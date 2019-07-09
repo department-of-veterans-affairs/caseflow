@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Quality Review worflow" do
+RSpec.feature "Quality Review workflow" do
   let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Javitz") }
   let!(:judge_staff) { FactoryBot.create(:staff, :judge_role, user: judge_user) }
 
@@ -28,7 +28,13 @@ RSpec.feature "Quality Review worflow" do
 
     let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
     let!(:judge_task) do
-      FactoryBot.create(:ama_judge_task, appeal: appeal, parent: root_task, assigned_to: judge_user, status: :completed)
+      FactoryBot.create(
+        :ama_judge_decision_review_task,
+        appeal: appeal,
+        parent: root_task,
+        assigned_to: judge_user,
+        status: :completed
+      )
     end
     let!(:attorney_task) do
       FactoryBot.create(
@@ -156,7 +162,8 @@ RSpec.feature "Quality Review worflow" do
         click_on "Continue"
 
         expect(page).to have_content(
-          "Thank you for drafting #{veteran_full_name}'s decision. It's been sent to #{judge_user.full_name} for review."
+          "Thank you for drafting #{veteran_full_name}'s decision. " \
+          "It's been sent to #{judge_user.full_name} for review."
         )
       end
 

@@ -50,6 +50,16 @@ const veteranNotFoundInstructions = <div>
   </p>
 </div>;
 
+const incidentFlashTeamEmail = React.createElement(
+  'a', { href: 'mailto:IncidentTeam.VBASLC@va.gov ? Subject=Temporarily%20unlock%20incident%20flash' },
+  'incident team'
+);
+
+const incidentFlashError = React.createElement(
+  'span', { id: 'incidentFlashError' }, COPY.INCIDENT_FLASH_ERROR_START, incidentFlashTeamEmail,
+  COPY.INCIDENT_FLASH_ERROR_END
+);
+
 class Search extends React.PureComponent {
   handleSearchSubmit = () => (
     this.props.doFileNumberSearch(this.props.formType, this.props.fileNumberSearchInput)
@@ -69,6 +79,10 @@ class Search extends React.PureComponent {
         title: 'Veteran not found',
         body: veteranNotFoundInstructions
       },
+      reserved_veteran_file_number: {
+        title: 'Invalid file number',
+        body: 'Please enter a valid Veteran ID and try again.'
+      },
       veteran_has_multiple_phone_numbers: {
         title: 'The Veteran has multiple active phone numbers',
         body: COPY.DUPLICATE_PHONE_NUMBER_MESSAGE
@@ -81,6 +95,10 @@ class Search extends React.PureComponent {
       veteran_not_valid: {
         title: 'The Veteran\'s profile has missing or invalid information required to create an EP.',
         body: invalidVeteranInstructions(searchErrorData)
+      },
+      incident_flash: {
+        title: 'The Veteran has an incident flash',
+        body: incidentFlashError
       },
       did_not_receive_ramp_election: {
         title: 'A RAMP Opt-in Notice Letter was not sent to this Veteran.',
@@ -136,7 +154,11 @@ class Search extends React.PureComponent {
 
     searchErrors.default.body = <div>
       <div>{`Error code ${searchErrorCode}.`}</div>
-      <div>Please try again. If the problem persists, please contact Caseflow support.</div>
+      <div>
+        Please try again. If the problem persists, please contact the Caseflow team
+        via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket
+        via <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a>.
+      </div>
     </div>;
 
     const error = searchErrors[searchErrorCode] || searchErrors.default;

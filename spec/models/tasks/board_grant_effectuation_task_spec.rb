@@ -2,7 +2,7 @@
 
 describe BoardGrantEffectuationTask do
   let(:task_status) { "assigned" }
-  let(:task) { create(:board_grant_effectuation_task, status: task_status).becomes(described_class) }
+  let(:task) { create(:board_grant_effectuation_task, status: task_status) }
 
   context "#label" do
     subject { task.label }
@@ -37,7 +37,7 @@ describe BoardGrantEffectuationTask do
     let(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
     let!(:education_business_line) { create(:business_line, url: "education") }
     let(:education_task) do
-      create(:task, appeal: appeal, assigned_to: education_business_line).becomes(described_class)
+      create(:board_grant_effectuation_task, appeal: appeal, assigned_to: education_business_line)
     end
 
     context "appeal with request issues in multiple business lines" do
@@ -49,7 +49,7 @@ describe BoardGrantEffectuationTask do
         create(:request_issue, :nonrating, decision_review: appeal, benefit_type: "insurance")
       end
       let(:insurance_task) do
-        create(:task, appeal: appeal, assigned_to: insurance_business_line).becomes(described_class)
+        create(:board_grant_effectuation_task, appeal: appeal, assigned_to: insurance_business_line)
       end
 
       it "only shows request issues relevant to business line" do

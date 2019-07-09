@@ -24,6 +24,16 @@ describe DecisionReviewsController, type: :controller do
       end
     end
 
+    context "user has Admin Intake role" do
+      let(:user) { User.authenticate!(roles: ["Admin Intake"]) }
+
+      it "displays org queue page" do
+        get :index, params: { business_line_slug: non_comp_org.url }
+
+        expect(response.status).to eq 200
+      end
+    end
+
     context "user is in org" do
       before do
         OrganizationsUser.add_user_to_organization(user, non_comp_org)
@@ -59,7 +69,7 @@ describe DecisionReviewsController, type: :controller do
   end
 
   describe "#show" do
-    let(:task) { create(:higher_level_review_task).becomes(DecisionReviewTask) }
+    let(:task) { create(:higher_level_review_task) }
 
     context "user is in org" do
       before do
@@ -103,7 +113,6 @@ describe DecisionReviewsController, type: :controller do
     context "with board grant effectuation task" do
       let(:task) do
         create(:board_grant_effectuation_task, status: "in_progress", assigned_to: non_comp_org)
-          .becomes(BoardGrantEffectuationTask)
       end
 
       it "marks task as completed" do
@@ -127,10 +136,7 @@ describe DecisionReviewsController, type: :controller do
     end
 
     context "with decision review task" do
-      let(:task) do
-        create(:higher_level_review_task, status: "in_progress", assigned_to: non_comp_org)
-          .becomes(DecisionReviewTask)
-      end
+      let(:task) { create(:higher_level_review_task, status: "in_progress", assigned_to: non_comp_org) }
 
       let!(:request_issues) do
         [

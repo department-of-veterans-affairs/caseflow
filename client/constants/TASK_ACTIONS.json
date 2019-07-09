@@ -115,6 +115,14 @@
     "label": "End hold early",
     "value": "modal/end_hold"
   },
+  "TOGGLE_TIMED_HOLD": {
+    "func": "toggle_timed_hold"
+  },
+  "REASSIGN_TO_JUDGE": {
+    "label": "Re-assign to a judge",
+    "value": "modal/reassign_to_judge",
+    "func": "reassign_to_judge_data"
+  },
   "REASSIGN_TO_PERSON": {
     "label": "Re-assign to person",
     "value": "modal/reassign_to_person",
@@ -132,7 +140,7 @@
   "QR_RETURN_TO_JUDGE": {
     "label": "Return to judge",
     "value": "modal/assign_to_judge",
-    "func": "assign_to_judge_data"
+    "func": "qr_return_to_judge_data"
   },
   "JUDGE_QR_RETURN_TO_ATTORNEY": {
     "label": "Return to attorney",
@@ -156,6 +164,9 @@
   "REVIEW_AMA_DECISION": {
     "label": "Decision ready for review",
     "value": "draft_decision/dispositions"
+  },
+  "REVIEW_DECISION_DRAFT": {
+    "func": "review_decision_draft"
   },
   "SCHEDULE_HEARING_SEND_TO_TEAM": {
     "label": "Hearing does need to be scheduled, send to hearing branch",

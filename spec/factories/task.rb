@@ -56,6 +56,11 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
+    factory :pulac_cerullo_task, class: PulacCerulloTask do
+      type { PulacCerulloTask.name }
+      appeal { create(:appeal) }
+    end
+
     factory :privacy_act_task, class: PrivacyActTask do
       type { PrivacyActTask.name }
       appeal { create(:appeal) }
@@ -64,74 +69,179 @@ FactoryBot.define do
     factory :timed_hold_task, class: TimedHoldTask do
       type { TimedHoldTask.name }
       appeal { create(:appeal) }
-      assigned_to { FactoryBot.create(:user) }
+      assigned_to { create(:user) }
       days_on_hold { rand(1..100) }
-      parent { FactoryBot.create(:generic_task) }
+      parent { create(:generic_task) }
     end
 
-    factory :colocated_task do
-      type { ColocatedTask.name }
+    factory :colocated_task, traits: [Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym] do
+      parent { create(:generic_task) }
 
-      factory :ama_colocated_task do
+      factory :ama_colocated_task, traits: [Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym] do
         appeal { create(:appeal) }
       end
 
-      after(:build) do |task|
-        example_instructions = {
-          ihp: "Hello. It appears that the VSO has not reviewed this case and has not provided an IHP.",
-          poa_clarification: "We received some correspondence from the Veteran's attorney in November " \
-                             "indicating the attorney wants to withdraw from representation of the Veteran. " \
-                             "I don't see any paperwork from the Veteran appointing a new rep or otherwise " \
-                             "acknowledging the withdraw of the old one. Please contact the Veteran to " \
-                             "clarify if they have current representation. If the Veteran no longer " \
-                             "wishes the current representative to act on his behalf, please get that in writing.",
-          hearing_clarification: "A March statement filed by the Veteran indicates that they desired " \
-                                 "a 'Televideo conference hearing' for all their appeals. No hearing " \
-                                 "was scheduled. Please clarify whether the Veteran still desires a " \
-                                 "Board hearing, and, if so, please reroute as necessary to schedule one. Thanks!",
-          aoj: "Please clarify whether the Veteran desires AOJ review of any evidence, to include VA " \
-               "treatment records dated through June, submitted since an April statement of the case. Thank you!",
-          extension: "The Veteran's POA submitted a letter requesting a 90 day extension. Please send " \
-                     "letter granting the extension.",
-          missing_hearing_transcripts: "Good evening, could you please return this to the hearing " \
-                                       "branch as the hearing was just held and the transcripts are " \
-                                       "not yet available. Thank you.",
-          unaccredited_rep: "Unaccredited rep",
-          foia: "The Veteran's representative submitted FOIA request in December of last year, which " \
-                "was acknowledged the same month. To date, there has been no response provided. " \
-                "Please follow up on the FOIA request.",
-          retired_vlj: "VLJ Snuffy conducted the hearing in June. Since they are now retired, the " \
-                       "Veteran needs to be provided notice of this and an opportunity to request " \
-                       "hearing before another VLJ.",
-          arneson: "email was sent re Arneson letter/ the Veteran needing to be offered a third hearing.",
-          new_rep_arguments: "The Veteran recently switched to a new POA. Please determine if the " \
-                             "new POA will provide new arguments for the issues on appeal.",
-          pending_scanning_vbms: "There is a pending scanning banner in VBMS indicating documents " \
-                                 "from November are pending scanning. The last documents uploaded " \
-                                 "to the file are from October. Please hold the case in abeyance " \
-                                 "for 2 weeks to allow the documents to be uploaded and the PSB to clear.",
-          address_verification: "VACOLS and Caseflow lists two different addresses for the Veteran. " \
-                                "From reviewing the recent documents in the file, it appears that " \
-                                "the address in Caseflow is the most recent address. Please verify " \
-                                "the Veteran's current address and update VACOLS if warranted.",
-          schedule_hearing: "The Veteran has requested a Board hearing as to all appealed issues. " \
-                            "To date, no Board hearing has been scheduled.",
-          missing_records: "The Veteran had a Board Video Conference Hearing in September with " \
-                          "Judge Snuffy. The Hearing transcripts are not of record.",
-          translation: "There are multiple document files that still require translation from " \
-                       "Spanish to English. The files in Spanish have been marked in Caseflow. " \
-                       "Please have these documents translated. Thank you!",
-          other: "Please request a waiver of AOJ consideration for new evidence"
-        }
+      trait :ihp do
+        initialize_with { IhpColocatedTask.new(attributes) }
+        type { IhpColocatedTask.name }
+        instructions { ["Hello. It appears that the VSO has not reviewed this case and has not provided an IHP."] }
+      end
 
+      trait :poa_clarification do
+        initialize_with { PoaClarificationColocatedTask.new(attributes) }
+        type { PoaClarificationColocatedTask.name }
+        instructions do
+          ["We received some correspondence from the Veteran's attorney in November " \
+          "indicating the attorney wants to withdraw from representation of the Veteran. " \
+          "I don't see any paperwork from the Veteran appointing a new rep or otherwise " \
+          "acknowledging the withdraw of the old one. Please contact the Veteran to " \
+          "clarify if they have current representation. If the Veteran no longer " \
+          "wishes the current representative to act on his behalf, please get that in writing."]
+        end
+      end
+
+      trait :hearing_clarification do
+        initialize_with { HearingClarificationColocatedTask.new(attributes) }
+        type { HearingClarificationColocatedTask.name }
+        instructions do
+          ["A March statement filed by the Veteran indicates that they desired " \
+          "a 'Televideo conference hearing' for all their appeals. No hearing " \
+          "was scheduled. Please clarify whether the Veteran still desires a " \
+          "Board hearing, and, if so, please reroute as necessary to schedule one. Thanks!"]
+        end
+      end
+
+      trait :aoj do
+        initialize_with { AojColocatedTask.new(attributes) }
+        type { AojColocatedTask.name }
+        instructions do
+          ["Please clarify whether the Veteran desires AOJ review of any evidence, to include VA " \
+          "treatment records dated through June, submitted since an April statement of the case. Thank you!"]
+        end
+      end
+
+      trait :extension do
+        initialize_with { ExtensionColocatedTask.new(attributes) }
+        type { ExtensionColocatedTask.name }
+        instructions do
+          ["The Veteran's POA submitted a letter requesting a 90 day extension. Please send " \
+          "letter granting the extension."]
+        end
+      end
+
+      trait :missing_hearing_transcripts do
+        initialize_with { MissingHearingTranscriptsColocatedTask.new(attributes) }
+        type { MissingHearingTranscriptsColocatedTask.name }
+        instructions do
+          ["Good evening, could you please return this to the hearing " \
+          "branch as the hearing was just held and the transcripts are " \
+          "not yet available. Thank you."]
+        end
+      end
+
+      trait :unaccredited_rep do
+        initialize_with { UnaccreditedRepColocatedTask.new(attributes) }
+        type { UnaccreditedRepColocatedTask.name }
+        instructions { ["Unaccredited rep"] }
+      end
+
+      trait :foia do
+        initialize_with { FoiaColocatedTask.new(attributes) }
+        type { FoiaColocatedTask.name }
+        instructions do
+          ["The Veteran's representative submitted FOIA request in December of last year, which " \
+          "was acknowledged the same month. To date, there has been no response provided. " \
+          "Please follow up on the FOIA request."]
+        end
+      end
+
+      trait :retired_vlj do
+        initialize_with { RetiredVljColocatedTask.new(attributes) }
+        type { RetiredVljColocatedTask.name }
+        instructions do
+          ["VLJ Snuffy conducted the hearing in June. Since they are now retired, the " \
+          "Veteran needs to be provided notice of this and an opportunity to request " \
+          "hearing before another VLJ."]
+        end
+      end
+
+      trait :arneson do
+        initialize_with { ArnesonColocatedTask.new(attributes) }
+        type { ArnesonColocatedTask.name }
+        instructions { ["email was sent re Arneson letter/ the Veteran needing to be offered a third hearing."] }
+      end
+
+      trait :new_rep_arguments do
+        initialize_with { NewRepArgumentsColocatedTask.new(attributes) }
+        type { NewRepArgumentsColocatedTask.name }
+        instructions do
+          ["The Veteran recently switched to a new POA. Please determine if the " \
+          "new POA will provide new arguments for the issues on appeal."]
+        end
+      end
+
+      trait :pending_scanning_vbms do
+        initialize_with { PendingScanningVbmsColocatedTask.new(attributes) }
+        type { PendingScanningVbmsColocatedTask.name }
+        instructions do
+          ["There is a pending scanning banner in VBMS indicating documents " \
+          "from November are pending scanning. The last documents uploaded " \
+          "to the file are from October. Please hold the case in abeyance " \
+          "for 2 weeks to allow the documents to be uploaded and the PSB to clear."]
+        end
+      end
+
+      trait :address_verification do
+        initialize_with { AddressVerificationColocatedTask.new(attributes) }
+        type { AddressVerificationColocatedTask.name }
+        instructions do
+          ["VACOLS and Caseflow lists two different addresses for the Veteran. " \
+          "From reviewing the recent documents in the file, it appears that " \
+          "the address in Caseflow is the most recent address. Please verify " \
+          "the Veteran's current address and update VACOLS if warranted."]
+        end
+      end
+
+      trait :schedule_hearing do
+        initialize_with { ScheduleHearingColocatedTask.new(attributes) }
+        type { ScheduleHearingColocatedTask.name }
+        instructions do
+          ["The Veteran has requested a Board hearing as to all appealed issues. " \
+          "To date, no Board hearing has been scheduled."]
+        end
+      end
+
+      trait :missing_records do
+        initialize_with { MissingRecordsColocatedTask.new(attributes) }
+        type { MissingRecordsColocatedTask.name }
+        instructions do
+          ["The Veteran had a Board Video Conference Hearing in September with " \
+          "Judge Snuffy. The Hearing transcripts are not of record."]
+        end
+      end
+
+      trait :translation do
+        initialize_with { TranslationColocatedTask.new(attributes) }
+        type { TranslationColocatedTask.name }
+        instructions do
+          ["There are multiple document files that still require translation from " \
+          "Spanish to English. The files in Spanish have been marked in Caseflow. " \
+          "Please have these documents translated. Thank you!"]
+        end
+      end
+
+      trait :other do
+        initialize_with { OtherColocatedTask.new(attributes) }
+        type { OtherColocatedTask.name }
+        instructions { ["Please request a waiver of AOJ consideration for new evidence"] }
+      end
+
+      after(:build) do |task|
         # Create a RootTask for this appeal unless one already exists because ColocatedTasks with the schedule_hearing
         # action can create ScheduleHearingTasks which require the appeal to have a RootTask.
         # github.com/department-of-veterans-affairs/caseflow
         #   /blob/2bf6503e7f0888abc3222caaba499d8e7db14ae4/app/models/tasks/colocated_task.rb#L134
         RootTask.create!(appeal: task.appeal) unless task.appeal.root_task
-
-        action = task.action || Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample
-        task.update!(action: action, instructions: [example_instructions[action.to_sym]]) if task.instructions.empty?
       end
     end
 
@@ -140,8 +250,8 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
-    factory :disposition_task, class: DispositionTask do
-      type { DispositionTask.name }
+    factory :assign_hearing_disposition_task, class: AssignHearingDispositionTask do
+      type { AssignHearingDispositionTask.name }
       assigned_to { Bva.singleton }
       appeal { create(:appeal) }
       parent { create(:hearing_task) }
@@ -196,19 +306,42 @@ FactoryBot.define do
       type { NoShowHearingTask.name }
       appeal { create(:appeal) }
       assigned_to { HearingsManagement.singleton }
-      parent { create(:disposition_task, appeal: appeal) }
+      parent { create(:assign_hearing_disposition_task, appeal: appeal) }
     end
 
-    factory :ama_attorney_task do
+    factory :evidence_submission_window_task, class: EvidenceSubmissionWindowTask do
+      type { EvidenceSubmissionWindowTask.name }
+      appeal { create(:appeal) }
+      assigned_to { HearingsManagement.singleton }
+      parent { create(:assign_hearing_disposition_task, appeal: appeal) }
+    end
+
+    factory :ama_attorney_task, class: AttorneyTask do
       type { AttorneyTask.name }
       appeal { create(:appeal) }
-      parent { create(:ama_judge_task) }
+      parent { create(:ama_judge_decision_review_task) }
+      assigned_by { create(:user) }
+      assigned_to { create(:user) }
+
+      after(:build) do |_task, evaluator|
+        if evaluator.assigned_by
+          existing_staff_record = VACOLS::Staff.where(
+            sdomainid: evaluator.assigned_by.css_id, svlj: "J", sactive: "A"
+          ).first
+          create(:staff, :judge_role, user: evaluator.assigned_by) if existing_staff_record.blank?
+        end
+
+        if evaluator.assigned_to
+          existing_staff_record = VACOLS::Staff.where(sdomainid: evaluator.assigned_to.css_id, sactive: "A").first
+          create(:staff, :attorney_role, user: evaluator.assigned_to) if existing_staff_record.blank?
+        end
+      end
     end
 
     factory :ama_judge_dispatch_return_to_attorney_task, class: AttorneyDispatchReturnTask do
       type { AttorneyDispatchReturnTask.name }
       appeal { create(:appeal) }
-      parent { create(:ama_judge_task) }
+      parent { create(:ama_judge_decision_review_task) }
     end
 
     factory :transcription_task, class: TranscriptionTask do
@@ -218,7 +351,7 @@ FactoryBot.define do
       assigned_to { TranscriptionTeam.singleton }
     end
 
-    factory :ama_vso_task do
+    factory :ama_vso_task, class: GenericTask do
       type { GenericTask.name }
       appeal { create(:appeal) }
       parent { create(:root_task) }
@@ -232,13 +365,13 @@ FactoryBot.define do
       assigned_to { QualityReview.singleton }
     end
 
-    factory :quality_review_task do
+    factory :quality_review_task, class: QualityReviewTask do
       type { QualityReviewTask.name }
       appeal { create(:appeal) }
       assigned_by { nil }
     end
 
-    factory :bva_dispatch_task do
+    factory :bva_dispatch_task, class: BvaDispatchTask do
       type { BvaDispatchTask.name }
       appeal { create(:appeal) }
       assigned_by { nil }

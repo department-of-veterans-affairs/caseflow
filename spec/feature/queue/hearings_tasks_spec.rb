@@ -20,7 +20,7 @@ RSpec.feature "Hearings tasks workflows" do
     let!(:completed_scheduling_task) do
       FactoryBot.create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
     end
-    let(:disposition_task) { FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal) }
+    let(:disposition_task) { FactoryBot.create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal) }
     let!(:no_show_hearing_task) do
       FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
     end
@@ -90,32 +90,6 @@ RSpec.feature "Hearings tasks workflows" do
           end
         end
       end
-
-      describe "Bulk assign hearing tasks" do
-        def fill_in_and_submit_bulk_assign_modal
-          options = find_all("option")
-          assign_to = options[2]
-          assign_to.click
-          task_type = options[8]
-          task_type.click
-          number_of_tasks = options[10]
-          number_of_tasks.click
-          submit = all("button", text: "Assign Tasks")[0]
-          submit.click
-        end
-
-        it "is able to bulk assign tasks for the hearing management org" do
-          3.times do
-            FactoryBot.create(:no_show_hearing_task)
-          end
-          success_msg = "You have bulk assigned 4 No Show Hearing Task task(s)"
-          visit("/organizations/hearing-management")
-          click_button(text: "Assign Tasks")
-          fill_in_and_submit_bulk_assign_modal
-          expect(page).to have_content(success_msg)
-          expect(page).to have_content("Assigned (4)")
-        end
-      end
     end
   end
 
@@ -137,7 +111,7 @@ RSpec.feature "Hearings tasks workflows" do
     let!(:completed_scheduling_task) do
       FactoryBot.create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
     end
-    let(:disposition_task) { FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal) }
+    let(:disposition_task) { FactoryBot.create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal) }
     let!(:no_show_hearing_task) do
       FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
     end

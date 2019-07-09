@@ -143,6 +143,8 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
     const ineligibleRequestIssues = issuesAfter.filter((ri) => ri.ineligibleReason);
     const withdrawnRequestIssues = addedIssues.filter((ri) => ri.withdrawalPending);
     const hasWithdrawnIssues = !_.isEmpty(withdrawnRequestIssues);
+    const editedRequestIssues = addedIssues.filter((ri) => ri.editedDescription);
+    const hasEditedRequestIssues = !_.isEmpty(editedRequestIssues);
     const pageTitle = () => {
       if (issuesAfter.length === 0) {
         return 'Review Removed';
@@ -183,6 +185,17 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
             {withdrawnRequestIssues.map((ri, i) =>
               <p key={`withdrawn-issue-${i}`}>
                 {ri.contentionText}
+              </p>)}
+          </li>
+        </ul>
+      </Fragment> }
+      { hasEditedRequestIssues && <Fragment>
+        <ul className="cf-success-checklist cf-left-padding">
+          <li>
+            <strong>Edited</strong>
+            {editedRequestIssues.map((ri, i) =>
+              <p key={`withdrawn-issue-${i}`}>
+                {ri.editedDescription}
               </p>)}
           </li>
         </ul>

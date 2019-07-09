@@ -612,3 +612,6 @@ export const setAppealAod = (externalAppealId) => ({
     externalAppealId
   }
 });
+
+export const setQueueConfig = (config) => ({ type: ACTIONS.SET_QUEUE_CONFIG,
+  payload: { config } });

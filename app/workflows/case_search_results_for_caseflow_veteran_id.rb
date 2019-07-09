@@ -1,52 +1,33 @@
 # frozen_string_literal: true
 
-class CaseSearchResultsForCaseflowVeteranId
-  include ActiveModel::Model
-  include ValidateVsoEmployeeCanAccessFileNumber
+class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
+  validate :veterans_exist
 
-  validate :valid_caseflow_veteran_id
-
-  def initialize(caseflow_veteran_id:, user:)
-    @caseflow_veteran_id = caseflow_veteran_id
-    @user = user
+  def initialize(caseflow_veteran_ids:, user:)
+    super(user: user)
+    @caseflow_veteran_ids = caseflow_veteran_ids
   end
 
-  def call
-    @success = valid?
+  protected
 
-    search_results if success
+  def appeals
+    AppealFinder.new(user: user).find_appeals_for_veterans(veterans_user_can_access)
+  end
 
-    FormResponse.new(
-      success: success,
-      errors: errors.messages[:workflow],
-      extra: error_status_or_search_results
-    )
+  def claim_reviews
+    ClaimReview.find_all_visible_by_file_number(veterans_user_can_access.map(&:file_number))
+  end
+
+  def veterans
+    @veterans ||= Veteran.where(id: caseflow_veteran_ids)
   end
 
   private
 
-  attr_reader :success, :user, :status, :caseflow_veteran_id, :workflow
+  attr_reader :caseflow_veteran_ids
 
-  def search_results
-    @search_results ||= { search_results: { appeals: appeals, claim_reviews: claim_reviews } }
-  end
-
-  def appeals
-    ::AppealsForFileNumber.new(file_number: file_number, user: user, veteran: veteran).call
-  end
-
-  def claim_reviews
-    ClaimReview.find_all_visible_by_file_number(file_number).map(&:search_table_ui_hash)
-  end
-
-  def error_status_or_search_results
-    return { status: status } unless success
-
-    search_results
-  end
-
-  def valid_caseflow_veteran_id
-    return if file_number
+  def veterans_exist
+    return unless veterans_user_can_access.empty?
 
     errors.add(:workflow, not_found_error)
     @status = :not_found
@@ -55,15 +36,7 @@ class CaseSearchResultsForCaseflowVeteranId
   def not_found_error
     {
       "title": "Veteran not found",
-      "detail": "Could not find a Veteran matching the Caseflow Veteran id #{file_number}"
+      "detail": "Could not find a Veteran matching one of the Caseflow Veteran ids #{caseflow_veteran_ids}"
     }
-  end
-
-  def file_number
-    @file_number ||= veteran&.file_number
-  end
-
-  def veteran
-    @veteran ||= Veteran.find_by(id: caseflow_veteran_id)
   end
 end

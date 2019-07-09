@@ -9,10 +9,11 @@
 # Note: Full list of colocated tasks in /client/constants/CO_LOCATED_ADMIN_ACTIONS.json
 
 class ColocatedTask < Task
-  validates :action, inclusion: { in: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s) }
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
   validate :on_hold_duration_is_set, on: :update
+  validate :task_is_unique, on: :create
+  validate :valid_action_or_type
 
   after_update :update_location_in_vacols
 
@@ -21,7 +22,14 @@ class ColocatedTask < Task
     def create_many_from_params(params_array, user)
       # Create all ColocatedTasks in one transaction so that if any fail they all fail.
       ActiveRecord::Base.multi_transaction do
-        team_tasks = super(params_array.map { |p| p.merge(assigned_to: Colocated.singleton) }, user)
+        params_array = params_array.map do |params|
+          # Find the task type for a given action.
+          create_params = params.clone
+          new_task_type = find_subclass_by_action(create_params.delete(:action).to_s)
+          create_params.merge!(type: new_task_type&.name, assigned_to: Colocated.singleton)
+        end
+
+        team_tasks = super(params_array, user)
 
         all_tasks = team_tasks.map { |team_task| [team_task, team_task.children.first] }.flatten
 
@@ -42,19 +50,27 @@ class ColocatedTask < Task
         fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
       end
     end
+
+    def find_subclass_by_action(action)
+      subclasses.find { |task_class| task_class.label == Constants::CO_LOCATED_ADMIN_ACTIONS[action] }
+    end
   end
 
   def label
-    action
+    action || self.class.label
   end
 
   def available_actions(user)
     if assigned_to == user
-      return available_actions_with_conditions([
-                                                 appropriate_timed_hold_task_action,
-                                                 Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
-                                                 Constants.TASK_ACTIONS.CANCEL_TASK.to_h
-                                               ])
+      base_actions = [
+        Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+        Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
+        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+      ]
+
+      base_actions.push(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h) if Colocated.singleton.user_is_admin?(user)
+
+      return available_actions_with_conditions(base_actions)
     end
 
     if task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.admins.include?(user)
@@ -65,6 +81,8 @@ class ColocatedTask < Task
   end
 
   def available_actions_with_conditions(core_actions)
+    # Break this out into respective subclasses once ColocatedTasks are migrated
+    # https://github.com/department-of-veterans-affairs/caseflow/pull/11295#issuecomment-509659069
     if %w[translation schedule_hearing].include?(action) && appeal.is_a?(LegacyAppeal)
       return legacy_translation_or_hearing_actions(core_actions)
     end
@@ -84,11 +102,11 @@ class ColocatedTask < Task
   end
 
   def create_twin_of_type(params)
-    self.class.create!(
+    task_type = ColocatedTask.find_subclass_by_action(params[:action])
+    task_type.create!(
       appeal: appeal,
       parent: parent,
       assigned_by: assigned_by,
-      action: params[:action],
       instructions: params[:instructions],
       assigned_to: Colocated.singleton
     )
@@ -116,7 +134,7 @@ class ColocatedTask < Task
 
   def legacy_translation_actions(actions)
     send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
-    send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
+    send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants.CO_LOCATED_ADMIN_ACTIONS.translation)
     actions.unshift(send_to_team)
   end
 
@@ -128,32 +146,45 @@ class ColocatedTask < Task
     if saved_change_to_status? &&
        !open? &&
        all_tasks_closed_for_appeal? &&
-       appeal.is_a?(LegacyAppeal) &&
-       appeal.location_code == LegacyAppeal::LOCATION_CODES[:caseflow]
-      AppealRepository.update_location!(appeal, location_based_on_action)
+       appeal_in_caseflow_vacols_location? &&
+       assigned_to.is_a?(Organization)
+      AppealRepository.update_location!(appeal, vacols_location)
     end
   end
 
-  def location_based_on_action
-    case action.to_sym
-    when :schedule_hearing
-      # Return to attorney if the task is cancelled. For instance, if the VLJ support staff sees that the hearing was
-      # actually held.
-      return assigned_by.vacols_uniq_id if status == Constants.TASK_STATUSES.cancelled
+  def appeal_in_caseflow_vacols_location?
+    appeal.is_a?(LegacyAppeal) &&
+      VACOLS::Case.find(appeal.vacols_id).bfcurloc == LegacyAppeal::LOCATION_CODES[:caseflow]
+  end
 
-      # Schedule hearing with a task (instead of changing Location in VACOLS, the old way)
-      ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)
-
-      LegacyAppeal::LOCATION_CODES[:caseflow]
-    when :translation
-      LegacyAppeal::LOCATION_CODES[action.to_sym]
+  def vacols_location
+    # Break this out into respective subclasses once ColocatedTasks are migrated
+    # https://github.com/department-of-veterans-affairs/caseflow/pull/11295#issuecomment-509659069
+    if action == "schedule_hearing" || type == ScheduleHearingColocatedTask.name
+      schedule_hearing_vacols_location
+    elsif action == "translation" || type == TranslationColocatedTask.name
+      translation_vacols_location
     else
       assigned_by.vacols_uniq_id
     end
   end
 
+  def schedule_hearing_vacols_location
+    # Return to attorney if the task is cancelled. For instance, if the VLJ support staff sees that the hearing was
+    # actually held.
+    return assigned_by.vacols_uniq_id if children.all? { |child| child.status == Constants.TASK_STATUSES.cancelled }
+
+    # Schedule hearing with a task (instead of changing Location in VACOLS, the old way)
+    ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)
+    LegacyAppeal::LOCATION_CODES[:caseflow]
+  end
+
+  def translation_vacols_location
+    LegacyAppeal::LOCATION_CODES[:translation]
+  end
+
   def all_tasks_closed_for_appeal?
-    appeal.tasks.open.where(type: ColocatedTask.name).none?
+    appeal.tasks.open.select { |task| task.is_a?(ColocatedTask) }.none?
   end
 
   def on_hold_duration_is_set
@@ -161,4 +192,50 @@ class ColocatedTask < Task
       errors.add(:on_hold_duration, "has to be specified")
     end
   end
+
+  def task_is_unique
+    ColocatedTask.where(
+      appeal_id: appeal_id,
+      assigned_to_id: assigned_to_id,
+      assigned_to_type: assigned_to_type,
+      action: action,
+      type: type,
+      parent_id: parent_id,
+      instructions: instructions
+    ).find_each do |duplicate_task|
+      if duplicate_task.open?
+        errors[:base] << format(
+          COPY::ADD_COLOCATED_TASK_ACTION_DUPLICATE_ERROR,
+          self.class.label&.upcase,
+          instructions.join(", ")
+        )
+        break
+      end
+    end
+  end
+
+  def valid_action_or_type
+    unless Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s).include?(action) ||
+           ColocatedTask.subclasses.include?(self.class)
+      errors[:base] << "Action is not included in the list"
+    end
+  end
 end
+
+require_dependency "poa_clarification_colocated_task"
+require_dependency "ihp_colocated_task"
+require_dependency "hearing_clarification_colocated_task"
+require_dependency "aoj_colocated_task"
+require_dependency "extension_colocated_task"
+require_dependency "missing_hearing_transcripts_colocated_task"
+require_dependency "unaccredited_rep_colocated_task"
+require_dependency "foia_colocated_task"
+require_dependency "retired_vlj_colocated_task"
+require_dependency "arneson_colocated_task"
+require_dependency "new_rep_arguments_colocated_task"
+require_dependency "pending_scanning_vbms_colocated_task"
+require_dependency "address_verification_colocated_task"
+require_dependency "schedule_hearing_colocated_task"
+require_dependency "missing_records_colocated_task"
+require_dependency "translation_colocated_task"
+require_dependency "other_colocated_task"

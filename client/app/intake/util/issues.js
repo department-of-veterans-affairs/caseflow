@@ -52,6 +52,17 @@ export const validateDate = (date) => {
   return null;
 };
 
+export const validateDateNotInFuture = (date) => {
+  const currentDate = new Date();
+  const enteredDate = new Date(date);
+
+  if (currentDate < enteredDate) {
+    return false;
+  }
+
+  return true;
+};
+
 export const validNonratingRequestIssue = (issue) => {
   const unvalidatedDate = issue.decisionDate;
   const decisionDate = validateDate(unvalidatedDate);

@@ -91,11 +91,19 @@ class TaskActionRepository
       }.merge(extras)
     end
 
-    def assign_to_judge_data(task, _user = nil)
+    def qr_return_to_judge_data(task, _user = nil)
       {
         selected: task.root_task.children.find { |child| child.is_a?(JudgeTask) }&.assigned_to,
         options: users_to_options(Judge.list_all),
         type: JudgeQualityReviewTask.name
+      }
+    end
+
+    def reassign_to_judge_data(task, _user = nil)
+      {
+        selected: nil,
+        options: users_to_options(Judge.list_all),
+        type: task.type
       }
     end
 
@@ -231,7 +239,8 @@ class TaskActionRepository
 
     def complete_transcription_data(_task, _user)
       {
-        modal_body: COPY::COMPLETE_TRANSCRIPTION_BODY
+        modal_body: COPY::COMPLETE_TRANSCRIPTION_BODY,
+        modal_hide_instructions: true
       }
     end
 
@@ -274,6 +283,20 @@ class TaskActionRepository
         options: [{ label: org.name, value: org.id }],
         type: PulacCerulloTask.name
       }
+    end
+
+    def toggle_timed_hold(task, user)
+      action = Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
+      action = Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h if task.on_timed_hold?
+
+      TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
+    end
+
+    def review_decision_draft(task, user)
+      action = Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h
+      action = Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h if task.ama?
+
+      TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
     end
 
     private

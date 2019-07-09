@@ -8,14 +8,15 @@ class WorkQueue::AppealSerializer
   attribute :assigned_judge
 
   attribute :issues do |object|
-    object.request_issues.active_or_decided.includes(:remand_reasons).map do |issue|
+    object.request_issues.active_or_decided_or_withdrawn.includes(:remand_reasons).map do |issue|
       {
         id: issue.id,
         program: issue.benefit_type,
         description: issue.description,
         notes: issue.notes,
         diagnostic_code: issue.contested_rating_issue_diagnostic_code,
-        remand_reasons: issue.remand_reasons
+        remand_reasons: issue.remand_reasons,
+        closed_status: issue.closed_status
       }
     end
   end
@@ -35,12 +36,14 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :can_edit_request_issues do |object, params|
-    params[:user]&.can_edit_request_issues?(object)
+    AppealRequestIssuesPolicy.new(user: params[:user], appeal: object).editable?
   end
 
   attribute(:hearings) { |object| hearings(object) }
 
   attribute :withdrawn, &:withdrawn?
+
+  attribute :removed, &:removed?
 
   attribute :assigned_to_location
 
@@ -84,6 +87,7 @@ class WorkQueue::AppealSerializer
   attribute :docket_range_date
   attribute :decision_date
   attribute :nod_date, &:receipt_date
+  attribute :withdrawal_date
 
   attribute :certification_date do
     nil

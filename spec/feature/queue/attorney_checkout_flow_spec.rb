@@ -16,7 +16,7 @@ RSpec.feature "Attorney checkout flow" do
     before do
       root_task = FactoryBot.create(:root_task)
       parent_task = FactoryBot.create(
-        :ama_judge_task,
+        :ama_judge_decision_review_task,
         assigned_to: judge_user,
         appeal: appeal,
         parent: root_task

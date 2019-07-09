@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
-describe DispositionTask do
+describe AssignHearingDispositionTask do
   describe "#update_from_params for ama appeal" do
     let(:appeal) { FactoryBot.create(:appeal) }
     let!(:hearing) { FactoryBot.create(:hearing, appeal: appeal) }
     let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
     let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-    let!(:disposition_task) { DispositionTask.create_disposition_task!(appeal, hearing_task, hearing) }
+    let!(:disposition_task) do
+      AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, hearing_task, hearing)
+    end
     let(:after_disposition_update) { nil }
     let(:user) { FactoryBot.create(:user) }
     let(:params) { nil }
@@ -111,7 +113,7 @@ describe DispositionTask do
           expect(HearingTask.count).to eq 2
           expect(HearingTask.first.cancelled?).to be_truthy
           expect(HearingTask.last.on_hold?).to be_truthy
-          expect(DispositionTask.first.cancelled?).to be_truthy
+          expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
           expect(ScheduleHearingTask.count).to eq 1
           expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.last.id
         end
@@ -122,11 +124,11 @@ describe DispositionTask do
             params[:instructions] = instructions_text
           end
 
-          it "adds the instructions to both the DispositionTask and the ScheduleHearingTask" do
+          it "adds the instructions to both the AssignHearingDispositionTask and the ScheduleHearingTask" do
             subject
 
-            expect(DispositionTask.first.cancelled?).to be_truthy
-            expect(DispositionTask.first.instructions).to eq [instructions_text]
+            expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
+            expect(AssignHearingDispositionTask.first.instructions).to eq [instructions_text]
             expect(ScheduleHearingTask.count).to eq 1
             expect(ScheduleHearingTask.first.instructions).to eq [instructions_text]
           end
@@ -150,7 +152,7 @@ describe DispositionTask do
           expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.postponed
           expect(HearingTask.count).to eq 2
           expect(HearingTask.first.cancelled?).to be_truthy
-          expect(DispositionTask.first.cancelled?).to be_truthy
+          expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
           expect(ScheduleHearingTask.count).to eq 1
           expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.last.id
           expect(HearingAdminActionIncarceratedVeteranTask.count).to eq 1
@@ -170,7 +172,7 @@ describe DispositionTask do
           }
         end
 
-        it "creates a new hearing with a new DispositionTask" do
+        it "creates a new hearing with a new AssignHearingDispositionTask" do
           subject
 
           expect(Hearing.count).to eq 2
@@ -180,33 +182,33 @@ describe DispositionTask do
           expect(HearingTask.count).to eq 2
           expect(HearingTask.first.cancelled?).to be_truthy
           expect(HearingTask.last.hearing_task_association.hearing.id).to eq Hearing.last.id
-          expect(DispositionTask.count).to eq 2
-          expect(DispositionTask.first.cancelled?).to be_truthy
+          expect(AssignHearingDispositionTask.count).to eq 2
+          expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
         end
       end
     end
   end
 
-  describe ".create_disposition_task!" do
+  describe ".create_assign_hearing_disposition_task!" do
     let(:appeal) { FactoryBot.create(:appeal) }
     let(:parent) { nil }
     let!(:hearing) { FactoryBot.create(:hearing, appeal: appeal) }
 
-    subject { described_class.create_disposition_task!(appeal, parent, hearing) }
+    subject { described_class.create_assign_hearing_disposition_task!(appeal, parent, hearing) }
 
     context "parent is a HearingTask" do
       let(:parent) { FactoryBot.create(:hearing_task, appeal: appeal) }
 
-      it "creates a DispositionTask and a HearingTaskAssociation" do
-        expect(DispositionTask.all.count).to eq 0
+      it "creates a AssignHearingDispositionTask and a HearingTaskAssociation" do
+        expect(AssignHearingDispositionTask.all.count).to eq 0
         expect(HearingTaskAssociation.all.count).to eq 0
 
         subject
 
-        expect(DispositionTask.all.count).to eq 1
-        expect(DispositionTask.first.appeal).to eq appeal
-        expect(DispositionTask.first.parent).to eq parent
-        expect(DispositionTask.first.assigned_to).to eq Bva.singleton
+        expect(AssignHearingDispositionTask.all.count).to eq 1
+        expect(AssignHearingDispositionTask.first.appeal).to eq appeal
+        expect(AssignHearingDispositionTask.first.parent).to eq parent
+        expect(AssignHearingDispositionTask.first.assigned_to).to eq Bva.singleton
         expect(HearingTaskAssociation.all.count).to eq 1
         expect(HearingTaskAssociation.first.hearing).to eq hearing
         expect(HearingTaskAssociation.first.hearing_task).to eq parent
@@ -256,7 +258,7 @@ describe DispositionTask do
     end
     let!(:disposition_task) do
       FactoryBot.create(
-        :disposition_task,
+        :assign_hearing_disposition_task,
         parent: hearing_task,
         appeal: appeal,
         status: Constants.TASK_STATUSES.in_progress
@@ -279,6 +281,8 @@ describe DispositionTask do
             expect(disposition_task.reload.cancelled?).to be_truthy
             expect(hearing_task.reload.cancelled?).to be_truthy
             expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq 0
+            expect(EvidenceSubmissionWindowTask.first.appeal).to eq disposition_task.appeal
+            expect(EvidenceSubmissionWindowTask.first.parent).to eq disposition_task.hearing_task.parent
           end
 
           context "the appeal has a VSO" do
@@ -321,7 +325,7 @@ describe DispositionTask do
           it "raises an error" do
             expect(disposition_task.cancelled?).to be_falsey
 
-            expect { subject }.to raise_error(DispositionTask::HearingDispositionNotCanceled)
+            expect { subject }.to raise_error(AssignHearingDispositionTask::HearingDispositionNotCanceled)
 
             expect(disposition_task.cancelled?).to be_falsey
           end
@@ -393,7 +397,7 @@ describe DispositionTask do
         let(:disposition) { nil }
 
         it "raises an error" do
-          expect { subject }.to raise_error DispositionTask::HearingDispositionNotPostponed
+          expect { subject }.to raise_error AssignHearingDispositionTask::HearingDispositionNotPostponed
 
           expect(disposition_task.status).to eq Constants.TASK_STATUSES.in_progress
         end
@@ -428,7 +432,7 @@ describe DispositionTask do
         let(:disposition) { nil }
 
         it "raises an error" do
-          expect { subject }.to raise_error DispositionTask::HearingDispositionNotNoShow
+          expect { subject }.to raise_error AssignHearingDispositionTask::HearingDispositionNotNoShow
 
           expect(disposition_task.reload.in_progress?).to be_truthy
         end
@@ -445,7 +449,7 @@ describe DispositionTask do
           context "the evidence window has not been waived" do
             let(:evidence_window_waived) { false }
 
-            it "creates a TranscriptionTask and an EvidenceSubmissionWindowTask as children of the DispositionTask" do
+            it "creates Transcription and EvidenceSubmissionWindow tasks as children of AssignHearingDispositionTask" do
               expect(disposition_task.children.count).to eq 0
 
               expect { subject }.to_not raise_error
@@ -470,7 +474,7 @@ describe DispositionTask do
           context "the hearing has marked the evidence window waived" do
             let(:evidence_window_waived) { true }
 
-            it "creates a TranscriptionTask as a child of the DispositionTask" do
+            it "creates a TranscriptionTask as a child of the AssignHearingDispositionTask" do
               expect(disposition_task.children.count).to eq 0
 
               expect { subject }.to_not raise_error
@@ -491,7 +495,7 @@ describe DispositionTask do
           it "raises an error" do
             expect(disposition_task.children.count).to eq 0
 
-            expect { subject }.to raise_error(DispositionTask::HearingDispositionNotHeld)
+            expect { subject }.to raise_error(AssignHearingDispositionTask::HearingDispositionNotHeld)
 
             expect(disposition_task.children.count).to eq 0
           end
@@ -507,7 +511,7 @@ describe DispositionTask do
         context "the task's hearing's disposition is held" do
           let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.held }
 
-          it "completes the DispositionTask, closes the HearingTask, and updates the appeal location" do
+          it "completes the AssignHearingDispositionTask, closes the HearingTask, and updates the appeal location" do
             expect(disposition_task.in_progress?).to be_truthy
             expect(hearing_task.on_hold?).to be_truthy
 

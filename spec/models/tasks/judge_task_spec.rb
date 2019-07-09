@@ -33,6 +33,7 @@ describe JudgeTask do
             [
               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
               Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h,
+              Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
               Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
             ].map { |action| subject_task.build_action_hash(action, judge) }
           )
@@ -46,6 +47,7 @@ describe JudgeTask do
               [
                 Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
                 Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h,
+                Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
                 Constants.TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.to_h,
                 Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
                 Constants.TASK_ACTIONS.CANCEL_TASK.to_h
@@ -65,6 +67,7 @@ describe JudgeTask do
             [
               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
               Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h,
+              Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
               Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h,
               Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h
             ].map { |action| subject_task.build_action_hash(action, judge) }
@@ -98,7 +101,9 @@ describe JudgeTask do
 
   describe ".create_from_params" do
     context "creating a JudgeQualityReviewTask from a QualityReviewTask" do
-      let(:judge_task) { FactoryBot.create(:ama_judge_task, parent: FactoryBot.create(:root_task), assigned_to: judge) }
+      let(:judge_task) do
+        FactoryBot.create(:ama_judge_decision_review_task, parent: FactoryBot.create(:root_task), assigned_to: judge)
+      end
       let(:qr_user) { FactoryBot.create(:user) }
       let(:qr_task) { FactoryBot.create(:qr_task, assigned_to: qr_user, parent: judge_task) }
       let(:params) { { assigned_to: judge, appeal: qr_task.appeal, parent_id: qr_task.id } }
@@ -155,7 +160,7 @@ describe JudgeTask do
   end
 
   describe ".previous_task" do
-    let(:parent) { FactoryBot.create(:ama_judge_task, assigned_to: judge) }
+    let(:parent) { FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge) }
     let!(:child) do
       FactoryBot.create(
         :ama_attorney_task,
@@ -163,7 +168,7 @@ describe JudgeTask do
         assigned_by: judge,
         status: Constants.TASK_STATUSES.completed,
         parent: parent
-      ).becomes(AttorneyTask)
+      )
     end
 
     subject { parent.previous_task }
@@ -207,11 +212,18 @@ describe JudgeTask do
           assigned_by: judge,
           assigned_to: attorney,
           parent: judge_task
-        ).becomes(AttorneyTask)
+        )
       end
 
-      it "changes the judge task type to decision review" do
+      before { Timecop.freeze(Time.zone.local(2019, 8, 2)) }
+
+      it "changes the judge task type to decision review and sends an error to sentry" do
         expect(judge_task.type).to eq(JudgeAssignTask.name)
+        expect(Raven).to receive(:capture_message).with(
+          ["Still changing JudgeAssignTask type to JudgeDecisionReviewTask.",
+           "See: https://github.com/department-of-veterans-affairs/caseflow/pull/11140#discussion_r295487938"],
+          extra: { application: "tasks" }
+        )
         subject
         expect(Task.find(judge_task.id).type).to eq(JudgeDecisionReviewTask.name)
       end

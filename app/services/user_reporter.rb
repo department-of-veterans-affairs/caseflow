@@ -38,7 +38,6 @@ class UserReporter
       { model: AppealView, column: :user, unique: [:appeal_type, :appeal_id] },
       { model: HearingView, column: :user, unique: [:hearing_type, :hearing_id] },
       { model: DocumentView, column: :user, unique: [:document_id] },
-      { model: ReaderUser, column: :user, unique: [] },
       { model: UserQuota, column: :user, unique: [:team_quota_id] }
     ]
   end

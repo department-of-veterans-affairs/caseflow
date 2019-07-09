@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import pluralize from 'pluralize';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -39,13 +40,13 @@ const horizontalRuleStyling = css({
 
 class CaseListView extends React.PureComponent {
   createLoadPromise = () => {
-    const caseflowVeteranId = this.props.caseflowVeteranId;
+    const { appeals, claimReviews, caseflowVeteranIds } = this.props;
 
-    if (this.props.appeals.length || this.props.claimReviews.length || !caseflowVeteranId) {
+    if (!_.isEmpty(appeals) || !_.isEmpty(claimReviews) || _.isEmpty(caseflowVeteranIds)) {
       return Promise.resolve();
     }
 
-    return ApiUtil.get(`/cases/${caseflowVeteranId}`).
+    return ApiUtil.get('/search', { query: { veteran_ids: caseflowVeteranIds.join(',') } }).
       then((response) => {
         const returnedObject = JSON.parse(response.text);
 
@@ -122,18 +123,26 @@ class CaseListView extends React.PureComponent {
 }
 
 CaseListView.propTypes = {
-  caseflowVeteranId: PropTypes.string
+  caseflowVeteranIds: PropTypes.arrayOf(PropTypes.string),
+  appeals: PropTypes.arrayOf(PropTypes.object),
+  claimReviews: PropTypes.arrayOf(PropTypes.object)
 };
 
 CaseListView.defaultProps = {
-  caseflowVeteranId: ''
+  caseflowVeteranIds: []
 };
 
 const mapStateToProps = (state, ownProps) => {
-  return {
-    appeals: appealsByCaseflowVeteranId(state, { caseflowVeteranId: ownProps.caseflowVeteranId }),
-    claimReviews: claimReviewsByCaseflowVeteranId(state, { caseflowVeteranId: ownProps.caseflowVeteranId })
-  };
+  const caseflowVeteranIds = ownProps.caseflowVeteranIds || [];
+  const appeals = caseflowVeteranIds.flatMap(
+    (id) => appealsByCaseflowVeteranId(state, { caseflowVeteranId: id })
+  );
+  const claimReviews = caseflowVeteranIds.flatMap(
+    (id) => claimReviewsByCaseflowVeteranId(state, { caseflowVeteranId: id })
+  );
+
+  return { appeals,
+    claimReviews };
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

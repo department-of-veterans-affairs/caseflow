@@ -5,7 +5,7 @@
 # is completed. When the associated hearing's disposition is set, the appropriate tasks are set as children
 #   (e.g., TranscriptionTask, EvidenceWindowTask, etc.).
 # The task is marked complete when these children tasks are completed.
-class DispositionTask < GenericTask
+class AssignHearingDispositionTask < GenericTask
   validates :parent, presence: true
   before_create :check_parent_type
   delegate :hearing, to: :hearing_task, allow_nil: true
@@ -16,8 +16,8 @@ class DispositionTask < GenericTask
   class HearingDispositionNotHeld < StandardError; end
 
   class << self
-    def create_disposition_task!(appeal, parent, hearing)
-      disposition_task = create!(
+    def create_assign_hearing_disposition_task!(appeal, parent, hearing)
+      assign_hearing_disposition_task = create!(
         appeal: appeal,
         parent: parent,
         assigned_to: Bva.singleton
@@ -25,7 +25,7 @@ class DispositionTask < GenericTask
 
       HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent)
 
-      disposition_task
+      assign_hearing_disposition_task
     end
   end
 
@@ -58,6 +58,14 @@ class DispositionTask < GenericTask
   def cancel!
     if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.cancelled
       fail HearingDispositionNotCanceled
+    end
+
+    if appeal.is_a? Appeal
+      EvidenceSubmissionWindowTask.create!(
+        appeal: appeal,
+        parent: hearing_task.parent,
+        assigned_to: MailTeam.singleton
+      )
     end
 
     update!(status: Constants.TASK_STATUSES.cancelled)
@@ -144,7 +152,7 @@ class DispositionTask < GenericTask
                                                      appeal: appeal,
                                                      hearing_location_attrs: hearing_location&.to_hash,
                                                      scheduled_time_string: scheduled_time_string)
-    self.class.create_disposition_task!(appeal, new_hearing_task, new_hearing)
+    self.class.create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
   end
 
   def mark_hearing_cancelled

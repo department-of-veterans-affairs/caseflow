@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature HearingAdminActionForeignVeteranCaseTask do
+describe HearingAdminActionForeignVeteranCaseTask do
   let!(:veteran) { create(:veteran) }
   let!(:appeal) { create(:appeal, veteran: veteran) }
   let(:root_task) { create(:root_task, appeal: appeal) }
@@ -33,14 +33,14 @@ RSpec.feature HearingAdminActionForeignVeteranCaseTask do
       expect(available_actions.length).to eq 3
       expect(available_actions).to include(
         Constants.TASK_ACTIONS.CANCEL_FOREIGN_VETERANS_CASE_TASK.to_h,
-        Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h,
+        Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
         Constants.TASK_ACTIONS.SEND_TO_SCHEDULE_VETERAN_LIST.to_h
       )
     end
   end
 
   context "after update" do
-    let!(:regional_office_code) { "RO50"}
+    let!(:regional_office_code) { "RO50" }
 
     before do
       OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
@@ -71,93 +71,6 @@ RSpec.feature HearingAdminActionForeignVeteranCaseTask do
 
     it "update RO on appeal" do
       expect(appeal.closest_regional_office).to eq regional_office_code
-    end
-  end
-
-  context "UI tests" do
-    before do
-      OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
-
-      User.authenticate!(user: user)
-    end
-
-    context "on queue appeal page" do
-      before do
-        visit("/queue/appeals/#{appeal.uuid}")
-      end
-
-      it "has foreign veteran task" do
-        expect(page).to have_content(foreign_veteran_case_task.label)
-      end
-
-      it "has 'Send to Schedule Veterans list' action" do
-        click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_SCHEDULE_VETERAN_LIST.label)
-      end
-
-      context "in 'Send to Schedule Veterans list' modal" do
-        before do
-          click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_SCHEDULE_VETERAN_LIST.label)
-        end
-
-        it "has Regional Office dropdown and notes field" do
-          expect(page).to have_field("regionalOffice")
-          expect(page).to have_field("notes")
-        end
-
-        it "can't submit form without specifying a Regional Office" do
-          click_button("Confirm")
-
-          expect(page).to have_content COPY::REGIONAL_OFFICE_REQUIRED_MESSAGE
-        end
-
-        it "can submit form with Regional Office and no notes" do
-          click_dropdown(text: "St. Petersburg, FL")
-
-          click_button("Confirm")
-
-          expect(page).to have_content COPY::SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_TITLE
-        end
-
-        it "can submit form with Regional Office and notes" do
-          click_dropdown(text: "St. Petersburg, FL")
-          fill_in("Notes", with: instructions_text)
-
-          click_button("Confirm")
-
-          expect(page).to have_content COPY::SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_TITLE
-        end
-      end
-
-      context "submitted 'Send to Schedule Veterans list' with notes" do
-        let!(:user) { create(:user, roles: ["Build HearSched"]) }
-
-        before do
-          click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_SCHEDULE_VETERAN_LIST.label)
-
-          click_dropdown(text: "St. Petersburg, FL")
-          fill_in("Notes", with: instructions_text)
-
-          click_button("Confirm")
-        end
-
-        it "has notes in schedule hearing task instructions" do
-          expect(page).to have_content COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
-
-          click_button(COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL)
-
-          expect(page).to have_content instructions_text
-        end
-
-        it "case shows up in schedule veterans list" do
-          allow(HearingDay).to receive(:load_days).and_return([create(:hearing_day)])
-
-          visit("/hearings/schedule/assign?roValue=RO17")
-
-          click_button("AMA Veterans Waiting")
-
-          expect(page).to have_content appeal.veteran_file_number
-        end
-      end
     end
   end
 end

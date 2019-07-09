@@ -457,14 +457,6 @@ feature "Supplemental Claim Edit issues" do
       expect(page).to have_button("Save", disabled: true)
     end
 
-    it "Does not allow save if no issues are selected" do
-      visit "supplemental_claims/#{rating_ep_claim_id}/edit"
-      click_remove_intake_issue("1")
-      click_remove_issue_confirmation
-
-      expect(page).to have_button("Save", disabled: true)
-    end
-
     scenario "shows error message if an update is in progress" do
       RequestIssuesUpdate.create!(
         review: supplemental_claim,
@@ -618,7 +610,7 @@ feature "Supplemental Claim Edit issues" do
         click_withdraw_intake_issue_dropdown("PTSD denied")
 
         expect(page).to_not have_content("Requested issues\n1. PTSD denied")
-        expect(page).to have_content("1. PTSD denied\nDecision date: 01/20/2018\nWithdraw pending")
+        expect(page).to have_content("1. PTSD denied\nDecision date: 05/10/2019\nWithdraw pending")
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
         fill_in "withdraw-date", with: withdraw_date
@@ -665,7 +657,7 @@ feature "Supplemental Claim Edit issues" do
 
         expect(page).to_not have_content("Requested issues\n1. PTSD denied")
         expect(page).to have_content(
-          /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
+          /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdraw pending/i
         )
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -686,7 +678,7 @@ feature "Supplemental Claim Edit issues" do
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
 
         expect(page).to have_content("Requested issues\n1. Left knee granted")
-        expect(page).to have_content("Withdrawn issues\n2. PTSD denied\nDecision date: 01/20/2018\nWithdrawn on")
+        expect(page).to have_content("Withdrawn issues\n2. PTSD denied\nDecision date: 05/10/2019\nWithdrawn on")
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
       end
     end
@@ -694,16 +686,11 @@ feature "Supplemental Claim Edit issues" do
 
   context "when remove decision reviews is enabled for supplemental_claim" do
     before do
-      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
       OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
 
       # skip the sync call since all edit requests require resyncing
       # currently, we're not mocking out vbms and bgs
       allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
-    end
-
-    after do
-      FeatureToggle.disable!(:remove_decision_reviews, users: [current_user.css_id])
     end
 
     let(:today) { Time.zone.now }
@@ -824,7 +811,7 @@ feature "Supplemental Claim Edit issues" do
         scenario "show alert message when a decision review is added, removed and withdrawn" do
           visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
           click_intake_add_issue
-          expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
+          expect(page.text).to match(/Does issue \d+ match any of these non-rating issue categories?/)
           add_intake_nonrating_issue(
             category: "Accrued",
             description: "Description for Accrued",

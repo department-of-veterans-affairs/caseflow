@@ -1,8 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import COPY from '../../COPY.json';
 
-const FilterSummary = ({ filteredByList, alternateColumnNames, clearFilteredByList }) => {
+const ALTERNATE_COLUMN_NAMES = {
+  'appeal.caseType': 'Case Type',
+  'appeal.docketName': COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
+  'assignedTo.name': COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
+  'closestRegionalOffice.location_hash.city': 'Regional Office',
+  readableRequestType: 'Hearing Type',
+  regionalOffice: 'Regional Office',
+  vlj: 'VLJ',
+  label: 'Task(s)'
+};
+
+const FilterSummary = ({ filteredByList, clearFilteredByList }) => {
   let filterSummary = null;
   let filterListContent = [];
   const clearAllFiltersLink = <button
@@ -16,7 +28,8 @@ const FilterSummary = ({ filteredByList, alternateColumnNames, clearFilteredByLi
       // as there could still bea key in the filteredByList object pointing to an empty array.
       if (filteredByList[filter].length > 0) {
         const filterContent = (<span
-          key={filter}> {alternateColumnNames ? alternateColumnNames[filter] : filter} ({filteredByList[filter].length})
+          key={filter}> {ALTERNATE_COLUMN_NAMES[filter] ? ALTERNATE_COLUMN_NAMES[filter] : filter} (
+          {filteredByList[filter].length})
         </span>);
 
         filterListContent = filterListContent.concat(filterContent);
@@ -52,8 +65,7 @@ const FilterSummary = ({ filteredByList, alternateColumnNames, clearFilteredByLi
 
 FilterSummary.propTypes = {
   filteredByList: PropTypes.object.isRequired,
-  clearFilteredByList: PropTypes.func.isRequired,
-  alternateColumnNames: PropTypes.object
+  clearFilteredByList: PropTypes.func.isRequired
 };
 
 export default FilterSummary;

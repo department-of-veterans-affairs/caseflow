@@ -20,6 +20,11 @@ class IntakeHelp extends React.Component {
       </p>
 
       <h1 id="training-videos">Training Videos</h1>
+      <p>
+        <a href="https://www.youtube.com/watch?v=kSQLLBVPgy0&feature=youtu.be" target="_blank" rel="noopener noreferrer">
+      Training video for business lines other than compensation and pension
+        </a>
+      </p>
       <div className="cf-help-divider"></div>
 
       <div className="cf-lead-paragraph">Coming Soon!</div>

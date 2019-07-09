@@ -33,9 +33,9 @@ class ClaimReview < DecisionReview
       claim_review
     end
 
-    def find_all_visible_by_file_number(file_number)
-      HigherLevelReview.where(veteran_file_number: file_number).reject(&:removed?) +
-        SupplementalClaim.where(veteran_file_number: file_number).reject(&:removed?)
+    def find_all_visible_by_file_number(*file_numbers)
+      HigherLevelReview.where(veteran_file_number: file_numbers).reject(&:removed?) +
+        SupplementalClaim.where(veteran_file_number: file_numbers).reject(&:removed?)
     end
   end
 
@@ -89,19 +89,8 @@ class ClaimReview < DecisionReview
       fail NoEndProductsRequired, message: "Decision reviews processed in Caseflow should not have End Products"
     end
 
-    end_product_establishments.each do |end_product_establishment|
-      end_product_establishment.perform!
-      end_product_establishment.create_contentions!
-      end_product_establishment.associate_rating_request_issues!
-      if informal_conference?
-        end_product_establishment.generate_claimant_letter!
-        end_product_establishment.generate_tracked_item!
-      end
-      end_product_establishment.commit!
-    end
-
+    end_product_establishments.each(&:establish!)
     process_legacy_issues!
-
     clear_error!
     processed!
   end
@@ -210,6 +199,10 @@ class ClaimReview < DecisionReview
     epe.request_issues
   end
 
+  def cancel_active_tasks
+    ClaimReviewActiveTaskCancellation.new(self).call
+  end
+
   private
 
   def incomplete_tasks?
@@ -224,10 +217,6 @@ class ClaimReview < DecisionReview
     return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
 
     DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
-  end
-
-  def informal_conference?
-    false
   end
 
   def intake_processed_by

@@ -88,7 +88,7 @@ export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListVi
 const NewTasksTab = connect(
   (state) => ({
     tasks: newTasksByAssigneeCssIdSelector(state),
-    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearing Management')
+    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearings Management')
   }))(
   (props) => {
     return <React.Fragment>
@@ -110,7 +110,7 @@ const NewTasksTab = connect(
 const OnHoldTasksTab = connect(
   (state) => ({
     tasks: onHoldTasksByAssigneeCssIdSelector(state),
-    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearing Management')
+    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearings Management')
   }))(
   (props) => {
     return <React.Fragment>
@@ -134,7 +134,7 @@ const OnHoldTasksTab = connect(
 const CompleteTasksTab = connect(
   (state) => ({
     tasks: completeTasksByAssigneeCssIdSelector(state),
-    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearing Management')
+    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearings Management')
   }))(
   (props) => {
     return <React.Fragment>

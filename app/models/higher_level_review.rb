@@ -99,10 +99,6 @@ class HigherLevelReview < ClaimReview
 
   private
 
-  def informal_conference?
-    informal_conference
-  end
-
   def new_end_product_establishment(issue)
     end_product_establishments.build(
       veteran_file_number: veteran_file_number,

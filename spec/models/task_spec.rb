@@ -1,6 +1,41 @@
 # frozen_string_literal: true
 
 describe Task do
+  context "includes PrintsTaskTree concern" do
+    describe ".structure" do
+      let(:root_task) { FactoryBot.create(:root_task, :on_hold) }
+      let!(:bva_task) { FactoryBot.create(:bva_dispatch_task, :in_progress, parent: root_task) }
+      let(:judge_task) { FactoryBot.create(:ama_judge_task, :completed, parent: root_task) }
+      let!(:attorney_task) { FactoryBot.create(:ama_attorney_task, :completed, parent: judge_task) }
+
+      subject { root_task.structure(:id, :status) }
+
+      it "outputs the task structure" do
+        root_key = "#{root_task.class.name} #{root_task.id}, #{root_task.status}".to_sym
+        judge_key = "#{judge_task.class.name} #{judge_task.id}, #{judge_task.status}".to_sym
+        bva_key = "#{bva_task.class.name} #{bva_task.id}, #{bva_task.status}".to_sym
+        attorney_key = "#{attorney_task.class.name} #{attorney_task.id}, #{attorney_task.status}".to_sym
+
+        expect(subject.key?(root_key)).to be_truthy
+        expect(subject[root_key].count).to eq 2
+        judge_task_found = false
+        bva_task_found = false
+        subject[root_key].each do |child_task|
+          if child_task.key? judge_key
+            judge_task_found = true
+            expect(child_task[judge_key].count).to eq 1
+            expect(child_task[judge_key].first.key?(attorney_key)).to be_truthy
+            expect(child_task[judge_key].first[attorney_key]).to eq []
+          elsif child_task.key? bva_key
+            bva_task_found = true
+          end
+        end
+        expect(judge_task_found).to be_truthy
+        expect(bva_task_found).to be_truthy
+      end
+    end
+  end
+
   describe ".when_child_task_completed" do
     let(:task) { FactoryBot.create(:task, :on_hold, type: Task.name) }
     let(:child) { FactoryBot.create(:task, :completed, type: Task.name, parent: task) }
@@ -149,7 +184,7 @@ describe Task do
 
     context "when user is an assignee" do
       let(:user) { create(:user) }
-      let(:task) { create(:generic_task, assigned_to: user).becomes(GenericTask) }
+      let(:task) { create(:generic_task, assigned_to: user) }
 
       it { is_expected.to be_truthy }
     end
@@ -358,7 +393,7 @@ describe Task do
           )
         end
         let(:task) do
-          FactoryBot.create(:disposition_task, parent: hearing_task, appeal: root_task.appeal, assigned_to: user)
+          FactoryBot.create(:assign_hearing_disposition_task, parent: hearing_task, appeal: root_task.appeal, assigned_to: user)
         end
 
         subject do
@@ -685,6 +720,27 @@ describe Task do
         expect(task.closed_at).to_not eq(nil)
       end
     end
+
+    context "when a timestamp is passed" do
+      it "should set passed timestamps" do
+        two_weeks_ago = 2.weeks.ago
+        expect(task.placed_on_hold_at).to eq(nil)
+        task.update!(status: Constants.TASK_STATUSES.on_hold, placed_on_hold_at: two_weeks_ago)
+        expect(task.placed_on_hold_at).to eq(two_weeks_ago)
+
+        # change status to completed
+        one_week_ago = 1.week.ago
+        task.update!(status: Constants.TASK_STATUSES.completed, closed_at: one_week_ago)
+        expect(task.closed_at).to eq(one_week_ago)
+
+        # change the status back to on hold and ensure timestamp is updated
+        task.update!(status: Constants.TASK_STATUSES.on_hold, placed_on_hold_at: one_week_ago)
+        expect(task.placed_on_hold_at).to eq(one_week_ago)
+
+        task.update!(status: Constants.TASK_STATUSES.in_progress, started_at: two_weeks_ago)
+        expect(task.started_at).to eq(two_weeks_ago)
+      end
+    end
   end
 
   describe "task timer relationship" do
@@ -778,9 +834,9 @@ describe Task do
     end
 
     context "when the task has a grandparent of the same type, but a different parent" do
-      let(:grandparent_task) { create(:colocated_task, action: "ihp", assigned_to: user) }
+      let(:grandparent_task) { create(:colocated_task, :ihp, assigned_to: user) }
       let(:parent_task) { create(:ama_judge_task, parent: grandparent_task, assigned_to: user) }
-      let(:task) { create(:colocated_task, action: "ihp", parent: parent_task, assigned_to: user) }
+      let(:task) { create(:colocated_task, :ihp, parent: parent_task, assigned_to: user) }
 
       it "should should return itself" do
         expect(subject.id).to eq(task.id)
@@ -788,9 +844,9 @@ describe Task do
     end
 
     context "when the task has both a parent and grandparent of the same type" do
-      let(:grandparent_task) { create(:colocated_task, action: "ihp", assigned_to: user) }
-      let(:parent_task) { create(:colocated_task, action: "ihp", parent: grandparent_task, assigned_to: user) }
-      let(:task) { create(:colocated_task, action: "ihp", parent: parent_task, assigned_to: user) }
+      let(:grandparent_task) { create(:colocated_task, :ihp, assigned_to: user) }
+      let(:parent_task) { create(:colocated_task, :ihp, parent: grandparent_task, assigned_to: user) }
+      let(:task) { create(:colocated_task, :ihp, parent: parent_task, assigned_to: user) }
 
       it "should should return the grandparent" do
         expect(subject.id).to eq(grandparent_task.id)
@@ -813,9 +869,9 @@ describe Task do
     end
 
     context "when the task has a grandchild of the same type, but a different child" do
-      let(:task) { create(:colocated_task, action: "ihp", assigned_to: user) }
+      let(:task) { create(:colocated_task, :ihp, assigned_to: user) }
       let(:child_task) { create(:ama_judge_task, type: JudgeAssignTask.name, parent: task) }
-      let(:grandchild_task) { create(:colocated_task, action: "ihp", parent: child_task, assigned_to: user) }
+      let(:grandchild_task) { create(:colocated_task, :ihp, parent: child_task, assigned_to: user) }
 
       it "should should return itself" do
         expect(subject.id).to eq(task.id)
@@ -823,9 +879,9 @@ describe Task do
     end
 
     context "when the task has both a parent and grandparent of the same type" do
-      let(:task) { create(:colocated_task, action: "ihp", assigned_to: user) }
-      let(:child_task) { create(:colocated_task, action: "ihp", parent: task, assigned_to: user) }
-      let!(:grandchild_task) { create(:colocated_task, action: "ihp", parent: child_task, assigned_to: user) }
+      let(:task) { create(:colocated_task, :ihp, assigned_to: user) }
+      let(:child_task) { create(:colocated_task, :ihp, parent: task, assigned_to: user) }
+      let!(:grandchild_task) { create(:colocated_task, :ihp, parent: child_task, assigned_to: user) }
 
       it "should should return the grandchild" do
         expect(subject.id).to eq(grandchild_task.id)

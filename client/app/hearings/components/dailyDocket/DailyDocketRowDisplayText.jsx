@@ -72,7 +72,7 @@ const HearingTime = ({ hearing }) => {
   </div>;
 };
 
-export default class DisplayText extends React.Component {
+export default class HearingText extends React.Component {
   render () {
     const { hearing, index, user, update, readOnly, initialState } = this.props;
 

@@ -62,9 +62,7 @@ class MailTask < GenericTask
     end
 
     def pending_hearing_task?(parent)
-      # TODO: Update this function once AMA appeals start to be held (sometime after 14 FEB 19). Right now this expects
-      # that every AMA appeal that is on the hearing docket has a pending hearing task.
-      parent.appeal.hearing_docket?
+      parent.appeal.tasks.open.any? { |task| task.is_a?(HearingTask) }
     end
 
     def case_active?(parent)

@@ -187,7 +187,7 @@ class ApplicationController < ApplicationBaseController
 
   def invalid_record_error(record)
     render json: {
-      "errors": ["title": "Record is invalid", "detail": record.errors.full_messages.join(" ,")]
+      "errors": ["title": COPY::INVALID_RECORD_ERROR_TITLE, "detail": record.errors.full_messages.join(" ,")]
     }, status: :bad_request
   end
 

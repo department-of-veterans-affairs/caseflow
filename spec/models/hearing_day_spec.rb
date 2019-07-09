@@ -240,8 +240,8 @@ describe HearingDay do
 
   context "load Video days for a range date" do
     let!(:hearings) do
-      [FactoryBot.create(:hearing_day, request_type: "V", regional_office: "RO13", scheduled_for: Time.zone.today),
-       FactoryBot.create(:hearing_day, request_type: "V", regional_office: "RO13", scheduled_for: Time.zone.today + 1.day)]
+      [create(:hearing_day, request_type: "V", regional_office: "RO13", scheduled_for: Time.zone.today),
+       create(:hearing_day, request_type: "V", regional_office: "RO13", scheduled_for: Time.zone.today + 1.day)]
     end
 
     subject { HearingDay.load_days(Time.zone.today, Time.zone.today + 1.day, "RO13") }
@@ -295,7 +295,7 @@ describe HearingDay do
         expect(subject.size).to eq 1
         expect(subject[0]["hearings"].size).to eq 1
         expect(subject[0]["readable_request_type"]).to eq Hearing::HEARING_TYPES[:V]
-        expect(subject[0]["hearings"][0]["appeal_id"]).to eq appeal.id
+        expect(subject[0]["hearings"][0][:appeal_id]).to eq appeal.id
       end
     end
   end
@@ -344,8 +344,8 @@ describe HearingDay do
         expect(subject.size).to eq 1
         expect(subject[0]["hearings"].size).to eq 1
         expect(subject[0]["readable_request_type"]).to eq Hearing::HEARING_TYPES[:V]
-        expect(subject[0]["hearings"][0]["appeal_id"]).to eq appeal.id
-        expect(subject[0]["hearings"][0]["hearing_disp"]).to eq nil
+        expect(subject[0]["hearings"][0][:appeal_id]).to eq appeal.id
+        expect(subject[0]["hearings"][0][:hearing_disp]).to eq nil
       end
     end
 
@@ -378,15 +378,15 @@ describe HearingDay do
       let!(:ama_hearing) { FactoryBot.create(:hearing, :with_tasks, hearing_day: ama_hearing_day, appeal: ama_appeal) }
 
       it "returns hearings are mapped to days" do
-        subject.sort_by! { |hearing_day| hearing_day["scheduled_for"]}
+        subject.sort_by! { |hearing_day| hearing_day["scheduled_for"] }
         expect(subject.size).to eq 3
-        expect(subject[0]["hearings"][0]["appeal_id"]).to eq ama_appeal.id
+        expect(subject[0]["hearings"][0][:appeal_id]).to eq ama_appeal.id
         expect(subject[1]["hearings"].size).to eq 2
         expect(subject[1]["readable_request_type"]).to eq Hearing::HEARING_TYPES[:V]
-        expect(subject[1]["hearings"][0]["appeal_id"]).to eq appeal.id
-        expect(subject[1]["hearings"][0]["hearing_disp"]).to eq nil
-        expect(subject[1]["hearings"][1]["appeal_id"]).to eq appeal_today.id
-        expect(subject[2]["hearings"][0]["appeal_id"]).to eq appeal_tomorrow.id
+        expect(subject[1]["hearings"][0][:appeal_id]).to eq appeal.id
+        expect(subject[1]["hearings"][0][:hearing_disp]).to eq nil
+        expect(subject[1]["hearings"][1][:appeal_id]).to eq appeal_today.id
+        expect(subject[2]["hearings"][0][:appeal_id]).to eq appeal_tomorrow.id
       end
     end
 
@@ -427,7 +427,7 @@ describe HearingDay do
         expect(subject.size).to eq 1
         expect(subject[0]["hearings"].size).to eq 1
         expect(subject[0]["readable_request_type"]).to eq Hearing::HEARING_TYPES[:C]
-        expect(subject[0]["hearings"][0]["appeal_id"]).to eq appeal.id
+        expect(subject[0]["hearings"][0][:appeal_id]).to eq appeal.id
       end
     end
   end

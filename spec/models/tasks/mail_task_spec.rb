@@ -68,20 +68,31 @@ describe MailTask do
   end
 
   describe ".pending_hearing_task?" do
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:appeal) { root_task.appeal }
 
     subject { MailTask.pending_hearing_task?(root_task) }
 
-    context "when the task's appeal is in the hearing docket" do
-      let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
-      it "should be true" do
+    context "when the task's appeal has an open HearingTask" do
+      before { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+
+      it "indicates there there is a pending_hearing_task" do
         expect(subject).to eq(true)
       end
     end
 
-    context "when the task's appeal is not in the hearing docket" do
-      let(:appeal) { FactoryBot.create(:appeal) }
-      it "should be false" do
+    context "when the task's appeal has a closed HearingTask" do
+      before do
+        FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal, status: Constants.TASK_STATUSES.completed)
+      end
+
+      it "indicates there there is not a pending_hearing_task" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when the task's appeal does not have any HearingTasks" do
+      it "indicates there there is not a pending_hearing_task" do
         expect(subject).to eq(false)
       end
     end
@@ -205,8 +216,8 @@ describe MailTask do
     context "for an AppealWithdrawalMailTask" do
       let(:task_class) { AppealWithdrawalMailTask }
 
-      it "should always route to the VLJ support staff" do
-        expect(subject).to eq(Colocated.singleton)
+      it "should always route to BVA Intake" do
+        expect(subject).to eq(BvaIntake.singleton)
       end
     end
 

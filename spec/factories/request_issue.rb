@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :request_issue do
-    association(:decision_review, factory: [:appeal, :with_tasks])
+    association(:decision_review, factory: [:appeal, :with_post_intake_tasks])
     benefit_type { "compensation" }
     contested_rating_issue_diagnostic_code { "5008" }
 
@@ -36,6 +36,11 @@ FactoryBot.define do
     trait :decided do
       closed_at { Time.zone.now }
       closed_status { :decided }
+    end
+
+    trait :withdrawn do
+      closed_at { Time.zone.now }
+      closed_status { :withdrawn }
     end
 
     trait :requires_processing do

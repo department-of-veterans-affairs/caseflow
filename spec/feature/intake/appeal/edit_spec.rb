@@ -181,10 +181,6 @@ feature "Appeal Edit issues" do
   end
 
   context "with remove decision review enabled" do
-    before do
-      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
-    end
-
     scenario "allows all request issues to be removed and saved" do
       visit "appeals/#{appeal.uuid}/edit/"
       # remove all issues
@@ -280,9 +276,7 @@ feature "Appeal Edit issues" do
         click_intake_add_issue
         add_intake_rating_issue("Back pain")
         add_intake_rating_issue("ankylosis of hip") # eligible issue
-
-        safe_click("#button-submit-update")
-        safe_click ".confirm"
+        click_edit_submit_and_confirm
 
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
@@ -311,8 +305,7 @@ feature "Appeal Edit issues" do
         visit "appeals/#{appeal.uuid}/edit/"
         click_remove_intake_issue_by_text("Back pain")
         click_remove_issue_confirmation
-        safe_click("#button-submit-update")
-        safe_click ".confirm"
+        click_edit_submit_and_confirm
 
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
         expect(li_optin.reload.rollback_processed_at).to_not be_nil
@@ -360,6 +353,7 @@ feature "Appeal Edit issues" do
       create(:veteran,
              first_name: "Ed",
              last_name: "Merica",
+             ssn: nil,
              bgs_veteran_record: {
                sex: nil,
                ssn: nil,
@@ -391,7 +385,7 @@ feature "Appeal Edit issues" do
       expect(page).to have_content("The Veteran's profile has missing or invalid information")
       expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
       expect(page).to have_content(
-        "the corporate database, then retry establishing the EP in Caseflow: ssn, country"
+        "the corporate database, then retry establishing the EP in Caseflow: country"
       )
       expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
       expect(page).to have_button("Save", disabled: true)
@@ -521,7 +515,7 @@ feature "Appeal Edit issues" do
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdraw pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -565,7 +559,7 @@ feature "Appeal Edit issues" do
 
       expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdraw pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -583,7 +577,7 @@ feature "Appeal Edit issues" do
       visit "appeals/#{appeal.uuid}/edit/"
 
       expect(page).to have_content(
-        /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 01\/20\/2018\s*Withdrawn on/i
+        /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 05\/10\/2019\s*Withdrawn on/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
       expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
@@ -610,7 +604,7 @@ feature "Appeal Edit issues" do
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdraw pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -656,14 +650,6 @@ feature "Appeal Edit issues" do
   end
 
   context "when remove decision reviews is enabled" do
-    before do
-      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
-    end
-
-    after do
-      FeatureToggle.disable!(:remove_decision_reviews, users: [current_user.css_id])
-    end
-
     let(:today) { Time.zone.now }
     let(:appeal) do
       # reload to get uuid
