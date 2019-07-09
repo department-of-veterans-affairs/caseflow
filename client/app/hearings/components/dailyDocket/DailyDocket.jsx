@@ -62,7 +62,7 @@ export default class DailyDocket extends React.Component {
   }
 
   isJudgeHearing = (judgeId, hearing) => hearing.judgeId === judgeId ||
-    (_.isNil(hearing.judgeId) && this.props.dailyDocket.hearingDay.judgeId === judgeId)
+    (_.isNil(hearing.judgeId) && this.props.dailyDocket.judgeId === judgeId)
 
   sortedHearings = () => {
     const { hearings, user } = this.props;
