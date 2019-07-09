@@ -194,7 +194,15 @@ class ListSchedule extends React.Component {
             failStatusMessageProps={{
               title: 'Unable to load the hearing schedule.'
             }}>
-
+            <div className="cf-push-left">
+              {this.props.userRoleBuild &&
+                <Button
+                  linkStyling
+                  onClick={this.props.openModal}>
+                  Add Hearing Date
+                </Button>
+              }
+            </div>
             <QueueTable
               columns={hearingScheduleColumns}
               rowObjects={hearingScheduleRows}
