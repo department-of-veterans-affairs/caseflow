@@ -48,12 +48,14 @@ class QueueConfig
     # Otherwise avoid the overhead of the additional database requests.
     tasks = use_task_pages_api?(user) ? serialized_tasks_for_user(task_pager.paged_tasks, user) : []
 
+    endpoint = "#{organization.path}/task_pages?#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{tab[:name]}"
+
     tab.merge(
       label: format(tab[:label], task_pager.total_task_count),
       tasks: tasks,
       task_page_count: task_pager.task_page_count,
       total_task_count: task_pager.total_task_count,
-      task_page_endpoint_base_path: "#{organization.path}/task_pages?tab=#{tab[:name]}"
+      task_page_endpoint_base_path: endpoint
     )
   end
 

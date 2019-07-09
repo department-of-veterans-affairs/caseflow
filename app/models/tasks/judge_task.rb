@@ -10,6 +10,7 @@ class JudgeTask < Task
     [
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
       Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+      Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
       additional_available_actions(user)
     ].flatten
   end

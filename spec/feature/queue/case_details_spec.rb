@@ -137,7 +137,9 @@ RSpec.feature "Case details" do
 
         expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
         scroll_to("#hearings-section")
-        worksheet_link = page.find("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
+        worksheet_link = page.find(
+          "a[href='/hearings/worksheet/print?keep_open=true&hearing_ids=#{hearing.external_id}']"
+        )
         expect(worksheet_link.text).to eq(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
 
         details_link = page.find("a[href='/hearings/#{hearing.external_id}/details']")
@@ -161,7 +163,9 @@ RSpec.feature "Case details" do
           expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
           scroll_to("#hearings-section")
           expect(page).to_not have_content(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
-          expect(page).to_not have_css("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
+          expect(page).to_not(
+            have_css("a[href='/hearings/worksheet/print?keep_open=true&hearing_ids=#{hearing.external_id}']")
+          )
           expect(page).to_not have_content(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)
           expect(page).to_not have_css("a[href='/hearings/#{hearing.external_id}/details']")
         end
@@ -778,10 +782,10 @@ RSpec.feature "Case details" do
       before do
         # The status attribute needs to be set here due to update_parent_status hook in the task model
         # the updated_at attribute needs to be set here due to the set_timestamps hook in the task model
-        assign_task.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-01-01")
-        attorney_task.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-02-01")
-        attorney_task2.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-03-01")
-        judge_task.update!(status: Constants.TASK_STATUSES.completed, updated_at: Time.zone.now)
+        assign_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-01-01")
+        attorney_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-02-01")
+        attorney_task2.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-03-01")
+        judge_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
       end
 
       it "should display judge & attorney tasks, but not judge assign tasks" do
@@ -999,7 +1003,7 @@ RSpec.feature "Case details" do
 
         let!(:appeal) do
           create(:appeal,
-                 :with_tasks,
+                 :with_post_intake_tasks,
                  veteran_file_number: veteran.file_number,
                  docket_type: "direct_review",
                  receipt_date: 10.months.ago.to_date.mdY)

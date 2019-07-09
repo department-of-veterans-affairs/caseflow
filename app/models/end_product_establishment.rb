@@ -114,6 +114,11 @@ class EndProductEstablishment < ApplicationRecord
     records_ready_for_contentions.map do |issue|
       contention = { description: issue.contention_text }
       issue.try(:special_issues) && contention[:special_issues] = issue.special_issues
+
+      if FeatureToggle.enabled?(:send_original_dta_contentions, user: RequestStore.store[:current_user])
+        issue.try(:original_contention_ids) && contention[:original_contention_ids] = issue.original_contention_ids
+      end
+
       contention
     end
   end
@@ -305,6 +310,10 @@ class EndProductEstablishment < ApplicationRecord
     contentions.find { |contention| contention.id.to_i == for_object.contention_reference_id.to_i }
   end
 
+  def veteran
+    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number, sync_name: true)
+  end
+
   private
 
   def status_type
@@ -397,10 +406,6 @@ class EndProductEstablishment < ApplicationRecord
       contention_map[issue.contested_rating_issue_reference_id] = issue.contention_reference_id
       contention_map
     end
-  end
-
-  def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number, sync_name: true)
   end
 
   def establish_claim_in_vbms(end_product)

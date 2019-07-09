@@ -30,11 +30,16 @@ class TrackVeteranTask < GenericTask
     true
   end
 
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def self.sync_tracking_tasks(appeal)
     new_task_count = 0
     closed_task_count = 0
 
-    tasks_to_sync = appeal.tasks.open.where(type: [TrackVeteranTask.name, InformalHearingPresentationTask.name])
+    tasks_to_sync = appeal.tasks.open.where(
+      type: [TrackVeteranTask.name, InformalHearingPresentationTask.name],
+      assigned_to_type: Organization.name
+    )
     cached_representatives = tasks_to_sync.map(&:assigned_to)
     fresh_representatives = appeal.representatives
     new_representatives = fresh_representatives - cached_representatives
@@ -54,11 +59,14 @@ class TrackVeteranTask < GenericTask
     outdated_representatives = cached_representatives - fresh_representatives
     tasks_to_sync.select { |t| outdated_representatives.include?(t.assigned_to) }.each do |task|
       task.update!(status: Constants.TASK_STATUSES.cancelled)
+      task.children.open.each { |child_task| child_task.update!(status: Constants.TASK_STATUSES.cancelled) }
       closed_task_count += 1
     end
 
     [new_task_count, closed_task_count]
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   private
 
