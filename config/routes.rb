@@ -34,6 +34,7 @@ Rails.application.routes.draw do
         get 'decision_reviews', to: 'docs#decision_reviews'
       end
     end
+    get "metadata", to: 'metadata#index'
   end
 
   namespace :idt do
@@ -140,7 +141,7 @@ Rails.application.routes.draw do
   get 'hearings/schedule/build/upload', to: "hearings_application#build_schedule_index"
   get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearings_application#build_schedule_index"
   get 'hearings/schedule/assign', to: "hearings_application#index"
-  get 'hearings/worksheet/print', to: "hearings/worksheets#print"
+  get 'hearings/worksheet/print', to: "hearings/worksheets#show_print"
   get 'hearings/:id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
   get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
