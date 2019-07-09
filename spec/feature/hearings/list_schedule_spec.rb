@@ -137,6 +137,28 @@ RSpec.feature "List Schedule" do
         expect(page).to have_content(Hearing::HEARING_TYPES[HearingDay.first.request_type.to_sym])
       end
     end
+
+    context "Many hearing days assigned to judge and not assigned to judge" do
+      let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Hearing Prep"]) }
+
+      before do
+        5.times do
+          create(:hearing, :with_tasks, judge: current_user)
+        end
+
+        5.times do
+          create(:hearing, :with_tasks)
+        end
+      end
+
+      scenario "Can switch to tab to see all hearing days" do
+        visit "hearings/schedule"
+
+        page.should have_css(".section-hearings-list tbody tr", count: 5)
+        click_on("All Hearing Days")
+        page.should have_css(".section-hearings-list tbody tr", count: 10)
+      end
+    end
   end
 
   context "VSO user view" do
