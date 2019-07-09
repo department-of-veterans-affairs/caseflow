@@ -1029,14 +1029,6 @@ feature "Higher Level Review Edit issues" do
       expect(page).to have_button("Save", disabled: true)
     end
 
-    it "Does not allow save if no issues are selected" do
-      visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-      click_remove_intake_issue("1")
-      click_remove_issue_confirmation
-
-      expect(page).to have_button("Save", disabled: true)
-    end
-
     scenario "shows error message if an update is in progress" do
       RequestIssuesUpdate.create!(
         review: higher_level_review,
@@ -1266,16 +1258,11 @@ feature "Higher Level Review Edit issues" do
 
   context "when remove decision reviews is enabled" do
     before do
-      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
       OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
 
       # skip the sync call since all edit requests require resyncing
       # currently, we're not mocking out vbms and bgs
       allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
-    end
-
-    after do
-      FeatureToggle.disable!(:remove_decision_reviews, users: [current_user.css_id])
     end
 
     let(:today) { Time.zone.now }
