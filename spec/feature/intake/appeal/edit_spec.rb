@@ -181,10 +181,6 @@ feature "Appeal Edit issues" do
   end
 
   context "with remove decision review enabled" do
-    before do
-      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
-    end
-
     scenario "allows all request issues to be removed and saved" do
       visit "appeals/#{appeal.uuid}/edit/"
       # remove all issues
@@ -654,14 +650,6 @@ feature "Appeal Edit issues" do
   end
 
   context "when remove decision reviews is enabled" do
-    before do
-      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
-    end
-
-    after do
-      FeatureToggle.disable!(:remove_decision_reviews, users: [current_user.css_id])
-    end
-
     let(:today) { Time.zone.now }
     let(:appeal) do
       # reload to get uuid
