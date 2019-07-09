@@ -118,7 +118,6 @@ module Asyncable
   end
 
   def submit_for_processing!(delay: 0)
-    binding.pry
     # One minute offset to prevent "this date is in the future" errors with external services
     when_to_start = delay.try(:to_datetime) ? delay.to_datetime + 1.minute : Time.zone.now + delay
 
