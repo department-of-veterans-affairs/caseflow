@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe Api::V2::HearingsController, type: :controller do
-  let(:api_key) { ApiKey.create!(consumer_name: "Jobs Tester").key_string }
+  let(:api_key) { ApiKey.create!(consumer_name: "API Consumer").key_string }
 
   before(:each) do
     request.headers["Authorization"] = "Token token=#{api_key}"
