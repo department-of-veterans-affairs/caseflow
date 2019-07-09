@@ -61,13 +61,16 @@ export default class DailyDocket extends React.Component {
     };
   }
 
+  isJudgeHearing = (judgeId, hearing) => hearing.judgeId === judgeId ||
+    (_.isNil(hearing.judgeId) && this.props.dailyDocket.hearingDay.judgeId === judgeId)
+
   sortedHearings = () => {
     const { hearings, user } = this.props;
 
-    return _.orderBy(hearings.map((hearing) => (
+    return _.orderBy(Object.values(hearings).map((hearing) => (
       {
         ...hearing,
-        sortOrder: hearing.judgeId === user.userId ? 0 : 1
+        sortOrder: this.isJudgeHearing(user.userId, hearing) ? 0 : 1
       }
     )), ['sortOrder', 'scheduledTimeString']);
   }
