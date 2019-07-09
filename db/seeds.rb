@@ -826,7 +826,7 @@ class SeedDB
     FactoryBot.create(:attorney_case_review, task_id: child.id)
   end
 
-  def create_task_at_colocated(appeal, judge, attorney, task_attributes = {})
+  def create_task_at_colocated(appeal, judge, attorney, trait = Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym)
     parent = FactoryBot.create(
       :ama_judge_decision_review_task,
       :on_hold,
@@ -847,22 +847,22 @@ class SeedDB
     org_task_args = { appeal: appeal,
                       parent: atty_task,
                       assigned_by: attorney,
-                      assigned_to: Colocated.singleton }.merge(task_attributes)
-    FactoryBot.create(:ama_colocated_task, :on_hold, org_task_args)
+                      assigned_to: Colocated.singleton }
+    FactoryBot.create(:ama_colocated_task, :on_hold, trait, org_task_args)
   end
 
   def create_colocated_legacy_tasks(attorney)
     [
-      { vacols_id: "2096907", trait: nil, additional: { action: "schedule_hearing" } },
-      { vacols_id: "2226048", trait: nil, additional: { action: "translation" } },
-      { vacols_id: "2249056", trait: :in_progress },
-      { vacols_id: "2306397", trait: :on_hold },
-      { vacols_id: "2657227", trait: :completed_hold }
+      { vacols_id: "2096907", trait: :schedule_hearing },
+      { vacols_id: "2226048", trait: :translation },
+      { vacols_id: "2249056", trait: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym },
+      { vacols_id: "2306397", trait: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym },
+      { vacols_id: "2657227", trait: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym }
     ].each do |attrs|
       org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
                         assigned_by: attorney,
-                        assigned_to: Colocated.singleton }.merge(attrs[:additional] || {})
-      FactoryBot.create(:colocated_task, :on_hold, org_task_args)
+                        assigned_to: Colocated.singleton }
+      FactoryBot.create(:colocated_task, :on_hold, attrs[:trait], org_task_args)
     end
   end
 
@@ -1013,7 +1013,7 @@ class SeedDB
     create_task_at_judge_review(@ama_appeals[2], judge, attorney)
     create_task_at_judge_review(@ama_appeals[3], judge, attorney)
     create_task_at_colocated(@ama_appeals[4], judge, attorney)
-    create_task_at_colocated(FactoryBot.create(:appeal), judge, attorney, action: "translation")
+    create_task_at_colocated(FactoryBot.create(:appeal), judge, attorney, :translation)
     create_task_at_attorney_review(@ama_appeals[5], judge, attorney)
     create_task_at_attorney_review(@ama_appeals[6], judge, attorney)
     create_task_at_judge_assignment(@ama_appeals[7], judge)
