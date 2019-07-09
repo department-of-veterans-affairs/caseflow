@@ -93,7 +93,7 @@
     "func": "return_to_attorney_data"
   },
   "LIT_SUPPORT_ASSIGN_JUDGE_DRAFT_MOTION_TO_VACATE": {
-    "label": "Send to judge for Draft Motion to Vacate",
+    "label": "Send to judge",
     "value": "modal/assign_to_judge",
     "func": "assign_to_judge_data"
   },

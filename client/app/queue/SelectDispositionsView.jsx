@@ -20,11 +20,7 @@ import {
   editStagedAppeal
 } from './QueueActions';
 import { hideSuccessMessage } from './uiReducer/uiActions';
-import {
-  PAGE_TITLES,
-  VACOLS_DISPOSITIONS,
-  ISSUE_DISPOSITIONS
-} from './constants';
+import { PAGE_TITLES, VACOLS_DISPOSITIONS, ISSUE_DISPOSITIONS } from './constants';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES.json';

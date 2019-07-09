@@ -283,7 +283,7 @@ RSpec.feature "Task queue" do
       expect(page).to have_content(success_msg)
       expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}")
       visit "/queue/appeals/#{appeal.uuid}"
-
+binding.pry
       click_dropdown(text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label)
       click_button(text: "Submit")
 
