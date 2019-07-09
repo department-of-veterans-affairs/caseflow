@@ -82,7 +82,7 @@ class Idt::V1::AppealDetailsSerializer
         ::WorkQueue::LegacyIssueSerializer.new(issue).serializable_hash[:data][:attributes]
       end
     else
-      object.request_issues.active_or_decided.map do |issue|
+      object.request_issues.active_or_decided_or_withdrawn.map do |issue|
         {
           id: issue.id,
           program: Constants::BENEFIT_TYPES[issue.benefit_type],
