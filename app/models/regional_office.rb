@@ -488,7 +488,7 @@ class RegionalOffice
     state: "VT",
     timezone: "America/New_York",
     hold_hearings: false,
-    facility_locator_id: "vba_405",
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO04" =>
   { label: "Providence regional office",
@@ -1391,6 +1391,36 @@ class RegionalOffice
     def for_station(station_key)
       [STATIONS[station_key]].flatten.map do |regional_office_key|
         find!(regional_office_key)
+      end
+    end
+
+    def facility_ids
+      facility_ids = []
+      CITIES.values.each do |val|
+        next if !val[:facility_locator_id]
+
+        facility_ids << val[:facility_locator_id]
+        facility_ids += val[:alternate_locations] if val[:alternate_locations].present?
+      end
+
+      facility_ids.uniq
+    end
+
+    def ro_facility_ids
+      CITIES.values.select { |ro| ro[:facility_locator_id].present? }.pluck(:facility_locator_id).uniq
+    end
+
+    def ro_facility_ids_for_state(state_code)
+      CITIES.values.select do |ro|
+        ro[:facility_locator_id].present? && state_code == ro[:state]
+      end.pluck(:facility_locator_id).uniq
+    end
+
+    def find_ro_by_facility_id(facility_id)
+      CITIES.detect do |regional_office_id, val|
+        if val[:facility_locator_id] == facility_id || val[:alternate_locations]&.include?(facility_id)
+          break regional_office_id
+        end
       end
     end
   end
