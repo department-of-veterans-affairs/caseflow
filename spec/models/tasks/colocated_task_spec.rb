@@ -127,6 +127,28 @@ describe ColocatedTask do
       end
     end
 
+    context "when action is :schedule_hearing, :missing_hearing_transcripts, :foia, or :translation" do
+      let(:params_list) do
+        [:schedule_hearing, :missing_hearing_transcripts, :foia, :translation].map do |action|
+          {
+            assigned_by: attorney,
+            action: action,
+            parent: create(:ama_attorney_task),
+            appeal: create(:appeal)
+          }
+        end
+      end
+
+      it "should route to the correct teams" do
+        hearing_task, transcript_task, foia_task, translation_task = subject
+
+        expect(hearing_task.assigned_to).to eq(HearingsManagement.singleton)
+        expect(transcript_task.assigned_to).to eq(HearingsManagement.singleton)
+        expect(foia_task.assigned_to).to eq(PrivacyTeam.singleton)
+        expect(translation_task.assigned_to).to eq(Translation.singleton)
+      end
+    end
+
     context "when appeal is missing" do
       let(:params_list) { [{ assigned_by: attorney, action: :aoj }] }
 

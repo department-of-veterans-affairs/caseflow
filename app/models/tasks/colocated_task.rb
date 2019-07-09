@@ -26,12 +26,12 @@ class ColocatedTask < Task
           # Find the task type for a given action.
           create_params = params.clone
           new_task_type = find_subclass_by_action(create_params.delete(:action).to_s)
-          create_params.merge!(type: new_task_type&.name, assigned_to: Colocated.singleton)
+          create_params.merge!(type: new_task_type&.name, assigned_to: new_task_type.default_assignee)
         end
 
         team_tasks = super(params_array, user)
 
-        all_tasks = team_tasks.map { |team_task| [team_task, team_task.children.first] }.flatten
+        all_tasks = team_tasks.map { |team_task| [team_task, team_task.children.first] }.flatten.compact
 
         all_tasks.map(&:appeal).uniq.each do |appeal|
           if appeal.is_a? LegacyAppeal
@@ -49,6 +49,10 @@ class ColocatedTask < Task
       elsif !(user.attorney_in_vacols? || user.judge_in_vacols?)
         fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
       end
+    end
+
+    def default_assignee
+      Colocated.singleton
     end
 
     def find_subclass_by_action(action)

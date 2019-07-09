@@ -5,6 +5,10 @@ class TranslationColocatedTask < ColocatedTask
     Constants.CO_LOCATED_ADMIN_ACTIONS.translation
   end
 
+  def self.default_assignee
+    Translation.singleton
+  end
+
   def available_actions_with_conditions(core_actions)
     core_actions = super(core_actions)
     if appeal.is_a?(LegacyAppeal)
