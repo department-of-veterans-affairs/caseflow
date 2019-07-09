@@ -51,7 +51,7 @@ feature "NonComp Record Request Page" do
 
     expect(page).to have_button("Confirm", disabled: true)
     expect(page).to have_content("Non-Comp Org")
-    expect(page).to have_content(veteran.name)
+    expect(page).to have_content(veteran.name.to_s)
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.appeal)
 
     submit_form
