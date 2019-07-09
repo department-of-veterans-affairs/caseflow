@@ -834,9 +834,9 @@ describe Task do
     end
 
     context "when the task has a grandparent of the same type, but a different parent" do
-      let(:grandparent_task) { create(:colocated_task, action: "ihp", assigned_to: user) }
+      let(:grandparent_task) { create(:colocated_task, :ihp, assigned_to: user) }
       let(:parent_task) { create(:ama_judge_task, parent: grandparent_task, assigned_to: user) }
-      let(:task) { create(:colocated_task, action: "ihp", parent: parent_task, assigned_to: user) }
+      let(:task) { create(:colocated_task, :ihp, parent: parent_task, assigned_to: user) }
 
       it "should should return itself" do
         expect(subject.id).to eq(task.id)
@@ -844,9 +844,9 @@ describe Task do
     end
 
     context "when the task has both a parent and grandparent of the same type" do
-      let(:grandparent_task) { create(:colocated_task, action: "ihp", assigned_to: user) }
-      let(:parent_task) { create(:colocated_task, action: "ihp", parent: grandparent_task, assigned_to: user) }
-      let(:task) { create(:colocated_task, action: "ihp", parent: parent_task, assigned_to: user) }
+      let(:grandparent_task) { create(:colocated_task, :ihp, assigned_to: user) }
+      let(:parent_task) { create(:colocated_task, :ihp, parent: grandparent_task, assigned_to: user) }
+      let(:task) { create(:colocated_task, :ihp, parent: parent_task, assigned_to: user) }
 
       it "should should return the grandparent" do
         expect(subject.id).to eq(grandparent_task.id)
@@ -869,9 +869,9 @@ describe Task do
     end
 
     context "when the task has a grandchild of the same type, but a different child" do
-      let(:task) { create(:colocated_task, action: "ihp", assigned_to: user) }
+      let(:task) { create(:colocated_task, :ihp, assigned_to: user) }
       let(:child_task) { create(:ama_judge_task, type: JudgeAssignTask.name, parent: task) }
-      let(:grandchild_task) { create(:colocated_task, action: "ihp", parent: child_task, assigned_to: user) }
+      let(:grandchild_task) { create(:colocated_task, :ihp, parent: child_task, assigned_to: user) }
 
       it "should should return itself" do
         expect(subject.id).to eq(task.id)
@@ -879,9 +879,9 @@ describe Task do
     end
 
     context "when the task has both a parent and grandparent of the same type" do
-      let(:task) { create(:colocated_task, action: "ihp", assigned_to: user) }
-      let(:child_task) { create(:colocated_task, action: "ihp", parent: task, assigned_to: user) }
-      let!(:grandchild_task) { create(:colocated_task, action: "ihp", parent: child_task, assigned_to: user) }
+      let(:task) { create(:colocated_task, :ihp, assigned_to: user) }
+      let(:child_task) { create(:colocated_task, :ihp, parent: task, assigned_to: user) }
+      let!(:grandchild_task) { create(:colocated_task, :ihp, parent: child_task, assigned_to: user) }
 
       it "should should return the grandchild" do
         expect(subject.id).to eq(grandchild_task.id)
