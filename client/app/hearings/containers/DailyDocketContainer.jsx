@@ -289,6 +289,7 @@ export class DailyDocketContainer extends React.Component {
           displayLockModal={this.props.displayLockModal}
           updateLockHearingDay={this.updateLockHearingDay}
           displayLockSuccessMessage={this.props.displayLockSuccessMessage}
+          dailyDocketServerError={this.props.dailyDocketServerError}
           onErrorHearingDayLock={this.props.onErrorHearingDayLock} />
       }
 

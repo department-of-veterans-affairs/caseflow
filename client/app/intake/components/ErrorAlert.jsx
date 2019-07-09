@@ -41,10 +41,6 @@ export default class ErrorAlert extends React.PureComponent {
         body: `An EP ${this.props.errorData} for this Veteran's claim was created` +
               ' outside Caseflow. Please tell your manager as soon as possible so they can resolve the issue.'
       },
-      request_issues_data_empty: {
-        title: 'No issues were selected',
-        body: 'Please select at least one issue and try again.'
-      },
       no_changes: {
         title: 'No changes were selected',
         body: 'Please select at least one change and try again.'

@@ -96,9 +96,9 @@ class TableFilter extends React.PureComponent {
   }
 
   clearFilteredByList = (columnName) => {
-    const filterList = this.props.filteredByList;
+    let filterList = { ...this.props.filteredByList };
 
-    filterList[columnName] = [];
+    delete filterList[columnName];
 
     this.props.updateFilters(filterList);
     this.hideDropdown();
