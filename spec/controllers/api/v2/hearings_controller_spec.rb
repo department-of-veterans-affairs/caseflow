@@ -83,6 +83,34 @@ RSpec.describe Api::V2::HearingsController, type: :controller do
           it { expect(JSON.parse(subject.body)["hearings"].size).to eq 1 }
         end
       end
+
+      context "response for multiple hearing days matching date" do
+        let!(:hearing_days) do
+          [
+            create(:hearing_day, scheduled_for: Date.new(2019, 8, 8), room: "1"),
+            create(:hearing_day, scheduled_for: Date.new(2019, 8, 8), room: "2")
+          ]
+        end
+        let!(:hearings) do
+          [
+            create(:hearing, hearing_day: hearing_days[0]),
+            create(:legacy_hearing, hearing_day: hearing_days[1])
+          ]
+        end
+
+        subject do
+          get :show, params: { hearing_day: "2019-08-08" }
+          response
+        end
+
+        it { expect(subject.status).to eq 200 }
+        it { expect(JSON.parse(subject.body)).to have_key("hearings") }
+        it { expect(JSON.parse(subject.body)["hearings"].size).to eq 2 }
+        it do
+          json_hearings = JSON.parse(subject.body)["hearings"]
+          expect(json_hearings.map { |hearing| hearing["scheduled_for"] }).to all(start_with("2019-08-08"))
+        end
+      end
     end
 
     context "with API that does not exists" do
