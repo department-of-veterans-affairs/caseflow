@@ -248,6 +248,32 @@ RSpec.feature "Task queue" do
     end
   end
 
+  context "Field VSO team queue", focus: true do
+    let(:vso_employee) { FactoryBot.create(:user, roles: ["VSO"]) }
+    let(:vso) { FactoryBot.create(:field_vso) }
+
+    let(:tracking_task_count) { 8 }
+
+    before do
+      FactoryBot.create_list(:track_veteran_task, tracking_task_count, assigned_to: vso)
+
+      allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
+      User.authenticate!(user: vso_employee)
+      visit(vso.path)
+    end
+
+    it "displays tracking tasks in single table" do
+      step("does not show tabs since field VSOs only have 1 tab") do
+        expect(page).to_not have_content(COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE)
+      end
+
+      step("shows tab description and correct number of tasks") do
+        expect(page).to have_content(format(COPY::ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, vso.name))
+        expect(find("tbody").find_all("tr").length).to eq(tracking_task_count)
+      end
+    end
+  end
+
   describe "Creating a mail task" do
     let(:mail_user) { FactoryBot.create(:user) }
     let(:mail_team) { MailTeam.singleton }
