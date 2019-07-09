@@ -66,12 +66,6 @@ class HearingDay < ApplicationRecord
       end
     end
 
-    if current_user.roles.include?("Hearing Prep")
-      caseflow_and_vacols_hearings = caseflow_and_vacols_hearings.select do |hearing|
-        hearing.assigned_to_judge?(current_user)
-      end
-    end
-
     caseflow_and_vacols_hearings
   end
 

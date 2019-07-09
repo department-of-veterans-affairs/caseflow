@@ -61,12 +61,23 @@ export default class DailyDocket extends React.Component {
     };
   }
 
+  sortedHearings = () => {
+    const { hearings, user } = this.props;
+
+    return _.orderBy(hearings.map((hearing) => (
+      {
+        ...hearing,
+        sortOrder: hearing.judgeId === user.userId ? 0 : 1
+      }
+    )), ['sortOrder', 'scheduledTimeString']);
+  }
+
   previouslyScheduledHearings = () => {
-    return _.filter(this.props.hearings, isPreviouslyScheduledHearing);
+    return _.filter(this.sortedHearings(), isPreviouslyScheduledHearing);
   };
 
   dailyDocketHearings = () => {
-    return _.filter(this.props.hearings, _.negate(isPreviouslyScheduledHearing));
+    return _.filter(this.sortedHearings(), _.negate(isPreviouslyScheduledHearing));
   };
 
   getRegionalOffice = () => {
