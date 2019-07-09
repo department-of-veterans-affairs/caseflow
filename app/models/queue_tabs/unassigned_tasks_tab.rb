@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class UnassignedTasksTab < QueueTab
+  attr_accessor :show_reader_link_column, :allow_bulk_assign
+
   def label
     COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE
   end
