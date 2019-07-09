@@ -6,6 +6,19 @@
 class DistributionTask < GenericTask
   before_validation :set_assignee
 
+
+  def available_actions(user)
+    return [] unless user
+
+    if ExtraodinaryCaseAdvancementTeam.singleton.user_has_access?(user)
+      return [
+        Constants.TASK_ACTIONS.EXTRAORDINARY_CASE_ADVANCEMENT.to_h,
+      ]
+    end
+
+    []
+  end
+
   def ready_for_distribution!
     update!(status: :assigned, assigned_at: Time.zone.now)
   end

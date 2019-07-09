@@ -285,6 +285,13 @@ class TaskActionRepository
       }
     end
 
+    def extraordinary_case_advancement_data(task, _user = nil)
+      {
+        selected: task.appeal.assigned_judge
+        options: users_to_options(Judge.list_all),
+      }
+    end
+
     def toggle_timed_hold(task, user)
       action = Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
       action = Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h if task.on_timed_hold?
