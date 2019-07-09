@@ -20,6 +20,69 @@ RSpec.describe Api::V2::HearingsController, type: :controller, focus: true do
         get :show, params: { hearing_day: "2019-07-07" }
         expect(response.status).to eq 404
       end
+
+      context "response for hearing day but no hearings" do
+        let!(:hearing_day) do
+          create(:hearing_day, scheduled_for: Date.new(2019, 7, 7))
+        end
+
+        subject do
+          get :show, params: { hearing_day: "2019-07-07" }
+          response
+        end
+
+        it { expect(subject.status).to eq 200 }
+        it { expect(JSON.parse(subject.body)).to have_key("hearings") }
+        it { expect(JSON.parse(subject.body)["hearings"]).to eq [] }
+      end
+
+      context "response for hearing day with hearings" do
+        let(:hearing_day) do
+          create(:hearing_day, scheduled_for: Date.new(2019, 7, 7))
+        end
+
+        context "ama hearings" do
+          let!(:hearings) do
+            [
+              create(:hearing, hearing_day: hearing_day, scheduled_time: "9:30AM"),
+              create(:hearing, hearing_day: hearing_day, scheduled_time: "10:30AM")
+            ]
+          end
+
+          subject do
+            get :show, params: { hearing_day: "2019-07-07" }
+            response
+          end
+
+          it { expect(subject.status).to eq 200 }
+          it { expect(JSON.parse(subject.body)).to have_key("hearings") }
+          it { expect(JSON.parse(subject.body)["hearings"].size).to eq 2 }
+          it do
+            response_body = JSON.parse(subject.body)
+            expected_times = hearings.map { |hearing| hearing.scheduled_for }
+            scheduled_times = response_body["hearings"].map { |hearing| hearing["scheduled_for"] }
+
+            expect(scheduled_times).to match_array(expected_times)
+          end
+        end
+
+        context "legacy hearings" do
+          let!(:hearings) do
+            [
+              create(:legacy_hearing, hearing_day: hearing_day)
+            ]
+          end
+
+          subject do
+            get :show, params: { hearing_day: "2019-07-07" }
+            response
+          end
+
+          it { expect(subject.status).to eq 200 }
+          it { expect(JSON.parse(subject.body)).to have_key("hearings") }
+          it { expect(JSON.parse(subject.body)["hearings"].size).to eq 1 }
+        end
+      end
     end
 
     context "with API that does not exists" do
