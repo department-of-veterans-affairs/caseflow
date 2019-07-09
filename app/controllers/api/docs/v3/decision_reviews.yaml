@@ -159,17 +159,17 @@ paths:
                 properties:
                   errors:
                     $ref: "#/components/schemas/errors"
-  /higher_level_reviews/status/{id}:
+  /higher_level_reviews/status/{uuid}:
     get:
       parameters:
-        - name: id
+        - name: uuid
           in: path
           required: true
-          description: ID of an Accepted Higher-Level Review
+          description: UUID of an Accepted Higher-Level Review
           schema:
-            type : integer
-            format: int64
-            minimum: 1
+            type : string
+            format: uuid
+            pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
       summary: After submitting a Higher-Level Review, you can check to see it's current status
       responses:
         '200':
