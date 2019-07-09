@@ -68,7 +68,7 @@ export class ListScheduleContainer extends React.Component {
     }
   };
 
-  loadHearingSchedule = ({ judgeId = null }) => {
+  loadHearingSchedule = ({ showAll = false }) => {
     let requestUrl = '/hearings/hearing_day.json';
 
     if (this.props.startDate && this.props.endDate) {
@@ -77,7 +77,7 @@ export class ListScheduleContainer extends React.Component {
         return this.props.onInputInvalidDates();
       }
 
-      requestUrl = `${requestUrl}?start_date=${this.props.startDate}&end_date=${this.props.endDate}&judgeId=${judgeId}`;
+      requestUrl += `?start_date=${this.props.startDate}&end_date=${this.props.endDate}&show_all=${showAll}`;
     }
 
     const requestOptions = {
@@ -93,7 +93,7 @@ export class ListScheduleContainer extends React.Component {
     });
   };
 
-  createHearingPromise = (params = { judgeId: null }) => Promise.all([
+  createHearingPromise = (params = { showAll: false }) => Promise.all([
     this.loadHearingSchedule(params)
   ]);
 
@@ -156,6 +156,8 @@ export class ListScheduleContainer extends React.Component {
   };
 
   render() {
+    const user = this.props.user;
+
     return (
       <React.Fragment>
         <QueueCaseSearchBar />
@@ -167,14 +169,14 @@ export class ListScheduleContainer extends React.Component {
         { this.props.invalidDates && <Alert type="error" title="Please enter valid dates." /> }
         <AppSegment filledBackground>
           <h1 className="cf-push-left">
-            {this.props.userRoleView || this.props.userRoleVso ? COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER :
+            {user.userRoleView || user.userRoleVso ? COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER :
               COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}
           </h1>
-          {this.props.userRoleBuild &&
+          {user.userRoleBuild &&
             <span className="cf-push-right">
               <Link button="secondary" to="/schedule/build">Build Schedule</Link>
             </span>
-          }{this.props.userRoleAssign &&
+          }{user.userRoleAssign &&
             <span className="cf-push-right"{...actionButtonsStyling} >
               <Link button="primary" to="/schedule/assign">Schedule Veterans</Link>
             </span>
@@ -184,8 +186,7 @@ export class ListScheduleContainer extends React.Component {
             hearingSchedule={this.props.hearingSchedule}
             onApply={this.createHearingPromise}
             openModal={this.openModal}
-            userRoleHearingPrep={this.props.userRoleHearingPrep}
-            userRoleBuild={this.props.userRoleBuild} />
+            user={user} />
           {this.state.modalOpen &&
             <HearingDayAddModal
               closeModal={this.closeModal}
@@ -229,10 +230,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 ListScheduleContainer.propTypes = {
-  userRoleAssign: PropTypes.bool,
-  userRoleBuild: PropTypes.bool,
-  userRoleView: PropTypes.bool,
-  userRoleVso: PropTypes.bool
+  user: PropTypes.object
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ListScheduleContainer));

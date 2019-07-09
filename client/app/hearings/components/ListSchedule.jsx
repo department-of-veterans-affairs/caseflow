@@ -8,6 +8,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import Button from '../../components/Button';
 import PropTypes from 'prop-types';
 import { CSVLink } from 'react-csv';
+import TabWindow from '../../components/TabWindow';
 import {
   toggleTypeFilterVisibility, toggleLocationFilterVisibility,
   toggleVljFilterVisibility, onReceiveHearingSchedule,
@@ -73,7 +74,6 @@ class ListTable extends React.Component {
   render() {
     return (
       <LoadingDataDisplay
-        key={this.props.dateRangeKey}
         createLoadPromise={this.props.onApply}
         loadingComponentProps={{
           spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
@@ -82,15 +82,12 @@ class ListTable extends React.Component {
         failStatusMessageProps={{
           title: 'Unable to load the hearing schedule.'
         }}>
-        <div className="cf-push-left">
-          {this.props.userRoleBuild &&
-            <Button
-              linkStyling
-              onClick={this.props.openModal}>
-              Add Hearing Date
-            </Button>
-          }
-        </div>
+        {this.props.user.userRoleBuild && <div style={{ marginBottom: 25 }}>
+          <Button classNames={['usa-button-secondary']}
+            onClick={this.props.openModal}>
+            Add Hearing Date
+          </Button>
+        </div>}
         <QueueTable
           columns={this.props.hearingScheduleColumns}
           rowObjects={this.props.hearingScheduleRows}
@@ -187,10 +184,39 @@ class ListSchedule extends React.Component {
     ];
   }
 
-  render() {
+  getTabbedList = (hearingScheduleColumns, hearingScheduleRows) => {
+    return (
+      <TabWindow
+        name="hearing-schedule-list"
+        tabs={[
+          {
+            label: 'Your Hearings',
+            page: <ListTable onApply={this.props.onApply}
+              key={`judgeHearings${this.state.dateRangeKey}`}
+              user={this.props.user}
+              hearingScheduleRows={hearingScheduleRows}
+              hearingScheduleColumns={hearingScheduleColumns} />
+          },
+          {
+            label: 'All Hearings',
+            page: <ListTable onApply={() => this.props.onApply({ showAll: true })}
+              key={`allHearings${this.state.dateRangeKey}`}
+              user={this.props.user}
+              hearingScheduleRows={hearingScheduleRows}
+              hearingScheduleColumns={hearingScheduleColumns} />
+          }
+        ]} />
+    );
+  }
 
+  render() {
     const hearingScheduleRows = this.getHearingScheduleRows();
     const hearingScheduleColumns = this.getHearingScheduleColumns(hearingScheduleRows);
+    const list = this.props.user.userRoleHearingPrep ? this.getTabbedList(hearingScheduleColumns, hearingScheduleRows) :
+      <ListTable onApply={this.props.onApply}
+        user={this.props.user}
+        hearingScheduleRows={hearingScheduleRows}
+        hearingScheduleColumns={hearingScheduleColumns} />;
 
     return (
       <React.Fragment>
@@ -216,9 +242,7 @@ class ListSchedule extends React.Component {
           </div>
         </div>
         <div className="section-hearings-list">
-          <ListTable onApply={() => this.props.onApply({})}
-            hearingScheduleRows={hearingScheduleRows}
-            hearingScheduleColumns={hearingScheduleColumns} />
+          {list}
         </div>
       </React.Fragment>
 
@@ -237,6 +261,7 @@ ListSchedule.propTypes = {
     updatedOn: PropTypes.string,
     updatedBy: PropTypes.string
   }),
+  user: PropTypes.object,
   onApply: PropTypes.func,
   openModal: PropTypes.func
 };
