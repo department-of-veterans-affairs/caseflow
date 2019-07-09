@@ -68,7 +68,7 @@ export class ListScheduleContainer extends React.Component {
     }
   };
 
-  loadHearingSchedule = () => {
+  loadHearingSchedule = ({ judgeId = null }) => {
     let requestUrl = '/hearings/hearing_day.json';
 
     if (this.props.startDate && this.props.endDate) {
@@ -77,7 +77,7 @@ export class ListScheduleContainer extends React.Component {
         return this.props.onInputInvalidDates();
       }
 
-      requestUrl = `${requestUrl}?start_date=${this.props.startDate}&end_date=${this.props.endDate}`;
+      requestUrl = `${requestUrl}?start_date=${this.props.startDate}&end_date=${this.props.endDate}&judgeId=${judgeId}`;
     }
 
     const requestOptions = {
@@ -93,8 +93,8 @@ export class ListScheduleContainer extends React.Component {
     });
   };
 
-  createHearingPromise = () => Promise.all([
-    this.loadHearingSchedule()
+  createHearingPromise = (params = { judgeId: null }) => Promise.all([
+    this.loadHearingSchedule(params)
   ]);
 
   openModal = () => {

@@ -69,12 +69,44 @@ const exportHeaders = [
     key: 'vlj' }
 ];
 
+class ListTable extends React.Component {
+  render() {
+    return (
+      <LoadingDataDisplay
+        key={this.props.dateRangeKey}
+        createLoadPromise={this.props.onApply}
+        loadingComponentProps={{
+          spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
+          message: 'Loading the hearing schedule...'
+        }}
+        failStatusMessageProps={{
+          title: 'Unable to load the hearing schedule.'
+        }}>
+        <div className="cf-push-left">
+          {this.props.userRoleBuild &&
+            <Button
+              linkStyling
+              onClick={this.props.openModal}>
+              Add Hearing Date
+            </Button>
+          }
+        </div>
+        <QueueTable
+          columns={this.props.hearingScheduleColumns}
+          rowObjects={this.props.hearingScheduleRows}
+          summary="hearing-schedule"
+          slowReRendersAreOk />
+
+      </LoadingDataDisplay>
+    );
+  }
+}
+
 class ListSchedule extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      filteredByList: [],
       dateRangeKey: `${props.startDate}->${props.endDate}`
     };
   }
@@ -156,7 +188,8 @@ class ListSchedule extends React.Component {
   }
 
   render() {
-    const hearingScheduleRows = this.getHearingScheduleRows(false);
+
+    const hearingScheduleRows = this.getHearingScheduleRows();
     const hearingScheduleColumns = this.getHearingScheduleColumns(hearingScheduleRows);
 
     return (
@@ -172,11 +205,10 @@ class ListSchedule extends React.Component {
           </div>
           <div className="cf-push-right" {...downloadButtonStyling} >
             <CSVLink
-              data={this.getHearingScheduleRows(true)}
+              data={hearingScheduleRows}
               headers={exportHeaders}
               target="_blank"
-              filename={`HearingSchedule ${this.props.startDate}-${this.props.endDate}.csv`}
-            >
+              filename={`HearingSchedule ${this.props.startDate}-${this.props.endDate}.csv`}>
               <Button classNames={['usa-button-secondary']}>
                 Download current view
               </Button>
@@ -184,32 +216,9 @@ class ListSchedule extends React.Component {
           </div>
         </div>
         <div className="section-hearings-list">
-          <LoadingDataDisplay
-            key={this.state.dateRangeKey}
-            createLoadPromise={this.props.onApply}
-            loadingComponentProps={{
-              spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
-              message: 'Loading the hearing schedule...'
-            }}
-            failStatusMessageProps={{
-              title: 'Unable to load the hearing schedule.'
-            }}>
-            <div className="cf-push-left">
-              {this.props.userRoleBuild &&
-                <Button
-                  linkStyling
-                  onClick={this.props.openModal}>
-                  Add Hearing Date
-                </Button>
-              }
-            </div>
-            <QueueTable
-              columns={hearingScheduleColumns}
-              rowObjects={hearingScheduleRows}
-              summary="hearing-schedule"
-              slowReRendersAreOk />
-
-          </LoadingDataDisplay>
+          <ListTable onApply={() => this.props.onApply({})}
+            hearingScheduleRows={hearingScheduleRows}
+            hearingScheduleColumns={hearingScheduleColumns} />
         </div>
       </React.Fragment>
 
