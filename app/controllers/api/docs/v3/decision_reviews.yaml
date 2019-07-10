@@ -575,7 +575,7 @@ paths:
                               type: object
                               nullable: true
               examples:
-                current_status:
+                received_status:
                   value:
                     data:
                       id: HLR1
