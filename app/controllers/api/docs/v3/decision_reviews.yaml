@@ -574,6 +574,35 @@ paths:
                             items:
                               type: object
                               nullable: true
+              examples:
+                current_status:
+                  value:
+                    data:
+                      id: HLR1
+                      type: 'higherLevelReview'
+                      attributes:
+                        appealIds:
+                        - HLR1
+                        updated: '2019-07-05T13:15:47-04:00'
+                        incompleteHistory: false
+                        active: true
+                        description: Streptococcic arthritis and 2 others
+                        location: aoj
+                        aoj: vba
+                        programArea: compensation
+                        status:
+                          type: 'hlr_received'
+                          details: {}
+                        alerts: []
+                        issues:
+                        - active: true
+                          lastAction:
+                          date:
+                          description: Streptococcic arthritis
+                          diagnosticCode: '5008'
+                        events:
+                        - AppealEvent
+                        evidence: []
         '404':
           description: id not found
           content:
