@@ -52,27 +52,20 @@ const taskInfoWithIconContainer = css({
 
 const taskTimeContainerStyling = css(taskContainerStyling, { width: '20%' });
 const taskInformationContainerStyling = css(taskContainerStyling, { width: '25%' });
-const taskActionsContainerStyling = css(taskContainerStyling, { width: '50%' });
 const taskTimeTimelineContainerStyling = css(taskContainerStyling, { width: '40%' });
-const taskInformationTimelineContainerStyling =
-  css(taskInformationContainerStyling, { align: 'left',
-    width: '50%',
-    maxWidth: '235px' });
-
 const taskInfoWithIconTimelineContainer =
   css(taskInfoWithIconContainer, { textAlign: 'left',
     marginLeft: '5px',
     width: '10%',
     paddingLeft: '0px' });
 
-const greyDotTimelineStyling = css({ padding: '0px 0px 0px 5px' });
 const isCancelled = (task) => {
   return task.status === TASK_STATUSES.cancelled;
 };
 
 const tdClassNames = (timeline, task) => {
   const containerClass = timeline ? taskInfoWithIconTimelineContainer : '';
-  const closedAtClass = task.closedAt ? null : greyDotTimelineStyling;
+  const closedAtClass = task.closedAt ? null : <span className="greyDotTimelineStyling"></span>;
 
   return [containerClass, closedAtClass].filter((val) => val).join(' ');
 };
@@ -258,7 +251,7 @@ class TaskRows extends React.PureComponent {
                 task.closedAt ? '' : greyDotAndlineStyling].join(' ')} /> }
       </td>
       <td {...taskInformationContainerStyling}
-        className={timeline ? taskInformationTimelineContainerStyling : ''}>
+        className={timeline ? "taskInformationTimelineContainerStyling" : ''}>
         <CaseDetailsDescriptionList>
           { timeline && timelineTitle }
           { this.assignedToListItem(task) }
@@ -267,7 +260,7 @@ class TaskRows extends React.PureComponent {
           { this.taskInstructionsListItem(task) }
         </CaseDetailsDescriptionList>
       </td>
-      { !timeline && <td {...taskActionsContainerStyling}>
+      { !timeline && <td className="taskContainerStyling taskActionsContainerStyling">
         { this.showActionsListItem(task, appeal) } </td> }
     </tr>;
   }
