@@ -95,30 +95,57 @@ RSpec.feature "Attorney queue" do
     context "when the task is active" do
       let(:task_status) { Constants.TASK_STATUSES.in_progress }
 
-      it "allows us to add a timed hold for an AttorneyTask" do
-        visit("/queue/appeals/#{appeal.external_id}")
+      it "reflects timed holds being opened and closed correctly in the queue table view" do
+        days_waiting = ((Time.zone.now - attorney_task.created_at) / 24 / 60 / 60).to_i - 1
 
-        click_dropdown(
-          prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-          text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label
-        )
+        step("Attorney's queue table view shows the correct number of days waiting") do
+          expect(days_waiting).to be > 0
+          visit("/queue")
+          expect(page).to have_content("#{days_waiting} days")
+        end
 
-        hold_length = 30
-        click_dropdown(prompt: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL, text: "#{hold_length} days")
+        step("Placing a timed hold for an AttorneyTask works properly") do
+          visit("/queue/appeals/#{appeal.external_id}")
 
-        instructions_text = generate_words(5)
-        fill_in("instructions", with: instructions_text)
-        click_on(COPY::MODAL_SUBMIT_BUTTON)
+          click_dropdown(
+            prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+            text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label
+          )
 
-        expect(page).to have_content(
-          format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, appeal.veteran_full_name, hold_length)
-        )
-        expect(TimedHoldTask.where(appeal: appeal).length).to eq(1)
+          hold_length = 30
+          click_dropdown(prompt: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL, text: "#{hold_length} days")
 
-        attorney_task.reload
-        expect(attorney_task.calculated_on_hold_duration).to eq(hold_length)
-        expect(attorney_task.instructions.last).to eq(instructions_text)
-        expect(attorney_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+          instructions_text = generate_words(5)
+          fill_in("instructions", with: instructions_text)
+          click_on(COPY::MODAL_SUBMIT_BUTTON)
+
+          expect(page).to have_content(
+            format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, appeal.veteran_full_name, hold_length)
+          )
+          expect(TimedHoldTask.where(appeal: appeal).length).to eq(1)
+
+          attorney_task.reload
+          expect(attorney_task.calculated_on_hold_duration).to eq(hold_length)
+          expect(attorney_task.instructions.last).to eq(instructions_text)
+          expect(attorney_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+        end
+
+        step("Ending a timed hold early works properly") do
+          click_dropdown(
+            prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+            text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label
+          )
+          click_on(COPY::MODAL_SUBMIT_BUTTON)
+          expect(page).to have_content(COPY::END_HOLD_SUCCESS_MESSAGE_TITLE)
+
+          attorney_task.reload
+          expect(attorney_task.status).to eq(Constants.TASK_STATUSES.assigned)
+        end
+
+        step("Days waiting column reflects the correct value") do
+          visit("/queue")
+          expect(page).to have_content("#{days_waiting} days")
+        end
       end
     end
 

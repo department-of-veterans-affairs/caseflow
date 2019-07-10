@@ -319,7 +319,7 @@ export class TaskTableUnconnected extends React.PureComponent {
         }
 
         const daysWaiting = moment().startOf('day').
-          diff(moment(task.assignedOn), 'days');
+          diff(moment(task.createdAt), 'days');
 
         return <React.Fragment>
           {daysWaiting} {pluralize('day', daysWaiting)}
@@ -328,7 +328,7 @@ export class TaskTableUnconnected extends React.PureComponent {
       span: this.collapseColumnIfNoDASRecord,
       backendCanSort: true,
       getSortValue: (task) => moment().startOf('day').
-        diff(moment(task.assignedOn), 'days')
+        diff(moment(task.createdAt), 'days')
     } : null;
   }
 

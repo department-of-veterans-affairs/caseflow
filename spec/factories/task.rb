@@ -3,6 +3,7 @@
 FactoryBot.define do
   factory :task do
     assigned_at { rand(30..35).days.ago }
+    created_at { assigned_at }
     assigned_by { create(:user) }
     assigned_to { create(:user) }
     appeal { create(:legacy_appeal, vacols_case: create(:case)) }
