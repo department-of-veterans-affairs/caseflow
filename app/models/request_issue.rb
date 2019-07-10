@@ -159,8 +159,12 @@ class RequestIssue < ApplicationRecord
       active_or_ineligible.or(withdrawn)
     end
 
-    def active_or_decided
-      active.or(decided).order(id: :asc)
+    def active_or_decided_or_withdrawn
+      active.or(decided).or(withdrawn).order(id: :asc)
+    end
+
+    def active_or_withdrawn
+      active.or(withdrawn)
     end
 
     def unidentified

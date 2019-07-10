@@ -56,6 +56,7 @@ const LegacyIssueDetails = (props) => {
     <IssueDiagnosticCodeListItem>{diagnosticCode}</IssueDiagnosticCodeListItem>
     <IssueNoteListItem>{issue.note}</IssueNoteListItem>
     <IssueDispositionListItem>{issue.disposition}</IssueDispositionListItem>
+    <IssueNoteListItem>{issue.closed_status}</IssueNoteListItem>
   </CaseDetailsDescriptionList>;
 };
 

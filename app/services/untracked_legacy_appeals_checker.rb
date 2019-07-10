@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-class UntrackedLegacyAppealsReportJob < CaseflowJob
-  queue_as :low_priority
-  application_attr :queue
-
-  def perform
-    send_report(legacy_appeal_ids_without_active_tasks)
+class UntrackedLegacyAppealsChecker < DataIntegrityChecker
+  def call
+    appeal_ids = legacy_appeal_ids_without_active_tasks
+    build_report(appeal_ids)
   end
+
+  private
 
   def legacy_appeal_ids_without_active_tasks
     vacols_ids = VACOLS::Case.where(bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow]).pluck(:bfkey)
@@ -18,15 +18,15 @@ class UntrackedLegacyAppealsReportJob < CaseflowJob
     legacy_appeals_charged_to_caseflow_ids.sort - legacy_appeal_with_active_tasks_ids.sort
   end
 
-  def send_report(appeal_ids)
+  def build_report(appeal_ids)
     return if appeal_ids.empty?
 
-    msg = "Found #{appeal_ids.count} legacy appeals charged to CASEFLOW in VACOLS with no active Caseflow tasks.\n"
-    msg += "These appeals will not progress unless location is manually corrected in VACOLS or an applicable Caseflow "
-    msg += "task is manually created. Research and fix these appeals accordingly.\n"
-    msg += "LegacyAppeal.where(id: #{appeal_ids.sort})"
+    count = appeal_ids.count
+    ids = appeal_ids.sort
 
-    Rails.logger.info(msg)
-    slack_service.send_notification(msg)
+    add_to_report "Found #{count} legacy appeals charged to CASEFLOW in VACOLS with no active Caseflow tasks."
+    add_to_report "These appeals will not progress unless location is manually corrected in VACOLS "
+    add_to_report "or an applicable Caseflow task is manually created. Research and fix these appeals accordingly."
+    add_to_report "LegacyAppeal.where(id: #{ids})"
   end
 end
