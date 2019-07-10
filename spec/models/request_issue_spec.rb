@@ -124,6 +124,21 @@ describe RequestIssue do
     end
   end
 
+  context "#contention" do
+    let(:end_product_establishment) { create(:end_product_establishment, :active) }
+    let!(:contention) do
+      Generators::Contention.build(
+        id: contention_reference_id,
+        claim_id: end_product_establishment.reference_id,
+        disposition: "allowed"
+      )
+    end
+
+    it "returns matching contention" do
+      expect(rating_request_issue.contention.id.to_s).to eq(contention_reference_id.to_s)
+    end
+  end
+
   context "#guess_benefit_type" do
     context "issue is unidentified" do
       it "returns 'unidentified'" do
