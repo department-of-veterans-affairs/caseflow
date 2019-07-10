@@ -526,7 +526,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def contention
-    end_product_establishment.contention_for(self)
+    end_product_establishment.contention_for_object(self)
   end
 
   private
