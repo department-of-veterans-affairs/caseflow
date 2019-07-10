@@ -241,8 +241,8 @@ RSpec.feature "Task queue" do
       end
 
       step("All cases tab") do
-        find("button", text: format(COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE, assigned_count)).click
-        expect(page).to have_content(format(COPY::ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, vso.name))
+        find("button", text: format(COPY::TRACKING_TASKS_TAB_TITLE, assigned_count)).click
+        expect(page).to have_content(format(COPY::TRACKING_TASKS_TAB_DESCRIPTION, vso.name))
         expect(find("tbody").find_all("tr").length).to eq(tracking_task_count)
       end
     end
@@ -264,11 +264,11 @@ RSpec.feature "Task queue" do
 
     it "displays tracking tasks in single table" do
       step("does not show tabs since field VSOs only have 1 tab") do
-        expect(page).to_not have_content(COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE)
+        expect(page).to_not have_content(COPY::TRACKING_TASKS_TAB_TITLE)
       end
 
       step("shows tab description and correct number of tasks") do
-        expect(page).to have_content(format(COPY::ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, vso.name))
+        expect(page).to have_content(format(COPY::TRACKING_TASKS_TAB_DESCRIPTION, vso.name))
         expect(find("tbody").find_all("tr").length).to eq(tracking_task_count)
       end
     end
@@ -453,7 +453,7 @@ RSpec.feature "Task queue" do
     end
 
     it "does not show all cases tab for non-VSO organization" do
-      expect(page).to_not have_content(COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE)
+      expect(page).to_not have_content(COPY::TRACKING_TASKS_TAB_TITLE)
     end
 
     it "shows the right number of cases in each tab" do
