@@ -234,13 +234,13 @@ paths:
                       }
                     ]
                   }
-                isssue_not_found:
+                issue_not_found:
                   value: {
                     "errors": [
                       {
                         "status": "404",
                         "title":  "Issue not found",
-                        "code":  "isssue_not_found"
+                        "code":  "issue_not_found"
                       }
                     ]
                   }
