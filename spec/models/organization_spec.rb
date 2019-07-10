@@ -204,4 +204,12 @@ describe Organization do
       end
     end
   end
+
+  describe ".queue_tabs" do
+    let(:org) { FactoryBot.create(:organization) }
+
+    it "returns the expected 3 tabs" do
+      expect(org.queue_tabs.map(&:class)).to eq([UnassignedTasksTab, AssignedTasksTab, CompletedTasksTab])
+    end
+  end
 end
