@@ -386,16 +386,6 @@ paths:
                       }
                     ]
                   }
-                appeal_to_appeal:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title":  "Issue is ineligible because it was last processed as a Board Appeal and this can't be done twice in a row",
-                        "code":  "appeal_to_appeal"
-                      }
-                    ]
-                  }
                 appeal_to_higher_level_review:
                   value: {
                     "errors": [
