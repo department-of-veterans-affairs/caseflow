@@ -121,14 +121,15 @@ module Asyncable
     # One minute offset to prevent "this date is in the future" errors with external services
     when_to_start = delay.try(:to_datetime) ? delay.to_datetime + 1.minute : Time.zone.now + delay
 
-    # Add the `processing_retry_interval_hours` to the delay time, since it should not be considered
+    # Subtract the `processing_retry_interval_hours` from the delay time,
+    # to offset its presence in the `previously_attmpted_ready_for_retry` logic.
     if delay != 0
       when_to_start -= self.class.processing_retry_interval_hours.hours
     end
 
     update!(
       self.class.last_submitted_at_column => when_to_start,
-      self.class.submitted_at_column => when_to_start,
+      self.class.submitted_at_column => delay.try(:to_datetime) ? delay.to_datetime : Time.zone.now,
       self.class.processed_at_column => nil
     )
   end
@@ -183,7 +184,7 @@ module Asyncable
   end
 
   def submitted_and_ready?
-    !!self[self.class.submitted_at_column] && self[self.class.submitted_at_column] <= Time.zone.now
+    submitted? && self[self.class.last_submitted_at_column] <= Time.zone.now
   end
 
   def submitted_not_processed?
