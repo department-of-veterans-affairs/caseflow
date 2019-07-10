@@ -143,6 +143,8 @@ module Asyncable
   end
 
   def canceled!
+    return if processed?
+
     update!(self.class.canceled_at_column => Time.zone.now)
   end
 
