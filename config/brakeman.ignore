@@ -42,6 +42,25 @@
     {
       "warning_type": "Cross-Site Request Forgery",
       "warning_code": 86,
+      "fingerprint": "1812c8892bb9cfd21d2582d5e52f2c4d72f45abb327b73d50139da2259905905",
+      "check_name": "ForgerySetting",
+      "message": "`protect_from_forgery` should be configured with `with: :exception`",
+      "file": "app/controllers/api/metadata_controller.rb",
+      "line": 4,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_request_forgery/",
+      "code": "protect_from_forgery(:with => :null_session)",
+      "render_path": null,
+      "location": {
+        "type": "controller",
+        "controller": "Api::MetadataController"
+      },
+      "user_input": null,
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "Cross-Site Request Forgery",
+      "warning_code": 86,
       "fingerprint": "2494532c77b2833cf67088a95d0a7b9b9c66b4b2277cbfa04ea936cd0bb25c24",
       "check_name": "ForgerySetting",
       "message": "`protect_from_forgery` should be configured with `with: :exception`",
@@ -115,6 +134,6 @@
       "note": "The application does not force use of HTTPS: `config.force_ssl` is not enabled"
     }
   ],
-  "updated": "2019-06-26 17:40:52 -0400",
+  "updated": "2019-07-02 17:03:56 -0500",
   "brakeman_version": "4.5.1"
 }

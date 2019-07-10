@@ -30,8 +30,13 @@ class Hearings::WorksheetsController < HearingsController
     end
   end
 
-  def print
-    render template: "hearings/index", locals: { print_stylesheet: "print/hearings_worksheet" }
+  def show_print
+    stylesheets = {
+      override_stylesheet: "print/hearings_worksheet_overrides",
+      print_stylesheet: "print/hearings_worksheet"
+    }
+
+    render template: "hearings/index", locals: stylesheets
   end
 
   def update

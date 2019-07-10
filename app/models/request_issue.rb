@@ -159,8 +159,12 @@ class RequestIssue < ApplicationRecord
       active_or_ineligible.or(withdrawn)
     end
 
-    def active_or_decided
-      active.or(decided).order(id: :asc)
+    def active_or_decided_or_withdrawn
+      active.or(decided).or(withdrawn).order(id: :asc)
+    end
+
+    def active_or_withdrawn
+      active.or(withdrawn)
     end
 
     def unidentified
@@ -364,6 +368,10 @@ class RequestIssue < ApplicationRecord
 
     clear_error!
     attempted!
+
+    # pre-fetch the internal veteran record before we start the transaction
+    # to avoid a slow BGS call causing the transaction to timeout
+    end_product_establishment.veteran
 
     transaction do
       return unless create_decision_issues
