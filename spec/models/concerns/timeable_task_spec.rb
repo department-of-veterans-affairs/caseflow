@@ -39,19 +39,20 @@ describe TimeableTask do
     task = SomeTimedTask.create!(appeal: appeal, assigned_to: Bva.singleton)
     timers = TaskTimer.where(task: task)
     expect(timers.length).to eq(1)
-    delayed_start = Time.zone.now + 5.days - 3.hours + 1.minute
+
+    delayed_start = Time.zone.now + 5.days - TaskTimer.processing_retry_interval_hours.hours + 1.minute
+
     expect(timers.first.last_submitted_at).to eq(delayed_start)
-    expect(timers.first.submitted_at).to eq(delayed_start)
+    expect(timers.first.submitted_at).to eq(task.timer_ends_at)
   end
 
-  it "queues itself when the delay is in the past" do
+  it "queues itself immediately when the delay is in the past" do
     task = OldTimedTask.create!(appeal: appeal, assigned_to: Bva.singleton)
     timers = TaskTimer.where(task: task)
     expect(timers.length).to eq(1)
     expect(timers.first.submitted_and_ready?).to eq(true)
+    expect(timers.first.submitted_at).to eq(task.timer_ends_at)
     expect(timers.first.last_submitted_at).to eq(NOW)
-    delay_in_the_past = Time.zone.now - 5.days - 3.hours + 1.minute
-    expect(timers.first.submitted_at).to eq(delay_in_the_past)
   end
 
   context "when not correctly configured" do

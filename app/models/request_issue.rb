@@ -525,6 +525,10 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  def contention
+    end_product_establishment.contention_for_object(self)
+  end
+
   private
 
   def limited_poa
