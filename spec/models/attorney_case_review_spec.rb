@@ -31,38 +31,52 @@ describe AttorneyCaseReview do
     let!(:request_issue6) do
       create(:request_issue, decision_review: appeal, decision_issues: [decision_issue3, decision_issue4])
     end
+    let!(:withdrawn_request_issue) do
+      create(
+        :request_issue,
+        decision_review: appeal,
+        contested_issue_description: "Tinnitus",
+        closed_at: Time.zone.now,
+        closed_status: "withdrawn"
+      )
+    end
 
     subject { AttorneyCaseReview.new(issues: issues, task_id: task.id).update_issue_dispositions_in_caseflow! }
 
     context "when issue attributes are valid" do
       let(:issues) do
-        [{ disposition: "allowed", description: "something1",
-           benefit_type: "compensation", diagnostic_code: "9999",
-           request_issue_ids: [request_issue1.id, request_issue2.id] },
-         { disposition: "remanded", description: "something2",
-           benefit_type: "compensation", diagnostic_code: "9999",
-           request_issue_ids: [request_issue1.id, request_issue2.id],
-           remand_reasons: [
-             { code: "va_records", post_aoj: false },
-             { code: "incorrect_notice_sent", post_aoj: true },
-             { code: "due_process_deficiency", post_aoj: false }
-           ] },
-         { disposition: "allowed", description: "something3",
-           benefit_type: "compensation", diagnostic_code: "9999",
-           request_issue_ids: [request_issue3.id, request_issue4.id] },
-         { disposition: "allowed", description: "something4",
-           benefit_type: "compensation", diagnostic_code: "9999",
-           request_issue_ids: [request_issue5.id] },
-         { disposition: "remanded", description: "something5",
-           benefit_type: "compensation", diagnostic_code: "9999",
-           request_issue_ids: [request_issue5.id],
-           remand_reasons: [
-             { code: "va_records", post_aoj: false },
-             { code: "incorrect_notice_sent", post_aoj: true }
-           ] },
-         { disposition: "allowed", description: "something6",
-           benefit_type: "compensation", diagnostic_code: "9999",
-           request_issue_ids: [request_issue6.id] }]
+        [
+          { disposition: "allowed", description: "something1",
+            benefit_type: "compensation", diagnostic_code: "9999",
+            request_issue_ids: [request_issue1.id, request_issue2.id] },
+          { disposition: "remanded", description: "something2",
+            benefit_type: "compensation", diagnostic_code: "9999",
+            request_issue_ids: [request_issue1.id, request_issue2.id],
+            remand_reasons: [
+              { code: "va_records", post_aoj: false },
+              { code: "incorrect_notice_sent", post_aoj: true },
+              { code: "due_process_deficiency", post_aoj: false }
+            ] },
+          { disposition: "allowed", description: "something3",
+            benefit_type: "compensation", diagnostic_code: "9999",
+            request_issue_ids: [request_issue3.id, request_issue4.id] },
+          { disposition: "allowed", description: "something4",
+            benefit_type: "compensation", diagnostic_code: "9999",
+            request_issue_ids: [request_issue5.id] },
+          { disposition: "remanded", description: "something5",
+            benefit_type: "compensation", diagnostic_code: "9999",
+            request_issue_ids: [request_issue5.id],
+            remand_reasons: [
+              { code: "va_records", post_aoj: false },
+              { code: "incorrect_notice_sent", post_aoj: true }
+            ] },
+          { disposition: "allowed", description: "something6",
+            benefit_type: "compensation", diagnostic_code: "9999",
+            request_issue_ids: [request_issue6.id] },
+          { disposition: "withdrawn", description: "withdrawn decision issue",
+            benefit_type: "compensation", diagnostic_code: "9999",
+            request_issue_ids: [withdrawn_request_issue.id] }
+        ]
       end
 
       it "should create and delete decision issues" do
@@ -101,6 +115,8 @@ describe AttorneyCaseReview do
         expect(request_issue5.reload.decision_issues.size).to eq 2
         expect(request_issue5.decision_issues[1].remand_reasons.size).to eq 2
         expect(request_issue6.decision_issues.size).to eq 1
+        expect(withdrawn_request_issue.decision_issues.size).to eq 1
+        expect(withdrawn_request_issue.decision_issues[0].disposition).to eq "withdrawn"
       end
     end
 

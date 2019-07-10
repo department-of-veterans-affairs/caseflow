@@ -3,8 +3,9 @@
 require "rails_helper"
 
 describe PrivateBar do
+  let(:private_bar) { PrivateBar.create!(name: "Caseflow Law Group", url: "caseflow-law") }
+
   describe ".create!" do
-    let(:private_bar) { PrivateBar.create!(name: "Caseflow Law Group", url: "caseflow-law") }
     let(:appeal) { FactoryBot.create(:appeal) }
 
     before do
@@ -14,6 +15,14 @@ describe PrivateBar do
     it "creates a representative that does not write IHPs for appeals they represent" do
       expect(appeal.representatives.include?(private_bar)).to eq(true)
       expect(private_bar.should_write_ihp?(appeal)).to eq(false)
+    end
+  end
+
+  describe ".queue_tabs" do
+    it "only returns a single tab with tracking tasks" do
+      tabs = private_bar.queue_tabs
+      expect(tabs.length).to eq(1)
+      expect(tabs.first).to be_a(TrackingTasksTab)
     end
   end
 end

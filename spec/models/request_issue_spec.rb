@@ -126,6 +126,21 @@ describe RequestIssue do
     end
   end
 
+  context "#contention" do
+    let(:end_product_establishment) { create(:end_product_establishment, :active) }
+    let!(:contention) do
+      Generators::Contention.build(
+        id: contention_reference_id,
+        claim_id: end_product_establishment.reference_id,
+        disposition: "allowed"
+      )
+    end
+
+    it "returns matching contention" do
+      expect(rating_request_issue.contention.id.to_s).to eq(contention_reference_id.to_s)
+    end
+  end
+
   context "#guess_benefit_type" do
     context "issue is unidentified" do
       it "returns 'unidentified'" do
@@ -320,16 +335,18 @@ describe RequestIssue do
     end
   end
 
-  context ".active_or_decided" do
-    subject { RequestIssue.active_or_decided }
+  context ".active_or_decided_or_withdrawn" do
+    subject { RequestIssue.active_or_decided_or_withdrawn }
 
     let!(:decided_request_issue) { create(:request_issue, :decided) }
     let!(:removed_request_issue) { create(:request_issue, :removed) }
+    let!(:withdrawn_request_issue) { create(:request_issue, :withdrawn) }
     let!(:open_eligible_request_issue) { create(:request_issue) }
 
-    it "returns open eligible or closed decided issues" do
+    it "returns open eligible or closed decided or withdrawn issues" do
       expect(subject.find_by(id: removed_request_issue.id)).to be_nil
       expect(subject.find_by(id: decided_request_issue.id)).to_not be_nil
+      expect(subject.find_by(id: withdrawn_request_issue.id)).to_not be_nil
       expect(subject.find_by(id: open_eligible_request_issue.id)).to_not be_nil
     end
   end

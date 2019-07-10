@@ -159,8 +159,12 @@ class RequestIssue < ApplicationRecord
       active_or_ineligible.or(withdrawn)
     end
 
-    def active_or_decided
-      active.or(decided).order(id: :asc)
+    def active_or_decided_or_withdrawn
+      active.or(decided).or(withdrawn).order(id: :asc)
+    end
+
+    def active_or_withdrawn
+      active.or(withdrawn)
     end
 
     def unidentified
@@ -519,6 +523,10 @@ class RequestIssue < ApplicationRecord
     @contention_disposition ||= end_product_establishment.fetch_dispositions_from_vbms.find do |disposition|
       disposition.contention_id.to_i == contention_reference_id
     end
+  end
+
+  def contention
+    end_product_establishment.contention_for_object(self)
   end
 
   private

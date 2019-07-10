@@ -146,6 +146,9 @@ describe BvaDispatchTask do
 
           decision_document = DecisionDocument.find_by(appeal_id: root_task.appeal.id)
           expect(decision_document.submitted_at).to eq(
+            decision_date - DecisionDocument::PROCESS_DELAY_VBMS_OFFSET_HOURS.hours
+          )
+          expect(decision_document.last_submitted_at).to eq(
             decision_date.to_date +
             DecisionDocument::PROCESS_DELAY_VBMS_OFFSET_HOURS.hours -
             DecisionDocument.processing_retry_interval_hours.hours + 1.minute
