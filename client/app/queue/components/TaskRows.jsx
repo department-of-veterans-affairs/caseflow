@@ -251,7 +251,7 @@ class TaskRows extends React.PureComponent {
                 task.closedAt ? '' : greyDotAndlineStyling].join(' ')} /> }
       </td>
       <td {...taskInformationContainerStyling}
-        className={timeline ? "taskInformationTimelineContainerStyling" : ''}>
+        className={timeline ? 'taskInformationTimelineContainerStyling' : ''}>
         <CaseDetailsDescriptionList>
           { timeline && timelineTitle }
           { this.assignedToListItem(task) }
