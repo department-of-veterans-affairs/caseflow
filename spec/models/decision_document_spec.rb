@@ -40,8 +40,6 @@ describe DecisionDocument, :postgres do
 
   context "#submit_for_processing!" do
     subject { decision_document.submit_for_processing! }
-    before { FeatureToggle.enable!(:decision_document_upload) }
-    after { FeatureToggle.disable!(:decision_document_upload) }
 
     let(:expected_path) { "decisions/#{decision_document.appeal.external_id}.pdf" }
     let!(:decision_issue) { create(:decision_issue, decision_review: appeal, caseflow_decision_date: nil) }
@@ -63,29 +61,9 @@ describe DecisionDocument, :postgres do
     end
 
     context "when no file" do
-      context "when :decision_document_upload feature is turned on" do
-        it "raises NoFileError" do
-          expect { subject }.to raise_error(DecisionDocument::NoFileError)
-          expect(decision_document.submitted_at).to be_nil
-        end
-      end
-
-      context "when :decision_document_upload feature is turned off" do
-        before { FeatureToggle.disable!(:decision_document_upload) }
-
-        it "marks document as having been processed immediately without uploading anything" do
-          expect(S3Service).to_not receive(:store_file).with(expected_path, /PDF/)
-          subject
-          expect(decision_document.submitted_at).to eq(Time.zone.now)
-          expect(decision_document.attempted_at).to eq(Time.zone.now)
-          expect(decision_document.processed_at).to eq(Time.zone.now)
-        end
-
-        it "updates the decision date on decision issues" do
-          subject
-          expect(decision_issue.reload.caseflow_decision_date).to_not be_nil
-          expect(decision_issue.caseflow_decision_date).to eq(decision_document.decision_date)
-        end
+      it "raises NoFileError" do
+        expect { subject }.to raise_error(DecisionDocument::NoFileError)
+        expect(decision_document.submitted_at).to be_nil
       end
     end
   end

@@ -538,11 +538,6 @@ RSpec.describe Idt::Api::V1::AppealsController, :all_dbs, type: :controller do
       key, t = Idt::Token.generate_one_time_key_and_proposed_token
       Idt::Token.activate_proposed_token(key, user.css_id)
       request.headers["TOKEN"] = t
-      FeatureToggle.enable!(:decision_document_upload)
-    end
-
-    after do
-      FeatureToggle.disable!(:decision_document_upload)
     end
 
     context "when some params are missing" do
