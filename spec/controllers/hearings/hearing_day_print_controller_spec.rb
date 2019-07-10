@@ -13,7 +13,7 @@ RSpec.describe Hearings::HearingDayPrintController, type: :controller do
         let!(:user) { User.authenticate!(roles: roles) }
 
         it "returns 302 status code and redirects with invalid roles #{roles}" do
-          get :index, { params: { id: hearing_day.id }}
+          get :index, params: { id: hearing_day.id }
           expect(response.status).to eq 302
           expect(response).to redirect_to("/unauthorized")
         end
@@ -34,7 +34,7 @@ RSpec.describe Hearings::HearingDayPrintController, type: :controller do
         let!(:user) { User.authenticate!(roles: roles) }
 
         it "returns 200 status code with valid roles #{roles}" do
-          get :index, { params: { id: hearing_day.id }}
+          get :index, params: { id: hearing_day.id }
           expect(response.status).to eq 200
         end
       end
