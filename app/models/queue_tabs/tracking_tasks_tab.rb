@@ -2,7 +2,7 @@
 
 class TrackingTasksTab < QueueTab
   def label
-    COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE
+    COPY::TRACKING_TASKS_TAB_TITLE
   end
 
   def name
@@ -10,7 +10,7 @@ class TrackingTasksTab < QueueTab
   end
 
   def description
-    COPY::ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION
+    COPY::TRACKING_TASKS_TAB_DESCRIPTION
   end
 
   def columns
