@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Hearings::HearingDayPrintController, type: :controller, focus: true do
+RSpec.describe Hearings::HearingDayPrintController, type: :controller do
   describe "GET print view of daily docket" do
     let(:hearing_day) { create(:hearing_day) }
 
