@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe GenericQueue do
   describe "#tasks" do
     let(:atty) { FactoryBot.create(:user) }

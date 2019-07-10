@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe Form8 do
   initial_fields = [:_initial_appellant_name,
                     :_initial_appellant_relationship,

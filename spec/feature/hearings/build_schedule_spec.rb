@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 RSpec.feature "Build Hearing Schedule" do
   context "Build RO Hearing Schedule" do
     let!(:current_user) do

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe LegacyOptinManager do
   before do
     Timecop.freeze(Time.zone.now)

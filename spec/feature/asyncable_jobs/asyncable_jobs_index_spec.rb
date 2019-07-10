@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 feature "Asyncable Jobs index" do
   before do
     Timecop.freeze(Time.zone.now)

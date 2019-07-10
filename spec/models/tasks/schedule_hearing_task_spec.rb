@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe ScheduleHearingTask do
   let(:vacols_case) { FactoryBot.create(:case, bfcurloc: "57") }
   let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }

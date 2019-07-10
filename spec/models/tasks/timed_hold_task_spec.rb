@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe TimedHoldTask do
   let(:task) { FactoryBot.create(:timed_hold_task) }
 

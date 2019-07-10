@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe Organization do
   describe ".create" do
     context "when the input URL has uppercase letters and spaces" do

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe AttorneyTask do
   let!(:attorney) { create(:user) }
   let!(:judge) { create(:user) }

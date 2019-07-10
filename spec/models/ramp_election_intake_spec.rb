@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe RampElectionIntake do
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
