@@ -334,7 +334,7 @@ describe HigherLevelReview do
               decision_review_remanded: higher_level_review
             )
             expect(dta_sc).to_not be_nil
-            expect(dta_sc.establishment_submitted_at).to eq((caseflow_decision_date + vbms_offset).utc)
+            expect(dta_sc.establishment_submitted_at).to eq((dta_sc.receipt_date + vbms_offset).utc)
             expect(dta_sc.establishment_last_submitted_at).to eq(
               caseflow_decision_date.to_date + vbms_offset -
               SupplementalClaim.processing_retry_interval_hours.hours + 1.minute
