@@ -29,6 +29,11 @@ Rails.application.routes.draw do
     namespace :v2 do
       resources :appeals, only: :index
     end
+    namespace :v3 do
+      namespace :decision_review do
+        resources :higher_level_reviews, only: :create
+      end
+    end
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do
         get 'decision_reviews', to: 'docs#decision_reviews'
