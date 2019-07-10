@@ -273,9 +273,7 @@ On error returns a `400` code with an error message like:
 
 #### `GET /idt/api/v1/veterans`
 
-## VETText / Hearings (DRAFT)
-
-**DRAFT RFC**
+## VETText / Hearings
 
 The Hearings API returns all the hearings scheduled for a given day.
 
