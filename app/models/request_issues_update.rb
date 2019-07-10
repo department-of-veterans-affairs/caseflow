@@ -131,19 +131,13 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def validate_before_perform
-    if @request_issues_data.blank? && !allow_zero_request_issues?
-      @error_code = :request_issues_data_empty
-    elsif !changes?
+    if !changes?
       @error_code = :no_changes
     elsif RequestIssuesUpdate.where(review: review).processable.exists?
       @error_code = :previous_update_not_done_processing
     end
 
     !@error_code
-  end
-
-  def allow_zero_request_issues?
-    FeatureToggle.enabled?(:remove_decision_reviews, user: RequestStore.store[:current_user])
   end
 
   def fetch_before_issues

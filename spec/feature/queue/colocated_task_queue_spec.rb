@@ -248,16 +248,16 @@ RSpec.feature "ColocatedTask" do
   end
 
   describe "translation task for AMA appeal" do
-    let(:action) { "translation" }
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:appeal) { root_task.appeal }
     let!(:colocated_task) do
-      FactoryBot.create(
+      create(
         :ama_colocated_task,
+        :translation,
         appeal: appeal,
         parent: root_task,
         assigned_to: vlj_support_staff,
-        action: action
+        assigned_by: vlj_support_staff
       )
     end
 
@@ -295,10 +295,10 @@ RSpec.feature "ColocatedTask" do
     let!(:colocated_task) do
       FactoryBot.create(
         :ama_colocated_task,
+        Constants::CO_LOCATED_ADMIN_ACTIONS.keys.last.to_sym,
         appeal: appeal,
         parent: root_task,
-        assigned_to: vlj_support_staff,
-        action: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.last
+        assigned_to: vlj_support_staff
       )
     end
 
