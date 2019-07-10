@@ -3,7 +3,7 @@
 class Hearings::HearingDayPrintController < HearingsApplicationController
   include HearingsConcerns::VerifyAccess
 
-  before_action :verify_view_hearing_schedule_access
+  before_action :verify_view_hearing_schedule_access, only: [:index]
   skip_before_action :deny_vso_access, only: [:index]
 
   def index

@@ -8,11 +8,11 @@ RSpec.describe Hearings::HearingDayPrintController, type: :controller do
       [
         %w[],
         %w[Invalid],
-        %w[Mail\ Intake]
+        %w[Mail\ Intake],
+        %w[Reader]
       ].each do |roles|
-        let!(:user) { User.authenticate!(roles: roles) }
-
         it "returns 302 status code and redirects with invalid roles #{roles}" do
+          User.authenticate!(roles: roles)
           get :index, params: { id: hearing_day.id }
           expect(response.status).to eq 302
           expect(response).to redirect_to("/unauthorized")
@@ -22,18 +22,16 @@ RSpec.describe Hearings::HearingDayPrintController, type: :controller do
 
     context "user with valid roles" do
       [
-        %w[Reader],
         %w[Hearing\ Prep],
         %w[Edit\ HearSched],
         %w[Build\ HearSched],
         %w[Reader Hearing\ Prep],
         %w[System\ Admin],
         %w[VSO],
-        %w[RO ViewHearSched]
+        %w[RO\ ViewHearSched]
       ].each do |roles|
-        let!(:user) { User.authenticate!(roles: roles) }
-
         it "returns 200 status code with valid roles #{roles}" do
+          User.authenticate!(roles: roles)
           get :index, params: { id: hearing_day.id }
           expect(response.status).to eq 200
         end

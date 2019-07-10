@@ -9,9 +9,8 @@ RSpec.describe Hearings::WorksheetsPrintController, type: :controller do
         %w[Invalid],
         %w[Mail\ Intake]
       ].each do |roles|
-        let!(:user) { User.authenticate!(roles: roles) }
-
         it "returns 302 status code and redirects with invalid roles #{roles}" do
+          User.authenticate!(roles: roles)
           get :index
           expect(response.status).to eq 302
           expect(response).to redirect_to("/unauthorized")
@@ -28,9 +27,8 @@ RSpec.describe Hearings::WorksheetsPrintController, type: :controller do
         %w[Reader Hearing\ Prep],
         %w[System\ Admin]
       ].each do |roles|
-        let!(:user) { User.authenticate!(roles: roles) }
-
         it "returns 200 status code with valid roles #{roles}" do
+          User.authenticate!(roles: roles)
           get :index
           expect(response.status).to eq 200
         end
