@@ -9,7 +9,7 @@ import {
 } from '../common/actions';
 import ApiUtil from '../../util/ApiUtil';
 import _ from 'lodash';
-import { formatDateStr } from '../../util/DateUtil';
+import { formatDateStr, getMinutesToMilliseconds } from '../../util/DateUtil';
 import LoadingLabel from './LoadingLabel';
 
 import SearchableDropdown from '../SearchableDropdown';
