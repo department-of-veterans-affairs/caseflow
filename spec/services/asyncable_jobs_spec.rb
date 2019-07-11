@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe AsyncableJobs do
   let(:veteran) { create(:veteran) }
   let!(:hlr) do

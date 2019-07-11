@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe Relationship do
   let(:veteran) { create(:veteran) }
   let(:relationship_type) { "Spouse" }

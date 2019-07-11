@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe PowerOfAttorneyRepository do
   context ".first_last_name?" do
     subject { PowerOfAttorney.repository.first_last_name?(representative_name) }

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe BoardGrantEffectuationTask do
   let(:task_status) { "assigned" }
   let(:task) { create(:board_grant_effectuation_task, status: task_status) }

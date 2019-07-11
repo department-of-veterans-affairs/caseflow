@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe TeamManagementController, type: :controller do
   let(:user) { FactoryBot.create(:user) }
 

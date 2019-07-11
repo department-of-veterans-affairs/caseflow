@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe GenericTask do
   describe ".available_actions" do
     let(:task) { nil }

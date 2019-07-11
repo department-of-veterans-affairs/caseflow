@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe AttorneyQueue do
   context "#tasks" do
     let(:user) { create(:user) }
