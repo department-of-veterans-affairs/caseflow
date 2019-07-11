@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe Claimant do
   let(:name) { nil }
   let(:relationship_to_veteran) { nil }

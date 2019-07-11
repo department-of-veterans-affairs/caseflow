@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe WarmBgsParticipantCachesJob do
   context "default" do
     # cache keys are using default POA so no specific ids.

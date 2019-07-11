@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe Person do
   context "#date_of_birth" do
     subject { create(:person, date_of_birth: date_of_birth) }

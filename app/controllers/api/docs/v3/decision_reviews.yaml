@@ -4,7 +4,7 @@ info:
   description: API version 0 for Decision Reviews provided by the Lighthouse Project
   version: 3.0.0
 servers:
-  - url: /api/{version}
+  - url: /api/{version}/decision_review
 paths:
   /higher_level_reviews:
     post:
@@ -247,13 +247,13 @@ paths:
                       }
                     ]
                   }
-                isssue_not_found:
+                issue_not_found:
                   value: {
                     "errors": [
                       {
                         "status": "404",
                         "title":  "Issue not found",
-                        "code":  "isssue_not_found"
+                        "code":  "issue_not_found"
                       }
                     ]
                   }
@@ -386,16 +386,6 @@ paths:
                         "status": "422",
                         "title":  "Issue is ineligible because it was last processed as a Higher-Level Review and this can't be done twice in a row",
                         "code":  "higher_level_review_to_higher_level_review"
-                      }
-                    ]
-                  }
-                appeal_to_appeal:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title":  "Issue is ineligible because it was last processed as a Board Appeal and this can't be done twice in a row",
-                        "code":  "appeal_to_appeal"
                       }
                     ]
                   }
