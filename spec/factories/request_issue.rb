@@ -38,6 +38,11 @@ FactoryBot.define do
       closed_status { :decided }
     end
 
+    trait :withdrawn do
+      closed_at { Time.zone.now }
+      closed_status { :withdrawn }
+    end
+
     trait :requires_processing do
       decision_sync_submitted_at { (RequestIssue.processing_retry_interval_hours + 1).hours.ago }
       decision_sync_last_submitted_at { (RequestIssue.processing_retry_interval_hours + 1).hours.ago }

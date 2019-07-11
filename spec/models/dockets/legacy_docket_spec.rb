@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe LegacyDocket do
   let(:docket) do
     LegacyDocket.new

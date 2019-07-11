@@ -2,6 +2,7 @@ import React from 'react';
 import { css } from 'glamor';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import _ from 'lodash';
 
 import Button from '../../../components/Button';
 
@@ -49,6 +50,9 @@ class HearingActions extends React.Component {
       initialState: {
         ...props.hearing
       },
+      invalid: {
+        advanceOnDocketMotionReason: false
+      },
       edited: false
     };
   }
@@ -72,7 +76,27 @@ class HearingActions extends React.Component {
     this.setState({ edited: false });
   }
 
+  validate = () => {
+    const { hearing } = this.props;
+
+    const invalid = {
+      advanceOnDocketMotionReason: hearing.advanceOnDocketMotion &&
+        !_.isNil(hearing.advanceOnDocketMotion.granted) &&
+        _.isNil(hearing.advanceOnDocketMotion.reason)
+    };
+
+    this.setState({ invalid });
+
+    return !invalid.advanceOnDocketMotionReason;
+  }
+
   saveHearing = () => {
+    const isValid = this.validate();
+
+    if (!isValid) {
+      return;
+    }
+
     this.props.saveHearing(this.props.hearingId).
       then((success) => {
         if (success) {
@@ -118,7 +142,10 @@ class HearingActions extends React.Component {
       <HearingPrepWorkSheetLink hearing={hearing} />
       {this.isAmaHearing() && <React.Fragment>
         <AmaAodDropdown {...inputProps} updateAodMotion={this.updateAodMotion} userId={user.userId} />
-        <AodReasonDropdown {...inputProps} updateAodMotion={this.updateAodMotion} userId={user.userId} />
+        <AodReasonDropdown {...inputProps}
+          updateAodMotion={this.updateAodMotion}
+          userId={user.userId}
+          invalid={this.state.invalid.advanceOnDocketMotionReason} />
       </React.Fragment>}
       {this.isLegacyHearing() && <React.Fragment>
         <LegacyAodDropdown {...inputProps} />

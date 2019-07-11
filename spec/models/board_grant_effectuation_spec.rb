@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe BoardGrantEffectuation do
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))

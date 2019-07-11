@@ -146,6 +146,8 @@ class EndProductEstablishment < ApplicationRecord
     cached ? cached_result : fetched_result
   end
 
+  alias end_product result
+
   delegate :contentions, to: :cached_result
 
   def limited_poa_on_established_claim
@@ -196,7 +198,7 @@ class EndProductEstablishment < ApplicationRecord
         last_synced_at: Time.zone.now
       )
       sync_source!
-      close_request_issues_if_canceled!
+      handle_canceled_ep!
       close_request_issues_with_no_decision!
     end
   rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => error
@@ -310,6 +312,10 @@ class EndProductEstablishment < ApplicationRecord
     contentions.find { |contention| contention.id.to_i == for_object.contention_reference_id.to_i }
   end
 
+  def veteran
+    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number, sync_name: true)
+  end
+
   private
 
   def status_type
@@ -362,13 +368,14 @@ class EndProductEstablishment < ApplicationRecord
       # delete end product in bgs & set sync status to canceled
       BGSService.new.cancel_end_product(veteran_file_number, code, modifier)
       update!(synced_status: CANCELED_STATUS)
-      close_request_issues_if_canceled!
+      handle_canceled_ep!
     end
   end
 
-  def close_request_issues_if_canceled!
+  def handle_canceled_ep!
     return unless status_canceled?
 
+    source.try(:canceled!)
     request_issues.all.find_each(&:close_after_end_product_canceled!)
   end
 
@@ -402,10 +409,6 @@ class EndProductEstablishment < ApplicationRecord
       contention_map[issue.contested_rating_issue_reference_id] = issue.contention_reference_id
       contention_map
     end
-  end
-
-  def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number, sync_name: true)
   end
 
   def establish_claim_in_vbms(end_product)

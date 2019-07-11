@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe LegacyAppeal do
   before do
     Timecop.freeze(post_ama_start_date)

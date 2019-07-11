@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe Issue do
   let(:vacols_id) { "12345678" }
   let(:disposition) { :allowed }

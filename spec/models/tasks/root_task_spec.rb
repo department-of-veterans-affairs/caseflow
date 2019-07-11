@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe RootTask do
   describe ".available_actions_unwrapper" do
     let(:user) { FactoryBot.create(:user) }

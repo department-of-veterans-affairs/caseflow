@@ -3,8 +3,8 @@
 class HearingsController < HearingsApplicationController
   include HearingsConcerns::VerifyAccess
 
-  before_action :verify_access_to_hearings, except: [:show_print, :show]
-  before_action :verify_access_to_reader_or_hearings, only: [:show_print, :show]
+  before_action :verify_access_to_hearings, except: [:show]
+  before_action :verify_access_to_reader_or_hearings, only: [:show]
 
   def show
     render json: hearing.to_hash(current_user.id)
@@ -31,6 +31,8 @@ class HearingsController < HearingsApplicationController
   end
 
   def update_advance_on_docket_motion
+    advance_on_docket_motion_params.require(:reason)
+
     motion = AdvanceOnDocketMotion.find_or_create_by!(
       person_id: advance_on_docket_motion_params[:person_id],
       user_id: advance_on_docket_motion_params[:user_id]

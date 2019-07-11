@@ -2,57 +2,58 @@
 
 # bundle exec rails runner scripts/enable_features_dev.rb
 
-json_config = <<EOS.strip_heredoc
-  [
-        {
-          feature: "automatic_ramp_rollback",
-          enable_all: true
-        },
-        {
-          feature: "hearings",
-          users: ["CASEFLOW_397", "CASEFLOW1"]
-        },
-        {
-          feature: "decision_reviews",
-          enable_all: true
-        },
-        {
-          feature: "intake",
-          enable_all: true
-        },
-        {
-          feature: "reader",
-          enable_all: true
-        },
-        {
-          feature: "search",
-          enable_all: true
-        },
-        {
-          feature: "judge_case_review_checkout",
-          enable_all: true
-        },
-        {
-          feature: "queue_beaam_appeals",
-          enable_all: true
-        },
-        {
-          feature: "idt_ama_appeals",
-          enable_all: true
-        },
-        {
-          feature: "decision_document_upload",
-          enable_all: true
-        },
-        {
-          feature: "use_representative_info_from_bgs",
-          enable_all: true
-        },
-        {
-          feature: "use_ama_activation_date",
-          enable_all: true
-        }
-  ]
-EOS
+class AllFeatureToggles
+  def call
+    files.each_with_object([]) do |file, result|
+      result << FeatureToggleSearch.new(file: file, regex: feature_toggle_regex).call
+      result << FeatureToggleSearch.new(file: file, regex: feature_enabled_regex).call
+    end
+  end
 
-FeatureToggle.sync! json_config
+  private
+
+  def files
+    app_rb_files + app_erb_files
+  end
+
+  def app_rb_files
+    Dir.glob("app/**/*.rb")
+  end
+
+  def app_erb_files
+    Dir.glob("app/views/**/*.erb")
+  end
+
+  def feature_toggle_regex
+    /FeatureToggle.enabled\?\(:(.+?(, user:.+)*)\)/
+  end
+
+  def feature_enabled_regex
+    /feature_enabled\?\(:(.+?)\)/
+  end
+end
+
+class FeatureToggleSearch
+  def initialize(file:, regex:)
+    @file = file
+    @regex = regex
+  end
+
+  def call
+    File.open(file, "r").each_with_object([]) do |line, result|
+      line.match(regex) { |found| result << found[1] }
+    end
+  end
+
+  private
+
+  attr_reader :file, :regex
+end
+
+all_features = AllFeatureToggles.new.call.flatten.uniq
+all_features.map! { |feature| feature.split(",")[0] }
+
+all_features.each_with_object([]) do |feature, result|
+  result << { "feature" => feature, "enable_all" => true }
+  FeatureToggle.sync! result.to_yaml
+end

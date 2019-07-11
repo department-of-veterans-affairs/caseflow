@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe AsyncableJobsReporter do
   before do
     seven_am_random_date = Time.new(2019, 3, 29, 7, 0, 0).in_time_zone

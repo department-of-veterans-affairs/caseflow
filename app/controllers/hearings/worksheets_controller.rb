@@ -30,10 +30,6 @@ class Hearings::WorksheetsController < HearingsController
     end
   end
 
-  def print
-    render template: "hearings/index", locals: { print_stylesheet: "print/hearings_worksheet" }
-  end
-
   def update
     hearing.update!(worksheet_params)
     if hearing.is_a?(LegacyHearing)
