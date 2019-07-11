@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe MailTask do
   let(:user) { FactoryBot.create(:user) }
   let(:mail_team) { MailTeam.singleton }

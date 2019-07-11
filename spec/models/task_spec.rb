@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe Task do
   context "includes PrintsTaskTree concern" do
     describe ".structure" do
