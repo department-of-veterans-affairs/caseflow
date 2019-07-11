@@ -154,7 +154,7 @@ class ExternalApi::VADotGovService
 
     def send_facilities_distance_request(latlng:, ids:, page:)
       response = send_va_dot_gov_request(
-        query: { lat: latlng[0], long: latlng[1], page: page, ids: ids },
+        query: { lat: latlng[0], long: latlng[1], page: page, ids: ids, per_page: 50 },
         endpoint: FACILITIES_ENDPOINT
       )
       resp_body = JSON.parse(response.body)
