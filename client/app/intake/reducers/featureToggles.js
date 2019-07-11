@@ -18,7 +18,7 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) => (
   updateFromServerFeatures({
     useAmaActivationDate: false,
     withdrawDecisionReviews: false,
-    editContentionText: false,
+    editContentionText: false
   }, data.featureToggles)
 );
 
