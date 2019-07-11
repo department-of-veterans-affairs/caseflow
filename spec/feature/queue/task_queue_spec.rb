@@ -392,6 +392,30 @@ binding.pry
       end
     end
 
+    context "when VacateMotionMailTask is sent to judge for review" do
+      let!(:root_task) { FactoryBot.create(:root_task) }
+      let!(:another_judge_user) { FactoryBot.create(:user, full_name: "Another Judge") }
+      let!(:another_vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: another_judge_user.css_id) }
+      let!(:another_judge_team) { JudgeTeam.create_for_judge(another_judge_user) }
+      let!(:judge_user) { FactoryBot.create(:user, full_name: "Appeal Decision Judge") }
+      let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+      let!(:decision_judge_team) { JudgeTeam.create_for_judge(judge_user) }
+      let!(:decision_issue) { create(:decision_issue, decision_review: appeal, request_issues: appeal.request_issues) }
+      let!(:decision_judge_task) do
+        FactoryBot.create(
+          :ama_judge_decision_review_task,
+          :on_hold,
+          assigned_to: judge_user,
+          appeal: appeal,
+          parent: root_task
+        )
+      end
+
+      it "assigns judge user" do
+        validate_pulac_cerullo_tasks_created(VacateMotionMailTask, COPY::VACATE_MOTION_MAIL_TASK_LABEL)
+      end
+    end
+
     context "when there is no active root task for the appeal" do
       let!(:root_task) { FactoryBot.create(:root_task, :completed) }
 

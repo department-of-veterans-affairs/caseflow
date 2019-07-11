@@ -107,6 +107,14 @@ class TaskActionRepository
       }
     end
 
+    def assign_judge_draft_motion_to_vacate_data(task, _user = nil)
+      {
+        selected: task.root_task.children.find { |child| child.is_a?(JudgeTask) }&.assigned_to,
+        options: users_to_options(Judge.list_all),
+        type: DraftMotionToVacateTask.name
+      }
+    end
+
     def dispatch_return_to_judge_data(task, _user = nil)
       {
         selected: task.root_task.children.find { |child| child.is_a?(JudgeTask) }&.assigned_to,
