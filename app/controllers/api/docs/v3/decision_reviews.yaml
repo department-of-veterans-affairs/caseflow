@@ -141,6 +141,16 @@ paths:
       responses:
         '202':
           description: Accepted
+          headers:
+            Content-Location:
+              schema:
+                type: string
+                format: url
+              description: Link to check status of intake for HigherLevelReview
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/intake_status"
         '4XX':
           description: Invalid Request
           content:
@@ -483,116 +493,15 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      type:
-                        type: string
-                        description: Will be "higherLevelReview"
-                      attributes:
-                        type: object
-                        properties:
-                          appealIds:
-                            type: array
-                            items:
-                              type: string
-                          updated:
-                            type: string
-                            format: date-time
-                          incompleteHistory:
-                            type: boolean
-                          active:
-                            type: boolean
-                          description:
-                            type: string
-                          location:
-                            type: string
-                          aoj:
-                            type: string
-                          programArea:
-                            type: string
-                          status:
-                            type: object
-                            properties:
-                              type:
-                                type: string
-                              details:
-                                type: object
-                                properties:
-                                  description:
-                                    type: string
-                                  disposition:
-                                    type: string
-                          alerts:
-                            type: array
-                            items:
-                              type: object
-                          issues:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                active:
-                                  type: boolean
-                                lastAction:
-                                  type: string
-                                  format: date-time
-                                date:
-                                  type: string
-                                  format: date-time
-                                description:
-                                  type: string
-                                diagnosticCode:
-                                  type: string
-                          events:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                type:
-                                  type: string
-                                date:
-                                  type: string
-                                  format: date-time
-                          evidence:
-                            type: array
-                            description: Will be empty https://github.com/department-of-veterans-affairs/caseflow/blob/c57d95f6ea11985b7658782cc82005107e9c3156/app/models/serializers/v2/appeal_status_serializer.rb#L37
-                            items:
-                              type: object
-                              nullable: true
+                $ref: "#/components/schemas/intake_status"
               examples:
-                received_status:
+                submitted_status:
                   value:
                     data:
-                      id: HLR1
-                      type: 'higherLevelReview'
+                      id: 123e4567-e89b-12d3-a456-426655440000
+                      type: intakeStatus
                       attributes:
-                        appealIds:
-                        - HLR1
-                        updated: '2019-07-05T13:15:47-04:00'
-                        incompleteHistory: false
-                        active: true
-                        description: Streptococcic arthritis and 2 others
-                        location: aoj
-                        aoj: vba
-                        programArea: compensation
-                        status:
-                          type: 'hlr_received'
-                          details: {}
-                        alerts: []
-                        issues:
-                        - active: true
-                          lastAction:
-                          date:
-                          description: Streptococcic arthritis
-                          diagnosticCode: '5008'
-                        events:
-                        - AppealEvent
-                        evidence: []
+                        status: submitted
         '404':
           description: id not found
           content:
@@ -879,3 +788,25 @@ components:
             type: string
           detail:
             type: string
+    intake_status:
+      description: An accepted Decision Review still needs to be processed before the Decision Review can be accessed
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            type:
+              type: string
+              description: Will be "intakeStatus"
+            attributes:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - processed
+                    - attempted
+                    - submitted
+                    - canceled
