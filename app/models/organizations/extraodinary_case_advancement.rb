@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class ExtraodinaryCaseAdvancementTeam < Organization
+class ExtraordinaryCaseAdvancementTeam < Organization
   def self.singleton
-    ExtroadinaryCaseAdvancementTeam.first || ExtraodinaryCaseAdvancementTeam.create(name: "ExtroadinaryCaseAdvancement", url: "eca")
+    ExtraordinaryCaseAdvancementTeam.first || ExtraordinaryCaseAdvancementTeam.create(name: "ExtraordinaryCaseAdvancement", url: "eca")
   end
 end

@@ -287,8 +287,8 @@ class TaskActionRepository
 
     def extraordinary_case_advancement_data(task, _user = nil)
       {
-        selected: task.appeal.assigned_judge
-        options: users_to_options(Judge.list_all),
+        selected: task.appeal.assigned_judge,
+        options: users_to_options(Judge.list_all)
       }
     end
 
