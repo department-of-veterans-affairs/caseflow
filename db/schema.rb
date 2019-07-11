@@ -544,7 +544,7 @@ ActiveRecord::Schema.define(version: 20190711181657) do
   create_table "hearings", force: :cascade do |t|
     t.integer "appeal_id", null: false
     t.string "bva_poc"
-    t.datetime "created_at"
+    t.datetime "created_at", comment: "Automatic timestamp when row was created."
     t.string "disposition"
     t.boolean "evidence_window_waived"
     t.integer "hearing_day_id", null: false
@@ -558,7 +558,7 @@ ActiveRecord::Schema.define(version: 20190711181657) do
     t.text "summary"
     t.boolean "transcript_requested"
     t.date "transcript_sent_date"
-    t.datetime "updated_at"
+    t.datetime "updated_at", comment: "Timestamp when record was last updated."
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.string "witness"
     t.index ["uuid"], name: "index_hearings_on_uuid"
@@ -656,11 +656,11 @@ ActiveRecord::Schema.define(version: 20190711181657) do
 
   create_table "legacy_hearings", force: :cascade do |t|
     t.integer "appeal_id"
-    t.datetime "created_at"
+    t.datetime "created_at", comment: "Automatic timestamp when row was created."
     t.string "military_service"
     t.boolean "prepped"
     t.text "summary"
-    t.datetime "updated_at"
+    t.datetime "updated_at", comment: "Timestamp when record was last updated."
     t.integer "user_id"
     t.string "vacols_id", null: false
     t.string "witness"
