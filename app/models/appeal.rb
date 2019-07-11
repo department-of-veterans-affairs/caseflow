@@ -212,8 +212,7 @@ class Appeal < DecisionReview
 
   delegate :first_name,
            :last_name,
-           :name_suffix,
-           :ssn, to: :veteran, prefix: true, allow_nil: true
+           :name_suffix, to: :veteran, prefix: true, allow_nil: true
 
   def appellant
     claimants.first
