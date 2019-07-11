@@ -499,7 +499,7 @@ paths:
                   value:
                     data:
                       id: 123e4567-e89b-12d3-a456-426655440000
-                      type: intakeStatus
+                      type: IntakeStatus
                       attributes:
                         status: submitted
         '303':
@@ -807,7 +807,7 @@ components:
               type: string
             type:
               type: string
-              description: Will be "intakeStatus"
+              description: Will be "IntakeStatus"
             attributes:
               type: object
               properties:
