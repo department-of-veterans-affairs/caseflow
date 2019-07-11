@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe WorkQueue::LegacyAppealSerializer do
   let(:user) { create(:user) }
   let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }

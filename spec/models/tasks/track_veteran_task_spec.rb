@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe TrackVeteranTask do
   let(:vso) { FactoryBot.create(:vso) }
   let(:root_task) { FactoryBot.create(:root_task) }

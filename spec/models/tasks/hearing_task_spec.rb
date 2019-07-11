@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe HearingTask do
   describe ".create_change_hearing_disposition_task" do
     let(:appeal) { FactoryBot.create(:appeal) }
