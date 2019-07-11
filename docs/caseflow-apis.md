@@ -18,7 +18,7 @@ Only actively maintained APIs are documented here. See the Git log history of th
 All API requests require a valid API key token, which is passed in the `Authorization` HTTP header. See the `curl`
 examples below for the proper syntax.
 
-If you need an API key, you can request one [[ TODO ]].
+If you need an API key, you can request one via [YourIT](https://yourit.va.gov/).
 
 If you are a Caseflow administrator, you can create a key in the Caseflow Rails console:
 
