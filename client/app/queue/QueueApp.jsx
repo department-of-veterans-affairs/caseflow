@@ -256,8 +256,6 @@ class QueueApp extends React.PureComponent {
 
   routedEndHoldModal = (props) => <EndHoldModal {...props.match.params} />;
 
-  routedExtraordinaryCaseAdvancementModal = (props) => <ExtraordinaryCaseAdvancementModal {...props.match.params} />;
-
   queueName = () => this.props.userRole === USER_ROLE_TYPES.attorney ? 'Your Queue' : 'Review Cases';
 
   propsForQueueLoadingScreen = () => {
@@ -382,7 +380,7 @@ class QueueApp extends React.PureComponent {
             render={this.routedEndHoldModal} />
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.EXTRAORDINARY_CASE_ADVANCEMENT.value}`}
-            render={this.routedExtraordinaryCaseAdvancementModal} />
+            render={this.routedAssignToUser} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"
