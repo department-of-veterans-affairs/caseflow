@@ -134,6 +134,52 @@ paths:
                             format: date
                           nonrating_issue_category:
                             $ref: "#/components/schemas/nonrating_issue_category"
+            examples:
+              pension:
+                value: {
+                  "data": {
+                    "type": "higher_level_review",
+                      "attributes": {
+                        "receipt_date": "2019-07-10",
+                        "informal_conference": true,
+                        "same_office": false,
+                        "legacy_opt_in_approved": true,
+                        "benefit_type": "pension"
+                      },
+                      "relationships": {
+                        "veteran": {
+                          "data": {
+                            "type": "veteran",
+                            "id": "55555555"
+                          }
+                        },
+                        "claimant": {
+                          "data": {
+                            "type": "claimant",
+                            "id": "44444444",
+                            "meta": {
+                              "payee_code": "10"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "included": [
+                      {
+                        "type": "nonrating_issue",
+                        "attributes": {
+                          "decision_text": "veteran status verified",
+                          "decision_date": "2019-07-11",
+                          "withdrawal_date": null,
+                          "nonrating_issue_category": "Eligibility | Veteran Status"
+                        }
+                      },
+                      {
+                        "type": "rating_issue",
+                        "id": "def456"
+                      }
+                    ]
+                  }
       responses:
         '202':
           description: Created
