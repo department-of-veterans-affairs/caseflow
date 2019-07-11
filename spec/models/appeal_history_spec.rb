@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe AppealHistory do
   let(:original) do
     create(:legacy_appeal, vacols_case:

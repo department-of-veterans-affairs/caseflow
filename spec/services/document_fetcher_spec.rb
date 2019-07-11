@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe DocumentFetcher do
   let(:appeal) { Generators::LegacyAppeal.build }
   let(:document_service) { DocumentFetcher.new(appeal: appeal, use_efolder: true) }

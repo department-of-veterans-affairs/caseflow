@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe RoundRobinAssigner do
   class RoundRobinAssignedTask < Task
     include RoundRobinAssigner

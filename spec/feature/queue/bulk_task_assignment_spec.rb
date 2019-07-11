@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 RSpec.feature "Bulk task assignment" do
   let(:user) { FactoryBot.create(:user) }
 

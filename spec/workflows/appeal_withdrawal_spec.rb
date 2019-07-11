@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe "Withdrawing an appeal" do
   context "appeal has one request issue and it is withdrawn" do
     it "allows it to be distributed" do

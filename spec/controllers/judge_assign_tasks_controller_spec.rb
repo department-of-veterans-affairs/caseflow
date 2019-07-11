@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 RSpec.describe JudgeAssignTasksController do
   describe "POST /judge_assign_tasks" do
     context "when cases will be assigned to an attorney" do
