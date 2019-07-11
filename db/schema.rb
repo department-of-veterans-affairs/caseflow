@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190705172439) do
+ActiveRecord::Schema.define(version: 20190711152558) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -544,6 +544,7 @@ ActiveRecord::Schema.define(version: 20190705172439) do
   create_table "hearings", force: :cascade do |t|
     t.integer "appeal_id", null: false
     t.string "bva_poc"
+    t.datetime "created_at"
     t.string "disposition"
     t.boolean "evidence_window_waived"
     t.integer "hearing_day_id", null: false
@@ -557,6 +558,7 @@ ActiveRecord::Schema.define(version: 20190705172439) do
     t.text "summary"
     t.boolean "transcript_requested"
     t.date "transcript_sent_date"
+    t.datetime "updated_at"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.string "witness"
     t.index ["uuid"], name: "index_hearings_on_uuid"
