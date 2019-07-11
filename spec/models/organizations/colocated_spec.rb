@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe Colocated do
   let(:colocated_org) { Colocated.singleton }
   let(:appeal) { nil }

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe Representative do
   let(:participant_id) { "123456" }
   let(:vso_participant_id) { "789" }

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "../support/clear_cache"
+
 describe PrometheusService do
   context "PrometheusGaugeSummary" do
     before do

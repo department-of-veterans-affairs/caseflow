@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe BvaDispatch do
   let(:bva_dispatch_org) { BvaDispatch.singleton }
 

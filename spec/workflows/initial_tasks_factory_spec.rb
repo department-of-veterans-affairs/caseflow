@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe InitialTasksFactory do
   context ".create_root_and_sub_tasks!" do
     let(:participant_id_with_pva) { "1234" }
