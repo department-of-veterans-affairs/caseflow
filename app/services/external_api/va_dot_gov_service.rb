@@ -19,9 +19,9 @@ class ExternalApi::VADotGovService
     end
 
     def get_facility_data(ids:)
-      send_multiple_facility_requests(ids) do |page, facility_ids|
+      send_multiple_facility_requests(ids) do |page|
         send_facilities_data_request(
-          ids: facility_ids.join(","), page: page
+          ids: ids.join(","), page: page
         )
       end
     end
