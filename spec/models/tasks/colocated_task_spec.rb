@@ -285,22 +285,10 @@ describe ColocatedTask do
 
       context "when completing a translation task" do
         let(:action) { :translation }
-        it "should update location to translation in vacols" do
+        it "should update location to the assigner in vacols" do
           expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
           colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
           expect(vacols_case.reload.bfcurloc).to eq staff.slogid
-        end
-      end
-
-      context "when completing a schedule hearing task" do
-        let(:action) { :schedule_hearing }
-        let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal_1) }
-
-        it "should update location to schedule hearing in vacols" do
-          expect(vacols_case.bfcurloc).to_not eq staff.slogid
-          colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
-          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
-          expect(appeal_1.tasks.pluck(:type).to_a).to include(ScheduleHearingTask.name)
         end
       end
 
@@ -475,15 +463,6 @@ describe ColocatedTask do
       context "when the location code is CASEFLOW" do
         let(:location_code) { LegacyAppeal::LOCATION_CODES[:caseflow] }
 
-        context "for translation task" do
-          let(:action) { :translation }
-
-          it "assigns back to translation VACOLS location" do
-            legacy_colocated_task.update!(status: Constants.TASK_STATUSES.cancelled)
-            expect(org_colocated_task.reload.appeal.location_code).to eq(LegacyAppeal::LOCATION_CODES[:translation])
-          end
-        end
-
         context "for AOJ ColocatedTask" do
           let(:action) { :aoj }
 
@@ -495,7 +474,7 @@ describe ColocatedTask do
       end
 
       context "when the location code is not CASEFLOW" do
-        let(:action) { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym }
+        let(:action) { ColocatedTask.actions_assigned_to_colocated.sample.to_sym }
         let(:location_code) { "FAKELOC" }
 
         it "does not change the case's location_code" do

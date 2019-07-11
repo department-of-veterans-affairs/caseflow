@@ -74,10 +74,10 @@ FactoryBot.define do
       parent { create(:generic_task) }
     end
 
-    factory :colocated_task, traits: [Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym] do
+    factory :colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
       parent { create(:generic_task) }
 
-      factory :ama_colocated_task, traits: [Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym] do
+      factory :ama_colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
         appeal { create(:appeal) }
       end
 

@@ -58,6 +58,12 @@ class ColocatedTask < Task
     def find_subclass_by_action(action)
       subclasses.find { |task_class| task_class.label == Constants::CO_LOCATED_ADMIN_ACTIONS[action] }
     end
+
+    def actions_assigned_to_colocated
+      Constants::CO_LOCATED_ADMIN_ACTIONS.keys.select do |action|
+        find_subclass_by_action(action)&.default_assignee == Colocated.singleton
+      end
+    end
   end
 
   def label
