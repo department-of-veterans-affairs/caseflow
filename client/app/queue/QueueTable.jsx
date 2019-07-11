@@ -366,7 +366,7 @@ export default class QueueTable extends React.PureComponent {
 
       // 2. Filter data
       rowObjects = this.filterTableData(rowObjects);
-      totalTaskCount = rowObjects.length;
+      totalTaskCount = rowObjects ? rowObjects.length : 0;
 
       // 3. Generate paginated data
       const paginatedData = this.paginateData(rowObjects);
