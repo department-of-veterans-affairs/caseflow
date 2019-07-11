@@ -10,18 +10,18 @@ class ExternalApi::VADotGovService
   class << self
     # :nocov:
     def get_distance(lat:, long:, ids:)
-      facility_results = send_multiple_facility_requests(ids) do |page, facility_ids|
+      facility_results = send_multiple_facility_requests(ids) do |page|
         send_facilities_distance_request(
-          latlng: [lat, long], ids: facility_ids.join(","), page: page
+          latlng: [lat, long], ids: ids.join(","), page: page
         )
       end
       facility_results.sort_by { |res| res[:distance] }
     end
 
     def get_facility_data(ids:)
-      send_multiple_facility_requests(ids) do |page, facility_ids|
+      send_multiple_facility_requests(ids) do |page|
         send_facilities_data_request(
-          ids: facility_ids.join(","), page: page
+          ids: ids.join(","), page: page
         )
       end
     end
@@ -131,7 +131,7 @@ class ExternalApi::VADotGovService
       has_next = true
 
       until remaining_ids.empty? || !has_next
-        results = yield(page, remaining_ids)
+        results = yield(page)
 
         remaining_ids -= results[:facilities].pluck(:facility_id)
         facility_results += results[:facilities]
@@ -154,7 +154,7 @@ class ExternalApi::VADotGovService
 
     def send_facilities_distance_request(latlng:, ids:, page:)
       response = send_va_dot_gov_request(
-        query: { lat: latlng[0], long: latlng[1], page: page, ids: ids },
+        query: { lat: latlng[0], long: latlng[1], page: page, ids: ids, per_page: 50 },
         endpoint: FACILITIES_ENDPOINT
       )
       resp_body = JSON.parse(response.body)
