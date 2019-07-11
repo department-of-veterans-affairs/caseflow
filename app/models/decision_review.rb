@@ -163,7 +163,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def veteran_ssn
-    veteran.ssn
+    veteran&.ssn
   end
 
   def mark_rating_request_issues_to_reassociate!
