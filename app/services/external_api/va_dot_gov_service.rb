@@ -10,9 +10,9 @@ class ExternalApi::VADotGovService
   class << self
     # :nocov:
     def get_distance(lat:, long:, ids:)
-      facility_results = send_multiple_facility_requests(ids) do |page, facility_ids|
+      facility_results = send_multiple_facility_requests(ids) do |page|
         send_facilities_distance_request(
-          latlng: [lat, long], ids: facility_ids.join(","), page: page
+          latlng: [lat, long], ids: ids.join(","), page: page
         )
       end
       facility_results.sort_by { |res| res[:distance] }
@@ -131,7 +131,7 @@ class ExternalApi::VADotGovService
       has_next = true
 
       until remaining_ids.empty? || !has_next
-        results = yield(page, remaining_ids)
+        results = yield(page)
 
         remaining_ids -= results[:facilities].pluck(:facility_id)
         facility_results += results[:facilities]
