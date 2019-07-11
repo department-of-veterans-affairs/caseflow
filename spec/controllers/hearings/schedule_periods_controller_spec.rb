@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Build HearSched"]) }
   let!(:ro_schedule_period) { create(:ro_schedule_period) }
@@ -78,7 +80,7 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
           end_date: "2018/06/01",
           file_name: "fakeFileName.xlsx",
           file: base64_header + Base64.encode64(File.open("spec/support/validRoSpreadsheet.xlsx").read)
-        },
+        }
       }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
@@ -95,7 +97,7 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
           end_date: "2018/06/01",
           file_name: "fakeFileName.xlsx",
           file: base64_header + Base64.encode64(File.open("spec/support/roTemplateNotFollowed.xlsx").read)
-        },
+        }
       }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)

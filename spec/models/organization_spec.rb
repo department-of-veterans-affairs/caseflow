@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe Organization do
   describe ".create" do
     context "when the input URL has uppercase letters and spaces" do
@@ -174,6 +176,42 @@ describe Organization do
       it "shows the regional office column in the queue table view" do
         expect(subject).to eq(true)
       end
+    end
+  end
+
+  describe ".use_task_pages_api?" do
+    subject { organization.use_task_pages_api? }
+
+    context "for a generic organization" do
+      let(:organization) { FactoryBot.create(:organization) }
+
+      it "does not use the task pages API" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "for VLJ Support Staff" do
+      let(:organization) { Colocated.singleton }
+
+      it "uses the task pages API" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "for HearingsManagement organization" do
+      let(:organization) { HearingsManagement.singleton }
+
+      it "uses the task pages API" do
+        expect(subject).to eq(true)
+      end
+    end
+  end
+
+  describe ".queue_tabs" do
+    let(:org) { FactoryBot.create(:organization) }
+
+    it "returns the expected 3 tabs" do
+      expect(org.queue_tabs.map(&:class)).to eq([UnassignedTasksTab, AssignedTasksTab, CompletedTasksTab])
     end
   end
 end

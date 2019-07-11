@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe DecisionReviewsController, type: :controller do
   before do
     FeatureToggle.enable!(:decision_reviews)
@@ -21,6 +23,16 @@ describe DecisionReviewsController, type: :controller do
 
         expect(response.status).to eq 302
         expect(response.body).to match(/unauthorized/)
+      end
+    end
+
+    context "user has Admin Intake role" do
+      let(:user) { User.authenticate!(roles: ["Admin Intake"]) }
+
+      it "displays org queue page" do
+        get :index, params: { business_line_slug: non_comp_org.url }
+
+        expect(response.status).to eq 200
       end
     end
 

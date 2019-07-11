@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe WorkQueue::VeteranRecordRequestSerializer do
   let(:veteran) { create(:veteran) }
   let(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }

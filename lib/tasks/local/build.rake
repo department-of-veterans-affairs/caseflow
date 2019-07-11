@@ -3,8 +3,8 @@
 namespace :local do
   desc "build local development environment"
   task :build do
-    puts "Building docker services from configuration"
-    system("./local/vacols/build_push.sh local") || abort
+    puts "Downloading facols image from ECR"
+    system("./local/vacols/build_push.sh rake") || abort
 
     puts "Starting docker containers in the background"
     system("docker-compose up -d") || abort

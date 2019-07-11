@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe TrackVeteranTask do
   let(:vso) { FactoryBot.create(:vso) }
   let(:root_task) { FactoryBot.create(:root_task) }
@@ -139,6 +141,44 @@ describe TrackVeteranTask do
 
           expect(subject).to eq([0, 0])
           expect(TrackVeteranTask.count).to eq(task_count_before)
+        end
+      end
+    end
+
+    context "when an IHP task has been assigned to an individual person" do
+      let(:vso) { FactoryBot.create(:vso) }
+      let(:vso_staff) { FactoryBot.create(:user) }
+      let(:org_ihp_task) do
+        FactoryBot.create(:informal_hearing_presentation_task, appeal: appeal, parent: root_task, assigned_to: vso)
+      end
+      let!(:individual_ihp_task) do
+        FactoryBot.create(
+          :informal_hearing_presentation_task,
+          appeal: appeal,
+          parent: org_ihp_task,
+          assigned_to: vso_staff
+        )
+      end
+
+      before do
+        OrganizationsUser.add_user_to_organization(vso_staff, vso)
+      end
+
+      context "when the individual's VSO is still the representative" do
+        before { allow_any_instance_of(Appeal).to receive(:representatives).and_return([vso]) }
+
+        it "leaves the individually-assigned IHP task open after syncing tracking tasks" do
+          expect(individual_ihp_task.status).to eq(Constants.TASK_STATUSES.assigned)
+          subject
+          expect(individual_ihp_task.reload.status).to eq(Constants.TASK_STATUSES.assigned)
+        end
+      end
+
+      context "when the individual's VSO no longer represents the appellant" do
+        it "closes the individually-assigned IHP task" do
+          expect(individual_ihp_task.status).to eq(Constants.TASK_STATUSES.assigned)
+          subject
+          expect(individual_ihp_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
         end
       end
     end

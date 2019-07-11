@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe SupplementalClaim do
   before do
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
@@ -49,12 +51,11 @@ describe SupplementalClaim do
         end
 
         context "invalid Veteran" do
-          let(:ssn) { nil }
-
           context "processed in VBMS" do
             let(:benefit_type) { "compensation" }
 
             it "adds an error" do
+              veteran.update(first_name: nil)
               expect(subject).to eq false
               expect(supplemental_claim.errors[:veteran]).to include("veteran_not_valid")
             end

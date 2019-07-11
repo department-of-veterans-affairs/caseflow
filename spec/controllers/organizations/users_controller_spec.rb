@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe Organizations::UsersController, type: :controller do
   describe "GET /organizations/:business_line/users" do
     subject { get :index, params: { organization_url: non_comp_org.url }, format: :json }

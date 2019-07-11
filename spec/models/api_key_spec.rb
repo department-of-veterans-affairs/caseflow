@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe ApiKey do
   context ".create!" do
     subject { ApiKey.create!(consumer_name: "CaseSlow") }

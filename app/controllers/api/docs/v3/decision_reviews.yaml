@@ -1,0 +1,819 @@
+openapi: 3.0.0
+info:
+  title: Decision Reviews
+  description: API version 3 for Decision Reviews provided by the Lighthouse Project
+  version: 3.0.0
+servers:
+  - url: https://dev-api.va.gov/services/appeals/{version}/decision_review
+    description: "VA.gov API development environment"
+    variables:
+      version:
+        default: "v3"
+paths:
+  /higher_level_reviews:
+    post:
+      summary: Creates a Higher-Level Review.
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              required:
+                - data
+                # included (NOT required)
+              properties:
+                data:
+                  type: object
+                  required:
+                    - type
+                    - attributes
+                    - relationships
+                  properties:
+                    type:
+                      type: string
+                      enum: [higher_level_review]
+                    attributes:
+                      type: object
+                      required:
+                        - receipt_date
+                        - informal_conference
+                        - same_office
+                        - legacy_opt_in_approved
+                        - benefit_type
+                      properties:
+                        receipt_date:
+                          type: string
+                          format: date
+                        informal_conference:
+                          type: boolean
+                        same_office:
+                          type: boolean
+                        legacy_opt_in_approved:
+                          type: boolean
+                        benefit_type:
+                          type: string
+                          enum:
+                            - compensation
+                            - pension
+                            - fiduciary
+                            - insurance
+                            - education
+                            - voc_rehab
+                            - loan_guaranty
+                            - vha
+                            - nca
+                    relationships:
+                      type: object
+                      required:
+                        - veteran
+                        # claimant (NOT required)
+                      properties:
+                        veteran:
+                          type: object
+                          required:
+                            - data
+                          properties:
+                            data:
+                              type: object
+                              required:
+                                - type
+                                - id
+                              properties:
+                                type:
+                                  type: string
+                                  enum: [veteran]
+                                id: # veteran_file_number
+                                  type: string
+                        claimant: # if claimant is not included, the veteran is the claimant (and their participantID is looked up)
+                          type: object
+                          required:
+                            - data
+                          properties:
+                            data:
+                              type: object
+                              required:
+                                - type
+                                - id
+                                - meta
+                              properties:
+                                type:
+                                  type: string
+                                  enum: [claimant]
+                                id: # participantID
+                                  type: string
+                                meta:
+                                  type: object
+                                  required:
+                                    - payee_code
+                                  properties:
+                                    payee_code:
+                                      $ref: "#/components/schemas/payee_code"
+                included:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - type
+                      - attributes
+                    properties:
+                      type:
+                        type: string
+                        enum: [request_issue]
+                      attributes:
+                        type: object
+                        required:
+                          - decision_text
+                          - decision_date
+                          # withdrawal_date (NOT required)
+                          # nonrating_issue_category (NOT required)
+                        properties:
+                          decision_text:
+                            type: string
+                          decision_date:
+                            type: string
+                            format: date
+                          withdrawal_date:
+                            type: string
+                            format: date
+                          nonrating_issue_category:
+                            $ref: "#/components/schemas/nonrating_issue_category"
+      responses:
+        '202':
+          description: Accepted
+          headers:
+            Content-Location:
+              schema:
+                type: string
+                format: url
+              description: Link to check status of intake for HigherLevelReview
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/intake_status"
+        '4XX':
+          description: Invalid Request
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+        '400':
+          description: |-
+            400 response
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                malformed_request:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "400",
+                        "title":  "Malformed request",
+                        "code":  "malformed_request"
+                      }
+                    ]
+                  }
+        '401':
+          description: |-
+            401 response
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                unauthenticated:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "401",
+                        "title":  "Unauthenticated",
+                        "code":  "unauthenticated"
+                      }
+                    ]
+                  }
+        '403':
+          description: |-
+            403 response
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                veteran_not_accessible:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "403",
+                        "title":  "Veteran File inaccessible",
+                        "code":  "veteran_not_accessible"
+                      }
+                    ]
+                  }
+        '404':
+          description: |-
+            404 response
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                veteran_not_found:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "404",
+                        "title":  "Veteran File not found",
+                        "code":  "veteran_not_found"
+                      }
+                    ]
+                  }
+                issue_not_found:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "404",
+                        "title":  "Issue not found",
+                        "code":  "issue_not_found"
+                      }
+                    ]
+                  }
+                claimant_not_found:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "404",
+                        "title":  "Claimant not found",
+                        "code":  "claimant_not_found"
+                      }
+                    ]
+                  }
+        '409':
+          description: |-
+            409 response
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                duplicate_intake_in_progress:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "409",
+                        "title":  "Intake in progress",
+                        "code":  "duplicate_intake_in_progress"
+                      }
+                    ]
+                  }
+        '422':
+          description: |-
+            422 response
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                payee_code_required:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Claimant payee code may not be blank",
+                        "code":  "payee_code_required"
+                      }
+                    ]
+                  }
+                claimant_required:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Claimant participant id may not be blank",
+                        "code":  "claimant_required"
+                      }
+                    ]
+                  }
+                claimant_address_required:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Claimant address required",
+                        "code":  "claimant_address_required"
+                      }
+                    ]
+                  }
+                benefit_type_requires_payee_code:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Benefit type requires payee code",
+                        "code":  "benefit_type_requires_payee_code"
+                      }
+                    ]
+                  }
+                duplicate_of_rating_issue_in_active_review:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Duplicate rating issue",
+                        "code":  "duplicate_of_rating_issue_in_active_review"
+                      }
+                    ]
+                  }
+                invalid_file_number:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Invalid Veteran File number",
+                        "code":  "invalid_file_number"
+                      }
+                    ]
+                  }
+                claimant_ineligible:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Claimant Ineligible (not on original Benefit Claim or no POA)",
+                        "code":  "claimant_ineligible"
+                      }
+                    ]
+                  }
+                untimely:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Issue is ineligible because it has a prior decision date that’s older than 1 year",
+                        "code":  "untimely"
+                      }
+                    ]
+                  }
+                before_ama:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Issue is ineligible because it has a prior decision date before February 19, 2019",
+                        "code":  "before_ama"
+                      }
+                    ]
+                  }
+                higher_level_review_to_higher_level_review:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Issue is ineligible because it was last processed as a Higher-Level Review and this can't be done twice in a row",
+                        "code":  "higher_level_review_to_higher_level_review"
+                      }
+                    ]
+                  }
+                appeal_to_higher_level_review:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Issue is ineligible because it was last processed as a Board Appeal which can't be followed by a Higher-Level Review",
+                        "code":  "appeal_to_higher_level_review"
+                      }
+                    ]
+                  }
+                legacy_issue_not_withdrawn:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Issue is ineligible because the same issue is under review as a Legacy Appeal but the claimant didn’t choose to withdraw their issue from the legacy system",
+                        "code":  "legacy_issue_not_withdrawn"
+                      }
+                    ]
+                  }
+                legacy_appeal_not_eligible:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Issue is ineligible because the same issue is under review as a Legacy Appeal and that appeal is outside the window of eligibility",
+                        "code":  "legacy_appeal_not_eligible"
+                      }
+                    ]
+                  }
+                veteran_has_multiple_phone_numbers:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Veteran has multiple phone numbers",
+                        "code":  "veteran_has_multiple_phone_numbers"
+                      }
+                    ]
+                  }
+                veteran_not_valid:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Veteran not valid",
+                        "code":  "veteran_not_valid"
+                      }
+                    ]
+                  }
+                reserved_veteran_file_number:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Reserved veteran file number",
+                        "code":  "reserved_veteran_file_number"
+                      }
+                    ]
+                  }
+                unknown_error:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Unknown error",
+                        "code":  "unknown_error"
+                      }
+                    ]
+                  }
+        '5XX':
+          description: Failed
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+  /higher_level_reviews/status/{uuid}:
+    get:
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          description: UUID of an Accepted Higher-Level Review
+          schema:
+            type : string
+            format: uuid
+            pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+      summary: After submitting a Higher-Level Review, you can check to see its current status
+      responses:
+        '200':
+          description: Status found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/intake_status"
+              examples:
+                submitted_status:
+                  value:
+                    data:
+                      id: 123e4567-e89b-12d3-a456-426655440000
+                      type: IntakeStatus
+                      attributes:
+                        status: submitted
+        '303':
+          description: See other, processing finished
+          headers:
+            Location:
+              schema:
+                type: string
+                format: url
+              description: Link to HigherLevelReview
+        '404':
+          description: id not found
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+        '4XX':
+          description: Invalid Request
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+        '5XX':
+          description: Failed
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+components:
+  schemas:
+    nonrating_issue_category:
+      type: string
+      enum:
+        # for benefit type:  compensation
+        - Unknown issue category
+        - Apportionment
+        - Incarceration Adjustments
+        - Audit Error Worksheet (DFAS)
+        - Active Duty Adjustments
+        - Drill Pay Adjustments
+        - Character of discharge determinations
+        - Income/net worth (pension)
+        - Dependent child - Adopted
+        - Dependent child - Stepchild
+        - Dependent child - Biological
+        - Dependency Spouse - Common law marriage
+        - Dependency Spouse - Inference of marriage
+        - Dependency Spouse - Deemed valid marriage
+        - Military Retired Pay
+        - Contested Claims (other than apportionment)
+        - Lack of Qualifying Service
+        - Other non-rated
+        # for benefit type:  pension
+        - Eligibility | Wartime service
+        - Eligibility | Veteran Status
+        - Income/Net Worth | Countable Income
+        - Income/Net Worth | Residential Lot Size
+        - Income/Net Worth | Medical Expense Deductions
+        - Effective date | Liberalizing Legislation
+        - Effective date | 3.400(b)(ii)(B)
+        - Dependent Eligibility | Adoption
+        - Dependent Eligibility | Stepchild
+        - Dependent Eligibility | School child
+        - Dependent Eligibility | Validity of marriage
+        - Dependent Eligibility | Parent(s)
+        - Dependent Eligibility | Other
+        - Penalty Period
+        - Post Award Audit
+        - Overpayment | Validity of debt
+        - Overpayment | Waiver
+        - Apportionment
+        - Survivors pension eligibility
+        - Burial Benefits - NSC Burial
+        - Burial Benefits - Plot or Interment Allowance
+        - Burial Benefits - Transportation Allowance
+        - Burial Benefits - VA Hospitalization Death
+        # for benefit type:  fiduciary
+        - Appointment of a Fiduciary (38 CFR 13.100)
+        - Removal of a Fiduciary (38 CFR 13.500)
+        - Misuse Determination (38 CFR 13.400)
+        - RO Director Reconsideration of Misuse Determination (13.400(d))
+        - P&F Director's Negligence Determination for Benefits Reissuance (13.410)
+        # for benefit type:  voc_rehab
+        - Basic Eligibility
+        - Entitlement to Services
+        - Plan/Goal Selection
+        - Equipment/Supply Purchases
+        - Additional Training
+        - Change of Program
+        - Feasibility to Pursue a Vocational Goal
+        - Training Facility Selection
+        - Subsistence Allowance
+        - Employment Adjustment Allowance
+        - Entitlement Extension
+        - Advance from the Revolving Fund Loan
+        - Retroactive Induction
+        - Retroactive Reimbursement
+        - Successful Closure of Case
+        - Discontinue Services
+        - Interruption of Services
+        # for benefit type:  education
+        - Accrued
+        - Eligibility | 38 U.S.C. ch. 30
+        - Eligibility | 38 U.S.C. ch. 35
+        - Eligibility | 38 U.S.C. ch. 32
+        - Eligibility | 38 U.S.C. ch. 33
+        - Eligibility | 38 U.S.C. ch. 1606
+        - Entitlement | 38 U.S.C. ch. 30
+        - Entitlement | 38 U.S.C. ch. 35
+        - Entitlement | 38 U.S.C. ch. 32
+        - Entitlement | 38 U.S.C. ch. 33
+        - Entitlement | 38 U.S.C. ch. 1606
+        - Effective Date of Award | 38 U.S.C. ch. 35
+        - Payment | 38 U.S.C. ch. 30
+        - Payment | 38 U.S.C. ch. 35
+        - Payment | 38 U.S.C. ch. 32
+        - Payment | 38 U.S.C. ch. 33
+        - Payment | 38 U.S.C. ch. 1606
+        - Overpayment | Validity of debt
+        - Vet Tec
+        - Delimiting Date Issues | 38 U.S.C. ch. 30
+        - Delimiting Date Issues | 38 U.S.C. ch. 35
+        - Delimiting Date Issues | 38 U.S.C. ch. 32
+        - Delimiting Date Issues | 38 U.S.C. ch. 33
+        - Delimiting Date Issues | 38 U.S.C. ch. 1606
+        - Other
+        # for benefit type:  insurance
+        - Waiver of premiums (1912-1914) | Date of total disability
+        - Waiver of premiums (1912-1914) | Effective date
+        - Waiver of premiums (1912-1914) | TDIP (1915)
+        - Waiver of premiums (1912-1914) | Other
+        - Reinstatement | Medically Qualified
+        - Reinstatement | Other
+        - RH (1922(a) S-DVI) | Timely application
+        - RH (1922(a) S-DVI) | Medically qualified
+        - RH (1922(a) S-DVI) | Discharged before 4/25/51
+        - RH (1922(a) S-DVI) | Other
+        - SRH (1922(b) S-DVI) | Timely application
+        - SRH (1922(b) S-DVI) | Over age 65
+        - SRH (1922(b) S-DVI) | Other
+        - VMLI (2106) | LOC/Reverse Mortgage
+        - VMLI (2106) | Over age 70
+        - VMLI (2106) | Death Award
+        - VMLI (2106) | Other
+        - Contested death claim | Relationships
+        - Contested death claim | Testamentary capacity
+        - Contested death claim | Undue influence
+        - Contested death claim | Intent of insured
+        - Contested death claim | Other
+        - Other
+        # for benefit type:  loan_guaranty
+        - Basic eligibility - Certificate of Eligibility (COE) was denied for use of benefit
+        - Validity of debt - Existing debt indicated from loan termination is incorrect as stated
+        - Waiver of indebtedness - Existing debt should be waived to allow issuance of COE
+        - Restoration of entitlement - Remove a previous loan that was paid-in-full to allow all available entitlement on the COE
+        - Other
+        # for benefit type:  nca
+        - Entitlement | Reserves/National Guard
+        - Entitlement | Less than 24 months
+        - Entitlement | Character of service
+        - Entitlement | Merchant Marine
+        - Entitlement | No military information
+        - Entitlement | Cadet (service academies)
+        - Entitlement | Unmarried Adult Child
+        - Entitlement | Allied forces and non-citizens
+        - Entitlement | Pre-need
+        - Entitlement | Spouse/Surving Spouse
+        - Entitlement | Non-qualifying service
+        - Entitlement | ABMC/overseas burial
+        - Entitlement | Pre-WWI/burial site unknown
+        - Entitlement | Marked grave (death prior to 10-18-78)
+        - Entitlement | Marked grave (death on/after 10-18-78 to 10-31-90)
+        - Entitlement | Other
+        - Entitlement | Voided Enlistment
+        - Entitlement | Benefit Already Provided
+        - Entitlement | Confederate IMO
+        - Entitlement | Cremains not interred
+        - Entitlement | Historic marker deemed serviceable
+        - Entitlement | Medallion (no grave)
+        - Entitlement | Medallion (unmarked grave)
+        - Entitlement | Parent
+        - Entitlement | Replacement
+        - Entitlement | Unauthorized applicant
+        - Entitlement | Hmong
+        - Entitlement | Medallion (monetary allowance)
+        - Entitlement | IMO in NC
+        # for benefit type:  vha
+        - Eligibility for Treatment | Dental
+        - Eligibility for Treatment | Other
+        - Beneficiary Travel | Mileage
+        - Beneficiary Travel | Common Carrier
+        - Beneficiary Travel | Special Mode
+        - Eligibility for Fee Basis Care
+        - Indebtedness | Validity of Debt
+        - Indebtedness | Waiver
+        - Level of Priority for Treatment
+        - Clothing Allowance § 3.810(b) Certification
+        - Prosthetics Services
+        - Family Member Services | CHAMPVA Eligibility
+        - Family Member Services | CHAMPVA Medical Charges
+        - Family Member Services | Foreign Medical Program Medical Charges
+        - Family Member Services | Spina Bifida Medical Charges
+        - Family Member Services | Camp Lejeune Family Member Eligibility
+        - Other
+    payee_code:
+      type: string
+      enum:
+        - "00"
+        - "01"
+        - "02"
+        - "03"
+        - "04"
+        - "05"
+        - "06"
+        - "07"
+        - "08"
+        - "09"
+        - "10"
+        - "11"
+        - "12"
+        - "13"
+        - "14"
+        - "15"
+        - "16"
+        - "17"
+        - "18"
+        - "19"
+        - "20"
+        - "21"
+        - "22"
+        - "23"
+        - "24"
+        - "25"
+        - "26"
+        - "27"
+        - "28"
+        - "29"
+        - "30"
+        - "31"
+        - "32"
+        - "33"
+        - "34"
+        - "35"
+        - "36"
+        - "37"
+        - "38"
+        - "39"
+        - "41"
+        - "42"
+        - "43"
+        - "44"
+        - "45"
+        - "46"
+        - "47"
+        - "48"
+        - "49"
+        - "50"
+        - "60"
+        - "70"
+        - "71"
+        - "72"
+        - "73"
+        - "74"
+        - "75"
+        - "76"
+        - "77"
+        - "78"
+        - "80"
+        - "81"
+        - "82"
+        - "83"
+        - "84"
+        - "85"
+        - "86"
+        - "87"
+        - "88"
+        - "89"
+        - "99"
+    errors:
+      type: array
+      items:
+        type: object
+        properties:
+          title:
+            type: string
+          detail:
+            type: string
+    intake_status:
+      description: An accepted Decision Review still needs to be processed before the Decision Review can be accessed
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            type:
+              type: string
+              description: Will be "IntakeStatus"
+            attributes:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - attempted
+                    - submitted
+                    - canceled

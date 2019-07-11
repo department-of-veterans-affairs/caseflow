@@ -7,7 +7,6 @@ import _ from 'lodash';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Button from '../../../components/Button';
 import { crossSymbolHtml, pencilSymbol, lockIcon } from '../../../components/RenderFunctions';
-import { navigateToPrintPage } from '../../../util/PrintUtil';
 
 const EditHearingDayLink = ({ openModal }) => (
   <Button {...css({ marginLeft: '30px' })} linkStyling onClick={openModal} >
@@ -69,11 +68,6 @@ export default class DailyDocketEditLinks extends React.Component {
           <span {...css({ marginTop: '15px' })}>
             <br /><strong>Notes: </strong><br />{dailyDocket.notes}
           </span>}
-      </div>
-      <div>
-        <Button classNames={['usa-button-secondary']} onClick={navigateToPrintPage}>
-          Download & Print Page
-        </Button>
       </div>
     </React.Fragment>;
   }

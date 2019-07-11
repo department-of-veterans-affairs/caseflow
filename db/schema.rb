@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190618173816) do
+ActiveRecord::Schema.define(version: 20190705172439) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -520,6 +520,8 @@ ActiveRecord::Schema.define(version: 20190618173816) do
     t.string "state"
     t.datetime "updated_at", null: false
     t.string "zip_code"
+    t.index ["hearing_id"], name: "index_hearing_locations_on_hearing_id"
+    t.index ["hearing_type"], name: "index_hearing_locations_on_hearing_type"
   end
 
   create_table "hearing_task_associations", force: :cascade do |t|
@@ -839,6 +841,7 @@ ActiveRecord::Schema.define(version: 20190618173816) do
     t.datetime "attempted_at", comment: "Timestamp for when the request issue update processing was last attempted."
     t.integer "before_request_issue_ids", null: false, comment: "An array of the active request issue IDs previously on the decision review before this editing session. Used with after_request_issue_ids to determine appropriate actions (such as which contentions need to be removed).", array: true
     t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
+    t.datetime "created_at", comment: "Timestamp when record was initially created"
     t.integer "edited_request_issue_ids", comment: "An array of the request issue IDs that were edited during this request issues update", array: true
     t.string "error", comment: "The error message if the last attempt at processing the request issues update was not successful."
     t.datetime "last_submitted_at", comment: "Timestamp for when the processing for the request issues update was last submitted. Used to determine how long to continue retrying the processing job. Can be reset to allow for additional retries."
@@ -846,6 +849,7 @@ ActiveRecord::Schema.define(version: 20190618173816) do
     t.bigint "review_id", null: false, comment: "The ID of the decision review edited."
     t.string "review_type", null: false, comment: "The type of the decision review edited."
     t.datetime "submitted_at", comment: "Timestamp when the request issues update was originally submitted."
+    t.datetime "updated_at", comment: "Timestamp when record was last updated."
     t.bigint "user_id", null: false, comment: "The ID of the user who edited the decision review."
     t.integer "withdrawn_request_issue_ids", comment: "An array of the request issue IDs that were withdrawn during this request issues update.", array: true
     t.index ["review_type", "review_id"], name: "index_request_issues_updates_on_review_type_and_review_id"
@@ -1038,7 +1042,10 @@ ActiveRecord::Schema.define(version: 20190618173816) do
     t.string "middle_name"
     t.string "name_suffix"
     t.string "participant_id"
+    t.string "ssn", comment: "The cached Social Security Number"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
+    t.index ["participant_id"], name: "index_veterans_on_participant_id"
+    t.index ["ssn"], name: "index_veterans_on_ssn"
   end
 
   create_table "vso_configs", force: :cascade do |t|
@@ -1063,6 +1070,7 @@ ActiveRecord::Schema.define(version: 20190618173816) do
     t.boolean "remand", default: false
     t.boolean "reopen", default: false
     t.string "vacols_sequence_id"
+    t.index ["appeal_id"], name: "index_worksheet_issues_on_appeal_id"
     t.index ["deleted_at"], name: "index_worksheet_issues_on_deleted_at"
   end
 

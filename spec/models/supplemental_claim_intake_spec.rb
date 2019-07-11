@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe SupplementalClaimIntake do
   before do
     Time.zone = "Eastern Time (US & Canada)"
@@ -126,7 +128,7 @@ describe SupplementalClaimIntake do
       end
 
       context "claimant is missing address" do
-        let(:empty_address) { {:address_line_1=>nil, :address_line_2=>nil, :city=>nil, :state=>nil, :zip=>nil} }
+        let(:empty_address) { { address_line_1: nil, address_line_2: nil, city: nil, state: nil, zip: nil } }
 
         before do
           allow_any_instance_of(BgsAddressService).to receive(:fetch_bgs_record).and_return(empty_address)

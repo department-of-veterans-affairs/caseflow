@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe AssignHearingDispositionTask do
   describe "#update_from_params for ama appeal" do
     let(:appeal) { FactoryBot.create(:appeal) }

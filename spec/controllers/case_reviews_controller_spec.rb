@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 RSpec.describe CaseReviewsController, type: :controller do
   before do
     Fakes::Initializer.load!

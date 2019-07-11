@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe AsyncableJobsReporter do
   before do
     seven_am_random_date = Time.new(2019, 3, 29, 7, 0, 0).in_time_zone
@@ -87,7 +89,8 @@ describe AsyncableJobsReporter do
   describe "#as_csv" do
     it "returns a CSV-formatted string" do
       csv = subject.as_csv
-      expect(csv).to match /SupplementalClaim,\d+,#{6.days.ago},#{6.days.ago},#{7.days.ago},bad,#{veteran.participant_id}/
+      expect(csv)
+        .to match(/SupplementalClaim,\d+,#{6.days.ago},#{6.days.ago},#{7.days.ago},bad,#{veteran.participant_id}/)
       expect(CSV.parse(csv).count).to eq(7) # jobs + header
     end
   end

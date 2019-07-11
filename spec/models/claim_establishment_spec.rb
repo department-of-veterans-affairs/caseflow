@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe ClaimEstablishment do
   let(:vacols_remand_case) do
     create(:case_with_decision, :status_remand)

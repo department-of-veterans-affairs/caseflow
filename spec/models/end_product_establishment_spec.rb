@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe EndProductEstablishment do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -25,7 +27,7 @@ describe EndProductEstablishment do
   let(:reference_id) { nil }
   let(:same_office) { false }
   let(:source) { create(:higher_level_review, veteran_file_number: veteran_file_number, same_office: same_office) }
-  let(:invalid_modifiers) { nil }
+  let(:invalid_modifiers) { [] }
   let(:synced_status) { nil }
   let(:committed_at) { nil }
   let(:fake_claim_id) { "FAKECLAIMID" }
@@ -165,6 +167,37 @@ describe EndProductEstablishment do
         )
       end
 
+      context "when it is a correction end product" do
+        let(:code) { "930AMABGRC" }
+
+        it "creates an end product with the correction valid modifier" do
+          subject
+          expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+            claim_hash: {
+              benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH,
+              payee_code: "00",
+              predischarge: false,
+              claim_type: "Claim",
+              end_product_modifier: "930",
+              end_product_code: "930AMABGRC",
+              end_product_label: "AMA BVA Grant Rating Control",
+              station_of_jurisdiction: "397",
+              date: 2.days.ago.to_date,
+              suppress_acknowledgement_letter: false,
+              gulf_war_registry: false,
+              claimant_participant_id: "11223344",
+              limited_poa_code: "ABC",
+              limited_poa_access: true
+            },
+            veteran_hash: veteran.reload.to_vbms_hash,
+            user: current_user
+          )
+          expect(end_product_establishment.reload).to have_attributes(
+            modifier: "930"
+          )
+        end
+      end
+
       context "when invalid modifiers is set" do
         let(:invalid_modifiers) { ["031"] }
 
@@ -208,7 +241,7 @@ describe EndProductEstablishment do
       end
 
       it "returns NoAvailableModifiers error" do
-        expect { subject }.to raise_error(EndProductEstablishment::NoAvailableModifiers)
+        expect { subject }.to raise_error(EndProductModifierFinder::NoAvailableModifiers)
       end
     end
 
@@ -241,7 +274,7 @@ describe EndProductEstablishment do
       end
 
       it "considers those EP modifiers as closed" do
-        expect { subject }.to raise_error(EndProductEstablishment::NoAvailableModifiers)
+        expect { subject }.to raise_error(EndProductModifierFinder::NoAvailableModifiers)
       end
     end
 
@@ -389,6 +422,49 @@ describe EndProductEstablishment do
           ),
           user: current_user
         )
+      end
+    end
+
+    context "when issues are from dta decisions" do
+      let!(:prior_request_issues) do
+        [
+          create(:request_issue, contention_reference_id: "101"),
+          create(:request_issue, contention_reference_id: "121")
+        ]
+      end
+
+      let!(:dta_decision_issue) do
+        create(:decision_issue, request_issues: prior_request_issues, disposition: "DTA Error")
+      end
+
+      let!(:request_issues) do
+        [
+          create(
+            :request_issue,
+            end_product_establishment: end_product_establishment,
+            decision_review: source,
+            contested_decision_issue: dta_decision_issue,
+            contested_issue_description: "I am contesting a dta decision"
+          )
+        ]
+      end
+
+      context "when send send_original_dta_contentions is enabled" do
+        before { FeatureToggle.enable!(:send_original_dta_contentions) }
+
+        it "sends the original contention ids when creating the contention" do
+          subject
+
+          expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
+            veteran_file_number: veteran_file_number,
+            claim_id: end_product_establishment.reference_id,
+            contentions: array_including(
+              description: "I am contesting a dta decision",
+              original_contention_ids: [101, 121]
+            ),
+            user: current_user
+          )
+        end
       end
     end
   end
@@ -761,9 +837,11 @@ describe EndProductEstablishment do
       context "when the end product is canceled" do
         let(:status_type_code) { "CAN" }
 
-        it "closes request issues" do
+        it "closes request issues and cancels establishment" do
           subject
+
           expect(end_product_establishment.reload.synced_status).to eq("CAN")
+          expect(end_product_establishment.source.canceled?).to be true
           expect(request_issues.first.reload.closed_at).to eq(Time.zone.now)
           expect(request_issues.first.closed_status).to eq("end_product_canceled")
         end
@@ -927,7 +1005,10 @@ describe EndProductEstablishment do
         subject
 
         # delay in processing should be 1 day for rating (minus the processing offset of 12.hours)
-        expect(rating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now + 12.hours)
+        expect(rating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now)
+        expect(rating_issue.reload.decision_sync_last_submitted_at).to eq(
+          Time.zone.now + RequestIssue.processing_retry_interval_hours.hours
+        )
         # immediatly for nonrating
         expect(nonrating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now)
 
@@ -951,7 +1032,10 @@ describe EndProductEstablishment do
         subject
 
         # delay in processing should be 1 day (minus the processing offset of 12.hours)
-        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to eq(Time.zone.now + 12.hours)
+        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to eq(Time.zone.now)
+        expect(board_grant_effectuation.reload.decision_sync_last_submitted_at).to eq(
+          Time.zone.now + BoardGrantEffectuation.processing_retry_interval_hours.hours
+        )
         expect(DecisionIssueSyncJob).to_not have_been_enqueued.with(board_grant_effectuation)
       end
     end

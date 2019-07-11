@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "rails_helper"
 require "support/intake_helpers"
 
 feature "Appeal Edit issues" do
@@ -181,10 +182,6 @@ feature "Appeal Edit issues" do
   end
 
   context "with remove decision review enabled" do
-    before do
-      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
-    end
-
     scenario "allows all request issues to be removed and saved" do
       visit "appeals/#{appeal.uuid}/edit/"
       # remove all issues
@@ -357,6 +354,7 @@ feature "Appeal Edit issues" do
       create(:veteran,
              first_name: "Ed",
              last_name: "Merica",
+             ssn: nil,
              bgs_veteran_record: {
                sex: nil,
                ssn: nil,
@@ -388,7 +386,7 @@ feature "Appeal Edit issues" do
       expect(page).to have_content("The Veteran's profile has missing or invalid information")
       expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
       expect(page).to have_content(
-        "the corporate database, then retry establishing the EP in Caseflow: ssn, country"
+        "the corporate database, then retry establishing the EP in Caseflow: country"
       )
       expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
       expect(page).to have_button("Save", disabled: true)
@@ -653,14 +651,6 @@ feature "Appeal Edit issues" do
   end
 
   context "when remove decision reviews is enabled" do
-    before do
-      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
-    end
-
-    after do
-      FeatureToggle.disable!(:remove_decision_reviews, users: [current_user.css_id])
-    end
-
     let(:today) { Time.zone.now }
     let(:appeal) do
       # reload to get uuid

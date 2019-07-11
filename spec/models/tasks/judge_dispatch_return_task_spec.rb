@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe JudgeDispatchReturnTask do
   let(:judge) { FactoryBot.create(:user) }
   let(:dispatch_user) { FactoryBot.create(:user) }
-  let(:dispatch_task) { FactoryBot.create(:bva_dispatch_task, assigned_to: dispatch_user, parent: FactoryBot.create(:root_task)) }
+  let(:dispatch_task) do
+    create(:bva_dispatch_task, assigned_to: dispatch_user, parent: create(:root_task))
+  end
   let(:params) { { assigned_to: judge, appeal: dispatch_task.appeal, parent_id: dispatch_task.id } }
   let(:judge_dispatch_task) { JudgeDispatchReturnTask.create_from_params(params, dispatch_user) }
 
@@ -15,6 +19,7 @@ describe JudgeDispatchReturnTask do
         [
           Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
           Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+          Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
           Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h,
           Constants.TASK_ACTIONS.JUDGE_DISPATCH_RETURN_TO_ATTORNEY.to_h,
           Constants.TASK_ACTIONS.CANCEL_TASK.to_h

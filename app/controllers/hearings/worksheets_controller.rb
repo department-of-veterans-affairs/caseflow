@@ -21,17 +21,13 @@ class Hearings::WorksheetsController < HearingsController
 
     respond_to do |format|
       format.html do
-        render template: "hearings/index", locals: { print_stylesheet: "print/hearings_worksheet" }
+        render template: "hearings/index"
       end
 
       format.json do
         render json: hearing_worksheet
       end
     end
-  end
-
-  def show_print
-    show
   end
 
   def update

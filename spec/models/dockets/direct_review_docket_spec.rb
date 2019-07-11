@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe DirectReviewDocket do
   context "#due_count" do
     subject { DirectReviewDocket.new.due_count }
@@ -9,7 +11,7 @@ describe DirectReviewDocket do
 
       (300..309).each do |i|
         appeal = create(:appeal,
-                        :with_tasks,
+                        :with_post_intake_tasks,
                         docket_type: "direct_review",
                         receipt_date: i.days.ago)
         appeal.set_target_decision_date!
@@ -30,7 +32,7 @@ describe DirectReviewDocket do
 
         (102..105).each do |i|
           appeal = create(:appeal,
-                          :with_tasks,
+                          :with_post_intake_tasks,
                           docket_type: "direct_review",
                           receipt_date: i.days.ago)
           appeal.set_target_decision_date!

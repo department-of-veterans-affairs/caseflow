@@ -674,10 +674,10 @@ module IntakeHelpers
 
   # rubocop:disable Metrics/AbcSize
   def verify_request_issue_contending_decision_issue_not_readded(
-      page_url,
-      decision_review,
-      contested_decision_issues
-    )
+    page_url,
+    decision_review,
+    contested_decision_issues
+  )
     # verify that not modifying a request issue contesting a decision issue
     # does not result in readding
 

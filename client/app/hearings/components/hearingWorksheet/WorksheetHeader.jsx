@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Textarea from 'react-textarea-autosize';
+import PropTypes from 'prop-types';
 import { ClipboardIcon } from '../../../components/RenderFunctions';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../../actions/hearingWorksheetActions';
@@ -12,6 +13,7 @@ import _ from 'lodash';
 import { DISPOSITION_OPTIONS } from '../../constants';
 import Tooltip from '../../../components/Tooltip';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
+import { formatNameLong, formatNameLongReversed } from '../../../util/FormatUtil';
 
 class WorksheetFormEntry extends React.PureComponent {
   render() {
@@ -46,18 +48,15 @@ const copyButtonStyling = css({
 });
 
 const firstColumnStyling = css({
-  width: '30%',
-  marginBottom: '20px'
+  flex: '40%'
 });
 
 const secondColumnStyling = css({
-  width: '65%',
-  marginBottom: '20px'
+  flex: '60%'
 });
 
 const secondRowStyling = css({
-  width: '100%',
-  marginBottom: '20px'
+  flex: '100%'
 });
 
 class WorksheetHeader extends React.PureComponent {
@@ -66,61 +65,58 @@ class WorksheetHeader extends React.PureComponent {
   onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
   onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
 
+  getVeteranGender = (genderSymbol) => {
+    let gender = '';
+
+    if (genderSymbol === 'M') {
+      gender = 'Male';
+    } else if (genderSymbol === 'F') {
+      gender = 'Female';
+    }
+
+    return gender;
+  }
+
+  getAppellantName = (worksheet) => {
+    if (worksheet.appellant_first_name && worksheet.appellant_last_name) {
+      return formatNameLongReversed(worksheet.appellant_first_name, worksheet.appellant_last_name);
+    }
+
+    return formatNameLongReversed(worksheet.veteran_first_name, worksheet.veteran_last_name);
+  }
+
+  getDisposition = (dispositionSymbol) => {
+    const disposition = _.find(DISPOSITION_OPTIONS, { value: dispositionSymbol });
+
+    return disposition ? disposition.label : '';
+  }
+
   render() {
     const { worksheet } = this.props;
-
-    let olderVeteran = worksheet.veteran_age > 74;
-
+    const olderVeteran = worksheet.veteran_age > 74;
     const veteranClassNames = classNames({ 'cf-red-text': olderVeteran });
-
-    const getVeteranGender = (genderSymbol) => {
-      let gender = '';
-
-      if (genderSymbol === 'M') {
-        gender = 'Male';
-      } else if (genderSymbol === 'F') {
-        gender = 'Female';
-      }
-
-      return gender;
-    };
-
-    let negativeDispositionOptions = ['no_show', 'postponed', 'cancelled'];
-
-    const getAppellantName = () => {
-      if (worksheet.appellant_first_name && worksheet.appellant_last_name) {
-        return `${worksheet.appellant_last_name}, ${worksheet.appellant_first_name}`;
-      }
-
-      return `${worksheet.veteran_last_name}, ${worksheet.veteran_first_name}`;
-
-    };
-
+    const negativeDispositionOptions = ['no_show', 'postponed', 'cancelled'];
     const negativeDispositions = negativeDispositionOptions.includes(worksheet.disposition);
-
     const dispositionClassNames = classNames({ 'cf-red-text': negativeDispositions });
 
-    const getDisposition = (dispositionSymbol) => {
-      const disposition = _.find(DISPOSITION_OPTIONS, { value: dispositionSymbol });
-
-      return disposition ? disposition.label : '';
-    };
-
     return <div>
+      <div className="title">
+        <h1>
+          {`${formatNameLong(worksheet.veteran_first_name, worksheet.veteran_last_name)}`}'s Hearing Worksheet
+        </h1>
+      </div>
+
       <div className="cf-hearings-worksheet-data">
-        <div className="title">
-          <h1>{`${worksheet.veteran_first_name} ${worksheet.veteran_last_name}`}'s Hearing Worksheet</h1>
-        </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h4>VLJ</h4>
           <div className="cf-hearings-headers">{worksheet.judge ? worksheet.judge.full_name : ''}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h4>HEARING TYPE</h4>
+          <h4>{this.props.print ? 'HEAR. TYPE' : 'HEARING TYPE'}</h4>
           <div className="cf-hearings-headers">{worksheet.readable_request_type}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h4>REGIONAL OFFICE</h4>
+          <h4>{this.props.print ? 'R.O.' : 'REGIONAL OFFICE'}</h4>
           <div className="cf-hearings-headers">{worksheet.regional_office_name}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
@@ -129,9 +125,9 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         {worksheet.scheduled_for && new Date(worksheet.scheduled_for) < new Date() &&
           <div className="cf-hearings-worksheet-data-cell">
-            <h4>HEARING DISPOSITION</h4>
+            <h4>{this.props.print ? 'HEAR. DISP.' : 'HEARING DISPOSITION'}</h4>
             <div className={classNames('cf-hearings-headers', dispositionClassNames)}>
-              {getDisposition(worksheet.disposition)}
+              {this.getDisposition(worksheet.disposition)}
             </div>
           </div>
         }
@@ -140,32 +136,32 @@ class WorksheetHeader extends React.PureComponent {
       <div className="cf-hearings-worksheet-data">
         <h2 className="cf-hearings-worksheet-header">Veteran/Appellant Information</h2>
         <div className="cf-hearings-worksheet-data-cell">
-          <h4>VETERAN NAME</h4>
+          <h4>{this.props.print ? 'VETERAN' : 'VETERAN NAME'}</h4>
           <div className="cf-hearings-headers"><b>
-            {`${worksheet.veteran_last_name}, ${worksheet.veteran_first_name}`}
+            {`${formatNameLongReversed(worksheet.veteran_first_name, worksheet.veteran_last_name)}`}
           </b></div>
         </div>
-
         <div className="cf-hearings-worksheet-data-cell">
           <h4>VETERAN ID</h4>
-          {!this.props.print &&
-          <div {...copyButtonStyling}>
-            <Tooltip text="Click to copy to clipboard">
-              <CopyToClipboard text={worksheet.veteran_file_number}>
-                <button
-                  name="Copy Veteran ID"
-                  className={['usa-button-secondary cf-copy-to-clipboard']}>
-                  {worksheet.veteran_file_number}
-                  <ClipboardIcon />
-                </button>
-              </CopyToClipboard>
-            </Tooltip>
-          </div>
-          }
-          {this.props.print &&
-         <div className="cf-hearings-headers">
-           {worksheet.veteran_file_number}
-         </div>
+          {
+            this.props.print ? (
+              <div className="cf-hearings-headers">
+                {worksheet.veteran_file_number}
+              </div>
+            ) : (
+              <div {...copyButtonStyling}>
+                <Tooltip text="Click to copy to clipboard">
+                  <CopyToClipboard text={worksheet.veteran_file_number}>
+                    <button
+                      name="Copy Veteran ID"
+                      className={['usa-button-secondary cf-copy-to-clipboard']}>
+                      {worksheet.veteran_file_number}
+                      <ClipboardIcon />
+                    </button>
+                  </CopyToClipboard>
+                </Tooltip>
+              </div>
+            )
           }
         </div>
         <div className="cf-hearings-worksheet-data-cell">
@@ -181,29 +177,31 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h4>GENDER</h4>
-          <div className="cf-hearings-headers">{getVeteranGender(worksheet.veteran_gender)}</div>
+          <div className="cf-hearings-headers">{this.getVeteranGender(worksheet.veteran_gender)}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h4>APPELLANT NAME</h4>
-          <div className="cf-hearings-headers">{getAppellantName()}</div>
+          <h4>{this.props.print ? 'APPELLANT' : 'APPELLANT NAME'}</h4>
+          <div className="cf-hearings-headers">{this.getAppellantName(worksheet)}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h4>CITY/STATE</h4>
-          <div className="cf-hearings-headers">{worksheet.appellant_city && worksheet.appellant_state ?
-            `${worksheet.appellant_city}, ${worksheet.appellant_state}` : ''}</div>
+          <div className="cf-hearings-headers">
+            {worksheet.appellant_city && worksheet.appellant_state ?
+              `${worksheet.appellant_city}, ${worksheet.appellant_state}` : ''}
+          </div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h4>POWER OF ATTORNEY</h4>
+          <h4>{this.props.print ? 'POWER OF ATTY.' : 'POWER OF ATTORNEY'}</h4>
           <div className="cf-hearings-headers">
             {worksheet.representative}
           </div>
         </div>
       </div>
 
-      <form className="cf-hearings-worksheet-form cf-hearings-form-headers">
-        <div {...firstColumnStyling} className="cf-push-left cf-hearings-form-headers">
+      <form className="cf-hearings-worksheet-form">
+        <div {...firstColumnStyling}>
           <WorksheetFormEntry
-            name="Representative Name"
+            name={this.props.print ? 'Representative' : 'Representative Name'}
             value={worksheet.representative_name}
             onChange={this.onRepNameChange}
             id="appellant-vet-rep-name"
@@ -212,9 +210,9 @@ class WorksheetHeader extends React.PureComponent {
             print={this.props.print}
           />
         </div>
-        <div {...secondColumnStyling} className="cf-push-right cf-hearings-form-headers">
+        <div {...secondColumnStyling}>
           <WorksheetFormEntry
-            name="Witness (W)/Observer (O) and Additional Details"
+            name={this.props.print ? 'Witness/Observer and Misc.' : 'Witness (W)/Observer (O) and Additional Details'}
             value={worksheet.witness}
             onChange={this.onWitnessChange}
             id="appellant-vet-witness"
@@ -223,7 +221,7 @@ class WorksheetHeader extends React.PureComponent {
             print={this.props.print}
           />
         </div>
-        <div {...secondRowStyling} className="cf-push-left cf-hearings-form-head">
+        <div {...secondRowStyling}>
           <WorksheetFormEntry
             name="Periods and circumstances of service"
             value={worksheet.military_service}
@@ -238,8 +236,13 @@ class WorksheetHeader extends React.PureComponent {
     </div>;
   }
 }
-const mapStateToProps = (state) => ({
-  worksheet: state.hearingWorksheet.worksheet
+
+WorksheetHeader.propTypes = {
+  print: PropTypes.bool
+};
+
+const mapStateToProps = (state, ownProps) => ({
+  worksheet: ownProps.worksheet || state.hearingWorksheet.worksheet
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

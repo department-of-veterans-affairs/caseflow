@@ -111,7 +111,7 @@ class Appeal < DecisionReview
   end
 
   def reviewing_judge_name
-    task = tasks.order(created_at: :desc).detect { |t| t.is_a?(JudgeTask) }
+    task = tasks.not_cancelled.where(type: JudgeDecisionReviewTask.name).order(created_at: :desc).first
     task ? task.assigned_to.try(:full_name) : ""
   end
 
@@ -212,8 +212,7 @@ class Appeal < DecisionReview
 
   delegate :first_name,
            :last_name,
-           :name_suffix,
-           :ssn, to: :veteran, prefix: true, allow_nil: true
+           :name_suffix, to: :veteran, prefix: true, allow_nil: true
 
   def appellant
     claimants.first
