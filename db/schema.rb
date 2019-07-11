@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190711152558) do
+ActiveRecord::Schema.define(version: 20190711181657) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -656,9 +656,11 @@ ActiveRecord::Schema.define(version: 20190711152558) do
 
   create_table "legacy_hearings", force: :cascade do |t|
     t.integer "appeal_id"
+    t.datetime "created_at"
     t.string "military_service"
     t.boolean "prepped"
     t.text "summary"
+    t.datetime "updated_at"
     t.integer "user_id"
     t.string "vacols_id", null: false
     t.string "witness"
