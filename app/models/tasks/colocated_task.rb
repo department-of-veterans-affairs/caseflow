@@ -26,7 +26,7 @@ class ColocatedTask < Task
           # Find the task type for a given action.
           create_params = params.clone
           new_task_type = find_subclass_by_action(create_params.delete(:action).to_s)
-          create_params.merge!(type: new_task_type&.name, assigned_to: new_task_type.default_assignee)
+          create_params.merge!(type: new_task_type&.name, assigned_to: new_task_type&.default_assignee)
         end
 
         team_tasks = super(params_array, user)
@@ -164,9 +164,9 @@ class ColocatedTask < Task
   def vacols_location
     # Break this out into respective subclasses once ColocatedTasks are migrated
     # https://github.com/department-of-veterans-affairs/caseflow/pull/11295#issuecomment-509659069
-    if action == "schedule_hearing" || type == ScheduleHearingColocatedTask.name
+    if action == "schedule_hearing"
       schedule_hearing_vacols_location
-    elsif action == "translation" || type == TranslationColocatedTask.name
+    elsif action == "translation"
       translation_vacols_location
     else
       assigned_by.vacols_uniq_id

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class TranslationColocatedTask < ColocatedTask
+  after_create :create_translation_task
+
   def self.label
     Constants.CO_LOCATED_ADMIN_ACTIONS.translation
   end
@@ -9,12 +11,29 @@ class TranslationColocatedTask < ColocatedTask
     Translation.singleton
   end
 
-  def available_actions_with_conditions(core_actions)
-    core_actions = super(core_actions)
-    if appeal.is_a?(LegacyAppeal)
-      return legacy_translation_actions(core_actions)
-    else
-      return ama_translation_actions(core_actions)
-    end
+  def hide_from_case_timeline
+    true
+  end
+
+  def hide_from_task_snapshot
+    true
+  end
+
+  def hide_from_queue_table_view
+    true
+  end
+
+  def cascade_closure_from_child_task?(child_task)
+    child_task.is_a?(TranslationTask)
+  end
+
+  def create_translation_task
+    TranslationTask.create!(
+      assigned_to: assigned_to,
+      assigned_by: assigned_by,
+      instructions: instructions,
+      appeal: appeal,
+      parent: self
+    )
   end
 end

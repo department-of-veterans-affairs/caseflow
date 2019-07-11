@@ -46,7 +46,19 @@ class Task < ApplicationRecord
   scope :not_cancelled, -> { where.not(status: Constants.TASK_STATUSES.cancelled) }
 
   # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
-  scope :visible_in_queue_table_view, -> { where.not(type: [TrackVeteranTask.name, TimedHoldTask.name]) }
+  scope :visible_in_queue_table_view, lambda {
+    where.not(
+      type:
+        [
+          TrackVeteranTask.name,
+          TimedHoldTask.name,
+          FoiaColocatedTask.name,
+          TranslationColocatedTask.name,
+          MissingHearingTranscriptsColocatedTask.name,
+          ScheduleHearingColocatedTask.name
+        ]
+    )
+  }
 
   scope :not_decisions_review, lambda {
                                  where.not(

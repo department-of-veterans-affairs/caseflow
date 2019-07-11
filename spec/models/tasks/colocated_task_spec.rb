@@ -134,18 +134,36 @@ describe ColocatedTask do
             assigned_by: attorney,
             action: action,
             parent: create(:ama_attorney_task),
-            appeal: create(:appeal)
+            appeal: create(:legacy_appeal, vacols_case: create(:case))
           }
         end
       end
 
-      it "should route to the correct teams" do
-        hearing_task, transcript_task, foia_task, translation_task = subject
+      it "should route to the correct teams and create the correct children" do
+        hearing_task, hearing_child_task, transcription_task, transcription_child_task, foia_task, foia_child_task,
+          translation_task, translation_child_task = subject
 
+        expect(hearing_task.is_a?(ScheduleHearingColocatedTask)).to eq true
         expect(hearing_task.assigned_to).to eq(HearingsManagement.singleton)
-        expect(transcript_task.assigned_to).to eq(HearingsManagement.singleton)
+        expect(hearing_task.children.first).to eq hearing_child_task
+        expect(hearing_child_task.is_a?(HearingTask)).to eq true
+        expect(hearing_child_task.children.first.is_a?(ScheduleHearingTask)).to eq true
+
+        expect(transcription_task.is_a?(MissingHearingTranscriptsColocatedTask)).to eq true
+        expect(transcription_task.assigned_to).to eq(HearingsManagement.singleton)
+        expect(transcription_task.children.first).to eq transcription_child_task
+        expect(transcription_child_task.is_a?(TranscriptionTask)).to eq true
+
+        expect(foia_task.is_a?(FoiaColocatedTask)).to eq true
         expect(foia_task.assigned_to).to eq(PrivacyTeam.singleton)
+        expect(foia_task.children.first).to eq foia_child_task
+        expect(foia_child_task.is_a?(PrivacyActTask)).to eq true
+
+        expect(translation_task.is_a?(TranslationColocatedTask)).to eq true
         expect(translation_task.assigned_to).to eq(Translation.singleton)
+        expect(translation_task.children.first).to eq translation_child_task
+        expect(translation_child_task.is_a?(TranslationTask)).to eq true
+        expect(translation_task.appeal.case_record.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
       end
     end
 
@@ -268,9 +286,9 @@ describe ColocatedTask do
       context "when completing a translation task" do
         let(:action) { :translation }
         it "should update location to translation in vacols" do
-          expect(vacols_case.bfcurloc).to_not eq staff.slogid
+          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
           colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
-          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:translation]
+          expect(vacols_case.reload.bfcurloc).to eq staff.slogid
         end
       end
 
