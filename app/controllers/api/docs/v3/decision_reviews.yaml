@@ -502,6 +502,14 @@ paths:
                       type: intakeStatus
                       attributes:
                         status: submitted
+        '303':
+          description: See other, processing finished
+          headers:
+            Location:
+              schema:
+                type: string
+                format: url
+              description: Link to HigherLevelReview
         '404':
           description: id not found
           content:
