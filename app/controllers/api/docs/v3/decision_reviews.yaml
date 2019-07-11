@@ -814,7 +814,6 @@ components:
                 status:
                   type: string
                   enum:
-                    - processed
                     - attempted
                     - submitted
                     - canceled
