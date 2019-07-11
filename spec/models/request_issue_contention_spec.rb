@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe RequestIssueContention do
   let(:decision_review) { create(:higher_level_review) }
   let!(:end_product_establishment) { create(:end_product_establishment) }

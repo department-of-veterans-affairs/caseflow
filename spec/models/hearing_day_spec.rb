@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe HearingDay do
   context "#create" do
     let(:hearing) do

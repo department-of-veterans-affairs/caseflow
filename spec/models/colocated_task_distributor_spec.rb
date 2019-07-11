@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe ColocatedTaskDistributor do
   let(:assignee_pool_size) { 6 }
   let(:colocated_org) { Colocated.singleton }

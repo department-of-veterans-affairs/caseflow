@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "rails_helper"
 require "support/intake_helpers"
 
 describe DecisionDocument do
@@ -128,7 +129,10 @@ describe DecisionDocument do
       it "submits the effectuation for processing and enqueues DecisionIssueSyncJob" do
         subject
         board_grant_effectuation.reload
-        expect(board_grant_effectuation.decision_sync_submitted_at).to eq(Time.zone.now + 12.hours)
+        expect(board_grant_effectuation.decision_sync_submitted_at).to eq(Time.zone.now)
+        expect(board_grant_effectuation.decision_sync_last_submitted_at).to eq(
+          Time.zone.now + BoardGrantEffectuation.processing_retry_interval_hours.hours
+        )
 
         # because we set delay, neither "submitted" nor queued.
         expect(board_grant_effectuation).to be_submitted
