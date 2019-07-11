@@ -1492,8 +1492,10 @@ feature "Higher Level Review Edit issues" do
           click_edit_contention_issue
         end
 
-        expect(page).to have_button("Submit", disabled: true)
+        expect(page).to have_field(type: "textarea", match: :first, text: "PTSD")
+        fill_in(with: "")
         expect(page).to have_field(type: "textarea", match: :first, placeholder: "PTSD")
+        expect(page).to have_button("Submit", disabled: true)
 
         fill_in(with: "Right Knee")
         expect(page).to have_button("Submit", disabled: false)
