@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe TaskTimerJob do
   class TimedTask < GenericTask
     include TimeableTask

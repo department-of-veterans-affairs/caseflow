@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe WorkQueue::DecisionReviewTaskSerializer do
   let(:veteran) { create(:veteran) }
   let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }

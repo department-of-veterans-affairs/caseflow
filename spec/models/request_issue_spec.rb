@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe RequestIssue do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -121,6 +123,21 @@ describe RequestIssue do
           closed_status: "ineligible"
         )
       end
+    end
+  end
+
+  context "#contention" do
+    let(:end_product_establishment) { create(:end_product_establishment, :active) }
+    let!(:contention) do
+      Generators::Contention.build(
+        id: contention_reference_id,
+        claim_id: end_product_establishment.reference_id,
+        disposition: "allowed"
+      )
+    end
+
+    it "returns matching contention" do
+      expect(rating_request_issue.contention.id.to_s).to eq(contention_reference_id.to_s)
     end
   end
 

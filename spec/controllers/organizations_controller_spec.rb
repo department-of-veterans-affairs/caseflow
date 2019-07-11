@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe OrganizationsController, type: :controller do
   describe "GET /organizations/:organization" do
     let(:participant_id) { "123456" }

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
 require "support/intake_helpers"
-require "byebug"
 
 feature "Intake Edit Confirmation" do
   include IntakeHelpers
