@@ -320,9 +320,8 @@ class AppealRepository
   end
 
   def self.vacols_ids_with_schedule_tasks
-    ScheduleHearingTask.where(appeal_type: LegacyAppeal.name)
+    ScheduleHearingTask.open.where(appeal_type: LegacyAppeal.name)
       .joins("LEFT JOIN legacy_appeals ON appeal_id = legacy_appeals.id")
-      .where("status <> ? AND type = ?", Constants.TASK_STATUSES.completed.to_sym, ScheduleHearingTask.name)
       .select("legacy_appeals.vacols_id").pluck(:vacols_id).uniq
   end
 
