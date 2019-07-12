@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe WarmBgsParticipantCachesJob do
+describe WarmBgsCachesJob do
   context "default" do
     # cache keys are using default POA so no specific ids.
     let(:poa_cache_key) { "bgs-participant-poa-" }
@@ -10,7 +10,7 @@ describe WarmBgsParticipantCachesJob do
     let(:ro_id) { "RO04" }
     let(:vacols_case) { create(:case) }
     let(:appeal) do
-      create(:legacy_appeal, vacols_case: vacols_case)
+      create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
     end
     let(:hearing_day) do
       create(:hearing_day, request_type: "V", regional_office: ro_id, scheduled_for: Time.zone.today)
