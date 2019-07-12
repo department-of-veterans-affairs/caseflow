@@ -4,10 +4,11 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
   protect_from_forgery with: :null_session
 
   def create
-    mock_hlr = HigherLevelReview.new(uuid: 'FAKEuuid-mock-test-fake-mocktestdata')
-    render json: intake_status(hlr), status: 202 # TODO add serializer for intake
-  rescue => e
-    render plain: e.message
+    mock_hlr = HigherLevelReview.new(
+      uuid: 'FAKEuuid-mock-test-fake-mocktestdata',
+      establishment_submitted_at: Time.zone.now # having this timestamp marks it as submitted
+    )
+    render json: intake_status(mock_hlr), status: 202
   end
 
 private
@@ -27,8 +28,8 @@ private
     #REVIEW should this be in asyncable?
     if higher_level_review.processed?
       :processed
-    elsif higher_level_review.cancelled?
-      :cancelled
+    elsif higher_level_review.canceled?
+      :canceled
     elsif higher_level_review.attempted?
       :attempted
     elsif higher_level_review.submitted?
