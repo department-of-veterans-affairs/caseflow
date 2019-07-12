@@ -135,7 +135,7 @@ class AssignToView extends React.Component {
 
   determineTitle = (props, action, isPulacCerullo, actionData) => {
     if (actionData.modal_title) {
-      return actionData.modal_title
+      return actionData.modal_title;
     }
     if (props.assigneeAlreadySelected && action) {
       if (isPulacCerullo) {
@@ -148,13 +148,13 @@ class AssignToView extends React.Component {
     return COPY.ASSIGN_TASK_TITLE;
   }
 
-  determinePlaceholder = (props, actionData)  => {
+  determinePlaceholder = (props, actionData) => {
     if (actionData.modal_selector_placeholder) {
-      return actionData.modal_selector_placeholder
+      return actionData.modal_selector_placeholder;
     }
 
     if (this.props.isTeamAssign) {
-      return COPY.ASSIGN_TO_TEAM_DROPDOWN
+      return COPY.ASSIGN_TO_TEAM_DROPDOWN;
     }
 
     return COPY.ASSIGN_TO_USER_DROPDOWN;
