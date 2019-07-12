@@ -43,7 +43,7 @@ class WarmBgsCachesJob < CaseflowJob
     # hearings scheduled.
     stop_date = (Time.zone.now + 6.weeks).to_date
     date_to_cache = Time.zone.today
-    while date_to_cache <= stop_date do
+    while date_to_cache <= stop_date
       begin
         hearings = HearingsForDayQuery.new(day: date_to_cache).call
         hearings.each do |hearing|
