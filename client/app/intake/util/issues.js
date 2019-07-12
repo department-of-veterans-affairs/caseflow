@@ -251,6 +251,7 @@ const formatNonratingRequestIssues = (state) => {
       vacols_sequence_id: issue.vacolsSequenceId,
       ineligible_due_to_id: issue.ineligibleDueToId,
       ineligible_reason: issue.ineligibleReason,
+      edited_description: issue.editedDescription,
       withdrawal_date: issue.withdrawalPending ? formatDateStringForApi(state.withdrawalDate) : null
     };
   });

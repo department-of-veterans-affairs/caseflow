@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe RoundRobinTaskDistributor do
   let(:assignee_pool_size) { 6 }
   let!(:assignee_pool) { FactoryBot.create_list(:user, assignee_pool_size) }

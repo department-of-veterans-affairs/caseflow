@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 RSpec.describe Idt::Api::V1::UsersController, type: :controller do
   describe "GET /idt/api/v1/user" do
     let(:user) { create(:user, css_id: "TEST_ID") }

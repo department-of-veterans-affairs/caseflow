@@ -50,8 +50,7 @@ describe Idt::Token do
       expect(Idt::Token.active?(invalid_token)).to eq(false)
     end
 
-    it "returns false after a token expires" do
-      # TODO: add test for this
+    xit "returns false after a token expires" do
     end
   end
 end

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe HearingSchedule::ValidateJudgeSpreadsheet do
   before do
     create(:staff, sattyid: "860", snamef: "Stuart", snamel: "Huels")

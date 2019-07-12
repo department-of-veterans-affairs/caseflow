@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "rails_helper"
 require "support/intake_helpers"
 
 feature "Higher Level Review Edit issues" do
@@ -1458,30 +1459,6 @@ feature "Higher Level Review Edit issues" do
 
       let!(:issue) do
         create(:request_issue, :rating, decision_review: higher_level_review, contested_issue_description: "PTSD")
-      end
-
-      scenario "edit contention text" do
-        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
-
-        expect(page).to have_content("Edit contention title")
-
-        within first(".issue-edit-text") do
-          click_edit_contention_issue
-        end
-
-        expect(page).to have_button("Submit", disabled: true)
-        expect(page).to have_field(type: "textarea", match: :first, placeholder: "PTSD")
-
-        fill_in(with: "Right Knee")
-        expect(page).to have_button("Submit", disabled: false)
-        click_button("Submit")
-        expect(page).to have_content("Right Knee")
-
-        within first(".issue-edit-text") do
-          click_edit_contention_issue
-        end
-
-        expect(page).to have_field(type: "textarea", match: :first, placeholder: "Right Knee")
       end
 
       scenario "edit contention text is saved" do

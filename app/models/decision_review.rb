@@ -162,6 +162,10 @@ class DecisionReview < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
+  def veteran_ssn
+    veteran&.ssn
+  end
+
   def mark_rating_request_issues_to_reassociate!
     request_issues.select(&:rating?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
   end
