@@ -163,7 +163,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def veteran_ssn
-    @veteran_ssn ||= Veteran.find_or_create_by_file_number(veteran_file_number, sync_name: true).ssn
+    veteran&.ssn
   end
 
   def mark_rating_request_issues_to_reassociate!
