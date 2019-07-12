@@ -6,12 +6,16 @@ class VeteranAttributeCacher
   end
 
   def call
-    Veteran.where(ssn: nil).or(Veteran.where(first_name: nil)).find_each(batch_size: limit) do |v|
-      v.update_cached_attributes! if v.stale_attributes?
+    potentially_stale_records.find_each(batch_size: limit) do |veteran|
+      veteran.update_cached_attributes! if veteran.stale_attributes?
     end
   end
 
   private
 
   attr_reader :limit
+
+  def potentially_stale_records
+    Veteran.where(ssn: nil).or(Veteran.where(first_name: nil))
+  end
 end
