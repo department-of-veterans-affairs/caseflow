@@ -86,7 +86,7 @@ class IntakeFrame extends React.PureComponent {
                   exact
                   path={PAGE_PATHS.ADD_ISSUES}
                   title="Add / Remove Issues | Caseflow Intake"
-                  component={IntakeAddIssuesPage} />
+                  render={() => <IntakeAddIssuesPage featureToggles={this.props.featureToggles} />} />
                 <PageRoute
                   exact
                   path={PAGE_PATHS.FINISH}
