@@ -4,26 +4,35 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
   protect_from_forgery with: :null_session
 
   def create
-    # new HigherLevelReview and return the serialized version
     mock_hlr = HigherLevelReview.new(uuid: 'FAKEuuid-mock-test-fake-mocktestdata')
-    # TODO return an IntakeStatus object
-    render json: {data: {type: 'high_level_review', id: mock_hlr.uuid, attributes: mock_hlr.attributes}}, status: 202 # TODO add serializer for intake
+    render json: intake_status(hlr), status: 202 # TODO add serializer for intake
   rescue => e
     render plain: e.message
   end
 
 private
-  def intake_status(hlr)
-    #FIXME get this order right
+  def intake_status(higher_level_review)
+    {
+      data: {
+        type: 'IntakeStatus',
+        id: higher_level_review.uuid,
+        attributes: {
+          status: async_status(higher_level_review)
+        }
+      }
+    }
+  end
+
+  def async_status(higher_level_review)
     #REVIEW should this be in asyncable?
-    if hlr.processed?
+    if higher_level_review.processed?
       :processed
-    elsif hlr.attempted?
-      :attempted
-    elsif hlr.submitted?
-      :submitted
-    elsif hlr.cancelled?
+    elsif higher_level_review.cancelled?
       :cancelled
+    elsif higher_level_review.attempted?
+      :attempted
+    elsif higher_level_review.submitted?
+      :submitted
     end
   end
 end
