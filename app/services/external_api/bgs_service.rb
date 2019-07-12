@@ -170,12 +170,14 @@ class ExternalApi::BGSService
     @poa_addresses[participant_id]
   end
 
+  def current_user
+    RequestStore[:current_user]
+  end
+
   # This method checks to see if the current user has access to this case
   # in BGS. Cases in BGS are assigned a "sensitivity level" which may be
   # higher than that of the current employee
   def can_access?(vbms_id)
-    current_user = RequestStore[:current_user]
-
     Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 24.hours) do
       DBService.release_db_connections
 
@@ -290,9 +292,6 @@ class ExternalApi::BGSService
   end
 
   def init_client
-    # Fetch current_user from global thread
-    current_user = RequestStore[:current_user]
-
     forward_proxy_url = FeatureToggle.enabled?(:bgs_forward_proxy) ? ENV["RUBY_BGS_PROXY_BASE_URL"] : nil
 
     BGS::Services.new(
