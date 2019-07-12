@@ -17,6 +17,7 @@ detectors:
       - AsyncableJobsReporter
       - HearingSerializerBase
       - DataIntegrityChecksJob
+      - VeteranAttributeCacher
   InstanceVariableAssumption:
     exclude:
       - Appeal
