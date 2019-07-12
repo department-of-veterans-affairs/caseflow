@@ -263,12 +263,16 @@ export default class QueueTable extends React.PureComponent {
     const casesPerPage = this.props.casesPerPage || DEFAULT_CASES_PER_PAGE;
     const paginatedData = [];
 
-    for (let i = 0; i < tableData.length; i += casesPerPage) {
-      paginatedData.push(tableData.slice(i, i + casesPerPage));
+    if (this.props.enablePagination) {
+      for (let i = 0; i < tableData.length; i += casesPerPage) {
+        paginatedData.push(tableData.slice(i, i + casesPerPage));
+      }
+    } else {
+      paginatedData.push(tableData);
     }
 
     return paginatedData;
-  }
+  };
 
   setColumnSortOrder = (colName) => this.setState(
     { sortColName: colName,
