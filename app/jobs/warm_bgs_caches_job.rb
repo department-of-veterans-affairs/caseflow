@@ -51,7 +51,7 @@ class WarmBgsCachesJob < CaseflowJob
           veteran.update_cached_attributes! if veteran.stale_attributes?
         end
         date_to_cache += 1.day
-      rescue
+      rescue ActiveRecord::RecordNotFound
         date_to_cache += 1.day
       end
     end
