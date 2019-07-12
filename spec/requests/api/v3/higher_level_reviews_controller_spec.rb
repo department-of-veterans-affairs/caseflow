@@ -11,5 +11,10 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, type: :request d
       expect(json['data']['type']).to eq 'IntakeStatus'
       expect(json['data']['attributes']['status']).to be_a String
     end
+    it 'should include a Content-Location header' do
+      post '/api/v3/decision_review/higher_level_reviews'
+      expect(response.headers.keys).to include('Content-Location')
+      expect(response.headers['Content-Location']).to match '/api/v3/decision_review/higher_level_reviews/intake_status'
+    end
   end
 end
