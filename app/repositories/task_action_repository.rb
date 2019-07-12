@@ -289,7 +289,10 @@ class TaskActionRepository
       {
         selected: task.appeal.assigned_judge,
         options: users_to_options(Judge.list_all),
-        type: ExtraordinaryCaseAdvancementTask.name
+        type: ExtraordinaryCaseAdvancementTask.name,
+        modal_title: COPY::ECA_MODAL_TITLE,
+        modal_body: COPY::ECA_MODAL_DETAIL,
+        modal_selector_placeholder: COPY::ECA_MODAL_SELECTOR_PLACEHOLDER
       }
     end
 

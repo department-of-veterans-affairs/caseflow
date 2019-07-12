@@ -133,7 +133,10 @@ class AssignToView extends React.Component {
       });
   }
 
-  determineTitle = (props, action, isPulacCerullo) => {
+  determineTitle = (props, action, isPulacCerullo, actionData) => {
+    if (actionData.modal_title) {
+      return actionData.modal_title
+    }
     if (props.assigneeAlreadySelected && action) {
       if (isPulacCerullo) {
         return sprintf(COPY.NOTIFY_OGC_OF, action.label);
@@ -143,6 +146,18 @@ class AssignToView extends React.Component {
     }
 
     return COPY.ASSIGN_TASK_TITLE;
+  }
+
+  determinePlaceholder = (props, actionData)  => {
+    if (actionData.modal_selector_placeholder) {
+      return actionData.modal_selector_placeholder
+    }
+
+    if (this.props.isTeamAssign) {
+      return COPY.ASSIGN_TO_TEAM_DROPDOWN
+    }
+
+    return COPY.ASSIGN_TO_USER_DROPDOWN;
   }
 
   render = () => {
@@ -161,20 +176,21 @@ class AssignToView extends React.Component {
     }
 
     return <QueueFlowModal
-      title={this.determineTitle(this.props, action, isPulacCerullo)}
+      title={this.determineTitle(this.props, action, isPulacCerullo, actionData)}
       pathAfterSubmit = {(actionData && actionData.redirect_after) || '/queue'}
       submit={this.submit}
       validateForm={isPulacCerullo ? () => {
         return true;
       } : this.validateForm}
     >
+      <div>{actionData.modal_body ? actionData.modal_body : ''}</div>
       { !assigneeAlreadySelected && <React.Fragment>
         <SearchableDropdown
           name="Assign to selector"
           searchable
           hideLabel
           errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
-          placeholder={this.props.isTeamAssign ? COPY.ASSIGN_TO_TEAM_DROPDOWN : COPY.ASSIGN_TO_USER_DROPDOWN}
+          placeholder={this.determinePlaceholder(this.props, actionData)}
           value={this.state.selectedValue}
           onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
           options={taskActionData(this.props).options} />

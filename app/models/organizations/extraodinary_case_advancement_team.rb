@@ -2,6 +2,6 @@
 
 class ExtraordinaryCaseAdvancementTeam < Organization
   def self.singleton
-    ExtraordinaryCaseAdvancementTeam.first || ExtraordinaryCaseAdvancementTeam.create(name: "ExtraordinaryCaseAdvancement", url: "eca")
+    ExtraordinaryCaseAdvancementTeam.first || ExtraordinaryCaseAdvancementTeam.create(name: "Case Movement Team", url: "eca")
   end
 end
