@@ -34,6 +34,6 @@ class DistributionTask < GenericTask
   private
 
   def set_assignee
-    self.assigned_to ||= MailTeam.singleton
+    self.assigned_to ||= Bva.singleton
   end
 end

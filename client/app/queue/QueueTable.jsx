@@ -375,7 +375,7 @@ export default class QueueTable extends React.PureComponent {
 
       // 4. Display only the data for the current page
       // paginatedData[this.state.currentPage] will be a subset of all rows I am guessing.
-      rowObjects = rowObjects.length ? paginatedData[this.state.currentPage] : rowObjects;
+      rowObjects = rowObjects && rowObjects.length ? paginatedData[this.state.currentPage] : rowObjects;
 
       casesPerPage = DEFAULT_CASES_PER_PAGE;
     }
@@ -396,7 +396,7 @@ export default class QueueTable extends React.PureComponent {
       paginationElements = <Pagination
         pageSize={casesPerPage}
         currentPage={this.state.currentPage + 1}
-        currentCases={rowObjects.length}
+        currentCases={rowObjects ? rowObjects.length : 0}
         totalPages={numberOfPages}
         totalCases={totalTaskCount}
         updatePage={(newPage) => this.updateCurrentPage(newPage)} />;
