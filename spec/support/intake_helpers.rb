@@ -286,12 +286,12 @@ module IntakeHelpers
 
   def edit_contention_text(old_text, new_text)
     issue_to_edit = find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue-container"]')
-      .select{|issue| issue.text.match?(/#{old_text}/)}.find(".issue-edit-text").first
+      .select { |issue| issue.text.match?(/#{old_text}/) }.find(".issue-edit-text").first
 
     within issue_to_edit do
       click_edit_contention_issue
     end
-    
+
     fill_in(with: new_text)
     click_button("Submit")
   end
