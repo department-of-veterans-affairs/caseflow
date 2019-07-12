@@ -60,6 +60,10 @@ class ColocatedTask < Task
     action || self.class.label
   end
 
+  def timeline_title
+    "#{label} completed"
+  end
+
   def available_actions(user)
     if assigned_to == user
       base_actions = [
