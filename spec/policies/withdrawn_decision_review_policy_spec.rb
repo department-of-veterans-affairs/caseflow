@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "../support/fake_decision_review"
+
 describe WithdrawnDecisionReviewPolicy do
   describe "#satisfied?" do
     context "withdrawn request issue exists, along with other active request issues" do

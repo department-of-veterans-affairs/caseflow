@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe HearingTaskAssociation do
   describe "uniqueness validation" do
     let(:hearing) { nil }

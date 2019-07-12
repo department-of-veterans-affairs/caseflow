@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe DirectReviewDocket do
   context "#due_count" do
     subject { DirectReviewDocket.new.due_count }

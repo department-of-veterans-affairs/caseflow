@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe RequestIssuesUpdate do
   before do
     Time.zone = "America/New_York"
@@ -190,14 +192,6 @@ describe RequestIssuesUpdate do
       let(:vbms_error) { VBMS::HTTPError.new("500", "More EPs more problems") }
 
       subject { request_issues_update.perform! }
-
-      context "when request issues are empty" do
-        it "fails and adds to errors" do
-          expect(subject).to be_falsey
-
-          expect(request_issues_update.error_code).to eq(:request_issues_data_empty)
-        end
-      end
 
       context "when issues are exactly the same as existing issues" do
         let(:request_issues_data) do

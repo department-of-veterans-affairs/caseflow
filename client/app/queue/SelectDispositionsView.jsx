@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -130,11 +131,12 @@ class SelectDispositionsView extends React.PureComponent {
   openDecisionHandler = (requestIssueId, decisionIssue) => () => {
     const benefitType = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).program;
     const diagnosticCode = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).diagnostic_code;
+    const closedStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).closed_status;
 
     const newDecisionIssue = {
       id: `temporary-id-${uuid.v4()}`,
       description: '',
-      disposition: null,
+      disposition: closedStatus,
       benefit_type: benefitType,
       diagnostic_code: diagnosticCode,
       request_issue_ids: [requestIssueId]

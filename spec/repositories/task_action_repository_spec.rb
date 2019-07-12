@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe TaskActionRepository do
   describe "#assign_to_user_data" do
     let(:organization) { create(:organization, name: "Organization") }

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe VeteranFinder do
   before do
     Fakes::BGSService.veteran_records = { file_number => veteran_record }
