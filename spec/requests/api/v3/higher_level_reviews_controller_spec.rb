@@ -1,5 +1,5 @@
 describe Api::V3::DecisionReview::HigherLevelReviewsController, type: :request do
-  fdescribe '#create' do #TODO remove 'f'
+  describe '#create' do #TODO remove 'f'
     it 'should return a 202 on success' do
       post '/api/v3/decision_review/higher_level_reviews'
       expect(response).to have_http_status(202)
