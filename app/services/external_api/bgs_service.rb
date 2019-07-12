@@ -189,6 +189,18 @@ class ExternalApi::BGSService
     end
   end
 
+  # Passing false to can_access? client method will use the find_flashes method underneath
+  # which has more robust sensitivity checks.
+  def may_modify?(vbms_id)
+    DBService.release_db_connections
+
+    MetricsService.record("BGS: can_access (find_flashes): #{vbms_id}",
+                          service: :bgs,
+                          name: "may_modify?") do
+      client.can_access?(vbms_id, false)
+    end
+  end
+
   def bust_can_access_cache(user, vbms_id)
     Rails.cache.delete(can_access_cache_key(user, vbms_id))
   end
