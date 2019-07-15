@@ -171,7 +171,13 @@ class SeedDB
     parent_hearing_task = FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal)
     FactoryBot.create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
 
-    hearing = FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day)
+    hearing = FactoryBot.create(
+      :hearing,
+      appeal: appeal,
+      hearing_day: hearing_day,
+      created_by: hearings_member,
+      updated_by: hearings_member
+    )
     FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
     FactoryBot.create(:change_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
   end
