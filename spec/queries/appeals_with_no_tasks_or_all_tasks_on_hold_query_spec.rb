@@ -18,7 +18,7 @@ describe AppealsWithNoTasksOrAllTasksOnHoldQuery do
     appeal
   end
 
-  describe "#stuck" do
+  describe "#call" do
     subject { described_class.new.call }
 
     it "returns array of appeals that look stuck" do
