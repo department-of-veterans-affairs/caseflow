@@ -36,7 +36,7 @@ class Intake < ApplicationRecord
     appeal: "AppealIntake"
   }.freeze
 
-  attr_accessor :error_data
+  attr_reader :error_data
 
   after_initialize :strip_file_number
 
@@ -44,6 +44,10 @@ class Intake < ApplicationRecord
     return if veteran_file_number.nil?
 
     veteran_file_number.strip!
+  end
+
+  def store_error_data(error_data)
+    @error_data = error_data
   end
 
   class << self

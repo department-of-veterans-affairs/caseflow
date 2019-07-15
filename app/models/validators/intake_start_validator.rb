@@ -35,7 +35,7 @@ class IntakeStartValidator
   def validate_intake
     if duplicate_intake_in_progress
       intake.error_code = :duplicate_intake_in_progress
-      intake.error_data = { processed_by: duplicate_intake_in_progress.user.full_name }
+      intake.store_error_data(processed_by: duplicate_intake_in_progress.user.full_name)
     end
   end
 
