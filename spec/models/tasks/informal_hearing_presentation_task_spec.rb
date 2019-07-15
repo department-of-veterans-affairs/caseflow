@@ -114,13 +114,14 @@ describe InformalHearingPresentationTask do
   end
 
   describe ".when_timer_ends" do
-    let(:task) { FactoryBot.create(:informal_hearing_presentation_task) }
+    let(:existing_instructions) { "Some existing instructions" }
+    let(:task) { FactoryBot.create(:informal_hearing_presentation_task, instructions: [existing_instructions]) }
 
     subject { task.when_timer_ends }
 
     it "appends a message to the instructions field when we automatically close an IHP task" do
       subject
-      expect(task.reload.instructions).to eq([COPY::IHP_TASK_REACHED_DEADLINE_MESSAGE])
+      expect(task.reload.instructions).to eq([existing_instructions, COPY::IHP_TASK_REACHED_DEADLINE_MESSAGE])
     end
   end
 end
