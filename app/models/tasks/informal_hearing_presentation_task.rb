@@ -37,7 +37,7 @@ class InformalHearingPresentationTask < GenericTask
     if open?
       update!(
         status: Constants.TASK_STATUSES.cancelled,
-        instructions: instructions << COPY.IHP_TASK_REACHED_DEADLINE_MESSAGE
+        instructions: instructions << COPY::IHP_TASK_REACHED_DEADLINE_MESSAGE
       )
     end
   end
