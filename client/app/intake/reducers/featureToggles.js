@@ -10,6 +10,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     },
     editContentionText: {
       $set: Boolean(featureToggles.editContentionText)
+    },
+    correctClaimReviews: {
+      $set: Boolean(featureToggles.correctClaimReviews)
     }
   });
 };
@@ -18,7 +21,8 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) => (
   updateFromServerFeatures({
     useAmaActivationDate: false,
     withdrawDecisionReviews: false,
-    editContentionText: false
+    editContentionText: false,
+    correctClaimReviews: false
   }, data.featureToggles)
 );
 
