@@ -19,6 +19,8 @@ class LegacyHearing < ApplicationRecord
 
   belongs_to :appeal, class_name: "LegacyAppeal"
   belongs_to :user # the judge
+  belongs_to :created_by, class_name: "User"
+  belongs_to :updated_by, class_name: "User"
   has_many :hearing_views, as: :hearing
   has_many :appeal_stream_snapshots, foreign_key: :hearing_id
   has_one :hearing_location, as: :hearing
@@ -53,6 +55,9 @@ class LegacyHearing < ApplicationRecord
   delegate :representative,
            to: :appeal,
            allow_nil: true
+
+  before_create :assign_created_by_user
+  before_update :assign_updated_by_user
 
   CO_HEARING = "Central"
   VIDEO_HEARING = "Video"
@@ -290,5 +295,15 @@ class LegacyHearing < ApplicationRecord
 
       hearing
     end
+  end
+
+  private
+
+  def assign_created_by_user
+    self.created_by = RequestStore[:current_user]
+  end
+
+  def assign_updated_by_user
+    self.updated_by ||= RequestStore[:current_user]
   end
 end
