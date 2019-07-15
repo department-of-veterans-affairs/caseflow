@@ -198,7 +198,7 @@ class Hearing < ApplicationRecord
   private
 
   def assign_created_by_user
-    self.created_by = RequestStore[:current_user]
+    self.created_by ||= RequestStore[:current_user]
   end
 
   def assign_updated_by_user
