@@ -36,7 +36,7 @@ class Intake < ApplicationRecord
     appeal: "AppealIntake"
   }.freeze
 
-  attr_reader :error_data
+  attr_accessor :error_data
 
   after_initialize :strip_file_number
 
@@ -172,19 +172,9 @@ class Intake < ApplicationRecord
 
     return false unless validator.validate
 
-    if duplicate_intake_in_progress
-      self.error_code = :duplicate_intake_in_progress
-      @error_data = { processed_by: duplicate_intake_in_progress.user.full_name }
-    else
-      validate_detail_on_start
-    end
+    validate_detail_on_start
 
     !error_code
-  end
-
-  def duplicate_intake_in_progress
-    @duplicate_intake_in_progress ||=
-      Intake.in_progress.find_by(type: type, veteran_file_number: veteran_file_number)
   end
 
   def veteran

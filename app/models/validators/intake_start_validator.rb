@@ -9,6 +9,9 @@ class IntakeStartValidator
     return false unless validate_file_number
 
     validate_veteran
+    validate_intake
+
+    !intake.error_code
   end
 
   private
@@ -27,8 +30,13 @@ class IntakeStartValidator
     elsif veteran.incident_flash?
       intake.error_code = :incident_flash
     end
+  end
 
-    !error_code
+  def validate_intake
+    if duplicate_intake_in_progress
+      intake.error_code = :duplicate_intake_in_progress
+      intake.error_data = { processed_by: duplicate_intake_in_progress.user.full_name }
+    end
   end
 
   def validate_file_number
@@ -45,6 +53,11 @@ class IntakeStartValidator
     return unless !veteran.accessible?
 
     intake.error_code = veteran.multiple_phone_numbers? ? :veteran_has_multiple_phone_numbers : :veteran_not_accessible
+  end
+
+  def duplicate_intake_in_progress
+    @duplicate_intake_in_progress ||=
+      Intake.in_progress.find_by(type: intake.type, veteran_file_number: veteran_file_number)
   end
 
   def file_number_valid?
