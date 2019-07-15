@@ -443,10 +443,6 @@ class SeedDB
     )
   end
 
-  def create_hearings
-    Generators::Hearing.create
-  end
-
   def create_ama_hearing(day)
     vet = Generators::Veteran.build(
       file_number: Faker::Number.number(9).to_s,
@@ -1227,7 +1223,6 @@ class SeedDB
     create_legacy_appeals(50)
     create_dispatch_tasks(50)
     create_ramp_elections(9)
-    create_hearings
     create_api_key
   end
 end
