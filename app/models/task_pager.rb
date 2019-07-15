@@ -79,9 +79,9 @@ class TaskPager
     when Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
       active_tasks
     when Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
-      on_hold_tasks
+      assigned_tasks
     when Constants.QUEUE_CONFIG.ON_HOLD_TASKS_TAB_NAME
-      on_hold_tasks
+      tasks_with_children_on_hold
     when Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME
       recently_completed_tasks
     else
@@ -103,6 +103,16 @@ class TaskPager
   def on_hold_tasks
     Task.includes(*task_includes)
       .visible_in_queue_table_view.where(assigned_to: assignee).on_hold
+  end
+
+  def assigned_tasks
+    Task.includes(*task_includes)
+      .visible_in_queue_table_view.active.where(parent: on_hold_tasks)
+  end
+
+  def tasks_with_children_on_hold
+    Task.includes(*task_includes)
+      .visible_in_queue_table_view.on_hold.where(parent: on_hold_tasks)
   end
 
   def recently_completed_tasks
