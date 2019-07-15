@@ -8,11 +8,7 @@ class IntakeUserStats
   end
 
   def call
-    Intake.select("intakes.*, date(completed_at) as day_completed")
-      .where(user: user)
-      .where("completed_at > ?", Time.zone.now.end_of_day - n_days.days)
-      .where(completion_status: "success")
-      .order("day_completed").each do |intake|
+    intakes_in_range.each do |intake|
       completed = intake[:day_completed].iso8601
       type = intake.detail_type.underscore.to_sym
       stats[completed] ||= { type => 0, date: completed }
@@ -25,4 +21,12 @@ class IntakeUserStats
   private
 
   attr_reader :user, :n_days, :stats
+
+  def intakes_in_range
+    Intake.select("intakes.*, date(completed_at) as day_completed")
+      .where(user: user)
+      .where("completed_at > ?", Time.zone.now.end_of_day - n_days.days)
+      .where(completion_status: "success")
+      .order("day_completed")
+  end
 end

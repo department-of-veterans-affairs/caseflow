@@ -170,10 +170,6 @@ class ExternalApi::BGSService
     @poa_addresses[participant_id]
   end
 
-  def current_user
-    RequestStore[:current_user]
-  end
-
   # This method checks to see if the current user has access to this case
   # in BGS. Cases in BGS are assigned a "sensitivity level" which may be
   # higher than that of the current employee
@@ -298,6 +294,10 @@ class ExternalApi::BGSService
   end
 
   private
+
+  def current_user
+    RequestStore[:current_user]
+  end
 
   def can_access_cache_key(user, vbms_id)
     "bgs_can_access_#{user.css_id}_#{user.station_id}_#{vbms_id}"
