@@ -8,7 +8,7 @@ import BulkAssignButton from './components/BulkAssignButton';
 import TabWindow from '../components/TabWindow';
 import { docketNumberColumn, hearingBadgeColumn, detailsColumn,
   taskColumn, regionalOfficeColumn, issueCountColumn, typeColumn,
-  assignedToColumn, daysWaitingColumn, readerLinkColumn } from './components/TaskTable';
+  assignedToColumn, daysWaitingColumn, daysOnHoldColumn, readerLinkColumn } from './components/TaskTable';
 import QueueTable from './QueueTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import Alert from '../components/Alert';
@@ -64,6 +64,7 @@ class OrganizationQueue extends React.PureComponent {
       assignedToColumn: assignedToColumn(tasks),
       docketNumberColumn: docketNumberColumn(tasks, false),
       daysWaitingColumn: daysWaitingColumn(false),
+      daysOnHoldColumn: daysOnHoldColumn(false),
       readerLinkColumn: readerLinkColumn(false, true),
       issueCountColumn: issueCountColumn(false)
     };
@@ -81,6 +82,7 @@ class OrganizationQueue extends React.PureComponent {
     const mapper = {
       [QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME]: this.props.unassignedTasks,
       [QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME]: this.props.assignedTasks,
+      [QUEUE_CONFIG.ON_HOLD_TASKS_TAB_NAME]: this.props.assignedTasks,
       [QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME]: this.props.completedTasks,
       [QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME]: this.props.trackingTasks
     };

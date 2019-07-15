@@ -28,7 +28,7 @@ class TaskPager
 
   def sorted_tasks(tasks)
     case sort_by
-    when Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN, Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN
+    when Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN, Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN
       tasks.order(assigned_at: sort_order.to_sym)
     when Constants.QUEUE_CONFIG.TASK_CLOSED_DATE_COLUMN
       tasks.order(closed_at: sort_order.to_sym)
@@ -79,6 +79,8 @@ class TaskPager
     when Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
       active_tasks
     when Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
+      on_hold_tasks
+    when Constants.QUEUE_CONFIG.ON_HOLD_TASKS_TAB_NAME
       on_hold_tasks
     when Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME
       recently_completed_tasks
