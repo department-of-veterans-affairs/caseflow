@@ -77,14 +77,7 @@ describe InformalHearingPresentationTask do
   end
 
   describe "TimeableTask expiration behaviour" do
-    let!(:task) do
-      # Cannot use FactoryBot to create this task since FactoryBot will create a Task object with the IHPTask type, but
-      # will not run the create!() method defined by TimeableTask that creates the task timer.
-      InformalHearingPresentationTask.create!(
-        appeal: appeal,
-        assigned_to: FactoryBot.create(:vso)
-      )
-    end
+    let!(:task) { FactoryBot.create(:informal_hearing_presentation_task, appeal: appeal) }
 
     def ballpark_seconds(seconds, cushion = 10)
       (seconds - cushion)..(seconds + cushion)

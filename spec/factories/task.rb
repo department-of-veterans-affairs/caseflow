@@ -396,6 +396,7 @@ FactoryBot.define do
     end
 
     factory :informal_hearing_presentation_task, class: InformalHearingPresentationTask do
+      initialize_with { InformalHearingPresentationTask.create!(attributes) }
       type { InformalHearingPresentationTask.name }
       appeal { create(:appeal) }
       assigned_by { nil }
