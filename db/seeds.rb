@@ -492,9 +492,13 @@ class SeedDB
   end
 
   def create_hearing_days
-    %w[C RO17 RO45].each do |ro_key|
-      user = User.find_by(css_id: "BVATWARNER")
+    user = User.find_by(css_id: "BVATWARNER")
 
+    # Set the current user var here, which is used to populate the
+    # created by field.
+    RequestStore[:current_user] = user
+
+    %w[C RO17 RO45].each do |ro_key|
       (1..5).each do |index|
         day = HearingDay.create!(
           regional_office: (ro_key == "C") ? nil : ro_key,
@@ -517,6 +521,10 @@ class SeedDB
         end
       end
     end
+
+    # The current user var should be set to nil at the start of this
+    # function. Restore it before executing the next seed function.
+    RequestStore[:current_user] = nil
   end
 
   def create_legacy_case_with_open_schedule_hearing_task(ro_key)
