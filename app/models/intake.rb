@@ -21,6 +21,7 @@ class Intake < ApplicationRecord
     veteran_not_found: "veteran_not_found",
     veteran_has_multiple_phone_numbers: "veteran_has_multiple_phone_numbers",
     veteran_not_accessible: "veteran_not_accessible",
+    veteran_not_modifiable: "veteran_not_modifiable",
     veteran_not_valid: "veteran_not_valid",
     duplicate_intake_in_progress: "duplicate_intake_in_progress",
     reserved_veteran_file_number: "reserved_veteran_file_number",

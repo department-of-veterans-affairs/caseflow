@@ -23,7 +23,7 @@ class IntakeStartValidator
     elsif !veteran.accessible?
       set_veteran_accessible_error
     elsif !user_may_modify_veteran_file?
-      intake.error_code = :veteran_not_accessible
+      intake.error_code = :veteran_not_modifiable
     elsif veteran.incident_flash?
       intake.error_code = :incident_flash
     end

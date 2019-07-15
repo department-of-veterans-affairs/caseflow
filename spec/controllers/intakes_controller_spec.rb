@@ -114,7 +114,7 @@ RSpec.describe IntakesController do
         post :create, params: { file_number: file_number, form_type: "higher_level_review" }
 
         expect(response.status).to eq(422)
-        expect(controller.send(:new_intake).error_code).to eq("veteran_not_accessible")
+        expect(controller.send(:new_intake).error_code).to eq("veteran_not_modifiable")
       end
     end
   end
