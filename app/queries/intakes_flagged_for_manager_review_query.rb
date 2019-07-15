@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class IntakesFlaggedForManagerReviewQuery
-  def call
+  def self.call
     Intake.select("intakes.*, intakes.type as form_type, users.full_name")
       .joins(:user,
              # Exclude an intake from results if an intake with the same veteran_file_number
