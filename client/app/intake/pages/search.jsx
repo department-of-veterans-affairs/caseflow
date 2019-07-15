@@ -94,9 +94,9 @@ class Search extends React.PureComponent {
       },
       veteran_not_modifiable: {
         title: "You don't have permission to intake this Veteran",
-        body: "You do not appear to have permission to establish a claim for this Veteran." +
-          " Often this is because they are an employee at the same station as you." +
-          " Please alert your manager so they can assign the form to someone else."
+        body: 'You do not appear to have permission to establish a claim for this Veteran.' +
+          ' Often this is because they are an employee at the same station as you.' +
+          ' Please alert your manager so they can assign the form to someone else.'
       },
       veteran_not_valid: {
         title: 'The Veteran\'s profile has missing or invalid information required to create an EP.',
