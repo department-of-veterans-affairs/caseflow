@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 class IntakeUserStats
   def initialize(user:, n_days:)
     @user = user
     @n_days = n_days
+    @stats = {}
   end
 
   def call
-    stats = {}
     Intake.select("intakes.*, date(completed_at) as day_completed")
       .where(user: user)
       .where("completed_at > ?", Time.zone.now.end_of_day - n_days.days)
@@ -22,5 +24,5 @@ class IntakeUserStats
 
   private
 
-  attr_reader :user, :n_days
+  attr_reader :user, :n_days, :stats
 end

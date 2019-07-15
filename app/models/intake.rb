@@ -41,9 +41,9 @@ class Intake < ApplicationRecord
   after_initialize :strip_file_number
 
   def strip_file_number
-    return unless veteran_file_number.present?
+    return if veteran_file_number.nil?
 
-    self.veteran_file_number.strip!
+    veteran_file_number.strip!
   end
 
   class << self
