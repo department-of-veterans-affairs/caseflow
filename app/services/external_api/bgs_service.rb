@@ -174,8 +174,6 @@ class ExternalApi::BGSService
   # in BGS. Cases in BGS are assigned a "sensitivity level" which may be
   # higher than that of the current employee
   def can_access?(vbms_id)
-    current_user = RequestStore[:current_user]
-
     Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 24.hours) do
       DBService.release_db_connections
 
@@ -184,6 +182,18 @@ class ExternalApi::BGSService
                             name: "can_access?") do
         client.can_access?(vbms_id, true)
       end
+    end
+  end
+
+  # Passing false to can_access? client method will use the find_flashes method underneath
+  # which has more robust sensitivity checks.
+  def may_modify?(vbms_id)
+    DBService.release_db_connections
+
+    MetricsService.record("BGS: can_access (find_flashes): #{vbms_id}",
+                          service: :bgs,
+                          name: "may_modify?") do
+      client.can_access?(vbms_id, false)
     end
   end
 
@@ -285,14 +295,15 @@ class ExternalApi::BGSService
 
   private
 
+  def current_user
+    RequestStore[:current_user]
+  end
+
   def can_access_cache_key(user, vbms_id)
     "bgs_can_access_#{user.css_id}_#{user.station_id}_#{vbms_id}"
   end
 
   def init_client
-    # Fetch current_user from global thread
-    current_user = RequestStore[:current_user]
-
     forward_proxy_url = FeatureToggle.enabled?(:bgs_forward_proxy) ? ENV["RUBY_BGS_PROXY_BASE_URL"] : nil
 
     BGS::Services.new(
