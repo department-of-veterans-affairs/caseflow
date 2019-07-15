@@ -16,6 +16,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import {
   getUnassignedOrganizationalTasks,
   getAssignedOrganizationalTasks,
+  getOrganizationalTasksWithOnHoldChildren,
   getCompletedOrganizationalTasks,
   trackingTasksForOrganization
 } from './selectors';
@@ -82,7 +83,7 @@ class OrganizationQueue extends React.PureComponent {
     const mapper = {
       [QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME]: this.props.unassignedTasks,
       [QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME]: this.props.assignedTasks,
-      [QUEUE_CONFIG.ON_HOLD_TASKS_TAB_NAME]: this.props.assignedTasks,
+      [QUEUE_CONFIG.ON_HOLD_TASKS_TAB_NAME]: this.props.onHoldTasks,
       [QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME]: this.props.completedTasks,
       [QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME]: this.props.trackingTasks
     };
@@ -169,6 +170,7 @@ const mapStateToProps = (state) => {
     tasksAssignedByBulk: state.queue.tasksAssignedByBulk,
     unassignedTasks: getUnassignedOrganizationalTasks(state),
     assignedTasks: getAssignedOrganizationalTasks(state),
+    onHoldTasks: getOrganizationalTasksWithOnHoldChildren(state),
     completedTasks: getCompletedOrganizationalTasks(state),
     trackingTasks: trackingTasksForOrganization(state),
     queueConfig: state.queue.queueConfig

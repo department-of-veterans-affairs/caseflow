@@ -100,7 +100,8 @@ const taskAttributesFromRawTask = (task) => {
     timelineTitle: task.attributes.timeline_title,
     hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
     hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
-    hideFromCaseTimeline: task.attributes.hide_from_case_timeline
+    hideFromCaseTimeline: task.attributes.hide_from_case_timeline,
+    children: task.attributes.children
   };
 };
 
