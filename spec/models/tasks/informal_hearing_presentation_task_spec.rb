@@ -75,4 +75,41 @@ describe InformalHearingPresentationTask do
       expect(appeal.root_task.reload.children.select { |t| t.type == DistributionTask.name }.count).to eq(1)
     end
   end
+
+  describe "TimeableTask expiration behaviour" do
+    let!(:task) do
+      # Cannot use FactoryBot to create this task since FactoryBot will create a Task object with the IHPTask type, but
+      # will not run the create!() method defined by TimeableTask that creates the task timer.
+      InformalHearingPresentationTask.create!(
+        appeal: appeal,
+        assigned_to: FactoryBot.create(:vso)
+      )
+    end
+
+    def ballpark_seconds(seconds, cushion = 10)
+      (seconds - cushion)..(seconds + cushion)
+    end
+
+    subject do
+      expect(task.task_timers.count).to eq(1)
+      timer = task.task_timers.first
+      expect(ballpark_seconds((timer.created_at + deadline_length.days).to_i)).to include(timer.submitted_at.to_i)
+    end
+
+    context "when the appeal is not advanced on docket" do
+      let(:appeal) { FactoryBot.create(:appeal) }
+      let(:deadline_length) { 120 }
+      it "creates a task timer that expires in 120 days" do
+        subject
+      end
+    end
+
+    context "when the appeal is advanced on docket" do
+      let(:appeal) { FactoryBot.create(:appeal, :advanced_on_docket_due_to_motion) }
+      let(:deadline_length) { 30 }
+      it "creates a task timer that expires in 30 days" do
+        subject
+      end
+    end
+  end
 end
