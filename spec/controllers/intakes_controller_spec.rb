@@ -101,6 +101,22 @@ RSpec.describe IntakesController do
         expect(bgs).to have_received(:fetch_veteran_info).exactly(1).times
       end
     end
+
+    context "veteran in BGS but user may not modify" do
+      before do
+        Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica")
+        allow_any_instance_of(Fakes::BGSService).to receive(:may_modify?).and_return(false)
+      end
+
+      let(:file_number) { "999887777" }
+
+      it "does not allow user to proceed with Intake" do
+        post :create, params: { file_number: file_number, form_type: "higher_level_review" }
+
+        expect(response.status).to eq(422)
+        expect(controller.send(:new_intake).error_code).to eq("veteran_not_accessible")
+      end
+    end
   end
 
   describe "#complete" do

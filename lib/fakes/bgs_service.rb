@@ -494,8 +494,15 @@ class Fakes::BGSService
     end
   end
 
+  def current_user
+    RequestStore[:current_user]
+  end
+
+  def may_modify?(vbms_id)
+    !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
+  end
+
   def can_access?(vbms_id)
-    current_user = RequestStore[:current_user]
     if current_user
       Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 1.minute) do
         !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
