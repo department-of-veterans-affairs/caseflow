@@ -463,6 +463,7 @@ class SeedDB
       docket_type: "hearing"
     )
 
+    # Legacy Hearings can be created here due to hearing_day_full? check
     Hearing.create(
       hearing_day: day,
       appeal: app,
