@@ -494,10 +494,6 @@ class Fakes::BGSService
     end
   end
 
-  def current_user
-    RequestStore[:current_user]
-  end
-
   def may_modify?(vbms_id)
     !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
   end
@@ -737,6 +733,10 @@ class Fakes::BGSService
 
   VSO_PARTICIPANT_ID = "4623321"
   DEFAULT_PARTICIPANT_ID = "781162"
+
+  def current_user
+    RequestStore[:current_user]
+  end
 
   def default_claimant_info
     {
