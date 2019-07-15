@@ -367,7 +367,7 @@ describe ColocatedTask do
 
       it "should include all actions available to the assigned user along with reassign" do
         assigned_user_actions = colocated_task.available_actions_unwrapper(colocated_user)
-        expect(colocated_task.available_actions_unwrapper(colocated_admin).count).to eq(assigned_user_actions.length + 1)
+        expect(colocated_task.available_actions_unwrapper(colocated_admin).count).to eq(assigned_user_actions.size + 1)
         expect(colocated_task.available_actions_unwrapper(colocated_admin)
           .include?(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label))
       end
