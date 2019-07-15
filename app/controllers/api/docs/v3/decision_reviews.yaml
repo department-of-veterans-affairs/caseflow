@@ -32,7 +32,7 @@ paths:
                   properties:
                     type:
                       type: string
-                      enum: [higher_level_review]
+                      enum: [HigherLevelReview]
                     attributes:
                       type: object
                       required:
@@ -82,7 +82,7 @@ paths:
                               properties:
                                 type:
                                   type: string
-                                  enum: [veteran]
+                                  enum: [Veteran]
                                 id: # veteran_file_number
                                   type: string
                         claimant: # if claimant is not included, the veteran is the claimant (and their participantID is looked up)
@@ -99,7 +99,7 @@ paths:
                               properties:
                                 type:
                                   type: string
-                                  enum: [claimant]
+                                  enum: [Claimant]
                                 id: # participantID
                                   type: string
                                 meta:
@@ -119,7 +119,7 @@ paths:
                     properties:
                       type:
                         type: string
-                        enum: [request_issue]
+                        enum: [RequestIssue]
                       attributes:
                         type: object
                         required:
@@ -142,7 +142,7 @@ paths:
               pension:
                 value: {
                   "data": {
-                    "type": "higher_level_review",
+                    "type": "HigherLevelReview",
                       "attributes": {
                         "receiptDate": "2019-07-10",
                         "informalConference": true,
@@ -153,13 +153,13 @@ paths:
                       "relationships": {
                         "veteran": {
                           "data": {
-                            "type": "veteran",
+                            "type": "Veteran",
                             "id": "55555555"
                           }
                         },
                         "claimant": {
                           "data": {
-                            "type": "claimant",
+                            "type": "Claimant",
                             "id": "44444444",
                             "meta": {
                               "payeeCode": "10"
@@ -170,7 +170,7 @@ paths:
                     },
                     "included": [
                       {
-                        "type": "nonrating_issue",
+                        "type": "NonratingIssue",
                         "attributes": {
                           "decisionText": "veteran status verified",
                           "decisionDate": "2019-07-11",
@@ -179,7 +179,7 @@ paths:
                         }
                       },
                       {
-                        "type": "rating_issue",
+                        "type": "RatingIssue",
                         "id": "def456"
                       }
                     ]
