@@ -5,7 +5,7 @@
 #   case distribution
 
 class ExtraordinaryCaseAdvancementTask < GenericTask
-  before_create :verify_parent_task_type
+  before_create :verify_parent_task_type, :verify_user_organization
   after_create :after_create_function
 
   private
@@ -20,6 +20,11 @@ class ExtraordinaryCaseAdvancementTask < GenericTask
     # For now, we expect the parent to always be the distribution task
     #   so we don't worry about distribution task explicitly
     parent.update!(status: Constants.TASK_STATUSES.completed)
+  end
+
+  def verify_user_organization
+    return true if assigned_by.organizations.include?(ExtraordinaryCaseAdvancementTeam.singleton)
+    false
   end
 
   def verify_parent_task_type
