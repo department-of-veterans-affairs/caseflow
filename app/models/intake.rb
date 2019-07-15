@@ -73,43 +73,11 @@ class Intake < ApplicationRecord
     end
 
     def flagged_for_manager_review
-      Intake.select("intakes.*, intakes.type as form_type, users.full_name")
-        .joins(:user,
-               # Exclude an intake from results if an intake with the same veteran_file_number
-               # and intake type has succeeded since the completed_at time (indicating the issue has been resolved)
-               "LEFT JOIN
-                 (SELECT veteran_file_number,
-                   type,
-                   MAX(completed_at) as succeeded_at
-                 FROM intakes
-                 WHERE completion_status = 'success'
-                 GROUP BY veteran_file_number, type) latest_success
-                 ON intakes.veteran_file_number = latest_success.veteran_file_number
-                 AND intakes.type = latest_success.type",
-               # To exclude ramp elections that were established outside of Caseflow
-               "LEFT JOIN ramp_elections ON intakes.veteran_file_number = ramp_elections.veteran_file_number")
-        .where.not(completion_status: "success")
-        .where(error_code: [nil, "veteran_not_accessible", "veteran_not_valid"])
-        .where(
-          "(intakes.completed_at > latest_success.succeeded_at OR latest_success.succeeded_at IS NULL)
-          AND NOT (intakes.type = 'RampElectionIntake' AND ramp_elections.established_at IS NOT NULL)"
-        )
+      IntakesFlaggedForManagerReviewQuery.call
     end
 
     def user_stats(user, n_days = 60)
-      stats = {}
-      Intake.select("intakes.*, date(completed_at) as day_completed")
-        .where(user: user)
-        .where("completed_at > ?", Time.zone.now.end_of_day - n_days.days)
-        .where(completion_status: "success")
-        .order("day_completed").each do |intake|
-        completed = intake[:day_completed].iso8601
-        type = intake.detail_type.underscore.to_sym
-        stats[completed] ||= { type => 0, date: completed }
-        stats[completed][type] ||= 0
-        stats[completed][type] += 1
-      end
-      stats.sort.map { |entry| entry[1] }.reverse
+      IntakeUserStats.new(user: user, n_days: n_days).call
     end
   end
 
