@@ -61,13 +61,22 @@ class HearingDateDropdown extends React.Component {
 
         hearingDateOptions.sort((d1, d2) => new Date(d1.value.hearingDate) - new Date(d2.value.hearingDate));
 
-        hearingDateOptions.unshift({
-          label: ' ',
-          value: {
-            hearingId: null,
-            hearingDate: null
+        hearingDateOptions.unshift(
+          {
+            label: ' ',
+            value: {
+              hearingId: null,
+              hearingDate: null
+            }
+          },
+          {
+            label: 'Other',
+            value: {
+              hearingId: null,
+              hearingDate: null
+            }
           }
-        });
+        );
 
         this.props.onReceiveDropdownData(name, hearingDateOptions);
 
