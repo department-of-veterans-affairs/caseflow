@@ -24,7 +24,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     unless @spreadsheet_template[:title] == SPREADSHEET_TITLE &&
            @spreadsheet_template[:headers] == SPREADSHEET_HEADERS &&
            @spreadsheet_template[:empty_column] == SPREADSHEET_EMPTY_COLUMN
-      @errors << JudgeTemplateNotFollowed.new("The template was not followed. Please redownload the file and try again")
+      @errors << JudgeTemplateNotFollowed.new("The template was not followed. Please redownload the template and try again.")
     end
   end
 

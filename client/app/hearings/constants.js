@@ -88,8 +88,6 @@ export const ACTIONS = {
 };
 
 export const ERROR_MAPPINGS = {
-  'ValidationError::MissingStartDateEndDateFile': 'The start date, end date, or file are missing.',
-  'ValidationError::EndDateTooEarly': 'The end date is before the start date.',
   'SchedulePeriod::OverlappingSchedulePeriods': 'You have already uploaded a file for these dates.',
   'HearingSchedule::ValidateRoSpreadsheet::RoDatesNotUnique': 'The RO non-availability spreadsheet contains ' +
     'duplicate dates for an RO.',
