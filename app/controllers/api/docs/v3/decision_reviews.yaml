@@ -521,7 +521,7 @@ paths:
                 properties:
                   errors:
                     $ref: "#/components/schemas/errors"
-  /higher_level_reviews/status/{uuid}:
+  /higher_level_reviews/intake_status/{uuid}:
     get:
       parameters:
         - name: uuid
