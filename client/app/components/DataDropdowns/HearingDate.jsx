@@ -15,6 +15,14 @@ import LoadingLabel from './LoadingLabel';
 import SearchableDropdown from '../SearchableDropdown';
 
 class HearingDateDropdown extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isOther: false
+    };
+  }
+
   componentDidMount() {
     this.getHearingDates(false);
   }
@@ -95,29 +103,47 @@ class HearingDateDropdown extends React.Component {
       return options ? options[0] : {};
     }
 
-    const comparison = typeof (value) === 'string' ?
-      (opt) => opt.value.hearingDate === formatDateStr(value, 'YYYY-MM-DD', 'YYYY-MM-DD') :
-      (opt) => opt.value === value;
+    let comparison;
+    if (typeof(value) === 'string' && value !== 'other') {
+      comparison = (opt) => opt.value.hearingDate === formatDateStr(value, 'YYYY-MM-DD', 'YYYY-MM-DD');
+    } else {
+      comparison = (opt) => opt.value === value;
+    }
 
     return _.find(options, comparison);
   }
 
+  onOptionSelected = (option) => {
+    const { onChange } = this.props;
+    const safeOption = option || {};
+
+    this.setState({ isOther: safeOption.label === 'Other' });
+
+    return onChange(safeOption.value, safeOption.label);
+  }
+
   render() {
     const {
-      name, label, onChange, readOnly, errorMessage, placeholder,
-      hearingDates: { options, isFetching, errorMsg } } = this.props;
+      name, label, readOnly, errorMessage, placeholder,
+      hearingDates: { options, isFetching, errorMsg }
+    } = this.props;
 
     return (
-      <SearchableDropdown
-        name={name}
-        label={isFetching ? <LoadingLabel text="Finding upcoming hearing dates for this regional office..." /> : label}
-        strongLabel
-        readOnly={readOnly}
-        value={this.getSelectedOption()}
-        onChange={(option) => onChange((option || {}).value, (option || {}).label)}
-        options={options}
-        errorMessage={errorMsg || errorMessage}
-        placeholder={placeholder} />
+      <React.Fragment>
+        <SearchableDropdown
+          name={name}
+          label={isFetching ? <LoadingLabel text="Finding upcoming hearing dates for this regional office..." /> : label}
+          strongLabel
+          readOnly={readOnly}
+          value={this.getSelectedOption()}
+          onChange={this.onOptionSelected}
+          options={options}
+          errorMessage={errorMsg || errorMessage}
+          placeholder={placeholder} />
+        {this.state.isOther &&
+          <p>Other</p>
+        }
+      </React.Fragment>
     );
   }
 }
