@@ -37,6 +37,8 @@ import HearingDayAddModal from '../components/HearingDayAddModal';
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import moment from 'moment';
 
+import { LIST_SCHEDULE_VIEWS } from '../constants';
+
 const dateFormatString = 'YYYY-MM-DD';
 
 const actionButtonsStyling = css({
@@ -49,8 +51,13 @@ export class ListScheduleContainer extends React.Component {
     this.state = {
       dateRangeKey: `${props.startDate}->${props.endDate}`,
       modalOpen: false,
-      showModalAlert: false
+      showModalAlert: false,
+      view: LIST_SCHEDULE_VIEWS.DEFAULT_VIEW
     };
+  }
+
+  switchListView = (view) => {
+    this.setState({ view });
   }
 
   componentDidMount = () => {
@@ -155,6 +162,20 @@ export class ListScheduleContainer extends React.Component {
     return 'success';
   };
 
+  getHeader = () => {
+    const { user } = this.props;
+
+    if (user.userRoleView || user.userRoleVso) {
+      return COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER;
+    } else if (user.userRoleHearingPrep) {
+      return this.state.view === LIST_SCHEDULE_VIEWS.DEFAULT_VIEW ?
+        COPY.HEARING_SCHEDULE_JUDGE_DEFAULT_VIEW_PAGE_HEADER :
+        COPY.HEARING_SCHEDULE_JUDGE_SHOW_ALL_VIEW_PAGE_HEADER;
+    }
+
+    return COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER;
+  }
+
   render() {
     const user = this.props.user;
 
@@ -169,8 +190,7 @@ export class ListScheduleContainer extends React.Component {
         { this.props.invalidDates && <Alert type="error" title="Please enter valid dates." /> }
         <AppSegment filledBackground>
           <h1 className="cf-push-left">
-            {user.userRoleView || user.userRoleVso ? COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER :
-              COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}
+            {this.getHeader()}
           </h1>
           {user.userRoleBuild &&
             <span className="cf-push-right">
@@ -186,7 +206,9 @@ export class ListScheduleContainer extends React.Component {
             hearingSchedule={this.props.hearingSchedule}
             onApply={this.createHearingPromise}
             openModal={this.openModal}
-            user={user} />
+            user={user}
+            view={this.state.view}
+            switchListView={this.switchListView} />
           {this.state.modalOpen &&
             <HearingDayAddModal
               closeModal={this.closeModal}

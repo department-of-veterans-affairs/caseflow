@@ -155,7 +155,8 @@ RSpec.feature "List Schedule" do
         visit "hearings/schedule"
 
         page.should have_css(".section-hearings-list tbody tr", count: 5)
-        click_on("All Hearing Days")
+        find(".cf-dropdown-trigger", text: "Switch View").click
+        find("li", text: "Complete Hearing Schedule").click
         page.should have_css(".section-hearings-list tbody tr", count: 10)
       end
     end

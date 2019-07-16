@@ -61,26 +61,12 @@ export default class DailyDocket extends React.Component {
     };
   }
 
-  isJudgeHearing = (judgeId, hearing) => hearing.judgeId === judgeId ||
-    (_.isNil(hearing.judgeId) && this.props.dailyDocket.judgeId === judgeId)
-
-  sortedHearings = () => {
-    const { hearings, user } = this.props;
-
-    return _.orderBy(Object.values(hearings).map((hearing) => (
-      {
-        ...hearing,
-        sortOrder: this.isJudgeHearing(user.userId, hearing) ? 0 : 1
-      }
-    )), ['sortOrder', 'scheduledTimeString']);
-  }
-
   previouslyScheduledHearings = () => {
-    return _.filter(this.sortedHearings(), isPreviouslyScheduledHearing);
+    return _.filter(this.props.hearings, isPreviouslyScheduledHearing);
   };
 
   dailyDocketHearings = () => {
-    return _.filter(this.sortedHearings(), _.negate(isPreviouslyScheduledHearing));
+    return _.filter(this.props.hearings, _.negate(isPreviouslyScheduledHearing));
   };
 
   getRegionalOffice = () => {
@@ -211,7 +197,8 @@ export default class DailyDocket extends React.Component {
       {!hasDocketHearings &&
         <div {...css({ marginTop: '75px' })}>
           <StatusMessage
-            title= "No Veterans are scheduled for this hearing day."
+            title={user.userRoleHearingPrep ? 'You have no hearings scheduled for this hearing day.' :
+              'No Veterans are scheduled for this hearing day.'}
             type="status" />
         </div>}
 

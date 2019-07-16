@@ -193,3 +193,8 @@ export const TIME_OPTIONS = [{
 { value: '16:30',
   label: '4:30 pm '
 }];
+
+export const LIST_SCHEDULE_VIEWS = {
+  DEFAULT_VIEW: 'DEFAULT_VIEW',
+  SHOW_ALL: 'SHOW_ALL'
+};

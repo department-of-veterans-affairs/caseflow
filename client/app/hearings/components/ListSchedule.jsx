@@ -8,7 +8,6 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import Button from '../../components/Button';
 import PropTypes from 'prop-types';
 import { CSVLink } from 'react-csv';
-import TabWindow from '../../components/TabWindow';
 import {
   toggleTypeFilterVisibility, toggleLocationFilterVisibility,
   toggleVljFilterVisibility, onReceiveHearingSchedule,
@@ -19,6 +18,9 @@ import connect from 'react-redux/es/connect/connect';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
 import moment from 'moment';
+
+import { LIST_SCHEDULE_VIEWS } from '../constants';
+import DropdownButton from '../../components/DropdownButton';
 
 const downloadButtonStyling = css({
   marginTop: '60px'
@@ -70,6 +72,22 @@ const exportHeaders = [
     key: 'vlj' }
 ];
 
+const SwitchViewDropdown = ({ onSwitchView }) => {
+  return (
+    <DropdownButton
+      lists={[
+        {
+          title: 'Your Hearing Schedule',
+          value: LIST_SCHEDULE_VIEWS.DEFAULT_VIEW },
+        {
+          title: 'Complete Hearing Schedule',
+          value: LIST_SCHEDULE_VIEWS.SHOW_ALL }
+      ]}
+      onClick={onSwitchView}
+      label="Switch View" />
+  );
+};
+
 class ListTable extends React.Component {
   render() {
     return (
@@ -83,7 +101,7 @@ class ListTable extends React.Component {
           title: 'Unable to load the hearing schedule.'
         }}>
         {this.props.user.userRoleBuild && <div style={{ marginBottom: 25 }}>
-          <Button classNames={['usa-button-secondary']}
+          <Button linkStyling
             onClick={this.props.openModal}>
             Add Hearing Day
           </Button>
@@ -184,42 +202,30 @@ class ListSchedule extends React.Component {
     ];
   }
 
-  getTabbedList = (hearingScheduleColumns, hearingScheduleRows) => {
-    return (
-      <TabWindow
-        name="hearing-schedule-list"
-        tabs={[
-          {
-            label: 'Your Hearing Days',
-            page: <ListTable onApply={this.props.onApply}
-              openModal={this.props.openModal}
-              key={`judgeHearings${this.state.dateRangeKey}`}
-              user={this.props.user}
-              hearingScheduleRows={hearingScheduleRows}
-              hearingScheduleColumns={hearingScheduleColumns} />
-          },
-          {
-            label: 'All Hearing Days',
-            page: <ListTable onApply={() => this.props.onApply({ showAll: true })}
-              openModal={this.props.openModal}
-              key={`allHearings${this.state.dateRangeKey}`}
-              user={this.props.user}
-              hearingScheduleRows={hearingScheduleRows}
-              hearingScheduleColumns={hearingScheduleColumns} />
-          }
-        ]} />
-    );
+  getListView = (hearingScheduleColumns, hearingScheduleRows) => {
+
+    const { user, view, onApply, openModal } = this.props;
+
+    if (!user.userRoleHearingPrep || view === LIST_SCHEDULE_VIEWS.DEFAULT_VIEW) {
+      return <ListTable onApply={onApply}
+        openModal={openModal}
+        key={`hearings${this.state.dateRangeKey}`}
+        user={user}
+        hearingScheduleRows={hearingScheduleRows}
+        hearingScheduleColumns={hearingScheduleColumns} />;
+    }
+
+    return <ListTable onApply={() => onApply({ showAll: true })}
+      openModal={openModal}
+      key={`allHearings${this.state.dateRangeKey}`}
+      user={user}
+      hearingScheduleRows={hearingScheduleRows}
+      hearingScheduleColumns={hearingScheduleColumns} />;
   }
 
   render() {
     const hearingScheduleRows = this.getHearingScheduleRows();
     const hearingScheduleColumns = this.getHearingScheduleColumns(hearingScheduleRows);
-    const list = this.props.user.userRoleHearingPrep ? this.getTabbedList(hearingScheduleColumns, hearingScheduleRows) :
-      <ListTable onApply={this.props.onApply}
-        openModal={this.props.openModal}
-        user={this.props.user}
-        hearingScheduleRows={hearingScheduleRows}
-        hearingScheduleColumns={hearingScheduleColumns} />;
 
     return (
       <React.Fragment>
@@ -232,7 +238,8 @@ class ListSchedule extends React.Component {
               endDateChange={this.props.onViewEndDateChange}
               onApply={this.setDateRangeKey} />
           </div>
-          <div className="cf-push-right" {...downloadButtonStyling} >
+          <div className="cf-push-right list-schedule-buttons" {...downloadButtonStyling} >
+            {this.props.user.userRoleHearingPrep && <SwitchViewDropdown onSwitchView={this.props.switchListView} />}
             <CSVLink
               data={hearingScheduleRows}
               headers={exportHeaders}
@@ -245,7 +252,7 @@ class ListSchedule extends React.Component {
           </div>
         </div>
         <div className="section-hearings-list">
-          {list}
+          {this.getListView(hearingScheduleColumns, hearingScheduleRows)}
         </div>
       </React.Fragment>
 
