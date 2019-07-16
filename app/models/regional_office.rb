@@ -28,7 +28,7 @@ class RegionalOffice
   end
 
   def station_key
-    @station_key ||= compute_station_key&.to_s
+    @station_key ||= compute_station_key
   end
 
   def city
