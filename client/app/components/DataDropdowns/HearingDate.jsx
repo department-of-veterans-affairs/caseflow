@@ -16,7 +16,7 @@ import SearchableDropdown from '../SearchableDropdown';
 
 class HearingDateDropdown extends React.Component {
   componentDidMount() {
-    setTimeout(this.getHearingDates, 0);
+    this.getHearingDates(false);
   }
 
   componentDidUpdate(prevProps) {
@@ -29,7 +29,7 @@ class HearingDateDropdown extends React.Component {
     }
 
     if (prevProps.regionalOffice !== this.props.regionalOffice) {
-      setTimeout(() => this.getHearingDates(true), 0);
+      this.getHearingDates(true);
     }
   }
 
