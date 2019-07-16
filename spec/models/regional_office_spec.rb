@@ -78,14 +78,4 @@ describe RegionalOffice do
       expect(subject).to match_array(%w[vba_349 vba_362])
     end
   end
-
-  context ".find_ro_by_facility_id" do
-    let(:ro_facility_id) { "vba_377" }
-    let(:ahl_facility_id) { "vba_405" }
-
-    it "returns RO ids for either RO or AHL facility ids" do
-      expect(RegionalOffice.find_ro_by_facility_id(ro_facility_id)).to eq "RO77"
-      expect(RegionalOffice.find_ro_by_facility_id(ahl_facility_id)).to eq "RO05"
-    end
-  end
 end
