@@ -7,26 +7,20 @@ class RequestIssueCorrection
   end
 
   def call
-    return if corrected_issues.empty?
+    corrected_issue_data.each do |issue_data|
+      corrected_request_issue_id = issue_data.delete(:corrected_request_issue_id)
 
-    # For now all corrected request issues should have the same correction label
-    correction_claim_label = corrected_issue_data.first[:correction_claim_label]
-    corrected_issues.each { |ri| ri.correct!(correction_claim_label) }
-  end
-
-  def corrected_issues
-    @corrected_issues ||= calculate_corrected_issues
+      new_issue = review.find_or_build_request_issue_from_intake_data(issue_data)
+      if corrected_request_issue_id
+        RequestIssue.find(corrected_request_issue_id)
+          .update(corrected_by_request_issue_id: new_issue.id)
+      end
+    end
   end
 
   private
 
   attr_reader :review, :request_issues_data
-
-  def calculate_corrected_issues
-    corrected_issue_data.map do |issue_data|
-      review.find_or_build_request_issue_from_intake_data(issue_data)
-    end
-  end
 
   def corrected_issue_data
     return [] unless request_issues_data

@@ -207,7 +207,8 @@ class RequestIssue < ApplicationRecord
         contested_decision_issue_id: data[:contested_decision_issue_id],
         ineligible_reason: data[:ineligible_reason],
         ineligible_due_to_id: data[:ineligible_due_to_id],
-        edited_description: data[:edited_description]
+        edited_description: data[:edited_description],
+        correction_claim_label: data[:correction_claim_label]
       }
     end
     # rubocop:enable Metrics/MethodLength
@@ -434,10 +435,6 @@ class RequestIssue < ApplicationRecord
 
   def withdraw!(withdrawal_date)
     close!(status: :withdrawn, closed_at_value: withdrawal_date.to_datetime)
-  end
-
-  def correct!(correction_claim_label)
-    # create a new request issue, connected to the existing one if present
   end
 
   def save_edited_contention_text!(new_description)
