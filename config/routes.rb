@@ -242,7 +242,9 @@ Rails.application.routes.draw do
     resources :tasks, only: [:index], controller: 'organizations/tasks'
     resources :task_pages, only: [:index], controller: 'organizations/task_pages'
     resources :users, only: [:index, :create, :update, :destroy], controller: 'organizations/users'
-    resources :members, only: [:index], controller: 'organizations/members'
+    # Maintain /organizations/members for backwards compatability for a few days.
+    resources :members, only: [:index], controller: 'organizations/task_summary'
+    resources :task_summary, only: [:index], controller: 'organizations/task_summary'
   end
   get '/organizations/:url/modal(*rest)', to: 'organizations#show'
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Organizations::MembersController < OrganizationsController
+class Organizations::TaskSummaryController < OrganizationsController
   def index
     redirect_to "/unauthorized" unless organization.users.include?(current_user)
 

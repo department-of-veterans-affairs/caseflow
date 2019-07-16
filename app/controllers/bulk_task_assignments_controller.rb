@@ -5,6 +5,8 @@ class BulkTaskAssignmentsController < TasksController
     bulk_task_assignment = BulkTaskAssignment.new(*bulk_task_assignment_params)
     return invalid_record_error(bulk_task_assignment) unless bulk_task_assignment.valid?
 
+    return false
+
     tasks = bulk_task_assignment.process
 
     render json: json_tasks(tasks)

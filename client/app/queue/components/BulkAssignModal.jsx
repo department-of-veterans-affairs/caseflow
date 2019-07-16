@@ -32,7 +32,7 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   componentDidMount() {
-    ApiUtil.get(`/organizations/${this.organizationUrl()}/members.json`).then((resp) => {
+    ApiUtil.get(`/organizations/${this.organizationUrl()}/task_summary.json`).then((resp) => {
       this.setState({ users: resp.body.members.data });
     }).
       catch(() => {
@@ -143,6 +143,7 @@ class BulkAssignModal extends React.PureComponent {
     return users;
   }
 
+  // task.closestRegionalOffice.location_hash.city
   generateRegionalOfficeOptions = () => {
     const filteredTasks = this.filterTasksByTaskType(this.props.tasks);
 
@@ -153,6 +154,7 @@ class BulkAssignModal extends React.PureComponent {
     return this.getDisplayTextOption(options);
   }
 
+  // Field we care about is task.type
   generateTaskTypeOptions = () => {
     const filteredTasks = this.filterTasksByRegionalOffice(this.props.tasks);
 
@@ -169,24 +171,26 @@ class BulkAssignModal extends React.PureComponent {
   generateNumberOfTaskOptions = () => {
     const actualOptions = [];
     const issueCounts = BULK_ASSIGN_ISSUE_COUNT;
-    let filteredTasks = this.filterTasksByRegionalOffice(this.props.tasks);
 
-    filteredTasks = this.filterTasksByTaskType(filteredTasks);
+    // TODO: Come back to dealing with this.
+    // 
+    // let filteredTasks = this.filterTasksByRegionalOffice(this.props.tasks);
+    // filteredTasks = this.filterTasksByTaskType(filteredTasks);
 
     for (let i = 0; i < issueCounts.length; i++) {
-      if (filteredTasks && filteredTasks.length < issueCounts[i]) {
-        actualOptions.push({
-          value: filteredTasks.length,
-          displayText: `${filteredTasks.length} (all available tasks)`
-        });
-        break;
-      }
-      if (filteredTasks.length > issueCounts[i]) {
+      // if (filteredTasks && filteredTasks.length < issueCounts[i]) {
+      //   actualOptions.push({
+      //     value: filteredTasks.length,
+      //     displayText: `${filteredTasks.length} (all available tasks)`
+      //   });
+      //   break;
+      // }
+      // if (filteredTasks.length > issueCounts[i]) {
         actualOptions.push({
           value: issueCounts[i],
           displayText: issueCounts[i]
         });
-      }
+      // }
     }
 
     return actualOptions;
