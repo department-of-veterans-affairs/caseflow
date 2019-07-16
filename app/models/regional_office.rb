@@ -24,7 +24,7 @@ class RegionalOffice
   end
 
   def station_key
-    @station_key ||= compute_station_key
+    @station_key ||= compute_station_key&.to_s
   end
 
   def city
@@ -44,7 +44,6 @@ class RegionalOffice
   end
 
   def valid?
-    # byebug
     !!location_hash[:city]
   end
 
@@ -71,7 +70,7 @@ class RegionalOffice
 
   def compute_station_key
     result = STATIONS.find { |_station, ros| [*ros].include? key }
-    result&.first.to_s
+    result&.first
   end
 
   class << self
