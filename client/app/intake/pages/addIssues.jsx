@@ -29,6 +29,7 @@ import {
   removeIssue,
   withdrawIssue,
   setIssueWithdrawalDate,
+  correctIssue,
   toggleUnidentifiedIssuesModal,
   toggleIssueRemoveModal,
   toggleLegacyOptInModal
@@ -60,18 +61,23 @@ export class AddIssuesPage extends React.Component {
   }
 
   onClickIssueAction = (index, option = 'remove') => {
-    if (option === 'remove') {
-      if (this.props.toggleIssueRemoveModal) {
-        // on the edit page, so show the remove modal
-        this.setState({
-          issueRemoveIndex: index
-        });
-        this.props.toggleIssueRemoveModal();
-      } else {
-        this.props.removeIssue(index);
-      }
-    } else if (option === 'withdraw') {
-      this.props.withdrawIssue(index);
+    switch(option) {
+      case 'remove':
+        if (this.props.toggleIssueRemoveModal) {
+          // on the edit page, so show the remove modal
+          this.setState({
+            issueRemoveIndex: index
+          });
+          this.props.toggleIssueRemoveModal();
+        } else {
+          this.props.removeIssue(index);
+        };
+        break;
+      case 'withdraw':
+        this.props.withdrawIssue(index);
+        break;
+      case 'correct':
+        this.props.correctIssue(index);
     }
   }
 
@@ -101,15 +107,25 @@ export class AddIssuesPage extends React.Component {
     );
 
     const issues = formatAddedIssues(intakeData, useAmaActivationDate);
-    const requestIssues = issues.filter((issue) => !issue.withdrawalPending && !issue.withdrawalDate);
+    const requestIssues = issues.filter(
+      (issue) => !issue.withdrawalPending && !issue.withdrawalDate && !issue.correctionOfIssue && !issue.endProductCleared
+    );
+
     const previouslywithdrawnIssues = issues.filter((issue) => issue.withdrawalDate);
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
     const allWithdrawnIssues = previouslywithdrawnIssues.concat(issuesPendingWithdrawal);
     const hasWithdrawnIssues = !_.isEmpty(allWithdrawnIssues);
+    const hasIssuesPendingWithdrawal = !_.isEmpty(issuesPendingWithdrawal);
     const withdrawDatePlaceholder = formatDateStr(new Date());
     const withdrawReview = !_.isEmpty(issues) && _.every(
       issues, (issue) => issue.withdrawalPending || issue.withdrawalDate
     );
+
+    const clearedIssues = issues.filter((issue) => issue.endProductCleared && !issue.correctedByIssue && !issue.withdrawalDate);
+    const hasClearedIssues = !_.isEmpty(clearedIssues);
+    const correctionIssues = issues.filter((issue) => issue.correctionOfIssue);
+    const hasCorrectionIssues = !_.isEmpty(correctionIssues);
+    const hasClearedEps = !_.isEmpty(intakeData.clearedEps)
 
     const haveIssuesChanged = () => {
       if (issues.length !== this.state.originalIssueLength) {
@@ -134,7 +150,7 @@ export class AddIssuesPage extends React.Component {
       return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
     }
 
-    if (intakeData.hasClearedEP && !correctClaimReviews) {
+    if (!_.isEmpty(intakeData.clearedEps) && !correctClaimReviews) {
       return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
     }
 
@@ -143,12 +159,28 @@ export class AddIssuesPage extends React.Component {
     }
 
     const requestIssuesComponent = () => {
-      const issueActionOptions = [
-        { displayText: 'Withdraw issue',
-          value: 'withdraw' },
-        { displayText: 'Remove issue',
-          value: 'remove' }
-      ];
+      const issueActionOptions = (issue) => {
+        let issueOptions = [
+          { displayText: 'Withdraw issue',
+            value: 'withdraw',
+            disabled: issue.endProductCleared
+          },
+          { displayText: 'Remove issue',
+            value: 'remove',
+            disabled: issue.endProductCleared
+           }
+        ];
+
+        if (issue.endProductCleared) {
+          issueOptions.unshift({
+            displayText: 'Correct issue',
+            value: 'correct'
+          })
+        };
+
+        return issueOptions;
+      }
+
 
       return <div className="issues">
         <div>
@@ -174,7 +206,7 @@ export class AddIssuesPage extends React.Component {
                     name={`issue-action-${issue.index}`}
                     label="Actions"
                     hideLabel
-                    options={issueActionOptions}
+                    options={issueActionOptions(issue)}
                     defaultText="Select action"
                     onChange={(option) => this.onClickIssueAction(issue.index, option)}
                   />
@@ -194,16 +226,6 @@ export class AddIssuesPage extends React.Component {
             </div>;
           })}
         </div>
-        <div className="cf-actions">
-          <Button
-            name="add-issue"
-            legacyStyling={false}
-            classNames={['usa-button-secondary']}
-            onClick={this.onClickAddIssue(_.size(intakeData.contestableIssues))}
-          >
-            + Add issue
-          </Button>
-        </div>
       </div>;
     };
 
@@ -211,6 +233,65 @@ export class AddIssuesPage extends React.Component {
       return <div className="issues">
         { withdrawReview && <p className="cf-red-text">{COPY.INTAKE_WITHDRAWN_BANNER}</p> }
         { allWithdrawnIssues.map((issue) => {
+          return <div
+            className="issue"
+            data-key={`issue-${issue.index}`}
+            key={`issue-${issue.index}`}
+            id={`issue-${issue.referenceId}`}>
+            <AddedIssue
+              issue={issue}
+              issueIdx={issue.index}
+              requestIssues={intakeData.requestIssues}
+              legacyOptInApproved={intakeData.legacyOptInApproved}
+              legacyAppeals={intakeData.legacyAppeals}
+              formType={formType} />
+          </div>;
+        })}
+      </div>;
+    };
+
+    const clearedIssuesComponent = () => {
+      return <div className="issues">
+        { clearedIssues.map((issue) => {
+          return <div
+            className="issue"
+            data-key={`issue-${issue.index}`}
+            key={`issue-${issue.index}`}
+            id={`issue-${issue.referenceId}`}>
+            <AddedIssue
+              issue={issue}
+              issueIdx={issue.index}
+              requestIssues={intakeData.requestIssues}
+              legacyOptInApproved={intakeData.legacyOptInApproved}
+              legacyAppeals={intakeData.legacyAppeals}
+              formType={formType} />
+            <Button
+              onClick={() => this.onClickIssueAction(issue.index, 'correct')}
+              classNames={['cf-btn-link']}
+            >
+              Correct issue through a 930 EP
+            </Button>
+          </div>;
+        })}
+      </div>;
+    };
+
+    const addIssueButton = () => {
+      return <div className="cf-actions">
+        <Button
+          name="add-issue"
+          legacyStyling={false}
+          classNames={['usa-button-secondary']}
+          onClick={this.onClickAddIssue(_.size(intakeData.contestableIssues))}
+        >
+          + Add issue
+        </Button>
+      </div>;
+    }
+
+    const correctionIssuesComponent = () => {
+      return <div className="issues">
+        { correctionIssues.map((issue) => {
           return <div
             className="issue"
             data-key={`issue-${issue.index}`}
@@ -283,6 +364,25 @@ export class AddIssuesPage extends React.Component {
       );
     }
 
+    if (hasClearedIssues) {
+      rowObjects = rowObjects.concat(
+        { field: 'Cleared issues',
+          content: clearedIssuesComponent() });
+    }
+
+    if (hasCorrectionIssues) {
+      rowObjects = rowObjects.concat(
+        {
+          field: 'Correction issues',
+          content: correctionIssuesComponent()
+        }
+      );
+    }
+
+    rowObjects = rowObjects.concat(
+      { field: ' ',
+        content: addIssueButton() });
+
     return <div className="cf-intake-edit">
       { intakeData.addIssuesModalVisible && <AddIssuesModal
         intakeData={intakeData}
@@ -326,7 +426,7 @@ export class AddIssuesPage extends React.Component {
         rowClassNames={issueChangeClassname}
         slowReRendersAreOk />
 
-      { hasWithdrawnIssues &&
+      { hasIssuesPendingWithdrawal &&
         <div className="cf-gray-box cf-decision-date">
           <InlineForm>
             <DateSelector
@@ -388,6 +488,7 @@ export const EditAddIssuesPage = connect(
     toggleLegacyOptInModal,
     removeIssue,
     withdrawIssue,
-    setIssueWithdrawalDate
+    setIssueWithdrawalDate,
+    correctIssue
   }, dispatch)
 )(AddIssuesPage);

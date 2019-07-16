@@ -1,9 +1,11 @@
 // shared functions between reducers
 import { ACTIONS } from '../constants';
 import { update } from '../../util/ReducerUtil';
+import { createCorrectionIssue } from '../util/issues'
 
 export const commonReducers = (state, action) => {
   let actionsMap = {};
+  let listOfIssues = state.addedIssues ? state.addedIssues : [];
 
   actionsMap[ACTIONS.TOGGLE_ADD_ISSUES_MODAL] = () => {
     return update(state, {
@@ -69,7 +71,6 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.ADD_ISSUE] = () => {
-    let listOfIssues = state.addedIssues ? state.addedIssues : [];
     let addedIssues = [...listOfIssues, action.payload];
 
     return {
@@ -81,8 +82,6 @@ export const commonReducers = (state, action) => {
 
   actionsMap[ACTIONS.REMOVE_ISSUE] = () => {
     // issues are removed by position, because not all issues have referenceIds
-    let listOfIssues = state.addedIssues ? state.addedIssues : [];
-
     listOfIssues.splice(action.payload.index, 1);
 
     return {
@@ -92,8 +91,6 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.WITHDRAW_ISSUE] = () => {
-    let listOfIssues = state.addedIssues ? state.addedIssues : [];
-
     listOfIssues[action.payload.index].withdrawalPending = true;
 
     return {
@@ -109,9 +106,19 @@ export const commonReducers = (state, action) => {
     };
   };
 
-  actionsMap[ACTIONS.SET_EDIT_CONTENTION_TEXT] = () => {
-    let listOfIssues = state.addedIssues || [];
+  actionsMap[ACTIONS.CORRECT_ISSUE] = () => {
+    let originalIssue = listOfIssues[action.payload.index]
+    originalIssue.correctedByIssue = true;
 
+    let addedIssues = [...listOfIssues, createCorrectionIssue(listOfIssues[action.payload.index])];
+
+    return {
+      ...state,
+      addedIssues
+    };
+  };
+
+  actionsMap[ACTIONS.SET_EDIT_CONTENTION_TEXT] = () => {
     listOfIssues[action.payload.issueIdx].editedDescription = action.payload.editedDescription;
 
     return {

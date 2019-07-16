@@ -43,7 +43,7 @@ class ClaimReview < DecisionReview
     super.merge(
       benefitType: benefit_type,
       payeeCode: payee_code,
-      hasClearedEP: cleared_ep?
+      clearedEps: cleared_eps
     )
   end
 
@@ -123,8 +123,8 @@ class ClaimReview < DecisionReview
     end
   end
 
-  def cleared_ep?
-    end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
+  def cleared_eps
+    end_product_establishments.select { |ep| ep.status_cleared?(sync: true) }.map(&:code)
   end
 
   def active?

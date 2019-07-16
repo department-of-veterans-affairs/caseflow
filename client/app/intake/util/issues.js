@@ -28,6 +28,16 @@ const getClaimantField = (formType, veteran, intakeData) => {
   return [];
 };
 
+export const createCorrectionIssue = (originalIssue) => {
+  let correctionIssue = _.clone(originalIssue)
+  correctionIssue.correctionOfIssue = originalIssue.id;
+  delete correctionIssue.endProductCleared;
+  delete correctionIssue.id;
+  delete correctionIssue.correctedByIssue;
+
+  return correctionIssue;
+}
+
 export const legacyIssue = (issue, legacyAppeals) => {
   if (issue.vacolsIssue) {
     return issue.vacolsIssue;
@@ -124,6 +134,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         vacolsId: issue.vacols_id,
         vacolsSequenceId: issue.vacols_sequence_id,
         vacolsIssue: issue.vacols_issue,
+        endProductCleared: issue.end_product_cleared,
         withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
       };
     }
@@ -139,6 +150,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         vacolsId: issue.vacols_id,
         vacolsSequenceId: issue.vacols_sequence_id,
         vacolsIssue: issue.vacols_issue,
+        endProductCleared: issue.end_product_cleared,
         withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
       };
     }
@@ -166,6 +178,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       vacolsId: issue.vacols_id,
       vacolsSequenceId: issue.vacols_sequence_id,
       vacolsIssue: issue.vacols_issue,
+      endProductCleared: issue.end_product_cleared,
       withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
     };
   });
@@ -205,7 +218,8 @@ const formatUnidentifiedIssues = (state) => {
         decision_text: issue.description,
         notes: issue.notes,
         is_unidentified: true,
-        withdrawal_date: issue.withdrawalPending ? formatDateStringForApi(state.withdrawalDate) : issue.withdrawalDate
+        withdrawal_date: issue.withdrawalPending ? formatDateStringForApi(state.withdrawalDate) : issue.withdrawalDate,
+        correction: issue.correction
       };
     });
 };
@@ -231,7 +245,8 @@ const formatRatingRequestIssues = (state) => {
         ineligible_reason: issue.ineligibleReason,
         ineligible_due_to_id: issue.ineligibleDueToId,
         withdrawal_date: issue.withdrawalPending ? formatDateStringForApi(state.withdrawalDate) : null,
-        edited_description: issue.editedDescription
+        edited_description: issue.editedDescription,
+        correction: issue.correction
       };
     });
 };
@@ -252,7 +267,8 @@ const formatNonratingRequestIssues = (state) => {
       ineligible_due_to_id: issue.ineligibleDueToId,
       ineligible_reason: issue.ineligibleReason,
       edited_description: issue.editedDescription,
-      withdrawal_date: issue.withdrawalPending ? formatDateStringForApi(state.withdrawalDate) : null
+      withdrawal_date: issue.withdrawalPending ? formatDateStringForApi(state.withdrawalDate) : null,
+      correction: issue.correction
     };
   });
 };
@@ -335,7 +351,10 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         notes: issue.notes,
         isUnidentified: true,
         withdrawalPending: issue.withdrawalPending,
-        withdrawalDate: issue.withdrawalDate
+        withdrawalDate: issue.withdrawalDate,
+        endProductCleared: issue.endProductCleared,
+        correctionOfIssue: issue.correctionOfIssue,
+        correctedByIssue: issue.correctedByIssue
       };
     } else if (issue.isRating) {
       if (!issue.decisionDate && !issue.approxDecisionDate) {
@@ -366,7 +385,10 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         eligibleForSocOptIn: issue.eligibleForSocOptIn,
         withdrawalPending: issue.withdrawalPending,
         withdrawalDate: issue.withdrawalDate,
-        editedDescription: issue.editedDescription
+        endProductCleared: issue.endProductCleared,
+        editedDescription: issue.editedDescription,
+        correctionOfIssue: issue.correctionOfIssue,
+        correctedByIssue: issue.correctedByIssue
       };
     }
 
@@ -391,8 +413,11 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       decisionReviewTitle: issue.decisionReviewTitle,
       withdrawalPending: issue.withdrawalPending,
       withdrawalDate: issue.withdrawalDate,
+      endProductCleared: issue.endProductCleared,
       category: issue.category,
-      editedDescription: issue.editedDescription
+      editedDescription: issue.editedDescription,
+      correctionOfIssue: issue.correctionOfIssue,
+      correctedByIssue: issue.correctedByIssue
     };
   });
 };

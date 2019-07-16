@@ -308,7 +308,8 @@ class RequestIssue < ApplicationRecord
       title_of_active_review: title_of_active_review,
       contested_decision_issue_id: contested_decision_issue_id,
       withdrawal_date: withdrawal_date,
-      contested_issue_description: contested_issue_description
+      contested_issue_description: contested_issue_description,
+      end_product_cleared: end_product_establishment&.status_cleared?
     }
   end
 
