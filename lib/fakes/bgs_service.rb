@@ -53,6 +53,7 @@ class Fakes::BGSService
         in_active_review_receipt_date = Time.zone.parse("2018-04-01")
         completed_review_receipt_date = in_active_review_receipt_date - 30.days
         completed_review_reference_id = "cleared-review-ref-id"
+        contention_reference_id = rand(1..999)
 
         Generators::Rating.build(
           participant_id: veteran.participant_id
@@ -66,7 +67,7 @@ class Fakes::BGSService
             { decision_text: "Right knee" },
             { decision_text: "PTSD" },
             { decision_text: "This rating is in active review", reference_id: in_active_review_reference_id },
-            { decision_text: "I am on a completed Higher Level Review", contention_reference_id: 999 }
+            { decision_text: "I am on a completed Higher Level Review", contention_reference_id: contention_reference_id }
           ]
         )
         Generators::Rating.build(
@@ -138,7 +139,7 @@ class Fakes::BGSService
           benefit_type: "compensation",
           end_product_establishment: cleared_epe,
           contested_rating_issue_reference_id: completed_review_reference_id,
-          contention_reference_id: 999
+          contention_reference_id: contention_reference_id
         ) do |reqi|
           reqi.contested_rating_issue_profile_date = Time.zone.today - 100
         end

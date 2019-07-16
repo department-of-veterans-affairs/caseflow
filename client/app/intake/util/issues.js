@@ -29,14 +29,16 @@ const getClaimantField = (formType, veteran, intakeData) => {
 };
 
 export const createCorrectionIssue = (originalIssue) => {
-  let correctionIssue = _.clone(originalIssue)
-  correctionIssue.correctionOfIssue = originalIssue.id;
+  let correctionIssue = _.clone(originalIssue);
+
+  correctionIssue.correctedRequestIssueId = originalIssue.id;
+  correctionIssue.correctionClaimLabel = 'control';
   delete correctionIssue.endProductCleared;
   delete correctionIssue.id;
   delete correctionIssue.correctedByIssue;
 
   return correctionIssue;
-}
+};
 
 export const legacyIssue = (issue, legacyAppeals) => {
   if (issue.vacolsIssue) {
@@ -353,7 +355,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         withdrawalPending: issue.withdrawalPending,
         withdrawalDate: issue.withdrawalDate,
         endProductCleared: issue.endProductCleared,
-        correctionOfIssue: issue.correctionOfIssue,
+        correctedRequestIssueId: issue.correctedRequestIssueId,
         correctedByIssue: issue.correctedByIssue
       };
     } else if (issue.isRating) {
@@ -387,7 +389,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         withdrawalDate: issue.withdrawalDate,
         endProductCleared: issue.endProductCleared,
         editedDescription: issue.editedDescription,
-        correctionOfIssue: issue.correctionOfIssue,
+        correctedRequestIssueId: issue.correctedRequestIssueId,
         correctedByIssue: issue.correctedByIssue
       };
     }
@@ -416,7 +418,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       endProductCleared: issue.endProductCleared,
       category: issue.category,
       editedDescription: issue.editedDescription,
-      correctionOfIssue: issue.correctionOfIssue,
+      correctedRequestIssueId: issue.correctedRequestIssueId,
       correctedByIssue: issue.correctedByIssue
     };
   });

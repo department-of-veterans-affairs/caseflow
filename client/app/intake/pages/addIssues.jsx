@@ -61,23 +61,23 @@ export class AddIssuesPage extends React.Component {
   }
 
   onClickIssueAction = (index, option = 'remove') => {
-    switch(option) {
-      case 'remove':
-        if (this.props.toggleIssueRemoveModal) {
-          // on the edit page, so show the remove modal
-          this.setState({
-            issueRemoveIndex: index
-          });
-          this.props.toggleIssueRemoveModal();
-        } else {
-          this.props.removeIssue(index);
-        };
-        break;
-      case 'withdraw':
-        this.props.withdrawIssue(index);
-        break;
-      case 'correct':
-        this.props.correctIssue(index);
+    switch (option) {
+    case 'remove':
+      if (this.props.toggleIssueRemoveModal) {
+        // on the edit page, so show the remove modal
+        this.setState({
+          issueRemoveIndex: index
+        });
+        this.props.toggleIssueRemoveModal();
+      } else {
+        this.props.removeIssue(index);
+      }
+      break;
+    case 'withdraw':
+      this.props.withdrawIssue(index);
+      break;
+    case 'correct':
+      this.props.correctIssue(index);
     }
   }
 
@@ -108,7 +108,7 @@ export class AddIssuesPage extends React.Component {
 
     const issues = formatAddedIssues(intakeData, useAmaActivationDate);
     const requestIssues = issues.filter(
-      (issue) => !issue.withdrawalPending && !issue.withdrawalDate && !issue.correctionOfIssue && !issue.endProductCleared
+      (issue) => !issue.withdrawalPending && !issue.withdrawalDate && !issue.correctedRequestIssueId && !issue.endProductCleared
     );
 
     const previouslywithdrawnIssues = issues.filter((issue) => issue.withdrawalDate);
@@ -123,9 +123,9 @@ export class AddIssuesPage extends React.Component {
 
     const clearedIssues = issues.filter((issue) => issue.endProductCleared && !issue.correctedByIssue && !issue.withdrawalDate);
     const hasClearedIssues = !_.isEmpty(clearedIssues);
-    const correctionIssues = issues.filter((issue) => issue.correctionOfIssue);
+    const correctionIssues = issues.filter((issue) => issue.correctedRequestIssueId);
     const hasCorrectionIssues = !_.isEmpty(correctionIssues);
-    const hasClearedEps = !_.isEmpty(intakeData.clearedEps)
+    const hasClearedEps = !_.isEmpty(intakeData.clearedEps);
 
     const haveIssuesChanged = () => {
       if (issues.length !== this.state.originalIssueLength) {
@@ -159,28 +159,14 @@ export class AddIssuesPage extends React.Component {
     }
 
     const requestIssuesComponent = () => {
-      const issueActionOptions = (issue) => {
-        let issueOptions = [
-          { displayText: 'Withdraw issue',
-            value: 'withdraw',
-            disabled: issue.endProductCleared
-          },
-          { displayText: 'Remove issue',
-            value: 'remove',
-            disabled: issue.endProductCleared
-           }
-        ];
-
-        if (issue.endProductCleared) {
-          issueOptions.unshift({
-            displayText: 'Correct issue',
-            value: 'correct'
-          })
-        };
-
-        return issueOptions;
-      }
-
+      const issueActionOptions = [
+        { displayText: 'Withdraw issue',
+          value: 'withdraw'
+        },
+        { displayText: 'Remove issue',
+          value: 'remove'
+        }
+      ];
 
       return <div className="issues">
         <div>
@@ -206,7 +192,7 @@ export class AddIssuesPage extends React.Component {
                     name={`issue-action-${issue.index}`}
                     label="Actions"
                     hideLabel
-                    options={issueActionOptions(issue)}
+                    options={issueActionOptions}
                     defaultText="Select action"
                     onChange={(option) => this.onClickIssueAction(issue.index, option)}
                   />
@@ -269,7 +255,7 @@ export class AddIssuesPage extends React.Component {
               onClick={() => this.onClickIssueAction(issue.index, 'correct')}
               classNames={['cf-btn-link']}
             >
-              Correct issue through a 930 EP
+              Correct issue
             </Button>
           </div>;
         })}
@@ -287,7 +273,7 @@ export class AddIssuesPage extends React.Component {
           + Add issue
         </Button>
       </div>;
-    }
+    };
 
     const correctionIssuesComponent = () => {
       return <div className="issues">
@@ -373,7 +359,7 @@ export class AddIssuesPage extends React.Component {
     if (hasCorrectionIssues) {
       rowObjects = rowObjects.concat(
         {
-          field: 'Correction issues',
+          field: '930 Correction issues',
           content: correctionIssuesComponent()
         }
       );

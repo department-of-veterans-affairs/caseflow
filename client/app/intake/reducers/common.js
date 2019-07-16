@@ -1,7 +1,7 @@
 // shared functions between reducers
 import { ACTIONS } from '../constants';
 import { update } from '../../util/ReducerUtil';
-import { createCorrectionIssue } from '../util/issues'
+import { createCorrectionIssue } from '../util/issues';
 
 export const commonReducers = (state, action) => {
   let actionsMap = {};
@@ -107,7 +107,8 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.CORRECT_ISSUE] = () => {
-    let originalIssue = listOfIssues[action.payload.index]
+    let originalIssue = listOfIssues[action.payload.index];
+
     originalIssue.correctedByIssue = true;
 
     let addedIssues = [...listOfIssues, createCorrectionIssue(listOfIssues[action.payload.index])];
