@@ -25,6 +25,7 @@ class RequestIssuesUpdate < ApplicationRecord
       process_legacy_issues!
       process_withdrawn_issues!
       process_edited_issues!
+      process_corrected_issues!
       review.mark_rating_request_issues_to_reassociate!
       update!(
         before_request_issue_ids: before_issues.map(&:id),
@@ -163,6 +164,17 @@ class RequestIssuesUpdate < ApplicationRecord
   def withdrawal
     @withdrawal ||= RequestIssueWithdrawal.new(
       user: user,
+      review: review,
+      request_issues_data: @request_issues_data
+    )
+  end
+
+  def process_corrected_issues!
+    correction.call
+  end
+
+  def correction
+    @correction ||= RequestIssueCorrection.new(
       review: review,
       request_issues_data: @request_issues_data
     )

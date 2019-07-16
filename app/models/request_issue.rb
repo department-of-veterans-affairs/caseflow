@@ -436,6 +436,10 @@ class RequestIssue < ApplicationRecord
     close!(status: :withdrawn, closed_at_value: withdrawal_date.to_datetime)
   end
 
+  def correct!(correction_claim_label)
+    # create a new request issue, connected to the existing one if present
+  end
+
   def save_edited_contention_text!(new_description)
     update!(edited_description: new_description, contention_updated_at: nil)
   end
