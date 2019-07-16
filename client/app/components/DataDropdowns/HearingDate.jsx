@@ -44,50 +44,57 @@ class HearingDateDropdown extends React.Component {
 
     this.props.onFetchDropdownData(name);
 
-    return ApiUtil.get(xhrUrl, { timeout: { response: getMinutesToMilliseconds(5) } }).then((resp) => {
-      const hearingDateOptions = _.values(ApiUtil.convertToCamelCase(resp.body).hearingDays).map((hearingDate) => ({
-        label: formatDateStr(hearingDate.scheduledFor),
-        value: { ...hearingDate,
-          hearingDate: formatDateStr(hearingDate.scheduledFor, 'YYYY-MM-DD', 'YYYY-MM-DD') }
-      }));
-
-      const ids = _.map(hearingDateOptions, (opt) => opt.value.hearingId);
-
-      if (this.props.staticOptions) {
-
-        _.forEach(this.props.staticOptions, (opt) => {
-          if (_.includes(ids, opt.value.hearingId)) {
-            return;
-          }
-
-          hearingDateOptions.push({
-            label: opt.label,
-            value: {
-              ...opt.value,
-              hearingDate: formatDateStr(opt.value.scheduledFor, 'YYYY-MM-DD', 'YYYY-MM-DD')
+    return ApiUtil
+      .get(xhrUrl, { timeout: { response: getMinutesToMilliseconds(5) } })
+      .then((resp) => {
+        const jsonResponse = ApiUtil.convertToCamelCase(resp.body);
+        const hearingDateOptions = _.values(jsonResponse.hearingDays)
+          .map((hearingDate) => (
+            {
+              label: formatDateStr(hearingDate.scheduledFor),
+              value: {
+                ...hearingDate,
+                hearingDate: formatDateStr(hearingDate.scheduledFor, 'YYYY-MM-DD', 'YYYY-MM-DD')
+              }
             }
+          ));
+
+        const ids = _.map(hearingDateOptions, (opt) => opt.value.hearingId);
+
+        if (this.props.staticOptions) {
+          _.forEach(this.props.staticOptions, (opt) => {
+            if (_.includes(ids, opt.value.hearingId)) {
+              return;
+            }
+
+            hearingDateOptions.push({
+              label: opt.label,
+              value: {
+                ...opt.value,
+                hearingDate: formatDateStr(opt.value.scheduledFor, 'YYYY-MM-DD', 'YYYY-MM-DD')
+              }
+            });
           });
+        }
+
+        hearingDateOptions.sort((d1, d2) => new Date(d1.value.hearingDate) - new Date(d2.value.hearingDate));
+
+        hearingDateOptions.unshift({
+          label: ' ',
+          value: {
+            hearingId: null,
+            hearingDate: null
+          }
         });
-      }
 
-      hearingDateOptions.sort((d1, d2) => new Date(d1.value.hearingDate) - new Date(d2.value.hearingDate));
+        this.props.onReceiveDropdownData(name, hearingDateOptions);
 
-      hearingDateOptions.unshift({
-        label: ' ',
-        value: {
-          hearingId: null,
-          hearingDate: null
+        if (hearingDateOptions && hearingDateOptions.length === 0) {
+          this.props.onDropdownError(name, 'There are no upcoming hearing dates for this regional office.');
+        } else {
+          this.props.onDropdownError(name, null);
         }
       });
-
-      this.props.onReceiveDropdownData(name, hearingDateOptions);
-
-      if (hearingDateOptions && hearingDateOptions.length === 0) {
-        this.props.onDropdownError(name, 'There are no upcoming hearing dates for this regional office.');
-      } else {
-        this.props.onDropdownError(name, null);
-      }
-    });
   }
 
   getSelectedOption = () => {
