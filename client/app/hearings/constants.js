@@ -117,10 +117,6 @@ export const ERROR_MAPPINGS = {
     'twice.',
   'HearingSchedule::ValidateRoSpreadsheet::AllocationTemplateNotFollowed': 'The allocation spreadsheet does not ' +
     'follow the template.',
-  'HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotInRange': 'The judge non-availability spreadsheet ' +
-    'contains dates outside the range you selected.',
-  'HearingSchedule::ValidateJudgeSpreadsheet::JudgeNotInDatabase': 'The judge non-availability spreadsheet contains ' +
-    'a judge not in our database.',
   'ValidationError::UnspecifiedError': 'The spreadsheet is invalid.'
 };
 
