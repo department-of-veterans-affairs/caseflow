@@ -80,7 +80,7 @@ class HearingDateDropdown extends React.Component {
 
         this.props.onReceiveDropdownData(name, hearingDateOptions);
 
-        if (hearingDateOptions && hearingDateOptions.length === 0) {
+        if (hearingDateOptions && hearingDateOptions.length === 2) {
           this.props.onDropdownError(name, 'There are no upcoming hearing dates for this regional office.');
         } else {
           this.props.onDropdownError(name, null);
