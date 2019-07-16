@@ -26,7 +26,7 @@ class AppealsWithNoTasksOrAllTasksOnHoldQuery
   def stuck_query(klass_name)
     klass = klass_name.constantize
     table = klass.table_name
-    klass.where.not(id: tasks_for(klass_name).inactive)
+    klass.where.not(id: tasks_for(klass_name).closed)
       .where.not(id: tasks_for(klass_name).where(type: "RootTask", status: Constants.TASK_STATUSES.cancelled))
       .joins(:tasks)
       .group("#{table}.id")
