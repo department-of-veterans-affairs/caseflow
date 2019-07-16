@@ -365,11 +365,11 @@ describe ColocatedTask do
       let(:colocated_admin) { FactoryBot.create(:user) }
       before { OrganizationsUser.make_user_admin(colocated_admin, colocated_org) }
 
-      it "should include only the reassign action" do
-        expect(colocated_task.available_actions_unwrapper(colocated_admin).count).to eq(1)
-        expect(colocated_task.available_actions_unwrapper(colocated_admin).first[:label]).to(
-          eq(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label)
-        )
+      it "should include all actions available to the assigned user along with reassign" do
+        assigned_user_actions = colocated_task.available_actions_unwrapper(colocated_user)
+        expect(colocated_task.available_actions_unwrapper(colocated_admin).count).to eq(assigned_user_actions.size + 1)
+        expect(colocated_task.available_actions_unwrapper(colocated_admin)
+          .include?(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label))
       end
     end
   end
