@@ -4,10 +4,40 @@ class Organizations::TaskSummaryController < OrganizationsController
   def index
     redirect_to "/unauthorized" unless organization.users.include?(current_user)
 
+    # TODO: Display a spinner on the front-end while we are waiting for this response.
+    # sleep(2)
+
+    result = ActiveRecord::Base.connection.exec_query(%Q{
+      select count(*) as count
+      , tasks.type as type
+      , closest_regional_office as regional_office
+      from tasks
+      left join (
+        select closest_regional_office
+        , id
+        , 'LegacyAppeal' as type
+        from legacy_appeals
+        union
+        select closest_regional_office
+        , id
+        , 'Appeal' as type
+        from appeals
+      ) all_appeals
+        on tasks.appeal_id = all_appeals.id
+        and tasks.appeal_type = all_appeals.type
+      -- TODO: Move this to a bound parameter
+      where assigned_to_id = #{organization.id}
+        and assigned_to_type = 'Organization'
+        and status in ('assigned', 'in_progress')
+      group by 2, 3
+      order by 2, 1 desc;
+    })
+
     respond_to do |format|
       format.json do
         render json: {
-          members: json_users(organization.users)
+          members: json_users(organization.users),
+          task_counts: result.to_hash.to_json
         }
       end
     end
