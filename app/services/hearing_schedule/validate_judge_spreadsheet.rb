@@ -24,7 +24,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     unless @spreadsheet_template[:title] == SPREADSHEET_TITLE &&
            @spreadsheet_template[:headers] == SPREADSHEET_HEADERS &&
            @spreadsheet_template[:empty_column] == SPREADSHEET_EMPTY_COLUMN
-      @errors << JudgeTemplateNotFollowed
+      @errors << JudgeTemplateNotFollowed.new("The template was not followed. Please redownload the file and try again")
     end
   end
 
@@ -51,23 +51,41 @@ class HearingSchedule::ValidateJudgeSpreadsheet
       vacols_judges[vlj_id][:last_name].casecmp(name.split(", ")[0].strip.downcase).zero?
   end
 
-  def check_range_of_dates(date)
-    !date.instance_of?(Date) || (date >= @start_date && date <= @end_date)
+  def get_incorrectly_formatted_dates
+    @spreadsheet_data.reject { |row| row["date"].instance_of?(Date) || row["date"] == "N/A" }.pluck("date")
+  end
+
+  def get_nonunique_judges
+    @spreadsheet_data.select { |row| @spreadsheet_data.count(row) > 1 }.pluck("vlj_id").uniq
+  end
+
+  def get_out_of_range_dates
+    @spreadsheet_data.reject do |row|
+      !row["date"].instance_of?(Date) || (row["date"] >= @start_date && row["date"] <= @end_date)
+    end.pluck("date").map { |date| date.strftime("%m/%d/%Y") }
+  end
+
+  def get_judges_not_in_db
+    vacols_judges = User.css_ids_by_vlj_ids(@spreadsheet_data.pluck("vlj_id").uniq)
+    @spreadsheet_data.select { |row| !judge_in_vacols?(vacols_judges, row["name"], row["vlj_id"]) }.pluck("vlj_id")
   end
 
   def validate_judge_non_availability_dates
-    vacols_judges = User.css_ids_by_vlj_ids(@spreadsheet_data.pluck("vlj_id").uniq)
-    unless @spreadsheet_data.all? { |row| row["date"].instance_of?(Date) || row["date"] == "N/A" }
-      @errors << JudgeDatesNotCorrectFormat
+    incorrectly_formatted_dates = get_incorrectly_formatted_dates
+    if incorrectly_formatted_dates.count > 0
+      @errors << JudgeDatesNotCorrectFormat.new("These dates are in the wrong format: " + incorrectly_formatted_dates.to_s)
     end
-    unless @spreadsheet_data.uniq == @spreadsheet_data
-      @errors << JudgeDatesNotUnique
+    nonunique_judges = get_nonunique_judges
+    if nonunique_judges.count > 0
+      @errors << JudgeDatesNotUnique.new("These judges have duplicate dates: " + nonunique_judges.to_s)
     end
-    unless @spreadsheet_data.all? { |row| check_range_of_dates(row["date"]) }
-      @errors << JudgeDatesNotInRange
+    out_of_range_dates = get_out_of_range_dates
+    if out_of_range_dates.count > 0
+      @errors << JudgeDatesNotInRange.new("These dates are out of the selected range: " + out_of_range_dates.to_s)
     end
-    unless @spreadsheet_data.all? { |row| judge_in_vacols?(vacols_judges, row["name"], row["vlj_id"]) }
-      @errors << JudgeNotInDatabase
+    judges_not_in_db = get_judges_not_in_db
+    if judges_not_in_db.count > 0
+      @errors << JudgeNotInDatabase.new("These judges are not in the database: " + judges_not_in_db.to_s)
     end
   end
 
