@@ -7,7 +7,7 @@ import _ from 'lodash';
 import ApiUtil from '../../util/ApiUtil';
 import QueueFlowModal from './QueueFlowModal';
 import Dropdown from '../../components/Dropdown';
-import { regionalOfficeCity } from '../utils';
+import { regionalOfficeCity, cityForRegionalOfficeCode } from '../utils';
 import { getUnassignedOrganizationalTasks } from '../selectors';
 import { bulkAssignTasks } from '../QueueActions';
 import { setActiveOrganization } from '../uiReducer/uiActions';
@@ -82,60 +82,20 @@ class BulkAssignModal extends React.PureComponent {
     //   });
   }
 
-  getDisplayTextOption = (options) => {
-    const optionsWithDisplayText = [
-      {
-        value: null,
-        displayText: ''
-      }
-    ];
-
-    options.forEach((option) => {
-      if (option !== null) {
-        if (typeof option === 'object') {
-          optionsWithDisplayText.push(option);
-        } else {
-          optionsWithDisplayText.push(
-            {
-              value: option,
-              displayText: option
-            }
-          );
-        }
-      }
-    });
-
-    return optionsWithDisplayText;
-  }
-
-  filterTasks = (fieldName, fieldValue, tasks) => {
-    let filteredTasks = tasks;
-
-    filteredTasks = fieldValue ?
-      _.filter(filteredTasks, { [fieldName]: fieldValue }) :
-      filteredTasks;
-
-    return filteredTasks;
-  }
-
   filterOptionsByRegionalOffice = (rows) => {
     if (!this.state.modal.regionalOffice) {
       return rows;
     }
 
-    debugger;
-
     return rows.filter((row) => row.regional_office === this.state.modal.regionalOffice);
   }
 
-  filterTasksByTaskType = (tasks) => {
-    let filteredTasks = tasks;
-
-    if (this.state.modal.taskType) {
-      filteredTasks = this.filterTasks('type', this.state.modal.taskType, filteredTasks);
+  filterOptionsByTaskType = (rows) => {
+    if (!this.state.modal.taskType) {
+      return rows;
     }
 
-    return filteredTasks;
+    return rows.filter((row) => row.type === this.state.modal.taskType);
   }
 
   generateUserOptions = () => {
@@ -149,52 +109,57 @@ class BulkAssignModal extends React.PureComponent {
     return users;
   }
 
-  // task.closestRegionalOffice.location_hash.city
+  // TODO: RO "Unknown" breaks things.
   generateRegionalOfficeOptions = () => {
-    const filteredTasks = this.filterTasksByTaskType(this.props.tasks);
+    const allRows = this.state.taskCountForTypeAndRegionalOffice;
+    const filteredRows = this.filterOptionsByTaskType(allRows);
 
-    const options = _.uniq(filteredTasks.map((task) => {
-      return regionalOfficeCity(task);
-    })).filter(Boolean);
-
-    return this.getDisplayTextOption(options);
+    return [{ value: null, displayText: "" }].concat(_.uniq(filteredRows.map((row) => ({
+          value: row.regional_office,
+          displayText: cityForRegionalOfficeCode(row.regional_office)
+        })
+      )
+    ));
   }
 
   generateTaskTypeOptions = () => {
     const allRows = this.state.taskCountForTypeAndRegionalOffice;
     const filteredRows = this.filterOptionsByRegionalOffice(allRows);
 
-    return _.uniq(filteredRows.map((task) => ({
-          value: task.type,
-          displayText: task.type.replace(/([a-z])([A-Z])/g, '$1 $2')
-        })
-      )
-    );
+    return [{ value: null, displayText: "" }].concat(_.uniq(filteredRows.map((row) => row.type)).map((type) => ({
+        value: type,
+        displayText: type.replace(/([a-z])([A-Z])/g, '$1 $2')
+      })
+    ));
+  }
+
+  assignableTaskCount = () => {
+    const allRows = this.state.taskCountForTypeAndRegionalOffice;
+    const filteredRows = this.filterOptionsByTaskType(this.filterOptionsByRegionalOffice(allRows));
+
+    return filteredRows.map((row) => row.count).reduce((a, b) => a + b, 0)
   }
 
   generateNumberOfTaskOptions = () => {
     const actualOptions = [];
     const issueCounts = BULK_ASSIGN_ISSUE_COUNT;
 
-    // TODO: Come back to dealing with this.
-    // 
-    // let filteredTasks = this.filterOptionsByRegionalOffice(this.props.tasks);
-    // filteredTasks = this.filterTasksByTaskType(filteredTasks);
+    const assignableTaskCount = this.assignableTaskCount();
 
     for (let i = 0; i < issueCounts.length; i++) {
-      // if (filteredTasks && filteredTasks.length < issueCounts[i]) {
-      //   actualOptions.push({
-      //     value: filteredTasks.length,
-      //     displayText: `${filteredTasks.length} (all available tasks)`
-      //   });
-      //   break;
-      // }
-      // if (filteredTasks.length > issueCounts[i]) {
+      if (assignableTaskCount < issueCounts[i]) {
+        actualOptions.push({
+          value: assignableTaskCount,
+          displayText: `${assignableTaskCount} (all available tasks)`
+        });
+        break;
+      }
+      if (assignableTaskCount > issueCounts[i]) {
         actualOptions.push({
           value: issueCounts[i],
           displayText: issueCounts[i]
         });
-      // }
+      }
     }
 
     return actualOptions;
