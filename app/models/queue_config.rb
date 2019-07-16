@@ -41,7 +41,7 @@ class QueueConfig
 
     # Only return tasks in the configuration if we are using it to populate the first page of results.
     # Otherwise avoid the overhead of the additional database requests.
-    tasks = use_task_pages_api?(user) ? serialized_tasks_for_user(task_pager.paged_tasks, tab.columns) : []
+    tasks = use_task_pages_api?(user) ? serialized_tasks_for_columns(task_pager.paged_tasks, tab.columns) : []
 
     endpoint = "#{organization.path}/task_pages?#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{tab.name}"
 
@@ -54,7 +54,7 @@ class QueueConfig
     )
   end
 
-  def serialized_tasks_for_user(tasks, columns)
+  def serialized_tasks_for_columns(tasks, columns)
     return [] if tasks.empty?
 
     primed_tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
