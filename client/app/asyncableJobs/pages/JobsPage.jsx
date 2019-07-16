@@ -8,6 +8,8 @@ import Pagination from '../../components/Pagination';
 
 import ApiUtil from '../../util/ApiUtil';
 
+import AsyncModelNav from '../components/AsyncModelNav';
+
 const DATE_TIME_FORMAT = 'ddd MMM DD HH:mm:ss YYYY';
 
 class AsyncableJobsPage extends React.PureComponent {
@@ -115,32 +117,13 @@ class AsyncableJobsPage extends React.PureComponent {
     return moment(datetime).format(DATE_TIME_FORMAT);
   }
 
-  modelNameLinks = () => {
-    let links = [];
-
-    for (let modelName of this.props.models.sort()) {
-      let modelLink = <span key={modelName} className="cf-model-jobs-link">
-        <a href={`/asyncable_jobs/${modelName}/jobs`}>{modelName}</a>
-      </span>;
-
-      links.push(modelLink);
-    }
-
-    return links;
-  }
-
   render = () => {
     const rowObjects = this.props.jobs;
 
     if (rowObjects.length === 0) {
       return <div>
         <h1>Success! There are no pending jobs.</h1>
-        <div>
-          <strong>Last updated:</strong> {moment(this.props.fetchedAt).format(DATE_TIME_FORMAT)}
-          &nbsp;&#183;&nbsp;
-          <a href="/jobs">All jobs</a>
-          <div>{this.modelNameLinks()}</div>
-        </div>
+        <AsyncModelNav models={this.props.models} fetchedAt={this.props.fetchedAt} />
       </div>;
     }
 
@@ -148,7 +131,7 @@ class AsyncableJobsPage extends React.PureComponent {
       {
         header: 'Name',
         valueFunction: (job, rowId) => {
-          return <a title={`row ${rowId}`} href={`/asyncable_jobs/${job.klass}/jobs`}>{job.klass}</a>;
+          return <a title={`row ${rowId}`} href={`/asyncable_jobs/${job.klass}/jobs/${job.id}`}>{job.klass}</a>;
         }
       },
       {
@@ -219,12 +202,7 @@ class AsyncableJobsPage extends React.PureComponent {
 
     return <div className="cf-asyncable-jobs-table">
       <h1>{this.props.asyncableJobKlass} Jobs</h1>
-      <div>
-        <strong>Last updated:</strong> {moment(this.props.fetchedAt).format(DATE_TIME_FORMAT)}
-        &nbsp;&#183;&nbsp;
-        <a href="/jobs">All jobs</a>
-        <div>{this.modelNameLinks()}</div>
-      </div>
+      <AsyncModelNav models={this.props.models} fetchedAt={this.props.fetchedAt} />
       <hr />
       <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} slowReRendersAreOk />
       <Pagination
