@@ -259,9 +259,22 @@ On error returns a `400` code with an error message like:
 {"message":"Invalid key."}
 ```
 
+Once the IDT session is activated, the `token` is passed in subsequent requests.
+
 #### `GET /idt/api/v1/appeals`
 
+```bash
+% curl -H 'TOKEN: your-idt-token' \
+       -H 'FILENUMBER: veteran-file-number' \
+       https://appeals.cf.ds.va.gov/idt/api/v1/appeals
+```
+
 #### `GET /idt/api/v1/appeals/:appeal_id`
+
+```bash
+% curl -H 'TOKEN: your-idt-token' \
+       https://appeals.cf.ds.va.gov/idt/api/v1/appeals?appeal_id=a-long-appeal-uuid
+```
 
 #### `POST /idt/api/v1/appeals/:appeal_id/outcode`
 
@@ -269,9 +282,25 @@ On error returns a `400` code with an error message like:
 
 #### `GET /idt/api/v1/judges`
 
+```bash
+% curl -H 'TOKEN: your-idt-token' \
+       https://appeals.cf.ds.va.gov/idt/api/v1/judges
+```
+
 #### `GET /idt/api/v1/user`
 
+```bash
+% curl -H 'TOKEN: your-idt-token' \
+       https://appeals.cf.ds.va.gov/idt/api/v1/user
+```
+
 #### `GET /idt/api/v1/veterans`
+
+```bash
+% curl -H 'TOKEN: your-idt-token' \
+       -H 'FILENUMBER: veteran-file-number' \
+       https://appeals.cf.ds.va.gov/idt/api/v1/veterans
+```
 
 ## VETText / Hearings
 
