@@ -50,6 +50,14 @@ feature "Asyncable Jobs index" do
     end
   end
 
+  describe "individual job page" do
+    it "shows job details" do
+      visit "/asyncable_jobs/HigherLevelReview/jobs/#{hlr.id}"
+
+      expect(page).to have_content(hlr.establishment_error)
+    end
+  end
+
   describe "index page" do
     it "shows jobs that look potentially stuck" do
       visit "/jobs"
