@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "rails_helper"
 require "support/intake_helpers"
 
 feature "Higher Level Review Edit issues" do
@@ -1140,6 +1141,15 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content("Issues Not Editable")
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
       end
+
+      context "when correct_claim_reviews is enabled" do
+        before { FeatureToggle.enable!(:correct_claim_reviews) }
+
+        it "allows a user to navigate to the edit page" do
+          visit "higher_level_reviews/#{rating_ep_claim_id}/edit/"
+          expect(page).to have_content("Edit Issues")
+        end
+      end
     end
 
     context "when EPs have cleared very recently" do
@@ -1460,30 +1470,6 @@ feature "Higher Level Review Edit issues" do
         create(:request_issue, :rating, decision_review: higher_level_review, contested_issue_description: "PTSD")
       end
 
-      scenario "edit contention text" do
-        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
-
-        expect(page).to have_content("Edit contention title")
-
-        within first(".issue-edit-text") do
-          click_edit_contention_issue
-        end
-
-        expect(page).to have_button("Submit", disabled: true)
-        expect(page).to have_field(type: "textarea", match: :first, placeholder: "PTSD")
-
-        fill_in(with: "Right Knee")
-        expect(page).to have_button("Submit", disabled: false)
-        click_button("Submit")
-        expect(page).to have_content("Right Knee")
-
-        within first(".issue-edit-text") do
-          click_edit_contention_issue
-        end
-
-        expect(page).to have_field(type: "textarea", match: :first, placeholder: "Right Knee")
-      end
-
       scenario "edit contention text is saved" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         expect(page).to have_content("Edit contention title")
@@ -1492,8 +1478,10 @@ feature "Higher Level Review Edit issues" do
           click_edit_contention_issue
         end
 
-        expect(page).to have_button("Submit", disabled: true)
+        expect(page).to have_field(type: "textarea", match: :first, text: "PTSD")
+        fill_in(with: "")
         expect(page).to have_field(type: "textarea", match: :first, placeholder: "PTSD")
+        expect(page).to have_button("Submit", disabled: true)
 
         fill_in(with: "Right Knee")
         expect(page).to have_button("Submit", disabled: false)

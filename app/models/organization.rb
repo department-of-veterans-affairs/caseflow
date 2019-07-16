@@ -24,6 +24,10 @@ class Organization < ApplicationRecord
     false
   end
 
+  def show_reader_link_column?
+    true
+  end
+
   def use_task_pages_api?
     false
   end
@@ -69,6 +73,31 @@ class Organization < ApplicationRecord
 
   def user_admin_path
     "#{path}/users"
+  end
+
+  def queue_tabs
+    [
+      unassigned_tasks_tab,
+      assigned_tasks_tab,
+      completed_tasks_tab
+    ]
+  end
+
+  def unassigned_tasks_tab
+    ::UnassignedTasksTab.new(
+      assignee_name: name,
+      show_regional_office_column: show_regional_office_in_queue?,
+      show_reader_link_column: show_reader_link_column?,
+      allow_bulk_assign: can_bulk_assign_tasks?
+    )
+  end
+
+  def assigned_tasks_tab
+    ::AssignedTasksTab.new(assignee_name: name, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def completed_tasks_tab
+    ::CompletedTasksTab.new(assignee_name: name, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def ama_task_serializer

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe VACOLS::CaseDocket do
   before do
     FeatureToggle.enable!(:test_facols)

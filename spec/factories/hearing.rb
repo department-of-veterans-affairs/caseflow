@@ -16,6 +16,8 @@ FactoryBot.define do
              request_type: regional_office.nil? ? "C" : "V")
     end
     scheduled_time { "8:30AM" }
+    created_by { create(:user) }
+    updated_by { create(:user) }
 
     trait :with_tasks do
       after(:create) do |hearing, _evaluator|

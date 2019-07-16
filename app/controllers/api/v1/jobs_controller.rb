@@ -5,6 +5,7 @@ class Api::V1::JobsController < Api::ApplicationController
   SUPPORTED_JOBS = {
     "calculate_dispatch_stats" => CalculateDispatchStatsJob,
     "create_establish_claim" => CreateEstablishClaimTasksJob,
+    "data_integrity_checks" => DataIntegrityChecksJob,
     "dependencies_check" => DependenciesCheckJob,
     "dependencies_report_service_log" => DependenciesReportServiceLogJob,
     "heartbeat" => HeartbeatTasksJob,
@@ -18,9 +19,8 @@ class Api::V1::JobsController < Api::ApplicationController
     "task_timer_job" => TaskTimerJob,
     "fetch_hearing_locations_for_veterans_job" => FetchHearingLocationsForVeteransJob,
     "update_appellant_representation_job" => UpdateAppellantRepresentationJob,
-    "untracked_legacy_appeals_report_job" => UntrackedLegacyAppealsReportJob,
     "hearing_disposition_change_job" => HearingDispositionChangeJob,
-    "warm_bgs_participant_caches_job" => WarmBgsParticipantCachesJob
+    "warm_bgs_caches_job" => WarmBgsCachesJob
   }.freeze
 
   def create

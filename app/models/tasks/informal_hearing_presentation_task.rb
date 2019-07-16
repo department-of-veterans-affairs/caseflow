@@ -6,9 +6,7 @@
 # BVA typically (but not always) waits for an IHP to be submitted before making a decision.
 
 class InformalHearingPresentationTask < GenericTask
-  # TODO: figure out how long IHP tasks will take to expire,
-  # then make them timeable
-  # include TimeableTask
+  include TimeableTask
 
   def available_actions(user)
     if assigned_to == user
@@ -33,5 +31,24 @@ class InformalHearingPresentationTask < GenericTask
 
   def label
     COPY::IHP_TASK_LABEL
+  end
+
+  def when_timer_ends
+    if open?
+      update!(
+        status: Constants.TASK_STATUSES.cancelled,
+        instructions: instructions << COPY::IHP_TASK_REACHED_DEADLINE_MESSAGE
+      )
+    end
+  end
+
+  def timer_ends_at
+    created_at + deadline_length.days
+  end
+
+  private
+
+  def deadline_length
+    appeal.advanced_on_docket ? 30 : 120
   end
 end

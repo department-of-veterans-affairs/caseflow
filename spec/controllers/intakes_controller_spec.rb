@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 RSpec.describe IntakesController do
   before do
     Fakes::Initializer.load!
@@ -97,6 +99,22 @@ RSpec.describe IntakesController do
         expect(Veteran.find_by_file_number_or_ssn(file_number)).to be_nil
         expect(Intake.find_by(veteran_file_number: file_number)).to_not be_nil
         expect(bgs).to have_received(:fetch_veteran_info).exactly(1).times
+      end
+    end
+
+    context "veteran in BGS but user may not modify" do
+      before do
+        Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica")
+        allow_any_instance_of(Fakes::BGSService).to receive(:may_modify?).and_return(false)
+      end
+
+      let(:file_number) { "999887777" }
+
+      it "does not allow user to proceed with Intake" do
+        post :create, params: { file_number: file_number, form_type: "higher_level_review" }
+
+        expect(response.status).to eq(422)
+        expect(controller.send(:new_intake).error_code).to eq("veteran_not_modifiable")
       end
     end
   end

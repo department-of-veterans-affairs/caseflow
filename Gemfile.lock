@@ -23,8 +23,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
-  revision: 3d06cb2ebd7fe1335e54df87cf8f4cfdbd7c732c
-  ref: 3d06cb2ebd7fe1335e54df87cf8f4cfdbd7c732c
+  revision: c7289957fef9c3548994d98c03a6cf5f0948fbe4
+  ref: c7289957fef9c3548994d98c03a6cf5f0948fbe4
   specs:
     connect_vbms (1.2.0)
       httpclient (~> 2.8.0)

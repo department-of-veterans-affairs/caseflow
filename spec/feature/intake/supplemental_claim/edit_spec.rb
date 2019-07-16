@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "rails_helper"
 require "support/intake_helpers"
 
 feature "Supplemental Claim Edit issues" do
@@ -565,6 +566,15 @@ feature "Supplemental Claim Edit issues" do
         expect(page).to have_current_path("/supplemental_claims/#{rating_ep_claim_id}/edit/cleared_eps")
         expect(page).to have_content("Issues Not Editable")
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
+      end
+
+      context "when correct_claim_reviews is enabled" do
+        before { FeatureToggle.enable!(:correct_claim_reviews) }
+
+        it "allows a user to navigate to the edit page" do
+          visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
+          expect(page).to have_content("Edit Issues")
+        end
       end
     end
 

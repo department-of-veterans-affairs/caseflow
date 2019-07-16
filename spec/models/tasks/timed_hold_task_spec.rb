@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe TimedHoldTask do
   let(:task) { FactoryBot.create(:timed_hold_task) }
 
@@ -196,9 +198,12 @@ describe TimedHoldTask do
 
     describe ".timer_end_time" do
       it "returns the expected end time" do
-        expect(task.reload.timer_end_time).to eq(
-          task.task_timers.first.submitted_at + TaskTimer.processing_retry_interval_hours.hours
-        )
+        task.reload
+        task_timer = task.task_timers.first
+        delay = TaskTimer.processing_retry_interval_hours.hours - 1.minute
+
+        expect(task.timer_end_time).to eq(task_timer.submitted_at + 1.minute)
+        expect(task_timer.submitted_at).to eq(task_timer.last_submitted_at + delay)
       end
     end
 

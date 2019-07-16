@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe EndProductEstablishment do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -835,9 +837,11 @@ describe EndProductEstablishment do
       context "when the end product is canceled" do
         let(:status_type_code) { "CAN" }
 
-        it "closes request issues" do
+        it "closes request issues and cancels establishment" do
           subject
+
           expect(end_product_establishment.reload.synced_status).to eq("CAN")
+          expect(end_product_establishment.source.canceled?).to be true
           expect(request_issues.first.reload.closed_at).to eq(Time.zone.now)
           expect(request_issues.first.closed_status).to eq("end_product_canceled")
         end
@@ -1001,7 +1005,10 @@ describe EndProductEstablishment do
         subject
 
         # delay in processing should be 1 day for rating (minus the processing offset of 12.hours)
-        expect(rating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now + 12.hours)
+        expect(rating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now)
+        expect(rating_issue.reload.decision_sync_last_submitted_at).to eq(
+          Time.zone.now + RequestIssue.processing_retry_interval_hours.hours
+        )
         # immediatly for nonrating
         expect(nonrating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now)
 
@@ -1025,7 +1032,10 @@ describe EndProductEstablishment do
         subject
 
         # delay in processing should be 1 day (minus the processing offset of 12.hours)
-        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to eq(Time.zone.now + 12.hours)
+        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to eq(Time.zone.now)
+        expect(board_grant_effectuation.reload.decision_sync_last_submitted_at).to eq(
+          Time.zone.now + BoardGrantEffectuation.processing_retry_interval_hours.hours
+        )
         expect(DecisionIssueSyncJob).to_not have_been_enqueued.with(board_grant_effectuation)
       end
     end

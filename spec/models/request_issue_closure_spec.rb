@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe RequestIssueClosure do
   let(:decision_review) { create(:higher_level_review) }
   let(:end_product_establishment) { nil }

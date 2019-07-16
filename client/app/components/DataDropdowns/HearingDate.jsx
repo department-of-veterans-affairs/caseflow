@@ -9,7 +9,7 @@ import {
 } from '../common/actions';
 import ApiUtil from '../../util/ApiUtil';
 import _ from 'lodash';
-import { formatDateStr } from '../../util/DateUtil';
+import { formatDateStr, getMinutesToMilliseconds } from '../../util/DateUtil';
 import LoadingLabel from './LoadingLabel';
 
 import SearchableDropdown from '../SearchableDropdown';
@@ -36,6 +36,7 @@ class HearingDateDropdown extends React.Component {
   getHearingDates = (force) => {
     const { hearingDates: { options, isFetching }, regionalOffice } = this.props;
     const name = `hearingDatesFor${regionalOffice}`;
+    const xhrUrl = `/regional_offices/${regionalOffice}/open_hearing_dates.json`;
 
     if ((options && !force) || isFetching) {
       return;
@@ -43,7 +44,7 @@ class HearingDateDropdown extends React.Component {
 
     this.props.onFetchDropdownData(name);
 
-    return ApiUtil.get(`/regional_offices/${regionalOffice}/open_hearing_dates.json`).then((resp) => {
+    return ApiUtil.get(xhrUrl, { timeout: { response: getMinutesToMilliseconds(5) } }).then((resp) => {
       const hearingDateOptions = _.values(ApiUtil.convertToCamelCase(resp.body).hearingDays).map((hearingDate) => ({
         label: formatDateStr(hearingDate.scheduledFor),
         value: { ...hearingDate,

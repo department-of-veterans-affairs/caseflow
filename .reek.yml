@@ -16,6 +16,8 @@ detectors:
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - AsyncableJobsReporter
       - HearingSerializerBase
+      - DataIntegrityChecksJob
+      - VeteranAttributeCacher
   InstanceVariableAssumption:
     exclude:
       - Appeal

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe InformalHearingPresentationTask do
   let(:user) { create(:user, roles: ["VSO"]) }
 
@@ -71,6 +73,48 @@ describe InformalHearingPresentationTask do
       task.update!(status: Constants.TASK_STATUSES.cancelled)
       expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
       expect(appeal.root_task.reload.children.select { |t| t.type == DistributionTask.name }.count).to eq(1)
+    end
+  end
+
+  describe "TimeableTask expiration behaviour" do
+    let!(:task) { FactoryBot.create(:informal_hearing_presentation_task, appeal: appeal) }
+
+    def ballpark_seconds(seconds, cushion = 10)
+      (seconds - cushion)..(seconds + cushion)
+    end
+
+    subject do
+      expect(task.task_timers.count).to eq(1)
+      timer = task.task_timers.first
+      expect(ballpark_seconds((timer.created_at + deadline_length.days).to_i)).to include(timer.submitted_at.to_i)
+    end
+
+    context "when the appeal is not advanced on docket" do
+      let(:appeal) { FactoryBot.create(:appeal) }
+      let(:deadline_length) { 120 }
+      it "creates a task timer that expires in 120 days" do
+        subject
+      end
+    end
+
+    context "when the appeal is advanced on docket" do
+      let(:appeal) { FactoryBot.create(:appeal, :advanced_on_docket_due_to_motion) }
+      let(:deadline_length) { 30 }
+      it "creates a task timer that expires in 30 days" do
+        subject
+      end
+    end
+  end
+
+  describe ".when_timer_ends" do
+    let(:existing_instructions) { "Some existing instructions" }
+    let(:task) { FactoryBot.create(:informal_hearing_presentation_task, instructions: [existing_instructions]) }
+
+    subject { task.when_timer_ends }
+
+    it "appends a message to the instructions field when we automatically close an IHP task" do
+      subject
+      expect(task.reload.instructions).to eq([existing_instructions, COPY::IHP_TASK_REACHED_DEADLINE_MESSAGE])
     end
   end
 end

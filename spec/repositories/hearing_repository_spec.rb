@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe HearingRepository do
   before do
     Timecop.freeze(Time.utc(2017, 10, 4))
@@ -12,7 +14,7 @@ describe HearingRepository do
     let(:hearing_day) { create(:hearing_day, scheduled_for: Date.new(2019, 3, 2)) }
 
     before do
-      RequestStore.store[:current_user] = OpenStruct.new(vacols_uniq_id: staff_record.slogid)
+      RequestStore.store[:current_user] = create(:user, vacols_uniq_id: staff_record.slogid)
     end
 
     it "slots hearing at correct time" do
