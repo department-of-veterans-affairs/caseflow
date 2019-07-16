@@ -3,7 +3,7 @@
 class WorkQueue::TaskColumnSerializer
   include FastJsonapi::ObjectSerializer
 
-  def serialize_attribute?(params, columns)
+  def self.serialize_attribute?(params, columns)
     (params[:columns] & columns).any?
   end
 
