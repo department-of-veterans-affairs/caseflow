@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+def convert_top_level_key_to_string(hash)
+  hash.keys.map { |key| [key.to_s, hash[key]] }.to_h
+end
+
 class RegionalOffice
   class NotFoundError < StandardError; end
 
@@ -8,13 +12,13 @@ class RegionalOffice
   DEFAULT_NUM_OF_RO_ROOMS = 1
 
   # Maps CSS Station # to RO id
-  STATIONS = Constants.REGIONAL_OFFICE_FOR_CSS_STATION.to_h.freeze
+  STATIONS = convert_top_level_key_to_string(Constants.REGIONAL_OFFICE_FOR_CSS_STATION.to_h).freeze
 
-  CITIES = Constants.REGIONAL_OFFICE_INFORMATION.to_h.freeze
+  CITIES = convert_top_level_key_to_string(Constants.REGIONAL_OFFICE_INFORMATION.to_h).freeze
 
   ROS = CITIES.keys.freeze
 
-  SATELLITE_OFFICES = Constants.SATELLITE_OFFICE_INFORMATION.to_h.freeze
+  SATELLITE_OFFICES = convert_top_level_key_to_string(Constants.SATELLITE_OFFICE_INFORMATION.to_h).freeze
 
   # The string key is a unique identifier for a regional office.
   attr_reader :key
@@ -56,16 +60,12 @@ class RegionalOffice
 
   private
 
-  def lookup_key
-    key&.to_sym
-  end
-
   def location_hash
     @location_hash ||= compute_location_hash
   end
 
   def compute_location_hash
-    CITIES[lookup_key] || SATELLITE_OFFICES[lookup_key] || {}
+    CITIES[key] || SATELLITE_OFFICES[key] || {}
   end
 
   def compute_station_key
@@ -90,7 +90,7 @@ class RegionalOffice
 
     # Returns RegionalOffice objects for each RO that has the passed station code
     def for_station(station_key)
-      [STATIONS[station_key.to_sym]].flatten.map do |regional_office_key|
+      [STATIONS[station_key]].flatten.map do |regional_office_key|
         find!(regional_office_key)
       end
     end
