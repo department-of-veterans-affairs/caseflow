@@ -11,8 +11,8 @@ class AsyncableJobsController < ApplicationController
 
   def show
     respond_to do |format|
-     format.json { render json: job.asyncable_ui_hash }
-     format.html { render template: "asyncable_jobs/show" }
+      format.json { render json: job.asyncable_ui_hash }
+      format.html { render template: "asyncable_jobs/show" }
     end
   end
 
