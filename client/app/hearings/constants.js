@@ -88,7 +88,6 @@ export const ACTIONS = {
 };
 
 export const ERROR_MAPPINGS = {
-  'SchedulePeriod::OverlappingSchedulePeriods': 'You have already uploaded a file for these dates.',
   'HearingSchedule::ValidateRoSpreadsheet::RoDatesNotUnique': 'The RO non-availability spreadsheet contains ' +
     'duplicate dates for an RO.',
   'HearingSchedule::ValidateRoSpreadsheet::RoDatesNotInRange': 'The RO non-availability spreadsheet contains dates ' +
@@ -114,8 +113,7 @@ export const ERROR_MAPPINGS = {
   'HearingSchedule::ValidateRoSpreadsheet::AllocationDuplicateRo': 'The allocation spreadsheet contains the same RO ' +
     'twice.',
   'HearingSchedule::ValidateRoSpreadsheet::AllocationTemplateNotFollowed': 'The allocation spreadsheet does not ' +
-    'follow the template.',
-  'ValidationError::UnspecifiedError': 'The spreadsheet is invalid.'
+    'follow the template.'
 };
 
 export const SPREADSHEET_TYPES = {
