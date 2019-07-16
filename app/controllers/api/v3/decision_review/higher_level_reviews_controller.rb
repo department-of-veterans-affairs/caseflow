@@ -19,22 +19,9 @@ private
         type: 'IntakeStatus',
         id: higher_level_review.uuid,
         attributes: {
-          status: async_status(higher_level_review)
+          status: higher_level_review.asyncable_status
         }
       }
     }
-  end
-
-  def async_status(higher_level_review)
-    #REVIEW should this be in asyncable?
-    if higher_level_review.processed?
-      :processed
-    elsif higher_level_review.canceled?
-      :canceled
-    elsif higher_level_review.attempted?
-      :attempted
-    elsif higher_level_review.submitted?
-      :submitted
-    end
   end
 end
