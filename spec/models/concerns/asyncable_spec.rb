@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-fdescribe Asyncable do #TODO remove f
+describe Asyncable do
   class TestAsyncable
     include ActiveModel::Model
     include Asyncable
@@ -11,8 +11,6 @@ fdescribe Asyncable do #TODO remove f
       self.send(column.to_sym)
     end
   end
-
-  # let(:model) { TestAsyncable.new(regional_office_key: "RO22") }
 
   describe "#asyncable_status" do
     it 'should return :not_yet_submitted if there is no timestamps' do
@@ -38,6 +36,5 @@ fdescribe Asyncable do #TODO remove f
       subject = TestAsyncable.new(submitted_at: Time.zone.now)
       expect(subject.asyncable_status).to eq :submitted
     end
-    # TODO add cases with multiple timestamps
   end
 end
