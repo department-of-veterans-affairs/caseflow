@@ -8,13 +8,9 @@ class RequestIssueCorrection
 
   def call
     corrected_issue_data.each do |issue_data|
-      corrected_request_issue_id = issue_data.delete(:corrected_request_issue_id)
-
+      request_issue_to_correct = RequestIssue.find_by(id: issue_data.delete(:corrected_request_issue_id))
       new_issue = review.find_or_build_request_issue_from_intake_data(issue_data)
-      if corrected_request_issue_id
-        RequestIssue.find(corrected_request_issue_id)
-          .update(corrected_by_request_issue_id: new_issue.id)
-      end
+      request_issue_to_correct&.update(corrected_by_request_issue_id: new_issue.id)
     end
   end
 
