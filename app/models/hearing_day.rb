@@ -222,14 +222,14 @@ class HearingDay < ApplicationRecord
       total_video_and_co = load_days(start_date, end_date, regional_office)
       vacols_hearings_for_days = HearingRepository.fetch_hearings_for_parents(total_video_and_co.pluck(:id))
 
-      total_video_and_co.select { |hearing_day| !hearing_day.lock }.map do |hearing_day|
-        all_hearings = (hearing_day.hearings || []) + (vacols_hearings_for_days[hearing_day.id.to_s] || [])
-        scheduled_hearings = filter_non_scheduled_hearings(all_hearings || [])
+      total_video_and_co
+        .select { |hearing_day| !hearing_day.lock }
+        .map do |hearing_day|
+          all_hearings = (hearing_day.hearings || []) + (vacols_hearings_for_days[hearing_day.id.to_s] || [])
+          scheduled_hearings = filter_non_scheduled_hearings(all_hearings || [])
 
-        hearing_day.to_hash.merge(
-          "hearings" => scheduled_hearings.map { |hearing| hearing.quick_to_hash(current_user_id) }
-        )
-      end
+          hearing_day_hash_with_hearings(hearing_day, scheduled_hearings, current_user_id)
+        end
     end
 
     def open_hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil, current_user_id = nil)
@@ -254,6 +254,12 @@ class HearingDay < ApplicationRecord
     end
 
     private
+
+    def hearing_day_hash_with_hearings(hearing_day, scheduled_hearings, current_user_id)
+      hearing_day.to_hash.merge(
+        "hearings" => scheduled_hearings.map { |hearing| hearing.quick_to_hash(current_user_id) }
+      )
+    end
 
     def hearing_days_in_range(start_date, end_date)
       HearingDay.includes(hearings: [appeal: [tasks: :assigned_to]])
