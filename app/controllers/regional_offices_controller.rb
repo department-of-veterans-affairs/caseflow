@@ -21,14 +21,12 @@ class RegionalOfficesController < ApplicationController
     }
   end
 
-  private
-
   class << self
-    def hearing_day_hash(ro, day)
+    def hearing_day_hash(regional_office, day)
       {
         hearing_id: day["id"],
-        regional_office: ro,
-        timezone: RegionalOffice::CITIES[ro][:timezone],
+        regional_office: regional_office,
+        timezone: RegionalOffice::CITIES[regional_office][:timezone],
         scheduled_for: day["scheduled_for"],
         request_type: day["request_type"],
         room: day["room"],
