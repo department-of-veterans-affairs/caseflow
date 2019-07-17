@@ -78,8 +78,11 @@ RSpec.feature "Search" do
           end
 
           it "should show edit issues page" do
-            expect(page).to have_content("Edit issues")
-            click_on "Edit issues"
+            expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+            new_window = window_opened_by { click_on("edit-issues") }
+            within_window new_window do
+              expect(page).to have_content("Edit Issues")
+            end
           end
         end
 
