@@ -73,12 +73,12 @@ class OtherReviewsTable extends React.PureComponent {
           <span {...linkStyling}>
             {review.claimantNames.length > 0 ? review.claimantNames.join(', ') : review.veteranFullName}
           </span>
-          <Link
+          {review.processedInVbms && <Link
             name="edit-issues"
             href={review.editIssuesUrl}
             target="_blank">
-         Edit issues
-          </Link>
+            Edit issues
+          </Link>}
         </React.Fragment>;
       }
     },

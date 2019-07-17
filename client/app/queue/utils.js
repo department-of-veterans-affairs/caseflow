@@ -341,7 +341,8 @@ export const prepareClaimReviewForStore = (claimReviews) => {
       reviewType: claimReview.review_type,
       veteranFileNumber: claimReview.veteran_file_number,
       veteranFullName: claimReview.veteran_full_name,
-      editIssuesUrl: claimReview.caseflow_only_edit_issues_url
+      editIssuesUrl: claimReview.caseflow_only_edit_issues_url,
+      processedInVbms: claimReview.processed_in_vbms
     };
 
     return accumulator;

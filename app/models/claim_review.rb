@@ -145,7 +145,8 @@ class ClaimReview < DecisionReview
       review_type: self.class.to_s.underscore,
       veteran_file_number: veteran_file_number,
       veteran_full_name: claim_veteran&.name&.formatted(:readable_full),
-      caseflow_only_edit_issues_url: caseflow_only_edit_issues_url
+      caseflow_only_edit_issues_url: caseflow_only_edit_issues_url,
+      processed_in_vbms: processed_in_vbms?
     }
   end
 
