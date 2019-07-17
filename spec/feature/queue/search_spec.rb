@@ -60,6 +60,11 @@ RSpec.feature "Search" do
         context "and it has no appeals" do
           let!(:veteran) { create(:veteran) }
           let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+          let!(:intake_user) { create(:intake_user) }
+
+          before do
+            User.authenticate!(user: intake_user)
+          end
 
           before do
             visit "/search"
@@ -70,6 +75,11 @@ RSpec.feature "Search" do
           it "should show the HLR / SCs table" do
             expect(page).to have_content(COPY::CASE_LIST_TABLE_EMPTY_TEXT)
             expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+          end
+
+          fit "should show edit issues page" do
+            expect(page).to have_content("Edit issues")
+            click_on "Edit issues"
           end
         end
 

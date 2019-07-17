@@ -21,6 +21,13 @@ FactoryBot.define do
       roles { ["Assign Hearings"] }
     end
 
+    factory :intake_user do
+      css_id { "BVATWARNER" }
+      full_name { "Sandra Warner" }
+      email { "sandra.warner@example.com" }
+      roles { ["Mail Intake"] }
+    end
+
     trait :vso_role do
       roles { ["VSO"] }
     end

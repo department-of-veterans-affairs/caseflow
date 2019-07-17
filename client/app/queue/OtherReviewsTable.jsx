@@ -10,6 +10,11 @@ import { clearCaseListSearch } from './CaseList/CaseListActions';
 
 import COPY from '../../COPY.json';
 import CLAIM_REVIEW_TEXT from '../../constants/CLAIM_REVIEW_TEXT.json';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+
+const linkStyling = css({
+  marginRight: '5px'
+});
 
 class SubdividedTableRow extends React.PureComponent {
   render = () => {
@@ -63,9 +68,19 @@ class OtherReviewsTable extends React.PureComponent {
   getColumns = () => [
     {
       header: COPY.OTHER_REVIEWS_TABLE_APPELLANT_NAME_COLUMN_TITLE,
-      valueFunction: (review) => review.claimantNames.length > 0 ?
-        review.claimantNames.join(', ') :
-        review.veteranFullName
+      valueFunction: (review) => {
+        return <React.Fragment>
+          <span {...linkStyling}>
+            {review.claimantNames.length > 0 ? review.claimantNames.join(', ') : review.veteranFullName}
+          </span>
+          <Link
+            name="edit-issues"
+            href={review.editIssuesUrl}
+            target="_blank">
+         Edit issues
+          </Link>
+        </React.Fragment>;
+      }
     },
     {
       header: COPY.OTHER_REVIEWS_TABLE_REVIEW_TYPE_COLUMN_TITLE,
