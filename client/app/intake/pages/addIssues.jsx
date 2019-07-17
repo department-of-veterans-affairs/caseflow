@@ -21,6 +21,7 @@ import { formatAddedIssues, getAddIssuesFields, validateDate } from '../util/iss
 import { formatDateStr } from '../../util/DateUtil';
 import Table from '../../components/Table';
 import EditContentionTitle from '../components/EditContentionTitle';
+import { WithdrawnIssues, ClearedIssues, CorrectionIssues, RequestedIssues } from '../components/addIssues/IssueLists'
 
 import {
   toggleAddIssuesModal,
@@ -94,9 +95,10 @@ export class AddIssuesPage extends React.Component {
       editPage
     } = this.props;
 
-    if (!formType) {
-      return <Redirect to={PAGE_PATHS.BEGIN} />;
-    }
+    if (!formType) { return <Redirect to={PAGE_PATHS.BEGIN} />; }
+    if (intakeData.isDtaError) { return <Redirect to={PAGE_PATHS.DTA_CLAIM} />; }
+    if (!_.isEmpty(intakeData.clearedEps) && !correctClaimReviews) { return <Redirect to={PAGE_PATHS.CLEARED_EPS} />; }
+    if (intakeData.isOutcoded) { return <Redirect to={PAGE_PATHS.OUTCODED} />; }
 
     const { useAmaActivationDate, withdrawDecisionReviews, editContentionText, correctClaimReviews } = featureToggles;
     const intakeData = intakeForms[formType];
@@ -107,159 +109,34 @@ export class AddIssuesPage extends React.Component {
     );
 
     const issues = formatAddedIssues(intakeData, useAmaActivationDate);
-    const requestIssues = issues.filter(
-      (issue) => !issue.withdrawalPending && !issue.withdrawalDate && !issue.correctedRequestIssueId && !issue.endProductCleared
+    const requestedIssues = issues.filter(
+      (i) => !i.withdrawalPending && !i.withdrawalDate && !i.correctedRequestIssueId && !i.endProductCleared
     );
 
     const previouslywithdrawnIssues = issues.filter((issue) => issue.withdrawalDate);
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
     const allWithdrawnIssues = previouslywithdrawnIssues.concat(issuesPendingWithdrawal);
-    const hasWithdrawnIssues = !_.isEmpty(allWithdrawnIssues);
-    const hasIssuesPendingWithdrawal = !_.isEmpty(issuesPendingWithdrawal);
     const withdrawDatePlaceholder = formatDateStr(new Date());
     const withdrawReview = !_.isEmpty(issues) && _.every(
       issues, (issue) => issue.withdrawalPending || issue.withdrawalDate
     );
 
-    const clearedIssues = issues.filter((issue) => issue.endProductCleared && !issue.correctedByIssue && !issue.withdrawalDate);
-    const hasClearedIssues = !_.isEmpty(clearedIssues);
-    const correctionIssues = issues.filter((issue) => issue.correctedRequestIssueId);
-    const hasCorrectionIssues = !_.isEmpty(correctionIssues);
-    const hasClearedEps = !_.isEmpty(intakeData.clearedEps);
+    const clearedIssues = issues.filter(
+      (issue) => issue.endProductCleared && !issue.correctedByIssue && !issue.withdrawalDate
+    );
+    const correctionIssues = issues.filter((issue) => issue.correctionClaimLabel);
 
     const haveIssuesChanged = () => {
-      if (issues.length !== this.state.originalIssueLength) {
-        return true;
-      }
+      if (issues.length !== this.state.originalIssueLength) { return true; }
 
       // If the entire review is withdrawn, then issues will have changed, but that
       // will be communicated differently so haveIssuesChanged will not be set to true
-      if (!_.isEmpty(issuesPendingWithdrawal) && !withdrawReview) {
-        return true;
-      }
+      if (!_.isEmpty(issuesPendingWithdrawal) && !withdrawReview) { return true; }
 
       // if any issues do not have ids, it means the issue was just added
-      if ((issues.filter((issue) => !issue.id || issue.editedDescription).length > 0)) {
-        return true;
-      }
+      if ((issues.filter((issue) => !issue.id || issue.editedDescription).length > 0)) { return true; }
 
       return false;
-    };
-
-    if (intakeData.isDtaError) {
-      return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
-    }
-
-    if (!_.isEmpty(intakeData.clearedEps) && !correctClaimReviews) {
-      return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
-    }
-
-    if (intakeData.isOutcoded) {
-      return <Redirect to={PAGE_PATHS.OUTCODED} />;
-    }
-
-    const requestIssuesComponent = () => {
-      const issueActionOptions = [
-        { displayText: 'Withdraw issue',
-          value: 'withdraw'
-        },
-        { displayText: 'Remove issue',
-          value: 'remove'
-        }
-      ];
-
-      return <div className="issues">
-        <div>
-          { requestIssues.map((issue) => {
-            const editableContentionText = Boolean(
-              formType !== FORM_TYPES.APPEAL.key && !issue.category && !issue.ineligibleReason);
-
-            return <div className="issue-container" key={`issue-container-${issue.index}`}>
-              <div
-                className="issue"
-                data-key={`issue-${issue.index}`}
-                key={`issue-${issue.index}`}
-                id={`issue-${issue.referenceId}`}>
-                <AddedIssue
-                  issue={issue}
-                  issueIdx={issue.index}
-                  requestIssues={intakeData.requestIssues}
-                  legacyOptInApproved={intakeData.legacyOptInApproved}
-                  legacyAppeals={intakeData.legacyAppeals}
-                  formType={formType} />
-                <div className="issue-action">
-                  { withdrawDecisionReviews && <Dropdown
-                    name={`issue-action-${issue.index}`}
-                    label="Actions"
-                    hideLabel
-                    options={issueActionOptions}
-                    defaultText="Select action"
-                    onChange={(option) => this.onClickIssueAction(issue.index, option)}
-                  />
-                  }
-                  { !withdrawDecisionReviews && <Button
-                    onClick={() => this.onClickIssueAction(issue.index)}
-                    classNames={['cf-btn-link', 'remove-issue']}
-                  >
-                    <i className="fa fa-trash-o" aria-hidden="true"></i><br />Remove
-                  </Button>
-                  }
-                </div>
-              </div>
-              {editContentionText && editableContentionText && <EditContentionTitle
-                issue= {issue}
-                issueIdx={issue.index} />}
-            </div>;
-          })}
-        </div>
-      </div>;
-    };
-
-    const withdrawnIssuesComponent = () => {
-      return <div className="issues">
-        { withdrawReview && <p className="cf-red-text">{COPY.INTAKE_WITHDRAWN_BANNER}</p> }
-        { allWithdrawnIssues.map((issue) => {
-          return <div
-            className="issue"
-            data-key={`issue-${issue.index}`}
-            key={`issue-${issue.index}`}
-            id={`issue-${issue.referenceId}`}>
-            <AddedIssue
-              issue={issue}
-              issueIdx={issue.index}
-              requestIssues={intakeData.requestIssues}
-              legacyOptInApproved={intakeData.legacyOptInApproved}
-              legacyAppeals={intakeData.legacyAppeals}
-              formType={formType} />
-          </div>;
-        })}
-      </div>;
-    };
-
-    const clearedIssuesComponent = () => {
-      return <div className="issues">
-        { clearedIssues.map((issue) => {
-          return <div
-            className="issue"
-            data-key={`issue-${issue.index}`}
-            key={`issue-${issue.index}`}
-            id={`issue-${issue.referenceId}`}>
-            <AddedIssue
-              issue={issue}
-              issueIdx={issue.index}
-              requestIssues={intakeData.requestIssues}
-              legacyOptInApproved={intakeData.legacyOptInApproved}
-              legacyAppeals={intakeData.legacyAppeals}
-              formType={formType} />
-            <Button
-              onClick={() => this.onClickIssueAction(issue.index, 'correct')}
-              classNames={['cf-btn-link']}
-            >
-              Correct issue
-            </Button>
-          </div>;
-        })}
-      </div>;
     };
 
     const addIssueButton = () => {
@@ -272,26 +149,6 @@ export class AddIssuesPage extends React.Component {
         >
           + Add issue
         </Button>
-      </div>;
-    };
-
-    const correctionIssuesComponent = () => {
-      return <div className="issues">
-        { correctionIssues.map((issue) => {
-          return <div
-            className="issue"
-            data-key={`issue-${issue.index}`}
-            key={`issue-${issue.index}`}
-            id={`issue-${issue.referenceId}`}>
-            <AddedIssue
-              issue={issue}
-              issueIdx={issue.index}
-              requestIssues={intakeData.requestIssues}
-              legacyOptInApproved={intakeData.legacyOptInApproved}
-              legacyAppeals={intakeData.legacyAppeals}
-              formType={formType} />
-          </div>;
-        })}
       </div>;
     };
 
@@ -337,32 +194,48 @@ export class AddIssuesPage extends React.Component {
       issueChangeClassname = (rowObj) => rowObj.field === '' ? 'intake-issue-flash' : '';
     }
 
-    let rowObjects = fieldsForFormType.concat(
-      { field: 'Requested issues',
-        content: requestIssuesComponent() });
+    let rowObjects = fieldsForFormType
 
-    if (hasWithdrawnIssues) {
-      rowObjects = rowObjects.concat(
-        {
-          field: 'Withdrawn issues',
-          content: withdrawnIssuesComponent()
-        }
-      );
+    if (!_.isEmpty(requestedIssues)) {
+      rowObjects = fieldsForFormType.concat(
+        { field: 'Requested issues',
+          content: <RequestedIssues
+            onClickIssueAction={this.onClickIssueAction}
+            issues={requestedIssues}
+            intakeData={intakeData}
+            formType={formType}
+            featureToggles={featureToggles} /> });
     }
 
-    if (hasClearedIssues) {
+    if (!_.isEmpty(allWithdrawnIssues)) {
+      rowObjects = rowObjects.concat(
+        { field: 'Withdrawn issues',
+          content: <WithdrawnIssues
+            withdrawReview={withdrawReview}
+            issues={allWithdrawnIssues}
+            intakeData={intakeData}
+            formType={formType} /> });
+    }
+
+    if (!_.isEmpty(clearedIssues)) {
       rowObjects = rowObjects.concat(
         { field: 'Cleared issues',
-          content: clearedIssuesComponent() });
+          content: <ClearedIssues
+            onClickIssueAction={this.onClickIssueAction}
+            issues={clearedIssues}
+            intakeData={intakeData}
+            formType={formType} /> });
     }
 
-    if (hasCorrectionIssues) {
+    if (!_.isEmpty(correctionIssues)) {
       rowObjects = rowObjects.concat(
         {
           field: '930 Correction issues',
-          content: correctionIssuesComponent()
-        }
-      );
+          content: <CorrectionIssues
+            onClickIssueAction={this.onClickIssueAction}
+            issues={correctionIssues}
+            intakeData={intakeData}
+            formType={formType} /> });
     }
 
     rowObjects = rowObjects.concat(
@@ -412,7 +285,7 @@ export class AddIssuesPage extends React.Component {
         rowClassNames={issueChangeClassname}
         slowReRendersAreOk />
 
-      { hasIssuesPendingWithdrawal &&
+      { !_.isEmpty(issuesPendingWithdrawal) &&
         <div className="cf-gray-box cf-decision-date">
           <InlineForm>
             <DateSelector

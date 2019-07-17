@@ -356,6 +356,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         withdrawalDate: issue.withdrawalDate,
         endProductCleared: issue.endProductCleared,
         correctedRequestIssueId: issue.correctedRequestIssueId,
+        correctionClaimLabel: issue.correctionClaimLabel,
         correctedByIssue: issue.correctedByIssue
       };
     } else if (issue.isRating) {
@@ -390,6 +391,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         endProductCleared: issue.endProductCleared,
         editedDescription: issue.editedDescription,
         correctedRequestIssueId: issue.correctedRequestIssueId,
+        correctionClaimLabel: issue.correctionClaimLabel,
         correctedByIssue: issue.correctedByIssue
       };
     }
@@ -419,6 +421,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       category: issue.category,
       editedDescription: issue.editedDescription,
       correctedRequestIssueId: issue.correctedRequestIssueId,
+      correctionClaimLabel: issue.correctionClaimLabel,
       correctedByIssue: issue.correctedByIssue
     };
   });

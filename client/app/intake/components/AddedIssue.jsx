@@ -87,7 +87,7 @@ class AddedIssue extends React.PureComponent {
       }
     }
 
-    if (issue.withdrawalPending || issue.withdrawalDate || issue.correctedRequestIssueId) {
+    if (issue.withdrawalPending || issue.withdrawalDate || issue.correctionClaimLabel) {
       eligibleState.cssKlasses.push('issue-pending-action');
     }
 
@@ -109,7 +109,7 @@ class AddedIssue extends React.PureComponent {
       }
       { issue.withdrawalPending && <p>Withdraw pending</p> }
       { issue.withdrawalDate && <p>Withdrawn on {issue.withdrawalDate}</p> }
-      { issue.correctedRequestIssueId && <p>Correction pending</p> }
+      { issue.correctionClaimLabel && <p>Correction pending</p> }
     </div>;
   }
 
