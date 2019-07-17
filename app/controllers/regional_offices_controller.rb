@@ -17,18 +17,24 @@ class RegionalOfficesController < ApplicationController
     )
 
     render json: {
-      hearing_days: hearing_days.map do |day|
-        {
-          hearing_id: day["id"],
-          regional_office: ro,
-          timezone: RegionalOffice::CITIES[ro][:timezone],
-          scheduled_for: day["scheduled_for"],
-          request_type: day["request_type"],
-          room: day["room"],
-          filled_slots: day["hearings"].size,
-          total_slots: day["total_slots"]
-        }
-      end
+      hearing_days: hearing_days.map { |day| RegionalOfficesController.hearing_day_hash(ro, day) }
     }
+  end
+
+  private
+
+  class << self
+    def hearing_day_hash(ro, day)
+      {
+        hearing_id: day["id"],
+        regional_office: ro,
+        timezone: RegionalOffice::CITIES[ro][:timezone],
+        scheduled_for: day["scheduled_for"],
+        request_type: day["request_type"],
+        room: day["room"],
+        filled_slots: day["hearings"].size,
+        total_slots: day["total_slots"]
+      }
+    end
   end
 end
