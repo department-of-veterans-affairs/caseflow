@@ -57,7 +57,6 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   bulkAssignTasks = () => {
-    // TODO: This should just be a success message.
     this.props.bulkAssignTasks(this.state.modal);
 
     const {
@@ -75,13 +74,13 @@ class BulkAssignModal extends React.PureComponent {
       task_count }
     };
 
-    // return ApiUtil.post('/bulk_task_assignments', { data }).then(() => {
-    //   this.props.history.push(`/organizations/${this.organizationUrl()}`);
-    //   window.location.reload();
-    // }).
-    //   catch(() => {
-    //     // handle the error
-    //   });
+    return ApiUtil.post('/bulk_task_assignments', { data }).then(() => {
+      this.props.history.push(`/organizations/${this.organizationUrl()}`);
+      window.location.reload();
+    }).
+      catch(() => {
+        // handle the error
+      });
   }
 
   filterOptionsByRegionalOffice = (rows) => {

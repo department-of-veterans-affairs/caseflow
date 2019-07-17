@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
 class Organizations::TaskSummaryController < OrganizationsController
+  # rubocop:disable Metrics/MethodLength
   def index
     redirect_to "/unauthorized" unless organization.users.include?(current_user)
 
-    # TODO: Display a spinner on the front-end while we are waiting for this response.
-    # sleep(2)
-
-    result = ActiveRecord::Base.connection.exec_query(%Q{
+    result = ActiveRecord::Base.connection.exec_query(%{
       select count(*) as count
       , tasks.type as type
       , closest_regional_office as regional_office
@@ -25,7 +23,6 @@ class Organizations::TaskSummaryController < OrganizationsController
       ) all_appeals
         on tasks.appeal_id = all_appeals.id
         and tasks.appeal_type = all_appeals.type
-      -- TODO: Move this to a bound parameter
       where assigned_to_id = #{organization.id}
         and assigned_to_type = 'Organization'
         and status in ('assigned', 'in_progress')
@@ -42,6 +39,7 @@ class Organizations::TaskSummaryController < OrganizationsController
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 
