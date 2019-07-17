@@ -317,6 +317,14 @@ class User < ApplicationRecord
       )
     end
 
+    def api_user
+      @api_user ||= find_by( # TODO should this be _or_initialize
+        station_id: 101,
+        css_id: "APIUSER",
+        full_name: "API User"
+      )
+    end
+
     def from_session(session)
       user_session = session["user"] ||= authentication_service.default_user_session
 
