@@ -170,6 +170,7 @@ class SeedDB
       created_by: hearings_member.css_id,
       updated_by: hearings_member.css_id
     )
+    hearing_day.update!(created_by_id: hearings_member.id, updated_by_id: hearings_member.id)
     veteran = FactoryBot.create(:veteran, first_name: "Abellona", last_name: "Valtas", file_number: 123_456_789)
     appeal = FactoryBot.create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number)
     root_task = FactoryBot.create(:root_task, appeal: appeal)
@@ -516,6 +517,7 @@ class SeedDB
           created_by: user.css_id,
           updated_by: user.css_id
         )
+        day.update!(created_by_id: user.id, updated_by_id: user.id)
 
         case index
         when 1
@@ -1193,7 +1195,7 @@ class SeedDB
     )
 
     user = User.find_by(css_id: "BVATWARNER")
-    HearingDay.create(
+    day = HearingDay.create(
       regional_office: "RO17",
       request_type: "V",
       scheduled_for: 5.days.from_now,
@@ -1201,6 +1203,7 @@ class SeedDB
       created_by: user.css_id,
       updated_by: user.css_id
     )
+    day.update!(created_by_id: user.id, updated_by_id: user.id)
   end
 
   def create_intake_users
