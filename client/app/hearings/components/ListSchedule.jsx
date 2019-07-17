@@ -103,7 +103,7 @@ class ListTable extends React.Component {
         {this.props.user.userRoleBuild && <div style={{ marginBottom: 25 }}>
           <Button linkStyling
             onClick={this.props.openModal}>
-            Add Hearing Day
+            Add Hearing Date
           </Button>
         </div>}
         <QueueTable
