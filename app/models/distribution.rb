@@ -31,15 +31,16 @@ class Distribution < ApplicationRecord
       # this might take awhile due to VACOLS, so set our timeout to 5 minutes.
       ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = 300000"
 
-      update(status: "started")
+      update!(status: "started")
 
       ama_distribution
 
-      update(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
-    rescue StandardError => error
-      update(status: "error")
-      raise error
+      update!(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
     end
+
+  rescue StandardError => error
+    update!(status: "error")
+    raise error
   end
 
   def self.pending_for_judge(judge)
