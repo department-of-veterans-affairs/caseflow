@@ -37,7 +37,6 @@ class Distribution < ApplicationRecord
 
       update!(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
     end
-
   rescue StandardError => error
     update!(status: "error")
     raise error
