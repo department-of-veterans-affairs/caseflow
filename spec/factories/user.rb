@@ -7,6 +7,10 @@ FactoryBot.define do
     station_id { User::BOARD_STATION_ID }
     full_name { "Lauren Roth" }
 
+    transient do
+      vacols_uniq_id { nil }
+    end
+
     factory :default_user do
       css_id { "DEFAULT_USER" }
       full_name { "Lauren Roth" }
@@ -30,6 +34,12 @@ FactoryBot.define do
 
     trait :vso_role do
       roles { ["VSO"] }
+    end
+
+    after(:create) do |user, evaluator|
+      if evaluator.vacols_uniq_id
+        create(:staff, slogid: evaluator.vacols_uniq_id, user: user)
+      end
     end
   end
 end

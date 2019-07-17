@@ -188,6 +188,22 @@ feature "Intake" do
       end
     end
 
+    context "Veteran is an employee at the same station as the User" do
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:may_modify?).and_return(false)
+      end
+
+      scenario "Search for a Veteran that the user may not modify" do
+        visit "/intake"
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        safe_click ".cf-submit.usa-button"
+        fill_in search_bar_title, with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_content("You don't have permission to intake this Veteran")
+      end
+    end
+
     context "RAMP Veteran has invalid information" do
       before { FeatureToggle.enable!(:ramp_intake) }
       after { FeatureToggle.disable!(:ramp_intake) }

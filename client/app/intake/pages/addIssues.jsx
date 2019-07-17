@@ -92,7 +92,7 @@ export class AddIssuesPage extends React.Component {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     }
 
-    const { useAmaActivationDate, withdrawDecisionReviews, editContentionText } = featureToggles;
+    const { useAmaActivationDate, withdrawDecisionReviews, editContentionText, correctClaimReviews } = featureToggles;
     const intakeData = intakeForms[formType];
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
     const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
@@ -134,7 +134,7 @@ export class AddIssuesPage extends React.Component {
       return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
     }
 
-    if (intakeData.hasClearedEP) {
+    if (intakeData.hasClearedEP && !correctClaimReviews) {
       return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
     }
 
