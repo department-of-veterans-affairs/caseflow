@@ -51,7 +51,7 @@ class HearingDateDropdown extends React.Component {
         const hearingDateOptions = _.values(jsonResponse.hearingDays)
           .map((hearingDate) => (
             {
-              label: formatDateStr(hearingDate.scheduledFor),
+              label: `${formatDateStr(hearingDate.scheduledFor)} (${hearingDate.filledSlots}/${hearingDate.totalSlots})`,
               value: {
                 ...hearingDate,
                 hearingDate: formatDateStr(hearingDate.scheduledFor, 'YYYY-MM-DD', 'YYYY-MM-DD')
