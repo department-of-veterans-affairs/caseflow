@@ -39,8 +39,8 @@ class HearingSchedule::ValidateRoSpreadsheet
   CO_DATES_NOT_UNIQUE = "The following dates in the CO spreadsheet are listed more than once: "
   CO_DATES_NOT_IN_RANGE = "The following dates in the CO spreadsheet are out of range: "
   ALLOCATION_NOT_CORRECT_FORMAT = "The following allocations are incorrectly formatted: "
-  ALLOCATION_LISTED_INCORRECTLY = "The ROs are listed incorrectly in the allocation spreadsheet. " +
-    "Redownload the template and try again."
+  ALLOCATION_LISTED_INCORRECTLY = "The ROs are listed incorrectly in the allocation spreadsheet. " \
+                                  "Redownload the template and try again."
   ALLOCATION_DUPLICATE_RO = "The following ROs are listed more than once in the allocation spreadsheet: "
 
   def initialize(spreadsheet, start_date, end_date)
