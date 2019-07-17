@@ -87,6 +87,7 @@ module StubbableUser
 
     def unauthenticate!
       Functions.delete_all_keys!
+      RequestStore[:current_user] = nil
       self.stub = nil
     end
 
@@ -162,8 +163,6 @@ RSpec.configure do |config|
     ReactOnRails::TestHelper.ensure_assets_compiled
   end
   config.before(:all) do
-    User.unauthenticate!
-
     # We need the VFTYPES and ISSREF tables to do any queries for issues. This code is borrowed from the
     # local:vacols:seed rake task to load all of our dumped data for the VFTYPES and ISSREF tables.
     date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 11, 1)
@@ -181,6 +180,7 @@ RSpec.configure do |config|
     Timecop.return
     Fakes::BGSService.clean!
     Time.zone = @spec_time_zone
+    User.unauthenticate!
   end
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures

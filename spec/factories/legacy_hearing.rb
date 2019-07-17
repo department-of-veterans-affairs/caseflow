@@ -38,6 +38,8 @@ FactoryBot.define do
     end
 
     vacols_id { case_hearing.hearing_pkseq }
+    created_by { create(:user) }
+    updated_by { create(:user) }
 
     trait :with_tasks do
       after(:create) do |hearing, _evaluator|
