@@ -46,16 +46,25 @@ class AssignHearingModal extends React.PureComponent {
                 'You cannot schedule another hearing.'
       });
     }
+
+    this.toggleFullHearingDayWarning();
   }
 
   componentDidUpdate = () => {
-    const { assignHearingForm: { hearingDay } } = this.props;
+    this.toggleFullHearingDayWarning();
+  }
 
-    if (!hearingDay) {
+  toggleFullHearingDayWarning = () => {
+    const { assignHearingForm, hearingDay } = this.props;
+    const selectedHearingDay =  (assignHearingForm || {}).hearingDay || hearingDay;
+
+    if (!selectedHearingDay) {
       return;
     }
 
-    this.setState({ showFullHearingDayWarning: hearingDay.filledSlots >= hearingDay.totalSlots });
+    this.setState({
+      showFullHearingDayWarning: selectedHearingDay.filledSlots >= selectedHearingDay.totalSlots
+    });
   }
 
   submit = () => {
