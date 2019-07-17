@@ -110,6 +110,9 @@ class BulkAssignModal extends React.PureComponent {
     return users;
   }
 
+  prependBlankOption = (options) => ([{ value: null,
+    displayText: '' }].concat(options));
+
   generateRegionalOfficeOptions = () => {
     const allRows = this.state.taskCountForTypeAndRegionalOffice;
 
@@ -117,21 +120,19 @@ class BulkAssignModal extends React.PureComponent {
     const validRows = allRows.filter((row) => row.regional_office);
     const filteredRows = this.filterOptionsByTaskType(validRows);
 
-    return [{ value: null,
-      displayText: '' }].concat(_.uniq(filteredRows.map((row) => ({
-      value: row.regional_office,
-      displayText: cityForRegionalOfficeCode(row.regional_office)
-    })
-    )
-    ));
+    return this.prependBlankOption(
+      _.uniq(filteredRows.map((row) => row.regional_office)).map((roCode) => ({
+        value: roCode,
+        displayText: cityForRegionalOfficeCode(roCode)
+      }))
+    );
   }
 
   generateTaskTypeOptions = () => {
     const allRows = this.state.taskCountForTypeAndRegionalOffice;
     const filteredRows = this.filterOptionsByRegionalOffice(allRows);
 
-    return [{ value: null,
-      displayText: '' }].concat(_.uniq(filteredRows.map((row) => row.type)).map((type) => ({
+    return this.prependBlankOption(_.uniq(filteredRows.map((row) => row.type)).map((type) => ({
       value: type,
       displayText: type.replace(/([a-z])([A-Z])/g, '$1 $2')
     })
