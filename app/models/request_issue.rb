@@ -208,7 +208,8 @@ class RequestIssue < ApplicationRecord
         ineligible_reason: data[:ineligible_reason],
         ineligible_due_to_id: data[:ineligible_due_to_id],
         edited_description: data[:edited_description],
-        correction_claim_label: data[:correction_claim_label]
+        correction_claim_label: data[:correction_claim_label],
+        corrected_request_issue_id: data[:corrected_request_issue_id]
       }
     end
     # rubocop:enable Metrics/MethodLength
@@ -286,6 +287,10 @@ class RequestIssue < ApplicationRecord
 
   def withdrawal_date
     closed_at if withdrawn?
+  end
+
+  def corrected?
+    RequestIssue.find_by(corrected_request_issue_id: id).present?
   end
 
   def ui_hash

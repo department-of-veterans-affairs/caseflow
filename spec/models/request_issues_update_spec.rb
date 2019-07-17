@@ -117,6 +117,18 @@ describe RequestIssuesUpdate do
       }]
     end
 
+    let(:corrected_request_issue_id) { review.request_issues.first.id }
+
+    let(:request_issues_data_with_new_corrected_issue) do
+      review.request_issues.map { |issue| { request_issue_id: issue.id } } + [{
+        correction_claim_label: "control",
+        corrected_request_issue_id: corrected_request_issue_id,
+        rating_issue_reference_id: "issue3",
+        rating_issue_profile_date: after_ama_start_date,
+        decision_text: "Service connection for cancer was denied"
+      }]
+    end
+
     context "#veteran" do
       it "delegates to review" do
         expect(request_issues_update.veteran).to eq(request_issues_update.review.veteran)
@@ -135,6 +147,21 @@ describe RequestIssuesUpdate do
 
         let(:new_request_issue) do
           RequestIssue.find_by(
+            contested_rating_issue_reference_id: "issue3",
+            contested_issue_description: "Service connection for cancer was denied"
+          )
+        end
+
+        it { is_expected.to contain_exactly(new_request_issue) }
+      end
+
+      context "when new correction issues were added as part of the update" do
+        let(:request_issues_data) { request_issues_data_with_new_corrected_issue }
+
+        let(:new_request_issue) do
+          RequestIssue.find_by(
+            correction_claim_label: "control",
+            corrected_request_issue_id: corrected_request_issue_id,
             contested_rating_issue_reference_id: "issue3",
             contested_issue_description: "Service connection for cancer was denied"
           )

@@ -813,7 +813,7 @@ ActiveRecord::Schema.define(version: 20190716190101) do
     t.string "contested_rating_issue_diagnostic_code", comment: "If the contested issue is a rating issue, this is the rating issue's diagnostic code. Will be nil if this request issue contests a decision issue."
     t.string "contested_rating_issue_profile_date", comment: "If the contested issue is a rating issue, this is the rating issue's profile date. Will be nil if this request issue contests a decision issue."
     t.string "contested_rating_issue_reference_id", comment: "If the contested issue is a rating issue, this is the rating issue's reference id. Will be nil if this request issue contests a decision issue."
-    t.integer "corrected_by_request_issue_id", comment: "The ID of the new request issue that is a correction to this incorrect request issue. This is needed for EP 930"
+    t.integer "corrected_request_issue_id", comment: "The ID of the original incorrect request issue. This is needed for EP 930"
     t.string "correction_claim_label", comment: "EP 930 correction type. Allowed values: control, local_quality_team, national_quality_team where 'control' is a regular correction, 'local_quality_team' is processed by a local quality team, and 'national_quality_team' is processed by a national quality team. This is needed for EP 930."
     t.datetime "created_at", comment: "Automatic timestamp when row was created"
     t.date "decision_date", comment: "Either the rating issue's promulgation date or the decision issue's approx decision date"
