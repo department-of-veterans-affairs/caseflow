@@ -72,12 +72,12 @@ class OtherReviewsTable extends React.PureComponent {
       header: COPY.OTHER_REVIEWS_TABLE_REVIEW_TYPE_COLUMN_TITLE,
       valueFunction: (review) => {
         return <React.Fragment>
-          {review.processedInVbms && <Link
+          <Link
             name="edit-issues"
             href={review.editIssuesUrl}
             target="_blank">
             {_.startCase(review.reviewType)}
-          </Link>}
+          </Link>
         </React.Fragment>;
       }
     },
