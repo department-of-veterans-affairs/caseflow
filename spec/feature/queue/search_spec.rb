@@ -77,7 +77,7 @@ RSpec.feature "Search" do
             expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
           end
 
-          fit "should show edit issues page" do
+          it "should show edit issues page" do
             expect(page).to have_content("Edit issues")
             click_on "Edit issues"
           end
