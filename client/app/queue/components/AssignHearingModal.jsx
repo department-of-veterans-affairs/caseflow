@@ -48,6 +48,16 @@ class AssignHearingModal extends React.PureComponent {
     }
   }
 
+  componentDidUpdate = () => {
+    const { assignHearingForm: { hearingDay } } = this.props;
+
+    if (!hearingDay) {
+      return;
+    }
+
+    this.setState({ showFullHearingDayWarning: hearingDay.filledSlots >= hearingDay.totalSlots });
+  }
+
   submit = () => {
     return this.completeScheduleHearingTask();
   };
