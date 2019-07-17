@@ -12,7 +12,6 @@ import _ from 'lodash';
 import { formatDateStr, getMinutesToMilliseconds } from '../../util/DateUtil';
 import LoadingLabel from './LoadingLabel';
 import SearchableDropdown from '../SearchableDropdown';
-import TextField from '../TextField';
 
 class HearingDateDropdown extends React.Component {
   componentDidMount() {
@@ -44,20 +43,22 @@ class HearingDateDropdown extends React.Component {
 
     this.props.onFetchDropdownData(name);
 
-    return ApiUtil
-      .get(xhrUrl, { timeout: { response: getMinutesToMilliseconds(5) } })
-      .then((resp) => {
+    return ApiUtil.
+      get(xhrUrl, { timeout: { response: getMinutesToMilliseconds(5) } }).
+      then((resp) => {
         const jsonResponse = ApiUtil.convertToCamelCase(resp.body);
-        const hearingDateOptions = _.values(jsonResponse.hearingDays)
-          .map((hearingDate) => (
-            {
-              label: `${formatDateStr(hearingDate.scheduledFor)} (${hearingDate.filledSlots}/${hearingDate.totalSlots})`,
+        const hearingDateOptions = _.values(jsonResponse.hearingDays).
+          map((hearingDate) => {
+            const scheduled = formatDateStr(hearingDate.scheduledFor);
+            
+            return {
+              label: `${scheduled} (${hearingDate.filledSlots}/${hearingDate.totalSlots})`,
               value: {
                 ...hearingDate,
                 hearingDate: formatDateStr(hearingDate.scheduledFor, 'YYYY-MM-DD', 'YYYY-MM-DD')
               }
-            }
-          ));
+            };
+          });
 
         hearingDateOptions.sort((d1, d2) => new Date(d1.value.hearingDate) - new Date(d2.value.hearingDate));
 
@@ -89,7 +90,8 @@ class HearingDateDropdown extends React.Component {
     }
 
     let comparison;
-    if (typeof(value) === 'string') {
+
+    if (typeof (value) === 'string') {
       comparison = (opt) => opt.value.hearingDate === formatDateStr(value, 'YYYY-MM-DD', 'YYYY-MM-DD');
     } else {
       comparison = (opt) => opt.value === value;
@@ -115,7 +117,9 @@ class HearingDateDropdown extends React.Component {
       <React.Fragment>
         <SearchableDropdown
           name={name}
-          label={isFetching ? <LoadingLabel text="Finding upcoming hearing dates for this regional office..." /> : label}
+          label={
+            isFetching ? <LoadingLabel text="Finding upcoming hearing dates for this regional office..." /> : label
+          }
           strongLabel
           readOnly={readOnly}
           value={this.getSelectedOption()}
