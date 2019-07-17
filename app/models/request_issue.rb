@@ -49,6 +49,12 @@ class RequestIssue < ApplicationRecord
     no_decision: "no_decision"
   }
 
+  enum correction_claim_label: {
+    control: "control",
+    local_quality_team: "local_quality_team",
+    national_quality_team: "national_quality_team"
+  }
+
   before_save :set_contested_rating_issue_profile_date
   before_save :close_if_ineligible!
 
