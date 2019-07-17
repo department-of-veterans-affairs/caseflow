@@ -164,6 +164,7 @@ class SeedDB
   def create_change_hearing_disposition_task
     hearings_member = User.find_or_create_by(css_id: "BVATWARNER", station_id: 101)
     hearing_day = FactoryBot.create(:hearing_day, created_by: hearings_member, updated_by: hearings_member)
+    hearing_day.update!(created_by_id: hearings_member.id, updated_by_id: hearings_member.id)
     veteran = FactoryBot.create(:veteran, first_name: "Abellona", last_name: "Valtas", file_number: 123_456_789)
     appeal = FactoryBot.create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number)
     root_task = FactoryBot.create(:root_task, appeal: appeal)
@@ -510,6 +511,7 @@ class SeedDB
           created_by: user,
           updated_by: user
         )
+        day.update!(created_by_id: user.id, updated_by_id: user.id)
 
         case index
         when 1
@@ -1187,7 +1189,7 @@ class SeedDB
     )
 
     user = User.find_by(css_id: "BVATWARNER")
-    HearingDay.create(
+    day = HearingDay.create(
       regional_office: "RO17",
       request_type: "V",
       scheduled_for: 5.days.from_now,
@@ -1195,6 +1197,7 @@ class SeedDB
       created_by: user,
       updated_by: user
     )
+    day.update!(created_by_id: user.id, updated_by_id: user.id)
   end
 
   def create_intake_users
