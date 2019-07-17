@@ -72,7 +72,7 @@ jslint:
 	cd client && yarn run lint
 
 security:
-	bundle exec rake security_caseflow
+	bundle exec rake security
 
 check: test lint
 
