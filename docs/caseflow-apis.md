@@ -273,7 +273,7 @@ Once the IDT session is activated, the `token` is passed in subsequent requests.
 
 ```bash
 % curl -H 'TOKEN: your-idt-token' \
-       https://appeals.cf.ds.va.gov/idt/api/v1/appeals?appeal_id=a-long-appeal-uuid
+       https://appeals.cf.ds.va.gov/idt/api/v1/appeals/uuid_or_vacols_id
 ```
 
 #### `POST /idt/api/v1/appeals/:appeal_id/outcode`
