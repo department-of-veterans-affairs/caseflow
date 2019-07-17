@@ -8,10 +8,11 @@ import {
   resetSuccessMessages,
   requestPatch
 } from '../uiReducer/uiActions';
+import COPY from '../../../COPY.json';
+import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants';
 import { fullWidth } from '../constants';
 import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-
 import { withRouter } from 'react-router-dom';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import {
@@ -21,8 +22,8 @@ import {
 import { onReceiveAmaTasks, onReceiveAppealDetails } from '../QueueActions';
 import { prepareAppealForStore } from '../utils';
 import _ from 'lodash';
-import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants';
 import QueueFlowModal from './QueueFlowModal';
+import Alert from '../../components/Alert';
 import AssignHearingForm from '../../hearings/components/modalForms/AssignHearingForm';
 
 class AssignHearingModal extends React.PureComponent {
@@ -30,7 +31,8 @@ class AssignHearingModal extends React.PureComponent {
     super(props);
 
     this.state = {
-      showErrorMessages: false
+      showErrorMessages: false,
+      showFullHearingDayWarning: false
     };
   }
 
@@ -161,36 +163,45 @@ class AssignHearingModal extends React.PureComponent {
     };
   };
 
+  /* eslint-disable camelcase */
   render = () => {
-    const {
-      appeal, openHearing
-    } = this.props;
-
+    const { appeal, openHearing } = this.props;
+    const { showErrorMessages, showFullHearingDayWarning } = this.state;
     const { address_line_1, city, state, zip } = appeal.appellantAddress || {};
 
     if (openHearing) {
       return null;
     }
 
-    /* eslint-disable camelcase */
-    return <QueueFlowModal
-      submit={this.submit}
-      validateForm={this.validateForm}
-      title="Schedule Veteran"
-      button="Schedule"
-    >
-      <div {...fullWidth}>
-        <p>
-          Veteran Address<br />
-          {address_line_1}<br />
-          {`${city}, ${state} ${zip}`}
-        </p>
-        <AssignHearingForm
-          appeal={appeal}
-          showErrorMessages={this.state.showErrorMessages}
-          {...this.getInitialValues()} />
-      </div>
-    </QueueFlowModal>;
+    return (
+      <QueueFlowModal
+        submit={this.submit}
+        validateForm={this.validateForm}
+        title="Schedule Veteran"
+        button="Schedule"
+      >
+        <div {...fullWidth}>
+          {
+            showFullHearingDayWarning &&
+            <Alert
+              title={COPY.SCHEDULE_VETERAN_FULL_HEARING_DAY_TITLE}
+              type="warning"
+            >
+              {COPY.SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL}
+            </Alert>
+          }
+          <p>
+            Veteran Address<br />
+            {address_line_1}<br />
+            {`${city}, ${state} ${zip}`}
+          </p>
+          <AssignHearingForm
+            appeal={appeal}
+            showErrorMessages={showErrorMessages}
+            {...this.getInitialValues()} />
+        </div>
+      </QueueFlowModal>
+    );
   }
 }
 
