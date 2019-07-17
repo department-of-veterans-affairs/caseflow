@@ -2,18 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
-import Button from '../../components/Button';
-import Table from '../../components/Table';
-
 import AsyncModelNav from '../components/AsyncModelNav';
 
 const DATE_TIME_FORMAT = 'ddd MMM DD HH:mm:ss YYYY';
 
 class AsyncableJobPage extends React.PureComponent {
-  constructor(props) {
-    super(props);
-  }
-
   formatDate = (datetime) => {
     if (!datetime) {
       return 'queued';
