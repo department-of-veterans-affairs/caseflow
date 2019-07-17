@@ -11,18 +11,10 @@ import ApiUtil from '../../util/ApiUtil';
 import _ from 'lodash';
 import { formatDateStr, getMinutesToMilliseconds } from '../../util/DateUtil';
 import LoadingLabel from './LoadingLabel';
-
 import SearchableDropdown from '../SearchableDropdown';
+import TextField from '../TextField';
 
 class HearingDateDropdown extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isOther: false
-    };
-  }
-
   componentDidMount() {
     this.getHearingDates(false);
   }
@@ -44,7 +36,7 @@ class HearingDateDropdown extends React.Component {
   getHearingDates = (force) => {
     const { hearingDates: { options, isFetching }, regionalOffice } = this.props;
     const name = `hearingDatesFor${regionalOffice}`;
-    const xhrUrl = `/regional_offices/${regionalOffice}/open_hearing_dates.json`;
+    const xhrUrl = `/regional_offices/${regionalOffice}/hearing_dates.json`;
 
     if ((options && !force) || isFetching) {
       return;
@@ -76,19 +68,12 @@ class HearingDateDropdown extends React.Component {
               hearingId: null,
               hearingDate: null
             }
-          },
-          {
-            label: 'Other',
-            value: {
-              hearingId: null,
-              hearingDate: null
-            }
           }
         );
 
         this.props.onReceiveDropdownData(name, hearingDateOptions);
 
-        if (hearingDateOptions && hearingDateOptions.length === 2) {
+        if (hearingDateOptions && hearingDateOptions.length === 1) {
           this.props.onDropdownError(name, 'There are no upcoming hearing dates for this regional office.');
         } else {
           this.props.onDropdownError(name, null);
@@ -104,7 +89,7 @@ class HearingDateDropdown extends React.Component {
     }
 
     let comparison;
-    if (typeof(value) === 'string' && value !== 'other') {
+    if (typeof(value) === 'string') {
       comparison = (opt) => opt.value.hearingDate === formatDateStr(value, 'YYYY-MM-DD', 'YYYY-MM-DD');
     } else {
       comparison = (opt) => opt.value === value;
@@ -116,8 +101,6 @@ class HearingDateDropdown extends React.Component {
   onOptionSelected = (option) => {
     const { onChange } = this.props;
     const safeOption = option || {};
-
-    this.setState({ isOther: safeOption.label === 'Other' });
 
     return onChange(safeOption.value, safeOption.label);
   }
@@ -140,9 +123,6 @@ class HearingDateDropdown extends React.Component {
           options={options}
           errorMessage={errorMsg || errorMessage}
           placeholder={placeholder} />
-        {this.state.isOther &&
-          <p>Other</p>
-        }
       </React.Fragment>
     );
   }
