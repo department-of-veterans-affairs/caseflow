@@ -28,7 +28,6 @@ class PrepareEstablishClaimTasksJob < ApplicationJob
     msg = "PrepareEstablishClaimTasksJob successfully ran: #{count[:success]} tasks " \
           "prepared and #{count[:fail]} tasks failed"
     Rails.logger.info msg
-    msg += "\n<!here>" if count[:fail] > 0
     SlackService.new(url: url).send_notification(msg)
   end
 
