@@ -25,7 +25,7 @@ class TasksController < ApplicationController
     InformalHearingPresentationTask: InformalHearingPresentationTask,
     PrivacyActTask: PrivacyActTask,
     PulacCerulloTask: PulacCerulloTask,
-    ExtraordinaryCaseAdvancementTask: ExtraordinaryCaseAdvancementTask
+    SpecialCaseMovementTask: SpecialCaseMovementTask
   }.freeze
 
   def set_application

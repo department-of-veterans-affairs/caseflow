@@ -40,4 +40,36 @@ describe DistributionTask do
       expect(distribution_task.ready_for_distribution_at).to eq(Time.zone.now)
     end
   end
+
+  describe ".available_actions", :focus => true do
+
+    let(:user) { FactoryBot.create(:user) }
+    let(:scm_user) { FactoryBot.create(:user) }
+    let(:scm_org) { SpecialCaseMovementTeam.singleton }
+    let(:distribution_task) do
+      DistributionTask.create!(
+        appeal: create(:appeal),
+        assigned_to: Bva.singleton,
+        status: "on_hold"
+      )
+    end
+
+    before do
+      OrganizationsUser.add_user_to_organization(scm_user, scm_org)
+    end
+
+    it "with regular user has no actions" do
+      expect(distribution_task.available_actions(user).count).to eq(0)
+    end
+
+    it "with Special Case Movement Team user has the Special Case Movement action" do
+      expect(distribution_task.available_actions(scm_user).count).to eq(1)
+    end
+
+#    it "with child subtasks it has no actions" do
+    #    create blocking mail task
+      #expect(distribution_task.available_actions(scm_user).count).to eq(0)
+#
+#    end
+  end
 end

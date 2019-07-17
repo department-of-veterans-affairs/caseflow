@@ -115,10 +115,10 @@
     "label": "End hold early",
     "value": "modal/end_hold"
   },
-  "EXTRAORDINARY_CASE_ADVANCEMENT": {
-    "label": "Extraordinary circumstances: Manually advance to judge",
-    "value": "modal/extraordinary_case_advancement",
-    "func": "extraordinary_case_advancement_data"
+  "SPECIAL_CASE_MOVEMENT": {
+    "label": "Special Case Movement: Advance to judge",
+    "value": "modal/special_case_movement",
+    "func": "special_case_movement_data"
   },
   "TOGGLE_TIMED_HOLD": {
     "func": "toggle_timed_hold"

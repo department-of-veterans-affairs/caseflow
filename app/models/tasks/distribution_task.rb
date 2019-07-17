@@ -9,9 +9,9 @@ class DistributionTask < GenericTask
   def available_actions(user)
     return [] unless user
 
-    if ::ExtraordinaryCaseAdvancementTeam.singleton.user_has_access?(user)
+    if ::SpecialCaseMovementTeam.singleton.user_has_access?(user)
       return [
-        Constants.TASK_ACTIONS.EXTRAORDINARY_CASE_ADVANCEMENT.to_h
+        Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.to_h
       ]
     end
 

@@ -379,7 +379,7 @@ class QueueApp extends React.PureComponent {
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.END_TIMED_HOLD.value}`}
             render={this.routedEndHoldModal} />
           <Route
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.EXTRAORDINARY_CASE_ADVANCEMENT.value}`}
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.value}`}
             render={this.routedAssignToUser} />
           <PageRoute
             exact

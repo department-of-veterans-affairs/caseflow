@@ -285,14 +285,14 @@ class TaskActionRepository
       }
     end
 
-    def extraordinary_case_advancement_data(task, _user = nil)
+    def special_case_movement_data(task, _user = nil)
       {
         selected: task.appeal.assigned_judge,
         options: users_to_options(Judge.list_all),
-        type: ExtraordinaryCaseAdvancementTask.name,
-        modal_title: COPY::ECA_MODAL_TITLE,
-        modal_body: COPY::ECA_MODAL_DETAIL,
-        modal_selector_placeholder: COPY::ECA_MODAL_SELECTOR_PLACEHOLDER
+        type: SpecialCaseMovementTask.name,
+        modal_title: COPY::SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
+        modal_body: COPY::SPECIAL_CASE_MOVEMENT_MODAL_DETAIL,
+        modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER
       }
     end
 

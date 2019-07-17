@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 ##
-# Task to record on the appeal that the extraordinary case movement manually assigned the case outside of automatic
+# Task to record on the appeal that the special case movement manually assigned the case outside of automatic
 #   case distribution
 
-class ExtraordinaryCaseAdvancementTask < GenericTask
+class SpecialCaseMovementTask < GenericTask
   before_create :verify_parent_task_type, :verify_user_organization
   after_create :after_create_function
 
@@ -23,7 +23,7 @@ class ExtraordinaryCaseAdvancementTask < GenericTask
   end
 
   def verify_user_organization
-    return true if assigned_by.organizations.include?(ExtraordinaryCaseAdvancementTeam.singleton)
+    return true if assigned_by.organizations.include?(SpecialCasemovementTeam.singleton)
     false
   end
 
@@ -32,7 +32,7 @@ class ExtraordinaryCaseAdvancementTask < GenericTask
     #   This may change as we add more 'from' scenarios
     if !parent.is_a?(DistributionTask)
       fail(Caseflow::Error::InvalidParentTask,
-           message: "Extraordinary Case Advancement must have a Distribution task parent")
+           message: "Special Case Movement must have a Distribution task parent")
     end
   end
 end
