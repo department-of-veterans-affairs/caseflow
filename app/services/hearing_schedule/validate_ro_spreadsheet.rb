@@ -29,9 +29,19 @@ class HearingSchedule::ValidateRoSpreadsheet
   class AllocationDuplicateRo < StandardError; end
   class AllocationTemplateNotFollowed < StandardError; end
 
-  RO_TEMPLATE_ERROR = "The RO non-availability template was not followed. Please redownload the template and try again."
-  CO_TEMPLATE_ERROR = "The CO non-availability template was not followed. Please redownload the template and try again."
-  ALLOCATION_TEMPLATE_ERROR = "The allocation template was not followed. Please redownload the template and try again."
+  RO_TEMPLATE_ERROR = "The RO non-availability template was not followed. Redownload the template and try again."
+  CO_TEMPLATE_ERROR = "The CO non-availability template was not followed. Redownload the template and try again."
+  ALLOCATION_TEMPLATE_ERROR = "The allocation template was not followed. Redownload the template and try again."
+  RO_DATES_NOT_CORRECT_FORMAT = "The following dates are incorrectly formatted in the RO spreadsheet: "
+  RO_DATES_NOT_IN_RANGE = "The following dates in the RO spreadsheet are out of range: "
+  RO_LISTED_INCORRECTLY = "The ROs are listed incorrectly in the RO spreadsheet. Redownload the template and try again."
+  CO_DATES_NOT_CORRECT_FORMAT = "The following dates are incorrectly formatted in the CO spreadsheet: "
+  CO_DATES_NOT_UNIQUE = "The following dates in the CO spreadsheet are listed more than once: "
+  CO_DATES_NOT_IN_RANGE = "The following dates in the CO spreadsheet are out of range: "
+  ALLOCATION_NOT_CORRECT_FORMAT = "The following allocations are incorrectly formatted: "
+  ALLOCATION_LISTED_INCORRECTLY = "The ROs are listed incorrectly in the allocation spreadsheet. " +
+    "Redownload the template and try again."
+  ALLOCATION_DUPLICATE_RO = "The following ROs are listed more than once in the allocation spreadsheet: "
 
   def initialize(spreadsheet, start_date, end_date)
     get_spreadsheet_data = HearingSchedule::GetSpreadsheetData.new(spreadsheet)
@@ -91,7 +101,7 @@ class HearingSchedule::ValidateRoSpreadsheet
   def validate_ro_non_availability_dates
     incorrectly_formatted_ro_dates = filter_incorrectly_formatted_ro_dates
     if incorrectly_formatted_ro_dates.count > 0
-      @errors << RoDatesNotCorrectFormat.new("The following dates are incorrectly formatted in the RO spreadsheet: " + incorrectly_formatted_ro_dates.to_s)
+      @errors << RoDatesNotCorrectFormat.new(RO_DATES_NOT_CORRECT_FORMAT + incorrectly_formatted_ro_dates.to_s)
     end
     nonunique_ro_dates = filter_nonunique_ro_dates
     if nonunique_ro_dates.count > 0
@@ -99,9 +109,9 @@ class HearingSchedule::ValidateRoSpreadsheet
     end
     out_of_range_ro_dates = filter_out_of_range_ro_dates
     if out_of_range_ro_dates.count > 0
-      @errors << RoDatesNotInRange.new("The following dates in the RO spreadsheet are out of range: " + out_of_range_ro_dates.to_s)
+      @errors << RoDatesNotInRange.new(RO_DATES_NOT_IN_RANGE + out_of_range_ro_dates.to_s)
     end
-    @errors << RoListedIncorrectly.new("The ROs are not listed correctly in the RO spreadsheet. Please redownload the template and try again.") unless validate_ros_with_hearings(@ro_spreadsheet_data)
+    @errors << RoListedIncorrectly.new(RO_LISTED_INCORRECTLY) unless validate_ros_with_hearings(@ro_spreadsheet_data)
   end
 
   def validate_co_non_availability_template
@@ -133,15 +143,15 @@ class HearingSchedule::ValidateRoSpreadsheet
   def validate_co_non_availability_dates
     incorrectly_formatted_co_dates = filter_incorrectly_formatted_co_dates
     if incorrectly_formatted_co_dates.count > 0
-      @errors << CoDatesNotCorrectFormat.new("The following dates in the CO spreadsheet are not correctly formatted: " + incorrectly_formatted_co_dates.to_s)
+      @errors << CoDatesNotCorrectFormat.new(CO_DATES_NOT_CORRECT_FORMAT + incorrectly_formatted_co_dates.to_s)
     end
     nonunique_co_dates = filter_nonunique_co_dates
     if nonunique_co_dates.count > 0
-      @errors << CoDatesNotUnique.new("The following dates in the CO spreadsheet are listed more than once: " + nonunique_co_dates.to_s)
+      @errors << CoDatesNotUnique.new(CO_DATES_NOT_UNIQUE + nonunique_co_dates.to_s)
     end
     out_of_range_co_dates = filter_out_of_co_range_dates
     if out_of_range_co_dates.count > 0
-      @errors << CoDatesNotInRange.new("The following dates in the CO spreadsheet are out of range: " + out_of_range_co_dates.to_s)
+      @errors << CoDatesNotInRange.new(CO_DATES_NOT_IN_RANGE + out_of_range_co_dates.to_s)
     end
   end
 
@@ -165,14 +175,14 @@ class HearingSchedule::ValidateRoSpreadsheet
   def validate_hearing_allocation_days
     incorrectly_formatted_allocations = filter_incorrectly_formatted_allocations
     if incorrectly_formatted_allocations.count > 0
-      @errors << AllocationNotCorrectFormat.new("The following allocations are not the correct format: " + incorrectly_formatted_allocations.to_s)
+      @errors << AllocationNotCorrectFormat.new(ALLOCATION_NOT_CORRECT_FORMAT + incorrectly_formatted_allocations.to_s)
     end
     unless validate_ros_with_hearings(@allocation_spreadsheet_data)
-      @errors << AllocationRoListedIncorrectly.new("The ROs are not listed correctly in the allocation spreadsheet. Please redownload the template and try again.")
+      @errors << AllocationRoListedIncorrectly.new(ALLOCATION_LISTED_INCORRECTLY)
     end
     nonunique_allocations = filter_nonunique_allocations
     if nonunique_allocations.count > 0
-      @errors << AllocationDuplicateRo.new("The following ROs are listed more than once in the allocation spreadsheet: " + nonunique_allocations.to_s)
+      @errors << AllocationDuplicateRo.new(ALLOCATION_DUPLICATE_RO + nonunique_allocations.to_s)
     end
   end
 
