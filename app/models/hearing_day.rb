@@ -240,7 +240,7 @@ class HearingDay < ApplicationRecord
         current_user_id
       )
 
-      all_hearing_days.select { |hearing_day| hearing_day["hearings"].length < hearing_day.total_slots }
+      all_hearing_days.select { |hearing_day| hearing_day["hearings"].length < hearing_day["total_slots"] }
     end
 
     def filter_non_scheduled_hearings(hearings)
