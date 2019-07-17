@@ -168,17 +168,6 @@ class RequestIssuesUpdate < ApplicationRecord
     )
   end
 
-  def create_corrected_issues!
-    correction.call
-  end
-
-  def correction
-    @correction ||= RequestIssueCorrection.new(
-      review: review,
-      request_issues_data: @request_issues_data
-    )
-  end
-
   def process_edited_issues!
     return if edited_issues.empty?
 
