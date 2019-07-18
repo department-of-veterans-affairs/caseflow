@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class RequestIssueCorrection
-  def initialize(user:, review:, request_issues_data:)
-    @user = user
+  def initialize(review:, request_issues_data:)
     @review = review
     @request_issues_data = request_issues_data
   end
@@ -40,7 +39,7 @@ class RequestIssueCorrection
 
   private
 
-  attr_reader :user, :review, :request_issues_data
+  attr_reader :review, :request_issues_data
 
   def calculate_corrected_issues
     corrected_issues_data.map do |issue_data|

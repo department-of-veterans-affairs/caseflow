@@ -191,7 +191,6 @@ class RequestIssuesUpdate < ApplicationRecord
 
   def correction
     @correction ||= RequestIssueCorrection.new(
-      user: user,
       review: review,
       request_issues_data: @request_issues_data
     )
