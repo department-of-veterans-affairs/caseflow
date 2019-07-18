@@ -203,6 +203,14 @@ class ClaimReview < DecisionReview
     ClaimReviewActiveTaskCancellation.new(self).call
   end
 
+  def end_product_establishment_for_issue(issue)
+    end_product_establishments.find_by(
+      "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
+      issue.end_product_code,
+      EndProduct::INACTIVE_STATUSES
+    ) || new_end_product_establishment(issue)
+  end
+
   private
 
   def incomplete_tasks?
@@ -221,14 +229,6 @@ class ClaimReview < DecisionReview
 
   def intake_processed_by
     intake ? intake.user : nil
-  end
-
-  def end_product_establishment_for_issue(issue)
-    end_product_establishments.find_by(
-      "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
-      issue.end_product_code,
-      EndProduct::INACTIVE_STATUSES
-    ) || new_end_product_establishment(issue)
   end
 
   def matching_request_issue(contention_id)

@@ -855,7 +855,7 @@ ActiveRecord::Schema.define(version: 20190718004714) do
     t.datetime "attempted_at", comment: "Timestamp for when the request issue update processing was last attempted."
     t.integer "before_request_issue_ids", null: false, comment: "An array of the active request issue IDs previously on the decision review before this editing session. Used with after_request_issue_ids to determine appropriate actions (such as which contentions need to be removed).", array: true
     t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
-    t.integer "correct_request_issue_ids", comment: "An array of the request issue IDs that were corrected during this request issues update.", array: true
+    t.integer "corrected_request_issue_ids", comment: "An array of the request issue IDs that were corrected during this request issues update.", array: true
     t.datetime "created_at", comment: "Timestamp when record was initially created"
     t.integer "edited_request_issue_ids", comment: "An array of the request issue IDs that were edited during this request issues update", array: true
     t.string "error", comment: "The error message if the last attempt at processing the request issues update was not successful."

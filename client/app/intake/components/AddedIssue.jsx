@@ -110,7 +110,9 @@ class AddedIssue extends React.PureComponent {
       { issue.withdrawalPending && <p>Withdrawal pending</p> }
       { issue.withdrawalDate && <p>Withdrawn on {issue.withdrawalDate}</p> }
       { issue.endProductCleared && <p>Status: Cleared, waiting for decision</p> }
-      { issue.correctionType && <p className="correction-pending">This issue will be added to a 930 EP for correction</p> }
+      { issue.correctionType && <p className="correction-pending">
+          This issue will be added to a 930 EP for correction
+      </p> }
     </div>;
   }
 

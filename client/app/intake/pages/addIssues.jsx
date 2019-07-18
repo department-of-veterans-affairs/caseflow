@@ -11,17 +11,14 @@ import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import UntimelyExemptionModal from '../components/UntimelyExemptionModal';
 import LegacyOptInModal from '../components/LegacyOptInModal';
 import Button from '../../components/Button';
-import Dropdown from '../../components/Dropdown';
 import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
-import AddedIssue from '../components/AddedIssue';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../constants';
 import { formatAddedIssues, getAddIssuesFields, validateDate } from '../util/issues';
 import { formatDateStr } from '../../util/DateUtil';
 import Table from '../../components/Table';
-import EditContentionTitle from '../components/EditContentionTitle';
-import { WithdrawnIssues, RequestedIssues } from '../components/addIssues/IssueLists'
+import IssueList from '../components/IssueList';
 
 import {
   toggleAddIssuesModal,
@@ -84,6 +81,8 @@ export class AddIssuesPage extends React.Component {
     case 'undo_correction':
       this.props.undoCorrection(index);
       break;
+    default:
+      this.props.undoCorrection(index);
     }
   }
 
@@ -101,12 +100,20 @@ export class AddIssuesPage extends React.Component {
     } = this.props;
 
     const intakeData = intakeForms[formType];
-    const { useAmaActivationDate, withdrawDecisionReviews, editContentionText, correctClaimReviews } = featureToggles;
+    const { useAmaActivationDate, correctClaimReviews } = featureToggles;
 
-    if (!formType) { return <Redirect to={PAGE_PATHS.BEGIN} />; }
-    if (intakeData.isDtaError) { return <Redirect to={PAGE_PATHS.DTA_CLAIM} />; }
-    if (!_.isEmpty(intakeData.clearedEps) && !correctClaimReviews) { return <Redirect to={PAGE_PATHS.CLEARED_EPS} />; }
-    if (intakeData.isOutcoded) { return <Redirect to={PAGE_PATHS.OUTCODED} />; }
+    if (!formType) {
+      return <Redirect to={PAGE_PATHS.BEGIN} />;
+    }
+    if (intakeData.isDtaError) {
+      return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
+    }
+    if (!_.isEmpty(intakeData.clearedEps) && !correctClaimReviews) {
+      return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
+    }
+    if (intakeData.isOutcoded) {
+      return <Redirect to={PAGE_PATHS.OUTCODED} />;
+    }
 
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
     const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
@@ -118,24 +125,27 @@ export class AddIssuesPage extends React.Component {
     const requestedIssues = issues.filter((issue) => !issue.withdrawalPending && !issue.withdrawalDate);
     const previouslywithdrawnIssues = issues.filter((issue) => issue.withdrawalDate);
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
-    const issuesPendingCorrection = issues.filter((issue) => issue.correctionType );
-    const allWithdrawnIssues = previouslywithdrawnIssues.concat(issuesPendingWithdrawal);
+    const withdrawnIssues = previouslywithdrawnIssues.concat(issuesPendingWithdrawal);
     const withdrawDatePlaceholder = formatDateStr(new Date());
     const withdrawReview = !_.isEmpty(issues) && _.every(
       issues, (issue) => issue.withdrawalPending || issue.withdrawalDate
     );
 
     const haveIssuesChanged = () => {
-      if (issues.length !== this.state.originalIssueLength) { return true; }
+      const issueCountChanged = issues.length !== this.state.originalIssueLength;
 
       // If the entire review is withdrawn, then issues will have changed, but that
       // will be communicated differently so haveIssuesChanged will not be set to true
-      if (!_.isEmpty(issuesPendingWithdrawal) && !withdrawReview) { return true; }
+      const partialWithdrawal = !_.isEmpty(issuesPendingWithdrawal) && !withdrawReview;
 
-      // if any issues do not have ids, it means the issue was just added
-      if ((issues.filter((issue) => !issue.id || issue.editedDescription).length > 0)) { return true; }
+      // if an new issue was added or an issue was edited
+      const newOrChangedIssue = issues.filter(
+        (issue) => !issue.id || issue.editedDescription || issue.correctionType
+      ).length > 0;
 
-      if(!_.isEmpty(issuesPendingCorrection)) { return true; }
+      if (issueCountChanged || partialWithdrawal || newOrChangedIssue) {
+        return true;
+      }
 
       return false;
     };
@@ -200,7 +210,7 @@ export class AddIssuesPage extends React.Component {
     if (!_.isEmpty(requestedIssues)) {
       rowObjects = fieldsForFormType.concat(
         { field: 'Requested issues',
-          content: <RequestedIssues
+          content: <IssueList
             onClickIssueAction={this.onClickIssueAction}
             issues={requestedIssues}
             intakeData={intakeData}
@@ -208,14 +218,15 @@ export class AddIssuesPage extends React.Component {
             featureToggles={featureToggles} /> });
     }
 
-    if (!_.isEmpty(allWithdrawnIssues)) {
+    if (!_.isEmpty(withdrawnIssues)) {
       rowObjects = rowObjects.concat(
         { field: 'Withdrawn issues',
-          content: <WithdrawnIssues
+          content: <IssueList
             withdrawReview={withdrawReview}
-            issues={allWithdrawnIssues}
+            issues={withdrawnIssues}
             intakeData={intakeData}
-            formType={formType} /> });
+            formType={formType}
+            featureToggles={featureToggles} /> });
     }
 
     rowObjects = rowObjects.concat(

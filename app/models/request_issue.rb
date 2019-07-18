@@ -132,12 +132,12 @@ class RequestIssue < ApplicationRecord
       control: {
         compensation: {
           supplemental_claim: {
-            rating: "040SCR",
-            nonrating: "040SCNR"
+            rating: "930AMASRC",
+            nonrating: "930AMASNRC"
           },
           higher_level_review: {
-            rating: "030HLRR",
-            nonrating: "030HLRNR"
+            rating: "930AMAHRC",
+            nonrating: "930AMAHNRC"
           }
         },
         pension: {
@@ -154,44 +154,44 @@ class RequestIssue < ApplicationRecord
       local_quality_error: {
         compensation: {
           supplemental_claim: {
-            rating: "040SCR",
-            nonrating: "040SCNR"
+            rating: "930AMASCRLQE",
+            nonrating: "930ASCNRLQE"
           },
           higher_level_review: {
-            rating: "030HLRR",
-            nonrating: "030HLRNR"
+            rating: "930AMAHCRLQE",
+            nonrating: "930AHCNRLQE"
           }
         },
         pension: {
           supplemental_claim: {
-            rating: "040SCRPMC",
-            nonrating: "040SCNRPMC"
+            rating: "930ASCRLQPMC",
+            nonrating: "930ASCNRLPMC"
           },
           higher_level_review: {
-            rating: "030HLRRPMC",
-            nonrating: "030HLRNRPMC"
+            rating: "930AHCRLQPMC",
+            nonrating: "930AHCNRLPMC"
           }
         }
       },
       national_quality_error: {
         compensation: {
           supplemental_claim: {
-            rating: "040SCR",
-            nonrating: "040SCNR"
+            rating: "930AMASCRNQE",
+            nonrating: "930ASCNRNQE"
           },
           higher_level_review: {
-            rating: "030HLRR",
-            nonrating: "030HLRNR"
+            rating: "930AMAHCRNQE",
+            nonrating: "930AHCNRNQE"
           }
         },
         pension: {
           supplemental_claim: {
-            rating: "040SCRPMC",
-            nonrating: "040SCNRPMC"
+            rating: "930ASCRNQPMC",
+            nonrating: "930ASCNRNPMC"
           },
           higher_level_review: {
-            rating: "030HLRRPMC",
-            nonrating: "030HLRNRPMC"
+            rating: "930AHCRNQPMC",
+            nonrating: "930AHCNRNPMC"
           }
         }
       }
@@ -857,7 +857,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def correction_end_product_code
-    choose_end_product_code(END_PRODUCT_CODES[:correction][correction_type][temp_find_benefit_type.to_sym])
+    choose_end_product_code(END_PRODUCT_CODES[:correction][correction_type.to_sym][temp_find_benefit_type.to_sym])
   end
 
   def choose_dta_end_product_code(end_product_codes)
