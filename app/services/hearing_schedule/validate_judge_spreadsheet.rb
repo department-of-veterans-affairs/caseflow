@@ -56,7 +56,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
 
   def filter_incorrectly_formatted_dates
     @spreadsheet_data.reject do |row|
-      HearingSchedule::DateValidators.new(row["date"]).is_date_correctly_formatted?
+      HearingSchedule::DateValidators.new(row["date"]).date_correctly_formatted?
     end.pluck("date")
   end
 
@@ -66,7 +66,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
 
   def filter_out_of_range_dates
     out_of_range_dates = @spreadsheet_data.reject do |row|
-      HearingSchedule::DateValidators.new(row["date"], @start_date, @end_date).is_date_in_range?
+      HearingSchedule::DateValidators.new(row["date"], @start_date, @end_date).date_in_range?
     end.pluck("date")
 
     out_of_range_dates.map { |date| date.strftime("%m/%d/%Y") }

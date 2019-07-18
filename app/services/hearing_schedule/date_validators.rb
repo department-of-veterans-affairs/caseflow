@@ -7,11 +7,11 @@ class HearingSchedule::DateValidators
     @end_date = end_date
   end
 
-  def is_date_correctly_formatted?
+  def date_correctly_formatted?
     @date.instance_of?(Date) || @date == "N/A"
   end
 
-  def is_date_in_range?
+  def date_in_range?
     !@date.instance_of?(Date) || (@date >= @start_date && @date <= @end_date)
   end
 end
