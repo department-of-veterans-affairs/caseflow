@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "ColocatedTask" do
+RSpec.feature "ColocatedTask", :vacols do
   let(:vlj_support_staff) { FactoryBot.create(:user) }
 
   before { OrganizationsUser.add_user_to_organization(vlj_support_staff, Colocated.singleton) }

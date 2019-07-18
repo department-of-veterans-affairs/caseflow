@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe RegionalOfficesController, type: :controller do
+RSpec.describe RegionalOfficesController, :vacols, type: :controller do
   let!(:user) { User.authenticate! }
 
   context "index" do

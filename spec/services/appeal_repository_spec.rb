@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe AppealRepository do
+describe AppealRepository, :vacols do
   let(:correspondent_record) do
     OpenStruct.new(
       snamef: "Phil",

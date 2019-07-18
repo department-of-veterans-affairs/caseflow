@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Build Hearing Schedule" do
+RSpec.feature "Build Hearing Schedule", :vacols do
   context "Build RO Hearing Schedule" do
     let!(:current_user) do
       User.authenticate!(roles: ["Build HearSched"])

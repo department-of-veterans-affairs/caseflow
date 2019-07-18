@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe TaskPager do
+describe TaskPager, :vacols do
   describe ".new" do
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:arguments) { { assignee: assignee, tab_name: tab_name } }

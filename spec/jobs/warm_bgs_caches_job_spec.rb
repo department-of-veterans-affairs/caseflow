@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe WarmBgsCachesJob do
+describe WarmBgsCachesJob, :vacols do
   context "default" do
     # cache keys are using default POA so no specific ids.
     let(:poa_cache_key) { "bgs-participant-poa-" }

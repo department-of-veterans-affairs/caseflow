@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe ColocatedTask do
+describe ColocatedTask, :vacols do
   let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
   let!(:staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
   let(:vacols_case) { create(:case) }

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-feature "Supplemental Claim Edit issues" do
+feature "Supplemental Claim Edit issues", :vacols do
   include IntakeHelpers
 
   before do

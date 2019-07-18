@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "AmaQueue" do
+RSpec.feature "AmaQueue", :vacols do
   def valid_document_id
     "12345-12345678"
   end

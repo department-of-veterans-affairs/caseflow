@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 require "faker"
 
-describe FetchHearingLocationsForVeteransJob do
+describe FetchHearingLocationsForVeteransJob, :vacols do
   let!(:job) { FetchHearingLocationsForVeteransJob.new }
 
   describe "find_appeals_ready_for_geomatching" do

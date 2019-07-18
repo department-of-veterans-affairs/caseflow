@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe HearingSchedule::ValidateJudgeSpreadsheet do
+describe HearingSchedule::ValidateJudgeSpreadsheet, :vacols do
   before do
     create(:staff, sattyid: "860", snamef: "Stuart", snamel: "Huels")
     create(:staff, sattyid: "861", snamef: "Doris", snamel: "Lamphere")

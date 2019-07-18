@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe UpdateLegacyAttorneyCaseReview do
+describe UpdateLegacyAttorneyCaseReview, :vacols do
   describe "#call" do
     let(:judge) { build(:user, css_id: "JUDGE") }
     let(:attorney) { build(:user, css_id: "ATTORNEY") }

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe IssuesController, type: :controller do
+RSpec.describe IssuesController, :vacols, type: :controller do
   let!(:user) { User.authenticate!(roles: ["System Admin"]) }
   let(:case_issue) { nil }
   let(:appeal) do

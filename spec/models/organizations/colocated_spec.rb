@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe Colocated do
+describe Colocated, :postgres do
   let(:colocated_org) { Colocated.singleton }
   let(:appeal) { nil }
 

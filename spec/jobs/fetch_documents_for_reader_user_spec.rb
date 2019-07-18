@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 require "faker"
 
-describe FetchDocumentsForReaderUserJob do
+describe FetchDocumentsForReaderUserJob, :vacols do
   context ".perform" do
     let(:user) { create(:user) }
     let(:document) { create(:document) }

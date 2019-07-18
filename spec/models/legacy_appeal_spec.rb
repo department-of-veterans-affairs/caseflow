@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe LegacyAppeal do
+describe LegacyAppeal, :vacols do
   before do
     Timecop.freeze(post_ama_start_date)
   end

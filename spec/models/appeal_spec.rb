@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-describe Appeal do
+describe Appeal, :vacols do
   include IntakeHelpers
 
   let!(:appeal) { create(:appeal) }
@@ -655,15 +655,15 @@ describe Appeal do
 
   context "is taskable" do
     context ".assigned_attorney" do
-      let(:attorney) { create(:user) }
-      let(:attorney2) { create(:user) }
-      let(:appeal) { create(:appeal) }
-      let!(:task) { create(:ama_attorney_task, assigned_to: attorney, appeal: appeal) }
+      let!(:attorney) { create(:user) }
+      let!(:attorney2) { create(:user) }
+      let!(:appeal) { create(:appeal) }
+      let!(:task) { create(:ama_attorney_task, assigned_to: attorney, appeal: appeal, created_at: 1.day.ago) }
       let!(:task2) { create(:ama_attorney_task, assigned_to: attorney2, appeal: appeal) }
 
       subject { appeal.assigned_attorney }
 
-      it "should know the right assigned attorney with two tasks" do
+      it "returns the assigned attorney for the most recent non-cancelled AttorneyTask" do
         expect(subject).to eq attorney2
       end
 
@@ -674,17 +674,18 @@ describe Appeal do
     end
 
     context ".assigned_judge" do
-      let(:judge) { create(:user) }
-      let(:judge2) { create(:user) }
-      let(:appeal) { create(:appeal) }
-      let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal) }
+      let!(:judge) { create(:user) }
+      let!(:judge2) { create(:user) }
+      let!(:appeal) { create(:appeal) }
+      let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal, created_at: 1.day.ago) }
       let!(:task2) { create(:ama_judge_task, assigned_to: judge2, appeal: appeal) }
 
       subject { appeal.assigned_judge }
 
-      it "should know the right assigned judge with two tasks" do
+      it "returns the assigned judge for the most recent non-cancelled JudgeTask" do
         expect(subject).to eq judge2
       end
+
       it "should know the right assigned judge with a cancelled tasks" do
         task2.update(status: "cancelled")
         expect(subject).to eq judge

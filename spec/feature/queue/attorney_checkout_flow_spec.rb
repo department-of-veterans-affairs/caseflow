@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Attorney checkout flow" do
+RSpec.feature "Attorney checkout flow", :vacols do
   let(:attorney_user) { FactoryBot.create(:default_user) }
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 

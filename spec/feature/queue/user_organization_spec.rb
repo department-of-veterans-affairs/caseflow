@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.feature "User organization" do
+RSpec.feature "User organization", :postgres do
   let(:role) { "org_role" }
   let!(:user) { User.authenticate!(user: create(:user, roles: [role])) }
   let!(:organization) { create(:organization, name: "Test organization", url: "test", role: role) }

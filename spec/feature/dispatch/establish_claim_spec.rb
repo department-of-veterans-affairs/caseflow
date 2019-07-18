@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Establish Claim - ARC Dispatch" do
+RSpec.feature "Establish Claim - ARC Dispatch", :vacols do
   before do
     Timecop.freeze(pre_ramp_start_date)
 

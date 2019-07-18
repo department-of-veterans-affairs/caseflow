@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe LegacyOptinManager do
+describe LegacyOptinManager, :vacols do
   before do
     Timecop.freeze(Time.zone.now)
   end

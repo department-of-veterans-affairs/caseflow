@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe UpdateCachedAppealsAttributesJob do
+describe UpdateCachedAppealsAttributesJob, :vacols do
   let(:vacols_case1) { create(:case) }
   let(:vacols_case2) { create(:case) }
   let(:vacols_case3) { create(:case) }

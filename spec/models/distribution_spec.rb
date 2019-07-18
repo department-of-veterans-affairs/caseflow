@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe Distribution do
+describe Distribution, :vacols do
   let(:judge) { FactoryBot.create(:user) }
   let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
   let(:member_count) { 5 }

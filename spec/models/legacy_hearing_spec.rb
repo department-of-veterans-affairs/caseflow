@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe LegacyHearing do
+describe LegacyHearing, :vacols do
   before do
     RequestStore[:current_user] = create(:user, css_id: "Test user", station_id: "101")
   end

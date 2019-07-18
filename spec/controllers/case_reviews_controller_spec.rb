@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe CaseReviewsController, type: :controller do
+RSpec.describe CaseReviewsController, :vacols, type: :controller do
   before do
     Fakes::Initializer.load!
     User.authenticate!(roles: ["System Admin"])

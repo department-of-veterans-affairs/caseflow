@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-describe WorksheetIssue do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe WorksheetIssue, :postgres do
   context ".create_from_issue" do
     let(:appeal) { Generators::LegacyAppeal.create }
     let(:issue) { Generators::Issue.build }

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Cancel certification" do
+RSpec.feature "Cancel certification", :vacols do
   let!(:current_user) { User.authenticate! }
 
   let(:appeal) do

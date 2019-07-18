@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe JudgeTask do
+describe JudgeTask, :vacols do
   let(:judge) { FactoryBot.create(:user) }
   let(:judge2) { FactoryBot.create(:user) }
   let(:attorney) { FactoryBot.create(:user) }

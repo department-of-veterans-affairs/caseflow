@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe DistributionTask do
+describe DistributionTask, :postgres do
   describe "ready_for_distribution" do
     before do
       Timecop.freeze(Time.zone.today)

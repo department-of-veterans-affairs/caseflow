@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe RequestIssuesUpdate do
+describe RequestIssuesUpdate, :vacols do
   before do
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 20))

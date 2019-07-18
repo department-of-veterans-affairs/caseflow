@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Change hearing disposition" do
+RSpec.feature "Change hearing disposition", :vacols do
   let(:current_full_name) { "Leonela Harbold" }
   let(:hearing_admin_user) { FactoryBot.create(:user, full_name: current_full_name, station_id: 101) }
   let(:hearing_day) { FactoryBot.create(:hearing_day) }

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe VACOLS::Representative do
+describe VACOLS::Representative, :vacols do
   let(:vacols_case) { create(:case_with_rep_table_record) }
   let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
   let(:rep) { VACOLS::Representative.appellant_representative(appeal.vacols_id) }
@@ -55,19 +56,16 @@ describe VACOLS::Representative do
   end
 
   context ".update" do
+    let(:vacols_rep) { build(:representative) }
+
     it "will raise error" do
-      expect do
-        VACOLS::Representative.first.update!(reptype: "F")
-      end.to raise_error
-      expect do
-        VACOLS::Representative.first.update(reptype: "F")
-      end.to raise_error
-      expect do
-        VACOLS::Representative.first.delete
-      end.to raise_error
-      expect do
-        VACOLS::Representative.first.destroy
-      end.to raise_error
+      expect { vacols_rep.update!(reptype: "F") }.to raise_error(VACOLS::Representative::RepError)
+
+      expect { vacols_rep.update(reptype: "F") }.to raise_error(VACOLS::Representative::RepError)
+
+      expect { vacols_rep.delete }.to raise_error(VACOLS::Representative::RepError)
+
+      expect { vacols_rep.destroy }.to raise_error(VACOLS::Representative::RepError)
     end
   end
 end

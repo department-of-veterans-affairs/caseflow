@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "List Schedule" do
+RSpec.feature "List Schedule", :vacols do
   context "Correct buttons are displayed based on permissions" do
     let!(:hearing) { create(:hearing) }
 

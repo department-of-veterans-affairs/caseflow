@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Hearings tasks workflows" do
+RSpec.feature "Hearings tasks workflows", :vacols do
   let(:user) { create(:user) }
 
   before do

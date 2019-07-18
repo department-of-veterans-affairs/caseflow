@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe HearingDay do
+describe HearingDay, :vacols do
   context "#create" do
     let(:hearing) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)

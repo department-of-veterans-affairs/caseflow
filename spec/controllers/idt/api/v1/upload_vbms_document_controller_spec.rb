@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, type: :controller do
+RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :vacols, type: :controller do
   describe "POST /idt/api/v1/appeals/:appeal_id/upload_document" do
     let(:user) { create(:user) }
     let(:appeal) { create(:appeal) }

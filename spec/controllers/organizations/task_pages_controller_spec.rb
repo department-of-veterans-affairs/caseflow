@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe Organizations::TaskPagesController, type: :controller do
+describe Organizations::TaskPagesController, :postgres, type: :controller do
   let(:organization) { FactoryBot.create(:organization) }
   let(:url) { organization.url }
 

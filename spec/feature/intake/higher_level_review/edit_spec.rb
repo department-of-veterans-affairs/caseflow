@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-feature "Higher Level Review Edit issues" do
+feature "Higher Level Review Edit issues", :vacols do
   include IntakeHelpers
 
   before do

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Start Certification" do
+RSpec.feature "Start Certification", :vacols do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end

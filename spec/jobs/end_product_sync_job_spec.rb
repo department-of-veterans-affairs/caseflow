@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe EndProductSyncJob do
+describe EndProductSyncJob, :postgres do
   let!(:ramp_election) { create(:ramp_election, :established) }
 
   let!(:end_product_establishment) do
