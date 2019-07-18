@@ -19,6 +19,14 @@ describe User do
     Fakes::AuthenticationService.user_session = nil
   end
 
+  context ".api_user" do
+    it "returns the api user" do
+      expect(User.api_user.station_id).to eq "101"
+      expect(User.api_user.css_id).to eq "APIUSER"
+      expect(User.api_user.full_name).to eq "API User"
+    end
+  end
+
   context ".find_by_css_id" do
     let!(:user) { create(:user, css_id: "FOOBAR") }
 
