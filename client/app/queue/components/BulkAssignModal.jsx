@@ -122,8 +122,11 @@ class BulkAssignModal extends React.PureComponent {
     const validRows = allRows.filter((row) => row.regional_office);
     const filteredRows = this.filterOptionsByTaskType(validRows);
 
+    const uniqueRows = _.uniq(filteredRows.map((row) => row.regional_office));
+    const rowsSortedByCityName = _.sortBy(uniqueRows, [(roCode) => cityForRegionalOfficeCode(roCode)]);
+
     return this.prependBlankOption(
-      _.uniq(filteredRows.map((row) => row.regional_office)).map((roCode) => ({
+      rowsSortedByCityName.map((roCode) => ({
         value: roCode,
         displayText: cityForRegionalOfficeCode(roCode)
       }))
