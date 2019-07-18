@@ -1502,7 +1502,7 @@ feature "Higher Level Review Edit issues" do
 
         scenario "do not show edit contention text on unidentified issues" do
           visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
-          expect(RequestIssue.where(contested_issue_description: "This is unidentified")).to_not be_nil
+          expect(page).to have_content("This is unidentified")
           expect(page).to_not have_link("Edit contention title")
         end
       end
