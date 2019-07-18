@@ -155,7 +155,7 @@ ActiveRecord::Schema.define(version: 20190711190057) do
     t.index ["granted_decision_issue_id"], name: "index_board_grant_effectuations_on_granted_decision_issue_id"
   end
 
-  create_table "cached_appeal_attributes", force: :cascade do |t|
+  create_table "cached_appeal_attributes", id: false, force: :cascade do |t|
     t.integer "appeal_id"
     t.string "appeal_type"
     t.integer "docket_number"
