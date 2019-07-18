@@ -74,7 +74,7 @@ class RequestIssue < ApplicationRecord
     end
   end
 
-  UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix"
+  UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click *Edit in Caseflow* button to fix"
 
   END_PRODUCT_CODES = {
     original: {
