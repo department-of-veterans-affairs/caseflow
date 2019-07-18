@@ -457,7 +457,8 @@ describe RequestIssue do
       create(
         :request_issue,
         rating_request_issue_attrs.merge(
-          correction_type: correction_type, contention_reference_id: "9876")
+          correction_type: correction_type, contention_reference_id: "9876"
+        )
       )
     end
 
