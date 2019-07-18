@@ -8,7 +8,6 @@ import ApiUtil from '../../util/ApiUtil';
 import QueueFlowModal from './QueueFlowModal';
 import Dropdown from '../../components/Dropdown';
 import { cityForRegionalOfficeCode } from '../utils';
-import { getUnassignedOrganizationalTasks } from '../selectors';
 import { bulkAssignTasks } from '../QueueActions';
 import { setActiveOrganization } from '../uiReducer/uiActions';
 import LoadingScreen from '../../components/LoadingScreen';
@@ -22,6 +21,8 @@ class BulkAssignModal extends React.PureComponent {
 
     this.state = {
       users: [],
+      // Expect each row in taskCountForTypeAndRegionalOffice to have the following shape:
+      // { count: 12, type: "NoShowHearingTask", regional_office: "RO31" }
       taskCountForTypeAndRegionalOffice: [],
       loadingComponent: null,
       modal: {
@@ -218,8 +219,7 @@ const mapStateToProps = (state) => {
   } = state.ui;
 
   return {
-    highlightFormItems,
-    tasks: getUnassignedOrganizationalTasks(state)
+    highlightFormItems
   };
 };
 
