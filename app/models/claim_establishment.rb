@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ClaimEstablishment < ApplicationRecord
-  belongs_to :task
+  belongs_to :task, class_name: "Dispatch::Task"
 
   enum decision_type: {
     full_grant: 1,
