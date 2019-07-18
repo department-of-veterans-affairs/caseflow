@@ -142,12 +142,12 @@ class RequestIssue < ApplicationRecord
         },
         pension: {
           supplemental_claim: {
-            rating: "040SCRPMC",
-            nonrating: "040SCNRPMC"
+            rating: "930AMASRCPMC",
+            nonrating: "930ASNRCPMC"
           },
           higher_level_review: {
-            rating: "030HLRRPMC",
-            nonrating: "030HLRNRPMC"
+            rating: "930AMAHRCPMC",
+            nonrating: "930AHNRCPMC"
           }
         }
       },
