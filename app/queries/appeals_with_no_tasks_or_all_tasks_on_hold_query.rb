@@ -2,21 +2,17 @@
 
 class AppealsWithNoTasksOrAllTasksOnHoldQuery
   def call
-    [stuck_appeals, stuck_legacy_appeals].flatten
+    [stuck_appeals, appeals_with_zero_tasks].flatten
   end
 
   private
 
   def stuck_appeals
-    stuck_query("Appeal") + zero_tasks_query("Appeal")
+    stuck_query("Appeal")
   end
 
-  def stuck_legacy_appeals
-    stuck_query("LegacyAppeal")
-  end
-
-  def zero_tasks_query(klass_name)
-    klass_name.constantize.where.not(id: Task.select(:appeal_id).where(appeal_type: klass_name))
+  def appeals_with_zero_tasks
+    Appeal.where.not(id: Task.select(:appeal_id).where(appeal_type: Appeal.name))
   end
 
   def tasks_for(klass_name)

@@ -5,8 +5,6 @@ require "rails_helper"
 describe AppealsWithNoTasksOrAllTasksOnHoldQuery do
   let!(:appeal_with_zero_tasks) { create(:appeal) }
   let!(:appeal_with_tasks) { create(:appeal, :with_post_intake_tasks) }
-  let!(:legacy_appeal_with_zero_tasks) { create(:legacy_appeal, vacols_case: create(:case)) }
-  let!(:legacy_appeal_with_tasks) { create(:task, type: "RootTask").appeal }
   let!(:appeal_with_all_tasks_on_hold) do
     appeal = create(:appeal, :with_post_intake_tasks)
     schedule_hearing_task = create(:schedule_hearing_task, appeal: appeal)
