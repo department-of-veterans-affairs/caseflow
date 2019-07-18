@@ -19,6 +19,12 @@ describe User do
     Fakes::AuthenticationService.user_session = nil
   end
 
+  context ".api_user" do
+    it 'returns the api user' do
+      expect(User.api_user).to_not be_nil
+    end
+  end
+
   context ".find_by_css_id" do
     let!(:user) { create(:user, css_id: "FOOBAR") }
 
