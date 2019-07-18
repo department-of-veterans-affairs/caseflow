@@ -30,6 +30,11 @@ Rails.application.routes.draw do
       resources :appeals, only: :index
       resources :hearings, only: :show, param: :hearing_day
     end
+    namespace :v3 do
+      namespace :decision_review do
+        resources :higher_level_reviews, only: :create
+      end
+    end
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do
         get 'decision_reviews', to: 'docs#decision_reviews'
