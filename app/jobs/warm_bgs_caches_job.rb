@@ -43,12 +43,16 @@ class WarmBgsCachesJob < CaseflowJob
     # hearings scheduled.
     stop_date = (Time.zone.now + 6.weeks).to_date
     date_to_cache = Time.zone.today
+    veterans_updated = 0
     while date_to_cache <= stop_date
       begin
         hearings = HearingsForDayQuery.new(day: date_to_cache).call
         hearings.each do |hearing|
           veteran = hearing.appeal.veteran
-          veteran.update_cached_attributes! if veteran.stale_attributes?
+          if veteran.stale_attributes?
+            veteran.update_cached_attributes!
+            veterans_updated += 1
+          end
         end
         date_to_cache += 1.day
       rescue ActiveRecord::RecordNotFound
@@ -57,5 +61,11 @@ class WarmBgsCachesJob < CaseflowJob
         Raven.capture_exception(error)
       end
     end
+    notify_slack("Updated cached attributes for #{veterans_updated} Veteran records")
+  end
+
+  def notify_slack(msg)
+    slack = SlackService.new(url: ENV["SLACK_DISPATCH_ALERT_URL"])
+    slack.send_notification(msg, "WarmBgsCachesJob")
   end
 end
