@@ -465,7 +465,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
   end
 
-  context "With a full hearing day", focus: true do
+  context "With a full hearing day" do
     let(:appeal) { create(:appeal) }
     let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal) }
     let!(:hearing_day) do
