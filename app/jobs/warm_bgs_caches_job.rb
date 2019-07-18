@@ -37,11 +37,11 @@ class WarmBgsCachesJob < CaseflowJob
   end
 
   def warm_veteran_attribute_caches
-    # look for hearings for each day up to 6 weeks out and make sure
+    # look for hearings for each day up to 3 weeks out and make sure
     # veteran attributes have been cached locally. This optimizes the VETText API.
     # we swallow RecordNotFound errors because some days will legitimately not have
     # hearings scheduled.
-    stop_date = (Time.zone.now + 6.weeks).to_date
+    stop_date = (Time.zone.now + 3.weeks).to_date
     date_to_cache = Time.zone.today
     veterans_updated = 0
     while date_to_cache <= stop_date
