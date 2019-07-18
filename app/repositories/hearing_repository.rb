@@ -56,10 +56,16 @@ class HearingRepository
       hearing
     end
 
-    def slot_new_hearing(hearing_day_id, scheduled_time_string:, appeal:, hearing_location_attrs: nil, override_full_hearing_day_validation: false)
+    def slot_new_hearing(
+      hearing_day_id,
+      scheduled_time_string:,
+      appeal:,
+      hearing_location_attrs: nil,
+      override_full_hearing_day_validation: false
+    )
       hearing_day = HearingDay.find(hearing_day_id)
 
-      fail HearingDayFull if !override_full_hearing_day_validation and hearing_day.hearing_day_full?
+      fail HearingDayFull if !override_full_hearing_day_validation && hearing_day.hearing_day_full?
 
       if appeal.is_a?(LegacyAppeal)
         scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
