@@ -87,7 +87,7 @@ class HearingSchedule::ValidateRoSpreadsheet
   end
 
   def filter_nonunique_ro_dates
-    @ro_spreadsheet_data.select { |row| @ro_spreadsheet_data.count(row) > 1 }.pluck("ro_code").uniq
+    HearingSchedule::UniquenessValidators.new(@ro_spreadsheet_data).duplicate_rows.pluck("ro_code").uniq
   end
 
   def filter_out_of_range_ro_dates
@@ -137,7 +137,7 @@ class HearingSchedule::ValidateRoSpreadsheet
   end
 
   def filter_nonunique_co_dates
-    @co_spreadsheet_data.select { |row| @co_spreadsheet_data.count(row) > 1 }.uniq
+    HearingSchedule::UniquenessValidators.new(@co_spreadsheet_data).duplicate_rows.uniq
   end
 
   def validate_co_non_availability_dates
@@ -168,8 +168,7 @@ class HearingSchedule::ValidateRoSpreadsheet
   end
 
   def filter_nonunique_allocations
-    ro_codes = @allocation_spreadsheet_data.pluck("ro_code")
-    ro_codes.select { |row| ro_codes.count(row) > 1 }.uniq
+    HearingSchedule::UniquenessValidators.new(@allocation_spreadsheet_data.pluck("ro_code")).duplicate_rows.uniq
   end
 
   def validate_hearing_allocation_days

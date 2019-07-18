@@ -1,6 +1,7 @@
-class HearingSchedule::ValidateJudgeSpreadsheet
+# frozen_string_literal: true
 
-SPREADSHEET_TITLE = "Judge Non-Availability Dates"
+class HearingSchedule::ValidateJudgeSpreadsheet
+  SPREADSHEET_TITLE = "Judge Non-Availability Dates"
   SPREADSHEET_HEADERS = [nil, "Judge Name", "VLJ #", "Date"].freeze
   SPREADSHEET_EMPTY_COLUMN = [nil].freeze
 
@@ -60,7 +61,7 @@ SPREADSHEET_TITLE = "Judge Non-Availability Dates"
   end
 
   def filter_nonunique_judges
-    @spreadsheet_data.select { |row| @spreadsheet_data.count(row) > 1 }.pluck("vlj_id").uniq
+    HearingSchedule::UniquenessValidators.new(@spreadsheet_data).duplicate_rows.pluck("vlj_id").uniq
   end
 
   def filter_out_of_range_dates
