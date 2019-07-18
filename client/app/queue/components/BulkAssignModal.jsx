@@ -203,7 +203,7 @@ class BulkAssignModal extends React.PureComponent {
 
     return <QueueFlowModal
       pathAfterSubmit={`/organizations/${this.organizationUrl()}`}
-      button="Assign Tasks"
+      button={COPY.BULK_ASSIGN_BUTTON_TEXT}
       submit={this.bulkAssignTasks}
       validateForm={this.validateForm}
       title={COPY.BULK_ASSIGN_MODAL_TITLE}>
