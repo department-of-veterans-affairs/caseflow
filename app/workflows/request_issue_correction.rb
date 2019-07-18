@@ -55,7 +55,7 @@ class RequestIssueCorrection
   end
 
   def create_correction_issue!(original_issue)
-    issue_data = corrected_issues_data.find { |ri| ri[:request_issue_id] == original_issue.id.to_s }
+    issue_data = corrected_issues_data.find { |ri| ri[:request_issue_id].to_i == original_issue.id }
     correction_type = issue_data[:correction_type]
 
     RequestIssue.create!(

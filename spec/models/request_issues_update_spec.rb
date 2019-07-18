@@ -188,6 +188,26 @@ describe RequestIssuesUpdate do
       end
     end
 
+    context "#corrected_issues" do
+      before do
+        request_issues_update.perform!
+      end
+
+      subject { request_issues_update.corrected_issues }
+
+      context "when correction issues were part of the update" do
+        let(:request_issue_to_correct) { review.request_issues.last }
+
+        let(:request_issues_data) do
+          [{ request_issue_id: request_issue_to_correct.id,
+             correction_type: "control"
+          }]
+        end
+
+        it { is_expected.to contain_exactly(request_issue_to_correct) }
+      end
+    end
+
     context "#perform!" do
       let(:vbms_error) { VBMS::HTTPError.new("500", "More EPs more problems") }
 
