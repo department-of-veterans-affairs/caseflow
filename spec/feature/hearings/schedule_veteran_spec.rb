@@ -507,5 +507,5 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
     end
-  end  
+  end 
 end
