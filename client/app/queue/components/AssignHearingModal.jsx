@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { sprintf } from 'sprintf-js';
 import {
   resetErrorMessages,
   showErrorMessage,
@@ -156,14 +157,17 @@ class AssignHearingModal extends React.PureComponent {
     const { appeal, assignHearingForm } = this.props;
 
     const hearingDateStr = formatDateStr(assignHearingForm.hearingDay.hearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
-    const title = `You have successfully assigned ${appeal.veteranFullName} ` +
-                  `to a ${this.getHearingType()} hearing on ${hearingDateStr}.`;
+    const title = sprintf(
+      COPY.SCHEDULE_VETERAN_SUCCESS_MESSAGE_TITLE,
+      appeal.veteranFullName,
+      this.getHearingType(),
+      hearingDateStr
+    );
     const href = `/hearings/schedule/assign?roValue=${assignHearingForm.hearingDay.regionalOffice}`;
 
     const detail = (
       <p>
-        To assign another veteran please use the "Schedule Veterans" link below.
-        You can also use the hearings section below to view the hearing in new tab.<br /><br />
+        {COPY.SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL}<br /><br />
         <Link href={href}>Back to Schedule Veterans</Link>
       </p>
     );
