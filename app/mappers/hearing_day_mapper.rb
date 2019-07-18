@@ -4,25 +4,6 @@ module HearingDayMapper
   class InvalidRegionalOfficeError < StandardError
   end
 
-  COLUMN_NAME_REVERSE_MAP = {
-    hearing_pkseq: :id,
-    hearing_type: :request_type,
-    hearing_date: :scheduled_for,
-    folder_nr: :regional_office,
-    room: :room,
-    board_member: :judge_id,
-    team: :team,
-    adduser: :created_by,
-    addtime: :created_at,
-    mduser: :updated_by,
-    mdtime: :updated_at,
-    vdbvapoc: :bva_poc,
-    notes: :notes,
-    judge_last_name: :judge_last_name,
-    judge_middle_name: :judge_middle_name,
-    judge_first_name: :judge_first_name
-  }.freeze
-
   class << self
     def hearing_day_field_validations(hearing_info)
       {

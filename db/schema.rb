@@ -480,6 +480,7 @@ ActiveRecord::Schema.define(version: 20190718004714) do
     t.string "bva_poc"
     t.datetime "created_at", null: false
     t.string "created_by", null: false
+    t.bigint "created_by_id", comment: "The ID of the user who created the Hearing Day"
     t.datetime "deleted_at"
     t.integer "judge_id"
     t.boolean "lock"
@@ -490,7 +491,10 @@ ActiveRecord::Schema.define(version: 20190718004714) do
     t.date "scheduled_for", null: false
     t.datetime "updated_at", null: false
     t.string "updated_by", null: false
+    t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the Hearing Day"
+    t.index ["created_by_id"], name: "index_hearing_days_on_created_by_id"
     t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
+    t.index ["updated_by_id"], name: "index_hearing_days_on_updated_by_id"
   end
 
   create_table "hearing_issue_notes", force: :cascade do |t|
@@ -1098,6 +1102,8 @@ ActiveRecord::Schema.define(version: 20190718004714) do
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "document_views", "users"
   add_foreign_key "end_product_establishments", "users"
+  add_foreign_key "hearing_days", "users", column: "created_by_id"
+  add_foreign_key "hearing_days", "users", column: "updated_by_id"
   add_foreign_key "hearing_views", "users"
   add_foreign_key "hearings", "users", column: "created_by_id"
   add_foreign_key "hearings", "users", column: "updated_by_id"
