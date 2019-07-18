@@ -25,9 +25,9 @@ describe('BuildScheduleUpload', () => {
   it('displays errors when set', () => {
     const wrapper = mount(<MemoryRouter><BuildScheduleUpload
       fileType={SPREADSHEET_TYPES.JudgeSchedulePeriod.value}
-      uploadJudgeFormErrors="Validation failed: HearingSchedule::ValidateJudgeSpreadsheet::JudgeTemplateNotFollowed"
+      uploadJudgeFormErrors="Validation failed: The template was not followed."
     /></MemoryRouter>);
 
-    expect(wrapper.text()).to.include('The judge non-availability spreadsheet ');
+    expect(wrapper.text()).to.include('The template was not followed.');
   });
 });
