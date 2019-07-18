@@ -59,9 +59,8 @@ describe RequestIssue do
     ]
   end
 
-  let!(:rating_request_issue) do
-    create(
-      :request_issue,
+  let(:rating_request_issue_attrs) do
+    {
       decision_review: review,
       contested_rating_issue_reference_id: contested_rating_issue_reference_id,
       contested_rating_issue_profile_date: profile_date,
@@ -78,12 +77,25 @@ describe RequestIssue do
       closed_status: closed_status,
       ineligible_reason: ineligible_reason,
       edited_description: edited_description
+    }
+  end
+
+  let!(:rating_request_issue) do
+    create(
+      :request_issue,
+      rating_request_issue_attrs
     )
   end
 
-  let!(:nonrating_request_issue) do
+  let!(:rating_correction_request_issue) do
     create(
       :request_issue,
+      rating_request_issue_attrs.merge(correction_claim_label: :control)
+    )
+  end
+
+  let(:nonrating_request_issue_attrs) do
+    {
       decision_review: review,
       nonrating_issue_description: "a nonrating request issue description",
       contested_issue_description: nonrating_contested_issue_description,
@@ -93,6 +105,20 @@ describe RequestIssue do
       end_product_establishment: end_product_establishment,
       contention_reference_id: nonrating_contention_reference_id,
       benefit_type: benefit_type
+    }
+  end
+
+  let!(:nonrating_request_issue) do
+    create(
+      :request_issue,
+      nonrating_request_issue_attrs
+    )
+  end
+
+  let!(:nonrating_correction_request_issue) do
+    create(
+      :request_issue,
+      nonrating_request_issue_attrs.merge(correction_claim_label: :control)
     )
   end
 

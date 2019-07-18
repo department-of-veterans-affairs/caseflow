@@ -105,6 +105,30 @@ class RequestIssue < ApplicationRecord
         }
       }
     },
+    correction: {
+      compensation: {
+        control: {
+          supplemental_claim: {
+            rating: "930AMASRC",
+            nonrating: "930AMASNRC"
+          },
+          higher_level_review: {
+            rating: "930AMAHRC",
+            nonrating: "930AMAHNRC"
+          }
+        },
+        pension: {
+          supplemental_claim: {
+            rating: "930AMASRCPMC",
+            nonrating: "930ASNRCPMC"
+          },
+          higher_level_review: {
+            rating: "930AMAHRCPMC",
+            nonrating: "930AHNRCPMC"
+          }
+        }
+      }
+    },
     dta: {
       compensation: {
         appeal: {
@@ -224,6 +248,7 @@ class RequestIssue < ApplicationRecord
   delegate :veteran, to: :decision_review
 
   def end_product_code
+    return correction_end_product_code if correction?
     remanded? ? dta_end_product_code : original_end_product_code
   end
 
@@ -295,8 +320,12 @@ class RequestIssue < ApplicationRecord
     closed_at if withdrawn?
   end
 
-  def corrected?
+  def corrected_after_end_product_cleared?
     RequestIssue.find_by(corrected_request_issue_id: id).present?
+  end
+
+  def correction?
+    correction_claim_label.present?
   end
 
   def ui_hash
@@ -791,6 +820,14 @@ class RequestIssue < ApplicationRecord
     else
       end_product_codes[:claim_review][rating? ? :rating : :nonrating]
     end
+  end
+
+  def correction_end_product_code
+    choose_original_end_product_code(END_PRODUCT_CODES[:correction][:control][temp_find_benefit_type.to_sym])
+  end
+
+  def choose_correction_end_product_code(end_product_codes)
+    end_product_codes[decision_review_type.underscore.to_sym][(rating? || is_unidentified?) ? :rating : :nonrating]
   end
 
   def remanded?
