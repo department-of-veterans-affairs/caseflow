@@ -18,7 +18,7 @@ describe HearingSchedule::ValidateJudgeSpreadsheet do
     end
 
     it "returns JudgeDatesNotUnique" do
-      expect(subject).to eq [HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotUnique]
+      expect(subject).to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotUnique
     end
   end
 
@@ -32,7 +32,7 @@ describe HearingSchedule::ValidateJudgeSpreadsheet do
     end
 
     it "returns JudgeDatesNotCorrectFormat" do
-      expect(subject).to eq [HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotCorrectFormat]
+      expect(subject).to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotCorrectFormat
     end
   end
 
@@ -46,7 +46,7 @@ describe HearingSchedule::ValidateJudgeSpreadsheet do
     end
 
     it "returns JudgeNotInDatabase" do
-      expect(subject).to eq [HearingSchedule::ValidateJudgeSpreadsheet::JudgeNotInDatabase]
+      expect(subject).to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeNotInDatabase
     end
   end
 
