@@ -86,7 +86,7 @@ class Hearings::HearingDayController < HearingsApplicationController
   end
 
   def list_all_upcoming_hearing_days?
-    params[:show_all] && current_user&.roles&.include?("Hearing Prep")
+    ActiveRecord::Type::Boolean.new.deserialize(params[:show_all]) && current_user&.roles&.include?("Hearing Prep")
   end
 
   def update_params
