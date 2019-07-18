@@ -53,6 +53,8 @@ class WarmBgsCachesJob < CaseflowJob
         date_to_cache += 1.day
       rescue ActiveRecord::RecordNotFound
         date_to_cache += 1.day
+      rescue StandardError => error
+        Raven.capture_exception(error)
       end
     end
   end
