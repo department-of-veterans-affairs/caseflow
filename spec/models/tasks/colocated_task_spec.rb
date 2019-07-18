@@ -157,7 +157,7 @@ describe ColocatedTask do
         expect(foia_task.is_a?(FoiaColocatedTask)).to eq true
         expect(foia_task.assigned_to).to eq(PrivacyTeam.singleton)
         expect(foia_task.children.first).to eq foia_child_task
-        expect(foia_child_task.is_a?(PrivacyActTask)).to eq true
+        expect(foia_child_task.is_a?(FoiaTask)).to eq true
 
         expect(translation_task.is_a?(TranslationColocatedTask)).to eq true
         expect(translation_task.assigned_to).to eq(Translation.singleton)

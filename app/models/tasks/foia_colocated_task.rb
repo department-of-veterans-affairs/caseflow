@@ -24,11 +24,11 @@ class FoiaColocatedTask < ColocatedTask
   end
 
   def cascade_closure_from_child_task?(child_task)
-    child_task.is_a?(PrivacyActTask)
+    child_task.is_a?(FoiaTask)
   end
 
   def create_privacy_act_task
-    PrivacyActTask.create!(
+    FoiaTask.create!(
       assigned_to: assigned_to,
       assigned_by: assigned_by,
       instructions: instructions,

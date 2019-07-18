@@ -66,6 +66,11 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
+    factory :foi_task, class: FoiaTask do
+      type { FoiaTask.name }
+      appeal { create(:appeal) }
+    end
+
     factory :timed_hold_task, class: TimedHoldTask do
       type { TimedHoldTask.name }
       appeal { create(:appeal) }
