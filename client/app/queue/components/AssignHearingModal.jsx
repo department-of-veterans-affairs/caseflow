@@ -86,10 +86,8 @@ class AssignHearingModal extends React.PureComponent {
   };
 
   completeScheduleHearingTask = () => {
-
-    const {
-      appeal, scheduleHearingTask, history, assignHearingForm
-    } = this.props;
+    const { appeal, scheduleHearingTask, history, assignHearingForm } = this.props;
+    const { showFullHearingDayWarning } = this.state;
 
     const payload = {
       data: {
@@ -98,7 +96,8 @@ class AssignHearingModal extends React.PureComponent {
           business_payloads: {
             description: 'Update Task',
             values: {
-              ...assignHearingForm.apiFormattedValues
+              ...assignHearingForm.apiFormattedValues,
+              override_full_hearing_day_validation: showFullHearingDayWarning
             }
           }
         }

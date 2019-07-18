@@ -56,28 +56,28 @@ class HearingRepository
       hearing
     end
 
-    def slot_new_hearing(hearing_day_id, scheduled_time_string:, appeal:, hearing_location_attrs: nil)
+    def slot_new_hearing(hearing_day_id, scheduled_time_string:, appeal:, hearing_location_attrs: nil, override_full_hearing_day_validation: false)
       hearing_day = HearingDay.find(hearing_day_id)
-      fail HearingDayFull if hearing_day.hearing_day_full?
 
-      hearing = if appeal.is_a?(LegacyAppeal)
-                  scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
-                    scheduled_for: hearing_day.scheduled_for,
-                    scheduled_time_string: scheduled_time_string
-                  )
-                  vacols_hearing = create_vacols_hearing(hearing_day, appeal, scheduled_for, hearing_location_attrs)
-                  AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
-                  vacols_hearing
-                else
-                  Hearing.create!(
-                    appeal: appeal,
-                    hearing_day_id: hearing_day.id,
-                    hearing_location_attributes: hearing_location_attrs || {},
-                    scheduled_time: scheduled_time_string
-                  )
-                end
+      fail HearingDayFull if !override_full_hearing_day_validation and hearing_day.hearing_day_full?
 
-      hearing
+      if appeal.is_a?(LegacyAppeal)
+        scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
+          scheduled_for: hearing_day.scheduled_for,
+          scheduled_time_string: scheduled_time_string
+        )
+        vacols_hearing = create_vacols_hearing(hearing_day, appeal, scheduled_for, hearing_location_attrs)
+        AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+        vacols_hearing
+      else
+        Hearing.create!(
+          appeal: appeal,
+          hearing_day_id: hearing_day.id,
+          hearing_location_attributes: hearing_location_attrs || {},
+          scheduled_time: scheduled_time_string,
+          override_full_hearing_day_validation: override_full_hearing_day_validation
+        )
+      end
     end
 
     def load_vacols_data(hearing)
