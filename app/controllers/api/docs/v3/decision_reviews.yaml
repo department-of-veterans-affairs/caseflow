@@ -583,6 +583,45 @@ paths:
                 properties:
                   errors:
                     $ref: "#/components/schemas/errors"
+  /higher_level_reviews/{uuid}:
+    get:
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          description: UUID of a Higher-Level Review
+          schema:
+            type : string
+            format: uuid
+            pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+      summary: Details of the Higher-Level Review
+      responses:
+        '200':
+          description: JSONAPI response detailing the specific Higher-Level Review
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  
+        '404':
+          description: ID not found
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+        '5XX':
+          description: Failed
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
 components:
   schemas:
     nonrating_issue_category:
