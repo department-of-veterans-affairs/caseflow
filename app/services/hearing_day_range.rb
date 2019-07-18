@@ -66,7 +66,11 @@ class HearingDayRange
       hearing_day.judge == user || hearing_day.hearings.any? { |hearing| hearing.judge == user }
     end
 
-    def hearing_day_for_vso_user?(vacols_hearings, legacy_hearings, user)
+    def ama_hearing_day_for_vso_user?(hearing_day, user)
+      hearing_day.hearings.any? { |hearing| hearing.assigned_to_vso?(user) }
+    end
+
+    def legacy_hearing_day_for_vso_user?(vacols_hearings, loaded_hearings, user)
       vacols_hearing&.any? do |hearing|
         loaded_hearings.find { |legacy_hearing| legacy_hearing.id == hearing.id }&.assigned_to_vso?(user)
       end
@@ -103,14 +107,16 @@ class HearingDayRange
     )
 
     hearing_days_in_range.select do |hearing_day|
-      self.hearing_day_for_judge?(hearing_day, user) || !vacols_hearings[hearing_day.id.to_s].nil?
+      self.class.hearing_day_for_judge?(hearing_day, user) || !vacols_hearings[hearing_day.id.to_s].nil?
     end
   end
 
   def upcoming_days_for_vso_user(user)
     days_in_range = hearing_days_in_range(start_date, end_date)
 
-    ama_days = days_in_range.select { |day| day.hearings.any? { |hearing| hearing.assigned_to_vso?(user) } }
+    ama_days = days_in_range.select do |hearing_day|
+      self.class.ama_hearing_day_for_vso_user?(hearing_day, user)
+    end
 
     remaining_days = days_in_range.where.not(id: ama_days.pluck(:id)).order(:scheduled_for).limit(1000)
 
@@ -123,7 +129,7 @@ class HearingDayRange
     vacols_days = remaining_days.select do |day|
       vacols_hearings = vacols_hearings_for_remaining_days[day.id.to_s]
 
-      self.class.hearing_day_for_vso_user?(vacols_hearings, legacy_hearings, user)
+      self.class.legacy_hearing_day_for_vso_user?(vacols_hearings, legacy_hearings, user)
     end
 
     ama_days + vacols_days
