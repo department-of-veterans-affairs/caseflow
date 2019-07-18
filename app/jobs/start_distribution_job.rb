@@ -8,13 +8,14 @@ class StartDistributionJob < ApplicationJob
     RequestStore.store[:current_user] = user if user
     distribution.distribute!
   rescue StandardError => error
-    Rails.logger.info "StartDistributionJob failed: #{error.message}"
-    Rails.logger.info error.backtrace.join("\n")
+    handle_error(error)
   end
 
-  # :nocov:
-  def max_attempts
-    1
+  private
+
+  def handle_error(error)
+    Rails.logger.info "StartDistributionJob failed: #{error.message}"
+    Rails.logger.info error.backtrace.join("\n")
+    Raven.capture_exception(error)
   end
-  # :nocov:
 end

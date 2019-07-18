@@ -27,9 +27,9 @@ class Distribution < ApplicationRecord
       return unless valid?(context: :create)
     end
 
-    transaction do
-      # this might take awhile due to VACOLS, so set our timeout to 5 minutes.
-      ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = 300000"
+    multi_transaction do
+      # this might take awhile due to VACOLS, so set our timeout to 2 minutes (in milliseconds).
+      ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = 120000"
 
       update!(status: "started")
 

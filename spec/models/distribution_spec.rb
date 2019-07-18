@@ -211,9 +211,10 @@ describe Distribution, :all_dbs do
 
     context "when the job errors" do
       it "marks the distribution as error" do
-        allow_any_instance_of(LegacyDocket).to receive(:distribute_priority_appeals).and_raise(StandardError)
+        allow_any_instance_of(LegacyDocket).to receive(:distribute_nonpriority_appeals).and_raise(StandardError)
         expect { subject.distribute! }.to raise_error(StandardError)
         expect(subject.status).to eq("error")
+        expect(subject.distributed_cases.count).to eq(0)
       end
     end
 
