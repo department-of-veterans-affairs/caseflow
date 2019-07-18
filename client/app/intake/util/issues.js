@@ -28,18 +28,6 @@ const getClaimantField = (formType, veteran, intakeData) => {
   return [];
 };
 
-export const createCorrectionIssue = (originalIssue) => {
-  let correctionIssue = _.clone(originalIssue);
-
-  correctionIssue.correctedRequestIssueId = originalIssue.id;
-  correctionIssue.correctionType = 'control';
-  delete correctionIssue.endProductCleared;
-  delete correctionIssue.id;
-  delete correctionIssue.correctedByIssue;
-
-  return correctionIssue;
-};
-
 export const legacyIssue = (issue, legacyAppeals) => {
   if (issue.vacolsIssue) {
     return issue.vacolsIssue;

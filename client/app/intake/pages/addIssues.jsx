@@ -21,7 +21,7 @@ import { formatAddedIssues, getAddIssuesFields, validateDate } from '../util/iss
 import { formatDateStr } from '../../util/DateUtil';
 import Table from '../../components/Table';
 import EditContentionTitle from '../components/EditContentionTitle';
-import { WithdrawnIssues, ClearedIssues, CorrectionIssues, RequestedIssues } from '../components/addIssues/IssueLists'
+import { WithdrawnIssues, RequestedIssues } from '../components/addIssues/IssueLists'
 
 import {
   toggleAddIssuesModal,

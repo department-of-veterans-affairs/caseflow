@@ -14,6 +14,7 @@ class RequestIssuesUpdate < ApplicationRecord
 
   delegate :veteran, :cancel_active_tasks, to: :review
   delegate :withdrawn_issues, to: :withdrawal
+  delegate :corrected_issues, to: :correction
 
   def perform!
     return false unless validate_before_perform
@@ -21,16 +22,14 @@ class RequestIssuesUpdate < ApplicationRecord
 
     transaction do
       review.create_issues!(new_issues)
-      process_removed_issues!
-      process_legacy_issues!
-      process_withdrawn_issues!
-      process_edited_issues!
+      process_issues!
       review.mark_rating_request_issues_to_reassociate!
       update!(
         before_request_issue_ids: before_issues.map(&:id),
         after_request_issue_ids: after_issues.map(&:id),
         withdrawn_request_issue_ids: withdrawn_issues.map(&:id),
-        edited_request_issue_ids: edited_issues.map(&:id)
+        edited_request_issue_ids: edited_issues.map(&:id),
+        corrected_request_issue_ids: corrected_issues.map(&:id)
       )
       cancel_active_tasks
       submit_for_processing!
@@ -98,7 +97,7 @@ class RequestIssuesUpdate < ApplicationRecord
 
   def changes?
     review.request_issues.active_or_ineligible.count != @request_issues_data.count || !new_issues.empty? ||
-      withdrawn_issues.any? || edited_issues.any?
+      withdrawn_issues.any? || edited_issues.any? || corrected_issues.any?
   end
 
   def new_issues
@@ -152,6 +151,14 @@ class RequestIssuesUpdate < ApplicationRecord
     RequestIssue.where(id: edited_request_issue_ids)
   end
 
+  def process_issues!
+    process_removed_issues!
+    process_legacy_issues!
+    process_withdrawn_issues!
+    process_edited_issues!
+    process_corrected_issues!
+  end
+
   def process_legacy_issues!
     LegacyOptinManager.new(decision_review: review).process!
   end
@@ -180,5 +187,17 @@ class RequestIssuesUpdate < ApplicationRecord
 
   def process_removed_issues!
     removed_issues.each(&:remove!)
+  end
+
+  def correction
+    @correction ||= RequestIssueCorrection.new(
+      user: user,
+      review: review,
+      request_issues_data: @request_issues_data
+    )
+  end
+
+  def process_corrected_issues!
+    correction.call
   end
 end

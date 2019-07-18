@@ -1190,7 +1190,7 @@ feature "Higher Level Review Edit issues" do
 
         click_withdraw_intake_issue_dropdown("PTSD denied")
         expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
-        expect(page).to have_content(/[0-9]+\. PTSD denied\s*Decision date: 05\/09\/2019\s*Withdraw pending/i)
+        expect(page).to have_content(/[0-9]+\. PTSD denied\s*Decision date: 05\/09\/2019\s*Withdrawal pending/i)
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
         fill_in "withdraw-date", with: withdraw_date
@@ -1238,7 +1238,7 @@ feature "Higher Level Review Edit issues" do
 
         expect(page).to have_content(/Requested issues\s*[0-9]+\. Left knee granted/i)
         expect(page).to have_content(
-          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 05\/09\/2019\s*Withdraw pending/i
+          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 05\/09\/2019\s*Withdrawal pending/i
         )
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
