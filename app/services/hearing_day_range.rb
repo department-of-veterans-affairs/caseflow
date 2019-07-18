@@ -52,8 +52,40 @@ class HearingDayRange
   end
 
   def open_hearing_days_with_hearings_hash(current_user_id = nil)
-    all_hearing_days_with_hearings_hash(current_user_id).select do
-      |hearing_day| hearing_day["hearings"].length < hearing_day["total_slots"]
+    all_hearing_days_with_hearings_hash(current_user_id).select do |hearing_day|
+      self.class.open_hearing_day?(hearing_day)
+    end
+  end
+
+  class << self
+    def open_hearing_day?(hearing_day)
+      hearing_day["hearings"].length < hearing_day["total_slots"]
+    end
+
+    def hearing_day_for_judge?(hearing_day, user)
+      hearing_day.judge == user || hearing_day.hearings.any? { |hearing| hearing.judge == user }
+    end
+
+    def hearing_day_for_vso_user?(vacols_hearings, legacy_hearings, user)
+      vacols_hearing&.any? do |hearing|
+        loaded_hearings.find { |legacy_hearing| legacy_hearing.id == hearing.id }&.assigned_to_vso?(user)
+      end
+    end
+
+    def filter_non_scheduled_hearings(hearings)
+      hearings.select do |hearing|
+        if hearing.is_a?(Hearing)
+          !%w[postponed cancelled].include?(hearing.disposition)
+        else
+          hearing.vacols_record.hearing_disp != "P" && hearing.vacols_record.hearing_disp != "C"
+        end
+      end
+    end
+
+    def hearing_day_hash_with_hearings(hearing_day, scheduled_hearings, current_user_id)
+      hearing_day.to_hash.merge(
+        "hearings" => scheduled_hearings.map { |hearing| hearing.quick_to_hash(current_user_id) }
+      )
     end
   end
 
@@ -71,9 +103,7 @@ class HearingDayRange
     )
 
     hearing_days_in_range.select do |hearing_day|
-      hearing_day.judge == user ||
-        hearing_day.hearings.any? { |hearing| hearing.judge == user } ||
-        !vacols_hearings[hearing_day.id.to_s].nil?
+      self.hearing_day_for_judge?(hearing_day, user) || !vacols_hearings[hearing_day.id.to_s].nil?
     end
   end
 
@@ -91,29 +121,11 @@ class HearingDayRange
       .where(id: vacols_hearings_for_remaining_days.values.flatten.pluck(:id))
 
     vacols_days = remaining_days.select do |day|
-      vacols_hearing = vacols_hearings_for_remaining_days[day.id.to_s]
+      vacols_hearings = vacols_hearings_for_remaining_days[day.id.to_s]
 
-      vacols_hearing&.any? do |hearing|
-        loaded_hearings.detect { |legacy_hearing| legacy_hearing.id == hearing.id }&.assigned_to_vso?(user)
-      end
+      self.class.hearing_day_for_vso_user?(vacols_hearings, legacy_hearings, user)
     end
 
     ama_days + vacols_days
-  end
-
-  def self.filter_non_scheduled_hearings(hearings)
-    hearings.select do |hearing|
-      if hearing.is_a?(Hearing)
-        !%w[postponed cancelled].include?(hearing.disposition)
-      else
-        hearing.vacols_record.hearing_disp != "P" && hearing.vacols_record.hearing_disp != "C"
-      end
-    end
-  end
-
-  def self.hearing_day_hash_with_hearings(hearing_day, scheduled_hearings, current_user_id)
-    hearing_day.to_hash.merge(
-      "hearings" => scheduled_hearings.map { |hearing| hearing.quick_to_hash(current_user_id) }
-    )
   end
 end

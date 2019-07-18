@@ -28,7 +28,7 @@ describe HearingRepository do
       before do
         Timecop.return
       end
-      
+
       let!(:hearings) do
         (1...13).map do |idx|
           create(
