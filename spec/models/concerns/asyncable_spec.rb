@@ -19,17 +19,17 @@ describe Asyncable do
       expect(subject.asyncable_status).to eq :not_yet_submitted
     end
     it "should return :processed when the processed timestamp is set" do
-      now = Time.zone.now
+      base_time = Time.zone.now
       subject = TestAsyncable.new(submitted_at: t - 10.minutes, attempted_at: t - 5.minutes, processed_at: t)
       expect(subject.asyncable_status).to eq :processed
     end
     it "should return :canceled when the canceled timestamp is set" do
-      now = Time.zone.now
+      base_time = Time.zone.now
       subject = TestAsyncable.new(submitted_at: t - 10.minutes, attempted_at: t - 5.minutes, canceled_at: t)
       expect(subject.asyncable_status).to eq :canceled
     end
     it "should return :attempted when the attempted timestamp is set" do
-      now = Time.zone.now
+      base_time = Time.zone.now
       subject = TestAsyncable.new(submitted_at: t - 5.minutes, attempted_at: t)
       expect(subject.asyncable_status).to eq :attempted
     end
