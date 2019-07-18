@@ -137,7 +137,13 @@ class HearingDay < ApplicationRecord
 
   class << self
     def create_hearing_day(hearing_hash)
-      hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
+      current_user_id = RequestStore.store[:current_user].id
+      hearing_hash = hearing_hash.merge(
+        created_by: current_user_css_id,
+        updated_by: current_user_css_id,
+        created_by_id: current_user_id,
+        updated_by_id: current_user_id
+      )
       create(hearing_hash).to_hash
     end
 
