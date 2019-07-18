@@ -12,6 +12,7 @@ import { bulkAssignTasks } from '../QueueActions';
 import { setActiveOrganization } from '../uiReducer/uiActions';
 import LoadingScreen from '../../components/LoadingScreen';
 import { LOGO_COLORS } from '../../constants/AppConstants';
+import COPY from '../../../COPY.json';
 
 const BULK_ASSIGN_ISSUE_COUNT = [5, 10, 20, 30, 40, 50];
 
@@ -202,7 +203,7 @@ class BulkAssignModal extends React.PureComponent {
       button="Assign Tasks"
       submit={this.bulkAssignTasks}
       validateForm={this.validateForm}
-      title="Bulk Assign Tasks">
+      title={COPY.BULK_ASSIGN_MODAL_TITLE}>
       {this.generateDropdown('Assign to', 'assignedUser', this.generateUserOptions(), true)}
       {this.generateDropdown('Regional office', 'regionalOffice', this.generateRegionalOfficeOptions(), false)}
       {this.generateDropdown('Select task type', 'taskType', this.generateTaskTypeOptions(), true)}

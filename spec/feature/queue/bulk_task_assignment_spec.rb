@@ -3,10 +3,11 @@
 require "rails_helper"
 
 RSpec.feature "Bulk task assignment" do
+  let(:org) { HearingsManagement.singleton }
   let(:user) { FactoryBot.create(:user) }
 
   before do
-    OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+    OrganizationsUser.add_user_to_organization(user, org)
     User.authenticate!(user: user)
   end
 
@@ -132,6 +133,33 @@ RSpec.feature "Bulk task assignment" do
       values = find_all("option").map(&:value)
       expect(values.include?("NoShowHearingTask")).to eq false
       expect(values.include?("EvidenceSubmissionWindowTask")).to eq true
+    end
+  end
+
+  context "when tasks in queue are paginated" do
+    before { FeatureToggle.enable!(:use_task_pages_api, users: [user.css_id]) }
+    after { FeatureToggle.disable!(:use_task_pages_api, users: [user.css_id]) }
+
+    context "when there are more tasks than will fit on a single page" do
+      let(:regional_offices) {}
+      before do
+        # TODO: Create tasks for each regional office we select.
+      end
+
+      it "correctly populates modal dropdowns with all options" do
+        visit(org.path)
+        click_button(text: COPY::BULK_ASSIGN_BUTTON_TEXT)
+        expect(page).to have_content(COPY::BULK_ASSIGN_MODAL_TITLE)
+
+        # TODO: Expect to find options for each regional office.
+        # <label for="Regional office">Regional office</label>
+        # <select id="Regional office">...
+        options = find_all("option")
+        task_type = options.find { |option| option.text =~ /No Show/ }
+        task_type.click
+        options = find_all("option")
+        expect(options.map(&:text).include?("Columbia")).to eq false
+      end
     end
   end
 end
