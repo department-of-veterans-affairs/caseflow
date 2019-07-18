@@ -21,7 +21,15 @@ describe User do
 
   context ".api_user" do
     it "returns the api user" do
+      expect(User.api_user.station_id).to eq "101"
+      expect(User.api_user.css_id).to eq "APIUSER"
+      expect(User.api_user.full_name).to eq "API User"
+    end
+
+    it 'only one API User exists in database' do
       expect(User.api_user).to_not be_nil
+      expect(User.api_user).to_not be_nil
+      expect(User.where(station_id: "101", css_id: "APIUSER", full_name: "API User").count).to eq 1
     end
   end
 

@@ -319,7 +319,7 @@ class User < ApplicationRecord
 
     def api_user
       @api_user ||= find_or_create_by(
-        station_id: 101,
+        station_id: "101",
         css_id: "APIUSER",
         full_name: "API User"
       )
