@@ -6,8 +6,12 @@
 # VACOLS DB (Aug 2018 implementation).
 class HearingDay < ApplicationRecord
   acts_as_paranoid
+
   belongs_to :judge, class_name: "User"
+  belongs_to :created_by, class_name: "User"
+  belongs_to :updated_by, class_name: "User"
   has_many :hearings
+
   validates :regional_office, absence: true, if: :central_office?
 
   class HearingDayHasChildrenRecords < StandardError; end
@@ -34,6 +38,8 @@ class HearingDay < ApplicationRecord
     "America/Anchorage" => 8
   }.freeze
 
+  before_create :assign_created_and_updated_by_user
+  before_update :assign_updated_by_user
   after_update :update_children_records
 
   def central_office?
@@ -112,6 +118,15 @@ class HearingDay < ApplicationRecord
 
   private
 
+  def assign_created_and_updated_by_user
+    self.created_by ||= RequestStore[:current_user]
+    assign_updated_by_user
+  end
+
+  def assign_updated_by_user
+    self.updated_by ||= RequestStore[:current_user]
+  end
+
   def update_children_records
     vacols_hearings.each do |hearing|
       hearing.update_caseflow_and_vacols(
@@ -137,13 +152,6 @@ class HearingDay < ApplicationRecord
 
   class << self
     def create_hearing_day(hearing_hash)
-      current_user_id = RequestStore.store[:current_user].id
-      hearing_hash = hearing_hash.merge(
-        created_by: current_user_css_id,
-        updated_by: current_user_css_id,
-        created_by_id: current_user_id,
-        updated_by_id: current_user_id
-      )
       create(hearing_hash).to_hash
     end
 
@@ -251,10 +259,6 @@ class HearingDay < ApplicationRecord
     def hearing_days_in_range(start_date, end_date)
       HearingDay.includes(hearings: [appeal: [tasks: :assigned_to]])
         .where("DATE(scheduled_for) between ? and ?", start_date, end_date)
-    end
-
-    def current_user_css_id
-      RequestStore.store[:current_user].css_id.upcase
     end
   end
 end

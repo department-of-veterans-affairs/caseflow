@@ -133,11 +133,11 @@ RSpec.describe "Hearing Day", type: :request do
       RequestStore[:current_user] = user
       HearingDay.create(
         [{ request_type: HearingDay::REQUEST_TYPES[:central], scheduled_for: "7-Jun-2019 09:00:00.000-4:00",
-           room: "1", created_by: "ramiro", updated_by: "ramiro" },
+           room: "1" },
          { request_type: HearingDay::REQUEST_TYPES[:central], scheduled_for: "9-Jun-2019 13:00:00.000-4:00",
-           room: "3", judge_id: 105, created_by: "ramiro", updated_by: "ramiro" },
+           room: "3", judge_id: 105 },
          { request_type: HearingDay::REQUEST_TYPES[:video], scheduled_for: "15-Jun-2019 08:30:00.000-4:00",
-           regional_office: "RO27", room: "4", created_by: "ramiro", updated_by: "ramiro" }]
+           regional_office: "RO27", room: "4" }]
       )
       Generators::Vacols::TravelBoardSchedule.create(tbyear: 2019, tbstdate: "2019-01-30 00:00:00",
                                                      tbenddate: "2019-02-03 00:00:00", tbmem1: "111")
@@ -165,9 +165,9 @@ RSpec.describe "Hearing Day", type: :request do
       RequestStore[:current_user] = user
       HearingDay.create(
         [{ request_type: HearingDay::REQUEST_TYPES[:video], scheduled_for: "7-Jun-2019 09:00:00.000-4:00",
-           room: "1", regional_office: "RO17", created_by: "ramiro", updated_by: "ramiro" },
+           room: "1", regional_office: "RO17" },
          { request_type: HearingDay::REQUEST_TYPES[:video], scheduled_for: "9-Jun-2019 09:00:00.000-4:00",
-           room: "3", regional_office: "RO27", created_by: "ramiro", updated_by: "ramiro" }]
+           room: "3", regional_office: "RO27" }]
       )
       Generators::Vacols::TravelBoardSchedule.create(tbyear: 2019, tbstdate: "2019-01-30 00:00:00",
                                                      tbenddate: "2019-02-03 00:00:00", tbmem1: "111")
@@ -193,9 +193,9 @@ RSpec.describe "Hearing Day", type: :request do
       Generators::Vacols::Staff.create(sattyid: "111")
       HearingDay.create(
         [{ request_type: HearingDay::REQUEST_TYPES[:video], scheduled_for: "7-Mar-2019 09:00:00.000-4:00",
-           room: "1", regional_office: "RO04", created_by: "ramiro", updated_by: "ramiro" },
+           room: "1", regional_office: "RO04" },
          { request_type: HearingDay::REQUEST_TYPES[:video], scheduled_for: "9-Mar-2019 09:00:00.000-4:00",
-           room: "3", regional_office: "RO04", created_by: "ramiro", updated_by: "ramiro" }]
+           room: "3", regional_office: "RO04" }]
       )
     end
 
