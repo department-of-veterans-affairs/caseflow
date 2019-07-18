@@ -592,11 +592,49 @@ describe RequestIssue do
           context "when rating" do
             let(:request_issue) { rating_request_issue }
             it { is_expected.to eq "030HLRR" }
+
+            context "when correction" do
+              let(:request_issue) { rating_correction_request_issue }
+
+              context "when control" do
+                let(:correction_type) { :control }
+                it { is_expected.to eq "930AMAHRC" }
+              end
+
+              context "when local quality error" do
+                let(:correction_type) { :local_quality_error }
+                it { is_expected.to eq "930AMAHCRLQE" }
+              end
+
+              context "when national quality error" do
+                let(:correction_type) { :national_quality_error }
+                it { is_expected.to eq "930AMAHCRNQE" }
+              end
+            end
           end
 
           context "when nonrating" do
             let(:request_issue) { nonrating_request_issue }
             it { is_expected.to eq "030HLRNR" }
+
+            context "when correction" do
+              let(:request_issue) { nonrating_correction_request_issue }
+
+              context "when control" do
+                let(:correction_type) { :control }
+                it { is_expected.to eq "930AMAHNRC" }
+              end
+
+              context "when local quality error" do
+                let(:correction_type) { :local_quality_error }
+                it { is_expected.to eq "930AHCNRLQE" }
+              end
+
+              context "when national quality error" do
+                let(:correction_type) { :national_quality_error }
+                it { is_expected.to eq "930AHCNRNQE" }
+              end
+            end
           end
         end
 
@@ -606,11 +644,49 @@ describe RequestIssue do
           context "when rating" do
             let(:request_issue) { rating_request_issue }
             it { is_expected.to eq "040SCR" }
+
+            context "when correction" do
+              let(:request_issue) { rating_correction_request_issue }
+
+              context "when control" do
+                let(:correction_type) { :control }
+                it { is_expected.to eq "930AMASRC" }
+              end
+
+              context "when local quality error" do
+                let(:correction_type) { :local_quality_error }
+                it { is_expected.to eq "930AMASCRLQE" }
+              end
+
+              context "when national quality error" do
+                let(:correction_type) { :national_quality_error }
+                it { is_expected.to eq "930AMASCRNQE" }
+              end
+            end
           end
 
           context "when nonrating" do
             let(:request_issue) { nonrating_request_issue }
             it { is_expected.to eq "040SCNR" }
+
+            context "when correction" do
+              let(:request_issue) { nonrating_correction_request_issue }
+
+              context "when control" do
+                let(:correction_type) { :control }
+                it { is_expected.to eq "930AMASNRC" }
+              end
+
+              context "when local quality error" do
+                let(:correction_type) { :local_quality_error }
+                it { is_expected.to eq "930ASCNRLQE" }
+              end
+
+              context "when national quality error" do
+                let(:correction_type) { :national_quality_error }
+                it { is_expected.to eq "930ASCNRNQE" }
+              end
+            end
           end
         end
       end
