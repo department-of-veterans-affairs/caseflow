@@ -51,7 +51,7 @@ class Hearing < ApplicationRecord
   before_create :assign_created_by_user
   before_update :assign_updated_by_user
 
-  attr_reader :override_full_hearing_day_validation
+  attr_accessor :override_full_hearing_day_validation
 
   HEARING_TYPES = {
     V: "Video",
