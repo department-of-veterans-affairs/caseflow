@@ -15,6 +15,7 @@ import DailyDocketEditLinks from './DailyDocketEditLinks';
 import { isPreviouslyScheduledHearing } from '../../utils';
 import { navigateToPrintPage } from '../../../util/PrintUtil';
 import { encodeQueryParams } from '../../../util/QueryParamsUtil';
+import COPY from '../../COPY.json';
 
 const alertStyling = css({
   marginBottom: '30px'
@@ -197,8 +198,8 @@ export default class DailyDocket extends React.Component {
       {!hasDocketHearings &&
         <div {...css({ marginTop: '75px' })}>
           <StatusMessage
-            title={user.userRoleHearingPrep ? 'You have no hearings scheduled for this hearing day.' :
-              'No Veterans are scheduled for this hearing day.'}
+            title={user.userRoleHearingPrep ? COPY.HEARING_SCHEDULE_DOCKET_JUDGE_WITH_NO_HEARINGS :
+              COPY.HEARING_SCHEDULE_DOCKET_NO_VETERANS}
             type="status" />
         </div>}
 

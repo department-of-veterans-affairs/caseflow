@@ -32,7 +32,7 @@ RSpec.feature "List Schedule" do
       scenario "All buttons are visible" do
         visit "hearings/schedule"
 
-        expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
+        expect(page).to have_content(COPY::HEARING_SCHEDULE_JUDGE_DEFAULT_VIEW_PAGE_HEADER)
         expect(page).to have_content("Schedule Veterans")
         expect(page).to have_content("Build Schedule")
         expect(page).to have_content("Add Hearing Date")
@@ -84,7 +84,7 @@ RSpec.feature "List Schedule" do
       scenario "No buttons are visible" do
         visit "hearings/schedule"
 
-        expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
+        expect(page).to have_content(COPY::HEARING_SCHEDULE_JUDGE_DEFAULT_VIEW_PAGE_HEADER)
         expect(page).to_not have_content("Schedule Veterans")
         expect(page).to_not have_content("Build Schedule")
         expect(page).to_not have_content("Add Hearing Date")

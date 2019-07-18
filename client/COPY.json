@@ -183,6 +183,8 @@
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_UPLOAD_LINK": "Upload files",
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HISTORY_HEADER": "Upload History",
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK": "View current schedule",
+  "HEARING_SCHEDULE_DOCKET_NO_VETERANS": "No Veterans are scheduled for this hearing day.",
+  "HEARING_SCHEDULE_DOCKET_JUDGE_WITH_NO_HEARINGS": "You have no hearings scheduled for this hearing day.",
 
   "HEARING_SCHEDULE_UPLOAD_PAGE_HEADER": "Upload Files",
   "HEARING_SCHEDULE_UPLOAD_PAGE_INSTRUCTIONS": "Please select the file you are uploading and choose a date range.",
