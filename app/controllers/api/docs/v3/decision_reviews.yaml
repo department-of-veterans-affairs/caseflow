@@ -603,7 +603,24 @@ paths:
               schema:
                 type: object
                 properties:
-                  
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+                      type:
+                        type: string
+                        description: Will be "HigherLevelReview"
+                      attributes:
+                        type: object
+                        properties:
+                          # TODO: HLR properties
+                      relationships:
+                        type: object
+                        properties:
+                          # TODO: HLR relationships
         '404':
           description: ID not found
           content:
