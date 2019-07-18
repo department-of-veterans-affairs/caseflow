@@ -1494,7 +1494,7 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content("Right Knee")
       end
 
-      context "when review has unidentified issue" do
+      context "when review has unidentified issues and non-ratings" do
         let!(:issue) do
           create(:request_issue, :unidentified, decision_review: higher_level_review,
                                                 contested_issue_description: "This is unidentified")
