@@ -15,7 +15,7 @@ import DailyDocketEditLinks from './DailyDocketEditLinks';
 import { isPreviouslyScheduledHearing } from '../../utils';
 import { navigateToPrintPage } from '../../../util/PrintUtil';
 import { encodeQueryParams } from '../../../util/QueryParamsUtil';
-import COPY from '../../COPY.json';
+import COPY from '../../../../COPY.json';
 
 const alertStyling = css({
   marginBottom: '30px'
