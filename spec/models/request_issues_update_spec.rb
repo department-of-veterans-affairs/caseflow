@@ -299,6 +299,45 @@ describe RequestIssuesUpdate do
           expect(created_issue.contention_reference_id).to_not be_nil
         end
 
+        context "with rating control correction request issue" do
+          let(:request_issue_to_correct) { review.request_issues.last }
+
+          let(:request_issues_data) do
+            [{ request_issue_id: request_issue_to_correct.id,
+               correction_type: "control"
+            }]
+          end
+
+          let(:review) do
+            create(:higher_level_review,
+                   veteran_file_number: veteran.file_number,
+                   informal_conference: true)
+          end
+
+          it "adds new end product for a correction" do
+            allow_create_contentions
+            expect(EndProductEstablishment.find_by(code: "930AMAHRC", source: review)).to eq(nil)
+
+            subject
+
+            expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+              hash_including(
+                veteran_file_number: review.veteran_file_number,
+                contentions: [{
+                  description: request_issue_to_correct.description
+                }]
+              )
+            )
+            ep = EndProductEstablishment.find_by(code: "930AMAHRC", source: review)
+            expect(ep).to_not be_nil
+            correction_request_issue_id = request_issue_to_correct.reload.corrected_by_request_issue_id
+            expect(correction_request_issue_id).to_not be_nil
+            correction_issue = review.request_issues.find_by(id: correction_request_issue_id)
+            expect(correction_issue.end_product_establishment).to eq ep
+            expect(correction_issue.correction_type).to eq "control"
+          end
+        end
+
         context "with nonrating request issue" do
           let(:request_issues_data) do
             review.request_issues.map { |issue| { request_issue_id: issue.id } } + [{
