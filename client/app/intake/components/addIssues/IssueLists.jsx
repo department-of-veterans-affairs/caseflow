@@ -7,11 +7,6 @@ import Dropdown from '../../../components/Dropdown';
 import EditContentionTitle from '../../components/EditContentionTitle';
 
 export const RequestedIssues = ({issues, intakeData, formType, onClickIssueAction, featureToggles}) => {
-  const issueActionOptions = [
-    { displayText: 'Withdraw issue', value: 'withdraw' },
-    { displayText: 'Remove issue', value: 'remove' }
-  ];
-
   const {
     withdrawDecisionReviews,
     editContentionText
@@ -21,7 +16,19 @@ export const RequestedIssues = ({issues, intakeData, formType, onClickIssueActio
     <div>
       { issues.map((issue) => {
         const editableContentionText = Boolean(
-          formType !== FORM_TYPES.APPEAL.key && !issue.category && !issue.ineligibleReason);
+          formType !== FORM_TYPES.APPEAL.key && !issue.category && !issue.ineligibleReason && !issue.endProductCleared);
+        let issueActionOptions = []
+
+        if (issue.correctionType) {
+          issueActionOptions.push({ displayText: 'Undo correction', value: 'undo_correction' })
+        } else if (issue.endProductCleared) {
+          issueActionOptions.push({ displayText: 'Correct issue', value: 'correct' })
+        } else {
+          issueActionOptions.push(
+            { displayText: 'Withdraw issue', value: 'withdraw' },
+            { displayText: 'Remove issue', value: 'remove' }
+          )
+        }
 
         return <div className="issue-container" key={`issue-container-${issue.index}`}>
           <div
@@ -67,52 +74,6 @@ export const RequestedIssues = ({issues, intakeData, formType, onClickIssueActio
 export const WithdrawnIssues = ({withdrawReview, issues, intakeData, formType}) => {
   return <div className="issues">
     { withdrawReview && <p className="cf-red-text">{COPY.INTAKE_WITHDRAWN_BANNER}</p> }
-    { issues.map((issue) => {
-      return <div
-        className="issue"
-        data-key={`issue-${issue.index}`}
-        key={`issue-${issue.index}`}
-        id={`issue-${issue.referenceId}`}>
-        <AddedIssue
-          issue={issue}
-          issueIdx={issue.index}
-          requestIssues={intakeData.requestIssues}
-          legacyOptInApproved={intakeData.legacyOptInApproved}
-          legacyAppeals={intakeData.legacyAppeals}
-          formType={formType} />
-      </div>;
-    })}
-  </div>;
-}
-
-export const ClearedIssues = ({issues, intakeData, formType, onClickIssueAction}) => {
-  return <div className="issues">
-    { issues.map((issue) => {
-      return <div
-        className="issue"
-        data-key={`issue-${issue.index}`}
-        key={`issue-${issue.index}`}
-        id={`issue-${issue.referenceId}`}>
-        <AddedIssue
-          issue={issue}
-          issueIdx={issue.index}
-          requestIssues={intakeData.requestIssues}
-          legacyOptInApproved={intakeData.legacyOptInApproved}
-          legacyAppeals={intakeData.legacyAppeals}
-          formType={formType} />
-        <Button
-          onClick={() => onClickIssueAction(issue.index, 'correct')}
-          classNames={['cf-btn-link']}
-        >
-          Correct issue
-        </Button>
-      </div>;
-    })}
-  </div>;
-};
-
-export const CorrectionIssues = ({issues, intakeData, formType, onClickIssueAction}) => {
-  return <div className="issues">
     { issues.map((issue) => {
       return <div
         className="issue"

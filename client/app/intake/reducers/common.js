@@ -107,15 +107,20 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.CORRECT_ISSUE] = () => {
-    let originalIssue = listOfIssues[action.payload.index];
-
-    originalIssue.correctedByIssue = true;
-
-    let addedIssues = [...listOfIssues, createCorrectionIssue(listOfIssues[action.payload.index])];
+    listOfIssues[action.payload.index].correctionType = "control";
 
     return {
       ...state,
-      addedIssues
+      addedIssues: listOfIssues
+    };
+  };
+
+  actionsMap[ACTIONS.UNDO_CORRECTION] = () => {
+    delete listOfIssues[action.payload.index].correctionType;
+
+    return {
+      ...state,
+      addedIssues: listOfIssues
     };
   };
 

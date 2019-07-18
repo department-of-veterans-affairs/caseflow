@@ -200,13 +200,18 @@
           }
         }
 
-        .issue-pending-action {
+        .withdrawn-issue {
           color: $color-gray-light;
 
           p {
             color: $color-gray-dark;
             font-style: italic;
           }
+        }
+
+        .correction-pending {
+          color: $color-gray-dark;
+          font-style: italic;
         }
 
         .not-eligible {

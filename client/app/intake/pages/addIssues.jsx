@@ -31,6 +31,7 @@ import {
   withdrawIssue,
   setIssueWithdrawalDate,
   correctIssue,
+  undoCorrection,
   toggleUnidentifiedIssuesModal,
   toggleIssueRemoveModal,
   toggleLegacyOptInModal
@@ -79,6 +80,10 @@ export class AddIssuesPage extends React.Component {
       break;
     case 'correct':
       this.props.correctIssue(index);
+      break;
+    case 'undo_correction':
+      this.props.undoCorrection(index);
+      break;
     }
   }
 
@@ -95,13 +100,14 @@ export class AddIssuesPage extends React.Component {
       editPage
     } = this.props;
 
+    const intakeData = intakeForms[formType];
+    const { useAmaActivationDate, withdrawDecisionReviews, editContentionText, correctClaimReviews } = featureToggles;
+
     if (!formType) { return <Redirect to={PAGE_PATHS.BEGIN} />; }
     if (intakeData.isDtaError) { return <Redirect to={PAGE_PATHS.DTA_CLAIM} />; }
     if (!_.isEmpty(intakeData.clearedEps) && !correctClaimReviews) { return <Redirect to={PAGE_PATHS.CLEARED_EPS} />; }
     if (intakeData.isOutcoded) { return <Redirect to={PAGE_PATHS.OUTCODED} />; }
 
-    const { useAmaActivationDate, withdrawDecisionReviews, editContentionText, correctClaimReviews } = featureToggles;
-    const intakeData = intakeForms[formType];
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
     const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
     const showInvalidVeteranError = !intakeData.veteranValid && (_.some(
@@ -109,22 +115,15 @@ export class AddIssuesPage extends React.Component {
     );
 
     const issues = formatAddedIssues(intakeData, useAmaActivationDate);
-    const requestedIssues = issues.filter(
-      (i) => !i.withdrawalPending && !i.withdrawalDate && !i.correctedRequestIssueId && !i.endProductCleared
-    );
-
+    const requestedIssues = issues.filter((issue) => !issue.withdrawalPending && !issue.withdrawalDate);
     const previouslywithdrawnIssues = issues.filter((issue) => issue.withdrawalDate);
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
+    const issuesPendingCorrection = issues.filter((issue) => issue.correctionType );
     const allWithdrawnIssues = previouslywithdrawnIssues.concat(issuesPendingWithdrawal);
     const withdrawDatePlaceholder = formatDateStr(new Date());
     const withdrawReview = !_.isEmpty(issues) && _.every(
       issues, (issue) => issue.withdrawalPending || issue.withdrawalDate
     );
-
-    const clearedIssues = issues.filter(
-      (issue) => issue.endProductCleared && !issue.correctedByIssue && !issue.withdrawalDate
-    );
-    const correctionIssues = issues.filter((issue) => issue.correctionClaimLabel);
 
     const haveIssuesChanged = () => {
       if (issues.length !== this.state.originalIssueLength) { return true; }
@@ -135,6 +134,8 @@ export class AddIssuesPage extends React.Component {
 
       // if any issues do not have ids, it means the issue was just added
       if ((issues.filter((issue) => !issue.id || issue.editedDescription).length > 0)) { return true; }
+
+      if(!_.isEmpty(issuesPendingCorrection)) { return true; }
 
       return false;
     };
@@ -194,7 +195,7 @@ export class AddIssuesPage extends React.Component {
       issueChangeClassname = (rowObj) => rowObj.field === '' ? 'intake-issue-flash' : '';
     }
 
-    let rowObjects = fieldsForFormType
+    let rowObjects = fieldsForFormType;
 
     if (!_.isEmpty(requestedIssues)) {
       rowObjects = fieldsForFormType.concat(
@@ -213,27 +214,6 @@ export class AddIssuesPage extends React.Component {
           content: <WithdrawnIssues
             withdrawReview={withdrawReview}
             issues={allWithdrawnIssues}
-            intakeData={intakeData}
-            formType={formType} /> });
-    }
-
-    if (!_.isEmpty(clearedIssues)) {
-      rowObjects = rowObjects.concat(
-        { field: 'Cleared issues',
-          content: <ClearedIssues
-            onClickIssueAction={this.onClickIssueAction}
-            issues={clearedIssues}
-            intakeData={intakeData}
-            formType={formType} /> });
-    }
-
-    if (!_.isEmpty(correctionIssues)) {
-      rowObjects = rowObjects.concat(
-        {
-          field: '930 Correction issues',
-          content: <CorrectionIssues
-            onClickIssueAction={this.onClickIssueAction}
-            issues={correctionIssues}
             intakeData={intakeData}
             formType={formType} /> });
     }
@@ -348,6 +328,7 @@ export const EditAddIssuesPage = connect(
     removeIssue,
     withdrawIssue,
     setIssueWithdrawalDate,
-    correctIssue
+    correctIssue,
+    undoCorrection
   }, dispatch)
 )(AddIssuesPage);
