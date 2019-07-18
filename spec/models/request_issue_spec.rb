@@ -457,7 +457,7 @@ describe RequestIssue do
       create(
         :request_issue,
         rating_request_issue_attrs.merge(
-          correction_claim_label: :control, contention_reference_id: "9876")
+          correction_claim_label: correction_claim_label, contention_reference_id: "9876")
       )
     end
 
@@ -465,10 +465,12 @@ describe RequestIssue do
       create(
         :request_issue,
         nonrating_request_issue_attrs.merge(
-          correction_claim_label: :control, contention_reference_id: "4321"
+          correction_claim_label: correction_claim_label, contention_reference_id: "4321"
         )
       )
     end
+
+    let(:correction_claim_label) { :control }
 
     subject { request_issue.end_product_code }
 
@@ -482,21 +484,21 @@ describe RequestIssue do
           context "when rating" do
             let(:request_issue) { rating_request_issue }
             it { is_expected.to eq "030HLRRPMC" }
+
+            context "when correction control" do
+              let(:request_issue) { rating_correction_request_issue }
+              it { is_expected.to eq "930AMAHRCPMC" }
+            end
           end
 
           context "when nonrating" do
             let(:request_issue) { nonrating_request_issue }
             it { is_expected.to eq "030HLRNRPMC" }
-          end
 
-          context "when rating correction" do
-            let(:request_issue) { rating_correction_request_issue }
-            it { is_expected.to eq "930AMAHRCPMC" }
-          end
-
-          context "when nonrating correction" do
-            let(:request_issue) { nonrating_correction_request_issue }
-            it { is_expected.to eq "930AHNRCPMC" }
+            context "when correction control" do
+              let(:request_issue) { nonrating_correction_request_issue }
+              it { is_expected.to eq "930AHNRCPMC" }
+            end
           end
         end
 
