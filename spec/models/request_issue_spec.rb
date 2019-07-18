@@ -87,13 +87,6 @@ describe RequestIssue do
     )
   end
 
-  let!(:rating_correction_request_issue) do
-    create(
-      :request_issue,
-      rating_request_issue_attrs.merge(correction_claim_label: :control)
-    )
-  end
-
   let(:nonrating_request_issue_attrs) do
     {
       decision_review: review,
@@ -112,13 +105,6 @@ describe RequestIssue do
     create(
       :request_issue,
       nonrating_request_issue_attrs
-    )
-  end
-
-  let!(:nonrating_correction_request_issue) do
-    create(
-      :request_issue,
-      nonrating_request_issue_attrs.merge(correction_claim_label: :control)
     )
   end
 
@@ -467,6 +453,23 @@ describe RequestIssue do
   end
 
   context "#end_product_code" do
+    let!(:rating_correction_request_issue) do
+      create(
+        :request_issue,
+        rating_request_issue_attrs.merge(
+          correction_claim_label: :control, contention_reference_id: "9876")
+      )
+    end
+
+    let!(:nonrating_correction_request_issue) do
+      create(
+        :request_issue,
+        nonrating_request_issue_attrs.merge(
+          correction_claim_label: :control, contention_reference_id: "4321"
+        )
+      )
+    end
+
     subject { request_issue.end_product_code }
 
     context "when on original decision review" do
@@ -484,6 +487,16 @@ describe RequestIssue do
           context "when nonrating" do
             let(:request_issue) { nonrating_request_issue }
             it { is_expected.to eq "030HLRNRPMC" }
+          end
+
+          context "when rating correction" do
+            let(:request_issue) { rating_correction_request_issue }
+            it { is_expected.to eq "930AMAHRCPMC" }
+          end
+
+          context "when nonrating correction" do
+            let(:request_issue) { nonrating_correction_request_issue }
+            it { is_expected.to eq "930AHNRCPMC" }
           end
         end
 

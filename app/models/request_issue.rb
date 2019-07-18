@@ -106,8 +106,8 @@ class RequestIssue < ApplicationRecord
       }
     },
     correction: {
-      compensation: {
-        control: {
+      control: {
+        compensation: {
           supplemental_claim: {
             rating: "930AMASRC",
             nonrating: "930AMASNRC"
@@ -823,7 +823,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def correction_end_product_code
-    choose_original_end_product_code(END_PRODUCT_CODES[:correction][:control][temp_find_benefit_type.to_sym])
+    choose_correction_end_product_code(END_PRODUCT_CODES[:correction][:control][temp_find_benefit_type.to_sym])
   end
 
   def choose_correction_end_product_code(end_product_codes)
