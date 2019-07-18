@@ -11,7 +11,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
 
     it "returns RoDatesNotInRange" do
-      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::RoDatesNotInRange]
+      expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::RoDatesNotInRange
     end
   end
 
@@ -25,7 +25,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
 
     it "returns RoDatesNotUnique" do
-      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::RoDatesNotUnique]
+      expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::RoDatesNotUnique
     end
   end
 
@@ -39,7 +39,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
 
     it "returns RoDatesNotCorrectFormat" do
-      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::RoDatesNotCorrectFormat]
+      expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::RoDatesNotCorrectFormat
     end
   end
 
@@ -53,7 +53,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
 
     it "returns RoListedIncorrectly" do
-      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::RoListedIncorrectly]
+      expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::RoListedIncorrectly
     end
   end
 
@@ -67,7 +67,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
 
     it "returns RoTemplateNotFollowed" do
-      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::RoTemplateNotFollowed]
+      expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::RoTemplateNotFollowed
     end
   end
 
@@ -81,7 +81,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
 
     it "returns RoListedIncorrectly" do
-      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::RoListedIncorrectly]
+      expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::RoListedIncorrectly
     end
   end
 
@@ -95,7 +95,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
 
     it "returns CoDatesNotInRange" do
-      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::CoDatesNotInRange]
+      expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::CoDatesNotInRange
     end
   end
 
@@ -109,7 +109,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
 
     it "returns CoDatesNotUnique" do
-      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::CoDatesNotUnique]
+      expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::CoDatesNotUnique
     end
   end
 
@@ -123,7 +123,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
 
     it "returns CoDatesNotCorrectFormat" do
-      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::CoDatesNotCorrectFormat]
+      expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::CoDatesNotCorrectFormat
     end
   end
 
@@ -137,7 +137,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
 
     it "returns AllocationNotCorrectFormat" do
-      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::AllocationNotCorrectFormat]
+      expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::AllocationNotCorrectFormat
     end
   end
 
@@ -151,7 +151,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
 
     it "returns AllocationDuplicateRo" do
-      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::AllocationDuplicateRo]
+      expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::AllocationDuplicateRo
     end
   end
 
@@ -165,7 +165,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
 
     it "returns AllocationTemplateNotFollowed" do
-      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::AllocationTemplateNotFollowed]
+      expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::AllocationTemplateNotFollowed
     end
   end
 
