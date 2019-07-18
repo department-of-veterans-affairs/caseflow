@@ -29,12 +29,12 @@ export class BuildScheduleUploadContainer extends React.Component {
 
   validateDatesAndFile = (onFailure, startDate, endDate, file) => {
     if (!(startDate && endDate && file)) {
-      onFailure('ValidationError::MissingStartDateEndDateFile');
+      onFailure('Please make sure all required fields are filled in.');
 
       return false;
     }
     if (endDate < startDate) {
-      onFailure('ValidationError::EndDateTooEarly');
+      onFailure('The end date must be after the start date.');
 
       return false;
     }

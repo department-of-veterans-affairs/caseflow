@@ -10,7 +10,7 @@ import Button from '../../components/Button';
 import BasicDateRangeSelector from '../../components/BasicDateRangeSelector';
 import FileUpload from '../../components/FileUpload';
 import InlineForm from '../../components/InlineForm';
-import { SPREADSHEET_TYPES, ERROR_MAPPINGS } from '../constants';
+import { SPREADSHEET_TYPES } from '../constants';
 
 const fileUploadStyling = css({
   marginTop: '40px'
@@ -41,7 +41,7 @@ export default class BuildScheduleUpload extends React.Component {
       check the file and dates and try again.
       <ul>
         {_.map(errors.replace('Validation failed: ', '').split(', '), (error, i) => {
-          return ERROR_MAPPINGS[error] ? <li key={i}>{ERROR_MAPPINGS[error]}</li> : null;
+          return <li key={i}>{error}</li>;
         })}
       </ul>
     </div>;

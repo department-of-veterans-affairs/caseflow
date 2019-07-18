@@ -259,9 +259,22 @@ On error returns a `400` code with an error message like:
 {"message":"Invalid key."}
 ```
 
+Once the IDT session is activated, the `token` is passed in subsequent requests.
+
 #### `GET /idt/api/v1/appeals`
 
+```bash
+% curl -H 'TOKEN: your-idt-token' \
+       -H 'FILENUMBER: veteran-file-number' \
+       https://appeals.cf.ds.va.gov/idt/api/v1/appeals
+```
+
 #### `GET /idt/api/v1/appeals/:appeal_id`
+
+```bash
+% curl -H 'TOKEN: your-idt-token' \
+       https://appeals.cf.ds.va.gov/idt/api/v1/appeals/uuid_or_vacols_id
+```
 
 #### `POST /idt/api/v1/appeals/:appeal_id/outcode`
 
@@ -269,9 +282,25 @@ On error returns a `400` code with an error message like:
 
 #### `GET /idt/api/v1/judges`
 
+```bash
+% curl -H 'TOKEN: your-idt-token' \
+       https://appeals.cf.ds.va.gov/idt/api/v1/judges
+```
+
 #### `GET /idt/api/v1/user`
 
+```bash
+% curl -H 'TOKEN: your-idt-token' \
+       https://appeals.cf.ds.va.gov/idt/api/v1/user
+```
+
 #### `GET /idt/api/v1/veterans`
+
+```bash
+% curl -H 'TOKEN: your-idt-token' \
+       -H 'FILENUMBER: veteran-file-number' \
+       https://appeals.cf.ds.va.gov/idt/api/v1/veterans
+```
 
 ## VETText / Hearings
 
@@ -290,6 +319,7 @@ On success returns `200` HTTP code and a body like:
       {
          "address" : "15 New Sudbury Street JFK Federal Building",
          "appeal" : "182fd411-c770-44c8-8491-0de36ac6f92c",
+         "city"   : "Boston",
          "facility_id" : "vba_301",
          "first_name" : "John",
          "last_name" : "Veteran",
@@ -304,6 +334,7 @@ On success returns `200` HTTP code and a body like:
       {
          "address" : "123 Main St.",
          "appeal" : "d69d7c3f-fd68-45aa-9bb9-556622fd557b",
+         "city"   : "Providence",
          "facility_id" : "vba_999",
          "first_name" : "Jane",
          "last_name" : "Veteran",
