@@ -200,8 +200,7 @@ describe RequestIssuesUpdate do
 
         let(:request_issues_data) do
           [{ request_issue_id: request_issue_to_correct.id,
-             correction_type: "control"
-          }]
+             correction_type: "control" }]
         end
 
         it { is_expected.to contain_exactly(request_issue_to_correct) }
@@ -304,8 +303,7 @@ describe RequestIssuesUpdate do
 
           let(:request_issues_data) do
             [{ request_issue_id: request_issue_to_correct.id,
-               correction_type: "control"
-            }]
+               correction_type: "control" }]
           end
 
           let(:review) do
