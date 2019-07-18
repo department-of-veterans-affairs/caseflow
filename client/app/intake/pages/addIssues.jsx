@@ -154,7 +154,8 @@ export class AddIssuesPage extends React.Component {
         <div>
           { requestIssues.map((issue) => {
             const editableContentionText = Boolean(
-              formType !== FORM_TYPES.APPEAL.key && !issue.category && !issue.ineligibleReason && !issue.isUnidentified);
+              formType !== FORM_TYPES.APPEAL.key &&
+              !issue.category && !issue.ineligibleReason && !issue.isUnidentified);
 
             return <div className="issue-container" key={`issue-container-${issue.index}`}>
               <div
