@@ -10,11 +10,11 @@ class RegionalOfficesController < ApplicationController
   def hearing_dates
     ro = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    hearing_days = HearingDay.all_hearing_days_with_hearings_hash(
+    hearing_days = HearingDayRange.new(
       Time.zone.today.beginning_of_day,
       Time.zone.today.beginning_of_day + 182.days,
       ro
-    )
+    ).all_hearing_days_with_hearings_hash
 
     render json: {
       hearing_days: hearing_days.map { |day| RegionalOfficesController.hearing_day_hash(ro, day) }
