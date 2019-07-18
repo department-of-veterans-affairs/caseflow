@@ -195,7 +195,7 @@ jobs:
       - run:
           name: Security
           command: |
-            ~/project/ci-bin/capture-log "bundle exec rake security_caseflow"
+            ~/project/ci-bin/capture-log "bundle exec rake security"
 
       - deploy:
           name: Concatenate all logs
