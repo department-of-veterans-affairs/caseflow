@@ -132,8 +132,27 @@
       "user_input": null,
       "confidence": "High",
       "note": "The application does not force use of HTTPS: `config.force_ssl` is not enabled"
+    },
+    {
+      "warning_type": "Cross-Site Request Forgery",
+      "warning_code": 86,
+      "fingerprint": "aa5b514f162036b68ab5af8209e415f2e6d987e62820aeb04817aad75cd845c9",
+      "check_name": "ForgerySetting",
+      "message": "`protect_from_forgery` should be configured with `with: :exception`",
+      "file": "app/controllers/api/v3/decision_review/higher_level_reviews_controller.rb",
+      "line": 4,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_request_forgery/",
+      "code": "protect_from_forgery(:with => :null_session)",
+      "render_path": null,
+      "location": {
+        "type": "controller",
+        "controller": "Api::V3::DecisionReview::HigherLevelReviewsController"
+      },
+      "user_input": null,
+      "confidence": "Medium",
+      "note": ""
     }
   ],
-  "updated": "2019-07-02 17:03:56 -0500",
+  "updated": "2019-07-12 18:18:53 -0400",
   "brakeman_version": "4.5.1"
 }
