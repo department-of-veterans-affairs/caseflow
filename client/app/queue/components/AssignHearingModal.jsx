@@ -56,7 +56,7 @@ class AssignHearingModal extends React.PureComponent {
 
   toggleFullHearingDayWarning = () => {
     const { assignHearingForm, hearingDay } = this.props;
-    const selectedHearingDay =  (assignHearingForm || {}).hearingDay || hearingDay;
+    const selectedHearingDay = (assignHearingForm || {}).hearingDay || hearingDay;
 
     if (!selectedHearingDay) {
       return;
