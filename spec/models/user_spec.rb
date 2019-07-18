@@ -20,7 +20,7 @@ describe User do
   end
 
   context ".api_user" do
-    it 'returns the api user' do
+    it "returns the api user" do
       expect(User.api_user).to_not be_nil
     end
   end

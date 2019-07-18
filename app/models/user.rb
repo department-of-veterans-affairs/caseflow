@@ -318,7 +318,7 @@ class User < ApplicationRecord
     end
 
     def api_user
-      @api_user ||= find_by( # TODO should this be _or_initialize
+      @api_user ||= find_or_create_by(
         station_id: 101,
         css_id: "APIUSER",
         full_name: "API User"
