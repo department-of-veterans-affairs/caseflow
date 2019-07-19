@@ -209,6 +209,11 @@
           }
         }
 
+        .correction-pending {
+          color: $color-gray-dark;
+          font-style: italic;
+        }
+
         .not-eligible {
           color: $color-red;
         }

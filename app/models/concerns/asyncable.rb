@@ -176,6 +176,20 @@ module Asyncable
     !!self[self.class.canceled_at_column]
   end
 
+  def asyncable_status
+    if processed?
+      :processed
+    elsif canceled?
+      :canceled
+    elsif attempted?
+      :attempted
+    elsif submitted?
+      :submitted
+    else
+      :not_yet_submitted
+    end
+  end
+
   def expired_without_processing?
     return false if processed?
 
