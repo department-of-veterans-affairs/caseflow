@@ -170,7 +170,7 @@ class ColocatedTask < Task
   def vacols_location
     # Break this out into respective subclasses once ColocatedTasks are migrated
     # https://github.com/department-of-veterans-affairs/caseflow/pull/11295#issuecomment-509659069
-    if action == "schedule_hearing"
+    if action == "schedule_hearing" || type == ScheduleHearingColocatedTask.name
       schedule_hearing_vacols_location
     elsif action == "translation"
       translation_vacols_location
@@ -182,7 +182,8 @@ class ColocatedTask < Task
   def schedule_hearing_vacols_location
     # Return to attorney if the task is cancelled. For instance, if the VLJ support staff sees that the hearing was
     # actually held.
-    return assigned_by.vacols_uniq_id if children.all? { |child| child.status == Constants.TASK_STATUSES.cancelled }
+    return assigned_by.vacols_uniq_id if children.all? { |child| child.status == Constants.TASK_STATUSES.cancelled } ||
+                                         status == Constants.TASK_STATUSES.cancelled
 
     # Schedule hearing with a task (instead of changing Location in VACOLS, the old way)
     ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)

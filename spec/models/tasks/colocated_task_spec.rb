@@ -140,14 +140,11 @@ describe ColocatedTask do
       end
 
       it "should route to the correct teams and create the correct children" do
-        hearing_task, hearing_child_task, transcription_task, transcription_child_task, foia_task, foia_child_task,
+        hearing_task, transcription_task, transcription_child_task, foia_task, foia_child_task,
           translation_task, translation_child_task = subject
 
         expect(hearing_task.is_a?(ScheduleHearingColocatedTask)).to eq true
         expect(hearing_task.assigned_to).to eq(HearingsManagement.singleton)
-        expect(hearing_task.children.first).to eq hearing_child_task
-        expect(hearing_child_task.is_a?(HearingTask)).to eq true
-        expect(hearing_child_task.children.first.is_a?(ScheduleHearingTask)).to eq true
 
         expect(transcription_task.is_a?(MissingHearingTranscriptsColocatedTask)).to eq true
         expect(transcription_task.assigned_to).to eq(HearingsManagement.singleton)
@@ -289,6 +286,18 @@ describe ColocatedTask do
           expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
           colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
           expect(vacols_case.reload.bfcurloc).to eq staff.slogid
+        end
+      end
+
+      context "when completing a schedule hearing task" do
+        let(:action) { :schedule_hearing }
+        it "should create a schedule hearing task" do
+          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
+          expect(appeal_1.root_task.children.empty?)
+          colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
+          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
+          expect(appeal_1.root_task.children.first.is_a?(HearingTask))
+          expect(appeal_1.root_task.children.first.children.first.is_a?(ScheduleHearingTask))
         end
       end
 
@@ -450,8 +459,8 @@ describe ColocatedTask do
         FactoryBot.create(
           :colocated_task,
           action,
-          assigned_by: attorney,
-          assigned_to: org
+          appeal: appeal_1,
+          assigned_by: attorney
         )
       end
       let(:legacy_colocated_task) { org_colocated_task.children.first }
@@ -469,6 +478,18 @@ describe ColocatedTask do
           it "assigns back to the assigner" do
             legacy_colocated_task.update!(status: Constants.TASK_STATUSES.cancelled)
             expect(org_colocated_task.reload.appeal.location_code).to eq(attorney.vacols_uniq_id)
+          end
+        end
+
+        context "for schedule hearing colocated task", focus: true do
+          let(:action) { :schedule_hearing }
+
+          it "should not create a schedule hearing task" do
+            expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
+            expect(org_colocated_task.appeal.root_task.children.empty?)
+            org_colocated_task.update!(status: Constants.TASK_STATUSES.cancelled)
+            expect(org_colocated_task.reload.appeal.location_code).to eq(attorney.vacols_uniq_id)
+            expect(org_colocated_task.appeal.root_task.children.empty?)
           end
         end
       end
