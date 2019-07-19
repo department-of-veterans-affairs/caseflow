@@ -245,6 +245,9 @@
   "MODAL_CANCEL_BUTTON": "Cancel",
   "MODAL_CONFIRM_BUTTON": "Confirm",
 
+  "BULK_ASSIGN_BUTTON_TEXT": "Assign Tasks",
+  "BULK_ASSIGN_MODAL_TITLE": "Bulk Assign Tasks",
+
   "REGIONAL_OFFICE_REQUIRED_MESSAGE": "Please select a regional office",
 
   "CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_TITLE": "Cancel hearing request",
