@@ -9,6 +9,5 @@ class CreateCachedAppealAttributes < ActiveRecord::Migration[5.1]
     end
 
      add_index :cached_appeal_attributes, [:appeal_id, :appeal_type], unique: true
-     add_index :cached_appeal_attributes, :vacols_id, unique: true
   end
 end
