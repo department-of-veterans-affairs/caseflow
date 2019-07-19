@@ -33,9 +33,8 @@ class HearingsController < HearingsApplicationController
   def update_advance_on_docket_motion
     advance_on_docket_motion_params.require(:reason)
 
-    motion = AdvanceOnDocketMotion.find_or_create_by!(
-      person_id: advance_on_docket_motion_params[:person_id],
-      user_id: advance_on_docket_motion_params[:user_id]
+    motion = hearing.advance_on_docket_motion || AdvanceOnDocketMotion.find_or_create_by!(
+      person_id: advance_on_docket_motion_params[:person_id]
     )
     motion.update(advance_on_docket_motion_params)
   end
