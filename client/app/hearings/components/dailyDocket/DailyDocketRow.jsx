@@ -175,8 +175,7 @@ class HearingActions extends React.Component {
     return <React.Fragment>
       <HearingPrepWorkSheetLink hearing={hearing} />
       {this.isAmaHearing() && <React.Fragment>
-        <AmaAodDropdown {...inputProps} updateAodMotion={this.updateAodMotion}
-          openAodModal={this.openAodModal} userId={user.userId} />
+        <AmaAodDropdown {...inputProps} updateAodMotion={this.updateAodMotion} userId={user.userId} />
         <AodReasonDropdown {...inputProps}
           updateAodMotion={this.updateAodMotion}
           userId={user.userId}
