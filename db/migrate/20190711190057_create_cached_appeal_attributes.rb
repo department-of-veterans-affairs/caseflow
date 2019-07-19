@@ -4,7 +4,11 @@ class CreateCachedAppealAttributes < ActiveRecord::Migration[5.1]
       t.integer :appeal_id
       t.string :appeal_type
       t.string :docket_type
-      t.integer :docket_number
+      t.string :docket_number
+      t.integer :vacols_id
     end
+
+     add_index :cached_appeal_attributes, [:appeal_id, :appeal_type], unique: true
+     add_index :cached_appeal_attributes, :vacols_id, unique: true
   end
 end

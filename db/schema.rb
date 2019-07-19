@@ -158,8 +158,11 @@ ActiveRecord::Schema.define(version: 20190711190057) do
   create_table "cached_appeal_attributes", id: false, force: :cascade do |t|
     t.integer "appeal_id"
     t.string "appeal_type"
-    t.integer "docket_number"
+    t.string "docket_number"
     t.string "docket_type"
+    t.integer "vacols_id"
+    t.index ["appeal_id", "appeal_type"], name: "index_cached_appeal_attributes_on_appeal_id_and_appeal_type", unique: true
+    t.index ["vacols_id"], name: "index_cached_appeal_attributes_on_vacols_id", unique: true
   end
 
   create_table "certification_cancellations", id: :serial, force: :cascade do |t|
