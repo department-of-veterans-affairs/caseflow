@@ -616,7 +616,37 @@ paths:
                       attributes:
                         type: object
                         properties:
-                          # TODO: HLR properties
+                          benefitType:
+                            type: string
+                          veteranFileNumber:
+                            type: string
+                          status:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                              details:
+                                type: object
+                                properties:
+                                  issues:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        description:
+                                          type: string
+                                        disposition:
+                                          type: string
+                          events:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                type:
+                                  type: string
+                                date:
+                                  type: string
+                                  format: date
                       relationships:
                         type: object
                         properties:
@@ -650,6 +680,8 @@ paths:
                         attributes:
                           type: object
                           properties:
+                            benefitType:
+                              type: string
                             active:
                               type: boolean
                             lastAction:
