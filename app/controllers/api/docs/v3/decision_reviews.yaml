@@ -32,26 +32,26 @@ paths:
                   properties:
                     type:
                       type: string
-                      enum: [higher_level_review]
+                      enum: [HigherLevelReview]
                     attributes:
                       type: object
                       required:
-                        - receipt_date
-                        - informal_conference
-                        - same_office
-                        - legacy_opt_in_approved
-                        - benefit_type
+                        - receiptDate
+                        - informalConference
+                        - sameOffice
+                        - legacyOptInApproved
+                        - benefitType
                       properties:
-                        receipt_date:
+                        receiptDate:
                           type: string
                           format: date
-                        informal_conference:
+                        informalConference:
                           type: boolean
-                        same_office:
+                        sameOffice:
                           type: boolean
-                        legacy_opt_in_approved:
+                        legacyOptInApproved:
                           type: boolean
-                        benefit_type:
+                        benefitType:
                           type: string
                           enum:
                             - compensation
@@ -82,7 +82,7 @@ paths:
                               properties:
                                 type:
                                   type: string
-                                  enum: [veteran]
+                                  enum: [Veteran]
                                 id: # veteran_file_number
                                   type: string
                         claimant: # if claimant is not included, the veteran is the claimant (and their participantID is looked up)
@@ -99,15 +99,15 @@ paths:
                               properties:
                                 type:
                                   type: string
-                                  enum: [claimant]
+                                  enum: [Claimant]
                                 id: # participantID
                                   type: string
                                 meta:
                                   type: object
                                   required:
-                                    - payee_code
+                                    - payeeCode
                                   properties:
-                                    payee_code:
+                                    payeeCode:
                                       $ref: "#/components/schemas/payee_code"
                 included:
                   type: array
@@ -119,50 +119,50 @@ paths:
                     properties:
                       type:
                         type: string
-                        enum: [request_issue]
+                        enum: [RequestIssue]
                       attributes:
                         type: object
                         required:
-                          - decision_text
-                          - decision_date
-                          # withdrawal_date (NOT required)
-                          # nonrating_issue_category (NOT required)
+                          - decisionText
+                          - decisionDate
+                          # withdrawalDate (NOT required)
+                          # nonratingIssueCategory (NOT required)
                         properties:
-                          decision_text:
+                          decisionText:
                             type: string
-                          decision_date:
-                            type: string
-                            format: date
-                          withdrawal_date:
+                          decisionDate:
                             type: string
                             format: date
-                          nonrating_issue_category:
+                          withdrawalDate:
+                            type: string
+                            format: date
+                          nonratingIssueCategory:
                             $ref: "#/components/schemas/nonrating_issue_category"
             examples:
               pension:
                 value: {
                   "data": {
-                    "type": "higher_level_review",
+                    "type": "HigherLevelReview",
                       "attributes": {
-                        "receipt_date": "2019-07-10",
-                        "informal_conference": true,
-                        "same_office": false,
-                        "legacy_opt_in_approved": true,
-                        "benefit_type": "pension"
+                        "receiptDate": "2019-07-10",
+                        "informalConference": true,
+                        "sameOffice": false,
+                        "legacyOptInApproved": true,
+                        "benefitType": "pension"
                       },
                       "relationships": {
                         "veteran": {
                           "data": {
-                            "type": "veteran",
+                            "type": "Veteran",
                             "id": "55555555"
                           }
                         },
                         "claimant": {
                           "data": {
-                            "type": "claimant",
+                            "type": "Claimant",
                             "id": "44444444",
                             "meta": {
-                              "payee_code": "10"
+                              "payeeCode": "10"
                             }
                           }
                         }
@@ -170,16 +170,16 @@ paths:
                     },
                     "included": [
                       {
-                        "type": "nonrating_issue",
+                        "type": "NonratingIssue",
                         "attributes": {
-                          "decision_text": "veteran status verified",
-                          "decision_date": "2019-07-11",
-                          "withdrawal_date": null,
-                          "nonrating_issue_category": "Eligibility | Veteran Status"
+                          "decisionText": "veteran status verified",
+                          "decisionDate": "2019-07-11",
+                          "withdrawalDate": null,
+                          "nonratingIssueCategory": "Eligibility | Veteran Status"
                         }
                       },
                       {
-                        "type": "rating_issue",
+                        "type": "RatingIssue",
                         "id": "def456"
                       }
                     ]
