@@ -162,11 +162,6 @@ class HearingDay < ApplicationRecord
 
     private
 
-    def hearing_days_in_range(start_date, end_date)
-      HearingDay.includes(hearings: [appeal: [tasks: :assigned_to]])
-        .where("DATE(scheduled_for) between ? and ?", start_date, end_date)
-    end
-
     def current_user_css_id
       RequestStore.store[:current_user].css_id.upcase
     end
