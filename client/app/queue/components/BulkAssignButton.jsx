@@ -1,6 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import Button from '../../components/Button';
+import COPY from '../../../COPY.json';
 
 class BulkAssignButton extends React.PureComponent {
   changeRoute = () => {
@@ -12,7 +13,9 @@ class BulkAssignButton extends React.PureComponent {
     this.props.history.push(`${baseUrl}/modal/bulk_assign_tasks`);
   }
 
-  render = () => <Button classNames={['bulk-assign-button']} onClick={this.changeRoute}>Assign Tasks</Button>;
+  render = () => <Button classNames={['bulk-assign-button']} onClick={this.changeRoute}>
+    {COPY.BULK_ASSIGN_BUTTON_TEXT}
+  </Button>;
 }
 
 export default (withRouter(BulkAssignButton));

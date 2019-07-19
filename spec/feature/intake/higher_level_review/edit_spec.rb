@@ -1493,6 +1493,19 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content("Edited")
         expect(page).to have_content("Right Knee")
       end
+
+      context "when review has unidentified issues and non-ratings" do
+        let!(:issue) do
+          create(:request_issue, :unidentified, decision_review: higher_level_review,
+                                                contested_issue_description: "This is unidentified")
+        end
+
+        scenario "do not show edit contention text on unidentified issues" do
+          visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+          expect(page).to have_content("This is unidentified")
+          expect(page).to_not have_link("Edit contention title")
+        end
+      end
     end
 
     context "when review has no active tasks" do

@@ -7,12 +7,12 @@ import _ from 'lodash';
 import ApiUtil from '../../util/ApiUtil';
 import QueueFlowModal from './QueueFlowModal';
 import Dropdown from '../../components/Dropdown';
-import { regionalOfficeCity } from '../utils';
-import { getUnassignedOrganizationalTasks } from '../selectors';
+import { cityForRegionalOfficeCode } from '../utils';
 import { bulkAssignTasks } from '../QueueActions';
-import {
-  setActiveOrganization
-} from '../uiReducer/uiActions';
+import { setActiveOrganization } from '../uiReducer/uiActions';
+import LoadingScreen from '../../components/LoadingScreen';
+import { LOGO_COLORS } from '../../constants/AppConstants';
+import COPY from '../../../COPY.json';
 
 const BULK_ASSIGN_ISSUE_COUNT = [5, 10, 20, 30, 40, 50];
 
@@ -22,6 +22,10 @@ class BulkAssignModal extends React.PureComponent {
 
     this.state = {
       users: [],
+      // Expect each row in taskCountForTypeAndRegionalOffice to have the following shape:
+      // { count: 12, type: "NoShowHearingTask", regional_office: "RO31" }
+      taskCountForTypeAndRegionalOffice: [],
+      loadingComponent: null,
       modal: {
         assignedUser: null,
         regionalOffice: null,
@@ -32,11 +36,17 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   componentDidMount() {
-    ApiUtil.get(`/organizations/${this.organizationUrl()}/members.json`).then((resp) => {
-      this.setState({ users: resp.body.members.data });
+    this.setState({ loadingComponent: <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} /> });
+
+    ApiUtil.get(`/organizations/${this.organizationUrl()}/task_summary.json`).then((resp) => {
+      this.setState({
+        users: resp.body.members.data,
+        taskCountForTypeAndRegionalOffice: JSON.parse(resp.body.task_counts),
+        loadingComponent: null
+      });
     }).
       catch(() => {
-        // handle the error from the frontend
+        this.setState({ loadingComponent: null });
       });
   }
 
@@ -51,15 +61,16 @@ class BulkAssignModal extends React.PureComponent {
   bulkAssignTasks = () => {
     this.props.bulkAssignTasks(this.state.modal);
 
-    const { taskType: task_type, numberOfTasks: task_count, assignedUser: assigned_to_id } = this.state.modal;
-    const regionalOffice = _.uniq(this.props.tasks.filter((task) => {
-      return regionalOfficeCity(task) === this.state.modal.regionalOffice;
-    }))[0];
-    const regionalOfficeKey = _.get(regionalOffice, 'closestRegionalOffice.key');
+    const {
+      taskType: task_type,
+      numberOfTasks: task_count,
+      assignedUser: assigned_to_id,
+      regionalOffice: regional_office
+    } = this.state.modal;
 
     const data = { bulk_task_assignment: {
       organization_url: this.organizationUrl(),
-      regional_office: regionalOfficeKey,
+      regional_office,
       assigned_to_id,
       task_type,
       task_count }
@@ -74,62 +85,20 @@ class BulkAssignModal extends React.PureComponent {
       });
   }
 
-  getDisplayTextOption = (options) => {
-    const optionsWithDisplayText = [
-      {
-        value: null,
-        displayText: ''
-      }
-    ];
-
-    options.forEach((option) => {
-      if (option !== null) {
-        if (typeof option === 'object') {
-          optionsWithDisplayText.push(option);
-        } else {
-          optionsWithDisplayText.push(
-            {
-              value: option,
-              displayText: option
-            }
-          );
-        }
-      }
-    });
-
-    return optionsWithDisplayText;
-  }
-
-  filterTasks = (fieldName, fieldValue, tasks) => {
-    let filteredTasks = tasks;
-
-    filteredTasks = fieldValue ?
-      _.filter(filteredTasks, { [fieldName]: fieldValue }) :
-      filteredTasks;
-
-    return filteredTasks;
-  }
-
-  filterTasksByRegionalOffice = (tasks) => {
-    let filteredTasks = tasks;
-
-    if (this.state.modal.regionalOffice) {
-      filteredTasks = filteredTasks.filter((task) => {
-        return regionalOfficeCity(task) === this.state.modal.regionalOffice;
-      });
+  filterOptionsByRegionalOffice = (rows) => {
+    if (!this.state.modal.regionalOffice) {
+      return rows;
     }
 
-    return filteredTasks;
+    return rows.filter((row) => row.regional_office === this.state.modal.regionalOffice);
   }
 
-  filterTasksByTaskType = (tasks) => {
-    let filteredTasks = tasks;
-
-    if (this.state.modal.taskType) {
-      filteredTasks = this.filterTasks('type', this.state.modal.taskType, filteredTasks);
+  filterOptionsByTaskType = (rows) => {
+    if (!this.state.modal.taskType) {
+      return rows;
     }
 
-    return filteredTasks;
+    return rows.filter((row) => row.type === this.state.modal.taskType);
   }
 
   generateUserOptions = () => {
@@ -143,45 +112,60 @@ class BulkAssignModal extends React.PureComponent {
     return users;
   }
 
+  prependBlankOption = (options) => ([{ value: null,
+    displayText: '' }].concat(options));
+
   generateRegionalOfficeOptions = () => {
-    const filteredTasks = this.filterTasksByTaskType(this.props.tasks);
+    const allRows = this.state.taskCountForTypeAndRegionalOffice;
 
-    const options = _.uniq(filteredTasks.map((task) => {
-      return regionalOfficeCity(task);
-    })).filter(Boolean);
+    // Remove rows with null regional office codes.
+    const validRows = allRows.filter((row) => row.regional_office);
+    const filteredRows = this.filterOptionsByTaskType(validRows);
 
-    return this.getDisplayTextOption(options);
+    const uniqueRows = _.uniq(filteredRows.map((row) => row.regional_office));
+    const rowsSortedByCityName = _.sortBy(uniqueRows, [(roCode) => cityForRegionalOfficeCode(roCode)]);
+
+    return this.prependBlankOption(
+      rowsSortedByCityName.map((roCode) => ({
+        value: roCode,
+        displayText: cityForRegionalOfficeCode(roCode)
+      }))
+    );
   }
 
   generateTaskTypeOptions = () => {
-    const filteredTasks = this.filterTasksByRegionalOffice(this.props.tasks);
+    const allRows = this.state.taskCountForTypeAndRegionalOffice;
+    const filteredRows = this.filterOptionsByRegionalOffice(allRows);
 
-    const taskOptions = _.uniq(filteredTasks.map((task) => task.type)).map((task) => {
-      return {
-        value: task,
-        displayText: task.replace(/([a-z])([A-Z])/g, '$1 $2')
-      };
-    });
+    return this.prependBlankOption(_.uniq(filteredRows.map((row) => row.type)).map((type) => ({
+      value: type,
+      displayText: type.replace(/([a-z])([A-Z])/g, '$1 $2')
+    })
+    ));
+  }
 
-    return taskOptions;
+  assignableTaskCount = () => {
+    const allRows = this.state.taskCountForTypeAndRegionalOffice;
+    const filteredRows = this.filterOptionsByTaskType(this.filterOptionsByRegionalOffice(allRows));
+
+    return filteredRows.map((row) => row.count).reduce((first, second) => first + second, 0);
   }
 
   generateNumberOfTaskOptions = () => {
     const actualOptions = [];
     const issueCounts = BULK_ASSIGN_ISSUE_COUNT;
-    let filteredTasks = this.filterTasksByRegionalOffice(this.props.tasks);
 
-    filteredTasks = this.filterTasksByTaskType(filteredTasks);
+    const assignableTaskCount = this.assignableTaskCount();
 
     for (let i = 0; i < issueCounts.length; i++) {
-      if (filteredTasks && filteredTasks.length < issueCounts[i]) {
+      if (assignableTaskCount < issueCounts[i]) {
         actualOptions.push({
-          value: filteredTasks.length,
-          displayText: `${filteredTasks.length} (all available tasks)`
+          value: assignableTaskCount,
+          displayText: `${assignableTaskCount} (all available tasks)`
         });
         break;
       }
-      if (filteredTasks.length > issueCounts[i]) {
+      if (assignableTaskCount > issueCounts[i]) {
         actualOptions.push({
           value: issueCounts[i],
           displayText: issueCounts[i]
@@ -212,18 +196,25 @@ class BulkAssignModal extends React.PureComponent {
 
   organizationUrl = () => this.props.location.pathname.split('/')[2];
 
-  render = () => <QueueFlowModal
-    pathAfterSubmit={`/organizations/${this.organizationUrl()}`}
-    button="Assign Tasks"
-    submit={this.bulkAssignTasks}
-    validateForm={this.validateForm}
-    title="Bulk Assign Tasks">
-    {this.generateDropdown('Assign to', 'assignedUser', this.generateUserOptions(), true)}
-    {this.generateDropdown('Regional office', 'regionalOffice', this.generateRegionalOfficeOptions(), false)}
-    {this.generateDropdown('Select task type', 'taskType', this.generateTaskTypeOptions(), true)}
-    {this.generateDropdown('Select number of tasks to assign', 'numberOfTasks',
-      this.generateNumberOfTaskOptions(), true)}
-  </QueueFlowModal>;
+  render = () => {
+    if (this.state.loadingComponent) {
+      return this.state.loadingComponent;
+    }
+
+    return <QueueFlowModal
+      pathAfterSubmit={`/organizations/${this.organizationUrl()}`}
+      button={COPY.BULK_ASSIGN_BUTTON_TEXT}
+      submit={this.bulkAssignTasks}
+      validateForm={this.validateForm}
+      title={COPY.BULK_ASSIGN_MODAL_TITLE}>
+      {this.generateDropdown('Assign to', 'assignedUser', this.generateUserOptions(), true)}
+      {this.generateDropdown('Regional office', 'regionalOffice', this.generateRegionalOfficeOptions(), false)}
+      {this.generateDropdown('Select task type', 'taskType', this.generateTaskTypeOptions(), true)}
+      {this.generateDropdown('Select number of tasks to assign', 'numberOfTasks',
+        this.generateNumberOfTaskOptions(), true)}
+    </QueueFlowModal>;
+  }
+  ;
 }
 
 const mapStateToProps = (state) => {
@@ -232,8 +223,7 @@ const mapStateToProps = (state) => {
   } = state.ui;
 
   return {
-    highlightFormItems,
-    tasks: getUnassignedOrganizationalTasks(state)
+    highlightFormItems
   };
 };
 
