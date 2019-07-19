@@ -43,7 +43,7 @@ class ClaimReview < DecisionReview
     super.merge(
       benefitType: benefit_type,
       payeeCode: payee_code,
-      hasClearedEP: cleared_ep?
+      clearedEps: cleared_eps
     )
   end
 
@@ -123,8 +123,8 @@ class ClaimReview < DecisionReview
     end
   end
 
-  def cleared_ep?
-    end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
+  def cleared_eps
+    end_product_establishments.select { |ep| ep.status_cleared?(sync: true) }.map(&:code)
   end
 
   def active?
@@ -204,6 +204,14 @@ class ClaimReview < DecisionReview
     ClaimReviewActiveTaskCancellation.new(self).call
   end
 
+  def end_product_establishment_for_issue(issue)
+    end_product_establishments.find_by(
+      "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
+      issue.end_product_code,
+      EndProduct::INACTIVE_STATUSES
+    ) || new_end_product_establishment(issue)
+  end
+
   private
 
   def incomplete_tasks?
@@ -222,14 +230,6 @@ class ClaimReview < DecisionReview
 
   def intake_processed_by
     intake ? intake.user : nil
-  end
-
-  def end_product_establishment_for_issue(issue)
-    end_product_establishments.find_by(
-      "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
-      issue.end_product_code,
-      EndProduct::INACTIVE_STATUSES
-    ) || new_end_product_establishment(issue)
   end
 
   def matching_request_issue(contention_id)

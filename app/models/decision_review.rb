@@ -289,7 +289,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def find_or_build_request_issue_from_intake_data(data)
-    return request_issues.active_or_ineligible.find(data[:request_issue_id]) if data[:request_issue_id]
+    return request_issues.find(data[:request_issue_id]) if data[:request_issue_id]
 
     RequestIssue.from_intake_data(data, decision_review: self)
   end

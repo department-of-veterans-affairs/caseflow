@@ -19,6 +19,9 @@ import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
 import moment from 'moment';
 
+import { LIST_SCHEDULE_VIEWS } from '../constants';
+import DropdownButton from '../../components/DropdownButton';
+
 const downloadButtonStyling = css({
   marginTop: '60px'
 });
@@ -69,12 +72,56 @@ const exportHeaders = [
     key: 'vlj' }
 ];
 
+const SwitchViewDropdown = ({ onSwitchView }) => {
+  return (
+    <DropdownButton
+      lists={[
+        {
+          title: 'Your Hearing Schedule',
+          value: LIST_SCHEDULE_VIEWS.DEFAULT_VIEW },
+        {
+          title: 'Complete Hearing Schedule',
+          value: LIST_SCHEDULE_VIEWS.SHOW_ALL }
+      ]}
+      onClick={onSwitchView}
+      label="Switch View" />
+  );
+};
+
+class ListTable extends React.Component {
+  render() {
+    return (
+      <LoadingDataDisplay
+        createLoadPromise={this.props.onApply}
+        loadingComponentProps={{
+          spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
+          message: 'Loading the hearing schedule...'
+        }}
+        failStatusMessageProps={{
+          title: 'Unable to load the hearing schedule.'
+        }}>
+        {this.props.user.userRoleBuild && <div style={{ marginBottom: 25 }}>
+          <Button linkStyling
+            onClick={this.props.openModal}>
+            Add Hearing Date
+          </Button>
+        </div>}
+        <QueueTable
+          columns={this.props.hearingScheduleColumns}
+          rowObjects={this.props.hearingScheduleRows}
+          summary="hearing-schedule"
+          slowReRendersAreOk />
+
+      </LoadingDataDisplay>
+    );
+  }
+}
+
 class ListSchedule extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      filteredByList: [],
       dateRangeKey: `${props.startDate}->${props.endDate}`
     };
   }
@@ -155,8 +202,29 @@ class ListSchedule extends React.Component {
     ];
   }
 
+  getListView = (hearingScheduleColumns, hearingScheduleRows) => {
+
+    const { user, view, onApply, openModal } = this.props;
+
+    if (!user.userRoleHearingPrep || view === LIST_SCHEDULE_VIEWS.DEFAULT_VIEW) {
+      return <ListTable onApply={onApply}
+        openModal={openModal}
+        key={`hearings${this.state.dateRangeKey}`}
+        user={user}
+        hearingScheduleRows={hearingScheduleRows}
+        hearingScheduleColumns={hearingScheduleColumns} />;
+    }
+
+    return <ListTable onApply={() => onApply({ showAll: true })}
+      openModal={openModal}
+      key={`allHearings${this.state.dateRangeKey}`}
+      user={user}
+      hearingScheduleRows={hearingScheduleRows}
+      hearingScheduleColumns={hearingScheduleColumns} />;
+  }
+
   render() {
-    const hearingScheduleRows = this.getHearingScheduleRows(false);
+    const hearingScheduleRows = this.getHearingScheduleRows();
     const hearingScheduleColumns = this.getHearingScheduleColumns(hearingScheduleRows);
 
     return (
@@ -170,13 +238,13 @@ class ListSchedule extends React.Component {
               endDateChange={this.props.onViewEndDateChange}
               onApply={this.setDateRangeKey} />
           </div>
-          <div className="cf-push-right" {...downloadButtonStyling} >
+          <div className="cf-push-right list-schedule-buttons" {...downloadButtonStyling} >
+            {this.props.user.userRoleHearingPrep && <SwitchViewDropdown onSwitchView={this.props.switchListView} />}
             <CSVLink
-              data={this.getHearingScheduleRows(true)}
+              data={hearingScheduleRows}
               headers={exportHeaders}
               target="_blank"
-              filename={`HearingSchedule ${this.props.startDate}-${this.props.endDate}.csv`}
-            >
+              filename={`HearingSchedule ${this.props.startDate}-${this.props.endDate}.csv`}>
               <Button classNames={['usa-button-secondary']}>
                 Download current view
               </Button>
@@ -184,32 +252,7 @@ class ListSchedule extends React.Component {
           </div>
         </div>
         <div className="section-hearings-list">
-          <LoadingDataDisplay
-            key={this.state.dateRangeKey}
-            createLoadPromise={this.props.onApply}
-            loadingComponentProps={{
-              spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
-              message: 'Loading the hearing schedule...'
-            }}
-            failStatusMessageProps={{
-              title: 'Unable to load the hearing schedule.'
-            }}>
-            <div className="cf-push-left">
-              {this.props.userRoleBuild &&
-                <Button
-                  linkStyling
-                  onClick={this.props.openModal}>
-                  Add Hearing Date
-                </Button>
-              }
-            </div>
-            <QueueTable
-              columns={hearingScheduleColumns}
-              rowObjects={hearingScheduleRows}
-              summary="hearing-schedule"
-              slowReRendersAreOk />
-
-          </LoadingDataDisplay>
+          {this.getListView(hearingScheduleColumns, hearingScheduleRows)}
         </div>
       </React.Fragment>
 
@@ -228,6 +271,7 @@ ListSchedule.propTypes = {
     updatedOn: PropTypes.string,
     updatedBy: PropTypes.string
   }),
+  user: PropTypes.object,
   onApply: PropTypes.func,
   openModal: PropTypes.func
 };

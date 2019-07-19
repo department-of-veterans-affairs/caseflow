@@ -34,6 +34,8 @@ describe WarmBgsCachesJob do
       allow(bgs_poa).to receive(:fetch_bgs_record).and_call_original
 
       appeal.veteran.update!(ssn: nil)
+
+      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
     end
 
     it "fetches all hearings and warms the Rails cache" do
@@ -51,6 +53,7 @@ describe WarmBgsCachesJob do
       expect(Rails.cache.exist?(poa_cache_key)).to eq(true)
       expect(Rails.cache.exist?(address_cache_key)).to eq(true)
       expect(appeal.veteran.reload[:ssn]).to_not be_nil
+      expect(@slack_msg).to eq("Updated cached attributes for 1 Veteran records")
     end
   end
 end
