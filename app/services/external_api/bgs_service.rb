@@ -189,7 +189,7 @@ class ExternalApi::BGSService
         # local memo cache for this object
         @veteran_info[vbms_id] ||= record
         # persist cache for other objects
-        Rails.cache.write(fetch_veteran_info_cache_key(vbms_id), record, expires_in: 24.hours)
+        Rails.cache.write(fetch_veteran_info_cache_key(vbms_id), record, expires_in: 10.minutes)
         true
       rescue BGS::ShareError
         false
