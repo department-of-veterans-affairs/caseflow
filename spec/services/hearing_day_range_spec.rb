@@ -145,7 +145,9 @@ describe HearingDayRange do
                             regional_office: staff.stafkey)
         end
         let!(:ama_appeal) { FactoryBot.create(:appeal) }
-        let!(:ama_hearing) { FactoryBot.create(:hearing, :with_tasks, hearing_day: ama_hearing_day, appeal: ama_appeal) }
+        let!(:ama_hearing) do
+          FactoryBot.create(:hearing, :with_tasks, hearing_day: ama_hearing_day, appeal: ama_appeal)
+        end
 
         it "returns hearings are mapped to days" do
           subject.sort_by! { |hearing_day| hearing_day["scheduled_for"] }
