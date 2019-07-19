@@ -7,6 +7,7 @@ describe ExternalApi::BGSService do
   let(:veteran_record) { { name: "foo", ssn: "123" } }
   let(:user) { build(:user) }
   let(:vbms_id) { "55554444" }
+  let(:cache_key) { "bgs_veteran_info_#{vbms_id}" }
 
   before do
     RequestStore[:current_user] = user
@@ -26,6 +27,7 @@ describe ExternalApi::BGSService do
 
         expect(bgs_veteran_service).to have_received(:find_by_file_number).once
         expect(vet_record).to eq(veteran_record)
+        expect(Rails.cache.exist?(cache_key)).to be_truthy
       end
     end
 
@@ -39,6 +41,7 @@ describe ExternalApi::BGSService do
 
         expect(bgs_veteran_service).to have_received(:find_by_file_number).once
         expect(vet_record).to eq(veteran_record)
+        expect(Rails.cache.exist?(cache_key)).to be_truthy
       end
     end
   end

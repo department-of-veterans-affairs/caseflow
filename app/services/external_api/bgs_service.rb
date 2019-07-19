@@ -186,6 +186,9 @@ class ExternalApi::BGSService
                             service: :bgs,
                             name: "can_access?") do
         record = client.veteran.find_by_file_number(vbms_id)
+        # local memo cache for this object
+        @veteran_info[vbms_id] ||= record
+        # persist cache for other objects
         Rails.cache.write(fetch_veteran_info_cache_key(vbms_id), record, expires_in: 24.hours)
         true
       rescue BGS::ShareError
