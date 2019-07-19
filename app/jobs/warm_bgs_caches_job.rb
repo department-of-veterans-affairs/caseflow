@@ -36,23 +36,41 @@ class WarmBgsCachesJob < CaseflowJob
   end
 
   def warm_veteran_attribute_caches
-    # look for hearings for each day up to 6 weeks out and make sure
+    # look for hearings for each day up to 3 weeks out and make sure
     # veteran attributes have been cached locally. This optimizes the VETText API.
     # we swallow RecordNotFound errors because some days will legitimately not have
     # hearings scheduled.
-    stop_date = (Time.zone.now + 6.weeks).to_date
+    stop_date = (Time.zone.now + 3.weeks).to_date
     date_to_cache = Time.zone.today
+    veterans_updated = 0
     while date_to_cache <= stop_date
       begin
-        hearings = HearingsForDayQuery.new(day: date_to_cache).call
-        hearings.each do |hearing|
-          veteran = hearing.appeal.veteran
-          veteran.update_cached_attributes! if veteran.stale_attributes?
-        end
+        veterans_updated += warm_veterans_for_hearings_on_day(date_to_cache)
         date_to_cache += 1.day
       rescue ActiveRecord::RecordNotFound
         date_to_cache += 1.day
+      rescue StandardError => error
+        Raven.capture_exception(error)
       end
     end
+    notify_slack("Updated cached attributes for #{veterans_updated} Veteran records")
+  end
+
+  def warm_veterans_for_hearings_on_day(date_to_cache)
+    veterans_updated = 0
+    hearings = HearingsForDayQuery.new(day: date_to_cache).call
+    hearings.each do |hearing|
+      veteran = hearing.appeal.veteran
+      if veteran.stale_attributes?
+        veteran.update_cached_attributes!
+        veterans_updated += 1
+      end
+    end
+    veterans_updated
+  end
+
+  def notify_slack(msg)
+    slack = SlackService.new(url: ENV["SLACK_DISPATCH_ALERT_URL"])
+    slack.send_notification(msg, "WarmBgsCachesJob")
   end
 end

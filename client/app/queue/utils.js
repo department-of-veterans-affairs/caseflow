@@ -16,6 +16,7 @@ import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../constants/UNDECIDED_VACOL
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
+import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import { formatDateStrUtc } from '../util/DateUtil';
 
@@ -340,7 +341,8 @@ export const prepareClaimReviewForStore = (claimReviews) => {
       establishmentError: claimReview.establishment_error,
       reviewType: claimReview.review_type,
       veteranFileNumber: claimReview.veteran_file_number,
-      veteranFullName: claimReview.veteran_full_name
+      veteranFullName: claimReview.veteran_full_name,
+      editIssuesUrl: claimReview.caseflow_only_edit_issues_url
     };
 
     return accumulator;
@@ -559,4 +561,10 @@ export const sortTaskList = (taskList) => {
 export const regionalOfficeCity = (objWithLocation, defaultToUnknown) => {
   return _.get(objWithLocation, 'closestRegionalOffice.location_hash.city',
     defaultToUnknown ? 'Unknown' : defaultToUnknown);
+};
+
+export const cityForRegionalOfficeCode = (code) => {
+  const regionalOffice = REGIONAL_OFFICE_INFORMATION[code];
+
+  return regionalOffice ? regionalOffice.city : 'Unknown';
 };
