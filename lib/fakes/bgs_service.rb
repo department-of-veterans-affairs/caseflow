@@ -28,7 +28,8 @@ class Fakes::BGSService
 
     CSV.foreach(file_path, headers: true) do |row|
       row_hash = row.to_h
-      veteran = Generators::Veteran.build(file_number: row_hash["vbms_id"].chop)
+      file_number = row_hash["vbms_id"].chop
+      veteran = Veteran.find_by_file_number(file_number) || Generators::Veteran.build(file_number: file_number)
       ama_begin_date = Constants::DATES["AMA_ACTIVATION"].to_date
 
       case row_hash["bgs_key"]
