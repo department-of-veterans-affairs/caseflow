@@ -32,7 +32,7 @@ RSpec.feature "List Schedule" do
       scenario "All buttons are visible" do
         visit "hearings/schedule"
 
-        expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
+        expect(page).to have_content(COPY::HEARING_SCHEDULE_JUDGE_DEFAULT_VIEW_PAGE_HEADER)
         expect(page).to have_content("Schedule Veterans")
         expect(page).to have_content("Build Schedule")
         expect(page).to have_content("Add Hearing Date")
@@ -84,7 +84,7 @@ RSpec.feature "List Schedule" do
       scenario "No buttons are visible" do
         visit "hearings/schedule"
 
-        expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
+        expect(page).to have_content(COPY::HEARING_SCHEDULE_JUDGE_DEFAULT_VIEW_PAGE_HEADER)
         expect(page).to_not have_content("Schedule Veterans")
         expect(page).to_not have_content("Build Schedule")
         expect(page).to_not have_content("Add Hearing Date")
@@ -135,6 +135,29 @@ RSpec.feature "List Schedule" do
         visit "hearings/schedule"
 
         expect(page).to have_content(Hearing::HEARING_TYPES[HearingDay.first.request_type.to_sym])
+      end
+    end
+
+    context "Many hearing days assigned to judge and not assigned to judge" do
+      let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Hearing Prep"]) }
+
+      before do
+        5.times do
+          create(:hearing, :with_tasks, judge: current_user)
+        end
+
+        5.times do
+          create(:hearing, :with_tasks)
+        end
+      end
+
+      scenario "Can switch to tab to see all hearing days" do
+        visit "hearings/schedule"
+
+        page.should have_css(".section-hearings-list tbody tr", count: 5)
+        find(".cf-dropdown-trigger", text: "Switch View").click
+        find("li", text: "Complete Hearing Schedule").click
+        page.should have_css(".section-hearings-list tbody tr", count: 10)
       end
     end
   end
