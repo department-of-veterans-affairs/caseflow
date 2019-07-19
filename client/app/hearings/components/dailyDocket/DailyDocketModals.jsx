@@ -41,6 +41,25 @@ export const LockModal = ({ updateLockHearingDay, onCancelDisplayLockModal, dail
   </div>
 );
 
+export const AodModal = ({ onConfirm, onCancel, advanceOnDocketMotion }) => (
+  <div>
+    <Modal
+      title="There is a prior AOD decision"
+      closeHandler={onCancel}
+      cancelButton={<Button linkStyling onClick={onCancel}>Cancel</Button>}
+      confirmButton={<Button
+        classNames={['usa-button-secondary']}
+        onClick={onConfirm}>
+          Confirm
+      </Button>}>
+      This AOD was&nbsp;<strong>{advanceOnDocketMotion.granted ? 'granted' : 'denied'}</strong>&nbsp;on&nbsp;
+      {moment(advanceOnDocketMotion.date).format('MM/DD/YYYY')}&nbsp;by Judge&nbsp;{advanceOnDocketMotion.judgeName}.
+      &nbsp;Changing this AOD will
+    override this previous decision.
+    </Modal>
+  </div>
+);
+
 export class DispositionModal extends React.Component {
 
   COPY = {
