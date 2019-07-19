@@ -119,7 +119,7 @@ class RegionalOffice
 
     def find_ro_by_facility_id(facility_id)
       CITIES.detect do |regional_office_id, val|
-        if val[:facility_locator_id] == facility_id || val[:alternate_locations]&.include?(facility_id)
+        if val[:facility_locator_id] == facility_id
           break regional_office_id
         end
       end
