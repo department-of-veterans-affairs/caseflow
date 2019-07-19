@@ -185,7 +185,6 @@ class AssignHearingModal extends React.PureComponent {
     };
   };
 
-  /* eslint-disable camelcase */
   render = () => {
     const { appeal, openHearing } = this.props;
     const { showErrorMessages, showFullHearingDayWarning } = this.state;
@@ -195,6 +194,7 @@ class AssignHearingModal extends React.PureComponent {
       return null;
     }
 
+    /* eslint-disable camelcase */
     return (
       <QueueFlowModal
         submit={this.submit}
