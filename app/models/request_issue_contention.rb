@@ -11,7 +11,7 @@ class RequestIssueContention
   def vbms_contention
     return unless contention_reference_id
 
-    request_issue.contention.contention
+    request_issue.contention
   end
 
   def update_text!

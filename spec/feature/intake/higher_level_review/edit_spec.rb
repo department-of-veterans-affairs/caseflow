@@ -163,7 +163,6 @@ feature "Higher Level Review Edit issues" do
         decision_review: higher_level_review,
         nonrating_issue_category: "Military Retired Pay",
         nonrating_issue_description: "eligible nonrating description",
-        contention_reference_id: "1234",
         ineligible_reason: nil,
         benefit_type: "compensation",
         decision_date: Time.zone.today
@@ -177,7 +176,6 @@ feature "Higher Level Review Edit issues" do
         decision_date: 2.years.ago,
         nonrating_issue_category: "Active Duty Adjustments",
         nonrating_issue_description: "untimely nonrating description",
-        contention_reference_id: "12345",
         benefit_type: "compensation",
         ineligible_reason: :untimely
       )
@@ -191,7 +189,6 @@ feature "Higher Level Review Edit issues" do
         decision_date: rating.promulgation_date,
         decision_review: another_higher_level_review,
         contested_issue_description: "PTSD denied",
-        contention_reference_id: "123",
         benefit_type: "compensation",
         ineligible_reason: nil,
         contention_removed_at: nil
@@ -206,7 +203,6 @@ feature "Higher Level Review Edit issues" do
         decision_date: rating.promulgation_date,
         decision_review: higher_level_review,
         contested_issue_description: "PTSD denied",
-        contention_reference_id: "111",
         ineligible_reason: :duplicate_of_rating_issue_in_active_review,
         benefit_type: "compensation",
         ineligible_due_to: ri_in_review
@@ -250,7 +246,6 @@ feature "Higher Level Review Edit issues" do
         decision_review: higher_level_review,
         benefit_type: "compensation",
         contested_issue_description: "Non-RAMP Issue before AMA Activation",
-        contention_reference_id: "23456",
         ineligible_reason: :before_ama,
         untimely_exemption: true
       )
@@ -265,7 +260,6 @@ feature "Higher Level Review Edit issues" do
         decision_review: higher_level_review,
         benefit_type: "compensation",
         contested_issue_description: "Issue before AMA Activation from RAMP",
-        contention_reference_id: "123456",
         ramp_claim_id: "ramp_claim_id",
         untimely_exemption: true
       )
@@ -282,7 +276,6 @@ feature "Higher Level Review Edit issues" do
         vacols_id: "vacols1",
         benefit_type: "compensation",
         vacols_sequence_id: "1",
-        contention_reference_id: "1234567",
         ineligible_reason: :legacy_issue_not_withdrawn
       )
     end
@@ -295,7 +288,6 @@ feature "Higher Level Review Edit issues" do
         decision_date: rating_before_ama.promulgation_date,
         decision_review: higher_level_review,
         contested_issue_description: "Issue connected to ineligible legacy appeal",
-        contention_reference_id: "12345678",
         vacols_id: "vacols2",
         benefit_type: "compensation",
         vacols_sequence_id: "2",
@@ -335,7 +327,6 @@ feature "Higher Level Review Edit issues" do
           decision_date: rating_before_ama.promulgation_date,
           decision_review: higher_level_review,
           contested_issue_description: "Non-RAMP Issue before AMA Activation legacy",
-          contention_reference_id: "123456789",
           vacols_id: "vacols1",
           benefit_type: "compensation",
           vacols_sequence_id: "2"
@@ -532,7 +523,6 @@ feature "Higher Level Review Edit issues" do
         decision_review: higher_level_review,
         nonrating_issue_category: "Military Retired Pay",
         nonrating_issue_description: "nonrating description",
-        contention_reference_id: "1234",
         benefit_type: "compensation",
         decision_date: 1.month.ago
       )
@@ -770,7 +760,6 @@ feature "Higher Level Review Edit issues" do
   end
 
   context "when there is a rating end product" do
-    let(:contention_ref_id) { "123" }
     let!(:request_issue) do
       create(
         :request_issue,
@@ -857,6 +846,9 @@ feature "Higher Level Review Edit issues" do
     end
 
     it "shows request issues and allows adding/removing issues" do
+      # remember to check for removal later
+      existing_contention = request_issue.reload.contention
+
       visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
       expect(page).to have_content("Edit Issues")
@@ -1019,7 +1011,6 @@ feature "Higher Level Review Edit issues" do
       )
 
       # expect contentions to reflect issue update
-      existing_contention = rating_epe.contentions.first
       expect(existing_contention.text).to eq("PTSD denied")
       expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(existing_contention)
 
@@ -1030,7 +1021,7 @@ feature "Higher Level Review Edit issues" do
           { description: RequestIssue::UNIDENTIFIED_ISSUE_MSG },
           { description: "Left knee granted" },
           { description: "Issue before AMA Activation from RAMP" },
-          description: "PTSD denied"
+          { description: "PTSD denied" }
         ),
         user: current_user
       )
@@ -1097,16 +1088,11 @@ feature "Higher Level Review Edit issues" do
 
       expect(page).to have_button("Save", disabled: false)
 
-      safe_click("#button-submit-update")
+      click_edit_submit
 
       expect(page).to have_current_path(
         "/higher_level_reviews/#{rating_ep_claim_id}/edit/confirmation"
       )
-
-      # reload to verify that the new issues populate the form
-      visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-      expect(page).to have_content("Left knee granted")
-      expect(page).to_not have_content("PTSD denied")
 
       # assert server has updated data
       new_request_issue = higher_level_review.reload.request_issues.active.first
@@ -1133,6 +1119,11 @@ feature "Higher Level Review Edit issues" do
         }
       )
       expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention_to_remove)
+
+      # reload to verify that the new issues populate the form
+      visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
+      expect(page).to have_content("Left knee granted")
+      expect(page).to_not have_content("PTSD denied")
     end
 
     feature "cancel edits" do
