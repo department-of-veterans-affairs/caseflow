@@ -127,6 +127,33 @@ feature "Higher Level Review Edit issues" do
     )
   end
 
+  context "when contentions disappear from VBMS between creation and edit" do
+    let(:request_issue) do
+      create(
+        :request_issue,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: rating.profile_date,
+        decision_review: higher_level_review,
+        benefit_type: benefit_type,
+        contested_issue_description: "PTSD denied"
+      )
+    end
+
+    before do
+      higher_level_review.create_issues!([request_issue])
+      higher_level_review.establish!
+      higher_level_review.reload
+      request_issue.reload
+      Fakes::VBMSService.remove_contention!(request_issue.contention)
+    end
+
+    it "renders error" do
+      visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
+      expect(page).to have_content(COPY::CLAIM_REVIEW_EDIT_ERROR_MISSING_CONTENTION)
+    end
+  end
+
   context "when there are ineligible issues" do
     ineligible = Constants.INELIGIBLE_REQUEST_ISSUES
 
