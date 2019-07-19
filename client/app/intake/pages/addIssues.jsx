@@ -160,6 +160,26 @@ export class AddIssuesPage extends React.Component {
         >
           + Add issue
         </Button>
+
+    if (intakeData.isDtaError) {
+      return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
+    }
+
+    if (intakeData.hasClearedEP && !correctClaimReviews) {
+      return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
+    }
+
+    if (intakeData.isOutcoded) {
+      return <Redirect to={PAGE_PATHS.OUTCODED} />;
+    }
+
+    const requestIssuesComponent = () => {
+      const issueActionOptions = [
+        { displayText: 'Withdraw issue',
+          value: 'withdraw' },
+        { displayText: 'Remove issue',
+          value: 'remove' }
+      ];
       </div>;
     };
 
