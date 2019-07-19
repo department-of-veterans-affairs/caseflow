@@ -3,7 +3,6 @@ BATCH_SIZE = 10
 class UpdateCachedAppealsAttributesJob < ApplicationJob
   queue_as :low_priority
 
-
   def perform
     cache_ama_appeals
     cache_legacy_appeals
@@ -61,9 +60,6 @@ class UpdateCachedAppealsAttributesJob < ApplicationJob
     # returns array of [vacols_id, docket_number] arrays
     legacy_appeal_attrs = VACOLS::Folder.where(ticknum: vacols_ids).pluck(:ticknum, :tinum)
 
-    puts "HERE"
-    puts legacy_appeal_attrs
-
     # now do another write to cache w/ vacols_id as the key
     legacy_appeals_to_cache = []
 
@@ -71,20 +67,8 @@ class UpdateCachedAppealsAttributesJob < ApplicationJob
       legacy_appeals_to_cache << { vacols_id: a[0], docket_number: a[1] }
     end
 
-    # byebug
-
     #  VACOLS IDs are unique
     CachedAppeal.import legacy_appeals_to_cache, on_duplicate_key_update: {conflict_target: [:vacols_id], columns: [:docket_number]}
 
   end
-
-
-
-
-
-
-
-
-
-
 end
