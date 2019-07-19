@@ -18,6 +18,7 @@ detectors:
       - HearingSerializerBase
       - DataIntegrityChecksJob
       - VeteranAttributeCacher
+      - WarmBgsCachesJob
   InstanceVariableAssumption:
     exclude:
       - Appeal
