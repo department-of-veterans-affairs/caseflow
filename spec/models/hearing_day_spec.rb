@@ -232,7 +232,7 @@ describe HearingDay do
         HearingDay.create_schedule(schedule_period.algorithm_assignments)
       end
 
-      subject { HearingDay.load_days(schedule_period.start_date, schedule_period.end_date) }
+      subject { HearingDayRange.new(schedule_period.start_date, schedule_period.end_date).load_days }
 
       it do
         expect(subject.size).to eql(442)
@@ -246,7 +246,7 @@ describe HearingDay do
        create(:hearing_day, request_type: "V", regional_office: "RO13", scheduled_for: Time.zone.today + 1.day)]
     end
 
-    subject { HearingDay.load_days(Time.zone.today, Time.zone.today + 1.day, "RO13") }
+    subject { HearingDayRange.new(Time.zone.today, Time.zone.today + 1.day, "RO13").load_days }
 
     it "gets hearings for a date range" do
       expect(subject.size).to eq 2
@@ -260,7 +260,9 @@ describe HearingDay do
        FactoryBot.create(:hearing_day, scheduled_for: Time.zone.today + 2.days)]
     end
 
-    subject { HearingDay.load_days(Time.zone.today, Time.zone.today + 2.days, HearingDay::REQUEST_TYPES[:central]) }
+    subject do
+      HearingDayRange.new(Time.zone.today, Time.zone.today + 2.days, HearingDay::REQUEST_TYPES[:central]).load_days
+    end
 
     it "should load all three hearing days" do
       expect(subject.size).to eq 3
@@ -289,8 +291,10 @@ describe HearingDay do
 
     context "get parent and children structure" do
       subject do
-        HearingDay.open_hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
-                                                        hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
+        HearingDayRange.new(
+          (hearing.hearing_date - 1).beginning_of_day,
+          hearing.hearing_date.beginning_of_day + 10
+        ).open_hearing_days_with_hearings_hash(staff.stafkey)
       end
 
       it "returns nested hash structure" do
@@ -337,8 +341,10 @@ describe HearingDay do
     end
 
     subject do
-      HearingDay.open_hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
-                                                      hearing.hearing_date.beginning_of_day + 1.day, staff.stafkey)
+      HearingDayRange.new(
+        (hearing.hearing_date - 1).beginning_of_day,
+        hearing.hearing_date.beginning_of_day + 1.day
+      ).open_hearing_days_with_hearings_hash(staff.stafkey)
     end
 
     context "get video hearings neither postponed or cancelled" do
@@ -420,9 +426,11 @@ describe HearingDay do
 
     context "get parent and children structure" do
       subject do
-        HearingDay.open_hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
-                                                        hearing.hearing_date.beginning_of_day + 10,
-                                                        HearingDay::REQUEST_TYPES[:central])
+        HearingDayRange.new(
+          (hearing.hearing_date - 1).beginning_of_day,
+          hearing.hearing_date.beginning_of_day + 10,
+          HearingDay::REQUEST_TYPES[:central]
+        ).open_hearing_days_with_hearings_hash
       end
 
       it "returns nested hash structure" do
@@ -464,7 +472,7 @@ describe HearingDay do
       ]
     end
 
-    subject { HearingDay.upcoming_days_for_vso_user(start_date, end_date, current_user) }
+    subject { HearingDayRange.new(start_date, end_date).upcoming_days_for_vso_user(current_user) }
 
     before do
       stub_const("BGSService", ExternalApi::BGSService)
