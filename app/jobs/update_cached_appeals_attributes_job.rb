@@ -9,66 +9,45 @@ class UpdateCachedAppealsAttributesJob < ApplicationJob
   end
 
   def cache_ama_appeals
-    ama_appeals = Task.open.where(appeal_type: Appeal.name).pluck(:appeal_id).uniq.in_groups_of(BATCH_SIZE)
-
-    ama_appeals.each do |appeal_ids|
-      appeals_attrs = Appeal.where(id: appeal_ids).map { |a|
-        [a.id, a.docket_type, a.docket_number]
+    appeals_to_cache = Task.open.where(appeal_type: Appeal.name).map(&:appeal).map do |appeal|
+      {
+        appeal_id: appeal.id,
+        docket_type: appeal.docket_type,
+        docket_number: appeal.docket_number,
+        appeal_type: Appeal.name
       }
-
-      appeals_to_cache = []
-
-      appeals_attrs.each do |a|
-        appeals_to_cache << {appeal_id: a[0], docket_type: a[1], docket_number:a[2], appeal_type: Appeal.name}
-      end
-
-      CachedAppeal.import appeals_to_cache, on_duplicate_key_update: {conflict_target: [:appeal_id, :appeal_type]}
     end
+
+    CachedAppeal.import appeals_to_cache, on_duplicate_key_update: {conflict_target: [:appeal_id, :appeal_type]}
   end
 
   def cache_legacy_appeals
-    legacy_appeals_batches = Task.open.where(appeal_type: LegacyAppeal.name).pluck(:appeal_id).uniq.in_groups_of(BATCH_SIZE)
+    legacy_appeals = LegacyAppeal.find(Task.open.where(appeal_type: LegacyAppeal.name).pluck(:appeal_id).uniq)
 
-    legacy_appeals_batches.each do |legacy_appeal_ids|
-      vacols_ids = cache_legacy_ama_data_and_return_vacols_ids(legacy_appeal_ids)
-
-      cache_legacy_vacols_data(vacols_ids)
-
-    end
+    cache_legacy_appeal_postgres_data(legacy_appeals)
+    cache_legacy_appeal_vacols_data(legacy_appeals)
   end
 
-  def cache_legacy_ama_data_and_return_vacols_ids(legacy_appeal_ids)
-    appeals_attrs =  LegacyAppeal.where(id: legacy_appeal_ids).map { |a|
-      [a.id, a.vacols_id]
-    }
-
-    legacy_appeals_to_cache = []
-
-    appeals_attrs.each do |a|
-      legacy_appeals_to_cache << { appeal_id: a[0], vacols_id: a[1], docket_type: LegacyAppeal.name, appeal_type: LegacyAppeal.name }
+  def cache_legacy_appeal_postgres_data(legacy_appeals)
+    values_to_cache = legacy_appeals.map do |appeal|
+      {
+        appeal_id: appeal.id,
+        appeal_type: LegacyAppeal.name,
+        vacols_id: appeal.vacols_id,
+        docket_type: appeal.docket_name # "legacy"
+      }
     end
 
-    CachedAppeal.import legacy_appeals_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type] }
-
-    # Return VACOLS IDs for further use.
-    appeals_attrs.map { |attrs|
-      attrs[1]
-    }
+    CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type] }
   end
 
-  def cache_legacy_vacols_data(vacols_ids)
-    # returns array of [vacols_id, docket_number] arrays
-    legacy_appeal_attrs = VACOLS::Folder.where(ticknum: vacols_ids).pluck(:ticknum, :tinum)
+  def cache_legacy_appeal_vacols_data(legacy_appeals)
+    legacy_appeals.pluck(:vacols_id).in_groups_of(BATCH_SIZE).each do |vacols_ids|
+      values_to_cache = VACOLS::Folder.where(ticknum: vacols_ids).pluck(:ticknum, :tinum).map do |vacols_folder|
+        { vacols_id: vacols_folder[0], docket_number: vacols_folder[1] }
+      end
 
-    # now do another write to cache w/ vacols_id as the key
-    legacy_appeals_to_cache = []
-
-    legacy_appeal_attrs.each do |a|
-      legacy_appeals_to_cache << { vacols_id: a[0], docket_number: a[1] }
+      CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:vacols_id], columns: [:docket_number] }
     end
-
-    #  VACOLS IDs are unique
-    CachedAppeal.import legacy_appeals_to_cache, on_duplicate_key_update: {conflict_target: [:vacols_id], columns: [:docket_number]}
-
   end
 end
