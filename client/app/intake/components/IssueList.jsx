@@ -27,8 +27,8 @@ export default class IssuesList extends React.Component {
       <div>
         { withdrawReview && <p className="cf-red-text">{COPY.INTAKE_WITHDRAWN_BANNER}</p> }
         { issues.map((issue) => {
-          const editableContentionText = Boolean(
-            formType !== FORM_TYPES.APPEAL.key && !issue.category && !issue.ineligibleReason && !issue.endProductCleared
+          const editableContentionText = Boolean(formType !== FORM_TYPES.APPEAL.key &&
+            !issue.category && !issue.ineligibleReason && !issue.endProductCleared && !issue.isUnidentified
           );
           let issueActionOptions = [];
 
