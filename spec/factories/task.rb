@@ -138,7 +138,7 @@ FactoryBot.define do
       trait :missing_hearing_transcripts do
         initialize_with { MissingHearingTranscriptsColocatedTask.new(attributes) }
         type { MissingHearingTranscriptsColocatedTask.name }
-        assigned_to { HearingsManagement.singleton }
+        assigned_to { MissingHearingTranscriptsColocatedTask.default_assignee }
         instructions do
           ["Good evening, could you please return this to the hearing " \
           "branch as the hearing was just held and the transcripts are " \
@@ -155,7 +155,7 @@ FactoryBot.define do
       trait :foia do
         initialize_with { FoiaColocatedTask.new(attributes) }
         type { FoiaColocatedTask.name }
-        assigned_to { PrivacyTeam.singleton }
+        assigned_to { FoiaColocatedTask.default_assignee }
         instructions do
           ["The Veteran's representative submitted FOIA request in December of last year, which " \
           "was acknowledged the same month. To date, there has been no response provided. " \
@@ -213,7 +213,7 @@ FactoryBot.define do
       trait :schedule_hearing do
         initialize_with { ScheduleHearingColocatedTask.new(attributes) }
         type { ScheduleHearingColocatedTask.name }
-        assigned_to { HearingsManagement.singleton }
+        assigned_to { ScheduleHearingColocatedTask.default_assignee }
         instructions do
           ["The Veteran has requested a Board hearing as to all appealed issues. " \
           "To date, no Board hearing has been scheduled."]
@@ -232,7 +232,7 @@ FactoryBot.define do
       trait :translation do
         initialize_with { TranslationColocatedTask.new(attributes) }
         type { TranslationColocatedTask.name }
-        assigned_to { Translation.singleton }
+        assigned_to { TranslationColocatedTask.default_assignee }
         instructions do
           ["There are multiple document files that still require translation from " \
           "Spanish to English. The files in Spanish have been marked in Caseflow. " \
