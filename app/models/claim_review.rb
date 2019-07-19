@@ -236,7 +236,9 @@ class ClaimReview < DecisionReview
 
   def verify_contentions
     request_issues.select(&:contention_reference_id).each do |reqi|
-      reqi.contention or fail EndProductEstablishment::ContentionNotFound, reqi.contention_reference_id
+      next if reqi.contention
+
+      fail EndProductEstablishment::ContentionNotFound, reqi.contention_reference_id
     end
   end
 
