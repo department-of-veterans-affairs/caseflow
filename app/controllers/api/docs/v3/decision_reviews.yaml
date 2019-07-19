@@ -620,7 +620,47 @@ paths:
                       relationships:
                         type: object
                         properties:
-                          # TODO: HLR relationships
+                          issues:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                data:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      type:
+                                        type: string
+                                        description: Will be "RequestIssue"
+                                      id:
+                                        type: string
+                                        description: will match the included data
+                  included:
+                    description: Minimal details on the related issues.
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          description: Will be "RequestIssue"
+                        id:
+                          type: string
+                        attributes:
+                          type: object
+                          properties:
+                            active:
+                              type: boolean
+                            lastAction:
+                              type: string
+                            date:
+                              type: string
+                              format: date
+                            description:
+                              type: string
+                            diagnosticCode:
+                              type: string
         '404':
           description: ID not found
           content:
