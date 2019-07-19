@@ -481,7 +481,7 @@ describe ColocatedTask do
           end
         end
 
-        context "for schedule hearing colocated task", focus: true do
+        context "for schedule hearing colocated task" do
           let(:action) { :schedule_hearing }
 
           it "should not create a schedule hearing task" do

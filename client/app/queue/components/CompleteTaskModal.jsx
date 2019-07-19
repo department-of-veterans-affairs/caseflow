@@ -6,7 +6,6 @@ import { sprintf } from 'sprintf-js';
 import TextareaField from '../../components/TextareaField';
 import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop } from '../constants';
 import COPY from '../../../COPY.json';
-import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import {
   taskById,
