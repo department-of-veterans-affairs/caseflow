@@ -8,20 +8,30 @@ class RequestIssueCorrection
 
   delegate :end_product_establishment_for_issue, to: :review
 
-  EXCLUDED_ATTRIBUTES = %w[
-    id
-    contention_reference_id
-    closed_at
-    closed_status
-    created_at
-    decision_sync_attempted_at
-    decision_sync_error
-    decision_sync_last_submitted_at
-    decision_sync_processed_at
-    decision_sync_submitted_at
-    disposition
-    end_product_establishment_id
-    rating_issue_associated_at
+  ATTRIBUTES_TO_COPY = %w[
+    benefit_type
+    contested_decision_issue_id
+    contested_issue_description
+    contested_rating_issue_diagnostic_code
+    contested_rating_issue_profile_date
+    contested_rating_issue_reference_id
+    decision_date
+    decision_review_id
+    decision_review_type
+    ineligible_due_to_id
+    ineligible_reason
+    is_unidentified
+    nonrating_issue_category
+    nonrating_issue_description
+    notes
+    ramp_claim_id
+    unidentified_issue_text
+    untimely_exemption
+    untimely_exemption_notes
+    vacols_id
+    vacols_sequence_id
+    veteran_participant_id
+    edited_description
   ].freeze
 
   def call
@@ -58,7 +68,7 @@ class RequestIssueCorrection
     correction_type = issue_data[:correction_type]
 
     RequestIssue.create!(
-      original_issue.attributes.except(*EXCLUDED_ATTRIBUTES).merge(correction_type: correction_type)
+      original_issue.attributes.slice(*ATTRIBUTES_TO_COPY).merge(correction_type: correction_type)
     ).tap do |correction_issue|
       correction_issue.update!(end_product_establishment: end_product_establishment_for_issue(correction_issue))
       original_issue.update!(correction_request_issue: correction_issue)
