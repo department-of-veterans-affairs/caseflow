@@ -317,6 +317,14 @@ class User < ApplicationRecord
       )
     end
 
+    def api_user
+      @api_user ||= find_or_create_by(
+        station_id: "101",
+        css_id: "APIUSER",
+        full_name: "API User"
+      )
+    end
+
     def from_session(session)
       user_session = session["user"] ||= authentication_service.default_user_session
 
