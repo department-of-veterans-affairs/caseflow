@@ -7,10 +7,10 @@ class ExternalApi::BGSService
   include PowerOfAttorneyMapper
   include AddressMapper
 
-  attr_accessor :client
+  attr_reader :client
 
-  def initialize
-    @client = init_client
+  def initialize(client: init_client)
+    @client = client
 
     # These instance variables are used for caching their
     # respective requests
@@ -58,10 +58,12 @@ class ExternalApi::BGSService
     DBService.release_db_connections
 
     @veteran_info[vbms_id] ||=
-      MetricsService.record("BGS: fetch veteran info for vbms id: #{vbms_id}",
-                            service: :bgs,
-                            name: "veteran.find_by_file_number") do
-        client.veteran.find_by_file_number(vbms_id)
+      Rails.cache.fetch(fetch_veteran_info_cache_key(vbms_id), expires_in: 24.hours) do
+        MetricsService.record("BGS: fetch veteran info for vbms id: #{vbms_id}",
+                              service: :bgs,
+                              name: "veteran.find_by_file_number") do
+          client.veteran.find_by_file_number(vbms_id)
+        end
       end
   end
 
@@ -172,7 +174,10 @@ class ExternalApi::BGSService
 
   # This method checks to see if the current user has access to this case
   # in BGS. Cases in BGS are assigned a "sensitivity level" which may be
-  # higher than that of the current employee
+  # higher than that of the current employee.
+  #
+  # We cache at 2 levels: the boolean check per user, and the veteran record itself.
+  # The veteran record is so that subsequent calls to fetch_veteran_info can read from cache.
   def can_access?(vbms_id)
     Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 24.hours) do
       DBService.release_db_connections
@@ -180,7 +185,11 @@ class ExternalApi::BGSService
       MetricsService.record("BGS: can_access? (find_by_file_number): #{vbms_id}",
                             service: :bgs,
                             name: "can_access?") do
-        client.can_access?(vbms_id, true)
+        record = client.veteran.find_by_file_number(vbms_id)
+        Rails.cache.write(fetch_veteran_info_cache_key(vbms_id), record, expires_in: 24.hours)
+        true
+      rescue BGS::ShareError
+        false
       end
     end
   end
@@ -199,6 +208,10 @@ class ExternalApi::BGSService
 
   def bust_can_access_cache(user, vbms_id)
     Rails.cache.delete(can_access_cache_key(user, vbms_id))
+  end
+
+  def bust_fetch_veteran_info_cache(vbms_id)
+    Rails.cache.delete(fetch_veteran_info_cache_key(vbms_id))
   end
 
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
@@ -301,6 +314,10 @@ class ExternalApi::BGSService
 
   def can_access_cache_key(user, vbms_id)
     "bgs_can_access_#{user.css_id}_#{user.station_id}_#{vbms_id}"
+  end
+
+  def fetch_veteran_info_cache_key(vbms_id)
+    "bgs_veteran_info_#{vbms_id}"
   end
 
   def init_client
