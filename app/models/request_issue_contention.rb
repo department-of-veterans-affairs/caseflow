@@ -5,13 +5,13 @@ class RequestIssueContention
     @request_issue = request_issue
   end
 
-  delegate :end_product_establishment, :contention_reference_id, :contention_removed_at, :contention_updated_at,
+  delegate :contention_reference_id, :contention_removed_at, :contention_updated_at,
            :edited_description, to: :request_issue
 
   def vbms_contention
     return unless contention_reference_id
 
-    end_product_establishment.contention_for_object(request_issue)
+    request_issue.contention.contention
   end
 
   def update_text!
