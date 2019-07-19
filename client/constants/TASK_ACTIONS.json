@@ -169,7 +169,7 @@
     "func": "review_decision_draft"
   },
   "SCHEDULE_HEARING_SEND_TO_TEAM": {
-    "label": "Hearing does need to be scheduled, send to hearing branch",
+    "label": "Hearing does need to be scheduled, create schdule hearing task",
     "value": "modal/send_colocated_task"
   },
   "SCHEDULE_VETERAN": {

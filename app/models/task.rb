@@ -54,8 +54,7 @@ class Task < ApplicationRecord
           TimedHoldTask.name,
           FoiaColocatedTask.name,
           TranslationColocatedTask.name,
-          MissingHearingTranscriptsColocatedTask.name,
-          ScheduleHearingColocatedTask.name
+          MissingHearingTranscriptsColocatedTask.name
         ]
     )
   }
@@ -297,6 +296,10 @@ class Task < ApplicationRecord
   def when_child_task_created(child_task)
     cancel_timed_hold unless child_task.is_a?(TimedHoldTask)
     update!(status: :on_hold) if !on_hold?
+  end
+
+  def task_is_assigned_to_users_organization?(user)
+    assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
   end
 
   def task_is_assigned_to_user_within_organization?(user)

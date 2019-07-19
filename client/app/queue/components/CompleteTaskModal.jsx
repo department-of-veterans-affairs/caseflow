@@ -121,9 +121,7 @@ class CompleteTaskModal extends React.Component {
 
   render = () => {
     return <QueueFlowModal
-      title={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].title({
-        teamName: (this.props.task && this.props.task.label) ? CO_LOCATED_ADMIN_ACTIONS[this.props.task.label] : ''
-      })}
+      title={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].title(this.getContentArgs())}
       button={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].buttonText}
       submit={this.submit}
     >

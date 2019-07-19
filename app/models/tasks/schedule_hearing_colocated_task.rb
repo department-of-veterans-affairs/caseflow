@@ -1,14 +1,26 @@
 # frozen_string_literal: true
 
 class ScheduleHearingColocatedTask < ColocatedTask
-  after_create :create_schedule_hearing_task
+  after_update :create_schedule_hearing_task
 
   def self.label
-    Constants.CO_LOCATED_ADMIN_ACTIONS.schedule_hearing
+    "Confirm #{Constants.CO_LOCATED_ADMIN_ACTIONS.schedule_hearing}"
   end
 
   def self.default_assignee
     HearingsManagement.singleton
+  end
+
+  def available_actions(user)
+    if task_is_assigned_to_users_organization?(user)
+      return [
+        Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h,
+        Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+      ]
+    end
+
+    []
   end
 
   def hide_from_case_timeline
@@ -16,24 +28,16 @@ class ScheduleHearingColocatedTask < ColocatedTask
   end
 
   def hide_from_task_snapshot
-    true
+    false
   end
 
   def hide_from_queue_table_view
-    true
-  end
-
-  def cascade_closure_from_child_task?(child_task)
-    child_task.is_a?(HearingTask)
+    false
   end
 
   def create_schedule_hearing_task
-    ScheduleHearingTask.create!(
-      assigned_to: assigned_to,
-      assigned_by: assigned_by,
-      instructions: instructions,
-      appeal: appeal,
-      parent: self
-    )
+    if saved_change_to_status? && status == Constants.TASK_STATUSES.completed
+      ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)
+    end
   end
 end
