@@ -107,9 +107,9 @@ class HearingActions extends React.Component {
 
   aodDecidedByAnotherUser = () => {
     const { initialState } = this.state;
-    const { hearing } = this.props;
+    const { hearing, user } = this.props;
 
-    if (_.isNil(initialState.advanceOnDocketMotion)) {
+    if (_.isNil(initialState.advanceOnDocketMotion) || !user.userRoleHearingPrep) {
       return false;
     }
 
