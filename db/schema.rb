@@ -160,7 +160,7 @@ ActiveRecord::Schema.define(version: 20190711190057) do
     t.string "appeal_type"
     t.string "docket_number"
     t.string "docket_type"
-    t.integer "vacols_id"
+    t.string "vacols_id"
     t.index ["appeal_id", "appeal_type"], name: "index_cached_appeal_attributes_on_appeal_id_and_appeal_type", unique: true
     t.index ["vacols_id"], name: "index_cached_appeal_attributes_on_vacols_id", unique: true
   end
