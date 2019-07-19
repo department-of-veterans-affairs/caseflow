@@ -58,7 +58,7 @@ class ExternalApi::BGSService
     DBService.release_db_connections
 
     @veteran_info[vbms_id] ||=
-      Rails.cache.fetch(fetch_veteran_info_cache_key(vbms_id), expires_in: 24.hours) do
+      Rails.cache.fetch(fetch_veteran_info_cache_key(vbms_id), expires_in: 10.minutes) do
         MetricsService.record("BGS: fetch veteran info for vbms id: #{vbms_id}",
                               service: :bgs,
                               name: "veteran.find_by_file_number") do
