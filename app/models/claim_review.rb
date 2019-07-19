@@ -48,6 +48,17 @@ class ClaimReview < DecisionReview
     )
   end
 
+  def validate_prior_to_edit
+    # force sync on initial edit call so that we have latest EP status.
+    # This helps prevent us editing something that recently closed upstream.
+    sync_end_product_establishments!
+
+    verify_contentions
+
+    # this will raise any errors for missing data
+    ui_hash
+  end
+
   def caseflow_only_edit_issues_url
     "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
   end
@@ -221,6 +232,12 @@ class ClaimReview < DecisionReview
 
   def cleared_nonrating_ep?
     cleared_end_products.any?(&:nonrating?)
+  end
+
+  def verify_contentions
+    request_issues.select(&:contention_reference_id).each do |reqi|
+      reqi.contention or fail EndProductEstablishment::ContentionNotFound, reqi.contention_reference_id
+    end
   end
 
   def incomplete_tasks?
