@@ -148,6 +148,8 @@ class NonratingRequestIssueModal extends React.Component {
   }
 
   onAddIssue = () => {
+    const isCorrection = (this.props.intakeData.clearedEpTypes || []).includes('nonrating');
+
     const currentIssue = {
       benefitType: this.state.benefitType,
       category: this.state.category.value,
@@ -156,8 +158,10 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleDueToId: this.state.ineligibleDueToId,
       ineligibleReason: this.state.ineligibleReason,
       decisionReviewTitle: this.state.decisionReviewTitle,
+      issueType: 'nonrating',
       isRating: false,
-      timely: this.isTimely()
+      timely: this.isTimely(),
+      correctionType: isCorrection ? 'control' : null
     };
 
     if (this.hasLegacyAppeals()) {

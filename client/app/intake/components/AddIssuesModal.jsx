@@ -7,7 +7,7 @@ import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 import {
-  addRatingRequestIssue,
+  addContestableIssue,
   toggleNonratingRequestIssueModal,
   toggleUntimelyExemptionModal,
   toggleLegacyOptInModal
@@ -55,6 +55,7 @@ class AddIssuesModal extends React.Component {
   onAddIssue = () => {
     const currentIssue = issueByIndex(this.props.intakeData.contestableIssues,
       this.state.selectedContestableIssueIndex);
+    const isCorrection = (this.props.intakeData.clearedEpTypes || []).includes(currentIssue.issueType);
 
     if (this.hasLegacyAppeals()) {
       this.props.toggleLegacyOptInModal({ currentIssue,
@@ -63,11 +64,12 @@ class AddIssuesModal extends React.Component {
       this.props.toggleUntimelyExemptionModal({ currentIssue,
         notes: this.state.notes });
     } else {
-      this.props.addRatingRequestIssue({
+      this.props.addContestableIssue({
         contestableIssueIndex: this.state.selectedContestableIssueIndex,
         contestableIssues: this.props.intakeData.contestableIssues,
-        isRating: true,
-        notes: this.state.notes
+        isRating: currentIssue.issueType === 'rating',
+        notes: this.state.notes,
+        correctionType: isCorrection ? 'control' : null
       });
       this.props.closeHandler();
     }
@@ -181,7 +183,7 @@ class AddIssuesModal extends React.Component {
 export default connect(
   null,
   (dispatch) => bindActionCreators({
-    addRatingRequestIssue,
+    addContestableIssue,
     toggleNonratingRequestIssueModal,
     toggleUntimelyExemptionModal,
     toggleLegacyOptInModal

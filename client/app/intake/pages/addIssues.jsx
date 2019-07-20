@@ -108,7 +108,7 @@ export class AddIssuesPage extends React.Component {
     if (intakeData.isDtaError) {
       return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
     }
-    if (!_.isEmpty(intakeData.clearedEps) && !correctClaimReviews) {
+    if (!_.isEmpty(intakeData.clearedEpTypes) && !correctClaimReviews) {
       return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
     }
     if (intakeData.isOutcoded) {
