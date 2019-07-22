@@ -55,21 +55,21 @@ class Fakes::EndProductStore
   def create_contention(contention)
     claim_id = contention.claim_id
     contentions = contentions_for(claim_id) || {}
-    contentions[contention.id] = contention
+    contentions[contention.id.to_s] = contention
     deflate_and_store(contention_key(claim_id), contentions)
   end
 
   def update_contention(contention)
     claim_id = contention.claim_id
     contentions = contentions_for(claim_id) or fail "No contentions for claim_id #{claim_id}"
-    contentions[contention.id] = contention
+    contentions[contention.id.to_s] = contention
     deflate_and_store(contention_key(claim_id), contentions)
   end
 
   def remove_contention(contention)
     claim_id = contention.claim_id
     contentions = contentions_for(claim_id) or fail "No contentions for claim_id #{claim_id}"
-    contentions.delete(contention.id)
+    contentions.delete(contention.id.to_s)
     deflate_and_store(contention_key(claim_id), contentions)
   end
 

@@ -28,7 +28,6 @@ class Fakes::VBMSService
     attr_accessor :end_product_claim_id
     attr_accessor :uploaded_form8, :uploaded_form8_appeal
     attr_accessor :manifest_vbms_fetched_at, :manifest_vva_fetched_at
-    attr_accessor :contention_records
     attr_accessor :end_product_claim_ids_by_file_number
     attr_accessor :disposition_records
   end
@@ -159,7 +158,7 @@ class Fakes::VBMSService
   end
 
   def self.fetch_contentions(claim_id:)
-    (contention_records || {})[claim_id] || []
+    Fakes::BGSService.end_product_store.inflated_contentions_for(claim_id) || []
   end
 
   def self.create_contentions!(veteran_file_number:, claim_id:, contentions:, user:)
@@ -213,7 +212,6 @@ class Fakes::VBMSService
     self.uploaded_form8_appeal = nil
     self.manifest_vbms_fetched_at = nil
     self.manifest_vva_fetched_at = nil
-    self.contention_records = nil
     self.end_product_claim_ids_by_file_number = nil
     self.disposition_records = nil
   end
