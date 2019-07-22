@@ -48,9 +48,13 @@ class VaDotGovAddressValidator
   def get_distance_to_facilities(facility_ids:)
     fail valid_address_error if valid_address_error.present?
 
-    VADotGovService.get_distance(lat: valid_address[:lat],
-                                 long: valid_address[:long],
-                                 ids: facility_ids)
+    distance_result = VADotGovService.get_distance(lat: valid_address[:lat],
+                                                   long: valid_address[:long],
+                                                   ids: facility_ids)
+
+    fail distance_result[:error] if distance_result[:error].present?
+
+    distance_result[:facilities]
   end
 
   def assign_available_hearing_locations_for_ro(regional_office_id:)
