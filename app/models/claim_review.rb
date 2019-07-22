@@ -235,13 +235,8 @@ class ClaimReview < DecisionReview
   end
 
   def verify_contentions
-    # any open request_issues that have contention_reference_id pointers that no longer
-    # resolve should be removed.
-    request_issues.select(&:open?).select(&:contention_reference_id).each do |reqi|
-      next if reqi.contention
-
-      reqi.remove!
-    end
+    # any open request_issues that have contention_reference_id pointers that no longer resolve should be removed.
+    request_issues.select(&:open?).select(&:contention_reference_id).reject(&:contention).each(&:remove!)
   end
 
   def incomplete_tasks?
