@@ -128,7 +128,7 @@ class ClaimReview < DecisionReview
   end
 
   def cleared_end_product_types
-    cleared_end_products.map{ |ep| ep.rating? ? "rating" : "nonrating" }.uniq
+    cleared_end_products.map { |ep| ep.rating? ? "rating" : "nonrating" }.uniq
   end
 
   def active?
