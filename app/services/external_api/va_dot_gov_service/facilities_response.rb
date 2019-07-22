@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ExternalApi::VADotGovService::FacilitiesResponseHelper < ExternalApi::VADotGovService::ResponseHelper
+class ExternalApi::VADotGovService::FacilitiesResponse < ExternalApi::VADotGovService::Response
   def facilities
     return [] if body[:data].blank?
 
@@ -39,7 +39,7 @@ class ExternalApi::VADotGovService::FacilitiesResponseHelper < ExternalApi::VADo
         classification: attrs[:classification],
         lat: attrs[:lat],
         long: attrs[:long],
-        address: ExternalApi::VADotGovService::ResponseHelper.full_address(
+        address: ExternalApi::VADotGovService::Response.full_address(
           address[:address_1],
           address[:address_2],
           address[:address_3]

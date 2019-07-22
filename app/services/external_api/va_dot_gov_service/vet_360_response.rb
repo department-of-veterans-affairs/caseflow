@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ExternalApi::VADotGovService::Vet360ResponseHelper < ExternalApi::VADotGovService::ResponseHelper
+class ExternalApi::VADotGovService::Vet360Response < ExternalApi::VADotGovService::Response
   def valid_address
     return {} if body[:geocode].nil?
 
@@ -12,7 +12,7 @@ class ExternalApi::VADotGovService::Vet360ResponseHelper < ExternalApi::VADotGov
       lat: body[:geocode][:latitude],
       long: body[:geocode][:longitude],
       city: body[:address][:city],
-      full_address: ExternalApi::VADotGovService::ResponseHelper.full_address(
+      full_address: ExternalApi::VADotGovService::Response.full_address(
         body[:address][:addressLine1],
         body[:address][:addressLine2],
         body[:address][:addressLine3]

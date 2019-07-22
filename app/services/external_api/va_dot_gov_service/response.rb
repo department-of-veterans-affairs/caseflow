@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ExternalApi::VADotGovService::ResponseHelper
+class ExternalApi::VADotGovService::Response
   def self.full_address(*addresses)
     addresses.reject(&:blank?).join(" ")
   end

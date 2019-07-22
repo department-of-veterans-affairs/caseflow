@@ -30,7 +30,7 @@ class ExternalApi::VADotGovService
     def validate_address(*args)
       response = send_va_dot_gov_request(validate_address_request(*args))
 
-      vet_360_response = ::Vet360ResponseHelper.new(response)
+      vet_360_response = ExternalApi::VADotGovService::Vet360Response.new(response)
       { error: vet_360_response.error, valid_address: vet_360_response.valid_address }
     end
 
@@ -42,7 +42,7 @@ class ExternalApi::VADotGovService
         endpoint: FACILITIES_ENDPOINT
       )
 
-      facilities_response = ::FacilitiesResponseHelper.new(response)
+      facilities_response = ExternalApi::VADotGovService::FacilitiesResponse.new(response)
 
       {
         facilities: facilities_response.facilities,

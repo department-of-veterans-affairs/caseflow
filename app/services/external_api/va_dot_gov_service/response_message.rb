@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ExternalApi::VADotGovService::ResponseHelper::ResponseMessage
+class ExternalApi::VADotGovService::Response::ResponseMessage
   def initialize(message)
     @message = message
   end
