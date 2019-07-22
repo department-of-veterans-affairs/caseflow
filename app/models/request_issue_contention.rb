@@ -26,14 +26,7 @@ class RequestIssueContention
   end
 
   def remove!
-    if !vbms_contention
-      # no contention to remove, so just mark ourselves removed
-      request_issue.remove!
-      request_issue.update!(contention_removed_at: Time.zone.now)
-      return
-    end
-
-    VBMSService.remove_contention!(vbms_contention)
+    VBMSService.remove_contention!(vbms_contention) if vbms_contention
     request_issue.update!(contention_removed_at: Time.zone.now)
   end
 

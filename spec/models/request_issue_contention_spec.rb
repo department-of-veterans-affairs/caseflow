@@ -88,7 +88,7 @@ describe RequestIssueContention do
 
       it "marks request issue as removed" do
         subject
-        expect(request_issue.reload).to be_removed
+        expect(request_issue.contention_removed_at).to_not be_nil
       end
     end
   end
