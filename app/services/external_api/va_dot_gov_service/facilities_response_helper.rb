@@ -25,6 +25,10 @@ class ExternalApi::VADotGovService::FacilitiesResponseHelper < ExternalApi::VADo
       facility[:attributes]
     end
 
+    def address
+      attrs[:address][:physical]
+    end
+
     def format
       {
         facility_id: facility[:id],
@@ -35,7 +39,7 @@ class ExternalApi::VADotGovService::FacilitiesResponseHelper < ExternalApi::VADo
         classification: attrs[:classification],
         lat: attrs[:lat],
         long: attrs[:long],
-        address: full_address(
+        address: ExternalApi::VADotGovService::ResponseHelper.full_address(
           address[:address_1],
           address[:address_2],
           address[:address_3]
