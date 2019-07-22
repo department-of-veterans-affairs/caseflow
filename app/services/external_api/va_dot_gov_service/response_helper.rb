@@ -18,12 +18,8 @@ class ExternalApi::VADotGovService::ResponseHelper
 
   private
 
-  def full_address(address_1:, address_2: nil, address_3: nil)
-    address_line1 = address_1
-    address_line2 = address_2.blank? ? "" : " " + address_2
-    address_line3 = address_3.blank? ? "" : " " + address_3
-
-    "#{address_line1}#{address_line2}#{address_line3}"
+  def full_address(*addresses)
+    addresses.reject(&:blank?).join(" ")
   end
 
   def response_error
