@@ -26,7 +26,12 @@ class RequestIssueContention
   end
 
   def remove!
-    fail EndProductEstablishment::ContentionNotFound, contention_reference_id unless vbms_contention
+    if !vbms_contention
+      # no contention to remove, so just mark ourselves removed
+      request_issue.remove!
+      request_issue.update!(contention_removed_at: Time.zone.now)
+      return
+    end
 
     VBMSService.remove_contention!(vbms_contention)
     request_issue.update!(contention_removed_at: Time.zone.now)
