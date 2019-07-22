@@ -147,10 +147,11 @@ feature "Higher Level Review Edit issues" do
       Fakes::VBMSService.remove_contention!(request_issue.contention)
     end
 
-    it "renders error" do
+    it "automatically removes issues" do
       visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
 
-      expect(page).to have_content(COPY::CLAIM_REVIEW_EDIT_ERROR_MISSING_CONTENTION)
+      expect(page).to_not have_content("PTSD denied")
+      expect(request_issue.reload).to be_closed
     end
   end
 
