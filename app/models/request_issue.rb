@@ -621,6 +621,12 @@ class RequestIssue < ApplicationRecord
     end_product_establishment.contention_for_object(self)
   end
 
+  def contention_in_ratings?
+    return false unless contention_reference_id
+
+    matching_rating_issues.any?
+  end
+
   private
 
   def limited_poa
