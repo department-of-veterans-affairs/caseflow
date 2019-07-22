@@ -11,7 +11,11 @@ class ClaimReviewController < ApplicationController
 
   def edit
     claim_review.validate_prior_to_edit
+  rescue ActiveRecord::RecordNotFound => error
+    raise error # re-throw so base controller handles it.
   rescue StandardError => error
+    Rails.logger.error(error)
+    Raven.capture_exception(error, extra: { error_uuid: error_uuid })
     error_class = error.class.to_s
     flash[:error] = EDIT_ERRORS[error_class] || EDIT_ERRORS["StandardError"]
     render "errors/500", layout: "application", status: :unprocessable_entity
