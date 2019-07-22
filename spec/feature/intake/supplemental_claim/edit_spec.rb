@@ -118,6 +118,34 @@ feature "Supplemental Claim Edit issues" do
     )
   end
 
+  context "when contentions disappear from VBMS between creation and edit" do
+    let(:request_issue) do
+      create(
+        :request_issue,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: rating.profile_date,
+        decision_review: supplemental_claim,
+        benefit_type: benefit_type,
+        contested_issue_description: "PTSD denied"
+      )
+    end
+
+    before do
+      supplemental_claim.create_issues!([request_issue])
+      supplemental_claim.establish!
+      supplemental_claim.reload
+      request_issue.reload
+      Fakes::VBMSService.remove_contention!(request_issue.contention)
+    end
+
+    it "automatically removes issues" do
+      visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
+
+      expect(page).to_not have_content("PTSD denied")
+      expect(request_issue.reload).to be_closed
+    end
+  end
+
   context "when there is a non-rating end product" do
     let!(:nonrating_request_issue) do
       RequestIssue.create!(
