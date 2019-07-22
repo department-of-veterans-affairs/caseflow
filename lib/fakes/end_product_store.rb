@@ -76,7 +76,7 @@ class Fakes::EndProductStore
     update_ep_child(contention, contention_key(claim_id), :id)
   end
 
-  def remove_child(child, key, id_attr)
+  def remove_ep_child(child, key, id_attr)
     children = children_for(key)
     fail "No values for #{key}" unless children
 
@@ -86,7 +86,7 @@ class Fakes::EndProductStore
 
   def remove_contention(contention)
     claim_id = contention.claim_id
-    remove_child(contention, contention_key(claim_id), :id)
+    remove_ep_child(contention, contention_key(claim_id), :id)
   end
 
   def contention_key(claim_id)
