@@ -86,8 +86,9 @@ describe RequestIssueContention do
     context "when contention does not exist" do
       let(:contention_id) { "9999" }
 
-      it "raises ContentionNotFound error" do
-        expect { subject }.to raise_error(EndProductEstablishment::ContentionNotFound)
+      it "marks request issue as removed" do
+        subject
+        expect(request_issue.reload).to be_removed
       end
     end
   end
