@@ -124,7 +124,6 @@ feature "Supplemental Claim Edit issues" do
         decision_review: supplemental_claim,
         nonrating_issue_category: "Military Retired Pay",
         nonrating_issue_description: "nonrating description",
-        contention_reference_id: "1234",
         benefit_type: benefit_type,
         decision_date: 1.month.ago
       )
