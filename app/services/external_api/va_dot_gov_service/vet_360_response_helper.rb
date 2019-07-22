@@ -2,6 +2,12 @@
 
 class ExternalApi::VADotGovService::Vet360ResponseHelper < ExternalApi::VADotGovService::ResponseHelper
   def valid_address
+    return {} if body[:geocode].nil?
+
+    formatted_valid_address
+  end
+
+  def formatted_valid_address
     {
       lat: body[:geocode][:latitude],
       long: body[:geocode][:longitude],
