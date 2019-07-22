@@ -9,7 +9,9 @@ class ExternalApi::VADotGovService::Response
     @response = api_response
     @code = response.code
     @body = JSON.parse(response.body).symbolize_keys
-    @messages = body[:messages].map { |message| ResponseMessage.new(message) }
+    @messages = body[:messages].map do |message|
+      ExternalApi::VADotGovService::Response::ResponseMessage.new(message)
+    end
   end
 
   def error
