@@ -51,73 +51,81 @@ class Fakes::EndProductStore
   end
 
   # contentions are "children" of End Products but we store by claim_id
-  # rather than veteran_id to make look up easier.
+  # rather than veteran_id to make look up easier. Dispositions are similar.
+  def create_ep_child(child, key, id_attr)
+    children = children_for(key) || {}
+    children[child[id_attr]] = child
+    deflate_and_store(key, children)
+  end
+
   def create_contention(contention)
     claim_id = contention.claim_id
-    contentions = contentions_for(claim_id) || {}
-    contentions[contention.id.to_s] = contention
-    deflate_and_store(contention_key(claim_id), contentions)
+    create_ep_child(contention, contention_key(claim_id), :id)
+  end
+
+  def update_ep_child(child, key, id_attr)
+    children = children_for(key)
+    fail "No values for #{key}" unless children
+
+    children[child[id_attr].to_s] = child
+    deflate_and_store(key, children)
   end
 
   def update_contention(contention)
     claim_id = contention.claim_id
-    contentions = contentions_for(claim_id) or fail "No contentions for claim_id #{claim_id}"
-    contentions[contention.id.to_s] = contention
-    deflate_and_store(contention_key(claim_id), contentions)
+    update_ep_child(contention, contention_key(claim_id), :id)
+  end
+
+  def remove_child(child, key, id_attr)
+    children = children_for(key)
+    fail "No values for #{key}" unless children
+
+    children.delete(child[id_attr].to_s)
+    deflate_and_store(key, children)
   end
 
   def remove_contention(contention)
     claim_id = contention.claim_id
-    contentions = contentions_for(claim_id) or fail "No contentions for claim_id #{claim_id}"
-    contentions.delete(contention.id.to_s)
-    deflate_and_store(contention_key(claim_id), contentions)
+    remove_child(contention, contention_key(claim_id), :id)
   end
 
   def contention_key(claim_id)
     "contention_#{claim_id}"
   end
 
-  def contentions_for(claim_id)
-    fetch_and_inflate(contention_key(claim_id))
+  def children_for(key)
+    fetch_and_inflate(key)
   end
 
   def inflated_contentions_for(claim_id)
-    contentions_for(claim_id).values.map { |cont| OpenStruct.new(cont[:table]) }.each { |cont| cont.id = cont.id.to_i }
+    children_for(contention_key(claim_id)).values.map { |hash| OpenStruct.new(hash[:table]) }.each do |cont|
+      cont.id = cont.id.to_i
+    end
   end
 
   # dispositions are similar to contentions
   def create_disposition(disposition)
     claim_id = disposition.claim_id
-    dispositions = dispositions_for(claim_id) || {}
-    dispositions[disposition.id.to_s] = disposition
-    deflate_and_store(disposition_key(claim_id), dispositions)
+    create_ep_child(disposition, disposition_key(claim_id), :contention_id)
   end
 
   def update_disposition(disposition)
     claim_id = disposition.claim_id
-    dispositions = dispositions_for(claim_id) or fail "No dispositions for claim_id #{claim_id}"
-    dispositions[disposition.id.to_s] = disposition
-    deflate_and_store(disposition_key(claim_id), dispositions)
+    update_ep_child(disposition, disposition_key(claim_id), :contention_id)
   end
 
   def remove_disposition(disposition)
     claim_id = disposition.claim_id
-    dispositions = dispositions_for(claim_id) or fail "No dispositions for claim_id #{claim_id}"
-    dispositions.delete(disposition.id.to_s)
-    deflate_and_store(disposition_key(claim_id), dispositions)
+    remove_ep_child(disposition, disposition_key(claim_id), :contention_id)
   end
 
   def disposition_key(claim_id)
     "disposition_#{claim_id}"
   end
 
-  def dispositions_for(claim_id)
-    fetch_and_inflate(disposition_key(claim_id))
-  end
-
   def inflated_dispositions_for(claim_id)
-    dispositions_for(claim_id).values.map do |hash|
-      OpenStruct.new(hash[:table]) }.each { |disp| disp.contention_id = disp.contention_id.to_i }
+    children_for(disposition_key(claim_id)).values.map { |hash| OpenStruct.new(hash[:table]) }.each do |disp|
+      disp.contention_id = disp.contention_id.to_i
     end
   end
 end
