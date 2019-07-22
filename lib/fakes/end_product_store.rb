@@ -84,4 +84,40 @@ class Fakes::EndProductStore
   def inflated_contentions_for(claim_id)
     contentions_for(claim_id).values.map { |cont| OpenStruct.new(cont[:table]) }.each { |cont| cont.id = cont.id.to_i }
   end
+
+  # dispositions are similar to contentions
+  def create_disposition(disposition)
+    claim_id = disposition.claim_id
+    dispositions = dispositions_for(claim_id) || {}
+    dispositions[disposition.id.to_s] = disposition
+    deflate_and_store(disposition_key(claim_id), dispositions)
+  end
+
+  def update_disposition(disposition)
+    claim_id = disposition.claim_id
+    dispositions = dispositions_for(claim_id) or fail "No dispositions for claim_id #{claim_id}"
+    dispositions[disposition.id.to_s] = disposition
+    deflate_and_store(disposition_key(claim_id), dispositions)
+  end
+
+  def remove_disposition(disposition)
+    claim_id = disposition.claim_id
+    dispositions = dispositions_for(claim_id) or fail "No dispositions for claim_id #{claim_id}"
+    dispositions.delete(disposition.id.to_s)
+    deflate_and_store(disposition_key(claim_id), dispositions)
+  end
+
+  def disposition_key(claim_id)
+    "disposition_#{claim_id}"
+  end
+
+  def dispositions_for(claim_id)
+    fetch_and_inflate(disposition_key(claim_id))
+  end
+
+  def inflated_dispositions_for(claim_id)
+    dispositions_for(claim_id).values.map do |hash|
+      OpenStruct.new(hash[:table]) }.each { |disp| disp.contention_id = disp.contention_id.to_i }
+    end
+  end
 end

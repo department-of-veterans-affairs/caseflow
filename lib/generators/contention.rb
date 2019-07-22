@@ -23,13 +23,12 @@ class Generators::Contention
         Fakes::BGSService.end_product_store.create_contention(contention)
 
         if disposition
-          Fakes::VBMSService.disposition_records ||= {}
-          Fakes::VBMSService.disposition_records[claim_id] ||= []
-          Fakes::VBMSService.disposition_records[claim_id] << OpenStruct.new(
+          disposition_record = OpenStruct.new(
             claim_id: contention.claim_id,
             contention_id: contention.id,
             disposition: disposition
           )
+          Fakes::BGSService.end_product_store.create_disposition(disposition_record)
         end
       end
     end
