@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class ExternalApi::VADotGovService::ResponseHelper
+  def self.full_address(*addresses)
+    addresses.reject(&:blank?).join(" ")
+  end
+
   def initialize(api_response)
     @response = api_response
     @code = response.code
@@ -17,10 +21,6 @@ class ExternalApi::VADotGovService::ResponseHelper
   end
 
   private
-
-  def full_address(*addresses)
-    addresses.reject(&:blank?).join(" ")
-  end
 
   def response_error
     case code

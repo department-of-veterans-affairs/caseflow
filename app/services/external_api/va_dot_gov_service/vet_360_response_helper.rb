@@ -12,7 +12,7 @@ class ExternalApi::VADotGovService::Vet360ResponseHelper < ExternalApi::VADotGov
       lat: body[:geocode][:latitude],
       long: body[:geocode][:longitude],
       city: body[:address][:city],
-      full_address: full_address(
+      full_address: ExternalApi::VADotGovService::ResponseHelper.full_address(
         body[:address][:addressLine1],
         body[:address][:addressLine2],
         body[:address][:addressLine3]

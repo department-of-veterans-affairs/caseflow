@@ -5,7 +5,7 @@ class ExternalApi::VADotGovService::FacilitiesResponseHelper < ExternalApi::VADo
     return [] if body[:data].blank?
 
     body[:data].map do |facility|
-      format_facility_response(facility, distances[facility[:id]])
+      Facility.new(facility, distances[facility[:id]]).format
     end
   end
 
@@ -15,34 +15,35 @@ class ExternalApi::VADotGovService::FacilitiesResponseHelper < ExternalApi::VADo
     Hash[body[:meta][:distances].pluck(:id, :distance)]
   end
 
-  def address(address)
-    {
-      address: full_address(
-        address[:address_1],
-        address[:address_2],
-        address[:address_3]
-      ),
-      city: address[:city],
-      state: address[:state],
-      zip_code: address[:zip]
-    }
-  end
+  class Facility
+    def initialize(facility, distance)
+      @facility = facility
+      @distance = distance
+    end
 
-  def attributes(attrs)
-    {
-      facility_type: attrs[:facility_type],
-      name: attrs[:name],
-      classification: attrs[:classification],
-      lat: attrs[:lat],
-      long: attrs[:long]
-    }.merge(address(attrs[:address][:physical]))
-  end
+    def attrs
+      facility[:attributes]
+    end
 
-  def format_facility_response(facility, distance)
-    {
-      facility_id: facility[:id],
-      type: facility[:type],
-      distance: distance
-    }.merge(attributes(facility[:attributes]))
+    def format
+      {
+        facility_id: facility[:id],
+        type: facility[:type],
+        distance: distance,
+        facility_type: attrs[:facility_type],
+        name: attrs[:name],
+        classification: attrs[:classification],
+        lat: attrs[:lat],
+        long: attrs[:long],
+        address: full_address(
+          address[:address_1],
+          address[:address_2],
+          address[:address_3]
+        ),
+        city: address[:city],
+        state: address[:state],
+        zip_code: address[:zip]
+      }
+    end
   end
 end
