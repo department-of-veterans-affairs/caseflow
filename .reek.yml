@@ -13,6 +13,7 @@ detectors:
     enabled: false
   FeatureEnvy:
     exclude:
+      - Fakes::EndProductStore
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - AsyncableJobsReporter
       - HearingSerializerBase
