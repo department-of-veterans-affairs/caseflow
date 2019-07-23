@@ -30,15 +30,6 @@ class Hearings::WorksheetsController < HearingsController
     end
   end
 
-  def print
-    stylesheets = {
-      override_stylesheet: "print/hearings_worksheet_overrides",
-      print_stylesheet: "print/hearings_worksheet"
-    }
-
-    render template: "hearings/index", locals: stylesheets
-  end
-
   def update
     hearing.update!(worksheet_params)
     if hearing.is_a?(LegacyHearing)

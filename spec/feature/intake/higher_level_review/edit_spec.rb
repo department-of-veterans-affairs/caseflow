@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "rails_helper"
 require "support/intake_helpers"
 
 feature "Higher Level Review Edit issues" do
@@ -1029,14 +1030,6 @@ feature "Higher Level Review Edit issues" do
       expect(page).to have_button("Save", disabled: true)
     end
 
-    it "Does not allow save if no issues are selected" do
-      visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-      click_remove_intake_issue("1")
-      click_remove_issue_confirmation
-
-      expect(page).to have_button("Save", disabled: true)
-    end
-
     scenario "shows error message if an update is in progress" do
       RequestIssuesUpdate.create!(
         review: higher_level_review,
@@ -1127,29 +1120,6 @@ feature "Higher Level Review Edit issues" do
       end
     end
 
-    feature "with cleared end product" do
-      let!(:cleared_end_product) do
-        Generators::EndProduct.build(
-          veteran_file_number: veteran.file_number,
-          bgs_attrs: { status_type_code: "CLR" }
-        )
-      end
-
-      let!(:cleared_end_product_establishment) do
-        create(:end_product_establishment,
-               source: higher_level_review,
-               synced_status: "CLR",
-               reference_id: cleared_end_product.claim_id)
-      end
-
-      scenario "prevents edits on eps that have cleared" do
-        visit "higher_level_reviews/#{rating_ep_claim_id}/edit/"
-        expect(page).to have_current_path("/higher_level_reviews/#{rating_ep_claim_id}/edit/cleared_eps")
-        expect(page).to have_content("Issues Not Editable")
-        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
-      end
-    end
-
     context "when EPs have cleared very recently" do
       before do
         ep = higher_level_review.reload.end_product_establishments.first.result
@@ -1188,7 +1158,7 @@ feature "Higher Level Review Edit issues" do
 
         click_withdraw_intake_issue_dropdown("PTSD denied")
         expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
-        expect(page).to have_content(/[0-9]+\. PTSD denied\s*Decision date: 05\/09\/2019\s*Withdraw pending/i)
+        expect(page).to have_content(/[0-9]+\. PTSD denied\s*Decision date: 05\/09\/2019\s*Withdrawal pending/i)
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
         fill_in "withdraw-date", with: withdraw_date
@@ -1236,7 +1206,7 @@ feature "Higher Level Review Edit issues" do
 
         expect(page).to have_content(/Requested issues\s*[0-9]+\. Left knee granted/i)
         expect(page).to have_content(
-          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 05\/09\/2019\s*Withdraw pending/i
+          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 05\/09\/2019\s*Withdrawal pending/i
         )
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -1266,16 +1236,11 @@ feature "Higher Level Review Edit issues" do
 
   context "when remove decision reviews is enabled" do
     before do
-      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
       OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
 
       # skip the sync call since all edit requests require resyncing
       # currently, we're not mocking out vbms and bgs
       allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
-    end
-
-    after do
-      FeatureToggle.disable!(:remove_decision_reviews, users: [current_user.css_id])
     end
 
     let(:today) { Time.zone.now }
@@ -1473,30 +1438,6 @@ feature "Higher Level Review Edit issues" do
         create(:request_issue, :rating, decision_review: higher_level_review, contested_issue_description: "PTSD")
       end
 
-      scenario "edit contention text" do
-        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
-
-        expect(page).to have_content("Edit contention title")
-
-        within first(".issue-edit-text") do
-          click_edit_contention_issue
-        end
-
-        expect(page).to have_button("Submit", disabled: true)
-        expect(page).to have_field(type: "textarea", match: :first, placeholder: "PTSD")
-
-        fill_in(with: "Right Knee")
-        expect(page).to have_button("Submit", disabled: false)
-        click_button("Submit")
-        expect(page).to have_content("Right Knee")
-
-        within first(".issue-edit-text") do
-          click_edit_contention_issue
-        end
-
-        expect(page).to have_field(type: "textarea", match: :first, placeholder: "Right Knee")
-      end
-
       scenario "edit contention text is saved" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         expect(page).to have_content("Edit contention title")
@@ -1505,8 +1446,10 @@ feature "Higher Level Review Edit issues" do
           click_edit_contention_issue
         end
 
-        expect(page).to have_button("Submit", disabled: true)
+        expect(page).to have_field(type: "textarea", match: :first, text: "PTSD")
+        fill_in(with: "")
         expect(page).to have_field(type: "textarea", match: :first, placeholder: "PTSD")
+        expect(page).to have_button("Submit", disabled: true)
 
         fill_in(with: "Right Knee")
         expect(page).to have_button("Submit", disabled: false)
@@ -1517,6 +1460,19 @@ feature "Higher Level Review Edit issues" do
         expect(RequestIssue.where(edited_description: "Right Knee")).to_not be_nil
         expect(page).to have_content("Edited")
         expect(page).to have_content("Right Knee")
+      end
+
+      context "when review has unidentified issues and non-ratings" do
+        let!(:issue) do
+          create(:request_issue, :unidentified, decision_review: higher_level_review,
+                                                contested_issue_description: "This is unidentified")
+        end
+
+        scenario "do not show edit contention text on unidentified issues" do
+          visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+          expect(page).to have_content("This is unidentified")
+          expect(page).to_not have_link("Edit contention title")
+        end
       end
     end
 

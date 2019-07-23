@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe RequestIssuesUpdate do
   before do
     Time.zone = "America/New_York"
@@ -186,18 +188,29 @@ describe RequestIssuesUpdate do
       end
     end
 
+    context "#corrected_issues" do
+      before do
+        request_issues_update.perform!
+      end
+
+      subject { request_issues_update.corrected_issues }
+
+      context "when correction issues were part of the update" do
+        let(:request_issue_to_correct) { review.request_issues.last }
+
+        let(:request_issues_data) do
+          [{ request_issue_id: request_issue_to_correct.id,
+             correction_type: "control" }]
+        end
+
+        it { is_expected.to contain_exactly(request_issue_to_correct) }
+      end
+    end
+
     context "#perform!" do
       let(:vbms_error) { VBMS::HTTPError.new("500", "More EPs more problems") }
 
       subject { request_issues_update.perform! }
-
-      context "when request issues are empty" do
-        it "fails and adds to errors" do
-          expect(subject).to be_falsey
-
-          expect(request_issues_update.error_code).to eq(:request_issues_data_empty)
-        end
-      end
 
       context "when issues are exactly the same as existing issues" do
         let(:request_issues_data) do
@@ -283,6 +296,44 @@ describe RequestIssuesUpdate do
             contested_issue_description: "Service connection for cancer was denied"
           )
           expect(created_issue.contention_reference_id).to_not be_nil
+        end
+
+        context "with rating control correction request issue" do
+          let(:request_issue_to_correct) { review.request_issues.last }
+
+          let(:request_issues_data) do
+            [{ request_issue_id: request_issue_to_correct.id,
+               correction_type: "control" }]
+          end
+
+          let(:review) do
+            create(:higher_level_review,
+                   veteran_file_number: veteran.file_number,
+                   informal_conference: true)
+          end
+
+          it "adds new end product for a correction" do
+            allow_create_contentions
+            expect(EndProductEstablishment.find_by(code: "930AMAHRC", source: review)).to eq(nil)
+
+            subject
+
+            expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+              hash_including(
+                veteran_file_number: review.veteran_file_number,
+                contentions: [{
+                  description: request_issue_to_correct.description
+                }]
+              )
+            )
+            ep = EndProductEstablishment.find_by(code: "930AMAHRC", source: review)
+            expect(ep).to_not be_nil
+            correction_request_issue_id = request_issue_to_correct.reload.corrected_by_request_issue_id
+            expect(correction_request_issue_id).to_not be_nil
+            correction_issue = review.request_issues.find_by(id: correction_request_issue_id)
+            expect(correction_issue.end_product_establishment).to eq ep
+            expect(correction_issue.correction_type).to eq "control"
+          end
         end
 
         context "with nonrating request issue" do

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Build HearSched"]) }
   let!(:ro_schedule_period) { create(:ro_schedule_period) }
@@ -86,7 +88,7 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
     end
 
     it "returns an error for an invalid spreadsheet" do
-      error = "Validation failed: HearingSchedule::ValidateRoSpreadsheet::RoTemplateNotFollowed"
+      error = "The RO non-availability template was not followed. Redownload the template and try again."
       base64_header = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,"
       post :create, params: {
         schedule_period: {
@@ -99,7 +101,7 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
       }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
-      expect(response_body["error"]).to eq error
+      expect(response_body["error"]).to include error
     end
   end
 

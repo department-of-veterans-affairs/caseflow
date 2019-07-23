@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe HearingDay do
   context "#create" do
     let(:hearing) do
@@ -107,7 +109,7 @@ describe HearingDay do
       let!(:caseflow_child_hearing) { FactoryBot.create(:hearing, hearing_day_id: hearing_day.id) }
 
       before do
-        RequestStore.store[:current_user] = OpenStruct.new(vacols_uniq_id: FactoryBot.create(:staff).slogid)
+        RequestStore.store[:current_user] = create(:user, vacols_uniq_id: create(:staff).slogid)
       end
 
       it "updates children hearings with a new room" do

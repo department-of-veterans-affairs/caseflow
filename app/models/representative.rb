@@ -14,8 +14,25 @@ class Representative < Organization
     false
   end
 
+  def show_reader_link_column?
+    false
+  end
+
   def should_write_ihp?(appeal)
     ihp_writing_configs.include?(appeal.docket_type) && appeal.representatives.include?(self)
+  end
+
+  def queue_tabs
+    [
+      tracking_tasks_tab,
+      unassigned_tasks_tab,
+      assigned_tasks_tab,
+      completed_tasks_tab
+    ]
+  end
+
+  def tracking_tasks_tab
+    ::TrackingTasksTab.new(assignee_name: name)
   end
 
   def ama_task_serializer

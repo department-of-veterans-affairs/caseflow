@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 RSpec.describe BulkTaskAssignmentsController, type: :controller do
   describe "#create" do
     let(:organization) { HearingsManagement.singleton }

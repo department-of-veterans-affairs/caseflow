@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 RSpec.feature "Bulk task assignment" do
+  let(:org) { HearingsManagement.singleton }
   let(:user) { FactoryBot.create(:user) }
 
   before do
-    OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+    OrganizationsUser.add_user_to_organization(user, org)
     User.authenticate!(user: user)
   end
 
@@ -130,6 +133,41 @@ RSpec.feature "Bulk task assignment" do
       values = find_all("option").map(&:value)
       expect(values.include?("NoShowHearingTask")).to eq false
       expect(values.include?("EvidenceSubmissionWindowTask")).to eq true
+    end
+  end
+
+  context "when tasks in queue are paginated" do
+    before { FeatureToggle.enable!(:use_task_pages_api, users: [user.css_id]) }
+    after { FeatureToggle.disable!(:use_task_pages_api, users: [user.css_id]) }
+
+    context "when there are more tasks than will fit on a single page" do
+      let(:task_count) { TaskPager::TASKS_PER_PAGE + 2 }
+      let(:regional_offices) { RegionalOffice::CITIES.keys.last(task_count) }
+
+      before do
+        regional_offices.each do |ro|
+          appeal = FactoryBot.create(:appeal, :hearing_docket, closest_regional_office: ro)
+          FactoryBot.create(:no_show_hearing_task, appeal: appeal)
+        end
+      end
+
+      it "correctly populates modal dropdowns with all options" do
+        visit(org.path)
+
+        expect(page).to have_content(COPY::BULK_ASSIGN_BUTTON_TEXT)
+        click_button(text: COPY::BULK_ASSIGN_BUTTON_TEXT)
+        expect(page).to have_content(COPY::BULK_ASSIGN_MODAL_TITLE)
+
+        options = find("select[id='Regional office']").find_all("option")
+
+        # Skip the first two since they are 1) "Select" and 2) an empty option to reset the dropdown.
+        expect(options.count).to eq(task_count + 2)
+        regional_office_options = options.last(task_count).map(&:text)
+
+        # Sort the regional offices we expect to see by city name.
+        sorted_regional_offices = regional_offices.map { |ro| RegionalOffice::CITIES[ro][:city] }.sort
+        expect(regional_office_options).to eq(sorted_regional_offices)
+      end
     end
   end
 end

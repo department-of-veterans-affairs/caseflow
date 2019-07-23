@@ -6,20 +6,21 @@ class Hearings::HearingDayController < HearingsApplicationController
   before_action :verify_view_hearing_schedule_access
   before_action :verify_access_to_hearings, only: [:update]
   before_action :verify_build_hearing_schedule_access, only: [:destroy, :create]
-  skip_before_action :deny_vso_access, only: [:index, :show, :index_print]
+  skip_before_action :deny_vso_access, only: [:index, :show]
 
   # show schedule days for date range provided
   def index
     respond_to do |format|
       format.html do
-        render "hearings/index", locals: { print_stylesheet: "print/hearings_schedule" }
+        render "hearings/index"
       end
 
       format.json do
         start_date = validate_start_date(params[:start_date])
         end_date = validate_end_date(params[:end_date])
         regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
-        hearing_days = HearingDay.list_upcoming_hearing_days(start_date, end_date, current_user, regional_office)
+        user = list_all_upcoming_hearing_days? ? nil : current_user
+        hearing_days = HearingDay.list_upcoming_hearing_days(start_date, end_date, user, regional_office)
 
         render json: {
           hearings: json_hearing_days(hearing_days.map(&:to_hash)),
@@ -28,10 +29,6 @@ class Hearings::HearingDayController < HearingsApplicationController
         }
       end
     end
-  end
-
-  def index_print
-    index
   end
 
   def show
@@ -86,6 +83,10 @@ class Hearings::HearingDayController < HearingsApplicationController
 
   def hearing_day_id
     params[:id]
+  end
+
+  def list_all_upcoming_hearing_days?
+    ActiveRecord::Type::Boolean.new.deserialize(params[:show_all]) && current_user&.roles&.include?("Hearing Prep")
   end
 
   def update_params

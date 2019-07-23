@@ -22,7 +22,8 @@ class SaveButtonUnconnected extends React.Component {
       showModals: {
         issueChangeModal: false,
         unidentifiedIssueModal: false,
-        reviewRemovedModal: false
+        reviewRemovedModal: false,
+        correctionIssueModal: false
       }
     };
   }
@@ -32,11 +33,12 @@ class SaveButtonUnconnected extends React.Component {
     let showModals = {
       issueChangeModal: false,
       unidentifiedIssueModal: false,
-      reviewRemovedModal: false
+      reviewRemovedModal: false,
+      correctionIssueModal: false
     };
 
     if (this.state.originalIssueNumber !== this.props.state.addedIssues.length) {
-      if (this.props.state.addedIssues.length === 0 && this.props.removeDecisionReviews) {
+      if (this.props.state.addedIssues.length === 0) {
         showModals.reviewRemovedModal = true;
       } else {
         showModals.issueChangeModal = true;
@@ -45,6 +47,9 @@ class SaveButtonUnconnected extends React.Component {
 
     if (this.props.state.addedIssues.filter((i) => i.isUnidentified).length > 0) {
       showModals.unidentifiedIssueModal = true;
+    }
+    if (this.props.state.addedIssues.filter((i) => i.correctionType).length > 0) {
+      showModals.correctionIssueModal = true;
     }
 
     if (_.every(showModals, (modal) => modal === false)) {
@@ -91,20 +96,12 @@ class SaveButtonUnconnected extends React.Component {
     const {
       addedIssues,
       originalIssues,
-      issueCount,
       requestStatus,
-      removeDecisionReviews,
       veteranValid,
       processedInCaseflow,
       withdrawalDate,
       receiptDate
     } = this.props;
-
-    let disableDueToIssueCount = false;
-
-    if (!issueCount && !removeDecisionReviews) {
-      disableDueToIssueCount = true;
-    }
 
     const invalidVeteran = !veteranValid && (_.some(
       addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId)
@@ -118,7 +115,7 @@ class SaveButtonUnconnected extends React.Component {
 
     const saveDisabled = _.isEqual(
       addedIssues, originalIssues
-    ) || disableDueToIssueCount || invalidVeteran || !withdrawDateValid;
+    ) || invalidVeteran || !withdrawDateValid;
 
     const withdrawReview = !_.isEmpty(addedIssues) && _.every(
       addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate
@@ -166,6 +163,15 @@ class SaveButtonUnconnected extends React.Component {
         <p>Are you sure you want to save this issue without fixing the unidentified issue?</p>
       </SaveAlertConfirmModal>}
 
+      { this.state.showModals.correctionIssueModal && <SaveAlertConfirmModal
+        title="Establish 930 EP"
+        buttonText= "Yes, establish"
+        onClose={() => this.closeModal('correctionIssueModal')}
+        onConfirm={() => this.confirmModal('correctionIssueModal')}>
+        <p>
+          You are now creating a 930 EP in VBMS.</p>
+      </SaveAlertConfirmModal>}
+
       <Button
         name="submit-update"
         onClick={this.validate}
@@ -191,7 +197,6 @@ const SaveButton = connect(
     originalIssues: state.originalIssues,
     requestStatus: state.requestStatus,
     issueCount: issueCountSelector(state),
-    removeDecisionReviews: state.featureToggles.removeDecisionReviews,
     veteranValid: state.veteranValid,
     processedInCaseflow: state.processedInCaseflow,
     withdrawalDate: state.withdrawalDate,

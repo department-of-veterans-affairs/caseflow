@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "rails_helper"
 require "support/intake_helpers"
 
 feature "Supplemental Claim Edit issues" do
@@ -457,14 +458,6 @@ feature "Supplemental Claim Edit issues" do
       expect(page).to have_button("Save", disabled: true)
     end
 
-    it "Does not allow save if no issues are selected" do
-      visit "supplemental_claims/#{rating_ep_claim_id}/edit"
-      click_remove_intake_issue("1")
-      click_remove_issue_confirmation
-
-      expect(page).to have_button("Save", disabled: true)
-    end
-
     scenario "shows error message if an update is in progress" do
       RequestIssuesUpdate.create!(
         review: supplemental_claim,
@@ -553,29 +546,6 @@ feature "Supplemental Claim Edit issues" do
       end
     end
 
-    feature "with cleared end product" do
-      let!(:cleared_end_product) do
-        Generators::EndProduct.build(
-          veteran_file_number: veteran.file_number,
-          bgs_attrs: { status_type_code: "CLR" }
-        )
-      end
-
-      let!(:cleared_end_product_establishment) do
-        create(:end_product_establishment,
-               source: supplemental_claim,
-               synced_status: "CLR",
-               reference_id: cleared_end_product.claim_id)
-      end
-
-      scenario "prevents edits on eps that have cleared" do
-        visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
-        expect(page).to have_current_path("/supplemental_claims/#{rating_ep_claim_id}/edit/cleared_eps")
-        expect(page).to have_content("Issues Not Editable")
-        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
-      end
-    end
-
     context "when EPs have cleared very recently" do
       before do
         ep = supplemental_claim.reload.end_product_establishments.first.result
@@ -618,7 +588,7 @@ feature "Supplemental Claim Edit issues" do
         click_withdraw_intake_issue_dropdown("PTSD denied")
 
         expect(page).to_not have_content("Requested issues\n1. PTSD denied")
-        expect(page).to have_content("1. PTSD denied\nDecision date: 05/10/2019\nWithdraw pending")
+        expect(page).to have_content("1. PTSD denied\nDecision date: 05/10/2019\nWithdrawal pending")
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
         fill_in "withdraw-date", with: withdraw_date
@@ -665,7 +635,7 @@ feature "Supplemental Claim Edit issues" do
 
         expect(page).to_not have_content("Requested issues\n1. PTSD denied")
         expect(page).to have_content(
-          /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdraw pending/i
+          /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdrawal pending/i
         )
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -694,16 +664,11 @@ feature "Supplemental Claim Edit issues" do
 
   context "when remove decision reviews is enabled for supplemental_claim" do
     before do
-      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
       OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
 
       # skip the sync call since all edit requests require resyncing
       # currently, we're not mocking out vbms and bgs
       allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
-    end
-
-    after do
-      FeatureToggle.disable!(:remove_decision_reviews, users: [current_user.css_id])
     end
 
     let(:today) { Time.zone.now }

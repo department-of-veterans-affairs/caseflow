@@ -129,8 +129,8 @@
   "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to a member of the %s team.",
   "ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE": "This queue is empty. You can ",
 
-  "ALL_CASES_QUEUE_TABLE_TAB_TITLE": "All cases",
-  "ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION": "All AMA cases represented by %s that have been active at the Board of Veterans' Appeals in the past 2 weeks.",
+  "TRACKING_TASKS_TAB_TITLE": "All cases",
+  "TRACKING_TASKS_TAB_DESCRIPTION": "All AMA cases represented by %s that have been active at the Board of Veterans' Appeals in the past 2 weeks.",
 
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
   "JUDGE_ASSIGN_DROPDOWN_LINK_LABEL": "Assign team cases",
@@ -183,6 +183,8 @@
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_UPLOAD_LINK": "Upload files",
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HISTORY_HEADER": "Upload History",
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK": "View current schedule",
+  "HEARING_SCHEDULE_DOCKET_NO_VETERANS": "No Veterans are scheduled for this hearing day.",
+  "HEARING_SCHEDULE_DOCKET_JUDGE_WITH_NO_HEARINGS": "You have no hearings scheduled for this hearing day.",
 
   "HEARING_SCHEDULE_UPLOAD_PAGE_HEADER": "Upload Files",
   "HEARING_SCHEDULE_UPLOAD_PAGE_INSTRUCTIONS": "Please select the file you are uploading and choose a date range.",
@@ -210,6 +212,8 @@
   "ASSIGN_WIDGET_MODAL_TITLE": "Select a user",
 
   "HEARING_SCHEDULE_VIEW_PAGE_HEADER": "Welcome to Caseflow Hearings!",
+  "HEARING_SCHEDULE_JUDGE_DEFAULT_VIEW_PAGE_HEADER": "Welcome to Your Hearing Schedule",
+  "HEARING_SCHEDULE_JUDGE_SHOW_ALL_VIEW_PAGE_HEADER": "Welcome to Hearing Schedule",
   "HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER": "Board Hearing Schedule",
   "HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK": "Apply",
   "HEARING_SCHEDULE_VIEW_START_DATE_LABEL": "From:",
@@ -240,6 +244,9 @@
   "MODAL_SUBMIT_BUTTON": "Submit",
   "MODAL_CANCEL_BUTTON": "Cancel",
   "MODAL_CONFIRM_BUTTON": "Confirm",
+
+  "BULK_ASSIGN_BUTTON_TEXT": "Assign Tasks",
+  "BULK_ASSIGN_MODAL_TITLE": "Bulk Assign Tasks",
 
   "REGIONAL_OFFICE_REQUIRED_MESSAGE": "Please select a regional office",
 

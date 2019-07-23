@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe ColocatedTask do
   let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
   let!(:staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
@@ -37,7 +39,8 @@ describe ColocatedTask do
 
         it "creates co-located tasks and updates the VACOLS location" do
           expect(vacols_case.bfcurloc).to be_nil
-          expect(Task.where(type: ColocatedTask.name).count).to eq 0
+          expect(ColocatedTask.count).to eq(0)
+          expect(AojColocatedTask.count).to eq(0)
 
           team_task = subject.detect { |t| t.assigned_to.is_a?(Colocated) }
           expect(team_task.valid?).to be true
@@ -49,10 +52,11 @@ describe ColocatedTask do
           expect(user_task.status).to eq "assigned"
           expect(user_task.assigned_at).to_not eq nil
           expect(user_task.assigned_by).to eq attorney
-          expect(user_task.action).to eq "aoj"
+          expect(user_task).to be_a(AojColocatedTask)
           expect(user_task.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
           expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
-          expect(Task.where(type: ColocatedTask.name).count).to eq 2
+          expect(ColocatedTask.count).to eq(2)
+          expect(AojColocatedTask.count).to eq(2)
         end
       end
 
@@ -60,12 +64,12 @@ describe ColocatedTask do
         user_tasks = subject.select { |t| t.assigned_to.is_a?(User) }
         expect(user_tasks.first.valid?).to be true
         expect(user_tasks.first.status).to eq "assigned"
-        expect(user_tasks.first.action).to eq "aoj"
+        expect(user_tasks.first).to be_a(AojColocatedTask)
         expect(user_tasks.first.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
 
         expect(user_tasks.second.valid?).to be true
         expect(user_tasks.second.status).to eq "assigned"
-        expect(user_tasks.second.action).to eq "poa_clarification"
+        expect(user_tasks.second).to be_a(PoaClarificationColocatedTask)
         expect(user_tasks.second.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
       end
 
@@ -111,14 +115,14 @@ describe ColocatedTask do
         expect(subject.first.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
         expect(subject.first.assigned_at).to_not eq nil
         expect(subject.first.assigned_by).to eq attorney
-        expect(subject.first.action).to eq "aoj"
+        expect(subject.first).to be_a(AojColocatedTask)
         expect(subject.first.assigned_to).to eq(Colocated.singleton)
 
         expect(subject.second.valid?).to be true
         expect(subject.second.reload.status).to eq(Constants.TASK_STATUSES.assigned)
         expect(subject.second.assigned_at).to_not eq nil
         expect(subject.second.assigned_by).to eq attorney
-        expect(subject.second.action).to eq "aoj"
+        expect(subject.second).to be_a(AojColocatedTask)
         expect(subject.second.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
 
         expect(AppealRepository).to_not receive(:update_location!)
@@ -171,10 +175,10 @@ describe ColocatedTask do
         let!(:existing_action) do
           FactoryBot.create(
             :colocated_task,
+            :poa_clarification,
             appeal: appeal_1,
             assigned_by: attorney,
             assigned_to: colocated_org,
-            action: :poa_clarification,
             parent: parent,
             instructions: [instructions]
           )
@@ -361,11 +365,11 @@ describe ColocatedTask do
       let(:colocated_admin) { FactoryBot.create(:user) }
       before { OrganizationsUser.make_user_admin(colocated_admin, colocated_org) }
 
-      it "should include only the reassign action" do
-        expect(colocated_task.available_actions_unwrapper(colocated_admin).count).to eq(1)
-        expect(colocated_task.available_actions_unwrapper(colocated_admin).first[:label]).to(
-          eq(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label)
-        )
+      it "should include all actions available to the assigned user along with reassign" do
+        assigned_user_actions = colocated_task.available_actions_unwrapper(colocated_user)
+        expect(colocated_task.available_actions_unwrapper(colocated_admin).count).to eq(assigned_user_actions.size + 1)
+        expect(colocated_task.available_actions_unwrapper(colocated_admin)
+          .include?(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label))
       end
     end
   end
@@ -419,9 +423,9 @@ describe ColocatedTask do
       let(:org_colocated_task) do
         FactoryBot.create(
           :colocated_task,
+          action,
           assigned_by: attorney,
-          assigned_to: org,
-          action: action
+          assigned_to: org
         )
       end
       let(:legacy_colocated_task) { org_colocated_task.children.first }
@@ -453,7 +457,7 @@ describe ColocatedTask do
       end
 
       context "when the location code is not CASEFLOW" do
-        let(:action) { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
+        let(:action) { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym }
         let(:location_code) { "FAKELOC" }
 
         it "does not change the case's location_code" do
@@ -480,8 +484,8 @@ describe ColocatedTask do
     let(:org_task) do
       FactoryBot.create(
         :colocated_task,
+        :retired_vlj,
         appeal: appeal,
-        action: :retired_vlj,
         assigned_by: initial_assigner,
         assigned_to: Colocated.singleton
       )

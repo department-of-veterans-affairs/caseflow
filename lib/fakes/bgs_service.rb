@@ -28,7 +28,8 @@ class Fakes::BGSService
 
     CSV.foreach(file_path, headers: true) do |row|
       row_hash = row.to_h
-      veteran = Generators::Veteran.build(file_number: row_hash["vbms_id"].chop)
+      file_number = row_hash["vbms_id"].chop
+      veteran = Veteran.find_by_file_number(file_number) || Generators::Veteran.build(file_number: file_number)
       ama_begin_date = Constants::DATES["AMA_ACTIVATION"].to_date
 
       case row_hash["bgs_key"]
@@ -53,6 +54,7 @@ class Fakes::BGSService
         in_active_review_receipt_date = Time.zone.parse("2018-04-01")
         completed_review_receipt_date = in_active_review_receipt_date - 30.days
         completed_review_reference_id = "cleared-review-ref-id"
+        contention_id = rand(1..999)
 
         Generators::Rating.build(
           participant_id: veteran.participant_id
@@ -66,7 +68,7 @@ class Fakes::BGSService
             { decision_text: "Right knee" },
             { decision_text: "PTSD" },
             { decision_text: "This rating is in active review", reference_id: in_active_review_reference_id },
-            { decision_text: "I am on a completed Higher Level Review", contention_reference_id: 999 }
+            { decision_text: "I am on a completed Higher Level Review", contention_reference_id: contention_id }
           ]
         )
         Generators::Rating.build(
@@ -138,7 +140,7 @@ class Fakes::BGSService
           benefit_type: "compensation",
           end_product_establishment: cleared_epe,
           contested_rating_issue_reference_id: completed_review_reference_id,
-          contention_reference_id: 999
+          contention_reference_id: contention_id
         ) do |reqi|
           reqi.contested_rating_issue_profile_date = Time.zone.today - 100
         end
@@ -494,8 +496,11 @@ class Fakes::BGSService
     end
   end
 
+  def may_modify?(vbms_id)
+    !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
+  end
+
   def can_access?(vbms_id)
-    current_user = RequestStore[:current_user]
     if current_user
       Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 1.minute) do
         !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
@@ -730,6 +735,10 @@ class Fakes::BGSService
 
   VSO_PARTICIPANT_ID = "4623321"
   DEFAULT_PARTICIPANT_ID = "781162"
+
+  def current_user
+    RequestStore[:current_user]
+  end
 
   def default_claimant_info
     {

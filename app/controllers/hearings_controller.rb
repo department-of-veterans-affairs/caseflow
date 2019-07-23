@@ -3,8 +3,8 @@
 class HearingsController < HearingsApplicationController
   include HearingsConcerns::VerifyAccess
 
-  before_action :verify_access_to_hearings, except: [:show_print, :show]
-  before_action :verify_access_to_reader_or_hearings, only: [:show_print, :show]
+  before_action :verify_access_to_hearings, except: [:show]
+  before_action :verify_access_to_reader_or_hearings, only: [:show]
 
   def show
     render json: hearing.to_hash(current_user.id)
