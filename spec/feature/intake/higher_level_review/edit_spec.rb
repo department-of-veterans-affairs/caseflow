@@ -1120,38 +1120,6 @@ feature "Higher Level Review Edit issues" do
       end
     end
 
-    feature "with cleared end product" do
-      let!(:cleared_end_product) do
-        Generators::EndProduct.build(
-          veteran_file_number: veteran.file_number,
-          bgs_attrs: { status_type_code: "CLR" }
-        )
-      end
-
-      let!(:cleared_end_product_establishment) do
-        create(:end_product_establishment,
-               source: higher_level_review,
-               synced_status: "CLR",
-               reference_id: cleared_end_product.claim_id)
-      end
-
-      scenario "prevents edits on eps that have cleared" do
-        visit "higher_level_reviews/#{rating_ep_claim_id}/edit/"
-        expect(page).to have_current_path("/higher_level_reviews/#{rating_ep_claim_id}/edit/cleared_eps")
-        expect(page).to have_content("Issues Not Editable")
-        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
-      end
-
-      context "when correct_claim_reviews is enabled" do
-        before { FeatureToggle.enable!(:correct_claim_reviews) }
-
-        it "allows a user to navigate to the edit page" do
-          visit "higher_level_reviews/#{rating_ep_claim_id}/edit/"
-          expect(page).to have_content("Edit Issues")
-        end
-      end
-    end
-
     context "when EPs have cleared very recently" do
       before do
         ep = higher_level_review.reload.end_product_establishments.first.result
