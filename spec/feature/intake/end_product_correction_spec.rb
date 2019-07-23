@@ -68,6 +68,7 @@ feature "End Product Correction (EP 930)" do
       create(claim_review_type.to_sym, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
     end
     let(:edit_path) { "#{claim_review_type.pluralize}/#{cleared_end_product.claim_id}/edit" }
+    let(:ep_code) { "030HLRR" }
 
     it "edits are prevented if correct claim reviews feature is not enabled" do
       visit edit_path
@@ -102,8 +103,6 @@ feature "End Product Correction (EP 930)" do
       end
 
       context "when a user adds an unidentified issue" do
-        let(:ep_code) { "030HLRR" }
-
         it "creates a correction issue and EP" do
           visit edit_path
           check_adding_unidentified_correction_issue
@@ -118,6 +117,7 @@ feature "End Product Correction (EP 930)" do
       create(claim_review_type.to_sym, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
     end
     let(:edit_path) { "#{claim_review_type.pluralize}/#{cleared_end_product.claim_id}/edit" }
+    let(:ep_code) { "040SCR" }
 
     it "edits are prevented if correct claim reviews feature is not enabled" do
       visit edit_path
@@ -143,7 +143,7 @@ feature "End Product Correction (EP 930)" do
       end
 
       context "when a user adds a nonrating issue" do
-        let(:ep_code) { "030HLRNR" }
+        let(:ep_code) { "040SCNR" }
 
         it "creates a correction issue and EP" do
           visit edit_path
@@ -152,8 +152,6 @@ feature "End Product Correction (EP 930)" do
       end
 
       context "when a user adds an unidentified issue" do
-        let(:ep_code) { "030HLRR" }
-
         it "creates a correction issue and EP" do
           visit edit_path
           check_adding_unidentified_correction_issue
