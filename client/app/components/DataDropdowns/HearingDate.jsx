@@ -118,7 +118,7 @@ class HearingDateDropdown extends React.Component {
         <SearchableDropdown
           name={name}
           label={
-            isFetching ? <LoadingLabel text="Finding upcoming hearing dates for this regional office..." /> : label
+            isFetching ? <LoadingLabel text={COPY.HEARING_DATE_LOADING} /> : label
           }
           strongLabel
           readOnly={readOnly}

@@ -504,5 +504,7 @@
   "SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL": "To assign another veteran please use the \"Schedule Veterans\" link below. You can also use the hearings section below to view the hearing in new tab.",
 
   "SCHEDULE_VETERAN_FULL_HEARING_DAY_TITLE": "This hearing day is full",
-  "SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL": "You are about to schedule this Veteran on a full docket. Please verify before scheduling."
+  "SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL": "You are about to schedule this Veteran on a full docket. Please verify before scheduling.",
+
+  "HEARING_DATE_LOADING": "Finding upcoming hearing dates for this regional office..."
 }
