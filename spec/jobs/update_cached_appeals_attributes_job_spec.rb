@@ -3,18 +3,18 @@
 require "rails_helper"
 
 describe UpdateCachedAppealsAttributesJob do
-  # 
+  #
   # let!(:vacols_case1) { create(:case) }
   # let!(:vacols_case2) { create(:case) }
 
   # let!(:legacy_appeal1) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case1) }
   # let!(:legacy_appeal2) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case2) }
 
-  let!(:appeal1) { FactoryBot.create(:appeal) }
-  let!(:appeal2) { FactoryBot.create(:appeal) }
-  let!(:appeal3) { FactoryBot.create(:appeal) }
+  let(:appeal1) { FactoryBot.create(:appeal) }
+  let(:appeal2) { FactoryBot.create(:appeal) }
+  let(:appeal3) { FactoryBot.create(:appeal) }
 
-  let!(:ama_appeals) { [appeal1, appeal2, appeal3] }
+  # let!(:ama_appeals) { [appeal1, appeal2, appeal3] }
 
 
   context "when the job runs successfully" do
@@ -33,6 +33,9 @@ describe UpdateCachedAppealsAttributesJob do
       # end
       #
       # UpdateCachedAppealsAttributesJob.perform_now
+
+      let!(:ama_appeals) { [appeal1, appeal2, appeal3] }
+      
 
 
     it "creates the correct number of cached appeals" do
