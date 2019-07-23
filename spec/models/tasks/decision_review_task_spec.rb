@@ -30,7 +30,7 @@ describe DecisionReviewTask do
         benefit_type: benefit_type
       )
     end
-    let(:task_status) { "assigned" }
+    let(:trait) { :assigned }
     let!(:request_issues) do
       [
         create(:request_issue, :rating, decision_review: hlr, benefit_type: benefit_type),
@@ -62,7 +62,7 @@ describe DecisionReviewTask do
         }
       ]
     end
-    let(:task) { create(:higher_level_review_task, appeal: hlr, status: task_status) }
+    let(:task) { create(:higher_level_review_task, trait, appeal: hlr) }
     subject { task.complete_with_payload!(decision_issue_params, decision_date) }
 
     context "assigned task" do
@@ -96,7 +96,7 @@ describe DecisionReviewTask do
     end
 
     context "completed task" do
-      let(:task_status) { "completed" }
+      let(:trait) { :completed }
 
       it "cannot be completed again" do
         expect(subject).to eq false

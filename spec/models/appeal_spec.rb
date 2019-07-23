@@ -14,7 +14,7 @@ describe Appeal do
 
   context "includes PrintsTaskTree concern" do
     context "#structure" do
-      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+      let!(:root_task) { create(:root_task, appeal: appeal) }
 
       subject { appeal.structure(:id) }
 
@@ -580,7 +580,7 @@ describe Appeal do
       let(:appeal) { create(:appeal) }
 
       before do
-        create(:root_task, appeal: appeal, status: :completed)
+        create(:root_task, :completed, appeal: appeal)
       end
 
       it "returns Post-decision" do
@@ -599,7 +599,7 @@ describe Appeal do
       let(:appeal) { create(:appeal) }
 
       before do
-        create(:root_task, appeal: appeal, status: :in_progress)
+        create(:root_task, :in_progress, appeal: appeal)
       end
 
       it "returns Case storage" do
@@ -609,10 +609,10 @@ describe Appeal do
 
     context "if there are TrackVeteranTasks" do
       let!(:appeal) { create(:appeal) }
-      let!(:root_task) { create(:root_task, appeal: appeal, status: :in_progress) }
+      let!(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
 
       before do
-        create(:track_veteran_task, appeal: appeal, status: :in_progress)
+        create(:track_veteran_task, :in_progress, appeal: appeal)
       end
 
       it "does not include TrackVeteranTasks in its determinations" do
@@ -636,7 +636,7 @@ describe Appeal do
         create(:generic_task, assigned_to: user, appeal: appeal_user, parent: user_root_task)
 
         on_hold_root = create(:root_task, appeal: appeal_on_hold, updated_at: today - 1)
-        create(:generic_task, status: :on_hold, appeal: appeal_on_hold, parent: on_hold_root, updated_at: today + 1)
+        create(:generic_task, :on_hold, appeal: appeal_on_hold, parent: on_hold_root, updated_at: today + 1)
       end
 
       it "if the most recent assignee is an organization it returns the organization name" do
@@ -879,8 +879,7 @@ describe Appeal do
     let!(:hearings_user) { create(:hearings_coordinator) }
     let!(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
     let(:appeal) { create(:appeal, receipt_date: receipt_date) }
-    let(:root_task_status) { "in_progress" }
-    let!(:appeal_root_task) { create(:root_task, appeal: appeal, status: root_task_status) }
+    let!(:appeal_root_task) { create(:root_task, :in_progress, appeal: appeal) }
 
     context "appeal not assigned" do
       it "is on docket" do
@@ -891,9 +890,8 @@ describe Appeal do
     end
 
     context "hearing to be scheduled" do
-      let(:schedule_hearing_status) { "in_progress" }
       let!(:schedule_hearing_task) do
-        create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
+        create(:schedule_hearing_task, :in_progress, appeal: appeal, assigned_to: hearings_user)
       end
 
       it "is waiting for hearing to be scheduled" do
@@ -932,17 +930,17 @@ describe Appeal do
       let!(:schedule_hearing_task) do
         FactoryBot.create(
           :schedule_hearing_task,
+          :completed,
           parent: hearing_task,
-          appeal: appeal,
-          status: Constants.TASK_STATUSES.completed
+          appeal: appeal
         )
       end
       let!(:disposition_task) do
         FactoryBot.create(
           :assign_hearing_disposition_task,
+          :in_progress,
           parent: hearing_task,
-          appeal: appeal,
-          status: Constants.TASK_STATUSES.in_progress
+          appeal: appeal
         )
       end
 
@@ -956,19 +954,15 @@ describe Appeal do
     end
 
     context "in an evidence submission window" do
-      let(:schedule_hearing_status) { "completed" }
       let!(:schedule_hearing_task) do
-        create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
+        create(:schedule_hearing_task, :completed, appeal: appeal, assigned_to: hearings_user)
       end
-      let(:evidence_hold_task_status) { "in_progress" }
       let!(:evidence_submission_task) do
-        EvidenceSubmissionWindowTask.create!(appeal: appeal,
-                                             status: evidence_hold_task_status, assigned_to: Bva.singleton)
+        create(:evidence_submission_window_task, :in_progress, appeal: appeal, assigned_to: Bva.singleton)
       end
-      let(:judge_review_task_status) { "in_progress" }
       let!(:judge_review_task) do
-        create(:ama_judge_decision_review_task,
-               assigned_to: judge, appeal: appeal, status: judge_review_task_status)
+        create(:ama_judge_decision_review_task, :in_progress,
+               assigned_to: judge, appeal: appeal)
       end
 
       it "is in evidentiary period " do
@@ -979,19 +973,16 @@ describe Appeal do
     end
 
     context "assigned to judge" do
-      let(:schedule_hearing_status) { "completed" }
       let!(:schedule_hearing_task) do
-        create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
+        create(:schedule_hearing_task, :completed, appeal: appeal, assigned_to: hearings_user)
       end
-      let(:evidence_hold_task_status) { "completed" }
       let!(:evidence_submission_task) do
-        EvidenceSubmissionWindowTask.create!(appeal: appeal,
-                                             status: evidence_hold_task_status, assigned_to: Bva.singleton)
+        create(:evidence_submission_window_task, :completed, appeal: appeal,
+                                                             assigned_to: Bva.singleton)
       end
-      let(:judge_review_task_status) { "in_progress" }
       let!(:judge_review_task) do
-        create(:ama_judge_decision_review_task,
-               assigned_to: judge, appeal: appeal, status: judge_review_task_status)
+        create(:ama_judge_decision_review_task, :in_progress,
+               assigned_to: judge, appeal: appeal)
       end
 
       it "waiting for a decision" do
@@ -1002,12 +993,11 @@ describe Appeal do
     end
 
     context "have a decision with no remands or effectuation, no decision document" do
-      let(:judge_review_task_status) { "completed" }
+      let!(:appeal_root_task) { create(:root_task, :completed, appeal: appeal) }
       let!(:judge_review_task) do
-        create(:ama_judge_decision_review_task,
-               assigned_to: judge, appeal: appeal, status: judge_review_task_status)
+        create(:ama_judge_decision_review_task, :completed,
+               assigned_to: judge, appeal: appeal)
       end
-      let(:root_task_status) { "completed" }
       let!(:not_remanded_decision_issue) do
         create(:decision_issue,
                decision_review: appeal, disposition: "allowed")
@@ -1032,11 +1022,10 @@ describe Appeal do
     end
 
     context "has an effectuation" do
-      let(:root_task_status) { "completed" }
-      let(:judge_review_task_status) { "completed" }
+      let!(:appeal_root_task) { create(:root_task, :completed, appeal: appeal) }
       let!(:judge_review_task) do
-        create(:ama_judge_decision_review_task,
-               assigned_to: judge, appeal: appeal, status: judge_review_task_status)
+        create(:ama_judge_decision_review_task, :completed,
+               assigned_to: judge, appeal: appeal)
       end
       let!(:not_remanded_decision_issue) do
         create(:decision_issue,
@@ -1058,11 +1047,10 @@ describe Appeal do
     end
 
     context "has an active remand" do
-      let(:root_task_status) { "completed" }
-      let(:judge_review_task_status) { "completed" }
+      let!(:appeal_root_task) { create(:root_task, :completed, appeal: appeal) }
       let!(:judge_review_task) do
-        create(:ama_judge_decision_review_task,
-               assigned_to: judge, appeal: appeal, status: judge_review_task_status)
+        create(:ama_judge_decision_review_task, :completed,
+               assigned_to: judge, appeal: appeal)
       end
       let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
       let!(:remanded_decision_issue) do
@@ -1084,11 +1072,10 @@ describe Appeal do
     end
 
     context "has multiple remands" do
-      let(:root_task_status) { "completed" }
-      let(:judge_review_task_status) { "completed" }
+      let!(:appeal_root_task) { create(:root_task, :completed, appeal: appeal) }
       let!(:judge_review_task) do
-        create(:ama_judge_decision_review_task,
-               assigned_to: judge, appeal: appeal, status: judge_review_task_status)
+        create(:ama_judge_decision_review_task, :completed,
+               assigned_to: judge, appeal: appeal)
       end
       let!(:not_remanded_decision_issue) do
         create(:decision_issue,
@@ -1183,12 +1170,12 @@ describe Appeal do
     let(:judge) { create(:user) }
     let(:judge_task_created_date) { receipt_date + 10 }
     let!(:judge_review_task) do
-      create(:ama_judge_decision_review_task,
-             assigned_to: judge, appeal: appeal, created_at: judge_task_created_date, status: "completed")
+      create(:ama_judge_decision_review_task, :completed,
+             assigned_to: judge, appeal: appeal, created_at: judge_task_created_date)
     end
     let!(:judge_quality_review_task) do
-      create(:ama_judge_quality_review_task,
-             assigned_to: judge, appeal: appeal, created_at: judge_task_created_date + 2.days, status: "completed")
+      create(:ama_judge_quality_review_task, :completed,
+             assigned_to: judge, appeal: appeal, created_at: judge_task_created_date + 2.days)
     end
 
     context "decision, no remand and an effectuation" do
@@ -1505,7 +1492,7 @@ describe Appeal do
 
     context "has an open evidence submission task" do
       let!(:evidence_submission_task) do
-        EvidenceSubmissionWindowTask.create!(appeal: appeal, status: "in_progress", assigned_to: Bva.singleton)
+        create(:evidence_submission_window_task, :in_progress, appeal: appeal, assigned_to: Bva.singleton)
       end
 
       it "has an evidentiary_period alert" do
@@ -1516,8 +1503,7 @@ describe Appeal do
     end
 
     context "has a scheduled hearing" do
-      let(:root_task_status) { "in_progress" }
-      let!(:appeal_root_task) { create(:root_task, appeal: appeal, status: root_task_status) }
+      let!(:appeal_root_task) { create(:root_task, :in_progress, appeal: appeal) }
       let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
       let(:hearing_scheduled_for) { Time.zone.today + 15.days }
       let!(:hearing_day) do
@@ -1546,17 +1532,17 @@ describe Appeal do
       let!(:schedule_hearing_task) do
         FactoryBot.create(
           :schedule_hearing_task,
+          :completed,
           parent: hearing_task,
-          appeal: appeal,
-          status: Constants.TASK_STATUSES.completed
+          appeal: appeal
         )
       end
       let!(:disposition_task) do
         FactoryBot.create(
           :assign_hearing_disposition_task,
+          :in_progress,
           parent: hearing_task,
-          appeal: appeal,
-          status: Constants.TASK_STATUSES.in_progress
+          appeal: appeal
         )
       end
 
