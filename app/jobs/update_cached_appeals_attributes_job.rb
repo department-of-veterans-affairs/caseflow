@@ -1,4 +1,6 @@
-BATCH_SIZE = 10
+# frozen_string_literal: true
+
+BATCH_SIZE = 1000
 
 class UpdateCachedAppealsAttributesJob < ApplicationJob
   queue_as :low_priority
@@ -18,7 +20,7 @@ class UpdateCachedAppealsAttributesJob < ApplicationJob
       }
     end
 
-    CachedAppeal.import appeals_to_cache, on_duplicate_key_update: {conflict_target: [:appeal_id, :appeal_type]}
+    CachedAppeal.import appeals_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type] }
   end
 
   def cache_legacy_appeals
@@ -47,7 +49,8 @@ class UpdateCachedAppealsAttributesJob < ApplicationJob
         { vacols_id: vacols_folder[0], docket_number: vacols_folder[1] }
       end
 
-      CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:vacols_id], columns: [:docket_number] }
+      CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:vacols_id],
+        columns: [:docket_number] }
     end
   end
 end
