@@ -64,13 +64,14 @@ export const setEditContentionText = (issueIdx, editedDescription) => ({
   }
 });
 
-export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
+export const addUnidentifiedIssue = (description, notes, correctionType) => (dispatch) => {
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {
       isUnidentified: true,
       description,
-      notes
+      notes,
+      correctionType: correctionType
     }
   });
 };

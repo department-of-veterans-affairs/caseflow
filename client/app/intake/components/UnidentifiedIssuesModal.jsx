@@ -18,7 +18,9 @@ class UnidentifiedIssuesModal extends React.Component {
   }
 
   onAddIssue = () => {
-    this.props.addUnidentifiedIssue(this.state.description, this.state.notes);
+    const isRatingCorrection = this.props.intakeData.hasClearedRatingEp;
+    const correctionType = isRatingCorrection ? 'control' : null;
+    this.props.addUnidentifiedIssue(this.state.description, this.state.notes, correctionType);
     this.props.closeHandler();
   }
 

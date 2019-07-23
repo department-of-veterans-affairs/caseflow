@@ -58,7 +58,7 @@ class ContestableIssue
       sourceReviewType: source_review_type,
       timely: timely?,
       latestIssuesInChain: serialize_latest_decision_issues,
-      is_rating: is_rating
+      isRating: is_rating
     }
   end
 
