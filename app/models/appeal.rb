@@ -160,7 +160,7 @@ class Appeal < DecisionReview
     #  in the assigned status, and do not have any MailType tasks that block
     return false unless tasks.active.where(type: DistributionTask.name).any?
 
-    tasks.open.where(type: MailTask.name).each |mail_task| do
+    MailTask.open.where(appeal: self).find_each do |mail_task|
       return false if mail_task.blocking?
     end
 

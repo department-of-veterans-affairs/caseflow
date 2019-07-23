@@ -41,20 +41,20 @@ describe DistributionTask do
     end
   end
 
-  describe ".available_actions", :focus => true do
-
+  describe ".available_actions" do
     let(:user) { FactoryBot.create(:user) }
     let(:scm_user) { FactoryBot.create(:user) }
     let(:scm_org) { SpecialCaseMovementTeam.singleton }
+    let(:root_task) { FactoryBot.create(:root_task) }
     let(:distribution_task) do
       DistributionTask.create!(
-        appeal: create(:appeal),
-        assigned_to: Bva.singleton,
-        status: "on_hold"
+        appeal: root_task.appeal,
+        assigned_to: Bva.singleton
       )
     end
 
     before do
+      OrganizationsUser.add_user_to_organization(user, MailTeam.singleton)
       OrganizationsUser.add_user_to_organization(scm_user, scm_org)
     end
 
@@ -68,17 +68,16 @@ describe DistributionTask do
 
     it "with congressional interest mail task it has no actions" do
       CongressionalInterestMailTask.create_from_params({
-          appeal: distribution_task.appeal,
-          parent_id: distribution_task.appeal.root_task.id
-        }, user)
+                                                         appeal: distribution_task.appeal,
+                                                         parent_id: distribution_task.appeal.root_task.id
+                                                       }, user)
       expect(distribution_task.available_actions(scm_user).count).to eq(0)
     end
 
     it "with address change mail task it has actions" do
-      #create blocking mail task
       AodMotionMailTask.create!(
         appeal: distribution_task.appeal,
-        parent_id: distribution_task.appeal.root_task.id
+        parent_id: distribution_task.appeal.root_task.id,
         assigned_to: MailTeam.singleton
       )
       expect(distribution_task.available_actions(scm_user).count).to eq(1)
