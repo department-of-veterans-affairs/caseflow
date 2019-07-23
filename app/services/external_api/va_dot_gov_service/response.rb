@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
 class ExternalApi::VADotGovService::Response
+  attr_reader :response, :code, :body, :messages
+
   def self.full_address(*addresses)
     addresses.reject(&:blank?).join(" ")
   end
 
   def initialize(api_response)
     @response = api_response
-    @code = response.code
+    @code = @response.code
     @body = JSON.parse(response.body).symbolize_keys
     @messages = body[:messages].map do |message|
       ExternalApi::VADotGovService::Response::ResponseMessage.new(message)

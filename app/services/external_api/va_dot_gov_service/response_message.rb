@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ExternalApi::VADotGovService::Response::ResponseMessage
+  attr_reader :message
+
   def initialize(message)
     @message = message
   end

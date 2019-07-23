@@ -3,6 +3,8 @@
 class VaDotGovAddressValidator
   include VaDotGovAddressValidator::Validations
 
+  attr_reader :appeal
+
   STATUSES = {
     matched_available_hearing_locations: :matched_available_hearing_locations,
     philippines_exception: :defaulted_to_philippines_RO58,
