@@ -23,7 +23,12 @@ export const toggleUntimelyExemptionModal = (currentIssueAndNotes = {}) => ({
 });
 
 export const toggleIssueRemoveModal = () => ({
-  type: ACTIONS.TOGGLE_ISSUE_REMOVE_MODAL
+  type: ACTIONS.TOGGLE_ISSUE_REMOVE_MODAL,
+  payload: { index }
+});
+
+export const toggleCorrectionTypeModal = () => ({
+  type: ACTIONS.TOGGLE_CORRECTION_TYPE_MODAL
 });
 
 export const toggleLegacyOptInModal = (currentIssueAndNotes = {}) => ({
@@ -46,9 +51,9 @@ export const setIssueWithdrawalDate = (withdrawalDate) => ({
   payload: { withdrawalDate }
 });
 
-export const correctIssue = (index) => ({
+export const correctIssue = ({index, correctionType}) => ({
   type: ACTIONS.CORRECT_ISSUE,
-  payload: { index }
+  payload: { index, correctionType }
 });
 
 export const undoCorrection = (index) => ({
