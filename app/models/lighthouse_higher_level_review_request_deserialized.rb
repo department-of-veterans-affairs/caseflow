@@ -150,23 +150,23 @@ class LighthouseHigherLevelReviewRequestDeserialized
   class NewRatingIssue
     attr_reader :decision_text, :decision_date
 
-    def initialize(decision_text:, decision_date:)
-      fail unless decision_text.is_a?(String) && valid_date_format?(decision_date)
+    def initialize(options)
+      text, date = options.values_at :decision_text, :decision_date
+      fail unless text.is_a?(String) && ::LighthouseHigherLevelReviewRequestDeserialized.valid_date_format?(date)
 
-      @decision_text = decision_text
-      @decision_date = decision_date
+      @decision_text = text
+      @decision_date = date
     end
   end
 
-  class NewNonratingIssue
+  class NewNonratingIssue < NewRatingIssue
     attr_reader :nonrating_issue_category
-
-    delegate :decision_text, :decision_date, to: :new_rating_issue
 
     def initialize(options)
       # options should have these keys: decision_text, decision_date, nonrating_issue_category, benefit_type
-      @new_rating_issue = NewRatingIssue.new options
-      category = options["nonrating_issue_category"]
+      super options
+
+      category, benefit_type = options.values_at :nonrating_issue_category, :benefit_type
       fail unless category.in? NONRATING_ISSUE_CATEGORIES[benefit_type]
 
       @nonrating_issue_category = category
@@ -174,29 +174,27 @@ class LighthouseHigherLevelReviewRequestDeserialized
   end
 
   # references an existing a rating issue
-  class RatingIssue
+  class RatingIssue < NewRatingIssue
     attr_reader :id
     alias contested_rating_issue_reference_id id
 
-    delegate :decision_text, :decision_date, to: :new_rating_issue
-
     def initialize(options)
-      # options should have these keys: decision_text, decision_date, id
-      @new_rating_issue = NewRatingIssue.new options
+      # options should have these keys: decision_text, decision_date, id, notes
+      super options
+
       fail unless (@id = options[:id])
     end
   end
 
   # references an existing a nonrating issue
-  class NonratingIssue
+  class NonratingIssue < NewNonratingIssue
     attr_reader :id
     alias caseflow_id id
 
-    delegate :decision_text, :decision_date, :nonrating_issue_category, to: :new_nonrating_issue
-
     def initialize(options)
       # options should have these keys: id, decision_text, decision_date, nonrating_issue_category, benefit_type
-      @new_nonrating_issue = NewNonratingIssue.new options
+      super options
+
       @id = Integer String options[:id]
     end
   end
@@ -221,10 +219,18 @@ class LighthouseHigherLevelReviewRequestDeserialized
   def hash_for_complete!
     {
       request_issues: [
+        {
+          "benefit_type": "fiduciary",
+          "nonrating_issue_category": "Appointment of a Fiduciary (38 CFR 13.100)",
+          "decision_text": "ntfoetnoienft",
+          "decision_date": "2019-06-09",
+          "ineligible_due_to_id": null,
+          "ineligible_reason": null,
+          "withdrawal_date": null
+        }
       ]
     }
   end
-
 
   # OTHER METHODS
 
@@ -245,7 +251,7 @@ class LighthouseHigherLevelReviewRequestDeserialized
     arg.is_a?(TrueClass) || arg.is_a?(FalseClass)
   end
 
-  def valid_date_format?(date)
+  def self.valid_date_format?(date)
     # should be "YYYY-MM-DD"
     Date.valid_date?(*(date.split("-").map { |s| Integer s }))
   end
@@ -253,7 +259,7 @@ class LighthouseHigherLevelReviewRequestDeserialized
   def initialize_attributes(attributes)
     ATTRIBUTES.each { |k| instance_variable_set("@#{k}", attributes[k.camelize(:lower)]) }
 
-    fail unless valid_date_format? receipt_date
+    fail unless self.class.valid_date_format? receipt_date
 
     %w[
       informal_conference
@@ -278,11 +284,13 @@ class LighthouseHigherLevelReviewRequestDeserialized
   def initialize_issues(issues)
     @issues = issues.map do |issue|
       id, attributes = issue.values_at "id", "attributes"
+
       klass = (id ? "" : "New") + issue["type"].camelize
       fail unless klass.in? ISSUE_CLASSES
+      klass = Object.const_get "LighthouseHigherLevelReviewRequestDeserialized::#{klass}"
 
-      klass = "LighthouseHigherLevelReviewRequestDeserialized::#{klass}"
-      Object.const_get(klass).new(attributes.deep_transform_keys(&:underscore).merge(id: id))
+      attributes = (attributes || {}).deep_transform_keys(&:underscore).merge(benefit_type: benefit_type).merge(id ? { id: id } : {}).symbolize_keys
+      klass.new attributes
     end
   end
 end
