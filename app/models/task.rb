@@ -473,8 +473,8 @@ class Task < ApplicationRecord
     if status != Constants.TASK_STATUSES.assigned
       # Send this to Sentry for now to find cases where we create
       # tasks with statuses other than assigned
-      fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
-      # Raven.capture_exception(Caseflow::Error::InvalidStatusOnTaskCreate.new)
+      # fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
+      Raven.capture_exception(Caseflow::Error::InvalidStatusOnTaskCreate.new)
     end
 
     true
