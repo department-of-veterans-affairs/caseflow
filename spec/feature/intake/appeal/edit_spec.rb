@@ -245,7 +245,7 @@ feature "Appeal Edit issues" do
                           nonrating_request_issue.id, rating_request_issue.id]
 
       # duplicate issues should be neither added nor removed
-      expect(request_issue_update.created_issues.map(&:id)).to_not include(non_modified_ids)
+      expect(request_issue_update.added_issues.map(&:id)).to_not include(non_modified_ids)
       expect(request_issue_update.removed_issues.map(&:id)).to_not include(non_modified_ids)
     end
   end

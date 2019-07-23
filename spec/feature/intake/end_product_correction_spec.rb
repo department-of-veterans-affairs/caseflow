@@ -45,12 +45,30 @@ feature "End Product Correction (EP 930)" do
     )
   end
 
+  let!(:test1) do
+    create(
+      :request_issue,
+      decision_review: claim_review,
+      contested_rating_issue_reference_id: "abcd",
+      contested_rating_issue_profile_date: (receipt_date - 2.days).to_datetime,
+      contested_issue_description: "Test1",
+      decision_date: Time.zone.now - 2.days
+    )
+  end
+
+  let!(:test2) do
+    create(
+      :request_issue, :nonrating,
+      decision_review: claim_review
+    )
+  end
+
   feature "with cleared end product on higher level review" do
     let(:claim_review) do
       HigherLevelReview.create!(
         veteran_file_number: veteran.file_number,
         receipt_date: receipt_date,
-        informal_conference: false,
+        informal_conference: true,
         same_office: false,
         benefit_type: benefit_type,
         veteran_is_not_claimant: false

@@ -14,7 +14,7 @@ class RequestIssuesUpdate < ApplicationRecord
 
   delegate :veteran, :cancel_active_tasks, to: :review
   delegate :withdrawn_issues, to: :withdrawal
-  delegate :corrected_issues, to: :correction
+  delegate :corrected_issues, :correction_issues, to: :correction
 
   def perform!
     return false unless validate_before_perform
@@ -69,7 +69,7 @@ class RequestIssuesUpdate < ApplicationRecord
     processed!
   end
 
-  def created_issues
+  def added_issues
     after_issues - before_issues
   end
 
@@ -90,7 +90,11 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def edited_issues
-    @edited_issues ||= edited_request_issue_ids ? fetch_edited_issues : calculate_edited_issues
+    edited_request_issue_ids ? fetch_edited_issues : calculate_edited_issues
+  end
+
+  def all_updated_issues
+    added_issues + removed_issues + withdrawn_issues + edited_issues + corrected_issues + correction_issues
   end
 
   private
@@ -190,10 +194,7 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def correction
-    @correction ||= RequestIssueCorrection.new(
-      review: review,
-      request_issues_data: @request_issues_data
-    )
+    @correction ||= RequestIssueCorrection.new(self, @request_issues_data)
   end
 
   def process_corrected_issues!

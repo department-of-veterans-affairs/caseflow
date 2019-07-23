@@ -391,7 +391,8 @@ class RequestIssue < ApplicationRecord
       contested_decision_issue_id: contested_decision_issue_id,
       withdrawal_date: withdrawal_date,
       contested_issue_description: contested_issue_description,
-      end_product_cleared: end_product_establishment&.status_cleared?
+      end_product_cleared: end_product_establishment&.status_cleared?,
+      end_product_code: end_product_code
     }
   end
 
