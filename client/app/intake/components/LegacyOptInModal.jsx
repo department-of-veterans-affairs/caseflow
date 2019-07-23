@@ -69,6 +69,7 @@ class LegacyOptInModal extends React.Component {
   onAddIssue = () => {
     const currentIssue = this.props.intakeData.currentIssueAndNotes.currentIssue;
     const notes = this.props.intakeData.currentIssueAndNotes.notes;
+    const correctionType = isCorrection(currentIssue.isRating, this.props.intakeData) ? 'control' : null;
 
     if (this.requiresUntimelyExemption()) {
       return this.props.toggleUntimelyExemptionModal({ currentIssue,
@@ -82,7 +83,7 @@ class LegacyOptInModal extends React.Component {
         vacolsId: this.state.vacolsId,
         vacolsSequenceId: this.state.vacolsSequenceId,
         eligibleForSocOptIn: this.state.eligibleForSocOptIn,
-        correctionType: isCorrection(currentIssue.isRating, this.props.intakeData) ? 'control' : null
+        correctionType
       });
     } else {
       this.props.addContestableIssue({
@@ -93,7 +94,7 @@ class LegacyOptInModal extends React.Component {
         vacolsSequenceId: this.state.vacolsSequenceId,
         eligibleForSocOptIn: this.state.eligibleForSocOptIn,
         notes,
-        correctionType: isCorrection ? 'control' : null
+        correctionType
       });
     }
     this.props.toggleLegacyOptInModal();

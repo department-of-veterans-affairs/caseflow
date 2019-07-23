@@ -36,7 +36,7 @@ class UntimelyExemptionModal extends React.Component {
         vacolsId: currentIssueData.vacolsId,
         vacolsSequenceId: currentIssueData.vacolsSequenceId,
         eligibleForSocOptIn: currentIssueData.eligibleForSocOptIn,
-        correctionType: isCorrection(currentIssue.isRating, this.props.intakeData) ? 'control' : null
+        correctionType: isCorrection(false, this.props.intakeData) ? 'control' : null
       });
     } else {
       this.props.addContestableIssue({
@@ -50,7 +50,7 @@ class UntimelyExemptionModal extends React.Component {
         vacolsId: currentIssueData.vacolsId,
         vacolsSequenceId: currentIssueData.vacolsSequenceId,
         eligibleForSocOptIn: currentIssueData.eligibleForSocOptIn,
-        correctionType: isCorrection ? 'control' : null
+        correctionType: isCorrection(currentIssue.isRating, this.props.intakeData) ? 'control' : null
       });
     }
     this.props.closeHandler();

@@ -70,6 +70,7 @@ describe ContestableIssue do
         decisionIssueId: nil,
         approxDecisionDate: promulgation_date,
         description: rating_issue.decision_text,
+        isRating: true,
         rampClaimId: nil,
         titleOfActiveReview: nil,
         sourceReviewType: nil,
@@ -89,6 +90,7 @@ describe ContestableIssue do
           decisionIssueId: nil,
           approxDecisionDate: promulgation_date,
           description: rating_issue.decision_text,
+          isRating: true,
           rampClaimId: nil,
           titleOfActiveReview: nil,
           sourceReviewType: nil,
@@ -122,10 +124,12 @@ describe ContestableIssue do
         decisionIssueId: decision_issue.id,
         approxDecisionDate: caseflow_decision_date,
         description: decision_issue.description,
+        isRating: true,
         rampClaimId: nil,
         titleOfActiveReview: nil,
         sourceReviewType: "Appeal",
         timely: true,
+        isRating: true,
         latestIssuesInChain: [{ id: decision_issue.id, approxDecisionDate: caseflow_decision_date }]
       )
     end
@@ -141,6 +145,7 @@ describe ContestableIssue do
           decisionIssueId: decision_issue.id,
           approxDecisionDate: caseflow_decision_date,
           description: decision_issue.description,
+          isRating: true,
           rampClaimId: nil,
           titleOfActiveReview: nil,
           sourceReviewType: "Appeal",
