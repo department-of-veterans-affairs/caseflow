@@ -16,6 +16,8 @@ class ExternalApi::VADotGovService::FacilitiesResponse < ExternalApi::VADotGovSe
   end
 
   class Facility
+    attr_reader :facility, :distance
+
     def initialize(facility, distance)
       @facility = facility
       @distance = distance
