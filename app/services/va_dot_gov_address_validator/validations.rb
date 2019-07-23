@@ -17,8 +17,28 @@ module VaDotGovAddressValidator::Validations
     end
   end
 
+  def valid_states
+    @valid_states ||= RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? }.pluck(:state)
+  end
+
   def error_handler
     @error_handler ||= VaDotGovAddressValidator::ErrorHandler.new(appeal: appeal, valid_address: valid_address)
+  end
+
+  def valid_address_error
+    valid_address_result[:error] if valid_address.nil?
+  end
+
+  def state_code_error
+    Caseflow::Error::VaDotGovForeignVeteranError.new if state_code.nil? || !valid_states.include?(state_code)
+  end
+
+  def closest_regional_office_error
+    closest_regional_office_result[:error]
+  end
+
+  def available_hearing_locations_error
+    available_hearing_locations_result[:error]
   end
 
   def error_status
@@ -53,25 +73,5 @@ module VaDotGovAddressValidator::Validations
 
   def veteran_lives_in_texas?
     state_code == "TX"
-  end
-
-  def valid_address_error
-    valid_address_result[:error] if valid_address.nil?
-  end
-
-  def state_code_error
-    Caseflow::Error::VaDotGovForeignVeteranError.new if state_code.nil? || !valid_states.include?(state_code)
-  end
-
-  def closest_regional_office_error
-    closest_regional_office_result[:error]
-  end
-
-  def available_hearing_locations_error
-    available_hearing_locations_result[:error]
-  end
-
-  def valid_states
-    @valid_states ||= RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? }.pluck(:state)
   end
 end
