@@ -12,6 +12,7 @@ import _ from 'lodash';
 import { formatDateStr, getMinutesToMilliseconds } from '../../util/DateUtil';
 import LoadingLabel from './LoadingLabel';
 import SearchableDropdown from '../SearchableDropdown';
+import COPY from '../../../COPY.json';
 
 class HearingDateDropdown extends React.Component {
   componentDidMount() {
