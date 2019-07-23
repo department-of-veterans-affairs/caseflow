@@ -2367,7 +2367,7 @@ describe LegacyAppeal do
 
           before do
             on_hold_root = create(:root_task, appeal: appeal, updated_at: pre_ama - 1)
-            create(:generic_task, status: :on_hold, appeal: appeal, parent: on_hold_root, updated_at: pre_ama + 1)
+            create(:generic_task, :on_hold, appeal: appeal, parent: on_hold_root, updated_at: pre_ama + 1)
           end
 
           it "it returns something" do
