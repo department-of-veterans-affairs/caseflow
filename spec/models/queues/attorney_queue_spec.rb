@@ -34,7 +34,7 @@ describe AttorneyQueue do
         end
       end
       let!(:action5) do
-        create(:colocated_task, assigned_by: user, status: "in_progress", assigned_to: Colocated.singleton)
+        create(:colocated_task, :in_progress, assigned_by: user, assigned_to: Colocated.singleton)
       end
 
       it "should return the list" do

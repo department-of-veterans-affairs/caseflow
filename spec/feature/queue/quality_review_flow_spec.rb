@@ -30,19 +30,19 @@ RSpec.feature "Quality Review workflow" do
     let!(:judge_task) do
       FactoryBot.create(
         :ama_judge_decision_review_task,
+        :completed,
         appeal: appeal,
         parent: root_task,
-        assigned_to: judge_user,
-        status: :completed
+        assigned_to: judge_user
       )
     end
     let!(:attorney_task) do
       FactoryBot.create(
         :ama_attorney_task,
+        :completed,
         appeal: appeal,
         parent: judge_task,
-        assigned_to: attorney_user,
-        status: :completed
+        assigned_to: attorney_user
       )
     end
     let!(:qr_task) do
@@ -113,7 +113,8 @@ RSpec.feature "Quality Review workflow" do
 
         visit "/queue"
 
-        click_on veteran_full_name
+        judge_qa_review_task = JudgeQualityReviewTask.first
+        find("#veteran-name-for-task-#{judge_qa_review_task.id}").click
 
         find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, match: :first).click
 
@@ -172,7 +173,8 @@ RSpec.feature "Quality Review workflow" do
 
         visit "/queue"
 
-        click_on veteran_full_name
+        judge_qa_review_task = JudgeQualityReviewTask.first
+        find("#veteran-name-for-task-#{judge_qa_review_task.id}").click
 
         find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, match: :first).click
         expect(page).to have_content(qr_instructions)
@@ -219,7 +221,7 @@ RSpec.feature "Quality Review workflow" do
     let(:hold_length) { 30 }
 
     let!(:judge_task) do
-      FactoryBot.create(:ama_judge_task, appeal: appeal, parent: root_task, assigned_to: judge_user, status: :completed)
+      FactoryBot.create(:ama_judge_task, :completed, appeal: appeal, parent: root_task, assigned_to: judge_user)
     end
     let!(:qr_org_task) { QualityReviewTask.create_from_root_task(root_task) }
 

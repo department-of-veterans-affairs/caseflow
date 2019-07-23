@@ -85,7 +85,7 @@ describe MailTask do
 
     context "when the task's appeal has a closed HearingTask" do
       before do
-        FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal, status: Constants.TASK_STATUSES.completed)
+        FactoryBot.create(:hearing_task, :completed, parent: root_task, appeal: appeal)
       end
 
       it "indicates there there is not a pending_hearing_task" do
