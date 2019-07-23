@@ -212,7 +212,7 @@ class ClaimReview < DecisionReview
   private
 
   def cleared_end_products
-    end_product_establishments.select { |ep| ep.status_cleared?(sync: true) }
+    @cleared_end_products ||= end_product_establishments.select { |ep| ep.status_cleared?(sync: true) }
   end
 
   def has_cleared_rating_ep?

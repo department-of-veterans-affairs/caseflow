@@ -7,6 +7,7 @@ import RadioField from '../../components/RadioField';
 import TextField from '../../components/TextField';
 import { BOOLEAN_RADIO_OPTIONS } from '../constants';
 import { addContestableIssue, addNonratingRequestIssue } from '../actions/addIssues';
+import { isCorrection } from '../util';
 
 class UntimelyExemptionModal extends React.Component {
   constructor(props) {
@@ -21,9 +22,6 @@ class UntimelyExemptionModal extends React.Component {
   onAddIssue = () => {
     const currentIssueData = this.props.intakeData.currentIssueAndNotes;
     const currentIssue = currentIssueData.currentIssue;
-    const isRatingCorrection = currentIssue.isRating && this.props.intakeData.hasClearedRatingEp;
-    const isNonratingCorrection = !currentIssue.isRating && this.props.intakeData.hasClearedNonratingEp;
-    const isCorrection = isRatingCorrection || isNonratingCorrection;
 
     if (currentIssue.category) {
       this.props.addNonratingRequestIssue({
@@ -38,7 +36,7 @@ class UntimelyExemptionModal extends React.Component {
         vacolsId: currentIssueData.vacolsId,
         vacolsSequenceId: currentIssueData.vacolsSequenceId,
         eligibleForSocOptIn: currentIssueData.eligibleForSocOptIn,
-        correctionType: isCorrection ? 'control' : null
+        correctionType: isCorrection(currentIssue.isRating, this.props.intakeData) ? 'control' : null
       });
     } else {
       this.props.addContestableIssue({

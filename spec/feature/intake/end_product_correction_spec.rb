@@ -63,20 +63,15 @@ feature "End Product Correction (EP 930)" do
   end
 
   feature "with cleared end product on higher level review" do
-    let(:claim_review) do
-      HigherLevelReview.create!(
-        veteran_file_number: veteran.file_number,
-        receipt_date: receipt_date,
-        informal_conference: false,
-        same_office: false,
-        benefit_type: benefit_type,
-        veteran_is_not_claimant: false
-      )
+    let(:claim_review_type) { "higher_level_review" }
+    let!(:claim_review) do
+      create(claim_review_type.to_sym, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
     end
+    let(:edit_path) { "#{claim_review_type.pluralize}/#{cleared_end_product.claim_id}/edit" }
 
     it "edits are prevented if correct claim reviews feature is not enabled" do
-      visit_non_editable_page("higher_level_reviews")
-      expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
+      visit edit_path
+      check_page_not_editable(claim_review_type)
     end
 
     context "when correct claim reviews feature is enabled" do
@@ -85,81 +80,132 @@ feature "End Product Correction (EP 930)" do
 
       context "when a user corrects an existing issue" do
         it "creates a correction issue and EP, and closes the existing issue with no decision" do
-          visit_edit_page("higher_level_reviews")
+          visit edit_path
           correct_existing_request_issue
-          submit_edit
         end
       end
 
       context "when a user adds a rating issue" do
         it "creates a correction issue and EP" do
-          visit_edit_page("higher_level_reviews")
-          click_intake_add_issue
-          add_intake_rating_issue("Left knee granted")
-          click_edit_submit
-          safe_click ".confirm"
-          confirm_930_modal
+          visit edit_path
+          check_adding_rating_correction_issue
         end
       end
 
       context "when a user adds a nonrating issue" do
-        it "creates a correction issue and EP" do
+        let(:ep_code) { "030HLRNR" }
 
+        it "creates a correction issue and EP" do
+          visit edit_path
+          check_adding_nonrating_correction_issue
         end
       end
 
       context "when a user adds an unidentified issue" do
+        let(:ep_code) { "030HLRR" }
+
         it "creates a correction issue and EP" do
-
+          visit edit_path
+          check_adding_unidentified_correction_issue
         end
-      end
-
-      it "allows a user to navigate to the edit page" do
-        visit_editable_page_and_correct_request_issues("higher_level_reviews")
       end
     end
   end
 
-  # feature "with cleared end product on supplemental claim" do
-  #   let(:claim_review) do
-  #     SupplementalClaim.create!(
-  #       veteran_file_number: veteran.file_number,
-  #       receipt_date: receipt_date,
-  #       benefit_type: benefit_type,
-  #       veteran_is_not_claimant: false
-  #     )
-  #   end
-  #
-  #   it "edits are prevented if correct claim reviews feature is not enabled" do
-  #     visit_non_editable_page("supplemental_claims")
-  #     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
-  #   end
-  #
-  #   context "when correct claim reviews feature is enabled" do
-  #     it "allows a user to navigate to the edit page" do
-  #       visit_edit_page("supplemental_claims")
-  #       correct_existing_request_issue
-  #       click_edit_submit
-  #     end
-  #   end
-  # end
+  feature "with cleared end product on supplemental claim" do
+    let(:claim_review_type) { "supplemental_claim" }
+    let!(:claim_review) do
+      create(claim_review_type.to_sym, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
+    end
+    let(:edit_path) { "#{claim_review_type.pluralize}/#{cleared_end_product.claim_id}/edit" }
+
+    it "edits are prevented if correct claim reviews feature is not enabled" do
+      visit edit_path
+      check_page_not_editable(claim_review_type)
+    end
+
+    context "when correct claim reviews feature is enabled" do
+      before { enable_features }
+      after { disable_features }
+
+      context "when a user corrects an existing issue" do
+        it "creates a correction issue and EP, and closes the existing issue with no decision" do
+          visit edit_path
+          correct_existing_request_issue
+        end
+      end
+
+      context "when a user adds a rating issue" do
+        it "creates a correction issue and EP" do
+          visit edit_path
+          check_adding_rating_correction_issue
+        end
+      end
+
+      context "when a user adds a nonrating issue" do
+        let(:ep_code) { "030HLRNR" }
+
+        it "creates a correction issue and EP" do
+          visit edit_path
+          check_adding_nonrating_correction_issue
+        end
+      end
+
+      context "when a user adds an unidentified issue" do
+        let(:ep_code) { "030HLRR" }
+
+        it "creates a correction issue and EP" do
+          visit edit_path
+          check_adding_unidentified_correction_issue
+        end
+      end
+    end
+  end
 end
 
-def visit_non_editable_page(type)
-  visit "/#{type}/#{cleared_end_product.claim_id}/edit/"
-  expect(page).to have_current_path("/#{type}/#{cleared_end_product.claim_id}/edit/cleared_eps")
+
+def check_page_not_editable(type)
+  expect(page).to have_current_path("/#{type}s/#{cleared_end_product.claim_id}/edit/cleared_eps")
   expect(page).to have_content("Issues Not Editable")
+  expect(page).to have_content(Constants.INTAKE_FORM_NAMES.send(type))
 end
 
 def correct_existing_request_issue
   click_correct_intake_issue_dropdown("PTSD denied")
-  expect(page).to have_content("This issue will be added to a 930 EP for correction")
+  click_edit_submit
+  confirm_930_modal
 end
 
 def visit_edit_page(type)
   visit "#{type}/#{cleared_end_product.claim_id}/edit/"
   expect(page).to have_content("Edit Issues")
   expect(page).to have_content("Cleared, waiting for decision")
+end
+
+def check_adding_rating_correction_issue
+  click_intake_add_issue
+  add_intake_rating_issue("Left knee granted")
+  click_edit_submit
+  safe_click ".confirm"
+  confirm_930_modal
+end
+
+def check_adding_nonrating_correction_issue
+  click_intake_add_issue
+  click_intake_no_matching_issues
+  add_intake_nonrating_issue(date: promulgation_date.mdY)
+  click_edit_submit
+  safe_click ".confirm"
+  confirm_930_modal
+end
+
+def check_adding_unidentified_correction_issue
+  click_intake_add_issue
+  add_intake_unidentified_issue
+  click_edit_submit
+  safe_click "#Unidentified-issue-button-id-1"
+  safe_click ".confirm"
+  confirm_930_modal
 end
 
 def confirm_930_modal

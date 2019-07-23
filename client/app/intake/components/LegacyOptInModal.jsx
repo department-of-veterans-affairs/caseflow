@@ -1,8 +1,9 @@
+import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
-
 import { formatDateStr } from '../../util/DateUtil';
+import { isCorrection } from '../util';
 import {
   addContestableIssue,
   addNonratingRequestIssue,
@@ -10,8 +11,6 @@ import {
   toggleLegacyOptInModal } from '../actions/addIssues';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
-
-import _ from 'lodash';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -70,9 +69,6 @@ class LegacyOptInModal extends React.Component {
   onAddIssue = () => {
     const currentIssue = this.props.intakeData.currentIssueAndNotes.currentIssue;
     const notes = this.props.intakeData.currentIssueAndNotes.notes;
-    const isRatingCorrection = currentIssue.isRating && this.props.intakeData.hasClearedRatingEp;
-    const isNonratingCorrection = !currentIssue.isRating && this.props.intakeData.hasClearedNonratingEp;
-    const isCorrection = isRatingCorrection || isNonratingCorrection;
 
     if (this.requiresUntimelyExemption()) {
       return this.props.toggleUntimelyExemptionModal({ currentIssue,
@@ -86,7 +82,7 @@ class LegacyOptInModal extends React.Component {
         vacolsId: this.state.vacolsId,
         vacolsSequenceId: this.state.vacolsSequenceId,
         eligibleForSocOptIn: this.state.eligibleForSocOptIn,
-        correctionType: isCorrection ? 'control' : null
+        correctionType: isCorrection(currentIssue.isRating, this.props.intakeData) ? 'control' : null
       });
     } else {
       this.props.addContestableIssue({

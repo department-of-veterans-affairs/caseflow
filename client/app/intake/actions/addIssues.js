@@ -71,7 +71,7 @@ export const addUnidentifiedIssue = (description, notes, correctionType) => (dis
       isUnidentified: true,
       description,
       notes,
-      correctionType: correctionType
+      correctionType
     }
   });
 };

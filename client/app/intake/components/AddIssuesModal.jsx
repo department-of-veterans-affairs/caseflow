@@ -14,6 +14,7 @@ import {
 } from '../actions/addIssues';
 import TextField from '../../components/TextField';
 import { issueByIndex } from '../util/issues';
+import { isCorrection } from '../util';
 
 class AddIssuesModal extends React.Component {
   constructor(props) {
@@ -55,9 +56,6 @@ class AddIssuesModal extends React.Component {
   onAddIssue = () => {
     const currentIssue = issueByIndex(this.props.intakeData.contestableIssues,
       this.state.selectedContestableIssueIndex);
-    const isRatingCorrection = currentIssue.isRating && this.props.intakeData.hasClearedRatingEp;
-    const isNonratingCorrection = !currentIssue.isRating && this.props.intakeData.hasClearedNonratingEp;
-    const isCorrection = isRatingCorrection || isNonratingCorrection;
 
     if (this.hasLegacyAppeals()) {
       this.props.toggleLegacyOptInModal({ currentIssue,
@@ -71,7 +69,7 @@ class AddIssuesModal extends React.Component {
         contestableIssues: this.props.intakeData.contestableIssues,
         isRating: currentIssue.isRating,
         notes: this.state.notes,
-        correctionType: isCorrection ? 'control' : null
+        correctionType: isCorrection(currentIssue.isRating, this.props.intakeData) ? 'control' : null
       });
       this.props.closeHandler();
     }
