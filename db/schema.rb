@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190711194030) do
+ActiveRecord::Schema.define(version: 20190718004714) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -480,6 +480,7 @@ ActiveRecord::Schema.define(version: 20190711194030) do
     t.string "bva_poc"
     t.datetime "created_at", null: false
     t.string "created_by", null: false
+    t.bigint "created_by_id", comment: "The ID of the user who created the Hearing Day"
     t.datetime "deleted_at"
     t.integer "judge_id"
     t.boolean "lock"
@@ -490,7 +491,10 @@ ActiveRecord::Schema.define(version: 20190711194030) do
     t.date "scheduled_for", null: false
     t.datetime "updated_at", null: false
     t.string "updated_by", null: false
+    t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the Hearing Day"
+    t.index ["created_by_id"], name: "index_hearing_days_on_created_by_id"
     t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
+    t.index ["updated_by_id"], name: "index_hearing_days_on_updated_by_id"
   end
 
   create_table "hearing_issue_notes", force: :cascade do |t|
@@ -813,6 +817,8 @@ ActiveRecord::Schema.define(version: 20190711194030) do
     t.string "contested_rating_issue_diagnostic_code", comment: "If the contested issue is a rating issue, this is the rating issue's diagnostic code. Will be nil if this request issue contests a decision issue."
     t.string "contested_rating_issue_profile_date", comment: "If the contested issue is a rating issue, this is the rating issue's profile date. Will be nil if this request issue contests a decision issue."
     t.string "contested_rating_issue_reference_id", comment: "If the contested issue is a rating issue, this is the rating issue's reference id. Will be nil if this request issue contests a decision issue."
+    t.integer "corrected_by_request_issue_id", comment: "If this request issue has been corrected, the ID of the new correction request issue. This is needed for EP 930."
+    t.string "correction_type", comment: "EP 930 correction type. Allowed values: control, local_quality_error, national_quality_error where 'control' is a regular correction, 'local_quality_error' was found after the fact by a local quality review team, and 'national_quality_error' was similarly found by a national quality review team. This is needed for EP 930."
     t.datetime "created_at", comment: "Automatic timestamp when row was created"
     t.date "decision_date", comment: "Either the rating issue's promulgation date or the decision issue's approx decision date"
     t.bigint "decision_review_id", comment: "ID of the decision review that this request issue belongs to"
@@ -853,6 +859,7 @@ ActiveRecord::Schema.define(version: 20190711194030) do
     t.datetime "attempted_at", comment: "Timestamp for when the request issue update processing was last attempted."
     t.integer "before_request_issue_ids", null: false, comment: "An array of the active request issue IDs previously on the decision review before this editing session. Used with after_request_issue_ids to determine appropriate actions (such as which contentions need to be removed).", array: true
     t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
+    t.integer "corrected_request_issue_ids", comment: "An array of the request issue IDs that were corrected during this request issues update.", array: true
     t.datetime "created_at", comment: "Timestamp when record was initially created"
     t.integer "edited_request_issue_ids", comment: "An array of the request issue IDs that were edited during this request issues update", array: true
     t.string "error", comment: "The error message if the last attempt at processing the request issues update was not successful."
@@ -1095,6 +1102,8 @@ ActiveRecord::Schema.define(version: 20190711194030) do
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "document_views", "users"
   add_foreign_key "end_product_establishments", "users"
+  add_foreign_key "hearing_days", "users", column: "created_by_id"
+  add_foreign_key "hearing_days", "users", column: "updated_by_id"
   add_foreign_key "hearing_views", "users"
   add_foreign_key "hearings", "users", column: "created_by_id"
   add_foreign_key "hearings", "users", column: "updated_by_id"
