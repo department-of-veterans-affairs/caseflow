@@ -77,7 +77,7 @@ class SaveButtonUnconnected extends React.Component {
     return this.state.showModals.correctionIssueModal &&
       !this.state.showModals.reviewRemovedModal &&
       !this.state.showModals.issueChangeModal &&
-      !this.state.showModals.unidentifiedIssueModal
+      !this.state.showModals.unidentifiedIssueModal;
   }
 
   confirmModal = (modalToClose) => {
