@@ -55,7 +55,9 @@ class AddIssuesModal extends React.Component {
   onAddIssue = () => {
     const currentIssue = issueByIndex(this.props.intakeData.contestableIssues,
       this.state.selectedContestableIssueIndex);
-    const isCorrection = (this.props.intakeData.clearedEpTypes || []).includes(currentIssue.issueType);
+    const isRatingCorrection = currentIssue.isRating && this.props.intakeData.hasClearedRatingEp;
+    const isNonratingCorrection = !currentIssue.isRating && this.props.intakeData.hasClearedNonratingEp;
+    const isCorrection = isRatingCorrection || isNonratingCorrection;
 
     if (this.hasLegacyAppeals()) {
       this.props.toggleLegacyOptInModal({ currentIssue,
@@ -67,7 +69,7 @@ class AddIssuesModal extends React.Component {
       this.props.addContestableIssue({
         contestableIssueIndex: this.state.selectedContestableIssueIndex,
         contestableIssues: this.props.intakeData.contestableIssues,
-        isRating: currentIssue.issueType === 'rating',
+        isRating: currentIssue.isRating,
         notes: this.state.notes,
         correctionType: isCorrection ? 'control' : null
       });

@@ -21,7 +21,9 @@ class UntimelyExemptionModal extends React.Component {
   onAddIssue = () => {
     const currentIssueData = this.props.intakeData.currentIssueAndNotes;
     const currentIssue = currentIssueData.currentIssue;
-    const isCorrection = (this.props.intakeData.clearedEpTypes || []).includes(currentIssue.issueType);
+    const isRatingCorrection = currentIssue.isRating && this.props.intakeData.hasClearedRatingEp;
+    const isNonratingCorrection = !currentIssue.isRating && this.props.intakeData.hasClearedNonratingEp;
+    const isCorrection = isRatingCorrection || isNonratingCorrection;
 
     if (currentIssue.category) {
       this.props.addNonratingRequestIssue({
@@ -43,7 +45,7 @@ class UntimelyExemptionModal extends React.Component {
         timely: false,
         contestableIssueIndex: currentIssue.index,
         contestableIssues: this.props.intakeData.contestableIssues,
-        isRating: currentIssue.issueType === 'rating',
+        isRating: currentIssue.isRating,
         notes: currentIssueData.notes,
         untimelyExemption: this.state.untimelyExemption,
         untimelyExemptionNotes: this.state.untimelyExemptionNotes,

@@ -7,7 +7,7 @@ class ContestableIssue
   # approx_decision_date is our best guess at the decision date.
   # it is used for timeliness checks on the client side and for user display.
   attr_accessor :rating_issue_reference_id, :approx_decision_date, :description,
-                :ramp_claim_id, :contesting_decision_review, :issue_type,
+                :ramp_claim_id, :contesting_decision_review, :is_rating,
                 :decision_issue, :rating_issue_profile_date, :source_request_issues,
                 :rating_issue_diagnostic_code, :source_decision_review
 
@@ -21,7 +21,7 @@ class ContestableIssue
         ramp_claim_id: rating_issue.ramp_claim_id,
         contesting_decision_review: contesting_decision_review,
         rating_issue_diagnostic_code: rating_issue.diagnostic_code,
-        issue_type: "rating",
+        is_rating: true,
 
         # TODO: These should never be set unless there is a decision issue. We should refactor this to
         # account for that.
@@ -40,7 +40,7 @@ class ContestableIssue
         source_request_issues: decision_issue.request_issues.active,
         source_decision_review: decision_issue.decision_review,
         contesting_decision_review: contesting_decision_review,
-        issue_type: decision_issue.issue_type
+        is_rating: decision_issue.rating?
       )
     end
   end
@@ -58,7 +58,7 @@ class ContestableIssue
       sourceReviewType: source_review_type,
       timely: timely?,
       latestIssuesInChain: serialize_latest_decision_issues,
-      issueType: issue_type
+      is_rating: is_rating
     }
   end
 
