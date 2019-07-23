@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class RequestIssueCorrection
-  def initialize(request_issues_update, request_issues_data)
+  def initialize(request_issues_update: request_issues_update, request_issues_data: request_issues_data)
     @request_issues_update = request_issues_update
     @review = request_issues_update.review
     @request_issues_data = request_issues_data

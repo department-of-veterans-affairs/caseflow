@@ -62,16 +62,14 @@ class ClaimReviewController < ApplicationController
       render json: { redirect_to: claim_review.business_line.tasks_url,
                      beforeIssues: request_issues_update.before_issues.map(&:ui_hash),
                      afterIssues: request_issues_update.after_issues.map(&:ui_hash),
-                     withdrawnIssues: request_issues_update.withdrawn_issues.map(&:ui_hash),
-                     correctedIssues: request_issues_update.corrected_issues.map(&:ui_hash) }
+                     withdrawnIssues: request_issues_update.withdrawn_issues.map(&:ui_hash) }
     else
       render json: {
         redirect_to: nil,
         beforeIssues: request_issues_update.before_issues.map(&:ui_hash),
         afterIssues: request_issues_update.after_issues.map(&:ui_hash),
         updatedIssues: request_issues_update.all_updated_issues.map(&:ui_hash),
-        withdrawnIssues: nil,
-        reviewWithdrawn: claim_review.withdrawn?
+        withdrawnIssues: nil
       }
     end
   end
