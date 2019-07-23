@@ -66,10 +66,22 @@ describe DistributionTask do
       expect(distribution_task.available_actions(scm_user).count).to eq(1)
     end
 
-#    it "with child subtasks it has no actions" do
-    #    create blocking mail task
-      #expect(distribution_task.available_actions(scm_user).count).to eq(0)
-#
-#    end
+    it "with congressional interest mail task it has no actions" do
+      CongressionalInterestMailTask.create_from_params({
+          appeal: distribution_task.appeal,
+          parent_id: distribution_task.appeal.root_task.id
+        }, user)
+      expect(distribution_task.available_actions(scm_user).count).to eq(0)
+    end
+
+    it "with address change mail task it has actions" do
+      #create blocking mail task
+      AodMotionMailTask.create!(
+        appeal: distribution_task.appeal,
+        parent_id: distribution_task.appeal.root_task.id
+        assigned_to: MailTeam.singleton
+      )
+      expect(distribution_task.available_actions(scm_user).count).to eq(1)
+    end
   end
 end

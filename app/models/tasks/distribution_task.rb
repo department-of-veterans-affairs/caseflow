@@ -9,7 +9,7 @@ class DistributionTask < GenericTask
   def available_actions(user)
     return [] unless user
 
-    if ::SpecialCaseMovementTeam.singleton.user_has_access?(user)
+    if special_case_movement_available?
       return [
         Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.to_h
       ]
@@ -31,6 +31,11 @@ class DistributionTask < GenericTask
   end
 
   private
+
+  def special_case_movement_available?
+    ::SpecialCaseMovementTeam.singleton.user_has_access?(user) &&
+      appeal.ready_for_distribution?
+  end
 
   def set_assignee
     self.assigned_to ||= Bva.singleton
