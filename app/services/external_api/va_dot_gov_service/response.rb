@@ -43,6 +43,6 @@ class ExternalApi::VADotGovService::Response
   end
 
   def message_error
-    messages.find { |message| message.error.present? }&.error
+    messages&.find { |message| message.error.present? }&.error
   end
 end
