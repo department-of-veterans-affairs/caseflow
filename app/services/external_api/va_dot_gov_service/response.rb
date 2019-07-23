@@ -29,13 +29,13 @@ class ExternalApi::VADotGovService::Response
   def response_error
     case code
     when 429
-      Caseflow::Error::VaDotGovLimitError.new code: code, message: response_body
+      Caseflow::Error::VaDotGovLimitError.new code: code, message: body
     when 400
-      Caseflow::Error::VaDotGovRequestError.new code: code, message: response_body
+      Caseflow::Error::VaDotGovRequestError.new code: code, message: body
     when 500
-      Caseflow::Error::VaDotGovServerError.new code: code, message: response_body
+      Caseflow::Error::VaDotGovServerError.new code: code, message: body
     else
-      msg = "Error: #{response['body']}, HTTP code: #{code}"
+      msg = "Error: #{body}, HTTP code: #{code}"
       Caseflow::Error::VaDotGovServerError.new code: code, message: msg
     end
   end
