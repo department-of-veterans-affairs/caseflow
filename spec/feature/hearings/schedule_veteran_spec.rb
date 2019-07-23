@@ -477,7 +477,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       )
     end
     let!(:hearings) do
-      (1...hearing_day.total_slots).map do |idx|
+      (1...hearing_day.total_slots + 1).map do |idx|
         create(
           :hearing,
           appeal: create(:appeal, receipt_date: Date.new(2019, 1, idx)),
