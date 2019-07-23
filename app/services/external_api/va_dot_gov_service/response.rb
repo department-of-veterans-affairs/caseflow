@@ -10,7 +10,7 @@ class ExternalApi::VADotGovService::Response
   def initialize(api_response)
     @response = api_response
     @code = @response.code
-    @body = JSON.parse(response.body).symbolize_keys
+    @body = JSON.parse(response.body).deep_symbolize_keys
     @messages = body[:messages]&.map do |message|
       ExternalApi::VADotGovService::ResponseMessage.new(message)
     end
