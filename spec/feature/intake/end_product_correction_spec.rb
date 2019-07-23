@@ -62,6 +62,24 @@ feature "End Product Correction (EP 930)" do
     )
   end
 
+  let!(:test1) do
+    create(
+      :request_issue,
+      decision_review: claim_review,
+      contested_rating_issue_reference_id: "abcd",
+      contested_rating_issue_profile_date: (receipt_date - 2.days).to_datetime,
+      contested_issue_description: "Test1",
+      decision_date: Time.zone.now - 2.days
+    )
+  end
+
+  let!(:test2) do
+    create(
+      :request_issue, :nonrating,
+      decision_review: claim_review
+    )
+  end
+
   feature "with cleared end product on higher level review" do
     let(:claim_review_type) { "higher_level_review" }
     let!(:claim_review) do

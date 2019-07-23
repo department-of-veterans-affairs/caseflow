@@ -123,12 +123,12 @@ describe RequestIssuesUpdate do
       end
     end
 
-    context "#created_issues" do
+    context "#added_issues" do
       before do
         request_issues_update.perform!
       end
 
-      subject { request_issues_update.created_issues }
+      subject { request_issues_update.added_issues }
 
       context "when new issues were added as part of the update" do
         let(:request_issues_data) { request_issues_data_with_new_issue }

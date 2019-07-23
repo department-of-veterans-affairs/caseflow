@@ -477,7 +477,7 @@
   "RAMP_COMPLETED_ALERT": "Send the \"RAMP Acknowledgement Letter\", listing all eligible contentions, and ineligible contentions if applicable.",
   "INELIGIBLE_RAMP_ALERT": "The Veteran’s RAMP Selection Form did not include any issues that are eligible for review under RAMP. Notify the Veteran using the \"RAMP Ineligible Letter\".",
   "INELIGIBLE_HIGHER_LEVEL_REVIEW_ALERT": "Contact the Veteran to verify their lane selection. If you are unable to reach the Veteran, send a letter indicating that their selected lane is not available, and that they may clarify their lane selection within 30 days.",
-  "INDENTIFIED_ALERT": "There is still an unidentified issue that needs to be resolved before sending the notice letter. To edit, go to VBMS claim details and click the \"Edit in Caseflow\" button.",
+  "UNIDENTIFIED_ALERT": "There is still an unidentified issue that needs to be resolved before sending the notice letter. To edit, go to VBMS claim details and click the \"Edit in Caseflow\" button.",
   "INTAKE_VETERAN_NOT_FOUND": "Note: If you are certain the Veteran ID or SSN is correct, the claimant may not exist in the VBA Corporate Database. If you have access, please add claimant to the Corporate Database to continue processing this intake. If you do not have access, please",
   "NON_COMP_ADDRESS_MESSAGE": "The Veteran/appellant has filed a Notice of Disagreement at the Board of Veterans' Appeals. In order to decide that appeal, the Board will need the complete records from",
   "INTAKE_EDIT_TITLE": "Edit contention title",
