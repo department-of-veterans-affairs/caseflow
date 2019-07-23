@@ -48,6 +48,7 @@ class SaveButtonUnconnected extends React.Component {
     if (this.props.state.addedIssues.filter((i) => i.isUnidentified).length > 0) {
       showModals.unidentifiedIssueModal = true;
     }
+
     if (this.props.state.addedIssues.filter((i) => i.correctionType).length > 0) {
       showModals.correctionIssueModal = true;
     }
@@ -70,6 +71,13 @@ class SaveButtonUnconnected extends React.Component {
     this.setState({
       showModals: update(this.state.showModals, updateModal)
     }, callback);
+  }
+
+  showCorrectionIssueModal = () => {
+    return this.state.showModals.correctionIssueModal &&
+      !this.state.showModals.reviewRemovedModal &&
+      !this.state.showModals.issueChangeModal &&
+      !this.state.showModals.unidentifiedIssueModal
   }
 
   confirmModal = (modalToClose) => {
@@ -163,7 +171,7 @@ class SaveButtonUnconnected extends React.Component {
         <p>Are you sure you want to save this issue without fixing the unidentified issue?</p>
       </SaveAlertConfirmModal>}
 
-      { this.state.showModals.correctionIssueModal && <SaveAlertConfirmModal
+      { this.showCorrectionIssueModal() && <SaveAlertConfirmModal
         title="Establish 930 EP"
         buttonText= "Yes, establish"
         onClose={() => this.closeModal('correctionIssueModal')}
