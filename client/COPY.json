@@ -502,5 +502,13 @@
   "SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_TITLE": "Updated Task Successfully",
   "SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_DETAIL": "Successfully sent %s's case to the list of Veterans to be scheduled.",
 
-  "INVALID_RECORD_ERROR_TITLE": "Record is invalid"
+  "INVALID_RECORD_ERROR_TITLE": "Record is invalid",
+
+  "SCHEDULE_VETERAN_SUCCESS_MESSAGE_TITLE": "You have successfully assigned %s to a %s hearing on %s.",
+  "SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL": "To assign another veteran please use the \"Schedule Veterans\" link below. You can also use the hearings section below to view the hearing in new tab.",
+
+  "SCHEDULE_VETERAN_FULL_HEARING_DAY_TITLE": "This hearing day is full",
+  "SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL": "You are about to schedule this Veteran on a full docket. Please verify before scheduling.",
+
+  "HEARING_DATE_LOADING": "Finding upcoming hearing dates for this regional office..."
 }

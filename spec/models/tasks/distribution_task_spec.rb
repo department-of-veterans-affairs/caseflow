@@ -13,10 +13,11 @@ describe DistributionTask do
     end
 
     let(:distribution_task) do
-      DistributionTask.create!(
+      create(
+        :distribution_task,
+        :on_hold,
         appeal: create(:appeal),
-        assigned_to: Bva.singleton,
-        status: "on_hold"
+        assigned_to: Bva.singleton
       )
     end
 

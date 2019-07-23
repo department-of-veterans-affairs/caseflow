@@ -65,7 +65,7 @@ RSpec.feature "Build Hearing Schedule" do
       click_on "Confirm upload"
       expect(page).not_to have_content("We are uploading to VACOLS.", wait: 15)
       expect(page).to have_content("You have successfully assigned judges to hearings", wait: 30)
-      hearing_days = HearingDay.load_days(Date.new(2018, 4, 1), Date.new(2018, 4, 30))
+      hearing_days = HearingDayRange.new(Date.new(2018, 4, 1), Date.new(2018, 4, 30)).load_days
       vlj_ids_count = hearing_days.pluck(:judge_id).compact.count
       expect(vlj_ids_count).to eq(2)
     end
