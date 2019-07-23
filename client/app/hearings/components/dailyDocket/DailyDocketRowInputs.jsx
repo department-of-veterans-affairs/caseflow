@@ -29,7 +29,7 @@ export const DispositionDropdown = ({
       if (!option) {
         return;
       }
-      
+
       const fromDisposition = hearing.disposition;
 
       update({ disposition: option.value });
