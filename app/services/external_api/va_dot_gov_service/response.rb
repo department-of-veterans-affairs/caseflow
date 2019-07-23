@@ -27,6 +27,8 @@ class ExternalApi::VADotGovService::Response
   private
 
   def response_error
+    return if code == 200
+
     case code
     when 429
       Caseflow::Error::VaDotGovLimitError.new code: code, message: body
