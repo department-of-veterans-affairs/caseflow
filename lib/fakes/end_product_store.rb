@@ -39,7 +39,7 @@ class Fakes::EndProductStore
       fail "No values for #{parent_key}" unless children
 
       children.delete(child_key)
-      deflate_and_store(key, children)
+      deflate_and_store(parent_key, children)
     end
 
     private
@@ -60,6 +60,10 @@ class Fakes::EndProductStore
 
   def self.all_keys
     cache_store.redis.keys("#{REDIS_NS}:*")
+  end
+
+  def all_keys
+    self.class.all_keys
   end
 
   def clear!
