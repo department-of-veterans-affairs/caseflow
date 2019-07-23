@@ -22,7 +22,8 @@ class SaveButtonUnconnected extends React.Component {
       showModals: {
         issueChangeModal: false,
         unidentifiedIssueModal: false,
-        reviewRemovedModal: false
+        reviewRemovedModal: false,
+        correctionIssueModal: false
       }
     };
   }
@@ -32,7 +33,8 @@ class SaveButtonUnconnected extends React.Component {
     let showModals = {
       issueChangeModal: false,
       unidentifiedIssueModal: false,
-      reviewRemovedModal: false
+      reviewRemovedModal: false,
+      correctionIssueModal: false
     };
 
     if (this.state.originalIssueNumber !== this.props.state.addedIssues.length) {
@@ -45,6 +47,9 @@ class SaveButtonUnconnected extends React.Component {
 
     if (this.props.state.addedIssues.filter((i) => i.isUnidentified).length > 0) {
       showModals.unidentifiedIssueModal = true;
+    }
+    if (this.props.state.addedIssues.filter((i) => i.correctionType).length > 0) {
+      showModals.correctionIssueModal = true;
     }
 
     if (_.every(showModals, (modal) => modal === false)) {
@@ -156,6 +161,15 @@ class SaveButtonUnconnected extends React.Component {
           removed and replaced with a rated or non-rated issue.
         </p>
         <p>Are you sure you want to save this issue without fixing the unidentified issue?</p>
+      </SaveAlertConfirmModal>}
+
+      { this.state.showModals.correctionIssueModal && <SaveAlertConfirmModal
+        title="Establish 930 EP"
+        buttonText= "Yes, establish"
+        onClose={() => this.closeModal('correctionIssueModal')}
+        onConfirm={() => this.confirmModal('correctionIssueModal')}>
+        <p>
+          You are now creating a 930 EP in VBMS.</p>
       </SaveAlertConfirmModal>}
 
       <Button
