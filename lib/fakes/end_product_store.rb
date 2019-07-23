@@ -50,17 +50,17 @@ class Fakes::EndProductStore
   # rather than veteran_id to make look up easier. Dispositions are similar.
   def create_contention(contention)
     claim_id = contention.claim_id
-    create_ep_child(contention, contention_key(claim_id), :id)
+    create_ep_child(child: contention, key: contention_key(claim_id))
   end
 
   def update_contention(contention)
     claim_id = contention.claim_id
-    update_ep_child(contention, contention_key(claim_id), :id)
+    update_ep_child(child: contention, key: contention_key(claim_id))
   end
 
   def remove_contention(contention)
     claim_id = contention.claim_id
-    remove_ep_child(contention, contention_key(claim_id), :id)
+    remove_ep_child(child: contention, key: contention_key(claim_id))
   end
 
   def contention_key(claim_id)
@@ -75,17 +75,17 @@ class Fakes::EndProductStore
 
   def create_disposition(disposition)
     claim_id = disposition.claim_id
-    create_ep_child(disposition, disposition_key(claim_id), :contention_id)
+    create_ep_child(child: disposition, key: disposition_key(claim_id), id_attr: :contention_id)
   end
 
   def update_disposition(disposition)
     claim_id = disposition.claim_id
-    update_ep_child(disposition, disposition_key(claim_id), :contention_id)
+    update_ep_child(child: disposition, key: disposition_key(claim_id), id_attr: :contention_id)
   end
 
   def remove_disposition(disposition)
     claim_id = disposition.claim_id
-    remove_ep_child(disposition, disposition_key(claim_id), :contention_id)
+    remove_ep_child(child: disposition, key: disposition_key(claim_id), id_attr: :contention_id)
   end
 
   def disposition_key(claim_id)
@@ -112,7 +112,7 @@ class Fakes::EndProductStore
     fetch_and_inflate(key)
   end
 
-  def create_ep_child(child, key, id_attr)
+  def create_ep_child(child:, key:, id_attr: :id)
     children = children_for(key) || {}
     children[child[id_attr]] = child
     deflate_and_store(key, children)

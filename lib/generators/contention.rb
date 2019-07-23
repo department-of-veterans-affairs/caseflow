@@ -24,7 +24,7 @@ class Generators::Contention
 
         if disposition
           disposition_record = OpenStruct.new(
-            claim_id: contention.claim_id,
+            claim_id: claim_id,
             contention_id: contention.id,
             disposition: disposition
           )
