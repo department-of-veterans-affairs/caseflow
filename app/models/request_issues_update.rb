@@ -194,7 +194,10 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def correction
-    @correction ||= RequestIssueCorrection.new(self, @request_issues_data)
+    @correction ||= RequestIssueCorrection.new(
+      request_issues_update: self,
+      request_issues_data: @request_issues_data
+    )
   end
 
   def process_corrected_issues!

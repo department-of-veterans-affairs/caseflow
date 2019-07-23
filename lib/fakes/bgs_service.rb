@@ -54,14 +54,14 @@ class Fakes::BGSService
         in_active_review_receipt_date = Time.zone.parse("2018-04-01")
         completed_review_receipt_date = in_active_review_receipt_date - 30.days
         completed_review_reference_id = "cleared-review-ref-id"
-        contention_id = 999
+        contention_id = rand(1..999)
 
         Generators::Rating.build(
           participant_id: veteran.participant_id
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          profile_date: ama_begin_date.to_datetime + 3.days,
+          profile_date: ama_begin_date + 3.days,
           promulgation_date: ama_begin_date + 7.days,
           issues: [
             { decision_text: "Left knee" },
@@ -73,7 +73,7 @@ class Fakes::BGSService
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          profile_date: ama_begin_date.to_datetime - 10.days,
+          profile_date: ama_begin_date - 10.days,
           promulgation_date: ama_begin_date - 5.days,
           issues: [
             { decision_text: "Issue before AMA not from a RAMP Review", reference_id: "before_ama_ref_id" },
@@ -85,7 +85,7 @@ class Fakes::BGSService
         ramp_begin_date = Date.new(2017, 11, 1)
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          profile_date: ramp_begin_date.to_datetime - 20.days,
+          profile_date: ramp_begin_date - 20.days,
           promulgation_date: ramp_begin_date - 15.days,
           issues: [
             { decision_text: "Issue before test AMA not from a RAMP Review", reference_id: "before_test_ama_ref_id" },
@@ -96,8 +96,8 @@ class Fakes::BGSService
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          promulgation_date: Time.zone.today - 395.days,
-          profile_date: Time.zone.now - 400.days,
+          promulgation_date: Time.zone.today - 395,
+          profile_date: Time.zone.today - 400,
           issues: [
             { decision_text: "Old injury" }
           ]
