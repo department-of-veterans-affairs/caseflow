@@ -69,7 +69,8 @@ class Fakes::EndProductStore
 
   def inflated_contentions_for(claim_id)
     children_to_structs(contention_key(claim_id)).each do |cont|
-      cont.id = cont.id.to_i
+      cont.start_date = Time.zone.parse(cont.start_date)
+      cont.submit_date = Time.zone.parse(cont.submit_date)
     end
   end
 
@@ -93,9 +94,7 @@ class Fakes::EndProductStore
   end
 
   def inflated_dispositions_for(claim_id)
-    children_to_structs(disposition_key(claim_id)).each do |disp|
-      disp.contention_id = disp.contention_id.to_i
-    end
+    children_to_structs(disposition_key(claim_id))
   end
 
   private
@@ -118,7 +117,7 @@ class Fakes::EndProductStore
     deflate_and_store(key, children)
   end
 
-  def update_ep_child(child, key, id_attr)
+  def update_ep_child(child:, key:, id_attr: :id)
     children = children_for(key)
     fail "No values for #{key}" unless children
 
@@ -126,7 +125,7 @@ class Fakes::EndProductStore
     deflate_and_store(key, children)
   end
 
-  def remove_ep_child(child, key, id_attr)
+  def remove_ep_child(child:, key:, id_attr: :id)
     children = children_for(key)
     fail "No values for #{key}" unless children
 
