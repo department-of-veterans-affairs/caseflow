@@ -183,6 +183,8 @@
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_UPLOAD_LINK": "Upload files",
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HISTORY_HEADER": "Upload History",
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK": "View current schedule",
+  "HEARING_SCHEDULE_DOCKET_NO_VETERANS": "No Veterans are scheduled for this hearing day.",
+  "HEARING_SCHEDULE_DOCKET_JUDGE_WITH_NO_HEARINGS": "You have no hearings scheduled for this hearing day.",
 
   "HEARING_SCHEDULE_UPLOAD_PAGE_HEADER": "Upload Files",
   "HEARING_SCHEDULE_UPLOAD_PAGE_INSTRUCTIONS": "Please select the file you are uploading and choose a date range.",
@@ -210,6 +212,8 @@
   "ASSIGN_WIDGET_MODAL_TITLE": "Select a user",
 
   "HEARING_SCHEDULE_VIEW_PAGE_HEADER": "Welcome to Caseflow Hearings!",
+  "HEARING_SCHEDULE_JUDGE_DEFAULT_VIEW_PAGE_HEADER": "Welcome to Your Hearing Schedule",
+  "HEARING_SCHEDULE_JUDGE_SHOW_ALL_VIEW_PAGE_HEADER": "Welcome to Hearing Schedule",
   "HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER": "Board Hearing Schedule",
   "HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK": "Apply",
   "HEARING_SCHEDULE_VIEW_START_DATE_LABEL": "From:",
@@ -240,6 +244,9 @@
   "MODAL_SUBMIT_BUTTON": "Submit",
   "MODAL_CANCEL_BUTTON": "Cancel",
   "MODAL_CONFIRM_BUTTON": "Confirm",
+
+  "BULK_ASSIGN_BUTTON_TEXT": "Assign Tasks",
+  "BULK_ASSIGN_MODAL_TITLE": "Bulk Assign Tasks",
 
   "REGIONAL_OFFICE_REQUIRED_MESSAGE": "Please select a regional office",
 
@@ -491,5 +498,13 @@
   "SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_TITLE": "Updated Task Successfully",
   "SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_DETAIL": "Successfully sent %s's case to the list of Veterans to be scheduled.",
 
-  "INVALID_RECORD_ERROR_TITLE": "Record is invalid"
+  "INVALID_RECORD_ERROR_TITLE": "Record is invalid",
+
+  "SCHEDULE_VETERAN_SUCCESS_MESSAGE_TITLE": "You have successfully assigned %s to a %s hearing on %s.",
+  "SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL": "To assign another veteran please use the \"Schedule Veterans\" link below. You can also use the hearings section below to view the hearing in new tab.",
+
+  "SCHEDULE_VETERAN_FULL_HEARING_DAY_TITLE": "This hearing day is full",
+  "SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL": "You are about to schedule this Veteran on a full docket. Please verify before scheduling.",
+
+  "HEARING_DATE_LOADING": "Finding upcoming hearing dates for this regional office..."
 }

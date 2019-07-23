@@ -9,6 +9,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 
 import JobsPage from './pages/JobsPage';
+import JobPage from './pages/JobPage';
 import { asyncableJobsReducer, mapDataToInitialState } from './reducers';
 
 class AsyncableJobs extends React.PureComponent {
@@ -43,6 +44,11 @@ class AsyncableJobs extends React.PureComponent {
                     path="/asyncable_jobs/:asyncable_job_klass/jobs"
                     title="Background Jobs | Caseflow"
                     component={JobsPage} />
+                  <PageRoute
+                    exact
+                    path="/asyncable_jobs/:asyncable_job_klass/jobs/:id"
+                    title="Background Jobs | Caseflow"
+                    component={JobPage} />
                 </div>
               </AppSegment>
             </AppFrame>

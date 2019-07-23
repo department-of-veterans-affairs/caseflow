@@ -106,6 +106,28 @@ feature "Intake Add Issues Page" do
     end
   end
 
+  context "when edit contention text feature is enabled" do
+    before { FeatureToggle.enable!(:edit_contention_text) }
+
+    it "Allows editing contention text on intake" do
+      start_higher_level_review(veteran)
+      visit "/intake"
+      click_intake_continue
+      click_intake_add_issue
+      add_intake_rating_issue("Left knee granted")
+      edit_contention_text("Left knee granted", "Right knee")
+
+      expect(page).to_not have_content("Left knee granted")
+      expect(page).to have_content("Right knee")
+
+      click_intake_finish
+
+      expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+      expect(page).to have_content("Right knee")
+      expect(RequestIssue.where(edited_description: "Right knee")).to_not be_nil
+    end
+  end
+
   context "check that none of these match works for VACOLS issue" do
     before do
       setup_legacy_opt_in_appeals(veteran.file_number)

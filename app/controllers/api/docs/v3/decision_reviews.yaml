@@ -1,10 +1,14 @@
 openapi: 3.0.0
 info:
   title: Decision Reviews
-  description: API version 0 for Decision Reviews provided by the Lighthouse Project
+  description: API version 3 for Decision Reviews provided by the Lighthouse Project
   version: 3.0.0
 servers:
-  - url: /api/{version}/decision_review
+  - url: https://dev-api.va.gov/services/appeals/{version}/decision_review
+    description: "VA.gov API development environment"
+    variables:
+      version:
+        default: "v3"
 paths:
   /higher_level_reviews:
     post:
@@ -28,26 +32,26 @@ paths:
                   properties:
                     type:
                       type: string
-                      enum: [higher_level_review]
+                      enum: [HigherLevelReview]
                     attributes:
                       type: object
                       required:
-                        - receipt_date
-                        - informal_conference
-                        - same_office
-                        - legacy_opt_in_approved
-                        - benefit_type
+                        - receiptDate
+                        - informalConference
+                        - sameOffice
+                        - legacyOptInApproved
+                        - benefitType
                       properties:
-                        receipt_date:
+                        receiptDate:
                           type: string
                           format: date
-                        informal_conference:
+                        informalConference:
                           type: boolean
-                        same_office:
+                        sameOffice:
                           type: boolean
-                        legacy_opt_in_approved:
+                        legacyOptInApproved:
                           type: boolean
-                        benefit_type:
+                        benefitType:
                           type: string
                           enum:
                             - compensation
@@ -78,7 +82,7 @@ paths:
                               properties:
                                 type:
                                   type: string
-                                  enum: [veteran]
+                                  enum: [Veteran]
                                 id: # veteran_file_number
                                   type: string
                         claimant: # if claimant is not included, the veteran is the claimant (and their participantID is looked up)
@@ -95,15 +99,15 @@ paths:
                               properties:
                                 type:
                                   type: string
-                                  enum: [claimant]
+                                  enum: [Claimant]
                                 id: # participantID
                                   type: string
                                 meta:
                                   type: object
                                   required:
-                                    - payee_code
+                                    - payeeCode
                                   properties:
-                                    payee_code:
+                                    payeeCode:
                                       $ref: "#/components/schemas/payee_code"
                 included:
                   type: array
@@ -115,33 +119,103 @@ paths:
                     properties:
                       type:
                         type: string
-                        enum: [request_issue]
+                        enum: [RequestIssue]
                       attributes:
                         type: object
                         required:
-                          - decision_text
-                          - decision_date
-                          # withdrawal_date (NOT required)
-                          # nonrating_issue_category (NOT required)
+                          - decisionText
+                          - decisionDate
+                          # withdrawalDate (NOT required)
+                          # nonratingIssueCategory (NOT required)
                         properties:
-                          decision_text:
+                          decisionText:
                             type: string
-                          decision_date:
-                            type: string
-                            format: date
-                          withdrawal_date:
+                          decisionDate:
                             type: string
                             format: date
-                          nonrating_issue_category:
+                          withdrawalDate:
+                            type: string
+                            format: date
+                          nonratingIssueCategory:
                             $ref: "#/components/schemas/nonrating_issue_category"
+            examples:
+              pension:
+                value: {
+                  "data": {
+                    "type": "HigherLevelReview",
+                      "attributes": {
+                        "receiptDate": "2019-07-10",
+                        "informalConference": true,
+                        "sameOffice": false,
+                        "legacyOptInApproved": true,
+                        "benefitType": "pension"
+                      },
+                      "relationships": {
+                        "veteran": {
+                          "data": {
+                            "type": "Veteran",
+                            "id": "55555555"
+                          }
+                        },
+                        "claimant": {
+                          "data": {
+                            "type": "Claimant",
+                            "id": "44444444",
+                            "meta": {
+                              "payeeCode": "10"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "included": [
+                      {
+                        "type": "NonratingIssue",
+                        "attributes": {
+                          "decisionText": "veteran status verified",
+                          "decisionDate": "2019-07-11",
+                          "withdrawalDate": null,
+                          "nonratingIssueCategory": "Eligibility | Veteran Status"
+                        }
+                      },
+                      {
+                        "type": "RatingIssue",
+                        "id": "def456"
+                      }
+                    ]
+                  }
       responses:
         '202':
-          description: Created
+          description: Accepted
+          headers:
+            Content-Location:
+              schema:
+                type: string
+                format: url
+              description: Link to check status of intake for HigherLevelReview
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/intake_status"
+        '4XX':
+          description: Invalid Request
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
         '400':
           description: |-
             400 response
           content:
             application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
               examples:
                 malformed_request:
                   value: {
@@ -158,6 +232,11 @@ paths:
             401 response
           content:
             application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
               examples:
                 unauthenticated:
                   value: {
@@ -174,6 +253,11 @@ paths:
             403 response
           content:
             application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
               examples:
                 veteran_not_accessible:
                   value: {
@@ -190,6 +274,11 @@ paths:
             404 response
           content:
             application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
               examples:
                 veteran_not_found:
                   value: {
@@ -226,6 +315,11 @@ paths:
             409 response
           content:
             application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
               examples:
                 duplicate_intake_in_progress:
                   value: {
@@ -242,6 +336,11 @@ paths:
             422 response
           content:
             application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
               examples:
                 payee_code_required:
                   value: {
@@ -413,8 +512,77 @@ paths:
                       }
                     ]
                   }
-        '500':
+        '5XX':
           description: Failed
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+  /higher_level_reviews/intake_status/{uuid}:
+    get:
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          description: UUID of an Accepted Higher-Level Review
+          schema:
+            type : string
+            format: uuid
+            pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+      summary: After submitting a Higher-Level Review, you can check to see its current status
+      responses:
+        '200':
+          description: Status found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/intake_status"
+              examples:
+                submitted_status:
+                  value:
+                    data:
+                      id: 123e4567-e89b-12d3-a456-426655440000
+                      type: IntakeStatus
+                      attributes:
+                        status: submitted
+        '303':
+          description: See other, processing finished
+          headers:
+            Location:
+              schema:
+                type: string
+                format: url
+              description: Link to HigherLevelReview
+        '404':
+          description: id not found
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+        '4XX':
+          description: Invalid Request
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+        '5XX':
+          description: Failed
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
 components:
   schemas:
     nonrating_issue_category:
@@ -665,3 +833,34 @@ components:
         - "88"
         - "89"
         - "99"
+    errors:
+      type: array
+      items:
+        type: object
+        properties:
+          title:
+            type: string
+          detail:
+            type: string
+    intake_status:
+      description: An accepted Decision Review still needs to be processed before the Decision Review can be accessed
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            type:
+              type: string
+              description: Will be "IntakeStatus"
+            attributes:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - processed
+                    - attempted
+                    - submitted
+                    - canceled

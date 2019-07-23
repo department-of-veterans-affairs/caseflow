@@ -6,6 +6,9 @@ class Api::V2::HearingSerializer
   attribute :address do |hearing|
     hearing.hearing_location&.address
   end
+  attribute :city do |hearing|
+    hearing.hearing_location&.city
+  end
   attribute :appeal, &:appeal_external_id
   attribute :facility_id do |hearing|
     hearing.hearing_location&.facility_id

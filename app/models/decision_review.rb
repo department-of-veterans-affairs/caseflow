@@ -163,7 +163,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def veteran_ssn
-    @veteran_ssn ||= Veteran.find_or_create_by_file_number(veteran_file_number, sync_name: true).ssn
+    veteran&.ssn
   end
 
   def mark_rating_request_issues_to_reassociate!
@@ -289,7 +289,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def find_or_build_request_issue_from_intake_data(data)
-    return request_issues.active_or_ineligible.find(data[:request_issue_id]) if data[:request_issue_id]
+    return request_issues.find(data[:request_issue_id]) if data[:request_issue_id]
 
     RequestIssue.from_intake_data(data, decision_review: self)
   end

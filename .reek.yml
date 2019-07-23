@@ -5,7 +5,14 @@ detectors:
   Attribute:
     exclude:
       - BulkTaskAssignment
+      - Hearing#override_full_hearing_day_validation
       - QueueConfig
+  BooleanParameter:
+    exclude:
+      - HearingRepository#slot_new_hearing
+  ControlParameter:
+    exclude:
+      - HearingRepository#slot_new_hearing
   DataClump:
     exclude:
       - HearingSerializerBase
@@ -17,6 +24,8 @@ detectors:
       - AsyncableJobsReporter
       - HearingSerializerBase
       - DataIntegrityChecksJob
+      - VeteranAttributeCacher
+      - WarmBgsCachesJob
   InstanceVariableAssumption:
     exclude:
       - Appeal

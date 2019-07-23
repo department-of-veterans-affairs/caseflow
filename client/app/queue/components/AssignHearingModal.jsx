@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { sprintf } from 'sprintf-js';
 import {
   resetErrorMessages,
   showErrorMessage,
@@ -8,10 +9,11 @@ import {
   resetSuccessMessages,
   requestPatch
 } from '../uiReducer/uiActions';
+import COPY from '../../../COPY.json';
+import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants';
 import { fullWidth } from '../constants';
 import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-
 import { withRouter } from 'react-router-dom';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import {
@@ -21,8 +23,8 @@ import {
 import { onReceiveAmaTasks, onReceiveAppealDetails } from '../QueueActions';
 import { prepareAppealForStore } from '../utils';
 import _ from 'lodash';
-import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants';
 import QueueFlowModal from './QueueFlowModal';
+import Alert from '../../components/Alert';
 import AssignHearingForm from '../../hearings/components/modalForms/AssignHearingForm';
 
 class AssignHearingModal extends React.PureComponent {
@@ -30,7 +32,8 @@ class AssignHearingModal extends React.PureComponent {
     super(props);
 
     this.state = {
-      showErrorMessages: false
+      showErrorMessages: false,
+      showFullHearingDayWarning: false
     };
   }
 
@@ -44,6 +47,25 @@ class AssignHearingModal extends React.PureComponent {
                 'You cannot schedule another hearing.'
       });
     }
+
+    this.toggleFullHearingDayWarning();
+  }
+
+  componentDidUpdate = () => {
+    this.toggleFullHearingDayWarning();
+  }
+
+  toggleFullHearingDayWarning = () => {
+    const { assignHearingForm, hearingDay } = this.props;
+    const selectedHearingDay = (assignHearingForm || {}).hearingDay || hearingDay;
+
+    if (!selectedHearingDay) {
+      return;
+    }
+
+    this.setState({
+      showFullHearingDayWarning: selectedHearingDay.filledSlots >= selectedHearingDay.totalSlots
+    });
   }
 
   submit = () => {
@@ -65,10 +87,8 @@ class AssignHearingModal extends React.PureComponent {
   };
 
   completeScheduleHearingTask = () => {
-
-    const {
-      appeal, scheduleHearingTask, history, assignHearingForm
-    } = this.props;
+    const { appeal, scheduleHearingTask, history, assignHearingForm } = this.props;
+    const { showFullHearingDayWarning } = this.state;
 
     const payload = {
       data: {
@@ -77,7 +97,8 @@ class AssignHearingModal extends React.PureComponent {
           business_payloads: {
             description: 'Update Task',
             values: {
-              ...assignHearingForm.apiFormattedValues
+              ...assignHearingForm.apiFormattedValues,
+              override_full_hearing_day_validation: showFullHearingDayWarning
             }
           }
         }
@@ -136,14 +157,17 @@ class AssignHearingModal extends React.PureComponent {
     const { appeal, assignHearingForm } = this.props;
 
     const hearingDateStr = formatDateStr(assignHearingForm.hearingDay.hearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
-    const title = `You have successfully assigned ${appeal.veteranFullName} ` +
-                  `to a ${this.getHearingType()} hearing on ${hearingDateStr}.`;
+    const title = sprintf(
+      COPY.SCHEDULE_VETERAN_SUCCESS_MESSAGE_TITLE,
+      appeal.veteranFullName,
+      this.getHearingType(),
+      hearingDateStr
+    );
     const href = `/hearings/schedule/assign?roValue=${assignHearingForm.hearingDay.regionalOffice}`;
 
     const detail = (
       <p>
-        To assign another veteran please use the "Schedule Veterans" link below.
-        You can also use the hearings section below to view the hearing in new tab.<br /><br />
+        {COPY.SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL}<br /><br />
         <Link href={href}>Back to Schedule Veterans</Link>
       </p>
     );
@@ -162,10 +186,8 @@ class AssignHearingModal extends React.PureComponent {
   };
 
   render = () => {
-    const {
-      appeal, openHearing
-    } = this.props;
-
+    const { appeal, openHearing } = this.props;
+    const { showErrorMessages, showFullHearingDayWarning } = this.state;
     const { address_line_1, city, state, zip } = appeal.appellantAddress || {};
 
     if (openHearing) {
@@ -173,24 +195,35 @@ class AssignHearingModal extends React.PureComponent {
     }
 
     /* eslint-disable camelcase */
-    return <QueueFlowModal
-      submit={this.submit}
-      validateForm={this.validateForm}
-      title="Schedule Veteran"
-      button="Schedule"
-    >
-      <div {...fullWidth}>
-        <p>
-          Veteran Address<br />
-          {address_line_1}<br />
-          {`${city}, ${state} ${zip}`}
-        </p>
-        <AssignHearingForm
-          appeal={appeal}
-          showErrorMessages={this.state.showErrorMessages}
-          {...this.getInitialValues()} />
-      </div>
-    </QueueFlowModal>;
+    return (
+      <QueueFlowModal
+        submit={this.submit}
+        validateForm={this.validateForm}
+        title="Schedule Veteran"
+        button="Schedule"
+      >
+        <div {...fullWidth}>
+          {
+            showFullHearingDayWarning &&
+            <Alert
+              title={COPY.SCHEDULE_VETERAN_FULL_HEARING_DAY_TITLE}
+              type="warning"
+            >
+              {COPY.SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL}
+            </Alert>
+          }
+          <p>
+            Veteran Address<br />
+            {address_line_1}<br />
+            {`${city}, ${state} ${zip}`}
+          </p>
+          <AssignHearingForm
+            appeal={appeal}
+            showErrorMessages={showErrorMessages}
+            {...this.getInitialValues()} />
+        </div>
+      </QueueFlowModal>
+    );
   }
 }
 
