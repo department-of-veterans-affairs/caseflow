@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ExternalApi::VADotGovService::Response::ResponseMessage
+class ExternalApi::VADotGovService::ResponseMessage
   attr_reader :message
 
   def initialize(message)
