@@ -35,13 +35,9 @@ class Fakes::EndProductStore
     end
   end
 
-  def fetch_and_inflate(veteran_id)
-    json_str = self.class.cache_store.get(veteran_id)
+  def fetch_and_inflate(key)
+    json_str = self.class.cache_store.get(key)
     json_str ? JSON.parse(json_str, symbolize_names: true) : nil
-  end
-
-  def deflate_and_store(key, payload)
-    self.class.cache_store.set(key, payload.to_json)
   end
 
   def update_ep_status(veteran_id, claim_id, new_status)
@@ -52,36 +48,14 @@ class Fakes::EndProductStore
 
   # contentions are "children" of End Products but we store by claim_id
   # rather than veteran_id to make look up easier. Dispositions are similar.
-  def create_ep_child(child, key, id_attr)
-    children = children_for(key) || {}
-    children[child[id_attr]] = child
-    deflate_and_store(key, children)
-  end
-
   def create_contention(contention)
     claim_id = contention.claim_id
     create_ep_child(contention, contention_key(claim_id), :id)
   end
 
-  def update_ep_child(child, key, id_attr)
-    children = children_for(key)
-    fail "No values for #{key}" unless children
-
-    children[child[id_attr].to_s] = child
-    deflate_and_store(key, children)
-  end
-
   def update_contention(contention)
     claim_id = contention.claim_id
     update_ep_child(contention, contention_key(claim_id), :id)
-  end
-
-  def remove_ep_child(child, key, id_attr)
-    children = children_for(key)
-    fail "No values for #{key}" unless children
-
-    children.delete(child[id_attr].to_s)
-    deflate_and_store(key, children)
   end
 
   def remove_contention(contention)
@@ -93,17 +67,12 @@ class Fakes::EndProductStore
     "contention_#{claim_id}"
   end
 
-  def children_for(key)
-    fetch_and_inflate(key)
-  end
-
   def inflated_contentions_for(claim_id)
-    children_for(contention_key(claim_id)).values.map { |hash| OpenStruct.new(hash[:table]) }.each do |cont|
+    children_to_structs(contention_key(claim_id)).each do |cont|
       cont.id = cont.id.to_i
     end
   end
 
-  # dispositions are similar to contentions
   def create_disposition(disposition)
     claim_id = disposition.claim_id
     create_ep_child(disposition, disposition_key(claim_id), :contention_id)
@@ -124,8 +93,44 @@ class Fakes::EndProductStore
   end
 
   def inflated_dispositions_for(claim_id)
-    children_for(disposition_key(claim_id)).values.map { |hash| OpenStruct.new(hash[:table]) }.each do |disp|
+    children_to_structs(disposition_key(claim_id)).each do |disp|
       disp.contention_id = disp.contention_id.to_i
     end
+  end
+
+  private
+
+  def deflate_and_store(key, payload)
+    self.class.cache_store.set(key, payload.to_json)
+  end
+
+  def children_to_structs(key)
+    children_for(key).values.map { |hash| OpenStruct.new(hash[:table]) }
+  end
+
+  def children_for(key)
+    fetch_and_inflate(key)
+  end
+
+  def create_ep_child(child, key, id_attr)
+    children = children_for(key) || {}
+    children[child[id_attr]] = child
+    deflate_and_store(key, children)
+  end
+
+  def update_ep_child(child, key, id_attr)
+    children = children_for(key)
+    fail "No values for #{key}" unless children
+
+    children[child[id_attr].to_s] = child
+    deflate_and_store(key, children)
+  end
+
+  def remove_ep_child(child, key, id_attr)
+    children = children_for(key)
+    fail "No values for #{key}" unless children
+
+    children.delete(child[id_attr].to_s)
+    deflate_and_store(key, children)
   end
 end
