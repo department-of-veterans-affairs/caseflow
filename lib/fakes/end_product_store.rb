@@ -105,7 +105,7 @@ class Fakes::EndProductStore
   end
 
   def children_to_structs(key)
-    children_for(key).values.map { |hash| OpenStruct.new(hash[:table]) }
+    (children_for(key) || {}).values.map { |hash| OpenStruct.new(hash[:table]) }
   end
 
   def children_for(key)
