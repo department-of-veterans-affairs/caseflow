@@ -113,14 +113,12 @@ class ExternalApi::VADotGovService
       {
         body: {
           requestAddress: {
-            addressLine1: address_line1, addressLine2: address_line2, addressLine3: address_line3,
+            addressLine1: address_line1,
+            addressLine2: address_line2,
+            addressLine3: address_line3,
             city: city,
-            stateProvince: {
-              code: state
-            },
-            requestCountry: {
-              country_code: country
-            },
+            stateProvince: { code: state },
+            requestCountry: { country_code: country },
             zipCode5: zip_code
           }
         },
