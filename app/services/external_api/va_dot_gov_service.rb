@@ -30,8 +30,12 @@ class ExternalApi::VADotGovService
     def validate_address(*args)
       response = send_va_dot_gov_request(validate_address_request(*args))
 
-      vet_360_response = ExternalApi::VADotGovService::Vet360Response.new(response)
-      { error: vet_360_response.error, valid_address: vet_360_response.valid_address }
+      address_validation_response = ExternalApi::VADotGovService::AddressValidationResponse.new(response)
+
+      {
+        error: address_validation_response.error,
+        valid_address: address_validation_response.valid_address
+      }
     end
 
     private

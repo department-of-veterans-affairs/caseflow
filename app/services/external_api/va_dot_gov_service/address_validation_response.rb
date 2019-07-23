@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
-class ExternalApi::VADotGovService::Vet360Response < ExternalApi::VADotGovService::Response
+class ExternalApi::VADotGovService::AddressValidationResponse < ExternalApi::VADotGovService::Response
   def valid_address
     return {} if body[:geocode].nil?
 
     formatted_valid_address
   end
+
+  private
 
   def formatted_valid_address
     {
