@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class VaDotGovAddressValidator::ErrorHandler
+  attr_reader :appeal, :valid_address
+
   def initialize(appeal:, valid_address:)
     @appeal = appeal
     @valid_address = valid_address
