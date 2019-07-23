@@ -169,7 +169,7 @@ const TranscriptionDetails = ({
             value: 'The Ravens Group, Inc.'
           }
         ]}
-        onChange={(val) => set('transcriber', val.value)}
+        onChange={(val) => set('transcriber', (val || {}).value)}
       />
     </div>
     <div {...rowThirds}>
@@ -237,7 +237,7 @@ const TranscriptionProblem = ({
           value: 'Other (see notes)'
         }
       ]}
-      onChange={(val) => set('problemType', val.value)}
+      onChange={(val) => set('problemType', (val || {}).value)}
     />
     <DateSelector
       name="problemNoticeSentDate"

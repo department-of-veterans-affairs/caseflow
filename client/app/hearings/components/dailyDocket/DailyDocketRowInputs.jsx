@@ -26,6 +26,10 @@ export const DispositionDropdown = ({
     options={DISPOSITION_OPTIONS}
     value={hearing.disposition}
     onChange={(option) => {
+      if (!option) {
+        return;
+      }
+      
       const fromDisposition = hearing.disposition;
 
       update({ disposition: option.value });
