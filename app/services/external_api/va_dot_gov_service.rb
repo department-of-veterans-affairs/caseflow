@@ -28,7 +28,7 @@ class ExternalApi::VADotGovService
     end
 
     def validate_address(*args)
-      response = send_va_dot_gov_request(validate_address_request(*args))
+      response = send_va_dot_gov_request(address_validation_request(*args))
 
       address_validation_response = ExternalApi::VADotGovService::AddressValidationResponse.new(response)
 
@@ -105,7 +105,7 @@ class ExternalApi::VADotGovService
     end
 
     # rubocop:disable Metrics/ParameterLists
-    def validate_address_request(
+    def address_validation_request(
         address_line1:, address_line2: nil,
         address_line3: nil, city:, state:, zip_code:, country:
       )
