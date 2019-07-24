@@ -202,7 +202,7 @@ class Veteran < ApplicationRecord
       state: state,
       country: country,
       zip_code: zip_code
-    )
+    )[:valid_address]
   end
 
   def stale_attributes?
