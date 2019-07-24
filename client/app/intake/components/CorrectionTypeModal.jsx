@@ -26,7 +26,7 @@ class CorrectionTypeModal extends React.Component {
             issueIndex
         } = this.props;
 
-        return <div className="intake-remove-issue">
+        return <div className="intake-correction-type">
             <Modal
                 buttons={[
                     {
@@ -35,7 +35,7 @@ class CorrectionTypeModal extends React.Component {
                         onClick: this.props.onCancel
                     },
                     {
-                        classNames: ['usa-button-red', 'remove-issue'],
+                        classNames: ['usa-button-red', 'correction-type-submit'],
                         name: 'Correct Issue',
                         onClick: () => {
                             this.props.correctIssue({ index: issueIndex, correctionType: this.state.correctionType });
