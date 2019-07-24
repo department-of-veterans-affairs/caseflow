@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
 class RequestIssueCorrection
-  def initialize(request_issues_update: request_issues_update, request_issues_data: request_issues_data)
-    @request_issues_update = request_issues_update
-    @review = request_issues_update.review
+  def initialize(review:, corrected_request_issue_ids:, request_issues_data:)
+    @corrected_request_issue_ids = corrected_request_issue_ids
+    @review = review
     @request_issues_data = request_issues_data
   end
 
   delegate :end_product_establishment_for_issue, to: :review
-  delegate :corrected_request_issue_ids, to: :request_issues_update
 
   ATTRIBUTES_TO_COPY = %w[
     benefit_type
@@ -46,7 +45,7 @@ class RequestIssueCorrection
   end
 
   def corrected_issues
-    @corrected_issues ||= corrected_request_issue_ids ? fetch_corrected_issues : calculate_corrected_issues
+    @corrected_issues ||= @corrected_request_issue_ids ? fetch_corrected_issues : calculate_corrected_issues
   end
 
   def correction_issues
@@ -58,7 +57,7 @@ class RequestIssueCorrection
   attr_reader :request_issues_update, :review, :request_issues_data
 
   def fetch_corrected_issues
-    RequestIssue.where(id: corrected_request_issue_ids)
+    RequestIssue.where(id: @corrected_request_issue_ids)
   end
 
   def calculate_corrected_issues

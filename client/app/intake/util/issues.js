@@ -104,6 +104,10 @@ const contestableIssueIndexByRequestIssue = (contestableIssuesByDate, requestIss
 // formatRequestIssues takes an array of requestIssues in the server ui_hash format
 // and returns objects useful for displaying in UI
 export const formatRequestIssues = (requestIssues, contestableIssues) => {
+  if (!requestIssues) {
+    return;
+  }
+
   return requestIssues.map((issue) => {
     // Nonrating issues
     if (issue.category) {

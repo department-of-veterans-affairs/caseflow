@@ -105,7 +105,7 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
     };
 
     const beforeEps = _.uniq(_.map(beforeIssues, 'endProductCode'));
-    const afterEps = _.uniq(_.map(afterIssues, 'endProductCode'));
+    const afterEps = _.uniq(_.map(afterIssues.filter((ri) => !ri.withdrawalDate), 'endProductCode'));
     const allChangedEps = _.uniq(_.map(updatedIssues, 'endProductCode'));
     const removedEps = _.difference(beforeEps, afterEps);
     const establishedEps = _.difference(allChangedEps, beforeEps);
@@ -131,10 +131,12 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
       })}
 
       { !_.isEmpty(updatedEps) && updatedEps.map((epCode) => {
-        return endProductUpdate(epCode, afterIssues, 'updated');
+        const remainingIssues = afterIssues.filter((ri) => !ri.withdrawalDate);
+
+        return endProductUpdate(epCode, remainingIssues, 'updated');
       })}
 
-      { !_.isEmpty(removedEps) && removedEps.map((epCode, issues, action) => {
+      { !_.isEmpty(removedEps) && removedEps.map((epCode) => {
         return endProductUpdate(epCode, beforeIssues, 'canceled');
       })}
 
