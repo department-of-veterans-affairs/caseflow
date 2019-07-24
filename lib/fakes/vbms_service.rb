@@ -28,9 +28,7 @@ class Fakes::VBMSService
     attr_accessor :end_product_claim_id
     attr_accessor :uploaded_form8, :uploaded_form8_appeal
     attr_accessor :manifest_vbms_fetched_at, :manifest_vva_fetched_at
-    attr_accessor :contention_records
     attr_accessor :end_product_claim_ids_by_file_number
-    attr_accessor :disposition_records
   end
 
   def self.load_vbms_ids_mappings
@@ -155,17 +153,17 @@ class Fakes::VBMSService
   end
 
   def self.get_dispositions!(claim_id:)
-    (disposition_records && disposition_records[claim_id]) || []
+    Fakes::BGSService.end_product_store.inflated_dispositions_for(claim_id) || []
   end
 
   def self.fetch_contentions(claim_id:)
-    (contention_records || {})[claim_id] || []
+    Fakes::BGSService.end_product_store.inflated_contentions_for(claim_id) || []
   end
 
   def self.create_contentions!(veteran_file_number:, claim_id:, contentions:, user:)
     Rails.logger.info("Submitting contentions to VBMS...")
     Rails.logger.info("File number: #{veteran_file_number}")
-    Rails.logger.info("Claim id:\n #{claim_id}")
+    Rails.logger.info("Claim id: #{claim_id}")
     Rails.logger.info("Contentions: #{contentions.inspect}")
     Rails.logger.info("User:\n #{user.inspect}")
 
@@ -176,7 +174,7 @@ class Fakes::VBMSService
     contentions.each do |contention|
       Generators::Contention.build(text: contention[:description], claim_id: claim_id)
     end
-    Fakes::VBMSService.contention_records[claim_id]
+    Fakes::BGSService.end_product_store.inflated_contentions_for(claim_id)
   end
 
   def self.associate_rating_request_issues!(claim_id:, rating_issue_contention_map:)
@@ -191,12 +189,16 @@ class Fakes::VBMSService
     Rails.logger.info("Submitting remove contention request to VBMS...")
     Rails.logger.info("Contention: #{contention.inspect}")
 
+    Fakes::BGSService.end_product_store.remove_contention(contention)
+
     true
   end
 
   def self.update_contention!(contention)
     Rails.logger.info("Submitting updated contention request to VBMS...")
     Rails.logger.info("Contention: #{contention.inspect}")
+
+    Fakes::BGSService.end_product_store.update_contention(contention)
 
     contention
   end
@@ -209,8 +211,6 @@ class Fakes::VBMSService
     self.uploaded_form8_appeal = nil
     self.manifest_vbms_fetched_at = nil
     self.manifest_vva_fetched_at = nil
-    self.contention_records = nil
     self.end_product_claim_ids_by_file_number = nil
-    self.disposition_records = nil
   end
 end
