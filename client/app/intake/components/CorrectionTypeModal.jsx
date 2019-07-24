@@ -7,13 +7,19 @@ import { connect } from 'react-redux';
 import { correctIssue } from '../actions/addIssues';
 import Modal from '../../components/Modal';
 import Dropdown from '../../components/Dropdown';
+import RadioField from '../../components/RadioField';
 
+const correctionTypeOptions = [
+    { value: 'control', displayText: 'Control' },
+    { value: 'local_quality_error', displayText: 'Local Quality Error' },
+    { value: 'national_quality_error', displayText: 'National Quality Error' }
+]
 
 class CorrectionTypeModal extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            correctionType: 'control'
+            correctionType: null
         }
     }
 
@@ -23,7 +29,12 @@ class CorrectionTypeModal extends React.Component {
 
     render() {
         const {
-            issueIndex
+            issueIndex,
+            cancelText,
+            onCancel,
+            onClose,
+            submitText,
+            correctIssue
         } = this.props;
 
         return <div className="intake-correction-type">
@@ -31,34 +42,33 @@ class CorrectionTypeModal extends React.Component {
                 buttons={[
                     {
                         classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
-                        name: 'Cancel',
-                        onClick: this.props.onCancel
+                        name: cancelText || 'Cancel',
+                        onClick: onCancel
                     },
                     {
                         classNames: ['usa-button-red', 'correction-type-submit'],
-                        name: 'Correct Issue',
+                        name: submitText || 'Correct Issue',
                         onClick: () => {
-                            this.props.correctIssue({ index: issueIndex, correctionType: this.state.correctionType });
-                            this.props.onClose();
+                            correctIssue({ index: issueIndex, correctionType: this.state.correctionType });
+                            onClose();
                         }
                     }
                 ]}
                 visible
-                closeHandler={this.props.onClose}
-                title="Correct issue"
+                closeHandler={onClose}
+                title="Set Correction Type"
             >
 
                 <div>
                     <p>This issue will be added to a 930 EP for correction. If a mistake was found during quality review, please select whether it was discovered by the local or national quality review team. Otherwise, select control.</p>
 
-                    <Dropdown
+                    <RadioField
+                        vertical
+                        required
+                        // label="Select Correction Type"
+                        hideLabel={true}
                         name="correctionType"
-                        label="Correction Type:"
-                        options={[
-                            { value: 'control', displayText: 'Control' },
-                            { value: 'local_quality_error', displayText: 'Local Quality Error' },
-                            { value: 'national_quality_error', displayText: 'National Quality Error' }
-                        ]}
+                        options={correctionTypeOptions}
                         value={this.state.correctionType}
                         onChange={val => this.handleSelect(val)}
                     />
@@ -72,6 +82,8 @@ class CorrectionTypeModal extends React.Component {
 CorrectionTypeModal.propTypes = {
     onCancel: PropTypes.func,
     onClose: PropTypes.func,
+    cancelText: PropTypes.string,
+    submitText: PropTypes.string,
     issueIndex: PropTypes.number,
 }
 
