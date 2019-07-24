@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ExternalApi::VADotGovService::Response
-  attr_reader :response, :code, :body, :messages
+  attr_reader :response, :code, :messages
 
   def self.full_address(*addresses)
     addresses.reject(&:blank?).join(" ")
@@ -10,10 +10,17 @@ class ExternalApi::VADotGovService::Response
   def initialize(api_response)
     @response = api_response
     @code = @response.code
-    @body = JSON.parse(response.body).deep_symbolize_keys
     @messages = body[:messages]&.map do |message|
       ExternalApi::VADotGovService::ResponseMessage.new(message)
     end
+  end
+
+  def body
+    @body ||= begin
+                JSON.parse(response.body).deep_symbolize_keys
+              rescue JSON::ParserError
+                response.body
+              end
   end
 
   def error
@@ -31,14 +38,14 @@ class ExternalApi::VADotGovService::Response
 
     case code
     when 429
-      Caseflow::Error::VaDotGovLimitError.new code: code, message: body
+      fail Caseflow::Error::VaDotGovLimitError code: code, message: body
     when 400
-      Caseflow::Error::VaDotGovRequestError.new code: code, message: body
+      fail Caseflow::Error::VaDotGovRequestError code: code, message: body
     when 500
-      Caseflow::Error::VaDotGovServerError.new code: code, message: body
+      fail Caseflow::Error::VaDotGovServerError code: code, message: body
     else
       msg = "Error: #{body}, HTTP code: #{code}"
-      Caseflow::Error::VaDotGovServerError.new code: code, message: msg
+      fail Caseflow::Error::VaDotGovServerError code: code, message: msg
     end
   end
 

@@ -27,11 +27,17 @@ class VaDotGovAddressValidator
   end
 
   def valid_address
-    @valid_address ||= valid_address_result[:valid_address] || validate_zip_code
+    @valid_address ||= if valid_address_result[:error].present?
+                         validate_zip_code
+                       else
+                         valid_address_result[:valid_address]
+                       end
   end
 
   def closest_regional_office
     @closest_regional_office ||= begin
+      return if closest_regional_office_error.present?
+
       return "RO62" if closest_regional_office_facility_id_is_san_antonio?
 
       RegionalOffice.find_ro_by_facility_id(closest_regional_office_facility_id)
@@ -90,6 +96,17 @@ class VaDotGovAddressValidator
     )
   end
 
+  def facility_ids_to_geomatch
+    facility_ids = RegionalOffice.ro_facility_ids_for_state(state_code_for_regional_office)
+    facility_ids << "vba_372" if appeal_is_legacy_and_veteran_lives_in_va_or_md? # include DC's facility id
+    # veterans whose closest AHL is San Antonio should have Houston as the RO
+    # even though Waco may be closer. This is a RO/AHL policy quirk.
+    # see https://github.com/department-of-veterans-affairs/caseflow/issues/9858
+    facility_ids << "vha_671BY" if veteran_lives_in_texas? # include San Antonio facility id
+
+    facility_ids
+  end
+
   private
 
   def address
@@ -118,14 +135,14 @@ class VaDotGovAddressValidator
 
   def closest_regional_office_result
     @closest_regional_office_result ||= VADotGovService.get_distance(
-      ids: ro_facility_ids_for_state,
+      ids: facility_ids_to_match,
       lat: valid_address[:lat],
       long: valid_address[:long]
     )
   end
 
   def closest_regional_office_facility_id
-    closest_regional_office_result[:facilities][0].try(:facility_id)
+    closest_regional_office_result[:facilities][0].dig(:facility_id)
   end
 
   def available_hearing_locations_result
@@ -148,20 +165,9 @@ class VaDotGovAddressValidator
     end
   end
 
-  def state_code
+  def state_code_for_regional_office
     return "DC" if appeal_is_legacy_and_veteran_requested_central_office?
 
     map_country_code_to_state
-  end
-
-  def ro_facility_ids_for_state
-    facility_ids = RegionalOffice.ro_facility_ids_for_state(state_code)
-    facility_ids << "vba_372" if appeal_is_legacy_and_veteran_lives_in_va_or_md? # include DC's facility id
-    # veterans whose closest AHL is San Antonio should have Houston as the RO
-    # even though Waco may be closer. This is a RO/AHL policy quirk.
-    # see https://github.com/department-of-veterans-affairs/caseflow/issues/9858
-    facility_ids << "vha_671BY" if veteran_lives_in_texas? # include San Antonio facility id
-
-    facility_ids
   end
 end

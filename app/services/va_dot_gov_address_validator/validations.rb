@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module VaDotGovAddressValidator::Validations
+  private
+
   def map_country_code_to_state
     case valid_address[:country_code]
     # Guam, American Samoa, Marshall Islands, Micronesia, Northern Mariana Islands, Palau
@@ -26,11 +28,13 @@ module VaDotGovAddressValidator::Validations
   end
 
   def valid_address_error
-    valid_address_result[:error] if valid_address.nil?
+    valid_address_result[:error] if valid_address.blank?
   end
 
   def state_code_error
-    Caseflow::Error::VaDotGovForeignVeteranError.new if state_code.nil? || !valid_states.include?(state_code)
+    if state_code_for_regional_office.nil? || !valid_states.include?(state_code_for_regional_office)
+      Caseflow::Error::VaDotGovForeignVeteranError
+    end
   end
 
   def closest_regional_office_error
@@ -43,7 +47,7 @@ module VaDotGovAddressValidator::Validations
 
   def error_status
     @error_status ||= if valid_address_error.present?
-                        error_handler.handle(validation_error)
+                        error_handler.handle(valid_address_error)
                       elsif state_code_error.present?
                         error_handler.handle(state_code_error)
                       elsif closest_regional_office_error.present?
@@ -64,7 +68,7 @@ module VaDotGovAddressValidator::Validations
   end
 
   def appeal_is_legacy_and_veteran_lives_in_va_or_md?
-    appeal.is_a?(LegacyAppeal) && %w[VA MD].include?(state_code)
+    appeal.is_a?(LegacyAppeal) && %w[VA MD].include?(state_code_for_regional_office)
   end
 
   def closest_regional_office_facility_id_is_san_antonio?
@@ -72,6 +76,6 @@ module VaDotGovAddressValidator::Validations
   end
 
   def veteran_lives_in_texas?
-    state_code == "TX"
+    state_code_for_regional_office == "TX"
   end
 end

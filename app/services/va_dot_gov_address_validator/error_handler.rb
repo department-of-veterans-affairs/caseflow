@@ -11,14 +11,14 @@ class VaDotGovAddressValidator::ErrorHandler
   def handle(error)
     if check_for_philippines_and_maybe_update
       :philippines_exception
-    elsif verify_address_errors.any? { |klass| error.is_a?(klass) }
+    elsif verify_address_errors.any? { |klass| error == klass }
       create_admin_action_for_schedule_hearing_task(
         instructions: "The appellant's address in VBMS does not exist, is incomplete, or is ambiguous.",
         admin_action_type: HearingAdminActionVerifyAddressTask
       )
 
       :created_verify_address_admin_action
-    elsif foreign_veteran_errors.any? { |klass| error.is_a(klass) }
+    elsif foreign_veteran_errors.any? { |klass| error == klass }
       create_admin_action_for_schedule_hearing_task(
         instructions: "The appellant's address in VBMS is outside of US territories.",
         admin_action_type: HearingAdminActionForeignVeteranCaseTask
@@ -26,7 +26,7 @@ class VaDotGovAddressValidator::ErrorHandler
 
       :created_foreign_veteran_admin_action
     else
-      fail error
+      fail error, code: 500, message: "VA Dot Gov error"
     end
   end
 
@@ -42,6 +42,8 @@ class VaDotGovAddressValidator::ErrorHandler
   end
 
   def check_for_philippines_and_maybe_update
+    return false if valid_address.nil?
+
     if "Philippines".casecmp(valid_address[:country]) == 0
       appeal.update(closest_regional_office: "RO58")
       facility = VADotGovService.get_facility_data(ids: ["vba_358"]).first

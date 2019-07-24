@@ -9,11 +9,11 @@ class ExternalApi::VADotGovService::ResponseMessage
 
   def error
     if address_could_not_be_found?
-      Caseflow::Error::VaDotGovAddressCouldNotBeFoundError.new code: 500, message: message
+      Caseflow::Error::VaDotGovAddressCouldNotBeFoundError
     elsif invalid_input?
-      Caseflow::Error::VaDotGovInvalidInputError.new code: 500, message: message
+      Caseflow::Error::VaDotGovInvalidInputError
     elsif multiple_address?
-      Caseflow::Error::VaDotGovMultipleAddressError.new code: 500, message: message
+      Caseflow::Error::VaDotGovMultipleAddressError
     end
   end
 
