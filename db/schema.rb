@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190718004714) do
+ActiveRecord::Schema.define(version: 20190718223313) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -479,8 +479,7 @@ ActiveRecord::Schema.define(version: 20190718004714) do
   create_table "hearing_days", force: :cascade do |t|
     t.string "bva_poc"
     t.datetime "created_at", null: false
-    t.string "created_by", null: false
-    t.bigint "created_by_id", comment: "The ID of the user who created the Hearing Day"
+    t.bigint "created_by_id", null: false, comment: "The ID of the user who created the Hearing Day"
     t.datetime "deleted_at"
     t.integer "judge_id"
     t.boolean "lock"
@@ -490,8 +489,7 @@ ActiveRecord::Schema.define(version: 20190718004714) do
     t.string "room", null: false
     t.date "scheduled_for", null: false
     t.datetime "updated_at", null: false
-    t.string "updated_by", null: false
-    t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the Hearing Day"
+    t.bigint "updated_by_id", null: false, comment: "The ID of the user who most recently updated the Hearing Day"
     t.index ["created_by_id"], name: "index_hearing_days_on_created_by_id"
     t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
     t.index ["updated_by_id"], name: "index_hearing_days_on_updated_by_id"
