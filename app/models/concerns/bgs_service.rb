@@ -5,10 +5,14 @@ module BgsService
 
   # both class and instance method
   class_methods do
+    private
+
     def bgs
       BGSService.new
     end
   end
+
+  private
 
   def bgs
     BGSService.new
