@@ -94,7 +94,7 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def all_updated_issues
-    added_issues + removed_issues + withdrawn_issues + edited_issues + corrected_issues + correction_issues
+    added_issues + removed_issues + withdrawn_issues + edited_issues + correction_issues
   end
 
   private
