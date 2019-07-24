@@ -2,6 +2,7 @@
 
 class RequestIssue < ApplicationRecord
   include Asyncable
+  include HasBusinessLine
   include DecisionSyncable
 
   # how many days before we give up trying to sync decisions

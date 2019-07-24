@@ -21,7 +21,6 @@ class RequestIssuesUpdate < ApplicationRecord
     return false if processed?
 
     transaction do
-      review.create_issues!(new_issues)
       process_issues!
       review.mark_rating_request_issues_to_reassociate!
       update!(
@@ -87,7 +86,7 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def after_issues
-    after_request_issue_ids ? fetch_after_issues : calculate_after_issues
+    @after_issues ||= after_request_issue_ids ? fetch_after_issues : calculate_after_issues
   end
 
   def edited_issues
@@ -101,12 +100,8 @@ class RequestIssuesUpdate < ApplicationRecord
   private
 
   def changes?
-    review.request_issues.active_or_ineligible.count != @request_issues_data.count || !new_issues.empty? ||
+    review.request_issues.active_or_ineligible.count != @request_issues_data.count || !added_issues.empty? ||
       withdrawn_issues.any? || edited_issues.any? || corrected_issues.any?
-  end
-
-  def new_issues
-    after_issues.reject(&:persisted?)
   end
 
   def calculate_after_issues
@@ -157,6 +152,7 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def process_issues!
+    review.create_issues!(added_issues)
     process_removed_issues!
     process_legacy_issues!
     process_withdrawn_issues!
