@@ -153,6 +153,35 @@ describe RequestIssue do
     end
   end
 
+  context "#contention_missing?" do
+    let(:end_product_establishment) { create(:end_product_establishment, :active) }
+    subject { rating_request_issue.contention_missing? }
+
+    context "contention_reference_id points at non-existent contention" do
+      let(:contention_reference_id) { "9999" }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "contention_reference_id points at existing contention" do
+      let!(:contention) do
+        Generators::Contention.build(
+          id: contention_reference_id,
+          claim_id: end_product_establishment.reference_id,
+          disposition: "allowed"
+        )
+      end
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "contention_reference_id is nil" do
+      let(:contention_reference_id) { nil }
+
+      it { is_expected.to eq(false) }
+    end
+  end
+
   context "#guess_benefit_type" do
     context "issue is unidentified" do
       it "returns 'unidentified'" do
@@ -480,7 +509,7 @@ describe RequestIssue do
         let(:benefit_type) { "pension" }
 
         context "when decision review is a higher level review" do
-          let(:review) { create(:higher_level_review) }
+          let(:review) { create(:higher_level_review, benefit_type: benefit_type) }
 
           context "when rating" do
             let(:request_issue) { rating_request_issue }
@@ -532,7 +561,9 @@ describe RequestIssue do
         end
 
         context "when decision review is a supplemental claim" do
-          let(:review) { create(:supplemental_claim, decision_review_remanded: nil) }
+          let(:review) do
+            create(:supplemental_claim, benefit_type: benefit_type, decision_review_remanded: nil)
+          end
 
           context "when rating" do
             let(:request_issue) { rating_request_issue }
@@ -588,7 +619,7 @@ describe RequestIssue do
         let(:benefit_type) { "compensation" }
 
         context "when decision review is a higher level review" do
-          let(:review) { create(:higher_level_review) }
+          let(:review) { create(:higher_level_review, benefit_type: benefit_type) }
 
           context "when rating" do
             let(:request_issue) { rating_request_issue }
@@ -640,7 +671,9 @@ describe RequestIssue do
         end
 
         context "when decision review is a supplemental claim" do
-          let(:review) { create(:supplemental_claim, decision_review_remanded: nil) }
+          let(:review) do
+            create(:supplemental_claim, benefit_type: benefit_type, decision_review_remanded: nil)
+          end
 
           context "when rating" do
             let(:request_issue) { rating_request_issue }
@@ -695,7 +728,9 @@ describe RequestIssue do
 
     context "when on remand (dta) decision review" do
       let(:decision_review_remanded) { nil }
-      let(:review) { create(:supplemental_claim, decision_review_remanded: decision_review_remanded) }
+      let(:review) do
+        create(:supplemental_claim, benefit_type: benefit_type, decision_review_remanded: decision_review_remanded)
+      end
 
       context "when benefit type is pension" do
         let(:benefit_type) { "pension" }
@@ -1731,7 +1766,7 @@ describe RequestIssue do
 
         context "when there is no disposition" do
           before do
-            Fakes::VBMSService.disposition_records = nil
+            Fakes::EndProductStore.new.clear!
           end
           it "raises an error" do
             expect { subject }.to raise_error(RequestIssue::ErrorCreatingDecisionIssue)
