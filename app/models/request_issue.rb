@@ -2,7 +2,6 @@
 
 class RequestIssue < ApplicationRecord
   include Asyncable
-  include HasBusinessLine
   include DecisionSyncable
 
   # how many days before we give up trying to sync decisions
@@ -292,6 +291,7 @@ class RequestIssue < ApplicationRecord
   delegate :veteran, to: :decision_review
 
   def end_product_code
+    return if decision_review.processed_in_caseflow?
     return dta_end_product_code if remanded?
     return correction_end_product_code if correction?
 
@@ -847,7 +847,7 @@ class RequestIssue < ApplicationRecord
 
   # TODO: use request issue benefit type once it's populated for request issues on build
   def temp_find_benefit_type
-    benefit_type || decision_review.benefit_type || contested_benefit_type
+    decision_review.benefit_type || benefit_type || contested_benefit_type
   end
 
   def choose_end_product_code(end_product_codes)

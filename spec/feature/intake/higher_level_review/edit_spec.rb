@@ -1217,7 +1217,7 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_current_path(
           "/higher_level_reviews/#{rating_ep_claim_id}/edit/confirmation"
         )
-        expect(page).to have_content("Review Withdrawn")
+        expect(page).to have_content("Claim Issues Saved")
 
         withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
         expect(withdrawn_issue).to_not be_nil
@@ -1471,6 +1471,7 @@ feature "Higher Level Review Edit issues" do
 
         scenario "do not show edit contention text on unidentified issues" do
           visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
           expect(page).to have_content("This is unidentified")
           expect(page).to_not have_link("Edit contention title")
         end

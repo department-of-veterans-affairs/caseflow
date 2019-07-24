@@ -87,11 +87,11 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def after_issues
-    @after_issues ||= after_request_issue_ids ? fetch_after_issues : calculate_after_issues
+    after_request_issue_ids ? fetch_after_issues : calculate_after_issues
   end
 
   def edited_issues
-    edited_request_issue_ids ? fetch_edited_issues : calculate_edited_issues
+    @edited_issues ||= edited_request_issue_ids ? fetch_edited_issues : calculate_edited_issues
   end
 
   def all_updated_issues
@@ -196,7 +196,8 @@ class RequestIssuesUpdate < ApplicationRecord
 
   def correction
     @correction ||= RequestIssueCorrection.new(
-      request_issues_update: self,
+      review: review,
+      corrected_request_issue_ids: corrected_request_issue_ids,
       request_issues_data: @request_issues_data
     )
   end
