@@ -62,11 +62,15 @@ feature "End Product Correction (EP 930)" do
       expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
     end
 
-    context "when correct claim reviews feature is enabled" do
+    fcontext "when correct claim reviews feature is enabled" do
       it "allows a user to navigate to the edit page" do
         visit_editable_page_and_correct_request_issues("higher_level_reviews")
       end
-    end
+
+      it "selecting to correct issue launches modal to set correction type" do
+        visit_editable_page_and_test_correction_modal("higher_level_reviews")
+      end
+    end    
   end
 
   feature "with cleared end product on supplemental claim" do
@@ -104,6 +108,31 @@ def visit_editable_page_and_correct_request_issues(type)
   expect(page).to have_content("Edit Issues")
   expect(page).to have_content("Cleared, waiting for decision")
   click_correct_intake_issue_dropdown("PTSD denied")
+  expect(page).to have_selector(".intake-correction-type")
+  select_correction_type_from_modal('control')
+  click_correction_type_modal_submit
+  expect(page).to have_content("This issue will be added to a 930 EP for correction")
+  click_edit_submit
+  expect(page).to have_content("You are now creating a 930 EP in VBMS")
+  click_button("Yes, establish")
+  expect(page).to have_content("Claim Issues Saved")
+  disable_features
+end
+
+def visit_editable_page_and_test_correction_modal(type)
+  enable_features
+  visit "#{type}/#{cleared_end_product.claim_id}/edit/"
+  expect(page).to have_content("Edit Issues")
+  expect(page).to have_content("Cleared, waiting for decision")
+  click_correct_intake_issue_dropdown("PTSD denied")
+  expect(page).to have_selector(".intake-correction-type")
+
+  expect(page).to have_selector("#correctionType_control")
+  expect(page).to have_selector("#correctionType_local_quality_error")
+  expect(page).to have_selector("#correctionType_national_quality_error")
+
+  select_correction_type_from_modal('local_quality_error')
+  click_correction_type_modal_submit
   expect(page).to have_content("This issue will be added to a 930 EP for correction")
   click_edit_submit
   expect(page).to have_content("You are now creating a 930 EP in VBMS")
