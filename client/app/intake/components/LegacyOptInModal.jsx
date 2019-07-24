@@ -1,17 +1,16 @@
+import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
-
 import { formatDateStr } from '../../util/DateUtil';
+import { isCorrection } from '../util';
 import {
-  addRatingRequestIssue,
+  addContestableIssue,
   addNonratingRequestIssue,
   toggleUntimelyExemptionModal,
   toggleLegacyOptInModal } from '../actions/addIssues';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
-
-import _ from 'lodash';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -70,6 +69,7 @@ class LegacyOptInModal extends React.Component {
   onAddIssue = () => {
     const currentIssue = this.props.intakeData.currentIssueAndNotes.currentIssue;
     const notes = this.props.intakeData.currentIssueAndNotes.notes;
+    const correctionType = isCorrection(currentIssue.isRating, this.props.intakeData) ? 'control' : null;
 
     if (this.requiresUntimelyExemption()) {
       return this.props.toggleUntimelyExemptionModal({ currentIssue,
@@ -77,22 +77,24 @@ class LegacyOptInModal extends React.Component {
         vacolsId: this.state.vacolsId,
         vacolsSequenceId: this.state.vacolsSequenceId,
         eligibleForSocOptIn: this.state.eligibleForSocOptIn });
-    } else if (currentIssue.ratingIssueReferenceId) {
-      this.props.addRatingRequestIssue({
-        contestableIssueIndex: currentIssue.index,
-        contestableIssues: this.props.intakeData.contestableIssues,
-        isRating: true,
-        vacolsId: this.state.vacolsId,
-        vacolsSequenceId: this.state.vacolsSequenceId,
-        eligibleForSocOptIn: this.state.eligibleForSocOptIn,
-        notes
-      });
-    } else {
+    } else if (currentIssue.category) {
       this.props.addNonratingRequestIssue({
         ...currentIssue,
         vacolsId: this.state.vacolsId,
         vacolsSequenceId: this.state.vacolsSequenceId,
-        eligibleForSocOptIn: this.state.eligibleForSocOptIn
+        eligibleForSocOptIn: this.state.eligibleForSocOptIn,
+        correctionType
+      });
+    } else {
+      this.props.addContestableIssue({
+        contestableIssueIndex: currentIssue.index,
+        contestableIssues: this.props.intakeData.contestableIssues,
+        isRating: currentIssue.isRating,
+        vacolsId: this.state.vacolsId,
+        vacolsSequenceId: this.state.vacolsSequenceId,
+        eligibleForSocOptIn: this.state.eligibleForSocOptIn,
+        notes,
+        correctionType
       });
     }
     this.props.toggleLegacyOptInModal();
@@ -172,7 +174,7 @@ class LegacyOptInModal extends React.Component {
 export default connect(
   null,
   (dispatch) => bindActionCreators({
-    addRatingRequestIssue,
+    addContestableIssue,
     addNonratingRequestIssue,
     toggleUntimelyExemptionModal,
     toggleLegacyOptInModal

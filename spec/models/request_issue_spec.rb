@@ -1731,7 +1731,7 @@ describe RequestIssue do
 
         context "when there is no disposition" do
           before do
-            Fakes::VBMSService.disposition_records = nil
+            Fakes::EndProductStore.new.clear!
           end
           it "raises an error" do
             expect { subject }.to raise_error(RequestIssue::ErrorCreatingDecisionIssue)

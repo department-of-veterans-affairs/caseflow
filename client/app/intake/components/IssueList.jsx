@@ -32,9 +32,14 @@ export default class IssuesList extends React.Component {
           );
           let issueActionOptions = [];
 
-          if (issue.correctionType) {
+          if (issue.correctionType && issue.endProductCleared) {
             issueActionOptions.push({ displayText: 'Undo correction',
               value: 'undo_correction' });
+          } else if (issue.correctionType) {
+            issueActionOptions.push(
+              { displayText: 'Remove issue',
+                value: 'remove' }
+            );
           } else if (issue.endProductCleared) {
             issueActionOptions.push({ displayText: 'Correct issue',
               value: 'correct' });

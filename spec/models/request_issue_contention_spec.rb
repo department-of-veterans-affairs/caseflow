@@ -43,11 +43,11 @@ describe RequestIssueContention do
     let(:edited_description) { "new request issue description" }
 
     it "updates the contention in VBMS" do
+      updated_contention = request_issue.contention
+      updated_contention.text = edited_description
+
       expect(subject).to be true
       expect(request_issue.contention_updated_at).to be_within(1.second).of Time.zone.now
-
-      updated_contention = contention
-      updated_contention.text = edited_description
       expect(Fakes::VBMSService).to have_received(:update_contention!).with(updated_contention)
     end
 
@@ -64,9 +64,11 @@ describe RequestIssueContention do
     subject { request_issue_contention.remove! }
 
     it "calls VBMS with the appropriate arguments to remove the contention" do
+      removed_contention = request_issue.contention
+
       subject
 
-      expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention)
+      expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(removed_contention)
       expect(request_issue.contention_removed_at).to be_within(1.second).of Time.zone.now
     end
 
