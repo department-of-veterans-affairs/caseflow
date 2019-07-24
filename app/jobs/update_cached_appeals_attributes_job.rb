@@ -52,7 +52,7 @@ class UpdateCachedAppealsAttributesJob < ApplicationJob
       end
 
       CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:vacols_id],
-        columns: [:docket_number] }
+                                                                      columns: [:docket_number] }
     end
   end
 end
