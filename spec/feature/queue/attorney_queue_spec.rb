@@ -36,11 +36,11 @@ RSpec.feature "Attorney queue" do
       let(:attorney_task) do
         FactoryBot.create(
           :ama_attorney_task,
+          :on_hold,
           appeal: appeal,
           assigned_by: judge,
           assigned_to: attorney,
-          parent: judge_task,
-          status: Constants.TASK_STATUSES.on_hold
+          parent: judge_task
         )
       end
       let!(:colocated_task) do

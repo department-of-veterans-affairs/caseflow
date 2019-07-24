@@ -6,7 +6,8 @@ import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 import TextField from '../../components/TextField';
 import { BOOLEAN_RADIO_OPTIONS } from '../constants';
-import { addRatingRequestIssue, addNonratingRequestIssue } from '../actions/addIssues';
+import { addContestableIssue, addNonratingRequestIssue } from '../actions/addIssues';
+import { isCorrection } from '../util';
 
 class UntimelyExemptionModal extends React.Component {
   constructor(props) {
@@ -22,20 +23,7 @@ class UntimelyExemptionModal extends React.Component {
     const currentIssueData = this.props.intakeData.currentIssueAndNotes;
     const currentIssue = currentIssueData.currentIssue;
 
-    if (currentIssue.ratingIssueReferenceId) {
-      this.props.addRatingRequestIssue({
-        timely: false,
-        contestableIssueIndex: currentIssue.index,
-        contestableIssues: this.props.intakeData.contestableIssues,
-        isRating: true,
-        notes: currentIssueData.notes,
-        untimelyExemption: this.state.untimelyExemption,
-        untimelyExemptionNotes: this.state.untimelyExemptionNotes,
-        vacolsId: currentIssueData.vacolsId,
-        vacolsSequenceId: currentIssueData.vacolsSequenceId,
-        eligibleForSocOptIn: currentIssueData.eligibleForSocOptIn
-      });
-    } else {
+    if (currentIssue.category) {
       this.props.addNonratingRequestIssue({
         timely: false,
         isRating: false,
@@ -47,7 +35,22 @@ class UntimelyExemptionModal extends React.Component {
         decisionDate: currentIssue.decisionDate,
         vacolsId: currentIssueData.vacolsId,
         vacolsSequenceId: currentIssueData.vacolsSequenceId,
-        eligibleForSocOptIn: currentIssueData.eligibleForSocOptIn
+        eligibleForSocOptIn: currentIssueData.eligibleForSocOptIn,
+        correctionType: isCorrection(false, this.props.intakeData) ? 'control' : null
+      });
+    } else {
+      this.props.addContestableIssue({
+        timely: false,
+        contestableIssueIndex: currentIssue.index,
+        contestableIssues: this.props.intakeData.contestableIssues,
+        isRating: currentIssue.isRating,
+        notes: currentIssueData.notes,
+        untimelyExemption: this.state.untimelyExemption,
+        untimelyExemptionNotes: this.state.untimelyExemptionNotes,
+        vacolsId: currentIssueData.vacolsId,
+        vacolsSequenceId: currentIssueData.vacolsSequenceId,
+        eligibleForSocOptIn: currentIssueData.eligibleForSocOptIn,
+        correctionType: isCorrection(currentIssue.isRating, this.props.intakeData) ? 'control' : null
       });
     }
     this.props.closeHandler();
@@ -121,7 +124,7 @@ class UntimelyExemptionModal extends React.Component {
 export default connect(
   null,
   (dispatch) => bindActionCreators({
-    addRatingRequestIssue,
+    addContestableIssue,
     addNonratingRequestIssue
   }, dispatch)
 )(UntimelyExemptionModal);

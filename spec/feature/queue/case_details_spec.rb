@@ -530,7 +530,7 @@ RSpec.feature "Case details" do
       let!(:pulac_cerullo) do
         FactoryBot.create(
           :pulac_cerullo_task,
-          status: Constants.TASK_STATUSES.completed,
+          :completed,
           instructions: ["completed"],
           closed_at: 45.days.ago,
           appeal: appeal
@@ -623,7 +623,6 @@ RSpec.feature "Case details" do
       let!(:assigned_task) do
         FactoryBot.create(
           :colocated_task,
-          status: Constants.TASK_STATUSES.assigned,
           assigned_to: colocated_user,
           assigned_by: attorney_user
         )
@@ -842,14 +841,19 @@ RSpec.feature "Case details" do
   describe "Show multiple tasks" do
     let(:appeal) { create(:appeal) }
     let!(:root_task) do
-      create(:root_task, appeal: appeal, assigned_to: judge_user,
-                         status: Constants.TASK_STATUSES.assigned)
+      create(:root_task, appeal: appeal, assigned_to: judge_user)
     end
     let(:instructions_text) { "note #1" }
     let!(:task) do
-      create(:task, appeal: appeal, status: Constants.TASK_STATUSES.in_progress,
-                    assigned_by: judge_user, assigned_to: attorney_user, type: GenericTask,
-                    parent_id: root_task.id, started_at: rand(1..10).days.ago, instructions: [instructions_text])
+      create(:task,
+             :in_progress,
+             appeal: appeal,
+             assigned_by: judge_user,
+             assigned_to: attorney_user,
+             type: GenericTask,
+             parent_id: root_task.id,
+             started_at: rand(1..10).days.ago,
+             instructions: [instructions_text])
     end
 
     context "single task" do
@@ -873,14 +877,14 @@ RSpec.feature "Case details" do
     end
     context "multiple tasks" do
       let!(:task2) do
-        create(:task, appeal: appeal, status: Constants.TASK_STATUSES.in_progress,
-                      assigned_by: judge_user, assigned_to: attorney_user, type: AttorneyTask,
-                      parent_id: task.id, started_at: rand(1..20).days.ago)
+        create(:task, :in_progress, appeal: appeal,
+                                    assigned_by: judge_user, assigned_to: attorney_user, type: AttorneyTask,
+                                    parent_id: task.id, started_at: rand(1..20).days.ago)
       end
       let!(:task3) do
-        create(:task, appeal: appeal, status: Constants.TASK_STATUSES.in_progress,
-                      assigned_by: judge_user, assigned_to: attorney_user, type: AttorneyTask,
-                      parent_id: task.id, started_at: rand(1..20).days.ago, assigned_at: 15.days.ago)
+        create(:task, :in_progress, appeal: appeal,
+                                    assigned_by: judge_user, assigned_to: attorney_user, type: AttorneyTask,
+                                    parent_id: task.id, started_at: rand(1..20).days.ago, assigned_at: 15.days.ago)
       end
       it "two tasks are displayed in the TaskSnapshot" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -911,13 +915,12 @@ RSpec.feature "Case details" do
 
     context "one task" do
       let!(:root_task) do
-        create(:root_task, appeal: legacy_appeal, assigned_to: judge_user,
-                           status: Constants.TASK_STATUSES.assigned)
+        create(:root_task, appeal: legacy_appeal, assigned_to: judge_user)
       end
       let!(:legacy_task) do
-        create(:task, appeal: legacy_appeal, status: Constants.TASK_STATUSES.in_progress,
-                      assigned_by: judge_user, assigned_to: attorney_user, type: GenericTask,
-                      parent_id: root_task.id, started_at: rand(1..10).days.ago)
+        create(:task, :in_progress, appeal: legacy_appeal,
+                                    assigned_by: judge_user, assigned_to: attorney_user, type: GenericTask,
+                                    parent_id: root_task.id, started_at: rand(1..10).days.ago)
       end
 
       it "is displayed in the TaskSnapshot" do
@@ -980,9 +983,9 @@ RSpec.feature "Case details" do
       let!(:tracking_task) do
         FactoryBot.create(
           :track_veteran_task,
+          :completed,
           appeal: appeal,
-          parent: root_task,
-          status: Constants.TASK_STATUSES.completed
+          parent: root_task
         )
       end
 

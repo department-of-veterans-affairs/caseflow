@@ -892,15 +892,17 @@ RSpec.feature "Task queue" do
   end
 
   describe "a task with a child TimedHoldTask" do
-    let(:user) { FactoryBot.create(:user) }
-    let(:veteran) { FactoryBot.create(:veteran, first_name: "Julita", last_name: "Van Sant", file_number: 201_905_061) }
-    let(:appeal) { FactoryBot.create(:appeal, veteran_file_number: veteran.file_number) }
+    let(:user) { create(:user) }
+    let(:veteran) { create(:veteran, first_name: "Julita", last_name: "Van Sant", file_number: 201_905_061) }
+    let(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
     let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
-    let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-    let!(:disposition_task) { FactoryBot.create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
+    let!(:root_task) { create(:root_task, appeal: appeal) }
+    let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+    let!(:disposition_task) do
+      create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal)
+    end
     let!(:transcription_task) do
-      FactoryBot.create(:transcription_task, parent: disposition_task, appeal: appeal, assigned_to: user)
+      create(:transcription_task, parent: disposition_task, appeal: appeal, assigned_to: user)
     end
     let(:days_on_hold) { 18 }
     let!(:timed_hold_task) do
