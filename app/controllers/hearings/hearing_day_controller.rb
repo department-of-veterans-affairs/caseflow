@@ -97,7 +97,7 @@ class Hearings::HearingDayController < HearingsApplicationController
                   :bva_poc,
                   :notes,
                   :lock)
-      .merge(updated_by: current_user.css_id)
+      .merge(updated_by: current_user)
   end
 
   def create_params
