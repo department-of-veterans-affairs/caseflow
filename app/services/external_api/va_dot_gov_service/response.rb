@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ExternalApi::VADotGovService::Response
-  attr_reader :response, :code, :messages
+  attr_reader :response, :code
 
   def self.full_address(*addresses)
     addresses.reject(&:blank?).join(" ")
@@ -10,9 +10,6 @@ class ExternalApi::VADotGovService::Response
   def initialize(api_response)
     @response = api_response
     @code = @response.code
-    @messages = body[:messages]&.map do |message|
-      ExternalApi::VADotGovService::ResponseMessage.new(message)
-    end
   end
 
   def body
@@ -21,6 +18,12 @@ class ExternalApi::VADotGovService::Response
               rescue JSON::ParserError
                 response.body
               end
+  end
+
+  def messages
+    @messages ||= body[:messages]&.map do |message|
+      ExternalApi::VADotGovService::ResponseMessage.new(message)
+    end
   end
 
   def error
