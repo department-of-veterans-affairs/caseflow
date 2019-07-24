@@ -484,7 +484,8 @@ class Fakes::BGSService
         birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
         first_name: "Cathy",
         middle_name: "",
-        last_name: "Smith"
+        last_name: "Smith",
+        name_suffix: "Jr."
       }
     else
       {
