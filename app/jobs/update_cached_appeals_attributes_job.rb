@@ -5,9 +5,16 @@ BATCH_SIZE = 1000
 class UpdateCachedAppealsAttributesJob < ApplicationJob
   queue_as :low_priority
 
+  APP_NAME = "caseflow_job"
+  METRIC_GROUP_NAME = UpdateCachedAppealsAttributesJob.name.underscore
+
   def perform
+    start_time = Time.zone.now
+
     cache_ama_appeals
     cache_legacy_appeals
+
+    record_runtime(start_time)
   end
 
   def cache_ama_appeals
@@ -55,4 +62,16 @@ class UpdateCachedAppealsAttributesJob < ApplicationJob
                                                                       columns: [:docket_number] }
     end
   end
+
+  def record_runtime(start_time)
+    job_duration_seconds = Time.zone.now - start_time
+
+    DataDogService.emit_gauge(
+      app_name: APP_NAME ,
+      metric_group: METRIC_GROUP_NAME,
+      metric_name: "runtime",
+      metric_value: job_duration_seconds
+    )
+  end
+
 end
