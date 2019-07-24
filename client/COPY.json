@@ -506,5 +506,8 @@
   "SCHEDULE_VETERAN_FULL_HEARING_DAY_TITLE": "This hearing day is full",
   "SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL": "You are about to schedule this Veteran on a full docket. Please verify before scheduling.",
 
-  "HEARING_DATE_LOADING": "Finding upcoming hearing dates for this regional office..."
+  "HEARING_DATE_LOADING": "Finding upcoming hearing dates for this regional office...",
+
+  "CLAIM_REVIEW_EDIT_ERROR_MISSING_DECISION_DATE": "VBMS or SHARE: One or more ratings may be locked on this Claim. Please try again in 24 hours.",
+  "CLAIM_REVIEW_EDIT_ERROR_DEFAULT": "There was an error preparing this Review for edit."
 }
