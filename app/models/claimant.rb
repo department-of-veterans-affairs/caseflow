@@ -36,10 +36,6 @@ class Claimant < ApplicationRecord
     FullName.new(first_name, "", last_name).formatted(:readable_short)
   end
 
-  def bgs
-    BGSService.new
-  end
-
   def person
     @person ||= Person.find_or_create_by(participant_id: participant_id)
   end
