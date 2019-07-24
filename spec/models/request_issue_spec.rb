@@ -480,7 +480,7 @@ describe RequestIssue do
         let(:benefit_type) { "pension" }
 
         context "when decision review is a higher level review" do
-          let(:review) { create(:higher_level_review) }
+          let(:review) { create(:higher_level_review, benefit_type: benefit_type) }
 
           context "when rating" do
             let(:request_issue) { rating_request_issue }
@@ -532,7 +532,9 @@ describe RequestIssue do
         end
 
         context "when decision review is a supplemental claim" do
-          let(:review) { create(:supplemental_claim, decision_review_remanded: nil) }
+          let(:review) do
+            create(:supplemental_claim, benefit_type: benefit_type, decision_review_remanded: nil)
+          end
 
           context "when rating" do
             let(:request_issue) { rating_request_issue }
@@ -588,7 +590,7 @@ describe RequestIssue do
         let(:benefit_type) { "compensation" }
 
         context "when decision review is a higher level review" do
-          let(:review) { create(:higher_level_review) }
+          let(:review) { create(:higher_level_review, benefit_type: benefit_type) }
 
           context "when rating" do
             let(:request_issue) { rating_request_issue }
@@ -640,7 +642,9 @@ describe RequestIssue do
         end
 
         context "when decision review is a supplemental claim" do
-          let(:review) { create(:supplemental_claim, decision_review_remanded: nil) }
+          let(:review) do
+            create(:supplemental_claim, benefit_type: benefit_type, decision_review_remanded: nil)
+          end
 
           context "when rating" do
             let(:request_issue) { rating_request_issue }
@@ -695,7 +699,9 @@ describe RequestIssue do
 
     context "when on remand (dta) decision review" do
       let(:decision_review_remanded) { nil }
-      let(:review) { create(:supplemental_claim, decision_review_remanded: decision_review_remanded) }
+      let(:review) do
+        create(:supplemental_claim, benefit_type: benefit_type, decision_review_remanded: decision_review_remanded)
+      end
 
       context "when benefit type is pension" do
         let(:benefit_type) { "pension" }
