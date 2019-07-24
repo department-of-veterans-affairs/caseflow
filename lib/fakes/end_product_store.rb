@@ -16,7 +16,7 @@ class Fakes::EndProductStore
   class ChildStore < Fakes::EndProductStore
     def initialize(parent_key:, child_key:, child:)
       @parent_key = parent_key
-      @child_key = child_key.to_s
+      @child_key = child_key.to_sym
       @child = child
     end
 
