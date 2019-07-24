@@ -609,6 +609,12 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  def contention_missing?
+    return false unless contention_reference_id
+
+    !contention
+  end
+
   def contention
     end_product_establishment.contention_for_object(self)
   end
