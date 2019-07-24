@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# :nocov:
 module BgsService
   extend ActiveSupport::Concern
 
@@ -8,13 +7,16 @@ module BgsService
 
   # both class and instance method
   class_methods do
+    # :nocov:
     def bgs
       BGSService.new
     end
+    # :nocov:
   end
 
+  # :nocov:
   def bgs
     BGSService.new
   end
+  # :nocov:
 end
-# :nocov:
