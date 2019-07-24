@@ -89,15 +89,15 @@ class HearingDayRange
 
   def open_hearing_days_with_hearings_hash(current_user_id = nil)
     all_hearing_days
-      .select { |hearing_day, _scheduled_hearings| self.class.open_hearing_day?(hearing_day) }
+      .select { |hearing_day, scheduled_hearings| self.class.open_hearing_day?(hearing_day, scheduled_hearings) }
       .map do |hearing_day, scheduled_hearings|
         self.class.hearing_day_hash_with_hearings(hearing_day, scheduled_hearings, current_user_id)
       end
   end
 
   class << self
-    def open_hearing_day?(hearing_day)
-      hearing_day["hearings"].length < hearing_day["total_slots"]
+    def open_hearing_day?(hearing_day, scheduled_hearings)
+      scheduled_hearings.size < hearing_day.total_slots
     end
 
     def hearing_day_for_judge?(hearing_day, user)
