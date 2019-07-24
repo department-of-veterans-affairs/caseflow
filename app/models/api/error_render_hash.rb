@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class LighthouseErrorRenderHash
+class ErrorRenderHash
   def initialize(*args)
     # accepts either a single argument (an error hash or an array of error hashes) or no arguments
 
