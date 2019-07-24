@@ -28,6 +28,7 @@ class HigherLevelReviewRequest::NonratingIssue < HigherLevelReviewRequest::Ratin
     super options
 
     @nonrating_issue_category = options[:nonrating_issue_category]
+    validate_nonrating_issue_category
   end
 
   def complete_hash
