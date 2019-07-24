@@ -91,7 +91,7 @@ class HearingDayRange
     all_hearing_days
       .select { |hearing_day, _scheduled_hearings| self.class.open_hearing_day?(hearing_day) }
       .map do |hearing_day, scheduled_hearings|
-        self.class.hearing_day_hash_with_hearings(hearing_day, scheduled_hearings, current_use_id)
+        self.class.hearing_day_hash_with_hearings(hearing_day, scheduled_hearings, current_user_id)
       end
   end
 
