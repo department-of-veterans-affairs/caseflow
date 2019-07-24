@@ -45,7 +45,7 @@ class RequestIssueCorrection
   end
 
   def corrected_issues
-    @corrected_issues ||= @corrected_request_issue_ids ? fetch_corrected_issues : calculate_corrected_issues
+    @corrected_issues ||= corrected_request_issue_ids.present? ? fetch_corrected_issues : calculate_corrected_issues
   end
 
   def correction_issues
@@ -54,10 +54,10 @@ class RequestIssueCorrection
 
   private
 
-  attr_reader :request_issues_update, :review, :request_issues_data
+  attr_reader :corrected_request_issue_ids, :review, :request_issues_data
 
   def fetch_corrected_issues
-    RequestIssue.where(id: @corrected_request_issue_ids)
+    RequestIssue.where(id: corrected_request_issue_ids)
   end
 
   def calculate_corrected_issues
