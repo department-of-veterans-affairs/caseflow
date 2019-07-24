@@ -62,10 +62,10 @@ describe TimedHoldTask do
 
       context "when there are closed sibling TimedHoldTasks" do
         let!(:cancelled_sibling) do
-          FactoryBot.create(:timed_hold_task, **args.merge(status: Constants.TASK_STATUSES.cancelled))
+          FactoryBot.create(:timed_hold_task, :cancelled, **args)
         end
         let!(:completed_sibling) do
-          FactoryBot.create(:timed_hold_task, **args.merge(status: Constants.TASK_STATUSES.completed))
+          FactoryBot.create(:timed_hold_task, :completed, **args)
         end
 
         it "does not change the status of the closed sibling tasks" do
@@ -140,12 +140,12 @@ describe TimedHoldTask do
   end
 
   describe ".when_timer_ends" do
-    let(:task) { FactoryBot.create(:timed_hold_task, status: status) }
+    let(:task) { FactoryBot.create(:timed_hold_task, trait) }
 
     subject { task.when_timer_ends }
 
     context "when the task is active" do
-      let(:status) { Constants.TASK_STATUSES.in_progress }
+      let(:trait) { :in_progress }
 
       context "when the TimedHoldTask does not have a parent task" do
         it "changes task status to completed" do
@@ -155,8 +155,8 @@ describe TimedHoldTask do
       end
 
       context "when the TimedHoldTask has a parent task assigned to an organization" do
-        let(:parent_task) { FactoryBot.create(:generic_task, status: Constants.TASK_STATUSES.on_hold) }
-        let(:task) { FactoryBot.create(:timed_hold_task, status: status, parent: parent_task) }
+        let(:parent_task) { FactoryBot.create(:generic_task, :on_hold) }
+        let(:task) { FactoryBot.create(:timed_hold_task, trait, parent: parent_task) }
         it "sets the parent task status to assigned" do
           subject
           expect(parent_task.status).to eq(Constants.TASK_STATUSES.assigned)
@@ -165,7 +165,7 @@ describe TimedHoldTask do
     end
 
     context "when the task has already been completed" do
-      let(:status) { Constants.TASK_STATUSES.completed }
+      let(:trait) { :completed }
 
       it "does not update the status of the task" do
         expect(task).to_not receive(:update!)
@@ -174,7 +174,7 @@ describe TimedHoldTask do
     end
 
     context "when the task has been cancelled" do
-      let(:status) { Constants.TASK_STATUSES.cancelled }
+      let(:trait) { :cancelled }
 
       it "does not change the status of the task" do
         expect(task).to_not receive(:update!)

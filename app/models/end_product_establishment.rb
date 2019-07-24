@@ -162,6 +162,10 @@ class EndProductEstablishment < ApplicationRecord
     RequestIssue::END_PRODUCT_CODES.find_all_values_for(:rating).include?(code)
   end
 
+  def nonrating?
+    RequestIssue::END_PRODUCT_CODES.find_all_values_for(:nonrating).include?(code)
+  end
+
   # Find an end product that has the traits of the end product that should be created.
   def active_preexisting_end_product
     preexisting_end_products.find(&:active?)
