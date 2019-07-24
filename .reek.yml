@@ -13,6 +13,12 @@ detectors:
   ControlParameter:
     exclude:
       - HearingRepository#slot_new_hearing
+  LongParameterList:
+    exclude:
+      - ExternalApi::VADotGovService#address_validation_request
+  UncommunicativeParameterName:
+    exclude:
+      - ExternalApi::VADotGovService#address_validation_request
   DataClump:
     exclude:
       - HearingSerializerBase
