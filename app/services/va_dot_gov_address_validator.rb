@@ -60,7 +60,7 @@ class VaDotGovAddressValidator
                                                    long: valid_address[:long],
                                                    ids: facility_ids)
 
-    fail distance_result[:error] if distance_result[:error].present?
+    fail distance_result[:error], code: 500, message: "Unable to get distances" if distance_result[:error].present?
 
     distance_result[:facilities]
   end
@@ -70,7 +70,7 @@ class VaDotGovAddressValidator
 
     facility_id = RegionalOffice::CITIES[regional_office_id][:facility_locator_id]
 
-    VADotGovService.get_facility_data(ids: [facility_id])
+    VADotGovService.get_facility_data(ids: [facility_id])[:facilities]
       .each do |alternate_hearing_location|
         create_available_hearing_location(facility: alternate_hearing_location)
       end

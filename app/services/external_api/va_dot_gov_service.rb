@@ -71,16 +71,14 @@ class ExternalApi::VADotGovService
         sleep 1
       end
 
-      error = unless remaining_ids.empty?
-                Caseflow::Error::VaDotGovAPIError.new(
-                  code: 500,
-                  message: "Unable to find api.va.gov facility data for: #{remaining_ids.join(', ')}."
-                )
-              end
+      unless remaining_ids.empty?
+        msg = "Unable to find api.va.gov facility data for: #{remaining_ids.join(', ')}."
+        fail Caseflow::Error::VaDotGovAPIError code: 500, message: msg
+      end
 
       track_pages(page)
 
-      { error: result[:error] || error, facilities: facilities }
+      { error: result[:error], facilities: facilities }
     end
 
     def send_va_dot_gov_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
