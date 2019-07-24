@@ -5,12 +5,14 @@
 #   case distribution
 
 class SpecialCaseMovementTask < GenericTask
-  before_create :verify_parent_task_type, :verify_user_organization
-  after_create :after_create_function
+  before_create :verify_parent_task_type,
+    :verify_user_organization,
+    :verify_appeal_distributable
+  after_create :close_and_create_judge_task
 
   private
 
-  def after_create_function
+  def close_and_create_judge_task
     JudgeAssignTask.create!(appeal: appeal,
       parent: appeal.root_task,
       assigned_to: assigned_to,
@@ -22,9 +24,11 @@ class SpecialCaseMovementTask < GenericTask
     parent.update!(status: Constants.TASK_STATUSES.completed)
   end
 
-  def verify_user_organization
-    return true if assigned_by.organizations.include?(SpecialCasemovementTeam.singleton)
-    false
+  def verify_appeal_distributable
+    if !appeal.ready_for_distribution?
+      fail(Caseflow::Error::InvalidAppealState,
+           message: "Appeal must not have any open blocking Mail Tasks and must be in Case Storage for Special Case Movement to occur")
+    end
   end
 
   def verify_parent_task_type
@@ -33,6 +37,13 @@ class SpecialCaseMovementTask < GenericTask
     if !parent.is_a?(DistributionTask)
       fail(Caseflow::Error::InvalidParentTask,
            message: "Special Case Movement must have a Distribution task parent")
+    end
+  end
+
+  def verify_user_organization
+    if !assigned_by.organizations.include?(SpecialCasemovementTeam.singleton)
+      fail(Caseflow::Error::ActionForbiddenError,
+           message: "Special Case Movement restricted to Special Case Movement Team members")
     end
   end
 end

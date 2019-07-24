@@ -30,6 +30,11 @@ Rails.application.routes.draw do
       resources :appeals, only: :index
       resources :hearings, only: :show, param: :hearing_day
     end
+    namespace :v3 do
+      namespace :decision_review do
+        resources :higher_level_reviews, only: :create
+      end
+    end
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do
         get 'decision_reviews', to: 'docs#decision_reviews'
@@ -123,7 +128,7 @@ Rails.application.routes.draw do
   resources :beaam_appeals, only: [:index]
 
   resources :regional_offices, only: [:index]
-  get '/regional_offices/:regional_office/open_hearing_dates', to: "regional_offices#open_hearing_dates"
+  get '/regional_offices/:regional_office/hearing_dates', to: "regional_offices#hearing_dates"
 
   namespace :hearings do
     resources :worksheets, only: [:update, :show], param: :id
@@ -242,7 +247,9 @@ Rails.application.routes.draw do
     resources :tasks, only: [:index], controller: 'organizations/tasks'
     resources :task_pages, only: [:index], controller: 'organizations/task_pages'
     resources :users, only: [:index, :create, :update, :destroy], controller: 'organizations/users'
-    resources :members, only: [:index], controller: 'organizations/members'
+    # Maintain /organizations/members for backwards compatability for a few days.
+    resources :members, only: [:index], controller: 'organizations/task_summary'
+    resources :task_summary, only: [:index], controller: 'organizations/task_summary'
   end
   get '/organizations/:url/modal(*rest)', to: 'organizations#show'
 
