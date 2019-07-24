@@ -16,8 +16,6 @@ describe UpdateCachedAppealsAttributesJob do
   context "when the job runs successfully" do
     before do
       open_appeals.each do |appeal|
-        puts "APPEAL"
-        puts appeal.id
         FactoryBot.create_list(:bva_dispatch_task, 3, appeal: appeal)
         FactoryBot.create_list(:ama_judge_task, 8, appeal: appeal)
       end
@@ -32,7 +30,8 @@ describe UpdateCachedAppealsAttributesJob do
     end
 
     it "does not cache appeals when all appeal tasks are closed" do
-      FactoryBot.create(:ama_judge_task, appeal: closed_legacy_appeal, status: Constants.TASK_STATUSES.completed)
+      task_to_close = FactoryBot.create(:ama_judge_task, appeal: closed_legacy_appeal, status: Constants.TASK_STATUSES.assigned)
+      task_to_close.update(status: Constants.TASK_STATUSES.completed)
 
       UpdateCachedAppealsAttributesJob.perform_now
 
