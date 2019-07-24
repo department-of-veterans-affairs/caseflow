@@ -929,6 +929,7 @@ feature "Higher Level Review Edit issues" do
       expect(page).to have_content("The review originally had 1 issue but now has 7.")
 
       safe_click "#Number-of-issues-has-changed-button-id-1"
+
       expect(page).to have_current_path(
         "/higher_level_reviews/#{rating_ep_claim_id}/edit/confirmation"
       )

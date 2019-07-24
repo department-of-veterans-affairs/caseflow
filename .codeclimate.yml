@@ -62,6 +62,9 @@ plugins:
       - XXX
   reek:
     enabled: true
+    checks:
+      Attribute:
+        enabled: false
     exclude_patterns:
     - 'db/migrate/*'
   rubocop:
