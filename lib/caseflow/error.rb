@@ -66,6 +66,14 @@ module Caseflow::Error
     end
   end
 
+  class InvalidStatusOnTaskCreate < SerializableError
+    def initialize(args)
+      @task_type = args[:task_type]
+      @code = args[:code] || 400
+      @message = args[:message] || "Task status has to be 'assigned' on create for #{@task_type}"
+    end
+  end
+
   class InvalidParentTask < SerializableError
     def initialize(args)
       @task_type = args[:task_type]

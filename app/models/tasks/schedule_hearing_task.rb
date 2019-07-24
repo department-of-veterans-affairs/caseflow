@@ -68,16 +68,15 @@ class ScheduleHearingTask < GenericTask
       verify_user_can_update!(current_user)
 
       if params[:status] == Constants.TASK_STATUSES.completed
-        task_payloads = params.delete(:business_payloads)
+        task_values = params.delete(:business_payloads)[:values]
 
-        scheduled_time_string = task_payloads[:values][:scheduled_time_string]
-        hearing_day_id = task_payloads[:values][:hearing_day_id]
-        hearing_location = task_payloads[:values][:hearing_location]
-
-        hearing = HearingRepository.slot_new_hearing(hearing_day_id,
-                                                     appeal: appeal,
-                                                     hearing_location_attrs: hearing_location&.to_hash,
-                                                     scheduled_time_string: scheduled_time_string)
+        hearing = HearingRepository.slot_new_hearing(
+          task_values[:hearing_day_id],
+          appeal: appeal,
+          hearing_location_attrs: task_values[:hearing_location]&.to_hash,
+          scheduled_time_string: task_values[:scheduled_time_string],
+          override_full_hearing_day_validation: task_values[:override_full_hearing_day_validation]
+        )
         AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
       elsif params[:status] == Constants.TASK_STATUSES.cancelled
         withdraw_hearing

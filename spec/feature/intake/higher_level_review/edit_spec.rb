@@ -929,6 +929,7 @@ feature "Higher Level Review Edit issues" do
       expect(page).to have_content("The review originally had 1 issue but now has 7.")
 
       safe_click "#Number-of-issues-has-changed-button-id-1"
+
       expect(page).to have_current_path(
         "/higher_level_reviews/#{rating_ep_claim_id}/edit/confirmation"
       )
@@ -1059,6 +1060,8 @@ feature "Higher Level Review Edit issues" do
       allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
       allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
+      contention_to_remove = request_issue.reload.contention
+
       visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
       click_remove_intake_issue("1")
       click_remove_issue_confirmation
@@ -1102,7 +1105,7 @@ feature "Higher Level Review Edit issues" do
           new_request_issue.contested_rating_issue_reference_id => new_request_issue.contention_reference_id
         }
       )
-      expect(Fakes::VBMSService).to have_received(:remove_contention!).once
+      expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention_to_remove)
     end
 
     feature "cancel edits" do
@@ -1117,38 +1120,6 @@ feature "Higher Level Review Edit issues" do
 
       scenario "from landing page" do
         click_cancel("/")
-      end
-    end
-
-    feature "with cleared end product" do
-      let!(:cleared_end_product) do
-        Generators::EndProduct.build(
-          veteran_file_number: veteran.file_number,
-          bgs_attrs: { status_type_code: "CLR" }
-        )
-      end
-
-      let!(:cleared_end_product_establishment) do
-        create(:end_product_establishment,
-               source: higher_level_review,
-               synced_status: "CLR",
-               reference_id: cleared_end_product.claim_id)
-      end
-
-      scenario "prevents edits on eps that have cleared" do
-        visit "higher_level_reviews/#{rating_ep_claim_id}/edit/"
-        expect(page).to have_current_path("/higher_level_reviews/#{rating_ep_claim_id}/edit/cleared_eps")
-        expect(page).to have_content("Issues Not Editable")
-        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
-      end
-
-      context "when correct_claim_reviews is enabled" do
-        before { FeatureToggle.enable!(:correct_claim_reviews) }
-
-        it "allows a user to navigate to the edit page" do
-          visit "higher_level_reviews/#{rating_ep_claim_id}/edit/"
-          expect(page).to have_content("Edit Issues")
-        end
       end
     end
 

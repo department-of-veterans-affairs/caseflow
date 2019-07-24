@@ -250,20 +250,22 @@ describe AssignHearingDispositionTask do
         hearing_task: hearing_task
       )
     end
-    let!(:schedule_hearing_task) do
-      FactoryBot.create(
-        :schedule_hearing_task,
-        parent: hearing_task,
-        appeal: appeal,
-        status: Constants.TASK_STATUSES.completed
-      )
-    end
+
     let!(:disposition_task) do
       FactoryBot.create(
         :assign_hearing_disposition_task,
+        :in_progress,
         parent: hearing_task,
-        appeal: appeal,
-        status: Constants.TASK_STATUSES.in_progress
+        appeal: appeal
+      )
+    end
+
+    let!(:schedule_hearing_task) do
+      FactoryBot.create(
+        :schedule_hearing_task,
+        :completed,
+        parent: hearing_task,
+        appeal: appeal
       )
     end
 
