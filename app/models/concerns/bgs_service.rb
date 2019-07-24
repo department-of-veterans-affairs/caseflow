@@ -3,16 +3,14 @@
 module BgsService
   extend ActiveSupport::Concern
 
+  private
+
   # both class and instance method
   class_methods do
-    private
-
     def bgs
       BGSService.new
     end
   end
-
-  private
 
   def bgs
     BGSService.new
