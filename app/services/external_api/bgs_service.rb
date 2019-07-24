@@ -80,6 +80,7 @@ class ExternalApi::BGSService
       first_name: bgs_info[:first_nm],
       last_name: bgs_info[:last_nm],
       middle_name: bgs_info[:middle_nm],
+      name_suffix: bgs_info[:suffix_nm],
       birth_date: bgs_info[:brthdy_dt]
     }
   end
