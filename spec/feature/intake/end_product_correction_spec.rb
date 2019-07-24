@@ -16,7 +16,6 @@ feature "End Product Correction (EP 930)" do
            last_name: "Merica")
   end
 
-  let(:benefit_type) { "compensation" }
   let(:receipt_date) { Time.zone.today - 20 }
   let(:promulgation_date) { receipt_date - 2.days }
   let(:profile_date) { promulgation_date.to_datetime }

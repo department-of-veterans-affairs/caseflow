@@ -84,7 +84,6 @@ class ClaimReviewController < ApplicationController
 
   def added_issues
     new_issues = request_issues_update.added_issues
-    # binding.pry
     return if new_issues.empty?
 
     "added #{new_issues.count} #{'issue'.pluralize(new_issues.count)}"

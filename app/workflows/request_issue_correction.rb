@@ -45,7 +45,7 @@ class RequestIssueCorrection
   end
 
   def corrected_issues
-    @corrected_issues ||= @corrected_request_issue_ids ? fetch_corrected_issues : calculate_corrected_issues
+    @corrected_issues ||= corrected_request_issue_ids.present? ? fetch_corrected_issues : calculate_corrected_issues
   end
 
   def correction_issues
