@@ -17,31 +17,45 @@ describe SpecialCaseMovementTask do
                             :with_post_intake_tasks,
                             docket_type: "direct_review")
         end
-        context "with no blocking tasks" do
+        context "with no blocking tasks", focus: true do
           it "should create the SCM task and JudgeAssign task" do
             expect do
+              dist_task = appeal.tasks.active.where(type: DistributionTask.name).first
               SpecialCaseMovementTask.create(appeal: appeal,
-                                             assigned_by: scm_user,
-                                             parent: appeal.root_task)
+                                             assigned_to: scm_user,
+                                             parent: dist_task)
             end.not_to raise_error
-            scm_task = tasks.open.where(type: SpecialCaseManagementTask.name).first
+            scm_task = appeal.tasks.open.where(type: SpecialCaseMovementTask.name).first
             expect(scm_task.status).to eq(TASK_STATUSES.completed)
 
-            judge_task = tasks.open.where(type: JudgeAssignTask.name).first
+            judge_task = appeal.tasks.open.where(type: JudgeAssignTask.name).first
             expect(judge_task.status).to eq(TASK_STATUSES.assigned)
           end
         end
 
         context "with blocking mail task" do
-          FactoryBot.create(:congressional_interest_mail_task,
-                            appeal: appeal,
-                            parent: appeal.root_task)
           it "should error with appeal not ready" do
+            FactoryBot.create(:congressional_interest_mail_task,
+                              appeal: appeal,
+                              parent: appeal.root_task)
             expect do
               SpecialCaseMovementTask.create(appeal: appeal,
                                              assigned_by: scm_user,
                                              parent: appeal.root_task)
-            end.to raise_error(InvalidAppealState)
+            end.to raise_error(Caseflow::Error::InvalidAppealState, appeal_id: appeal.id, action: "SpecialCaseMovement")
+          end
+        end
+
+        context "with a nonblocking mail task" do
+          it "shouldn't error with appeal not ready" do
+            FactoryBot.create(:aod_motion_mail_task,
+                              appeal: appeal,
+                              parent: appeal.root_task)
+            expect do
+              SpecialCaseMovementTask.create(appeal: appeal,
+                                             assigned_by: scm_user,
+                                             parent: appeal.root_task)
+            end.not_to raise_error
           end
         end
       end
@@ -55,10 +69,11 @@ describe SpecialCaseMovementTask do
         context "with distribution task on_hold" do
           it "should error with appeal not ready" do
             expect do
+              dist_task = appeal.tasks.open.where(type: DistributionTask.name).first
               SpecialCaseMovementTask.create(appeal: appeal,
                                              assigned_by: scm_user,
-                                             parent: appeal.root_task)
-            end.to raise_error(InvalidAppealState)
+                                             parent: dist_task)
+            end.to raise_error(Caseflow::Error::InvalidAppealState, appeal_id: appeal.id, action: "SpecialCaseMovement")
           end
         end
 
@@ -69,7 +84,7 @@ describe SpecialCaseMovementTask do
               SpecialCaseMovementTask.create(appeal: appeal,
                                              assigned_by: scm_user,
                                              parent: evidence_window_task)
-            end.to raise_error(InvalidParentTask)
+            end.to raise_error(Caseflow::Error::InvalidParentTask, task_type: EvidenceSubmissionWindowTask.name)
           end
         end
       end
@@ -88,7 +103,7 @@ describe SpecialCaseMovementTask do
           SpecialCaseMovementTask.create(appeal: appeal,
                                          assigned_by: user,
                                          parent: appeal.root_task)
-        end.to raise_error(ActionForbiddenError)
+        end.to raise_error(Caseflow::Error::ActionForbiddenError)
       end
     end
   end

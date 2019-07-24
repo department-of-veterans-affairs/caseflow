@@ -74,6 +74,15 @@ module Caseflow::Error
     end
   end
 
+  class InvalidAppealState < SerializableError
+    def initialize(args)
+      @code = args[:code] || 500
+      @appeal_id = args[:appeal_id]
+      @action = args[:action]
+      @message = args[:message] || "Invalid Appeal State to #{@action} for #{@appeal_id}"
+    end
+  end
+
   class InvalidParentTask < SerializableError
     def initialize(args)
       @task_type = args[:task_type]
