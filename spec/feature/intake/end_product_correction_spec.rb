@@ -161,7 +161,6 @@ feature "End Product Correction (EP 930)" do
   end
 end
 
-
 def check_page_not_editable(type)
   expect(page).to have_current_path("/#{type}s/#{cleared_end_product.claim_id}/edit/cleared_eps")
   expect(page).to have_content("Issues Not Editable")

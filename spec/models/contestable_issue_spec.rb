@@ -129,7 +129,6 @@ describe ContestableIssue do
         titleOfActiveReview: nil,
         sourceReviewType: "Appeal",
         timely: true,
-        isRating: true,
         latestIssuesInChain: [{ id: decision_issue.id, approxDecisionDate: caseflow_decision_date }]
       )
     end
