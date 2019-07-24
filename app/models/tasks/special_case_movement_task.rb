@@ -6,18 +6,18 @@
 
 class SpecialCaseMovementTask < GenericTask
   before_create :verify_parent_task_type,
-    :verify_user_organization,
-    :verify_appeal_distributable
+                :verify_user_organization,
+                :verify_appeal_distributable
   after_create :close_and_create_judge_task
 
   private
 
   def close_and_create_judge_task
     JudgeAssignTask.create!(appeal: appeal,
-      parent: appeal.root_task,
-      assigned_to: assigned_to,
-      assigned_by: assigned_by,
-      instructions: instructions)
+                            parent: appeal.root_task,
+                            assigned_to: assigned_to,
+                            assigned_by: assigned_by,
+                            instructions: instructions)
     update!(status: Constants.TASK_STATUSES.completed)
     # For now, we expect the parent to always be the distribution task
     #   so we don't worry about distribution task explicitly
@@ -27,7 +27,7 @@ class SpecialCaseMovementTask < GenericTask
   def verify_appeal_distributable
     if !appeal.ready_for_distribution?
       fail(Caseflow::Error::InvalidAppealState,
-           message: "Appeal must not have any open blocking Mail Tasks and must be in Case Storage for Special Case Movement to occur")
+           message: "Appeal must be in Case Storage and not have blocking Mail Tasks for Special Case Movement")
     end
   end
 
