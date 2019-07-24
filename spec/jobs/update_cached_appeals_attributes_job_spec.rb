@@ -30,7 +30,8 @@ describe UpdateCachedAppealsAttributesJob do
     end
 
     it "does not cache appeals when all appeal tasks are closed" do
-      task_to_close = FactoryBot.create(:ama_judge_task, appeal: closed_legacy_appeal,
+      task_to_close = FactoryBot.create(:ama_judge_task,
+                                        appeal: closed_legacy_appeal,
                                         status: Constants.TASK_STATUSES.assigned)
       task_to_close.update(status: Constants.TASK_STATUSES.completed)
 
