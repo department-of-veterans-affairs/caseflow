@@ -9,6 +9,7 @@
 class LegacyAppeal < ApplicationRecord
   include AppealConcern
   include AssociatedVacolsModel
+  include BgsService
   include CachedAttributes
   include AddressMapper
   include Taskable
@@ -389,7 +390,7 @@ class LegacyAppeal < ApplicationRecord
 
   # TODO: delegate this to veteran
   def can_be_accessed_by_current_user?
-    self.class.bgs.can_access?(veteran_file_number)
+    bgs.can_access?(veteran_file_number)
   end
 
   def task_header
@@ -846,10 +847,6 @@ class LegacyAppeal < ApplicationRecord
       else
         numeric
       end
-    end
-
-    def bgs
-      BGSService.new
     end
 
     def fetch_appeals_by_file_number(*file_numbers)

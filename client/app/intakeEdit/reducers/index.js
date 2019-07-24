@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { ACTIONS } from '../constants';
 import { applyCommonReducers } from '../../intake/reducers/common';
 import { REQUEST_STATE } from '../../intake/constants';
@@ -13,7 +14,7 @@ export const mapDataToInitialState = function(props = {}) {
 
   if (serverIntake.veteranInvalidFields) {
     serverIntake.veteranInvalidFields = {
-      veteranMissingFields: serverIntake.veteranInvalidFields.veteran_missing_fields.join(', '),
+      veteranMissingFields: _.join(serverIntake.veteranInvalidFields.veteran_missing_fields, ', '),
       veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long
     };
   }
@@ -32,8 +33,9 @@ export const mapDataToInitialState = function(props = {}) {
       requestIssuesUpdate: REQUEST_STATE.NOT_STARTED
     },
     requestIssuesUpdateErrorCode: null,
-    issuesAfter: null,
-    issuesBefore: null
+    afterIssues: null,
+    beforeIssues: null,
+    updatedIssues: null
   };
 };
 
@@ -58,11 +60,14 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
       redirectTo: {
         $set: action.payload.responseObject.redirect_to
       },
-      issuesAfter: {
-        $set: formatRequestIssues(action.payload.responseObject.issuesAfter)
+      afterIssues: {
+        $set: formatRequestIssues(action.payload.responseObject.afterIssues)
       },
-      issuesBefore: {
-        $set: formatRequestIssues(action.payload.responseObject.issuesBefore)
+      beforeIssues: {
+        $set: formatRequestIssues(action.payload.responseObject.beforeIssues)
+      },
+      updatedIssues: {
+        $set: formatRequestIssues(action.payload.responseObject.updatedIssues)
       }
     });
   case ACTIONS.REQUEST_ISSUES_UPDATE_FAIL:

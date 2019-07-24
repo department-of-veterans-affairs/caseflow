@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class RequestIssueCorrection
-  def initialize(review:, request_issues_data:)
+  def initialize(review:, corrected_request_issue_ids:, request_issues_data:)
+    @corrected_request_issue_ids = corrected_request_issue_ids
     @review = review
     @request_issues_data = request_issues_data
   end
@@ -44,12 +45,20 @@ class RequestIssueCorrection
   end
 
   def corrected_issues
-    @corrected_issues ||= calculate_corrected_issues
+    @corrected_issues ||= @corrected_request_issue_ids.present? ? fetch_corrected_issues : calculate_corrected_issues
+  end
+
+  def correction_issues
+    corrected_issues.map(&:correction_request_issue)
   end
 
   private
 
-  attr_reader :review, :request_issues_data
+  attr_reader :request_issues_update, :review, :request_issues_data
+
+  def fetch_corrected_issues
+    RequestIssue.where(id: @corrected_request_issue_ids)
+  end
 
   def calculate_corrected_issues
     corrected_issues_data.map do |issue_data|
