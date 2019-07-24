@@ -23,7 +23,7 @@ const leadMessageList = ({ veteran, formName, requestIssues }) => {
       leadMessageArr.push(
         <Alert type="warning">
           <h2>Unidentified issue</h2>
-          <p>{COPY.INDENTIFIED_ALERT}</p>
+          <p>{COPY.UNIDENTIFIED_ALERT}</p>
           {unidentifiedIssues.map((ri, i) => <p className="cf-red-text" key={`unidentified-alert-${i}`}>
             Unidentified issue: no issue matched for requested "{ri.description}"
           </p>)}

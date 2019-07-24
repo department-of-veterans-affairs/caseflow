@@ -69,14 +69,15 @@ class ClaimReviewController < ApplicationController
       set_flash_success_message
 
       render json: { redirect_to: claim_review.business_line.tasks_url,
-                     issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
-                     issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
+                     beforeIssues: request_issues_update.before_issues.map(&:ui_hash),
+                     afterIssues: request_issues_update.after_issues.map(&:ui_hash),
                      withdrawnIssues: request_issues_update.withdrawn_issues.map(&:ui_hash) }
     else
       render json: {
         redirect_to: nil,
-        issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
-        issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
+        beforeIssues: request_issues_update.before_issues.map(&:ui_hash),
+        afterIssues: request_issues_update.after_issues.map(&:ui_hash),
+        updatedIssues: request_issues_update.all_updated_issues.map(&:ui_hash),
         withdrawnIssues: nil
       }
     end
@@ -91,7 +92,7 @@ class ClaimReviewController < ApplicationController
   end
 
   def added_issues
-    new_issues = request_issues_update.after_issues - request_issues_update.before_issues
+    new_issues = request_issues_update.added_issues
     return if new_issues.empty?
 
     "added #{new_issues.count} #{'issue'.pluralize(new_issues.count)}"
