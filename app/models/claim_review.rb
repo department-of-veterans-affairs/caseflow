@@ -43,7 +43,8 @@ class ClaimReview < DecisionReview
     super.merge(
       benefitType: benefit_type,
       payeeCode: payee_code,
-      clearedEps: cleared_eps
+      hasClearedRatingEp: cleared_rating_ep?,
+      hasClearedNonratingEp: cleared_nonrating_ep?
     )
   end
 
@@ -121,10 +122,6 @@ class ClaimReview < DecisionReview
       epe.veteran = veteran
       epe.sync!
     end
-  end
-
-  def cleared_eps
-    end_product_establishments.select { |ep| ep.status_cleared?(sync: true) }.map(&:code)
   end
 
   def active?
@@ -213,6 +210,18 @@ class ClaimReview < DecisionReview
   end
 
   private
+
+  def cleared_end_products
+    @cleared_end_products ||= end_product_establishments.select { |ep| ep.status_cleared?(sync: true) }
+  end
+
+  def cleared_rating_ep?
+    cleared_end_products.any?(&:rating?)
+  end
+
+  def cleared_nonrating_ep?
+    cleared_end_products.any?(&:nonrating?)
+  end
 
   def incomplete_tasks?
     tasks.reject(&:completed?).any?
