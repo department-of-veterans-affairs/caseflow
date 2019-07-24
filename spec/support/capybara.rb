@@ -5,7 +5,7 @@ require "capybara-screenshot/rspec"
 require "selenium-webdriver"
 require "webdrivers"
 
-Webdrivers.logger.level = :DEBUG
+Webdrivers.logger.level = :DEBUG if ENV["DEBUG"]
 
 Sniffybara::Driver.configuration_file = File.expand_path("VA-axe-configuration.json", __dir__)
 
