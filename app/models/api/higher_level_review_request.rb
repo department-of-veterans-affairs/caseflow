@@ -39,8 +39,8 @@ class HigherLevelReviewRequest
     initialize_issues included
   end
 
-  def review_hash
-    {
+  def review_params
+    ActionController::Parameters.new(
       informal_conference: informal_conference,
       same_office: same_office,
       benefit_type: benefit_type,
@@ -49,11 +49,11 @@ class HigherLevelReviewRequest
       veteran_is_not_claimant: !!claimant,
       payee_code: claimant&.payee_code,
       legacy_opt_in_approved: legacy_opt_in_approved
-    }
+    )
   end
 
-  def complete_hash
-    { request_issues: issues.map(&:complete_hash) }
+  def complete_params
+    ActionController::Parameters.new request_issues: issues.map(&:complete_hash)
   end
 
   class << self

@@ -12,8 +12,8 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
 
     transaction do
       render error unless intake.start! # make these errors more specific
-      render error unless intake.review! @request.review_hash
-      render error unless intake.complete! @request.complete_hash
+      render error unless intake.review! @request.review_params
+      render error unless intake.complete! @request.complete_params
     end
 
     higher_level_review = intake.detail
