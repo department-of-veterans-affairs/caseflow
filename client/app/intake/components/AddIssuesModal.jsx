@@ -7,13 +7,14 @@ import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 import {
-  addRatingRequestIssue,
+  addContestableIssue,
   toggleNonratingRequestIssueModal,
   toggleUntimelyExemptionModal,
   toggleLegacyOptInModal
 } from '../actions/addIssues';
 import TextField from '../../components/TextField';
 import { issueByIndex } from '../util/issues';
+import { isCorrection } from '../util';
 
 class AddIssuesModal extends React.Component {
   constructor(props) {
@@ -63,11 +64,12 @@ class AddIssuesModal extends React.Component {
       this.props.toggleUntimelyExemptionModal({ currentIssue,
         notes: this.state.notes });
     } else {
-      this.props.addRatingRequestIssue({
+      this.props.addContestableIssue({
         contestableIssueIndex: this.state.selectedContestableIssueIndex,
         contestableIssues: this.props.intakeData.contestableIssues,
-        isRating: true,
-        notes: this.state.notes
+        isRating: currentIssue.isRating,
+        notes: this.state.notes,
+        correctionType: isCorrection(currentIssue.isRating, this.props.intakeData) ? 'control' : null
       });
       this.props.closeHandler();
     }
@@ -181,7 +183,7 @@ class AddIssuesModal extends React.Component {
 export default connect(
   null,
   (dispatch) => bindActionCreators({
-    addRatingRequestIssue,
+    addContestableIssue,
     toggleNonratingRequestIssueModal,
     toggleUntimelyExemptionModal,
     toggleLegacyOptInModal
