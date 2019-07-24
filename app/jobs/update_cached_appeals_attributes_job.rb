@@ -13,9 +13,6 @@ class UpdateCachedAppealsAttributesJob < ApplicationJob
   def cache_ama_appeals
     appeals_ids_to_cache = Task.open.where(appeal_type: Appeal.name).pluck(:appeal_id).uniq
 
-    puts "APPEAL IDS"
-    puts appeals_ids_to_cache
-
     appeals_to_cache = Appeal.find(appeals_ids_to_cache).map do |appeal|
       {
         appeal_id: appeal.id,
