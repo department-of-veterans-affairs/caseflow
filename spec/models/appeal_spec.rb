@@ -493,7 +493,11 @@ describe Appeal do
 
       context "VADotGovService is responsive" do
         before do
-          allow(VADotGovService).to receive(:validate_address).and_return(mock_va_dot_gov_address)
+          allow(VADotGovService).to receive(:validate_address)
+            .and_return(
+              error: nil,
+              valid_address: mock_va_dot_gov_address
+            )
         end
 
         context "the service returns a state code" do
