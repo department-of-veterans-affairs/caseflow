@@ -41,14 +41,14 @@ class ExternalApi::VADotGovService::Response
 
     case code
     when 429
-      fail Caseflow::Error::VaDotGovLimitError code: code, message: body
+      fail Caseflow::Error::VaDotGovLimitError, code: code, message: body
     when 400
-      fail Caseflow::Error::VaDotGovRequestError code: code, message: body
+      fail Caseflow::Error::VaDotGovRequestError, code: code, message: body
     when 500
-      fail Caseflow::Error::VaDotGovServerError code: code, message: body
+      fail Caseflow::Error::VaDotGovServerError, code: code, message: body
     else
       msg = "Error: #{body}, HTTP code: #{code}"
-      fail Caseflow::Error::VaDotGovServerError code: code, message: msg
+      fail Caseflow::Error::VaDotGovServerError, code: code, message: msg
     end
   end
 

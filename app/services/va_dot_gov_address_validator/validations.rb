@@ -31,6 +31,12 @@ module VaDotGovAddressValidator::Validations
     valid_address_result[:error] if valid_address.blank?
   end
 
+  def fail_if_unable_to_validate_address
+    if valid_address_error.present?
+      fail valid_address_error, code: 500, message: "Unable to validate appeal address"
+    end
+  end
+
   def state_code_error
     if state_code_for_regional_office.nil? || !valid_states.include?(state_code_for_regional_office)
       Caseflow::Error::VaDotGovForeignVeteranError

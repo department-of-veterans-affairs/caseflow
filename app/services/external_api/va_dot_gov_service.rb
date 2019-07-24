@@ -73,7 +73,7 @@ class ExternalApi::VADotGovService
 
       unless remaining_ids.empty?
         msg = "Unable to find api.va.gov facility data for: #{remaining_ids.join(', ')}."
-        fail Caseflow::Error::VaDotGovAPIError code: 500, message: msg
+        fail Caseflow::Error::VaDotGovAPIError, code: 500, message: msg
       end
 
       track_pages(page)

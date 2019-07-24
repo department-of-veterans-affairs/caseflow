@@ -54,7 +54,7 @@ class VaDotGovAddressValidator
   end
 
   def get_distance_to_facilities(facility_ids:)
-    fail valid_address_error if valid_address_error.present?
+    fail_if_unable_to_validate_address
 
     distance_result = VADotGovService.get_distance(lat: valid_address[:lat],
                                                    long: valid_address[:long],
