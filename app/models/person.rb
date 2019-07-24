@@ -45,7 +45,7 @@ class Person < ApplicationRecord
 
   def update_cached_attributes!
     transaction do
-      CACHED_BGS_ATTRIBUTES.each { |attr| self.send(attr) }
+      CACHED_BGS_ATTRIBUTES.each { |attr| send(attr) }
     end
   end
 

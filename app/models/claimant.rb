@@ -18,9 +18,7 @@ class Claimant < ApplicationRecord
       participant_id: participant_id,
       payee_code: payee_code
     )
-    Person.find_or_create_by(participant_id: participant_id).tap do |person|
-      person.update_cached_attributes!
-    end
+    Person.find_or_create_by(participant_id: participant_id).tap(&:update_cached_attributes!)
   end
 
   def power_of_attorney
