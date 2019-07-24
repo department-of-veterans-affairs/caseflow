@@ -20,7 +20,7 @@ class Hearings::HearingDayController < HearingsApplicationController
         end_date = validate_end_date(params[:end_date])
         regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
         user = list_all_upcoming_hearing_days? ? nil : current_user
-        hearing_days = HearingDay.list_upcoming_hearing_days(start_date, end_date, user, regional_office)
+        hearing_days = HearingDayRange.new(start_date, end_date, regional_office).list_upcoming_hearing_days(user)
 
         render json: {
           hearings: json_hearing_days(hearing_days.map(&:to_hash)),
@@ -42,12 +42,11 @@ class Hearings::HearingDayController < HearingsApplicationController
   def index_with_hearings
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    hearing_days_with_hearings = HearingDay.open_hearing_days_with_hearings_hash(
+    hearing_days_with_hearings = HearingDayRange.new(
       Time.zone.today.beginning_of_day,
       Time.zone.today.beginning_of_day + 182.days,
-      regional_office,
-      current_user.id
-    )
+      regional_office
+    ).open_hearing_days_with_hearings_hash(current_user.id)
 
     render json: { hearing_days: json_hearing_days(hearing_days_with_hearings) }
   end

@@ -282,7 +282,8 @@ class RequestIssue < ApplicationRecord
         contested_decision_issue_id: data[:contested_decision_issue_id],
         ineligible_reason: data[:ineligible_reason],
         ineligible_due_to_id: data[:ineligible_due_to_id],
-        edited_description: data[:edited_description]
+        edited_description: data[:edited_description],
+        correction_type: data[:correction_type]
       }
     end
     # rubocop:enable Metrics/MethodLength

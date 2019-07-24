@@ -38,6 +38,13 @@ export const benefitTypeProcessedInVBMS = (benefitType) => {
   return (benefitType === 'compensation' || benefitType === 'pension');
 };
 
+export const isCorrection = (isRating, intakeData) => {
+  const isRatingCorrection = isRating && intakeData.hasClearedRatingEp;
+  const isNonratingCorrection = !isRating && intakeData.hasClearedNonratingEp;
+
+  return isRatingCorrection || isNonratingCorrection;
+};
+
 export const getReceiptDateError = (responseErrorCodes, state) => (
   {
     blank:

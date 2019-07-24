@@ -33,8 +33,9 @@ class RequestIssuesUpdate < ApplicationRecord
       )
       cancel_active_tasks
       submit_for_processing!
-      process_job
     end
+
+    process_job
 
     true
   end
