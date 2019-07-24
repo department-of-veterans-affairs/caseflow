@@ -7,6 +7,8 @@ class Person < ApplicationRecord
   has_many :claimants, primary_key: :participant_id, foreign_key: :participant_id
   validates :participant_id, presence: true
 
+  CACHED_BGS_ATTRIBUTES = [:first_name, :last_name, :middle_name, :name_suffix, :date_of_birth].freeze
+
   def advanced_on_docket(appeal_receipt_date)
     advanced_on_docket_based_on_age || advanced_on_docket_motion_granted(appeal_receipt_date)
   end
@@ -32,7 +34,20 @@ class Person < ApplicationRecord
   end
 
   def name
-    FullName.new(first_name, "", last_name)
+    FullName.new(first_name, "", last_name).formatted(:readable_short)
+  end
+
+  def stale_attributes?
+    return false unless bgs_person
+
+    is_stale = CACHED_BGS_ATTRIBUTES.any? { |attr| self[attr].nil? }
+    is_stale
+  end
+
+  def update_cached_attributes!
+    transaction do
+      CACHED_BGS_ATTRIBUTES.each { |attr| self.send(attr) }
+    end
   end
 
   private
