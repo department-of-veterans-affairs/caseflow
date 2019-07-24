@@ -14,24 +14,24 @@ class RegionalOfficesController < ApplicationController
       Time.zone.today.beginning_of_day,
       Time.zone.today.beginning_of_day + 182.days,
       ro
-    ).all_hearing_days_with_hearings_hash
+    ).all_hearing_days
 
     render json: {
-      hearing_days: hearing_days.map { |day| RegionalOfficesController.hearing_day_hash(ro, day) }
+      hearing_days: hearing_days.map { |day, hearings| RegionalOfficesController.hearing_day_hash(ro, day, hearings) }
     }
   end
 
   class << self
-    def hearing_day_hash(regional_office, day)
+    def hearing_day_hash(regional_office, day, hearings)
       {
-        hearing_id: day["id"],
+        hearing_id: day.id,
         regional_office: regional_office,
         timezone: RegionalOffice::CITIES[regional_office][:timezone],
-        scheduled_for: day["scheduled_for"],
-        request_type: day["request_type"],
-        room: day["room"],
-        filled_slots: day["hearings"].size,
-        total_slots: day["total_slots"]
+        scheduled_for: day.scheduled_for,
+        request_type: day.request_type,
+        room: day.room,
+        filled_slots: hearings.size,
+        total_slots: day.total_slots
       }
     end
   end
