@@ -68,7 +68,9 @@ class VaDotGovAddressValidator
   def assign_available_hearing_locations_for_ro(regional_office_id:)
     destroy_existing_available_hearing_locations!
 
-    VADotGovService.get_facility_data(ids: RegionalOffice.facility_ids_for_ro(regional_office_id))
+    facility_id = RegionalOffice::CITIES[regional_office_id][:facility_locator_id]
+
+    VADotGovService.get_facility_data(ids: [facility_id])
       .each do |alternate_hearing_location|
         create_available_hearing_location(facility: alternate_hearing_location)
       end
@@ -135,7 +137,7 @@ class VaDotGovAddressValidator
 
   def closest_regional_office_result
     @closest_regional_office_result ||= VADotGovService.get_distance(
-      ids: facility_ids_to_match,
+      ids: facility_ids_to_geomatch,
       lat: valid_address[:lat],
       long: valid_address[:long]
     )
