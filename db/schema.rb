@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190718004714) do
+ActiveRecord::Schema.define(version: 20190724190057) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -153,6 +153,16 @@ ActiveRecord::Schema.define(version: 20190718004714) do
     t.index ["decision_document_id"], name: "index_board_grant_effectuations_on_decision_document_id"
     t.index ["end_product_establishment_id"], name: "index_board_grant_effectuations_on_end_product_establishment_id"
     t.index ["granted_decision_issue_id"], name: "index_board_grant_effectuations_on_granted_decision_issue_id"
+  end
+
+  create_table "cached_appeal_attributes", id: false, force: :cascade do |t|
+    t.integer "appeal_id"
+    t.string "appeal_type"
+    t.string "docket_number"
+    t.string "docket_type"
+    t.string "vacols_id"
+    t.index ["appeal_id", "appeal_type"], name: "index_cached_appeal_attributes_on_appeal_id_and_appeal_type", unique: true
+    t.index ["vacols_id"], name: "index_cached_appeal_attributes_on_vacols_id", unique: true
   end
 
   create_table "certification_cancellations", id: :serial, force: :cascade do |t|
