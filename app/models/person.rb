@@ -40,8 +40,7 @@ class Person < ApplicationRecord
   def stale_attributes?
     return false unless bgs_person
 
-    is_stale = CACHED_BGS_ATTRIBUTES.any? { |attr| self[attr].nil? }
-    is_stale
+    stale_attributes.any?
   end
 
   def update_cached_attributes!
@@ -52,12 +51,17 @@ class Person < ApplicationRecord
 
   private
 
+  def stale_attributes
+    bgs_person[:date_of_birth] = bgs_person[:birth_date].to_date
+    CACHED_BGS_ATTRIBUTES.select { |attr| self[attr].nil? || self[attr] != bgs_person[attr] }
+  end
+
   def cached_or_fetched_from_bgs(attr_name:, bgs_attr: nil)
     bgs_attr ||= attr_name
     self[attr_name] || begin
       return unless bgs_person
 
-      update!(attr_name: bgs_person[bgs_attr]) if persisted?
+      update!(attr_name => bgs_person[bgs_attr]) if persisted?
       self[attr_name]
     end
   end
