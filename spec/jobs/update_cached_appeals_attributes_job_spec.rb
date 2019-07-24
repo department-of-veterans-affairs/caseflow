@@ -50,6 +50,5 @@ describe UpdateCachedAppealsAttributesJob do
 
       UpdateCachedAppealsAttributesJob.perform_now
     end
-
   end
 end

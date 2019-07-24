@@ -67,11 +67,10 @@ class UpdateCachedAppealsAttributesJob < ApplicationJob
     job_duration_seconds = Time.zone.now - start_time
 
     DataDogService.emit_gauge(
-      app_name: APP_NAME ,
+      app_name: APP_NAME,
       metric_group: METRIC_GROUP_NAME,
       metric_name: "runtime",
       metric_value: job_duration_seconds
     )
   end
-
 end
