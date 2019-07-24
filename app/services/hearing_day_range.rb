@@ -73,7 +73,7 @@ class HearingDayRange
     end
   end
 
-  def all_hearing_days(current_user_id = nil)
+  def all_hearing_days
     total_video_and_co = load_days
     vacols_hearings_for_days = HearingRepository.fetch_hearings_for_parents(total_video_and_co.pluck(:id))
 
@@ -89,9 +89,7 @@ class HearingDayRange
 
   def open_hearing_days_with_hearings_hash(current_user_id = nil)
     all_hearing_days_with_hearings_hash(current_user_id)
-      .select do |hearing_day, _scheduled_hearings|
-        self.class.open_hearing_day?(hearing_day)
-      end
+      .select { |hearing_day, _scheduled_hearings| self.class.open_hearing_day?(hearing_day) }
       .map do |hearing_day, scheduled_hearings|
         self.class.hearing_day_hash_with_hearings(hearing_day, scheduled_hearings, current_use_id)
       end
