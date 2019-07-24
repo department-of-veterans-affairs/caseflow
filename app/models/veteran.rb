@@ -194,7 +194,7 @@ class Veteran < ApplicationRecord
   end
 
   def validate_address
-    VADotGovService.validate_address(
+    result = VADotGovService.validate_address(
       address_line1: address_line1,
       address_line2: address_line2,
       address_line3: address_line3,
@@ -202,7 +202,13 @@ class Veteran < ApplicationRecord
       state: state,
       country: country,
       zip_code: zip_code
-    )[:valid_address]
+    )
+
+    if result[:error].present?
+      fail result[:error], code: 500, message: "Unable to validate veteran address"
+    end
+
+    result[:valid_address]
   end
 
   def stale_attributes?
