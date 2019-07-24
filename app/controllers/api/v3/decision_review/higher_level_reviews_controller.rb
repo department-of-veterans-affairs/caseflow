@@ -5,15 +5,15 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
 
   def create
     begin
-      @request = HigherLevelReviewRequest.new params
+      @higher_level_review_request = HigherLevelReviewRequest.new params
     rescue StandardError
       render error status: 400, title: "Malformed request"
     end
 
     transaction do
       render error unless intake.start! # make these errors more specific
-      render error unless intake.review! @request.review_params
-      render error unless intake.complete! @request.complete_params
+      render error unless intake.review! @higher_level_review_request.review_params
+      render error unless intake.complete! @higher_level_review_request.complete_params
     end
 
     higher_level_review = intake.detail
@@ -62,7 +62,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
   def intake
     @intake ||= Intake.build(
       user: current_user,
-      veteran_file_number: @request.veteran.file_number,
+      veteran_file_number: @higher_level_review_request.veteran.file_number,
       form_type: "higher_level_review"
     )
   end
