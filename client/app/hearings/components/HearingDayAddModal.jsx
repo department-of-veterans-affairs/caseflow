@@ -218,7 +218,7 @@ class HearingDayAddModal extends React.Component {
     this.props.selectRequestType(value);
     this.resetErrorState();
 
-    switch (value.value) {
+    switch ((value || {}).value) {
     case 'V':
       this.setState({ videoSelected: true,
         centralOfficeSelected: false });
