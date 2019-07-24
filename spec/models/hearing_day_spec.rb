@@ -235,7 +235,7 @@ describe HearingDay do
       subject { HearingDayRange.new(schedule_period.start_date, schedule_period.end_date).load_days }
 
       it do
-        expect(subject.size).to eql(442)
+        expect(subject.size).to eql(434)
       end
     end
   end
