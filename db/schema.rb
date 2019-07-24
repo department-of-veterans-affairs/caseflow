@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190724193340) do
+ActiveRecord::Schema.define(version: 20190724200447) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -739,6 +739,7 @@ ActiveRecord::Schema.define(version: 20190724193340) do
     t.string "name_suffix", comment: "Person name suffix, cached from BGS"
     t.string "participant_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["participant_id"], name: "index_people_on_participant_id", unique: true
   end
 
   create_table "ramp_closed_appeals", id: :serial, force: :cascade, comment: "Keeps track of legacy appeals that are closed or partially closed in VACOLS due to being transitioned to a RAMP election.  This data can be used to rollback the RAMP Election if needed." do |t|
