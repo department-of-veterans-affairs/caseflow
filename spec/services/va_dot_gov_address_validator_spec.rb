@@ -179,7 +179,7 @@ describe VaDotGovAddressValidator do
 
         subject { appeal.va_dot_gov_address_validator.facility_ids_to_geomatch }
 
-        it "returns facility ids for state #{expected_state_code}" do
+        it "returns facility ids for appropriate state" do
           expect(subject).to eq(RegionalOffice.ro_facility_ids_for_state(expected_state_code))
         end
       end
