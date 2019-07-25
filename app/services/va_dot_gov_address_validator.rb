@@ -144,7 +144,7 @@ class VaDotGovAddressValidator
   end
 
   def closest_regional_office_facility_id
-    closest_regional_office_result[:facilities][0].dig(:facility_id)
+    closest_regional_office_result[:facilities][0]&.dig(:facility_id)
   end
 
   def available_hearing_locations_result
