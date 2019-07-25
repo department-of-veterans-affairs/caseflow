@@ -107,7 +107,7 @@ feature "End Product Correction (EP 930)" do
           check_adding_unidentified_correction_issue
         end
       end
-    end    
+    end
   end
 
   feature "with cleared end product on supplemental claim" do
@@ -167,14 +167,14 @@ def check_page_not_editable(type)
 end
 
 def check_correction_type_modal_button_status(enabled)
-  if enabled 
-    expect(page).to have_button('Correct Issue', disabled: true)
+  if enabled
+    expect(page).to have_button("Correct Issue", disabled: true)
   else
-    expect(page).to have_button('Correct Issue', disabled: false)
+    expect(page).to have_button("Correct Issue", disabled: false)
   end
 end
 
-def check_correction_type_modal_elements 
+def check_correction_type_modal_elements
   expect(page).to have_selector(".intake-correction-type")
   expect(page).to have_selector("label[for=correctionType_control]")
   expect(page).to have_selector("label[for=correctionType_local_quality_error]")
@@ -183,13 +183,13 @@ end
 
 def correct_existing_request_issue(request_issue_to_correct)
   click_correct_intake_issue_dropdown(request_issue_to_correct.description)
-  
+
   check_correction_type_modal_elements
   check_correction_type_modal_button_status(true)
-  select_correction_type_from_modal('control')
+  select_correction_type_from_modal("control")
   check_correction_type_modal_button_status(false)
   click_correction_type_modal_submit
-  
+
   click_edit_submit
   confirm_930_modal
   correction_issue = request_issue_to_correct.reload.correction_request_issue

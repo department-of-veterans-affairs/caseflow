@@ -283,7 +283,7 @@ module IntakeHelpers
   end
 
   def click_correction_type_modal_submit
-    find('.correction-type-submit').click
+    find(".correction-type-submit").click
   end
 
   def click_remove_intake_issue_by_text(text)
