@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class VaDotGovAddressValidator::ErrorHandler
-  attr_reader :appeal, :valid_address
+  attr_reader :appeal, :appellant_address
 
-  def initialize(appeal:, valid_address:)
+  def initialize(appeal:, appellant_address:)
     @appeal = appeal
-    @valid_address = valid_address
+    @appellant_address = appellant_address
   end
 
   def handle(error)
@@ -42,12 +42,13 @@ class VaDotGovAddressValidator::ErrorHandler
   end
 
   def check_for_philippines_and_maybe_update
-    return false if valid_address.nil?
+    return false if appellant_address.nil?
 
-    if "Philippines".casecmp(valid_address[:country]) == 0
+    if "Philippines".casecmp(appellant_address[:country]) == 0
       appeal.update(closest_regional_office: "RO58")
       facility = VADotGovService.get_facility_data(ids: ["vba_358"]).first
       appeal.va_dot_gov_address_validator.create_available_hearing_location(facility: facility)
+
       return true
     end
 

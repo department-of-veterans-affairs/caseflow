@@ -115,6 +115,31 @@ describe VaDotGovAddressValidator do
         end
       end
     end
+
+    context "when validation fails and veteran's country is Philippines", focus: true do
+      let!(:valid_address_result) do
+        {
+          error: Caseflow::Error::VaDotGovAddressCouldNotBeFoundError,
+          valid_address: {}
+        }
+      end
+
+      before do
+        allow_any_instance_of(VaDotGovAddressValidator).to receive(:validate_zip_code)
+          .and_return(nil)
+        allow(ExternalApi::VADotGovService).to receive(:get_facility_data)
+          .and_return([mock_facility_data(id: "vba_358")])
+
+        Fakes::BGSService.address_records = Hash[appeal.veteran_file_number, { cntry_nm: "PHILIPPINES" }]
+      end
+
+      it "assigns closest regional office to Manila" do
+        appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
+
+        expect(Appeal.first.closest_regional_office).to eq("RO58")
+        expect(Appeal.first.available_hearing_locations.first.facility_id).to eq("vba_358")
+      end
+    end
   end
 
   describe "facility_ids_to_geomatch" do

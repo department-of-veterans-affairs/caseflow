@@ -24,7 +24,7 @@ module VaDotGovAddressValidator::Validations
   end
 
   def error_handler
-    @error_handler ||= VaDotGovAddressValidator::ErrorHandler.new(appeal: appeal, valid_address: valid_address)
+    @error_handler ||= VaDotGovAddressValidator::ErrorHandler.new(appeal: appeal, appellant_address: address)
   end
 
   def valid_address_error
