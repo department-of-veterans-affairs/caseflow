@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Api::DecisionReviewError
-  # note: children need to define ERRORS and DEFAULT_ERROR
+  # children must define ERRORS and DEFAULT_ERROR
 
   attr_reader :status, :title, :code
 
@@ -34,7 +34,7 @@ class Api::DecisionReviewError
     fail ArgumentError, "invalid title: <#{title}>" unless title == ERRORS[code]["title"]
 
     @status ||= ERRORS[code]["status"]
-    @status = @status.to_i # ensure it's numeric
+    @status = @status.to_i # normalize all statuses to int
     fail ArgumentError, "invalid status: <#{status}>" unless status == ERRORS[code]["status"]
   end
 end

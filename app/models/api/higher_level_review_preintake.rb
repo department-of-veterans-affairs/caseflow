@@ -17,7 +17,7 @@
 #   * ensures that a date is an actual calendar date, but does not ensure that the date makes
 #     sense for where ever it's being used
 
-class HigherLevelReviewRequest
+class Api::HigherLevelReviewPreintake
   ATTRIBUTES = %w[
     receipt_date
     informal_conference
