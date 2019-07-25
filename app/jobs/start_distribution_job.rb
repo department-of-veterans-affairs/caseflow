@@ -9,6 +9,7 @@ class StartDistributionJob < ApplicationJob
     distribution.distribute!
   rescue StandardError => error
     handle_error(error)
+    # do not re-raise, since we only want to run once.
   end
 
   private

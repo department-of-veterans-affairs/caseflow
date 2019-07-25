@@ -28,8 +28,8 @@ class Distribution < ApplicationRecord
     end
 
     multi_transaction do
-      # this might take awhile due to VACOLS, so set our timeout to 2 minutes (in milliseconds).
-      ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = 120000"
+      # this might take awhile due to VACOLS, so set our timeout to 3 minutes (in milliseconds).
+      ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = 180000"
 
       update!(status: "started")
 
