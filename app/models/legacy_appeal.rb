@@ -717,7 +717,6 @@ class LegacyAppeal < ApplicationRecord
   def eligible_for_soc_opt_in?(receipt_date)
     return false unless receipt_date
     return false unless soc_date
-    return false if soc_date < Constants::DATES["AMA_ACTIVATION"].to_date
 
     soc_date_eligible_for_opt_in?(receipt_date) || nod_date_eligible_for_opt_in?(receipt_date)
   end
@@ -750,9 +749,10 @@ class LegacyAppeal < ApplicationRecord
 
   def soc_date_eligible_for_opt_in?(receipt_date)
     soc_eligible_date = receipt_date - 60.days
+    earliest_eligible_date = [soc_eligible_date, Constants::DATES["AMA_ACTIVATION"].to_date].max
 
     # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
-    soc_date >= soc_eligible_date || ssoc_dates.any? { |ssoc_date| ssoc_date >= soc_eligible_date }
+    soc_date >= earliest_eligible_date || ssoc_dates.any? { |ssoc_date| ssoc_date >= earliest_eligible_date }
   end
 
   def nod_date_eligible_for_opt_in?(receipt_date)
