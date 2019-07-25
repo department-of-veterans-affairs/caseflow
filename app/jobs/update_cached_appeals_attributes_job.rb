@@ -30,6 +30,8 @@ class UpdateCachedAppealsAttributesJob < ApplicationJob
     end
 
     CachedAppeal.import appeals_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type] }
+
+    increment_appeal_count(appeals_to_cache.length, Appeal.name)
   end
 
   def cache_legacy_appeals
@@ -37,6 +39,8 @@ class UpdateCachedAppealsAttributesJob < ApplicationJob
 
     cache_legacy_appeal_postgres_data(legacy_appeals)
     cache_legacy_appeal_vacols_data(legacy_appeals)
+
+    increment_appeal_count(legacy_appeals.length, LegacyAppeal.name)
   end
 
   def cache_legacy_appeal_postgres_data(legacy_appeals)
@@ -62,6 +66,19 @@ class UpdateCachedAppealsAttributesJob < ApplicationJob
                                                                       columns: [:docket_number] }
     end
   end
+
+  def increment_appeal_count(count, appeal_type)
+    count.times do
+      DataDogService.increment_counter(
+        app_name: APP_NAME,
+        metric_group: METRIC_GROUP_NAME,
+        metric_name: "appeals_to_cache",
+        attrs: {
+          type: appeal_type
+        }
+      )
+    end
+end
 
   def record_runtime(start_time)
     job_duration_seconds = Time.zone.now - start_time
