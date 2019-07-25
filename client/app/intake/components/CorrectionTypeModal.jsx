@@ -7,10 +7,7 @@ import { connect } from 'react-redux';
 import { correctIssue } from '../actions/addIssues';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
-import {
-  INTAKE_CORRECTION_TYPE_MODAL_TITLE,
-  INTAKE_CORRECTION_TYPE_MODAL_COPY
-} from '../../../COPY.json';
+import { INTAKE_CORRECTION_TYPE_MODAL_TITLE, INTAKE_CORRECTION_TYPE_MODAL_COPY } from '../../../COPY.json';
 
 const correctionTypeOptions = [
   { value: 'control',
@@ -34,56 +31,51 @@ class CorrectionTypeModal extends React.Component {
   }
 
   render() {
-    const {
-      issueIndex,
-      cancelText,
-      onCancel,
-      onClose,
-      submitText,
-      correctIssue
-    } = this.props;
+    const { issueIndex, cancelText, onCancel, onClose, submitText } = this.props;
 
-    return <div className="intake-correction-type">
-      <Modal
-        buttons={[
-          {
-            classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
-            name: cancelText || 'Cancel',
-            onClick: onCancel
-          },
-          {
-            classNames: ['usa-button-red', 'correction-type-submit'],
-            name: submitText || 'Correct Issue',
-            disabled: !this.state.correctionType,
-            onClick: () => {
-              correctIssue({ index: issueIndex,
-                correctionType: this.state.correctionType });
-              onClose();
+    return (
+      <div className="intake-correction-type">
+        <Modal
+          buttons={[
+            {
+              classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
+              name: cancelText || 'Cancel',
+              onClick: onCancel
+            },
+            {
+              classNames: ['usa-button-red', 'correction-type-submit'],
+              name: submitText || 'Correct Issue',
+              disabled: !this.state.correctionType,
+              onClick: () => {
+                this.props.correctIssue({
+                  index: issueIndex,
+                  correctionType: this.state.correctionType
+                });
+                onClose();
+              }
             }
-          }
-        ]}
-        visible
-        closeHandler={onClose}
-        title={INTAKE_CORRECTION_TYPE_MODAL_TITLE}
-      >
+          ]}
+          visible
+          closeHandler={onClose}
+          title={INTAKE_CORRECTION_TYPE_MODAL_TITLE}
+        >
+          <div>
+            <p>{INTAKE_CORRECTION_TYPE_MODAL_COPY}</p>
 
-        <div>
-          <p>{INTAKE_CORRECTION_TYPE_MODAL_COPY}</p>
-
-          <RadioField
-            vertical
-            required
-            // label="Select Correction Type"
-            hideLabel
-            name="correctionType"
-            options={correctionTypeOptions}
-            value={this.state.correctionType}
-            onChange={(val) => this.handleSelect(val)}
-          />
-        </div>
-
-      </Modal>
-    </div>;
+            <RadioField
+              vertical
+              required
+              // label="Select Correction Type"
+              hideLabel
+              name="correctionType"
+              options={correctionTypeOptions}
+              value={this.state.correctionType}
+              onChange={(val) => this.handleSelect(val)}
+            />
+          </div>
+        </Modal>
+      </div>
+    );
   }
 }
 
@@ -97,7 +89,11 @@ CorrectionTypeModal.propTypes = {
 
 export default connect(
   null,
-  (dispatch) => bindActionCreators({
-    correctIssue
-  }, dispatch)
+  (dispatch) =>
+    bindActionCreators(
+      {
+        correctIssue
+      },
+      dispatch
+    )
 )(CorrectionTypeModal);
