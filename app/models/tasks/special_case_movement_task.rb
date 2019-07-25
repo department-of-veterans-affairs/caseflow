@@ -26,8 +26,7 @@ class SpecialCaseMovementTask < GenericTask
 
   def verify_appeal_distributable
     if !appeal.ready_for_distribution?
-      fail(Caseflow::Error::InvalidAppealState,
-           message: "Appeal must be in Case Storage and not have blocking Mail Tasks for Special Case Movement")
+      fail(Caseflow::Error::IneligibleForSpecialCaseMovement, appeal_id: appeal.id)
     end
   end
 
@@ -41,7 +40,7 @@ class SpecialCaseMovementTask < GenericTask
   end
 
   def verify_user_organization
-    if !assigned_to.organizations.include?(SpecialCaseMovementTeam.singleton)
+    if !SpecialCaseMovementTeam.singleton.user_has_access?(assigned_to)
       fail(Caseflow::Error::ActionForbiddenError,
            message: "Special Case Movement restricted to Special Case Movement Team members")
     end
