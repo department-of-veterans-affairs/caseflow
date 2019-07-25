@@ -128,7 +128,10 @@ describe VaDotGovAddressValidator do
         allow_any_instance_of(VaDotGovAddressValidator).to receive(:validate_zip_code)
           .and_return(nil)
         allow(ExternalApi::VADotGovService).to receive(:get_facility_data)
-          .and_return([mock_facility_data(id: "vba_358")])
+          .and_return(
+            error: nil,
+            facilities: [mock_facility_data(id: "vba_358")]
+          )
 
         Fakes::BGSService.address_records = Hash[appeal.veteran_file_number, { cntry_nm: "PHILIPPINES" }]
       end

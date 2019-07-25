@@ -2,7 +2,7 @@
 
 class ExternalApi::VADotGovService::AddressValidationResponse < ExternalApi::VADotGovService::Response
   def error
-    messages&.find { |message| message.error.present? }&.error
+    message_error || fail_if_response_error
   end
 
   def valid_address
@@ -12,6 +12,10 @@ class ExternalApi::VADotGovService::AddressValidationResponse < ExternalApi::VAD
   end
 
   private
+
+  def message_error
+    messages&.find { |message| message.error.present? }&.error
+  end
 
   def messages
     @messages ||= body[:messages]&.map do |message|

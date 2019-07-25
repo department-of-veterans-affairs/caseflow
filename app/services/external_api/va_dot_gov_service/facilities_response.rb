@@ -2,7 +2,7 @@
 
 class ExternalApi::VADotGovService::FacilitiesResponse < ExternalApi::VADotGovService::Response
   def next?
-    body[:links][:next].present?
+    body[:link].dig(:next).present?
   end
 
   def facilities

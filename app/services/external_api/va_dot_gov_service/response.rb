@@ -10,12 +10,10 @@ class ExternalApi::VADotGovService::Response
   def initialize(api_response)
     @response = api_response
     @code = @response.code
-
-    fail_if_response_error
   end
 
   def error
-    nil
+    fail_if_response_error
   end
 
   private
@@ -36,7 +34,7 @@ class ExternalApi::VADotGovService::Response
       fail Caseflow::Error::VaDotGovLimitError, code: code, message: body
     when 400
       fail Caseflow::Error::VaDotGovRequestError, code: code, message: body
-    when 500
+    when 500, 502, 503, 504
       fail Caseflow::Error::VaDotGovServerError, code: code, message: body
     else
       msg = "Error: #{body}, HTTP code: #{code}"
