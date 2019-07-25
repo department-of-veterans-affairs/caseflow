@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
+  include BgsService
+
   has_many :dispatch_tasks, class_name: "Dispatch::Task"
   has_many :document_views
   has_many :appeal_views
@@ -262,10 +264,6 @@ class User < ApplicationRecord
 
   def normalize_css_id
     self.css_id = css_id.upcase
-  end
-
-  def bgs
-    @bgs ||= BGSService.new
   end
 
   def user_info

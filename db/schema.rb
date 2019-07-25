@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190718223313) do
+ActiveRecord::Schema.define(version: 20190724201133) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -155,6 +155,16 @@ ActiveRecord::Schema.define(version: 20190718223313) do
     t.index ["granted_decision_issue_id"], name: "index_board_grant_effectuations_on_granted_decision_issue_id"
   end
 
+  create_table "cached_appeal_attributes", id: false, force: :cascade do |t|
+    t.integer "appeal_id"
+    t.string "appeal_type"
+    t.string "docket_number"
+    t.string "docket_type"
+    t.string "vacols_id"
+    t.index ["appeal_id", "appeal_type"], name: "index_cached_appeal_attributes_on_appeal_id_and_appeal_type", unique: true
+    t.index ["vacols_id"], name: "index_cached_appeal_attributes_on_vacols_id", unique: true
+  end
+
   create_table "certification_cancellations", id: :serial, force: :cascade do |t|
     t.string "cancellation_reason"
     t.integer "certification_id"
@@ -225,6 +235,7 @@ ActiveRecord::Schema.define(version: 20190718223313) do
     t.string "participant_id", null: false, comment: "The participant ID of the claimant."
     t.string "payee_code", comment: "The payee_code for the claimant, if applicable. payee_code is required when the claim is processed in VBMS."
     t.index ["decision_review_type", "decision_review_id"], name: "index_claimants_on_decision_review_type_and_decision_review_id"
+    t.index ["participant_id"], name: "index_claimants_on_participant_id"
   end
 
   create_table "claims_folder_searches", id: :serial, force: :cascade do |t|
@@ -723,8 +734,13 @@ ActiveRecord::Schema.define(version: 20190718223313) do
   create_table "people", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date_of_birth"
+    t.string "first_name", comment: "Person first name, cached from BGS"
+    t.string "last_name", comment: "Person last name, cached from BGS"
+    t.string "middle_name", comment: "Person middle name, cached from BGS"
+    t.string "name_suffix", comment: "Person name suffix, cached from BGS"
     t.string "participant_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["participant_id"], name: "index_people_on_participant_id", unique: true
   end
 
   create_table "ramp_closed_appeals", id: :serial, force: :cascade, comment: "Keeps track of legacy appeals that are closed or partially closed in VACOLS due to being transitioned to a RAMP election.  This data can be used to rollback the RAMP Election if needed." do |t|

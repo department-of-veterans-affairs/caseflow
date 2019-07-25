@@ -292,6 +292,7 @@ class RequestIssue < ApplicationRecord
   delegate :veteran, to: :decision_review
 
   def end_product_code
+    return if decision_review.processed_in_caseflow?
     return dta_end_product_code if remanded?
     return correction_end_product_code if correction?
 
@@ -392,7 +393,8 @@ class RequestIssue < ApplicationRecord
       contested_decision_issue_id: contested_decision_issue_id,
       withdrawal_date: withdrawal_date,
       contested_issue_description: contested_issue_description,
-      end_product_cleared: end_product_establishment&.status_cleared?
+      end_product_cleared: end_product_establishment&.status_cleared?,
+      end_product_code: end_product_code
     }
   end
 
@@ -852,7 +854,7 @@ class RequestIssue < ApplicationRecord
 
   # TODO: use request issue benefit type once it's populated for request issues on build
   def temp_find_benefit_type
-    benefit_type || decision_review.benefit_type || contested_benefit_type
+    decision_review.benefit_type || benefit_type || contested_benefit_type
   end
 
   def choose_end_product_code(end_product_codes)

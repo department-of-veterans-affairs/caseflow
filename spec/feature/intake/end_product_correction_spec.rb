@@ -16,7 +16,6 @@ feature "End Product Correction (EP 930)" do
            last_name: "Merica")
   end
 
-  let(:benefit_type) { "compensation" }
   let(:receipt_date) { Time.zone.today - 20 }
   let(:promulgation_date) { receipt_date - 2.days }
   let(:profile_date) { promulgation_date.to_datetime }
@@ -50,7 +49,7 @@ feature "End Product Correction (EP 930)" do
     )
   end
 
-  let!(:cleared_request_issue) do
+  let!(:request_issue_to_correct) do
     create(
       :request_issue,
       decision_review: claim_review,
@@ -82,7 +81,7 @@ feature "End Product Correction (EP 930)" do
       context "when a user corrects an existing issue" do
         it "creates a correction issue and EP, and closes the existing issue with no decision" do
           visit edit_path
-          correct_existing_request_issue
+          correct_existing_request_issue(request_issue_to_correct)
         end
       end
 
@@ -131,7 +130,7 @@ feature "End Product Correction (EP 930)" do
       context "when a user corrects an existing issue" do
         it "creates a correction issue and EP, and closes the existing issue with no decision" do
           visit edit_path
-          correct_existing_request_issue
+          correct_existing_request_issue(request_issue_to_correct)
         end
       end
 
@@ -167,10 +166,13 @@ def check_page_not_editable(type)
   expect(page).to have_content(Constants.INTAKE_FORM_NAMES.send(type))
 end
 
-def correct_existing_request_issue
-  click_correct_intake_issue_dropdown("PTSD denied")
+def correct_existing_request_issue(request_issue_to_correct)
+  click_correct_intake_issue_dropdown(request_issue_to_correct.description)
   click_edit_submit
   confirm_930_modal
+  correction_issue = request_issue_to_correct.reload.correction_request_issue
+  check_confirmation_page(correction_issue)
+  expect(request_issue_to_correct.closed_status).to eq("no_decision")
 end
 
 def visit_edit_page(type)
@@ -185,30 +187,45 @@ def check_adding_rating_correction_issue
   click_edit_submit
   safe_click ".confirm"
   confirm_930_modal
+  correction_issue = RequestIssue.find_by(contested_issue_description: "Left knee granted")
+  check_confirmation_page(correction_issue)
 end
 
 def check_adding_nonrating_correction_issue
+  description = "New nonrating correction issue"
   click_intake_add_issue
   click_intake_no_matching_issues
-  add_intake_nonrating_issue(date: promulgation_date.mdY)
+  add_intake_nonrating_issue(description: "New nonrating correction issue", date: promulgation_date.mdY)
   click_edit_submit
   safe_click ".confirm"
   confirm_930_modal
+  correction_issue = RequestIssue.find_by(nonrating_issue_description: description)
+  check_confirmation_page(correction_issue)
 end
 
 def check_adding_unidentified_correction_issue
+  description = "New unidentified correction issue"
   click_intake_add_issue
-  add_intake_unidentified_issue
+  add_intake_unidentified_issue(description)
   click_edit_submit
   safe_click "#Unidentified-issue-button-id-1"
   safe_click ".confirm"
   confirm_930_modal
+  correction_issue = RequestIssue.find_by(unidentified_issue_text: description)
+  check_confirmation_page(correction_issue)
 end
 
 def confirm_930_modal
   expect(page).to have_content("You are now creating a 930 EP in VBMS")
   click_button("Yes, establish")
   expect(page).to have_content("Claim Issues Saved")
+end
+
+def check_confirmation_page(correction_issue)
+  ep_description = Constants::END_PRODUCT_CODES[correction_issue.end_product_code]
+
+  expect(page).to have_content("A #{ep_description} EP is being established:")
+  expect(page).to have_content("Contention: #{correction_issue.contention_text}")
 end
 
 def enable_features
