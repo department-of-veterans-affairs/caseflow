@@ -64,31 +64,31 @@ export class AddIssuesPage extends React.Component {
 
   onClickIssueAction = (index, option = 'remove') => {
     switch (option) {
-      case 'remove':
-        if (this.props.toggleIssueRemoveModal) {
-          // on the edit page, so show the remove modal
-          this.setState({
-            issueRemoveIndex: index
-          });
-          this.props.toggleIssueRemoveModal();
-        } else {
-          this.props.removeIssue(index);
-        }
-        break;
-      case 'withdraw':
-        this.props.withdrawIssue(index);
-        break;
-      case 'correct':
+    case 'remove':
+      if (this.props.toggleIssueRemoveModal) {
+        // on the edit page, so show the remove modal
         this.setState({
-          issueIndex: index
-        })
-        this.props.toggleCorrectionTypeModal(index);
-        break;
-      case 'undo_correction':
-        this.props.undoCorrection(index);
-        break;
-      default:
-        this.props.undoCorrection(index);
+          issueRemoveIndex: index
+        });
+        this.props.toggleIssueRemoveModal();
+      } else {
+        this.props.removeIssue(index);
+      }
+      break;
+    case 'withdraw':
+      this.props.withdrawIssue(index);
+      break;
+    case 'correct':
+      this.setState({
+        issueIndex: index
+      });
+      this.props.toggleCorrectionTypeModal(index);
+      break;
+    case 'undo_correction':
+      this.props.undoCorrection(index);
+      break;
+    default:
+      this.props.undoCorrection(index);
     }
   }
 
@@ -279,11 +279,11 @@ export class AddIssuesPage extends React.Component {
         issueIndex={this.state.issueIndex}
         intakeData={intakeData}
         onCancel={() => {
-          this.setState({issueIndex: null});
+          this.setState({ issueIndex: null });
           this.props.toggleCorrectionTypeModal();
         }}
         onClose={() => {
-          this.setState({issueIndex: null});
+          this.setState({ issueIndex: null });
           this.props.toggleCorrectionTypeModal();
         }} />
       }

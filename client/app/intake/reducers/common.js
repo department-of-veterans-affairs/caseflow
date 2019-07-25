@@ -112,7 +112,8 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.CORRECT_ISSUE] = () => {
-    const {index, correctionType} = action.payload;
+    const { index, correctionType } = action.payload;
+
     listOfIssues[index].correctionType = correctionType;
 
     return {
