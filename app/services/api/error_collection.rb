@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ErrorRenderHash
+class Api::HigherLevelReviewErrorCollection
   def initialize(*args)
     # accepts either a single argument (an error hash or an array of error hashes) or no arguments
 
@@ -23,7 +23,7 @@ class ErrorRenderHash
 
       case status
       when Numeric then status
-      when Symbol then Status.int status
+      when Symbol then self.class.status_symbol_to_int status
       else
         number = begin; Integer status; rescue StandardError; nil; end
         number || Status.int(status.to_sym)
@@ -88,21 +88,25 @@ class ErrorRenderHash
 
     delegate :as_json, to: :inspect
   end
-  # Error.const_set("DEFAULT_TITLE", "Unknown error.")
-  # Error.const_set("DEFAULT_CODE", Error.code_from_title(Error::DEFAULT_TITLE))
 
-  class Status
-    SYM_TO_INT = Rack::Utils::SYMBOL_TO_STATUS_CODE
-    INT_TO_SYM = Rack::Utils::HTTP_STATUS_CODES
+  class << self
+    # verifies that status code is a valid one
+    # note: instead of a boolean, it returns either nil (invalid status) or the status code swapped
+    # --swapped as in:
+    #   given something number-like, returns a symbol
+    #   given something symbol-like, returns an int
+    def valid_status(status)
+      int = begin
+              Integer status
+            rescue
+              nil
+            end
+      sym = status.to_sym
+      Rack::Utils::HTTP_STATUS_CODES[int] || Rack::Utils::SYMBOL_TO_STATUS_CODE[sym]
+    end
 
-    class << self
-      def sym(int)
-        INT_TO_SYM[int]
-      end
-
-      def int(sym)
-        SYM_TO_INT[sym]
-      end
+    def invalid_status_error(status)
+      raise ArgumentError, "Invalid status: #{status}"
     end
   end
 end
