@@ -116,7 +116,7 @@ describe VaDotGovAddressValidator do
       end
     end
 
-    context "when validation fails and veteran's country is Philippines", focus: true do
+    context "when validation fails and veteran's country is Philippines" do
       let!(:valid_address_result) do
         {
           error: Caseflow::Error::VaDotGovAddressCouldNotBeFoundError,

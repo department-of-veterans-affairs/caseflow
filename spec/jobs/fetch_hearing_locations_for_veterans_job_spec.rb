@@ -130,6 +130,55 @@ describe FetchHearingLocationsForVeteransJob do
         end
       end
     end
+
+    describe "#perform" do
+      before(:each) do
+        allow_any_instance_of(VaDotGovAddressValidator).to receive(:update_closest_ro_and_ahls)
+          .and_return(status: :matched_available_hearing_locations)
+      end
+
+      subject { FetchHearingLocationsForVeteransJob.new }
+
+      it "creates schedule hearing tasks for appeal and records a geomatched result" do
+        expect(subject).to receive(:record_geomatched_appeal)
+          .with(legacy_appeal.external_id, :matched_available_hearing_locations)
+
+        subject.perform
+
+        expect(legacy_appeal.tasks.count).to eq(3)
+        expect(legacy_appeal.tasks.open.where(type: "ScheduleHearingTask").count).to eq(1)
+        expect(legacy_appeal.tasks.open.where(type: "HearingTask").count).to eq(1)
+      end
+
+      context "when API limit is reached" do
+        before(:each) do
+          allow_any_instance_of(VaDotGovAddressValidator).to receive(:update_closest_ro_and_ahls)
+            .and_raise(Caseflow::Error::VaDotGovLimitError.new(code: 500, message: "Error"))
+        end
+
+        it "records a geomatch error" do
+          expect(subject).to receive(:record_geomatched_appeal)
+            .with(legacy_appeal.external_id, "limit_error")
+
+          subject.perform
+        end
+      end
+
+      context "when unknown error is thrown" do
+        before(:each) do
+          allow_any_instance_of(VaDotGovAddressValidator).to receive(:update_closest_ro_and_ahls)
+            .and_raise(StandardError)
+        end
+
+        it "records a geomatch error" do
+          expect(subject).to receive(:record_geomatched_appeal)
+            .with(legacy_appeal.external_id, "error")
+          expect(Raven).to receive(:capture_exception)
+
+          subject.perform
+        end
+      end
+    end
   end
 
   def veteran_record(file_number:, state: "MA", zip_code: "01002", country: "USA")
