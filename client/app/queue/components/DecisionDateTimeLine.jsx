@@ -26,16 +26,10 @@ class DecisionDateTimeLine extends React.PureComponent {
         <dd>{moment(appeal.decisionDate).format('MM/DD/YYYY')}</dd></div> : null;
     };
 
-    const showWithdrawnDecisionText = () => {
-      return appeal.withdrawn ?
-        <span>{COPY.CASE_TIMELINE_APPEAL_WITHDRAWN}</span> :
-        <span>{COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING}</span>;
-    };
-
-    const showDecisionDateText = () => {
-      return appeal.decisionDate ?
-        <span>{COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA}</span> :
-        <span>{COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING}</span>;
+    const showDateText = () => {
+      if (appeal.decisionDate) { return <span>{COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA}</span> };
+      if (appeal.withdrawn) { return <span>{COPY.CASE_TIMELINE_APPEAL_WITHDRAWN}</span> };
+      return <span>{COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING}</span>;
     };
 
     const showWithdrawnIconStyle = () => {
@@ -61,15 +55,15 @@ class DecisionDateTimeLine extends React.PureComponent {
       {timeline && <tr>
         <td className="taskContainerStyling taskTimeTimelineContainerStyling">
           <CaseDetailsDescriptionList>
-            { appeal.decisionDate ? showDecisionDate() : showWithdrawalDate() }
+            {showDecisionDate() || showWithdrawalDate()}
           </CaseDetailsDescriptionList>
         </td>
         <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer">
-          {appeal.decisionDate ? showDecisionDateIcon() : showWithdrawnIconStyle()}
+          {showDecisionDateIcon() || showWithdrawnIconStyle()}
           {showTaskListStyling()}
         </td>
         <td className="taskContainerStyling taskInformationTimelineContainerStyling">
-          {appeal.withdrawn ? showWithdrawnDecisionText() : showDecisionDateText()} <br />
+          {showDateText()} <br />
         </td>
       </tr>}
     </React.Fragment>;
