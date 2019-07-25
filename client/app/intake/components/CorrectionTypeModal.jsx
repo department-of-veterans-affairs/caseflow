@@ -8,6 +8,10 @@ import { correctIssue } from '../actions/addIssues';
 import Modal from '../../components/Modal';
 import Dropdown from '../../components/Dropdown';
 import RadioField from '../../components/RadioField';
+import {
+    INTAKE_CORRECTION_TYPE_MODAL_TITLE,
+    INTAKE_CORRECTION_TYPE_MODAL_COPY
+} from '../../../COPY.json'
 
 const correctionTypeOptions = [
     { value: 'control', displayText: 'Control' },
@@ -56,11 +60,11 @@ class CorrectionTypeModal extends React.Component {
                 ]}
                 visible
                 closeHandler={onClose}
-                title="Set Correction Type"
+                title={INTAKE_CORRECTION_TYPE_MODAL_TITLE}
             >
 
                 <div>
-                    <p>This issue will be added to a 930 EP for correction. If a mistake was found during quality review, please select whether it was discovered by the local or national quality review team. Otherwise, select control.</p>
+                    <p>{INTAKE_CORRECTION_TYPE_MODAL_COPY}</p>
 
                     <RadioField
                         vertical
