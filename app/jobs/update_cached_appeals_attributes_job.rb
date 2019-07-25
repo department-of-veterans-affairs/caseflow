@@ -77,8 +77,8 @@ class UpdateCachedAppealsAttributesJob < ApplicationJob
           type: appeal_type
         }
       )
+    end
   end
-end
 
   def record_runtime(start_time)
     job_duration_seconds = Time.zone.now - start_time
