@@ -27,8 +27,13 @@ class DecisionDateTimeLine extends React.PureComponent {
     };
 
     const showDateText = () => {
-      if (appeal.decisionDate) { return <span>{COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA}</span> };
-      if (appeal.withdrawn) { return <span>{COPY.CASE_TIMELINE_APPEAL_WITHDRAWN}</span> };
+      if (appeal.decisionDate) {
+        return <span>{COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA}</span>;
+      }
+      if (appeal.withdrawn) {
+        return <span>{COPY.CASE_TIMELINE_APPEAL_WITHDRAWN}</span>;
+      }
+
       return <span>{COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING}</span>;
     };
 
