@@ -52,6 +52,7 @@ class CorrectionTypeModal extends React.Component {
                     {
                         classNames: ['usa-button-red', 'correction-type-submit'],
                         name: submitText || 'Correct Issue',
+                        disabled: !this.state.correctionType,
                         onClick: () => {
                             correctIssue({ index: issueIndex, correctionType: this.state.correctionType });
                             onClose();

@@ -166,15 +166,28 @@ def check_page_not_editable(type)
   expect(page).to have_content(Constants.INTAKE_FORM_NAMES.send(type))
 end
 
-def correct_existing_request_issue(request_issue_to_correct)
-  click_correct_intake_issue_dropdown(request_issue_to_correct.description)
+def check_correction_type_modal_button_status(enabled)
+  if enabled 
+    expect(page).to have_button('Correct Issue', disabled: true)
+  else
+    expect(page).to have_button('Correct Issue', disabled: false)
+  end
+end
 
+def check_correction_type_modal_elements 
   expect(page).to have_selector(".intake-correction-type")
   expect(page).to have_selector("label[for=correctionType_control]")
   expect(page).to have_selector("label[for=correctionType_local_quality_error]")
   expect(page).to have_selector("label[for=correctionType_national_quality_error]")
+end
+
+def correct_existing_request_issue(request_issue_to_correct)
+  click_correct_intake_issue_dropdown(request_issue_to_correct.description)
   
+  check_correction_type_modal_elements
+  check_correction_type_modal_button_status(true)
   select_correction_type_from_modal('control')
+  check_correction_type_modal_button_status(false)
   click_correction_type_modal_submit
   
   click_edit_submit
