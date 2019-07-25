@@ -672,7 +672,7 @@ feature "Supplemental Claim Edit issues" do
         expect(page).to have_current_path(
           "/supplemental_claims/#{rating_ep_claim_id}/edit/confirmation"
         )
-        expect(page).to have_content("Review Withdrawn")
+        expect(page).to have_content("Claim Issues Saved")
 
         withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
         expect(withdrawn_issue).to_not be_nil
@@ -822,7 +822,6 @@ feature "Supplemental Claim Edit issues" do
             description: "Description for Accrued",
             date: 1.day.ago.to_date.mdY
           )
-
           click_remove_intake_issue_dropdown(1)
           click_withdraw_intake_issue_dropdown(2)
           fill_in "withdraw-date", with: withdraw_date

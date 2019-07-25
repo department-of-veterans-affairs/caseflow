@@ -101,8 +101,7 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
           $set: action.payload.errorData.processed_by
         },
         veteranMissingFields: {
-          $set: _.get(action.payload.errorData.veteran_missing_fields, 'length', 0) > 0 &&
-            action.payload.errorData.veteran_missing_fields.join(', ')
+          $set: _.join(action.payload.errorData.veteran_missing_fields, ', ')
         },
         veteranAddressTooLong: {
           $set: action.payload.errorData.veteran_address_too_long

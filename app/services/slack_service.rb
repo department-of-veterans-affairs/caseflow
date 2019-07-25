@@ -27,12 +27,14 @@ class SlackService
   def format_slack_msg(msg, title, channel)
     channel.prepend("#") unless channel =~ /^#/
 
+    aws_env = ENV.fetch("DEPLOY_ENV", "development")
+
     {
-      username: "Caseflow",
+      username: "Caseflow (#{aws_env})",
       channel: channel,
       attachments: [
         {
-          title: title,
+          title: "#{title} (#{aws_env})",
           color: "#ccc",
           text: msg
         }
