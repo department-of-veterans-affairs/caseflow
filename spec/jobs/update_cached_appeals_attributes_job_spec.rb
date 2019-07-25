@@ -50,5 +50,11 @@ describe UpdateCachedAppealsAttributesJob do
 
       UpdateCachedAppealsAttributesJob.perform_now
     end
+
+    it "records the number of appeals cached with DataDog" do
+      expect(DataDogService).to receive(:increment_counter).exactly(open_appeals.length).times
+
+      UpdateCachedAppealsAttributesJob.perform_now
+    end
   end
 end
