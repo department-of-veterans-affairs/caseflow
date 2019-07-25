@@ -15,7 +15,7 @@ class ExternalApi::VADotGovService::Response
   end
 
   def error
-    false
+    nil
   end
 
   private

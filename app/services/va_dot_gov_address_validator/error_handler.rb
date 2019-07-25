@@ -45,9 +45,7 @@ class VaDotGovAddressValidator::ErrorHandler
     return false if appellant_address.nil?
 
     if "Philippines".casecmp(appellant_address[:country]) == 0
-      appeal.update(closest_regional_office: "RO58")
-      facility = VADotGovService.get_facility_data(ids: ["vba_358"]).first
-      appeal.va_dot_gov_address_validator.create_available_hearing_location(facility: facility)
+      appeal.va_dot_gov_address_validator.assign_ro_and_update_ahls("RO58")
 
       return true
     end

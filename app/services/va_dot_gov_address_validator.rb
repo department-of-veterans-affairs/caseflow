@@ -53,6 +53,17 @@ class VaDotGovAddressValidator
     assign_available_hearing_locations_for_ro(regional_office_id: new_ro)
   end
 
+  def assign_available_hearing_locations_for_ro(regional_office_id:)
+    destroy_existing_available_hearing_locations!
+
+    facility_ids = RegionalOffice.facility_ids_for_ro(regional_office_id)
+
+    VADotGovService.get_facility_data(ids: facility_ids)[:facilities]
+      .each do |alternate_hearing_location|
+        create_available_hearing_location(facility: alternate_hearing_location)
+      end
+  end
+
   def get_distance_to_facilities(facility_ids:)
     fail_if_unable_to_validate_address
 
@@ -63,39 +74,6 @@ class VaDotGovAddressValidator
     fail distance_result[:error], code: 500, message: "Unable to get distances" if distance_result[:error].present?
 
     distance_result[:facilities]
-  end
-
-  def assign_available_hearing_locations_for_ro(regional_office_id:)
-    destroy_existing_available_hearing_locations!
-
-    facility_id = RegionalOffice::CITIES[regional_office_id][:facility_locator_id]
-
-    VADotGovService.get_facility_data(ids: [facility_id])[:facilities]
-      .each do |alternate_hearing_location|
-        create_available_hearing_location(facility: alternate_hearing_location)
-      end
-  end
-
-  def create_available_hearing_locations
-    available_hearing_locations.map do |facility|
-      create_available_hearing_location(facility: facility)
-    end
-  end
-
-  def create_available_hearing_location(facility:)
-    AvailableHearingLocations.create(
-      veteran_file_number: appeal.veteran_file_number || "",
-      appeal: appeal,
-      distance: facility[:distance],
-      facility_id: facility[:facility_id],
-      name: facility[:name],
-      address: facility[:address],
-      city: facility[:city],
-      state: facility[:state],
-      zip_code: facility[:zip_code],
-      classification: facility[:classification],
-      facility_type: facility[:facility_type]
-    )
   end
 
   def facility_ids_to_geomatch
@@ -121,6 +99,28 @@ class VaDotGovAddressValidator
 
   def destroy_existing_available_hearing_locations!
     AvailableHearingLocations.where(appeal: appeal).destroy_all
+  end
+
+  def create_available_hearing_locations
+    available_hearing_locations.map do |facility|
+      create_available_hearing_location(facility: facility)
+    end
+  end
+
+  def create_available_hearing_location(facility:)
+    AvailableHearingLocations.create(
+      veteran_file_number: appeal.veteran_file_number || "",
+      appeal: appeal,
+      distance: facility[:distance],
+      facility_id: facility[:facility_id],
+      name: facility[:name],
+      address: facility[:address],
+      city: facility[:city],
+      state: facility[:state],
+      zip_code: facility[:zip_code],
+      classification: facility[:classification],
+      facility_type: facility[:facility_type]
+    )
   end
 
   def valid_address_result
