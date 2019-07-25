@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class ExternalApi::VADotGovService::AddressValidationResponse < ExternalApi::VADotGovService::Response
+  def error
+    messages&.find { |message| message.error.present? }&.error
+  end
+
   def valid_address
     return {} if body[:geocode].nil?
 
@@ -8,6 +12,12 @@ class ExternalApi::VADotGovService::AddressValidationResponse < ExternalApi::VAD
   end
 
   private
+
+  def messages
+    @messages ||= body[:messages]&.map do |message|
+      ExternalApi::VADotGovService::ResponseMessage.new(message)
+    end
+  end
 
   def formatted_valid_address
     {

@@ -10,33 +10,25 @@ class ExternalApi::VADotGovService::Response
   def initialize(api_response)
     @response = api_response
     @code = @response.code
+
+    fail_if_response_error
   end
+
+  def error
+    false
+  end
+
+  private
 
   def body
     @body ||= begin
                 JSON.parse(response.body).deep_symbolize_keys
               rescue JSON::ParserError
-                response.body
+                {}
               end
   end
 
-  def messages
-    @messages ||= body[:messages]&.map do |message|
-      ExternalApi::VADotGovService::ResponseMessage.new(message)
-    end
-  end
-
-  def error
-    @error ||= response_error || message_error
-  end
-
-  def next?
-    body[:links][:next].present?
-  end
-
-  private
-
-  def response_error
+  def fail_if_response_error
     return if code == 200
 
     case code
@@ -50,9 +42,5 @@ class ExternalApi::VADotGovService::Response
       msg = "Error: #{body}, HTTP code: #{code}"
       fail Caseflow::Error::VaDotGovServerError, code: code, message: msg
     end
-  end
-
-  def message_error
-    messages&.find { |message| message.error.present? }&.error
   end
 end

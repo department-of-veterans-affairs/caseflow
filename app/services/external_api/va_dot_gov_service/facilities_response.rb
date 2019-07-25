@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class ExternalApi::VADotGovService::FacilitiesResponse < ExternalApi::VADotGovService::Response
+  def next?
+    body[:links][:next].present?
+  end
+
   def facilities
     return [] if body[:data].blank?
 

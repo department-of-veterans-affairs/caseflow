@@ -43,4 +43,49 @@ describe ExternalApi::VADotGovService do
       expect(result[:error]).to be_nil
     end
   end
+
+  describe "response failures" do
+    let!(:error_code) { nil }
+
+    before(:each) do
+      allow(VADotGovService).to receive(:send_va_dot_gov_request)
+        .and_return(HTTPI::Response.new(error_code, {}, {}.to_json))
+    end
+
+    context "429" do
+      let!(:error_code) { 429 }
+
+      it "throws Caseflow::Error::VaDotGovLimitError" do
+        expect { VADotGovService.get_facility_data(ids: ["vba_372"]) }
+          .to raise_error(Caseflow::Error::VaDotGovLimitError)
+      end
+    end
+
+    context "400" do
+      let!(:error_code) { 400 }
+
+      it "throws Caseflow::Error::VaDotGovRequestError" do
+        expect { VADotGovService.get_facility_data(ids: ["vba_372"]) }
+          .to raise_error(Caseflow::Error::VaDotGovRequestError)
+      end
+    end
+
+    context "500" do
+      let!(:error_code) { 500 }
+
+      it "throws Caseflow::Error::VaDotGovServerError" do
+        expect { VADotGovService.get_facility_data(ids: ["vba_372"]) }
+          .to raise_error(Caseflow::Error::VaDotGovServerError)
+      end
+    end
+
+    context "504" do
+      let!(:error_code) { 504 }
+
+      it "throws Caseflow::Error::VaDotGovServerError" do
+        expect { VADotGovService.get_facility_data(ids: ["vba_372"]) }
+          .to raise_error(Caseflow::Error::VaDotGovServerError)
+      end
+    end
+  end
 end
