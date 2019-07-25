@@ -279,8 +279,7 @@ module IntakeHelpers
   end
 
   def select_correction_type_from_modal(value)
-    find("#correctionType").click
-    find("#correctionType_#{value}").click
+    find("label[for=correctionType_#{value}]").click
   end
 
   def click_correction_type_modal_submit

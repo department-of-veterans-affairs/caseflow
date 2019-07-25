@@ -75,9 +75,6 @@ feature "End Product Correction (EP 930)" do
       check_page_not_editable(claim_review_type)
     end
 
-    # fcontext "when correct claim reviews feature is enabled" do
-    #   it "allows a user to navigate to the edit page" do
-    #     visit_editable_page_and_correct_request_issues("higher_level_reviews")
     fcontext "when correct claim reviews feature is enabled" do
       before { enable_features }
       after { disable_features }
@@ -174,9 +171,9 @@ def correct_existing_request_issue
   click_correct_intake_issue_dropdown("PTSD denied")
   
   expect(page).to have_selector(".intake-correction-type")
-  expect(page).to have_selector("#correctionType_control")
-  expect(page).to have_selector("#correctionType_local_quality_error")
-  expect(page).to have_selector("#correctionType_national_quality_error")
+  expect(page).to have_selector("label[for=correctionType_control]")
+  expect(page).to have_selector("label[for=correctionType_local_quality_error]")
+  expect(page).to have_selector("label[for=correctionType_national_quality_error]")
   
   select_correction_type_from_modal('control')
   click_correction_type_modal_submit
