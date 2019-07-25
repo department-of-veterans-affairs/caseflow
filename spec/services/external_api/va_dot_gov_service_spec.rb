@@ -44,7 +44,7 @@ describe ExternalApi::VADotGovService do
     end
   end
 
-  describe "response failures" do
+  describe "response failure" do
     let!(:error_code) { nil }
 
     before(:each) do

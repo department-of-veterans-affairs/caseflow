@@ -4,7 +4,7 @@ require "rails_helper"
 require "faker"
 
 describe VaDotGovAddressValidator do
-  describe "update_closest_ro_and_ahls" do
+  describe "#update_closest_ro_and_ahls" do
     let!(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
     let!(:valid_address_country_code) { "US" }
     let!(:valid_address_state_code) { "PA" }
@@ -142,9 +142,10 @@ describe VaDotGovAddressValidator do
     end
   end
 
-  describe "facility_ids_to_geomatch" do
+  describe "#facility_ids_to_geomatch" do
     let!(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
     let!(:valid_address_state_code) { "VA" }
+    let!(:valid_address_country_code) { "US" }
     let!(:valid_address_result) do
       {
         error: nil,
@@ -153,7 +154,7 @@ describe VaDotGovAddressValidator do
           long: 0.0,
           city: "Fake City",
           full_address: "555 Fake Address",
-          country_code: "US",
+          country_code: valid_address_country_code,
           state_code: valid_address_state_code,
           zip_code: "20035"
         }
@@ -163,6 +164,25 @@ describe VaDotGovAddressValidator do
     before(:each) do
       allow_any_instance_of(VaDotGovAddressValidator).to receive(:valid_address_result)
         .and_return(valid_address_result)
+    end
+
+    %w[GQ PH VI].each do |foreign_country_code|
+      context "when veteran lives in country with code #{foreign_country_code}" do
+        let!(:valid_address_country_code) { foreign_country_code }
+        let!(:expected_state_code) do
+          {
+            GQ: "HI",
+            PH: "PI",
+            VI: "PR"
+          }[foreign_country_code.to_sym]
+        end
+
+        subject { appeal.va_dot_gov_address_validator.facility_ids_to_geomatch }
+
+        it "returns facility ids for state #{expected_state_code}" do
+          expect(subject).to eq(RegionalOffice.ro_facility_ids_for_state(expected_state_code))
+        end
+      end
     end
 
     context "when veteran with legacy appeal requests central office and does not live in DC, MD, or VA" do
@@ -194,7 +214,7 @@ describe VaDotGovAddressValidator do
     end
   end
 
-  describe "valid_address when there is an address validation error" do
+  describe "#valid_address when there is an address validation error" do
     let!(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
 
     let!(:valid_address_result) do
