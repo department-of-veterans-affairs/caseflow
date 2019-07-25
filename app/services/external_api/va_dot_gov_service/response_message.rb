@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class ExternalApi::VADotGovService::ResponseMessage
-  attr_reader :message
+  attr_reader :key
 
   def initialize(message)
-    @message = message
+    @key = message[:key]
   end
 
   def error
@@ -20,16 +20,16 @@ class ExternalApi::VADotGovService::ResponseMessage
   private
 
   def address_could_not_be_found?
-    %w[AddressCouldNotBeFound SpectrumServiceAddressError].include?(message)
+    %w[AddressCouldNotBeFound SpectrumServiceAddressError].include?(key)
   end
 
   def invalid_input?
     %w[DualAddressError InsufficientInputData InvalidRequestCountry
        InvalidRequestNonStreetAddress InvalidRequestPostalCode InvalidRequestState
-       InvalidRequestStreetAddress].include?(message)
+       InvalidRequestStreetAddress].include?(key)
   end
 
   def multiple_address?
-    message == "MultipleAddressError"
+    key == "MultipleAddressError"
   end
 end
