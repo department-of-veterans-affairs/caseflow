@@ -34,7 +34,7 @@ export class VeteranDetail extends React.PureComponent {
       gender,
       date_of_birth: dob,
       date_of_death: dod,
-      email_address
+      email_address: email
     } = this.props.veteranInfo.veteran;
 
     const details = [{
@@ -73,10 +73,10 @@ export class VeteranDetail extends React.PureComponent {
       });
     }
 
-    if (email_address) {
+    if (email) {
       details.push({
         label: 'Email Address',
-        value: email_address
+        value: email
       });
     }
 
