@@ -4,17 +4,15 @@ module Api::Validation
   extend ActiveSupport::Concern
   include Api::Helpers
 
-  private
-
   def int?(value, key: nil, exception: ArgumentError)
-    return true if value == to_int(value)
+    return true if !value.nil? && value == to_int(value)
     fail exception, join_present(key, "isn't an int : <#{value}>") if exception
 
     false
   end
 
   def int_or_int_string?(value, key: nil, exception: ArgumentError)
-    return true if int?(value, exception: nil) || to_int(value)
+    return true if int?(value, exception: nil) || (to_int(value) && to_int(value) == to_float(value))
 
     message = "is neither an int nor a string that can be converted to an int: <#{value}>"
     fail exception, join_present(key, message) if exception

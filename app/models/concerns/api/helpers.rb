@@ -3,8 +3,17 @@
 module Api::Helpers
   extend ActiveSupport::Concern
 
+  def to_float(val)
+    Float val
+  rescue StandardError
+    nil
+  end
+
   # returns a valid int or nil. for avoiding to_i which fails with 0
   def to_int(val)
+    its_octal = val.is_a?(String) && val[0] == "0"
+    val = to_float val unless its_octal
+    # to_float allows a float string to be converted to an int
     Integer val
   rescue StandardError
     nil
