@@ -3,8 +3,6 @@
 module Api::Helpers
   extend ActiveSupport::Concern
 
-  private
-
   # returns a valid int or nil. for avoiding to_i which fails with 0
   def to_int(val)
     Integer val
@@ -17,10 +15,10 @@ module Api::Helpers
   end
 
   def missing_keys(hash, expected_keys:)
-    expected_keys.filter? { |k| !hash.key? k }
+    (expected_keys.is_a?(Array) ? expected_keys : expected_keys.keys).reject { |k| hash.key? k }
   end
 
   def extra_keys(hash, expected_keys:)
-    hash.except(*expected_keys).keys
+    hash.except(*(expected_keys.is_a?(Array) ? expected_keys : expected_keys.keys)).keys
   end
 end
