@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::Preintake::RequestIssue
+class Api::RequestIssuePreintake
   include Api::Validation
 
   attr_reader(

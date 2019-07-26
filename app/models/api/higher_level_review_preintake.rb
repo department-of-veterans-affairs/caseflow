@@ -29,6 +29,8 @@ class Api::HigherLevelReviewPreintake
   attr_reader(*ATTRIBUTES, :veteran, :claimant, :issues)
 
   def initialize(params)
+    these_are_the_hash_keys?
+
     data, included = params.as_json.values_at "data", "included"
     type, attributes, relationships = data.values_at "type", "attributes", "relationships"
 

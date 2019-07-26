@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::HigherLevelReviewError
+class Api::HigherLevelReviewError < Api::DecisionReviewError
   ERRORS = lambda do
     # grab our spec
     spec = YAML.safe_load File.read "app/controllers/api/docs/v3/decision_reviews.yaml"
