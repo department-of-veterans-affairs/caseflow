@@ -177,7 +177,7 @@ RSpec.describe AppealsController, type: :controller do
       end
 
       context "when request header contains nonexistent Veteran file number" do
-        it "returns 404 error", skip: "flake https://github.com/department-of-veterans-affairs/caseflow/issues/10516#issuecomment-512247593" do
+        it "returns 404 error", skip: "flake" do
           appeal = create(:appeal, claimants: [build(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")])
           create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)
 
