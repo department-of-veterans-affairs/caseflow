@@ -66,7 +66,6 @@ describe UpdateCachedAppealsAttributesJob do
     end
 
     it "sends a message to Slack that includes the error" do
-
       slack_msg = ""
       allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
 
