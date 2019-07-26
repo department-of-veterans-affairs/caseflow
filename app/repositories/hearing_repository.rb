@@ -98,6 +98,7 @@ class HearingRepository
         set_vacols_values(hearing, vacols_record)
         true
       else
+        Raven.extra_context(application: "hearings")
         fail Caseflow::Error::VacolsRecordNotFound, "Hearing record with vacols id #{hearing.vacols_id} not found."
       end
     rescue ActiveRecord::RecordNotFound
