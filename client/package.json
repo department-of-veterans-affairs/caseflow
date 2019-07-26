@@ -56,7 +56,7 @@
     "jsdom": "9.8.3",
     "lodash": "^4.17.13",
     "mark.js": "^8.11.0",
-    "moment": "^2.18.1",
+    "moment": "^2.19.3",
     "moment-timezone": "^0.5.13",
     "node-sass": "^4.9.2",
     "pdf-annotate.js": "^1.0.0",
