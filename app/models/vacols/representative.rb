@@ -7,6 +7,13 @@ class VACOLS::Representative < VACOLS::Record
   self.table_name = "rep"
   self.primary_key = "repkey"
 
+  attribute :repaddr1, AsciiString.new(limit: 50)
+  attribute :repaddr2, AsciiString.new(limit: 50)
+  attribute :repcity, AsciiString.new(limit: 20)
+  attribute :replast, AsciiString.new(limit: 40)
+  attribute :repfirst, AsciiString.new(limit: 24)
+  attribute :repmi, AsciiString.new(limit: 4)
+
   class RepError < StandardError; end
   class InvalidRepTypeError < RepError; end
 
@@ -87,16 +94,16 @@ class VACOLS::Representative < VACOLS::Record
     }
     unless name.empty?
       attrs = attrs.merge(
-        repfirst: name[:first_name][0, 24],
-        repmi: name[:middle_initial][0, 4],
-        replast: name[:last_name][0, 40]
+        repfirst: name[:first_name],
+        repmi: name[:middle_initial],
+        replast: name[:last_name]
       )
     end
     unless address.empty?
       attrs = attrs.merge(
-        repaddr1: address[:address_one][0, 50],
-        repaddr2: address[:address_two][0, 50],
-        repcity: address[:city][0, 20],
+        repaddr1: address[:address_one],
+        repaddr2: address[:address_two],
+        repcity: address[:city],
         repst: address[:state][0, 4],
         repzip: address[:zip][0, 10]
       )

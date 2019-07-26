@@ -68,4 +68,46 @@ describe VACOLS::Representative, :all_dbs do
       expect { vacols_rep.destroy }.to raise_error(VACOLS::Representative::RepError)
     end
   end
+
+  context "when name or address contains non-ASCII characters" do
+    let(:name_hash) { { first_name: "Søren", middle_initial: "A", last_name: "Skarsgård" } }
+    let(:address_hash) { { address_one: "123 Walnut Aveñue", address_two: "«456»", city: "San Juañ", state: "OH", zip: "12222" } }
+    let(:bfkey) { "99999XYZ" }
+
+    subject do
+      VACOLS::Representative.update_vacols_rep_table!(
+        bfkey: bfkey,
+        name: name_hash,
+        address: address_hash,
+        type: :appellant_agent
+      )
+    end
+    context "row does not yet exist" do
+      it "creates with ASCII" do
+        subject
+
+        rep = VACOLS::Representative.representatives(bfkey).first
+
+        expect(rep.repfirst).to eq("Soren")
+        expect(rep.replast).to eq("Skarsgard")
+        expect(rep.repaddr1).to eq("123 Walnut Avenue")
+        expect(rep.repaddr2).to eq("<<456>>")
+        expect(rep.repcity).to eq("San Juan")
+      end
+    end
+
+    context "row exists" do
+      let(:bfkey) { appeal.vacols_id }
+
+      it "updates with ASCII" do
+        subject
+
+        expect(rep.repfirst).to eq("Soren")
+        expect(rep.replast).to eq("Skarsgard")
+        expect(rep.repaddr1).to eq("123 Walnut Avenue")
+        expect(rep.repaddr2).to eq("<<456>>")
+        expect(rep.repcity).to eq("San Juan")
+      end
+    end
+  end
 end

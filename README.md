@@ -222,7 +222,11 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 You probably have to create an Oracle account to download these.
 
 Add this to your env to squash oracle errors on startup:
-`export NLS_LANG=AMERICAN_AMERICA.US7ASCII`
+`export NLS_LANG=AMERICAN_AMERICA.UTF8`
+
+NOTE that VACOLS actually only supports ASCII7 encoding but our code will manage the encoding transliteration.
+We tell the OracleEnhanced Ruby library it is UTF8 via the environment variable so that it does not
+"conveniently" convert encodings for us, and then only ever write ASCII to the database.
 
 (May need to have your user own the oracle /opt directory?)
 
