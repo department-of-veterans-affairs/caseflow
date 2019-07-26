@@ -57,4 +57,24 @@ describe UpdateCachedAppealsAttributesJob do
       UpdateCachedAppealsAttributesJob.perform_now
     end
   end
+
+  context "when the entire job fails" do
+    let(:error_msg) { "Some dummy error" }
+
+    before do
+      allow_any_instance_of(UpdateCachedAppealsAttributesJob).to receive(:cache_ama_appeals).and_raise(error_msg)
+    end
+
+    it "sends a message to Slack that includes the error" do
+
+      slack_msg = ""
+      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+
+      UpdateCachedAppealsAttributesJob.perform_now
+
+      expected_msg = "UpdateCachedAppealsAttributesJob failed after running for .*. Fatal error: #{error_msg}"
+
+      expect(slack_msg).to match(/#{expected_msg}/)
+    end
+  end
 end
