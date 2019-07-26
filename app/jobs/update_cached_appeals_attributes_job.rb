@@ -16,7 +16,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     cache_ama_appeals
     cache_legacy_appeals
 
-    record_runtime(start_time)s
+    record_runtime(start_time)
   rescue StandardError => error
     log_error(start_time, error)
   end
