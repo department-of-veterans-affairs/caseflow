@@ -18,7 +18,9 @@ class SpecialCaseMovementTask < GenericTask
                             assigned_to: assigned_to,
                             assigned_by: assigned_by,
                             instructions: instructions)
-    update!(status: Constants.TASK_STATUSES.completed)
+    # We don't want the judge to have to worry about the SpecialCaseMovementTask,
+    #   so we assign it to the SCM user that assigned this.
+    update!(status: Constants.TASK_STATUSES.completed, assigned_to: assigned_by)
     # For now, we expect the parent to always be the distribution task
     #   so we don't worry about distribution task explicitly
     parent.update!(status: Constants.TASK_STATUSES.completed)
@@ -40,7 +42,7 @@ class SpecialCaseMovementTask < GenericTask
   end
 
   def verify_user_organization
-    if !SpecialCaseMovementTeam.singleton.user_has_access?(assigned_to)
+    if !assigned_by.organizations.include?(SpecialCaseMovementTeam.singleton)
       fail(Caseflow::Error::ActionForbiddenError,
            message: "Special Case Movement restricted to Special Case Movement Team members")
     end
