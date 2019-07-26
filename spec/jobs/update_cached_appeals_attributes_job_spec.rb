@@ -39,5 +39,22 @@ describe UpdateCachedAppealsAttributesJob do
 
       expect(CachedAppeal.all.count).to eq(open_appeals.length)
     end
+
+    it "records the jobs runtime with Datadog" do
+      expect(DataDogService).to receive(:emit_gauge).with(
+        app_name: "caseflow_job",
+        metric_group: UpdateCachedAppealsAttributesJob.name.underscore,
+        metric_name: "runtime",
+        metric_value: anything
+      )
+
+      UpdateCachedAppealsAttributesJob.perform_now
+    end
+
+    it "records the number of appeals cached with DataDog" do
+      expect(DataDogService).to receive(:increment_counter).exactly(open_appeals.length).times
+
+      UpdateCachedAppealsAttributesJob.perform_now
+    end
   end
 end
