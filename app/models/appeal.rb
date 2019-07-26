@@ -6,6 +6,7 @@
 # which went into effect Feb 19, 2019.
 
 class Appeal < DecisionReview
+  include BgsService
   include Taskable
   include PrintsTaskTree
 
@@ -662,10 +663,6 @@ class Appeal < DecisionReview
         assigned_to: business_line
       )
     end
-  end
-
-  def bgs
-    BGSService.new
   end
 
   # we always want to show ratings on intake

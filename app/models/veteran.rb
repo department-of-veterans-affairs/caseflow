@@ -105,10 +105,6 @@ class Veteran < ApplicationRecord
     @benefit_type_code ||= deceased? ? BENEFIT_TYPE_CODE_DEATH : BENEFIT_TYPE_CODE_LIVE
   end
 
-  def bgs
-    BGSService.new
-  end
-
   def fetch_bgs_record
     result = bgs.fetch_veteran_info(file_number)
 
