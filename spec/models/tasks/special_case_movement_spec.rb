@@ -10,9 +10,9 @@ describe SpecialCaseMovementTask do
       subject do
         SpecialCaseMovementTask.create!(appeal: appeal,
                                         assigned_to: scm_user,
+                                        assigned_by: scm_user,
                                         parent: dist_task)
       end
-
 
       before do
         OrganizationsUser.add_user_to_organization(scm_user,
@@ -85,6 +85,7 @@ describe SpecialCaseMovementTask do
           subject do
             SpecialCaseMovementTask.create!(appeal: appeal,
                                             assigned_to: scm_user,
+                                            assigned_by: scm_user,
                                             parent: evidence_window_task)
           end
 
@@ -107,6 +108,7 @@ describe SpecialCaseMovementTask do
       subject do
         SpecialCaseMovementTask.create!(appeal: appeal,
                                         assigned_to: user,
+                                        assigned_by: user,
                                         parent: dist_task)
       end
 
