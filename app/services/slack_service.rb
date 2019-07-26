@@ -34,7 +34,7 @@ class SlackService
       channel: channel,
       attachments: [
         {
-          title: "#{title} (#{aws_env})",
+          title: title,
           color: "#ccc",
           text: msg
         }
