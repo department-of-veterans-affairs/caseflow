@@ -267,6 +267,12 @@ FactoryBot.define do
         end
       end
 
+      trait :stayed_appeal do
+        initialize_with { StayedAppealColocatedTask.new(attributes) }
+        type { StayedAppealColocatedTask.name }
+        instructions { ["Appeal stayed because Veteran fulls under Blue Water Navy Veteran policy."] }
+      end
+
       trait :other do
         initialize_with { OtherColocatedTask.new(attributes) }
         type { OtherColocatedTask.name }
