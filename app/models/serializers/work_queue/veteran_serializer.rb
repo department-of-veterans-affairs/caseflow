@@ -10,6 +10,8 @@ class WorkQueue::VeteranSerializer
   end
   attribute :date_of_death do |object|
     object.veteran ? object.veteran.date_of_death : nil
+  attribute :email_address do |object|
+    object.veteran&.email_address
   end
   attribute :address do |object|
     if object.veteran_address_line_1
