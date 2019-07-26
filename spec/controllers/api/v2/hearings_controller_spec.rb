@@ -75,6 +75,10 @@ RSpec.describe Api::V2::HearingsController, type: :controller do
             scheduled_times = response_body["hearings"].map { |hearing| hearing["scheduled_for"] }
 
             expect(scheduled_times).to match_array(expected_times)
+
+            expected_participant_ids = hearings.map { |hearing| hearing.appeal.veteran.participant_id }
+            response_participant_ids = response_body["hearings"].map { |hearing| hearing["participant_id"] }
+            expect(response_participant_ids).to match_array(expected_participant_ids)
           end
         end
 
