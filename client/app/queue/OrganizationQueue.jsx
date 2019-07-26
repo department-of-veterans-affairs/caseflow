@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
+import { sprintf } from 'sprintf-js';
 
 import BulkAssignButton from './components/BulkAssignButton';
 import TabWindow from '../components/TabWindow';
@@ -16,7 +17,6 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import {
   getUnassignedOrganizationalTasks,
   getAssignedOrganizationalTasks,
-  getOrganizationalTasksWithOnHoldChildren,
   getCompletedOrganizationalTasks,
   trackingTasksForOrganization
 } from './selectors';
@@ -96,9 +96,10 @@ class OrganizationQueue extends React.PureComponent {
       tasksWithAppealsFromRawTasks(tabConfig.tasks) :
       this.tasksForTab(tabConfig.name);
     const cols = this.columnsFromConfig(tabConfig, tasks);
+    const totalTaskCount = config.use_task_pages_api ? tabConfig.total_task_count : tasks.length;
 
     return {
-      label: tabConfig.label,
+      label: sprintf(tabConfig.label, totalTaskCount),
       page: <React.Fragment>
         <p className="cf-margin-top-0">{tabConfig.description}</p>
         { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
@@ -110,7 +111,7 @@ class OrganizationQueue extends React.PureComponent {
           useTaskPagesApi={config.use_task_pages_api}
           casesPerPage={config.tasks_per_page}
           numberOfPages={tabConfig.task_page_count}
-          totalTaskCount={tabConfig.total_task_count}
+          totalTaskCount={totalTaskCount}
           taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
           enablePagination
         />
@@ -170,7 +171,6 @@ const mapStateToProps = (state) => {
     tasksAssignedByBulk: state.queue.tasksAssignedByBulk,
     unassignedTasks: getUnassignedOrganizationalTasks(state),
     assignedTasks: getAssignedOrganizationalTasks(state),
-    onHoldTasks: getOrganizationalTasksWithOnHoldChildren(state),
     completedTasks: getCompletedOrganizationalTasks(state),
     trackingTasks: trackingTasksForOrganization(state),
     queueConfig: state.queue.queueConfig

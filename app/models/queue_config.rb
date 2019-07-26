@@ -22,7 +22,7 @@ class QueueConfig
       active_tab: Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME,
       tasks_per_page: TaskPager::TASKS_PER_PAGE,
       use_task_pages_api: use_task_pages_api?(user),
-      tabs: tabs.map { |tab| attach_tasks_to_tab(tab, user) }
+      tabs: tabs(user).map { |tab| attach_tasks_to_tab(tab, user) }
     }
   end
 
@@ -32,8 +32,10 @@ class QueueConfig
     FeatureToggle.enabled?(:use_task_pages_api, user: user) && organization.use_task_pages_api?
   end
 
-  def tabs
-    organization.queue_tabs
+  def tabs(user)
+    queue_tabs = organization.queue_tabs
+    queue_tabs.delete_at(2) unless use_task_pages_api?(user)
+    queue_tabs
   end
 
   def attach_tasks_to_tab(tab, user)
@@ -46,7 +48,7 @@ class QueueConfig
     endpoint = "#{organization.path}/task_pages?#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{tab.name}"
 
     tab.to_hash.merge(
-      label: format(tab.label, task_pager.total_task_count),
+      label: tab.label,
       tasks: tasks,
       task_page_count: task_pager.task_page_count,
       total_task_count: task_pager.total_task_count,

@@ -39,14 +39,6 @@ class WorkQueue::TaskSerializer
     }
   end
 
-  attribute :children do |object|
-    object.children.map do |child|
-      {
-        status: child.status
-      }
-    end
-  end
-
   attribute :assignee_name do |object|
     object.assigned_to.is_a?(Organization) ? object.assigned_to.name : object.assigned_to.css_id
   end

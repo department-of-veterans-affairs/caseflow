@@ -139,19 +139,9 @@ export const getUnassignedOrganizationalTasks = createSelector(
   })
 );
 
-export const getOnHoldOrganizationalTasks = createSelector(
+export const getAssignedOrganizationalTasks = createSelector(
   [workTasksByOrganization],
   (tasks) => _.filter(tasks, (task) => (task.status === TASK_STATUSES.on_hold))
-);
-
-export const getAssignedOrganizationalTasks = createSelector(
-  [getOnHoldOrganizationalTasks],
-  (tasks) => _.filter(tasks, (task) => (task.children.every((child) => child.status !== TASK_STATUSES.on_hold)))
-);
-
-export const getOrganizationalTasksWithOnHoldChildren = createSelector(
-  [getOnHoldOrganizationalTasks],
-  (tasks) => _.filter(tasks, (task) => (task.children.some((child) => child.status === TASK_STATUSES.on_hold)))
 );
 
 export const getCompletedOrganizationalTasks = createSelector(

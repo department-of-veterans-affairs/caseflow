@@ -105,6 +105,7 @@ class TaskPager
       .visible_in_queue_table_view.where(assigned_to: assignee).on_hold
   end
 
+  # These two funtions return CHILD tasks of the on hold tasks to the org queue
   def assigned_tasks
     Task.includes(*task_includes)
       .visible_in_queue_table_view.active.where(parent: on_hold_tasks)
