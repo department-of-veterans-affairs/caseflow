@@ -40,9 +40,7 @@ class TaskTableTab extends React.PureComponent {
       allTasks: this.props.tasks,
       predefinedColumns: this.props.predefinedColumns,
       shownTasks: this.props.tasks,
-      searchText: '',
-      isReviewFilterOpen: false,
-      filteredByList: null
+      searchText: ''
     };
   }
 
