@@ -21,10 +21,7 @@ module Api::Validation
   end
 
   def present?(value, key: nil, exception: ArgumentError)
-    return true if value.present?
-    fail exception, join_present(key, "is blank: <#{value.inspect}>") if exception
-
-    false
+    value.present? || (exception ? fail(exception, join_present(key, "is blank: <#{value.inspect}>")) : false)
   end
 
   def nullable_array?(value, key: nil, exception: ArgumentError)
@@ -35,32 +32,28 @@ module Api::Validation
   end
 
   def string?(value, key: nil, exception: ArgumentError)
-    return true if value.is_a?(String)
-    fail exception, join_present(key, "is not a string: <#{value}>") if exception
-
-    false
+    value.is_a?(String) || (exception ? fail(exception, join_present(key, "is not a string: <#{value}>")) : false)
   end
 
   def nullable_string?(value, key: nil, exception: ArgumentError)
-    return true if value.nil? || value.is_a?(String)
-    fail exception, join_present(key, "is neither a string nor nil: <#{value}>") if exception
-
-    false
+    value.nil? || string?(value, key: key, exception: exception)
   end
 
   # date string: "YYYY-MM-DD"
   def date_string?(value, key: nil, exception: ArgumentError)
-    return true if Date.valid_date?(*(value.split("-").map { |s| to_int s }))
+    return true if begin
+      Date.valid_date?(*(value.split("-").map { |s| to_int s }))
+                   rescue StandardError # if the splitting raises an exception
+                     false
+    end
+
     fail exception, join_present(key, "is not a date string: <#{value}>") if exception
 
     false
   end
 
   def nullable_date_string?(value, key: nil, exception: ArgumentError)
-    return true if value.nil? || date_string?(value, exception: nil)
-    fail exception, join_present(key, "is neither a date string nor nil: <#{value}>") if exception
-
-    false
+    value.nil? || date_string?(value, key: key, exception: exception)
   end
 
   def boolean?(value, key: nil, exception: ArgumentError)
@@ -71,10 +64,7 @@ module Api::Validation
   end
 
   def true?(value, key: nil, exception: ArgumentError)
-    return true if value == true
-    fail exception, join_present(key, "is not true: <#{value}>") if exception
-
-    false
+    (value == true) || (exception ? fail(exception, join_present(key, "is not true: <#{value}>")) : false)
   end
 
   def null_or_benefit_type?(value, key: nil, exception: ArgumentError)
@@ -101,10 +91,7 @@ module Api::Validation
   end
 
   def any_present?(*values, keys:, exception: ArgumentError)
-    return true if values.any?(&:present?)
-    fail exception, "at least one must be present: #{keys}" if exception
-
-    false
+    values.any?(&:present?) || (exception ? fail(exception, "at least one must be present: #{keys}") : false)
   end
 
   def hash_keys_are_within_this_set?(hash, keys:, exception: ArgumentError)
