@@ -30,7 +30,7 @@ class DistributionTask < GenericTask
     assigned_at
   end
 
-  # private
+  private
 
   def special_case_movement_available?(user)
     ::SpecialCaseMovementTeam.singleton.user_has_access?(user) &&
