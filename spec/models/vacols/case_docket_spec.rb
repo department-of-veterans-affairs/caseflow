@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe VACOLS::CaseDocket, :vacols do
+describe VACOLS::CaseDocket, :all_dbs do
   before do
     FeatureToggle.enable!(:test_facols)
   end

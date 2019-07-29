@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "List Schedule", :vacols do
+RSpec.feature "List Schedule", :all_dbs do
   context "Correct buttons are displayed based on permissions" do
     let!(:hearing) { create(:hearing) }
 

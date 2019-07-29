@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe EstablishClaim, :vacols do
+describe EstablishClaim, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end

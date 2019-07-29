@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe DistributionsController, :vacols do
+describe DistributionsController, :all_dbs do
   describe "#new" do
     context "current user is not a judge" do
       it "renders an error" do

@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe StartCertificationJob, :vacols do
+describe StartCertificationJob, :all_dbs do
   let(:appeal) do
     create(:legacy_appeal, vacols_case: vacols_case)
   end

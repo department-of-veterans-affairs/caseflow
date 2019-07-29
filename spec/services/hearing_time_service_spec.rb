@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe HearingTimeService, :vacols do
+describe HearingTimeService, :all_dbs do
   context "with a legacy hearing and a hearing scheduled for 12:00pm PT" do
     let!(:hearing) { create(:hearing, regional_office: "RO43", scheduled_time: "12:00") }
     let!(:legacy_hearing) do

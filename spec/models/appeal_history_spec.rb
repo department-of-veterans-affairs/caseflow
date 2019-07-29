@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe AppealHistory, :vacols do
+describe AppealHistory, :all_dbs do
   let(:original) do
     create(:legacy_appeal, vacols_case:
       create(

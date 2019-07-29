@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe AttorneyTask, :vacols do
+describe AttorneyTask, :all_dbs do
   let!(:attorney) { create(:user) }
   let!(:judge) { create(:user) }
   let!(:attorney_staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }

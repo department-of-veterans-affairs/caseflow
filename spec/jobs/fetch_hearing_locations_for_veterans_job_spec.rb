@@ -4,7 +4,7 @@ require "support/vacols_database_cleaner"
 require "rails_helper"
 require "faker"
 
-describe FetchHearingLocationsForVeteransJob, :vacols do
+describe FetchHearingLocationsForVeteransJob, :all_dbs do
   let!(:job) { FetchHearingLocationsForVeteransJob.new }
 
   describe "find_appeals_ready_for_geomatching" do

@@ -4,7 +4,7 @@ require "support/vacols_database_cleaner"
 require "rails_helper"
 require_relative "../../app/models/tasks/mail_task"
 
-describe Docket, :vacols do
+describe Docket, :all_dbs do
   context "docket" do
     # nonpriority
     let!(:appeal) { create(:appeal, :with_post_intake_tasks, docket_type: "direct_review") }

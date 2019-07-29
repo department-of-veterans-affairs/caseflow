@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-feature "Appeal Edit issues", :vacols do
+feature "Appeal Edit issues", :all_dbs do
   include IntakeHelpers
 
   before do

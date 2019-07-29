@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Attorney queue", :vacols do
+RSpec.feature "Attorney queue", :all_dbs do
   let(:judge) { FactoryBot.create(:user) }
   let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, user: judge) }
 

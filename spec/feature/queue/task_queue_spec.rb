@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Task queue", :vacols do
+RSpec.feature "Task queue", :all_dbs do
   context "attorney user with assigned tasks" do
     let(:attorney_user) { FactoryBot.create(:user) }
 

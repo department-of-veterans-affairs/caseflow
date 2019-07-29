@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-feature "Higher Level Review Edit issues", :vacols do
+feature "Higher Level Review Edit issues", :all_dbs do
   include IntakeHelpers
 
   before do

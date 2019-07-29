@@ -78,7 +78,7 @@ def add_comment(text)
   click_on "Save"
 end
 
-RSpec.feature "Reader", :vacols do
+RSpec.feature "Reader", :all_dbs do
   before do
     Fakes::Initializer.load!
 

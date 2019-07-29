@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe BvaDispatchTask, :vacols do
+describe BvaDispatchTask, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
   end

@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe Appeal, :vacols do
+describe Appeal, :all_dbs do
   include IntakeHelpers
 
   let!(:appeal) { create(:appeal) }

@@ -45,7 +45,7 @@ def expect_case_to_be_update_to_date(vacols_case, decass)
   expect(vacols_case.bfboard).to eq(decass.deteam)
 end
 
-describe JudgeCaseReview, :vacols do
+describe JudgeCaseReview, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end

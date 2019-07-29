@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe UpdateCachedAppealsAttributesJob, :vacols do
+describe UpdateCachedAppealsAttributesJob, :all_dbs do
   let(:vacols_case1) { create(:case) }
   let(:vacols_case2) { create(:case) }
   let(:vacols_case3) { create(:case) }

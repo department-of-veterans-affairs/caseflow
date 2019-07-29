@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Hearing Schedule Daily Docket", :vacols do
+RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
 
   context "Daily docket with one legacy hearing" do

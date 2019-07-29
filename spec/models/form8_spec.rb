@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe Form8, :vacols do
+describe Form8, :all_dbs do
   initial_fields = [:_initial_appellant_name,
                     :_initial_appellant_relationship,
                     :_initial_veteran_name,

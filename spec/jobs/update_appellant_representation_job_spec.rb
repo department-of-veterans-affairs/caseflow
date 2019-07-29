@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe UpdateAppellantRepresentationJob, :vacols do
+describe UpdateAppellantRepresentationJob, :all_dbs do
   context "when the job runs successfully" do
     let(:new_task_count) { 3 }
     let(:closed_task_count) { 1 }

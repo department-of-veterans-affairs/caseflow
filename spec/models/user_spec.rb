@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe User, :vacols do
+describe User, :all_dbs do
   let(:css_id) { "TomBrady" }
   let(:session) { { "user" => { "id" => css_id, "station_id" => "310", "name" => "Tom Brady" } } }
   let(:user) { User.from_session(session) }

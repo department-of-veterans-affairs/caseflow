@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe AppealRepository, :vacols do
+describe AppealRepository, :all_dbs do
   let(:correspondent_record) do
     OpenStruct.new(
       snamef: "Phil",

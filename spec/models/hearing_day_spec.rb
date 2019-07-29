@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe HearingDay, :vacols do
+describe HearingDay, :all_dbs do
   context "#create" do
     let(:hearing) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)

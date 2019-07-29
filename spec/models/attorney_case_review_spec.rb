@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe AttorneyCaseReview, :vacols do
+describe AttorneyCaseReview, :all_dbs do
   let(:attorney) { FactoryBot.create(:user) }
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
 

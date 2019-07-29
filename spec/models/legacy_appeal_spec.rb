@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe LegacyAppeal, :vacols do
+describe LegacyAppeal, :all_dbs do
   before do
     Timecop.freeze(post_ama_start_date)
   end

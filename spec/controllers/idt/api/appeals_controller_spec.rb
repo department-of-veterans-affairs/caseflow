@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe Idt::Api::V1::AppealsController, :vacols, type: :controller do
+RSpec.describe Idt::Api::V1::AppealsController, :all_dbs, type: :controller do
   describe "GET /idt/api/v1/appeals" do
     let(:user) { create(:user, css_id: "TEST_ID", full_name: "George Michael") }
     let(:token) do

@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe LegacyTasksController, :vacols, type: :controller do
+RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
   before do
     Fakes::Initializer.load!
     User.authenticate!(roles: ["System Admin"])

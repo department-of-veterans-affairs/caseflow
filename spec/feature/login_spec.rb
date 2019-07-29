@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Login", :vacols do
+RSpec.feature "Login", :all_dbs do
   let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 
   before do

@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe RoundRobinTaskDistributor, :vacols do
+describe RoundRobinTaskDistributor, :all_dbs do
   let(:assignee_pool_size) { 6 }
   let!(:assignee_pool) { FactoryBot.create_list(:user, assignee_pool_size) }
   let(:task_class) { Task }

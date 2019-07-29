@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe Task, :vacols do
+describe Task, :all_dbs do
   context "includes PrintsTaskTree concern" do
     describe ".structure" do
       let(:root_task) { FactoryBot.create(:root_task, :on_hold) }

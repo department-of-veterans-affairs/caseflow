@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe HearingRepository, :vacols do
+describe HearingRepository, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2017, 10, 4))
     Time.zone = "America/Chicago"

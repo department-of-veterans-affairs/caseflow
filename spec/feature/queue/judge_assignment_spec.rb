@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Judge assignment to attorney and judge", :vacols do
+RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
   let(:judge_one) { Judge.new(FactoryBot.create(:user, full_name: "Billie Daniel")) }
   let(:judge_two) { Judge.new(FactoryBot.create(:user, full_name: "Joe Shmoe")) }
   let!(:vacols_user_one) { FactoryBot.create(:staff, :judge_role, user: judge_one.user) }

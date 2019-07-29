@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-feature "Supplemental Claim Intake", :vacols do
+feature "Supplemental Claim Intake", :all_dbs do
   include IntakeHelpers
 
   before do

@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe TakeDocketSnapshotJob, :vacols do
+describe TakeDocketSnapshotJob, :all_dbs do
   before do
     allow(AppealRepository).to receive(:latest_docket_month) { 11.months.ago.to_date.beginning_of_month }
     allow(AppealRepository).to receive(:docket_counts_by_month) do

@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe HearingDispositionChangeJob, :vacols do
+describe HearingDispositionChangeJob, :all_dbs do
   def create_disposition_task_ancestry(disposition: nil, scheduled_for: nil, associated_hearing: true)
     appeal = FactoryBot.create(:appeal)
     root_task = FactoryBot.create(:root_task, appeal: appeal)

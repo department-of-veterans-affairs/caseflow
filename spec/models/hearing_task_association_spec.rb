@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe HearingTaskAssociation, :vacols do
+describe HearingTaskAssociation, :all_dbs do
   describe "uniqueness validation" do
     let(:hearing) { nil }
     let(:trait) { :in_progress }

@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe PowerOfAttorneyRepository, :vacols do
+describe PowerOfAttorneyRepository, :all_dbs do
   context ".first_last_name?" do
     subject { PowerOfAttorney.repository.first_last_name?(representative_name) }
 

@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe PrepareEstablishClaimTasksJob, :vacols do
+describe PrepareEstablishClaimTasksJob, :all_dbs do
   before do
     allow(VBMSService).to receive(:fetch_document_file) do |document|
       fail VBMS::ClientError, "Failure" if document.vbms_document_id == "2"

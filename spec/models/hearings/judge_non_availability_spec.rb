@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe JudgeNonAvailability, :vacols do
+describe JudgeNonAvailability, :all_dbs do
   let(:judge_schedule_period) { create(:judge_schedule_period) }
 
   context ".import_judge_non_availability" do

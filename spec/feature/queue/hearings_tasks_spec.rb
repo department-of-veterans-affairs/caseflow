@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Hearings tasks workflows", :vacols do
+RSpec.feature "Hearings tasks workflows", :all_dbs do
   let(:user) { create(:user) }
 
   before do

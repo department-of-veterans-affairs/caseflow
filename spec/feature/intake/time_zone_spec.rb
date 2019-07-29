@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-feature "Appeal time zone", :vacols do
+feature "Appeal time zone", :all_dbs do
   include IntakeHelpers
 
   before do

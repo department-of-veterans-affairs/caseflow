@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Case Assignment flows", :vacols do
+RSpec.feature "Case Assignment flows", :all_dbs do
   let(:attorney_user) { FactoryBot.create(:user) }
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 

@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe AppealsController, :vacols, type: :controller do
+RSpec.describe AppealsController, :all_dbs, type: :controller do
   include TaskHelpers
 
   describe "GET appeals" do

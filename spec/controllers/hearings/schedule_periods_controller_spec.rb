@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe Hearings::SchedulePeriodsController, :vacols, type: :controller do
+RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Build HearSched"]) }
   let!(:ro_schedule_period) { create(:ro_schedule_period) }
   let!(:judge_schedule_period) { create(:judge_schedule_period) }

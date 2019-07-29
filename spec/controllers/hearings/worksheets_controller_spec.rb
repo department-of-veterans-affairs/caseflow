@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe Hearings::WorksheetsController, :vacols, type: :controller do
+RSpec.describe Hearings::WorksheetsController, :all_dbs, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let(:legacy_hearing) { create(:legacy_hearing) }
   let(:hearing) { create(:hearing, :with_tasks) }

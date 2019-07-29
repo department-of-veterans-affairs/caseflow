@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Edit a Hearing Day", :vacols do
+RSpec.feature "Edit a Hearing Day", :all_dbs do
   let!(:current_user) do
     user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
     OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)

@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe Hearings::AppealsController, :vacols, type: :controller do
+RSpec.describe Hearings::AppealsController, :all_dbs, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let(:appeal) do
     create(:legacy_appeal, vacols_case: vacols_case)

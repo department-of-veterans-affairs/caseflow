@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Cancel certification", :vacols do
+RSpec.feature "Cancel certification", :all_dbs do
   let!(:current_user) { User.authenticate! }
 
   let(:appeal) do

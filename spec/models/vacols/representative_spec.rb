@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe VACOLS::Representative, :vacols do
+describe VACOLS::Representative, :all_dbs do
   let(:vacols_case) { create(:case_with_rep_table_record) }
   let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
   let(:rep) { VACOLS::Representative.appellant_representative(appeal.vacols_id) }

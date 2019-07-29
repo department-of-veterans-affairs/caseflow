@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe RegionalOfficesController, :vacols, type: :controller do
+RSpec.describe RegionalOfficesController, :all_dbs, type: :controller do
   let!(:user) { User.authenticate! }
 
   context "index" do

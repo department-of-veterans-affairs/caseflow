@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe "Appeals API v2", :vacols, type: :request do
+describe "Appeals API v2", :all_dbs, type: :request do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end

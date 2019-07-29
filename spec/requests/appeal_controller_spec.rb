@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe "Reader Appeal Requests", :vacols, type: :request do
+RSpec.describe "Reader Appeal Requests", :all_dbs, type: :request do
   let!(:user) { User.authenticate!(roles: ["Reader"]) }
   let(:appeal) do
     create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "123456789S", case_issues: [create(:case_issue)]))

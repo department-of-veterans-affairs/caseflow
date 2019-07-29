@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Hearing Schedule Daily Docket", :vacols do
+RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
   let(:user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"]) }
 
   before do

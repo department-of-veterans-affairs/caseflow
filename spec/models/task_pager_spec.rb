@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe TaskPager, :vacols do
+describe TaskPager, :all_dbs do
   describe ".new" do
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:arguments) { { assignee: assignee, tab_name: tab_name } }

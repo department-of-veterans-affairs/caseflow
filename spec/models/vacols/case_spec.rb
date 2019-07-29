@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe VACOLS::Case, :vacols do
+describe VACOLS::Case, :all_dbs do
   before do
     FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))

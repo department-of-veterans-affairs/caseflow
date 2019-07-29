@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe RampElectionIntake, :vacols do
+describe RampElectionIntake, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end

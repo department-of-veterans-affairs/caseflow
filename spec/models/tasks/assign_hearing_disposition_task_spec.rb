@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe AssignHearingDispositionTask, :vacols do
+describe AssignHearingDispositionTask, :all_dbs do
   describe "#update_from_params for ama appeal" do
     let(:appeal) { FactoryBot.create(:appeal) }
     let!(:hearing) { FactoryBot.create(:hearing, appeal: appeal) }

@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe HearingDayRange, :vacols do
+describe HearingDayRange, :all_dbs do
   describe ".load_days" do
     context "load Video days for a range date" do
       let!(:hearings) do

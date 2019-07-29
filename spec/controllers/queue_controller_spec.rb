@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe QueueController, :vacols, type: :controller do
+RSpec.describe QueueController, :all_dbs, type: :controller do
   describe "GET /queue" do
     context "when user has access to queue" do
       let(:attorney_user) { FactoryBot.create(:user) }

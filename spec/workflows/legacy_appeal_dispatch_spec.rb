@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe LegacyAppealDispatch, :vacols do
+describe LegacyAppealDispatch, :all_dbs do
   describe "#call" do
     context "invalid or missing citation number" do
       it "raises OutcodeValidationFailure" do

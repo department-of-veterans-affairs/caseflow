@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe RequestIssuesUpdate, :vacols do
+describe RequestIssuesUpdate, :all_dbs do
   before do
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 20))

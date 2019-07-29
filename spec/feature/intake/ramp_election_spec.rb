@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-feature "RAMP Election Intake", :vacols do
+feature "RAMP Election Intake", :all_dbs do
   include IntakeHelpers
 
   before do

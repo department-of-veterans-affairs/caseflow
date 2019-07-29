@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe PowerOfAttorney, :vacols do
+describe PowerOfAttorney, :all_dbs do
   let!(:vacols_case) { create(:case, :representative_american_legion) }
   let(:power_of_attorney) { PowerOfAttorney.new(vacols_id: vacols_case.bfkey, file_number: "VBMS-ID") }
 
