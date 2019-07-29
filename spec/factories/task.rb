@@ -267,6 +267,12 @@ FactoryBot.define do
         end
       end
 
+      trait :stayed_appeal do
+        initialize_with { StayedAppealColocatedTask.new(attributes) }
+        type { StayedAppealColocatedTask.name }
+        instructions { ["Appeal stayed because Veteran fulls under Blue Water Navy Veteran policy."] }
+      end
+
       trait :other do
         initialize_with { OtherColocatedTask.new(attributes) }
         type { OtherColocatedTask.name }
@@ -460,6 +466,22 @@ FactoryBot.define do
       type { VeteranRecordRequest.name }
       appeal { create(:appeal) }
       parent { create(:root_task) }
+      assigned_by { nil }
+    end
+
+    factory :aod_motion_mail_task, class: AodMotionMailTask do
+      type { AodMotionMailTask.name }
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+      assigned_to { MailTeam.singleton }
+      assigned_by { nil }
+    end
+
+    factory :congressional_interest_mail_task, class: CongressionalInterestMailTask do
+      type { CongressionalInterestMailTask.name }
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+      assigned_to { MailTeam.singleton }
       assigned_by { nil }
     end
   end
