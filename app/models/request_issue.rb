@@ -527,6 +527,10 @@ class RequestIssue < ApplicationRecord
   end
 
   def remove!
+    # When a user attempts to remove a request issue and if any of the request issues
+    # already have a rating, automatically close them as 'decided' so that the user cannot
+    # attempt to change them.
+    return close_decided_issue! if contention_in_ratings?
     close!(status: :removed) do
       legacy_issue_optin&.flag_for_rollback!
 
