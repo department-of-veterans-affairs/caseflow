@@ -5,7 +5,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
 
   def create
     begin
-      @preintake = HigherLevelReviewPreintake.new params
+      @preintake = Api::V3::HigherLevelReviewPreintake.new params
     rescue StandardError
       render error status: 400, title: "Malformed request"
     end
@@ -56,7 +56,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
   end
 
   def error(*args)
-    ErrorRenderHash.new(*args).render_hash
+    Api::HigherLevelReviewError.new(*args).render_options
   end
 
   def intake

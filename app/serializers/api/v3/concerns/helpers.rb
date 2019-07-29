@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Api::Helpers
+module Api::V3::Concerns::Helpers
   extend ActiveSupport::Concern
 
   def to_float(val)

@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-describe Api::Helpers do
-  let(:helped_object) { Class.new { include Api::Helpers }.new }
+describe Api::V3::Concerns::Helpers do
+  let(:helped_object) { Class.new { include Api::V3::Concerns::Helpers }.new }
 
   context ".to_float" do
     it { expect(helped_object.to_float(999)).to eq(999) }
