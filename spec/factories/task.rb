@@ -468,5 +468,21 @@ FactoryBot.define do
       parent { create(:root_task) }
       assigned_by { nil }
     end
+
+    factory :aod_motion_mail_task, class: AodMotionMailTask do
+      type { AodMotionMailTask.name }
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+      assigned_to { MailTeam.singleton }
+      assigned_by { nil }
+    end
+
+    factory :congressional_interest_mail_task, class: CongressionalInterestMailTask do
+      type { CongressionalInterestMailTask.name }
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+      assigned_to { MailTeam.singleton }
+      assigned_by { nil }
+    end
   end
 end
