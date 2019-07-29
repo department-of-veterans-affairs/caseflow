@@ -42,7 +42,7 @@ class SpecialCaseMovementTask < GenericTask
   end
 
   def verify_user_organization
-    if !assigned_by.organizations.include?(SpecialCaseMovementTeam.singleton)
+    if !SpecialCaseMovementTeam.singleton.user_has_access?(assigned_by)
       fail(Caseflow::Error::ActionForbiddenError,
            message: "Special Case Movement restricted to Special Case Movement Team members")
     end
