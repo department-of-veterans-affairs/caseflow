@@ -34,7 +34,7 @@ class Generators::Veteran
         eft_account_number: nil,
         eft_account_type: nil,
         eft_routing_number: nil,
-        email_address: nil,
+        email_address: "america@example.com",
         fiduciary_decision_category_type_code: nil,
         fiduciary_folder_location: nil,
         file_number: "111223334",
