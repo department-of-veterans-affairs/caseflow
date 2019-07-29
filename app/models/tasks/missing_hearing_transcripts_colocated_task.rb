@@ -23,10 +23,6 @@ class MissingHearingTranscriptsColocatedTask < ColocatedTask
     true
   end
 
-  def cascade_closure_from_child_task?(child_task)
-    child_task.is_a?(TranscriptionTask)
-  end
-
   def create_transcription_task
     TranscriptionTask.create!(
       assigned_to: assigned_to,
@@ -35,5 +31,11 @@ class MissingHearingTranscriptsColocatedTask < ColocatedTask
       appeal: appeal,
       parent: self
     )
+  end
+
+  private
+
+  def cascade_closure_from_child_task?(child_task)
+    child_task.is_a?(TranscriptionTask)
   end
 end

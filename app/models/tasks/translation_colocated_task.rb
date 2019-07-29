@@ -23,10 +23,6 @@ class TranslationColocatedTask < ColocatedTask
     true
   end
 
-  def cascade_closure_from_child_task?(child_task)
-    child_task.is_a?(TranslationTask)
-  end
-
   def create_translation_task
     TranslationTask.create!(
       assigned_to: assigned_to,
@@ -35,5 +31,11 @@ class TranslationColocatedTask < ColocatedTask
       appeal: appeal,
       parent: self
     )
+  end
+
+  private
+
+  def cascade_closure_from_child_task?(child_task)
+    child_task.is_a?(TranslationTask)
   end
 end
