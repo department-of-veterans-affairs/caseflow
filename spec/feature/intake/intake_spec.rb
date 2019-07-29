@@ -159,7 +159,7 @@ feature "Intake" do
       before do
         Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
-          .and_raise(BGS::ShareError, message: "NonUniqueResultException")
+          .and_raise(BGS::ShareError.new("NonUniqueResultException"))
       end
 
       scenario "Search for a veteran with multiple active phone numbers" do
