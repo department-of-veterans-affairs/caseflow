@@ -22,11 +22,9 @@ import {
 } from './QueueActions';
 import { hideSuccessMessage } from './uiReducer/uiActions';
 import {
-  PAGE_TITLES,
   VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS
 } from './constants';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
@@ -63,20 +61,19 @@ class SelectDispositionsView extends React.PureComponent {
     };
   }
 
+  decisionReviewCheckoutFlow = () => this.props.checkoutFlow === 'dispatch_decision';
+
   componentDidMount = () => {
-    if (this.props.userRole === USER_ROLE_TYPES.attorney) {
+    if (!this.decisionReviewCheckoutFlow()) {
       this.props.setDecisionOptions({ work_product: 'Decision' });
     }
   }
-
-  getPageName = () => PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()];
 
   getNextStepUrl = () => {
     const {
       appealId,
       taskId,
       checkoutFlow,
-      userRole,
       appeal: { decisionIssues }
     } = this.props;
 
@@ -88,7 +85,7 @@ class SelectDispositionsView extends React.PureComponent {
 
     if (remandedIssues) {
       nextStep = 'remands';
-    } else if (userRole === USER_ROLE_TYPES.judge || checkoutFlow === 'dispatch_decision') {
+    } else if (this.decisionReviewCheckoutFlow()) {
       nextStep = 'evaluate';
     } else {
       nextStep = 'submit';
@@ -437,15 +434,13 @@ class SelectDispositionsView extends React.PureComponent {
 
 SelectDispositionsView.propTypes = {
   appealId: PropTypes.string.isRequired,
-  checkoutFlow: PropTypes.string.isRequired,
-  userRole: PropTypes.string.isRequired
+  checkoutFlow: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
   success: state.ui.messages.success,
-  highlight: state.ui.highlightFormItems,
-  ..._.pick(state.ui, 'userRole')
+  highlight: state.ui.highlightFormItems
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
