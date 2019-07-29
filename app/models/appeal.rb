@@ -156,6 +156,19 @@ class Appeal < DecisionReview
     tasks.open.where(type: RootTask.name).any?
   end
 
+  def ready_for_distribution?
+    # Appeals are ready for distribution when the DistributionTask is the active task, meaning there are no outstanding
+    #   Evidence Window or Hearing tasks, and when there are no mail tasks that legally restrict the distribution of
+    #   the case, aka blocking mail tasks
+    return false unless tasks.active.where(type: DistributionTask.name).any?
+
+    MailTask.open.where(appeal: self).find_each do |mail_task|
+      return false if mail_task.blocking?
+    end
+
+    true
+  end
+
   def ready_for_distribution_at
     tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
   end
