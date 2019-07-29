@@ -6,6 +6,18 @@
 class DistributionTask < GenericTask
   before_validation :set_assignee
 
+  def available_actions(user)
+    return [] unless user
+
+    if special_case_movement_available?(user)
+      return [
+        Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.to_h
+      ]
+    end
+
+    []
+  end
+
   def ready_for_distribution!
     update!(status: :assigned, assigned_at: Time.zone.now)
   end
@@ -19,6 +31,11 @@ class DistributionTask < GenericTask
   end
 
   private
+
+  def special_case_movement_available?(user)
+    ::SpecialCaseMovementTeam.singleton.user_has_access?(user) &&
+      appeal.ready_for_distribution?
+  end
 
   def set_assignee
     self.assigned_to ||= Bva.singleton
