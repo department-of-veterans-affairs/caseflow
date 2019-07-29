@@ -17,9 +17,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each, :all_dbs, db_clean: :truncation) do
-    DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].strategy =
-      :deletion, { except: %w[vftypes issref] }
-    DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].strategy = :truncation
+    clean_vacols_with_deletion_and_pg_with_truncation
   end
 
   config.before(:each, :all_dbs, type: :feature) do
@@ -31,9 +29,7 @@ RSpec.configure do |config|
       # Driver is probably for an external browser with an app
       # under test that does *not* share a database connection with the
       # specs, so use truncation strategy.
-      DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].strategy =
-        :deletion, { except: %w[vftypes issref] }
-      DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].strategy = :truncation
+      clean_vacols_with_deletion_and_pg_with_truncation
     end
   end
 
@@ -47,4 +43,10 @@ RSpec.configure do |config|
     DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].clean
     clean_application!
   end
+end
+
+def clean_vacols_with_deletion_and_pg_with_truncation
+  DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].strategy =
+    :deletion, { except: %w[vftypes issref] }
+  DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].strategy = :truncation
 end
