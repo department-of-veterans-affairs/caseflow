@@ -85,6 +85,10 @@ class Task < ApplicationRecord
     open? && children.empty?
   end
 
+  def active?
+    self.class.active_statuses.include?(status)
+  end
+
   # available_actions() returns an array of options selected by
   # the subclass from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
