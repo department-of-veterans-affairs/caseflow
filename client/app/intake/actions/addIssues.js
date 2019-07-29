@@ -3,6 +3,11 @@ import { issueByIndex } from '../util/issues';
 
 const analytics = true;
 
+export const toggleAddingIssue = () => ({
+  type: ACTIONS.TOGGLE_ADDING_ISSUE,
+  meta: { analytics }
+});
+
 export const toggleAddIssuesModal = () => ({
   type: ACTIONS.TOGGLE_ADD_ISSUES_MODAL,
   meta: { analytics }
@@ -27,8 +32,9 @@ export const toggleIssueRemoveModal = (index) => ({
   payload: { index }
 });
 
-export const toggleCorrectionTypeModal = () => ({
-  type: ACTIONS.TOGGLE_CORRECTION_TYPE_MODAL
+export const toggleCorrectionTypeModal = ({index, isNewIssue} = {}) => ({
+  type: ACTIONS.TOGGLE_CORRECTION_TYPE_MODAL,
+  payload: {index, isNewIssue}
 });
 
 export const toggleLegacyOptInModal = (currentIssueAndNotes = {}) => ({
