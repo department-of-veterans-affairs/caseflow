@@ -66,6 +66,25 @@ module Caseflow::Error
     end
   end
 
+  class InvalidStatusOnTaskCreate < SerializableError
+    def initialize(args)
+      @task_type = args[:task_type]
+      @code = args[:code] || 400
+      @message = args[:message] || "Task status has to be 'assigned' on create for #{@task_type}"
+    end
+  end
+
+  class IneligibleForSpecialCaseMovement < SerializableError
+    attr_accessor :appeal_id
+
+    def initialize(args)
+      @code = args[:code] || 500
+      @appeal_id = args[:appeal_id] || nil
+      @message = args[:message] || "Appeal #{@appeal_id} must be in Case Storage and not have blocking Mail Tasks for"\
+                                   " Special Case Movement"
+    end
+  end
+
   class InvalidParentTask < SerializableError
     def initialize(args)
       @task_type = args[:task_type]

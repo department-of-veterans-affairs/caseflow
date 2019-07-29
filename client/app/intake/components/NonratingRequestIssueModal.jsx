@@ -18,6 +18,7 @@ import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
 import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES.json';
 import { validateDate, validateDateNotInFuture } from '../util/issues';
+import { isCorrection } from '../util';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -157,7 +158,8 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleReason: this.state.ineligibleReason,
       decisionReviewTitle: this.state.decisionReviewTitle,
       isRating: false,
-      timely: this.isTimely()
+      timely: this.isTimely(),
+      correctionType: isCorrection(false, this.props.intakeData) ? 'control' : null
     };
 
     if (this.hasLegacyAppeals()) {

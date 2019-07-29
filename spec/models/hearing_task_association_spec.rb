@@ -5,10 +5,10 @@ require "rails_helper"
 describe HearingTaskAssociation do
   describe "uniqueness validation" do
     let(:hearing) { nil }
-    let(:status) { Constants.TASK_STATUSES.in_progress }
-    let(:hearing_task) { FactoryBot.create(:hearing_task, appeal: hearing&.appeal, status: status) }
+    let(:trait) { :in_progress }
+    let(:hearing_task) { FactoryBot.create(:hearing_task, trait, appeal: hearing&.appeal) }
     let(:hearing_task_2) do
-      FactoryBot.create(:hearing_task, appeal: hearing&.appeal, status: Constants.TASK_STATUSES.assigned)
+      FactoryBot.create(:hearing_task, trait, appeal: hearing&.appeal)
     end
     let!(:hearing_task_association) do
       FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task)
@@ -30,7 +30,7 @@ describe HearingTaskAssociation do
       end
 
       context "there is a duplicate hearing task but it's closed" do
-        let(:status) { Constants.TASK_STATUSES.cancelled }
+        let(:trait) { :cancelled }
 
         it "allows creation of a duplicate" do
           before_count = HearingTaskAssociation.count
@@ -50,7 +50,7 @@ describe HearingTaskAssociation do
       end
 
       context "there is a duplicate hearing task but it's closed" do
-        let(:status) { Constants.TASK_STATUSES.cancelled }
+        let(:trait) { :cancelled }
 
         it "allows creation of a duplicate" do
           before_count = HearingTaskAssociation.count

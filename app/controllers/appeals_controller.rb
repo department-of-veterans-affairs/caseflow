@@ -114,8 +114,8 @@ class AppealsController < ApplicationController
       set_flash_success_message
 
       render json: {
-        issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
-        issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
+        beforeIssues: request_issues_update.before_issues.map(&:ui_hash),
+        afterIssues: request_issues_update.after_issues.map(&:ui_hash),
         withdrawnIssues: request_issues_update.withdrawn_issues.map(&:ui_hash)
       }
     else
