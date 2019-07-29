@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "stringex/unidecoder"
 require "stringex/core_ext"
 
@@ -8,8 +10,10 @@ class AsciiConverter
 
   def convert
     return str if ascii?
+
     return str.encode("UTF-8", "Windows-1252").to_ascii if cp1252?
-    return str.to_ascii
+
+    str.to_ascii
   end
 
   private
@@ -17,7 +21,7 @@ class AsciiConverter
   attr_reader :str
 
   def ascii?
-    !str.bytes.any? { |byte| byte > 127 }
+    str.bytes.none? { |byte| byte > 127 }
   end
 
   def cp1252?
