@@ -58,6 +58,14 @@ class SeedDB
     OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
     bva_intake_admin = User.create(css_id: "BVAGBLUE", station_id: 101, full_name: "BVA Intake admin")
     OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
+    special_case_movement_user = User.create(css_id: "BVAGGREEN",
+                                             station_id: 101,
+                                             full_name: "Rosalie SpecialCaseMovement Dunkle")
+    OrganizationsUser.add_user_to_organization(special_case_movement_user, SpecialCaseMovementTeam.singleton)
+    special_case_movement_admin = User.create(css_id: "BVAGAQUA",
+                                              station_id: 101,
+                                              full_name: "Bryan SpecialCaseMovementAdmin Beekman")
+    OrganizationsUser.make_user_admin(special_case_movement_admin, SpecialCaseMovementTeam.singleton)
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
@@ -1053,6 +1061,13 @@ class SeedDB
       :in_progress,
       assigned_to: User.find_by(css_id: "BVAEBECKER"),
       appeal: FactoryBot.create(:appeal)
+    )
+
+    FactoryBot.create_list(
+      :appeal,
+      8,
+      :with_post_intake_tasks,
+      docket_type: Constants.AMA_DOCKETS.direct_review
     )
   end
 

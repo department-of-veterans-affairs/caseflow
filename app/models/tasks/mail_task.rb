@@ -74,6 +74,10 @@ class MailTask < GenericTask
     end
   end
 
+  def blocking?
+    self.class.blocking?
+  end
+
   def label
     self.class.label
   end
