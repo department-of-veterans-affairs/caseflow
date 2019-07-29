@@ -61,7 +61,7 @@ class ColocatedTask < Task
 
     def actions_assigned_to_colocated
       Constants::CO_LOCATED_ADMIN_ACTIONS.keys.select do |action|
-        find_subclass_by_action(action)&.default_assignee == Colocated.singleton
+        find_subclass_by_action(action).methods(false).exclude?(:default_assignee)
       end
     end
   end
