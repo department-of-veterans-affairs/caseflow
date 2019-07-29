@@ -490,7 +490,7 @@ describe Intake do
       context "Veteran has multiple phone numbers" do
         before do
           allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
-            .and_raise(BGS::ShareError, message: "NonUniqueResultException")
+            .and_raise(BGS::ShareError.new("NonUniqueResultException"))
         end
 
         it "adds veteran_has_multiple_phone_numbers and returns false" do
