@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Api::Docs::V3::DocsController, type: :request do
   describe "#decision_reviews" do
     it "should successfully return openapi spec" do

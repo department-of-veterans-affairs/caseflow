@@ -20,18 +20,15 @@ class Generators::Contention
       disposition = attrs.delete(:disposition)
 
       OpenStruct.new(attrs).tap do |contention|
-        Fakes::VBMSService.contention_records ||= {}
-        Fakes::VBMSService.contention_records[claim_id] ||= []
-        Fakes::VBMSService.contention_records[claim_id] << contention
+        Fakes::BGSService.end_product_store.create_contention(contention)
 
         if disposition
-          Fakes::VBMSService.disposition_records ||= {}
-          Fakes::VBMSService.disposition_records[claim_id] ||= []
-          Fakes::VBMSService.disposition_records[claim_id] << OpenStruct.new(
-            claim_id: contention.claim_id,
+          disposition_record = OpenStruct.new(
+            claim_id: claim_id,
             contention_id: contention.id,
             disposition: disposition
           )
+          Fakes::BGSService.end_product_store.create_disposition(disposition_record)
         end
       end
     end

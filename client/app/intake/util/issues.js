@@ -104,6 +104,10 @@ const contestableIssueIndexByRequestIssue = (contestableIssuesByDate, requestIss
 // formatRequestIssues takes an array of requestIssues in the server ui_hash format
 // and returns objects useful for displaying in UI
 export const formatRequestIssues = (requestIssues, contestableIssues) => {
+  if (!requestIssues) {
+    return;
+  }
+
   return requestIssues.map((issue) => {
     // Nonrating issues
     if (issue.category) {
@@ -125,6 +129,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         vacolsSequenceId: issue.vacols_sequence_id,
         vacolsIssue: issue.vacols_issue,
         endProductCleared: issue.end_product_cleared,
+        endProductCode: issue.end_product_code,
         withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
       };
     }
@@ -141,6 +146,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         vacolsSequenceId: issue.vacols_sequence_id,
         vacolsIssue: issue.vacols_issue,
         endProductCleared: issue.end_product_cleared,
+        endProductCode: issue.end_product_code,
         withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
       };
     }
@@ -169,6 +175,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       vacolsSequenceId: issue.vacols_sequence_id,
       vacolsIssue: issue.vacols_issue,
       endProductCleared: issue.end_product_cleared,
+      endProductCode: issue.end_product_code,
       withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
     };
   });
