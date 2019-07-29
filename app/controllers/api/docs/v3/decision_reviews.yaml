@@ -583,6 +583,134 @@ paths:
                 properties:
                   errors:
                     $ref: "#/components/schemas/errors"
+  /higher_level_reviews/{uuid}:
+    get:
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          description: UUID of a Higher-Level Review
+          schema:
+            type : string
+            format: uuid
+            pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+      summary: Details of the Higher-Level Review
+      responses:
+        '200':
+          description: JSONAPI response detailing the specific Higher-Level Review
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+                      type:
+                        type: string
+                        description: Will be "HigherLevelReview"
+                      attributes:
+                        type: object
+                        properties:
+                          benefitType:
+                            type: string
+                          veteranFileNumber:
+                            type: string
+                          status:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                              details:
+                                type: object
+                                properties:
+                                  issues:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        description:
+                                          type: string
+                                        disposition:
+                                          type: string
+                          events:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                type:
+                                  type: string
+                                date:
+                                  type: string
+                                  format: date
+                      relationships:
+                        type: object
+                        properties:
+                          issues:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                data:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      type:
+                                        type: string
+                                        description: Will be "RequestIssue"
+                                      id:
+                                        type: string
+                                        description: will match the included data
+                  included:
+                    description: Minimal details on the related issues.
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          description: Will be "RequestIssue"
+                        id:
+                          type: string
+                        attributes:
+                          type: object
+                          properties:
+                            benefitType:
+                              type: string
+                            active:
+                              type: boolean
+                            lastAction:
+                              type: string
+                            date:
+                              type: string
+                              format: date
+                            description:
+                              type: string
+                            diagnosticCode:
+                              type: string
+        '404':
+          description: ID not found
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+        '5XX':
+          description: Failed
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
 components:
   schemas:
     nonrating_issue_category:
