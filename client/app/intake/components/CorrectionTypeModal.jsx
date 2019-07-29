@@ -31,7 +31,7 @@ class CorrectionTypeModal extends React.Component {
   }
 
   render() {
-    const { issueIndex, cancelText, onCancel, onClose, submitText } = this.props;
+    const { issueIndex, cancelText, onCancel, onSubmit, submitText } = this.props;
 
     return (
       <div className="intake-correction-type">
@@ -47,16 +47,12 @@ class CorrectionTypeModal extends React.Component {
               name: submitText || 'Correct Issue',
               disabled: !this.state.correctionType,
               onClick: () => {
-                this.props.correctIssue({
-                  index: issueIndex,
-                  correctionType: this.state.correctionType
-                });
-                onClose();
+                onSubmit({ correctionType: this.state.correctionType });
               }
             }
           ]}
           visible
-          closeHandler={onClose}
+          closeHandler={onSubmit}
           title={INTAKE_CORRECTION_TYPE_MODAL_TITLE}
         >
           <div>
@@ -81,7 +77,7 @@ class CorrectionTypeModal extends React.Component {
 
 CorrectionTypeModal.propTypes = {
   onCancel: PropTypes.func,
-  onClose: PropTypes.func,
+  onSubmit: PropTypes.func,
   cancelText: PropTypes.string,
   submitText: PropTypes.string,
   issueIndex: PropTypes.number

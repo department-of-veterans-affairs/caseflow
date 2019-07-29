@@ -1,14 +1,17 @@
-import _ from 'lodash';
+import React from 'react';
+import PropTypes from 'prop-types';
+
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import React from 'react';
+
 import { formatDateStr } from '../../util/DateUtil';
 import { isCorrection } from '../util';
 import {
   addContestableIssue,
   addNonratingRequestIssue,
   toggleUntimelyExemptionModal,
-  toggleLegacyOptInModal } from '../actions/addIssues';
+  toggleLegacyOptInModal
+} from '../actions/addIssues';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 
@@ -40,11 +43,11 @@ class LegacyOptInModal extends React.Component {
       const legacyAppeal = this.props.intakeData.legacyAppeals.find((appeal) => appeal.vacols_id === legacyValues[0]);
 
       if (vacolsSequenceId) {
-        let vacolsIssue = _.find(legacyAppeal.issues, { vacols_sequence_id: parseInt(vacolsSequenceId, 10) });
+        let vacolsIssue = legacyAppeal.issues.find((i) => i.vacols_sequence_id === parseInt(vacolsSequenceId, 10));
 
         this.setState({
           vacolsId: legacyValues[0],
-          eligibleForSocOptIn: (legacyAppeal.eligible_for_soc_opt_in && vacolsIssue.eligible_for_soc_opt_in),
+          eligibleForSocOptIn: legacyAppeal.eligible_for_soc_opt_in && vacolsIssue.eligible_for_soc_opt_in,
           vacolsSequenceId
         });
       }
@@ -53,7 +56,7 @@ class LegacyOptInModal extends React.Component {
     this.setState({
       radioKey: value
     });
-  }
+  };
 
   requiresUntimelyExemption = () => {
     if (this.props.formType === 'supplemental_claim') {
@@ -64,58 +67,62 @@ class LegacyOptInModal extends React.Component {
     }
 
     return !this.props.intakeData.currentIssueAndNotes.currentIssue.timely;
-  }
+  };
 
   onAddIssue = () => {
-    const currentIssue = this.props.intakeData.currentIssueAndNotes.currentIssue;
-    const notes = this.props.intakeData.currentIssueAndNotes.notes;
-    const correctionType = isCorrection(currentIssue.isRating, this.props.intakeData) ? 'control' : null;
+    // const { correctionType } = this.props;
+    // const currentIssue = this.props.intakeData.currentIssueAndNotes.currentIssue;
+    // const notes = this.props.intakeData.currentIssueAndNotes.notes;
 
-    if (this.requiresUntimelyExemption()) {
-      return this.props.toggleUntimelyExemptionModal({ currentIssue,
-        notes,
-        vacolsId: this.state.vacolsId,
-        vacolsSequenceId: this.state.vacolsSequenceId,
-        eligibleForSocOptIn: this.state.eligibleForSocOptIn });
-    } else if (currentIssue.category) {
-      this.props.addNonratingRequestIssue({
-        ...currentIssue,
-        vacolsId: this.state.vacolsId,
-        vacolsSequenceId: this.state.vacolsSequenceId,
-        eligibleForSocOptIn: this.state.eligibleForSocOptIn,
-        correctionType
-      });
-    } else {
-      this.props.addContestableIssue({
-        contestableIssueIndex: currentIssue.index,
-        contestableIssues: this.props.intakeData.contestableIssues,
-        isRating: currentIssue.isRating,
-        vacolsId: this.state.vacolsId,
-        vacolsSequenceId: this.state.vacolsSequenceId,
-        eligibleForSocOptIn: this.state.eligibleForSocOptIn,
-        notes,
-        correctionType
-      });
-    }
-    this.props.toggleLegacyOptInModal();
-  }
+    // if (this.requiresUntimelyExemption()) {
+    //   return this.props.toggleUntimelyExemptionModal({
+    //     currentIssue,
+    //     notes,
+    //     vacolsId: this.state.vacolsId,
+    //     vacolsSequenceId: this.state.vacolsSequenceId,
+    //     eligibleForSocOptIn: this.state.eligibleForSocOptIn
+    //   });
+    // } else if (currentIssue.category) {
+    //   this.props.addNonratingRequestIssue({
+    //     ...currentIssue,
+    //     vacolsId: this.state.vacolsId,
+    //     vacolsSequenceId: this.state.vacolsSequenceId,
+    //     eligibleForSocOptIn: this.state.eligibleForSocOptIn,
+    //     correctionType
+    //   });
+    // } else {
+    //   this.props.addContestableIssue({
+    //     contestableIssueIndex: currentIssue.index,
+    //     contestableIssues: this.props.intakeData.contestableIssues,
+    //     isRating: currentIssue.isRating,
+    //     vacolsId: this.state.vacolsId,
+    //     vacolsSequenceId: this.state.vacolsSequenceId,
+    //     eligibleForSocOptIn: this.state.eligibleForSocOptIn,
+    //     notes,
+    //     correctionType
+    //   });
+    // }
+    // this.props.toggleLegacyOptInModal();
+
+    this.props.onSubmit({
+      vacolsId: this.state.vacolsId,
+      vacolsSequenceId: this.state.vacolsSequenceId,
+      eligibleForSocOptIn: this.state.eligibleForSocOptIn
+    });
+  };
 
   // do no allow the same legacy issue to be selected more than once
   findOptinIssue = (legacyIssue, addedIssues) => {
     return (addedIssues || []).find((element) => {
-      return element.vacolsId === legacyIssue.vacols_id &&
-        element.vacolsSequenceId === legacyIssue.vacols_sequence_id.toString();
+      return (
+        element.vacolsId === legacyIssue.vacols_id &&
+        element.vacolsSequenceId === legacyIssue.vacols_sequence_id.toString()
+      );
     });
-  }
+  };
 
-  render() {
-    let {
-      intakeData,
-      closeHandler
-    } = this.props;
-
-    const issueNumber = (intakeData.addedIssues || []).length + 1;
-    const legacyAppealsSections = intakeData.legacyAppeals.map((legacyAppeal, index) => {
+  getLegacyAppealsSections(intakeData) {
+    return intakeData.legacyAppeals.map((legacyAppeal, index) => {
       const radioOptions = legacyAppeal.issues.map((issue) => {
         return {
           displayText: issue.description,
@@ -132,51 +139,89 @@ class LegacyOptInModal extends React.Component {
         });
       }
 
-      return <RadioField
-        vertical
-        label={<h3>Notice of Disagreement Date { formatDateStr(legacyAppeal.date) }</h3>}
-        name="rating-radio"
-        options={radioOptions}
-        key={`${index}legacy-opt-in`}
-        value={this.state.radioKey}
-        onChange={this.radioOnChange}
-      />;
+      return (
+        <RadioField
+          vertical
+          label={<h3>Notice of Disagreement Date {formatDateStr(legacyAppeal.date)}</h3>}
+          name="rating-radio"
+          options={radioOptions}
+          key={`${index}legacy-opt-in`}
+          value={this.state.radioKey}
+          onChange={this.radioOnChange}
+        />
+      );
     });
+  }
 
-    return <div className="intake-add-issues">
-      <Modal
-        buttons={[
-          { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
-            name: 'Cancel adding this issue',
-            onClick: closeHandler
-          },
-          { classNames: ['usa-button', 'add-issue'],
-            name: 'Add this issue',
-            onClick: this.onAddIssue,
-            disabled: !this.state.radioKey
-          }
-        ]}
-        visible
-        closeHandler={closeHandler}
-        title={`Add issue ${issueNumber}`}
-      >
-        <div>
-          <h2>
-            Does issue {issueNumber} match any of these VACOLS issues?
-          </h2>
-          { legacyAppealsSections }
-        </div>
-      </Modal>
-    </div>;
+  getModalButtons() {
+    const btns = [
+      {
+        classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
+        name: this.props.cancelText,
+        onClick: this.props.onCancel
+      },
+      {
+        classNames: ['usa-button', 'add-issue'],
+        name: this.props.submitText,
+        onClick: this.onAddIssue,
+        disabled: !this.state.radioKey
+      }
+    ];
+
+    if (this.props.onSkip) {
+      btns.push({
+        classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
+        name: this.props.skipText,
+        onClick: this.props.onSkip
+      });
+    }
+
+    return btns;
+  }
+
+  render() {
+    const { intakeData, closeHandler } = this.props;
+
+    const issueNumber = (intakeData.addedIssues || []).length + 1;
+
+    return (
+      <div className="intake-add-issues">
+        <Modal buttons={this.getModalButtons()} visible closeHandler={closeHandler} title={`Add issue ${issueNumber}`}>
+          <div>
+            <h2>Does issue {issueNumber} match any of these VACOLS issues?</h2>
+            {this.getLegacyAppealsSections(intakeData)}
+          </div>
+        </Modal>
+      </div>
+    );
   }
 }
 
+LegacyOptInModal.propTypes = {
+  onSubmit: PropTypes.func,
+  submitText: PropTypes.string,
+  onCancel: PropTypes.func,
+  cancelText: PropTypes.string,
+  onSkip: PropTypes.func,
+  skipText: PropTypes.string
+};
+
+LegacyOptInModal.defaultProps = {
+  submitText: 'Next',
+  cancelText: 'Cancel adding this issue',
+  skipText: 'None of these match, see more options'
+};
+
 export default connect(
   null,
-  (dispatch) => bindActionCreators({
-    addContestableIssue,
-    addNonratingRequestIssue,
-    toggleUntimelyExemptionModal,
-    toggleLegacyOptInModal
-  }, dispatch)
+  (dispatch) =>
+    bindActionCreators(
+      {
+        addContestableIssue,
+        addNonratingRequestIssue,
+        toggleUntimelyExemptionModal,
+        toggleLegacyOptInModal
+      },
+      dispatch
+    )
 )(LegacyOptInModal);
