@@ -71,7 +71,15 @@ describe VACOLS::Representative, :all_dbs do
 
   context "when name or address contains non-ASCII characters" do
     let(:name_hash) { { first_name: "Søren", middle_initial: "A", last_name: "Skarsgård" } }
-    let(:address_hash) { { address_one: "123 Walnut Aveñue", address_two: "«456»", city: "San Juañ", state: "OH", zip: "12222" } }
+    let(:address_hash) do
+      {
+        address_one: "123 Walnut Aveñue",
+        address_two: "«456»",
+        city: "San Juañ",
+        state: "OH",
+        zip: "12222"
+      }
+    end
     let(:bfkey) { "99999XYZ" }
 
     subject do
