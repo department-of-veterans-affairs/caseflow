@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
+  include BgsService
+
   has_many :dispatch_tasks, class_name: "Dispatch::Task"
   has_many :document_views
   has_many :appeal_views
@@ -264,10 +266,6 @@ class User < ApplicationRecord
     self.css_id = css_id.upcase
   end
 
-  def bgs
-    @bgs ||= BGSService.new
-  end
-
   def user_info
     @user_info ||= self.class.user_repository.user_info_from_vacols(css_id)
   end
@@ -314,6 +312,14 @@ class User < ApplicationRecord
       @system_user ||= find_or_initialize_by(
         station_id: Rails.deploy_env?(:prod) ? "283" : "317",
         css_id: Rails.deploy_env?(:prod) ? "CSFLOW" : "CASEFLOW1"
+      )
+    end
+
+    def api_user
+      @api_user ||= find_or_create_by(
+        station_id: "101",
+        css_id: "APIUSER",
+        full_name: "API User"
       )
     end
 

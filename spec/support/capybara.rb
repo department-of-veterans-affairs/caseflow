@@ -5,6 +5,8 @@ require "capybara-screenshot/rspec"
 require "selenium-webdriver"
 require "webdrivers"
 
+Webdrivers.logger.level = :DEBUG if ENV["DEBUG"]
+
 Sniffybara::Driver.configuration_file = File.expand_path("VA-axe-configuration.json", __dir__)
 
 download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")

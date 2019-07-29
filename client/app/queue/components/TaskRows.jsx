@@ -3,7 +3,6 @@ import React from 'react';
 import moment from 'moment';
 import Button from '../../components/Button';
 import COPY from '../../../COPY.json';
-import { DateString } from '../../util/DateUtil';
 import { GrayDot, GreenCheckmark, CancelIcon } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
 import { taskIsOnHold, sortTaskList } from '../utils';
@@ -13,6 +12,7 @@ import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTION
 import ActionsDropdown from '../components/ActionsDropdown';
 import OnHoldLabel from '../components/OnHoldLabel';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
+import DecisionDateTimeLine from '../components/DecisionDateTimeLine';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -52,28 +52,20 @@ const taskInfoWithIconContainer = css({
 
 const taskTimeContainerStyling = css(taskContainerStyling, { width: '20%' });
 const taskInformationContainerStyling = css(taskContainerStyling, { width: '25%' });
-const taskActionsContainerStyling = css(taskContainerStyling, { width: '50%' });
 const taskTimeTimelineContainerStyling = css(taskContainerStyling, { width: '40%' });
-const taskInformationTimelineContainerStyling =
-  css(taskInformationContainerStyling, { align: 'left',
-    width: '50%',
-    maxWidth: '235px' });
-
 const taskInfoWithIconTimelineContainer =
   css(taskInfoWithIconContainer, { textAlign: 'left',
     marginLeft: '5px',
     width: '10%',
     paddingLeft: '0px' });
 
-const greyDotStyling = css({ paddingLeft: '6px' });
-const greyDotTimelineStyling = css({ padding: '0px 0px 0px 5px' });
 const isCancelled = (task) => {
   return task.status === TASK_STATUSES.cancelled;
 };
 
 const tdClassNames = (timeline, task) => {
   const containerClass = timeline ? taskInfoWithIconTimelineContainer : '';
-  const closedAtClass = task.closedAt ? null : greyDotTimelineStyling;
+  const closedAtClass = task.closedAt ? null : <span className="greyDotTimelineStyling"></span>;
 
   return [containerClass, closedAtClass].filter((val) => val).join(' ');
 };
@@ -81,8 +73,6 @@ const tdClassNames = (timeline, task) => {
 const cancelGrayTimeLineStyle = (timeline) => {
   return timeline ? grayLineTimelineStyling : '';
 };
-
-const timelineLeftPaddingStyle = css({ paddingLeft: '0px' });
 
 class TaskRows extends React.PureComponent {
   constructor(props) {
@@ -129,28 +119,17 @@ class TaskRows extends React.PureComponent {
     }
 
     return task.assignedOn ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
-      <dd><DateString date={task.assignedOn} dateFormat="MM/DD/YYYY" /></dd></div> : null;
+      <dd>{moment(task.assignedOn).format('MM/DD/YYYY')}</dd></div> : null;
   }
 
   closedAtListItem = (task) => {
     return task.closedAt ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL}</dt>
-      <dd><DateString date={task.closedAt} dateFormat="MM/DD/YYYY" /></dd></div> : null;
+      <dd>{moment(task.closedAt).format('MM/DD/YYYY')}</dd></div> : null;
   }
 
   cancelledAtListItem = (task) => {
     return <div><dt>{COPY.TASK_SNAPSHOT_TASK_CANCELLED_DATE_LABEL}</dt>
-      <dd><DateString date={task.closedAt} dateFormat="MM/DD/YYYY" /></dd></div>;
-  }
-
-  showWithdrawalDate = () => {
-    return this.props.appeal.withdrawalDate ? <div>
-      <dt>{COPY.TASK_SNAPSHOT_TASK_WITHDRAWAL_DATE_LABEL}</dt>
-      <dd><DateString date={this.props.appeal.withdrawalDate} dateFormat="MM/DD/YYYY" /></dd></div> : null;
-  }
-
-  showDecisionDate = () => {
-    return this.props.appeal.decisionDate ? <div>
-      <dd><DateString date={this.props.appeal.decisionDate} dateFormat="MM/DD/YYYY" /></dd></div> : null;
+      <dd>{moment(task.closedAt).format('MM/DD/YYYY')}</dd></div>;
   }
 
   daysWaitingListItem = (task) => {
@@ -272,7 +251,7 @@ class TaskRows extends React.PureComponent {
                 task.closedAt ? '' : greyDotAndlineStyling].join(' ')} /> }
       </td>
       <td {...taskInformationContainerStyling}
-        className={timeline ? taskInformationTimelineContainerStyling : ''}>
+        className={timeline ? 'taskInformationTimelineContainerStyling' : ''}>
         <CaseDetailsDescriptionList>
           { timeline && timelineTitle }
           { this.assignedToListItem(task) }
@@ -281,49 +260,9 @@ class TaskRows extends React.PureComponent {
           { this.taskInstructionsListItem(task) }
         </CaseDetailsDescriptionList>
       </td>
-      { !timeline && <td {...taskActionsContainerStyling}>
+      { !timeline && <td className="taskContainerStyling taskActionsContainerStyling">
         { this.showActionsListItem(task, appeal) } </td> }
     </tr>;
-  }
-
-  decisionDateTemplate = (templateConfig) => {
-    const { taskList, timeline, appeal } = templateConfig;
-    let timelineContainerText;
-    let timeLineIcon;
-    let grayLineIconStyling;
-
-    if (appeal.withdrawn) {
-      timelineContainerText = COPY.CASE_TIMELINE_APPEAL_WITHDRAWN;
-      timeLineIcon = <CancelIcon />;
-      grayLineIconStyling = grayLineTimelineStyling;
-    } else if (appeal.decisionDate) {
-      timelineContainerText = COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA;
-      timeLineIcon = <GreenCheckmark />;
-    } else {
-      timelineContainerText = COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING;
-      timeLineIcon = <GrayDot />;
-      grayLineIconStyling = css({ top: '25px !important' });
-    }
-
-    if (timeline) {
-      return <tr>
-        <td {...taskTimeTimelineContainerStyling}>
-          <CaseDetailsDescriptionList>
-            { appeal.decisionDate ? this.showDecisionDate() : this.showWithdrawalDate() }
-          </CaseDetailsDescriptionList>
-        </td>
-        <td {...taskInfoWithIconTimelineContainer}
-          {...(appeal.withdrawalDate || appeal.decisionDate ? timelineLeftPaddingStyle : greyDotTimelineStyling)}>
-          {timeLineIcon}
-          { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
-          <div {...grayLineTimelineStyling}
-            {...grayLineIconStyling} />}
-        </td>
-        <td {...taskInformationTimelineContainerStyling}>
-          { timelineContainerText } <br />
-        </td>
-      </tr>;
-    }
   }
 
   render = () => {
@@ -348,28 +287,31 @@ class TaskRows extends React.PureComponent {
           return this.taskTemplate(templateConfig);
         }
 
-        return this.decisionDateTemplate(templateConfig);
-
+        return <DecisionDateTimeLine
+          appeal = {appeal}
+          timeline ={timeline}
+          taskList = {taskList} />;
       }) }
+
       {/* everything below here will not be in chronological order unless it's added to the task list on line 287*/}
       { timeline && appeal.isLegacyAppeal && <tr>
-        <td {...taskTimeTimelineContainerStyling}>
+        <td className="taskContainerStyling taskTimeTimelineContainerStyling">
           { appeal.form9Date ? moment(appeal.form9Date).format('MM/DD/YYYY') : null }
         </td>
-        <td {...taskInfoWithIconTimelineContainer} className={appeal.form9Date ? '' : greyDotStyling}>
+        <td {...taskInfoWithIconTimelineContainer} className={appeal.form9Date ? '' : 'greyDotStyling'}>
           { appeal.form9Date ? <GreenCheckmark /> : <GrayDot /> }
-          { appeal.nodDate && <div {...grayLineTimelineStyling} />}</td>
-        <td {...taskInformationTimelineContainerStyling}>
+          { appeal.nodDate && <div className="grayLineStyling grayLineTimelineStyling" />}</td>
+        <td className="taskContainerStyling taskInformationTimelineContainerStyling">
           { appeal.form9Date ? COPY.CASE_TIMELINE_FORM_9_RECEIVED : COPY.CASE_TIMELINE_FORM_9_PENDING}
         </td>
       </tr> }
       { timeline && appeal.nodDate && <tr>
-        <td {...taskTimeTimelineContainerStyling}>
+        <td className="taskContainerStyling taskTimeTimelineContainerStyling">
           { moment(appeal.nodDate).format('MM/DD/YYYY') }
         </td>
-        <td {...taskInfoWithIconTimelineContainer}>
+        <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer">
           { <GreenCheckmark /> } </td>
-        <td {...taskInformationTimelineContainerStyling}>
+        <td className="taskContainerStyling taskInformationTimelineContainerStyling">
           { COPY.CASE_TIMELINE_NOD_RECEIVED } <br />
         </td>
       </tr> }

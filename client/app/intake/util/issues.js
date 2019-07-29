@@ -104,6 +104,10 @@ const contestableIssueIndexByRequestIssue = (contestableIssuesByDate, requestIss
 // formatRequestIssues takes an array of requestIssues in the server ui_hash format
 // and returns objects useful for displaying in UI
 export const formatRequestIssues = (requestIssues, contestableIssues) => {
+  if (!requestIssues) {
+    return;
+  }
+
   return requestIssues.map((issue) => {
     // Nonrating issues
     if (issue.category) {
@@ -124,6 +128,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         vacolsId: issue.vacols_id,
         vacolsSequenceId: issue.vacols_sequence_id,
         vacolsIssue: issue.vacols_issue,
+        endProductCleared: issue.end_product_cleared,
+        endProductCode: issue.end_product_code,
         withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
       };
     }
@@ -139,6 +145,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         vacolsId: issue.vacols_id,
         vacolsSequenceId: issue.vacols_sequence_id,
         vacolsIssue: issue.vacols_issue,
+        endProductCleared: issue.end_product_cleared,
+        endProductCode: issue.end_product_code,
         withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
       };
     }
@@ -166,6 +174,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       vacolsId: issue.vacols_id,
       vacolsSequenceId: issue.vacols_sequence_id,
       vacolsIssue: issue.vacols_issue,
+      endProductCleared: issue.end_product_cleared,
+      endProductCode: issue.end_product_code,
       withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
     };
   });
@@ -205,7 +215,8 @@ const formatUnidentifiedIssues = (state) => {
         decision_text: issue.description,
         notes: issue.notes,
         is_unidentified: true,
-        withdrawal_date: issue.withdrawalPending ? formatDateStringForApi(state.withdrawalDate) : issue.withdrawalDate
+        withdrawal_date: issue.withdrawalPending ? formatDateStringForApi(state.withdrawalDate) : issue.withdrawalDate,
+        correction_type: issue.correctionType
       };
     });
 };
@@ -231,7 +242,8 @@ const formatRatingRequestIssues = (state) => {
         ineligible_reason: issue.ineligibleReason,
         ineligible_due_to_id: issue.ineligibleDueToId,
         withdrawal_date: issue.withdrawalPending ? formatDateStringForApi(state.withdrawalDate) : null,
-        edited_description: issue.editedDescription
+        edited_description: issue.editedDescription,
+        correction_type: issue.correctionType
       };
     });
 };
@@ -252,7 +264,8 @@ const formatNonratingRequestIssues = (state) => {
       ineligible_due_to_id: issue.ineligibleDueToId,
       ineligible_reason: issue.ineligibleReason,
       edited_description: issue.editedDescription,
-      withdrawal_date: issue.withdrawalPending ? formatDateStringForApi(state.withdrawalDate) : null
+      withdrawal_date: issue.withdrawalPending ? formatDateStringForApi(state.withdrawalDate) : null,
+      correction_type: issue.correctionType
     };
   });
 };
@@ -335,7 +348,9 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         notes: issue.notes,
         isUnidentified: true,
         withdrawalPending: issue.withdrawalPending,
-        withdrawalDate: issue.withdrawalDate
+        withdrawalDate: issue.withdrawalDate,
+        endProductCleared: issue.endProductCleared,
+        correctionType: issue.correctionType
       };
     } else if (issue.isRating) {
       if (!issue.decisionDate && !issue.approxDecisionDate) {
@@ -366,7 +381,9 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         eligibleForSocOptIn: issue.eligibleForSocOptIn,
         withdrawalPending: issue.withdrawalPending,
         withdrawalDate: issue.withdrawalDate,
-        editedDescription: issue.editedDescription
+        endProductCleared: issue.endProductCleared,
+        editedDescription: issue.editedDescription,
+        correctionType: issue.correctionType
       };
     }
 
@@ -391,8 +408,10 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       decisionReviewTitle: issue.decisionReviewTitle,
       withdrawalPending: issue.withdrawalPending,
       withdrawalDate: issue.withdrawalDate,
+      endProductCleared: issue.endProductCleared,
       category: issue.category,
-      editedDescription: issue.editedDescription
+      editedDescription: issue.editedDescription,
+      correctionType: issue.correctionType
     };
   });
 };

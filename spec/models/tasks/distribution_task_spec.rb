@@ -13,10 +13,11 @@ describe DistributionTask do
     end
 
     let(:distribution_task) do
-      DistributionTask.create!(
+      create(
+        :distribution_task,
+        :on_hold,
         appeal: create(:appeal),
-        assigned_to: Bva.singleton,
-        status: "on_hold"
+        assigned_to: Bva.singleton
       )
     end
 
@@ -38,6 +39,49 @@ describe DistributionTask do
       another_child_task.update!(status: "completed")
       expect(distribution_task.ready_for_distribution?).to eq(true)
       expect(distribution_task.ready_for_distribution_at).to eq(Time.zone.now)
+    end
+  end
+
+  describe ".available_actions" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:scm_user) { FactoryBot.create(:user) }
+    let(:scm_org) { SpecialCaseMovementTeam.singleton }
+    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:distribution_task) do
+      DistributionTask.create!(
+        appeal: root_task.appeal,
+        assigned_to: Bva.singleton
+      )
+    end
+
+    before do
+      OrganizationsUser.add_user_to_organization(user, MailTeam.singleton)
+      OrganizationsUser.add_user_to_organization(scm_user, scm_org)
+    end
+
+    it "with regular user has no actions" do
+      expect(distribution_task.available_actions(user).count).to eq(0)
+    end
+
+    it "with Special Case Movement Team user has the Special Case Movement action" do
+      expect(distribution_task.available_actions(scm_user).count).to eq(1)
+    end
+
+    it "with congressional interest mail task it has no actions" do
+      CongressionalInterestMailTask.create_from_params({
+                                                         appeal: distribution_task.appeal,
+                                                         parent_id: distribution_task.appeal.root_task.id
+                                                       }, user)
+      expect(distribution_task.available_actions(scm_user).count).to eq(0)
+    end
+
+    it "with address change mail task it has actions" do
+      AodMotionMailTask.create!(
+        appeal: distribution_task.appeal,
+        parent_id: distribution_task.appeal.root_task.id,
+        assigned_to: MailTeam.singleton
+      )
+      expect(distribution_task.available_actions(scm_user).count).to eq(1)
     end
   end
 end

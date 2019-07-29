@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.feature "Hearings tasks workflows" do
-  let(:user) { FactoryBot.create(:user) }
+  let(:user) { create(:user) }
 
   before do
     OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
@@ -11,18 +11,21 @@ RSpec.feature "Hearings tasks workflows" do
   end
 
   describe "Postponing a NoShowHearingTask" do
-    let(:veteran) { FactoryBot.create(:veteran, first_name: "Semka", last_name: "Venturini", file_number: 800_888_002) }
-    let(:appeal) { FactoryBot.create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number) }
+    let(:veteran) { create(:veteran, first_name: "Semka", last_name: "Venturini", file_number: 800_888_002) }
+    let(:appeal) { create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number) }
     let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let(:distribution_task) { FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task) }
-    let(:parent_hearing_task) { FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal) }
-    let!(:completed_scheduling_task) do
-      FactoryBot.create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
+    let(:root_task) { create(:root_task, appeal: appeal) }
+    let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
+    let(:parent_hearing_task) { create(:hearing_task, parent: distribution_task, appeal: appeal) }
+    let(:disposition_task) do
+      create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
     end
-    let(:disposition_task) { FactoryBot.create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal) }
     let!(:no_show_hearing_task) do
-      FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+      create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+    end
+
+    let!(:completed_scheduling_task) do
+      create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
     end
 
     it "closes current branch of task tree and starts a new one" do
@@ -104,25 +107,28 @@ RSpec.feature "Hearings tasks workflows" do
       expect(task.reload.status).to eq(Constants.TASK_STATUSES.completed)
     end
 
-    let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let(:distribution_task) { FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task) }
-    let(:parent_hearing_task) { FactoryBot.create(:hearing_task, parent: hearing_task_parent, appeal: appeal) }
-    let!(:completed_scheduling_task) do
-      FactoryBot.create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
+    let(:appeal) { create(:appeal, :hearing_docket) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
+    let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
+    let(:parent_hearing_task) { create(:hearing_task, parent: hearing_task_parent, appeal: appeal) }
+    let(:disposition_task) do
+      create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
     end
-    let(:disposition_task) { FactoryBot.create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal) }
     let!(:no_show_hearing_task) do
-      FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+      create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+    end
+
+    let!(:completed_scheduling_task) do
+      create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
     end
 
     context "when the appeal is a LegacyAppeal" do
-      let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
       let(:hearing_task_parent) { root_task }
 
       context "when the appellant is represented by a VSO" do
         before do
-          FactoryBot.create(:vso)
+          create(:vso)
           allow_any_instance_of(LegacyAppeal).to receive(:representatives) { Representative.all }
         end
 

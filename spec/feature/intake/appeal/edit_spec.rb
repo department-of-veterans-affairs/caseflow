@@ -245,7 +245,7 @@ feature "Appeal Edit issues" do
                           nonrating_request_issue.id, rating_request_issue.id]
 
       # duplicate issues should be neither added nor removed
-      expect(request_issue_update.created_issues.map(&:id)).to_not include(non_modified_ids)
+      expect(request_issue_update.added_issues.map(&:id)).to_not include(non_modified_ids)
       expect(request_issue_update.removed_issues.map(&:id)).to_not include(non_modified_ids)
     end
   end
@@ -516,7 +516,7 @@ feature "Appeal Edit issues" do
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdraw pending/i
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdrawal pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -560,7 +560,7 @@ feature "Appeal Edit issues" do
 
       expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdraw pending/i
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdrawal pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -580,8 +580,6 @@ feature "Appeal Edit issues" do
       expect(page).to have_content(
         /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 05\/10\/2019\s*Withdrawn on/i
       )
-      expect(page).to have_content("Please include the date the withdrawal was requested")
-      expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
     end
 
     scenario "show alert when issue is added, removed and withdrawn" do
@@ -605,7 +603,7 @@ feature "Appeal Edit issues" do
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdraw pending/i
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdrawal pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -667,6 +665,14 @@ feature "Appeal Edit issues" do
              appeal: appeal,
              assigned_to: non_comp_org,
              closed_at: last_week)
+    end
+
+    let!(:cancelled_task) do
+      create(:appeal_task,
+             :cancelled,
+             appeal: appeal,
+             assigned_to: non_comp_org,
+             closed_at: Time.zone.now)
     end
 
     context "when review has multiple active tasks" do
@@ -733,14 +739,6 @@ feature "Appeal Edit issues" do
       end
 
       context "when appeal task is cancelled" do
-        let!(:task) do
-          create(:appeal_task,
-                 status: Constants.TASK_STATUSES.cancelled,
-                 appeal: appeal,
-                 assigned_to: non_comp_org,
-                 closed_at: Time.zone.now)
-        end
-
         scenario "show timestamp when all request issues are cancelled" do
           visit "appeals/#{appeal.uuid}/edit"
           # remove all request issues
@@ -755,8 +753,8 @@ feature "Appeal Edit issues" do
           visit "appeals/#{appeal.uuid}/edit"
           expect(page).not_to have_content(existing_request_issues.first.description)
           expect(page).not_to have_content(existing_request_issues.second.description)
-          expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
-          expect(task.closed_at).to eq(Time.zone.now)
+          expect(cancelled_task.status).to eq(Constants.TASK_STATUSES.cancelled)
+          expect(cancelled_task.closed_at).to eq(Time.zone.now)
         end
       end
     end

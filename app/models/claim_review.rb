@@ -43,8 +43,20 @@ class ClaimReview < DecisionReview
     super.merge(
       benefitType: benefit_type,
       payeeCode: payee_code,
-      hasClearedEP: cleared_ep?
+      hasClearedRatingEp: cleared_rating_ep?,
+      hasClearedNonratingEp: cleared_nonrating_ep?
     )
+  end
+
+  def validate_prior_to_edit
+    # force sync on initial edit call so that we have latest EP status.
+    # This helps prevent us editing something that recently closed upstream.
+    sync_end_product_establishments!
+
+    verify_contentions
+
+    # this will raise any errors for missing data
+    ui_hash
   end
 
   def caseflow_only_edit_issues_url
@@ -123,10 +135,6 @@ class ClaimReview < DecisionReview
     end
   end
 
-  def cleared_ep?
-    end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
-  end
-
   def active?
     processed_in_vbms? ? end_product_establishments.any? { |ep| ep.status_active?(sync: false) } : incomplete_tasks?
   end
@@ -144,7 +152,8 @@ class ClaimReview < DecisionReview
       establishment_error: establishment_error,
       review_type: self.class.to_s.underscore,
       veteran_file_number: veteran_file_number,
-      veteran_full_name: claim_veteran&.name&.formatted(:readable_full)
+      veteran_full_name: claim_veteran&.name&.formatted(:readable_full),
+      caseflow_only_edit_issues_url: caseflow_only_edit_issues_url
     }
   end
 
@@ -203,7 +212,32 @@ class ClaimReview < DecisionReview
     ClaimReviewActiveTaskCancellation.new(self).call
   end
 
+  def end_product_establishment_for_issue(issue)
+    end_product_establishments.find_by(
+      "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
+      issue.end_product_code,
+      EndProduct::INACTIVE_STATUSES
+    ) || new_end_product_establishment(issue)
+  end
+
   private
+
+  def cleared_end_products
+    @cleared_end_products ||= end_product_establishments.select { |ep| ep.status_cleared?(sync: true) }
+  end
+
+  def cleared_rating_ep?
+    cleared_end_products.any?(&:rating?)
+  end
+
+  def cleared_nonrating_ep?
+    cleared_end_products.any?(&:nonrating?)
+  end
+
+  def verify_contentions
+    # any open request_issues that have contention_reference_id pointers that no longer resolve should be removed.
+    request_issues.select(&:open?).select(&:contention_missing?).each(&:remove!)
+  end
 
   def incomplete_tasks?
     tasks.reject(&:completed?).any?
@@ -221,14 +255,6 @@ class ClaimReview < DecisionReview
 
   def intake_processed_by
     intake ? intake.user : nil
-  end
-
-  def end_product_establishment_for_issue(issue)
-    end_product_establishments.find_by(
-      "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
-      issue.end_product_code,
-      EndProduct::INACTIVE_STATUSES
-    ) || new_end_product_establishment(issue)
   end
 
   def matching_request_issue(contention_id)

@@ -5,13 +5,13 @@ class RequestIssueContention
     @request_issue = request_issue
   end
 
-  delegate :end_product_establishment, :contention_reference_id, :contention_removed_at, :contention_updated_at,
+  delegate :contention_reference_id, :contention_removed_at, :contention_updated_at,
            :edited_description, to: :request_issue
 
   def vbms_contention
     return unless contention_reference_id
 
-    end_product_establishment.contention_for_object(request_issue)
+    request_issue.contention
   end
 
   def update_text!
@@ -26,9 +26,7 @@ class RequestIssueContention
   end
 
   def remove!
-    fail EndProductEstablishment::ContentionNotFound, contention_reference_id unless vbms_contention
-
-    VBMSService.remove_contention!(vbms_contention)
+    VBMSService.remove_contention!(vbms_contention) if vbms_contention
     request_issue.update!(contention_removed_at: Time.zone.now)
   end
 

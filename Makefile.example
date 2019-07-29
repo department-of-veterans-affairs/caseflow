@@ -38,6 +38,9 @@
 # Hopefully the targets are easy enough to remember to make this useful to others.
 #
 
+whats-next:
+	scripts/whats-next
+
 ready:
 	h=`docker-compose ps | grep healthy`; while [ "$$h" == "" ]; do h=`docker-compose ps | grep healthy`; echo $$h; sleep 1; done
 
@@ -72,7 +75,7 @@ jslint:
 	cd client && yarn run lint
 
 security:
-	bundle exec rake security_caseflow
+	bundle exec rake security
 
 check: test lint
 

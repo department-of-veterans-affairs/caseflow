@@ -109,12 +109,13 @@ RSpec.feature "Hearing Schedule Daily Docket" do
     end
     let!(:disposition_task) do
       create(:assign_hearing_disposition_task,
+             :completed,
              parent: hearing_task_association.hearing_task,
-             appeal: hearing.appeal,
-             status: Constants.TASK_STATUSES.completed)
+             appeal: hearing.appeal)
     end
 
     scenario "User cannot update disposition" do
+      hearing_task_association.hearing_task.update(status: :in_progress)
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
       expect(find(".dropdown-#{hearing.external_id}-disposition")).to have_css(".is-disabled")
     end
@@ -147,7 +148,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User has no assigned hearings" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      expect(page).to have_content("No Veterans are scheduled for this hearing day.")
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_DOCKET_NO_VETERANS)
       expect(page).to_not have_content("Edit Hearing Day")
       expect(page).to_not have_content("Lock Hearing Day")
       expect(page).to_not have_content("Hearing Details")
@@ -187,7 +188,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       scenario "no hearings are shown" do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
 
-        expect(page).to have_content("No Veterans are scheduled for this hearing day.")
+        expect(page).to have_content(COPY::HEARING_SCHEDULE_DOCKET_JUDGE_WITH_NO_HEARINGS)
       end
     end
 

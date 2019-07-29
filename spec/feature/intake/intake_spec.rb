@@ -159,7 +159,7 @@ feature "Intake" do
       before do
         Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
-          .and_raise(BGS::ShareError, message: "NonUniqueResultException")
+          .and_raise(BGS::ShareError.new("NonUniqueResultException"))
       end
 
       scenario "Search for a veteran with multiple active phone numbers" do
@@ -185,6 +185,22 @@ feature "Intake" do
 
         expect(page).to have_current_path("/intake/review_request")
         expect(Rails.cache.exist?(cache_key)).to eq(true)
+      end
+    end
+
+    context "Veteran is an employee at the same station as the User" do
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:may_modify?).and_return(false)
+      end
+
+      scenario "Search for a Veteran that the user may not modify" do
+        visit "/intake"
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        safe_click ".cf-submit.usa-button"
+        fill_in search_bar_title, with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_content("You don't have permission to intake this Veteran")
       end
     end
 
