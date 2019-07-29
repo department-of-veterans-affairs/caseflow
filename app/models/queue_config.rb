@@ -34,7 +34,7 @@ class QueueConfig
 
   def tabs(user)
     queue_tabs = organization.queue_tabs
-    use_task_pages_api?(user) ? queue_tabs : queue_tabs.reject { |tab| tab.is_a?(::OnHoldTasksTab) }
+    use_task_pages_api?(user) ? queue_tabs : queue_tabs.reject { |queue_tab| queue_tab.is_a?(::OnHoldTasksTab) }
   end
 
   def attach_tasks_to_tab(tab, user)
