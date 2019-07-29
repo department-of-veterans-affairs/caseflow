@@ -122,9 +122,6 @@ class VACOLS::Representative < VACOLS::Record
       .where("extract(month from repaddtime) = ?", repaddtime.month)
       .where("extract(day   from repaddtime) = ?", repaddtime.day)
       .update_all(rep_attrs)
-  rescue => err
-    binding.pry
-    fail err
   end
 
   def self.create_rep!(bfkey, rep_attrs)
