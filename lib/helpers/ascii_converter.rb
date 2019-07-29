@@ -11,7 +11,9 @@ class AsciiConverter
   def convert
     return str if ascii?
 
-    return str.encode("UTF-8", "Windows-1252").to_ascii if cp1252?
+    return str.to_ascii if utf8?
+
+    return str.encode("UTF-8", "Windows-1252").to_ascii if !utf8? && cp1252?
 
     str.to_ascii
   end
@@ -19,6 +21,10 @@ class AsciiConverter
   private
 
   attr_reader :str
+
+  def utf8?
+    str.valid_encoding? && str.encoding == Encoding::UTF_8
+  end
 
   def ascii?
     str.bytes.none? { |byte| byte > 127 }
