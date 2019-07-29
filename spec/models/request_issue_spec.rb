@@ -1276,6 +1276,16 @@ describe RequestIssue do
       expect(request_issue_in_progress.duplicate_but_ineligible).to eq([rating_request_issue])
     end
 
+    context "when rating issue is missing associated_rating" do
+      let(:duplicate_reference_id) { nil }
+      let(:contested_rating_issue_reference_id) { nil }
+
+      it "does not mark issue as duplicate of another issue missing an associated rating" do
+        rating_request_issue.validate_eligibility!
+        expect(rating_request_issue.ineligible_reason).to be_nil
+      end
+    end
+
     it "flags duplicate appeal as in progress" do
       rating_request_issue.contested_rating_issue_reference_id =
         appeal_request_issue_in_progress.contested_rating_issue_reference_id
