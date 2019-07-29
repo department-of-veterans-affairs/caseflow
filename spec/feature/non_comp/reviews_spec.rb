@@ -98,6 +98,16 @@ feature "NonComp Reviews Queue" do
       )
     end
 
+    scenario "filtering reviews" do
+      visit "decision_reviews/nco"
+      find(".unselected-filter-icon").click
+      find("label", text: "Higher-level review").click
+      expect(page).to have_content("Higher-Level Review")
+      expect(page).to_not have_content("Board Grant")
+      find(".cf-clear-filters-link").click
+      expect(page).to have_content("Board Grant")
+    end
+
     context "with user enabled for intake" do
       scenario "goes back to intake" do
         # allow user to have access to intake
