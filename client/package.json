@@ -67,7 +67,7 @@
     "react": "^16.2.0",
     "react-copy-to-clipboard": "^5.0.1",
     "react-csv": "^1.0.15-RC2",
-    "react-dom": "^16.2.1",
+    "react-dom": "^16.2.0",
     "react-draft-wysiwyg": "^1.12.11",
     "react-highlight-words": "^0.8.0",
     "react-hot-loader": "^3.0.0-beta.6",
@@ -89,7 +89,7 @@
     "sass-loader": "^7.0.3",
     "sprintf-js": "^1.1.1",
     "style-loader": "^0.21.0",
-    "superagent": "^5.0.2",
+    "superagent": "^3.0.0",
     "superagent-no-cache": "^0.1.0",
     "svg-loader": "^0.0.2",
     "url-loader": "^1.0.1",
@@ -122,6 +122,6 @@
     "mocha-junit-reporter": "^1.17.0",
     "prettier": "1.17.1",
     "sinon": "^2.1.0",
-    "webpack-dev-server": "^3.1.11"
+    "webpack-dev-server": "^2.4.2"
   }
 }
