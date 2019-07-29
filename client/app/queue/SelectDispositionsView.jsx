@@ -88,7 +88,7 @@ class SelectDispositionsView extends React.PureComponent {
 
     if (remandedIssues) {
       nextStep = 'remands';
-    } else if (userRole === USER_ROLE_TYPES.judge) {
+    } else if (userRole === USER_ROLE_TYPES.judge || checkoutFlow === 'dispatch_decision') {
       nextStep = 'evaluate';
     } else {
       nextStep = 'submit';
