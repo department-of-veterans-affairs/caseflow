@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require "stringex/unidecoder"
-require "stringex/core_ext"
+require "helpers/ascii_converter"
 
 class QueueMapper
   COLUMN_NAMES = {
@@ -123,11 +122,11 @@ class QueueMapper
   end
 
   def truncate_notes_at_350_characters_and_convert_to_ascii
-    renamed_attributes[COLUMN_NAMES[:note]] = note[0..349].to_ascii if note
+    renamed_attributes[COLUMN_NAMES[:note]] = AsciiConverter.new(string: note).convert[0..349] if note
   end
 
   def truncate_comment_at_600_characters_and_convert_to_ascii
-    renamed_attributes[COLUMN_NAMES[:comment]] = comment[0..599].to_ascii if comment
+    renamed_attributes[COLUMN_NAMES[:comment]] = AsciiConverter.new(string: comment).convert[0..599] if comment
   end
 
   def add_modification_timestamp
