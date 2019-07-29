@@ -1,23 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 
 import { map, findIndex, uniq } from 'lodash';
 
 import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
-import {
-  addContestableIssue,
-  toggleNonratingRequestIssueModal,
-  toggleUntimelyExemptionModal,
-  toggleLegacyOptInModal,
-  toggleCorrectionTypeModal
-} from '../actions/addIssues';
 import TextField from '../../components/TextField';
 import { issueByIndex } from '../util/issues';
-import { isCorrection } from '../util';
 
 class AddIssuesModal extends React.Component {
   constructor(props) {
@@ -44,14 +34,6 @@ class AddIssuesModal extends React.Component {
       notes
     });
   };
-
-  // getNextButtonText = () => {
-  //   if (this.hasLegacyAppeals()) {
-  //     return 'Next';
-  //   }
-
-  //   return 'Add this issue';
-  // };
 
   getContestableIssuesSections() {
     const { intakeData } = this.props;
@@ -168,17 +150,4 @@ AddIssuesModal.defaultProps = {
   skipText: 'None of these match, see more options'
 };
 
-export default connect(
-  null,
-  (dispatch) =>
-    bindActionCreators(
-      {
-        addContestableIssue,
-        toggleNonratingRequestIssueModal,
-        toggleUntimelyExemptionModal,
-        toggleLegacyOptInModal,
-        toggleCorrectionTypeModal
-      },
-      dispatch
-    )
-)(AddIssuesModal);
+export default AddIssuesModal;

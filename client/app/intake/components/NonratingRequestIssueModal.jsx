@@ -1,15 +1,9 @@
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
 
-import {
-  addNonratingRequestIssue,
-  toggleUnidentifiedIssuesModal,
-  toggleUntimelyExemptionModal,
-  toggleLegacyOptInModal
-} from '../actions/addIssues';
 import BenefitType from '../components/BenefitType';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
@@ -18,7 +12,6 @@ import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
 import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES.json';
 import { validateDate, validateDateNotInFuture } from '../util/issues';
-import { isCorrection } from '../util';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -58,7 +51,7 @@ class NonratingRequestIssueModal extends React.Component {
       benefitType: benType.value,
       category: ''
     });
-  }
+  };
 
   categoryOnChange = (value) => {
     this.setState({
@@ -70,20 +63,20 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleReason: null,
       decisionReviewTitle: null
     });
-  }
+  };
 
   descriptionOnChange = (value) => {
     this.setState({
       description: value
     });
-  }
+  };
 
   decisionDateOnChange = (value) => {
     this.setState({
       decisionDate: value,
       dateError: this.errorOnDecisionDate(value)
     });
-  }
+  };
 
   errorOnDecisionDate = (value) => {
     if (value.length === 10) {
@@ -95,7 +88,7 @@ class NonratingRequestIssueModal extends React.Component {
 
       return error;
     }
-  }
+  };
 
   selectedNonratingIssueIdOnChange = (value) => {
     if (value === NO_MATCH_TEXT) {
@@ -106,8 +99,9 @@ class NonratingRequestIssueModal extends React.Component {
         ineligibleReason: null
       });
     } else {
-      const activeNonratingRequestIssue = this.props.intakeData.activeNonratingRequestIssues.
-        find((issue) => issue.id === String(value));
+      const activeNonratingRequestIssue = this.props.intakeData.activeNonratingRequestIssues.find(
+        (issue) => issue.id === String(value)
+      );
 
       this.setState({
         selectedNonratingIssueId: activeNonratingRequestIssue.id,
@@ -118,19 +112,7 @@ class NonratingRequestIssueModal extends React.Component {
         ineligibleReason: 'duplicate_of_nonrating_issue_in_active_review'
       });
     }
-  }
-
-  hasLegacyAppeals = () => {
-    return this.props.intakeData.legacyAppeals.length > 0;
-  }
-
-  getNextButtonText = () => {
-    if (this.hasLegacyAppeals()) {
-      return 'Next';
-    }
-
-    return 'Add this issue';
-  }
+  };
 
   isTimely = () => {
     if (this.props.formType === 'supplemental_claim') {
@@ -141,91 +123,121 @@ class NonratingRequestIssueModal extends React.Component {
 
     // we must do our own date math for nonrating request issues.
     // we assume the timezone of the browser for all these.
-    let decisionDate = new Date(this.state.decisionDate);
-    let receiptDate = new Date(this.props.intakeData.receiptDate);
-    let lessThanOneYear = (receiptDate - decisionDate) <= ONE_YEAR_PLUS_MS;
+    const decisionDate = new Date(this.state.decisionDate);
+    const receiptDate = new Date(this.props.intakeData.receiptDate);
+    const lessThanOneYear = receiptDate - decisionDate <= ONE_YEAR_PLUS_MS;
 
     return lessThanOneYear;
-  }
+  };
 
   onAddIssue = () => {
+    const {
+      benefitType,
+      category: { value: category },
+      description,
+      decisionDate,
+      ineligibleDueToId,
+      ineligibleReason,
+      decisionReviewTitle
+    } = this.state;
+
     const currentIssue = {
-      benefitType: this.state.benefitType,
-      category: this.state.category.value,
-      description: this.state.description,
-      decisionDate: this.state.decisionDate,
-      ineligibleDueToId: this.state.ineligibleDueToId,
-      ineligibleReason: this.state.ineligibleReason,
-      decisionReviewTitle: this.state.decisionReviewTitle,
+      benefitType,
+      category,
+      description,
+      decisionDate,
+      ineligibleDueToId,
+      ineligibleReason,
+      decisionReviewTitle,
       isRating: false,
-      timely: this.isTimely(),
-      correctionType: isCorrection(false, this.props.intakeData) ? 'control' : null
+      timely: this.isTimely()
     };
 
-    if (this.hasLegacyAppeals()) {
-      this.props.toggleLegacyOptInModal({
-        currentIssue,
-        notes: null });
-    } else if (currentIssue.timely === false) {
-      this.props.toggleUntimelyExemptionModal({
-        currentIssue,
-        notes: null
-      });
-    } else {
-      this.props.addNonratingRequestIssue(currentIssue);
-      this.props.closeHandler();
-    }
+    this.onSubmit({ currentIssue });
+  };
+
+  requiredFieldsMissing() {
+    const { formType } = this.props;
+    const { description, category, decisionDate, benefitType } = this.state;
+
+    return !description || !category || !decisionDate || (formType === 'appeal' && !benefitType);
   }
 
-  render() {
-    let {
-      formType,
-      intakeData,
-      closeHandler
-    } = this.props;
+  getModalButtons() {
+    const btns = [
+      {
+        classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
+        name: this.props.cancelText,
+        onClick: this.props.onCancel
+      },
+      {
+        classNames: ['usa-button', 'add-issue'],
+        name: this.props.submitText,
+        onClick: this.onAddIssue,
+        disabled: this.requiredFieldsMissing() || this.state.decisionDate.length < 10 || Boolean(this.state.dateError)
+      }
+    ];
 
-    const { benefitType, category, description, decisionDate, selectedNonratingIssueId } = this.state;
-    const issueNumber = (intakeData.addedIssues || []).length + 1;
-    let requiredFieldsMissing = !description || !category || !decisionDate;
-
-    if (formType === 'appeal' && !benefitType) {
-      requiredFieldsMissing = true;
+    if (this.props.onSkip) {
+      btns.push({
+        classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
+        name: this.props.skipText,
+        onClick: this.props.onSkip
+      });
     }
 
-    let nonratingRequestIssueOptions = intakeData.activeNonratingRequestIssues.filter((issue) => {
-      return category && issue.category === category.value;
-    }).map((issue) => {
-      return {
-        displayText: `${issue.category}: ${issue.description}, decided ${issue.decisionDate}`,
-        value: issue.id,
-        disabled: false
-      };
-    });
+    return btns;
+  }
 
-    nonratingRequestIssueOptions.push({
+  getNonratingRequestIssueOptions() {
+    const { intakeData } = this.props;
+    const { category } = this.state;
+
+    const options = intakeData.activeNonratingRequestIssues.
+      filter((issue) => {
+        return category && issue.category === category.value;
+      }).
+      map((issue) => {
+        return {
+          displayText: `${issue.category}: ${issue.description}, decided ${issue.decisionDate}`,
+          value: issue.id,
+          disabled: false
+        };
+      });
+
+    const noMatch = {
       displayText: NO_MATCH_TEXT,
       value: NO_MATCH_TEXT,
       disabled: false
-    });
+    };
 
-    let nonratingRequestIssueSelection = null;
+    return [...options, ...noMatch];
+  }
 
-    if (nonratingRequestIssueOptions.length >= 2) {
-      nonratingRequestIssueSelection = <RadioField
+  getNonratingRequestIssueSelection() {
+    const { intakeData } = this.props;
+    const { category, selectedNonratingIssueId } = this.state;
+    const issueNumber = (intakeData.addedIssues || []).length + 1;
+    const issueOpts = this.getNonratingRequestIssueOptions();
+
+    return issueOpts.length < 2 ? null : (
+      <RadioField
         vertical
         label={<h3>Does issue {issueNumber} match any of the issues actively being reviewed?</h3>}
         name="rating-radio"
-        options={nonratingRequestIssueOptions}
+        options={issueOpts}
         key={category}
         value={selectedNonratingIssueId}
         onChange={this.selectedNonratingIssueIdOnChange}
-      />;
-    }
+      />
+    );
+  }
 
-    let additionalDetails = null;
+  getAdditionalDetails() {
+    const { decisionDate, description } = this.state;
 
-    if (selectedNonratingIssueId === NO_MATCH_TEXT || !nonratingRequestIssueSelection) {
-      additionalDetails = <React.Fragment>
+    return (
+      <React.Fragment>
         <div className="decision-date">
           <DateSelector
             name="decision-date"
@@ -233,77 +245,77 @@ class NonratingRequestIssueModal extends React.Component {
             strongLabel
             value={decisionDate}
             errorMessage={this.state.dateError}
-            onChange={this.decisionDateOnChange} />
+            onChange={this.decisionDateOnChange}
+          />
         </div>
 
-        <TextField
-          name="Issue description"
-          strongLabel
-          value={description}
-          onChange={this.descriptionOnChange} />
-      </React.Fragment>;
-    }
+        <TextField name="Issue description" strongLabel value={description} onChange={this.descriptionOnChange} />
+      </React.Fragment>
+    );
+  }
 
-    let benefitTypeElement = '';
+  render() {
+    const { formType, intakeData, closeHandler } = this.props;
+    const { benefitType, category, selectedNonratingIssueId } = this.state;
 
-    if (formType === 'appeal') {
-      benefitTypeElement = <BenefitType value={benefitType} onChange={this.benefitTypeOnChange} asDropdown />;
-    }
+    const issueNumber = (intakeData.addedIssues || []).length + 1;
 
-    return <div className="intake-add-issues">
-      <Modal
-        buttons={[
-          { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
-            name: 'Cancel adding this issue',
-            onClick: closeHandler
-          },
-          { classNames: ['usa-button', 'add-issue'],
-            name: this.getNextButtonText(),
-            onClick: this.onAddIssue,
-            disabled: requiredFieldsMissing || this.state.decisionDate.length < 10 || Boolean(this.state.dateError)
-          },
-          { classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
-            name: 'None of these match, see more options',
-            onClick: this.props.toggleUnidentifiedIssuesModal
-          }
-        ]}
-        visible
-        closeHandler={closeHandler}
-        title={`Add issue ${issueNumber}`}
-      >
-        <p {...noteDiv}> If the issue is a rating issue, please select
-        "None of these match, see more options" and add it as an unidentified rating issue.</p>
-        <div>
-          <h2>
-            Does issue {issueNumber} match any of these non-rating issue categories?
-          </h2>
-          <div className="add-nonrating-request-issue">
-            {benefitTypeElement}
-            <SearchableDropdown
-              name="issue-category"
-              label="Issue category"
-              strongLabel
-              placeholder="Select or enter..."
-              options={nonratingRequestIssueCategories(benefitType)}
-              value={category}
-              onChange={this.categoryOnChange} />
+    const nonratingRequestIssueSelection = this.getNonratingRequestIssueSelection();
+
+    const additionalDetails =
+      selectedNonratingIssueId === NO_MATCH_TEXT || !nonratingRequestIssueSelection ?
+        this.getAdditionalDetails() :
+        null;
+
+    const benefitTypeElement =
+      formType === 'appeal' ? <BenefitType value={benefitType} onChange={this.benefitTypeOnChange} asDropdown /> : null;
+
+    return (
+      <div className="intake-add-issues">
+        <Modal buttons={this.getModalButtons()} visible closeHandler={closeHandler} title={`Add issue ${issueNumber}`}>
+          <p {...noteDiv}>
+            {' '}
+            If the issue is a rating issue, please select "None of these match, see more options" and add it as an
+            unidentified rating issue.
+          </p>
+          <div>
+            <h2>Does issue {issueNumber} match any of these non-rating issue categories?</h2>
+            <div className="add-nonrating-request-issue">
+              {benefitTypeElement}
+              <SearchableDropdown
+                name="issue-category"
+                label="Issue category"
+                strongLabel
+                placeholder="Select or enter..."
+                options={nonratingRequestIssueCategories(benefitType)}
+                value={category}
+                onChange={this.categoryOnChange}
+              />
+            </div>
+            <div className="add-nonrating-request-issue-description">
+              {nonratingRequestIssueSelection}
+              {additionalDetails}
+            </div>
           </div>
-          <div className="add-nonrating-request-issue-description">
-            { nonratingRequestIssueSelection }
-            { additionalDetails }
-          </div>
-        </div>
-      </Modal>
-    </div>;
+        </Modal>
+      </div>
+    );
   }
 }
 
-export default connect(
-  null,
-  (dispatch) => bindActionCreators({
-    addNonratingRequestIssue,
-    toggleUnidentifiedIssuesModal,
-    toggleUntimelyExemptionModal,
-    toggleLegacyOptInModal
-  }, dispatch)
-)(NonratingRequestIssueModal);
+NonratingRequestIssueModal.propTypes = {
+  onSubmit: PropTypes.func,
+  submitText: PropTypes.string,
+  onCancel: PropTypes.func,
+  cancelText: PropTypes.string,
+  onSkip: PropTypes.func,
+  skipText: PropTypes.string
+};
+
+NonratingRequestIssueModal.defaultProps = {
+  submitText: 'Add this issue',
+  cancelText: 'Cancel adding this issue',
+  skipText: 'None of these match, see more options'
+};
+
+export default NonratingRequestIssueModal;

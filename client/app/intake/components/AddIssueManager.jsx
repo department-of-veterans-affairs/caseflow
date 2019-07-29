@@ -11,6 +11,7 @@ import { isCorrection } from '../util';
 import LegacyOptInModal from './LegacyOptInModal';
 import UntimelyExemptionModal from './UntimelyExemptionModal';
 import { addContestableIssue } from '../actions/addIssues';
+import UnidentifiedIssuesModal from './UnidentifiedIssuesModal';
 
 const initialState = {
   currentModal: 'AddIssuesModal',
@@ -80,7 +81,20 @@ class AddIssueManager extends React.Component {
         props: {
           intakeData,
           formType,
-          onCancel: () => this.cancel()
+          submitText: this.hasLegacyAppeals() ? 'Next' : 'Add this issue',
+          onCancel: () => this.cancel(),
+          onSkip: () => this.setState({ component: 'UnidentifiedIssuesModal' }),
+          onSubmit: ({ currentIssue }) => {
+            this.setState({ currentIssue }, () => {
+              if (this.hasLegacyAppeals()) {
+                this.setState({ component: 'LegacyOptInModal' });
+              } else if (currentIssue.timely === false) {
+                this.setState({ component: 'UntimelyExemptionModal' });
+              } else {
+                this.setState({ currentModal: 'CorrectionTypeModal' });
+              }
+            });
+          }
         }
       },
       LegacyOptInModal: {
@@ -128,7 +142,51 @@ class AddIssueManager extends React.Component {
         props: {
           intakeData,
           formType,
-          onCancel: () => this.cancel()
+          onCancel: () => this.cancel(),
+          onSubmit: ({ untimelyExemption, untimelyExemptionNotes }) => {
+            this.setState({ untimelyExemption,
+              untimelyExemptionNotes }, () => {
+              const {
+                currentIssue,
+                notes,
+                vacolsId,
+                vacolsSequenceId,
+                eligibleForSocOptIn,
+                correctionType
+              } = this.state;
+
+              if (currentIssue.category) {
+                this.props.addNonratingRequestIssue({
+                  timely: false,
+                  isRating: false,
+                  untimelyExemption,
+                  untimelyExemptionNotes,
+                  benefitType: currentIssue.benefitType,
+                  category: currentIssue.category,
+                  description: currentIssue.description,
+                  decisionDate: currentIssue.decisionDate,
+                  vacolsId,
+                  vacolsSequenceId,
+                  eligibleForSocOptIn,
+                  correctionType
+                });
+              } else {
+                this.props.addContestableIssue({
+                  timely: false,
+                  contestableIssueIndex: currentIssue.index,
+                  contestableIssues: this.props.intakeData.contestableIssues,
+                  isRating: currentIssue.isRating,
+                  notes,
+                  untimelyExemption,
+                  untimelyExemptionNotes,
+                  vacolsId,
+                  vacolsSequenceId,
+                  eligibleForSocOptIn,
+                  correctionType
+                });
+              }
+            });
+          }
         }
       }
     };
