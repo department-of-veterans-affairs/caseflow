@@ -25,6 +25,7 @@ class Task < ApplicationRecord
   before_save :set_timestamp
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
+  after_update :cancel_task_timers, if: :task_just_closed?
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -424,6 +425,12 @@ class Task < ApplicationRecord
 
   def update_children_status_after_closed
     active_child_timed_hold_task&.update!(status: Constants.TASK_STATUSES.cancelled)
+  end
+
+  def cancel_task_timers
+    task_timers.processable.each do |task_timer|
+      task_timer.update!(canceled_at: Time.zone.now)
+    end
   end
 
   def task_just_closed?

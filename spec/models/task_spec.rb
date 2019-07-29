@@ -770,7 +770,7 @@ describe Task do
     let(:task) { FactoryBot.create(:generic_task) }
     let(:task_id) { task.id }
     let(:task_timer_count) { 4 }
-    let!(:task_timers) { Array.new(task_timer_count) { TaskTimer.create!(task: task) } }
+    let!(:task_timers) { Array.new(task_timer_count) { TaskTimer.create!(task: task, last_submitted_at: 2.days.ago) } }
 
     it "returns and destroys related timers" do
       expect(TaskTimer.where(task_id: task_id).count).to eq(task_timer_count)
@@ -778,6 +778,13 @@ describe Task do
 
       task.destroy!
       expect(TaskTimer.where(task_id: task_id).count).to eq(0)
+    end
+
+    it "cancels related timers on cancel" do
+      task.update!(status: Constants.TASK_STATUSES.cancelled)
+      task.task_timers.each do |task_timer|
+        expect(task_timer.canceled_at).not_to eq(nil)
+      end
     end
   end
 
