@@ -7,12 +7,12 @@ class VACOLS::Representative < VACOLS::Record
   self.table_name = "rep"
   self.primary_key = "repkey"
 
-  attribute :repaddr1, AsciiString.new(limit: 50)
-  attribute :repaddr2, AsciiString.new(limit: 50)
-  attribute :repcity, AsciiString.new(limit: 20)
-  attribute :replast, AsciiString.new(limit: 40)
-  attribute :repfirst, AsciiString.new(limit: 24)
-  attribute :repmi, AsciiString.new(limit: 4)
+  attribute :repaddr1, :ascii_string, limit: 50
+  attribute :repaddr2, :ascii_string, limit: 50
+  attribute :repcity, :ascii_string, limit: 20
+  attribute :replast, :ascii_string, limit: 40
+  attribute :repfirst, :ascii_string, limit: 24
+  attribute :repmi, :ascii_string, limit: 4
 
   class RepError < StandardError; end
   class InvalidRepTypeError < RepError; end
@@ -122,6 +122,9 @@ class VACOLS::Representative < VACOLS::Record
       .where("extract(month from repaddtime) = ?", repaddtime.month)
       .where("extract(day   from repaddtime) = ?", repaddtime.day)
       .update_all(rep_attrs)
+  rescue => err
+    binding.pry
+    fail err
   end
 
   def self.create_rep!(bfkey, rep_attrs)

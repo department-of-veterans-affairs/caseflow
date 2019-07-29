@@ -1,13 +1,12 @@
 # Custom column types, particularly for VACOLS
 
-require "stringex/unidecoder"
-require "stringex/core_ext"
+require "helpers/ascii_converter"
 
-class AsciiString < ActiveRecord::Type::String
+class AsciiString < ActiveRecord::Type::Text
   private
-
   def cast_value(value)
-    limit ? value.to_s.to_ascii[0, limit-1] : value.to_s.to_ascii
+    ascii_value = AsciiConverter.new(string: value.to_s).convert
+    limit ? ascii_value[0, limit-1] : ascii_value
   end
 end
 

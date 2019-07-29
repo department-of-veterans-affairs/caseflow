@@ -117,5 +117,16 @@ describe VACOLS::Representative, :all_dbs do
         expect(rep.repcity).to eq("San Juan")
       end
     end
+
+    context "name contains invalid UTF-8 codepoint from bad Windows 1252 conversion" do
+      let(:bfkey) { appeal.vacols_id }
+      let(:name_hash) { { first_name: "Søren", middle_initial: "A", last_name: "O\x92Reilly" } }
+
+      it "corrects codepoint before transliterating to ASCII" do
+        subject
+
+        expect(rep.replast).to eq("O'Reilly")
+      end
+    end
   end
 end

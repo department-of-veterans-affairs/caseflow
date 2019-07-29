@@ -6,7 +6,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   self.sequence_name = "hearsched_pkseq"
 
   attribute :hearing_date, :datetime
-  attribute :notes1, AsciiString.new
+  attribute :notes1, :ascii_string
   validates :hearing_type, :hearing_date, :room, presence: true, on: :create
 
   has_one :staff, foreign_key: :sattyid, primary_key: :board_member
