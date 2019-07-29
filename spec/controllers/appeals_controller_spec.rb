@@ -483,7 +483,7 @@ RSpec.describe AppealsController, type: :controller do
     end
   end
 
-  describe "GET veteran/:appeal_id", focus: true do
+  describe "GET veteran/:appeal_id" do
     let(:veteran_first_name) { "Test" }
     let(:veteran_last_name) { "User" }
     let(:correspondent) { create(:correspondent, snamef: veteran_first_name, snamel: veteran_last_name) }
