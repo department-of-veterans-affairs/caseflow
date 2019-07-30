@@ -97,7 +97,4 @@ describe TaskTimerJob do
     TaskTimerJob.new.process(timer)
     expect(timer.reload.processed_at).to eq(nil)
   end
-
-
-
 end
