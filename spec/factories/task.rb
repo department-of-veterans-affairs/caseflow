@@ -104,8 +104,8 @@ FactoryBot.define do
     end
 
     factory :foi_task, class: FoiaTask do
+      appeal
       type { FoiaTask.name }
-      appeal { create(:appeal) }
     end
 
     factory :timed_hold_task, class: TimedHoldTask do
