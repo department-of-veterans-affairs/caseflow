@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe TaskTimerJob do
+describe TaskTimerJob, :postgres do
   class TimedTask < GenericTask
     include TimeableTask
 
@@ -46,6 +47,7 @@ describe TaskTimerJob do
   it "processes jobs only if they aren't already processed" do
     timer = timer_for_task
     Timecop.travel(Time.zone.now + 1.day)
+
     TaskTimerJob.perform_now
     processed_at = timer.reload.processed_at
 
@@ -54,6 +56,10 @@ describe TaskTimerJob do
 
     # ensure the "processed at" field wasn't updated a second time
     expect(timer.reload.processed_at).to eq(processed_at)
+
+    # ensure the "canceled at" field wasn't updated
+    TaskTimerJob.new.cancel(timer)
+    expect(timer.reload.canceled_at).to eq(nil)
   end
 
   it "handles errors arising from task objects and continues processing succesful timers" do
@@ -70,5 +76,26 @@ describe TaskTimerJob do
     expect(error_timer.reload.processed_at).to be_nil
     expect(error_timer.error).to eq("RuntimeError")
     expect(error_timer.attempted_at).to be_nil # because it was in a failed transaction
+  end
+
+  it "cancels jobs whose parent tasks are cancelled" do
+    timer = timer_for_task
+
+    # avoid the callbacks that cancel the timer from task close
+    Timecop.travel(Time.zone.now + 1.day)
+    timer.task.update_columns(status: Constants.TASK_STATUSES.cancelled)
+
+    Timecop.travel(Time.zone.now + 1.day)
+    TaskTimerJob.perform_now
+    canceled_at = timer.reload.canceled_at
+    expect(timer.reload.processed_at).to eq(nil)
+    expect(timer.reload.canceled_at).not_to eq(nil)
+
+    Timecop.travel(Time.zone.now + 1.day)
+    TaskTimerJob.new.cancel(timer)
+    expect(timer.reload.canceled_at).to eq(canceled_at)
+
+    TaskTimerJob.new.process(timer)
+    expect(timer.reload.processed_at).to eq(nil)
   end
 end

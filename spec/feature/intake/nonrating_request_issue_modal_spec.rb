@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-feature "Nonrating Request Issue Modal" do
+feature "Nonrating Request Issue Modal", :postgres do
   include IntakeHelpers
 
   before do

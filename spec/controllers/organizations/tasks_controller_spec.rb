@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe Organizations::TasksController, type: :controller do
+RSpec.describe Organizations::TasksController, :all_dbs, type: :controller do
   include PowerOfAttorneyMapper
   include TaskHelpers
 

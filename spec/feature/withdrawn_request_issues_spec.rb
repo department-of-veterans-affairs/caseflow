@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-feature "attorney checkout flow when appeal has withdrawn request issues" do
+require "support/vacols_database_cleaner"
+require "rails_helper"
+
+feature "attorney checkout flow when appeal has withdrawn request issues", :all_dbs do
   before { FeatureToggle.enable!(:ama_decision_issues) }
   after { FeatureToggle.disable!(:ama_decision_issues) }
 

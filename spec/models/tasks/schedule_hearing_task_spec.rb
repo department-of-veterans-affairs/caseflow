@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe ScheduleHearingTask do
+describe ScheduleHearingTask, :all_dbs do
   let(:vacols_case) { FactoryBot.create(:case, bfcurloc: "57") }
   let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
   let!(:hearings_management_user) { FactoryBot.create(:hearings_coordinator) }

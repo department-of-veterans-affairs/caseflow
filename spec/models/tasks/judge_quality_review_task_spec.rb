@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe JudgeQualityReviewTask do
+describe JudgeQualityReviewTask, :postgres do
   let(:judge) { FactoryBot.create(:user) }
   let(:judge_task) do
     FactoryBot.create(:ama_judge_decision_review_task, parent: FactoryBot.create(:root_task), assigned_to: judge)

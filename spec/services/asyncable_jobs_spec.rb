@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe AsyncableJobs do
+describe AsyncableJobs, :postgres do
   let(:veteran) { create(:veteran) }
   let!(:hlr) do
     create(:higher_level_review,
