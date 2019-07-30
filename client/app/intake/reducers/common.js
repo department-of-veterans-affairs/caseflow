@@ -42,6 +42,12 @@ export const commonReducers = (state, action) => {
     });
   };
 
+  actionsMap[ACTIONS.TOGGLE_CORRECTION_TYPE_MODAL] = () => {
+    return update(state, {
+      $toggle: ['correctIssueModalVisible']
+    });
+  };
+
   actionsMap[ACTIONS.TOGGLE_UNIDENTIFIED_ISSUES_MODAL] = () => {
     return update(state, {
       $toggle: ['unidentifiedIssuesModalVisible'],
@@ -106,7 +112,9 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.CORRECT_ISSUE] = () => {
-    listOfIssues[action.payload.index].correctionType = 'control';
+    const { index, correctionType } = action.payload;
+
+    listOfIssues[index].correctionType = correctionType;
 
     return {
       ...state,
