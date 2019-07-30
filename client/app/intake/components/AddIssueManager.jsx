@@ -10,13 +10,14 @@ import { issueByIndex } from '../util/issues';
 import { isCorrection } from '../util';
 import LegacyOptInModal from './LegacyOptInModal';
 import UntimelyExemptionModal from './UntimelyExemptionModal';
-import { addContestableIssue } from '../actions/addIssues';
+import { addContestableIssue, addIssue } from '../actions/addIssues';
 import UnidentifiedIssuesModal from './UnidentifiedIssuesModal';
 
 const initialState = {
   currentModal: 'AddIssuesModal',
   currentIssue: null,
-  correctionType: null
+  correctionType: null,
+  addtlProps: null
 };
 
 class AddIssueManager extends React.Component {
@@ -45,11 +46,26 @@ class AddIssueManager extends React.Component {
           onSubmit: ({ selectedContestableIssueIndex, currentIssue, notes }) => {
             this.setState({ selectedContestableIssueIndex,
               currentIssue,
-              notes });
+              notes }, () => {
+              if (isCorrection(currentIssue.isRating, this.props.intakeData)) {
+                this.setState({ currentModal: 'CorrectionTypeModal' });
+              } else if (this.hasLegacyAppeals()) {
+                this.setState({ currentModal: 'LegacyOptInModal' });
+              } else if (this.requiresUntimelyExemption()) {
+                this.setState({ currentModal: 'UntimelyExemptionModal',
+                  addtlProps: { currentIssue } });
+              } else {
+                this.props.addContestableIssue({
+                  contestableIssueIndex: selectedContestableIssueIndex,
+                  contestableIssues: intakeData.contestableIssues,
+                  isRating: currentIssue.isRating,
+                  notes
+                });
 
-            if (isCorrection(currentIssue.isRating, this.props.intakeData)) {
-              this.setState({ currentModal: 'CorrectionTypeModal' });
-            }
+                this.setState(initialState);
+                this.props.onComplete();
+              }
+            });
           },
           onSkip: () => {
             this.setState({ currentModal: 'NonratingRequestIssueModal' });
@@ -69,9 +85,20 @@ class AddIssueManager extends React.Component {
             if (this.hasLegacyAppeals()) {
               this.setState({ currentModal: 'LegacyOptInModal' });
             } else if (this.requiresUntimelyExemption()) {
-              this.setState({ currentModal: 'UntimelyExemptionModal' });
+              const { currentIssue } = this.state;
+
+              this.setState({ currentModal: 'UntimelyExemptionModal',
+                addtlProps: { currentIssue } });
             } else {
-              // create
+              const { selectedContestableIssueIndex, currentIssue, notes } = this.state;
+
+              this.props.addContestableIssue({
+                contestableIssueIndex: selectedContestableIssueIndex,
+                contestableIssues: intakeData.contestableIssues,
+                isRating: currentIssue.isRating,
+                notes,
+                correctionType
+              });
             }
           }
         }
@@ -87,9 +114,10 @@ class AddIssueManager extends React.Component {
           onSubmit: ({ currentIssue }) => {
             this.setState({ currentIssue }, () => {
               if (this.hasLegacyAppeals()) {
-                this.setState({ component: 'LegacyOptInModal' });
+                this.setState({ currentModal: 'LegacyOptInModal' });
               } else if (currentIssue.timely === false) {
-                this.setState({ component: 'UntimelyExemptionModal' });
+                this.setState({ currentModal: 'UntimelyExemptionModal',
+                  addtlProps: { currentIssue } });
               } else {
                 this.setState({ currentModal: 'CorrectionTypeModal' });
               }
@@ -109,7 +137,10 @@ class AddIssueManager extends React.Component {
               vacolsSequenceId,
               eligibleForSocOptIn }, () => {
               if (this.requiresUntimelyExemption()) {
-                this.setState({ currentModal: 'UntimelyExemptionModal' });
+                const { currentIssue } = this.state;
+
+                this.setState({ currentModal: 'UntimelyExemptionModal',
+                  addtlProps: { currentIssue } });
               } else if (this.state.currentIssue.category) {
                 console.log('addNonratingRequestIssue');
                 // addNonratingRequestIssue
@@ -185,7 +216,25 @@ class AddIssueManager extends React.Component {
                   correctionType
                 });
               }
+
+              this.setState(initialState);
             });
+          }
+        }
+      },
+      UnidentifiedIssuesModal: {
+        component: UnidentifiedIssuesModal,
+        props: {
+          intakeData,
+          formType,
+          onCancel: () => this.cancel(),
+          onSubmit: ({ currentIssue }) => {
+            if (isCorrection(currentIssue.isRating, this.props.intakeData)) {
+              this.setState({ currentModal: 'CorrectionTypeModal' });
+            } else {
+              // Just add
+              this.props.addIssue(currentIssue);
+            }
           }
         }
       }
@@ -206,14 +255,16 @@ class AddIssueManager extends React.Component {
   };
 
   render() {
-    if (!this.state.currentModal) {
+    const { currentModal, addtlProps } = this.state;
+
+    if (!currentModal) {
       return null;
     }
 
-    const step = this.steps[this.state.currentModal];
+    const step = this.steps[currentModal];
     const Step = step.component;
 
-    return <Step onComplete={step.onComplete} {...step.props} />;
+    return <Step onComplete={step.onComplete} {...step.props} {...addtlProps} />;
   }
 }
 
@@ -230,7 +281,8 @@ export default connect(
   (dispatch) =>
     bindActionCreators(
       {
-        addContestableIssue
+        addContestableIssue,
+        addIssue
       },
       dispatch
     )
