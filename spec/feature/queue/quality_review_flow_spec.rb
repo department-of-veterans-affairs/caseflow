@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Quality Review workflow" do
+RSpec.feature "Quality Review workflow", :all_dbs do
   let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Javitz") }
   let!(:judge_staff) { FactoryBot.create(:staff, :judge_role, user: judge_user) }
 

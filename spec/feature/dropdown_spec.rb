@@ -1,16 +1,14 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Dropdown" do
-  let!(:current_user) { User.authenticate! }
-  let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
-
+RSpec.feature "Dropdown", :postgres do
   scenario "Dropdown works on both erb and react pages" do
     User.authenticate!
 
-    visit "certifications/new/#{appeal.vacols_id}"
-    find("a", text: "DSUSER (DSUSER)") .click
+    visit "test/users"
+    find("a", text: "DSUSER (DSUSER)").click
     expect(page).to have_content("Sign Out")
 
     visit "dispatch/establish-claim"

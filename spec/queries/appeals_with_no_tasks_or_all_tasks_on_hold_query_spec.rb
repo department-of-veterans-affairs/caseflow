@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe AppealsWithNoTasksOrAllTasksOnHoldQuery do
+describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
   let!(:appeal_with_zero_tasks) { create(:appeal) }
   let!(:appeal_with_tasks) { create(:appeal, :with_post_intake_tasks) }
   let!(:appeal_with_all_tasks_on_hold) do

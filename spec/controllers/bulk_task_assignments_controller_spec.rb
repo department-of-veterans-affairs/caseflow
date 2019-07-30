@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.describe BulkTaskAssignmentsController, type: :controller do
+RSpec.describe BulkTaskAssignmentsController, :postgres, type: :controller do
   describe "#create" do
     let(:organization) { HearingsManagement.singleton }
     let!(:schedule_hearing1) do

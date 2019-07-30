@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-feature "NonComp Reviews Queue" do
+feature "NonComp Reviews Queue", :postgres do
   before do
     FeatureToggle.enable!(:decision_reviews)
   end

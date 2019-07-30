@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe GenericQueue do
+describe GenericQueue, :all_dbs do
   describe "#tasks" do
     let(:atty) { FactoryBot.create(:user) }
     let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: atty.css_id) }
