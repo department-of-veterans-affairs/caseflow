@@ -70,40 +70,6 @@ class LegacyOptInModal extends React.Component {
   };
 
   onAddIssue = () => {
-    // const { correctionType } = this.props;
-    // const currentIssue = this.props.intakeData.currentIssueAndNotes.currentIssue;
-    // const notes = this.props.intakeData.currentIssueAndNotes.notes;
-
-    // if (this.requiresUntimelyExemption()) {
-    //   return this.props.toggleUntimelyExemptionModal({
-    //     currentIssue,
-    //     notes,
-    //     vacolsId: this.state.vacolsId,
-    //     vacolsSequenceId: this.state.vacolsSequenceId,
-    //     eligibleForSocOptIn: this.state.eligibleForSocOptIn
-    //   });
-    // } else if (currentIssue.category) {
-    //   this.props.addNonratingRequestIssue({
-    //     ...currentIssue,
-    //     vacolsId: this.state.vacolsId,
-    //     vacolsSequenceId: this.state.vacolsSequenceId,
-    //     eligibleForSocOptIn: this.state.eligibleForSocOptIn,
-    //     correctionType
-    //   });
-    // } else {
-    //   this.props.addContestableIssue({
-    //     contestableIssueIndex: currentIssue.index,
-    //     contestableIssues: this.props.intakeData.contestableIssues,
-    //     isRating: currentIssue.isRating,
-    //     vacolsId: this.state.vacolsId,
-    //     vacolsSequenceId: this.state.vacolsSequenceId,
-    //     eligibleForSocOptIn: this.state.eligibleForSocOptIn,
-    //     notes,
-    //     correctionType
-    //   });
-    // }
-    // this.props.toggleLegacyOptInModal();
-
     this.props.onSubmit({
       vacolsId: this.state.vacolsId,
       vacolsSequenceId: this.state.vacolsSequenceId,
@@ -180,13 +146,13 @@ class LegacyOptInModal extends React.Component {
   }
 
   render() {
-    const { intakeData, closeHandler } = this.props;
+    const { intakeData, onCancel } = this.props;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
     return (
       <div className="intake-add-issues">
-        <Modal buttons={this.getModalButtons()} visible closeHandler={closeHandler} title={`Add issue ${issueNumber}`}>
+        <Modal buttons={this.getModalButtons()} visible closeHandler={onCancel} title={`Add issue ${issueNumber}`}>
           <div>
             <h2>Does issue {issueNumber} match any of these VACOLS issues?</h2>
             {this.getLegacyAppealsSections(intakeData)}

@@ -153,7 +153,7 @@ class NonratingRequestIssueModal extends React.Component {
       timely: this.isTimely()
     };
 
-    this.onSubmit({ currentIssue });
+    this.props.onSubmit({ currentIssue });
   };
 
   requiredFieldsMissing() {
@@ -255,7 +255,7 @@ class NonratingRequestIssueModal extends React.Component {
   }
 
   render() {
-    const { formType, intakeData, closeHandler } = this.props;
+    const { formType, intakeData, onCancel } = this.props;
     const { benefitType, category, selectedNonratingIssueId } = this.state;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
@@ -272,7 +272,7 @@ class NonratingRequestIssueModal extends React.Component {
 
     return (
       <div className="intake-add-issues">
-        <Modal buttons={this.getModalButtons()} visible closeHandler={closeHandler} title={`Add issue ${issueNumber}`}>
+        <Modal buttons={this.getModalButtons()} visible closeHandler={onCancel} title={`Add issue ${issueNumber}`}>
           <p {...noteDiv}>
             {' '}
             If the issue is a rating issue, please select "None of these match, see more options" and add it as an

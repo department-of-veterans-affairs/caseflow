@@ -112,13 +112,13 @@ class AddIssuesModal extends React.Component {
   }
 
   render() {
-    const { intakeData, closeHandler } = this.props;
+    const { intakeData, onCancel } = this.props;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
     return (
       <div className="intake-add-issues">
-        <Modal buttons={this.getModalButtons()} visible closeHandler={closeHandler} title={`Add issue ${issueNumber}`}>
+        <Modal buttons={this.getModalButtons()} visible closeHandler={onCancel} title={`Add issue ${issueNumber}`}>
           <div>
             <h2>Does issue {issueNumber} match any of these issues from past descriptions?</h2>
             <p>

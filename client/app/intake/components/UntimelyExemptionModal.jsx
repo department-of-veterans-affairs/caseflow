@@ -19,7 +19,7 @@ class UntimelyExemptionModal extends React.Component {
   onAddIssue = () => {
     const { untimelyExemption, untimelyExemptionNotes } = this.state;
 
-    this.onSubmit({ untimelyExemption,
+    this.props.onSubmit({ untimelyExemption,
       untimelyExemptionNotes });
   };
 
@@ -62,17 +62,18 @@ class UntimelyExemptionModal extends React.Component {
   }
 
   render() {
-    const { intakeData, closeHandler } = this.props;
+    const { intakeData, onCancel, currentIssue } = this.props;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
-    const issue = intakeData.currentIssueAndNotes.currentIssue;
+    // const issue = intakeData.currentIssueAndNotes.currentIssue;
+    const issue = currentIssue;
 
     return (
       <div className="intake-add-issues">
         <Modal
           buttons={this.getModalButtons()}
           visible
-          closeHandler={closeHandler}
+          closeHandler={onCancel}
           title={`Issue ${issueNumber} is an Untimely Issue`}
         >
           <p>
