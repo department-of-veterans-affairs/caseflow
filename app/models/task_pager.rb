@@ -35,7 +35,7 @@ class TaskPager
     when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
       tasks.order(type: sort_order.to_sym, action: sort_order.to_sym, created_at: sort_order.to_sym)
     when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
-      tasks.order(docket_number: sort_order.to_sym)
+      tasks_with_cached_attributes(tasks).order("cached_appeal_attributes.docket_number #{sort_order}")
     # Columns not yet supported:
     #
     # APPEAL_TYPE_COLUMN
@@ -52,6 +52,10 @@ class TaskPager
     else
       tasks.order(created_at: sort_order.to_sym)
     end
+  end
+
+  def tasks_with_cached_attributes(tasks)
+    tasks.joins("left join cached_appeal_attributes on cached_appeal_attributes.appeal_id = tasks.appeal_id and cached_appeal_attributes.appeal_type = tasks.appeal_type")
   end
 
   # # TODO: Some filters are on other tables that we will need to join to (appeal docket type)
