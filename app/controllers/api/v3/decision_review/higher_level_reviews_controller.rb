@@ -4,27 +4,28 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
   protect_from_forgery with: :null_session
 
   def create
-    preintake = Api::V3::HigherLevelReviewPreintake.new(params)
+    processor = Api::V3::HigherLevelReviewProcessor.new(params)
 
-    if preintake.errors
-      status = preintake.errors.map{|error| error[:status]}.max
-      render json: {errors: preintake.errors}, status: status
+    if processor.errors?
+      status = processor.errors.map { |error| error[:status] }.max
+      render json: { errors: processor.errors }, status: status
       return
     end
-    
-    preintake.complete_review!
-    
-    higher_level_review = preintake.higher_level_review
+
+    processor.build_start_review_complete
+
+    higher_level_review = processor.higher_level_review
     uuid = higher_level_review.uuid
-    
+
     response.set_header(
       "Content-Location",
       "#{request.base_url}/api/v3/decision_review/higher_level_reviews/intake_status/#{uuid}"
     )
 
     render json: intake_status(higher_level_review), status: :accepted
-  rescue StandardError
-    render json: {errors: [{status: 422, code: unknown_error, title: "Unknown error"}]}, status: 422
+  rescue StandardError => error
+    error_hash = Api::V3::HigherLevelReviewProcessor.error_hash_from_error_code(error.try(:error_code))
+    render json: { errors: [error_hash] }, status: error_hash[:status]
   end
 
   def mock_create
@@ -53,4 +54,6 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
       }
     }
   end
+
+  def lookup_error; end
 end
