@@ -531,6 +531,7 @@ class RequestIssue < ApplicationRecord
     # already have a rating, automatically close them as 'decided' so that
     # the user cannot attempt to change them.
     return close_decided_issue! if contention_in_ratings?
+
     close!(status: :removed) do
       legacy_issue_optin&.flag_for_rollback!
 
