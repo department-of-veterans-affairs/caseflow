@@ -54,6 +54,4 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
       }
     }
   end
-
-  def lookup_error; end
 end
