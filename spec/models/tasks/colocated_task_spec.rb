@@ -202,20 +202,6 @@ describe ColocatedTask, :all_dbs do
     end
     let!(:colocated_admin_action) { org_colocated_task.children.first }
 
-    context "when status is updated to on-hold" do
-      it "should validate on-hold duration" do
-        colocated_admin_action.update(status: Constants.TASK_STATUSES.on_hold)
-        expect(colocated_admin_action.valid?).to eq false
-        expect(colocated_admin_action.errors.messages[:on_hold_duration]).to eq ["has to be specified"]
-
-        colocated_admin_action.update(status: Constants.TASK_STATUSES.in_progress)
-        expect(colocated_admin_action.valid?).to eq true
-
-        colocated_admin_action.update(status: Constants.TASK_STATUSES.on_hold, on_hold_duration: 60)
-        expect(colocated_admin_action.valid?).to eq true
-      end
-    end
-
     context "when status is updated to completed" do
       let(:colocated_admin_action) do
         ColocatedTask.create_many_from_params([{
