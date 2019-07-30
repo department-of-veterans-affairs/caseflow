@@ -23,6 +23,10 @@ class TranslationColocatedTask < ColocatedTask
     true
   end
 
+  def self.hide_from_queue_table_view
+    true
+  end
+
   def create_translation_task
     TranslationTask.create!(
       assigned_to: assigned_to,

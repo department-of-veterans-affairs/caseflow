@@ -23,6 +23,10 @@ class MissingHearingTranscriptsColocatedTask < ColocatedTask
     true
   end
 
+  def self.hide_from_queue_table_view
+    true
+  end
+
   def create_transcription_task
     TranscriptionTask.create!(
       assigned_to: assigned_to,

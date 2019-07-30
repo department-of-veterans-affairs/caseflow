@@ -23,6 +23,10 @@ class FoiaColocatedTask < ColocatedTask
     true
   end
 
+  def self.hide_from_queue_table_view
+    true
+  end
+
   def create_privacy_act_task
     FoiaTask.create!(
       assigned_to: assigned_to,

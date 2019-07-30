@@ -24,12 +24,4 @@ class ScheduleHearingColocatedTask < ColocatedTask
   def hide_from_case_timeline
     true
   end
-
-  def hide_from_task_snapshot
-    false
-  end
-
-  def hide_from_queue_table_view
-    false
-  end
 end

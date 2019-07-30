@@ -50,14 +50,7 @@ class Task < ApplicationRecord
   # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
   scope :visible_in_queue_table_view, lambda {
     where.not(
-      type:
-        [
-          TrackVeteranTask.name,
-          TimedHoldTask.name,
-          FoiaColocatedTask.name,
-          TranslationColocatedTask.name,
-          MissingHearingTranscriptsColocatedTask.name
-        ]
+      type: Task.descendants.select(&:hide_from_queue_table_view).map(&:name)
     )
   }
 
@@ -247,6 +240,10 @@ class Task < ApplicationRecord
   end
 
   def hide_from_queue_table_view
+    false
+  end
+
+  def self.hide_from_queue_table_view
     false
   end
 
