@@ -13,7 +13,7 @@ describe AttorneyQueue, :all_dbs do
 
     context "when colocated admin actions are on hold" do
       let!(:vlj_support_staff) do
-        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton)
+        OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
         Colocated.singleton.users.first
       end
 
@@ -48,12 +48,12 @@ describe AttorneyQueue, :all_dbs do
 
     context "when complete and incomplete colocated admin actions exist for an appeal" do
       let!(:vlj_support_staff) do
-        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton)
+        OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
         Colocated.singleton.users.first
       end
 
       let!(:completed_action) do
-        FactoryBot.create(
+        create(
           :colocated_task,
           appeal: appeal,
           assigned_by: user,
@@ -63,7 +63,7 @@ describe AttorneyQueue, :all_dbs do
         end
       end
       let!(:incomplete_action) do
-        FactoryBot.create(
+        create(
           :colocated_task,
           appeal: appeal,
           assigned_by: user,

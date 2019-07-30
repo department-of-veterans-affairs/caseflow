@@ -24,7 +24,7 @@ describe TaskTimer, :postgres do
   end
 
   describe "requires_processing" do
-    let(:task) { FactoryBot.create(:generic_task, trait) }
+    let(:task) { create(:generic_task, trait) }
     let!(:task_timer) { TaskTimer.create!(task: task).tap(&:submit_for_processing!) }
 
     before do

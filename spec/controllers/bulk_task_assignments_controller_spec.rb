@@ -7,16 +7,16 @@ RSpec.describe BulkTaskAssignmentsController, :postgres, type: :controller do
   describe "#create" do
     let(:organization) { HearingsManagement.singleton }
     let!(:schedule_hearing1) do
-      FactoryBot.create(
+      create(
         :no_show_hearing_task,
         assigned_to: organization,
         created_at: 5.days.ago
       )
     end
     let!(:schedule_hearing2) do
-      FactoryBot.create(:no_show_hearing_task,
-                        assigned_to: organization,
-                        created_at: 2.days.ago)
+      create(:no_show_hearing_task,
+             assigned_to: organization,
+             created_at: 2.days.ago)
     end
 
     let(:assigned_to) { create(:user) }

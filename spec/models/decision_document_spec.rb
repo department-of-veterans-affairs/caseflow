@@ -108,7 +108,7 @@ describe DecisionDocument, :postgres do
     let(:end_product_establishment) { board_grant_effectuation.end_product_establishment }
 
     let!(:granted_decision_issue) do
-      FactoryBot.create(
+      create(
         :decision_issue,
         :rating,
         disposition: "allowed",
@@ -165,7 +165,7 @@ describe DecisionDocument, :postgres do
 
     context "there was no upload error" do
       let!(:denied_issue) do
-        FactoryBot.create(
+        create(
           :decision_issue,
           :rating,
           disposition: "denied",
@@ -220,7 +220,7 @@ describe DecisionDocument, :postgres do
 
       context "when granted compensation issues" do
         let!(:granted_issue) do
-          FactoryBot.create(
+          create(
             :decision_issue,
             :rating,
             disposition: "allowed",
@@ -229,7 +229,7 @@ describe DecisionDocument, :postgres do
         end
 
         let!(:another_granted_issue) do
-          FactoryBot.create(
+          create(
             :decision_issue,
             :rating,
             description: "i am a long description" * 20,

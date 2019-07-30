@@ -23,9 +23,9 @@ describe RoundRobinAssigner, :postgres do
     context "when task assigned to User exists" do
       let!(:task) do
         RoundRobinAssignedTask.create(
-          assigned_by: FactoryBot.create(:user),
-          assigned_to: FactoryBot.create(:user),
-          appeal: FactoryBot.create(:appeal),
+          assigned_by: create(:user),
+          assigned_to: create(:user),
+          appeal: create(:appeal),
           appeal_type: Appeal.name
         )
       end
@@ -37,16 +37,16 @@ describe RoundRobinAssigner, :postgres do
     context "when task assigned to Organization is most recent task" do
       let!(:user_task) do
         RoundRobinAssignedTask.create(
-          assigned_by: FactoryBot.create(:user),
-          assigned_to: FactoryBot.create(:user),
-          appeal: FactoryBot.create(:appeal),
+          assigned_by: create(:user),
+          assigned_to: create(:user),
+          appeal: create(:appeal),
           appeal_type: Appeal.name
         )
       end
       let!(:org_task) do
         RoundRobinAssignedTask.create(
           assigned_by: user_task.assigned_to,
-          assigned_to: FactoryBot.create(:organization),
+          assigned_to: create(:organization),
           appeal: user_task.appeal,
           appeal_type: user_task.appeal_type,
           parent: user_task
@@ -75,16 +75,16 @@ describe RoundRobinAssigner, :postgres do
       let(:total_distribution_count) { iterations * assignees.length }
 
       before do
-        assignees.each { |a| FactoryBot.create(:user, css_id: a) }
+        assignees.each { |a| create(:user, css_id: a) }
         RoundRobinAssignedTask.list_of_assignees = assignees
       end
 
       it "should evenly distribute tasks to assignees" do
         total_distribution_count.times do
           RoundRobinAssignedTask.create(
-            assigned_by: FactoryBot.create(:user),
+            assigned_by: create(:user),
             assigned_to: RoundRobinAssignedTask.next_assignee,
-            appeal: FactoryBot.create(:appeal),
+            appeal: create(:appeal),
             appeal_type: Appeal.name
           )
         end

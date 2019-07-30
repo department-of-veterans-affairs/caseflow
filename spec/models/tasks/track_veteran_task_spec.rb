@@ -4,10 +4,10 @@ require "support/database_cleaner"
 require "rails_helper"
 
 describe TrackVeteranTask, :postgres do
-  let(:vso) { FactoryBot.create(:vso) }
-  let(:root_task) { FactoryBot.create(:root_task) }
+  let(:vso) { create(:vso) }
+  let(:root_task) { create(:root_task) }
   let(:tracking_task) do
-    FactoryBot.create(
+    create(
       :track_veteran_task,
       parent: root_task,
       appeal: root_task.appeal,
@@ -47,21 +47,21 @@ describe TrackVeteranTask, :postgres do
   end
 
   describe ".sync_tracking_tasks" do
-    let!(:appeal) { FactoryBot.create(:appeal) }
-    let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let!(:appeal) { create(:appeal) }
+    let!(:root_task) { create(:root_task, appeal: appeal) }
 
     subject { TrackVeteranTask.sync_tracking_tasks(appeal) }
 
     context "When former represenative VSO is assigned non-Tracking tasks" do
-      let!(:old_vso) { FactoryBot.create(:vso, name: "Remember Korea") }
-      let!(:new_vso) { FactoryBot.create(:vso) }
-      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+      let!(:old_vso) { create(:vso, name: "Remember Korea") }
+      let!(:new_vso) { create(:vso) }
+      let!(:root_task) { create(:root_task, appeal: appeal) }
 
       let!(:ihp_org_task) do
-        FactoryBot.create(:informal_hearing_presentation_task, appeal: appeal, assigned_to: old_vso)
+        create(:informal_hearing_presentation_task, appeal: appeal, assigned_to: old_vso)
       end
       let!(:tracking_task) do
-        FactoryBot.create(
+        create(
           :track_veteran_task,
           parent: root_task,
           appeal: root_task.appeal,
@@ -95,8 +95,8 @@ describe TrackVeteranTask, :postgres do
       end
 
       context "when there is an existing open TrackVeteranTasks" do
-        let(:vso) { FactoryBot.create(:vso) }
-        let!(:tracking_task) { FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: vso) }
+        let(:vso) { create(:vso) }
+        let!(:tracking_task) { create(:track_veteran_task, appeal: appeal, assigned_to: vso) }
 
         it "cancels old TrackVeteranTask, does not create any new tasks" do
           active_task_count_before = TrackVeteranTask.open.count
@@ -108,7 +108,7 @@ describe TrackVeteranTask, :postgres do
     end
 
     context "when the appeal has two VSOs" do
-      let(:representing_vsos) { FactoryBot.create_list(:vso, 2) }
+      let(:representing_vsos) { create_list(:vso, 2) }
       before { allow_any_instance_of(Appeal).to receive(:representatives).and_return(representing_vsos) }
 
       context "when there are no existing TrackVeteranTasks" do
@@ -122,7 +122,7 @@ describe TrackVeteranTask, :postgres do
 
       context "when there is an existing open TrackVeteranTasks for a different VSO" do
         before do
-          FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: FactoryBot.create(:vso))
+          create(:track_veteran_task, appeal: appeal, assigned_to: create(:vso))
         end
 
         it "cancels old TrackVeteranTask, creates 2 new TrackVeteran and 2 new IHP tasks" do
@@ -133,7 +133,7 @@ describe TrackVeteranTask, :postgres do
       context "when there are already TrackVeteranTasks for both VSOs" do
         before do
           representing_vsos.each do |vso|
-            FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: vso)
+            create(:track_veteran_task, appeal: appeal, assigned_to: vso)
           end
         end
 
@@ -147,13 +147,13 @@ describe TrackVeteranTask, :postgres do
     end
 
     context "when an IHP task has been assigned to an individual person" do
-      let(:vso) { FactoryBot.create(:vso) }
-      let(:vso_staff) { FactoryBot.create(:user) }
+      let(:vso) { create(:vso) }
+      let(:vso_staff) { create(:user) }
       let(:org_ihp_task) do
-        FactoryBot.create(:informal_hearing_presentation_task, appeal: appeal, parent: root_task, assigned_to: vso)
+        create(:informal_hearing_presentation_task, appeal: appeal, parent: root_task, assigned_to: vso)
       end
       let!(:individual_ihp_task) do
-        FactoryBot.create(
+        create(
           :informal_hearing_presentation_task,
           appeal: appeal,
           parent: org_ihp_task,

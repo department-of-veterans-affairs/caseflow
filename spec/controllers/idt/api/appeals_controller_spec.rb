@@ -520,9 +520,9 @@ RSpec.describe Idt::Api::V1::AppealsController, :all_dbs, type: :controller do
   end
 
   describe "POST /idt/api/v1/appeals/:appeal_id/outcode" do
-    let(:user) { FactoryBot.create(:user) }
-    let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: user.css_id) }
-    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:user) { create(:user) }
+    let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: user.css_id) }
+    let(:root_task) { create(:root_task) }
     let(:citation_number) { "A18123456" }
     let(:params) do
       { appeal_id: root_task.appeal.external_id,

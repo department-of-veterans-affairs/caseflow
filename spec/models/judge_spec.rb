@@ -27,11 +27,11 @@ describe Judge, :postgres do
   end
 
   context "#attorneys" do
-    let(:user) { FactoryBot.create(:user) }
+    let(:user) { create(:user) }
     let(:judge) { Judge.new(user) }
     let!(:judge_team) { JudgeTeam.create_for_judge(judge.user) }
     let(:member_count) { 5 }
-    let(:attorneys) { FactoryBot.create_list(:user, member_count) }
+    let(:attorneys) { create_list(:user, member_count) }
 
     before do
       attorneys.each do |u|

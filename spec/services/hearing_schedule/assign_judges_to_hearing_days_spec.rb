@@ -25,7 +25,7 @@ describe HearingSchedule::AssignJudgesToHearingDays, :all_dbs do
     context "when Judge exists in both VACOLS and Caseflow" do
       before do
         3.times do
-          judge = FactoryBot.create(:user)
+          judge = create(:user)
           create(:judge_non_availability, date: Date.new(2018, 7, 6), schedule_period_id: schedule_period.id,
                                           object_identifier: judge.css_id)
           create(:staff, :hearing_judge, sdomainid: judge.css_id)
@@ -44,7 +44,7 @@ describe HearingSchedule::AssignJudgesToHearingDays, :all_dbs do
       before do
         @num_non_available_days = [10, 5, 15, 0]
         @num_non_available_days.count.times do |i|
-          judge = FactoryBot.create(:user)
+          judge = create(:user)
           get_unique_dates_between(schedule_period.start_date, schedule_period.end_date,
                                    @num_non_available_days[i]).map do |date|
             create(:judge_non_availability, object_identifier: judge.css_id,
@@ -54,7 +54,7 @@ describe HearingSchedule::AssignJudgesToHearingDays, :all_dbs do
         end
 
         # creating a judge and n/a with nil date.
-        judge = FactoryBot.create(:user)
+        judge = create(:user)
         create(:judge_non_availability, object_identifier: judge.css_id,
                                         date: nil, schedule_period_id: schedule_period.id)
         create(:staff, :hearing_judge, sdomainid: judge.css_id)
@@ -136,7 +136,7 @@ describe HearingSchedule::AssignJudgesToHearingDays, :all_dbs do
       @judges = []
 
       5.times do
-        judge = FactoryBot.create(:user)
+        judge = create(:user)
         date = get_unique_dates_between(schedule_period.start_date,
                                         schedule_period.end_date, 1).first
         create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
@@ -172,7 +172,7 @@ describe HearingSchedule::AssignJudgesToHearingDays, :all_dbs do
     end
 
     let(:judge) do
-      judge = FactoryBot.create(:user)
+      judge = create(:user)
       @date = get_unique_dates_between(schedule_period.start_date,
                                        schedule_period.end_date, 1).first
       create(:judge_non_availability, date: @date, schedule_period_id: schedule_period.id,
@@ -200,7 +200,7 @@ describe HearingSchedule::AssignJudgesToHearingDays, :all_dbs do
     end
 
     let(:judge) do
-      judge = FactoryBot.create(:user)
+      judge = create(:user)
       date = get_unique_dates_between(schedule_period.start_date,
                                       schedule_period.end_date, 1).first
       create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
@@ -246,7 +246,7 @@ describe HearingSchedule::AssignJudgesToHearingDays, :all_dbs do
       before do
         hearing_days
         2.times do
-          judge = FactoryBot.create(:user)
+          judge = create(:user)
           get_unique_dates_between(schedule_period.start_date, schedule_period.end_date,
                                    80).map do |date|
             create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
@@ -286,7 +286,7 @@ describe HearingSchedule::AssignJudgesToHearingDays, :all_dbs do
         judges = []
         date_count = {}
         80.times do
-          judge = FactoryBot.create(:user)
+          judge = create(:user)
           get_unique_dates_between(schedule_period.start_date, schedule_period.end_date,
                                    Random.rand(1..50)).map do |date|
             date_count[date] ||= 0
