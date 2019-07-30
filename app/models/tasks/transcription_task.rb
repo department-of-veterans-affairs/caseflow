@@ -3,11 +3,11 @@
 class TranscriptionTask < GenericTask
   before_create :check_parent_type
 
-  class NonDispositionTaskParent < StandardError; end
+  class NonDispositionTaskOrMissingHearingTranscriptsParent < StandardError; end
 
   def check_parent_type
     unless parent.is_a?(AssignHearingDispositionTask) || parent.is_a?(MissingHearingTranscriptsColocatedTask)
-      fail NonDispositionTaskParent
+      fail NonDispositionTaskOrMissingHearingTranscriptsParent
     end
   end
 
