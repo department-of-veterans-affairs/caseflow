@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe Person do
+describe Person, :postgres do
   let(:known_fake_participant_id) { "1129318238" }
 
   context "#date_of_birth" do

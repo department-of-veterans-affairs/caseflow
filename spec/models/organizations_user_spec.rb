@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe OrganizationsUser do
+describe OrganizationsUser, :postgres do
   let(:organization) { FactoryBot.create(:organization) }
   let(:user) { FactoryBot.create(:user) }
 

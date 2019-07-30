@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Dispatch Stats Dashboard" do
+RSpec.feature "Dispatch Stats Dashboard", :postgres do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 17, 55, 0, rand(1000)))
   end

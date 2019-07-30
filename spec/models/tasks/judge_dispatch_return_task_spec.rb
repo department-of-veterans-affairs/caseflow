@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe JudgeDispatchReturnTask do
+describe JudgeDispatchReturnTask, :postgres do
   let(:judge) { FactoryBot.create(:user) }
   let(:dispatch_user) { FactoryBot.create(:user) }
   let(:dispatch_task) do
