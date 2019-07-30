@@ -2,7 +2,7 @@
 
 class ExternalApi::VADotGovService::AddressValidationResponse < ExternalApi::VADotGovService::Response
   def error
-    message_error || fail_if_response_error
+    message_error || response_error
   end
 
   def valid_address

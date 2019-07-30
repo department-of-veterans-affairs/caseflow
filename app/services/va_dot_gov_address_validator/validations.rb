@@ -33,7 +33,7 @@ module VaDotGovAddressValidator::Validations
 
   def fail_if_unable_to_validate_address
     if valid_address_error.present?
-      fail valid_address_error, code: 500, message: "Unable to validate appeal address"
+      raise valid_address_error # rubocop:disable Style/SignalException
     end
   end
 

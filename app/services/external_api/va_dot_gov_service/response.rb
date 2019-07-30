@@ -9,7 +9,7 @@ class ExternalApi::VADotGovService::Response
   end
 
   def error
-    fail_if_response_error
+    response_error
   end
 
   private
@@ -22,19 +22,19 @@ class ExternalApi::VADotGovService::Response
               end
   end
 
-  def fail_if_response_error
+  def response_error
     return if code == 200
 
     case code
     when 429
       Caseflow::Error::VaDotGovLimitError.new code: code, message: body
     when 400
-      fail Caseflow::Error::VaDotGovRequestError, code: code, message: body
+      Caseflow::Error::VaDotGovRequestError.new code: code, message: body
     when 500, 502, 503, 504
-      fail Caseflow::Error::VaDotGovServerError, code: code, message: body
+      Caseflow::Error::VaDotGovServerError.new code: code, message: body
     else
       msg = "Error: #{body}, HTTP code: #{code}"
-      fail Caseflow::Error::VaDotGovServerError, code: code, message: msg
+      Caseflow::Error::VaDotGovServerError.new code: code, message: msg
     end
   end
 end

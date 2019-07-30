@@ -72,7 +72,7 @@ class VaDotGovAddressValidator
                                                    long: valid_address[:long],
                                                    ids: facility_ids)
 
-    fail distance_result[:error], code: 500, message: "Unable to get distances" if distance_result[:error].present?
+    raise distance_result[:error] if distance_result[:error].present? # rubocop:disable Style/SignalException
 
     distance_result[:facilities]
   end

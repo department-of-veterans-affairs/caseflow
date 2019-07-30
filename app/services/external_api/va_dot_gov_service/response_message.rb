@@ -9,11 +9,11 @@ class ExternalApi::VADotGovService::ResponseMessage
 
   def error
     if address_could_not_be_found?
-      Caseflow::Error::VaDotGovAddressCouldNotBeFoundError
+      Caseflow::Error::VaDotGovAddressCouldNotBeFoundError.new code: 500, message: "Address could not be found"
     elsif invalid_input?
-      Caseflow::Error::VaDotGovInvalidInputError
+      Caseflow::Error::VaDotGovInvalidInputError.new code: 500, message: "Address information is incomplete"
     elsif multiple_address?
-      Caseflow::Error::VaDotGovMultipleAddressError
+      Caseflow::Error::VaDotGovMultipleAddressError.new code: 500, message: "Address was ambiguous"
     end
   end
 

@@ -26,7 +26,7 @@ class VaDotGovAddressValidator::ErrorHandler
 
       :created_foreign_veteran_admin_action
     else
-      fail error, code: 500, message: "VA Dot Gov error"
+      raise error # rubocop:disable Style/SignalException
     end
   end
 
