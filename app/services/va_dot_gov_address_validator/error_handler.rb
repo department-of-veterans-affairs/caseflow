@@ -42,9 +42,7 @@ class VaDotGovAddressValidator::ErrorHandler
   end
 
   def check_for_philippines_and_maybe_update
-    return false if appellant_address.nil?
-
-    if "Philippines".casecmp(appellant_address[:country]) == 0
+    if "Philippines".casecmp(appellant_address.country) == 0
       appeal.va_dot_gov_address_validator.assign_ro_and_update_ahls("RO58")
 
       return true

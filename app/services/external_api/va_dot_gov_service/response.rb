@@ -3,10 +3,6 @@
 class ExternalApi::VADotGovService::Response
   attr_reader :response, :code
 
-  def self.full_address(*addresses)
-    addresses.reject(&:blank?).join(" ")
-  end
-
   def initialize(api_response)
     @response = api_response
     @code = @response.code
@@ -31,7 +27,7 @@ class ExternalApi::VADotGovService::Response
 
     case code
     when 429
-      fail Caseflow::Error::VaDotGovLimitError, code: code, message: body
+      Caseflow::Error::VaDotGovLimitError.new code: code, message: body
     when 400
       fail Caseflow::Error::VaDotGovRequestError, code: code, message: body
     when 500, 502, 503, 504

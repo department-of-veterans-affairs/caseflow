@@ -624,6 +624,19 @@ class Appeal < DecisionReview
     AppealActiveTaskCancellation.new(self).call
   end
 
+  def address
+    appellant_address = appellant.address
+    Address.new(
+      address_line_1: appellant_address[:address_line_1],
+      address_line_2: appellant_address[:address_line_2],
+      address_line_3: appellant_address[:address_line_3],
+      city: appellant_address[:city],
+      state: appellant_address[:state],
+      country: appellant_address[:country],
+      zip_code: appellant_address[:zip]
+    )
+  end
+
   private
 
   def most_recently_assigned_to_label(tasks)

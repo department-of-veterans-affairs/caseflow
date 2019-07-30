@@ -8,13 +8,15 @@ describe ExternalApi::VADotGovService do
   describe "#validate_address" do
     it "returns validated address" do
       result = VADotGovService.validate_address(
-        address_line1: "fake address",
-        address_line2: "fake address",
-        address_line3: "fake address",
-        city: "City",
-        state: "State",
-        zip_code: "Zip",
-        country: "US"
+        Address.new(
+          address_line_1: "fake address",
+          address_line_2: "fake address",
+          address_line_3: "fake address",
+          city: "City",
+          state: "State",
+          zip_code: "Zip",
+          country: "US"
+        )
       )
 
       expect(result[:error]).to be_nil

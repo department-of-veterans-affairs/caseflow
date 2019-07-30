@@ -18,12 +18,15 @@ class Veteran < ApplicationRecord
 
   validates :first_name, :last_name, presence: true, on: :bgs
   validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
+
   with_options if: :alive? do
     validates :address_line1, :country, presence: true, on: :bgs
     validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
     validates :state, presence: true, if: :state_is_required?, on: :bgs
     validates :city, presence: true, unless: :military_address?, on: :bgs
   end
+
+  delegate :full_address, to: :address
 
   CHARACTER_OF_SERVICE_CODES = {
     "HON" => "Honorable",
@@ -48,10 +51,6 @@ class Veteran < ApplicationRecord
   # TODO: get middle initial from BGS
   def name
     FullName.new(first_name, "", last_name)
-  end
-
-  def full_address
-    "#{address_line1}#{address_line2 ? " #{address_line2}" : ''}, #{city} #{state} #{zip_code}"
   end
 
   def country_requires_zip?
@@ -193,16 +192,20 @@ class Veteran < ApplicationRecord
     super || (bgs_record.is_a?(Hash) ? bgs_record[:ssn] : nil)
   end
 
-  def validate_address
-    result = VADotGovService.validate_address(
-      address_line1: address_line1,
-      address_line2: address_line2,
-      address_line3: address_line3,
+  def address
+    @address ||= Address.new(
+      address_line_1: address_line1,
+      address_line_2: address_line2,
+      address_line_3: address_line3,
       city: city,
       state: state,
       country: country,
       zip_code: zip_code
     )
+  end
+
+  def validate_address
+    result = VADotGovService.validate_address(address)
 
     if result[:error].present?
       fail result[:error], code: 500, message: "Unable to validate veteran address"

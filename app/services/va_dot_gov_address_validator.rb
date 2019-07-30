@@ -4,6 +4,7 @@ class VaDotGovAddressValidator
   include VaDotGovAddressValidator::Validations
 
   attr_reader :appeal
+  delegate :address, to: :appeal
 
   STATUSES = {
     matched_available_hearing_locations: :matched_available_hearing_locations,
@@ -89,10 +90,6 @@ class VaDotGovAddressValidator
 
   private
 
-  def address
-    @address ||= appeal.is_a?(LegacyAppeal) ? appeal.appellant[:address] : appeal.appellant.address
-  end
-
   def update_closest_regional_office
     appeal.update(closest_regional_office: closest_regional_office_with_exceptions)
   end
@@ -124,15 +121,7 @@ class VaDotGovAddressValidator
   end
 
   def valid_address_result
-    @valid_address_result ||= VADotGovService.validate_address(
-      address_line1: address[:address_line_1],
-      address_line2: address[:address_line_2],
-      address_line3: address[:address_line_3],
-      city: address[:city],
-      state: address[:state],
-      country: address[:country],
-      zip_code: address[:zip]
-    )
+    @valid_address_result ||= VADotGovService.validate_address(address)
   end
 
   def closest_regional_office_result
@@ -156,14 +145,14 @@ class VaDotGovAddressValidator
   end
 
   def validate_zip_code
-    if address[:zip].nil? || address[:state].nil? || address[:country].nil?
+    if address.zip_code_not_validatable?
       nil
     else
-      lat_lng = ZipCodeToLatLngMapper::MAPPING[address[:zip][0..4]]
+      lat_lng = ZipCodeToLatLngMapper::MAPPING[address.zip_code[0..4]]
 
       return nil if lat_lng.nil?
 
-      { lat: lat_lng[0], long: lat_lng[1], country_code: address[:country], state_code: address[:state] }
+      { lat: lat_lng[0], long: lat_lng[1], country_code: address.country, state_code: address.state }
     end
   end
 
