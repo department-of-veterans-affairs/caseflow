@@ -1101,6 +1101,40 @@ RSpec.feature "Case details" do
     end
   end
 
+  describe "when appeal is assigned to Case Review" do
+    let!(:appeal) { create(:appeal) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
+
+    let!(:task) do
+      create(
+        :task,
+        :in_progress,
+        appeal: appeal,
+        type: DistributionTask,
+        parent: root_task
+      )
+    end
+
+    let!(:appeal_withdraw_mail_task) do
+      create(
+        :appeal_withdraw_mail_task,
+        :cancelled,
+        appeal: appeal,
+        parent: root_task,
+        instructions: ["cancelled"]
+      )
+    end
+
+    before { allow(appeal_withdraw_mail_task).to receive(:hide_from_case_timeline).and_return(true) }
+
+    it "should create AppealWithdrawalMailTask assigned to Case Review Team" do
+      visit("/queue/appeals/#{appeal_withdraw_mail_task.appeal.uuid}")
+
+      expect(appeal_withdraw_mail_task.assigned_to.class).to eq(BvaIntake)
+      expect(page).to have_content("AppealWithdrawalMailTask  cancelled")
+    end
+  end
+
   describe "Case details page access control" do
     let(:queue_home_path) { "/queue" }
     let(:case_details_page_path) { "/queue/appeals/#{appeal.external_id}" }
