@@ -23,19 +23,27 @@ class ExternalApi::VADotGovService::AddressValidationResponse < ExternalApi::VAD
     end
   end
 
+  def address
+    @address ||= Address.new(
+      address_line_1: body[:address][:addressLine1],
+      address_line_2: body[:address][:addressLine2],
+      address_line_3: body[:address][:addressLine3],
+      city: body[:address][:city],
+      state: body[:address][:stateProvince][:code],
+      country: body[:address][:country][:fipsCode],
+      zip: body[:address][:zipCode5]
+    )
+  end
+
   def formatted_valid_address
     {
       lat: body[:geocode][:latitude],
       long: body[:geocode][:longitude],
-      city: body[:address][:city],
-      full_address: ExternalApi::VADotGovService::Response.full_address(
-        body[:address][:addressLine1],
-        body[:address][:addressLine2],
-        body[:address][:addressLine3]
-      ),
-      country_code: body[:address][:country][:fipsCode],
-      state_code: body[:address][:stateProvince][:code],
-      zip_code: body[:address][:zipCode5]
+      city: address.city,
+      full_address: address.full_address,
+      country_code: address.country,
+      state_code: address.state,
+      zip_code: address.zip
     }
   end
 end

@@ -14,7 +14,7 @@ describe ExternalApi::VADotGovService do
           address_line_3: "fake address",
           city: "City",
           state: "State",
-          zip_code: "Zip",
+          zip: "Zip",
           country: "US"
         )
       )

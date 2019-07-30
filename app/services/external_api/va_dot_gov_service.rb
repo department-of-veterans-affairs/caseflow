@@ -112,7 +112,7 @@ class ExternalApi::VADotGovService
             city: address.city,
             stateProvince: { code: address.state },
             requestCountry: { country_code: address.country },
-            zipCode5: address.zip_code
+            zipCode5: address.zip
           }
         },
         headers: {

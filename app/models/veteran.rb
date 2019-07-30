@@ -196,16 +196,15 @@ class Veteran < ApplicationRecord
       city: city,
       state: state,
       country: country,
-      zip_code: zip_code
+      zip: zip_code
     )
   end
 
   def validate_address
     result = VADotGovService.validate_address(address)
+    error = result[:error]
 
-    if result[:error].present?
-      fail result[:error], code: 500, message: "Unable to validate veteran address"
-    end
+    raise error if error.present? # rubocop:disable Style/SignalException
 
     result[:valid_address]
   end

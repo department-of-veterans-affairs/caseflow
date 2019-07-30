@@ -148,7 +148,7 @@ class VaDotGovAddressValidator
     if address.zip_code_not_validatable?
       nil
     else
-      lat_lng = ZipCodeToLatLngMapper::MAPPING[address.zip_code[0..4]]
+      lat_lng = ZipCodeToLatLngMapper::MAPPING[address.zip[0..4]]
 
       return nil if lat_lng.nil?
 

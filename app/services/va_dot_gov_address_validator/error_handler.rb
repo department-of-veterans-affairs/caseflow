@@ -11,14 +11,14 @@ class VaDotGovAddressValidator::ErrorHandler
   def handle(error)
     if check_for_philippines_and_maybe_update
       :philippines_exception
-    elsif verify_address_errors.any? { |klass| error == klass }
+    elsif verify_address_errors.any? { |klass| error.instance_of?(klass) }
       create_admin_action_for_schedule_hearing_task(
         instructions: "The appellant's address in VBMS does not exist, is incomplete, or is ambiguous.",
         admin_action_type: HearingAdminActionVerifyAddressTask
       )
 
       :created_verify_address_admin_action
-    elsif foreign_veteran_errors.any? { |klass| error == klass }
+    elsif foreign_veteran_errors.any? { |klass| error.instance_of?(klass) }
       create_admin_action_for_schedule_hearing_task(
         instructions: "The appellant's address in VBMS is outside of US territories.",
         admin_action_type: HearingAdminActionForeignVeteranCaseTask

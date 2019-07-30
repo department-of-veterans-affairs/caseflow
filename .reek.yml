@@ -13,6 +13,12 @@ detectors:
   ControlParameter:
     exclude:
       - HearingRepository#slot_new_hearing
+  UncommunicativeVariableName:
+    exclude:
+      - Address
+  TooManyInstanceVariables:
+    exclude:
+      - Address
   LongParameterList:
     exclude:
       - Address
