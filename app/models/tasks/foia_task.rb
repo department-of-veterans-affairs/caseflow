@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ##
-# Task to track when an appeal has been assigned to Privacy Team
+# Task to track when a Freedom of Information Act task has been assigned to Privacy Team
 
 class FoiaTask < GenericTask
   def available_actions(user)
