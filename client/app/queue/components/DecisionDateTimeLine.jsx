@@ -59,7 +59,7 @@ class DecisionDateTimeLine extends React.PureComponent {
       {timeline && <tr>
         <td className="taskContainerStyling taskTimeTimelineContainerStyling">
           <CaseDetailsDescriptionList>
-            {appeal.decisionDate ? showDecisionDate() : showWithdrawalDate()}
+            {showDecisionDate() || showWithdrawalDate()}
           </CaseDetailsDescriptionList>
         </td>
         <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer">
