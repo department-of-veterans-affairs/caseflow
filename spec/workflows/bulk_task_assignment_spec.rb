@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe BulkTaskAssignment do
+describe BulkTaskAssignment, :postgres do
   describe "#process" do
     let(:organization) { HearingsManagement.singleton }
     let!(:no_show_hearing_task1) do

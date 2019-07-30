@@ -12,13 +12,13 @@ FactoryBot.define do
     start_date { Date.parse("2018-01-01") }
     end_date { Date.parse("2018-06-01") }
     file_name { "validRoSpreadsheet.xlsx" }
-    user { create(:user) }
+    user
 
     factory :blank_ro_schedule_period do
       start_date { Date.parse("2018-01-01") }
       end_date { Date.parse("2018-06-01") }
       file_name { "blankRoSpreadsheet.xlsx" }
-      user { create(:user) }
+      user
     end
   end
 end

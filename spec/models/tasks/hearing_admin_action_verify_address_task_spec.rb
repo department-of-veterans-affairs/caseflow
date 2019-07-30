@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
 RSpec.shared_examples "Address Verify Task for Appeal" do
@@ -88,7 +89,7 @@ RSpec.shared_examples "Address Verify Task for Appeal" do
   end
 end
 
-describe HearingAdminActionVerifyAddressTask do
+describe HearingAdminActionVerifyAddressTask, :all_dbs do
   describe "Address Verify Workflow with Legacy Appeal" do
     let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
     let!(:appeal_id) { appeal.vacols_id }

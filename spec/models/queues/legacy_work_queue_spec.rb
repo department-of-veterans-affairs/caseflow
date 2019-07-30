@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe LegacyWorkQueue do
+describe LegacyWorkQueue, :all_dbs do
   context ".tasks_for_user" do
     let!(:user) { FactoryBot.create(:user) }
     let!(:staff_record) { FactoryBot.create(:staff, role, sdomainid: user.css_id) }

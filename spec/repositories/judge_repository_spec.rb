@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe JudgeRepository do
+describe JudgeRepository, :all_dbs do
   let(:judge_name) { "Sojudgey" }
 
   before do

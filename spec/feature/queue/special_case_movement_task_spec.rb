@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "SpecialCaseMovementTask" do
+RSpec.feature "SpecialCaseMovementTask", :all_dbs do
   let(:scm_user) { FactoryBot.create(:user) }
 
   let(:judge_user) { FactoryBot.create(:user) }

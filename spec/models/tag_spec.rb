@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe Tag do
+describe Tag, :postgres do
   let(:document) { Generators::Document.create(vbms_document_id: 123) }
   let(:tag1) { Generators::Tag.create(text: "Service Connected") }
 

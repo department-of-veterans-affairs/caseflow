@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe JudgeSchedulePeriod do
+describe JudgeSchedulePeriod, :all_dbs do
   let(:judge_schedule_period) { create(:judge_schedule_period) }
   let(:single_nonavail_date_judge_schedule_period) { create(:single_nonavail_date_judge_schedule_period) }
   let(:two_in_july_judge_schedule_period) { create(:two_in_july_judge_schedule_period) }

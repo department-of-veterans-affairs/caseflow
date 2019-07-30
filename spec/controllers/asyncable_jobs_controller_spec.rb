@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe AsyncableJobsController, type: :controller do
+describe AsyncableJobsController, :postgres, type: :controller do
   before do
     User.stub = user
   end

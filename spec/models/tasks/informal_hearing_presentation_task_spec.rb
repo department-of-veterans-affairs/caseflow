@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe InformalHearingPresentationTask do
+describe InformalHearingPresentationTask, :postgres do
   let(:user) { create(:user, roles: ["VSO"]) }
 
   describe ".available_actions" do

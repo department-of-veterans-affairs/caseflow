@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-feature "Updating Document ID" do
+feature "Updating Document ID", :all_dbs do
   context "AMA case review" do
     it "only allows assigner and assignee to edit document ID and validates ID format" do
       attorney = create_ama_case_review

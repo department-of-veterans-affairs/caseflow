@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
-require "faker"
 
-describe RetrieveDocumentsForReaderJob do
+describe RetrieveDocumentsForReaderJob, :postgres do
   context ".perform" do
     context "a user exists who have been recently active" do
       let!(:active_user1) do
