@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe TimedHoldTask do
+describe TimedHoldTask, :postgres do
   let(:task) { FactoryBot.create(:timed_hold_task) }
 
   describe ".create!" do

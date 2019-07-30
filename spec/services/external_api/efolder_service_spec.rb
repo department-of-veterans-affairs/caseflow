@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 require "faker"
 
-describe ExternalApi::EfolderService do
+describe ExternalApi::EfolderService, :postgres do
   let(:base_url) { Faker::Internet.url }
   let(:efolder_key) { Faker::Internet.device_token }
 

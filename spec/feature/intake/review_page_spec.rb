@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-feature "Intake Review Page" do
+feature "Intake Review Page", :postgres do
   include IntakeHelpers
 
   before do

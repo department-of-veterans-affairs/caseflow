@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.feature "TranscriptionTeam" do
+RSpec.feature "TranscriptionTeam", :postgres do
   let(:transcription_team_member) { FactoryBot.create(:user) }
   let(:veteran) { FactoryBot.create(:veteran, first_name: "Maisie", last_name: "Varesko", file_number: 201_905_061) }
   let(:appeal) { FactoryBot.create(:appeal, veteran_file_number: veteran.file_number) }

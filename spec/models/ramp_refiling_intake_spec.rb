@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe RampRefilingIntake do
+describe RampRefilingIntake, :postgres do
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end

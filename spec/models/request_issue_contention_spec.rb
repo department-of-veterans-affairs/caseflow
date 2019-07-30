@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe RequestIssueContention do
+describe RequestIssueContention, :postgres do
   let(:decision_review) { create(:higher_level_review) }
   let!(:end_product_establishment) { create(:end_product_establishment) }
   let!(:contention_reference_id) { "1234" }
