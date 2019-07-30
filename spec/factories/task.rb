@@ -336,6 +336,7 @@ FactoryBot.define do
       type { HearingTask.name }
       assigned_to { Bva.singleton }
       appeal { create(:appeal) }
+      parent { appeal.root_task || create(:root_task, appeal: appeal) }
     end
 
     factory :schedule_hearing_task, class: ScheduleHearingTask do
