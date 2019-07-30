@@ -9,7 +9,7 @@ class AsciiConverter
   end
 
   def convert
-    return str if ascii?
+    return str if str.ascii_only?
 
     return str.to_ascii if utf8?
 
@@ -24,10 +24,6 @@ class AsciiConverter
 
   def utf8?
     str.valid_encoding? && str.encoding == Encoding::UTF_8
-  end
-
-  def ascii?
-    str.bytes.none? { |byte| byte > 127 }
   end
 
   def cp1252?
