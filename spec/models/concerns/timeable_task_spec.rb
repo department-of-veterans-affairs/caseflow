@@ -1,17 +1,25 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe TimeableTask do
-  NOW = Time.utc(2018, 4, 24, 12, 0, 0)
+describe TimeableTask, :postgres do
+  let(:now) { Time.utc(2018, 4, 24, 12, 0, 0) }
+
+  module CurrentDate
+    def now
+      Time.utc(2018, 4, 24, 12, 0, 0)
+    end
+  end
 
   class SomeTimedTask < GenericTask
     include TimeableTask
+    include CurrentDate
 
     def when_timer_ends; end
 
     def timer_ends_at
-      NOW + 5.days
+      now + 5.days
     end
   end
 
@@ -23,16 +31,17 @@ describe TimeableTask do
 
   class OldTimedTask < GenericTask
     include TimeableTask
+    include CurrentDate
 
     def when_timer_ends; end
 
     def timer_ends_at
-      NOW - 5.days
+      now - 5.days
     end
   end
 
   before do
-    Timecop.freeze(NOW)
+    Timecop.freeze(now)
   end
 
   let(:appeal) { create(:appeal, receipt_date: 10.days.ago) }
@@ -54,7 +63,7 @@ describe TimeableTask do
     expect(timers.length).to eq(1)
     expect(timers.first.submitted_and_ready?).to eq(true)
     expect(timers.first.submitted_at).to eq(task.timer_ends_at)
-    expect(timers.first.last_submitted_at).to eq(NOW)
+    expect(timers.first.last_submitted_at).to eq(now)
   end
 
   context "when not correctly configured" do

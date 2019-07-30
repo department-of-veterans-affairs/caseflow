@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-feature "End Product Correction (EP 930)" do
+feature "End Product Correction (EP 930)", :postgres do
   include IntakeHelpers
 
   let!(:current_user) do

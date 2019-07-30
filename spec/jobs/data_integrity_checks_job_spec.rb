@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe DataIntegrityChecksJob do
   let(:expired_async_jobs_checker) { ExpiredAsyncJobsChecker.new }
   let(:untracked_legacy_appeals_checker) { UntrackedLegacyAppealsChecker.new }

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe UpdateCachedAppealsAttributesJob do
+describe UpdateCachedAppealsAttributesJob, :all_dbs do
   let(:vacols_case1) { create(:case) }
   let(:vacols_case2) { create(:case) }
   let(:vacols_case3) { create(:case) }
@@ -38,6 +39,42 @@ describe UpdateCachedAppealsAttributesJob do
       UpdateCachedAppealsAttributesJob.perform_now
 
       expect(CachedAppeal.all.count).to eq(open_appeals.length)
+    end
+
+    it "records the jobs runtime with Datadog" do
+      expect(DataDogService).to receive(:emit_gauge).with(
+        app_name: "caseflow_job",
+        metric_group: UpdateCachedAppealsAttributesJob.name.underscore,
+        metric_name: "runtime",
+        metric_value: anything
+      )
+
+      UpdateCachedAppealsAttributesJob.perform_now
+    end
+
+    it "records the number of appeals cached with DataDog" do
+      expect(DataDogService).to receive(:increment_counter).exactly(open_appeals.length).times
+
+      UpdateCachedAppealsAttributesJob.perform_now
+    end
+  end
+
+  context "when the entire job fails" do
+    let(:error_msg) { "Some dummy error" }
+
+    before do
+      allow_any_instance_of(UpdateCachedAppealsAttributesJob).to receive(:cache_ama_appeals).and_raise(error_msg)
+    end
+
+    it "sends a message to Slack that includes the error" do
+      slack_msg = ""
+      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+
+      UpdateCachedAppealsAttributesJob.perform_now
+
+      expected_msg = "UpdateCachedAppealsAttributesJob failed after running for .*. Fatal error: #{error_msg}"
+
+      expect(slack_msg).to match(/#{expected_msg}/)
     end
   end
 end

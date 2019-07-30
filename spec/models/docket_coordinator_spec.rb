@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe DocketCoordinator do
+describe DocketCoordinator, :all_dbs do
   before do
     FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2020, 4, 1, 12, 0, 0))

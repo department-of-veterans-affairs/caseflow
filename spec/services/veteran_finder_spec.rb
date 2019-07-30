@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe VeteranFinder do
+describe VeteranFinder, :postgres do
   before do
     Fakes::BGSService.veteran_records = { file_number => veteran_record }
     RequestStore[:current_user] = create(:user)

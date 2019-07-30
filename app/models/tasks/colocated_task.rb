@@ -11,7 +11,6 @@
 class ColocatedTask < Task
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
-  validate :on_hold_duration_is_set, on: :update
   validate :task_is_unique, on: :create
   validate :valid_action_or_type
 
@@ -188,12 +187,6 @@ class ColocatedTask < Task
     appeal.tasks.open.select { |task| task.is_a?(ColocatedTask) }.none?
   end
 
-  def on_hold_duration_is_set
-    if saved_change_to_status? && on_hold? && !on_hold_duration && assigned_to.is_a?(User)
-      errors.add(:on_hold_duration, "has to be specified")
-    end
-  end
-
   def task_is_unique
     ColocatedTask.where(
       appeal_id: appeal_id,
@@ -237,6 +230,7 @@ require_dependency "new_rep_arguments_colocated_task"
 require_dependency "pending_scanning_vbms_colocated_task"
 require_dependency "address_verification_colocated_task"
 require_dependency "schedule_hearing_colocated_task"
+require_dependency "stayed_appeal_colocated_task"
 require_dependency "missing_records_colocated_task"
 require_dependency "translation_colocated_task"
 require_dependency "other_colocated_task"
