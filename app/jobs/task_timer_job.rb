@@ -22,7 +22,7 @@ class TaskTimerJob < CaseflowJob
     # no other threads have a lock on the row, and will reload
     # the record after acquiring the lock.
     task_timer.with_lock do
-      return if task_timer.processed? || if task_timer.canceled?
+      return if task_timer.processed? || task_timer.canceled?
 
       task_timer.attempted!
       task_timer.task.when_timer_ends
@@ -38,7 +38,7 @@ class TaskTimerJob < CaseflowJob
 
   def cancel(task_timer)
     task_timer.with_lock do
-      return if task_timer.canceled? || if task_timer.processed?
+      return if task_timer.canceled? || task_timer.processed?
       task_timer.canceled!
     end
   rescue StandardError => error
