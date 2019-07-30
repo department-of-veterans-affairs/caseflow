@@ -238,7 +238,8 @@ describe Veteran do
         country: "USA",
         date_of_birth: "21/12/1989",
         zip_code: "94117",
-        address_type: ""
+        address_type: "",
+        email_address: nil
       )
     end
 

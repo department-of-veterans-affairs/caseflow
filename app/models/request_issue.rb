@@ -833,7 +833,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_active_request_issue_by_rating!
-    return unless rating?
+    return unless associated_rating_issue?
 
     add_duplicate_issue_error(
       RequestIssue.active.find_by(contested_rating_issue_reference_id: contested_rating_issue_reference_id)
