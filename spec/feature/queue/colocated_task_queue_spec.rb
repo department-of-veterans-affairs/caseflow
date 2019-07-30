@@ -247,48 +247,6 @@ RSpec.feature "ColocatedTask" do
     end
   end
 
-  describe "translation task for AMA appeal" do
-    let(:root_task) { FactoryBot.create(:root_task) }
-    let(:appeal) { root_task.appeal }
-    let!(:colocated_task) do
-      create(
-        :ama_colocated_task,
-        :translation,
-        appeal: appeal,
-        parent: root_task,
-        assigned_to: vlj_support_staff,
-        assigned_by: vlj_support_staff
-      )
-    end
-
-    before do
-      # Allow the current user to access the Translation team queue to confirm that the task made it into their queue.
-      OrganizationsUser.add_user_to_organization(vlj_support_staff, Translation.singleton)
-    end
-
-    it "should be able to be sent to the translation team" do
-      # Visit case details page for VLJ support staff.
-      User.authenticate!(user: vlj_support_staff)
-      visit("/queue/appeals/#{appeal.uuid}")
-
-      # Send case to Translation team.
-      expect(TranslationTask.count).to eq 0
-      find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.label).click
-      fill_in("instructions", with: "Please translate some documents")
-      find("button", text: "Submit").click
-
-      # Redirected to personal queue page. Return to attorney succeeds.
-      expect(page).to have_current_path("/queue")
-      expect(page).to have_content(format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, Translation.singleton.name))
-      expect(TranslationTask.count).to eq 1
-
-      # View Translation team queue to confirm the appeal shows up there.
-      visit(Translation.singleton.path)
-      expect(page).to have_content(appeal.veteran.name.formatted(:readable_full))
-    end
-  end
-
   describe "vlj support staff changes task type" do
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:appeal) { root_task.appeal }

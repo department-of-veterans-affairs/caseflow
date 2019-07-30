@@ -937,7 +937,7 @@ describe Task do
     subject { task.last_descendant_of_type }
 
     context "when the task has no children of the same type" do
-      let(:task) { create(:colocated_task) }
+      let(:task) { create(:colocated_task, assigned_to: user) }
       let(:child_task) { create(:ama_judge_task, parent: task) }
 
       it "should should return itself" do

@@ -232,7 +232,7 @@ describe JudgeTask do
     end
 
     context "when child task is an VLJ support staff admin action" do
-      let(:child_task) { FactoryBot.create(:colocated_task, assigned_by: judge, parent: judge_task) }
+      let(:child_task) { create(:colocated_task, assigned_by: judge, parent: judge_task, assigned_to: create(:user)) }
 
       it "does not change the judge task type" do
         expect(judge_task.type).to eq(JudgeAssignTask.name)

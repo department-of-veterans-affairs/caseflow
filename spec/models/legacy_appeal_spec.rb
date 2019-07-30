@@ -28,6 +28,8 @@ describe LegacyAppeal do
       end
 
       context "the appeal has more than one parentless task" do
+        before { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
+
         let!(:colocated_task) { FactoryBot.create(:colocated_task, appeal: appeal, parent: nil) }
 
         it "returns all parentless tasks" do
