@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 require "ostruct"
 
@@ -14,7 +15,7 @@ class FakeTask < Dispatch::Task
   end
 end
 
-describe Dispatch::Task do
+describe Dispatch::Task, :postgres do
   before { Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0)) }
 
   let(:appeal) { Generators::LegacyAppeal.create }

@@ -253,6 +253,10 @@
   "CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_TITLE": "Cancel hearing request",
   "CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_DETAIL": "Canceling this hearing request will release it to a hearing coordinator for review. A 90 day evidence hold may still apply to this case.",
 
+  "SPECIAL_CASE_MOVEMENT_MODAL_TITLE": "Special Case Movement",
+  "SPECIAL_CASE_MOVEMENT_MODAL_DETAIL": "This action overrides the normal case distribution process and immediately assigns the appeal to the judge selected.",
+  "SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER": "Select a judge",
+
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
   "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to the assigner",
   "CANCEL_TASK_CONFIRMATION": "Task for %s's case has been cancelled",
@@ -364,6 +368,8 @@
   "DECISION_ISSUE_PAGE_EXPLANATION": "Add decisions to each issue the Veteran is appealing. Any decisions you add must be connected to at least one issue on appeal. This helps Caseflow gather metrics on BVA decisions and meet AMA reporting requirements.",
   "DECISION_ISSUE_CONFIRM_DELETE_WITH_CONNECTED_ISSUES": " Deleting this decision will also remove it from other issues you've added it to.",
   "DECISION_ISSUE_CONFIRM_DELETE": "Are you sure you want to delete this decision?",
+
+  "EVALUATE_DECISION_PAGE_TITLE": "Evaluate Decision",
 
   "TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK": "Caseflow team management",
   "TEAM_MANAGEMENT_PAGE_HEADER": "Caseflow Team Management",
@@ -481,6 +487,9 @@
   "INTAKE_VETERAN_NOT_FOUND": "Note: If you are certain the Veteran ID or SSN is correct, the claimant may not exist in the VBA Corporate Database. If you have access, please add claimant to the Corporate Database to continue processing this intake. If you do not have access, please",
   "NON_COMP_ADDRESS_MESSAGE": "The Veteran/appellant has filed a Notice of Disagreement at the Board of Veterans' Appeals. In order to decide that appeal, the Board will need the complete records from",
   "INTAKE_EDIT_TITLE": "Edit contention title",
+
+  "INTAKE_CORRECTION_TYPE_MODAL_TITLE": "Set Correction Type",
+  "INTAKE_CORRECTION_TYPE_MODAL_COPY": "This issue will be added to a 930 EP for correction. If a mistake was found during quality review, please select whether it was discovered by the local or national quality review team. Otherwise, select control.",
 
   "END_HOLD_MODAL_TITLE": "End hold early",
   "END_HOLD_MODAL_BODY": "Do you want to end the hold early?",

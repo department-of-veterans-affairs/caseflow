@@ -14,7 +14,7 @@ class Veteran < ApplicationRecord
   bgs_attr_accessor :ptcpnt_id, :sex, :address_line1, :address_line2,
                     :address_line3, :city, :state, :country, :zip_code,
                     :military_postal_type_code, :military_post_office_type_code,
-                    :service, :date_of_birth, :date_of_death
+                    :service, :date_of_birth, :date_of_death, :email_address
 
   validates :first_name, :last_name, presence: true, on: :bgs
   validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
@@ -102,10 +102,6 @@ class Veteran < ApplicationRecord
 
   def benefit_type_code
     @benefit_type_code ||= deceased? ? BENEFIT_TYPE_CODE_DEATH : BENEFIT_TYPE_CODE_LIVE
-  end
-
-  def bgs
-    BGSService.new
   end
 
   def fetch_bgs_record

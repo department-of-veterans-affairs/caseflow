@@ -18,6 +18,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.in_progress)
+        task.children.update_all(status: Constants.TASK_STATUSES.in_progress)
       end
     end
 
@@ -28,6 +29,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.on_hold)
+        task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
       end
     end
 
@@ -38,6 +40,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.on_hold)
+        task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
       end
     end
 
@@ -49,6 +52,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.completed)
+        task.children.update_all(status: Constants.TASK_STATUSES.completed)
       end
     end
 
@@ -59,6 +63,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.completed, closed_at: 3.weeks.ago)
+        task.children.update_all(status: Constants.TASK_STATUSES.completed, closed_at: 3.weeks.ago)
       end
     end
 
@@ -67,6 +72,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.cancelled)
+        task.children.update_all(status: Constants.TASK_STATUSES.cancelled)
       end
     end
 
@@ -85,6 +91,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.on_hold)
+        task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
       end
     end
 
@@ -265,6 +272,12 @@ FactoryBot.define do
           "Spanish to English. The files in Spanish have been marked in Caseflow. " \
           "Please have these documents translated. Thank you!"]
         end
+      end
+
+      trait :stayed_appeal do
+        initialize_with { StayedAppealColocatedTask.new(attributes) }
+        type { StayedAppealColocatedTask.name }
+        instructions { ["Appeal stayed because Veteran fulls under Blue Water Navy Veteran policy."] }
       end
 
       trait :other do
@@ -460,6 +473,22 @@ FactoryBot.define do
       type { VeteranRecordRequest.name }
       appeal { create(:appeal) }
       parent { create(:root_task) }
+      assigned_by { nil }
+    end
+
+    factory :aod_motion_mail_task, class: AodMotionMailTask do
+      type { AodMotionMailTask.name }
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+      assigned_to { MailTeam.singleton }
+      assigned_by { nil }
+    end
+
+    factory :congressional_interest_mail_task, class: CongressionalInterestMailTask do
+      type { CongressionalInterestMailTask.name }
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+      assigned_to { MailTeam.singleton }
       assigned_by { nil }
     end
   end

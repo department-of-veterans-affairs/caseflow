@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe Api::V2::HearingsController, type: :controller do
+RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
   let(:api_key) { ApiKey.create!(consumer_name: "API Consumer").key_string }
 
   before(:each) do
@@ -75,6 +76,10 @@ RSpec.describe Api::V2::HearingsController, type: :controller do
             scheduled_times = response_body["hearings"].map { |hearing| hearing["scheduled_for"] }
 
             expect(scheduled_times).to match_array(expected_times)
+
+            expected_participant_ids = hearings.map { |hearing| hearing.appeal.veteran.participant_id }
+            response_participant_ids = response_body["hearings"].map { |hearing| hearing["participant_id"] }
+            expect(response_participant_ids).to match_array(expected_participant_ids)
           end
         end
 

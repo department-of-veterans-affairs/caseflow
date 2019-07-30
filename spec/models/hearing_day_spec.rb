@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe HearingDay do
+describe HearingDay, :all_dbs do
   context "#create" do
     let(:hearing) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
@@ -235,7 +236,7 @@ describe HearingDay do
       subject { HearingDayRange.new(schedule_period.start_date, schedule_period.end_date).load_days }
 
       it do
-        expect(subject.size).to eql(442)
+        expect(subject.size).to eql(434)
       end
     end
   end

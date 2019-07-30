@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Bulk task assignment" do
+RSpec.feature "Bulk task assignment", :postgres do
   let(:org) { HearingsManagement.singleton }
   let(:user) { FactoryBot.create(:user) }
 

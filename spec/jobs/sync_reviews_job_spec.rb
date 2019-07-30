@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe SyncReviewsJob do
+describe SyncReviewsJob, :postgres do
   context ".perform" do
     let!(:end_product_establishment_more_recently_synced) do
       create(:end_product_establishment, last_synced_at: 1.day.ago, established_at: 4.days.ago)

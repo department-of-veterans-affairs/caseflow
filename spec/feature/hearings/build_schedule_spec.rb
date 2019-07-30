@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Build Hearing Schedule" do
+RSpec.feature "Build Hearing Schedule", :all_dbs do
   context "Build RO Hearing Schedule" do
     let!(:current_user) do
       User.authenticate!(roles: ["Build HearSched"])
@@ -18,11 +19,11 @@ RSpec.feature "Build Hearing Schedule" do
       click_on "Continue"
       expect(page).to have_content("We have assigned your video hearings", wait: 30)
       expect(SchedulePeriod.count).to eq(1)
-      expect(RoNonAvailability.count).to eq(227)
+      expect(RoNonAvailability.count).to eq(223)
       expect(CoNonAvailability.count).to eq(4)
-      expect(Allocation.count).to eq(57)
+      expect(Allocation.count).to eq(56)
       allocation_count = Allocation.all.map(&:allocated_days).inject(:+).ceil
-      expect(allocation_count).to eq(358)
+      expect(allocation_count).to eq(350)
       click_on "Confirm assignments"
       click_on "Confirm upload"
       expect(page).not_to have_content("We are uploading to VACOLS.", wait: 30)

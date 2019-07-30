@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-feature "NonComp Reviews Queue" do
+feature "NonComp Reviews Queue", :postgres do
   before do
     FeatureToggle.enable!(:decision_reviews)
   end
@@ -96,6 +97,16 @@ feature "NonComp Reviews Queue" do
       expect(page).to have_content(
         /#{veteran_b.name} 5\d+ 0 [\d\/]+ Higher-Level Review\s#{veteran_a.name} 5\d+ 0 [\d\/]+/
       )
+    end
+
+    scenario "filtering reviews" do
+      visit "decision_reviews/nco"
+      find(".unselected-filter-icon").click
+      find("label", text: "Higher-level review").click
+      expect(page).to have_content("Higher-Level Review")
+      expect(page).to_not have_content("Board Grant")
+      find(".cf-clear-filters-link").click
+      expect(page).to have_content("Board Grant")
     end
 
     context "with user enabled for intake" do

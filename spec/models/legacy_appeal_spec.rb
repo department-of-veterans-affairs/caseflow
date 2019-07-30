@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe LegacyAppeal do
+describe LegacyAppeal, :all_dbs do
   before do
     Timecop.freeze(post_ama_start_date)
   end
@@ -72,6 +73,17 @@ describe LegacyAppeal do
       allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
 
       expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
+      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+    end
+
+    scenario "when is active and soc is not eligible but ssoc is" do
+      allow(appeal).to receive(:active?).and_return(true)
+      allow(appeal).to receive(:issues).and_return(issues)
+      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
+      allow(appeal).to receive(:ssoc_dates).and_return([soc_eligible_date + 1.day])
+      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
+
+      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(true)
       expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
     end
 
