@@ -39,6 +39,7 @@ class TaskTimerJob < CaseflowJob
   def cancel(task_timer)
     task_timer.with_lock do
       return if task_timer.canceled? || task_timer.processed?
+
       task_timer.canceled!
     end
   rescue StandardError => error
