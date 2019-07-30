@@ -70,79 +70,8 @@ module Api::V3::Concerns::Validation
     false
   end
 
-  def benefit_type?(value, name_of_value: nil, exception: DEFAULT_ERROR)
-    return true if value.in? Api::V3::HigherLevelReviewPreintake::BENEFIT_TYPES
-
-    fail exception, join_present(name_of_value, "is not a benefit type (line of business): <#{value}>") if exception
-
-    false
-  end
-
-  def nullable_benefit_type?(value, name_of_value: nil, exception: DEFAULT_ERROR)
-    return true if value.nil? || benefit_type?(value, exception: nil)
-
-    fail exception, join_present(name_of_value, "is neither a benefit type (line of business) nor nil: <#{value}>") if exception
-
-    false
-  end
-
-  def nonrating_issue_category_for_benefit_type?(category, benefit_type, names_of_values: %w[category benefit_type], exception: DEFAULT_ERROR)
-    return false unless benefit_type?(benefit_type, name_of_value: names_of_values.is_a?(Array) && names_of_values[1], exception: exception)
-
-    categories = Api::V3::HigherLevelReviewPreintake::NONRATING_ISSUE_CATEGORIES[benefit_type]
-    return true if category.in? categories
-
-    names_of_values = if names_of_values.is_a?(Array) && names_of_values.length == 2
-                        "for #{names_of_values[0]} and #{names_of_values[1]},"
-                      end
-
-    if exception
-      fail exception, join_present(
-        names_of_values,
-        "either <#{category}> is not a valid category for benefit type <#{benefit_type}>,",
-        "or <#{benefit_type}> isn't a valid benefit type."
-      )
-    end
-
-    false
-  end
-
-  def nullable_nonrating_issue_category_for_benefit_type?(category, benefit_type, names_of_values: %w[category benefit_type], exception: DEFAULT_ERROR)
-    return true if category.nil? || nonrating_issue_category_for_benefit_type?(category, benefit_type, exception: nil)
-
-    names_of_values = if names_of_values.is_a?(Array) && names_of_values.length == 2
-                        "for #{names_of_values[0]} and #{names_of_values[1]},"
-                      end
-
-    name_of_category_variable = if names_of_values.is_a?(Array) && names_of_values[0].present?
-                                  names_of_values[0]
-                                else
-                                  "category specified"
-                                end
-
-    if exception
-      fail exception, join_present(
-        names_of_values,
-        "either #{name_of_category_variable} isn't nil,",
-        "or <#{category}> isn't a valid category for benefit type <#{benefit_type}>,",
-        "or <#{benefit_type}> isn't a valid benefit type."
-      )
-    end
-
-    false
-  end
-
-  def payee_code?(value, name_of_value: nil, exception: DEFAULT_ERROR)
-    return true if value.in? Api::V3::RequestIssuePreintake::PAYEE_CODES
-
-    fail exception, join_present(name_of_value, "is not a valid payee code: <#{value}>") if exception
-
-    false
-  end
-
-  def hash_keys_are_within_this_set?(hash, keys:, name_of_value: nil, exception: DEFAULT_ERROR)
+  def hash_keys_are_within_this_set?(hash, keys:, name_of_value: nil, exception: ArgumentError)
     extras = extra_keys hash, expected_keys: keys
-
     return true if extras.empty?
 
     fail exception, join_present("hash", name_of_value, "has extra keys: #{extras}") if exception
