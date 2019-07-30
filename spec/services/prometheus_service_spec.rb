@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../support/clear_cache"
+require "rails_helper"
 
 describe PrometheusService do
   context "PrometheusGaugeSummary" do

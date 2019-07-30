@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-feature "RAMP Election Intake" do
+feature "RAMP Election Intake", :all_dbs do
   include IntakeHelpers
 
   before do

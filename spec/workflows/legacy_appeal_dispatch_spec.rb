@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe LegacyAppealDispatch do
+describe LegacyAppealDispatch, :all_dbs do
   describe "#call" do
     context "invalid or missing citation number" do
       it "raises OutcodeValidationFailure" do

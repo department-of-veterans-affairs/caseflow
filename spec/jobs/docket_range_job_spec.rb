@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 require "faker"
 
-describe DocketRangeJob do
+describe DocketRangeJob, :postgres do
   describe "#perform" do
     let(:today) { Time.zone.now }
     let(:docket_coord) { DocketCoordinator.new }
