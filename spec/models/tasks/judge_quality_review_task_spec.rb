@@ -10,7 +10,9 @@ describe JudgeQualityReviewTask, :postgres do
   end
   let(:qr_user) { FactoryBot.create(:user) }
   let(:qr_task) { FactoryBot.create(:qr_task, assigned_to: qr_user, parent: judge_task) }
-  let(:params) { { assigned_to: judge, appeal: qr_task.appeal, parent_id: qr_task.id } }
+  let(:params) do
+    { assigned_to_id: judge.id, assigned_to_type: User.name, appeal: qr_task.appeal, parent_id: qr_task.id }
+  end
   let(:judge_qr_task) { JudgeQualityReviewTask.create_from_params(params, qr_user) }
 
   describe ".available_actions" do
