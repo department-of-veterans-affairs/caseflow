@@ -4,7 +4,9 @@ require "support/vacols_database_cleaner"
 require "rails_helper"
 
 RSpec.feature "Task queue", :all_dbs do
-  before { OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton) }
+  let!(:vlj_support_staffer) { create(:user) }
+
+  before { OrganizationsUser.add_user_to_organization(vlj_support_staffer, Colocated.singleton) }
 
   context "attorney user with assigned tasks" do
     let(:attorney_user) { FactoryBot.create(:user) }
@@ -504,12 +506,9 @@ RSpec.feature "Task queue", :all_dbs do
     let!(:attorney) { FactoryBot.create(:user) }
     let!(:staff) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
     let!(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
-    let!(:vlj_support_staffer) { FactoryBot.create(:user) }
     let!(:judgeteam) { JudgeTeam.create_for_judge(attorney) }
 
     before do
-      OrganizationsUser.add_user_to_organization(vlj_support_staffer, Colocated.singleton)
-      OrganizationsUser.add_user_to_organization(vlj_support_staffer, judgeteam)
       User.authenticate!(user: vlj_support_staffer)
     end
 
