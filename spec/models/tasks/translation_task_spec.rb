@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe TranslationTask do
+describe TranslationTask, :postgres do
   describe ".create_from_root_task" do
     let(:appeal) { FactoryBot.create(:appeal) }
     let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }

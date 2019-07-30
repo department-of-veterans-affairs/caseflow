@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe QueueConfig do
+describe QueueConfig, :postgres do
   describe ".new" do
     let(:arguments) { { organization: organization } }
 

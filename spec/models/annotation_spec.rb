@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-describe Annotation do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe Annotation, :postgres do
   let(:annotation) do
     Annotation.new(document_id: document.id, comment: comment)
   end

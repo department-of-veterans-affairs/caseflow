@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.describe Tasks::PlaceHoldController, type: :controller do
+RSpec.describe Tasks::PlaceHoldController, :postgres, type: :controller do
   describe "POST tasks/:id/place_hold" do
     let(:user) { FactoryBot.create(:user) }
 

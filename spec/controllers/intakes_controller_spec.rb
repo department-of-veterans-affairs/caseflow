@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.describe IntakesController do
+RSpec.describe IntakesController, :postgres do
   before do
     Fakes::Initializer.load!
     User.authenticate!(roles: ["Mail Intake"])
