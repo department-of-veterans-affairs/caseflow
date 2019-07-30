@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe TranscriptionTask do
+describe TranscriptionTask, :postgres do
   before do
     Time.zone = "Eastern Time (US & Canada)"
     OrganizationsUser.add_user_to_organization(transcription_user, TranscriptionTeam.singleton)

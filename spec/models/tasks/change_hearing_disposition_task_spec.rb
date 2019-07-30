@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe ChangeHearingDispositionTask do
+describe ChangeHearingDispositionTask, :postgres do
   let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
   let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
   let(:distribution_task) { FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task) }

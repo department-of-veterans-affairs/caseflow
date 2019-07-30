@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Task queue" do
+RSpec.feature "Task queue", :all_dbs do
   before { OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton) }
 
   context "attorney user with assigned tasks" do

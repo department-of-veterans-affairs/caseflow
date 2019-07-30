@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe Hearing do
+describe Hearing, :postgres do
   context "create" do
     let!(:hearing_day) { create(:hearing_day) }
 

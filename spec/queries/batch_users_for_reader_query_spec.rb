@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe BatchUsersForReaderQuery do
+describe BatchUsersForReaderQuery, :postgres do
   describe "#process" do
     let!(:active_user1) do
       create(:user, last_login_at: 3.days.ago, efolder_documents_fetched_at: 25.hours.ago)

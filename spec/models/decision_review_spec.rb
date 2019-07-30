@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe DecisionReview do
+describe DecisionReview, :postgres do
   before do
     Time.zone = "UTC"
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.describe AdvanceOnDocketMotionsController, type: :controller do
+RSpec.describe AdvanceOnDocketMotionsController, :postgres, type: :controller do
   describe "POST aod_team" do
     context "request to create as aod" do
       let(:aod) { AodTeam.singleton }
