@@ -37,16 +37,15 @@ class DecisionDateTimeLine extends React.PureComponent {
       return <span>{COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING}</span>;
     };
 
-    const showWithdrawnIconStyle = () => {
-      return appeal.withdrawn ?
-        <span className="timelineLeftPaddingStyle">
-          <CancelIcon /></span> : <span className="greyDotTimelineStyling"><GrayDot /></span>;
-    };
+    const showStylingIcon = () => {
+      if (appeal.decisionDate) {
+        return <span className="timelineLeftPaddingStyle"><GreenCheckmark /></span>;
+      }
+      if (appeal.withdrawn) {
+        return <span className="timelineLeftPaddingStyle"><CancelIcon /></span>;
+      }
 
-    const showDecisionDateIcon = () => {
-      return appeal.decisionDate ?
-        <span className="timelineLeftPaddingStyle">
-          <GreenCheckmark /></span> : <span className="greyDotTimelineStyling"><GrayDot /></span>;
+      return <span className="greyDotTimelineStyling"><GrayDot /></span>;
     };
 
     const showTaskListStyling = () => {
@@ -64,7 +63,7 @@ class DecisionDateTimeLine extends React.PureComponent {
           </CaseDetailsDescriptionList>
         </td>
         <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer">
-          {showDecisionDateIcon() || showWithdrawnIconStyle()}
+          {showStylingIcon()}
           {showTaskListStyling()}
         </td>
         <td className="taskContainerStyling taskInformationTimelineContainerStyling">
