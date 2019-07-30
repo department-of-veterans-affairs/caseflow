@@ -229,6 +229,17 @@ describe ColocatedTask, :all_dbs do
         end
       end
     end
+
+    context "when user is not a judge or an attorney" do
+      let(:params_list) { [{ assigned_by: attorney, action: :ihp, appeal: appeal_1 }] }
+
+      before { allow_any_instance_of(User).to receive(:attorney_in_vacols?).and_return(false) }
+
+      it "throws an error" do
+        expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError, /Current user cannot access this task/)
+        expect(ColocatedTask.all.count).to eq 0
+      end
+    end
   end
 
   context ".update" do
