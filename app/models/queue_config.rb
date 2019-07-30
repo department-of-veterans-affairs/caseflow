@@ -47,7 +47,6 @@ class QueueConfig
     endpoint = "#{organization.path}/task_pages?#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{tab.name}"
 
     tab.to_hash.merge(
-      label: tab.label,
       tasks: tasks,
       task_page_count: task_pager.task_page_count,
       total_task_count: task_pager.total_task_count,
