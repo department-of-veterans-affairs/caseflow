@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe TaskActionRepository do
+describe TaskActionRepository, :all_dbs do
   describe "#assign_to_user_data" do
     let(:organization) { create(:organization, name: "Organization") }
     let(:users) { create_list(:user, 3) }

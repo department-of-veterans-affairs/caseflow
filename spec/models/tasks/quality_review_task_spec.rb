@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe QualityReviewTask do
+describe QualityReviewTask, :all_dbs do
   let(:root_task) { FactoryBot.create(:root_task) }
   let(:qr_task) { QualityReviewTask.create_from_root_task(root_task) }
 

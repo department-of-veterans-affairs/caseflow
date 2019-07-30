@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe ReassignOldTasksJob do
+describe ReassignOldTasksJob, :postgres do
   let!(:appeal1) { LegacyAppeal.create(vacols_id: "1") }
   let!(:appeal2) { LegacyAppeal.create(vacols_id: "2") }
   let!(:user1) { User.create(station_id: "123", css_id: "abc") }

@@ -182,10 +182,14 @@ export default class AssignHearingsTabs extends React.Component {
 
     const { city, state, distance } = location;
 
-    return <span>
-      <div>{`${city}, ${state} ${getFacilityType(location)}`}</div>
-      <div>{`Distance: ${distance} miles away`}</div>
-    </span>;
+    return (
+      <span>
+        <div>{`${city}, ${state} ${getFacilityType(location)}`}</div>
+        {!_.isNil(distance) &&
+          <div>{`Distance: ${distance} miles away`}</div>
+        }
+      </span>
+    );
   }
 
   filterAppeals = (appeals, tab) => {

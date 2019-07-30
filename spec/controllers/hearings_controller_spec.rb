@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe HearingsController, type: :controller do
+RSpec.describe HearingsController, :all_dbs, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
   let!(:legacy_hearing) { create(:legacy_hearing) }

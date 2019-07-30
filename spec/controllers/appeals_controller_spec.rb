@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe AppealsController, type: :controller do
+RSpec.describe AppealsController, :all_dbs, type: :controller do
   include TaskHelpers
 
   describe "GET appeals" do
@@ -480,6 +481,46 @@ RSpec.describe AppealsController, type: :controller do
       assert_response :success
       expect(appeal_json["available_hearing_locations"][0]["city"]).to eq "Holdrege"
       expect(appeal_json["hearings"][0]["type"]).to eq "Video"
+    end
+  end
+
+  describe "GET veteran/:appeal_id" do
+    let(:veteran_first_name) { "Test" }
+    let(:veteran_last_name) { "User" }
+    let(:correspondent) { create(:correspondent, snamef: veteran_first_name, snamel: veteran_last_name) }
+    let(:appeal) do
+      create(
+        :legacy_appeal,
+        vacols_case: create(
+          :case,
+          bfcorlid: "0000000000S",
+          correspondent: correspondent
+        )
+      )
+    end
+    let!(:veteran) do
+      create(
+        :veteran,
+        first_name: veteran_first_name,
+        last_name: veteran_last_name,
+        file_number: appeal.veteran_file_number,
+        email_address: "test@test.com"
+      )
+    end
+
+    before do
+      User.authenticate!(roles: ["System Admin"])
+    end
+
+    context "when current user is a System Admin" do
+      subject do
+        get :veteran, params: { appeal_id: appeal.vacols_id }, as: :json
+        response
+      end
+
+      it { expect(subject.status).to eq 200 }
+      it { expect(JSON.parse(subject.body)["veteran"]["email_address"]).to eq "test@test.com" }
+      it { expect(JSON.parse(subject.body)["veteran"]["full_name"]).to eq "Test User" }
     end
   end
 end

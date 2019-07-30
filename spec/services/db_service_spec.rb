@@ -19,6 +19,10 @@ describe DBService do
         FeatureToggle.enable!(:release_db_connections)
       end
 
+      after do
+        FeatureToggle.disable!(:release_db_connections)
+      end
+
       context "when connections have been grabbed" do
         before do
           # Force grabbing connections

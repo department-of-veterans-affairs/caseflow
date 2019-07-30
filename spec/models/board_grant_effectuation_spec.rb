@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe BoardGrantEffectuation do
+describe BoardGrantEffectuation, :postgres do
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
   end

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe TaskTimerJob do
+describe TaskTimerJob, :postgres do
   class TimedTask < GenericTask
     include TimeableTask
 

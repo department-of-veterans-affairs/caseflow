@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.describe Tasks::EndHoldController, type: :controller do
+RSpec.describe Tasks::EndHoldController, :postgres, type: :controller do
   describe "POST tasks/:id/end_hold" do
     let(:user) { FactoryBot.create(:user) }
     let!(:parent) { FactoryBot.create(:generic_task) }
