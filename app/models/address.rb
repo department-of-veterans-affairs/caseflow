@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Address
-  attr_reader :country, :city, :zip_code, :address_line_1, :address_line_2, :address_line_3, :state
+  attr_reader :country, :city, :zip, :address_line_1, :address_line_2, :address_line_3, :state
 
   # rubocop:disable Metrics/ParameterLists
   def initialize(
