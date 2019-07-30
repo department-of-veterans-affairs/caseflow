@@ -497,7 +497,7 @@ ActiveRecord::Schema.define(version: 20190730193421) do
     t.text "notes"
     t.string "regional_office"
     t.string "request_type", null: false
-    t.string "room"
+    t.string "room", comment: "The room where the hearing will take place"
     t.date "scheduled_for", null: false
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", null: false, comment: "The ID of the user who most recently updated the Hearing Day"
