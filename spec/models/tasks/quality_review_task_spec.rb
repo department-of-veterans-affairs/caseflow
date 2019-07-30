@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe QualityReviewTask do
   let(:root_task) { FactoryBot.create(:root_task) }
   let(:qr_task) { QualityReviewTask.create_from_root_task(root_task) }

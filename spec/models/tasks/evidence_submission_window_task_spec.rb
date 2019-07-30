@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe EvidenceSubmissionWindowTask do
   let(:participant_id_with_pva) { "000000" }
   let(:participant_id_with_no_vso) { "11111" }
@@ -92,9 +94,9 @@ describe EvidenceSubmissionWindowTask do
       let!(:parent) do
         FactoryBot.create(
           :assign_hearing_disposition_task,
+          :in_progress,
           parent: hearing_task,
-          appeal: appeal,
-          status: Constants.TASK_STATUSES.in_progress
+          appeal: appeal
         )
       end
       let!(:task) do

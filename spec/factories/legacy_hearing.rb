@@ -32,17 +32,27 @@ FactoryBot.define do
     end
 
     appeal do
-      create(:legacy_appeal, closest_regional_office: regional_office, vacols_case:
+      create(:legacy_appeal, :with_veteran, closest_regional_office: regional_office, vacols_case:
         create(:case_with_form_9, case_issues:
         [create(:case_issue), create(:case_issue)], bfregoff: regional_office, case_hearings: [case_hearing]))
     end
 
     vacols_id { case_hearing.hearing_pkseq }
+    created_by { create(:user) }
+    updated_by { create(:user) }
 
     trait :with_tasks do
       after(:create) do |hearing, _evaluator|
-        create(:hearing_task_association, hearing: hearing, hearing_task: create(:hearing_task, appeal: hearing.appeal))
-        create(:assign_hearing_disposition_task, parent: hearing.hearing_task_association.hearing_task, appeal: hearing.appeal)
+        create(
+          :hearing_task_association,
+          hearing: hearing,
+          hearing_task: create(:hearing_task, appeal: hearing.appeal)
+        )
+        create(
+          :assign_hearing_disposition_task,
+          parent: hearing.hearing_task_association.hearing_task,
+          appeal: hearing.appeal
+        )
       end
     end
   end

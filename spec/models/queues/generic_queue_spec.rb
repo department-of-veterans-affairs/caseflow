@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe GenericQueue do
   describe "#tasks" do
     let(:atty) { FactoryBot.create(:user) }
@@ -11,7 +13,6 @@ describe GenericQueue do
         :on_hold,
         assigned_by: atty,
         assigned_to: user,
-        placed_on_hold_at: 15.days.ago,
         on_hold_duration: 3
       )
     end
@@ -21,6 +22,7 @@ describe GenericQueue do
 
     context "when some on hold tasks have expired" do
       it "should set the status of the expired task to in_progress" do
+        on_hold_task.update(placed_on_hold_at: 15.days.ago)
         tasks = GenericQueue.new(user: user).tasks
         expect(tasks.size).to eq(task_count + 1)
 

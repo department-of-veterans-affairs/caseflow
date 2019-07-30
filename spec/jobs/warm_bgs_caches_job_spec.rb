@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-describe WarmBgsParticipantCachesJob do
+require "rails_helper"
+
+describe WarmBgsCachesJob do
   context "default" do
     # cache keys are using default POA so no specific ids.
     let(:poa_cache_key) { "bgs-participant-poa-" }
@@ -8,7 +10,7 @@ describe WarmBgsParticipantCachesJob do
     let(:ro_id) { "RO04" }
     let(:vacols_case) { create(:case) }
     let(:appeal) do
-      create(:legacy_appeal, vacols_case: vacols_case)
+      create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
     end
     let(:hearing_day) do
       create(:hearing_day, request_type: "V", regional_office: ro_id, scheduled_for: Time.zone.today)
@@ -30,16 +32,28 @@ describe WarmBgsParticipantCachesJob do
       allow(bgs_address_service).to receive(:fetch_bgs_record).and_call_original
       allow(BgsPowerOfAttorney).to receive(:new).and_return(bgs_poa)
       allow(bgs_poa).to receive(:fetch_bgs_record).and_call_original
+
+      appeal.veteran.update!(ssn: nil)
+
+      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
     end
 
     it "fetches all hearings and warms the Rails cache" do
+      # validate data before we run job
+      expect(appeal.reload.veteran[:ssn]).to be_nil
       expect(Rails.cache.exist?(poa_cache_key)).to eq(false)
       expect(Rails.cache.exist?(address_cache_key)).to eq(false)
+
+      # run job w/o error
       expect { described_class.perform_now }.to_not raise_error
+
+      # validate data after job
       expect(bgs_poa).to have_received(:fetch_bgs_record).once
       expect(bgs_address_service).to have_received(:fetch_bgs_record).once
       expect(Rails.cache.exist?(poa_cache_key)).to eq(true)
       expect(Rails.cache.exist?(address_cache_key)).to eq(true)
+      expect(appeal.veteran.reload[:ssn]).to_not be_nil
+      expect(@slack_msg).to eq("Updated cached attributes for 1 Veteran records")
     end
   end
 end

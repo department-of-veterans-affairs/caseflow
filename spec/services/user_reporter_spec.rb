@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe UserReporter do
   let!(:user_UC) { create(:user, css_id: "FOOBAR") }
 

@@ -28,6 +28,12 @@ Rails.application.routes.draw do
     end
     namespace :v2 do
       resources :appeals, only: :index
+      resources :hearings, only: :show, param: :hearing_day
+    end
+    namespace :v3 do
+      namespace :decision_review do
+        resources :higher_level_reviews, only: :create
+      end
     end
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do
@@ -122,7 +128,7 @@ Rails.application.routes.draw do
   resources :beaam_appeals, only: [:index]
 
   resources :regional_offices, only: [:index]
-  get '/regional_offices/:regional_office/open_hearing_dates', to: "regional_offices#open_hearing_dates"
+  get '/regional_offices/:regional_office/hearing_dates', to: "regional_offices#hearing_dates"
 
   namespace :hearings do
     resources :worksheets, only: [:update, :show], param: :id
@@ -136,12 +142,12 @@ Rails.application.routes.draw do
   get 'hearings/schedule', to: "hearings/hearing_day#index"
   get 'hearings/:hearing_id/details', to: "hearings_application#hearing_details_index"
   get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
-  get 'hearings/schedule/docket/:id/print', to: "hearings/hearing_day#index_print"
+  get 'hearings/schedule/docket/:id/print', to: "hearings/hearing_day_print#index"
   get 'hearings/schedule/build', to: "hearings_application#build_schedule_index"
   get 'hearings/schedule/build/upload', to: "hearings_application#build_schedule_index"
   get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearings_application#build_schedule_index"
   get 'hearings/schedule/assign', to: "hearings_application#index"
-  get 'hearings/worksheet/print', to: "hearings/worksheets#show_print"
+  get 'hearings/worksheet/print', to: "hearings/worksheets_print#index"
   get 'hearings/:id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
   get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
@@ -241,7 +247,9 @@ Rails.application.routes.draw do
     resources :tasks, only: [:index], controller: 'organizations/tasks'
     resources :task_pages, only: [:index], controller: 'organizations/task_pages'
     resources :users, only: [:index, :create, :update, :destroy], controller: 'organizations/users'
-    resources :members, only: [:index], controller: 'organizations/members'
+    # Maintain /organizations/members for backwards compatability for a few days.
+    resources :members, only: [:index], controller: 'organizations/task_summary'
+    resources :task_summary, only: [:index], controller: 'organizations/task_summary'
   end
   get '/organizations/:url/modal(*rest)', to: 'organizations#show'
 

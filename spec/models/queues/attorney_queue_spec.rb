@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe AttorneyQueue do
   context "#tasks" do
     let(:user) { create(:user) }
@@ -32,7 +34,7 @@ describe AttorneyQueue do
         end
       end
       let!(:action5) do
-        create(:colocated_task, assigned_by: user, status: "in_progress", assigned_to: Colocated.singleton)
+        create(:colocated_task, :in_progress, assigned_by: user, assigned_to: Colocated.singleton)
       end
 
       it "should return the list" do

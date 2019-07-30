@@ -58,6 +58,14 @@ class SeedDB
     OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
     bva_intake_admin = User.create(css_id: "BVAGBLUE", station_id: 101, full_name: "BVA Intake admin")
     OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
+    special_case_movement_user = User.create(css_id: "BVAGGREEN",
+                                             station_id: 101,
+                                             full_name: "Rosalie SpecialCaseMovement Dunkle")
+    OrganizationsUser.add_user_to_organization(special_case_movement_user, SpecialCaseMovementTeam.singleton)
+    special_case_movement_admin = User.create(css_id: "BVAGAQUA",
+                                              station_id: 101,
+                                              full_name: "Bryan SpecialCaseMovementAdmin Beekman")
+    OrganizationsUser.make_user_admin(special_case_movement_admin, SpecialCaseMovementTeam.singleton)
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
@@ -152,7 +160,9 @@ class SeedDB
         parent: parent_hearing_task,
         appeal: appeal
       )
-      disposition_task = FactoryBot.create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
+      disposition_task = FactoryBot.create(
+        :assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal
+      )
       FactoryBot.create(
         [:no_show_hearing_task, :evidence_submission_window_task].sample,
         parent: disposition_task,
@@ -171,7 +181,13 @@ class SeedDB
     parent_hearing_task = FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal)
     FactoryBot.create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
 
-    hearing = FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day)
+    hearing = FactoryBot.create(
+      :hearing,
+      appeal: appeal,
+      hearing_day: hearing_day,
+      created_by: hearings_member,
+      updated_by: hearings_member
+    )
     FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
     FactoryBot.create(:change_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
   end
@@ -443,10 +459,6 @@ class SeedDB
     )
   end
 
-  def create_hearings
-    Generators::Hearing.create
-  end
-
   def create_ama_hearing(day)
     vet = Generators::Veteran.build(
       file_number: Faker::Number.number(9).to_s,
@@ -461,6 +473,7 @@ class SeedDB
       docket_type: "hearing"
     )
 
+    # Legacy Hearings can be created here due to hearing_day_full? check
     Hearing.create(
       hearing_day: day,
       appeal: app,
@@ -490,9 +503,13 @@ class SeedDB
   end
 
   def create_hearing_days
-    %w[C RO17 RO45].each do |ro_key|
-      user = User.find_by(css_id: "BVATWARNER")
+    user = User.find_by(css_id: "BVATWARNER")
 
+    # Set the current user var here, which is used to populate the
+    # created by field.
+    RequestStore[:current_user] = user
+
+    %w[C RO17 RO45].each do |ro_key|
       (1..5).each do |index|
         day = HearingDay.create!(
           regional_office: (ro_key == "C") ? nil : ro_key,
@@ -515,6 +532,10 @@ class SeedDB
         end
       end
     end
+
+    # The current user var should be set to nil at the start of this
+    # function. Restore it before executing the next seed function.
+    RequestStore[:current_user] = nil
   end
 
   def create_legacy_case_with_open_schedule_hearing_task(ro_key)
@@ -625,7 +646,7 @@ class SeedDB
     # Newer style, tasks created through the Factory trait
     [
       { number_of_claimants: nil, veteran_file_number: "963360019", docket_type: dr, request_issue_count: 2 },
-      { number_of_claimants: 1, veteran_file_number: "604969679", docket_type: dr, request_issue_count: 1 },
+      { number_of_claimants: 1, veteran_file_number: "604969679", docket_type: dr, request_issue_count: 1 }
     ].each do |params|
       FactoryBot.create(
         :appeal,
@@ -1006,7 +1027,7 @@ class SeedDB
     judge = User.find_by(css_id: "BVAAABSHIRE")
 
     # At Judge Assignment
-    #evidence submission docket
+    # evidence submission docket
     create_task_at_judge_assignment(@ama_appeals[0], judge, 35.days.ago)
     create_task_at_judge_assignment(@ama_appeals[1], judge)
 
@@ -1040,6 +1061,13 @@ class SeedDB
       :in_progress,
       assigned_to: User.find_by(css_id: "BVAEBECKER"),
       appeal: FactoryBot.create(:appeal)
+    )
+
+    FactoryBot.create_list(
+      :appeal,
+      8,
+      :with_post_intake_tasks,
+      docket_type: Constants.AMA_DOCKETS.direct_review
     )
   end
 
@@ -1227,7 +1255,6 @@ class SeedDB
     create_legacy_appeals(50)
     create_dispatch_tasks(50)
     create_ramp_elections(9)
-    create_hearings
     create_api_key
   end
 end

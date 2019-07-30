@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe JudgeTask do
   let(:judge) { FactoryBot.create(:user) }
   let(:judge2) { FactoryBot.create(:user) }
@@ -164,9 +166,9 @@ describe JudgeTask do
     let!(:child) do
       FactoryBot.create(
         :ama_attorney_task,
+        :completed,
         assigned_to: attorney,
         assigned_by: judge,
-        status: Constants.TASK_STATUSES.completed,
         parent: parent
       )
     end

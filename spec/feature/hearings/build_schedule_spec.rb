@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 RSpec.feature "Build Hearing Schedule" do
   context "Build RO Hearing Schedule" do
     let!(:current_user) do
@@ -16,11 +18,11 @@ RSpec.feature "Build Hearing Schedule" do
       click_on "Continue"
       expect(page).to have_content("We have assigned your video hearings", wait: 30)
       expect(SchedulePeriod.count).to eq(1)
-      expect(RoNonAvailability.count).to eq(227)
+      expect(RoNonAvailability.count).to eq(223)
       expect(CoNonAvailability.count).to eq(4)
-      expect(Allocation.count).to eq(57)
+      expect(Allocation.count).to eq(56)
       allocation_count = Allocation.all.map(&:allocated_days).inject(:+).ceil
-      expect(allocation_count).to eq(358)
+      expect(allocation_count).to eq(350)
       click_on "Confirm assignments"
       click_on "Confirm upload"
       expect(page).not_to have_content("We are uploading to VACOLS.", wait: 30)
@@ -63,7 +65,7 @@ RSpec.feature "Build Hearing Schedule" do
       click_on "Confirm upload"
       expect(page).not_to have_content("We are uploading to VACOLS.", wait: 15)
       expect(page).to have_content("You have successfully assigned judges to hearings", wait: 30)
-      hearing_days = HearingDay.load_days(Date.new(2018, 4, 1), Date.new(2018, 4, 30))
+      hearing_days = HearingDayRange.new(Date.new(2018, 4, 1), Date.new(2018, 4, 30)).load_days
       vlj_ids_count = hearing_days.pluck(:judge_id).compact.count
       expect(vlj_ids_count).to eq(2)
     end

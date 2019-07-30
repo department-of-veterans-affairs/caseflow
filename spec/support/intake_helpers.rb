@@ -271,6 +271,13 @@ module IntakeHelpers
     find("#issue-action-#{issue_num}_withdraw").click
   end
 
+  def click_correct_intake_issue_dropdown(text)
+    issue_el = find_intake_issue_by_text(text)
+    issue_num = issue_el[:"data-key"].sub(/^issue-/, "")
+    find("#issue-action-#{issue_num}").click
+    find("#issue-action-#{issue_num}_correct").click
+  end
+
   def click_remove_intake_issue_by_text(text)
     issue_el = find_intake_issue_by_text(text)
     issue_el.find(".remove-issue").click
@@ -282,6 +289,18 @@ module IntakeHelpers
 
   def click_edit_contention_issue
     safe_click ".edit-contention-issue"
+  end
+
+  def edit_contention_text(old_text, new_text)
+    issue_to_edit = find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue-container"]')
+      .select { |issue| issue.text.match?(/#{old_text}/) }.find(".issue-edit-text").first
+
+    within issue_to_edit do
+      click_edit_contention_issue
+    end
+
+    fill_in(with: new_text)
+    click_button("Submit")
   end
 
   def click_number_of_issues_changed_confirmation
@@ -700,7 +719,7 @@ module IntakeHelpers
     request_issue_update = RequestIssuesUpdate.find_by(review: decision_review)
 
     # existing issues should not be added or removed
-    expect(request_issue_update.created_issues.map(&:id)).to_not include(non_modified_ids)
+    expect(request_issue_update.added_issues.map(&:id)).to_not include(non_modified_ids)
     expect(request_issue_update.removed_issues.map(&:id)).to_not include(non_modified_ids)
   end
   # rubocop:enable Metrics/AbcSize

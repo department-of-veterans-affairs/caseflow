@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe RootTask do
   describe ".available_actions_unwrapper" do
     let(:user) { FactoryBot.create(:user) }
@@ -77,18 +79,18 @@ describe RootTask do
         subject { RootTask.create!(appeal: appeal) }
 
         before do
-          FactoryBot.create(:root_task, appeal: appeal, status: root_task_status)
+          FactoryBot.create(:root_task, trait, appeal: appeal)
         end
 
         context "when existing RootTask is active" do
-          let(:root_task_status) { Constants.TASK_STATUSES.on_hold }
+          let(:trait) { :on_hold }
           it "will raise an error" do
             expect { subject }.to raise_error(Caseflow::Error::DuplicateOrgTask)
           end
         end
 
         context "when existing RootTask is inactive" do
-          let(:root_task_status) { Constants.TASK_STATUSES.completed }
+          let(:trait) { :completed }
           it "will raise an error" do
             expect { subject }.to raise_error(Caseflow::Error::DuplicateOrgTask)
           end

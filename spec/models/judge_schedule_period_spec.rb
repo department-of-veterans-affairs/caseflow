@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe JudgeSchedulePeriod do
   let(:judge_schedule_period) { create(:judge_schedule_period) }
   let(:single_nonavail_date_judge_schedule_period) { create(:single_nonavail_date_judge_schedule_period) }

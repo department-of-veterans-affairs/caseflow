@@ -4,6 +4,8 @@ class Hearing < ApplicationRecord
   belongs_to :hearing_day
   belongs_to :appeal
   belongs_to :judge, class_name: "User"
+  belongs_to :created_by, class_name: "User"
+  belongs_to :updated_by, class_name: "User"
   has_one :transcription
   has_many :hearing_views, as: :hearing
   has_one :hearing_location, as: :hearing
@@ -45,7 +47,11 @@ class Hearing < ApplicationRecord
   delegate :hearing_day_full?, to: :hearing_day
 
   after_create :update_fields_from_hearing_day
-  before_create :check_available_slots
+  before_create :check_available_slots, unless: :override_full_hearing_day_validation
+  before_create :assign_created_by_user
+  before_update :assign_updated_by_user
+
+  attr_accessor :override_full_hearing_day_validation
 
   HEARING_TYPES = {
     V: "Video",
@@ -189,5 +195,15 @@ class Hearing < ApplicationRecord
 
   def to_hash_for_worksheet(_current_user_id)
     ::HearingSerializer.worksheet(self).serializable_hash[:data][:attributes]
+  end
+
+  private
+
+  def assign_created_by_user
+    self.created_by ||= RequestStore[:current_user]
+  end
+
+  def assign_updated_by_user
+    self.updated_by ||= RequestStore[:current_user]
   end
 end

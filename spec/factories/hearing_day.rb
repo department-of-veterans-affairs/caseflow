@@ -5,7 +5,7 @@ FactoryBot.define do
     scheduled_for { Date.tomorrow }
     request_type { HearingDay::REQUEST_TYPES[:central] }
     room { "2" }
-    created_by { create(:user).css_id }
-    updated_by { create(:user).css_id }
+    created_by { create(:user) }
+    updated_by { create(:user) }
   end
 end

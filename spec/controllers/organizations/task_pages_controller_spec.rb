@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe Organizations::TaskPagesController, type: :controller do
   let(:organization) { FactoryBot.create(:organization) }
   let(:url) { organization.url }

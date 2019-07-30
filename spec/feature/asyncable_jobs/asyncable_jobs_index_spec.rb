@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 feature "Asyncable Jobs index" do
   before do
     Timecop.freeze(Time.zone.now)
@@ -45,6 +47,14 @@ feature "Asyncable Jobs index" do
   let!(:request_issues) do
     50.times do
       create(:request_issue, decision_sync_last_submitted_at: 1.day.ago) # fewer days to sort others first
+    end
+  end
+
+  describe "individual job page" do
+    it "shows job details" do
+      visit "/asyncable_jobs/HigherLevelReview/jobs/#{hlr.id}"
+
+      expect(page).to have_content(hlr.establishment_error)
     end
   end
 

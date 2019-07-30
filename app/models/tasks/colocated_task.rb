@@ -70,21 +70,22 @@ class ColocatedTask < Task
     action || self.class.label
   end
 
+  def timeline_title
+    "#{label} completed"
+  end
+
   def available_actions(user)
-    if assigned_to == user
+    if assigned_to == user ||
+       (task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.user_is_admin?(user))
       base_actions = [
         Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
         Constants.TASK_ACTIONS.CANCEL_TASK.to_h
       ]
 
-      base_actions.push(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h) if Colocated.singleton.user_is_admin?(user)
+      base_actions.unshift(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h) if Colocated.singleton.user_is_admin?(user)
 
       return available_actions_with_conditions(base_actions)
-    end
-
-    if task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.admins.include?(user)
-      return [Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h]
     end
 
     []
@@ -247,6 +248,7 @@ require_dependency "new_rep_arguments_colocated_task"
 require_dependency "pending_scanning_vbms_colocated_task"
 require_dependency "address_verification_colocated_task"
 require_dependency "schedule_hearing_colocated_task"
+require_dependency "stayed_appeal_colocated_task"
 require_dependency "missing_records_colocated_task"
 require_dependency "translation_colocated_task"
 require_dependency "other_colocated_task"

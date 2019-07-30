@@ -3,16 +3,17 @@
 class ClaimReviewController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
 
-  def edit
-    # force sync on initial edit call so that we have latest EP status.
-    # This helps prevent us editing something that recently closed upstream.
-    claim_review.sync_end_product_establishments!
+  EDIT_ERRORS = {
+    "RequestIssue::MissingDecisionDate" => COPY::CLAIM_REVIEW_EDIT_ERROR_MISSING_DECISION_DATE,
+    "StandardError" => COPY::CLAIM_REVIEW_EDIT_ERROR_DEFAULT
+  }.freeze
 
-    # we call the serialization method here before the view does so we can rescue any data errors
-    claim_review.ui_hash
-  rescue RequestIssue::MissingDecisionDate
-    flash[:error] = "VBMS or SHARE: One or more ratings may be locked on this Claim. Please try again in 24 hours."
-    render "errors/500", layout: "application", status: :unprocessable_entity
+  def edit
+    claim_review.validate_prior_to_edit
+  rescue ActiveRecord::RecordNotFound => error
+    raise error # re-throw so base controller handles it.
+  rescue StandardError => error
+    render_error(error)
   end
 
   def update
@@ -55,19 +56,28 @@ class ClaimReviewController < ApplicationController
     verify_authorized_roles("Mail Intake", "Admin Intake")
   end
 
+  def render_error(error)
+    Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
+    Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+    error_class = error.class.to_s
+    flash[:error] = EDIT_ERRORS[error_class] || EDIT_ERRORS["StandardError"]
+    render "errors/500", layout: "application", status: :unprocessable_entity
+  end
+
   def render_success
     if claim_review.processed_in_caseflow?
       set_flash_success_message
 
       render json: { redirect_to: claim_review.business_line.tasks_url,
-                     issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
-                     issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
+                     beforeIssues: request_issues_update.before_issues.map(&:ui_hash),
+                     afterIssues: request_issues_update.after_issues.map(&:ui_hash),
                      withdrawnIssues: request_issues_update.withdrawn_issues.map(&:ui_hash) }
     else
       render json: {
         redirect_to: nil,
-        issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
-        issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
+        beforeIssues: request_issues_update.before_issues.map(&:ui_hash),
+        afterIssues: request_issues_update.after_issues.map(&:ui_hash),
+        updatedIssues: request_issues_update.all_updated_issues.map(&:ui_hash),
         withdrawnIssues: nil
       }
     end
@@ -82,7 +92,7 @@ class ClaimReviewController < ApplicationController
   end
 
   def added_issues
-    new_issues = request_issues_update.after_issues - request_issues_update.before_issues
+    new_issues = request_issues_update.added_issues
     return if new_issues.empty?
 
     "added #{new_issues.count} #{'issue'.pluralize(new_issues.count)}"

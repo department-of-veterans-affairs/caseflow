@@ -146,6 +146,8 @@ class EndProductEstablishment < ApplicationRecord
     cached ? cached_result : fetched_result
   end
 
+  alias end_product result
+
   delegate :contentions, to: :cached_result
 
   def limited_poa_on_established_claim
@@ -158,6 +160,10 @@ class EndProductEstablishment < ApplicationRecord
 
   def rating?
     RequestIssue::END_PRODUCT_CODES.find_all_values_for(:rating).include?(code)
+  end
+
+  def nonrating?
+    RequestIssue::END_PRODUCT_CODES.find_all_values_for(:nonrating).include?(code)
   end
 
   # Find an end product that has the traits of the end product that should be created.
@@ -196,7 +202,7 @@ class EndProductEstablishment < ApplicationRecord
         last_synced_at: Time.zone.now
       )
       sync_source!
-      close_request_issues_if_canceled!
+      handle_canceled_ep!
       close_request_issues_with_no_decision!
     end
   rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => error
@@ -366,13 +372,14 @@ class EndProductEstablishment < ApplicationRecord
       # delete end product in bgs & set sync status to canceled
       BGSService.new.cancel_end_product(veteran_file_number, code, modifier)
       update!(synced_status: CANCELED_STATUS)
-      close_request_issues_if_canceled!
+      handle_canceled_ep!
     end
   end
 
-  def close_request_issues_if_canceled!
+  def handle_canceled_ep!
     return unless status_canceled?
 
+    source.try(:canceled!)
     request_issues.all.find_each(&:close_after_end_product_canceled!)
   end
 

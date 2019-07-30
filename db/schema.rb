@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190705172439) do
+ActiveRecord::Schema.define(version: 20190724201133) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -155,6 +155,16 @@ ActiveRecord::Schema.define(version: 20190705172439) do
     t.index ["granted_decision_issue_id"], name: "index_board_grant_effectuations_on_granted_decision_issue_id"
   end
 
+  create_table "cached_appeal_attributes", id: false, force: :cascade do |t|
+    t.integer "appeal_id"
+    t.string "appeal_type"
+    t.string "docket_number"
+    t.string "docket_type"
+    t.string "vacols_id"
+    t.index ["appeal_id", "appeal_type"], name: "index_cached_appeal_attributes_on_appeal_id_and_appeal_type", unique: true
+    t.index ["vacols_id"], name: "index_cached_appeal_attributes_on_vacols_id", unique: true
+  end
+
   create_table "certification_cancellations", id: :serial, force: :cascade do |t|
     t.string "cancellation_reason"
     t.integer "certification_id"
@@ -225,6 +235,7 @@ ActiveRecord::Schema.define(version: 20190705172439) do
     t.string "participant_id", null: false, comment: "The participant ID of the claimant."
     t.string "payee_code", comment: "The payee_code for the claimant, if applicable. payee_code is required when the claim is processed in VBMS."
     t.index ["decision_review_type", "decision_review_id"], name: "index_claimants_on_decision_review_type_and_decision_review_id"
+    t.index ["participant_id"], name: "index_claimants_on_participant_id"
   end
 
   create_table "claims_folder_searches", id: :serial, force: :cascade do |t|
@@ -479,7 +490,7 @@ ActiveRecord::Schema.define(version: 20190705172439) do
   create_table "hearing_days", force: :cascade do |t|
     t.string "bva_poc"
     t.datetime "created_at", null: false
-    t.string "created_by", null: false
+    t.bigint "created_by_id", null: false, comment: "The ID of the user who created the Hearing Day"
     t.datetime "deleted_at"
     t.integer "judge_id"
     t.boolean "lock"
@@ -489,8 +500,10 @@ ActiveRecord::Schema.define(version: 20190705172439) do
     t.string "room", null: false
     t.date "scheduled_for", null: false
     t.datetime "updated_at", null: false
-    t.string "updated_by", null: false
+    t.bigint "updated_by_id", null: false, comment: "The ID of the user who most recently updated the Hearing Day"
+    t.index ["created_by_id"], name: "index_hearing_days_on_created_by_id"
     t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
+    t.index ["updated_by_id"], name: "index_hearing_days_on_updated_by_id"
   end
 
   create_table "hearing_issue_notes", force: :cascade do |t|
@@ -544,6 +557,8 @@ ActiveRecord::Schema.define(version: 20190705172439) do
   create_table "hearings", force: :cascade do |t|
     t.integer "appeal_id", null: false
     t.string "bva_poc"
+    t.datetime "created_at", comment: "Automatic timestamp when row was created."
+    t.bigint "created_by_id", comment: "The ID of the user who created the Hearing"
     t.string "disposition"
     t.boolean "evidence_window_waived"
     t.integer "hearing_day_id", null: false
@@ -557,8 +572,12 @@ ActiveRecord::Schema.define(version: 20190705172439) do
     t.text "summary"
     t.boolean "transcript_requested"
     t.date "transcript_sent_date"
+    t.datetime "updated_at", comment: "Timestamp when record was last updated."
+    t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the Hearing"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.string "witness"
+    t.index ["created_by_id"], name: "index_hearings_on_created_by_id"
+    t.index ["updated_by_id"], name: "index_hearings_on_updated_by_id"
     t.index ["uuid"], name: "index_hearings_on_uuid"
   end
 
@@ -654,12 +673,18 @@ ActiveRecord::Schema.define(version: 20190705172439) do
 
   create_table "legacy_hearings", force: :cascade do |t|
     t.integer "appeal_id"
+    t.datetime "created_at", comment: "Automatic timestamp when row was created."
+    t.bigint "created_by_id", comment: "The ID of the user who created the Legacy Hearing"
     t.string "military_service"
     t.boolean "prepped"
     t.text "summary"
+    t.datetime "updated_at", comment: "Timestamp when record was last updated."
+    t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the Legacy Hearing"
     t.integer "user_id"
     t.string "vacols_id", null: false
     t.string "witness"
+    t.index ["created_by_id"], name: "index_legacy_hearings_on_created_by_id"
+    t.index ["updated_by_id"], name: "index_legacy_hearings_on_updated_by_id"
     t.index ["user_id"], name: "index_legacy_hearings_on_user_id"
     t.index ["vacols_id"], name: "index_legacy_hearings_on_vacols_id", unique: true
   end
@@ -709,8 +734,13 @@ ActiveRecord::Schema.define(version: 20190705172439) do
   create_table "people", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date_of_birth"
+    t.string "first_name", comment: "Person first name, cached from BGS"
+    t.string "last_name", comment: "Person last name, cached from BGS"
+    t.string "middle_name", comment: "Person middle name, cached from BGS"
+    t.string "name_suffix", comment: "Person name suffix, cached from BGS"
     t.string "participant_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["participant_id"], name: "index_people_on_participant_id", unique: true
   end
 
   create_table "ramp_closed_appeals", id: :serial, force: :cascade, comment: "Keeps track of legacy appeals that are closed or partially closed in VACOLS due to being transitioned to a RAMP election.  This data can be used to rollback the RAMP Election if needed." do |t|
@@ -801,6 +831,8 @@ ActiveRecord::Schema.define(version: 20190705172439) do
     t.string "contested_rating_issue_diagnostic_code", comment: "If the contested issue is a rating issue, this is the rating issue's diagnostic code. Will be nil if this request issue contests a decision issue."
     t.string "contested_rating_issue_profile_date", comment: "If the contested issue is a rating issue, this is the rating issue's profile date. Will be nil if this request issue contests a decision issue."
     t.string "contested_rating_issue_reference_id", comment: "If the contested issue is a rating issue, this is the rating issue's reference id. Will be nil if this request issue contests a decision issue."
+    t.integer "corrected_by_request_issue_id", comment: "If this request issue has been corrected, the ID of the new correction request issue. This is needed for EP 930."
+    t.string "correction_type", comment: "EP 930 correction type. Allowed values: control, local_quality_error, national_quality_error where 'control' is a regular correction, 'local_quality_error' was found after the fact by a local quality review team, and 'national_quality_error' was similarly found by a national quality review team. This is needed for EP 930."
     t.datetime "created_at", comment: "Automatic timestamp when row was created"
     t.date "decision_date", comment: "Either the rating issue's promulgation date or the decision issue's approx decision date"
     t.bigint "decision_review_id", comment: "ID of the decision review that this request issue belongs to"
@@ -841,6 +873,8 @@ ActiveRecord::Schema.define(version: 20190705172439) do
     t.datetime "attempted_at", comment: "Timestamp for when the request issue update processing was last attempted."
     t.integer "before_request_issue_ids", null: false, comment: "An array of the active request issue IDs previously on the decision review before this editing session. Used with after_request_issue_ids to determine appropriate actions (such as which contentions need to be removed).", array: true
     t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
+    t.integer "corrected_request_issue_ids", comment: "An array of the request issue IDs that were corrected during this request issues update.", array: true
+    t.datetime "created_at", comment: "Timestamp when record was initially created"
     t.integer "edited_request_issue_ids", comment: "An array of the request issue IDs that were edited during this request issues update", array: true
     t.string "error", comment: "The error message if the last attempt at processing the request issues update was not successful."
     t.datetime "last_submitted_at", comment: "Timestamp for when the processing for the request issues update was last submitted. Used to determine how long to continue retrying the processing job. Can be reset to allow for additional retries."
@@ -848,6 +882,7 @@ ActiveRecord::Schema.define(version: 20190705172439) do
     t.bigint "review_id", null: false, comment: "The ID of the decision review edited."
     t.string "review_type", null: false, comment: "The type of the decision review edited."
     t.datetime "submitted_at", comment: "Timestamp when the request issues update was originally submitted."
+    t.datetime "updated_at", comment: "Timestamp when record was last updated."
     t.bigint "user_id", null: false, comment: "The ID of the user who edited the decision review."
     t.integer "withdrawn_request_issue_ids", comment: "An array of the request issue IDs that were withdrawn during this request issues update.", array: true
     t.index ["review_type", "review_id"], name: "index_request_issues_updates_on_review_type_and_review_id"
@@ -1081,10 +1116,16 @@ ActiveRecord::Schema.define(version: 20190705172439) do
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "document_views", "users"
   add_foreign_key "end_product_establishments", "users"
+  add_foreign_key "hearing_days", "users", column: "created_by_id"
+  add_foreign_key "hearing_days", "users", column: "updated_by_id"
   add_foreign_key "hearing_views", "users"
+  add_foreign_key "hearings", "users", column: "created_by_id"
+  add_foreign_key "hearings", "users", column: "updated_by_id"
   add_foreign_key "intakes", "users"
   add_foreign_key "legacy_appeals", "appeal_series"
   add_foreign_key "legacy_hearings", "users"
+  add_foreign_key "legacy_hearings", "users", column: "created_by_id"
+  add_foreign_key "legacy_hearings", "users", column: "updated_by_id"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "users"

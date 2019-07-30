@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe HearingRepository do
   before do
     Timecop.freeze(Time.utc(2017, 10, 4))
@@ -12,7 +14,7 @@ describe HearingRepository do
     let(:hearing_day) { create(:hearing_day, scheduled_for: Date.new(2019, 3, 2)) }
 
     before do
-      RequestStore.store[:current_user] = OpenStruct.new(vacols_uniq_id: staff_record.slogid)
+      RequestStore.store[:current_user] = create(:user, vacols_uniq_id: staff_record.slogid)
     end
 
     it "slots hearing at correct time" do
@@ -20,6 +22,43 @@ describe HearingRepository do
 
       expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day.id)
         .hearing_date.to_datetime.in_time_zone("UTC").hour).to eq(9)
+    end
+
+    context "for a full hearing day" do
+      before do
+        Timecop.return
+      end
+
+      let!(:hearings) do
+        (1...hearing_day.total_slots + 1).map do |idx|
+          create(
+            :hearing,
+            appeal: create(:appeal, receipt_date: Date.new(2019, 5, idx)),
+            hearing_day: hearing_day
+          )
+        end
+      end
+
+      it "throws a hearing day full error" do
+        expect do
+          HearingRepository.slot_new_hearing(
+            hearing_day.id,
+            scheduled_time_string: "9:30",
+            appeal: legacy_appeal
+          )
+        end.to raise_error(HearingRepository::HearingDayFull)
+      end
+
+      it "does not throw an error if the override flag is set" do
+        expect do
+          HearingRepository.slot_new_hearing(
+            hearing_day.id,
+            scheduled_time_string: "9:30",
+            appeal: legacy_appeal,
+            override_full_hearing_day_validation: true
+          )
+        end.not_to raise_error
+      end
     end
   end
 

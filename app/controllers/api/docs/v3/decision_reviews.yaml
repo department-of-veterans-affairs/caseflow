@@ -1,10 +1,14 @@
 openapi: 3.0.0
 info:
   title: Decision Reviews
-  description: API version 0 for Decision Reviews provided by the Lighthouse Project
+  description: API version 3 for Decision Reviews provided by the Lighthouse Project
   version: 3.0.0
 servers:
-  - url: /api/{version}
+  - url: https://dev-api.va.gov/services/appeals/{version}/decision_review
+    description: "VA.gov API development environment"
+    variables:
+      version:
+        default: "v3"
 paths:
   /higher_level_reviews:
     post:
@@ -28,26 +32,26 @@ paths:
                   properties:
                     type:
                       type: string
-                      enum: [higher_level_review]
+                      enum: [HigherLevelReview]
                     attributes:
                       type: object
                       required:
-                        - receipt_date
-                        - informal_conference
-                        - same_office
-                        - legacy_opt_in_approved
-                        - benefit_type
+                        - receiptDate
+                        - informalConference
+                        - sameOffice
+                        - legacyOptInApproved
+                        - benefitType
                       properties:
-                        receipt_date:
+                        receiptDate:
                           type: string
                           format: date
-                        informal_conference:
+                        informalConference:
                           type: boolean
-                        same_office:
+                        sameOffice:
                           type: boolean
-                        legacy_opt_in_approved:
+                        legacyOptInApproved:
                           type: boolean
-                        benefit_type:
+                        benefitType:
                           type: string
                           enum:
                             - compensation
@@ -78,7 +82,7 @@ paths:
                               properties:
                                 type:
                                   type: string
-                                  enum: [veteran]
+                                  enum: [Veteran]
                                 id: # veteran_file_number
                                   type: string
                         claimant: # if claimant is not included, the veteran is the claimant (and their participantID is looked up)
@@ -95,15 +99,15 @@ paths:
                               properties:
                                 type:
                                   type: string
-                                  enum: [claimant]
+                                  enum: [Claimant]
                                 id: # participantID
                                   type: string
                                 meta:
                                   type: object
                                   required:
-                                    - payee_code
+                                    - payeeCode
                                   properties:
-                                    payee_code:
+                                    payeeCode:
                                       $ref: "#/components/schemas/payee_code"
                 included:
                   type: array
@@ -115,32 +119,598 @@ paths:
                     properties:
                       type:
                         type: string
-                        enum: [request_issue]
+                        enum: [RequestIssue]
                       attributes:
                         type: object
                         required:
-                          - decision_text
-                          - decision_date
-                          # withdrawal_date (NOT required)
-                          # nonrating_issue_category (NOT required)
+                          - decisionText
+                          - decisionDate
+                          # withdrawalDate (NOT required)
+                          # nonratingIssueCategory (NOT required)
                         properties:
-                          decision_text:
+                          decisionText:
                             type: string
-                          decision_date:
-                            type: string
-                            format: date
-                          withdrawal_date:
+                          decisionDate:
                             type: string
                             format: date
-                          nonrating_issue_category:
+                          withdrawalDate:
+                            type: string
+                            format: date
+                          nonratingIssueCategory:
                             $ref: "#/components/schemas/nonrating_issue_category"
+            examples:
+              pension:
+                value: {
+                  "data": {
+                    "type": "HigherLevelReview",
+                      "attributes": {
+                        "receiptDate": "2019-07-10",
+                        "informalConference": true,
+                        "sameOffice": false,
+                        "legacyOptInApproved": true,
+                        "benefitType": "pension"
+                      },
+                      "relationships": {
+                        "veteran": {
+                          "data": {
+                            "type": "Veteran",
+                            "id": "55555555"
+                          }
+                        },
+                        "claimant": {
+                          "data": {
+                            "type": "Claimant",
+                            "id": "44444444",
+                            "meta": {
+                              "payeeCode": "10"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "included": [
+                      {
+                        "type": "NonratingIssue",
+                        "attributes": {
+                          "decisionText": "veteran status verified",
+                          "decisionDate": "2019-07-11",
+                          "withdrawalDate": null,
+                          "nonratingIssueCategory": "Eligibility | Veteran Status"
+                        }
+                      },
+                      {
+                        "type": "RatingIssue",
+                        "id": "def456"
+                      }
+                    ]
+                  }
       responses:
         '202':
-          description: Created
-        '400':
+          description: Accepted
+          headers:
+            Content-Location:
+              schema:
+                type: string
+                format: url
+              description: Link to check status of intake for HigherLevelReview
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/intake_status"
+        '4XX':
           description: Invalid Request
-        '500':
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+        '400':
+          description: |-
+            400 response
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                malformed_request:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "400",
+                        "title":  "Malformed request",
+                        "code":  "malformed_request"
+                      }
+                    ]
+                  }
+        '401':
+          description: |-
+            401 response
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                unauthenticated:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "401",
+                        "title":  "Unauthenticated",
+                        "code":  "unauthenticated"
+                      }
+                    ]
+                  }
+        '403':
+          description: |-
+            403 response
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                veteran_not_accessible:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "403",
+                        "title":  "Veteran File inaccessible",
+                        "code":  "veteran_not_accessible"
+                      }
+                    ]
+                  }
+        '404':
+          description: |-
+            404 response
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                veteran_not_found:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "404",
+                        "title":  "Veteran File not found",
+                        "code":  "veteran_not_found"
+                      }
+                    ]
+                  }
+                issue_not_found:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "404",
+                        "title":  "Issue not found",
+                        "code":  "issue_not_found"
+                      }
+                    ]
+                  }
+                claimant_not_found:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "404",
+                        "title":  "Claimant not found",
+                        "code":  "claimant_not_found"
+                      }
+                    ]
+                  }
+        '409':
+          description: |-
+            409 response
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                duplicate_intake_in_progress:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "409",
+                        "title":  "Intake in progress",
+                        "code":  "duplicate_intake_in_progress"
+                      }
+                    ]
+                  }
+        '422':
+          description: |-
+            422 response
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                payee_code_required:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Claimant payee code may not be blank",
+                        "code":  "payee_code_required"
+                      }
+                    ]
+                  }
+                claimant_required:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Claimant participant id may not be blank",
+                        "code":  "claimant_required"
+                      }
+                    ]
+                  }
+                claimant_address_required:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Claimant address required",
+                        "code":  "claimant_address_required"
+                      }
+                    ]
+                  }
+                benefit_type_requires_payee_code:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Benefit type requires payee code",
+                        "code":  "benefit_type_requires_payee_code"
+                      }
+                    ]
+                  }
+                duplicate_of_rating_issue_in_active_review:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Duplicate rating issue",
+                        "code":  "duplicate_of_rating_issue_in_active_review"
+                      }
+                    ]
+                  }
+                invalid_file_number:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Invalid Veteran File number",
+                        "code":  "invalid_file_number"
+                      }
+                    ]
+                  }
+                claimant_ineligible:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Claimant Ineligible (not on original Benefit Claim or no POA)",
+                        "code":  "claimant_ineligible"
+                      }
+                    ]
+                  }
+                untimely:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Issue is ineligible because it has a prior decision date that’s older than 1 year",
+                        "code":  "untimely"
+                      }
+                    ]
+                  }
+                before_ama:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Issue is ineligible because it has a prior decision date before February 19, 2019",
+                        "code":  "before_ama"
+                      }
+                    ]
+                  }
+                higher_level_review_to_higher_level_review:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Issue is ineligible because it was last processed as a Higher-Level Review and this can't be done twice in a row",
+                        "code":  "higher_level_review_to_higher_level_review"
+                      }
+                    ]
+                  }
+                appeal_to_higher_level_review:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Issue is ineligible because it was last processed as a Board Appeal which can't be followed by a Higher-Level Review",
+                        "code":  "appeal_to_higher_level_review"
+                      }
+                    ]
+                  }
+                legacy_issue_not_withdrawn:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Issue is ineligible because the same issue is under review as a Legacy Appeal but the claimant didn’t choose to withdraw their issue from the legacy system",
+                        "code":  "legacy_issue_not_withdrawn"
+                      }
+                    ]
+                  }
+                legacy_appeal_not_eligible:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Issue is ineligible because the same issue is under review as a Legacy Appeal and that appeal is outside the window of eligibility",
+                        "code":  "legacy_appeal_not_eligible"
+                      }
+                    ]
+                  }
+                veteran_has_multiple_phone_numbers:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Veteran has multiple phone numbers",
+                        "code":  "veteran_has_multiple_phone_numbers"
+                      }
+                    ]
+                  }
+                veteran_not_valid:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Veteran not valid",
+                        "code":  "veteran_not_valid"
+                      }
+                    ]
+                  }
+                reserved_veteran_file_number:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Reserved veteran file number",
+                        "code":  "reserved_veteran_file_number"
+                      }
+                    ]
+                  }
+                unknown_error:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title":  "Unknown error",
+                        "code":  "unknown_error"
+                      }
+                    ]
+                  }
+        '5XX':
           description: Failed
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+  /higher_level_reviews/intake_status/{uuid}:
+    get:
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          description: UUID of an Accepted Higher-Level Review
+          schema:
+            type : string
+            format: uuid
+            pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+      summary: After submitting a Higher-Level Review, you can check to see its current status
+      responses:
+        '200':
+          description: Status found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/intake_status"
+              examples:
+                submitted_status:
+                  value:
+                    data:
+                      id: 123e4567-e89b-12d3-a456-426655440000
+                      type: IntakeStatus
+                      attributes:
+                        status: submitted
+        '303':
+          description: See other, processing finished
+          headers:
+            Location:
+              schema:
+                type: string
+                format: url
+              description: Link to HigherLevelReview
+        '404':
+          description: id not found
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+        '4XX':
+          description: Invalid Request
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+        '5XX':
+          description: Failed
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+  /higher_level_reviews/{uuid}:
+    get:
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          description: UUID of a Higher-Level Review
+          schema:
+            type : string
+            format: uuid
+            pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+      summary: Details of the Higher-Level Review
+      responses:
+        '200':
+          description: JSONAPI response detailing the specific Higher-Level Review
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+                      type:
+                        type: string
+                        description: Will be "HigherLevelReview"
+                      attributes:
+                        type: object
+                        properties:
+                          benefitType:
+                            type: string
+                          veteranFileNumber:
+                            type: string
+                          status:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                              details:
+                                type: object
+                                properties:
+                                  issues:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        description:
+                                          type: string
+                                        disposition:
+                                          type: string
+                          events:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                type:
+                                  type: string
+                                date:
+                                  type: string
+                                  format: date
+                      relationships:
+                        type: object
+                        properties:
+                          issues:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                data:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      type:
+                                        type: string
+                                        description: Will be "RequestIssue"
+                                      id:
+                                        type: string
+                                        description: will match the included data
+                  included:
+                    description: Minimal details on the related issues.
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          description: Will be "RequestIssue"
+                        id:
+                          type: string
+                        attributes:
+                          type: object
+                          properties:
+                            benefitType:
+                              type: string
+                            active:
+                              type: boolean
+                            lastAction:
+                              type: string
+                            date:
+                              type: string
+                              format: date
+                            description:
+                              type: string
+                            diagnosticCode:
+                              type: string
+        '404':
+          description: ID not found
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+        '5XX':
+          description: Failed
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
 components:
   schemas:
     nonrating_issue_category:
@@ -391,3 +961,34 @@ components:
         - "88"
         - "89"
         - "99"
+    errors:
+      type: array
+      items:
+        type: object
+        properties:
+          title:
+            type: string
+          detail:
+            type: string
+    intake_status:
+      description: An accepted Decision Review still needs to be processed before the Decision Review can be accessed
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            type:
+              type: string
+              description: Will be "IntakeStatus"
+            attributes:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - processed
+                    - attempted
+                    - submitted
+                    - canceled

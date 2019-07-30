@@ -13,6 +13,7 @@ class DecisionReview < ApplicationRecord
   has_many :request_decision_issues, through: :request_issues
   has_many :decision_issues, as: :decision_review, dependent: :destroy
   has_many :tasks, as: :appeal, dependent: :destroy
+  has_many :request_issues_updates, as: :review, dependent: :destroy
   has_one :intake, as: :detail
 
   cache_attribute :cached_serialized_ratings, cache_key: :ratings_cache_key, expires_in: 1.day do
@@ -161,6 +162,10 @@ class DecisionReview < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
+  def veteran_ssn
+    veteran&.ssn
+  end
+
   def mark_rating_request_issues_to_reassociate!
     request_issues.select(&:rating?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
   end
@@ -284,7 +289,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def find_or_build_request_issue_from_intake_data(data)
-    return request_issues.active_or_ineligible.find(data[:request_issue_id]) if data[:request_issue_id]
+    return request_issues.find(data[:request_issue_id]) if data[:request_issue_id]
 
     RequestIssue.from_intake_data(data, decision_review: self)
   end

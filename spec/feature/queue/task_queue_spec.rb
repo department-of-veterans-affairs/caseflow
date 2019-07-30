@@ -241,8 +241,34 @@ RSpec.feature "Task queue" do
       end
 
       step("All cases tab") do
-        find("button", text: format(COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE, assigned_count)).click
-        expect(page).to have_content(format(COPY::ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, vso.name))
+        find("button", text: format(COPY::TRACKING_TASKS_TAB_TITLE, assigned_count)).click
+        expect(page).to have_content(format(COPY::TRACKING_TASKS_TAB_DESCRIPTION, vso.name))
+        expect(find("tbody").find_all("tr").length).to eq(tracking_task_count)
+      end
+    end
+  end
+
+  context "Field VSO team queue" do
+    let(:vso_employee) { FactoryBot.create(:user, roles: ["VSO"]) }
+    let(:vso) { FactoryBot.create(:field_vso) }
+
+    let(:tracking_task_count) { 8 }
+
+    before do
+      FactoryBot.create_list(:track_veteran_task, tracking_task_count, assigned_to: vso)
+
+      allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
+      User.authenticate!(user: vso_employee)
+      visit(vso.path)
+    end
+
+    it "displays tracking tasks in single table" do
+      step("does not show tabs since field VSOs only have 1 tab") do
+        expect(page).to_not have_content(COPY::TRACKING_TASKS_TAB_TITLE)
+      end
+
+      step("shows tab description and correct number of tasks") do
+        expect(page).to have_content(format(COPY::TRACKING_TASKS_TAB_DESCRIPTION, vso.name))
         expect(find("tbody").find_all("tr").length).to eq(tracking_task_count)
       end
     end
@@ -427,7 +453,7 @@ RSpec.feature "Task queue" do
     end
 
     it "does not show all cases tab for non-VSO organization" do
-      expect(page).to_not have_content(COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE)
+      expect(page).to_not have_content(COPY::TRACKING_TASKS_TAB_TITLE)
     end
 
     it "shows the right number of cases in each tab" do
@@ -866,15 +892,17 @@ RSpec.feature "Task queue" do
   end
 
   describe "a task with a child TimedHoldTask" do
-    let(:user) { FactoryBot.create(:user) }
-    let(:veteran) { FactoryBot.create(:veteran, first_name: "Julita", last_name: "Van Sant", file_number: 201_905_061) }
-    let(:appeal) { FactoryBot.create(:appeal, veteran_file_number: veteran.file_number) }
+    let(:user) { create(:user) }
+    let(:veteran) { create(:veteran, first_name: "Julita", last_name: "Van Sant", file_number: 201_905_061) }
+    let(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
     let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
-    let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-    let!(:disposition_task) { FactoryBot.create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
+    let!(:root_task) { create(:root_task, appeal: appeal) }
+    let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+    let!(:disposition_task) do
+      create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal)
+    end
     let!(:transcription_task) do
-      FactoryBot.create(:transcription_task, parent: disposition_task, appeal: appeal, assigned_to: user)
+      create(:transcription_task, parent: disposition_task, appeal: appeal, assigned_to: user)
     end
     let(:days_on_hold) { 18 }
     let!(:timed_hold_task) do

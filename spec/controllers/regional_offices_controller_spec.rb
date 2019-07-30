@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 RSpec.describe RegionalOfficesController, type: :controller do
   let!(:user) { User.authenticate! }
 
@@ -8,7 +10,7 @@ RSpec.describe RegionalOfficesController, type: :controller do
       get :index, as: :json
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
-      expect(response_body["regional_offices"].size).to eq 58
+      expect(response_body["regional_offices"].size).to eq 57
     end
   end
 
@@ -27,8 +29,8 @@ RSpec.describe RegionalOfficesController, type: :controller do
              folder_nr: create(:case).bfkey)
     end
 
-    xit "returns hearing dates with open slots" do
-      get :open_hearing_dates, params: { regional_office: HearingDay::REQUEST_TYPES[:central] }, as: :json
+    it "returns all central hearing dates" do
+      get :hearing_dates, params: { regional_office: HearingDay::REQUEST_TYPES[:central] }, as: :json
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
       expect(response_body["hearing_days"].size).to eq 1

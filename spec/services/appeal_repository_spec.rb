@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe AppealRepository do
   let(:correspondent_record) do
     OpenStruct.new(

@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe LegacyHearing do
   before do
-    RequestStore[:current_user] = OpenStruct.new(css_id: "Test user", station_id: "101", uniq_id: "1234")
+    RequestStore[:current_user] = create(:user, css_id: "Test user", station_id: "101")
   end
 
   let(:hearing) do
@@ -54,7 +56,9 @@ describe LegacyHearing do
 
     context "when the hearing has an open disposition task" do
       let!(:hearing_task_association) { create(:hearing_task_association, hearing: hearing) }
-      let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task_association.hearing_task) }
+      let!(:disposition_task) do
+        create(:assign_hearing_disposition_task, parent: hearing_task_association.hearing_task)
+      end
 
       it { is_expected.to eq(true) }
     end
@@ -63,8 +67,12 @@ describe LegacyHearing do
       let!(:hearing_task_association) { create(:hearing_task_association, hearing: hearing) }
       let!(:disposition_task) do
         create(:assign_hearing_disposition_task,
-               parent: hearing_task_association.hearing_task,
-               status: Constants.TASK_STATUSES.cancelled)
+               :cancelled,
+               parent: hearing_task_association.hearing_task)
+      end
+
+      before do
+        hearing_task_association.hearing_task.update(status: :in_progress)
       end
 
       it { is_expected.to eq(false) }
@@ -72,7 +80,9 @@ describe LegacyHearing do
 
     context "when the hearing has a disposition task with children" do
       let!(:hearing_task_association) { create(:hearing_task_association, hearing: hearing) }
-      let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task_association.hearing_task) }
+      let!(:disposition_task) do
+        create(:assign_hearing_disposition_task, parent: hearing_task_association.hearing_task)
+      end
       let!(:transcription_task) { create(:transcription_task, parent: disposition_task) }
 
       it { is_expected.to eq(false) }

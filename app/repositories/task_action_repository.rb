@@ -285,6 +285,17 @@ class TaskActionRepository
       }
     end
 
+    def special_case_movement_data(task, _user = nil)
+      {
+        selected: task.appeal.assigned_judge,
+        options: users_to_options(Judge.list_all),
+        type: SpecialCaseMovementTask.name,
+        modal_title: COPY::SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
+        modal_body: COPY::SPECIAL_CASE_MOVEMENT_MODAL_DETAIL,
+        modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER
+      }
+    end
+
     def toggle_timed_hold(task, user)
       action = Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
       action = Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h if task.on_timed_hold?

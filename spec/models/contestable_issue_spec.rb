@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe ContestableIssue do
   before do
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
@@ -68,6 +70,7 @@ describe ContestableIssue do
         decisionIssueId: nil,
         approxDecisionDate: promulgation_date,
         description: rating_issue.decision_text,
+        isRating: true,
         rampClaimId: nil,
         titleOfActiveReview: nil,
         sourceReviewType: nil,
@@ -87,6 +90,7 @@ describe ContestableIssue do
           decisionIssueId: nil,
           approxDecisionDate: promulgation_date,
           description: rating_issue.decision_text,
+          isRating: true,
           rampClaimId: nil,
           titleOfActiveReview: nil,
           sourceReviewType: nil,
@@ -120,6 +124,7 @@ describe ContestableIssue do
         decisionIssueId: decision_issue.id,
         approxDecisionDate: caseflow_decision_date,
         description: decision_issue.description,
+        isRating: true,
         rampClaimId: nil,
         titleOfActiveReview: nil,
         sourceReviewType: "Appeal",
@@ -139,6 +144,7 @@ describe ContestableIssue do
           decisionIssueId: decision_issue.id,
           approxDecisionDate: caseflow_decision_date,
           description: decision_issue.description,
+          isRating: true,
           rampClaimId: nil,
           titleOfActiveReview: nil,
           sourceReviewType: "Appeal",

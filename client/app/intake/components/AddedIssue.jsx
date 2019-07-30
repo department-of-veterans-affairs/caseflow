@@ -107,9 +107,12 @@ class AddedIssue extends React.PureComponent {
           <span className="desc">{ legacyIssue(issue, this.props.legacyAppeals).description }</span>
         </div>
       }
-      { issue.withdrawalPending && <p>Withdraw pending</p> }
+      { issue.withdrawalPending && <p>Withdrawal pending</p> }
       { issue.withdrawalDate && <p>Withdrawn on {issue.withdrawalDate}</p> }
-
+      { issue.endProductCleared && <p>Status: Cleared, waiting for decision</p> }
+      { issue.correctionType && <p className="correction-pending">
+          This issue will be added to a 930 EP for correction
+      </p> }
     </div>;
   }
 

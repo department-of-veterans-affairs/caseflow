@@ -3,10 +3,9 @@ import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import { css } from 'glamor';
-import Table from '../../components/Table';
+import QueueTable from '../../queue/QueueTable';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Button from '../../components/Button';
-import FilterRibbon from '../../components/FilterRibbon';
 import PropTypes from 'prop-types';
 import { CSVLink } from 'react-csv';
 import {
@@ -20,6 +19,9 @@ import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
 import moment from 'moment';
 
+import { LIST_SCHEDULE_VIEWS } from '../constants';
+import DropdownButton from '../../components/DropdownButton';
+
 const downloadButtonStyling = css({
   marginTop: '60px'
 });
@@ -28,48 +30,6 @@ const formatVljName = (lastName, firstName) => {
   if (lastName && firstName) {
     return `${lastName}, ${firstName}`;
   }
-};
-
-const populateFilterDropDowns = (resultSet, filterName) => {
-  let countByFilterName = _.countBy(resultSet, filterName);
-  let uniqueOptions = [];
-
-  for (let key in countByFilterName) {
-    if (key && key !== 'null' && key !== 'undefined') {
-      uniqueOptions.push({
-        value: key,
-        displayText: `${key} (${countByFilterName[key]})`
-      });
-    } else {
-      uniqueOptions.push({
-        value: 'null',
-        displayText: `<<blank>> (${countByFilterName[key]})`
-      });
-    }
-  }
-
-  return _.sortBy(uniqueOptions, 'displayText');
-};
-
-const judgeNameToIdMap = (hearings) => {
-  let nameToIdMap = {};
-
-  _.forEach(hearings, (hearingDay) => nameToIdMap[formatVljName(hearingDay.judgeLastName,
-    hearingDay.judgeFirstName)] = hearingDay.judgeId);
-
-  return nameToIdMap;
-};
-
-const filterSchedule = (scheduleToFilter, filterName, value) => {
-  let filteredSchedule = {};
-
-  for (let key in scheduleToFilter) {
-    if (String(scheduleToFilter[key][filterName]) === String(value)) {
-      filteredSchedule[key] = scheduleToFilter[key];
-    }
-  }
-
-  return filteredSchedule;
 };
 
 const inlineFormStyling = css({
@@ -112,12 +72,56 @@ const exportHeaders = [
     key: 'vlj' }
 ];
 
+const SwitchViewDropdown = ({ onSwitchView }) => {
+  return (
+    <DropdownButton
+      lists={[
+        {
+          title: 'Your Hearing Schedule',
+          value: LIST_SCHEDULE_VIEWS.DEFAULT_VIEW },
+        {
+          title: 'Complete Hearing Schedule',
+          value: LIST_SCHEDULE_VIEWS.SHOW_ALL }
+      ]}
+      onClick={onSwitchView}
+      label="Switch View" />
+  );
+};
+
+class ListTable extends React.Component {
+  render() {
+    return (
+      <LoadingDataDisplay
+        createLoadPromise={this.props.onApply}
+        loadingComponentProps={{
+          spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
+          message: 'Loading the hearing schedule...'
+        }}
+        failStatusMessageProps={{
+          title: 'Unable to load the hearing schedule.'
+        }}>
+        {this.props.user.userRoleBuild && <div style={{ marginBottom: 25 }}>
+          <Button linkStyling
+            onClick={this.props.openModal}>
+            Add Hearing Date
+          </Button>
+        </div>}
+        <QueueTable
+          columns={this.props.hearingScheduleColumns}
+          rowObjects={this.props.hearingScheduleRows}
+          summary="hearing-schedule"
+          slowReRendersAreOk />
+
+      </LoadingDataDisplay>
+    );
+  }
+}
+
 class ListSchedule extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      filteredByList: [],
       dateRangeKey: `${props.startDate}->${props.endDate}`
     };
   }
@@ -127,14 +131,13 @@ class ListSchedule extends React.Component {
     this.setState({ dateRangeKey: `${this.props.startDate}->${this.props.endDate}` });
   }
 
-  getHearingScheduleRows = (forCsv = false) => {
+  getHearingScheduleRows = () => {
     const { hearingSchedule } = this.props;
 
     return _.orderBy(hearingSchedule, (hearingDay) => hearingDay.scheduledFor, 'asc').
       map((hearingDay) => ({
-        scheduledFor: forCsv ? hearingDay.scheduledFor : <Link to={`/schedule/docket/${hearingDay.id}`}>
-          {moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}
-        </Link>,
+        id: hearingDay.id,
+        scheduledFor: hearingDay.scheduledFor,
         readableRequestType: hearingDay.readableRequestType,
         regionalOffice: hearingDay.regionalOffice,
         room: hearingDay.room,
@@ -143,108 +146,85 @@ class ListSchedule extends React.Component {
   };
 
   getHearingScheduleColumns = (hearingScheduleRows) => {
-
-    const uniqueRequestTypes = populateFilterDropDowns(hearingScheduleRows, 'readableRequestType');
-    const uniqueVljs = populateFilterDropDowns(hearingScheduleRows, 'vlj');
-    const uniqueLocations = populateFilterDropDowns(hearingScheduleRows, 'regionalOffice');
-
     return [
       {
         header: 'Date',
         align: 'left',
         valueName: 'scheduledFor',
-        getSortValue: (hearingDay) => {
-          return hearingDay.scheduledFor;
+        valueFunction: (row) => <Link to={`/schedule/docket/${row.id}`}>
+          {moment(row.scheduledFor).format('ddd M/DD/YYYY')}
+        </Link>,
+        getSortValue: (row) => {
+          return row.scheduledFor;
         }
       },
       {
         header: 'Type',
         cellClass: 'type-column',
         align: 'left',
-        valueName: 'readableRequestType',
+        tableData: hearingScheduleRows,
+        enableFilter: true,
+        anyFiltersAreSet: true,
         label: 'Filter by type',
-        getFilterValues: uniqueRequestTypes,
-        isDropdownFilterOpen: this.props.filterTypeIsOpen,
-        anyFiltersAreSet: false,
-        toggleDropdownFilterVisibility: this.props.toggleTypeFilterVisibility,
-        setSelectedValue: this.setTypeSelectedValue
+        columnName: 'readableRequestType',
+        valueName: 'Hearing Type',
+        valueFunction: (row) => row.readableRequestType
       },
       {
         header: 'Regional Office',
-        align: 'left',
-        valueName: 'regionalOffice',
-        label: 'Filter by location',
-        getFilterValues: uniqueLocations,
-        isDropdownFilterOpen: this.props.filterLocationIsOpen,
-        anyFiltersAreSet: false,
-        toggleDropdownFilterVisibility: this.props.toggleLocationFilterVisibility,
-        setSelectedValue: this.setLocationSelectedValue
+        name: 'Regional Office',
+        tableData: hearingScheduleRows,
+        enableFilter: true,
+        anyFiltersAreSet: true,
+        label: 'Filter by RO',
+        columnName: 'regionalOffice',
+        valueName: 'regionalOffice'
       },
       {
         header: 'Room',
         align: 'left',
         valueName: 'room',
+        tableData: hearingScheduleRows,
         getSortValue: (hearingDay) => {
           return hearingDay.room;
         }
       },
       {
         header: 'VLJ',
-        align: 'left',
-        valueName: 'vlj',
+        name: 'VLJ',
+        tableData: hearingScheduleRows,
+        enableFilter: true,
+        anyFiltersAreSet: true,
         label: 'Filter by VLJ',
-        getFilterValues: uniqueVljs,
-        isDropdownFilterOpen: this.props.filterVljIsOpen,
-        anyFiltersAreSet: false,
-        toggleDropdownFilterVisibility: this.props.toggleVljFilterVisibility,
-        setSelectedValue: this.setVljSelectedValue
+        columnName: 'vlj',
+        valueName: 'vlj'
       }
     ];
   }
 
-  clearFilteredByList = () => {
-    this.setState({
-      filteredByList: []
-    });
-    this.props.onApply();
-  };
+  getListView = (hearingScheduleColumns, hearingScheduleRows) => {
 
-  setTypeSelectedValue = (value) => {
-    this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'readableRequestType', value));
-    this.setState({
-      filteredByList: this.state.filteredByList.concat(['Hearing Type'])
-    });
-    this.props.toggleTypeFilterVisibility();
-  };
+    const { user, view, onApply, openModal } = this.props;
 
-  setLocationSelectedValue = (value) => {
-    this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'regionalOffice', value));
-    this.setState({
-      filteredByList: this.state.filteredByList.concat(['Hearing Location'])
-    });
-    this.props.toggleLocationFilterVisibility();
-  };
-
-  /*
-    As props.hearingSchedule does not have judge full name we need to create a full name to judgeId mapping
-    to use when receiving the full name through the value parameter.
-   */
-  setVljSelectedValue = (value) => {
-    const judges = judgeNameToIdMap(this.props.hearingSchedule);
-
-    if (value === 'null') {
-      this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'judgeLastName', null));
-    } else {
-      this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'judgeId', judges[value]));
+    if (!user.userRoleHearingPrep || view === LIST_SCHEDULE_VIEWS.DEFAULT_VIEW) {
+      return <ListTable onApply={onApply}
+        openModal={openModal}
+        key={`hearings${this.state.dateRangeKey}`}
+        user={user}
+        hearingScheduleRows={hearingScheduleRows}
+        hearingScheduleColumns={hearingScheduleColumns} />;
     }
-    this.setState({
-      filteredByList: this.state.filteredByList.concat(['VLJ'])
-    });
-    this.props.toggleVljFilterVisibility();
-  };
+
+    return <ListTable onApply={() => onApply({ showAll: true })}
+      openModal={openModal}
+      key={`allHearings${this.state.dateRangeKey}`}
+      user={user}
+      hearingScheduleRows={hearingScheduleRows}
+      hearingScheduleColumns={hearingScheduleColumns} />;
+  }
 
   render() {
-    const hearingScheduleRows = this.getHearingScheduleRows(false);
+    const hearingScheduleRows = this.getHearingScheduleRows();
     const hearingScheduleColumns = this.getHearingScheduleColumns(hearingScheduleRows);
 
     return (
@@ -258,13 +238,13 @@ class ListSchedule extends React.Component {
               endDateChange={this.props.onViewEndDateChange}
               onApply={this.setDateRangeKey} />
           </div>
-          <div className="cf-push-right" {...downloadButtonStyling} >
+          <div className="cf-push-right list-schedule-buttons" {...downloadButtonStyling} >
+            {this.props.user.userRoleHearingPrep && <SwitchViewDropdown onSwitchView={this.props.switchListView} />}
             <CSVLink
-              data={this.getHearingScheduleRows(true)}
+              data={hearingScheduleRows}
               headers={exportHeaders}
               target="_blank"
-              filename={`HearingSchedule ${this.props.startDate}-${this.props.endDate}.csv`}
-            >
+              filename={`HearingSchedule ${this.props.startDate}-${this.props.endDate}.csv`}>
               <Button classNames={['usa-button-secondary']}>
                 Download current view
               </Button>
@@ -272,36 +252,7 @@ class ListSchedule extends React.Component {
           </div>
         </div>
         <div className="section-hearings-list">
-          <LoadingDataDisplay
-            key={this.state.dateRangeKey}
-            createLoadPromise={this.props.onApply}
-            loadingComponentProps={{
-              spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
-              message: 'Loading the hearing schedule...'
-            }}
-            failStatusMessageProps={{
-              title: 'Unable to load the hearing schedule.'
-            }}>
-
-            <div className="cf-push-left">
-              <FilterRibbon
-                filteredByList={this.state.filteredByList}
-                clearAllFilters={this.clearFilteredByList} />
-              { this.props.userRoleBuild &&
-                <Button
-                  linkStyling
-                  onClick={this.props.openModal} >
-                  Add Hearing Date
-                </Button>
-              }
-            </div>
-            <Table
-              columns={hearingScheduleColumns}
-              rowObjects={hearingScheduleRows}
-              summary="hearing-schedule"
-              slowReRendersAreOk />
-
-          </LoadingDataDisplay>
+          {this.getListView(hearingScheduleColumns, hearingScheduleRows)}
         </div>
       </React.Fragment>
 
@@ -320,6 +271,7 @@ ListSchedule.propTypes = {
     updatedOn: PropTypes.string,
     updatedBy: PropTypes.string
   }),
+  user: PropTypes.object,
   onApply: PropTypes.func,
   openModal: PropTypes.func
 };

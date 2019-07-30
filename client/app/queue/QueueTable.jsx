@@ -263,12 +263,16 @@ export default class QueueTable extends React.PureComponent {
     const casesPerPage = this.props.casesPerPage || DEFAULT_CASES_PER_PAGE;
     const paginatedData = [];
 
-    for (let i = 0; i < tableData.length; i += casesPerPage) {
-      paginatedData.push(tableData.slice(i, i + casesPerPage));
+    if (this.props.enablePagination) {
+      for (let i = 0; i < tableData.length; i += casesPerPage) {
+        paginatedData.push(tableData.slice(i, i + casesPerPage));
+      }
+    } else {
+      paginatedData.push(tableData);
     }
 
     return paginatedData;
-  }
+  };
 
   setColumnSortOrder = (colName) => this.setState(
     { sortColName: colName,
@@ -366,7 +370,7 @@ export default class QueueTable extends React.PureComponent {
 
       // 2. Filter data
       rowObjects = this.filterTableData(rowObjects);
-      totalTaskCount = rowObjects.length;
+      totalTaskCount = rowObjects ? rowObjects.length : 0;
 
       // 3. Generate paginated data
       const paginatedData = this.paginateData(rowObjects);
@@ -375,7 +379,7 @@ export default class QueueTable extends React.PureComponent {
 
       // 4. Display only the data for the current page
       // paginatedData[this.state.currentPage] will be a subset of all rows I am guessing.
-      rowObjects = rowObjects.length ? paginatedData[this.state.currentPage] : rowObjects;
+      rowObjects = rowObjects && rowObjects.length ? paginatedData[this.state.currentPage] : rowObjects;
 
       casesPerPage = DEFAULT_CASES_PER_PAGE;
     }
@@ -396,7 +400,7 @@ export default class QueueTable extends React.PureComponent {
       paginationElements = <Pagination
         pageSize={casesPerPage}
         currentPage={this.state.currentPage + 1}
-        currentCases={rowObjects.length}
+        currentCases={rowObjects ? rowObjects.length : 0}
         totalPages={numberOfPages}
         totalCases={totalTaskCount}
         updatePage={(newPage) => this.updateCurrentPage(newPage)} />;

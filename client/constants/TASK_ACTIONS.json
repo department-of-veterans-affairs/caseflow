@@ -115,6 +115,11 @@
     "label": "End hold early",
     "value": "modal/end_hold"
   },
+  "SPECIAL_CASE_MOVEMENT": {
+    "label": "Special Case Movement: Advance to judge",
+    "value": "modal/special_case_movement",
+    "func": "special_case_movement_data"
+  },
   "TOGGLE_TIMED_HOLD": {
     "func": "toggle_timed_hold"
   },

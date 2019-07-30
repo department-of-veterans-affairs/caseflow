@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 RSpec.describe TasksController, type: :controller do
   before do
     Fakes::Initializer.load!
@@ -23,12 +25,12 @@ RSpec.describe TasksController, type: :controller do
 
       let!(:task1) { create(:colocated_task, assigned_by: user, assigned_to: Colocated.singleton) }
       let!(:task2) { create(:colocated_task, assigned_by: user, assigned_to: Colocated.singleton) }
-      let!(:task3) { create(:colocated_task, assigned_by: user, status: Constants.TASK_STATUSES.completed) }
+      let!(:task3) { create(:colocated_task, :completed, assigned_by: user) }
 
       let!(:task11) { create(:ama_attorney_task, assigned_to: user) }
       let!(:task12) { create(:ama_attorney_task, :in_progress, assigned_to: user) }
       let!(:task13) { create(:ama_attorney_task, :completed, assigned_to: user) }
-      let!(:task16) { create(:ama_attorney_task, :completed, assigned_to: user, closed_at: 3.weeks.ago) }
+      let!(:task16) { create(:ama_attorney_task, :completed_in_the_past, assigned_to: user) }
       let!(:task14) { create(:ama_attorney_task, :on_hold, assigned_to: user) }
 
       it "should process the request successfully" do
@@ -76,11 +78,11 @@ RSpec.describe TasksController, type: :controller do
       let!(:task4) do
         create(:colocated_task, assigned_to: user, appeal: create(:legacy_appeal, vacols_case: create(:case, :aod)))
       end
-      let!(:task5) { create(:colocated_task, assigned_to: user, status: Constants.TASK_STATUSES.in_progress) }
+      let!(:task5) { create(:colocated_task, :in_progress, assigned_to: user) }
       let!(:task_ama_colocated_aod) do
         create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, :advanced_on_docket_due_to_age))
       end
-      let!(:task6) { create(:colocated_task, assigned_to: user, status: Constants.TASK_STATUSES.completed) }
+      let!(:task6) { create(:colocated_task, :completed, assigned_to: user) }
       let!(:task7) { create(:colocated_task) }
 
       it "should process the request succesfully" do
@@ -115,7 +117,7 @@ RSpec.describe TasksController, type: :controller do
       let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user, assigned_by: user) }
       let!(:task10) { create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user) }
       let!(:task15) do
-        create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user, closed_at: 3.weeks.ago)
+        create(:ama_judge_task, :completed_in_the_past, assigned_to: user, assigned_by: user)
       end
 
       it "should process the request succesfully" do
@@ -881,9 +883,11 @@ RSpec.describe TasksController, type: :controller do
     subject { post(:request_hearing_disposition_change, params: params) }
 
     context "when the task is a no show hearing task with a HearingTask ancestor" do
-      let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-      let(:disposition_task) { FactoryBot.create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
-      let!(:task) { FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
+      let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+      let(:disposition_task) do
+        create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal)
+      end
+      let!(:task) { create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
       let(:params) do
         {
           id: task.id,
@@ -914,7 +918,7 @@ RSpec.describe TasksController, type: :controller do
         FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day, disposition: past_hearing_disposition)
       end
       let(:hearing_task) do
-        FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal, status: Constants.TASK_STATUSES.completed)
+        FactoryBot.create(:hearing_task, :completed, parent: root_task, appeal: appeal)
       end
       let!(:association) { FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
       let!(:hearing_task_2) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }

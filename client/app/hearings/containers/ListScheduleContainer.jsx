@@ -37,6 +37,8 @@ import HearingDayAddModal from '../components/HearingDayAddModal';
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import moment from 'moment';
 
+import { LIST_SCHEDULE_VIEWS } from '../constants';
+
 const dateFormatString = 'YYYY-MM-DD';
 
 const actionButtonsStyling = css({
@@ -49,8 +51,13 @@ export class ListScheduleContainer extends React.Component {
     this.state = {
       dateRangeKey: `${props.startDate}->${props.endDate}`,
       modalOpen: false,
-      showModalAlert: false
+      showModalAlert: false,
+      view: LIST_SCHEDULE_VIEWS.DEFAULT_VIEW
     };
+  }
+
+  switchListView = (view) => {
+    this.setState({ view });
   }
 
   componentDidMount = () => {
@@ -68,7 +75,7 @@ export class ListScheduleContainer extends React.Component {
     }
   };
 
-  loadHearingSchedule = () => {
+  loadHearingSchedule = ({ showAll = false }) => {
     let requestUrl = '/hearings/hearing_day.json';
 
     if (this.props.startDate && this.props.endDate) {
@@ -77,7 +84,7 @@ export class ListScheduleContainer extends React.Component {
         return this.props.onInputInvalidDates();
       }
 
-      requestUrl = `${requestUrl}?start_date=${this.props.startDate}&end_date=${this.props.endDate}`;
+      requestUrl += `?start_date=${this.props.startDate}&end_date=${this.props.endDate}&show_all=${showAll}`;
     }
 
     const requestOptions = {
@@ -93,8 +100,8 @@ export class ListScheduleContainer extends React.Component {
     });
   };
 
-  createHearingPromise = () => Promise.all([
-    this.loadHearingSchedule()
+  createHearingPromise = (params = { showAll: false }) => Promise.all([
+    this.loadHearingSchedule(params)
   ]);
 
   openModal = () => {
@@ -155,7 +162,23 @@ export class ListScheduleContainer extends React.Component {
     return 'success';
   };
 
+  getHeader = () => {
+    const { user } = this.props;
+
+    if (user.userRoleView || user.userRoleVso) {
+      return COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER;
+    } else if (user.userRoleHearingPrep) {
+      return this.state.view === LIST_SCHEDULE_VIEWS.DEFAULT_VIEW ?
+        COPY.HEARING_SCHEDULE_JUDGE_DEFAULT_VIEW_PAGE_HEADER :
+        COPY.HEARING_SCHEDULE_JUDGE_SHOW_ALL_VIEW_PAGE_HEADER;
+    }
+
+    return COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER;
+  }
+
   render() {
+    const user = this.props.user;
+
     return (
       <React.Fragment>
         <QueueCaseSearchBar />
@@ -167,14 +190,13 @@ export class ListScheduleContainer extends React.Component {
         { this.props.invalidDates && <Alert type="error" title="Please enter valid dates." /> }
         <AppSegment filledBackground>
           <h1 className="cf-push-left">
-            {this.props.userRoleView || this.props.userRoleVso ? COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER :
-              COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}
+            {this.getHeader()}
           </h1>
-          {this.props.userRoleBuild &&
+          {user.userRoleBuild &&
             <span className="cf-push-right">
               <Link button="secondary" to="/schedule/build">Build Schedule</Link>
             </span>
-          }{this.props.userRoleAssign &&
+          }{user.userRoleAssign &&
             <span className="cf-push-right"{...actionButtonsStyling} >
               <Link button="primary" to="/schedule/assign">Schedule Veterans</Link>
             </span>
@@ -184,8 +206,9 @@ export class ListScheduleContainer extends React.Component {
             hearingSchedule={this.props.hearingSchedule}
             onApply={this.createHearingPromise}
             openModal={this.openModal}
-            userRoleHearingPrep={this.props.userRoleHearingPrep}
-            userRoleBuild={this.props.userRoleBuild} />
+            user={user}
+            view={this.state.view}
+            switchListView={this.switchListView} />
           {this.state.modalOpen &&
             <HearingDayAddModal
               closeModal={this.closeModal}
@@ -229,10 +252,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 ListScheduleContainer.propTypes = {
-  userRoleAssign: PropTypes.bool,
-  userRoleBuild: PropTypes.bool,
-  userRoleView: PropTypes.bool,
-  userRoleVso: PropTypes.bool
+  user: PropTypes.object
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ListScheduleContainer));
