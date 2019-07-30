@@ -341,8 +341,6 @@ class Task < ApplicationRecord
   end
 
   def self.child_task_assignee(_parent, params)
-    return params[:assigned_to] if params[:assigned_to]
-
     Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
   end
 
