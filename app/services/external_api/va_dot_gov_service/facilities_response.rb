@@ -38,8 +38,8 @@ class ExternalApi::VADotGovService::FacilitiesResponse < ExternalApi::VADotGovSe
     def address
       @address ||= Address.new(
         address_line_1: physical_address[:address_1],
-        address_line_2: physical_address[:address_1],
-        address_line_3: physical_address[:address_1],
+        address_line_2: physical_address[:address_2],
+        address_line_3: physical_address[:address_3],
         city: physical_address[:city],
         state: physical_address[:state],
         zip: physical_address[:zip]
