@@ -121,13 +121,11 @@ class SubmitDecisionView extends React.PureComponent {
       },
       checkoutFlow,
       decision,
-      userRole,
       judges
     } = this.props;
 
     const issuesToPass = isLegacyAppeal ? issues : decisionIssues;
-    const payload = buildCaseReviewPayload(checkoutFlow, decision,
-      userRole, issuesToPass, { isLegacyAppeal });
+    const payload = buildCaseReviewPayload(checkoutFlow, decision, true, issuesToPass, { isLegacyAppeal });
 
     const fields = {
       type: checkoutFlow === DECISION_TYPES.DRAFT_DECISION ?
@@ -275,7 +273,6 @@ const mapStateToProps = (state, ownProps) => {
     },
     ui: {
       highlightFormItems,
-      userRole,
       messages: {
         error
       }
@@ -288,7 +285,6 @@ const mapStateToProps = (state, ownProps) => {
     task: taskById(state, { taskId: ownProps.taskId }),
     decision,
     error,
-    userRole,
     highlightFormItems
   };
 };

@@ -28,7 +28,7 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import {
   marginBottom, marginTop,
   paddingLeft, fullWidth,
-  redText, PAGE_TITLES,
+  redText,
   VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS,
   JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH
@@ -66,8 +66,6 @@ class EvaluateDecisionView extends React.PureComponent {
   componentDidMount = () => this.setState(
     _.pick(this.props.taskOptions, _.keys(this.state))
   );
-
-  getPageName = () => PAGE_TITLES.EVALUATE;
 
   qualityIsDeficient = () => ['needs_improvements', 'does_not_meet_expectations'].includes(this.state.quality);
 
@@ -131,7 +129,6 @@ class EvaluateDecisionView extends React.PureComponent {
       appeal,
       checkoutFlow,
       decision,
-      userRole,
       appealId
     } = this.props;
 
@@ -143,7 +140,7 @@ class EvaluateDecisionView extends React.PureComponent {
       successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
     }
     const issuesToPass = appeal.isLegacyAppeal ? appeal.issues : appeal.decisionIssues;
-    const payload = buildCaseReviewPayload(checkoutFlow, decision, userRole, issuesToPass, {
+    const payload = buildCaseReviewPayload(checkoutFlow, decision, false, issuesToPass, {
       location: loc,
       attorney_id: appeal.isLegacyAppeal ? task.assignedBy.pgId : appeal.assignedAttorney.id,
       isLegacyAppeal: appeal.isLegacyAppeal,
@@ -215,7 +212,7 @@ class EvaluateDecisionView extends React.PureComponent {
         taskType="Dispatch"
         redirectUrl={window.location.pathname} />
       <h1 {...css(fullWidth, marginBottom(2), marginTop(2))}>
-        {this.getPageName()}
+        {COPY.EVALUATE_DECISION_PAGE_TITLE}
       </h1>
       {error && <Alert title={error.title} type="error" styling={css(marginTop(0), marginBottom(1))}>
         {error.detail}
@@ -341,7 +338,6 @@ const mapStateToProps = (state, ownProps) => {
     taskOptions: state.queue.stagedChanges.taskDecision.opts,
     task: taskById(state, { taskId: ownProps.taskId }),
     decision: state.queue.stagedChanges.taskDecision,
-    userRole: state.ui.userRole,
     error: state.ui.messages.error
   };
 };

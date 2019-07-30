@@ -8,7 +8,14 @@ RSpec.feature "Judge checkout flow", :all_dbs do
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
   let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
-  let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+  let!(:vacols_judge) { FactoryBot.create(:staff, vacols_role_trait, sdomainid: judge_user.css_id) }
+  let(:vacols_role_trait) { :judge_role }
+
+  before do
+    # When a judge completes judge checkout we create either a QR or dispatch task. Make sure we have somebody in
+    # the BVA dispatch team so that the creation of that task (which round robin assigns org tasks) does not fail.
+    OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+  end
 
   context "given a valid ama appeal with single issue" do
     let!(:appeal) do
@@ -48,10 +55,6 @@ RSpec.feature "Judge checkout flow", :all_dbs do
     before do
       child_task.update!(status: Constants.TASK_STATUSES.completed)
       User.authenticate!(user: judge_user)
-
-      # When a judge completes judge checkout we create either a QR or dispatch task. Make sure we have somebody in
-      # the BVA dispatch team so that the creation of that task (which round robin assigns org tasks) does not fail.
-      OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
     end
 
     scenario "starts dispatch checkout flow" do
@@ -219,6 +222,70 @@ RSpec.feature "Judge checkout flow", :all_dbs do
         decass = VACOLS::Decass.find_by(defolder: appeal.vacols_id, deadtim: Time.zone.today)
         expect(decass.decomp).to eq(VacolsHelper.local_date_with_utc_timezone)
         expect(decass.deoq).to eq("3")
+      end
+    end
+  end
+
+  context "when an acting judge is checking out an AMA appeal" do
+    let(:vacols_role_trait) { :attorney_judge_role }
+
+    let(:appeal) do
+      FactoryBot.create(
+        :appeal,
+        number_of_claimants: 1,
+        request_issues: FactoryBot.build_list(:request_issue, 1)
+      )
+    end
+    let!(:decision_issue) do
+      FactoryBot.create(:decision_issue, decision_review: appeal, request_issues: appeal.request_issues)
+    end
+
+    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let(:judge_review_task) do
+      FactoryBot.create(
+        :ama_judge_decision_review_task,
+        appeal: appeal,
+        parent: root_task,
+        assigned_to: judge_user
+      )
+    end
+    let!(:attorney_task) do
+      FactoryBot.create(
+        :ama_attorney_task,
+        appeal: appeal,
+        parent: judge_review_task,
+        assigned_to: attorney_user
+      )
+    end
+
+    before do
+      attorney_task.update!(status: Constants.TASK_STATUSES.completed)
+      User.authenticate!(user: judge_user)
+    end
+
+    it "allows the acting judge to complete judge checkout" do
+      step("Navigate from case details to decision issues by way of actions dropdown") do
+        visit("/queue/appeals/#{appeal.external_id}")
+        click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
+        expect(page).to have_content(COPY::DECISION_ISSUE_PAGE_TITLE)
+      end
+
+      step("Navigate to evaluation page from decision issues page") do
+        click_on("Continue")
+        expect(page).to have_content(COPY::EVALUATE_DECISION_PAGE_TITLE)
+      end
+
+      step("Fill out evaluation page") do
+        find("label", text: Constants.JUDGE_CASE_REVIEW_OPTIONS.COMPLEXITY.medium).click
+        find("label", text: "3 - #{Constants.JUDGE_CASE_REVIEW_OPTIONS.QUALITY.meets_expectations}").click
+        click_on("Continue")
+      end
+
+      step("Verify that draft decision evaluation completed successfully") do
+        expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
+        case_review = JudgeCaseReview.find_by(task_id: judge_review_task.id)
+        expect(case_review.attorney).to eq(attorney_user)
+        expect(case_review.judge).to eq(judge_user)
       end
     end
   end
