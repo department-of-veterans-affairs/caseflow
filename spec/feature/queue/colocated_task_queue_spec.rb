@@ -254,12 +254,14 @@ RSpec.feature "ColocatedTask", :all_dbs do
     let!(:colocated_task) do
       FactoryBot.create(
         :ama_colocated_task,
-        Constants::CO_LOCATED_ADMIN_ACTIONS.keys.last.to_sym,
+        :other,
         appeal: appeal,
         parent: root_task,
         assigned_to: vlj_support_staff
       )
     end
+
+    let(:new_task_type) { IhpColocatedTask }
 
     it "should update the task type" do
       # Visit case details page for VLJ support staff.
@@ -272,8 +274,6 @@ RSpec.feature "ColocatedTask", :all_dbs do
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h[:label]).click
 
       expect(page).to have_content(COPY::CHANGE_TASK_TYPE_SUBHEAD)
-      opt_idx = rand(Constants::CO_LOCATED_ADMIN_ACTIONS.length - 1)
-      selected_opt_0 = Constants::CO_LOCATED_ADMIN_ACTIONS.values[opt_idx]
 
       # Ensure all admin actions are available
       find(".Select-control", text: "Select an action type").click do
@@ -282,7 +282,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
       end
 
       # Attempt to change task type without including instuctions.
-      find("div", class: "Select-option", text: selected_opt_0).click
+      find("div", class: "Select-option", text: new_task_type.label).click
       find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
       # Instructions field is required
@@ -298,12 +298,12 @@ RSpec.feature "ColocatedTask", :all_dbs do
         format(
           COPY::CHANGE_TASK_TYPE_CONFIRMATION_TITLE,
           Constants::CO_LOCATED_ADMIN_ACTIONS.values.last,
-          selected_opt_0
+          new_task_type.label
         )
       )
 
       # Ensure the task has been updated
-      expect(page).to have_content(format("TASK\n%<label>s", label: selected_opt_0))
+      expect(page).to have_content(format("TASK\n%<label>s", label: new_task_type.label))
       page.find("#currently-active-tasks button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
       expect(page).to have_content(instructions)
     end
