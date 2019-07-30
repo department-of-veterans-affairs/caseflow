@@ -103,7 +103,7 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
-    factory :foi_task, class: FoiaTask do
+    factory :foia_task, class: FoiaTask do
       appeal
       type { FoiaTask.name }
     end

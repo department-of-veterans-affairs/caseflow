@@ -5,6 +5,6 @@
 
 class FoiaTask < GenericTask
   def available_actions(user)
-    super(user).reject { |action| action == Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h }
+    super(user).reject { |action| action == Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h }
   end
 end
