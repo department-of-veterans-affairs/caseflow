@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe HearingAdminActionTask do
+describe HearingAdminActionTask, :postgres do
   let!(:veteran) { create(:veteran) }
   let!(:appeal) { create(:appeal, veteran: veteran) }
   let!(:hearings_management_user) { FactoryBot.create(:hearings_coordinator) }

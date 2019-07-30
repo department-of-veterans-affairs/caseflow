@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe TrackVeteranTask do
+describe TrackVeteranTask, :postgres do
   let(:vso) { FactoryBot.create(:vso) }
   let(:root_task) { FactoryBot.create(:root_task) }
   let(:tracking_task) do

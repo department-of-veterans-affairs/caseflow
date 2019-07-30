@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe Veteran do
+describe Veteran, :postgres do
   let(:veteran) { Veteran.new(file_number: "44556677", first_name: "June", last_name: "Juniper") }
 
   before do
@@ -238,7 +239,8 @@ describe Veteran do
         country: "USA",
         date_of_birth: "21/12/1989",
         zip_code: "94117",
-        address_type: ""
+        address_type: "",
+        email_address: nil
       )
     end
 

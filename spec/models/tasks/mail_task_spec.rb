@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe MailTask do
+describe MailTask, :postgres do
   let(:user) { FactoryBot.create(:user) }
   let(:mail_team) { MailTeam.singleton }
   let(:root_task) { FactoryBot.create(:root_task) }

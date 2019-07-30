@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-describe DecisionIssue do
+describe DecisionIssue, :postgres do
   include IntakeHelpers
 
   before do
