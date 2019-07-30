@@ -21,7 +21,9 @@
     "build:production": "NODE_ENV=production yarn run build",
     "dev:clear-build": "rm ../app/assets/javascripts/*webpack* || true",
     "dev": "yarn run dev:clear-build && NODE_ENV=development yarn run build -w",
-    "dev:hot": "yarn run dev:clear-build && NODE_ENV=development-hot node webpack-hot-server.js"
+    "dev:hot": "yarn run dev:clear-build && NODE_ENV=development-hot node webpack-hot-server.js",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "cacheDirectories": [
     "node_modules",
@@ -56,7 +58,7 @@
     "jsdom": "9.8.3",
     "lodash": "^4.17.13",
     "mark.js": "^8.11.0",
-    "moment": "^2.18.1",
+    "moment": "^2.19.3",
     "moment-timezone": "^0.5.13",
     "node-sass": "^4.9.2",
     "pdf-annotate.js": "^1.0.0",
@@ -67,7 +69,7 @@
     "react": "^16.2.0",
     "react-copy-to-clipboard": "^5.0.1",
     "react-csv": "^1.0.15-RC2",
-    "react-dom": "^16.2.0",
+    "react-dom": "^16.2.1",
     "react-draft-wysiwyg": "^1.12.11",
     "react-highlight-words": "^0.8.0",
     "react-hot-loader": "^3.0.0-beta.6",
@@ -89,13 +91,14 @@
     "sass-loader": "^7.0.3",
     "sprintf-js": "^1.1.1",
     "style-loader": "^0.21.0",
-    "superagent": "^3.0.0",
+    "superagent": "^3.8.1",
     "superagent-no-cache": "^0.1.0",
     "svg-loader": "^0.0.2",
     "url-loader": "^1.0.1",
     "uswds": "^1.6.4",
     "uuid": "^3.0.1",
-    "webpack": "^3.10.0"
+    "webpack": "^3.10.0",
+    "snyk": "^1.203.0"
   },
   "devDependencies": {
     "@department-of-veterans-affairs/eslint-config-appeals": "https://github.com/department-of-veterans-affairs/eslint-config-appeals#f50522e",
@@ -123,5 +126,6 @@
     "prettier": "1.17.1",
     "sinon": "^2.1.0",
     "webpack-dev-server": "^2.4.2"
-  }
+  },
+  "snyk": true
 }
