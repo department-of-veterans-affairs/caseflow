@@ -719,7 +719,7 @@ module IntakeHelpers
     request_issue_update = RequestIssuesUpdate.find_by(review: decision_review)
 
     # existing issues should not be added or removed
-    expect(request_issue_update.created_issues.map(&:id)).to_not include(non_modified_ids)
+    expect(request_issue_update.added_issues.map(&:id)).to_not include(non_modified_ids)
     expect(request_issue_update.removed_issues.map(&:id)).to_not include(non_modified_ids)
   end
   # rubocop:enable Metrics/AbcSize

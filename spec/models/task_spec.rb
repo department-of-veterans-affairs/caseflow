@@ -13,10 +13,10 @@ describe Task do
       subject { root_task.structure(:id, :status) }
 
       it "outputs the task structure" do
-        root_key = "#{root_task.class.name} #{root_task.id}, #{root_task.status}".to_sym
-        judge_key = "#{judge_task.class.name} #{judge_task.id}, #{judge_task.status}".to_sym
-        bva_key = "#{bva_task.class.name} #{bva_task.id}, #{bva_task.status}".to_sym
-        attorney_key = "#{attorney_task.class.name} #{attorney_task.id}, #{attorney_task.status}".to_sym
+        root_key = "#{root_task.type} #{root_task.id}, #{root_task.status}".to_sym
+        judge_key = "#{judge_task.type} #{judge_task.id}, #{judge_task.status}".to_sym
+        bva_key = "#{bva_task.type} #{bva_task.id}, #{bva_task.status}".to_sym
+        attorney_key = "#{attorney_task.type} #{attorney_task.id}, #{attorney_task.status}".to_sym
 
         expect(subject.key?(root_key)).to be_truthy
         expect(subject[root_key].count).to eq 2
@@ -47,6 +47,7 @@ describe Task do
     context "when on_hold task is assigned to a person" do
       context "when task has no child tasks" do
         let(:child) { nil }
+
         it "should not change the task's status" do
           status_before = task.status
           subject
@@ -56,6 +57,7 @@ describe Task do
 
       context "when task has 1 incomplete child task" do
         let(:child) { FactoryBot.create(:task, :in_progress, type: Task.name, parent_id: task.id) }
+
         it "should not change the task's status" do
           status_before = task.status
           subject
@@ -65,6 +67,7 @@ describe Task do
 
       context "when task has 1 complete child task" do
         let(:child) { FactoryBot.create(:task, :completed, type: Task.name, parent_id: task.id) }
+
         it "should change task's status to assigned" do
           status_before = task.status
           subject
@@ -91,6 +94,7 @@ describe Task do
           FactoryBot.create_list(:task, 2, :in_progress, type: Task.name, parent_id: task.id)
         end
         let(:child) { incomplete_children.last }
+
         it "should not change the task's status" do
           status_before = task.status
           subject
@@ -101,6 +105,7 @@ describe Task do
       context "when task has only complete child tasks" do
         let(:completed_children) { FactoryBot.create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
         let(:child) { completed_children.last }
+
         it "should change task's status to assigned" do
           status_before = task.status
           subject
@@ -116,25 +121,30 @@ describe Task do
 
       context "when task has no child tasks" do
         let(:child) { nil }
+
         it "should not update any attribute of the task" do
-          expect_any_instance_of(Task).to_not receive(:update!)
+          task_status = task.status
           subject
+          expect(task.reload.status).to eq task_status
         end
       end
 
       context "when task has 1 incomplete child task" do
         let(:child) { FactoryBot.create(:task, :in_progress, type: Task.name, parent_id: task.id) }
+
         it "should not update any attribute of the task" do
-          expect_any_instance_of(Task).to_not receive(:update!)
+          task_status = task.status
           subject
+          expect(task.reload.status).to eq task_status
         end
       end
 
       context "when task has 1 complete child task" do
         let(:child) { FactoryBot.create(:task, :completed, type: Task.name, parent_id: task.id) }
+
         it "should update the task" do
-          expect_any_instance_of(Task).to receive(:update!)
           subject
+          expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
         end
       end
 
@@ -156,18 +166,21 @@ describe Task do
           FactoryBot.create_list(:task, 2, :in_progress, type: Task.name, parent_id: task.id)
         end
         let(:child) { incomplete_children.last }
+
         it "should not update any attribute of the task" do
-          expect_any_instance_of(Task).to_not receive(:update!)
+          task_status = task.status
           subject
+          expect(task.reload.status).to eq task_status
         end
       end
 
       context "when task has only complete child tasks" do
         let(:completed_children) { FactoryBot.create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
         let(:child) { completed_children.last }
+
         it "should update the task" do
-          expect_any_instance_of(Task).to receive(:update!)
           subject
+          expect(task.status).to eq(Constants.TASK_STATUSES.completed)
         end
       end
 
@@ -388,14 +401,22 @@ describe Task do
       end
 
       context "a new child task is added" do
-        let(:root_task) { FactoryBot.create(:root_task) }
+        let(:root_task) { create(:root_task) }
         let(:hearing_task) do
-          FactoryBot.create(
-            :hearing_task, parent: root_task, appeal: root_task.appeal, assigned_to: HearingsManagement.singleton
+          create(
+            :hearing_task,
+            parent: root_task,
+            appeal: root_task.appeal,
+            assigned_to: HearingsManagement.singleton
           )
         end
         let(:task) do
-          FactoryBot.create(:assign_hearing_disposition_task, parent: hearing_task, appeal: root_task.appeal, assigned_to: user)
+          create(
+            :assign_hearing_disposition_task,
+            parent: hearing_task,
+            appeal: root_task.appeal,
+            assigned_to: user
+          )
         end
 
         subject do
@@ -450,12 +471,12 @@ describe Task do
   end
 
   describe ".open?" do
-    let(:status) { nil }
-    let(:task) { FactoryBot.create(:generic_task, status: status) }
+    let(:trait) { nil }
+    let(:task) { FactoryBot.create(:generic_task, trait) }
     subject { task.open? }
 
     context "when status is assigned" do
-      let(:status) { Constants.TASK_STATUSES.assigned }
+      let(:trait) { :assigned }
 
       it "is open" do
         expect(subject).to eq(true)
@@ -463,7 +484,7 @@ describe Task do
     end
 
     context "when status is in_progress" do
-      let(:status) { Constants.TASK_STATUSES.in_progress }
+      let(:trait) { :in_progress }
 
       it "is open" do
         expect(subject).to eq(true)
@@ -471,7 +492,7 @@ describe Task do
     end
 
     context "when status is on_hold" do
-      let(:status) { Constants.TASK_STATUSES.on_hold }
+      let(:trait) { :on_hold }
 
       it "is open" do
         expect(subject).to eq(true)
@@ -479,7 +500,7 @@ describe Task do
     end
 
     context "when status is completed" do
-      let(:status) { Constants.TASK_STATUSES.completed }
+      let(:trait) { :completed }
 
       it "is not open" do
         expect(subject).to eq(false)
@@ -487,9 +508,55 @@ describe Task do
     end
 
     context "when status is cancelled" do
-      let(:status) { Constants.TASK_STATUSES.cancelled }
+      let(:trait) { :cancelled }
 
       it "is not open" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
+  describe ".active?" do
+    let(:trait) { nil }
+    let(:task) { FactoryBot.create(:generic_task, trait) }
+    subject { task.active? }
+
+    context "when status is assigned" do
+      let(:trait) { :assigned }
+
+      it "is active" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when status is in_progress" do
+      let(:trait) { :in_progress }
+
+      it "is active" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when status is on_hold" do
+      let(:trait) { :on_hold }
+
+      it "is not active" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when status is completed" do
+      let(:trait) { :completed }
+
+      it "is not active" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when status is cancelled" do
+      let(:trait) { :cancelled }
+
+      it "is not active" do
         expect(subject).to eq(false)
       end
     end
@@ -499,7 +566,7 @@ describe Task do
     let(:user) { create(:user) }
 
     context "when task status is on_hold" do
-      let(:task) { create(:generic_task, status: "on_hold") }
+      let(:task) { create(:generic_task, :on_hold) }
 
       it "returns false" do
         expect(task.actions_available?(user)).to eq(false)
@@ -511,7 +578,7 @@ describe Task do
     let(:user) { create(:user) }
 
     context "when task status is completed" do
-      let(:task) { create(:generic_task, status: "completed") }
+      let(:task) { create(:generic_task, :completed) }
 
       it "returns false" do
         expect(task.actions_allowable?(user)).to eq(false)
@@ -749,7 +816,7 @@ describe Task do
     let(:task) { FactoryBot.create(:generic_task) }
     let(:task_id) { task.id }
     let(:task_timer_count) { 4 }
-    let!(:task_timers) { Array.new(task_timer_count) { TaskTimer.create!(task: task) } }
+    let!(:task_timers) { Array.new(task_timer_count) { TaskTimer.create!(task: task, last_submitted_at: 2.days.ago) } }
 
     it "returns and destroys related timers" do
       expect(TaskTimer.where(task_id: task_id).count).to eq(task_timer_count)
@@ -757,6 +824,13 @@ describe Task do
 
       task.destroy!
       expect(TaskTimer.where(task_id: task_id).count).to eq(0)
+    end
+
+    it "cancels related timers on cancel" do
+      task.update!(status: Constants.TASK_STATUSES.cancelled)
+      task.task_timers.each do |task_timer|
+        expect(task_timer.canceled_at).not_to eq(nil)
+      end
     end
   end
 
@@ -772,9 +846,10 @@ describe Task do
     end
 
     context "when a task has completed an old-style hold" do
-      let(:task) { FactoryBot.create(:task, :on_hold, placed_on_hold_at: 200.days.ago) }
+      let(:task) { FactoryBot.create(:task, :on_hold) }
 
       it "recognizes that the old style hold has expired" do
+        task.update(placed_on_hold_at: 200.days.ago)
         expect(subject).to eq(true)
       end
     end

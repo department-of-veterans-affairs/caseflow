@@ -253,6 +253,10 @@
   "CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_TITLE": "Cancel hearing request",
   "CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_DETAIL": "Canceling this hearing request will release it to a hearing coordinator for review. A 90 day evidence hold may still apply to this case.",
 
+  "SPECIAL_CASE_MOVEMENT_MODAL_TITLE": "Special Case Movement",
+  "SPECIAL_CASE_MOVEMENT_MODAL_DETAIL": "This action overrides the normal case distribution process and immediately assigns the appeal to the judge selected.",
+  "SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER": "Select a judge",
+
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
   "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to the assigner",
   "CANCEL_TASK_CONFIRMATION": "Task for %s's case has been cancelled",
@@ -477,7 +481,7 @@
   "RAMP_COMPLETED_ALERT": "Send the \"RAMP Acknowledgement Letter\", listing all eligible contentions, and ineligible contentions if applicable.",
   "INELIGIBLE_RAMP_ALERT": "The Veteran’s RAMP Selection Form did not include any issues that are eligible for review under RAMP. Notify the Veteran using the \"RAMP Ineligible Letter\".",
   "INELIGIBLE_HIGHER_LEVEL_REVIEW_ALERT": "Contact the Veteran to verify their lane selection. If you are unable to reach the Veteran, send a letter indicating that their selected lane is not available, and that they may clarify their lane selection within 30 days.",
-  "INDENTIFIED_ALERT": "There is still an unidentified issue that needs to be resolved before sending the notice letter. To edit, go to VBMS claim details and click the \"Edit in Caseflow\" button.",
+  "UNIDENTIFIED_ALERT": "There is still an unidentified issue that needs to be resolved before sending the notice letter. To edit, go to VBMS claim details and click the \"Edit in Caseflow\" button.",
   "INTAKE_VETERAN_NOT_FOUND": "Note: If you are certain the Veteran ID or SSN is correct, the claimant may not exist in the VBA Corporate Database. If you have access, please add claimant to the Corporate Database to continue processing this intake. If you do not have access, please",
   "NON_COMP_ADDRESS_MESSAGE": "The Veteran/appellant has filed a Notice of Disagreement at the Board of Veterans' Appeals. In order to decide that appeal, the Board will need the complete records from",
   "INTAKE_EDIT_TITLE": "Edit contention title",
@@ -498,5 +502,16 @@
   "SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_TITLE": "Updated Task Successfully",
   "SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_DETAIL": "Successfully sent %s's case to the list of Veterans to be scheduled.",
 
-  "INVALID_RECORD_ERROR_TITLE": "Record is invalid"
+  "INVALID_RECORD_ERROR_TITLE": "Record is invalid",
+
+  "SCHEDULE_VETERAN_SUCCESS_MESSAGE_TITLE": "You have successfully assigned %s to a %s hearing on %s.",
+  "SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL": "To assign another veteran please use the \"Schedule Veterans\" link below. You can also use the hearings section below to view the hearing in new tab.",
+
+  "SCHEDULE_VETERAN_FULL_HEARING_DAY_TITLE": "This hearing day is full",
+  "SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL": "You are about to schedule this Veteran on a full docket. Please verify before scheduling.",
+
+  "HEARING_DATE_LOADING": "Finding upcoming hearing dates for this regional office...",
+
+  "CLAIM_REVIEW_EDIT_ERROR_MISSING_DECISION_DATE": "VBMS or SHARE: One or more ratings may be locked on this Claim. Please try again in 24 hours.",
+  "CLAIM_REVIEW_EDIT_ERROR_DEFAULT": "There was an error preparing this Review for edit."
 }

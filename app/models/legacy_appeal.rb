@@ -9,6 +9,7 @@
 class LegacyAppeal < ApplicationRecord
   include AppealConcern
   include AssociatedVacolsModel
+  include BgsService
   include CachedAttributes
   include AddressMapper
   include Taskable
@@ -389,7 +390,7 @@ class LegacyAppeal < ApplicationRecord
 
   # TODO: delegate this to veteran
   def can_be_accessed_by_current_user?
-    self.class.bgs.can_access?(veteran_file_number)
+    bgs.can_access?(veteran_file_number)
   end
 
   def task_header
@@ -716,7 +717,6 @@ class LegacyAppeal < ApplicationRecord
   def eligible_for_soc_opt_in?(receipt_date)
     return false unless receipt_date
     return false unless soc_date
-    return false if soc_date < Constants::DATES["AMA_ACTIVATION"].to_date
 
     soc_date_eligible_for_opt_in?(receipt_date) || nod_date_eligible_for_opt_in?(receipt_date)
   end
@@ -749,9 +749,10 @@ class LegacyAppeal < ApplicationRecord
 
   def soc_date_eligible_for_opt_in?(receipt_date)
     soc_eligible_date = receipt_date - 60.days
+    earliest_eligible_date = [soc_eligible_date, Constants::DATES["AMA_ACTIVATION"].to_date].max
 
     # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
-    soc_date >= soc_eligible_date || ssoc_dates.any? { |ssoc_date| ssoc_date >= soc_eligible_date }
+    soc_date >= earliest_eligible_date || ssoc_dates.any? { |ssoc_date| ssoc_date >= earliest_eligible_date }
   end
 
   def nod_date_eligible_for_opt_in?(receipt_date)
@@ -846,10 +847,6 @@ class LegacyAppeal < ApplicationRecord
       else
         numeric
       end
-    end
-
-    def bgs
-      BGSService.new
     end
 
     def fetch_appeals_by_file_number(*file_numbers)

@@ -25,6 +25,21 @@ feature "NonComp Reviews Queue" do
     let(:today) { Time.zone.now }
     let(:last_week) { Time.zone.now - 7.days }
 
+    let!(:completed_tasks) do
+      [
+        create(:higher_level_review_task,
+               :completed,
+               appeal: hlr_a,
+               assigned_to: non_comp_org,
+               closed_at: last_week),
+        create(:higher_level_review_task,
+               :completed,
+               appeal: hlr_b,
+               assigned_to: non_comp_org,
+               closed_at: today)
+      ]
+    end
+
     let!(:in_progress_tasks) do
       [
         create(:higher_level_review_task,
@@ -42,21 +57,6 @@ feature "NonComp Reviews Queue" do
                appeal: appeal,
                assigned_to: non_comp_org,
                assigned_at: 1.day.ago)
-      ]
-    end
-
-    let!(:completed_tasks) do
-      [
-        create(:higher_level_review_task,
-               :completed,
-               appeal: hlr_a,
-               assigned_to: non_comp_org,
-               closed_at: last_week),
-        create(:higher_level_review_task,
-               :completed,
-               appeal: hlr_b,
-               assigned_to: non_comp_org,
-               closed_at: today)
       ]
     end
 
@@ -96,6 +96,16 @@ feature "NonComp Reviews Queue" do
       expect(page).to have_content(
         /#{veteran_b.name} 5\d+ 0 [\d\/]+ Higher-Level Review\s#{veteran_a.name} 5\d+ 0 [\d\/]+/
       )
+    end
+
+    scenario "filtering reviews" do
+      visit "decision_reviews/nco"
+      find(".unselected-filter-icon").click
+      find("label", text: "Higher-level review").click
+      expect(page).to have_content("Higher-Level Review")
+      expect(page).to_not have_content("Board Grant")
+      find(".cf-clear-filters-link").click
+      expect(page).to have_content("Board Grant")
     end
 
     context "with user enabled for intake" do
