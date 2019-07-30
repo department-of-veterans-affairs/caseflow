@@ -96,11 +96,11 @@ describe VaDotGovAddressValidator do
     end
 
     [
-      Caseflow::Error::VaDotGovAddressCouldNotBeFoundError,
-      Caseflow::Error::VaDotGovInvalidInputError,
-      Caseflow::Error::VaDotGovMultipleAddressError
+      Caseflow::Error::VaDotGovAddressCouldNotBeFoundError.new(code: 500, message: ""),
+      Caseflow::Error::VaDotGovInvalidInputError.new(code: 500, message: ""),
+      Caseflow::Error::VaDotGovMultipleAddressError.new(code: 500, message: "")
     ].each do |error|
-      context "when va_dot_gov_service throws a #{error.name} error and zipcode fallback fails" do
+      context "when va_dot_gov_service throws a #{error.class.name} error and zipcode fallback fails" do
         let!(:valid_address_result) { { error: error, valid_address: {} } }
 
         before do
