@@ -58,8 +58,8 @@ describe ExternalApi::VADotGovService do
       let!(:error_code) { 429 }
 
       it "throws Caseflow::Error::VaDotGovLimitError" do
-        expect { VADotGovService.get_facility_data(ids: ["vba_372"]) }
-          .to raise_error(Caseflow::Error::VaDotGovLimitError)
+        expect { VADotGovService.get_facility_data(ids: ["vba_372"])[:error] }
+          .to be_an_instance_of(Caseflow::Error::VaDotGovLimitError)
       end
     end
 
@@ -67,8 +67,8 @@ describe ExternalApi::VADotGovService do
       let!(:error_code) { 400 }
 
       it "throws Caseflow::Error::VaDotGovRequestError" do
-        expect { VADotGovService.get_facility_data(ids: ["vba_372"]) }
-          .to raise_error(Caseflow::Error::VaDotGovRequestError)
+        expect { VADotGovService.get_facility_data(ids: ["vba_372"])[:error] }
+          .to be_an_instance_of(Caseflow::Error::VaDotGovRequestError)
       end
     end
 
@@ -76,8 +76,8 @@ describe ExternalApi::VADotGovService do
       let!(:error_code) { 500 }
 
       it "throws Caseflow::Error::VaDotGovServerError" do
-        expect { VADotGovService.get_facility_data(ids: ["vba_372"]) }
-          .to raise_error(Caseflow::Error::VaDotGovServerError)
+        expect { VADotGovService.get_facility_data(ids: ["vba_372"])[:error] }
+          .to be_an_instance_of(Caseflow::Error::VaDotGovServerError)
       end
     end
 
@@ -85,8 +85,8 @@ describe ExternalApi::VADotGovService do
       let!(:error_code) { 504 }
 
       it "throws Caseflow::Error::VaDotGovServerError" do
-        expect { VADotGovService.get_facility_data(ids: ["vba_372"]) }
-          .to raise_error(Caseflow::Error::VaDotGovServerError)
+        expect { VADotGovService.get_facility_data(ids: ["vba_372"])[:error] }
+          .to be_an_instance_of(Caseflow::Error::VaDotGovServerError)
       end
     end
   end
