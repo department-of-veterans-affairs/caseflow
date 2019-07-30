@@ -34,6 +34,8 @@ class TaskPager
       tasks.order(closed_at: sort_order.to_sym)
     when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
       tasks.order(type: sort_order.to_sym, action: sort_order.to_sym, created_at: sort_order.to_sym)
+    when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
+      tasks.order(docket_number: sort_order.to_sym)
     # Columns not yet supported:
     #
     # APPEAL_TYPE_COLUMN

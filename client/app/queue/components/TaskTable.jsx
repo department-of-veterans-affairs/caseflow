@@ -62,6 +62,7 @@ export const docketNumberColumn = (tasks, requireDasRecord) => {
       </React.Fragment>;
     },
     span: collapseColumn(requireDasRecord),
+    backendCanSort: true,
     getSortValue: (task) => {
       if (!hasDASRecord(task, requireDasRecord)) {
         return null;
@@ -155,6 +156,7 @@ export const typeColumn = (tasks, requireDasRecord) => {
       renderAppealType(task.appeal) :
       <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
     span: (task) => hasDASRecord(task, requireDasRecord) ? 1 : 5,
+    backendCanSort: true,
     getSortValue: (task) => {
       // We append a * before the docket number if it's a priority case since * comes before
       // numbers in sort order, this forces these cases to the top of the sort.
