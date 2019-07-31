@@ -63,10 +63,37 @@ class Api::V3::HigherLevelReviewProcessor
     intake.detail
   end
 
-  def self.error_hash_from_error_code(code)
-    return ERRORS_BY_CODE[code].merge(code: code) if ERRORS_BY_CODE[code]
-
-    ERRORS_BY_CODE[DEFAULT_ERROR_CODE].merge(code: DEFAULT_ERROR_CODE)
+  def self.error_from_error_code(code)
+    code = code.to_s
+    status, title = (
+      case code
+      when "invalid_file_number"
+        [422, "Veteran ID not found"]
+      when "veteran_not_found"
+        [404, "Veteran not found"]
+      when "veteran_has_multiple_phone_numbers"
+        [422, "The veteran has multiple active phone numbers"]
+      when "veteran_not_accessible"
+        [403, "You don't have permission to view this veteran's information"]
+      when "veteran_not_modifiable"
+        [422, "You don't have permission to intake this veteran"]
+      when "veteran_not_valid"
+        [422, "The veteran's profile has missing or invalid information required to create an EP."]
+      when "duplicate_intake_in_progress"
+        [409, "Intake In progress"]
+      when "reserved_veteran_file_number"
+        [422, "Invalid veteran file number"]
+      when "incident_flash"
+        [422, "The veteran has an incident flash"]
+      else; [nil, nil]
+      end
+    )
+    unless status || title
+      status = 422
+      title = "Unknown error"
+      code = "unknown_error"
+    end
+    { status: status, code: code, title: title }
   end
 
   private
