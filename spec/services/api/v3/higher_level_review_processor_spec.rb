@@ -20,7 +20,7 @@ describe Intake, :all_dbs do
   #   end
 
   let(:params) do
-    {
+    ActionController::Parameters.new(
       "data" => {
         "type" => "HigherLevelReview",
         "attributes" => {
@@ -75,7 +75,7 @@ describe Intake, :all_dbs do
           }
         }
       ]
-    }
+    )
   end
 
   context "new" do
@@ -83,7 +83,7 @@ describe Intake, :all_dbs do
 
     context "when form_type is supported" do
       it "no errors" do
-        expect { subject.errors? }.to be false
+        expect(subject.errors?).to be false
       end
     end
   end
