@@ -37,14 +37,21 @@ class TaskPager
     when Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
       tasks.order(placed_on_hold_at: sort_order)
     when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
-      tasks_with_cached_attributes(tasks).order("cached_appeal_attributes.docket_number #{sort_order}")
+      ts = tasks_with_cached_appeal_attributes(tasks)
+
+      # byebug;
+
+      # ts.order(docket_number: sort_order)
+
+      ts.order("cached_appeal_attributes.docket_number #{sort_order}")
+
+      # ts.order(docket_number: sort_order)
 
     # Columns not yet supported:
     #
     # APPEAL_TYPE_COLUMN
     # CASE_DETAILS_LINK_COLUMN
     # DOCUMENT_COUNT_READER_LINK_COLUMN
-    # DOCKET_NUMBER_COLUMN
     # HEARING_BADGE_COLUMN
     # ISSUE_COUNT_COLUMN
     # REGIONAL_OFFICE_COLUMN
@@ -57,8 +64,11 @@ class TaskPager
     end
   end
 
-  def tasks_with_cached_attributes(tasks)
-    sql = "left join cached_appeal_attributes on cached_appeal_attributes.appeal_id = tasks.appeal_id and cached_appeal_attributes.appeal_type = tasks.appeal_type"
+  def tasks_with_cached_appeal_attributes(tasks)
+    sql = "left join cached_appeal_attributes \
+    on cached_appeal_attributes.appeal_id = tasks.appeal_id \
+    and cached_appeal_attributes.appeal_type = tasks.appeal_type"
+
     tasks.joins(sql)
   end
 
