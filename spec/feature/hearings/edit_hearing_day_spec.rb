@@ -100,7 +100,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     expect(page).to have_content("You have successfully completed this action")
   end
 
-  scenario "first option is 'None'", focus: true do
+  scenario "first option is 'None'" do
     visit "hearings/schedule"
     find_link(hearing_day.scheduled_for.strftime("%a%_m/%d/%Y")).click
     find("button", text: "Edit Hearing Day").click
