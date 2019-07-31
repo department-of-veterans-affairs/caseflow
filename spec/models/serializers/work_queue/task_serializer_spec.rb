@@ -5,8 +5,8 @@ require "rails_helper"
 
 describe WorkQueue::TaskSerializer, :postgres do
   let(:now) { Time.utc(2018, 4, 24, 12, 0, 0) }
-  let(:user) { FactoryBot.create(:user) }
-  let!(:parent) { FactoryBot.create(:generic_task, assigned_to: user) }
+  let(:user) { create(:user) }
+  let!(:parent) { create(:generic_task, assigned_to: user) }
   let(:days_on_hold) { 18 }
 
   subject { described_class.new(parent).serializable_hash[:data][:attributes] }

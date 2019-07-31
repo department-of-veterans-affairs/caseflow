@@ -249,7 +249,7 @@ describe User, :all_dbs do
   end
 
   context "#selectable_organizations" do
-    let(:judge) { FactoryBot.create :user }
+    let(:judge) { create :user }
     let!(:judgeteam) { JudgeTeam.create_for_judge(judge) }
 
     subject { user.selectable_organizations }
@@ -553,7 +553,7 @@ describe User, :all_dbs do
   end
 
   describe ".organization_queue_user?" do
-    let(:user) { FactoryBot.create(:user) }
+    let(:user) { create(:user) }
 
     subject { user.organization_queue_user? }
 
@@ -564,7 +564,7 @@ describe User, :all_dbs do
     end
 
     context "when the user is a member of some organizations" do
-      before { OrganizationsUser.add_user_to_organization(user, FactoryBot.create(:organization)) }
+      before { OrganizationsUser.add_user_to_organization(user, create(:organization)) }
       it "returns true" do
         expect(subject).to eq(true)
       end

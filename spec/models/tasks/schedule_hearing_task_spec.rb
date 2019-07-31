@@ -4,9 +4,9 @@ require "support/vacols_database_cleaner"
 require "rails_helper"
 
 describe ScheduleHearingTask, :all_dbs do
-  let(:vacols_case) { FactoryBot.create(:case, bfcurloc: "57") }
-  let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
-  let!(:hearings_management_user) { FactoryBot.create(:hearings_coordinator) }
+  let(:vacols_case) { create(:case, bfcurloc: "57") }
+  let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+  let!(:hearings_management_user) { create(:hearings_coordinator) }
   let(:test_hearing_date_vacols) do
     Time.use_zone("Eastern Time (US & Canada)") do
       Time.zone.local(2018, 11, 2, 6, 0, 0)
@@ -24,7 +24,7 @@ describe ScheduleHearingTask, :all_dbs do
   end
 
   context "create a new ScheduleHearingTask" do
-    let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
+    let(:appeal) { create(:appeal, :hearing_docket) }
 
     subject do
       InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
@@ -50,7 +50,7 @@ describe ScheduleHearingTask, :all_dbs do
     end
 
     context "there is a hearing admin org user" do
-      let(:hearing_admin_user) { FactoryBot.create(:user, station_id: 101) }
+      let(:hearing_admin_user) { create(:user, station_id: 101) }
 
       before do
         OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
@@ -66,9 +66,9 @@ describe ScheduleHearingTask, :all_dbs do
   end
 
   context "create a ScheduleHearingTask with parent other than HearingTask type" do
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
 
-    subject { FactoryBot.create(:schedule_hearing_task, parent: root_task) }
+    subject { create(:schedule_hearing_task, parent: root_task) }
 
     it "creates a HearingTask in between the input parent and the ScheduleHearingTask" do
       expect { subject }.to_not raise_error

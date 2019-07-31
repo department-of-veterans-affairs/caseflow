@@ -25,7 +25,7 @@ describe NoShowHearingTask, :postgres do
     end
 
     context "there is a hearings management org user" do
-      let!(:hearings_management_user) { FactoryBot.create(:hearings_coordinator) }
+      let!(:hearings_management_user) { create(:hearings_coordinator) }
 
       before do
         OrganizationsUser.add_user_to_organization(hearings_management_user, HearingsManagement.singleton)
@@ -37,7 +37,7 @@ describe NoShowHearingTask, :postgres do
     end
 
     context "there is a hearing admin org user" do
-      let(:hearing_admin_user) { FactoryBot.create(:user, station_id: 101) }
+      let(:hearing_admin_user) { create(:user, station_id: 101) }
 
       before do
         OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)

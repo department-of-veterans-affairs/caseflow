@@ -78,7 +78,7 @@ describe HearingDay, :all_dbs do
 
   context "update hearing" do
     let!(:hearing_day) do
-      FactoryBot.create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video], regional_office: "RO18")
+      create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video], regional_office: "RO18")
     end
     let(:hearing_hash) do
       {
@@ -105,9 +105,9 @@ describe HearingDay, :all_dbs do
 
     context "updates attributes in children hearings" do
       let!(:vacols_child_hearing) do
-        FactoryBot.create(:case_hearing, vdkey: hearing_day.id, folder_nr: FactoryBot.create(:case).bfkey)
+        create(:case_hearing, vdkey: hearing_day.id, folder_nr: create(:case).bfkey)
       end
-      let!(:caseflow_child_hearing) { FactoryBot.create(:hearing, hearing_day_id: hearing_day.id) }
+      let!(:caseflow_child_hearing) { create(:hearing, hearing_day_id: hearing_day.id) }
 
       before do
         RequestStore.store[:current_user] = create(:user, vacols_uniq_id: create(:staff).slogid)
@@ -130,8 +130,8 @@ describe HearingDay, :all_dbs do
       end
 
       context "both room and judge are changed" do
-        let!(:judge) { FactoryBot.create(:user) }
-        let!(:judge_role) { FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id) }
+        let!(:judge) { create(:user) }
+        let!(:judge_role) { create(:staff, :judge_role, sdomainid: judge.css_id) }
         let!(:hearing_hash) do
           {
             judge_id: judge.id,
@@ -167,8 +167,8 @@ describe HearingDay, :all_dbs do
   end
 
   context "confirm_no_children_records" do
-    let!(:hearing_day) { FactoryBot.create(:hearing_day) }
-    let!(:hearing) { FactoryBot.create(:hearing, hearing_day: hearing_day) }
+    let!(:hearing_day) { create(:hearing_day) }
+    let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
 
     it "returns an error if there are children records" do
       expect { hearing_day.reload.confirm_no_children_records }.to raise_error(HearingDay::HearingDayHasChildrenRecords)
@@ -177,12 +177,12 @@ describe HearingDay, :all_dbs do
 
   context "hearing day full" do
     context "the hearing day has 12 scheduled hearings" do
-      let!(:hearing_day) { FactoryBot.create(:hearing_day) }
+      let!(:hearing_day) { create(:hearing_day) }
 
       before do
         6.times do
-          FactoryBot.create(:hearing, hearing_day: hearing_day)
-          FactoryBot.create(:case_hearing, vdkey: hearing_day.id)
+          create(:hearing, hearing_day: hearing_day)
+          create(:case_hearing, vdkey: hearing_day.id)
         end
       end
 
@@ -194,12 +194,12 @@ describe HearingDay, :all_dbs do
     end
 
     context "the hearing day has 12 closed hearings" do
-      let!(:hearing_day) { FactoryBot.create(:hearing_day) }
+      let!(:hearing_day) { create(:hearing_day) }
 
       before do
         6.times do
-          FactoryBot.create(:hearing, hearing_day: hearing_day, disposition: "postponed")
-          FactoryBot.create(:case_hearing, vdkey: hearing_day.id, hearing_disp: "C")
+          create(:hearing, hearing_day: hearing_day, disposition: "postponed")
+          create(:case_hearing, vdkey: hearing_day.id, hearing_disp: "C")
         end
       end
 
@@ -211,7 +211,7 @@ describe HearingDay, :all_dbs do
     end
 
     context "the hearing day is locked" do
-      let!(:hearing_day) { FactoryBot.create(:hearing_day, lock: true) }
+      let!(:hearing_day) { create(:hearing_day, lock: true) }
 
       subject { hearing_day.reload.hearing_day_full? }
 
@@ -225,7 +225,7 @@ describe HearingDay, :all_dbs do
     let(:schedule_period) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
       Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
-      FactoryBot.create(:ro_schedule_period)
+      create(:ro_schedule_period)
     end
 
     context "generate and persist hearing schedule" do
