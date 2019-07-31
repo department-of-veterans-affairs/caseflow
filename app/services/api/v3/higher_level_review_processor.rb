@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "json"
-
 class Api::V3::HigherLevelReviewProcessor
   attr_reader :intake, :errors
 
@@ -9,7 +7,8 @@ class Api::V3::HigherLevelReviewProcessor
     fail StandardError, "couldn't pull nonrating issue categories from ISSUE_CATEGORIES.json"
   end
 
-  def initialize(_hash)
+  def initialize(user:, params:)
+    @user = user
     @errors = []
 
     attributes = params[:data][:attributes]
@@ -45,10 +44,10 @@ class Api::V3::HigherLevelReviewProcessor
     !errors.empty?
   end
 
-  def build_start_review_complete(current_user)
+  def build_start_review_complete
     transaction do
       @intake = Intake.build(
-        user: current_user,
+        user: @user,
         veteran_file_number: @veteran_file_number,
         form_type: "higher_level_review"
       )
