@@ -9,7 +9,7 @@ class AsciiString < ActiveRecord::Type::Text
 
   def cast_value(value)
     ascii_value = AsciiConverter.new(string: value.to_s).convert
-    limit ? ascii_value[0, (limit - 1)] : ascii_value
+    limit ? ascii_value[0, limit] : ascii_value
   end
 end
 
