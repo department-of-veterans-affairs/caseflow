@@ -36,9 +36,9 @@ class TaskPager
       tasks.order(type: sort_order, action: sort_order, created_at: sort_order)
     when Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
       tasks.order(placed_on_hold_at: sort_order)
-    when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
-      tasks_with_cached_attributes(tasks).order("cached_appeal_attributes.docket_number #{sort_order}")
-      
+    # when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
+    #   tasks_with_cached_attributes(tasks).order("cached_appeal_attributes.docket_number #{sort_order}")
+
     # Columns not yet supported:
     #
     # APPEAL_TYPE_COLUMN
