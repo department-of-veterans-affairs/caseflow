@@ -5,12 +5,12 @@ require "rails_helper"
 
 describe HearingTask, :postgres do
   describe ".create_change_hearing_disposition_task" do
-    let(:appeal) { FactoryBot.create(:appeal) }
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+    let(:appeal) { create(:appeal) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
+    let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
     let(:instructions) { "These are the instructions I've written for you." }
     let!(:disposition_task) do
-      FactoryBot.create(
+      create(
         :assign_hearing_disposition_task,
         :in_progress,
         parent: hearing_task,
@@ -39,12 +39,12 @@ describe HearingTask, :postgres do
   end
 
   describe "#assign_hearing_disposition_task" do
-    let(:root_task) { FactoryBot.create(:root_task) }
-    let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: root_task.appeal) }
+    let(:root_task) { create(:root_task) }
+    let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: root_task.appeal) }
     let(:disposition_task_type) { :assign_hearing_disposition_task }
     let(:trait) { :assigned }
     let!(:disposition_task) do
-      FactoryBot.create(
+      create(
         disposition_task_type,
         trait,
         parent: hearing_task,

@@ -28,7 +28,7 @@ describe BoardGrantEffectuation, :postgres do
   let(:processed_at) { nil }
 
   let!(:granted_decision_issue) do
-    FactoryBot.create(
+    create(
       :decision_issue,
       rating_or_nonrating,
       disposition: "allowed",
@@ -131,7 +131,7 @@ describe BoardGrantEffectuation, :postgres do
 
     context "when matching end product establishment exists" do
       let!(:matching_end_product_establishment) do
-        FactoryBot.create(
+        create(
           :end_product_establishment,
           code: "030BGR",
           source: decision_document,
@@ -140,7 +140,7 @@ describe BoardGrantEffectuation, :postgres do
       end
 
       let!(:not_matching_end_product_establishment) do
-        FactoryBot.create(
+        create(
           :end_product_establishment,
           code: "030BGRNR",
           source: decision_document
@@ -148,7 +148,7 @@ describe BoardGrantEffectuation, :postgres do
       end
 
       let!(:already_established_end_product_establishment) do
-        FactoryBot.create(
+        create(
           :end_product_establishment,
           code: "030BGR",
           source: decision_document,
@@ -233,7 +233,7 @@ describe BoardGrantEffectuation, :postgres do
 
         # Create a not matching end product establishment to make sure that never matches
         let!(:not_matching_end_product_establishment) do
-          FactoryBot.create(
+          create(
             :end_product_establishment,
             code: "030BGR",
             source: decision_document
@@ -310,7 +310,7 @@ describe BoardGrantEffectuation, :postgres do
 
         # Create a not matching end product establishment to make sure that never matches
         let!(:not_matching_end_product_establishment) do
-          FactoryBot.create(
+          create(
             :end_product_establishment,
             code: "030BGR",
             source: decision_document

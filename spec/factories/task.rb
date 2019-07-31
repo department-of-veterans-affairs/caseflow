@@ -18,6 +18,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.in_progress)
+        task.children.update_all(status: Constants.TASK_STATUSES.in_progress)
       end
     end
 
@@ -28,6 +29,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.on_hold)
+        task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
       end
     end
 
@@ -38,6 +40,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.on_hold)
+        task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
       end
     end
 
@@ -49,6 +52,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.completed)
+        task.children.update_all(status: Constants.TASK_STATUSES.completed)
       end
     end
 
@@ -59,6 +63,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.completed, closed_at: 3.weeks.ago)
+        task.children.update_all(status: Constants.TASK_STATUSES.completed, closed_at: 3.weeks.ago)
       end
     end
 
@@ -67,6 +72,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.cancelled)
+        task.children.update_all(status: Constants.TASK_STATUSES.cancelled)
       end
     end
 
@@ -85,6 +91,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.on_hold)
+        task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
       end
     end
 

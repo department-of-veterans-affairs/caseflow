@@ -488,8 +488,8 @@ describe Appeal, :all_dbs do
       let(:bgs_veteran_record) { { state: bgs_veteran_state } }
       let(:validated_veteran_state) { nil }
       let(:mock_va_dot_gov_address) { { state_code: validated_veteran_state } }
-      let(:veteran) { FactoryBot.create(:veteran, bgs_veteran_record: bgs_veteran_record) }
-      let(:appeal) { FactoryBot.create(:appeal, veteran: veteran) }
+      let(:veteran) { create(:veteran, bgs_veteran_record: bgs_veteran_record) }
+      let(:appeal) { create(:appeal, veteran: veteran) }
 
       context "VADotGovService is responsive" do
         before do
@@ -697,7 +697,7 @@ describe Appeal, :all_dbs do
     subject { appeal.active? }
 
     context "when there are no tasks for an appeal" do
-      let(:appeal) { FactoryBot.create(:appeal) }
+      let(:appeal) { create(:appeal) }
 
       it "should indicate the appeal is not active" do
         expect(subject).to eq(false)
@@ -705,10 +705,10 @@ describe Appeal, :all_dbs do
     end
 
     context "when there are only completed tasks for an appeal" do
-      let(:appeal) { FactoryBot.create(:appeal) }
+      let(:appeal) { create(:appeal) }
 
       before do
-        FactoryBot.create_list(:task, 6, :completed, appeal: appeal)
+        create_list(:task, 6, :completed, appeal: appeal)
       end
 
       it "should indicate the appeal is not active" do
@@ -717,10 +717,10 @@ describe Appeal, :all_dbs do
     end
 
     context "when there are incomplete tasks for an appeal" do
-      let(:appeal) { FactoryBot.create(:appeal) }
+      let(:appeal) { create(:appeal) }
 
       before do
-        FactoryBot.create_list(:task, 3, :in_progress, appeal: appeal)
+        create_list(:task, 3, :in_progress, appeal: appeal)
       end
 
       it "should indicate the appeal is active" do
@@ -763,7 +763,7 @@ describe Appeal, :all_dbs do
       let(:appeal) { create(:appeal) }
 
       before do
-        FactoryBot.create_list(:task, 3, :in_progress, type: RootTask.name, appeal: appeal)
+        create_list(:task, 3, :in_progress, type: RootTask.name, appeal: appeal)
       end
 
       it "appeal is active" do
@@ -903,7 +903,7 @@ describe Appeal, :all_dbs do
     end
 
     context "hearing is scheduled" do
-      let(:hearing_task) { FactoryBot.create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
+      let(:hearing_task) { create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
       let(:hearing_scheduled_for) { Time.zone.today + 15.days }
       let(:hearing_day) do
         create(:hearing_day,
@@ -913,7 +913,7 @@ describe Appeal, :all_dbs do
       end
 
       let(:hearing) do
-        FactoryBot.create(
+        create(
           :hearing,
           appeal: appeal,
           disposition: nil,
@@ -922,14 +922,14 @@ describe Appeal, :all_dbs do
         )
       end
       let!(:hearing_task_association) do
-        FactoryBot.create(
+        create(
           :hearing_task_association,
           hearing: hearing,
           hearing_task: hearing_task
         )
       end
       let!(:schedule_hearing_task) do
-        FactoryBot.create(
+        create(
           :schedule_hearing_task,
           :completed,
           parent: hearing_task,
@@ -937,7 +937,7 @@ describe Appeal, :all_dbs do
         )
       end
       let!(:disposition_task) do
-        FactoryBot.create(
+        create(
           :assign_hearing_disposition_task,
           :in_progress,
           parent: hearing_task,
@@ -1505,7 +1505,7 @@ describe Appeal, :all_dbs do
 
     context "has a scheduled hearing" do
       let!(:appeal_root_task) { create(:root_task, :in_progress, appeal: appeal) }
-      let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
+      let!(:hearing_task) { create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
       let(:hearing_scheduled_for) { Time.zone.today + 15.days }
       let!(:hearing_day) do
         create(:hearing_day,
@@ -1515,7 +1515,7 @@ describe Appeal, :all_dbs do
       end
 
       let!(:hearing) do
-        FactoryBot.create(
+        create(
           :hearing,
           appeal: appeal,
           disposition: nil,
@@ -1524,14 +1524,14 @@ describe Appeal, :all_dbs do
         )
       end
       let!(:hearing_task_association) do
-        FactoryBot.create(
+        create(
           :hearing_task_association,
           hearing: hearing,
           hearing_task: hearing_task
         )
       end
       let!(:schedule_hearing_task) do
-        FactoryBot.create(
+        create(
           :schedule_hearing_task,
           :completed,
           parent: hearing_task,
@@ -1539,7 +1539,7 @@ describe Appeal, :all_dbs do
         )
       end
       let!(:disposition_task) do
-        FactoryBot.create(
+        create(
           :assign_hearing_disposition_task,
           :in_progress,
           parent: hearing_task,

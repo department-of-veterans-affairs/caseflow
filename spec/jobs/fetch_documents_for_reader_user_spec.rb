@@ -58,7 +58,7 @@ describe FetchDocumentsForReaderUserJob, :all_dbs do
 
     context "when an attorney with a colocated task is provided" do
       let!(:vacols_atty) do
-        FactoryBot.create(
+        create(
           :staff,
           :attorney_role,
           sdomainid: user.css_id
