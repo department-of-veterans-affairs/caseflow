@@ -4,25 +4,25 @@ require "support/vacols_database_cleaner"
 require "rails_helper"
 
 RSpec.feature "Judge checkout flow", :all_dbs do
-  let(:attorney_user) { FactoryBot.create(:default_user) }
-  let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+  let(:attorney_user) { create(:default_user) }
+  let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
-  let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
-  let!(:vacols_judge) { FactoryBot.create(:staff, vacols_role_trait, sdomainid: judge_user.css_id) }
+  let(:judge_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
+  let!(:vacols_judge) { create(:staff, vacols_role_trait, sdomainid: judge_user.css_id) }
   let(:vacols_role_trait) { :judge_role }
 
   before do
     # When a judge completes judge checkout we create either a QR or dispatch task. Make sure we have somebody in
     # the BVA dispatch team so that the creation of that task (which round robin assigns org tasks) does not fail.
-    OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+    OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
   end
 
   context "given a valid ama appeal with single issue" do
     let!(:appeal) do
-      FactoryBot.create(
+      create(
         :appeal,
         number_of_claimants: 1,
-        request_issues: FactoryBot.build_list(
+        request_issues: build_list(
           :request_issue, 1,
           contested_issue_description: "Tinnitus"
         )
@@ -30,9 +30,9 @@ RSpec.feature "Judge checkout flow", :all_dbs do
     end
     let!(:decision_issue) { create(:decision_issue, decision_review: appeal, request_issues: appeal.request_issues) }
 
-    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:root_task) { create(:root_task) }
     let(:parent_task) do
-      FactoryBot.create(
+      create(
         :ama_judge_decision_review_task,
         :in_progress,
         assigned_to: judge_user,
@@ -42,7 +42,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
     end
 
     let(:child_task) do
-      FactoryBot.create(
+      create(
         :ama_attorney_task,
         :in_progress,
         assigned_to: attorney_user,
@@ -92,17 +92,17 @@ RSpec.feature "Judge checkout flow", :all_dbs do
 
   context "given a valid legacy appeal with single issue" do
     let!(:appeal) do
-      FactoryBot.create(
+      create(
         :legacy_appeal,
         :with_veteran,
-        vacols_case: FactoryBot.create(
+        vacols_case: create(
           :case,
           :assigned,
           user: judge_user,
           assigner: attorney_user,
           case_issues: [
-            FactoryBot.create(:case_issue, :disposition_allowed),
-            FactoryBot.create(:case_issue, :disposition_granted_by_aoj)
+            create(:case_issue, :disposition_allowed),
+            create(:case_issue, :disposition_granted_by_aoj)
           ],
           work_product: work_product
         )
@@ -230,19 +230,19 @@ RSpec.feature "Judge checkout flow", :all_dbs do
     let(:vacols_role_trait) { :attorney_judge_role }
 
     let(:appeal) do
-      FactoryBot.create(
+      create(
         :appeal,
         number_of_claimants: 1,
-        request_issues: FactoryBot.build_list(:request_issue, 1)
+        request_issues: build_list(:request_issue, 1)
       )
     end
     let!(:decision_issue) do
-      FactoryBot.create(:decision_issue, decision_review: appeal, request_issues: appeal.request_issues)
+      create(:decision_issue, decision_review: appeal, request_issues: appeal.request_issues)
     end
 
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
     let(:judge_review_task) do
-      FactoryBot.create(
+      create(
         :ama_judge_decision_review_task,
         appeal: appeal,
         parent: root_task,
@@ -250,7 +250,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       )
     end
     let!(:attorney_task) do
-      FactoryBot.create(
+      create(
         :ama_attorney_task,
         appeal: appeal,
         parent: judge_review_task,

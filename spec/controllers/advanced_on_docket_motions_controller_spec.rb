@@ -7,8 +7,8 @@ RSpec.describe AdvanceOnDocketMotionsController, :postgres, type: :controller do
   describe "POST aod_team" do
     context "request to create as aod" do
       let(:aod) { AodTeam.singleton }
-      let(:aod_user) { FactoryBot.create(:user) }
-      let(:appeal) { FactoryBot.create(:appeal, veteran: FactoryBot.create(:veteran)) }
+      let(:aod_user) { create(:user) }
+      let(:appeal) { create(:appeal, veteran: create(:veteran)) }
 
       before do
         OrganizationsUser.add_user_to_organization(aod_user, aod)
@@ -23,8 +23,8 @@ RSpec.describe AdvanceOnDocketMotionsController, :postgres, type: :controller do
       end
     end
     context "request to create as non-aod" do
-      let(:non_aod_user) { FactoryBot.create(:user) }
-      let(:appeal) { FactoryBot.create(:appeal, veteran: FactoryBot.create(:veteran)) }
+      let(:non_aod_user) { create(:user) }
+      let(:appeal) { create(:appeal, veteran: create(:veteran)) }
 
       before do
         User.authenticate!(user: non_aod_user)

@@ -27,7 +27,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when object is created with a valid assignee but no tab name" do
-      let(:assignee) { FactoryBot.create(:organization) }
+      let(:assignee) { create(:organization) }
       let(:tab_name) { nil }
 
       it "raises an error" do
@@ -36,7 +36,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sort order is invalid" do
-      let(:assignee) { FactoryBot.create(:organization) }
+      let(:assignee) { create(:organization) }
       let(:arguments) { { assignee: assignee, tab_name: tab_name, sort_order: "invalid" } }
 
       it "raises an error" do
@@ -45,7 +45,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when object is created with a valid assignee and a tab name" do
-      let(:assignee) { FactoryBot.create(:organization) }
+      let(:assignee) { create(:organization) }
 
       it "successfully instantiates the object" do
         expect { subject }.to_not raise_error
@@ -54,7 +54,7 @@ describe TaskPager, :all_dbs do
   end
 
   describe ".tasks_for_tab" do
-    let(:assignee) { FactoryBot.create(:organization) }
+    let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:arguments) { { assignee: assignee, tab_name: tab_name } }
 
@@ -72,7 +72,7 @@ describe TaskPager, :all_dbs do
       let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
       let(:task_count) { TaskPager::TASKS_PER_PAGE + 3 }
 
-      before { FactoryBot.create_list(:generic_task, task_count, assigned_to: assignee) }
+      before { create_list(:generic_task, task_count, assigned_to: assignee) }
 
       it "returns the correct number of tasks" do
         expect(subject.count).to eq(task_count)
@@ -81,12 +81,12 @@ describe TaskPager, :all_dbs do
   end
 
   describe ".paged_tasks" do
-    let(:assignee) { FactoryBot.create(:organization) }
+    let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:page) { 1 }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, page: page } }
 
-    before { FactoryBot.create_list(:generic_task, TaskPager::TASKS_PER_PAGE + 1, assigned_to: assignee) }
+    before { create_list(:generic_task, TaskPager::TASKS_PER_PAGE + 1, assigned_to: assignee) }
 
     subject { TaskPager.new(arguments).paged_tasks }
 
@@ -117,11 +117,11 @@ describe TaskPager, :all_dbs do
     let(:task_pager) { TaskPager.new(arguments) }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, sort_by: sort_by } }
     let(:sort_by) { nil }
-    let(:assignee) { FactoryBot.create(:organization) }
+    let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:tasks) { task_pager.tasks_for_tab }
 
-    let!(:created_tasks) { FactoryBot.create_list(:generic_task, 14, assigned_to: assignee) }
+    let!(:created_tasks) { create_list(:generic_task, 14, assigned_to: assignee) }
 
     subject { task_pager.sorted_tasks(tasks) }
 
@@ -163,7 +163,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by days on hold" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN }
 
       before do
         created_tasks.each do |task|
@@ -196,7 +196,7 @@ describe TaskPager, :all_dbs do
 
     context "when sorting by task type" do
       let(:sort_by) { Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN }
-      let!(:created_tasks) { FactoryBot.create_list(:colocated_task, 14, assigned_to: assignee) }
+      let!(:created_tasks) { create_list(:colocated_task, 14, assigned_to: assignee) }
 
       it "sorts ColocatedTasks by action and created_at" do
         expected_order = created_tasks.sort_by { |task| [task.action, task.created_at] }

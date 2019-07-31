@@ -28,7 +28,7 @@ describe InformalHearingPresentationTask, :postgres do
     end
 
     context "when task is assigned to an organization the user is a member of" do
-      let(:org) { Organization.find(FactoryBot.create(:organization).id) }
+      let(:org) { Organization.find(create(:organization).id) }
       let(:task) do
         InformalHearingPresentationTask.find(create(:informal_hearing_presentation_task, assigned_to: org).id)
       end
@@ -61,7 +61,7 @@ describe InformalHearingPresentationTask, :postgres do
   end
 
   describe "when an IHP task is cancelled" do
-    let(:appeal) { FactoryBot.create(:appeal) }
+    let(:appeal) { create(:appeal) }
     let(:task) do
       InformalHearingPresentationTask.find(create(:informal_hearing_presentation_task, assigned_to: user).id)
     end

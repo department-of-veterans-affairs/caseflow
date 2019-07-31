@@ -60,10 +60,10 @@ describe Organizations::UsersController, :postgres, type: :controller do
   describe "PATCH /organizations/:org_url/users/:user_id" do
     subject { patch(:update, params: params, as: :json) }
 
-    let(:org) { FactoryBot.create(:organization) }
-    let(:user) { FactoryBot.create(:user) }
+    let(:org) { create(:organization) }
+    let(:user) { create(:user) }
     let(:admin) do
-      FactoryBot.create(:user).tap do |u|
+      create(:user).tap do |u|
         OrganizationsUser.make_user_admin(u, org)
       end
     end
