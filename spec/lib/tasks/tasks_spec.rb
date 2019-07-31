@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 require "rake"
 
-describe "task rake tasks" do
+describe "task rake tasks", :postgres do
   before :all do
     Rake.application = Rake::Application.new
     Rake.application.rake_require "tasks/tasks"

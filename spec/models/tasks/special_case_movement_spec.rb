@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe SpecialCaseMovementTask do
+describe SpecialCaseMovementTask, :postgres do
   describe ".create" do
     context "with Special Case Movement Team user" do
       let(:scm_user) { FactoryBot.create(:user) }

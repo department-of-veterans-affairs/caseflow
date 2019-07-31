@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe HearingAdminActionForeignVeteranCaseTask do
+describe HearingAdminActionForeignVeteranCaseTask, :postgres do
   let!(:veteran) { create(:veteran) }
   let!(:appeal) { create(:appeal, veteran: veteran) }
   let(:root_task) { create(:root_task, appeal: appeal) }

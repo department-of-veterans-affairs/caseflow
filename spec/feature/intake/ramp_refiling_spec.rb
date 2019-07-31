@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-RSpec.feature "RAMP Refiling Intake" do
+RSpec.feature "RAMP Refiling Intake", :postgres do
   include IntakeHelpers
 
   before do

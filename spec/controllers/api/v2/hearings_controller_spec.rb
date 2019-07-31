@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe Api::V2::HearingsController, type: :controller do
+RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
   let(:api_key) { ApiKey.create!(consumer_name: "API Consumer").key_string }
 
   before(:each) do

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe ColocatedTask do
+describe ColocatedTask, :all_dbs do
   let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
   let!(:staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
   let(:vacols_case) { create(:case) }
@@ -200,20 +201,6 @@ describe ColocatedTask do
       FactoryBot.create(:colocated_task, assigned_by: attorney_2, assigned_to: Colocated.singleton)
     end
     let!(:colocated_admin_action) { org_colocated_task.children.first }
-
-    context "when status is updated to on-hold" do
-      it "should validate on-hold duration" do
-        colocated_admin_action.update(status: Constants.TASK_STATUSES.on_hold)
-        expect(colocated_admin_action.valid?).to eq false
-        expect(colocated_admin_action.errors.messages[:on_hold_duration]).to eq ["has to be specified"]
-
-        colocated_admin_action.update(status: Constants.TASK_STATUSES.in_progress)
-        expect(colocated_admin_action.valid?).to eq true
-
-        colocated_admin_action.update(status: Constants.TASK_STATUSES.on_hold, on_hold_duration: 60)
-        expect(colocated_admin_action.valid?).to eq true
-      end
-    end
 
     context "when status is updated to completed" do
       let(:colocated_admin_action) do

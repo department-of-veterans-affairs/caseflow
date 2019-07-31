@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe RootTask do
+describe RootTask, :postgres do
   describe ".available_actions_unwrapper" do
     let(:user) { FactoryBot.create(:user) }
     let(:root_task) { RootTask.find(FactoryBot.create(:root_task).id) }

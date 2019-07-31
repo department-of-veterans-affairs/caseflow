@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe JudgeTeam do
+describe JudgeTeam, :postgres do
   let(:judge) { FactoryBot.create(:user) }
 
   describe ".create_for_judge" do
