@@ -29,6 +29,10 @@ RSpec.feature "Log in as User", :postgres do
     end
 
     scenario "user is able to log in as user" do
+      test_global_admin_masquerade
+    end
+
+    def test_global_admin_masquerade
       visit "test/users"
       fill_in "User ID", with: "ANNE MERICA"
       fill_in "Station ID", with: "283"
@@ -43,6 +47,16 @@ RSpec.feature "Log in as User", :postgres do
       find("a", text: "Sign Out").click
       expect(page).to have_content("DSUSER")
       expect(page).to have_content("admin page")
+    end
+
+    context "dependencies_faked? is false (prod env)" do
+      before do
+        allow(ApplicationController).to receive(:dependencies_faked?) { false }
+      end
+
+      scenario "user can log in as another user" do
+        test_global_admin_masquerade
+      end
     end
   end
 
