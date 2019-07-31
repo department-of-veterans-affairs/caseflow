@@ -66,6 +66,7 @@ detectors:
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
+      - OnHoldTasksTab#name
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.

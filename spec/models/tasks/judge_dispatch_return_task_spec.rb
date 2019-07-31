@@ -4,8 +4,8 @@ require "support/database_cleaner"
 require "rails_helper"
 
 describe JudgeDispatchReturnTask, :postgres do
-  let(:judge) { FactoryBot.create(:user) }
-  let(:dispatch_user) { FactoryBot.create(:user) }
+  let(:judge) { create(:user) }
+  let(:dispatch_user) { create(:user) }
   let(:dispatch_task) do
     create(:bva_dispatch_task, assigned_to: dispatch_user, parent: create(:root_task))
   end

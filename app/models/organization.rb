@@ -79,6 +79,7 @@ class Organization < ApplicationRecord
     [
       unassigned_tasks_tab,
       assigned_tasks_tab,
+      on_hold_tasks_tab,
       completed_tasks_tab
     ]
   end
@@ -94,6 +95,10 @@ class Organization < ApplicationRecord
 
   def assigned_tasks_tab
     ::AssignedTasksTab.new(assignee_name: name, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def on_hold_tasks_tab
+    ::OnHoldTasksTab.new(assignee_name: name, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def completed_tasks_tab
