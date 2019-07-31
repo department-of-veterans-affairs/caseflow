@@ -29,4 +29,10 @@ class BvaDispatchTask < GenericTask
       end
     end
   end
+
+  private
+
+  def task_is_assigned_to_organization_user_administers?(user)
+    task_is_assigned_to_users_organization?(user) && user.administered_teams.include?(assigned_to)
+  end
 end
