@@ -162,7 +162,7 @@ describe TaskPager, :all_dbs do
       end
     end
 
-    context "when sorting by days on hold" do
+    context "when sorting by days waiting" do
       let(:sort_by) { Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN }
 
       before do
@@ -200,6 +200,22 @@ describe TaskPager, :all_dbs do
 
       it "sorts ColocatedTasks by action and created_at" do
         expected_order = created_tasks.sort_by { |task| [task.action, task.created_at] }
+        expect(subject.map(&:id)).to eq(expected_order.map(&:id))
+      end
+    end
+
+    context "when sorting by days on hold" do
+      let(:sort_by) { Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN }
+
+      before do
+        created_tasks.each do |task|
+          # Update each task to be place on hold at some time in the past 30 days.
+          task.update!(placed_on_hold_at: rand(30 * 24 * 60).minutes.ago)
+        end
+      end
+
+      it "sorts tasks by placed_on_hold_at value" do
+        expected_order = created_tasks.sort_by(&:placed_on_hold_at)
         expect(subject.map(&:id)).to eq(expected_order.map(&:id))
       end
     end
