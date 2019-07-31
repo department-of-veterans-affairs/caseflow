@@ -13,7 +13,6 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "ffb77dd0395cbd5b7c1a5729f7f8275b5ec681fa"
-gem 'composite_primary_keys', '~> 10.0.0'
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "c7289957fef9c3548994d98c03a6cf5f0948fbe4"
 gem "dogstatsd-ruby"
 gem "fast_jsonapi"
