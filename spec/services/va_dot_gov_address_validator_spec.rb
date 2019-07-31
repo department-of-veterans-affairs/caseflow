@@ -119,7 +119,7 @@ describe VaDotGovAddressValidator do
     context "when validation fails and veteran's country is Philippines" do
       let!(:valid_address_result) do
         {
-          error: Caseflow::Error::VaDotGovAddressCouldNotBeFoundError,
+          error: Caseflow::Error::VaDotGovAddressCouldNotBeFoundError.new(code: 500, message: ""),
           valid_address: {}
         }
       end
@@ -127,6 +127,7 @@ describe VaDotGovAddressValidator do
       before do
         allow_any_instance_of(VaDotGovAddressValidator).to receive(:validate_zip_code)
           .and_return(nil)
+        # this mocks get_facility_data call for ErrorHandler#check_for_philippines_and_maybe_update
         allow(ExternalApi::VADotGovService).to receive(:get_facility_data)
           .and_return(
             error: nil,
