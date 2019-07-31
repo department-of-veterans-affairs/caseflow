@@ -26,7 +26,7 @@ describe QueueConfig, :postgres do
     end
 
     context "when object is created with a valid organization" do
-      let(:organization) { FactoryBot.create(:organization) }
+      let(:organization) { create(:organization) }
 
       it "successfully instantiates the object" do
         expect { subject }.to_not raise_error
@@ -35,8 +35,8 @@ describe QueueConfig, :postgres do
   end
 
   describe ".to_hash_for_user" do
-    let(:organization) { FactoryBot.create(:organization) }
-    let(:user) { FactoryBot.create(:user) }
+    let(:organization) { create(:organization) }
+    let(:user) { create(:user) }
 
     subject { QueueConfig.new(organization: organization).to_hash_for_user(user) }
 
@@ -98,14 +98,14 @@ describe QueueConfig, :postgres do
           before { FeatureToggle.enable!(:use_task_pages_api) }
           after { FeatureToggle.disable!(:use_task_pages_api) }
 
-          let!(:unassigned_tasks) { FactoryBot.create_list(:generic_task, 4, assigned_to: organization) }
+          let!(:unassigned_tasks) { create_list(:generic_task, 4, assigned_to: organization) }
           let!(:assigned_tasks) do
             create_list(:generic_task, 2, parent: create(:generic_task, assigned_to: organization))
           end
           let!(:on_hold_tasks) do
             create_list(:generic_task, 2, :on_hold, parent: create(:generic_task, assigned_to: organization))
           end
-          let!(:completed_tasks) { FactoryBot.create_list(:generic_task, 7, :completed, assigned_to: organization) }
+          let!(:completed_tasks) { create_list(:generic_task, 7, :completed, assigned_to: organization) }
 
           before { allow(organization).to receive(:use_task_pages_api?).and_return(true) }
 
@@ -141,7 +141,7 @@ describe QueueConfig, :postgres do
       end
 
       context "when the organization is a VSO" do
-        let(:organization) { FactoryBot.create(:vso) }
+        let(:organization) { create(:vso) }
 
         it "includes a tab for tracking tasks" do
           expect(subject.length).to eq(4)
@@ -170,7 +170,7 @@ describe QueueConfig, :postgres do
           before { FeatureToggle.enable!(:use_task_pages_api) }
           after { FeatureToggle.disable!(:use_task_pages_api) }
 
-          let!(:tracking_tasks) { FactoryBot.create_list(:track_veteran_task, 5, assigned_to: organization) }
+          let!(:tracking_tasks) { create_list(:track_veteran_task, 5, assigned_to: organization) }
 
           it "returns the tasks in the tracking tasks tabs" do
             # Tasks are serialized at this point so we need to convert integer task IDs to strings.

@@ -17,7 +17,7 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
     before do
       correct_task_count.times do |_|
         appeal, vso = create_appeal_and_vso
-        FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: vso)
+        create(:track_veteran_task, appeal: appeal, assigned_to: vso)
         vso_for_appeal[appeal.id] = [vso]
       end
 
@@ -28,7 +28,7 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
 
       closed_task_count.times do |_|
         appeal, vso = create_appeal_and_vso
-        FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: vso)
+        create(:track_veteran_task, appeal: appeal, assigned_to: vso)
         vso_for_appeal[appeal.id] = []
       end
 
@@ -96,7 +96,7 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
 
       correct_task_count.times do |_|
         appeal, vso = create_appeal_and_vso
-        FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: vso)
+        create(:track_veteran_task, appeal: appeal, assigned_to: vso)
         vso_for_appeal[appeal.id] = [vso]
       end
 
@@ -107,14 +107,14 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
 
       closed_task_count.times do |_|
         appeal, vso = create_appeal_and_vso
-        FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: vso)
+        create(:track_veteran_task, appeal: appeal, assigned_to: vso)
         vso_for_appeal[appeal.id] = []
       end
 
       error_indicator = "RAISE ERROR"
       error_count.times do |_|
         appeal, vso = create_appeal_and_vso
-        FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: vso)
+        create(:track_veteran_task, appeal: appeal, assigned_to: vso)
         vso_for_appeal[appeal.id] = error_indicator
       end
 
@@ -215,9 +215,9 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
 end
 
 def create_appeal_and_vso
-  appeal = FactoryBot.create(:appeal)
-  FactoryBot.create(:root_task, appeal: appeal)
-  vso = FactoryBot.create(:vso)
+  appeal = create(:appeal)
+  create(:root_task, appeal: appeal)
+  vso = create(:vso)
 
   [appeal, vso]
 end

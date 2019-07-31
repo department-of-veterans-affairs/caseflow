@@ -6,7 +6,7 @@ require "rails_helper"
 describe SpecialCaseMovementTask, :postgres do
   describe ".create" do
     context "with Special Case Movement Team user" do
-      let(:scm_user) { FactoryBot.create(:user) }
+      let(:scm_user) { create(:user) }
 
       subject do
         SpecialCaseMovementTask.create!(appeal: appeal,
@@ -22,9 +22,9 @@ describe SpecialCaseMovementTask, :postgres do
 
       context "appeal ready for distribution" do
         let(:appeal) do
-          FactoryBot.create(:appeal,
-                            :with_post_intake_tasks,
-                            docket_type: Constants.AMA_DOCKETS.direct_review)
+          create(:appeal,
+                 :with_post_intake_tasks,
+                 docket_type: Constants.AMA_DOCKETS.direct_review)
         end
         let(:dist_task) { appeal.tasks.active.where(type: DistributionTask.name).first }
 
@@ -40,9 +40,9 @@ describe SpecialCaseMovementTask, :postgres do
 
         context "with blocking mail task" do
           before do
-            FactoryBot.create(:congressional_interest_mail_task,
-                              appeal: appeal,
-                              parent: appeal.root_task)
+            create(:congressional_interest_mail_task,
+                   appeal: appeal,
+                   parent: appeal.root_task)
           end
           it "should error with appeal not ready" do
             expect { subject }.to raise_error do |error|
@@ -53,9 +53,9 @@ describe SpecialCaseMovementTask, :postgres do
 
         context "with a nonblocking mail task" do
           before do
-            FactoryBot.create(:aod_motion_mail_task,
-                              appeal: appeal,
-                              parent: appeal.root_task)
+            create(:aod_motion_mail_task,
+                   appeal: appeal,
+                   parent: appeal.root_task)
           end
           it "shouldn't error with appeal not ready" do
             expect { subject }.not_to raise_error
@@ -65,9 +65,9 @@ describe SpecialCaseMovementTask, :postgres do
 
       context "appeal at the evidence window state" do
         let(:appeal) do
-          FactoryBot.create(:appeal,
-                            :with_post_intake_tasks,
-                            docket_type: "evidence_submission")
+          create(:appeal,
+                 :with_post_intake_tasks,
+                 docket_type: "evidence_submission")
         end
         let(:dist_task) { appeal.tasks.open.where(type: DistributionTask.name).first }
 
@@ -98,11 +98,11 @@ describe SpecialCaseMovementTask, :postgres do
     end
 
     context "with regular user" do
-      let(:user) { FactoryBot.create(:user) }
+      let(:user) { create(:user) }
       let(:appeal) do
-        FactoryBot.create(:appeal,
-                          :with_post_intake_tasks,
-                          docket_type: Constants.AMA_DOCKETS.direct_review)
+        create(:appeal,
+               :with_post_intake_tasks,
+               docket_type: Constants.AMA_DOCKETS.direct_review)
       end
       let(:dist_task) { appeal.tasks.active.where(type: DistributionTask.name).first }
 

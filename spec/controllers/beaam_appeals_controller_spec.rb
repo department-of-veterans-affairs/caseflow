@@ -25,8 +25,8 @@ RSpec.describe BeaamAppealsController, :postgres, type: :controller do
     end
     let!(:appeals) do
       [
-        FactoryBot.create(:appeal, veteran: FactoryBot.create(:veteran, bgs_veteran_record: bgs_veteran_record)),
-        FactoryBot.create(:appeal, veteran: FactoryBot.create(:veteran))
+        create(:appeal, veteran: create(:veteran, bgs_veteran_record: bgs_veteran_record)),
+        create(:appeal, veteran: create(:veteran))
       ]
     end
 

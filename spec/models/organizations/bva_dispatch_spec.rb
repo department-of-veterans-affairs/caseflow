@@ -7,7 +7,7 @@ describe BvaDispatch, :postgres do
   let(:bva_dispatch_org) { BvaDispatch.singleton }
 
   before do
-    FactoryBot.create_list(:user, 6).each do |u|
+    create_list(:user, 6).each do |u|
       OrganizationsUser.add_user_to_organization(u, bva_dispatch_org)
     end
   end
