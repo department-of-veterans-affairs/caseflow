@@ -1131,7 +1131,7 @@ RSpec.feature "Case details", :all_dbs do
         User.authenticate!(user: user)
       end
 
-      it "displays AppealWithdrawalMailTask in case timelinewhen" do
+      it "displays AppealWithdrawalMailTask in case timeline" do
         visit("/queue/appeals/#{appeal.uuid}")
 
         prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
