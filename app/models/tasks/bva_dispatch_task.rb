@@ -16,6 +16,10 @@ class BvaDispatchTask < GenericTask
     actions
   end
 
+  def task_is_assigned_to_organization_user_administers?(user)
+    task_is_assigned_to_users_organization?(user) && user.administered_teams.include?(assigned_to)
+  end
+
   class << self
     def create_from_root_task(root_task)
       create!(assigned_to: BvaDispatch.singleton, parent_id: root_task.id, appeal: root_task.appeal)
@@ -28,11 +32,5 @@ class BvaDispatchTask < GenericTask
         LegacyAppealDispatch.new(appeal: appeal, params: params).call
       end
     end
-  end
-
-  private
-
-  def task_is_assigned_to_organization_user_administers?(user)
-    task_is_assigned_to_users_organization?(user) && user.administered_teams.include?(assigned_to)
   end
 end
