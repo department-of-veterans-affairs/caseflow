@@ -92,7 +92,7 @@ describe Docket, :all_dbs do
       context "appeal has mail tasks" do
         subject { DirectReviewDocket.new.appeals(ready: true) }
 
-        let(:user) { FactoryBot.create(:user) }
+        let(:user) { create(:user) }
 
         before do
           OrganizationsUser.add_user_to_organization(user, MailTeam.singleton)

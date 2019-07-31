@@ -16,9 +16,9 @@ describe BvaDispatchTask, :all_dbs do
     end
 
     context "when valid root_task passed as argument" do
-      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:root_task) { create(:root_task) }
       before do
-        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+        OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
       end
 
       it "should create a BvaDispatchTask assigned to a User with a parent task assigned to the BvaDispatch org" do
@@ -33,9 +33,9 @@ describe BvaDispatchTask, :all_dbs do
     end
 
     context "when organization-level BvaDispatchTask already exists" do
-      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:root_task) { create(:root_task) }
       before do
-        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+        OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
         BvaDispatchTask.create_from_root_task(root_task)
       end
 
@@ -46,10 +46,10 @@ describe BvaDispatchTask, :all_dbs do
   end
 
   describe ".outcode" do
-    let(:user) { FactoryBot.create(:user) }
-    let(:root_task) { FactoryBot.create(:root_task) }
-    let(:the_case) { FactoryBot.create(:case) }
-    let!(:legacy_appeal) { FactoryBot.create(:legacy_appeal, vacols_case: the_case) }
+    let(:user) { create(:user) }
+    let(:root_task) { create(:root_task) }
+    let(:the_case) { create(:case) }
+    let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: the_case) }
     let(:citation_number) { "A18123456" }
     let(:file) { "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW" }
     let(:decision_date) { Date.new(1989, 12, 13).to_s }

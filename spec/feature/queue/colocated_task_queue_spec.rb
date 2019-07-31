@@ -4,22 +4,22 @@ require "support/vacols_database_cleaner"
 require "rails_helper"
 
 RSpec.feature "ColocatedTask", :all_dbs do
-  let(:vlj_support_staff) { FactoryBot.create(:user) }
+  let(:vlj_support_staff) { create(:user) }
 
   before { OrganizationsUser.add_user_to_organization(vlj_support_staff, Colocated.singleton) }
 
   describe "attorney assigns task to vlj support staff, vlj returns it to attorney after completion" do
-    let(:judge_user) { FactoryBot.create(:user) }
-    let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+    let(:judge_user) { create(:user) }
+    let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
 
-    let(:attorney_user) { FactoryBot.create(:user) }
-    let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+    let(:attorney_user) { create(:user) }
+    let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
-    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:root_task) { create(:root_task) }
     let(:appeal) { root_task.appeal }
 
     let!(:atty_task) do
-      FactoryBot.create(
+      create(
         :ama_attorney_task,
         appeal: appeal,
         parent: root_task,
@@ -83,14 +83,14 @@ RSpec.feature "ColocatedTask", :all_dbs do
   end
 
   describe "vlj support staff places the task on hold" do
-    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:root_task) { create(:root_task) }
     let(:appeal) { root_task.appeal }
     let(:veteran_name) { appeal.veteran.name.formatted(:readable_full) }
 
     context "when ColocatedTask is in progress" do
       let(:hold_duration_days) { 15 }
       let!(:colocated_task) do
-        FactoryBot.create(
+        create(
           :ama_colocated_task,
           appeal: appeal,
           parent: root_task,
@@ -139,7 +139,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
       let(:new_hold_duration_days) { 60 }
 
       let(:colocated_org_task) do
-        FactoryBot.create(
+        create(
           :ama_colocated_task,
           appeal: appeal,
           parent: root_task,
@@ -193,7 +193,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
       let(:new_hold_duration_days) { 45 }
 
       let(:colocated_org_task) do
-        FactoryBot.create(
+        create(
           :ama_colocated_task,
           appeal: appeal,
           parent: root_task,
@@ -249,7 +249,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
   end
 
   describe "translation task for AMA appeal" do
-    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:root_task) { create(:root_task) }
     let(:appeal) { root_task.appeal }
     let!(:colocated_task) do
       create(
@@ -291,10 +291,10 @@ RSpec.feature "ColocatedTask", :all_dbs do
   end
 
   describe "vlj support staff changes task type" do
-    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:root_task) { create(:root_task) }
     let(:appeal) { root_task.appeal }
     let!(:colocated_task) do
-      FactoryBot.create(
+      create(
         :ama_colocated_task,
         Constants::CO_LOCATED_ADMIN_ACTIONS.keys.last.to_sym,
         appeal: appeal,

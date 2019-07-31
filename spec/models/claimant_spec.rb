@@ -39,7 +39,7 @@ describe Claimant, :postgres do
   end
 
   context "lazy loading instance attributes from BGS" do
-    let(:claimant) { FactoryBot.create(:claimant) }
+    let(:claimant) { create(:claimant) }
 
     context "when claimant exists in BGS" do
       let(:first_name) { "HARRY" }
