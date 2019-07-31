@@ -6,6 +6,7 @@ class DataIntegrityChecksJob < CaseflowJob
 
   CHECKERS = %w[
     ExpiredAsyncJobsChecker
+    OpenHearingTasksWithoutActiveDescendantsChecker
     UntrackedLegacyAppealsChecker
   ].freeze
 
