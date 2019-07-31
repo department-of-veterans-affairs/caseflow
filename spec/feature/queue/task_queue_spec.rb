@@ -604,7 +604,7 @@ RSpec.feature "Task queue", :all_dbs do
     end
     let!(:decision_issue) { create(:decision_issue, decision_review: appeal, request_issues: appeal.request_issues) }
 
-    let(:root_task) { create(:root_task) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
 
     before do
       User.authenticate!(user: judge_user)
