@@ -34,7 +34,7 @@ class Api::V2::Appeals
   end
 
   def appeals
-    @appeals ||= Appeal.where(veteran_file_number: veteran_file_number).select { |a| a.request_issues.any? }
+    @appeals ||= Appeal.where(veteran_file_number: veteran_file_number).select { |appeal| appeal.request_issues.any? }
   end
 
   def all_reviews_and_appeals
