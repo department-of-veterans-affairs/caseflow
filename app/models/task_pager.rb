@@ -34,6 +34,8 @@ class TaskPager
       tasks.order(closed_at: sort_order)
     when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
       tasks.order(type: sort_order, action: sort_order, created_at: sort_order)
+    when Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
+      tasks.order(placed_on_hold_at: sort_order)
     # Columns not yet supported:
     #
     # APPEAL_TYPE_COLUMN
