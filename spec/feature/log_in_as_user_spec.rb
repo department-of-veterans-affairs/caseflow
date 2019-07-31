@@ -45,4 +45,11 @@ RSpec.feature "Log in as User", :postgres do
       expect(page).to have_content("admin page")
     end
   end
+
+  scenario "User visits session page" do
+    visit "test/users/me"
+
+    expect(page).to have_content("Your session")
+    expect(page).to have_content("session_id")
+  end
 end
