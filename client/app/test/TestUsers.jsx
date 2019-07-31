@@ -146,6 +146,12 @@ export default class TestUsers extends React.PureComponent {
         <AppFrame>
           <AppSegment filledBackground>
             <h1>Welcome to the Caseflow admin page.</h1>
+            { this.props.userSession &&
+              <div>
+                <p>Your session</p>
+                <pre>{JSON.stringify(this.props.userSession, null, 2)}</pre>
+              </div>
+            }
             { this.props.dependenciesFaked &&
               <div>
                 <p>
