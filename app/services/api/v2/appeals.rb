@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Api::V2::Appeals
   def initialize(veteran_file_number:, vbms_id:)
     @veteran_file_number = veteran_file_number

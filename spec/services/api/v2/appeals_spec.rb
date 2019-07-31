@@ -24,7 +24,6 @@ describe Api::V2::Appeals, :all_dbs do
   end
 
   describe "#to_hash" do
-
     context "Legacy Appeal list" do
       before do
         DocketSnapshot.create
