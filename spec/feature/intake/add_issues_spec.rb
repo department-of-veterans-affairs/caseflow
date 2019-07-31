@@ -71,6 +71,11 @@ feature "Intake Add Issues Page" do
           date: 1.day.ago.to_date.mdY
         )
 
+        # Handle correctionType modal
+        expect(page).to have_content("Set Correction Type")
+        select_correction_type_from_modal("control")
+        click_correction_type_modal_submit()
+
         expect(page).to have_content("Description for Accrued")
         expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
         expect(page).to have_button("Establish appeal", disabled: false)
@@ -78,6 +83,7 @@ feature "Intake Add Issues Page" do
         # Add a rating issue
         click_intake_add_issue
         add_intake_rating_issue("Left knee granted")
+
         expect(page).to have_content("The Veteran's profile has missing or invalid information")
         expect(page).to have_content(
           "the corporate database, then retry establishing the EP in Caseflow: country."
@@ -99,6 +105,11 @@ feature "Intake Add Issues Page" do
           date: 2.days.ago.to_date.mdY
         )
 
+        # Handle correctionType modal
+        expect(page).to have_content("Set Correction Type")
+        select_correction_type_from_modal("control")
+        click_correction_type_modal_submit()
+
         expect(page).to have_content("Description for Apportionment")
         expect(page).to have_content("The Veteran's profile has missing or invalid information")
         expect(page).to have_button("Establish appeal", disabled: true)
@@ -116,10 +127,8 @@ feature "Intake Add Issues Page" do
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
       edit_contention_text("Left knee granted", "Right knee")
-
       expect(page).to_not have_content("Left knee granted")
       expect(page).to have_content("Right knee")
-
       click_intake_finish
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
