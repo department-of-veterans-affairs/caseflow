@@ -65,8 +65,7 @@ class Test::UsersController < ApplicationController
   ].freeze
 
   # :nocov:
-  def index
-  end
+  def index; end
 
   def show
     render "index"
@@ -159,7 +158,7 @@ class Test::UsersController < ApplicationController
   private
 
   def user_session
-    params[:id] == "me" ? session : nil
+    (params[:id] == "me") ? session : nil
   end
   helper_method :user_session
 
