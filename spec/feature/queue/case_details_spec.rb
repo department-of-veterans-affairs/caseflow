@@ -1106,32 +1106,35 @@ RSpec.feature "Case details", :all_dbs do
     let!(:appeal) { create(:appeal) }
     let(:root_task) { create(:root_task, appeal: appeal) }
 
-    let!(:task) do
+    let!(:withdraw_mail_task) do
       create(
-        :task,
-        :in_progress,
+        :withdraw_mail_task,
         appeal: appeal,
-        type: DistributionTask,
-        parent: root_task
-      )
-    end
-
-    let!(:appeal_withdraw_mail_task) do
-      create(
-        :appeal_withdraw_mail_task,
-        :cancelled,
-        appeal: appeal,
-        parent: root_task,
         instructions: ["cancelled"]
       )
     end
 
-    before { allow(appeal_withdraw_mail_task).to receive(:hide_from_case_timeline).and_return(true) }
+    let!(:bva_mail_task) do
+      create(
+        :withdraw_bva_task,
+        appeal: appeal,
+        parent: withdraw_mail_task,
+        instructions: ["cancelled"]
+      )
+    end
+
+    let(:user) { create(:user) }
+
+    before do
+      OrganizationsUser.add_user_to_organization(user, BvaIntake.singleton)
+      User.authenticate!(user: user)
+    end
 
     it "should create AppealWithdrawalMailTask assigned to Case Review Team" do
-      visit("/queue/appeals/#{appeal_withdraw_mail_task.appeal.uuid}")
+      visit("/queue/appeals/#{appeal.uuid}")
+      
 
-      expect(appeal_withdraw_mail_task.assigned_to.class).to eq(BvaIntake)
+      expect(bva_mail_task.assigned_to.class).to eq(BvaIntake)
       expect(page).to have_content("AppealWithdrawalMailTask  cancelled")
     end
   end

@@ -8,8 +8,4 @@ class AppealWithdrawalMailTask < MailTask
   def self.default_assignee(_parent)
     BvaIntake.singleton
   end
-
-  def hide_from_case_timeline
-    children.first&.cancelled?
-  end
 end

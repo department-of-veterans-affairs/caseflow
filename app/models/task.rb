@@ -285,7 +285,7 @@ class Task < ApplicationRecord
   end
 
   def when_child_task_completed(child_task)
-    update_status_if_children_tasks_are_complete(child_task)
+    update_status_if_children_tasks_are_closed(child_task)
   end
 
   def when_child_task_created(child_task)
@@ -445,10 +445,10 @@ class Task < ApplicationRecord
     task_just_closed? && parent
   end
 
-  def update_status_if_children_tasks_are_complete(child_task)
+  def update_status_if_children_tasks_are_closed(child_task)
     if children.any? && children.open.empty? && on_hold?
       if assigned_to.is_a?(Organization) && cascade_closure_from_child_task?(child_task)
-        return update!(status: Constants.TASK_STATUSES.completed)
+        return update!(status: child_task.status)
       end
 
       update!(status: Constants.TASK_STATUSES.assigned)

@@ -352,10 +352,17 @@ FactoryBot.define do
       parent { create(:hearing_task, appeal: appeal) }
     end
 
-    factory :appeal_withdraw_mail_task, class: AppealWithdrawalMailTask do
+    factory :withdraw_bva_task, class: AppealWithdrawalMailTask do
       type { AppealWithdrawalMailTask.name }
       appeal { create(:appeal) }
       assigned_to { BvaIntake.singleton }
+      parent { create(:withdraw_mail_task, appeal: appeal) }
+    end
+
+    factory :withdraw_mail_task, class: AppealWithdrawalMailTask do
+      type { AppealWithdrawalMailTask.name }
+      appeal { create(:appeal) }
+      assigned_to { MailTeam.singleton }
       parent { create(:root_task, appeal: appeal) }
     end
 

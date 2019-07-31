@@ -78,7 +78,7 @@ class HearingTask < GenericTask
     self.assigned_to = Bva.singleton
   end
 
-  def update_status_if_children_tasks_are_complete(_child_task)
+  def update_status_if_children_tasks_are_closed(_child_task)
     if children.open.empty? && children.select { |c| c.type == AssignHearingDispositionTask.name && c.cancelled? }.any?
       return update!(status: :cancelled)
     end
