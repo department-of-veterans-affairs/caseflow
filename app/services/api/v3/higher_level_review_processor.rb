@@ -3,6 +3,23 @@
 class Api::V3::HigherLevelReviewProcessor
   attr_reader :intake, :errors
 
+  ERROR_STATUSES_AND_TITLES_BY_CODE = {
+    invalid_file_number: { status: 422, title: "Veteran ID not found" },
+    veteran_not_found: { status: 404, title: "Veteran not found" },
+    veteran_has_multiple_phone_numbers: { status: 422, title: "The veteran has multiple active phone numbers" },
+    veteran_not_accessible: { status: 403, title: "You don't have permission to view this veteran's information" },
+    veteran_not_modifiable: { status: 422, title: "You don't have permission to intake this veteran" },
+    veteran_not_valid: {
+      status: 422, title: "The veteran's profile has missing or invalid information required to create an EP."
+    },
+    duplicate_intake_in_progress: { status: 409, title: "Intake In progress" },
+    reserved_veteran_file_number: { status: 422, title: "Invalid veteran file number" },
+    incident_flash: { status: 422, title: "The veteran has an incident flash" },
+    unknown_error: { status: 422, title: "Unknown error" }
+  }.freeze
+
+  DEFAULT_ERROR = { status: 422, code: :unknown_error, title: "Unknown error" }.freeze
+
   unless (CATEGORIES_BY_BENEFIT_TYPE = JSON.parse(File.read("client/constants/ISSUE_CATEGORIES.json")))
     fail StandardError, "couldn't pull nonrating issue categories from ISSUE_CATEGORIES.json"
   end
@@ -44,7 +61,7 @@ class Api::V3::HigherLevelReviewProcessor
     !errors.empty?
   end
 
-  def build_start_review_complete
+  def build_start_review_complete!
     transaction do
       @intake = Intake.build(
         user: @user,
@@ -63,36 +80,12 @@ class Api::V3::HigherLevelReviewProcessor
   end
 
   def self.error_from_error_code(code)
-    code = code.to_s
-    status, title = (
-      case code
-      when "invalid_file_number"
-        [422, "Veteran ID not found"]
-      when "veteran_not_found"
-        [404, "Veteran not found"]
-      when "veteran_has_multiple_phone_numbers"
-        [422, "The veteran has multiple active phone numbers"]
-      when "veteran_not_accessible"
-        [403, "You don't have permission to view this veteran's information"]
-      when "veteran_not_modifiable"
-        [422, "You don't have permission to intake this veteran"]
-      when "veteran_not_valid"
-        [422, "The veteran's profile has missing or invalid information required to create an EP."]
-      when "duplicate_intake_in_progress"
-        [409, "Intake In progress"]
-      when "reserved_veteran_file_number"
-        [422, "Invalid veteran file number"]
-      when "incident_flash"
-        [422, "The veteran has an incident flash"]
-      else; [nil, nil]
-      end
-    )
-    unless status || title
-      status = 422
-      title = "Unknown error"
-      code = "unknown_error"
-    end
-    { status: status, code: code, title: title }
+    return DEFAULT_ERROR unless code
+
+    status_and_title = ERROR_STATUSES_AND_TITLES_BY_CODE[code.to_sym]
+    return DEFAULT_ERROR unless status_and_title
+
+    { status: status_and_title[:status], code: code, title: status_and_title[:title] }
   end
 
   private
