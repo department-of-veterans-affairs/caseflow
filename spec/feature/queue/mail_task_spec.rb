@@ -40,7 +40,7 @@ RSpec.feature "MailTasks", :postgres do
         visit("queue/appeals/#{aod_team_task.appeal.external_id}")
 
         prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
-        text = Constants.TASK_ACTIONS.CANCEL_TASK.label
+        text = Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label
         click_dropdown(prompt: prompt, text: text)
         fill_in("taskInstructions", with: "instructions")
         click_button("Submit")
