@@ -164,14 +164,14 @@ class Test::UsersController < ApplicationController
   helper_method :user_session
 
   def test_users
-    return [] if Rails.env.prod?
+    return [] unless ApplicationController.dependencies_faked?
 
     User.all
   end
   helper_method :test_users
 
   def features_list
-    return [] if Rails.env.prod?
+    return [] unless ApplicationController.dependencies_faked?
 
     FeatureToggle.features
   end
