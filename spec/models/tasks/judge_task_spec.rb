@@ -4,20 +4,20 @@ require "support/vacols_database_cleaner"
 require "rails_helper"
 
 describe JudgeTask, :all_dbs do
-  let(:judge) { FactoryBot.create(:user) }
-  let(:judge2) { FactoryBot.create(:user) }
-  let(:attorney) { FactoryBot.create(:user) }
+  let(:judge) { create(:user) }
+  let(:judge2) { create(:user) }
+  let(:attorney) { create(:user) }
 
   before do
-    FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id)
-    FactoryBot.create(:staff, :judge_role, sdomainid: judge2.css_id)
-    FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
+    create(:staff, :judge_role, sdomainid: judge.css_id)
+    create(:staff, :judge_role, sdomainid: judge2.css_id)
+    create(:staff, :attorney_role, sdomainid: attorney.css_id)
   end
 
   describe ".available_actions" do
     let(:user) { judge }
     let(:subject_task) do
-      FactoryBot.create(:ama_judge_task, assigned_to: judge, appeal: FactoryBot.create(:appeal))
+      create(:ama_judge_task, assigned_to: judge, appeal: create(:appeal))
     end
 
     subject { subject_task.available_actions_unwrapper(user) }
@@ -43,7 +43,7 @@ describe JudgeTask, :all_dbs do
         end
 
         context "the task was assigned from Quality Review" do
-          let(:subject_task) { FactoryBot.create(:ama_judge_quality_review_task, assigned_to: judge) }
+          let(:subject_task) { create(:ama_judge_quality_review_task, assigned_to: judge) }
 
           it "should return the assignment and mark complete actions" do
             expect(subject).to eq(
@@ -62,7 +62,7 @@ describe JudgeTask, :all_dbs do
 
       context "in the review phase" do
         let(:subject_task) do
-          FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge, parent: FactoryBot.create(:root_task))
+          create(:ama_judge_decision_review_task, assigned_to: judge, parent: create(:root_task))
         end
 
         it "returns the dispatch action" do
@@ -105,10 +105,10 @@ describe JudgeTask, :all_dbs do
   describe ".create_from_params" do
     context "creating a JudgeQualityReviewTask from a QualityReviewTask" do
       let(:judge_task) do
-        FactoryBot.create(:ama_judge_decision_review_task, parent: FactoryBot.create(:root_task), assigned_to: judge)
+        create(:ama_judge_decision_review_task, parent: create(:root_task), assigned_to: judge)
       end
-      let(:qr_user) { FactoryBot.create(:user) }
-      let(:qr_task) { FactoryBot.create(:qr_task, assigned_to: qr_user, parent: judge_task) }
+      let(:qr_user) { create(:user) }
+      let(:qr_task) { create(:qr_task, assigned_to: qr_user, parent: judge_task) }
       let(:params) { { assigned_to: judge, appeal: qr_task.appeal, parent_id: qr_task.id } }
 
       subject { JudgeQualityReviewTask.create_from_params(params, qr_user) }
@@ -130,7 +130,7 @@ describe JudgeTask, :all_dbs do
       let(:existing_instructions) { "existing instructions" }
       let(:existing_status) { :assigned }
       let!(:jqr_task) do
-        FactoryBot.create(
+        create(
           :ama_judge_quality_review_task,
           assigned_to: judge,
           status: existing_status,
@@ -163,9 +163,9 @@ describe JudgeTask, :all_dbs do
   end
 
   describe ".previous_task" do
-    let(:parent) { FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge) }
+    let(:parent) { create(:ama_judge_decision_review_task, assigned_to: judge) }
     let!(:child) do
-      FactoryBot.create(
+      create(
         :ama_attorney_task,
         :completed,
         assigned_to: attorney,
@@ -204,13 +204,13 @@ describe JudgeTask, :all_dbs do
   end
 
   describe "when child task completed" do
-    let(:judge_task) { FactoryBot.create(:ama_judge_task) }
+    let(:judge_task) { create(:ama_judge_task) }
 
     subject { child_task.update!(status: Constants.TASK_STATUSES.completed) }
 
     context "when child task is an attorney task" do
       let(:child_task) do
-        FactoryBot.create(
+        create(
           :ama_attorney_task,
           assigned_by: judge,
           assigned_to: attorney,
@@ -233,7 +233,7 @@ describe JudgeTask, :all_dbs do
     end
 
     context "when child task is an VLJ support staff admin action" do
-      let(:child_task) { FactoryBot.create(:colocated_task, assigned_by: judge, parent: judge_task) }
+      let(:child_task) { create(:colocated_task, assigned_by: judge, parent: judge_task) }
 
       it "does not change the judge task type" do
         expect(judge_task.type).to eq(JudgeAssignTask.name)

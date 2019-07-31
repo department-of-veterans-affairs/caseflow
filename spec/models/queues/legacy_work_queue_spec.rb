@@ -5,8 +5,8 @@ require "rails_helper"
 
 describe LegacyWorkQueue, :all_dbs do
   context ".tasks_for_user" do
-    let!(:user) { FactoryBot.create(:user) }
-    let!(:staff_record) { FactoryBot.create(:staff, role, sdomainid: user.css_id) }
+    let!(:user) { create(:user) }
+    let!(:staff_record) { create(:staff, role, sdomainid: user.css_id) }
     let!(:appeals) do
       [
         create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user)),
@@ -47,7 +47,7 @@ describe LegacyWorkQueue, :all_dbs do
     let!(:appeal) { appeals[0] }
 
     before do
-      FactoryBot.create(:staff, role)
+      create(:staff, role)
     end
 
     subject { LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id) }

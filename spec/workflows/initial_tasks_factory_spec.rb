@@ -171,10 +171,10 @@ describe InitialTasksFactory, :postgres do
 
       context "when VSO does not writes IHPs for hearing docket cases" do
         let(:appeal) do
-          FactoryBot.create(
+          create(
             :appeal,
             docket_type: Constants.AMA_DOCKETS.hearing,
-            claimants: [FactoryBot.create(:claimant, participant_id: participant_id_with_pva)]
+            claimants: [create(:claimant, participant_id: participant_id_with_pva)]
           )
         end
 

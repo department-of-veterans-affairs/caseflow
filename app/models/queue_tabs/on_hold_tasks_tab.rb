@@ -1,18 +1,16 @@
 # frozen_string_literal: true
 
-class UnassignedTasksTab < QueueTab
-  attr_accessor :show_reader_link_column, :allow_bulk_assign
-
+class OnHoldTasksTab < QueueTab
   def label
-    COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE
+    COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE
   end
 
   def name
-    Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.ON_HOLD_TASKS_TAB_NAME
   end
 
   def description
-    COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION
+    COPY::ORGANIZATIONAL_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION
   end
 
   def columns
@@ -22,13 +20,9 @@ class UnassignedTasksTab < QueueTab
       Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN,
       show_regional_office_column ? Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN : nil,
       Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
+      Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN,
       Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
-      Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN,
-      show_reader_link_column ? Constants.QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN : nil
+      Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
     ].compact
-  end
-
-  def allow_bulk_assign?
-    !!allow_bulk_assign
   end
 end
