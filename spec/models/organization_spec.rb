@@ -211,8 +211,10 @@ describe Organization, :postgres do
   describe ".queue_tabs" do
     let(:org) { create(:organization) }
 
-    it "returns the expected 3 tabs" do
-      expect(org.queue_tabs.map(&:class)).to eq([UnassignedTasksTab, AssignedTasksTab, CompletedTasksTab])
+    it "returns the expected 4 tabs" do
+      expect(org.queue_tabs.map(&:class)).to eq(
+        [UnassignedTasksTab, AssignedTasksTab, OnHoldTasksTab, CompletedTasksTab]
+      )
     end
   end
 end
