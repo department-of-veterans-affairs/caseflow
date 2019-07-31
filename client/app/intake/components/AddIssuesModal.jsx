@@ -28,10 +28,18 @@ class AddIssuesModal extends React.Component {
     const { selectedContestableIssueIndex, notes } = this.state;
     const currentIssue = issueByIndex(this.props.intakeData.contestableIssues, selectedContestableIssueIndex);
 
+    console.log('onAddIssue', currentIssue, currentIssue.index);
+    if (selectedContestableIssueIndex && !currentIssue.index) {
+      currentIssue.index = selectedContestableIssueIndex;
+    }
+
     this.props.onSubmit({
-      selectedContestableIssueIndex,
-      currentIssue,
-      notes
+      // selectedContestableIssueIndex,
+      // notes,
+      currentIssue: {
+        ...currentIssue,
+        notes
+      }
     });
   };
 
