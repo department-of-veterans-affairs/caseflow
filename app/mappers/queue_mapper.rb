@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "helpers/ascii_converter"
-
 class QueueMapper
   COLUMN_NAMES = {
     case_id: :defolder,
@@ -86,8 +84,7 @@ class QueueMapper
     convert_quality_to_vacols_code
     convert_one_touch_initiative_to_vacols_code
     convert_deficiencies_to_vacols_code
-    truncate_notes_at_350_characters_and_convert_to_ascii
-    truncate_comment_at_600_characters_and_convert_to_ascii
+    assign_note_and_comment
     add_modification_timestamp
   end
 
@@ -121,12 +118,9 @@ class QueueMapper
     end
   end
 
-  def truncate_notes_at_350_characters_and_convert_to_ascii
-    renamed_attributes[COLUMN_NAMES[:note]] = AsciiConverter.new(string: note).convert[0..349] if note
-  end
-
-  def truncate_comment_at_600_characters_and_convert_to_ascii
-    renamed_attributes[COLUMN_NAMES[:comment]] = AsciiConverter.new(string: comment).convert[0..599] if comment
+  def assign_note_and_comment
+    renamed_attributes[COLUMN_NAMES[:note]] = note if note
+    renamed_attributes[COLUMN_NAMES[:comment]] = comment if comment
   end
 
   def add_modification_timestamp
