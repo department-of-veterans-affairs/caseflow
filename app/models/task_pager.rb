@@ -55,7 +55,8 @@ class TaskPager
   end
 
   def tasks_with_cached_attributes(tasks)
-    tasks.joins("left join cached_appeal_attributes on cached_appeal_attributes.appeal_id = tasks.appeal_id and cached_appeal_attributes.appeal_type = tasks.appeal_type")
+    sql = "left join cached_appeal_attributes on cached_appeal_attributes.appeal_id = tasks.appeal_id and cached_appeal_attributes.appeal_type = tasks.appeal_type"
+    tasks.joins(sql)
   end
 
   # # TODO: Some filters are on other tables that we will need to join to (appeal docket type)
