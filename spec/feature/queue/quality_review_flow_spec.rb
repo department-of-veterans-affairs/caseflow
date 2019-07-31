@@ -4,8 +4,8 @@ require "support/vacols_database_cleaner"
 require "rails_helper"
 
 RSpec.feature "Quality Review workflow", :all_dbs do
-  let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Javitz") }
-  let!(:judge_staff) { FactoryBot.create(:staff, :judge_role, user: judge_user) }
+  let(:judge_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Javitz") }
+  let!(:judge_staff) { create(:staff, :judge_role, user: judge_user) }
 
   context "return case to judge" do
     let(:valid_document_id) { "12345-12345678" }
@@ -13,23 +13,23 @@ RSpec.feature "Quality Review workflow", :all_dbs do
     let(:veteran_first_name) { "Marissa" }
     let(:veteran_last_name) { "Vasquez" }
     let(:veteran_full_name) { "#{veteran_first_name} #{veteran_last_name}" }
-    let!(:veteran) { FactoryBot.create(:veteran, first_name: veteran_first_name, last_name: veteran_last_name) }
+    let!(:veteran) { create(:veteran, first_name: veteran_first_name, last_name: veteran_last_name) }
 
     let(:qr_user_name) { "QR User" }
     let(:qr_user_name_short) { "Q. User" }
-    let!(:qr_user) { FactoryBot.create(:user, roles: ["Reader"], full_name: qr_user_name) }
+    let!(:qr_user) { create(:user, roles: ["Reader"], full_name: qr_user_name) }
 
-    let(:attorney_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Nicole Apple") }
-    let!(:attorney_staff) { FactoryBot.create(:staff, :attorney_role, user: attorney_user) }
+    let(:attorney_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Nicole Apple") }
+    let!(:attorney_staff) { create(:staff, :attorney_role, user: attorney_user) }
 
     let!(:quality_review_organization) { QualityReview.singleton }
     let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
-    let!(:appeal) { FactoryBot.create(:appeal, veteran_file_number: veteran.file_number) }
+    let!(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
     let!(:request_issue) { create(:request_issue, decision_review: appeal) }
 
-    let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let!(:root_task) { create(:root_task, appeal: appeal) }
     let!(:judge_task) do
-      FactoryBot.create(
+      create(
         :ama_judge_decision_review_task,
         :completed,
         appeal: appeal,
@@ -38,7 +38,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
       )
     end
     let!(:attorney_task) do
-      FactoryBot.create(
+      create(
         :ama_attorney_task,
         :completed,
         appeal: appeal,
@@ -47,7 +47,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
       )
     end
     let!(:qr_task) do
-      FactoryBot.create(
+      create(
         :qr_task,
         :in_progress,
         assigned_to: quality_review_organization,
@@ -61,16 +61,16 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
     before do
       ["Reba Janowiec", "Lee Jiang", "Pearl Jurs"].each do |judge_name|
-        FactoryBot.create(
+        create(
           :staff,
           :judge_role,
-          user: FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: judge_name)
+          user: create(:user, station_id: User::BOARD_STATION_ID, full_name: judge_name)
         )
       end
 
-      OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+      OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
 
-      FactoryBot.create(:staff, user: qr_user)
+      create(:staff, user: qr_user)
       OrganizationsUser.add_user_to_organization(qr_user, quality_review_organization)
       User.authenticate!(user: qr_user)
     end
@@ -215,19 +215,19 @@ RSpec.feature "Quality Review workflow", :all_dbs do
   end
 
   describe "creating a child task for a task on a timed hold" do
-    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:root_task) { create(:root_task) }
 
     let(:appeal) { root_task.appeal }
     let(:veteran_name) { appeal.veteran.name.formatted(:readable_full) }
     let(:hold_length) { 30 }
 
     let!(:judge_task) do
-      FactoryBot.create(:ama_judge_task, :completed, appeal: appeal, parent: root_task, assigned_to: judge_user)
+      create(:ama_judge_task, :completed, appeal: appeal, parent: root_task, assigned_to: judge_user)
     end
     let!(:qr_org_task) { QualityReviewTask.create_from_root_task(root_task) }
 
     let(:user) do
-      FactoryBot.create(:user).tap do |user|
+      create(:user).tap do |user|
         OrganizationsUser.add_user_to_organization(user, QualityReview.singleton)
       end
     end

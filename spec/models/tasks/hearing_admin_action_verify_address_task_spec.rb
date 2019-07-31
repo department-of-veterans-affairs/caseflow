@@ -60,7 +60,7 @@ RSpec.shared_examples "Address Verify Task for Appeal" do
     end
 
     it "throws an access error trying to update from params with random user" do
-      user = FactoryBot.create(:user)
+      user = create(:user)
 
       expect { verify_address_task.update_from_params({}, user) }.to raise_error(
         Caseflow::Error::ActionForbiddenError

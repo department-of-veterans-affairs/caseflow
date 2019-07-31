@@ -5,7 +5,7 @@ require "rails_helper"
 
 describe RoundRobinTaskDistributor, :all_dbs do
   let(:assignee_pool_size) { 6 }
-  let!(:assignee_pool) { FactoryBot.create_list(:user, assignee_pool_size) }
+  let!(:assignee_pool) { create_list(:user, assignee_pool_size) }
   let(:task_class) { Task }
   let(:round_robin_distributor) do
     RoundRobinTaskDistributor.new(assignee_pool: assignee_pool, task_class: task_class)
@@ -23,8 +23,8 @@ describe RoundRobinTaskDistributor, :all_dbs do
     end
 
     context "when a task has been assigned to a member of the list of assignees" do
-      let!(:previous_tasks) { FactoryBot.create_list(:task, 8) }
-      let!(:task) { FactoryBot.create(:task, assigned_to: assignee) }
+      let!(:previous_tasks) { create_list(:task, 8) }
+      let!(:task) { create(:task, assigned_to: assignee) }
 
       it "should return the most recent task" do
         expect(round_robin_distributor.latest_task.id).to eq(task.id)
@@ -33,8 +33,8 @@ describe RoundRobinTaskDistributor, :all_dbs do
 
     context "when task assigned to Organization is most recent task" do
       before do
-        FactoryBot.create(:task, assigned_to: assignee)
-        FactoryBot.create(:task, assigned_to: FactoryBot.create(:organization))
+        create(:task, assigned_to: assignee)
+        create(:task, assigned_to: create(:organization))
       end
 
       it "should return the most recent task assigned to a User" do
@@ -69,7 +69,7 @@ describe RoundRobinTaskDistributor, :all_dbs do
       end
 
       context "the assignee_pool contains items that aren't Users" do
-        let!(:assignee_pool) { FactoryBot.create_list(:user, assignee_pool_size).pluck(:css_id) }
+        let!(:assignee_pool) { create_list(:user, assignee_pool_size).pluck(:css_id) }
 
         it "raises an error" do
           expect { round_robin_distributor.next_assignee }.to(raise_error) do |error|
@@ -86,7 +86,7 @@ describe RoundRobinTaskDistributor, :all_dbs do
 
       before do
         total_distribution_count.times do
-          FactoryBot.create(:task, assigned_to: round_robin_distributor.next_assignee)
+          create(:task, assigned_to: round_robin_distributor.next_assignee)
         end
       end
 

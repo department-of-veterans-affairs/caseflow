@@ -205,7 +205,7 @@ export const readerLinkColumn = (requireDasRecord, includeNewDocsIcon) => {
 export const daysWaitingColumn = (requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
-    name: QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN,
+    name: QUEUE_CONFIG.DAYS_WAITING_COLUMN,
     span: collapseColumn(requireDasRecord),
     tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
     align: 'center',
@@ -220,6 +220,25 @@ export const daysWaitingColumn = (requireDasRecord) => {
     backendCanSort: true,
     getSortValue: (task) => moment().startOf('day').
       diff(moment(task.assignedOn), 'days')
+  };
+};
+
+export const daysOnHoldColumn = (requireDasRecord) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,
+    name: QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN,
+    span: collapseColumn(requireDasRecord),
+    tooltip: <React.Fragment>Calendar days since <br /> this case was placed on hold</React.Fragment>,
+    align: 'center',
+    valueFunction: (task) => {
+      return <React.Fragment>
+        <OnHoldLabel task={task} />
+        <ContinuousProgressBar limit={task.onHoldDuration} level={moment().startOf('day').
+          diff(task.placedOnHoldAt, 'days')} />
+      </React.Fragment>;
+    },
+    backendCanSort: false,
+    getSortValue: (task) => numDaysOnHold(task)
   };
 };
 
@@ -336,19 +355,9 @@ export class TaskTableUnconnected extends React.PureComponent {
     return this.props.includeDaysWaiting ? daysWaitingColumn(this.props.requireDasRecord) : null;
   }
 
-  caseDaysOnHoldColumn = () => (this.props.includeDaysOnHold ? {
-    header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,
-    name: QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN,
-    align: 'center',
-    valueFunction: (task) => {
-      return <React.Fragment>
-        <OnHoldLabel task={task} />
-        <ContinuousProgressBar limit={task.onHoldDuration} level={moment().startOf('day').
-          diff(task.placedOnHoldAt, 'days')} />
-      </React.Fragment>;
-    },
-    getSortValue: (task) => numDaysOnHold(task)
-  } : null)
+  caseDaysOnHoldColumn = () => {
+    return this.props.includeDaysOnHold ? daysOnHoldColumn(this.props.requireDasRecord) : null;
+  }
 
   completedDateColumn = () => {
     return this.props.includeCompletedDate ? {

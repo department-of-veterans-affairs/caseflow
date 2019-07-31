@@ -7,19 +7,19 @@ describe HearingTaskAssociation, :all_dbs do
   describe "uniqueness validation" do
     let(:hearing) { nil }
     let(:trait) { :in_progress }
-    let(:hearing_task) { FactoryBot.create(:hearing_task, trait, appeal: hearing&.appeal) }
+    let(:hearing_task) { create(:hearing_task, trait, appeal: hearing&.appeal) }
     let(:hearing_task_2) do
-      FactoryBot.create(:hearing_task, trait, appeal: hearing&.appeal)
+      create(:hearing_task, trait, appeal: hearing&.appeal)
     end
     let!(:hearing_task_association) do
-      FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task)
+      create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task)
     end
     let(:message) do
       "Validation failed: Hearing task that is not closed " \
         "already exists for #{hearing&.class&.name} #{hearing&.id}"
     end
 
-    subject { FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2) }
+    subject { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2) }
 
     context "legacy hearing" do
       let(:hearing) { create(:legacy_hearing) }
