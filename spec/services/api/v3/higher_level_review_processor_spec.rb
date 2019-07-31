@@ -3,11 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe Intake, :all_dbs do
-  before do
-    RequestStore[:current_user] = user
-  end
-
+describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
   let(:user) { Generators::User.build }
   let(:veteran_file_number) { "64205050" }
   let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number, country: "USA") }
