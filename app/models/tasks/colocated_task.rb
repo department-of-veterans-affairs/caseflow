@@ -100,30 +100,6 @@ class ColocatedTask < Task
 
   private
 
-  def ama_translation_actions(core_actions)
-    core_actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
-    core_actions
-  end
-
-  def legacy_translation_or_hearing_actions(actions)
-    return legacy_schedule_hearing_actions(actions) if action == "schedule_hearing"
-
-    legacy_translation_actions(actions)
-  end
-
-  def legacy_schedule_hearing_actions(actions)
-    task_actions = Constants.TASK_ACTIONS
-    actions = actions.reject { |action| action[:label] == task_actions.ASSIGN_TO_PRIVACY_TEAM.to_h[:label] }
-    actions.unshift(task_actions.SCHEDULE_HEARING_SEND_TO_TEAM.to_h)
-    actions
-  end
-
-  def legacy_translation_actions(actions)
-    send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
-    send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants.CO_LOCATED_ADMIN_ACTIONS.translation)
-    actions.unshift(send_to_team)
-  end
-
   def create_and_auto_assign_child_task(_options = {})
     super(appeal: appeal)
   end
