@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module ApiHelpers
+  # rubocop:disable Metrics/AbcSize
   def api_setup_appeal_repository_dockets
     allow(AppealRepository).to receive(:latest_docket_month) { 11.months.ago.to_date.beginning_of_month }
     allow(AppealRepository).to receive(:regular_non_aod_docket_count) { 123_456 }
@@ -87,4 +88,5 @@ module ApiHelpers
       ]
     ))
   end
+  # rubocop:enable Metrics/AbcSize
 end
