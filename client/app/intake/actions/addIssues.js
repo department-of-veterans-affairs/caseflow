@@ -93,7 +93,8 @@ export const addUnidentifiedIssue = (description, notes, correctionType) => (dis
       isUnidentified: true,
       description,
       notes,
-      correctionType
+      correctionType,
+      editable: true
     }
   });
 };
@@ -122,7 +123,8 @@ export const addContestableIssue = (args) => (dispatch) => {
       vacolsId: args.vacolsId,
       vacolsSequenceId: args.vacolsSequenceId,
       eligibleForSocOptIn: args.eligibleForSocOptIn,
-      correctionType: args.correctionType
+      correctionType: args.correctionType,
+      editable: true
     }
   });
 };
@@ -145,7 +147,8 @@ export const addNonratingRequestIssue = (args) => (dispatch) => {
       ineligibleDueToId: args.ineligibleDueToId,
       ineligibleReason: args.ineligibleReason,
       decisionReviewTitle: args.decisionReviewTitle,
-      correctionType: args.correctionType
+      correctionType: args.correctionType,
+      editable: true
     }
   });
 };

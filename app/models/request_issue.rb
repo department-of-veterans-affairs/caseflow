@@ -623,7 +623,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def editable?
-    return false
     return false if contention_connected_to_rating?
 
     true
