@@ -37,13 +37,7 @@ class TaskPager
     when Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
       tasks.order(placed_on_hold_at: sort_order)
     when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
-      ts = tasks_with_cached_appeal_attributes(tasks)
-
-      # byebug;
-
-      # ts.order(docket_number: sort_order)
-
-      ts.order("cached_appeal_attributes.docket_number #{sort_order}")
+      tasks_with_cached_appeal_attributes(tasks).order("cached_appeal_attributes.docket_number #{sort_order}")
 
       # ts.order(docket_number: sort_order)
 
@@ -69,7 +63,9 @@ class TaskPager
     on cached_appeal_attributes.appeal_id = tasks.appeal_id \
     and cached_appeal_attributes.appeal_type = tasks.appeal_type"
 
-    tasks.joins(sql)
+    tasks_with_cached_appeal_attributes = tasks.joins(sql)
+
+    byebug
   end
 
   # # TODO: Some filters are on other tables that we will need to join to (appeal docket type)
