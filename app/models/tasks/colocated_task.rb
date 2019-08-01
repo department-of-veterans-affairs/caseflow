@@ -66,35 +66,21 @@ class ColocatedTask < Task
   def available_actions(user)
     if assigned_to == user ||
        (task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.user_is_admin?(user))
-      base_actions = [
+      actions = [
         Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
         Constants.TASK_ACTIONS.CANCEL_TASK.to_h
       ]
 
-      base_actions.unshift(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h) if Colocated.singleton.user_is_admin?(user)
+      actions.unshift(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h) if Colocated.singleton.user_is_admin?(user)
 
-      return available_actions_with_conditions(base_actions)
+      actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
+      actions.unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
+
+      return actions
     end
 
     []
-  end
-
-  def available_actions_with_conditions(core_actions)
-    # Break this out into respective subclasses once ColocatedTasks are migrated
-    # https://github.com/department-of-veterans-affairs/caseflow/pull/11295#issuecomment-509659069
-    if %w[translation schedule_hearing].include?(action) && appeal.is_a?(LegacyAppeal)
-      return legacy_translation_or_hearing_actions(core_actions)
-    end
-
-    core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
-    core_actions.unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
-
-    if action == "translation" && appeal.is_a?(Appeal)
-      return ama_translation_actions(core_actions)
-    end
-
-    core_actions
   end
 
   def actions_available?(_user)
