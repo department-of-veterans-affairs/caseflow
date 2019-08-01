@@ -26,6 +26,8 @@ const tableNumberStyling = css({
 });
 
 const UPCOMING_HEARINGS_TAB_NAME = 'upcomingHearings';
+const AMA_APPEALS_TAB_NAME = 'amaAppeals';
+const LEGACY_APPEALS_TAB_NAME = 'legacyAppeals';
 
 const AvailableVeteransTable = ({ rows, columns, style = {} }) => {
   let removeTimeColumn = _.slice(columns, 0, -1);
@@ -316,11 +318,14 @@ export default class AssignHearingsTabs extends React.Component {
     const hearingsForSelected = _.get(selectedHearingDay, 'hearings', []);
     const availableSlots = _.get(selectedHearingDay, 'totalSlots', 0) - Object.keys(hearingsForSelected).length;
 
-    const upcomingHearings = sortHearings(hearingsForSelected);
+    const upcomingRows = this.upcomingHearingsRows(sortHearings(hearingsForSelected));
     const amaAppeals = _.filter(appealsReadyForHearing, (appeal) => this.isAmaAppeal(appeal));
-    const legacyAppeals = _.filter(appealsReadyForHearing, (appeal) => !this.isAmaAppeal(appeal));
+    const amaRows = this.availableVeteransRows(amaAppeals);
+    const legacyRows = this.availableVeteransRows(
+      _.filter(appealsReadyForHearing, (appeal) => !this.isAmaAppeal(appeal))
+    );
 
-    return <div className="usa-width-three-fourths" {...filterDropdownFix}>
+    return <div className="usa-width-three-fourths">
       {!_.isNil(selectedHearingDay) && <h1>
         {`${moment(selectedHearingDay.scheduledFor).format('ddd M/DD/YYYY')}
           ${room} (${availableSlots} slots remaining)`}
@@ -332,23 +337,23 @@ export default class AssignHearingsTabs extends React.Component {
             label: 'Scheduled Veterans',
             page: <UpcomingHearingsTable
               selectedHearingDay={selectedHearingDay}
-              rows={this.upcomingHearingsRows(upcomingHearings)}
-              columns={this.tabWindowColumns(upcomingHearings, { tab: UPCOMING_HEARINGS_TAB_NAME })}
+              rows={upcomingRows}
+              columns={this.tabWindowColumns(upcomingRows, { tab: UPCOMING_HEARINGS_TAB_NAME })}
             />
           },
           {
             label: 'Legacy Veterans Waiting',
             page: <AvailableVeteransTable
-              rows={this.availableVeteransRows(legacyAppeals, { tab: 'legacyAppeals' })}
-              columns={this.tabWindowColumns(legacyAppeals, { tab: 'legacyAppeals' })}
+              rows={legacyRows}
+              columns={this.tabWindowColumns(legacyRows, { tab: LEGACY_APPEALS_TAB_NAME })}
             />
           },
           {
             label: 'AMA Veterans Waiting',
             page: <AvailableVeteransTable
               style={this.amaDocketCutoffLineStyle(amaAppeals)}
-              rows={this.availableVeteransRows(amaAppeals, { tab: 'amaAppeals' })}
-              columns={this.tabWindowColumns(amaAppeals, { tab: 'amaAppeals' })}
+              rows={amaRows}
+              columns={this.tabWindowColumns(amaRows, { tab: AMA_APPEALS_TAB_NAME })}
             />
           }
         ]}
