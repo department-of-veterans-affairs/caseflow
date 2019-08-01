@@ -237,7 +237,7 @@ export const daysOnHoldColumn = (requireDasRecord) => {
           diff(task.placedOnHoldAt, 'days')} />
       </React.Fragment>;
     },
-    backendCanSort: false,
+    backendCanSort: true,
     getSortValue: (task) => numDaysOnHold(task)
   };
 };
