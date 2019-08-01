@@ -15,12 +15,14 @@ import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../constants';
-import { formatAddedIssues, getAddIssuesFields, validateDate } from '../util/issues';
+import { formatAddedIssues, getAddIssuesFields, validateDate, issueByIndex } from '../util/issues';
+import { isCorrection } from '../util';
 import { formatDateStr } from '../../util/DateUtil';
 import Table from '../../components/Table';
 import IssueList from '../components/IssueList';
 
 import {
+  toggleAddingIssue,
   toggleAddIssuesModal,
   toggleUntimelyExemptionModal,
   toggleNonratingRequestIssueModal,
@@ -36,6 +38,7 @@ import {
 } from '../actions/addIssues';
 import COPY from '../../../COPY.json';
 import CorrectionTypeModal from '../components/CorrectionTypeModal';
+import AddIssueManager from '../components/AddIssueManager';
 
 export class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -50,17 +53,14 @@ export class AddIssuesPage extends React.Component {
     this.state = {
       originalIssueLength,
       issueRemoveIndex: 0,
-      issueIndex: 0
+      issueIndex: 0,
+      addingIssue: false
     };
   }
 
-  onClickAddIssue = (ratingIssueCount) => {
-    if (!ratingIssueCount) {
-      return this.props.toggleNonratingRequestIssueModal;
-    }
-
-    return this.props.toggleAddIssuesModal;
-  }
+  onClickAddIssue = () => {
+    this.setState({ addingIssue: true });
+  };
 
   onClickIssueAction = (index, option = 'remove') => {
     switch (option) {
@@ -79,10 +79,7 @@ export class AddIssuesPage extends React.Component {
       this.props.withdrawIssue(index);
       break;
     case 'correct':
-      this.setState({
-        issueIndex: index
-      });
-      this.props.toggleCorrectionTypeModal(index);
+      this.props.toggleCorrectionTypeModal({ index });
       break;
     case 'undo_correction':
       this.props.undoCorrection(index);
@@ -90,20 +87,61 @@ export class AddIssuesPage extends React.Component {
     default:
       this.props.undoCorrection(index);
     }
-  }
+  };
 
   withdrawalDateOnChange = (value) => {
     this.props.setIssueWithdrawalDate(value);
-  }
+  };
+
+  // handleAddIssueModal = ({ selectedContestableIssueIndex, currentIssue, notes }) => {
+  //   const { formType, intakeForms } = this.props;
+  //   const intakeData = intakeForms[formType];
+
+  //   this.props.toggleAddIssuesModal();
+
+  //   if (isCorrection(currentIssue.isRating, intakeData)) {
+  //     this.props.toggleCorrectionTypeModal();
+  //   } else if (this.hasLegacyAppeals()) {
+  //     this.props.toggleLegacyOptInModal({
+  //       currentIssue,
+  //       notes
+  //     });
+  //   } else if (this.requiresUntimelyExemption()) {
+  //     this.props.toggleUntimelyExemptionModal({
+  //       currentIssue,
+  //       notes
+  //     });
+  //   } else {
+  //     this.props.addContestableIssue({
+  //       contestableIssueIndex: selectedContestableIssueIndex,
+  //       contestableIssues: intakeData.contestableIssues,
+  //       isRating: currentIssue.isRating,
+  //       notes
+  //     });
+  //   }
+  // };
+
+  // hasLegacyAppeals = () => {
+  //   const { formType, intakeForms } = this.props;
+  //   const intakeData = intakeForms[formType];
+
+  //   return intakeData.legacyAppeals.length > 0;
+  // };
+
+  // requiresUntimelyExemption = (selectedContestableIssueIndex) => {
+  //   const { formType, intakeForms } = this.props;
+  //   const intakeData = intakeForms[formType];
+
+  //   if (formType === 'supplemental_claim') {
+  //     return false;
+  //   }
+  //   const currentIssue = issueByIndex(intakeData.contestableIssues, selectedContestableIssueIndex);
+
+  //   return !currentIssue.timely;
+  // };
 
   render() {
-    const {
-      intakeForms,
-      formType,
-      veteran,
-      featureToggles,
-      editPage
-    } = this.props;
+    const { intakeForms, formType, veteran, featureToggles, editPage, addingIssue } = this.props;
 
     const intakeData = intakeForms[formType];
     const { useAmaActivationDate, correctClaimReviews } = featureToggles;
@@ -123,9 +161,12 @@ export class AddIssuesPage extends React.Component {
 
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
     const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
-    const showInvalidVeteranError = !intakeData.veteranValid && (_.some(
-      intakeData.addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId)
-    );
+    const showInvalidVeteranError =
+      !intakeData.veteranValid &&
+      _.some(
+        intakeData.addedIssues,
+        (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId
+      );
 
     const issues = formatAddedIssues(intakeData, useAmaActivationDate);
     const requestedIssues = issues.filter((issue) => !issue.withdrawalPending && !issue.withdrawalDate);
@@ -133,9 +174,8 @@ export class AddIssuesPage extends React.Component {
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
     const withdrawnIssues = previouslywithdrawnIssues.concat(issuesPendingWithdrawal);
     const withdrawDatePlaceholder = formatDateStr(new Date());
-    const withdrawReview = !_.isEmpty(issues) && _.every(
-      issues, (issue) => issue.withdrawalPending || issue.withdrawalDate
-    );
+    const withdrawReview =
+      !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
 
     const haveIssuesChanged = () => {
       const issueCountChanged = issues.length !== this.state.originalIssueLength;
@@ -145,9 +185,8 @@ export class AddIssuesPage extends React.Component {
       const partialWithdrawal = !_.isEmpty(issuesPendingWithdrawal) && !withdrawReview;
 
       // if an new issue was added or an issue was edited
-      const newOrChangedIssue = issues.filter(
-        (issue) => !issue.id || issue.editedDescription || issue.correctionType
-      ).length > 0;
+      const newOrChangedIssue =
+        issues.filter((issue) => !issue.id || issue.editedDescription || issue.correctionType).length > 0;
 
       if (issueCountChanged || partialWithdrawal || newOrChangedIssue) {
         return true;
@@ -157,16 +196,18 @@ export class AddIssuesPage extends React.Component {
     };
 
     const addIssueButton = () => {
-      return <div className="cf-actions">
-        <Button
-          name="add-issue"
-          legacyStyling={false}
-          classNames={['usa-button-secondary']}
-          onClick={this.onClickAddIssue(_.size(intakeData.contestableIssues))}
-        >
-          + Add issue
-        </Button>
-      </div>;
+      return (
+        <div className="cf-actions">
+          <Button
+            name="add-issue"
+            legacyStyling={false}
+            classNames={['usa-button-secondary']}
+            onClick={() => this.onClickAddIssue()}
+          >
+            + Add issue
+          </Button>
+        </div>
+      );
     };
 
     const messageHeader = editPage ? 'Edit Issues' : 'Add / Remove Issues';
@@ -182,7 +223,7 @@ export class AddIssuesPage extends React.Component {
         if (withdrawalDate < receiptDate) {
           msg = `We cannot process your request. Please select a date after the ${formName}'s receipt date.`;
         } else if (withdrawalDate > currentDate) {
-          msg = 'We cannot process your request. Please select a date prior to today\'s date.';
+          msg = "We cannot process your request. Please select a date prior to today's date.";
         }
       } else if (intakeData.withdrawalDate && intakeData.withdrawalDate.length >= 10) {
         msg = 'We cannot process your request. Please enter a valid date.';
@@ -191,10 +232,7 @@ export class AddIssuesPage extends React.Component {
       return msg;
     };
 
-    const columns = [
-      { valueName: 'field' },
-      { valueName: 'content' }
-    ];
+    const columns = [{ valueName: 'field' }, { valueName: 'content' }];
 
     let fieldsForFormType = getAddIssuesFields(formType, veteran, intakeData);
     let issueChangeClassname = () => {
@@ -205,123 +243,137 @@ export class AddIssuesPage extends React.Component {
       // flash a save message if user is on the edit page & issues have changed
       const issuesChangedBanner = <p>When you finish making changes, click "Save" to continue.</p>;
 
-      fieldsForFormType = fieldsForFormType.concat(
-        {
-          field: '',
-          content: issuesChangedBanner
-        });
-      issueChangeClassname = (rowObj) => rowObj.field === '' ? 'intake-issue-flash' : '';
+      fieldsForFormType = fieldsForFormType.concat({
+        field: '',
+        content: issuesChangedBanner
+      });
+      issueChangeClassname = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
     }
 
     let rowObjects = fieldsForFormType;
 
     if (!_.isEmpty(requestedIssues)) {
-      rowObjects = fieldsForFormType.concat(
-        {
-          field: 'Requested issues',
-          content: <IssueList
+      rowObjects = fieldsForFormType.concat({
+        field: 'Requested issues',
+        content: (
+          <IssueList
             onClickIssueAction={this.onClickIssueAction}
             issues={requestedIssues}
             intakeData={intakeData}
             formType={formType}
-            featureToggles={featureToggles} />
-        });
+            featureToggles={featureToggles}
+          />
+        )
+      });
     }
 
     if (!_.isEmpty(withdrawnIssues)) {
-      rowObjects = rowObjects.concat(
-        {
-          field: 'Withdrawn issues',
-          content: <IssueList
+      rowObjects = rowObjects.concat({
+        field: 'Withdrawn issues',
+        content: (
+          <IssueList
             withdrawReview={withdrawReview}
             issues={withdrawnIssues}
             intakeData={intakeData}
             formType={formType}
-            featureToggles={featureToggles} />
-        });
+            featureToggles={featureToggles}
+          />
+        )
+      });
     }
 
-    rowObjects = rowObjects.concat(
-      {
-        field: ' ',
-        content: addIssueButton()
-      });
+    rowObjects = rowObjects.concat({
+      field: ' ',
+      content: addIssueButton()
+    });
 
-    return <div className="cf-intake-edit">
-      {intakeData.addIssuesModalVisible && <AddIssuesModal
-        intakeData={intakeData}
-        formType={formType}
-        closeHandler={this.props.toggleAddIssuesModal} />
-      }
-      {intakeData.untimelyExemptionModalVisible && <UntimelyExemptionModal
-        intakeData={intakeData}
-        closeHandler={this.props.toggleUntimelyExemptionModal} />
-      }
-      {intakeData.nonRatingRequestIssueModalVisible && <NonratingRequestIssueModal
-        intakeData={intakeData}
-        formType={formType}
-        closeHandler={this.props.toggleNonratingRequestIssueModal} />
-      }
-      {intakeData.unidentifiedIssuesModalVisible && <UnidentifiedIssuesModal
-        intakeData={intakeData}
-        closeHandler={this.props.toggleUnidentifiedIssuesModal} />
-      }
-      {intakeData.legacyOptInModalVisible && <LegacyOptInModal
-        intakeData={intakeData}
-        closeHandler={this.props.toggleLegacyOptInModal} />
-      }
-      {intakeData.removeIssueModalVisible && <RemoveIssueModal
-        removeIndex={this.state.issueRemoveIndex}
-        intakeData={intakeData}
-        closeHandler={this.props.toggleIssueRemoveModal} />
-      }
-      {intakeData.correctIssueModalVisible && <CorrectionTypeModal
-        issueIndex={this.state.issueIndex}
-        intakeData={intakeData}
-        onCancel={() => {
-          this.setState({ issueIndex: null });
-          this.props.toggleCorrectionTypeModal();
-        }}
-        onClose={() => {
-          this.setState({ issueIndex: null });
-          this.props.toggleCorrectionTypeModal();
-        }} />
-      }
-      <h1 className="cf-txt-c">{messageHeader}</h1>
+    return (
+      <div className="cf-intake-edit">
+        {this.state.addingIssue && (
+          <AddIssueManager
+            intakeData={intakeData}
+            formType={formType}
+            onComplete={() => {
+              this.setState({ addingIssue: false });
+            }}
+          />
+        )}
 
-      {requestState === REQUEST_STATE.FAILED &&
-        <ErrorAlert errorCode={requestErrorCode} />
-      }
+        {/* {intakeData.addIssuesModalVisible && (
+          <AddIssuesModal intakeData={intakeData} formType={formType} closeHandler={this.handleAddIssueModal} />
+        )}
+        {intakeData.untimelyExemptionModalVisible && (
+          <UntimelyExemptionModal intakeData={intakeData} closeHandler={this.props.toggleUntimelyExemptionModal} />
+        )}
+        {intakeData.nonRatingRequestIssueModalVisible && (
+          <NonratingRequestIssueModal
+            intakeData={intakeData}
+            formType={formType}
+            closeHandler={this.props.toggleNonratingRequestIssueModal}
+          />
+        )}
+        {intakeData.unidentifiedIssuesModalVisible && (
+          <UnidentifiedIssuesModal intakeData={intakeData} closeHandler={this.props.toggleUnidentifiedIssuesModal} />
+        )}
+        {intakeData.legacyOptInModalVisible && (
+          <LegacyOptInModal intakeData={intakeData} closeHandler={this.props.toggleLegacyOptInModal} />
+        )} */}
+        {intakeData.removeIssueModalVisible && (
+          <RemoveIssueModal
+            removeIndex={this.state.issueRemoveIndex}
+            intakeData={intakeData}
+            closeHandler={this.props.toggleIssueRemoveModal}
+          />
+        )}
+        {intakeData.correctIssueModalVisible && (
+          <CorrectionTypeModal
+            issueIndex={this.props.activeIssue}
+            intakeData={intakeData}
+            cancelText={addingIssue ? 'Cancel adding this issue' : 'Cancel'}
+            onCancel={() => {
+              this.props.toggleCorrectionTypeModal();
+            }}
+            submitText={addingIssue ? 'Continue' : 'Save'}
+            onSubmit={({ correctionType }) => {
+              this.props.correctIssue({
+                index: this.props.activeIssue,
+                correctionType
+              });
+              this.props.toggleCorrectionTypeModal();
+            }}
+          />
+        )}
+        <h1 className="cf-txt-c">{messageHeader}</h1>
 
-      {showInvalidVeteranError &&
-        <ErrorAlert errorCode="veteran_not_valid" errorData={intakeData.veteranInvalidFields} />}
+        {requestState === REQUEST_STATE.FAILED && <ErrorAlert errorCode={requestErrorCode} />}
 
-      <Table
-        columns={columns}
-        rowObjects={rowObjects}
-        rowClassNames={issueChangeClassname}
-        slowReRendersAreOk />
+        {showInvalidVeteranError && (
+          <ErrorAlert errorCode="veteran_not_valid" errorData={intakeData.veteranInvalidFields} />
+        )}
 
-      {!_.isEmpty(issuesPendingWithdrawal) &&
-        <div className="cf-gray-box cf-decision-date">
-          <InlineForm>
-            <DateSelector
-              label={COPY.INTAKE_EDIT_WITHDRAW_DATE}
-              name="withdraw-date"
-              value={intakeData.withdrawalDate}
-              onChange={this.withdrawalDateOnChange}
-              placeholder={withdrawDatePlaceholder}
-              dateErrorMessage={withdrawError()}
-            />
-          </InlineForm>
-        </div>
-      }
-    </div>;
+        <Table columns={columns} rowObjects={rowObjects} rowClassNames={issueChangeClassname} slowReRendersAreOk />
+
+        {!_.isEmpty(issuesPendingWithdrawal) && (
+          <div className="cf-gray-box cf-decision-date">
+            <InlineForm>
+              <DateSelector
+                label={COPY.INTAKE_EDIT_WITHDRAW_DATE}
+                name="withdraw-date"
+                value={intakeData.withdrawalDate}
+                onChange={this.withdrawalDateOnChange}
+                placeholder={withdrawDatePlaceholder}
+                dateErrorMessage={withdrawError()}
+              />
+            </InlineForm>
+          </div>
+        )}
+      </div>
+    );
   }
 }
 
 export const IntakeAddIssuesPage = connect(
-  ({ intake, higherLevelReview, supplementalClaim, appeal, featureToggles }) => ({
+  ({ intake, higherLevelReview, supplementalClaim, appeal, featureToggles, activeIssue, addingIssue }) => ({
     intakeForms: {
       higher_level_review: higherLevelReview,
       supplemental_claim: supplementalClaim,
@@ -329,18 +381,24 @@ export const IntakeAddIssuesPage = connect(
     },
     formType: intake.formType,
     veteran: intake.veteran,
-    featureToggles
+    featureToggles,
+    activeIssue,
+    addingIssue
   }),
-  (dispatch) => bindActionCreators({
-    toggleAddIssuesModal,
-    toggleUntimelyExemptionModal,
-    toggleNonratingRequestIssueModal,
-    toggleUnidentifiedIssuesModal,
-    toggleLegacyOptInModal,
-    removeIssue,
-    withdrawIssue,
-    setIssueWithdrawalDate
-  }, dispatch)
+  (dispatch) =>
+    bindActionCreators(
+      {
+        toggleAddIssuesModal,
+        toggleUntimelyExemptionModal,
+        toggleNonratingRequestIssueModal,
+        toggleUnidentifiedIssuesModal,
+        toggleLegacyOptInModal,
+        removeIssue,
+        withdrawIssue,
+        setIssueWithdrawalDate
+      },
+      dispatch
+    )
 )(AddIssuesPage);
 
 export const EditAddIssuesPage = connect(
@@ -353,20 +411,27 @@ export const EditAddIssuesPage = connect(
     formType: state.formType,
     veteran: state.veteran,
     featureToggles: state.featureToggles,
-    editPage: true
+    editPage: true,
+    activeIssue: state.activeIssue,
+    addingIssue: state.addingIssue
   }),
-  (dispatch) => bindActionCreators({
-    toggleAddIssuesModal,
-    toggleUntimelyExemptionModal,
-    toggleIssueRemoveModal,
-    toggleNonratingRequestIssueModal,
-    toggleUnidentifiedIssuesModal,
-    toggleLegacyOptInModal,
-    toggleCorrectionTypeModal,
-    removeIssue,
-    withdrawIssue,
-    setIssueWithdrawalDate,
-    correctIssue,
-    undoCorrection
-  }, dispatch)
+  (dispatch) =>
+    bindActionCreators(
+      {
+        toggleAddingIssue,
+        // toggleAddIssuesModal,
+        // toggleUntimelyExemptionModal,
+        // toggleNonratingRequestIssueModal,
+        // toggleUnidentifiedIssuesModal,
+        // toggleLegacyOptInModal,
+        toggleIssueRemoveModal,
+        toggleCorrectionTypeModal,
+        removeIssue,
+        withdrawIssue,
+        setIssueWithdrawalDate,
+        correctIssue,
+        undoCorrection
+      },
+      dispatch
+    )
 )(AddIssuesPage);
