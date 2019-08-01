@@ -16,14 +16,50 @@ class Api::V3::HigherLevelReviewProcessor
     reserved_veteran_file_number: { status: 422, title: "Invalid veteran file number" },
     incident_flash: { status: 422, title: "The veteran has an incident flash" },
     adding_legacy_issue_without_opting_in: { status: 422, title: "Adding legacy issue without opting in" },
-    unknown_category_for_benefit_type: { status: 422, title: "Unknown category for benefit type" }
+    unknown_category_for_benefit_type: { status: 422, title: "Unknown category for benefit type" },
+    unknown_contestation_type: { status: 422, title: "Cannot contest that type" },
+    must_have_id_to_contest_decision_issue: { status: 422, title: "Must have id to contest decision issue" },
+    must_have_id_to_contest_rating_issue: { status: 422, title: "Must have id to contest rating issue" },
+    must_have_id_to_contest_legacy_issue: { status: 422, title: "Must have id to contest legacy issue" },
+    notes_cannot_be_blank_when_contesting_decision_issue: {
+      status: 422, title: "Notes cannot be blank when contesting decision issue"
+    },
+    notes_cannot_be_blank_when_contesting_rating_issue: {
+      status: 422, title: "Notes cannot be blank when contesting rating issue"
+    },
+    notes_cannot_be_blank_when_contesting_legacy_issue: {
+      status: 422, title: "Notes cannot be blank when contesting legacy issue"
+    },
+    either_notes_or_decision_text_must_be_present_when_contesting_other: {
+      status: 422, title: "Either notes or decision text must be present when contesting other"
+    }
   }.freeze
 
   DEFAULT_ERROR = { status: 422, code: :unknown_error, title: "Unknown error" }.freeze
 
-  unless (CATEGORIES_BY_BENEFIT_TYPE = JSON.parse(File.read("client/constants/ISSUE_CATEGORIES.json")))
-    fail StandardError, "couldn't pull nonrating issue categories from ISSUE_CATEGORIES.json"
-  end
+  # this is the hash that the method "attributes_from_intake_data", in the request_issue model, is expecting
+  INTAKE_DATA_HASH = {
+    rating_issue_reference_id: nil,
+    rating_issue_diagnostic_code: nil,
+    decision_text: nil,
+    decision_date: nil,
+    nonrating_issue_category: nil,
+    benefit_type: nil,
+    notes: nil,
+    is_unidentified: false, # false
+    untimely_exemption: nil,
+    untimely_exemption_notes: nil,
+    ramp_claim_id: nil,
+    vacols_id: nil,
+    vacols_sequence_id: nil,
+    contested_decision_issue_id: nil,
+    ineligible_reason: nil,
+    ineligible_due_to_id: nil,
+    edited_description: nil,
+    correction_type: nil
+  }.freeze
+
+  CATEGORIES_BY_BENEFIT_TYPE = Constants::ISSUE_CATEGORIES
 
   def initialize(params, user)
     @user = user
@@ -43,10 +79,10 @@ class Api::V3::HigherLevelReviewProcessor
     @claimant_participant_id = relationships.dig :claimant, :data, :id
     @claimant_payee_code = relationships.dig :claimant, :data, :meta, :payeeCode
 
-    @request_issues = included.each do |hash|
+    included.each do |hash|
       next unless hash[:type] == "RequestIssue"
 
-      request_issue, error = included_request_issue_to_intake_data_hash(hash, legacy_opt_in_approved, benefit_type)
+      request_issue, error = included_request_issue_to_intake_data_hash(hash)
       @errors << error if error
       @request_issues << request_issue if request_issue
     end
@@ -56,6 +92,7 @@ class Api::V3::HigherLevelReviewProcessor
     !errors.empty?
   end
 
+  # all of the intake steps
   def build_start_review_complete!
     @intake = Intake.build(
       user: @user,
@@ -73,6 +110,7 @@ class Api::V3::HigherLevelReviewProcessor
     intake.detail
   end
 
+  # params for the "review" step of the intake process
   def review_params
     ActionController::Parameters.new(
       informal_conference: @informal_conference,
@@ -86,61 +124,102 @@ class Api::V3::HigherLevelReviewProcessor
     )
   end
 
+  # params for the "complete" step of the intake process
   def complete_params
     ActionController::Parameters.new request_issues: @request_issues
   end
 
-  class << self
-    def error_from_error_code(code)
-      return DEFAULT_ERROR unless code
+  def self.error_from_error_code(code)
+    return DEFAULT_ERROR unless code
 
-      status_and_title = ERROR_STATUSES_AND_TITLES_BY_CODE[code.to_sym]
-      return DEFAULT_ERROR unless status_and_title
+    status_and_title = ERROR_STATUSES_AND_TITLES_BY_CODE[code.to_sym]
+    return DEFAULT_ERROR unless status_and_title
 
-      { status: status_and_title[:status], code: code, title: status_and_title[:title] }
+    { status: status_and_title[:status], code: code, title: status_and_title[:title] }
+  end
+
+  def included_request_issue_to_intake_data_hash(request_issue)
+    request_issue = request_issue[:attributes].as_json.symbolize_keys
+
+    case request_issue[:contests]
+    when "on_file_decision_issue"
+      contesting_decision_to_intake_data_hash(request_issue)
+    when "on_file_rating_issue"
+      contesting_rating_to_intake_data_hash(request_issue)
+    when "on_file_legacy_issue"
+      contesting_legacy_to_intake_data_hash(request_issue)
+    when "other"
+      if request_issue[:category].present?
+        contesting_categorized_other_to_intake_data_hash(request_issue)
+      else
+        contesting_uncategorized_other_to_intake_data_hash(request_issue)
+      end
+    else
+      [nil, error_from_error_code(:unknown_contestation_type)]
     end
+  end
 
+  private
+
+  def contesting_decision_to_intake_data_hash(request_issue)
+    id, notes = request_issue.values_at :id, :notes
     # open question: where will attributes[:request_issue_ids] go?
-    def included_request_issue_to_intake_data_hash(request_issue, legacy_opt_in_approved, benefit_type)
-      attributes = request_issue[:attributes]
+    return [nil, error_from_error_code(:must_have_id_to_contest_decision_issue)] if id.blank?
+    return [nil, error_from_error_code(:notes_cannot_be_blank_when_contesting_decision_issue)] if notes.blank?
 
-      if attributes[:contests] == "on_file_legacy_issue" && !legacy_opt_in_approved
-        return [nil, error_from_error_code(:adding_legacy_issue_without_opting_in)]
-      end
+    intake_data_hash(contested_decision_issue_id: id, notes: notes)
+  end
 
-      unless attributes[:category].in? CATEGORIES_BY_BENEFIT_TYPE[benefit_type]
-        return [nil, error_from_error_code(:unknown_category_for_benefit_type)]
-      end
+  def contesting_rating_to_intake_data_hash(request_issue)
+    id, notes = request_issue.values_at :id, :notes
+    return [nil, error_from_error_code(:must_have_id_to_contest_rating_issue)] if id.blank?
+    return [nil, error_from_error_code(:notes_cannot_be_blank_when_contesting_rating_issue)] if notes.blank?
 
-      [intake_data_hash(attributes.merge(benefit_type: benefit_type)), nil]
+    intake_data_hash(rating_issue_reference_id: id, notes: notes)
+  end
+
+  def contesting_legacy_to_intake_data_hash
+    if !@legacy_opt_in_approved
+      return [nil, error_from_error_code(:adding_legacy_issue_without_opting_in)]
     end
 
-    private
+    id, notes = request_issue.values_at :id, :notes
+    return [nil, error_from_error_code(:must_have_id_to_contest_legacy_issue)] if id.blank?
+    return [nil, error_from_error_code(:notes_cannot_be_blank_when_contesting_legacy_issue)] if notes.blank?
 
-    # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists
-    def intake_data_hash(benefit_type:, category:, contests:, decision_date:, decision_text:, id:, notes:)
-      identified = benefit_type.present? && category.present?
-      {
-        rating_issue_reference_id: (contests == "on_file_rating_issue") ? id : nil,
-        rating_issue_diagnostic_code: nil,
-        decision_text: decision_text,
-        decision_date: decision_date,
-        nonrating_issue_category: category,
-        benefit_type: benefit_type,
-        notes: notes,
-        is_unidentified: !identified,
-        untimely_exemption: nil,
-        untimely_exemption_notes: nil,
-        ramp_claim_id: nil,
-        vacols_id: (contests == "on_file_legacy_issue") ? id : nil,
-        vacols_sequence_id: nil,
-        contested_decision_issue_id: (contests == "on_file_decision_issue") ? id : nil,
-        ineligible_reason: nil,
-        ineligible_due_to_id: nil,
-        edited_description: nil,
-        correction_type: nil
-      }
+    intake_data_hash(vacols_id: id, notes: notes)
+  end
+
+  def contesting_categorized_other_to_intake_data_hash(request_issue)
+    category, notes, decision_text = request_issue.values_at :category, :notes, :decision_text
+    return [nil, error_from_error_code(:unknown_category_for_benefit_type)] unless category.in?(
+      CATEGORIES_BY_BENEFIT_TYPE[@benefit_type]
+    )
+
+    unless notes.present? || decision_text.present?
+      return [
+        nil,
+        error_from_error_code(:either_notes_or_decision_text_must_be_present_when_contesting_other)
+      ]
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists
+
+    intake_data_hash(
+      request_issue.slice(:notes, :decision_date, :decision_text).merge(nonrating_issue_category: category)
+    )
+  end
+
+  def contesting_uncategorized_other_to_intake_data_hash(request_issue)
+    notes, decision_text = request_issue.values_at :notes, :decision_text
+    unless notes.present? || decision_text.present?
+      return [
+        nil, error_from_error_code(:either_notes_or_decision_text_must_be_present_when_contesting_other)
+      ]
+    end
+
+    intake_data_hash(request_issue.slice(:notes, :decision_date, :decision_text).merge(is_unidentified: true))
+  end
+
+  def intake_data_hash(hash)
+    [INTAKE_DATA_HASH.merge(benefit_type: @benefit_type).merge(hash), nil]
   end
 end
