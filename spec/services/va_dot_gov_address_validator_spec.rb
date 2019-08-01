@@ -117,29 +117,31 @@ describe VaDotGovAddressValidator do
       end
     end
 
-    context "when validation fails and veteran's country is Philippines" do
-      let!(:valid_address_error) do
-        Caseflow::Error::VaDotGovAddressCouldNotBeFoundError.new(code: 500, message: "")
-      end
+    ensure_stable do
+      context "when validation fails and veteran's country is Philippines" do
+        let!(:valid_address_error) do
+          Caseflow::Error::VaDotGovAddressCouldNotBeFoundError.new(code: 500, message: "")
+        end
 
-      before do
-        allow_any_instance_of(VaDotGovAddressValidator).to receive(:validate_zip_code)
-          .and_return(nil)
-        # this mocks get_facility_data call for ErrorHandler#check_for_philippines_and_maybe_update
-        philippines_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
-        allow(philippines_response).to receive(:data).and_return([mock_facility_data(id: "vba_358")])
-        allow(philippines_response).to receive(:error).and_return(nil)
-        allow(ExternalApi::VADotGovService).to receive(:get_facility_data)
-          .and_return(philippines_response)
+        before do
+          allow_any_instance_of(VaDotGovAddressValidator).to receive(:validate_zip_code)
+            .and_return(nil)
+          # this mocks get_facility_data call for ErrorHandler#check_for_philippines_and_maybe_update
+          philippines_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
+          allow(philippines_response).to receive(:data).and_return([mock_facility_data(id: "vba_358")])
+          allow(philippines_response).to receive(:error).and_return(nil)
+          allow(ExternalApi::VADotGovService).to receive(:get_facility_data)
+            .and_return(philippines_response)
 
-        Fakes::BGSService.address_records = Hash[appeal.veteran_file_number, { cntry_nm: "PHILIPPINES" }]
-      end
+          Fakes::BGSService.address_records = Hash[appeal.veteran_file_number, { cntry_nm: "PHILIPPINES" }]
+        end
 
-      it "assigns closest regional office to Manila" do
-        appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
+        it "assigns closest regional office to Manila" do
+          appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
 
-        expect(Appeal.find(appeal.id).closest_regional_office).to eq("RO58")
-        expect(Appeal.find(appeal.id).available_hearing_locations.first.facility_id).to eq("vba_358")
+          expect(Appeal.find(appeal.id).closest_regional_office).to eq("RO58")
+          expect(Appeal.find(appeal.id).available_hearing_locations.first.facility_id).to eq("vba_358")
+        end
       end
     end
   end
