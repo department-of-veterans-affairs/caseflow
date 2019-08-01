@@ -152,7 +152,7 @@ class TableFilter extends React.PureComponent {
         {this.state.open &&
           <QueueDropdownFilter
             clearFilters={() => this.clearFilteredByList(columnName)}
-            name={valueName}
+            name={valueName || columnName}
             isClearEnabled={anyFiltersAreSet}
             handleClose={this.toggleDropdown}
             addClearFiltersRow>
