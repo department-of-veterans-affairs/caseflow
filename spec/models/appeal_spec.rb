@@ -484,6 +484,7 @@ describe Appeal, :all_dbs do
     end
 
     context "creating translation tasks" do
+      let!(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
       let(:bgs_veteran_state) { nil }
       let(:bgs_veteran_record) { { state: bgs_veteran_state } }
       let(:validated_veteran_state) { nil }
@@ -493,11 +494,10 @@ describe Appeal, :all_dbs do
 
       context "VADotGovService is responsive" do
         before do
+          valid_address_response = ExternalApi::VADotGovService::AddressValidationResponse.new(mock_response)
+          allow(valid_address_response).to receive(:data).and_return(mock_va_dot_gov_address)
           allow(VADotGovService).to receive(:validate_address)
-            .and_return(
-              error: nil,
-              valid_address: mock_va_dot_gov_address
-            )
+            .and_return(valid_address_response)
         end
 
         context "the service returns a state code" do

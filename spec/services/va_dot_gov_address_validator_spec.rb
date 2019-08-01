@@ -138,8 +138,8 @@ describe VaDotGovAddressValidator do
       it "assigns closest regional office to Manila" do
         appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
 
-        expect(appeal.closest_regional_office).to eq("RO58")
-        expect(appeal.available_hearing_locations.first.facility_id).to eq("vba_358")
+        expect(Appeal.find(appeal.id).closest_regional_office).to eq("RO58")
+        expect(Appeal.find(appeal.id).available_hearing_locations.first.facility_id).to eq("vba_358")
       end
     end
   end

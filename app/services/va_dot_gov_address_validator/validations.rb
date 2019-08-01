@@ -28,9 +28,7 @@ module VaDotGovAddressValidator::Validations
   end
 
   def fail_if_unable_to_validate_address
-    unless valid_address_response.success?
-      raise valid_address.error # rubocop:disable Style/SignalException
-    end
+    raise valid_address_response.error if valid_address.nil? # rubocop:disable Style/SignalException
   end
 
   def state_code_error
