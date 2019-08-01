@@ -105,6 +105,7 @@ class Test::UsersController < ApplicationController
       Rake::Task["db:seed"].reenable
       Rake::Task["db:seed"].invoke
     end
+    head :ok
   end
 
   def toggle_feature
@@ -115,15 +116,7 @@ class Test::UsersController < ApplicationController
     params[:disable]&.each do |f|
       FeatureToggle.disable!(f[:value])
     end
-  end
-
-  def save_admin_login_attempt
-    Rails.logger.info("#{current_user.css_id} logging in as #{params[:id]} at #{params[:station_id]}")
-    GlobalAdminLogin.create!(
-      admin_css_id: current_user.css_id,
-      target_css_id: params[:id],
-      target_station_id: params[:station_id]
-    )
+    head :ok
   end
 
   # Set end products in DEMO
@@ -131,14 +124,6 @@ class Test::UsersController < ApplicationController
     BGSService.end_product_records[:default] = new_default_end_products
 
     head :ok
-  end
-
-  def require_demo
-    redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
-  end
-
-  def require_global_admin
-    head :unauthorized unless current_user.global_admin?
   end
 
   def show_error
@@ -156,6 +141,23 @@ class Test::UsersController < ApplicationController
   end
 
   private
+
+  def require_demo
+    redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
+  end
+
+  def require_global_admin
+    head :unauthorized unless current_user.global_admin?
+  end
+
+  def save_admin_login_attempt
+    Rails.logger.info("#{current_user.css_id} logging in as #{params[:id]} at #{params[:station_id]}")
+    GlobalAdminLogin.create!(
+      admin_css_id: current_user.css_id,
+      target_css_id: params[:id],
+      target_station_id: params[:station_id]
+    )
+  end
 
   def user_session
     (params[:id] == "me") ? session : nil
