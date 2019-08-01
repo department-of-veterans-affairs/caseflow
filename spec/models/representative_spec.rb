@@ -93,7 +93,7 @@ describe Representative, :postgres do
 
   describe ".should_write_ihp?" do
     let(:docket) { nil }
-    let(:appeal) { FactoryBot.create(:appeal, docket_type: docket) }
+    let(:appeal) { create(:appeal, docket_type: docket) }
 
     before { allow_any_instance_of(Appeal).to receive(:representatives).and_return(poas) }
 

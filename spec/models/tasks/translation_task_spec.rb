@@ -5,8 +5,8 @@ require "rails_helper"
 
 describe TranslationTask, :postgres do
   describe ".create_from_root_task" do
-    let(:appeal) { FactoryBot.create(:appeal) }
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let(:appeal) { create(:appeal) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
 
     subject { TranslationTask.create_from_root_task(root_task) }
 

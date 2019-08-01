@@ -8,9 +8,9 @@ describe ColocatedTask, :all_dbs do
   let!(:staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
   let(:vacols_case) { create(:case) }
   let!(:appeal_1) { create(:legacy_appeal, vacols_case: vacols_case) }
-  let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal_1) }
+  let!(:root_task) { create(:root_task, appeal: appeal_1) }
   let!(:colocated_org) { Colocated.singleton }
-  let(:colocated_members) { FactoryBot.create_list(:user, 3) }
+  let(:colocated_members) { create_list(:user, 3) }
   let(:params_list) { [] }
 
   subject { ColocatedTask.create_many_from_params(params_list, attorney) }
@@ -26,11 +26,11 @@ describe ColocatedTask, :all_dbs do
   context ".create_many_from_params" do
     context "all fields are present and it is a legacy appeal" do
       let!(:appeal_2) { create(:legacy_appeal, vacols_case: create(:case)) }
-      let!(:root_task2) { FactoryBot.create(:root_task, appeal: appeal_2) }
+      let!(:root_task2) { create(:root_task, appeal: appeal_2) }
       let!(:appeal_3) { create(:legacy_appeal, vacols_case: create(:case)) }
-      let!(:root_task3) { FactoryBot.create(:root_task, appeal: appeal_3) }
+      let!(:root_task3) { create(:root_task, appeal: appeal_3) }
       let!(:appeal_4) { create(:legacy_appeal, vacols_case: create(:case)) }
-      let!(:root_task4) { FactoryBot.create(:root_task, appeal: appeal_4) }
+      let!(:root_task4) { create(:root_task, appeal: appeal_4) }
       let(:task_params_1) { { assigned_by: attorney, action: :aoj, appeal: appeal_1 } }
       let(:task_params_2) { { assigned_by: attorney, action: :poa_clarification, appeal: appeal_1 } }
       let(:params_list) { [task_params_1, task_params_2] }
@@ -149,7 +149,7 @@ describe ColocatedTask, :all_dbs do
     end
 
     context "when trying to create muliple identical tasks" do
-      let!(:parent) { FactoryBot.create(:ama_attorney_task, parent: root_task, assigned_to: attorney) }
+      let!(:parent) { create(:ama_attorney_task, parent: root_task, assigned_to: attorney) }
       let(:instructions) { "These are my instructions" }
       let(:task_params) do
         {
@@ -174,7 +174,7 @@ describe ColocatedTask, :all_dbs do
       context "when one already exists" do
         let(:params_list) { [task_params] }
         let!(:existing_action) do
-          FactoryBot.create(
+          create(
             :colocated_task,
             :poa_clarification,
             appeal: appeal_1,
@@ -195,26 +195,12 @@ describe ColocatedTask, :all_dbs do
   end
 
   context ".update" do
-    let!(:attorney_2) { FactoryBot.create(:user) }
-    let!(:staff_2) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_2.css_id) }
+    let!(:attorney_2) { create(:user) }
+    let!(:staff_2) { create(:staff, :attorney_role, sdomainid: attorney_2.css_id) }
     let(:org_colocated_task) do
-      FactoryBot.create(:colocated_task, assigned_by: attorney_2, assigned_to: Colocated.singleton)
+      create(:colocated_task, assigned_by: attorney_2, assigned_to: Colocated.singleton)
     end
     let!(:colocated_admin_action) { org_colocated_task.children.first }
-
-    context "when status is updated to on-hold" do
-      it "should validate on-hold duration" do
-        colocated_admin_action.update(status: Constants.TASK_STATUSES.on_hold)
-        expect(colocated_admin_action.valid?).to eq false
-        expect(colocated_admin_action.errors.messages[:on_hold_duration]).to eq ["has to be specified"]
-
-        colocated_admin_action.update(status: Constants.TASK_STATUSES.in_progress)
-        expect(colocated_admin_action.valid?).to eq true
-
-        colocated_admin_action.update(status: Constants.TASK_STATUSES.on_hold, on_hold_duration: 60)
-        expect(colocated_admin_action.valid?).to eq true
-      end
-    end
 
     context "when status is updated to completed" do
       let(:colocated_admin_action) do
@@ -257,7 +243,7 @@ describe ColocatedTask, :all_dbs do
 
       context "when completing a schedule hearing task" do
         let(:action) { :schedule_hearing }
-        let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal_1) }
+        let!(:root_task) { create(:root_task, appeal: appeal_1) }
 
         it "should update location to schedule hearing in vacols" do
           expect(vacols_case.bfcurloc).to_not eq staff.slogid
@@ -342,11 +328,11 @@ describe ColocatedTask, :all_dbs do
   end
 
   describe ".available_actions_unwrapper" do
-    let(:colocated_user) { FactoryBot.create(:user) }
+    let(:colocated_user) { create(:user) }
     let(:colocated_task) do
       # We expect all ColocatedTasks that are assigned to individuals to have parent tasks assigned to the organization.
-      org_task = FactoryBot.create(:colocated_task, assigned_by: attorney, assigned_to: Colocated.singleton)
-      FactoryBot.create(
+      org_task = create(:colocated_task, assigned_by: attorney, assigned_to: Colocated.singleton)
+      create(
         :colocated_task,
         assigned_by: attorney,
         assigned_to: colocated_user,
@@ -363,7 +349,7 @@ describe ColocatedTask, :all_dbs do
     end
 
     context "when current user is Colocated admin but not task assignee" do
-      let(:colocated_admin) { FactoryBot.create(:user) }
+      let(:colocated_admin) { create(:user) }
       before { OrganizationsUser.make_user_admin(colocated_admin, colocated_org) }
 
       it "should include all actions available to the assigned user along with reassign" do
@@ -377,8 +363,8 @@ describe ColocatedTask, :all_dbs do
 
   describe "round robin assignment skips admins" do
     context "when there is one admin and one non admin in the organization" do
-      let(:non_admin) { FactoryBot.create(:user) }
-      let(:admin) { FactoryBot.create(:user) }
+      let(:non_admin) { create(:user) }
+      let(:admin) { create(:user) }
       let(:task_count) { 6 }
 
       before do
@@ -405,13 +391,13 @@ describe ColocatedTask, :all_dbs do
 
   describe "colocated task is cancelled" do
     let(:org) { Colocated.singleton }
-    let(:colocated_user) { FactoryBot.create(:user) }
+    let(:colocated_user) { create(:user) }
 
     before do
       OrganizationsUser.add_user_to_organization(colocated_user, org)
     end
 
-    let(:org_task) { FactoryBot.create(:colocated_task, assigned_by: attorney, assigned_to: org) }
+    let(:org_task) { create(:colocated_task, assigned_by: attorney, assigned_to: org) }
     let(:colocated_task) { org_task.children.first }
 
     it "assigns the parent task back to the organization" do
@@ -422,7 +408,7 @@ describe ColocatedTask, :all_dbs do
 
     context "for legacy appeals, the new assigned to location is set correctly" do
       let(:org_colocated_task) do
-        FactoryBot.create(
+        create(
           :colocated_task,
           action,
           assigned_by: attorney,
@@ -470,20 +456,20 @@ describe ColocatedTask, :all_dbs do
   end
 
   describe "Reassigned ColocatedTask for LegacyAppeal" do
-    let(:initial_assigner) { FactoryBot.create(:user) }
-    let!(:initial_assigner_staff) { FactoryBot.create(:staff, :attorney_role, sdomainid: initial_assigner.css_id) }
-    let(:reassigner) { FactoryBot.create(:user) }
-    let!(:reassigner_staff) { FactoryBot.create(:staff, sdomainid: reassigner.css_id) }
+    let(:initial_assigner) { create(:user) }
+    let!(:initial_assigner_staff) { create(:staff, :attorney_role, sdomainid: initial_assigner.css_id) }
+    let(:reassigner) { create(:user) }
+    let!(:reassigner_staff) { create(:staff, sdomainid: reassigner.css_id) }
 
     let(:appeal) do
-      FactoryBot.create(
+      create(
         :legacy_appeal,
-        vacols_case: FactoryBot.create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow])
+        vacols_case: create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow])
       )
     end
 
     let(:org_task) do
-      FactoryBot.create(
+      create(
         :colocated_task,
         :retired_vlj,
         appeal: appeal,

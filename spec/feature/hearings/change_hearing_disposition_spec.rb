@@ -5,12 +5,12 @@ require "rails_helper"
 
 RSpec.feature "Change hearing disposition", :all_dbs do
   let(:current_full_name) { "Leonela Harbold" }
-  let(:hearing_admin_user) { FactoryBot.create(:user, full_name: current_full_name, station_id: 101) }
-  let(:hearing_day) { FactoryBot.create(:hearing_day) }
-  let(:veteran) { FactoryBot.create(:veteran, first_name: "Chibueze", last_name: "Vanscoy", file_number: 800_888_001) }
+  let(:hearing_admin_user) { create(:user, full_name: current_full_name, station_id: 101) }
+  let(:hearing_day) { create(:hearing_day) }
+  let(:veteran) { create(:veteran, first_name: "Chibueze", last_name: "Vanscoy", file_number: 800_888_001) }
   let(:regional_office_code) { "RO39" } # Denver
   let(:appeal) do
-    FactoryBot.create(
+    create(
       :appeal,
       :hearing_docket,
       closest_regional_office: regional_office_code,
@@ -18,14 +18,14 @@ RSpec.feature "Change hearing disposition", :all_dbs do
     )
   end
   let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
-  let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-  let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+  let(:root_task) { create(:root_task, appeal: appeal) }
+  let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
   let(:hearing_disposition) { nil }
   let(:hearing) do
-    FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day, disposition: hearing_disposition)
+    create(:hearing, appeal: appeal, hearing_day: hearing_day, disposition: hearing_disposition)
   end
-  let!(:association) { FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
-  let!(:change_task) { FactoryBot.create(:change_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
+  let!(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
+  let!(:change_task) { create(:change_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
   let(:instructions_text) { "This is why I'm changing this hearing's disposition." }
 
   before do
@@ -34,9 +34,9 @@ RSpec.feature "Change hearing disposition", :all_dbs do
   end
 
   context "there are hearing prep, transcription, and mail team members" do
-    let(:mail_user) { FactoryBot.create(:user, full_name: "Chinelo Mbanefo") }
-    let(:transcription_user) { FactoryBot.create(:user, full_name: "Li Hua Meng") }
-    let(:hearing_user) { FactoryBot.create(:user, full_name: "Lendvai Huot", roles: ["Hearing Prep"]) }
+    let(:mail_user) { create(:user, full_name: "Chinelo Mbanefo") }
+    let(:transcription_user) { create(:user, full_name: "Li Hua Meng") }
+    let(:hearing_user) { create(:user, full_name: "Lendvai Huot", roles: ["Hearing Prep"]) }
     let(:hearing_day) { create(:hearing_day, judge: hearing_user, scheduled_for: 1.month.from_now) }
 
     before do
@@ -119,7 +119,7 @@ RSpec.feature "Change hearing disposition", :all_dbs do
 
   context "there's a hearings management user" do
     let!(:hearing_mgmt_user) do
-      FactoryBot.create(:user, full_name: "Janaan Handal", station_id: 101, roles: ["Build HearSched"])
+      create(:user, full_name: "Janaan Handal", station_id: 101, roles: ["Build HearSched"])
     end
     let!(:hearing_day) do
       create(
@@ -211,11 +211,11 @@ RSpec.feature "Change hearing disposition", :all_dbs do
     context "a hearing has mistakenly been marked postponed" do
       let(:hearing_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
       let!(:cancel_change_task) { change_task.update!(status: Constants.TASK_STATUSES.cancelled) }
-      let!(:hearing_task_2) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+      let!(:hearing_task_2) { create(:hearing_task, parent: root_task, appeal: appeal) }
       let!(:association_2) do
-        FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
+        create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
       end
-      let!(:schedule_hearing_task) { FactoryBot.create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
       let(:instructions_text) { "This hearing is postponed, but it should be held." }
 
       before do
@@ -269,7 +269,7 @@ RSpec.feature "Change hearing disposition", :all_dbs do
 
   context "there are other hearing admin and hearings management members" do
     let(:other_admin_full_name) { "Remika Hanisco" }
-    let!(:other_admin_user) { FactoryBot.create(:user, full_name: other_admin_full_name, station_id: 101) }
+    let!(:other_admin_user) { create(:user, full_name: other_admin_full_name, station_id: 101) }
     let(:admin_full_names) { ["Bisar Helget", "Rose Hidrogo", "Rihab Hancin", "Abby Hudmon"] }
     let(:mgmt_full_names) { ["Claudia Heraty", "Nouf Heigl", "Hayley Houlahan", "Bahiya Haese"] }
     let(:assign_instructions_text) { "This is why I'm assigning this to you." }
@@ -278,12 +278,12 @@ RSpec.feature "Change hearing disposition", :all_dbs do
       OrganizationsUser.add_user_to_organization(other_admin_user, HearingAdmin.singleton)
 
       admin_full_names.each do |name|
-        user = FactoryBot.create(:user, full_name: name, station_id: 101)
+        user = create(:user, full_name: name, station_id: 101)
         OrganizationsUser.add_user_to_organization(user, HearingAdmin.singleton)
       end
 
       mgmt_full_names.each do |name|
-        user = FactoryBot.create(:user, full_name: name, station_id: 101)
+        user = create(:user, full_name: name, station_id: 101)
         OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
       end
     end
@@ -351,7 +351,7 @@ RSpec.feature "Change hearing disposition", :all_dbs do
     end
 
     context "disposition task" do
-      let!(:task) { FactoryBot.create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
+      let!(:task) { create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
 
       it "can create a change hearing disposition task" do
         visit("/queue/appeals/#{appeal.uuid}")
@@ -366,7 +366,7 @@ RSpec.feature "Change hearing disposition", :all_dbs do
       end
 
       context "transcription task" do
-        let!(:child_task) { FactoryBot.create(:transcription_task, parent: task, appeal: appeal) }
+        let!(:child_task) { create(:transcription_task, parent: task, appeal: appeal) }
 
         it "can create a change hearing disposition task" do
           visit("/queue/appeals/#{appeal.uuid}")
@@ -381,7 +381,7 @@ RSpec.feature "Change hearing disposition", :all_dbs do
       end
 
       context "no show hearing task" do
-        let!(:child_task) { FactoryBot.create(:no_show_hearing_task, parent: task, appeal: appeal) }
+        let!(:child_task) { create(:no_show_hearing_task, parent: task, appeal: appeal) }
 
         it "can create a change hearing disposition task" do
           visit("/queue/appeals/#{appeal.uuid}")
@@ -397,7 +397,7 @@ RSpec.feature "Change hearing disposition", :all_dbs do
     end
 
     context "schedule hearing task" do
-      let!(:task) { FactoryBot.create(:schedule_hearing_task, parent: hearing_task, appeal: appeal) }
+      let!(:task) { create(:schedule_hearing_task, parent: hearing_task, appeal: appeal) }
 
       it "cannot create a change hearing disposition task" do
         visit("/queue/appeals/#{appeal.uuid}")
@@ -407,7 +407,7 @@ RSpec.feature "Change hearing disposition", :all_dbs do
 
       context "hearing admin task" do
         let!(:child_task) do
-          FactoryBot.create(:hearing_admin_action_incarcerated_veteran_task, parent: task, appeal: appeal)
+          create(:hearing_admin_action_incarcerated_veteran_task, parent: task, appeal: appeal)
         end
 
         it "cannot create a change hearing disposition task" do

@@ -7,29 +7,29 @@ describe BulkTaskAssignment, :postgres do
   describe "#process" do
     let(:organization) { HearingsManagement.singleton }
     let!(:no_show_hearing_task1) do
-      FactoryBot.create(
+      create(
         :no_show_hearing_task,
         assigned_to: organization,
         created_at: 5.days.ago
       )
     end
     let!(:no_show_hearing_task2) do
-      FactoryBot.create(:no_show_hearing_task,
-                        assigned_to: organization,
-                        created_at: 2.days.ago)
+      create(:no_show_hearing_task,
+             assigned_to: organization,
+             created_at: 2.days.ago)
     end
     let!(:no_show_hearing_task3) do
-      FactoryBot.create(:no_show_hearing_task,
-                        assigned_to: organization,
-                        created_at: 1.day.ago)
+      create(:no_show_hearing_task,
+             assigned_to: organization,
+             created_at: 1.day.ago)
     end
 
     # Even it is the oldest task, it should skip it becasue it is on hold
     let!(:no_show_hearing_task4) do
-      FactoryBot.create(:no_show_hearing_task,
-                        :on_hold,
-                        assigned_to: organization,
-                        created_at: 6.days.ago)
+      create(:no_show_hearing_task,
+             :on_hold,
+             assigned_to: organization,
+             created_at: 6.days.ago)
     end
 
     let(:assigned_to) { create(:user) }

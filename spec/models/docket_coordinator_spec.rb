@@ -9,8 +9,8 @@ describe DocketCoordinator, :all_dbs do
     Timecop.freeze(Time.utc(2020, 4, 1, 12, 0, 0))
 
     4.times do
-      team = JudgeTeam.create_for_judge(FactoryBot.create(:user))
-      FactoryBot.create_list(:user, 5).each do |attorney|
+      team = JudgeTeam.create_for_judge(create(:user))
+      create_list(:user, 5).each do |attorney|
         OrganizationsUser.add_user_to_organization(attorney, team)
       end
     end

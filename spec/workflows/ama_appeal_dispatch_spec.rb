@@ -24,7 +24,8 @@ describe AmaAppealDispatch, :postgres do
         appeal_type: "Appeal",
         citation_number: "A18123456",
         decision_date: Time.zone.now,
-        redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx"
+        redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx",
+        file: "12345678"
       }
 
       AmaAppealDispatch.new(appeal: appeal, params: params, user: user).call

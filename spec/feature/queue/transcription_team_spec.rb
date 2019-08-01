@@ -4,14 +4,14 @@ require "support/database_cleaner"
 require "rails_helper"
 
 RSpec.feature "TranscriptionTeam", :postgres do
-  let(:transcription_team_member) { FactoryBot.create(:user) }
-  let(:veteran) { FactoryBot.create(:veteran, first_name: "Maisie", last_name: "Varesko", file_number: 201_905_061) }
-  let(:appeal) { FactoryBot.create(:appeal, veteran_file_number: veteran.file_number) }
+  let(:transcription_team_member) { create(:user) }
+  let(:veteran) { create(:veteran, first_name: "Maisie", last_name: "Varesko", file_number: 201_905_061) }
+  let(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
   let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
-  let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-  let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-  let!(:disposition_task) { FactoryBot.create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
-  let!(:transcription_task) { FactoryBot.create(:transcription_task, parent: disposition_task, appeal: appeal) }
+  let!(:root_task) { create(:root_task, appeal: appeal) }
+  let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+  let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
+  let!(:transcription_task) { create(:transcription_task, parent: disposition_task, appeal: appeal) }
 
   before do
     OrganizationsUser.add_user_to_organization(transcription_team_member, TranscriptionTeam.singleton)
@@ -55,13 +55,13 @@ RSpec.feature "TranscriptionTeam", :postgres do
     end
 
     context "with a hearing and a hearing admin member" do
-      let(:hearing_day) { FactoryBot.create(:hearing_day) }
-      let(:hearing) { FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day) }
+      let(:hearing_day) { create(:hearing_day) }
+      let(:hearing) { create(:hearing, appeal: appeal, hearing_day: hearing_day) }
       let!(:association) do
-        FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task)
+        create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task)
       end
       let(:admin_full_name) { "Steinlaug Huppert" }
-      let(:hearing_admin_user) { FactoryBot.create(:user, full_name: admin_full_name, station_id: 101) }
+      let(:hearing_admin_user) { create(:user, full_name: admin_full_name, station_id: 101) }
       let(:instructions_text) { "This is why I want a hearing disposition change!" }
 
       before do

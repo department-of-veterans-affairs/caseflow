@@ -5,6 +5,9 @@ class VACOLS::Decass < VACOLS::Record
   self.table_name = "decass"
   self.primary_key = "defolder"
 
+  attribute :deatcom, :ascii_string, limit: 350
+  attribute :debmcom, :ascii_string, limit: 600
+
   validates :defolder, :deatty, :deteam, :deadusr, :deadtim, presence: true, on: :create
 
   class DecassError < StandardError; end

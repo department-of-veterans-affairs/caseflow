@@ -98,4 +98,15 @@ describe TaskTimerJob, :postgres do
     TaskTimerJob.new.process(timer)
     expect(timer.reload.processed_at).to eq(nil)
   end
+
+  it "records the jobs runtime with Datadog" do
+    expect(DataDogService).to receive(:emit_gauge).with(
+      app_name: "caseflow_job",
+      metric_group: TaskTimerJob.name.underscore,
+      metric_name: "runtime",
+      metric_value: anything
+    )
+
+    TaskTimerJob.perform_now
+  end
 end

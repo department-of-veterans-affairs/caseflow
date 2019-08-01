@@ -44,10 +44,10 @@ describe DistributionTask, :postgres do
   end
 
   describe ".available_actions" do
-    let(:user) { FactoryBot.create(:user) }
-    let(:scm_user) { FactoryBot.create(:user) }
+    let(:user) { create(:user) }
+    let(:scm_user) { create(:user) }
     let(:scm_org) { SpecialCaseMovementTeam.singleton }
-    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:root_task) { create(:root_task) }
     let(:distribution_task) do
       DistributionTask.create!(
         appeal: root_task.appeal,
