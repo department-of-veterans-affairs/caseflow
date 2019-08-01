@@ -57,13 +57,12 @@ class Api::V3::HigherLevelReviewProcessor
   end
 
   def build_start_review_complete!
+    @intake = Intake.build(
+      user: @user,
+      veteran_file_number: @veteran_file_number,
+      form_type: "higher_level_review"
+    )
     transaction do
-      @intake = Intake.build(
-        user: @user,
-        veteran_file_number: @veteran_file_number,
-        form_type: "higher_level_review"
-      )
-
       intake.start!
       intake.review! review_params
       intake.complete! complete_params
