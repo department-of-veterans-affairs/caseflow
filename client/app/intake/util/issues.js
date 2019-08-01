@@ -132,7 +132,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         endProductCleared: issue.end_product_cleared,
         endProductCode: issue.end_product_code,
         withdrawalDate: formatDateStrUtc(issue.withdrawal_date),
-        uneditable: issue.uneditable
+        editable: issue.editable
       };
     }
 
@@ -150,7 +150,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         endProductCleared: issue.end_product_cleared,
         endProductCode: issue.end_product_code,
         withdrawalDate: formatDateStrUtc(issue.withdrawal_date),
-        uneditable: issue.uneditable
+        editable: issue.editable
       };
     }
 
@@ -180,7 +180,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       endProductCleared: issue.end_product_cleared,
       endProductCode: issue.end_product_code,
       withdrawalDate: formatDateStrUtc(issue.withdrawal_date),
-      uneditable: issue.uneditable
+      editable: issue.editable
     };
   });
 };
@@ -355,7 +355,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         withdrawalDate: issue.withdrawalDate,
         endProductCleared: issue.endProductCleared,
         correctionType: issue.correctionType,
-        uneditable: issue.uneditable
+        editable: issue.editable
       };
     } else if (issue.isRating) {
       if (!issue.decisionDate && !issue.approxDecisionDate) {
@@ -389,7 +389,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         endProductCleared: issue.endProductCleared,
         editedDescription: issue.editedDescription,
         correctionType: issue.correctionType,
-        uneditable: issue.uneditable
+        editable: issue.editable
       };
     }
 
@@ -418,7 +418,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       category: issue.category,
       editedDescription: issue.editedDescription,
       correctionType: issue.correctionType,
-      uneditable: issue.uneditable
+      editable: issue.editable
     };
   });
 };

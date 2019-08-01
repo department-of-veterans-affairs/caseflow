@@ -20,7 +20,7 @@ export default class IssuesList extends React.Component {
   generateIssueActionOptions = (issue) => {
     let options = [];
 
-    if (issue.uneditable) {
+    if (!issue.editable) {
       return options;
     } else if (issue.correctionType && issue.endProductCleared) {
       options.push({ displayText: 'Undo correction',

@@ -395,7 +395,7 @@ class RequestIssue < ApplicationRecord
       contested_issue_description: contested_issue_description,
       end_product_cleared: end_product_establishment&.status_cleared?,
       end_product_code: end_product_code,
-      uneditable: contention_connected_to_rating?
+      editable: editable?
     }
   end
 
@@ -620,6 +620,13 @@ class RequestIssue < ApplicationRecord
 
   def contention
     end_product_establishment.contention_for_object(self)
+  end
+
+  def editable?
+    return false
+    return false if contention_connected_to_rating?
+
+    true
   end
 
   private
