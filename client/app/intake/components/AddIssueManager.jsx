@@ -6,7 +6,6 @@ import { bindActionCreators } from 'redux';
 import AddIssuesModal from './AddIssuesModal';
 import CorrectionTypeModal from './CorrectionTypeModal';
 import NonratingRequestIssueModal from './NonratingRequestIssueModal';
-import { issueByIndex } from '../util/issues';
 import { isCorrection } from '../util';
 import LegacyOptInModal from './LegacyOptInModal';
 import UntimelyExemptionModal from './UntimelyExemptionModal';
@@ -23,7 +22,18 @@ const initialState = {
 class AddIssueManager extends React.Component {
   constructor(props) {
     super(props);
-    this.state = initialState;
+    this.state = {
+      ...initialState,
+      currentModal: this.props.currentModal || initialState.currentModal
+    };
+
+    // Determine initial step -- though we still honor prop, if exists
+    const { intakeData } = this.props;
+    const hasRatingIssues = Boolean(Object.keys(intakeData.contestableIssues).length);
+
+    if (!this.props.currentModal && !hasRatingIssues) {
+      this.state.currentModal = 'NonratingRequestIssueModal';
+    }
 
     this.setupSteps();
   }
@@ -76,23 +86,31 @@ class AddIssueManager extends React.Component {
           onCancel: () => this.cancel(),
           onSubmit: ({ correctionType }) => {
             // update data
-            this.setState({ correctionType });
+            this.setState(
+              {
+                currentIssue: {
+                  ...this.state.currentIssue,
+                  correctionType
+                }
+              },
+              () => {
+                if (this.hasLegacyAppeals()) {
+                  this.setState({ currentModal: 'LegacyOptInModal' });
+                } else if (this.requiresUntimelyExemption()) {
+                  const { currentIssue } = this.state;
 
-            if (this.hasLegacyAppeals()) {
-              this.setState({ currentModal: 'LegacyOptInModal' });
-            } else if (this.requiresUntimelyExemption()) {
-              const { currentIssue } = this.state;
+                  this.setState({ currentModal: 'UntimelyExemptionModal',
+                    addtlProps: { currentIssue } });
+                } else {
+                  const { currentIssue } = this.state;
 
-              this.setState({ currentModal: 'UntimelyExemptionModal',
-                addtlProps: { currentIssue } });
-            } else {
-              const { currentIssue } = this.state;
+                  // Sequence complete — dispatch action to add issue
+                  this.props.addIssue(currentIssue);
 
-              // Sequence complete — dispatch action to add issue
-              this.props.addIssue(currentIssue);
-
-              this.props.onComplete();
-            }
+                  this.props.onComplete();
+                }
+              }
+            );
           }
         }
       },
@@ -103,7 +121,7 @@ class AddIssueManager extends React.Component {
           formType,
           submitText: this.hasLegacyAppeals() ? 'Next' : 'Add this issue',
           onCancel: () => this.cancel(),
-          onSkip: () => this.setState({ component: 'UnidentifiedIssuesModal' }),
+          onSkip: () => this.setState({ currentModal: 'UnidentifiedIssuesModal' }),
           onSubmit: ({ currentIssue }) => {
             this.setState({ currentIssue }, () => {
               if (isCorrection(currentIssue.isRating, this.props.intakeData)) {
@@ -145,26 +163,13 @@ class AddIssueManager extends React.Component {
                   this.setState({ currentModal: 'UntimelyExemptionModal',
                     addtlProps: { currentIssue } });
                 } else if (this.state.currentIssue.category) {
-                  console.log('addNonratingRequestIssue');
-                  // addNonratingRequestIssue
+                  // Safe to combine these conditionals now, I guess...?
+
                   // Sequence complete — dispatch action to add issue
                   this.props.addIssue(currentIssue);
+                  this.setState(initialState);
+                  this.props.onComplete();
                 } else {
-                  console.log('addContestableIssue');
-                  // addContestableIssue
-                  // const { currentIssue, notes, correctionType } = this.state;
-
-                  // this.props.addContestableIssue({
-                  //   contestableIssueIndex: currentIssue.index,
-                  //   contestableIssues: intakeData.contestableIssues,
-                  //   isRating: currentIssue.isRating,
-                  //   vacolsId,
-                  //   vacolsSequenceId,
-                  //   eligibleForSocOptIn,
-                  //   notes,
-                  //   correctionType
-                  // });
-
                   this.props.addIssue(currentIssue);
 
                   this.setState(initialState);
@@ -191,49 +196,12 @@ class AddIssueManager extends React.Component {
                 }
               },
               () => {
-                const {
-                  currentIssue
-                  // notes,
-                  // vacolsId,
-                  // vacolsSequenceId,
-                  // eligibleForSocOptIn,
-                  // correctionType
-                } = this.state;
+                const { currentIssue } = this.state;
 
                 this.props.addIssue(currentIssue);
 
-                // if (currentIssue.category) {
-                //   this.props.addNonratingRequestIssue({
-                //     timely: false,
-                //     isRating: false,
-                //     untimelyExemption,
-                //     untimelyExemptionNotes,
-                //     benefitType: currentIssue.benefitType,
-                //     category: currentIssue.category,
-                //     description: currentIssue.description,
-                //     decisionDate: currentIssue.decisionDate,
-                //     vacolsId,
-                //     vacolsSequenceId,
-                //     eligibleForSocOptIn,
-                //     correctionType
-                //   });
-                // } else {
-                //   this.props.addContestableIssue({
-                //     timely: false,
-                //     contestableIssueIndex: currentIssue.index,
-                //     contestableIssues: this.props.intakeData.contestableIssues,
-                //     isRating: currentIssue.isRating,
-                //     notes,
-                //     untimelyExemption,
-                //     untimelyExemptionNotes,
-                //     vacolsId,
-                //     vacolsSequenceId,
-                //     eligibleForSocOptIn,
-                //     correctionType
-                //   });
-                // }
-
                 this.setState(initialState);
+                this.props.onComplete();
               }
             );
           }
@@ -246,11 +214,13 @@ class AddIssueManager extends React.Component {
           formType,
           onCancel: () => this.cancel(),
           onSubmit: ({ currentIssue }) => {
-            if (isCorrection(currentIssue.isRating, this.props.intakeData)) {
-              this.setState({ currentModal: 'CorrectionTypeModal' });
+            if (isCorrection(true, this.props.intakeData)) {
+              this.setState({ currentIssue,
+                currentModal: 'CorrectionTypeModal' });
             } else {
               // Just add
               this.props.addIssue(currentIssue);
+              this.props.onComplete();
             }
           }
         }
@@ -267,6 +237,16 @@ class AddIssueManager extends React.Component {
       return false;
     }
     const { currentIssue } = this.state;
+
+    // Skip untimely check for legacy issues
+    if (currentIssue && currentIssue.vacolsId) {
+      return false;
+    }
+
+    // Skip untimely check for unidentified issues
+    if (currentIssue && currentIssue.isUnidentified) {
+      return false;
+    }
 
     return currentIssue && !currentIssue.timely;
   };
@@ -286,10 +266,12 @@ class AddIssueManager extends React.Component {
 }
 
 AddIssueManager.propTypes = {
+  currentModal: PropTypes.string,
   onComplete: PropTypes.func
 };
 
 AddIssueManager.defaultProps = {
+  // currentModal: 'AddIssuesModal',
   onComplete: () => {}
 };
 
