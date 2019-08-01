@@ -29,6 +29,8 @@ import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
  *     an argument and returns the value of the cell for that column.
  *   - @valueName {string} if valueFunction is not defined, cell value will use
  *     valueName to pull that attribute from the rowObject.
+ *   - @filterValueTransform {function(any)} function that takes the value of the
+ *     column, and transforms it into a string for filtering.
  *   - @footer {string} footer cell value for the column
  * - @rowObjects {array[object]} array of objects used to build the <tr/> rows
  * - @summary {string} table summary
@@ -87,6 +89,7 @@ const HeaderRow = (props) => {
         if (!props.useTaskPagesApi && (column.enableFilter || column.getFilterValues)) {
           filterIcon = <TableFilter
             {...column}
+            valueTransform={column.filterValueTransform}
             updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
             filteredByList={props.filteredByList} />;
         }
@@ -231,6 +234,7 @@ export default class QueueTable extends React.PureComponent {
   };
 
   filterTableData = (data: Array<Object>) => {
+    const { columns } = this.props;
     const { filteredByList } = this.state;
     let filteredData = _.clone(data);
 
@@ -243,9 +247,21 @@ export default class QueueTable extends React.PureComponent {
           continue; // eslint-disable-line no-continue
         }
 
+        // Find the column configuration so any transform functions can
+        // be applied to the row when filtering.
+        const matchColumnConfigIndex = _.findIndex(columns, (column) => column.columnName === columnName);
+        let columnConfig;
+        if (matchColumnConfigIndex > 0) {
+          columnConfig = columns[matchColumnConfigIndex];
+        }
+
         // Only return the data point if it contains the value of the filter
         filteredData = filteredData.filter((row) => {
-          const cellValue = _.get(row, columnName);
+          let cellValue = _.get(row, columnName);
+
+          if (columnConfig && columnConfig.filterValueTransform) {
+            cellValue = columnConfig.filterValueTransform(cellValue);
+          }
 
           if (typeof cellValue === 'undefined' || cellValue === null) {
             return filteredByList[columnName].includes('null');

@@ -25,8 +25,7 @@ import FilterOption from './FilterOption';
  *   - @customFilterLabels {object} key-value pairs translating the data values to
  *     user readable text
  *   - @label {string} used for the aria-label on the icon,
- *   - @valueName {string} if valueFunction is not defined, cell value will use
- *     valueName to pull that attribute from the rowObject.
+ *   - @valueName {string} used as the name for the dropdown filter.
  */
 
 class TableFilter extends React.PureComponent {
@@ -36,9 +35,18 @@ class TableFilter extends React.PureComponent {
     this.state = { open: false };
   }
 
+  transformColumnValue = (columnValue) => {
+    const { valueTransform } = this.props;
+
+    return valueTransform ? valueTransform(columnValue) : columnValue;
+  }
+
   filterDropdownOptions = (tableDataByRow, columnName) => {
-    let countByColumnName = _.countBy(tableDataByRow, columnName);
-    let uniqueOptions = [];
+    const countByColumnName = _.countBy(
+      tableDataByRow,
+      (row) => this.transformColumnValue(row[columnName])
+    );
+    const uniqueOptions = [];
     const filtersForColumn = _.get(this.props.filteredByList, columnName);
     const { customFilterLabels } = this.props;
 
@@ -61,7 +69,6 @@ class TableFilter extends React.PureComponent {
         displayText,
         checked: filtersForColumn ? filtersForColumn.includes(keyValue) : false
       });
-
     }
 
     return _.sortBy(uniqueOptions, 'displayText');
@@ -163,6 +170,7 @@ TableFilter.propTypes = {
   customFilterLabels: PropTypes.object,
   label: PropTypes.string,
   valueName: PropTypes.string,
+  valueTransform: PropTypes.func,
   filteredByList: PropTypes.object,
   updateFilters: PropTypes.func
 };
