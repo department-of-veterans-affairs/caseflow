@@ -8,11 +8,15 @@ class ExternalApi::VADotGovService::Response
     @code = @response.code
   end
 
+  def data; end
+
   def error
     response_error
   end
 
-  private
+  def success?
+    error.nil?
+  end
 
   def body
     @body ||= begin
@@ -21,6 +25,8 @@ class ExternalApi::VADotGovService::Response
                 {}
               end
   end
+
+  private
 
   def response_error
     return if code == 200

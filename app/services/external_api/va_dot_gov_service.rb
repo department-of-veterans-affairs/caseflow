@@ -10,14 +10,10 @@ class ExternalApi::VADotGovService
   class << self
     # :nocov:
     def get_distance(lat:, long:, ids:)
-      result = send_facilities_requests(
+      send_facilities_requests(
         ids: ids,
         query: { lat: lat, long: long, ids: ids.join(",") }
       )
-
-      result[:facilities].sort_by { |facility| facility[:distance] }
-
-      result
     end
 
     def get_facility_data(ids:)
@@ -30,12 +26,7 @@ class ExternalApi::VADotGovService
     def validate_address(address)
       response = send_va_dot_gov_request(address_validation_request(address))
 
-      address_validation_response = ExternalApi::VADotGovService::AddressValidationResponse.new(response)
-
-      {
-        error: address_validation_response.error,
-        valid_address: address_validation_response.valid_address
-      }
+      ExternalApi::VADotGovService::AddressValidationResponse.new(response)
     end
 
     private
@@ -46,39 +37,26 @@ class ExternalApi::VADotGovService
         endpoint: FACILITIES_ENDPOINT
       )
 
-      facilities_response = ExternalApi::VADotGovService::FacilitiesResponse.new(response)
-
-      {
-        facilities: facilities_response.facilities,
-        has_next: facilities_response.next?,
-        error: facilities_response.error
-      }
+      ExternalApi::VADotGovService::FacilitiesResponse.new(response)
     end
 
     def send_facilities_requests(ids:, query:)
       page = 1
-      facilities = []
       remaining_ids = ids
-      result = {}
+      response = nil
 
-      until remaining_ids.empty? || result[:has_next] == false || result[:error].present?
-        result = send_facilities_request(query: query.merge(page: page, per_page: 100))
+      until remaining_ids.empty? || response.try(:next?) == false || response.try(:success?) == false
+        response = send_facilities_request(query: query.merge(page: page, per_page: 100)).merge(response)
 
-        remaining_ids -= result[:facilities].pluck(:facility_id)
-        facilities += result[:facilities]
+        remaining_ids -= response.data.pluck(:facility_id)
 
         page += 1
         sleep 1
       end
 
-      error = unless remaining_ids.empty?
-                msg = "Unable to find api.va.gov facility data for: #{remaining_ids.join(', ')}."
-                Caseflow::Error::VaDotGovMissingFacilityError.new(code: 500, message: msg)
-              end
-
       track_pages(page)
 
-      { error: result[:error] || error, facilities: facilities }
+      response
     end
 
     def send_va_dot_gov_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)

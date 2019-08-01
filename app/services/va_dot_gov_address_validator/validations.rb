@@ -27,13 +27,9 @@ module VaDotGovAddressValidator::Validations
     @error_handler ||= VaDotGovAddressValidator::ErrorHandler.new(appeal: appeal, appellant_address: address)
   end
 
-  def valid_address_error
-    valid_address_result[:error] if valid_address.blank?
-  end
-
   def fail_if_unable_to_validate_address
-    if valid_address_error.present?
-      raise valid_address_error # rubocop:disable Style/SignalException
+    unless valid_address_response.success?
+      raise valid_address.error # rubocop:disable Style/SignalException
     end
   end
 
@@ -46,23 +42,15 @@ module VaDotGovAddressValidator::Validations
     end
   end
 
-  def closest_regional_office_error
-    closest_regional_office_result[:error]
-  end
-
-  def available_hearing_locations_error
-    available_hearing_locations_result[:error]
-  end
-
   def error_status
-    @error_status ||= if valid_address_error.present?
-                        error_handler.handle(valid_address_error)
+    @error_status ||= if valid_address.blank?
+                        error_handler.handle(valid_address_response.error)
                       elsif state_code_error.present?
                         error_handler.handle(state_code_error)
-                      elsif closest_regional_office_error.present?
-                        error_handler.handle(closest_regional_office_error)
-                      elsif available_hearing_locations_error.present?
-                        error_handler.handle(available_hearing_locations_error)
+                      elsif !closest_regional_office_response.success?
+                        error_handler.handle(closest_regional_office_response.error)
+                      elsif !available_hearing_locations_response.success?
+                        error_handler.handle(available_hearing_locations_response.error)
                       end
   end
 

@@ -5,12 +5,22 @@ class ExternalApi::VADotGovService::FacilitiesResponse < ExternalApi::VADotGovSe
     body[:link]&.dig(:next).present?
   end
 
-  def facilities
+  def data
     return [] if body[:data].blank?
 
-    body[:data].map do |facility|
+    facility_data = body[:data].map do |facility|
       Facility.new(facility, distances[facility[:id]]).format
     end
+
+    facility_data.sort_by { |facility| facility[:distance] }
+  end
+
+  def merge(facilities_response)
+    return self if facilities_response.nil? || !facilities_response.success?
+
+    body[:data] += facilities_response.body[:data]
+
+    self
   end
 
   private

@@ -28,16 +28,16 @@ class VaDotGovAddressValidator
   end
 
   def valid_address
-    @valid_address ||= if valid_address_result[:error].present?
-                         validate_zip_code
+    @valid_address ||= if valid_address_response.success?
+                         valid_address_response.data
                        else
-                         valid_address_result[:valid_address]
+                         validate_zip_code
                        end
   end
 
   def closest_regional_office
     @closest_regional_office ||= begin
-      return if closest_regional_office_error.present?
+      return unless closest_regional_office_response.success?
 
       return "RO62" if closest_regional_office_facility_id_is_san_antonio?
 
@@ -46,7 +46,7 @@ class VaDotGovAddressValidator
   end
 
   def available_hearing_locations
-    @available_hearing_locations ||= available_hearing_locations_result[:facilities]
+    @available_hearing_locations ||= available_hearing_locations_response.data
   end
 
   def assign_ro_and_update_ahls(new_ro)
@@ -60,22 +60,21 @@ class VaDotGovAddressValidator
 
     facility_ids = RegionalOffice.facility_ids_for_ro(regional_office_id)
 
-    VADotGovService.get_facility_data(ids: facility_ids)[:facilities]
-      .each do |alternate_hearing_location|
-        create_available_hearing_location(facility: alternate_hearing_location)
-      end
+    VADotGovService.get_facility_data(ids: facility_ids).data.each do |facility|
+      create_available_hearing_location(facility: facility)
+    end
   end
 
   def get_distance_to_facilities(facility_ids:)
     fail_if_unable_to_validate_address
 
-    distance_result = VADotGovService.get_distance(lat: valid_address[:lat],
-                                                   long: valid_address[:long],
-                                                   ids: facility_ids)
+    distance_response = VADotGovService.get_distance(lat: valid_address[:lat],
+                                                     long: valid_address[:long],
+                                                     ids: facility_ids)
 
-    raise distance_result[:error] if distance_result[:error].present? # rubocop:disable Style/SignalException
+    return distance_response.data if distance_response.success?
 
-    distance_result[:facilities]
+    raise distance_response.error # rubocop:disable Style/SignalException
   end
 
   def facility_ids_to_geomatch
@@ -121,12 +120,12 @@ class VaDotGovAddressValidator
     )
   end
 
-  def valid_address_result
-    @valid_address_result ||= VADotGovService.validate_address(address)
+  def valid_address_response
+    @valid_address_response ||= VADotGovService.validate_address(address)
   end
 
-  def closest_regional_office_result
-    @closest_regional_office_result ||= VADotGovService.get_distance(
+  def closest_regional_office_response
+    @closest_regional_office_response ||= VADotGovService.get_distance(
       ids: facility_ids_to_geomatch,
       lat: valid_address[:lat],
       long: valid_address[:long]
@@ -134,11 +133,11 @@ class VaDotGovAddressValidator
   end
 
   def closest_regional_office_facility_id
-    closest_regional_office_result[:facilities][0]&.dig(:facility_id)
+    closest_regional_office_response.data[0]&.dig(:facility_id)
   end
 
-  def available_hearing_locations_result
-    @available_hearing_locations_result ||= VADotGovService.get_distance(
+  def available_hearing_locations_response
+    @available_hearing_locations_response ||= VADotGovService.get_distance(
       lat: valid_address[:lat],
       long: valid_address[:long],
       ids: RegionalOffice.facility_ids_for_ro(closest_regional_office)

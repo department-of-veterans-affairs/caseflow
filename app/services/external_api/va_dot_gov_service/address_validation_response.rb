@@ -5,7 +5,7 @@ class ExternalApi::VADotGovService::AddressValidationResponse < ExternalApi::VAD
     message_error || response_error
   end
 
-  def valid_address
+  def data
     return {} if body[:geocode].nil?
 
     formatted_valid_address

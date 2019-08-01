@@ -201,12 +201,11 @@ class Veteran < ApplicationRecord
   end
 
   def validate_address
-    result = VADotGovService.validate_address(address)
-    error = result[:error]
+    response = VADotGovService.validate_address(address)
 
-    raise error if error.present? # rubocop:disable Style/SignalException
+    return response.data if response.success?
 
-    result[:valid_address]
+    raise response.error # rubocop:disable Style/SignalException
   end
 
   def stale_attributes?
