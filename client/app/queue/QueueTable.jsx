@@ -31,6 +31,8 @@ import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
  *     valueName to pull that attribute from the rowObject.
  *   - @filterValueTransform {function(any)} function that takes the value of the
  *     column, and transforms it into a string for filtering.
+ *   - @enableFilterTextTransform {boolean} when true, filter text that gets displayed
+ *     is automatically capitalized. default is true.
  *   - @footer {string} footer cell value for the column
  * - @rowObjects {array[object]} array of objects used to build the <tr/> rows
  * - @summary {string} table summary

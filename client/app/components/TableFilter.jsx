@@ -13,6 +13,8 @@ import FilterOption from './FilterOption';
  * - @column {array[string]} array of objects that define the properties
  *   of the column. Possible attributes for each column include:
  *   - @enableFilter {boolean} whether filtering is turned on for each column
+ *   - @enableFilterTextTransform {boolean} when true, filter text that gets displayed
+ *     is automatically capitalized. default is true.
  *   - @tableData {array} the entire data set for the table (required to calculate
  *     the options each column can be filtered on)
  *   - @columnName {string} the name of the column in the table data
@@ -42,13 +44,13 @@ class TableFilter extends React.PureComponent {
   }
 
   filterDropdownOptions = (tableDataByRow, columnName) => {
+    const { customFilterLabels, enableFilterTextTransform } = this.props;
     const countByColumnName = _.countBy(
       tableDataByRow,
       (row) => this.transformColumnValue(row[columnName])
     );
     const uniqueOptions = [];
     const filtersForColumn = _.get(this.props.filteredByList, columnName);
-    const { customFilterLabels } = this.props;
 
     for (let key in countByColumnName) { // eslint-disable-line guard-for-in
       let displayText = `<<blank>> (${countByColumnName[key]})`;
@@ -58,7 +60,9 @@ class TableFilter extends React.PureComponent {
         if (customFilterLabels && customFilterLabels[key]) {
           displayText = `${customFilterLabels[key]} (${countByColumnName[key]})`;
         } else {
-          displayText = `${_.capitalize(key)} (${countByColumnName[key]})`;
+          const displayKey = enableFilterTextTransform ? _.capitalize(key) : key;
+
+          displayText = `${displayKey} (${countByColumnName[key]})`;
         }
 
         keyValue = key;
@@ -162,8 +166,13 @@ class TableFilter extends React.PureComponent {
   }
 }
 
+TableFilter.defaultProps = {
+  enableFilterTextTransform: true
+};
+
 TableFilter.propTypes = {
   enableFilter: PropTypes.bool,
+  enableFilterTextTransform: PropTypes.bool,
   tableData: PropTypes.array,
   columnName: PropTypes.string,
   anyFiltersAreSet: PropTypes.bool,
