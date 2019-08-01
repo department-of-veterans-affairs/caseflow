@@ -7,6 +7,16 @@ import FilterIcon from './FilterIcon';
 import QueueDropdownFilter from '../queue/QueueDropdownFilter';
 import FilterOption from './FilterOption';
 
+const iconStyle = css(
+  {
+    display: 'table-cell',
+    paddingLeft: '1rem',
+    paddingTop: '0.3rem',
+    verticalAlign: 'middle'
+  },
+  hover({ cursor: 'pointer' })
+);
+
 /**
  * This component can be used to implement filtering for a table column.
  * The required props are:
@@ -110,8 +120,9 @@ class TableFilter extends React.PureComponent {
     this.toggleDropdown();
   }
 
-  clearFilteredByList = (columnName) => {
-    let filterList = { ...this.props.filteredByList };
+  clearFilteredByList = () => {
+    let { filteredByList, columnName } = this.props;
+    let filterList = { ...filteredByList };
 
     delete filterList[columnName];
 
@@ -129,13 +140,6 @@ class TableFilter extends React.PureComponent {
       valueName,
       getFilterValues
     } = this.props;
-
-    const iconStyle = css({
-      display: 'table-cell',
-      paddingLeft: '1rem',
-      paddingTop: '0.3rem',
-      verticalAlign: 'middle'
-    }, hover({ cursor: 'pointer' }));
 
     const filterOptions = tableData && columnName ?
       this.filterDropdownOptions(tableData, columnName) :
@@ -158,7 +162,7 @@ class TableFilter extends React.PureComponent {
 
         {this.state.open &&
           <QueueDropdownFilter
-            clearFilters={() => this.clearFilteredByList(columnName)}
+            clearFilters={this.clearFilteredByList}
             name={valueName || columnName}
             isClearEnabled={anyFiltersAreSet}
             handleClose={this.toggleDropdown}
