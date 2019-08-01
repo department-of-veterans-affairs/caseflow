@@ -5,15 +5,15 @@ require "rails_helper"
 
 describe AssignHearingDispositionTask, :all_dbs do
   describe "#update_from_params for ama appeal" do
-    let(:appeal) { FactoryBot.create(:appeal) }
-    let!(:hearing) { FactoryBot.create(:hearing, appeal: appeal) }
-    let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+    let(:appeal) { create(:appeal) }
+    let!(:hearing) { create(:hearing, appeal: appeal) }
+    let!(:root_task) { create(:root_task, appeal: appeal) }
+    let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
     let!(:disposition_task) do
       AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, hearing_task, hearing)
     end
     let(:after_disposition_update) { nil }
-    let(:user) { FactoryBot.create(:user) }
+    let(:user) { create(:user) }
     let(:params) { nil }
 
     subject { disposition_task.update_from_params(params, user) }
@@ -193,14 +193,14 @@ describe AssignHearingDispositionTask, :all_dbs do
   end
 
   describe ".create_assign_hearing_disposition_task!" do
-    let(:appeal) { FactoryBot.create(:appeal) }
+    let(:appeal) { create(:appeal) }
     let(:parent) { nil }
-    let!(:hearing) { FactoryBot.create(:hearing, appeal: appeal) }
+    let!(:hearing) { create(:hearing, appeal: appeal) }
 
     subject { described_class.create_assign_hearing_disposition_task!(appeal, parent, hearing) }
 
     context "parent is a HearingTask" do
-      let(:parent) { FactoryBot.create(:hearing_task, appeal: appeal) }
+      let(:parent) { create(:hearing_task, appeal: appeal) }
 
       it "creates a AssignHearingDispositionTask and a HearingTaskAssociation" do
         expect(AssignHearingDispositionTask.all.count).to eq 0
@@ -219,7 +219,7 @@ describe AssignHearingDispositionTask, :all_dbs do
     end
 
     context "parent is a RootTask" do
-      let(:parent) { FactoryBot.create(:root_task, appeal: appeal) }
+      let(:parent) { create(:root_task, appeal: appeal) }
 
       it "should throw an error" do
         expect { subject }.to raise_error(Caseflow::Error::InvalidParentTask)
@@ -229,14 +229,14 @@ describe AssignHearingDispositionTask, :all_dbs do
 
   context "disposition updates" do
     let(:disposition) { nil }
-    let(:appeal) { FactoryBot.create(:appeal) }
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+    let(:appeal) { create(:appeal) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
+    let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
     let(:evidence_window_waived) { nil }
     let(:hearing_scheduled_for) { appeal.receipt_date + 15.days }
     let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_scheduled_for) }
     let(:hearing) do
-      FactoryBot.create(
+      create(
         :hearing,
         appeal: appeal,
         disposition: disposition,
@@ -245,7 +245,7 @@ describe AssignHearingDispositionTask, :all_dbs do
       )
     end
     let!(:hearing_task_association) do
-      FactoryBot.create(
+      create(
         :hearing_task_association,
         hearing: hearing,
         hearing_task: hearing_task
@@ -253,7 +253,7 @@ describe AssignHearingDispositionTask, :all_dbs do
     end
 
     let!(:disposition_task) do
-      FactoryBot.create(
+      create(
         :assign_hearing_disposition_task,
         :in_progress,
         parent: hearing_task,
@@ -262,7 +262,7 @@ describe AssignHearingDispositionTask, :all_dbs do
     end
 
     let!(:schedule_hearing_task) do
-      FactoryBot.create(
+      create(
         :schedule_hearing_task,
         :completed,
         parent: hearing_task,
@@ -338,7 +338,7 @@ describe AssignHearingDispositionTask, :all_dbs do
       end
 
       context "the appeal is a legacy appeal" do
-        let(:vacols_case) { FactoryBot.create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]) }
+        let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]) }
         let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
         let(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: disposition) }
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
@@ -508,7 +508,7 @@ describe AssignHearingDispositionTask, :all_dbs do
       end
 
       context "the appeal is a legacy appeal" do
-        let(:vacols_case) { FactoryBot.create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]) }
+        let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]) }
         let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
         let(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: disposition) }
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }

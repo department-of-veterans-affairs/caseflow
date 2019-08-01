@@ -36,7 +36,6 @@ class DecisionDocument < ApplicationRecord
 
   def submit_for_processing!(delay: processing_delay)
     update_decision_issue_decision_dates! if appeal.is_a?(Appeal)
-    return no_processing_required! unless upload_enabled?
 
     cache_file!
     super
@@ -118,10 +117,6 @@ class DecisionDocument < ApplicationRecord
 
     VBMSService.upload_document_to_vbms(appeal, self)
     update!(uploaded_to_vbms_at: Time.zone.now)
-  end
-
-  def upload_enabled?
-    FeatureToggle.enabled?(:decision_document_upload, user: RequestStore.store[:current_user])
   end
 
   def pdf_name

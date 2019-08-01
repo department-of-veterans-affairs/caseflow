@@ -123,7 +123,7 @@ describe Organization, :postgres do
   end
 
   describe ".next_assignee" do
-    let(:org) { FactoryBot.create(:organization) }
+    let(:org) { create(:organization) }
     let(:appeal) { nil }
 
     subject { org.next_assignee(appeal: appeal) }
@@ -135,7 +135,7 @@ describe Organization, :postgres do
     end
 
     context "when appeal is specified" do
-      let(:appeal) { FactoryBot.create(:appeal) }
+      let(:appeal) { create(:appeal) }
       it "should return nil" do
         expect(subject).to eq(nil)
       end
@@ -143,7 +143,7 @@ describe Organization, :postgres do
   end
 
   describe ".automatically_assign_to_member?" do
-    let(:org) { FactoryBot.create(:organization) }
+    let(:org) { create(:organization) }
 
     subject { org.automatically_assign_to_member? }
 
@@ -156,7 +156,7 @@ describe Organization, :postgres do
     subject { organization.show_regional_office_in_queue? }
 
     context "for a generic organization" do
-      let(:organization) { FactoryBot.create(:organization) }
+      let(:organization) { create(:organization) }
 
       it "does not show the regional office column in the queue table view" do
         expect(subject).to eq(false)
@@ -184,7 +184,7 @@ describe Organization, :postgres do
     subject { organization.use_task_pages_api? }
 
     context "for a generic organization" do
-      let(:organization) { FactoryBot.create(:organization) }
+      let(:organization) { create(:organization) }
 
       it "does not use the task pages API" do
         expect(subject).to eq(false)
@@ -209,10 +209,12 @@ describe Organization, :postgres do
   end
 
   describe ".queue_tabs" do
-    let(:org) { FactoryBot.create(:organization) }
+    let(:org) { create(:organization) }
 
-    it "returns the expected 3 tabs" do
-      expect(org.queue_tabs.map(&:class)).to eq([UnassignedTasksTab, AssignedTasksTab, CompletedTasksTab])
+    it "returns the expected 4 tabs" do
+      expect(org.queue_tabs.map(&:class)).to eq(
+        [UnassignedTasksTab, AssignedTasksTab, OnHoldTasksTab, CompletedTasksTab]
+      )
     end
   end
 end
