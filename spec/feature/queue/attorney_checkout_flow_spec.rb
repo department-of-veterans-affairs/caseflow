@@ -4,26 +4,26 @@ require "support/vacols_database_cleaner"
 require "rails_helper"
 
 RSpec.feature "Attorney checkout flow", :all_dbs do
-  let(:attorney_user) { FactoryBot.create(:default_user) }
-  let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+  let(:attorney_user) { create(:default_user) }
+  let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
-  let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
-  let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+  let(:judge_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
+  let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
 
   let(:valid_document_id) { "12345678.123" }
   let(:invalid_document_id) { "222333" }
 
   context "given a valid ama appeal" do
     before do
-      root_task = FactoryBot.create(:root_task)
-      parent_task = FactoryBot.create(
+      root_task = create(:root_task)
+      parent_task = create(
         :ama_judge_decision_review_task,
         assigned_to: judge_user,
         appeal: appeal,
         parent: root_task
       )
 
-      FactoryBot.create(
+      create(
         :ama_attorney_task,
         :in_progress,
         assigned_to: attorney_user,
@@ -36,7 +36,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
       # When a judge completes judge checkout we create either a QR or dispatch task. Make sure we have somebody in
       # the BVA dispatch team so that the creation of that task (which round robin assigns org tasks) does not fail.
-      OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+      OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
     end
 
     let(:issue_note) { "Test note" }
@@ -54,10 +54,10 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
     let(:new_diagnostic_code) { "5003" }
 
     let!(:appeal) do
-      FactoryBot.create(
+      create(
         :appeal,
         number_of_claimants: 1,
-        request_issues: FactoryBot.build_list(
+        request_issues: build_list(
           :request_issue, 2,
           contested_issue_description: issue_description,
           notes: issue_note,
@@ -308,10 +308,10 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
   context "given a valid legacy appeal" do
     let!(:appeal) do
-      FactoryBot.create(
+      create(
         :legacy_appeal,
         :with_veteran,
-        vacols_case: FactoryBot.create(
+        vacols_case: create(
           :case,
           :assigned,
           user: attorney_user,
@@ -323,7 +323,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
     before { User.authenticate!(user: attorney_user) }
 
     context "with a single issue" do
-      let(:case_issues) { FactoryBot.create_list(:case_issue, 1) }
+      let(:case_issues) { create_list(:case_issue, 1) }
 
       scenario "attorney checkout flow from case detail view loads" do
         visit "/queue"
@@ -384,7 +384,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
     end
 
     context "with four issues" do
-      let(:case_issues) { FactoryBot.create_list(:case_issue, 4, with_notes: true) }
+      let(:case_issues) { create_list(:case_issue, 4, with_notes: true) }
 
       scenario "selects issue dispositions" do
         visit "/queue"
@@ -473,7 +473,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         fill_in "notes", with: "this is a decision note"
 
         # Expect this to be populated with all judge_staff we've created
-        # by way of FactoryBot.create(:staff, :judge_role...
+        # by way of create(:staff, :judge_role...
         safe_click "#select-judge"
         click_dropdown(index: 0)
         expect(page).to have_content(judge_user.full_name)
@@ -569,7 +569,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
     context "with a single issue with nil disposition" do
       # Default issue disposition is nil.
-      let(:case_issues) { FactoryBot.create_list(:case_issue, 1) }
+      let(:case_issues) { create_list(:case_issue, 1) }
 
       def select_issue_level_options(opts)
         Array.new(5).map.with_index do |*, row_idx|

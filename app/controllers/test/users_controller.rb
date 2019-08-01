@@ -8,7 +8,7 @@ CaseflowCertification::Application.load_tasks
 class Test::UsersController < ApplicationController
   before_action :require_demo, only: [:set_user, :set_end_products, :reseed, :toggle_feature]
   before_action :require_global_admin, only: :log_in_as_user
-  skip_before_action :deny_vso_access, only: [:index, :set_user]
+  skip_before_action :deny_vso_access, only: [:index, :set_user, :show]
 
   APPS = [
     {
@@ -65,10 +65,9 @@ class Test::UsersController < ApplicationController
   ].freeze
 
   # :nocov:
-  def index
-    @test_users = User.all
-    @features_list = FeatureToggle.features
-    @ep_types = %w[full partial none all]
+  def index; end
+
+  def show
     render "index"
   end
 
@@ -84,14 +83,10 @@ class Test::UsersController < ApplicationController
     User.clear_current_user # for testing only
     save_admin_login_attempt
 
-    user = User.find_by(css_id: params[:id], station_id: params[:station_id])
+    user = find_user
     return head :not_found if user.nil?
 
-    session["user"] = user.to_session_hash
-    # We keep track of current user to use when logging out
-    session["global_admin"] = current_user.id
-    RequestStore[:current_user] = user
-    session[:regional_office] = user.users_regional_office
+    switch_current_user(user)
     head :ok
   end
 
@@ -106,6 +101,7 @@ class Test::UsersController < ApplicationController
       Rake::Task["db:seed"].reenable
       Rake::Task["db:seed"].invoke
     end
+    head :ok
   end
 
   def toggle_feature
@@ -116,15 +112,7 @@ class Test::UsersController < ApplicationController
     params[:disable]&.each do |f|
       FeatureToggle.disable!(f[:value])
     end
-  end
-
-  def save_admin_login_attempt
-    Rails.logger.info("#{current_user.css_id} logging in as #{params[:id]} at #{params[:station_id]}")
-    GlobalAdminLogin.create!(
-      admin_css_id: current_user.css_id,
-      target_css_id: params[:id],
-      target_station_id: params[:station_id]
-    )
+    head :ok
   end
 
   # Set end products in DEMO
@@ -132,14 +120,6 @@ class Test::UsersController < ApplicationController
     BGSService.end_product_records[:default] = new_default_end_products
 
     head :ok
-  end
-
-  def require_demo
-    redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
-  end
-
-  def require_global_admin
-    head :unauthorized unless current_user.global_admin?
   end
 
   def show_error
@@ -157,6 +137,59 @@ class Test::UsersController < ApplicationController
   end
 
   private
+
+  def find_user
+    User.find_by_css_id(params[:id])
+  end
+
+  def switch_current_user(user)
+    session["user"] = user.to_session_hash
+    # We keep track of current user to use when logging out
+    session["global_admin"] = current_user.id
+    RequestStore[:current_user] = user
+    session[:regional_office] = user.users_regional_office
+  end
+
+  def require_demo
+    redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
+  end
+
+  def require_global_admin
+    head :unauthorized unless current_user.global_admin?
+  end
+
+  def save_admin_login_attempt
+    Rails.logger.info("#{current_user.css_id} logging in as #{params[:id]} at #{params[:station_id]}")
+    GlobalAdminLogin.create!(
+      admin_css_id: current_user.css_id,
+      target_css_id: params[:id],
+      target_station_id: params[:station_id]
+    )
+  end
+
+  def user_session
+    (params[:id] == "me") ? session : nil
+  end
+  helper_method :user_session
+
+  def test_users
+    return [] unless ApplicationController.dependencies_faked?
+
+    User.all
+  end
+  helper_method :test_users
+
+  def features_list
+    return [] unless ApplicationController.dependencies_faked?
+
+    FeatureToggle.features
+  end
+  helper_method :features_list
+
+  def ep_types
+    %w[full partial none all]
+  end
+  helper_method :ep_types
 
   def new_default_end_products
     {

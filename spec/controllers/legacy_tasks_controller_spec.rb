@@ -45,7 +45,7 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
 
     context "user does not have a role" do
       let(:role) { nil }
-      let(:caseflow_only_user) { FactoryBot.create(:user) }
+      let(:caseflow_only_user) { create(:user) }
 
       it "should return an invalid role error" do
         get :index, params: { user_id: caseflow_only_user.id }
@@ -60,13 +60,13 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
   end
 
   describe "POST /legacy_tasks" do
-    let(:attorney) { FactoryBot.create(:user) }
-    let(:user) { FactoryBot.create(:user) }
-    let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+    let(:attorney) { create(:user) }
+    let(:user) { create(:user) }
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
     before do
       User.stub = user
-      @staff_user = FactoryBot.create(:staff, role, sdomainid: user.css_id)
-      FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
+      @staff_user = create(:staff, role, sdomainid: user.css_id)
+      create(:staff, :attorney_role, sdomainid: attorney.css_id)
     end
 
     context "when current user is an attorney" do
@@ -93,7 +93,7 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
         }
       end
       before do
-        @appeal = FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, staff: @staff_user))
+        @appeal = create(:legacy_appeal, vacols_case: create(:case, staff: @staff_user))
       end
 
       it "should be successful" do
@@ -116,7 +116,7 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       context "when judge does not have access to the appeal" do
         it "should not be successful" do
           params = {
-            "appeal_id": create(:legacy_appeal, vacols_case: FactoryBot.create(:case)).id,
+            "appeal_id": create(:legacy_appeal, vacols_case: create(:case)).id,
             "assigned_to_id": attorney.id
           }
 
@@ -183,12 +183,12 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
   end
 
   describe "PATCH legacy_tasks/:id" do
-    let(:attorney) { FactoryBot.create(:user) }
-    let(:user) { FactoryBot.create(:user) }
+    let(:attorney) { create(:user) }
+    let(:user) { create(:user) }
     before do
       User.stub = user
-      @staff_user = FactoryBot.create(:staff, role, sdomainid: user.css_id)
-      FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
+      @staff_user = create(:staff, role, sdomainid: user.css_id)
+      create(:staff, :attorney_role, sdomainid: attorney.css_id)
     end
 
     context "when current user is an attorney" do
@@ -213,7 +213,7 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
         }
       end
       before do
-        @appeal = FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, staff: @staff_user))
+        @appeal = create(:legacy_appeal, vacols_case: create(:case, staff: @staff_user))
       end
 
       it "should be successful" do
@@ -253,8 +253,8 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
           ).and_return(true)
           today = Time.utc(2018, 4, 18)
           yesterday = Time.utc(2018, 4, 17)
-          FactoryBot.create(:decass, defolder: @appeal.vacols_id, deadtim: today)
-          FactoryBot.create(:decass, defolder: @appeal.vacols_id, deadtim: yesterday)
+          create(:decass, defolder: @appeal.vacols_id, deadtim: today)
+          create(:decass, defolder: @appeal.vacols_id, deadtim: yesterday)
           task_id = "#{@appeal.vacols_id}-2018-04-18"
 
           patch :update, params: { tasks: params, id: task_id }

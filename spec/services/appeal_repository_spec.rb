@@ -350,8 +350,8 @@ describe AppealRepository, :all_dbs do
     subject { AppealRepository.find_case_record(ids, ignore_misses: ignore_misses) }
 
     context "when input set of IDs includes records that have been deleted" do
-      let(:retained_vacols_cases) { FactoryBot.create_list(:case, 5) }
-      let(:deleted_vacols_cases) { FactoryBot.create_list(:case, 3) }
+      let(:retained_vacols_cases) { create_list(:case, 5) }
+      let(:deleted_vacols_cases) { create_list(:case, 3) }
       let(:ids) { [retained_vacols_cases, deleted_vacols_cases].flatten.pluck(:bfkey) }
 
       before do

@@ -5,7 +5,7 @@ require "rails_helper"
 
 RSpec.feature "Bulk task assignment", :postgres do
   let(:org) { HearingsManagement.singleton }
-  let(:user) { FactoryBot.create(:user) }
+  let(:user) { create(:user) }
 
   before do
     OrganizationsUser.add_user_to_organization(user, org)
@@ -28,7 +28,7 @@ RSpec.feature "Bulk task assignment", :postgres do
 
     it "is able to bulk assign tasks for the hearing management org", skip: "flake" do
       3.times do
-        FactoryBot.create(:no_show_hearing_task)
+        create(:no_show_hearing_task)
       end
       visit("/organizations/hearings-management")
       click_button(text: "Assign Tasks")
@@ -49,14 +49,14 @@ RSpec.feature "Bulk task assignment", :postgres do
       # RO17 == St. Petersburg
       # RO19 == Columbia
       2.times do
-        FactoryBot.create(
+        create(
           :no_show_hearing_task,
           appeal: create(:appeal, closest_regional_office: "RO17")
         )
       end
 
       2.times do
-        FactoryBot.create(
+        create(
           :evidence_submission_window_task,
           appeal: create(:appeal, closest_regional_office: "RO19")
         )
@@ -78,21 +78,21 @@ RSpec.feature "Bulk task assignment", :postgres do
 
     it "filters tasks by regional office and task type" do
       4.times do
-        FactoryBot.create(
+        create(
           :no_show_hearing_task,
           appeal: create(:appeal, closest_regional_office: "RO17")
         )
       end
 
       2.times do
-        FactoryBot.create(
+        create(
           :evidence_submission_window_task,
           appeal: create(:appeal, closest_regional_office: "RO19")
         )
       end
 
       5.times do
-        FactoryBot.create(
+        create(
           :evidence_submission_window_task,
           appeal: create(:appeal, closest_regional_office: "RO17")
         )
@@ -113,14 +113,14 @@ RSpec.feature "Bulk task assignment", :postgres do
 
     it "filters task types by regional office" do
       2.times do
-        FactoryBot.create(
+        create(
           :no_show_hearing_task,
           appeal: create(:appeal, closest_regional_office: "RO17")
         )
       end
 
       2.times do
-        FactoryBot.create(
+        create(
           :evidence_submission_window_task,
           appeal: create(:appeal, closest_regional_office: "RO19")
         )
@@ -147,8 +147,8 @@ RSpec.feature "Bulk task assignment", :postgres do
 
       before do
         regional_offices.each do |ro|
-          appeal = FactoryBot.create(:appeal, :hearing_docket, closest_regional_office: ro)
-          FactoryBot.create(:no_show_hearing_task, appeal: appeal)
+          appeal = create(:appeal, :hearing_docket, closest_regional_office: ro)
+          create(:no_show_hearing_task, appeal: appeal)
         end
       end
 
