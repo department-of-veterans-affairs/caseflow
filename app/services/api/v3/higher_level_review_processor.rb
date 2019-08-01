@@ -15,7 +15,8 @@ class Api::V3::HigherLevelReviewProcessor
     duplicate_intake_in_progress: { status: 409, title: "Intake In progress" },
     reserved_veteran_file_number: { status: 422, title: "Invalid veteran file number" },
     incident_flash: { status: 422, title: "The veteran has an incident flash" },
-    unknown_error: { status: 422, title: "Unknown error" }
+    adding_legacy_issue_without_opting_in: { status: 422, title: "Adding legacy issue without opting in" },
+    unknown_category_for_benefit_type: { status: 422, title: "Unknown category for benefit type" }
   }.freeze
 
   DEFAULT_ERROR = { status: 422, code: :unknown_error, title: "Unknown error" }.freeze
@@ -24,36 +25,30 @@ class Api::V3::HigherLevelReviewProcessor
     fail StandardError, "couldn't pull nonrating issue categories from ISSUE_CATEGORIES.json"
   end
 
-  def initialize(user:, params:)
+  def initialize(params, user)
     @user = user
     @errors = []
+    @request_issues = []
 
     attributes = params[:data][:attributes]
     relationships = params[:data][:relationships]
     included = params[:included]
 
-    @receipt_date = attributes[:receipt_date]
-    @informal_conference = attributes[:informal_conference]
-    @same_office = attributes[:same_office]
-    @legacy_opt_in_approved = attributes[:legacy_opt_in_approved]
-    @benefit_type = attributes[:benefit_type]
-
+    @receipt_date = attributes[:receiptDate]
+    @informal_conference = attributes[:informalConference]
+    @same_office = attributes[:sameOffice]
+    @legacy_opt_in_approved = attributes[:legacyOptInApproved]
+    @benefit_type = attributes[:benefitType]
     @veteran_file_number = relationships[:veteran][:data][:id]
-
     @claimant_participant_id = relationships.dig :claimant, :data, :id
     @claimant_payee_code = relationships.dig :claimant, :data, :meta, :payeeCode
 
-    @request_issues = included.reduce([]) do |acc, included_item|
-      next acc unless included_item[:type] == "RequestIssue"
+    @request_issues = included.each do |hash|
+      next unless hash[:type] == "RequestIssue"
 
-      request_issue, error = json_api_included_request_issue_to_intake_data_hash(included_item)
-
-      if error
-        @errors << error
-        next acc
-      end
-
-      acc << request_issue
+      request_issue, error = included_request_issue_to_intake_data_hash(hash, legacy_opt_in_approved, benefit_type)
+      @errors << error if error
+      @request_issues << request_issue if request_issue
     end
   end
 
@@ -79,74 +74,6 @@ class Api::V3::HigherLevelReviewProcessor
     intake.detail
   end
 
-  def self.error_from_error_code(code)
-    return DEFAULT_ERROR unless code
-
-    status_and_title = ERROR_STATUSES_AND_TITLES_BY_CODE[code.to_sym]
-    return DEFAULT_ERROR unless status_and_title
-
-    { status: status_and_title[:status], code: code, title: status_and_title[:title] }
-  end
-
-  private
-
-  # returns a 2 element array: [params, error]
-  # open question: where will attributes[:request_issue_ids] go?
-  def json_api_included_request_issue_to_intake_data_hash(request_issue)
-    attributes = request_issue[:attributes]
-
-    if contests == "on_file_legacy_issue" && !@legacy_opt_in_approved
-      return [
-        nil,
-        {
-          status: 422,
-          title: "Adding legacy issue without opting in",
-          code: :adding_legacy_issue_without_opting_in
-        }
-      ]
-    end
-
-    category = attributes[:category]
-
-    unless category.in? CATEGORIES_BY_BENEFIT_TYPE[@benefit_type]
-      return [
-        nil,
-        {
-          status: 422,
-          title: "Unknown category for benefit type",
-          code: :unknown_category_for_benefit_type
-        }
-      ]
-    end
-
-    id = attributes[:id]
-    identified = @benefit_type.present? && category.present?
-
-    [
-      {
-        rating_issue_reference_id: (contests == "on_file_rating_issue") ? id : nil,
-        rating_issue_diagnostic_code: nil,
-        decision_text: attributes[:decision_text],
-        decision_date: attributes[:decision_date],
-        nonrating_issue_category: category,
-        benefit_type: @benefit_type,
-        notes: attributes[:notes],
-        is_unidentified: !identified,
-        untimely_exemption: nil,
-        untimely_exemption_notes: nil,
-        ramp_claim_id: nil,
-        vacols_id: (contests == "on_file_legacy_issue") ? id : nil,
-        vacols_sequence_id: nil,
-        contested_decision_issue_id: (contests == "on_file_decision_issue") ? id : nil,
-        ineligible_reason: nil,
-        ineligible_due_to_id: nil,
-        edited_description: nil,
-        correction_type: nil
-      },
-      nil
-    ]
-  end
-
   def review_params
     ActionController::Parameters.new(
       informal_conference: @informal_conference,
@@ -162,5 +89,59 @@ class Api::V3::HigherLevelReviewProcessor
 
   def complete_params
     ActionController::Parameters.new request_issues: @request_issues
+  end
+
+  class << self
+    def error_from_error_code(code)
+      return DEFAULT_ERROR unless code
+
+      status_and_title = ERROR_STATUSES_AND_TITLES_BY_CODE[code.to_sym]
+      return DEFAULT_ERROR unless status_and_title
+
+      { status: status_and_title[:status], code: code, title: status_and_title[:title] }
+    end
+
+    # open question: where will attributes[:request_issue_ids] go?
+    def included_request_issue_to_intake_data_hash(request_issue, legacy_opt_in_approved, benefit_type)
+      attributes = request_issue[:attributes]
+
+      if attributes[:contests] == "on_file_legacy_issue" && !legacy_opt_in_approved
+        return [nil, error_from_error_code(:adding_legacy_issue_without_opting_in)]
+      end
+
+      unless attributes[:category].in? CATEGORIES_BY_BENEFIT_TYPE[benefit_type]
+        return [nil, error_from_error_code(:unknown_category_for_benefit_type)]
+      end
+
+      [intake_data_hash(attributes.merge(benefit_type: benefit_type)), nil]
+    end
+
+    private
+
+    # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists
+    def intake_data_hash(benefit_type:, category:, contests:, decision_date:, decision_text:, id:, notes:)
+      identified = benefit_type.present? && category.present?
+      {
+        rating_issue_reference_id: (contests == "on_file_rating_issue") ? id : nil,
+        rating_issue_diagnostic_code: nil,
+        decision_text: decision_text,
+        decision_date: decision_date,
+        nonrating_issue_category: category,
+        benefit_type: benefit_type,
+        notes: notes,
+        is_unidentified: !identified,
+        untimely_exemption: nil,
+        untimely_exemption_notes: nil,
+        ramp_claim_id: nil,
+        vacols_id: (contests == "on_file_legacy_issue") ? id : nil,
+        vacols_sequence_id: nil,
+        contested_decision_issue_id: (contests == "on_file_decision_issue") ? id : nil,
+        ineligible_reason: nil,
+        ineligible_due_to_id: nil,
+        edited_description: nil,
+        correction_type: nil
+      }
+    end
+    # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists
   end
 end
