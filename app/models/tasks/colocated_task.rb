@@ -122,9 +122,9 @@ class ColocatedTask < Task
   def vacols_location
     # Break this out into respective subclasses once ColocatedTasks are migrated
     # https://github.com/department-of-veterans-affairs/caseflow/pull/11295#issuecomment-509659069
-    if action == "schedule_hearing" || type == ScheduleHearingColocatedTask.name
+    if type == ScheduleHearingColocatedTask.name
       schedule_hearing_vacols_location
-    elsif action == "translation" || type == TranslationColocatedTask.name
+    elsif type == TranslationColocatedTask.name
       translation_vacols_location
     else
       assigned_by.vacols_uniq_id
@@ -154,7 +154,6 @@ class ColocatedTask < Task
       appeal_id: appeal_id,
       assigned_to_id: assigned_to_id,
       assigned_to_type: assigned_to_type,
-      action: action,
       type: type,
       parent_id: parent_id,
       instructions: instructions
