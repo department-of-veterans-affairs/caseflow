@@ -10,10 +10,24 @@ describe ApplicationController, type: :controller do
   end
 
   describe "#feedback" do
-    it "allows all users to see feedback page" do
+    def all_users_can_access_feedback
       get :feedback
 
       expect(response.status).to eq 200
+    end
+
+    it "allows users to see feedback page" do
+      all_users_can_access_feedback
+    end
+
+    context "user is part of VSO" do
+      before do
+        allow(user).to receive(:vso_employee?) { true }
+      end
+
+      it "allows VSO user to see feedback page" do
+        all_users_can_access_feedback
+      end
     end
   end
 end
