@@ -1151,7 +1151,7 @@ RSpec.feature "Case details", :all_dbs do
         expect(new_tasks.length).to eq(1)
 
         new_task = new_tasks.first
-        expect(new_task.status).to eq("cancelled")
+        expect(new_task.status).to eq Constants.TASK_STATUSES.cancelled
 
         expect(page).to have_content("AppealWithdrawalMailTask cancelled")
       end

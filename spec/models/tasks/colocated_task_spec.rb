@@ -403,7 +403,7 @@ describe ColocatedTask, :all_dbs do
     it "assigns the parent task back to the organization" do
       expect(org_task.status).to eq Constants.TASK_STATUSES.on_hold
       colocated_task.update!(status: Constants.TASK_STATUSES.cancelled)
-      expect(org_task.status).to eq Constants.TASK_STATUSES.completed
+      expect(org_task.status).to eq Constants.TASK_STATUSES.cancelled
     end
 
     context "for legacy appeals, the new assigned to location is set correctly" do
