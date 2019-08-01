@@ -253,6 +253,7 @@ export default class QueueTable extends React.PureComponent {
         // be applied to the row when filtering.
         const matchColumnConfigIndex = _.findIndex(columns, (column) => column.columnName === columnName);
         let columnConfig;
+
         if (matchColumnConfigIndex > 0) {
           columnConfig = columns[matchColumnConfigIndex];
         }

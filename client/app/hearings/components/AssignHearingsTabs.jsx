@@ -78,11 +78,7 @@ const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => {
 };
 
 export default class AssignHearingsTabs extends React.Component {
-
-  constructor(props) {
-    super(props);
-  }
-
+  
   isAmaAppeal = (appeal) => {
     return appeal.attributes.appealType === 'Appeal';
   };
@@ -179,6 +175,7 @@ export default class AssignHearingsTabs extends React.Component {
   }
 
   availableVeteransRows = (appeals) => {
+
     /*
       Sorting by docket number within each category of appeal:
       CAVC, AOD and normal. Prepended * and + to docket number for
@@ -227,13 +224,14 @@ export default class AssignHearingsTabs extends React.Component {
     const { selectedRegionalOffice, selectedHearingDay } = this.props;
 
     let locationColumn;
+
     if (tab === UPCOMING_HEARINGS_TAB_NAME) {
       locationColumn = {
         name: 'Hearing Location',
         header: 'Hearing Location',
         align: 'left',
         columnName: 'hearingLocation',
-        valueName:  'hearingLocation',
+        valueName: 'hearingLocation',
         tableData: data,
         anyFiltersAreSet: true,
         enableFilter: true,
@@ -293,7 +291,8 @@ export default class AssignHearingsTabs extends React.Component {
   }
 
   amaDocketCutoffLineStyle = (appeals) => {
-    const endOfNextMonth = moment().add('months', 1).endOf('month');
+    const endOfNextMonth = moment().add('months', 1).
+      endOf('month');
     const indexOfLine = getIndexOfDocketLine(appeals, endOfNextMonth);
 
     return docketCutoffLineStyle(indexOfLine, endOfNextMonth.format('MMMM YYYY'));
