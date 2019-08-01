@@ -394,7 +394,8 @@ class RequestIssue < ApplicationRecord
       withdrawal_date: withdrawal_date,
       contested_issue_description: contested_issue_description,
       end_product_cleared: end_product_establishment&.status_cleared?,
-      end_product_code: end_product_code
+      end_product_code: end_product_code,
+      uneditable: contention_connected_to_rating?
     }
   end
 
@@ -527,11 +528,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def remove!
-    # When a user attempts to remove a request issue and a request issue
-    # already have a rating, automatically close them as 'decided' so that
-    # the user cannot attempt to change them.
-    return close_decided_issue! if contention_in_ratings?
-
     close!(status: :removed) do
       legacy_issue_optin&.flag_for_rollback!
 
@@ -626,13 +622,16 @@ class RequestIssue < ApplicationRecord
     end_product_establishment.contention_for_object(self)
   end
 
+  private
+
+  # When a request issue already has a rating in VBMS, prevent user from editing it.
   def contention_connected_to_rating?
     return false unless contention_reference_id
 
-    matching_rating_issues.any? && contention_disposition.present?
+    matching_rating_issues.any? if end_product_establishment.associated_rating
+  rescue Rating::BgsRatingError
+    false
   end
-
-  private
 
   def limited_poa
     previous_request_issue&.end_product_establishment&.limited_poa_on_established_claim
