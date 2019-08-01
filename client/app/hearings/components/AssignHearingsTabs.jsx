@@ -78,7 +78,7 @@ const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => {
 };
 
 export default class AssignHearingsTabs extends React.Component {
-  
+
   isAmaAppeal = (appeal) => {
     return appeal.attributes.appealType === 'Appeal';
   };
