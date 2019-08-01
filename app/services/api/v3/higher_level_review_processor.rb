@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Api::V3::HigherLevelReviewProcessor
-  attr_reader :intake, :errors
-
   ERROR_STATUSES_AND_TITLES_BY_CODE = {
     invalid_file_number: { status: 422, title: "Veteran ID not found" },
     veteran_not_found: { status: 404, title: "Veteran not found" },
@@ -35,9 +33,9 @@ class Api::V3::HigherLevelReviewProcessor
     }
   }.freeze
 
-  DEFAULT_ERROR = { status: 422, code: :unknown_error, title: "Unknown error" }.freeze
+  ERROR_HASH_FOR_UNKNOWN_ERROR_CODE = { status: 422, code: :unknown_error, title: "Unknown error" }.freeze
 
-  # this is the hash that the method "attributes_from_intake_data", in the request_issue model, is expecting
+  # this is the hash that the method "attributes_from_intake_data" (request_issue model) is expecting
   INTAKE_DATA_HASH = {
     rating_issue_reference_id: nil,
     rating_issue_diagnostic_code: nil,
@@ -60,6 +58,8 @@ class Api::V3::HigherLevelReviewProcessor
   }.freeze
 
   CATEGORIES_BY_BENEFIT_TYPE = Constants::ISSUE_CATEGORIES
+
+  attr_reader :intake, :errors
 
   def initialize(params, user)
     @user = user
@@ -129,11 +129,9 @@ class Api::V3::HigherLevelReviewProcessor
     ActionController::Parameters.new request_issues: @request_issues
   end
 
-  def self.error_from_error_code(code)
-    return DEFAULT_ERROR unless code
-
-    status_and_title = ERROR_STATUSES_AND_TITLES_BY_CODE[code.to_sym]
-    return DEFAULT_ERROR unless status_and_title
+  def error_hash_from_error_code(code)
+    status_and_title = ERROR_STATUSES_AND_TITLES_BY_CODE[code.to_s.to_sym]
+    return ERROR_HASH_FOR_UNKNOWN_ERROR_CODE unless status_and_title
 
     { status: status_and_title[:status], code: code, title: status_and_title[:title] }
   end
@@ -155,7 +153,7 @@ class Api::V3::HigherLevelReviewProcessor
         contesting_uncategorized_other_to_intake_data_hash(request_issue)
       end
     else
-      [nil, error_from_error_code(:unknown_contestation_type)]
+      bad_request_issue(:unknown_contestation_type)
     end
   end
 
@@ -164,43 +162,41 @@ class Api::V3::HigherLevelReviewProcessor
   def contesting_decision_to_intake_data_hash(request_issue)
     id, notes = request_issue.values_at :id, :notes
     # open question: where will attributes[:request_issue_ids] go?
-    return [nil, error_from_error_code(:must_have_id_to_contest_decision_issue)] if id.blank?
-    return [nil, error_from_error_code(:notes_cannot_be_blank_when_contesting_decision_issue)] if notes.blank?
+    return bad_request_issue(:must_have_id_to_contest_decision_issue) if id.blank?
+    return bad_request_issue(:notes_cannot_be_blank_when_contesting_decision_issue) if notes.blank?
 
     intake_data_hash(contested_decision_issue_id: id, notes: notes)
   end
 
   def contesting_rating_to_intake_data_hash(request_issue)
     id, notes = request_issue.values_at :id, :notes
-    return [nil, error_from_error_code(:must_have_id_to_contest_rating_issue)] if id.blank?
-    return [nil, error_from_error_code(:notes_cannot_be_blank_when_contesting_rating_issue)] if notes.blank?
+    return bad_request_issue(:must_have_id_to_contest_rating_issue) if id.blank?
+    return bad_request_issue(:notes_cannot_be_blank_when_contesting_rating_issue) if notes.blank?
 
     intake_data_hash(rating_issue_reference_id: id, notes: notes)
   end
 
   def contesting_legacy_to_intake_data_hash
     if !@legacy_opt_in_approved
-      return [nil, error_from_error_code(:adding_legacy_issue_without_opting_in)]
+      return bad_request_issue(:adding_legacy_issue_without_opting_in)
     end
 
     id, notes = request_issue.values_at :id, :notes
-    return [nil, error_from_error_code(:must_have_id_to_contest_legacy_issue)] if id.blank?
-    return [nil, error_from_error_code(:notes_cannot_be_blank_when_contesting_legacy_issue)] if notes.blank?
+    return bad_request_issue(:must_have_id_to_contest_legacy_issue) if id.blank?
+    return bad_request_issue(:notes_cannot_be_blank_when_contesting_legacy_issue) if notes.blank?
 
     intake_data_hash(vacols_id: id, notes: notes)
   end
 
   def contesting_categorized_other_to_intake_data_hash(request_issue)
     category, notes, decision_text = request_issue.values_at :category, :notes, :decision_text
-    return [nil, error_from_error_code(:unknown_category_for_benefit_type)] unless category.in?(
+
+    return bad_request_issue(:unknown_category_for_benefit_type) unless category.in?(
       CATEGORIES_BY_BENEFIT_TYPE[@benefit_type]
     )
 
     unless notes.present? || decision_text.present?
-      return [
-        nil,
-        error_from_error_code(:either_notes_or_decision_text_must_be_present_when_contesting_other)
-      ]
+      return bad_request_issue(:either_notes_or_decision_text_must_be_present_when_contesting_other)
     end
 
     intake_data_hash(
@@ -211,12 +207,14 @@ class Api::V3::HigherLevelReviewProcessor
   def contesting_uncategorized_other_to_intake_data_hash(request_issue)
     notes, decision_text = request_issue.values_at :notes, :decision_text
     unless notes.present? || decision_text.present?
-      return [
-        nil, error_from_error_code(:either_notes_or_decision_text_must_be_present_when_contesting_other)
-      ]
+      return bad_request_issue(:either_notes_or_decision_text_must_be_present_when_contesting_other)
     end
 
     intake_data_hash(request_issue.slice(:notes, :decision_date, :decision_text).merge(is_unidentified: true))
+  end
+
+  def bad_request_issue(hash)
+    [nil, error_hash_from_error_code(hash)]
   end
 
   def intake_data_hash(hash)
