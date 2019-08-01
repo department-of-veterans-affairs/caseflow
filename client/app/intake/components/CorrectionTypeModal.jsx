@@ -96,4 +96,10 @@ CorrectionTypeModal.propTypes = {
   issueIndex: PropTypes.number
 };
 
+CorrectionTypeModal.defaultProps = {
+  submitText: 'Next',
+  cancelText: 'Cancel',
+  skipText: 'None of these match, see more options'
+};
+
 export default CorrectionTypeModal;
