@@ -168,9 +168,9 @@ end
 
 def check_correction_type_modal_button_status(enabled)
   if enabled
-    expect(page).to have_button("Correct Issue", disabled: true)
+    expect(page).to have_css(".correction-type-submit:disabled")
   else
-    expect(page).to have_button("Correct Issue", disabled: false)
+    expect(page).to have_css(".correction-type-submit:enabled")
   end
 end
 
@@ -206,6 +206,10 @@ end
 def check_adding_rating_correction_issue
   click_intake_add_issue
   add_intake_rating_issue("Left knee granted")
+
+  select_correction_type_from_modal("control")
+  click_correction_type_modal_submit
+  
   click_edit_submit
   safe_click ".confirm"
   confirm_930_modal
@@ -218,6 +222,10 @@ def check_adding_nonrating_correction_issue
   click_intake_add_issue
   click_intake_no_matching_issues
   add_intake_nonrating_issue(description: "New nonrating correction issue", date: promulgation_date.mdY)
+
+  select_correction_type_from_modal("control")
+  click_correction_type_modal_submit
+
   click_edit_submit
   safe_click ".confirm"
   confirm_930_modal
@@ -229,9 +237,14 @@ def check_adding_unidentified_correction_issue
   description = "New unidentified correction issue"
   click_intake_add_issue
   add_intake_unidentified_issue(description)
+  
+  select_correction_type_from_modal("control")
+  click_correction_type_modal_submit
+
   click_edit_submit
   safe_click "#Unidentified-issue-button-id-1"
   safe_click ".confirm"
+
   confirm_930_modal
   correction_issue = RequestIssue.find_by(unidentified_issue_text: description)
   check_confirmation_page(correction_issue)
