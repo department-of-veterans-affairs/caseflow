@@ -284,29 +284,7 @@ export default class AssignHearingsTabs extends React.Component {
       align: 'left',
       valueName: 'docketNumber'
     },
-    {
-      header: tab === UPCOMING_HEARINGS_TAB_NAME ? 'Hearing Location' : 'Suggested Location',
-      align: 'left',
-      valueName: tab === UPCOMING_HEARINGS_TAB_NAME ? 'hearingLocation' : 'suggestedLocation',
-      getFilterValues: locationFilterValues,
-      isDropdownFilterOpen: state.dropdownIsOpen,
-      label: 'Filter by location',
-      anyFiltersAreSet: false,
-      toggleDropdownFilterVisibility: () => this.setState({
-        [tab]: {
-          ...state,
-          dropdownIsOpen: !state.dropdownIsOpen
-        }
-      }),
-      setSelectedValue: (val) => {
-        this.setState({
-          [tab]: {
-            dropdownIsOpen: false,
-            filteredBy: val === 'all' ? null : val
-          }
-        });
-      }
-    },
+    locationColumn,
     {
       header: 'Time',
       align: 'left',
