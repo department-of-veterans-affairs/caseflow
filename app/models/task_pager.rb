@@ -61,9 +61,7 @@ class TaskPager
     on cached_appeal_attributes.appeal_id = tasks.appeal_id \
     and cached_appeal_attributes.appeal_type = tasks.appeal_type"
 
-    tasks_with_cached_appeal_attributes = tasks.joins(sql)
-
-    byebug
+    tasks.joins(sql)
   end
 
   # # TODO: Some filters are on other tables that we will need to join to (appeal docket type)
