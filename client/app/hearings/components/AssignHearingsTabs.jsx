@@ -16,16 +16,6 @@ import StatusMessage from '../../components/StatusMessage';
 import { getFacilityType } from '../../components/DataDropdowns/AppealHearingLocations';
 import { getIndexOfDocketLine, docketCutoffLineStyle } from './AssignHearingsDocketLine';
 
-const filterDropdownFix = css({
-  '& svg.table-icon + div': {
-    position: 'absolute !important',
-    padding: '10px',
-    border: '1px solid #ddd',
-    background: '#fff',
-    cursor: 'pointer'
-  }
-});
-
 const tableNumberStyling = css({
   '& tr > td:first-child': {
     paddingRight: 0
@@ -89,21 +79,6 @@ export default class AssignHearingsTabs extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      amaAppeals: {
-        dropdownIsOpen: false,
-        filteredBy: null
-      },
-      legacyAppeals: {
-        dropdownIsOpen: false,
-        filteredBy: null
-      },
-      upcomingHearings: {
-        dropdownIsOpen: false,
-        filteredBy: null
-      }
-    };
   }
 
   isAmaAppeal = (appeal) => {
@@ -192,34 +167,13 @@ export default class AssignHearingsTabs extends React.Component {
     );
   }
 
-  filterAppeals = (appeals, tab) => {
-    const filteredBy = this.state[tab].filteredBy;
-
-    return _.filter(appeals, (appeal) => {
-
-      if (filteredBy === null) {
-        return true;
-      }
-
-      if (_.isEmpty(appeal.attributes.availableHearingLocations) && filteredBy === 'null') {
-        return true;
-      } else if (_.isEmpty(appeal.attributes.availableHearingLocations)) {
-        return false;
-      }
-
-      return filteredBy === appeal.attributes.availableHearingLocations[0].facilityId;
-    });
-  }
-
-  availableVeteransRows = (appeals, { tab }) => {
-    const filtered = this.filterAppeals(appeals, tab);
-
+  availableVeteransRows = (appeals) => {
     /*
       Sorting by docket number within each category of appeal:
       CAVC, AOD and normal. Prepended * and + to docket number for
       CAVC and AOD to group them first and second.
      */
-    const sortedByAodCavc = _.sortBy(filtered, (appeal) => {
+    const sortedByAodCavc = _.sortBy(appeals, (appeal) => {
       if (appeal.attributes.caseType === LEGACY_APPEAL_TYPES_BY_ID.cavc_remand) {
         return `*${appeal.attributes.docketNumber}`;
       } else if (appeal.attributes.aod) {
@@ -244,25 +198,7 @@ export default class AssignHearingsTabs extends React.Component {
   };
 
   upcomingHearingsRows = (hearings) => {
-    const filteredBy = this.state.upcomingHearings.filteredBy;
-    const filtered = _.filter(hearings, (hearing) => {
-
-      if (filteredBy === null) {
-        return true;
-      }
-
-      const hearingLocation = hearing.readableLocation;
-
-      if (_.isEmpty(hearingLocation) && filteredBy === 'null') {
-        return true;
-      } else if (_.isEmpty(hearingLocation)) {
-        return false;
-      }
-
-      return filteredBy === hearingLocation;
-    });
-
-    return _.map(filtered, (hearing, index) => ({
+    return _.map(hearings, (hearing, index) => ({
       number: <span>{index + 1}.</span>,
       externalId: hearing.appealExternalId,
       caseDetails: this.appellantName(hearing),
@@ -276,63 +212,36 @@ export default class AssignHearingsTabs extends React.Component {
     }));
   };
 
-  getLocationFilterValues = (locations) => {
-    const countByValue = _.countBy(locations, 'value');
-
-    return _.uniqBy(_.sortBy(locations, 'displayText'), 'value').map((row) => ({
-      ...row,
-      displayText: `${row.displayText} (${countByValue[row.value]} Veterans)`
-    }));
-  };
-
-  getFilteredLocationsForUpcomingHearings = (data) => (
-    data.map((row) => {
-      const location = row.readableLocation;
-
-      return {
-        displayText: location || '<<blank>>',
-        value: location || 'null'
-      };
-    })
-  );
-
-  getFilteredSuggestedLocationsForAvailableVeterans = (data) => {
-    const getLocation = (row) => (row.attributes.availableHearingLocations || [])[0];
-
-    return data.map((row) => {
-      const location = getLocation(row);
-
-      if (!location) {
-        return {
-          displayText: '<<blank>>',
-          value: 'null'
-        };
-      }
-
-      const { city, state, facilityId } = location;
-
-      return {
-        displayText: `${city}, ${state}`,
-        value: facilityId || 'null'
-      };
-    });
-  };
-
   tabWindowColumns = (data, { tab }) => {
-
     const { selectedRegionalOffice, selectedHearingDay } = this.props;
 
-    const state = this.state[tab];
-    let locationFilterValues = this.getLocationFilterValues(
-      tab === UPCOMING_HEARINGS_TAB_NAME ?
-        this.getFilteredLocationsForUpcomingHearings(data) :
-        this.getFilteredSuggestedLocationsForAvailableVeterans(data)
-    );
-
-    locationFilterValues.unshift({
-      displayText: `All (${data.length})`,
-      value: 'all'
-    });
+    let locationColumn;
+    if (tab === UPCOMING_HEARINGS_TAB_NAME) {
+      locationColumn = {
+        name: 'Hearing Location',
+        header: 'Hearing Location',
+        align: 'left',
+        columnName: 'hearingLocation',
+        valueName:  'hearingLocation',
+        tableData: data,
+        anyFiltersAreSet: true,
+        enableFilter: true,
+        enableFilterTextTransform: false
+      };
+    } else {
+      locationColumn = {
+        name: 'Suggested Location',
+        header: 'Suggested Location',
+        align: 'left',
+        columnName: 'suggestedLocation',
+        valueFunction: this.getSuggestedHearingLocationForDisplay,
+        filterValueTransform: this.formatSuggestedHearingLocation,
+        tableData: data,
+        anyFiltersAreSet: true,
+        enableFilter: true,
+        enableFilterTextTransform: false
+      };
+    }
 
     return [{
       header: '',
@@ -395,11 +304,8 @@ export default class AssignHearingsTabs extends React.Component {
   }
 
   amaDocketCutoffLineStyle = (appeals) => {
-    const filtered = this.filterAppeals(appeals, 'amaAppeals');
-    const endOfNextMonth = moment().add('months', 1).
-      endOf('month');
-
-    const indexOfLine = getIndexOfDocketLine(filtered, endOfNextMonth);
+    const endOfNextMonth = moment().add('months', 1).endOf('month');
+    const indexOfLine = getIndexOfDocketLine(appeals, endOfNextMonth);
 
     return docketCutoffLineStyle(indexOfLine, endOfNextMonth.format('MMMM YYYY'));
   }
