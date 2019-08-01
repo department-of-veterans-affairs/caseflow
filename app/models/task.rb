@@ -12,7 +12,6 @@ class Task < ApplicationRecord
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
-
   has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
 
