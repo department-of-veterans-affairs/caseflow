@@ -205,11 +205,13 @@ class NonratingRequestIssueModal extends React.Component {
         };
       });
 
-    const noMatch = {
-      displayText: NO_MATCH_TEXT,
-      value: NO_MATCH_TEXT,
-      disabled: false
-    };
+    const noMatch = [
+      {
+        displayText: NO_MATCH_TEXT,
+        value: NO_MATCH_TEXT,
+        disabled: false
+      }
+    ];
 
     return [...options, ...noMatch];
   }
