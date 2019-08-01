@@ -71,11 +71,6 @@ feature "Intake Add Issues Page" do
           date: 1.day.ago.to_date.mdY
         )
 
-        # Handle correctionType modal
-        expect(page).to have_content("Set Correction Type")
-        select_correction_type_from_modal("control")
-        click_correction_type_modal_submit()
-
         expect(page).to have_content("Description for Accrued")
         expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
         expect(page).to have_button("Establish appeal", disabled: false)
@@ -104,11 +99,6 @@ feature "Intake Add Issues Page" do
           description: "Description for Apportionment",
           date: 2.days.ago.to_date.mdY
         )
-
-        # Handle correctionType modal
-        expect(page).to have_content("Set Correction Type")
-        select_correction_type_from_modal("control")
-        click_correction_type_modal_submit()
 
         expect(page).to have_content("Description for Apportionment")
         expect(page).to have_content("The Veteran's profile has missing or invalid information")
