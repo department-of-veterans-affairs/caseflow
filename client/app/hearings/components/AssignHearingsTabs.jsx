@@ -148,22 +148,31 @@ export default class AssignHearingsTabs extends React.Component {
     /* Select first entry which should be shortest distance. */
     const location = sortedLocations[0];
 
-    return this.formatSuggestedHearingLocation(location);
-
+    return location;
   };
 
-  formatSuggestedHearingLocation = (location) => {
+  formatSuggestedHearingLocation = (suggestedLocation) => {
+    if (_.isNull(suggestedLocation) || _.isUndefined(suggestedLocation)) {
+      return null;
+    }
+
+    const { city, state } = suggestedLocation;
+
+    return `${city}, ${state} ${getFacilityType(location)}`;
+  }
+
+  getSuggestedHearingLocationForDisplay = (row) => {
+    const location = row.suggestedLocation;
+
     if (!location) {
       return '';
     }
 
-    const { city, state, distance } = location;
-
     return (
       <span>
-        <div>{`${city}, ${state} ${getFacilityType(location)}`}</div>
-        {!_.isNil(distance) &&
-          <div>{`Distance: ${distance} miles away`}</div>
+        <div>{`${this.formatSuggestedHearingLocation(location)}`}</div>
+        {!_.isNil(location.distance) &&
+          <div>{`Distance: ${location.distance} miles away`}</div>
         }
       </span>
     );
