@@ -12,7 +12,7 @@ class ColocatedTask < Task
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
   validate :task_is_unique, on: :create
-  validate :valid_action_or_type
+  validate :valid_type
 
   after_update :update_location_in_vacols
 
@@ -56,7 +56,7 @@ class ColocatedTask < Task
   end
 
   def label
-    action || self.class.label
+    self.class.label
   end
 
   def timeline_title
@@ -170,10 +170,9 @@ class ColocatedTask < Task
     end
   end
 
-  def valid_action_or_type
-    unless Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s).include?(action) ||
-           ColocatedTask.subclasses.include?(self.class)
-      errors[:base] << "Action is not included in the list"
+  def valid_type
+    unless ColocatedTask.subclasses.include?(self.class)
+      errors[:base] << "Colocated subtype is not included in the list"
     end
   end
 end
