@@ -83,14 +83,10 @@ class Test::UsersController < ApplicationController
     User.clear_current_user # for testing only
     save_admin_login_attempt
 
-    user = User.find_by(css_id: params[:id], station_id: params[:station_id])
+    user = find_user
     return head :not_found if user.nil?
 
-    session["user"] = user.to_session_hash
-    # We keep track of current user to use when logging out
-    session["global_admin"] = current_user.id
-    RequestStore[:current_user] = user
-    session[:regional_office] = user.users_regional_office
+    switch_current_user(user)
     head :ok
   end
 
@@ -141,6 +137,18 @@ class Test::UsersController < ApplicationController
   end
 
   private
+
+  def find_user
+    User.find_by_css_id(params[:id])
+  end
+
+  def switch_current_user(user)
+    session["user"] = user.to_session_hash
+    # We keep track of current user to use when logging out
+    session["global_admin"] = current_user.id
+    RequestStore[:current_user] = user
+    session[:regional_office] = user.users_regional_office
+  end
 
   def require_demo
     redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
