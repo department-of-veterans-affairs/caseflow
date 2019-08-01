@@ -176,7 +176,7 @@ class Api::V3::HigherLevelReviewProcessor
     intake_data_hash(rating_issue_reference_id: id, notes: notes)
   end
 
-  def contesting_legacy_to_intake_data_hash
+  def contesting_legacy_to_intake_data_hash(request_issue)
     if !@legacy_opt_in_approved
       return bad_request_issue(:adding_legacy_issue_without_opting_in)
     end

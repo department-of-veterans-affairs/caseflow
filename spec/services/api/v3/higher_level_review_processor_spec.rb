@@ -98,6 +98,105 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
       )
     end
   end
+
+  context "review_params and complete_params" do
+    let(:a_contests) { "on_file_decision_issue" }
+    let(:a_id) { 232 }
+    let(:a_notes) { "Notes for request issue Aaayyyyyy!" }
+
+    let(:b_contests) { "on_file_rating_issue" }
+    let(:b_id) { 616 }
+    let(:b_notes) { "Notes for request issue BeEeEe!" }
+
+    let(:c_contests) { "on_file_legacy_issue" }
+    let(:c_id) { 111_111 }
+    let(:c_notes) { "Notes for request issue Sea!" }
+
+    let(:benefit_type) { "compensation" }
+    let(:d_contests) { "other" }
+    let(:d_category) { "Character of discharge determinations" }
+    let(:d_notes) { "Notes for request issue Deee!" }
+    let(:d_decision_date) { "2019-05-07" }
+    let(:d_decision_text) { "Decision text for request issue Deee!" }
+
+    let(:e_contests) { "other" }
+    let(:e_notes) { "Notes for request issue EEEEEEEEEEEEEEE   EEEEE!" }
+    let(:e_decision_date) { "2019-05-09" }
+    let(:e_decision_text) { "Decision text for request issue EEE!" }
+
+    let(:params) do
+      ActionController::Parameters.new(
+        data: {
+          type: "HigherLevelReview",
+          attributes: {
+            receiptDate: receipt_date,
+            informalConference: informal_conference,
+            sameOffice: same_office,
+            legacyOptInApproved: legacy_opt_in_approved,
+            benefitType: benefit_type
+          },
+          relationships: {
+            veteran: {
+              data: {
+                type: "Veteran",
+                id: veteran_file_number
+              }
+            }
+          }
+        },
+        "included" => [
+          {
+            type: "RequestIssue",
+            attributes: {
+              contests: a_contests,
+              id: a_id,
+              notes: a_notes
+            }
+          },
+          {
+            type: "RequestIssue",
+            attributes: {
+              contests: b_contests,
+              id: b_id,
+              notes: b_notes
+            }
+          },
+          {
+            type: "RequestIssue",
+            attributes: {
+              contests: c_contests,
+              id: c_id,
+              notes: c_notes
+            }
+          },
+          {
+            type: "RequestIssue",
+            attributes: {
+              contests: d_contests,
+              category: d_category,
+              decision_date: d_decision_date,
+              decision_text: d_decision_text,
+              notes: d_notes
+            }
+          },
+          {
+            type: "RequestIssue",
+            attributes: {
+              contests: e_contests,
+              decision_date: e_decision_date,
+              decision_text: e_decision_text,
+              notes: e_notes
+            }
+          }
+        ]
+      )
+    end
+
+    subject { Api::V3::HigherLevelReviewProcessor.new(params, user) }
+    it "the values returned by complete_params should match those passed into new" do
+      puts subject.complete_params
+    end
+  end
 end
 
 # {
