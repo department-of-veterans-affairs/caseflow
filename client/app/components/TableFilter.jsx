@@ -88,6 +88,12 @@ class TableFilter extends React.PureComponent {
     return _.sortBy(uniqueOptions, 'displayText');
   }
 
+  isFilterOpen = () => {
+    const { columnName, filteredByList } = this.props;
+
+    return this.state.open || (filteredByList[columnName] || []).length > 0;
+  }
+
   toggleDropdown = () => this.setState({ open: !this.state.open });
 
   hideDropdown = () => this.setState({ open: false });
@@ -134,7 +140,6 @@ class TableFilter extends React.PureComponent {
     const {
       tableData,
       columnName,
-      filteredByList,
       anyFiltersAreSet,
       label,
       valueName,
@@ -155,9 +160,7 @@ class TableFilter extends React.PureComponent {
         <FilterIcon
           label={label}
           getRef={this.props.getFilterIconRef}
-          selected={
-            this.state.open ||
-            (filteredByList[columnName] ? filteredByList[columnName].length > 0 : false)}
+          selected={this.isFilterOpen()}
           handleActivate={this.toggleDropdown} />
 
         {this.state.open &&
