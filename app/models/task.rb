@@ -240,7 +240,7 @@ class Task < ApplicationRecord
   end
 
   def hide_from_queue_table_view
-    false
+    self.class.hide_from_queue_table_view
   end
 
   def self.hide_from_queue_table_view

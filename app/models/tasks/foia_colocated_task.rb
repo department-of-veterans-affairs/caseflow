@@ -19,10 +19,6 @@ class FoiaColocatedTask < ColocatedTask
     true
   end
 
-  def hide_from_queue_table_view
-    true
-  end
-
   def self.hide_from_queue_table_view
     true
   end
