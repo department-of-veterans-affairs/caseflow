@@ -220,7 +220,7 @@ export default class AssignHearingsTabs extends React.Component {
     }));
   };
 
-  tabWindowColumns = (data, { tab }) => {
+  tabWindowColumns = (tab) => {
     const { selectedRegionalOffice, selectedHearingDay } = this.props;
 
     let locationColumn;
@@ -233,7 +233,6 @@ export default class AssignHearingsTabs extends React.Component {
         columnName: 'hearingLocation',
         valueName: 'hearingLocation',
         label: 'Filter by location',
-        tableData: data,
         anyFiltersAreSet: true,
         enableFilter: true,
         enableFilterTextTransform: false
@@ -247,7 +246,6 @@ export default class AssignHearingsTabs extends React.Component {
         valueFunction: this.getSuggestedHearingLocationForDisplay,
         label: 'Filter by location',
         filterValueTransform: this.formatSuggestedHearingLocation,
-        tableData: data,
         anyFiltersAreSet: true,
         enableFilter: true,
         enableFilterTextTransform: false
@@ -326,14 +324,14 @@ export default class AssignHearingsTabs extends React.Component {
             page: <UpcomingHearingsTable
               selectedHearingDay={selectedHearingDay}
               rows={upcomingRows}
-              columns={this.tabWindowColumns(upcomingRows, { tab: UPCOMING_HEARINGS_TAB_NAME })}
+              columns={this.tabWindowColumns(UPCOMING_HEARINGS_TAB_NAME)}
             />
           },
           {
             label: 'Legacy Veterans Waiting',
             page: <AvailableVeteransTable
               rows={legacyRows}
-              columns={this.tabWindowColumns(legacyRows, { tab: LEGACY_APPEALS_TAB_NAME })}
+              columns={this.tabWindowColumns(LEGACY_APPEALS_TAB_NAME)}
             />
           },
           {
@@ -341,7 +339,7 @@ export default class AssignHearingsTabs extends React.Component {
             page: <AvailableVeteransTable
               style={this.amaDocketCutoffLineStyle(amaAppeals)}
               rows={amaRows}
-              columns={this.tabWindowColumns(amaRows, { tab: AMA_APPEALS_TAB_NAME })}
+              columns={this.tabWindowColumns(AMA_APPEALS_TAB_NAME)}
             />
           }
         ]}

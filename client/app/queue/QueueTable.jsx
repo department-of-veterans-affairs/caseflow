@@ -93,6 +93,7 @@ const HeaderRow = (props) => {
         if (!props.useTaskPagesApi && (column.enableFilter || column.getFilterValues)) {
           filterIcon = <TableFilter
             {...column}
+            tableData={column.tableData || props.rowObjects}
             valueTransform={column.filterValueTransform}
             updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
             filteredByList={props.filteredByList} />;
@@ -439,6 +440,7 @@ export default class QueueTable extends React.PureComponent {
 
         <HeaderRow
           columns={columns}
+          rowObjects={rowObjects}
           headerClassName={headerClassName}
           setSortOrder={this.setColumnSortOrder}
           updateFilteredByList={this.updateFilteredByList}
