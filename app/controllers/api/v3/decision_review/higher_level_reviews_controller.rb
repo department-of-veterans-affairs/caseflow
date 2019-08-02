@@ -14,6 +14,12 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
 
     processor.start_review_complete!
 
+    if processor.errors?
+      status = processor.errors.map { |error| error.status }.max
+      render json: { errors: processor.errors }, status: status
+      return
+    end
+
     higher_level_review = processor.higher_level_review
     uuid = higher_level_review.uuid
 
@@ -25,7 +31,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
     render json: intake_status(higher_level_review), status: :accepted
   rescue StandardError => error
     error = processor.error_from_error_code(
-      processor.intake.try(:error_code) || error.try(:error_code)
+      error.try(:error_code) || processor.intake.try(:error_code)
     )
 
     render json: { errors: [error] }, status: status

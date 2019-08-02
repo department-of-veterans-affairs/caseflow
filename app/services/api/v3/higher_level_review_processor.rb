@@ -5,8 +5,15 @@ class Api::V3::HigherLevelReviewProcessor
 
   def self.code_from_title(title)
     return nil if title.blank?
+
     title = title.to_s.split(" ").join("_").downcase.gsub(/[^0-9a-z_]/i, "")
     title.blank? ? nil : title.to_sym
+  end
+
+  def self.title_from_code(code)
+    return nil if code.blank?
+
+    code.to_s.split("_").join(" ").capitalize
   end
 
   # creates a hash with this shape:
@@ -18,31 +25,33 @@ class Api::V3::HigherLevelReviewProcessor
   # }
   #
   # if a code is left out, the title is turned into a code (downcase, underscores, non-alphanumeric chars removed)
-  ERRORS_BY_CODE = {
-    403 => [["You don't have permission to view this veteran's information", :veteran_not_accessible]],
-    404 => [["Veteran not found"]],
-    409 => [["Intake In progress", :duplicate_intake_in_progress]],
-    422 => [
-      ["The veteran's profile has missing or invalid information required to create an EP.", :veteran_not_valid],
-      ["Veteran ID not found", :invalid_file_number],
-      ["The veteran has multiple active phone numbers", :veteran_has_multiple_phone_numbers],
-      ["You don't have permission to intake this veteran", :veteran_not_modifiable],
-      ["Invalid veteran file number", :reserved_veteran_file_number],
-      ["The veteran has an incident flash", :incident_flash],
-      ["Adding legacy issue without opting in"],
-      ["Unknown category for benefit type"],
-      ["Cannot contest that type", :unknown_contestation_type],
-      ["Must have id to contest decision issue"],
-      ["Must have id to contest rating issue"],
-      ["Must have id to contest legacy issue"],
-      ["Notes cannot be blank when contesting decision issue"],
-      ["Notes cannot be blank when contesting rating issue"],
-      ["Notes cannot be blank when contesting legacy issue"],
-      ["Either notes or decision text must be present when contesting other"]
-    ]
-  }.each_with_object({}) do |(status, errors), acc|
-    errors.each do |(title, code)|
-      code ||= code_from_title(title)
+  ERRORS_BY_CODE = [
+    [403, :veteran_not_accessible, "You don't have permission to view this veteran's information"],
+    [404, :veteran_not_found, "Veteran not found"],
+    [409, :duplicate_intake_in_progress, "Intake In progress"],
+    [422, :adding_legacy_issue_without_opting_in, "Adding legacy issue without opting in"],
+    [422, :attributes_must_be_object, "Attributes must be object"]
+    [422, :either_notes_or_decision_text_must_be_present_when_contesting_other, "Either notes or decision text must be present when contesting other"
+    [422, :incident_flash, "The veteran has an incident flash"],
+    [422, :intake_review_failed, "Intake review failed"],
+    [422, :intake_start_failed, "Intake start failed"],
+    [422, :invalid_file_number, "Veteran ID not found"],
+    [422, :must_have_id_to_contest_decision_issue, "Must have id to contest decision issue"],
+    [422, :must_have_id_to_contest_legacy_issue, "Must have id to contest legacy issue"],
+    [422, :must_have_id_to_contest_rating_issue, "Must have id to contest rating issue"],
+    [422, :notes_cannot_be_blank_when_contesting_decision_issue, "Notes cannot be blank when contesting decision issue"],
+    [422, :notes_cannot_be_blank_when_contesting_legacy_issue, "Notes cannot be blank when contesting legacy issue"],
+    [422, :notes_cannot_be_blank_when_contesting_rating_issue, "Notes cannot be blank when contesting rating issue"],
+    [422, :reserved_veteran_file_number, "Invalid veteran file number"],
+    [422, :unknown_category_for_benefit_type, "Unknown category for benefit type"],
+    [422, :unknown_contestation_type, "Cannot contest that type"],
+    [422, :veteran_has_multiple_phone_numbers, "The veteran has multiple active phone numbers"],
+    [422, :veteran_not_modifiable, "You don't have permission to intake this veteran"],
+    [422, :veteran_not_valid, "The veteran's profile has missing or invalid information required to create an EP."],
+    ],
+  ].each_with_object({}) do |(status, errors), acc|
+    errors.each do |(code, title)|
+      title ||= title_from_code(code)
       acc[code] = Error.new(status, code, title)
     end
   end.freeze
@@ -59,21 +68,12 @@ class Api::V3::HigherLevelReviewProcessor
 
   def initialize(params, user)
     @errors = []
-    attributes = params[:data][:attributes]
-    relationships = params[:data][:relationships]
-    included = params[:included]
-    @intake = Intake.build(
-      user: user, veteran_file_number: relationships[:veteran][:data][:id], form_type: "higher_level_review"
-    )
-    @receipt_date = attributes[:receiptDate]
-    @informal_conference = attributes[:informalConference]
-    @same_office = attributes[:sameOffice]
-    @legacy_opt_in_approved = attributes[:legacyOptInApproved]
-    @benefit_type = attributes[:benefitType]
-    @claimant_participant_id = relationships.dig :claimant, :data, :id
-    @claimant_payee_code = relationships.dig :claimant, :data, :meta, :payeeCode
+    @receipt_date, @informal_conference, @same_office, @legacy_opt_in_approved, @benefit_type = attributes(params)
+    veteran_file_number, @claimant_participant_id, @claimant_payee_code = veteran_and_claimant(params)
+    @intake = Intake.build(user: user, veteran_file_number: veteran_file_number, form_type: "higher_level_review")
+    @errors << error_from_error_code(intake.error_code) if intake.error_code
     @request_issues = []
-    included.each do |included_item|
+    params[:included].each do |included_item|
       next unless included_item[:type] == "RequestIssue"
 
       value = included_request_issue_to_intake_data_hash(included_item)
@@ -85,11 +85,38 @@ class Api::V3::HigherLevelReviewProcessor
     !errors.empty?
   end
 
-  # all of the intake steps
+  class StartError < StandardError
+    def initialize(intake)
+      @intake = intake
+      super("intake.start! did not throw an exception, but did return a falsey value")
+    end
+
+    def error_code
+      @intake.error_code || :intake_start_failed
+    end
+  end
+
+  class ReviewError < StandardError
+    def initialize(intake)
+      @intake = intake
+      msg = "intake.review!(review_params) did not throw an exception, but did return a falsey value"
+      review_errors = @intake.detail.errors
+      msg = ["#{msg}:", *review_errors.full_messages].join("\n") if review_errors.present?
+      super(msg)
+    end
+
+    def error_code
+      @intake.error_code || :intake_review_failed
+    end
+  end
+
+  # this method performs all of the intake steps which write to DBs
+  # both start and review can signal a failure by either throwing an exception OR returning a falsey value
   def start_review_complete!
     transaction do
-      intake.start!
-      intake.review! review_params
+      fail StartError, intake unless intake.start!
+      fail ReviewError, intake unless intake.review!(review_params)
+
       intake.complete! complete_params
     end
   end
@@ -117,6 +144,24 @@ class Api::V3::HigherLevelReviewProcessor
     ActionController::Parameters.new request_issues: @request_issues
   end
 
+  # initialize helper
+  def attributes(params)
+    params[:data][:attributes].values_at(
+      :receiptDate, :informalConference, :sameOffice, :legacyOptInApproved, :benefitType
+    )
+  end
+
+  # initialize helper
+  def veteran_and_claimant(params)
+    relationships = params[:data][:relationships]
+    claimant = relationships[:claimant]
+    [
+      relationships[:veteran][:data][:id],
+      *(claimant ? [claimant.dig(:data, :id), claimant.dig(:data, :meta, :payeeCode)] : [])
+    ]
+  end
+
+  # initialize helper
   def included_request_issue_to_intake_data_hash(request_issue)
     request_issue = request_issue[:attributes]
 
@@ -140,7 +185,6 @@ class Api::V3::HigherLevelReviewProcessor
 
   private
 
-  #
   # the helper methods below create hashes in the shape that the method
   # "attributes_from_intake_data" (request_issue model) is expecting
   #
@@ -166,7 +210,6 @@ class Api::V3::HigherLevelReviewProcessor
   #   edited_description: nil,
   #   correction_type: nil
   # }
-  #
 
   def contesting_decision_to_intake_data_hash(request_issue)
     request_issue = request_issue.permit(:id, :notes)
