@@ -25,12 +25,12 @@ class ColocatedTask < Task
           # Find the task type for a given action.
           create_params = params.clone
           new_task_type = find_subclass_by_action(create_params.delete(:action).to_s)
-          create_params.merge!(type: new_task_type&.name, assigned_to: Colocated.singleton)
+          create_params.merge!(type: new_task_type&.name, assigned_to: new_task_type&.default_assignee)
         end
 
         team_tasks = super(params_array, user)
 
-        all_tasks = team_tasks.map { |team_task| [team_task, team_task.children.first] }.flatten
+        all_tasks = team_tasks.map { |team_task| [team_task, team_task.children.first] }.flatten.compact
 
         all_tasks.map(&:appeal).uniq.each do |appeal|
           if appeal.is_a? LegacyAppeal
@@ -50,8 +50,18 @@ class ColocatedTask < Task
       end
     end
 
+    def default_assignee
+      Colocated.singleton
+    end
+
     def find_subclass_by_action(action)
       subclasses.find { |task_class| task_class.label == Constants::CO_LOCATED_ADMIN_ACTIONS[action] }
+    end
+
+    def actions_assigned_to_colocated
+      Constants::CO_LOCATED_ADMIN_ACTIONS.keys.select do |action|
+        find_subclass_by_action(action).methods(false).exclude?(:default_assignee)
+      end
     end
   end
 

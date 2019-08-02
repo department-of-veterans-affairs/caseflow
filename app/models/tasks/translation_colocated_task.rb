@@ -1,33 +1,41 @@
 # frozen_string_literal: true
 
 class TranslationColocatedTask < ColocatedTask
+  after_create :create_translation_task
+
   def self.label
     Constants.CO_LOCATED_ADMIN_ACTIONS.translation
   end
 
-  def available_actions(core_actions)
-    core_actions = super(core_actions)
-    if appeal.is_a?(LegacyAppeal)
-      return legacy_translation_actions(core_actions)
-    else
-      return ama_translation_actions(core_actions)
-    end
+  def self.default_assignee
+    Translation.singleton
+  end
+
+  def hide_from_case_timeline
+    true
+  end
+
+  def hide_from_task_snapshot
+    true
+  end
+
+  def self.hide_from_queue_table_view
+    true
+  end
+
+  def create_translation_task
+    TranslationTask.create!(
+      assigned_to: assigned_to,
+      assigned_by: assigned_by,
+      instructions: instructions,
+      appeal: appeal,
+      parent: self
+    )
   end
 
   private
 
-  def ama_translation_actions(core_actions)
-    core_actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
-    core_actions
-  end
-
-  def legacy_translation_actions(actions)
-    send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
-    send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants.CO_LOCATED_ADMIN_ACTIONS.translation)
-    actions.unshift(send_to_team)
-  end
-
-  def vacols_location
-    LegacyAppeal::LOCATION_CODES[:translation]
+  def cascade_closure_from_child_task?(child_task)
+    child_task.is_a?(TranslationTask)
   end
 end

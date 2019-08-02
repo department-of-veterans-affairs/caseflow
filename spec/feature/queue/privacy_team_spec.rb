@@ -17,7 +17,6 @@ RSpec.feature "Privacy team tasks and queue", :all_dbs do
     let!(:colocated_task) do
       create(
         :colocated_task,
-        :foia,
         appeal: appeal,
         parent: root_task,
         assigned_by: attorney,
