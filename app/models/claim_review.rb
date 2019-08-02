@@ -220,6 +220,13 @@ class ClaimReview < DecisionReview
     ) || new_end_product_establishment(issue)
   end
 
+  def cancel_establishment!
+    transaction do
+      canceled!
+      request_issues.each { |reqi| reqi.close!(status: :end_product_canceled) }
+    end
+  end
+
   private
 
   def cleared_end_products
