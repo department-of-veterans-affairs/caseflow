@@ -217,7 +217,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       end
 
       context "with an existing denied AOD motion made by another judge" do
-        let!(:aod_motion) do
+        before do
           AdvanceOnDocketMotion.create!(
             user_id: create(:user).id,
             person_id: person.id,
@@ -240,7 +240,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       end
 
       context "with an existing AOD motion made by same judge" do
-        let!(:aod_motion) do
+        before do
           AdvanceOnDocketMotion.create!(
             user_id: current_user.id,
             person_id: person.id,
