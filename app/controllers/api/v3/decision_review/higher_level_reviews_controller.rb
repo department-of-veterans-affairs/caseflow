@@ -7,7 +7,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
     processor = Api::V3::HigherLevelReviewProcessor.new(params, current_user)
 
     if processor.errors?
-      status = processor.errors.map { |error| error[:status] }.max
+      status = processor.errors.map { |error| error.status }.max
       render json: { errors: processor.errors }, status: status
       return
     end

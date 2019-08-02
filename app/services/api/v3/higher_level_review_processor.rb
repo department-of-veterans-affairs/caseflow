@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Api::V3::HigherLevelReviewProcessor
-  ERROR = Struct.new(:status, :code, :title)
+  Error = Struct.new(:status, :code, :title)
 
   def self.code_from_title(title)
     title.split(" ").join("_").downcase.gsub(/[^0-9a-z_]/i, "")
@@ -9,9 +9,9 @@ class Api::V3::HigherLevelReviewProcessor
 
   # creates a hash with this shape:
   # {
-  #   veteran_not_found: <struct ERROR status=404, code=:veteran_not_found, title="Veteran not found">,
-  #   invalid_file_number: <struct ERROR status=422, code=:invalid_file_number, title="Veteran ID not found">,
-  #   incident_flash: <struct ERROR status=422, code=:incident_flash, title="The veteran has an incident flash">,
+  #   veteran_not_found: <struct Error status=404, code=:veteran_not_found, title="Veteran not found">,
+  #   invalid_file_number: <struct Error status=422, code=:invalid_file_number, title="Veteran ID not found">,
+  #   incident_flash: <struct Error status=422, code=:incident_flash, title="The veteran has an incident flash">,
   #   ...
   # }
   #
@@ -41,11 +41,11 @@ class Api::V3::HigherLevelReviewProcessor
   }.each_with_object({}) do |(status, errors), acc|
     errors.each do |(title, code)|
       code ||= code_from_title(title)
-      acc[code] = ERROR.new(status, code, title)
+      acc[code] = Error.new(status, code, title)
     end
   end.freeze
 
-  ERROR_FOR_UNKNOWN_CODE = ERROR.new(422, :unknown_error, "Unknown error")
+  ERROR_FOR_UNKNOWN_CODE = Error.new(422, :unknown_error, "Unknown error")
 
   def error_from_error_code(code)
     ERRORS_BY_CODE[code.to_s.to_sym] || ERROR_FOR_UNKNOWN_CODE
@@ -75,7 +75,7 @@ class Api::V3::HigherLevelReviewProcessor
       next unless included_item[:type] == "RequestIssue"
 
       value = included_request_issue_to_intake_data_hash(included_item)
-      (value.is_a?(self.class::ERROR) ? @errors : @request_issues) << value
+      (value.is_a?(self.class::Error) ? @errors : @request_issues) << value
     end
   end
 
