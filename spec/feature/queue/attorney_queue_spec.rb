@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Attorney queue" do
-  let(:judge) { FactoryBot.create(:user) }
-  let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, user: judge) }
+RSpec.feature "Attorney queue", :all_dbs do
+  let(:judge) { create(:user) }
+  let!(:vacols_judge) { create(:staff, :judge_role, user: judge) }
 
-  let(:attorney) { FactoryBot.create(:user) }
-  let!(:vacols_attorney) { FactoryBot.create(:staff, :attorney_role, user: attorney) }
+  let(:attorney) { create(:user) }
+  let!(:vacols_attorney) { create(:staff, :attorney_role, user: attorney) }
 
   let!(:judge_team) do
     JudgeTeam.create_for_judge(judge).tap { |jt| OrganizationsUser.add_user_to_organization(attorney, jt) }
@@ -19,14 +20,14 @@ RSpec.feature "Attorney queue" do
 
   describe "assigning admin actions to VLJ support staff" do
     let!(:colocated_team) do
-      Colocated.singleton.tap { |org| OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), org) }
+      Colocated.singleton.tap { |org| OrganizationsUser.add_user_to_organization(create(:user), org) }
     end
 
     context "for AMA appeals" do
-      let(:appeal) { FactoryBot.create(:appeal) }
-      let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+      let(:appeal) { create(:appeal) }
+      let(:root_task) { create(:root_task, appeal: appeal) }
       let(:judge_task) do
-        FactoryBot.create(
+        create(
           :ama_judge_decision_review_task,
           appeal: appeal,
           assigned_to: judge,
@@ -34,17 +35,17 @@ RSpec.feature "Attorney queue" do
         )
       end
       let(:attorney_task) do
-        FactoryBot.create(
+        create(
           :ama_attorney_task,
+          :on_hold,
           appeal: appeal,
           assigned_by: judge,
           assigned_to: attorney,
-          parent: judge_task,
-          status: Constants.TASK_STATUSES.on_hold
+          parent: judge_task
         )
       end
       let!(:colocated_task) do
-        FactoryBot.create(
+        create(
           :ama_colocated_task,
           appeal: appeal,
           assigned_by: attorney,
@@ -72,10 +73,10 @@ RSpec.feature "Attorney queue" do
 
   describe "on hold tab contents" do
     context "when an AMA appeal has a ColocatedTask" do
-      let(:appeal) { FactoryBot.create(:appeal) }
-      let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+      let(:appeal) { create(:appeal) }
+      let(:root_task) { create(:root_task, appeal: appeal) }
       let(:judge_task) do
-        FactoryBot.create(
+        create(
           :ama_judge_decision_review_task,
           appeal: appeal,
           assigned_to: judge,
@@ -83,7 +84,7 @@ RSpec.feature "Attorney queue" do
         )
       end
       let(:attorney_task) do
-        FactoryBot.create(
+        create(
           :ama_attorney_task,
           appeal: appeal,
           assigned_by: judge,
@@ -92,10 +93,10 @@ RSpec.feature "Attorney queue" do
         )
       end
       let!(:colocated_users) do
-        3.times { OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton) }
+        3.times { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
       end
       let!(:colocated_org_task) do
-        FactoryBot.create(
+        create(
           :colocated_task,
           appeal: appeal,
           assigned_by: attorney,
@@ -115,12 +116,12 @@ RSpec.feature "Attorney queue" do
     end
 
     context "when a LegacyAppeal has a ColocatedTask" do
-      let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
       let!(:colocated_users) do
-        3.times { OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton) }
+        3.times { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
       end
       let!(:colocated_org_task) do
-        FactoryBot.create(
+        create(
           :colocated_task,
           appeal: appeal,
           assigned_by: attorney,
@@ -139,12 +140,12 @@ RSpec.feature "Attorney queue" do
     end
 
     context "when a LegacyAppeal's ColocatedTask is re-assigned from one member of the VLJ support staff to another" do
-      let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
       let!(:colocated_users) do
-        3.times { OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton) }
+        3.times { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
       end
       let(:colocated_org_task) do
-        FactoryBot.create(
+        create(
           :colocated_task,
           appeal: appeal,
           assigned_by: attorney,

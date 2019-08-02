@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 require_relative "../../app/models/tasks/mail_task"
 
-describe Docket do
+describe Docket, :all_dbs do
   context "docket" do
     # nonpriority
     let!(:appeal) { create(:appeal, :with_post_intake_tasks, docket_type: "direct_review") }
@@ -91,7 +92,7 @@ describe Docket do
       context "appeal has mail tasks" do
         subject { DirectReviewDocket.new.appeals(ready: true) }
 
-        let(:user) { FactoryBot.create(:user) }
+        let(:user) { create(:user) }
 
         before do
           OrganizationsUser.add_user_to_organization(user, MailTeam.singleton)

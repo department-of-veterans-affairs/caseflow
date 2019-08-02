@@ -43,8 +43,20 @@ class ClaimReview < DecisionReview
     super.merge(
       benefitType: benefit_type,
       payeeCode: payee_code,
-      clearedEps: cleared_eps
+      hasClearedRatingEp: cleared_rating_ep?,
+      hasClearedNonratingEp: cleared_nonrating_ep?
     )
+  end
+
+  def validate_prior_to_edit
+    # force sync on initial edit call so that we have latest EP status.
+    # This helps prevent us editing something that recently closed upstream.
+    sync_end_product_establishments!
+
+    verify_contentions
+
+    # this will raise any errors for missing data
+    ui_hash
   end
 
   def caseflow_only_edit_issues_url
@@ -121,10 +133,6 @@ class ClaimReview < DecisionReview
       epe.veteran = veteran
       epe.sync!
     end
-  end
-
-  def cleared_eps
-    end_product_establishments.select { |ep| ep.status_cleared?(sync: true) }.map(&:code)
   end
 
   def active?
@@ -212,7 +220,31 @@ class ClaimReview < DecisionReview
     ) || new_end_product_establishment(issue)
   end
 
+  def cancel_establishment!
+    transaction do
+      canceled!
+      request_issues.each { |reqi| reqi.close!(status: :end_product_canceled) }
+    end
+  end
+
   private
+
+  def cleared_end_products
+    @cleared_end_products ||= end_product_establishments.select { |ep| ep.status_cleared?(sync: true) }
+  end
+
+  def cleared_rating_ep?
+    cleared_end_products.any?(&:rating?)
+  end
+
+  def cleared_nonrating_ep?
+    cleared_end_products.any?(&:nonrating?)
+  end
+
+  def verify_contentions
+    # any open request_issues that have contention_reference_id pointers that no longer resolve should be removed.
+    request_issues.select(&:open?).select(&:contention_missing?).each(&:remove!)
+  end
 
   def incomplete_tasks?
     tasks.reject(&:completed?).any?

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe EvidenceSubmissionWindowTask do
+describe EvidenceSubmissionWindowTask, :postgres do
   let(:participant_id_with_pva) { "000000" }
   let(:participant_id_with_no_vso) { "11111" }
   let!(:receipt_date) { 2.days.ago }
@@ -73,11 +74,11 @@ describe EvidenceSubmissionWindowTask do
     end
 
     context "parent is a AssignHearingDispositionTask and there is a held hearing" do
-      let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-      let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+      let(:root_task) { create(:root_task, appeal: appeal) }
+      let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
       let(:hearing_day) { create(:hearing_day, scheduled_for: appeal.receipt_date + 15.days) }
       let(:hearing) do
-        FactoryBot.create(
+        create(
           :hearing,
           appeal: appeal,
           disposition: Constants.HEARING_DISPOSITION_TYPES.held,
@@ -85,18 +86,18 @@ describe EvidenceSubmissionWindowTask do
         )
       end
       let!(:hearing_task_association) do
-        FactoryBot.create(
+        create(
           :hearing_task_association,
           hearing: hearing,
           hearing_task: hearing_task
         )
       end
       let!(:parent) do
-        FactoryBot.create(
+        create(
           :assign_hearing_disposition_task,
+          :in_progress,
           parent: hearing_task,
-          appeal: appeal,
-          status: Constants.TASK_STATUSES.in_progress
+          appeal: appeal
         )
       end
       let!(:task) do

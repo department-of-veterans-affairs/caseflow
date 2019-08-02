@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Schedule Veteran For A Hearing" do
+RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
   let!(:current_user) do
     user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
     User.authenticate!(user: user)
@@ -462,6 +463,50 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(table_row).to have_content("1445678")
       table_row = page.find("tr", id: "table-row-4")
       expect(table_row).to have_content("1445695")
+    end
+  end
+
+  context "With a full hearing day" do
+    let(:appeal) { create(:appeal) }
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal) }
+    let!(:hearing_day) do
+      create(
+        :hearing_day,
+        scheduled_for: Time.zone.today + 5,
+        request_type: HearingDay::REQUEST_TYPES[:video],
+        regional_office: "RO17"
+      )
+    end
+    let!(:hearings) do
+      (1...hearing_day.total_slots + 1).map do |idx|
+        create(
+          :hearing,
+          appeal: create(:appeal, receipt_date: Date.new(2019, 1, idx)),
+          hearing_day: hearing_day
+        )
+      end
+    end
+
+    scenario "can still schedule veteran successfully" do
+      visit "/queue/appeals/#{appeal.external_id}"
+      click_dropdown(text: "Schedule Veteran")
+      click_dropdown(text: RegionalOffice.find!("RO17").city)
+      click_dropdown(
+        text: "#{hearing_day.scheduled_for.to_formatted_s(:short_date)} (12/12)",
+        name: "hearingDate"
+      )
+
+      expect(page).to have_content(COPY::SCHEDULE_VETERAN_FULL_HEARING_DAY_TITLE)
+      expect(page).to have_content(COPY::SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL)
+
+      click_dropdown(
+        text: "Holdrege, NE (VHA) 0 miles away",
+        name: "appealHearingLocation"
+      )
+      click_dropdown(text: "10:00 am", name: "optionalHearingTime1")
+      click_button("Schedule")
+
+      expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
     end
   end
 end

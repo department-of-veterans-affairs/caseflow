@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe UnassignedTasksTab do
   let(:tab) { UnassignedTasksTab.new(params) }
   let(:params) do

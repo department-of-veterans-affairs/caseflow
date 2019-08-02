@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.feature "User organization" do
+RSpec.feature "User organization", :postgres do
   let(:role) { "org_role" }
   let!(:user) { User.authenticate!(user: create(:user, roles: [role])) }
   let!(:organization) { create(:organization, name: "Test organization", url: "test", role: role) }
@@ -67,7 +68,7 @@ RSpec.feature "User organization" do
     end
 
     context "when there are many users in the organization" do
-      let(:other_org_user) { FactoryBot.create(:user) }
+      let(:other_org_user) { create(:user) }
       before do
         OrganizationsUser.add_user_to_organization(other_org_user, organization)
       end
@@ -91,7 +92,7 @@ RSpec.feature "User organization" do
     end
 
     context "the user is in a judge team" do
-      let!(:judge) { FactoryBot.create(:user) }
+      let!(:judge) { create(:user) }
       let!(:judgeteam) { JudgeTeam.create_for_judge(judge) }
 
       before do

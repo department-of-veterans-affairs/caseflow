@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe QueueConfig do
+describe QueueConfig, :postgres do
   describe ".new" do
     let(:arguments) { { organization: organization } }
 
@@ -25,7 +26,7 @@ describe QueueConfig do
     end
 
     context "when object is created with a valid organization" do
-      let(:organization) { FactoryBot.create(:organization) }
+      let(:organization) { create(:organization) }
 
       it "successfully instantiates the object" do
         expect { subject }.to_not raise_error
@@ -34,8 +35,8 @@ describe QueueConfig do
   end
 
   describe ".to_hash_for_user" do
-    let(:organization) { FactoryBot.create(:organization) }
-    let(:user) { FactoryBot.create(:user) }
+    let(:organization) { create(:organization) }
+    let(:user) { create(:user) }
 
     subject { QueueConfig.new(organization: organization).to_hash_for_user(user) }
 
@@ -97,9 +98,14 @@ describe QueueConfig do
           before { FeatureToggle.enable!(:use_task_pages_api) }
           after { FeatureToggle.disable!(:use_task_pages_api) }
 
-          let!(:unassigned_tasks) { FactoryBot.create_list(:generic_task, 4, assigned_to: organization) }
-          let!(:on_hold_tasks) { FactoryBot.create_list(:generic_task, 2, :on_hold, assigned_to: organization) }
-          let!(:completed_tasks) { FactoryBot.create_list(:generic_task, 7, :completed, assigned_to: organization) }
+          let!(:unassigned_tasks) { create_list(:generic_task, 4, assigned_to: organization) }
+          let!(:assigned_tasks) do
+            create_list(:generic_task, 2, parent: create(:generic_task, assigned_to: organization))
+          end
+          let!(:on_hold_tasks) do
+            create_list(:generic_task, 2, :on_hold, parent: create(:generic_task, assigned_to: organization))
+          end
+          let!(:completed_tasks) { create_list(:generic_task, 7, :completed, assigned_to: organization) }
 
           before { allow(organization).to receive(:use_task_pages_api?).and_return(true) }
 
@@ -108,18 +114,18 @@ describe QueueConfig do
 
             # Tasks are serialized at this point so we need to convert integer task IDs to strings.
             expect(tabs[0][:tasks].pluck(:id)).to match_array(unassigned_tasks.map { |t| t.id.to_s })
-            expect(tabs[1][:tasks].pluck(:id)).to match_array(on_hold_tasks.map { |t| t.id.to_s })
-            expect(tabs[2][:tasks].pluck(:id)).to match_array(completed_tasks.map { |t| t.id.to_s })
+            expect(tabs[1][:tasks].pluck(:id)).to match_array(assigned_tasks.map { |t| t.id.to_s })
+            expect(tabs[2][:tasks].pluck(:id)).to match_array(on_hold_tasks.map { |t| t.id.to_s })
+            expect(tabs[3][:tasks].pluck(:id)).to match_array(completed_tasks.map { |t| t.id.to_s })
           end
 
           it "displays the correct labels for the tabs" do
             tabs = subject
 
-            expect(tabs[0][:label]).to eq(
-              format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_tasks.count)
-            )
-            expect(tabs[1][:label]).to eq(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, on_hold_tasks.count))
-            expect(tabs[2][:label]).to eq(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
+            expect(tabs[0][:label]).to eq(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE)
+            expect(tabs[1][:label]).to eq(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE)
+            expect(tabs[2][:label]).to eq(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE)
+            expect(tabs[3][:label]).to eq(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
           end
         end
       end
@@ -135,7 +141,7 @@ describe QueueConfig do
       end
 
       context "when the organization is a VSO" do
-        let(:organization) { FactoryBot.create(:vso) }
+        let(:organization) { create(:vso) }
 
         it "includes a tab for tracking tasks" do
           expect(subject.length).to eq(4)
@@ -164,7 +170,7 @@ describe QueueConfig do
           before { FeatureToggle.enable!(:use_task_pages_api) }
           after { FeatureToggle.disable!(:use_task_pages_api) }
 
-          let!(:tracking_tasks) { FactoryBot.create_list(:track_veteran_task, 5, assigned_to: organization) }
+          let!(:tracking_tasks) { create_list(:track_veteran_task, 5, assigned_to: organization) }
 
           it "returns the tasks in the tracking tasks tabs" do
             # Tasks are serialized at this point so we need to convert integer task IDs to strings.

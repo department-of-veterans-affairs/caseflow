@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-feature "Appeal Edit issues" do
+feature "Appeal Edit issues", :all_dbs do
   include IntakeHelpers
 
   before do
@@ -245,7 +245,7 @@ feature "Appeal Edit issues" do
                           nonrating_request_issue.id, rating_request_issue.id]
 
       # duplicate issues should be neither added nor removed
-      expect(request_issue_update.created_issues.map(&:id)).to_not include(non_modified_ids)
+      expect(request_issue_update.added_issues.map(&:id)).to_not include(non_modified_ids)
       expect(request_issue_update.removed_issues.map(&:id)).to_not include(non_modified_ids)
     end
   end
@@ -667,6 +667,14 @@ feature "Appeal Edit issues" do
              closed_at: last_week)
     end
 
+    let!(:cancelled_task) do
+      create(:appeal_task,
+             :cancelled,
+             appeal: appeal,
+             assigned_to: non_comp_org,
+             closed_at: Time.zone.now)
+    end
+
     context "when review has multiple active tasks" do
       let!(:in_progress_task) do
         create(:appeal_task,
@@ -731,14 +739,6 @@ feature "Appeal Edit issues" do
       end
 
       context "when appeal task is cancelled" do
-        let!(:task) do
-          create(:appeal_task,
-                 status: Constants.TASK_STATUSES.cancelled,
-                 appeal: appeal,
-                 assigned_to: non_comp_org,
-                 closed_at: Time.zone.now)
-        end
-
         scenario "show timestamp when all request issues are cancelled" do
           visit "appeals/#{appeal.uuid}/edit"
           # remove all request issues
@@ -753,8 +753,8 @@ feature "Appeal Edit issues" do
           visit "appeals/#{appeal.uuid}/edit"
           expect(page).not_to have_content(existing_request_issues.first.description)
           expect(page).not_to have_content(existing_request_issues.second.description)
-          expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
-          expect(task.closed_at).to eq(Time.zone.now)
+          expect(cancelled_task.status).to eq(Constants.TASK_STATUSES.cancelled)
+          expect(cancelled_task.closed_at).to eq(Time.zone.now)
         end
       end
     end

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe DecisionReview do
+describe DecisionReview, :postgres do
   before do
     Time.zone = "UTC"
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -62,11 +63,9 @@ describe DecisionReview do
       create(:decision_issue,
              :nonrating,
              participant_id: participant_id,
-             rating_issue_reference_id: nil,
              decision_text: "decision issue 3",
+             end_product_last_action_date: promulgation_date,
              benefit_type: higher_level_review.benefit_type,
-             rating_profile_date: profile_date + 2.days,
-             rating_promulgation_date: promulgation_date + 2.days,
              decision_review: higher_level_review),
       create(:decision_issue,
              :rating,
@@ -106,8 +105,10 @@ describe DecisionReview do
   context "#contestable_issues" do
     subject { higher_level_review.contestable_issues }
 
-    def find_serialized_issue(serialized_contestable_issues, ref_id)
-      serialized_contestable_issues.find { |ci| ci[:ratingIssueReferenceId] == ref_id }
+    def find_serialized_issue(serialized_contestable_issues, ref_id_or_description)
+      serialized_contestable_issues.find do |i|
+        i[:isRating] ? i[:ratingIssueReferenceId] == ref_id_or_description : i[:description] == ref_id_or_description
+      end
     end
 
     it "creates a list of contestable rating and decision issues" do
@@ -121,6 +122,7 @@ describe DecisionReview do
         decisionIssueId: decision_issues.first.id,
         approxDecisionDate: promulgation_date,
         description: "decision issue 1",
+        isRating: true,
         rampClaimId: nil,
         titleOfActiveReview: nil,
         sourceReviewType: "HigherLevelReview",
@@ -135,6 +137,7 @@ describe DecisionReview do
         decisionIssueId: nil,
         approxDecisionDate: promulgation_date,
         description: "rating issue 2",
+        isRating: true,
         rampClaimId: nil,
         titleOfActiveReview: nil,
         sourceReviewType: nil,
@@ -149,6 +152,7 @@ describe DecisionReview do
         decisionIssueId: decision_issues.second.id,
         approxDecisionDate: promulgation_date + 1.day,
         description: "decision issue 2",
+        isRating: true,
         rampClaimId: nil,
         titleOfActiveReview: nil,
         sourceReviewType: "HigherLevelReview",
@@ -156,18 +160,19 @@ describe DecisionReview do
         latestIssuesInChain: [{ id: decision_issues.second.id, approxDecisionDate: promulgation_date + 1.day }]
       )
 
-      expect(find_serialized_issue(serialized_contestable_issues, nil)).to eq(
+      expect(find_serialized_issue(serialized_contestable_issues, "decision issue 3")).to eq(
         ratingIssueReferenceId: nil,
-        ratingIssueProfileDate: profile_date + 2.days,
+        ratingIssueProfileDate: nil,
         ratingIssueDiagnosticCode: nil,
         decisionIssueId: decision_issues.third.id,
-        approxDecisionDate: promulgation_date + 2.days,
+        approxDecisionDate: promulgation_date,
         description: "decision issue 3",
+        isRating: false,
         rampClaimId: nil,
         titleOfActiveReview: nil,
         sourceReviewType: "HigherLevelReview",
         timely: true,
-        latestIssuesInChain: [{ id: decision_issues.third.id, approxDecisionDate: promulgation_date + 2.days }]
+        latestIssuesInChain: [{ id: decision_issues.third.id, approxDecisionDate: promulgation_date }]
       )
     end
 

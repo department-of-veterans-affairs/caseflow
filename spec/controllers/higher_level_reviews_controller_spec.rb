@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe HigherLevelReviewsController, type: :controller do
+describe HigherLevelReviewsController, :postgres, type: :controller do
   before do
     User.stub = user
   end

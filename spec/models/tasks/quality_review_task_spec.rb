@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe QualityReviewTask do
-  let(:root_task) { FactoryBot.create(:root_task) }
+describe QualityReviewTask, :all_dbs do
+  let(:root_task) { create(:root_task) }
   let(:qr_task) { QualityReviewTask.create_from_root_task(root_task) }
 
   before do
-    OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+    OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
   end
 
   describe ".update!(status: Constants.TASK_STATUSES.completed)" do
@@ -24,16 +25,16 @@ describe QualityReviewTask do
     context "when QualityReviewTask has been assigned to an individual" do
       let!(:appeal) { root_task.appeal }
 
-      let!(:judge) { FactoryBot.create(:user) }
-      let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, user: judge) }
+      let!(:judge) { create(:user) }
+      let!(:vacols_judge) { create(:staff, :judge_role, user: judge) }
       let!(:judge_task) { JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge) }
 
-      let!(:atty) { FactoryBot.create(:user) }
-      let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, user: atty) }
+      let!(:atty) { create(:user) }
+      let!(:vacols_atty) { create(:staff, :attorney_role, user: atty) }
       let!(:atty_task_params) { [{ appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }] }
       let!(:atty_task) { AttorneyTask.create_many_from_params(atty_task_params, judge).first }
 
-      let!(:qr_user) { FactoryBot.create(:user) }
+      let!(:qr_user) { create(:user) }
       let!(:qr_relationship) { OrganizationsUser.add_user_to_organization(qr_user, QualityReview.singleton) }
       let!(:qr_org_task) { QualityReviewTask.create_from_root_task(root_task) }
       let!(:qr_task_params) do
@@ -68,7 +69,7 @@ describe QualityReviewTask do
 
   describe "completing a child GenericTask" do
     let!(:generic_task_child) do
-      GenericTask.create!(appeal: qr_task.appeal, parent: qr_task, assigned_to: FactoryBot.create(:user))
+      GenericTask.create!(appeal: qr_task.appeal, parent: qr_task, assigned_to: create(:user))
     end
     it "sets the status of the parent QualityReviewTask to assigned" do
       expect(qr_task.status).to eq(Constants.TASK_STATUSES.on_hold)

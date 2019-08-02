@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe TaskTimer do
+describe TaskTimer, :postgres do
   describe "processing" do
     before do
       Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
@@ -23,7 +24,7 @@ describe TaskTimer do
   end
 
   describe "requires_processing" do
-    let(:task) { FactoryBot.create(:generic_task, status: task_status) }
+    let(:task) { create(:generic_task, trait) }
     let!(:task_timer) { TaskTimer.create!(task: task).tap(&:submit_for_processing!) }
 
     before do
@@ -33,14 +34,14 @@ describe TaskTimer do
     subject { TaskTimer.requires_processing }
 
     context "when the related task is closed" do
-      let(:task_status) { Constants.TASK_STATUSES.cancelled }
+      let(:trait) { :cancelled }
       it "returns no task timers" do
         expect(subject.length).to eq(0)
       end
     end
 
     context "when the related task is active" do
-      let(:task_status) { Constants.TASK_STATUSES.in_progress }
+      let(:trait) { :in_progress }
       it "returns the correct task timer" do
         processable_task_timers = subject
         expect(processable_task_timers.length).to eq(1)

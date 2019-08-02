@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe AttorneyTask do
+describe AttorneyTask, :all_dbs do
   let!(:attorney) { create(:user) }
   let!(:judge) { create(:user) }
   let!(:attorney_staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
   let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge.css_id) }
-  let(:appeal) { FactoryBot.create(:appeal) }
+  let(:appeal) { create(:appeal) }
   let!(:parent) { create(:ama_judge_decision_review_task, assigned_by: judge, appeal: appeal) }
 
   context ".create" do
@@ -16,8 +17,7 @@ describe AttorneyTask do
         assigned_to: attorney,
         assigned_by: judge,
         appeal: appeal,
-        parent: parent,
-        status: Constants.TASK_STATUSES.assigned
+        parent: parent
       )
     end
 
@@ -35,13 +35,12 @@ describe AttorneyTask do
 
     context "there is a completed sibling task" do
       before do
-        AttorneyTask.create!(
-          assigned_to: attorney,
-          assigned_by: judge,
-          appeal: appeal,
-          parent: parent,
-          status: Constants.TASK_STATUSES.completed
-        )
+        create(:ama_attorney_task,
+               :completed,
+               assigned_to: attorney,
+               assigned_by: judge,
+               appeal: appeal,
+               parent: parent)
       end
 
       it "is valid" do
@@ -51,12 +50,12 @@ describe AttorneyTask do
 
     context "there is an uncompleted sibling task" do
       before do
-        AttorneyTask.create!(
+        create(
+          :ama_attorney_task,
           assigned_to: attorney,
           assigned_by: judge,
           appeal: appeal,
-          parent: parent,
-          status: Constants.TASK_STATUSES.assigned
+          parent: parent
         )
       end
 

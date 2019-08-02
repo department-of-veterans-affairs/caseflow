@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe TasksController, type: :controller do
+RSpec.describe TasksController, :all_dbs, type: :controller do
   before do
     Fakes::Initializer.load!
     User.authenticate!(roles: ["System Admin"])
@@ -19,18 +20,18 @@ RSpec.describe TasksController, type: :controller do
       let(:role) { :attorney_role }
 
       let!(:vlj_support_staff) do
-        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton)
+        OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
         Colocated.singleton.users.first
       end
 
       let!(:task1) { create(:colocated_task, assigned_by: user, assigned_to: Colocated.singleton) }
       let!(:task2) { create(:colocated_task, assigned_by: user, assigned_to: Colocated.singleton) }
-      let!(:task3) { create(:colocated_task, assigned_by: user, status: Constants.TASK_STATUSES.completed) }
+      let!(:task3) { create(:colocated_task, :completed, assigned_by: user) }
 
       let!(:task11) { create(:ama_attorney_task, assigned_to: user) }
       let!(:task12) { create(:ama_attorney_task, :in_progress, assigned_to: user) }
       let!(:task13) { create(:ama_attorney_task, :completed, assigned_to: user) }
-      let!(:task16) { create(:ama_attorney_task, :completed, assigned_to: user, closed_at: 3.weeks.ago) }
+      let!(:task16) { create(:ama_attorney_task, :completed_in_the_past, assigned_to: user) }
       let!(:task14) { create(:ama_attorney_task, :on_hold, assigned_to: user) }
 
       it "should process the request successfully" do
@@ -78,11 +79,11 @@ RSpec.describe TasksController, type: :controller do
       let!(:task4) do
         create(:colocated_task, assigned_to: user, appeal: create(:legacy_appeal, vacols_case: create(:case, :aod)))
       end
-      let!(:task5) { create(:colocated_task, assigned_to: user, status: Constants.TASK_STATUSES.in_progress) }
+      let!(:task5) { create(:colocated_task, :in_progress, assigned_to: user) }
       let!(:task_ama_colocated_aod) do
         create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, :advanced_on_docket_due_to_age))
       end
-      let!(:task6) { create(:colocated_task, assigned_to: user, status: Constants.TASK_STATUSES.completed) }
+      let!(:task6) { create(:colocated_task, :completed, assigned_to: user) }
       let!(:task7) { create(:colocated_task) }
 
       it "should process the request succesfully" do
@@ -117,7 +118,7 @@ RSpec.describe TasksController, type: :controller do
       let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user, assigned_by: user) }
       let!(:task10) { create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user) }
       let!(:task15) do
-        create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user, closed_at: 3.weeks.ago)
+        create(:ama_judge_task, :completed_in_the_past, assigned_to: user, assigned_by: user)
       end
 
       it "should process the request succesfully" do
@@ -181,16 +182,16 @@ RSpec.describe TasksController, type: :controller do
       end
 
       context "when a task is assignable" do
-        let(:root_task) { FactoryBot.create(:root_task) }
+        let(:root_task) { create(:root_task) }
 
-        let(:org_1) { FactoryBot.create(:organization) }
+        let(:org_1) { create(:organization) }
         let(:org_1_member_cnt) { 6 }
-        let(:org_1_members) { FactoryBot.create_list(:user, org_1_member_cnt) }
+        let(:org_1_members) { create_list(:user, org_1_member_cnt) }
         let(:org_1_assignee) { org_1_members[0] }
         let(:org_1_non_assignee) { org_1_members[1] }
-        let!(:org_1_team_task) { FactoryBot.create(:generic_task, assigned_to: org_1, parent: root_task) }
+        let!(:org_1_team_task) { create(:generic_task, assigned_to: org_1, parent: root_task) }
         let!(:org_1_member_task) do
-          FactoryBot.create(:generic_task, assigned_to: org_1_assignee, parent: org_1_team_task)
+          create(:generic_task, assigned_to: org_1_assignee, parent: org_1_team_task)
         end
 
         before do
@@ -220,13 +221,13 @@ RSpec.describe TasksController, type: :controller do
       end
 
       context "when the task belongs to the user" do
-        let(:no_role_user) { FactoryBot.create(:user) }
-        let!(:task) { FactoryBot.create(:generic_task, assigned_to: no_role_user) }
+        let(:no_role_user) { create(:user) }
+        let!(:task) { create(:generic_task, assigned_to: no_role_user) }
         before { User.authenticate!(user: no_role_user) }
 
         context "when there are Organizations in the table" do
           let(:org_count) { 8 }
-          before { FactoryBot.create_list(:organization, org_count) }
+          before { create_list(:organization, org_count) }
 
           it "should return a list of all Organizations" do
             get :index, params: { user_id: no_role_user.id }
@@ -250,12 +251,12 @@ RSpec.describe TasksController, type: :controller do
   describe "POST /tasks" do
     let(:attorney) { create(:user) }
     let(:user) { create(:user) }
-    let(:appeal) { create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 
     before do
       User.stub = user
-      @staff_user = FactoryBot.create(:staff, role, sdomainid: user.css_id) if role
-      FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
+      @staff_user = create(:staff, role, sdomainid: user.css_id) if role
+      create(:staff, :attorney_role, sdomainid: attorney.css_id)
     end
 
     subject { post :create, params: { tasks: params } }
@@ -297,8 +298,8 @@ RSpec.describe TasksController, type: :controller do
 
     context "VSO user" do
       let(:user) { create(:default_user, roles: ["VSO"]) }
-      let(:vso) { FactoryBot.create(:vso) }
-      let(:appeal) { FactoryBot.create(:appeal) }
+      let(:vso) { create(:vso) }
+      let(:appeal) { create(:appeal) }
       let(:root_task) { create(:root_task, appeal: appeal) }
       let(:role) { nil }
 
@@ -327,7 +328,7 @@ RSpec.describe TasksController, type: :controller do
 
       context "when creating a ihp task" do
         let(:ihp_org_task) do
-          FactoryBot.create(
+          create(
             :informal_hearing_presentation_task,
             appeal: appeal,
             assigned_to: vso
@@ -353,7 +354,7 @@ RSpec.describe TasksController, type: :controller do
 
     context "Co-located admin action" do
       before do
-        u = FactoryBot.create(:user)
+        u = create(:user)
         OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
       end
 
@@ -377,7 +378,7 @@ RSpec.describe TasksController, type: :controller do
           end
 
           before do
-            u = FactoryBot.create(:user)
+            u = create(:user)
             OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
           end
 
@@ -426,7 +427,7 @@ RSpec.describe TasksController, type: :controller do
           end
 
           before do
-            u = FactoryBot.create(:user)
+            u = create(:user)
             OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
           end
 
@@ -525,8 +526,8 @@ RSpec.describe TasksController, type: :controller do
     context "hearing user and hearing admin action tasks" do
       let(:role) { :hearing_coordinator }
       let!(:user) { create(:user, roles: ["Build HearSched"]) }
-      let!(:appeal) { FactoryBot.create(:appeal) }
-      let!(:schedule_hearing_task) { FactoryBot.create(:schedule_hearing_task, appeal: appeal) }
+      let!(:appeal) { create(:appeal) }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal) }
       let(:incarcerated_instructions) { "Incarcerated veteran task instructions" }
       let(:contested_instructions_1) { "Contested claimant task instructions" }
       let(:contested_instructions_2) { "Instructions for another contested claimant task" }
@@ -585,8 +586,8 @@ RSpec.describe TasksController, type: :controller do
     let(:admin_action) { create(task_type, assigned_by: assigned_by_user, assigned_to: assigned_to_user) }
     let!(:authenticated_staff) { create(:staff, :colocated_role, sdomainid: authenticated_user.css_id) }
     let!(:assigned_by_staff) { create(:staff, :attorney_role, sdomainid: assigned_by_user.css_id) }
-    let(:root_task) { FactoryBot.create(:root_task) }
-    let(:colocated_task) { FactoryBot.create(:colocated_task, parent: root_task) }
+    let(:root_task) { create(:root_task) }
+    let(:colocated_task) { create(:colocated_task, parent: root_task) }
     before do
       User.stub = authenticated_user
     end
@@ -845,7 +846,7 @@ RSpec.describe TasksController, type: :controller do
 
   describe "POST tasks/:id/reschedule" do
     context "when the task is not a NoShowHearingTask" do
-      let(:task) { FactoryBot.create(:task) }
+      let(:task) { create(:task) }
       it "returns an error" do
         post(:reschedule, params: { id: task.id })
         response_body = JSON.parse(response.body)
@@ -856,9 +857,9 @@ RSpec.describe TasksController, type: :controller do
     end
 
     context "when the task is a NoShowHearingTask" do
-      let(:root_task) { FactoryBot.create(:root_task) }
-      let(:parent_hearing_task) { FactoryBot.create(:hearing_task, parent: root_task) }
-      let(:task) { FactoryBot.create(:no_show_hearing_task, parent: parent_hearing_task) }
+      let(:root_task) { create(:root_task) }
+      let(:parent_hearing_task) { create(:hearing_task, parent: root_task) }
+      let(:task) { create(:no_show_hearing_task, parent: parent_hearing_task) }
       it "creates the new ScheduleHearingTask as expected" do
         post(:reschedule, params: { id: task.id })
         expect(response.status).to eq(200)
@@ -868,9 +869,9 @@ RSpec.describe TasksController, type: :controller do
 
   describe "POST tasks/:id/request_hearing_disposition_change" do
     let!(:hearing_mgmt_user) do
-      FactoryBot.create(:user, full_name: "Janaan Handal", station_id: 101, roles: ["Build HearSched"])
+      create(:user, full_name: "Janaan Handal", station_id: 101, roles: ["Build HearSched"])
     end
-    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:root_task) { create(:root_task) }
     let(:appeal) { root_task.appeal }
     let(:params) { nil }
     let(:instructions) { "these are my detailed instructions." }
@@ -883,9 +884,11 @@ RSpec.describe TasksController, type: :controller do
     subject { post(:request_hearing_disposition_change, params: params) }
 
     context "when the task is a no show hearing task with a HearingTask ancestor" do
-      let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-      let(:disposition_task) { FactoryBot.create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
-      let!(:task) { FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
+      let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+      let(:disposition_task) do
+        create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal)
+      end
+      let!(:task) { create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
       let(:params) do
         {
           id: task.id,
@@ -910,20 +913,20 @@ RSpec.describe TasksController, type: :controller do
     end
 
     context "when the task is a schedule hearing task with a past hearing with a disposition" do
-      let(:hearing_day) { FactoryBot.create(:hearing_day) }
+      let(:hearing_day) { create(:hearing_day) }
       let(:past_hearing_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
       let(:hearing) do
-        FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day, disposition: past_hearing_disposition)
+        create(:hearing, appeal: appeal, hearing_day: hearing_day, disposition: past_hearing_disposition)
       end
       let(:hearing_task) do
-        FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal, status: Constants.TASK_STATUSES.completed)
+        create(:hearing_task, :completed, parent: root_task, appeal: appeal)
       end
-      let!(:association) { FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
-      let!(:hearing_task_2) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+      let!(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
+      let!(:hearing_task_2) { create(:hearing_task, parent: root_task, appeal: appeal) }
       let!(:association_2) do
-        FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
+        create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
       end
-      let!(:task) { FactoryBot.create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
+      let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
       let(:params) do
         {
           id: task.id,
@@ -962,7 +965,7 @@ RSpec.describe TasksController, type: :controller do
 
     context "when the task doesn't have a HearingTask ancestor" do
       let!(:task) do
-        FactoryBot.create(:track_veteran_task, parent: root_task, appeal: appeal)
+        create(:track_veteran_task, parent: root_task, appeal: appeal)
       end
       let(:params) do
         {

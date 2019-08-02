@@ -58,6 +58,14 @@ class SeedDB
     OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
     bva_intake_admin = User.create(css_id: "BVAGBLUE", station_id: 101, full_name: "BVA Intake admin")
     OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
+    special_case_movement_user = User.create(css_id: "BVAGGREEN",
+                                             station_id: 101,
+                                             full_name: "Rosalie SpecialCaseMovement Dunkle")
+    OrganizationsUser.add_user_to_organization(special_case_movement_user, SpecialCaseMovementTeam.singleton)
+    special_case_movement_admin = User.create(css_id: "BVAGAQUA",
+                                              station_id: 101,
+                                              full_name: "Bryan SpecialCaseMovementAdmin Beekman")
+    OrganizationsUser.make_user_admin(special_case_movement_admin, SpecialCaseMovementTeam.singleton)
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
@@ -165,12 +173,7 @@ class SeedDB
 
   def create_change_hearing_disposition_task
     hearings_member = User.find_or_create_by(css_id: "BVATWARNER", station_id: 101)
-    hearing_day = FactoryBot.create(
-      :hearing_day,
-      created_by: hearings_member.css_id,
-      updated_by: hearings_member.css_id
-    )
-    hearing_day.update!(created_by_id: hearings_member.id, updated_by_id: hearings_member.id)
+    hearing_day = FactoryBot.create(:hearing_day, created_by: hearings_member, updated_by: hearings_member)
     veteran = FactoryBot.create(:veteran, first_name: "Abellona", last_name: "Valtas", file_number: 123_456_789)
     appeal = FactoryBot.create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number)
     root_task = FactoryBot.create(:root_task, appeal: appeal)
@@ -514,10 +517,9 @@ class SeedDB
           judge: User.find_by_css_id("BVAAABSHIRE"),
           request_type: (ro_key == "C") ? "C" : "V",
           scheduled_for: Time.zone.today + (index * 11).days,
-          created_by: user.css_id,
-          updated_by: user.css_id
+          created_by: user,
+          updated_by: user
         )
-        day.update!(created_by_id: user.id, updated_by_id: user.id)
 
         case index
         when 1
@@ -1060,6 +1062,13 @@ class SeedDB
       assigned_to: User.find_by(css_id: "BVAEBECKER"),
       appeal: FactoryBot.create(:appeal)
     )
+
+    FactoryBot.create_list(
+      :appeal,
+      8,
+      :with_post_intake_tasks,
+      docket_type: Constants.AMA_DOCKETS.direct_review
+    )
   end
 
   def create_board_grant_tasks
@@ -1195,15 +1204,14 @@ class SeedDB
     )
 
     user = User.find_by(css_id: "BVATWARNER")
-    day = HearingDay.create(
+    HearingDay.create(
       regional_office: "RO17",
       request_type: "V",
       scheduled_for: 5.days.from_now,
       room: "001",
-      created_by: user.css_id,
-      updated_by: user.css_id
+      created_by: user,
+      updated_by: user
     )
-    day.update!(created_by_id: user.id, updated_by_id: user.id)
   end
 
   def create_intake_users

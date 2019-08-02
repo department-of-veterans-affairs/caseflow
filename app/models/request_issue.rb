@@ -282,7 +282,8 @@ class RequestIssue < ApplicationRecord
         contested_decision_issue_id: data[:contested_decision_issue_id],
         ineligible_reason: data[:ineligible_reason],
         ineligible_due_to_id: data[:ineligible_due_to_id],
-        edited_description: data[:edited_description]
+        edited_description: data[:edited_description],
+        correction_type: data[:correction_type]
       }
     end
     # rubocop:enable Metrics/MethodLength
@@ -291,6 +292,7 @@ class RequestIssue < ApplicationRecord
   delegate :veteran, to: :decision_review
 
   def end_product_code
+    return if decision_review.processed_in_caseflow?
     return dta_end_product_code if remanded?
     return correction_end_product_code if correction?
 
@@ -391,7 +393,8 @@ class RequestIssue < ApplicationRecord
       contested_decision_issue_id: contested_decision_issue_id,
       withdrawal_date: withdrawal_date,
       contested_issue_description: contested_issue_description,
-      end_product_cleared: end_product_establishment&.status_cleared?
+      end_product_cleared: end_product_establishment&.status_cleared?,
+      end_product_code: end_product_code
     }
   end
 
@@ -606,6 +609,12 @@ class RequestIssue < ApplicationRecord
     @contention_disposition ||= end_product_establishment.fetch_dispositions_from_vbms.find do |disposition|
       disposition.contention_id.to_i == contention_reference_id
     end
+  end
+
+  def contention_missing?
+    return false unless contention_reference_id
+
+    !contention
   end
 
   def contention
@@ -824,7 +833,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_active_request_issue_by_rating!
-    return unless rating?
+    return unless associated_rating_issue?
 
     add_duplicate_issue_error(
       RequestIssue.active.find_by(contested_rating_issue_reference_id: contested_rating_issue_reference_id)
@@ -845,7 +854,7 @@ class RequestIssue < ApplicationRecord
 
   # TODO: use request issue benefit type once it's populated for request issues on build
   def temp_find_benefit_type
-    benefit_type || decision_review.benefit_type || contested_benefit_type
+    decision_review.benefit_type || benefit_type || contested_benefit_type
   end
 
   def choose_end_product_code(end_product_codes)

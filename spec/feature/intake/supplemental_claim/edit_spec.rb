@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-feature "Supplemental Claim Edit issues" do
+feature "Supplemental Claim Edit issues", :all_dbs do
   include IntakeHelpers
 
   before do
@@ -118,13 +118,40 @@ feature "Supplemental Claim Edit issues" do
     )
   end
 
+  context "when contentions disappear from VBMS between creation and edit" do
+    let(:request_issue) do
+      create(
+        :request_issue,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: rating.profile_date,
+        decision_review: supplemental_claim,
+        benefit_type: benefit_type,
+        contested_issue_description: "PTSD denied"
+      )
+    end
+
+    before do
+      supplemental_claim.create_issues!([request_issue])
+      supplemental_claim.establish!
+      supplemental_claim.reload
+      request_issue.reload
+      Fakes::VBMSService.remove_contention!(request_issue.contention)
+    end
+
+    it "automatically removes issues" do
+      visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
+
+      expect(page).to_not have_content("PTSD denied")
+      expect(request_issue.reload).to be_closed
+    end
+  end
+
   context "when there is a non-rating end product" do
     let!(:nonrating_request_issue) do
       RequestIssue.create!(
         decision_review: supplemental_claim,
         nonrating_issue_category: "Military Retired Pay",
         nonrating_issue_description: "nonrating description",
-        contention_reference_id: "1234",
         benefit_type: benefit_type,
         decision_date: 1.month.ago
       )
@@ -546,38 +573,6 @@ feature "Supplemental Claim Edit issues" do
       end
     end
 
-    feature "with cleared end product" do
-      let!(:cleared_end_product) do
-        Generators::EndProduct.build(
-          veteran_file_number: veteran.file_number,
-          bgs_attrs: { status_type_code: "CLR" }
-        )
-      end
-
-      let!(:cleared_end_product_establishment) do
-        create(:end_product_establishment,
-               source: supplemental_claim,
-               synced_status: "CLR",
-               reference_id: cleared_end_product.claim_id)
-      end
-
-      scenario "prevents edits on eps that have cleared" do
-        visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
-        expect(page).to have_current_path("/supplemental_claims/#{rating_ep_claim_id}/edit/cleared_eps")
-        expect(page).to have_content("Issues Not Editable")
-        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
-      end
-
-      context "when correct_claim_reviews is enabled" do
-        before { FeatureToggle.enable!(:correct_claim_reviews) }
-
-        it "allows a user to navigate to the edit page" do
-          visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
-          expect(page).to have_content("Edit Issues")
-        end
-      end
-    end
-
     context "when EPs have cleared very recently" do
       before do
         ep = supplemental_claim.reload.end_product_establishments.first.result
@@ -677,7 +672,7 @@ feature "Supplemental Claim Edit issues" do
         expect(page).to have_current_path(
           "/supplemental_claims/#{rating_ep_claim_id}/edit/confirmation"
         )
-        expect(page).to have_content("Review Withdrawn")
+        expect(page).to have_content("Claim Issues Saved")
 
         withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
         expect(withdrawn_issue).to_not be_nil
@@ -827,7 +822,6 @@ feature "Supplemental Claim Edit issues" do
             description: "Description for Accrued",
             date: 1.day.ago.to_date.mdY
           )
-
           click_remove_intake_issue_dropdown(1)
           click_withdraw_intake_issue_dropdown(2)
           fill_in "withdraw-date", with: withdraw_date

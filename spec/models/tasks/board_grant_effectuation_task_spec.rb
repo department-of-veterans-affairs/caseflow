@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe BoardGrantEffectuationTask do
-  let(:task_status) { "assigned" }
-  let(:task) { create(:board_grant_effectuation_task, status: task_status) }
+describe BoardGrantEffectuationTask, :postgres do
+  let(:trait) { :assigned }
+  let(:task) { create(:board_grant_effectuation_task, trait) }
 
   context "#label" do
     subject { task.label }
@@ -26,7 +27,7 @@ describe BoardGrantEffectuationTask do
     end
 
     context "completed task" do
-      let(:task_status) { "completed" }
+      let(:trait) { :completed }
 
       it "cannot be completed again" do
         expect(subject).to eq false

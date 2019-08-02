@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-describe AppealRequestIssuesPolicy do
+require "support/database_cleaner"
+
+describe AppealRequestIssuesPolicy, :postgres do
   describe "#editable?" do
     let(:appeal) { build_stubbed(:appeal) }
     let(:user) { build_stubbed(:user) }
@@ -12,8 +14,7 @@ describe AppealRequestIssuesPolicy do
         create(:task,
                type: "AttorneyTask",
                appeal: appeal,
-               assigned_to: user,
-               status: Constants.TASK_STATUSES.assigned)
+               assigned_to: user)
 
         expect(subject).to be true
       end
@@ -24,8 +25,7 @@ describe AppealRequestIssuesPolicy do
         create(:task,
                type: "AttorneyTask",
                appeal: appeal,
-               assigned_to: build_stubbed(:user),
-               status: Constants.TASK_STATUSES.assigned)
+               assigned_to: build_stubbed(:user))
 
         expect(subject).to be false
       end
@@ -34,10 +34,10 @@ describe AppealRequestIssuesPolicy do
     context "when appeal has in-progress judge task assigned to user" do
       it "returns true" do
         create(:task,
+               :in_progress,
                type: "JudgeDecisionReviewTask",
                appeal: appeal,
-               assigned_to: user,
-               status: Constants.TASK_STATUSES.in_progress)
+               assigned_to: user)
 
         expect(subject).to be true
       end
@@ -46,10 +46,10 @@ describe AppealRequestIssuesPolicy do
     context "when appeal has completed attorney task assigned to user" do
       it "returns false" do
         create(:task,
+               :completed,
                type: "AttorneyTask",
                appeal: appeal,
-               assigned_to: user,
-               status: Constants.TASK_STATUSES.completed)
+               assigned_to: user)
 
         expect(subject).to be false
       end
@@ -60,8 +60,7 @@ describe AppealRequestIssuesPolicy do
         create(:task,
                type: "ColocatedTask",
                appeal: appeal,
-               assigned_to: user,
-               status: Constants.TASK_STATUSES.assigned)
+               assigned_to: user)
 
         expect(subject).to be false
       end
@@ -76,8 +75,7 @@ describe AppealRequestIssuesPolicy do
         create(:task,
                type: "ColocatedTask",
                appeal: appeal,
-               assigned_to: build_stubbed(:user),
-               status: Constants.TASK_STATUSES.assigned)
+               assigned_to: build_stubbed(:user))
 
         expect(subject).to be true
       end
@@ -92,8 +90,7 @@ describe AppealRequestIssuesPolicy do
         create(:task,
                type: "AttorneyTask",
                appeal: appeal,
-               assigned_to: build_stubbed(:user),
-               status: Constants.TASK_STATUSES.assigned)
+               assigned_to: build_stubbed(:user))
 
         expect(subject).to be false
       end

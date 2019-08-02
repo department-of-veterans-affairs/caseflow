@@ -271,6 +271,21 @@ module IntakeHelpers
     find("#issue-action-#{issue_num}_withdraw").click
   end
 
+  def click_correct_intake_issue_dropdown(text)
+    issue_el = find_intake_issue_by_text(text)
+    issue_num = issue_el[:"data-key"].sub(/^issue-/, "")
+    find("#issue-action-#{issue_num}").click
+    find("#issue-action-#{issue_num}_correct").click
+  end
+
+  def select_correction_type_from_modal(value)
+    find("label[for=correctionType_#{value}]").click
+  end
+
+  def click_correction_type_modal_submit
+    find(".correction-type-submit").click
+  end
+
   def click_remove_intake_issue_by_text(text)
     issue_el = find_intake_issue_by_text(text)
     issue_el.find(".remove-issue").click
@@ -323,6 +338,14 @@ module IntakeHelpers
   def find_intake_issue_number_by_text(text)
     find_intake_issue_by_text(text).find(".issue-num").text.delete(".")
   end
+
+  # def find_correction_type_by_value(value)
+  #   find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue-container"]').each do |node|
+  #     if node.text.match?(/#{text}/)
+  #       return node.find(".issue")
+  #     end
+  #   end
+  # end
 
   def expect_ineligible_issue(number)
     number = number.strip if number.is_a?(String)
@@ -712,7 +735,7 @@ module IntakeHelpers
     request_issue_update = RequestIssuesUpdate.find_by(review: decision_review)
 
     # existing issues should not be added or removed
-    expect(request_issue_update.created_issues.map(&:id)).to_not include(non_modified_ids)
+    expect(request_issue_update.added_issues.map(&:id)).to_not include(non_modified_ids)
     expect(request_issue_update.removed_issues.map(&:id)).to_not include(non_modified_ids)
   end
   # rubocop:enable Metrics/AbcSize

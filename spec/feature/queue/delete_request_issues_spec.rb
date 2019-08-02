@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-feature "correcting issues" do
+feature "correcting issues", :postgres do
   before { FeatureToggle.enable!(:ama_decision_issues) }
   after { FeatureToggle.disable!(:ama_decision_issues) }
 

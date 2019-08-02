@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe Distribution do
-  let(:judge) { FactoryBot.create(:user) }
+describe Distribution, :all_dbs do
+  let(:judge) { create(:user) }
   let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
   let(:member_count) { 5 }
-  let(:attorneys) { FactoryBot.create_list(:user, member_count) }
+  let(:attorneys) { create_list(:user, member_count) }
   let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge.css_id) }
 
   before do
@@ -18,8 +19,8 @@ describe Distribution do
 
     # set up a couple of extra judge teams
     2.times do
-      team = JudgeTeam.create_for_judge(FactoryBot.create(:user))
-      FactoryBot.create_list(:user, 5).each do |attorney|
+      team = JudgeTeam.create_for_judge(create(:user))
+      create_list(:user, 5).each do |attorney|
         OrganizationsUser.add_user_to_organization(attorney, team)
       end
     end
@@ -212,7 +213,7 @@ describe Distribution do
     end
 
     context "when the judge has an empty team" do
-      let(:judge_wo_attorneys) { FactoryBot.create(:user) }
+      let(:judge_wo_attorneys) { create(:user) }
       let!(:vacols_judge_wo_attorneys) { create(:staff, :judge_role, sdomainid: judge_wo_attorneys.css_id) }
 
       subject { Distribution.create(judge: judge_wo_attorneys) }

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.feature HearingAdminActionForeignVeteranCaseTask do
+RSpec.feature HearingAdminActionForeignVeteranCaseTask, :postgres do
   let!(:veteran) { create(:veteran) }
   let!(:appeal) { create(:appeal, veteran: veteran) }
   let(:root_task) { create(:root_task, appeal: appeal) }
@@ -95,7 +96,7 @@ RSpec.feature HearingAdminActionForeignVeteranCaseTask do
         end
 
         it "case shows up in schedule veterans list" do
-          allow(HearingDay).to receive(:load_days).and_return([create(:hearing_day)])
+          allow_any_instance_of(HearingDayRange).to receive(:load_days).and_return([create(:hearing_day)])
 
           visit("/hearings/schedule/assign?roValue=RO17")
 

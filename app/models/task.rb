@@ -16,14 +16,16 @@ class Task < ApplicationRecord
   has_many :task_timers, dependent: :destroy
 
   validates :assigned_to, :appeal, :type, :status, presence: true
+  validate :status_is_valid_on_create, on: :create
 
   before_create :set_assigned_at
   after_create :create_and_auto_assign_child_task, if: :automatically_assign_org_task?
   after_create :tell_parent_task_child_task_created
 
-  before_save :set_timestamps
+  before_save :set_timestamp
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
+  after_update :cancel_task_timers, if: :task_just_closed?
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -82,6 +84,10 @@ class Task < ApplicationRecord
 
   def open_with_no_children?
     open? && children.empty?
+  end
+
+  def active?
+    self.class.active_statuses.include?(status)
   end
 
   # available_actions() returns an array of options selected by
@@ -279,7 +285,7 @@ class Task < ApplicationRecord
   end
 
   def when_child_task_completed(child_task)
-    update_status_if_children_tasks_are_complete(child_task)
+    update_status_if_children_tasks_are_closed(child_task)
   end
 
   def when_child_task_created(child_task)
@@ -323,6 +329,7 @@ class Task < ApplicationRecord
       t.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
       t.assigned_to = self.class.child_task_assignee(parent, reassign_params)
       t.instructions = [instructions, reassign_params[:instructions]].flatten
+      t.status = Constants.TASK_STATUSES.assigned
       t.save!
     end
 
@@ -424,6 +431,12 @@ class Task < ApplicationRecord
     active_child_timed_hold_task&.update!(status: Constants.TASK_STATUSES.cancelled)
   end
 
+  def cancel_task_timers
+    task_timers.processable.each do |task_timer|
+      task_timer.update!(canceled_at: Time.zone.now)
+    end
+  end
+
   def task_just_closed?
     saved_change_to_attribute?("status") && !open?
   end
@@ -432,14 +445,26 @@ class Task < ApplicationRecord
     task_just_closed? && parent
   end
 
-  def update_status_if_children_tasks_are_complete(child_task)
+  def update_status_if_children_tasks_are_closed(child_task)
     if children.any? && children.open.empty? && on_hold?
       if assigned_to.is_a?(Organization) && cascade_closure_from_child_task?(child_task)
-        return update!(status: Constants.TASK_STATUSES.completed)
+        return all_children_cancelled_or_completed
       end
 
       update!(status: Constants.TASK_STATUSES.assigned)
     end
+  end
+
+  def all_children_cancelled_or_completed
+    if all_children_cancelled?
+      update!(status: Constants.TASK_STATUSES.cancelled)
+    else
+      update!(status: Constants.TASK_STATUSES.completed)
+    end
+  end
+
+  def all_children_cancelled?
+    children.pluck(:status).uniq == [Constants.TASK_STATUSES.cancelled]
   end
 
   def cascade_closure_from_child_task?(child_task)
@@ -458,12 +483,23 @@ class Task < ApplicationRecord
     cancelled: :closed_at
   }.freeze
 
-  def set_timestamps
+  def set_timestamp
     return unless will_save_change_to_attribute?(:status)
 
     timestamp_to_update = STATUS_TIMESTAMPS[status_change_to_be_saved&.last&.to_sym]
     return if will_save_change_to_attribute?(timestamp_to_update)
 
     self[timestamp_to_update] = Time.zone.now
+  end
+
+  def status_is_valid_on_create
+    if status != Constants.TASK_STATUSES.assigned
+      # Send this to Sentry for now to find cases where we create
+      # tasks with statuses other than assigned
+      # fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
+      Raven.capture_exception(Caseflow::Error::InvalidStatusOnTaskCreate.new)
+    end
+
+    true
   end
 end

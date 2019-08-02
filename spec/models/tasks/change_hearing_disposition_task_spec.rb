@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe ChangeHearingDispositionTask do
-  let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
-  let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-  let(:distribution_task) { FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task) }
-  let(:hearing_task) { FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal) }
+describe ChangeHearingDispositionTask, :postgres do
+  let(:appeal) { create(:appeal, :hearing_docket) }
+  let(:root_task) { create(:root_task, appeal: appeal) }
+  let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
+  let(:hearing_task) { create(:hearing_task, parent: distribution_task, appeal: appeal) }
 
   context "create a new ChangeHearingDispositionTask" do
     let(:task_params) { { appeal: appeal, parent: hearing_task } }
@@ -19,7 +20,7 @@ describe ChangeHearingDispositionTask do
     end
 
     context "there is a hearings management org user" do
-      let!(:hearing_admin_user) { FactoryBot.create(:hearings_coordinator) }
+      let!(:hearing_admin_user) { create(:hearings_coordinator) }
 
       before do
         OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
@@ -31,7 +32,7 @@ describe ChangeHearingDispositionTask do
     end
 
     context "there is a hearings management org user" do
-      let(:hearings_management_user) { FactoryBot.create(:user, station_id: 101) }
+      let(:hearings_management_user) { create(:user, station_id: 101) }
 
       before do
         OrganizationsUser.add_user_to_organization(hearings_management_user, HearingsManagement.singleton)

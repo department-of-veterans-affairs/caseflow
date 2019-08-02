@@ -22,8 +22,13 @@ export const toggleUntimelyExemptionModal = (currentIssueAndNotes = {}) => ({
   payload: { currentIssueAndNotes }
 });
 
-export const toggleIssueRemoveModal = () => ({
-  type: ACTIONS.TOGGLE_ISSUE_REMOVE_MODAL
+export const toggleIssueRemoveModal = (index) => ({
+  type: ACTIONS.TOGGLE_ISSUE_REMOVE_MODAL,
+  payload: { index }
+});
+
+export const toggleCorrectionTypeModal = () => ({
+  type: ACTIONS.TOGGLE_CORRECTION_TYPE_MODAL
 });
 
 export const toggleLegacyOptInModal = (currentIssueAndNotes = {}) => ({
@@ -46,26 +51,16 @@ export const setIssueWithdrawalDate = (withdrawalDate) => ({
   payload: { withdrawalDate }
 });
 
-export const correctIssue = (index) => ({
+export const correctIssue = ({ index, correctionType }) => ({
   type: ACTIONS.CORRECT_ISSUE,
-  payload: { index }
+  payload: { index,
+    correctionType }
 });
 
 export const undoCorrection = (index) => ({
   type: ACTIONS.UNDO_CORRECTION,
   payload: { index }
 });
-
-export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.ADD_ISSUE,
-    payload: {
-      isUnidentified: true,
-      description,
-      notes
-    }
-  });
-};
 
 export const setEditContentionText = (issueIdx, editedDescription) => ({
   type: ACTIONS.SET_EDIT_CONTENTION_TEXT,
@@ -75,7 +70,19 @@ export const setEditContentionText = (issueIdx, editedDescription) => ({
   }
 });
 
-export const addRatingRequestIssue = (args) => (dispatch) => {
+export const addUnidentifiedIssue = (description, notes, correctionType) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.ADD_ISSUE,
+    payload: {
+      isUnidentified: true,
+      description,
+      notes,
+      correctionType
+    }
+  });
+};
+
+export const addContestableIssue = (args) => (dispatch) => {
   const currentIssue = issueByIndex(args.contestableIssues, args.contestableIssueIndex);
 
   dispatch({
@@ -98,7 +105,8 @@ export const addRatingRequestIssue = (args) => (dispatch) => {
       untimelyExemptionNotes: args.untimelyExemptionNotes,
       vacolsId: args.vacolsId,
       vacolsSequenceId: args.vacolsSequenceId,
-      eligibleForSocOptIn: args.eligibleForSocOptIn
+      eligibleForSocOptIn: args.eligibleForSocOptIn,
+      correctionType: args.correctionType
     }
   });
 };
@@ -120,7 +128,8 @@ export const addNonratingRequestIssue = (args) => (dispatch) => {
       eligibleForSocOptIn: args.eligibleForSocOptIn,
       ineligibleDueToId: args.ineligibleDueToId,
       ineligibleReason: args.ineligibleReason,
-      decisionReviewTitle: args.decisionReviewTitle
+      decisionReviewTitle: args.decisionReviewTitle,
+      correctionType: args.correctionType
     }
   });
 };

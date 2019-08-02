@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe RequestIssueContention do
+describe RequestIssueContention, :postgres do
   let(:decision_review) { create(:higher_level_review) }
   let!(:end_product_establishment) { create(:end_product_establishment) }
   let!(:contention_reference_id) { "1234" }
@@ -43,11 +44,11 @@ describe RequestIssueContention do
     let(:edited_description) { "new request issue description" }
 
     it "updates the contention in VBMS" do
+      updated_contention = request_issue.contention
+      updated_contention.text = edited_description
+
       expect(subject).to be true
       expect(request_issue.contention_updated_at).to be_within(1.second).of Time.zone.now
-
-      updated_contention = contention
-      updated_contention.text = edited_description
       expect(Fakes::VBMSService).to have_received(:update_contention!).with(updated_contention)
     end
 
@@ -64,9 +65,11 @@ describe RequestIssueContention do
     subject { request_issue_contention.remove! }
 
     it "calls VBMS with the appropriate arguments to remove the contention" do
+      removed_contention = request_issue.contention
+
       subject
 
-      expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention)
+      expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(removed_contention)
       expect(request_issue.contention_removed_at).to be_within(1.second).of Time.zone.now
     end
 
@@ -84,8 +87,9 @@ describe RequestIssueContention do
     context "when contention does not exist" do
       let(:contention_id) { "9999" }
 
-      it "raises ContentionNotFound error" do
-        expect { subject }.to raise_error(EndProductEstablishment::ContentionNotFound)
+      it "marks request issue as removed" do
+        subject
+        expect(request_issue.contention_removed_at).to_not be_nil
       end
     end
   end

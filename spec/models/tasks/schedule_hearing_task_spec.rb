@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe ScheduleHearingTask do
-  let(:vacols_case) { FactoryBot.create(:case, bfcurloc: "57") }
-  let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
-  let!(:hearings_management_user) { FactoryBot.create(:hearings_coordinator) }
+describe ScheduleHearingTask, :all_dbs do
+  let(:vacols_case) { create(:case, bfcurloc: "57") }
+  let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+  let!(:hearings_management_user) { create(:hearings_coordinator) }
   let(:test_hearing_date_vacols) do
     Time.use_zone("Eastern Time (US & Canada)") do
       Time.zone.local(2018, 11, 2, 6, 0, 0)
@@ -23,7 +24,7 @@ describe ScheduleHearingTask do
   end
 
   context "create a new ScheduleHearingTask" do
-    let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
+    let(:appeal) { create(:appeal, :hearing_docket) }
 
     subject do
       InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
@@ -49,7 +50,7 @@ describe ScheduleHearingTask do
     end
 
     context "there is a hearing admin org user" do
-      let(:hearing_admin_user) { FactoryBot.create(:user, station_id: 101) }
+      let(:hearing_admin_user) { create(:user, station_id: 101) }
 
       before do
         OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
@@ -65,9 +66,9 @@ describe ScheduleHearingTask do
   end
 
   context "create a ScheduleHearingTask with parent other than HearingTask type" do
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
 
-    subject { FactoryBot.create(:schedule_hearing_task, parent: root_task) }
+    subject { create(:schedule_hearing_task, parent: root_task) }
 
     it "creates a HearingTask in between the input parent and the ScheduleHearingTask" do
       expect { subject }.to_not raise_error
@@ -187,20 +188,22 @@ describe ScheduleHearingTask do
   end
 
   describe "#create_change_hearing_disposition_task" do
-    let(:appeal) { FactoryBot.create(:appeal) }
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let(:appeal) { create(:appeal) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
     let(:past_hearing_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
-    let(:hearing) { FactoryBot.create(:hearing, appeal: appeal, disposition: past_hearing_disposition) }
-    let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-    let!(:disposition_task) { FactoryBot.create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
-    let!(:association) { FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
-    let!(:hearing_task_2) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-    let!(:task) { FactoryBot.create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
+    let(:hearing) { create(:hearing, appeal: appeal, disposition: past_hearing_disposition) }
+    let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+    let!(:disposition_task) do
+      create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal)
+    end
+    let!(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
+    let!(:hearing_task_2) { create(:hearing_task, parent: root_task, appeal: appeal) }
+    let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
     let(:instructions) { "These are my detailed instructions for a schedule hearing task." }
 
     before do
       [hearing_task, disposition_task].each { |task| task&.update!(status: Constants.TASK_STATUSES.completed) }
-      FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
+      create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
     end
 
     subject { task.create_change_hearing_disposition_task(instructions) }

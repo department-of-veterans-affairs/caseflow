@@ -1,19 +1,20 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe HearingTask do
+describe HearingTask, :postgres do
   describe ".create_change_hearing_disposition_task" do
-    let(:appeal) { FactoryBot.create(:appeal) }
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+    let(:appeal) { create(:appeal) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
+    let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
     let(:instructions) { "These are the instructions I've written for you." }
     let!(:disposition_task) do
-      FactoryBot.create(
+      create(
         :assign_hearing_disposition_task,
+        :in_progress,
         parent: hearing_task,
-        appeal: appeal,
-        status: Constants.TASK_STATUSES.in_progress
+        appeal: appeal
       )
     end
     let!(:transcription_task) { create(:transcription_task, parent: disposition_task, appeal: appeal) }
@@ -38,16 +39,16 @@ describe HearingTask do
   end
 
   describe "#assign_hearing_disposition_task" do
-    let(:root_task) { FactoryBot.create(:root_task) }
-    let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: root_task.appeal) }
+    let(:root_task) { create(:root_task) }
+    let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: root_task.appeal) }
     let(:disposition_task_type) { :assign_hearing_disposition_task }
-    let(:disposition_task_status) { Constants.TASK_STATUSES.assigned }
+    let(:trait) { :assigned }
     let!(:disposition_task) do
-      FactoryBot.create(
+      create(
         disposition_task_type,
+        trait,
         parent: hearing_task,
-        appeal: root_task.appeal,
-        status: disposition_task_status
+        appeal: root_task.appeal
       )
     end
 
@@ -58,7 +59,7 @@ describe HearingTask do
     end
 
     context "the disposition task is not active" do
-      let(:disposition_task_status) { Constants.TASK_STATUSES.cancelled }
+      let(:trait) { :cancelled }
 
       it "returns nil" do
         expect(subject).to be_nil

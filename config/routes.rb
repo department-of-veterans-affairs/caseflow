@@ -128,7 +128,7 @@ Rails.application.routes.draw do
   resources :beaam_appeals, only: [:index]
 
   resources :regional_offices, only: [:index]
-  get '/regional_offices/:regional_office/open_hearing_dates', to: "regional_offices#open_hearing_dates"
+  get '/regional_offices/:regional_office/hearing_dates', to: "regional_offices#hearing_dates"
 
   namespace :hearings do
     resources :worksheets, only: [:update, :show], param: :id
@@ -288,7 +288,7 @@ Rails.application.routes.draw do
   namespace :test do
     get "/error", to: "users#show_error"
 
-    resources :users, only: [:index]
+    resources :users, only: [:index, :show]
     if ApplicationController.dependencies_faked?
       post "/set_user/:id", to: "users#set_user", as: "set_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'

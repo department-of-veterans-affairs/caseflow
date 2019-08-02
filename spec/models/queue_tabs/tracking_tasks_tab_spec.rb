@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe TrackingTasksTab do
   let(:tab) { TrackingTasksTab.new(params) }
   let(:params) { { assignee_name: assignee_name } }

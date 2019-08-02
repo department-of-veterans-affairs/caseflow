@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-feature "NonComp Record Request Page" do
+feature "NonComp Record Request Page", :postgres do
   before do
     FeatureToggle.enable!(:decision_reviews)
     Timecop.freeze(post_ama_start_date)

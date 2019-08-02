@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 require "faker"
 
-describe FetchHearingLocationsForVeteransJob do
+describe FetchHearingLocationsForVeteransJob, :all_dbs do
   let!(:job) { FetchHearingLocationsForVeteransJob.new }
 
   describe "find_appeals_ready_for_geomatching" do
@@ -77,11 +78,12 @@ describe FetchHearingLocationsForVeteransJob do
         let!(:appeal_2) { create(:appeal, veteran_file_number: "222222222") }
         let!(:task_3) { create(:schedule_hearing_task, appeal: appeal_2) }
         let!(:completed_admin_action) do
-          HearingAdminActionVerifyAddressTask.create!(
+          create(
+            :hearing_admin_action_verify_address_task,
+            :completed,
             appeal: appeal_2,
             assigned_to: HearingsManagement.singleton,
-            parent: task_3,
-            status: "completed"
+            parent: task_3
           )
         end
         # should not be returned
@@ -90,14 +92,15 @@ describe FetchHearingLocationsForVeteransJob do
           (0..2).each do |number|
             create(:veteran, file_number: "23456781#{number}")
             app = create(:appeal, veteran_file_number: "23456781#{number}")
-            create(:schedule_hearing_task, appeal: app, status: "completed")
+            create(:schedule_hearing_task, :completed, appeal: app)
           end
 
           # task with Address admin action
           create(:veteran, file_number: "234567815")
           app_2 = create(:appeal, veteran_file_number: "234567815")
           tsk = create(:schedule_hearing_task, appeal: app_2)
-          HearingAdminActionVerifyAddressTask.create!(
+          create(
+            :hearing_admin_action_verify_address_task,
             appeal: app_2,
             assigned_to: HearingsManagement.singleton,
             parent: tsk
@@ -107,7 +110,8 @@ describe FetchHearingLocationsForVeteransJob do
           create(:veteran, file_number: "234567816")
           app_3 = create(:appeal, veteran_file_number: "234567816")
           tsk_2 = create(:schedule_hearing_task, appeal: app_3)
-          HearingAdminActionForeignVeteranCaseTask.create!(
+          create(
+            :hearing_admin_action_verify_address_task,
             appeal: app_3,
             assigned_to: HearingsManagement.singleton,
             parent: tsk_2

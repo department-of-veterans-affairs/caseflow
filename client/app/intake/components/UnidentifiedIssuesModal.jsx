@@ -5,6 +5,7 @@ import React from 'react';
 import { addUnidentifiedIssue } from '../actions/addIssues';
 import Modal from '../../components/Modal';
 import TextField from '../../components/TextField';
+import { isCorrection } from '../util';
 
 class UnidentifiedIssuesModal extends React.Component {
   constructor(props) {
@@ -18,7 +19,9 @@ class UnidentifiedIssuesModal extends React.Component {
   }
 
   onAddIssue = () => {
-    this.props.addUnidentifiedIssue(this.state.description, this.state.notes);
+    const correctionType = isCorrection(true, this.props.intakeData) ? 'control' : null;
+
+    this.props.addUnidentifiedIssue(this.state.description, this.state.notes, correctionType);
     this.props.closeHandler();
   }
 

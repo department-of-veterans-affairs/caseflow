@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe Claimant do
+describe Claimant, :postgres do
   let(:name) { nil }
   let(:relationship_to_veteran) { nil }
   let(:claimant_info) do
@@ -38,7 +39,7 @@ describe Claimant do
   end
 
   context "lazy loading instance attributes from BGS" do
-    let(:claimant) { FactoryBot.create(:claimant) }
+    let(:claimant) { create(:claimant) }
 
     context "when claimant exists in BGS" do
       let(:first_name) { "HARRY" }

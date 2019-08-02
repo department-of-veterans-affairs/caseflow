@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
+RSpec.describe Idt::Api::V1::AppealsController, :all_dbs, type: :controller do
   describe "GET /idt/api/v1/appeals" do
     let(:user) { create(:user, css_id: "TEST_ID", full_name: "George Michael") }
     let(:token) do
@@ -519,9 +520,9 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
   end
 
   describe "POST /idt/api/v1/appeals/:appeal_id/outcode" do
-    let(:user) { FactoryBot.create(:user) }
-    let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: user.css_id) }
-    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:user) { create(:user) }
+    let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: user.css_id) }
+    let(:root_task) { create(:root_task) }
     let(:citation_number) { "A18123456" }
     let(:params) do
       { appeal_id: root_task.appeal.external_id,
@@ -537,11 +538,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       key, t = Idt::Token.generate_one_time_key_and_proposed_token
       Idt::Token.activate_proposed_token(key, user.css_id)
       request.headers["TOKEN"] = t
-      FeatureToggle.enable!(:decision_document_upload)
-    end
-
-    after do
-      FeatureToggle.disable!(:decision_document_upload)
     end
 
     context "when some params are missing" do
