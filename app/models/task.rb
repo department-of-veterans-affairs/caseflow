@@ -448,21 +448,24 @@ class Task < ApplicationRecord
   def update_status_if_children_tasks_are_closed(child_task)
     if children.any? && children.open.empty? && on_hold?
       if assigned_to.is_a?(Organization) && cascade_closure_from_child_task?(child_task)
-        return all_children_closed
+        return all_children_cancelled_or_completed
       end
 
       update!(status: Constants.TASK_STATUSES.assigned)
     end
   end
 
-  def all_children_closed
-    if children.all?(&:cancelled?)
-      return update!(status: Constants.TASK_STATUSES.cancelled)
+  def all_children_cancelled_or_completed
+    if all_children_cancelled?
+      update!(status: Constants.TASK_STATUSES.cancelled)
     else
-      return update!(status: Constants.TASK_STATUSES.completed)
+      update!(status: Constants.TASK_STATUSES.completed)
     end
   end
 
+  def all_children_cancelled?
+    children.pluck(:status).uniq == [Constants.TASK_STATUSES.cancelled]
+  end
 
   def cascade_closure_from_child_task?(child_task)
     type == child_task&.type
