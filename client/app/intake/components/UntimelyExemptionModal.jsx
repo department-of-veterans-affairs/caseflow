@@ -65,7 +65,6 @@ class UntimelyExemptionModal extends React.Component {
     const { intakeData, onCancel, currentIssue } = this.props;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
-    // const issue = intakeData.currentIssueAndNotes.currentIssue;
     const issue = currentIssue;
 
     return (

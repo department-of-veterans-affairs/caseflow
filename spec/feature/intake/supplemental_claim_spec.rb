@@ -850,7 +850,7 @@ feature "Supplemental Claim Intake", :all_dbs do
         setup_legacy_opt_in_appeals(veteran.file_number)
       end
 
-      fcontext "with legacy_opt_in_approved" do
+      context "with legacy_opt_in_approved" do
         let(:receipt_date) { Time.zone.today }
 
         scenario "adding issues" do

@@ -32,7 +32,7 @@ class AddIssuesModal extends React.Component {
       currentIssue.index = selectedContestableIssueIndex;
     }
 
-    // Ensure we have a value for decisionDate (this used to be done in action)
+    // Ensure we have a value for decisionDate
     currentIssue.decisionDate = currentIssue.decisionDate || currentIssue.approxDecisionDate;
 
     this.props.onSubmit({

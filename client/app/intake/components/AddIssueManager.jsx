@@ -29,9 +29,9 @@ class AddIssueManager extends React.Component {
 
     // Determine initial step -- though we still honor prop, if exists
     const { intakeData } = this.props;
-    const hasRatingIssues = Boolean(Object.keys(intakeData.contestableIssues).length);
+    const hasContestableIssues = Boolean(Object.keys(intakeData.contestableIssues).length);
 
-    if (!this.props.currentModal && !hasRatingIssues) {
+    if (!this.props.currentModal && !hasContestableIssues) {
       this.state.currentModal = 'NonratingRequestIssueModal';
     }
 
@@ -96,16 +96,14 @@ class AddIssueManager extends React.Component {
               }
             },
             () => {
+              const { currentIssue } = this.state;
+
               if (this.hasLegacyAppeals()) {
                 this.setState({ currentModal: 'LegacyOptInModal' });
               } else if (this.requiresUntimelyExemption()) {
-                const { currentIssue } = this.state;
-
                 this.setState({ currentModal: 'UntimelyExemptionModal',
                   addtlProps: { currentIssue } });
               } else {
-                const { currentIssue } = this.state;
-
                 // Sequence complete — dispatch action to add issue
                 this.props.addIssue(currentIssue);
 
@@ -174,13 +172,6 @@ class AddIssueManager extends React.Component {
               if (this.requiresUntimelyExemption()) {
                 this.setState({ currentModal: 'UntimelyExemptionModal',
                   addtlProps: { currentIssue } });
-              } else if (this.state.currentIssue.category) {
-                // Safe to combine these conditionals now, I guess...?
-
-                // Sequence complete — dispatch action to add issue
-                this.props.addIssue(currentIssue);
-                this.setState(initialState);
-                this.props.onComplete();
               } else {
                 this.props.addIssue(currentIssue);
 
