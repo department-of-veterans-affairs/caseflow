@@ -2,8 +2,23 @@
 
 class Api::Docs::V3::DocsController < ActionController::Base
   protect_from_forgery with: :null_session
+  before_action :is_api_released?
+
   def decision_reviews
     swagger = YAML.safe_load(File.read("app/controllers/api/docs/v3/decision_reviews.yaml"))
     render json: swagger
+  end
+
+  def is_api_released?
+    return if FeatureToggle.enabled?(:external_api_released)
+    render json: {
+        errors: [
+          {
+            status: "501",
+            title:  "Not Implemented",
+            detail: "This endpoint is not yet supported."
+          }
+        ]
+      }, status: 501
   end
 end

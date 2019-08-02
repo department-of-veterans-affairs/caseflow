@@ -30,19 +30,17 @@ Rails.application.routes.draw do
       resources :appeals, only: :index
       resources :hearings, only: :show, param: :hearing_day
     end
-    if FeatureToggle.enabled?(:external_api_access)
-      namespace :v3 do
-        namespace :decision_review do
-          resources :higher_level_reviews, only: :create
-        end
+    namespace :v3 do
+      namespace :decision_review do
+        resources :higher_level_reviews, only: :create
       end
-      namespace :docs do
-        namespace :v3, defaults: { format: 'json' } do
-          get 'decision_reviews', to: 'docs#decision_reviews'
-        end
-      end
-      get "metadata", to: 'metadata#index'
     end
+    namespace :docs do
+      namespace :v3, defaults: { format: 'json' } do
+        get 'decision_reviews', to: 'docs#decision_reviews'
+      end
+    end
+    get "metadata", to: 'metadata#index'
   end
 
   namespace :idt do

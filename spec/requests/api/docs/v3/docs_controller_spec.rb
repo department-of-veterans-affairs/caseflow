@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 describe Api::Docs::V3::DocsController, type: :request do
+  before do
+    FeatureToggle.enable!(:external_api_released)
+  end
   describe "#decision_reviews" do
     it "should successfully return openapi spec" do
       get "/api/docs/v3/decision_reviews"
