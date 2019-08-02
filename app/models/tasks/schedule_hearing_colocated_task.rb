@@ -24,4 +24,16 @@ class ScheduleHearingColocatedTask < ColocatedTask
   def hide_from_case_timeline
     true
   end
+
+  private
+
+  def vacols_location
+    # Return to attorney if the task is cancelled. For instance, if HearingsManagement sees that the hearing was
+    # actually held.
+    return assigned_by.vacols_uniq_id if children.all? { |child| child.status == Constants.TASK_STATUSES.cancelled }
+
+    # Schedule hearing with a task (instead of changing Location in VACOLS, the old way)
+    ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)
+    LegacyAppeal::LOCATION_CODES[:caseflow]
+  end
 end
