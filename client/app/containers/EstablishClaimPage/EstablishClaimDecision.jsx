@@ -228,10 +228,12 @@ EstablishClaimDecision.propTypes = {
   decisionType: PropTypes.string.isRequired,
   handleToggleCancelTaskModal: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
+  handleSpecialIssueFieldChange: PropTypes.func,
   pdfLink: PropTypes.string.isRequired,
   pdfjsLink: PropTypes.string.isRequired,
   specialIssues: PropTypes.object.isRequired,
-  task: PropTypes.object.isRequired
+  task: PropTypes.object.isRequired,
+  loading: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

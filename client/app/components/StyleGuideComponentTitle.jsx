@@ -57,7 +57,7 @@ export default class StyleGuideComponentTitle extends React.PureComponent {
   }
 }
 
-StyleGuideComponentTitle.props = {
+StyleGuideComponentTitle.propTypes = {
   id: PropTypes.string.isRequired,
   isExternalLink: PropTypes.bool,
   isSubsection: PropTypes.bool,
