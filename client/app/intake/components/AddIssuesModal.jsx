@@ -32,6 +32,9 @@ class AddIssuesModal extends React.Component {
       currentIssue.index = selectedContestableIssueIndex;
     }
 
+    // Ensure we have a value for decisionDate (this used to be done in action)
+    currentIssue.decisionDate = currentIssue.decisionDate || currentIssue.approxDecisionDate;
+
     this.props.onSubmit({
       currentIssue: {
         ...currentIssue,
@@ -66,7 +69,7 @@ class AddIssuesModal extends React.Component {
             })
           ).join(', ');
 
-          text = `${text} (Please select the most recent decision on ` + `${dates})`;
+          text = `${text} (Please select the most recent decision on ${dates})`;
         }
 
         return {
