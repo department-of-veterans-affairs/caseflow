@@ -89,23 +89,43 @@ export class AddIssuesPage extends React.Component {
     this.props.setIssueWithdrawalDate(value);
   };
 
+  willRedirect() {
+    const { intakeForms, formType, featureToggles } = this.props;
+    const intakeData = intakeForms[formType];
+    const { correctClaimReviews } = featureToggles;
+
+    return (
+      !formType ||
+      intakeData.isDtaError ||
+      ((intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp) && !correctClaimReviews) ||
+      intakeData.isOutcoded
+    );
+  }
+
+  redirect() {
+    const { intakeForms, formType, featureToggles } = this.props;
+    const intakeData = intakeForms[formType];
+    const { correctClaimReviews } = featureToggles;
+
+    if (!formType) {
+      return <Redirect to={PAGE_PATHS.BEGIN} />;
+    } else if (intakeData.isDtaError) {
+      return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
+    } else if ((intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp) && !correctClaimReviews) {
+      return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
+    } else if (intakeData.isOutcoded) {
+      return <Redirect to={PAGE_PATHS.OUTCODED} />;
+    }
+  }
+
   render() {
     const { intakeForms, formType, veteran, featureToggles, editPage, addingIssue } = this.props;
 
     const intakeData = intakeForms[formType];
-    const { useAmaActivationDate, correctClaimReviews } = featureToggles;
+    const { useAmaActivationDate } = featureToggles;
 
-    if (!formType) {
-      return <Redirect to={PAGE_PATHS.BEGIN} />;
-    }
-    if (intakeData.isDtaError) {
-      return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
-    }
-    if ((intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp) && !correctClaimReviews) {
-      return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
-    }
-    if (intakeData.isOutcoded) {
-      return <Redirect to={PAGE_PATHS.OUTCODED} />;
+    if (this.willRedirect()) {
+      return this.redirect();
     }
 
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
