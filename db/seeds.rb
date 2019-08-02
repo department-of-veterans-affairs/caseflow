@@ -470,7 +470,7 @@ class SeedDB
     app = FactoryBot.create(
       :appeal,
       veteran_file_number: vet.file_number,
-      docket_type: "hearing"
+      docket_type: Constants.AMA_DOCKETS.hearing
     )
 
     # Legacy Hearings can be created here due to hearing_day_full? check
@@ -566,7 +566,7 @@ class SeedDB
       number_of_claimants: 1,
       closest_regional_office: ro_key,
       veteran_file_number: vet.file_number,
-      docket_type: "hearing"
+      docket_type: Constants.AMA_DOCKETS.hearing
     )
   end
 
@@ -972,7 +972,7 @@ class SeedDB
       :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: vet.file_number,
-      docket_type: "hearing",
+      docket_type: Constants.AMA_DOCKETS.hearing,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 1, :nonrating, notes: notes
@@ -1185,7 +1185,7 @@ class SeedDB
       :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: "808415990",
-      docket_type: "hearing",
+      docket_type: Constants.AMA_DOCKETS.hearing,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 1, contested_issue_description: description, notes: notes
@@ -1196,7 +1196,7 @@ class SeedDB
       :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: "992190636",
-      docket_type: "hearing",
+      docket_type: Constants.AMA_DOCKETS.hearing,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 8, contested_issue_description: description, notes: notes

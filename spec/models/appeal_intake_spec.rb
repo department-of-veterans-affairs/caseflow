@@ -82,7 +82,7 @@ describe AppealIntake, :all_dbs do
     subject { intake.review!(request_params) }
 
     let(:receipt_date) { "2018-05-25" }
-    let(:docket_type) { "hearing" }
+    let(:docket_type) { Constants.AMA_DOCKETS.hearing }
     let(:claimant) { nil }
     let(:payee_code) { nil }
     let(:legacy_opt_in_approved) { true }
@@ -105,7 +105,7 @@ describe AppealIntake, :all_dbs do
 
       expect(intake.detail).to have_attributes(
         receipt_date: Date.new(2018, 5, 25),
-        docket_type: "hearing",
+        docket_type: Constants.AMA_DOCKETS.hearing,
         legacy_opt_in_approved: true,
         veteran_is_not_claimant: false
       )

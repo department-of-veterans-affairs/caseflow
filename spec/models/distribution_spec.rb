@@ -150,13 +150,17 @@ describe Distribution, :all_dbs do
 
     let!(:evidence_submission_cases) do
       (0...43).map do
-        create(:appeal, :with_post_intake_tasks, docket_type: "evidence_submission")
+        create(:appeal,
+               :with_post_intake_tasks,
+               docket_type: Constants.AMA_DOCKETS.evidence_submission)
       end
     end
 
     let!(:hearing_cases) do
       (0...43).map do
-        create(:appeal, :with_post_intake_tasks, docket_type: "hearing")
+        create(:appeal,
+               :with_post_intake_tasks,
+               docket_type: Constants.AMA_DOCKETS.hearing)
       end
     end
 
