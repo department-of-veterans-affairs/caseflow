@@ -59,7 +59,7 @@ describe "task rake fixes", :all_dbs do
           expect { subject }.to output(expected_output).to_stdout
           # no changes have been made
           schedule_hearing_tasks.each do |task|
-            expect(task.status).to eq Constants.TASK_STATUSES.on_hold
+            expect(task.reload.status).to eq Constants.TASK_STATUSES.on_hold
           end
         end
       end
@@ -97,11 +97,10 @@ describe "task rake fixes", :all_dbs do
               expect(Rails.logger).to receive(:info).with expected_output.chomp
               expect { subject }.to output(expected_output).to_stdout
               # changes have been made
-              HearingTask.open.each do |task|
-                expect(task.children.first.status).to eq Constants.TASK_STATUSES.assigned
-              end
-              expect(HearingTask.closed.count).to eq 1
-              expect(HearingTask.closed.first.children.first.status).to eq Constants.TASK_STATUSES.cancelled
+              # only the second and third tasks have been changed
+              expect(schedule_hearing_task1.reload.status).to eq Constants.TASK_STATUSES.cancelled
+              expect(schedule_hearing_task2.reload.status).to eq Constants.TASK_STATUSES.assigned
+              expect(schedule_hearing_task3.reload.status).to eq Constants.TASK_STATUSES.assigned
             end
           end
 
@@ -168,12 +167,16 @@ describe "task rake fixes", :all_dbs do
             end
           end
 
-          context "a HearingTask's on_hold ScheduleHearingTask child has an active descendant" do
+          context "a HearingTask's on_hold ScheduleHearingTask child has an open descendant" do
             let!(:verify_address_task2) do
               create(:hearing_admin_action_verify_address_task, appeal: appeal2, parent: schedule_hearing_task2)
             end
 
-            it "doesn't try to change the open HearingTask with the active descendant" do
+            before do
+              verify_address_task2.update_columns(status: Constants.TASK_STATUSES.on_hold)
+            end
+
+            it "doesn't try to change the open HearingTask with the open descendant" do
               ids = [hearing_task1.id, hearing_task3.id]
               expected_output = <<~OUTPUT
                 Found 2 stalled HearingTasks. Updating 2 stalled HearingTasks with IDs #{ids}!
