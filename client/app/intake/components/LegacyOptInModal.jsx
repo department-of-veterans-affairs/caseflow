@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import { formatDateStr } from '../../util/DateUtil';
-import { isCorrection } from '../util';
 import {
   addContestableIssue,
   addNonratingRequestIssue,

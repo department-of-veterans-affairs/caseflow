@@ -11,7 +11,7 @@ describe('CorrectionTypeModal', () => {
 
   context('renders', () => {
     it('renders button text', () => {
-      const wrapper = mount(<CorrectionTypeModal formType={formType} intakeData={intakeData} onSkip={() => {}} />);
+      const wrapper = mount(<CorrectionTypeModal formType={formType} intakeData={intakeData} onSkip={() => null} />);
 
       const cancelBtn = wrapper.find('.cf-modal-controls .close-modal');
       const skipBtn = wrapper.find('.cf-modal-controls .no-matching-issues');
@@ -37,7 +37,7 @@ describe('CorrectionTypeModal', () => {
 
       expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).to.equal(false);
 
-      wrapper.setProps({ onSkip: () => {} });
+      wrapper.setProps({ onSkip: () => null });
       expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).to.equal(true);
     });
 

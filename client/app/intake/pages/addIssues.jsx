@@ -1,22 +1,20 @@
+import React from 'react';
+
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
-import React from 'react';
 
-import AddIssuesModal from '../components/AddIssuesModal';
-import NonratingRequestIssueModal from '../components/NonratingRequestIssueModal';
 import RemoveIssueModal from '../components/RemoveIssueModal';
-import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
-import UntimelyExemptionModal from '../components/UntimelyExemptionModal';
-import LegacyOptInModal from '../components/LegacyOptInModal';
+import CorrectionTypeModal from '../components/CorrectionTypeModal';
+import AddIssueManager from '../components/AddIssueManager';
+
 import Button from '../../components/Button';
 import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../constants';
-import { formatAddedIssues, getAddIssuesFields, validateDate, issueByIndex } from '../util/issues';
-import { isCorrection } from '../util';
+import { formatAddedIssues, getAddIssuesFields, validateDate } from '../util/issues';
 import { formatDateStr } from '../../util/DateUtil';
 import Table from '../../components/Table';
 import IssueList from '../components/IssueList';
@@ -37,8 +35,6 @@ import {
   toggleCorrectionTypeModal
 } from '../actions/addIssues';
 import COPY from '../../../COPY.json';
-import CorrectionTypeModal from '../components/CorrectionTypeModal';
-import AddIssueManager from '../components/AddIssueManager';
 
 export class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -92,53 +88,6 @@ export class AddIssuesPage extends React.Component {
   withdrawalDateOnChange = (value) => {
     this.props.setIssueWithdrawalDate(value);
   };
-
-  // handleAddIssueModal = ({ selectedContestableIssueIndex, currentIssue, notes }) => {
-  //   const { formType, intakeForms } = this.props;
-  //   const intakeData = intakeForms[formType];
-
-  //   this.props.toggleAddIssuesModal();
-
-  //   if (isCorrection(currentIssue.isRating, intakeData)) {
-  //     this.props.toggleCorrectionTypeModal();
-  //   } else if (this.hasLegacyAppeals()) {
-  //     this.props.toggleLegacyOptInModal({
-  //       currentIssue,
-  //       notes
-  //     });
-  //   } else if (this.requiresUntimelyExemption()) {
-  //     this.props.toggleUntimelyExemptionModal({
-  //       currentIssue,
-  //       notes
-  //     });
-  //   } else {
-  //     this.props.addContestableIssue({
-  //       contestableIssueIndex: selectedContestableIssueIndex,
-  //       contestableIssues: intakeData.contestableIssues,
-  //       isRating: currentIssue.isRating,
-  //       notes
-  //     });
-  //   }
-  // };
-
-  // hasLegacyAppeals = () => {
-  //   const { formType, intakeForms } = this.props;
-  //   const intakeData = intakeForms[formType];
-
-  //   return intakeData.legacyAppeals.length > 0;
-  // };
-
-  // requiresUntimelyExemption = (selectedContestableIssueIndex) => {
-  //   const { formType, intakeForms } = this.props;
-  //   const intakeData = intakeForms[formType];
-
-  //   if (formType === 'supplemental_claim') {
-  //     return false;
-  //   }
-  //   const currentIssue = issueByIndex(intakeData.contestableIssues, selectedContestableIssueIndex);
-
-  //   return !currentIssue.timely;
-  // };
 
   render() {
     const { intakeForms, formType, veteran, featureToggles, editPage, addingIssue } = this.props;
@@ -299,25 +248,6 @@ export class AddIssuesPage extends React.Component {
           />
         )}
 
-        {/* {intakeData.addIssuesModalVisible && (
-          <AddIssuesModal intakeData={intakeData} formType={formType} closeHandler={this.handleAddIssueModal} />
-        )}
-        {intakeData.untimelyExemptionModalVisible && (
-          <UntimelyExemptionModal intakeData={intakeData} closeHandler={this.props.toggleUntimelyExemptionModal} />
-        )}
-        {intakeData.nonRatingRequestIssueModalVisible && (
-          <NonratingRequestIssueModal
-            intakeData={intakeData}
-            formType={formType}
-            closeHandler={this.props.toggleNonratingRequestIssueModal}
-          />
-        )}
-        {intakeData.unidentifiedIssuesModalVisible && (
-          <UnidentifiedIssuesModal intakeData={intakeData} closeHandler={this.props.toggleUnidentifiedIssuesModal} />
-        )}
-        {intakeData.legacyOptInModalVisible && (
-          <LegacyOptInModal intakeData={intakeData} closeHandler={this.props.toggleLegacyOptInModal} />
-        )} */}
         {intakeData.removeIssueModalVisible && (
           <RemoveIssueModal
             removeIndex={this.state.issueRemoveIndex}
@@ -419,11 +349,6 @@ export const EditAddIssuesPage = connect(
     bindActionCreators(
       {
         toggleAddingIssue,
-        // toggleAddIssuesModal,
-        // toggleUntimelyExemptionModal,
-        // toggleNonratingRequestIssueModal,
-        // toggleUnidentifiedIssuesModal,
-        // toggleLegacyOptInModal,
         toggleIssueRemoveModal,
         toggleCorrectionTypeModal,
         removeIssue,

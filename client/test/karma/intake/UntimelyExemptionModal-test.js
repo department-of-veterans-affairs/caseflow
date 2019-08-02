@@ -16,7 +16,7 @@ describe('UntimelyExemptionModal', () => {
         <UntimelyExemptionModal
           formType={formType}
           intakeData={intakeData}
-          onSkip={() => {}}
+          onSkip={() => null}
           currentIssue={currentIssue}
         />
       );
@@ -47,7 +47,7 @@ describe('UntimelyExemptionModal', () => {
 
       expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).to.equal(false);
 
-      wrapper.setProps({ onSkip: () => {} });
+      wrapper.setProps({ onSkip: () => null });
       expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).to.equal(true);
     });
 

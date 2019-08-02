@@ -12,7 +12,7 @@ describe('NonratingRequestIssueModal', () => {
   context('renders', () => {
     it('renders button text', () => {
       const wrapper = mount(
-        <NonratingRequestIssueModal formType={formType} intakeData={intakeData} onSkip={() => {}} />
+        <NonratingRequestIssueModal formType={formType} intakeData={intakeData} onSkip={() => null} />
       );
 
       const cancelBtn = wrapper.find('.cf-modal-controls .close-modal');
@@ -39,7 +39,7 @@ describe('NonratingRequestIssueModal', () => {
 
       expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).to.equal(false);
 
-      wrapper.setProps({ onSkip: () => {} });
+      wrapper.setProps({ onSkip: () => null });
       expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).to.equal(true);
     });
 

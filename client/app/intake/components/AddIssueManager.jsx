@@ -272,7 +272,9 @@ AddIssueManager.propTypes = {
 
 AddIssueManager.defaultProps = {
   // currentModal: 'AddIssuesModal',
-  onComplete: () => {}
+  onComplete: () => {
+    return null;
+  }
 };
 
 export default connect(
