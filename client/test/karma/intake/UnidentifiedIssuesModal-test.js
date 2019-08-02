@@ -11,7 +11,9 @@ describe('UnidentifiedIssuesModal', () => {
 
   context('renders', () => {
     it('renders button text', () => {
-      const wrapper = mount(<UnidentifiedIssuesModal formType={formType} intakeData={intakeData} onSkip={() => null} />);
+      const wrapper = mount(
+        <UnidentifiedIssuesModal formType={formType} intakeData={intakeData} onSkip={() => null} />
+      );
 
       const cancelBtn = wrapper.find('.cf-modal-controls .close-modal');
       const skipBtn = wrapper.find('.cf-modal-controls .no-matching-issues');
