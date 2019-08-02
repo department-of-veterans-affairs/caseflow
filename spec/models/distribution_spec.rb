@@ -188,7 +188,8 @@ describe Distribution, :all_dbs do
       expect(subject.distributed_cases.where(priority: true, genpop: false).count).to eq(2)
       expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(0)
       expect(subject.distributed_cases.where(priority: false, genpop_query: "any").map(&:docket_index).max).to eq(30)
-      expect(subject.distributed_cases.where(priority: true, docket: Constants.AMA_DOCKETS.direct_review).count).to eq(1)
+      expect(subject.distributed_cases.where(priority: true,
+                                             docket: Constants.AMA_DOCKETS.direct_review).count).to eq(1)
       expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
       expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.direct_review).count).to be >= 3
       expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count).to eq(2)
