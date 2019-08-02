@@ -107,7 +107,7 @@
     "eslint": "4.9.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-mocha": "^4.11.0",
-    "eslint-plugin-react": "^7.5.1",
+    "eslint-plugin-react": "^7.14.3",
     "karma": "^1.6.0",
     "karma-chrome-launcher": "^2.0.0",
     "karma-firefox-launcher": "^1.0.1",
