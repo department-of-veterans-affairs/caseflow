@@ -105,7 +105,9 @@ export class EstablishClaimDecision extends React.Component {
           id="sr-download-link"
           href={`${pdfLink}&decision_number=${index}`}
           download
-          target="_blank">
+          target="_blank"
+          rel="noopener noreferrer"
+        >
            The PDF viewer in your browser may not be accessible. Click to download
            the Decision PDF so you can preview it in a reader with accessibility features
            such as Adobe Acrobat.
