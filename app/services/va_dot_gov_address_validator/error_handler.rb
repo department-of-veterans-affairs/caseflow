@@ -26,7 +26,9 @@ class VaDotGovAddressValidator::ErrorHandler
 
       :created_foreign_veteran_admin_action
     else
+      # :nocov:
       raise error # rubocop:disable Style/SignalException
+      # :nocov:
     end
   end
 
@@ -41,6 +43,7 @@ class VaDotGovAddressValidator::ErrorHandler
     [Caseflow::Error::VaDotGovForeignVeteranError]
   end
 
+  # :nocov:
   def check_for_philippines_and_maybe_update
     if "Philippines".casecmp(appellant_address.country) == 0
       appeal.va_dot_gov_address_validator.assign_ro_and_update_ahls("RO58")
@@ -50,6 +53,7 @@ class VaDotGovAddressValidator::ErrorHandler
 
     false
   end
+  # :nocov:
 
   def create_admin_action_for_schedule_hearing_task(instructions:, admin_action_type:)
     task = ScheduleHearingTask.open.find_by(appeal: appeal)

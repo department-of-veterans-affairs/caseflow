@@ -89,5 +89,14 @@ describe ExternalApi::VADotGovService do
           .to be_an_instance_of(Caseflow::Error::VaDotGovServerError)
       end
     end
+
+    context "404" do
+      let!(:error_code) { 404 }
+
+      it "throws Caseflow::Error::VaDotGovServerError" do
+        expect(VADotGovService.get_facility_data(ids: ["vba_372"]).error)
+          .to be_an_instance_of(Caseflow::Error::VaDotGovServerError)
+      end
+    end
   end
 end
