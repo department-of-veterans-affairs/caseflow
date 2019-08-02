@@ -1102,6 +1102,62 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
+  describe "AppealWithdrawalMailTask snapshot" do
+    context "when child AppealWithdrawalMailTask is cancelled " do
+      let!(:appeal) { create(:appeal) }
+      let(:root_task) { create(:root_task, appeal: appeal) }
+
+      let!(:appeal_withdrawal_mail_task) do
+        create(
+          :appeal_withdrawal_mail_task,
+          appeal: appeal,
+          instructions: ["cancelled"]
+        )
+      end
+
+      let!(:appeal_withdrawal_bva_task) do
+        create(
+          :appeal_withdrawal_bva_task,
+          appeal: appeal,
+          parent: appeal_withdrawal_mail_task,
+          instructions: ["cancelled"]
+        )
+      end
+
+      let(:user) { create(:user) }
+
+      before do
+        OrganizationsUser.add_user_to_organization(user, BvaIntake.singleton)
+        User.authenticate!(user: user)
+      end
+
+      it "displays AppealWithdrawalMailTask in case timeline" do
+        visit("/queue/appeals/#{appeal.uuid}")
+
+        prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
+        text = Constants.TASK_ACTIONS.CANCEL_TASK.label
+        click_dropdown(prompt: prompt, text: text)
+        click_button("Submit")
+
+        expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name))
+        expect(page.current_path).to eq("/queue")
+
+        click_on "Search"
+        fill_in "searchBarEmptyList", with: appeal.veteran_file_number
+        click_on "Search"
+        click_on appeal.docket_number
+
+        new_tasks = appeal_withdrawal_mail_task.children
+        expect(new_tasks.length).to eq(1)
+
+        new_task = new_tasks.first
+        expect(new_task.status).to eq Constants.TASK_STATUSES.cancelled
+        expect(appeal_withdrawal_bva_task.assigned_to).to eq(BvaIntake.singleton)
+        expect(appeal_withdrawal_bva_task.parent.assigned_to).to eq(MailTeam.singleton)
+      end
+    end
+  end
+
   describe "Case details page access control" do
     let(:queue_home_path) { "/queue" }
     let(:case_details_page_path) { "/queue/appeals/#{appeal.external_id}" }
