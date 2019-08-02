@@ -163,7 +163,7 @@ describe "Withdrawing an appeal", :postgres do
       appeal = create(
         :appeal,
         :with_post_intake_tasks,
-        docket_type: "direct_review",
+        docket_type: Constants.AMA_DOCKETS.direct_review,
         request_issues: build_list(:request_issue, 1, contested_issue_description: "Knee pain")
       )
       create_track_veteran_tasks(appeal)
@@ -176,7 +176,7 @@ describe "Withdrawing an appeal", :postgres do
       appeal = create(
         :appeal,
         :with_post_intake_tasks,
-        docket_type: "direct_review"
+        docket_type: Constants.AMA_DOCKETS.direct_review
       )
       appeal.request_issues = build_list(
         :request_issue, 2, contested_issue_description: "Knee pain", decision_review: appeal
@@ -192,7 +192,7 @@ describe "Withdrawing an appeal", :postgres do
       appeal = create(
         :appeal,
         :with_post_intake_tasks,
-        docket_type: "direct_review"
+        docket_type: Constants.AMA_DOCKETS.direct_review
       )
       create(
         :request_issue,
@@ -215,7 +215,7 @@ describe "Withdrawing an appeal", :postgres do
       appeal = create(
         :appeal,
         :with_post_intake_tasks,
-        docket_type: "direct_review"
+        docket_type: Constants.AMA_DOCKETS.direct_review
       )
       create(
         :request_issue,

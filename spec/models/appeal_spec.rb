@@ -1271,7 +1271,7 @@ describe Appeal, :all_dbs do
       )
     end
 
-    let(:docket_type) { "direct_review" }
+    let(:docket_type) { Constants.AMA_DOCKETS.direct_review }
     let!(:appeal) do
       create(:appeal,
              receipt_date: receipt_date,
