@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe InitialTasksFactory do
+describe InitialTasksFactory, :postgres do
   context ".create_root_and_sub_tasks!" do
     let(:participant_id_with_pva) { "1234" }
     let(:participant_id_with_aml) { "5678" }
@@ -170,10 +171,10 @@ describe InitialTasksFactory do
 
       context "when VSO does not writes IHPs for hearing docket cases" do
         let(:appeal) do
-          FactoryBot.create(
+          create(
             :appeal,
             docket_type: Constants.AMA_DOCKETS.hearing,
-            claimants: [FactoryBot.create(:claimant, participant_id: participant_id_with_pva)]
+            claimants: [create(:claimant, participant_id: participant_id_with_pva)]
           )
         end
 

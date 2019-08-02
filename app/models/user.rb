@@ -309,10 +309,10 @@ class User < ApplicationRecord
     # :nocov:
 
     def system_user
-      @system_user ||= find_or_initialize_by(
-        station_id: Rails.deploy_env?(:prod) ? "283" : "317",
-        css_id: Rails.deploy_env?(:prod) ? "CSFLOW" : "CASEFLOW1"
-      )
+      @system_user ||= begin
+        private_method_name = "#{Rails.current_env}_system_user".to_sym
+        send(private_method_name)
+      end
     end
 
     def api_user
@@ -373,5 +373,20 @@ class User < ApplicationRecord
     def user_repository
       UserRepository
     end
+
+    private
+
+    def prod_system_user
+      find_or_initialize_by(station_id: "283", css_id: "CSFLOW")
+    end
+
+    alias preprod_system_user prod_system_user
+
+    def uat_system_user
+      find_or_initialize_by(station_id: "317", css_id: "CASEFLOW1")
+    end
+
+    alias test_system_user uat_system_user
+    alias development_system_user uat_system_user
   end
 end

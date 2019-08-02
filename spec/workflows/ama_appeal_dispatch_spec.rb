@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe AmaAppealDispatch do
+describe AmaAppealDispatch, :postgres do
   describe "#call" do
     it "stores current POA participant ID in the Appeals table" do
       user = create(:user)
@@ -23,7 +24,8 @@ describe AmaAppealDispatch do
         appeal_type: "Appeal",
         citation_number: "A18123456",
         decision_date: Time.zone.now,
-        redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx"
+        redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx",
+        file: "12345678"
       }
 
       AmaAppealDispatch.new(appeal: appeal, params: params, user: user).call

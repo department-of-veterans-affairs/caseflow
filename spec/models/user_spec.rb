@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe User do
+describe User, :all_dbs do
   let(:css_id) { "TomBrady" }
   let(:session) { { "user" => { "id" => css_id, "station_id" => "310", "name" => "Tom Brady" } } }
   let(:user) { User.from_session(session) }
@@ -248,7 +249,7 @@ describe User do
   end
 
   context "#selectable_organizations" do
-    let(:judge) { FactoryBot.create :user }
+    let(:judge) { create :user }
     let!(:judgeteam) { JudgeTeam.create_for_judge(judge) }
 
     subject { user.selectable_organizations }
@@ -552,7 +553,7 @@ describe User do
   end
 
   describe ".organization_queue_user?" do
-    let(:user) { FactoryBot.create(:user) }
+    let(:user) { create(:user) }
 
     subject { user.organization_queue_user? }
 
@@ -563,7 +564,7 @@ describe User do
     end
 
     context "when the user is a member of some organizations" do
-      before { OrganizationsUser.add_user_to_organization(user, FactoryBot.create(:organization)) }
+      before { OrganizationsUser.add_user_to_organization(user, create(:organization)) }
       it "returns true" do
         expect(subject).to eq(true)
       end

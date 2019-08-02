@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe ClaimReview do
+describe ClaimReview, :postgres do
   before do
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
   end
@@ -102,6 +103,33 @@ describe ClaimReview do
       participant_id: veteran_participant_id,
       payee_code: "00"
     )
+  end
+
+  describe "#cancel_establishment!" do
+    let(:claim_review) do
+      create(
+        :higher_level_review,
+        receipt_date: receipt_date,
+        establishment_attempted_at: (ClaimReview.processing_retry_interval_hours - 1).hours.ago,
+        establishment_error: "oops!"
+      )
+    end
+
+    subject { claim_review.cancel_establishment! }
+
+    it "sets async canceled_at and closes all request_issues" do
+      request_issue = rating_request_issue.tap(&:save!)
+
+      expect(request_issue).to_not be_closed
+
+      subject
+
+      claim_review.reload
+
+      expect(claim_review).to be_canceled
+      expect(claim_review.establishment_error).to eq("oops!")
+      expect(request_issue.reload).to be_closed
+    end
   end
 
   let(:vbms_error) do

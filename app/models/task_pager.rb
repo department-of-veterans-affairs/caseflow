@@ -28,16 +28,19 @@ class TaskPager
 
   def sorted_tasks(tasks)
     case sort_by
-    when Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN, Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN
-      tasks.order(assigned_at: sort_order.to_sym)
+    when Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN, Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN
+      tasks.order(assigned_at: sort_order)
     when Constants.QUEUE_CONFIG.TASK_CLOSED_DATE_COLUMN
-      tasks.order(closed_at: sort_order.to_sym)
+      tasks.order(closed_at: sort_order)
     when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
-      tasks.order(type: sort_order.to_sym, action: sort_order.to_sym, created_at: sort_order.to_sym)
+      tasks.order(type: sort_order, action: sort_order, created_at: sort_order)
+    when Constants.QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN
+      tasks.order(placed_on_hold_at: sort_order)
     # Columns not yet supported:
     #
     # APPEAL_TYPE_COLUMN
     # CASE_DETAILS_LINK_COLUMN
+    # DAYS_ON_HOLD_COLUMN
     # DOCUMENT_COUNT_READER_LINK_COLUMN
     # DOCKET_NUMBER_COLUMN
     # HEARING_BADGE_COLUMN
@@ -45,10 +48,9 @@ class TaskPager
     # REGIONAL_OFFICE_COLUMN
     # TASK_ASSIGNEE_COLUMN
     # TASK_ASSIGNER_COLUMN
-    # TASK_HOLD_LENGTH_COLUMN
     #
     else
-      tasks.order(created_at: sort_order.to_sym)
+      tasks.order(created_at: sort_order)
     end
   end
 
@@ -79,7 +81,9 @@ class TaskPager
     when Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
       active_tasks
     when Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
-      on_hold_tasks
+      assigned_child_tasks
+    when Constants.QUEUE_CONFIG.ON_HOLD_TASKS_TAB_NAME
+      on_hold_child_tasks
     when Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME
       recently_completed_tasks
     else
@@ -101,6 +105,16 @@ class TaskPager
   def on_hold_tasks
     Task.includes(*task_includes)
       .visible_in_queue_table_view.where(assigned_to: assignee).on_hold
+  end
+
+  def assigned_child_tasks
+    Task.includes(*task_includes)
+      .visible_in_queue_table_view.active.where(parent: on_hold_tasks)
+  end
+
+  def on_hold_child_tasks
+    Task.includes(*task_includes)
+      .visible_in_queue_table_view.on_hold.where(parent: on_hold_tasks)
   end
 
   def recently_completed_tasks

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe Organizations::UsersController, type: :controller do
+describe Organizations::UsersController, :postgres, type: :controller do
   describe "GET /organizations/:business_line/users" do
     subject { get :index, params: { organization_url: non_comp_org.url }, format: :json }
 
@@ -59,10 +60,10 @@ describe Organizations::UsersController, type: :controller do
   describe "PATCH /organizations/:org_url/users/:user_id" do
     subject { patch(:update, params: params, as: :json) }
 
-    let(:org) { FactoryBot.create(:organization) }
-    let(:user) { FactoryBot.create(:user) }
+    let(:org) { create(:organization) }
+    let(:user) { create(:user) }
     let(:admin) do
-      FactoryBot.create(:user).tap do |u|
+      create(:user).tap do |u|
         OrganizationsUser.make_user_admin(u, org)
       end
     end

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe VACOLS::Representative do
+describe VACOLS::Representative, :all_dbs do
   let(:vacols_case) { create(:case_with_rep_table_record) }
   let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
   let(:rep) { VACOLS::Representative.appellant_representative(appeal.vacols_id) }
@@ -55,19 +56,77 @@ describe VACOLS::Representative do
   end
 
   context ".update" do
+    let(:vacols_rep) { build(:representative) }
+
     it "will raise error" do
-      expect do
-        VACOLS::Representative.first.update!(reptype: "F")
-      end.to raise_error
-      expect do
-        VACOLS::Representative.first.update(reptype: "F")
-      end.to raise_error
-      expect do
-        VACOLS::Representative.first.delete
-      end.to raise_error
-      expect do
-        VACOLS::Representative.first.destroy
-      end.to raise_error
+      expect { vacols_rep.update!(reptype: "F") }.to raise_error(VACOLS::Representative::RepError)
+
+      expect { vacols_rep.update(reptype: "F") }.to raise_error(VACOLS::Representative::RepError)
+
+      expect { vacols_rep.delete }.to raise_error(VACOLS::Representative::RepError)
+
+      expect { vacols_rep.destroy }.to raise_error(VACOLS::Representative::RepError)
+    end
+  end
+
+  context "when name or address contains non-ASCII characters" do
+    let(:name_hash) { { first_name: "Søren", middle_initial: "A", last_name: "Skarsgård" } }
+    let(:address_hash) do
+      {
+        address_one: "123 Walnut Aveñue",
+        address_two: "«456»",
+        city: "San Juañ",
+        state: "OH",
+        zip: "12222"
+      }
+    end
+    let(:bfkey) { "99999XYZ" }
+
+    subject do
+      VACOLS::Representative.update_vacols_rep_table!(
+        bfkey: bfkey,
+        name: name_hash,
+        address: address_hash,
+        type: :appellant_agent
+      )
+    end
+    context "row does not yet exist" do
+      it "creates with ASCII" do
+        subject
+
+        rep = VACOLS::Representative.representatives(bfkey).first
+
+        expect(rep.repfirst).to eq("Soren")
+        expect(rep.replast).to eq("Skarsgard")
+        expect(rep.repaddr1).to eq("123 Walnut Avenue")
+        expect(rep.repaddr2).to eq("<<456>>")
+        expect(rep.repcity).to eq("San Juan")
+      end
+    end
+
+    context "row exists" do
+      let(:bfkey) { appeal.vacols_id }
+
+      it "updates with ASCII" do
+        subject
+
+        expect(rep.repfirst).to eq("Soren")
+        expect(rep.replast).to eq("Skarsgard")
+        expect(rep.repaddr1).to eq("123 Walnut Avenue")
+        expect(rep.repaddr2).to eq("<<456>>")
+        expect(rep.repcity).to eq("San Juan")
+      end
+    end
+
+    context "name contains invalid UTF-8 codepoint from bad Windows 1252 conversion" do
+      let(:bfkey) { appeal.vacols_id }
+      let(:name_hash) { { first_name: "Søren", middle_initial: "A", last_name: "O\x92Reilly" } }
+
+      it "corrects codepoint before transliterating to ASCII" do
+        subject
+
+        expect(rep.replast).to eq("O'Reilly")
+      end
     end
   end
 end

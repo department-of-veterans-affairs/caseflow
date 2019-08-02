@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe DistributionTask do
+describe DistributionTask, :postgres do
   describe "ready_for_distribution" do
     before do
       Timecop.freeze(Time.zone.today)
@@ -43,10 +44,10 @@ describe DistributionTask do
   end
 
   describe ".available_actions" do
-    let(:user) { FactoryBot.create(:user) }
-    let(:scm_user) { FactoryBot.create(:user) }
+    let(:user) { create(:user) }
+    let(:scm_user) { create(:user) }
     let(:scm_org) { SpecialCaseMovementTeam.singleton }
-    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:root_task) { create(:root_task) }
     let(:distribution_task) do
       DistributionTask.create!(
         appeal: root_task.appeal,

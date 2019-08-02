@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe UserRepository do
+describe UserRepository, :all_dbs do
   let(:css_id) { "TEST1" }
 
   context ".vacols_role" do
