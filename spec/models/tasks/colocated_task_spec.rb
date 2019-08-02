@@ -150,7 +150,7 @@ describe ColocatedTask, :all_dbs do
         expect(hearing_task.assigned_to).to eq(HearingsManagement.singleton)
 
         expect(transcription_task.is_a?(MissingHearingTranscriptsColocatedTask)).to eq true
-        expect(transcription_task.assigned_to).to eq(HearingsManagement.singleton)
+        expect(transcription_task.assigned_to).to eq(TranscriptionTeam.singleton)
         expect(transcription_task.children.first).to eq transcription_child_task
         expect(transcription_child_task.is_a?(TranscriptionTask)).to eq true
 

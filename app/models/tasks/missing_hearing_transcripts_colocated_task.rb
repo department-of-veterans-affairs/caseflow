@@ -8,7 +8,7 @@ class MissingHearingTranscriptsColocatedTask < ColocatedTask
   end
 
   def self.default_assignee
-    HearingsManagement.singleton
+    TranscriptionTeam.singleton
   end
 
   def hide_from_case_timeline
