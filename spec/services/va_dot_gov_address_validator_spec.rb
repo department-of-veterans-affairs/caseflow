@@ -115,7 +115,7 @@ describe VaDotGovAddressValidator do
           expect(appeal.tasks.where(type: "HearingAdminActionVerifyAddressTask").count).to eq(1)
         end
 
-        context "and veteran's country is Philippines", skip: "flake" do
+        context "and veteran's country is Philippines" do
           before do
             # this mocks get_facility_data call for ErrorHandler#check_for_philippines_and_maybe_update
             philippines_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
@@ -128,9 +128,8 @@ describe VaDotGovAddressValidator do
           end
 
           it "assigns closest regional office to Manila" do
+            expect(appeal.va_dot_gov_address_validator).to receive(:assign_ro_and_update_ahls).with("RO58")
             appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
-            expect(Appeal.find(appeal.id).closest_regional_office).to eq("RO58")
-            expect(Appeal.find(appeal.id).available_hearing_locations.first.facility_id).to eq("vba_358")
           end
         end
       end
