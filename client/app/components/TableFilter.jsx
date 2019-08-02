@@ -38,6 +38,8 @@ const iconStyle = css(
  *     user readable text
  *   - @label {string} used for the aria-label on the icon,
  *   - @valueName {string} used as the name for the dropdown filter.
+ *   - @valueTransform {function(any)} function that takes the value of the
+ *     column, and transforms it into a string.
  */
 
 class TableFilter extends React.PureComponent {
