@@ -4,7 +4,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
   protect_from_forgery with: :null_session
 
   def create
-    processor = Api::V3::HigherLevelReviewProcessor.new(user: current_user, params: params)
+    processor = Api::V3::HigherLevelReviewProcessor.new(params, current_user)
 
     if processor.errors?
       status = processor.errors.map { |error| error[:status] }.max
@@ -12,7 +12,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
       return
     end
 
-    processor.build_start_review_complete!
+    processor.start_review_complete!
 
     higher_level_review = processor.higher_level_review
     uuid = higher_level_review.uuid
@@ -24,7 +24,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
 
     render json: intake_status(higher_level_review), status: :accepted
   rescue StandardError => error
-    error = processor.error_hash_from_error_code(
+    error = processor.error_from_error_code(
       processor.intake.try(:error_code) || error.try(:error_code)
     )
 
