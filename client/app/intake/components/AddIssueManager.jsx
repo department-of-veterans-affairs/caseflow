@@ -80,8 +80,6 @@ class AddIssueManager extends React.Component {
   };
 
   setupCorrectionTypeModal = () => {
-    const { intakeData, formType } = this.props;
-
     return {
       component: CorrectionTypeModal,
       props: {
