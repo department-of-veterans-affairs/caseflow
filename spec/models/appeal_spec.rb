@@ -853,8 +853,8 @@ describe Appeal, :all_dbs do
   end
 
   context "#set_target_decision_date!" do
-    let(:direct_review_appeal) { create(:appeal, docket_type: "direct_review") }
-    let(:evidence_submission_appeal) { create(:appeal, docket_type: "evidence_submission") }
+    let(:direct_review_appeal) { create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review) }
+    let(:evidence_submission_appeal) { create(:appeal, docket_type: Constants.AMA_DOCKETS.evidence_submission) }
 
     context "with direct review appeal" do
       subject { direct_review_appeal }

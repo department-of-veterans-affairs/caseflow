@@ -7,24 +7,24 @@ require_relative "../../app/models/tasks/mail_task"
 describe Docket, :all_dbs do
   context "docket" do
     # nonpriority
-    let!(:appeal) { create(:appeal, :with_post_intake_tasks, docket_type: "direct_review") }
+    let!(:appeal) { create(:appeal, :with_post_intake_tasks, docket_type: Constants.AMA_DOCKETS.direct_review) }
     let!(:denied_aod_motion_appeal) do
-      create(:appeal, :denied_advance_on_docket, :with_post_intake_tasks, docket_type: "direct_review")
+      create(:appeal, :denied_advance_on_docket, :with_post_intake_tasks, docket_type: Constants.AMA_DOCKETS.direct_review)
     end
     let!(:inapplicable_aod_motion_appeal) do
-      create(:appeal, :inapplicable_aod_motion, :with_post_intake_tasks, docket_type: "direct_review")
+      create(:appeal, :inapplicable_aod_motion, :with_post_intake_tasks, docket_type: Constants.AMA_DOCKETS.direct_review)
     end
 
     # priority
     let!(:aod_age_appeal) do
-      create(:appeal, :advanced_on_docket_due_to_age, :with_post_intake_tasks, docket_type: "direct_review")
+      create(:appeal, :advanced_on_docket_due_to_age, :with_post_intake_tasks, docket_type: Constants.AMA_DOCKETS.direct_review)
     end
     let!(:aod_motion_appeal) do
-      create(:appeal, :advanced_on_docket_due_to_motion, :with_post_intake_tasks, docket_type: "direct_review")
+      create(:appeal, :advanced_on_docket_due_to_motion, :with_post_intake_tasks, docket_type: Constants.AMA_DOCKETS.direct_review)
     end
 
-    let!(:hearing_appeal) { create(:appeal, :with_post_intake_tasks, docket_type: "hearing") }
-    let!(:evidence_submission_appeal) { create(:appeal, :with_post_intake_tasks, docket_type: "evidence_submission") }
+    let!(:hearing_appeal) { create(:appeal, :with_post_intake_tasks, docket_type: Constants.AMA_DOCKETS.hearing) }
+    let!(:evidence_submission_appeal) { create(:appeal, :with_post_intake_tasks, docket_type: Constants.AMA_DOCKETS.evidence_submission) }
 
     context "appeals" do
       context "when no options given" do
@@ -100,7 +100,7 @@ describe Docket, :all_dbs do
 
         context "nonblocking mail tasks" do
           it "includes those appeals" do
-            nonblocking_appeal = create(:appeal, :with_post_intake_tasks, docket_type: "direct_review")
+            nonblocking_appeal = create(:appeal, :with_post_intake_tasks, docket_type: Constants.AMA_DOCKETS.direct_review)
             AodMotionMailTask.create_from_params({
                                                    appeal: nonblocking_appeal,
                                                    parent_id: nonblocking_appeal.root_task.id
@@ -112,7 +112,7 @@ describe Docket, :all_dbs do
 
         context "blocking mail tasks with status not completed or cancelled" do
           it "excludes those appeals" do
-            blocking_appeal = create(:appeal, :with_post_intake_tasks, docket_type: "direct_review")
+            blocking_appeal = create(:appeal, :with_post_intake_tasks, docket_type: Constants.AMA_DOCKETS.direct_review)
             CongressionalInterestMailTask.create_from_params({
                                                                appeal: blocking_appeal,
                                                                parent_id: blocking_appeal.root_task.id
@@ -125,7 +125,7 @@ describe Docket, :all_dbs do
         context "blocking mail tasks with status completed or cancelled" do
           it "includes those appeals",
              skip: "flake https://github.com/department-of-veterans-affairs/caseflow/issues/10516#issuecomment-503269122" do
-            with_blocking_but_closed_tasks = create(:appeal, :with_post_intake_tasks, docket_type: "direct_review")
+            with_blocking_but_closed_tasks = create(:appeal, :with_post_intake_tasks, docket_type: Constants.AMA_DOCKETS.direct_review)
             FoiaRequestMailTask.create_from_params({
                                                      appeal: with_blocking_but_closed_tasks,
                                                      parent_id: with_blocking_but_closed_tasks.root_task.id
@@ -138,7 +138,7 @@ describe Docket, :all_dbs do
 
         context "nonblocking mail tasks but closed Root Task" do
           it "excludes those appeals" do
-            inactive_appeal = create(:appeal, :with_post_intake_tasks, docket_type: "direct_review")
+            inactive_appeal = create(:appeal, :with_post_intake_tasks, docket_type: Constants.AMA_DOCKETS.direct_review)
             AodMotionMailTask.create_from_params({
                                                    appeal: inactive_appeal,
                                                    parent_id: inactive_appeal.root_task.id
@@ -199,22 +199,22 @@ describe Docket, :all_dbs do
       let!(:newer_non_priority_decisions) do
         2.times do
           doc = create(:decision_document, decision_date: 20.days.ago)
-          doc.appeal.update(docket_type: "direct_review")
+          doc.appeal.update(docket_type: Constants.AMA_DOCKETS.direct_review)
           doc.appeal
         end
       end
       let!(:older_non_priority_decision) do
         doc = create(:decision_document, decision_date: 380.days.ago)
-        doc.appeal.update(docket_type: "direct_review")
+        doc.appeal.update(docket_type: Constants.AMA_DOCKETS.direct_review)
         doc.appeal
       end
       let!(:newer_priority_decision) do
-        appeal = create(:appeal, :advanced_on_docket_due_to_age, :with_post_intake_tasks, docket_type: "direct_review")
+        appeal = create(:appeal, :advanced_on_docket_due_to_age, :with_post_intake_tasks, docket_type: Constants.AMA_DOCKETS.direct_review)
         create(:decision_document, decision_date: 20.days.ago, appeal: appeal)
         appeal
       end
       let!(:older_priority_decision) do
-        appeal = create(:appeal, :advanced_on_docket_due_to_age, :with_post_intake_tasks, docket_type: "direct_review")
+        appeal = create(:appeal, :advanced_on_docket_due_to_age, :with_post_intake_tasks, docket_type: Constants.AMA_DOCKETS.direct_review)
         create(:decision_document, decision_date: 380.days.ago, appeal: appeal)
         appeal
       end
@@ -232,7 +232,7 @@ describe Docket, :all_dbs do
   context "distribute_appeals" do
     let!(:appeals) do
       (1..10).map do
-        create(:appeal, :with_post_intake_tasks, docket_type: "direct_review")
+        create(:appeal, :with_post_intake_tasks, docket_type: Constants.AMA_DOCKETS.direct_review)
       end
     end
 

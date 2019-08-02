@@ -205,7 +205,7 @@ describe AppealIntake, :all_dbs do
         veteran_file_number: veteran_file_number,
         receipt_date: 3.days.ago,
         legacy_opt_in_approved: legacy_opt_in_approved,
-        docket_type: "direct_review"
+        docket_type: Constants.AMA_DOCKETS.direct_review
       )
     end
 
