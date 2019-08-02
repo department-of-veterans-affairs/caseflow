@@ -43,188 +43,222 @@ class AddIssueManager extends React.Component {
     this.props.onComplete();
   }
 
-  setupSteps() {
+  setupAddIssuesModal = () => {
     const { intakeData, formType } = this.props;
 
-    this.steps = {
-      AddIssuesModal: {
-        component: AddIssuesModal,
-        props: {
-          intakeData,
-          formType,
-          onCancel: () => this.cancel(),
-          onSubmit: ({ selectedContestableIssueIndex, currentIssue, notes }) => {
-            this.setState({ selectedContestableIssueIndex,
-              currentIssue,
-              notes }, () => {
-              if (isCorrection(currentIssue.isRating, this.props.intakeData)) {
-                this.setState({ currentModal: 'CorrectionTypeModal' });
-              } else if (this.hasLegacyAppeals()) {
+    return {
+      component: AddIssuesModal,
+      props: {
+        intakeData,
+        formType,
+        onCancel: () => this.cancel(),
+        onSubmit: ({ selectedContestableIssueIndex, currentIssue, notes }) => {
+          this.setState({ selectedContestableIssueIndex,
+            currentIssue,
+            notes }, () => {
+            if (isCorrection(currentIssue.isRating, this.props.intakeData)) {
+              this.setState({ currentModal: 'CorrectionTypeModal' });
+            } else if (this.hasLegacyAppeals()) {
+              this.setState({ currentModal: 'LegacyOptInModal' });
+            } else if (this.requiresUntimelyExemption()) {
+              this.setState({ currentModal: 'UntimelyExemptionModal',
+                addtlProps: { currentIssue } });
+            } else {
+              // Dispatch action to add issue
+              this.props.addIssue(currentIssue);
+
+              this.setState(initialState);
+              this.props.onComplete();
+            }
+          });
+        },
+        onSkip: () => {
+          this.setState({ currentModal: 'NonratingRequestIssueModal' });
+        }
+      }
+    };
+  };
+
+  setupCorrectionTypeModal = () => {
+    const { intakeData, formType } = this.props;
+
+    return {
+      component: CorrectionTypeModal,
+      props: {
+        cancelText: 'Cancel adding this issue',
+        submitText: this.hasLegacyAppeals() || this.requiresUntimelyExemption() ? 'Next' : 'Add this issue',
+        onCancel: () => this.cancel(),
+        onSubmit: ({ correctionType }) => {
+          // update data
+          this.setState(
+            {
+              currentIssue: {
+                ...this.state.currentIssue,
+                correctionType
+              }
+            },
+            () => {
+              if (this.hasLegacyAppeals()) {
                 this.setState({ currentModal: 'LegacyOptInModal' });
               } else if (this.requiresUntimelyExemption()) {
+                const { currentIssue } = this.state;
+
                 this.setState({ currentModal: 'UntimelyExemptionModal',
                   addtlProps: { currentIssue } });
               } else {
-                // Dispatch action to add issue
-                this.props.addIssue(currentIssue);
-
-                this.setState(initialState);
-                this.props.onComplete();
-              }
-            });
-          },
-          onSkip: () => {
-            this.setState({ currentModal: 'NonratingRequestIssueModal' });
-          }
-        }
-      },
-      CorrectionTypeModal: {
-        component: CorrectionTypeModal,
-        props: {
-          cancelText: 'Cancel adding this issue',
-          submitText: this.hasLegacyAppeals() || this.requiresUntimelyExemption() ? 'Next' : 'Add this issue',
-          onCancel: () => this.cancel(),
-          onSubmit: ({ correctionType }) => {
-            // update data
-            this.setState(
-              {
-                currentIssue: {
-                  ...this.state.currentIssue,
-                  correctionType
-                }
-              },
-              () => {
-                if (this.hasLegacyAppeals()) {
-                  this.setState({ currentModal: 'LegacyOptInModal' });
-                } else if (this.requiresUntimelyExemption()) {
-                  const { currentIssue } = this.state;
-
-                  this.setState({ currentModal: 'UntimelyExemptionModal',
-                    addtlProps: { currentIssue } });
-                } else {
-                  const { currentIssue } = this.state;
-
-                  // Sequence complete — dispatch action to add issue
-                  this.props.addIssue(currentIssue);
-
-                  this.props.onComplete();
-                }
-              }
-            );
-          }
-        }
-      },
-      NonratingRequestIssueModal: {
-        component: NonratingRequestIssueModal,
-        props: {
-          intakeData,
-          formType,
-          submitText: this.hasLegacyAppeals() ? 'Next' : 'Add this issue',
-          onCancel: () => this.cancel(),
-          onSkip: () => this.setState({ currentModal: 'UnidentifiedIssuesModal' }),
-          onSubmit: ({ currentIssue }) => {
-            this.setState({ currentIssue }, () => {
-              if (isCorrection(currentIssue.isRating, this.props.intakeData)) {
-                this.setState({ currentModal: 'CorrectionTypeModal' });
-              } else if (this.hasLegacyAppeals()) {
-                this.setState({ currentModal: 'LegacyOptInModal' });
-              } else if (currentIssue.timely === false) {
-                this.setState({ currentModal: 'UntimelyExemptionModal',
-                  addtlProps: { currentIssue } });
-              } else {
-                this.props.addIssue(currentIssue);
-                this.props.onComplete();
-              }
-            });
-          }
-        }
-      },
-      LegacyOptInModal: {
-        component: LegacyOptInModal,
-        props: {
-          intakeData,
-          formType,
-          submitText: this.requiresUntimelyExemption() ? 'Next' : 'Add this issue',
-          onCancel: () => this.cancel(),
-          onSubmit: ({ vacolsId, vacolsSequenceId, eligibleForSocOptIn }) => {
-            this.setState(
-              {
-                currentIssue: {
-                  ...this.state.currentIssue,
-                  vacolsId,
-                  vacolsSequenceId,
-                  eligibleForSocOptIn
-                }
-              },
-              () => {
                 const { currentIssue } = this.state;
 
-                if (this.requiresUntimelyExemption()) {
-                  this.setState({ currentModal: 'UntimelyExemptionModal',
-                    addtlProps: { currentIssue } });
-                } else if (this.state.currentIssue.category) {
-                  // Safe to combine these conditionals now, I guess...?
-
-                  // Sequence complete — dispatch action to add issue
-                  this.props.addIssue(currentIssue);
-                  this.setState(initialState);
-                  this.props.onComplete();
-                } else {
-                  this.props.addIssue(currentIssue);
-
-                  this.setState(initialState);
-                  this.props.onComplete();
-                }
-              }
-            );
-          }
-        }
-      },
-      UntimelyExemptionModal: {
-        component: UntimelyExemptionModal,
-        props: {
-          intakeData,
-          formType,
-          onCancel: () => this.cancel(),
-          onSubmit: ({ untimelyExemption, untimelyExemptionNotes }) => {
-            this.setState(
-              {
-                currentIssue: {
-                  ...this.state.currentIssue,
-                  untimelyExemption,
-                  untimelyExemptionNotes
-                }
-              },
-              () => {
-                const { currentIssue } = this.state;
-
+                // Sequence complete — dispatch action to add issue
                 this.props.addIssue(currentIssue);
 
-                this.setState(initialState);
                 this.props.onComplete();
               }
-            );
-          }
+            }
+          );
         }
-      },
-      UnidentifiedIssuesModal: {
-        component: UnidentifiedIssuesModal,
-        props: {
-          intakeData,
-          formType,
-          onCancel: () => this.cancel(),
-          onSubmit: ({ currentIssue }) => {
-            if (isCorrection(true, this.props.intakeData)) {
-              this.setState({ currentIssue,
-                currentModal: 'CorrectionTypeModal' });
+      }
+    };
+  };
+
+  setupNonratingRequestIssueModal = () => {
+    const { intakeData, formType } = this.props;
+
+    return {
+      component: NonratingRequestIssueModal,
+      props: {
+        intakeData,
+        formType,
+        submitText: this.hasLegacyAppeals() ? 'Next' : 'Add this issue',
+        onCancel: () => this.cancel(),
+        onSkip: () => this.setState({ currentModal: 'UnidentifiedIssuesModal' }),
+        onSubmit: ({ currentIssue }) => {
+          this.setState({ currentIssue }, () => {
+            if (isCorrection(currentIssue.isRating, this.props.intakeData)) {
+              this.setState({ currentModal: 'CorrectionTypeModal' });
+            } else if (this.hasLegacyAppeals()) {
+              this.setState({ currentModal: 'LegacyOptInModal' });
+            } else if (currentIssue.timely === false) {
+              this.setState({ currentModal: 'UntimelyExemptionModal',
+                addtlProps: { currentIssue } });
             } else {
-              // Just add
               this.props.addIssue(currentIssue);
               this.props.onComplete();
             }
+          });
+        }
+      }
+    };
+  };
+
+  setupLegacyOptInModal = () => {
+    const { intakeData, formType } = this.props;
+
+    return {
+      component: LegacyOptInModal,
+      props: {
+        intakeData,
+        formType,
+        submitText: this.requiresUntimelyExemption() ? 'Next' : 'Add this issue',
+        onCancel: () => this.cancel(),
+        onSubmit: ({ vacolsId, vacolsSequenceId, eligibleForSocOptIn }) => {
+          this.setState(
+            {
+              currentIssue: {
+                ...this.state.currentIssue,
+                vacolsId,
+                vacolsSequenceId,
+                eligibleForSocOptIn
+              }
+            },
+            () => {
+              const { currentIssue } = this.state;
+
+              if (this.requiresUntimelyExemption()) {
+                this.setState({ currentModal: 'UntimelyExemptionModal',
+                  addtlProps: { currentIssue } });
+              } else if (this.state.currentIssue.category) {
+                // Safe to combine these conditionals now, I guess...?
+
+                // Sequence complete — dispatch action to add issue
+                this.props.addIssue(currentIssue);
+                this.setState(initialState);
+                this.props.onComplete();
+              } else {
+                this.props.addIssue(currentIssue);
+
+                this.setState(initialState);
+                this.props.onComplete();
+              }
+            }
+          );
+        }
+      }
+    };
+  };
+
+  setupUntimelyExemptionModal = () => {
+    const { intakeData, formType } = this.props;
+
+    return {
+      component: UntimelyExemptionModal,
+      props: {
+        intakeData,
+        formType,
+        onCancel: () => this.cancel(),
+        onSubmit: ({ untimelyExemption, untimelyExemptionNotes }) => {
+          this.setState(
+            {
+              currentIssue: {
+                ...this.state.currentIssue,
+                untimelyExemption,
+                untimelyExemptionNotes
+              }
+            },
+            () => {
+              const { currentIssue } = this.state;
+
+              this.props.addIssue(currentIssue);
+
+              this.setState(initialState);
+              this.props.onComplete();
+            }
+          );
+        }
+      }
+    };
+  };
+
+  setupUnidentifiedIssuesModal = () => {
+    const { intakeData, formType } = this.props;
+
+    return {
+      component: UnidentifiedIssuesModal,
+      props: {
+        intakeData,
+        formType,
+        onCancel: () => this.cancel(),
+        onSubmit: ({ currentIssue }) => {
+          if (isCorrection(true, this.props.intakeData)) {
+            this.setState({ currentIssue,
+              currentModal: 'CorrectionTypeModal' });
+          } else {
+            // Just add
+            this.props.addIssue(currentIssue);
+            this.props.onComplete();
           }
         }
       }
+    };
+  };
+
+  setupSteps() {
+    this.steps = {
+      AddIssuesModal: this.setupAddIssuesModal(),
+      CorrectionTypeModal: this.setupCorrectionTypeModal(),
+      NonratingRequestIssueModal: this.setupNonratingRequestIssueModal(),
+      LegacyOptInModal: this.setupLegacyOptInModal(),
+      UntimelyExemptionModal: this.setupUntimelyExemptionModal(),
+      UnidentifiedIssuesModal: this.setupUnidentifiedIssuesModal()
     };
   }
 
