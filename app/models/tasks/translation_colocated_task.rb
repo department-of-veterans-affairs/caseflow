@@ -26,4 +26,8 @@ class TranslationColocatedTask < ColocatedTask
     send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants.CO_LOCATED_ADMIN_ACTIONS.translation)
     actions.unshift(send_to_team)
   end
+
+  def vacols_location
+    LegacyAppeal::LOCATION_CODES[:translation]
+  end
 end

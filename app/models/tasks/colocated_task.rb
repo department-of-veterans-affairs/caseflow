@@ -67,6 +67,8 @@ class ColocatedTask < Task
     if assigned_to == user ||
        (task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.user_is_admin?(user))
       actions = [
+        Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h,
+        Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
         Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
         Constants.TASK_ACTIONS.CANCEL_TASK.to_h
@@ -74,10 +76,7 @@ class ColocatedTask < Task
 
       actions.unshift(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h) if Colocated.singleton.user_is_admin?(user)
 
-      actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
-      actions.unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
-
-      return actions
+      actions
     end
 
     []
@@ -120,29 +119,7 @@ class ColocatedTask < Task
   end
 
   def vacols_location
-    # Break this out into respective subclasses once ColocatedTasks are migrated
-    # https://github.com/department-of-veterans-affairs/caseflow/pull/11295#issuecomment-509659069
-    if type == ScheduleHearingColocatedTask.name
-      schedule_hearing_vacols_location
-    elsif type == TranslationColocatedTask.name
-      translation_vacols_location
-    else
-      assigned_by.vacols_uniq_id
-    end
-  end
-
-  def schedule_hearing_vacols_location
-    # Return to attorney if the task is cancelled. For instance, if the VLJ support staff sees that the hearing was
-    # actually held.
-    return assigned_by.vacols_uniq_id if children.all? { |child| child.status == Constants.TASK_STATUSES.cancelled }
-
-    # Schedule hearing with a task (instead of changing Location in VACOLS, the old way)
-    ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)
-    LegacyAppeal::LOCATION_CODES[:caseflow]
-  end
-
-  def translation_vacols_location
-    LegacyAppeal::LOCATION_CODES[:translation]
+    assigned_by.vacols_uniq_id
   end
 
   def all_tasks_closed_for_appeal?
