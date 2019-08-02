@@ -36,8 +36,6 @@ class ExternalApi::VADotGovService::Response
       Caseflow::Error::VaDotGovLimitError.new code: code, message: body
     when 400
       Caseflow::Error::VaDotGovRequestError.new code: code, message: body
-    when 500, 502, 503, 504
-      Caseflow::Error::VaDotGovServerError.new code: code, message: body
     else
       msg = "Error: #{body}, HTTP code: #{code}"
       Caseflow::Error::VaDotGovServerError.new code: code, message: msg
