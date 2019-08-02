@@ -1107,19 +1107,19 @@ RSpec.feature "Case details", :all_dbs do
       let!(:appeal) { create(:appeal) }
       let(:root_task) { create(:root_task, appeal: appeal) }
 
-      let!(:withdraw_mail_task) do
+      let!(:appeal_withdrawal_mail_task) do
         create(
-          :withdraw_mail_task,
+          :appeal_withdrawal_mail_task,
           appeal: appeal,
           instructions: ["cancelled"]
         )
       end
 
-      let!(:bva_mail_task) do
+      let!(:appeal_withdrawal_bva_task) do
         create(
-          :withdraw_bva_task,
+          :appeal_withdrawal_bva_task,
           appeal: appeal,
-          parent: withdraw_mail_task,
+          parent: appeal_withdrawal_mail_task,
           instructions: ["cancelled"]
         )
       end
@@ -1147,14 +1147,14 @@ RSpec.feature "Case details", :all_dbs do
         click_on "Search"
         click_on appeal.docket_number
 
-        new_tasks = withdraw_mail_task.children
+        new_tasks = appeal_withdrawal_mail_task.children
         expect(new_tasks.length).to eq(1)
 
         new_task = new_tasks.first
         expect(new_task.status).to eq Constants.TASK_STATUSES.cancelled
 
-        expect(bva_mail_task.assigned_to).to eq(BvaIntake.singleton)
-        expect(bva_mail_task.parent.assigned_to).to eq(MailTeam.singleton)
+        expect(appeal_withdrawal_bva_task.assigned_to).to eq(BvaIntake.singleton)
+        expect(appeal_withdrawal_bva_task.parent.assigned_to).to eq(MailTeam.singleton)
       end
     end
   end
