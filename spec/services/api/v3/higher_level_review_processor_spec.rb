@@ -64,6 +64,44 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
     )
   end
 
+  context "self.code_from_title" do
+    code = Api::V3::HigherLevelReviewProcessor.method :code_from_title
+    it "converts values to codes" do
+      expect(code["Non-toxic does not mean food."]).to be(:nontoxic_does_not_mean_food)
+      expect(code["Invalid veteran type!!"]).to be(:invalid_veteran_type)
+      expect(code[:invalid_veteran_type]).to be(:invalid_veteran_type)
+      expect(code[123]).to be(:"123")
+      expect(code[nil]).to be_nil
+      expect(code[false]).to be_nil
+      expect(code["@^$!"]).to be(nil)
+      expect(code[""]).to be_nil
+      expect(code["     "]).to be_nil
+    end
+  end
+
+  context "ERRORS_BY_CODE" do
+    ERRORS_BY_CODE = Api::V3::HigherLevelReviewProcessor::ERRORS_BY_CODE
+    it("is a hash") { expect(ERRORS_BY_CODE).to be_a(Hash) }
+    it("has Errors") { expect(ERRORS_BY_CODE.values.first).to be_a(Api::V3::HigherLevelReviewProcessor::Error) }
+  end
+
+  context "error_from_error_code" do
+    ERRORS_BY_CODE = Api::V3::HigherLevelReviewProcessor::ERRORS_BY_CODE
+    ERROR_FOR_UNKNOWN_CODE = Api::V3::HigherLevelReviewProcessor::ERROR_FOR_UNKNOWN_CODE
+    Error = Api::V3::HigherLevelReviewProcessor::Error
+    subject { Api::V3::HigherLevelReviewProcessor.new(params, user) }
+    it "returns the correct Error objects" do
+      expect(subject.error_from_error_code(false)).to be(ERROR_FOR_UNKNOWN_CODE)
+      expect(subject.error_from_error_code(:unknown_error)).to be(ERROR_FOR_UNKNOWN_CODE)
+      expect(subject.error_from_error_code(:must_have_id_to_contest_decision_issue)).to eq(
+        ERRORS_BY_CODE[:must_have_id_to_contest_decision_issue]
+      )
+      expect(subject.error_from_error_code(:must_have_id_to_contest_decision_issue)).to eq(
+        Error.new(422, :must_have_id_to_contest_decision_issue, "Must have id to contest decision issue")
+      )
+    end
+  end
+
   context "review_params" do
     subject { Api::V3::HigherLevelReviewProcessor.new(params, user) }
     it "returns the request issue as a properly formatted intake data hash" do
@@ -210,6 +248,86 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
       expect(e[:notes]).to be(e_notes)
       expect(e[:decision_text]).to be(e_decision_text)
       expect(e[:decision_date]).to be(e_decision_date)
+    end
+  end
+
+  context "errors and errors?" do
+    let(:a_contests) { "on_file_decision_issue" } # missing id
+    let(:a_id) { nil }
+    let(:a_notes) { "Notes for request issue Aaayyyyyy!" }
+
+    let(:b_contests) { "on_file_rating_issue" } # missing notes
+    let(:b_id) { 616 }
+    let(:b_notes) { "" }
+
+    let(:c_contests) { "on_file_legacy_issue" } # missing both notes and id
+    let(:c_id) { "   " }
+    let(:c_notes) { false }
+
+    let(:benefit_type) { "compensation" }
+
+    let(:d_contests) { "other" } # wrong category type
+    let(:d_category) { "Character of discharge determinations" }
+    let(:d_notes) { "Notes for request issue Deee!" }
+    let(:d_decision_date) { "2019-05-07" }
+    let(:d_decision_text) { "Decision text for request issue Deee!" }
+
+    let(:e_contests) { "other" } # no text
+    let(:e_notes) { nil }
+    let(:e_decision_date) { "2019-05-09" }
+    let(:e_decision_text) { "" }
+
+    let(:included) do
+      [
+        {
+          type: "RequestIssue",
+          attributes: {
+            contests: a_contests,
+            id: a_id,
+            notes: a_notes
+          }
+        },
+        {
+          type: "RequestIssue",
+          attributes: {
+            contests: b_contests,
+            id: b_id,
+            notes: b_notes
+          }
+        },
+        {
+          type: "RequestIssue",
+          attributes: {
+            contests: c_contests,
+            id: c_id,
+            notes: c_notes
+          }
+        },
+        {
+          type: "RequestIssue",
+          attributes: {
+            contests: d_contests,
+            category: d_category,
+            decision_date: d_decision_date,
+            decision_text: d_decision_text,
+            notes: d_notes
+          }
+        },
+        {
+          type: "RequestIssue",
+          attributes: {
+            contests: e_contests,
+            decision_date: e_decision_date,
+            decision_text: e_decision_text,
+            notes: e_notes
+          }
+        }
+      ]
+    end
+    subject { Api::V3::HigherLevelReviewProcessor.new(params, user) }
+    it "has the appropriate errors" do
+      expect(subject.errors?).to be(true)
+      expect(subject.errors.length).to be > 0
     end
   end
 end

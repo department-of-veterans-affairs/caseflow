@@ -4,7 +4,9 @@ class Api::V3::HigherLevelReviewProcessor
   Error = Struct.new(:status, :code, :title)
 
   def self.code_from_title(title)
-    title.split(" ").join("_").downcase.gsub(/[^0-9a-z_]/i, "")
+    return nil if title.blank?
+    title = title.to_s.split(" ").join("_").downcase.gsub(/[^0-9a-z_]/i, "")
+    title.blank? ? nil : title.to_sym
   end
 
   # creates a hash with this shape:
