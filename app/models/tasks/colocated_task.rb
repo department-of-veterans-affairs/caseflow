@@ -76,7 +76,7 @@ class ColocatedTask < Task
 
       actions.unshift(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h) if Colocated.singleton.user_is_admin?(user)
 
-      actions
+      return actions
     end
 
     []
