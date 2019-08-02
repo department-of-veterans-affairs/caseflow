@@ -24,8 +24,7 @@ class TaskPager
 
   def paged_tasks
     # TODO: Validate input.
-    # TODO: Validate column is in some accepted set of columns.
-    #       - We don't need to do this with the values because that's the whole point of the filter.
+    # TODO: Ensure no filters works correctly.
     where_clause = filter_params_to_where_clause(filters)
     filtered_tasks = tasks_for_tab.where(where_clause)
     sorted_tasks(filtered_tasks).page(page).per(TASKS_PER_PAGE)
