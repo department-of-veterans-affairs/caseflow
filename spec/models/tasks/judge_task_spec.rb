@@ -220,13 +220,13 @@ describe JudgeTask, :all_dbs do
         )
       end
 
-      before { Timecop.freeze(Time.zone.local(2019, 8, 2)) }
+      before { Timecop.freeze(Time.zone.local(2019, 9, 2)) }
 
       it "changes the judge task type to decision review and sends an error to sentry" do
         expect(judge_task.type).to eq(JudgeAssignTask.name)
         expect(Raven).to receive(:capture_message).with(
-          ["Still changing JudgeAssignTask type to JudgeDecisionReviewTask.",
-           "See: https://github.com/department-of-veterans-affairs/caseflow/pull/11140#discussion_r295487938"],
+          "Still changing JudgeAssignTask type to JudgeDecisionReviewTask."\
+           "See: https://github.com/department-of-veterans-affairs/caseflow/pull/11140#discussion_r295487938",
           extra: { application: "tasks" }
         )
         subject
