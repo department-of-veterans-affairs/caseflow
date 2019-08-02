@@ -139,15 +139,6 @@ describe ColocatedTask, :all_dbs do
       end
     end
 
-    context "when action is not valid" do
-      let(:params_list) { [{ assigned_by: attorney, action: :test, appeal: appeal_1 }] }
-
-      it "does not create a co-located task" do
-        expect { subject }.to raise_error(ActiveRecord::RecordInvalid, /Action is not included in the list/)
-        expect(ColocatedTask.all.count).to eq 0
-      end
-    end
-
     context "when trying to create muliple identical tasks" do
       let!(:parent) { create(:ama_attorney_task, parent: root_task, assigned_to: attorney) }
       let(:instructions) { "These are my instructions" }
