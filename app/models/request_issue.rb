@@ -631,12 +631,18 @@ class RequestIssue < ApplicationRecord
   private
 
   # When a request issue already has a rating in VBMS, prevent user from editing it.
+  # LockedRatingError indicates that the matching rating issue could be locked,
+  # we can't know if the rating issues include this specific issue
+  # BackfilledRatingError prevents from fetching the list of ratings
+  # so we don't know if there is a rating in progress
   def contention_connected_to_rating?
     return false unless contention_reference_id
 
     matching_rating_issues.any? if end_product_establishment.associated_rating
-  rescue Rating::BgsRatingError
+  rescue Rating::NilRatingProfileListError
     false
+  rescue Rating::LockedRatingError, Rating::BackfilledRatingError
+    true
   end
 
   def limited_poa

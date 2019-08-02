@@ -3,10 +3,9 @@
 class Rating
   include ActiveModel::Model
 
-  class BgsRatingError < StandardError; end
-  class NilRatingProfileListError < BgsRatingError; end
-  class LockedRatingError < BgsRatingError; end
-  class BackfilledRatingError < BgsRatingError; end
+  class NilRatingProfileListError < StandardError; end
+  class LockedRatingError < StandardError; end
+  class BackfilledRatingError < StandardError; end
 
   # WARNING: profile_date is a misnomer adopted from BGS terminology.
   # It is a datetime, not a date.
