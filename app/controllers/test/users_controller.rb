@@ -83,14 +83,10 @@ class Test::UsersController < ApplicationController
     User.clear_current_user # for testing only
     save_admin_login_attempt
 
-    user = User.find_by(css_id: params[:id], station_id: params[:station_id])
+    user = find_user
     return head :not_found if user.nil?
 
-    session["user"] = user.to_session_hash
-    # We keep track of current user to use when logging out
-    session["global_admin"] = current_user.id
-    RequestStore[:current_user] = user
-    session[:regional_office] = user.users_regional_office
+    switch_current_user(user)
     head :ok
   end
 
@@ -105,6 +101,7 @@ class Test::UsersController < ApplicationController
       Rake::Task["db:seed"].reenable
       Rake::Task["db:seed"].invoke
     end
+    head :ok
   end
 
   def toggle_feature
@@ -115,15 +112,7 @@ class Test::UsersController < ApplicationController
     params[:disable]&.each do |f|
       FeatureToggle.disable!(f[:value])
     end
-  end
-
-  def save_admin_login_attempt
-    Rails.logger.info("#{current_user.css_id} logging in as #{params[:id]} at #{params[:station_id]}")
-    GlobalAdminLogin.create!(
-      admin_css_id: current_user.css_id,
-      target_css_id: params[:id],
-      target_station_id: params[:station_id]
-    )
+    head :ok
   end
 
   # Set end products in DEMO
@@ -131,14 +120,6 @@ class Test::UsersController < ApplicationController
     BGSService.end_product_records[:default] = new_default_end_products
 
     head :ok
-  end
-
-  def require_demo
-    redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
-  end
-
-  def require_global_admin
-    head :unauthorized unless current_user.global_admin?
   end
 
   def show_error
@@ -156,6 +137,35 @@ class Test::UsersController < ApplicationController
   end
 
   private
+
+  def find_user
+    User.find_by_css_id(params[:id])
+  end
+
+  def switch_current_user(user)
+    session["user"] = user.to_session_hash
+    # We keep track of current user to use when logging out
+    session["global_admin"] = current_user.id
+    RequestStore[:current_user] = user
+    session[:regional_office] = user.users_regional_office
+  end
+
+  def require_demo
+    redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
+  end
+
+  def require_global_admin
+    head :unauthorized unless current_user.global_admin?
+  end
+
+  def save_admin_login_attempt
+    Rails.logger.info("#{current_user.css_id} logging in as #{params[:id]} at #{params[:station_id]}")
+    GlobalAdminLogin.create!(
+      admin_css_id: current_user.css_id,
+      target_css_id: params[:id],
+      target_station_id: params[:station_id]
+    )
+  end
 
   def user_session
     (params[:id] == "me") ? session : nil
