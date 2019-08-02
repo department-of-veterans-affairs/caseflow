@@ -1256,6 +1256,8 @@ class SeedDB
     create_dispatch_tasks(50)
     create_ramp_elections(9)
     create_api_key
+
+    UpdateCachedAppealsAttributesJob.perform_now
   end
 end
 # rubocop:enable Metrics/MethodLength
