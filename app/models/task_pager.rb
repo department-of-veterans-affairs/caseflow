@@ -34,12 +34,13 @@ class TaskPager
       tasks.order(closed_at: sort_order)
     when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
       tasks.order(type: sort_order, action: sort_order, created_at: sort_order)
-    when Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
+    when Constants.QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN
       tasks.order(placed_on_hold_at: sort_order)
     # Columns not yet supported:
     #
     # APPEAL_TYPE_COLUMN
     # CASE_DETAILS_LINK_COLUMN
+    # DAYS_ON_HOLD_COLUMN
     # DOCUMENT_COUNT_READER_LINK_COLUMN
     # DOCKET_NUMBER_COLUMN
     # HEARING_BADGE_COLUMN
@@ -47,7 +48,6 @@ class TaskPager
     # REGIONAL_OFFICE_COLUMN
     # TASK_ASSIGNEE_COLUMN
     # TASK_ASSIGNER_COLUMN
-    # TASK_HOLD_LENGTH_COLUMN
     #
     else
       tasks.order(created_at: sort_order)

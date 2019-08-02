@@ -128,6 +128,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
 
     scenario "User can only update notes" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      expect(page).to_not have_button("Print all Hearing Worksheets")
       expect(page).to_not have_content("Edit Hearing Day")
       expect(page).to_not have_content("Lock Hearing Day")
       expect(page).to_not have_content("Hearing Details")
@@ -166,6 +167,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       scenario "User can update hearing prep fields" do
         visit "hearings/schedule/docket/" + legacy_hearing.hearing_day.id.to_s
 
+        expect(page).to have_button("Print all Hearing Worksheets", disabled: false)
         click_dropdown(name: "#{legacy_hearing.external_id}-disposition", index: 0)
         click_button("Confirm")
         expect(page).to have_content("You have successfully updated")

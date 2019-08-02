@@ -102,7 +102,7 @@ RSpec.feature "Postpone hearing", :all_dbs do
       create(:legacy_hearing, :with_tasks, regional_office: "RO39", hearing_day: hearing_day_earlier)
     end
 
-    scenario "and reschedule on the same day" do
+    scenario "and reschedule on the same day", skip: "flake dropdown" do
       visit "/queue/appeals/#{legacy_hearing.appeal.external_id}"
 
       click_dropdown(text: Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h[:label])
