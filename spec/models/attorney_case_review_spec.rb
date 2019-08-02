@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe AttorneyCaseReview do
-  let(:attorney) { FactoryBot.create(:user) }
-  let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+describe AttorneyCaseReview, :all_dbs do
+  let(:attorney) { create(:user) }
+  let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
 
-  let(:judge) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID) }
-  let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id) }
+  let(:judge) { create(:user, station_id: User::BOARD_STATION_ID) }
+  let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge.css_id) }
 
   context "#update_issue_dispositions_in_caseflow!" do
     let!(:appeal) { create(:appeal) }
@@ -222,7 +223,7 @@ describe AttorneyCaseReview do
     context "for omo request" do
       let(:task_id) { "#{vacols_case.bfkey}-#{vacols_case.decass[0].deadtim.strftime('%F')}" }
       let(:case_issues) { [] }
-      let(:vacols_case) { FactoryBot.create(:case, :assigned, staff: vacols_atty, case_issues: case_issues) }
+      let(:vacols_case) { create(:case, :assigned, staff: vacols_atty, case_issues: case_issues) }
 
       context "should validate format of the task ID" do
         context "when correct format" do
@@ -232,7 +233,7 @@ describe AttorneyCaseReview do
         context "when correct format with letters" do
           let(:case_id_w_trailing_letter) { "1989L" }
           let(:vacols_case) do
-            FactoryBot.create(:case, :assigned, staff: vacols_atty, bfkey: case_id_w_trailing_letter)
+            create(:case, :assigned, staff: vacols_atty, bfkey: case_id_w_trailing_letter)
           end
           let(:task_id) { "#{vacols_case.bfkey}-#{vacols_case.decass[0].deadtim.strftime('%F')}" }
           it { is_expected.to be_valid }
@@ -305,14 +306,14 @@ describe AttorneyCaseReview do
 
       context "when legacy" do
         let(:task_id) { "#{vacols_case.bfkey}-#{vacols_case.decass[0].deadtim.strftime('%F')}" }
-        let(:vacols_case) { FactoryBot.create(:case, :assigned, staff: vacols_atty, case_issues: case_issues) }
+        let(:vacols_case) { create(:case, :assigned, staff: vacols_atty, case_issues: case_issues) }
         let(:document_type) { Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"] }
         let(:work_product) { "Decision" }
         let(:document_id) { "12345-12345678" }
-        let(:vacated_issue) { FactoryBot.create(:case_issue, :disposition_vacated) }
-        let(:remand_reason) { FactoryBot.create(:remand_reason, rmdval: "AB", rmddev: "R2") }
+        let(:vacated_issue) { create(:case_issue, :disposition_vacated) }
+        let(:remand_reason) { create(:remand_reason, rmdval: "AB", rmddev: "R2") }
         let(:remanded_issue) do
-          FactoryBot.create(:case_issue, :disposition_remanded, remand_reasons: [remand_reason])
+          create(:case_issue, :disposition_remanded, remand_reasons: [remand_reason])
         end
         let(:case_issues) { [vacated_issue, remanded_issue] }
         let(:issues) do

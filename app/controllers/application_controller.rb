@@ -7,7 +7,7 @@ class ApplicationController < ApplicationBaseController
   before_action :set_raven_user
   before_action :verify_authentication
   before_action :set_paper_trail_whodunnit
-  before_action :deny_vso_access, except: [:unauthorized]
+  before_action :deny_vso_access, except: [:unauthorized, :feedback]
 
   rescue_from StandardError do |e|
     fail e unless e.class.method_defined?(:serialize_response)

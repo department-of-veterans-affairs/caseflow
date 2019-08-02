@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe OrganizationsUser do
-  let(:organization) { FactoryBot.create(:organization) }
-  let(:user) { FactoryBot.create(:user) }
+describe OrganizationsUser, :postgres do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user) }
 
   describe ".remove_admin_rights_from_user" do
     subject { OrganizationsUser.remove_admin_rights_from_user(user, organization) }

@@ -2,6 +2,7 @@
 
 require "csv"
 require "rainbow"
+require_relative "../../helpers/vacols_csv_reader"
 
 namespace :local do
   namespace :vacols do
@@ -35,19 +36,13 @@ namespace :local do
       date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 12, 10)
       hearing_date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 7, 25)
 
-      read_csv(VACOLS::Case, date_shift)
-      read_csv(VACOLS::Folder, date_shift)
-      read_csv(VACOLS::Representative, date_shift)
-      read_csv(VACOLS::Correspondent, date_shift)
-      read_csv(VACOLS::CaseIssue, date_shift)
-      read_csv(VACOLS::Note, date_shift)
-      read_csv(VACOLS::CaseHearing, hearing_date_shift)
-      read_csv(VACOLS::Actcode, date_shift)
-      read_csv(VACOLS::Decass, date_shift)
-      read_csv(VACOLS::Staff, date_shift)
-      read_csv(VACOLS::Vftypes, date_shift)
-      read_csv(VACOLS::Issref, date_shift)
-      read_csv(VACOLS::TravelBoardSchedule, date_shift)
+      vacols_models.each do |model|
+        if model == VACOLS::CaseHearing
+          VacolsCSVReader.new(model, hearing_date_shift).call
+        else
+          VacolsCSVReader.new(model, date_shift).call
+        end
+      end
 
       create_issrefs
     end
@@ -123,6 +118,24 @@ namespace :local do
 
     private
 
+    def vacols_models
+      [
+        VACOLS::Case,
+        VACOLS::Folder,
+        VACOLS::Representative,
+        VACOLS::Correspondent,
+        VACOLS::CaseIssue,
+        VACOLS::Note,
+        VACOLS::CaseHearing,
+        VACOLS::Actcode,
+        VACOLS::Decass,
+        VACOLS::Staff,
+        VACOLS::Vftypes,
+        VACOLS::Issref,
+        VACOLS::TravelBoardSchedule
+      ]
+    end
+
     # rubocop:disable Metrics/MethodLength
     def create_issrefs
       # creates VACOLS::Issrefs added later than our sanitized UAT copy
@@ -183,40 +196,6 @@ namespace :local do
           csv << [c.bfcorlid, case_descriptors[i]["vbms_key"]]
         end
       end
-    end
-
-    def dateshift_field(items, date_shift, key)
-      items.map! do |item|
-        item[key] = item[key] + date_shift.seconds if item[key]
-        item
-      end
-    end
-
-    def truncate_string(items, sql_type, key)
-      max_index = /\((\d*)\)/.match(sql_type)[1].to_i - 1
-      items.map! do |item|
-        item[key] = item[key][0..max_index] if item[key]
-        item
-      end
-    end
-
-    def read_csv(klass, date_shift = nil)
-      items = []
-      klass.delete_all
-      CSV.foreach(Rails.root.join("local/vacols", klass.name + "_dump.csv"), headers: true) do |row|
-        h = row.to_h
-        items << klass.new(row.to_h) if klass.primary_key.nil? || !h[klass.primary_key].nil?
-      end
-
-      klass.columns_hash.each do |k, v|
-        if date_shift && v.type == :date
-          dateshift_field(items, date_shift, k)
-        elsif v.type == :string
-          truncate_string(items, v.sql_type, k)
-        end
-      end
-
-      klass.import(items)
     end
 
     def write_csv(klass, rows, sanitizer)

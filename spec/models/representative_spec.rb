@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe Representative do
+describe Representative, :postgres do
   let(:participant_id) { "123456" }
   let(:vso_participant_id) { "789" }
 
@@ -92,7 +93,7 @@ describe Representative do
 
   describe ".should_write_ihp?" do
     let(:docket) { nil }
-    let(:appeal) { FactoryBot.create(:appeal, docket_type: docket) }
+    let(:appeal) { create(:appeal, docket_type: docket) }
 
     before { allow_any_instance_of(Appeal).to receive(:representatives).and_return(poas) }
 

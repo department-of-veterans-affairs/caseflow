@@ -1,19 +1,20 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "SpecialCaseMovementTask" do
-  let(:scm_user) { FactoryBot.create(:user) }
+RSpec.feature "SpecialCaseMovementTask", :all_dbs do
+  let(:scm_user) { create(:user) }
 
-  let(:judge_user) { FactoryBot.create(:user) }
-  let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+  let(:judge_user) { create(:user) }
+  let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
   let!(:judgeteam) { JudgeTeam.create_for_judge(judge_user) }
-  let(:veteran) { FactoryBot.create(:veteran, first_name: "Samuel", last_name: "Purcell") }
+  let(:veteran) { create(:veteran, first_name: "Samuel", last_name: "Purcell") }
   let(:appeal) do
-    FactoryBot.create(:appeal,
-                      :with_post_intake_tasks,
-                      veteran: veteran,
-                      docket_type: Constants.AMA_DOCKETS.direct_review)
+    create(:appeal,
+           :with_post_intake_tasks,
+           veteran: veteran,
+           docket_type: Constants.AMA_DOCKETS.direct_review)
   end
 
   before do

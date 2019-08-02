@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
 RSpec.shared_examples "Address Verify Task Frontend Workflow" do
   let!(:user) { create(:hearings_coordinator) }
-  let(:root_task) { create(:root_task, appeal: appeal) }
-  let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
+  let(:distribution_task) { create(:distribution_task, appeal: appeal) }
   let(:parent_hearing_task) { create(:hearing_task, parent: distribution_task, appeal: appeal) }
   let!(:schedule_hearing_task) { create(:schedule_hearing_task, :completed, appeal: appeal) }
   let!(:verify_address_task) do
@@ -93,7 +93,7 @@ RSpec.shared_examples "Address Verify Task Frontend Workflow" do
   end
 end
 
-RSpec.feature HearingAdminActionVerifyAddressTask do
+RSpec.feature HearingAdminActionVerifyAddressTask, :all_dbs do
   describe "Address Verify Workflow with Legacy Appeal" do
     let!(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: create(:case)) }
     let!(:appeal_id) { appeal.vacols_id }

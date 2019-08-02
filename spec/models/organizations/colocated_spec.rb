@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe Colocated do
+describe Colocated, :postgres do
   let(:colocated_org) { Colocated.singleton }
   let(:appeal) { nil }
 
   before do
-    FactoryBot.create_list(:user, 6).each do |u|
+    create_list(:user, 6).each do |u|
       OrganizationsUser.add_user_to_organization(u, colocated_org)
     end
   end
@@ -35,7 +36,7 @@ describe Colocated do
     end
 
     context "when appeal is specified" do
-      let(:appeal) { FactoryBot.create(:appeal) }
+      let(:appeal) { create(:appeal) }
       it "should return the first member of the Colocated team" do
         expect(subject).to eq(colocated_org.users.first)
       end

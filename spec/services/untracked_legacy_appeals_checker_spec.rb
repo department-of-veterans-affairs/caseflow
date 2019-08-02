@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
-describe UntrackedLegacyAppealsChecker do
+require "support/vacols_database_cleaner"
+require "rails_helper"
+
+describe UntrackedLegacyAppealsChecker, :all_dbs do
   context "when there are LegacyAppeals charged to CASEFLOW in VACOLS without active Caseflow tasks" do
     let(:untracked_legacy_appeals) do
-      Array.new(3) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+      Array.new(3) { create(:legacy_appeal, vacols_case: create(:case)) }
     end
     let(:tracked_legacy_appeals) do
-      Array.new(4) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+      Array.new(4) { create(:legacy_appeal, vacols_case: create(:case)) }
     end
 
     before do
@@ -17,7 +20,7 @@ describe UntrackedLegacyAppealsChecker do
 
       # Only create tasks for tracked legacy appeals.
       tracked_legacy_appeals.each do |appeal|
-        FactoryBot.create(:generic_task, assigned_to: FactoryBot.create(:user), appeal: appeal)
+        create(:generic_task, assigned_to: create(:user), appeal: appeal)
       end
     end
 
@@ -32,13 +35,13 @@ describe UntrackedLegacyAppealsChecker do
 
   context "when all LegacyAppeals charged to CASEFLOW in VACOLS have active Caseflow tasks" do
     let(:tracked_legacy_appeals) do
-      Array.new(5) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+      Array.new(5) { create(:legacy_appeal, vacols_case: create(:case)) }
     end
 
     before do
       tracked_legacy_appeals.each do |appeal|
         VACOLS::Case.find_by(bfkey: appeal.vacols_id).update!(bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow])
-        FactoryBot.create(:generic_task, assigned_to: FactoryBot.create(:user), appeal: appeal)
+        create(:generic_task, assigned_to: create(:user), appeal: appeal)
       end
     end
 

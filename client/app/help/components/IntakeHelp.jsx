@@ -10,11 +10,11 @@ class IntakeHelp extends React.Component {
 
       <p>
       Here you will find <a href="#training-videos"> Training Videos</a> and <a href="#faq">Frequently Asked Questions
-      (FAQs)</a> for Intake, as well as links to the
+      (FAQs)</a> for Intake, as well as links to the&nbsp;
         <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Training_Guide.pdf">Training Guide</a> and the
-        <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Quick_Reference_Guide.pdf">
+        &nbsp;<a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Quick_Reference_Guide.pdf">
       Quick Reference Guide</a>. These items are provided to assist you as you access and use Intake. If you require
-      further assistance after reviewing these items, please contact
+      further assistance after reviewing these items, please contact&nbsp;
         <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">
         YourIT for support</a>. We look forward to assisting you.
       </p>
@@ -106,7 +106,7 @@ class IntakeHelp extends React.Component {
 
       <h2 id="launch-intake">4. How do I launch Intake?</h2>
       <h3>For Compensation and Pension Lines of Business</h3>
-      <p>To launch Intake, open your web browser and paste the following URL into the address bar:
+      <p>To launch Intake, open your web browser and paste the following URL into the address bar:&nbsp;
         <a href="https://appeals.cf.ds.va.gov/intake" >https://appeals.cf.ds.va.gov/intake</a>. Hit the Enter button
       and sign in using your VA credentials. You will be taken to the Intake Welcome page.
       </p>
@@ -124,7 +124,7 @@ class IntakeHelp extends React.Component {
 
       <h2 id="encounter-problems">7. What should I do if I encounter problems?</h2>
       <p>
-      If you encounter any problems while using Intake, please contact
+      If you encounter any problems while using Intake, please contact&nbsp;
         <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT for support</a>.
       </p>
 
@@ -141,10 +141,10 @@ class IntakeHelp extends React.Component {
 
       <h2 id="still-need-help">9. What if I still need help?</h2>
       <p>
-      If you require further assistance after reviewing the <a href="#faq">FAQs</a>,
+      If you require further assistance after reviewing the <a href="#faq">FAQs</a>,&nbsp;
         <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Quick_Reference_Guide.pdf">Quick Reference
       Guide</a>, or <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Training_Guide.pdf">Training Guide
-        </a>, please contact
+        </a>, please contact&nbsp;
         <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">
         YourIT for support</a>. We look forward to assisting you.
       </p>
