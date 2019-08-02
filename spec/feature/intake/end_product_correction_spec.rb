@@ -209,7 +209,7 @@ def check_adding_rating_correction_issue
 
   select_correction_type_from_modal("control")
   click_correction_type_modal_submit
-  
+
   click_edit_submit
   safe_click ".confirm"
   confirm_930_modal
@@ -237,7 +237,7 @@ def check_adding_unidentified_correction_issue
   description = "New unidentified correction issue"
   click_intake_add_issue
   add_intake_unidentified_issue(description)
-  
+
   select_correction_type_from_modal("control")
   click_correction_type_modal_submit
 

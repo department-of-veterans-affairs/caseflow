@@ -850,7 +850,7 @@ feature "Supplemental Claim Intake", :all_dbs do
         setup_legacy_opt_in_appeals(veteran.file_number)
       end
 
-      context "with legacy_opt_in_approved" do
+      fcontext "with legacy_opt_in_approved" do
         let(:receipt_date) { Time.zone.today }
 
         scenario "adding issues" do
@@ -876,7 +876,9 @@ feature "Supplemental Claim Intake", :all_dbs do
           click_intake_add_issue
           add_intake_rating_issue("Untimely rating issue 1")
           add_intake_rating_issue("None of these match")
-          expect(page).to_not have_content("The issue requested isn't usually eligible because its decision date is older")
+          expect(page).to_not have_content(
+            "The issue requested isn't usually eligible because its decision date is older"
+          )
 
           expect(page).to have_content("Untimely rating issue 1")
 
