@@ -51,6 +51,7 @@ export const docketNumberColumn = (tasks, requireDasRecord) => {
     anyFiltersAreSet: true,
     label: 'Filter by docket name',
     valueName: 'docketName',
+    backendCanSort: true,
     valueFunction: (task) => {
       if (!hasDASRecord(task, requireDasRecord)) {
         return null;
@@ -143,7 +144,8 @@ export const issueCountColumn = (requireDasRecord) => {
 
 export const typeColumn = (tasks, requireDasRecord) => {
   return {
-    header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
+    // header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
+    header: "LOLOLOL",
     name: QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
     enableFilter: true,
     tableData: tasks,
