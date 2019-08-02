@@ -25,6 +25,8 @@ import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
  *   of the columns. Possible attributes for each column include:
  *   - @header {string|component} header cell value for the column
  *   - @align {sting} alignment of the column ("left", "right", or "center")
+ *   - @tableData {array[object]} array of rows that are being used to populate the table.
+ *     if not specified, @rowObjects will used.
  *   - @valueFunction {function(rowObject)} function that takes `rowObject` as
  *     an argument and returns the value of the cell for that column.
  *   - @valueName {string} if valueFunction is not defined, cell value will use
