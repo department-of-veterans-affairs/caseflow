@@ -101,7 +101,7 @@ RSpec.feature "Intake Stats Dashboard", :postgres do
       veteran_file_number: "64205555",
       receipt_date: 45.minutes.ago,
       option_selected: :appeal,
-      appeal_docket: Constants.AMA_DOCKETS.direct_review,
+      appeal_docket: :direct_review,
       established_at: nil
     )
 
