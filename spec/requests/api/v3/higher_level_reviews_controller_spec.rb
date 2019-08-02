@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 describe Api::V3::DecisionReview::HigherLevelReviewsController, type: :request do
+  before do
+    FeatureToggle.enable!(:external_api_released)
+  end
   describe "#create" do
     it "should return a 202 on success" do
       post "/api/v3/decision_review/higher_level_reviews"
