@@ -11,7 +11,6 @@
 class ColocatedTask < Task
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
-  validate :on_hold_duration_is_set, on: :update
   validate :task_is_unique, on: :create
   validate :valid_action_or_type
 
@@ -199,12 +198,6 @@ class ColocatedTask < Task
 
   def all_tasks_closed_for_appeal?
     appeal.tasks.open.select { |task| task.is_a?(ColocatedTask) }.none?
-  end
-
-  def on_hold_duration_is_set
-    if saved_change_to_status? && on_hold? && !on_hold_duration && assigned_to.is_a?(User)
-      errors.add(:on_hold_duration, "has to be specified")
-    end
   end
 
   def task_is_unique

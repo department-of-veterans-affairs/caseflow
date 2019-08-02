@@ -18,7 +18,7 @@ describe LegacyAppeal, :all_dbs do
 
   context "includes PrintsTaskTree concern" do
     context "#structure" do
-      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+      let!(:root_task) { create(:root_task, appeal: appeal) }
       let(:vacols_case) { create(:case, bfcorlid: "123456789S") }
 
       subject { appeal.structure(:id) }
@@ -31,7 +31,7 @@ describe LegacyAppeal, :all_dbs do
       context "the appeal has more than one parentless task" do
         before { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
 
-        let!(:colocated_task) { FactoryBot.create(:colocated_task, appeal: appeal, parent: nil) }
+        let!(:colocated_task) { create(:colocated_task, appeal: appeal, parent: nil) }
 
         it "returns all parentless tasks" do
           expect_any_instance_of(RootTask).to receive(:structure).with(:id)

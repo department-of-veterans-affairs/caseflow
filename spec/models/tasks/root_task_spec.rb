@@ -5,8 +5,8 @@ require "rails_helper"
 
 describe RootTask, :postgres do
   describe ".available_actions_unwrapper" do
-    let(:user) { FactoryBot.create(:user) }
-    let(:root_task) { RootTask.find(FactoryBot.create(:root_task).id) }
+    let(:user) { create(:user) }
+    let(:root_task) { RootTask.find(create(:root_task).id) }
 
     subject { root_task.available_actions_unwrapper(user) }
 
@@ -26,14 +26,14 @@ describe RootTask, :postgres do
   end
 
   describe ".update_children_status_after_closed" do
-    let!(:root_task) { FactoryBot.create(:root_task) }
+    let!(:root_task) { create(:root_task) }
     let!(:appeal) { root_task.appeal }
 
     subject { root_task.update_children_status_after_closed }
 
     context "when there are multiple children tasks" do
-      let!(:generic_task) { FactoryBot.create(:generic_task, appeal: appeal, parent: root_task) }
-      let!(:tracking_task) { FactoryBot.create(:track_veteran_task, appeal: appeal, parent: root_task) }
+      let!(:generic_task) { create(:generic_task, appeal: appeal, parent: root_task) }
+      let!(:tracking_task) { create(:track_veteran_task, appeal: appeal, parent: root_task) }
 
       it "should close the tracking task but not the generic task" do
         expect { subject }.to_not raise_error
@@ -45,7 +45,7 @@ describe RootTask, :postgres do
 
   describe ".set_assignee" do
     context "when retrieving an existing RootTask" do
-      let!(:root_task) { FactoryBot.create(:root_task, assigned_to: assignee) }
+      let!(:root_task) { create(:root_task, assigned_to: assignee) }
       context "when the assignee is already set" do
         let(:assignee) { Bva.singleton }
 
@@ -62,7 +62,7 @@ describe RootTask, :postgres do
         it "should not be called" do
           expect_any_instance_of(RootTask).to_not receive(:set_assignee)
 
-          RootTask.create(appeal: FactoryBot.create(:appeal), assigned_to: Bva.singleton)
+          RootTask.create(appeal: create(:appeal), assigned_to: Bva.singleton)
         end
       end
 
@@ -70,17 +70,17 @@ describe RootTask, :postgres do
         it "should not be called" do
           expect_any_instance_of(RootTask).to receive(:set_assignee).exactly(1).times
 
-          RootTask.create(appeal: FactoryBot.create(:appeal))
+          RootTask.create(appeal: create(:appeal))
         end
       end
 
       context "when a RootTask already exists for the appeal" do
-        let(:appeal) { FactoryBot.create(:appeal) }
+        let(:appeal) { create(:appeal) }
 
         subject { RootTask.create!(appeal: appeal) }
 
         before do
-          FactoryBot.create(:root_task, trait, appeal: appeal)
+          create(:root_task, trait, appeal: appeal)
         end
 
         context "when existing RootTask is active" do

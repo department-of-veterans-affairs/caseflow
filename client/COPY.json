@@ -127,6 +127,7 @@
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases owned by the %s team that are unassigned to a person.",
   "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to a member of the %s team.",
+  "ORGANIZATIONAL_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold in a %s team member's queue.",
   "ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE": "This queue is empty. You can ",
 
   "TRACKING_TASKS_TAB_TITLE": "All cases",
@@ -487,6 +488,9 @@
   "INTAKE_VETERAN_NOT_FOUND": "Note: If you are certain the Veteran ID or SSN is correct, the claimant may not exist in the VBA Corporate Database. If you have access, please add claimant to the Corporate Database to continue processing this intake. If you do not have access, please",
   "NON_COMP_ADDRESS_MESSAGE": "The Veteran/appellant has filed a Notice of Disagreement at the Board of Veterans' Appeals. In order to decide that appeal, the Board will need the complete records from",
   "INTAKE_EDIT_TITLE": "Edit contention title",
+
+  "INTAKE_CORRECTION_TYPE_MODAL_TITLE": "Set Correction Type",
+  "INTAKE_CORRECTION_TYPE_MODAL_COPY": "This issue will be added to a 930 EP for correction. If a mistake was found during quality review, please select whether it was discovered by the local or national quality review team. Otherwise, select control.",
 
   "END_HOLD_MODAL_TITLE": "End hold early",
   "END_HOLD_MODAL_BODY": "Do you want to end the hold early?",

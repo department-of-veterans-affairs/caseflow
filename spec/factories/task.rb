@@ -18,6 +18,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.in_progress)
+        task.children.update_all(status: Constants.TASK_STATUSES.in_progress)
       end
     end
 
@@ -28,6 +29,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.on_hold)
+        task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
       end
     end
 
@@ -38,6 +40,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.on_hold)
+        task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
       end
     end
 
@@ -49,6 +52,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.completed)
+        task.children.update_all(status: Constants.TASK_STATUSES.completed)
       end
     end
 
@@ -59,6 +63,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.completed, closed_at: 3.weeks.ago)
+        task.children.update_all(status: Constants.TASK_STATUSES.completed, closed_at: 3.weeks.ago)
       end
     end
 
@@ -67,6 +72,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.cancelled)
+        task.children.update_all(status: Constants.TASK_STATUSES.cancelled)
       end
     end
 
@@ -85,6 +91,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.on_hold)
+        task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
       end
     end
 
@@ -346,6 +353,7 @@ FactoryBot.define do
       type { HearingTask.name }
       assigned_to { Bva.singleton }
       appeal { create(:appeal) }
+      parent { appeal.root_task || create(:root_task, appeal: appeal) }
     end
 
     factory :schedule_hearing_task, class: ScheduleHearingTask do
@@ -353,6 +361,20 @@ FactoryBot.define do
       appeal { create(:appeal) }
       assigned_to { Bva.singleton }
       parent { create(:hearing_task, appeal: appeal) }
+    end
+
+    factory :appeal_withdrawal_mail_task, class: AppealWithdrawalMailTask do
+      type { AppealWithdrawalMailTask.name }
+      appeal { create(:appeal) }
+      assigned_to { MailTeam.singleton }
+      parent { create(:root_task, appeal: appeal) }
+    end
+
+    factory :appeal_withdrawal_bva_task, class: AppealWithdrawalMailTask do
+      type { AppealWithdrawalMailTask.name }
+      appeal { create(:appeal) }
+      assigned_to { BvaIntake.singleton }
+      parent { create(:appeal_withdrawal_mail_task, appeal: appeal) }
     end
 
     factory :no_show_hearing_task, class: NoShowHearingTask do

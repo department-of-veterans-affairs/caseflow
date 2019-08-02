@@ -4,10 +4,10 @@ require "support/database_cleaner"
 require "rails_helper"
 
 describe Organizations::TaskPagesController, :postgres, type: :controller do
-  let(:organization) { FactoryBot.create(:organization) }
+  let(:organization) { create(:organization) }
   let(:url) { organization.url }
 
-  let(:user) { FactoryBot.create(:user) }
+  let(:user) { create(:user) }
 
   before do
     OrganizationsUser.add_user_to_organization(user, organization)
@@ -19,7 +19,7 @@ describe Organizations::TaskPagesController, :postgres, type: :controller do
       let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
       let(:task_count) { 4 }
 
-      before { FactoryBot.create_list(:generic_task, task_count, assigned_to: organization) }
+      before { create_list(:generic_task, task_count, assigned_to: organization) }
 
       it "returns correct number of tasks" do
         get(:index, params: { organization_url: url, tab: tab_name })

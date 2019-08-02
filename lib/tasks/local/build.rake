@@ -25,6 +25,9 @@ namespace :local do
     puts "Seeding FACOLS"
     system("RAILS_ENV=development bundle exec rake local:vacols:seed") || abort
 
+    puts "Seeding FACOLS TEST"
+    system("RAILS_ENV=test bundle exec rake spec:setup_vacols") || abort
+
     puts "Enabling feature flags"
     system("bundle exec rails runner scripts/enable_features_dev.rb") || abort
 

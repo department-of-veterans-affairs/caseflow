@@ -8,7 +8,7 @@ describe Colocated, :postgres do
   let(:appeal) { nil }
 
   before do
-    FactoryBot.create_list(:user, 6).each do |u|
+    create_list(:user, 6).each do |u|
       OrganizationsUser.add_user_to_organization(u, colocated_org)
     end
   end
@@ -36,7 +36,7 @@ describe Colocated, :postgres do
     end
 
     context "when appeal is specified" do
-      let(:appeal) { FactoryBot.create(:appeal) }
+      let(:appeal) { create(:appeal) }
       it "should return the first member of the Colocated team" do
         expect(subject).to eq(colocated_org.users.first)
       end
