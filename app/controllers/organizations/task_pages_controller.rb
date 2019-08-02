@@ -20,6 +20,13 @@ class Organizations::TaskPagesController < OrganizationsController
   #   "page"=>"3"
   # }>
 
+  # TODO: Put all this as a comment on the original ticket.
+  #
+  # TODO: We need some way to unpack the filter parameters to prepare them for consumption by the TaskPager. Maybe
+  # that can even happen after they have been given to the TaskPager. Let's delay thinking about that problem until
+  # later (maybe even tackle it as a different ticket/PR). For now, we'll assume that transformation has already
+  # taken place and all inputs are valid.
+  #
   def index
     tasks = TaskPager.new(
       assignee: organization,

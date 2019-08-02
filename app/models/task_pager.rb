@@ -7,8 +7,7 @@ class TaskPager
   validate :assignee_is_user_or_organization
   validate :sort_order_is_valid
 
-  attr_accessor :assignee, :tab_name, :page, :sort_by, :sort_order
-  # attr_accessor :filters
+  attr_accessor :assignee, :tab_name, :page, :sort_by, :sort_order, :filters
 
   TASKS_PER_PAGE = 15
 
@@ -18,12 +17,18 @@ class TaskPager
     @page ||= 1
     @sort_by ||= Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN
     @sort_order ||= Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
+    @filters ||= []
 
     fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
   end
 
   def paged_tasks
-    sorted_tasks(tasks_for_tab).page(page).per(TASKS_PER_PAGE)
+    # TODO: Validate input.
+    # TODO: Validate column is in some accepted set of columns.
+    #       - We don't need to do this with the values because that's the whole point of the filter.
+    where_clause = filter_params_to_where_clause(filters)
+    filtered_tasks = tasks_for_tab.where(where_clause)
+    sorted_tasks(filtered_tasks).page(page).per(TASKS_PER_PAGE)
   end
 
   def sorted_tasks(tasks)
@@ -54,17 +59,39 @@ class TaskPager
     end
   end
 
-  # # TODO: Some filters are on other tables that we will need to join to (appeal docket type)
-  # def filtered_tasks(tasks)
-  #   filters&.each do |filter_string|
-  #     filter = Rack::Utils.parse_query(filter_string)
-  #     # TODO: Fail if the filter is not in the correct format
-  #     # TODO: Fail if the column we are filtering on is not in some allowed set of columns.
-  #     tasks = tasks.where(filter["col"] => filter["val"])
-  #   end
-  #
-  #   tasks
-  # end
+  # Assuming columns filtered on multiple values are comma-separated.
+  # ["col=docketNumberColumn&val=legacy,evidence_submission", "col=taskColumn&val=translation"]
+  # ->
+  # "cached_appeals_attributes.docket_type IN ('legacy', 'evidence_submission') AND
+  #   cached_appeals_attributes.task_action IN ('translation')"
+  def self.filter_params_to_where_clause(filter_params)
+    filter_params.map do |filter_string|
+      # TODO: filter is a string. Let's make it a hash!
+      filter_hash = Rack::Utils.parse_query(filter_string)
+      values = filter_hash["val"].split(",")
+
+      "#{table_column_from_name(filter_hash['col'])} IN #{values}"
+    end.join(" AND ")
+  end
+
+  def self.table_column_from_name(column_name)
+    case column_name
+    # TODO: I think this constant may be incorrectly named.
+    when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
+      "cached_appeals_attributes.docket_type"
+    when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
+      "tasks.type"
+    # TODO: The following columns are not yet implemented.
+    # when Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN
+    #   "cached_appeals_attributes.appeal_type"
+    # when Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN
+    #   "cached_appeals_attributes.regional_office"
+    # when Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN
+    #   "???"
+    else
+      fail(Caseflow::Error::InvalidTaskTableColumnFilter, column: column_name)
+    end
+  end
 
   def task_page_count
     @task_page_count ||= paged_tasks.total_pages
