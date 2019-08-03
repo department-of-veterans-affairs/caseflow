@@ -420,9 +420,34 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
     end
   end
 
-    # error: bad benefit_type
+  # error: bad benefit_type
   # legacy opt in
   context "review_params" do
+    let(:a_contests) { "on_file_decision_issue" }
+    let(:a_id) { "232" }
+    let(:a_notes) { 12_345_789 }
+
+    let(:b_contests) { "on_file_rating_issue" }
+    let(:b_id) { [1] }
+    let(:b_notes) { { a: 1 } }
+
+    let(:c_contests) { "on_file_legacy_issue" }
+    let(:c_id) { 0 }
+    let(:c_notes) { "a" }
+
+    let(:benefit_type) { "compensation" }
+
+    let(:d_contests) { "other" }
+    let(:d_category) { "Character of discharge determinations" }
+    let(:d_notes) { "notesnotesnotes" }
+    let(:d_decision_date) { "2019-04-07" }
+    let(:d_decision_text) { "Decision text for d!" }
+
+    let(:e_contests) { "other" }
+    let(:e_notes) { "tnest" }
+    let(:e_decision_date) { "2019-08-09" }
+    let(:e_decision_text) { "Decision text for e!" }
+
     # error: bad contest type
     let(:f_contests) { "something that you can't contest" }
     let(:f_id) { 763 }
@@ -433,85 +458,65 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
     let(:g_id) { 67 }
     let(:g_notes) { "Pineapplular" }
 
-    # error: blank id 
+    # error: blank id
     let(:h_contests) { "on_file_decision_issue" }
     let(:h_id) { "   " }
     let(:h_notes) { "Call total" }
 
-    # error: blank id 
+    # error: blank id
     let(:i_contests) { "on_file_decision_issue" }
     let(:i_id) { false }
     let(:i_notes) { "Johnny Appleseed" }
 
-    # error: blank id 
+    # error: blank id
     let(:j_contests) { "on_file_rating_issue" }
     let(:j_id) { "   " }
     let(:j_notes) { "Herald Harold" }
 
-    # error: blank id 
+    # error: blank id
     let(:k_contests) { "on_file_rating_issue" }
     let(:k_id) { false }
     let(:k_notes) { "Pins" }
 
-    # error: blank id 
+    # error: blank id
     let(:l_contests) { "on_file_legacy_issue" }
     let(:l_id) { "   " }
     let(:l_notes) { "Weeeeeeeeeeepy" }
 
-    # error: blank id 
+    # error: blank id
     let(:m_contests) { "on_file_legacy_issue" }
     let(:m_id) { false }
     let(:m_notes) { "Monopoly" }
 
-    # error: blank notes 
+    # error: blank notes
     let(:n_contests) { "on_file_decision_issue" }
     let(:n_id) { 2312 }
     let(:n_notes) { false }
 
-    # error: blank notes 
+    # error: blank notes
     let(:o_contests) { "on_file_decision_issue" }
     let(:o_id) { 77 }
     let(:o_notes) { "  " }
 
-    # error: blank notes 
+    # error: blank notes
     let(:p_contests) { "on_file_rating_issue" }
     let(:p_id) { 231 }
     let(:p_notes) { nil }
 
-    # error: blank notes 
+    # error: blank notes
     let(:q_contests) { "on_file_rating_issue" }
     let(:q_id) { 882 }
     let(:q_notes) { " " }
 
-    # error: blank notes 
+    # error: blank notes
     let(:r_contests) { "on_file_legacy_issue" }
     let(:r_id) { 12 }
     let(:r_notes) { false }
 
-    # error: blank notes 
+    # error: blank notes
     let(:s_contests) { "on_file_legacy_issue" }
     let(:s_id) { 54 }
     let(:s_notes) { "   " }
-
-    let(:a_contests) { "on_file_decision_issue" }
-    let(:a_id) { 232 }
-    let(:a_notes) { "Notes for request issue Aaayyyyyy!" }
-
-    let(:b_contests) { "on_file_rating_issue" }
-    let(:b_id) { 616 }
-    let(:b_notes) { "Notes for request issue BeEeEe!" }
-
-    let(:c_contests) { "on_file_legacy_issue" }
-    let(:c_id) { 111_111 }
-    let(:c_notes) { "Notes for request issue Sea!" }
-
-    let(:benefit_type) { "compensation" }
-
-    let(:d_contests) { "other" }
-    let(:d_category) { "Character of discharge determinations" }
-    let(:d_notes) { "Notes for request issue Deee!" }
-    let(:d_decision_date) { "2019-05-07" }
-    let(:d_decision_text) { "Decision text for request issue Deee!" }
 
     # error: bad category
     let(:t_contests) { "other" }
@@ -520,7 +525,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
     let(:t_decision_date) { "2019-05-01" }
     let(:t_decision_text) { "Decisive text here" }
 
-    # error: bad category
+    # good - though nil is not a valid category, it's seen as not specifying a category
     let(:u_contests) { "other" }
     let(:u_category) { nil }
     let(:u_notes) { "blntnfhr" }
@@ -534,11 +539,6 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
     let(:v_decision_date) { "2019-05-21" }
     let(:v_decision_text) { "  " }
 
-    let(:e_contests) { "other" }
-    let(:e_notes) { "Notes for request issue EEEEEEEEEEEEEEE   EEEEE!" }
-    let(:e_decision_date) { "2019-05-09" }
-    let(:e_decision_text) { "Decision text for request issue EEE!" }
-    
     # error: no text
     let(:w_contests) { "other" }
     let(:w_notes) { "" }
@@ -740,61 +740,124 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
             decision_text: w_decision_text,
             notes: w_notes
           }
-        },
+        }
       ]
     end
-    subject { Api::V3::HigherLevelReviewProcessor.new(params, user) }
+    subject(:processor) { Api::V3::HigherLevelReviewProcessor.new(params, user) }
+    subject(:complete_params) { processor.complete_params }
+    subject(:request_issues) { complete_params[:request_issues] }
     it "the values returned by complete_params should match those passed into new" do
-      expect(subject.errors?).to be(true)
-      expect(subject.errors.length).to be > 0
+      expect(processor.errors?).to be(true)
+      expect(processor.errors).to be_a(Array)
+      # expect(processor.errors.length).to eq(18)
 
-      complete_params = subject.complete_params
       expect(complete_params).to be_a(ActionController::Parameters)
+      expect(request_issues.as_json).to be_a(Array)
+      # expect(request_issues).to eq(5)
 
-      request_issues = complete_params[:request_issues]
-      expect(request_issues).to be_a(Array)
-
-=begin
-      a, b, c, d, e = request_issues
+      a, b, c, d, e, u = request_issues
 
       expect(a.as_json).to be_a(Hash)
       expect(a.keys.length).to be(4)
       expect(a[:is_unidentified]).to be(false)
-      expect(a[:benefit_type]).to be(benefit_type)
-      expect(a[:contested_decision_issue_id]).to be(a_id)
-      expect(a[:notes]).to be(a_notes)
+      expect(a[:benefit_type]).to eq(benefit_type)
+      expect(a[:contested_decision_issue_id]).to eq(a_id)
+      expect(a[:notes]).to eq(a_notes)
 
       expect(b.as_json).to be_a(Hash)
       expect(b.keys.length).to be(4)
       expect(b[:is_unidentified]).to be(false)
-      expect(b[:benefit_type]).to be(benefit_type)
-      expect(b[:rating_issue_reference_id]).to be(b_id)
-      expect(b[:notes]).to be(b_notes)
+      expect(b[:benefit_type]).to eq(benefit_type)
+      expect(b[:rating_issue_reference_id]).to eq(b_id)
+      expect(b[:notes].as_json.symbolize_keys).to eq(b_notes)
 
       expect(c.as_json).to be_a(Hash)
       expect(c.keys.length).to be(4)
       expect(c[:is_unidentified]).to be(false)
-      expect(c[:benefit_type]).to be(benefit_type)
-      expect(c[:vacols_id]).to be(c_id)
-      expect(c[:notes]).to be(c_notes)
+      expect(c[:benefit_type]).to eq(benefit_type)
+      expect(c[:vacols_id]).to eq(c_id)
+      expect(c[:notes]).to eq(c_notes)
 
       expect(d.as_json).to be_a(Hash)
       expect(d.keys.length).to be(6)
       expect(d[:is_unidentified]).to be(false)
-      expect(d[:benefit_type]).to be(benefit_type)
-      expect(d[:nonrating_issue_category]).to be(d_category)
-      expect(d[:notes]).to be(d_notes)
-      expect(d[:decision_text]).to be(d_decision_text)
-      expect(d[:decision_date]).to be(d_decision_date)
+      expect(d[:benefit_type]).to eq(benefit_type)
+      expect(d[:nonrating_issue_category]).to eq(d_category)
+      expect(d[:notes]).to eq(d_notes)
+      expect(d[:decision_text]).to eq(d_decision_text)
+      expect(d[:decision_date]).to eq(d_decision_date)
 
       expect(e.as_json).to be_a(Hash)
-      expect(e.keys.length).to be(5)
+      expect(e.keys.length).to eq(5)
       expect(e[:is_unidentified]).to be(true)
-      expect(e[:benefit_type]).to be(benefit_type)
-      expect(e[:notes]).to be(e_notes)
-      expect(e[:decision_text]).to be(e_decision_text)
-      expect(e[:decision_date]).to be(e_decision_date)
-=end
+      expect(e[:benefit_type]).to eq(benefit_type)
+      expect(e[:notes]).to eq(e_notes)
+      expect(e[:decision_text]).to eq(e_decision_text)
+      expect(e[:decision_date]).to eq(e_decision_date)
+
+      expect(u.as_json).to be_a(Hash)
+      expect(u.keys.length).to eq(5)
+      expect(u[:is_unidentified]).to be(true)
+      expect(u[:benefit_type]).to eq(benefit_type)
+      expect(u[:notes]).to eq(u_notes)
+      expect(u[:decision_text]).to eq(u_decision_text)
+      expect(u[:decision_date]).to eq(u_decision_date)
+
+      puts request_issues.as_json
+
+      f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, v, w = processor.errors
+
+      error = processor.error_from_error_code(:unknown_contestation_type)
+      expect(f.as_json).to be_a(Hash)
+      expect(f.as_json.keys.length).to eq(3)
+      expect(f.status).to eq(error.status)
+      expect(f.code).to eq(error.code)
+      expect(f.title).to eq(error.title)
+
+      expect(g.as_json).to be_a(Hash)
+      expect(g.as_json.keys.length).to eq(3)
+      expect(g.status).to eq(error.status)
+      expect(g.code).to eq(error.code)
+      expect(g.title).to eq(error.title)
+
+      error = processor.error_from_error_code(:decision_issue_id_cannot_be_blank)
+      expect(h.as_json).to be_a(Hash)
+      expect(h.as_json.keys.length).to eq(3)
+      expect(h.status).to eq(error.status)
+      expect(h.code).to eq(error.code)
+      expect(h.title).to eq(error.title)
+
+      expect(i.as_json).to be_a(Hash)
+      expect(i.as_json.keys.length).to eq(3)
+      expect(i.status).to eq(error.status)
+      expect(i.code).to eq(error.code)
+      expect(i.title).to eq(error.title)
+
+      error = processor.error_from_error_code(:rating_issue_id_cannot_be_blank)
+      expect(j.as_json).to be_a(Hash)
+      expect(j.as_json.keys.length).to eq(3)
+      expect(j.status).to eq(error.status)
+      expect(j.code).to eq(error.code)
+      expect(j.title).to eq(error.title)
+
+      expect(k.as_json).to be_a(Hash)
+      expect(k.as_json.keys.length).to eq(3)
+      expect(k.status).to eq(error.status)
+      expect(k.code).to eq(error.code)
+      expect(k.title).to eq(error.title)
+
+      error = processor.error_from_error_code(:legacy_issue_id_cannot_be_blank)
+      expect(l.as_json).to be_a(Hash)
+      expect(l.as_json.keys.length).to eq(3)
+      expect(l.status).to eq(error.status)
+      expect(l.code).to eq(error.code)
+      expect(l.title).to eq(error.title)
+
+      expect(m.as_json).to be_a(Hash)
+      expect(m.as_json.keys.length).to eq(3)
+      expect(m.status).to eq(error.status)
+      expect(m.code).to eq(error.code)
+      expect(m.title).to eq(error.title)
     end
   end
 
