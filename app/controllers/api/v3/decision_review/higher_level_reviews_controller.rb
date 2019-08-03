@@ -5,20 +5,10 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
 
   def create
     processor = Api::V3::HigherLevelReviewProcessor.new(params, current_user)
-
-    if processor.errors?
-      status = processor.errors.map { |error| error.status }.max
-      render json: { errors: processor.errors }, status: status
-      return
-    end
+    render_errors(processor.errors) && return if processor.errors?
 
     processor.start_review_complete!
-
-    if processor.errors?
-      status = processor.errors.map { |error| error.status }.max
-      render json: { errors: processor.errors }, status: status
-      return
-    end
+    render_errors(processor.errors) && return if processor.errors?
 
     higher_level_review = processor.higher_level_review
     uuid = higher_level_review.uuid
@@ -30,11 +20,12 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
 
     render json: intake_status(higher_level_review), status: :accepted
   rescue StandardError => error
-    error = processor.error_from_error_code(
-      error.try(:error_code) || processor.intake.try(:error_code)
-    )
+    # TODO: log_error
+    # TODO error_uuid
 
-    render json: { errors: [error] }, status: status
+    # defaults to ERROR_FOR_UNKNOWN_CODE
+    error = processor.error_from_error_code(error.try(:error_code) || processor.intake.try(:error_code))
+    render_errors([error])
   end
 
   def mock_create
@@ -62,5 +53,10 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
         }
       }
     }
+  end
+
+  # errors should be an array of Api::V3::HigherLevelReviewProcessor::Error
+  def render_errors(errors)
+    render json: { errors: errors }, status: errors.map(&:status).max
   end
 end

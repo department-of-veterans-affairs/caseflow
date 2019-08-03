@@ -3,61 +3,39 @@
 class Api::V3::HigherLevelReviewProcessor
   Error = Struct.new(:status, :code, :title)
 
-  def self.code_from_title(title)
-    return nil if title.blank?
-
-    title = title.to_s.split(" ").join("_").downcase.gsub(/[^0-9a-z_]/i, "")
-    title.blank? ? nil : title.to_sym
-  end
-
-  def self.title_from_code(code)
-    return nil if code.blank?
-
-    code.to_s.split("_").join(" ").capitalize
-  end
-
-  # creates a hash with this shape:
-  # {
-  #   veteran_not_found: <struct Error status=404, code=:veteran_not_found, title="Veteran not found">,
-  #   invalid_file_number: <struct Error status=422, code=:invalid_file_number, title="Veteran ID not found">,
-  #   incident_flash: <struct Error status=422, code=:incident_flash, title="The veteran has an incident flash">,
-  #   ...
-  # }
-  #
-  # if a code is left out, the title is turned into a code (downcase, underscores, non-alphanumeric chars removed)
+  # ERRORS_BY_CODE becomes a hash of Error structs with symbol keys
+  # columns: status | code | title
   ERRORS_BY_CODE = [
     [403, :veteran_not_accessible, "You don't have permission to view this veteran's information"],
     [404, :veteran_not_found, "Veteran not found"],
-    [409, :duplicate_intake_in_progress, "Intake In progress"],
-    [422, :adding_legacy_issue_without_opting_in, "Adding legacy issue without opting in"],
-    [422, :attributes_must_be_object, "Attributes must be object"]
-    [422, :either_notes_or_decision_text_must_be_present_when_contesting_other, "Either notes or decision text must be present when contesting other"
+    [409, :duplicate_intake_in_progress, "Intake in progress"],
+    [422, :adding_legacy_issue_without_opting_in, "To add a legacy issue, legacy_opt_in_approved must be true"],
+    [422, :attributes_must_be_object, "The \"attributes\" field must be an object"],
+    [422, :decision_issue_id_cannot_be_blank, "Must specify a decision issue ID to contest a decision issue"],
     [422, :incident_flash, "The veteran has an incident flash"],
-    [422, :intake_review_failed, "Intake review failed"],
-    [422, :intake_start_failed, "Intake start failed"],
+    [422, :intake_review_failed, "The review step of processing the intake failed"],
+    [422, :intake_start_failed, "The start step of processing the intake failed"],
     [422, :invalid_file_number, "Veteran ID not found"],
-    [422, :must_have_id_to_contest_decision_issue, "Must have id to contest decision issue"],
-    [422, :must_have_id_to_contest_legacy_issue, "Must have id to contest legacy issue"],
-    [422, :must_have_id_to_contest_rating_issue, "Must have id to contest rating issue"],
-    [422, :notes_cannot_be_blank_when_contesting_decision_issue, "Notes cannot be blank when contesting decision issue"],
-    [422, :notes_cannot_be_blank_when_contesting_legacy_issue, "Notes cannot be blank when contesting legacy issue"],
-    [422, :notes_cannot_be_blank_when_contesting_rating_issue, "Notes cannot be blank when contesting rating issue"],
+    [422, :legacy_issue_id_cannot_be_blank, "Must specify a legacy issue ID to contest a legacy issue"],
+    [422, :must_have_text_to_contest_other, "notes or decision_text must be non-blank when contesting \"other\""],
+    [422, :notes_cannot_be_blank_when_contesting_decision, "Notes cannot be blank when contesting a decision"],
+    [422, :notes_cannot_be_blank_when_contesting_legacy, "Notes cannot be blank when contesting a legacy issue"],
+    [422, :notes_cannot_be_blank_when_contesting_rating, "Notes cannot be blank when contesting a rating"],
+    [422, :rating_issue_id_cannot_be_blank, "Must specify a rating issue ID to contest a rating issue"],
     [422, :reserved_veteran_file_number, "Invalid veteran file number"],
-    [422, :unknown_category_for_benefit_type, "Unknown category for benefit type"],
-    [422, :unknown_contestation_type, "Cannot contest that type"],
+    [422, :unknown_category_for_benefit_type, "Unknown category for specified benefit type"],
+    [422, :unknown_contestation_type, "Can only contest: \"on_file_(decision|rating|legacy)_issue\" or \"other\""],
     [422, :veteran_has_multiple_phone_numbers, "The veteran has multiple active phone numbers"],
     [422, :veteran_not_modifiable, "You don't have permission to intake this veteran"],
-    [422, :veteran_not_valid, "The veteran's profile has missing or invalid information required to create an EP."],
-    ],
-  ].each_with_object({}) do |(status, errors), acc|
-    errors.each do |(code, title)|
-      title ||= title_from_code(code)
-      acc[code] = Error.new(status, code, title)
-    end
+    [422, :veteran_not_valid, "The veteran's profile has missing or invalid information required to create an EP"]
+  ].each_with_object({}) do |args, hash|
+    hash[args[1]] = Error.new(*args)
   end.freeze
 
+  # this is the error given when error code lookup fails.  :unknown_error is not in the list above
   ERROR_FOR_UNKNOWN_CODE = Error.new(422, :unknown_error, "Unknown error")
 
+  # returns the full Error for a given error code
   def error_from_error_code(code)
     ERRORS_BY_CODE[code.to_s.to_sym] || ERROR_FOR_UNKNOWN_CODE
   end
@@ -66,6 +44,9 @@ class Api::V3::HigherLevelReviewProcessor
 
   attr_reader :intake, :errors
 
+  # Instance variables are set in initialize and nowhere else. Besides what the models do to intake and
+  # intake.detail, the internal state of a processor is set here and is not changed. This is true even for
+  # the @errors array --errors after this step are exceptions thrown by the models or in the transaction.
   def initialize(params, user)
     @errors = []
     @receipt_date, @informal_conference, @same_office, @legacy_opt_in_approved, @benefit_type = attributes(params)
@@ -111,9 +92,11 @@ class Api::V3::HigherLevelReviewProcessor
   end
 
   # this method performs all of the intake steps which write to DBs
-  # both start and review can signal a failure by either throwing an exception OR returning a falsey value
+  # this method fails by exception. some exceptions will have an error_code method
   def start_review_complete!
     transaction do
+      # both start and review can signal a failure by either throwing an exception OR returning a falsey value.
+      # consequently, false returns are turn into execptions (with error codes) to rollback the transaction
       fail StartError, intake unless intake.start!
       fail ReviewError, intake unless intake.review!(review_params)
 
@@ -212,7 +195,6 @@ class Api::V3::HigherLevelReviewProcessor
   # }
 
   def contesting_decision_to_intake_data_hash(request_issue)
-    request_issue = request_issue.permit(:id, :notes)
     id, notes = request_issue.values_at :id, :notes
     # open question: where will attributes[:request_issue_ids] go?
     return error_from_error_code(:must_have_id_to_contest_decision_issue) if id.blank?
@@ -222,7 +204,6 @@ class Api::V3::HigherLevelReviewProcessor
   end
 
   def contesting_rating_to_intake_data_hash(request_issue)
-    request_issue = request_issue.permit(:id, :notes)
     id, notes = request_issue.values_at :id, :notes
 
     return error_from_error_code(:must_have_id_to_contest_rating_issue) if id.blank?
@@ -236,7 +217,6 @@ class Api::V3::HigherLevelReviewProcessor
       return error_from_error_code(:adding_legacy_issue_without_opting_in)
     end
 
-    request_issue = request_issue.permit(:id, :notes)
     id, notes = request_issue.values_at :id, :notes
 
     return error_from_error_code(:must_have_id_to_contest_legacy_issue) if id.blank?
@@ -246,8 +226,9 @@ class Api::V3::HigherLevelReviewProcessor
   end
 
   def contesting_categorized_other_to_intake_data_hash(request_issue)
-    request_issue = request_issue.permit(:category, :notes, :decision_date, :decision_text)
-    category, notes, decision_text = request_issue.values_at :category, :notes, :decision_text
+    category, notes, decision_date, decision_text = request_issue.values_at(
+      :category, :notes, :decision_date, :decision_text
+    )
 
     return error_from_error_code(:unknown_category_for_benefit_type) unless category.in?(
       CATEGORIES_BY_BENEFIT_TYPE[@benefit_type]
@@ -258,19 +239,26 @@ class Api::V3::HigherLevelReviewProcessor
     end
 
     intake_data_hash(
-      request_issue.slice(:notes, :decision_date, :decision_text).merge(nonrating_issue_category: category)
+      nonrating_issue_category: category,
+      notes: notes,
+      decision_date: decision_date,
+      decision_text: decision_text
     )
   end
 
   def contesting_uncategorized_other_to_intake_data_hash(request_issue)
-    request_issue = request_issue.permit(:notes, :decision_date, :decision_text)
-    notes, decision_text = request_issue.values_at :notes, :decision_text
+    notes, decision_date, decision_text = request_issue.values_at :notes, :decision_date, :decision_text
 
     unless notes.present? || decision_text.present?
       return error_from_error_code(:either_notes_or_decision_text_must_be_present_when_contesting_other)
     end
 
-    intake_data_hash(request_issue.slice(:notes, :decision_date, :decision_text).merge(is_unidentified: true))
+    intake_data_hash(
+      is_unidentified: true,
+      notes: notes,
+      decision_date: decision_date,
+      decision_text: decision_text
+    )
   end
 
   def intake_data_hash(hash)
