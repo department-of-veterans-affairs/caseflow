@@ -5,20 +5,25 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
 
   def create
     processor = Api::V3::HigherLevelReviewProcessor.new(params, current_user)
-    render_errors(processor.errors) && return if processor.errors?
+    if processor.errors?
+      render_errors(processor.errors)
+      return
+    end
 
     processor.start_review_complete!
-    render_errors(processor.errors) && return if processor.errors?
+    if processor.errors?
+      render_errors(processor.errors)
+      return
+    end
 
-    higher_level_review = processor.higher_level_review
-    uuid = higher_level_review.uuid
+    hlr = processor.higher_level_review
 
     response.set_header(
       "Content-Location",
-      "#{request.base_url}/api/v3/decision_review/higher_level_reviews/intake_status/#{uuid}"
+      "#{request.base_url}/api/v3/decision_review/higher_level_reviews/intake_status/#{hlr.uuid}"
     )
 
-    render json: intake_status(higher_level_review), status: :accepted
+    render json: intake_status(hlr), status: :accepted
   rescue StandardError => error
     # TODO: log_error
     # TODO error_uuid
