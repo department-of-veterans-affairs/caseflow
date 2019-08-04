@@ -98,7 +98,7 @@ class Api::V3::HigherLevelReviewProcessor
   def start_review_complete!
     ActiveRecord::Base.transaction do
       # both start and review can signal a failure by either throwing an exception OR returning a falsey value.
-      # consequently, false returns are turn into execptions (with error codes) to rollback the transaction
+      # consequently, false returns are turned into execptions (with error codes) to rollback the transaction
       fail StartError, intake unless intake.start!
       fail ReviewError, intake unless intake.review!(review_params)
 

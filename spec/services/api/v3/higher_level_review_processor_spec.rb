@@ -295,7 +295,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
     end
   end
 
-  context "review_params" do
+  context "complete_params" do
     let(:a_contests) { "on_file_decision_issue" }
     let(:a_id) { 232 }
     let(:a_notes) { "Notes for request issue Aaayyyyyy!" }
@@ -420,7 +420,6 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
     end
   end
 
-  # error: bad benefit_type
   # legacy opt in
   context "review_params" do
     let(:a_contests) { "on_file_decision_issue" }
@@ -858,86 +857,114 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
       expect(m.status).to eq(error.status)
       expect(m.code).to eq(error.code)
       expect(m.title).to eq(error.title)
+
+      error = processor.error_from_error_code(:notes_cannot_be_blank_when_contesting_decision)
+      expect(n.as_json).to be_a(Hash)
+      expect(n.as_json.keys.length).to eq(3)
+      expect(n.status).to eq(error.status)
+      expect(n.code).to eq(error.code)
+      expect(n.title).to eq(error.title)
+
+      expect(o.as_json).to be_a(Hash)
+      expect(o.as_json.keys.length).to eq(3)
+      expect(o.status).to eq(error.status)
+      expect(o.code).to eq(error.code)
+      expect(o.title).to eq(error.title)
+
+      error = processor.error_from_error_code(:notes_cannot_be_blank_when_contesting_rating)
+      expect(p.as_json).to be_a(Hash)
+      expect(p.as_json.keys.length).to eq(3)
+      expect(p.status).to eq(error.status)
+      expect(p.code).to eq(error.code)
+      expect(p.title).to eq(error.title)
+
+      expect(q.as_json).to be_a(Hash)
+      expect(q.as_json.keys.length).to eq(3)
+      expect(q.status).to eq(error.status)
+      expect(q.code).to eq(error.code)
+      expect(q.title).to eq(error.title)
+
+      error = processor.error_from_error_code(:notes_cannot_be_blank_when_contesting_legacy)
+      expect(r.as_json).to be_a(Hash)
+      expect(r.as_json.keys.length).to eq(3)
+      expect(r.status).to eq(error.status)
+      expect(r.code).to eq(error.code)
+      expect(r.title).to eq(error.title)
+
+      expect(s.as_json).to be_a(Hash)
+      expect(s.as_json.keys.length).to eq(3)
+      expect(s.status).to eq(error.status)
+      expect(s.code).to eq(error.code)
+      expect(s.title).to eq(error.title)
+
+      error = processor.error_from_error_code(:unknown_category_for_benefit_type)
+      expect(t.as_json).to be_a(Hash)
+      expect(t.as_json.keys.length).to eq(3)
+      expect(t.status).to eq(error.status)
+      expect(t.code).to eq(error.code)
+      expect(t.title).to eq(error.title)
+
+      error = processor.error_from_error_code(:must_have_text_to_contest_other)
+      expect(v.as_json).to be_a(Hash)
+      expect(v.as_json.keys.length).to eq(3)
+      expect(v.status).to eq(error.status)
+      expect(v.code).to eq(error.code)
+      expect(v.title).to eq(error.title)
+
+      expect(w.as_json).to be_a(Hash)
+      expect(w.as_json.keys.length).to eq(3)
+      expect(w.status).to eq(error.status)
+      expect(w.code).to eq(error.code)
+      expect(w.title).to eq(error.title)
     end
   end
 
-  context "errors and errors?" do
-    let(:a_contests) { "on_file_decision_issue" } # missing id
-    let(:a_id) { nil }
-    let(:a_notes) { "Notes for request issue Aaayyyyyy!" }
-
-    let(:b_contests) { "on_file_rating_issue" } # missing notes
-    let(:b_id) { 616 }
-    let(:b_notes) { "" }
-
-    let(:c_contests) { "on_file_legacy_issue" } # missing both notes and id
-    let(:c_id) { "   " }
-    let(:c_notes) { false }
-
-    let(:benefit_type) { "compensation" }
-
-    let(:d_contests) { "other" } # wrong category type
-    let(:d_category) { "Character of discharge determinations" }
-    let(:d_notes) { "Notes for request issue Deee!" }
-    let(:d_decision_date) { "2019-05-07" }
-    let(:d_decision_text) { "Decision text for request issue Deee!" }
-
-    let(:e_contests) { "other" } # no text
-    let(:e_notes) { nil }
-    let(:e_decision_date) { "2019-05-09" }
-    let(:e_decision_text) { "" }
-
+  context "complete_params" do
+    let(:legacy_opt_in_approved) { false }
+    let(:contests) { "on_file_legacy_issue" }
+    let(:id) { 7643 }
+    let(:notes) { "Notes for goats." }
     let(:included) do
       [
         {
           type: "RequestIssue",
           attributes: {
-            contests: a_contests,
-            id: a_id,
-            notes: a_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: b_contests,
-            id: b_id,
-            notes: b_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: c_contests,
-            id: c_id,
-            notes: c_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: d_contests,
-            category: d_category,
-            decision_date: d_decision_date,
-            decision_text: d_decision_text,
-            notes: d_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: e_contests,
-            decision_date: e_decision_date,
-            decision_text: e_decision_text,
-            notes: e_notes
+            contests: contests,
+            id: id,
+            notes: notes
           }
         }
       ]
     end
-    subject { Api::V3::HigherLevelReviewProcessor.new(params, user) }
-    it "has the appropriate errors" do
-      expect(subject.errors?).to be(true)
-      expect(subject.errors.length).to be > 0
+    subject(:processor) { Api::V3::HigherLevelReviewProcessor.new(params, user) }
+    subject(:complete_params) { processor.complete_params }
+    subject(:request_issues) { complete_params[:request_issues] }
+    it "should not allow a legacy issue to be added if legacy issues haven't been opted in" do
+      expect(processor.errors?).to be(true)
+      expect(processor.errors).to be_a(Array)
+      expect(processor.errors.length).to eq(1)
+
+      expect(complete_params).to be_a(ActionController::Parameters)
+      expect(request_issues.as_json).to be_a(Array)
+      expect(request_issues.as_json.length).to eq(0)
+
+      expected_error = processor.error_from_error_code(:adding_legacy_issue_without_opting_in)
+      generated_error = processor.errors[0]
+
+      expect(generated_error.as_json).to be_a(Hash)
+      expect(generated_error.as_json.keys.length).to eq(3)
+      expect(generated_error.status).to eq(expected_error.status)
+      expect(generated_error.code).to eq(expected_error.code)
+      expect(generated_error.title).to eq(expected_error.title)
+    end
+  end
+
+  context "attributes" do
+    subject { Api::V3::HigherLevelReviewProcessor.new(params, user).attributes(params) }
+    it "it should return the fields of the attributes object of a request as an array in the correct order" do
+      expect(subject).to eq([
+                              receipt_date, informal_conference, same_office, legacy_opt_in_approved, benefit_type
+                            ])
     end
   end
 end
