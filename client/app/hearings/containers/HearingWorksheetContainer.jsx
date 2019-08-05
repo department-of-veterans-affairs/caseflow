@@ -39,7 +39,8 @@ class HearingWorksheetContainer extends React.Component {
 }
 
 HearingWorksheetContainer.propTypes = {
-  hearingId: PropTypes.string.isRequired
+  hearingId: PropTypes.string.isRequired,
+  populateWorksheet: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

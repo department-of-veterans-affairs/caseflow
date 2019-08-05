@@ -59,7 +59,9 @@ class HearingDetailsContainer extends React.Component {
 }
 
 HearingDetailsContainer.propTypes = {
-  hearingId: PropTypes.string.isRequired
+  hearingId: PropTypes.string.isRequired,
+  userInHearingsOrganization: PropTypes.bool,
+  history: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
