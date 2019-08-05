@@ -23,8 +23,8 @@ class TaskPager
   end
 
   def paged_tasks
-    where_clause = WhereClauseArgumentsFactory.from_params(filters)
-    filtered_tasks = tasks_for_tab.where(where_clause)
+    where_clause = QueueWhereClauseArgumentsFactory.new(filter_params: filters).arguments
+    filtered_tasks = tasks_for_tab.where(*where_clause)
 
     sorted_tasks(filtered_tasks).page(page).per(TASKS_PER_PAGE)
   end

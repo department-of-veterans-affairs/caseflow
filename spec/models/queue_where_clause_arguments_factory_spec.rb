@@ -42,4 +42,20 @@ describe QueueWhereClauseArgumentsFactory, :postgres do
       end
     end
   end
+
+  describe ".arguments" do
+    let(:filter_params) { nil }
+
+    subject { QueueWhereClauseArgumentsFactory.new(filter_params: filter_params).arguments }
+
+    context "when filter_params is an empty array" do
+      let(:filter_params) { [] }
+
+      it "returns an empty array" do
+        expect(subject).to eq([])
+      end
+    end
+
+    # TODO: Keep plugging away here.
+  end
 end

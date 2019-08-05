@@ -34,9 +34,6 @@ class QueueWhereClauseArgumentsFactory
 
   def table_column_from_name(column_name)
     case column_name
-    # TODO: I think this constant may be incorrectly named.
-    when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
-      "cached_appeals_attributes.docket_type"
     when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
       "tasks.type"
     # TODO: The following columns are not yet implemented.
@@ -44,6 +41,9 @@ class QueueWhereClauseArgumentsFactory
     #   "cached_appeals_attributes.appeal_type"
     # when Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN
     #   "cached_appeals_attributes.regional_office"
+    # TODO: I think this constant may be incorrectly named.
+    # when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
+    #   "cached_appeals_attributes.docket_type"
     # when Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN
     #   "???"
     else
