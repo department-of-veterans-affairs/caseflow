@@ -58,7 +58,7 @@ class TaskPager
 
   def tasks_sorted_by_docket_number(tasks)
     # Additional guard against SQL Injection
-    verified_sort_order = ( sort_order.casecmp("DESC").zero? ) ? "DESC" : "ASC"
+    verified_sort_order = sort_order.casecmp("DESC").zero? ? "DESC" : "ASC"
     order_sql = "cached_appeal_attributes.docket_type #{verified_sort_order}, \
                 cached_appeal_attributes.docket_number #{verified_sort_order}"
 
