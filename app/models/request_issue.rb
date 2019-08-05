@@ -372,7 +372,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def ui_hash
-    binding.pry
     {
       id: id,
       rating_issue_reference_id: contested_rating_issue_reference_id,

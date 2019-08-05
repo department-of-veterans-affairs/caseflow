@@ -787,15 +787,12 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
     context "when request issues are read only" do
       before do
-        allow(request_issue).to receive(:editable?).and_return(false)
-        FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
+        allow_any_instance_of(RequestIssue).to receive(:editable?).and_return(false)
       end
-
-      after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
 
       it "does not allow to edit request issue" do
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-        binding.pry
+        expect(page).to have_content("Rating may be in process")
       end
     end
 
