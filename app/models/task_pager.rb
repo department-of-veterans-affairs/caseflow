@@ -37,7 +37,8 @@ class TaskPager
     when Constants.QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN
       tasks.order(placed_on_hold_at: sort_order)
     when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
-      tasks_sorted_by_docket_number(tasks)
+      tasks.order("cached_appeal_attributes.docket_type #{sort_order}",
+                  "cached_appeal_attributes.docket_number #{sort_order}")
 
     # Columns not yet supported:
     #
@@ -56,22 +57,6 @@ class TaskPager
     end
   end
 
-  def tasks_sorted_by_docket_number(tasks)
-    # Additional guard against SQL Injection
-    verified_sort_order = sort_order.casecmp("DESC").zero? ? "DESC" : "ASC"
-    order_sql = "cached_appeal_attributes.docket_type #{verified_sort_order}, \
-                cached_appeal_attributes.docket_number #{verified_sort_order}"
-
-    tasks_with_cached_appeal_attributes(tasks).order(order_sql)
-  end
-
-  def tasks_with_cached_appeal_attributes(tasks)
-    sql = "left join cached_appeal_attributes \
-          on cached_appeal_attributes.appeal_id = tasks.appeal_id \
-          and cached_appeal_attributes.appeal_type = tasks.appeal_type"
-
-    tasks.joins(sql)
-  end
   def task_page_count
     @task_page_count ||= paged_tasks.total_pages
   end
@@ -82,7 +67,15 @@ class TaskPager
 
   def filtered_tasks
     where_clause = QueueWhereClauseArgumentsFactory.new(filter_params: filters).arguments
-    where_clause.empty? ? tasks_for_tab : tasks_for_tab.where(*where_clause)
+    where_clause.empty? ? tasks_with_cached_fields : tasks_with_cached_fields.where(*where_clause)
+  end
+
+  def tasks_with_cached_fields
+    sql = "left join cached_appeal_attributes "\
+          "on cached_appeal_attributes.appeal_id = tasks.appeal_id "\
+          "and cached_appeal_attributes.appeal_type = tasks.appeal_type"
+
+    tasks_for_tab.joins(sql)
   end
 
   def tasks_for_tab
