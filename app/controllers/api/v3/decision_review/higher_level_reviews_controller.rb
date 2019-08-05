@@ -25,8 +25,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::
 
     render json: intake_status(hlr), status: :accepted
   rescue StandardError => error
-    # TODO: log_error
-    # TODO error_uuid
+    # do we want something like intakes_controller's log_error here?
 
     # defaults to ERROR_FOR_UNKNOWN_CODE
     error = processor.error_from_error_code(error.try(:error_code) || processor.intake.try(:error_code))
