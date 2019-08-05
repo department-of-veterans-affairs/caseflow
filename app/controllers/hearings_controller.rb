@@ -6,8 +6,18 @@ class HearingsController < HearingsApplicationController
   before_action :verify_access_to_hearings, except: [:show]
   before_action :verify_access_to_reader_or_hearings, only: [:show]
 
+  rescue_from ActiveRecord::RecordNotFound do |error|
+    Rails.logger.debug "Unable to find hearing in Caseflow: #{error.message}"
+    render json: { "errors": ["message": error.message, code: 1000] }, status: :not_found
+  end
+
+  rescue_from ActiveRecord::RecordInvalid, Caseflow::Error::VacolsRepositoryError do |error|
+    Rails.logger.debug "Unable to find hearing in VACOLS: #{error.message}"
+    render json: { "errors": ["message": error.message, code: 1001] }, status: :not_found
+  end
+
   def show
-    render json: hearing.to_hash(current_user.id)
+    render json: hearing.to_hash_for_worksheet(current_user.id)
   end
 
   def update
@@ -74,8 +84,13 @@ class HearingsController < HearingsApplicationController
     params[:id]
   end
 
+  # rubocop:disable Metrics/MethodLength
   def update_params_legacy
-    params.require("hearing").permit(:notes,
+    params.require("hearing").permit(:representative_name,
+                                     :witness,
+                                     :military_service,
+                                     :summary,
+                                     :notes,
                                      :disposition,
                                      :hold_open,
                                      :aod,
@@ -94,9 +109,12 @@ class HearingsController < HearingsApplicationController
                                      ])
   end
 
-  # rubocop:disable Metrics/MethodLength
   def update_params
-    params.require("hearing").permit(:notes,
+    params.require("hearing").permit(:representative_name,
+                                     :witness,
+                                     :military_service,
+                                     :summary,
+                                     :notes,
                                      :disposition,
                                      :hold_open,
                                      :transcript_requested,
@@ -118,7 +136,9 @@ class HearingsController < HearingsApplicationController
                                        :problem_type, :requested_remedy,
                                        :sent_to_transcriber_date, :task_number,
                                        :transcriber, :uploaded_to_vbms_date
-                                     ])
+                                     ],
+                                     hearing_issue_notes_attributes: [:id, :allow, :deny, :remand,
+                                                                      :dismiss, :reopen, :worksheet_notes])
   end
   # rubocop:enable Metrics/MethodLength
 
