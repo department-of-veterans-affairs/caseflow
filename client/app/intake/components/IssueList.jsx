@@ -84,7 +84,7 @@ export default class IssuesList extends React.Component {
                 formType={formType} />
 
               { _.isEmpty(issueActionOptions) && <div className="issue-action">
-                <span {...nonEditableIssueStyling}>Rating in process</span>
+                <span {...nonEditableIssueStyling}>{COPY.INTAKE_RATING_MAY_BE_PROCESS}</span>
               </div> }
 
               { !_.isEmpty(issueActionOptions) && <div className="issue-action">
