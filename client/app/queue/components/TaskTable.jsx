@@ -11,6 +11,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import pluralize from 'pluralize';
 import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
 
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
@@ -435,6 +436,36 @@ export class TaskTableUnconnected extends React.PureComponent {
     rowClassNames={(task) =>
       this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />;
 }
+
+TaskTableUnconnected.propTypes = {
+  isTaskAssignedToUserSelected: PropTypes.object,
+  userId: PropTypes.number,
+  requireDasRecord: PropTypes.bool,
+  includeHearingBadge: PropTypes.bool,
+  includeSelect: PropTypes.bool,
+  setSelectionOfTaskOfUser: PropTypes.func,
+  includeDetailsLink: PropTypes.bool,
+  tasks: PropTypes.array,
+  userRole: PropTypes.string,
+  includeTask: PropTypes.bool,
+  includeDocumentId: PropTypes.bool,
+  includeType: PropTypes.bool,
+  includeAssignedTo: PropTypes.bool,
+  includeDocketNumber: PropTypes.bool,
+  includeIssueCount: PropTypes.bool,
+  includeDueDate: PropTypes.bool,
+  includeDaysWaiting: PropTypes.bool,
+  includeDaysOnHold: PropTypes.bool,
+  includeCompletedDate: PropTypes.bool,
+  includeCompletedToName: PropTypes.bool,
+  userIsVsoEmployee: PropTypes.bool,
+  includeReaderLink: PropTypes.bool,
+  includeNewDocsIcon: PropTypes.bool,
+  includeRegionalOffice: PropTypes.bool,
+  customColumns: PropTypes.array,
+  defaultSortIdx: PropTypes.number,
+  getKeyForRow: PropTypes.func
+};
 
 const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
