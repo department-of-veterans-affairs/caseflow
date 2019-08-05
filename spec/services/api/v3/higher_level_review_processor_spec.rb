@@ -157,14 +157,14 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
     subject { hlrp.new(params, user) }
     it("returns the default error for unknown codes") do
       [false, nil, "", "    ", [], {}, [2], { a: 1 }, :unknown_error].each do |v|
-        expect(subject.error_from_error_code(v)).to be(error_for_unknown_code)
+        expect(hlrp.error_from_error_code(v)).to be(error_for_unknown_code)
       end
     end
     it("returns the correct error") do
       [:decision_issue_id_cannot_be_blank, "decision_issue_id_cannot_be_blank"].each do |v|
-        expect(subject.error_from_error_code(v)).to eq(errors_by_code[:decision_issue_id_cannot_be_blank])
+        expect(hlrp.error_from_error_code(v)).to eq(errors_by_code[:decision_issue_id_cannot_be_blank])
       end
-      expect(subject.error_from_error_code(:duplicate_intake_in_progress)).to eq(
+      expect(hlrp.error_from_error_code(:duplicate_intake_in_progress)).to eq(
         error.new(409, :duplicate_intake_in_progress, "Intake in progress")
       )
     end
@@ -420,7 +420,6 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
     end
   end
 
-  # legacy opt in
   context "review_params" do
     let(:a_contests) { "on_file_decision_issue" }
     let(:a_id) { "232" }
@@ -746,6 +745,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
     subject(:complete_params) { processor.complete_params }
     subject(:request_issues) { complete_params[:request_issues] }
     it "the values returned by complete_params should match those passed into new" do
+      hlrp = Api::V3::HigherLevelReviewProcessor
       expect(processor.errors?).to be(true)
       expect(processor.errors).to be_a(Array)
       # expect(processor.errors.length).to eq(18)
@@ -806,7 +806,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
 
       f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, v, w = processor.errors
 
-      error = processor.error_from_error_code(:unknown_contestation_type)
+      error = hlrp.error_from_error_code(:unknown_contestation_type)
       expect(f.as_json).to be_a(Hash)
       expect(f.as_json.keys.length).to eq(3)
       expect(f.status).to eq(error.status)
@@ -819,7 +819,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
       expect(g.code).to eq(error.code)
       expect(g.title).to eq(error.title)
 
-      error = processor.error_from_error_code(:decision_issue_id_cannot_be_blank)
+      error = hlrp.error_from_error_code(:decision_issue_id_cannot_be_blank)
       expect(h.as_json).to be_a(Hash)
       expect(h.as_json.keys.length).to eq(3)
       expect(h.status).to eq(error.status)
@@ -832,7 +832,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
       expect(i.code).to eq(error.code)
       expect(i.title).to eq(error.title)
 
-      error = processor.error_from_error_code(:rating_issue_id_cannot_be_blank)
+      error = hlrp.error_from_error_code(:rating_issue_id_cannot_be_blank)
       expect(j.as_json).to be_a(Hash)
       expect(j.as_json.keys.length).to eq(3)
       expect(j.status).to eq(error.status)
@@ -845,7 +845,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
       expect(k.code).to eq(error.code)
       expect(k.title).to eq(error.title)
 
-      error = processor.error_from_error_code(:legacy_issue_id_cannot_be_blank)
+      error = hlrp.error_from_error_code(:legacy_issue_id_cannot_be_blank)
       expect(l.as_json).to be_a(Hash)
       expect(l.as_json.keys.length).to eq(3)
       expect(l.status).to eq(error.status)
@@ -858,7 +858,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
       expect(m.code).to eq(error.code)
       expect(m.title).to eq(error.title)
 
-      error = processor.error_from_error_code(:notes_cannot_be_blank_when_contesting_decision)
+      error = hlrp.error_from_error_code(:notes_cannot_be_blank_when_contesting_decision)
       expect(n.as_json).to be_a(Hash)
       expect(n.as_json.keys.length).to eq(3)
       expect(n.status).to eq(error.status)
@@ -871,7 +871,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
       expect(o.code).to eq(error.code)
       expect(o.title).to eq(error.title)
 
-      error = processor.error_from_error_code(:notes_cannot_be_blank_when_contesting_rating)
+      error = hlrp.error_from_error_code(:notes_cannot_be_blank_when_contesting_rating)
       expect(p.as_json).to be_a(Hash)
       expect(p.as_json.keys.length).to eq(3)
       expect(p.status).to eq(error.status)
@@ -884,7 +884,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
       expect(q.code).to eq(error.code)
       expect(q.title).to eq(error.title)
 
-      error = processor.error_from_error_code(:notes_cannot_be_blank_when_contesting_legacy)
+      error = hlrp.error_from_error_code(:notes_cannot_be_blank_when_contesting_legacy)
       expect(r.as_json).to be_a(Hash)
       expect(r.as_json.keys.length).to eq(3)
       expect(r.status).to eq(error.status)
@@ -897,14 +897,14 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
       expect(s.code).to eq(error.code)
       expect(s.title).to eq(error.title)
 
-      error = processor.error_from_error_code(:unknown_category_for_benefit_type)
+      error = hlrp.error_from_error_code(:unknown_category_for_benefit_type)
       expect(t.as_json).to be_a(Hash)
       expect(t.as_json.keys.length).to eq(3)
       expect(t.status).to eq(error.status)
       expect(t.code).to eq(error.code)
       expect(t.title).to eq(error.title)
 
-      error = processor.error_from_error_code(:must_have_text_to_contest_other)
+      error = hlrp.error_from_error_code(:must_have_text_to_contest_other)
       expect(v.as_json).to be_a(Hash)
       expect(v.as_json.keys.length).to eq(3)
       expect(v.status).to eq(error.status)
@@ -948,7 +948,9 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
       expect(request_issues.as_json).to be_a(Array)
       expect(request_issues.as_json.length).to eq(0)
 
-      expected_error = processor.error_from_error_code(:adding_legacy_issue_without_opting_in)
+      expected_error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(
+        :adding_legacy_issue_without_opting_in
+      )
       generated_error = processor.errors[0]
 
       expect(generated_error.as_json).to be_a(Hash)

@@ -3,6 +3,68 @@
 require "rails_helper"
 require "support/intake_helpers"
 require "support/vacols_database_cleaner"
+require File.expand_path("../../../../app/services/api/v3/higher_level_review_processor.rb", __dir__)
+
+describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: :request do
+  context "#intake_status" do
+    let(:uuid) { 444 }
+    let(:asyncable_status) { "nice" }
+    let(:higher_level_review) do
+      Struct.new(:uuid, :asyncable_status).new(uuid, asyncable_status)
+    end
+
+    subject { Api::V3::DecisionReview::HigherLevelReviewsController.intake_status(higher_level_review) }
+    it "should return the correct hash" do
+      expect(subject).to eq(
+        data: {
+          type: "IntakeStatus",
+          id: uuid,
+          attributes: {
+            status: asyncable_status
+          }
+        }
+      )
+    end
+  end
+
+  context "#errors_to_render_args" do
+    let(:error_from_error_code) { Api::V3::HigherLevelReviewProcessor.method(:error_from_error_code) }
+    let(:error_a) { error_from_error_code.call(:veteran_not_found) }
+    let(:error_b) { error_from_error_code.call(nil) }
+
+    subject { Api::V3::DecisionReview::HigherLevelReviewsController.method(:errors_to_render_args) }
+    it "should return the correct json" do
+      expect(subject.call([error_a, error_b])).to eq(
+        json: {
+          errors:
+            [
+              error_a,
+              error_b
+            ]
+        },
+        status: 422
+      )
+    end
+  end
+
+  context "#error_from_objects_error_code" do
+    let(:error_from_error_code) { Api::V3::HigherLevelReviewProcessor.method(:error_from_error_code) }
+    let(:code_a) { :incident_flash }
+    let(:object_a) do
+      Intake.new(error_code: code_a)
+    end
+    let(:code_b) { :invalid_file_number }
+    let(:object_b) do
+      Api::V3::HigherLevelReviewProcessor::StartError.new(Intake.new(error_code: code_b))
+    end
+
+    subject { Api::V3::DecisionReview::HigherLevelReviewsController.method(:error_from_objects_error_code) }
+    it "should return the correct error" do
+      expect(subject.call(object_a, object_b)).to eq(error_from_error_code.call(code_a))
+      expect(subject.call(object_b, object_a)).to eq(error_from_error_code.call(code_b))
+    end
+  end
+end
 
 describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: :request do
   #   describe "#mock_create" do

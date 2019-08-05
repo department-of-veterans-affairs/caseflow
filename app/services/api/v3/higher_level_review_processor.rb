@@ -38,7 +38,7 @@ class Api::V3::HigherLevelReviewProcessor
   ERROR_FOR_UNKNOWN_CODE = Error.new(422, :unknown_error, "Unknown error")
 
   # returns the full Error for a given error code
-  def error_from_error_code(code)
+  def self.error_from_error_code(code)
     ERRORS_BY_CODE[code.to_s.to_sym] || ERROR_FOR_UNKNOWN_CODE
   end
 
@@ -54,7 +54,7 @@ class Api::V3::HigherLevelReviewProcessor
     @receipt_date, @informal_conference, @same_office, @legacy_opt_in_approved, @benefit_type = attributes(params)
     veteran_file_number, @claimant_participant_id, @claimant_payee_code = veteran_and_claimant(params)
     @intake = Intake.build(user: user, veteran_file_number: veteran_file_number, form_type: "higher_level_review")
-    @errors << error_from_error_code(intake.error_code) if intake.error_code
+    @errors << self.class.error_from_error_code(intake.error_code) if intake.error_code
     @request_issues = []
     params[:included].each do |included_item|
       next unless included_item[:type] == "RequestIssue"
@@ -161,7 +161,7 @@ class Api::V3::HigherLevelReviewProcessor
         contesting_uncategorized_other_to_intake_data_hash(request_issue)
       end
     else
-      error_from_error_code(:unknown_contestation_type)
+      self.class.error_from_error_code(:unknown_contestation_type)
     end
   end
 
@@ -213,8 +213,8 @@ class Api::V3::HigherLevelReviewProcessor
     id, notes = request_issue.values_at(:id, :notes)
     # open question: where will attributes[:request_issue_ids] go?
 
-    return error_from_error_code(:decision_issue_id_cannot_be_blank) if id.blank?
-    return error_from_error_code(:notes_cannot_be_blank_when_contesting_decision) if notes.blank?
+    return self.class.error_from_error_code(:decision_issue_id_cannot_be_blank) if id.blank?
+    return self.class.error_from_error_code(:notes_cannot_be_blank_when_contesting_decision) if notes.blank?
 
     intake_data_hash(contested_decision_issue_id: id, notes: notes)
   end
@@ -222,20 +222,20 @@ class Api::V3::HigherLevelReviewProcessor
   def contesting_rating_to_intake_data_hash(request_issue)
     id, notes = request_issue.values_at(:id, :notes)
 
-    return error_from_error_code(:rating_issue_id_cannot_be_blank) if id.blank?
-    return error_from_error_code(:notes_cannot_be_blank_when_contesting_rating) if notes.blank?
+    return self.class.error_from_error_code(:rating_issue_id_cannot_be_blank) if id.blank?
+    return self.class.error_from_error_code(:notes_cannot_be_blank_when_contesting_rating) if notes.blank?
 
     intake_data_hash(rating_issue_reference_id: id, notes: notes)
   end
 
   def contesting_legacy_to_intake_data_hash(request_issue)
     if !@legacy_opt_in_approved
-      return error_from_error_code(:adding_legacy_issue_without_opting_in)
+      return self.class.error_from_error_code(:adding_legacy_issue_without_opting_in)
     end
 
     id, notes = request_issue.values_at(:id, :notes)
-    return error_from_error_code(:legacy_issue_id_cannot_be_blank) if id.blank?
-    return error_from_error_code(:notes_cannot_be_blank_when_contesting_legacy) if notes.blank?
+    return self.class.error_from_error_code(:legacy_issue_id_cannot_be_blank) if id.blank?
+    return self.class.error_from_error_code(:notes_cannot_be_blank_when_contesting_legacy) if notes.blank?
 
     intake_data_hash(vacols_id: id, notes: notes)
   end
@@ -246,10 +246,12 @@ class Api::V3::HigherLevelReviewProcessor
     )
 
     unless category.in?(CATEGORIES_BY_BENEFIT_TYPE[@benefit_type])
-      return error_from_error_code(:unknown_category_for_benefit_type)
+      return self.class.error_from_error_code(:unknown_category_for_benefit_type)
     end
 
-    return error_from_error_code(:must_have_text_to_contest_other) unless notes.present? || decision_text.present?
+    unless notes.present? || decision_text.present?
+      return self.class.error_from_error_code(:must_have_text_to_contest_other)
+    end
 
     intake_data_hash(
       nonrating_issue_category: category,
@@ -262,7 +264,8 @@ class Api::V3::HigherLevelReviewProcessor
   def contesting_uncategorized_other_to_intake_data_hash(request_issue)
     notes, decision_date, decision_text = request_issue.values_at(:notes, :decision_date, :decision_text)
 
-    return error_from_error_code(:must_have_text_to_contest_other) unless notes.present? || decision_text.present?
+    return self.class.error_from_error_code(:must_have_text_to_contest_other) unless
+      notes.present? || decision_text.present?
 
     intake_data_hash(
       is_unidentified: true,
