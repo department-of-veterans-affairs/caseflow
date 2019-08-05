@@ -11,7 +11,7 @@ import HearingWorksheet from '../components/hearingWorksheet/HearingWorksheet';
 class HearingWorksheetContainer extends React.Component {
 
   loadHearingWorksheet = () => {
-    let requestUrl = `/hearings/${this.props.hearingId}/worksheet.json`;
+    let requestUrl = `/hearings/${this.props.hearingId}`;
 
     return ApiUtil.get(requestUrl).then((response) => {
       this.props.populateWorksheet(response.body);
@@ -39,7 +39,8 @@ class HearingWorksheetContainer extends React.Component {
 }
 
 HearingWorksheetContainer.propTypes = {
-  hearingId: PropTypes.string.isRequired
+  hearingId: PropTypes.string.isRequired,
+  populateWorksheet: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
