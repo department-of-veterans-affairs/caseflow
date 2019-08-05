@@ -37,7 +37,9 @@ class TaskPager
     when Constants.QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN
       tasks.order(placed_on_hold_at: sort_order)
     when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
-      tasks_with_cached_appeal_attributes(tasks).order("cached_appeal_attributes.docket_number #{sort_order}")
+      tasks_sorted_by_docket_number(tasks)
+
+      # tasks_with_cached_appeal_attributes(tasks).order("cached_appeal_attributes.docket_number #{sort_order}")
 
     # Columns not yet supported:
     #
@@ -54,6 +56,15 @@ class TaskPager
     else
       tasks.order(created_at: sort_order)
     end
+  end
+
+  def tasks_sorted_by_docket_number(tasks)
+    # Prevent SQL Injection!
+    verified_sort_order = sort_order.upcase == "DESC" ? "DESC" : "ASC"
+    order_sql = "cached_appeal_attributes.docket_type #{verified_sort_order}, \
+                cached_appeal_attributes.docket_number #{verified_sort_order}"
+
+    tasks_with_cached_appeal_attributes(tasks).order(order_sql)
   end
 
   def tasks_with_cached_appeal_attributes(tasks)
