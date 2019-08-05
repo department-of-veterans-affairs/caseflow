@@ -18,13 +18,9 @@ class HearingDetailsContainer extends React.Component {
     };
   }
 
-  componentDidMount() {
-    this.getHearing();
-  }
-
   goBack = () => {
     this.props.history.goBack();
-  }
+  };
 
   getHearing = () => {
     const { hearingId } = this.props;
@@ -41,30 +37,24 @@ class HearingDetailsContainer extends React.Component {
         });
       });
     }
-  }
+  };
+
   render() {
-
-    if (this.state.hearing) {
-      return <LoadingDataDisplay
-        createLoadPromise={() => Promise.all([
-          this.getHearing()
-        ])}
-        loadingComponentProps={{
-          spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
-          message: 'Loading the hearing details...'
-        }}
-        failStatusMessageProps={{
-          title: 'Unable to load the details.'
-        }}>
-        <HearingDetails
-          disabled={!this.props.userInHearingsOrganization}
-          hearing={this.state.hearing}
-          goBack={this.goBack}
-        />
-      </LoadingDataDisplay>;
-    }
-
-    return null;
+    return <LoadingDataDisplay
+      createLoadPromise={this.getHearing}
+      loadingComponentProps={{
+        spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
+        message: 'Loading the hearing details...'
+      }}
+      failStatusMessageProps={{
+        title: 'Unable to load the details.'
+      }}>
+      <HearingDetails
+        disabled={!this.props.userInHearingsOrganization}
+        hearing={this.state.hearing}
+        goBack={this.goBack}
+      />
+    </LoadingDataDisplay>;
   }
 }
 

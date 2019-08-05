@@ -11,7 +11,7 @@ import HearingWorksheet from '../components/hearingWorksheet/HearingWorksheet';
 class HearingWorksheetContainer extends React.Component {
 
   loadHearingWorksheet = () => {
-    let requestUrl = `/hearings/${this.props.hearingId}/worksheet.json`;
+    let requestUrl = `/hearings/${this.props.hearingId}`;
 
     return ApiUtil.get(requestUrl).then((response) => {
       this.props.populateWorksheet(response.body);

@@ -83,7 +83,7 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
   dispatch(toggleWorksheetSaving(true));
   dispatch(setWorksheetSaveFailedStatus(false));
 
-  ApiUtil.patch(`/hearings/worksheets/${worksheet.external_id}`, { data: { worksheet } }).
+  ApiUtil.patch(`/hearings/${worksheet.external_id}`, { data: { hearing: worksheet } }).
     then(() => {
       dispatch({ type: ACTIONS.SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
     },
