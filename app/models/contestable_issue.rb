@@ -86,6 +86,10 @@ class ContestableIssue
     conflicting_request_issue.try(:review_title)
   end
 
+  def voided?
+    decision_issue&.voided?
+  end
+
   private
 
   def contested_by_request_issue

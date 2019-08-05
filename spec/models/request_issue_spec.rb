@@ -831,6 +831,22 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "#corrected?" do
+    let(:request_issue) { create(:request_issue, corrected_by_request_issue_id: corrected_by_id) }
+
+    subject { request_issue.corrected? }
+
+    context "when corrected" do
+      let(:corrected_by_id) { create(:request_issue).id }
+      it { is_expected.to eq true }
+    end
+
+    context "when not corrected" do
+      let(:corrected_by_id) { nil }
+      it { is_expected.to eq false }
+    end
+  end
+
   context "#ui_hash" do
     context "when there is a previous request issue in active review" do
       let!(:ratings) do

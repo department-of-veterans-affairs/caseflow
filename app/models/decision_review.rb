@@ -198,7 +198,7 @@ class DecisionReview < ApplicationRecord
   def contestable_issues
     return contestable_issues_from_decision_issues unless can_contest_rating_issues?
 
-    contestable_issues_from_ratings + contestable_issues_from_decision_issues
+    contestable_issues_from_ratings + contestable_issues_from_decision_issues.reject(&:voided?)
   end
 
   def active_nonrating_request_issues
