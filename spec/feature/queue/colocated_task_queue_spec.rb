@@ -93,8 +93,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
         create(
           :ama_colocated_task,
           appeal: appeal,
-          parent: root_task,
-          assigned_to: Colocated.singleton
+          parent: root_task
         )
       end
       let(:individual_task) { colocated_task.children.first }
@@ -142,8 +141,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
         create(
           :ama_colocated_task,
           appeal: appeal,
-          parent: root_task,
-          assigned_to: Colocated.singleton
+          parent: root_task
         )
       end
       let(:colocated_individual_task) { colocated_org_task.children.first }
@@ -196,8 +194,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
         create(
           :ama_colocated_task,
           appeal: appeal,
-          parent: root_task,
-          assigned_to: Colocated.singleton
+          parent: root_task
         )
       end
       let(:colocated_individual_task) { colocated_org_task.children.first }

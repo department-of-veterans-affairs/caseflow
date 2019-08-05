@@ -17,25 +17,24 @@ describe AttorneyQueue, :all_dbs do
         Colocated.singleton.users.first
       end
 
-      let!(:action1) { create(:colocated_task, assigned_by: user, assigned_to: Colocated.singleton) }
-      let!(:action2) { create(:colocated_task, appeal: appeal, assigned_by: user, assigned_to: Colocated.singleton) }
+      let!(:action1) { create(:colocated_task, assigned_by: user) }
+      let!(:action2) { create(:colocated_task, appeal: appeal, assigned_by: user) }
       let!(:action3) do
         create(
           :colocated_task,
           appeal: appeal,
-          assigned_by: user,
-          assigned_to: Colocated.singleton
+          assigned_by: user
         ).tap do |task|
           task.children.first.update!(status: Constants.TASK_STATUSES.completed)
         end
       end
       let!(:action4) do
-        create(:colocated_task, assigned_by: user, assigned_to: Colocated.singleton).tap do |task|
+        create(:colocated_task, assigned_by: user).tap do |task|
           task.children.first.update!(status: Constants.TASK_STATUSES.completed)
         end
       end
       let!(:action5) do
-        create(:colocated_task, :in_progress, assigned_by: user, assigned_to: Colocated.singleton)
+        create(:colocated_task, :in_progress, assigned_by: user)
       end
 
       it "should return the list" do
@@ -56,8 +55,7 @@ describe AttorneyQueue, :all_dbs do
         create(
           :colocated_task,
           appeal: appeal,
-          assigned_by: user,
-          assigned_to: Colocated.singleton
+          assigned_by: user
         ).tap do |task|
           task.children.first.update!(status: Constants.TASK_STATUSES.completed)
         end
@@ -66,8 +64,7 @@ describe AttorneyQueue, :all_dbs do
         create(
           :colocated_task,
           appeal: appeal,
-          assigned_by: user,
-          assigned_to: Colocated.singleton
+          assigned_by: user
         ).tap do |task|
           task.children.first.update!(status: Constants.TASK_STATUSES.on_hold)
         end
