@@ -97,12 +97,9 @@ class Api::V3::HigherLevelReviewProcessor
   # this method fails by exception. some exceptions will have an error_code method
   def start_review_complete!
     ActiveRecord::Base.transaction do
-      # both start and review can signal a failure by either throwing an exception OR returning a falsey value.
-      # consequently, false returns are turned into execptions (with error codes) to rollback the transaction
-      fail StartError, intake unless intake.start!
-      fail ReviewError, intake unless intake.review!(review_params)
-
-      intake.complete! complete_params
+      start!
+      review!
+      complete!
     end
   end
 
@@ -126,7 +123,7 @@ class Api::V3::HigherLevelReviewProcessor
 
   # params for the "complete" step of the intake process
   def complete_params
-    ActionController::Parameters.new request_issues: @request_issues
+    ActionController::Parameters.new(request_issues: @request_issues)
   end
 
   # initialize helper
@@ -170,6 +167,22 @@ class Api::V3::HigherLevelReviewProcessor
 
   private
 
+  # both intake.start! and intake.review! can signal a failure by either
+  # throwing an exception OR returning a falsey value. consequently, false
+  # returns are turned into execptions (with error codes) to rollback the
+  # transaction
+  def start!
+    fail(StartError, intake) unless intake.start!
+  end
+
+  def review!
+    fail(ReviewError, intake) unless intake.review!(review_params)
+  end
+
+  def complete!
+    intake.complete! complete_params
+  end
+
   # the helper methods below create hashes in the shape that the method
   # "attributes_from_intake_data" (request_issue model) is expecting
   #
@@ -197,7 +210,7 @@ class Api::V3::HigherLevelReviewProcessor
   # }
 
   def contesting_decision_to_intake_data_hash(request_issue)
-    id, notes = request_issue.values_at :id, :notes
+    id, notes = request_issue.values_at(:id, :notes)
     # open question: where will attributes[:request_issue_ids] go?
 
     return error_from_error_code(:decision_issue_id_cannot_be_blank) if id.blank?
@@ -207,7 +220,7 @@ class Api::V3::HigherLevelReviewProcessor
   end
 
   def contesting_rating_to_intake_data_hash(request_issue)
-    id, notes = request_issue.values_at :id, :notes
+    id, notes = request_issue.values_at(:id, :notes)
 
     return error_from_error_code(:rating_issue_id_cannot_be_blank) if id.blank?
     return error_from_error_code(:notes_cannot_be_blank_when_contesting_rating) if notes.blank?
@@ -220,7 +233,7 @@ class Api::V3::HigherLevelReviewProcessor
       return error_from_error_code(:adding_legacy_issue_without_opting_in)
     end
 
-    id, notes = request_issue.values_at :id, :notes
+    id, notes = request_issue.values_at(:id, :notes)
     return error_from_error_code(:legacy_issue_id_cannot_be_blank) if id.blank?
     return error_from_error_code(:notes_cannot_be_blank_when_contesting_legacy) if notes.blank?
 
@@ -247,7 +260,7 @@ class Api::V3::HigherLevelReviewProcessor
   end
 
   def contesting_uncategorized_other_to_intake_data_hash(request_issue)
-    notes, decision_date, decision_text = request_issue.values_at :notes, :decision_date, :decision_text
+    notes, decision_date, decision_text = request_issue.values_at(:notes, :decision_date, :decision_text)
 
     return error_from_error_code(:must_have_text_to_contest_other) unless notes.present? || decision_text.present?
 
