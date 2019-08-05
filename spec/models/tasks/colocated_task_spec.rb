@@ -236,9 +236,7 @@ describe ColocatedTask, :all_dbs do
   context ".update" do
     let!(:attorney_2) { create(:user) }
     let!(:staff_2) { create(:staff, :attorney_role, sdomainid: attorney_2.css_id) }
-    let(:org_colocated_task) do
-      create(:colocated_task, assigned_by: attorney_2, assigned_to: Colocated.singleton)
-    end
+    let(:org_colocated_task) { create(:colocated_task, assigned_by: attorney_2) }
     let!(:colocated_admin_action) { org_colocated_task.children.first }
 
     context "when status is updated to completed" do
@@ -370,7 +368,7 @@ describe ColocatedTask, :all_dbs do
     let(:colocated_user) { create(:user) }
     let(:colocated_task) do
       # We expect all ColocatedTasks that are assigned to individuals to have parent tasks assigned to the organization.
-      org_task = create(:colocated_task, assigned_by: attorney, assigned_to: Colocated.singleton)
+      org_task = create(:colocated_task, assigned_by: attorney)
       create(
         :colocated_task,
         assigned_by: attorney,
@@ -515,8 +513,7 @@ describe ColocatedTask, :all_dbs do
         :colocated_task,
         :retired_vlj,
         appeal: appeal,
-        assigned_by: initial_assigner,
-        assigned_to: Colocated.singleton
+        assigned_by: initial_assigner
       )
     end
     let(:colocated_task) { org_task.children.first }
