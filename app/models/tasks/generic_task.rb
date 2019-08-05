@@ -106,10 +106,6 @@ class GenericTask < Task
     ]
   end
 
-  def task_is_assigned_to_users_organization?(user)
-    assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
-  end
-
   class << self
     def create_from_params(params, user)
       parent_task = Task.find(params[:parent_id])
