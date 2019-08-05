@@ -48,6 +48,9 @@ detectors:
   RepeatedConditional:
     exclude:
       - QueueConfig
+  TooManyInstanceVariables:
+    exclude:
+      - ExternalApi::VbmsDocumentUploader
   TooManyMethods:
     enabled: false
   TooManyStatements:
