@@ -64,10 +64,8 @@ RSpec.feature "Hearing prep", :all_dbs do
       expect(page).to have_content("This is military service")
     end
 
-    scenario "Worksheet adds, deletes, edits, and saves user created issues", focus: true do
+    scenario "Worksheet adds, deletes, edits, and saves user created issues" do
       visit "/hearings/" + legacy_hearing.external_id.to_s + "/worksheet"
-
-      binding.pry
 
       click_on "button-addIssue-1"
       fill_in "3-issue-description", with: "This is the description"
