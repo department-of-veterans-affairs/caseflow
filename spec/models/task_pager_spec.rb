@@ -223,14 +223,13 @@ describe TaskPager, :all_dbs do
     context "when sorting by docket number column" do
       let(:sort_by) { Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN }
 
-      # assumes all tasks created so far are made w AMA appeals
       before do
         created_tasks.each do |task|
           create(:cached_appeal, appeal_id: task.appeal_id, appeal_type: task.appeal_type)
         end
       end
 
-      it "sorts using ascending order by default", focus: true do
+      it "sorts using ascending order by default" do
         expected_order = CachedAppeal.all.sort_by { |appeal| appeal.docket_number }
         expect(subject.map { |task| task.appeal_id }).to eq(expected_order.map { |appeal| appeal.appeal_id })
       end
