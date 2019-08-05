@@ -229,7 +229,7 @@ describe TaskPager, :all_dbs do
         end
       end
 
-      it "sorts using ascending order by default", focus: true do
+      it "sorts using ascending order by default" do
         expected_order = CachedAppeal.all.sort_by { |appeal| appeal.docket_number }
         expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
       end
