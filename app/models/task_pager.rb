@@ -39,8 +39,6 @@ class TaskPager
     when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
       tasks_sorted_by_docket_number(tasks)
 
-      # tasks_with_cached_appeal_attributes(tasks).order("cached_appeal_attributes.docket_number #{sort_order}")
-
     # Columns not yet supported:
     #
     # APPEAL_TYPE_COLUMN
