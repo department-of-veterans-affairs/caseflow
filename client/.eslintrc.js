@@ -8,7 +8,14 @@ module.exports = {
   ],
   rules: {
     'prefer-const': 'off',
-    'max-statements': 'off'
+    'max-statements': 'off',
+    'react/prop-types': [1, { ignore: [],
+      customValidators: [] }]
+  },
+  settings: {
+    react: {
+      version: '16.2'
+    }
   },
   globals: {
     $ReadOnly: true,
