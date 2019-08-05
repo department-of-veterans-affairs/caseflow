@@ -3,6 +3,11 @@ import { issueByIndex } from '../util/issues';
 
 const analytics = true;
 
+export const toggleAddingIssue = () => ({
+  type: ACTIONS.TOGGLE_ADDING_ISSUE,
+  meta: { analytics }
+});
+
 export const toggleAddIssuesModal = () => ({
   type: ACTIONS.TOGGLE_ADD_ISSUES_MODAL,
   meta: { analytics }
@@ -27,8 +32,10 @@ export const toggleIssueRemoveModal = (index) => ({
   payload: { index }
 });
 
-export const toggleCorrectionTypeModal = () => ({
-  type: ACTIONS.TOGGLE_CORRECTION_TYPE_MODAL
+export const toggleCorrectionTypeModal = ({ index, isNewIssue } = {}) => ({
+  type: ACTIONS.TOGGLE_CORRECTION_TYPE_MODAL,
+  payload: { index,
+    isNewIssue }
 });
 
 export const toggleLegacyOptInModal = (currentIssueAndNotes = {}) => ({
@@ -70,6 +77,15 @@ export const setEditContentionText = (issueIdx, editedDescription) => ({
   }
 });
 
+export const addIssue = (currentIssue) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.ADD_ISSUE,
+    payload: {
+      ...currentIssue
+    }
+  });
+};
+
 export const addUnidentifiedIssue = (description, notes, correctionType) => (dispatch) => {
   dispatch({
     type: ACTIONS.ADD_ISSUE,
@@ -83,7 +99,7 @@ export const addUnidentifiedIssue = (description, notes, correctionType) => (dis
 };
 
 export const addContestableIssue = (args) => (dispatch) => {
-  const currentIssue = issueByIndex(args.contestableIssues, args.contestableIssueIndex);
+  const currentIssue = args.currentIssue || issueByIndex(args.contestableIssues, args.contestableIssueIndex);
 
   dispatch({
     type: ACTIONS.ADD_ISSUE,

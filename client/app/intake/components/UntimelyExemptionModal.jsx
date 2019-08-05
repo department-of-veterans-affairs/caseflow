@@ -1,13 +1,10 @@
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 import TextField from '../../components/TextField';
 import { BOOLEAN_RADIO_OPTIONS } from '../constants';
-import { addContestableIssue, addNonratingRequestIssue } from '../actions/addIssues';
-import { isCorrection } from '../util';
 
 class UntimelyExemptionModal extends React.Component {
   constructor(props) {
@@ -20,111 +17,106 @@ class UntimelyExemptionModal extends React.Component {
   }
 
   onAddIssue = () => {
-    const currentIssueData = this.props.intakeData.currentIssueAndNotes;
-    const currentIssue = currentIssueData.currentIssue;
+    const { untimelyExemption, untimelyExemptionNotes } = this.state;
 
-    if (currentIssue.category) {
-      this.props.addNonratingRequestIssue({
-        timely: false,
-        isRating: false,
-        untimelyExemption: this.state.untimelyExemption,
-        untimelyExemptionNotes: this.state.untimelyExemptionNotes,
-        benefitType: currentIssue.benefitType,
-        category: currentIssue.category,
-        description: currentIssue.description,
-        decisionDate: currentIssue.decisionDate,
-        vacolsId: currentIssueData.vacolsId,
-        vacolsSequenceId: currentIssueData.vacolsSequenceId,
-        eligibleForSocOptIn: currentIssueData.eligibleForSocOptIn,
-        correctionType: isCorrection(false, this.props.intakeData) ? 'control' : null
-      });
-    } else {
-      this.props.addContestableIssue({
-        timely: false,
-        contestableIssueIndex: currentIssue.index,
-        contestableIssues: this.props.intakeData.contestableIssues,
-        isRating: currentIssue.isRating,
-        notes: currentIssueData.notes,
-        untimelyExemption: this.state.untimelyExemption,
-        untimelyExemptionNotes: this.state.untimelyExemptionNotes,
-        vacolsId: currentIssueData.vacolsId,
-        vacolsSequenceId: currentIssueData.vacolsSequenceId,
-        eligibleForSocOptIn: currentIssueData.eligibleForSocOptIn,
-        correctionType: isCorrection(currentIssue.isRating, this.props.intakeData) ? 'control' : null
-      });
-    }
-    this.props.closeHandler();
-  }
+    this.props.onSubmit({ untimelyExemption,
+      untimelyExemptionNotes });
+  };
 
   radioOnChange = (value) => {
     this.setState({
       untimelyExemption: value
     });
-  }
+  };
 
   untimelyExemptionNotesOnChange = (value) => {
     this.setState({
       untimelyExemptionNotes: value
     });
+  };
+
+  getModalButtons() {
+    const btns = [
+      {
+        classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
+        name: this.props.cancelText,
+        onClick: this.props.onCancel
+      },
+      {
+        classNames: ['usa-button', 'add-issue'],
+        name: this.props.submitText,
+        onClick: this.onAddIssue,
+        disabled: !this.state.untimelyExemption
+      }
+    ];
+
+    if (this.props.onSkip) {
+      btns.push({
+        classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
+        name: this.props.skipText,
+        onClick: this.props.onSkip
+      });
+    }
+
+    return btns;
   }
 
   render() {
-    let {
-      intakeData,
-      closeHandler
-    } = this.props;
+    const { intakeData, onCancel, currentIssue } = this.props;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
-    const issue = intakeData.currentIssueAndNotes.currentIssue;
+    const issue = currentIssue;
 
-    return <div className="intake-add-issues">
-      <Modal
-        buttons={[
-          { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
-            name: 'Cancel adding this issue',
-            onClick: closeHandler
-          },
-          { classNames: ['usa-button', 'add-issue'],
-            name: 'Add this issue',
-            onClick: this.onAddIssue,
-            disabled: this.state.disabled
-          }
-        ]}
-        visible
-        closeHandler={closeHandler}
-        title={`Issue ${issueNumber} is an Untimely Issue`}
-      >
-        <p><strong>Requested issue:</strong> {issue.description}</p>
-        <p>The issue requested isn't usually eligible because its decision date is older than what's allowed.</p>
-        <RadioField
-          name="untimely-exemption"
-          label="Did the applicant request an extension to the date requirements?"
-          strongLabel
-          vertical
-          options={BOOLEAN_RADIO_OPTIONS}
-          onChange={this.radioOnChange}
-          value={this.state.untimelyExemption === null ? null : this.state.untimelyExemption.toString()}
-        />
-
-        {
-          this.state.untimelyExemption === 'true' && <TextField
-            name="Notes"
-            optional
+    return (
+      <div className="intake-add-issues">
+        <Modal
+          buttons={this.getModalButtons()}
+          visible
+          closeHandler={onCancel}
+          title={`Issue ${issueNumber} is an Untimely Issue`}
+        >
+          <p>
+            <strong>Requested issue:</strong> {issue.description}
+          </p>
+          <p>The issue requested isn't usually eligible because its decision date is older than what's allowed.</p>
+          <RadioField
+            name="untimely-exemption"
+            label="Did the applicant request an extension to the date requirements?"
             strongLabel
-            value={this.state.untimelyExemptionNotes}
-            onChange={this.untimelyExemptionNotesOnChange}
+            vertical
+            options={BOOLEAN_RADIO_OPTIONS}
+            onChange={this.radioOnChange}
+            value={this.state.untimelyExemption === null ? null : this.state.untimelyExemption.toString()}
           />
-        }
 
-      </Modal>
-    </div>;
+          {this.state.untimelyExemption === 'true' && (
+            <TextField
+              name="Notes"
+              optional
+              strongLabel
+              value={this.state.untimelyExemptionNotes}
+              onChange={this.untimelyExemptionNotesOnChange}
+            />
+          )}
+        </Modal>
+      </div>
+    );
   }
 }
 
-export default connect(
-  null,
-  (dispatch) => bindActionCreators({
-    addContestableIssue,
-    addNonratingRequestIssue
-  }, dispatch)
-)(UntimelyExemptionModal);
+UntimelyExemptionModal.propTypes = {
+  onSubmit: PropTypes.func,
+  submitText: PropTypes.string,
+  onCancel: PropTypes.func,
+  cancelText: PropTypes.string,
+  onSkip: PropTypes.func,
+  skipText: PropTypes.string
+};
+
+UntimelyExemptionModal.defaultProps = {
+  submitText: 'Add this issue',
+  cancelText: 'Cancel adding this issue',
+  skipText: 'None of these match, see more options'
+};
+
+export default UntimelyExemptionModal;
