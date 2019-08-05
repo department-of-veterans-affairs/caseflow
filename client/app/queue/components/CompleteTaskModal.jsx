@@ -6,7 +6,6 @@ import { sprintf } from 'sprintf-js';
 import TextareaField from '../../components/TextareaField';
 import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop } from '../constants';
 import COPY from '../../../COPY.json';
-import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import {
   taskById,
@@ -121,9 +120,7 @@ class CompleteTaskModal extends React.Component {
 
   render = () => {
     return <QueueFlowModal
-      title={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].title({
-        teamName: (this.props.task && this.props.task.label) ? CO_LOCATED_ADMIN_ACTIONS[this.props.task.label] : ''
-      })}
+      title={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].title(this.getContentArgs())}
       button={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].buttonText}
       submit={this.submit}
     >
