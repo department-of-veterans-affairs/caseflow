@@ -278,7 +278,10 @@ describe HearingRequestDocket, :all_dbs do
                     :ready_for_distribution,
                     :advanced_on_docket_due_to_motion,
                     docket_type: Constants.AMA_DOCKETS.hearing)
-    hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal)
+    hearing = create(:hearing,
+                     judge: nil,
+                     disposition: "held",
+                     appeal: appeal)
     hearing.update(judge: active_judge)
   end
 
@@ -294,7 +297,8 @@ describe HearingRequestDocket, :all_dbs do
                     docket_type: Constants.AMA_DOCKETS.hearing)
     create(:hearing, judge: nil, disposition: "held", appeal: appeal)
     appeal = create(:appeal,
-                    :ready_for_distribution, docket_type: Constants.AMA_DOCKETS.hearing)
+                    :ready_for_distribution,
+                    docket_type: Constants.AMA_DOCKETS.hearing)
     create(:hearing, judge: nil, disposition: "held", appeal: appeal)
   end
 
@@ -392,7 +396,10 @@ describe HearingRequestDocket, :all_dbs do
   end
 
   def matching_all_base_conditions_with_most_recent_held_hearing_not_tied_to_any_judge
-    appeal = create(:appeal, :ready_for_distribution, :advanced_on_docket_due_to_motion, docket_type: Constants.AMA_DOCKETS.hearing)
+    appeal = create(:appeal,
+                    :ready_for_distribution,
+                    :advanced_on_docket_due_to_motion,
+                    docket_type: Constants.AMA_DOCKETS.hearing)
     most_recent = create(:hearing_day, scheduled_for: 3.days.ago)
     create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
 
