@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 class WhereClauseArgumentsFactory
+  # ["col=docketNumberColumn&val=legacy,evidence_submission", "col=taskColumn&val=TranslationTask"]
+  # ->
+  # [
+  #   "cached_appeals_attributes.docket_type IN ? AND tasks.type in ?",
+  #   ["legacy", "evidence_submission"],
+  #   ["TranslationTask"]
+  # ]
   def self.from_params(filter_params = [])
     return [] if filter_params.empty?
 
@@ -26,12 +33,12 @@ class FilterParameter
     fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
   end
 
-  # Transform the filter from a string to a hash and create an object from that hash.
-  # "col=docketNumberColumn&val=legacy,evidence_submission"
-  # ->
-  # { "col": "docketNumberColumn", "val": ["legacy", "evidence_submission"] }
   class << self
     def from_string(filter_string)
+      # Transform the filter from a string to a hash and create an object from that hash.
+      # "col=docketNumberColumn&val=legacy,evidence_submission"
+      # ->
+      # { "col": "docketNumberColumn", "val": ["legacy", "evidence_submission"] }
       filter_hash = Rack::Utils.parse_query(filter_string)
 
       new(column: table_column_from_name(filter_hash["col"]), values: filter_hash["val"].split(","))
