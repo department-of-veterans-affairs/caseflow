@@ -23,9 +23,6 @@ class TaskPager
   end
 
   def paged_tasks
-    where_clause = QueueWhereClauseArgumentsFactory.new(filter_params: filters).arguments
-    filtered_tasks = tasks_for_tab.where(*where_clause)
-
     sorted_tasks(filtered_tasks).page(page).per(TASKS_PER_PAGE)
   end
 
@@ -63,6 +60,11 @@ class TaskPager
 
   def total_task_count
     @total_task_count ||= tasks_for_tab.count
+  end
+
+  def filtered_tasks
+    where_clause = QueueWhereClauseArgumentsFactory.new(filter_params: filters).arguments
+    where_clause.empty? ? tasks_for_tab : tasks_for_tab.where(*where_clause)
   end
 
   def tasks_for_tab

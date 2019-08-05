@@ -56,6 +56,15 @@ describe QueueWhereClauseArgumentsFactory, :postgres do
       end
     end
 
-    # TODO: Keep plugging away here.
+    context "when filtering on task type" do
+      let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{RootTask.name}"] }
+
+      it "returns the expected arguments" do
+        expect(subject).to eq([
+                                "tasks.type IN (?)",
+                                [RootTask.name]
+                              ])
+      end
+    end
   end
 end
