@@ -37,13 +37,11 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
   let(:veteran_file_number) { "123412345" }
 
-  let(:veteran) do
+  let!(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number,
                               first_name: "Ed",
                               last_name: "Merica")
   end
-
-  let(:receipt_date) { Time.zone.today - 5.days }
 
   let(:promulgation_date) { receipt_date - 10.days }
 
@@ -66,55 +64,60 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     )
   end
 
+  let(:receipt_date) { Time.zone.today - 5.days }
+  let(:informal_conference) { true }
+  let(:same_office) { false }
+  let(:legacy_opt_in_approved) { true }
+  let(:benefit_type) { "pension" }
+  let(:contests) { "other" }
+  let(:category) { "Penalty Period" }
+  let(:decision_date) { Time.zone.today - 10.days }
+  let(:decision_text) { "Some text here." }
+  let(:notes) { "not sure if this is on file" }
+  let(:attributes) do
+    {
+      receiptDate: receipt_date.strftime("%Y-%m-%d"),
+      informalConference: informal_conference,
+      sameOffice: same_office,
+      legacyOptInApproved: legacy_opt_in_approved,
+      benefitType: benefit_type
+    }
+  end
+  let(:relationships) do
+    {
+      veteran: {
+        data: {
+          type: "Veteran",
+          id: veteran_file_number
+        }
+      }
+    }
+  end
+  let(:data) do
+    {
+      type: "HigherLevelReview",
+      attributes: attributes,
+      relationships: relationships
+    }
+  end
+  let(:included) do
+    [
+      {
+        type: "RequestIssue",
+        attributes: {
+          contests: contests,
+          category: category,
+          decision_date: decision_date.strftime("%Y-%m-%d"),
+          decision_text: decision_text,
+          notes: notes
+        }
+      }
+    ]
+  end
   let(:params) do
     {
-      "data" => {
-        "type" => "HigherLevelReview",
-        "attributes" => {
-          "receiptDate" => receipt_date,
-          "informalConference" => true,
-          "sameOffice" => false,
-          "legacyOptInApproved" => true,
-          "benefitType" => "pension"
-        },
-        "relationships" => {
-          "veteran" => {
-            "data" => {
-              "type" => "Veteran",
-              "id" => veteran_file_number
-            }
-          },
-          "claimant" => {
-            "data" => {
-              "type" => "Claimant",
-              "id" => "44444444",
-              "meta" => {
-                "payeeCode" => "10"
-              }
-            }
-          }
-        }
-      },
-      "included" => [
-        {
-          "type" => "request_issue",
-          "attributes" => {
-            "contests" => "other",
-            "category" => "Eligibility | Veteran Status",
-            "decisionText" => "veteran status verified",
-            "decisionDate" => "2019-07-11",
-            "notes" => "Some notes."
-          }
-        },
-        {
-          "type" => "request_issue",
-          "attributes" => {
-            "contests" => "on_file_rating_issue",
-            "id" => 23456,
-            "notes" => "Some more notes.",
-          }
-        },
-      ]
+      data: data,
+      included: included
     }
   end
 
