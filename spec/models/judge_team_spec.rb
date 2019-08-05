@@ -4,7 +4,7 @@ require "support/database_cleaner"
 require "rails_helper"
 
 describe JudgeTeam, :postgres do
-  let(:judge) { FactoryBot.create(:user) }
+  let(:judge) { create(:user) }
 
   describe ".create_for_judge" do
     context "when user is not already an admin of an existing JudgeTeam" do
@@ -23,10 +23,10 @@ describe JudgeTeam, :postgres do
   end
 
   describe ".for_judge" do
-    let(:user) { FactoryBot.create(:user) }
+    let(:user) { create(:user) }
 
     context "when user is admin of a non-JudgeTeam organization" do
-      before { OrganizationsUser.make_user_admin(user, FactoryBot.create(:organization)) }
+      before { OrganizationsUser.make_user_admin(user, create(:organization)) }
 
       it "should return nil" do
         expect(JudgeTeam.for_judge(user)).to eq(nil)
@@ -67,10 +67,10 @@ describe JudgeTeam, :postgres do
   end
 
   context "a judge team with attorneys on it" do
-    let(:user) { FactoryBot.create(:user) }
+    let(:user) { create(:user) }
     let(:judge) { Judge.new(user) }
     let!(:judge_team) { JudgeTeam.create_for_judge(judge.user) }
-    let(:attorneys) { FactoryBot.create_list(:user, 5) }
+    let(:attorneys) { create_list(:user, 5) }
 
     before do
       attorneys.each do |u|

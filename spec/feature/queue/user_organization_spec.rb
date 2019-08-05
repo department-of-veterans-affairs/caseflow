@@ -68,7 +68,7 @@ RSpec.feature "User organization", :postgres do
     end
 
     context "when there are many users in the organization" do
-      let(:other_org_user) { FactoryBot.create(:user) }
+      let(:other_org_user) { create(:user) }
       before do
         OrganizationsUser.add_user_to_organization(other_org_user, organization)
       end
@@ -92,7 +92,7 @@ RSpec.feature "User organization", :postgres do
     end
 
     context "the user is in a judge team" do
-      let!(:judge) { FactoryBot.create(:user) }
+      let!(:judge) { create(:user) }
       let!(:judgeteam) { JudgeTeam.create_for_judge(judge) }
 
       before do

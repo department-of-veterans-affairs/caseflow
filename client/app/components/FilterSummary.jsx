@@ -11,7 +11,9 @@ const ALTERNATE_COLUMN_NAMES = {
   readableRequestType: 'Hearing Type',
   regionalOffice: 'Regional Office',
   vlj: 'VLJ',
-  label: 'Task(s)'
+  label: 'Task(s)',
+  suggestedLocation: 'Suggested Location',
+  hearingLocation: 'Hearing Location'
 };
 
 const FilterSummary = ({ filteredByList, clearFilteredByList }) => {

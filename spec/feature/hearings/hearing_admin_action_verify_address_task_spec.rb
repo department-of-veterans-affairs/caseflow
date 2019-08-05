@@ -5,8 +5,7 @@ require "rails_helper"
 
 RSpec.shared_examples "Address Verify Task Frontend Workflow" do
   let!(:user) { create(:hearings_coordinator) }
-  let(:root_task) { create(:root_task, appeal: appeal) }
-  let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
+  let(:distribution_task) { create(:distribution_task, appeal: appeal) }
   let(:parent_hearing_task) { create(:hearing_task, parent: distribution_task, appeal: appeal) }
   let!(:schedule_hearing_task) { create(:schedule_hearing_task, :completed, appeal: appeal) }
   let!(:verify_address_task) do
