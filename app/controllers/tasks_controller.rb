@@ -24,6 +24,7 @@ class TasksController < ApplicationController
     MailTask: MailTask,
     InformalHearingPresentationTask: InformalHearingPresentationTask,
     PrivacyActTask: PrivacyActTask,
+    FoiaTask: FoiaTask,
     PulacCerulloTask: PulacCerulloTask,
     SpecialCaseMovementTask: SpecialCaseMovementTask
   }.freeze

@@ -9,6 +9,11 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     User.authenticate!(roles: ["System Admin"])
   end
 
+  let!(:vlj_support_staff) do
+    OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
+    Colocated.singleton.users.first
+  end
+
   describe "GET tasks/xxx" do
     let(:user) { create(:default_user) }
     before do
@@ -19,20 +24,17 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     context "when user is an attorney" do
       let(:role) { :attorney_role }
 
-      let!(:vlj_support_staff) do
-        OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
-        Colocated.singleton.users.first
-      end
-
       let!(:task1) { create(:colocated_task, assigned_by: user, assigned_to: Colocated.singleton) }
       let!(:task2) { create(:colocated_task, assigned_by: user, assigned_to: Colocated.singleton) }
-      let!(:task3) { create(:colocated_task, :completed, assigned_by: user) }
+      let!(:task3) { create(:colocated_task, assigned_by: user, assigned_to: Colocated.singleton) }
 
       let!(:task11) { create(:ama_attorney_task, assigned_to: user) }
       let!(:task12) { create(:ama_attorney_task, :in_progress, assigned_to: user) }
       let!(:task13) { create(:ama_attorney_task, :completed, assigned_to: user) }
       let!(:task16) { create(:ama_attorney_task, :completed_in_the_past, assigned_to: user) }
       let!(:task14) { create(:ama_attorney_task, :on_hold, assigned_to: user) }
+
+      before { task3.update!(status: Constants.TASK_STATUSES.completed) }
 
       it "should process the request successfully" do
         get :index, params: { user_id: user.id, role: "attorney" }
@@ -241,7 +243,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
               action["label"] == Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]
             end
 
-            expect(assign_to_organization_action["data"]["options"].length).to eq(org_count)
+            expect(assign_to_organization_action["data"]["options"].length).to eq(org_count + 1)
           end
         end
       end
@@ -682,7 +684,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
         assert_response :success
         response_body = JSON.parse(response.body)
-        expect(response_body["tasks"].length).to eq 3
+        expect(response_body["tasks"].length).to eq 4
         task = response_body["tasks"][0]
         expect(task["id"]).to eq(legacy_appeal.vacols_id)
         expect(task["attributes"]["type"]).to eq("JudgeLegacyTask")
@@ -724,7 +726,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
         assert_response :success
         response_body = JSON.parse(response.body)
-        expect(response_body["tasks"].length).to eq 3
+        expect(response_body["tasks"].length).to eq 4
         task = response_body["tasks"][0]
         expect(task["id"]).to eq(legacy_appeal.vacols_id)
         expect(task["attributes"]["type"]).to eq("AttorneyLegacyTask")
@@ -745,7 +747,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
           assert_response :success
           response_body = JSON.parse(response.body)
-          expect(response_body["tasks"].length).to eq 3
+          expect(response_body["tasks"].length).to eq 4
           task = response_body["tasks"][0]
           expect(task["id"]).to eq(legacy_appeal.vacols_id)
           expect(task["attributes"]["type"]).to eq("AttorneyLegacyTask")
