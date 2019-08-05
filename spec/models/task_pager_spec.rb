@@ -205,7 +205,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by days on hold" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN }
 
       before do
         created_tasks.each do |task|
