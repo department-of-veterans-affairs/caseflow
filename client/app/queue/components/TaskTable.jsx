@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 /**
  * Base class for all task tables in Caseflow. Used primarily throughout Queue but also used
  * in a few other places. Task tables can:
