@@ -92,6 +92,28 @@ feature "End Product Correction (EP 930)", :postgres do
         end
       end
 
+      context "when request issue is decided" do
+        let!(:request_issue_to_correct) do
+          create(
+            :request_issue,
+            decision_review: claim_review,
+            contested_rating_issue_reference_id: "def456",
+            decision_date: promulgation_date,
+            contested_rating_issue_profile_date: profile_date,
+            contested_issue_description: "Back pain",
+            end_product_establishment: cleared_end_product_establishment,
+            closed_status: "decided",
+            closed_at: Time.zone.now
+          )
+        end
+
+        fit "creates a correction issue and EP, and closes the existing issue with no decision " do
+          visit edit_path
+          binding.pry
+          correct_existing_request_issue(request_issue_to_correct)
+        end
+      end
+
       context "when a user adds a nonrating issue" do
         let(:ep_code) { "030HLRNR" }
 

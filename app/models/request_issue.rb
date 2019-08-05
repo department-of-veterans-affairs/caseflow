@@ -234,6 +234,10 @@ class RequestIssue < ApplicationRecord
       active_or_ineligible.or(withdrawn)
     end
 
+    def active_or_ineligible_or_withdrawn_or_decided
+      active_or_ineligible_or_withdrawn.or(decided)
+    end
+
     def active_or_decided_or_withdrawn
       active.or(decided).or(withdrawn).order(id: :asc)
     end
@@ -394,7 +398,8 @@ class RequestIssue < ApplicationRecord
       withdrawal_date: withdrawal_date,
       contested_issue_description: contested_issue_description,
       end_product_cleared: end_product_establishment&.status_cleared?,
-      end_product_code: end_product_code
+      end_product_code: end_product_code,
+      closed_status: closed_status
     }
   end
 

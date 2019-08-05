@@ -176,7 +176,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       vacolsIssue: issue.vacols_issue,
       endProductCleared: issue.end_product_cleared,
       endProductCode: issue.end_product_code,
-      withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
+      withdrawalDate: formatDateStrUtc(issue.withdrawal_date),
+      closedStatus: issue.closed_status
     };
   });
 };
