@@ -26,6 +26,7 @@ class TaskPager
     sorted_tasks(filtered_tasks).page(page).per(TASKS_PER_PAGE)
   end
 
+  # rubocop:disable Metrics/AbcSize
   def sorted_tasks(tasks)
     case sort_by
     when Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN, Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN
@@ -37,8 +38,8 @@ class TaskPager
     when Constants.QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN
       tasks.order(placed_on_hold_at: sort_order)
     when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
-      tasks.order("cached_appeal_attributes.docket_type #{sort_order}",
-                  "cached_appeal_attributes.docket_number #{sort_order}")
+      tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.docket_type #{sort_order}, "\
+                                                       "cached_appeal_attributes.docket_number #{sort_order}")
 
     # Columns not yet supported:
     #
@@ -56,6 +57,13 @@ class TaskPager
       tasks.order(created_at: sort_order)
     end
   end
+  # rubocop:enable Metrics/AbcSize
+
+  def cached_attributes_join_clause
+    "left join cached_appeal_attributes "\
+    "on cached_appeal_attributes.appeal_id = tasks.appeal_id "\
+    "and cached_appeal_attributes.appeal_type = tasks.appeal_type"
+  end
 
   def task_page_count
     @task_page_count ||= paged_tasks.total_pages
@@ -67,15 +75,7 @@ class TaskPager
 
   def filtered_tasks
     where_clause = QueueWhereClauseArgumentsFactory.new(filter_params: filters).arguments
-    where_clause.empty? ? tasks_with_cached_fields : tasks_with_cached_fields.where(*where_clause)
-  end
-
-  def tasks_with_cached_fields
-    sql = "left join cached_appeal_attributes "\
-          "on cached_appeal_attributes.appeal_id = tasks.appeal_id "\
-          "and cached_appeal_attributes.appeal_type = tasks.appeal_type"
-
-    tasks_for_tab.joins(sql)
+    where_clause.empty? ? tasks_for_tab : tasks_for_tab.joins(cached_attributes_join_clause).where(*where_clause)
   end
 
   def tasks_for_tab
