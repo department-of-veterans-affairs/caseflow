@@ -1,14 +1,17 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe JudgeDispatchReturnTask do
-  let(:judge) { FactoryBot.create(:user) }
-  let(:dispatch_user) { FactoryBot.create(:user) }
+describe JudgeDispatchReturnTask, :postgres do
+  let(:judge) { create(:user) }
+  let(:dispatch_user) { create(:user) }
   let(:dispatch_task) do
     create(:bva_dispatch_task, assigned_to: dispatch_user, parent: create(:root_task))
   end
-  let(:params) { { assigned_to: judge, appeal: dispatch_task.appeal, parent_id: dispatch_task.id } }
+  let(:params) do
+    { assigned_to_id: judge.id, assigned_to_type: User.name, appeal: dispatch_task.appeal, parent_id: dispatch_task.id }
+  end
   let(:judge_dispatch_task) { JudgeDispatchReturnTask.create_from_params(params, dispatch_user) }
 
   describe ".available_actions" do

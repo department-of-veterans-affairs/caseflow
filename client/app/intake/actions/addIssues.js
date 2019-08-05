@@ -3,6 +3,11 @@ import { issueByIndex } from '../util/issues';
 
 const analytics = true;
 
+export const toggleAddingIssue = () => ({
+  type: ACTIONS.TOGGLE_ADDING_ISSUE,
+  meta: { analytics }
+});
+
 export const toggleAddIssuesModal = () => ({
   type: ACTIONS.TOGGLE_ADD_ISSUES_MODAL,
   meta: { analytics }
@@ -22,8 +27,15 @@ export const toggleUntimelyExemptionModal = (currentIssueAndNotes = {}) => ({
   payload: { currentIssueAndNotes }
 });
 
-export const toggleIssueRemoveModal = () => ({
-  type: ACTIONS.TOGGLE_ISSUE_REMOVE_MODAL
+export const toggleIssueRemoveModal = (index) => ({
+  type: ACTIONS.TOGGLE_ISSUE_REMOVE_MODAL,
+  payload: { index }
+});
+
+export const toggleCorrectionTypeModal = ({ index, isNewIssue } = {}) => ({
+  type: ACTIONS.TOGGLE_CORRECTION_TYPE_MODAL,
+  payload: { index,
+    isNewIssue }
 });
 
 export const toggleLegacyOptInModal = (currentIssueAndNotes = {}) => ({
@@ -46,9 +58,10 @@ export const setIssueWithdrawalDate = (withdrawalDate) => ({
   payload: { withdrawalDate }
 });
 
-export const correctIssue = (index) => ({
+export const correctIssue = ({ index, correctionType }) => ({
   type: ACTIONS.CORRECT_ISSUE,
-  payload: { index }
+  payload: { index,
+    correctionType }
 });
 
 export const undoCorrection = (index) => ({
@@ -64,6 +77,15 @@ export const setEditContentionText = (issueIdx, editedDescription) => ({
   }
 });
 
+export const addIssue = (currentIssue) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.ADD_ISSUE,
+    payload: {
+      ...currentIssue
+    }
+  });
+};
+
 export const addUnidentifiedIssue = (description, notes, correctionType) => (dispatch) => {
   dispatch({
     type: ACTIONS.ADD_ISSUE,
@@ -77,7 +99,7 @@ export const addUnidentifiedIssue = (description, notes, correctionType) => (dis
 };
 
 export const addContestableIssue = (args) => (dispatch) => {
-  const currentIssue = issueByIndex(args.contestableIssues, args.contestableIssueIndex);
+  const currentIssue = args.currentIssue || issueByIndex(args.contestableIssues, args.contestableIssueIndex);
 
   dispatch({
     type: ACTIONS.ADD_ISSUE,

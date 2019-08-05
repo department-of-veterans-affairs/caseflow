@@ -6,6 +6,12 @@ export const commonReducers = (state, action) => {
   let actionsMap = {};
   let listOfIssues = state.addedIssues ? state.addedIssues : [];
 
+  actionsMap[ACTIONS.TOGGLE_ADDING_ISSUE] = () => {
+    return update(state, {
+      $toggle: ['addingIssue']
+    });
+  };
+
   actionsMap[ACTIONS.TOGGLE_ADD_ISSUES_MODAL] = () => {
     return update(state, {
       $toggle: ['addIssuesModalVisible']
@@ -39,6 +45,18 @@ export const commonReducers = (state, action) => {
   actionsMap[ACTIONS.TOGGLE_ISSUE_REMOVE_MODAL] = () => {
     return update(state, {
       $toggle: ['removeIssueModalVisible']
+    });
+  };
+
+  actionsMap[ACTIONS.TOGGLE_CORRECTION_TYPE_MODAL] = () => {
+    return update(state, {
+      $toggle: ['correctIssueModalVisible'],
+      activeIssue: {
+        $set: action.payload.index
+      },
+      isNewIssue: {
+        $set: action.payload.isNewIssue
+      }
     });
   };
 
@@ -106,7 +124,9 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.CORRECT_ISSUE] = () => {
-    listOfIssues[action.payload.index].correctionType = 'control';
+    const { index, correctionType } = action.payload;
+
+    listOfIssues[index].correctionType = correctionType;
 
     return {
       ...state,

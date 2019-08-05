@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-feature "Asyncable Jobs index" do
+feature "Asyncable Jobs index", :postgres do
   before do
     Timecop.freeze(Time.zone.now)
   end

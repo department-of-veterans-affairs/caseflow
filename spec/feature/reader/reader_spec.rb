@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
 def scroll_position(id: nil, class_name: nil)
@@ -25,10 +26,6 @@ def scrolled_amount(child_class_name)
       return 0;
     }();
   EOS
-end
-
-def scroll_element_to_view(element)
-  page.execute_script("document.getElementById('#{element}').scrollIntoView()")
 end
 
 def scroll_to_bottom(id: nil, class_name: nil)
@@ -81,7 +78,7 @@ def add_comment(text)
   click_on "Save"
 end
 
-RSpec.feature "Reader" do
+RSpec.feature "Reader", :all_dbs do
   before do
     Fakes::Initializer.load!
 

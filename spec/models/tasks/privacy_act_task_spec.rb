@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe GenericTask do
+describe GenericTask, :postgres do
   describe ".available_actions" do
     let(:task) { nil }
     let(:user) { nil }
     subject { task.available_actions(user) }
 
     context "when task is assigned to user" do
-      let(:task) { PrivacyActTask.find(FactoryBot.create(:privacy_act_task).id) }
+      let(:task) { PrivacyActTask.find(create(:privacy_act_task).id) }
       let(:user) { task.assigned_to }
       let(:expected_actions) do
         [

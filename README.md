@@ -221,9 +221,6 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 
 You probably have to create an Oracle account to download these.
 
-Add this to your env to squash oracle errors on startup:
-`export NLS_LANG=AMERICAN_AMERICA.US7ASCII`
-
 (May need to have your user own the oracle /opt directory?)
 
 **Windows**
@@ -334,7 +331,7 @@ Add these to your `.bash_profile`:
 export POSTGRES_HOST=localhost
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
-export NLS_LANG=AMERICAN_AMERICA.US7ASCII
+export NLS_LANG=AMERICAN_AMERICA.UTF8
 ```
 
 The last env var silences one of the Oracle warnings on startup.

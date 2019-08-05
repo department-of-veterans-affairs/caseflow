@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.describe BeaamAppealsController, type: :controller do
+RSpec.describe BeaamAppealsController, :postgres, type: :controller do
   before do
     User.authenticate!(roles: ["System Admin"])
     FeatureToggle.enable!(:queue_beaam_appeals)
@@ -24,8 +25,8 @@ RSpec.describe BeaamAppealsController, type: :controller do
     end
     let!(:appeals) do
       [
-        FactoryBot.create(:appeal, veteran: FactoryBot.create(:veteran, bgs_veteran_record: bgs_veteran_record)),
-        FactoryBot.create(:appeal, veteran: FactoryBot.create(:veteran))
+        create(:appeal, veteran: create(:veteran, bgs_veteran_record: bgs_veteran_record)),
+        create(:appeal, veteran: create(:veteran))
       ]
     end
 

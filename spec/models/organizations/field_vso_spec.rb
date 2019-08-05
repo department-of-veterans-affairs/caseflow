@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-describe FieldVso do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe FieldVso, :postgres do
   let(:vso) { FieldVso.create!(name: "VSO name here", url: "vso-name-here") }
 
   describe ".create!" do

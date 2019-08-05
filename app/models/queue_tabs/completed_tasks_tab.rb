@@ -22,7 +22,7 @@ class CompletedTasksTab < QueueTab
       Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
       Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN,
       Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
-      Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
+      Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN
     ].compact
   end
 end

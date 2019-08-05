@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Case details" do
+RSpec.feature "Case details", :all_dbs do
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
   end
@@ -10,10 +11,10 @@ RSpec.feature "Case details" do
   let(:attorney_first_name) { "Chanel" }
   let(:attorney_last_name) { "Afshari" }
   let!(:attorney_user) do
-    FactoryBot.create(:user, full_name: "#{attorney_first_name} #{attorney_last_name}")
+    create(:user, full_name: "#{attorney_first_name} #{attorney_last_name}")
   end
   let!(:vacols_atty) do
-    FactoryBot.create(
+    create(
       :staff,
       :attorney_role,
       sdomainid: attorney_user.css_id,
@@ -24,9 +25,9 @@ RSpec.feature "Case details" do
 
   let(:judge_first_name) { "Eeva" }
   let(:judge_last_name) { "Jovich" }
-  let!(:judge_user) { FactoryBot.create(:user, full_name: "#{judge_first_name} #{judge_last_name}") }
+  let!(:judge_user) { create(:user, full_name: "#{judge_first_name} #{judge_last_name}") }
   let!(:vacols_judge) do
-    FactoryBot.create(
+    create(
       :staff,
       :judge_role,
       sdomainid: judge_user.css_id,
@@ -35,8 +36,8 @@ RSpec.feature "Case details" do
     )
   end
 
-  let(:colocated_user) { FactoryBot.create(:user) }
-  let!(:vacols_colocated) { FactoryBot.create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
+  let(:colocated_user) { create(:user) }
+  let!(:vacols_colocated) { create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
 
   before do
     User.authenticate!(user: attorney_user)
@@ -46,7 +47,7 @@ RSpec.feature "Case details" do
     let(:veteran_first_name) { "Linda" }
     let(:veteran_last_name) { "Verne" }
     let!(:veteran) do
-      FactoryBot.create(
+      create(
         :veteran,
         first_name: veteran_first_name,
         last_name: veteran_last_name,
@@ -54,9 +55,9 @@ RSpec.feature "Case details" do
       )
     end
     let!(:post_remanded_appeal) do
-      FactoryBot.create(
+      create(
         :legacy_appeal,
-        vacols_case: FactoryBot.create(
+        vacols_case: create(
           :case,
           :assigned,
           :type_post_remand,
@@ -66,9 +67,9 @@ RSpec.feature "Case details" do
       )
     end
     let!(:appeal) do
-      FactoryBot.create(
+      create(
         :legacy_appeal,
-        vacols_case: FactoryBot.create(
+        vacols_case: create(
           :case,
           :assigned,
           user: attorney_user,
@@ -81,7 +82,7 @@ RSpec.feature "Case details" do
     let(:hearing) { appeal.hearings.first }
 
     context "when appeal has a single hearing that has already been held" do
-      let!(:case_hearings) { [FactoryBot.build(:case_hearing, :disposition_held, user: judge_user)] }
+      let!(:case_hearings) { [build(:case_hearing, :disposition_held, user: judge_user)] }
 
       scenario "Entire set of attributes for hearing are displayed" do
         visit "/queue"
@@ -108,7 +109,7 @@ RSpec.feature "Case details" do
     end
 
     context "when appeal has a single hearing that was cancelled" do
-      let!(:case_hearings) { [FactoryBot.build(:case_hearing, :disposition_cancelled, user: judge_user)] }
+      let!(:case_hearings) { [build(:case_hearing, :disposition_cancelled, user: judge_user)] }
 
       scenario "Fewer attributes of hearing are displayed" do
         visit "/queue"
@@ -127,7 +128,7 @@ RSpec.feature "Case details" do
     end
 
     context "when appeal has a single hearing with a HearingView" do
-      let!(:case_hearings) { [FactoryBot.build(:case_hearing, :disposition_held, user: judge_user)] }
+      let!(:case_hearings) { [build(:case_hearing, :disposition_held, user: judge_user)] }
       before { HearingView.create(hearing: hearing, user_id: attorney_user.id).touch }
 
       scenario "Fewer attributes of hearing are displayed" do
@@ -147,9 +148,9 @@ RSpec.feature "Case details" do
       end
 
       context "the user has a VSO role", skip: "re-enable when pagination is fixed" do
-        let!(:vso) { FactoryBot.create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: "8054") }
-        let!(:vso_user) { FactoryBot.create(:user, :vso_role) }
-        let!(:vso_task) { FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: appeal) }
+        let!(:vso) { create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: "8054") }
+        let!(:vso_user) { create(:user, :vso_role) }
+        let!(:vso_task) { create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: appeal) }
 
         before do
           OrganizationsUser.add_user_to_organization(vso_user, vso)
@@ -187,14 +188,14 @@ RSpec.feature "Case details" do
   context "attorney case details view" do
     context "when Veteran is the appellant" do
       let!(:appeal) do
-        FactoryBot.create(
+        create(
           :legacy_appeal,
           :with_veteran,
-          vacols_case: FactoryBot.create(
+          vacols_case: create(
             :case,
             :assigned,
             user: attorney_user,
-            correspondent: FactoryBot.create(:correspondent, sgender: "F", sdob: "1966-05-23")
+            correspondent: create(:correspondent, sgender: "F", sdob: "1966-05-23")
           )
         )
       end
@@ -219,14 +220,14 @@ RSpec.feature "Case details" do
 
     context "when veteran is not in BGS" do
       let!(:appeal) do
-        FactoryBot.create(
+        create(
           :legacy_appeal,
           :with_veteran,
-          vacols_case: FactoryBot.create(
+          vacols_case: create(
             :case,
             :assigned,
             user: attorney_user,
-            correspondent: FactoryBot.create(:correspondent, sgender: "F")
+            correspondent: create(:correspondent, sgender: "F")
           )
         )
       end
@@ -248,7 +249,7 @@ RSpec.feature "Case details" do
     end
     context "when veteran is in BGS" do
       let!(:appeal) do
-        FactoryBot.create(
+        create(
           :appeal
         )
       end
@@ -262,14 +263,14 @@ RSpec.feature "Case details" do
 
     context "when Veteran is not the appellant" do
       let!(:appeal) do
-        FactoryBot.create(
+        create(
           :legacy_appeal,
           :with_veteran,
-          vacols_case: FactoryBot.create(
+          vacols_case: create(
             :case,
             :assigned,
             user: attorney_user,
-            correspondent: FactoryBot.create(
+            correspondent: create(
               :correspondent,
               appellant_first_name: "Not",
               appellant_middle_initial: "D",
@@ -296,9 +297,9 @@ RSpec.feature "Case details" do
 
     context "when attorney has a case assigned in VACOLS without a DECASS record" do
       let!(:appeal) do
-        FactoryBot.create(
+        create(
           :legacy_appeal,
-          vacols_case: FactoryBot.create(
+          vacols_case: create(
             :case,
             :assigned,
             decass_count: 0,
@@ -318,14 +319,14 @@ RSpec.feature "Case details" do
 
     context "veteran records have been merged and Veteran has multiple active phone numbers in SHARE" do
       let!(:appeal) do
-        FactoryBot.create(
+        create(
           :legacy_appeal,
           :with_veteran,
-          vacols_case: FactoryBot.create(
+          vacols_case: create(
             :case,
             :assigned,
             user: attorney_user,
-            correspondent: FactoryBot.create(:correspondent, sgender: "F")
+            correspondent: create(:correspondent, sgender: "F")
           )
         )
       end
@@ -379,14 +380,14 @@ RSpec.feature "Case details" do
 
   context "when an appeal has an issue with an allowed disposition" do
     let!(:appeal) do
-      FactoryBot.create(
+      create(
         :legacy_appeal,
         :with_veteran,
-        vacols_case: FactoryBot.create(
+        vacols_case: create(
           :case,
           :assigned,
           user: attorney_user,
-          case_issues: [FactoryBot.create(:case_issue, :disposition_allowed)]
+          case_issues: [create(:case_issue, :disposition_allowed)]
         )
       )
     end
@@ -416,7 +417,7 @@ RSpec.feature "Case details" do
         )
       ].flatten
     end
-    let!(:appeal) { FactoryBot.create(:appeal, request_issues: issues) }
+    let!(:appeal) { create(:appeal, request_issues: issues) }
 
     scenario "only eligible issues should appear in case details page" do
       visit "/queue/appeals/#{appeal.uuid}"
@@ -443,7 +444,7 @@ RSpec.feature "Case details" do
         )
       ].flatten
     end
-    let!(:appeal) { FactoryBot.create(:appeal, request_issues: issues) }
+    let!(:appeal) { create(:appeal, request_issues: issues) }
 
     scenario "decided issues should appear in case details page" do
       visit "/queue/appeals/#{appeal.uuid}"
@@ -455,12 +456,12 @@ RSpec.feature "Case details" do
 
   context "loads judge task detail views" do
     let!(:vacols_case) do
-      FactoryBot.create(
+      create(
         :case,
         :assigned,
         user: judge_user,
         assigner: attorney_user,
-        correspondent: FactoryBot.create(:correspondent, snamef: "Feffy", snamel: "Smeterino"),
+        correspondent: create(:correspondent, snamef: "Feffy", snamel: "Smeterino"),
         document_id: "1234567890"
       )
     end
@@ -490,7 +491,7 @@ RSpec.feature "Case details" do
   context "when events are present" do
     let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
     let!(:vacols_case) do
-      FactoryBot.create(
+      create(
         :case,
         bfdnod: 2.days.ago,
         bfd19: 1.day.ago
@@ -511,7 +512,7 @@ RSpec.feature "Case details" do
 
     context "when appeal is assigned to Pulac Cerullo" do
       let!(:appeal) do
-        FactoryBot.create(
+        create(
           :appeal,
           veteran_file_number: "500000102",
           receipt_date: 6.months.ago.to_date.mdY,
@@ -520,7 +521,7 @@ RSpec.feature "Case details" do
       end
 
       let!(:decision_document) do
-        FactoryBot.create(
+        create(
           :decision_document,
           appeal: appeal,
           decision_date: 5.months.ago.to_date
@@ -528,7 +529,7 @@ RSpec.feature "Case details" do
       end
 
       let!(:pulac_cerullo) do
-        FactoryBot.create(
+        create(
           :pulac_cerullo_task,
           :completed,
           instructions: ["completed"],
@@ -547,6 +548,40 @@ RSpec.feature "Case details" do
         expect(first_row_with_task).to have_content("PulacCerulloTask completed")
         expect(second_row_with_task).to have_content(COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA)
         expect(third_row_with_task).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
+      end
+    end
+
+    context "when the appeal has hidden colocated tasks" do
+      let(:appeal) { create(:appeal) }
+
+      let!(:transcript_task) do
+        create(:ama_colocated_task, :missing_hearing_transcripts, appeal: appeal).tap do |task|
+          task.children.first.update!(status: Constants.TASK_STATUSES.completed)
+        end
+      end
+
+      let!(:translation_task) do
+        create(:ama_colocated_task, :translation, appeal: appeal).tap do |task|
+          task.children.first.update!(status: Constants.TASK_STATUSES.completed)
+        end
+      end
+
+      let!(:foia_task) do
+        create(:ama_colocated_task, :foia, appeal: appeal).tap do |task|
+          task.children.first.update!(status: Constants.TASK_STATUSES.completed)
+        end
+      end
+
+      it "Does not display the intermediate colocated tasks" do
+        visit "/queue/appeals/#{appeal.external_id}"
+
+        case_timeline = page.find("table#case-timeline-table")
+        expect(case_timeline).not_to have_content(transcript_task.class.name)
+        expect(case_timeline).not_to have_content(translation_task.class.name)
+        expect(case_timeline).not_to have_content(foia_task.class.name)
+        expect(case_timeline).to have_content(transcript_task.children.first.class.name)
+        expect(case_timeline).to have_content(translation_task.children.first.class.name)
+        expect(case_timeline).to have_content(foia_task.children.first.class.name)
       end
     end
   end
@@ -575,14 +610,14 @@ RSpec.feature "Case details" do
 
   context "loads colocated task detail views" do
     let!(:appeal) do
-      FactoryBot.create(
+      create(
         :legacy_appeal,
         :with_veteran,
-        vacols_case: FactoryBot.create(
+        vacols_case: create(
           :case,
           :assigned,
           user: colocated_user,
-          case_issues: FactoryBot.create_list(:case_issue, 1)
+          case_issues: create_list(:case_issue, 1)
         )
       )
     end
@@ -593,7 +628,7 @@ RSpec.feature "Case details" do
 
     context "on hold task" do
       let!(:on_hold_task) do
-        FactoryBot.create(
+        create(
           :colocated_task,
           :on_hold,
           assigned_to: colocated_user,
@@ -621,7 +656,7 @@ RSpec.feature "Case details" do
 
     context "assigned task" do
       let!(:assigned_task) do
-        FactoryBot.create(
+        create(
           :colocated_task,
           assigned_to: colocated_user,
           assigned_by: attorney_user
@@ -644,9 +679,9 @@ RSpec.feature "Case details" do
   end
 
   context "edit aod link appears/disappears as expected" do
-    let(:appeal) { FactoryBot.create(:appeal) }
-    let(:user) { FactoryBot.create(:user) }
-    let(:user2) { FactoryBot.create(:user) }
+    let(:appeal) { create(:appeal) }
+    let(:user) { create(:user) }
+    let(:user2) { create(:user) }
 
     context "when the current user is a member of the AOD team" do
       before do
@@ -688,13 +723,13 @@ RSpec.feature "Case details" do
   describe "Marking organization task complete" do
     context "when there is no assigner" do
       let(:qr) { QualityReview.singleton }
-      let(:task) { FactoryBot.create(:qr_task) }
-      let(:user) { FactoryBot.create(:user) }
+      let(:task) { create(:qr_task) }
+      let(:user) { create(:user) }
 
       before do
         # Marking this task complete creates a BvaDispatchTask. Make sure there are members of that organization so
         # that the creation of that BvaDispatchTask succeeds.
-        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+        OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
         OrganizationsUser.add_user_to_organization(user, qr)
         User.authenticate!(user: user)
       end
@@ -713,20 +748,20 @@ RSpec.feature "Case details" do
 
     describe "Issue order by created_at in Case Details page" do
       context "when there are two issues" do
-        let!(:appeal) { FactoryBot.create(:appeal) }
+        let!(:appeal) { create(:appeal) }
         issue_description = "Head trauma 1"
         issue_description2 = "Head trauma 2"
         benefit_text = "Benefit type: Compensation"
         diagnostic_text = "Diagnostic code: 5008"
         let!(:request_issue) do
-          FactoryBot.create(
+          create(
             :request_issue,
             decision_review: appeal,
             contested_issue_description: issue_description
           )
         end
         let!(:request_issue2) do
-          FactoryBot.create(
+          create(
             :request_issue,
             decision_review: appeal,
             contested_issue_description: issue_description2
@@ -752,7 +787,7 @@ RSpec.feature "Case details" do
     end
 
     describe "Docket type badge shows up" do
-      let!(:appeal) { FactoryBot.create(:appeal, docket_type: "direct_review") }
+      let!(:appeal) { create(:appeal, docket_type: "direct_review") }
 
       it "should display docket type and number" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -761,9 +796,9 @@ RSpec.feature "Case details" do
     end
 
     describe "CaseTimeline shows judge & attorney tasks" do
-      let!(:user) { FactoryBot.create(:user) }
-      let!(:appeal) { FactoryBot.create(:appeal) }
-      let!(:appeal2) { FactoryBot.create(:appeal) }
+      let!(:user) { create(:user) }
+      let!(:appeal) { create(:appeal) }
+      let!(:appeal2) { create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
       let!(:assign_task) { create(:ama_judge_task, appeal: appeal, assigned_to: user, parent: root_task) }
       let!(:judge_task) do
@@ -932,13 +967,13 @@ RSpec.feature "Case details" do
   end
 
   describe "VLJ and Attorney working case in Universal Case Title" do
-    let(:attorney_user) { FactoryBot.create(:user) }
-    let(:judge_user) { FactoryBot.create(:user) }
-    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:attorney_user) { create(:user) }
+    let(:judge_user) { create(:user) }
+    let(:root_task) { create(:root_task) }
     let(:appeal) { root_task.appeal }
     let!(:request_issue) { create(:request_issue, decision_review: appeal) }
     let!(:judge_task) do
-      FactoryBot.create(
+      create(
         :ama_judge_decision_review_task,
         appeal: appeal,
         parent: root_task,
@@ -947,7 +982,7 @@ RSpec.feature "Case details" do
       )
     end
     let!(:atty_task) do
-      FactoryBot.create(
+      create(
         :ama_attorney_task,
         appeal: appeal,
         parent: judge_task,
@@ -978,10 +1013,10 @@ RSpec.feature "Case details" do
 
   describe "case timeline" do
     context "when the only completed task is a TrackVeteranTask" do
-      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:root_task) { create(:root_task) }
       let(:appeal) { root_task.appeal }
       let!(:tracking_task) do
-        FactoryBot.create(
+        create(
           :track_veteran_task,
           :completed,
           appeal: appeal,
@@ -1037,23 +1072,23 @@ RSpec.feature "Case details" do
     end
 
     context "when an AMA appeal has been dispatched from the Board" do
-      let(:appeal) { FactoryBot.create(:appeal) }
-      let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+      let(:appeal) { create(:appeal) }
+      let(:root_task) { create(:root_task, appeal: appeal) }
 
       before do
-        judge = FactoryBot.create(:user, station_id: 101)
-        FactoryBot.create(:staff, :judge_role, user: judge)
+        judge = create(:user, station_id: 101)
+        create(:staff, :judge_role, user: judge)
         judge_task = JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge)
 
-        atty = FactoryBot.create(:user, station_id: 101)
-        FactoryBot.create(:staff, :attorney_role, user: atty)
+        atty = create(:user, station_id: 101)
+        create(:staff, :attorney_role, user: atty)
         atty_task_params = [{ appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }]
         atty_task = AttorneyTask.create_many_from_params(atty_task_params, judge).first
 
         atty_task.update!(status: Constants.TASK_STATUSES.completed)
         judge_task.update!(status: Constants.TASK_STATUSES.completed)
 
-        bva_dispatcher = FactoryBot.create(:user)
+        bva_dispatcher = create(:user)
         OrganizationsUser.add_user_to_organization(bva_dispatcher, BvaDispatch.singleton)
         BvaDispatchTask.create_from_root_task(root_task)
 
@@ -1081,9 +1116,9 @@ RSpec.feature "Case details" do
 
   describe "task snapshot" do
     context "when the only task is a TrackVeteranTask" do
-      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:root_task) { create(:root_task) }
       let(:appeal) { root_task.appeal }
-      let(:tracking_task) { FactoryBot.create(:track_veteran_task, appeal: appeal, parent: root_task) }
+      let(:tracking_task) { create(:track_veteran_task, appeal: appeal, parent: root_task) }
 
       it "should not show the tracking task in task snapshot" do
         visit("/queue/appeals/#{tracking_task.appeal.uuid}")
@@ -1092,11 +1127,67 @@ RSpec.feature "Case details" do
     end
 
     context "when the only task is an IHP task" do
-      let(:ihp_task) { FactoryBot.create(:informal_hearing_presentation_task) }
+      let(:ihp_task) { create(:informal_hearing_presentation_task) }
 
       it "should show the label for the IHP task" do
         visit("/queue/appeals/#{ihp_task.appeal.uuid}")
         expect(page).to have_content(COPY::IHP_TASK_LABEL)
+      end
+    end
+  end
+
+  describe "AppealWithdrawalMailTask snapshot" do
+    context "when child AppealWithdrawalMailTask is cancelled " do
+      let!(:appeal) { create(:appeal) }
+      let(:root_task) { create(:root_task, appeal: appeal) }
+
+      let!(:appeal_withdrawal_mail_task) do
+        create(
+          :appeal_withdrawal_mail_task,
+          appeal: appeal,
+          instructions: ["cancelled"]
+        )
+      end
+
+      let!(:appeal_withdrawal_bva_task) do
+        create(
+          :appeal_withdrawal_bva_task,
+          appeal: appeal,
+          parent: appeal_withdrawal_mail_task,
+          instructions: ["cancelled"]
+        )
+      end
+
+      let(:user) { create(:user) }
+
+      before do
+        OrganizationsUser.add_user_to_organization(user, BvaIntake.singleton)
+        User.authenticate!(user: user)
+      end
+
+      it "displays AppealWithdrawalMailTask in case timeline" do
+        visit("/queue/appeals/#{appeal.uuid}")
+
+        prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
+        text = Constants.TASK_ACTIONS.CANCEL_TASK.label
+        click_dropdown(prompt: prompt, text: text)
+        click_button("Submit")
+
+        expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name))
+        expect(page.current_path).to eq("/queue")
+
+        click_on "Search"
+        fill_in "searchBarEmptyList", with: appeal.veteran_file_number
+        click_on "Search"
+        click_on appeal.docket_number
+
+        new_tasks = appeal_withdrawal_mail_task.children
+        expect(new_tasks.length).to eq(1)
+
+        new_task = new_tasks.first
+        expect(new_task.status).to eq Constants.TASK_STATUSES.cancelled
+        expect(appeal_withdrawal_bva_task.assigned_to).to eq(BvaIntake.singleton)
+        expect(appeal_withdrawal_bva_task.parent.assigned_to).to eq(MailTeam.singleton)
       end
     end
   end
@@ -1111,10 +1202,10 @@ RSpec.feature "Case details" do
       end
 
       context "when the appeal is a legacy appeal" do
-        let!(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+        let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 
         # Assign a task to the current user so that a row appears on the queue page.
-        let!(:task) { FactoryBot.create(:ama_attorney_task, appeal: appeal, assigned_to: attorney_user) }
+        let!(:task) { create(:ama_attorney_task, appeal: appeal, assigned_to: attorney_user) }
 
         context "when we navigate directly to the case details page" do
           it "displays a loading failed message on the case details page" do
@@ -1141,10 +1232,10 @@ RSpec.feature "Case details" do
       end
 
       context "when the appeal is a legacy appeal" do
-        let!(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+        let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 
         # Assign a task to the current user so that a row appears on the queue page.
-        let!(:task) { FactoryBot.create(:ama_attorney_task, appeal: appeal, assigned_to: attorney_user) }
+        let!(:task) { create(:ama_attorney_task, appeal: appeal, assigned_to: attorney_user) }
 
         context "when we navigate directly to the case details page" do
           it "displays a loading failed message on the case details page" do

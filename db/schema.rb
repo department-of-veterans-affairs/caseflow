@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190724201133) do
+ActiveRecord::Schema.define(version: 20190730193421) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -497,7 +497,7 @@ ActiveRecord::Schema.define(version: 20190724201133) do
     t.text "notes"
     t.string "regional_office"
     t.string "request_type", null: false
-    t.string "room", null: false
+    t.string "room", comment: "The room at BVA where the hearing will take place"
     t.date "scheduled_for", null: false
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", null: false, comment: "The ID of the user who most recently updated the Hearing Day"

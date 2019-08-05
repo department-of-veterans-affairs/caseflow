@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 require "rake"
 
-describe "task rake tasks" do
+describe "task rake tasks", :postgres do
   before :all do
     Rake.application = Rake::Application.new
     Rake.application.rake_require "tasks/tasks"
@@ -24,7 +25,7 @@ describe "task rake tasks" do
     context "there are tasks to change" do
       let(:task_count) { 10 }
       let(:subset_count) { 6 }
-      let!(:hold_hearing_tasks) { FactoryBot.create_list(:schedule_hearing_task, task_count) }
+      let!(:hold_hearing_tasks) { create_list(:schedule_hearing_task, task_count) }
 
       context "no dry run variable is passed" do
         let(:args) { [from_task_name, to_task_name] }
@@ -93,7 +94,7 @@ describe "task rake tasks" do
           end
 
           context "some of the id numbers do not match existing tasks" do
-            let!(:other_task) { FactoryBot.create(:ama_judge_decision_review_task) }
+            let!(:other_task) { create(:ama_judge_decision_review_task) }
             let(:change_ids) { hold_hearing_tasks.pluck(:id)[0..subset_count - 1] + [other_task.id] }
 
             it "raises an error" do
@@ -164,7 +165,7 @@ describe "task rake tasks" do
 
     context "there are tasks to change" do
       let(:subset_count) { 6 }
-      let!(:target_tasks) { FactoryBot.create_list(target_task_factory, task_count, assigned_to: from_org) }
+      let!(:target_tasks) { create_list(target_task_factory, task_count, assigned_to: from_org) }
 
       context "no dry run variable is passed" do
         let(:args) { [target_task_name, from_org.id, to_org.id] }
@@ -236,7 +237,7 @@ describe "task rake tasks" do
           end
 
           context "some of the id numbers do not match existing tasks" do
-            let!(:other_task) { FactoryBot.create(:ama_judge_decision_review_task) }
+            let!(:other_task) { create(:ama_judge_decision_review_task) }
             let(:matching_ids) { target_tasks.pluck(:id)[0..subset_count - 1] }
             let(:change_ids) { matching_ids + [other_task.id] }
 
@@ -282,7 +283,7 @@ describe "task rake tasks" do
     end
 
     context "there are no tasks to change" do
-      let!(:target_tasks) { FactoryBot.create_list(target_task_factory, task_count, assigned_to: to_org) }
+      let!(:target_tasks) { create_list(target_task_factory, task_count, assigned_to: to_org) }
       let(:args) { [target_task_name, from_org.id, to_org.id, "false"] }
 
       it "tells the caller that there are no tasks to change" do

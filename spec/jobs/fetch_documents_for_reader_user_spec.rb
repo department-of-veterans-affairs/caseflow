@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 require "faker"
 
-describe FetchDocumentsForReaderUserJob do
+describe FetchDocumentsForReaderUserJob, :all_dbs do
   context ".perform" do
     let(:user) { create(:user) }
     let(:document) { create(:document) }
@@ -57,7 +58,7 @@ describe FetchDocumentsForReaderUserJob do
 
     context "when an attorney with a colocated task is provided" do
       let!(:vacols_atty) do
-        FactoryBot.create(
+        create(
           :staff,
           :attorney_role,
           sdomainid: user.css_id

@@ -52,10 +52,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   def outcode_params
-    keys = %w[citation_number decision_date redacted_document_location]
-    if feature_enabled?(:decision_document_upload)
-      keys << "file"
-    end
+    keys = %w[citation_number decision_date redacted_document_location file]
     params.require(keys)
 
     # Have to do this because params.require() returns an array of the parameter values.
