@@ -36,13 +36,15 @@ class TaskPager
       tasks.order(type: sort_order, action: sort_order, created_at: sort_order)
     when Constants.QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN
       tasks.order(placed_on_hold_at: sort_order)
+    when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
+      tasks_sorted_by_docket_number(tasks)
+
     # Columns not yet supported:
     #
     # APPEAL_TYPE_COLUMN
     # CASE_DETAILS_LINK_COLUMN
     # DAYS_ON_HOLD_COLUMN
     # DOCUMENT_COUNT_READER_LINK_COLUMN
-    # DOCKET_NUMBER_COLUMN
     # HEARING_BADGE_COLUMN
     # ISSUE_COUNT_COLUMN
     # REGIONAL_OFFICE_COLUMN
@@ -52,6 +54,23 @@ class TaskPager
     else
       tasks.order(created_at: sort_order)
     end
+  end
+
+  def tasks_sorted_by_docket_number(tasks)
+    # Additional guard against SQL Injection
+    verified_sort_order = sort_order.casecmp("DESC").zero? ? "DESC" : "ASC"
+    order_sql = "cached_appeal_attributes.docket_type #{verified_sort_order}, \
+                cached_appeal_attributes.docket_number #{verified_sort_order}"
+
+    tasks_with_cached_appeal_attributes(tasks).order(order_sql)
+  end
+
+  def tasks_with_cached_appeal_attributes(tasks)
+    sql = "left join cached_appeal_attributes \
+          on cached_appeal_attributes.appeal_id = tasks.appeal_id \
+          and cached_appeal_attributes.appeal_type = tasks.appeal_type"
+
+    tasks.joins(sql)
   end
 
   # # TODO: Some filters are on other tables that we will need to join to (appeal docket type)
