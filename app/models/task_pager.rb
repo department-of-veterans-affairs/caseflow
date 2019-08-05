@@ -23,10 +23,9 @@ class TaskPager
   end
 
   def paged_tasks
-    # TODO: Validate input.
-    # TODO: Ensure no filters works correctly.
-    where_clause = filter_params_to_where_clause(filters)
+    where_clause = WhereClauseArgumentsFactory.from_params(filters)
     filtered_tasks = tasks_for_tab.where(where_clause)
+
     sorted_tasks(filtered_tasks).page(page).per(TASKS_PER_PAGE)
   end
 
@@ -55,40 +54,6 @@ class TaskPager
     #
     else
       tasks.order(created_at: sort_order)
-    end
-  end
-
-  # Assuming columns filtered on multiple values are comma-separated.
-  # ["col=docketNumberColumn&val=legacy,evidence_submission", "col=taskColumn&val=translation"]
-  # ->
-  # "cached_appeals_attributes.docket_type IN ('legacy', 'evidence_submission') AND
-  #   cached_appeals_attributes.task_action IN ('translation')"
-  def self.filter_params_to_where_clause(filter_params)
-    filter_params.map do |filter_string|
-      # TODO: filter is a string. Let's make it a hash!
-      filter_hash = Rack::Utils.parse_query(filter_string)
-      values = filter_hash["val"].split(",")
-
-      "#{table_column_from_name(filter_hash['col'])} IN #{values}"
-    end.join(" AND ")
-  end
-
-  def self.table_column_from_name(column_name)
-    case column_name
-    # TODO: I think this constant may be incorrectly named.
-    when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
-      "cached_appeals_attributes.docket_type"
-    when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
-      "tasks.type"
-    # TODO: The following columns are not yet implemented.
-    # when Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN
-    #   "cached_appeals_attributes.appeal_type"
-    # when Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN
-    #   "cached_appeals_attributes.regional_office"
-    # when Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN
-    #   "???"
-    else
-      fail(Caseflow::Error::InvalidTaskTableColumnFilter, column: column_name)
     end
   end
 
