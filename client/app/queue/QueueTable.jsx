@@ -269,7 +269,7 @@ export default class QueueTable extends React.PureComponent {
             cellValue = columnConfig.filterValueTransform(cellValue);
           }
 
-          if (typeof cellValue === 'undefined' || cellValue === null) {
+          if (_.isNil(cellValue)) {
             return filteredByList[columnName].includes('null');
           }
 
