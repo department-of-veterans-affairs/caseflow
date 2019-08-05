@@ -105,7 +105,9 @@ export class EstablishClaimDecision extends React.Component {
           id="sr-download-link"
           href={`${pdfLink}&decision_number=${index}`}
           download
-          target="_blank">
+          target="_blank"
+          rel="noopener noreferrer"
+        >
            The PDF viewer in your browser may not be accessible. Click to download
            the Decision PDF so you can preview it in a reader with accessibility features
            such as Adobe Acrobat.
@@ -226,10 +228,12 @@ EstablishClaimDecision.propTypes = {
   decisionType: PropTypes.string.isRequired,
   handleToggleCancelTaskModal: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
+  handleSpecialIssueFieldChange: PropTypes.func,
   pdfLink: PropTypes.string.isRequired,
   pdfjsLink: PropTypes.string.isRequired,
   specialIssues: PropTypes.object.isRequired,
-  task: PropTypes.object.isRequired
+  task: PropTypes.object.isRequired,
+  loading: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
