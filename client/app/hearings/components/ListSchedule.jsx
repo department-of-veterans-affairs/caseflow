@@ -176,6 +176,7 @@ class ListSchedule extends React.Component {
         tableData: hearingScheduleRows,
         enableFilter: true,
         anyFiltersAreSet: true,
+        enableFilterTextTransform: false,
         label: 'Filter by RO',
         columnName: 'regionalOffice',
         valueName: 'regionalOffice'
