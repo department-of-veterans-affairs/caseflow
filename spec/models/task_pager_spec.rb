@@ -219,6 +219,21 @@ describe TaskPager, :all_dbs do
         expect(subject.map(&:id)).to eq(expected_order.map(&:id))
       end
     end
+
+    context "when sorting by docket number column" do
+      let(:sort_by) { Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN }
+
+      before do
+        created_tasks.each do |task|
+          create(:cached_appeal, appeal_id: task.appeal_id, appeal_type: task.appeal_type)
+        end
+      end
+
+      it "sorts using ascending order by default" do
+        expected_order = CachedAppeal.all.sort_by(&:docket_number)
+        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+      end
+    end
   end
 
   describe ".filtered_tasks", focus: true do
