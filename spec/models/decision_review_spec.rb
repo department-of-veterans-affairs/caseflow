@@ -209,19 +209,19 @@ describe DecisionReview, :postgres do
       end
     end
 
-    context "when a decision issue was voided" do
+    context "when a decision issue is voided" do
       let(:request_issue) { create(:request_issue, corrected_by_request_issue_id: create(:request_issue).id) }
       let!(:voided_decision_issue) do
         create(:decision_issue,
-             :rating,
-             request_issues: [request_issue],
-             participant_id: participant_id,
-             rating_issue_reference_id: "321",
-             decision_text: "voided decision issue 1",
-             benefit_type: higher_level_review.benefit_type,
-             rating_profile_date: profile_date,
-             rating_promulgation_date: promulgation_date,
-             decision_review: higher_level_review)
+               :rating,
+               request_issues: [request_issue],
+               participant_id: participant_id,
+               rating_issue_reference_id: "321",
+               decision_text: "voided decision issue 1",
+               benefit_type: higher_level_review.benefit_type,
+               rating_profile_date: profile_date,
+               rating_promulgation_date: promulgation_date,
+               decision_review: higher_level_review)
       end
 
       let!(:rating) do
@@ -245,7 +245,7 @@ describe DecisionReview, :postgres do
       end
     end
 
-    context "when the issue is from an Appeal that is not outcoded" do
+    context "when the issue is from an appeal that is not outcoded" do
       let(:outcoded_appeal) { create(:appeal, :outcoded, veteran: veteran, receipt_date: receipt_date) }
       let!(:outcoded_decision_doc) { create(:decision_document, decision_date: profile_date, appeal: outcoded_appeal) }
 
