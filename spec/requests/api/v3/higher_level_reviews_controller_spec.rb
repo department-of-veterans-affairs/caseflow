@@ -36,14 +36,30 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     it "should return the correct json" do
       expect(subject.call([error_a, error_b])).to eq(
         json: {
-          errors:
-            [
-              error_a,
-              error_b
-            ]
+          errors: [error_a, error_b]
         },
         status: 422
       )
+      expect(subject.call([error_b, error_a])).to eq(
+        json: {
+          errors: [error_b, error_a]
+        },
+        status: 422
+      )
+      expect(subject.call([error_a])).to eq(
+        json: {
+          errors: [error_a]
+        },
+        status: 404
+      )
+      expect(subject.call([error_b])).to eq(
+        json: {
+          errors: [error_b]
+        },
+        status: 422
+      )
+      expect { subject.call(nil) }.to raise_error(NoMethodError)
+      expect { subject.call("banana") }.to raise_error(NoMethodError)
     end
   end
 
@@ -62,6 +78,9 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     it "should return the correct error" do
       expect(subject.call(object_a, object_b)).to eq(error_from_error_code.call(code_a))
       expect(subject.call(object_b, object_a)).to eq(error_from_error_code.call(code_b))
+      expect(subject.call(object_a)).to eq(error_from_error_code.call(code_a))
+      expect(subject.call(object_b)).to eq(error_from_error_code.call(code_b))
+      expect(subject.call(nil)).to eq(error_from_error_code.call(nil))
     end
   end
 end
@@ -188,6 +207,11 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       post("/api/v3/decision_review/higher_level_reviews",
            params: params)
       expect(response).to have_http_status(202)
+    end
+    it "should return a 422 on failure" do
+      post("/api/v3/decision_review/higher_level_reviews",
+           params: {})
+      expect(response).to have_http_status(:error)
     end
   end
 end
