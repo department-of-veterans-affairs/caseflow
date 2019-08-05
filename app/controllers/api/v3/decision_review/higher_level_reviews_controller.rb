@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::Base
-  protect_from_forgery with: :null_session
-
+class Api::V3::DecisionReview::HigherLevelReviewsController < Api::ExternalProxyController
   def create
     mock_hlr = HigherLevelReview.new(
       uuid: "FAKEuuid-mock-test-fake-mocktestdata",
