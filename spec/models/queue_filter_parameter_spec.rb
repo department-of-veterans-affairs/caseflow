@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
-describe QueueFilterParameter, :postgres do
+describe QueueFilterParameter do
   describe ".from_string" do
     let(:filter_string) { nil }
 
@@ -11,16 +9,16 @@ describe QueueFilterParameter, :postgres do
     context "when input argument is nil" do
       let(:filter_string) { nil }
 
-      it "raises an InvalidTaskTableColumnFilter error" do
-        expect { subject }.to raise_error(Caseflow::Error::InvalidTaskTableColumnFilter)
+      it "raises an MissingRequiredProperty error" do
+        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
       end
     end
 
     context "when input string is not formed how we expect" do
       let(:filter_string) { "string is poorly formed" }
 
-      it "raises an InvalidTaskTableColumnFilter error" do
-        expect { subject }.to raise_error(Caseflow::Error::InvalidTaskTableColumnFilter)
+      it "raises an MissingRequiredProperty error" do
+        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
       end
     end
 
@@ -29,14 +27,6 @@ describe QueueFilterParameter, :postgres do
 
       it "raises an MissingRequiredProperty error" do
         expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
-      end
-    end
-
-    context "when input string contains an unsortable value in the column field" do
-      let(:filter_string) { "col=someUnsortableColumn" }
-
-      it "raises an InvalidTaskTableColumnFilter error" do
-        expect { subject }.to raise_error(Caseflow::Error::InvalidTaskTableColumnFilter)
       end
     end
 
