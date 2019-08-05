@@ -226,8 +226,8 @@ export const saveIssue = (issue) => (dispatch) => {
   let data = { appeal: { worksheet_issues_attributes: [issue] } };
 
   if (issue.docket_name === 'hearing') {
-    url = `/hearings/worksheets/${issue.hearing.external_id}`;
-    data = { worksheet: { hearing_issue_notes_attributes: [issue] } };
+    url = `/hearings/${issue.hearing.external_id}`;
+    data = { hearing: { hearing_issue_notes_attributes: [issue] } };
   }
 
   ApiUtil.patch(url, { data }).

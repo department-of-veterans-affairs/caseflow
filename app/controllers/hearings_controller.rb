@@ -6,14 +6,14 @@ class HearingsController < HearingsApplicationController
   before_action :verify_access_to_hearings, except: [:show]
   before_action :verify_access_to_reader_or_hearings, only: [:show]
 
-  rescue_from ActiveRecord::RecordNotFound do |e|
-    Rails.logger.debug "Unable to find hearing in Caseflow: #{e.message}"
-    render json: { "errors": ["message": e.message, code: 1000] }, status: :not_found
+  rescue_from ActiveRecord::RecordNotFound do |error|
+    Rails.logger.debug "Unable to find hearing in Caseflow: #{error.message}"
+    render json: { "errors": ["message": error.message, code: 1000] }, status: :not_found
   end
 
-  rescue_from ActiveRecord::RecordInvalid, Caseflow::Error::VacolsRepositoryError do |e|
-    Rails.logger.debug "Unable to find hearing in VACOLS: #{e.message}"
-    render json: { "errors": ["message": e.message, code: 1001] }, status: :not_found
+  rescue_from ActiveRecord::RecordInvalid, Caseflow::Error::VacolsRepositoryError do |error|
+    Rails.logger.debug "Unable to find hearing in VACOLS: #{error.message}"
+    render json: { "errors": ["message": error.message, code: 1001] }, status: :not_found
   end
 
   def show
@@ -84,6 +84,7 @@ class HearingsController < HearingsApplicationController
     params[:id]
   end
 
+  # rubocop:disable Metrics/MethodLength
   def update_params_legacy
     params.require("hearing").permit(:representative_name,
                                      :witness,
@@ -108,7 +109,6 @@ class HearingsController < HearingsApplicationController
                                      ])
   end
 
-  # rubocop:disable Metrics/MethodLength
   def update_params
     params.require("hearing").permit(:representative_name,
                                      :witness,
