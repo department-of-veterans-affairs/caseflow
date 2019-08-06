@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.fdescribe Api::ExternalProxyController, type: :controller do
-  describe "FeatureToggle for :external_api_released" do
+RSpec.describe Api::ExternalProxyController, type: :controller do
+  fdescribe "FeatureToggle for :external_api_released" do
     controller do
       before_action :is_api_released?
 
@@ -11,8 +11,15 @@ RSpec.fdescribe Api::ExternalProxyController, type: :controller do
     end
 
     describe "when not enabled" do
-      it "should return a 501 response"
-      it "should have a jsonapi error response"
+      it "should return a 501 response" do
+        get :index
+        expect(response).to have_http_status(:not_implemented)
+      end
+      it "should have a jsonapi error response" do
+        get :index
+        expect{parsed_response = response.body}.to_not raise(JSON::ParserError)
+        expect(parsed_response).to eq 'meow'
+      end
     end
 
     describe "when enabled" do
