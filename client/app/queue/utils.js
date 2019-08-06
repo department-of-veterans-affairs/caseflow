@@ -561,11 +561,11 @@ export const sortTaskList = (taskList) => {
 
 export const regionalOfficeCity = (objWithLocation, defaultToUnknown) => {
   return _.get(objWithLocation, 'closestRegionalOffice.location_hash.city',
-    defaultToUnknown ? COPY.UNKNOWN_RO : defaultToUnknown);
+    defaultToUnknown ? COPY.UNKNOWN_REGIONAL_OFFICE : defaultToUnknown);
 };
 
 export const cityForRegionalOfficeCode = (code) => {
   const regionalOffice = REGIONAL_OFFICE_INFORMATION[code];
 
-  return regionalOffice ? regionalOffice.city : COPY.UNKNOWN_RO;
+  return regionalOffice ? regionalOffice.city : COPY.UNKNOWN_REGIONAL_OFFICE;
 };
