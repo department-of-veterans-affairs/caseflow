@@ -2,6 +2,7 @@
 
 require "support/vacols_database_cleaner"
 require "rails_helper"
+require "faker"
 
 describe TaskPager, :all_dbs do
   describe ".new" do
@@ -251,6 +252,30 @@ describe TaskPager, :all_dbs do
       it "sorts by regional office city" do
         expected_order = created_tasks.sort_by do |task|
           RegionalOffice::CITIES[task.appeal.closest_regional_office][:city]
+        end
+        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+      end
+    end
+
+    context "when sorting by case details link column" do
+      let(:sort_by) { Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN }
+
+      before do
+        created_tasks.each do |task|
+          first_name = Faker::Name.first_name
+          last_name = "#{Faker::Name.middle_name} #{Faker::Name.last_name}"
+          task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
+          create(
+            :cached_appeal,
+            appeal_id: task.appeal_id,
+            veteran_name: "#{last_name.split(' ').last}, #{first_name.split(' ').first}"
+          )
+        end
+      end
+
+      it "sorts by veteran last and first name" do
+        expected_order = created_tasks.sort_by do |task|
+          "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name.split(' ').first}"
         end
         expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
       end

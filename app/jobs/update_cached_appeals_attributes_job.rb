@@ -32,7 +32,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         docket_number: appeal.docket_number,
         appeal_type: Appeal.name,
         closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
-        veteran_name: "#{appeal.veteran.last_name}, #{appeal.veteran.first_name}"
+        veteran_name: "#{appeal.veteran_last_name.split(' ').last}, #{appeal.veteran_first_name.split(' ').first}"
       }
     end
 
@@ -63,7 +63,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         vacols_id: appeal.vacols_id,
         docket_type: appeal.docket_name, # "legacy"
         closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
-        veteran_name: "#{appeal.veteran.last_name}, #{appeal.veteran.first_name}"
+        veteran_name: "#{appeal.veteran_last_name.split(' ').last}, #{appeal.veteran_first_name.split(' ').first}"
       }
     end
 
