@@ -418,6 +418,16 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
       expect(e[:decision_text]).to be(e_decision_text)
       expect(e[:decision_date]).to be(e_decision_date)
     end
+
+    it "start_review_complete! should not throw an exception" do
+      expect { subject.start_review_complete! }.not_to raise_error
+    end
+
+    it "start_review_complete! should not throw an exception, and higher_level_review should have a uuid" do
+      processor = subject
+      processor.start_review_complete!
+      expect(processor.higher_level_review.uuid).to be_a(String)
+    end
   end
 
   context "review_params" do
