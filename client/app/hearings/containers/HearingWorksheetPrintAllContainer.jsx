@@ -28,7 +28,7 @@ class HearingWorksheetPrintAllContainer extends React.Component {
   loadHearingWorksheets = () => {
     let { hearingIds } = this.props;
     let getAllWorksheets = hearingIds.map(
-      (hearingId) => ApiUtil.get(`/hearings/${hearingId}/worksheet.json`)
+      (hearingId) => ApiUtil.get(`/hearings/${hearingId}`)
     );
 
     return Promise.all(getAllWorksheets).then((responses) => {

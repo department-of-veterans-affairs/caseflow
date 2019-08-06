@@ -52,8 +52,27 @@ describe "task rake fixes", :all_dbs do
           ids = HearingTask.all.map(&:id).sort
           expected_output = <<~OUTPUT
             *** DRY RUN
-            *** pass 'false' as the third argument to execute
+            *** pass 'false' as the second argument to execute
             Found 3 stalled HearingTasks. Would update 3 stalled HearingTasks with IDs #{ids}!
+          OUTPUT
+          expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+          expect { subject }.to output(expected_output).to_stdout
+          # no changes have been made
+          schedule_hearing_tasks.each do |task|
+            expect(task.reload.status).to eq Constants.TASK_STATUSES.on_hold
+          end
+        end
+      end
+
+      context "hearing task ids are passed" do
+        let(:args) { [0, hearing_task1.id, hearing_task3.id] }
+
+        it "only describes what changes will be made" do
+          ids = [hearing_task1.id, hearing_task3.id]
+          expected_output = <<~OUTPUT
+            *** DRY RUN
+            *** pass 'false' as the second argument to execute
+            Found 2 stalled HearingTasks. Would update 2 stalled HearingTasks with IDs #{ids}!
           OUTPUT
           expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
           expect { subject }.to output(expected_output).to_stdout
@@ -82,7 +101,48 @@ describe "task rake fixes", :all_dbs do
             end
           end
 
-          context "a HearingTask isn't open" do
+          context "hearing task ids are passed" do
+            let(:args) { [0, "false", hearing_task2.id, hearing_task3.id] }
+
+            it "makes the requested changes" do
+              ids = [hearing_task2.id, hearing_task3.id]
+              expected_output = <<~OUTPUT
+                Found 2 stalled HearingTasks. Updating 2 stalled HearingTasks with IDs #{ids}!
+              OUTPUT
+              expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+              expect(Rails.logger).to receive(:info).with expected_output.chomp
+              expect { subject }.to output(expected_output).to_stdout
+              # only the second and third tasks have been changed
+              expect(schedule_hearing_task1.reload.status).to eq Constants.TASK_STATUSES.on_hold
+              expect(schedule_hearing_task2.reload.status).to eq Constants.TASK_STATUSES.assigned
+              expect(schedule_hearing_task3.reload.status).to eq Constants.TASK_STATUSES.assigned
+            end
+
+            context "one of the passed ids is for a non-matching hearing task" do
+              let(:args) { [0, "false", hearing_task2.id, hearing_task3.id] }
+
+              before do
+                schedule_hearing_task3.update_columns(status: Constants.TASK_STATUSES.cancelled)
+                hearing_task3.update_columns(status: Constants.TASK_STATUSES.cancelled)
+              end
+
+              it "doesn't try to change the un-open HearingTask" do
+                ids = [hearing_task2.id]
+                expected_output = <<~OUTPUT
+                  Found 1 stalled HearingTasks. Updating 1 stalled HearingTasks with IDs #{ids}!
+                OUTPUT
+                expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+                expect(Rails.logger).to receive(:info).with expected_output.chomp
+                expect { subject }.to output(expected_output).to_stdout
+                # only the second task has been changed
+                expect(schedule_hearing_task1.reload.status).to eq Constants.TASK_STATUSES.on_hold
+                expect(schedule_hearing_task2.reload.status).to eq Constants.TASK_STATUSES.assigned
+                expect(schedule_hearing_task3.reload.status).to eq Constants.TASK_STATUSES.cancelled
+              end
+            end
+          end
+
+          context "a hearing task isn't open" do
             before do
               schedule_hearing_task1.update_columns(status: Constants.TASK_STATUSES.cancelled)
               hearing_task1.update_columns(status: Constants.TASK_STATUSES.cancelled)
@@ -96,7 +156,6 @@ describe "task rake fixes", :all_dbs do
               expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
               expect(Rails.logger).to receive(:info).with expected_output.chomp
               expect { subject }.to output(expected_output).to_stdout
-              # changes have been made
               # only the second and third tasks have been changed
               expect(schedule_hearing_task1.reload.status).to eq Constants.TASK_STATUSES.cancelled
               expect(schedule_hearing_task2.reload.status).to eq Constants.TASK_STATUSES.assigned

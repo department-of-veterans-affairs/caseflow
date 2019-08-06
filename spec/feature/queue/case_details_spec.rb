@@ -550,6 +550,40 @@ RSpec.feature "Case details", :all_dbs do
         expect(third_row_with_task).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
       end
     end
+
+    context "when the appeal has hidden colocated tasks" do
+      let(:appeal) { create(:appeal) }
+
+      let!(:transcript_task) do
+        create(:ama_colocated_task, :missing_hearing_transcripts, appeal: appeal).tap do |task|
+          task.children.first.update!(status: Constants.TASK_STATUSES.completed)
+        end
+      end
+
+      let!(:translation_task) do
+        create(:ama_colocated_task, :translation, appeal: appeal).tap do |task|
+          task.children.first.update!(status: Constants.TASK_STATUSES.completed)
+        end
+      end
+
+      let!(:foia_task) do
+        create(:ama_colocated_task, :foia, appeal: appeal).tap do |task|
+          task.children.first.update!(status: Constants.TASK_STATUSES.completed)
+        end
+      end
+
+      it "Does not display the intermediate colocated tasks" do
+        visit "/queue/appeals/#{appeal.external_id}"
+
+        case_timeline = page.find("table#case-timeline-table")
+        expect(case_timeline).not_to have_content(transcript_task.class.name)
+        expect(case_timeline).not_to have_content(translation_task.class.name)
+        expect(case_timeline).not_to have_content(foia_task.class.name)
+        expect(case_timeline).to have_content(transcript_task.children.first.class.name)
+        expect(case_timeline).to have_content(translation_task.children.first.class.name)
+        expect(case_timeline).to have_content(foia_task.children.first.class.name)
+      end
+    end
   end
 
   context "when there is a dispatch and decision_date" do
@@ -753,7 +787,7 @@ RSpec.feature "Case details", :all_dbs do
     end
 
     describe "Docket type badge shows up" do
-      let!(:appeal) { create(:appeal, docket_type: "direct_review") }
+      let!(:appeal) { create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review) }
 
       it "should display docket type and number" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -1008,7 +1042,7 @@ RSpec.feature "Case details", :all_dbs do
           create(:appeal,
                  :with_post_intake_tasks,
                  veteran_file_number: veteran.file_number,
-                 docket_type: "direct_review",
+                 docket_type: Constants.AMA_DOCKETS.direct_review,
                  receipt_date: 10.months.ago.to_date.mdY)
         end
 
