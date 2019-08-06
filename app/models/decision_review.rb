@@ -376,7 +376,9 @@ class DecisionReview < ApplicationRecord
   end
 
   def contestable_issues_from_decision_issues
-    contestable_decision_issues.map { |decision_issue| ContestableIssue.from_decision_issue(decision_issue, self) }
+    @contestable_issues_from_decision_issues ||= contestable_decision_issues.map do |decision_issue|
+      ContestableIssue.from_decision_issue(decision_issue, self)
+    end
   end
 
   def available_legacy_appeals

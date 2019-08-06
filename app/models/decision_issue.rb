@@ -96,7 +96,7 @@ class DecisionIssue < ApplicationRecord
   # If a decision issue is associated with request issues that were corrected,
   # consider it invalid
   def voided?
-    request_issues.all?(&:corrected?)
+    request_issues.any? && request_issues.all?(&:corrected?)
   end
 
   def finalized?
