@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
+import PropTypes from 'prop-types';
 import COPY from '../../../COPY.json';
 import { FORM_TYPES } from '../constants';
 import AddedIssue from './AddedIssue';
@@ -41,6 +42,7 @@ export default class IssuesList extends React.Component {
           value: 'remove' }
       );
     }
+
     return options;
   }
 
@@ -115,3 +117,12 @@ export default class IssuesList extends React.Component {
     </div>;
   }
 }
+
+IssuesList.propTypes = {
+  issues: PropTypes.array,
+  intakeData: PropTypes.object,
+  formType: PropTypes.string,
+  onClickIssueAction: PropTypes.func,
+  withdrawReview: PropTypes.bool,
+  featureToggles: PropTypes.object
+};
