@@ -2,7 +2,7 @@
 
 class HearingRequestDocket < Docket
   def docket_type
-    "hearing"
+    Constants.AMA_DOCKETS.hearing
   end
 
   def age_of_n_oldest_priority_appeals(num)
