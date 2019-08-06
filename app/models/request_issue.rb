@@ -238,6 +238,14 @@ class RequestIssue < ApplicationRecord
       active_or_ineligible_or_withdrawn.or(decided)
     end
 
+    # def active_or_ineligible_or_withdrawn_or_decided
+    #   [active_or_ineligible_or_withdrawn, decided_cleared].flatten
+    # end
+
+    # def decided_cleared
+    #    joins(:end_product_establishment).where(closed_status: :decided, end_product_establishment: {synced_status: "CLR"})
+    # end
+
     def active_or_decided_or_withdrawn
       active.or(decided).or(withdrawn).order(id: :asc)
     end
