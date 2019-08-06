@@ -150,7 +150,7 @@ class AssignHearingDispositionTask < GenericTask
   end
 
   def set_default_instructions
-    instructions.unshift(COPY::ASSIGN_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS)
+    (self.instructions ||= []).unshift(COPY::ASSIGN_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS)
   end
 
   def reschedule(hearing_day_id:, scheduled_time_string:, hearing_location: nil)

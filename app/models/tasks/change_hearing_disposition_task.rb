@@ -30,6 +30,6 @@ class ChangeHearingDispositionTask < AssignHearingDispositionTask
   end
 
   def set_default_instructions
-    instructions.unshift(COPY::CHANGE_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS)
+    (self.instructions ||= []).unshift(COPY::CHANGE_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS)
   end
 end

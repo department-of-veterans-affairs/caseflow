@@ -84,7 +84,7 @@ class HearingTask < GenericTask
   end
 
   def set_default_instructions
-    instructions.unshift(COPY::HEARING_TASK_DEFAULT_INSTRUCTIONS)
+    (self.instructions ||= []).unshift(COPY::HEARING_TASK_DEFAULT_INSTRUCTIONS)
   end
 
   def update_status_if_children_tasks_are_closed(_child_task)

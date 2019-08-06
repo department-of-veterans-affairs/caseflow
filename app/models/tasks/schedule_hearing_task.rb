@@ -128,7 +128,7 @@ class ScheduleHearingTask < GenericTask
   end
 
   def set_default_instructions
-    instructions.unshift(COPY::SCHEDULE_HEARING_TASK_DEFAULT_INSTRUCTIONS)
+    (self.instructions ||= []).unshift(COPY::SCHEDULE_HEARING_TASK_DEFAULT_INSTRUCTIONS)
   end
 
   def withdraw_hearing
