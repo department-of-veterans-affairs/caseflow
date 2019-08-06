@@ -1243,7 +1243,9 @@ class SeedDB
 
     create_intake_users
 
+    # Active Jobs which populate tables based on seed data
     FetchHearingLocationsForVeteransJob.perform_now
+    UpdateCachedAppealsAttributesJob.perform_now
 
     return if Rails.env.development?
 
