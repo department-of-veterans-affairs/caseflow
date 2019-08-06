@@ -26,7 +26,7 @@ class ContestableIssueGenerator
   end
 
   def filtered_from_decision_issues
-    from_decision_issues.reject(&:voided?)
+    from_decision_issues.reject { |contestable_issue| contestable_issue.decision_issue&.voided? }
   end
 
   def unfiltered_from_ratings
