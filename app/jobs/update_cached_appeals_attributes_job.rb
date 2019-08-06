@@ -31,12 +31,16 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         docket_type: appeal.docket_type,
         docket_number: appeal.docket_number,
         appeal_type: Appeal.name,
-        closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE
+        closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
+        veteran_name: "#{appeal.veteran.last_name}, #{appeal.veteran.first_name}"
       }
     end
 
     CachedAppeal.import appeals_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
-                                                                     columns: [:closest_regional_office_city] }
+                                                                     columns: [
+                                                                       :closest_regional_office_city,
+                                                                       :veteran_name
+                                                                     ] }
 
     increment_appeal_count(appeals_to_cache.length, Appeal.name)
   end
@@ -58,12 +62,16 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         appeal_type: LegacyAppeal.name,
         vacols_id: appeal.vacols_id,
         docket_type: appeal.docket_name, # "legacy"
-        closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE
+        closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
+        veteran_name: "#{appeal.veteran.last_name}, #{appeal.veteran.first_name}"
       }
     end
 
     CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
-                                                                    columns: [:closest_regional_office_city] }
+                                                                    columns: [
+                                                                      :closest_regional_office_city,
+                                                                      :veteran_name
+                                                                    ] }
   end
 
   def cache_legacy_appeal_vacols_data(legacy_appeals)

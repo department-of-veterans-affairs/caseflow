@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190806133551) do
+ActiveRecord::Schema.define(version: 20190806180125) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -162,6 +162,7 @@ ActiveRecord::Schema.define(version: 20190806133551) do
     t.string "docket_number"
     t.string "docket_type"
     t.string "vacols_id"
+    t.string "veteran_name", comment: "'LastName, FirstName' of the veteran"
     t.index ["appeal_id", "appeal_type"], name: "index_cached_appeal_attributes_on_appeal_id_and_appeal_type", unique: true
     t.index ["vacols_id"], name: "index_cached_appeal_attributes_on_vacols_id", unique: true
   end
