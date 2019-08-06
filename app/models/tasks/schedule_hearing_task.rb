@@ -7,7 +7,7 @@
 
 class ScheduleHearingTask < GenericTask
   before_validation :set_assignee
-  before_create :create_parent_hearing_task, :set_default_instructions
+  before_create :create_parent_hearing_task
 
   class << self
     def tasks_for_ro(regional_office)
@@ -55,6 +55,10 @@ class ScheduleHearingTask < GenericTask
 
   def label
     "Schedule hearing"
+  end
+
+  def default_instructions
+    [COPY::SCHEDULE_HEARING_TASK_DEFAULT_INSTRUCTIONS]
   end
 
   def create_parent_hearing_task
@@ -125,10 +129,6 @@ class ScheduleHearingTask < GenericTask
 
   def set_assignee
     self.assigned_to ||= Bva.singleton
-  end
-
-  def set_default_instructions
-    (self.instructions ||= []).unshift(COPY::SCHEDULE_HEARING_TASK_DEFAULT_INSTRUCTIONS)
   end
 
   def withdraw_hearing

@@ -7,7 +7,7 @@
 # The task is marked complete when these children tasks are completed.
 class AssignHearingDispositionTask < GenericTask
   validates :parent, presence: true
-  before_create :check_parent_type, :set_default_instructions
+  before_create :check_parent_type
   delegate :hearing, to: :hearing_task, allow_nil: true
 
   class HearingDispositionNotCanceled < StandardError; end
@@ -31,6 +31,10 @@ class AssignHearingDispositionTask < GenericTask
 
   def label
     "Select hearing disposition"
+  end
+
+  def default_instructions
+    [COPY::ASSIGN_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS]
   end
 
   def hearing_task
@@ -147,10 +151,6 @@ class AssignHearingDispositionTask < GenericTask
         assignee_type: assigned_to.class.name
       )
     end
-  end
-
-  def set_default_instructions
-    (self.instructions ||= []).unshift(COPY::ASSIGN_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS)
   end
 
   def reschedule(hearing_day_id:, scheduled_time_string:, hearing_location: nil)
