@@ -25,15 +25,18 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     appeals_ids_to_cache = Task.open.where(appeal_type: Appeal.name).pluck(:appeal_id).uniq
 
     appeals_to_cache = Appeal.find(appeals_ids_to_cache).map do |appeal|
+      closest_regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
       {
         appeal_id: appeal.id,
         docket_type: appeal.docket_type,
         docket_number: appeal.docket_number,
-        appeal_type: Appeal.name
+        appeal_type: Appeal.name,
+        closest_regional_office_city: closest_regional_office ? closest_regional_office[:city] : "Unknown"
       }
     end
 
-    CachedAppeal.import appeals_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type] }
+    CachedAppeal.import appeals_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
+                                                                     columns: [:closest_regional_office_city] }
 
     increment_appeal_count(appeals_to_cache.length, Appeal.name)
   end
@@ -49,15 +52,18 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   def cache_legacy_appeal_postgres_data(legacy_appeals)
     values_to_cache = legacy_appeals.map do |appeal|
+      closest_regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
       {
         appeal_id: appeal.id,
         appeal_type: LegacyAppeal.name,
         vacols_id: appeal.vacols_id,
-        docket_type: appeal.docket_name # "legacy"
+        docket_type: appeal.docket_name, # "legacy"
+        closest_regional_office_city: closest_regional_office ? closest_regional_office[:city] : "Unknown"
       }
     end
 
-    CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type] }
+    CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
+                                                                    columns: [:closest_regional_office_city] }
   end
 
   def cache_legacy_appeal_vacols_data(legacy_appeals)
