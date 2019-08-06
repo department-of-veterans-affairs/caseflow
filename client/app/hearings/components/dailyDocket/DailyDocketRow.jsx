@@ -9,6 +9,7 @@ import Button from '../../../components/Button';
 import { onUpdateDocketHearing } from '../../actions/dailyDocketActions';
 import { AodModal } from './DailyDocketModals';
 import HearingText from './DailyDocketRowDisplayText';
+import PropTypes from 'prop-types';
 import {
   DispositionDropdown, TranscriptRequestedCheckbox, HearingDetailsLink,
   AmaAodDropdown, LegacyAodDropdown, AodReasonDropdown, HearingPrepWorkSheetLink, StaticRegionalOffice,
@@ -35,6 +36,12 @@ const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
       Save
     </Button>
   </div>;
+};
+
+SaveButton.propTypes = {
+  hearing: PropTypes.object,
+  cancelUpdate: PropTypes.func,
+  saveHearing: PropTypes.func
 };
 
 const inputSpacing = css({
@@ -249,6 +256,30 @@ class HearingActions extends React.Component {
     </React.Fragment>;
   }
 }
+
+HearingActions.propTypes = {
+  index: PropTypes.number,
+  hearingId: PropTypes.number,
+  update: PropTypes.func,
+  saveHearing: PropTypes.func,
+  openDispositionModal: PropTypes.func,
+  regionalOffice: PropTypes.string,
+  readOnly: PropTypes.bool,
+  hearing: PropTypes.shape({
+    docketName: PropTypes.string,
+    advanceOnDocketMotion: PropTypes.object
+  }),
+  user: PropTypes.shape({
+    userRoleAssign: PropTypes.bool,
+    userRoleBuild: PropTypes.bool,
+    userRoleView: PropTypes.bool,
+    userRoleVso: PropTypes.bool,
+    userRoleHearingPrep: PropTypes.bool,
+    userInHearingsOrganization: PropTypes.bool,
+    userId: PropTypes.number,
+    userCssId: PropTypes.string
+  })
+};
 
 const mapStateToProps = (state, props) => ({
   hearing: props.hearingId ? state.dailyDocket.hearings[props.hearingId] : {}

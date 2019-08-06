@@ -5,6 +5,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Modal from '../../../components/Modal';
 import Button from '../../../components/Button';
 import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.json';
+import PropTypes from 'prop-types';
 
 export const RemoveHearingModal = ({ onCancelRemoveHearingDay, deleteHearingDay, dailyDocket }) => (
   <div>
@@ -21,6 +22,12 @@ export const RemoveHearingModal = ({ onCancelRemoveHearingDay, deleteHearingDay,
     </Modal>
   </div>
 );
+
+RemoveHearingModal.propTypes = {
+  onCancelRemoveHearingDay: PropTypes.func,
+  deleteHearingDay: PropTypes.func,
+  dailyDocket: PropTypes.object
+};
 
 export const LockModal = ({ updateLockHearingDay, onCancelDisplayLockModal, dailyDocket }) => (
   <div>
@@ -41,6 +48,12 @@ export const LockModal = ({ updateLockHearingDay, onCancelDisplayLockModal, dail
   </div>
 );
 
+LockModal.propTypes = {
+  updateLockHearingDay: PropTypes.func,
+  onCancelDisplayLockModal: PropTypes.func,
+  dailyDocket: PropTypes.object
+};
+
 export const AodModal = ({ onConfirm, onCancel, advanceOnDocketMotion }) => (
   <div>
     <Modal
@@ -59,6 +72,12 @@ export const AodModal = ({ onConfirm, onCancel, advanceOnDocketMotion }) => (
     </Modal>
   </div>
 );
+
+AodModal.propTypes = {
+  onConfirm: PropTypes.func,
+  onCancel: PropTypes.func,
+  advanceOnDocketMotion: PropTypes.object
+};
 
 export class DispositionModal extends React.Component {
 
@@ -125,3 +144,11 @@ export class DispositionModal extends React.Component {
     );
   }
 }
+
+DispositionModal.propTypes = {
+  hearing: PropTypes.object,
+  fromDisposition: PropTypes.string,
+  toDisposition: PropTypes.string,
+  onCancel: PropTypes.func,
+  onConfirm: PropTypes.func
+};
