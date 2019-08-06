@@ -17,6 +17,7 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
+import COPY from '../../COPY.json';
 import { formatDateStrUtc } from '../util/DateUtil';
 
 /**
@@ -560,11 +561,11 @@ export const sortTaskList = (taskList) => {
 
 export const regionalOfficeCity = (objWithLocation, defaultToUnknown) => {
   return _.get(objWithLocation, 'closestRegionalOffice.location_hash.city',
-    defaultToUnknown ? 'Unknown' : defaultToUnknown);
+    defaultToUnknown ? COPY.UNKNOWN_RO : defaultToUnknown);
 };
 
 export const cityForRegionalOfficeCode = (code) => {
   const regionalOffice = REGIONAL_OFFICE_INFORMATION[code];
 
-  return regionalOffice ? regionalOffice.city : 'Unknown';
+  return regionalOffice ? regionalOffice.city : COPY.UNKNOWN_RO;
 };

@@ -31,7 +31,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         docket_type: appeal.docket_type,
         docket_number: appeal.docket_number,
         appeal_type: Appeal.name,
-        closest_regional_office_city: closest_regional_office ? closest_regional_office[:city] : "Unknown"
+        closest_regional_office_city: closest_regional_office ? closest_regional_office[:city] : COPY::UNKNOWN_RO
       }
     end
 
@@ -58,7 +58,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         appeal_type: LegacyAppeal.name,
         vacols_id: appeal.vacols_id,
         docket_type: appeal.docket_name, # "legacy"
-        closest_regional_office_city: closest_regional_office ? closest_regional_office[:city] : "Unknown"
+        closest_regional_office_city: closest_regional_office ? closest_regional_office[:city] : COPY::UNKNOWN_RO
       }
     end
 

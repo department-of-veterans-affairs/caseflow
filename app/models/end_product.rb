@@ -251,7 +251,7 @@ class EndProduct
   end
 
   def station_description
-    regional_office ? regional_office.station_description : "Unknown"
+    regional_office ? regional_office.station_description : COPY::UNKNOWN_RO
   end
 
   def active?
