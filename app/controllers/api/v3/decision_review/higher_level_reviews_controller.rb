@@ -12,7 +12,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::ExternalProxy
       # id returned is static, if a mock intake_status is created, this should match
       "#{request.base_url}/api/v3/decision_review/higher_level_reviews/intake_status/999"
     )
-    render json: intake_status(mock_hlr), status: 202
+    render json: intake_status(mock_hlr), status: :accepted
   end
 
   private
