@@ -82,7 +82,7 @@ class EstablishClaim < Dispatch::Task
         review!(outgoing_reference_id: result.claim_id)
       end
     end
-  rescue VBMS::HTTPError, Caseflow::Error::VBMS, VBMSError => error
+  rescue VBMS::HTTPError => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 
@@ -166,7 +166,7 @@ class EstablishClaim < Dispatch::Task
       return :missing_decision if appeal.decisions.empty?
 
       appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
-    rescue VBMS::ClientError, VBMSError, Caseflow::Error::VBMS => error
+    rescue VBMS::ClientError => error
       Rails.logger.info "Failed EstablishClaim (id = #{id}), Error: #{error}"
       return :failed
     end

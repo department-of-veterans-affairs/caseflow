@@ -36,7 +36,7 @@ RSpec.feature "Postpone hearing", :all_dbs do
     let!(:appeal) do
       create(
         :appeal,
-        docket_type: "hearing",
+        docket_type: Constants.AMA_DOCKETS.hearing,
         closest_regional_office: "RO39",
         veteran: create(:veteran)
       )

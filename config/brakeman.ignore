@@ -1,23 +1,24 @@
 {
   "ignored_warnings": [
     {
-      "warning_type": "Cross-Site Request Forgery",
-      "warning_code": 86,
-      "fingerprint": "0bc3c7bb01027bba366908970aa5640bc505eb03a24d696949caf361ef6ea7f4",
-      "check_name": "ForgerySetting",
-      "message": "`protect_from_forgery` should be configured with `with: :exception`",
-      "file": "app/controllers/api/docs/v3/docs_controller.rb",
-      "line": 4,
-      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_request_forgery/",
-      "code": "protect_from_forgery(:with => :null_session)",
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "0ed3c295e5216f5a6ae5ee60d4c5baf3fcf4c624c9769ab723114045a565ebca",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/task_pager.rb",
+      "line": 63,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.docket_type #{sort_order}, cached_appeal_attributes.docket_number #{sort_order}\")",
       "render_path": null,
       "location": {
-        "type": "controller",
-        "controller": "Api::Docs::V3::DocsController"
+        "type": "method",
+        "class": "TaskPager",
+        "method": "tasks_sorted_by_docket_number"
       },
-      "user_input": null,
-      "confidence": "Medium",
-      "note": "This is an API, :null_session is the appropriate CSRF protection"
+      "user_input": "sort_order",
+      "confidence": "Weak",
+      "note": "False positive, sort_order is validated in sort_order_is_valid"
     },
     {
       "warning_type": "File Access",
@@ -134,25 +135,45 @@
       "note": "The application does not force use of HTTPS: `config.force_ssl` is not enabled"
     },
     {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "74680b779aa1ec56237b794a5508d3f93d91eecfd819193790edc893a7b5a5ed",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/task_pager.rb",
+      "line": 69,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.closest_regional_office_city #{sort_order}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "TaskPager",
+        "method": "tasks_sorted_by_regional_office"
+      },
+      "user_input": "sort_order",
+      "confidence": "Weak",
+      "note": "False positive, sort_order is validated in sort_order_is_valid"
+    },
+    {
       "warning_type": "Cross-Site Request Forgery",
       "warning_code": 86,
-      "fingerprint": "aa5b514f162036b68ab5af8209e415f2e6d987e62820aeb04817aad75cd845c9",
+      "fingerprint": "a6f4ed5d980fa7975b12ef33c337e4f9d7062f670d9a46c9e6b8e9c0824a656b",
       "check_name": "ForgerySetting",
       "message": "`protect_from_forgery` should be configured with `with: :exception`",
-      "file": "app/controllers/api/v3/decision_review/higher_level_reviews_controller.rb",
+      "file": "app/controllers/api/external_proxy_controller.rb",
       "line": 4,
       "link": "https://brakemanscanner.org/docs/warning_types/cross-site_request_forgery/",
       "code": "protect_from_forgery(:with => :null_session)",
       "render_path": null,
       "location": {
         "type": "controller",
-        "controller": "Api::V3::DecisionReview::HigherLevelReviewsController"
+        "controller": "Api::ExternalProxyController"
       },
       "user_input": null,
       "confidence": "Medium",
       "note": ""
     }
   ],
-  "updated": "2019-07-12 18:18:53 -0400",
+  "updated": "2019-08-06 13:43:50 -0400",
   "brakeman_version": "4.5.1"
 }

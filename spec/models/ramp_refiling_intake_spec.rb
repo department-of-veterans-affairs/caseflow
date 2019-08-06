@@ -436,7 +436,7 @@ describe RampRefilingIntake, :postgres do
 
     context "when no end product is needed" do
       let(:option_selected) { "appeal" }
-      let(:appeal_docket) { "direct_review" }
+      let(:appeal_docket) { Constants.AMA_DOCKETS.direct_review }
 
       it "saves issues and does NOT create an end product" do
         expect(Fakes::VBMSService).to_not receive(:establish_claim!)
