@@ -234,5 +234,25 @@ describe TaskPager, :all_dbs do
         expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
       end
     end
+
+    context "when sorting by closest regional office column" do
+      let(:sort_by) { Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN }
+
+      before do
+        created_tasks.each do |task|
+          ro_key = RegionalOffice::ROS.sample
+          ro_city = RegionalOffice::CITIES[ro_key][:city]
+          task.appeal.update!(closest_regional_office: ro_key)
+          create(:cached_appeal, appeal_id: task.appeal_id, closest_regional_office_city: ro_city)
+        end
+      end
+
+      it "sorts by regional office city" do
+        expected_order = created_tasks.sort_by do |task|
+          RegionalOffice::CITIES[task.appeal.closest_regional_office][:city]
+        end
+        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+      end
+    end
   end
 end
