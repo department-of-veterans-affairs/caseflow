@@ -26,80 +26,81 @@ describe TaskTimerJob, :postgres do
     end
   end
 
-  before do
-    Timecop.freeze(Time.zone.today)
-  end
-
-  after do
-    Timecop.return
-  end
-
   let(:timer_for_task) do
     task = TimedTask.create!(appeal: create(:appeal), assigned_to: Bva.singleton)
-    TaskTimer.find_by(task: task)
+    task_timer = TaskTimer.find_by(task: task)
+    task_timer.update(last_submitted_at: 1.day.ago)
+    task_timer.reload
   end
 
   let(:timer_for_task_that_errors) do
     task = TimedTaskThatErrors.create!(appeal: create(:appeal), assigned_to: Bva.singleton)
-    TaskTimer.find_by(task: task)
+    task_timer = TaskTimer.find_by(task: task)
+    task_timer.update(last_submitted_at: 1.day.ago)
+    task_timer.reload
   end
 
-  it "processes jobs only if they aren't already processed" do
-    timer = timer_for_task
-    Timecop.travel(Time.zone.now + 1.day)
+  it "does not process timers that are already processed" do
+    timer_for_task.update(processed_at: 1.day.ago, error: "some error")
+    processed_at = timer_for_task.reload.processed_at
 
     TaskTimerJob.perform_now
-    processed_at = timer.reload.processed_at
 
-    Timecop.travel(Time.zone.now + 1.day)
-    TaskTimerJob.new.process(timer)
-
-    # ensure the "processed at" field wasn't updated a second time
-    expect(timer.reload.processed_at).to eq(processed_at)
-
-    # ensure the "canceled at" field wasn't updated
-    TaskTimerJob.new.cancel(timer)
-    expect(timer.reload.canceled_at).to eq(nil)
+    expect(timer_for_task.reload.processed_at).to eq processed_at
+    expect(timer_for_task.canceled_at).to be_nil
+    expect(timer_for_task.attempted_at).to be_nil
+    expect(timer_for_task.error).to eq("some error")
   end
 
-  it "handles errors arising from task objects and continues processing succesful timers" do
+  it "does not process timers that are already canceled" do
+    timer_for_task.update(canceled_at: 1.day.ago, error: "some error")
+    canceled_at = timer_for_task.reload.canceled_at
+
+    TaskTimerJob.perform_now
+
+    expect(timer_for_task.reload.processed_at).to be_nil
+    expect(timer_for_task.canceled_at).to eq canceled_at
+    expect(timer_for_task.attempted_at).to be_nil
+    expect(timer_for_task.error).to eq("some error")
+  end
+
+  it "handles errors arising from task objects and continues processing successful timers" do
     error_timer = timer_for_task_that_errors
     timer = timer_for_task
-    Timecop.travel(Time.zone.now + 1.day)
-
-    expect(TaskTimer.requires_processing).to include error_timer
 
     TaskTimerJob.perform_now
 
     expect(timer.reload.processed_at).not_to be_nil
-    expect(timer.reload.attempted_at).not_to be_nil
+    expect(timer.attempted_at).not_to be_nil
+    expect(timer.error).to be_nil
     expect(error_timer.reload.processed_at).to be_nil
     expect(error_timer.error).to eq("RuntimeError")
     expect(error_timer.attempted_at).to be_nil # because it was in a failed transaction
   end
 
-  it "cancels jobs whose parent tasks are cancelled" do
+  it "cancels timers whose parent tasks are closed" do
     timer = timer_for_task
-
     # avoid the callbacks that cancel the timer from task close
-    Timecop.travel(Time.zone.now + 1.day)
-    timer.task.update_columns(status: Constants.TASK_STATUSES.cancelled)
+    timer.task.update_columns(status: Task.closed_statuses.sample)
 
-    Timecop.travel(Time.zone.now + 1.day)
     TaskTimerJob.perform_now
-    canceled_at = timer.reload.canceled_at
-    expect(timer.reload.processed_at).to eq(nil)
-    expect(timer.reload.canceled_at).not_to eq(nil)
 
-    Timecop.travel(Time.zone.now + 1.day)
-    TaskTimerJob.new.cancel(timer)
-    expect(timer.reload.canceled_at).to eq(canceled_at)
-
-    TaskTimerJob.new.process(timer)
-    expect(timer.reload.processed_at).to eq(nil)
+    expect(timer.reload.processed_at).to be_nil
+    expect(timer.canceled_at).not_to be_nil
+    expect(timer.processed_at).to be_nil
   end
 
-  it "records the jobs runtime with Datadog" do
+  it "does not cancel processable timers whose parent tasks are not closed" do
+    timer = timer_for_task
+    # avoid the callbacks that cancel the timer from task close
+    timer.task.update_columns(status: Task.open_statuses.sample)
+
+    TaskTimerJob.perform_now
+
+    expect(timer.reload.canceled_at).to be_nil
+  end
+
+  it "records the job's runtime with Datadog" do
     expect(DataDogService).to receive(:emit_gauge).with(
       app_name: "caseflow_job",
       metric_group: TaskTimerJob.name.underscore,
