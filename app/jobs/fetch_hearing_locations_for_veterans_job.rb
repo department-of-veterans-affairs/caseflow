@@ -43,7 +43,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
         record_geomatched_appeal(appeal.external_id, "limit_error")
         break
       rescue StandardError => error
-        Raven.capture_exception(error, extra: { appeal_external_id: appeal.external_id })
+        capture_exception(error: error, extra: { appeal_external_id: appeal.external_id })
         record_geomatched_appeal(appeal.external_id, "error")
       end
     end

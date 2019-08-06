@@ -60,7 +60,7 @@ class EndProductEstablishment < ApplicationRecord
         modifier: end_product_to_establish.modifier
       )
     end
-  rescue VBMS::HTTPError, Caseflow::Error::VBMS, VBMSError => error
+  rescue VBMS::HTTPError => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 
@@ -208,7 +208,8 @@ class EndProductEstablishment < ApplicationRecord
   rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => error
     raise error
   rescue StandardError => error
-    raise ::BGSSyncError.from_bgs_error(error, self)
+    Raven.extra_context(end_product_establishment_id: id)
+    raise error
   end
 
   def fetch_dispositions_from_vbms

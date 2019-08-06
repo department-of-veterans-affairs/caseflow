@@ -128,6 +128,7 @@ export const regionalOfficeColumn = (tasks) => {
     columnName: 'closestRegionalOffice.location_hash.city',
     anyFiltersAreSet: true,
     label: 'Filter by regional office',
+    backendCanSort: true,
     valueFunction: (task) => {
       return regionalOfficeCity(task, true);
     },
