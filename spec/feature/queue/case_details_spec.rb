@@ -787,7 +787,7 @@ RSpec.feature "Case details", :all_dbs do
     end
 
     describe "Docket type badge shows up" do
-      let!(:appeal) { create(:appeal, docket_type: "direct_review") }
+      let!(:appeal) { create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review) }
 
       it "should display docket type and number" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -1042,7 +1042,7 @@ RSpec.feature "Case details", :all_dbs do
           create(:appeal,
                  :with_post_intake_tasks,
                  veteran_file_number: veteran.file_number,
-                 docket_type: "direct_review",
+                 docket_type: Constants.AMA_DOCKETS.direct_review,
                  receipt_date: 10.months.ago.to_date.mdY)
         end
 

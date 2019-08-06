@@ -5,7 +5,7 @@ class DirectReviewDocket < Docket
   DAYS_BEFORE_GOAL_DUE_FOR_DISTRIBUTION = 60
 
   def docket_type
-    "direct_review"
+    Constants.AMA_DOCKETS.direct_review
   end
 
   def due_count
