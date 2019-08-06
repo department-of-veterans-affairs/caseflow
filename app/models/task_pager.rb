@@ -26,7 +26,6 @@ class TaskPager
     sorted_tasks(filtered_tasks).page(page).per(TASKS_PER_PAGE)
   end
 
-  # rubocop:disable Metrics/AbcSize
   def sorted_tasks(tasks)
     case sort_by
     when Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN, Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN
@@ -38,8 +37,7 @@ class TaskPager
     when Constants.QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN
       tasks.order(placed_on_hold_at: sort_order)
     when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
-      tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.docket_type #{sort_order}, "\
-                                                       "cached_appeal_attributes.docket_number #{sort_order}")
+      tasks_sorted_by_docket_number(tasks)
 
     # Columns not yet supported:
     #
@@ -57,7 +55,11 @@ class TaskPager
       tasks.order(created_at: sort_order)
     end
   end
-  # rubocop:enable Metrics/AbcSize
+
+  def tasks_sorted_by_docket_number(tasks)
+    tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.docket_type #{sort_order}, "\
+                                                     "cached_appeal_attributes.docket_number #{sort_order}")
+  end
 
   def cached_attributes_join_clause
     "left join cached_appeal_attributes "\
