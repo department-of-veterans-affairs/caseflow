@@ -88,6 +88,33 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       expect(case_review.quality).to eq "does_not_meet_expectations"
       expect(case_review.one_touch_initiative).to eq false
     end
+
+    context "when the judge wants to return the case to an attorney on different judge team" do
+      let!(:other_judge_team) { JudgeTeam.create_for_judge(create(:user)) }
+      let!(:other_attorney) { create(:user, full_name: "Wild E Beast") }
+
+      before do
+        # Make sure the other attorney is identified as an attorney in VACOLS and on another judge team.
+        create(:staff, :attorney_role, sdomainid: other_attorney.css_id)
+        OrganizationsUser.add_user_to_organization(other_attorney, other_judge_team)
+      end
+
+      it "allows the judge to return the case to an attorney on a different judge team" do
+        visit("/queue/appeals/#{appeal.external_id}")
+        click_dropdown(
+          prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+          text: Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.label
+        )
+
+        click_dropdown(text: other_attorney.full_name)
+        expect(page).to have_content(other_attorney.full_name)
+
+        fill_in("instructions", with: "Returning case to different attorney")
+        click_on(COPY::MODAL_SUBMIT_BUTTON)
+
+        expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % other_attorney.full_name)
+      end
+    end
   end
 
   context "given a valid legacy appeal with single issue" do
@@ -288,5 +315,8 @@ RSpec.feature "Judge checkout flow", :all_dbs do
         expect(case_review.judge).to eq(judge_user)
       end
     end
+  end
+
+  describe "returning a case to an attorney on a different judge team", focus: true do
   end
 end
