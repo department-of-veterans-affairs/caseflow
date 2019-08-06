@@ -26,6 +26,7 @@ class TaskPager
     sorted_tasks(tasks_for_tab).page(page).per(TASKS_PER_PAGE)
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def sorted_tasks(tasks)
     case sort_by
     when Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN, Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN
@@ -38,6 +39,8 @@ class TaskPager
       tasks.order(placed_on_hold_at: sort_order)
     when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
       tasks_sorted_by_docket_number(tasks)
+    when Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN
+      tasks_sorted_by_regional_office(tasks)
 
     # Columns not yet supported:
     #
@@ -47,7 +50,6 @@ class TaskPager
     # DOCUMENT_COUNT_READER_LINK_COLUMN
     # HEARING_BADGE_COLUMN
     # ISSUE_COUNT_COLUMN
-    # REGIONAL_OFFICE_COLUMN
     # TASK_ASSIGNEE_COLUMN
     # TASK_ASSIGNER_COLUMN
     #
@@ -55,22 +57,23 @@ class TaskPager
       tasks.order(created_at: sort_order)
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def tasks_sorted_by_docket_number(tasks)
-    # Additional guard against SQL Injection
-    verified_sort_order = sort_order.casecmp("DESC").zero? ? "DESC" : "ASC"
-    order_sql = "cached_appeal_attributes.docket_type #{verified_sort_order}, \
-                cached_appeal_attributes.docket_number #{verified_sort_order}"
-
-    tasks_with_cached_appeal_attributes(tasks).order(order_sql)
+    tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.docket_type #{sort_order}, "\
+                                                     "cached_appeal_attributes.docket_number #{sort_order}")
   end
 
-  def tasks_with_cached_appeal_attributes(tasks)
-    sql = "left join cached_appeal_attributes \
-          on cached_appeal_attributes.appeal_id = tasks.appeal_id \
-          and cached_appeal_attributes.appeal_type = tasks.appeal_type"
+  def tasks_sorted_by_regional_office(tasks)
+    tasks.joins(cached_attributes_join_clause).order(
+      "cached_appeal_attributes.closest_regional_office_city #{sort_order}"
+    )
+  end
 
-    tasks.joins(sql)
+  def cached_attributes_join_clause
+    "left join cached_appeal_attributes "\
+    "on cached_appeal_attributes.appeal_id = tasks.appeal_id "\
+    "and cached_appeal_attributes.appeal_type = tasks.appeal_type"
   end
 
   # # TODO: Some filters are on other tables that we will need to join to (appeal docket type)

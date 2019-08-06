@@ -335,7 +335,7 @@ RSpec.feature "Case details", :all_dbs do
         Fakes::BGSService.inaccessible_appeal_vbms_ids = []
         Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
-          .and_raise(BGS::ShareError, message: "NonUniqueResultException")
+          .and_raise(BGS::ShareError, "NonUniqueResultException")
       end
 
       scenario "access the appeal's case details", skip: "flake" do
