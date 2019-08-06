@@ -81,7 +81,8 @@ export const addIssue = (currentIssue) => (dispatch) => {
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {
-      ...currentIssue
+      ...currentIssue,
+      editable: true
     }
   });
 };

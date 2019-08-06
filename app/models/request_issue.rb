@@ -634,9 +634,10 @@ class RequestIssue < ApplicationRecord
   # BackfilledRatingError prevents from fetching the list of ratings
   # so we don't know if there is a rating in progress
   def contention_connected_to_rating?
-    return false if !contention_reference_id || !end_product_establishment.associated_rating
-
-    matching_rating_issues.any?
+    if contention_reference_id && end_product_establishment&.associated_rating
+      return matching_rating_issues.any?
+    end
+    false
   rescue Rating::NilRatingProfileListError
     false
   rescue Rating::LockedRatingError, Rating::BackfilledRatingError
