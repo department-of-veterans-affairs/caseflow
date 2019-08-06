@@ -316,7 +316,7 @@ RSpec.feature "Change hearing disposition", :all_dbs do
         find(
           "#currently-active-tasks button",
           text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL,
-          id: "#{ChangeHearingDispositionTask.last.id}"
+          id: ChangeHearingDispositionTask.last.id.to_s
         ).click
         expect(page).to have_content(assign_instructions_text)
       end
@@ -344,7 +344,7 @@ RSpec.feature "Change hearing disposition", :all_dbs do
         find(
           "#currently-active-tasks button",
           text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL,
-          id: "#{ChangeHearingDispositionTask.last.id}"
+          id: ChangeHearingDispositionTask.last.id.to_s
         ).click
         expect(page).to have_content(assign_instructions_text)
       end
