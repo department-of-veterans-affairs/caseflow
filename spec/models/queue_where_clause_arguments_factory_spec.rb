@@ -4,8 +4,6 @@ require "rails_helper"
 
 describe QueueWhereClauseArgumentsFactory, :postgres do
   describe ".new" do
-    let(:filter_params) { nil }
-
     subject { QueueWhereClauseArgumentsFactory.new(filter_params: filter_params) }
 
     context "when input argument is nil" do
@@ -44,8 +42,6 @@ describe QueueWhereClauseArgumentsFactory, :postgres do
   end
 
   describe ".arguments" do
-    let(:filter_params) { nil }
-
     subject { QueueWhereClauseArgumentsFactory.new(filter_params: filter_params).arguments }
 
     context "when filter_params is an empty array" do

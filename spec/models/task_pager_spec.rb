@@ -239,7 +239,6 @@ describe TaskPager, :all_dbs do
   describe ".filtered_tasks" do
     let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
-    let(:filters) { [] }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, filters: filters } }
 
     let(:task_pager) { TaskPager.new(arguments) }
