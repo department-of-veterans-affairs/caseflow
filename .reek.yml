@@ -20,12 +20,17 @@ detectors:
     enabled: false
   FeatureEnvy:
     exclude:
+      - Api::ApplicationController#on_external_error
+      - Api::ApplicationController#upstream_known_error
+      - AsyncableJobsReporter
+      - DataIntegrityChecksJob
+      - DecisionIssueSyncJob
       - Fakes::EndProductStore
       - FetchDocumentsForReaderJob#fetch_for_appeal
-      - AsyncableJobsReporter
       - HearingSerializerBase
-      - DataIntegrityChecksJob
       - VeteranAttributeCacher
+      - SyncReviewsJob
+      - TaskTimerJob
       - WarmBgsCachesJob
   InstanceVariableAssumption:
     exclude:

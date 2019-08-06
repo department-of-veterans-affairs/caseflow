@@ -51,7 +51,7 @@ describe DecisionReviewProcessJob do
 
   context "transient VBMS error" do
     let(:vbms_error) do
-      VBMSError.from_vbms_http_error(VBMS::HTTPError.new("500", "FAILED FOR UNKNOWN REASONS"))
+      VBMS::HTTPError.new("500", "FAILED FOR UNKNOWN REASONS")
     end
 
     it "does not alert Sentry" do
