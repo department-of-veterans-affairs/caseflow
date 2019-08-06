@@ -623,9 +623,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def editable?
-    return false if contention_connected_to_rating?
-
-    true
+    !contention_connected_to_rating?
   end
 
   private
@@ -636,9 +634,9 @@ class RequestIssue < ApplicationRecord
   # BackfilledRatingError prevents from fetching the list of ratings
   # so we don't know if there is a rating in progress
   def contention_connected_to_rating?
-    return false unless contention_reference_id
+    return false if !contention_reference_id || !end_product_establishment.associated_rating
 
-    matching_rating_issues.any? if end_product_establishment.associated_rating
+    matching_rating_issues.any?
   rescue Rating::NilRatingProfileListError
     false
   rescue Rating::LockedRatingError, Rating::BackfilledRatingError
