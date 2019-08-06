@@ -100,7 +100,6 @@ RSpec.feature "Attorney queue", :all_dbs do
           :colocated_task,
           appeal: appeal,
           assigned_by: attorney,
-          assigned_to: Colocated.singleton,
           parent: attorney_task
         )
       end
@@ -124,8 +123,7 @@ RSpec.feature "Attorney queue", :all_dbs do
         create(
           :colocated_task,
           appeal: appeal,
-          assigned_by: attorney,
-          assigned_to: Colocated.singleton
+          assigned_by: attorney
         )
       end
 
@@ -148,8 +146,7 @@ RSpec.feature "Attorney queue", :all_dbs do
         create(
           :colocated_task,
           appeal: appeal,
-          assigned_by: attorney,
-          assigned_to: Colocated.singleton
+          assigned_by: attorney
         )
       end
       let(:colocated_person_task) { colocated_org_task.children.first }
