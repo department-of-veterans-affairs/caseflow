@@ -104,7 +104,7 @@ class Api::V3::HigherLevelReviewProcessor
   end
 
   def higher_level_review
-    intake.detail.reload
+    intake.detail&.reload
   end
 
   # params for the "review" step of the intake process
