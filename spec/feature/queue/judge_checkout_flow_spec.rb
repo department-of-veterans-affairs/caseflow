@@ -316,7 +316,4 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       end
     end
   end
-
-  describe "returning a case to an attorney on a different judge team", focus: true do
-  end
 end
