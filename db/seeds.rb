@@ -470,7 +470,7 @@ class SeedDB
     app = FactoryBot.create(
       :appeal,
       veteran_file_number: vet.file_number,
-      docket_type: "hearing"
+      docket_type: Constants.AMA_DOCKETS.hearing
     )
 
     # Legacy Hearings can be created here due to hearing_day_full? check
@@ -566,7 +566,7 @@ class SeedDB
       number_of_claimants: 1,
       closest_regional_office: ro_key,
       veteran_file_number: vet.file_number,
-      docket_type: "hearing"
+      docket_type: Constants.AMA_DOCKETS.hearing
     )
   end
 
@@ -613,7 +613,7 @@ class SeedDB
         FactoryBot.build(:claimant, participant_id: "OTHER_CLAIMANT")
       ],
       veteran_file_number: "701305078",
-      docket_type: "direct_review",
+      docket_type: Constants.AMA_DOCKETS.direct_review,
       request_issues: FactoryBot.create_list(:request_issue, 3, :nonrating, notes: notes)
     )
 
@@ -814,7 +814,7 @@ class SeedDB
       associated_judge: judge,
       active_task_assigned_at: assigned_at,
       veteran_file_number: Generators::Random.unique_ssn,
-      docket_type: "direct_review",
+      docket_type: Constants.AMA_DOCKETS.direct_review,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 2, contested_issue_description: description, notes: notes
@@ -918,7 +918,7 @@ class SeedDB
       :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: vet.file_number,
-      docket_type: "direct_review",
+      docket_type: Constants.AMA_DOCKETS.direct_review,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 1, :nonrating, notes: notes
@@ -970,7 +970,7 @@ class SeedDB
       :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: vet.file_number,
-      docket_type: "hearing",
+      docket_type: Constants.AMA_DOCKETS.hearing,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 1, :nonrating, notes: notes
@@ -1183,7 +1183,7 @@ class SeedDB
       :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: "808415990",
-      docket_type: "hearing",
+      docket_type: Constants.AMA_DOCKETS.hearing,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 1, contested_issue_description: description, notes: notes
@@ -1194,7 +1194,7 @@ class SeedDB
       :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: "992190636",
-      docket_type: "hearing",
+      docket_type: Constants.AMA_DOCKETS.hearing,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 8, contested_issue_description: description, notes: notes
