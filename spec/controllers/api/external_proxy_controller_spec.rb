@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Api::ExternalProxyController, type: :controller do
-  fdescribe "FeatureToggle for :external_api_released" do
+  describe "FeatureToggle for :external_api_released" do
     controller do
       before_action :is_api_released?
 
