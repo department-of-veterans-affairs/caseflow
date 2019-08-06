@@ -12,7 +12,7 @@ class ExternalApi::VbmsDocumentsForAppeal
 
     begin
       fetch_veteran_file_number_docs
-    rescue VBMSError::FilenumberDoesNotExist
+    rescue VBMS::FilenumberDoesNotExist
       raise if bgs_claim_number_nil_or_same_as_veteran_file_number?
 
       fetch_bgs_claim_number_docs
@@ -40,7 +40,11 @@ class ExternalApi::VbmsDocumentsForAppeal
   end
 
   def fetch_veteran_file_number_docs
-    @documents = send_and_log_request(file_number, veteran_file_number_docs_request)
+    @documents = ExternalApi::VBMSRequest.new(
+      client: vbms_client,
+      request: veteran_file_number_docs_request,
+      id: file_number
+    ).call
   end
 
   def bgs_claim_number_nil_or_same_as_veteran_file_number?
@@ -48,7 +52,11 @@ class ExternalApi::VbmsDocumentsForAppeal
   end
 
   def fetch_bgs_claim_number_docs
-    @documents = send_and_log_request(bgs_claim_number, bgs_claim_number_docs_request)
+    @documents = ExternalApi::VBMSRequest.new(
+      client: vbms_client,
+      request: bgs_claim_number_docs_request,
+      id: bgs_claim_number
+    ).call
   end
 
   def result_hash
@@ -69,18 +77,5 @@ class ExternalApi::VbmsDocumentsForAppeal
 
   def bgs_claim_number_docs_request
     VBMS::Requests::FindDocumentVersionReference.new(bgs_claim_number)
-  end
-
-  def send_and_log_request(vbms_id, request)
-    name = request.class.name.split("::").last
-    MetricsService.record("sent VBMS request #{request.class} for #{vbms_id}",
-                          service: :vbms,
-                          name: name) do
-      vbms_client.send_request(request)
-    end
-  rescue VBMS::ClientError => error
-    Rails.logger.error "#{error.message}\n#{error.backtrace.join("\n")}"
-
-    raise VBMSError.from_vbms_http_error(error)
   end
 end
