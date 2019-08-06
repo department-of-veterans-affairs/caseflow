@@ -239,8 +239,9 @@ describe TaskPager, :all_dbs do
       let(:sort_by) { Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN }
 
       before do
-        created_tasks.each do |task|
-          ro_key = RegionalOffice::ROS.sample
+        regional_offices = RegionalOffice::ROS.shuffle
+        created_tasks.each_with_index do |task, index|
+          ro_key = regional_offices[index]
           ro_city = RegionalOffice::CITIES[ro_key][:city]
           task.appeal.update!(closest_regional_office: ro_key)
           create(:cached_appeal, appeal_id: task.appeal_id, closest_regional_office_city: ro_city)
