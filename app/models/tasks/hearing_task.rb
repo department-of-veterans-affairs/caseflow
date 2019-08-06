@@ -9,6 +9,11 @@ class HearingTask < GenericTask
   has_one :hearing_task_association
   delegate :hearing, to: :hearing_task_association, allow_nil: true
   before_validation :set_assignee
+  before_create :set_default_instructions
+
+  def label
+    "All hearing-related tasks"
+  end
 
   def cancel_and_recreate
     hearing_task = HearingTask.create!(
@@ -76,6 +81,10 @@ class HearingTask < GenericTask
 
   def set_assignee
     self.assigned_to = Bva.singleton
+  end
+
+  def set_default_instructions
+    self.instructions.unshift(COPY::HEARING_TASK_DEFAULT_INSTRUCTIONS)
   end
 
   def update_status_if_children_tasks_are_closed(_child_task)

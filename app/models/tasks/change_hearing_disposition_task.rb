@@ -5,6 +5,11 @@
 # when a disposition has not been set on a hearing that was held more than 48 hours ago.
 class ChangeHearingDispositionTask < AssignHearingDispositionTask
   before_validation :set_assignee
+  before_create :set_default_instructions
+
+  def label
+    "Change hearing disposition"
+  end
 
   def available_actions(_user)
     [
@@ -22,5 +27,9 @@ class ChangeHearingDispositionTask < AssignHearingDispositionTask
 
   def set_assignee
     self.assigned_to ||= HearingAdmin.singleton
+  end
+
+  def set_default_instructions
+    self.instructions.unshift(COPY::CHANGE_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS)
   end
 end
