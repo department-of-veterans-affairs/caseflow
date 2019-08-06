@@ -637,6 +637,7 @@ class RequestIssue < ApplicationRecord
     if contention_reference_id && end_product_establishment&.associated_rating
       return matching_rating_issues.any?
     end
+
     false
   rescue Rating::NilRatingProfileListError
     false
