@@ -6,14 +6,15 @@ class Api::ExternalProxyController < ActionController::Base
   def api_released?
     return true if FeatureToggle.enabled?(:external_api_released)
 
-    render json:  {
+    render  json: {
                     errors: [
                       {
                         status: "501",
-                        title: "Not Implemented",
+                        title:  "Not Implemented",
                         detail: "This endpoint is not yet supported."
                       }
                     ]
-                  }, status: 501
+                  },
+            status: 501
   end
 end

@@ -17,7 +17,7 @@ RSpec.describe Api::ExternalProxyController, type: :controller do
       end
       it "should have a jsonapi error response" do
         get :index
-        expect{ JSON.parse(response.body) }.to_not raise_error(JSON::ParserError)
+        expect { JSON.parse(response.body) }.to_not raise_error(JSON::ParserError)
         parsed_response = JSON.parse(response.body)
         expect(parsed_response["errors"]).to be_a Array
         expect(parsed_response["errors"].first).to include("status", "title", "detail")
