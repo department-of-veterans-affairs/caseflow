@@ -638,6 +638,11 @@ class Appeal < DecisionReview
     AppealActiveTaskCancellation.new(self).call
   end
 
+  # we always want to show ratings on intake
+  def can_contest_rating_issues?
+    true
+  end
+
   private
 
   def most_recently_assigned_to_label(tasks)
@@ -664,11 +669,6 @@ class Appeal < DecisionReview
         assigned_to: business_line
       )
     end
-  end
-
-  # we always want to show ratings on intake
-  def can_contest_rating_issues?
-    true
   end
 
   def contestable_decision_issues

@@ -227,6 +227,10 @@ class ClaimReview < DecisionReview
     end
   end
 
+  def can_contest_rating_issues?
+    processed_in_vbms?
+  end
+
   private
 
   def cleared_end_products
@@ -248,10 +252,6 @@ class ClaimReview < DecisionReview
 
   def incomplete_tasks?
     tasks.reject(&:completed?).any?
-  end
-
-  def can_contest_rating_issues?
-    processed_in_vbms?
   end
 
   def create_decision_review_task!

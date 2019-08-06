@@ -20,6 +20,8 @@ class DecisionReview < ApplicationRecord
     ratings_with_issues.map(&:serialize)
   end
 
+  delegate :contestable_issues, to: :contestable_issue_generator
+
   # The Asyncable module requires we define these.
   # establishment_submitted_at - when our db is ready to push to exernal services
   # establishment_attempted_at - when our db attempted to push to external services
@@ -195,12 +197,6 @@ class DecisionReview < ApplicationRecord
     # no-op
   end
 
-  def contestable_issues
-    return contestable_issues_from_decision_issues unless can_contest_rating_issues?
-
-    contestable_issues_from_ratings + contestable_issues_from_decision_issues.reject(&:voided?)
-  end
-
   def active_nonrating_request_issues
     @active_nonrating_request_issues ||= RequestIssue.nonrating.active
       .where(veteran_participant_id: veteran.participant_id)
@@ -326,6 +322,10 @@ class DecisionReview < ApplicationRecord
 
   private
 
+  def contestable_issue_generator
+    @contestable_issue_generator ||= ContestableIssueGenerator.new(self, veteran.participant_id)
+  end
+
   def veteran_invalid_fields
     return unless intake
 
@@ -341,44 +341,6 @@ class DecisionReview < ApplicationRecord
 
   def can_contest_rating_issues?
     fail Caseflow::Error::MustImplementInSubclass
-  end
-
-  def cached_rating_issues
-    cached_serialized_ratings.inject([]) do |result, rating_hash|
-      result + rating_hash[:issues].map { |rating_issue_hash| RatingIssue.deserialize(rating_issue_hash) }
-    end
-  end
-
-  def unfiltered_contestable_issues_from_ratings
-    return [] unless receipt_date
-
-    cached_rating_issues
-      .select { |issue| issue.profile_date && issue.profile_date.to_date < receipt_date }
-      .map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, self) }
-  end
-
-  def contestable_issues_from_ratings
-    unfiltered_contestable_issues_from_ratings.reject do |contestable_issue|
-      contestable_issues_from_decision_issues.any? do |potential_duplicate|
-        contestable_issue.rating_issue_reference_id == potential_duplicate.rating_issue_reference_id
-      end
-    end
-  end
-
-  def contestable_decision_issues
-    return [] unless receipt_date
-
-    DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
-      .select(&:finalized?)
-      .select do |issue|
-        issue.approx_decision_date && issue.approx_decision_date < receipt_date
-      end
-  end
-
-  def contestable_issues_from_decision_issues
-    @contestable_issues_from_decision_issues ||= contestable_decision_issues.map do |decision_issue|
-      ContestableIssue.from_decision_issue(decision_issue, self)
-    end
   end
 
   def available_legacy_appeals
