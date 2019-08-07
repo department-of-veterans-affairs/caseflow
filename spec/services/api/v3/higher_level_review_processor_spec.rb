@@ -217,6 +217,205 @@ describe hlrp, :all_dbs do
     end
   end
 
+  let(:included_array_for_complete_params_tests) do
+    [
+      {
+        type: "RequestIssue",
+        attributes: {
+          contests: a_contests,
+          id: a_id,
+          notes: a_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          contests: b_contests,
+          id: b_id,
+          notes: b_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          contests: c_contests,
+          id: c_id,
+          notes: c_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          contests: d_contests,
+          category: d_category,
+          decision_date: d_decision_date,
+          decision_text: d_decision_text,
+          notes: d_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          contests: e_contests,
+          decision_date: e_decision_date,
+          decision_text: e_decision_text,
+          notes: e_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          id: f_id,
+          contests: f_contests,
+          notes: f_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          id: g_id,
+          contests: g_contests,
+          notes: g_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          id: h_id,
+          contests: h_contests,
+          notes: h_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          id: i_id,
+          contests: i_contests,
+          notes: i_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          id: j_id,
+          contests: j_contests,
+          notes: j_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          id: k_id,
+          contests: k_contests,
+          notes: k_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          id: l_id,
+          contests: l_contests,
+          notes: l_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          id: m_id,
+          contests: m_contests,
+          notes: m_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          id: n_id,
+          contests: n_contests,
+          notes: n_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          id: o_id,
+          contests: o_contests,
+          notes: o_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          id: p_id,
+          contests: p_contests,
+          notes: p_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          id: q_id,
+          contests: q_contests,
+          notes: q_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          id: r_id,
+          contests: r_contests,
+          notes: r_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          id: s_id,
+          contests: s_contests,
+          notes: s_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          contests: t_contests,
+          category: t_category,
+          decision_date: t_decision_date,
+          decision_text: t_decision_text,
+          notes: t_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          contests: u_contests,
+          category: u_category,
+          decision_date: u_decision_date,
+          decision_text: u_decision_text,
+          notes: u_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          contests: v_contests,
+          category: v_category,
+          decision_date: v_decision_date,
+          decision_text: v_decision_text,
+          notes: v_notes
+        }
+      },
+      {
+        type: "RequestIssue",
+        attributes: {
+          contests: w_contests,
+          decision_date: w_decision_date,
+          decision_text: w_decision_text,
+          notes: w_notes
+        }
+      }
+    ]
+  end
+
   context "#complete_params (with errors)" do
     let(:a_contests) { "on_file_decision_issue" }
     let(:a_id) { "232" }
@@ -340,204 +539,13 @@ describe hlrp, :all_dbs do
     let(:w_decision_date) { "2019-05-20" }
     let(:w_decision_text) { nil }
 
-    let(:included) do
-      [
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: a_contests,
-            id: a_id,
-            notes: a_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: b_contests,
-            id: b_id,
-            notes: b_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: c_contests,
-            id: c_id,
-            notes: c_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: d_contests,
-            category: d_category,
-            decision_date: d_decision_date,
-            decision_text: d_decision_text,
-            notes: d_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: e_contests,
-            decision_date: e_decision_date,
-            decision_text: e_decision_text,
-            notes: e_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: f_id,
-            contests: f_contests,
-            notes: f_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: g_id,
-            contests: g_contests,
-            notes: g_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: h_id,
-            contests: h_contests,
-            notes: h_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: i_id,
-            contests: i_contests,
-            notes: i_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: j_id,
-            contests: j_contests,
-            notes: j_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: k_id,
-            contests: k_contests,
-            notes: k_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: l_id,
-            contests: l_contests,
-            notes: l_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: m_id,
-            contests: m_contests,
-            notes: m_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: n_id,
-            contests: n_contests,
-            notes: n_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: o_id,
-            contests: o_contests,
-            notes: o_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: p_id,
-            contests: p_contests,
-            notes: p_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: q_id,
-            contests: q_contests,
-            notes: q_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: r_id,
-            contests: r_contests,
-            notes: r_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: s_id,
-            contests: s_contests,
-            notes: s_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: t_contests,
-            category: t_category,
-            decision_date: t_decision_date,
-            decision_text: t_decision_text,
-            notes: t_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: u_contests,
-            category: u_category,
-            decision_date: u_decision_date,
-            decision_text: u_decision_text,
-            notes: u_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: v_contests,
-            category: v_category,
-            decision_date: v_decision_date,
-            decision_text: v_decision_text,
-            notes: v_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: w_contests,
-            decision_date: w_decision_date,
-            decision_text: w_decision_text,
-            notes: w_notes
-          }
-        }
-      ]
+    let(:params) do
+      ActionController::Parameters.new(
+        data: data,
+        included: included_array_for_complete_params_tests
+      )
     end
+
     subject(:processor) { hlrp.new(params, user) }
     subject(:complete_params) { processor.complete_params }
     subject(:request_issues) { complete_params[:request_issues] }
@@ -1198,204 +1206,13 @@ describe hlrp, :all_dbs do
     let(:w_decision_date) { "2019-01-20" }
     let(:w_decision_text) { nil }
 
-    let(:included) do
-      [
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: a_contests,
-            id: a_id,
-            notes: a_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: b_contests,
-            id: b_id,
-            notes: b_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: c_contests,
-            id: c_id,
-            notes: c_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: d_contests,
-            category: d_category,
-            decision_date: d_decision_date,
-            decision_text: d_decision_text,
-            notes: d_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: e_contests,
-            decision_date: e_decision_date,
-            decision_text: e_decision_text,
-            notes: e_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: f_id,
-            contests: f_contests,
-            notes: f_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: g_id,
-            contests: g_contests,
-            notes: g_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: h_id,
-            contests: h_contests,
-            notes: h_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: i_id,
-            contests: i_contests,
-            notes: i_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: j_id,
-            contests: j_contests,
-            notes: j_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: k_id,
-            contests: k_contests,
-            notes: k_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: l_id,
-            contests: l_contests,
-            notes: l_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: m_id,
-            contests: m_contests,
-            notes: m_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: n_id,
-            contests: n_contests,
-            notes: n_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: o_id,
-            contests: o_contests,
-            notes: o_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: p_id,
-            contests: p_contests,
-            notes: p_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: q_id,
-            contests: q_contests,
-            notes: q_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: r_id,
-            contests: r_contests,
-            notes: r_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            id: s_id,
-            contests: s_contests,
-            notes: s_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: t_contests,
-            category: t_category,
-            decision_date: t_decision_date,
-            decision_text: t_decision_text,
-            notes: t_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: u_contests,
-            category: u_category,
-            decision_date: u_decision_date,
-            decision_text: u_decision_text,
-            notes: u_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: v_contests,
-            category: v_category,
-            decision_date: v_decision_date,
-            decision_text: v_decision_text,
-            notes: v_notes
-          }
-        },
-        {
-          type: "RequestIssue",
-          attributes: {
-            contests: w_contests,
-            decision_date: w_decision_date,
-            decision_text: w_decision_text,
-            notes: w_notes
-          }
-        }
-      ]
+    let(:params) do
+      ActionController::Parameters.new(
+        data: data,
+        included: included_array_for_complete_params_tests
+      )
     end
+
     subject(:complete_params_and_errors) { hlrp.complete_params_and_errors_from_params(params) }
     subject(:errors) { complete_params_and_errors[1] }
     subject(:complete_params) { complete_params_and_errors[0] }
