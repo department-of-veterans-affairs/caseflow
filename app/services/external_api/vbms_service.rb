@@ -190,9 +190,5 @@ class ExternalApi::VBMSService
                           name: name) do
       (override_vbms_client || @vbms_client).send_request(request)
     end
-  rescue VBMS::ClientError => error
-    Rails.logger.error "#{error.message}\n#{error.backtrace.join("\n")}"
-
-    raise VBMSError.from_vbms_http_error(error)
   end
 end

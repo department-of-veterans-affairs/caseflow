@@ -33,7 +33,7 @@ class SyncReviewsJob < CaseflowJob
       ramp_refiling.create_end_product_and_contentions!
     rescue StandardError => error
       # Rescue and capture errors so they don't cause the job to stop
-      Raven.capture_exception(error, extra: { ramp_refiling_id: ramp_refiling.id })
+      capture_exception(error: error, extra: { ramp_refiling_id: ramp_refiling.id })
     end
   end
 

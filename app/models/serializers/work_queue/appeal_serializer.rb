@@ -77,10 +77,7 @@ class WorkQueue::AppealSerializer
 
   attribute :external_id, &:uuid
 
-  attribute :type do
-    "Original"
-  end
-
+  attribute :type
   attribute :aod, &:advanced_on_docket
   attribute :docket_name
   attribute :docket_number

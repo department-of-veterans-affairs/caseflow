@@ -67,6 +67,14 @@ module Caseflow::Error
     end
   end
 
+  class InvalidTaskTableColumnFilter < SerializableError
+    def initialize(args)
+      @column = args[:column]
+      @code = args[:code] || 400
+      @message = args[:message] || "Cannot filter table on column: \"#{@column}\""
+    end
+  end
+
   class InvalidStatusOnTaskCreate < SerializableError
     def initialize(args)
       @task_type = args[:task_type]
