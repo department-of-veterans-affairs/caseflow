@@ -792,7 +792,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       it "does not allow to edit request issue" do
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-        expect(page).to have_content("Rating may be in process")
+        expect(page).to have_content("Rating may be in progress")
       end
     end
 

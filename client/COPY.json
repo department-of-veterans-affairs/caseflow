@@ -449,7 +449,7 @@
   "CLAIMANT_NOT_FOUND_END": " for assistance.",
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
   "INTAKE_WITHDRAWN_BANNER": "This review will be withdrawn. You can intake these issues as a different type of decision review, if that was requested.",
-  "INTAKE_RATING_MAY_BE_PROCESS": "Rating may be in process",
+  "INTAKE_RATING_MAY_BE_PROCESS": "Rating may be in progress",
 
   "VACOLS_OPTIN_ISSUE_NEW": "Adding this issue will automatically close VACOLS issue",
   "VACOLS_OPTIN_ISSUE_CLOSED_EDIT": "This issue has automatically closed the VACOLS issue",
