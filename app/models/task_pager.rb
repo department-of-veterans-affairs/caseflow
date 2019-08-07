@@ -41,6 +41,9 @@ class TaskPager
       tasks_sorted_by_docket_number(tasks)
     when Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN
       tasks_sorted_by_regional_office(tasks)
+    when Constants.QUEUE_CONFIG.TASK_ASSIGNER_COLUMN
+      # order by last name, then first names
+      tasks_sorted_by_assigned_by_name(tasks)
 
     # Columns not yet supported:
     #
@@ -58,6 +61,20 @@ class TaskPager
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity
+
+  # split_part(string text, delimiter text, field int)
+
+  getSortValue: (task) => task.assignedBy ? task.assignedBy.lastName : null
+} : null;
+
+  def tasks_sorted_by_assigned_by_name(tasks)
+    tasks.joins(users_join_clause).select(*.tasks)
+  end
+
+  def users_join_clause
+    "left join users on users.id = tasks.assigned_by_id"
+  end
+
 
   def tasks_sorted_by_docket_number(tasks)
     tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.docket_type #{sort_order}, "\

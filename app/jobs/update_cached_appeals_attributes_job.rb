@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+# migration adding assigned_by_last_name, first_name
+# scrape [first_name, last_name] of the assigned_by user
+# task pager conditional sorting - when clause
+    # join, then sort by last name, then by first name
+#  backendCanSort = True
+# Testing
+
 BATCH_SIZE = 1000
 
 class UpdateCachedAppealsAttributesJob < CaseflowJob
