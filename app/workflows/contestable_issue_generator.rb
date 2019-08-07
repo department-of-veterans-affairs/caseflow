@@ -11,14 +11,14 @@ class ContestableIssueGenerator
   def contestable_issues
     return contestable_decision_issues unless review.can_contest_rating_issues?
 
-    contestable_ratings + contestable_decision_issues
+    contestable_rating_issues + contestable_decision_issues
   end
 
   private
 
   attr_reader :review
 
-  def contestable_ratings
+  def contestable_rating_issues
     from_ratings.reject { |contestable_issue| decision_issue_duplicate_exists?(contestable_issue) }
   end
 
@@ -29,7 +29,7 @@ class ContestableIssueGenerator
   def from_ratings
     return [] unless receipt_date
 
-    rating_issues_for_review
+    rating_issues
       .select { |issue| issue.profile_date && issue.profile_date.to_date < receipt_date }
       .map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, review) }
   end
@@ -40,7 +40,7 @@ class ContestableIssueGenerator
     end
   end
 
-  def rating_issues_for_review
+  def rating_issues
     review.cached_serialized_ratings.inject([]) do |result, rating_hash|
       result + rating_hash[:issues].map { |rating_issue_hash| RatingIssue.deserialize(rating_issue_hash) }
     end
