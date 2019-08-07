@@ -7,7 +7,9 @@ import _ from 'lodash';
 import Button from '../../../components/Button';
 
 import { onUpdateDocketHearing } from '../../actions/dailyDocketActions';
+import { AodModal } from './DailyDocketModals';
 import HearingText from './DailyDocketRowDisplayText';
+import PropTypes from 'prop-types';
 import {
   DispositionDropdown, TranscriptRequestedCheckbox, HearingDetailsLink,
   AmaAodDropdown, LegacyAodDropdown, AodReasonDropdown, HearingPrepWorkSheetLink, StaticRegionalOffice,
@@ -36,6 +38,12 @@ const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
   </div>;
 };
 
+SaveButton.propTypes = {
+  hearing: PropTypes.object,
+  cancelUpdate: PropTypes.func,
+  saveHearing: PropTypes.func
+};
+
 const inputSpacing = css({
   '& > div:not(:first-child)': {
     marginTop: '25px'
@@ -53,6 +61,7 @@ class HearingActions extends React.Component {
       invalid: {
         advanceOnDocketMotionReason: false
       },
+      aodModalActive: false,
       edited: false
     };
   }
@@ -62,9 +71,17 @@ class HearingActions extends React.Component {
     this.setState({ edited: true });
   }
 
+  openAodModal = () => {
+    this.setState({ aodModalActive: true });
+  }
+
+  closeAodModal = () => {
+    this.setState({ aodModalActive: false });
+  }
+
   updateAodMotion = (values) => {
     this.update({
-      advanceOnDocketMotion: values === null ? null : {
+      advanceOnDocketMotion: {
         ...(this.props.hearing.advanceOnDocketMotion || {}),
         ...values
       }
@@ -73,7 +90,12 @@ class HearingActions extends React.Component {
 
   cancelUpdate = () => {
     this.props.update(this.state.initialState);
-    this.setState({ edited: false });
+    this.setState({
+      edited: false,
+      invalid: {
+        advanceOnDocketMotionReason: false
+      }
+    });
   }
 
   validate = () => {
@@ -88,6 +110,25 @@ class HearingActions extends React.Component {
     this.setState({ invalid });
 
     return !invalid.advanceOnDocketMotionReason;
+  }
+
+  aodDecidedByAnotherUser = () => {
+    const { initialState } = this.state;
+    const { user } = this.props;
+
+    if (_.isNil(initialState.advanceOnDocketMotion) || !user.userRoleHearingPrep) {
+      return false;
+    }
+
+    return initialState.advanceOnDocketMotion.userId !== user.userId;
+  }
+
+  checkAodAndSave = () => {
+    if (this.aodDecidedByAnotherUser()) {
+      this.openAodModal();
+    } else {
+      this.saveHearing();
+    }
   }
 
   saveHearing = () => {
@@ -163,7 +204,7 @@ class HearingActions extends React.Component {
         <SaveButton
           hearing={this.props.hearing}
           cancelUpdate={this.cancelUpdate}
-          saveHearing={this.saveHearing} />}
+          saveHearing={this.checkAodAndSave} />}
     </div>;
   }
 
@@ -201,9 +242,44 @@ class HearingActions extends React.Component {
         {this.getLeftColumn()}
         {this.getRightColumn()}
       </div>
+      {this.state.aodModalActive && <AodModal
+        advanceOnDocketMotion={hearing.advanceOnDocketMotion || {}}
+        onConfirm={() => {
+          this.saveHearing();
+          this.closeAodModal();
+        }}
+        onCancel={() => {
+          this.updateAodMotion(this.state.initialState.advanceOnDocketMotion);
+          this.closeAodModal();
+        }}
+      />}
     </React.Fragment>;
   }
 }
+
+HearingActions.propTypes = {
+  index: PropTypes.number,
+  hearingId: PropTypes.number,
+  update: PropTypes.func,
+  saveHearing: PropTypes.func,
+  openDispositionModal: PropTypes.func,
+  regionalOffice: PropTypes.string,
+  readOnly: PropTypes.bool,
+  hearing: PropTypes.shape({
+    docketName: PropTypes.string,
+    advanceOnDocketMotion: PropTypes.object
+  }),
+  user: PropTypes.shape({
+    userRoleAssign: PropTypes.bool,
+    userRoleBuild: PropTypes.bool,
+    userRoleView: PropTypes.bool,
+    userRoleVso: PropTypes.bool,
+    userRoleHearingPrep: PropTypes.bool,
+    userInHearingsOrganization: PropTypes.bool,
+    userId: PropTypes.number,
+    userCssId: PropTypes.string
+  })
+};
 
 const mapStateToProps = (state, props) => ({
   hearing: props.hearingId ? state.dailyDocket.hearings[props.hearingId] : {}

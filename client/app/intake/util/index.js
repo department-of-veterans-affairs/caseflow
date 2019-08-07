@@ -42,7 +42,7 @@ export const isCorrection = (isRating, intakeData) => {
   const isRatingCorrection = isRating && intakeData.hasClearedRatingEp;
   const isNonratingCorrection = !isRating && intakeData.hasClearedNonratingEp;
 
-  return isRatingCorrection || isNonratingCorrection;
+  return Boolean(isRatingCorrection || isNonratingCorrection);
 };
 
 export const getReceiptDateError = (responseErrorCodes, state) => (

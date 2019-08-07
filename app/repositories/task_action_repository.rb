@@ -228,7 +228,12 @@ class TaskActionRepository
 
     def return_to_attorney_data(task, _user = nil)
       assignee = task.children.select { |child| child.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
-      attorneys = JudgeTeam.for_judge(task.assigned_to)&.attorneys || []
+
+      judge_team = JudgeTeam.for_judge(task.assigned_to)
+
+      # Include attorneys for all judge teams in list of possible recipients so that judges can send cases to
+      # attorneys who are not on their judge team.
+      attorneys = (judge_team&.attorneys || []) + JudgeTeam.where.not(id: judge_team&.id).map(&:attorneys).flatten
       attorneys |= [assignee] if assignee.present?
       {
         selected: assignee,

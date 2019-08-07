@@ -25,7 +25,7 @@ class HearingDispositionChangeJob < CaseflowJob
       increment_task_count_for(label)
     rescue StandardError => error
       # Rescue from errors so we attempt to change disposition even if we hit individual errors.
-      Raven.capture_exception(error, extra: { task_id: task.id })
+      capture_exception(error: error, extra: { task_id: task.id })
       error_count += 1
     end
 

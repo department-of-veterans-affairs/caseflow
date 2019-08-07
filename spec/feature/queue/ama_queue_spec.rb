@@ -540,7 +540,10 @@ RSpec.feature "AmaQueue", :all_dbs do
 
         click_on veteran_full_name
 
-        click_dropdown(prompt: "Select an action", text: "Return to attorney")
+        click_dropdown(
+          prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+          text: Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.label
+        )
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
         fill_in "taskInstructions", with: "Please fix this"
 
@@ -669,7 +672,10 @@ RSpec.feature "AmaQueue", :all_dbs do
 
         click_on veteran_full_name
 
-        click_dropdown(prompt: "Select an action", text: "Return to attorney")
+        click_dropdown(
+          prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+          text: Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.label
+        )
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
         fill_in "taskInstructions", with: "Please fix this"
 

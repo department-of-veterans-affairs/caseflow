@@ -4,6 +4,10 @@ require "support/vacols_database_cleaner"
 require "rails_helper"
 
 RSpec.feature "Task queue", :all_dbs do
+  let!(:vlj_support_staffer) { create(:user) }
+
+  before { OrganizationsUser.add_user_to_organization(vlj_support_staffer, Colocated.singleton) }
+
   context "attorney user with assigned tasks" do
     let(:attorney_user) { create(:user) }
 
@@ -502,12 +506,9 @@ RSpec.feature "Task queue", :all_dbs do
     let!(:attorney) { create(:user) }
     let!(:staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
     let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
-    let!(:vlj_support_staffer) { create(:user) }
     let!(:judgeteam) { JudgeTeam.create_for_judge(attorney) }
 
     before do
-      OrganizationsUser.add_user_to_organization(vlj_support_staffer, Colocated.singleton)
-      OrganizationsUser.add_user_to_organization(vlj_support_staffer, judgeteam)
       User.authenticate!(user: vlj_support_staffer)
     end
 
@@ -542,16 +543,16 @@ RSpec.feature "Task queue", :all_dbs do
     end
   end
 
-  describe "VLJ support staff schedule hearing action" do
+  describe "Hearing management schedule hearing action" do
     let(:attorney) { create(:user) }
     let(:vacols_case) { create(:case) }
     let!(:staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
     let(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: vacols_case) }
-    let!(:vlj_support_staffer) { create(:user) }
+    let!(:hearings_management_user) { create(:user) }
 
     before do
-      OrganizationsUser.add_user_to_organization(vlj_support_staffer, Colocated.singleton)
-      User.authenticate!(user: vlj_support_staffer)
+      OrganizationsUser.add_user_to_organization(hearings_management_user, HearingsManagement.singleton)
+      User.authenticate!(user: hearings_management_user)
     end
 
     context "when a ColocatedTask has been assigned through the Colocated organization to an individual" do
@@ -563,13 +564,13 @@ RSpec.feature "Task queue", :all_dbs do
                                               }], attorney)
       end
 
-      it "the location is updated to 57 when a user assigns a colocated task back to the hearing team" do
+      it "the location is updated to caseflow when a user assigns a colocated task back to the hearing team" do
         visit("/queue/appeals/#{appeal.external_id}")
         find(".Select-control", text: "Select an action…").click
         expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
         find("button", text: "Send case").click
-        expect(page).to have_content("Bob Smith's case has been sent to the Schedule hearing team")
+        expect(page).to have_content("Bob Smith's case has been sent to the Confirm schedule hearing team")
         expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
       end
 

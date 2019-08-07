@@ -213,7 +213,7 @@ class LegacyHearing < ApplicationRecord
   cache_attribute :cached_number_of_documents do
     begin
       number_of_documents
-    rescue Caseflow::Error::EfolderError, VBMS::HTTPError, Caseflow::Error::VBMS, VBMSError
+    rescue Caseflow::Error::EfolderError, VBMS::HTTPError
       nil
     end
   end

@@ -470,7 +470,7 @@ class SeedDB
     app = FactoryBot.create(
       :appeal,
       veteran_file_number: vet.file_number,
-      docket_type: "hearing"
+      docket_type: Constants.AMA_DOCKETS.hearing
     )
 
     # Legacy Hearings can be created here due to hearing_day_full? check
@@ -566,7 +566,7 @@ class SeedDB
       number_of_claimants: 1,
       closest_regional_office: ro_key,
       veteran_file_number: vet.file_number,
-      docket_type: "hearing"
+      docket_type: Constants.AMA_DOCKETS.hearing
     )
   end
 
@@ -613,7 +613,7 @@ class SeedDB
         FactoryBot.build(:claimant, participant_id: "OTHER_CLAIMANT")
       ],
       veteran_file_number: "701305078",
-      docket_type: "direct_review",
+      docket_type: Constants.AMA_DOCKETS.direct_review,
       request_issues: FactoryBot.create_list(:request_issue, 3, :nonrating, notes: notes)
     )
 
@@ -814,7 +814,7 @@ class SeedDB
       associated_judge: judge,
       active_task_assigned_at: assigned_at,
       veteran_file_number: Generators::Random.unique_ssn,
-      docket_type: "direct_review",
+      docket_type: Constants.AMA_DOCKETS.direct_review,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 2, contested_issue_description: description, notes: notes
@@ -847,7 +847,7 @@ class SeedDB
     FactoryBot.create(:attorney_case_review, task_id: child.id)
   end
 
-  def create_task_at_colocated(appeal, judge, attorney, trait = Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym)
+  def create_task_at_colocated(appeal, judge, attorney, trait = ColocatedTask.actions_assigned_to_colocated.sample.to_sym)
     parent = FactoryBot.create(
       :ama_judge_decision_review_task,
       :on_hold,
@@ -867,23 +867,21 @@ class SeedDB
 
     org_task_args = { appeal: appeal,
                       parent: atty_task,
-                      assigned_by: attorney,
-                      assigned_to: Colocated.singleton }
-    FactoryBot.create(:ama_colocated_task, :on_hold, trait, org_task_args)
+                      assigned_by: attorney }
+    FactoryBot.create(:ama_colocated_task, trait, org_task_args)
   end
 
   def create_colocated_legacy_tasks(attorney)
     [
       { vacols_id: "2096907", trait: :schedule_hearing },
       { vacols_id: "2226048", trait: :translation },
-      { vacols_id: "2249056", trait: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym },
-      { vacols_id: "2306397", trait: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym },
-      { vacols_id: "2657227", trait: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym }
+      { vacols_id: "2249056", trait: ColocatedTask.actions_assigned_to_colocated.sample.to_sym },
+      { vacols_id: "2306397", trait: ColocatedTask.actions_assigned_to_colocated.sample.to_sym },
+      { vacols_id: "2657227", trait: ColocatedTask.actions_assigned_to_colocated.sample.to_sym }
     ].each do |attrs|
       org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
-                        assigned_by: attorney,
-                        assigned_to: Colocated.singleton }
-      FactoryBot.create(:colocated_task, :on_hold, attrs[:trait], org_task_args)
+                        assigned_by: attorney }
+      FactoryBot.create(:colocated_task, attrs[:trait], org_task_args)
     end
   end
 
@@ -920,7 +918,7 @@ class SeedDB
       :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: vet.file_number,
-      docket_type: "direct_review",
+      docket_type: Constants.AMA_DOCKETS.direct_review,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 1, :nonrating, notes: notes
@@ -972,7 +970,7 @@ class SeedDB
       :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: vet.file_number,
-      docket_type: "hearing",
+      docket_type: Constants.AMA_DOCKETS.hearing,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 1, :nonrating, notes: notes
@@ -1185,7 +1183,7 @@ class SeedDB
       :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: "808415990",
-      docket_type: "hearing",
+      docket_type: Constants.AMA_DOCKETS.hearing,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 1, contested_issue_description: description, notes: notes
@@ -1196,7 +1194,7 @@ class SeedDB
       :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: "992190636",
-      docket_type: "hearing",
+      docket_type: Constants.AMA_DOCKETS.hearing,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 8, contested_issue_description: description, notes: notes
@@ -1245,7 +1243,9 @@ class SeedDB
 
     create_intake_users
 
+    # Active Jobs which populate tables based on seed data
     FetchHearingLocationsForVeteransJob.perform_now
+    UpdateCachedAppealsAttributesJob.perform_now
 
     return if Rails.env.development?
 
