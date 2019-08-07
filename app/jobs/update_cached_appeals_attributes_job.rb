@@ -22,9 +22,10 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def cache_ama_appeals
-    appeals_ids_to_cache = Task.open.where(appeal_type: Appeal.name).pluck(:appeal_id).uniq
+    appeals = Appeal.find(Task.open.where(appeal_type: Appeal.name).pluck(:appeal_id).uniq)
+    veteran_names_to_cache = veteran_names_for_appeals(appeals)
 
-    appeals_to_cache = Appeal.find(appeals_ids_to_cache).map do |appeal|
+    appeals_to_cache = appeals.map do |appeal|
       regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
       {
         appeal_id: appeal.id,
@@ -32,7 +33,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         docket_number: appeal.docket_number,
         appeal_type: Appeal.name,
         closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
-        veteran_name: "#{appeal.veteran.last_name.split(' ').last}, #{appeal.veteran.first_name.split(' ').first}"
+        veteran_name: veteran_names_to_cache[appeal.veteran_file_number]
       }
     end
 
@@ -119,5 +120,13 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     slack_service.send_notification(msg)
 
     record_runtime(start_time)
+  end
+
+  private
+
+  def veteran_names_for_appeals(appeals)
+    Veteran.where(file_number: appeals.pluck(:veteran_file_number)).map do |veteran|
+      [veteran.file_number, "#{veteran.last_name.split(' ').last}, #{veteran.first_name.split(' ').first}"]
+    end.to_h
   end
 end
