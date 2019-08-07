@@ -5,9 +5,9 @@ require "rails_helper"
 
 RSpec.describe Tasks::PlaceHoldController, :postgres, type: :controller do
   describe "POST tasks/:id/place_hold" do
-    let(:user) { FactoryBot.create(:user) }
+    let(:user) { create(:user) }
 
-    let(:parent) { FactoryBot.create(:generic_task) }
+    let(:parent) { create(:generic_task) }
     let(:parent_id) { parent.id }
     let(:days_on_hold) { 30 }
     let(:instructions) { "Placing task on hold for 30 days" }

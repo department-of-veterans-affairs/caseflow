@@ -4,10 +4,10 @@ require "support/vacols_database_cleaner"
 require "rails_helper"
 
 describe Distribution, :all_dbs do
-  let(:judge) { FactoryBot.create(:user) }
+  let(:judge) { create(:user) }
   let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
   let(:member_count) { 5 }
-  let(:attorneys) { FactoryBot.create_list(:user, member_count) }
+  let(:attorneys) { create_list(:user, member_count) }
   let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge.css_id) }
 
   before do
@@ -19,8 +19,8 @@ describe Distribution, :all_dbs do
 
     # set up a couple of extra judge teams
     2.times do
-      team = JudgeTeam.create_for_judge(FactoryBot.create(:user))
-      FactoryBot.create_list(:user, 5).each do |attorney|
+      team = JudgeTeam.create_for_judge(create(:user))
+      create_list(:user, 5).each do |attorney|
         OrganizationsUser.add_user_to_organization(attorney, team)
       end
     end
@@ -122,7 +122,7 @@ describe Distribution, :all_dbs do
       (0...6).map do
         create(:appeal,
                :with_post_intake_tasks,
-               docket_type: "direct_review",
+               docket_type: Constants.AMA_DOCKETS.direct_review,
                receipt_date: 11.months.ago,
                target_decision_date: 1.month.from_now)
       end
@@ -132,7 +132,7 @@ describe Distribution, :all_dbs do
       appeal = create(:appeal,
                       :with_post_intake_tasks,
                       :advanced_on_docket_due_to_age,
-                      docket_type: "direct_review",
+                      docket_type: Constants.AMA_DOCKETS.direct_review,
                       receipt_date: 1.month.ago)
       appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: 1.month.ago)
       appeal
@@ -142,7 +142,7 @@ describe Distribution, :all_dbs do
       (0...20).map do
         create(:appeal,
                :with_post_intake_tasks,
-               docket_type: "direct_review",
+               docket_type: Constants.AMA_DOCKETS.direct_review,
                receipt_date: 61.days.ago,
                target_decision_date: 304.days.from_now)
       end
@@ -150,13 +150,17 @@ describe Distribution, :all_dbs do
 
     let!(:evidence_submission_cases) do
       (0...43).map do
-        create(:appeal, :with_post_intake_tasks, docket_type: "evidence_submission")
+        create(:appeal,
+               :with_post_intake_tasks,
+               docket_type: Constants.AMA_DOCKETS.evidence_submission)
       end
     end
 
     let!(:hearing_cases) do
       (0...43).map do
-        create(:appeal, :with_post_intake_tasks, docket_type: "hearing")
+        create(:appeal,
+               :with_post_intake_tasks,
+               docket_type: Constants.AMA_DOCKETS.hearing)
       end
     end
 
@@ -188,10 +192,11 @@ describe Distribution, :all_dbs do
       expect(subject.distributed_cases.where(priority: true, genpop: false).count).to eq(2)
       expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(0)
       expect(subject.distributed_cases.where(priority: false, genpop_query: "any").map(&:docket_index).max).to eq(30)
-      expect(subject.distributed_cases.where(priority: true, docket: "direct_review").count).to eq(1)
+      expect(subject.distributed_cases.where(priority: true,
+                                             docket: Constants.AMA_DOCKETS.direct_review).count).to eq(1)
       expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
-      expect(subject.distributed_cases.where(docket: "direct_review").count).to be >= 3
-      expect(subject.distributed_cases.where(docket: "evidence_submission").count).to eq(2)
+      expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.direct_review).count).to be >= 3
+      expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count).to eq(2)
     end
 
     # context "when the judge is only recieves hearing cases" do
@@ -213,7 +218,7 @@ describe Distribution, :all_dbs do
     end
 
     context "when the judge has an empty team" do
-      let(:judge_wo_attorneys) { FactoryBot.create(:user) }
+      let(:judge_wo_attorneys) { create(:user) }
       let!(:vacols_judge_wo_attorneys) { create(:staff, :judge_role, sdomainid: judge_wo_attorneys.css_id) }
 
       subject { Distribution.create(judge: judge_wo_attorneys) }

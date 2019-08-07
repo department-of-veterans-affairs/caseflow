@@ -50,13 +50,13 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
     end
 
     context "with a hearing and a hearing admin member" do
-      let(:hearing_day) { FactoryBot.create(:hearing_day) }
-      let(:hearing) { FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day) }
+      let(:hearing_day) { create(:hearing_day) }
+      let(:hearing) { create(:hearing, appeal: appeal, hearing_day: hearing_day) }
       let!(:association) do
-        FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
+        create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
       end
       let(:admin_full_name) { "Zagorka Hrenic" }
-      let(:hearing_admin_user) { FactoryBot.create(:user, full_name: admin_full_name, station_id: 101) }
+      let(:hearing_admin_user) { create(:user, full_name: admin_full_name, station_id: 101) }
       let(:instructions_text) { "This is why I want a hearing disposition change!" }
 
       before do
@@ -168,7 +168,7 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
 
       context "when the appellant is represented by a VSO" do
         before do
-          FactoryBot.create(:vso)
+          create(:vso)
           allow_any_instance_of(Appeal).to receive(:representatives) { Representative.all }
         end
 

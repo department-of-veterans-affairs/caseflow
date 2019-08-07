@@ -27,7 +27,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when object is created with a valid assignee but no tab name" do
-      let(:assignee) { FactoryBot.create(:organization) }
+      let(:assignee) { create(:organization) }
       let(:tab_name) { nil }
 
       it "raises an error" do
@@ -36,7 +36,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sort order is invalid" do
-      let(:assignee) { FactoryBot.create(:organization) }
+      let(:assignee) { create(:organization) }
       let(:arguments) { { assignee: assignee, tab_name: tab_name, sort_order: "invalid" } }
 
       it "raises an error" do
@@ -45,7 +45,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when object is created with a valid assignee and a tab name" do
-      let(:assignee) { FactoryBot.create(:organization) }
+      let(:assignee) { create(:organization) }
 
       it "successfully instantiates the object" do
         expect { subject }.to_not raise_error
@@ -54,7 +54,7 @@ describe TaskPager, :all_dbs do
   end
 
   describe ".tasks_for_tab" do
-    let(:assignee) { FactoryBot.create(:organization) }
+    let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:arguments) { { assignee: assignee, tab_name: tab_name } }
 
@@ -72,7 +72,7 @@ describe TaskPager, :all_dbs do
       let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
       let(:task_count) { TaskPager::TASKS_PER_PAGE + 3 }
 
-      before { FactoryBot.create_list(:generic_task, task_count, assigned_to: assignee) }
+      before { create_list(:generic_task, task_count, assigned_to: assignee) }
 
       it "returns the correct number of tasks" do
         expect(subject.count).to eq(task_count)
@@ -81,12 +81,12 @@ describe TaskPager, :all_dbs do
   end
 
   describe ".paged_tasks" do
-    let(:assignee) { FactoryBot.create(:organization) }
+    let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:page) { 1 }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, page: page } }
 
-    before { FactoryBot.create_list(:generic_task, TaskPager::TASKS_PER_PAGE + 1, assigned_to: assignee) }
+    before { create_list(:generic_task, TaskPager::TASKS_PER_PAGE + 1, assigned_to: assignee) }
 
     subject { TaskPager.new(arguments).paged_tasks }
 
@@ -117,11 +117,11 @@ describe TaskPager, :all_dbs do
     let(:task_pager) { TaskPager.new(arguments) }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, sort_by: sort_by } }
     let(:sort_by) { nil }
-    let(:assignee) { FactoryBot.create(:organization) }
+    let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:tasks) { task_pager.tasks_for_tab }
 
-    let!(:created_tasks) { FactoryBot.create_list(:generic_task, 14, assigned_to: assignee) }
+    let!(:created_tasks) { create_list(:generic_task, 14, assigned_to: assignee) }
 
     subject { task_pager.sorted_tasks(tasks) }
 
@@ -162,8 +162,8 @@ describe TaskPager, :all_dbs do
       end
     end
 
-    context "when sorting by days on hold" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN }
+    context "when sorting by days waiting" do
+      let(:sort_by) { Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN }
 
       before do
         created_tasks.each do |task|
@@ -196,11 +196,108 @@ describe TaskPager, :all_dbs do
 
     context "when sorting by task type" do
       let(:sort_by) { Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN }
-      let!(:created_tasks) { FactoryBot.create_list(:colocated_task, 14, assigned_to: assignee) }
+      let!(:created_tasks) { create_list(:colocated_task, 14, assigned_to: assignee) }
 
       it "sorts ColocatedTasks by action and created_at" do
         expected_order = created_tasks.sort_by { |task| [task.action, task.created_at] }
         expect(subject.map(&:id)).to eq(expected_order.map(&:id))
+      end
+    end
+
+    context "when sorting by days on hold" do
+      let(:sort_by) { Constants.QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN }
+
+      before do
+        created_tasks.each do |task|
+          # Update each task to be place on hold at some time in the past 30 days.
+          task.update!(placed_on_hold_at: rand(30 * 24 * 60).minutes.ago)
+        end
+      end
+
+      it "sorts tasks by placed_on_hold_at value" do
+        expected_order = created_tasks.sort_by(&:placed_on_hold_at)
+        expect(subject.map(&:id)).to eq(expected_order.map(&:id))
+      end
+    end
+
+    context "when sorting by docket number column" do
+      let(:sort_by) { Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN }
+
+      before do
+        created_tasks.each do |task|
+          create(:cached_appeal, appeal_id: task.appeal_id, appeal_type: task.appeal_type)
+        end
+      end
+
+      it "sorts using ascending order by default" do
+        expected_order = CachedAppeal.all.sort_by(&:docket_number)
+        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+      end
+    end
+
+    context "when sorting by closest regional office column" do
+      let(:sort_by) { Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN }
+
+      before do
+        regional_offices = RegionalOffice::ROS.shuffle
+        created_tasks.each_with_index do |task, index|
+          ro_key = regional_offices[index]
+          ro_city = RegionalOffice::CITIES[ro_key][:city]
+          task.appeal.update!(closest_regional_office: ro_key)
+          create(:cached_appeal, appeal_id: task.appeal_id, closest_regional_office_city: ro_city)
+        end
+      end
+
+      it "sorts by regional office city" do
+        expected_order = created_tasks.sort_by do |task|
+          RegionalOffice::CITIES[task.appeal.closest_regional_office][:city]
+        end
+        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+      end
+    end
+  end
+
+  describe ".filtered_tasks" do
+    let(:assignee) { create(:organization) }
+    let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
+    let(:arguments) { { assignee: assignee, tab_name: tab_name, filters: filters } }
+
+    let(:task_pager) { TaskPager.new(arguments) }
+    subject { task_pager.filtered_tasks }
+
+    context "when there are a variety of task assigned to the current organization" do
+      let!(:privacy_act_tasks) { create_list(:privacy_act_task, 3, assigned_to: assignee) }
+      let!(:foia_tasks) { create_list(:foia_task, 5, assigned_to: assignee) }
+      let!(:track_veteran_tasks) { create_list(:track_veteran_task, 7, assigned_to: assignee) }
+      let!(:translation_tasks) { create_list(:translation_task, 11, assigned_to: assignee) }
+
+      context "when filters is an empty array" do
+        let(:filters) { [] }
+
+        it "returns the same set of tasks for the filtered and unfiltered set" do
+          expect(subject.map(&:id)).to match_array(task_pager.tasks_for_tab.map(&:id))
+        end
+      end
+
+      context "when filter includes TranslationTasks" do
+        let(:filters) { ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{TranslationTask.name}"] }
+
+        it "returns only translation tasks assigned to the current organization" do
+          expect(subject.map(&:id)).to_not match_array(task_pager.tasks_for_tab.map(&:id))
+          expect(subject.map(&:type).uniq).to eq([TranslationTask.name])
+          expect(subject.length).to eq(translation_tasks.count)
+        end
+      end
+
+      context "when filter includes TranslationTasks and FoiaTasks" do
+        let(:filters) do
+          ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{TranslationTask.name},#{FoiaTask.name}"]
+        end
+
+        it "returns all translation and FOIA tasks assigned to the current organization" do
+          expect(subject.map(&:type).uniq).to match_array([TranslationTask.name, FoiaTask.name])
+          expect(subject.length).to eq(translation_tasks.count + foia_tasks.count)
+        end
       end
     end
   end

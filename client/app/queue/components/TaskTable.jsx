@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 /**
  * Base class for all task tables in Caseflow. Used primarily throughout Queue but also used
  * in a few other places. Task tables can:
@@ -11,6 +13,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import pluralize from 'pluralize';
 import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
 
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
@@ -51,6 +54,7 @@ export const docketNumberColumn = (tasks, requireDasRecord) => {
     anyFiltersAreSet: true,
     label: 'Filter by docket name',
     valueName: 'docketName',
+    backendCanSort: true,
     valueFunction: (task) => {
       if (!hasDASRecord(task, requireDasRecord)) {
         return null;
@@ -124,6 +128,7 @@ export const regionalOfficeColumn = (tasks) => {
     columnName: 'closestRegionalOffice.location_hash.city',
     anyFiltersAreSet: true,
     label: 'Filter by regional office',
+    backendCanSort: true,
     valueFunction: (task) => {
       return regionalOfficeCity(task, true);
     },
@@ -205,7 +210,7 @@ export const readerLinkColumn = (requireDasRecord, includeNewDocsIcon) => {
 export const daysWaitingColumn = (requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
-    name: QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN,
+    name: QUEUE_CONFIG.DAYS_WAITING_COLUMN,
     span: collapseColumn(requireDasRecord),
     tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
     align: 'center',
@@ -220,6 +225,25 @@ export const daysWaitingColumn = (requireDasRecord) => {
     backendCanSort: true,
     getSortValue: (task) => moment().startOf('day').
       diff(moment(task.assignedOn), 'days')
+  };
+};
+
+export const daysOnHoldColumn = (requireDasRecord) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,
+    name: QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN,
+    span: collapseColumn(requireDasRecord),
+    tooltip: <React.Fragment>Calendar days since <br /> this case was placed on hold</React.Fragment>,
+    align: 'center',
+    valueFunction: (task) => {
+      return <React.Fragment>
+        <OnHoldLabel task={task} />
+        <ContinuousProgressBar limit={task.onHoldDuration} level={moment().startOf('day').
+          diff(task.placedOnHoldAt, 'days')} />
+      </React.Fragment>;
+    },
+    backendCanSort: true,
+    getSortValue: (task) => numDaysOnHold(task)
   };
 };
 
@@ -336,19 +360,9 @@ export class TaskTableUnconnected extends React.PureComponent {
     return this.props.includeDaysWaiting ? daysWaitingColumn(this.props.requireDasRecord) : null;
   }
 
-  caseDaysOnHoldColumn = () => (this.props.includeDaysOnHold ? {
-    header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,
-    name: QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN,
-    align: 'center',
-    valueFunction: (task) => {
-      return <React.Fragment>
-        <OnHoldLabel task={task} />
-        <ContinuousProgressBar limit={task.onHoldDuration} level={moment().startOf('day').
-          diff(task.placedOnHoldAt, 'days')} />
-      </React.Fragment>;
-    },
-    getSortValue: (task) => numDaysOnHold(task)
-  } : null)
+  caseDaysOnHoldColumn = () => {
+    return this.props.includeDaysOnHold ? daysOnHoldColumn(this.props.requireDasRecord) : null;
+  }
 
   completedDateColumn = () => {
     return this.props.includeCompletedDate ? {
@@ -425,6 +439,36 @@ export class TaskTableUnconnected extends React.PureComponent {
     rowClassNames={(task) =>
       this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />;
 }
+
+TaskTableUnconnected.propTypes = {
+  isTaskAssignedToUserSelected: PropTypes.object,
+  userId: PropTypes.number,
+  requireDasRecord: PropTypes.bool,
+  includeHearingBadge: PropTypes.bool,
+  includeSelect: PropTypes.bool,
+  setSelectionOfTaskOfUser: PropTypes.func,
+  includeDetailsLink: PropTypes.bool,
+  tasks: PropTypes.array,
+  userRole: PropTypes.string,
+  includeTask: PropTypes.bool,
+  includeDocumentId: PropTypes.bool,
+  includeType: PropTypes.bool,
+  includeAssignedTo: PropTypes.bool,
+  includeDocketNumber: PropTypes.bool,
+  includeIssueCount: PropTypes.bool,
+  includeDueDate: PropTypes.bool,
+  includeDaysWaiting: PropTypes.bool,
+  includeDaysOnHold: PropTypes.bool,
+  includeCompletedDate: PropTypes.bool,
+  includeCompletedToName: PropTypes.bool,
+  userIsVsoEmployee: PropTypes.bool,
+  includeReaderLink: PropTypes.bool,
+  includeNewDocsIcon: PropTypes.bool,
+  includeRegionalOffice: PropTypes.bool,
+  customColumns: PropTypes.array,
+  defaultSortIdx: PropTypes.number,
+  getKeyForRow: PropTypes.func
+};
 
 const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,

@@ -20,9 +20,9 @@ describe HearingDayRange, :all_dbs do
 
     context "load Central Office days for a range date" do
       let!(:hearings) do
-        [FactoryBot.create(:hearing_day, scheduled_for: Time.zone.today),
-         FactoryBot.create(:hearing_day, scheduled_for: Time.zone.today + 1.day),
-         FactoryBot.create(:hearing_day, scheduled_for: Time.zone.today + 2.days)]
+        [create(:hearing_day, scheduled_for: Time.zone.today),
+         create(:hearing_day, scheduled_for: Time.zone.today + 1.day),
+         create(:hearing_day, scheduled_for: Time.zone.today + 2.days)]
       end
 
       subject do
@@ -36,22 +36,22 @@ describe HearingDayRange, :all_dbs do
 
     context "Video Hearing parent and child rows for a date range" do
       let(:vacols_case) do
-        FactoryBot.create(
+        create(
           :case,
-          folder: FactoryBot.create(:folder, tinum: "docket-number"),
+          folder: create(:folder, tinum: "docket-number"),
           bfregoff: "RO13",
           bfcurloc: "57"
         )
       end
       let(:appeal) do
-        FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
+        create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
       end
-      let!(:staff) { FactoryBot.create(:staff, stafkey: "RO13", stc2: 2, stc3: 3, stc4: 4) }
+      let!(:staff) { create(:staff, stafkey: "RO13", stc2: 2, stc3: 3, stc4: 4) }
       let!(:hearing_day) do
-        FactoryBot.create(:hearing_day, request_type: "V", regional_office: "RO13", scheduled_for: Time.zone.today)
+        create(:hearing_day, request_type: "V", regional_office: "RO13", scheduled_for: Time.zone.today)
       end
       let!(:hearing) do
-        FactoryBot.create(:case_hearing, folder_nr: appeal.vacols_id, vdkey: hearing_day.id)
+        create(:case_hearing, folder_nr: appeal.vacols_id, vdkey: hearing_day.id)
       end
 
       context "get parent and children structure" do
@@ -73,23 +73,23 @@ describe HearingDayRange, :all_dbs do
 
     context "Video Hearings returns video hearings that are not postponed or cancelled" do
       let(:vacols_case) do
-        FactoryBot.create(
+        create(
           :case,
-          folder: FactoryBot.create(:folder, tinum: "docket-number"),
+          folder: create(:folder, tinum: "docket-number"),
           bfregoff: "RO13",
           bfcurloc: "57",
           bfdocind: HearingDay::REQUEST_TYPES[:video]
         )
       end
       let(:appeal) do
-        FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
+        create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
       end
-      let!(:staff) { FactoryBot.create(:staff, stafkey: "RO13", stc2: 2, stc3: 3, stc4: 4) }
+      let!(:staff) { create(:staff, stafkey: "RO13", stc2: 2, stc3: 3, stc4: 4) }
       let!(:hearing) do
-        FactoryBot.create(:case_hearing, folder_nr: appeal.vacols_id)
+        create(:case_hearing, folder_nr: appeal.vacols_id)
       end
       let(:vacols_case2) do
-        FactoryBot.create(
+        create(
           :case,
           bfregoff: "RO13",
           bfcurloc: "57",
@@ -97,10 +97,10 @@ describe HearingDayRange, :all_dbs do
         )
       end
       let(:appeal2) do
-        FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: vacols_case2)
+        create(:legacy_appeal, :with_veteran, vacols_case: vacols_case2)
       end
       let!(:hearing2) do
-        FactoryBot.create(
+        create(
           :case_hearing, :disposition_postponed, folder_nr: appeal2.vacols_id, vdkey: hearing.vdkey
         )
       end
@@ -124,32 +124,32 @@ describe HearingDayRange, :all_dbs do
 
       context "When there are multiple hearings and multiple days" do
         let(:appeal_today) do
-          FactoryBot.create(
-            :legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)
+          create(
+            :legacy_appeal, :with_veteran, vacols_case: create(:case)
           )
         end
         let!(:second_hearing_today) do
-          FactoryBot.create(:case_hearing, vdkey: hearing.vdkey, folder_nr: appeal_today.vacols_id)
+          create(:case_hearing, vdkey: hearing.vdkey, folder_nr: appeal_today.vacols_id)
         end
         let(:appeal_tomorrow) do
-          FactoryBot.create(
-            :legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)
+          create(
+            :legacy_appeal, :with_veteran, vacols_case: create(:case)
           )
         end
         let!(:hearing_tomorrow) do
-          FactoryBot.create(
+          create(
             :case_hearing, hearing_date: Time.zone.tomorrow, folder_nr: appeal_tomorrow.vacols_id
           )
         end
         let!(:ama_hearing_day) do
-          FactoryBot.create(:hearing_day,
-                            request_type: HearingDay::REQUEST_TYPES[:video],
-                            scheduled_for: Time.zone.yesterday,
-                            regional_office: staff.stafkey)
+          create(:hearing_day,
+                 request_type: HearingDay::REQUEST_TYPES[:video],
+                 scheduled_for: Time.zone.yesterday,
+                 regional_office: staff.stafkey)
         end
-        let!(:ama_appeal) { FactoryBot.create(:appeal) }
+        let!(:ama_appeal) { create(:appeal) }
         let!(:ama_hearing) do
-          FactoryBot.create(:hearing, :with_tasks, hearing_day: ama_hearing_day, appeal: ama_appeal)
+          create(:hearing, :with_tasks, hearing_day: ama_hearing_day, appeal: ama_appeal)
         end
 
         it "returns hearings are mapped to days" do
@@ -176,19 +176,19 @@ describe HearingDayRange, :all_dbs do
 
     context "Central Office parent and child rows for a date range" do
       let(:vacols_case) do
-        FactoryBot.create(
+        create(
           :case,
-          folder: FactoryBot.create(:folder, tinum: "docket-number"),
+          folder: create(:folder, tinum: "docket-number"),
           bfregoff: "RO04",
           bfcurloc: "57"
         )
       end
       let(:appeal) do
-        FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
+        create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
       end
-      let!(:staff) { FactoryBot.create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
+      let!(:staff) { create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
       let(:hearing) do
-        FactoryBot.create(:case_hearing, hearing_type: HearingDay::REQUEST_TYPES[:central], folder_nr: appeal.vacols_id)
+        create(:case_hearing, hearing_type: HearingDay::REQUEST_TYPES[:central], folder_nr: appeal.vacols_id)
       end
 
       context "get parent and children structure" do

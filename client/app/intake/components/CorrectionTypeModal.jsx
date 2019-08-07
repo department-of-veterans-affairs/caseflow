@@ -1,10 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-
-import { correctIssue } from '../actions/addIssues';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 import { INTAKE_CORRECTION_TYPE_MODAL_TITLE, INTAKE_CORRECTION_TYPE_MODAL_COPY } from '../../../COPY.json';
@@ -30,33 +26,47 @@ class CorrectionTypeModal extends React.Component {
     this.setState({ correctionType });
   }
 
+  handleSubmit = () => {
+    const { correctionType } = this.state;
+
+    this.props.onSubmit({ correctionType });
+  };
+
+  getModalButtons() {
+    const btns = [
+      {
+        classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
+        name: this.props.cancelText,
+        onClick: this.props.onCancel
+      },
+      {
+        classNames: ['usa-button', 'add-issue', 'correction-type-submit'],
+        name: this.props.submitText,
+        onClick: this.handleSubmit,
+        disabled: !this.state.correctionType
+      }
+    ];
+
+    if (this.props.onSkip) {
+      btns.push({
+        classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
+        name: this.props.skipText,
+        onClick: this.props.onSkip
+      });
+    }
+
+    return btns;
+  }
+
   render() {
-    const { issueIndex, cancelText, onCancel, onClose, submitText } = this.props;
+    const { onCancel } = this.props;
 
     return (
       <div className="intake-correction-type">
         <Modal
-          buttons={[
-            {
-              classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
-              name: cancelText || 'Cancel',
-              onClick: onCancel
-            },
-            {
-              classNames: ['usa-button-red', 'correction-type-submit'],
-              name: submitText || 'Correct Issue',
-              disabled: !this.state.correctionType,
-              onClick: () => {
-                this.props.correctIssue({
-                  index: issueIndex,
-                  correctionType: this.state.correctionType
-                });
-                onClose();
-              }
-            }
-          ]}
+          buttons={this.getModalButtons()}
           visible
-          closeHandler={onClose}
+          closeHandler={onCancel}
           title={INTAKE_CORRECTION_TYPE_MODAL_TITLE}
         >
           <div>
@@ -65,7 +75,6 @@ class CorrectionTypeModal extends React.Component {
             <RadioField
               vertical
               required
-              // label="Select Correction Type"
               hideLabel
               name="correctionType"
               options={correctionTypeOptions}
@@ -81,19 +90,16 @@ class CorrectionTypeModal extends React.Component {
 
 CorrectionTypeModal.propTypes = {
   onCancel: PropTypes.func,
-  onClose: PropTypes.func,
+  onSubmit: PropTypes.func,
   cancelText: PropTypes.string,
   submitText: PropTypes.string,
   issueIndex: PropTypes.number
 };
 
-export default connect(
-  null,
-  (dispatch) =>
-    bindActionCreators(
-      {
-        correctIssue
-      },
-      dispatch
-    )
-)(CorrectionTypeModal);
+CorrectionTypeModal.defaultProps = {
+  submitText: 'Next',
+  cancelText: 'Cancel',
+  skipText: 'None of these match, see more options'
+};
+
+export default CorrectionTypeModal;

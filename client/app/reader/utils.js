@@ -133,6 +133,7 @@ export const getHearingWorksheetLink = (hearings) => {
         return <div>
           <a target="_blank"
             href={`/hearings/worksheet/print?keep_open=true&hearing_ids=${hearing.external_id}`}
+            rel="noopener noreferrer"
             key={key}>Hearing Worksheet</a>
         </div>;
       })}

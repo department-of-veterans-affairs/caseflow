@@ -45,14 +45,14 @@ describe TaskActionRepository, :all_dbs do
   end
 
   describe "#return_to_attorney_data" do
-    let(:attorney) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Janet Avilez") }
-    let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
-    let(:judge) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
-    let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id) }
+    let(:attorney) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Janet Avilez") }
+    let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+    let(:judge) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
+    let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge.css_id) }
     let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
-    let(:judge_task) { FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge) }
+    let(:judge_task) { create(:ama_judge_decision_review_task, assigned_to: judge) }
     let!(:attorney_task) do
-      FactoryBot.create(:ama_attorney_task, assigned_to: attorney, parent: judge_task, appeal: judge_task.appeal)
+      create(:ama_attorney_task, assigned_to: attorney, parent: judge_task, appeal: judge_task.appeal)
     end
 
     subject { TaskActionRepository.return_to_attorney_data(judge_task) }
@@ -71,10 +71,10 @@ describe TaskActionRepository, :all_dbs do
         OrganizationsUser.add_user_to_organization(attorney, judge_team)
 
         attorney_names.each do |attorney_name|
-          another_attorney_on_the_team = FactoryBot.create(
+          another_attorney_on_the_team = create(
             :user, station_id: User::BOARD_STATION_ID, full_name: attorney_name
           )
-          FactoryBot.create(:staff, :attorney_role, user: another_attorney_on_the_team)
+          create(:staff, :attorney_role, user: another_attorney_on_the_team)
           OrganizationsUser.add_user_to_organization(another_attorney_on_the_team, judge_team)
         end
       end
@@ -90,7 +90,7 @@ describe TaskActionRepository, :all_dbs do
   end
 
   describe "#cancel_task_data" do
-    let(:task) { FactoryBot.create(:generic_task, assigned_by_id: assigner_id) }
+    let(:task) { create(:generic_task, assigned_by_id: assigner_id) }
     subject { TaskActionRepository.cancel_task_data(task) }
 
     context "when the task has no assigner" do

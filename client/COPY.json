@@ -127,6 +127,7 @@
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases owned by the %s team that are unassigned to a person.",
   "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to a member of the %s team.",
+  "ORGANIZATIONAL_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold in a %s team member's queue.",
   "ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE": "This queue is empty. You can ",
 
   "TRACKING_TASKS_TAB_TITLE": "All cases",
@@ -518,5 +519,7 @@
   "HEARING_DATE_LOADING": "Finding upcoming hearing dates for this regional office...",
 
   "CLAIM_REVIEW_EDIT_ERROR_MISSING_DECISION_DATE": "VBMS or SHARE: One or more ratings may be locked on this Claim. Please try again in 24 hours.",
-  "CLAIM_REVIEW_EDIT_ERROR_DEFAULT": "There was an error preparing this Review for edit."
+  "CLAIM_REVIEW_EDIT_ERROR_DEFAULT": "There was an error preparing this Review for edit.",
+
+  "UNKNOWN_REGIONAL_OFFICE": "Unknown"
 }

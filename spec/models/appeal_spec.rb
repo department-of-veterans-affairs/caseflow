@@ -488,8 +488,8 @@ describe Appeal, :all_dbs do
       let(:bgs_veteran_record) { { state: bgs_veteran_state } }
       let(:validated_veteran_state) { nil }
       let(:mock_va_dot_gov_address) { { state_code: validated_veteran_state } }
-      let(:veteran) { FactoryBot.create(:veteran, bgs_veteran_record: bgs_veteran_record) }
-      let(:appeal) { FactoryBot.create(:appeal, veteran: veteran) }
+      let(:veteran) { create(:veteran, bgs_veteran_record: bgs_veteran_record) }
+      let(:appeal) { create(:appeal, veteran: veteran) }
 
       context "VADotGovService is responsive" do
         before do
@@ -501,7 +501,7 @@ describe Appeal, :all_dbs do
             let(:validated_veteran_state) { "PR" }
 
             it "creates a translation task" do
-              expect(TranslationTask).to receive(:create_from_root_task).once.with(kind_of(RootTask))
+              expect(TranslationTask).to receive(:create_from_parent).once.with(kind_of(DistributionTask))
 
               subject
             end
@@ -511,7 +511,7 @@ describe Appeal, :all_dbs do
               let(:bgs_veteran_state) { "NV" }
 
               it "prefers the service state code and creates a translation task" do
-                expect(TranslationTask).to receive(:create_from_root_task).once.with(kind_of(RootTask))
+                expect(TranslationTask).to receive(:create_from_parent).once.with(kind_of(DistributionTask))
 
                 subject
               end
@@ -522,9 +522,9 @@ describe Appeal, :all_dbs do
             let(:validated_veteran_state) { "NV" }
 
             it "doesn't create a translation task" do
-              expect(TranslationTask).to_not receive(:create_from_root_task)
-
+              translation_task_count = TranslationTask.all.count
               subject
+              expect(TranslationTask.all.count).to eq(translation_task_count)
             end
           end
         end
@@ -544,9 +544,9 @@ describe Appeal, :all_dbs do
 
         context "the bgs veteran record has no state code" do
           it "doesn't create a translation task" do
-            expect(TranslationTask).to_not receive(:create_from_root_task)
-
+            translation_task_count = TranslationTask.all.count
             subject
+            expect(TranslationTask.all.count).to eq(translation_task_count)
           end
         end
 
@@ -555,7 +555,7 @@ describe Appeal, :all_dbs do
             let(:bgs_veteran_state) { "PI" }
 
             it "creates a translation task" do
-              expect(TranslationTask).to receive(:create_from_root_task).once.with(kind_of(RootTask))
+              expect(TranslationTask).to receive(:create_from_parent).once.with(kind_of(DistributionTask))
 
               subject
             end
@@ -565,9 +565,9 @@ describe Appeal, :all_dbs do
             let(:bgs_veteran_state) { "NV" }
 
             it "doesn't create a translation task" do
-              expect(TranslationTask).to_not receive(:create_from_root_task)
-
+              translation_task_count = TranslationTask.all.count
               subject
+              expect(TranslationTask.all.count).to eq(translation_task_count)
             end
           end
         end
@@ -697,7 +697,7 @@ describe Appeal, :all_dbs do
     subject { appeal.active? }
 
     context "when there are no tasks for an appeal" do
-      let(:appeal) { FactoryBot.create(:appeal) }
+      let(:appeal) { create(:appeal) }
 
       it "should indicate the appeal is not active" do
         expect(subject).to eq(false)
@@ -705,10 +705,10 @@ describe Appeal, :all_dbs do
     end
 
     context "when there are only completed tasks for an appeal" do
-      let(:appeal) { FactoryBot.create(:appeal) }
+      let(:appeal) { create(:appeal) }
 
       before do
-        FactoryBot.create_list(:task, 6, :completed, appeal: appeal)
+        create_list(:task, 6, :completed, appeal: appeal)
       end
 
       it "should indicate the appeal is not active" do
@@ -717,10 +717,10 @@ describe Appeal, :all_dbs do
     end
 
     context "when there are incomplete tasks for an appeal" do
-      let(:appeal) { FactoryBot.create(:appeal) }
+      let(:appeal) { create(:appeal) }
 
       before do
-        FactoryBot.create_list(:task, 3, :in_progress, appeal: appeal)
+        create_list(:task, 3, :in_progress, appeal: appeal)
       end
 
       it "should indicate the appeal is active" do
@@ -763,7 +763,7 @@ describe Appeal, :all_dbs do
       let(:appeal) { create(:appeal) }
 
       before do
-        FactoryBot.create_list(:task, 3, :in_progress, type: RootTask.name, appeal: appeal)
+        create_list(:task, 3, :in_progress, type: RootTask.name, appeal: appeal)
       end
 
       it "appeal is active" do
@@ -853,8 +853,14 @@ describe Appeal, :all_dbs do
   end
 
   context "#set_target_decision_date!" do
-    let(:direct_review_appeal) { create(:appeal, docket_type: "direct_review") }
-    let(:evidence_submission_appeal) { create(:appeal, docket_type: "evidence_submission") }
+    let(:direct_review_appeal) do
+      create(:appeal,
+             docket_type: Constants.AMA_DOCKETS.direct_review)
+    end
+    let(:evidence_submission_appeal) do
+      create(:appeal,
+             docket_type: Constants.AMA_DOCKETS.evidence_submission)
+    end
 
     context "with direct review appeal" do
       subject { direct_review_appeal }
@@ -903,7 +909,7 @@ describe Appeal, :all_dbs do
     end
 
     context "hearing is scheduled" do
-      let(:hearing_task) { FactoryBot.create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
+      let(:hearing_task) { create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
       let(:hearing_scheduled_for) { Time.zone.today + 15.days }
       let(:hearing_day) do
         create(:hearing_day,
@@ -913,7 +919,7 @@ describe Appeal, :all_dbs do
       end
 
       let(:hearing) do
-        FactoryBot.create(
+        create(
           :hearing,
           appeal: appeal,
           disposition: nil,
@@ -922,14 +928,14 @@ describe Appeal, :all_dbs do
         )
       end
       let!(:hearing_task_association) do
-        FactoryBot.create(
+        create(
           :hearing_task_association,
           hearing: hearing,
           hearing_task: hearing_task
         )
       end
       let!(:schedule_hearing_task) do
-        FactoryBot.create(
+        create(
           :schedule_hearing_task,
           :completed,
           parent: hearing_task,
@@ -937,7 +943,7 @@ describe Appeal, :all_dbs do
         )
       end
       let!(:disposition_task) do
-        FactoryBot.create(
+        create(
           :assign_hearing_disposition_task,
           :in_progress,
           parent: hearing_task,
@@ -1265,7 +1271,7 @@ describe Appeal, :all_dbs do
       )
     end
 
-    let(:docket_type) { "direct_review" }
+    let(:docket_type) { Constants.AMA_DOCKETS.direct_review }
     let!(:appeal) do
       create(:appeal,
              receipt_date: receipt_date,
@@ -1505,7 +1511,7 @@ describe Appeal, :all_dbs do
 
     context "has a scheduled hearing" do
       let!(:appeal_root_task) { create(:root_task, :in_progress, appeal: appeal) }
-      let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
+      let!(:hearing_task) { create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
       let(:hearing_scheduled_for) { Time.zone.today + 15.days }
       let!(:hearing_day) do
         create(:hearing_day,
@@ -1515,7 +1521,7 @@ describe Appeal, :all_dbs do
       end
 
       let!(:hearing) do
-        FactoryBot.create(
+        create(
           :hearing,
           appeal: appeal,
           disposition: nil,
@@ -1524,14 +1530,14 @@ describe Appeal, :all_dbs do
         )
       end
       let!(:hearing_task_association) do
-        FactoryBot.create(
+        create(
           :hearing_task_association,
           hearing: hearing,
           hearing_task: hearing_task
         )
       end
       let!(:schedule_hearing_task) do
-        FactoryBot.create(
+        create(
           :schedule_hearing_task,
           :completed,
           parent: hearing_task,
@@ -1539,7 +1545,7 @@ describe Appeal, :all_dbs do
         )
       end
       let!(:disposition_task) do
-        FactoryBot.create(
+        create(
           :assign_hearing_disposition_task,
           :in_progress,
           parent: hearing_task,

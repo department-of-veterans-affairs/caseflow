@@ -4,22 +4,22 @@ require "support/vacols_database_cleaner"
 require "rails_helper"
 
 RSpec.feature "ColocatedTask", :all_dbs do
-  let(:vlj_support_staff) { FactoryBot.create(:user) }
+  let(:vlj_support_staff) { create(:user) }
 
   before { OrganizationsUser.add_user_to_organization(vlj_support_staff, Colocated.singleton) }
 
   describe "attorney assigns task to vlj support staff, vlj returns it to attorney after completion" do
-    let(:judge_user) { FactoryBot.create(:user) }
-    let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+    let(:judge_user) { create(:user) }
+    let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
 
-    let(:attorney_user) { FactoryBot.create(:user) }
-    let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+    let(:attorney_user) { create(:user) }
+    let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
-    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:root_task) { create(:root_task) }
     let(:appeal) { root_task.appeal }
 
     let!(:atty_task) do
-      FactoryBot.create(
+      create(
         :ama_attorney_task,
         appeal: appeal,
         parent: root_task,
@@ -83,18 +83,17 @@ RSpec.feature "ColocatedTask", :all_dbs do
   end
 
   describe "vlj support staff places the task on hold" do
-    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:root_task) { create(:root_task) }
     let(:appeal) { root_task.appeal }
     let(:veteran_name) { appeal.veteran.name.formatted(:readable_full) }
 
     context "when ColocatedTask is in progress" do
       let(:hold_duration_days) { 15 }
       let!(:colocated_task) do
-        FactoryBot.create(
+        create(
           :ama_colocated_task,
           appeal: appeal,
-          parent: root_task,
-          assigned_to: Colocated.singleton
+          parent: root_task
         )
       end
       let(:individual_task) { colocated_task.children.first }
@@ -139,11 +138,10 @@ RSpec.feature "ColocatedTask", :all_dbs do
       let(:new_hold_duration_days) { 60 }
 
       let(:colocated_org_task) do
-        FactoryBot.create(
+        create(
           :ama_colocated_task,
           appeal: appeal,
-          parent: root_task,
-          assigned_to: Colocated.singleton
+          parent: root_task
         )
       end
       let(:colocated_individual_task) { colocated_org_task.children.first }
@@ -193,11 +191,10 @@ RSpec.feature "ColocatedTask", :all_dbs do
       let(:new_hold_duration_days) { 45 }
 
       let(:colocated_org_task) do
-        FactoryBot.create(
+        create(
           :ama_colocated_task,
           appeal: appeal,
-          parent: root_task,
-          assigned_to: Colocated.singleton
+          parent: root_task
         )
       end
       let(:colocated_individual_task) { colocated_org_task.children.first }
@@ -248,60 +245,20 @@ RSpec.feature "ColocatedTask", :all_dbs do
     end
   end
 
-  describe "translation task for AMA appeal" do
-    let(:root_task) { FactoryBot.create(:root_task) }
+  describe "vlj support staff changes task type" do
+    let(:root_task) { create(:root_task) }
     let(:appeal) { root_task.appeal }
     let!(:colocated_task) do
       create(
         :ama_colocated_task,
-        :translation,
-        appeal: appeal,
-        parent: root_task,
-        assigned_to: vlj_support_staff,
-        assigned_by: vlj_support_staff
-      )
-    end
-
-    before do
-      # Allow the current user to access the Translation team queue to confirm that the task made it into their queue.
-      OrganizationsUser.add_user_to_organization(vlj_support_staff, Translation.singleton)
-    end
-
-    it "should be able to be sent to the translation team" do
-      # Visit case details page for VLJ support staff.
-      User.authenticate!(user: vlj_support_staff)
-      visit("/queue/appeals/#{appeal.uuid}")
-
-      # Send case to Translation team.
-      expect(TranslationTask.count).to eq 0
-      find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.label).click
-      fill_in("instructions", with: "Please translate some documents")
-      find("button", text: "Submit").click
-
-      # Redirected to personal queue page. Return to attorney succeeds.
-      expect(page).to have_current_path("/queue")
-      expect(page).to have_content(format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, Translation.singleton.name))
-      expect(TranslationTask.count).to eq 1
-
-      # View Translation team queue to confirm the appeal shows up there.
-      visit(Translation.singleton.path)
-      expect(page).to have_content(appeal.veteran.name.formatted(:readable_full))
-    end
-  end
-
-  describe "vlj support staff changes task type" do
-    let(:root_task) { FactoryBot.create(:root_task) }
-    let(:appeal) { root_task.appeal }
-    let!(:colocated_task) do
-      FactoryBot.create(
-        :ama_colocated_task,
-        Constants::CO_LOCATED_ADMIN_ACTIONS.keys.last.to_sym,
+        :other,
         appeal: appeal,
         parent: root_task,
         assigned_to: vlj_support_staff
       )
     end
+
+    let(:new_task_type) { IhpColocatedTask }
 
     it "should update the task type" do
       # Visit case details page for VLJ support staff.
@@ -314,8 +271,6 @@ RSpec.feature "ColocatedTask", :all_dbs do
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h[:label]).click
 
       expect(page).to have_content(COPY::CHANGE_TASK_TYPE_SUBHEAD)
-      opt_idx = rand(Constants::CO_LOCATED_ADMIN_ACTIONS.length - 1)
-      selected_opt_0 = Constants::CO_LOCATED_ADMIN_ACTIONS.values[opt_idx]
 
       # Ensure all admin actions are available
       find(".Select-control", text: "Select an action type").click do
@@ -324,7 +279,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
       end
 
       # Attempt to change task type without including instuctions.
-      find("div", class: "Select-option", text: selected_opt_0).click
+      find("div", class: "Select-option", text: new_task_type.label).click
       find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
       # Instructions field is required
@@ -340,12 +295,12 @@ RSpec.feature "ColocatedTask", :all_dbs do
         format(
           COPY::CHANGE_TASK_TYPE_CONFIRMATION_TITLE,
           Constants::CO_LOCATED_ADMIN_ACTIONS.values.last,
-          selected_opt_0
+          new_task_type.label
         )
       )
 
       # Ensure the task has been updated
-      expect(page).to have_content(format("TASK\n%<label>s", label: selected_opt_0))
+      expect(page).to have_content(format("TASK\n%<label>s", label: new_task_type.label))
       page.find("#currently-active-tasks button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
       expect(page).to have_content(instructions)
     end

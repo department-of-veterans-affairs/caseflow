@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class Api::V3::DecisionReview::HigherLevelReviewsController < ActionController::Base
-  protect_from_forgery with: :null_session
-
+class Api::V3::DecisionReview::HigherLevelReviewsController < Api::ExternalProxyController
   def create
     processor = Api::V3::HigherLevelReviewProcessor.new(params, current_user)
     if processor.errors?
