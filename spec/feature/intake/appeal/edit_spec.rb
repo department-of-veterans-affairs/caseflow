@@ -452,14 +452,6 @@ feature "Appeal Edit issues", :all_dbs do
   end
 
   context "when withdraw decision reviews is enabled" do
-    before do
-      FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
-    end
-
-    after do
-      FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id])
-    end
-
     scenario "remove an issue with dropdown and show alert message" do
       visit "appeals/#{appeal.uuid}/edit/"
       expect(page).to have_content("PTSD denied")

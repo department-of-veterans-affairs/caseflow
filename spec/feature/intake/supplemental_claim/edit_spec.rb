@@ -591,10 +591,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
     context "when withdraw decision reviews is enabled" do
       before do
-        FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
       end
-      after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
 
       scenario "remove an issue with dropdown" do
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
@@ -772,7 +770,6 @@ feature "Supplemental Claim Edit issues", :all_dbs do
           education_org = create(:business_line, name: "Education", url: "education")
           OrganizationsUser.add_user_to_organization(current_user, education_org)
           FeatureToggle.enable!(:decision_reviews)
-          FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
         end
 
         after do

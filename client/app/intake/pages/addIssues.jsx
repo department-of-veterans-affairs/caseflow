@@ -231,6 +231,7 @@ export class AddIssuesPage extends React.Component {
             intakeData={intakeData}
             formType={formType}
             featureToggles={featureToggles}
+            editPage={editPage}
           />
         )
       });
@@ -246,6 +247,7 @@ export class AddIssuesPage extends React.Component {
             intakeData={intakeData}
             formType={formType}
             featureToggles={featureToggles}
+            editPage={editPage}
           />
         )
       });

@@ -15,11 +15,11 @@ export default class IssuesList extends React.Component {
       formType,
       onClickIssueAction,
       withdrawReview,
-      featureToggles
+      featureToggles,
+      editPage
     } = this.props;
 
     const {
-      withdrawDecisionReviews,
       editContentionText
     } = featureToggles;
 
@@ -68,7 +68,7 @@ export default class IssuesList extends React.Component {
                 formType={formType} />
 
               { !_.isEmpty(issueActionOptions) && <div className="issue-action">
-                { withdrawDecisionReviews && <Dropdown
+                { editPage && <Dropdown
                   name={`issue-action-${issue.index}`}
                   label="Actions"
                   hideLabel
@@ -77,13 +77,13 @@ export default class IssuesList extends React.Component {
                   onChange={(option) => onClickIssueAction(issue.index, option)}
                 />
                 }
-                { !withdrawDecisionReviews && <Button
+                {!editPage && <Button
                   onClick={() => onClickIssueAction(issue.index)}
                   classNames={['cf-btn-link', 'remove-issue']}
                 >
                   <i className="fa fa-trash-o" aria-hidden="true"></i><br />Remove
-                </Button>
-                }
+                </Button>}
+
               </div> }
             </div>
             {editContentionText && editableContentionText && <EditContentionTitle

@@ -1159,9 +1159,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
     end
 
     context "when withdraw decision reviews is enabled" do
-      before { FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id]) }
-      after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
-
       scenario "remove an issue with dropdown" do
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
         expect(page).to have_content("PTSD denied")
@@ -1383,7 +1380,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
         education_org = create(:business_line, name: "Education", url: "education")
         OrganizationsUser.add_user_to_organization(current_user, education_org)
         FeatureToggle.enable!(:decision_reviews)
-        FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
       end
 
       after do
@@ -1448,7 +1444,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
     context "when a rating decision text is edited" do
       before do
-        FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
         FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
       end
 
