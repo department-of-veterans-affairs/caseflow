@@ -60,6 +60,10 @@ detectors:
   RepeatedConditional:
     exclude:
       - QueueConfig
+  TooManyInstanceVariables:
+    exclude:
+      - AmaAppealDispatch
+      - LegacyAppealDispatch
   TooManyMethods:
     enabled: false
   TooManyStatements:
