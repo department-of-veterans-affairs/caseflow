@@ -19,10 +19,12 @@ class ContestableIssueGenerator
   attr_reader :review
 
   def contestable_ratings
-    from_ratings.reject do |contestable_issue|
-      from_decision_issues.any? do |potential_duplicate|
-        contestable_issue.rating_issue_reference_id == potential_duplicate.rating_issue_reference_id
-      end
+    from_ratings.reject { |contestable_issue| decision_issue_duplicate_exists?(contestable_issue) }
+  end
+
+  def decision_issue_duplicate_exists?(contestable_issue)
+    from_decision_issues.any? do |potential_duplicate|
+      contestable_issue.rating_issue_reference_id == potential_duplicate.rating_issue_reference_id
     end
   end
 
