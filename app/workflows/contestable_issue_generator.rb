@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 class ContestableIssueGenerator
-  def initialize(review, participant_id)
+  def initialize(review)
     @review = review
-    @participant_id = participant_id
   end
 
   delegate :finalized_decision_issues_before_receipt_date, to: :review
@@ -17,7 +16,7 @@ class ContestableIssueGenerator
 
   private
 
-  attr_reader :review, :participant_id
+  attr_reader :review
 
   def contestable_ratings
     from_ratings.reject do |contestable_issue|
@@ -32,10 +31,10 @@ class ContestableIssueGenerator
   end
 
   def from_ratings
-    return [] unless review.receipt_date
+    return [] unless receipt_date
 
     cached_rating_issues
-      .select { |issue| issue.profile_date && issue.profile_date.to_date < review.receipt_date }
+      .select { |issue| issue.profile_date && issue.profile_date.to_date < receipt_date }
       .map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, review) }
   end
 

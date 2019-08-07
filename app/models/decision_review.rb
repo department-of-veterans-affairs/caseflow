@@ -327,7 +327,7 @@ class DecisionReview < ApplicationRecord
   private
 
   def contestable_issue_generator
-    @contestable_issue_generator ||= ContestableIssueGenerator.new(self, veteran.participant_id)
+    @contestable_issue_generator ||= ContestableIssueGenerator.new(self)
   end
 
   def veteran_invalid_fields

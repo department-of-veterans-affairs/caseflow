@@ -66,7 +66,7 @@ class ClaimReview < DecisionReview
   def finalized_decision_issues_before_receipt_date
     return [] unless receipt_date
 
-    DecisionIssue.where(participant_id: participant_id, benefit_type: benefit_type)
+    DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
       .select(&:finalized?)
       .select do |issue|
         issue.approx_decision_date && issue.approx_decision_date < receipt_date
