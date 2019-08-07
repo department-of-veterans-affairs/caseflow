@@ -643,6 +643,16 @@ class Appeal < DecisionReview
     true
   end
 
+  def finalized_decision_issues_before_receipt_date
+    return [] unless receipt_date
+
+    DecisionIssue.includes(:decision_review).where(participant_id: veteran.participant_id)
+      .select(&:finalized?)
+      .select do |issue|
+        issue.approx_decision_date && issue.approx_decision_date < receipt_date
+      end
+  end
+
   private
 
   def most_recently_assigned_to_label(tasks)
@@ -669,15 +679,5 @@ class Appeal < DecisionReview
         assigned_to: business_line
       )
     end
-  end
-
-  def contestable_decision_issues
-    return [] unless receipt_date
-
-    DecisionIssue.includes(:decision_review).where(participant_id: veteran.participant_id)
-      .select(&:finalized?)
-      .select do |issue|
-        issue.approx_decision_date && issue.approx_decision_date < receipt_date
-      end
   end
 end

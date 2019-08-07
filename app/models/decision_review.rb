@@ -154,6 +154,10 @@ class DecisionReview < ApplicationRecord
     claimant_participant_id && claimant_participant_id != veteran.participant_id
   end
 
+  def finalized_decision_issues_before_receipt_date
+    fail NotImplementedError
+  end
+
   def payee_code
     return nil if claimants.empty?
 
