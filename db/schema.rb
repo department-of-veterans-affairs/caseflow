@@ -161,6 +161,7 @@ ActiveRecord::Schema.define(version: 20190807144959) do
     t.string "case_type"
     t.string "docket_number"
     t.string "docket_type"
+    t.boolean "is_aod"
     t.string "vacols_id"
     t.index ["appeal_id", "appeal_type"], name: "index_cached_appeal_attributes_on_appeal_id_and_appeal_type", unique: true
     t.index ["vacols_id"], name: "index_cached_appeal_attributes_on_vacols_id", unique: true
