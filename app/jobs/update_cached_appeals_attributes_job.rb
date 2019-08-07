@@ -62,12 +62,18 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   def cache_legacy_appeal_vacols_data(legacy_appeals)
     legacy_appeals.pluck(:vacols_id).in_groups_of(BATCH_SIZE, false).each do |vacols_ids|
-      values_to_cache = VACOLS::Folder.where(ticknum: vacols_ids).pluck(:ticknum, :tinum).map do |vacols_folder|
+      values_to_cache = VACOLS::Folder.where(ticknum: vacols_ids)
+        .pluck(:ticknum, :tinum)
+        .map do |vacols_folder|
         { vacols_id: vacols_folder[0], docket_number: vacols_folder[1] }
+      end
+      values_to_cache.each do |value|
+        bfac = VACOLS::Case.where(bfkey: value[:vacols_id]).pluck(:bfac)
+        value[:case_type] = VACOLS::Case::BFAC_TYPE_CACHE_KEY[bfac[0]]
       end
 
       CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:vacols_id],
-                                                                      columns: [:docket_number] }
+                                                                      columns: [:docket_number, :case_type] }
     end
   end
 
