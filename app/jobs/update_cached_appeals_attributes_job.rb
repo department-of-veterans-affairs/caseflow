@@ -63,26 +63,29 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         appeal_type: LegacyAppeal.name,
         vacols_id: appeal.vacols_id,
         docket_type: appeal.docket_name, # "legacy"
-        closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
-        veteran_name: "#{appeal.veteran.last_name.split(' ').last}, #{appeal.veteran.first_name.split(' ').first}"
+        closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE
       }
     end
 
     CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
-                                                                    columns: [
-                                                                      :closest_regional_office_city,
-                                                                      :veteran_name
-                                                                    ] }
+                                                                    columns: [:closest_regional_office_city] }
   end
 
   def cache_legacy_appeal_vacols_data(legacy_appeals)
     legacy_appeals.pluck(:vacols_id).in_groups_of(BATCH_SIZE, false).each do |vacols_ids|
-      values_to_cache = VACOLS::Folder.where(ticknum: vacols_ids).pluck(:ticknum, :tinum).map do |vacols_folder|
-        { vacols_id: vacols_folder[0], docket_number: vacols_folder[1] }
+      vacols_folders = VACOLS::Folder.where(ticknum: vacols_ids).pluck(:ticknum, :tinum, :ticorkey)
+      veteran_names_to_cache = veteran_names_for_vacols_folders(vacols_folders)
+
+      values_to_cache = vacols_folders.map do |vacols_folder|
+        {
+          vacols_id: vacols_folder[0],
+          docket_number: vacols_folder[1],
+          veteran_name: veteran_names_to_cache[vacols_folder[2]]
+        }
       end
 
       CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:vacols_id],
-                                                                      columns: [:docket_number] }
+                                                                      columns: [:docket_number, :veteran_name] }
     end
   end
 
@@ -127,6 +130,13 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def veteran_names_for_appeals(appeals)
     Veteran.where(file_number: appeals.pluck(:veteran_file_number)).map do |veteran|
       [veteran.file_number, "#{veteran.last_name.split(' ').last}, #{veteran.first_name.split(' ').first}"]
+    end.to_h
+  end
+
+  def veteran_names_for_vacols_folders(folders)
+    # folders is an array of [ticknum, tinum, ticorkey] for each folder
+    VACOLS::Correspondent.where(stafkey: folders.map { |folder| folder[2] }).map do |corr|
+      [corr.stafkey, "#{corr.snamel.split(' ').last}, #{corr.snamef.split(' ').first}"]
     end.to_h
   end
 end
