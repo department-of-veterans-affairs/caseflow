@@ -113,9 +113,7 @@ class Api::V3::HigherLevelReviewProcessor
         :legacy_opt_in_approved, :benefit_type
       )
 
-      params[:included].each do |included_item|
-        next unless included_item[:type] == "RequestIssue"
-
+      included_request_issues(params).each do |included_item|
         value = json_api_request_issue_attributes_to_error_or_intake_data_hash(
           included_item[:attributes], benefit_type, legacy_opt_in_approved
         )
@@ -124,6 +122,10 @@ class Api::V3::HigherLevelReviewProcessor
       end
 
       [ActionController::Parameters.new(request_issues: request_issues), errors]
+    end
+
+    def included_request_issues(params)
+      params[:included].select { |included_item| included_item[:type] == "RequestIssue" }
     end
 
     # either converts a JSON:API-shaped request issue to an "intake data hash"
