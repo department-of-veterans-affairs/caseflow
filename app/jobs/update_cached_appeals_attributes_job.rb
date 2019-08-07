@@ -70,10 +70,14 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       values_to_cache.each do |value|
         bfac = VACOLS::Case.where(bfkey: value[:vacols_id]).pluck(:bfac)
         value[:case_type] = VACOLS::Case::BFAC_TYPE_CACHE_KEY[bfac[0]]
+        aod = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD)
+          .where(bfkey: value[:vacols_id])
+          .pluck(:aod)
+        value[:is_aod] = !!aod[0]
       end
 
       CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:vacols_id],
-                                                                      columns: [:docket_number, :case_type] }
+                                                                      columns: [:docket_number, :case_type, :is_aod] }
     end
   end
 
