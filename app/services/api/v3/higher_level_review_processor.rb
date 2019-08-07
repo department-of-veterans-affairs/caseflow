@@ -120,11 +120,7 @@ class Api::V3::HigherLevelReviewProcessor
           included_item[:attributes], benefit_type, legacy_opt_in_approved
         )
 
-        if value.is_a?(Error)
-          errors << value
-        else
-          request_issues << { is_unidentified: false, benefit_type: benefit_type }.merge(value)
-        end
+        (value.is_a?(Error) ? errors : request_issues) << value
       end
 
       [ActionController::Parameters.new(request_issues: request_issues), errors]
