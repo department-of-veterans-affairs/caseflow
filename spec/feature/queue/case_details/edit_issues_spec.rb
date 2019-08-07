@@ -8,6 +8,10 @@ RSpec.feature "Edit Issues", :all_dbs do
     FeatureToggle.enable!(:allow_judge_edit_issues)
   end
 
+after do
+  FeatureToggle.disable!(:allow_judge_edit_issues)
+end
+
   context "for a judge" do
     let(:judge) { create(:user, station_id: User::BOARD_STATION_ID) }
     let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge.css_id) }
