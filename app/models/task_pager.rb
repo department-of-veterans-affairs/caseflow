@@ -7,8 +7,7 @@ class TaskPager
   validate :assignee_is_user_or_organization
   validate :sort_order_is_valid
 
-  attr_accessor :assignee, :tab_name, :page, :sort_by, :sort_order
-  # attr_accessor :filters
+  attr_accessor :assignee, :tab_name, :page, :sort_by, :sort_order, :filters
 
   TASKS_PER_PAGE = 15
 
@@ -18,12 +17,13 @@ class TaskPager
     @page ||= 1
     @sort_by ||= Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN
     @sort_order ||= Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
+    @filters ||= []
 
     fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
   end
 
   def paged_tasks
-    sorted_tasks(tasks_for_tab).page(page).per(TASKS_PER_PAGE)
+    sorted_tasks(filtered_tasks).page(page).per(TASKS_PER_PAGE)
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -76,24 +76,17 @@ class TaskPager
     "and cached_appeal_attributes.appeal_type = tasks.appeal_type"
   end
 
-  # # TODO: Some filters are on other tables that we will need to join to (appeal docket type)
-  # def filtered_tasks(tasks)
-  #   filters&.each do |filter_string|
-  #     filter = Rack::Utils.parse_query(filter_string)
-  #     # TODO: Fail if the filter is not in the correct format
-  #     # TODO: Fail if the column we are filtering on is not in some allowed set of columns.
-  #     tasks = tasks.where(filter["col"] => filter["val"])
-  #   end
-  #
-  #   tasks
-  # end
-
   def task_page_count
     @task_page_count ||= paged_tasks.total_pages
   end
 
   def total_task_count
     @total_task_count ||= tasks_for_tab.count
+  end
+
+  def filtered_tasks
+    where_clause = QueueWhereClauseArgumentsFactory.new(filter_params: filters).arguments
+    where_clause.empty? ? tasks_for_tab : tasks_for_tab.joins(cached_attributes_join_clause).where(*where_clause)
   end
 
   def tasks_for_tab
