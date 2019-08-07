@@ -36,8 +36,8 @@ describe hlrc do
       end
     end
 
-    it "should return ArgumentError when given an empty hash" do
-      expect { hlrc.status_from_errors({}) }.to raise_error(ArgumentError)
+    it "should still return a 422 status if given an empty array" do
+      expect(hlrc.status_from_errors([])).to eq(422)
     end
 
     let(:error_with_403_integer_status) { hlrp.error_from_error_code(:veteran_not_accessible) }
@@ -50,11 +50,7 @@ describe hlrc do
     let(:error_with_nil_status) { hlrp::Error.new(nil, :green, "Green.") }
     let(:error_with_string_that_cant_quite_convert_to_int) { hlrp::Error.new("123abc", :green, "Green.") }
 
-    it "should still return a 422 status if given an empty array" do
-      expect(hlrc.status_from_errors([])).to eq(422)
-    end
-
-    it "should return a properly formatted hash of kwargs for render" do
+    it "should return the correct status" do
       expect(error_with_403_integer_status.status).to eq(403)
       expect(error_with_404_integer_status.status).to eq(404)
 

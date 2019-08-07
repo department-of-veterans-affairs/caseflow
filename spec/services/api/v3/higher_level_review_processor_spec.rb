@@ -774,14 +774,14 @@ describe hlrp, :all_dbs do
   end
 
   context "#errors?" do
-    context "(good input)" do
+    context "good input" do
       subject { hlrp.new(params, user) }
-      it("is false with good input") do
+      it("is false") do
         expect(subject.errors?).to be(false)
       end
     end
 
-    context "(bad input)" do
+    context "bad input" do
       let(:included) do
         [
           {
@@ -793,7 +793,7 @@ describe hlrp, :all_dbs do
         ]
       end
       subject { hlrp.new(params, user) }
-      it("is true with bad input") do
+      it("is true") do
         expect(subject.errors?).to be(true)
       end
     end
@@ -1516,27 +1516,6 @@ describe hlrp, :all_dbs do
         decision_text: decision_text
       )
     end
-  end
-
-  context ".contesting_decision_to_intake_data_hash" do
-  end
-
-  context ".contesting_rating_to_intake_data_hash" do
-  end
-
-  context ".contesting_legacy_to_intake_data_hash" do
-  end
-
-  context ".contesting_categorized_other_to_intake_data_hash" do
-  end
-
-  context ".contesting_uncategorized_other_to_intake_data_hash" do
-  end
-
-  context ".id_or_notes_missing_error" do
-  end
-
-  context ".notes_and_decision_text_are_blank_error" do
   end
 
   context "::StartError" do
