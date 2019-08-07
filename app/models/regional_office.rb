@@ -115,12 +115,6 @@ class RegionalOffice
       (CITIES[regional_office_key][:alternate_locations] || []) << CITIES[regional_office_key][:facility_locator_id]
     end
 
-    def ro_facility_ids_for_state(state_code)
-      CITIES.values.select do |ro|
-        ro[:facility_locator_id].present? && state_code == ro[:state]
-      end.pluck(:facility_locator_id).uniq
-    end
-
     def find_ro_by_facility_id(facility_id)
       CITIES.detect do |regional_office_id, val|
         if val[:facility_locator_id] == facility_id
