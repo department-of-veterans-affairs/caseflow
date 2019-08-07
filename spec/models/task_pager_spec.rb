@@ -240,7 +240,7 @@ describe TaskPager, :all_dbs do
       let(:sort_by) { Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN }
 
       before do
-        regional_offices = RegionalOffice::ROS.shuffle
+        regional_offices = RegionalOffice::ROS.first(65).shuffle
         created_tasks.each_with_index do |task, index|
           ro_key = regional_offices[index]
           ro_city = RegionalOffice::CITIES[ro_key][:city]
