@@ -16,9 +16,6 @@ detectors:
   UncommunicativeVariableName:
     exclude:
       - Address
-  TooManyInstanceVariables:
-    exclude:
-      - Address
   LongParameterList:
     exclude:
       - Address
@@ -64,6 +61,7 @@ detectors:
     exclude:
       - AmaAppealDispatch
       - LegacyAppealDispatch
+      - Address
   TooManyMethods:
     enabled: false
   TooManyStatements:
