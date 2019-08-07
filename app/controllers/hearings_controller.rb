@@ -71,10 +71,6 @@ class HearingsController < HearingsApplicationController
 
   private
 
-  def check_hearing_prep_out_of_service
-    render "out_of_service", layout: "application" if Rails.cache.read("hearing_prep_out_of_service")
-  end
-
   def hearing
     @hearing ||= Hearing.find_hearing_by_uuid_or_vacols_id(hearing_external_id)
   end
