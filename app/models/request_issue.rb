@@ -314,6 +314,12 @@ class RequestIssue < ApplicationRecord
     !rating? && !is_unidentified?
   end
 
+  # Checks if the issue was corrected by another request issue
+  def corrected?
+    corrected_by_request_issue_id.present?
+  end
+
+  # Checks if the issue acts as a corection to another request issue
   def correction?
     !!correction_type
   end
