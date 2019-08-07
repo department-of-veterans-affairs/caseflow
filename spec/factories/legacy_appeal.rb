@@ -6,8 +6,8 @@ FactoryBot.define do
       vacols_case { nil }
     end
 
-    vacols_id { vacols_case.bfkey }
-    vbms_id { vacols_case.bfcorlid }
+    vacols_id { vacols_case&.bfkey }
+    vbms_id { vacols_case&.bfcorlid }
 
     trait :with_veteran do
       after(:create) do |legacy_appeal, evaluator|
