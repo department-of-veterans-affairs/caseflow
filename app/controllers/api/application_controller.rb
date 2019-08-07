@@ -24,6 +24,8 @@ class Api::ApplicationController < ActionController::Base
     }, status: :internal_server_error
   end
 
+  rescue_from BGS::ShareError, VBMS::ClientError, with: :on_external_error
+
   private
 
   # For API calls, we use the system user to make all BGS calls
@@ -55,5 +57,35 @@ class Api::ApplicationController < ActionController::Base
 
   def setup_fakes
     Fakes::Initializer.setup!(Rails.env)
+  end
+
+  def on_external_error(error)
+    if error.ignorable?
+      Rails.logger.error "#{error.message}\n#{error.backtrace.join("\n")}"
+      upstream_transient_error
+    else
+      Raven.capture_exception(error)
+      upstream_known_error(error)
+    end
+  end
+
+  def upstream_transient_error
+    render json: {
+      "errors": [
+        "status": "503",
+        "title": "Service unavailable",
+        "detail": "Upstream service timed out or unavailable to process the request"
+      ]
+    }, status: :service_unavailable
+  end
+
+  def upstream_known_error(error)
+    render json: {
+      "errors": [
+        "status": error.code,
+        "title": "Bad request",
+        "detail": error.body
+      ]
+    }, status: error.code || :bad_request
   end
 end

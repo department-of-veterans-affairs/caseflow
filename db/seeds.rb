@@ -868,7 +868,7 @@ class SeedDB
     org_task_args = { appeal: appeal,
                       parent: atty_task,
                       assigned_by: attorney }
-    FactoryBot.create(:ama_colocated_task, :on_hold, trait, org_task_args)
+    FactoryBot.create(:ama_colocated_task, trait, org_task_args)
   end
 
   def create_colocated_legacy_tasks(attorney)
@@ -881,7 +881,7 @@ class SeedDB
     ].each do |attrs|
       org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
                         assigned_by: attorney }
-      FactoryBot.create(:colocated_task, :on_hold, attrs[:trait], org_task_args)
+      FactoryBot.create(:colocated_task, attrs[:trait], org_task_args)
     end
   end
 
@@ -1243,7 +1243,9 @@ class SeedDB
 
     create_intake_users
 
+    # Active Jobs which populate tables based on seed data
     FetchHearingLocationsForVeteransJob.perform_now
+    UpdateCachedAppealsAttributesJob.perform_now
 
     return if Rails.env.development?
 

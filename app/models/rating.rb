@@ -3,9 +3,23 @@
 class Rating
   include ActiveModel::Model
 
-  class NilRatingProfileListError < StandardError; end
-  class LockedRatingError < StandardError; end
-  class BackfilledRatingError < StandardError; end
+  class NilRatingProfileListError < StandardError
+    def ignorable?
+      true
+    end
+  end
+
+  class LockedRatingError < StandardError
+    def ignorable?
+      true
+    end
+  end
+
+  class BackfilledRatingError < StandardError
+    def ignorable?
+      true
+    end
+  end
 
   # WARNING: profile_date is a misnomer adopted from BGS terminology.
   # It is a datetime, not a date.
