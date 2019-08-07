@@ -258,4 +258,49 @@ describe TaskPager, :all_dbs do
       end
     end
   end
+
+  describe ".filtered_tasks" do
+    let(:assignee) { create(:organization) }
+    let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
+    let(:arguments) { { assignee: assignee, tab_name: tab_name, filters: filters } }
+
+    let(:task_pager) { TaskPager.new(arguments) }
+    subject { task_pager.filtered_tasks }
+
+    context "when there are a variety of task assigned to the current organization" do
+      let!(:privacy_act_tasks) { create_list(:privacy_act_task, 3, assigned_to: assignee) }
+      let!(:foia_tasks) { create_list(:foia_task, 5, assigned_to: assignee) }
+      let!(:track_veteran_tasks) { create_list(:track_veteran_task, 7, assigned_to: assignee) }
+      let!(:translation_tasks) { create_list(:translation_task, 11, assigned_to: assignee) }
+
+      context "when filters is an empty array" do
+        let(:filters) { [] }
+
+        it "returns the same set of tasks for the filtered and unfiltered set" do
+          expect(subject.map(&:id)).to match_array(task_pager.tasks_for_tab.map(&:id))
+        end
+      end
+
+      context "when filter includes TranslationTasks" do
+        let(:filters) { ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{TranslationTask.name}"] }
+
+        it "returns only translation tasks assigned to the current organization" do
+          expect(subject.map(&:id)).to_not match_array(task_pager.tasks_for_tab.map(&:id))
+          expect(subject.map(&:type).uniq).to eq([TranslationTask.name])
+          expect(subject.length).to eq(translation_tasks.count)
+        end
+      end
+
+      context "when filter includes TranslationTasks and FoiaTasks" do
+        let(:filters) do
+          ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{TranslationTask.name},#{FoiaTask.name}"]
+        end
+
+        it "returns all translation and FOIA tasks assigned to the current organization" do
+          expect(subject.map(&:type).uniq).to match_array([TranslationTask.name, FoiaTask.name])
+          expect(subject.length).to eq(translation_tasks.count + foia_tasks.count)
+        end
+      end
+    end
+  end
 end

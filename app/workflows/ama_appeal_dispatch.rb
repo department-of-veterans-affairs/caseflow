@@ -1,31 +1,33 @@
 # frozen_string_literal: true
 
 class AmaAppealDispatch
+  include ActiveModel::Model
+  include DecisionDocumentValidator
+
   def initialize(appeal:, params:, user:)
     @appeal = appeal
     @params = params.merge(appeal_id: appeal.id, appeal_type: "Appeal")
     @user = user
+    @citation_number = params[:citation_number]
+    @decision_date = params[:decision_date]
+    @redacted_document_location = params[:redacted_document_location]
+    @file = params[:file]
   end
 
   def call
     throw_error_if_no_tasks_or_if_task_is_completed
 
-    create_decision_document_and_submit_for_processing!(params)
-    complete_dispatch_task!
-    complete_dispatch_root_task!
-    close_request_issues_as_decided!
-    store_poa_participant_id
-  rescue ActiveRecord::RecordInvalid => error
-    if error.message.match?(/^Validation failed:/)
-      raise(Caseflow::Error::OutcodeValidationFailure, message: error.message)
-    end
+    @success = valid?
 
-    raise error
+    outcode_appeal if success
+
+    FormResponse.new(success: success, errors: [errors.full_messages.join(", ")])
   end
 
   private
 
-  attr_reader :appeal, :params, :user
+  attr_reader :appeal, :params, :user, :success, :citation_number,
+              :decision_date, :redacted_document_location, :file
 
   def dispatch_tasks
     @dispatch_tasks ||= BvaDispatchTask.where(appeal: appeal, assigned_to: user)
@@ -49,6 +51,14 @@ class AmaAppealDispatch
         appeal_id: appeal.id, task_id: dispatch_task.id
       )
     end
+  end
+
+  def outcode_appeal
+    create_decision_document_and_submit_for_processing!(params)
+    complete_dispatch_task!
+    complete_dispatch_root_task!
+    close_request_issues_as_decided!
+    store_poa_participant_id
   end
 
   def create_decision_document_and_submit_for_processing!(params)

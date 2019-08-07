@@ -785,6 +785,17 @@ feature "Higher Level Review Edit issues", :all_dbs do
       higher_level_review.establish!
     end
 
+    context "when request issues are read only" do
+      before do
+        allow_any_instance_of(RequestIssue).to receive(:editable?).and_return(false)
+      end
+
+      it "does not allow to edit request issue" do
+        visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
+        expect(page).to have_content("Rating may be in progress")
+      end
+    end
+
     context "has decision issues" do
       let(:contested_decision_issues) { setup_prior_decision_issues(veteran) }
 
