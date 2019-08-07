@@ -23,6 +23,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   def cache_ama_appeals
     appeals_ids_to_cache = Task.open.where(appeal_type: Appeal.name).pluck(:appeal_id).uniq
+    request_issues_to_cache = request_issues_for_appeals(appeals_ids_to_cache)
 
     appeals_to_cache = Appeal.find(appeals_ids_to_cache).map do |appeal|
       regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
@@ -31,12 +32,18 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         docket_type: appeal.docket_type,
         docket_number: appeal.docket_number,
         appeal_type: Appeal.name,
-        closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE
+        closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
+        issue_count: request_issues_to_cache[appeal.id] || 0
       }
     end
 
     CachedAppeal.import appeals_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
-                                                                     columns: [:closest_regional_office_city] }
+                                                                     columns: [
+                                                                       :closest_regional_office_city,
+                                                                       :issue_count,
+                                                                       :docket_type,
+                                                                       :docket_number
+                                                                     ] }
 
     increment_appeal_count(appeals_to_cache.length, Appeal.name)
   end
@@ -63,17 +70,28 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     end
 
     CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
-                                                                    columns: [:closest_regional_office_city] }
+                                                                    columns: [
+                                                                      :closest_regional_office_city,
+                                                                      :vacols_id,
+                                                                      :docket_type
+                                                                    ] }
   end
 
   def cache_legacy_appeal_vacols_data(legacy_appeals)
     legacy_appeals.pluck(:vacols_id).in_groups_of(BATCH_SIZE, false).each do |vacols_ids|
-      values_to_cache = VACOLS::Folder.where(ticknum: vacols_ids).pluck(:ticknum, :tinum).map do |vacols_folder|
-        { vacols_id: vacols_folder[0], docket_number: vacols_folder[1] }
+      vacols_folders = VACOLS::Folder.where(ticknum: vacols_ids).pluck(:ticknum, :tinum)
+      issue_counts_to_cache = issues_counts_for_vacols_folders(vacols_ids)
+
+      values_to_cache = vacols_folders.map do |vacols_folder|
+        {
+          vacols_id: vacols_folder[0],
+          docket_number: vacols_folder[1],
+          issue_count: issue_counts_to_cache[vacols_folder[0]] || 0
+        }
       end
 
       CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:vacols_id],
-                                                                      columns: [:docket_number] }
+                                                                      columns: [:docket_number, :issue_count] }
     end
   end
 
@@ -111,5 +129,15 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     slack_service.send_notification(msg)
 
     record_runtime(start_time)
+  end
+
+  private
+
+  def request_issues_for_appeals(appeals)
+    RequestIssue.where(decision_review_id: appeals, decision_review_type: Appeal.name).group(:decision_review_id).count
+  end
+
+  def issues_counts_for_vacols_folders(vacols_ids)
+    VACOLS::CaseIssue.undecided.where(isskey: vacols_ids).group(:isskey).count
   end
 end
