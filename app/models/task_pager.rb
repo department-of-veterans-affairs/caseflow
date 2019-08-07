@@ -16,7 +16,7 @@ class TaskPager
     super
 
     @page ||= 1
-    @sort_by ||= Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN
+    @sort_by ||= nil
     @sort_order ||= Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
 
     fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
