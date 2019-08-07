@@ -103,7 +103,7 @@ class ColocatedTask < Task
       parent: parent,
       assigned_by: assigned_by,
       instructions: params[:instructions],
-      assigned_to: Colocated.singleton
+      assigned_to: task_type.default_assignee
     )
   end
 

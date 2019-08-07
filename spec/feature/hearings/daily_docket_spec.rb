@@ -217,7 +217,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       end
 
       context "with an existing denied AOD motion made by another judge" do
-        let!(:aod_motion) do
+        before do
           AdvanceOnDocketMotion.create!(
             user_id: create(:user).id,
             person_id: person.id,
@@ -225,39 +225,22 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
             reason: "age"
           )
         end
-        scenario "judge can create a new AOD motion" do
+
+        scenario "judge can overwrite previous AOD motion" do
           visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
           click_dropdown(name: "#{hearing.external_id}-aod", text: "Granted")
+          click_dropdown(name: "#{hearing.external_id}-aodReason", text: "Financial Distress")
           click_button("Save")
 
+          expect(page).to have_content("There is a prior AOD decision")
+          click_button("Confirm")
+
           expect(page).to have_content("You have successfully updated")
-          expect(AdvanceOnDocketMotion.count).to eq(2)
-          judge_motions = AdvanceOnDocketMotion.where(user_id: current_user.id)
-          expect(judge_motions.count).to eq(1)
-          expect(judge_motions.first.granted).to eq(true)
-          expect(judge_motions.first.reason).to eq("age")
-        end
-      end
-
-      context "with an existing granted AOD motion made by another judge" do
-        let!(:aod_motion) do
-          AdvanceOnDocketMotion.create!(
-            user_id: create(:user).id,
-            person_id: person.id,
-            granted: true,
-            reason: "age"
-          )
-        end
-
-        scenario "judge cannot create a new AOD motion" do
-          visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-          expect(page).to have_selector(".dropdown-#{hearing.external_id}-aod .is-disabled")
-          expect(page).to have_selector(".dropdown-#{hearing.external_id}-aodReason .is-disabled")
         end
       end
 
       context "with an existing AOD motion made by same judge" do
-        let!(:aod_motion) do
+        before do
           AdvanceOnDocketMotion.create!(
             user_id: current_user.id,
             person_id: person.id,

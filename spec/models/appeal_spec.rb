@@ -505,7 +505,7 @@ describe Appeal, :all_dbs do
             let(:validated_veteran_state) { "PR" }
 
             it "creates a translation task" do
-              expect(TranslationTask).to receive(:create_from_root_task).once.with(kind_of(RootTask))
+              expect(TranslationTask).to receive(:create_from_parent).once.with(kind_of(DistributionTask))
 
               subject
             end
@@ -515,7 +515,7 @@ describe Appeal, :all_dbs do
               let(:bgs_veteran_state) { "NV" }
 
               it "prefers the service state code and creates a translation task" do
-                expect(TranslationTask).to receive(:create_from_root_task).once.with(kind_of(RootTask))
+                expect(TranslationTask).to receive(:create_from_parent).once.with(kind_of(DistributionTask))
 
                 subject
               end
@@ -526,9 +526,9 @@ describe Appeal, :all_dbs do
             let(:validated_veteran_state) { "NV" }
 
             it "doesn't create a translation task" do
-              expect(TranslationTask).to_not receive(:create_from_root_task)
-
+              translation_task_count = TranslationTask.all.count
               subject
+              expect(TranslationTask.all.count).to eq(translation_task_count)
             end
           end
         end
@@ -548,9 +548,9 @@ describe Appeal, :all_dbs do
 
         context "the bgs veteran record has no state code" do
           it "doesn't create a translation task" do
-            expect(TranslationTask).to_not receive(:create_from_root_task)
-
+            translation_task_count = TranslationTask.all.count
             subject
+            expect(TranslationTask.all.count).to eq(translation_task_count)
           end
         end
 
@@ -559,7 +559,7 @@ describe Appeal, :all_dbs do
             let(:bgs_veteran_state) { "PI" }
 
             it "creates a translation task" do
-              expect(TranslationTask).to receive(:create_from_root_task).once.with(kind_of(RootTask))
+              expect(TranslationTask).to receive(:create_from_parent).once.with(kind_of(DistributionTask))
 
               subject
             end
@@ -569,9 +569,9 @@ describe Appeal, :all_dbs do
             let(:bgs_veteran_state) { "NV" }
 
             it "doesn't create a translation task" do
-              expect(TranslationTask).to_not receive(:create_from_root_task)
-
+              translation_task_count = TranslationTask.all.count
               subject
+              expect(TranslationTask.all.count).to eq(translation_task_count)
             end
           end
         end
@@ -857,8 +857,14 @@ describe Appeal, :all_dbs do
   end
 
   context "#set_target_decision_date!" do
-    let(:direct_review_appeal) { create(:appeal, docket_type: "direct_review") }
-    let(:evidence_submission_appeal) { create(:appeal, docket_type: "evidence_submission") }
+    let(:direct_review_appeal) do
+      create(:appeal,
+             docket_type: Constants.AMA_DOCKETS.direct_review)
+    end
+    let(:evidence_submission_appeal) do
+      create(:appeal,
+             docket_type: Constants.AMA_DOCKETS.evidence_submission)
+    end
 
     context "with direct review appeal" do
       subject { direct_review_appeal }
@@ -1269,7 +1275,7 @@ describe Appeal, :all_dbs do
       )
     end
 
-    let(:docket_type) { "direct_review" }
+    let(:docket_type) { Constants.AMA_DOCKETS.direct_review }
     let!(:appeal) do
       create(:appeal,
              receipt_date: receipt_date,

@@ -655,7 +655,8 @@ class Appeal < DecisionReview
   rescue Caseflow::Error::VaDotGovAPIError
     state_code = veteran_state_code
   ensure
-    TranslationTask.create_from_root_task(root_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
+    distribution_task = tasks.open.find_by(type: DistributionTask.name)
+    TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
   end
 
   def create_business_line_tasks
