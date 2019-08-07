@@ -83,7 +83,14 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
   dispatch(toggleWorksheetSaving(true));
   dispatch(setWorksheetSaveFailedStatus(false));
 
-  ApiUtil.patch(`/hearings/${worksheet.external_id}`, { data: { hearing: worksheet } }).
+  const formattedHearing = {
+    military_service: worksheet.military_service,
+    summary: worksheet.summary,
+    witness: worksheet.witness,
+    representative_name: worksheet.representative_name
+  };
+
+  ApiUtil.patch(`/hearings/${worksheet.external_id}`, { data: { hearing: formattedHearing } }).
     then(() => {
       dispatch({ type: ACTIONS.SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
     },
