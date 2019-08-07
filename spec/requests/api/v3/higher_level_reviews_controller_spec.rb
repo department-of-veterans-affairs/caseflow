@@ -29,15 +29,15 @@ describe hlrc do
     end
   end
 
-  context ".errors_to_render_args" do
+  context ".status_from_errors" do
     it "should return NoMethodError when given something that can't be mapped (or is a filled hash)" do
       [nil, false, "abc", 32, { a: hlrp::Error.new(1000, :something, "Something.") }].each do |errors|
-        expect { hlrc.errors_to_render_args(errors) }.to raise_error(NoMethodError)
+        expect { hlrc.status_from_errors(errors) }.to raise_error(NoMethodError)
       end
     end
 
     it "should return ArgumentError when given an empty hash" do
-      expect { hlrc.errors_to_render_args({}) }.to raise_error(ArgumentError)
+      expect { hlrc.status_from_errors({}) }.to raise_error(ArgumentError)
     end
 
     let(:error_with_403_integer_status) { hlrp.error_from_error_code(:veteran_not_accessible) }
@@ -51,7 +51,7 @@ describe hlrc do
     let(:error_with_string_that_cant_quite_convert_to_int) { hlrp::Error.new("123abc", :green, "Green.") }
 
     it "should still return a 422 status if given an empty array" do
-      expect(hlrc.errors_to_render_args([])).to eq(json: { errors: [] }, status: 422)
+      expect(hlrc.status_from_errors([])).to eq(422)
     end
 
     it "should return a properly formatted hash of kwargs for render" do
@@ -77,7 +77,7 @@ describe hlrc do
           ], 1000
         ]
       ].each do |(array, status)|
-        expect(hlrc.errors_to_render_args(array)).to eq(json: { errors: array }, status: status)
+        expect(hlrc.status_from_errors(array)).to eq(status)
       end
 
       [
@@ -85,11 +85,11 @@ describe hlrc do
         [error_with_false_status],
         [error_with_404_integer_status, error_with_403_integer_status, error_with_nil_status]
       ].each do |array|
-        expect { hlrc.errors_to_render_args(array) }.to raise_error(TypeError)
+        expect { hlrc.status_from_errors(array) }.to raise_error(TypeError)
       end
 
       array = [error_with_string_that_cant_quite_convert_to_int]
-      expect { hlrc.errors_to_render_args(array) }.to raise_error(ArgumentError)
+      expect { hlrc.status_from_errors(array) }.to raise_error(ArgumentError)
     end
   end
 
@@ -218,23 +218,20 @@ describe hlrc, :all_dbs, type: :request do
 
   describe "#create" do
     it "should return a 202 on success" do
-      post("/api/v3/decision_review/higher_level_reviews",
-           params: params)
+      post("/api/v3/decision_review/higher_level_reviews", params: params)
       expect(response).to have_http_status(202)
     end
 
     it "should return a 422 on failure" do
-      post("/api/v3/decision_review/higher_level_reviews",
-           params: {})
+      post("/api/v3/decision_review/higher_level_reviews", params: {})
       expect(response).to have_http_status(:error)
     end
   end
 
   describe "#create" do
     let(:category) { "Words ending in urple" }
-    it "should return a 422 on failure" do
-      post("/api/v3/decision_review/higher_level_reviews",
-           params: params)
+    it "should return a 422 on this failure" do
+      post("/api/v3/decision_review/higher_level_reviews", params: params)
       expect(response).to have_http_status(422)
 
       error = hlrp.error_from_error_code(:unknown_category_for_benefit_type)
