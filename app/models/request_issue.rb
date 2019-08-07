@@ -400,7 +400,8 @@ class RequestIssue < ApplicationRecord
       withdrawal_date: withdrawal_date,
       contested_issue_description: contested_issue_description,
       end_product_cleared: end_product_establishment&.status_cleared?,
-      end_product_code: end_product_code
+      end_product_code: end_product_code,
+      editable: editable?
     }
   end
 
@@ -627,7 +628,28 @@ class RequestIssue < ApplicationRecord
     end_product_establishment.contention_for_object(self)
   end
 
+  def editable?
+    !contention_connected_to_rating?
+  end
+
   private
+
+  # When a request issue already has a rating in VBMS, prevent user from editing it.
+  # LockedRatingError indicates that the matching rating issue could be locked,
+  # we can't know if the rating issues include this specific issue
+  # BackfilledRatingError prevents from fetching the list of ratings
+  # so we don't know if there is a rating in progress
+  def contention_connected_to_rating?
+    if contention_reference_id && end_product_establishment&.associated_rating
+      return matching_rating_issues.any?
+    end
+
+    false
+  rescue Rating::NilRatingProfileListError
+    false
+  rescue Rating::LockedRatingError, Rating::BackfilledRatingError
+    true
+  end
 
   def limited_poa
     previous_request_issue&.end_product_establishment&.limited_poa_on_established_claim

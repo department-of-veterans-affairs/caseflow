@@ -3,10 +3,13 @@
 class TranscriptionTask < GenericTask
   before_create :check_parent_type
 
-  class NonDispositionTaskParent < StandardError; end
-
   def check_parent_type
-    fail NonDispositionTaskParent unless parent.is_a? AssignHearingDispositionTask
+    unless parent.is_a?(AssignHearingDispositionTask) || parent.is_a?(MissingHearingTranscriptsColocatedTask)
+      fail(
+        Caseflow::Error::InvalidParentTask,
+        message: "TranscriptionTask parents must be AssignHearingDispositionTask/MissingHearingTranscriptsColocatedTask"
+      )
+    end
   end
 
   def available_actions(user)

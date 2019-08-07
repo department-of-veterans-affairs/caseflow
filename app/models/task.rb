@@ -48,7 +48,11 @@ class Task < ApplicationRecord
   scope :not_cancelled, -> { where.not(status: Constants.TASK_STATUSES.cancelled) }
 
   # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
-  scope :visible_in_queue_table_view, -> { where.not(type: [TrackVeteranTask.name, TimedHoldTask.name]) }
+  scope :visible_in_queue_table_view, lambda {
+    where.not(
+      type: Task.descendants.select(&:hide_from_queue_table_view).map(&:name)
+    )
+  }
 
   scope :not_decisions_review, lambda {
                                  where.not(
@@ -62,6 +66,10 @@ class Task < ApplicationRecord
 
   def label
     self.class.name.titlecase
+  end
+
+  def default_instructions
+    []
   end
 
   def self.closed_statuses
@@ -236,6 +244,10 @@ class Task < ApplicationRecord
   end
 
   def hide_from_queue_table_view
+    self.class.hide_from_queue_table_view
+  end
+
+  def self.hide_from_queue_table_view
     false
   end
 
@@ -285,12 +297,16 @@ class Task < ApplicationRecord
   end
 
   def when_child_task_completed(child_task)
-    update_status_if_children_tasks_are_complete(child_task)
+    update_status_if_children_tasks_are_closed(child_task)
   end
 
   def when_child_task_created(child_task)
     cancel_timed_hold unless child_task.is_a?(TimedHoldTask)
     update!(status: :on_hold) if !on_hold?
+  end
+
+  def task_is_assigned_to_users_organization?(user)
+    assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
   end
 
   def task_is_assigned_to_user_within_organization?(user)
@@ -445,14 +461,26 @@ class Task < ApplicationRecord
     task_just_closed? && parent
   end
 
-  def update_status_if_children_tasks_are_complete(child_task)
+  def update_status_if_children_tasks_are_closed(child_task)
     if children.any? && children.open.empty? && on_hold?
       if assigned_to.is_a?(Organization) && cascade_closure_from_child_task?(child_task)
-        return update!(status: Constants.TASK_STATUSES.completed)
+        return all_children_cancelled_or_completed
       end
 
       update!(status: Constants.TASK_STATUSES.assigned)
     end
+  end
+
+  def all_children_cancelled_or_completed
+    if all_children_cancelled?
+      update!(status: Constants.TASK_STATUSES.cancelled)
+    else
+      update!(status: Constants.TASK_STATUSES.completed)
+    end
+  end
+
+  def all_children_cancelled?
+    children.pluck(:status).uniq == [Constants.TASK_STATUSES.cancelled]
   end
 
   def cascade_closure_from_child_task?(child_task)
@@ -482,10 +510,7 @@ class Task < ApplicationRecord
 
   def status_is_valid_on_create
     if status != Constants.TASK_STATUSES.assigned
-      # Send this to Sentry for now to find cases where we create
-      # tasks with statuses other than assigned
-      # fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
-      Raven.capture_exception(Caseflow::Error::InvalidStatusOnTaskCreate.new)
+      fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
     end
 
     true

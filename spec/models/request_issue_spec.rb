@@ -1608,6 +1608,30 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "#editable?" do
+    let(:ep_code) { "030HLRR" }
+    let(:end_product_establishment) do
+      create(:end_product_establishment,
+             :active,
+             veteran_file_number: veteran.file_number,
+             established_at: review.receipt_date - 100.days,
+             code: ep_code)
+    end
+    subject { rating_request_issue.editable? }
+
+    context "when rating exists" do
+      let(:associated_claims) do
+        [{ clm_id: end_product_establishment.reference_id, bnft_clm_tc: ep_code }]
+      end
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "when rating does not exist" do
+      it { is_expected.to eq(true) }
+    end
+  end
+
   context "#sync_decision_issues!" do
     let(:request_issue) { rating_request_issue.tap(&:submit_for_processing!) }
     subject { request_issue.sync_decision_issues! }
