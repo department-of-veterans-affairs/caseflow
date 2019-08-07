@@ -7,7 +7,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/task_pager.rb",
-      "line": 63,
+      "line": 66,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.docket_type #{sort_order}, cached_appeal_attributes.docket_number #{sort_order}\")",
       "render_path": null,
@@ -79,6 +79,26 @@
       "note": "Because it's an API, :null_session is the appropriate CSRF protection"
     },
     {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "46d8934746498039691a8b5e522384236c6adc8c7b30755ec296bc05743864b0",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/task_pager.rb",
+      "line": 77,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.veteran_name #{sort_order}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "TaskPager",
+        "method": "tasks_sorted_by_veteran_name"
+      },
+      "user_input": "sort_order",
+      "confidence": "Weak",
+      "note": "False positive, sort_order is validated in sort_order_is_valid"
+    },
+    {
       "warning_type": "File Access",
       "warning_code": 16,
       "fingerprint": "51625fbaea06d71b4cf619f3192432518766296d1356e21eb5f31f3d517a1c7a",
@@ -141,7 +161,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/task_pager.rb",
-      "line": 69,
+      "line": 72,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.closest_regional_office_city #{sort_order}\")",
       "render_path": null,
@@ -174,6 +194,6 @@
       "note": ""
     }
   ],
-  "updated": "2019-08-06 13:43:50 -0400",
+  "updated": "2019-08-07 13:45:26 -0400",
   "brakeman_version": "4.5.1"
 }
