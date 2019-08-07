@@ -6,7 +6,7 @@ require "support/fake_bgs_client"
 describe ExternalApi::VbmsDocumentsForAppeal do
   let(:veteran_file_number) { "12345678" }
   let(:nonexistent_file_number_error) do
-    VBMS::ClientError.new(message: "File Number does not exist within the system.")
+    VBMS::FilenumberDoesNotExist.new(500, "File Number does not exist within the system.")
   end
 
   context "when VBMS cannot find file number and BGS returns nil for claim number" do
@@ -22,7 +22,7 @@ describe ExternalApi::VbmsDocumentsForAppeal do
         .and_return({})
 
       expect(vbms_client).to receive(:send_request).exactly(:once)
-      expect { docs.fetch }.to raise_error(VBMSError::FilenumberDoesNotExist)
+      expect { docs.fetch }.to raise_error(VBMS::FilenumberDoesNotExist)
     end
   end
 
@@ -39,7 +39,7 @@ describe ExternalApi::VbmsDocumentsForAppeal do
         .and_return(claim_number: veteran_file_number)
 
       expect(vbms_client).to receive(:send_request).exactly(:once)
-      expect { docs.fetch }.to raise_error(VBMSError::FilenumberDoesNotExist)
+      expect { docs.fetch }.to raise_error(VBMS::FilenumberDoesNotExist)
     end
   end
 
@@ -60,7 +60,7 @@ describe ExternalApi::VbmsDocumentsForAppeal do
       expect(VBMS::Requests::FindDocumentVersionReference)
         .to receive(:new).with(veteran_file_number)
       expect(VBMS::Requests::FindDocumentVersionReference).to receive(:new).with(bgs_claim_number)
-      expect { docs.fetch }.to raise_error(VBMSError::FilenumberDoesNotExist)
+      expect { docs.fetch }.to raise_error(VBMS::FilenumberDoesNotExist)
     end
   end
 

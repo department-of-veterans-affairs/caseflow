@@ -7,8 +7,7 @@ class TaskPager
   validate :assignee_is_user_or_organization
   validate :sort_order_is_valid
 
-  attr_accessor :assignee, :tab_name, :page, :sort_by, :sort_order
-  # attr_accessor :filters
+  attr_accessor :assignee, :tab_name, :page, :sort_by, :sort_order, :filters
 
   TASKS_PER_PAGE = 15
 
@@ -18,14 +17,16 @@ class TaskPager
     @page ||= 1
     @sort_by ||= Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN
     @sort_order ||= Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
+    @filters ||= []
 
     fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
   end
 
   def paged_tasks
-    sorted_tasks(tasks_for_tab).page(page).per(TASKS_PER_PAGE)
+    sorted_tasks(filtered_tasks).page(page).per(TASKS_PER_PAGE)
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def sorted_tasks(tasks)
     case sort_by
     when Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN, Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN
@@ -38,6 +39,8 @@ class TaskPager
       tasks.order(placed_on_hold_at: sort_order)
     when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
       tasks_sorted_by_docket_number(tasks)
+    when Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN
+      tasks_sorted_by_regional_office(tasks)
 
     # Columns not yet supported:
     #
@@ -47,7 +50,6 @@ class TaskPager
     # DOCUMENT_COUNT_READER_LINK_COLUMN
     # HEARING_BADGE_COLUMN
     # ISSUE_COUNT_COLUMN
-    # REGIONAL_OFFICE_COLUMN
     # TASK_ASSIGNEE_COLUMN
     # TASK_ASSIGNER_COLUMN
     #
@@ -55,35 +57,24 @@ class TaskPager
       tasks.order(created_at: sort_order)
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def tasks_sorted_by_docket_number(tasks)
-    # Additional guard against SQL Injection
-    verified_sort_order = sort_order.casecmp("DESC").zero? ? "DESC" : "ASC"
-    order_sql = "cached_appeal_attributes.docket_type #{verified_sort_order}, \
-                cached_appeal_attributes.docket_number #{verified_sort_order}"
-
-    tasks_with_cached_appeal_attributes(tasks).order(order_sql)
+    tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.docket_type #{sort_order}, "\
+                                                     "cached_appeal_attributes.docket_number #{sort_order}")
   end
 
-  def tasks_with_cached_appeal_attributes(tasks)
-    sql = "left join cached_appeal_attributes \
-          on cached_appeal_attributes.appeal_id = tasks.appeal_id \
-          and cached_appeal_attributes.appeal_type = tasks.appeal_type"
-
-    tasks.joins(sql)
+  def tasks_sorted_by_regional_office(tasks)
+    tasks.joins(cached_attributes_join_clause).order(
+      "cached_appeal_attributes.closest_regional_office_city #{sort_order}"
+    )
   end
 
-  # # TODO: Some filters are on other tables that we will need to join to (appeal docket type)
-  # def filtered_tasks(tasks)
-  #   filters&.each do |filter_string|
-  #     filter = Rack::Utils.parse_query(filter_string)
-  #     # TODO: Fail if the filter is not in the correct format
-  #     # TODO: Fail if the column we are filtering on is not in some allowed set of columns.
-  #     tasks = tasks.where(filter["col"] => filter["val"])
-  #   end
-  #
-  #   tasks
-  # end
+  def cached_attributes_join_clause
+    "left join cached_appeal_attributes "\
+    "on cached_appeal_attributes.appeal_id = tasks.appeal_id "\
+    "and cached_appeal_attributes.appeal_type = tasks.appeal_type"
+  end
 
   def task_page_count
     @task_page_count ||= paged_tasks.total_pages
@@ -91,6 +82,11 @@ class TaskPager
 
   def total_task_count
     @total_task_count ||= tasks_for_tab.count
+  end
+
+  def filtered_tasks
+    where_clause = QueueWhereClauseArgumentsFactory.new(filter_params: filters).arguments
+    where_clause.empty? ? tasks_for_tab : tasks_for_tab.joins(cached_attributes_join_clause).where(*where_clause)
   end
 
   def tasks_for_tab

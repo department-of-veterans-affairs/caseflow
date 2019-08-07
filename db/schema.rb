@@ -159,6 +159,7 @@ ActiveRecord::Schema.define(version: 20190807144959) do
     t.integer "appeal_id"
     t.string "appeal_type"
     t.string "case_type"
+    t.string "closest_regional_office_city", comment: "Closest regional office to the veteran"
     t.string "docket_number"
     t.string "docket_type"
     t.boolean "is_aod"
