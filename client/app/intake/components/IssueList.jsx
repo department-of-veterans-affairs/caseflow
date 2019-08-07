@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
+import PropTypes from 'prop-types';
 import COPY from '../../../COPY.json';
 import { FORM_TYPES } from '../constants';
 import AddedIssue from './AddedIssue';
@@ -7,7 +8,44 @@ import Button from '../../components/Button';
 import Dropdown from '../../components/Dropdown';
 import EditContentionTitle from '../components/EditContentionTitle';
 
+import { css } from 'glamor';
+import { COLORS } from '../../constants/AppConstants';
+
+const nonEditableIssueStyling = css({
+  color: COLORS.GREY,
+  fontStyle: 'Italic'
+});
+
 export default class IssuesList extends React.Component {
+
+  generateIssueActionOptions = (issue) => {
+    let options = [];
+
+    if (!issue.editable) {
+      return options;
+    } else if (issue.correctionType && issue.endProductCleared) {
+      options.push({ displayText: 'Undo correction',
+        value: 'undo_correction' });
+    } else if (issue.correctionType) {
+      options.push(
+        { displayText: 'Remove issue',
+          value: 'remove' }
+      );
+    } else if (issue.endProductCleared) {
+      options.push({ displayText: 'Correct issue',
+        value: 'correct' });
+    } else if (!issue.withdrawalDate && !issue.withdrawalPending) {
+      options.push(
+        { displayText: 'Withdraw issue',
+          value: 'withdraw' },
+        { displayText: 'Remove issue',
+          value: 'remove' }
+      );
+    }
+
+    return options;
+  }
+
   render = () => {
     const {
       issues,
@@ -30,27 +68,7 @@ export default class IssuesList extends React.Component {
           const editableContentionText = Boolean(formType !== FORM_TYPES.APPEAL.key &&
             !issue.category && !issue.ineligibleReason && !issue.endProductCleared && !issue.isUnidentified
           );
-          let issueActionOptions = [];
-
-          if (issue.correctionType && issue.endProductCleared) {
-            issueActionOptions.push({ displayText: 'Undo correction',
-              value: 'undo_correction' });
-          } else if (issue.correctionType) {
-            issueActionOptions.push(
-              { displayText: 'Remove issue',
-                value: 'remove' }
-            );
-          } else if (issue.endProductCleared) {
-            issueActionOptions.push({ displayText: 'Correct issue',
-              value: 'correct' });
-          } else if (!issue.withdrawalDate && !issue.withdrawalPending) {
-            issueActionOptions.push(
-              { displayText: 'Withdraw issue',
-                value: 'withdraw' },
-              { displayText: 'Remove issue',
-                value: 'remove' }
-            );
-          }
+          let issueActionOptions = this.generateIssueActionOptions(issue);
 
           return <div className="issue-container" key={`issue-container-${issue.index}`}>
             <div
@@ -66,6 +84,10 @@ export default class IssuesList extends React.Component {
                 legacyOptInApproved={intakeData.legacyOptInApproved}
                 legacyAppeals={intakeData.legacyAppeals}
                 formType={formType} />
+
+              { _.isEmpty(issueActionOptions) && <div className="issue-action">
+                <span {...nonEditableIssueStyling}>{COPY.INTAKE_RATING_MAY_BE_PROCESS}</span>
+              </div> }
 
               { !_.isEmpty(issueActionOptions) && <div className="issue-action">
                 { withdrawDecisionReviews && <Dropdown
@@ -95,3 +117,12 @@ export default class IssuesList extends React.Component {
     </div>;
   }
 }
+
+IssuesList.propTypes = {
+  issues: PropTypes.array,
+  intakeData: PropTypes.object,
+  formType: PropTypes.string,
+  onClickIssueAction: PropTypes.func,
+  withdrawReview: PropTypes.bool,
+  featureToggles: PropTypes.object
+};

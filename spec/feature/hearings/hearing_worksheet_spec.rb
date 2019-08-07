@@ -137,8 +137,7 @@ RSpec.feature "Hearing prep", :all_dbs do
         expect(page).to have_content("This is a witness")
         expect(page).to have_content("These are the notes being taken here")
         expect(page).to have_content("This is military service")
-        # Temporarily commented out until we fix issue #10621
-        # expect(page).to have_field("Hearing Prepped", checked: true, visible: false)
+        expect(page).to have_field("Hearing Prepped", checked: true, visible: false)
       end
 
       scenario "Can save preliminary impressions for ama hearings" do
