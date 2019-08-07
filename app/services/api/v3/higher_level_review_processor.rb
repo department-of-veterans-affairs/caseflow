@@ -107,149 +107,119 @@ class Api::V3::HigherLevelReviewProcessor
     end
 
     def complete_params_and_errors_from_params(params)
-      request_issues = []
-      errors = []
       legacy_opt_in_approved, benefit_type = review_params_from_params(params).values_at(
         :legacy_opt_in_approved, :benefit_type
       )
 
-      included_request_issues(params).each do |included_item|
-        value = json_api_request_issue_attributes_to_error_or_intake_data_hash(
-          included_item[:attributes], benefit_type, legacy_opt_in_approved
-        )
+      json_api_request_issues, errors = (
+        if legacy_opt_in_approved
+          [included_request_issues(params), []]
+        else
+          included_request_issues_and_errors_for_each_legacy_issue(params)
+        end
+      )
 
-        (value.is_a?(Error) ? errors : request_issues) << value
+      intake_data_hash_request_issues = []
+      json_api_request_issues.each do |issue|
+        value = json_api_request_issue_attributes_to_error_or_intake_data_hash(issue[:attributes], benefit_type)
+
+        if value.is_a?(Error)
+          errors << value
+        else
+          intake_data_hash_request_issues << { benefit_type: benefit_type }.merge(value)
+        end
       end
 
-      [ActionController::Parameters.new(request_issues: request_issues), errors]
+      [ActionController::Parameters.new(request_issues: intake_data_hash_request_issues), errors]
     end
 
     def included_request_issues(params)
       params[:included].select { |included_item| included_item[:type] == "RequestIssue" }
     end
 
+    def included_request_issues_and_errors_for_each_legacy_issue(params)
+      request_issues = []
+      legacy_errors = []
+
+      included_request_issues(params).each do |request_issue|
+        if request_issue[:attributes][:contests] == "on_file_legacy_issue"
+          legacy_errors << error_from_error_code(:adding_legacy_issue_without_opting_in)
+        else
+          request_issues << request_issue
+        end
+      end
+
+      [request_issues, legacy_errors]
+    end
+
     # either converts a JSON:API-shaped request issue to an "intake data hash"
     # --the shape of hash expected by the "attributes_from_intake_data" method (request_issue model)--
     # or, if unsuccessful, returns an error
-    def json_api_request_issue_attributes_to_error_or_intake_data_hash(
-      attributes, benefit_type, legacy_opt_in_approved
-    )
+    def json_api_request_issue_attributes_to_error_or_intake_data_hash(attributes, benefit_type)
       case attributes[:contests]
       when "on_file_decision_issue"
-        contesting_decision_to_intake_data_hash(attributes, benefit_type)
+        contesting_on_file_to_intake_data_hash(attributes, :decision)
       when "on_file_rating_issue"
-        contesting_rating_to_intake_data_hash(attributes, benefit_type)
+        contesting_on_file_to_intake_data_hash(attributes, :rating)
       when "on_file_legacy_issue"
-        contesting_legacy_to_intake_data_hash(attributes, benefit_type, legacy_opt_in_approved)
+        contesting_on_file_to_intake_data_hash(attributes, :legacy)
       when "other"
-        if attributes[:category].nil?
-          contesting_uncategorized_other_to_intake_data_hash(attributes, benefit_type)
-        else
-          contesting_categorized_other_to_intake_data_hash(attributes, benefit_type)
-        end
+        contesting_other_to_intake_data_hash(attributes, benefit_type)
       else
         error_from_error_code(:unknown_contestation_type)
       end
     end
 
-    def contesting_decision_to_intake_data_hash(request_issue, benefit_type)
+    def contesting_other_to_intake_data_hash(attributes, benefit_type)
+      if attributes[:category].nil?
+        contesting_other_to_intake_data_hash_for_category(attributes, nil)
+      elsif attributes[:category].in?(CATEGORIES_BY_BENEFIT_TYPE[benefit_type])
+        contesting_other_to_intake_data_hash_for_category(attributes, attributes[:category])
+      else
+        error_from_error_code(:unknown_category_for_benefit_type)
+      end
+    end
+
+    def blank_id_error_for_contest_type(type)
+      "#{type}_issue_id_cannot_be_blank"
+    end
+
+    def blank_notes_error_for_contest_type(type)
+      "notes_cannot_be_blank_when_contesting_#{type}"
+    end
+
+    INTAKE_DATA_HASH_ID_KEY_BY_CONTEST_TYPE = {
+      decision: :contested_decision_issue_id,
+      rating: :rating_issue_reference_id,
+      legacy: :vacols_id
+    }.freeze
+
+    def contesting_on_file_to_intake_data_hash(request_issue, contest_type)
       id, notes = request_issue.values_at(:id, :notes)
       # open question: where will attributes[:request_issue_ids] go?
 
-      error = id_or_notes_missing_error(
-        id, notes, :decision_issue_id_cannot_be_blank, :notes_cannot_be_blank_when_contesting_decision
-      )
-      return error if error
+      return error_from_error_code(blank_id_error_for_contest_type(contest_type)) if id.blank?
+      return error_from_error_code(blank_notes_error_for_contest_type(contest_type)) if notes.blank?
 
       {
         is_unidentified: false,
-        benefit_type: benefit_type,
-        contested_decision_issue_id: id,
+        INTAKE_DATA_HASH_ID_KEY_BY_CONTEST_TYPE[contest_type] => id,
         notes: notes
       }
     end
 
-    def contesting_rating_to_intake_data_hash(request_issue, benefit_type)
-      id, notes = request_issue.values_at(:id, :notes)
+    def contesting_other_to_intake_data_hash_for_category(request_issue, category)
+      notes, decision_date, decision_text = request_issue.values_at(:notes, :decision_date, :decision_text)
 
-      error = id_or_notes_missing_error(
-        id, notes, :rating_issue_id_cannot_be_blank, :notes_cannot_be_blank_when_contesting_rating
-      )
-      return error if error
+      return error_from_error_code(:must_have_text_to_contest_other) if notes.blank? && decision_text.blank?
 
       {
-        is_unidentified: false,
-        benefit_type: benefit_type,
-        rating_issue_reference_id: id,
-        notes: notes
-      }
-    end
-
-    def contesting_legacy_to_intake_data_hash(request_issue, benefit_type, legacy_opt_in_approved)
-      return error_from_error_code(:adding_legacy_issue_without_opting_in) unless legacy_opt_in_approved
-
-      id, notes = request_issue.values_at(:id, :notes)
-      error = id_or_notes_missing_error(
-        id, notes, :legacy_issue_id_cannot_be_blank, :notes_cannot_be_blank_when_contesting_legacy
-      )
-      return error if error
-
-      {
-        is_unidentified: false,
-        benefit_type: benefit_type,
-        vacols_id: id,
-        notes: notes
-      }
-    end
-
-    def contesting_categorized_other_to_intake_data_hash(request_issue, benefit_type)
-      category, notes, decision_date, decision_text = request_issue.values_at(
-        :category, :notes, :decision_date, :decision_text
-      )
-
-      unless category.in?(CATEGORIES_BY_BENEFIT_TYPE[benefit_type])
-        return error_from_error_code(:unknown_category_for_benefit_type)
-      end
-
-      error = notes_and_decision_text_are_blank_error(notes, decision_text)
-      return error if error
-
-      {
-        is_unidentified: false,
-        benefit_type: benefit_type,
+        is_unidentified: category.blank?,
         nonrating_issue_category: category,
         notes: notes,
         decision_date: decision_date,
         decision_text: decision_text
       }
-    end
-
-    def contesting_uncategorized_other_to_intake_data_hash(request_issue, benefit_type)
-      notes, decision_date, decision_text = request_issue.values_at(:notes, :decision_date, :decision_text)
-
-      error = notes_and_decision_text_are_blank_error(notes, decision_text)
-      return error if error
-
-      {
-        is_unidentified: true,
-        benefit_type: benefit_type,
-        notes: notes,
-        decision_date: decision_date,
-        decision_text: decision_text
-      }
-    end
-
-    def id_or_notes_missing_error(id, notes, error_for_id, error_for_notes)
-      return error_from_error_code(error_for_id) if id.blank?
-      return error_from_error_code(error_for_notes) if notes.blank?
-
-      nil
-    end
-
-    def notes_and_decision_text_are_blank_error(notes, decision_text)
-      return nil if notes.present? || decision_text.present?
-
-      error_from_error_code(:must_have_text_to_contest_other)
     end
   end
 

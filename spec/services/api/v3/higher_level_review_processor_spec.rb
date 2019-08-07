@@ -583,17 +583,19 @@ describe hlrp, :all_dbs do
       expect(d[:decision_date]).to eq(d_decision_date)
 
       expect(e.as_json).to be_a(Hash)
-      expect(e.keys.length).to eq(5)
+      expect(e.keys.length).to eq(6)
       expect(e[:is_unidentified]).to be(true)
       expect(e[:benefit_type]).to eq(benefit_type)
+      expect(e[:nonrating_issue_category]).to be(nil)
       expect(e[:notes]).to eq(e_notes)
       expect(e[:decision_text]).to eq(e_decision_text)
       expect(e[:decision_date]).to eq(e_decision_date)
 
       expect(u.as_json).to be_a(Hash)
-      expect(u.keys.length).to eq(5)
+      expect(u.keys.length).to eq(6)
       expect(u[:is_unidentified]).to be(true)
       expect(u[:benefit_type]).to eq(benefit_type)
+      expect(u[:nonrating_issue_category]).to be(nil)
       expect(u[:notes]).to eq(u_notes)
       expect(u[:decision_text]).to eq(u_decision_text)
       expect(u[:decision_date]).to eq(u_decision_date)
@@ -913,9 +915,10 @@ describe hlrp, :all_dbs do
       expect(d[:decision_date]).to be(d_decision_date)
 
       expect(e.as_json).to be_a(Hash)
-      expect(e.keys.length).to be(5)
+      expect(e.keys.length).to be(6)
       expect(e[:is_unidentified]).to be(true)
       expect(e[:benefit_type]).to be(benefit_type)
+      expect(e[:nonrating_issue_category]).to be(nil)
       expect(e[:notes]).to be(e_notes)
       expect(e[:decision_text]).to be(e_decision_text)
       expect(e[:decision_date]).to be(e_decision_date)
@@ -1437,9 +1440,10 @@ describe hlrp, :all_dbs do
       expect(d[:decision_date]).to eq(d_decision_date)
 
       expect(e.as_json).to be_a(Hash)
-      expect(e.keys.length).to eq(5)
+      expect(e.keys.length).to eq(6)
       expect(e[:is_unidentified]).to be(true)
       expect(e[:benefit_type]).to eq(benefit_type)
+      expect(e[:nonrating_issue_category]).to be(nil)
       expect(e[:notes]).to eq(e_notes)
       expect(e[:decision_text]).to eq(e_decision_text)
       expect(e[:decision_date]).to eq(e_decision_date)
@@ -1610,7 +1614,6 @@ describe hlrp, :all_dbs do
     id = 4
     notes = "Some notes."
     benefit_type = "compensation"
-    legacy_opt_in_approved = true
 
     it "converts a request issue contesting a decision issue correctly" do
       attributes = ActionController::Parameters.new(
@@ -1619,12 +1622,9 @@ describe hlrp, :all_dbs do
         notes: notes
       )
       expect(
-        hlrp.json_api_request_issue_attributes_to_error_or_intake_data_hash(
-          attributes, benefit_type, legacy_opt_in_approved
-        )
+        hlrp.json_api_request_issue_attributes_to_error_or_intake_data_hash(attributes, benefit_type)
       ).to eq(
         is_unidentified: false,
-        benefit_type: benefit_type,
         contested_decision_issue_id: id,
         notes: notes
       )
@@ -1636,12 +1636,9 @@ describe hlrp, :all_dbs do
         notes: notes
       )
       expect(
-        hlrp.json_api_request_issue_attributes_to_error_or_intake_data_hash(
-          attributes, benefit_type, legacy_opt_in_approved
-        )
+        hlrp.json_api_request_issue_attributes_to_error_or_intake_data_hash(attributes, benefit_type)
       ).to eq(
         is_unidentified: false,
-        benefit_type: benefit_type,
         rating_issue_reference_id: id,
         notes: notes
       )
@@ -1653,12 +1650,9 @@ describe hlrp, :all_dbs do
         notes: notes
       )
       expect(
-        hlrp.json_api_request_issue_attributes_to_error_or_intake_data_hash(
-          attributes, benefit_type, legacy_opt_in_approved
-        )
+        hlrp.json_api_request_issue_attributes_to_error_or_intake_data_hash(attributes, benefit_type)
       ).to eq(
         is_unidentified: false,
-        benefit_type: benefit_type,
         vacols_id: id,
         notes: notes
       )
@@ -1678,12 +1672,9 @@ describe hlrp, :all_dbs do
         decision_text: decision_text
       )
       expect(
-        hlrp.json_api_request_issue_attributes_to_error_or_intake_data_hash(
-          attributes, benefit_type, legacy_opt_in_approved
-        )
+        hlrp.json_api_request_issue_attributes_to_error_or_intake_data_hash(attributes, benefit_type)
       ).to eq(
         is_unidentified: false,
-        benefit_type: benefit_type,
         nonrating_issue_category: category,
         notes: notes,
         decision_date: decision_date,
@@ -1699,13 +1690,11 @@ describe hlrp, :all_dbs do
         decision_text: decision_text
       )
       expect(
-        hlrp.json_api_request_issue_attributes_to_error_or_intake_data_hash(
-          attributes, benefit_type, legacy_opt_in_approved
-        )
+        hlrp.json_api_request_issue_attributes_to_error_or_intake_data_hash(attributes, benefit_type)
       ).to eq(
         is_unidentified: true,
-        benefit_type: benefit_type,
         notes: notes,
+        nonrating_issue_category: nil,
         decision_date: decision_date,
         decision_text: decision_text
       )
