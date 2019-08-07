@@ -30,9 +30,9 @@ describe hlrc do
   end
 
   context ".status_from_errors" do
-    it "should return NoMethodError when given something that can't be mapped (or is a filled hash)" do
+    it "should return ArgumentError when given something that isn't an array" do
       [nil, false, "abc", 32, { a: hlrp::Error.new(1000, :something, "Something.") }].each do |errors|
-        expect { hlrc.status_from_errors(errors) }.to raise_error(NoMethodError)
+        expect { hlrc.status_from_errors(errors) }.to raise_error(ArgumentError)
       end
     end
 
@@ -85,7 +85,7 @@ describe hlrc do
         [error_with_false_status],
         [error_with_404_integer_status, error_with_403_integer_status, error_with_nil_status]
       ].each do |array|
-        expect { hlrc.status_from_errors(array) }.to raise_error(TypeError)
+        expect(hlrc.status_from_errors(array)).to be(422)
       end
 
       array = [error_with_string_that_cant_quite_convert_to_int]
@@ -217,25 +217,74 @@ describe hlrc, :all_dbs, type: :request do
   end
 
   describe "#create" do
-    it "should return a 202 on success" do
-      post("/api/v3/decision_review/higher_level_reviews", params: params)
-      expect(response).to have_http_status(202)
+    describe "(general cases)" do
+      it "should return a 202 on success" do
+        post("/api/v3/decision_review/higher_level_reviews", params: params)
+        expect(response).to have_http_status(202)
+      end
+
+      it "should return a 422 on failure" do
+        post("/api/v3/decision_review/higher_level_reviews", params: {})
+        expect(response).to have_http_status(422)
+      end
     end
 
-    it "should return a 422 on failure" do
-      post("/api/v3/decision_review/higher_level_reviews", params: {})
-      expect(response).to have_http_status(:error)
+    describe "(test error case: unknown_category_for_benefit_type)" do
+      let(:category) { "Words ending in urple" }
+      it "should return a 422 on this failure" do
+        post("/api/v3/decision_review/higher_level_reviews", params: params)
+        expect(response).to have_http_status(422)
+
+        error = hlrp.error_from_error_code(:unknown_category_for_benefit_type)
+        expect(JSON.parse(response.body)).to eq({ errors: [error] }.as_json)
+      end
     end
-  end
 
-  describe "#create" do
-    let(:category) { "Words ending in urple" }
-    it "should return a 422 on this failure" do
-      post("/api/v3/decision_review/higher_level_reviews", params: params)
-      expect(response).to have_http_status(422)
+    describe "(error cases)" do
+      describe "(intake_review_failed)" do
+        let(:attributes) do
+          {
+            receiptDate: "wrench",
+            informalConference: informal_conference,
+            sameOffice: same_office,
+            legacyOptInApproved: legacy_opt_in_approved,
+            benefitType: benefit_type
+          }
+        end
+        it "should return 422/intake_review_failed" do
+          post("/api/v3/decision_review/higher_level_reviews", params: params)
+          expect(response).to have_http_status(422)
+          error = hlrp.error_from_error_code(:intake_review_failed)
+          expect(JSON.parse(response.body)).to eq({ errors: [error] }.as_json)
+        end
+      end
 
-      error = hlrp.error_from_error_code(:unknown_category_for_benefit_type)
-      expect(JSON.parse(response.body)).to eq({ errors: [error] }.as_json)
+      describe "(unknown_error_code)" do
+        let(:params) do
+          {
+            data: data,
+            included: []
+          }
+        end
+        it "should return 422/unknown_error_code" do
+          post("/api/v3/decision_review/higher_level_reviews", params: params)
+          expect(response).to have_http_status(422)
+          error = hlrp.error_from_error_code(:unknown_error_code)
+          expect(JSON.parse(response.body)).to eq({ errors: [error] }.as_json)
+        end
+      end
+
+      describe "(reserved_veteran_file_number)" do
+        let(:veteran_file_number) { "123456789" }
+        it "should return 422/reserved_veteran_file_number" do
+          FeatureToggle.enable!(:intake_reserved_file_number, users: [current_user.css_id])
+          post("/api/v3/decision_review/higher_level_reviews", params: params)
+          expect(response).to have_http_status(422)
+          error = hlrp.error_from_error_code(:reserved_veteran_file_number)
+          expect(JSON.parse(response.body)).to eq({ errors: [error] }.as_json)
+          FeatureToggle.disable!(:intake_reserved_file_number, users: [current_user.css_id])
+        end
+      end
     end
   end
 end

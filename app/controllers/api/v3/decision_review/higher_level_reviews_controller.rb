@@ -20,7 +20,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::ExternalProxy
     render json: self.class.intake_status(processor.higher_level_review), status: :accepted
   rescue StandardError => error
     # do we want something like intakes_controller's log_error here?
-    render_errors([self.class.error_from_objects_error_code(error, processor.intake)])
+    render_errors([self.class.error_from_objects_error_code(error, processor.try(:intake))])
   end
 
   def render_errors(errors)
@@ -42,9 +42,10 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::ExternalProxy
 
     # errors should be an array of Api::V3::HigherLevelReviewProcessor::Error
     def status_from_errors(errors)
-      fail ArgumentError, "status_from_errors expects 1 array argument" if errors == {}
+      fail ArgumentError, "status_from_errors expects 1 array argument" unless errors.is_a?(Array)
+      return 422 if errors.empty?
 
-      errors.map { |error| Integer error.status }.max || 422
+      errors.map { |error| Integer(error.try(:status) || 422) }.max
     end
 
     # given multiple objects, will return the error for the first error code it can find
