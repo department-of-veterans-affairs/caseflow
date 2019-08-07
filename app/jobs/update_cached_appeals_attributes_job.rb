@@ -29,11 +29,13 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         appeal_id: appeal.id,
         docket_type: appeal.docket_type,
         docket_number: appeal.docket_number,
-        appeal_type: Appeal.name
+        appeal_type: Appeal.name,
+        case_type: Appeal.type,
+        is_aod: Appeal.aod
       }
     end
 
-    CachedAppeal.import appeals_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type] }
+    CachedAppeal.import appeals_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type, :case_type, :is_aod] }
 
     increment_appeal_count(appeals_to_cache.length, Appeal.name)
   end
