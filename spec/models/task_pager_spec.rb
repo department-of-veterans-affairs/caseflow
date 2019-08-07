@@ -255,6 +255,24 @@ describe TaskPager, :all_dbs do
         expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
       end
     end
+
+    context "when sorting by issue count column" do
+      let(:sort_by) { Constants.QUEUE_CONFIG.ISSUE_COUNT_COLUMN }
+
+      before do
+        issue_counts = (0..created_tasks.length).to_a.shuffle
+        created_tasks.each_with_index do |task, index|
+          appeal = create(:appeal, request_issues: build_list(:request_issue, issue_counts[index]))
+          task.update!(appeal_id: appeal.id)
+          create(:cached_appeal, appeal_id: task.appeal_id, issue_count: issue_counts[index])
+        end
+      end
+
+      it "sorts by issue count" do
+        expected_order = created_tasks.sort_by { |task| task.appeal.issues.values.flatten.count }
+        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+      end
+    end
   end
 
   describe ".filtered_tasks" do
