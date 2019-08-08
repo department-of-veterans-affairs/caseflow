@@ -13,6 +13,15 @@ detectors:
   ControlParameter:
     exclude:
       - HearingRepository#slot_new_hearing
+  UncommunicativeVariableName:
+    exclude:
+      - Address
+  LongParameterList:
+    exclude:
+      - Address
+  UncommunicativeParameterName:
+    exclude:
+      - Address
   DataClump:
     exclude:
       - HearingSerializerBase
@@ -52,6 +61,7 @@ detectors:
     exclude:
       - AmaAppealDispatch
       - LegacyAppealDispatch
+      - Address
   TooManyMethods:
     enabled: false
   TooManyStatements:
