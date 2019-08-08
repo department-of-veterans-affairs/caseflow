@@ -10,11 +10,8 @@ describe SlackService do
   end
 
   context "when it is run in the uat environment" do
-    before do
-      allow_any_instance_of(SlackService).to receive(:aws_env).and_return("uat")
-    end
-
     it "does not make post request" do
+      stub_const("ENV", "DEPLOY_ENV" => "uat")
       expect_any_instance_of(HTTPClient).to_not receive(:post)
       slack_service.send_notification("filler message contents")
     end
