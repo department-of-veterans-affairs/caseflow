@@ -8,7 +8,7 @@ import COPY from '../../COPY.json';
 
 import {
   clearCaseListSearch,
-  fetchAppealsUsingVeteranId,
+  appealsSearch,
   setCaseListSearch
 } from './CaseList/CaseListActions';
 
@@ -21,7 +21,7 @@ class CaseListSearch extends React.PureComponent {
   onSubmitSearch = (searchQuery) => {
     /* eslint-disable no-empty-function */
     // Error cases already handled inside the promise itself.
-    this.props.fetchAppealsUsingVeteranId(searchQuery).then((veteranIds) => {
+    this.props.appealsSearch(searchQuery).then((veteranIds) => {
       const caseListPath = `/search?veteran_ids=${veteranIds.join(',')}`;
 
       if (this.props.location.pathname === '/schedule') {
@@ -66,7 +66,7 @@ CaseListSearch.defaultProps = {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   clearCaseListSearch,
-  fetchAppealsUsingVeteranId,
+  appealsSearch,
   setCaseListSearch
 }, dispatch);
 

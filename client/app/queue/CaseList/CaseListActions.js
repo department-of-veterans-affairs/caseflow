@@ -2,14 +2,8 @@ import { SEARCH_ERROR_FOR } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import * as Constants from './actionTypes';
 import _ from 'lodash';
-import {
-  onReceiveAppealDetails,
-  onReceiveClaimReviewDetails
-} from '../QueueActions';
-import {
-  prepareAppealForStore,
-  prepareClaimReviewForStore
-} from '../utils';
+import { onReceiveAppealDetails, onReceiveClaimReviewDetails } from '../QueueActions';
+import { prepareAppealForStore, prepareClaimReviewForStore } from '../utils';
 
 export const clearCaseListSearch = () => ({
   type: Constants.CLEAR_CASE_LIST_SEARCH
@@ -90,18 +84,25 @@ export const fetchAppealUsingBackendError = (searchQuery, error) => ({
   }
 });
 
-export const fetchAppealsUsingVeteranId = (searchQuery) =>
-  (dispatch) => new Promise((resolve, reject) => {
+export const appealsSearch = (searchQuery) => (dispatch) =>
+  new Promise((resolve, reject) => {
     if (!searchQuery.length) {
       dispatch(emptyQuerySearchAttempt());
 
       return reject();
     }
 
-    const veteranId = searchQuery.replace(/\D/g, '');
-    // Allow for SSNs (9 digits) as well as claims file numbers (7 or 8 digits).
+    // Allow numbers + hyphen (for docket number)
+    const search = searchQuery.trim().replace(/[^\d-]/g, '');
 
-    if (!veteranId.match(/\d{7,9}/)) {
+    // We should probably refactor these to be imports
+    const validSSN = (input) => input.match(/\d{9}/) || input.match(/\d{3}-\d{2}-\d{4}$/);
+    const validFileNum = (input) => input.match(/\d{7,8}$/);
+    const validDocketNum = (input) => input.match(/\d{6}-{1}\d+$/);
+
+    const validInput = (i) => validSSN(i) || validFileNum(i) || validDocketNum(i);
+
+    if (!validInput(search)) {
       dispatch(fetchAppealUsingInvalidVeteranIdFailed(searchQuery));
 
       return reject();
@@ -109,19 +110,18 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
 
     dispatch(requestAppealUsingVeteranId());
     ApiUtil.get('/appeals', {
-      headers: { 'veteran-id': veteranId }
+      headers: { 'case-search': search }
     }).
       then((response) => {
         let isResponseEmpty;
-        const returnedObject = (response.text) ? JSON.parse(response.text) : null;
+        const returnedObject = response.text ? JSON.parse(response.text) : null;
 
         if (returnedObject) {
-          isResponseEmpty = _.size(returnedObject.appeals) === 0 &&
-            _.size(returnedObject.claim_reviews) === 0;
+          isResponseEmpty = _.size(returnedObject.appeals) === 0 && _.size(returnedObject.claim_reviews) === 0;
         }
 
         if (!returnedObject || isResponseEmpty) {
-          dispatch(fetchedNoAppealsUsingVeteranId(veteranId));
+          dispatch(fetchedNoAppealsUsingVeteranId(search));
 
           return reject();
         }
