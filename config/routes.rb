@@ -154,6 +154,17 @@ Rails.application.routes.draw do
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
   get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
 
+  scope path: "hearings/tasks/:id" do
+    get "/schedule", to: "hearing_tasks#schedule"
+    get "/withdraw", to: "hearing_tasks#withdraw"
+    get "/hold", to: "hearing_tasks#hold"
+    get "/cancel", to: "hearing_tasks#cancel"
+    get "/no_show", to: "hearing_tasks#now_show"
+    get "/postpone", to: "hearing_tasks#postpone"
+    get "/postpone_and_reschedule", to: "hearing_tasks#postpone_and_reschedule"
+    get "/postpone_and_reschedule_later_with_admin_action", to: "hearing_tasks#postpone_and_reschedule_later_with_admin_action"
+  end
+
   resources :hearings, only: [:update, :show]
 
   patch "certifications" => "certifications#create"
