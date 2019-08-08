@@ -63,6 +63,16 @@ class ClaimReview < DecisionReview
     "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
   end
 
+  def finalized_decision_issues_before_receipt_date
+    return [] unless receipt_date
+
+    DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
+      .select(&:finalized?)
+      .select do |issue|
+        issue.approx_decision_date && issue.approx_decision_date < receipt_date
+      end
+  end
+
   # Save issues and assign it the appropriate end product establishment.
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
@@ -227,6 +237,10 @@ class ClaimReview < DecisionReview
     end
   end
 
+  def can_contest_rating_issues?
+    processed_in_vbms?
+  end
+
   private
 
   def cleared_end_products
@@ -248,10 +262,6 @@ class ClaimReview < DecisionReview
 
   def incomplete_tasks?
     tasks.reject(&:completed?).any?
-  end
-
-  def can_contest_rating_issues?
-    processed_in_vbms?
   end
 
   def create_decision_review_task!

@@ -313,7 +313,11 @@ RSpec.feature "Change hearing disposition", :all_dbs do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
         expect(page).to have_content(ChangeHearingDispositionTask.last.label)
-        find("#currently-active-tasks button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+        find(
+          "#currently-active-tasks button",
+          text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL,
+          id: ChangeHearingDispositionTask.last.id.to_s
+        ).click
         expect(page).to have_content(assign_instructions_text)
       end
     end
@@ -337,7 +341,11 @@ RSpec.feature "Change hearing disposition", :all_dbs do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
         expect(page).to have_content(ChangeHearingDispositionTask.last.label)
-        find("#currently-active-tasks button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+        find(
+          "#currently-active-tasks button",
+          text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL,
+          id: ChangeHearingDispositionTask.last.id.to_s
+        ).click
         expect(page).to have_content(assign_instructions_text)
       end
     end

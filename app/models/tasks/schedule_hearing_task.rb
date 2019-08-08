@@ -57,6 +57,10 @@ class ScheduleHearingTask < GenericTask
     "Schedule hearing"
   end
 
+  def default_instructions
+    [COPY::SCHEDULE_HEARING_TASK_DEFAULT_INSTRUCTIONS]
+  end
+
   def create_parent_hearing_task
     if parent.type != HearingTask.name
       self.parent = HearingTask.create(appeal: appeal, parent: parent)
