@@ -250,6 +250,7 @@ describe User, :all_dbs do
 
   context "#selectable_organizations" do
     let(:user) { create(:user) }
+    let!(:staff) { create(:staff, :attorney_role, user: user) }
 
     subject { user.selectable_organizations }
 
@@ -265,7 +266,7 @@ describe User, :all_dbs do
     end
 
     context "when user is a judge in vacols" do
-      before { expect_any_instance_of(User).to receive(:judge_in_vacols?).and_return(true) }
+      let!(:staff) { create(:staff, :attorney_judge_role, user: user) }
 
       context "but has no judge team" do
         it "creates a judge team and and includes it in the selectable organizations" do
