@@ -274,7 +274,7 @@ describe TaskPager, :all_dbs do
         expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
       end
     end
-    
+
     context "when sorting by case details link column" do
       let(:sort_by) { Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN }
 

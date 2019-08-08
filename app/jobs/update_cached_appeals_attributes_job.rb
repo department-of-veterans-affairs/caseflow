@@ -138,7 +138,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   private
 
   def request_issue_counts_for_appeal_ids(appeal_ids)
-    RequestIssue.where(decision_review_id: appeal_ids, decision_review_type: Appeal.name).group(:decision_review_id).count
+    RequestIssue.where(decision_review_id: appeal_ids, decision_review_type: Appeal.name)
+      .group(:decision_review_id).count
   end
 
   def issues_counts_for_vacols_folders(vacols_ids)

@@ -77,7 +77,7 @@ class TaskPager
   def tasks_sorted_by_issue_count(tasks)
     tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.issue_count #{sort_order}")
   end
-  
+
   def tasks_sorted_by_veteran_name(tasks)
     tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.veteran_name #{sort_order}")
   end
