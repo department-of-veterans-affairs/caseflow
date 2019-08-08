@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Hearings::WorkflowManager
   attr_reader :hearing_task, :appeal, :hearing
   delegate :reschedule, :reschedule_later, :reschedule_later_with_admin_action, to: :scheduler

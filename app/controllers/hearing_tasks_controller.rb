@@ -68,10 +68,15 @@ class HearingTasksController < TasksController
   end
 
   def hearing_params
-    params.require(:hearing)
+    params.require(:hearing).permit(
+      :hearing_day_id, :hearing_location_attrs, :scheduled_time_string,
+      :override_full_hearing_day_validation
+    )
   end
 
   def reschedule_later_params
-    params.require(:reschedule_later)
+    params.require(:reschedule_later).permit(
+      :instructions, :admin_action_klas, :admin_action_instructions
+    )
   end
 end

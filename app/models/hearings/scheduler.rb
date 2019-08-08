@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Hearings::Scheduler
   attr_reader :appeal, :hearing_task
 
