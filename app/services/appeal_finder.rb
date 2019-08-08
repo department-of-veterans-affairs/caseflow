@@ -23,6 +23,25 @@ class AppealFinder
     )
   end
 
+  def find_appeals_by_docket_number(docket_number)
+    return [] if docket_number.empty?
+
+    # Take the first six digits as date, remaining as ID
+    parsed = docket_number.split("-")
+
+    # If we can't parse a valid date from search, return no results
+    begin
+      receipt_date = Date.strptime(parsed[0], "%y%m%d")
+
+      id = parsed[1]
+      appeals = Appeal.where(id: id, receipt_date: receipt_date)
+
+      return appeals
+    rescue ArgumentError => e
+      return []
+    end
+  end
+
   class << self
     def find_appeals_with_file_numbers(file_numbers)
       return [] if file_numbers.empty?

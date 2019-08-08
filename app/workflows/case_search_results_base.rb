@@ -20,13 +20,18 @@ class CaseSearchResultsBase
       extra: error_status_or_search_results
     )
   end
-
+  
   protected
 
   attr_reader :status, :user
 
   def current_user_is_vso_employee?
     user.vso_employee?
+  end
+
+  # Child classes will likely override this
+  def veterans
+    []
   end
 
   def veterans_user_can_access

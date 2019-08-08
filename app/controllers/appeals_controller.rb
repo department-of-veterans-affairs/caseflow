@@ -10,13 +10,17 @@ class AppealsController < ApplicationController
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        veteran_file_number = request.headers["HTTP_VETERAN_ID"]
+        case_search = request.headers["HTTP_CASE_SEARCH"]
 
-        result = CaseSearchResultsForVeteranFileNumber.new(
-          file_number_or_ssn: veteran_file_number, user: current_user
+        result1 = CaseSearchResultsForVeteranFileNumber.new(
+          file_number_or_ssn: case_search, user: current_user
         ).call
 
-        render_search_results_as_json(result)
+        result2 = CaseSearchResultsForDocketNumber.new(
+          docket_number: case_search, user: current_user
+        ).call
+
+        render_combined_results_as_json([result1, result2])
       end
     end
   end
@@ -132,6 +136,34 @@ class AppealsController < ApplicationController
       render json: result.extra[:search_results]
     else
       render json: result.to_h, status: result.extra[:status]
+    end
+  end
+
+  def render_combined_results_as_json(items)
+    success = false
+    errors = []
+    search_results = {
+      appeals: [],
+      claim_reviews: []
+    }
+    status = nil
+
+    items.each do |item|
+      hashed = item.to_h
+
+      if item.success?
+        success = true
+        search_results.each { |key, _val| search_results[key] += hashed[:search_results][key] }
+      else
+        errors += hashed[:errors]
+        status = item.extra[:status]
+      end
+    end
+
+    if success
+      render json: search_results
+    else
+      render json: { errors: errors }, status: status
     end
   end
 
