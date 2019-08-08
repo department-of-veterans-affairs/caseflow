@@ -240,9 +240,10 @@ describe TaskPager, :all_dbs do
       let(:sort_by) { Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN }
 
       before do
-        regional_offices = RegionalOffice::ROS.first(65).shuffle
+        uniq_regional_offices = RegionalOffice::ROS.reject { |ro| RegionalOffice::CITIES[ro][:city].eql?("Washington") }
+          .shuffle
         created_tasks.each_with_index do |task, index|
-          ro_key = regional_offices[index]
+          ro_key = uniq_regional_offices[index]
           ro_city = RegionalOffice::CITIES[ro_key][:city]
           task.appeal.update!(closest_regional_office: ro_key)
           create(:cached_appeal, appeal_id: task.appeal_id, closest_regional_office_city: ro_city)
@@ -253,6 +254,24 @@ describe TaskPager, :all_dbs do
         expected_order = created_tasks.sort_by do |task|
           RegionalOffice::CITIES[task.appeal.closest_regional_office][:city]
         end
+        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+      end
+    end
+
+    context "when sorting by issue count column" do
+      let(:sort_by) { Constants.QUEUE_CONFIG.ISSUE_COUNT_COLUMN }
+
+      before do
+        issue_counts = (0..created_tasks.length).to_a.shuffle
+        created_tasks.each_with_index do |task, index|
+          appeal = create(:appeal, request_issues: build_list(:request_issue, issue_counts[index]))
+          task.update!(appeal_id: appeal.id)
+          create(:cached_appeal, appeal_id: task.appeal_id, issue_count: issue_counts[index])
+        end
+      end
+
+      it "sorts by issue count" do
+        expected_order = created_tasks.sort_by { |task| task.appeal.issues[:request_issues].count }
         expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
       end
     end
