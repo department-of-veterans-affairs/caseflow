@@ -23,7 +23,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   def cache_ama_appeals
     appeals_ids_to_cache = Task.open.where(appeal_type: Appeal.name).pluck(:appeal_id).uniq
-    request_issues_to_cache = request_issues_for_appeals(appeals_ids_to_cache)
+    request_issues_to_cache = request_issue_counts_for_appeals(appeals_ids_to_cache)
 
     appeals_to_cache = Appeal.find(appeals_ids_to_cache).map do |appeal|
       regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
@@ -133,7 +133,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   private
 
-  def request_issues_for_appeals(appeals)
+  def request_issue_counts_for_appeals(appeals)
     RequestIssue.where(decision_review_id: appeals, decision_review_type: Appeal.name).group(:decision_review_id).count
   end
 
