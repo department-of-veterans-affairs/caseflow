@@ -22,11 +22,11 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def cache_ama_appeals
-    appeals = Task.open.where(appeal_type: Appeal.name).pluck(:appeal_id, :veteran_file_number).uniq
-    request_issues_to_cache = request_issue_counts_for_appeal_ids(appeals.map { |appeal| appeal[0] })
-    veteran_names_to_cache = veteran_names_for_file_numbers(appeals.map { |appeal| appeal[1] })
+    appeals = Appeal.find(Task.open.where(appeal_type: Appeal.name).pluck(:appeal_id).uniq)
+    request_issues_to_cache = request_issue_counts_for_appeal_ids(appeals.pluck(:id))
+    veteran_names_to_cache = veteran_names_for_file_numbers(appeals.pluck(:veteran_file_number))
 
-    appeals_to_cache = Appeal.find(appeals.map { |appeal| appeal[0] }).map do |appeal|
+    appeals_to_cache = appeals.map do |appeal|
       regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
       {
         appeal_id: appeal.id,
