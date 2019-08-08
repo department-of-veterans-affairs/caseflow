@@ -22,18 +22,26 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def cache_ama_appeals
-    appeals_ids_to_cache = Task.open.where(appeal_type: Appeal.name).pluck(:appeal_id).uniq
+    appeals = Appeal.find(Task.open.where(appeal_type: Appeal.name).pluck(:appeal_id).uniq)
+    veteran_names_to_cache = veteran_names_for_appeals(appeals)
 
-    appeals_to_cache = Appeal.find(appeals_ids_to_cache).map do |appeal|
+    appeals_to_cache = appeals.map do |appeal|
+      regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
       {
         appeal_id: appeal.id,
         docket_type: appeal.docket_type,
         docket_number: appeal.docket_number,
-        appeal_type: Appeal.name
+        appeal_type: Appeal.name,
+        closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
+        veteran_name: veteran_names_to_cache[appeal.veteran_file_number]
       }
     end
 
-    CachedAppeal.import appeals_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type] }
+    CachedAppeal.import appeals_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
+                                                                     columns: [
+                                                                       :closest_regional_office_city,
+                                                                       :veteran_name
+                                                                     ] }
 
     increment_appeal_count(appeals_to_cache.length, Appeal.name)
   end
@@ -49,25 +57,35 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   def cache_legacy_appeal_postgres_data(legacy_appeals)
     values_to_cache = legacy_appeals.map do |appeal|
+      regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
       {
         appeal_id: appeal.id,
         appeal_type: LegacyAppeal.name,
         vacols_id: appeal.vacols_id,
-        docket_type: appeal.docket_name # "legacy"
+        docket_type: appeal.docket_name, # "legacy"
+        closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE
       }
     end
 
-    CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type] }
+    CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
+                                                                    columns: [:closest_regional_office_city] }
   end
 
   def cache_legacy_appeal_vacols_data(legacy_appeals)
     legacy_appeals.pluck(:vacols_id).in_groups_of(BATCH_SIZE, false).each do |vacols_ids|
-      values_to_cache = VACOLS::Folder.where(ticknum: vacols_ids).pluck(:ticknum, :tinum).map do |vacols_folder|
-        { vacols_id: vacols_folder[0], docket_number: vacols_folder[1] }
+      vacols_folders = VACOLS::Folder.where(ticknum: vacols_ids).pluck(:ticknum, :tinum, :ticorkey)
+      veteran_names_to_cache = veteran_names_for_correspondent_ids(vacols_folders.map { |folder| folder[2] })
+
+      values_to_cache = vacols_folders.map do |vacols_folder|
+        {
+          vacols_id: vacols_folder[0],
+          docket_number: vacols_folder[1],
+          veteran_name: veteran_names_to_cache[vacols_folder[2]]
+        }
       end
 
       CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:vacols_id],
-                                                                      columns: [:docket_number] }
+                                                                      columns: [:docket_number, :veteran_name] }
     end
   end
 
@@ -105,5 +123,21 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     slack_service.send_notification(msg)
 
     record_runtime(start_time)
+  end
+
+  private
+
+  def veteran_names_for_appeals(appeals)
+    Veteran.where(file_number: appeals.pluck(:veteran_file_number)).map do |veteran|
+      # Matches how last names are split and sorted on the front end (see: TaskTable.detailsColumn.getSortValue)
+      [veteran.file_number, "#{veteran.last_name.split(' ').last}, #{veteran.first_name}"]
+    end.to_h
+  end
+
+  def veteran_names_for_correspondent_ids(correspondent_ids)
+    # folders is an array of [ticknum, tinum, ticorkey] for each folder
+    VACOLS::Correspondent.where(stafkey: correspondent_ids).map do |corr|
+      [corr.stafkey, "#{corr.snamel.split(' ').last}, #{corr.snamef}"]
+    end.to_h
   end
 end

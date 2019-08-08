@@ -131,9 +131,9 @@ describe AssignHearingDispositionTask, :all_dbs do
             subject
 
             expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
-            expect(AssignHearingDispositionTask.first.instructions).to eq [instructions_text]
+            expect(AssignHearingDispositionTask.first.instructions).to include(instructions_text)
             expect(ScheduleHearingTask.count).to eq 1
-            expect(ScheduleHearingTask.first.instructions).to eq [instructions_text]
+            expect(ScheduleHearingTask.first.instructions).to include(instructions_text)
           end
         end
       end

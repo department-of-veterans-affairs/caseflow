@@ -17,8 +17,7 @@ class ApplicationController < ApplicationBaseController
   end
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
-  rescue_from VBMS::ClientError, with: :on_vbms_error
-  rescue_from VBMSError, with: :on_vbms_error
+  rescue_from BGS::ShareError, VBMS::ClientError, with: :on_external_error
 
   rescue_from Caseflow::Error::VacolsRepositoryError do |e|
     Rails.logger.error "Vacols error occured: #{e.message}"
@@ -274,15 +273,19 @@ class ApplicationController < ApplicationBaseController
     @react_routed = true
   end
 
-  def on_vbms_error(error)
-    Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+  def on_external_error(error)
+    unless error.ignorable?
+      Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+    end
+
     respond_to do |format|
+      flash[:error] = error.body
       format.html do
         render "errors/500", layout: "application", status: :internal_server_error
       end
 
       format.json do
-        render json: { errors: [:vbms_error], error_uuid: error_uuid }, status: :internal_server_error
+        render json: { errors: [:external_error], error_uuid: error_uuid }, status: :internal_server_error
       end
     end
   end

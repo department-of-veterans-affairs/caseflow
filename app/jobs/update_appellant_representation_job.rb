@@ -29,7 +29,7 @@ class UpdateAppellantRepresentationJob < CaseflowJob
       # TODO: Add an alert if we've been running for longer than x number of minutes?
     rescue StandardError => error
       # Rescue from errors when looping over appeals so that we attempt to sync tracking tasks for each appeal.
-      Raven.capture_exception(error, extra: { appeal_id: appeal.id })
+      capture_exception(error: error, extra: { appeal_id: appeal.id })
       increment_task_count("error", appeal.id)
     end
 
@@ -108,6 +108,9 @@ class UpdateAppellantRepresentationJob < CaseflowJob
 
     Rails.logger.info(msg)
     Rails.logger.info(err.backtrace.join("\n"))
+
+    # do not spam slack in uat because we redeploy so often there.
+    return if deploy_env == "uat"
 
     slack_service.send_notification(msg)
 

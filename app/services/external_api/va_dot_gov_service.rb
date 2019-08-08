@@ -54,6 +54,12 @@ class ExternalApi::VADotGovService
         sleep 1
       end
 
+      if !remaining_ids.empty? && response.success?
+        fail Caseflow::Error::VaDotGovMissingFacilityError,
+             message: "Missing facility ids #{remaining_ids.join(',')}",
+             code: 500
+      end
+
       track_pages(page)
 
       response
