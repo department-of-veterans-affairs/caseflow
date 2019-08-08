@@ -8,6 +8,7 @@ RSpec.feature "Search", :all_dbs do
   let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
   let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
+  let(:invalid_docket_number) { "invaliddocket-number" }
   let(:veteran_with_no_appeals) { create(:veteran) }
   let!(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: create(:case)) }
 
@@ -392,6 +393,86 @@ RSpec.feature "Search", :all_dbs do
 
         expect(page).to have_content("1 case found for")
         expect(page).to have_content(COPY::IS_PAPER_CASE)
+      end
+    end
+  end
+
+  context "queue case search for appeals using docket number" do
+    let!(:veteran) { create(:veteran, first_name: "Testy", last_name: "McTesterson") }
+    let!(:appeal) { create(:appeal, veteran: veteran) }
+
+    context "when using invalid docket number" do
+      def perform_search
+        visit "/search"
+        fill_in "searchBarEmptyList", with: invalid_docket_number
+        click_on "Search"
+      end
+
+      it "page displays invalid search message" do
+        perform_search
+        expect(page).to have_content(format(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_docket_number))
+      end
+    end
+
+    context "when appeal exists" do
+      def perform_search
+        visit "/search"
+        fill_in "searchBarEmptyList", with: appeal.docket_number
+        click_on "Search"
+      end
+
+      context "has higher level reviews and supplemental claims" do
+        let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: appeal.veteran_file_number) }
+        let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number) }
+        let!(:eligible_request_issue) { create(:request_issue, decision_review: higher_level_review) }
+
+        before do
+          perform_search
+        end
+
+        it "shows the HLR / SCs table" do
+          expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+        end
+
+        it "shows a higher level review" do
+          expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Higher Level Review")
+        end
+
+        it "page displays table of results" do
+          expect(page).to have_content("1 case found for")
+          expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
+        end
+
+        it "search bar stays in top right" do
+          expect(page).to have_selector("#searchBarEmptyList")
+        end
+
+        it "clicking on the x in the search bar clears the search bar" do
+          click_on "button-clear-search"
+          expect(page).to have_css("#searchBarEmptyList", text: "")
+        end
+
+        it "clicking on docket number sends us to the case details page" do
+          find("a", exact_text: appeal.docket_number).click
+          expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}")
+          expect(page).not_to have_content "Select an action"
+        end
+      end
+    end
+
+    context "when appeal doesn't exist" do
+      let!(:non_existing_docket_number) { "010101-99999" }
+      def perform_search
+        visit "/search"
+        fill_in "searchBarEmptyList", with: non_existing_docket_number
+        click_on "Search"
+      end
+
+      it "page displays no cases found message" do
+        perform_search
+        expect(page).to have_content(
+          format(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, non_existing_docket_number)
+        )
       end
     end
   end
