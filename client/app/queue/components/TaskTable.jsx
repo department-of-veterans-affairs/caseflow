@@ -93,6 +93,7 @@ export const detailsColumn = (tasks, requireDasRecord, userRole) => {
       appeal={task.appeal}
       userRole={userRole}
       disabled={!hasDASRecord(task, requireDasRecord)} />,
+    backendCanSort: true,
     getSortValue: (task) => {
       const vetName = task.appeal.veteranFullName.split(' ');
       // only take last, first names. ignore middle names/initials
@@ -142,6 +143,7 @@ export const issueCountColumn = (requireDasRecord) => {
     name: QUEUE_CONFIG.ISSUE_COUNT_COLUMN,
     valueFunction: (task) => hasDASRecord(task, requireDasRecord) ? task.appeal.issueCount : null,
     span: collapseColumn(requireDasRecord),
+    backendCanSort: true,
     getSortValue: (task) => hasDASRecord(task, requireDasRecord) ? task.appeal.issueCount : null
   };
 };

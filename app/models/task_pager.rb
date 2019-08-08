@@ -15,7 +15,7 @@ class TaskPager
     super
 
     @page ||= 1
-    @sort_by ||= Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN
+    @sort_by ||= nil
     @sort_order ||= Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
     @filters ||= []
 
@@ -27,6 +27,7 @@ class TaskPager
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/AbcSize
   def sorted_tasks(tasks)
     case sort_by
     when Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN, Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN
@@ -41,6 +42,10 @@ class TaskPager
       tasks_sorted_by_docket_number(tasks)
     when Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN
       tasks_sorted_by_regional_office(tasks)
+    when Constants.QUEUE_CONFIG.ISSUE_COUNT_COLUMN
+      tasks_sorted_by_issue_count(tasks)
+    when Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN
+      tasks_sorted_by_veteran_name(tasks)
     when Constants.QUEUE_CONFIG.TASK_ASSIGNER_COLUMN
       # order by last name, then first names
       byebug
@@ -50,17 +55,16 @@ class TaskPager
     # Columns not yet supported:
     #
     # APPEAL_TYPE_COLUMN
-    # CASE_DETAILS_LINK_COLUMN
     # DAYS_ON_HOLD_COLUMN
     # DOCUMENT_COUNT_READER_LINK_COLUMN
     # HEARING_BADGE_COLUMN
-    # ISSUE_COUNT_COLUMN
     # TASK_ASSIGNEE_COLUMN
     #
     else
       tasks.order(created_at: sort_order)
     end
-  end;
+  end
+  # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/CyclomaticComplexity
 
   # split_part(string text, delimiter text, field int)
@@ -95,6 +99,14 @@ class TaskPager
     tasks.joins(cached_attributes_join_clause).order(
       "cached_appeal_attributes.closest_regional_office_city #{sort_order}"
     )
+  end
+
+  def tasks_sorted_by_issue_count(tasks)
+    tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.issue_count #{sort_order}")
+  end
+
+  def tasks_sorted_by_veteran_name(tasks)
+    tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.veteran_name #{sort_order}")
   end
 
   def cached_attributes_join_clause
