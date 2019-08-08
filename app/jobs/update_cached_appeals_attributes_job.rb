@@ -74,7 +74,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def cache_legacy_appeal_vacols_data(legacy_appeals)
     legacy_appeals.pluck(:vacols_id).in_groups_of(BATCH_SIZE, false).each do |vacols_ids|
       vacols_folders = VACOLS::Folder.where(ticknum: vacols_ids).pluck(:ticknum, :tinum, :ticorkey)
-      veteran_names_to_cache = veteran_names_for_vacols_folders(vacols_folders)
+      veteran_names_to_cache = veteran_names_for_correspondent_ids(vacols_folders.map { |folder| folder[2] })
 
       values_to_cache = vacols_folders.map do |vacols_folder|
         {
@@ -129,14 +129,15 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   def veteran_names_for_appeals(appeals)
     Veteran.where(file_number: appeals.pluck(:veteran_file_number)).map do |veteran|
-      [veteran.file_number, "#{veteran.last_name.split(' ').last}, #{veteran.first_name.split(' ').first}"]
+      # Matches how last names are split and sorted on the front end (see: TaskTable.detailsColumn.getSortValue)
+      [veteran.file_number, "#{veteran.last_name.split(' ').last}, #{veteran.first_name}"]
     end.to_h
   end
 
-  def veteran_names_for_vacols_folders(folders)
+  def veteran_names_for_correspondent_ids(correspondent_ids)
     # folders is an array of [ticknum, tinum, ticorkey] for each folder
-    VACOLS::Correspondent.where(stafkey: folders.map { |folder| folder[2] }).map do |corr|
-      [corr.stafkey, "#{corr.snamel.split(' ').last}, #{corr.snamef.split(' ').first}"]
+    VACOLS::Correspondent.where(stafkey: correspondent_ids).map do |corr|
+      [corr.stafkey, "#{corr.snamel.split(' ').last}, #{corr.snamef}"]
     end.to_h
   end
 end
