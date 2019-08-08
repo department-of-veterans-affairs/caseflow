@@ -15,7 +15,7 @@ class TaskPager
     super
 
     @page ||= 1
-    @sort_by ||= Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN
+    @sort_by ||= nil
     @sort_order ||= Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
     @filters ||= []
 
@@ -27,6 +27,7 @@ class TaskPager
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/AbcSize
   def sorted_tasks(tasks)
     case sort_by
     when Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN, Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN
@@ -41,12 +42,13 @@ class TaskPager
       tasks_sorted_by_docket_number(tasks)
     when Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN
       tasks_sorted_by_regional_office(tasks)
+    when Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN
+      tasks_sorted_by_veteran_name(tasks)
     when Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN
       tasks_sorted_by_appeal_case_type(tasks)
 
     # Columns not yet supported:
     #
-    # CASE_DETAILS_LINK_COLUMN
     # DAYS_ON_HOLD_COLUMN
     # DOCUMENT_COUNT_READER_LINK_COLUMN
     # HEARING_BADGE_COLUMN
@@ -58,6 +60,7 @@ class TaskPager
       tasks.order(created_at: sort_order)
     end
   end
+  # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/CyclomaticComplexity
 
   def tasks_sorted_by_appeal_case_type(tasks)
@@ -75,6 +78,10 @@ class TaskPager
     tasks.joins(cached_attributes_join_clause).order(
       "cached_appeal_attributes.closest_regional_office_city #{sort_order}"
     )
+  end
+
+  def tasks_sorted_by_veteran_name(tasks)
+    tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.veteran_name #{sort_order}")
   end
 
   def cached_attributes_join_clause
