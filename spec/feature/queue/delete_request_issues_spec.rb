@@ -4,6 +4,8 @@ require "support/database_cleaner"
 require "rails_helper"
 
 feature "correcting issues", :postgres do
+  include IntakeHelpers
+
   before { FeatureToggle.enable!(:ama_decision_issues) }
   after { FeatureToggle.disable!(:ama_decision_issues) }
 
@@ -11,13 +13,13 @@ feature "correcting issues", :postgres do
     it "deletes the decision issue" do
       appeal = appeal_with_one_decision_issue
       create_judge_decision_review_task_for(appeal)
-      first_request_issue = RequestIssue.find_by(notes: "first request issue")
+      first_request_issue = RequestIssue.find_by(notes: "second request issue")
 
       visit_appeals_page_as_judge(appeal)
       remove_request_issue_as_a_judge(first_request_issue)
 
       expect(page).to have_link "Correct issues"
-      expect(page).to_not have_content "first request issue"
+      expect(page).to_not have_content "second request issue"
       expect(DecisionIssue.count).to eq 1
       expect(RequestDecisionIssue.count).to eq 1
       expect(first_request_issue.reload.decision_review).to_not be_nil
@@ -36,7 +38,7 @@ feature "correcting issues", :postgres do
       remove_request_issue_as_a_judge(request_issue)
 
       expect(page).to have_link "Correct issues"
-      expect(page).to_not have_content "with many decision issues"
+      expect(page).to_not have_content "with many decision issue"
       expect(DecisionIssue.pluck(:id)).to eq [3]
       expect(RequestDecisionIssue.count).to eq 1
       expect(request_issue.reload.decision_review).to_not be_nil
@@ -55,21 +57,21 @@ feature "correcting issues", :postgres do
       expect(page).to have_content "decision with id 1"
       expect(page).to have_content "decision with id 2"
       page.go_back
-      request_issue = RequestIssue.find_by(notes: "with a shared decision issue")
+      request_issue = RequestIssue.find_by(notes: "another shared decision issue")
       remove_request_issue_as_a_judge(request_issue)
       expect(page).to have_link "Correct issues"
-      expect(page).to_not have_content "with a shared decision issue"
-      expect(DecisionIssue.pluck(:id)).to eq [1]
-      expect(RequestDecisionIssue.count).to eq 1
+      expect(page).to_not have_content "another shared decision issue"
+      expect(DecisionIssue.pluck(:id)).to eq [1, 2]
+      expect(RequestDecisionIssue.count).to eq 2
       expect(request_issue.reload.decision_review).to_not be_nil
       expect(request_issue).to be_closed
       expect(request_issue).to be_removed
 
       expect(page).to_not have_content "Added to 2 issues"
-      expect(page).to_not have_content "decision with id 2"
+      expect(page).to have_content "decision with id 2"
       click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
       expect(page).to have_content "decision with id 1"
-      expect(page).to have_content "another shared decision issue"
+      expect(page).to have_content "with a shared decision issue"
     end
   end
 
@@ -132,7 +134,8 @@ feature "correcting issues", :postgres do
       :request_issue,
       :rating,
       notes: notes,
-      decision_issues: decision_issues
+      decision_issues: decision_issues,
+      contested_issue_description: "PTSD denied"
     )
   end
 
@@ -154,13 +157,9 @@ feature "correcting issues", :postgres do
     click_link "(#{appeal.veteran_file_number})"
   end
 
-  def remove_request_issue_as_a_judge(request_issue)
+  def remove_request_issue_as_a_judge(_request_issue)
     click_link "Correct issues"
-    within("#issue-#{request_issue.id}") do
-      click_button "Remove"
-    end
-    click_on "Yes, remove issue"
-    click_on "Save"
-    click_button "Yes, save"
+    click_remove_intake_issue_dropdown("PTSD denied")
+    click_edit_submit_and_confirm
   end
 end
