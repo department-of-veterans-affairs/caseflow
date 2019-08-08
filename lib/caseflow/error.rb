@@ -29,6 +29,7 @@ module Caseflow::Error
   class VaDotGovServerError < VaDotGovAPIError; end
   class VaDotGovLimitError < VaDotGovAPIError; end
   class VaDotGovAddressCouldNotBeFoundError < VaDotGovAPIError; end
+  class VaDotGovMissingFacilityError < VaDotGovAPIError; end
   class VaDotGovInvalidInputError < VaDotGovAPIError; end
   class VaDotGovMultipleAddressError < VaDotGovAPIError; end
   class VaDotGovNullAddressError < StandardError; end

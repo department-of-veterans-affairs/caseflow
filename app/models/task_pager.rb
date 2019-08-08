@@ -42,6 +42,8 @@ class TaskPager
       tasks_sorted_by_docket_number(tasks)
     when Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN
       tasks_sorted_by_regional_office(tasks)
+    when Constants.QUEUE_CONFIG.ISSUE_COUNT_COLUMN
+      tasks_sorted_by_issue_count(tasks)
     when Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN
       tasks_sorted_by_veteran_name(tasks)
 
@@ -51,7 +53,6 @@ class TaskPager
     # DAYS_ON_HOLD_COLUMN
     # DOCUMENT_COUNT_READER_LINK_COLUMN
     # HEARING_BADGE_COLUMN
-    # ISSUE_COUNT_COLUMN
     # TASK_ASSIGNEE_COLUMN
     # TASK_ASSIGNER_COLUMN
     #
@@ -71,6 +72,10 @@ class TaskPager
     tasks.joins(cached_attributes_join_clause).order(
       "cached_appeal_attributes.closest_regional_office_city #{sort_order}"
     )
+  end
+
+  def tasks_sorted_by_issue_count(tasks)
+    tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.issue_count #{sort_order}")
   end
 
   def tasks_sorted_by_veteran_name(tasks)
