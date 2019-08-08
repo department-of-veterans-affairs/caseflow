@@ -60,7 +60,6 @@ feature "correcting issues", :postgres do
       request_issue = RequestIssue.find_by(notes: "another shared decision issue")
       remove_request_issue_as_a_judge(request_issue)
       expect(page).to have_link "Correct issues"
-      expect(page).to_not have_content "another shared decision issue"
       expect(DecisionIssue.pluck(:id)).to eq [1, 2]
       expect(RequestDecisionIssue.count).to eq 2
       expect(request_issue.reload.decision_review).to_not be_nil
