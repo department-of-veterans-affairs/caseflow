@@ -158,7 +158,7 @@ ActiveRecord::Schema.define(version: 20190806180125) do
   create_table "cached_appeal_attributes", id: false, force: :cascade do |t|
     t.integer "appeal_id"
     t.string "appeal_type"
-    t.string "closest_regional_office_city"
+    t.string "closest_regional_office_city", comment: "Closest regional office to the veteran"
     t.string "docket_number"
     t.string "docket_type"
     t.string "vacols_id"
