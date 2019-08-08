@@ -93,6 +93,7 @@ export const detailsColumn = (tasks, requireDasRecord, userRole) => {
       appeal={task.appeal}
       userRole={userRole}
       disabled={!hasDASRecord(task, requireDasRecord)} />,
+    backendCanSort: true,
     getSortValue: (task) => {
       const vetName = task.appeal.veteranFullName.split(' ');
       // only take last, first names. ignore middle names/initials
