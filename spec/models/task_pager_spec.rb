@@ -269,7 +269,7 @@ describe TaskPager, :all_dbs do
       end
 
       it "sorts by issue count" do
-        expected_order = created_tasks.sort_by { |task| task.appeal.issues.values.flatten.count }
+        expected_order = created_tasks.sort_by { |task| task.appeal.issues[:request_issues].count }
         expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
       end
     end
