@@ -48,6 +48,7 @@ class MetricsService
       metric = PrometheusService.send("#{service}_request_attempt_counter".to_sym)
       metric.increment(app: app, name: name)
       increment_datadog_counter("request_attempt", service, name, app)
+      LocalCounter.increment_counter(service)
     end
   end
 

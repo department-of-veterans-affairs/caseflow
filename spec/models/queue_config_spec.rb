@@ -95,9 +95,6 @@ describe QueueConfig, :postgres do
         end
 
         context "when the organization uses the task pages API and has tasks assigned to it" do
-          before { FeatureToggle.enable!(:use_task_pages_api) }
-          after { FeatureToggle.disable!(:use_task_pages_api) }
-
           let!(:unassigned_tasks) { create_list(:generic_task, 4, assigned_to: organization) }
           let!(:assigned_tasks) do
             create_list(:generic_task, 2, parent: create(:generic_task, assigned_to: organization))
@@ -107,7 +104,16 @@ describe QueueConfig, :postgres do
           end
           let!(:completed_tasks) { create_list(:generic_task, 7, :completed, assigned_to: organization) }
 
-          before { allow(organization).to receive(:use_task_pages_api?).and_return(true) }
+          before do
+            LocalCounter.enable
+            FeatureToggle.enable!(:use_task_pages_api)
+            allow(organization).to receive(:use_task_pages_api?).and_return(true)
+          end
+
+          after do
+            LocalCounter.disable
+            FeatureToggle.disable!(:use_task_pages_api)
+          end
 
           it "returns the tasks in the correct tabs" do
             tabs = subject
@@ -117,6 +123,9 @@ describe QueueConfig, :postgres do
             expect(tabs[1][:tasks].pluck(:id)).to match_array(assigned_tasks.map { |t| t.id.to_s })
             expect(tabs[2][:tasks].pluck(:id)).to match_array(on_hold_tasks.map { |t| t.id.to_s })
             expect(tabs[3][:tasks].pluck(:id)).to match_array(completed_tasks.map { |t| t.id.to_s })
+
+            # We make 1 request to VACOLS in order to eager load data for Legacy Appeals.
+            expect(LocalCounter.get_counter(:vacols)).to eq(tabs.count)
           end
 
           it "displays the correct labels for the tabs" do
