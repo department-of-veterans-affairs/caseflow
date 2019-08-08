@@ -79,7 +79,7 @@ class VaDotGovAddressValidator
 
   def facility_ids_to_geomatch
     # only match to Central office if veteran requested central office
-    return ["vha_671BY"] if appeal_is_legacy_and_veteran_requested_central_office?
+    return ["vba_372"] if appeal_is_legacy_and_veteran_requested_central_office?
 
     facility_ids = RegionalOffice.ro_facility_ids
     # veterans whose closest AHL is San Antonio should have Houston as the RO
