@@ -324,6 +324,9 @@ export default class QueueTable extends React.PureComponent {
     // Request currentPage + 1 since our API indexes starting at 1 and the pagination element indexes starting at 0.
     const params = { [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: this.state.currentPage + 1 };
 
+    console.log("PARAMSSSSS#################")
+    console.dir(params);
+
     // Add sorting parameters to query string if any sorting parameters have been explicitly set.
     if (this.state.sortColName) {
       params[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] = this.state.sortColName;
@@ -337,13 +340,15 @@ export default class QueueTable extends React.PureComponent {
     ).
       join('&');
 
-    return `${this.props.taskPagesApiEndpoint}&${queryString}`;
+    console.log("ENDPOINT");
+    console.log(`${this.props.taskPagesApiEndpoint}&${queryString}`);
+
+    // return `${this.props.taskPagesApiEndpoint}&${queryString}`;
+    return `${"tasks"}&${queryString}`
   }
 
   requestTasks = () => {
     // if (!this.props.useTaskPagesApi) {
-    //   console.log("YEPPPPPP");
-    //
     //   return;
     // }
 

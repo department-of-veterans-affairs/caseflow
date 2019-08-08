@@ -251,8 +251,8 @@ export const daysOnHoldColumn = (requireDasRecord) => {
 
 export const assignedByColumn = () => {
   return {
-    header: COPY.CASE_LIST_TABLE_COMPLETED_BACK_TO_NAME_COLUMN_TITLE,
-    // header: "YEAH YEAH",
+    // header: COPY.CASE_LIST_TABLE_COMPLETED_BACK_TO_NAME_COLUMN_TITLE,
+    header: "YEAH YEAH",
     name: QUEUE_CONFIG.TASK_ASSIGNER_COLUMN,
     backendCanSort: true,
     valueFunction: (task) =>

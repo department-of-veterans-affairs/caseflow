@@ -47,6 +47,7 @@ class TaskPager
     when Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN
       tasks_sorted_by_veteran_name(tasks)
     when Constants.QUEUE_CONFIG.TASK_ASSIGNER_COLUMN
+      puts "WORKING"
       # order by last name, then first names
       byebug
       sts = tasks_sorted_by_assigned_by_name(tasks)
