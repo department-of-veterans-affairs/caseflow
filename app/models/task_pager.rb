@@ -43,7 +43,9 @@ class TaskPager
       tasks_sorted_by_regional_office(tasks)
     when Constants.QUEUE_CONFIG.TASK_ASSIGNER_COLUMN
       # order by last name, then first names
-      tasks_sorted_by_assigned_by_name(tasks)
+      byebug
+      sts = tasks_sorted_by_assigned_by_name(tasks)
+      byebug
 
     # Columns not yet supported:
     #
@@ -54,27 +56,35 @@ class TaskPager
     # HEARING_BADGE_COLUMN
     # ISSUE_COUNT_COLUMN
     # TASK_ASSIGNEE_COLUMN
-    # TASK_ASSIGNER_COLUMN
     #
     else
       tasks.order(created_at: sort_order)
     end
-  end
+  end;
   # rubocop:enable Metrics/CyclomaticComplexity
 
   # split_part(string text, delimiter text, field int)
 
-  getSortValue: (task) => task.assignedBy ? task.assignedBy.lastName : null
-} : null;
+#   getSortValue: (task) => task.assignedBy ? task.assignedBy.lastName : null
+# } : null;
+
+# select tasks.*
+# from tasks
+# left join users
+# on users.id = tasks.assigned_by_id
+# order by regexp_replace(users.full_name, '.*\s', ''), users.full_name
 
   def tasks_sorted_by_assigned_by_name(tasks)
-    tasks.joins(users_join_clause).select(*.tasks)
+    tasks.joins(users_join_clause).order(users_order_clause)
   end
 
   def users_join_clause
     "left join users on users.id = tasks.assigned_by_id"
   end
 
+  def users_order_clause
+    "regexp_replace(users.full_name, '.*\s', '')  #{sort_order}, users.full_name #{sort_order}"
+  end
 
   def tasks_sorted_by_docket_number(tasks)
     tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.docket_type #{sort_order}, "\

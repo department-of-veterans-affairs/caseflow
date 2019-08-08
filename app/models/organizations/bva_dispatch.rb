@@ -8,4 +8,8 @@ class BvaDispatch < Organization
   def next_assignee(options = {})
     BvaDispatchTaskDistributor.new.next_assignee(options)
   end
+
+  def use_task_pages_api?
+    true
+  end
 end

@@ -76,6 +76,13 @@ const HeaderRow = (props) => {
         let filterIcon;
 
         if ((!props.useTaskPagesApi || column.backendCanSort) && column.getSortValue) {
+
+          console.log("###################################");
+          console.log("###################################")
+
+          console.log("###################################");
+
+
           const topColor = props.sortColName === column.name && !props.sortAscending ?
             COLORS.PRIMARY :
             COLORS.GREY_LIGHT;
@@ -334,9 +341,11 @@ export default class QueueTable extends React.PureComponent {
   }
 
   requestTasks = () => {
-    if (!this.props.useTaskPagesApi) {
-      return;
-    }
+    // if (!this.props.useTaskPagesApi) {
+    //   console.log("YEPPPPPP");
+    //
+    //   return;
+    // }
 
     this.setState({ loadingComponent: <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} /> });
 
