@@ -244,7 +244,7 @@ describe TaskPager, :all_dbs do
           .uniq { |ro_key| RegionalOffice::CITIES[ro_key][:city] }
           .shuffle
         created_tasks.each_with_index do |task, index|
-          ro_key = uniq_regional_offices[index]
+          ro_key = regional_offices[index]
           ro_city = RegionalOffice::CITIES[ro_key][:city]
           task.appeal.update!(closest_regional_office: ro_key)
           create(:cached_appeal, appeal_id: task.appeal_id, closest_regional_office_city: ro_city)
