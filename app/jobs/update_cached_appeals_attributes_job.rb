@@ -138,6 +138,6 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def issues_counts_for_vacols_folders(vacols_ids)
-    VACOLS::CaseIssue.undecided.where(isskey: vacols_ids).group(:isskey).count
+    VACOLS::CaseIssue.where(isskey: vacols_ids).group(:isskey).count
   end
 end

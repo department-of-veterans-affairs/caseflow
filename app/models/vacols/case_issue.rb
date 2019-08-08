@@ -11,8 +11,6 @@ class VACOLS::CaseIssue < VACOLS::Record
 
   validates :isskey, :issseq, :issprog, :isscode, :issaduser, :issadtime, presence: true, on: :create
 
-  scope :undecided, -> { where(issdc: Constants::UNDECIDED_VACOLS_DISPOSITIONS_BY_ID.keys << nil) }
-
   # :nocov:
   def remand_clone_attributes
     slice(:issprog, :isscode, :isslev1, :isslev2, :isslev3, :issdesc, :issgr)
