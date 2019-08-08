@@ -265,10 +265,8 @@ end
 
 def enable_features
   FeatureToggle.enable!(:correct_claim_reviews)
-  FeatureToggle.enable!(:withdraw_decision_review)
 end
 
 def disable_features
   FeatureToggle.disable!(:correct_claim_reviews)
-  FeatureToggle.disable!(:withdraw_decision_review)
 end
