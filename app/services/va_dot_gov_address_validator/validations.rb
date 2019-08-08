@@ -16,7 +16,7 @@ module VaDotGovAddressValidator::Validations
   end
 
   def state_code_error
-    if state_code_for_regional_office.nil? || !valid_states.include?(state_code_for_regional_office)
+    if !valid_states.include?(state_code)
       Caseflow::Error::VaDotGovForeignVeteranError.new(
         code: 500,
         message: "Appellant address is not in US territories."

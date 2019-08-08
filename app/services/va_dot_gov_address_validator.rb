@@ -35,6 +35,10 @@ class VaDotGovAddressValidator
                        end
   end
 
+  def state_code
+    valid_address.dig(:state_code)
+  end
+
   def closest_regional_office
     @closest_regional_office ||= begin
       return unless closest_regional_office_response.success?
