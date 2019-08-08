@@ -109,6 +109,9 @@ class UpdateAppellantRepresentationJob < CaseflowJob
     Rails.logger.info(msg)
     Rails.logger.info(err.backtrace.join("\n"))
 
+    # do not spam slack in uat because we redeploy so often there.
+    return if deploy_env == "uat"
+
     slack_service.send_notification(msg)
 
     record_runtime(start_time)
