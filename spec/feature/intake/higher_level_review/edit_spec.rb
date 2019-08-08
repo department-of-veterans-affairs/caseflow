@@ -386,8 +386,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
       add_intake_rating_issue(ri_legacy_issue_not_withdrawn.contention_text)
       add_intake_rating_issue("ankylosis of hip")
 
-      
-
       expect(number_of_issues).to eq(8)
       expect(page).to have_content(
         "#{ri_legacy_issue_not_withdrawn.contention_text} #{ineligible.legacy_issue_not_withdrawn}"
@@ -427,7 +425,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       # 6
       click_remove_intake_issue_dropdown(untimely_request_issue.contention_text)
-      
 
       expect(page).to_not have_content(
         "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
