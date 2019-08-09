@@ -3,9 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-hlrp = Api::V3::HigherLevelReviewProcessor
-
-describe hlrp, :all_dbs do
+describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
   let(:user) { Generators::User.build }
   let(:veteran_file_number) { "64205050" }
   let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number, country: "USA") }
@@ -78,7 +76,7 @@ describe hlrp, :all_dbs do
   end
 
   context "::Error" do
-    subject { hlrp::Error }
+    subject { Api::V3::HigherLevelReviewProcessor::Error }
     it("is a Class") { expect(subject).to be_a(Class) }
     it("can set/get status") do
       status = 99
@@ -113,7 +111,7 @@ describe hlrp, :all_dbs do
   end
 
   context "::ERRORS_BY_CODE" do
-    subject { hlrp::ERRORS_BY_CODE }
+    subject { Api::V3::HigherLevelReviewProcessor::ERRORS_BY_CODE }
     it("is a hash") { expect(subject).to be_a(Hash) }
     it("isn't empty") { expect(subject.empty?).to be(false) }
     it("has only symbols as keys") do
@@ -124,7 +122,7 @@ describe hlrp, :all_dbs do
     it("has 21 keys") { expect(subject.length).to be(21) }
     it("has only Errors as values") do
       subject.values.each do |v|
-        expect(v).to be_a(hlrp::Error)
+        expect(v).to be_a(Api::V3::HigherLevelReviewProcessor::Error)
       end
     end
     it("each error has an integer status") do
@@ -146,8 +144,8 @@ describe hlrp, :all_dbs do
   end
 
   context "::ERROR_FOR_UNKNOWN_CODE" do
-    error = hlrp::Error
-    subject { hlrp::ERROR_FOR_UNKNOWN_CODE }
+    error = Api::V3::HigherLevelReviewProcessor::Error
+    subject { Api::V3::HigherLevelReviewProcessor::ERROR_FOR_UNKNOWN_CODE }
     it("is an Error") { expect(subject).to be_a(error) }
     it("has an integer status") do
       expect(subject.status).to be_a(Integer)
@@ -162,7 +160,7 @@ describe hlrp, :all_dbs do
   end
 
   context "::CATEGORIES_BY_BENEFIT_TYPE" do
-    subject { hlrp::CATEGORIES_BY_BENEFIT_TYPE }
+    subject { Api::V3::HigherLevelReviewProcessor::CATEGORIES_BY_BENEFIT_TYPE }
     it("is a hash") { expect(subject).to be_a(Hash) }
     it("isn't empty") { expect(subject).not_to be_empty }
     it("has string keys") do
@@ -181,12 +179,12 @@ describe hlrp, :all_dbs do
   end
 
   context "#errors" do
-    subject { hlrp.new(params, user) }
+    subject { Api::V3::HigherLevelReviewProcessor.new(params, user) }
     it("returns the processor's error array") { expect(subject.errors).to be_a(Array) }
   end
 
   context "#intake" do
-    subject { hlrp.new(params, user) }
+    subject { Api::V3::HigherLevelReviewProcessor.new(params, user) }
     it("returns the processor's intake") { expect(subject.intake).to be_a(Intake) }
   end
 
@@ -194,7 +192,7 @@ describe hlrp, :all_dbs do
   end
 
   context "#complete_params" do
-    subject { hlrp.new(params, user) }
+    subject { Api::V3::HigherLevelReviewProcessor.new(params, user) }
     it "returns the request issue as a properly formatted intake data hash" do
       expect(subject.errors?).to be(false)
       expect(subject.errors).to eq([])
@@ -546,7 +544,7 @@ describe hlrp, :all_dbs do
       )
     end
 
-    subject(:processor) { hlrp.new(params, user) }
+    subject(:processor) { Api::V3::HigherLevelReviewProcessor.new(params, user) }
     subject(:complete_params) { processor.complete_params }
     subject(:request_issues) { complete_params[:request_issues] }
     it "the values returned by complete_params should match those passed into new" do
@@ -610,7 +608,7 @@ describe hlrp, :all_dbs do
 
       f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, v, w = processor.errors
 
-      error = hlrp.error_from_error_code(:unknown_contestation_type)
+      error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:unknown_contestation_type)
       expect(f.as_json).to be_a(Hash)
       expect(f.as_json.keys.length).to eq(3)
       expect(f.status).to eq(error.status)
@@ -623,7 +621,7 @@ describe hlrp, :all_dbs do
       expect(g.code).to eq(error.code)
       expect(g.title).to eq(error.title)
 
-      error = hlrp.error_from_error_code(:decision_issue_id_cannot_be_blank)
+      error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:decision_issue_id_cannot_be_blank)
       expect(h.as_json).to be_a(Hash)
       expect(h.as_json.keys.length).to eq(3)
       expect(h.status).to eq(error.status)
@@ -636,7 +634,7 @@ describe hlrp, :all_dbs do
       expect(i.code).to eq(error.code)
       expect(i.title).to eq(error.title)
 
-      error = hlrp.error_from_error_code(:rating_issue_id_cannot_be_blank)
+      error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:rating_issue_id_cannot_be_blank)
       expect(j.as_json).to be_a(Hash)
       expect(j.as_json.keys.length).to eq(3)
       expect(j.status).to eq(error.status)
@@ -649,7 +647,7 @@ describe hlrp, :all_dbs do
       expect(k.code).to eq(error.code)
       expect(k.title).to eq(error.title)
 
-      error = hlrp.error_from_error_code(:legacy_issue_id_cannot_be_blank)
+      error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:legacy_issue_id_cannot_be_blank)
       expect(l.as_json).to be_a(Hash)
       expect(l.as_json.keys.length).to eq(3)
       expect(l.status).to eq(error.status)
@@ -662,7 +660,7 @@ describe hlrp, :all_dbs do
       expect(m.code).to eq(error.code)
       expect(m.title).to eq(error.title)
 
-      error = hlrp.error_from_error_code(:notes_cannot_be_blank_when_contesting_decision)
+      error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:notes_cannot_be_blank_when_contesting_decision)
       expect(n.as_json).to be_a(Hash)
       expect(n.as_json.keys.length).to eq(3)
       expect(n.status).to eq(error.status)
@@ -675,7 +673,7 @@ describe hlrp, :all_dbs do
       expect(o.code).to eq(error.code)
       expect(o.title).to eq(error.title)
 
-      error = hlrp.error_from_error_code(:notes_cannot_be_blank_when_contesting_rating)
+      error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:notes_cannot_be_blank_when_contesting_rating)
       expect(p.as_json).to be_a(Hash)
       expect(p.as_json.keys.length).to eq(3)
       expect(p.status).to eq(error.status)
@@ -688,7 +686,7 @@ describe hlrp, :all_dbs do
       expect(q.code).to eq(error.code)
       expect(q.title).to eq(error.title)
 
-      error = hlrp.error_from_error_code(:notes_cannot_be_blank_when_contesting_legacy)
+      error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:notes_cannot_be_blank_when_contesting_legacy)
       expect(r.as_json).to be_a(Hash)
       expect(r.as_json.keys.length).to eq(3)
       expect(r.status).to eq(error.status)
@@ -701,14 +699,14 @@ describe hlrp, :all_dbs do
       expect(s.code).to eq(error.code)
       expect(s.title).to eq(error.title)
 
-      error = hlrp.error_from_error_code(:unknown_category_for_benefit_type)
+      error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:unknown_category_for_benefit_type)
       expect(t.as_json).to be_a(Hash)
       expect(t.as_json.keys.length).to eq(3)
       expect(t.status).to eq(error.status)
       expect(t.code).to eq(error.code)
       expect(t.title).to eq(error.title)
 
-      error = hlrp.error_from_error_code(:must_have_text_to_contest_other)
+      error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:must_have_text_to_contest_other)
       expect(v.as_json).to be_a(Hash)
       expect(v.as_json.keys.length).to eq(3)
       expect(v.status).to eq(error.status)
@@ -740,7 +738,7 @@ describe hlrp, :all_dbs do
         }
       ]
     end
-    subject(:processor) { hlrp.new(params, user) }
+    subject(:processor) { Api::V3::HigherLevelReviewProcessor.new(params, user) }
     subject(:complete_params) { processor.complete_params }
     subject(:request_issues) { complete_params[:request_issues] }
     it "should not allow a legacy issue to be added if legacy issues haven't been opted in" do
@@ -752,7 +750,7 @@ describe hlrp, :all_dbs do
       expect(request_issues.as_json).to be_a(Array)
       expect(request_issues.as_json.length).to eq(0)
 
-      expected_error = hlrp.error_from_error_code(
+      expected_error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(
         :adding_legacy_issue_without_opting_in
       )
       generated_error = processor.errors[0]
@@ -766,8 +764,8 @@ describe hlrp, :all_dbs do
   end
 
   context "#initialize" do
-    subject { hlrp.new(params, user) }
-    it("creates a new processor") { expect(subject).to be_a(hlrp) }
+    subject { Api::V3::HigherLevelReviewProcessor.new(params, user) }
+    it("creates a new processor") { expect(subject).to be_a(Api::V3::HigherLevelReviewProcessor) }
     it("attached user to intake") { expect(subject.intake.user).to be(user) }
     it("attached veteran to intake") { expect(subject.intake.veteran.file_number).to eq(veteran_file_number) }
     it("hasn't committed intake to the DB") { expect(subject.intake.id).to be_nil }
@@ -775,7 +773,7 @@ describe hlrp, :all_dbs do
 
   context "#errors?" do
     context "good input" do
-      subject { hlrp.new(params, user) }
+      subject { Api::V3::HigherLevelReviewProcessor.new(params, user) }
       it("is false") do
         expect(subject.errors?).to be(false)
       end
@@ -792,7 +790,7 @@ describe hlrp, :all_dbs do
           }
         ]
       end
-      subject { hlrp.new(params, user) }
+      subject { Api::V3::HigherLevelReviewProcessor.new(params, user) }
       it("is true") do
         expect(subject.errors?).to be(true)
       end
@@ -800,7 +798,7 @@ describe hlrp, :all_dbs do
   end
 
   context "#higher_level_review" do
-    subject { hlrp.new(params, user) }
+    subject { Api::V3::HigherLevelReviewProcessor.new(params, user) }
     it("returns intake.detail, which should be a HigherLevelReview") do
       subject.start_review_complete!
       expect(subject.higher_level_review).to be_a(HigherLevelReview)
@@ -879,7 +877,7 @@ describe hlrp, :all_dbs do
         }
       ]
     end
-    subject { hlrp.new(params, user) }
+    subject { Api::V3::HigherLevelReviewProcessor.new(params, user) }
     it "the values returned by complete_params should match those passed into new" do
       expect(subject.errors?).to be(false)
       expect(subject.errors).to eq([])
@@ -944,20 +942,22 @@ describe hlrp, :all_dbs do
   end
 
   context ".error_from_error_code" do
-    errors_by_code = hlrp::ERRORS_BY_CODE
-    error_for_unknown_code = hlrp::ERROR_FOR_UNKNOWN_CODE
-    error = hlrp::Error
-    subject { hlrp.new(params, user) }
+    errors_by_code = Api::V3::HigherLevelReviewProcessor::ERRORS_BY_CODE
+    error_for_unknown_code = Api::V3::HigherLevelReviewProcessor::ERROR_FOR_UNKNOWN_CODE
+    error = Api::V3::HigherLevelReviewProcessor::Error
+    subject { Api::V3::HigherLevelReviewProcessor.new(params, user) }
     it("returns the default error for unknown codes") do
       [false, nil, "", "    ", [], {}, [2], { a: 1 }, :unknown_error].each do |v|
-        expect(hlrp.error_from_error_code(v)).to be(error_for_unknown_code)
+        expect(Api::V3::HigherLevelReviewProcessor.error_from_error_code(v)).to be(error_for_unknown_code)
       end
     end
     it("returns the correct error") do
       [:decision_issue_id_cannot_be_blank, "decision_issue_id_cannot_be_blank"].each do |v|
-        expect(hlrp.error_from_error_code(v)).to eq(errors_by_code[:decision_issue_id_cannot_be_blank])
+        expect(Api::V3::HigherLevelReviewProcessor.error_from_error_code(v)).to(
+          eq(errors_by_code[:decision_issue_id_cannot_be_blank])
+        )
       end
-      expect(hlrp.error_from_error_code(:duplicate_intake_in_progress)).to eq(
+      expect(Api::V3::HigherLevelReviewProcessor.error_from_error_code(:duplicate_intake_in_progress)).to eq(
         error.new(409, :duplicate_intake_in_progress, "Intake in progress")
       )
     end
@@ -966,7 +966,9 @@ describe hlrp, :all_dbs do
   context ".claimant_from_params" do
     context "(with good, properly nested data)" do
       it("returns the claimant_participant_id and claimant_payee_code in a two element array") do
-        expect(hlrp.claimant_from_params(params)).to eq([claimant_participant_id, claimant_payee_code])
+        expect(Api::V3::HigherLevelReviewProcessor.claimant_from_params(params)).to(
+          eq([claimant_participant_id, claimant_payee_code])
+        )
       end
     end
     context "(with claimant absent)" do
@@ -981,7 +983,7 @@ describe hlrp, :all_dbs do
         }
       end
       it("returns [nil, nil]") do
-        expect(hlrp.claimant_from_params(params)).to eq([nil, nil])
+        expect(Api::V3::HigherLevelReviewProcessor.claimant_from_params(params)).to eq([nil, nil])
       end
     end
     context "(with bad, improperly nested data)" do
@@ -997,7 +999,7 @@ describe hlrp, :all_dbs do
         }
       end
       it("raises an error trying to access nesting that doesn't exist") do
-        expect { hlrp.claimant_from_params(params) }.to raise_error(NoMethodError)
+        expect { Api::V3::HigherLevelReviewProcessor.claimant_from_params(params) }.to raise_error(NoMethodError)
       end
     end
   end
@@ -1015,19 +1017,23 @@ describe hlrp, :all_dbs do
         }
       end
       it("returns the veteran_file_number") do
-        expect(hlrp.veteran_file_number_from_params(params)).to eq(veteran_file_number)
+        expect(Api::V3::HigherLevelReviewProcessor.veteran_file_number_from_params(params)).to eq(veteran_file_number)
       end
     end
     context "(with veteran absent)" do
       let(:relationships) { {} }
       it("raises an error trying to access nesting that doesn't exist") do
-        expect { hlrp.veteran_file_number_from_params(params) }.to raise_error(NoMethodError)
+        expect { Api::V3::HigherLevelReviewProcessor.veteran_file_number_from_params(params) }.to(
+          raise_error(NoMethodError)
+        )
       end
     end
     context "(with bad, improperly nested data)" do
       let(:relationships) { { veteran: {} } }
       it("raises an error trying to access nesting that doesn't exist") do
-        expect { hlrp.veteran_file_number_from_params(params) }.to raise_error(NoMethodError)
+        expect { Api::V3::HigherLevelReviewProcessor.veteran_file_number_from_params(params) }.to(
+          raise_error(NoMethodError)
+        )
       end
     end
   end
@@ -1035,7 +1041,7 @@ describe hlrp, :all_dbs do
   context ".review_params_from_params" do
     context "(with good, properly nested data)" do
       it("returns a properly shaped params object") do
-        expect(hlrp.review_params_from_params(params)).to eq(
+        expect(Api::V3::HigherLevelReviewProcessor.review_params_from_params(params)).to eq(
           ActionController::Parameters.new(
             informal_conference: informal_conference,
             same_office: same_office,
@@ -1061,7 +1067,7 @@ describe hlrp, :all_dbs do
         }
       end
       it("returns a properly shaped params object") do
-        expect(hlrp.review_params_from_params(params)).to eq(
+        expect(Api::V3::HigherLevelReviewProcessor.review_params_from_params(params)).to eq(
           ActionController::Parameters.new(
             informal_conference: informal_conference,
             same_office: same_office,
@@ -1078,7 +1084,7 @@ describe hlrp, :all_dbs do
     context "(with bad, improperly nested data)" do
       let(:relationships) { { claimant: {} } }
       it("raises an error trying to access nesting that doesn't exist") do
-        expect { hlrp.review_params_from_params(params) }.to raise_error(NoMethodError)
+        expect { Api::V3::HigherLevelReviewProcessor.review_params_from_params(params) }.to raise_error(NoMethodError)
       end
     end
   end
@@ -1094,7 +1100,7 @@ describe hlrp, :all_dbs do
 
     let(:c_contests) { "on_file_legacy_issue" }
     let(:c_id) { true }
-    let(:c_notes) { hlrp::Error.new(1, 2, 3) }
+    let(:c_notes) { Api::V3::HigherLevelReviewProcessor::Error.new(1, 2, 3) }
 
     let(:benefit_type) { "compensation" }
 
@@ -1213,7 +1219,9 @@ describe hlrp, :all_dbs do
       )
     end
 
-    subject(:complete_params_and_errors) { hlrp.complete_params_and_errors_from_params(params) }
+    subject(:complete_params_and_errors) do
+      Api::V3::HigherLevelReviewProcessor.complete_params_and_errors_from_params(params)
+    end
     subject(:errors) { complete_params_and_errors[1] }
     subject(:complete_params) { complete_params_and_errors[0] }
     subject(:request_issues) { complete_params_and_errors[0][:request_issues] }
@@ -1267,7 +1275,7 @@ describe hlrp, :all_dbs do
 
       f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w = errors
 
-      error = hlrp.error_from_error_code(:unknown_contestation_type)
+      error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:unknown_contestation_type)
       expect(f.as_json).to be_a(Hash)
       expect(f.as_json.keys.length).to eq(3)
       expect(f.status).to eq(error.status)
@@ -1280,7 +1288,7 @@ describe hlrp, :all_dbs do
       expect(g.code).to eq(error.code)
       expect(g.title).to eq(error.title)
 
-      error = hlrp.error_from_error_code(:decision_issue_id_cannot_be_blank)
+      error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:decision_issue_id_cannot_be_blank)
       expect(h.as_json).to be_a(Hash)
       expect(h.as_json.keys.length).to eq(3)
       expect(h.status).to eq(error.status)
@@ -1293,7 +1301,7 @@ describe hlrp, :all_dbs do
       expect(i.code).to eq(error.code)
       expect(i.title).to eq(error.title)
 
-      error = hlrp.error_from_error_code(:rating_issue_id_cannot_be_blank)
+      error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:rating_issue_id_cannot_be_blank)
       expect(j.as_json).to be_a(Hash)
       expect(j.as_json.keys.length).to eq(3)
       expect(j.status).to eq(error.status)
@@ -1306,7 +1314,7 @@ describe hlrp, :all_dbs do
       expect(k.code).to eq(error.code)
       expect(k.title).to eq(error.title)
 
-      error = hlrp.error_from_error_code(:legacy_issue_id_cannot_be_blank)
+      error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:legacy_issue_id_cannot_be_blank)
       expect(l.as_json).to be_a(Hash)
       expect(l.as_json.keys.length).to eq(3)
       expect(l.status).to eq(error.status)
@@ -1319,7 +1327,7 @@ describe hlrp, :all_dbs do
       expect(m.code).to eq(error.code)
       expect(m.title).to eq(error.title)
 
-      error = hlrp.error_from_error_code(:notes_cannot_be_blank_when_contesting_decision)
+      error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:notes_cannot_be_blank_when_contesting_decision)
       expect(n.as_json).to be_a(Hash)
       expect(n.as_json.keys.length).to eq(3)
       expect(n.status).to eq(error.status)
@@ -1332,7 +1340,7 @@ describe hlrp, :all_dbs do
       expect(o.code).to eq(error.code)
       expect(o.title).to eq(error.title)
 
-      error = hlrp.error_from_error_code(:notes_cannot_be_blank_when_contesting_rating)
+      error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:notes_cannot_be_blank_when_contesting_rating)
       expect(p.as_json).to be_a(Hash)
       expect(p.as_json.keys.length).to eq(3)
       expect(p.status).to eq(error.status)
@@ -1345,7 +1353,7 @@ describe hlrp, :all_dbs do
       expect(q.code).to eq(error.code)
       expect(q.title).to eq(error.title)
 
-      error = hlrp.error_from_error_code(:notes_cannot_be_blank_when_contesting_legacy)
+      error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:notes_cannot_be_blank_when_contesting_legacy)
       expect(r.as_json).to be_a(Hash)
       expect(r.as_json.keys.length).to eq(3)
       expect(r.status).to eq(error.status)
@@ -1358,7 +1366,7 @@ describe hlrp, :all_dbs do
       expect(s.code).to eq(error.code)
       expect(s.title).to eq(error.title)
 
-      error = hlrp.error_from_error_code(:unknown_category_for_benefit_type)
+      error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:unknown_category_for_benefit_type)
       expect(t.as_json).to be_a(Hash)
       expect(t.as_json.keys.length).to eq(3)
       expect(t.status).to eq(error.status)
@@ -1371,7 +1379,7 @@ describe hlrp, :all_dbs do
       expect(u.code).to eq(error.code)
       expect(u.title).to eq(error.title)
 
-      error = hlrp.error_from_error_code(:must_have_text_to_contest_other)
+      error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:must_have_text_to_contest_other)
       expect(v.as_json).to be_a(Hash)
       expect(v.as_json.keys.length).to eq(3)
       expect(v.status).to eq(error.status)
@@ -1403,7 +1411,9 @@ describe hlrp, :all_dbs do
         }
       ]
     end
-    subject(:complete_params_and_errors) { hlrp.complete_params_and_errors_from_params(params) }
+    subject(:complete_params_and_errors) do
+      Api::V3::HigherLevelReviewProcessor.complete_params_and_errors_from_params(params)
+    end
     subject(:errors) { complete_params_and_errors[1] }
     subject(:complete_params) { complete_params_and_errors[0] }
     subject(:request_issues) { complete_params_and_errors[0][:request_issues] }
@@ -1414,7 +1424,7 @@ describe hlrp, :all_dbs do
       expect(errors).to be_a(Array)
       expect(errors.length).to eq(1)
 
-      expected_error = hlrp.error_from_error_code(
+      expected_error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(
         :adding_legacy_issue_without_opting_in
       )
       generated_error = errors[0]
@@ -1439,7 +1449,9 @@ describe hlrp, :all_dbs do
         notes: notes
       )
       expect(
-        hlrp.json_api_request_issue_attributes_to_error_or_intake_data_hash(attributes, benefit_type)
+        Api::V3::HigherLevelReviewProcessor.json_api_request_issue_attributes_to_error_or_intake_data_hash(
+          attributes, benefit_type
+        )
       ).to eq(
         is_unidentified: false,
         contested_decision_issue_id: id,
@@ -1453,7 +1465,9 @@ describe hlrp, :all_dbs do
         notes: notes
       )
       expect(
-        hlrp.json_api_request_issue_attributes_to_error_or_intake_data_hash(attributes, benefit_type)
+        Api::V3::HigherLevelReviewProcessor.json_api_request_issue_attributes_to_error_or_intake_data_hash(
+          attributes, benefit_type
+        )
       ).to eq(
         is_unidentified: false,
         rating_issue_reference_id: id,
@@ -1467,7 +1481,9 @@ describe hlrp, :all_dbs do
         notes: notes
       )
       expect(
-        hlrp.json_api_request_issue_attributes_to_error_or_intake_data_hash(attributes, benefit_type)
+        Api::V3::HigherLevelReviewProcessor.json_api_request_issue_attributes_to_error_or_intake_data_hash(
+          attributes, benefit_type
+        )
       ).to eq(
         is_unidentified: false,
         vacols_id: id,
@@ -1489,7 +1505,9 @@ describe hlrp, :all_dbs do
         decision_text: decision_text
       )
       expect(
-        hlrp.json_api_request_issue_attributes_to_error_or_intake_data_hash(attributes, benefit_type)
+        Api::V3::HigherLevelReviewProcessor.json_api_request_issue_attributes_to_error_or_intake_data_hash(
+          attributes, benefit_type
+        )
       ).to eq(
         is_unidentified: false,
         nonrating_issue_category: category,
@@ -1507,7 +1525,9 @@ describe hlrp, :all_dbs do
         decision_text: decision_text
       )
       expect(
-        hlrp.json_api_request_issue_attributes_to_error_or_intake_data_hash(attributes, benefit_type)
+        Api::V3::HigherLevelReviewProcessor.json_api_request_issue_attributes_to_error_or_intake_data_hash(
+          attributes, benefit_type
+        )
       ).to eq(
         is_unidentified: true,
         notes: notes,
@@ -1519,7 +1539,7 @@ describe hlrp, :all_dbs do
   end
 
   context "::StartError" do
-    subject { hlrp::StartError }
+    subject { Api::V3::HigherLevelReviewProcessor::StartError }
     it("returns the error_code of intake if it's truthy") do
       intake = Intake.new
       code = "banana"
@@ -1536,7 +1556,7 @@ describe hlrp, :all_dbs do
   end
 
   context "::ReviewError" do
-    subject { hlrp::ReviewError }
+    subject { Api::V3::HigherLevelReviewProcessor::ReviewError }
     it("returns the error_code of intake if it's truthy") do
       intake = Intake.new
       code = "banana"
@@ -1561,11 +1581,3 @@ describe hlrp, :all_dbs do
     end
   end
 end
-
-#   let!(:claimant) do
-#     Claimant.create!(
-#       decision_review: higher_level_review,
-#       participant_id: veteran.participant_id,
-#       payee_code: "10"
-#     )
-#   end
