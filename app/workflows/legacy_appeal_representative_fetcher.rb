@@ -1,18 +1,21 @@
+# frozen_string_literal: true
+
 class LegacyAppealRepresentativeFetcher
-  def initialize(veteran_file_number:, vacols_id:, case_record:)
-    @veteran_file_number = veteran_file_number
-    @vacols_id = vacols_id
+  def initialize(power_of_attorney:, case_record:)
+    @power_of_attorney = power_of_attorney
     @case_record = case_record
   end
+
+  # This references VACOLS::Representative table
+  delegate :vacols_representatives, to: :case_record
 
   # This references Caseflow organizations table
   def representatives
     Representative.where(participant_id: [representative_participant_id] - [nil])
   end
 
-  # This references VACOLS::Representative table
-  def vacols_representatives
-    case_record.vacols_representatives
+  def representative_participant_id
+    power_of_attorney.bgs_participant_id
   end
 
   REPRESENTATIVE_METHOD_NAMES = [
@@ -43,7 +46,7 @@ class LegacyAppealRepresentativeFetcher
 
   private
 
-  attr_reader :veteran_file_number, :vacols_id, :case_record
+  attr_reader :power_of_attorney, :case_record
 
   def use_representative_info_from_bgs?
     RequestStore.store[:application] == "queue" ||
@@ -53,22 +56,5 @@ class LegacyAppealRepresentativeFetcher
 
   def vacols_representative_code
     power_of_attorney.vacols_representative_code
-  end
-
-  def representative_participant_id
-    power_of_attorney.bgs_participant_id
-  end
-
-  def power_of_attorney
-    # TODO: this will only return a single power of attorney. There are sometimes multiple values, eg.
-    # when a contesting claimant is present. Refactor so we surface all POA data.
-    @power_of_attorney ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id).tap do |poa|
-      # Set the VACOLS properties of the PowerOfAttorney object here explicitly so we only query the database once.
-      poa.class.repository.set_vacols_values(
-        poa: poa,
-        case_record: case_record,
-        representative: VACOLS::Representative.appellant_representative(vacols_id)
-      )
-    end
   end
 end

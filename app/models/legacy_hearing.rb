@@ -81,7 +81,7 @@ class LegacyHearing < ApplicationRecord
   end
 
   def representative
-    appeal && appeal.bgs_representative_name
+    appeal&.representative_name
   end
 
   def assigned_to_vso?(user)

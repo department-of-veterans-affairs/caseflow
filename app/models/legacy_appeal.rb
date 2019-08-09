@@ -244,14 +244,27 @@ class LegacyAppeal < ApplicationRecord
 
   delegate :representative_name, :representative_type,
            :representatives, :representative_to_hash,
-           :vacols_representatives, to: :representative_fetcher
+           :representative_participant_id, :vacols_representatives,
+           to: :representative_fetcher
 
   def representative_fetcher
     @representative_fetcher ||= LegacyAppealRepresentativeFetcher.new(
-      veteran_file_number: veteran_file_number,
-      vacols_id: vacols_id,
+      power_of_attorney: power_of_attorney,
       case_record: case_record
     )
+  end
+
+  def power_of_attorney
+    # TODO: this will only return a single power of attorney. There are sometimes multiple values, eg.
+    # when a contesting claimant is present. Refactor so we surface all POA data.
+    @power_of_attorney ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id).tap do |poa|
+      # Set the VACOLS properties of the PowerOfAttorney object here explicitly so we only query the database once.
+      poa.class.repository.set_vacols_values(
+        poa: poa,
+        case_record: case_record,
+        representative: VACOLS::Representative.appellant_representative(vacols_id)
+      )
+    end
   end
 
   attr_writer :hearings
