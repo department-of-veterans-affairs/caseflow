@@ -52,10 +52,6 @@ class LegacyHearing < ApplicationRecord
            to: :appeal,
            allow_nil: true
 
-  delegate :representative,
-           to: :appeal,
-           allow_nil: true
-
   before_create :assign_created_by_user
   before_update :assign_updated_by_user
 
@@ -82,6 +78,10 @@ class LegacyHearing < ApplicationRecord
 
   def judge
     user
+  end
+
+  def representative
+    appeal && appeal.bgs_representative_name
   end
 
   def assigned_to_vso?(user)
