@@ -6,10 +6,6 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   skip_before_action :verify_authenticity_token, only: [:outcode]
 
-  rescue_from ActionController::ParameterMissing do |e|
-    render(json: { message: e.message }, status: :bad_request)
-  end
-
   def list
     if file_number.present?
       render json: json_appeals(appeals_by_file_number)
@@ -23,8 +19,11 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   def outcode
-    BvaDispatchTask.outcode(appeal, outcode_params, user)
-    render json: { message: "Success!" }
+    result = BvaDispatchTask.outcode(appeal, outcode_params, user)
+
+    return render json: { message: "Success!" } if result.success?
+
+    render json: { message: result.errors[0] }, status: :bad_request
   end
 
   private
@@ -52,11 +51,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   def outcode_params
-    keys = %w[citation_number decision_date redacted_document_location file]
-    params.require(keys)
-
-    # Have to do this because params.require() returns an array of the parameter values.
-    keys.map { |k| [k, params[k]] }.to_h
+    params.permit(:citation_number, :decision_date, :redacted_document_location, :file)
   end
 
   def json_appeal_details
