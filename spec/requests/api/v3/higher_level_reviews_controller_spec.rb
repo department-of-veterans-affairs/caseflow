@@ -240,9 +240,9 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         expect(response).to have_http_status(202)
       end
 
-      it "should return a 422 on failure" do
+      it "should return an error status on failure" do
         post("/api/v3/decision_review/higher_level_reviews", params: {})
-        expect(response).to have_http_status(422)
+        expect(response).to have_http_status(:error)
       end
     end
 
@@ -250,9 +250,9 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       let(:category) { "Words ending in urple" }
       it "should return a 422 on this failure" do
         post("/api/v3/decision_review/higher_level_reviews", params: params)
-        expect(response).to have_http_status(422)
-
         error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:unknown_category_for_benefit_type)
+
+        expect(response).to have_http_status(error.status)
         expect(JSON.parse(response.body)).to eq({ errors: [error] }.as_json)
       end
     end
@@ -270,8 +270,9 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         end
         it "should return 422/intake_review_failed" do
           post("/api/v3/decision_review/higher_level_reviews", params: params)
-          expect(response).to have_http_status(422)
           error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:intake_review_failed)
+
+          expect(response).to have_http_status(error.status)
           expect(JSON.parse(response.body)).to eq({ errors: [error] }.as_json)
         end
       end
@@ -285,8 +286,9 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         end
         it "should return 422/unknown_error_code" do
           post("/api/v3/decision_review/higher_level_reviews", params: params)
-          expect(response).to have_http_status(422)
           error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:unknown_error_code)
+
+          expect(response).to have_http_status(error.status)
           expect(JSON.parse(response.body)).to eq({ errors: [error] }.as_json)
         end
       end
@@ -296,8 +298,9 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         it "should return 422/reserved_veteran_file_number" do
           FeatureToggle.enable!(:intake_reserved_file_number, users: [current_user.css_id])
           post("/api/v3/decision_review/higher_level_reviews", params: params)
-          expect(response).to have_http_status(422)
           error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:reserved_veteran_file_number)
+
+          expect(response).to have_http_status(error.status)
           expect(JSON.parse(response.body)).to eq({ errors: [error] }.as_json)
           FeatureToggle.disable!(:intake_reserved_file_number, users: [current_user.css_id])
         end

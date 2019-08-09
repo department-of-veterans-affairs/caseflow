@@ -37,7 +37,7 @@ class Api::V3::HigherLevelReviewProcessor
   end.freeze
 
   # this is the error given when error code lookup fails. Note: :unknown_error is not in the list above
-  ERROR_FOR_UNKNOWN_CODE = Error.new(422, :unknown_error, "Unknown error")
+  ERROR_FOR_UNKNOWN_CODE = Error.new(500, :unknown_error, "Unknown error")
 
   CATEGORIES_BY_BENEFIT_TYPE = Constants::ISSUE_CATEGORIES
 
