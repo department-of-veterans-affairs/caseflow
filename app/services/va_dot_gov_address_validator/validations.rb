@@ -3,6 +3,7 @@
 module VaDotGovAddressValidator::Validations
   private
 
+  # :nocov:
   def map_country_code_to_state
     case valid_address[:country_code]
     # Guam, American Samoa, Marshall Islands, Micronesia, Northern Mariana Islands, Palau
@@ -18,6 +19,7 @@ module VaDotGovAddressValidator::Validations
       valid_address.dig(:state_code)
     end
   end
+  # :nocov:
 
   def valid_states
     @valid_states ||= RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? }.pluck(:state)
