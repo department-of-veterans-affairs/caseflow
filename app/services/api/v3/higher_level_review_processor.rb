@@ -22,7 +22,6 @@ class Api::V3::HigherLevelReviewProcessor
     [422, :notes_cannot_be_blank_when_contesting_legacy, "Notes cannot be blank when contesting a legacy issue"],
     [422, :notes_cannot_be_blank_when_contesting_rating, "Notes cannot be blank when contesting a rating"],
     [422, :rating_issue_id_cannot_be_blank, "Must specify a rating issue ID to contest a rating issue"],
-    [422, :reserved_veteran_file_number, "Invalid veteran file number"], # i
     [422, :unknown_category_for_benefit_type, "Unknown category for specified benefit type"],
     [422, :unknown_contestation_type, "Can only contest: \"on_file_(decision|rating|legacy)_issue\" or \"other\""],
     [422, :veteran_has_multiple_phone_numbers, "The veteran has multiple active phone numbers"], # i
@@ -31,7 +30,8 @@ class Api::V3::HigherLevelReviewProcessor
       422,
       :veteran_not_valid, # i
       "The veteran's profile has missing or invalid information required to create an EP"
-    ]
+    ],
+    [500, :reserved_veteran_file_number, "Invalid veteran file number"] # i
   ].each_with_object({}) do |args, hash|
     hash[args[1]] = Error.new(*args)
   end.freeze
