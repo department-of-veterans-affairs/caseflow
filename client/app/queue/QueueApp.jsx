@@ -60,7 +60,6 @@ import SelectSpecialIssuesView from './SelectSpecialIssuesView';
 import SpecialIssueLoadingScreen from './SpecialIssueLoadingScreen';
 import AddEditIssueView from './AddEditIssueView';
 import SelectRemandReasonsView from './SelectRemandReasonsView';
-import BeaamAppealListView from './BeaamAppealListView';
 import OrganizationQueue from './OrganizationQueue';
 import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
@@ -116,10 +115,6 @@ class QueueApp extends React.PureComponent {
 
   routedQueueList = () => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
     {this.viewForUserRole()}
-  </QueueLoadingScreen>;
-
-  routedBeaamList = () => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()} urlToLoad="/beaam_appeals">
-    <BeaamAppealListView {...this.props} />
   </QueueLoadingScreen>;
 
   routedJudgeQueueList = (label) => ({ match }) => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
@@ -297,18 +292,11 @@ class QueueApp extends React.PureComponent {
             path="/queue"
             title={`${this.queueName()}  | Caseflow`}
             render={this.routedQueueList} />
-          <Switch>
-            <PageRoute
-              exact
-              path="/queue/beaam"
-              title="BEAAM Appeals"
-              render={this.routedBeaamList} />
-            <PageRoute
-              exact
-              path="/queue/:userId"
-              title={`${this.queueName()}  | Caseflow`}
-              render={this.routedQueueList} />
-          </Switch>
+          <PageRoute
+            exact
+            path="/queue/:userId"
+            title={`${this.queueName()}  | Caseflow`}
+            render={this.routedQueueList} />
           <PageRoute
             exact
             path="/queue/:userId/review"

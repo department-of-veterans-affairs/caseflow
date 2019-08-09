@@ -35,7 +35,7 @@ RSpec.feature "AmaQueue", :all_dbs do
     end
   end
 
-  context "loads appellant detail view" do
+  context "loads appellant detail view", focus: true do
     let(:attorney_first_name) { "Robby" }
     let(:attorney_last_name) { "McDobby" }
     let!(:attorney_user) do
@@ -60,7 +60,6 @@ RSpec.feature "AmaQueue", :all_dbs do
 
     before do
       Fakes::Initializer.load!
-      FeatureToggle.enable!(:queue_beaam_appeals)
 
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
         appeals.first.claimants.first.participant_id => {
@@ -69,10 +68,6 @@ RSpec.feature "AmaQueue", :all_dbs do
           participant_id: participant_id
         }
       )
-    end
-
-    after do
-      FeatureToggle.disable!(:queue_beaam_appeals)
     end
 
     let(:poa_address) { "123 Poplar St." }
