@@ -5,16 +5,13 @@ require "support/intake_helpers"
 require "support/vacols_database_cleaner"
 require File.expand_path("../../../../app/services/api/v3/higher_level_review_processor.rb", __dir__)
 
-hlrp = Api::V3::HigherLevelReviewProcessor
-hlrc = Api::V3::DecisionReview::HigherLevelReviewsController
-
-describe hlrc do
+describe Api::V3::DecisionReview::HigherLevelReviewsController do
   context ".intake_status" do
     it "should return a properly formatted IntakeStatus hash" do
       uuid = 444
       asyncable_status = "nice"
       higher_level_review = Struct.new(:uuid, :asyncable_status).new(uuid, asyncable_status)
-      expect(hlrc.intake_status(higher_level_review)).to eq(
+      expect(Api::V3::DecisionReview::HigherLevelReviewsController.intake_status(higher_level_review)).to eq(
         data: {
           type: "IntakeStatus",
           id: uuid,
@@ -25,30 +22,50 @@ describe hlrc do
       )
     end
     it "should raise a NoMethod error when given an object with neither a uuid nor a asyncable_status method" do
-      expect { hlrc.intake_status("") }.to raise_error(NoMethodError)
+      expect { Api::V3::DecisionReview::HigherLevelReviewsController.intake_status("") }.to raise_error(NoMethodError)
     end
   end
 
   context ".status_from_errors" do
     it "should return ArgumentError when given something that isn't an array" do
-      [nil, false, "abc", 32, { a: hlrp::Error.new(1000, :something, "Something.") }].each do |errors|
-        expect { hlrc.status_from_errors(errors) }.to raise_error(ArgumentError)
+      [
+        nil,
+        false,
+        "abc",
+        32,
+        { a: Api::V3::HigherLevelReviewProcessor::Error.new(1000, :something, "Something.") }
+      ].each do |errors|
+        expect { Api::V3::DecisionReview::HigherLevelReviewsController.status_from_errors(errors) }.to(
+          raise_error(ArgumentError)
+        )
       end
     end
 
     it "should still return a 422 status if given an empty array" do
-      expect(hlrc.status_from_errors([])).to eq(422)
+      expect(Api::V3::DecisionReview::HigherLevelReviewsController.status_from_errors([])).to eq(422)
     end
 
-    let(:error_with_403_integer_status) { hlrp.error_from_error_code(:veteran_not_accessible) }
-    let(:error_with_404_integer_status) { hlrp.error_from_error_code(:veteran_not_found) }
-    let(:error_with_1000_integer_status) { hlrp::Error.new(1000, :something, "Something.") }
-    let(:error_with_403_string_status) { hlrp::Error.new("403", :something_else, "Something else.") }
-    let(:error_with_404_string_status) { hlrp::Error.new("404", :something_completely_different, "Etc..") }
-    let(:error_with_1000_string_status) { hlrp::Error.new("1000", :blue, "Blue.") }
-    let(:error_with_false_status) { hlrp::Error.new(false, :yellow, "Yellow.") }
-    let(:error_with_nil_status) { hlrp::Error.new(nil, :green, "Green.") }
-    let(:error_with_string_that_cant_quite_convert_to_int) { hlrp::Error.new("123abc", :green, "Green.") }
+    let(:error_with_403_integer_status) do
+      Api::V3::HigherLevelReviewProcessor.error_from_error_code(:veteran_not_accessible)
+    end
+    let(:error_with_404_integer_status) do
+      Api::V3::HigherLevelReviewProcessor.error_from_error_code(:veteran_not_found)
+    end
+    let(:error_with_1000_integer_status) do
+      Api::V3::HigherLevelReviewProcessor::Error.new(1000, :something, "Something.")
+    end
+    let(:error_with_403_string_status) do
+      Api::V3::HigherLevelReviewProcessor::Error.new("403", :something_else, "Something else.")
+    end
+    let(:error_with_404_string_status) do
+      Api::V3::HigherLevelReviewProcessor::Error.new("404", :something_completely_different, "Etc..")
+    end
+    let(:error_with_1000_string_status) { Api::V3::HigherLevelReviewProcessor::Error.new("1000", :blue, "Blue.") }
+    let(:error_with_false_status) { Api::V3::HigherLevelReviewProcessor::Error.new(false, :yellow, "Yellow.") }
+    let(:error_with_nil_status) { Api::V3::HigherLevelReviewProcessor::Error.new(nil, :green, "Green.") }
+    let(:error_with_string_that_cant_quite_convert_to_int) do
+      Api::V3::HigherLevelReviewProcessor::Error.new("123abc", :green, "Green.")
+    end
 
     it "should return the correct status" do
       expect(error_with_403_integer_status.status).to eq(403)
@@ -73,7 +90,7 @@ describe hlrc do
           ], 1000
         ]
       ].each do |(array, status)|
-        expect(hlrc.status_from_errors(array)).to eq(status)
+        expect(Api::V3::DecisionReview::HigherLevelReviewsController.status_from_errors(array)).to eq(status)
       end
 
       [
@@ -81,11 +98,13 @@ describe hlrc do
         [error_with_false_status],
         [error_with_404_integer_status, error_with_403_integer_status, error_with_nil_status]
       ].each do |array|
-        expect(hlrc.status_from_errors(array)).to be(422)
+        expect(Api::V3::DecisionReview::HigherLevelReviewsController.status_from_errors(array)).to be(422)
       end
 
       array = [error_with_string_that_cant_quite_convert_to_int]
-      expect { hlrc.status_from_errors(array) }.to raise_error(ArgumentError)
+      expect do
+        Api::V3::DecisionReview::HigherLevelReviewsController.status_from_errors(array)
+      end.to raise_error(ArgumentError)
     end
   end
 
@@ -97,10 +116,10 @@ describe hlrc do
 
     let(:code_b) { :invalid_file_number }
     let(:object_b) do
-      hlrp::StartError.new(Intake.new(error_code: code_b))
+      Api::V3::HigherLevelReviewProcessor::StartError.new(Intake.new(error_code: code_b))
     end
 
-    subject { hlrc.method(:error_from_objects_error_code) }
+    subject { Api::V3::DecisionReview::HigherLevelReviewsController.method(:error_from_objects_error_code) }
     it "should return the correct error" do
       [
         [[object_a, object_b], code_a],
@@ -109,13 +128,15 @@ describe hlrc do
         [[object_b], code_b],
         [[nil], nil]
       ].each do |objects, code|
-        expect(hlrc.error_from_objects_error_code(*objects)).to eq(hlrp.error_from_error_code(code))
+        expect(Api::V3::DecisionReview::HigherLevelReviewsController.error_from_objects_error_code(*objects)).to(
+          eq(Api::V3::HigherLevelReviewProcessor.error_from_error_code(code))
+        )
       end
     end
   end
 end
 
-describe hlrc, :all_dbs, type: :request do
+describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: :request do
   include IntakeHelpers
 
   before do
@@ -231,7 +252,7 @@ describe hlrc, :all_dbs, type: :request do
         post("/api/v3/decision_review/higher_level_reviews", params: params)
         expect(response).to have_http_status(422)
 
-        error = hlrp.error_from_error_code(:unknown_category_for_benefit_type)
+        error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:unknown_category_for_benefit_type)
         expect(JSON.parse(response.body)).to eq({ errors: [error] }.as_json)
       end
     end
@@ -250,7 +271,7 @@ describe hlrc, :all_dbs, type: :request do
         it "should return 422/intake_review_failed" do
           post("/api/v3/decision_review/higher_level_reviews", params: params)
           expect(response).to have_http_status(422)
-          error = hlrp.error_from_error_code(:intake_review_failed)
+          error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:intake_review_failed)
           expect(JSON.parse(response.body)).to eq({ errors: [error] }.as_json)
         end
       end
@@ -265,7 +286,7 @@ describe hlrc, :all_dbs, type: :request do
         it "should return 422/unknown_error_code" do
           post("/api/v3/decision_review/higher_level_reviews", params: params)
           expect(response).to have_http_status(422)
-          error = hlrp.error_from_error_code(:unknown_error_code)
+          error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:unknown_error_code)
           expect(JSON.parse(response.body)).to eq({ errors: [error] }.as_json)
         end
       end
@@ -276,7 +297,7 @@ describe hlrc, :all_dbs, type: :request do
           FeatureToggle.enable!(:intake_reserved_file_number, users: [current_user.css_id])
           post("/api/v3/decision_review/higher_level_reviews", params: params)
           expect(response).to have_http_status(422)
-          error = hlrp.error_from_error_code(:reserved_veteran_file_number)
+          error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:reserved_veteran_file_number)
           expect(JSON.parse(response.body)).to eq({ errors: [error] }.as_json)
           FeatureToggle.disable!(:intake_reserved_file_number, users: [current_user.css_id])
         end
