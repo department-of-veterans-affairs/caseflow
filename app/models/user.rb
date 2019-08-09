@@ -247,11 +247,9 @@ class User < ApplicationRecord
 
   def selectable_organizations
     orgs = organizations.select(&:selectable_in_queue?)
-    judge_team = JudgeTeam.for_judge(self)
 
-    if judge_team
+    if JudgeTeam.for_judge(self) || judge_in_vacols?
       orgs << {
-        id: judge_team.id,
         name: "Assign",
         url: format("queue/%s/assign", id)
       }
