@@ -254,7 +254,7 @@ describe User, :all_dbs do
 
     subject { user.selectable_organizations }
 
-    context "when user is not a judge in vacols" do
+    context "when user is not a judge in vacols and does not have a judge team" do
       it "assign cases is not returned" do
         is_expected.to be_empty
       end
@@ -262,6 +262,17 @@ describe User, :all_dbs do
 
     context "when user is a judge in vacols" do
       let!(:staff) { create(:staff, :attorney_judge_role, user: user) }
+
+      it "assign cases is returned" do
+        is_expected.to include(
+          name: "Assign",
+          url: format("queue/%<id>s/assign", id: user.id)
+        )
+      end
+    end
+
+    context "when user has a judge team" do
+      before { JudgeTeam.create_for_judge(user) }
 
       it "assign cases is returned" do
         is_expected.to include(
