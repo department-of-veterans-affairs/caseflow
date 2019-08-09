@@ -10,7 +10,7 @@ class SlackService
   attr_reader :url
 
   def send_notification(msg, title = "", channel = DEFAULT_CHANNEL)
-    return unless url
+    return unless url && (aws_env != "uat")
 
     slack_msg = format_slack_msg(msg, title, channel)
 
@@ -27,8 +27,6 @@ class SlackService
   def format_slack_msg(msg, title, channel)
     channel.prepend("#") unless channel =~ /^#/
 
-    aws_env = ENV.fetch("DEPLOY_ENV", "development")
-
     {
       username: "Caseflow (#{aws_env})",
       channel: channel,
@@ -40,5 +38,9 @@ class SlackService
         }
       ]
     }
+  end
+
+  def aws_env
+    ENV.fetch("DEPLOY_ENV", "development")
   end
 end

@@ -249,32 +249,36 @@ describe User, :all_dbs do
   end
 
   context "#selectable_organizations" do
-    let(:judge) { create :user }
-    let!(:judgeteam) { JudgeTeam.create_for_judge(judge) }
+    let(:user) { create(:user) }
+    let!(:staff) { create(:staff, :attorney_role, user: user) }
 
     subject { user.selectable_organizations }
 
-    context "when user is the team's judge" do
-      let(:user) { judge }
-
-      it "includes judge teams from the organization list" do
-        is_expected.to include(
-          id: judgeteam.id,
-          name: "Assign",
-          url: format("queue/%<id>s/assign", id: user.id)
-        )
-        expect(user.organizations).to include judgeteam
+    context "when user is not a judge in vacols and does not have a judge team" do
+      it "assign cases is not returned" do
+        is_expected.to be_empty
       end
     end
 
-    context "when user is not the team's judge" do
-      before do
-        OrganizationsUser.add_user_to_organization(user, judgeteam)
-      end
+    context "when user is a judge in vacols" do
+      let!(:staff) { create(:staff, :attorney_judge_role, user: user) }
 
-      it "excludes judge teams from the organization list" do
-        is_expected.to be_empty
-        expect(user.organizations).to include judgeteam
+      it "assign cases is returned" do
+        is_expected.to include(
+          name: "Assign",
+          url: format("queue/%<id>s/assign", id: user.id)
+        )
+      end
+    end
+
+    context "when user has a judge team" do
+      before { JudgeTeam.create_for_judge(user) }
+
+      it "assign cases is returned" do
+        is_expected.to include(
+          name: "Assign",
+          url: format("queue/%<id>s/assign", id: user.id)
+        )
       end
     end
   end
