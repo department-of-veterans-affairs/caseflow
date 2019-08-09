@@ -49,7 +49,7 @@ RSpec.shared_examples "Address Verify Task for Appeal" do
     end
   end
 
-  context "after update", focus: true do
+  context "after update" do
     it "finds closest_ro for veteran when completed" do
       verify_address_task.update!(status: Constants.TASK_STATUSES.completed)
 
