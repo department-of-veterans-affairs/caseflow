@@ -302,8 +302,8 @@ Navigate to the directory you'd like to clone this repo into and run:
 cd caseflow
 rbenv install $(cat .ruby-version)
 rbenv rehash
-BUNDLED_WITH= #[Gemfile.lock bundled-with]
-gem install bundler -v $BUNDLED_WITH
+# BUNDLED_WITH<VERSION> is at the bottom Gemfile.lock
+gem install bundler -v BUNDLED_WITH
 # If when running gem install bundler above you get a permissions error,
 # this means you have not propertly configured your rbenv.
 # Debug.

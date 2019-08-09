@@ -60,7 +60,6 @@ RSpec.feature "AmaQueue", :all_dbs do
 
     before do
       Fakes::Initializer.load!
-      FeatureToggle.enable!(:queue_beaam_appeals)
 
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
         appeals.first.claimants.first.participant_id => {
@@ -69,10 +68,6 @@ RSpec.feature "AmaQueue", :all_dbs do
           participant_id: participant_id
         }
       )
-    end
-
-    after do
-      FeatureToggle.disable!(:queue_beaam_appeals)
     end
 
     let(:poa_address) { "123 Poplar St." }
@@ -540,7 +535,10 @@ RSpec.feature "AmaQueue", :all_dbs do
 
         click_on veteran_full_name
 
-        click_dropdown(prompt: "Select an action", text: "Return to attorney")
+        click_dropdown(
+          prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+          text: Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.label
+        )
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
         fill_in "taskInstructions", with: "Please fix this"
 
@@ -669,7 +667,10 @@ RSpec.feature "AmaQueue", :all_dbs do
 
         click_on veteran_full_name
 
-        click_dropdown(prompt: "Select an action", text: "Return to attorney")
+        click_dropdown(
+          prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+          text: Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.label
+        )
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
         fill_in "taskInstructions", with: "Please fix this"
 

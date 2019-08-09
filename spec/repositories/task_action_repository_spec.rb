@@ -81,9 +81,31 @@ describe TaskActionRepository, :all_dbs do
 
       it "shows the assigned attorney in selected, and all attorneys in options" do
         expect(subject[:selected]).to eq attorney
+
+        # + 1 because "attorney" is already in the judge team
         expect(judge_team.non_admins.count).to eq attorney_names.count + 1
         judge_team.non_admins.each do |team_attorney|
           expect(subject[:options]).to include(label: team_attorney.full_name, value: team_attorney.id)
+        end
+      end
+
+      context "there are an attorneys on other judge teamd" do
+        let(:other_teams_atty_names) { ["Wild E Beast", "Emory Millage", "Madalene Padavano", "Yvette Jessie Bailey"] }
+        let(:other_teams_attorneys) { other_teams_atty_names.map { |atty_name| create(:user, full_name: atty_name) } }
+
+        before do
+          other_teams_attorneys.each do |atty_user|
+            create(:staff, :attorney_role, user: atty_user)
+            other_judge_team = JudgeTeam.create_for_judge(create(:user))
+            OrganizationsUser.add_user_to_organization(atty_user, other_judge_team)
+          end
+        end
+
+        it "includes attorneys on other judge teams in the list of options" do
+          all_attorneys = judge_team.non_admins + other_teams_attorneys
+          expected_options = all_attorneys.map { |atty| { label: atty.full_name, value: atty.id } }
+
+          expect(subject[:options]).to match_array(expected_options)
         end
       end
     end

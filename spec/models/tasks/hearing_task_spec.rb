@@ -34,7 +34,7 @@ describe HearingTask, :postgres do
       expect(change_hearing_disposition_task.appeal).to eq appeal
       expect(change_hearing_disposition_task.parent).to eq hearing_task
       expect(change_hearing_disposition_task.open?).to be_truthy
-      expect(change_hearing_disposition_task.instructions).to match_array [instructions]
+      expect(change_hearing_disposition_task.instructions).to include(instructions)
     end
   end
 

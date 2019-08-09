@@ -68,6 +68,10 @@ class Task < ApplicationRecord
     self.class.name.titlecase
   end
 
+  def default_instructions
+    []
+  end
+
   def self.closed_statuses
     [Constants.TASK_STATUSES.completed, Constants.TASK_STATUSES.cancelled]
   end
