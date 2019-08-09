@@ -4,7 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Route, BrowserRouter, Switch } from 'react-router-dom';
+import { Route, BrowserRouter } from 'react-router-dom';
 import StringUtil from '../util/StringUtil';
 
 import {
@@ -528,7 +528,23 @@ QueueApp.propTypes = {
   userRole: PropTypes.string.isRequired,
   userCssId: PropTypes.string.isRequired,
   dropdownUrls: PropTypes.array,
-  buildDate: PropTypes.string
+  buildDate: PropTypes.string,
+  setCanEditAod: PropTypes.func,
+  canEditAod: PropTypes.bool,
+  setFeatureToggles: PropTypes.func,
+  featureToggles: PropTypes.object,
+  setUserRole: PropTypes.func,
+  setUserCssId: PropTypes.func,
+  setOrganizations: PropTypes.func,
+  organizations: PropTypes.array,
+  setUserIsVsoEmployee: PropTypes.func,
+  userIsVsoEmployee: PropTypes.bool,
+  setFeedbackUrl: PropTypes.func,
+  hasCaseDetailsRole: PropTypes.bool,
+  caseSearchHomePage: PropTypes.bool,
+  applicationUrls: PropTypes.array,
+  flash: PropTypes.array,
+  reviewActionType: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
