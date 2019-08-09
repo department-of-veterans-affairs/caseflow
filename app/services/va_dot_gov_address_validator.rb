@@ -36,7 +36,7 @@ class VaDotGovAddressValidator
   end
 
   def state_code
-    valid_address.dig(:state_code)
+    map_country_code_to_state
   end
 
   def closest_regional_office
