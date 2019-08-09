@@ -3,8 +3,8 @@
 class Api::ExternalProxyController < ActionController::Base
   protect_from_forgery with: :null_session
 
-  def api_released?
-    return true if FeatureToggle.enabled?(:external_api_released)
+  def api_released?(api_name=controller_as_api_feature_name)
+    return true if FeatureToggle.enabled?(api_name)
 
     render json: {
       errors: [
@@ -16,5 +16,12 @@ class Api::ExternalProxyController < ActionController::Base
       ]
     },
            status: :not_implemented
+  end
+
+  def controller_as_api_feature_name(cntrlr = self.class)
+    case cntrlr
+    when Api::V3::DecisionReview::HigherLevelReviewsController
+      :higher_level_review_api
+    end
   end
 end

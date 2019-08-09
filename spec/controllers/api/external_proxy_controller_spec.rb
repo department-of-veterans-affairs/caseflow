@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 RSpec.describe Api::ExternalProxyController, type: :controller do
-  describe "FeatureToggle for :external_api_released" do
+  describe "#api_released used in before_action" do
+    API_NAME = :external_proxy_controller
     controller do
-      before_action :api_released?
+      before_action -> { api_released?(API_NAME) }
 
       def index
         render json: { meta: { text: "This is just a test action." } }
@@ -17,7 +18,7 @@ RSpec.describe Api::ExternalProxyController, type: :controller do
       end
       it "should have a jsonapi error response" do
         get :index
-        expect { JSON.parse(response.body) }.to_not raise_error(JSON::ParserError)
+        expect { JSON.parse(response.body) }.to_not raise_error
         parsed_response = JSON.parse(response.body)
         expect(parsed_response["errors"]).to be_a Array
         expect(parsed_response["errors"].first).to include("status", "title", "detail")
@@ -26,7 +27,7 @@ RSpec.describe Api::ExternalProxyController, type: :controller do
 
     describe "when enabled" do
       it "should return a 200 response" do
-        FeatureToggle.enable!(:external_api_released)
+        FeatureToggle.enable!(API_NAME)
         get :index
         expect(response).to have_http_status(:ok)
       end
