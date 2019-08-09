@@ -119,7 +119,8 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
         expect(k).to be_a(Symbol)
       end
     end
-    it("has 21 keys") { expect(subject.length).to be(21) }
+    number_of_keys = 22
+    it("has #{number_of_keys} keys") { expect(subject.length).to be(number_of_keys) }
     it("has only Errors as values") do
       subject.values.each do |v|
         expect(v).to be_a(Api::V3::HigherLevelReviewProcessor::Error)
@@ -238,6 +239,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
         attributes: {
           contests: c_contests,
           id: c_id,
+          seq_id: c_seq_id,
           notes: c_notes
         }
       },
@@ -312,6 +314,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
         type: "RequestIssue",
         attributes: {
           id: l_id,
+          seq_id: l_seq_id,
           contests: l_contests,
           notes: l_notes
         }
@@ -320,6 +323,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
         type: "RequestIssue",
         attributes: {
           id: m_id,
+          seq_id: m_seq_id,
           contests: m_contests,
           notes: m_notes
         }
@@ -360,6 +364,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
         type: "RequestIssue",
         attributes: {
           id: r_id,
+          seq_id: r_seq_id,
           contests: r_contests,
           notes: r_notes
         }
@@ -368,6 +373,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
         type: "RequestIssue",
         attributes: {
           id: s_id,
+          seq_id: s_seq_id,
           contests: s_contests,
           notes: s_notes
         }
@@ -425,6 +431,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
 
     let(:c_contests) { "on_file_legacy_issue" }
     let(:c_id) { 0 }
+    let(:c_seq_id) { 0 }
     let(:c_notes) { "a" }
 
     let(:benefit_type) { "compensation" }
@@ -473,11 +480,13 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
     # error: blank id
     let(:l_contests) { "on_file_legacy_issue" }
     let(:l_id) { "   " }
+    let(:l_seq_id) { 1 }
     let(:l_notes) { "Weeeeeeeeeeepy" }
 
     # error: blank id
     let(:m_contests) { "on_file_legacy_issue" }
     let(:m_id) { false }
+    let(:m_seq_id) { 1 }
     let(:m_notes) { "Monopoly" }
 
     # error: blank notes
@@ -503,11 +512,13 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
     # error: blank notes
     let(:r_contests) { "on_file_legacy_issue" }
     let(:r_id) { 12 }
+    let(:r_seq_id) { 1 }
     let(:r_notes) { false }
 
     # error: blank notes
     let(:s_contests) { "on_file_legacy_issue" }
     let(:s_id) { 54 }
+    let(:s_seq_id) { 1 }
     let(:s_notes) { "   " }
 
     # error: bad category
@@ -573,7 +584,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
       expect(b[:notes]).to eq(ActionController::Parameters.new(b_notes))
 
       expect(c.as_json).to be_a(Hash)
-      expect(c.keys.length).to be(4)
+      expect(c.keys.length).to be(5)
       expect(c[:is_unidentified]).to be(false)
       expect(c[:benefit_type]).to eq(benefit_type)
       expect(c[:vacols_id]).to eq(c_id)
@@ -725,6 +736,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
     let(:legacy_opt_in_approved) { false }
     let(:contests) { "on_file_legacy_issue" }
     let(:id) { 7643 }
+    let(:seq_id) { 123 }
     let(:notes) { "Notes for goats." }
     let(:included) do
       [
@@ -733,6 +745,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
           attributes: {
             contests: contests,
             id: id,
+            seq_id: seq_id,
             notes: notes
           }
         }
@@ -816,6 +829,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
 
     let(:c_contests) { "on_file_legacy_issue" }
     let(:c_id) { 111_111 }
+    let(:c_seq_id) { 1 }
     let(:c_notes) { "Notes for request issue Sea!" }
 
     let(:benefit_type) { "compensation" }
@@ -853,6 +867,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
           attributes: {
             contests: c_contests,
             id: c_id,
+            seq_id: c_seq_id,
             notes: c_notes
           }
         },
@@ -905,7 +920,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
       expect(b[:notes]).to be(b_notes)
 
       expect(c.as_json).to be_a(Hash)
-      expect(c.keys.length).to be(4)
+      expect(c.keys.length).to be(5)
       expect(c[:is_unidentified]).to be(false)
       expect(c[:benefit_type]).to be(benefit_type)
       expect(c[:vacols_id]).to be(c_id)
@@ -1100,6 +1115,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
 
     let(:c_contests) { "on_file_legacy_issue" }
     let(:c_id) { true }
+    let(:c_seq_id) { 1 }
     let(:c_notes) { Api::V3::HigherLevelReviewProcessor::Error.new(1, 2, 3) }
 
     let(:benefit_type) { "compensation" }
@@ -1148,11 +1164,13 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
     # error: blank id
     let(:l_contests) { "on_file_legacy_issue" }
     let(:l_id) { "   " }
+    let(:l_seq_id) { 1 }
     let(:l_notes) { "Computer" }
 
     # error: blank id
     let(:m_contests) { "on_file_legacy_issue" }
     let(:m_id) { false }
+    let(:m_seq_id) { 1 }
     let(:m_notes) { "xray crayon" }
 
     # error: blank notes
@@ -1178,11 +1196,13 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
     # error: blank notes
     let(:r_contests) { "on_file_legacy_issue" }
     let(:r_id) { 19_992 }
+    let(:r_seq_id) { 1 }
     let(:r_notes) { false }
 
     # error: blank notes
     let(:s_contests) { "on_file_legacy_issue" }
     let(:s_id) { 9954 }
+    let(:s_seq_id) { 1 }
     let(:s_notes) { "   " }
 
     # error: bad category
@@ -1249,7 +1269,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
       expect(b[:notes]).to eq(b_notes)
 
       expect(c.as_json).to be_a(Hash)
-      expect(c.keys.length).to be(4)
+      expect(c.keys.length).to be(5)
       expect(c[:is_unidentified]).to be(false)
       expect(c[:benefit_type]).to eq(benefit_type)
       expect(c[:vacols_id]).to eq(c_id)
@@ -1398,6 +1418,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
     let(:legacy_opt_in_approved) { false }
     let(:contests) { "on_file_legacy_issue" }
     let(:id) { 7643 }
+    let(:seq_id) { 3 }
     let(:notes) { "Notes for goats." }
     let(:included) do
       [
@@ -1439,6 +1460,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
 
   context ".json_api_request_issue_attributes_to_error_or_intake_data_hash" do
     id = 4
+    seq_id = 8
     notes = "Some notes."
     benefit_type = "compensation"
 
@@ -1478,6 +1500,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
       attributes = ActionController::Parameters.new(
         contests: "on_file_legacy_issue",
         id: id,
+        seq_id: seq_id,
         notes: notes
       )
       expect(
@@ -1487,6 +1510,7 @@ describe Api::V3::HigherLevelReviewProcessor, :all_dbs do
       ).to eq(
         is_unidentified: false,
         vacols_id: id,
+        vacols_sequence_id: seq_id,
         notes: notes
       )
     end

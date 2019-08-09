@@ -17,6 +17,7 @@ class Api::V3::HigherLevelReviewProcessor
     [422, :intake_start_failed, "The start step of processing the intake failed"],
     [422, :invalid_file_number, "Veteran ID not found"], # i
     [422, :legacy_issue_id_cannot_be_blank, "Must specify a legacy issue ID to contest a legacy issue"],
+    [422, :legacy_sequence_id_cannot_be_blank, "Must specify a legacy sequence ID to contest a legacy issue"],
     [422, :must_have_text_to_contest_other, "notes or decision_text must be non-blank when contesting \"other\""],
     [422, :notes_cannot_be_blank_when_contesting_decision, "Notes cannot be blank when contesting a decision"],
     [422, :notes_cannot_be_blank_when_contesting_legacy, "Notes cannot be blank when contesting a legacy issue"],
@@ -195,18 +196,40 @@ class Api::V3::HigherLevelReviewProcessor
     }.freeze
 
     def contesting_on_file_to_intake_data_hash(request_issue, contest_type)
-      id, notes = request_issue.values_at(:id, :notes)
+      id, seq_id, notes = request_issue.values_at(:id, :seq_id, :notes)
       # open question: where will attributes[:request_issue_ids] go?
 
       return error_from_error_code(blank_id_error_for_contest_type(contest_type)) if id.blank?
       return error_from_error_code(blank_notes_error_for_contest_type(contest_type)) if notes.blank?
 
-      {
+      intake_data = {
         is_unidentified: false,
         INTAKE_DATA_HASH_ID_KEY_BY_CONTEST_TYPE[contest_type] => id,
         notes: notes
       }
+
+      if contest_type == :legacy
+        return error_from_error_code(:legacy_sequence_id_cannot_be_blank) if seq_id.blank?
+
+        intake_data.merge(vacols_sequence_id: seq_id)
+      else
+        intake_data
+      end
     end
+
+    #     def contesting_legacy_to_intake_data_hash(request_issue, contest_type)
+    #       id, notes = request_issue.values_at(:id, :notes)
+    #       # open question: where will attributes[:request_issue_ids] go?
+    #
+    #       return error_from_error_code(blank_id_error_for_contest_type(contest_type)) if id.blank?
+    #       return error_from_error_code(blank_notes_error_for_contest_type(contest_type)) if notes.blank?
+    #
+    #       {
+    #         is_unidentified: false,
+    #         INTAKE_DATA_HASH_ID_KEY_BY_CONTEST_TYPE[contest_type] => id,
+    #         notes: notes
+    #       }
+    #     end
 
     def contesting_other_to_intake_data_hash_for_category(request_issue, category)
       notes, decision_date, decision_text = request_issue.values_at(:notes, :decision_date, :decision_text)
