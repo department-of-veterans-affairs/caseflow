@@ -35,7 +35,7 @@ RSpec.feature "AmaQueue", :all_dbs do
     end
   end
 
-  context "loads appellant detail view", focus: true do
+  context "loads appellant detail view" do
     let(:attorney_first_name) { "Robby" }
     let(:attorney_last_name) { "McDobby" }
     let!(:attorney_user) do
