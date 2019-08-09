@@ -54,7 +54,7 @@ RSpec.shared_examples "Address Verify Task for Appeal" do
       verify_address_task.update!(status: Constants.TASK_STATUSES.completed)
 
       expect(verify_address_task.status).to eq Constants.TASK_STATUSES.completed
-      expect(RegionalOffice.ro_facility_ids).to include(appeal.class.first.closest_regional_office)
+      expect(RegionalOffice::ROS).to include(appeal.class.first.closest_regional_office)
     end
 
     it "throws an access error trying to update from params with random user" do
