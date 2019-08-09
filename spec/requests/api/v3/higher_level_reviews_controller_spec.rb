@@ -2,7 +2,7 @@
 
 describe Api::V3::DecisionReview::HigherLevelReviewsController, type: :request do
   before do
-    FeatureToggle.enable!(:external_api_released)
+    FeatureToggle.enable!(:higher_level_review_api)
   end
   describe "#create" do
     it "should return a 202 on success" do

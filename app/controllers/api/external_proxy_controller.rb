@@ -18,9 +18,9 @@ class Api::ExternalProxyController < ActionController::Base
            status: :not_implemented
   end
 
-  def controller_as_api_feature_name(cntrlr = self.class)
+  def controller_as_api_feature_name(cntrlr = self.class.name)
     case cntrlr
-    when Api::V3::DecisionReview::HigherLevelReviewsController
+    when 'Api::V3::DecisionReview::HigherLevelReviewsController'
       :higher_level_review_api
     end
   end
