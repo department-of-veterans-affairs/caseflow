@@ -38,7 +38,7 @@ class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
   def missing_veteran_file_number_or_ssn_error
     {
       "title": "Veteran file number missing",
-      "detail": "HTTP_VETERAN_ID request header must include Veteran file number"
+      "detail": "HTTP_CASE_SEARCH request header must include Veteran file number"
     }
   end
 
