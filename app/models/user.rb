@@ -250,7 +250,6 @@ class User < ApplicationRecord
 
     if judge_in_vacols?
       orgs << {
-        id: (JudgeTeam.for_judge(self) || JudgeTeam.create_for_judge(self)).id,
         name: "Assign",
         url: format("queue/%s/assign", id)
       }

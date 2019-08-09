@@ -255,52 +255,19 @@ describe User, :all_dbs do
     subject { user.selectable_organizations }
 
     context "when user is not a judge in vacols" do
-      before do
-        OrganizationsUser.add_user_to_organization(user, JudgeTeam.create_for_judge(create(:user)))
-      end
-
-      it "does not create a judge team and the team is not in the selectable organizations" do
+      it "assign cases is not returned" do
         is_expected.to be_empty
-        expect(user.organizations.first.is_a?(JudgeTeam)).to eq true
       end
     end
 
     context "when user is a judge in vacols" do
       let!(:staff) { create(:staff, :attorney_judge_role, user: user) }
 
-      context "but has no judge team" do
-        it "creates a judge team and and includes it in the selectable organizations" do
-          expect(JudgeTeam.for_judge(user)).to eq nil
-
-          subject
-
-          team = JudgeTeam.for_judge(user.reload)
-          is_expected.to include(
-            id: team.id,
-            name: "Assign",
-            url: format("queue/%<id>s/assign", id: user.id)
-          )
-          expect(user.organizations).to include team
-        end
-      end
-
-      context "but has a judge team" do
-        let!(:team) { JudgeTeam.create_for_judge(user) }
-
-        it "includes it in the selectable organizations but does not create a new judge team" do
-          expect(JudgeTeam.for_judge(user.reload)).to eq team
-          judge_team_count = JudgeTeam.count
-
-          subject
-
-          expect(JudgeTeam.count).to eq judge_team_count
-          is_expected.to include(
-            id: team.id,
-            name: "Assign",
-            url: format("queue/%<id>s/assign", id: user.id)
-          )
-          expect(user.organizations).to include team
-        end
+      it "assign cases is returned" do
+        is_expected.to include(
+          name: "Assign",
+          url: format("queue/%<id>s/assign", id: user.id)
+        )
       end
     end
   end
