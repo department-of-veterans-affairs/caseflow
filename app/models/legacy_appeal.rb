@@ -243,9 +243,9 @@ class LegacyAppeal < ApplicationRecord
   end
 
   delegate :representative_name, :representative_type,
-           :representatives, :representative_to_hash,
-           :representative_participant_id, :vacols_representatives,
-           to: :representative_fetcher
+           :representative_address, :representatives,
+           :representative_to_hash, :representative_participant_id,
+           :vacols_representatives, to: :representative_fetcher
 
   def representative_fetcher
     @representative_fetcher ||= LegacyAppealRepresentativeFetcher.new(

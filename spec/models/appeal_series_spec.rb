@@ -349,6 +349,7 @@ describe AppealSeries, :all_dbs do
     context "when it is at VSO" do
       let(:status) { "ACT" }
       let(:location_code) { "55" }
+      before { RequestStore[:application] = nil }
 
       it "returns a details hash with the vso name" do
         expect(subject[:type]).to eq(:at_vso)
