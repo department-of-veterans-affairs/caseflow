@@ -746,7 +746,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def address
-    @address ||= Address.new(appellant[:address])
+    @address ||= Address.new(appellant[:address]) if appellant[:address].present?
   end
 
   private
