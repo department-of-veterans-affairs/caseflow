@@ -3,7 +3,14 @@
 class QueueTab
   include ActiveModel::Model
 
+  validate :assignee_is_organization
+
   attr_accessor :assignee, :show_regional_office_column
+
+  def initialize(args)
+    super
+    fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
+  end
 
   def self.from_name(tab_name)
     tab = subclasses.find { |subclass| subclass.tab_name == tab_name }
@@ -54,6 +61,10 @@ class QueueTab
       :children,
       :parent
     ]
+  end
+
+  def assignee_is_organization
+    errors.add(:assignee, COPY::TASK_PAGE_INVALID_ASSIGNEE_MESSAGE) unless assignee&.is_a?(Organization)
   end
 end
 

@@ -7,11 +7,11 @@ describe QueueTab do
   let(:tab) { AssignedTasksTab.new(params) }
   let(:params) do
     {
-      assignee_name: assignee_name,
+      assignee: assignee,
       show_regional_office_column: show_regional_office_column
     }
   end
-  let(:assignee_name) { "organization name" }
+  let(:assignee) { create(:organization) }
   let(:show_regional_office_column) { false }
 
   describe ".allow_bulk_assign?" do
@@ -33,8 +33,37 @@ describe QueueTab do
       expect(subject.keys).to match_array([:label, :name, :description, :columns, :allow_bulk_assign])
     end
 
-    it "interpolates assignee_name name in description element of hash" do
-      expect(subject[:description]).to eq(format(tab.description, assignee_name))
+    it "interpolates assignee name in description element of hash" do
+      expect(subject[:description]).to eq(format(tab.description, assignee.name))
+    end
+  end
+
+  describe ".new" do
+    subject { tab }
+
+    context "when the assignee is not an organization" do
+      let(:assignee) { create(:user) }
+
+      it "raises an error" do
+        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
+      end
+    end
+
+    context "when there is no assignee parameter passed when instantiating the tab" do
+      let(:params) { { show_regional_office_column: show_regional_office_column } }
+
+      it "raises an error" do
+        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
+      end
+    end
+
+    context "when the assignee is an organization" do
+      let(:assignee) { create(:organization) }
+
+      it "is created successfully" do
+        expect { subject }.to_not raise_error
+        expect(subject).to be_a(AssignedTasksTab)
+      end
     end
   end
 
