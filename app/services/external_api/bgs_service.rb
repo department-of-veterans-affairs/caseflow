@@ -200,11 +200,11 @@ class ExternalApi::BGSService
 
   # can_access? reflects whether a user may read a veteran's records.
   # may_modify? reflects whether a user may establish a new claim.
-  def may_modify?(vbms_id)
+  def may_modify?(vbms_id, veteran_participant_id)
     return false unless can_access?(vbms_id)
 
     conflict_checker = ExternalApi::BgsVeteranStationUserConflict.new(
-      veteran_participant_id: @veteran_info[vbms_id][:ptcpnt_id],
+      veteran_participant_id: veteran_participant_id,
       client: client
     )
     !conflict_checker.call
