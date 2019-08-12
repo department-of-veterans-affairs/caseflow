@@ -98,7 +98,7 @@ class TaskPager
   end
 
   def tasks_for_tab
-    QueueTab.from_name(tab_name).new(assignee: organization).tasks
+    QueueTab.from_name(tab_name).new(assignee: assignee).tasks
   end
 
   private
