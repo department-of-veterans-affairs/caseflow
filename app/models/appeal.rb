@@ -224,7 +224,7 @@ class Appeal < DecisionReview
 
   alias aod advanced_on_docket
 
-  alias advance_on_docket?  advanced_on_docket
+  alias advance_on_docket? advanced_on_docket
 
   delegate :first_name,
            :last_name,

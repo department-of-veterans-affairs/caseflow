@@ -53,6 +53,8 @@ class Hearing < ApplicationRecord
 
   attr_accessor :override_full_hearing_day_validation
 
+  alias advance_on_docket? advanced_on_docket
+
   HEARING_TYPES = {
     V: "Video",
     T: "Travel",
