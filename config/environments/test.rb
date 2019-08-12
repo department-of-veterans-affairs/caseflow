@@ -87,6 +87,4 @@ Rails.application.configure do
   ENV["ENABLE_PUSHGATEWAY_HEALTHCHECK"] = "true"
 
   config.active_job.queue_adapter = :test
-
-  FeatureToggle.enable!(:api_v3)
 end
