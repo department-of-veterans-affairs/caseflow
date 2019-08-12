@@ -125,7 +125,7 @@ CaseDetailsView.propTypes = {
   resetErrorMessages: PropTypes.func,
   setHearingDay: PropTypes.func,
   success: PropTypes.object,
-  userRoleView: PropTypes.bool
+  userRoleView: PropTypes.bool,
   veteranCaseListIsVisible: PropTypes.bool
 };
 
