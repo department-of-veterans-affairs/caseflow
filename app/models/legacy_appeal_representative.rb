@@ -27,9 +27,9 @@ class LegacyAppealRepresentative
   REPRESENTATIVE_METHOD_NAMES.each do |method_name|
     define_method(method_name) do
       if use_representative_info_from_bgs?
-        power_of_attorney.send("bgs_#{method_name}".to_sym)
+        power_of_attorney.public_send("bgs_#{method_name}".to_sym)
       else
-        power_of_attorney.send("vacols_#{method_name}".to_sym)
+        power_of_attorney.public_send("vacols_#{method_name}".to_sym)
       end
     end
   end
