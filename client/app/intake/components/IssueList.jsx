@@ -6,6 +6,7 @@ import AddedIssue from './AddedIssue';
 import Button from '../../components/Button';
 import Dropdown from '../../components/Dropdown';
 import EditContentionTitle from '../components/EditContentionTitle';
+import PropTypes from 'prop-types';
 
 export default class IssuesList extends React.Component {
   render = () => {
@@ -95,3 +96,13 @@ export default class IssuesList extends React.Component {
     </div>;
   }
 }
+
+IssuesList.propTypes = {
+  featureToggles: PropTypes.object,
+  editPage: PropTypes.bool,
+  formType: PropTypes.string,
+  issues: PropTypes.array,
+  onClickIssueAction: PropTypes.func,
+  intakeData: PropTypes.object,
+  withdrawReview: PropTypes.bool
+};

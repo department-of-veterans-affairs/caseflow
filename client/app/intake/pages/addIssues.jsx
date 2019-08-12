@@ -35,6 +35,7 @@ import {
   toggleCorrectionTypeModal
 } from '../actions/addIssues';
 import COPY from '../../../COPY.json';
+import PropTypes from 'prop-types';
 
 export class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -323,6 +324,15 @@ export class AddIssuesPage extends React.Component {
     );
   }
 }
+
+AddIssuesPage.propTypes = {
+  featureToggles: PropTypes.object,
+  editPage: PropTypes.bool,
+  formType: PropTypes.string,
+  intakeForms: PropTypes.object,
+  addingIssue: PropTypes.func,
+  veteran: PropTypes.object
+};
 
 export const IntakeAddIssuesPage = connect(
   ({ intake, higherLevelReview, supplementalClaim, appeal, featureToggles, activeIssue, addingIssue }) => ({
