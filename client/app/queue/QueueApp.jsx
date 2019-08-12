@@ -125,7 +125,7 @@ class QueueApp extends React.PureComponent {
 
   routedQueueDetail = (props) => <CaseDetailsView appealId={props.match.params.appealId}
     hasCaseDetailsRole={this.props.hasCaseDetailsRole}
-    userRoleView={this.props.userRoleView}
+    userCanViewHearingSchedule={this.props.userCanViewHearingSchedule}
   />;
 
   routedQueueDetailWithLoadingScreen = (props) => <CaseDetailsLoadingScreen
@@ -547,7 +547,7 @@ QueueApp.propTypes = {
   applicationUrls: PropTypes.array,
   flash: PropTypes.array,
   reviewActionType: PropTypes.string,
-  userRoleView: PropTypes.bool
+  userCanViewHearingSchedule: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

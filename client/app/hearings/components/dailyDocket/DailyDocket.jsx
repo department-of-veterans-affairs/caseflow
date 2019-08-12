@@ -192,7 +192,7 @@ export default class DailyDocket extends React.Component {
       {hasDocketHearings &&
         <DailyDocketRows
           hearings={docketHearings}
-          readOnly={user.userRoleView || user.userRoleVso}
+          readOnly={user.userCanViewHearingSchedule || user.userRoleVso}
           saveHearing={this.props.saveHearing}
           openDispositionModal={this.openDispositionModal}
           regionalOffice={regionalOffice}

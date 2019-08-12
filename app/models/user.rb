@@ -71,6 +71,10 @@ class User < ApplicationRecord
     can_any_of_these_roles?(["Build HearSched", "Edit HearSched", "RO ViewHearSched", "VSO", "Hearing Prep"])
   end
 
+  def can_view_hearing_schedule?
+    can?("RO ViewHearSched") && !can?("Build HearSched") && !can?("Edit HearSched")
+  end
+
   def administer_org_users?
     admin? || granted?("Admin Intake") || roles.include?("Admin Intake")
   end

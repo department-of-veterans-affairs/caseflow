@@ -16,13 +16,12 @@
   buildDate: build_date,
   userRoleAssign: current_user.can?('Edit HearSched') || current_user.can?('Build HearSched'),
   userRoleBuild: current_user.can?('Build HearSched'),
-  userRoleView: current_user.can?('RO ViewHearSched') &&
-      !current_user.can?('Build HearSched') && !current_user.can?('Edit HearSched'),
   userRoleVso: current_user.can?('VSO') && !current_user.can?('RO ViewHearSched') &&
       !current_user.can?('Build HearSched') && !current_user.can?('Edit HearSched'),
   userRoleHearingPrep: current_user.can?('Hearing Prep'),
   userInHearingsOrganization: (HearingsManagement.singleton.users.include?(current_user) ||
       TranscriptionTeam.singleton.users.include?(current_user)),
+  userCanViewHearingSchedule: current_user.can_view_hearing_schedule?,
   userId: current_user.id,
   userCssId: current_user.css_id
 }) %>

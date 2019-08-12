@@ -83,7 +83,7 @@ class CaseDetailsView extends React.PureComponent {
         <CaseTitle appeal={appeal} />
         <CaseTitleDetails appealId={appealId} redirectUrl={window.location.pathname}
           hasCaseDetailsRole={this.props.hasCaseDetailsRole}
-          userRoleView={this.props.userRoleView}
+          userCanViewHearingSchedule={this.props.userCanViewHearingSchedule}
         />
         { this.props.veteranCaseListIsVisible &&
           <VeteranCasesView
@@ -125,7 +125,7 @@ CaseDetailsView.propTypes = {
   resetErrorMessages: PropTypes.func,
   setHearingDay: PropTypes.func,
   success: PropTypes.object,
-  userRoleView: PropTypes.bool,
+  userCanViewHearingSchedule: PropTypes.bool,
   veteranCaseListIsVisible: PropTypes.bool
 };
 

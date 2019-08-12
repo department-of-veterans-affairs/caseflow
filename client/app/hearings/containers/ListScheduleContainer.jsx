@@ -165,7 +165,7 @@ export class ListScheduleContainer extends React.Component {
   getHeader = () => {
     const { user } = this.props;
 
-    if (user.userRoleView || user.userRoleVso) {
+    if (user.userCanViewHearingSchedule || user.userRoleVso) {
       return COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER;
     } else if (user.userRoleHearingPrep) {
       return this.state.view === LIST_SCHEDULE_VIEWS.DEFAULT_VIEW ?

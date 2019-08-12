@@ -272,10 +272,10 @@ HearingActions.propTypes = {
   user: PropTypes.shape({
     userRoleAssign: PropTypes.bool,
     userRoleBuild: PropTypes.bool,
-    userRoleView: PropTypes.bool,
     userRoleVso: PropTypes.bool,
     userRoleHearingPrep: PropTypes.bool,
     userInHearingsOrganization: PropTypes.bool,
+    userCanViewHearingSchedule: PropTypes.bool,
     userId: PropTypes.number,
     userCssId: PropTypes.string
   })

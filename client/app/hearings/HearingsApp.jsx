@@ -26,10 +26,10 @@ export default class HearingsApp extends React.PureComponent {
     const {
       userRoleAssign,
       userRoleBuild,
-      userRoleView,
       userRoleVso,
       userRoleHearingPrep,
       userInHearingsOrganization,
+      userCanViewHearingSchedule,
       userId,
       userCssId
     } = this.props;
@@ -37,10 +37,10 @@ export default class HearingsApp extends React.PureComponent {
     return {
       userRoleAssign,
       userRoleBuild,
-      userRoleView,
       userRoleVso,
       userRoleHearingPrep,
       userInHearingsOrganization,
+      userCanViewHearingSchedule,
       userId,
       userCssId
     };
@@ -174,10 +174,10 @@ HearingsApp.propTypes = {
   buildDate: PropTypes.string,
   userRoleAssign: PropTypes.bool,
   userRoleBuild: PropTypes.bool,
-  userRoleView: PropTypes.bool,
   userRoleVso: PropTypes.bool,
   userRoleHearingPrep: PropTypes.bool,
   userInHearingsOrganization: PropTypes.bool,
+  userCanViewHearingSchedule: PropTypes.bool,
   userRole: PropTypes.string,
   userId: PropTypes.number,
   userCssId: PropTypes.string

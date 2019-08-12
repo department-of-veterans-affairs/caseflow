@@ -158,7 +158,7 @@ export class CaseTitleDetails extends React.PureComponent {
 
       { !userIsVsoEmployee &&
       !this.props.hasCaseDetailsRole &&
-      !this.props.userRoleView &&
+      !this.props.userCanViewHearingSchedule &&
         <React.Fragment>
           <h4>Veteran Documents</h4>
           <div>
@@ -252,7 +252,7 @@ CaseTitleDetails.propTypes = {
   requestPatch: PropTypes.func.isRequired,
   taskType: PropTypes.string,
   userIsVsoEmployee: PropTypes.bool.isRequired,
-  userRoleView: PropTypes.bool
+  userCanViewHearingSchedule: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => {
