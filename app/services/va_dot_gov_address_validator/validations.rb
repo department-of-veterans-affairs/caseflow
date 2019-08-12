@@ -42,9 +42,20 @@ module VaDotGovAddressValidator::Validations
     end
   end
 
+  def valid_address_error
+    if address.nil?
+      Caseflow::Error::VaDotGovNullAddressError.new(
+        code: 500,
+        message: "Appellant address is missing in VBMS."
+      )
+    end
+
+    valid_address_ressponse.error
+  end
+
   def error_status
-    @error_status ||= if valid_address.blank?
-                        error_handler.handle(valid_address_response.error)
+    @error_status ||= if valid_address_error.present?
+                        error_handler.handle(valid_address_error)
                       elsif state_code_error.present?
                         error_handler.handle(state_code_error)
                       elsif !closest_regional_office_response.success?

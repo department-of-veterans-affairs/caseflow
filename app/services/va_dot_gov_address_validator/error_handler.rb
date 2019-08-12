@@ -36,7 +36,7 @@ class VaDotGovAddressValidator::ErrorHandler
 
   def verify_address_errors
     [Caseflow::Error::VaDotGovInvalidInputError, Caseflow::Error::VaDotGovAddressCouldNotBeFoundError,
-     Caseflow::Error::VaDotGovMultipleAddressError]
+     Caseflow::Error::VaDotGovMultipleAddressError, Caseflow::Error::VaDotGovNullAddressError]
   end
 
   def foreign_veteran_errors
