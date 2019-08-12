@@ -118,9 +118,15 @@ class CaseDetailsView extends React.PureComponent {
 }
 
 CaseDetailsView.propTypes = {
+  appeal: PropTypes.object,
   appealId: PropTypes.string.isRequired,
+  error: PropTypes.object,
   hasCaseDetailsRole: PropTypes.bool,
+  resetErrorMessages: PropTypes.func,
+  setHearingDay: PropTypes.func,
+  success: PropTypes.object,
   userRoleView: PropTypes.bool
+  veteranCaseListIsVisible: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => {

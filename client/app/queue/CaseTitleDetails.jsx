@@ -78,6 +78,8 @@ const CaseDetailTitleScaffolding = (props) => <div {...containingDivStyling}>
   </ul>
 </div>;
 
+CaseDetailTitleScaffolding.propTypes = { children: PropTypes.node.isRequired };
+
 export class CaseTitleDetails extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -242,6 +244,14 @@ export class CaseTitleDetails extends React.PureComponent {
 }
 
 CaseTitleDetails.propTypes = {
+  appeal: PropTypes.object.isRequired,
+  appealId: PropTypes.string.isRequired,
+  canEditAod: PropTypes.bool,
+  hasCaseDetailsRole: PropTypes.bool.isRequired,
+  redirectUrl: PropTypes.string,
+  requestPatch: PropTypes.func.isRequired,
+  taskType: PropTypes.string,
+  userIsVsoEmployee: PropTypes.bool.isRequired,
   userRoleView: PropTypes.bool
 };
 
