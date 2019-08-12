@@ -50,7 +50,7 @@ module VaDotGovAddressValidator::Validations
       )
     end
 
-    valid_address_ressponse.error
+    valid_address_response.error
   end
 
   def error_status
