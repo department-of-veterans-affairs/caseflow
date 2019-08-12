@@ -365,4 +365,30 @@ describe LegacyHearing, :all_dbs do
       end
     end
   end
+
+  context "#hearing_day", focus: true do
+    context "associated hearing day exists" do
+      let(:hearing_day) { create(:hearing_day) }
+      let(:legacy_hearing) { create(:legacy_hearing, hearing_day: hearing_day) }
+
+      it "get hearing day returns the associated hearing day successfully" do
+        expect(legacy_hearing.hearing_day).to eq hearing_day
+      end
+
+      it "get hearing day calls VACOLS only once" do
+        expect(HearingRepository).to receive(:load_vacols_data).once
+
+        legacy_hearing.hearing_day
+        legacy_hearing.hearing_day
+      end
+    end
+
+    context "associated hearing day does not exist" do
+      let(:legacy_hearing) { create(:legacy_hearing, hearing_day: nil) }
+
+      it "get hearing day returns nil" do
+        expect(legacy_hearing.hearing_day).to eq nil
+      end
+    end
+  end
 end
