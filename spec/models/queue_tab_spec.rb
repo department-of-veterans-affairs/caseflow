@@ -37,4 +37,25 @@ describe QueueTab do
       expect(subject[:description]).to eq(format(tab.description, assignee_name))
     end
   end
+
+  describe "#from_name" do
+    subject { QueueTab.from_name(tab_name) }
+
+    context "when not tab class exists with the given name" do
+      let(:tab_name) { "non-existent tab name" }
+
+      it "raises an error" do
+        expect { subject }.to raise_error(Caseflow::Error::InvalidTaskTableTab)
+      end
+    end
+
+    context "when a tab class with that name exists" do
+      let(:tab_name) { Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME }
+
+      it "returns the class" do
+        expect { subject }.to_not raise_error
+        expect(subject).to eq(CompletedTasksTab)
+      end
+    end
+  end
 end
