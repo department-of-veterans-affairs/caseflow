@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190807192535) do
+ActiveRecord::Schema.define(version: 20190807203232) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -158,7 +158,7 @@ ActiveRecord::Schema.define(version: 20190807192535) do
   create_table "cached_appeal_attributes", id: false, force: :cascade do |t|
     t.integer "appeal_id"
     t.string "appeal_type"
-    t.string "closest_regional_office_city", comment: "Closest regional office to the veteran"
+    t.string "closest_regional_office_city"
     t.string "docket_number"
     t.string "docket_type"
     t.integer "issue_count", comment: "Number of issues on the appeal."
@@ -678,6 +678,7 @@ ActiveRecord::Schema.define(version: 20190807192535) do
     t.integer "appeal_id"
     t.datetime "created_at", comment: "Automatic timestamp when row was created."
     t.bigint "created_by_id", comment: "The ID of the user who created the Legacy Hearing"
+    t.bigint "hearing_day_id", comment: "The hearing day the hearing will take place on"
     t.string "military_service"
     t.boolean "prepped"
     t.text "summary"
@@ -687,6 +688,7 @@ ActiveRecord::Schema.define(version: 20190807192535) do
     t.string "vacols_id", null: false
     t.string "witness"
     t.index ["created_by_id"], name: "index_legacy_hearings_on_created_by_id"
+    t.index ["hearing_day_id"], name: "index_legacy_hearings_on_hearing_day_id"
     t.index ["updated_by_id"], name: "index_legacy_hearings_on_updated_by_id"
     t.index ["user_id"], name: "index_legacy_hearings_on_user_id"
     t.index ["vacols_id"], name: "index_legacy_hearings_on_vacols_id", unique: true
@@ -1126,6 +1128,7 @@ ActiveRecord::Schema.define(version: 20190807192535) do
   add_foreign_key "hearings", "users", column: "updated_by_id"
   add_foreign_key "intakes", "users"
   add_foreign_key "legacy_appeals", "appeal_series"
+  add_foreign_key "legacy_hearings", "hearing_days"
   add_foreign_key "legacy_hearings", "users"
   add_foreign_key "legacy_hearings", "users", column: "created_by_id"
   add_foreign_key "legacy_hearings", "users", column: "updated_by_id"
