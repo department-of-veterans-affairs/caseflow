@@ -156,9 +156,7 @@ export class CaseTitleDetails extends React.PureComponent {
         </div>
       </React.Fragment>
 
-      { !userIsVsoEmployee &&
-      !this.props.hasCaseDetailsRole &&
-      !this.props.userCanViewHearingSchedule &&
+      { !userIsVsoEmployee && this.props.userCanAccessReader &&
         <React.Fragment>
           <h4>Veteran Documents</h4>
           <div>
@@ -247,12 +245,11 @@ CaseTitleDetails.propTypes = {
   appeal: PropTypes.object.isRequired,
   appealId: PropTypes.string.isRequired,
   canEditAod: PropTypes.bool,
-  hasCaseDetailsRole: PropTypes.bool.isRequired,
   redirectUrl: PropTypes.string,
   requestPatch: PropTypes.func.isRequired,
   taskType: PropTypes.string,
   userIsVsoEmployee: PropTypes.bool.isRequired,
-  userCanViewHearingSchedule: PropTypes.bool
+  userCanAccessReader: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => {

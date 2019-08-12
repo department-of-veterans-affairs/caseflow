@@ -124,8 +124,7 @@ class QueueApp extends React.PureComponent {
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <CaseDetailsView appealId={props.match.params.appealId}
-    hasCaseDetailsRole={this.props.hasCaseDetailsRole}
-    userCanViewHearingSchedule={this.props.userCanViewHearingSchedule}
+    userCanAccessReader={!this.props.hasCaseDetailsRole && !this.props.userCanViewHearingSchedule}
   />;
 
   routedQueueDetailWithLoadingScreen = (props) => <CaseDetailsLoadingScreen
