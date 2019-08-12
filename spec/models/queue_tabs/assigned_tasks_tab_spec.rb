@@ -5,7 +5,7 @@ require "support/database_cleaner"
 
 describe AssignedTasksTab, :postgres do
   let(:tab) { AssignedTasksTab.new(params) }
-  let!(:params) do
+  let(:params) do
     {
       assignee: assignee,
       show_regional_office_column: show_regional_office_column
@@ -53,7 +53,7 @@ describe AssignedTasksTab, :postgres do
         end.flatten
       end
 
-      it "only returns the tasks that are children of the assignee's on hold tasks" do
+      it "only returns the active tasks that are children of the assignee's on hold tasks" do
         expect(subject).to match_array(on_hold_tasks_children)
       end
     end

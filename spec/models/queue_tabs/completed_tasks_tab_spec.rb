@@ -5,12 +5,13 @@ require "support/database_cleaner"
 
 describe CompletedTasksTab, :postgres do
   let(:tab) { CompletedTasksTab.new(params) }
-  let!(:params) do
+  let(:params) do
     {
-      assignee: create(:organization),
+      assignee: assignee,
       show_regional_office_column: show_regional_office_column
     }
   end
+  let(:assignee) { create(:organization) }
   let(:show_regional_office_column) { false }
 
   describe ".columns" do
@@ -33,6 +34,24 @@ describe CompletedTasksTab, :postgres do
 
       it "includes the regional office column" do
         expect(subject).to include(Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN)
+      end
+    end
+  end
+
+  describe ".tasks" do
+    subject { tab.tasks }
+
+    context "when there are tasks assigned to the assignee and other folks" do
+      let!(:other_folks_tasks) { create_list(:generic_task, 11) }
+      let!(:assignee_active_tasks) { create_list(:generic_task, 4, :assigned, assigned_to: assignee) }
+      let!(:assignee_closed_tasks) { create_list(:generic_task, 3, :assigned, assigned_to: assignee) }
+
+      before do
+        assignee_closed_tasks.each { |task| task.update!(status: Constants.TASK_STATUSES.completed) }
+      end
+
+      it "only returns the assignee's completed tasks" do
+        expect(subject).to match_array(assignee_closed_tasks)
       end
     end
   end
