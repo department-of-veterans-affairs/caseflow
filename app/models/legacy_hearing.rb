@@ -108,6 +108,14 @@ class LegacyHearing < ApplicationRecord
   end
 
   def hearing_day
+    if hearing_day_id.nil?
+      begin
+        update!(hearing_day_id: hearing_day_vacols_id)
+      rescue ActiveRecord::InvalidForeignKey
+        # Hearing day doesn't exist yet in DB. Ignore for now.
+      end
+    end
+
     # access with caution. this retrieves the hearing_day_id from vacols
     # then looks up the HearingDay in Caseflow
     @hearing_day ||= HearingDay.find_by_id(hearing_day_id)
