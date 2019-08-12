@@ -92,62 +92,16 @@ class TaskPager
     @task_page_count ||= paged_tasks.total_pages
   end
 
-  def total_task_count
-    @total_task_count ||= tasks_for_tab.count
-  end
-
   def filtered_tasks
     where_clause = QueueWhereClauseArgumentsFactory.new(filter_params: filters).arguments
     where_clause.empty? ? tasks_for_tab : tasks_for_tab.joins(cached_attributes_join_clause).where(*where_clause)
   end
 
   def tasks_for_tab
-    case tab_name
-    when Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME
-      tracking_tasks
-    when Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
-      active_tasks
-    when Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
-      assigned_child_tasks
-    when Constants.QUEUE_CONFIG.ON_HOLD_TASKS_TAB_NAME
-      on_hold_child_tasks
-    when Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME
-      recently_completed_tasks
-    else
-      fail(Caseflow::Error::InvalidTaskTableTab, tab_name: tab_name)
-    end
+    QueueTab.from_name(tab_name).new(assignee: organization).tasks
   end
 
   private
-
-  def tracking_tasks
-    TrackVeteranTask.includes(*task_includes).active.where(assigned_to: assignee)
-  end
-
-  def active_tasks
-    Task.includes(*task_includes)
-      .visible_in_queue_table_view.where(assigned_to: assignee).active
-  end
-
-  def on_hold_tasks
-    Task.includes(*task_includes)
-      .visible_in_queue_table_view.where(assigned_to: assignee).on_hold
-  end
-
-  def assigned_child_tasks
-    Task.includes(*task_includes)
-      .visible_in_queue_table_view.active.where(parent: on_hold_tasks)
-  end
-
-  def on_hold_child_tasks
-    Task.includes(*task_includes)
-      .visible_in_queue_table_view.on_hold.where(parent: on_hold_tasks)
-  end
-
-  def recently_completed_tasks
-    Task.includes(*task_includes)
-      .visible_in_queue_table_view.where(assigned_to: assignee).recently_closed
-  end
 
   def assignee_is_user_or_organization
     unless assignee.is_a?(User) || assignee.is_a?(Organization)
@@ -158,15 +112,5 @@ class TaskPager
   def sort_order_is_valid
     valid_sort_orders = [Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC, Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC]
     errors.add(:sort_order, COPY::TASK_PAGE_INVALID_SORT_ORDER) unless valid_sort_orders.include?(sort_order)
-  end
-
-  def task_includes
-    [
-      { appeal: [:available_hearing_locations, :claimants] },
-      :assigned_by,
-      :assigned_to,
-      :children,
-      :parent
-    ]
   end
 end
