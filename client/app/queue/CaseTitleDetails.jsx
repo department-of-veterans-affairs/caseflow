@@ -1,5 +1,6 @@
 import { css } from 'glamor';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Modal from '../components/Modal';
 import TextField from '../components/TextField';
@@ -155,6 +156,7 @@ export class CaseTitleDetails extends React.PureComponent {
 
       { !userIsVsoEmployee &&
       !this.props.hasCaseDetailsRole &&
+      !this.props.userRoleView &&
         <React.Fragment>
           <h4>Veteran Documents</h4>
           <div>
@@ -238,6 +240,10 @@ export class CaseTitleDetails extends React.PureComponent {
     </CaseDetailTitleScaffolding>;
   };
 }
+
+CaseTitleDetails.propTypes = {
+  userRoleView: PropTypes.bool
+};
 
 const mapStateToProps = (state, ownProps) => {
   const { featureToggles, userRole, canEditAod } = state.ui;
