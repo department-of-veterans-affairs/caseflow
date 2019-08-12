@@ -32,7 +32,13 @@ class QueueColumn
 
   def sort_by_cached_column(tasks, sort_order, *columns)
     order_clause = columns.map { |col| "#{CachedAppeal.table_name}.#{col} #{sort_order}" }.join(", ")
-    tasks.joins(CachedAppeal.task_table_join_clause).order(order_clause)
+    tasks.joins(cached_attributes_join_clause).order(order_clause)
+  end
+
+  def cached_attributes_join_clause
+    "left join #{CachedAppeal.table_name} "\
+    "on #{CachedAppeal.table_name}.appeal_id = #{Task.table_name}.appeal_id "\
+    "and #{CachedAppeal.table_name}.appeal_type = #{Task.table_name}.appeal_type"
   end
 end
 
