@@ -7,12 +7,16 @@ class UnassignedTasksTab < QueueTab
     COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE
   end
 
-  def name
+  def self.tab_name
     Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
   end
 
   def description
     COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION
+  end
+
+  def tasks
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
   end
 
   def columns
