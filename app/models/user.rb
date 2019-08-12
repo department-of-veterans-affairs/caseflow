@@ -18,9 +18,6 @@ class User < ApplicationRecord
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_writer :regional_office
 
-  FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
-               "Reader", "Hearing Prep", "Mail Intake", "Admin Intake", "Case Details"].freeze
-
   # Because of the function character limit, we need to also alias some functions
   FUNCTION_ALIASES = {
     "Manage Claims Establishme" => ["Manage Claim Establishment"],
