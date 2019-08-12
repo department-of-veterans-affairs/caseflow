@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 describe Api::V3::DecisionReview::HigherLevelReviewsController, type: :request do
   describe "#create" do
     it "should return a 202 on success" do
