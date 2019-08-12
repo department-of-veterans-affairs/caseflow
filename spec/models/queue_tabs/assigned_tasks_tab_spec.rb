@@ -1,23 +1,23 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require "support/database_cleaner"
 
-describe AssignedTasksTab do
+describe AssignedTasksTab, :postgres do
   let(:tab) { AssignedTasksTab.new(params) }
-  let(:params) do
+  let!(:params) do
     {
-      assignee_name: assignee_name,
+      assignee: create(:organization),
       show_regional_office_column: show_regional_office_column
     }
   end
-  let(:assignee_name) { "organization name" }
   let(:show_regional_office_column) { false }
 
   describe ".columns" do
     subject { tab.columns }
 
-    context "when no arguments are passed when instantiating the object" do
-      let(:params) { {} }
+    context "when only the assignee argument is passed when instantiating the object" do
+      let(:params) { { assignee: create(:organization) } }
 
       it "returns the correct number of columns" do
         expect(subject.length).to eq(7)

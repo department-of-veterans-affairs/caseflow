@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require "support/database_cleaner"
 
-describe UnassignedTasksTab do
+describe UnassignedTasksTab, :postgres do
   let(:tab) { UnassignedTasksTab.new(params) }
-  let(:params) do
+  let!(:params) do
     {
-      assignee_name: assignee_name,
+      assignee: create(:organization),
       show_regional_office_column: show_regional_office_column,
       show_reader_link_column: show_reader_link_column,
       allow_bulk_assign: allow_bulk_assign
     }
   end
-  let(:assignee_name) { "organization name" }
   let(:show_regional_office_column) { false }
   let(:show_reader_link_column) { false }
   let(:allow_bulk_assign) { false }
@@ -20,8 +20,8 @@ describe UnassignedTasksTab do
   describe ".columns" do
     subject { tab.columns }
 
-    context "when no arguments are passed when instantiating the object" do
-      let(:params) { {} }
+    context "when only the assignee argument is passed when instantiating the object" do
+      let(:params) { { assignee: create(:organization) } }
 
       it "returns the correct number of columns" do
         expect(subject.length).to eq(6)
@@ -53,8 +53,8 @@ describe UnassignedTasksTab do
   describe ".allow_bulk_assign?" do
     subject { tab.allow_bulk_assign? }
 
-    context "when no arguments are passed when instantiating the object" do
-      let(:params) { {} }
+    context "when only the assignee argument is passed when instantiating the object" do
+      let(:params) { { assignee: create(:organization) } }
 
       it "returns false" do
         expect(subject).to eq(false)
