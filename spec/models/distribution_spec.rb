@@ -131,7 +131,7 @@ describe Distribution, :all_dbs do
     let!(:priority_direct_review_case) do
       appeal = create(:appeal,
                       :with_post_intake_tasks,
-                      :advanced_on_docket_due_to_age,
+                      :advance_on_docket_due_to_age,
                       docket_type: Constants.AMA_DOCKETS.direct_review,
                       receipt_date: 1.month.ago)
       appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: 1.month.ago)

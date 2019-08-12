@@ -6,7 +6,7 @@ FactoryBot.define do
     sequence(:participant_id)
     decision_review_type { "Appeal" }
 
-    trait :advanced_on_docket_due_to_age do
+    trait :advance_on_docket_due_to_age do
       after(:create) do |claimant, _evaluator|
         claimant.person.update!(date_of_birth: 76.years.ago)
       end

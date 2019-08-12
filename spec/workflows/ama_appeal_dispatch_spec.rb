@@ -8,7 +8,7 @@ describe AmaAppealDispatch, :postgres do
     it "stores current POA participant ID in the Appeals table" do
       user = create(:user)
       OrganizationsUser.add_user_to_organization(user, BvaDispatch.singleton)
-      appeal = create(:appeal, :advanced_on_docket_due_to_age)
+      appeal = create(:appeal, :advance_on_docket_due_to_age)
       root_task = create(:root_task, appeal: appeal)
       BvaDispatchTask.create_from_root_task(root_task)
       claimant = appeal.claimants.first

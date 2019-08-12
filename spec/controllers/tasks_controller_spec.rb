@@ -83,7 +83,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       end
       let!(:task5) { create(:colocated_task, :in_progress, assigned_to: user) }
       let!(:task_ama_colocated_aod) do
-        create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, :advanced_on_docket_due_to_age))
+        create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, :advance_on_docket_due_to_age))
       end
       let!(:task6) { create(:colocated_task, :completed, assigned_to: user) }
       let!(:task7) { create(:colocated_task) }

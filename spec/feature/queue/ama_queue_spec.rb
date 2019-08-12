@@ -84,7 +84,7 @@ RSpec.feature "AmaQueue", :all_dbs do
       [
         create(
           :appeal,
-          :advanced_on_docket_due_to_age,
+          :advance_on_docket_due_to_age,
           veteran: create(
             :veteran,
             participant_id: veteran_participant_id,

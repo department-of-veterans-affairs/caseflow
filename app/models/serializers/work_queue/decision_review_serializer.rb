@@ -36,7 +36,7 @@ class WorkQueue::DecisionReviewSerializer
   end
 
   attribute :aod do
-    object.try(:advanced_on_docket)
+    object.try(:advance_on_docket?)
   end
 
   attribute :issue_count do

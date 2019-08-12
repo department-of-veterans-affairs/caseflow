@@ -46,11 +46,11 @@ FactoryBot.define do
       docket_type { Constants.AMA_DOCKETS.hearing }
     end
 
-    trait :advanced_on_docket_due_to_age do
-      claimants { [create(:claimant, :advanced_on_docket_due_to_age)] }
+    trait :advance_on_docket_due_to_age do
+      claimants { [create(:claimant, :advance_on_docket_due_to_age)] }
     end
 
-    trait :advanced_on_docket_due_to_motion do
+    trait :advance_on_docket_due_to_motion do
       # the appeal has to be established before the motion is created to apply to it.
       established_at { Time.zone.now - 1 }
       claimants do
