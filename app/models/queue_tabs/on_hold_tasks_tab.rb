@@ -5,12 +5,16 @@ class OnHoldTasksTab < QueueTab
     COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE
   end
 
-  def name
+  def self.tab_name
     Constants.QUEUE_CONFIG.ON_HOLD_TASKS_TAB_NAME
   end
 
   def description
     COPY::ORGANIZATIONAL_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION
+  end
+
+  def tasks
+    Task.includes(*task_includes).visible_in_queue_table_view.on_hold.where(parent: on_hold_tasks)
   end
 
   def columns
