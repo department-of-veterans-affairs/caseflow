@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class LegacyAppealRepresentativeFetcher
+class LegacyAppealRepresentative
   def initialize(power_of_attorney:, case_record:)
     @power_of_attorney = power_of_attorney
     @case_record = case_record

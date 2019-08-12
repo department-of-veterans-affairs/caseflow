@@ -245,10 +245,10 @@ class LegacyAppeal < ApplicationRecord
   delegate :representative_name, :representative_type,
            :representative_address, :representatives,
            :representative_to_hash, :representative_participant_id,
-           :vacols_representatives, to: :representative_fetcher
+           :vacols_representatives, to: :legacy_appeal_representative
 
-  def representative_fetcher
-    @representative_fetcher ||= LegacyAppealRepresentativeFetcher.new(
+  def legacy_appeal_representative
+    @legacy_appeal_representative ||= LegacyAppealRepresentative.new(
       power_of_attorney: power_of_attorney,
       case_record: case_record
     )
