@@ -167,7 +167,7 @@ export class ListScheduleContainer extends React.Component {
 
     if (user.userCanViewHearingSchedule || user.userRoleVso) {
       return COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER;
-    } else if (user.userRoleHearingPrep) {
+    } else if (user.userHasHearingPrepRole) {
       return this.state.view === LIST_SCHEDULE_VIEWS.DEFAULT_VIEW ?
         COPY.HEARING_SCHEDULE_JUDGE_DEFAULT_VIEW_PAGE_HEADER :
         COPY.HEARING_SCHEDULE_JUDGE_SHOW_ALL_VIEW_PAGE_HEADER;
@@ -192,11 +192,11 @@ export class ListScheduleContainer extends React.Component {
           <h1 className="cf-push-left">
             {this.getHeader()}
           </h1>
-          {user.userRoleBuild &&
+          {user.userCanBuildHearingSchedule &&
             <span className="cf-push-right">
               <Link button="secondary" to="/schedule/build">Build Schedule</Link>
             </span>
-          }{user.userRoleAssign &&
+          }{user.userCanAssignHearingSchedule &&
             <span className="cf-push-right"{...actionButtonsStyling} >
               <Link button="primary" to="/schedule/assign">Schedule Veterans</Link>
             </span>

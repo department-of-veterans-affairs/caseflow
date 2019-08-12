@@ -43,9 +43,9 @@ const Header = ({ user }) => (
         background: 'none !important'
       },
       '& > div > div': { verticalAlign: 'bottom' }
-    })} className={user.userRoleHearingPrep ? 'judge-view' : ''}>
+    })} className={user.userHasHearingPrepRole ? 'judge-view' : ''}>
     <div>
-      <div>{user.userRoleHearingPrep && <strong>Prep</strong>}</div>
+      <div>{user.userHasHearingPrepRole && <strong>Prep</strong>}</div>
       <div></div>
       <div><strong>Appellant/Veteran ID/Representative</strong></div>
       <div><strong>Time/RO(s)</strong></div>
@@ -64,7 +64,7 @@ export default class DailyDocketHearingRows extends React.Component {
     return <div {...rowsMargin}>
       <Header user={user} />
       <div>{sortedHearings.map((hearing, index) => (
-        <div {...docketRowStyle} key={hearing.externalId} className={user.userRoleHearingPrep ? 'judge-view' : ''}>
+        <div {...docketRowStyle} key={hearing.externalId} className={user.userHasHearingPrepRole ? 'judge-view' : ''}>
           <DailyDocketRow hearingId={hearing.externalId}
             index={index}
             readOnly={readOnly}

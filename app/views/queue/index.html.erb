@@ -13,7 +13,7 @@
     feedbackUrl: feedback_url,
     flash: flash,
     buildDate: build_date,
-    hasCaseDetailsRole: (current_user.roles.include? "Case Details"),
+    hasCaseDetailsRole: current_user.roles.include?('Case Details'),
     userCanViewHearingSchedule: current_user.can_view_hearing_schedule?,
     featureToggles: {
       judge_case_review_checkout: FeatureToggle.enabled?(:judge_case_review_checkout, user: current_user),

@@ -177,7 +177,7 @@ export default class DailyDocket extends React.Component {
         </div>
         <div className="cf-push-right">
           {
-            user.userRoleHearingPrep &&
+            user.userHasHearingPrepRole &&
             <Button
               classNames={['usa-button-secondary']}
               onClick={this.navigateToPrintAllPage}
@@ -192,7 +192,7 @@ export default class DailyDocket extends React.Component {
       {hasDocketHearings &&
         <DailyDocketRows
           hearings={docketHearings}
-          readOnly={user.userCanViewHearingSchedule || user.userRoleVso}
+          readOnly={user.userCanViewHearingSchedule || user.userCanVsoHearingSchedule}
           saveHearing={this.props.saveHearing}
           openDispositionModal={this.openDispositionModal}
           regionalOffice={regionalOffice}
@@ -201,7 +201,7 @@ export default class DailyDocket extends React.Component {
       {!hasDocketHearings &&
         <div {...css({ marginTop: '75px' })}>
           <StatusMessage
-            title={user.userRoleHearingPrep ? COPY.HEARING_SCHEDULE_DOCKET_JUDGE_WITH_NO_HEARINGS :
+            title={user.userHasHearingPrepRole ? COPY.HEARING_SCHEDULE_DOCKET_JUDGE_WITH_NO_HEARINGS :
               COPY.HEARING_SCHEDULE_DOCKET_NO_VETERANS}
             type="status" />
         </div>}

@@ -54,14 +54,14 @@ export default class DailyDocketEditLinks extends React.Component {
         marginBottom: '25px'
       })}>
         <Link linkStyling to="/schedule" >&lt; Back to schedule</Link>&nbsp;&nbsp;
-        {user.userRoleAssign &&
+        {user.userCanAssignHearingSchedule &&
           <span>
             <EditHearingDayLink openModal={openModal} />
             &nbsp;&nbsp;
             <LockHearingLink dailyDocket={dailyDocket} onDisplayLockModal={onDisplayLockModal} />
             &nbsp;&nbsp;
           </span>}
-        {(_.isEmpty(hearings) && user.userRoleBuild) &&
+        {(_.isEmpty(hearings) && user.userCanBuildHearingSchedule) &&
           <RemoveHearingDayLink onClickRemoveHearingDay={onClickRemoveHearingDay} />}
 
         {dailyDocket.notes &&

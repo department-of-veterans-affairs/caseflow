@@ -71,8 +71,20 @@ class User < ApplicationRecord
     can_any_of_these_roles?(["Build HearSched", "Edit HearSched", "RO ViewHearSched", "VSO", "Hearing Prep"])
   end
 
+  def can_assign_hearing_schedule?
+    can_any_of_these_roles?(["Edit HearSched", "Build HearSched"])
+  end
+
   def can_view_hearing_schedule?
     can?("RO ViewHearSched") && !can?("Build HearSched") && !can?("Edit HearSched")
+  end
+
+  def can_vso_hearing_schedule?
+    can?("VSO") && !can?("RO ViewHearSched") && !can?("Build HearSched") && !can?("Edit HearSched")
+  end
+
+  def in_hearing_or_transcription_organization?
+    HearingsManagement.singleton.users.include?(self) || TranscriptionTeam.singleton.users.include?(self)
   end
 
   def administer_org_users?

@@ -24,23 +24,23 @@ import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
 export default class HearingsApp extends React.PureComponent {
   userPermissionProps = () => {
     const {
-      userRoleAssign,
-      userRoleBuild,
-      userRoleVso,
-      userRoleHearingPrep,
-      userInHearingsOrganization,
+      userCanAssignHearingSchedule,
+      userCanBuildHearingSchedule,
       userCanViewHearingSchedule,
+      userCanVsoHearingSchedule,
+      userHasHearingPrepRole,
+      userInHearingOrTranscriptionOrganization,
       userId,
       userCssId
     } = this.props;
 
     return {
-      userRoleAssign,
-      userRoleBuild,
-      userRoleVso,
-      userRoleHearingPrep,
-      userInHearingsOrganization,
+      userCanAssignHearingSchedule,
+      userCanBuildHearingSchedule,
       userCanViewHearingSchedule,
+      userCanVsoHearingSchedule,
+      userHasHearingPrepRole,
+      userInHearingOrTranscriptionOrganization,
       userId,
       userCssId
     };
@@ -172,12 +172,12 @@ HearingsApp.propTypes = {
   applicationUrls: PropTypes.array,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
-  userRoleAssign: PropTypes.bool,
-  userRoleBuild: PropTypes.bool,
-  userRoleVso: PropTypes.bool,
-  userRoleHearingPrep: PropTypes.bool,
-  userInHearingsOrganization: PropTypes.bool,
+  userCanAssignHearingSchedule: PropTypes.bool,
+  userCanBuildHearingSchedule: PropTypes.bool,
   userCanViewHearingSchedule: PropTypes.bool,
+  userCanVsoHearingSchedule: PropTypes.bool,
+  userHasHearingPrepRole: PropTypes.bool,
+  userInHearingOrTranscriptionOrganization: PropTypes.bool,
   userRole: PropTypes.string,
   userId: PropTypes.number,
   userCssId: PropTypes.string

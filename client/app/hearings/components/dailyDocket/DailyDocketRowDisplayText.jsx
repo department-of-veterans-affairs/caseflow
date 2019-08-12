@@ -77,7 +77,7 @@ export default class HearingText extends React.Component {
     const { hearing, index, user, update, readOnly, initialState } = this.props;
 
     return <React.Fragment>
-      <div>{user.userRoleHearingPrep &&
+      <div>{user.userHasHearingPrepRole &&
         <PreppedCheckbox hearing={hearing} update={update} readOnly={readOnly} />}
       </div>
       <div><strong>{index + 1}</strong></div>

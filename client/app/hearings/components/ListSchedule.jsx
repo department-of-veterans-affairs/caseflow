@@ -100,7 +100,7 @@ class ListTable extends React.Component {
         failStatusMessageProps={{
           title: 'Unable to load the hearing schedule.'
         }}>
-        {this.props.user.userRoleBuild && <div style={{ marginBottom: 25 }}>
+        {this.props.user.userCanBuildHearingSchedule && <div style={{ marginBottom: 25 }}>
           <Button linkStyling
             onClick={this.props.openModal}>
             Add Hearing Date
@@ -207,7 +207,7 @@ class ListSchedule extends React.Component {
 
     const { user, view, onApply, openModal } = this.props;
 
-    if (!user.userRoleHearingPrep || view === LIST_SCHEDULE_VIEWS.DEFAULT_VIEW) {
+    if (!user.userHasHearingPrepRole || view === LIST_SCHEDULE_VIEWS.DEFAULT_VIEW) {
       return <ListTable onApply={onApply}
         openModal={openModal}
         key={`hearings${this.state.dateRangeKey}`}
@@ -240,7 +240,7 @@ class ListSchedule extends React.Component {
               onApply={this.setDateRangeKey} />
           </div>
           <div className="cf-push-right list-schedule-buttons" {...downloadButtonStyling} >
-            {this.props.user.userRoleHearingPrep && <SwitchViewDropdown onSwitchView={this.props.switchListView} />}
+            {this.props.user.userHasHearingPrepRole && <SwitchViewDropdown onSwitchView={this.props.switchListView} />}
             <CSVLink
               data={hearingScheduleRows}
               headers={exportHeaders}
