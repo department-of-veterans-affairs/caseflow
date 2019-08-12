@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require "support/database_cleaner"
 
-describe QueueTab do
+describe QueueTab, :postgres do
   # Use AssignedTasksTab as our example since we don't expect QueueTab to ever be instantiated directly.
   let(:tab) { AssignedTasksTab.new(params) }
   let(:params) do
@@ -17,8 +18,8 @@ describe QueueTab do
   describe ".allow_bulk_assign?" do
     subject { tab.allow_bulk_assign? }
 
-    context "when no arguments are passed when instantiating the object" do
-      let(:params) { {} }
+    context "when only the assignee argument is passed when instantiating the object" do
+      let(:params) { { assignee: assignee } }
 
       it "returns false" do
         expect(subject).to eq(false)
