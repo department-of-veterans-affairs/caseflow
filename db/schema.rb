@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190724201133) do
+ActiveRecord::Schema.define(version: 20190807192535) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -158,9 +158,12 @@ ActiveRecord::Schema.define(version: 20190724201133) do
   create_table "cached_appeal_attributes", id: false, force: :cascade do |t|
     t.integer "appeal_id"
     t.string "appeal_type"
+    t.string "closest_regional_office_city", comment: "Closest regional office to the veteran"
     t.string "docket_number"
     t.string "docket_type"
+    t.integer "issue_count", comment: "Number of issues on the appeal."
     t.string "vacols_id"
+    t.string "veteran_name", comment: "'LastName, FirstName' of the veteran"
     t.index ["appeal_id", "appeal_type"], name: "index_cached_appeal_attributes_on_appeal_id_and_appeal_type", unique: true
     t.index ["vacols_id"], name: "index_cached_appeal_attributes_on_vacols_id", unique: true
   end
@@ -497,7 +500,7 @@ ActiveRecord::Schema.define(version: 20190724201133) do
     t.text "notes"
     t.string "regional_office"
     t.string "request_type", null: false
-    t.string "room", null: false
+    t.string "room", comment: "The room at BVA where the hearing will take place"
     t.date "scheduled_for", null: false
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", null: false, comment: "The ID of the user who most recently updated the Hearing Day"

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-feature "Higher Level Review Edit issues" do
+feature "Higher Level Review Edit issues", :all_dbs do
   include IntakeHelpers
 
   before do
@@ -783,6 +783,17 @@ feature "Higher Level Review Edit issues" do
     before do
       higher_level_review.create_issues!(request_issues)
       higher_level_review.establish!
+    end
+
+    context "when request issues are read only" do
+      before do
+        allow_any_instance_of(RequestIssue).to receive(:editable?).and_return(false)
+      end
+
+      it "does not allow to edit request issue" do
+        visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
+        expect(page).to have_content("Rating may be in progress")
+      end
     end
 
     context "has decision issues" do

@@ -23,7 +23,7 @@ RSpec.describe Idt::AuthenticationsController, type: :controller do
     end
 
     context "when authenticated" do
-      before { User.authenticate! }
+      before { User.authenticate!(user: build_stubbed(:user)) }
 
       context "when no key is passed" do
         it "responds witn an error" do

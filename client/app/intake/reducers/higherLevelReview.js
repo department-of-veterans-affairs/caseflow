@@ -92,6 +92,7 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     unidentifiedIssuesModalVisible: false,
     untimelyExemptionModalVisible: false,
     removeIssueModalVisible: false,
+    correctIssueModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
     benefitType: null,

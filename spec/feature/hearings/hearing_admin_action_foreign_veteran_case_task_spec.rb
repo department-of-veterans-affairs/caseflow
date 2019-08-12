@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.feature HearingAdminActionForeignVeteranCaseTask do
+RSpec.feature HearingAdminActionForeignVeteranCaseTask, :postgres do
   let!(:veteran) { create(:veteran) }
   let!(:appeal) { create(:appeal, veteran: veteran) }
   let(:root_task) { create(:root_task, appeal: appeal) }
@@ -89,7 +90,7 @@ RSpec.feature HearingAdminActionForeignVeteranCaseTask do
         it "has notes in schedule hearing task instructions" do
           expect(page).to have_content COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
 
-          click_button(COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL)
+          click_button(COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, id: schedule_hearing_task.id)
 
           expect(page).to have_content instructions_text
         end

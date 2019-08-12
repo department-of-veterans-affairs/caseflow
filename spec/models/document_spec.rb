@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 require "faker"
 
-describe Document do
+describe Document, :postgres do
   let(:document_type) { "NOD" }
   let(:document) do
     Document.new(

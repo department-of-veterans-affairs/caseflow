@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe UsersController, type: :controller do
+RSpec.describe UsersController, :all_dbs, type: :controller do
   let!(:user) { User.authenticate!(roles: ["System Admin"]) }
   let!(:staff) { create(:staff, :attorney_judge_role, user: user) }
 
@@ -30,12 +31,12 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe "GET /users?role=Attorney" do
-    let(:judge) { Judge.new(FactoryBot.create(:user)) }
+    let(:judge) { Judge.new(create(:user)) }
     let!(:judge_team) { JudgeTeam.create_for_judge(judge.user) }
     let(:team_member_count) { 3 }
     let(:solo_count) { 3 }
-    let(:team_attorneys) { FactoryBot.create_list(:user, team_member_count) }
-    let(:solo_attorneys) { FactoryBot.create_list(:user, solo_count) }
+    let(:team_attorneys) { create_list(:user, team_member_count) }
+    let(:solo_attorneys) { create_list(:user, solo_count) }
 
     before do
       create(:staff, :judge_role, user: judge.user)
@@ -99,10 +100,10 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe "GET /users?role=non_judges" do
-    before { judge_team_count.times { JudgeTeam.create_for_judge(FactoryBot.create(:user)) } }
+    before { judge_team_count.times { JudgeTeam.create_for_judge(create(:user)) } }
 
     context "when there are no judge teams" do
-      let!(:users) { FactoryBot.create_list(:user, 8) }
+      let!(:users) { create_list(:user, 8) }
       let(:judge_team_count) { 0 }
 
       # Add one for the current user who was created outside the scope of this test.

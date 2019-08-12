@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe RampElection do
+describe RampElection, :postgres do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
@@ -200,7 +201,7 @@ describe RampElection do
 
         context "when the error is caught by VBMSError wrapper" do
           let(:vbms_error) do
-            VBMSError::DuplicateEP.new("A duplicate claim for this EP code already exists in CorpDB.")
+            VBMS::DuplicateEP.new(500, "A duplicate claim for this EP code already exists in CorpDB.")
           end
 
           it "raises a parsed EstablishClaimFailedInVBMS error" do

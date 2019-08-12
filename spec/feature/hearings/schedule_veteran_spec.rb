@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Schedule Veteran For A Hearing" do
+RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
   let!(:current_user) do
     user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
     User.authenticate!(user: user)
@@ -156,7 +157,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       create(
         :appeal,
         :with_post_intake_tasks,
-        docket_type: "hearing",
+        docket_type: Constants.AMA_DOCKETS.hearing,
         closest_regional_office: "RO39",
         veteran: create(:veteran)
       )

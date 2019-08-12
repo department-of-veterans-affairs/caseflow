@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
 RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
-  describe "GET /idt/api/v1/appeals" do
+  describe "GET /idt/api/v1/appeals", :all_dbs do
     let(:user) { create(:user, css_id: "TEST_ID", full_name: "George Michael") }
     let(:token) do
       key, token = Idt::Token.generate_one_time_key_and_proposed_token
@@ -518,10 +520,9 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
     end
   end
 
-  describe "POST /idt/api/v1/appeals/:appeal_id/outcode" do
-    let(:user) { FactoryBot.create(:user) }
-    let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: user.css_id) }
-    let(:root_task) { FactoryBot.create(:root_task) }
+  describe "POST /idt/api/v1/appeals/:appeal_id/outcode", :postgres do
+    let(:user) { create(:user) }
+    let(:root_task) { create(:root_task) }
     let(:citation_number) { "A18123456" }
     let(:params) do
       { appeal_id: root_task.appeal.external_id,
@@ -532,27 +533,25 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
     end
 
     before do
+      allow(controller).to receive(:verify_access).and_return(true)
       OrganizationsUser.add_user_to_organization(user, BvaDispatch.singleton)
 
       key, t = Idt::Token.generate_one_time_key_and_proposed_token
       Idt::Token.activate_proposed_token(key, user.css_id)
       request.headers["TOKEN"] = t
-      FeatureToggle.enable!(:decision_document_upload)
-    end
-
-    after do
-      FeatureToggle.disable!(:decision_document_upload)
     end
 
     context "when some params are missing" do
-      let(:params) { { appeal_id: root_task.appeal.external_id } }
+      let(:params) { { appeal_id: root_task.appeal.external_id, citation_number: citation_number } }
       before { BvaDispatchTask.create_from_root_task(root_task) }
 
       it "should throw an error" do
         post :outcode, params: params
+        error_message = "Decision date can't be blank, Redacted document " \
+                        "location can't be blank, File can't be blank"
+
         expect(response.status).to eq(400)
-        err_msg = JSON.parse(response.body)["message"]
-        expect(err_msg).to match(/param is missing/)
+        expect(JSON.parse(response.body)["message"]).to eq error_message
       end
     end
 
@@ -560,11 +559,25 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       let(:citation_number) { "INVALID" }
       before { BvaDispatchTask.create_from_root_task(root_task) }
 
-      it "should throw an error" do
+      it "throws an error" do
         post :outcode, params: params
+
         expect(response.status).to eq(400)
-        err_msg = JSON.parse(response.body)["errors"].first["detail"]
-        expect(err_msg).to match(/Validation failed/)
+        expect(JSON.parse(response.body)["message"]).to eq "Citation number is invalid"
+      end
+    end
+
+    context "when citation_number already exists on a different appeal" do
+      before do
+        BvaDispatchTask.create_from_root_task(root_task)
+        create(:decision_document, citation_number: citation_number, appeal: create(:appeal))
+      end
+
+      it "throws an error" do
+        post :outcode, params: params
+
+        expect(response.status).to eq(400)
+        expect(JSON.parse(response.body)["message"]).to eq "Citation number already exists"
       end
     end
 
@@ -573,10 +586,15 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
       it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
         post :outcode, params: params
+
         expect(response.status).to eq(200)
+
         tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
+
         expect(tasks.length).to eq(1)
+
         task = tasks[0]
+
         expect(task.status).to eq("completed")
         expect(task.parent.status).to eq("completed")
         expect(S3Service.files["decisions/" + root_task.appeal.external_id + ".pdf"]).to_not eq nil
@@ -585,7 +603,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
     end
 
     context "when multiple BvaDispatchTasks exists for user and appeal combination" do
-      let(:task_count) { 4 }
+      let(:task_count) { 2 }
+
       before do
         task_count.times do
           org_task = BvaDispatchTask.create_from_root_task(root_task)
@@ -594,8 +613,9 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         end
       end
 
-      it "should throw an error" do
+      it "throws an error" do
         post :outcode, params: params
+
         expect(response.status).to eq(400)
         response_detail = JSON.parse(response.body)["errors"][0]["detail"]
         expect(response_detail).to eq("Expected 1 BvaDispatchTask received #{task_count} tasks for appeal "\
@@ -605,12 +625,31 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
     context "when no BvaDispatchTasks exists for user and appeal combination" do
       let(:task_count) { 0 }
-      it "should throw an error" do
+
+      it "throws an error" do
         post :outcode, params: params
+
         expect(response.status).to eq(400)
         response_detail = JSON.parse(response.body)["errors"][0]["detail"]
         expect(response_detail).to eq("Expected 1 BvaDispatchTask received #{task_count} tasks for appeal "\
                                       "#{root_task.appeal.id}, user #{user.id}")
+      end
+    end
+
+    context "when appeal has already been outcoded" do
+      it "throws an error" do
+        BvaDispatchTask.create_from_root_task(root_task)
+        post :outcode, params: params
+        post :outcode, params: params.merge(citation_number: "A12131989")
+
+        expect(response.status).to eq(400)
+
+        response_detail = JSON.parse(response.body)["errors"][0]["detail"]
+        task = BvaDispatchTask.find_by(appeal: root_task.appeal, assigned_to: user)
+        error_message = "Appeal #{root_task.appeal.id}, task ID #{task.id} has already been outcoded. " \
+                        "Cannot outcode the same appeal and task combination more than once"
+
+        expect(response_detail).to eq error_message
       end
     end
   end

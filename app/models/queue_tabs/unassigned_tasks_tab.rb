@@ -23,7 +23,7 @@ class UnassignedTasksTab < QueueTab
       show_regional_office_column ? Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN : nil,
       Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
       Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
-      Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN,
+      Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN,
       show_reader_link_column ? Constants.QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN : nil
     ].compact
   end

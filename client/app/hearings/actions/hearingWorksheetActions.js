@@ -83,7 +83,14 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
   dispatch(toggleWorksheetSaving(true));
   dispatch(setWorksheetSaveFailedStatus(false));
 
-  ApiUtil.patch(`/hearings/worksheets/${worksheet.external_id}`, { data: { worksheet } }).
+  const formattedHearing = {
+    military_service: worksheet.military_service,
+    summary: worksheet.summary,
+    witness: worksheet.witness,
+    representative_name: worksheet.representative_name
+  };
+
+  ApiUtil.patch(`/hearings/${worksheet.external_id}`, { data: { hearing: formattedHearing } }).
     then(() => {
       dispatch({ type: ACTIONS.SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
     },
@@ -226,8 +233,8 @@ export const saveIssue = (issue) => (dispatch) => {
   let data = { appeal: { worksheet_issues_attributes: [issue] } };
 
   if (issue.docket_name === 'hearing') {
-    url = `/hearings/worksheets/${issue.hearing.external_id}`;
-    data = { worksheet: { hearing_issue_notes_attributes: [issue] } };
+    url = `/hearings/${issue.hearing.external_id}`;
+    data = { hearing: { hearing_issue_notes_attributes: [issue] } };
   }
 
   ApiUtil.patch(url, { data }).

@@ -30,7 +30,12 @@ export default class StyleGuideComponentTitle extends React.PureComponent {
     const ViewSourceCodeLink = (props) => {
 
       return <span>
-        <a className="usa-button" href={getBaseUrl() + props.link} target="_blank">
+        <a
+          className="usa-button"
+          href={getBaseUrl() + props.link}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <GithubIcon /> View source code
         </a>
       </span>;
@@ -52,7 +57,7 @@ export default class StyleGuideComponentTitle extends React.PureComponent {
   }
 }
 
-StyleGuideComponentTitle.props = {
+StyleGuideComponentTitle.propTypes = {
   id: PropTypes.string.isRequired,
   isExternalLink: PropTypes.bool,
   isSubsection: PropTypes.bool,

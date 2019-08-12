@@ -1,13 +1,18 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Task queue" do
+RSpec.feature "Task queue", :all_dbs do
+  let!(:vlj_support_staffer) { create(:user) }
+
+  before { OrganizationsUser.add_user_to_organization(vlj_support_staffer, Colocated.singleton) }
+
   context "attorney user with assigned tasks" do
-    let(:attorney_user) { FactoryBot.create(:user) }
+    let(:attorney_user) { create(:user) }
 
     let!(:attorney_task) do
-      FactoryBot.create(
+      create(
         :ama_attorney_task,
         :on_hold,
         assigned_to: attorney_user,
@@ -16,7 +21,7 @@ RSpec.feature "Task queue" do
     end
 
     let!(:attorney_task_new_docs) do
-      FactoryBot.create(
+      create(
         :ama_attorney_task,
         :on_hold,
         assigned_to: attorney_user,
@@ -26,7 +31,7 @@ RSpec.feature "Task queue" do
     end
 
     let!(:colocated_task) do
-      FactoryBot.create(
+      create(
         :ama_colocated_task,
         assigned_by: attorney_user,
         assigned_at: 2.days.ago,
@@ -35,7 +40,7 @@ RSpec.feature "Task queue" do
     end
 
     let!(:colocated_task_new_docs) do
-      FactoryBot.create(
+      create(
         :ama_colocated_task,
         assigned_by: attorney_user,
         assigned_at: 4.days.ago,
@@ -44,14 +49,14 @@ RSpec.feature "Task queue" do
     end
 
     let!(:paper_appeal) do
-      FactoryBot.create(
+      create(
         :legacy_appeal,
         :with_veteran,
-        vacols_case: FactoryBot.create(
+        vacols_case: create(
           :case,
           :assigned,
           user: attorney_user,
-          folder: FactoryBot.build(:folder, :paper_case)
+          folder: build(:folder, :paper_case)
         )
       )
     end
@@ -67,7 +72,7 @@ RSpec.feature "Task queue" do
     context "the on-hold task is attached to an appeal with documents" do
       let!(:documents) do
         ["NOD", "BVA Decision", "SSOC"].map do |t|
-          FactoryBot.create(
+          create(
             :document,
             type: t,
             upload_date: 3.days.ago,
@@ -78,7 +83,7 @@ RSpec.feature "Task queue" do
 
       let!(:more_documents) do
         ["NOD", "BVA Decision", "SSOC"].map do |t|
-          FactoryBot.create(
+          create(
             :document,
             type: t,
             upload_date: 3.days.ago,
@@ -100,7 +105,7 @@ RSpec.feature "Task queue" do
     context "hearings" do
       context "if a task has a hearing" do
         let!(:attorney_task_with_hearing) do
-          FactoryBot.create(
+          create(
             :ama_attorney_task,
             :in_progress,
             assigned_to: attorney_user
@@ -165,7 +170,7 @@ RSpec.feature "Task queue" do
     end
 
     context "attorney user in an organization with assigned tasks" do
-      let(:organization) { FactoryBot.create(:organization) }
+      let(:organization) { create(:organization) }
 
       before do
         OrganizationsUser.add_user_to_organization(attorney_user, organization)
@@ -181,11 +186,11 @@ RSpec.feature "Task queue" do
 
   context "VSO employee" do
     let(:vso) do
-      v = FactoryBot.create(:vso)
+      v = create(:vso)
       Vso.find(v.id)
     end
-    let(:vso_employee) { FactoryBot.create(:user, :vso_role) }
-    let!(:vso_task) { FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso) }
+    let(:vso_employee) { create(:user, :vso_role) }
+    let!(:vso_task) { create(:ama_vso_task, :in_progress, assigned_to: vso) }
     before do
       User.authenticate!(user: vso_employee)
       allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
@@ -211,17 +216,17 @@ RSpec.feature "Task queue" do
   end
 
   context "VSO team queue" do
-    let(:vso_employee) { FactoryBot.create(:user, roles: ["VSO"]) }
-    let(:vso) { FactoryBot.create(:vso) }
+    let(:vso_employee) { create(:user, roles: ["VSO"]) }
+    let(:vso) { create(:vso) }
 
     let(:unassigned_count) { 3 }
     let(:assigned_count) { 7 }
     let(:tracking_task_count) { 14 }
 
     before do
-      FactoryBot.create_list(:informal_hearing_presentation_task, unassigned_count, :in_progress, assigned_to: vso)
-      FactoryBot.create_list(:informal_hearing_presentation_task, assigned_count, :on_hold, assigned_to: vso)
-      FactoryBot.create_list(:track_veteran_task, tracking_task_count, assigned_to: vso)
+      create_list(:informal_hearing_presentation_task, unassigned_count, :in_progress, assigned_to: vso)
+      create_list(:informal_hearing_presentation_task, assigned_count, :on_hold, assigned_to: vso)
+      create_list(:track_veteran_task, tracking_task_count, assigned_to: vso)
 
       allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
       User.authenticate!(user: vso_employee)
@@ -249,13 +254,13 @@ RSpec.feature "Task queue" do
   end
 
   context "Field VSO team queue" do
-    let(:vso_employee) { FactoryBot.create(:user, roles: ["VSO"]) }
-    let(:vso) { FactoryBot.create(:field_vso) }
+    let(:vso_employee) { create(:user, roles: ["VSO"]) }
+    let(:vso) { create(:field_vso) }
 
     let(:tracking_task_count) { 8 }
 
     before do
-      FactoryBot.create_list(:track_veteran_task, tracking_task_count, assigned_to: vso)
+      create_list(:track_veteran_task, tracking_task_count, assigned_to: vso)
 
       allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
       User.authenticate!(user: vso_employee)
@@ -275,13 +280,13 @@ RSpec.feature "Task queue" do
   end
 
   describe "Creating a mail task" do
-    let(:mail_user) { FactoryBot.create(:user) }
+    let(:mail_user) { create(:user) }
     let(:mail_team) { MailTeam.singleton }
     let(:appeal) { root_task.appeal }
     let(:instructions) { "Some instructions for how to complete the task" }
 
     let!(:pulac_user) do
-      FactoryBot.create(:user)
+      create(:user)
     end
 
     let!(:lit_support_team) do
@@ -336,7 +341,7 @@ RSpec.feature "Task queue" do
     end
 
     context "when we are a member of the mail team and a root task exists for the appeal" do
-      let!(:root_task) { FactoryBot.create(:root_task) }
+      let!(:root_task) { create(:root_task) }
       it "should allow us to assign a mail task to a user" do
         visit "/queue/appeals/#{appeal.uuid}"
 
@@ -365,7 +370,7 @@ RSpec.feature "Task queue" do
     end
 
     context "when a ClearAndUnmistakeableErrorMailTask task is routed to Pulac Cerullo" do
-      let!(:root_task) { FactoryBot.create(:root_task) }
+      let!(:root_task) { create(:root_task) }
       it "creates two child tasks: one Pulac Cerullo Task, and a child of that task " \
         "assigned to the first user in the Pulac Cerullo org" do
         validate_pulac_cerullo_tasks_created(
@@ -375,7 +380,7 @@ RSpec.feature "Task queue" do
     end
 
     context "when a ReconsiderationMotionMailTask task is routed to Pulac Cerullo" do
-      let!(:root_task) { FactoryBot.create(:root_task) }
+      let!(:root_task) { create(:root_task) }
       it "creates two child tasks: one Pulac Cerullo Task, and a child of that task " \
         "assigned to the first user in the Pulac Cerullo org" do
         validate_pulac_cerullo_tasks_created(
@@ -385,7 +390,7 @@ RSpec.feature "Task queue" do
     end
 
     context "when a VacateMotionMailTask task is routed to Pulac Cerullo" do
-      let!(:root_task) { FactoryBot.create(:root_task) }
+      let!(:root_task) { create(:root_task) }
       it "creates two child tasks: one Pulac Cerullo Task, and a child of that task " \
         "assigned to the first user in the Pulac Cerullo org" do
         validate_pulac_cerullo_tasks_created(VacateMotionMailTask, COPY::VACATE_MOTION_MAIL_TASK_LABEL)
@@ -393,7 +398,7 @@ RSpec.feature "Task queue" do
     end
 
     context "when there is no active root task for the appeal" do
-      let!(:root_task) { FactoryBot.create(:root_task, :completed) }
+      let!(:root_task) { create(:root_task, :completed) }
 
       it "should allow us to create a mail task" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -424,8 +429,8 @@ RSpec.feature "Task queue" do
   end
 
   describe "Organizational queue page" do
-    let(:organization) { FactoryBot.create(:organization) }
-    let(:organization_user) { FactoryBot.create(:user) }
+    let(:organization) { create(:organization) }
+    let(:organization_user) { create(:user) }
 
     let(:unassigned_count) { 8 }
     let(:assigned_count) { 12 }
@@ -433,8 +438,8 @@ RSpec.feature "Task queue" do
     before do
       OrganizationsUser.add_user_to_organization(organization_user, organization)
       User.authenticate!(user: organization_user)
-      FactoryBot.create_list(:generic_task, unassigned_count, :in_progress, assigned_to: organization)
-      FactoryBot.create_list(:generic_task, assigned_count, :on_hold, assigned_to: organization)
+      create_list(:generic_task, unassigned_count, :in_progress, assigned_to: organization)
+      create_list(:generic_task, assigned_count, :on_hold, assigned_to: organization)
       visit(organization.path)
     end
 
@@ -480,10 +485,10 @@ RSpec.feature "Task queue" do
     context "when organization tasks include one associated with a LegacyAppeal that has been removed from VACOLS" do
       let!(:tasks) do
         Array.new(4) do
-          vacols_case = FactoryBot.create(:case)
-          legacy_appeal = FactoryBot.create(:legacy_appeal, vacols_case: vacols_case)
+          vacols_case = create(:case)
+          legacy_appeal = create(:legacy_appeal, vacols_case: vacols_case)
           vacols_case.destroy!
-          FactoryBot.create(:generic_task, :in_progress, appeal: legacy_appeal, assigned_to: organization)
+          create(:generic_task, :in_progress, appeal: legacy_appeal, assigned_to: organization)
         end
       end
 
@@ -498,15 +503,12 @@ RSpec.feature "Task queue" do
   end
 
   describe "VLJ support staff task action" do
-    let!(:attorney) { FactoryBot.create(:user) }
-    let!(:staff) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
-    let!(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
-    let!(:vlj_support_staffer) { FactoryBot.create(:user) }
+    let!(:attorney) { create(:user) }
+    let!(:staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+    let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
     let!(:judgeteam) { JudgeTeam.create_for_judge(attorney) }
 
     before do
-      OrganizationsUser.add_user_to_organization(vlj_support_staffer, Colocated.singleton)
-      OrganizationsUser.add_user_to_organization(vlj_support_staffer, judgeteam)
       User.authenticate!(user: vlj_support_staffer)
     end
 
@@ -541,16 +543,16 @@ RSpec.feature "Task queue" do
     end
   end
 
-  describe "VLJ support staff schedule hearing action" do
-    let(:attorney) { FactoryBot.create(:user) }
+  describe "Hearing management schedule hearing action" do
+    let(:attorney) { create(:user) }
     let(:vacols_case) { create(:case) }
-    let!(:staff) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
-    let(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: vacols_case) }
-    let!(:vlj_support_staffer) { FactoryBot.create(:user) }
+    let!(:staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+    let(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: vacols_case) }
+    let!(:hearings_management_user) { create(:user) }
 
     before do
-      OrganizationsUser.add_user_to_organization(vlj_support_staffer, Colocated.singleton)
-      User.authenticate!(user: vlj_support_staffer)
+      OrganizationsUser.add_user_to_organization(hearings_management_user, HearingsManagement.singleton)
+      User.authenticate!(user: hearings_management_user)
     end
 
     context "when a ColocatedTask has been assigned through the Colocated organization to an individual" do
@@ -562,13 +564,13 @@ RSpec.feature "Task queue" do
                                               }], attorney)
       end
 
-      it "the location is updated to 57 when a user assigns a colocated task back to the hearing team" do
+      it "the location is updated to caseflow when a user assigns a colocated task back to the hearing team" do
         visit("/queue/appeals/#{appeal.external_id}")
         find(".Select-control", text: "Select an action…").click
         expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
         find("button", text: "Send case").click
-        expect(page).to have_content("Bob Smith's case has been sent to the Schedule hearing team")
+        expect(page).to have_content("Bob Smith's case has been sent to the Confirm schedule hearing team")
         expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
       end
 
@@ -588,14 +590,14 @@ RSpec.feature "Task queue" do
   end
 
   describe "JudgeTask" do
-    let!(:judge_user) { FactoryBot.create(:user) }
-    let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+    let!(:judge_user) { create(:user) }
+    let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
     let!(:judge_team) { JudgeTeam.create_for_judge(judge_user) }
     let!(:appeal) do
-      FactoryBot.create(
+      create(
         :appeal,
         number_of_claimants: 1,
-        request_issues: FactoryBot.build_list(
+        request_issues: build_list(
           :request_issue, 1,
           contested_issue_description: "Tinnitus"
         )
@@ -603,7 +605,7 @@ RSpec.feature "Task queue" do
     end
     let!(:decision_issue) { create(:decision_issue, decision_review: appeal, request_issues: appeal.request_issues) }
 
-    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
 
     before do
       User.authenticate!(user: judge_user)
@@ -611,7 +613,7 @@ RSpec.feature "Task queue" do
 
     context "when it was created from a QualityReviewTask" do
       let!(:qr_team) { QualityReview.singleton }
-      let!(:qr_user) { FactoryBot.create(:user) }
+      let!(:qr_user) { create(:user) }
       let!(:qr_relationship) { OrganizationsUser.add_user_to_organization(qr_user, qr_team) }
       let!(:qr_org_task) { QualityReviewTask.create_from_root_task(root_task) }
       let!(:qr_task_params) do
@@ -640,7 +642,7 @@ RSpec.feature "Task queue" do
         visit("/queue/appeals/#{appeal.external_id}")
 
         # Add a user to the Colocated team so the task assignment will suceed.
-        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton)
+        OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
       end
 
       it "should display an option to mark task complete" do
@@ -674,18 +676,18 @@ RSpec.feature "Task queue" do
     end
 
     context "when it was created from a BvaDispatchTask" do
-      let!(:bva_dispatch_user) { FactoryBot.create(:user) }
+      let!(:bva_dispatch_user) { create(:user) }
       let!(:bva_dispatch_relationship) do
         OrganizationsUser.add_user_to_organization(bva_dispatch_user, BvaDispatch.singleton)
       end
-      let!(:attorney_user) { FactoryBot.create(:user) }
-      let!(:attorney_staff) { FactoryBot.create(:staff, :attorney_role, user: attorney_user) }
+      let!(:attorney_user) { create(:user) }
+      let!(:attorney_staff) { create(:staff, :attorney_role, user: attorney_user) }
 
       let!(:attorney_judge_relationship) do
         OrganizationsUser.add_user_to_organization(attorney_user, judge_team)
       end
       let!(:orig_judge_task) do
-        FactoryBot.create(
+        create(
           :ama_judge_decision_review_task,
           :on_hold,
           assigned_to: judge_user,
@@ -695,7 +697,7 @@ RSpec.feature "Task queue" do
       end
 
       let!(:orig_atty_task) do
-        FactoryBot.create(
+        create(
           :ama_attorney_task,
           :completed,
           assigned_to: attorney_user,
@@ -740,7 +742,7 @@ RSpec.feature "Task queue" do
         visit("/queue/appeals/#{appeal.external_id}")
 
         # Add a user to the Colocated team so the task assignment will suceed.
-        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton)
+        OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
       end
 
       it "should display an option of Ready for Dispatch" do
@@ -803,7 +805,7 @@ RSpec.feature "Task queue" do
 
     context "when it was created through case distribution" do
       before do
-        FactoryBot.create(:ama_judge_task, appeal: appeal, assigned_to: judge_user)
+        create(:ama_judge_task, appeal: appeal, assigned_to: judge_user)
         visit("/queue/appeals/#{appeal.external_id}")
       end
 
@@ -814,9 +816,9 @@ RSpec.feature "Task queue" do
     end
 
     context "judge user's queue table view" do
-      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:root_task) { create(:root_task) }
       let!(:caseflow_review_task) do
-        FactoryBot.create(
+        create(
           :ama_judge_decision_review_task,
           assigned_to: judge_user,
           parent: root_task,
@@ -824,7 +826,7 @@ RSpec.feature "Task queue" do
         )
       end
       let!(:legacy_review_task) do
-        FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, :assigned, user: judge_user))
+        create(:legacy_appeal, vacols_case: create(:case, :assigned, user: judge_user))
       end
 
       it "should display both legacy and caseflow review tasks" do
@@ -833,7 +835,7 @@ RSpec.feature "Task queue" do
       end
 
       it "should be able to add admin actions from case details" do
-        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton)
+        OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
         visit("/queue")
         click_on "#{legacy_review_task.veteran_full_name} (#{legacy_review_task.sanitized_vbms_id})"
         # On case details page select the "Add admin action" option
@@ -854,10 +856,10 @@ RSpec.feature "Task queue" do
 
   describe "GenericTask" do
     context "when it is assigned to the current user" do
-      let(:user) { FactoryBot.create(:user) }
-      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:user) { create(:user) }
+      let(:root_task) { create(:root_task) }
       let(:appeal) { root_task.appeal }
-      let(:task) { FactoryBot.create(:generic_task, assigned_to: user) }
+      let(:task) { create(:generic_task, assigned_to: user) }
 
       before { User.authenticate!(user: user) }
 
@@ -872,10 +874,10 @@ RSpec.feature "Task queue" do
     end
 
     context "when a task is associated with a LegacyAppeal that has been removed from VACOLS" do
-      let(:user) { FactoryBot.create(:user) }
-      let(:vacols_case) { FactoryBot.create(:case) }
-      let(:legacy_appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
-      let!(:task) { FactoryBot.create(:generic_task, appeal: legacy_appeal, assigned_to: user) }
+      let(:user) { create(:user) }
+      let(:vacols_case) { create(:case) }
+      let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let!(:task) { create(:generic_task, appeal: legacy_appeal, assigned_to: user) }
 
       before do
         vacols_case.destroy!

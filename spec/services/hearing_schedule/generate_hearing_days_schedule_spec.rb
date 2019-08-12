@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe HearingSchedule::GenerateHearingDaysSchedule do
+describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
   let(:schedule_period) do
     create(:blank_ro_schedule_period, start_date: Date.parse("2018-04-01"),
                                       end_date: Date.parse("2018-09-30"))

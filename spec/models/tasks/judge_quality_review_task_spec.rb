@@ -1,15 +1,18 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe JudgeQualityReviewTask do
-  let(:judge) { FactoryBot.create(:user) }
+describe JudgeQualityReviewTask, :postgres do
+  let(:judge) { create(:user) }
   let(:judge_task) do
-    FactoryBot.create(:ama_judge_decision_review_task, parent: FactoryBot.create(:root_task), assigned_to: judge)
+    create(:ama_judge_decision_review_task, parent: create(:root_task), assigned_to: judge)
   end
-  let(:qr_user) { FactoryBot.create(:user) }
-  let(:qr_task) { FactoryBot.create(:qr_task, assigned_to: qr_user, parent: judge_task) }
-  let(:params) { { assigned_to: judge, appeal: qr_task.appeal, parent_id: qr_task.id } }
+  let(:qr_user) { create(:user) }
+  let(:qr_task) { create(:qr_task, assigned_to: qr_user, parent: judge_task) }
+  let(:params) do
+    { assigned_to_id: judge.id, assigned_to_type: User.name, appeal: qr_task.appeal, parent_id: qr_task.id }
+  end
   let(:judge_qr_task) { JudgeQualityReviewTask.create_from_params(params, qr_user) }
 
   describe ".available_actions" do

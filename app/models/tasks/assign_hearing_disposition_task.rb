@@ -29,6 +29,14 @@ class AssignHearingDispositionTask < GenericTask
     end
   end
 
+  def label
+    "Select hearing disposition"
+  end
+
+  def default_instructions
+    [COPY::ASSIGN_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS]
+  end
+
   def hearing_task
     @hearing_task ||= parent
   end

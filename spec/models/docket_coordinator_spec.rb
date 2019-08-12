@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe DocketCoordinator do
+describe DocketCoordinator, :all_dbs do
   before do
     FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2020, 4, 1, 12, 0, 0))
 
     4.times do
-      team = JudgeTeam.create_for_judge(FactoryBot.create(:user))
-      FactoryBot.create_list(:user, 5).each do |attorney|
+      team = JudgeTeam.create_for_judge(create(:user))
+      create_list(:user, 5).each do |attorney|
         OrganizationsUser.add_user_to_organization(attorney, team)
       end
     end
@@ -67,7 +68,7 @@ describe DocketCoordinator do
     (0...due_direct_review_count).map do
       create(:appeal,
              :with_post_intake_tasks,
-             docket_type: "direct_review",
+             docket_type: Constants.AMA_DOCKETS.direct_review,
              receipt_date: 11.months.ago,
              target_decision_date: 1.month.from_now)
     end
@@ -77,7 +78,7 @@ describe DocketCoordinator do
     (0...10).map do
       create(:appeal,
              :with_post_intake_tasks,
-             docket_type: "direct_review",
+             docket_type: Constants.AMA_DOCKETS.direct_review,
              receipt_date: 61.days.ago,
              target_decision_date: 304.days.from_now)
     end
@@ -87,13 +88,17 @@ describe DocketCoordinator do
 
   let!(:evidence_submission_cases) do
     (0...other_docket_count).map do
-      create(:appeal, :with_post_intake_tasks, docket_type: "evidence_submission")
+      create(:appeal,
+             :with_post_intake_tasks,
+             docket_type: Constants.AMA_DOCKETS.evidence_submission)
     end
   end
 
   let!(:hearing_cases) do
     (0...other_docket_count).map do
-      create(:appeal, :with_post_intake_tasks, docket_type: "hearing")
+      create(:appeal,
+             :with_post_intake_tasks,
+             docket_type: Constants.AMA_DOCKETS.hearing)
     end
   end
 

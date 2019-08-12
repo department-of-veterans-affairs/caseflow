@@ -1,14 +1,15 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe GenericQueue do
+describe GenericQueue, :all_dbs do
   describe "#tasks" do
-    let(:atty) { FactoryBot.create(:user) }
-    let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: atty.css_id) }
-    let(:user) { FactoryBot.create(:user) }
+    let(:atty) { create(:user) }
+    let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: atty.css_id) }
+    let(:user) { create(:user) }
     let!(:on_hold_task) do
-      FactoryBot.create(
+      create(
         :colocated_task,
         :on_hold,
         assigned_by: atty,
@@ -18,7 +19,7 @@ describe GenericQueue do
     end
     let(:task_count) { 5 }
 
-    before { FactoryBot.create_list(:colocated_task, task_count, :in_progress, assigned_by: atty, assigned_to: user) }
+    before { create_list(:colocated_task, task_count, :in_progress, assigned_by: atty, assigned_to: user) }
 
     context "when some on hold tasks have expired" do
       it "should set the status of the expired task to in_progress" do

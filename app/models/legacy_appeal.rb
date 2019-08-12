@@ -178,7 +178,7 @@ class LegacyAppeal < ApplicationRecord
   cache_attribute :cached_number_of_documents_after_certification do
     begin
       number_of_documents_after_certification
-    rescue Caseflow::Error::EfolderError, VBMS::HTTPError, Caseflow::Error::VBMS, VBMSError
+    rescue Caseflow::Error::EfolderError, VBMS::HTTPError
       nil
     end
   end
@@ -743,6 +743,10 @@ class LegacyAppeal < ApplicationRecord
     # shouldn't happen because setting location to "CASEFLOW" only happens when a task is created
     Raven.capture_message("legacy appeal #{external_id} has been worked in caseflow but is open and has no tasks")
     location_code
+  end
+
+  def address
+    @address ||= Address.new(appellant[:address]) if appellant[:address].present?
   end
 
   private

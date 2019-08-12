@@ -127,6 +127,7 @@
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases owned by the %s team that are unassigned to a person.",
   "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to a member of the %s team.",
+  "ORGANIZATIONAL_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold in a %s team member's queue.",
   "ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE": "This queue is empty. You can ",
 
   "TRACKING_TASKS_TAB_TITLE": "All cases",
@@ -166,7 +167,6 @@
 
   "JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL": "Additional Comments",
   "JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_SUBHEAD": "Share more details about your evaluation",
-  "BEAAM_QUEUE_TABLE_TITLE": "List of BEAAM Appeals",
 
   "JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE": "You have successfully submitted an OMO for %s.",
   "JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS.",
@@ -271,6 +271,13 @@
   "NO_SHOW_HEARING_TASK_COMPLETE_MODAL_BODY": "Marking this case as complete will release it to a judge for review. A 90 day evidence hold may still apply to this case.",
   "NO_SHOW_HEARING_TASK_RESCHEDULE_FORBIDDEN_ERROR": "Can only reschedule NoShowHearingTasks",
   "HEARING_TASK_ASSOCIATION_NOT_UNIQUE_MESSAGE": "that is not closed already exists for %s %s",
+  "HEARING_TASK_DEFAULT_INSTRUCTIONS": "This task will be auto-completed when all hearing-related tasks have been completed.",
+
+  "ASSIGN_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS": "Postpone or cancel a hearing prior to the hearing date. This task will be auto-completed after the hearing's scheduled date.",
+
+  "CHANGE_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS": "Change hearing disposition (Held, Canceled, No Show, Postponed) if it was marked in error.",
+
+  "SCHEDULE_HEARING_TASK_DEFAULT_INSTRUCTIONS": "Schedule Veteran and/or appellant for Board hearing.",
 
   "ADD_COLOCATED_TASK_SUBHEAD": "Submit admin action",
   "ADD_COLOCATED_TASK_ACTION_TYPE_LABEL": "Select the type of administrative action you'd like to assign:",
@@ -369,6 +376,8 @@
   "DECISION_ISSUE_CONFIRM_DELETE_WITH_CONNECTED_ISSUES": " Deleting this decision will also remove it from other issues you've added it to.",
   "DECISION_ISSUE_CONFIRM_DELETE": "Are you sure you want to delete this decision?",
 
+  "EVALUATE_DECISION_PAGE_TITLE": "Evaluate Decision",
+
   "TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK": "Caseflow team management",
   "TEAM_MANAGEMENT_PAGE_HEADER": "Caseflow Team Management",
   "TEAM_MANAGEMENT_ID_COLUMN_HEADING": "ID",
@@ -446,6 +455,7 @@
   "CLAIMANT_NOT_FOUND_END": " for assistance.",
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
   "INTAKE_WITHDRAWN_BANNER": "This review will be withdrawn. You can intake these issues as a different type of decision review, if that was requested.",
+  "INTAKE_RATING_MAY_BE_PROCESS": "Rating may be in progress",
 
   "VACOLS_OPTIN_ISSUE_NEW": "Adding this issue will automatically close VACOLS issue",
   "VACOLS_OPTIN_ISSUE_CLOSED_EDIT": "This issue has automatically closed the VACOLS issue",
@@ -486,6 +496,9 @@
   "NON_COMP_ADDRESS_MESSAGE": "The Veteran/appellant has filed a Notice of Disagreement at the Board of Veterans' Appeals. In order to decide that appeal, the Board will need the complete records from",
   "INTAKE_EDIT_TITLE": "Edit contention title",
 
+  "INTAKE_CORRECTION_TYPE_MODAL_TITLE": "Set Correction Type",
+  "INTAKE_CORRECTION_TYPE_MODAL_COPY": "This issue will be added to a 930 EP for correction. If a mistake was found during quality review, please select whether it was discovered by the local or national quality review team. Otherwise, select control.",
+
   "END_HOLD_MODAL_TITLE": "End hold early",
   "END_HOLD_MODAL_BODY": "Do you want to end the hold early?",
   "END_HOLD_SUCCESS_MESSAGE_TITLE": "Success! The hold has been ended early.",
@@ -513,5 +526,7 @@
   "HEARING_DATE_LOADING": "Finding upcoming hearing dates for this regional office...",
 
   "CLAIM_REVIEW_EDIT_ERROR_MISSING_DECISION_DATE": "VBMS or SHARE: One or more ratings may be locked on this Claim. Please try again in 24 hours.",
-  "CLAIM_REVIEW_EDIT_ERROR_DEFAULT": "There was an error preparing this Review for edit."
+  "CLAIM_REVIEW_EDIT_ERROR_DEFAULT": "There was an error preparing this Review for edit.",
+
+  "UNKNOWN_REGIONAL_OFFICE": "Unknown"
 }

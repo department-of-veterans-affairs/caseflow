@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe RequestIssue do
+describe RequestIssue, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
@@ -830,6 +831,22 @@ describe RequestIssue do
     end
   end
 
+  context "#corrected?" do
+    let(:request_issue) { create(:request_issue, corrected_by_request_issue_id: corrected_by_id) }
+
+    subject { request_issue.corrected? }
+
+    context "when corrected" do
+      let(:corrected_by_id) { create(:request_issue).id }
+      it { is_expected.to eq true }
+    end
+
+    context "when not corrected" do
+      let(:corrected_by_id) { nil }
+      it { is_expected.to eq false }
+    end
+  end
+
   context "#ui_hash" do
     context "when there is a previous request issue in active review" do
       let!(:ratings) do
@@ -1588,6 +1605,30 @@ describe RequestIssue do
         expect(rating_request_issue.closed_status).to eq("withdrawn")
         expect(legacy_issue_optin.reload.rollback_created_at).to be_nil
       end
+    end
+  end
+
+  context "#editable?" do
+    let(:ep_code) { "030HLRR" }
+    let(:end_product_establishment) do
+      create(:end_product_establishment,
+             :active,
+             veteran_file_number: veteran.file_number,
+             established_at: review.receipt_date - 100.days,
+             code: ep_code)
+    end
+    subject { rating_request_issue.editable? }
+
+    context "when rating exists" do
+      let(:associated_claims) do
+        [{ clm_id: end_product_establishment.reference_id, bnft_clm_tc: ep_code }]
+      end
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "when rating does not exist" do
+      it { is_expected.to eq(true) }
     end
   end
 

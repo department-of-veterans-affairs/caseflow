@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "../exceptions/standard_error"
+
 class ApplicationJob < ActiveJob::Base
   class << self
     def application_attr(app_name)
@@ -7,6 +9,18 @@ class ApplicationJob < ActiveJob::Base
     end
 
     attr_reader :app_name
+  end
+
+  rescue_from VBMS::ClientError, BGS::ShareError do |error|
+    capture_exception(error: error)
+  end
+
+  def capture_exception(error:, extra: {})
+    if error.ignorable?
+      Rails.logger.error(error)
+    else
+      Raven.capture_exception(error, extra: extra)
+    end
   end
 
   before_perform do |job|

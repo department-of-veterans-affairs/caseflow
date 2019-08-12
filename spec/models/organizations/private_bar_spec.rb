@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe PrivateBar do
+describe PrivateBar, :postgres do
   let(:private_bar) { PrivateBar.create!(name: "Caseflow Law Group", url: "caseflow-law") }
 
   describe ".create!" do
-    let(:appeal) { FactoryBot.create(:appeal) }
+    let(:appeal) { create(:appeal) }
 
     before do
       allow(appeal).to receive(:representatives).and_return(PrivateBar.where(id: private_bar.id))

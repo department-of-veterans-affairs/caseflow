@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe QueueTab do
   # Use AssignedTasksTab as our example since we don't expect QueueTab to ever be instantiated directly.
   let(:tab) { AssignedTasksTab.new(params) }

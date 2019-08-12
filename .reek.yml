@@ -13,6 +13,15 @@ detectors:
   ControlParameter:
     exclude:
       - HearingRepository#slot_new_hearing
+  UncommunicativeVariableName:
+    exclude:
+      - Address
+  LongParameterList:
+    exclude:
+      - Address
+  UncommunicativeParameterName:
+    exclude:
+      - Address
   DataClump:
     exclude:
       - HearingSerializerBase
@@ -20,12 +29,17 @@ detectors:
     enabled: false
   FeatureEnvy:
     exclude:
+      - Api::ApplicationController#on_external_error
+      - Api::ApplicationController#upstream_known_error
+      - AsyncableJobsReporter
+      - DataIntegrityChecksJob
+      - DecisionIssueSyncJob
       - Fakes::EndProductStore
       - FetchDocumentsForReaderJob#fetch_for_appeal
-      - AsyncableJobsReporter
       - HearingSerializerBase
-      - DataIntegrityChecksJob
       - VeteranAttributeCacher
+      - SyncReviewsJob
+      - TaskTimerJob
       - WarmBgsCachesJob
   InstanceVariableAssumption:
     exclude:
@@ -43,6 +57,11 @@ detectors:
   RepeatedConditional:
     exclude:
       - QueueConfig
+  TooManyInstanceVariables:
+    exclude:
+      - AmaAppealDispatch
+      - LegacyAppealDispatch
+      - Address
   TooManyMethods:
     enabled: false
   TooManyStatements:
@@ -54,6 +73,7 @@ detectors:
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
+      - OnHoldTasksTab#name
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.

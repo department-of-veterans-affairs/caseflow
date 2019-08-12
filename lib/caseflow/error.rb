@@ -29,6 +29,7 @@ module Caseflow::Error
   class VaDotGovServerError < VaDotGovAPIError; end
   class VaDotGovLimitError < VaDotGovAPIError; end
   class VaDotGovAddressCouldNotBeFoundError < VaDotGovAPIError; end
+  class VaDotGovMissingFacilityError < VaDotGovAPIError; end
   class VaDotGovInvalidInputError < VaDotGovAPIError; end
   class VaDotGovMultipleAddressError < VaDotGovAPIError; end
   class VaDotGovNullAddressError < StandardError; end
@@ -63,6 +64,14 @@ module Caseflow::Error
       @tab_name = args[:tab_name]
       @code = args[:code] || 400
       @message = args[:message] || "\"#{@tab_name}\" is not a valid tab name"
+    end
+  end
+
+  class InvalidTaskTableColumnFilter < SerializableError
+    def initialize(args)
+      @column = args[:column]
+      @code = args[:code] || 400
+      @message = args[:message] || "Cannot filter table on column: \"#{@column}\""
     end
   end
 

@@ -14,10 +14,10 @@ import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../constants/UNDECIDED_VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
+import COPY from '../../COPY.json';
 import { formatDateStrUtc } from '../util/DateUtil';
 
 /**
@@ -412,13 +412,14 @@ export const getIssueDiagnosticCodeLabel = (code) => {
   return `${code} - ${readableLabel.staff_description}`;
 };
 
+// Build case review payloads for attorney decision draft submissions as well as judge decision evaluations.
 export const buildCaseReviewPayload = (
-  checkoutFlow, decision, userRole, issues, args = {}
+  checkoutFlow, decision, draftDecisionSubmission, issues, args = {}
 ) => {
   const payload = {
     data: {
       tasks: {
-        type: `${userRole}CaseReview`,
+        type: draftDecisionSubmission ? 'AttorneyCaseReview' : 'JudgeCaseReview',
         ...decision.opts
       }
     }
@@ -430,7 +431,7 @@ export const buildCaseReviewPayload = (
     delete args.isLegacyAppeal;
   }
 
-  if (userRole === USER_ROLE_TYPES.attorney) {
+  if (draftDecisionSubmission) {
     _.extend(payload.data.tasks, { document_type: checkoutFlow });
   } else {
     args.factors_not_considered = _.keys(args.factors_not_considered);
@@ -560,11 +561,11 @@ export const sortTaskList = (taskList) => {
 
 export const regionalOfficeCity = (objWithLocation, defaultToUnknown) => {
   return _.get(objWithLocation, 'closestRegionalOffice.location_hash.city',
-    defaultToUnknown ? 'Unknown' : defaultToUnknown);
+    defaultToUnknown ? COPY.UNKNOWN_REGIONAL_OFFICE : defaultToUnknown);
 };
 
 export const cityForRegionalOfficeCode = (code) => {
   const regionalOffice = REGIONAL_OFFICE_INFORMATION[code];
 
-  return regionalOffice ? regionalOffice.city : 'Unknown';
+  return regionalOffice ? regionalOffice.city : COPY.UNKNOWN_REGIONAL_OFFICE;
 };

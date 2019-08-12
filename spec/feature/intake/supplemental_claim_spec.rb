@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-feature "Supplemental Claim Intake" do
+feature "Supplemental Claim Intake", :all_dbs do
   include IntakeHelpers
 
   before do
@@ -872,11 +872,13 @@ feature "Supplemental Claim Intake" do
             "Left knee granted #{ineligible_constants.legacy_appeal_not_eligible}"
           )
 
-          # Expect untimely exemption modal for untimely issue
+          # Expect no untimely exemption modal for untimely issue, due to it being supplemental claim
           click_intake_add_issue
           add_intake_rating_issue("Untimely rating issue 1")
           add_intake_rating_issue("None of these match")
-          add_untimely_exemption_response("Yes")
+          expect(page).to_not have_content(
+            "The issue requested isn't usually eligible because its decision date is older"
+          )
 
           expect(page).to have_content("Untimely rating issue 1")
 

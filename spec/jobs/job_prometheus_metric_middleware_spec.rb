@@ -32,7 +32,7 @@ describe JobPrometheusMetricMiddleware do
       expect(PrometheusService.background_jobs_error_counter.values[@labels]).to eq(nil)
       expect do
         @middleware.call(nil, :low_priority, @msg, @body) { fail("test") }
-      end.to raise_error
+      end.to raise_error(RuntimeError, "test")
 
       expect(PrometheusService.background_jobs_error_counter.values[@labels]).to eq(1)
     end
