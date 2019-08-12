@@ -49,7 +49,7 @@ class QueueConfig
     tab.to_hash.merge(
       tasks: tasks,
       task_page_count: task_pager.task_page_count,
-      total_task_count: task_pager.total_task_count,
+      total_task_count: tab.tasks.count,
       task_page_endpoint_base_path: endpoint
     )
   end

@@ -86,7 +86,7 @@ class Organization < ApplicationRecord
 
   def unassigned_tasks_tab
     ::UnassignedTasksTab.new(
-      assignee_name: name,
+      assignee: self,
       show_regional_office_column: show_regional_office_in_queue?,
       show_reader_link_column: show_reader_link_column?,
       allow_bulk_assign: can_bulk_assign_tasks?
@@ -94,15 +94,15 @@ class Organization < ApplicationRecord
   end
 
   def assigned_tasks_tab
-    ::AssignedTasksTab.new(assignee_name: name, show_regional_office_column: show_regional_office_in_queue?)
+    ::AssignedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def on_hold_tasks_tab
-    ::OnHoldTasksTab.new(assignee_name: name, show_regional_office_column: show_regional_office_in_queue?)
+    ::OnHoldTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def completed_tasks_tab
-    ::CompletedTasksTab.new(assignee_name: name, show_regional_office_column: show_regional_office_in_queue?)
+    ::CompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def ama_task_serializer
