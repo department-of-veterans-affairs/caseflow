@@ -121,6 +121,26 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
+      "fingerprint": "5e7193afe39d87737f803459761fab47394b577e13c53606b71ea94312ded2a2",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/task_pager.rb",
+      "line": 77,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.issue_count #{sort_order}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "TaskPager",
+        "method": "tasks_sorted_by_issue_count"
+      },
+      "user_input": "sort_order",
+      "confidence": "Weak",
+      "note": "False positive, sort_order is validated in sort_order_is_valid"
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
       "fingerprint": "62eee76f337de2ef652f6755165cf76c318d170b2a3a13a5da6c92dd7a2f18d7",
       "check_name": "SQL",
       "message": "Possible SQL injection",
@@ -194,6 +214,6 @@
       "note": ""
     }
   ],
-  "updated": "2019-08-07 13:45:26 -0400",
+  "updated": "2019-08-08 08:31:50 -0400",
   "brakeman_version": "4.5.1"
 }

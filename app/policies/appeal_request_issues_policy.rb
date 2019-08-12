@@ -7,9 +7,8 @@ class AppealRequestIssuesPolicy
   end
 
   def editable?
-    return true if editable_by_case_review_team_member?
-
-    case_is_in_active_review_by_current_user?
+    editable_by_case_review_team_member? || case_is_in_active_review_by_current_user? ||
+      hearing_is_assigned_to_judge_user
   end
 
   private
@@ -26,6 +25,10 @@ class AppealRequestIssuesPolicy
 
   def case_is_not_in_active_review?
     Task.where(appeal: appeal, type: "AttorneyTask").empty?
+  end
+
+  def hearing_is_assigned_to_judge_user
+    FeatureToggle.enabled?(:allow_judge_edit_issues) && appeal.hearings.last&.judge == user
   end
 
   def case_is_in_active_review_by_current_user?

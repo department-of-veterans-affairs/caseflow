@@ -638,6 +638,10 @@ class Appeal < DecisionReview
     AppealActiveTaskCancellation.new(self).call
   end
 
+  def address
+    @address ||= Address.new(appellant.address) if appellant.address.present?
+  end
+
   # we always want to show ratings on intake
   def can_contest_rating_issues?
     true
