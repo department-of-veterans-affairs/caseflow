@@ -26,66 +26,8 @@ class TaskPager
     sorted_tasks(filtered_tasks).page(page).per(TASKS_PER_PAGE)
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/AbcSize
   def sorted_tasks(tasks)
-    case sort_by
-    when Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN, Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN
-      tasks.order(assigned_at: sort_order)
-    when Constants.QUEUE_CONFIG.TASK_CLOSED_DATE_COLUMN
-      tasks.order(closed_at: sort_order)
-    when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
-      tasks.order(type: sort_order, action: sort_order, created_at: sort_order)
-    when Constants.QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN
-      tasks.order(placed_on_hold_at: sort_order)
-    when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
-      tasks_sorted_by_docket_number(tasks)
-    when Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN
-      tasks_sorted_by_regional_office(tasks)
-    when Constants.QUEUE_CONFIG.ISSUE_COUNT_COLUMN
-      tasks_sorted_by_issue_count(tasks)
-    when Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN
-      tasks_sorted_by_veteran_name(tasks)
-
-    # Columns not yet supported:
-    #
-    # APPEAL_TYPE_COLUMN
-    # DAYS_ON_HOLD_COLUMN
-    # DOCUMENT_COUNT_READER_LINK_COLUMN
-    # HEARING_BADGE_COLUMN
-    # TASK_ASSIGNEE_COLUMN
-    # TASK_ASSIGNER_COLUMN
-    #
-    else
-      tasks.order(created_at: sort_order)
-    end
-  end
-  # rubocop:enable Metrics/AbcSize
-  # rubocop:enable Metrics/CyclomaticComplexity
-
-  def tasks_sorted_by_docket_number(tasks)
-    tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.docket_type #{sort_order}, "\
-                                                     "cached_appeal_attributes.docket_number #{sort_order}")
-  end
-
-  def tasks_sorted_by_regional_office(tasks)
-    tasks.joins(cached_attributes_join_clause).order(
-      "cached_appeal_attributes.closest_regional_office_city #{sort_order}"
-    )
-  end
-
-  def tasks_sorted_by_issue_count(tasks)
-    tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.issue_count #{sort_order}")
-  end
-
-  def tasks_sorted_by_veteran_name(tasks)
-    tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.veteran_name #{sort_order}")
-  end
-
-  def cached_attributes_join_clause
-    "left join cached_appeal_attributes "\
-    "on cached_appeal_attributes.appeal_id = tasks.appeal_id "\
-    "and cached_appeal_attributes.appeal_type = tasks.appeal_type"
+    QueueColumn.from_name(sort_by).new.sort_tasks(tasks, sort_order)
   end
 
   def task_page_count
