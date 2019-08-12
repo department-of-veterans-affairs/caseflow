@@ -67,14 +67,13 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     end
 
     it "sends a message to Slack that includes the error" do
-      slack_msg = ""
-      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+      expected_msg = "UpdateCachedAppealsAttributesJob failed after running for .*. Fatal error: #{error_msg}"
+      slack_service = instance_double(SlackService)
+
+      expect(SlackService).to receive(:new).with(msg: /#{expected_msg}/).and_return(slack_service)
+      expect(slack_service).to receive(:send_notification)
 
       UpdateCachedAppealsAttributesJob.perform_now
-
-      expected_msg = "UpdateCachedAppealsAttributesJob failed after running for .*. Fatal error: #{error_msg}"
-
-      expect(slack_msg).to match(/#{expected_msg}/)
     end
   end
 end

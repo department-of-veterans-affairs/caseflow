@@ -12,17 +12,26 @@ class SyncIntakeJob < CaseflowJob
 
     Intake.close_expired_intakes!
 
-    appeals_to_reclose = RampClosedAppeal.appeals_to_reclose
-    reclosed_appeals = []
-    appeals_to_reclose.each do |appeal|
+    SlackService.new(msg: slack_message).send_notification
+  end
+
+  private
+
+  def slack_message
+    "Intake: Successfully reclosed #{reclosed_appeals.count} out of #{appeals_to_reclose.count} RAMP VACOLS appeals"
+  end
+
+  def reclosed_appeals
+    appeals_to_reclose.each_with_object([]) do |appeal, result|
       appeal.reclose!
-      reclosed_appeals << appeal
+      result << appeal
     rescue StandardError => error
       # Rescue and capture errors so they don't cause the job to stop
       capture_exception(error: error, extra: { ramp_closed_appeal_id: appeal.id })
     end
-    slack_service.send_notification(
-      "Intake: Successfully reclosed #{reclosed_appeals.count} out of #{appeals_to_reclose.count} RAMP VACOLS appeals"
-    )
+  end
+
+  def appeals_to_reclose
+    @appeals_to_reclose ||= RampClosedAppeal.appeals_to_reclose
   end
 end

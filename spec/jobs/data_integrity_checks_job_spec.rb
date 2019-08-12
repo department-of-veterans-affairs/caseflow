@@ -6,7 +6,7 @@ describe DataIntegrityChecksJob do
   let(:expired_async_jobs_checker) { ExpiredAsyncJobsChecker.new }
   let(:open_hearing_tasks_without_active_descendants_checker) { OpenHearingTasksWithoutActiveDescendantsChecker.new }
   let(:untracked_legacy_appeals_checker) { UntrackedLegacyAppealsChecker.new }
-  let(:slack_service) { SlackService.new(url: "http://www.example.com") }
+  let(:slack_service) { instance_double(SlackService) }
 
   before do
     allow(ExpiredAsyncJobsChecker).to receive(:new).and_return(expired_async_jobs_checker)
@@ -52,6 +52,9 @@ describe DataIntegrityChecksJob do
       end
 
       it "sends slack notification if there is a report" do
+        expect(SlackService).to receive(:new)
+          .with(msg: "1 expired async job", title: "ExpiredAsyncJobsChecker", channel: "#appeals-app-alerts")
+
         described_class.perform_now
 
         expect(expired_async_jobs_checker).to have_received(:call).once

@@ -79,7 +79,8 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
 
     it "sends the correct number of messages to DataDog and not send a message to Slack" do
       expect(DataDogService).to receive(:increment_counter).exactly(changed_tasks_count).times
-      expect_any_instance_of(SlackService).to_not receive(:send_notification)
+
+      expect(SlackService).to_not receive(:new)
 
       UpdateAppellantRepresentationJob.perform_now
     end
@@ -148,15 +149,14 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
     end
 
     it "sends a message to Slack that includes the error" do
-      expect_any_instance_of(UpdateAppellantRepresentationJob).to receive(:record_runtime).exactly(1).times
+      expected_msg = "UpdateAppellantRepresentationJob failed after running for .*. Fatal error: #{error_msg}"
+      slack_service = instance_double(SlackService)
 
-      slack_msg = ""
-      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+      expect_any_instance_of(UpdateAppellantRepresentationJob).to receive(:record_runtime).exactly(1).times
+      expect(SlackService).to receive(:new).with(msg: /#{expected_msg}/).and_return(slack_service)
+      expect(slack_service).to receive(:send_notification)
 
       UpdateAppellantRepresentationJob.perform_now
-
-      expected_msg = "UpdateAppellantRepresentationJob failed after running for .*. Fatal error: #{error_msg}"
-      expect(slack_msg).to match(/#{expected_msg}/)
     end
   end
 

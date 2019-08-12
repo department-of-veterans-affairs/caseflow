@@ -179,16 +179,15 @@ describe HearingDispositionChangeJob, :all_dbs do
 
     context "when the job runs successfully" do
       it "logs and sends the correct message to slack" do
-        slack_msg = ""
-        allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+        expected_msg = "HearingDispositionChangeJob completed after running for .*." \
+          " Encountered errors for #{error_count} hearings."
+        slack_service = instance_double(SlackService)
 
+        expect(SlackService).to receive(:new).with(msg: /#{expected_msg}/).and_return(slack_service)
+        expect(slack_service).to receive(:send_notification)
         expect(Rails.logger).to receive(:info).exactly(2).times
 
         HearingDispositionChangeJob.new.log_info(start_time, task_count_for, error_count, hearing_ids, error)
-
-        expected_msg = "HearingDispositionChangeJob completed after running for .*." \
-          " Encountered errors for #{error_count} hearings."
-        expect(slack_msg).to match(/#{expected_msg}/)
       end
     end
 
@@ -196,16 +195,16 @@ describe HearingDispositionChangeJob, :all_dbs do
       let(:task_count_for) { { first_key: 0, second_key: 13 } }
 
       it "includes a sentence in the output message for each element of the hash" do
-        slack_msg = ""
-        allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
-
-        HearingDispositionChangeJob.new.log_info(start_time, task_count_for, error_count, hearing_ids, error)
-
         expected_msg = "HearingDispositionChangeJob completed after running for .*." \
           " Processed 0 First key hearings." \
           " Processed 13 Second key hearings." \
           " Encountered errors for #{error_count} hearings."
-        expect(slack_msg).to match(/#{expected_msg}/)
+        slack_service = instance_double(SlackService)
+
+        expect(SlackService).to receive(:new).with(msg: /#{expected_msg}/).and_return(slack_service)
+        expect(slack_service).to receive(:send_notification)
+
+        HearingDispositionChangeJob.new.log_info(start_time, task_count_for, error_count, hearing_ids, error)
       end
     end
 
@@ -219,16 +218,15 @@ describe HearingDispositionChangeJob, :all_dbs do
       end
 
       it "logs an error message and sends the correct message to slack" do
-        slack_msg = ""
-        allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+        expected_msg = "HearingDispositionChangeJob failed after running for .*." \
+          " Encountered errors for #{error_count} hearings. Fatal error: #{err_msg}"
+        slack_service = instance_double(SlackService)
 
+        expect(SlackService).to receive(:new).with(msg: /#{expected_msg}/).and_return(slack_service)
+        expect(slack_service).to receive(:send_notification)
         expect(Rails.logger).to receive(:info).exactly(3).times
 
         HearingDispositionChangeJob.new.log_info(start_time, task_count_for, error_count, hearing_ids, error)
-
-        expected_msg = "HearingDispositionChangeJob failed after running for .*." \
-          " Encountered errors for #{error_count} hearings. Fatal error: #{err_msg}"
-        expect(slack_msg).to match(/#{expected_msg}/)
       end
     end
   end

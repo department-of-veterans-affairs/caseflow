@@ -100,6 +100,6 @@ class HearingDispositionChangeJob < CaseflowJob
     Rails.logger.info(hearing_ids)
     Rails.logger.info(err.backtrace.join("\n")) if err
 
-    slack_service.send_notification(msg)
+    SlackService.new(msg: msg).send_notification
   end
 end

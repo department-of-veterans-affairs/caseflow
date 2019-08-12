@@ -13,8 +13,10 @@ class OutOfServiceReminderJob < ApplicationJob
       out_of_service_apps.push(app.humanize) if Rails.cache.read(app + "_out_of_service")
     end
 
-    SlackService.new(url: url).send_notification(message(out_of_service_apps)) unless out_of_service_apps.empty?
+    SlackService.new(msg: message(out_of_service_apps)).send_notification unless out_of_service_apps.empty?
   end
+
+  private
 
   def message(apps)
     if apps.include?("Caseflow")
@@ -22,9 +24,5 @@ class OutOfServiceReminderJob < ApplicationJob
     else
       "Reminder: #{apps.to_sentence} are out of service."
     end
-  end
-
-  def url
-    ENV["SLACK_DISPATCH_ALERT_URL"]
   end
 end

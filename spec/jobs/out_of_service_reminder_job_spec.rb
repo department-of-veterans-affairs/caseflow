@@ -4,35 +4,38 @@ require "rails_helper"
 
 describe OutOfServiceReminderJob do
   context "when single apps are disabled" do
-    before do
-      allow_any_instance_of(SlackService).to receive(:send_notification)
-        .with("Reminder: Dispatch and Reader are out of service.")
-        .and_return("Reminder: Dispatch and Reader are out of service.")
-    end
-
     it "reports that apps are out of service" do
       Rails.cache.write("reader_out_of_service", true)
       Rails.cache.write("dispatch_out_of_service", true)
-      expect(OutOfServiceReminderJob.perform_now).to eq("Reminder: Dispatch and Reader are out of service.")
+      slack_service = instance_double(SlackService)
+      expected_msg = "Reminder: Dispatch and Reader are out of service."
+
+      expect(SlackService).to receive(:new).with(msg: expected_msg).and_return(slack_service)
+      expect(slack_service).to receive(:send_notification)
+
+      OutOfServiceReminderJob.perform_now
     end
 
     it "does not report otherwise" do
-      expect(OutOfServiceReminderJob.perform_now).to eq(nil)
+      expect(SlackService).to_not receive(:new)
+
+      OutOfServiceReminderJob.perform_now
     end
   end
 
   context "when both single apps and global are disabled" do
-    before do
-      allow_any_instance_of(SlackService).to receive(:send_notification)
-        .with("Reminder: Caseflow has been taken out of service.")
-        .and_return("Reminder: Caseflow has been taken out of service.")
-    end
-
     it "reports only that Caseflow is out of service" do
       Rails.cache.write("reader_out_of_service", true)
       Rails.cache.write("dispatch_out_of_service", true)
       Rails.cache.write("out_of_service", true)
-      expect(OutOfServiceReminderJob.perform_now).to eq("Reminder: Caseflow has been taken out of service.")
+
+      slack_service = instance_double(SlackService)
+      expected_msg = "Reminder: Caseflow has been taken out of service."
+
+      expect(SlackService).to receive(:new).with(msg: expected_msg).and_return(slack_service)
+      expect(slack_service).to receive(:send_notification)
+
+      OutOfServiceReminderJob.perform_now
     end
   end
 end

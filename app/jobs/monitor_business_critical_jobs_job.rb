@@ -20,7 +20,7 @@ class MonitorBusinessCriticalJobsJob < CaseflowJob
 
     # Log monitoring information to both logs & slack
     Rails.logger.info(results_message)
-    slack_service.send_notification(slack_message)
+    SlackService.new(msg: slack_message).send_notification
   end
 
   # build a hash of keys with their last started and completed timestamps

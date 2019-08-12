@@ -130,7 +130,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     Rails.logger.info(msg)
     Rails.logger.info(err.backtrace.join("\n"))
 
-    slack_service.send_notification(msg)
+    SlackService.new(msg: msg).send_notification
 
     record_runtime(start_time)
   end

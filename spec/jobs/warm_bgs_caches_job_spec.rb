@@ -40,7 +40,13 @@ describe WarmBgsCachesJob, :all_dbs do
     end
 
     it "fetches all hearings and warms the Rails cache" do
+      slack_service = instance_double(SlackService)
+
       # validate data before we run job
+      expect(SlackService).to receive(:new)
+        .with(msg: "Updated cached attributes for 1 Veteran records", title: "WarmBgsCachesJob")
+        .and_return(slack_service)
+      expect(slack_service).to receive(:send_notification)
       expect(appeal.reload.veteran[:ssn]).to be_nil
       expect(Rails.cache.exist?(poa_cache_key)).to eq(false)
       expect(Rails.cache.exist?(address_cache_key)).to eq(false)
@@ -54,7 +60,6 @@ describe WarmBgsCachesJob, :all_dbs do
       expect(Rails.cache.exist?(poa_cache_key)).to eq(true)
       expect(Rails.cache.exist?(address_cache_key)).to eq(true)
       expect(appeal.veteran.reload[:ssn]).to_not be_nil
-      expect(@slack_msg).to eq("Updated cached attributes for 1 Veteran records")
     end
   end
 end

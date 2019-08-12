@@ -70,7 +70,6 @@ class WarmBgsCachesJob < CaseflowJob
   end
 
   def notify_slack(msg)
-    slack = SlackService.new(url: ENV["SLACK_DISPATCH_ALERT_URL"])
-    slack.send_notification(msg, "WarmBgsCachesJob")
+    SlackService.new(msg: msg, title: "WarmBgsCachesJob").send_notification
   end
 end

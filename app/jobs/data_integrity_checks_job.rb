@@ -23,7 +23,10 @@ class DataIntegrityChecksJob < CaseflowJob
   private
 
   def send_to_slack(checker)
-    slack = SlackService.new(url: ENV["SLACK_DISPATCH_ALERT_URL"])
-    slack.send_notification(checker.report, checker.class.name, checker.slack_channel)
+    SlackService.new(
+      msg: checker.report,
+      title: checker.class.name,
+      channel: checker.slack_channel
+    ).send_notification
   end
 end
