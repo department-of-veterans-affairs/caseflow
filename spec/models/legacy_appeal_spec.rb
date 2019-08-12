@@ -1650,33 +1650,33 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
-  # context "#power_of_attorney" do
-  #   let(:vacols_case) { create(:case, :representative_american_legion) }
-  #   subject { appeal.power_of_attorney }
+  context "#power_of_attorney" do
+    let(:vacols_case) { create(:case, :representative_american_legion) }
+    subject { appeal.power_of_attorney }
 
-  #   it "returns poa loaded with VACOLS values" do
-  #     is_expected.to have_attributes(
-  #       vacols_representative_type: "Service Organization",
-  #       vacols_representative_name: "The American Legion"
-  #     )
-  #   end
+    it "returns poa loaded with VACOLS values" do
+      is_expected.to have_attributes(
+        vacols_representative_type: "Service Organization",
+        vacols_representative_name: "The American Legion"
+      )
+    end
 
-  #   it "returns poa loaded with BGS values by default" do
-  #     is_expected.to have_attributes(bgs_representative_type: "Attorney", bgs_representative_name: "Clarence Darrow")
-  #   end
+    it "returns poa loaded with BGS values by default" do
+      is_expected.to have_attributes(bgs_representative_type: "Attorney", bgs_representative_name: "Clarence Darrow")
+    end
 
-  #   context "#power_of_attorney.bgs_representative_address" do
-  #     subject { appeal.power_of_attorney.bgs_representative_address }
+    context "#power_of_attorney.bgs_representative_address" do
+      subject { appeal.power_of_attorney.bgs_representative_address }
 
-  #     it "returns address if we are able to retrieve it" do
-  #       is_expected.to include(
-  #         address_line_1: "9999 MISSION ST",
-  #         city: "SAN FRANCISCO",
-  #         zip: "94103"
-  #       )
-  #     end
-  #   end
-  # end
+      it "returns address if we are able to retrieve it" do
+        is_expected.to include(
+          address_line_1: "9999 MISSION ST",
+          city: "SAN FRANCISCO",
+          zip: "94103"
+        )
+      end
+    end
+  end
 
   context "#issue_categories" do
     let(:vacols_case) { create(:case, case_issues: issues) }
