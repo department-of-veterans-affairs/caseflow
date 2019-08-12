@@ -30,9 +30,11 @@ Rails.application.routes.draw do
       resources :appeals, only: :index
       resources :hearings, only: :show, param: :hearing_day
     end
-    namespace :v3 do
-      namespace :decision_review do
-        resources :higher_level_reviews, only: :create
+    if FeatureToggle.enabled?(:api_v3)
+      namespace :v3 do
+        namespace :decision_review do
+          resources :higher_level_reviews, only: :create
+        end
       end
     end
     namespace :docs do

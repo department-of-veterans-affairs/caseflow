@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Api::V3::DecisionReview::HigherLevelReviewsController < Api::ExternalProxyController
-  before_action :api_released?
   def create
     mock_hlr = HigherLevelReview.new(
       uuid: "FAKEuuid-mock-test-fake-mocktestdata",
