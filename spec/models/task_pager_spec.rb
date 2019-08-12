@@ -2,6 +2,7 @@
 
 require "support/vacols_database_cleaner"
 require "rails_helper"
+require "faker"
 
 describe TaskPager, :all_dbs do
   describe ".new" do
@@ -239,7 +240,9 @@ describe TaskPager, :all_dbs do
       let(:sort_by) { Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN }
 
       before do
-        regional_offices = RegionalOffice::ROS.shuffle
+        regional_offices = RegionalOffice::ROS
+          .uniq { |ro_key| RegionalOffice::CITIES[ro_key][:city] }
+          .shuffle
         created_tasks.each_with_index do |task, index|
           ro_key = regional_offices[index]
           ro_city = RegionalOffice::CITIES[ro_key][:city]
@@ -251,6 +254,48 @@ describe TaskPager, :all_dbs do
       it "sorts by regional office city" do
         expected_order = created_tasks.sort_by do |task|
           RegionalOffice::CITIES[task.appeal.closest_regional_office][:city]
+        end
+        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+      end
+    end
+
+    context "when sorting by issue count column" do
+      let(:sort_by) { Constants.QUEUE_CONFIG.ISSUE_COUNT_COLUMN }
+
+      before do
+        issue_counts = (0..created_tasks.length).to_a.shuffle
+        created_tasks.each_with_index do |task, index|
+          appeal = create(:appeal, request_issues: build_list(:request_issue, issue_counts[index]))
+          task.update!(appeal_id: appeal.id)
+          create(:cached_appeal, appeal_id: task.appeal_id, issue_count: issue_counts[index])
+        end
+      end
+
+      it "sorts by issue count" do
+        expected_order = created_tasks.sort_by { |task| task.appeal.issues[:request_issues].count }
+        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+      end
+    end
+
+    context "when sorting by case details link column" do
+      let(:sort_by) { Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN }
+
+      before do
+        created_tasks.each do |task|
+          first_name = Faker::Name.first_name
+          last_name = "#{Faker::Name.middle_name} #{Faker::Name.last_name}"
+          task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
+          create(
+            :cached_appeal,
+            appeal_id: task.appeal_id,
+            veteran_name: "#{last_name.split(' ').last}, #{first_name.split(' ').first}"
+          )
+        end
+      end
+
+      it "sorts by veteran last and first name" do
+        expected_order = created_tasks.sort_by do |task|
+          "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name.split(' ').first}"
         end
         expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
       end
