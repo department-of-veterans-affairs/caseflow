@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ExternalApi::BgsVeteranStationUserConflict
   def initialize(veteran_participant_id:, client: nil)
     @veteran_participant_id = veteran_participant_id
@@ -12,7 +14,6 @@ class ExternalApi::BgsVeteranStationUserConflict
     return true if station_dtos.any? && !veteran_dto
 
     # otherwise we must check sensitivity reason
-
   end
 
   private
@@ -36,7 +37,7 @@ class ExternalApi::BgsVeteranStationUserConflict
 
     return false unless veteran_dto
 
-    return veteran_dto[:station_number] == current_user_station
+    veteran_dto[:station_number] == current_user_station
   end
 
   def veteran_station_id
@@ -60,9 +61,11 @@ class ExternalApi::BgsVeteranStationUserConflict
   end
 
   def sensitivity_level
-    @sensitivity_level ||= MetricsService.record("BGS: fetch sensitivity level by participant id: #{veteran_participant_id}",
-                                                 service: :bgs,
-                                                 name: "security.find_sensitivity_level_by_participant_id") do
+    @sensitivity_level ||= MetricsService.record(
+      "BGS: fetch sensitivity level by participant id: #{veteran_participant_id}",
+      service: :bgs,
+      name: "security.find_sensitivity_level_by_participant_id"
+    ) do
       client.security.find_sensitivity_level_by_participant_id(veteran_participant_id)
     end
   end
