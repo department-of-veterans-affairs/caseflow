@@ -331,7 +331,15 @@ AddIssuesPage.propTypes = {
   formType: PropTypes.string,
   intakeForms: PropTypes.object,
   addingIssue: PropTypes.func,
-  veteran: PropTypes.object
+  veteran: PropTypes.object,
+  toggleIssueRemoveModal: PropTypes.func,
+  removeIssue: PropTypes.func,
+  withdrawIssue: PropTypes.func,
+  toggleCorrectionTypeModal: PropTypes.func,
+  undoCorrection: PropTypes.func,
+  activeIssue: PropTypes.func,
+  correctIssue: PropTypes.func,
+  setIssueWithdrawalDate: PropTypes.func
 };
 
 export const IntakeAddIssuesPage = connect(
