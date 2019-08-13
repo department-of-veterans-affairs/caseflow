@@ -47,7 +47,7 @@ class EndProductModifierFinder
   end
 
   def taken_modifiers
-    @taken_modifiers ||= veteran.end_products.reject(&:cleared?).map(&:modifier)
+    @taken_modifiers ||= veteran.end_products.select(&:active?).map(&:modifier)
   end
 
   def correction_end_product?
