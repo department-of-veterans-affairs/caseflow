@@ -15,6 +15,7 @@ import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import StatusMessage from '../../components/StatusMessage';
 import { getFacilityType } from '../../components/DataDropdowns/AppealHearingLocations';
 import { getIndexOfDocketLine, docketCutoffLineStyle } from './AssignHearingsDocketLine';
+import PropTypes from 'prop-types';
 
 const tableNumberStyling = css({
   '& tr > td:first-child': {
@@ -65,6 +66,13 @@ const AvailableVeteransTable = ({ rows, columns, selectedHearingDay, style = {} 
   </span>;
 };
 
+AvailableVeteransTable.propTypes = {
+  rows: PropTypes.array,
+  columns: PropTypes.array,
+  selectedHearingDay: PropTypes.object,
+  style: PropTypes.object
+};
+
 const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => {
   if (_.isNil(selectedHearingDay)) {
     return <StatusMessage
@@ -87,6 +95,12 @@ const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => {
       bodyStyling={tableNumberStyling}
     />
   </div>;
+};
+
+UpcomingHearingsTable.propTypes = {
+  rows: PropTypes.array,
+  columns: PropTypes.array,
+  selectedHearingDay: PropTypes.object
 };
 
 export default class AssignHearingsTabs extends React.Component {
@@ -365,3 +379,10 @@ export default class AssignHearingsTabs extends React.Component {
     </div>;
   }
 }
+
+AssignHearingsTabs.propTypes = {
+  selectedRegionalOffice: PropTypes.object,
+  selectedHearingDay: PropTypes.object,
+  room: PropTypes.string,
+  appealsReadyForHearing: PropTypes.object
+};
