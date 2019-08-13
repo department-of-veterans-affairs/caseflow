@@ -384,7 +384,13 @@ describe LegacyHearing, :all_dbs do
     end
 
     context "associated hearing day does not exist" do
-      let(:legacy_hearing) { create(:legacy_hearing, hearing_day: nil) }
+      let(:legacy_hearing) do
+        create(
+          :legacy_hearing,
+          hearing_day: nil,
+          case_hearing: create(:case_hearing, vdkey: '123456')
+        )
+      end
 
       it "get hearing day returns nil" do
         expect(legacy_hearing.hearing_day).to eq nil
