@@ -108,14 +108,12 @@ class LegacyHearing < ApplicationRecord
   end
 
   def hearing_day_id_refers_to_vacols_row?
-    (request_type == HearingDay::REQUEST_TYPES[:central] &&
-      scheduled_for.to_date < Date.new(2019, 1, 1)) ||
-    (request_type == HearingDay::REQUEST_TYPES[:video] &&
-      scheduled_for.to_date < Date.new(2019, 4, 1))
+    (request_type == HearingDay::REQUEST_TYPES[:central] && scheduled_for.to_date < Date.new(2019, 1, 1)) ||
+      (request_type == HearingDay::REQUEST_TYPES[:video] && scheduled_for.to_date < Date.new(2019, 4, 1))
   end
 
   def hearing_day_id
-    if self[:hearing_day_id].nil? and !hearing_day_id_refers_to_vacols_row?
+    if self[:hearing_day_id].nil? && !hearing_day_id_refers_to_vacols_row?
       begin
         update!(hearing_day_id: hearing_day_vacols_id)
       rescue ActiveRecord::InvalidForeignKey
