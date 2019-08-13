@@ -475,6 +475,19 @@ RSpec.feature "Search", :all_dbs do
         )
       end
     end
+
+    context "when VSO employee does not have access to the file number" do
+      it "displays a helpful error message on same page" do
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.veteran_file_number]
+        vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
+        User.authenticate!(user: vso_user)
+        visit "/search"
+        fill_in "searchBarEmptyList", with: appeal.docket_number
+        click_on "Search"
+
+        expect(page).to have_content("You do not have access to this claims file number")
+      end
+    end
   end
 
   context "case search from home page" do
