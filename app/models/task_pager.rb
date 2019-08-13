@@ -65,7 +65,7 @@ class TaskPager
   # rubocop:enable Metrics/CyclomaticComplexity
 
   def tasks_sorted_by_appeal_case_type(tasks)
-    tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.is_aod #{sort_order}, "\
+    tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.is_aod DESC, "\
                                                      "cached_appeal_attributes.case_type #{sort_order}, "\
                                                      "cached_appeal_attributes.docket_number #{sort_order}")
   end

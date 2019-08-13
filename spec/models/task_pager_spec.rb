@@ -300,6 +300,44 @@ describe TaskPager, :all_dbs do
         expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
       end
     end
+
+    context "when sorting by Appeal Type column" do
+      let(:sort_by) { Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN }
+      let!(:created_tasks) { [] }
+
+      let!(:legacy_appeal_1) { create(:legacy_appeal, vacols_case: create(:case, :type_original)) }
+      let!(:legacy_appeal_2) { create(:legacy_appeal, vacols_case: create(:case, :type_post_remand)) }
+      let!(:legacy_appeal_3) { create(:legacy_appeal, vacols_case: create(:case, :type_cavc_remand)) }
+      let!(:appeal_1) { create(:appeal, :advanced_on_docket_due_to_motion) }
+      let!(:appeal_2) { create(:appeal) }
+
+      before do
+        legacy_appeals = [legacy_appeal_1, legacy_appeal_2, legacy_appeal_3,]
+        legacy_appeals.map do |appeal|
+          create(:colocated_task, assigned_to: assignee, appeal: appeal)
+          create(:cached_appeal,
+                 appeal_id: appeal.id,
+                 appeal_type: LegacyAppeal.name,
+                 case_type: LegacyAppeal::TYPE_CODES[appeal.type])
+        end
+        appeals = [appeal_1, appeal_2]
+        appeals.map do |appeal|
+          create(:colocated_task, assigned_to: assignee, appeal: appeal)
+          create(:cached_appeal,
+                 appeal_id: appeal.id,
+                 appeal_type: Appeal.name,
+                 case_type: appeal.type.downcase,
+                 is_aod: appeal.aod)
+        end
+      end
+
+      it "sorts by AOD status, case type, and docket number" do
+        expected_order = CachedAppeal.all.sort_by do |cached_appeal|
+          [cached_appeal.is_aod ? 0 : 1, cached_appeal.case_type, cached_appeal.docket_number]
+        end
+        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+      end
+    end
   end
 
   describe ".filtered_tasks" do

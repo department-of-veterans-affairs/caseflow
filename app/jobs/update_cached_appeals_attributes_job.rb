@@ -32,13 +32,13 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       {
         appeal_id: appeal.id,
         appeal_type: Appeal.name,
-        case_type: appeal.type,
+        case_type: appeal.type.downcase,
         closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
         issue_count: request_issues_to_cache[appeal.id] || 0,
         docket_type: appeal.docket_type,
         docket_number: appeal.docket_number,
-        is_aod: appeal_aod_status[appeal.id]
-        veteran_name: veteran_names_to_cache[appeal.veteran_file_number],
+        is_aod: appeal_aod_status[appeal.id],
+        veteran_name: veteran_names_to_cache[appeal.veteran_file_number]
       }
     end
 
@@ -71,8 +71,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         vacols_id: appeal.vacols_id,
         appeal_id: appeal.id,
         appeal_type: LegacyAppeal.name,
-        closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE
-        docket_type: appeal.docket_name, # "legacy"
+        closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
+        docket_type: appeal.docket_name # "legacy"
       }
     end
 
