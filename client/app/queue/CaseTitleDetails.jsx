@@ -1,5 +1,6 @@
 import { css } from 'glamor';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Modal from '../components/Modal';
 import TextField from '../components/TextField';
@@ -77,6 +78,8 @@ const CaseDetailTitleScaffolding = (props) => <div {...containingDivStyling}>
   </ul>
 </div>;
 
+CaseDetailTitleScaffolding.propTypes = { children: PropTypes.node.isRequired };
+
 export class CaseTitleDetails extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -153,8 +156,7 @@ export class CaseTitleDetails extends React.PureComponent {
         </div>
       </React.Fragment>
 
-      { !userIsVsoEmployee &&
-      !this.props.hasCaseDetailsRole &&
+      { !userIsVsoEmployee && this.props.userCanAccessReader &&
         <React.Fragment>
           <h4>Veteran Documents</h4>
           <div>
@@ -238,6 +240,17 @@ export class CaseTitleDetails extends React.PureComponent {
     </CaseDetailTitleScaffolding>;
   };
 }
+
+CaseTitleDetails.propTypes = {
+  appeal: PropTypes.object.isRequired,
+  appealId: PropTypes.string.isRequired,
+  canEditAod: PropTypes.bool,
+  redirectUrl: PropTypes.string,
+  requestPatch: PropTypes.func.isRequired,
+  taskType: PropTypes.string,
+  userIsVsoEmployee: PropTypes.bool.isRequired,
+  userCanAccessReader: PropTypes.bool
+};
 
 const mapStateToProps = (state, ownProps) => {
   const { featureToggles, userRole, canEditAod } = state.ui;
