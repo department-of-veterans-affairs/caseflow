@@ -21,10 +21,6 @@ class QueueColumn
       %w[created_at]
     end
   end
-
-  def name
-    self.class.column_name
-  end
 end
 
 require_dependency "appeal_type_column"
