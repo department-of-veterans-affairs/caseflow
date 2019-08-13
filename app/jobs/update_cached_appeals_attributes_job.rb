@@ -155,7 +155,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   def aod_status_for_vacols_id(vacols_ids)
     aods = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD).where(bfkey: vacols_ids).pluck(:aod).map do |aod|
-      aod == 1 ? true : false
+      aod == 1
     end
     vacols_ids.zip(aods).to_h
   end
