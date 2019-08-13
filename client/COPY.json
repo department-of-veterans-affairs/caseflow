@@ -443,6 +443,8 @@
   "RETURNED_CORRESPONDENCE_MAIL_TASK_LABEL": "Returned or undeliverable mail",
   "STATUS_INQUIRY_MAIL_TASK_LABEL": "Status inquiry",
   "VACATE_MOTION_MAIL_TASK_LABEL": "Motion to vacate",
+  "DRAFT_MOTION_TO_VACATE_TASK_LABEL": "Draft motion to vacate",
+
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
 

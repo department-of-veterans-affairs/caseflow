@@ -509,6 +509,13 @@ FactoryBot.define do
       assigned_by { nil }
     end
 
+    factory :vacate_motion_mail_task, class: VacateMotionMailTask do
+      type { VacateMotionMailTask.name }
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+      assigned_to { LitigationSupport.singleton }
+    end
+
     factory :congressional_interest_mail_task, class: CongressionalInterestMailTask do
       type { CongressionalInterestMailTask.name }
       appeal { create(:appeal) }

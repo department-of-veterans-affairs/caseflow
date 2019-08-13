@@ -151,6 +151,14 @@ class TaskActionRepository
       }
     end
 
+    def assign_to_judge_data(task, _user = nil)
+      {
+        selected: task.root_task.children.find { |child| child.is_a?(JudgeTask) }&.assigned_to,
+        options: users_to_options(Judge.list_all),
+        type: DraftMotionToVacateTask.name
+      }
+    end
+
     def assign_to_translation_team_data(_task, _user = nil)
       org = Translation.singleton
 

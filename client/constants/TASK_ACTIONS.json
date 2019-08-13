@@ -37,6 +37,11 @@
     "value": "modal/assign_to_team",
     "func": "assign_to_organization_data"
   },
+  "ASSIGN_TO_JUDGE": {
+    "label": "Assign to judge",
+    "value": "modal/assign_to_judge",
+    "func": "assign_to_judge_data"
+  },
   "CANCEL_FOREIGN_VETERANS_CASE_TASK": {
     "label": "Cancel hearing request",
     "value": "modal/cancel_task",

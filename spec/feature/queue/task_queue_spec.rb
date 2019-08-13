@@ -428,6 +428,44 @@ RSpec.feature "Task queue", :all_dbs do
     end
   end
 
+  context "LitigationSupport" do
+    let!(:lit_support_team) do
+      LitigationSupport.singleton
+    end
+
+    let(:lit_support_user) { create(:user) }
+    let!(:judge_user) { create(:user) }
+    # let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+    let!(:judge_team) { JudgeTeam.create_for_judge(judge_user) }
+    let!(:appeal) do
+      create(
+        :appeal,
+        number_of_claimants: 1,
+        request_issues: build_list(
+          :request_issue, 1,
+          contested_issue_description: "Tinnitus"
+        )
+      )
+    end
+    let!(:decision_issue) { create(:decision_issue, decision_review: appeal, request_issues: appeal.request_issues) }
+
+    let!(:root_task) { create(:root_task, :completed, appeal: appeal) }
+
+    let(:vacate_motion_mail_task) { create(:vacate_motion_mail_task, appeal: appeal, parent: root_task) }
+
+    let(:judge_task) { create(:ama_judge_decision_review_task, assigned_to: judge_user, parent: root_task) }
+
+    before do
+      OrganizationsUser.add_user_to_organization(lit_support_user, lit_support_team)
+      User.authenticate!(user: lit_support_user)
+    end
+
+    fit " show lit support" do
+     visit "/queue/appeals/#{appeal.uuid}"
+     binding.pry
+    end
+  end
+
   describe "Organizational queue page" do
     let(:organization) { create(:organization) }
     let(:organization_user) { create(:user) }
