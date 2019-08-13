@@ -19,7 +19,7 @@ class ExternalApi::BGSService
     @person_info = {}
     @poas = {}
     @poa_by_participant_ids = {}
-    @poa_addresses = {}
+    @addresses = {}
     @people_by_ssn = {}
   end
 
@@ -155,24 +155,23 @@ class ExternalApi::BGSService
     get_limited_poas_hash_from_bgs(bgs_limited_poas)
   end
 
-  def find_address_by_participant_id(participant_id)
+  def find_addresses_by_participant_id(participant_id)
     DBService.release_db_connections
 
-    unless @poa_addresses[participant_id]
-      bgs_address = MetricsService.record("BGS: fetch address by participant_id: #{participant_id}",
+    unless @addresses[participant_id]
+      response = MetricsService.record("BGS: fetch address by participant_id: #{participant_id}",
                                           service: :bgs,
                                           name: "address.find_by_participant_id") do
         client.address.find_all_by_participant_id(participant_id)
       end
-      if bgs_address
-        # Count on addresses being sorted with most recent first if we return a list of addresses.
+      if response
         # The very first element of the array might not necessarily be an address
-        bgs_address = bgs_address.select { |a| a.key?(:addrs_one_txt) }[0] if bgs_address.is_a?(Array)
-        @poa_addresses[participant_id] = get_address_from_bgs_address(bgs_address)
+        bgs_addresses = Array.wrap(response).select { |a| a.key?(:addrs_one_txt) }
+        @addresses[participant_id] = bgs_addresses.map{ |a| get_address_from_bgs_address(a) }
       end
     end
 
-    @poa_addresses[participant_id]
+    @addresses[participant_id]
   end
 
   # This method checks to see if the current user has access to this case

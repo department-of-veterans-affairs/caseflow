@@ -34,7 +34,7 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
 
     return {} unless poa
 
-    poa_address = bgs.find_address_by_participant_id(poa[:participant_id])
+    poa_address = bgs.find_addresses_by_participant_id(poa[:participant_id]).first
 
     return poa unless poa_address
 
