@@ -118,7 +118,7 @@
     "karma-snapshot": "^0.5.1",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^2.0.3",
-    "mocha": "^6.2.0",
+    "mocha": "5.2.0",
     "mocha-junit-reporter": "^1.17.0",
     "prettier": "1.17.1",
     "sinon": "^2.1.0",
