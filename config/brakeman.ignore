@@ -20,6 +20,26 @@
       "note": ""
     },
     {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "0ed3c295e5216f5a6ae5ee60d4c5baf3fcf4c624c9769ab723114045a565ebca",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/task_pager.rb",
+      "line": 67,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.docket_type #{sort_order}, cached_appeal_attributes.docket_number #{sort_order}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "TaskPager",
+        "method": "tasks_sorted_by_docket_number"
+      },
+      "user_input": "sort_order",
+      "confidence": "Weak",
+      "note": ""
+    },
+    {
       "warning_type": "File Access",
       "warning_code": 16,
       "fingerprint": "140e07405ecb20ab6aa52f2f41aeeef0ed7830d781698d6b752ee3d8b0a9c065",
@@ -78,6 +98,26 @@
       "note": "Because it's an API, :null_session is the appropriate CSRF protection"
     },
     {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "46d8934746498039691a8b5e522384236c6adc8c7b30755ec296bc05743864b0",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/task_pager.rb",
+      "line": 82,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.veteran_name #{sort_order}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "TaskPager",
+        "method": "tasks_sorted_by_veteran_name"
+      },
+      "user_input": "sort_order",
+      "confidence": "Weak",
+      "note": ""
+    },
+    {
       "warning_type": "File Access",
       "warning_code": 16,
       "fingerprint": "51625fbaea06d71b4cf619f3192432518766296d1356e21eb5f31f3d517a1c7a",
@@ -100,6 +140,26 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
+      "fingerprint": "5e7193afe39d87737f803459761fab47394b577e13c53606b71ea94312ded2a2",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/task_pager.rb",
+      "line": 78,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.issue_count #{sort_order}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "TaskPager",
+        "method": "tasks_sorted_by_issue_count"
+      },
+      "user_input": "sort_order",
+      "confidence": "Weak",
+      "note": "False positive, sort_order is validated in sort_order_is_valid"
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
       "fingerprint": "62eee76f337de2ef652f6755165cf76c318d170b2a3a13a5da6c92dd7a2f18d7",
       "check_name": "SQL",
       "message": "Possible SQL injection",
@@ -118,26 +178,6 @@
       "note": "False positive, all input is sanitized by sanitize_sql_array"
     },
     {
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
-      "fingerprint": "5e7193afe39d87737f803459761fab47394b577e13c53606b71ea94312ded2a2",
-      "check_name": "SQL",
-      "message": "Possible SQL injection",
-      "file": "app/models/task_pager.rb",
-      "line": 77,
-      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.issue_count #{sort_order}\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "TaskPager",
-        "method": "tasks_sorted_by_issue_count"
-      },
-      "user_input": "sort_order",
-      "confidence": "Weak",
-      "note": "False positive, sort_order is validated in sort_order_is_valid"
-    },
-    {
       "warning_type": "Missing Encryption",
       "warning_code": 109,
       "fingerprint": "6a26086cd2400fbbfb831b2f8d7291e320bcc2b36984d2abc359e41b3b63212b",
@@ -152,8 +192,28 @@
       "user_input": null,
       "confidence": "High",
       "note": "The application does not force use of HTTPS: `config.force_ssl` is not enabled"
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "74680b779aa1ec56237b794a5508d3f93d91eecfd819193790edc893a7b5a5ed",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/task_pager.rb",
+      "line": 73,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.closest_regional_office_city #{sort_order}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "TaskPager",
+        "method": "tasks_sorted_by_regional_office"
+      },
+      "user_input": "sort_order",
+      "confidence": "Weak",
+      "note": ""
     }
   ],
-  "updated": "2019-08-13 14:37:43 -0400",
+  "updated": "2019-08-13 15:10:25 -0400",
   "brakeman_version": "4.5.1"
 }
