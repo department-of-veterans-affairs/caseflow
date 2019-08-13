@@ -223,7 +223,8 @@ describe Distribution, :all_dbs do
       let!(:existing_distribution) { create(:distribution, judge: judge) }
 
       it "prevents new Distribution record" do
-        expect { subject }.to raise_error("Foo")
+        expect(subject.errors.details).to have_key(:judge)
+        expect(subject.errors.details[:judge]).to include(error: :pending_distribution)
       end
     end
 
@@ -231,7 +232,8 @@ describe Distribution, :all_dbs do
       let!(:existing_distribution) { create(:distribution, judge: judge, status: :started) }
 
       it "prevents new Distribution record" do
-        expect { subject }.to raise_error("Foo")
+        expect(subject.errors.details).to have_key(:judge)
+        expect(subject.errors.details[:judge]).to include(error: :pending_distribution)
       end
     end
 
