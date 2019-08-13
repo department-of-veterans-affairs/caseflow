@@ -421,44 +421,6 @@ RSpec.feature "Search", :all_dbs do
         click_on "Search"
       end
 
-      context "has higher level reviews and supplemental claims" do
-        let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: appeal.veteran_file_number) }
-        let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number) }
-        let!(:eligible_request_issue) { create(:request_issue, decision_review: higher_level_review) }
-
-        before do
-          perform_search
-        end
-
-        it "shows the HLR / SCs table" do
-          expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
-        end
-
-        it "shows a higher level review" do
-          expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Higher Level Review")
-        end
-
-        it "page displays table of results" do
-          expect(page).to have_content("1 case found for")
-          expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
-        end
-
-        it "search bar stays in top right" do
-          expect(page).to have_selector("#searchBarEmptyList")
-        end
-
-        it "clicking on the x in the search bar clears the search bar" do
-          click_on "button-clear-search"
-          expect(page).to have_css("#searchBarEmptyList", text: "")
-        end
-
-        it "clicking on docket number sends us to the case details page" do
-          find("a", exact_text: appeal.docket_number).click
-          expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}")
-          expect(page).not_to have_content "Select an action"
-        end
-      end
-    end
 
     context "when appeal doesn't exist" do
       let!(:non_existing_docket_number) { "010101-99999" }
