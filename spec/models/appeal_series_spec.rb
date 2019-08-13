@@ -6,6 +6,7 @@ require "rails_helper"
 describe AppealSeries, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2015, 1, 30, 12, 0, 0))
+    before { RequestStore[:application] = nil }
   end
 
   before do
@@ -349,7 +350,6 @@ describe AppealSeries, :all_dbs do
     context "when it is at VSO" do
       let(:status) { "ACT" }
       let(:location_code) { "55" }
-      before { RequestStore[:application] = nil }
 
       it "returns a details hash with the vso name" do
         expect(subject[:type]).to eq(:at_vso)
