@@ -26,7 +26,9 @@ class DecisionReviewsController < ApplicationController
         business_line.tasks.reload
         render json: { in_progress_tasks: in_progress_tasks, completed_tasks: completed_tasks }, status: :ok
       else
-        render json: { error_code: task.error_code }, status: :bad_request
+        error = StandardError.new(task.error_code)
+        Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+        render json: { error_uuid: error_uuid, error_code: task.error_code }, status: :bad_request
       end
     else
       render json: { error: "Task #{task_id} not found" }, status: :not_found
