@@ -37,7 +37,9 @@ class TaskPager
 
   def filtered_tasks
     where_clause = QueueWhereClauseArgumentsFactory.new(filter_params: filters).arguments
-    where_clause.empty? ? tasks_for_tab : tasks_for_tab.joins(cached_attributes_join_clause).where(*where_clause)
+    return tasks_for_tab if where_clause.empty?
+
+    tasks_for_tab.joins(TaskSorter.cached_attributes_join_clause).where(*where_clause)
   end
 
   def tasks_for_tab
