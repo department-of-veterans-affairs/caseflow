@@ -252,6 +252,25 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 ListScheduleContainer.propTypes = {
+  endDate: PropTypes.string,
+  hearingSchedule: PropTypes.object,
+  invalidDates: PropTypes.bool,
+  onAssignHearingRoom: PropTypes.func,
+  onInputInvalidDates: PropTypes.func,
+  onReceiveHearingSchedule: PropTypes.func,
+  onRegionalOfficeChange: PropTypes.func,
+  onResetDeleteSuccessful: PropTypes.func,
+  onResetInvalidDates: PropTypes.func,
+  onSelectedHearingDayChange: PropTypes.func,
+  onViewEndDateChange: PropTypes.func,
+  onViewStartDateChange: PropTypes.func,
+  selectedHearingDay: PropTypes.string,
+  selectHearingCoordinator: PropTypes.func,
+  selectRequestType: PropTypes.func,
+  selectVlj: PropTypes.func,
+  setNotes: PropTypes.func,
+  startDate: PropTypes.string,
+  successfulHearingDayDelete: PropTypes.string,
   user: PropTypes.object
 };
 

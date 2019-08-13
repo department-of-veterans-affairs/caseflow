@@ -88,6 +88,8 @@ const SwitchViewDropdown = ({ onSwitchView }) => {
   );
 };
 
+SwitchViewDropdown.propTypes = { onSwitchView: PropTypes.func };
+
 class ListTable extends React.Component {
   render() {
     return (
@@ -116,6 +118,16 @@ class ListTable extends React.Component {
     );
   }
 }
+
+ListTable.propTypes = {
+  hearingScheduleColumns: PropTypes.array,
+  hearingScheduleRows: PropTypes.array,
+  onApply: PropTypes.func,
+  openModal: PropTypes.func,
+  user: {
+    userCanBuildHearingSchedule: PropTypes.bool
+  }
+};
 
 class ListSchedule extends React.Component {
   constructor(props) {
@@ -262,6 +274,7 @@ class ListSchedule extends React.Component {
 }
 
 ListSchedule.propTypes = {
+  endDate: PropTypes.string,
   hearingSchedule: PropTypes.shape({
     scheduledFor: PropTypes.string,
     readableRequestType: PropTypes.string,
@@ -272,9 +285,14 @@ ListSchedule.propTypes = {
     updatedOn: PropTypes.string,
     updatedBy: PropTypes.string
   }),
-  user: PropTypes.object,
   onApply: PropTypes.func,
-  openModal: PropTypes.func
+  onViewStartDateChange: PropTypes.func,
+  onViewEndDateChange: PropTypes.func,
+  openModal: PropTypes.func,
+  startDate: PropTypes.string,
+  switchListView: PropTypes.func,
+  user: PropTypes.object,
+  view: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({

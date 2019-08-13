@@ -53,6 +53,17 @@ const Alerts = ({
   </React.Fragment>
 );
 
+Alerts.propTypes = {
+  dailyDocket: {
+    lock: PropTypes.bool,
+    scheduledFor: PropTypes.string
+  },
+  dailyDocketServerError: PropTypes.bool,
+  displayLockSuccessMessage: PropTypes.bool,
+  onErrorHearingDayLock: PropTypes.bool,
+  saveSuccessful: PropTypes.object
+};
+
 export default class DailyDocket extends React.Component {
   constructor (props) {
     super(props);

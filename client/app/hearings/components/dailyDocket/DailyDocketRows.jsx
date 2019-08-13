@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { sortHearings } from '../../utils';
 import DailyDocketRow from './DailyDocketRow';
@@ -54,6 +55,12 @@ const Header = ({ user }) => (
   </div>
 );
 
+Header.propTypes = {
+  user: {
+    userHasHearingPrepRole: PropTypes.bool
+  }
+};
+
 export default class DailyDocketHearingRows extends React.Component {
   render () {
     const { hearings, readOnly, regionalOffice,
@@ -77,3 +84,14 @@ export default class DailyDocketHearingRows extends React.Component {
     </div>;
   }
 }
+
+DailyDocketHearingRows.propTypes = {
+  hearings: PropTypes.array,
+  openDispositionModal: PropTypes.func,
+  readOnly: PropTypes.bool,
+  regionalOffice: PropTypes.string,
+  saveHearing: PropTypes.func,
+  user: {
+    userHasHearingPrepRole: PropTypes.bool
+  }
+};

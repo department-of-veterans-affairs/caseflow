@@ -20,6 +20,10 @@ const EditHearingDayLink = ({ openModal }) => (
   </Button>
 );
 
+EditHearingDayLink.propTypes = {
+  openModal: PropTypes.func.isRequired
+};
+
 const LockHearingLink = ({ dailyDocket, onDisplayLockModal }) => (
   <Button linkStyling onClick={onDisplayLockModal}>
     <span {...css({ position: 'absolute',
@@ -33,6 +37,13 @@ const LockHearingLink = ({ dailyDocket, onDisplayLockModal }) => (
   </Button>
 );
 
+LockHearingLink.propTypes = {
+  dailyDocket: {
+    lock: PropTypes.bool
+  },
+  onDisplayLockModal: PropTypes.func.isRequired
+};
+
 const RemoveHearingDayLink = ({ onClickRemoveHearingDay }) => (
   <Button
     linkStyling
@@ -40,6 +51,10 @@ const RemoveHearingDayLink = ({ onClickRemoveHearingDay }) => (
     {crossSymbolHtml()}<span{...css({ marginLeft: '3px' })}>Remove Hearing Day</span>
   </Button>
 );
+
+RemoveHearingDayLink.propTypes = {
+  onClickRemoveHearingDay: PropTypes.func.isRequired
+};
 
 export default class DailyDocketEditLinks extends React.Component {
 
