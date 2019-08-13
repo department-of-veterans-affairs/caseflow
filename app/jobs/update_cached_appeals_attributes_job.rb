@@ -99,17 +99,13 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
           docket_number: vacols_folder[1],
           issue_count: issue_counts_to_cache[vacols_folder[0]] || 0,
           is_aod: aod_status_to_cache[vacols_folder[0]],
-          veteran_name: veteran_names_to_cache[vacols_folder[2]],
+          veteran_name: veteran_names_to_cache[vacols_folder[2]]
         }
       end
 
-      update_columns = [:docket_number,
-                        :issue_count,
-                        :veteran_name,
-                        :case_type,
-                        :is_aod]
+      update_columns = [:docket_number, :issue_count, :veteran_name, :case_type, :is_aod]
       CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:vacols_id],
-                                                                     columns: update_columns }
+                                                                      columns: update_columns }
     end
   end
 
