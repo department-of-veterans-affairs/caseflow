@@ -6,7 +6,6 @@ require "rails_helper"
 describe AppealSeries, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2015, 1, 30, 12, 0, 0))
-    before { RequestStore[:application] = nil }
   end
 
   before do
