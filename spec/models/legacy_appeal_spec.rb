@@ -2130,12 +2130,11 @@ describe LegacyAppeal, :all_dbs do
 
     context "when representative is returned from BGS" do
       before do
-        FeatureToggle.enable!(:use_representative_info_from_bgs)
         RequestStore.store[:application] = "queue"
       end
 
       after do
-        FeatureToggle.disable!(:use_representative_info_from_bgs)
+        RequestStore.store[:application] = nil
       end
 
       it "the appellant is returned" do
