@@ -388,7 +388,7 @@ describe LegacyHearing, :all_dbs do
         create(
           :legacy_hearing,
           hearing_day: nil,
-          case_hearing: create(:case_hearing, vdkey: '123456')
+          case_hearing: create(:case_hearing, vdkey: "123456")
         )
       end
 
