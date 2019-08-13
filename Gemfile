@@ -22,9 +22,9 @@ gem "kaminari"
 gem "loofah", ">= 2.2.3"
 gem "moment_timezone-rails"
 gem "newrelic_rpm"
-# nokogiri versions before 1.10.3 are affected by CVE-2019-11068. Explicitly define nokogiri version here to avoid that.
-# https://github.com/sparklemotion/nokogiri/issues/1892
-gem "nokogiri", "1.10.3"
+# nokogiri versions before 1.10.4 are vulnerable to CVE-2019-5477.
+# https://github.com/sparklemotion/nokogiri/issues/1915
+gem "nokogiri", "~> 1.10.4"
 gem "paper_trail", "8.1.2"
 # Used to speed up reporting
 gem "parallel"
