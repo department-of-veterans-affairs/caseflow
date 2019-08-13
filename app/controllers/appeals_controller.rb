@@ -12,15 +12,18 @@ class AppealsController < ApplicationController
       format.json do
         case_search = request.headers["HTTP_CASE_SEARCH"]
 
-        result1 = CaseSearchResultsForVeteranFileNumber.new(
-          file_number_or_ssn: case_search, user: current_user
-        ).call
+        result = if docket_number?(case_search)
+                   CaseSearchResultsForDocketNumber.new(
+                     docket_number: case_search, user: current_user
+                   ).call
 
-        result2 = CaseSearchResultsForDocketNumber.new(
-          docket_number: case_search, user: current_user
-        ).call
+                 else
+                   CaseSearchResultsForVeteranFileNumber.new(
+                     file_number_or_ssn: case_search, user: current_user
+                   ).call
 
-        render_combined_results_as_json([result1, result2])
+                 end
+        render_search_results_as_json(result)
       end
     end
   end
@@ -139,34 +142,6 @@ class AppealsController < ApplicationController
     end
   end
 
-  def render_combined_results_as_json(items)
-    success = false
-    errors = []
-    search_results = {
-      appeals: [],
-      claim_reviews: []
-    }
-    status = nil
-
-    items.each do |item|
-      hashed = item.to_h
-
-      if item.success?
-        success = true
-        search_results.each { |key, _val| search_results[key] += hashed[:search_results][key] }
-      else
-        errors += hashed[:errors]
-        status = item.extra[:status]
-      end
-    end
-
-    if success
-      render json: search_results
-    else
-      render json: { errors: errors }, status: status
-    end
-  end
-
   def log_hearings_request
     # Log requests to this endpoint to try to investigate cause addressed by this rollback:
     # https://github.com/department-of-veterans-affairs/caseflow/pull/9271
@@ -252,5 +227,9 @@ class AppealsController < ApplicationController
 
   def access_error_message
     appeal.veteran.multiple_phone_numbers? ? COPY::DUPLICATE_PHONE_NUMBER_TITLE : COPY::ACCESS_DENIED_TITLE
+  end
+
+  def docket_number?(search)
+    search.match?(/\d{6}-{1}\d+$/)
   end
 end
