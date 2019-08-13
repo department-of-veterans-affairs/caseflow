@@ -56,4 +56,11 @@ class CaseSearchResultsForDocketNumber < ::CaseSearchResultsBase
     @file_numbers_for_appeals ||= appeals.map(&:veteran_file_number)
     @veterans ||= VeteranFinder.find_or_create_all(@file_numbers_for_appeals)
   end
+
+  def prohibited_error
+    {
+      "title": "Access to Veteran file prohibited",
+      "detail": "You do not have access to this docket number"
+    }
+  end
 end

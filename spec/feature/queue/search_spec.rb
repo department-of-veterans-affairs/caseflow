@@ -485,7 +485,7 @@ RSpec.feature "Search", :all_dbs do
         fill_in "searchBarEmptyList", with: appeal.docket_number
         click_on "Search"
 
-        expect(page).to have_content("You do not have access to this claims file number")
+        expect(page).to have_content("You do not have access to this docket number")
       end
     end
   end
