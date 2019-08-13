@@ -318,5 +318,5 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 export default (connect(
-  mapStateToProps, null, null, { forwardRef: true }
+  mapStateToProps, null, null, { withRef: true }
 )(IssueRemandReasonsOptions));
