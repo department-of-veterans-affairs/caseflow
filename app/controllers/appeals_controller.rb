@@ -230,6 +230,6 @@ class AppealsController < ApplicationController
   end
 
   def docket_number?(search)
-    search.match?(/\d{6}-{1}\d+$/)
+    !search.nil? && search.match?(/\d{6}-{1}\d+$/)
   end
 end

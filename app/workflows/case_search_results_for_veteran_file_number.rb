@@ -7,9 +7,7 @@ class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
   def initialize(file_number_or_ssn:, user:)
     super(user: user)
     # Ensure we have a string made of solely numeric characters
-    file_number_or_ssn = file_number_or_ssn.to_s.gsub(/\D/, "")
-
-    @file_number_or_ssn = file_number_or_ssn if file_number_or_ssn
+    @file_number_or_ssn = file_number_or_ssn.to_s.gsub(/\D/, "") if file_number_or_ssn
   end
 
   protected
