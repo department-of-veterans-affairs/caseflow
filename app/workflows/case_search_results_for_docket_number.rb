@@ -11,15 +11,12 @@ class CaseSearchResultsForDocketNumber < ::CaseSearchResultsBase
 
   protected
 
-  def appeals
-    @appeals = AppealFinder.new(user: user).find_appeals_by_docket_number(docket_number)
-    return @appeals
+  def claim_reviews
+    []
   end
 
-  def claim_reviews
-    veteran_file_numbers = veterans_user_can_access.map(&:file_number)
-
-    ClaimReview.find_all_visible_by_file_number(*veteran_file_numbers)
+  def appeals
+    Array.wrap(AppealFinder.new(user: user).find_appeal_by_docket_number(docket_number))
   end
 
   private
@@ -56,7 +53,7 @@ class CaseSearchResultsForDocketNumber < ::CaseSearchResultsBase
 
   def veterans
     # Determine vet that corresponds to docket number so we can validate user can access
-    @file_numbers_for_appeals ||= appeals.map(&:veteran_file_number).uniq
+    @file_numbers_for_appeals ||= appeals.map(&:veteran_file_number)
     @veterans ||= VeteranFinder.find_or_create_all(@file_numbers_for_appeals)
   end
 end

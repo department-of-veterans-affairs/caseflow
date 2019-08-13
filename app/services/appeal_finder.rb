@@ -23,7 +23,7 @@ class AppealFinder
     )
   end
 
-  def find_appeals_by_docket_number(docket_number)
+  def find_appeal_by_docket_number(docket_number)
     return [] if docket_number.empty?
 
     # Take the first six digits as date, remaining as ID
@@ -34,11 +34,19 @@ class AppealFinder
       receipt_date = Date.strptime(parsed[0], "%y%m%d")
 
       id = parsed[1]
-      appeals = Appeal.where(id: id, receipt_date: receipt_date)
+      appeal = Appeal.find_by(id: id, receipt_date: receipt_date)
 
-      return appeals
-    rescue ArgumentError => e
-      return []
+      appeal
+      # # If VSO user, check to make sure they have rights to the requested appeal
+      # if user.vso_employee?
+      #   veterans = VeteranFinder.find_or_create_all(appeal.veteran_file_number)
+
+      #   filter_appeals_for_vso_user(appeals: Array.wrap(appeal), veterans: veterans)
+      # else
+      #   appeal
+      # end
+    rescue ArgumentError
+      return nil
     end
   end
 
@@ -72,6 +80,14 @@ class AppealFinder
       vso_participant_ids = user.vsos_user_represents.map { |poa| poa[:participant_id] }
 
       veterans.flat_map { |vet| vet.accessible_appeals_for_poa(vso_participant_ids) }
+    end
+  end
+
+  def filter_appeals_for_vso_user(appeals:, veterans:)
+    allowed_appeal_ids = find_appeals_for_vso_user(veterans: veterans).map(&:id)
+
+    appeals.select do |appeal|
+      allowed_appeal_ids.include?(appeal.id)
     end
   end
 end
