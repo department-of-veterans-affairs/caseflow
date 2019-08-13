@@ -497,7 +497,7 @@ class Fakes::BGSService
     end
   end
 
-  def may_modify?(vbms_id)
+  def may_modify?(vbms_id, veteran_participant_id)
     !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
   end
 
