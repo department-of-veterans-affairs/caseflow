@@ -25,13 +25,14 @@ RSpec.feature "AmaQueue", :all_dbs do
         expect(current_path).to eq "/search"
       end
 
-      step "searches for a veteran and views their case details" do
+      step "searches for a veteran and clicks the search result" do
         fill_in "searchBarEmptyList", with: appeal.veteran_file_number
         find("#submit-search-searchBarEmptyList").click
         click_on(appeal.docket_number)
       end
 
-      step "does not have the view docs link" do
+      step "views their case details which does not have the view docs link" do
+        expect(page).to have_content("#{veteran.first_name} #{veteran.last_name}")
         expect(page).to_not have_content("Veteran Documents")
       end
     end
