@@ -2,6 +2,6 @@
 
 FactoryBot.define do
   factory :distribution do
-    judge { create(:user) }
+    association :judge, factory: :user
   end
 end
