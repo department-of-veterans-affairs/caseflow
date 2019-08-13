@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "faker"
+require "support/vacols_database_cleaner"
 
 describe VaDotGovAddressValidator do
-  describe "#update_closest_ro_and_ahls" do
+  describe "#update_closest_ro_and_ahls", :all_dbs do
     let!(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
     let!(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
     let!(:valid_address_country_code) { "US" }
