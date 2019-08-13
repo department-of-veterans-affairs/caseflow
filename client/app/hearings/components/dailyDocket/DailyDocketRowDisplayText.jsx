@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
 
@@ -52,6 +53,21 @@ const AppellantInformation = ({ hearing }) => {
   </div>;
 };
 
+AppellantInformation.propTypes = {
+  hearing: {
+    appealExternalId: PropTypes.string,
+    appellantAddressLine1: PropTypes.string,
+    appellantCity: PropTypes.string,
+    appellantState: PropTypes.string,
+    appellantZip: PropTypes.string,
+    docketName: PropTypes.string,
+    docketNumber: PropTypes.string,
+    representative: PropTypes.string,
+    representativeName: PropTypes.string,
+    veteranFileNumber: PropTypes.string
+  }
+};
+
 const HearingTime = ({ hearing }) => {
   const localTime = getDisplayTime(
     hearing.scheduledTimeString,
@@ -72,12 +88,23 @@ const HearingTime = ({ hearing }) => {
   </div>;
 };
 
+HearingTime.propTypes = {
+  hearing: {
+    centralOfficeTimeString: PropTypes.string,
+    currentIssueCount: PropTypes.string,
+    readableRequestType: PropTypes.string,
+    regionalOfficeName: PropTypes.string,
+    regionalOfficeTimezone: PropTypes.string,
+    scheduledTimeString: PropTypes.string
+  }
+};
+
 export default class HearingText extends React.Component {
   render () {
     const { hearing, index, user, update, readOnly, initialState } = this.props;
 
     return <React.Fragment>
-      <div>{user.userRoleHearingPrep &&
+      <div>{user.userHasHearingPrepRole &&
         <PreppedCheckbox hearing={hearing} update={update} readOnly={readOnly} />}
       </div>
       <div><strong>{index + 1}</strong></div>
@@ -86,3 +113,14 @@ export default class HearingText extends React.Component {
     </React.Fragment>;
   }
 }
+
+HearingText.propTypes = {
+  hearing: PropTypes.object,
+  index: PropTypes.number,
+  initialState: PropTypes.object,
+  readOnly: PropTypes.bool,
+  update: PropTypes.func,
+  user: {
+    userHasHearingPrepRole: PropTypes.bool
+  }
+};

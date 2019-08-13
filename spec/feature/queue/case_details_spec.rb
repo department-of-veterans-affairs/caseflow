@@ -210,7 +210,9 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to have_content(appeal.veteran_address_line_1)
         expect(page).to_not have_content("Regional Office")
       end
+
       scenario "when there is no POA" do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
         expect(page).to have_content("Power of Attorney")
@@ -364,17 +366,53 @@ RSpec.feature "Case details", :all_dbs do
       )
     end
 
-    before { attorney_user.update!(roles: attorney_user.roles + ["Reader"]) }
-    after { attorney_user.update!(roles: attorney_user.roles - ["Reader"]) }
+    context "with reader role" do
+      before { attorney_user.update!(roles: attorney_user.roles + ["Reader"]) }
+      after { attorney_user.update!(roles: attorney_user.roles - ["Reader"]) }
 
-    scenario "reader link appears on page and sends us to reader" do
-      visit "/queue"
-      click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-      click_on "View #{appeal.documents.count} docs"
+      scenario "reader link appears on page and sends us to reader" do
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        click_on "View #{appeal.documents.count} docs"
 
-      # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
-      expect(page).to have_content("CaseflowQueue")
-      expect(page).to have_content("Back to Your Queue\n#{appeal.veteran_full_name}")
+        expect(page).to have_content("CaseflowQueue")
+        expect(page).to have_content("Back to Your Queue\n#{appeal.veteran_full_name}")
+      end
+    end
+
+    context "with ro view hearing schedule role" do
+      let(:roles) { ["RO ViewHearSched"] }
+      let!(:attorney_user) { create(:user, roles: roles) }
+
+      scenario "reader link does not appear on page" do
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        expect(page).to have_content COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL
+        expect(page).to_not have_content COPY::CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE.upcase
+        expect(page).to_not have_content "View #{appeal.documents.count} docs"
+      end
+
+      context "also with build hearing schedule role" do
+        let(:roles) { ["RO ViewHearSched", "Build HearSched"] }
+
+        scenario "reader link appears on page" do
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+          expect(page).to have_content COPY::CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE.upcase
+          expect(page).to have_content "View #{appeal.documents.count} docs"
+        end
+      end
+
+      context "also with edit hearing schedule role" do
+        let(:roles) { ["RO ViewHearSched", "Edit HearSched"] }
+
+        scenario "reader link appears on page" do
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+          expect(page).to have_content COPY::CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE.upcase
+          expect(page).to have_content "View #{appeal.documents.count} docs"
+        end
+      end
     end
   end
 
