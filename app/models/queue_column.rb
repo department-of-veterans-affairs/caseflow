@@ -5,10 +5,7 @@ class QueueColumn
 
   class << self
     def from_name(column_name)
-      column = subclasses.find { |subclass| subclass.column_name == column_name }
-      fail(Caseflow::Error::InvalidTaskTableColumn, column_name: column_name) unless column
-
-      column
+      subclasses.find { |subclass| subclass.column_name == column_name }
     end
 
     def column_name; end
@@ -35,6 +32,7 @@ require_dependency "regional_office_column"
 require_dependency "task_assignee_column"
 require_dependency "task_assigner_column"
 require_dependency "task_closed_date_column"
+require_dependency "task_created_at_column"
 require_dependency "task_due_date_column"
 require_dependency "task_hold_length_column"
 require_dependency "task_type_column"

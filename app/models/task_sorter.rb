@@ -3,21 +3,26 @@
 class TaskSorter
   include ActiveModel::Model
 
-  validates :column, :sort_order, :tasks, presence: true
+  validates :column, :sort_order, presence: true
   validate :column_is_valid
   validate :sort_order_is_valid
 
-  attr_accessor :columns, :sort_order, :tasks
+  attr_accessor :column, :sort_order, :tasks
 
   def initialize(args)
     super
 
+    # Default to sorting by task creation date.
+    @column ||= TaskCreatedAtColumn
     @sort_order ||= Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
+    @tasks ||= []
 
     fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
   end
 
   def sorted_tasks
+    return tasks unless tasks.any?
+
     # Always join to the CachedAppeal table because we sometimes need it, joining does not slow down the application,
     # and conditional logic to only join sometimes adds unnecessary complexity.
     tasks.joins(cached_attributes_join_clause).order(order_clause)

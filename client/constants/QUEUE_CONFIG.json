@@ -16,6 +16,7 @@
   "REGIONAL_OFFICE_COLUMN": "regionalOfficeColumn",
   "TASK_ASSIGNEE_COLUMN": "assignedToColumn",
   "TASK_ASSIGNER_COLUMN": "completedToNameColumn",
+  "TASK_CREATED_AT_COLUMN": "createdDateColumn",
   "TASK_CLOSED_DATE_COLUMN": "completedDateColumn",
   "TASK_DUE_DATE_COLUMN": "caseDueDateColumn",
   "TASK_HOLD_LENGTH_COLUMN": "caseDaysOnHoldColumn",
