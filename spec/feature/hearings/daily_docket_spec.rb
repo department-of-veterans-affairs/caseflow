@@ -38,14 +38,6 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
     let!(:legacy_hearing) { create(:legacy_hearing, vacols_id: case_hearing.hearing_pkseq, appeal: legacy_appeal) }
     let!(:staff) { create(:staff, stafkey: "RO18", stc2: 2, stc3: 3, stc4: 4) }
 
-    before do
-      FeatureToggle.enable!(:use_representative_info_from_bgs)
-    end
-
-    after do
-      FeatureToggle.disable!(:use_representative_info_from_bgs)
-    end
-
     scenario "address and poa info from BGS is displayed on docket page" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
       expect(page).to have_content FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_1
