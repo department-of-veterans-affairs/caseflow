@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe QueueWhereClauseArgumentsFactory, :postgres do
+describe QueueWhereClauseArgumentsFactory do
   describe ".new" do
     subject { QueueWhereClauseArgumentsFactory.new(filter_params: filter_params) }
 
