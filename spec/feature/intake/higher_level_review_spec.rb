@@ -1216,8 +1216,6 @@ feature "Higher-Level Review", :all_dbs do
       end
 
       context "no contestable issues present" do
-        before { FeatureToggle.enable!(:decision_reviews) }
-        after { FeatureToggle.disable!(:decision_reviews) }
         let!(:business_line) { create(:business_line, name: "Education", url: "education") }
 
         scenario "no rating issues show on first Add Issues modal" do
