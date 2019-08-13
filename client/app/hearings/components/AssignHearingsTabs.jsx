@@ -312,7 +312,7 @@ export default class AssignHearingsTabs extends React.Component {
       align: 'left',
       valueName: 'docketNumber'
     },
-      locationColumn,
+    locationColumn,
     {
       header: 'Time',
       align: 'left',
