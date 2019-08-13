@@ -28,14 +28,26 @@ const tableNumberStyling = css({
 const UPCOMING_HEARINGS_TAB_NAME = 'upcomingHearings';
 const AMA_APPEALS_TAB_NAME = 'amaAppeals';
 const LEGACY_APPEALS_TAB_NAME = 'legacyAppeals';
-
-const AvailableVeteransTable = ({ rows, columns, style = {} }) => {
+const NoUpcomingHearingDayMessage = () => (
+  <StatusMessage
+    title={COPY.ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_HEADER}
+    type="alert"
+    messageText={COPY.ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_MESSAGE}
+    wrapInAppSegment={false}
+  />
+);
+const AvailableVeteransTable = ({ rows, columns, selectedHearingDay, style = {} }) => {
   let removeTimeColumn = _.slice(columns, 0, -1);
 
+  if (_.isNil(selectedHearingDay)) {
+    return (<div>
+      <NoUpcomingHearingDayMessage />
+    </div>);
+  }
   if (_.isEmpty(rows)) {
     return <div>
       <StatusMessage
-        title= {COPY.ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_HEADER}
+        title={COPY.ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_HEADER}
         type="alert"
         messageText={COPY.ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_MESSAGE}
         wrapInAppSegment={false}
@@ -65,7 +77,7 @@ const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => {
 
   return <div>
     <Link to={`/schedule/docket/${selectedHearingDay.id}`}>
-      {`View the Daily Docket for ${moment(selectedHearingDay.scheduledFor).format('M/DD/YYYY')}` }
+      {`View the Daily Docket for ${moment(selectedHearingDay.scheduledFor).format('M/DD/YYYY')}`}
     </Link>
     <QueueTable
       columns={columns}
@@ -225,6 +237,10 @@ export default class AssignHearingsTabs extends React.Component {
 
     let locationColumn;
 
+    if (_.isNil(selectedHearingDay)) {
+      return [];
+    }
+
     if (tab === UPCOMING_HEARINGS_TAB_NAME) {
       locationColumn = {
         name: 'Hearing Location',
@@ -282,7 +298,7 @@ export default class AssignHearingsTabs extends React.Component {
       align: 'left',
       valueName: 'docketNumber'
     },
-    locationColumn,
+      locationColumn,
     {
       header: 'Time',
       align: 'left',
@@ -332,6 +348,7 @@ export default class AssignHearingsTabs extends React.Component {
             page: <AvailableVeteransTable
               rows={legacyRows}
               columns={this.tabWindowColumns(LEGACY_APPEALS_TAB_NAME)}
+              selectedHearingDay={selectedHearingDay}
             />
           },
           {
@@ -340,6 +357,7 @@ export default class AssignHearingsTabs extends React.Component {
               style={this.amaDocketCutoffLineStyle(amaAppeals)}
               rows={amaRows}
               columns={this.tabWindowColumns(AMA_APPEALS_TAB_NAME)}
+              selectedHearingDay={selectedHearingDay}
             />
           }
         ]}
