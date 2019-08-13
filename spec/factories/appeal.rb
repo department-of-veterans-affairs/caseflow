@@ -90,6 +90,13 @@ FactoryBot.define do
       end
     end
 
+    trait :with_schedule_hearing_tasks do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
+      end
+    end
+
     trait :ready_for_distribution do
       after(:create) do |appeal, _evaluator|
         appeal.create_tasks_on_intake_success!

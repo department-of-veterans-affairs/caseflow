@@ -39,6 +39,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       begin
         geomatch_result = appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
         record_geomatched_appeal(appeal.external_id, geomatch_result[:status])
+        sleep 1
       rescue Caseflow::Error::VaDotGovLimitError
         record_geomatched_appeal(appeal.external_id, "limit_error")
         break

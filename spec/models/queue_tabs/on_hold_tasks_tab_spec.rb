@@ -3,8 +3,8 @@
 require "rails_helper"
 require "support/database_cleaner"
 
-describe AssignedTasksTab, :postgres do
-  let(:tab) { AssignedTasksTab.new(params) }
+describe OnHoldTasksTab, :postgres do
+  let(:tab) { OnHoldTasksTab.new(params) }
   let(:params) do
     {
       assignee: assignee,
@@ -53,7 +53,11 @@ describe AssignedTasksTab, :postgres do
         end.flatten
       end
 
-      it "only returns the active tasks that are children of the assignee's on hold tasks" do
+      before do
+        on_hold_tasks_children.each { |task| task.update!(status: Constants.TASK_STATUSES.on_hold) }
+      end
+
+      it "only returns the on hold tasks that are children of the assignee's on hold tasks" do
         expect(subject).to match_array(on_hold_tasks_children)
       end
     end

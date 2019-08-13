@@ -720,6 +720,10 @@ class LegacyAppeal < ApplicationRecord
     location_code
   end
 
+  def address
+    @address ||= Address.new(appellant[:address]) if appellant[:address].present?
+  end
+
   private
 
   def soc_date_eligible_for_opt_in?(receipt_date)
