@@ -112,7 +112,9 @@ class LegacyHearing < ApplicationRecord
       begin
         update!(hearing_day_id: hearing_day_vacols_id)
       rescue ActiveRecord::InvalidForeignKey
-        # Hearing day doesn't exist yet in DB. Ignore for now.
+        # Hearing day doesn't exist yet in DB. Set hearing_day_id to nil
+        # explicitly for clarity (even though we already know it's nil).
+        hearing_day_id = nil
       end
     end
 
