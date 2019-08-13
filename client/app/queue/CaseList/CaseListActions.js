@@ -1,9 +1,13 @@
 import { SEARCH_ERROR_FOR } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import * as Constants from './actionTypes';
-import _ from 'lodash';
+
+import { size } from 'lodash';
 import { onReceiveAppealDetails, onReceiveClaimReviewDetails } from '../QueueActions';
 import { prepareAppealForStore, prepareClaimReviewForStore } from '../utils';
+import ValidatorsUtil from '../../util/ValidatorsUtil';
+
+const { validSSN, validFileNum, validDocketNum } = ValidatorsUtil;
 
 export const clearCaseListSearch = () => ({
   type: Constants.CLEAR_CASE_LIST_SEARCH
@@ -27,6 +31,10 @@ export const setCaseListSearch = (searchQuery) => (dispatch) => {
 
 export const requestAppealUsingVeteranId = () => ({
   type: Constants.REQUEST_APPEAL_USING_VETERAN_ID
+});
+
+export const requestAppealUsingCaseSearch = () => ({
+  type: Constants.REQUEST_APPEAL_USING_CASE_SEARCH
 });
 
 export const emptyQuerySearchAttempt = () => ({
@@ -84,6 +92,48 @@ export const fetchAppealUsingBackendError = (searchQuery, error) => ({
   }
 });
 
+const uniqueVetIdsFromCases = ({ appeals, claim_reviews }) => {
+  const veteranIds = appeals.
+    map((appeal) => appeal.attributes).
+    concat(claim_reviews).
+    map((obj) => obj.caseflow_veteran_id);
+
+  return [...new Set(veteranIds)];
+};
+
+export const fetchAppealsBySearch = (searchTerm) => (dispatch) => {
+  return ApiUtil.get('/appeals', { headers: { 'case-search': searchTerm } }).
+    then((response) => {
+      const returnedObject = response.text ? JSON.parse(response.text) : null;
+      const isResponseEmpty = returnedObject && !size(returnedObject.appeals) && !size(returnedObject.claim_reviews);
+
+      if (!returnedObject || isResponseEmpty) {
+        dispatch(fetchedNoAppealsUsingVeteranId(searchTerm));
+
+        return Promise.reject();
+      }
+
+      dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
+      dispatch(onReceiveClaimReviewsUsingVeteranId(returnedObject.claim_reviews));
+
+      // Return with duplicates removed
+      return uniqueVetIdsFromCases(returnedObject);
+    }).
+    catch((error) => {
+      const backendError = error.response.body;
+
+      if (backendError) {
+        const errorMessage = backendError.errors[0].detail;
+
+        dispatch(fetchAppealUsingBackendError(searchTerm, errorMessage));
+      } else {
+        dispatch(fetchAppealUsingVeteranIdFailed(searchTerm));
+      }
+
+      return Promise.reject();
+    });
+};
+
 export const appealsSearch = (searchQuery) => (dispatch) =>
   new Promise((resolve, reject) => {
     if (!searchQuery.length) {
@@ -93,62 +143,19 @@ export const appealsSearch = (searchQuery) => (dispatch) =>
     }
 
     // Allow numbers + hyphen (for docket number)
-    const search = searchQuery.trim().replace(/[^\d-]/g, '');
-
-    // We should probably refactor these to be imports
-    const validSSN = (input) => input.match(/\d{9}/) || input.match(/\d{3}-\d{2}-\d{4}$/);
-    const validFileNum = (input) => input.match(/\d{7,8}$/);
-    const validDocketNum = (input) => input.match(/\d{6}-{1}\d+$/);
+    const searchTerm = searchQuery.trim().replace(/[^\d-]/g, '');
 
     const validInput = (i) => validSSN(i) || validFileNum(i) || validDocketNum(i);
 
-    if (!validInput(search)) {
+    if (!validInput(searchTerm)) {
       dispatch(fetchAppealUsingInvalidVeteranIdFailed(searchQuery));
 
       return reject();
     }
 
-    dispatch(requestAppealUsingVeteranId());
-    ApiUtil.get('/appeals', {
-      headers: { 'case-search': search }
-    }).
-      then((response) => {
-        let isResponseEmpty;
-        const returnedObject = response.text ? JSON.parse(response.text) : null;
+    dispatch(requestAppealUsingCaseSearch());
 
-        if (returnedObject) {
-          isResponseEmpty = _.size(returnedObject.appeals) === 0 && _.size(returnedObject.claim_reviews) === 0;
-        }
-
-        if (!returnedObject || isResponseEmpty) {
-          dispatch(fetchedNoAppealsUsingVeteranId(search));
-
-          return reject();
-        }
-
-        dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
-        dispatch(onReceiveClaimReviewsUsingVeteranId(returnedObject.claim_reviews));
-
-        const veteranIds = returnedObject.appeals.
-          map((appeal) => appeal.attributes).
-          concat(returnedObject.claim_reviews).
-          map((obj) => obj.caseflow_veteran_id);
-
-        return resolve([...new Set(veteranIds)]);
-      }).
-      catch((error) => {
-        const backendError = error.response.body;
-
-        if (backendError) {
-          const errorMessage = backendError.errors[0].detail;
-
-          dispatch(fetchAppealUsingBackendError(searchQuery, errorMessage));
-        } else {
-          dispatch(fetchAppealUsingVeteranIdFailed(searchQuery));
-        }
-
-        return reject();
-      });
+    dispatch(fetchAppealsBySearch(searchTerm)).then((res) => resolve(res));
   });
 
 export const setFetchedAllCasesFor = (caseflowVeteranId) => ({
