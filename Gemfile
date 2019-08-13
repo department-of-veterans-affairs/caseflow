@@ -118,4 +118,8 @@ group :development do
   # POSIX systems should have this already, so we're not going to bring it in on other platforms
   gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 end
+
+group :test do
+  gem "webmock"
+end
 # rubocop:enable Metrics/LineLength
