@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-class Api::ExternalProxyController < ActionController::Base
+class Api::V3::BaseController < Api::ApplicationController
   protect_from_forgery with: :null_session
+  before_action :api_released?
 
   def api_released?
     return true if FeatureToggle.enabled?(:api_v3)

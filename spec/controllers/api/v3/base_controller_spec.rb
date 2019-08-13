@@ -1,13 +1,18 @@
 # frozen_string_literal: true
 
-RSpec.describe Api::ExternalProxyController, type: :controller do
+require "support/vacols_database_cleaner"
+require "rails_helper"
+
+RSpec.describe Api::V3::BaseController, type: :controller do
   describe "#api_released used in before_action" do
     controller do
-      before_action :api_released?
-
       def index
         render json: { meta: { text: "This is just a test action." } }
       end
+    end
+
+    before(:each) do
+      allow(controller).to receive(:verify_authentication_token).and_return(true)
     end
 
     describe "when not enabled" do
