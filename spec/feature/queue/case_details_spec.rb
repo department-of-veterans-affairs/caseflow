@@ -210,7 +210,9 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to have_content(appeal.veteran_address_line_1)
         expect(page).to_not have_content("Regional Office")
       end
+
       scenario "when there is no POA" do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
         expect(page).to have_content("Power of Attorney")
