@@ -3,10 +3,18 @@
 class HomeController < ApplicationController
   skip_before_action :verify_authentication
 
-  def index
-    return redirect_to("/help") unless current_user&.authenticated?
-    return render("queue/index") if feature_enabled?(:case_search_home_page)
+  # def index
+  #   return redirect_to("/help") unless current_user&.authenticated?
+  #   return render("queue/index") if feature_enabled?(:case_search_home_page)
 
-    redirect_to("/help")
+  #   redirect_to("/help")
+  # end
+
+  def index
+    if current_user&.authenticated?
+      render("queue/index")
+    else
+      redirect_to("/help")
+    end
   end
 end
