@@ -366,7 +366,7 @@ describe LegacyHearing, :all_dbs do
     end
   end
 
-  context "#hearing_day", focus: true do
+  context "#hearing_day" do
     context "associated hearing day exists" do
       let(:hearing_day) { create(:hearing_day) }
       let(:legacy_hearing) { create(:legacy_hearing, hearing_day: hearing_day) }
