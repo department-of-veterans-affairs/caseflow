@@ -1,13 +1,17 @@
 # frozen_string_literal: true
 
 class TaskTypeColumn < QueueColumn
-  def self.column_name
-    Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
-  end
+  class << self
+    def column_name
+      Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
+    end
 
-  private
+    def sorting_table
+      Task.table_name
+    end
 
-  def unsafe_sort_tasks(tasks, sort_order)
-    tasks.order(type: sort_order, action: sort_order, created_at: sort_order)
+    def sorting_columns
+      %w[type action created_at]
+    end
   end
 end

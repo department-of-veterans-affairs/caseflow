@@ -1,13 +1,17 @@
 # frozen_string_literal: true
 
 class DaysWaitingColumn < QueueColumn
-  def self.column_name
-    Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN
-  end
+  class << self
+    def column_name
+      Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN
+    end
 
-  private
+    def sorting_table
+      Task.table_name
+    end
 
-  def unsafe_sort_tasks(tasks, sort_order)
-    tasks.order(assigned_at: sort_order)
+    def sorting_columns
+      %w[assigned_at]
+    end
   end
 end

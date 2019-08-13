@@ -1,13 +1,17 @@
 # frozen_string_literal: true
 
 class DocketNumberColumn < QueueColumn
-  def self.column_name
-    Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
-  end
+  class << self
+    def column_name
+      Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
+    end
 
-  private
+    def sorting_table
+      CachedAppeal.table_name
+    end
 
-  def unsafe_sort_tasks(tasks, sort_order)
-    sort_by_cached_column(tasks, sort_order, "docket_type", "docket_number")
+    def sorting_columns
+      %w[docket_type docket_number]
+    end
   end
 end

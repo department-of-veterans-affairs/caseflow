@@ -1,13 +1,17 @@
 # frozen_string_literal: true
 
 class TaskClosedDateColumn < QueueColumn
-  def self.column_name
-    Constants.QUEUE_CONFIG.TASK_CLOSED_DATE_COLUMN
-  end
+  class << self
+    def column_name
+      Constants.QUEUE_CONFIG.TASK_CLOSED_DATE_COLUMN
+    end
 
-  private
+    def sorting_table
+      Task.table_name
+    end
 
-  def unsafe_sort_tasks(tasks, sort_order)
-    tasks.order(closed_at: sort_order)
+    def sorting_columns
+      %w[closed_at]
+    end
   end
 end

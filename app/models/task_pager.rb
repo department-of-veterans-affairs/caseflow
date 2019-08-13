@@ -27,7 +27,8 @@ class TaskPager
   end
 
   def sorted_tasks(tasks)
-    QueueColumn.from_name(sort_by).new.sort_tasks(tasks, sort_order)
+    column = QueueColumn.from_name(sort_by)
+    TaskSorter.new(tasks: tasks, sort_order: sort_order, column: column).sorted_tasks
   end
 
   def task_page_count
