@@ -107,17 +107,28 @@ class LegacyHearing < ApplicationRecord
     vacols_id
   end
 
-  def hearing_day
-    if hearing_day_id.nil?
+  def hearing_day_id_refers_to_vacols_row?
+    (request_type == HearingDay::REQUEST_TYPES[:central] &&
+      scheduled_for.to_date < Date.new(2019, 1, 1)) ||
+    (request_type == HearingDay::REQUEST_TYPES[:video] &&
+      scheduled_for.to_date < Date.new(2019, 4, 1))
+  end
+
+  def hearing_day_id
+    if self[:hearing_day_id].nil? and !hearing_day_id_refers_to_vacols_row?
       begin
         update!(hearing_day_id: hearing_day_vacols_id)
       rescue ActiveRecord::InvalidForeignKey
-        # Hearing day doesn't exist yet in DB. Set hearing_day_id to nil
-        # explicitly for clarity (even though we already know it's nil).
-        hearing_day_id = nil
+        # Hearing day doesn't exist yet in Caseflow.
+        return hearing_day_vacols_id
       end
     end
 
+    # Returns the cached value, or nil if the hearing day id refers to a VACOLS row.
+    self[:hearing_day_id]
+  end
+
+  def hearing_day
     @hearing_day ||= HearingDay.find_by_id(hearing_day_id)
   end
 
