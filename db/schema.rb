@@ -158,11 +158,11 @@ ActiveRecord::Schema.define(version: 20190807203232) do
   create_table "cached_appeal_attributes", id: false, force: :cascade do |t|
     t.integer "appeal_id"
     t.string "appeal_type"
-    t.string "case_type"
+    t.string "case_type", comment: "The case type, i.e. original, post remand, CAVC remand, etc"
     t.string "closest_regional_office_city", comment: "Closest regional office to the veteran"
     t.string "docket_number"
     t.string "docket_type"
-    t.boolean "is_aod"
+    t.boolean "is_aod", comment: "Whether the case is Advanced on Docket"
     t.integer "issue_count", comment: "Number of issues on the appeal."
     t.string "vacols_id"
     t.string "veteran_name", comment: "'LastName, FirstName' of the veteran"
