@@ -118,8 +118,6 @@ class LegacyHearing < ApplicationRecord
       end
     end
 
-    # access with caution. this retrieves the hearing_day_id from vacols
-    # then looks up the HearingDay in Caseflow
     @hearing_day ||= HearingDay.find_by_id(hearing_day_id)
   end
 
