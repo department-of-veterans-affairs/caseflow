@@ -30,18 +30,28 @@ describe Distribution, :all_dbs do
     FeatureToggle.disable!(:test_facols)
   end
 
-  # We use StartDistributionJob.perform_now in the test environment.
-  #
-  # context "StartDistributionJob" do
-  #   ActiveJob::Base.queue_adapter = :test
+  context "#valid?" do
+    subject { Distribution.new(judge: judge).valid? }
 
-  #   it "enqueues a job" do
-  #     expect { Distribution.create(judge: judge) }.to have_enqueued_job(StartDistributionJob)
-  #   end
-  # end
+    context "existing Distribution record with status pending" do
+      let!(:existing_distribution) { create(:distribution, judge: judge) }
+
+      it "prevents new Distribution record" do
+        expect(subject).to be_falsey
+      end
+    end
+
+    context "existing Distribution record with status started" do
+      let!(:existing_distribution) { create(:distribution, judge: judge, status: :started) }
+
+      it "prevents new Distribution record" do
+        expect(subject).to be_falsey
+      end
+    end
+  end
 
   context "#distribute!" do
-    subject { Distribution.create(judge: judge) }
+    subject { Distribution.create!(judge: judge) }
 
     let(:legacy_priority_count) { 14 }
 
