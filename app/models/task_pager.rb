@@ -59,7 +59,7 @@ class TaskPager
     # TASK_ASSIGNER_COLUMN
     #
     else
-      tasks.order(created_at: sort_order)
+      tasks_sorted_by_appeal_case_type(tasks)
     end
   end
   # rubocop:enable Metrics/MethodLength
