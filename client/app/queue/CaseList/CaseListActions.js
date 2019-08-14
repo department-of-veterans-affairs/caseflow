@@ -75,7 +75,7 @@ export const fetchAppealFromSearchFailed = (searchQuery) => ({
   }
 });
 
-export const fetchAppealUsingInvalidVeteranIdFailed = (searchQuery) => ({
+export const invalidCaseSearchTerm = (searchQuery) => ({
   type: Constants.SEARCH_RESULTED_IN_ERROR,
   payload: {
     errorType: SEARCH_ERROR_FOR.INVALID_VETERAN_ID,
@@ -83,7 +83,7 @@ export const fetchAppealUsingInvalidVeteranIdFailed = (searchQuery) => ({
   }
 });
 
-export const fetchAppealUsingBackendError = (searchQuery, error) => ({
+export const caseSearchBackendError = (searchQuery, error) => ({
   type: Constants.SEARCH_RESULTED_IN_ERROR,
   payload: {
     errorType: SEARCH_ERROR_FOR.BACKEND_ERROR,
@@ -125,7 +125,7 @@ export const fetchAppealsBySearch = (searchTerm) => (dispatch) => {
       if (backendError) {
         const errorMessage = backendError.errors[0].detail;
 
-        dispatch(fetchAppealUsingBackendError(searchTerm, errorMessage));
+        dispatch(caseSearchBackendError(searchTerm, errorMessage));
       } else {
         dispatch(fetchAppealFromSearchFailed(searchTerm));
       }
@@ -148,7 +148,7 @@ export const appealsSearch = (searchQuery) => (dispatch) =>
     const validInput = (i) => validSSN(i) || validFileNum(i) || validDocketNum(i);
 
     if (!validInput(searchTerm)) {
-      dispatch(fetchAppealUsingInvalidVeteranIdFailed(searchQuery));
+      dispatch(invalidCaseSearchTerm(searchQuery));
 
       return reject();
     }
