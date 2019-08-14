@@ -20,6 +20,12 @@ class Distribution < ApplicationRecord
   CASES_PER_ATTORNEY = 3
   ALTERNATIVE_BATCH_SIZE = 15
 
+  class << self
+    def pending_for_judge(judge)
+      find_by(status: %w[pending started], judge: judge)
+    end
+  end
+
   def distribute!
     return unless %w[pending error].include? status
 
@@ -27,9 +33,9 @@ class Distribution < ApplicationRecord
       return unless valid?(context: :create)
     end
 
-    transaction do
-      # this might take awhile due to VACOLS, so set our timeout to 5 minutes.
-      ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = 300000"
+    multi_transaction do
+      # this might take awhile due to VACOLS, so set our timeout to 3 minutes (in milliseconds).
+      ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = 180000"
 
       update!(status: "started")
 
@@ -40,10 +46,6 @@ class Distribution < ApplicationRecord
   rescue StandardError => error
     update!(status: "error")
     raise error
-  end
-
-  def self.pending_for_judge(judge)
-    where(status: %w[pending started], judge: judge)
   end
 
   private
@@ -69,7 +71,7 @@ class Distribution < ApplicationRecord
   end
 
   def validate_judge_has_no_pending_distributions
-    errors.add(:judge, :pending_distribution) if self.class.pending_for_judge(judge).any?
+    errors.add(:judge, :pending_distribution) if self.class.pending_for_judge(judge)
   end
 
   def judge_tasks
