@@ -435,7 +435,6 @@ RSpec.feature "Task queue", :all_dbs do
 
     let(:lit_support_user) { create(:user) }
     let!(:judge_user) { create(:user) }
-    # let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
     let!(:judge_team) { JudgeTeam.create_for_judge(judge_user) }
     let!(:appeal) do
       create(
@@ -460,9 +459,8 @@ RSpec.feature "Task queue", :all_dbs do
       User.authenticate!(user: lit_support_user)
     end
 
-    fit " show lit support" do
-     visit "/queue/appeals/#{appeal.uuid}"
-     binding.pry
+    fit "show lit support task assignment" do
+      visit "/queue/appeals/#{appeal.uuid}"
     end
   end
 
