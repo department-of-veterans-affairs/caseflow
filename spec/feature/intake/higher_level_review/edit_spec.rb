@@ -1361,11 +1361,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
       before do
         education_org = create(:business_line, name: "Education", url: "education")
         OrganizationsUser.add_user_to_organization(current_user, education_org)
-        FeatureToggle.enable!(:decision_reviews)
-      end
-
-      after do
-        FeatureToggle.disable!(:decision_reviews)
       end
 
       let!(:benefit_type) { "education" }
@@ -1393,12 +1388,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       before do
         education_org = create(:business_line, name: "Education", url: "education")
         OrganizationsUser.add_user_to_organization(current_user, education_org)
-        FeatureToggle.enable!(:decision_reviews)
         FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
-      end
-
-      after do
-        FeatureToggle.disable!(:decision_reviews)
       end
 
       let(:withdraw_date) { 1.day.ago.to_date.mdY }
