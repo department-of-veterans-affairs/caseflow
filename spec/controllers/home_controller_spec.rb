@@ -45,14 +45,6 @@ RSpec.describe HomeController, :postgres, type: :controller do
     context "when visitor is logged in, does not have a personal queue but does have case search access" do
       let!(:current_user) { User.authenticate! }
 
-      # before do
-      #   FeatureToggle.enable!(:case_search_home_page, users: [current_user.css_id])
-      # end
-
-      # after do
-      #   FeatureToggle.disable!(:case_search_home_page, users: [current_user.css_id])
-      # end
-
       it "should land at /" do
         get :index
         expect(response.status).to eq 200
