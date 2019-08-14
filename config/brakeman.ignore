@@ -1,25 +1,6 @@
 {
   "ignored_warnings": [
     {
-      "warning_type": "Cross-Site Request Forgery",
-      "warning_code": 86,
-      "fingerprint": "0bc3c7bb01027bba366908970aa5640bc505eb03a24d696949caf361ef6ea7f4",
-      "check_name": "ForgerySetting",
-      "message": "`protect_from_forgery` should be configured with `with: :exception`",
-      "file": "app/controllers/api/docs/v3/docs_controller.rb",
-      "line": 4,
-      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_request_forgery/",
-      "code": "protect_from_forgery(:with => :null_session)",
-      "render_path": null,
-      "location": {
-        "type": "controller",
-        "controller": "Api::Docs::V3::DocsController"
-      },
-      "user_input": null,
-      "confidence": "Medium",
-      "note": ""
-    },
-    {
       "warning_type": "SQL Injection",
       "warning_code": 0,
       "fingerprint": "0ed3c295e5216f5a6ae5ee60d4c5baf3fcf4c624c9769ab723114045a565ebca",
@@ -76,6 +57,25 @@
       },
       "user_input": null,
       "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "Cross-Site Request Forgery",
+      "warning_code": 7,
+      "fingerprint": "1a5ba045bdf2941e540d11c5f239696af2cb1478657b4d91b629186f6f4fbf2c",
+      "check_name": "ForgerySetting",
+      "message": "`protect_from_forgery` should be called in `Api::Docs::V3::DocsController`",
+      "file": "app/controllers/api/docs/v3/docs_controller.rb",
+      "line": 3,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_request_forgery/",
+      "code": null,
+      "render_path": null,
+      "location": {
+        "type": "controller",
+        "controller": "Api::Docs::V3::DocsController"
+      },
+      "user_input": null,
+      "confidence": "High",
       "note": ""
     },
     {
@@ -214,6 +214,6 @@
       "note": ""
     }
   ],
-  "updated": "2019-08-13 15:10:25 -0400",
+  "updated": "2019-08-13 23:00:43 -0400",
   "brakeman_version": "4.5.1"
 }
