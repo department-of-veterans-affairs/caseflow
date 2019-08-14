@@ -59,7 +59,7 @@ class TableFilter extends React.PureComponent {
     const { customFilterLabels, enableFilterTextTransform } = this.props;
     const countByColumnName = _.countBy(
       tableDataByRow,
-      (row) => this.transformColumnValue(row[columnName])
+      (row) => this.transformColumnValue(_.get(row, columnName))
     );
     const uniqueOptions = [];
     const filtersForColumn = _.get(this.props.filteredByList, columnName);
