@@ -37,7 +37,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         issue_count: request_issues_to_cache[appeal.id] || 0,
         docket_type: appeal.docket_type,
         docket_number: appeal.docket_number,
-        is_aod: appeal_aod_status[appeal.id],
+        is_aod: appeal_aod_status.include?(appeal.id),
         veteran_name: veteran_names_to_cache[appeal.veteran_file_number]
       }
     end
@@ -147,9 +147,14 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   private
 
   def aod_status_for_appeals(appeals)
-    Appeal.where(id: appeals).map do |appeal|
-      [appeal.id, appeal.advanced_on_docket]
-    end.to_h
+    Appeal.where(id: appeals).joins(
+      "left join claimants on appeals.id = claimants.decision_review_id and claimants.decision_review_type = 'Appeal' "\
+      "left join people on people.participant_id = claimants.participant_id "\
+      "left join advance_on_docket_motions on advance_on_docket_motions.person_id = people.id "
+    ).where(
+      "(advance_on_docket_motions.granted = true and advance_on_docket_motions.created_at > appeals.receipt_date) "\
+      "or people.date_of_birth < (current_date - interval '75 years')"
+    ).pluck(:id)
   end
 
   def case_status_for_vacols_id(vacols_ids)
