@@ -23,7 +23,7 @@ class Appeal < DecisionReview
   has_one :special_issue_list
   has_many :record_synced_by_job, as: :record
 
-  validate :validate_receipt_date
+  validate :validate_receipt_date, on: :create
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
