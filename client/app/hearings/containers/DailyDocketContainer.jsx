@@ -281,6 +281,7 @@ export class DailyDocketContainer extends React.Component {
           saveHearing={this.saveHearing}
           saveSuccessful={this.props.saveSuccessful}
           openModal={this.openModal}
+          onCancelRemoveHearingDay={this.props.onCancelRemoveHearingDay}
           onClickRemoveHearingDay={this.props.onClickRemoveHearingDay}
           displayRemoveHearingDayModal={this.props.displayRemoveHearingDayModal}
           deleteHearingDay={this.deleteHearingDay}

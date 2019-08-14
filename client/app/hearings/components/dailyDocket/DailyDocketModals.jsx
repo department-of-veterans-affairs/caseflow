@@ -35,7 +35,7 @@ export const RemoveHearingModal = ({ onCancelRemoveHearingDay, deleteHearingDay,
 );
 
 RemoveHearingModal.propTypes = {
-  onCancelRemoveHearingDay: PropTypes.func,
+  onCancelRemoveHearingDay: PropTypes.func.isRequired,
   deleteHearingDay: PropTypes.func,
   dailyDocket: PropTypes.object
 };

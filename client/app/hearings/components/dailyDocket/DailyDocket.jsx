@@ -131,8 +131,9 @@ export default class DailyDocket extends React.Component {
     const hasPrevHearings = !_.isEmpty(prevHearings);
 
     const {
-      dailyDocket, onClickRemoveHearingDay, displayRemoveHearingDayModal, displayLockModal, openModal,
-      deleteHearingDay, updateLockHearingDay, onCancelDisplayLockModal, user
+      dailyDocket, onCancelRemoveHearingDay, onClickRemoveHearingDay, displayRemoveHearingDayModal,
+      displayLockModal, openModal, deleteHearingDay, updateLockHearingDay, onCancelDisplayLockModal,
+      user
     } = this.props;
 
     const { editedDispositionModalProps } = this.state;
@@ -145,6 +146,7 @@ export default class DailyDocket extends React.Component {
 
       {displayRemoveHearingDayModal &&
         <RemoveHearingModal dailyDocket={dailyDocket}
+          onCancelRemoveHearingDay={onCancelRemoveHearingDay}
           onClickRemoveHearingDay={onClickRemoveHearingDay}
           deleteHearingDay={deleteHearingDay} />}
 
@@ -237,6 +239,7 @@ DailyDocket.propTypes = {
   saveHearing: PropTypes.func.isRequired,
   saveSuccessful: PropTypes.object,
   openModal: PropTypes.func.isRequired,
+  onCancelRemoveHearingDay: PropTypes.func,
   onClickRemoveHearingDay: PropTypes.func.isRequired,
   displayRemoveHearingDayModal: PropTypes.bool,
   deleteHearingDay: PropTypes.func.isRequired,
