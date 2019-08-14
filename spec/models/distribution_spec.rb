@@ -189,6 +189,18 @@ describe Distribution, :all_dbs do
       expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count).to eq(2)
     end
 
+    context "when a DistributedCase already exists" do
+      before do
+        distribution = create(:distribution, judge: judge)
+        appeal = create(:appeal, :with_post_intake_tasks, docket_type: Constants.AMA_DOCKETS.hearing)
+        distribution.distributed_cases.create(case_id: appeal.uuid)
+      end
+
+      it "does not create a duplicate distributed_case" do
+
+      end
+    end
+
     context "when the job errors" do
       it "marks the distribution as error" do
         allow_any_instance_of(LegacyDocket).to receive(:distribute_nonpriority_appeals).and_raise(StandardError)
