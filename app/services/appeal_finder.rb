@@ -37,14 +37,6 @@ class AppealFinder
       appeal = Appeal.find_by(id: id, receipt_date: receipt_date)
 
       appeal
-      # # If VSO user, check to make sure they have rights to the requested appeal
-      # if user.vso_employee?
-      #   veterans = VeteranFinder.find_or_create_all(appeal.veteran_file_number)
-
-      #   filter_appeals_for_vso_user(appeals: Array.wrap(appeal), veterans: veterans)
-      # else
-      #   appeal
-      # end
     rescue ArgumentError
       return nil
     end
