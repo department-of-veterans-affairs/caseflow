@@ -44,6 +44,7 @@ import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
 import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
+import ReviewMotionToVacateModal from './ReviewMotionToVacateModal'
 import AddVsoModal from './AddVsoModal';
 import AddPrivateBarModal from './AddPrivateBarModal';
 import PostponeHearingTaskModal from './PostponeHearingTaskModal';
@@ -371,7 +372,7 @@ class QueueApp extends React.PureComponent {
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.value}`}
             render={this.routedAssignToUser} />
           <Route
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_JUDGE.value}`}
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_MOTION_TO_VACATE_TO_JUDGE.value}`}
             render={this.routedAssignToUser} />
           <PageRoute
             exact

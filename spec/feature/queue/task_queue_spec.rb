@@ -302,6 +302,7 @@ RSpec.feature "Task queue", :all_dbs do
 
     def validate_pulac_cerullo_tasks_created(task_class, label)
       visit "/queue/appeals/#{appeal.uuid}"
+      binding.pry
       find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
       find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
@@ -391,6 +392,10 @@ RSpec.feature "Task queue", :all_dbs do
 
     context "when a VacateMotionMailTask task is routed to Pulac Cerullo" do
       let!(:root_task) { create(:root_task) }
+      let!(:judge_user) { create(:user) }
+      let!(:judge_team) { JudgeTeam.create_for_judge(judge_user) }
+      let!(:judge_task) { create(:ama_judge_decision_review_task, assigned_to: judge_user, parent: root_task) }
+
       it "creates two child tasks: one Pulac Cerullo Task, and a child of that task " \
         "assigned to the first user in the Pulac Cerullo org" do
         validate_pulac_cerullo_tasks_created(VacateMotionMailTask, COPY::VACATE_MOTION_MAIL_TASK_LABEL)
@@ -459,7 +464,7 @@ RSpec.feature "Task queue", :all_dbs do
       User.authenticate!(user: lit_support_user)
     end
 
-    fit "show lit support task assignment" do
+    it "show lit support task assignment" do
       visit "/queue/appeals/#{appeal.uuid}"
     end
   end

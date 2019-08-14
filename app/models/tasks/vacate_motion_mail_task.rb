@@ -3,10 +3,8 @@
 class VacateMotionMailTask < MailTask
 
   VACATE_MOTION_AVAILABLE_ACTIONS = [
-    Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h,
-    Constants.TASK_ACTIONS.ASSIGN_TO_JUDGE.to_h
+    Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
   ].freeze
-
 
   def available_actions(user)
     if LitigationSupport.singleton.user_has_access?(user)
@@ -14,6 +12,17 @@ class VacateMotionMailTask < MailTask
     end
 
     super
+  end
+
+  def self.create_child_task(parent, current_user, params)
+    Task.create!(
+      type: ReviewMotionToVacateTask.name,
+      appeal: parent.appeal,
+      assigned_by_id: child_assigned_by_id(parent, current_user),
+      parent_id: parent.id,
+      assigned_to: child_task_assignee(parent, params),
+      instructions: params[:instructions]
+    )
   end
 
   def self.label

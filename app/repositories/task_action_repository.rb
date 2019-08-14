@@ -151,11 +151,11 @@ class TaskActionRepository
       }
     end
 
-    def assign_to_judge_data(task, _user = nil)
+    def assign_motion_to_vacate_to_judge_data(task, _user = nil)
       {
         selected: task.root_task.children.find { |child| child.is_a?(JudgeTask) }&.assigned_to,
         options: users_to_options(Judge.list_all),
-        type: DraftMotionToVacateTask.name
+        type: ReviewMotionToVacateTask.name
       }
     end
 
