@@ -401,37 +401,33 @@ RSpec.feature "Search", :all_dbs do
     let!(:veteran) { create(:veteran, first_name: "Testy", last_name: "McTesterson") }
     let!(:appeal) { create(:appeal, veteran: veteran) }
 
-    context "when using invalid docket number" do
-      def perform_search
-        visit "/search"
-        fill_in "searchBarEmptyList", with: invalid_docket_number
-        click_on "Search"
-      end
+    def perform_search(search_term)
+      visit "/search"
+      fill_in "searchBarEmptyList", with: search_term
+      click_on "Search"
+    end
 
+    context "when using invalid docket number" do
       it "page displays invalid search message" do
-        perform_search
+        perform_search(invalid_docket_number)
         expect(page).to have_content(format(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_docket_number))
       end
     end
 
     context "when appeal exists" do
-      def perform_search
-        visit "/search"
-        fill_in "searchBarEmptyList", with: appeal.docket_number
-        click_on "Search"
-      end
+      it "displays correct single result" do
+        perform_search(appeal.docket_number)
 
+        expect(page).to have_content("1 case found for")
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
+      end
+    end
 
     context "when appeal doesn't exist" do
       let!(:non_existing_docket_number) { "010101-99999" }
-      def perform_search
-        visit "/search"
-        fill_in "searchBarEmptyList", with: non_existing_docket_number
-        click_on "Search"
-      end
 
       it "page displays no cases found message" do
-        perform_search
+        perform_search(non_existing_docket_number)
         expect(page).to have_content(
           format(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, non_existing_docket_number)
         )
