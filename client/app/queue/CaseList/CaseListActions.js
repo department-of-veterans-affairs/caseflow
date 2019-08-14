@@ -45,7 +45,7 @@ export const emptyQuerySearchAttempt = () => ({
   }
 });
 
-export const fetchedNoAppealsUsingVeteranId = (searchQuery) => ({
+export const fetchedNoAppeals = (searchQuery) => ({
   type: Constants.SEARCH_RESULTED_IN_ERROR,
   payload: {
     errorType: SEARCH_ERROR_FOR.NO_APPEALS,
@@ -53,21 +53,21 @@ export const fetchedNoAppealsUsingVeteranId = (searchQuery) => ({
   }
 });
 
-export const onReceiveAppealsUsingVeteranId = (appeals) => (dispatch) => {
+export const onReceiveAppeals = (appeals) => (dispatch) => {
   dispatch(onReceiveAppealDetails(prepareAppealForStore(appeals)));
   dispatch({
     type: Constants.RECEIVED_APPEALS_USING_VETERAN_ID_SUCCESS
   });
 };
 
-export const onReceiveClaimReviewsUsingVeteranId = (claimReviews) => (dispatch) => {
+export const onReceiveClaimReviews = (claimReviews) => (dispatch) => {
   dispatch(onReceiveClaimReviewDetails(prepareClaimReviewForStore(claimReviews)));
   dispatch({
     type: Constants.RECEIVED_CLAIM_REVIEWS_USING_VETERAN_ID_SUCCESS
   });
 };
 
-export const fetchAppealUsingVeteranIdFailed = (searchQuery) => ({
+export const fetchAppealFromSearchFailed = (searchQuery) => ({
   type: Constants.SEARCH_RESULTED_IN_ERROR,
   payload: {
     errorType: SEARCH_ERROR_FOR.UNKNOWN_SERVER_ERROR,
@@ -108,13 +108,13 @@ export const fetchAppealsBySearch = (searchTerm) => (dispatch) => {
       const isResponseEmpty = returnedObject && !size(returnedObject.appeals) && !size(returnedObject.claim_reviews);
 
       if (!returnedObject || isResponseEmpty) {
-        dispatch(fetchedNoAppealsUsingVeteranId(searchTerm));
+        dispatch(fetchedNoAppeals(searchTerm));
 
         return Promise.reject();
       }
 
-      dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
-      dispatch(onReceiveClaimReviewsUsingVeteranId(returnedObject.claim_reviews));
+      dispatch(onReceiveAppeals(returnedObject.appeals));
+      dispatch(onReceiveClaimReviews(returnedObject.claim_reviews));
 
       // Return with duplicates removed
       return uniqueVetIdsFromCases(returnedObject);
@@ -127,7 +127,7 @@ export const fetchAppealsBySearch = (searchTerm) => (dispatch) => {
 
         dispatch(fetchAppealUsingBackendError(searchTerm, errorMessage));
       } else {
-        dispatch(fetchAppealUsingVeteranIdFailed(searchTerm));
+        dispatch(fetchAppealFromSearchFailed(searchTerm));
       }
 
       return Promise.reject();

@@ -21,8 +21,8 @@ import OtherReviewsTable from './OtherReviewsTable';
 import { fullWidth } from './constants';
 
 import {
-  onReceiveAppealsUsingVeteranId,
-  onReceiveClaimReviewsUsingVeteranId
+  onReceiveAppeals,
+  onReceiveClaimReviews
 } from './CaseList/CaseListActions';
 import {
   appealsByCaseflowVeteranId,
@@ -50,8 +50,8 @@ class CaseListView extends React.PureComponent {
       then((response) => {
         const returnedObject = JSON.parse(response.text);
 
-        this.props.onReceiveAppealsUsingVeteranId(returnedObject.appeals);
-        this.props.onReceiveClaimReviewsUsingVeteranId(returnedObject.claim_reviews);
+        this.props.onReceiveAppeals(returnedObject.appeals);
+        this.props.onReceiveClaimReviews(returnedObject.claim_reviews);
       });
   };
 
@@ -146,8 +146,8 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveAppealsUsingVeteranId,
-  onReceiveClaimReviewsUsingVeteranId
+  onReceiveAppeals,
+  onReceiveClaimReviews
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(CaseListView);
