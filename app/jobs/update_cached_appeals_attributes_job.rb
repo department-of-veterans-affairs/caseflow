@@ -88,7 +88,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       vacols_folders = VACOLS::Folder.where(ticknum: vacols_ids).pluck(:ticknum, :tinum, :ticorkey)
       issue_counts_to_cache = issues_counts_for_vacols_folders(vacols_ids)
       veteran_names_to_cache = veteran_names_for_correspondent_ids(vacols_folders.map { |folder| folder[2] })
-      aod_status_to_cache = aod_status_for_vacols_id(vacols_folders.map { |folder| folder[0] })
+      aod_status_to_cache = VACOLS::Case.aod(vacols_folders.map { |folder| folder[0] })
       case_status_to_cache = case_status_for_vacols_id(vacols_folders.map { |folder| folder[0] })
 
       values_to_cache = vacols_folders.map do |vacols_folder|
@@ -150,13 +150,6 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     Appeal.where(id: appeals).map do |appeal|
       [appeal.id, appeal.advanced_on_docket]
     end.to_h
-  end
-
-  def aod_status_for_vacols_id(vacols_ids)
-    aods = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD).where(bfkey: vacols_ids).pluck(:aod).map do |aod|
-      aod == 1
-    end
-    vacols_ids.zip(aods).to_h
   end
 
   def case_status_for_vacols_id(vacols_ids)
