@@ -25,6 +25,8 @@ const iconStyle = css(
  *   - @enableFilter {boolean} whether filtering is turned on for each column
  *   - @enableFilterTextTransform {boolean} when true, filter text that gets displayed
  *     is automatically capitalized. default is true.
+ *   - @getFilterIconRef {function}
+ *   - @getFilterValues {function} DEPRECATED
  *   - @tableData {array} the entire data set for the table (required to calculate
  *     the options each column can be filtered on)
  *   - @columnName {string} the name of the column in the table data
@@ -189,6 +191,8 @@ TableFilter.defaultProps = {
 TableFilter.propTypes = {
   enableFilter: PropTypes.bool,
   enableFilterTextTransform: PropTypes.bool,
+  getFilterIconRef: PropTypes.func,
+  getFilterValues: PropTypes.func,
   tableData: PropTypes.array,
   columnName: PropTypes.string,
   anyFiltersAreSet: PropTypes.bool,
