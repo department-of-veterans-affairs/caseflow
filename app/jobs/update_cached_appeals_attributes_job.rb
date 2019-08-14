@@ -22,12 +22,26 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def cache_ama_appeals
-    appeals = Appeal.find(Task.open.where(appeal_type: Appeal.name).pluck(:appeal_id).uniq)
+    appeals = Appeal.find(open_appeals_from_tasks)
     request_issues_to_cache = request_issue_counts_for_appeal_ids(appeals.pluck(:id))
     veteran_names_to_cache = veteran_names_for_file_numbers(appeals.pluck(:veteran_file_number))
     appeal_aod_status = aod_status_for_appeals(appeals)
 
-    appeals_to_cache = appeals.map do |appeal|
+    appeals_to_cache = collate_cached_ama_appeal_data(appeals,
+                                                      request_issues_to_cache,
+                                                      appeal_aod_status,
+                                                      veteran_names_to_cache)
+
+    update_columns = [:case_type, :closest_regional_office_city, :docket_type, :docket_number, :is_aod, :issue_count,
+                      :veteran_name]
+    CachedAppeal.import appeals_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
+                                                                     columns: update_columns }
+
+    increment_appeal_count(appeals_to_cache.length, Appeal.name)
+  end
+
+  def collate_cached_ama_appeal_data(appeals, request_issues_to_cache, appeal_aod_status, veteran_names_to_cache)
+    appeals.map do |appeal|
       regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
       {
         appeal_id: appeal.id,
@@ -41,18 +55,10 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         veteran_name: veteran_names_to_cache[appeal.veteran_file_number]
       }
     end
+  end
 
-    update_columns = [:case_type,
-                      :closest_regional_office_city,
-                      :docket_type,
-                      :docket_number,
-                      :is_aod,
-                      :issue_count,
-                      :veteran_name]
-    CachedAppeal.import appeals_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
-                                                                     columns: update_columns }
-
-    increment_appeal_count(appeals_to_cache.length, Appeal.name)
+  def open_appeals_from_tasks
+    Task.open.where(appeal_type: Appeal.name).pluck(:appeal_id).uniq
   end
 
   def cache_legacy_appeals
