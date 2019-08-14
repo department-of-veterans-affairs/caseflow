@@ -403,13 +403,8 @@ RSpec.feature "Search", :all_dbs do
     let(:non_queue_user) { create(:user) }
 
     before do
-      # FeatureToggle.enable!(:case_search_home_page)
       User.authenticate!(user: non_queue_user)
     end
-
-    # after do
-    #   FeatureToggle.disable!(:case_search_home_page)
-    # end
 
     scenario "logo links to / instead of /queue" do
       visit "/"
