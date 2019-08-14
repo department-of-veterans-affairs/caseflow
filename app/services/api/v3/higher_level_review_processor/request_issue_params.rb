@@ -127,7 +127,7 @@ module Api::V3::HigherLevelReviewProcessor::RequestIssueParams
       def self.invalid_category(params)
         category, benefit_type = params.values_at(:nonrating_issue_category, :benefit_type)
         return nil if category.blank? || category.in?(
-          Api::V3::HigherLevelReviewProcessor::CATEGORY_BY_BENEFIT_TYPE[benefit_type]
+          Api::V3::HigherLevelReviewProcessor::CATEGORIES_BY_BENEFIT_TYPE[benefit_type]
         )
 
         :unknown_category_for_benefit_type
