@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 // This lil' bundle o' joy is a workaround for an Enzyme bug.
 // The Enzyme full renderer produces a structure like:
 //
