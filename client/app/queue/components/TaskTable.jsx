@@ -183,6 +183,7 @@ export const assignedToColumn = (tasks) => {
     columnName: 'assignedTo.name',
     anyFiltersAreSet: true,
     label: 'Filter by assignee',
+    backendCanSort: true,
     valueFunction: (task) => task.assignedTo.name,
     getSortValue: (task) => task.assignedTo.name
   };
