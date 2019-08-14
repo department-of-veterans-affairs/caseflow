@@ -14,16 +14,6 @@ RSpec.describe HomeController, :postgres, type: :controller do
       end
     end
 
-    context "when visitor is logged in, does not have a personal queue, nor case search access" do
-      let!(:current_user) { User.authenticate! }
-
-      it "should redirect to /help" do
-        get :index
-        expect(response.status).to eq 302
-        expect(URI.parse(response.location).path).to eq("/help")
-      end
-    end
-
     context "when visitor is logged in" do
       let!(:current_user) { User.authenticate! }
 

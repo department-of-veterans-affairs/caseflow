@@ -168,15 +168,12 @@ class ApplicationController < ApplicationBaseController
   end
 
   def case_search_home_page
-    if current_user&.authenticated?
-      return false if current_user.admin?
-      return false if current_user.organization_queue_user? || current_user.vso_employee?
-      return false if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
-      return false if current_user.colocated_in_vacols?
+    return false if current_user.admin?
+    return false if current_user.organization_queue_user? || current_user.vso_employee?
+    return false if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
+    return false if current_user.colocated_in_vacols?
 
-      return true
-    end
-    false
+    true
   end
   helper_method :case_search_home_page
 

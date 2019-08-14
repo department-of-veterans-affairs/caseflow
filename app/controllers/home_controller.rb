@@ -4,10 +4,8 @@ class HomeController < ApplicationController
   skip_before_action :verify_authentication
 
   def index
-    if current_user&.authenticated?
-      render("queue/index")
-    else
-      redirect_to("/help")
-    end
+    return redirect_to("/help") unless current_user&.authenticated?
+
+    render("queue/index")
   end
 end
