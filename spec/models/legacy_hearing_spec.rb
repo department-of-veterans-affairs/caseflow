@@ -394,7 +394,7 @@ describe LegacyHearing, :all_dbs do
         let(:hearing_day) do
           create(
             :hearing_day,
-            scheduled_for: DateTime.new(2018, 1, 1),
+            scheduled_for: Time.zone.local(2018, 1, 1),
             request_type: HearingDay::REQUEST_TYPES[:central]
           )
         end
