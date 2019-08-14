@@ -21,16 +21,8 @@ class Organizations::TaskPagesController < OrganizationsController
   # }>
 
   def index
-    tasks = TaskPager.new(
-      assignee: organization,
-      tab_name: params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM.to_sym],
-      page: params[Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM.to_sym],
-      sort_order: params[Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM.to_sym],
-      sort_by: params[Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM.to_sym]
-    ).paged_tasks
-
     render json: {
-      tasks: json_tasks(tasks)
+      tasks: json_tasks(paged_tasks)
     }
   end
 
@@ -38,6 +30,17 @@ class Organizations::TaskPagesController < OrganizationsController
 
   def organization_url
     params[:organization_url]
+  end
+
+  def paged_tasks
+    TaskPager.new(
+      assignee: organization,
+      tab_name: params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM.to_sym],
+      page: params[Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM.to_sym],
+      sort_order: params[Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM.to_sym],
+      sort_by: params[Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM.to_sym],
+      filters: params[Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM.to_sym]
+    ).paged_tasks
   end
 
   def json_tasks(tasks)

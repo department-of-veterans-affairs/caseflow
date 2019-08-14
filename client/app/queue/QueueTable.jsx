@@ -313,7 +313,11 @@ export default class QueueTable extends React.PureComponent {
   // &page=2
   // &sort_by=detailsColumn
   // &order=desc
+  // &filter[]=col=label&val=Unaccredited rep,Extension&filter[]=col=appeal.caseType&val=null
   requestUrl = () => {
+    const { filteredByList } = this.state;
+    const filterParams = [];
+
     // Request currentPage + 1 since our API indexes starting at 1 and the pagination element indexes starting at 0.
     const params = { [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: this.state.currentPage + 1 };
 
@@ -325,9 +329,24 @@ export default class QueueTable extends React.PureComponent {
         QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC;
     }
 
+    if (!_.isEmpty(filteredByList)) {
+      for (const columnName in filteredByList) {
+        if (!_.isEmpty(filteredByList[columnName])) {
+          const column = this.props.columns.find((col) => col.columnName === columnName);
+
+          filterParams.push(
+            `col=${column.name}&val=${filteredByList[columnName].join(',')}`
+          );
+        }
+      }
+    }
+
     const queryString = Object.keys(params).map(
       (key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
     ).
+      concat(filterParams.map((filterParam) =>
+        `${encodeURIComponent(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`)}=${encodeURIComponent(filterParam)}`
+      )).
       join('&');
 
     return `${this.props.taskPagesApiEndpoint}&${queryString}`;
