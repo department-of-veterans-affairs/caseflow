@@ -109,4 +109,47 @@ describe Api::V3::HigherLevelReviewProcessor::Error do
       )
     end
   end
+
+  context "::StartError" do
+    subject { Api::V3::HigherLevelReviewProcessor::Error::StartError }
+    it("returns the error_code of intake if it's truthy") do
+      intake = Intake.new
+      code = "banana"
+      intake.error_code = code
+      start_error = subject.new(intake)
+      expect(start_error.error_code).to eq(code)
+    end
+    it("returns :intake_start_failed if passed in error_code is falsey") do
+      intake = Intake.new
+      expect(intake.error_code).to be_nil
+      start_error = subject.new(intake)
+      expect(start_error.error_code).to be(:intake_start_failed)
+    end
+  end
+
+  context "::ReviewError" do
+    subject { Api::V3::HigherLevelReviewProcessor::Error::ReviewError }
+    it("returns the error_code of intake if it's truthy") do
+      intake = Intake.new
+      code = "banana"
+      intake.error_code = code
+      review_error = subject.new(intake)
+      expect(review_error.error_code).to eq(code)
+    end
+    it("returns :intake_review_failed if passed in error_code is falsey") do
+      intake = Intake.new
+      expect(intake.error_code).to be_nil
+      review_error = subject.new(intake)
+      expect(review_error.error_code).to be(:intake_review_failed)
+    end
+    it("adds intake.detail's full error messages to ReviewError instance's message") do
+      intake = Intake.new
+      intake.detail = HigherLevelReview.new
+      intake.detail.errors.add :id
+      review_error = subject.new(intake)
+      expect(review_error.message).to eq(
+        "intake.review!(review_params) did not throw an exception, but did return a falsey value:\nId is invalid"
+      )
+    end
+  end
 end

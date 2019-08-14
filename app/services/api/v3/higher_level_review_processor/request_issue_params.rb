@@ -7,12 +7,15 @@
 #
 # Most of the methods below are in support of:
 #
-# RequestIssueParams::ApiShape.to_intakes_controller_shape
-#   for converting an API-style request issue params object to an
-#   IntakesController-style request issue params obje
+#   RequestIssueParams::ApiShape.to_intakes_controller_shape
+#     for converting an API-style request issue params object to an
+#     IntakesController-style request issue params object
+#  
+#   RequestIssueParams::IntakesControllerShape.validate
+#     returns a an Error or nil
 #
-# RequestIssueParams::IntakesControllerShape.validate
-#   returns a an Error or nil
+# for more info: 
+#   https://github.com/department-of-veterans-affairs/caseflow/issues/11734
 
 module Api::V3::HigherLevelReviewProcessor::RequestIssueParams
   PERMITTED_API_KEYS = [
@@ -73,24 +76,24 @@ module Api::V3::HigherLevelReviewProcessor::RequestIssueParams
   # methods for request issue params that are IntakesController shaped:
 
   #   {
-  #     rating_issue_reference_id: nil,
-  #     rating_issue_diagnostic_code: nil,
-  #     decision_text: nil,
-  #     decision_date: nil,
-  #     nonrating_issue_category: nil,
-  #     benefit_type: nil,
-  #     notes: nil,
-  #     is_unidentified: nil,
-  #     untimely_exemption: nil,
-  #     untimely_exemption_notes: nil,
-  #     ramp_claim_id: nil,
-  #     vacols_id: nil,
-  #     vacols_sequence_id: nil,
-  #     contested_decision_issue_id: nil,
-  #     ineligible_reason: nil,
-  #     ineligible_due_to_id: nil,
-  #     edited_description: nil,
-  #     correction_type: nil
+  #     rating_issue_reference_id
+  #     rating_issue_diagnostic_code
+  #     decision_text
+  #     decision_date
+  #     nonrating_issue_category
+  #     benefit_type
+  #     notes
+  #     is_unidentified
+  #     untimely_exemption
+  #     untimely_exemption_notes
+  #     ramp_claim_id
+  #     vacols_id
+  #     vacols_sequence_id
+  #     contested_decision_issue_id
+  #     ineligible_reason
+  #     ineligible_due_to_id
+  #     edited_description
+  #     correction_type
   #   }
 
   module IntakesControllerShape

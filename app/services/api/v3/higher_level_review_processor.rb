@@ -69,7 +69,7 @@ class Api::V3::HigherLevelReviewProcessor
 
     # pulls :included, :benefit_type, and :legacy_opt_in_approved from params
     def included_objects_benefit_type_legacy_opt_in_approved(params)
-      [params[:included], review_params_from_params(params).values_at(:benefit_type, :legacy_opt_in_approved)]
+      [params[:included], *review_params_from_params(params).values_at(:benefit_type, :legacy_opt_in_approved)]
     end
 
     # returns params for the "complete" step for the IntakesController and errors
@@ -79,8 +79,12 @@ class Api::V3::HigherLevelReviewProcessor
       included_objects.each do |obj|
         next unless obj[:type] == "RequestIssue"
 
-        request_issue_params = RequestIssueParams::ApiShape.to_intakes_controller_shape(obj, benefit_type)
-        error = RequestIssueParams::IntakesControllerShape.validate(request_issue_params, legacy_opt_in_approved)
+        request_issue_params = self::RequestIssueParams::ApiShape.to_intakes_controller_shape(
+          obj, benefit_type
+        )
+        error = self::RequestIssueParams::IntakesControllerShape.validate(
+          request_issue_params, legacy_opt_in_approved
+        )
         if error
           errors << error
         else
@@ -106,9 +110,9 @@ class Api::V3::HigherLevelReviewProcessor
     @review_params = self.class.review_params_from_params(params)
   end
 
-  def initialize_complete_params(_params)
-    @complete_params, errors = self.class.complete_params_and_errors_from_params(
-      *included_objects_benefit_type_legacy_opt_in_approved
+  def initialize_complete_params(params)
+    @complete_params, errors = self.class.complete_params_and_errors(
+      *self.class.included_objects_benefit_type_legacy_opt_in_approved(params)
     )
     @errors += errors
   end
