@@ -53,7 +53,7 @@ class DecisionDocument < ApplicationRecord
     attempted!
     upload_to_vbms!
 
-    if FeatureToggle.enabled?(:create_board_grant_effectuations) && appeal.is_a?(Appeal)
+    if appeal.is_a?(Appeal)
       create_board_grant_effectuations!
       process_board_grant_effectuations!
       appeal.create_remand_supplemental_claims!
