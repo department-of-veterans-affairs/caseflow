@@ -27,8 +27,13 @@ RSpec.describe Api::V3::BaseController, type: :controller do
     end
 
     describe "when enabled" do
-      it "should return a 200 response" do
+      before do
         FeatureToggle.enable!(:api_v3)
+      end
+      after do
+        FeatureToggle.disable!(:api_v3)
+      end
+      it "should return a 200 response" do
         get :index
         expect(response).to have_http_status(:ok)
       end

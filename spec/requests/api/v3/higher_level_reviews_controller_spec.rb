@@ -6,6 +6,9 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :postgres, type:
   before do
     FeatureToggle.enable!(:api_v3)
   end
+  after do
+    FeatureToggle.disable!(:api_v3)
+  end
 
   let!(:api_key) { ApiKey.create!(consumer_name: "ApiV3 Test Consumer").key_string }
 
