@@ -16,7 +16,7 @@ class Organizations::TaskPagesController < OrganizationsController
   #   "tab"=>"on_hold",
   #   "sort_by"=>"case_details_link",
   #   "order"=>"desc",
-  #   "filter"=>["col=docket_type&val=legacy", "col=task_action&val=translation"],
+  #   "filter"=>["col=docketNumberColumn&val=legacy,evidence_submission", "col=taskColumn&val=Unaccredited rep,Extension"],
   #   "page"=>"3"
   # }>
 

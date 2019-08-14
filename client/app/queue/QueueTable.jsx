@@ -314,7 +314,7 @@ export default class QueueTable extends React.PureComponent {
   // &page=2
   // &sort_by=detailsColumn
   // &order=desc
-  // &filter[]=col=label&val=Unaccredited rep,Extension&filter[]=col=appeal.caseType&val=null
+  // &filter[]=col=docketNumberColumn&val=legacy,evidence_submission&filters[]=col=taskColumn&val=Unaccredited rep
   requestUrl = () => {
     const { filteredByList } = this.state;
     const filterParams = [];
