@@ -24,7 +24,7 @@ class Helpers::Sanitizers
 
   # Utility method to randomly either write a value, or nil
   def random_or_nil(value)
-    return value if ::Faker::Number.number(1).to_i < 5
+    return value if ::Faker::Number.number(digits: 1).to_i < 5
 
     nil
   end
@@ -133,7 +133,7 @@ class Helpers::Sanitizers
         login: login,
         stafkey: login,
         first_name: first_name,
-        middle_initial: ::Faker::Name.initials(1),
+        middle_initial: ::Faker::Name.initials(number: 1),
         last_name: last_name
       }
     end
@@ -218,12 +218,12 @@ class Helpers::Sanitizers
     ::Faker::Config.random = Random.new(folder.ticknum.to_i)
 
     folder.assign_attributes(
-      titrnum: ::Faker::Number.number(9) + "S",
-      tinum: ::Faker::Number.number(7),
+      titrnum: ::Faker::Number.number(digits: 9) + "S",
+      tinum: ::Faker::Number.number(digits: 7),
       tiwpptr: random_or_nil(::Faker::Lorem.sentence),
       tispare1: exist_hash["tispare1"] ? ::Faker::Name.last_name : nil,
       tispare2: exist_hash["tispare2"] ? ::Faker::Name.first_name : nil,
-      tiread2: exist_hash["tiread2"] ? ::Faker::Number.number(7) : nil
+      tiread2: exist_hash["tiread2"] ? ::Faker::Number.number(digits: 7) : nil
     )
   end
 
@@ -239,7 +239,7 @@ class Helpers::Sanitizers
     representative.assign_attributes(
       replast: ::Faker::Name.last_name,
       repfirst: ::Faker::Name.first_name,
-      repmi: ::Faker::Name.initials(1),
+      repmi: ::Faker::Name.initials(number: 1),
       repsuf: ::Faker::Name.suffix,
       repaddr1: ::Faker::Address.street_address,
       repaddr2: ::Faker::Address.secondary_address,
@@ -260,12 +260,12 @@ class Helpers::Sanitizers
     ::Faker::Config.random = Random.new(Digest::SHA256.hexdigest(correspondent.stafkey).to_i(16))
 
     correspondent.assign_attributes(
-      ssn: random_or_nil(::Faker::Number.number(9)),
+      ssn: random_or_nil(::Faker::Number.number(digits: 9)),
       ssalut: ::Faker::Name.suffix,
       snamef: ::Faker::Name.first_name,
-      snamemi: ::Faker::Name.initials(1),
+      snamemi: ::Faker::Name.initials(number: 1),
       snamel: ::Faker::Name.last_name,
-      slogid: ::Faker::Number.number(9) + "S",
+      slogid: ::Faker::Number.number(digits: 9) + "S",
       stitle: ::Faker::Name.prefix,
       sorg: random_or_nil(::Faker::Lorem.sentence),
       sdept: random_or_nil(::Faker::Lorem.sentence),
@@ -282,11 +282,11 @@ class Helpers::Sanitizers
       snotes: random_or_nil(::Faker::Lorem.sentence),
       sspare1: exist_hash["sspare1"] ? ::Faker::Name.last_name : nil,
       sspare2: exist_hash["sspare2"] ? ::Faker::Name.first_name : nil,
-      sspare3: exist_hash["sspare3"] ? ::Faker::Name.initials(1) : nil,
+      sspare3: exist_hash["sspare3"] ? ::Faker::Name.initials(number: 1) : nil,
       sspare4: exist_hash["sspare4"] ? ::Faker::Name.suffix : nil,
-      sfnod: exist_hash["sfnod"] ? ::Faker::Date.between(Date.new(1980), Date.new(2018)) : nil,
-      sdob: random_or_nil(::Faker::Date.between(Date.new(1960), Date.new(1990))),
-      sgender: (::Faker::Number.number(1).to_i < 5) ? "M" : "F"
+      sfnod: exist_hash["sfnod"] ? ::Faker::Date.between(from: Date.new(1980), to: Date.new(2018)) : nil,
+      sdob: random_or_nil(::Faker::Date.between(from: Date.new(1960), to: Date.new(1990))),
+      sgender: (::Faker::Number.number(digits: 1).to_i < 5) ? "M" : "F"
     )
   end
 
@@ -356,7 +356,7 @@ class Helpers::Sanitizers
     decass.assign_attributes(
       debmcom: exist_hash["debmcom"] ? ::Faker::Lorem.sentence : nil,
       deatcom: exist_hash["deatcom"] ? ::Faker::Lorem.sentence : nil,
-      dehours: exist_hash["dehours"] ? ::Faker::Number.number(1).to_d : nil
+      dehours: exist_hash["dehours"] ? ::Faker::Number.number(digits: 1).to_d : nil
     )
   end
 
@@ -376,8 +376,8 @@ class Helpers::Sanitizers
     ::Faker::Config.random = Random.new(vacols_case.bfkey.to_i)
 
     vacols_case.assign_attributes(
-      bfcorlid: ::Faker::Number.number(9) + "S",
-      bfcclkid: ::Faker::Number.number(7)
+      bfcorlid: ::Faker::Number.number(digits: 9) + "S",
+      bfcclkid: ::Faker::Number.number(digits: 7)
     )
   end
 end
