@@ -54,10 +54,10 @@ const Alerts = ({
 );
 
 Alerts.propTypes = {
-  dailyDocket: {
+  dailyDocket: PropTypes.shape({
     lock: PropTypes.bool,
     scheduledFor: PropTypes.string
-  },
+  }),
   dailyDocketServerError: PropTypes.bool,
   displayLockSuccessMessage: PropTypes.bool,
   onErrorHearingDayLock: PropTypes.bool,
