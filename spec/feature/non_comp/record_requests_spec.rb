@@ -5,12 +5,7 @@ require "rails_helper"
 
 feature "NonComp Record Request Page", :postgres do
   before do
-    FeatureToggle.enable!(:decision_reviews)
     Timecop.freeze(post_ama_start_date)
-  end
-
-  after do
-    FeatureToggle.disable!(:decision_reviews)
   end
 
   def submit_form
