@@ -4,7 +4,7 @@
     userId: current_user.id,
     userRole: (current_user.vacols_roles.first || "").capitalize,
     userCssId: current_user.css_id,
-    organizations: current_user.selectable_organizations.map {|o| o.slice(:id, :name, :url)},
+    organizations: current_user.selectable_organizations.map {|o| o.slice(:name, :url)},
     userIsVsoEmployee: current_user.vso_employee?,
     canEditAod: AodTeam.singleton.user_has_access?(current_user),
     caseSearchHomePage: case_search_home_page,
@@ -13,7 +13,8 @@
     feedbackUrl: feedback_url,
     flash: flash,
     buildDate: build_date,
-    hasCaseDetailsRole: (current_user.roles.include? "Case Details"),
+    hasCaseDetailsRole: current_user.roles.include?('Case Details'),
+    userCanViewHearingSchedule: current_user.can_view_hearing_schedule?,
     featureToggles: {
       judge_case_review_checkout: FeatureToggle.enabled?(:judge_case_review_checkout, user: current_user),
       attorney_assignment_to_colocated: FeatureToggle.enabled?(:attorney_assignment_to_colocated, user: current_user)

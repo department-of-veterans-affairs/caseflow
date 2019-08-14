@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "faker"
+require "support/vacols_database_cleaner"
 
 describe VaDotGovAddressValidator do
-  describe "#update_closest_ro_and_ahls" do
+  describe "#update_closest_ro_and_ahls", :all_dbs do
     let!(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
     let!(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
     let!(:valid_address_country_code) { "US" }
@@ -115,7 +115,7 @@ describe VaDotGovAddressValidator do
           expect(appeal.tasks.where(type: "HearingAdminActionVerifyAddressTask").count).to eq(1)
         end
 
-        # this passes locally, but CircleCi is not use BGS fake address_records
+        # this passes locally, but CircleCi is not using BGS fake address_records
         # correctly. skipping.
         context "and veteran's country is Philippines", skip: "fails CircleCi" do
           before do
@@ -165,25 +165,6 @@ describe VaDotGovAddressValidator do
         .and_return(valid_address_response)
     end
 
-    %w[GQ PH VI].each do |foreign_country_code|
-      context "when veteran lives in country with code #{foreign_country_code}" do
-        let!(:valid_address_country_code) { foreign_country_code }
-        let!(:expected_state_code) do
-          {
-            GQ: "HI",
-            PH: "PI",
-            VI: "PR"
-          }[foreign_country_code.to_sym]
-        end
-
-        subject { appeal.va_dot_gov_address_validator.facility_ids_to_geomatch }
-
-        it "returns facility ids for appropriate state" do
-          expect(subject).to eq(RegionalOffice.ro_facility_ids_for_state(expected_state_code))
-        end
-      end
-    end
-
     context "when veteran with legacy appeal requests central office and does not live in DC, MD, or VA" do
       let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfhr: "1")) }
       subject { appeal.va_dot_gov_address_validator.facility_ids_to_geomatch }
@@ -198,17 +179,7 @@ describe VaDotGovAddressValidator do
       subject { appeal.va_dot_gov_address_validator.facility_ids_to_geomatch }
 
       it "adds San Antonio Satellite Office" do
-        expect(subject).to match_array %w[vba_349 vba_362 vha_671BY]
-      end
-    end
-
-    context "when veteran with legacy appeal lives in MD" do
-      let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
-      let!(:valid_address_state_code) { "MD" }
-      subject { appeal.va_dot_gov_address_validator.facility_ids_to_geomatch }
-
-      it "adds DC regional office" do
-        expect(subject).to match_array %w[vba_313 vba_372]
+        expect(subject).to match_array(RegionalOffice.ro_facility_ids + %w[vha_671BY])
       end
     end
   end

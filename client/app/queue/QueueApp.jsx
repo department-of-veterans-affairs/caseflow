@@ -4,7 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Route, BrowserRouter, Switch } from 'react-router-dom';
+import { Route, BrowserRouter } from 'react-router-dom';
 import StringUtil from '../util/StringUtil';
 
 import {
@@ -60,7 +60,6 @@ import SelectSpecialIssuesView from './SelectSpecialIssuesView';
 import SpecialIssueLoadingScreen from './SpecialIssueLoadingScreen';
 import AddEditIssueView from './AddEditIssueView';
 import SelectRemandReasonsView from './SelectRemandReasonsView';
-import BeaamAppealListView from './BeaamAppealListView';
 import OrganizationQueue from './OrganizationQueue';
 import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
@@ -118,10 +117,6 @@ class QueueApp extends React.PureComponent {
     {this.viewForUserRole()}
   </QueueLoadingScreen>;
 
-  routedBeaamList = () => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()} urlToLoad="/beaam_appeals">
-    <BeaamAppealListView {...this.props} />
-  </QueueLoadingScreen>;
-
   routedJudgeQueueList = (label) => ({ match }) => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
     {label === 'assign' ?
       <JudgeAssignTaskListView {...this.props} match={match} /> :
@@ -129,7 +124,8 @@ class QueueApp extends React.PureComponent {
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <CaseDetailsView appealId={props.match.params.appealId}
-    hasCaseDetailsRole={this.props.hasCaseDetailsRole} />;
+    userCanAccessReader={!this.props.hasCaseDetailsRole && !this.props.userCanViewHearingSchedule}
+  />;
 
   routedQueueDetailWithLoadingScreen = (props) => <CaseDetailsLoadingScreen
     {...this.propsForQueueLoadingScreen()}
@@ -297,18 +293,11 @@ class QueueApp extends React.PureComponent {
             path="/queue"
             title={`${this.queueName()}  | Caseflow`}
             render={this.routedQueueList} />
-          <Switch>
-            <PageRoute
-              exact
-              path="/queue/beaam"
-              title="BEAAM Appeals"
-              render={this.routedBeaamList} />
-            <PageRoute
-              exact
-              path="/queue/:userId"
-              title={`${this.queueName()}  | Caseflow`}
-              render={this.routedQueueList} />
-          </Switch>
+          <PageRoute
+            exact
+            path="/queue/:userId"
+            title={`${this.queueName()}  | Caseflow`}
+            render={this.routedQueueList} />
           <PageRoute
             exact
             path="/queue/:userId/review"
@@ -540,7 +529,24 @@ QueueApp.propTypes = {
   userRole: PropTypes.string.isRequired,
   userCssId: PropTypes.string.isRequired,
   dropdownUrls: PropTypes.array,
-  buildDate: PropTypes.string
+  buildDate: PropTypes.string,
+  setCanEditAod: PropTypes.func,
+  canEditAod: PropTypes.bool,
+  setFeatureToggles: PropTypes.func,
+  featureToggles: PropTypes.object,
+  setUserRole: PropTypes.func,
+  setUserCssId: PropTypes.func,
+  setOrganizations: PropTypes.func,
+  organizations: PropTypes.array,
+  setUserIsVsoEmployee: PropTypes.func,
+  userIsVsoEmployee: PropTypes.bool,
+  setFeedbackUrl: PropTypes.func,
+  hasCaseDetailsRole: PropTypes.bool,
+  caseSearchHomePage: PropTypes.bool,
+  applicationUrls: PropTypes.array,
+  flash: PropTypes.array,
+  reviewActionType: PropTypes.string,
+  userCanViewHearingSchedule: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

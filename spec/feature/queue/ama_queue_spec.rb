@@ -9,27 +9,30 @@ RSpec.feature "AmaQueue", :all_dbs do
   end
 
   context "user with case details role " do
-    let!(:appeal) { create(:appeal) }
+    let(:veteran_file_number) { 190_802_172 }
+    let(:veteran) { create(:veteran, file_number: veteran_file_number, first_name: "Segan", last_name: "Vecellio") }
+    let!(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
     let(:no_queue_user) { create(:user, roles: ["Case Details"]) }
 
-    it "should not be able to access queue and redirect to search" do
-      step "case details role tries to access queue" do
-        User.authenticate!(user: no_queue_user)
+    before do
+      User.authenticate!(user: no_queue_user)
+    end
+
+    scenario "user visits queue" do
+      step "is redirected to search" do
         visit "/queue"
         expect(page).to have_content("Search")
         expect(current_path).to eq "/search"
       end
-    end
-    it "should be able to search for a case",
-       skip: "flake https://github.com/department-of-veterans-affairs/caseflow/issues/10516#issuecomment-504416406" do
-      step "by veteran file number" do
-        User.authenticate!(user: no_queue_user)
-        visit "/queue"
-        expect(page).to have_content("Search")
-        expect(current_path).to eq "/search"
-        fill_in("searchBarEmptyList", with: appeal.veteran_file_number)
-        click_on("submit-search-searchBarEmptyList")
+
+      step "searches for a veteran and clicks the search result" do
+        fill_in "searchBarEmptyList", with: appeal.veteran_file_number
+        find("#submit-search-searchBarEmptyList").click
         click_on(appeal.docket_number)
+      end
+
+      step "views their case details which does not have the view docs link" do
+        expect(page).to have_content("#{veteran.first_name} #{veteran.last_name}")
         expect(page).to_not have_content("Veteran Documents")
       end
     end
@@ -60,7 +63,6 @@ RSpec.feature "AmaQueue", :all_dbs do
 
     before do
       Fakes::Initializer.load!
-      FeatureToggle.enable!(:queue_beaam_appeals)
 
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
         appeals.first.claimants.first.participant_id => {
@@ -69,10 +71,6 @@ RSpec.feature "AmaQueue", :all_dbs do
           participant_id: participant_id
         }
       )
-    end
-
-    after do
-      FeatureToggle.disable!(:queue_beaam_appeals)
     end
 
     let(:poa_address) { "123 Poplar St." }

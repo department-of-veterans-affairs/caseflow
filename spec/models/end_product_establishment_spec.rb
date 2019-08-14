@@ -236,7 +236,7 @@ describe EndProductEstablishment, :postgres do
         %w[030 031 032].each do |modifier|
           Generators::EndProduct.build(
             veteran_file_number: veteran_file_number,
-            bgs_attrs: { end_product_type_code: modifier, status_type_code: "CAN" }
+            bgs_attrs: { end_product_type_code: modifier, status_type_code: "PEND" }
           )
         end
       end
@@ -261,21 +261,6 @@ describe EndProductEstablishment, :postgres do
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           hash_including(veteran_hash: veteran.reload.to_vbms_hash)
         )
-      end
-    end
-
-    context "when existing EP has status CAN" do
-      before do
-        %w[030 031 032].each do |modifier|
-          Generators::EndProduct.build(
-            veteran_file_number: veteran_file_number,
-            bgs_attrs: { end_product_type_code: modifier, status_type_code: "CAN" }
-          )
-        end
-      end
-
-      it "considers those EP modifiers as closed" do
-        expect { subject }.to raise_error(EndProductModifierFinder::NoAvailableModifiers)
       end
     end
 

@@ -5,12 +5,16 @@ class AssignedTasksTab < QueueTab
     COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE
   end
 
-  def name
+  def self.tab_name
     Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
   end
 
   def description
     COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION
+  end
+
+  def tasks
+    Task.includes(*task_includes).visible_in_queue_table_view.active.where(parent: on_hold_tasks)
   end
 
   def columns

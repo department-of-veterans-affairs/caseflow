@@ -8,8 +8,4 @@ class CaseflowJob < ApplicationJob
   def slack_service
     @slack_service ||= SlackService.new(url: slack_url)
   end
-
-  def deploy_env
-    ENV.fetch("DEPLOY_ENV", "development")
-  end
 end

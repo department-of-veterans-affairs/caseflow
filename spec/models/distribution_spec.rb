@@ -30,18 +30,8 @@ describe Distribution, :all_dbs do
     FeatureToggle.disable!(:test_facols)
   end
 
-  # We use StartDistributionJob.perform_now in the test environment.
-  #
-  # context "StartDistributionJob" do
-  #   ActiveJob::Base.queue_adapter = :test
-
-  #   it "enqueues a job" do
-  #     expect { Distribution.create(judge: judge) }.to have_enqueued_job(StartDistributionJob)
-  #   end
-  # end
-
   context "#distribute!" do
-    subject { Distribution.create(judge: judge) }
+    subject { Distribution.create!(judge: judge) }
 
     let(:legacy_priority_count) { 14 }
 
@@ -199,21 +189,12 @@ describe Distribution, :all_dbs do
       expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count).to eq(2)
     end
 
-    # context "when the judge is only recieves hearing cases" do
-    #   it "correctly distributes cases to the judge" do
-    #     subject.distribute!
-    #     expect(subject.valid?).to eq(true)
-    #     expect(subject.statistics["batch_size"]).to eq(10)
-    #     expect(subject.distributed_cases.count).to eq(7)
-    #     expect(subject.distributed_cases.where(genpop: false).count).to eq(7)
-    #   end
-    # end
-
     context "when the job errors" do
       it "marks the distribution as error" do
-        allow_any_instance_of(LegacyDocket).to receive(:distribute_priority_appeals).and_raise(StandardError)
+        allow_any_instance_of(LegacyDocket).to receive(:distribute_nonpriority_appeals).and_raise(StandardError)
         expect { subject.distribute! }.to raise_error(StandardError)
         expect(subject.status).to eq("error")
+        expect(subject.distributed_cases.count).to eq(0)
       end
     end
 
@@ -237,6 +218,24 @@ describe Distribution, :all_dbs do
     subject { Distribution.create(judge: user) }
 
     let(:user) { judge }
+
+    context "existing Distribution record with status pending" do
+      let!(:existing_distribution) { create(:distribution, judge: judge) }
+
+      it "prevents new Distribution record" do
+        expect(subject.errors.details).to have_key(:judge)
+        expect(subject.errors.details[:judge]).to include(error: :pending_distribution)
+      end
+    end
+
+    context "existing Distribution record with status started" do
+      let!(:existing_distribution) { create(:distribution, judge: judge, status: :started) }
+
+      it "prevents new Distribution record" do
+        expect(subject.errors.details).to have_key(:judge)
+        expect(subject.errors.details[:judge]).to include(error: :pending_distribution)
+      end
+    end
 
     context "when the user is not a judge in VACOLS" do
       let(:user) { create(:user) }

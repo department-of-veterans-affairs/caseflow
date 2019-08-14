@@ -573,7 +573,7 @@
     "state": "DE",
     "timezone": "America/New_York",
     "hold_hearings": false,
-    "facility_locator_id": "vba_460",
+    "facility_locator_id": null,
     "alternate_locations": null
   },
   "RO61": {

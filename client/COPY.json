@@ -167,7 +167,6 @@
 
   "JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL": "Additional Comments",
   "JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_SUBHEAD": "Share more details about your evaluation",
-  "BEAAM_QUEUE_TABLE_TITLE": "List of BEAAM Appeals",
 
   "JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE": "You have successfully submitted an OMO for %s.",
   "JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS.",

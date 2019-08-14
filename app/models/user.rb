@@ -18,9 +18,6 @@ class User < ApplicationRecord
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_writer :regional_office
 
-  FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
-               "Reader", "Hearing Prep", "Mail Intake", "Admin Intake", "Case Details"].freeze
-
   # Because of the function character limit, we need to also alias some functions
   FUNCTION_ALIASES = {
     "Manage Claims Establishme" => ["Manage Claim Establishment"],
@@ -72,6 +69,22 @@ class User < ApplicationRecord
 
   def hearings_user?
     can_any_of_these_roles?(["Build HearSched", "Edit HearSched", "RO ViewHearSched", "VSO", "Hearing Prep"])
+  end
+
+  def can_assign_hearing_schedule?
+    can_any_of_these_roles?(["Edit HearSched", "Build HearSched"])
+  end
+
+  def can_view_hearing_schedule?
+    can?("RO ViewHearSched") && !can?("Build HearSched") && !can?("Edit HearSched")
+  end
+
+  def can_vso_hearing_schedule?
+    can?("VSO") && !can?("RO ViewHearSched") && !can?("Build HearSched") && !can?("Edit HearSched")
+  end
+
+  def in_hearing_or_transcription_organization?
+    HearingsManagement.singleton.users.include?(self) || TranscriptionTeam.singleton.users.include?(self)
   end
 
   def administer_org_users?
@@ -247,11 +260,9 @@ class User < ApplicationRecord
 
   def selectable_organizations
     orgs = organizations.select(&:selectable_in_queue?)
-    judge_team = JudgeTeam.for_judge(self)
 
-    if judge_team
+    if JudgeTeam.for_judge(self) || judge_in_vacols?
       orgs << {
-        id: judge_team.id,
         name: "Assign",
         url: format("queue/%s/assign", id)
       }

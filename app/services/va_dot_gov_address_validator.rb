@@ -35,6 +35,10 @@ class VaDotGovAddressValidator
                        end
   end
 
+  def state_code
+    map_country_code_to_state
+  end
+
   def closest_regional_office
     @closest_regional_office ||= begin
       return unless closest_regional_office_response.success?
@@ -78,8 +82,10 @@ class VaDotGovAddressValidator
   end
 
   def facility_ids_to_geomatch
-    facility_ids = RegionalOffice.ro_facility_ids_for_state(state_code_for_regional_office)
-    facility_ids << "vba_372" if appeal_is_legacy_and_veteran_lives_in_va_or_md? # include DC's facility id
+    # only match to Central office if veteran requested central office
+    return ["vba_372"] if appeal_is_legacy_and_veteran_requested_central_office?
+
+    facility_ids = RegionalOffice.ro_facility_ids
     # veterans whose closest AHL is San Antonio should have Houston as the RO
     # even though Waco may be closer. This is a RO/AHL policy quirk.
     # see https://github.com/department-of-veterans-affairs/caseflow/issues/9858
@@ -91,7 +97,7 @@ class VaDotGovAddressValidator
   private
 
   def update_closest_regional_office
-    appeal.update(closest_regional_office: closest_regional_office_with_exceptions)
+    appeal.update(closest_regional_office: closest_regional_office)
   end
 
   def destroy_existing_available_hearing_locations!
@@ -154,11 +160,5 @@ class VaDotGovAddressValidator
 
       { lat: lat_lng[0], long: lat_lng[1], country_code: address.country, state_code: address.state }
     end
-  end
-
-  def state_code_for_regional_office
-    return "DC" if appeal_is_legacy_and_veteran_requested_central_office?
-
-    map_country_code_to_state
   end
 end
