@@ -344,8 +344,7 @@ class SeedDB
   end
 
   def create_case_search_only_user
-    u = User.create!(station_id: 101, css_id: "CASE_SEARCHER_ONLY", full_name: "Case search access. No Queue access")
-    FeatureToggle.enable!(:case_search_home_page, users: [u.css_id])
+    User.create!(station_id: 101, css_id: "CASE_SEARCHER_ONLY", full_name: "Case search access. No Queue access")
   end
 
   def create_dispatch_tasks(number)
@@ -461,7 +460,7 @@ class SeedDB
 
   def create_ama_hearing(day)
     vet = Generators::Veteran.build(
-      file_number: Faker::Number.number(9).to_s,
+      file_number: Faker::Number.number(digits: 9).to_s,
       first_name: Faker::Name.first_name,
       last_name: Faker::Name.last_name
     )
@@ -553,7 +552,7 @@ class SeedDB
 
   def create_ama_case_with_open_schedule_hearing_task(ro_key)
     vet = Generators::Veteran.build(
-      file_number: Faker::Number.number(9).to_s,
+      file_number: Faker::Number.number(digits: 9).to_s,
       first_name: Faker::Name.first_name,
       last_name: Faker::Name.last_name
     )
@@ -907,7 +906,7 @@ class SeedDB
   def create_task_at_quality_review(qr_user = nil, judge_name = nil, attorney_name = nil)
     vet = FactoryBot.create(
       :veteran,
-      file_number: Faker::Number.number(9).to_s,
+      file_number: Faker::Number.number(digits: 9).to_s,
       first_name: Faker::Name.first_name,
       last_name: Faker::Name.last_name
     )
@@ -954,11 +953,11 @@ class SeedDB
     end
   end
 
-  def create_task_at_bva_dispatch(seed = Faker::Number.number(3))
+  def create_task_at_bva_dispatch(seed = Faker::Number.number(digits: 3))
     Faker::Config.random = Random.new(seed)
     vet = FactoryBot.create(
       :veteran,
-      file_number: Faker::Number.number(9).to_s,
+      file_number: Faker::Number.number(digits: 9).to_s,
       first_name: Faker::Name.first_name,
       last_name: Faker::Name.last_name
     )
