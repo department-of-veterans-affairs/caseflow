@@ -107,19 +107,7 @@ class AppealHearingLocationsDropdown extends React.Component {
         let errorReason = '.';
 
         if (!_.isNil(error.response)) {
-          switch (error.response.body.message) {
-          case 'InvalidRequestStreetAddress':
-            errorReason = ' because their address does not exist in VBMS.';
-            break;
-          case 'AddressCouldNotBeFound':
-            errorReason = ' because their address from VBMS could not be found on a map.';
-            break;
-          case 'DualAddressError':
-            errorReason = ' because their address from VBMS is ambiguous.';
-            break;
-          default:
-            errorReason = '. Service is temporarily unavailable.';
-          }
+          errorReason = error.response.body.message;
         }
 
         const errorMsg = `Could not find hearing locations for this appellant${errorReason}`;

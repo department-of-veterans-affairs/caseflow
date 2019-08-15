@@ -54,17 +54,17 @@ class HearingsController < HearingsApplicationController
       HearingDayMapper.validate_regional_office(params["regional_office"])
 
       appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params["appeal_id"])
+      facility_ids = RegionalOffice.ro_facility_ids
+      facility_response = appeal.va_dot_gov_address_validator.get_distance_to_facilities(facility_ids: facility_ids)
 
-      facility_ids = (RegionalOffice::CITIES[params["regional_office"]][:alternate_locations] ||
-                     []) << RegionalOffice::CITIES[params["regional_office"]][:facility_locator_id]
-
-      locations = appeal.va_dot_gov_address_validator.get_distance_to_facilities(facility_ids: facility_ids)
-
-      render json: { hearing_locations: locations }
-    rescue Caseflow::Error::VaDotGovAPIError => error
-      messages = error.message.dig("messages") || []
-      render json: { message: messages[0]&.dig("key") || error.message }, status: :bad_request
-    rescue StandardError => error
+      if facility_response.success?
+        render json: { hearing_locations: facility_response.data }
+      else
+        capture_exception(error) if error.code == 400
+        render facility_response.error.serialize_response
+      end
+    rescue Caseflow::Error::VaDotGovAPIError => error # catch address validation error
+      capture_exception(error) if error.code == 400
       render json: { message: error.message }, status: :internal_server_error
     end
   end
