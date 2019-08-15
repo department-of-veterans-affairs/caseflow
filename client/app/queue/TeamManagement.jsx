@@ -30,6 +30,8 @@ class TeamManagement extends React.PureComponent {
 
   addPrivateBar = () => this.props.history.push('/team_management/add_private_bar');
 
+  lookupParticipantId = () => this.props.history.push('/team_management/lookup_participant_id');
+
   render = () => {
     const {
       success,
@@ -65,7 +67,17 @@ class TeamManagement extends React.PureComponent {
               <OrgList orgs={this.props.vsos} showBgsParticipantId />
 
               <OrgHeader>
-                Private Bar <Button name={COPY.TEAM_MANAGEMENT_ADD_PRIVATE_BAR_BUTTON} onClick={this.addPrivateBar} />
+                Private Bar
+                <span {...css({ marginLeft: '1rem' })}>
+                  <Button name={COPY.TEAM_MANAGEMENT_ADD_PRIVATE_BAR_BUTTON} onClick={this.addPrivateBar} />
+                </span>
+                <span {...css({ marginLeft: '1rem' })}>
+                  <Button
+                    name="Look up Participant ID"
+                    onClick={this.lookupParticipantId}
+                    classNames={['usa-button-secondary']}
+                  />
+                </span>
               </OrgHeader>
               <OrgList orgs={this.props.privateBars} showBgsParticipantId />
 
