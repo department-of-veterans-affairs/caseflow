@@ -22,7 +22,7 @@ export class DailyDocketPrinted extends React.Component {
     openPrintDialogue();
   }
 
-  isUserJudge = () => this.props.user.userRoleHearingPrep;
+  isUserJudge = () => this.props.user.userHasHearingPrepRole;
 
   getTableColumns = () => [
     {

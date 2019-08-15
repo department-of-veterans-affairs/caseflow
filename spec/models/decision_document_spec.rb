@@ -8,11 +8,6 @@ describe DecisionDocument, :postgres do
 
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
-    FeatureToggle.enable!(:create_board_grant_effectuations)
-  end
-
-  after do
-    FeatureToggle.disable!(:create_board_grant_effectuations)
   end
 
   let(:veteran) { create(:veteran) }
