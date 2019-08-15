@@ -89,7 +89,12 @@ class LegacyAppeal < ApplicationRecord
     self.class.repository.aod(vacols_id)
   end
 
-  def advanced_on_docket
+  # To match Appeals AOD behavior
+  def aod?
+    aod
+  end
+
+  def advanced_on_docket?
     aod
   end
 
