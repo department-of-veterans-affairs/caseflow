@@ -67,14 +67,6 @@ module Caseflow::Error
     end
   end
 
-  class InvalidTaskTableColumn < SerializableError
-    def initialize(args)
-      @column_name = args[:column_name]
-      @code = args[:code] || 400
-      @message = args[:message] || "\"#{@column_name}\" is not a valid column name"
-    end
-  end
-
   class InvalidTaskTableColumnFilter < SerializableError
     def initialize(args)
       @column = args[:column]
