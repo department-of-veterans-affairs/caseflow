@@ -67,7 +67,7 @@ class IntakeStartValidator
   end
 
   def file_number_reserved?
-    veteran_file_number == "123456789"
+    Rails.deploy_env?(:prod) && veteran_file_number == "123456789"
   end
 
   def user_may_modify_veteran_file?
