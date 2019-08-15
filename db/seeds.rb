@@ -344,8 +344,7 @@ class SeedDB
   end
 
   def create_case_search_only_user
-    u = User.create!(station_id: 101, css_id: "CASE_SEARCHER_ONLY", full_name: "Case search access. No Queue access")
-    FeatureToggle.enable!(:case_search_home_page, users: [u.css_id])
+    User.create!(station_id: 101, css_id: "CASE_SEARCHER_ONLY", full_name: "Case search access. No Queue access")
   end
 
   def create_dispatch_tasks(number)
