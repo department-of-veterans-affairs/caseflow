@@ -106,18 +106,20 @@ class AppealHearingLocationsDropdown extends React.Component {
       catch((error) => {
         let errorReason = '.';
 
-        switch (error.response.body.message) {
-        case 'InvalidRequestStreetAddress':
-          errorReason = ' because their address does not exist in VBMS.';
-          break;
-        case 'AddressCouldNotBeFound':
-          errorReason = ' because their address from VBMS could not be found on a map.';
-          break;
-        case 'DualAddressError':
-          errorReason = ' because their address from VBMS is ambiguous.';
-          break;
-        default:
-          errorReason = '. Service is temporarily unavailable.';
+        if (!_.isNil(error.response)) {
+          switch (error.response.body.message) {
+          case 'InvalidRequestStreetAddress':
+            errorReason = ' because their address does not exist in VBMS.';
+            break;
+          case 'AddressCouldNotBeFound':
+            errorReason = ' because their address from VBMS could not be found on a map.';
+            break;
+          case 'DualAddressError':
+            errorReason = ' because their address from VBMS is ambiguous.';
+            break;
+          default:
+            errorReason = '. Service is temporarily unavailable.';
+          }
         }
 
         const errorMsg = `Could not find hearing locations for this appellant${errorReason}`;
@@ -165,6 +167,7 @@ AppealHearingLocationsDropdown.propTypes = {
   staticHearingLocations: PropTypes.array,
   regionalOffice: PropTypes.string,
   name: PropTypes.string,
+  dropdownName: PropTypes.string,
   label: PropTypes.string,
   dynamic: PropTypes.bool,
   value: PropTypes.oneOfType([
@@ -172,6 +175,31 @@ AppealHearingLocationsDropdown.propTypes = {
     PropTypes.object
   ]),
   onChange: PropTypes.func.isRequired,
+  onDropdownError: PropTypes.func,
+  onFetchDropdownData: PropTypes.func,
+  onReceiveDropdownData: PropTypes.func,
+  appealHearingLocations: PropTypes.shape({
+    isFetching: PropTypes.bool,
+    options: PropTypes.arrayOf(
+      PropTypes.shape({
+        label: PropTypes.string,
+        value: PropTypes.shape({
+          facilityId: PropTypes.number,
+          type: PropTypes.string,
+          distance: PropTypes.number,
+          facilityType: PropTypes.string,
+          name: PropTypes.string,
+          classification: PropTypes.string,
+          lat: PropTypes.number,
+          long: PropTypes.number,
+          address: PropTypes.string,
+          city: PropTypes.string,
+          state: PropTypes.string,
+          zipCode: PropTypes.string
+        })
+      })
+    )
+  }),
   readOnly: PropTypes.bool,
   placeholder: PropTypes.string,
   errorMessage: PropTypes.string
