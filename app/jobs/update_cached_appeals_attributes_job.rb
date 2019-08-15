@@ -21,6 +21,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     log_error(start_time, error)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def cache_ama_appeals
     appeals = Appeal.find(open_appeals_from_tasks)
     request_issues_to_cache = request_issue_counts_for_appeal_ids(appeals.pluck(:id))
@@ -49,6 +50,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
     increment_appeal_count(appeals_to_cache.length, Appeal.name)
   end
+  # rubocop:enable Metrics/MethodLength
 
   def open_appeals_from_tasks
     Task.open.where(appeal_type: Appeal.name).pluck(:appeal_id).uniq
