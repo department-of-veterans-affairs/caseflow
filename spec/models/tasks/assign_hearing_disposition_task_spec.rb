@@ -294,12 +294,12 @@ describe AssignHearingDispositionTask, :all_dbs do
               create(:evidence_submission_window_task, appeal: appeal, parent: distribution_task)
             end
 
-            it "does not attempt to create a new EvidenceSubmissionWindowTask" do
-              expect(EvidenceSubmissionWindowTask.count).to eq 1
-
+            it "does not raise an error" do
               expect { subject }.to_not raise_error
+            end
 
-              expect(EvidenceSubmissionWindowTask.count).to eq 1
+            it "does not attempt to create a new EvidenceSubmissionWindowTask" do
+              expect { subject }.to_not change(EvidenceSubmissionWindowTask, :count)
             end
           end
 
