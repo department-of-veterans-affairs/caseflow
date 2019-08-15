@@ -427,7 +427,7 @@ describe Veteran, :postgres do
     end
   end
 
-  context "#accessible_appeals_for_poa" do
+  context "#all_accessible_appeals_for_poa" do
     let!(:appeals) do
       [
         create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id)]),
@@ -471,7 +471,7 @@ describe Veteran, :postgres do
     end
 
     it "returns only the case with vso assigned to it" do
-      returned_appeals = veteran.accessible_appeals_for_poa([vso_participant_id, "other vso participant id"])
+      returned_appeals = veteran.all_accessible_appeals_for_poa([vso_participant_id, "other vso participant id"])
       expect(returned_appeals.count).to eq 2
       expect(returned_appeals.first).to eq appeals.first
       expect(returned_appeals.last).to eq appeals.last

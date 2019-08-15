@@ -166,14 +166,14 @@ class Veteran < ApplicationRecord
     DecisionIssue.where(participant_id: participant_id)
   end
 
-  def accessible_appeals_for_poa(poa_participant_ids)
+  def all_accessible_appeals_for_poa(poa_participant_ids)
     [
-      accessible_ama_appeals_for_poa(poa_participant_ids),
+      accessible_appeals_for_poa(poa_participant_ids),
       accessible_legacy_appeals_for_poa(poa_participant_ids)
     ].flatten
   end
 
-  def accessible_ama_appeals_for_poa(poa_participant_ids)
+  def accessible_appeals_for_poa(poa_participant_ids)
     appeals = Appeal.where(veteran_file_number: file_number).includes(:claimants)
 
     claimants_participant_ids = appeals.map { |appeal| appeal.claimants.pluck(:participant_id) }.flatten
