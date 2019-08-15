@@ -321,6 +321,8 @@ feature "Intake", :all_dbs do
         User.authenticate!(roles: ["Admin Intake"])
       end
 
+      before { allow(Rails).to receive(:deploy_env?).and_return(true) }
+      
       let(:veteran) do
         Generators::Veteran.build(
           file_number: "123456789",
@@ -331,7 +333,7 @@ feature "Intake", :all_dbs do
       end
 
       scenario "Search for a veteran with reserved file_number" do
-        visit "/intake"
+        visit "intake"
         select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
         safe_click ".cf-submit.usa-button"
 

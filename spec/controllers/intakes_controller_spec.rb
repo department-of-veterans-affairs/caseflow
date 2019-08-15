@@ -67,7 +67,10 @@ RSpec.describe IntakesController, :postgres do
     context "veteran in BGS with reserved file number" do
       let(:file_number) { "123456789" }
       let!(:veteran) {} # no-op
-      before { Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica") }
+      before do
+        Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica")
+        allow(Rails).to receive(:deploy_env?).and_return(true)
+      end
 
       it "should search by reserved Veteran file number" do
         expect(Veteran.find_by_file_number_or_ssn(file_number)).to be_nil
