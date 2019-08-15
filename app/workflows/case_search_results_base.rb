@@ -20,7 +20,7 @@ class CaseSearchResultsBase
       extra: error_status_or_search_results
     )
   end
-  
+
   protected
 
   attr_reader :status, :user

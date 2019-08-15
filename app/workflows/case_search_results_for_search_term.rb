@@ -23,7 +23,7 @@ class CaseSearchResultsForSearchTerm < ::CaseSearchResultsBase
 
   def appeals
     if docket_number?
-      Array.wrap(AppealFinder.new(user: user).find_appeal_by_docket_number(search_term))
+      Array.wrap(AppealFinder::find_appeal_by_docket_number(search_term))
     else
       AppealFinder.new(user: user).find_appeals_for_veterans(veterans_user_can_access)
     end
