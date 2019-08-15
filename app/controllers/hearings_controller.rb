@@ -53,7 +53,7 @@ class HearingsController < HearingsApplicationController
     HearingDayMapper.validate_regional_office(params["regional_office"])
 
     appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params["appeal_id"])
-    facility_ids = RegionalOffice.ro_facility_ids
+    facility_ids = RegionalOffice.facility_ids_for_ro(params["regional_office"])
     facility_response = appeal.va_dot_gov_address_validator.get_distance_to_facilities(facility_ids: facility_ids)
 
     if facility_response.success?
