@@ -639,7 +639,7 @@ class Appeal < DecisionReview
   end
 
   def address
-    @address ||= Address.new(appellant.address)
+    @address ||= Address.new(appellant.address) if appellant.address.present?
   end
 
   # we always want to show ratings on intake

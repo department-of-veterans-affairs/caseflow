@@ -59,6 +59,7 @@ RSpec.configure do |config|
     Fakes::BGSService.clean!
     Time.zone = @spec_time_zone
     User.unauthenticate!
+    RequestStore[:application] = nil
   end
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your

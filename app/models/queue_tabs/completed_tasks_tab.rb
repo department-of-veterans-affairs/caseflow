@@ -5,12 +5,16 @@ class CompletedTasksTab < QueueTab
     COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE
   end
 
-  def name
+  def self.tab_name
     Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME
   end
 
   def description
     COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION
+  end
+
+  def tasks
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).recently_closed
   end
 
   def columns

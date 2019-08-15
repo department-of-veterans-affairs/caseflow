@@ -380,16 +380,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               appellant_last_name: "Gump"
             )
           end
-          let!(:representative) do
-            create(
-              :representative,
-              repkey: vacols_case.bfkey,
-              reptype: "A",
-              repfirst: "Attorney",
-              replast: "McAttorney"
-            )
-          end
-
           let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
           it "succeeds and passes appeal info" do
@@ -403,7 +393,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             expect(response_body["attributes"]["veteran_name_suffix"]).to eq "PhD"
             expect(response_body["attributes"]["veteran_ssn"]).to eq appeal.veteran_ssn
             expect(response_body["attributes"]["file_number"]).to eq appeal.veteran_file_number
-            expect(response_body["attributes"]["appellants"][0]["representative"]["name"]).to eq("Attorney McAttorney")
+            # BGS service default attorney: Clarence Darrow
+            expect(response_body["attributes"]["appellants"][0]["representative"]["name"]).to eq("Clarence Darrow")
             expect(response_body["attributes"]["appellants"][0]["first_name"]).to eq("Forrest")
             expect(response_body["attributes"]["aod"]).to eq appeal.aod
             expect(response_body["attributes"]["cavc"]).to eq appeal.cavc
