@@ -13,7 +13,7 @@ class TaskSorter
     super
 
     # Default to sorting by task creation date.
-    @column ||= TaskCreatedAtColumn
+    @column ||= QueueColumn.from_name(Constants.QUEUE_CONFIG.TASK_CREATED_AT_COLUMN)
     @sort_order ||= Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
     @tasks ||= []
 
@@ -41,8 +41,7 @@ class TaskSorter
   end
 
   def column_is_valid
-    # Use include?() instead of is_a?() because column is a class, not an instance.
-    errors.add(:column, COPY::INVALID_SORT_COLUMN) unless QueueColumn.subclasses.include?(column)
+    errors.add(:column, COPY::INVALID_SORT_COLUMN) unless column.is_a?(QueueColumn)
   end
 
   def sort_order_is_valid

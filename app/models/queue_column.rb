@@ -3,36 +3,22 @@
 class QueueColumn
   include ActiveModel::Model
 
-  class << self
-    def from_name(column_name)
-      subclasses.find { |subclass| subclass.column_name == column_name }
-    end
+  validates :name, :sorting_table, :sorting_columns, presence: true
 
-    def column_name; end
+  attr_accessor :name, :sorting_table, :sorting_columns
 
-    def sorting_table
-      Task.table_name
-    end
+  def initialize(args)
+    super
 
-    def sorting_columns
-      %w[created_at]
-    end
+    @sorting_table ||= Task.table_name
+    @sorting_columns ||= ["created_at"]
+
+    fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
+  end
+
+  def self.from_name(column_name)
+    column_config = Constants.QUEUE_CONFIG.COLUMNS.to_h.values.find { |col| col[:name] == column_name }
+
+    column_config ? new(column_config) : nil
   end
 end
-
-require_dependency "appeal_type_column"
-require_dependency "case_details_link_column"
-require_dependency "days_on_hold_column"
-require_dependency "days_waiting_column"
-require_dependency "docket_number_column"
-require_dependency "document_count_reader_link_column"
-require_dependency "hearing_badge_column"
-require_dependency "issue_count_column"
-require_dependency "regional_office_column"
-require_dependency "task_assignee_column"
-require_dependency "task_assigner_column"
-require_dependency "task_closed_date_column"
-require_dependency "task_created_at_column"
-require_dependency "task_due_date_column"
-require_dependency "task_hold_length_column"
-require_dependency "task_type_column"
