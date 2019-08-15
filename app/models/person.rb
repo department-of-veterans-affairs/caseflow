@@ -13,8 +13,6 @@ class Person < ApplicationRecord
     advanced_on_docket_based_on_age || advanced_on_docket_motion_granted(appeal_receipt_date)
   end
 
-  alias advance_on_docket?  advanced_on_docket
-
   def date_of_birth
     cached_or_fetched_from_bgs(attr_name: :date_of_birth, bgs_attr: :birth_date)
   end

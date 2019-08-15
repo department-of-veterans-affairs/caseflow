@@ -93,8 +93,6 @@ class LegacyAppeal < ApplicationRecord
     aod
   end
 
-  alias advance_on_docket?  advanced_on_docket
-
   cache_attribute :dic do
     issues.map(&:dic).include?(true)
   end
