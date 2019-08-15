@@ -68,7 +68,7 @@ class TaskPager
 
   def tasks_sorted_by_assignee_name(tasks)
     tasks.joins("left join users on tasks.assigned_to_id = users.id and tasks.assigned_to_type = '#{User.name}'")
-         .order("users.full_name #{sort_order}")
+      .order("users.full_name #{sort_order}")
   end
 
   def tasks_sorted_by_docket_number(tasks)

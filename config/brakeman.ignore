@@ -7,7 +7,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/task_pager.rb",
-      "line": 72,
+      "line": 75,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.docket_type #{sort_order}, cached_appeal_attributes.docket_number #{sort_order}\")",
       "render_path": null,
@@ -104,7 +104,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/task_pager.rb",
-      "line": 87,
+      "line": 90,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.veteran_name #{sort_order}\")",
       "render_path": null,
@@ -144,7 +144,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/task_pager.rb",
-      "line": 83,
+      "line": 86,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.issue_count #{sort_order}\")",
       "render_path": null,
@@ -200,7 +200,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/task_pager.rb",
-      "line": 78,
+      "line": 81,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.closest_regional_office_city #{sort_order}\")",
       "render_path": null,
@@ -232,8 +232,28 @@
       "user_input": "sort_order",
       "confidence": "Weak",
       "note": "False positive, sort_order is validated in sort_order_is_valid"
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "f1dbbe2d5cbcab88170219b8a51e742503e9e5072006ae95e6d808a410a80cf6",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/task_pager.rb",
+      "line": 70,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "tasks.joins(\"left join users on tasks.assigned_to_id = users.id and tasks.assigned_to_type = '#{User.name}'\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "TaskPager",
+        "method": "tasks_sorted_by_assignee_name"
+      },
+      "user_input": "User.name",
+      "confidence": "Medium",
+      "note": "False positive, sort_order is validated in sort_order_is_valid"
     }
   ],
-  "updated": "2019-08-15 14:21:04 -0400",
+  "updated": "2019-08-15 15:04:11 -0400",
   "brakeman_version": "4.6.1"
 }
