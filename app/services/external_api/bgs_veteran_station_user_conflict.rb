@@ -7,6 +7,9 @@ class ExternalApi::BgsVeteranStationUserConflict
   end
 
   # logic detailed in https://github.com/department-of-veterans-affairs/caseflow/issues/10087#issuecomment-507783830
+  # a good example in production is veteran_participant_id 3309696 and user id 2321
+  # "true" return value in this case means there is a conflict.
+  # "false" means no conflict.
   def call
     DBService.release_db_connections
 
@@ -14,6 +17,10 @@ class ExternalApi::BgsVeteranStationUserConflict
     return true if station_dtos.any? && !veteran_dto
 
     # otherwise we must check sensitivity reason
+    return true if violates_sensitivity_reason?
+
+    # default is no conflict
+    false
   end
 
   private
@@ -37,7 +44,7 @@ class ExternalApi::BgsVeteranStationUserConflict
 
     return false unless veteran_dto
 
-    veteran_dto[:station_number] == current_user_station
+    veteran_station_id == current_user_station
   end
 
   def veteran_station_id
