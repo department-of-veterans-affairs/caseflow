@@ -321,14 +321,6 @@ feature "Intake", :all_dbs do
         User.authenticate!(roles: ["Admin Intake"])
       end
 
-      before do
-        FeatureToggle.enable!(:intake_reserved_file_number, users: [current_user.css_id])
-      end
-
-      after do
-        FeatureToggle.disable!(:intake_reserved_file_number, users: [current_user.css_id])
-      end
-
       let(:veteran) do
         Generators::Veteran.build(
           file_number: "123456789",

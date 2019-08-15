@@ -7,15 +7,10 @@ RSpec.describe IntakesController, :postgres do
   before do
     Fakes::Initializer.load!
     User.authenticate!(roles: ["Mail Intake"])
-    FeatureToggle.enable!(:intake_reserved_file_number)
 
     allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
     allow_any_instance_of(Veteran).to receive(:bgs).and_return(bgs)
     allow(bgs).to receive(:fetch_veteran_info).and_call_original
-  end
-
-  after do
-    FeatureToggle.disable!(:intake_reserved_file_number)
   end
 
   let(:bgs) { BGSService.new }
