@@ -59,7 +59,7 @@ class HearingsController < HearingsApplicationController
     if facility_response.success?
       render json: { hearing_locations: facility_response.data }
     else
-      capture_exception(error) if error.code == 400
+      capture_exception(facility_response.error) if facility_response.error.code == 400
       render facility_response.error.serialize_response
     end
   end
