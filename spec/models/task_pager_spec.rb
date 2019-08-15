@@ -122,7 +122,7 @@ describe TaskPager, :all_dbs do
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:tasks) { task_pager.tasks_for_tab }
 
-    let!(:created_tasks) { create_list(:generic_task, 14, assigned_to: assignee) }
+    let(:created_tasks) { create_list(:generic_task, 14, assigned_to: assignee) }
 
     subject { task_pager.sorted_tasks(tasks) }
 
@@ -274,6 +274,26 @@ describe TaskPager, :all_dbs do
       it "sorts by issue count" do
         expected_order = created_tasks.sort_by { |task| task.appeal.issues[:request_issues].count }
         expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+      end
+    end
+
+    context "when sorting by task assignee name" do
+      subject { task_pager.sorted_tasks(tasks) }
+
+      let(:assignee) { Colocated.singleton }
+      let(:tab_name) { Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME }
+      let(:sort_by) { Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN }
+      let(:created_tasks) { create_list(:ama_colocated_task, 3).map(&:children).flatten }
+
+      before do
+        create_list(:user, 3, :random_name).each do |user|
+          OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
+        end
+      end
+
+      it "sorts tasks by assigned_to user's name" do
+        expected_order = created_tasks.sort_by { |task| [task.assigned_to.full_name] }
+        expect(subject.map(&:id)).to eq(expected_order.map(&:id))
       end
     end
 
