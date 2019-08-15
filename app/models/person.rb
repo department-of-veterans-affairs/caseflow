@@ -9,9 +9,11 @@ class Person < ApplicationRecord
 
   CACHED_BGS_ATTRIBUTES = [:first_name, :last_name, :middle_name, :name_suffix, :date_of_birth].freeze
 
-  def advance_on_docket?(appeal_receipt_date)
-    advance_on_docket_based_on_age? || advance_on_docket_motion_granted?(appeal_receipt_date)
+  def advanced_on_docket(appeal_receipt_date)
+    advanced_on_docket_based_on_age || advanced_on_docket_motion_granted(appeal_receipt_date)
   end
+
+  alias advance_on_docket? advanced_on_docket
 
   def date_of_birth
     cached_or_fetched_from_bgs(attr_name: :date_of_birth, bgs_attr: :birth_date)
@@ -70,11 +72,11 @@ class Person < ApplicationRecord
     @bgs_person ||= bgs.fetch_person_info(participant_id)
   end
 
-  def advance_on_docket_based_on_age?
+  def advanced_on_docket_based_on_age
     date_of_birth && date_of_birth < 75.years.ago
   end
 
-  def advance_on_docket_motion_granted?(appeal_receipt_date)
+  def advanced_on_docket_motion_granted(appeal_receipt_date)
     advance_on_docket_motions.any? do |advance_on_docket_motion|
       advance_on_docket_motion.granted && appeal_receipt_date < advance_on_docket_motion.created_at
     end

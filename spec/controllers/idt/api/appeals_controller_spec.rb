@@ -290,7 +290,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               expect(response_body["attributes"]["file_number"]).to eq ama_appeals.first.veteran_file_number
 
               expect(response_body["attributes"]["representative_address"]).to eq(nil)
-              expect(response_body["attributes"]["aod"]).to eq ama_appeals.first.advance_on_docket?
+              expect(response_body["attributes"]["aod"]).to eq ama_appeals.first.advanced_on_docket
               expect(response_body["attributes"]["cavc"]).to eq "not implemented for AMA"
               expect(response_body["attributes"]["issues"].first["program"]).to eq "Compensation"
               expect(response_body["attributes"]["issues"].second["program"]).to eq "Compensation"

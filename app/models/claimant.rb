@@ -34,8 +34,10 @@ class Claimant < ApplicationRecord
     @person ||= Person.find_or_create_by(participant_id: participant_id)
   end
 
-  delegate :date_of_birth, :advance_on_docket?, :name, :first_name, :last_name, :middle_name, to: :person
+  delegate :date_of_birth, :advanced_on_docket, :name, :first_name, :last_name, :middle_name, to: :person
   delegate :address, :address_line_1, :address_line_2, :city, :country, :state, :zip, to: :bgs_address_service
+
+  alias advance_on_docket? advanced_on_docket
 
   def fetch_bgs_record
     general_info = bgs.fetch_claimant_info_by_participant_id(participant_id)

@@ -28,13 +28,13 @@ describe Docket, :all_dbs do
     # priority
     let!(:aod_age_appeal) do
       create(:appeal,
-             :advance_on_docket_due_to_age,
+             :advanced_on_docket_due_to_age,
              :with_post_intake_tasks,
              docket_type: Constants.AMA_DOCKETS.direct_review)
     end
     let!(:aod_motion_appeal) do
       create(:appeal,
-             :advance_on_docket_due_to_motion,
+             :advanced_on_docket_due_to_motion,
              :with_post_intake_tasks,
              docket_type: Constants.AMA_DOCKETS.direct_review)
     end
@@ -242,7 +242,7 @@ describe Docket, :all_dbs do
       end
       let!(:newer_priority_decision) do
         appeal = create(:appeal,
-                        :advance_on_docket_due_to_age,
+                        :advanced_on_docket_due_to_age,
                         :with_post_intake_tasks,
                         docket_type: Constants.AMA_DOCKETS.direct_review)
         create(:decision_document, decision_date: 20.days.ago, appeal: appeal)
@@ -250,7 +250,7 @@ describe Docket, :all_dbs do
       end
       let!(:older_priority_decision) do
         appeal = create(:appeal,
-                        :advance_on_docket_due_to_age,
+                        :advanced_on_docket_due_to_age,
                         :with_post_intake_tasks,
                         docket_type: Constants.AMA_DOCKETS.direct_review)
         create(:decision_document, decision_date: 380.days.ago, appeal: appeal)

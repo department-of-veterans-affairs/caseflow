@@ -22,7 +22,7 @@ class V2::AppealStatusSerializer
 
   attribute :active, &:active_status?
   attribute :description
-  attribute :aod, &:advance_on_docket?
+  attribute :aod, &:advanced_on_docket
   attribute :location
   attribute :aoj
   attribute :program_area, &:program

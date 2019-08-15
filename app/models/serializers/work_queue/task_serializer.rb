@@ -86,7 +86,7 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :aod do |object|
-    object.appeal.try(:advance_on_docket?)
+    object.appeal.try(:advanced_on_docket)
   end
 
   attribute :issue_count do |object|

@@ -41,7 +41,7 @@ class Hearing < ApplicationRecord
   delegate :docket_name, to: :appeal
   delegate :request_issues, to: :appeal
   delegate :decision_issues, to: :appeal
-  delegate :available_hearing_locations, :closest_regional_office, :advance_on_docket?, to: :appeal
+  delegate :available_hearing_locations, :closest_regional_office, :advanced_on_docket, to: :appeal
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
   delegate :hearing_day_full?, to: :hearing_day
@@ -52,6 +52,8 @@ class Hearing < ApplicationRecord
   before_update :assign_updated_by_user
 
   attr_accessor :override_full_hearing_day_validation
+
+  alias advance_on_docket? advanced_on_docket
 
   HEARING_TYPES = {
     V: "Video",

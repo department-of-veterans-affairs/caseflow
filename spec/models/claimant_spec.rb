@@ -99,11 +99,11 @@ describe Claimant, :postgres do
     end
   end
 
-  context "#advance_on_docket?" do
+  context "#advanced_on_docket" do
     context "when claimant is over 75 years old" do
       it "returns true" do
-        claimant = create(:claimant, :advance_on_docket_due_to_age)
-        expect(claimant.advance_on_docket?(1.year.ago)).to eq(true)
+        claimant = create(:claimant, :advanced_on_docket_due_to_age)
+        expect(claimant.advanced_on_docket(1.year.ago)).to eq(true)
       end
     end
 
@@ -112,14 +112,14 @@ describe Claimant, :postgres do
         claimant = create(:claimant)
         create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true)
 
-        expect(claimant.advance_on_docket?(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket(1.year.ago)).to eq(true)
       end
     end
 
     context "when claimant is younger than 75 years old and has no motion granted" do
       it "returns false" do
         claimant = create(:claimant)
-        expect(claimant.advance_on_docket?(1.year.ago)).to eq(false)
+        expect(claimant.advanced_on_docket(1.year.ago)).to eq(false)
       end
     end
   end
