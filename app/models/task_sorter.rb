@@ -25,13 +25,7 @@ class TaskSorter
 
     # Always join to the CachedAppeal table because we sometimes need it, joining does not slow down the application,
     # and conditional logic to only join sometimes adds unnecessary complexity.
-    tasks.joins(TaskSorter.cached_attributes_join_clause).order(order_clause)
-  end
-
-  def self.cached_attributes_join_clause
-    "left join #{CachedAppeal.table_name} "\
-    "on #{CachedAppeal.table_name}.appeal_id = #{Task.table_name}.appeal_id "\
-    "and #{CachedAppeal.table_name}.appeal_type = #{Task.table_name}.appeal_type"
+    tasks.joins(CachedAppeal.left_join_from_tasks_clause).order(order_clause)
   end
 
   private
