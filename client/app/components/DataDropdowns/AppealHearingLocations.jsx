@@ -107,7 +107,7 @@ class AppealHearingLocationsDropdown extends React.Component {
         let errorReason = '.';
 
         if (!_.isNil(error.response)) {
-          errorReason = error.response.body.message;
+          errorReason = ` ${error.response.body.message}`;
         }
 
         const errorMsg = `Could not find hearing locations for this appellant${errorReason}`;
