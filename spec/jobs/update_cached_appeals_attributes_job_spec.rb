@@ -42,8 +42,8 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     end
 
     context "Datadog" do
-      let (:emitted_gauges) { [] }
-      let (:job_gauges) do
+      let(:emitted_gauges) { [] }
+      let(:job_gauges) do
         emitted_gauges.select do |gauge|
           gauge[:metric_group] == "update_cached_appeals_attributes_job"
         end
