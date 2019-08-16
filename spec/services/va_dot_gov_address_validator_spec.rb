@@ -140,7 +140,7 @@ describe VaDotGovAddressValidator do
     end
   end
 
-  describe "#facility_ids_to_geomatch" do
+  describe "#facility_ids_to_geomatch", :all_dbs do
     let!(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
     let!(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
     let!(:valid_address_state_code) { "VA" }
@@ -184,7 +184,7 @@ describe VaDotGovAddressValidator do
     end
   end
 
-  describe "#valid_address when there is an address validation error" do
+  describe "#valid_address when there is an address validation error", :postgres do
     let!(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
     let!(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
 
