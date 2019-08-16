@@ -122,7 +122,7 @@ HearingText.propTypes = {
   hearing: hearingPropTypes,
   index: PropTypes.number,
   user: PropTypes.shape({
-    userRoleHearingPrep: PropTypes.bool
+    userHasHearingPrepRole: PropTypes.bool
   }),
   update: PropTypes.func,
   readOnly: PropTypes.bool,
