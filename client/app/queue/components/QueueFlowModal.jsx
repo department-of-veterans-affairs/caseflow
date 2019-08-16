@@ -54,6 +54,7 @@ class QueueFlowModal extends React.PureComponent {
   render = () => {
     const {
       error,
+      success,
       title,
       button,
       children
@@ -77,6 +78,7 @@ class QueueFlowModal extends React.PureComponent {
           <Alert type="error" title={error.title} message={error.detail} />
         </div>
       }
+      {success && <div {...bottomMargin}><Alert type="success" title={success.title} message={success.detail} /></div>}
       {children}
     </Modal>;
   }
@@ -91,17 +93,22 @@ QueueFlowModal.defaultProps = {
 
 QueueFlowModal.propTypes = {
   children: PropTypes.node,
+  error: PropTypes.object,
+  highlightInvalidFormItems: PropTypes.func,
+  history: PropTypes.object,
   title: PropTypes.string,
   button: PropTypes.string,
   pathAfterSubmit: PropTypes.string,
   submit: PropTypes.func,
+  success: PropTypes.object,
   validateForm: PropTypes.func,
   reloadPageAfterSubmit: PropTypes.bool
 };
 
 const mapStateToProps = (state) => {
   return {
-    error: state.ui.messages.error
+    error: state.ui.messages.error,
+    success: state.ui.messages.success
   };
 };
 
