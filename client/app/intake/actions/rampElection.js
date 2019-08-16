@@ -35,7 +35,7 @@ export const completeIntake = (intakeId, rampElection) => (dispatch) => {
     meta: { analytics }
   });
 
-  return submitIntakeCompleteRequest(intakeId, {})(dispatch);  
+  return submitIntakeCompleteRequest(intakeId, {})(dispatch);
 };
 
 export const confirmFinishIntake = (isConfirmed) => ({

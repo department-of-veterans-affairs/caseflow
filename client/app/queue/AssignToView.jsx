@@ -88,7 +88,9 @@ class AssignToView extends React.Component {
 
     return this.props.requestSave('/tasks', payload, assignTaskSuccessMessage).
       then((resp) => this.props.onReceiveAmaTasks(resp.body.tasks.data)).
-      catch(() => {});
+      catch(() => {
+        // handle the error from the frontend
+      });
   }
 
   getAssignee = () => {
