@@ -9,10 +9,11 @@ describe Distribution, :all_dbs do
   let(:member_count) { 5 }
   let(:attorneys) { create_list(:user, member_count) }
   let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge.css_id) }
+  let(:today) { Time.utc(2019, 1, 1, 12, 0, 0) }
 
   before do
     FeatureToggle.enable!(:test_facols)
-    Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
+    Timecop.freeze(today)
     attorneys.each do |u|
       OrganizationsUser.add_user_to_organization(u, judge_team)
     end
@@ -163,6 +164,8 @@ describe Distribution, :all_dbs do
       subject.distribute!
       expect(subject.valid?).to eq(true)
       expect(subject.status).to eq("completed")
+      expect(subject.started_at).to eq(Time.zone.now) # time is frozen so appears zero time elapsed
+      expect(subject.errored_at).to be_nil
       expect(subject.completed_at).to eq(Time.zone.now)
       expect(subject.statistics["batch_size"]).to eq(15)
       expect(subject.statistics["total_batch_size"]).to eq(45)
@@ -207,6 +210,7 @@ describe Distribution, :all_dbs do
         expect { subject.distribute! }.to raise_error(StandardError)
         expect(subject.status).to eq("error")
         expect(subject.distributed_cases.count).to eq(0)
+        expect(subject.errored_at).to eq(Time.zone.now)
       end
     end
 

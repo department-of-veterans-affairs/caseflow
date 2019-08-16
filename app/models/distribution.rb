@@ -33,9 +33,14 @@ class Distribution < ApplicationRecord
       return unless valid?(context: :create)
     end
 
+    # always set the timestamp, ok if the status rolls back in the transaction below.
+    update!(started_at: Time.zone.now)
+
+    # this might take awhile due to VACOLS, so set our timeout to 3 minutes (in milliseconds).
+    transaction_time_out = 3 * 60 * 1000
+
     multi_transaction do
-      # this might take awhile due to VACOLS, so set our timeout to 3 minutes (in milliseconds).
-      ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = 180000"
+      ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = #{transaction_time_out}"
 
       update!(status: "started")
 
@@ -44,7 +49,7 @@ class Distribution < ApplicationRecord
       update!(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
     end
   rescue StandardError => error
-    update!(status: "error")
+    update!(status: "error", errored_at: Time.zone.now)
     raise error
   end
 
