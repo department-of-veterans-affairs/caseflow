@@ -31,6 +31,10 @@ class ApplicationController < ApplicationBaseController
 
   private
 
+  def deny_non_bva_admins
+    redirect_to "/unauthorized" unless Bva.singleton.user_has_access?(current_user)
+  end
+
   def manage_teams_menu_items
     current_user.administered_teams.map do |team|
       {
