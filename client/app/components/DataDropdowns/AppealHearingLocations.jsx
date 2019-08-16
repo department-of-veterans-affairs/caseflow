@@ -160,6 +160,7 @@ AppealHearingLocationsDropdown.propTypes = {
   onReceiveDropdownData: PropTypes.func,
   appealHearingLocations: PropTypes.shape({
     isFetching: PropTypes.bool,
+    errorMsg: PropTypes.string,
     options: PropTypes.arrayOf(
       PropTypes.shape({
         label: PropTypes.string,
