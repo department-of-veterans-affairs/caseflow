@@ -61,11 +61,23 @@ class LookupParticipantIdModal extends React.Component {
         detail: err.message }));
   }
 
-  representedOrganizationsList = () => <ol>
-    { this.state.representedOrganizations.map((org, idx) =>
-      <li key={idx}>{org.representative_name}, {org.representative_type}. Participant ID: {org.participant_id}</li>
-    ) }
-  </ol>;
+  representedOrganizationsList = () => {
+    const orgs = this.state.representedOrganizations;
+
+    if (!orgs) {
+      return null;
+    }
+
+    if (!orgs.length) {
+      return <p>{COPY.LOOKUP_PARTICIPANT_ID_MODAL_NO_ORGS_MESSAGE}</p>;
+    }
+
+    return <ol>
+      { orgs.map((org, idx) =>
+        <li key={idx}>{org.representative_name}, {org.representative_type}. Participant ID: {org.participant_id}</li>
+      ) }
+    </ol>;
+  };
 
   render = () => {
     return <QueueFlowModal
@@ -89,7 +101,7 @@ class LookupParticipantIdModal extends React.Component {
           onChange={this.selectUser}
           options={this.dropdownOptions()} />
       </LoadingDataDisplay>
-      { this.state.representedOrganizations && this.representedOrganizationsList() }
+      { this.representedOrganizationsList() }
     </QueueFlowModal>;
   };
 }
