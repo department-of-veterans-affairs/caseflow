@@ -192,15 +192,27 @@ describe Distribution, :all_dbs do
       expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count).to eq(2)
     end
 
-    context "when a DistributedCase already exists" do
+    context "when a nonpriority legacy case re-distribtution is attempted" do
       before do
         distribution = create(:distribution, judge: judge)
-        appeal = create(:appeal, :with_post_intake_tasks, docket_type: Constants.AMA_DOCKETS.hearing)
-        distribution.distributed_cases.create(case_id: appeal.uuid)
+        legacy_case = legacy_nonpriority_cases.first
+        distribution.distributed_cases.create(
+          case_id: legacy_case.bfkey,
+          priority: false,
+          docket: "legacy",
+          ready_at: VacolsHelper.normalize_vacols_datetime(legacy_case.bfdloout),
+          docket_index: "123",
+          genpop: false,
+          genpop_query: "foobar"
+        )
+        distribution.update!(status: "completed", completed_at: today)
       end
 
       it "does not create a duplicate distributed_case" do
-
+        expect { subject.distribute! }.to raise_error(PG::UniqueViolation)
+        expect(subject.valid?).to eq(true)
+        expect(subject.error?).to eq(true)
+        expect(subject.errored_at).to eq(Time.zone.now)
       end
     end
 

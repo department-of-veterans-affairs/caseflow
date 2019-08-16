@@ -4,13 +4,12 @@ class DistributedCase < ApplicationRecord
   belongs_to :distribution
   belongs_to :task
 
-  validates :distribution, :docket, :ready_at, presence: true
+  validates :case_id, :distribution, :docket, :ready_at, presence: true
   validates :genpop, inclusion: [true, false], if: :docket_has_hearing_option
   validates :genpop_query, presence: true, if: :docket_has_hearing_option
   validates :task_id, presence: true, if: :ama_docket
   validates :docket_index, presence: true, if: :legacy_nonpriority
   validates :priority, inclusion: [true, false]
-  validates :case_id, presence: true, uniqueness: true
 
   private
 
