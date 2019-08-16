@@ -109,9 +109,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           HTTPI::Response.new(200, {}, {}.to_json)
         )
         allow(facilities_response).to receive(:data).and_return([])
-        allow(facilities_response).to receive(:error).and_return(
-          Caseflow::Error::VaDotGovLimitError.new(code: 500, message: "")
-        )
+        allow(facilities_response).to receive(:code).and_return(500)
         allow(VADotGovService).to receive(:get_distance).and_return(facilities_response)
       end
 
@@ -132,9 +130,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           HTTPI::Response.new(200, {}, {}.to_json)
         )
         allow(valid_address_response).to receive(:data).and_return([])
-        allow(valid_address_response).to receive(:error).and_return(
-          Caseflow::Error::VaDotGovAddressCouldNotBeFoundError.new(code: 500, message: "")
-        )
+        allow(valid_address_response).to receive(:code).and_return(500)
         allow_any_instance_of(VaDotGovAddressValidator).to receive(:valid_address_response)
           .and_return(valid_address_response)
       end
