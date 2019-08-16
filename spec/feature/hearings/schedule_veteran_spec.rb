@@ -509,4 +509,12 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
     end
   end
+
+  context "No upcoming hearing days" do
+    scenario "Show status message for empty upcoming hearing days" do
+      visit "hearings/schedule/assign"
+      click_dropdown(text: "Winston-Salem, NC")
+      expect(page).to have_content("No upcoming hearing days")
+    end
+  end
 end
