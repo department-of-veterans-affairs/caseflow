@@ -8,7 +8,7 @@ class VacolsLocationBatchUpdater
   end
 
   def call
-    conn = connection
+    conn = VACOLS::Case.connection
 
     MetricsService.record("VACOLS: batch_update_vacols_location",
                           service: :vacols,
@@ -50,4 +50,8 @@ class VacolsLocationBatchUpdater
   private
 
   attr_reader :location, :vacols_ids, :user_id
+
+  def sanitize_sql_array(array)
+    VACOLS::Case.sanitize_sql(array)
+  end
 end
