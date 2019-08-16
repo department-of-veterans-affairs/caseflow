@@ -6,6 +6,7 @@ class TaskSorter
   validates :column, :sort_order, presence: true
   validate :column_is_valid
   validate :sort_order_is_valid
+  validate :tasks_type_is_valid
 
   attr_accessor :column, :sort_order, :tasks
 
@@ -15,7 +16,7 @@ class TaskSorter
     # Default to sorting by task creation date.
     @column ||= QueueColumn.from_name(Constants.QUEUE_CONFIG.TASK_CREATED_AT_COLUMN)
     @sort_order ||= Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
-    @tasks ||= []
+    @tasks ||= Task.none
 
     fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
   end
@@ -41,5 +42,9 @@ class TaskSorter
   def sort_order_is_valid
     valid_sort_orders = [Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC, Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC]
     errors.add(:sort_order, COPY::TASK_PAGE_INVALID_SORT_ORDER) unless valid_sort_orders.include?(sort_order)
+  end
+
+  def tasks_type_is_valid
+    errors.add(:tasks, COPY::INVALID_TASKS_ARGUMENT) unless tasks.is_a?(ActiveRecord::Relation)
   end
 end
