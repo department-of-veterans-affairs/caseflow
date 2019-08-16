@@ -58,7 +58,8 @@ RSpec.feature "Bulk task assignment", :postgres do
       2.times do
         create(
           :evidence_submission_window_task,
-          appeal: create(:appeal, closest_regional_office: "RO19")
+          appeal: create(:appeal, closest_regional_office: "RO19"),
+          assigned_to: HearingsManagement.singleton
         )
       end
       visit("/organizations/hearings-management")
@@ -87,14 +88,16 @@ RSpec.feature "Bulk task assignment", :postgres do
       2.times do
         create(
           :evidence_submission_window_task,
-          appeal: create(:appeal, closest_regional_office: "RO19")
+          appeal: create(:appeal, closest_regional_office: "RO19"),
+          assigned_to: HearingsManagement.singleton
         )
       end
 
       5.times do
         create(
           :evidence_submission_window_task,
-          appeal: create(:appeal, closest_regional_office: "RO17")
+          appeal: create(:appeal, closest_regional_office: "RO17"),
+          assigned_to: HearingsManagement.singleton
         )
       end
 
@@ -122,7 +125,8 @@ RSpec.feature "Bulk task assignment", :postgres do
       2.times do
         create(
           :evidence_submission_window_task,
-          appeal: create(:appeal, closest_regional_office: "RO19")
+          appeal: create(:appeal, closest_regional_office: "RO19"),
+          assigned_to: HearingsManagement.singleton
         )
       end
       visit("/organizations/hearings-management")

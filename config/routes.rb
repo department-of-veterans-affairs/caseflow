@@ -202,6 +202,9 @@ Rails.application.routes.draw do
   match '/jobs' => 'asyncable_jobs#index', via: [:get]
 
   resources :users, only: [:index]
+  resources :users, only: [:index] do
+    get 'represented_organizations', on: :member
+  end
 
   get 'cases/:veteran_ids', to: 'appeals#show_case_list'
   get 'cases_to_schedule/:ro', to: 'tasks#ready_for_hearing_schedule'

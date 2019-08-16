@@ -168,16 +168,27 @@ class Veteran < ApplicationRecord
 
   def accessible_appeals_for_poa(poa_participant_ids)
     appeals = Appeal.where(veteran_file_number: file_number).includes(:claimants)
+    legacy_appeals = LegacyAppeal.fetch_appeals_by_file_number(file_number)
 
-    claimants_participant_ids = appeals.map { |appeal| appeal.claimants.pluck(:participant_id) }.flatten
+    poas = poas_for_appeals(appeals, legacy_appeals)
 
-    poas = bgs.fetch_poas_by_participant_ids(claimants_participant_ids)
-
-    appeals.select do |appeal|
-      appeal.claimants.any? do |claimant|
-        poa_participant_ids.include?(poas[claimant[:participant_id]][:participant_id])
+    [
+      appeals.select do |appeal|
+        appeal.claimants.any? do |claimant|
+          poa_participant_ids.include?(poas[claimant[:participant_id]][:participant_id])
+        end
+      end,
+      legacy_appeals.select do |legacy_appeal|
+        poa_participant_ids.include?(poas[legacy_appeal.veteran.participant_id][:participant_id])
       end
-    end
+    ].flatten
+  end
+
+  def poas_for_appeals(appeals, legacy_appeals)
+    claimants_participant_ids = appeals.map { |appeal| appeal.claimants.pluck(:participant_id) }.flatten
+      .concat(legacy_appeals.map { |legacy_appeal| legacy_appeal.veteran.participant_id }.flatten)
+
+    bgs.fetch_poas_by_participant_ids(claimants_participant_ids.uniq)
   end
 
   def participant_id
