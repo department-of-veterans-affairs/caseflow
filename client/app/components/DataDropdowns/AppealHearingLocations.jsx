@@ -49,14 +49,6 @@ const generateHearingLocationOptions = (hearingLocations) => (
 
 class AppealHearingLocationsDropdown extends React.Component {
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      errorMsg: false
-    };
-  }
-
   componentDidMount() {
     const { dropdownName, dynamic, staticHearingLocations } = this.props;
 
@@ -103,11 +95,11 @@ class AppealHearingLocationsDropdown extends React.Component {
       this.props.onReceiveDropdownData(dropdownName, locationOptions);
       this.props.onDropdownError(dropdownName, null);
     }).
-      catch((error) => {
+      catch(({ response }) => {
         let errorReason = '.';
 
-        if (!_.isNil(error.response)) {
-          errorReason = ` ${error.response.body.message}`;
+        if (!_.isNil(response)) {
+          errorReason = `. ${response.body.errors[0].detail}`;
         }
 
         const errorMsg = `Could not find hearing locations for this appellant${errorReason}`;
@@ -132,8 +124,8 @@ class AppealHearingLocationsDropdown extends React.Component {
 
   render() {
     const {
-      name, label, onChange, readOnly, errorMessage, placeholder,
-      appealHearingLocations: { isFetching, options } } = this.props;
+      name, label, onChange, readOnly, placeholder, errorMessage,
+      appealHearingLocations: { isFetching, options, errorMsg } } = this.props;
 
     return (
       <SearchableDropdown
@@ -144,7 +136,7 @@ class AppealHearingLocationsDropdown extends React.Component {
         value={this.getSelectedOption()}
         onChange={(option) => onChange((option || {}).value, (option || {}).label)}
         options={options}
-        errorMessage={this.state.errorMsg || errorMessage}
+        errorMessage={errorMessage || errorMsg}
         placeholder={placeholder} />
     );
   }
