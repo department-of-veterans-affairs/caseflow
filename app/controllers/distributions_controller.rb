@@ -94,6 +94,6 @@ class DistributionsController < ApplicationController
   end
 
   def pending_distribution
-    Distribution.pending_for_judge(current_user).first
+    Distribution.pending_for_judge(current_user)
   end
 end

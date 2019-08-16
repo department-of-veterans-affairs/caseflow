@@ -168,14 +168,21 @@ describe AppealIntake, :all_dbs do
 
       context "claimant is nil" do
         let(:claimant) { nil }
-        let(:receipt_date) { 3.days.from_now }
 
         it "is expected to add an error that claimant cannot be blank" do
           expect(subject).to be_falsey
           expect(detail.errors[:claimant]).to include("blank")
-          expect(detail.errors[:receipt_date]).to include("in_future")
           expect(detail.claimants).to be_empty
         end
+      end
+    end
+
+    context "receipt date is in the future" do
+      let(:receipt_date) { 3.days.from_now }
+
+      it "is invalid" do
+        expect(subject).to be_falsey
+        expect(detail.errors[:receipt_date]).to include("in_future")
       end
     end
   end

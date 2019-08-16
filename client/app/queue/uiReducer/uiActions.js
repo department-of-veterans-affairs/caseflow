@@ -101,6 +101,8 @@ export const requestSave = (
     catch((err) => dispatch(saveFailure(err)));
 };
 
+export const requestGet = (url, params, successMessage) =>
+  requestSave(url, params, successMessage, 'get');
 export const requestPatch = (url, params, successMessage) =>
   requestSave(url, params, successMessage, 'patch');
 export const requestUpdate = (url, params, successMessage) =>

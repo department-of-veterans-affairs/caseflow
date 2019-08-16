@@ -387,7 +387,7 @@ FactoryBot.define do
     factory :evidence_submission_window_task, class: EvidenceSubmissionWindowTask do
       type { EvidenceSubmissionWindowTask.name }
       appeal { create(:appeal) }
-      assigned_to { HearingsManagement.singleton }
+      assigned_to { MailTeam.singleton }
       parent { create(:assign_hearing_disposition_task, appeal: appeal) }
     end
 
