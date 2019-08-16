@@ -92,6 +92,17 @@ class TeamManagement extends React.PureComponent {
   };
 }
 
+TeamManagement.propTypes = {
+  error: PropTypes.object,
+  history: PropTypes.object,
+  judgeTeams: PropTypes.array,
+  onReceiveTeamList: PropTypes.func,
+  otherOrgs: PropTypes.array,
+  privateBars: PropTypes.array,
+  success: PropTypes.object,
+  vsos: PropTypes.array
+};
+
 const mapStateToProps = (state) => {
   const {
     success,
@@ -130,6 +141,10 @@ class OrgHeader extends React.PureComponent {
   }
 }
 
+OrgHeader.propTypes = {
+  children: PropTypes.node
+};
+
 const labelRowStyling = css({
   '& td': { fontWeight: 'bold' }
 });
@@ -157,6 +172,7 @@ OrgList.defaultProps = {
 };
 
 OrgList.propTypes = {
+  orgs: PropTypes.array,
   showBgsParticipantId: PropTypes.bool
 };
 
@@ -256,5 +272,10 @@ OrgRow.defaultProps = {
 };
 
 OrgRow.propTypes = {
-  showBgsParticipantId: PropTypes.bool
+  id: PropTypes.number,
+  name: PropTypes.string,
+  participant_id: PropTypes.number,
+  showBgsParticipantId: PropTypes.bool,
+  url: PropTypes.string,
+  user_admin_path: PropTypes.string
 };

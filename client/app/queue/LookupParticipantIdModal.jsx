@@ -2,6 +2,7 @@ import * as React from 'react';
 import ApiUtil from '../util/ApiUtil';
 import COPY from '../../COPY.json';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
+import PropTypes from 'prop-types';
 import SearchableDropdown from '../components/SearchableDropdown';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -9,7 +10,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import {
   hideErrorMessage,
   hideSuccessMessage,
-  requestSave,
+  requestGet,
   showErrorMessage
 } from './uiReducer/uiActions';
 import { withRouter } from 'react-router-dom';
@@ -54,9 +55,10 @@ class LookupParticipantIdModal extends React.Component {
     this.setState({ representedOrganizations: null });
     this.clearAlerts();
 
-    return this.props.requestSave(url, undefined, undefined, 'get').
+    return this.props.requestGet(url).
       then((resp) => this.setState({ representedOrganizations: resp.body.represented_organizations })).
-      catch((err) => this.props.showErrorMessage({ title: 'Error', detail: err.message }));
+      catch((err) => this.props.showErrorMessage({ title: 'Error',
+        detail: err.message }));
   }
 
   representedOrganizationsList = () => <ol>
@@ -92,12 +94,19 @@ class LookupParticipantIdModal extends React.Component {
   };
 }
 
+LookupParticipantIdModal.propTypes = {
+  hideErrorMessage: PropTypes.func,
+  hideSuccessMessage: PropTypes.func,
+  requestGet: PropTypes.func,
+  showErrorMessage: PropTypes.func
+};
+
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   hideErrorMessage,
   hideSuccessMessage,
-  requestSave,
+  requestGet,
   showErrorMessage
 }, dispatch);
 
