@@ -61,9 +61,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
 
     return this.props.requestPatch(`/tasks/${task.taskId}/change_type`, payload, successMsg).
       then((response) => {
-        const amaTasks = JSON.parse(response.text).tasks.data;
-
-        this.props.onReceiveAmaTasks({ amaTasks });
+        this.props.onReceiveAmaTasks({ response.body.tasks.data });
       }).
       catch(() => {
         // handle the error from the frontend

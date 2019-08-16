@@ -164,9 +164,7 @@ class PostponeHearingModal extends React.Component {
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, this.getSuccessMsg()).
       then((resp) => {
         this.setState({ isPosting: false });
-        const response = JSON.parse(resp.text);
-
-        this.props.onReceiveAmaTasks(response.tasks.data);
+        this.props.onReceiveAmaTasks(resp.body.tasks.data);
       }, () => {
         this.setState({ isPosting: false });
 

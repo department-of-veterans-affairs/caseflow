@@ -23,7 +23,7 @@ export const submitReview = (intakeId, rampElection) => (dispatch) => {
         meta: { analytics }
       }),
       (error) => {
-        const responseObject = JSON.parse(error.response.text);
+        const responseObject = error.response.body;
         const responseErrorCodes = responseObject.error_codes;
 
         dispatch({
@@ -66,12 +66,10 @@ export const completeIntake = (intakeId, rampElection) => (dispatch) => {
   return ApiUtil.patch(`/intake/${intakeId}/complete`, {}, ENDPOINT_NAMES.COMPLETE_INTAKE).
     then(
       (response) => {
-        const responseObject = JSON.parse(response.text);
-
         dispatch({
           type: ACTIONS.COMPLETE_INTAKE_SUCCEED,
           payload: {
-            intake: responseObject
+            intake: response.body
           },
           meta: { analytics }
         });
@@ -79,12 +77,7 @@ export const completeIntake = (intakeId, rampElection) => (dispatch) => {
         return true;
       },
       (error) => {
-        let responseObject = {};
-
-        try {
-          responseObject = JSON.parse(error.response.text);
-        } catch (ex) { /* pass */ }
-
+        const responseObject = error.response.body || {};
         const responseErrorCode = responseObject.error_code;
         const responseErrorData = responseObject.error_data;
 

@@ -42,7 +42,7 @@ class BuildScheduleContainer extends React.PureComponent {
 
   loadPastUploads = () => {
     return ApiUtil.get('/hearings/schedule_periods.json').then((response) => {
-      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+      const resp = ApiUtil.convertToCamelCase(response.body);
       const schedulePeriods = _.keyBy(resp.schedulePeriods, 'id');
 
       this.props.onReceivePastUploads(schedulePeriods);

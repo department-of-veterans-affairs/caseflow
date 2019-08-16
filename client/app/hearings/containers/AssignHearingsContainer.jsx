@@ -78,7 +78,7 @@ class AssignHearingsContainer extends React.PureComponent {
 
     return ApiUtil.get(requestUrl, { timeout: { response: getMinutesToMilliseconds(5) } }
     ).then((response) => {
-      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+      const resp = ApiUtil.convertToCamelCase(response.body);
 
       this.props.onReceiveUpcomingHearingDays(_.keyBy(resp.hearingDays, 'id'));
       this.props.onSelectedHearingDayChange(resp.hearingDays[0]);
@@ -93,7 +93,7 @@ class AssignHearingsContainer extends React.PureComponent {
     const requestUrl = `/cases_to_schedule/${roValue}`;
 
     return ApiUtil.get(requestUrl).then((response) => {
-      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+      const resp = ApiUtil.convertToCamelCase(response.body);
 
       this.props.onReceiveAppealsReadyForHearing(resp.data);
     });

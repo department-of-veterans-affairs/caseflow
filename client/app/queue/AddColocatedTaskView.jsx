@@ -107,10 +107,8 @@ class AddColocatedTaskView extends React.PureComponent {
 
     this.props.requestSave('/tasks', payload, successMsg).
       then((resp) => {
-        const response = JSON.parse(resp.text);
-
         // Remove any duplicate tasks returned by creating multiple admin actions
-        const filteredTasks = _.sortedUniqBy(response.tasks.data, (amaTask) => {
+        const filteredTasks = _.sortedUniqBy(resp.body.tasks.data, (amaTask) => {
           if (amaTask.attributes.external_appeal_id === task.externalAppealId) {
             return amaTask.attributes.external_appeal_id;
           }

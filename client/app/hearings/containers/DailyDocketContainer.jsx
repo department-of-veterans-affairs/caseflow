@@ -73,7 +73,7 @@ export class DailyDocketContainer extends React.Component {
   loadHearingDetails = (hearings) => {
     _.each(hearings, (hearing) => {
       ApiUtil.get(`/hearings/${hearing.externalId}`).then((response) => {
-        const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+        const resp = ApiUtil.convertToCamelCase(response.body);
 
         this.props.onReceiveHearing(resp);
       }).
@@ -87,7 +87,7 @@ export class DailyDocketContainer extends React.Component {
     const requestUrl = `/hearings/hearing_day/${this.props.match.params.hearingDayId}`;
 
     return ApiUtil.get(requestUrl).then((response) => {
-      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+      const resp = ApiUtil.convertToCamelCase(response.body);
 
       const hearings = _.keyBy(resp.hearingDay.hearings, 'externalId');
       const hearingDay = _.omit(resp.hearingDay, ['hearings']);
@@ -144,7 +144,7 @@ export class DailyDocketContainer extends React.Component {
       ...aodMotion
     } }).
       then((response) => {
-        const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+        const resp = ApiUtil.convertToCamelCase(response.body);
 
         this.props.onReceiveSavedHearing(resp);
 
@@ -210,7 +210,7 @@ export class DailyDocketContainer extends React.Component {
 
       ApiUtil.put(`/hearings/hearing_day/${this.props.hearingDay.id}`, { data }).
         then((response) => {
-          const editedHearingDay = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+          const editedHearingDay = ApiUtil.convertToCamelCase(response.body);
 
           editedHearingDay.requestType = this.props.hearingDay.requestType;
 

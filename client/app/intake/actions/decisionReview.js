@@ -17,12 +17,10 @@ export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => 
   return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).
     then(
       (response) => {
-        const responseObject = JSON.parse(response.text);
-
         dispatch({
           type: ACTIONS.SUBMIT_REVIEW_SUCCEED,
           payload: {
-            intake: responseObject
+            intake: response.body
           },
           meta: { analytics }
         });
@@ -30,7 +28,7 @@ export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => 
         return true;
       },
       (error) => {
-        const responseObject = JSON.parse(error.response.text);
+        const responseObject = error.response.body;
         const responseErrorCodes = responseObject.error_codes;
 
         dispatch({
@@ -67,12 +65,10 @@ export const completeIntake = (intakeId, intakeData) => (dispatch) => {
   return ApiUtil.patch(`/intake/${intakeId}/complete`, { data }, ENDPOINT_NAMES.COMPLETE_INTAKE).
     then(
       (response) => {
-        const responseObject = JSON.parse(response.text);
-
         dispatch({
           type: ACTIONS.COMPLETE_INTAKE_SUCCEED,
           payload: {
-            intake: responseObject
+            intake: response.body
           },
           meta: { analytics }
         });
@@ -80,12 +76,7 @@ export const completeIntake = (intakeId, intakeData) => (dispatch) => {
         return true;
       },
       (error) => {
-        let responseObject = {};
-
-        try {
-          responseObject = JSON.parse(error.response.text);
-        } catch (ex) { /* pass */ }
-
+        const responseObject = response.body || {};
         const responseErrorCode = responseObject.error_code;
         const responseErrorData = responseObject.error_data;
 

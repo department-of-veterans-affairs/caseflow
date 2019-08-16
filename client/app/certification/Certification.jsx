@@ -22,20 +22,18 @@ export class Certification extends React.Component {
     const loadPromise = new Promise((resolve, reject) => {
       const makePollAttempt = () => {
         ApiUtil.get(`/certifications/${this.props.vacolsId}`).
-          then(({ text }) => {
-            const response = JSON.parse(text);
-
-            if (response.loading_data_failed) {
+          then((response) => {
+            if (response.body.loading_data_failed) {
               reject(new Error('Backend failed to load data'));
             }
 
-            if (response.loading_data) {
+            if (response.body.loading_data) {
               setTimeout(makePollAttempt, AppConstants.CERTIFICATION_DATA_POLLING_INTERVAL);
 
               return;
             }
 
-            this.setState(_.pick(response, ['certification', 'form9PdfPath']));
+            this.setState(_.pick(response.body, ['certification', 'form9PdfPath']));
             resolve();
           }, reject);
       };

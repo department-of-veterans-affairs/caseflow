@@ -46,7 +46,7 @@ class HearingBadge extends React.PureComponent {
   componentDidMount = () => {
     if (!this.props.mostRecentlyHeldHearingForAppeal && !this.props.hearing && this.props.externalId) {
       ApiUtil.get(`/appeals/${this.props.externalId}/hearings`).then((response) => {
-        this.props.setMostRecentlyHeldHearingForAppeal(this.props.externalId, JSON.parse(response.text));
+        this.props.setMostRecentlyHeldHearingForAppeal(this.props.externalId, response.body);
       });
     }
   }

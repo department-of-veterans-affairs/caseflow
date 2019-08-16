@@ -160,7 +160,7 @@ class HearingDayAddModal extends React.Component {
 
     ApiUtil.post('/hearings/hearing_day.json', { data }).
       then((response) => {
-        const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+        const resp = ApiUtil.convertToCamelCase(response.body);
 
         const newHearings = Object.assign({}, this.props.hearingSchedule);
         const hearingsLength = Object.keys(newHearings).length;

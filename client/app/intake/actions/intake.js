@@ -29,24 +29,17 @@ export const doFileNumberSearch = (formType, fileNumberSearch) => (dispatch) => 
   return ApiUtil.post('/intake', { data }, ENDPOINT_NAMES.START_INTAKE).
     then(
       (response) => {
-        const responseObject = JSON.parse(response.text);
-
         dispatch({
           type: ACTIONS.FILE_NUMBER_SEARCH_SUCCEED,
           payload: {
-            intake: responseObject
+            intake: response.body
           },
           meta: { analytics }
         });
       },
       (error) => {
-        let responseObject = {};
-        let errorCode = 'default';
-
-        try {
-          responseObject = JSON.parse(error.response.text);
-          errorCode = responseObject.error_code;
-        } catch (ex) { /* pass */ }
+        const responseObject = error.response.body || {};
+        const errorCode = responseObject.error_code || 'default';
 
         dispatch({
           type: ACTIONS.FILE_NUMBER_SEARCH_FAIL,

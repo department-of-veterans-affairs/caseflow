@@ -34,7 +34,7 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
             organization_name: organizationName,
             is_vso: isVso,
             queue_config: queueConfig
-          } = JSON.parse(response.text);
+          } = response.body;
 
           this.props.setActiveOrganization(id, organizationName, isVso);
           this.props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));

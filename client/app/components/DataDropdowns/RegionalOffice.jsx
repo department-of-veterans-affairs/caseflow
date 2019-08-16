@@ -35,7 +35,7 @@ class RegionalOfficeDropdown extends React.Component {
     this.props.onFetchDropdownData('regionalOffices');
 
     ApiUtil.get('/regional_offices.json').then((response) => {
-      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+      const resp = ApiUtil.convertToCamelCase(response.body);
 
       let regionalOfficeOptions = [];
 

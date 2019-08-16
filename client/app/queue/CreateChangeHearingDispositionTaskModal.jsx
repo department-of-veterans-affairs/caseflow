@@ -53,9 +53,7 @@ class CreateChangeHearingDispositionTaskModal extends React.Component {
 
     return this.props.requestSave(`/tasks/${task.taskId}/request_hearing_disposition_change`, payload, successMsg).
       then((resp) => {
-        const response = JSON.parse(resp.text);
-
-        this.props.onReceiveAmaTasks(response.tasks.data);
+        this.props.onReceiveAmaTasks(resp.body.tasks.data);
       }).
       catch(() => {
         // handle the error from the frontend

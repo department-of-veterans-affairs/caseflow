@@ -45,7 +45,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
   componentDidMount() {
     ApiUtil.get(`/hearings/hearing_day/${this.props.worksheet.hearing_day_id}`).
       then((response) => {
-        this.props.getHearingDayHearings(_.keyBy(JSON.parse(response.text).hearing_day.hearings, 'external_id'));
+        this.props.getHearingDayHearings(_.keyBy(response.body.hearing_day.hearings, 'external_id'));
       });
   }
 

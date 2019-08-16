@@ -29,7 +29,7 @@ export class ReviewAssignmentsContainer extends React.Component {
 
   loadSchedulePeriod = () => {
     return ApiUtil.get(`/hearings/schedule_periods/${this.props.match.params.schedulePeriodId}`).then((response) => {
-      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+      const resp = ApiUtil.convertToCamelCase(response.body);
       const schedulePeriod = resp.schedulePeriod;
 
       this.props.onReceiveSchedulePeriod(schedulePeriod);

@@ -35,7 +35,7 @@ export default class UserStats extends React.PureComponent {
     ApiUtil.get(`/intake/manager/users/${userId}`).then((response) => {
       this.setState({
         error: false,
-        userStats: JSON.parse(response.text),
+        userStats: response.body,
         userStatsFetched: true,
         isSwitching: false
       });

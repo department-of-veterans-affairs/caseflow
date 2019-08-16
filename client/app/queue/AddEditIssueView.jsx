@@ -124,7 +124,7 @@ class AddEditIssueView extends React.Component {
       );
     }
 
-    requestPromise.then((resp) => this.updateIssuesFromServer(JSON.parse(resp.text))).
+    requestPromise.then((resp) => this.updateIssuesFromServer(resp.body)).
       catch(() => {
         // handle the error from the frontend
       });
@@ -157,7 +157,7 @@ class AddEditIssueView extends React.Component {
     this.props.requestDelete(
       `/appeals/${appealId}/issues/${String(issue.id)}`, {},
       { title: `You deleted issue ${issueIndex + 1}.` }
-    ).then((resp) => this.props.deleteEditingAppealIssue(appealId, issueId, JSON.parse(resp.text)));
+    ).then((resp) => this.props.deleteEditingAppealIssue(appealId, issueId, resp.body));
   };
 
   renderDiagnosticCodes = () => _.keys(DIAGNOSTIC_CODE_DESCRIPTIONS).map((value) => ({
