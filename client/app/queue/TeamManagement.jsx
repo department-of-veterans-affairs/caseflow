@@ -30,6 +30,8 @@ class TeamManagement extends React.PureComponent {
 
   addPrivateBar = () => this.props.history.push('/team_management/add_private_bar');
 
+  lookupParticipantId = () => this.props.history.push('/team_management/lookup_participant_id');
+
   render = () => {
     const {
       success,
@@ -65,7 +67,17 @@ class TeamManagement extends React.PureComponent {
               <OrgList orgs={this.props.vsos} showBgsParticipantId />
 
               <OrgHeader>
-                Private Bar <Button name={COPY.TEAM_MANAGEMENT_ADD_PRIVATE_BAR_BUTTON} onClick={this.addPrivateBar} />
+                Private Bar
+                <span {...css({ marginLeft: '1rem' })}>
+                  <Button name={COPY.TEAM_MANAGEMENT_ADD_PRIVATE_BAR_BUTTON} onClick={this.addPrivateBar} />
+                </span>
+                <span {...css({ marginLeft: '1rem' })}>
+                  <Button
+                    name="Look up Participant ID"
+                    onClick={this.lookupParticipantId}
+                    classNames={['usa-button-secondary']}
+                  />
+                </span>
               </OrgHeader>
               <OrgList orgs={this.props.privateBars} showBgsParticipantId />
 
@@ -79,6 +91,17 @@ class TeamManagement extends React.PureComponent {
     </LoadingDataDisplay>;
   };
 }
+
+TeamManagement.propTypes = {
+  error: PropTypes.object,
+  history: PropTypes.object,
+  judgeTeams: PropTypes.array,
+  onReceiveTeamList: PropTypes.func,
+  otherOrgs: PropTypes.array,
+  privateBars: PropTypes.array,
+  success: PropTypes.object,
+  vsos: PropTypes.array
+};
 
 const mapStateToProps = (state) => {
   const {
@@ -118,6 +141,10 @@ class OrgHeader extends React.PureComponent {
   }
 }
 
+OrgHeader.propTypes = {
+  children: PropTypes.node
+};
+
 const labelRowStyling = css({
   '& td': { fontWeight: 'bold' }
 });
@@ -145,6 +172,7 @@ OrgList.defaultProps = {
 };
 
 OrgList.propTypes = {
+  orgs: PropTypes.array,
   showBgsParticipantId: PropTypes.bool
 };
 
@@ -244,5 +272,10 @@ OrgRow.defaultProps = {
 };
 
 OrgRow.propTypes = {
-  showBgsParticipantId: PropTypes.bool
+  id: PropTypes.number,
+  name: PropTypes.string,
+  participant_id: PropTypes.number,
+  showBgsParticipantId: PropTypes.bool,
+  url: PropTypes.string,
+  user_admin_path: PropTypes.string
 };
