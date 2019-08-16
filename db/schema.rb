@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190815125313) do
+ActiveRecord::Schema.define(version: 20190816155214) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1042,6 +1042,7 @@ ActiveRecord::Schema.define(version: 20190815125313) do
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
+    t.boolean "active", default: true, comment: "Whether or not a user is an active user of caseflow"
     t.datetime "created_at"
     t.string "css_id", null: false
     t.datetime "efolder_documents_fetched_at", comment: "Date when efolder documents were cached in s3 for this user"

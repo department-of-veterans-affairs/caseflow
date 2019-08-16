@@ -26,6 +26,8 @@ class User < ApplicationRecord
 
   before_create :normalize_css_id
 
+  scope :active, -> { where(active: true) }
+
   def username
     css_id
   end
