@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190815125313) do
+ActiveRecord::Schema.define(version: 20190816210203) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1053,8 +1053,11 @@ ActiveRecord::Schema.define(version: 20190815125313) do
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
+    t.string "status", default: "active", comment: "Whether or not the user is an active user of caseflow"
+    t.datetime "status_updated_at", comment: "When the user's status was last updated"
     t.datetime "updated_at"
     t.index "upper((css_id)::text)", name: "index_users_unique_css_id", unique: true
+    t.index ["status"], name: "index_users_on_status"
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|

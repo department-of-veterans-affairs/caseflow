@@ -73,7 +73,9 @@ describe User, :all_dbs do
         "efolder_documents_fetched_at" => nil,
         "selected_regional_office" => nil,
         :display_name => css_id.upcase,
-        "name" => "Tom Brady"
+        "name" => "Tom Brady",
+        "status" => Constants.USER_STATUSES.active,
+        "status_updated_at" => nil
       }
     end
 
@@ -571,6 +573,32 @@ describe User, :all_dbs do
       before { OrganizationsUser.add_user_to_organization(user, create(:organization)) }
       it "returns true" do
         expect(subject).to eq(true)
+      end
+    end
+  end
+
+  describe "when the status is updated" do
+    let(:user) { create(:user) }
+
+    subject { user.update(status: status) }
+
+    context "with an invalid status" do
+      let(:status) { "invalid" }
+
+      it "fails and does not update the status_updated_at column" do
+        expect { subject }.to raise_error(ArgumentError)
+        expect(user.reload.status).not_to eq status
+        expect(user.status_updated_at).to eq nil
+      end
+    end
+
+    context "with a valid status" do
+      let(:status) { Constants.USER_STATUSES.inactive }
+
+      it "succeed and updates the status_updated_at column" do
+        expect(subject).to eq true
+        expect(user.reload.status).to eq Constants.USER_STATUSES.inactive
+        expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
       end
     end
   end

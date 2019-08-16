@@ -26,6 +26,13 @@ class User < ApplicationRecord
 
   before_create :normalize_css_id
 
+  after_update :maybe_update_status_timestamp
+
+  enum status: {
+    Constants.USER_STATUSES.active.to_sym => Constants.USER_STATUSES.active,
+    Constants.USER_STATUSES.inactive.to_sym => Constants.USER_STATUSES.inactive
+  }
+
   def username
     css_id
   end
@@ -272,6 +279,10 @@ class User < ApplicationRecord
   end
 
   private
+
+  def maybe_update_status_timestamp
+    update!(status_updated_at: Time.zone.now) if saved_change_to_attribute?("status")
+  end
 
   def normalize_css_id
     self.css_id = css_id.upcase
