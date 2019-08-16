@@ -40,6 +40,7 @@ class DecisionReviewIntake < Intake
       start_completion!
       detail.request_issues.destroy_all unless detail.request_issues.empty?
       detail.create_issues!(build_issues(req_issues))
+      # It’s used in AppealIntake#complete!, which calls super with a block
       yield
       complete_with_status!(:success)
     end

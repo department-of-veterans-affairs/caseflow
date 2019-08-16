@@ -25,6 +25,7 @@ class RequestIssue < ApplicationRecord
 
   # enum is symbol, but validates requires a string
   validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
+  validate :validate_rating_or_nonrating_or_unidentified, on: :create
 
   enum ineligible_reason: {
     duplicate_of_nonrating_issue_in_active_review: "duplicate_of_nonrating_issue_in_active_review",
@@ -315,12 +316,17 @@ class RequestIssue < ApplicationRecord
     end_product_establishment.status_active?
   end
 
+  def validate_rating_or_nonrating_or_unidentified
+    return if rating? || nonrating? || is_unidentified?
+    errors.add(:request_issue, "must be rating or nonrating or unidentified")
+  end
+
   def rating?
     !!associated_rating_issue? || previous_rating_issue? || !!associated_rating_decision?
   end
 
   def nonrating?
-    !rating? && !is_unidentified?
+    nonrating_issue_category.present?
   end
 
   # Checks if the issue was corrected by another request issue
@@ -334,7 +340,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def associated_rating_issue?
-    contested_rating_issue_reference_id
+    contested_rating_issue_reference_id.present?
   end
 
   def associated_rating_decision?
