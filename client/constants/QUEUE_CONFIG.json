@@ -24,7 +24,9 @@
 
   "COLUMNS": {
     "APPEAL_TYPE": {
-      "name": "typeColumn"
+      "name": "typeColumn",
+      "sorting_table": "cached_appeal_attributes",
+      "sorting_columns": ["is_aod", "case_type", "docket_number"]
     },
     "CASE_DETAILS_LINK": {
       "name": "detailsColumn",
