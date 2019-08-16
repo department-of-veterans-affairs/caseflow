@@ -45,7 +45,7 @@ class HearingSerializer
   attribute :location
   attribute :military_service, if: for_full
   attribute :notes
-  attribute :paper_case do |object|
+  attribute :paper_case do
     false
   end
   attribute :prepped
