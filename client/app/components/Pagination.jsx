@@ -54,7 +54,7 @@ class Pagination extends React.PureComponent {
     // If there are no pages, there is no data, so the range should be 0-0.
     // Otherwise, the end of the range is the previous amount of cases + 
     // the amount of data in the current page.
-    const endingCaseNumber =  totalCases === 0 ? 0 : (beginningCaseNumber + currentCases - 1);
+    const endingCaseNumber = totalCases === 0 ? 0 : (beginningCaseNumber + currentCases - 1);
     // Create the range
     let currentCaseRange = `${beginningCaseNumber}-${endingCaseNumber}`;
     // Create the entire summary
