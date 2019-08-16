@@ -119,6 +119,8 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
             params: { appeal_id: appeal.external_id, regional_office: "RO13" }
 
         expect(response.status).to eq 500
+        expect(JSON.parse(response.body).dig("errors").first.dig("detail"))
+          .to eq("An unexpected error occured when attempting to map veteran.")
       end
     end
 
@@ -141,6 +143,8 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
             params: { appeal_id: appeal.external_id, regional_office: "RO13" }
 
         expect(response.status).to eq 500
+        expect(JSON.parse(response.body).dig("errors").first.dig("detail"))
+          .to eq("An unexpected error occured when attempting to map veteran.")
       end
     end
   end
