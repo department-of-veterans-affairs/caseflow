@@ -516,5 +516,11 @@ FactoryBot.define do
       assigned_to { MailTeam.singleton }
       assigned_by { nil }
     end
+
+    factory :vacate_motion_mail_task, class: VacateMotionMailTask do
+      type { "VacateMotionMailTask" }
+      appeal
+      association :parent, factory: :root_task
+    end
   end
 end
