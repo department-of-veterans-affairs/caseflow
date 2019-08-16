@@ -322,7 +322,7 @@ feature "Intake", :all_dbs do
       end
 
       before { allow(Rails).to receive(:deploy_env?).and_return(true) }
-      
+
       let(:veteran) do
         Generators::Veteran.build(
           file_number: "123456789",
