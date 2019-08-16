@@ -166,85 +166,81 @@ describe TaskSorter, :postgres do
           end
         end
 
-        # context "when sorting by docket number column" do
-        #   let(:column_name) { Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN }
+        context "when sorting by docket number column" do
+          let(:column_name) { Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN }
 
-        #   before do
-        #     tasks.each do |task|
-        #       create(:cached_appeal, appeal_id: task.appeal_id, appeal_type: task.appeal_type)
-        #     end
-        #   end
+          before do
+            tasks.each do |task|
+              create(:cached_appeal, appeal_id: task.appeal_id, appeal_type: task.appeal_type)
+            end
+          end
 
-        #   it "sorts using ascending order by default" do
-        #     expected_order = CachedAppeal.all.sort_by(&:docket_number)
-        #     expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
-        #   end
-        # end
+          it "sorts using ascending order by default" do
+            expect(subject.pluck(:appeal_id)).to eq(CachedAppeal.order(:docket_type, :docket_number).pluck(:appeal_id))
+          end
+        end
 
-        # context "when sorting by closest regional office column" do
-        #   let(:column_name) { Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN }
+        context "when sorting by closest regional office column" do
+          let(:column_name) { Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN }
 
-        #   before do
-        #     regional_offices = RegionalOffice::ROS
-        #       .uniq { |ro_key| RegionalOffice::CITIES[ro_key][:city] }
-        #       .shuffle
-        #     tasks.each_with_index do |task, index|
-        #       ro_key = regional_offices[index]
-        #       ro_city = RegionalOffice::CITIES[ro_key][:city]
-        #       task.appeal.update!(closest_regional_office: ro_key)
-        #       create(:cached_appeal, appeal_id: task.appeal_id, closest_regional_office_city: ro_city)
-        #     end
-        #   end
+          before do
+            regional_offices = RegionalOffice::ROS
+              .uniq { |ro_key| RegionalOffice::CITIES[ro_key][:city] }
+              .shuffle
+            tasks.each_with_index do |task, index|
+              ro_key = regional_offices[index]
+              ro_city = RegionalOffice::CITIES[ro_key][:city]
+              task.appeal.update!(closest_regional_office: ro_key)
+              create(:cached_appeal, appeal_id: task.appeal_id, closest_regional_office_city: ro_city)
+            end
+          end
 
-        #   it "sorts by regional office city" do
-        #     expected_order = tasks.sort_by do |task|
-        #       RegionalOffice::CITIES[task.appeal.closest_regional_office][:city]
-        #     end
-        #     expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
-        #   end
-        # end
+          it "sorts by regional office city" do
+            expect(subject.pluck(:appeal_id)).to eq(CachedAppeal.order(:closest_regional_office_city).pluck(:appeal_id))
+          end
+        end
 
-        # context "when sorting by issue count column" do
-        #   let(:column_name) { Constants.QUEUE_CONFIG.ISSUE_COUNT_COLUMN }
+        context "when sorting by issue count column" do
+          let(:column_name) { Constants.QUEUE_CONFIG.ISSUE_COUNT_COLUMN }
 
-        #   before do
-        #     issue_counts = (0..tasks.length).to_a.shuffle
-        #     tasks.each_with_index do |task, index|
-        #       appeal = create(:appeal, request_issues: build_list(:request_issue, issue_counts[index]))
-        #       task.update!(appeal_id: appeal.id)
-        #       create(:cached_appeal, appeal_id: task.appeal_id, issue_count: issue_counts[index])
-        #     end
-        #   end
+          before do
+            issue_counts = (0..tasks.length).to_a.shuffle
+            tasks.each_with_index do |task, index|
+              appeal = create(:appeal, request_issues: build_list(:request_issue, issue_counts[index]))
+              task.update!(appeal_id: appeal.id)
+              create(:cached_appeal, appeal_id: task.appeal_id, issue_count: issue_counts[index])
+            end
+          end
 
-        #   it "sorts by issue count" do
-        #     expected_order = tasks.sort_by { |task| task.appeal.issues[:request_issues].count }
-        #     expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
-        #   end
-        # end
+          it "sorts by issue count" do
+            expected_order = tasks.sort_by { |task| task.appeal.issues[:request_issues].count }
+            expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+          end
+        end
 
-        # context "when sorting by case details link column" do
-        #   let(:column_name) { Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN }
+        context "when sorting by case details link column" do
+          let(:column_name) { Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN }
 
-        #   before do
-        #     tasks.each do |task|
-        #       first_name = Faker::Name.first_name
-        #       last_name = "#{Faker::Name.middle_name} #{Faker::Name.last_name}"
-        #       task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
-        #       create(
-        #         :cached_appeal,
-        #         appeal_id: task.appeal_id,
-        #         veteran_name: "#{last_name.split(' ').last}, #{first_name.split(' ').first}"
-        #       )
-        #     end
-        #   end
+          before do
+            tasks.each do |task|
+              first_name = Faker::Name.first_name
+              last_name = "#{Faker::Name.middle_name} #{Faker::Name.last_name}"
+              task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
+              create(
+                :cached_appeal,
+                appeal_id: task.appeal_id,
+                veteran_name: "#{last_name.split(' ').last}, #{first_name.split(' ').first}"
+              )
+            end
+          end
 
-        #   it "sorts by veteran last and first name" do
-        #     expected_order = tasks.sort_by do |task|
-        #       "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name.split(' ').first}"
-        #     end
-        #     expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
-        #   end
-        # end
+          it "sorts by veteran last and first name" do
+            expected_order = tasks.sort_by do |task|
+              "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name.split(' ').first}"
+            end
+            expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+          end
+        end
       end
     end
   end
