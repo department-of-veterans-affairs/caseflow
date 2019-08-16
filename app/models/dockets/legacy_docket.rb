@@ -30,24 +30,30 @@ class LegacyDocket
 
   def distribute_priority_appeals(distribution, genpop: "any", limit: 1)
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
-      distribution.distributed_cases.create(case_id: record["bfkey"],
-                                            docket: docket_type,
-                                            priority: true,
-                                            ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
-                                            genpop: record["vlj"].nil?,
-                                            genpop_query: genpop)
+      DistributedCase.create(
+        distribution: distribution,
+        case_id: record["bfkey"],
+        docket: docket_type,
+        priority: true,
+        ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
+        genpop: record["vlj"].nil?,
+        genpop_query: genpop
+      )
     end
   end
 
   def distribute_nonpriority_appeals(distribution, genpop: "any", range: nil, limit: 1)
     LegacyAppeal.repository.distribute_nonpriority_appeals(distribution.judge, genpop, range, limit).map do |record|
-      distribution.distributed_cases.create(case_id: record["bfkey"],
-                                            docket: docket_type,
-                                            priority: false,
-                                            ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
-                                            docket_index: record["docket_index"],
-                                            genpop: record["vlj"].nil?,
-                                            genpop_query: genpop)
+      DistributedCase.create(
+        distribution: distribution,
+        case_id: record["bfkey"],
+        docket: docket_type,
+        priority: false,
+        ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
+        docket_index: record["docket_index"],
+        genpop: record["vlj"].nil?,
+        genpop_query: genpop
+      )
     end
   end
 

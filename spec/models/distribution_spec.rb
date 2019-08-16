@@ -209,7 +209,7 @@ describe Distribution, :all_dbs do
       end
 
       it "does not create a duplicate distributed_case" do
-        expect { subject.distribute! }.to raise_error(PG::UniqueViolation)
+        expect { subject.distribute! }.to raise_error(ActiveRecord::RecordNotUnique)
         expect(subject.valid?).to eq(true)
         expect(subject.error?).to eq(true)
         expect(subject.errored_at).to eq(Time.zone.now)

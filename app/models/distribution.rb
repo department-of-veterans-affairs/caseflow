@@ -49,7 +49,8 @@ class Distribution < ApplicationRecord
       update!(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
     end
   rescue StandardError => error
-    update!(status: "error", errored_at: Time.zone.now)
+    # DO NOT use update! because we want to avoid validations and saving any cached associations.
+    update_columns(status: "error", errored_at: Time.zone.now)
     raise error
   end
 
