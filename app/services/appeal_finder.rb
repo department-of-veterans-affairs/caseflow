@@ -52,7 +52,7 @@ class AppealFinder
                           name: "VeteranFinderQuery.find_appeals_for_vso_user") do
       vso_participant_ids = user.vsos_user_represents.map { |poa| poa[:participant_id] }
 
-      veterans.flat_map { |vet| vet.all_accessible_appeals_for_poa(vso_participant_ids) }
+      veterans.flat_map { |vet| vet.accessible_appeals_for_poa(vso_participant_ids) }
     end
   end
 end
