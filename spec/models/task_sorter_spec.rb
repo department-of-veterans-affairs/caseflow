@@ -104,73 +104,73 @@ describe TaskSorter, :postgres do
           end
 
           it "sorts tasks by closed_at value" do
-            expect(subject.pluck(:id)).to eq(Task.order(:closed_at).pluck(:id))
+            expect(subject.pluck(:id)).to eq(tasks.order(:closed_at).pluck(:id))
           end
         end
 
-        #         context "when sorting by days waiting" do
-        #   let(:sort_by) { Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN }
+        context "when sorting by days waiting" do
+          let(:column_name) { Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN }
 
-        #   before do
-        #     created_tasks.each do |task|
-        #       # Update each task to be assigned some time in the past 30 days.
-        #       task.update!(assigned_at: rand(30 * 24 * 60).minutes.ago)
-        #     end
-        #   end
+          before do
+            tasks.each do |task|
+              # Update each task to be assigned some time in the past 30 days.
+              task.update!(assigned_at: rand(30 * 24 * 60).minutes.ago)
+            end
+          end
 
-        #   it "sorts tasks by assigned_at value" do
-        #     expected_order = created_tasks.sort_by(&:assigned_at)
-        #     expect(subject.map(&:id)).to eq(expected_order.map(&:id))
-        #   end
-        # end
+          it "sorts tasks by assigned_at value" do
+            expect(subject.pluck(:id)).to eq(tasks.order(:assigned_at).pluck(:id))
+          end
+        end
 
-        # context "when sorting by due date" do
-        #   let(:sort_by) { Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN }
+        context "when sorting by due date" do
+          let(:column_name) { Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN }
 
-        #   before do
-        #     created_tasks.each do |task|
-        #       # Update each task to be assigned some time in the past 30 days.
-        #       task.update!(assigned_at: rand(30 * 24 * 60).minutes.ago)
-        #     end
-        #   end
+          before do
+            tasks.each do |task|
+              # Update each task to be assigned some time in the past 30 days.
+              task.update!(assigned_at: rand(30 * 24 * 60).minutes.ago)
+            end
+          end
 
-        #   it "sorts tasks by assigned_at value" do
-        #     expected_order = created_tasks.sort_by(&:assigned_at)
-        #     expect(subject.map(&:id)).to eq(expected_order.map(&:id))
-        #   end
-        # end
+          it "sorts tasks by assigned_at value" do
+            expect(subject.pluck(:id)).to eq(tasks.order(:assigned_at).pluck(:id))
+          end
+        end
 
-        # context "when sorting by task type" do
-        #   let(:sort_by) { Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN }
-        #   let!(:created_tasks) { create_list(:colocated_task, 14, assigned_to: assignee) }
+        context "when sorting by task type" do
+          let(:column_name) { Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN }
+          let(:tasks) { Task.where(id: create_list(:ama_colocated_task, 14).pluck(:id)) }
 
-        #   it "sorts ColocatedTasks by action and created_at" do
-        #     expected_order = created_tasks.sort_by { |task| [task.action, task.created_at] }
-        #     expect(subject.map(&:id)).to eq(expected_order.map(&:id))
-        #   end
-        # end
+          before do
+            OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
+          end
 
-        # context "when sorting by days on hold" do
-        #   let(:sort_by) { Constants.QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN }
+          it "sorts ColocatedTasks by action and created_at" do
+            expect(subject.pluck(:id)).to eq(tasks.order(:type, :action, :created_at).pluck(:id))
+          end
+        end
 
-        #   before do
-        #     created_tasks.each do |task|
-        #       # Update each task to be place on hold at some time in the past 30 days.
-        #       task.update!(placed_on_hold_at: rand(30 * 24 * 60).minutes.ago)
-        #     end
-        #   end
+        context "when sorting by days on hold" do
+          let(:column_name) { Constants.QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN }
 
-        #   it "sorts tasks by placed_on_hold_at value" do
-        #     expected_order = created_tasks.sort_by(&:placed_on_hold_at)
-        #     expect(subject.map(&:id)).to eq(expected_order.map(&:id))
-        #   end
-        # end
+          before do
+            tasks.each do |task|
+              # Update each task to be place on hold at some time in the past 30 days.
+              task.update!(placed_on_hold_at: rand(30 * 24 * 60).minutes.ago)
+            end
+          end
+
+          it "sorts tasks by placed_on_hold_at value" do
+            expect(subject.pluck(:id)).to eq(tasks.order(:placed_on_hold_at).pluck(:id))
+          end
+        end
 
         # context "when sorting by docket number column" do
-        #   let(:sort_by) { Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN }
+        #   let(:column_name) { Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN }
 
         #   before do
-        #     created_tasks.each do |task|
+        #     tasks.each do |task|
         #       create(:cached_appeal, appeal_id: task.appeal_id, appeal_type: task.appeal_type)
         #     end
         #   end
@@ -182,13 +182,13 @@ describe TaskSorter, :postgres do
         # end
 
         # context "when sorting by closest regional office column" do
-        #   let(:sort_by) { Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN }
+        #   let(:column_name) { Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN }
 
         #   before do
         #     regional_offices = RegionalOffice::ROS
         #       .uniq { |ro_key| RegionalOffice::CITIES[ro_key][:city] }
         #       .shuffle
-        #     created_tasks.each_with_index do |task, index|
+        #     tasks.each_with_index do |task, index|
         #       ro_key = regional_offices[index]
         #       ro_city = RegionalOffice::CITIES[ro_key][:city]
         #       task.appeal.update!(closest_regional_office: ro_key)
@@ -197,7 +197,7 @@ describe TaskSorter, :postgres do
         #   end
 
         #   it "sorts by regional office city" do
-        #     expected_order = created_tasks.sort_by do |task|
+        #     expected_order = tasks.sort_by do |task|
         #       RegionalOffice::CITIES[task.appeal.closest_regional_office][:city]
         #     end
         #     expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
@@ -205,11 +205,11 @@ describe TaskSorter, :postgres do
         # end
 
         # context "when sorting by issue count column" do
-        #   let(:sort_by) { Constants.QUEUE_CONFIG.ISSUE_COUNT_COLUMN }
+        #   let(:column_name) { Constants.QUEUE_CONFIG.ISSUE_COUNT_COLUMN }
 
         #   before do
-        #     issue_counts = (0..created_tasks.length).to_a.shuffle
-        #     created_tasks.each_with_index do |task, index|
+        #     issue_counts = (0..tasks.length).to_a.shuffle
+        #     tasks.each_with_index do |task, index|
         #       appeal = create(:appeal, request_issues: build_list(:request_issue, issue_counts[index]))
         #       task.update!(appeal_id: appeal.id)
         #       create(:cached_appeal, appeal_id: task.appeal_id, issue_count: issue_counts[index])
@@ -217,16 +217,16 @@ describe TaskSorter, :postgres do
         #   end
 
         #   it "sorts by issue count" do
-        #     expected_order = created_tasks.sort_by { |task| task.appeal.issues[:request_issues].count }
+        #     expected_order = tasks.sort_by { |task| task.appeal.issues[:request_issues].count }
         #     expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
         #   end
         # end
 
         # context "when sorting by case details link column" do
-        #   let(:sort_by) { Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN }
+        #   let(:column_name) { Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN }
 
         #   before do
-        #     created_tasks.each do |task|
+        #     tasks.each do |task|
         #       first_name = Faker::Name.first_name
         #       last_name = "#{Faker::Name.middle_name} #{Faker::Name.last_name}"
         #       task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
@@ -239,7 +239,7 @@ describe TaskSorter, :postgres do
         #   end
 
         #   it "sorts by veteran last and first name" do
-        #     expected_order = created_tasks.sort_by do |task|
+        #     expected_order = tasks.sort_by do |task|
         #       "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name.split(' ').first}"
         #     end
         #     expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
