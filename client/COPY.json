@@ -529,6 +529,15 @@
   "SCHEDULE_VETERAN_FULL_HEARING_DAY_TITLE": "This hearing day is full",
   "SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL": "You are about to schedule this Veteran on a full docket. Please verify before scheduling.",
 
+  "REMOVE_HEARING_DAY_MESSAGE_TITLE": "Remove Hearing Day",
+  "REMOVE_HEARING_DAY_MESSAGE_DETAIL": "Once the hearing day is removed, users will no longer be able to schedule Veterans for this %s hearing day on %s.",
+
+  "LOCK_HEARING_DAY_MESSAGE_TITLE": "Lock Hearing Day",
+  "LOCK_HEARING_DAY_MESSAGE_DETAIL": "Completing this action will not allow more Veterans to be scheduled for this day. You can still make changes to the existing slots.",
+
+  "UNLOCK_HEARING_DAY_MESSAGE_TITLE": "Unlock Hearing Day",
+  "UNLOCK_HEARING_DAY_MESSAGE_DETAIL": "This hearing day is locked. Do you want to unlock the hearing day?",
+
   "HEARING_DATE_LOADING": "Finding upcoming hearing dates for this regional office...",
 
   "CLAIM_REVIEW_EDIT_ERROR_MISSING_DECISION_DATE": "VBMS or SHARE: One or more ratings may be locked on this Claim. Please try again in 24 hours.",
