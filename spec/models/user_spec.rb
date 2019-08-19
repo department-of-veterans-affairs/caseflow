@@ -595,7 +595,7 @@ describe User, :all_dbs do
     context "with a valid status" do
       let(:status) { Constants.USER_STATUSES.inactive }
 
-      it "succeed and updates the status_updated_at column" do
+      it "succeeds and updates the status_updated_at column" do
         expect(subject).to eq true
         expect(user.reload.status).to eq Constants.USER_STATUSES.inactive
         expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
