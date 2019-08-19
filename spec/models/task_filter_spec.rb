@@ -88,4 +88,46 @@ describe TaskFilter, :postgres do
       end
     end
   end
+
+  describe ".filtered_tasks" do
+    subject { TaskFilter.new(filter_params: filter_params, tasks: all_tasks).filtered_tasks }
+
+    context "when there are a variety of task assigned to the current organization" do
+      let(:foia_tasks) { create_list(:foia_task, 5) }
+      let(:translation_tasks) { create_list(:translation_task, 6) }
+      let(:generic_tasks) { create_list(:generic_task, 7) }
+      let(:all_tasks) do
+        Task.where(id: foia_tasks.pluck(:id) + translation_tasks.pluck(:id) + generic_tasks.pluck(:id))
+      end
+
+      context "when filter_params is an empty array" do
+        let(:filter_params) { [] }
+
+        it "returns the same set of tasks for the filtered and unfiltered set" do
+          expect(subject.map(&:id)).to match_array(all_tasks.map(&:id))
+        end
+      end
+
+      context "when filter includes TranslationTasks" do
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{TranslationTask.name}"] }
+
+        it "returns only translation tasks assigned to the current organization" do
+          expect(subject.map(&:id)).to_not match_array(all_tasks.map(&:id))
+          expect(subject.map(&:type).uniq).to eq([TranslationTask.name])
+          expect(subject.map(&:id)).to match_array(translation_tasks.map(&:id))
+        end
+      end
+
+      context "when filter includes TranslationTasks and FoiaTasks" do
+        let(:filter_params) do
+          ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{TranslationTask.name},#{FoiaTask.name}"]
+        end
+
+        it "returns all translation and FOIA tasks assigned to the current organization" do
+          expect(subject.map(&:type).uniq).to match_array([TranslationTask.name, FoiaTask.name])
+          expect(subject.map(&:id)).to match_array(translation_tasks.map(&:id) + foia_tasks.map(&:id))
+        end
+      end
+    end
+  end
 end
