@@ -324,7 +324,9 @@ ActiveRecord::Schema.define(version: 20190816210203) do
   create_table "distributions", force: :cascade do |t|
     t.datetime "completed_at"
     t.datetime "created_at", null: false
+    t.datetime "errored_at", comment: "when the Distribution job suffered an error"
     t.integer "judge_id"
+    t.datetime "started_at", comment: "when the Distribution job commenced"
     t.json "statistics"
     t.string "status"
     t.datetime "updated_at", null: false
