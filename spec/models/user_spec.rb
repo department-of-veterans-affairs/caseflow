@@ -580,7 +580,7 @@ describe User, :all_dbs do
   describe "when the status is updated" do
     let(:user) { create(:user) }
 
-    subject { user.update(status: status) }
+    subject { user.update_status!(status) }
 
     before { Timecop.freeze(Time.zone.now) }
 

@@ -26,8 +26,6 @@ class User < ApplicationRecord
 
   before_create :normalize_css_id
 
-  after_update :maybe_update_status_timestamp
-
   enum status: {
     Constants.USER_STATUSES.active.to_sym => Constants.USER_STATUSES.active,
     Constants.USER_STATUSES.inactive.to_sym => Constants.USER_STATUSES.inactive
@@ -276,6 +274,10 @@ class User < ApplicationRecord
     end
 
     orgs
+  end
+
+  def update_status!(new_status)
+    update!(status: new_status, status_updated_at: Time.zone.now)
   end
 
   private
