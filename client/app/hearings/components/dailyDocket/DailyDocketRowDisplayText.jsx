@@ -54,7 +54,7 @@ const AppellantInformation = ({ hearing }) => {
 };
 
 AppellantInformation.propTypes = {
-  hearing: {
+  hearing: PropTypes.shape({
     appealExternalId: PropTypes.string,
     appellantAddressLine1: PropTypes.string,
     appellantCity: PropTypes.string,
@@ -65,7 +65,7 @@ AppellantInformation.propTypes = {
     representative: PropTypes.string,
     representativeName: PropTypes.string,
     veteranFileNumber: PropTypes.string
-  }
+  })
 };
 
 const HearingTime = ({ hearing }) => {
@@ -89,14 +89,14 @@ const HearingTime = ({ hearing }) => {
 };
 
 HearingTime.propTypes = {
-  hearing: {
+  hearing: PropTypes.shape({
     centralOfficeTimeString: PropTypes.string,
-    currentIssueCount: PropTypes.string,
+    currentIssueCount: PropTypes.number,
     readableRequestType: PropTypes.string,
     regionalOfficeName: PropTypes.string,
     regionalOfficeTimezone: PropTypes.string,
     scheduledTimeString: PropTypes.string
-  }
+  })
 };
 
 export default class HearingText extends React.Component {
@@ -120,7 +120,7 @@ HearingText.propTypes = {
   initialState: PropTypes.object,
   readOnly: PropTypes.bool,
   update: PropTypes.func,
-  user: {
+  user: PropTypes.shape({
     userHasHearingPrepRole: PropTypes.bool
-  }
+  })
 };
