@@ -8,4 +8,8 @@ class CaseflowJob < ApplicationJob
   def slack_service
     @slack_service ||= SlackService.new(url: slack_url)
   end
+
+  def datadog_service(:app_name, :metric_group_name)
+    @datadog_service ||= DataDogService.new(app_name, metric_group_name)
+  end
 end
