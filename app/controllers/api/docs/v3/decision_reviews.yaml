@@ -126,13 +126,13 @@ paths:
                           notes:
                             type: string
                           decision_issue_id:
-                            type: string
+                            type: integer
                           rating_issue_id:
                             type: string
                           legacy_appeal_id:
                             type: string
                           legacy_appeal_issue_id:
-                            type: string
+                            type: integer
                           category:
                             $ref: "#/components/schemas/nonrating_issue_category"
                           decision_date:
@@ -177,7 +177,21 @@ paths:
                           "decisionDate": "2019-07-11",
                           "category": "Eligibility | Veteran Status"
                         }
-                      }
+                      },
+                      {
+                        "type": "RequestIssue",
+                        "attributes": {
+                          "decisionIssueId": 22
+                        }
+                      },
+                      {
+                        "type": "RequestIssue",
+                        "attributes": {
+                          "ratingIssueId": "12345678",
+                          "legacyAppealId": "9876543210",
+                          "legacyAppealIssueId": 1
+                        }
+                      },
                     ]
                   }
       responses:
