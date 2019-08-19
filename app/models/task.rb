@@ -221,7 +221,7 @@ class Task < ApplicationRecord
   end
 
   def same_task_type?(task_to_check)
-    slice(:action, :type).eql?(task_to_check&.slice(:action, :type))
+    type.eql?(task_to_check.type)
   end
 
   def cancel_descendants
