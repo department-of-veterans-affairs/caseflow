@@ -24,7 +24,7 @@ class QueueTab
       label: label,
       name: name,
       description: format(description, assignee.name),
-      columns: columns,
+      columns: columns.map(&:to_hash),
       allow_bulk_assign: allow_bulk_assign?
     }
   end

@@ -20,7 +20,8 @@ class QueueFilterParameter
     # { "col": "docketNumberColumn", "val": ["legacy", "evidence_submission"] }
     filter_hash = Rack::Utils.parse_query(filter_string)
 
-    new(column: filter_hash["col"], values: filter_hash["val"]&.split(","))
+    # TODO: Double encode values going to the front-end
+    new(column: filter_hash["col"], values: filter_hash["val"]&.split(",")&.map { |val| CGI.unescape(val) })
   end
 
   private

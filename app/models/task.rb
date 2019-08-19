@@ -64,8 +64,13 @@ class Task < ApplicationRecord
     []
   end
 
+  def self.label
+    name.titlecase
+  end
+
+  # TODO: Change every subclasses' definition of label to self.label
   def label
-    self.class.name.titlecase
+    self.class.label
   end
 
   def default_instructions
