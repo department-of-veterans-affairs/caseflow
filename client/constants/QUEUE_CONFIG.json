@@ -7,19 +7,93 @@
 
   "APPEAL_TYPE_COLUMN": "typeColumn",
   "CASE_DETAILS_LINK_COLUMN": "detailsColumn",
-  "DAYS_WAITING_COLUMN": "daysWaitingColumn",
   "DAYS_ON_HOLD_COLUMN": "daysOnHoldColumn",
-  "DOCUMENT_COUNT_READER_LINK_COLUMN": "readerLinkColumn",
+  "DAYS_WAITING_COLUMN": "daysWaitingColumn",
   "DOCKET_NUMBER_COLUMN": "docketNumberColumn",
+  "DOCUMENT_COUNT_READER_LINK_COLUMN": "readerLinkColumn",
   "HEARING_BADGE_COLUMN": "hearingBadgeColumn",
   "ISSUE_COUNT_COLUMN": "issueCountColumn",
   "REGIONAL_OFFICE_COLUMN": "regionalOfficeColumn",
   "TASK_ASSIGNEE_COLUMN": "assignedToColumn",
   "TASK_ASSIGNER_COLUMN": "completedToNameColumn",
   "TASK_CLOSED_DATE_COLUMN": "completedDateColumn",
+  "TASK_CREATED_AT_COLUMN": "createdDateColumn",
   "TASK_DUE_DATE_COLUMN": "caseDueDateColumn",
   "TASK_HOLD_LENGTH_COLUMN": "caseDaysOnHoldColumn",
   "TASK_TYPE_COLUMN": "taskColumn",
+
+  "COLUMNS": {
+    "APPEAL_TYPE": {
+      "name": "typeColumn",
+      "sorting_table": "cached_appeal_attributes",
+      "sorting_columns": ["is_aod", "case_type", "docket_number"]
+    },
+    "CASE_DETAILS_LINK": {
+      "name": "detailsColumn",
+      "sorting_table": "cached_appeal_attributes",
+      "sorting_columns": ["veteran_name"]
+    },
+    "DAYS_ON_HOLD": {
+      "name": "daysOnHoldColumn"
+    },
+    "DAYS_WAITING": {
+      "name": "daysWaitingColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["assigned_at"]
+    },
+    "DOCKET_NUMBER": {
+      "name": "docketNumberColumn",
+      "sorting_table": "cached_appeal_attributes",
+      "sorting_columns": ["docket_type", "docket_number"]
+    },
+    "DOCUMENT_COUNT_READER_LINK": {
+      "name": "readerLinkColumn"
+    },
+    "HEARING_BADGE": {
+      "name": "hearingBadgeColumn"
+    },
+    "ISSUE_COUNT": {
+      "name": "issueCountColumn",
+      "sorting_table": "cached_appeal_attributes",
+      "sorting_columns": ["issue_count"]
+    },
+    "REGIONAL_OFFICE": {
+      "name": "regionalOfficeColumn",
+      "sorting_table": "cached_appeal_attributes",
+      "sorting_columns": ["closest_regional_office_city"]
+    },
+    "TASK_ASSIGNEE": {
+      "name": "assignedToColumn"
+    },
+    "TASK_ASSIGNER": {
+      "name": "completedToNameColumn"
+    },
+    "TASK_CLOSED_DATE": {
+      "name": "completedDateColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["closed_at"]
+    },
+    "TASK_CREATED_AT": {
+      "name": "createdDateColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["created_at"]
+    },
+    "TASK_DUE_DATE": {
+      "name": "caseDueDateColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["assigned_at"]
+    },
+    "TASK_HOLD_LENGTH": {
+      "name": "caseDaysOnHoldColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["placed_on_hold_at"]
+    },
+    "TASK_TYPE": {
+      "name": "taskColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["type", "action", "created_at"]
+    }
+  },
 
   "TAB_NAME_REQUEST_PARAM": "tab",
   "PAGE_NUMBER_REQUEST_PARAM": "page",
