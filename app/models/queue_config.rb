@@ -48,6 +48,8 @@ class QueueConfig
 
     tab.to_hash.merge(
       tasks: tasks,
+      # TODO: Change task_page_count to something like: (tab.tasks.count / TaskPager::TASKS_PER_PAGE.to_f).ceil
+      # This allows us to only instantiate TaskPager if we are using the task pages API.
       task_page_count: task_pager.task_page_count,
       total_task_count: tab.tasks.count,
       task_page_endpoint_base_path: endpoint
