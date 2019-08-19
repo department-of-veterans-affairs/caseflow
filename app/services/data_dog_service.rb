@@ -5,10 +5,9 @@ require "datadog/statsd"
 class DataDogService
   @statsd = Datadog::Statsd.new
 
-  def initialize(app_name:, :metric_group_name, :start_time)
+  def initialize(app_name:, metric_group_name:)
     @app_name = app_name
     @metric_group_name = metric_group_name
-    @start_time = start_time
   end
 
   attr_reader :app_name, :metric_group_name
