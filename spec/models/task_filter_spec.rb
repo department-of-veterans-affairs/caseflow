@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-describe QueueWhereClauseArgumentsFactory do
+describe TaskFilter do
   describe ".new" do
-    subject { QueueWhereClauseArgumentsFactory.new(filter_params: filter_params) }
+    subject { TaskFilter.new(filter_params: filter_params) }
 
     context "when input argument is nil" do
       let(:filter_params) { nil }
@@ -27,7 +27,7 @@ describe QueueWhereClauseArgumentsFactory do
 
       it "instantiates without error" do
         expect { subject }.to_not raise_error
-        expect(subject).to be_a(QueueWhereClauseArgumentsFactory)
+        expect(subject).to be_a(TaskFilter)
       end
     end
 
@@ -36,13 +36,13 @@ describe QueueWhereClauseArgumentsFactory do
 
       it "instantiates without error" do
         expect { subject }.to_not raise_error
-        expect(subject).to be_a(QueueWhereClauseArgumentsFactory)
+        expect(subject).to be_a(TaskFilter)
       end
     end
   end
 
-  describe ".arguments" do
-    subject { QueueWhereClauseArgumentsFactory.new(filter_params: filter_params).arguments }
+  describe ".where_clause" do
+    subject { TaskFilter.new(filter_params: filter_params).where_clause }
 
     context "when filter_params is an empty array" do
       let(:filter_params) { [] }
@@ -55,7 +55,7 @@ describe QueueWhereClauseArgumentsFactory do
     context "when filtering on task type" do
       let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{RootTask.name}"] }
 
-      it "returns the expected arguments" do
+      it "returns the expected where_clause" do
         expect(subject).to eq([
                                 "tasks.type IN (?)",
                                 [RootTask.name]

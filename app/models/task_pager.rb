@@ -67,34 +67,28 @@ class TaskPager
   # rubocop:enable Metrics/CyclomaticComplexity
 
   def tasks_sorted_by_appeal_case_type(tasks)
-    tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.is_aod DESC, "\
+    tasks.joins(CachedAppeal.left_join_from_tasks_clause).order("cached_appeal_attributes.is_aod DESC, "\
                                                      "cached_appeal_attributes.case_type #{sort_order}, "\
                                                      "cached_appeal_attributes.docket_number #{sort_order}")
   end
 
   def tasks_sorted_by_docket_number(tasks)
-    tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.docket_type #{sort_order}, "\
+    tasks.joins(CachedAppeal.left_join_from_tasks_clause).order("cached_appeal_attributes.docket_type #{sort_order}, "\
                                                      "cached_appeal_attributes.docket_number #{sort_order}")
   end
 
   def tasks_sorted_by_regional_office(tasks)
-    tasks.joins(cached_attributes_join_clause).order(
+    tasks.joins(CachedAppeal.left_join_from_tasks_clause).order(
       "cached_appeal_attributes.closest_regional_office_city #{sort_order}"
     )
   end
 
   def tasks_sorted_by_issue_count(tasks)
-    tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.issue_count #{sort_order}")
+    tasks.joins(CachedAppeal.left_join_from_tasks_clause).order("cached_appeal_attributes.issue_count #{sort_order}")
   end
 
   def tasks_sorted_by_veteran_name(tasks)
-    tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.veteran_name #{sort_order}")
-  end
-
-  def cached_attributes_join_clause
-    "left join cached_appeal_attributes "\
-    "on cached_appeal_attributes.appeal_id = tasks.appeal_id "\
-    "and cached_appeal_attributes.appeal_type = tasks.appeal_type"
+    tasks.joins(CachedAppeal.left_join_from_tasks_clause).order("cached_appeal_attributes.veteran_name #{sort_order}")
   end
 
   def task_page_count
@@ -102,8 +96,7 @@ class TaskPager
   end
 
   def filtered_tasks
-    where_clause = QueueWhereClauseArgumentsFactory.new(filter_params: filters).arguments
-    where_clause.empty? ? tasks_for_tab : tasks_for_tab.joins(cached_attributes_join_clause).where(*where_clause)
+    TaskFilter.new(filter_params: filters, tasks: tasks_for_tab).filtered_tasks
   end
 
   def tasks_for_tab
