@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
+  before_action :deny_non_bva_admins, only: [:represented_organizations]
+
   def index
     case params[:role]
     when Constants::USER_ROLE_TYPES["judge"]
@@ -15,6 +17,10 @@ class UsersController < ApplicationController
       return render json: { non_judges: json_users(User.where.not(id: JudgeTeam.all.map(&:judge).pluck(:id))) }
     end
     render json: {}
+  end
+
+  def represented_organizations
+    render json: { represented_organizations: User.find(params[:id]).vsos_user_represents }
   end
 
   def judge

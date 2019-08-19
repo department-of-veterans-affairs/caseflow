@@ -266,7 +266,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     context "Attorney task" do
       context "when current user is a judge" do
         let(:ama_appeal) { create(:appeal) }
-        let(:ama_judge_task) { create(:ama_judge_task, assigned_to: user) }
+        let(:ama_judge_task) { create(:ama_judge_task, assigned_to: user, appeal: ama_appeal) }
         let(:role) { :judge_role }
 
         let(:params) do

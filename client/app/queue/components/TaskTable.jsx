@@ -155,6 +155,7 @@ export const typeColumn = (tasks, requireDasRecord) => {
     enableFilter: true,
     tableData: tasks,
     columnName: 'appeal.caseType',
+    backendCanSort: true,
     anyFiltersAreSet: true,
     label: 'Filter by type',
     valueName: 'caseType',
