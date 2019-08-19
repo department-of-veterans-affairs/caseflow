@@ -525,7 +525,7 @@ RSpec.feature "Task queue", :all_dbs do
         visit("/queue/appeals/#{appeal.external_id}")
 
         find(".Select-control", text: "Select an action…").click
-        find("div .Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label]).click
+        find("div .Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_JUDGE.label).click
         expect(page).to have_content("Instructions:")
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
