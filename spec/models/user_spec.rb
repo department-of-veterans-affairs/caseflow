@@ -600,7 +600,7 @@ describe User, :all_dbs do
       it "succeeds and updates the status_updated_at column" do
         expect(subject).to eq true
         expect(user.reload.status).to eq status
-        expect(user.status_updated_at).to eq Time.zone.now
+        expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
       end
     end
   end
