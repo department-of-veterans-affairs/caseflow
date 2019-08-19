@@ -24,14 +24,7 @@ class JudgeAssignTaskCreator
   attr_reader :appeal, :judge, :genpop
 
   def task
-    @task ||= JudgeAssignTask.create!(
-      appeal: appeal,
-      parent: appeal.root_task,
-      appeal_type: Appeal.name,
-      assigned_at: Time.zone.now,
-      assigned_to: judge,
-      action: "assign"
-    )
+    @task ||= JudgeAssignTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: judge)
   end
 
   def close_distribution_tasks_for_appeal
