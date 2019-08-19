@@ -687,7 +687,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(response_body["tasks"].length).to eq 4
         task = response_body["tasks"][0]
         expect(task["id"]).to eq(legacy_appeal.vacols_id)
-        expect(task["attributes"]["type"]).to eq("JudgeLegacyTask")
+        expect(task["attributes"]["type"]).to eq(JudgeLegacyDecisionReviewTask.name)
         expect(task["attributes"]["user_id"]).to eq(judge_user.css_id)
         expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
         expect(task["attributes"]["available_actions"].size).to eq 2
@@ -710,7 +710,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           expect(response_body["tasks"].length).to eq 2
           task = response_body["tasks"][0]
           expect(task["id"]).to eq(legacy_appeal2.vacols_id)
-          expect(task["attributes"]["type"]).to eq("JudgeLegacyTask")
+          expect(task["attributes"]["type"]).to eq(JudgeLegacyDecisionReviewTask.name)
           expect(task["attributes"]["user_id"]).to eq(another_judge.css_id)
           expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal2.id)
           expect(task["attributes"]["available_actions"].size).to eq 0
