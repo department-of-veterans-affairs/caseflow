@@ -49,7 +49,8 @@ BackToQueueLink.propTypes = {
   vbmsId: PropTypes.string,
   veteranFullName: PropTypes.string,
   queueTaskType: PropTypes.string,
-  useReactRouter: PropTypes.bool
+  useReactRouter: PropTypes.bool,
+  collapseTopMargin: PropTypes.string
 };
 
 export default BackToQueueLink;
