@@ -28,6 +28,7 @@ class TaskPager
 
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def sorted_tasks(tasks)
     case sort_by
     when Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN, Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN
@@ -46,10 +47,11 @@ class TaskPager
       tasks_sorted_by_issue_count(tasks)
     when Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN
       tasks_sorted_by_veteran_name(tasks)
+    when Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN
+      tasks_sorted_by_appeal_case_type(tasks)
 
     # Columns not yet supported:
     #
-    # APPEAL_TYPE_COLUMN
     # DAYS_ON_HOLD_COLUMN
     # DOCUMENT_COUNT_READER_LINK_COLUMN
     # HEARING_BADGE_COLUMN
@@ -57,11 +59,18 @@ class TaskPager
     # TASK_ASSIGNER_COLUMN
     #
     else
-      tasks.order(created_at: sort_order)
+      tasks_sorted_by_appeal_case_type(tasks)
     end
   end
+  # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/CyclomaticComplexity
+
+  def tasks_sorted_by_appeal_case_type(tasks)
+    tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.is_aod DESC, "\
+                                                     "cached_appeal_attributes.case_type #{sort_order}, "\
+                                                     "cached_appeal_attributes.docket_number #{sort_order}")
+  end
 
   def tasks_sorted_by_docket_number(tasks)
     tasks.joins(cached_attributes_join_clause).order("cached_appeal_attributes.docket_type #{sort_order}, "\
