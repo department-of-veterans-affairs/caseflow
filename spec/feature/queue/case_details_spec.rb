@@ -884,9 +884,6 @@ RSpec.feature "Case details", :all_dbs do
   end
 
   describe "AMA decision issue notes" do
-    before { FeatureToggle.enable!(:ama_decision_issues) }
-    after { FeatureToggle.disable!(:ama_decision_issues) }
-
     let(:request_issue) { create(:request_issue, contested_issue_description: "knee pain", notes: notes) }
     let(:appeal) { create(:appeal, number_of_claimants: 1, request_issues: [request_issue]) }
 
