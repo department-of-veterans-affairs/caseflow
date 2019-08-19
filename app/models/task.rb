@@ -60,6 +60,8 @@ class Task < ApplicationRecord
                                  )
                                }
 
+  self.ignored_columns = %w[action]
+
   def available_actions(_user)
     []
   end
@@ -181,6 +183,8 @@ class Task < ApplicationRecord
     if params.key?(:instructions) && !params[:instructions].is_a?(Array)
       params[:instructions] = [params[:instructions]]
     end
+    # TODO: Do I actually need this?
+    # params.delete(:action)
     params
   end
 

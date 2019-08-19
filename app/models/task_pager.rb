@@ -36,7 +36,7 @@ class TaskPager
     when Constants.QUEUE_CONFIG.TASK_CLOSED_DATE_COLUMN
       tasks.order(closed_at: sort_order)
     when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
-      tasks.order(type: sort_order, action: sort_order, created_at: sort_order)
+      tasks.order(type: sort_order, created_at: sort_order)
     when Constants.QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN
       tasks.order(placed_on_hold_at: sort_order)
     when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
