@@ -44,13 +44,13 @@ RSpec.feature "User organization", :postgres do
 
       find("a", text: "#{organization.name} team management").click
       expect(page.current_path).to eq(organization.user_admin_path)
-      expect(page).to have_content("#{organization.name} team")
+      expect(page).to have_content(format(COPY::USER_MANAGEMENT_PAGE_TITLE, organization.name))
     end
 
     scenario "Adds and removes users from the organization" do
       visit organization.user_admin_path
 
-      expect(page).to have_content("#{organization.name} team")
+      expect(page).to have_content(format(COPY::USER_MANAGEMENT_PAGE_TITLE, organization.name))
 
       find(".Select-control", text: COPY::USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT).click
       expect(page).to have_content(user_with_role.full_name)
@@ -125,7 +125,7 @@ RSpec.feature "User organization", :postgres do
       scenario "Adds and removes users from the organization" do
         visit organization.user_admin_path
 
-        expect(page).to have_content("#{organization.name} team")
+        expect(page).to have_content(format(COPY::USER_MANAGEMENT_PAGE_TITLE, organization.name))
       end
     end
   end
