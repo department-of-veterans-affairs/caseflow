@@ -72,13 +72,7 @@ class Rating
     return {} unless rating_profile[:disabilities]
 
     Array.wrap(rating_profile[:disabilities]).map do |disability|
-      decision = {}
-      decision[:type_name] = disability[:decn_tn]
-      decision[:rating_sequence_number] = disability[:disability_evaluations][:rating_sn]
-      decision[:disability_id] = disability[:dis_sn]
-      decision[:diagnostic_text] = disability[:disability_evaluations][:dgnstc_txt]
-      decision[:profile_date] = disability[:disability_evaluations][:prfl_dt]
-      RatingDecision.from_bgs_hash(decision)
+      RatingDecision.from_bgs_disability(self, disability)
     end
   end
 
