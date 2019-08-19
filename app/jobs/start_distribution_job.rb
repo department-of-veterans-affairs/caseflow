@@ -17,6 +17,6 @@ class StartDistributionJob < ApplicationJob
   def handle_error(error)
     Rails.logger.info "StartDistributionJob failed: #{error.message}"
     Rails.logger.info error.backtrace.join("\n")
-    Raven.capture_exception(error)
+    capture_exception(error: error)
   end
 end
