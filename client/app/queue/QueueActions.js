@@ -355,7 +355,7 @@ export const fetchTasksAndAppealsOfAttorney = (attorneyId, params) => (dispatch)
   const queryString = `?${pairs.join('&')}`;
 
   return ApiUtil.get(`/queue/${attorneyId}${queryString}`, requestOptions).then(
-    (resp) => dispatch(
+    (response) => dispatch(
       receiveTasksAndAppealsOfAttorney(
         { attorneyId,
           ...associateTasksWithAppeals(response.body) })),
