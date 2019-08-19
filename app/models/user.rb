@@ -281,7 +281,7 @@ class User < ApplicationRecord
   private
 
   def maybe_update_status_timestamp
-    update!(status_updated_at: Time.zone.now) if saved_change_to_attribute?("status")
+    update!(status_updated_at: Time.zone.now) if saved_change_to_attribute?(:status)
   end
 
   def normalize_css_id
