@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class VacolsLocationBatchUpdater
+  include ActiveRecord::Sanitization::ClassMethods
+
   def initialize(location:, vacols_ids:, user_id:)
     @location = location
     @vacols_ids = vacols_ids
@@ -42,7 +44,8 @@ class VacolsLocationBatchUpdater
           )
         end
 
-        conn.execute("insert all #{insert_strs.join(' ')} select 1 from dual")
+        insert_str_sql = insert_strs.join(' ')
+        conn.execute("insert all #{insert_str_sql} select 1 from dual")
       end
     end
   end
@@ -52,6 +55,6 @@ class VacolsLocationBatchUpdater
   attr_reader :location, :vacols_ids, :user_id
 
   def sanitize_sql_array(array)
-    VACOLS::Case.sanitize_sql(array)
+    self.class.sanitize_sql_array(array)
   end
 end

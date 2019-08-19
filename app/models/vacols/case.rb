@@ -324,11 +324,6 @@ class VACOLS::Case < VACOLS::Record
         memo[(row["bfkey"]).to_s] = VacolsHelper.normalize_vacols_datetime(row["rem_return"])
       end
     end
-
-    # util method we expose via public method
-    def sanitize_sql(array)
-      sanitize_sql_array(array)
-    end
     # :nocov:
   end
 
