@@ -265,18 +265,66 @@ class VACOLS::Case < VACOLS::Record
     -- Check that there are no remanded issues. Denials can be included.
   }
 
-  # These scopes query VACOLS and cannot be covered by automated tests.
-  # :nocov:
-  def self.remands_ready_for_claims_establishment
-    VACOLS::Case.joins(:folder, :correspondent)
-      .where(WHERE_PAPERLESS_REMAND_LOC97)
-      .order("BFDDEC ASC")
-  end
+  class << self
+    # These scopes query VACOLS and cannot be covered by automated tests.
+    # :nocov:
+    def remands_ready_for_claims_establishment
+      VACOLS::Case.joins(:folder, :correspondent)
+        .where(WHERE_PAPERLESS_REMAND_LOC97)
+        .order("BFDDEC ASC")
+    end
 
-  def self.amc_full_grants(outcoded_after:)
-    VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_COUNT)
-      .where(WHERE_PAPERLESS_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
-      .order("BFDDEC ASC")
+    def amc_full_grants(outcoded_after:)
+      VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_COUNT)
+        .where(WHERE_PAPERLESS_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
+        .order("BFDDEC ASC")
+    end
+
+    def batch_update_vacols_location(location, vacols_ids)
+      unless location
+        Rails.logger.error "THERE IS A BUG IN YOUR CODE! It attempted to assign a case to a falsey location. " \
+                           "Unfortunately, I can't throw an exception here because code may depend on this method " \
+                           "failing silently. Please validate before passing it to this method."
+        return
+      end
+
+      return if vacols_ids.empty?
+
+      updater = VacolsLocationBatchUpdater.new(
+        location: location,
+        vacols_ids: vacols_ids,
+        user_id: RequestStore.store[:current_user].try(:vacols_uniq_id)
+      )
+      updater.call
+    end
+
+    ##
+    # This method takes an array of vacols ids and fetches their aod status.
+    #
+    def aod(vacols_ids)
+      aod_result = MetricsService.record("VACOLS: Case.aod for #{vacols_ids}", name: "Case.aod",
+                                                                               service: :vacols) do
+        VACOLS::Case.joins(JOIN_AOD).where(bfkey: vacols_ids).select("bfkey", "aod")
+      end
+
+      aod_result.reduce({}) do |memo, result|
+        memo[(result["bfkey"]).to_s] = (result["aod"] == 1)
+        memo
+      end
+    end
+
+    def remand_return_date(vacols_ids)
+      result = MetricsService.record("VACOLS: Case.remand_return_date for #{vacols_ids}",
+                                     name: "Case.remand_return_date",
+                                     service: :vacols) do
+        VACOLS::Case.joins(JOIN_REMAND_RETURN).where(bfkey: vacols_ids).select("bfkey", "rem_return")
+      end
+
+      result.each_with_object({}) do |row, memo|
+        memo[(row["bfkey"]).to_s] = VacolsHelper.normalize_vacols_datetime(row["rem_return"])
+      end
+    end
+    # :nocov:
   end
 
   # The attributes that are copied over when the case is cloned because of a remand
@@ -297,57 +345,6 @@ class VACOLS::Case < VACOLS::Record
     return result if result.present?
 
     VACOLS::Representative.where(repcorkey: bfcorkey)
-  end
-
-  def self.batch_update_vacols_location(location, vacols_ids)
-    unless location
-      Rails.logger.error "THERE IS A BUG IN YOUR CODE! It attempted to assign a case to a falsey location. " \
-                         "Unfortunately, I can't throw an exception here because code may depend on this method " \
-                         "failing silently. Please validate before passing it to this method."
-      return
-    end
-
-    return if vacols_ids.empty?
-
-    user_id = (RequestStore.store[:current_user].try(:vacols_uniq_id) || "DSUSER").upcase
-
-    conn = connection
-
-    MetricsService.record("VACOLS: batch_update_vacols_location",
-                          service: :vacols,
-                          name: "batch_update_vacols_location") do
-      conn.transaction do
-        conn.execute(sanitize_sql_array([<<-SQL, location, vacols_ids]))
-          update BRIEFF
-          set BFDLOCIN = SYSDATE,
-              BFCURLOC = ?,
-              BFDLOOUT = SYSDATE,
-              BFORGTIC = NULL
-          where BFKEY in (?)
-        SQL
-
-        conn.execute(sanitize_sql_array([<<-SQL, user_id, vacols_ids]))
-          update PRIORLOC
-          set LOCDIN = SYSDATE,
-              LOCSTRCV = ?,
-              LOCEXCEP = 'Y'
-          where LOCKEY in (?) and LOCDIN is null
-        SQL
-
-        insert_strs = vacols_ids.map do |vacols_id|
-          sanitize_sql_array(
-            [
-              "into PRIORLOC (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY) values (SYSDATE, SYSDATE, ?, ?, ?)",
-              location,
-              user_id,
-              vacols_id
-            ]
-          )
-        end
-
-        conn.execute("insert all #{insert_strs.join(' ')} select 1 from dual")
-      end
-    end
   end
 
   def previous_active_location
@@ -382,33 +379,4 @@ class VACOLS::Case < VACOLS::Record
   def closed?
     bfddec.present?
   end
-
-  ##
-  # This method takes an array of vacols ids and fetches their aod status.
-  #
-  def self.aod(vacols_ids)
-    aod_result = MetricsService.record("VACOLS: Case.aod for #{vacols_ids}", name: "Case.aod",
-                                                                             service: :vacols) do
-      VACOLS::Case.joins(JOIN_AOD).where(bfkey: vacols_ids).select("bfkey", "aod")
-    end
-
-    aod_result.reduce({}) do |memo, result|
-      memo[(result["bfkey"]).to_s] = (result["aod"] == 1)
-      memo
-    end
-  end
-
-  def self.remand_return_date(vacols_ids)
-    result = MetricsService.record("VACOLS: Case.remand_return_date for #{vacols_ids}",
-                                   name: "Case.remand_return_date",
-                                   service: :vacols) do
-      VACOLS::Case.joins(JOIN_REMAND_RETURN).where(bfkey: vacols_ids).select("bfkey", "rem_return")
-    end
-
-    result.each_with_object({}) do |row, memo|
-      memo[(row["bfkey"]).to_s] = VacolsHelper.normalize_vacols_datetime(row["rem_return"])
-    end
-  end
-
-  # :nocov:
 end

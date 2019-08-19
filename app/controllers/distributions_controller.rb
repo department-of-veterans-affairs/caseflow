@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class DistributionsController < ApplicationController
+  include RunAsyncable
+
   def set_application
     RequestStore.store[:application] = "queue"
   end
@@ -28,10 +30,10 @@ class DistributionsController < ApplicationController
   private
 
   def enqueue_distribution_job(distribution)
-    if Rails.env.development? || Rails.env.test?
-      StartDistributionJob.perform_now(distribution)
-    else
+    if run_async?
       StartDistributionJob.perform_later(distribution, current_user)
+    else
+      StartDistributionJob.perform_now(distribution)
     end
   end
 
