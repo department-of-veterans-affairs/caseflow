@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 class CaseflowJob < ApplicationJob
-  @start_time
-
-  def initialize()
+  def initialize
     super
     @start_time = Time.zone.now
   end

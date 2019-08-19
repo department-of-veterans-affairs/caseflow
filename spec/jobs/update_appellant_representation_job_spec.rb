@@ -133,7 +133,6 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
         metric_value: anything
       )
 
-
       expect_any_instance_of(UpdateAppellantRepresentationJob).to_not receive(:log_error).with(anything, anything)
 
       observed_error_count = 0
@@ -161,7 +160,6 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
         metric_name: "runtime",
         metric_value: anything
       )
-
 
       slack_msg = ""
       allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }

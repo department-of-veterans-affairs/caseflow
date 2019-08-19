@@ -15,7 +15,7 @@ class DataDogService
     metric_name = "runtime"
     job_duration_seconds = Time.zone.now - start_time
 
-    self.emit_gauge(
+    emit_gauge(
       app_name: app_name,
       metric_group: metric_group,
       metric_name: metric_name,
