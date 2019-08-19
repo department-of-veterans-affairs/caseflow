@@ -92,6 +92,10 @@
     "value": "modal/return_to_attorney",
     "func": "return_to_attorney_data"
   },
+  "JUDGE_MTV_CHECKOUT": {
+    "label": "Address Motion to Vacate",
+    "value": "address"
+  },
   "LIT_SUPPORT_PULAC_CERULLO": {
     "label": "Notify OGC of Pulac-Cerullo",
     "value": "modal/assign_to_pulac_cerullo",
