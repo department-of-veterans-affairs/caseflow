@@ -125,19 +125,19 @@ paths:
                         properties: # none are required
                           notes:
                             type: string
-                          decision_issue_id:
+                          decisionIssueId:
                             type: integer
-                          rating_issue_id:
+                          ratingIssueId:
                             type: string
-                          legacy_appeal_id:
+                          legacyAppealId:
                             type: string
-                          legacy_appeal_issue_id:
+                          legacyAppealIssueId:
                             type: integer
                           category:
                             $ref: "#/components/schemas/nonrating_issue_category"
-                          decision_date:
+                          decisionDate:
                             type: string
-                          decision_text:
+                          decisionText:
                             type: string
             examples:
               pension:
