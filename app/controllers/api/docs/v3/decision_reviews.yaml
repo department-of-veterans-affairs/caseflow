@@ -122,22 +122,23 @@ paths:
                         enum: [RequestIssue]
                       attributes:
                         type: object
-                        required:
-                          - decisionText
-                          - decisionDate
-                          # withdrawalDate (NOT required)
-                          # nonratingIssueCategory (NOT required)
-                        properties:
-                          decisionText:
+                        properties: # none are required
+                          notes:
                             type: string
+                          decisionIssueId:
+                            type: integer
+                          ratingIssueId:
+                            type: string
+                          legacyAppealId:
+                            type: string
+                          legacyAppealIssueId:
+                            type: integer
+                          category:
+                            $ref: "#/components/schemas/nonrating_issue_category"
                           decisionDate:
                             type: string
-                            format: date
-                          withdrawalDate:
+                          decisionText:
                             type: string
-                            format: date
-                          nonratingIssueCategory:
-                            $ref: "#/components/schemas/nonrating_issue_category"
             examples:
               pension:
                 value: {
@@ -170,18 +171,27 @@ paths:
                     },
                     "included": [
                       {
-                        "type": "NonratingIssue",
+                        "type": "RequestIssue",
                         "attributes": {
                           "decisionText": "veteran status verified",
                           "decisionDate": "2019-07-11",
-                          "withdrawalDate": null,
-                          "nonratingIssueCategory": "Eligibility | Veteran Status"
+                          "category": "Eligibility | Veteran Status"
                         }
                       },
                       {
-                        "type": "RatingIssue",
-                        "id": "def456"
-                      }
+                        "type": "RequestIssue",
+                        "attributes": {
+                          "decisionIssueId": 22
+                        }
+                      },
+                      {
+                        "type": "RequestIssue",
+                        "attributes": {
+                          "ratingIssueId": "12345678",
+                          "legacyAppealId": "9876543210",
+                          "legacyAppealIssueId": 1
+                        }
+                      },
                     ]
                   }
       responses:
