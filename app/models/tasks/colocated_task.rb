@@ -76,16 +76,9 @@ class ColocatedTask < Task
   def available_actions(user)
     if assigned_to == user ||
        (task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.user_is_admin?(user))
-      
-      # Use assigner so that we handle creation of the ColcoatedTask from LegacyTasks gracefully.
-      return_action = if JudgeTeam.for_judge(assigned_by)
-                        Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_JUDGE.to_h
-                      else
-                        Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h
-                      end
 
       actions = [
-        return_action,
+        return_to_assigner_action,
         Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
         Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
@@ -98,6 +91,15 @@ class ColocatedTask < Task
     end
 
     []
+  end
+
+  def return_to_assigner_action
+    # Use assigner so that we handle creation of the ColcoatedTask from LegacyTasks gracefully.
+    if JudgeTeam.for_judge(assigned_by)
+      Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_JUDGE.to_h
+    else
+      Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h
+    end
   end
 
   def actions_available?(_user)
