@@ -205,6 +205,8 @@ class QueueApp extends React.PureComponent {
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
+  routedSendMotionToVacateToJudge = (props) => <ReviewMotionToVacateView {...props.match.params} />;
+
   routedAssignToPulacCerullo = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
 
   routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
@@ -372,8 +374,8 @@ class QueueApp extends React.PureComponent {
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.value}`}
             render={this.routedAssignToUser} />
           <Route
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_MOTION_TO_VACATE_TO_JUDGE.value}`}
-            render={this.routedAssignToUser} />
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SEND_MOTION_TO_VACATE_TO_JUDGE.value}`}
+            render={this.routedSendMotionToVacateToJudge} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"

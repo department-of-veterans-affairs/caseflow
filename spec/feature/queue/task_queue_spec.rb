@@ -438,8 +438,13 @@ RSpec.feature "Task queue", :all_dbs do
       LitigationSupport.singleton
     end
 
-    let(:lit_support_user) { create(:user) }
-    let!(:judge_user) { create(:user) }
+    let(:mail_user) { create(:user, full_name: "Mail user") }
+    let(:mail_team) { MailTeam.singleton }
+    let(:instructions) { "Some instructions for how to complete the task" }
+
+    let(:lit_support_user) { create(:user, full_name: "Lit support user") }
+    let(:motion_attorney) { create(:user, full_name: "Motions attorney") }
+    let!(:judge_user) { create(:user, full_name: "Judge user") }
     let!(:judge_team) { JudgeTeam.create_for_judge(judge_user) }
     let!(:appeal) do
       create(
@@ -455,17 +460,60 @@ RSpec.feature "Task queue", :all_dbs do
 
     let!(:root_task) { create(:root_task, :completed, appeal: appeal) }
 
-    let(:vacate_motion_mail_task) { create(:vacate_motion_mail_task, appeal: appeal, parent: root_task) }
+    # let(:vacate_motion_mail_task) { create(:vacate_motion_mail_task, appeal: appeal, parent: root_task) }
 
-    let(:judge_task) { create(:ama_judge_decision_review_task, assigned_to: judge_user, parent: root_task) }
+    let!(:judge_task) { create(:ama_judge_decision_review_task, assigned_to: judge_user, parent: root_task) }
 
     before do
       OrganizationsUser.add_user_to_organization(lit_support_user, lit_support_team)
-      User.authenticate!(user: lit_support_user)
+      OrganizationsUser.add_user_to_organization(motion_attorney, lit_support_team)
+      OrganizationsUser.add_user_to_organization(mail_user, mail_team)
+      User.authenticate!(user: mail_user)
     end
 
     it "show lit support task assignment" do
       visit "/queue/appeals/#{appeal.uuid}"
+      find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
+      find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+      find("div", class: "Select-option", text: COPY::VACATE_MOTION_MAIL_TASK_LABEL).click
+      fill_in("taskInstructions", with: instructions)
+      find("button", text: "Submit").click
+      User.authenticate!(user: lit_support_user)
+      binding.pry
+      visit "/queue/appeals/#{appeal.uuid}"
+      find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find("div", class: "Select-option", text: "Assign to person").click
+      find(".Select-value").click
+      find("div", class: "Select-option", text: "Motions attorney").click
+      click_button(text: "Submit")
+      User.authenticate!(user: motion_attorney)
+      visit "/queue/appeals/#{appeal.uuid}"
+      find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find("div", class: "Select-option", text: "Send to judge").click
+      binding.pry
+
+      # click_button(text: "Submit")
+      #
+      # mail_task = root_task.reload.children[0]
+      # expect(mail_task.class).to eq(task_class)
+      # expect(mail_task.assigned_to).to eq(MailTeam.singleton)
+      # expect(mail_task.children.length).to eq(1)
+      # sleep 1
+      # child_task = mail_task.children[0]
+      #
+      # pulac_cerullo_task = child_task.children[0]
+      # pulac_cerullo_user_task = pulac_cerullo_task.children[0]
+      # expect(child_task.class).to eq(task_class)
+      # expect(pulac_cerullo_task.type).to eq("PulacCerulloTask")
+      # expect(pulac_cerullo_task.assigned_to.is_a?(Organization)).to eq(true)
+      # expect(pulac_cerullo_task.assigned_to.class).to eq(PulacCerullo)
+      # expect(pulac_cerullo_user_task.assigned_to).to eq(pulac_user)
+      #
+      # User.unauthenticate!
+      # User.authenticate!(user: pulac_user)
+      # visit "/queue"
+      # expect(page).to have_content("Assigned (1)")
+      # expect(page).to have_content(appeal.veteran_file_number)
     end
   end
 

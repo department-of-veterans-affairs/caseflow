@@ -22,6 +22,11 @@
     "value": "modal/assign_to_hearing_admin_member",
     "func": "assign_to_user_data"
   },
+  "ASSIGN_TO_MOTIONS_ATTORNEY": {
+    "label": "Assign to person",
+    "value": "modal/assign_to_person",
+    "func": "assign_to_user_data"
+  },
   "ASSIGN_TO_PERSON": {
     "label": "Assign to person",
     "value": "modal/assign_to_person",
@@ -37,10 +42,10 @@
     "value": "modal/assign_to_team",
     "func": "assign_to_organization_data"
   },
-  "ASSIGN_MOTION_TO_VACATE_TO_JUDGE": {
-    "label": "Assign to judge",
-    "value": "modal/assign_motion_to_vacate_to_judge",
-    "func": "assign_motion_to_vacate_to_judge_data"
+  "SEND_MOTION_TO_VACATE_TO_JUDGE": {
+    "label": "Send to judge",
+    "value": "send_motion_to_vacate_to_judge",
+    "func": "send_motion_to_vacate_to_judge_data"
   },
   "CANCEL_FOREIGN_VETERANS_CASE_TASK": {
     "label": "Cancel hearing request",
