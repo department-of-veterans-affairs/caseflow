@@ -67,8 +67,7 @@ class IntakeStartValidator
   end
 
   def file_number_reserved?
-    FeatureToggle.enabled?(:intake_reserved_file_number,
-                           user: RequestStore[:current_user]) && veteran_file_number == "123456789"
+    Rails.deploy_env?(:prod) && veteran_file_number == "123456789"
   end
 
   def user_may_modify_veteran_file?

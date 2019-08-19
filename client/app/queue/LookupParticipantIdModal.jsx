@@ -1,11 +1,13 @@
 import * as React from 'react';
 import ApiUtil from '../util/ApiUtil';
+import Button from '../components/Button';
 import COPY from '../../COPY.json';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../components/SearchableDropdown';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { css } from 'glamor';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import {
   hideErrorMessage,
@@ -15,6 +17,12 @@ import {
 } from './uiReducer/uiActions';
 import { withRouter } from 'react-router-dom';
 import QueueFlowModal from './components/QueueFlowModal';
+
+const searchButtonStyling = css({
+  marginTop: '1rem',
+  textAlign: 'right',
+  width: '100%'
+});
 
 class LookupParticipantIdModal extends React.Component {
   constructor(props) {
@@ -48,7 +56,7 @@ class LookupParticipantIdModal extends React.Component {
     this.state.users.map((user) => ({ label: this.formatName(user),
       value: user }));
 
-  submit = () => {
+  search = () => {
     const url = `/users/${this.state.selectedUser.value.id}/represented_organizations`;
 
     // Clear previous results before every attempt.
@@ -82,8 +90,9 @@ class LookupParticipantIdModal extends React.Component {
   render = () => {
     return <QueueFlowModal
       title={COPY.LOOKUP_PARTICIPANT_ID_MODAL_TITLE}
-      pathAfterSubmit="/team_management/lookup_participant_id"
-      submit={this.submit}
+      pathAfterSubmit="/team_management"
+      button="Close"
+      submit={() => Promise.resolve()}
     >
       <LoadingDataDisplay
         createLoadPromise={this.loadingPromise}
@@ -92,16 +101,21 @@ class LookupParticipantIdModal extends React.Component {
           message: 'Loading users...'
         }}
         failStatusMessageProps={{ title: 'Unable to load users' }}>
-        <SearchableDropdown
-          name={COPY.LOOKUP_PARTICIPANT_ID_SELECT_USER_LABEL}
-          hideLabel
-          searchable
-          placeholder={COPY.LOOKUP_PARTICIPANT_ID_SELECT_USER_LABEL}
-          value={this.state.selectedUser}
-          onChange={this.selectUser}
-          options={this.dropdownOptions()} />
+        <React.Fragment>
+          <SearchableDropdown
+            name={COPY.LOOKUP_PARTICIPANT_ID_SELECT_USER_LABEL}
+            hideLabel
+            searchable
+            placeholder={COPY.LOOKUP_PARTICIPANT_ID_SELECT_USER_LABEL}
+            value={this.state.selectedUser}
+            onChange={this.selectUser}
+            options={this.dropdownOptions()} />
+          { this.representedOrganizationsList() }
+          <div {...searchButtonStyling}>
+            <Button name="Search" onClick={this.search} />
+          </div>
+        </React.Fragment>
       </LoadingDataDisplay>
-      { this.representedOrganizationsList() }
     </QueueFlowModal>;
   };
 }
