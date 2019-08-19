@@ -4,8 +4,29 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
 
 import { PreppedCheckbox } from './DailyDocketRowInputs';
+import COPY from '../../../../COPY.json';
 
 import moment from 'moment';
+
+const hearingPropTypes = PropTypes.shape({
+  appealExternalId: PropTypes.string,
+  appellantAddressLine1: PropTypes.string,
+  appellantCity: PropTypes.string,
+  appellantState: PropTypes.string,
+  appellantZip: PropTypes.string,
+  docketName: PropTypes.string,
+  docketNumber: PropTypes.string,
+  representative: PropTypes.string,
+  representativeName: PropTypes.any,
+  veteranFileNumber: PropTypes.string,
+  scheduledTimeString: PropTypes.string,
+  regionalOfficeTimezone: PropTypes.string,
+  centralOfficeTimeString: PropTypes.string,
+  readableRequestType: PropTypes.string,
+  regionalOfficeName: PropTypes.string,
+  currentIssueCount: PropTypes.number,
+  paperCase: PropTypes.bool
+});
 
 export const getDisplayTime = (scheduledTimeString, timezone) => {
   const val = scheduledTimeString ? moment(scheduledTimeString, 'HH:mm').format('h:mm a') : '';
@@ -41,7 +62,8 @@ const AppellantInformation = ({ hearing }) => {
       </Link>
     </strong><br />
     <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
-    {hearing.docketNumber}
+    {hearing.docketNumber} <br />
+    {hearing.paperCase && <span>{COPY.IS_PAPER_CASE}</span>}
     <br /><br />
     {hearing.appellantAddressLine1}<br />
     {hearing.appellantCity ?
@@ -54,18 +76,7 @@ const AppellantInformation = ({ hearing }) => {
 };
 
 AppellantInformation.propTypes = {
-  hearing: PropTypes.shape({
-    appealExternalId: PropTypes.string,
-    appellantAddressLine1: PropTypes.string,
-    appellantCity: PropTypes.string,
-    appellantState: PropTypes.string,
-    appellantZip: PropTypes.string,
-    docketName: PropTypes.string,
-    docketNumber: PropTypes.string,
-    representative: PropTypes.string,
-    representativeName: PropTypes.string,
-    veteranFileNumber: PropTypes.string
-  })
+  hearing: hearingPropTypes
 };
 
 const HearingTime = ({ hearing }) => {
@@ -89,14 +100,7 @@ const HearingTime = ({ hearing }) => {
 };
 
 HearingTime.propTypes = {
-  hearing: PropTypes.shape({
-    centralOfficeTimeString: PropTypes.string,
-    currentIssueCount: PropTypes.number,
-    readableRequestType: PropTypes.string,
-    regionalOfficeName: PropTypes.string,
-    regionalOfficeTimezone: PropTypes.string,
-    scheduledTimeString: PropTypes.string
-  })
+  hearing: hearingPropTypes
 };
 
 export default class HearingText extends React.Component {
@@ -115,12 +119,12 @@ export default class HearingText extends React.Component {
 }
 
 HearingText.propTypes = {
-  hearing: PropTypes.object,
+  hearing: hearingPropTypes,
   index: PropTypes.number,
-  initialState: PropTypes.object,
-  readOnly: PropTypes.bool,
-  update: PropTypes.func,
   user: PropTypes.shape({
     userHasHearingPrepRole: PropTypes.bool
-  })
+  }),
+  update: PropTypes.func,
+  readOnly: PropTypes.bool,
+  initialState: PropTypes.object
 };
