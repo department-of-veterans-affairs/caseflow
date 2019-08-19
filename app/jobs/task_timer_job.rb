@@ -6,13 +6,7 @@ class TaskTimerJob < CaseflowJob
   queue_as :low_priority
   application_attr :queue
 
-  APP_NAME = "caseflow_job"
-  METRIC_GROUP_NAME = TaskTimerJob.name.underscore
-
-  #  grab task type and appeal from tasks
-
   def perform
-    set_job_start_time
     RequestStore.store[:current_user] = User.system_user
 
     TaskTimer.requires_processing.each do |task_timer|
@@ -24,7 +18,7 @@ class TaskTimerJob < CaseflowJob
       cancel(task_timer)
     end
 
-    datadog_report_runtime(app_name: APP_NAME, metric_group_name: METRIC_GROUP_NAME)
+    datadog_report_runtime(metric_group_name: TaskTimerJob.name.underscore)
   end
 
   private

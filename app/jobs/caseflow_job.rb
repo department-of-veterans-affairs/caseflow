@@ -3,17 +3,17 @@
 class CaseflowJob < ApplicationJob
   @start_time
 
-  def datadog_report_runtime(:app_name, :metric_group_name)
-    # TODO check for start time set
-    DataDogService.record_runtime(
-      app_name: app_name,
-      metric_group_name: metric_group_name,
-      start_time: @start_time
-    )
+  def initialize()
+    super
+    @start_time = Time.zone.now
   end
 
-  def set_job_start_time(start_time: Time.zone.now)
-    @start_time = start_time
+  def datadog_report_runtime(metric_group_name:)
+    DataDogService.record_runtime(
+      app_name: "caseflow_job",
+      metric_group: metric_group_name,
+      start_time: @start_time
+    )
   end
 
   def slack_url
