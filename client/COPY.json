@@ -399,6 +399,7 @@
   "LOOKUP_PARTICIPANT_ID_SELECT_USER_LABEL": "Select user",
   "LOOKUP_PARTICIPANT_ID_MODAL_NO_ORGS_MESSAGE": "User does not belong to any POA organizations.",
 
+  "USER_MANAGEMENT_PAGE_TITLE": "%s management page",
   "USER_MANAGEMENT_INITIAL_LOAD_ERROR_TITLE": "Failed to load users",
   "USER_MANAGEMENT_INITIAL_LOAD_LOADING_MESSAGE": "Loading users...",
   "USER_MANAGEMENT_ADD_USER_ERROR_TITLE": "Failed to add user",
