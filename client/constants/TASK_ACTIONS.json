@@ -61,6 +61,10 @@
     "label": "Send back to attorney",
     "value": "modal/mark_task_complete"
   },
+  "COLOCATED_RETURN_TO_JUDGE": {
+    "label": "Send back to judge",
+    "value": "modal/mark_task_complete"
+  },
   "COMPLETE_TRANSCRIPTION": {
     "label": "Mark as complete: Transcribed",
     "value": "modal/mark_task_complete",
