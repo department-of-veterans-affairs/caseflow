@@ -19,10 +19,9 @@ class AdvanceOnDocketMotion < ApplicationRecord
     def granted_for_person?(person_id, appeal_receipt_date)
       where(
         granted: true,
-        created_at: appeal_receipt_date..DateTime::Infinity.new, 
+        created_at: appeal_receipt_date..DateTime::Infinity.new,
         person_id: person_id
       ).any?
     end
   end
-
 end
