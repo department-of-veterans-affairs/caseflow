@@ -259,7 +259,7 @@ class HearingActions extends React.Component {
 
 HearingActions.propTypes = {
   index: PropTypes.number,
-  hearingId: PropTypes.number,
+  hearingId: PropTypes.string,
   update: PropTypes.func,
   saveHearing: PropTypes.func,
   openDispositionModal: PropTypes.func,
