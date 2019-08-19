@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class Api::V3::HigherLevelReviewProcessor
+  # tweaked for happy path
+  CATEGORIES_BY_BENEFIT_TYPE = Constants::ISSUE_CATEGORIES.slice("compensation")
+  # CATEGORIES_BY_BENEFIT_TYPE = Constants::ISSUE_CATEGORIES
 
   attr_reader :errors, :intake, :review_params, :complete_params
 

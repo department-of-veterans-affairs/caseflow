@@ -20,11 +20,11 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::ExternalProxy
     render json: self.class.intake_status(processor.higher_level_review), status: :accepted
   rescue StandardError => error
     # do we want something like intakes_controller's log_error here?
-    render_errors([self.class.error_from_objects_error_code(error, processor.try(:intake))])
+    render_errors([Api::V3::DecisionReview::IntakeError.new(error, processor.try(:intake))])
   end
 
   def render_errors(errors)
-    render json: { errors: errors }, status: self.class.status_from_errors(errors)
+    render json: { errors: errors }, status: Api::V3::DecisionReview::IntakeError.status_from_errors(errors)
   end
 
   class << self
@@ -39,24 +39,8 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::ExternalProxy
         }
       }
     end
-
-    # errors should be an array of Api::V3::HigherLevelReviewProcessor::Error
-    def status_from_errors(errors)
-      fail ArgumentError, "status_from_errors expects 1 array argument" unless errors.is_a?(Array)
-      return 422 if errors.empty?
-
-      errors.map { |error| Integer(error.try(:status) || 422) }.max
-    end
-
-    # given multiple objects, will return the error for the first error code it can find
-    def error_from_objects_error_code(*args)
-      args.each do |arg|
-        code = arg.try(:error_code)
-        return Api::V3::HigherLevelReviewProcessor.error_from_error_code(code) if code
-      end
-      Api::V3::HigherLevelReviewProcessor::ERROR_FOR_UNKNOWN_CODE
-    end
   end
+
 end
 
 # def mock_create

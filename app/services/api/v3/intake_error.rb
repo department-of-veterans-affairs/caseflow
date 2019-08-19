@@ -1,19 +1,10 @@
 # frozen_string_literal: true
 
-# This module maps error codes (originating from both the intake models and the
-# HigherLevelReviewProcessor) to JSON:API-style error hashes which can be
-# return to an API consumer.
-# It is not intended to be used as a mixin.
-
-module Api::V3::HigherLevelReviewProcessor::Error
-  Error = Struct.new(:status, :code, :title)
-
-  # BY_CODE is a hash of Error structs with symbol keys. Errors marked with
-  # "# i" come from the intake model (otherwise the error is a validation from
-  # HigherLevelReviewProcessor)
+class Api::V3::DecisionReview::IntakeError
+  attr_reader :status, :code, :title
 
   # columns: status | code | title
-  BY_CODE = [
+  KNOWN_ERRORS = [
     [403, :veteran_not_accessible, "You don't have permission to view this veteran's information"], # i
     [404, :veteran_not_found, "Veteran not found"], # i
     [409, :duplicate_intake_in_progress, "Intake in progress"], # i
@@ -41,41 +32,42 @@ module Api::V3::HigherLevelReviewProcessor::Error
     ],
     [500, :intake_review_failed, "The review step of processing the intake failed for an unknown reason"],
     [500, :intake_start_failed, "The start step of processing the intake failed for an unknown reason"],
-    [500, :reserved_veteran_file_number, "Invalid veteran file number"] # i
-  ].each_with_object({}) do |args, hash|
-    hash[args[1]] = Error.new(*args)
-  end.freeze
+    [500, :reserved_veteran_file_number, "Invalid veteran file number"], # i
+  ]
 
-  # this is the error given when error code lookup fails. Note: :unknown_error is not in the list above
-  FOR_UNKNOWN_CODE = Error.new(500, :unknown_error, "Unknown error")
+  UNKNOWN_ERROR = [500, :unknown_error, "Unknown error"]
 
-  # returns the full Error for a given error code
-  def self.from_error_code(code)
-    BY_CODE[code.to_s.to_sym] || FOR_UNKNOWN_CODE
+  KNOWN_ERRORS_BY_CODE = KNOWN_ERRORS.each_with_object({}) { |array, hash| hash[array.second] = array }
+
+  # Given multiple arguments, it uses the first argument that is/has an error code
+  def initialize(*args)
+    @status, @code, @title = KNOWN_ERRORS_BY_CODE[self.class.first_error_code(args)] || UNKNOWN_ERROR
   end
 
-  class StartError < StandardError
-    def initialize(intake)
-      @intake = intake
-      super("intake.start! did not throw an exception, but did return a falsey value")
+  class << self
+    def error_code(obj)
+      case obj
+      when Symbol
+        obj
+      when String
+        obj.to_sym
+      else
+        obj.try(:error_code)
+      end
+    end
+  
+    def first_error_code(array)
+      array.each do |obj|
+        code = error_code(obj)
+        return code if code
+      end
+      nil
     end
 
-    def error_code
-      @intake.error_code || :intake_start_failed
-    end
-  end
+    def status_from_errors(errors)
+      fail ArgumentError, "status_from_errors expects an non-empty array" unless errors.is_a?(Array) && errors.any?
 
-  class ReviewError < StandardError
-    def initialize(intake)
-      @intake = intake
-      msg = "intake.review!(review_params) did not throw an exception, but did return a falsey value"
-      review_errors = @intake&.detail&.errors
-      msg = ["#{msg}:", *review_errors.full_messages].join("\n") if review_errors.present?
-      super(msg)
-    end
-
-    def error_code
-      @intake.error_code || :intake_review_failed
+      errors.map { |error| Integer(error.try(:status) || 422) }.max
     end
   end
 end
