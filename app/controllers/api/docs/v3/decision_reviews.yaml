@@ -122,22 +122,23 @@ paths:
                         enum: [RequestIssue]
                       attributes:
                         type: object
-                        required:
-                          - decisionText
-                          - decisionDate
-                          # withdrawalDate (NOT required)
-                          # nonratingIssueCategory (NOT required)
-                        properties:
-                          decisionText:
+                        properties: # none are required
+                          notes:
                             type: string
-                          decisionDate:
+                          decision_issue_id:
                             type: string
-                            format: date
-                          withdrawalDate:
+                          rating_issue_id:
                             type: string
-                            format: date
-                          nonratingIssueCategory:
+                          legacy_appeal_id:
+                            type: string
+                          legacy_appeal_issue_id:
+                            type: string
+                          category:
                             $ref: "#/components/schemas/nonrating_issue_category"
+                          decision_date:
+                            type: string
+                          decision_text:
+                            type: string
             examples:
               pension:
                 value: {
@@ -170,17 +171,12 @@ paths:
                     },
                     "included": [
                       {
-                        "type": "NonratingIssue",
+                        "type": "RequestIssue",
                         "attributes": {
                           "decisionText": "veteran status verified",
                           "decisionDate": "2019-07-11",
-                          "withdrawalDate": null,
-                          "nonratingIssueCategory": "Eligibility | Veteran Status"
+                          "category": "Eligibility | Veteran Status"
                         }
-                      },
-                      {
-                        "type": "RatingIssue",
-                        "id": "def456"
                       }
                     ]
                   }
