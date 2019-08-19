@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
 
@@ -213,3 +214,7 @@ export default class OrganizationUsers extends React.PureComponent {
     </AppSegment>
   </LoadingDataDisplay>;
 }
+
+OrganizationUsers.propTypes = {
+  organization: PropTypes.string
+};
