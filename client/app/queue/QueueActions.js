@@ -158,7 +158,7 @@ export const getAppealValue = (appealId, endpoint, name) => (dispatch) => {
       name
     }
   });
-  ApiUtil.get(`/appeals/${appealId}/${endpoint}`).then((resp) => {
+  ApiUtil.get(`/appeals/${appealId}/${endpoint}`).then((response) => {
     dispatch({
       type: ACTIONS.RECEIVE_APPEAL_VALUE,
       payload: {
