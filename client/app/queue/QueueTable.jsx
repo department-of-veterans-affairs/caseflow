@@ -343,7 +343,7 @@ export default class QueueTable extends React.PureComponent {
     return ApiUtil.get(this.requestUrl()).then((response) => {
       const {
         tasks: { data: tasks }
-      } = JSON.parse(response.text);
+      } = response.body;
 
       this.setState({
         tasksFromApi: tasksWithAppealsFromRawTasks(tasks),

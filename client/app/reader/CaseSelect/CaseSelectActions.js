@@ -62,7 +62,7 @@ export const fetchAppealUsingVeteranId = (veteranId) =>
     },
     ENDPOINT_NAMES.APPEAL_DETAILS_BY_VET_ID).
       then((response) => {
-        const returnedObject = JSON.parse(response.text);
+        const returnedObject = response.body;
 
         if (_.size(returnedObject.appeals) === 0) {
           dispatch(fetchedNoAppealsUsingVeteranId(veteranId));

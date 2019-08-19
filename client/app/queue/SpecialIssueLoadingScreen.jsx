@@ -19,7 +19,7 @@ class SpecialIssueLoadingScreen extends React.PureComponent {
       `/appeals/${this.props.appealExternalId}/special_issues`, requestOptions).then(
       (response) => {
         // eslint-disable-next-line no-unused-vars
-        const { appeal_id, id, ...specialIssues } = JSON.parse(response.text);
+        const { appeal_id, id, ...specialIssues } = response.body;
 
         this.props.setSpecialIssues(specialIssues);
       }

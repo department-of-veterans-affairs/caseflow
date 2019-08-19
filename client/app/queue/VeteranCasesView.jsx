@@ -43,7 +43,7 @@ class VeteranCasesView extends React.PureComponent {
 
     return ApiUtil.get('/appeals', { headers: { 'case-search': veteranId } }).
       then((response) => {
-        const returnedObject = JSON.parse(response.text);
+        const returnedObject = response.body;
 
         if (!returnedObject.appeals.length) {
           return Promise.reject(response);

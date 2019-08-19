@@ -64,7 +64,7 @@ class QueueLoadingScreen extends React.PureComponent {
     return ApiUtil.get(urlToLoad, requestOptions).then((response) => {
       this.props.onReceiveQueue({
         amaTasks: {},
-        ...associateTasksWithAppeals(JSON.parse(response.text))
+        ...associateTasksWithAppeals(response.body)
       });
       this.props.setUserId(userId);
     });
