@@ -613,12 +613,14 @@ RSpec.feature "Task queue", :all_dbs do
         :appeal,
         number_of_claimants: 1,
         request_issues: build_list(
-          :request_issue, 1,
+          :request_issue, 1, :rating,
           contested_issue_description: "Tinnitus"
         )
       )
     end
-    let!(:decision_issue) { create(:decision_issue, decision_review: appeal, request_issues: appeal.request_issues) }
+    let!(:decision_issue) do
+      create(:decision_issue, decision_review: appeal, request_issues: appeal.request_issues)
+    end
 
     let(:root_task) { create(:root_task, appeal: appeal) }
 

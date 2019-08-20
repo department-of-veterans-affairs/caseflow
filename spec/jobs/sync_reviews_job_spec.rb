@@ -79,8 +79,8 @@ describe SyncReviewsJob, :postgres do
     end
 
     context "when there are request issues awaiting processing" do
-      let!(:pending_request_issue) { create(:request_issue, :requires_processing) }
-      let!(:request_issue) { create(:request_issue) }
+      let!(:pending_request_issue) { create(:request_issue, :rating, :requires_processing) }
+      let!(:request_issue) { create(:request_issue, :rating) }
 
       it "ignores request issues that are not flagged" do
         expect(DecisionIssueSyncJob).to_not receive(:perform_later).with(request_issue)

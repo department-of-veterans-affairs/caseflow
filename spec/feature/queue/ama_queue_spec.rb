@@ -96,20 +96,20 @@ RSpec.feature "AmaQueue", :all_dbs do
             file_number: file_numbers[0]
           ),
           documents: create_list(:document, 5, file_number: file_numbers[0], upload_date: 3.days.ago),
-          request_issues: build_list(:request_issue, 3, contested_issue_description: "Knee pain")
+          request_issues: build_list(:request_issue, 3, :rating, contested_issue_description: "Knee pain")
         ),
         create(
           :appeal,
           veteran: create(:veteran, file_number: file_numbers[1]),
           documents: create_list(:document, 4, file_number: file_numbers[1]),
-          request_issues: build_list(:request_issue, 2, contested_issue_description: "PTSD")
+          request_issues: build_list(:request_issue, 2, :rating, contested_issue_description: "PTSD")
         ),
         create(
           :appeal,
           number_of_claimants: 1,
           veteran: create(:veteran, file_number: file_numbers[2]),
           documents: create_list(:document, 3, file_number: file_numbers[2]),
-          request_issues: build_list(:request_issue, 1, contested_issue_description: "Tinnitus")
+          request_issues: build_list(:request_issue, 1, :rating, contested_issue_description: "Tinnitus")
         )
       ]
     end
@@ -429,9 +429,15 @@ RSpec.feature "AmaQueue", :all_dbs do
         veteran_file_number: veteran.file_number,
         number_of_claimants: 1,
         request_issues: [
-          create(:request_issue, contested_issue_description: "Tinnitus", notes: "Tinnitus note"),
           create(
             :request_issue,
+            :rating,
+            contested_issue_description: "Tinnitus",
+            notes: "Tinnitus note"
+          ),
+          create(
+            :request_issue,
+            :rating,
             contested_issue_description: "Knee pain",
             notes: "Knee pain note",
             contested_rating_issue_diagnostic_code: nil

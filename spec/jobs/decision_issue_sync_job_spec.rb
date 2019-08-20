@@ -5,7 +5,7 @@ require "rails_helper"
 
 describe DecisionIssueSyncJob, :postgres do
   let(:epe) { create(:end_product_establishment, :cleared, established_at: Time.zone.today) }
-  let(:request_issue) { create(:request_issue, end_product_establishment: epe) }
+  let(:request_issue) { create(:request_issue, :rating, end_product_establishment: epe) }
   let(:no_ratings_err) { Rating::NilRatingProfileListError.new("none!") }
   let(:bgs_transport_err) { BGS::ShareError.new("network!") }
 

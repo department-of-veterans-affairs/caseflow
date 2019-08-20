@@ -111,6 +111,7 @@ feature "attorney checkout flow when appeal has withdrawn request issues", :all_
   def create_withdrawn_request_issue
     create(
       :request_issue,
+      :rating,
       decision_review: appeal,
       contested_issue_description: "Tinnitus",
       closed_at: Time.zone.now,

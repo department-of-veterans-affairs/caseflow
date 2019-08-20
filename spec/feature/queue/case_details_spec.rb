@@ -447,11 +447,13 @@ RSpec.feature "Case details", :all_dbs do
         build_list(
           :request_issue,
           1,
+          :rating,
           contested_issue_description: "Knee pain"
         ),
         build_list(
           :request_issue,
           1,
+          :rating,
           contested_issue_description: "Sunburn",
           ineligible_reason: :untimely
         )
@@ -473,11 +475,13 @@ RSpec.feature "Case details", :all_dbs do
         build_list(
           :request_issue,
           1,
+          :rating,
           contested_issue_description: "Knee pain"
         ),
         build_list(
           :request_issue,
           1,
+          :rating,
           contested_issue_description: "Sunburn",
           closed_status: :decided,
           closed_at: 2.days.ago
@@ -796,6 +800,7 @@ RSpec.feature "Case details", :all_dbs do
         let!(:request_issue) do
           create(
             :request_issue,
+            :rating,
             decision_review: appeal,
             contested_issue_description: issue_description
           )
@@ -803,6 +808,7 @@ RSpec.feature "Case details", :all_dbs do
         let!(:request_issue2) do
           create(
             :request_issue,
+            :rating,
             decision_review: appeal,
             contested_issue_description: issue_description2
           )
@@ -886,7 +892,7 @@ RSpec.feature "Case details", :all_dbs do
   end
 
   describe "AMA decision issue notes" do
-    let(:request_issue) { create(:request_issue, contested_issue_description: "knee pain", notes: notes) }
+    let(:request_issue) { create(:request_issue, :rating, contested_issue_description: "knee pain", notes: notes) }
     let(:appeal) { create(:appeal, number_of_claimants: 1, request_issues: [request_issue]) }
 
     context "when notes are nil" do
@@ -1086,6 +1092,7 @@ RSpec.feature "Case details", :all_dbs do
         let!(:request_issue) do
           create(
             :request_issue,
+            :rating,
             decision_review: appeal,
             contested_issue_description: "Left Knee",
             benefit_type: "compensation",

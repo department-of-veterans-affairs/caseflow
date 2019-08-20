@@ -760,6 +760,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       let(:decision_request_issue) do
         create(
           :request_issue,
+          :rating,
           decision_review: higher_level_review,
           contested_issue_description: "currently contesting decision issue",
           decision_date: Time.zone.now - 2.days,
@@ -771,6 +772,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         already_active_hlr = create(:higher_level_review, :with_end_product_establishment)
         create(
           :request_issue,
+          :rating,
           decision_review: already_active_hlr,
           contested_issue_description: "currently active request issue",
           decision_date: Time.zone.now - 2.days,

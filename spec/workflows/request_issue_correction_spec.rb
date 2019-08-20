@@ -24,8 +24,8 @@ describe "Request Issue Correction", :postgres do
 
   let(:request_issues_data) { [] }
   let(:corrected_request_issue_ids) { nil }
-  let(:request_issue1) { create(:request_issue, decision_review: claim_review) }
-  let(:request_issue2) { create(:request_issue, decision_review: claim_review) }
+  let(:request_issue1) { create(:request_issue, :rating, decision_review: claim_review) }
+  let(:request_issue2) { create(:request_issue, :rating, decision_review: claim_review) }
 
   describe "#corrected_issues" do
     subject { correction.corrected_issues }
