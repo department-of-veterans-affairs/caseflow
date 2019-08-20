@@ -12,16 +12,17 @@ class ExternalApi::BgsVeteranStationUserConflict
   # a good example in production is veteran_participant_id 3309696 and user id 2321
   # "true" return value in this case means there is a conflict.
   # "false" means no conflict.
+  # a "DTO" is a Data Type Object which is just BGS SOAP API speak.
   def conflict?
     DBService.release_db_connections
 
     return false unless station_dtos.any?
 
     # simple case if DTOs exist and contain a Veteran record
-    return true if veteran_dto
+    return true if veteran_at_same_station
 
     # likewise for spouse
-    return true if spouse_dto
+    return true if spouse_at_same_station
 
     # otherwise we must check sensitivity reason
     return true if violates_sensitivity_reason?
@@ -42,11 +43,11 @@ class ExternalApi::BgsVeteranStationUserConflict
     [employee_dtos[:station]].flatten
   end
 
-  def veteran_dto
+  def veteran_at_same_station
     station_dtos.find { |dto| dto[:ptcpnt_rlnshp_type_nm] == "Veteran" }
   end
 
-  def spouse_dto
+  def spouse_at_same_station
     station_dtos.find { |dto| dto[:ptcpnt_rlnshp_type_nm] == "Spouse" }
   end
 
