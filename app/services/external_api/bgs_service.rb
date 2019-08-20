@@ -203,11 +203,10 @@ class ExternalApi::BGSService
   def may_modify?(vbms_id, veteran_participant_id)
     return false unless can_access?(vbms_id)
 
-    conflict_checker = ExternalApi::BgsVeteranStationUserConflict.new(
+    !ExternalApi::BgsVeteranStationUserConflict.new(
       veteran_participant_id: veteran_participant_id,
       client: client
-    )
-    !conflict_checker.call
+    ).conflict?
   end
 
   def bust_can_access_cache(user, vbms_id)

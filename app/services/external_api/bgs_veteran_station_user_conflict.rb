@@ -12,7 +12,7 @@ class ExternalApi::BgsVeteranStationUserConflict
   # a good example in production is veteran_participant_id 3309696 and user id 2321
   # "true" return value in this case means there is a conflict.
   # "false" means no conflict.
-  def call
+  def conflict?
     DBService.release_db_connections
 
     return false unless station_dtos.any?
