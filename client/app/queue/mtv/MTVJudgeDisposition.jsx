@@ -12,7 +12,7 @@ import { MTVDispositionSelection } from './MTVDispositionSelection';
 import TextareaField from '../../components/TextareaField';
 import RadioField from '../../components/RadioField';
 import { mtvVacateTypeOptions } from './index';
-import SearchableDropdown from '../../components/SearchableDropdown.jsx';
+import SearchableDropdown from '../../components/SearchableDropdown';
 
 export const MTVJudgeDisposition = ({ attorneys, task }) => {
   const { assignedTo } = task;
@@ -60,7 +60,7 @@ export const MTVJudgeDisposition = ({ attorneys, task }) => {
         options={attorneys}
         placeholder="Select attorney"
         onChange={(option) => option && setAttorneyId(option.value)}
-        value={assignedTo}
+        value={attorneyId}
         // styling={css({ width: '30rem' })}
       />
     </div>
