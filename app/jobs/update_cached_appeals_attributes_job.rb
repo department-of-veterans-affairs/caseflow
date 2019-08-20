@@ -10,13 +10,13 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   APP_NAME = "caseflow_job"
   METRIC_GROUP_NAME = UpdateCachedAppealsAttributesJob.name.underscore
 
-  def perform
+  def perform(_args = {})
     start_time = Time.zone.now
 
     cache_ama_appeals
     cache_legacy_appeals
 
-    record_runtime(start_time)
+    datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   rescue StandardError => error
     log_error(start_time, error)
   end
@@ -123,17 +123,6 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     end
   end
 
-  def record_runtime(start_time)
-    job_duration_seconds = Time.zone.now - start_time
-
-    DataDogService.emit_gauge(
-      app_name: APP_NAME,
-      metric_group: METRIC_GROUP_NAME,
-      metric_name: "runtime",
-      metric_value: job_duration_seconds
-    )
-  end
-
   def log_error(start_time, err)
     duration = time_ago_in_words(start_time)
     msg = "UpdateCachedAppealsAttributesJob failed after running for #{duration}. Fatal error: #{err.message}"
@@ -143,7 +132,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
     slack_service.send_notification(msg)
 
-    record_runtime(start_time)
+    datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end
 
   private
