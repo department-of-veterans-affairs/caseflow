@@ -29,10 +29,6 @@ module VaDotGovAddressValidator::Validations
     @error_handler ||= VaDotGovAddressValidator::ErrorHandler.new(appeal: appeal, appellant_address: address)
   end
 
-  def fail_if_unable_to_validate_address
-    raise valid_address_response.error if valid_address.nil? # rubocop:disable Style/SignalException
-  end
-
   def state_code_error
     if !valid_states.include?(state_code)
       Caseflow::Error::VaDotGovForeignVeteranError.new(
