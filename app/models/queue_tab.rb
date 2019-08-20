@@ -24,7 +24,26 @@ class QueueTab
       label: label,
       name: name,
       description: format(description, assignee.name),
-      columns: columns.map(&:to_hash),
+
+      # Was:
+      # columns: [
+      #   "TaskTypeColumn",
+      #   ...
+      # ]
+      #
+      # Now:
+      # columns: [
+      #   { name: "TaskTypeColumn",
+      #     options: [
+      #       {  key: "ArnesonColocatedTask",
+      #          label: "Arneson (2)"
+      #       },
+      #       ...
+      #     ]
+      #   },
+      #   ...
+      # ]
+      columns: columns.map { |col| col.to_hash(tasks) },
       allow_bulk_assign: allow_bulk_assign?
     }
   end

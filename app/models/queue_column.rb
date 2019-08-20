@@ -24,6 +24,7 @@ class QueueColumn
     column_config ? new(column_config) : nil
   end
 
+  # TODO: Consider renaming to be more specific to the context we are working in.
   def to_hash(tasks)
     return { name: name, filterable: false, filter_options: nil } if filter_function.nil?
 
@@ -51,6 +52,37 @@ class QueueColumn
 
     tasks.group(:type).count.each_pair do |option, count|
       arr << { value: option, label: format("%s (%d)", Object.const_get(option).label, count) }
+    end
+
+    arr
+  end
+
+  def filter_regional_office(tasks)
+    arr = []
+
+    tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:closest_regional_office_city).count.each_pair do |option, count|
+      # TODO: Double encode these values
+      arr << { value: option, label: format("%s (%d)", option, count) }
+    end
+
+    arr
+  end
+
+  def filter_case_type(tasks)
+    arr = []
+
+    # TODO: Add the AOD option first.
+
+    # aod_counts = tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:is_aod).count
+    # aod_counts[true]
+    #
+    # OR
+    #
+    # Task.joins("join cached_appeal_attributes on cached_appeal_attributes.appeal_id = tasks.appeal_id and cached_appeal_attributes.appeal_type = tasks.appeal_type and cached_appeal_attributes.is_aod ='true'").count
+
+    tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:case_type).count.each_pair do |option, count|
+      # TODO: Map the label to the correct friendly name.
+      arr << { value: option, label: format("%s (%d)", option, count) }
     end
 
     arr

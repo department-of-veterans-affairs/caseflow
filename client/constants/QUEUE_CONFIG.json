@@ -24,6 +24,7 @@
 
   "COLUMNS": {
     "APPEAL_TYPE": {
+      "filter_function": "filter_case_type",
       "name": "typeColumn",
       "sorting_table": "cached_appeal_attributes",
       "sorting_columns": ["is_aod", "case_type", "docket_number"]
@@ -59,6 +60,7 @@
       "sorting_columns": ["issue_count"]
     },
     "REGIONAL_OFFICE": {
+      "filter_function": "filter_regional_office",
       "name": "regionalOfficeColumn",
       "sorting_table": "cached_appeal_attributes",
       "sorting_columns": ["closest_regional_office_city"]
