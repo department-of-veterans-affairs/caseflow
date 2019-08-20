@@ -15,7 +15,9 @@ describe AttorneyCaseReview, :all_dbs do
     let(:task) { create(:ama_attorney_task, appeal: appeal) }
     let!(:request_issue1) { create(:request_issue, :rating, decision_review: appeal) }
     let(:decision_issue1) { build(:decision_issue) }
-    let!(:request_issue2) { create(:request_issue, :rating, decision_review: appeal, decision_issues: [decision_issue1]) }
+    let!(:request_issue2) do
+      create(:request_issue, :rating, decision_review: appeal, decision_issues: [decision_issue1])
+    end
 
     let(:remand_reason1) { create(:ama_remand_reason) }
     let(:remand_reason2) { create(:ama_remand_reason) }

@@ -147,7 +147,9 @@ RSpec.feature "Search", :all_dbs do
               end
 
               let!(:caseflow_appeal) { create(:appeal, veteran: higher_level_review.veteran) }
-              let!(:removed_request_issue) { create(:request_issue, :rating, :removed, decision_review: caseflow_appeal) }
+              let!(:removed_request_issue) do
+                create(:request_issue, :rating, :removed, decision_review: caseflow_appeal)
+              end
 
               it "does not show removed decision reviews" do
                 perform_search

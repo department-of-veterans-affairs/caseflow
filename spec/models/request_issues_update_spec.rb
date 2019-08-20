@@ -678,11 +678,16 @@ describe RequestIssuesUpdate, :all_dbs do
   end
 
   context "#establish!" do
-    let!(:before_issue) { create(:request_issue_with_epe, decision_review: review, contention_reference_id: "1") }
-    let!(:after_issue) { create(:request_issue_with_epe, decision_review: review, contention_reference_id: "2") }
+    let!(:before_issue) do
+      create(:request_issue_with_epe, :rating, decision_review: review, contention_reference_id: "1")
+    end
+    let!(:after_issue) do
+      create(:request_issue_with_epe, :rating, decision_review: review, contention_reference_id: "2")
+    end
     let(:edited_issue) do
       create(
         :request_issue_with_epe,
+        :rating,
         decision_review: review,
         contention_reference_id: "3",
         edited_description: edited_description
