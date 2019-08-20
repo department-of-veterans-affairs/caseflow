@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class StartError < StandardError
+class Api::V3::DecisionReview::StartError < StandardError
   def initialize(intake)
     @intake = intake
     super("intake.start! did not throw an exception, but did return a falsey value")

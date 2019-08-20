@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ReviewError < StandardError
+class Api::V3::DecisionReview::ReviewError < StandardError
   def initialize(intake)
     @intake = intake
     msg = "intake.review!(review_params) did not throw an exception, but did return a falsey value"
