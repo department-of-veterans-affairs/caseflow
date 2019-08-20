@@ -13,8 +13,13 @@ class ExternalApi::BgsVeteranStationUserConflict
   def call
     DBService.release_db_connections
 
-    # simple case if DTOs exist and do not contain a Veteran record
-    return true if station_dtos.any? && !veteran_dto
+    return false unless station_dtos.any?
+
+    # simple case if DTOs exist and contain a Veteran record
+    return true if veteran_dto
+
+    # likewise for spouse
+    return true if spouse_dto
 
     # otherwise we must check sensitivity reason
     return true if violates_sensitivity_reason?
@@ -39,6 +44,10 @@ class ExternalApi::BgsVeteranStationUserConflict
     station_dtos.find { |dto| dto[:ptcpnt_rlnshp_type_nm] == "Veteran" }
   end
 
+  def spouse_dto
+    station_dtos.find { |dto| dto[:ptcpnt_rlnshp_type_nm] == "Spouse" }
+  end
+
   def veteran_at_same_station?
     return false unless station_dtos
 
@@ -56,6 +65,8 @@ class ExternalApi::BgsVeteranStationUserConflict
   end
 
   def violates_sensitivity_reason?
+    return false unless sensitivity_level
+
     ["Relative of Local VA Employee", "VBA Employee", "Veteran", "Work Study"].include?(sensitivity_reason)
   end
 
