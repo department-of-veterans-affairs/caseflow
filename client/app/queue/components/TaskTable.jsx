@@ -164,13 +164,11 @@ export const typeColumn = (tasks, requireDasRecord) => {
       <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
     span: (task) => hasDASRecord(task, requireDasRecord) ? 1 : 5,
     getSortValue: (task) => {
+      const sortString = `${task.appeal.caseType} ${task.appeal.docketNumber}`;
+
       // We append a * before the docket number if it's a priority case since * comes before
       // numbers in sort order, this forces these cases to the top of the sort.
-      if (task.appeal.isAdvancedOnDocket || task.appeal.caseType === LEGACY_APPEAL_TYPES.CAVC_REMAND) {
-        return `*${task.appeal.docketNumber}`;
-      }
-
-      return task.appeal.docketNumber;
+      return task.appeal.isAdvancedOnDocket ? `*${sortString}` : sortString;
     }
   };
 };
