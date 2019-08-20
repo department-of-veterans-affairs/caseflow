@@ -177,18 +177,20 @@ export const submitIntakeReviewRequest = (intakeId, data) => (dispatch) => {
             responseErrorCodes
           },
           meta: {
-            analytics: (triggerEvent, category, actionName) => {
-              triggerEvent(category, actionName, 'any-error');
-
-              _.forEach(
-                responseErrorCodes,
-                (errorVal, errorKey) => triggerEvent(category, actionName, `${errorKey}-${errorVal}`)
-              );
-            }
+            analytics: analyticsCallback
           }
         });
 
         throw error;
       }
     );
+};
+
+export const analyticsCallback = (triggerEvent, category, actionName) => {
+  triggerEvent(category, actionName, 'any-error');
+
+  _.forEach(
+    responseErrorCodes,
+    (errorVal, errorKey) => triggerEvent(category, actionName, `${errorKey}-${errorVal}`)
+  );
 };

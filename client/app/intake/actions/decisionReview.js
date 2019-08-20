@@ -1,5 +1,6 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
+import { analyticsCallback, submitIntakeCompleteRequest, submitIntakeReviewRequest } from './intake';
 import { prepareReviewData } from '../util';
 import { formatIssues } from '../util/issues';
 import _ from 'lodash';
@@ -38,14 +39,7 @@ export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => 
             responseErrorCodes
           },
           meta: {
-            analytics: (triggerEvent, category, actionName) => {
-              triggerEvent(category, actionName, 'any-error');
-
-              _.forEach(
-                responseErrorCodes,
-                (errorVal, errorKey) => triggerEvent(category, actionName, `${errorKey}-${errorVal}`)
-              );
-            }
+            analytics: analyticsCallback
           }
         });
 
@@ -62,35 +56,7 @@ export const completeIntake = (intakeId, intakeData) => (dispatch) => {
 
   const data = formatIssues(intakeData);
 
-  return ApiUtil.patch(`/intake/${intakeId}/complete`, { data }, ENDPOINT_NAMES.COMPLETE_INTAKE).
-    then(
-      (response) => {
-        dispatch({
-          type: ACTIONS.COMPLETE_INTAKE_SUCCEED,
-          payload: {
-            intake: response.body
-          },
-          meta: { analytics }
-        });
-
-        return true;
-      },
-      (error) => {
-        const responseObject = error.response.body || {};
-        const responseErrorCode = responseObject.error_code;
-        const responseErrorData = responseObject.error_data;
-
-        dispatch({
-          type: ACTIONS.COMPLETE_INTAKE_FAIL,
-          payload: {
-            responseErrorCode,
-            responseErrorData
-          },
-          meta: { analytics }
-        });
-        throw error;
-      }
-    );
+  return submitIntakeCompleteRequest(intakeId, { data })(dispatch);
 };
 
 export const setBenefitType = (benefitType) => ({
