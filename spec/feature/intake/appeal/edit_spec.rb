@@ -369,7 +369,7 @@ feature "Appeal Edit issues", :all_dbs do
   end
 
   context "appeal is non-comp benefit type" do
-    let!(:request_issue) { create(:request_issue, benefit_type: "education") }
+    let!(:request_issue) { create(:request_issue, :nonrating, benefit_type: "education") }
 
     scenario "adding an issue with a non-comp benefit type" do
       visit "appeals/#{appeal.uuid}/edit/"
@@ -666,7 +666,7 @@ feature "Appeal Edit issues", :all_dbs do
       end
 
       context "when appeal is non-comp benefit type" do
-        let!(:request_issue) { create(:request_issue, benefit_type: "education") }
+        let!(:request_issue) { create(:request_issue, :nonrating, benefit_type: "education") }
 
         scenario "remove all non-comp decision reviews" do
           visit "appeals/#{appeal.uuid}/edit"

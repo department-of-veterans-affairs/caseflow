@@ -268,8 +268,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           end
 
           let(:params) { { appeal_id: ama_appeals.first.uuid } }
-          let!(:request_issue1) { create(:request_issue, decision_review: ama_appeals.first) }
-          let!(:request_issue2) { create(:request_issue, decision_review: ama_appeals.first) }
+          let!(:request_issue1) { create(:request_issue, :rating, decision_review: ama_appeals.first) }
+          let!(:request_issue2) { create(:request_issue, :rating, decision_review: ama_appeals.first) }
 
           context "and addresses should not be queried" do
             before do

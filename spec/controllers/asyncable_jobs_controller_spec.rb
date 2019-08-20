@@ -40,6 +40,7 @@ describe AsyncableJobsController, :postgres, type: :controller do
       end
       let!(:request_issue) do
         create(:request_issue,
+               :rating,
                decision_review: hlr,
                decision_sync_submitted_at: 7.days.ago,
                decision_sync_attempted_at: 7.days.ago)

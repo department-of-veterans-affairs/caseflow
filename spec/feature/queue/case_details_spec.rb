@@ -1008,7 +1008,7 @@ RSpec.feature "Case details", :all_dbs do
     let(:judge_user) { create(:user) }
     let(:root_task) { create(:root_task) }
     let(:appeal) { root_task.appeal }
-    let!(:request_issue) { create(:request_issue, decision_review: appeal) }
+    let!(:request_issue) { create(:request_issue, :rating, decision_review: appeal) }
     let!(:judge_task) do
       create(
         :ama_judge_decision_review_task,

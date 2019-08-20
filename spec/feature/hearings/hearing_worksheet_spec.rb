@@ -121,7 +121,7 @@ RSpec.feature "Hearing prep", :all_dbs do
 
     context "Worksheet for AMA hearings" do
       let(:ama_hearing) { create(:hearing, :with_tasks, judge: current_user) }
-      let!(:request_issue) { create(:request_issue, decision_review: ama_hearing.appeal) }
+      let!(:request_issue) { create(:request_issue, :rating, decision_review: ama_hearing.appeal) }
 
       scenario "Can save information for ama hearings" do
         visit "/hearings/" + ama_hearing.external_id.to_s + "/worksheet"

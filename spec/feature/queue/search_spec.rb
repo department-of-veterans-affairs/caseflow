@@ -110,7 +110,7 @@ RSpec.feature "Search", :all_dbs do
         context "and it also has appeals" do
           let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: appeal.veteran_file_number) }
           let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number) }
-          let!(:eligible_request_issue) { create(:request_issue, decision_review: higher_level_review) }
+          let!(:eligible_request_issue) { create(:request_issue, :rating, decision_review: higher_level_review) }
 
           def perform_search
             visit "/search"
@@ -143,7 +143,7 @@ RSpec.feature "Search", :all_dbs do
               end
 
               let!(:caseflow_appeal) { create(:appeal, veteran: higher_level_review.veteran) }
-              let!(:removed_request_issue) { create(:request_issue, :removed, decision_review: caseflow_appeal) }
+              let!(:removed_request_issue) { create(:request_issue, :rating, :removed, decision_review: caseflow_appeal) }
 
               it "does not show removed decision reviews" do
                 perform_search

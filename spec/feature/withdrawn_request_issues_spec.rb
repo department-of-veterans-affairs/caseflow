@@ -119,6 +119,6 @@ feature "attorney checkout flow when appeal has withdrawn request issues", :all_
   end
 
   def create_active_request_issue
-    create(:request_issue, decision_review: appeal, contested_issue_description: "Back pain")
+    create(:request_issue, :rating, decision_review: appeal, contested_issue_description: "Back pain")
   end
 end

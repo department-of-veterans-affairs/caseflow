@@ -50,7 +50,7 @@ feature "Asyncable Jobs index", :postgres do
   end
   let!(:request_issues) do
     50.times do
-      create(:request_issue, decision_sync_last_submitted_at: 1.day.ago) # fewer days to sort others first
+      create(:request_issue, :rating, decision_sync_last_submitted_at: 1.day.ago) # fewer days to sort others first
     end
   end
 

@@ -335,6 +335,7 @@ describe ContestableIssue, :postgres do
         let!(:conflicting_request_issue) do
           create(
             :request_issue,
+            :rating,
             contested_decision_issue: decision_issue,
             closed_at: closed_at
           )
@@ -351,7 +352,7 @@ describe ContestableIssue, :postgres do
 
       context "when the conflicting request issue is on the same decision review" do
         let!(:conflicting_request_issue) do
-          create(:request_issue, contested_decision_issue: decision_issue, decision_review: decision_review)
+          create(:request_issue, :rating, contested_decision_issue: decision_issue, decision_review: decision_review)
         end
 
         it { is_expected.to be_nil }

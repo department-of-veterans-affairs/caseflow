@@ -25,7 +25,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
     let!(:quality_review_organization) { QualityReview.singleton }
     let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
     let!(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
-    let!(:request_issue) { create(:request_issue, decision_review: appeal) }
+    let!(:request_issue) { create(:request_issue, :rating, decision_review: appeal) }
 
     let!(:root_task) { create(:root_task, appeal: appeal) }
     let!(:judge_task) do

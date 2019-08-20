@@ -340,6 +340,7 @@ describe SupplementalClaimIntake, :all_dbs do
           profile_date: "2018-04-30T11:11:00.000-04:00",
           reference_id: "reference-id",
           decision_text: "decision text",
+          nonrating_issue_category: "Apportionment",
           vacols_id: legacy_appeal.vacols_id,
           vacols_sequence_id: vacols_issue.issseq
         }

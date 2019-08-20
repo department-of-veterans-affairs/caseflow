@@ -169,6 +169,7 @@ describe DecisionDocument, :postgres do
         let!(:remanded_issue) do
           create(
             :decision_issue,
+            :rating,
             decision_review: decision_document.appeal,
             disposition: "remanded",
             caseflow_decision_date: decision_document.decision_date

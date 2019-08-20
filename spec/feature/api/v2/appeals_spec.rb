@@ -306,6 +306,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
 
     let!(:hlr_request_issue) do
       create(:request_issue,
+             :rating,
              decision_review: hlr,
              benefit_type: benefit_type,
              contested_rating_issue_diagnostic_code: nil)
@@ -326,6 +327,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
 
     let!(:sc_request_issue) do
       create(:request_issue,
+             :rating,
              decision_review: supplemental_claim_review,
              benefit_type: "pension",
              contested_rating_issue_diagnostic_code: "9999")
@@ -346,13 +348,17 @@ describe "Appeals API v2", :all_dbs, type: :request do
     let(:rating_promulgated_date) { receipt_date - 40.days }
 
     let(:request_issue1) do
-      create(:request_issue, benefit_type: benefit_type,
-                             contested_rating_issue_diagnostic_code: nil)
+      create(:request_issue,
+        :rating,
+        benefit_type: benefit_type,
+         contested_rating_issue_diagnostic_code: nil)
     end
 
     let(:request_issue2) do
-      create(:request_issue, benefit_type: "education",
-                             contested_rating_issue_diagnostic_code: nil)
+      create(:request_issue,
+        :rating,
+        benefit_type: "education",
+        contested_rating_issue_diagnostic_code: nil)
     end
 
     let!(:appeal) do
@@ -559,6 +565,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
 
     let!(:request_issue1) do
       create(:request_issue,
+             :rating,
              decision_review: hlr_with_dta_error,
              benefit_type: benefit_type,
              contested_rating_issue_diagnostic_code: "9999")
@@ -585,6 +592,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
 
     let!(:request_issue2) do
       create(:request_issue,
+             :rating,
              decision_review: dta_sc,
              benefit_type: benefit_type,
              contested_rating_issue_diagnostic_code: "9999")
