@@ -791,6 +791,8 @@ module IntakeHelpers
 
     click_intake_add_issue
 
+    # Is this intentional??? It is adding nonrating decision issue as a rating issue
+    # It seems like it is a problem in production as well.
     add_intake_rating_issue(nonrating_decision_issue_description)
 
     expect(page).to have_content(nonrating_decision_issue_description)
