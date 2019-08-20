@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 import {
+  JUDGE_ADDRESS_MTV_TITLE,
   JUDGE_ADDRESS_MTV_DESCRIPTION,
   JUDGE_ADDRESS_MTV_DISPOSITION_SELECT_LABEL,
   JUDGE_ADDRESS_MTV_VACATE_TYPE_LABEL,
@@ -18,6 +19,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import { css } from 'glamor';
+import { MTVTaskHeader } from './MTVTaskHeader';
 
 export const MTVJudgeDisposition = ({ attorneys, task, appeal, onSubmit }) => {
   const { assignedTo } = task;
@@ -49,17 +51,7 @@ export const MTVJudgeDisposition = ({ attorneys, task, appeal, onSubmit }) => {
   return (
     <div className="address-motion-to-vacate">
       <AppSegment filledBackground>
-        <h1>Address {appeal.veteranFullName}'s Motion to Vacate</h1>
-
-        <div className="case-meta">
-          <span>
-            <strong>Veteran ID:</strong> {appeal.veteranFileNumber}
-          </span>
-          <span style={{ marginLeft: '3rem' }}>
-            <strong>Task:</strong> {task.label}
-          </span>
-        </div>
-        <div className="cf-help-divider" style={{ margin: '15px 0' }} />
+        <MTVTaskHeader title={JUDGE_ADDRESS_MTV_TITLE} task={task} appeal={appeal} />
 
         <p>{JUDGE_ADDRESS_MTV_DESCRIPTION}</p>
 

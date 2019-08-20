@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 import {
+  ATTORNEY_ADDRESS_MTV_TITLE,
   ATTORNEY_REVIEW_MTV_DESCRIPTION,
   ATTORNEY_REVIEW_MTV_DISPOSITION_SELECT_LABEL,
   ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL,
@@ -16,14 +17,15 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import Button from '../../components/Button';
 import JudgeDropdown from '../../../app/components/DataDropdowns/Judge';
+import JudgeSelectComponent from '../JudgeSelectComponent';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import JudgeSelectComponent from '../JudgeSelectComponent.jsx';
 import { css } from 'glamor';
+import { MTVTaskHeader } from './MTVTaskHeader';
 
 const formatReviewAttyInstructions = ({ disposition, hyperlink, instructions }) => {
-  return `
-  
-  `;
+  const parts = [instructions];
+
+  return parts.join('\n');
 };
 
 export const MTVAttorneyDisposition = ({ judges, task, appeal, onSubmit }) => {
@@ -59,17 +61,7 @@ export const MTVAttorneyDisposition = ({ judges, task, appeal, onSubmit }) => {
   return (
     <div className="address-motion-to-vacate">
       <AppSegment filledBackground>
-        <h1>Review {appeal.veteranFullName}'s Motion to Vacate</h1>
-
-        <div className="case-meta">
-          <span>
-            <strong>Veteran ID:</strong> {appeal.veteranFileNumber}
-          </span>
-          <span style={{ marginLeft: '3rem' }}>
-            <strong>Task:</strong> {task.label}
-          </span>
-        </div>
-        <div className="cf-help-divider" style={{ margin: '15px 0' }} />
+        <MTVTaskHeader title={ATTORNEY_ADDRESS_MTV_TITLE} task={task} appeal={appeal} />
 
         <p>{ATTORNEY_REVIEW_MTV_DESCRIPTION}</p>
 
