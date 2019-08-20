@@ -10,7 +10,7 @@ class Person < ApplicationRecord
   CACHED_BGS_ATTRIBUTES = [:first_name, :last_name, :middle_name, :name_suffix, :date_of_birth].freeze
 
   def advanced_on_docket?(appeal_receipt_date)
-    advanced_on_docket_based_on_age || AdvanceOnDocketMotion.granted_for_person?(id, appeal_receipt_date)
+    advanced_on_docket_based_on_age? || AdvanceOnDocketMotion.granted_for_person?(id, appeal_receipt_date)
   end
 
   def date_of_birth
