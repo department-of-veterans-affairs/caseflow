@@ -34,7 +34,8 @@ ReviewMotionToVacateView.propTypes = {
   task: PropTypes.object,
   appeal: PropTypes.object,
   judges: PropTypes.array,
-  fetchJudges: PropTypes.func
+  fetchJudges: PropTypes.func,
+  submitMTVAttyReview: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {

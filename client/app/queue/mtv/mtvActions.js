@@ -31,3 +31,34 @@ export const submitMTVAttyReview = (data) => {
     }
   };
 };
+
+export const submitMTVJudgeDecisionStarted = () => ({
+  type: Constants.MTV_SUBMIT_JUDGE_DECISION
+});
+
+export const submitMTVJudgeDecisionSuccess = (task) => ({
+  type: Constants.MTV_SUBMIT_JUDGE_DECISION_SUCCESS,
+  payload: {
+    ...task
+  }
+});
+
+export const submitMTVJudgeDecisionError = () => ({
+  type: Constants.MTV_SUBMIT_JUDGE_DECISION_ERROR
+});
+
+export const submitMTVJudgeDecision = (data) => {
+  return async (dispatch) => {
+    dispatch(submitMTVJudgeDecisionStarted());
+
+    const url = 'motion_to_vacate/create';
+
+    try {
+      const res = await ApiUtil.post(url, { data });
+
+      dispatch(submitMTVJudgeDecisionSuccess(res));
+    } catch (error) {
+      dispatch(submitMTVJudgeDecisionError());
+    }
+  };
+};
