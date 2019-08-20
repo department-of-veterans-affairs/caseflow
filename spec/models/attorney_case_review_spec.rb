@@ -21,14 +21,14 @@ describe AttorneyCaseReview, :all_dbs do
     let(:remand_reason2) { create(:ama_remand_reason) }
     let(:decision_issue2) do
       create(:decision_issue,
-        remand_reasons: [remand_reason1, remand_reason2],
-        decision_review: appeal)
+             remand_reasons: [remand_reason1, remand_reason2],
+             decision_review: appeal)
     end
     let!(:request_issue3) do
       create(:request_issue,
-        :rating,
-        decision_review: appeal,
-        decision_issues: [decision_issue2])
+             :rating,
+             decision_review: appeal,
+             decision_issues: [decision_issue2])
     end
     let!(:request_issue4) { create(:request_issue, :rating, decision_review: appeal) }
 
@@ -38,10 +38,9 @@ describe AttorneyCaseReview, :all_dbs do
     let(:decision_issue4) { create(:decision_issue, decision_review: appeal) }
     let!(:request_issue6) do
       create(:request_issue,
-        :rating,
-        decision_review: appeal,
-        decision_issues: [decision_issue3, decision_issue4]
-      )
+             :rating,
+             decision_review: appeal,
+             decision_issues: [decision_issue3, decision_issue4])
     end
     let!(:withdrawn_request_issue) do
       create(

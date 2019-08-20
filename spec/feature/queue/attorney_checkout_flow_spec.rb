@@ -58,7 +58,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         :appeal,
         number_of_claimants: 1,
         request_issues: build_list(
-          :request_issue, :rating, 2,
+          :request_issue, 2, :rating,
           contested_issue_description: issue_description,
           notes: issue_note,
           contested_rating_issue_diagnostic_code: diagnostic_code

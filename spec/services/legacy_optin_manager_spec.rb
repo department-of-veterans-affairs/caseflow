@@ -23,15 +23,15 @@ describe LegacyOptinManager, :all_dbs do
   let!(:undecided_appeal) { create(:legacy_appeal, vacols_case: undecided_case) }
   let(:undecided_ri1) do
     create(:request_issue,
-      :rating,
-      vacols_id: undecided_case.bfkey,
-      vacols_sequence_id: undecided_issue1.issseq)
+           :rating,
+           vacols_id: undecided_case.bfkey,
+           vacols_sequence_id: undecided_issue1.issseq)
   end
   let(:undecided_ri2) do
     create(:request_issue,
-      :rating,
-      vacols_id: undecided_case.bfkey,
-      vacols_sequence_id: undecided_issue2.issseq)
+           :rating,
+           vacols_id: undecided_case.bfkey,
+           vacols_sequence_id: undecided_issue2.issseq)
   end
 
   let(:remand_case) do
@@ -42,24 +42,24 @@ describe LegacyOptinManager, :all_dbs do
   let(:remand_issue2) { create(:case_issue, :disposition_manlincon_remand, issseq: 2) }
   let(:remand_ri1) do
     create(:request_issue,
-      :rating,
-      vacols_id: remand_case.bfkey,
-      vacols_sequence_id: remand_issue1.issseq)
+           :rating,
+           vacols_id: remand_case.bfkey,
+           vacols_sequence_id: remand_issue1.issseq)
   end
   let(:remand_ri2) do
     create(:request_issue,
-      :rating,
-      vacols_id: remand_case.bfkey,
-      vacols_sequence_id: remand_issue2.issseq)
+           :rating,
+           vacols_id: remand_case.bfkey,
+           vacols_sequence_id: remand_issue2.issseq)
   end
 
   let!(:higher_level_review) { create(:higher_level_review, request_issues: [hlr_remand_ri]) }
   let(:hlr_remand_issue) { create(:case_issue, :disposition_remanded, issseq: 3) }
   let(:hlr_remand_ri) do
     create(:request_issue,
-      :rating,
-      vacols_id: remand_case.bfkey,
-      vacols_sequence_id: hlr_remand_issue.issseq)
+           :rating,
+           vacols_id: remand_case.bfkey,
+           vacols_sequence_id: hlr_remand_issue.issseq)
   end
 
   let(:already_closed_case) do
@@ -78,15 +78,15 @@ describe LegacyOptinManager, :all_dbs do
   end
   let(:closed_ri1) do
     create(:request_issue,
-      :rating,
-      vacols_id: already_closed_case.bfkey,
-      vacols_sequence_id: closed_issue1.issseq)
+           :rating,
+           vacols_id: already_closed_case.bfkey,
+           vacols_sequence_id: closed_issue1.issseq)
   end
   let(:closed_ri2) do
     create(:request_issue,
-      :rating,
-      vacols_id: already_closed_case.bfkey,
-      vacols_sequence_id: closed_issue2.issseq)
+           :rating,
+           vacols_id: already_closed_case.bfkey,
+           vacols_sequence_id: closed_issue2.issseq)
   end
 
   def vacols_issue(vacols_id, vacols_sequence_id)

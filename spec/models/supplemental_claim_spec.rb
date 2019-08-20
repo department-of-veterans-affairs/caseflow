@@ -173,9 +173,8 @@ describe SupplementalClaim, :postgres do
 
     let!(:ri_contesting_di) do
       create(:request_issue,
-        :rating,
-        contested_decision_issue_id: already_contested_remanded_di.id
-      )
+             :rating,
+             contested_decision_issue_id: already_contested_remanded_di.id)
     end
 
     it "creates remand issues for appropriate decision issues" do

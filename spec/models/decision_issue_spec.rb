@@ -44,9 +44,8 @@ describe DecisionIssue, :postgres do
   context "scopes" do
     let!(:ri_contesting_decision_issue) do
       create(:request_issue,
-        :rating,
-        contested_decision_issue_id: decision_issue.id
-      )
+             :rating,
+             contested_decision_issue_id: decision_issue.id)
     end
     let!(:uncontested_di) { create(:decision_issue, disposition: "other") }
     let!(:uncontested_remand_di) { create(:decision_issue, disposition: "remanded") }
