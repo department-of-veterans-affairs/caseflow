@@ -301,12 +301,14 @@ describe Rating do
       let(:issues) { nil }
 
       it "should have no issues" do
-        is_expected.to match(hash_including(
-          participant_id: rating.participant_id,
-          profile_date: rating.profile_date,
-          promulgation_date: rating.promulgation_date,
-          issues: []
-        ))
+        is_expected.to match(
+          hash_including(
+            participant_id: rating.participant_id,
+            profile_date: rating.profile_date,
+            promulgation_date: rating.promulgation_date,
+            issues: []
+          )
+        )
       end
     end
   end
