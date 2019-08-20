@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/ReduxBase';
 import _ from 'lodash';
 
@@ -9,7 +10,6 @@ import * as AppConstants from '../constants/AppConstants';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 
 export class Certification extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -77,3 +77,7 @@ export class Certification extends React.Component {
     </LoadingDataDisplay>;
   }
 }
+
+Certification.propTypes = {
+  vacolsId: PropTypes.string
+};
