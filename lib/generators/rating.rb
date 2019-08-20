@@ -22,6 +22,7 @@ class Generators::Rating
               " is established from October 1, 2017."
           }
         ],
+        decisions: [],
         associated_claims: []
       }
     end
@@ -35,6 +36,8 @@ class Generators::Rating
 
       attrs[:issues] = populate_issue_ids(attrs)
 
+      attrs[:decisions] = populate_decision_ids(attrs)
+
       existing_rating = Fakes::BGSService.rating_profile_records[attrs[:participant_id]][attrs[:profile_date]]
       fail "You may not override an existing rating for #{attrs[:profile_date]}" if existing_rating
 
@@ -43,7 +46,7 @@ class Generators::Rating
       Fakes::BGSService.rating_profile_records[attrs[:participant_id]][attrs[:profile_date]] =
         bgs_rating_profile_data(attrs)
 
-      Rating.new(attrs.except(:issues, :associated_claims, :disabilities))
+      Rating.new(attrs.except(:issues, :decisions, :associated_claims, :disabilities))
     end
 
     private
@@ -77,6 +80,28 @@ class Generators::Rating
       (issue_data.length == 1) ? issue_data.first : issue_data
     end
 
+    def bgs_rating_decisions_data(attrs)
+      return nil unless attrs[:decisions]
+
+      decisions_data = attrs[:decisions].map do |decision|
+        {
+          disability_evaluations: {
+            rba_decision_id: decision[:reference_id] || generate_external_id,
+            dgnstc_txt: decision[:diagnostic_text],
+            dgnstc_tn: decision[:diagnostic_type],
+            dgnstc_tc: decision[:diagnostic_code],
+            prfl_dt: decision[:profile_date],
+            rating_sn: decision[:rating_sequence_number] || generate_external_id
+          },
+          decn_tn: decision[:type_name],
+          dis_sn: decision[:disability_id],
+          dis_dt: decision[:disability_date]
+        }
+      end
+
+      (decisions_data.length == 1) ? decisions_data.first : decisions_data
+    end
+
     def bgs_associated_claims_data(attrs)
       return nil unless attrs[:associated_claims]
 
@@ -87,7 +112,7 @@ class Generators::Rating
       {
         rating_issues: bgs_rating_issues_data(attrs),
         associated_claims: bgs_associated_claims_data(attrs),
-        disabilities: attrs[:disabilities]
+        disabilities: [attrs[:disabilities], bgs_rating_decisions_data(attrs)].compact.flatten
       }
     end
 
@@ -111,6 +136,15 @@ class Generators::Rating
       attrs[:issues].map do |issue|
         issue[:reference_id] ||= "#{attrs[:participant_id]}#{generate_external_id}"
         issue
+      end
+    end
+
+    def populate_decision_ids(attrs)
+      return unless attrs[:decisions]
+
+      attrs[:decisions].map do |decision|
+        decision[:rating_sequence_number] ||= "#{attrs[:participant_id]}#{generate_external_id}"
+        decision
       end
     end
   end

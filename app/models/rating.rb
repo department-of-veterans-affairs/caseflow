@@ -69,7 +69,7 @@ class Rating
   end
 
   def decisions
-    return {} unless rating_profile[:disabilities]
+    return [] unless rating_profile[:disabilities]
 
     Array.wrap(rating_profile[:disabilities]).map do |disability|
       RatingDecision.from_bgs_disability(self, disability)

@@ -19,6 +19,7 @@ describe Rating do
   let(:rating) do
     Generators::Rating.build(
       issues: issues,
+      decisions: decisions,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
       participant_id: participant_id,
@@ -39,8 +40,22 @@ describe Rating do
     }
   end
 
+  def build_decision(num)
+    {
+      participant_id: participant_id,
+      rating_sequence_number: "RatingSN#{num}",
+      diagnostic_text: "Diagnostic#{num}",
+      disability_date: promulgation_date,
+      profile_date: profile_date
+    }
+  end
+
   let(:issues) do
     [build_issue(1), build_issue(2)]
+  end
+
+  let(:decisions) do
+    [build_decision(1), build_decision(2)]
   end
 
   context "with disabilities" do
@@ -188,6 +203,21 @@ describe Rating do
     end
   end
 
+  context "#decisions" do
+    subject { rating.decisions }
+
+    it "returns the decisions" do
+      binding.pry
+      expect(subject.count).to eq(2)
+      expect(subject.first).to have_attributes(
+        rating_sequence_number: "RatingSN1", diagnostic_text: "Diagnostic1"
+      )
+      expect(subject.second).to have_attributes(
+        rating_sequence_number: "RatingSN2", diagnostic_text: "Diagnostic2"
+      )
+    end
+  end
+
   context "#associated_end_products" do
     subject { rating.associated_end_products }
 
@@ -263,7 +293,8 @@ describe Rating do
         participant_id: rating.participant_id,
         profile_date: rating.profile_date,
         promulgation_date: rating.promulgation_date,
-        issues: rating.issues.map(&:serialize)
+        issues: rating.issues.map(&:serialize),
+        decisions: rating.decisions.map(&:serialize)
       )
     end
 
@@ -275,7 +306,8 @@ describe Rating do
           participant_id: rating.participant_id,
           profile_date: rating.profile_date,
           promulgation_date: rating.promulgation_date,
-          issues: []
+          issues: [],
+          decisions: []
         )
       end
     end
