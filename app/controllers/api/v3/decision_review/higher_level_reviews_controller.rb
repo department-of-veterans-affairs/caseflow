@@ -2,22 +2,25 @@
 
 class Api::V3::DecisionReview::HigherLevelReviewsController < Api::ExternalProxyController
   def create
-    processor = Api::V3::HigherLevelReviewProcessor.new(params, current_user)
+    processor = Api::V3::DecisionReview::HigherLevelReviewProcessor.new(params, current_user)
     if processor.errors?
       render_errors(processor.errors)
       return
     end
-    processor.start_review_complete!
+
+    processor.run!
     if processor.errors?
       render_errors(processor.errors)
       return
     end
+
     response.set_header("Content-Location", (
                           request.base_url +
                           "/api/v3/decision_review/higher_level_reviews/intake_status/" +
                           processor.higher_level_review.uuid
                         ))
-    render json: self.class.intake_status(processor.higher_level_review), status: :accepted
+
+    render json: higher_level_review.api_intake_status, status: :accepted
   rescue StandardError => error
     # do we want something like intakes_controller's log_error here?
     render_errors([Api::V3::DecisionReview::IntakeError.new(error, processor.try(:intake))])
@@ -26,21 +29,6 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::ExternalProxy
   def render_errors(errors)
     render json: { errors: errors }, status: Api::V3::DecisionReview::IntakeError.status_from_errors(errors)
   end
-
-  class << self
-    def intake_status(higher_level_review)
-      {
-        data: {
-          type: "IntakeStatus",
-          id: higher_level_review.uuid,
-          attributes: {
-            status: higher_level_review.asyncable_status
-          }
-        }
-      }
-    end
-  end
-
 end
 
 # def mock_create
