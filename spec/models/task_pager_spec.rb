@@ -255,7 +255,7 @@ describe TaskPager, :all_dbs do
       before do
         issue_counts = (0..created_tasks.length).to_a.shuffle
         created_tasks.each_with_index do |task, index|
-          appeal = create(:appeal, request_issues: build_list(:request_issue, issue_counts[index]))
+          appeal = create(:appeal, request_issues: build_list(:request_issue, issue_counts[index], :rating))
           task.update!(appeal_id: appeal.id)
           create(:cached_appeal, appeal_id: task.appeal_id, issue_count: issue_counts[index])
         end

@@ -94,7 +94,7 @@ describe JudgeCaseReview, :all_dbs do
     context "when ama case review" do
       let(:probability) { JudgeCaseReview::QUALITY_REVIEW_SELECTION_PROBABILITY }
       let(:task) { create(:ama_judge_decision_review_task) }
-      let(:request_issue) { create(:request_issue, decision_review: task.appeal) }
+      let(:request_issue) { create(:request_issue, :rating, decision_review: task.appeal) }
       let(:params) do
         {
           location: "bva_dispatch",

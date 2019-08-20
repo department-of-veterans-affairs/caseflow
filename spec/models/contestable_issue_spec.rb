@@ -254,6 +254,7 @@ describe ContestableIssue, :postgres do
         3.times do |index|
           future_appeal = create(:appeal)
           future_request_issue = create(:request_issue,
+                                        :nonrating,
                                         decision_review: future_appeal,
                                         contested_decision_issue_id: contesting_decision_issue_id)
           future_decision_issue = create(:decision_issue,

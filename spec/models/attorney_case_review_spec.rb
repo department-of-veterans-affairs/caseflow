@@ -13,28 +13,29 @@ describe AttorneyCaseReview, :all_dbs do
   context "#update_issue_dispositions_in_caseflow!" do
     let!(:appeal) { create(:appeal) }
     let(:task) { create(:ama_attorney_task, appeal: appeal) }
-    let!(:request_issue1) { create(:request_issue, decision_review: appeal) }
+    let!(:request_issue1) { create(:request_issue, :rating, decision_review: appeal) }
     let(:decision_issue1) { build(:decision_issue) }
-    let!(:request_issue2) { create(:request_issue, decision_review: appeal, decision_issues: [decision_issue1]) }
+    let!(:request_issue2) { create(:request_issue, :rating, decision_review: appeal, decision_issues: [decision_issue1]) }
 
     let(:remand_reason1) { create(:ama_remand_reason) }
     let(:remand_reason2) { create(:ama_remand_reason) }
     let(:decision_issue2) do
       create(:decision_issue, remand_reasons: [remand_reason1, remand_reason2], decision_review: appeal)
     end
-    let!(:request_issue3) { create(:request_issue, decision_review: appeal, decision_issues: [decision_issue2]) }
-    let!(:request_issue4) { create(:request_issue, decision_review: appeal) }
+    let!(:request_issue3) { create(:request_issue, :rating, decision_review: appeal, decision_issues: [decision_issue2]) }
+    let!(:request_issue4) { create(:request_issue, :rating, decision_review: appeal) }
 
-    let!(:request_issue5) { create(:request_issue, decision_review: appeal) }
+    let!(:request_issue5) { create(:request_issue, :rating, decision_review: appeal) }
 
     let(:decision_issue3) { create(:decision_issue, decision_review: appeal) }
     let(:decision_issue4) { create(:decision_issue, decision_review: appeal) }
     let!(:request_issue6) do
-      create(:request_issue, decision_review: appeal, decision_issues: [decision_issue3, decision_issue4])
+      create(:request_issue, :rating, decision_review: appeal, decision_issues: [decision_issue3, decision_issue4])
     end
     let!(:withdrawn_request_issue) do
       create(
         :request_issue,
+        :rating,
         decision_review: appeal,
         contested_issue_description: "Tinnitus",
         closed_at: Time.zone.now,

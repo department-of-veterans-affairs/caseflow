@@ -423,8 +423,8 @@ describe EndProductEstablishment, :postgres do
     context "when issues are from dta decisions" do
       let!(:prior_request_issues) do
         [
-          create(:request_issue, contention_reference_id: "101"),
-          create(:request_issue, contention_reference_id: "121")
+          create(:request_issue, :rating, contention_reference_id: "101"),
+          create(:request_issue, :rating, contention_reference_id: "121")
         ]
       end
 
@@ -436,6 +436,7 @@ describe EndProductEstablishment, :postgres do
         [
           create(
             :request_issue,
+            :rating,
             end_product_establishment: end_product_establishment,
             decision_review: source,
             contested_decision_issue: dta_decision_issue,
@@ -739,6 +740,7 @@ describe EndProductEstablishment, :postgres do
       [
         create(
           :request_issue,
+          :rating,
           end_product_establishment: end_product_establishment,
           decision_review: source
         )
@@ -836,6 +838,7 @@ describe EndProductEstablishment, :postgres do
       [
         create(
           :request_issue,
+          :rating,
           end_product_establishment: end_product_establishment,
           decision_review: source,
           closed_at: closed_at
@@ -1020,15 +1023,15 @@ describe EndProductEstablishment, :postgres do
     let(:processed_at) { Time.zone.now }
 
     let(:processing_request_issue) do
-      create(:request_issue, decision_review: source)
+      create(:request_issue, :rating, decision_review: source)
     end
 
     let!(:processed_request_issue) do
-      create(:request_issue, decision_review: source, decision_sync_processed_at: Time.zone.now)
+      create(:request_issue, :rating, decision_review: source, decision_sync_processed_at: Time.zone.now)
     end
 
     let!(:closed_request_issue) do
-      create(:request_issue, :removed, decision_review: source)
+      create(:request_issue, :rating, :removed, decision_review: source)
     end
 
     context "when decision issues are all synced" do
@@ -1071,7 +1074,7 @@ describe EndProductEstablishment, :postgres do
 
     context "when decision issues are not all synced" do
       let!(:not_processed_request_issue) do
-        create(:request_issue, decision_review: source)
+        create(:request_issue, :rating, decision_review: source)
       end
 
       it "does nothing" do
@@ -1108,6 +1111,7 @@ describe EndProductEstablishment, :postgres do
           let!(:pending_request_issue) do
             create(
               :request_issue,
+              :rating,
               decision_review: epe.source,
               end_product_establishment: epe
             )
@@ -1119,6 +1123,7 @@ describe EndProductEstablishment, :postgres do
             let!(:pending_request_issue) do
               create(
                 :request_issue,
+                :rating,
                 decision_review: epe.source,
                 end_product_establishment: epe,
                 decision_sync_submitted_at: Time.zone.now + 1.second
@@ -1131,6 +1136,7 @@ describe EndProductEstablishment, :postgres do
               let!(:errored_request_issue) do
                 create(
                   :request_issue,
+                  :rating,
                   decision_review: epe.source,
                   end_product_establishment: epe,
                   decision_sync_submitted_at: Time.zone.now,

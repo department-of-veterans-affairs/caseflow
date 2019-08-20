@@ -60,7 +60,7 @@ describe BvaDispatchTask, :all_dbs do
         file: file,
         redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx" }
     end
-    let!(:request_issue) { create(:request_issue, decision_review: root_task.appeal) }
+    let!(:request_issue) { create(:request_issue, :rating, decision_review: root_task.appeal) }
     let!(:di) { create(:decision_issue, decision_review: root_task.appeal, request_issues: [request_issue]) }
 
     before do

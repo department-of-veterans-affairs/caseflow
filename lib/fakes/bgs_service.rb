@@ -203,7 +203,8 @@ class Fakes::BGSService
           decision_review: hlr,
           benefit_type: "compensation",
           end_product_establishment: epe,
-          contention_reference_id: contention_reference_id
+          contention_reference_id: contention_reference_id,
+          contested_rating_issue_reference_id: "1234"
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,

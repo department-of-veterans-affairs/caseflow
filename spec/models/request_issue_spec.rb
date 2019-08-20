@@ -123,6 +123,7 @@ describe RequestIssue, :all_dbs do
     )
   end
 
+
   let(:nonrating_contested_issue_description) { nil }
 
   let!(:unidentified_issue) do
@@ -214,7 +215,7 @@ describe RequestIssue, :all_dbs do
 
     context "issue has a contested_decision_issue" do
       let(:decision_issue) { create(:decision_issue, benefit_type: "education") }
-      let(:request_issue) { create(:request_issue, contested_decision_issue: decision_issue) }
+      let(:request_issue) { build_stubbed(:request_issue, contested_decision_issue: decision_issue) }
 
       it "returns the parent decision issue's benefit_type" do
         expect(request_issue.guess_benefit_type).to eq "education"
@@ -327,12 +328,12 @@ describe RequestIssue, :all_dbs do
 
   context "remove!" do
     let(:decision_issue) { create(:decision_issue) }
-    let!(:request_issue1) { create(:request_issue, decision_issues: [decision_issue]) }
+    let!(:request_issue1) { create(:request_issue, :rating, decision_issues: [decision_issue]) }
 
     subject { request_issue1.remove! }
 
     context "when a decision issue is shared between two request issues" do
-      let!(:request_issue2) { create(:request_issue, decision_issues: [decision_issue]) }
+      let!(:request_issue2) { create(:request_issue, :rating, decision_issues: [decision_issue]) }
 
       it "does not soft delete a decision issue" do
         expect(RequestDecisionIssue.count).to eq 2
@@ -345,7 +346,7 @@ describe RequestIssue, :all_dbs do
     context "when request issue has many decision issues" do
       let(:decision_issue2) { create(:decision_issue) }
       let!(:request_issue1) do
-        create(:request_issue, decision_issues: [decision_issue, decision_issue2])
+        create(:request_issue, :rating, decision_issues: [decision_issue, decision_issue2])
       end
 
       it "soft deletes all decision issues" do
@@ -371,7 +372,7 @@ describe RequestIssue, :all_dbs do
 
     context "when a request issue is removed after it has been submitted, before it has been processed" do
       let!(:request_issue1) do
-        create(:request_issue, decision_sync_submitted_at: 1.day.ago, decision_sync_processed_at: nil)
+        create(:request_issue, :rating, decision_sync_submitted_at: 1.day.ago, decision_sync_processed_at: nil)
       end
 
       it "cancels the decision sync job" do
@@ -384,7 +385,7 @@ describe RequestIssue, :all_dbs do
   context ".active" do
     subject { RequestIssue.active }
 
-    let!(:closed_request_issue) { create(:request_issue, :removed) }
+    let!(:closed_request_issue) { create(:request_issue, :rating, :removed) }
 
     it "filters by whether the closed_at is nil" do
       expect(subject.find_by(id: closed_request_issue.id)).to be_nil
@@ -394,10 +395,10 @@ describe RequestIssue, :all_dbs do
   context ".active_or_decided_or_withdrawn" do
     subject { RequestIssue.active_or_decided_or_withdrawn }
 
-    let!(:decided_request_issue) { create(:request_issue, :decided) }
-    let!(:removed_request_issue) { create(:request_issue, :removed) }
-    let!(:withdrawn_request_issue) { create(:request_issue, :withdrawn) }
-    let!(:open_eligible_request_issue) { create(:request_issue) }
+    let!(:decided_request_issue) { create(:request_issue, :rating, :decided) }
+    let!(:removed_request_issue) { create(:request_issue, :rating, :removed) }
+    let!(:withdrawn_request_issue) { create(:request_issue, :rating, :withdrawn) }
+    let!(:open_eligible_request_issue) { create(:request_issue, :rating) }
 
     it "returns open eligible or closed decided or withdrawn issues" do
       expect(subject.find_by(id: removed_request_issue.id)).to be_nil
@@ -412,8 +413,8 @@ describe RequestIssue, :all_dbs do
 
     let(:original_request_issues) do
       [
-        create(:request_issue, contention_reference_id: "101"),
-        create(:request_issue, contention_reference_id: "121")
+        create(:request_issue, :rating, contention_reference_id: "101"),
+        create(:request_issue, :rating, contention_reference_id: "121")
       ]
     end
     let(:disposition) { "granted" }
@@ -444,7 +445,9 @@ describe RequestIssue, :all_dbs do
 
   context "limited_poa" do
     let(:previous_dr) { create(:higher_level_review) }
-    let(:previous_ri) { create(:request_issue, decision_review: previous_dr, end_product_establishment: previous_epe) }
+    let(:previous_ri) do
+      create(:request_issue, :rating, decision_review: previous_dr, end_product_establishment: previous_epe)
+    end
     let(:previous_epe) { create(:end_product_establishment, reference_id: previous_claim_id) }
     let(:decision_issue) { create(:decision_issue, decision_review: previous_dr, request_issues: [previous_ri]) }
 
@@ -778,7 +781,6 @@ describe RequestIssue, :all_dbs do
             context "when dta issues comes from a previous rating issue" do
               let(:contested_decision_issue_id) { decision_issue.id }
               let(:contested_rating_issue_reference_id) { nil }
-
               let(:original_request_issue) do
                 create(
                   :request_issue,
@@ -846,12 +848,12 @@ describe RequestIssue, :all_dbs do
   end
 
   context "#corrected?" do
-    let(:request_issue) { create(:request_issue, corrected_by_request_issue_id: corrected_by_id) }
+    let(:request_issue) { build_stubbed(:request_issue, corrected_by_request_issue_id: corrected_by_id) }
 
     subject { request_issue.corrected? }
 
     context "when corrected" do
-      let(:corrected_by_id) { create(:request_issue).id }
+      let(:corrected_by_id) { "1" }
       it { is_expected.to eq true }
     end
 
@@ -1185,6 +1187,7 @@ describe RequestIssue, :all_dbs do
       let(:contested_rating_issue_reference_id) { nil }
       let(:contested_decision_issue_id) { decision_issue.id }
       let(:previous_review) { create(:higher_level_review) }
+
       let(:original_request_issue) do
         create(
           :request_issue,

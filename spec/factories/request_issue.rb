@@ -7,6 +7,7 @@ FactoryBot.define do
     contested_rating_issue_diagnostic_code { "5008" }
 
     factory :request_issue_with_epe do
+      rating
       end_product_establishment { create(:end_product_establishment, source: decision_review) }
     end
 

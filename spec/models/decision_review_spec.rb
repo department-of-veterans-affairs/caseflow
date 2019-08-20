@@ -82,8 +82,8 @@ describe DecisionReview, :postgres do
   context "#removed?" do
     subject { higher_level_review.removed? }
 
-    let!(:removed_ri) { create(:request_issue, :removed, decision_review: higher_level_review) }
-    let!(:active_ri) { create(:request_issue, decision_review: higher_level_review) }
+    let!(:removed_ri) { create(:request_issue, :rating, :removed, decision_review: higher_level_review) }
+    let!(:active_ri) { create(:request_issue, :rating, decision_review: higher_level_review) }
 
     context "when a subset of request issues are removed" do
       it { is_expected.to eq(false) }
@@ -214,7 +214,7 @@ describe DecisionReview, :postgres do
     end
 
     context "when a decision issue is voided" do
-      let(:request_issue) { create(:request_issue, corrected_by_request_issue_id: create(:request_issue).id) }
+      let(:request_issue) { create(:request_issue, :rating, corrected_by_request_issue_id: "1") }
       let!(:voided_decision_issue) do
         create(:decision_issue,
                :rating,
@@ -295,12 +295,13 @@ describe DecisionReview, :postgres do
   describe "#active_request_issues" do
     it "only returns active request issues" do
       review = build_stubbed(:appeal)
-      active_request_issue = create(:request_issue, decision_review: review)
+      active_request_issue = create(:request_issue, :rating, decision_review: review)
       inactive_request_issue = create(
-        :request_issue, closed_at: Time.zone.now, decision_review: review
+        :request_issue, :rating, closed_at: Time.zone.now, decision_review: review
       )
       withdrawn_request_issue = create(
         :request_issue,
+        :rating,
         closed_status: "withdrawn",
         closed_at: Time.zone.now,
         decision_review: review
@@ -313,15 +314,16 @@ describe DecisionReview, :postgres do
   describe "#withdrawn_request_issues" do
     it "only returns withdrawn request issues" do
       review = build_stubbed(:appeal)
-      active_request_issue = create(:request_issue, decision_review: review)
+      active_request_issue = create(:request_issue, :rating, decision_review: review)
       withdrawn_request_issue = create(
         :request_issue,
+        :rating,
         closed_status: "withdrawn",
         closed_at: Time.zone.now,
         decision_review: review
       )
       inactive_request_issue = create(
-        :request_issue, closed_at: Time.zone.now, decision_review: review
+        :request_issue, :rating, closed_at: Time.zone.now, decision_review: review
       )
 
       expect(review.withdrawn_request_issues).to match_array([withdrawn_request_issue])

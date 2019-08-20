@@ -13,6 +13,7 @@ describe RequestIssueContention, :postgres do
   let(:request_issue) do
     create(
       :request_issue,
+      :rating,
       decision_review: decision_review,
       end_product_establishment: end_product_establishment,
       contention_reference_id: contention_reference_id,

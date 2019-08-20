@@ -13,6 +13,7 @@ describe DecisionIssue, :postgres do
   let(:decision_issue) do
     create(
       :decision_issue,
+      :rating,
       decision_review: decision_review,
       disposition: disposition,
       decision_text: decision_text,
@@ -270,7 +271,7 @@ describe DecisionIssue, :postgres do
 
     context "when all request issues are corrected" do
       let(:request_issues) do
-        [create(:request_issue, corrected_by_request_issue_id: create(:request_issue).id)]
+        [create(:request_issue, :rating, corrected_by_request_issue_id: "1")]
       end
 
       it { is_expected.to eq true }
@@ -278,8 +279,8 @@ describe DecisionIssue, :postgres do
 
     context "when not all request issues are corrected" do
       let(:request_issues) do
-        [create(:request_issue, corrected_by_request_issue_id: create(:request_issue).id),
-         create(:request_issue)]
+        [create(:request_issue, :rating, corrected_by_request_issue_id: "1"),
+         create(:request_issue, :rating)]
       end
 
       it { is_expected.to eq false }

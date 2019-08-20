@@ -49,6 +49,7 @@ describe Appeal, :all_dbs do
     let!(:remanded_decision_issue) do
       create(
         :decision_issue,
+        :rating,
         decision_review: appeal,
         disposition: "remanded",
         benefit_type: "compensation",
@@ -58,8 +59,12 @@ describe Appeal, :all_dbs do
 
     let!(:remanded_decision_issue_processed_in_caseflow) do
       create(
-        :decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "nca",
-                         caseflow_decision_date: decision_date
+        :decision_issue, 
+        :rating,
+        decision_review: appeal, 
+        disposition: "remanded", 
+        benefit_type: "nca",
+        caseflow_decision_date: decision_date
       )
     end
 
@@ -251,7 +256,7 @@ describe Appeal, :all_dbs do
 
   context "#every_request_issue_has_decision" do
     let(:appeal) { create(:appeal, request_issues: [request_issue]) }
-    let(:request_issue) { create(:request_issue, decision_issues: decision_issues) }
+    let(:request_issue) { create(:request_issue, :rating, decision_issues: decision_issues) }
 
     subject { appeal.every_request_issue_has_decision? }
 
@@ -470,9 +475,9 @@ describe Appeal, :all_dbs do
     context "request issue has non-comp business line" do
       let!(:appeal) do
         create(:appeal, request_issues: [
-                 create(:request_issue, benefit_type: :fiduciary),
-                 create(:request_issue, benefit_type: :compensation),
-                 create(:request_issue, :unidentified)
+                 create(:request_issue, :rating, benefit_type: :fiduciary),
+                 create(:request_issue, :rating, benefit_type: :compensation),
+                 create(:request_issue, :rating, :unidentified)
                ])
       end
 
@@ -739,9 +744,9 @@ describe Appeal, :all_dbs do
     let(:benefit_type1) { "compensation" }
     let(:benefit_type2) { "pension" }
     let(:appeal) { create(:appeal, request_issues: [request_issue]) }
-    let(:request_issue) { create(:request_issue, benefit_type: benefit_type1) }
-    let(:request_issue2) { create(:request_issue, benefit_type: benefit_type1) }
-    let(:request_issue3) { create(:request_issue, benefit_type: benefit_type2) }
+    let(:request_issue) { create(:request_issue, :rating, benefit_type: benefit_type1) }
+    let(:request_issue2) { create(:request_issue, :rating, benefit_type: benefit_type1) }
+    let(:request_issue3) { create(:request_issue, :rating, benefit_type: benefit_type2) }
 
     context "appeal has one request issue" do
       it { is_expected.to eq benefit_type1 }
