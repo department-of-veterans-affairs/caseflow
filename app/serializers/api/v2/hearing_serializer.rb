@@ -20,10 +20,10 @@ class Api::V2::HearingSerializer
   end
   # deprecated :regional_office
   attribute :regional_office do |hearing|
-    hearing.hearing_location&.name
+    hearing.hearing_location&.name || hearing.regional_office_name
   end
   attribute :hearing_location do |hearing|
-    hearing.hearing_location&.name
+    hearing.hearing_location&.name || hearing.regional_office_name
   end
   attribute :room do |hearing|
     hearing.hearing_day.room
