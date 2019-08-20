@@ -1,5 +1,6 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
+import { submitIntakeCompleteRequest, submitIntakeReviewRequest } from './intake';
 import { formatDateStringForApi } from '../../util/DateUtil';
 import _ from 'lodash';
 
@@ -57,36 +58,7 @@ export const submitReview = (intakeId, rampRefiling) => (dispatch) => {
     appeal_docket: rampRefiling.appealDocket
   };
 
-  return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).
-    then(
-      () => dispatch({
-        type: ACTIONS.SUBMIT_REVIEW_SUCCEED,
-        meta: { analytics }
-      }),
-      (error) => {
-        const responseObject = error.response.body || {};
-        const responseErrorCodes = responseObject.error_codes;
-
-        dispatch({
-          type: ACTIONS.SUBMIT_REVIEW_FAIL,
-          payload: {
-            responseErrorCodes
-          },
-          meta: {
-            analytics: (triggerEvent, category, actionName) => {
-              triggerEvent(category, actionName, 'any-error');
-
-              _.forEach(
-                responseErrorCodes,
-                (errorVal, errorKey) => triggerEvent(category, actionName, `${errorKey}-${errorVal}`)
-              );
-            }
-          }
-        });
-
-        throw error;
-      }
-    );
+  return submitIntakeReviewRequest(intakeId, { data })(dispatch);
 };
 
 export const setIssueSelected = (issueId, isSelected) => ({
@@ -163,33 +135,5 @@ export const completeIntake = (intakeId, rampRefiling) => (dispatch) => {
       value()
   };
 
-  return ApiUtil.patch(`/intake/${intakeId}/complete`, { data }, ENDPOINT_NAMES.COMPLETE_INTAKE).
-    then(
-      (response) => {
-        dispatch({
-          type: ACTIONS.COMPLETE_INTAKE_SUCCEED,
-          payload: {
-            intake: response.body
-          },
-          meta: { analytics }
-        });
-
-        return true;
-      },
-      (error) => {
-        const responseObject = error.response.body || {};
-        const responseErrorCode = responseObject.error_code;
-        const responseErrorData = responseObject.error_data;
-
-        dispatch({
-          type: ACTIONS.COMPLETE_INTAKE_FAIL,
-          payload: {
-            responseErrorCode,
-            responseErrorData
-          },
-          meta: { analytics }
-        });
-        throw error;
-      }
-    );
+  return submitIntakeCompleteRequest(intakeId, { data })(dispatch);
 };
