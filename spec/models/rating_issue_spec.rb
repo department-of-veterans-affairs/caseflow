@@ -8,7 +8,7 @@ describe RatingIssue do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
-  let(:profile_date) { Time.zone.today - 30 }
+  let(:profile_date) { Time.zone.today - 40 }
   let(:promulgation_date) { Time.zone.today - 30 }
 
   context ".deserialize" do
@@ -17,6 +17,7 @@ describe RatingIssue do
     let(:rating_issue) do
       RatingIssue.new(
         reference_id: "NBA",
+        rating_sequence_number: "5678",
         participant_id: "123",
         profile_date: profile_date,
         promulgation_date: promulgation_date,
@@ -32,6 +33,7 @@ describe RatingIssue do
     it do
       is_expected.to have_attributes(
         reference_id: "NBA",
+        rating_sequence_number: "5678",
         participant_id: "123",
         profile_date: profile_date,
         promulgation_date: promulgation_date,
@@ -64,6 +66,7 @@ describe RatingIssue do
     let(:bgs_record) do
       {
         rba_issue_id: "NBA",
+        rating_sn: "5678",
         decn_txt: "This broadcast may not be reproduced",
         dgnstc_tc: "3001"
       }
@@ -74,6 +77,7 @@ describe RatingIssue do
     it do
       is_expected.to have_attributes(
         reference_id: "NBA",
+        rating_sequence_number: "5678",
         decision_text: "This broadcast may not be reproduced",
         profile_date: profile_date,
         contention_reference_ids: [],
@@ -86,6 +90,7 @@ describe RatingIssue do
       let(:bgs_record) do
         {
           rba_issue_id: "NBA",
+          rating_sn: "5678",
           decn_txt: "This broadcast may not be reproduced",
           rba_issue_contentions: { prfil_dt: Time.zone.now, cntntn_id: "foul" }
         }
@@ -94,6 +99,7 @@ describe RatingIssue do
       it do
         is_expected.to have_attributes(
           reference_id: "NBA",
+          rating_sequence_number: "5678",
           decision_text: "This broadcast may not be reproduced",
           profile_date: profile_date,
           contention_reference_ids: ["foul"],
@@ -106,6 +112,7 @@ describe RatingIssue do
       let(:bgs_record) do
         {
           rba_issue_id: "NBA",
+          rating_sn: "5678",
           decn_txt: "This broadcast may not be reproduced",
           rba_issue_contentions: [
             { prfil_dt: Time.zone.now, cntntn_id: "foul" },
@@ -117,6 +124,7 @@ describe RatingIssue do
       it do
         is_expected.to have_attributes(
           reference_id: "NBA",
+          rating_sequence_number: "5678",
           decision_text: "This broadcast may not be reproduced",
           profile_date: profile_date,
           contention_reference_ids: %w[foul dunk]

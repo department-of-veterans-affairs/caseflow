@@ -8,12 +8,13 @@ class RatingIssue
 
   attr_accessor :reference_id, :decision_text, :profile_date, :associated_end_products,
                 :promulgation_date, :participant_id, :rba_contentions_data, :diagnostic_code,
-                :benefit_type
+                :benefit_type, :rating_sequence_number
 
   class << self
     def from_bgs_hash(rating, bgs_data)
       new(
         reference_id: bgs_data[:rba_issue_id],
+        rating_sequence_number: bgs_data[:rating_sn],
         rba_contentions_data: ensure_array_of_hashes(bgs_data.dig(:rba_issue_contentions)),
         profile_date: rating.profile_date,
         decision_text: bgs_data[:decn_txt],
@@ -29,6 +30,7 @@ class RatingIssue
       new(
         participant_id: serialized_hash[:participant_id],
         reference_id: serialized_hash[:reference_id],
+        rating_sequence_number: serialized_hash[:rating_sequence_number],
         decision_text: serialized_hash[:decision_text],
         associated_end_products: deserialize_end_products(serialized_hash),
         promulgation_date: serialized_hash[:promulgation_date],
@@ -64,6 +66,7 @@ class RatingIssue
     {
       participant_id: participant_id,
       reference_id: reference_id,
+      rating_sequence_number: rating_sequence_number,
       decision_text: decision_text,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
