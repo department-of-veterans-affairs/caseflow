@@ -25,9 +25,15 @@ class V2::HLRStatusSerializer
 
   attribute :aoj
   attribute :program_area, &:program
-  attribute :status, &:status_hash
+  attribute :status do |object|
+    StatusSerializer.new(object).serializable_hash[:data][:attributes]
+  end
   attribute :alerts
-  attribute :issues, &:issues_hash
+  attribute :issues do |object|
+    issues_list = object.active? ? object.request_issues.active.all : object.fetch_all_decision_issues
+    IssueSerializer.new(issues_list, is_collection: true).serializable_hash[:data].collect { |issue| issue[:attributes] }
+  end
+
   attribute :events
 
   # Stubbed attributes

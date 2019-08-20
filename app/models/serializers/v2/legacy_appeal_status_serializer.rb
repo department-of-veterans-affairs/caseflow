@@ -20,7 +20,10 @@ class V2::LegacyAppealStatusSerializer
   attribute :location
   attribute :aoj
   attribute :program_area, &:program
-  attribute :status, &:status_hash
+  attribute :status do |object|
+    StatusSerializer.new(object).serializable_hash[:data][:attributes]
+  end
+
   attribute :alerts
   attribute :docket, &:docket_hash
   attribute :issues

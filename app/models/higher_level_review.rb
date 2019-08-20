@@ -39,10 +39,6 @@ class HigherLevelReview < ClaimReview
     false
   end
 
-  def status_hash
-    { type: fetch_status, details: fetch_details_for_status }
-  end
-
   def alerts
     @alerts ||= ApiStatusAlerts.new(decision_review: self).all.sort_by { |alert| alert[:details][:decisionDate] }
   end
@@ -97,21 +93,6 @@ class HigherLevelReview < ClaimReview
     %w[supplemental_claim appeal]
   end
 
-  private
-
-  def new_end_product_establishment(issue)
-    end_product_establishments.build(
-      veteran_file_number: veteran_file_number,
-      claim_date: receipt_date,
-      payee_code: payee_code || EndProduct::DEFAULT_PAYEE_CODE,
-      code: issue.end_product_code,
-      claimant_participant_id: claimant_participant_id,
-      station: end_product_station,
-      benefit_type_code: veteran.benefit_type_code,
-      user: intake_processed_by
-    )
-  end
-
   def fetch_status
     if active?
       :hlr_received
@@ -137,6 +118,21 @@ class HigherLevelReview < ClaimReview
     else
       {}
     end
+  end
+
+  private
+  
+  def new_end_product_establishment(issue)
+    end_product_establishments.build(
+      veteran_file_number: veteran_file_number,
+      claim_date: receipt_date,
+      payee_code: payee_code || EndProduct::DEFAULT_PAYEE_CODE,
+      code: issue.end_product_code,
+      claimant_participant_id: claimant_participant_id,
+      station: end_product_station,
+      benefit_type_code: veteran.benefit_type_code,
+      user: intake_processed_by
+    )
   end
 
   def api_issues_for_status_details_issues(issue_list)
