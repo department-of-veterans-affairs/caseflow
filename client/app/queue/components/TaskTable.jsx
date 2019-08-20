@@ -30,7 +30,6 @@ import { DateString } from '../../util/DateUtil';
 import {
   CATEGORIES,
   redText,
-  LEGACY_APPEAL_TYPES,
   DOCKET_NAME_FILTERS
 } from '../constants';
 import COPY from '../../../COPY.json';
