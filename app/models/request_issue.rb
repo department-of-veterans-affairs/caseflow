@@ -318,10 +318,11 @@ class RequestIssue < ApplicationRecord
 
   def validate_rating_or_nonrating_or_unidentified
     return if rating? || nonrating? || is_unidentified?
+
     errors.add(:request_issue, "must be rating, nonrating or unidentified")
     # Add temporary logging to Sentry to get notified when this error happens.
     msg = "Request issue is invalid. Must be rating, nonrating or unidentified. \
-      Request issue: #{self.inspect}"
+      Request issue: #{inspect}"
     Raven.capture_message(msg)
   end
 

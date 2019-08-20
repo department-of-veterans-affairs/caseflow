@@ -42,7 +42,12 @@ describe DecisionIssue, :postgres do
   let(:decision_review) { create(:supplemental_claim, benefit_type: benefit_type) }
 
   context "scopes" do
-    let!(:ri_contesting_decision_issue) { create(:request_issue, :rating, contested_decision_issue_id: decision_issue.id) }
+    let!(:ri_contesting_decision_issue) do
+      create(:request_issue,
+        :rating,
+        contested_decision_issue_id: decision_issue.id
+      )
+    end
     let!(:uncontested_di) { create(:decision_issue, disposition: "other") }
     let!(:uncontested_remand_di) { create(:decision_issue, disposition: "remanded") }
     let!(:uncontested_dta_di) { create(:decision_issue, disposition: "DTA Error - Fed Recs") }

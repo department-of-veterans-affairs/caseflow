@@ -9,7 +9,12 @@ describe LegacyIssueOptin, :all_dbs do
     create(:case, :status_remand, bfkey: "remand", case_issues: [remand_issue])
   end
   let(:lio) { create(:legacy_issue_optin, request_issue: request_issue) }
-  let(:request_issue) { create(:request_issue, :rating, vacols_id: remand_case.bfkey, vacols_sequence_id: remand_issue.issseq) }
+  let(:request_issue) do
+    create(:request_issue,
+      :rating,
+      vacols_id: remand_case.bfkey,
+      vacols_sequence_id: remand_issue.issseq)
+  end
 
   describe ".related_remand_issues" do
     it "joins with request_issues" do

@@ -122,8 +122,6 @@ describe RequestIssue, :all_dbs do
       nonrating_request_issue_attrs
     )
   end
-
-
   let(:nonrating_contested_issue_description) { nil }
 
   let!(:unidentified_issue) do

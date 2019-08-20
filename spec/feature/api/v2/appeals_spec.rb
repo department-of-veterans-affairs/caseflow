@@ -349,16 +349,16 @@ describe "Appeals API v2", :all_dbs, type: :request do
 
     let(:request_issue1) do
       create(:request_issue,
-        :rating,
-        benefit_type: benefit_type,
-         contested_rating_issue_diagnostic_code: nil)
+             :rating,
+             benefit_type: benefit_type,
+             contested_rating_issue_diagnostic_code: nil)
     end
 
     let(:request_issue2) do
       create(:request_issue,
-        :rating,
-        benefit_type: "education",
-        contested_rating_issue_diagnostic_code: nil)
+             :rating,
+             benefit_type: "education",
+             contested_rating_issue_diagnostic_code: nil)
     end
 
     let!(:appeal) do

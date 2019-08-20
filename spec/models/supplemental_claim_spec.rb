@@ -171,7 +171,12 @@ describe SupplementalClaim, :postgres do
       )
     end
 
-    let!(:ri_contesting_di) { create(:request_issue, :rating, contested_decision_issue_id: already_contested_remanded_di.id) }
+    let!(:ri_contesting_di) do
+      create(:request_issue,
+        :rating,
+        contested_decision_issue_id: already_contested_remanded_di.id
+      )
+    end
 
     it "creates remand issues for appropriate decision issues" do
       expect { subject }.to change(supplemental_claim.request_issues, :count).by(1)
