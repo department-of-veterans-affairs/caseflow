@@ -89,7 +89,12 @@ class LegacyAppeal < ApplicationRecord
     self.class.repository.aod(vacols_id)
   end
 
-  def advanced_on_docket
+  # To match Appeals AOD behavior
+  def aod?
+    aod
+  end
+
+  def advanced_on_docket?
     aod
   end
 
@@ -722,6 +727,10 @@ class LegacyAppeal < ApplicationRecord
 
   def address
     @address ||= Address.new(appellant[:address]) if appellant[:address].present?
+  end
+
+  def paper_case?
+    file_type.eql? "Paper"
   end
 
   private

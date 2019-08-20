@@ -1,5 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import { sprintf } from 'sprintf-js';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -206,9 +208,13 @@ export default class OrganizationUsers extends React.PureComponent {
         {this.state.error.body}
       </Alert>}
       <div>
-        <h1>{this.state.organizationName} team</h1>
+        <h1>{sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, this.state.organizationName)}</h1>
         {this.mainContent()}
       </div>
     </AppSegment>
   </LoadingDataDisplay>;
 }
+
+OrganizationUsers.propTypes = {
+  organization: PropTypes.string
+};

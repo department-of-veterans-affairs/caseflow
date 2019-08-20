@@ -37,6 +37,9 @@ class LegacyHearingSerializer
   attribute :location
   attribute :military_service, if: for_worksheet
   attribute :notes
+  attribute :paper_case do |object|
+    object.appeal.paper_case?
+  end
   attribute :prepped
   attribute :readable_location
   attribute :readable_request_type
