@@ -127,7 +127,7 @@ describe VaDotGovAddressValidator do
           expect(appeal.tasks.where(type: "HearingAdminActionVerifyAddressTask").count).to eq(1)
         end
 
-        context "and veteran's country is Philippines", focus: true do
+        context "and veteran's country is Philippines" do
           let(:address) do
             Address.new(country: "PHILIPPINES", city: "A City")
           end
