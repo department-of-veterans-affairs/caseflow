@@ -86,7 +86,7 @@ class Generators::Rating
       decisions_data = attrs[:decisions].map do |decision|
         {
           disability_evaluations: {
-            rba_decision_id: decision[:reference_id] || generate_external_id,
+            rba_issue_id: decision[:reference_id] || generate_external_id,
             dgnstc_txt: decision[:diagnostic_text],
             dgnstc_tn: decision[:diagnostic_type],
             dgnstc_tc: decision[:diagnostic_code],
