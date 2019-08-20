@@ -7,14 +7,24 @@
 class RatingDecision
   include ActiveModel::Model
 
-  attr_accessor :type_name, :rating_sequence_number, :disability_id, :disability_date, :diagnostic_text, :profile_date,
-                :diagnostic_code, :benefit_type, :participant_id, :diagnostic_type
+  attr_accessor :benefit_type,
+                :diagnostic_code,
+                :diagnostic_text,
+                :diagnostic_type,
+                :disability_date,
+                :disability_id,
+                :participant_id,
+                :profile_date,
+                :rating_sequence_number,
+                :rating_reference_id,
+                :type_name
 
   class << self
     def from_bgs_disability(rating, disability)
       new(
         type_name: disability[:decn_tn],
         rating_sequence_number: disability[:disability_evaluations][:rating_sn],
+        rating_reference_id: disability[:disability_evaluations][:rba_issue_id], # ok if nil
         disability_id: disability[:dis_sn],
         diagnostic_text: disability[:disability_evaluations][:dgnstc_txt],
         diagnostic_type: disability[:disability_evaluations][:dgnstc_tn],
