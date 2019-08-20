@@ -18,7 +18,11 @@ class Api::V2::HearingSerializer
   attribute :participant_id do |hearing|
     hearing.appeal.veteran.participant_id
   end
+  # deprecated :regional_office
   attribute :regional_office do |hearing|
+    hearing.hearing_location&.name
+  end
+  attribute :hearing_location do |hearing|
     hearing.hearing_location&.name
   end
   attribute :room do |hearing|
