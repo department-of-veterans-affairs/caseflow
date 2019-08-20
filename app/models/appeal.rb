@@ -218,11 +218,13 @@ class Appeal < DecisionReview
     nil
   end
 
-  def advanced_on_docket
-    claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
+  def advanced_on_docket?
+    claimants.any? { |claimant| claimant.advanced_on_docket?(receipt_date) }
   end
 
-  alias aod advanced_on_docket
+  # Prefer aod? over aod going forward, as this function returns a boolean
+  alias aod? advanced_on_docket?
+  alias aod advanced_on_docket?
 
   delegate :first_name,
            :last_name,

@@ -96,17 +96,6 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :application
 
-  def help_url
-    {
-      "certification" => certification_help_path,
-      "dispatch-arc" => dispatch_help_path,
-      "reader" => reader_help_path,
-      "hearings" => hearing_prep_help_path,
-      "intake" => intake_help_path
-    }[application] || help_path
-  end
-  helper_method :help_url
-
   # Link used when clicking logo
   def logo_path
     root_path
@@ -133,7 +122,8 @@ class ApplicationController < ApplicationBaseController
   def dropdown_urls
     urls = [
       { title: "Help", link: help_url },
-      { title: "Send Feedback", link: feedback_url, target: "_blank" }
+      { title: "Send Feedback", link: feedback_url, target: "_blank" },
+      { title: "Release History", link: release_history_url, target: "_blank" }
     ]
 
     if current_user&.administered_teams&.any?
@@ -313,6 +303,22 @@ class ApplicationController < ApplicationBaseController
     "/feedback"
   end
   helper_method :feedback_url
+
+  def help_url
+    {
+      "certification" => certification_help_path,
+      "dispatch-arc" => dispatch_help_path,
+      "reader" => reader_help_path,
+      "hearings" => hearing_prep_help_path,
+      "intake" => intake_help_path
+    }[application] || help_path
+  end
+  helper_method :help_url
+
+  def release_history_url
+    "https://headwayapp.co/va-caseflow-updates"
+  end
+  helper_method :release_history_url
 
   def build_date
     return Rails.application.config.build_version[:date] if Rails.application.config.build_version

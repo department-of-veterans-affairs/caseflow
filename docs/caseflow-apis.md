@@ -324,7 +324,8 @@ On success returns `200` HTTP code and a body like:
          "first_name" : "John",
          "last_name" : "Veteran",
          "participant_id" : "12345",
-         "regional_office" : "Boston",
+         "regional_office" : "Boston",  // deprecated
+         "hearing_location" : "Boston",
          "room" : "123",
          "scheduled_for" : "2019-07-24T13:30:00.000-04:00",
          "ssn" : "666456999",
@@ -340,7 +341,8 @@ On success returns `200` HTTP code and a body like:
          "first_name" : "Jane",
          "last_name" : "Veteran",
          "participant_id" : "23456",
-         "regional_office" : "Providence",
+         "regional_office" : "Providence", // deprecated
+         "hearing_location" : "Providence",
          "room" : "456",
          "scheduled_for" : "2019-07-24T13:30:00.000-04:00",
          "ssn" : "666456000",
