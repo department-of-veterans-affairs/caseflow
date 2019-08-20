@@ -226,7 +226,7 @@ describe TaskPager, :all_dbs do
       end
     end
 
-    ensure_stable
+    ensure_stable do
       fcontext "when sorting by closest regional office column" do
         let(:sort_by) { Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN }
 
@@ -270,7 +270,7 @@ describe TaskPager, :all_dbs do
       end
     end
 
-    ensure_stable
+    ensure_stable do
       fcontext "when sorting by case details link column" do
         let(:sort_by) { Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN }
 
