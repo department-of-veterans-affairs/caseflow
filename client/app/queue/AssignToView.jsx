@@ -77,7 +77,7 @@ class AssignToView extends React.Component {
       }
     };
 
-    const successMsg = {
+    const assignTaskSuccessMessage = {
       title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()),
       detail: taskActionData(this.props).message_detail
     };
@@ -86,7 +86,7 @@ class AssignToView extends React.Component {
       return this.reassignTask();
     }
 
-    return this.props.requestSave('/tasks', payload, successMsg).
+    return this.props.requestSave('/tasks', payload, assignTaskSuccessMessage).
       then((resp) => this.props.onReceiveAmaTasks(resp.body.tasks.data)).
       catch(() => {});
   }

@@ -46,9 +46,9 @@ class CreateMailTaskDialog extends React.Component {
 
     const label = this.taskActionData().options.find((option) => option.value === this.state.selectedValue).label;
 
-    const successMsg = { title: sprintf(COPY.MAIL_TASK_CREATION_SUCCESS_MESSAGE, label) };
+    const createMailTaskSuccessMessage = { title: sprintf(COPY.MAIL_TASK_CREATION_SUCCESS_MESSAGE, label) };
 
-    return this.props.requestSave('/tasks', payload, successMsg).
+    return this.props.requestSave('/tasks', payload, createMailTaskSuccessMessage).
       then((resp) => this.props.onReceiveAmaTasks(resp.body.tasks.data)).
       catch(() => {});
   }
