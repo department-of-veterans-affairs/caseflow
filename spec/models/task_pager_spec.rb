@@ -226,7 +226,7 @@ describe TaskPager, :all_dbs do
       end
     end
 
-    context "when sorting by closest regional office column" do
+    fcontext "when sorting by closest regional office column" do
       let(:sort_by) { Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN }
 
       before do
@@ -245,7 +245,8 @@ describe TaskPager, :all_dbs do
         expected_order = created_tasks.sort_by do |task|
           RegionalOffice::CITIES[task.appeal.closest_regional_office][:city]
         end
-        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+        expect(subject.map { |task| RegionalOffice::CITIES[task.appeal.closest_regional_office][:city] })
+          .to eq(expected_order.map { |task| RegionalOffice::CITIES[task.appeal.closest_regional_office][:city] })
       end
     end
 
@@ -267,13 +268,13 @@ describe TaskPager, :all_dbs do
       end
     end
 
-    context "when sorting by case details link column" do
+    fcontext "when sorting by case details link column" do
       let(:sort_by) { Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN }
 
       before do
         created_tasks.each do |task|
-          first_name = Faker::Name.first_name
-          last_name = "#{Faker::Name.middle_name} #{Faker::Name.last_name}"
+          first_name = Faker::Name.unique.first_name
+          last_name = "#{Faker::Name.unique.middle_name} #{Faker::Name.unique.last_name}"
           task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
           create(
             :cached_appeal,
@@ -287,7 +288,11 @@ describe TaskPager, :all_dbs do
         expected_order = created_tasks.sort_by do |task|
           "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name.split(' ').first}"
         end
-        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+        expect(subject.map do |task|
+          "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name.split(' ').first}"
+        end).to eq(expected_order.map do |task|
+          "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name.split(' ').first}"
+        end)
       end
     end
 
