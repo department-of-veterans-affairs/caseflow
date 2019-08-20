@@ -17,7 +17,6 @@ class ContestableIssue
       new(
         rating_issue_reference_id: rating_issue.reference_id,
         rating_issue_profile_date: rating_issue.profile_date.to_date,
-        rating_issue_sequence_id: rating_issue.rating_sequence_number,
         approx_decision_date: rating_issue.promulgation_date.to_date,
         description: rating_issue.decision_text,
         ramp_claim_id: rating_issue.ramp_claim_id,
