@@ -146,10 +146,22 @@ class LoadingDataDisplay extends React.PureComponent {
 }
 
 LoadingDataDisplay.propTypes = {
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.element),
+    PropTypes.element
+  ]),
   createLoadPromise: PropTypes.func.isRequired,
-  loadingComponentProps: PropTypes.object,
+  errorComponent: PropTypes.func,
+  failStatusMessageChildren: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.object
+  ]),
   failStatusMessageProps: PropTypes.object,
-  failStatusMessageChildren: PropTypes.object
+  loadingComponent: PropTypes.func,
+  loadingComponentProps: PropTypes.object,
+  slowLoadMessage: PropTypes.string,
+  slowLoadThresholdMs: PropTypes.number,
+  timeoutMs: PropTypes.number
 };
 
 LoadingDataDisplay.defaultProps = {
