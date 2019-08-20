@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
+# tests are all via ExternalApi::BGSService
+# :nocov:
 class ExternalApi::BgsVeteranStationUserConflict
-  # tests are all via ExternalApi::BGSService
-  # :nocov:
   def initialize(veteran_participant_id:, client: nil)
     @veteran_participant_id = veteran_participant_id
     @client = client
@@ -29,7 +29,6 @@ class ExternalApi::BgsVeteranStationUserConflict
     # default is no conflict
     false
   end
-  # :nocov:
 
   private
 
@@ -95,3 +94,4 @@ class ExternalApi::BgsVeteranStationUserConflict
     @client ||= ExternalApi::BGSService.new.client
   end
 end
+# :nocov:
