@@ -84,15 +84,20 @@ class RegionalOfficeDropdown extends React.Component {
 }
 
 RegionalOfficeDropdown.propTypes = {
-  name: PropTypes.string,
-  label: PropTypes.string,
-  value: PropTypes.string,
-  onChange: PropTypes.func.isRequired,
-  readOnly: PropTypes.bool,
-  placeholder: PropTypes.string,
   errorMessage: PropTypes.string,
-  // run onChange when dropdown mounts
-  validateValueOnMount: PropTypes.bool
+  label: PropTypes.string,
+  name: PropTypes.string,
+  onChange: PropTypes.func.isRequired,
+  onFetchDropdownData: PropTypes.func.isRequired,
+  onReceiveDropdownData: PropTypes.func.isRequired,
+  placeholder: PropTypes.string,
+  readOnly: PropTypes.bool,
+  regionalOffices: PropTypes.shape({
+    options: PropTypes.object,
+    isFetching: PropTypes.bool
+  }),
+  validateValueOnMount: PropTypes.bool,
+  value: PropTypes.string
 };
 
 RegionalOfficeDropdown.defaultProps = {
