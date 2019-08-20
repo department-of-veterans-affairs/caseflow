@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { MTVAttorneyDisposition } from './MTVAttorneyDisposition';
 
@@ -6,31 +6,57 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 
-import { taskById } from '../selectors';
+import { fetchJudges } from '../QueueActions';
+import { submitMTVAttyReview } from './mtvActions';
+import { taskById, appealWithDetailSelector } from '../selectors';
 
-const handleSubmit = (review) => {
-  console.log('handleSubmit', review);
-};
+export const ReviewMotionToVacateView = (props) => {
+  const { task, appeal, judges } = props;
 
-export const ReviewMotionToVacateView = ({ task }) => {
-  return <MTVAttorneyDisposition task={task} onSubmit={handleSubmit} />;
+  const judgeOptions = Object.values(judges).map(({ id, display_name }) => ({ label: display_name,
+    value: id }));
+
+  const handleSubmit = (review) => {
+    console.log('handleSubmit', review);
+    props.submitMTVAttyReview(review);
+  };
+
+  useEffect(() => {
+    if (!judgeOptions.length) {
+      props.fetchJudges();
+    }
+  });
+
+  return judges && <MTVAttorneyDisposition task={task} judges={judgeOptions} appeal={appeal} onSubmit={handleSubmit} />;
 };
 
 ReviewMotionToVacateView.propTypes = {
-  task: PropTypes.object
+  task: PropTypes.object,
+  appeal: PropTypes.object,
+  judges: PropTypes.array,
+  fetchJudges: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    task: taskById(state, { taskId: ownProps.taskId })
+    task: taskById(state, { taskId: ownProps.taskId }),
+    appeal: appealWithDetailSelector(state, ownProps),
+    judges: state.queue.judges
   };
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({}, dispatch);
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      fetchJudges,
+      submitMTVAttyReview
+    },
+    dispatch
+  );
 
 export default withRouter(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(MTVAttorneyDisposition)
+  )(ReviewMotionToVacateView)
 );
