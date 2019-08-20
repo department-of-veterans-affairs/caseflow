@@ -76,7 +76,7 @@ export const completeIntake = (intakeId, intakeData) => (dispatch) => {
         return true;
       },
       (error) => {
-        const responseObject = response.body || {};
+        const responseObject = error.response.body || {};
         const responseErrorCode = responseObject.error_code;
         const responseErrorData = responseObject.error_data;
 
