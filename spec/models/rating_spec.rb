@@ -207,7 +207,6 @@ describe Rating do
     subject { rating.decisions }
 
     it "returns the decisions" do
-      binding.pry
       expect(subject.count).to eq(2)
       expect(subject.first).to have_attributes(
         rating_sequence_number: "RatingSN1", diagnostic_text: "Diagnostic1"
@@ -302,13 +301,12 @@ describe Rating do
       let(:issues) { nil }
 
       it "should have no issues" do
-        is_expected.to match(
+        is_expected.to match(hash_including(
           participant_id: rating.participant_id,
           profile_date: rating.profile_date,
           promulgation_date: rating.promulgation_date,
-          issues: [],
-          decisions: []
-        )
+          issues: []
+        ))
       end
     end
   end
