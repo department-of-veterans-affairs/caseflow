@@ -226,29 +226,26 @@ describe TaskPager, :all_dbs do
       end
     end
 
-    ensure_stable do
-      fcontext "when sorting by closest regional office column" do
-        let(:sort_by) { Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN }
+    context "when sorting by closest regional office column" do
+      let(:sort_by) { Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN }
 
-        before do
-          regional_offices = RegionalOffice::ROS
-            .uniq { |ro_key| RegionalOffice::CITIES[ro_key][:city] }
-            .shuffle
-          created_tasks.each_with_index do |task, index|
-            ro_key = regional_offices[index]
-            ro_city = RegionalOffice::CITIES[ro_key][:city]
-            task.appeal.update!(closest_regional_office: ro_key)
-            create(:cached_appeal, appeal_id: task.appeal_id, closest_regional_office_city: ro_city)
-          end
+      before do
+        regional_offices = RegionalOffice::ROS
+          .uniq { |ro_key| RegionalOffice::CITIES[ro_key][:city] }
+          .shuffle
+        created_tasks.each_with_index do |task, index|
+          ro_key = regional_offices[index]
+          ro_city = RegionalOffice::CITIES[ro_key][:city]
+          task.appeal.update!(closest_regional_office: ro_key)
+          create(:cached_appeal, appeal_id: task.appeal_id, closest_regional_office_city: ro_city)
         end
+      end
 
-        it "sorts by regional office city" do
-          expected_order = created_tasks.sort_by do |task|
-            RegionalOffice::CITIES[task.appeal.closest_regional_office][:city]
-          end
-          expect(subject.map { |task| RegionalOffice::CITIES[task.appeal.closest_regional_office][:city] })
-            .to eq(expected_order.map { |task| RegionalOffice::CITIES[task.appeal.closest_regional_office][:city] })
+      it "sorts by regional office city" do
+        expected_order = created_tasks.sort_by do |task|
+          RegionalOffice::CITIES[task.appeal.closest_regional_office][:city].downcase
         end
+        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
       end
     end
 
@@ -270,33 +267,27 @@ describe TaskPager, :all_dbs do
       end
     end
 
-    ensure_stable do
-      fcontext "when sorting by case details link column" do
-        let(:sort_by) { Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN }
+    context "when sorting by case details link column" do
+      let(:sort_by) { Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN }
 
-        before do
-          created_tasks.each do |task|
-            first_name = Faker::Name.unique.first_name
-            last_name = "#{Faker::Name.unique.middle_name} #{Faker::Name.unique.last_name}"
-            task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
-            create(
-              :cached_appeal,
-              appeal_id: task.appeal_id,
-              veteran_name: "#{last_name.split(' ').last}, #{first_name.split(' ').first}"
-            )
-          end
+      before do
+        created_tasks.each do |task|
+          first_name = Faker::Name.unique.first_name
+          last_name = "#{Faker::Name.unique.middle_name} #{Faker::Name.unique.last_name}"
+          task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
+          create(
+            :cached_appeal,
+            appeal_id: task.appeal_id,
+            veteran_name: "#{last_name.split(' ').last}, #{first_name.split(' ').first}"
+          )
         end
+      end
 
-        it "sorts by veteran last and first name" do
-          expected_order = created_tasks.sort_by do |task|
-            "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name.split(' ').first}"
-          end
-          expect(subject.map do |task|
-            "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name.split(' ').first}"
-          end).to eq(expected_order.map do |task|
-            "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name.split(' ').first}"
-          end)
+      it "sorts by veteran last and first name" do
+        expected_order = created_tasks.sort_by do |task|
+          "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name.split(' ').first}"
         end
+        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
       end
     end
 
@@ -332,7 +323,7 @@ describe TaskPager, :all_dbs do
 
       it "sorts by AOD status, case type, and docket number" do
         expected_order = CachedAppeal.all.sort_by do |cached_appeal|
-          [cached_appeal.is_aod ? 1 : 0, cached_appeal.case_type, cached_appeal.docket_number]
+          [cached_appeal.is_aod ? 0 : 1, cached_appeal.case_type, cached_appeal.docket_number]
         end
         expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
       end
