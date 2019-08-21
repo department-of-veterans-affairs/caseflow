@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -31,6 +32,7 @@ const selectedAction = (props) => {
 };
 
 class AssignToView extends React.Component {
+
   constructor(props) {
     super(props);
 
@@ -202,6 +204,24 @@ class AssignToView extends React.Component {
     </QueueFlowModal>;
   }
 }
+
+AssignToView.propTypes = {
+  appeal: PropTypes.shape({
+    externalId: PropTypes.string
+  }),
+  assigneeAlreadySelected: PropTypes.bool,
+  highlightFormItems: PropTypes.bool,
+  isReassignAction: PropTypes.bool,
+  isTeamAssign: PropTypes.bool,
+  onReceiveAmaTasks: PropTypes.func,
+  requestPatch: PropTypes.func,
+  requestSave: PropTypes.func,
+  task: PropTypes.shape({
+    instructions: PropTypes.string,
+    taskId: PropTypes.string,
+    availableActions: PropTypes.arrayOf(PropTypes.object)
+  })
+};
 
 const mapStateToProps = (state, ownProps) => {
   const {
