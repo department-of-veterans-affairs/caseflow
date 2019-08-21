@@ -44,7 +44,6 @@ import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
 import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
-// import ReviewMotionToVacateModal from './ReviewMotionToVacateModal'
 import AddVsoModal from './AddVsoModal';
 import AddPrivateBarModal from './AddPrivateBarModal';
 import LookupParticipantIdModal from './LookupParticipantIdModal';
@@ -216,7 +215,7 @@ class QueueApp extends React.PureComponent {
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
-  routedSendMotionToVacateToJudge = (props) => <ReviewMotionToVacateView {...props.match.params} />;
+  routedSendMotionToVacateToJudge = () => <ReviewMotionToVacateView />;
 
   routedAddressMotionToVacate = (props) => <AddressMotionToVacateView {...props.match.params} />;
 

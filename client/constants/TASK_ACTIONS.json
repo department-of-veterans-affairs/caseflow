@@ -44,7 +44,7 @@
   },
   "SEND_MOTION_TO_VACATE_TO_JUDGE": {
     "label": "Send to judge",
-    "value": "send_motion_to_vacate_to_judge",
+    "value": "send_to_judge",
     "func": "send_motion_to_vacate_to_judge_data"
   },
   "CANCEL_FOREIGN_VETERANS_CASE_TASK": {
