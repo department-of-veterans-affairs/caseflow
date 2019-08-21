@@ -137,8 +137,7 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
         return resolve([...new Set(veteranIds)]);
       }).
       catch((error) => {
-
-        const backendError = _.get(error.response, 'body');
+        const backendError = error.response.body;
 
         if (backendError) {
           const errorMessage = backendError.errors[0].detail;
