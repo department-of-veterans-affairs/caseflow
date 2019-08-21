@@ -317,7 +317,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def validate_rating_or_nonrating_or_unidentified
-    return unless eligible?
     return if rating? || nonrating? || is_unidentified?
 
     errors.add(:request_issue, "must be rating, nonrating or unidentified")
