@@ -93,7 +93,7 @@ RegionalOfficeDropdown.propTypes = {
   placeholder: PropTypes.string,
   readOnly: PropTypes.bool,
   regionalOffices: PropTypes.shape({
-    options: PropTypes.object,
+    options: PropTypes.arrayOf(PropTypes.object),
     isFetching: PropTypes.bool
   }),
   validateValueOnMount: PropTypes.bool,

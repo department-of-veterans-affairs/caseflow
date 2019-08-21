@@ -146,10 +146,7 @@ class LoadingDataDisplay extends React.PureComponent {
 }
 
 LoadingDataDisplay.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.element),
-    PropTypes.element
-  ]),
+  children: PropTypes.node,
   createLoadPromise: PropTypes.func.isRequired,
   errorComponent: PropTypes.func,
   failStatusMessageChildren: PropTypes.oneOfType([
