@@ -28,7 +28,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   def geomatch(appeal)
     geomatch_result = appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
     if geomatch_result[:status] == VaDotGovAddressValidator::STATUSES[:matched_available_hearing_locations]
-      cancel_admin_actions_for_matched_appeals(appeal)
+      cancel_admin_actions_for_matched_appeal(appeal)
     end
 
     geomatch_result
