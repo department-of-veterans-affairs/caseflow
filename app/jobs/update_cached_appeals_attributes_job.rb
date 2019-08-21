@@ -26,6 +26,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     appeals = Appeal.find(open_appeals_from_tasks)
     request_issues_to_cache = request_issue_counts_for_appeal_ids(appeals.pluck(:id))
     veteran_names_to_cache = veteran_names_for_file_numbers(appeals.pluck(:veteran_file_number))
+    appeal_assignees_to_cache = assignees_for_ama_appeal_ids(appeals.pluck(:id))
+
     appeal_aod_status = aod_status_for_appeals(appeals)
 
     appeals_to_cache = appeals.map do |appeal|
@@ -33,6 +35,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       {
         appeal_id: appeal.id,
         appeal_type: Appeal.name,
+        assignee_label: appeal_assignees_to_cache[appeal.id],
         case_type: appeal.type.downcase,
         closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
         issue_count: request_issues_to_cache[appeal.id] || 0,
@@ -43,8 +46,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       }
     end
 
-    update_columns = [:case_type, :closest_regional_office_city, :docket_type, :docket_number, :is_aod, :issue_count,
-                      :veteran_name]
+    update_columns = [:assignee_label, :case_type, :closest_regional_office_city, :docket_type, :docket_number,
+                      :is_aod, :issue_count, :veteran_name]
     CachedAppeal.import appeals_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
                                                                      columns: update_columns }
 
@@ -146,6 +149,41 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       "(advance_on_docket_motions.granted = true and advance_on_docket_motions.created_at > appeals.receipt_date) "\
       "or people.date_of_birth < (current_date - interval '75 years')"
     ).pluck(:id)
+  end
+
+  def assignees_for_ama_appeal_ids(appeal_ids)
+    active_appeals = active_ama_appeals_assignees(appeal_ids)
+    on_hold_appeals = on_hold_ama_appeals_assignees(appeal_ids)
+
+    on_hold_appeals.merge(active_appeals)
+  end
+
+  def active_ama_appeals_assignees(appeal_ids)
+    ordered_active_tasks = Task.active
+      .visible_in_queue_table_view
+      .where(appeal_type: Appeal.name, appeal_id: appeal_ids)
+      .order(:appeal_id, created_at: :desc)
+
+    first_task_assignee_per_ama_appeal(ordered_active_tasks)
+  end
+
+  def on_hold_ama_appeals_assignees(appeal_ids)
+    ordered_on_hold_tasks = Task.on_hold
+      .visible_in_queue_table_view
+      .where(appeal_type: Appeal.name, appeal_id: appeal_ids)
+      .order(:appeal_id, created_at: :desc)
+
+    first_task_assignee_per_ama_appeal(ordered_on_hold_tasks)
+  end
+
+  def first_task_assignee_per_ama_appeal(tasks)
+    appeals = {}
+    tasks.each do |task|
+      next if appeals[task.appeal_id] != nil
+      appeals[task.appeal_id] = task&.assigned_to_label
+    end
+
+    appeals
   end
 
   def case_status_for_vacols_id(vacols_ids)
