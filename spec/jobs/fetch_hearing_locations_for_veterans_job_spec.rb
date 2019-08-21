@@ -111,7 +111,7 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
       end
 
       context "when there are more appeals to match than query limit" do
-        let!(:number_of_appeals_ready) { 10 }
+        let!(:number_of_appeals_ready) { 20 }
         let!(:number_of_legacy_appeals_ready) { 10 } # - 1 from above context
         let!(:query_limit) { 2 }
         before do
@@ -125,10 +125,10 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
         end
 
         it "geomatches all appeals" do
-          (1..(number_of_appeals_ready + number_of_legacy_appeals_ready) / 2).each do
+          (1..(number_of_appeals_ready + number_of_legacy_appeals_ready)).each do
             job = FetchHearingLocationsForVeteransJob.new
             job.perform
-            # let's pretend the validator actually updated the RO and AHL
+            # let's pretend the job actually updated the RO and AHL
             job.appeals.each do |appeal|
               appeal.update(closest_regional_office: "RO01")
               AvailableHearingLocations.create(appeal: appeal)
