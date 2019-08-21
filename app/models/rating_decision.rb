@@ -23,6 +23,8 @@ class RatingDecision
 
   class << self
     def from_bgs_disability(rating, disability)
+      return new() unless FeatureToggle.enabled?(:contestable_rating_decisions)
+
       latest_evaluation = latest_disability_evaluation(disability)
       new(
         type_name: disability[:decn_tn],

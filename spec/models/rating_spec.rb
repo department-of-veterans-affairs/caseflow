@@ -207,6 +207,9 @@ describe Rating do
   context "#decisions" do
     subject { rating.decisions }
 
+    before { FeatureToggle.enable!(:contestable_rating_decisions) }
+    after { FeatureToggle.disable!(:contestable_rating_decisions) }
+
     it "returns the decisions" do
       expect(subject.count).to eq(2)
       expect(subject.first).to have_attributes(

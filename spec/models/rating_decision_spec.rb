@@ -6,6 +6,12 @@ describe RatingDecision do
   before do
     Time.zone = "UTC"
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+
+    FeatureToggle.enable!(:contestable_rating_decisions)
+  end
+
+  after do
+    FeatureToggle.disable!(:contestable_rating_decisions)
   end
 
   let(:profile_date) { Time.zone.today - 40 }
