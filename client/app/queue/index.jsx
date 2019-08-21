@@ -4,8 +4,10 @@ import queueReducer, { initialState } from './reducers';
 
 import QueueApp from './QueueApp';
 
-const Queue = (props) => <ReduxBase reducer={queueReducer} store={initialState}>
-  <QueueApp {...props} />
-</ReduxBase>;
+const Queue = (props) => (
+  <ReduxBase reducer={queueReducer} initialState={{ queue: { ...initialState } }}>
+    <QueueApp {...props} />
+  </ReduxBase>
+);
 
 export default Queue;
