@@ -15,6 +15,7 @@ class RatingDecision
                 :disability_id,
                 :participant_id,
                 :profile_date,
+                :promulgation_date,
                 :rating_sequence_number,
                 :rating_reference_id,
                 :type_name
@@ -31,7 +32,8 @@ class RatingDecision
         diagnostic_type: latest_evaluation[:dgnstc_tn],
         diagnostic_code: latest_evaluation[:dgnstc_tc],
         disability_date: disability[:dis_dt],
-        profile_date: latest_evaluation[:prfl_dt],
+        profile_date: rating.profile_date,
+        promulgation_date: rating.promulgation_date,
         participant_id: rating.participant_id,
         benefit_type: rating.pension? ? :pension : :compensation
       )
