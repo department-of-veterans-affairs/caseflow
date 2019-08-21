@@ -101,13 +101,16 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       end
     end
 
-    context "when returns unknown error" do
+    context "when facility request fails" do
       let(:appeal) { create(:appeal) }
 
       before do
-        error = JSON::ParserError.new
-
-        allow(VADotGovService).to receive(:send_va_dot_gov_request).and_raise(error)
+        facilities_response = ExternalApi::VADotGovService::FacilitiesResponse.new(
+          HTTPI::Response.new(200, {}, {}.to_json)
+        )
+        allow(facilities_response).to receive(:data).and_return([])
+        allow(facilities_response).to receive(:code).and_return(500)
+        allow(VADotGovService).to receive(:get_distance).and_return(facilities_response)
       end
 
       it "returns an error response" do
@@ -116,7 +119,8 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
             params: { appeal_id: appeal.external_id, regional_office: "RO13" }
 
         expect(response.status).to eq 500
-        expect(JSON.parse(response.body)["message"]).to eq "JSON::ParserError"
+        expect(JSON.parse(response.body).dig("errors").first.dig("detail"))
+          .to eq("An unexpected error occured when attempting to map veteran.")
       end
     end
 
@@ -124,17 +128,13 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       let(:appeal) { create(:appeal) }
 
       before do
-        message = {
-          "messages" => [
-            {
-              "key" => "AddressCouldNotBeFound"
-            }
-          ]
-        }
-
-        error = Caseflow::Error::VaDotGovServerError.new(code: "500", message: message)
-
-        allow(VADotGovService).to receive(:send_va_dot_gov_request).and_raise(error)
+        valid_address_response = ExternalApi::VADotGovService::AddressValidationResponse.new(
+          HTTPI::Response.new(200, {}, {}.to_json)
+        )
+        allow(valid_address_response).to receive(:data).and_return([])
+        allow(valid_address_response).to receive(:code).and_return(500)
+        allow_any_instance_of(VaDotGovAddressValidator).to receive(:valid_address_response)
+          .and_return(valid_address_response)
       end
 
       it "returns an error response" do
@@ -142,8 +142,9 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
             as: :json,
             params: { appeal_id: appeal.external_id, regional_office: "RO13" }
 
-        expect(response.status).to eq 400
-        expect(JSON.parse(response.body)["message"]).to eq "AddressCouldNotBeFound"
+        expect(response.status).to eq 500
+        expect(JSON.parse(response.body).dig("errors").first.dig("detail"))
+          .to eq("An unexpected error occured when attempting to map veteran.")
       end
     end
   end

@@ -243,7 +243,7 @@ describe TaskPager, :all_dbs do
 
       it "sorts by regional office city" do
         expected_order = created_tasks.sort_by do |task|
-          RegionalOffice::CITIES[task.appeal.closest_regional_office][:city]
+          RegionalOffice::CITIES[task.appeal.closest_regional_office][:city].downcase
         end
         expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
       end
@@ -272,8 +272,8 @@ describe TaskPager, :all_dbs do
 
       before do
         created_tasks.each do |task|
-          first_name = Faker::Name.first_name
-          last_name = "#{Faker::Name.middle_name} #{Faker::Name.last_name}"
+          first_name = Faker::Name.unique.first_name
+          last_name = "#{Faker::Name.unique.middle_name} #{Faker::Name.unique.last_name}"
           task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
           create(
             :cached_appeal,
