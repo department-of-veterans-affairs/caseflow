@@ -70,6 +70,7 @@ class Rating
   end
 
   def decisions
+    return [] unless FeatureToggle.enabled?(:contestable_rating_decisions, user: RequestStore[:current_user])
     return [] unless rating_profile[:disabilities]
 
     Array.wrap(rating_profile[:disabilities]).map do |disability|
