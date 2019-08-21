@@ -12,15 +12,15 @@ class FoiaColocatedTask < ColocatedTask
   end
 
   def hide_from_case_timeline
-    true
+    new_style_colocated?
   end
 
   def hide_from_task_snapshot
-    true
+    new_style_colocated?
   end
 
   def self.hide_from_queue_table_view
-    true
+    new_style_colocated?
   end
 
   def create_privacy_act_task
@@ -37,5 +37,9 @@ class FoiaColocatedTask < ColocatedTask
 
   def cascade_closure_from_child_task?(child_task)
     child_task.is_a?(FoiaTask)
+  end
+
+  def new_style_colocated?
+    children.first.is_a?(FoiaTask)
   end
 end

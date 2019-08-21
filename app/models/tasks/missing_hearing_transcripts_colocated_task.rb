@@ -12,15 +12,15 @@ class MissingHearingTranscriptsColocatedTask < ColocatedTask
   end
 
   def hide_from_case_timeline
-    true
+    new_style_colocated?
   end
 
   def hide_from_task_snapshot
-    true
+    new_style_colocated?
   end
 
   def self.hide_from_queue_table_view
-    true
+    new_style_colocated?
   end
 
   def create_transcription_task
@@ -37,5 +37,9 @@ class MissingHearingTranscriptsColocatedTask < ColocatedTask
 
   def cascade_closure_from_child_task?(child_task)
     child_task.is_a?(TranscriptionTask)
+  end
+
+  def new_style_colocated?
+    children.first.is_a?(TranscriptionTask)
   end
 end
