@@ -16,7 +16,7 @@ class CaseSearchResultsForDocketNumber < ::CaseSearchResultsBase
   end
 
   def appeals
-    Array.wrap(AppealFinder.new(user: user).find_appeal_by_docket_number(docket_number))
+    Array.wrap(AppealFinder.find_appeal_by_docket_number(docket_number))
   end
 
   private

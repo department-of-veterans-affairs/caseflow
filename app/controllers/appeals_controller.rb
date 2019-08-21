@@ -12,9 +12,19 @@ class AppealsController < ApplicationController
       format.json do
         case_search = request.headers["HTTP_CASE_SEARCH"]
 
-        result = CaseSearchResultsForSearchTerm.new(
-          search_term: case_search, user: current_user
-        ).call
+        # result = CaseSearchResultsForSearchTerm.new(
+        #   search_term: case_search, user: current_user
+        # ).call
+
+        result = if docket_number?(case_search)
+                   CaseSearchResultsForDocketNumber.new(
+                     docket_number: case_search, user: current_user
+                   ).call
+                 else
+                   CaseSearchResultsForVeteranFileNumber.new(
+                     file_number_or_ssn: case_search, user: current_user
+                   ).call
+                 end
 
         render_search_results_as_json(result)
       end
