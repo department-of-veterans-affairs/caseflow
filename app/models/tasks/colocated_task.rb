@@ -24,7 +24,6 @@ class ColocatedTask < GenericTask
       create!(params)
     end
 
-
     # Override so that each ColocatedTask for an appeal gets assigned to the same colocated staffer.
     def create_many_from_params(params_array, user)
       # Create all ColocatedTasks in one transaction so that if any fail they all fail.
@@ -154,9 +153,8 @@ class ColocatedTask < GenericTask
     appeal.tasks.open.select { |task| task.is_a?(ColocatedTask) }.none?
   end
 
-  # GenericTask#verify_org_task_unique already performs this check
-  def verify_org_task_unique
-  end
+  # GenericTask.verify_org_task_unique already performs this check
+  def verify_org_task_unique; end
 
   def task_is_unique
     ColocatedTask.where(
