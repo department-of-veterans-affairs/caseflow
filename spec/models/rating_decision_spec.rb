@@ -95,7 +95,7 @@ describe RatingDecision do
           dis_sn: "67468264",
           disability_evaluations: [
             {
-              dis_dt: 1.year.ago + 1.day,
+              dis_dt: 1.year.ago - 1.day,
               dgnstc_tc: "6260",
               dgnstc_tn: "Tinnitus",
               dgnstc_txt: "tinnitus",
@@ -111,7 +111,8 @@ describe RatingDecision do
               prfl_dt: profile_date,
               rating_sn: "later",
               rba_issue_id: "later"
-            },
+            }
+          ]
         }
       end
 
