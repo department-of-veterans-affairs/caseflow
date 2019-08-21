@@ -198,16 +198,15 @@ class ExternalApi::BGSService
     end
   end
 
-  # Passing false to can_access? client method will use the find_flashes method underneath
-  # which has more robust sensitivity checks.
-  def may_modify?(vbms_id)
-    DBService.release_db_connections
+  # can_access? reflects whether a user may read a veteran's records.
+  # may_modify? reflects whether a user may establish a new claim.
+  def may_modify?(vbms_id, veteran_participant_id)
+    return false unless can_access?(vbms_id)
 
-    MetricsService.record("BGS: can_access (find_flashes): #{vbms_id}",
-                          service: :bgs,
-                          name: "may_modify?") do
-      client.can_access?(vbms_id, false)
-    end
+    !ExternalApi::BgsVeteranStationUserConflict.new(
+      veteran_participant_id: veteran_participant_id,
+      client: client
+    ).conflict?
   end
 
   def bust_can_access_cache(user, vbms_id)
