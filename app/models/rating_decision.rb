@@ -6,6 +6,7 @@
 
 class RatingDecision
   include ActiveModel::Model
+  include LatestRatingDisabilityEvaluation
 
   attr_accessor :benefit_type,
                 :diagnostic_code,
@@ -22,7 +23,7 @@ class RatingDecision
 
   class << self
     def from_bgs_disability(rating, disability)
-      latest_evaluation = Array.wrap(disability[:disability_evaluations]).max_by { |dis_eval| dis_eval[:dis_dt] } || {}
+      latest_evaluation = latest_disability_evaluation(disability)
       new(
         type_name: disability[:decn_tn],
         rating_sequence_number: latest_evaluation[:rating_sn],
