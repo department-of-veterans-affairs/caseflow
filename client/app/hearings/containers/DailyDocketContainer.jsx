@@ -345,13 +345,29 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 DailyDocketContainer.propTypes = {
+  children: PropTypes.node,
   user: PropTypes.object,
   hearingDay: PropTypes.object,
   hearings: PropTypes.object,
   saveSuccessful: PropTypes.object,
-  vlj: PropTypes.string,
-  coordinator: PropTypes.string,
-  hearingRoom: PropTypes.string,
+  vlj: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.shape({
+      value: PropTypes.string
+    })
+  ]),
+  coordinator: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.shape({
+      value: PropTypes.string
+    })
+  ]),
+  hearingRoom: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.shape({
+      value: PropTypes.string
+    })
+  ]),
   notes: PropTypes.string,
   hearingDayModified: PropTypes.bool,
   displayRemoveHearingDayModal: PropTypes.bool,
