@@ -3,18 +3,18 @@
 # who will watch the watcher? we will!
 # periodic check that jobs we expected to run, have run.
 # if not, try them again.
-class MissedJobSweeperJob < ApplicationJob
+class MissedJobSweeperJob < CaseflowJob
   queue_as :high
   application_attr :queue
 
-  def perform
+  def perform(_args)
     check_distribution_jobs
   end
 
   private
 
   def check_distribution_jobs
-    missed_jobs = Distribution.pending.where("created_at > ?", 1.hour.ago)
+    missed_jobs = Distribution.pending.where("created_at < ?", 1.hour.ago)
     missed_jobs.each do |distribution|
       slack_service.send_notification("Restarted Distribution job #{distribution.id}")
       StartDistributionJob.perform_now(distribution, distribution.judge)
