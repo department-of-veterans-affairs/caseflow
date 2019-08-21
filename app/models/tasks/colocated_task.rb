@@ -17,6 +17,14 @@ class ColocatedTask < GenericTask
   after_update :update_location_in_vacols
 
   class << self
+    def create_from_params(params, user)
+      parent_task = params[:parent_id] ? Task.find(params[:parent_id]) : nil
+      verify_user_can_create!(user, parent_task)
+      params = modify_params(params)
+      create!(params)
+    end
+
+
     # Override so that each ColocatedTask for an appeal gets assigned to the same colocated staffer.
     def create_many_from_params(params_array, user)
       # Create all ColocatedTasks in one transaction so that if any fail they all fail.
@@ -144,6 +152,10 @@ class ColocatedTask < GenericTask
 
   def all_tasks_closed_for_appeal?
     appeal.tasks.open.select { |task| task.is_a?(ColocatedTask) }.none?
+  end
+
+  # GenericTask#verify_org_task_unique already performs this check
+  def verify_org_task_unique
   end
 
   def task_is_unique
