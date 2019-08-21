@@ -421,12 +421,12 @@ RSpec.feature "Search", :all_dbs do
       end
 
       it "returns nil when docket number can't be found" do
-        res = AppealFinder.find_appeal_by_docket_number('012345-000')
+        res = AppealFinder.find_appeal_by_docket_number("012345-000")
 
         expect(res).to be_nil
       end
     end
-  
+
     context "when using invalid docket number" do
       it "page displays invalid search message" do
         perform_search(invalid_docket_number)
