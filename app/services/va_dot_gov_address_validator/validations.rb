@@ -54,10 +54,8 @@ module VaDotGovAddressValidator::Validations
                         error_handler.handle(valid_address_error)
                       elsif state_code_error.present?
                         error_handler.handle(state_code_error)
-                      elsif !closest_regional_office_response.success?
-                        error_handler.handle(closest_regional_office_response.error)
-                      elsif !available_hearing_locations_response.success?
-                        error_handler.handle(available_hearing_locations_response.error)
+                      elsif !closest_facility_response.success?
+                        error_handler.handle(closest_facility_response.error)
                       end
   end
 

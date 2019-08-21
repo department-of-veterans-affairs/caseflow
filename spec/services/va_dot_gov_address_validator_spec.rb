@@ -22,14 +22,10 @@ describe VaDotGovAddressValidator do
       }
     end
     let!(:ro43_facility_id) { "vba_343" }
-    let!(:closest_regional_office_facilities) do
-      [mock_facility_data(id: ro43_facility_id)]
-    end
-    let!(:available_hearing_locations_facilities) do
-      [
-        mock_facility_data(id: ro43_facility_id),
-        mock_facility_data(id: "vba_343f")
-      ]
+    let!(:closest_facilities) do
+      RegionalOffice.facility_ids.shuffle.map do |id|
+        mock_facility_data(id: id)
+      end
     end
 
     before(:each) do
@@ -39,29 +35,19 @@ describe VaDotGovAddressValidator do
       allow_any_instance_of(VaDotGovAddressValidator).to receive(:valid_address_response)
         .and_return(valid_address_response)
 
-      closest_regional_office_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
-      allow(closest_regional_office_response).to receive(:data).and_return(closest_regional_office_facilities)
-      allow(closest_regional_office_response).to receive(:error).and_return(nil)
-      allow_any_instance_of(VaDotGovAddressValidator).to receive(:closest_regional_office_response)
-        .and_return(closest_regional_office_response)
-
-      available_hearing_locations_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
-      allow(available_hearing_locations_response).to receive(:data)
-        .and_return(available_hearing_locations_facilities)
-      allow(available_hearing_locations_response).to receive(:error).and_return(nil)
-      allow_any_instance_of(VaDotGovAddressValidator).to receive(:available_hearing_locations_response)
-        .and_return(available_hearing_locations_response)
+      closest_facility_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
+      allow(closest_facility_response).to receive(:data).and_return(closest_facilities)
+      allow(closest_facility_response).to receive(:error).and_return(nil)
+      allow_any_instance_of(VaDotGovAddressValidator).to receive(:closest_facility_response)
+        .and_return(closest_facility_response)
     end
 
     it "assigns a closest_regional_office and creates an available hearing location" do
       Appeal.first.va_dot_gov_address_validator.update_closest_ro_and_ahls
 
-      available_hearing_locations = Appeal.first.available_hearing_locations.where(
-        facility_id: available_hearing_locations_facilities.pluck(:facility_id)
-      )
-
-      expect(Appeal.first.closest_regional_office).to eq("RO43")
-      expect(available_hearing_locations.count).to eq(2)
+      ro = Appeal.first.closest_regional_office
+      expect(ro).not_to be_nil
+      expect(Appeal.first.available_hearing_locations.count).to eq(RegionalOffice.facility_ids_for_ro(ro).count)
     end
 
     context "when there is an existing available_hearing_location" do
@@ -184,15 +170,6 @@ describe VaDotGovAddressValidator do
 
       it "returns DC" do
         expect(subject).to match_array ["vba_372"]
-      end
-    end
-
-    context "when veteran lives in Texas" do
-      let!(:valid_address_state_code) { "TX" }
-      subject { appeal.va_dot_gov_address_validator.facility_ids_to_geomatch }
-
-      it "adds San Antonio Satellite Office" do
-        expect(subject).to match_array(RegionalOffice.ro_facility_ids + %w[vha_671BY])
       end
     end
   end
