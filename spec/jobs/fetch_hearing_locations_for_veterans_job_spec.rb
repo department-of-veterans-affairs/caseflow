@@ -110,6 +110,36 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
         expect(legacy_appeal.tasks.open.where(type: "HearingTask").count).to eq(1)
       end
 
+      context "when there are more appeals to match than query limit" do
+        let!(:number_of_appeals_ready) { 10 }
+        let!(:number_of_legacy_appeals_ready) { 10 } # - 1 from above context
+        let!(:query_limit) { 2 }
+        before do
+          stub_const("FetchHearingLocationsForVeteransJob::QUERY_LIMIT", query_limit)
+          (1..number_of_appeals_ready).each do
+            create(:appeal, :with_schedule_hearing_tasks)
+          end
+          (1..(number_of_legacy_appeals_ready - 1)).each do
+            create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: create(:case))
+          end
+        end
+
+        it "geomatches all appeals" do
+          (1..(number_of_appeals_ready + number_of_legacy_appeals_ready) / 2).each do
+            job = FetchHearingLocationsForVeteransJob.new
+            job.perform
+            # let's pretend the validator actually updated the RO and AHL
+            job.appeals.each do |appeal|
+              appeal.update(closest_regional_office: "RO01")
+              AvailableHearingLocations.create(appeal: appeal)
+            end
+          end
+
+          expect(Appeal.where.not(closest_regional_office: nil).count).to eq(number_of_appeals_ready)
+          expect(LegacyAppeal.where.not(closest_regional_office: nil).count).to eq(number_of_legacy_appeals_ready)
+        end
+      end
+
       context "when appeal has open admin action" do
         before do
           HearingAdminActionVerifyAddressTask.create!(
