@@ -46,6 +46,7 @@ describe Rating do
       rating_sequence_number: "RatingSN#{num}",
       diagnostic_text: "Diagnostic#{num}",
       disability_date: promulgation_date,
+      promulgation_date: promulgation_date,
       profile_date: profile_date
     }
   end

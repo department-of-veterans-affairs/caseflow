@@ -18,6 +18,7 @@ describe RatingDecision do
     let(:rating_decision) do
       described_class.new(
         profile_date: profile_date,
+        promulgation_date: promulgation_date,
         rating_sequence_number: "1234",
         disability_id: "5678",
         diagnostic_text: "tinnitus",

@@ -52,6 +52,7 @@ describe ContestableIssue, :postgres do
   let(:rating_decision) do
     RatingDecision.new(
       profile_date: profile_date,
+      promulgation_date: promulgation_date,
       rating_sequence_number: "1234",
       disability_id: "5678",
       diagnostic_text: "tinnitus",
@@ -71,7 +72,7 @@ describe ContestableIssue, :postgres do
         rating_issue_reference_id: nil,
         rating_issue_profile_date: profile_date,
         decision_issue: nil,
-        approx_decision_date: rating_decision.disability_date,
+        approx_decision_date: promulgation_date,
         description: rating_decision.diagnostic_text,
         contesting_decision_review: decision_review,
         rating_issue_diagnostic_code: diagnostic_code,
@@ -84,7 +85,7 @@ describe ContestableIssue, :postgres do
         ratingIssueProfileDate: profile_date,
         ratingIssueDiagnosticCode: diagnostic_code,
         decisionIssueId: nil,
-        approxDecisionDate: rating_decision.disability_date,
+        approxDecisionDate: promulgation_date,
         description: rating_decision.diagnostic_text,
         isRating: true,
         rampClaimId: nil,
