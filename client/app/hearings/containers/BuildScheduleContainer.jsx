@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
@@ -92,6 +93,24 @@ class BuildScheduleContainer extends React.PureComponent {
     return <div>{loadingDataDisplay}</div>;
   }
 }
+
+BuildScheduleContainer.propTypes = {
+  displaySuccessMessage: PropTypes.bool,
+  onConfirmAssignmentsUpload: PropTypes.func,
+  onReceivePastUploads: PropTypes.func,
+  pastUploads: PropTypes.shape({
+    id: PropTypes.number,
+    type: PropTypes.string,
+    userFullName: PropTypes.string,
+    startDate: PropTypes.string,
+    endDate: PropTypes.string,
+    createdAt: PropTypes.string,
+    fileName: PropTypes.string
+  }),
+  schedulePeriod: PropTypes.object,
+  unsetSuccessMessage: PropTypes.func,
+  vacolsUpload: PropTypes.bool
+};
 
 const mapStateToProps = (state) => ({
   pastUploads: state.hearingSchedule.pastUploads,
