@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190815125313) do
+ActiveRecord::Schema.define(version: 20190821162943) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -753,6 +753,7 @@ ActiveRecord::Schema.define(version: 20190815125313) do
     t.string "disposition", comment: "Possible options are Grant, Deny, Withdraw, and Dismiss"
     t.bigint "task_id"
     t.datetime "updated_at", null: false
+    t.string "vacate_type", comment: "Granted motion to vacate can be either Straight Vacate and Readjudication or Vacate and De Novo."
     t.index ["task_id"], name: "index_post_decision_motions_on_task_id"
   end
 
