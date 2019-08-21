@@ -77,7 +77,7 @@ FactoryBot.define do
 
     factory :root_task, class: RootTask do
       type { RootTask.name }
-      appeal { create(:appeal) }
+      appeal
       assigned_by { nil }
       assigned_to { Bva.singleton }
     end
@@ -514,6 +514,18 @@ FactoryBot.define do
       parent { create(:root_task) }
       assigned_to { MailTeam.singleton }
       assigned_by { nil }
+    end
+
+    factory :vacate_motion_mail_task, class: VacateMotionMailTask do
+      type { VacateMotionMailTask.name }
+      appeal
+      association :parent, factory: :root_task
+    end
+
+    factory :judge_address_motion_to_vacate_task, class: JudgeAddressMotionToVacateTask do
+      type { JudgeAddressMotionToVacateTask.name }
+      appeal
+      association :parent, factory: :vacate_motion_mail_task
     end
   end
 end
