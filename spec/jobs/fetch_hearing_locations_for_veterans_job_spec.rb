@@ -135,7 +135,7 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
         before do
           allow_any_instance_of(VaDotGovAddressValidator).to receive(:update_closest_ro_and_ahls)
             .and_return(status: :created_verify_address_admin_action)
-          AvailableHearingLocations.create(appeal: appeal, facility_id: "fake_152")
+          AvailableHearingLocations.create(appeal: appeal, facility_id: "fake_152", updated_at: Time.zone.now - 15.days)
         end
 
         it "pushes appeal to the bottom of job query by creating a blank
