@@ -10,7 +10,7 @@ class ContestableIssue
                 :ramp_claim_id, :contesting_decision_review, :is_rating,
                 :decision_issue, :rating_issue_profile_date, :source_request_issues,
                 :rating_issue_diagnostic_code, :source_decision_review,
-                :rating_issue_sequence_id
+                :rating_decision_reference_id
 
   class << self
     def from_rating_issue(rating_issue, contesting_decision_review)
@@ -64,7 +64,7 @@ class ContestableIssue
       ratingIssueReferenceId: rating_issue_reference_id,
       ratingIssueProfileDate: rating_issue_profile_date.try(:to_date),
       ratingIssueDiagnosticCode: rating_issue_diagnostic_code,
-      ratingDecisionReferenceId: rating_issue_sequence_id,
+      ratingDecisionReferenceId: rating_decision_reference_id,
       decisionIssueId: decision_issue&.id,
       approxDecisionDate: approx_decision_date,
       description: description,
@@ -106,7 +106,7 @@ class ContestableIssue
   def contested_by_request_issue
     RequestIssue.active.find_by(
       contested_rating_issue_reference_id: rating_issue_reference_id,
-      contested_rating_issue_sequence_id: rating_issue_sequence_id,
+      contested_rating_decision_reference_id: rating_decision_reference_id,
       contested_decision_issue_id: decision_issue&.id
     )
   end
