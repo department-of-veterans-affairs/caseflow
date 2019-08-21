@@ -40,6 +40,6 @@ class FoiaColocatedTask < ColocatedTask
   end
 
   def new_style_colocated?
-    children.first.is_a?(FoiaTask)
+    children.any && children.first.is_a?(FoiaTask)
   end
 end

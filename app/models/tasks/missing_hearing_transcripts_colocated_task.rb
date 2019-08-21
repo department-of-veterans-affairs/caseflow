@@ -40,6 +40,6 @@ class MissingHearingTranscriptsColocatedTask < ColocatedTask
   end
 
   def new_style_colocated?
-    children.first.is_a?(TranscriptionTask)
+    children.any && children.first.is_a?(TranscriptionTask)
   end
 end

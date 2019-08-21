@@ -40,6 +40,6 @@ class TranslationColocatedTask < ColocatedTask
   end
 
   def new_style_colocated?
-    children.first.is_a?(TranslationTask)
+    children.any && children.first.is_a?(TranslationTask)
   end
 end
