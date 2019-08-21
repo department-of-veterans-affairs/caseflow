@@ -8,6 +8,8 @@ class ExternalApi::BgsVeteranStationUserConflict
     @client = client
   end
 
+  # we do not allow users to do Intakes if the Veteran or a Veteran's relative is employed at the same
+  # station as the user.
   # logic detailed in https://github.com/department-of-veterans-affairs/caseflow/issues/10087#issuecomment-507783830
   # a good example in production is veteran_participant_id 3309696 and user id 2321
   # "true" return value in this case means there is a conflict.
@@ -44,22 +46,22 @@ class ExternalApi::BgsVeteranStationUserConflict
   end
 
   def veteran_at_same_station
+    veteran_dto && veteran_dto[:station_number].to_s == current_user_station
+  end
+
+  def veteran_dto
     station_dtos.find { |dto| dto[:ptcpnt_rlnshp_type_nm] == "Veteran" }
   end
 
   def spouse_at_same_station
+    spouse_dto && spouse_dto[:station_number].to_s == current_user_station
+  end
+
+  def spouse_dto
     station_dtos.find { |dto| dto[:ptcpnt_rlnshp_type_nm] == "Spouse" }
   end
 
-  def veteran_at_same_station?
-    return false unless station_dtos
-
-    return false unless veteran_dto
-
-    veteran_station_id == current_user_station
-  end
-
-  def veteran_station_id
+  def sensitivity_station_id
     "#{sensitivity_level[:fclty_type_cd]}#{sensitivity_level[:cd]}"
   end
 
@@ -69,6 +71,7 @@ class ExternalApi::BgsVeteranStationUserConflict
 
   def violates_sensitivity_reason?
     return false unless sensitivity_level
+    return false unless sensitivity_station_id == current_user_station
 
     ["Relative of Local VA Employee", "VBA Employee", "Veteran", "Work Study"].include?(sensitivity_reason)
   end
