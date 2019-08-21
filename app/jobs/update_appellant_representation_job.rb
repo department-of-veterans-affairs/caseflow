@@ -11,7 +11,7 @@ class UpdateAppellantRepresentationJob < CaseflowJob
   METRIC_GROUP_NAME = UpdateAppellantRepresentationJob.name.underscore
   TOTAL_NUMBER_OF_APPEALS_TO_UPDATE = 1000
 
-  def perform
+  def perform(_args = {})
     start_time = Time.zone.now
 
     # Set user to system_user to avoid sensitivity errors
@@ -33,7 +33,7 @@ class UpdateAppellantRepresentationJob < CaseflowJob
       increment_task_count("error", appeal.id)
     end
 
-    record_runtime(start_time)
+    datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   rescue StandardError => error
     log_error(start_time, error)
   end
@@ -77,17 +77,6 @@ class UpdateAppellantRepresentationJob < CaseflowJob
     Appeal.joins(:tasks).where("tasks.type = ? AND tasks.status NOT IN (?)", "RootTask", Task.closed_statuses)
   end
 
-  def record_runtime(start_time)
-    job_duration_seconds = Time.zone.now - start_time
-
-    DataDogService.emit_gauge(
-      app_name: APP_NAME,
-      metric_group: METRIC_GROUP_NAME,
-      metric_name: "runtime",
-      metric_value: job_duration_seconds
-    )
-  end
-
   def increment_task_count(task_effect, appeal_id, count = 1)
     count.times do
       DataDogService.increment_counter(
@@ -111,6 +100,6 @@ class UpdateAppellantRepresentationJob < CaseflowJob
 
     slack_service.send_notification(msg)
 
-    record_runtime(start_time)
+    datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end
 end
