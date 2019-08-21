@@ -273,7 +273,7 @@ describe TaskPager, :all_dbs do
       before do
         created_tasks.each do |task|
           first_name = Faker::Name.unique.first_name
-          last_name = "#{Faker::Name.unique.middle_name} #{Faker::Name.unique.last_name}"
+          last_name = "#{Faker::Name.unique.first_name} #{Faker::Name.unique.first_name}"
           task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
           create(
             :cached_appeal,
