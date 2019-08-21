@@ -21,15 +21,15 @@ class RatingDecision
 
   class << self
     def from_bgs_disability(rating, disability)
-      latest_evaluation = Array.wrap(disability[:disability_evaluations]).max_by { |evaluation| evaluation[:dis_dt] } || {}
+      latest_evaluation = Array.wrap(disability[:disability_evaluations]).max_by { |dis_eval| dis_eval[:dis_dt] } || {}
       new(
         type_name: disability[:decn_tn],
-        rating_sequence_number: latest_evalutation[:rating_sn],
-        rating_reference_id: latest_evalutation[:rba_issue_id], # ok if nil
+        rating_sequence_number: latest_evaluation[:rating_sn],
+        rating_reference_id: latest_evaluation[:rba_issue_id], # ok if nil
         disability_id: disability[:dis_sn],
-        diagnostic_text: latest_evalutation[:dgnstc_txt],
-        diagnostic_type: latest_evalutation[:dgnstc_tn],
-        diagnostic_code: latest_evalutation[:dgnstc_tc],
+        diagnostic_text: latest_evaluation[:dgnstc_txt],
+        diagnostic_type: latest_evaluation[:dgnstc_tn],
+        diagnostic_code: latest_evaluation[:dgnstc_tc],
         disability_date: disability[:dis_dt],
         profile_date: latest_evalutation[:prfl_dt],
         participant_id: rating.participant_id,
