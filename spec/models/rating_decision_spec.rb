@@ -29,7 +29,7 @@ describe RatingDecision do
         disability_id: "5678",
         diagnostic_text: "tinnitus",
         diagnostic_code: "6260",
-        disability_date: profile_date + 30.days,
+        begin_date: profile_date + 30.days,
         participant_id: participant_id,
         benefit_type: :compensation
       )
@@ -62,9 +62,9 @@ describe RatingDecision do
     let(:bgs_record) do
       {
         decn_tn: decision_type_name,
-        dis_dt: 1.year.ago,
         dis_sn: "67468264",
         disability_evaluations: {
+          begin_dt: 1.year.ago,
           dgnstc_tc: "6260",
           dgnstc_tn: "Tinnitus",
           dgnstc_txt: "tinnitus",
@@ -86,7 +86,7 @@ describe RatingDecision do
         diagnostic_text: "tinnitus",
         diagnostic_type: "Tinnitus",
         diagnostic_code: "6260",
-        disability_date: 1.year.ago,
+        begin_date: 1.year.ago,
         profile_date: profile_date,
         participant_id: rating.participant_id,
         benefit_type: :pension
