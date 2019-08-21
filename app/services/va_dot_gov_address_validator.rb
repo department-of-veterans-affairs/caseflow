@@ -40,11 +40,7 @@ class VaDotGovAddressValidator
   end
 
   def closest_regional_office
-    @closest_regional_office ||= begin
-      return unless closest_facility_response.success?
-
-      possible_regional_offices.first[:regional_office_key]
-    end
+    @closest_regional_office ||= possible_regional_offices.first&.dig(:regional_office_key)
   end
 
   def available_hearing_locations
@@ -134,9 +130,11 @@ class VaDotGovAddressValidator
   end
 
   def possible_regional_offices
+    return [] unless closest_facility_response.success?
+
     # a facility id can be both an alternate location and an RO
     # and could also be an alternate location for more than one RO
-    # find all possible ROs for the facility id
+    # find all possible ROs for the facility id and sort by distance
     possible_ros = []
 
     RegionalOffice::CITIES.each do |regional_office_key, val|
