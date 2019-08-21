@@ -60,7 +60,8 @@ class QueueColumn
   def filter_regional_office(tasks)
     arr = []
 
-    tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:closest_regional_office_city).count.each_pair do |option, count|
+    tasks.joins(CachedAppeal.left_join_from_tasks_clause)
+      .group(:closest_regional_office_city).count.each_pair do |option, count|
       # TODO: Double encode these values
       arr << { value: option, label: format("%s (%d)", option, count) }
     end
@@ -71,14 +72,9 @@ class QueueColumn
   def filter_case_type(tasks)
     arr = []
 
-    # TODO: Add the AOD option first.
-
-    # aod_counts = tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:is_aod).count
-    # aod_counts[true]
-    #
-    # OR
-    #
-    # Task.joins("join cached_appeal_attributes on cached_appeal_attributes.appeal_id = tasks.appeal_id and cached_appeal_attributes.appeal_type = tasks.appeal_type and cached_appeal_attributes.is_aod ='true'").count
+    # Add the AOD option first.
+    aod_counts = tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:is_aod).count
+    arr << { value: "is_aod", label: format("%s (%d)", "AOD", aod_counts[true]) }
 
     tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:case_type).count.each_pair do |option, count|
       # TODO: Map the label to the correct friendly name.
