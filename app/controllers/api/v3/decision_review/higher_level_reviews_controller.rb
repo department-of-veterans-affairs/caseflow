@@ -16,7 +16,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::ExternalProxy
   private
 
   def processor
-    @processor ||= Api::V3::DecisionReview::HigherLevelReviewProcessor.new(params, current_user)
+    @processor ||= Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(params, current_user)
   end
 
   # Try to create an IntakeError from the exception, otherwise the processor's intake object.
