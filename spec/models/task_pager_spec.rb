@@ -278,16 +278,20 @@ describe TaskPager, :all_dbs do
           create(
             :cached_appeal,
             appeal_id: task.appeal_id,
-            veteran_name: "#{last_name.split(' ').last}, #{first_name.split(' ').first}"
+            veteran_name: "#{last_name.split(' ').last}, #{first_name}"
           )
         end
       end
 
       it "sorts by veteran last and first name" do
         expected_order = created_tasks.sort_by do |task|
-          "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name.split(' ').first}"
+          "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name}"
         end
-        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+        expect(subject.map do |task|
+          "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name}"
+        end).to eq(expected_order.map do |task|
+          "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name}"
+        end)
       end
     end
 
