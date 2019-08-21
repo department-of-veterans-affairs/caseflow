@@ -369,10 +369,40 @@ class HearingDayAddModal extends React.Component {
 }
 
 HearingDayAddModal.propTypes = {
-  userId: PropTypes.number,
-  userCssId: PropTypes.string,
+  cancelModal: PropTypes.func,
   closeModal: PropTypes.func,
-  cancelModal: PropTypes.func
+  coordinator: PropTypes.shape({
+    value: PropTypes.string
+  }),
+  hearingSchedule: PropTypes.object,
+  notes: PropTypes.string,
+  onAssignHearingRoom: PropTypes.func,
+  onReceiveHearingSchedule: PropTypes.func,
+  onRegionalOfficeChange: PropTypes.func,
+  onSelectedHearingDayChange: PropTypes.func,
+  regionalOffices: PropTypes.shape({
+    options: PropTypes.arrayOf(PropTypes.object)
+  }),
+  requestType: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.shape({
+      value: PropTypes.string
+    })
+  ]),
+  roomRequired: PropTypes.bool,
+  selectHearingCoordinator: PropTypes.func,
+  selectRequestType: PropTypes.func,
+  selectVlj: PropTypes.func,
+  selectedHearingDay: PropTypes.string,
+  selectedRegionalOffice: PropTypes.shape({
+    value: PropTypes.string
+  }),
+  setNotes: PropTypes.func,
+  userCssId: PropTypes.string,
+  userId: PropTypes.number,
+  vlj: PropTypes.shape({
+    value: PropTypes.string
+  })
 };
 
 const mapStateToProps = (state) => ({
