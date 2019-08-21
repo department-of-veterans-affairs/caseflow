@@ -8,11 +8,12 @@ class RatingDecision
   include ActiveModel::Model
   include LatestRatingDisabilityEvaluation
 
-  attr_accessor :benefit_type,
+  attr_accessor :begin_date,
+                :benefit_type,
+                :converted_begin_date,
                 :diagnostic_code,
                 :diagnostic_text,
                 :diagnostic_type,
-                :disability_date,
                 :disability_id,
                 :participant_id,
                 :profile_date,
@@ -34,7 +35,8 @@ class RatingDecision
         diagnostic_text: latest_evaluation[:dgnstc_txt],
         diagnostic_type: latest_evaluation[:dgnstc_tn],
         diagnostic_code: latest_evaluation[:dgnstc_tc],
-        disability_date: disability[:dis_dt],
+        begin_date: latest_evaluation[:begin_dt],
+        converted_begin_date: latest_evaluation[:conv_begin_dt],
         profile_date: rating.profile_date,
         promulgation_date: rating.promulgation_date,
         participant_id: rating.participant_id,
