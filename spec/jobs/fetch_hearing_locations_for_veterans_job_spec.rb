@@ -110,36 +110,6 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
         expect(legacy_appeal.tasks.open.where(type: "HearingTask").count).to eq(1)
       end
 
-      context "when there are more appeals to match than query limit" do
-        let!(:number_of_appeals_ready) { 20 }
-        let!(:number_of_legacy_appeals_ready) { 10 } # - 1 from above context
-        let!(:query_limit) { 2 }
-        before do
-          stub_const("FetchHearingLocationsForVeteransJob::QUERY_LIMIT", query_limit)
-          (1..number_of_appeals_ready).each do
-            create(:appeal, :with_schedule_hearing_tasks)
-          end
-          (1..(number_of_legacy_appeals_ready - 1)).each do
-            create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: create(:case))
-          end
-        end
-
-        it "geomatches all appeals" do
-          (1..(number_of_appeals_ready + number_of_legacy_appeals_ready)).each do
-            job = FetchHearingLocationsForVeteransJob.new
-            job.perform
-            # let's pretend the job actually updated the RO and AHL
-            job.appeals.each do |appeal|
-              appeal.update(closest_regional_office: "RO01")
-              AvailableHearingLocations.create(appeal: appeal)
-            end
-          end
-
-          expect(Appeal.where.not(closest_regional_office: nil).count).to eq(number_of_appeals_ready)
-          expect(LegacyAppeal.where.not(closest_regional_office: nil).count).to eq(number_of_legacy_appeals_ready)
-        end
-      end
-
       context "when appeal has open admin action" do
         before do
           HearingAdminActionVerifyAddressTask.create!(
@@ -156,6 +126,24 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
           subject.perform
 
           expect(HearingAdminActionVerifyAddressTask.first.status).to eq(Constants.TASK_STATUSES.cancelled)
+        end
+      end
+
+      context "when appeal can't be matched" do
+        let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
+
+        before do
+          allow_any_instance_of(VaDotGovAddressValidator).to receive(:update_closest_ro_and_ahls)
+            .and_return(status: :created_verify_address_admin_action)
+          AvailableHearingLocations.create(appeal: appeal, facility_id: "fake_152")
+        end
+
+        it "pushes appeal to the bottom of job query by creating a blank
+            available_hearing_locations or touching an existing record" do
+          subject.perform
+
+          expect(legacy_appeal.available_hearing_locations.first.facility_id).to eq(nil)
+          expect(appeal.available_hearing_locations.first.updated_at.strftime("%F")).to eq(Time.zone.now.strftime("%F"))
         end
       end
 

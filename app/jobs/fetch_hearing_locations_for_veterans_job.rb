@@ -49,10 +49,10 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
     case geomatch_result[:status]
     when VaDotGovAddressValidator::STATUSES[:matched_available_hearing_locations],
-      VaDotGovLimitError::STATUSES[:philippines_exception]
+      VaDotGovAddressValidator::STATUSES[:philippines_exception]
       cancel_admin_actions_for_matched_appeal(appeal)
     when VaDotGovAddressValidator::STATUSES[:created_verify_address_admin_action],
-      VaDotGovLimitError::STATUSES[:created_foreign_veteran_admin_action]
+      VaDotGovAddressValidator::STATUSES[:created_foreign_veteran_admin_action]
       create_available_hearing_location_for_errored_appeal(appeal)
     end
 
