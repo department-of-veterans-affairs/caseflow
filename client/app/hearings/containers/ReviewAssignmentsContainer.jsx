@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -66,6 +67,27 @@ export class ReviewAssignmentsContainer extends React.Component {
     return <div>{loadingDataDisplay}</div>;
   }
 }
+
+ReviewAssignmentsContainer.propTypes = {
+  displayConfirmationModal: PropTypes.bool,
+  history: PropTypes.shape({
+    push: PropTypes.func
+  }),
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      schedulePeriodId: PropTypes.string
+    })
+  }),
+  onClickCloseModal: PropTypes.func,
+  onClickConfirmAssignments: PropTypes.func,
+  onReceiveSchedulePeriod: PropTypes.func,
+  onSchedulePeriodError: PropTypes.func,
+  removeSchedulePeriodError: PropTypes.func,
+  schedulePeriod: PropTypes.object,
+  schedulePeriodError: PropTypes.bool,
+  setVacolsUpload: PropTypes.func,
+  spErrorDetails: PropTypes.object
+};
 
 const mapStateToProps = (state) => ({
   schedulePeriod: state.hearingSchedule.schedulePeriod,
