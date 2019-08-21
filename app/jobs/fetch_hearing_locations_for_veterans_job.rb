@@ -10,25 +10,37 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def find_appeals_ready_for_geomatching(appeal_type)
-    # Appeals that have not had an available_hearing_locations updated in the last week
-    # and where the appeal id is in a subquery of ScheduleHearingTasks
-    # that are not blocked by an VerifyAddress or ForeignVeteranCase admin action
+    appeal_ids = ScheduleHearingTask.open.where(
+      appeal_type: appeal_type.name
+    ).pluck(:appeal_id)
+
     appeal_type.left_outer_joins(:available_hearing_locations)
-      .where("#{appeal_type.table_name}.id IN (SELECT t.appeal_id FROM tasks t
-          LEFT OUTER JOIN tasks admin_actions
-          ON t.id = admin_actions.parent_id
-          AND admin_actions.type IN ('HearingAdminActionVerifyAddressTask', 'HearingAdminActionForeignVeteranCaseTask')
-          WHERE t.appeal_type = ?
-          AND admin_actions.id IS NULL AND t.type = 'ScheduleHearingTask'
-          AND t.status NOT IN ('cancelled', 'completed')
-        )", appeal_type.name)
+      .where(id: appeal_ids)
       .order("available_hearing_locations.updated_at nulls first")
       .limit(QUERY_LIMIT)
   end
 
   def appeals
-    @appeals ||= find_appeals_ready_for_geomatching(LegacyAppeal)[0..(QUERY_LIMIT / 2).to_int] +
-                 find_appeals_ready_for_geomatching(Appeal)[0..(QUERY_LIMIT / 2).to_int]
+    @appeals ||= find_appeals_ready_for_geomatching(LegacyAppeal).first(QUERY_LIMIT / 2) +
+                 find_appeals_ready_for_geomatching(Appeal).first(QUERY_LIMIT / 2)
+  end
+
+  def geomatch(appeal)
+    geomatch_result = appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
+    if geomatch_result[:status] == VaDotGovAddressValidator::STATUSES[:matched_available_hearing_locations]
+      cancel_admin_actions_for_matched_appeals(appeal)
+    end
+
+    geomatch_result
+  end
+
+  def cancel_admin_actions_for_matched_appeal(appeal)
+    tasks_to_cancel = Task.open.where(
+      type: %w[HearingAdminActionVerifyAddressTask HearingAdminActionForeignVeteranCaseTask],
+      appeal: appeal
+    )
+
+    tasks_to_cancel.each { |task| task.update(status: Constants.TASK_STATUSES.cancelled) }
   end
 
   def perform
@@ -37,7 +49,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
     appeals.each do |appeal|
       begin
-        geomatch_result = appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
+        geomatch_result = geomatch(appeal)
         record_geomatched_appeal(appeal.external_id, geomatch_result[:status])
         sleep 1
       rescue Caseflow::Error::VaDotGovLimitError
