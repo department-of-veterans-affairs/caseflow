@@ -6,28 +6,33 @@ class Api::V3::DecisionReview::IntakeProcessor
   def initialize(params, user, form_type)
     @params = Api::V3::DecisionReview::IntakeParams.new(params)
     @errors = @params.errors # initialize the errors array with any errors caught by IntakeParams
-    build_intake(user, form_type)
+    build_intake(user, form_type) unless errors?
   end
 
   def errors?
     errors.any?
   end
 
-  # this method performs all of the intake steps which write to DBs.
-  # this method fails by exception. some exceptions will have an error_code method
   def run!
+    return if errors?
+
     ActiveRecord::Base.transaction do
       start!
       review!
       complete!
     end
+    add_intake_error_if_intake_error_code
   end
 
   private
 
   def build_intake(user, form_type)
     @intake = Intake.build(user: user, veteran_file_number: @params.veteran_file_number, form_type: form_type)
-    @errors << Api::V3::DecisionReview::IntakeError.new(intake) if intake.error_code
+    add_intake_error_if_intake_error_code
+  end
+
+  def add_intake_error_if_intake_error_code
+    @errors << Api::V3::DecisionReview::IntakeError.new(intake) if intake.try(:error_code)
   end
 
   # both intake.start! and intake.review! can signal a failure by either

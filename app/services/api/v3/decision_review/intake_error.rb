@@ -78,11 +78,5 @@ class Api::V3::DecisionReview::IntakeError
       end
       nil
     end
-
-    def status_from_errors(errors)
-      fail ArgumentError, "status_from_errors expects an non-empty array" unless errors.is_a?(Array) && errors.any?
-
-      errors.map { |error| Integer(error.try(:status) || 422) }.max
-    end
   end
 end

@@ -2,32 +2,31 @@
 
 class Api::V3::DecisionReview::HigherLevelReviewsController < Api::ExternalProxyController
   def create
-    processor = Api::V3::DecisionReview::HigherLevelReviewProcessor.new(params, current_user)
-    if processor.errors?
+    if processor.run!.errors?
       render_errors(processor.errors)
-      return
+    else
+      response.set_header("Content-Location", url_for(:intake_status, processor.higher_level_review.uuid))
+      render Api::V3::DecisionReview::IntakeStatus.new(processor.intake).render_hash
     end
-
-    processor.run!
-    if processor.errors?
-      render_errors(processor.errors)
-      return
-    end
-
-    response.set_header("Content-Location", (
-                          request.base_url +
-                          "/api/v3/decision_review/higher_level_reviews/intake_status/" +
-                          processor.higher_level_review.uuid
-                        ))
-
-    render json: higher_level_review.api_intake_status, status: :accepted
   rescue StandardError => error
     # do we want something like intakes_controller's log_error here?
-    render_errors([Api::V3::DecisionReview::IntakeError.new(error, processor.try(:intake))])
+    render_errors(intake_error_from_exception_or_processor(error))
   end
 
-  def render_errors(errors)
-    render json: { errors: errors }, status: Api::V3::DecisionReview::IntakeError.status_from_errors(errors)
+  private
+
+  def processor
+    @processor ||= Api::V3::DecisionReview::HigherLevelReviewProcessor.new(params, current_user)
+  end
+
+  # Try to create an IntakeError from the exception, otherwise the processor's intake object.
+  # If neither has an error_code, the IntakeError will be IntakeError::UNKNOWN_ERROR
+  def intake_error_from_exception_or_processor(exception)
+    Api::V3::DecisionReview::IntakeError.new(exception, processor.try(:intake))
+  end
+
+  def render_errors(*errors)
+    render Api::V3::DecisionReview::IntakeErrors.new(*errors).render_hash
   end
 end
 
