@@ -49,7 +49,7 @@ class ContestableIssue
       new(
         rating_issue_reference_id: rating_decision.rating_reference_id,
         rating_issue_profile_date: rating_decision.profile_date.to_date,
-        rating_issue_sequence_id: rating_decision.rating_sequence_number,
+        rating_decision_reference_id: rating_decision.rating_sequence_number,
         approx_decision_date: rating_decision.disability_date.to_date,
         description: rating_decision.diagnostic_text,
         contesting_decision_review: contesting_decision_review,
@@ -64,7 +64,7 @@ class ContestableIssue
       ratingIssueReferenceId: rating_issue_reference_id,
       ratingIssueProfileDate: rating_issue_profile_date.try(:to_date),
       ratingIssueDiagnosticCode: rating_issue_diagnostic_code,
-      ratingIssueSequenceId: rating_issue_sequence_id,
+      ratingDecisionReferenceId: rating_issue_sequence_id,
       decisionIssueId: decision_issue&.id,
       approxDecisionDate: approx_decision_date,
       description: description,
