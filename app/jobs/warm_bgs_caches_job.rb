@@ -16,9 +16,7 @@ class WarmBgsCachesJob < CaseflowJob
   private
 
   def warm_people_caches
-    Person.where(first_name: nil, last_name: nil).order(created_at: :desc).limit(5000).each do |person|
-      person.update_cached_attributes!
-    end
+    Person.where(first_name: nil, last_name: nil).order(created_at: :desc).limit(5000).each(&:update_cached_attributes!)
   end
 
   def warm_participant_caches
