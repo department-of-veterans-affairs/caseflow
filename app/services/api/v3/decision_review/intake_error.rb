@@ -56,7 +56,9 @@ class Api::V3::DecisionReview::IntakeError
 
   # Given multiple arguments, it uses the first argument that is/has an error code
   def initialize(*args)
-    @status, @code, @title = KNOWN_ERRORS_BY_CODE[self.class.first_error_code(args)] || UNKNOWN_ERROR
+    @status, @code, @title = (
+      KNOWN_ERRORS_BY_CODE[self.class.error_code(self.class.find_first_error_code(args))] || UNKNOWN_ERROR
+    )
   end
 
   class << self
@@ -71,12 +73,8 @@ class Api::V3::DecisionReview::IntakeError
       end
     end
 
-    def first_error_code(array)
-      array.each do |obj|
-        code = error_code(obj)
-        return code if code
-      end
-      nil
+    def find_first_error_code(array)
+      array.find { |obj| error_code(obj) }
     end
   end
 end
