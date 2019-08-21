@@ -2,7 +2,7 @@
 
 # tests are all via ExternalApi::BGSService
 class ExternalApi::BgsVeteranStationUserConflict
-# :nocov:
+  # :nocov:
   def initialize(veteran_participant_id:, client: nil)
     @veteran_participant_id = veteran_participant_id
     @client = client
@@ -97,5 +97,5 @@ class ExternalApi::BgsVeteranStationUserConflict
   def client
     @client ||= ExternalApi::BGSService.new.client
   end
-# :nocov:
+  # :nocov:
 end
