@@ -47,7 +47,7 @@ class ContestableIssue
 
     def from_rating_decision(rating_decision, contesting_decision_review)
       new(
-        rating_issue_reference_id: rating_decision.rating_reference_id,
+        rating_issue_reference_id: rating_decision.rating_issue_reference_id,
         rating_issue_profile_date: rating_decision.profile_date.to_date,
         rating_decision_reference_id: rating_decision.rating_sequence_number,
         approx_decision_date: rating_decision.promulgation_date.to_date,

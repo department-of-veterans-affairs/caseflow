@@ -75,7 +75,7 @@ describe RatingDecision do
       is_expected.to have_attributes(
         type_name: decision_type_name,
         rating_sequence_number: "227606458",
-        rating_reference_id: "56780000",
+        rating_issue_reference_id: "56780000",
         disability_id: "67468264",
         diagnostic_text: "tinnitus",
         diagnostic_type: "Tinnitus",

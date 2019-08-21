@@ -17,7 +17,7 @@ class RatingDecision
                 :profile_date,
                 :promulgation_date,
                 :rating_sequence_number,
-                :rating_reference_id,
+                :rating_issue_reference_id,
                 :type_name
 
   class << self
@@ -26,7 +26,7 @@ class RatingDecision
       new(
         type_name: disability[:decn_tn],
         rating_sequence_number: latest_evaluation[:rating_sn],
-        rating_reference_id: latest_evaluation[:rba_issue_id], # ok if nil
+        rating_issue_reference_id: latest_evaluation[:rba_issue_id], # ok if nil
         disability_id: disability[:dis_sn],
         diagnostic_text: latest_evaluation[:dgnstc_txt],
         diagnostic_type: latest_evaluation[:dgnstc_tn],
