@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PostDecisionMotion < ApplicationRecord
-  belongs_to :task, required: true
+  belongs_to :task, optional: false
 
   validates :disposition, presence: true
   validate :vacate_type_is_present_if_granted
@@ -18,11 +18,11 @@ class PostDecisionMotion < ApplicationRecord
     vacate_and_de_novo: "vacate_and_de_novo"
   }
 
-
   private
 
   def vacate_type_is_present_if_granted
     return unless granted?
+
     errors.add(:vacate_type, "is required for granted disposition") unless vacate_type
   end
 end

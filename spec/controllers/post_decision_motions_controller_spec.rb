@@ -38,7 +38,7 @@ describe PostDecisionMotionsController do
 
         task = create_task_without_unnecessary_models
 
-        params = { disposition: "granted", task_id: task.id, vacate_type: "straight_vacate_and_readjudication"}
+        params = { disposition: "granted", task_id: task.id, vacate_type: "straight_vacate_and_readjudication" }
         post :create, params: { post_decision_motion: params }
 
         expect(response).to be_success
@@ -53,7 +53,7 @@ describe PostDecisionMotionsController do
     parent = build_stubbed(:root_task)
     allow(parent).to receive(:when_child_task_created).and_return(true)
     create(
-      :vacate_motion_mail_task,
+      :judge_address_motion_to_vacate_task,
       appeal: appeal,
       parent: parent,
       assigned_to: user,
