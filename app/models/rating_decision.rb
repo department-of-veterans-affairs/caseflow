@@ -47,6 +47,10 @@ class RatingDecision
     end
   end
 
+  def decision_date
+    converted_begin_date || begin_date || promulgation_date
+  end
+
   # If you change this method, you will need to clear cache in prod for your changes to
   # take effect immediately. See DecisionReview#cached_serialized_ratings
   def serialize

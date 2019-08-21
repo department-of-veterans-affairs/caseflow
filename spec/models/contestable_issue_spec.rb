@@ -53,11 +53,11 @@ describe ContestableIssue, :postgres do
     RatingDecision.new(
       profile_date: profile_date,
       promulgation_date: promulgation_date,
+      begin_date: promulgation_date - 1.day,
       rating_sequence_number: "1234",
       disability_id: "5678",
       diagnostic_text: "tinnitus",
       diagnostic_code: diagnostic_code,
-      disability_date: profile_date - 30.days,
       participant_id: participant_id,
       benefit_type: benefit_type
     )
@@ -72,7 +72,7 @@ describe ContestableIssue, :postgres do
         rating_issue_reference_id: nil,
         rating_issue_profile_date: profile_date,
         decision_issue: nil,
-        approx_decision_date: promulgation_date,
+        approx_decision_date: rating_decision.begin_date,
         description: rating_decision.diagnostic_text,
         contesting_decision_review: decision_review,
         rating_issue_diagnostic_code: diagnostic_code,
@@ -85,14 +85,14 @@ describe ContestableIssue, :postgres do
         ratingIssueProfileDate: profile_date,
         ratingIssueDiagnosticCode: diagnostic_code,
         decisionIssueId: nil,
-        approxDecisionDate: promulgation_date,
+        approxDecisionDate: rating_decision.begin_date,
         description: rating_decision.diagnostic_text,
         isRating: true,
         rampClaimId: nil,
         titleOfActiveReview: nil,
         sourceReviewType: nil,
         timely: true,
-        latestIssuesInChain: [{ id: nil, approxDecisionDate: promulgation_date }]
+        latestIssuesInChain: [{ id: nil, approxDecisionDate: rating_decision.begin_date }]
       )
     end
   end

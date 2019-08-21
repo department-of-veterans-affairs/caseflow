@@ -17,6 +17,7 @@ describe RatingDecision do
   let(:profile_date) { Time.zone.today - 40 }
   let(:promulgation_date) { Time.zone.today - 30 }
   let(:participant_id) { "1234567" }
+  let(:begin_date) { profile_date + 30.days }
 
   context ".deserialize" do
     subject { described_class.deserialize(rating_decision.serialize) }
@@ -29,7 +30,7 @@ describe RatingDecision do
         disability_id: "5678",
         diagnostic_text: "tinnitus",
         diagnostic_code: "6260",
-        begin_date: profile_date + 30.days,
+        begin_date: begin_date,
         participant_id: participant_id,
         benefit_type: :compensation
       )
@@ -64,7 +65,7 @@ describe RatingDecision do
         decn_tn: decision_type_name,
         dis_sn: "67468264",
         disability_evaluations: {
-          begin_dt: 1.year.ago,
+          begin_dt: begin_date,
           dgnstc_tc: "6260",
           dgnstc_tn: "Tinnitus",
           dgnstc_txt: "tinnitus",
@@ -86,7 +87,7 @@ describe RatingDecision do
         diagnostic_text: "tinnitus",
         diagnostic_type: "Tinnitus",
         diagnostic_code: "6260",
-        begin_date: 1.year.ago,
+        begin_date: begin_date,
         profile_date: profile_date,
         participant_id: rating.participant_id,
         benefit_type: :pension
@@ -140,6 +141,12 @@ describe RatingDecision do
         it "returns false" do
           expect(subject.service_connected?).to eq(false)
         end
+      end
+    end
+
+    describe "#decision_date" do
+      it "uses the begin_date if available" do
+        expect(subject.decision_date).to eq(begin_date)
       end
     end
   end
