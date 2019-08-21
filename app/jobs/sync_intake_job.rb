@@ -6,7 +6,7 @@ class SyncIntakeJob < CaseflowJob
   queue_as :low_priority
   application_attr :intake
 
-  def perform
+  def perform(_args = {})
     # Set user to system_user to avoid sensitivity errors
     RequestStore.store[:current_user] = User.system_user
 

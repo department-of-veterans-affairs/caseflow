@@ -1,15 +1,24 @@
 # frozen_string_literal: true
 
-class QueueWhereClauseArgumentsFactory
+class TaskFilter
   include ActiveModel::Model
 
   validate :filter_params_is_array
+  validate :tasks_type_is_valid
 
-  attr_accessor :filter_params
+  attr_accessor :filter_params, :tasks
 
   def initialize(args)
     super
+
+    @filters_params ||= []
+    @tasks ||= Task.none
+
     fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
+  end
+
+  def filtered_tasks
+    where_clause.empty? ? tasks : tasks.joins(CachedAppeal.left_join_from_tasks_clause).where(*where_clause)
   end
 
   # filter_params = ["col=docketNumberColumn&val=legacy,evidence_submission", "col=taskColumn&val=TranslationTask"]
@@ -19,7 +28,7 @@ class QueueWhereClauseArgumentsFactory
   #   ["legacy", "evidence_submission"],
   #   ["TranslationTask"]
   # ]
-  def arguments
+  def where_clause
     return [] if filter_params.empty?
 
     filters = filter_params.map { |filter_string| QueueFilterParameter.from_string(filter_string) }
@@ -53,5 +62,9 @@ class QueueWhereClauseArgumentsFactory
 
   def filter_params_is_array
     errors.add(:filter_params, "must be an array") unless filter_params&.is_a?(Array)
+  end
+
+  def tasks_type_is_valid
+    errors.add(:tasks, COPY::INVALID_TASKS_ARGUMENT) unless tasks.is_a?(ActiveRecord::Relation)
   end
 end
