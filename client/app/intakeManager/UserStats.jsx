@@ -1,10 +1,12 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
+import PropTypes from 'prop-types';
 import Table from '../components/Table';
 import SearchBar from '../components/SearchBar';
 import ApiUtil from '../util/ApiUtil';
 
 export default class UserStats extends React.PureComponent {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -122,3 +124,7 @@ export default class UserStats extends React.PureComponent {
     </div>;
   }
 }
+
+UserStats.propTypes = {
+  selectedUser: PropTypes.string
+};
