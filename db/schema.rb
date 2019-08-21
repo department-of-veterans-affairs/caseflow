@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190807203232) do
+ActiveRecord::Schema.define(version: 20190816210203) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -158,9 +158,11 @@ ActiveRecord::Schema.define(version: 20190807203232) do
   create_table "cached_appeal_attributes", id: false, force: :cascade do |t|
     t.integer "appeal_id"
     t.string "appeal_type"
+    t.string "case_type", comment: "The case type, i.e. original, post remand, CAVC remand, etc"
     t.string "closest_regional_office_city", comment: "Closest regional office to the veteran"
     t.string "docket_number"
     t.string "docket_type"
+    t.boolean "is_aod", comment: "Whether the case is Advanced on Docket"
     t.integer "issue_count", comment: "Number of issues on the appeal."
     t.string "vacols_id"
     t.string "veteran_name", comment: "'LastName, FirstName' of the veteran"
@@ -322,7 +324,9 @@ ActiveRecord::Schema.define(version: 20190807203232) do
   create_table "distributions", force: :cascade do |t|
     t.datetime "completed_at"
     t.datetime "created_at", null: false
+    t.datetime "errored_at", comment: "when the Distribution job suffered an error"
     t.integer "judge_id"
+    t.datetime "started_at", comment: "when the Distribution job commenced"
     t.json "statistics"
     t.string "status"
     t.datetime "updated_at", null: false
@@ -748,6 +752,14 @@ ActiveRecord::Schema.define(version: 20190807203232) do
     t.index ["participant_id"], name: "index_people_on_participant_id", unique: true
   end
 
+  create_table "post_decision_motions", force: :cascade, comment: "Stores the disposition and associated task of post-decisional motions handled by the Litigation Support Team: Motion for Reconsideration, Motion to Vacate, and Clear and Unmistakeable Error." do |t|
+    t.datetime "created_at", null: false
+    t.string "disposition", comment: "Possible options are Grant, Deny, Withdraw, and Dismiss"
+    t.bigint "task_id"
+    t.datetime "updated_at", null: false
+    t.index ["task_id"], name: "index_post_decision_motions_on_task_id"
+  end
+
   create_table "ramp_closed_appeals", id: :serial, force: :cascade, comment: "Keeps track of legacy appeals that are closed or partially closed in VACOLS due to being transitioned to a RAMP election.  This data can be used to rollback the RAMP Election if needed." do |t|
     t.datetime "closed_on", comment: "The datetime that the legacy appeal was closed in VACOLS and opted into RAMP."
     t.date "nod_date", comment: "The date when the Veteran filed a Notice of Disagreement for the original claims decision in the legacy system."
@@ -1043,8 +1055,11 @@ ActiveRecord::Schema.define(version: 20190807203232) do
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
+    t.string "status", default: "active", comment: "Whether or not the user is an active user of caseflow"
+    t.datetime "status_updated_at", comment: "When the user's status was last updated"
     t.datetime "updated_at"
     t.index "upper((css_id)::text)", name: "index_users_unique_css_id", unique: true
+    t.index ["status"], name: "index_users_on_status"
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
@@ -1133,6 +1148,7 @@ ActiveRecord::Schema.define(version: 20190807203232) do
   add_foreign_key "legacy_hearings", "users", column: "created_by_id"
   add_foreign_key "legacy_hearings", "users", column: "updated_by_id"
   add_foreign_key "organizations_users", "users"
+  add_foreign_key "post_decision_motions", "tasks"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "users"
   add_foreign_key "request_issues_updates", "users"

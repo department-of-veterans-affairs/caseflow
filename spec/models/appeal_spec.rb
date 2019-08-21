@@ -290,24 +290,24 @@ describe Appeal, :all_dbs do
     end
   end
 
-  context "#advanced_on_docket" do
-    context "when a claimant is advanced_on_docket" do
+  context "#advanced_on_docket?" do
+    context "when a claimant is advanced_on_docket?" do
       let(:appeal) do
         create(:appeal, claimants: [create(:claimant, :advanced_on_docket_due_to_age)])
       end
 
       it "returns true" do
-        expect(appeal.advanced_on_docket).to eq(true)
+        expect(appeal.advanced_on_docket?).to eq(true)
       end
     end
 
-    context "when no claimant is advanced_on_docket" do
+    context "when no claimant is advanced_on_docket?" do
       let(:appeal) do
         create(:appeal)
       end
 
       it "returns false" do
-        expect(appeal.advanced_on_docket).to eq(false)
+        expect(appeal.advanced_on_docket?).to eq(false)
       end
     end
   end

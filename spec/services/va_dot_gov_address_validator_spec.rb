@@ -76,6 +76,18 @@ describe VaDotGovAddressValidator do
       end
     end
 
+    context "when address is nil" do
+      before do
+        allow(appeal).to receive(:address).and_return(nil)
+      end
+
+      it "creates Verify Address admin action" do
+        appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
+
+        expect(appeal.tasks.where(type: "HearingAdminActionVerifyAddressTask").count).to eq(1)
+      end
+    end
+
     context "when veteran state is outside US territories" do
       let(:valid_address_state_code) { "AE" }
 
@@ -115,9 +127,11 @@ describe VaDotGovAddressValidator do
           expect(appeal.tasks.where(type: "HearingAdminActionVerifyAddressTask").count).to eq(1)
         end
 
-        # this passes locally, but CircleCi is not using BGS fake address_records
-        # correctly. skipping.
-        context "and veteran's country is Philippines", skip: "fails CircleCi" do
+        context "and veteran's country is Philippines" do
+          let(:address) do
+            Address.new(country: "PHILIPPINES", city: "A City")
+          end
+
           before do
             # this mocks get_facility_data call for ErrorHandler#check_for_philippines_and_maybe_update
             philippines_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
@@ -126,21 +140,20 @@ describe VaDotGovAddressValidator do
             allow(ExternalApi::VADotGovService).to receive(:get_facility_data)
               .and_return(philippines_response)
 
-            Fakes::BGSService.address_records = Hash[appeal.veteran_file_number, { cntry_nm: "PHILIPPINES" }]
+            allow(appeal).to receive(:address).and_return(address)
           end
 
           it "assigns closest regional office to Manila" do
-            expect(appeal.va_dot_gov_address_validator).to receive(:assign_ro_and_update_ahls).with("RO58")
+            appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
             expect(appeal.closest_regional_office).to eq("RO58")
             expect(appeal.available_hearing_locations.first.facility_id).to eq("vba_358")
-            appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
           end
         end
       end
     end
   end
 
-  describe "#facility_ids_to_geomatch" do
+  describe "#facility_ids_to_geomatch", :all_dbs do
     let!(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
     let!(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
     let!(:valid_address_state_code) { "VA" }
@@ -184,7 +197,7 @@ describe VaDotGovAddressValidator do
     end
   end
 
-  describe "#valid_address when there is an address validation error" do
+  describe "#valid_address when there is an address validation error", :postgres do
     let!(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
     let!(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
 

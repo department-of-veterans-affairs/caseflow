@@ -70,15 +70,11 @@ class VaDotGovAddressValidator
   end
 
   def get_distance_to_facilities(facility_ids:)
-    fail_if_unable_to_validate_address
+    return valid_address_response unless valid_address_response.success?
 
-    distance_response = VADotGovService.get_distance(lat: valid_address[:lat],
-                                                     long: valid_address[:long],
-                                                     ids: facility_ids)
-
-    return distance_response.data if distance_response.success?
-
-    raise distance_response.error # rubocop:disable Style/SignalException
+    VADotGovService.get_distance(lat: valid_address[:lat],
+                                 long: valid_address[:long],
+                                 ids: facility_ids)
   end
 
   def facility_ids_to_geomatch
