@@ -3,7 +3,7 @@
 class Api::V3::DecisionReview::IntakeProcessor
   attr_reader :errors, :intake
 
-  def initialize(params, user, form_type)
+  def initialize(params:, user:, form_type:)
     @params = Api::V3::DecisionReview::IntakeParams.new(params)
     @errors = @params.errors # initialize the errors array with any errors caught by IntakeParams
     build_intake(user, form_type) unless errors?
