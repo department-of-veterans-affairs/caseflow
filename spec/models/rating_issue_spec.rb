@@ -10,7 +10,6 @@ describe RatingIssue do
 
   let(:profile_date) { Time.zone.today - 30 }
   let(:promulgation_date) { Time.zone.today - 30 }
-  let(:profile_date) { Time.zone.today - 40 }
 
   context ".deserialize" do
     subject { RatingIssue.deserialize(rating_issue.serialize) }

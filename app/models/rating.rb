@@ -41,7 +41,8 @@ class Rating
       participant_id: participant_id,
       profile_date: profile_date,
       promulgation_date: promulgation_date,
-      issues: issues.map(&:serialize)
+      issues: issues.map(&:serialize),
+      decisions: decisions.map(&:serialize)
     }
   end
 
@@ -65,6 +66,14 @@ class Rating
 
   def pension?
     associated_claims_data.any? { |ac| ac[:bnft_clm_tc].match(/PMC$/) }
+  end
+
+  def decisions
+    return [] unless rating_profile[:disabilities]
+
+    Array.wrap(rating_profile[:disabilities]).map do |disability|
+      RatingDecision.from_bgs_disability(self, disability)
+    end
   end
 
   private
