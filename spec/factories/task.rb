@@ -6,7 +6,6 @@ FactoryBot.define do
     association :assigned_by, factory: :user
     association :assigned_to, factory: :user
     appeal { create(:legacy_appeal, vacols_case: create(:case)) }
-    action { nil }
     type { Task.name }
 
     trait :assigned do

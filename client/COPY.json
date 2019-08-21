@@ -395,6 +395,11 @@
   "TEAM_MANAGEMENT_IHP_WRITING_VSO_OPTION": "IHP-writing VSO",
   "TEAM_MANAGEMENT_FIELD_VSO_OPTION": "Field VSO",
 
+  "LOOKUP_PARTICIPANT_ID_MODAL_TITLE": "Look Up Participant ID",
+  "LOOKUP_PARTICIPANT_ID_SELECT_USER_LABEL": "Select user",
+  "LOOKUP_PARTICIPANT_ID_MODAL_NO_ORGS_MESSAGE": "User does not belong to any POA organizations.",
+
+  "USER_MANAGEMENT_PAGE_TITLE": "%s management page",
   "USER_MANAGEMENT_INITIAL_LOAD_ERROR_TITLE": "Failed to load users",
   "USER_MANAGEMENT_INITIAL_LOAD_LOADING_MESSAGE": "Loading users...",
   "USER_MANAGEMENT_ADD_USER_ERROR_TITLE": "Failed to add user",
@@ -485,6 +490,8 @@
   "UNTIMELY_EVIDENCE_BULLET_THREE": "3. Requested the Hearing appeal option and submitted evidence outside of the 90-day window after their hearing",
   "WHAT_IS_INELIGIBLE_EVIDENCE": "What is ineligible evidence?",
 
+  "INVALID_TASKS_ARGUMENT": "must be an ActiveRecord::Relation object",
+  "INVALID_SORT_COLUMN": "must be a QueueColumn",
   "TASK_PAGE_INVALID_ASSIGNEE_MESSAGE": "must be either a User or an Organization",
   "TASK_PAGE_INVALID_SORT_ORDER": "must be either asc or desc",
   "TASK_DISTRIBUTOR_ASSIGNEE_POOL_USERS_ONLY_MESSAGE": "must contain only Users",
@@ -523,6 +530,15 @@
 
   "SCHEDULE_VETERAN_FULL_HEARING_DAY_TITLE": "This hearing day is full",
   "SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL": "You are about to schedule this Veteran on a full docket. Please verify before scheduling.",
+
+  "REMOVE_HEARING_DAY_MESSAGE_TITLE": "Remove Hearing Day",
+  "REMOVE_HEARING_DAY_MESSAGE_DETAIL": "Once the hearing day is removed, users will no longer be able to schedule Veterans for this %s hearing day on %s.",
+
+  "LOCK_HEARING_DAY_MESSAGE_TITLE": "Lock Hearing Day",
+  "LOCK_HEARING_DAY_MESSAGE_DETAIL": "Completing this action will not allow more Veterans to be scheduled for this day. You can still make changes to the existing slots.",
+
+  "UNLOCK_HEARING_DAY_MESSAGE_TITLE": "Unlock Hearing Day",
+  "UNLOCK_HEARING_DAY_MESSAGE_DETAIL": "This hearing day is locked. Do you want to unlock the hearing day?",
 
   "HEARING_DATE_LOADING": "Finding upcoming hearing dates for this regional office...",
 

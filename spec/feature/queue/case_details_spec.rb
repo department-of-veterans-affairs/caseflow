@@ -376,7 +376,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on "View #{appeal.documents.count} docs"
 
         expect(page).to have_content("CaseflowQueue")
-        expect(page).to have_content("Back to Your Queue\n#{appeal.veteran_full_name}")
+        expect(page).to have_content("Back to your cases\n#{appeal.veteran_full_name}")
       end
     end
 
@@ -683,7 +683,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on "On hold (1)"
         click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
 
-        expect(page).to have_content("TASK\n#{Constants::CO_LOCATED_ADMIN_ACTIONS[on_hold_task.action]}")
+        expect(page).to have_content("TASK\n#{on_hold_task.label}")
         find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
         expect(page).to have_content("TASK INSTRUCTIONS\n#{on_hold_task.instructions[0].squeeze(' ').strip}")
         expect(page).to have_content("#{assigner_name.first[0]}. #{assigner_name.last}")

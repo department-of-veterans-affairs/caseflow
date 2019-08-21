@@ -348,23 +348,23 @@ RSpec.feature "Task queue", :all_dbs do
         find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
         find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
-        find("div", class: "Select-option", text: COPY::FOIA_REQUEST_MAIL_TASK_LABEL).click
+        find("div", class: "Select-option", text: COPY::AOD_MOTION_MAIL_TASK_LABEL).click
 
         fill_in("taskInstructions", with: instructions)
         find("button", text: "Submit").click
 
-        success_msg = format(COPY::MAIL_TASK_CREATION_SUCCESS_MESSAGE, COPY::FOIA_REQUEST_MAIL_TASK_LABEL)
+        success_msg = format(COPY::MAIL_TASK_CREATION_SUCCESS_MESSAGE, COPY::AOD_MOTION_MAIL_TASK_LABEL)
         expect(page).to have_content(success_msg)
         expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}")
 
         mail_task = root_task.children[0]
-        expect(mail_task.class).to eq(FoiaRequestMailTask)
+        expect(mail_task.class).to eq(AodMotionMailTask)
         expect(mail_task.assigned_to).to eq(MailTeam.singleton)
         expect(mail_task.children.length).to eq(1)
 
         child_task = mail_task.children[0]
-        expect(child_task.class).to eq(FoiaRequestMailTask)
-        expect(child_task.assigned_to).to eq(PrivacyTeam.singleton)
+        expect(child_task.class).to eq(AodMotionMailTask)
+        expect(child_task.assigned_to).to eq(AodTeam.singleton)
         expect(child_task.children.length).to eq(0)
       end
     end
@@ -406,23 +406,23 @@ RSpec.feature "Task queue", :all_dbs do
         find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
         find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
-        find("div", class: "Select-option", text: COPY::FOIA_REQUEST_MAIL_TASK_LABEL).click
+        find("div", class: "Select-option", text: COPY::AOD_MOTION_MAIL_TASK_LABEL).click
 
         fill_in("taskInstructions", with: instructions)
         find("button", text: "Submit").click
 
-        success_msg = format(COPY::MAIL_TASK_CREATION_SUCCESS_MESSAGE, COPY::FOIA_REQUEST_MAIL_TASK_LABEL)
+        success_msg = format(COPY::MAIL_TASK_CREATION_SUCCESS_MESSAGE, COPY::AOD_MOTION_MAIL_TASK_LABEL)
         expect(page).to have_content(success_msg)
         expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}")
 
         mail_task = root_task.children[0]
-        expect(mail_task.class).to eq(FoiaRequestMailTask)
+        expect(mail_task.class).to eq(AodMotionMailTask)
         expect(mail_task.assigned_to).to eq(MailTeam.singleton)
         expect(mail_task.children.length).to eq(1)
 
         child_task = mail_task.children[0]
-        expect(child_task.class).to eq(FoiaRequestMailTask)
-        expect(child_task.assigned_to).to eq(PrivacyTeam.singleton)
+        expect(child_task.class).to eq(AodMotionMailTask)
+        expect(child_task.assigned_to).to eq(AodTeam.singleton)
         expect(child_task.children.length).to eq(0)
       end
     end
@@ -525,7 +525,7 @@ RSpec.feature "Task queue", :all_dbs do
         visit("/queue/appeals/#{appeal.external_id}")
 
         find(".Select-control", text: "Select an action…").click
-        find("div .Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label]).click
+        find("div .Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_JUDGE.label).click
         expect(page).to have_content("Instructions:")
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 

@@ -92,7 +92,7 @@ class Idt::V1::AppealDetailsSerializer
     end
   end
 
-  attribute :aod, &:advanced_on_docket
+  attribute :aod, &:advanced_on_docket?
   attribute :cavc
   attribute :status
   attribute :previously_selected_for_quality_review

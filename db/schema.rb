@@ -158,9 +158,11 @@ ActiveRecord::Schema.define(version: 20190821162943) do
   create_table "cached_appeal_attributes", id: false, force: :cascade do |t|
     t.integer "appeal_id"
     t.string "appeal_type"
+    t.string "case_type", comment: "The case type, i.e. original, post remand, CAVC remand, etc"
     t.string "closest_regional_office_city", comment: "Closest regional office to the veteran"
     t.string "docket_number"
     t.string "docket_type"
+    t.boolean "is_aod", comment: "Whether the case is Advanced on Docket"
     t.integer "issue_count", comment: "Number of issues on the appeal."
     t.string "vacols_id"
     t.string "veteran_name", comment: "'LastName, FirstName' of the veteran"
@@ -322,7 +324,9 @@ ActiveRecord::Schema.define(version: 20190821162943) do
   create_table "distributions", force: :cascade do |t|
     t.datetime "completed_at"
     t.datetime "created_at", null: false
+    t.datetime "errored_at", comment: "when the Distribution job suffered an error"
     t.integer "judge_id"
+    t.datetime "started_at", comment: "when the Distribution job commenced"
     t.json "statistics"
     t.string "status"
     t.datetime "updated_at", null: false
@@ -1052,8 +1056,11 @@ ActiveRecord::Schema.define(version: 20190821162943) do
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
+    t.string "status", default: "active", comment: "Whether or not the user is an active user of caseflow"
+    t.datetime "status_updated_at", comment: "When the user's status was last updated"
     t.datetime "updated_at"
     t.index "upper((css_id)::text)", name: "index_users_unique_css_id", unique: true
+    t.index ["status"], name: "index_users_on_status"
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|

@@ -56,9 +56,9 @@ const Header = ({ user }) => (
 );
 
 Header.propTypes = {
-  user: {
+  user: PropTypes.shape({
     userHasHearingPrepRole: PropTypes.bool
-  }
+  })
 };
 
 export default class DailyDocketHearingRows extends React.Component {
@@ -91,7 +91,7 @@ DailyDocketHearingRows.propTypes = {
   readOnly: PropTypes.bool,
   regionalOffice: PropTypes.string,
   saveHearing: PropTypes.func,
-  user: {
+  user: PropTypes.shape({
     userHasHearingPrepRole: PropTypes.bool
-  }
+  })
 };
