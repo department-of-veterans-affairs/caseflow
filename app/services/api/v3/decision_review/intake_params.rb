@@ -64,7 +64,9 @@ class Api::V3::DecisionReview::IntakeParams
       .select { |obj| obj[:type] == "RequestIssue" }
       .map do |obj|
         Api::V3::DecisionReview::RequestIssueParams.new(
-          obj, attributes[:benefit_type], attributes[:legacyOptInApproved]
+          request_issue: obj,
+          benefit_type: attributes[:benefit_type],
+          legacy_opt_in_approved: attributes[:legacyOptInApproved]
         )
       end
   end

@@ -74,7 +74,7 @@ class Api::V3::DecisionReview::RequestIssueParams
 
   attr_reader :error_code
 
-  def initialize(request_issue, benefit_type, legacy_opt_in_approved)
+  def initialize(request_issue:, benefit_type:, legacy_opt_in_approved:)
     @attributes = request_issue[:attributes].permit(PERMITTED_KEYS)
     @benefit_type = benefit_type
     @legacy_opt_in_approved = legacy_opt_in_approved
