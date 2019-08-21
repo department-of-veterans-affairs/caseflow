@@ -162,8 +162,24 @@ class AssignHearingsContainer extends React.PureComponent {
 }
 
 AssignHearings.propTypes = {
-  userId: PropTypes.number,
-  userCssId: PropTypes.string
+  appealsReadyForHearing: PropTypes.object,
+  onReceiveAppealsReadyForHearing: PropTypes.func,
+  onReceiveTasks: PropTypes.func,
+  onReceiveUpcomingHearingDays: PropTypes.func,
+  onRegionalOfficeChange: PropTypes.func,
+  onSelectedHearingDayChange: PropTypes.func,
+  selectedHearingDay: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
+  selectedRegionalOffice: PropTypes.shape({
+    label: PropTypes.string,
+    value: PropTypes.string
+  }),
+  setUserCssId: PropTypes.func,
+  upcomingHearingDays: PropTypes.object,
+  userCssId: PropTypes.string,
+  userId: PropTypes.number
 };
 
 const mapStateToProps = (state) => ({
