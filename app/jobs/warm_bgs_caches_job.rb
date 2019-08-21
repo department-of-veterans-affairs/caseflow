@@ -4,7 +4,7 @@ class WarmBgsCachesJob < CaseflowJob
   queue_as :low_priority
   application_attr :hearing_schedule
 
-  def perform
+  def perform(_args = {})
     RequestStore.store[:current_user] = User.system_user
     RequestStore.store[:application] = "hearings"
 
