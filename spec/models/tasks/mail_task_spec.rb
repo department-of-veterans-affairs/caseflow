@@ -62,6 +62,28 @@ describe MailTask, :postgres do
         )
       end
     end
+
+    context "when the task is a blocking mail task" do
+      let(:task_class) { FoiaRequestMailTask }
+      let!(:distribution_task) { create(:distribution_task, parent: root_task, appeal: root_task.appeal) }
+
+      it "creates FoiaRequestMailTask as a child of the distribution task" do
+        expect { task_class.create_from_params(params, user) }.to_not raise_error
+        expect(distribution_task.children.length).to eq(1)
+
+        mail_task = distribution_task.children[0]
+        expect(mail_task.class).to eq(task_class)
+        expect(mail_task.assigned_to).to eq(mail_team)
+        expect(mail_task.children.length).to eq(1)
+
+        child_task = mail_task.children[0]
+        expect(child_task.class).to eq(task_class)
+        expect(child_task.assigned_to).to eq(PrivacyTeam.singleton)
+        expect(child_task.children.length).to eq(0)
+
+        expect(root_task.appeal.ready_for_distribution?).to eq false
+      end
+    end
   end
 
   describe ".outstanding_cavc_tasks?" do
