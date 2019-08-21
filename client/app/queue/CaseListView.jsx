@@ -121,8 +121,8 @@ class CaseListView extends React.PureComponent {
 }
 
 CaseListView.propTypes = {
-  caseflowVeteranIds: PropTypes.arrayOf(PropTypes.string),
   appeals: PropTypes.arrayOf(PropTypes.object),
+  caseflowVeteranIds: PropTypes.arrayOf(PropTypes.string),
   claimReviews: PropTypes.arrayOf(PropTypes.object),
   onReceiveAppeals: PropTypes.func,
   onReceiveClaimReviews: PropTypes.func
