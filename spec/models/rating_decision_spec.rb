@@ -87,6 +87,41 @@ describe RatingDecision do
       )
     end
 
+    context "with multiple disabilities" do
+      let(:bgs_record) do
+        {
+          decn_tn: decision_type_name,
+          dis_dt: 1.year.ago,
+          dis_sn: "67468264",
+          disability_evaluations: [
+            {
+              dis_dt: 1.year.ago + 1.day,
+              dgnstc_tc: "6260",
+              dgnstc_tn: "Tinnitus",
+              dgnstc_txt: "tinnitus",
+              prfl_dt: profile_date,
+              rating_sn: "227606458",
+              rba_issue_id: "56780000"
+            },
+            {
+              dis_dt: 1.year.ago,
+              dgnstc_tc: "6260",
+              dgnstc_tn: "Tinnitus",
+              dgnstc_txt: "tinnitus",
+              prfl_dt: profile_date,
+              rating_sn: "later",
+              rba_issue_id: "later"
+            },
+        }
+      end
+
+      it "prefers latest date" do
+        expect(subject).to have_attributes(
+          rating_sequence_number: "later", rating_issue_reference_id: "later"
+        )
+      end
+    end
+
     describe "#service_connected?" do
       it "returns true" do
         expect(subject.service_connected?).to eq(true)
