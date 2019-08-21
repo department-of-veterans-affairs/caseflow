@@ -161,7 +161,7 @@ class AssignHearingsContainer extends React.PureComponent {
   }
 }
 
-AssignHearings.propTypes = {
+AssignHearingsContainer.propTypes = {
   appealsReadyForHearing: PropTypes.object,
   onReceiveAppealsReadyForHearing: PropTypes.func,
   onReceiveTasks: PropTypes.func,
