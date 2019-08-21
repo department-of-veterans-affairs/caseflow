@@ -63,7 +63,16 @@ class AppealDocumentCount extends React.PureComponent {
 
 AppealDocumentCount.propTypes = {
   appeal: PropTypes.object.isRequired,
-  loadingText: PropTypes.bool
+  docCountForAppeal: PropTypes.shape({
+    docCountText: PropTypes.number,
+    loading: PropTypes.bool,
+    error: PropTypes.bool
+  }),
+  errorFetchingDocumentCount: PropTypes.func,
+  externalId: PropTypes.string,
+  loadAppealDocCount: PropTypes.func,
+  loadingText: PropTypes.bool,
+  setAppealDocCount: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
