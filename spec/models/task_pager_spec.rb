@@ -190,7 +190,7 @@ describe TaskPager, :all_dbs do
       let!(:created_tasks) { create_list(:colocated_task, 14, assigned_to: assignee) }
 
       it "sorts ColocatedTasks by action and created_at" do
-        expected_order = created_tasks.sort_by { |task| [task.action, task.created_at] }
+        expected_order = created_tasks.sort_by(&:created_at)
         expect(subject.map(&:id)).to eq(expected_order.map(&:id))
       end
     end
