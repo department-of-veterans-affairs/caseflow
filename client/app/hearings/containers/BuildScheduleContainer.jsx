@@ -98,15 +98,7 @@ BuildScheduleContainer.propTypes = {
   displaySuccessMessage: PropTypes.bool,
   onConfirmAssignmentsUpload: PropTypes.func,
   onReceivePastUploads: PropTypes.func,
-  pastUploads: PropTypes.shape({
-    id: PropTypes.number,
-    type: PropTypes.string,
-    userFullName: PropTypes.string,
-    startDate: PropTypes.string,
-    endDate: PropTypes.string,
-    createdAt: PropTypes.string,
-    fileName: PropTypes.string
-  }),
+  pastUploads: PropTypes.object,
   schedulePeriod: PropTypes.object,
   unsetSuccessMessage: PropTypes.func,
   vacolsUpload: PropTypes.bool
