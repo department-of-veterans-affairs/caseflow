@@ -97,16 +97,6 @@ class HigherLevelReview < ClaimReview
     %w[supplemental_claim appeal]
   end
 
-  def api_intake_status
-    {
-      data: {
-        type: "IntakeStatus",
-        id: uuid,
-        attributes: { status: asyncable_status }
-      }
-    }
-  end
-
   private
 
   def new_end_product_establishment(issue)
