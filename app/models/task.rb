@@ -60,6 +60,9 @@ class Task < ApplicationRecord
                                  )
                                }
 
+  # Cautious step before removing the column from the database as part of #9057.
+  self.ignored_columns = %w[action]
+
   def available_actions(_user)
     []
   end
@@ -181,6 +184,7 @@ class Task < ApplicationRecord
     if params.key?(:instructions) && !params[:instructions].is_a?(Array)
       params[:instructions] = [params[:instructions]]
     end
+    params.delete(:action)
     params
   end
 
