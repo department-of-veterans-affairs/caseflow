@@ -155,7 +155,7 @@ export class PdfViewer extends React.Component {
     window.removeEventListener('keydown', this.keyListener);
   }
 
-  componentWillReceiveProps = (nextProps) => {
+  UNSAFE_componentWillReceiveProps = (nextProps) => {
     const nextDocId = Number(nextProps.match.params.docId);
 
     if (nextDocId !== this.selectedDocId()) {

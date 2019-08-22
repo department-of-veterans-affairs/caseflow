@@ -20,7 +20,7 @@ export class AssociatePage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (!this.props.endProducts.length) {
       this.props.history.goBack();
     }
