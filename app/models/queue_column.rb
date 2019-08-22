@@ -4,10 +4,9 @@ class QueueColumn
   include ActiveModel::Model
 
   validates :name, :sorting_table, :sorting_columns, presence: true
+  validate :filter_function_is_valid
 
   attr_accessor :name, :sorting_table, :sorting_columns, :filter_function
-
-  # TODO: Validate filter_function is in our acceptable set of filters
 
   def initialize(args)
     super
@@ -24,7 +23,6 @@ class QueueColumn
     column_config ? new(column_config) : nil
   end
 
-  # TODO: Consider renaming to be more specific to the context we are working in.
   def to_hash(tasks)
     return { name: name, filterable: false, filter_options: nil } if filter_function.nil?
 
@@ -84,5 +82,18 @@ class QueueColumn
     aod_option_label = format_option_label("AOD", aod_counts[true])
 
     [filter_option_hash("is_aod", aod_option_label)] + options
+  end
+
+  def filter_function_is_valid
+    valid_filter_functions = [
+      Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.filter_function,
+      Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.filter_function,
+      Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.filter_function,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.filter_function
+    ]
+
+    if !filter_function.nil? && !valid_filter_functions.include?(filter_function)
+      errors.add(:assignee, COPY::INVALID_FILTER_FUNCTION)
+    end
   end
 end
