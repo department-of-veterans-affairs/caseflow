@@ -64,14 +64,17 @@ class QueueColumn
       .group(:case_type).count.each_pair.map do |option, count|
       # TODO: Map the label to the correct friendly name.
       label = format_option_label(option, count)
-      arr << filter_option_hash(option, label)
+      filter_option_hash(option, label)
     end
 
     # Add the AOD option as the first option in the list.
-    aod_counts = tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:is_aod).count
-    aod_option_label = format_option_label("AOD", aod_counts[true])
+    aod_counts = tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:is_aod).count[true]
+    if aod_counts
+      aod_option_label = format_option_label("AOD", aod_counts)
+      options = [filter_option_hash("is_aod", aod_option_label)] + options
+    end
 
-    [filter_option_hash("is_aod", aod_option_label)] + options
+    options
   end
 
   def docket_type_options(tasks)
