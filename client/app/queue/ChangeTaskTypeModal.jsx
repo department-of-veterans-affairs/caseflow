@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -22,6 +23,7 @@ import { taskActionData, actionNameOfTask } from './utils';
 import QueueFlowModal from './components/QueueFlowModal';
 
 class ChangeTaskTypeModal extends React.PureComponent {
+
   constructor(props) {
     super(props);
 
@@ -111,6 +113,22 @@ class ChangeTaskTypeModal extends React.PureComponent {
     </QueueFlowModal>;
   }
 }
+
+ChangeTaskTypeModal.propTypes = {
+  appealId: PropTypes.string,
+  error: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
+  }),
+  highlightFormItems: PropTypes.bool,
+  highlightInvalidFormItems: PropTypes.func,
+  onReceiveAmaTasks: PropTypes.func,
+  requestPatch: PropTypes.func,
+  setAppealAttrs: PropTypes.func,
+  task: PropTypes.shape({
+    taskId: PropTypes.string
+  })
+};
 
 const mapStateToProps = (state, ownProps) => ({
   highlightFormItems: state.ui.highlightFormItems,
