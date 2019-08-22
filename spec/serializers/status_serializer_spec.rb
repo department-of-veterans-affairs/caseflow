@@ -290,4 +290,150 @@ describe StatusSerializer, :all_dbs do
       end
     end
 	end
+
+  context "status for higher level review" do
+    let(:receipt_date) { Time.new("2018", "03", "01").utc }
+    let(:benefit_type) { "compensation" }
+    let(:hlr_decision_date) { receipt_date + 30.days }
+
+    let!(:hlr) do
+      create(:higher_level_review,
+             receipt_date: receipt_date,
+             benefit_type: benefit_type)
+    end
+
+    context "has a decision" do
+      let!(:request_issue1) do
+        create(:request_issue,
+               decision_review: hlr,
+               benefit_type: benefit_type,
+               contested_rating_issue_diagnostic_code: "8877")
+      end
+
+      let!(:hlr_ep) do
+        create(:end_product_establishment,
+               :cleared,
+               source: hlr,
+               last_synced_at: hlr_decision_date)
+      end
+
+      let!(:hlr_decision_issue) do
+        create(:decision_issue,
+               decision_review: hlr,
+               disposition: "denied",
+               benefit_type: benefit_type,
+               end_product_last_action_date: hlr_decision_date,
+               diagnostic_code: "8877")
+      end
+
+      it "has decision status and status details" do
+        status = StatusSerializer.new(hlr).serializable_hash[:data][:attributes]
+        expect(status[:type]).to eq(:hlr_decision)
+        expect(status[:details][:issues].first[:description]).to eq("Undiagnosed hemic or lymphatic condition")
+        expect(status[:details][:issues].first[:disposition]).to eq("denied")
+      end
+    end
+
+    context "dta error" do
+      let(:receipt_date) { Time.new("2018", "03", "01").utc }
+      let(:benefit_type) { "compensation" }
+      let!(:hlr) do
+        create(:higher_level_review,
+               receipt_date: receipt_date,
+               benefit_type: benefit_type)
+      end
+
+      let(:hlr_decision_date) { receipt_date + 30.days }
+
+      let!(:hlr_decision_issue_with_dta_error) do
+        create(:decision_issue,
+               decision_review: hlr,
+               disposition: DecisionIssue::DTA_ERROR_PMR,
+               benefit_type: benefit_type,
+               end_product_last_action_date: hlr_decision_date,
+               diagnostic_code: "9999")
+      end
+
+      let!(:dta_sc) do
+        create(:supplemental_claim,
+               decision_review_remanded: hlr)
+      end
+
+      let!(:dta_ep) do
+        create(:end_product_establishment,
+               :cleared,
+               source: dta_sc)
+      end
+
+      let!(:dta_request_issue) do
+        create(:request_issue,
+               decision_review: dta_sc,
+               benefit_type: benefit_type,
+               contested_rating_issue_diagnostic_code: "9999")
+      end
+
+      let(:dta_sc_decision_date) { receipt_date + 60.days }
+
+      let!(:dta_sc_decision_issue) do
+        create(:decision_issue,
+               decision_review: dta_sc,
+               disposition: "allowed",
+               benefit_type: benefit_type,
+               end_product_last_action_date: dta_sc_decision_date,
+               diagnostic_code: "9999")
+      end
+
+      it "has decision status and status details for the dta sc decision" do
+        status = StatusSerializer.new(hlr).serializable_hash[:data][:attributes]
+
+        expect(status[:type]).to eq(:hlr_decision)
+        expect(status[:details][:issues].first[:description]).to eq("Dental or oral condition")
+        expect(status[:details][:issues].first[:disposition]).to eq("allowed")
+      end
+    end
+  end
+
+  context "status for supplemental claim" do
+    let(:receipt_date) { Time.new("2018", "03", "01").utc }
+    let(:benefit_type) { "compensation" }
+
+    let(:sc) do
+      create(:supplemental_claim, 
+             receipt_date: receipt_date,
+             benefit_type: benefit_type)
+    end
+
+    let(:ep_status) { "PEND" }
+    let!(:sc_ep) do
+      create(:end_product_establishment,
+             synced_status: ep_status, source: sc)
+    end
+
+    context "SC received" do
+      it "has status sc_recieved" do
+        status = StatusSerializer.new(sc).serializable_hash[:data][:attributes]
+        expect(status).to_not be_nil
+        expect(status[:type]).to eq(:sc_recieved)
+        expect(status[:details]).to be_empty
+      end
+    end
+
+    context "SC gets a decision" do
+      let(:ep_status) { "CLR" }
+
+      let!(:decision_issue) do
+        create(:decision_issue,
+               decision_review: sc, end_product_last_action_date: receipt_date + 100.days,
+               benefit_type: benefit_type, diagnostic_code: nil, disposition: "allowed")
+      end
+
+      it "has status sc_decision" do
+        status = StatusSerializer.new(sc).serializable_hash[:data][:attributes]
+        expect(status).to_not be_nil
+        expect(status[:type]).to eq(:sc_decision)
+        expect(status[:details][:issues].first[:description]).to eq("Compensation issue")
+        expect(status[:details][:issues].first[:disposition]).to eq("allowed")
+      end
+    end
+  end
 end
