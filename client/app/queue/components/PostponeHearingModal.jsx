@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { formatDateStr } from '../../util/DateUtil';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -219,6 +220,43 @@ class PostponeHearingModal extends React.Component {
     );
   };
 }
+
+PostponeHearingModal.propTypes = {
+  appeal: PropTypes.shape({
+    closestRegionalOffice: PropTypes.string,
+    externalId: PropTypes.string,
+    veteranFullName: PropTypes.string
+  }),
+  assignHearing: PropTypes.shape({
+    apiFormattedValues: PropTypes.shape({
+      scheduled_time_string: PropTypes.string,
+      hearing_day_id: PropTypes.string,
+      hearing_location: PropTypes.string
+    }),
+    errorMessages: PropTypes.shape({
+      hasErrorMessages: PropTypes.bool
+    }),
+    hearingDay: PropTypes.shape({
+      hearingDate: PropTypes.string
+    })
+  }),
+  onReceiveAmaTasks: PropTypes.func,
+  onReceiveAppealDetails: PropTypes.func,
+  requestPatch: PropTypes.func,
+  scheduleHearingLaterWithAdminAction: PropTypes.shape({
+    apiFormattedValues: PropTypes.shape({
+      with_admin_action_klass: PropTypes.bool,
+      admin_action_instructions: PropTypes.string
+    }),
+    errorMessages: PropTypes.shape({
+      hasErrorMessages: PropTypes.bool
+    })
+  }),
+  showErrorMessage: PropTypes.func,
+  task: PropTypes.shape({
+    taskId: PropTypes.string
+  })
+};
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
