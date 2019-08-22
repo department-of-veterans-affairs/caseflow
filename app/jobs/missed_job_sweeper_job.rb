@@ -14,10 +14,11 @@ class MissedJobSweeperJob < CaseflowJob
   private
 
   def check_distribution_jobs
-    missed_jobs = Distribution.pending.where("created_at < ?", 55.minutes.ago)
-    missed_jobs.each do |distribution|
-      slack_service.send_notification("Restarted Distribution job #{distribution.id}")
-      StartDistributionJob.perform_now(distribution, distribution.judge)
-    end
+    slack_service.send_notification("Restarting jobs for Distributions: #{missed_distribution_jobs.map(&:id)}")
+    missed_distribution_jobs.each { |distribution| StartDistributionJob.perform_now(distribution, distribution.judge) }
+  end
+
+  def missed_distribution_jobs
+    @missed_distribution_jobs ||= Distribution.pending.where("created_at < ?", 55.minutes.ago)
   end
 end

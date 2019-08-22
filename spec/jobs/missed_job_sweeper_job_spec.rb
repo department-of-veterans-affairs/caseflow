@@ -9,9 +9,8 @@ describe MissedJobSweeperJob do
       allow(slack_service).to receive(:send_notification) { true }
       allow_any_instance_of(described_class).to receive(:slack_service).and_return(slack_service)
 
-      distribution = double("Distribution")
-      allow(distribution).to receive(:id).and_return(111)
-      allow(distribution).to receive(:judge).and_return(double("User"))
+      distribution_id = 111
+      distribution = double("Distribution", id: distribution_id, judge: double("User"))
       allow(distribution).to receive(:distribute!)
       allow(Distribution).to receive(:pending).and_return(Distribution)
       allow(Distribution).to receive(:where).with("created_at < ?", kind_of(ActiveSupport::TimeWithZone)) do |*args|
@@ -21,7 +20,8 @@ describe MissedJobSweeperJob do
       described_class.perform_now
 
       expect(distribution).to have_received(:distribute!).once
-      expect(slack_service).to have_received(:send_notification).once
+      message = "Restarting jobs for Distributions: [#{distribution_id}]"
+      expect(slack_service).to have_received(:send_notification).with(message).once
     end
   end
 end
