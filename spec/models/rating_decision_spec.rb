@@ -6,11 +6,18 @@ describe RatingDecision do
   before do
     Time.zone = "UTC"
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+
+    FeatureToggle.enable!(:contestable_rating_decisions)
+  end
+
+  after do
+    FeatureToggle.disable!(:contestable_rating_decisions)
   end
 
   let(:profile_date) { Time.zone.today - 40 }
   let(:promulgation_date) { Time.zone.today - 30 }
   let(:participant_id) { "1234567" }
+  let(:begin_date) { profile_date + 30.days }
 
   context ".deserialize" do
     subject { described_class.deserialize(rating_decision.serialize) }
@@ -18,11 +25,12 @@ describe RatingDecision do
     let(:rating_decision) do
       described_class.new(
         profile_date: profile_date,
+        promulgation_date: promulgation_date,
         rating_sequence_number: "1234",
         disability_id: "5678",
         diagnostic_text: "tinnitus",
         diagnostic_code: "6260",
-        disability_date: profile_date + 30.days,
+        begin_date: begin_date,
         participant_id: participant_id,
         benefit_type: :compensation
       )
@@ -55,9 +63,9 @@ describe RatingDecision do
     let(:bgs_record) do
       {
         decn_tn: decision_type_name,
-        dis_dt: 1.year.ago,
         dis_sn: "67468264",
         disability_evaluations: {
+          begin_dt: begin_date,
           dgnstc_tc: "6260",
           dgnstc_tn: "Tinnitus",
           dgnstc_txt: "tinnitus",
@@ -74,16 +82,52 @@ describe RatingDecision do
       is_expected.to have_attributes(
         type_name: decision_type_name,
         rating_sequence_number: "227606458",
-        rating_reference_id: "56780000",
+        rating_issue_reference_id: "56780000",
         disability_id: "67468264",
         diagnostic_text: "tinnitus",
         diagnostic_type: "Tinnitus",
         diagnostic_code: "6260",
-        disability_date: 1.year.ago,
+        begin_date: begin_date,
         profile_date: profile_date,
         participant_id: rating.participant_id,
         benefit_type: :pension
       )
+    end
+
+    context "with multiple disabilities" do
+      let(:bgs_record) do
+        {
+          decn_tn: decision_type_name,
+          dis_dt: 1.year.ago,
+          dis_sn: "67468264",
+          disability_evaluations: [
+            {
+              dis_dt: 1.year.ago - 1.day,
+              dgnstc_tc: "6260",
+              dgnstc_tn: "Tinnitus",
+              dgnstc_txt: "tinnitus",
+              prfl_dt: profile_date,
+              rating_sn: "227606458",
+              rba_issue_id: "56780000"
+            },
+            {
+              dis_dt: 1.year.ago,
+              dgnstc_tc: "6260",
+              dgnstc_tn: "Tinnitus",
+              dgnstc_txt: "tinnitus",
+              prfl_dt: profile_date,
+              rating_sn: "later",
+              rba_issue_id: "later"
+            }
+          ]
+        }
+      end
+
+      it "prefers latest date" do
+        expect(subject).to have_attributes(
+          rating_sequence_number: "later", rating_issue_reference_id: "later"
+        )
+      end
     end
 
     describe "#service_connected?" do
@@ -97,6 +141,12 @@ describe RatingDecision do
         it "returns false" do
           expect(subject.service_connected?).to eq(false)
         end
+      end
+    end
+
+    describe "#decision_date" do
+      it "uses the begin_date if available" do
+        expect(subject.decision_date).to eq(begin_date)
       end
     end
   end
