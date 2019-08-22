@@ -42,7 +42,7 @@ export default class SearchBar extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.value !== nextProps.value) {
       this.clearSearchCallback();
 
