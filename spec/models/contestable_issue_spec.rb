@@ -22,10 +22,11 @@ describe ContestableIssue, :postgres do
   let(:profile_date) { Time.zone.today }
   let(:promulgation_date) { Time.zone.today - 30 }
   let(:diagnostic_code) { "diagnostic_code" }
+  let(:participant_id) { "123" }
   let(:rating_issue) do
     RatingIssue.new(
       reference_id: "NBA",
-      participant_id: "123",
+      participant_id: participant_id,
       profile_date: profile_date,
       promulgation_date: promulgation_date,
       diagnostic_code: diagnostic_code,
@@ -48,6 +49,54 @@ describe ContestableIssue, :postgres do
     )
   end
 
+  let(:rating_decision) do
+    RatingDecision.new(
+      profile_date: profile_date,
+      promulgation_date: promulgation_date,
+      begin_date: promulgation_date - 1.day,
+      rating_sequence_number: "1234",
+      disability_id: "5678",
+      diagnostic_text: "tinnitus",
+      diagnostic_code: diagnostic_code,
+      participant_id: participant_id,
+      benefit_type: benefit_type
+    )
+  end
+
+  context ".from_rating_decision" do
+    subject { described_class.from_rating_decision(rating_decision, decision_review) }
+
+    it "can be serialized" do
+      contestable_issue = subject
+      expect(contestable_issue).to have_attributes(
+        rating_issue_reference_id: nil,
+        rating_issue_profile_date: profile_date,
+        decision_issue: nil,
+        approx_decision_date: rating_decision.begin_date,
+        description: rating_decision.diagnostic_text,
+        contesting_decision_review: decision_review,
+        rating_issue_diagnostic_code: diagnostic_code,
+        source_review_type: nil
+      )
+
+      expect(contestable_issue.serialize).to eq(
+        ratingIssueReferenceId: nil,
+        ratingDecisionReferenceId: rating_decision.rating_sequence_number,
+        ratingIssueProfileDate: profile_date,
+        ratingIssueDiagnosticCode: diagnostic_code,
+        decisionIssueId: nil,
+        approxDecisionDate: rating_decision.begin_date,
+        description: rating_decision.diagnostic_text,
+        isRating: true,
+        rampClaimId: nil,
+        titleOfActiveReview: nil,
+        sourceReviewType: nil,
+        timely: true,
+        latestIssuesInChain: [{ id: nil, approxDecisionDate: rating_decision.begin_date }]
+      )
+    end
+  end
+
   context ".from_rating_issue" do
     subject { ContestableIssue.from_rating_issue(rating_issue, decision_review) }
 
@@ -68,6 +117,7 @@ describe ContestableIssue, :postgres do
         ratingIssueReferenceId: rating_issue.reference_id,
         ratingIssueProfileDate: profile_date,
         ratingIssueDiagnosticCode: diagnostic_code,
+        ratingDecisionReferenceId: nil,
         decisionIssueId: nil,
         approxDecisionDate: promulgation_date,
         description: rating_issue.decision_text,
@@ -88,6 +138,7 @@ describe ContestableIssue, :postgres do
           ratingIssueReferenceId: rating_issue.reference_id,
           ratingIssueProfileDate: profile_date,
           ratingIssueDiagnosticCode: diagnostic_code,
+          ratingDecisionReferenceId: nil,
           decisionIssueId: nil,
           approxDecisionDate: promulgation_date,
           description: rating_issue.decision_text,
@@ -122,6 +173,7 @@ describe ContestableIssue, :postgres do
         ratingIssueReferenceId: "rating1",
         ratingIssueProfileDate: profile_date,
         ratingIssueDiagnosticCode: nil,
+        ratingDecisionReferenceId: nil,
         decisionIssueId: decision_issue.id,
         approxDecisionDate: caseflow_decision_date,
         description: decision_issue.description,
@@ -142,6 +194,7 @@ describe ContestableIssue, :postgres do
           ratingIssueReferenceId: "rating1",
           ratingIssueProfileDate: profile_date,
           ratingIssueDiagnosticCode: nil,
+          ratingDecisionReferenceId: nil,
           decisionIssueId: decision_issue.id,
           approxDecisionDate: caseflow_decision_date,
           description: decision_issue.description,
