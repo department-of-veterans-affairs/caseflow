@@ -22,6 +22,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def cache_ama_appeals
     appeals = Appeal.find(open_appeals_from_tasks)
     request_issues_to_cache = request_issue_counts_for_appeal_ids(appeals.pluck(:id))
@@ -46,14 +47,21 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       }
     end
 
-    update_columns = [:assignee_label, :case_type, :closest_regional_office_city, :docket_type, :docket_number,
-                      :is_aod, :issue_count, :veteran_name]
+    update_columns = [:assignee_label,
+                      :case_type,
+                      :closest_regional_office_city,
+                      :docket_type,
+                      :docket_number,
+                      :is_aod,
+                      :issue_count,
+                      :veteran_name]
     CachedAppeal.import appeals_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
                                                                      columns: update_columns }
 
     increment_appeal_count(appeals_to_cache.length, Appeal.name)
   end
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   def open_appeals_from_tasks
     Task.open.where(appeal_type: Appeal.name).pluck(:appeal_id).uniq
@@ -183,7 +191,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       .where("tasks.assigned_to_type = 'User'").pluck(:created_at, :appeal_id, "users.css_id")
 
     # Combine the user & org tasks, preferring the most recently created (last) task
-    appeals = (org_tasks + user_tasks).sort_by { |task| task[0] }.map { |task| task.drop(1) }.to_h
+    (org_tasks + user_tasks).sort_by { |task| task[0] }.map { |task| task.drop(1) }.to_h
   end
 
   def case_status_for_vacols_id(vacols_ids)
