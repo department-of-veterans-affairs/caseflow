@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -87,6 +88,19 @@ class CreateChangeHearingDispositionTaskModal extends React.Component {
     </QueueFlowModal>;
   }
 }
+
+CreateChangeHearingDispositionTaskModal.propTypes = {
+  appeal: PropTypes.shape({
+    externalId: PropTypes.string,
+    veteranFullName: PropTypes.string
+  }),
+  highlightFormItems: PropTypes.bool,
+  onReceiveAmaTasks: PropTypes.func,
+  requestSave: PropTypes.func,
+  task: PropTypes.shape({
+    taskId: PropTypes.string
+  })
+};
 
 const mapStateToProps = (state, ownProps) => {
   const {
