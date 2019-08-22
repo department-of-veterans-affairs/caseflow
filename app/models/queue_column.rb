@@ -62,7 +62,6 @@ class QueueColumn
   def case_type_options(tasks)
     options = tasks.joins(CachedAppeal.left_join_from_tasks_clause)
       .group(:case_type).count.each_pair.map do |option, count|
-      # TODO: Map the label to the correct friendly name.
       label = format_option_label(option, count)
       filter_option_hash(option, label)
     end
