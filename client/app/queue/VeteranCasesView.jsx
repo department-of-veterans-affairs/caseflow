@@ -86,13 +86,13 @@ class VeteranCasesView extends React.PureComponent {
 }
 
 VeteranCasesView.propTypes = {
+  appeals: PropTypes.arrayOf(PropTypes.object),
   caseflowVeteranId: PropTypes.number,
-  veteranId: PropTypes.string,
+  fetchedAllCasesFor: PropTypes.object,
   hideVeteranCaseList: PropTypes.func,
   onReceiveAppealDetails: PropTypes.func,
   setFetchedAllCasesFor: PropTypes.func,
-  appeals: PropTypes.array,
-  fetchedAllCasesFor: PropTypes.object
+  veteranId: PropTypes.string
 };
 
 VeteranCasesView.defaultProps = {
