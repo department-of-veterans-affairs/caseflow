@@ -149,5 +149,11 @@ describe RatingDecision do
         expect(subject.decision_date).to eq(begin_date)
       end
     end
+
+    describe "#reference_id" do
+      it "uses the disability id" do
+        expect(subject.reference_id).to eq("67468264")
+      end
+    end
   end
 end

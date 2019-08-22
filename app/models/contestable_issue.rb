@@ -49,7 +49,7 @@ class ContestableIssue
       new(
         rating_issue_reference_id: rating_decision.rating_issue_reference_id,
         rating_issue_profile_date: rating_decision.profile_date.to_date,
-        rating_decision_reference_id: rating_decision.rating_sequence_number,
+        rating_decision_reference_id: rating_decision.reference_id,
         approx_decision_date: rating_decision.decision_date.to_date,
         description: rating_decision.diagnostic_text,
         contesting_decision_review: contesting_decision_review,

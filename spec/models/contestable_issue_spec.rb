@@ -81,7 +81,7 @@ describe ContestableIssue, :postgres do
 
       expect(contestable_issue.serialize).to eq(
         ratingIssueReferenceId: nil,
-        ratingDecisionReferenceId: rating_decision.rating_sequence_number,
+        ratingDecisionReferenceId: rating_decision.reference_id,
         ratingIssueProfileDate: profile_date,
         ratingIssueDiagnosticCode: diagnostic_code,
         decisionIssueId: nil,
