@@ -606,6 +606,10 @@ class Appeal < DecisionReview
     @events ||= AppealEvents.new(appeal: self).all
   end
 
+  def active_request_issues_or_decision_isssues
+    decision_issues.empty? ? request_issues.active.all : fetch_all_decision_issues
+  end
+
   def fetch_all_decision_issues
     return decision_issues unless decision_issues.remanded.any?
     # only include the remanded issues if they are still being worked on
