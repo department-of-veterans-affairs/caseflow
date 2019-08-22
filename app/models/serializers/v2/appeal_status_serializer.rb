@@ -2,6 +2,9 @@
 
 class V2::AppealStatusSerializer
   include FastJsonapi::ObjectSerializer
+  include StatusFieldSerializer
+  include IssuesFieldSerializer
+  
   set_key_transform :camel_lower
   set_type :appeal
   set_id :appeal_status_id
@@ -27,13 +30,13 @@ class V2::AppealStatusSerializer
   attribute :aoj
   attribute :program_area, &:program
   attribute :status do |object|
-    StatusSerializer.new(object).serializable_hash[:data][:attributes]
+    status(object)
   end
   attribute :alerts
   attribute :docket, &:docket_hash
   attribute :events
   attribute :issues do |object|
-    IssueSerializer.new(object.active_request_issues_or_decision_isssues, is_collection: true).serializable_hash[:data].collect{|issue| issue[:attributes]}
+    issues(object)
   end
 
   # Stubbed attributes
