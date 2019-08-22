@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -113,6 +114,22 @@ class QueueLoadingScreen extends React.PureComponent {
     </div>;
   };
 }
+
+QueueLoadingScreen.propTypes = {
+  amaTasks: PropTypes.object,
+  appeals: PropTypes.object,
+  children: PropTypes.node,
+  fetchAllAttorneys: PropTypes.func,
+  fetchAmaTasksOfUser: PropTypes.func,
+  loadedUserId: PropTypes.number,
+  onReceiveQueue: PropTypes.func,
+  setAttorneysOfJudge: PropTypes.func,
+  setUserId: PropTypes.func,
+  tasks: PropTypes.object,
+  urlToLoad: PropTypes.string,
+  userId: PropTypes.number,
+  userRole: PropTypes.string
+};
 
 const mapStateToProps = (state) => {
   const { tasks, amaTasks, appeals } = state.queue;
