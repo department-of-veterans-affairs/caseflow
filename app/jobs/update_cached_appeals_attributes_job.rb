@@ -33,7 +33,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       {
         appeal_id: appeal.id,
         appeal_type: Appeal.name,
-        case_type: appeal.type.downcase,
+        case_type: appeal.type,
         closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
         issue_count: request_issues_to_cache[appeal.id] || 0,
         docket_type: appeal.docket_type,
@@ -150,7 +150,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   def case_status_for_vacols_id(vacols_ids)
     statuses = VACOLS::Case.where(bfkey: vacols_ids).pluck(:bfac).map do |value|
-      VACOLS::Case::BFAC_TYPE_CACHE_KEY[value]
+      VACOLS::Case::TYPES[value]
     end
     vacols_ids.zip(statuses).to_h
   end
