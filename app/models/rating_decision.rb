@@ -6,31 +6,37 @@
 
 class RatingDecision
   include ActiveModel::Model
+  include LatestRatingDisabilityEvaluation
 
-  attr_accessor :benefit_type,
+  attr_accessor :begin_date,
+                :benefit_type,
+                :converted_begin_date,
                 :diagnostic_code,
                 :diagnostic_text,
                 :diagnostic_type,
-                :disability_date,
                 :disability_id,
                 :participant_id,
                 :profile_date,
+                :promulgation_date,
                 :rating_sequence_number,
-                :rating_reference_id,
+                :rating_issue_reference_id,
                 :type_name
 
   class << self
     def from_bgs_disability(rating, disability)
+      latest_evaluation = latest_disability_evaluation(disability)
       new(
         type_name: disability[:decn_tn],
-        rating_sequence_number: disability[:disability_evaluations][:rating_sn],
-        rating_reference_id: disability[:disability_evaluations][:rba_issue_id], # ok if nil
+        rating_sequence_number: latest_evaluation[:rating_sn],
+        rating_issue_reference_id: latest_evaluation[:rba_issue_id], # ok if nil
         disability_id: disability[:dis_sn],
-        diagnostic_text: disability[:disability_evaluations][:dgnstc_txt],
-        diagnostic_type: disability[:disability_evaluations][:dgnstc_tn],
-        diagnostic_code: disability[:disability_evaluations][:dgnstc_tc],
-        disability_date: disability[:dis_dt],
-        profile_date: disability[:disability_evaluations][:prfl_dt],
+        diagnostic_text: latest_evaluation[:dgnstc_txt],
+        diagnostic_type: latest_evaluation[:dgnstc_tn],
+        diagnostic_code: latest_evaluation[:dgnstc_tc],
+        begin_date: latest_evaluation[:begin_dt],
+        converted_begin_date: latest_evaluation[:conv_begin_dt],
+        profile_date: rating.profile_date,
+        promulgation_date: rating.promulgation_date,
         participant_id: rating.participant_id,
         benefit_type: rating.pension? ? :pension : :compensation
       )
@@ -39,6 +45,10 @@ class RatingDecision
     def deserialize(hash)
       new(hash)
     end
+  end
+
+  def decision_date
+    converted_begin_date || begin_date || promulgation_date
   end
 
   # If you change this method, you will need to clear cache in prod for your changes to
