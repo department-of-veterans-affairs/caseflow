@@ -8,7 +8,7 @@
 class BoardGrantEffectuationTask < DecisionReviewTask
   include BusinessLineTask
 
-  def self.label
+  def label
     "Board Grant"
   end
 
