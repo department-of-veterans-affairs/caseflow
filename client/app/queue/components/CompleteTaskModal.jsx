@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -19,6 +20,54 @@ import { taskActionData } from '../utils';
 
 import QueueFlowModal from './QueueFlowModal';
 
+const MarkTaskCompleteModal = ({ props, state, setState }) => {
+  const taskConfiguration = taskActionData(props);
+
+  return <React.Fragment>
+    {
+      taskConfiguration && taskConfiguration.modal_body
+    }
+    {
+      (!taskConfiguration || !taskConfiguration.modal_hide_instructions) &&
+      <TextareaField
+        label="Instructions:"
+        name="instructions"
+        id="completeTaskInstructions"
+        onChange={(value) => setState({ instructions: value })}
+        value={state.instructions}
+        styling={marginTop(4)}
+        maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+      />
+    }
+  </React.Fragment>;
+};
+
+MarkTaskCompleteModal.propTypes = {
+  props: PropTypes.object,
+  setState: PropTypes.func,
+  state: PropTypes.object
+};
+
+const SendColocatedTaskModal = ({ appeal, teamName }) => (
+  <React.Fragment>
+    {
+      sprintf(
+        COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY,
+        appeal.veteranFullName,
+        appeal.veteranFileNumber)
+    }&nbsp;
+    <strong>{teamName}</strong>.
+  </React.Fragment>
+);
+
+SendColocatedTaskModal.propTypes = {
+  appeal: PropTypes.shape({
+    veteranFileNumber: PropTypes.string,
+    veteranFullName: PropTypes.string
+  }),
+  teamName: PropTypes.string
+};
+
 const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
   mark_task_complete: {
     buildSuccessMsg: (appeal, { assignerName }) => ({
@@ -26,28 +75,7 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
       detail: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assignerName)
     }),
     title: () => COPY.MARK_TASK_COMPLETE_TITLE,
-    getContent: ({ props, state, setState }) => {
-      const taskConfiguration = taskActionData(props);
-
-      return <React.Fragment>
-        {
-          taskConfiguration && taskConfiguration.modal_body
-        }
-        {
-          (!taskConfiguration || !taskConfiguration.modal_hide_instructions) &&
-          <TextareaField
-            label="Instructions:"
-            name="instructions"
-            id="completeTaskInstructions"
-            onChange={(value) => setState({ instructions: value })}
-            value={state.instructions}
-            styling={marginTop(4)}
-            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
-          />
-        }
-      </React.Fragment>
-      ;
-    },
+    getContent: MarkTaskCompleteModal,
     buttonText: COPY.MARK_TASK_COMPLETE_BUTTON
   },
   send_colocated_task: {
@@ -58,10 +86,7 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
       )
     }),
     title: ({ teamName }) => sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD, teamName),
-    getContent: ({ appeal, teamName }) => <React.Fragment>
-      {sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY, appeal.veteranFullName, appeal.veteranFileNumber)}&nbsp;
-      <strong>{teamName}</strong>.
-    </React.Fragment>,
+    getContent: SendColocatedTaskModal,
     buttonText: COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON
   }
 };
@@ -127,6 +152,24 @@ class CompleteTaskModal extends React.Component {
     </QueueFlowModal>;
   };
 }
+
+CompleteTaskModal.propTypes = {
+  appeal: PropTypes.shape({
+    veteranFileNumber: PropTypes.string,
+    veteranFullName: PropTypes.string
+  }),
+  modalType: PropTypes.string,
+  onReceiveAmaTasks: PropTypes.func,
+  requestPatch: PropTypes.func,
+  task: PropTypes.shape({
+    assignedBy: PropTypes.shape({
+      firstName: PropTypes.string,
+      lastName: PropTypes.string
+    }),
+    label: PropTypes.string,
+    taskId: PropTypes.string
+  })
+};
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
