@@ -41,8 +41,6 @@ class TaskFilter
 
   private
 
-  # TODO: Peel is_aod off of the case type column and make that its own part of the where clause. Do this in a later
-  # PR.
   def table_column_from_name(column_name)
     case column_name
     when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
