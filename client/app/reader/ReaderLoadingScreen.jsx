@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
@@ -49,6 +50,15 @@ export class ReaderLoadingScreen extends React.Component {
     return loadingDataDisplay;
   }
 }
+
+ReaderLoadingScreen.propTypes = {
+  children: PropTypes.node,
+  loadedAppealId: PropTypes.string,
+  onReceiveAnnotations: PropTypes.func,
+  onReceiveDocs: PropTypes.func,
+  onReceiveManifests: PropTypes.func,
+  vacolsId: PropTypes.string
+};
 
 const mapStateToProps = (state) => ({
   loadedAppealId: state.pdfViewer.loadedAppealId
