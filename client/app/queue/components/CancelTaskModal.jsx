@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -57,6 +58,17 @@ class CancelTaskModal extends React.Component {
     </QueueFlowModal>;
   };
 }
+
+CancelTaskModal.propTypes = {
+  hearingDay: PropTypes.shape({
+    regionalOffice: PropTypes.string
+  }),
+  onReceiveAmaTasks: PropTypes.func,
+  requestPatch: PropTypes.func,
+  task: PropTypes.shape({
+    taskId: PropTypes.string
+  })
+};
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
