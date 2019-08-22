@@ -4,9 +4,8 @@ class QueueColumn
   include ActiveModel::Model
 
   validates :name, :sorting_table, :sorting_columns, presence: true
-  validate :filter_function_is_valid
 
-  attr_accessor :name, :sorting_table, :sorting_columns, :filter_function
+  attr_accessor :name, :sorting_table, :sorting_columns
 
   def initialize(args)
     super
@@ -24,13 +23,26 @@ class QueueColumn
   end
 
   def to_hash(tasks)
-    return { name: name, filterable: false, filter_options: nil } if filter_function.nil?
+    filtered_tasks = filter_options(tasks)
 
     {
       name: name,
-      filterable: true,
-      filter_options: send(filter_function.to_sym, tasks)
+      filterable: !filtered_tasks.nil?,
+      filter_options: filtered_tasks
     }
+  end
+
+  def filter_options(tasks)
+    case name
+    when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
+      case_type_options(tasks)
+    when Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name
+      docket_type_options(tasks)
+    when Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name
+      regional_office_options(tasks)
+    when Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name
+      task_type_options(tasks)
+    end
   end
 
   private
@@ -47,29 +59,7 @@ class QueueColumn
     { value: URI.escape(URI.escape(value)), label: label }
   end
 
-  def filter_docket_type(tasks)
-    tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:docket_type).count.each_pair.map do |option, count|
-      label = format_option_label(Constants::DOCKET_NAME_FILTERS[option], count)
-      filter_option_hash(option, label)
-    end
-  end
-
-  def filter_task_type(tasks)
-    tasks.group(:type).count.each_pair.map do |option, count|
-      label = format_option_label(Object.const_get(option).label, count)
-      filter_option_hash(option, label)
-    end
-  end
-
-  def filter_regional_office(tasks)
-    tasks.joins(CachedAppeal.left_join_from_tasks_clause)
-      .group(:closest_regional_office_city).count.each_pair.map do |option, count|
-      label = format_option_label(option, count)
-      filter_option_hash(option, label)
-    end
-  end
-
-  def filter_case_type(tasks)
+  def case_type_options(tasks)
     options = tasks.joins(CachedAppeal.left_join_from_tasks_clause)
       .group(:case_type).count.each_pair.map do |option, count|
       # TODO: Map the label to the correct friendly name.
@@ -84,16 +74,25 @@ class QueueColumn
     [filter_option_hash("is_aod", aod_option_label)] + options
   end
 
-  def filter_function_is_valid
-    valid_filter_functions = [
-      Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.filter_function,
-      Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.filter_function,
-      Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.filter_function,
-      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.filter_function
-    ]
+  def docket_type_options(tasks)
+    tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:docket_type).count.each_pair.map do |option, count|
+      label = format_option_label(Constants::DOCKET_NAME_FILTERS[option], count)
+      filter_option_hash(option, label)
+    end
+  end
 
-    if !filter_function.nil? && !valid_filter_functions.include?(filter_function)
-      errors.add(:assignee, COPY::INVALID_FILTER_FUNCTION)
+  def regional_office_options(tasks)
+    tasks.joins(CachedAppeal.left_join_from_tasks_clause)
+      .group(:closest_regional_office_city).count.each_pair.map do |option, count|
+      label = format_option_label(option, count)
+      filter_option_hash(option, label)
+    end
+  end
+
+  def task_type_options(tasks)
+    tasks.group(:type).count.each_pair.map do |option, count|
+      label = format_option_label(Object.const_get(option).label, count)
+      filter_option_hash(option, label)
     end
   end
 end

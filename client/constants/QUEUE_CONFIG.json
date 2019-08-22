@@ -24,7 +24,6 @@
 
   "COLUMNS": {
     "APPEAL_TYPE": {
-      "filter_function": "filter_case_type",
       "name": "typeColumn",
       "sorting_table": "cached_appeal_attributes",
       "sorting_columns": ["is_aod", "case_type", "docket_number"]
@@ -43,7 +42,6 @@
       "sorting_columns": ["assigned_at"]
     },
     "DOCKET_NUMBER": {
-      "filter_function": "filter_docket_type",
       "name": "docketNumberColumn",
       "sorting_table": "cached_appeal_attributes",
       "sorting_columns": ["docket_type", "docket_number"]
@@ -60,7 +58,6 @@
       "sorting_columns": ["issue_count"]
     },
     "REGIONAL_OFFICE": {
-      "filter_function": "filter_regional_office",
       "name": "regionalOfficeColumn",
       "sorting_table": "cached_appeal_attributes",
       "sorting_columns": ["closest_regional_office_city"]
@@ -92,7 +89,6 @@
       "sorting_columns": ["placed_on_hold_at"]
     },
     "TASK_TYPE": {
-      "filter_function": "filter_task_type",
       "name": "taskColumn",
       "sorting_table": "tasks",
       "sorting_columns": ["type", "action", "created_at"]

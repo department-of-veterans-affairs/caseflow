@@ -491,7 +491,6 @@
   "WHAT_IS_INELIGIBLE_EVIDENCE": "What is ineligible evidence?",
 
   "INVALID_TASKS_ARGUMENT": "must be an ActiveRecord::Relation object",
-  "INVALID_FILTER_FUNCTION": "must be in set of valid filter_functions",
   "INVALID_SORT_COLUMN": "must be a QueueColumn",
   "TASK_PAGE_INVALID_ASSIGNEE_MESSAGE": "must be either a User or an Organization",
   "TASK_PAGE_INVALID_SORT_ORDER": "must be either asc or desc",
