@@ -7,8 +7,8 @@ describe StatusSerializer, :all_dbs do
     StatusSerializer.new(object).serializable_hash[:data][:attributes]
   end
 
-	context "#appeal" do
-		let(:judge) { create(:user) }
+  context "#appeal" do
+    let(:judge) { create(:user) }
     let!(:hearings_user) { create(:hearings_coordinator) }
     let!(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
     let(:appeal) { create(:appeal, receipt_date: receipt_date) }
@@ -293,7 +293,7 @@ describe StatusSerializer, :all_dbs do
         end
       end
     end
-	end
+  end
 
   context "#higher_level_review" do
     let(:receipt_date) { Time.new("2018", "03", "01").utc }
