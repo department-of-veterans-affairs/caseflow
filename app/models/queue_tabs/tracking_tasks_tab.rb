@@ -17,7 +17,7 @@ class TrackingTasksTab < QueueTab
     TrackVeteranTask.includes(*task_includes).active.where(assigned_to: assignee)
   end
 
-  def columns
+  def column_names
     [
       Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
       Constants.QUEUE_CONFIG.ISSUE_COUNT_COLUMN,

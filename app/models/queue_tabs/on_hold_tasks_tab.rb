@@ -17,7 +17,7 @@ class OnHoldTasksTab < QueueTab
     Task.includes(*task_includes).visible_in_queue_table_view.on_hold.where(parent: on_hold_tasks)
   end
 
-  def columns
+  def column_names
     [
       Constants.QUEUE_CONFIG.HEARING_BADGE_COLUMN,
       Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,

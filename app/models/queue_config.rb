@@ -54,7 +54,7 @@ class QueueConfig
       total_task_count: tab.tasks.count,
       task_page_endpoint_base_path: endpoint,
       # TODO: Change the front-end to accept columns when the names are inside of a hash.
-      columns: tab.columns.map { |col| QueueColumn.from_name(col).to_hash(tasks) }
+      columns: tab.columns.map { |column| column.to_hash(tab.tasks) }
     )
   end
 
