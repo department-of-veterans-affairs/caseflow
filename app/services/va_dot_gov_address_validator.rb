@@ -40,7 +40,14 @@ class VaDotGovAddressValidator
   end
 
   def closest_regional_office
-    @closest_regional_office ||= closest_possible_regional_office
+    @closest_regional_office ||= begin
+      return unless closest_facility_response.success?
+
+      VaDotGovAddressValidator::ClosestRegionalOfficeFinder.new(
+        facilities: closest_facility_response.data,
+        closest_facility_id: closest_facility_id
+      ).call
+    end
   end
 
   def available_hearing_locations
@@ -127,34 +134,6 @@ class VaDotGovAddressValidator
 
   def closest_facility_id
     closest_facility_response.data[0]&.dig(:facility_id)
-  end
-
-  def closest_facilities_hash
-    @closest_facilities_hash ||= begin
-      facility_tuples = closest_facility_response.data.map { |facility| [facility[:facility_id], facility] }
-      Hash[facility_tuples]
-    end
-  end
-
-  def closest_possible_regional_office
-    return nil unless closest_facility_response.success?
-
-    # a facility id can be both an alternate location and an RO
-    # and could also be an alternate location for more than one RO
-    # find all possible ROs for the facility id and sort by distance
-    possible_ros = RegionalOffice::CITIES.select do |_key, val|
-      val[:facility_locator_id] == closest_facility_id ||
-        val[:alternate_locations]&.include?(closest_facility_id)
-    end
-
-    # get distance for each possible regional office from facility response and sort
-    possible_ros.map do |regional_office_key, val|
-      regional_office_facility = closest_facilities_hash[val[:facility_locator_id]]
-      val.merge(
-        distance: regional_office_facility[:distance],
-        regional_office_key: regional_office_key
-      )
-    end.min_by(&:distance).dig(:regional_office_key)
   end
 
   def validate_zip_code
