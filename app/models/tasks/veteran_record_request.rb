@@ -6,7 +6,7 @@
 class VeteranRecordRequest < DecisionReviewTask
   include BusinessLineTask
 
-  def label
+  def self.label
     "Record Request"
   end
 
