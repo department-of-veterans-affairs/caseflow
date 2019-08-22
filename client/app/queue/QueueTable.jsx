@@ -3,20 +3,21 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { css, hover } from 'glamor';
 import _ from 'lodash';
-
 import Tooltip from '../components/Tooltip';
 import { DoubleArrow } from '../components/RenderFunctions';
 import TableFilter from '../components/TableFilter';
 import FilterSummary from '../components/FilterSummary';
 import Pagination from '../components/Pagination';
-import {
-  COLORS,
-  LOGO_COLORS
-} from '../constants/AppConstants';
+import { COLORS, LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import LoadingScreen from '../components/LoadingScreen';
 import { tasksWithAppealsFromRawTasks } from './utils';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
+
+const COLUMNS_TYPE = PropTypes.oneOfType([
+  PropTypes.arrayOf(PropTypes.object),
+  PropTypes.func
+]).isRequired;
 
 /**
  * This component can be used to easily build tables.
@@ -117,6 +118,17 @@ const HeaderRow = (props) => {
   </thead>;
 };
 
+HeaderRow.propTypes = {
+  filteredByList: PropTypes.object,
+  headerClassName: PropTypes.string,
+  rowObjects: PropTypes.arrayOf(PropTypes.object),
+  setSortOrder: PropTypes.func,
+  sortAscending: PropTypes.bool,
+  sortColName: PropTypes.string,
+  updateFilteredByList: PropTypes.func,
+  useTaskPagesApi: PropTypes.bool
+};
+
 const getCellValue = (rowObject, rowId, column) => {
   if (column.valueFunction) {
     return column.valueFunction(rowObject, rowId);
@@ -160,6 +172,13 @@ class Row extends React.PureComponent {
   }
 }
 
+Row.propTypes = {
+  footer: PropTypes.bool,
+  rowClassNames: PropTypes.func,
+  rowId: PropTypes.string,
+  rowObject: PropTypes.object
+};
+
 class BodyRows extends React.PureComponent {
   render() {
     const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id, getKeyForRow, bodyStyling } = this.props;
@@ -180,6 +199,17 @@ class BodyRows extends React.PureComponent {
   }
 }
 
+BodyRows.propTypes = {
+  bodyClassName: PropTypes.string,
+  bodyStyling: PropTypes.object,
+  columns: COLUMNS_TYPE,
+  getKeyForRow: PropTypes.func,
+  id: PropTypes.string,
+  rowClassNames: PropTypes.func,
+  rowObjects: PropTypes.arrayOf(PropTypes.object),
+  tbodyRef: PropTypes.func
+};
+
 class FooterRow extends React.PureComponent {
   render() {
     const props = this.props;
@@ -190,6 +220,10 @@ class FooterRow extends React.PureComponent {
     </tfoot>;
   }
 }
+
+FooterRow.propTypes = {
+  columns: COLUMNS_TYPE
+};
 
 export default class QueueTable extends React.PureComponent {
   constructor(props) {
@@ -216,10 +250,7 @@ export default class QueueTable extends React.PureComponent {
 
   sortRowObjects = () => {
     const { rowObjects } = this.props;
-    const {
-      sortColName,
-      sortAscending
-    } = this.state;
+    const { sortColName, sortAscending } = this.state;
 
     if (sortColName === null) {
       return rowObjects;
@@ -303,10 +334,7 @@ export default class QueueTable extends React.PureComponent {
   );
 
   updateCurrentPage = (newPage) => {
-    this.setState(
-      { currentPage: newPage },
-      this.requestTasks
-    );
+    this.setState({ currentPage: newPage }, this.requestTasks);
   }
 
   // /organizations/vlj-support-staff/tasks?tab=on_hold
@@ -325,9 +353,9 @@ export default class QueueTable extends React.PureComponent {
         QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC;
     }
 
-    const queryString = Object.keys(params).map(
-      (key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
-    ).
+    const queryString = Object.
+      keys(params).
+      map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`).
       join('&');
 
     return `${this.props.taskPagesApiEndpoint}&${queryString}`;
@@ -341,18 +369,14 @@ export default class QueueTable extends React.PureComponent {
     this.setState({ loadingComponent: <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} /> });
 
     return ApiUtil.get(this.requestUrl()).then((response) => {
-      const {
-        tasks: { data: tasks }
-      } = response.body;
+      const { tasks: { data: tasks } } = response.body;
 
       this.setState({
         tasksFromApi: tasksWithAppealsFromRawTasks(tasks),
         loadingComponent: null
       });
     }).
-      catch(() => {
-        this.setState({ loadingComponent: null });
-      });
+      catch(() => this.setState({ loadingComponent: null }));
   };
 
   render() {
@@ -374,12 +398,7 @@ export default class QueueTable extends React.PureComponent {
       useTaskPagesApi
     } = this.props;
 
-    let {
-      totalTaskCount,
-      numberOfPages,
-      rowObjects,
-      casesPerPage
-    } = this.props;
+    let { totalTaskCount, numberOfPages, rowObjects, casesPerPage } = this.props;
 
     if (useTaskPagesApi) {
       if (this.state.tasksFromApi.length) {
@@ -474,28 +493,33 @@ export default class QueueTable extends React.PureComponent {
 }
 
 QueueTable.propTypes = {
-  tbodyId: PropTypes.string,
-  tbodyRef: PropTypes.func,
-  columns: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.object),
-    PropTypes.func]).isRequired,
-  rowObjects: PropTypes.arrayOf(PropTypes.object).isRequired,
-  rowClassNames: PropTypes.func,
-  keyGetter: PropTypes.func,
-  slowReRendersAreOk: PropTypes.bool,
-  summary: PropTypes.string,
-  headerClassName: PropTypes.string,
-  className: PropTypes.string,
+  bodyClassName: PropTypes.string,
+  bodyStyling: PropTypes.object,
   caption: PropTypes.string,
-  id: PropTypes.string,
-  styling: PropTypes.object,
+  casesPerPage: PropTypes.number,
+  className: PropTypes.string,
+  columns: COLUMNS_TYPE,
   defaultSort: PropTypes.shape({
     sortColName: PropTypes.string,
     sortAscending: PropTypes.bool
   }),
-  userReadableColumnNames: PropTypes.object,
-  useTaskPagesApi: PropTypes.bool,
-  taskPagesApiEndpoint: PropTypes.string,
   enablePagination: PropTypes.bool,
-  casesPerPage: PropTypes.number
+  getKeyForRow: PropTypes.func,
+  headerClassName: PropTypes.string,
+  id: PropTypes.string,
+  keyGetter: PropTypes.func,
+  numberOfPages: PropTypes.number,
+  rowClassNames: PropTypes.func,
+  rowObjects: PropTypes.arrayOf(PropTypes.object).isRequired,
+  slowReRendersAreOk: PropTypes.bool,
+  sortAscending: PropTypes.bool,
+  sortColName: PropTypes.string,
+  styling: PropTypes.object,
+  summary: PropTypes.string,
+  taskPagesApiEndpoint: PropTypes.string,
+  tbodyId: PropTypes.string,
+  tbodyRef: PropTypes.func,
+  totalTaskCount: PropTypes.number,
+  useTaskPagesApi: PropTypes.bool,
+  userReadableColumnNames: PropTypes.object
 };
