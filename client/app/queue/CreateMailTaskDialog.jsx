@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -102,6 +103,25 @@ class CreateMailTaskDialog extends React.Component {
     </QueueFlowModal>;
   }
 }
+
+CreateMailTaskDialog.propTypes = {
+  appeal: PropTypes.shape({
+    external_id: PropTypes.string
+  }),
+  appealId: PropTypes.string,
+  highlightFormItems: PropTypes.bool,
+  history: PropTypes.shape({
+    location: PropTypes.shape({
+      pathname: PropTypes.string
+    })
+  }),
+  onReceiveAmaTasks: PropTypes.func,
+  requestSave: PropTypes.func,
+  task: PropTypes.shape({
+    taskId: PropTypes.string,
+    availableAction: PropTypes.array
+  })
+};
 
 const mapStateToProps = (state, ownProps) => {
   const { highlightFormItems } = state.ui;
