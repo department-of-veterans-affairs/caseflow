@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { onReceiveAmaTasks } from './QueueActions';
@@ -36,6 +37,14 @@ class PostponeHearingTaskModal extends React.Component {
     <p>Postponing this case will make the case available to be scheduled again.</p>
   </QueueFlowModal>;
 }
+
+PostponeHearingTaskModal.propTypes = {
+  onReceiveAmaTasks: PropTypes.func,
+  requestSave: PropTypes.func,
+  task: PropTypes.shape({
+    taskId: PropTypes.string
+  })
+};
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId })
