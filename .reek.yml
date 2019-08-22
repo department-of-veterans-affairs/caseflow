@@ -73,6 +73,7 @@ detectors:
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
+      - LatestRatingDisabilityEvaluation#latest_disability_evaluation
       - OnHoldTasksTab#name
 
 ### Directory specific configuration
