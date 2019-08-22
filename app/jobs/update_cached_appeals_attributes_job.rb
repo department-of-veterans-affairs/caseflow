@@ -177,13 +177,13 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def first_task_assignee_per_ama_appeal(tasks)
-    appeals = {}
-    tasks.each do |task|
-      next if appeals[task.appeal_id] != nil
-      appeals[task.appeal_id] = task&.assigned_to_label
-    end
+    org_tasks = tasks.joins("left join organizations on tasks.assigned_to_id = organizations.id")
+      .where("tasks.assigned_to_type = 'Organization'").pluck(:created_at, :appeal_id, "organizations.name")
+    user_tasks = tasks.joins("left join users on tasks.assigned_to_id = users.id")
+      .where("tasks.assigned_to_type = 'User'").pluck(:created_at, :appeal_id, "users.css_id")
 
-    appeals
+    # Combine the user & org tasks, preferring the most recently created (last) task
+    appeals = (org_tasks + user_tasks).sort_by { |task| task[0] }.map { |task| task.drop(1) }.to_h
   end
 
   def case_status_for_vacols_id(vacols_ids)
