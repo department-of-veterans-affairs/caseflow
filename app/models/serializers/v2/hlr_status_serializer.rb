@@ -30,8 +30,7 @@ class V2::HLRStatusSerializer
   end
   attribute :alerts
   attribute :issues do |object|
-    issues_list = object.active? ? object.request_issues.active.all : object.fetch_all_decision_issues
-    IssueSerializer.new(issues_list, is_collection: true).serializable_hash[:data].collect { |issue| issue[:attributes] }
+    IssueSerializer.new(object.active_request_issues_or_decision_isssues, is_collection: true).serializable_hash[:data].collect { |issue| issue[:attributes] }
   end
 
   attribute :events

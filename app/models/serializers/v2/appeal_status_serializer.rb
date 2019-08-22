@@ -33,8 +33,7 @@ class V2::AppealStatusSerializer
   attribute :docket, &:docket_hash
   attribute :events
   attribute :issues do |object|
-    issues_list = object.decision_issues.empty? ? object.request_issues.active.all : object.fetch_all_decision_issues
-    IssueSerializer.new(issues_list, is_collection: true).serializable_hash[:data].collect{|issue| issue[:attributes]}
+    IssueSerializer.new(object.active_request_issues_or_decision_isssues, is_collection: true).serializable_hash[:data].collect{|issue| issue[:attributes]}
   end
 
   # Stubbed attributes

@@ -28,7 +28,7 @@ describe IssueSerializer, :all_dbs do
 
     context "appeal pending a decision" do
       it "is status of the request issues" do
-        issue_statuses = issues_hash(appeal.issues_list)
+        issue_statuses = issues_hash(appeal.active_request_issues_or_decision_isssues)
        
         expect(issue_statuses.count).to eq(2)
 
@@ -69,7 +69,7 @@ describe IssueSerializer, :all_dbs do
       let!(:remanded_ep) { create(:end_product_establishment, source: remanded_sc, synced_status: "PEND") }
 
       it "remanded decision as active, other decision as inactive" do
-        issue_statuses = issues_hash(appeal.issues_list)
+        issue_statuses = issues_hash(appeal.active_request_issues_or_decision_isssues)
 
         expect(issue_statuses.empty?).to eq(false)
 
@@ -115,7 +115,7 @@ describe IssueSerializer, :all_dbs do
       end
 
       it "has the remand sc decision and other decision" do
-        issue_statuses = issues_hash(appeal.issues_list)
+        issue_statuses = issues_hash(appeal.active_request_issues_or_decision_isssues)
 
         expect(issue_statuses.empty?).to eq(false)
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "5002" }
@@ -169,7 +169,7 @@ describe IssueSerializer, :all_dbs do
 
     context "claim open pending decision" do
       it "gets status for the request issues" do
-        issue_statuses = issues_hash(hlr.issues_list)
+        issue_statuses = issues_hash(hlr.active_request_issues_or_decision_isssues)
         expect(issue_statuses.count).to eq(2)
 
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }
@@ -229,7 +229,7 @@ describe IssueSerializer, :all_dbs do
       end
 
       it "will still show the status for the request issues" do
-        issue_statuses = issues_hash(hlr.issues_list)
+        issue_statuses = issues_hash(hlr.active_request_issues_or_decision_isssues)
 
         expect(issue_statuses.empty?).to eq(false)
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }
@@ -299,7 +299,7 @@ describe IssueSerializer, :all_dbs do
       end
 
       it "will get the status for the decisions issues" do
-        issue_statuses = issues_hash(hlr.issues_list)
+        issue_statuses = issues_hash(hlr.active_request_issues_or_decision_isssues)
 
         expect(issue_statuses.empty?).to eq(false)
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }
@@ -343,7 +343,7 @@ describe IssueSerializer, :all_dbs do
 
     context "claim is open, pending a decision" do
       it "status gives status info of the request issue" do
-        issue_statuses = issues_hash(sc.issues_list)
+        issue_statuses = issues_hash(sc.active_request_issues_or_decision_isssues)
         
         expect(issue_statuses.empty?).to eq(false)
         expect(issue_statuses.first[:active]).to eq(true)
@@ -363,7 +363,7 @@ describe IssueSerializer, :all_dbs do
       end
 
       it "status gives status info of the decision issue" do
-        issue_statuses = issues_hash(sc.issues_list)
+        issue_statuses = issues_hash(sc.active_request_issues_or_decision_isssues)
         expect(issue_statuses.empty?).to eq(false)
         expect(issue_statuses.first[:active]).to eq(false)
         expect(issue_statuses.first[:lastAction]).to eq("allowed")
