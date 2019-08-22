@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190816210203) do
+ActiveRecord::Schema.define(version: 20190821162943) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -757,6 +757,7 @@ ActiveRecord::Schema.define(version: 20190816210203) do
     t.string "disposition", comment: "Possible options are Grant, Deny, Withdraw, and Dismiss"
     t.bigint "task_id"
     t.datetime "updated_at", null: false
+    t.string "vacate_type", comment: "Granted motion to vacate can be either Straight Vacate and Readjudication or Vacate and De Novo."
     t.index ["task_id"], name: "index_post_decision_motions_on_task_id"
   end
 
@@ -845,6 +846,7 @@ ActiveRecord::Schema.define(version: 20190816210203) do
     t.datetime "contention_updated_at", comment: "Timestamp indicating when a contention was successfully updated in VBMS."
     t.integer "contested_decision_issue_id", comment: "The ID of the decision issue that this request issue contests. A Request issue will contest either a rating issue or a decision issue"
     t.string "contested_issue_description", comment: "Description of the contested rating or decision issue. Will be either a rating issue's decision text or a decision issue's description."
+    t.string "contested_rating_decision_reference_id", comment: "The BGS id for contested rating decisions. These may not have corresponding contested_rating_issue_reference_id values."
     t.string "contested_rating_issue_diagnostic_code", comment: "If the contested issue is a rating issue, this is the rating issue's diagnostic code. Will be nil if this request issue contests a decision issue."
     t.string "contested_rating_issue_profile_date", comment: "If the contested issue is a rating issue, this is the rating issue's profile date. Will be nil if this request issue contests a decision issue."
     t.string "contested_rating_issue_reference_id", comment: "If the contested issue is a rating issue, this is the rating issue's reference id. Will be nil if this request issue contests a decision issue."

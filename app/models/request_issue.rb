@@ -202,12 +202,13 @@ class RequestIssue < ApplicationRecord
     def rating
       where.not(
         contested_rating_issue_reference_id: nil
-      ).or(where(is_unidentified: true))
+      ).or(where(is_unidentified: true)).or(where.not(contested_rating_decision_reference_id: nil))
     end
 
     def nonrating
       where(
         contested_rating_issue_reference_id: nil,
+        contested_rating_decision_reference_id: nil,
         is_unidentified: [nil, false]
       ).where.not(nonrating_issue_category: nil)
     end
@@ -245,6 +246,7 @@ class RequestIssue < ApplicationRecord
     def unidentified
       where(
         contested_rating_issue_reference_id: nil,
+        contested_rating_decision_reference_id: nil,
         is_unidentified: true
       )
     end
@@ -266,6 +268,7 @@ class RequestIssue < ApplicationRecord
       {
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
         contested_rating_issue_diagnostic_code: data[:rating_issue_diagnostic_code],
+        contested_rating_decision_reference_id: data[:rating_decision_reference_id],
         contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
         nonrating_issue_description: data[:nonrating_issue_category] ? data[:decision_text] : nil,
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
@@ -382,6 +385,7 @@ class RequestIssue < ApplicationRecord
       id: id,
       rating_issue_reference_id: contested_rating_issue_reference_id,
       rating_issue_profile_date: contested_rating_issue_profile_date,
+      rating_decision_reference_id: contested_rating_decision_reference_id,
       description: description,
       contention_text: contention_text,
       approx_decision_date: approx_decision_date_of_issue_being_contested,

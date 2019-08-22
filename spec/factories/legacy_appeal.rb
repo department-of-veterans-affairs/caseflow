@@ -9,6 +9,13 @@ FactoryBot.define do
     vacols_id { vacols_case&.bfkey }
     vbms_id { vacols_case&.bfcorlid }
 
+    trait :with_schedule_hearing_tasks do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
+      end
+    end
+
     trait :with_veteran do
       after(:create) do |legacy_appeal, evaluator|
         veteran = create(
