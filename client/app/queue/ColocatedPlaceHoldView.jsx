@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -30,6 +31,7 @@ import {
 import QueueFlowPage from './components/QueueFlowPage';
 
 class ColocatedPlaceHoldView extends React.Component {
+
   constructor(props) {
     super(props);
 
@@ -156,6 +158,24 @@ class ColocatedPlaceHoldView extends React.Component {
     </QueueFlowPage>;
   }
 }
+
+ColocatedPlaceHoldView.propTypes = {
+  appeal: PropTypes.shape({
+    veteranFileNumber: PropTypes.string,
+    veteranFullName: PropTypes.string
+  }),
+  error: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
+  }),
+  highlightFormItems: PropTypes.bool,
+  onReceiveAmaTasks: PropTypes.func,
+  requestPatch: PropTypes.func,
+  task: PropTypes.shape({
+    label: PropTypes.string,
+    taskId: PropTypes.string
+  })
+};
 
 const mapStateToProps = (state, ownProps) => {
   const {
