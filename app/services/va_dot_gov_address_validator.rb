@@ -131,7 +131,7 @@ class VaDotGovAddressValidator
 
   def closest_facilities_hash
     @closest_facilities_hash ||= begin
-      facility_tuples = clostest_facility_response.data.map { |facility| [facility[:facility_id], facility] }
+      facility_tuples = closest_facility_response.data.map { |facility| [facility[:facility_id], facility] }
       Hash[facility_tuples]
     end
   end
