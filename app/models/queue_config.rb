@@ -52,9 +52,7 @@ class QueueConfig
       # This allows us to only instantiate TaskPager if we are using the task pages API.
       task_page_count: task_pager.task_page_count,
       total_task_count: tab.tasks.count,
-      task_page_endpoint_base_path: endpoint,
-      # TODO: Change the front-end to accept columns when the names are inside of a hash.
-      columns: tab.columns.map { |column| column.to_hash(tab.tasks) }
+      task_page_endpoint_base_path: endpoint
     )
   end
 
