@@ -10,9 +10,14 @@ class WarmBgsCachesJob < CaseflowJob
 
     warm_participant_caches
     warm_veteran_attribute_caches
+    warm_people_caches
   end
 
   private
+
+  def warm_people_caches
+    Person.where(first_name: nil, last_name: nil).order(created_at: :desc).limit(5000).each(&:update_cached_attributes!)
+  end
 
   def warm_participant_caches
     RegionalOffice::CITIES.each_key do |ro_id|
