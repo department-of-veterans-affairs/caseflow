@@ -106,7 +106,7 @@ class CreateMailTaskDialog extends React.Component {
 
 CreateMailTaskDialog.propTypes = {
   appeal: PropTypes.shape({
-    external_id: PropTypes.string
+    externalId: PropTypes.string
   }),
   appealId: PropTypes.string,
   highlightFormItems: PropTypes.bool,
@@ -119,7 +119,7 @@ CreateMailTaskDialog.propTypes = {
   requestSave: PropTypes.func,
   task: PropTypes.shape({
     taskId: PropTypes.string,
-    availableAction: PropTypes.array
+    availableActions: PropTypes.array
   })
 };
 
