@@ -175,7 +175,10 @@ class Row extends React.PureComponent {
 Row.propTypes = {
   footer: PropTypes.bool,
   rowClassNames: PropTypes.func,
-  rowId: PropTypes.string,
+  rowId: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string
+  ]),
   rowObject: PropTypes.object
 };
 
