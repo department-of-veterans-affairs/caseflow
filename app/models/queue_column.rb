@@ -37,50 +37,52 @@ class QueueColumn
 
   private
 
+  # rubocop:disable Style/FormatStringToken
+  def format_option_label(label, count)
+    format("%s (%d)", label, count)
+  end
+  # rubocop:enable Style/FormatStringToken
+
+  def filter_option_hash(value, label)
+    # Double encode the values here since we un-encode them twice in QueueFilterParameter. Once when parsing the query
+    # and again when unpacking the values of the selected filters into an array.
+    { value: URI.escape(URI.escape(value)), label: label }
+  end
+
   def filter_docket_type(tasks)
-    arr = []
-
-    tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:docket_type).count.each_pair do |option, count|
-      arr << { value: option, label: format("%s (%d)", Constants::DOCKET_NAME_FILTERS[option], count) }
+    tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:docket_type).count.each_pair.map do |option, count|
+      label = format_option_label(Constants::DOCKET_NAME_FILTERS[option], count)
+      filter_option_hash(option, label)
     end
-
-    arr
   end
 
   def filter_task_type(tasks)
-    arr = []
-
-    tasks.group(:type).count.each_pair do |option, count|
-      arr << { value: option, label: format("%s (%d)", Object.const_get(option).label, count) }
+    tasks.group(:type).count.each_pair.map do |option, count|
+      label = format_option_label(Object.const_get(option).label, count)
+      filter_option_hash(option, label)
     end
-
-    arr
   end
 
   def filter_regional_office(tasks)
-    arr = []
-
     tasks.joins(CachedAppeal.left_join_from_tasks_clause)
-      .group(:closest_regional_office_city).count.each_pair do |option, count|
-      # TODO: Double encode these values
-      arr << { value: option, label: format("%s (%d)", option, count) }
+      .group(:closest_regional_office_city).count.each_pair.map do |option, count|
+      label = format_option_label(option, count)
+      filter_option_hash(option, label)
     end
-
-    arr
   end
 
   def filter_case_type(tasks)
-    arr = []
-
-    # Add the AOD option first.
-    aod_counts = tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:is_aod).count
-    arr << { value: "is_aod", label: format("%s (%d)", "AOD", aod_counts[true]) }
-
-    tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:case_type).count.each_pair do |option, count|
+    options = tasks.joins(CachedAppeal.left_join_from_tasks_clause)
+      .group(:case_type).count.each_pair.map do |option, count|
       # TODO: Map the label to the correct friendly name.
-      arr << { value: option, label: format("%s (%d)", option, count) }
+      label = format_option_label(option, count)
+      arr << filter_option_hash(option, label)
     end
 
-    arr
+    # Add the AOD option as the first option in the list.
+    aod_counts = tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:is_aod).count
+    aod_option_label = format_option_label("AOD", aod_counts[true])
+
+    [filter_option_hash("is_aod", aod_option_label)] + options
   end
 end
