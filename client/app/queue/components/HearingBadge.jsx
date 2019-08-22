@@ -77,8 +77,11 @@ class HearingBadge extends React.PureComponent {
 }
 
 HearingBadge.propTypes = {
-  task: PropTypes.object,
-  hearing: PropTypes.object
+  externalId: PropTypes.string,
+  hearing: PropTypes.object,
+  mostRecentlyHeldHearingForAppeal: PropTypes.object,
+  setMostRecentlyHeldHearingForAppeal: PropTypes.func,
+  task: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => {
