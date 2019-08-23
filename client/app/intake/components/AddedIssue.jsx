@@ -17,7 +17,8 @@ class AddedIssue extends React.PureComponent {
       return true;
     }
 
-    let existingRequestIssue = _.filter(requestIssues, { rating_issue_reference_id: issue.ratingIssueReferenceId })[0];
+    let existingRequestIssue = _.filter(requestIssues, { rating_issue_reference_id: issue.ratingIssueReferenceId })[0] ||
+                               _.filter(requestIssues, { rating_decision_reference_id: issue.ratingDecisionReferenceId })[0];
 
     if (existingRequestIssue && !existingRequestIssue.ineligible_reason) {
       return false;
