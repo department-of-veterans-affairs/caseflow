@@ -9,6 +9,9 @@ Please explain the changes you made here.
 ### Testing Plan
 1. Go to ...
 
+### Documentation Updates
+- [ ] Topline File Descriptions Added or Updated as Needed
+
 *Schema Changes Only*
 
 * [ ] Column comments updated
