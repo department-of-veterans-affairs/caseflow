@@ -27,7 +27,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     appeals = Appeal.find(open_appeals_from_tasks)
     request_issues_to_cache = request_issue_counts_for_appeal_ids(appeals.pluck(:id))
     veteran_names_to_cache = veteran_names_for_file_numbers(appeals.pluck(:veteran_file_number))
-    appeal_assignees_to_cache = assignees_for_ama_appeal_ids(appeals.pluck(:id))
+    appeal_assignees_to_cache = assignees_for_caseflow_appeal_ids(appeals.pluck(:id), Appeal.name)
 
     appeal_aod_status = aod_status_for_appeals(appeals)
 
@@ -99,13 +99,15 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def cache_legacy_appeal_vacols_data(legacy_appeals)
-    legacy_appeals.pluck(:vacols_id).in_groups_of(BATCH_SIZE, false).each do |vacols_ids|
+    legacy_appeals.pluck(:vacols_id, :id).in_groups_of(BATCH_SIZE, false).each do |ids|
+      vacols_ids = ids.map { |id| id[0] }
+      appeal_ids = ids.map { |id| id[1] }
       vacols_folders = VACOLS::Folder.where(ticknum: vacols_ids).pluck(:ticknum, :tinum, :ticorkey)
       issue_counts_to_cache = issues_counts_for_vacols_folders(vacols_ids)
       veteran_names_to_cache = veteran_names_for_correspondent_ids(vacols_folders.map { |folder| folder[2] })
       aod_status_to_cache = VACOLS::Case.aod(vacols_folders.map { |folder| folder[0] })
       case_status_to_cache = case_status_for_vacols_id(vacols_folders.map { |folder| folder[0] })
-      appeal_assignees_to_cache = assignees_for_vacols_id(vacols_folders.map { |folder| folder[0] })
+      appeal_assignees_to_cache = assignees_for_vacols_and_appeals_id(vacols_folders.map { |folder| folder[0] }, appeal_ids)
 
       values_to_cache = vacols_folders.map do |vacols_folder|
         {
@@ -165,25 +167,25 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     ).pluck(:id)
   end
 
-  def ama_appeals_assignees(appeal_ids, tasks)
-    ordered_tasks = tasks
-      .visible_in_queue_table_view
-      .where(appeal_type: Appeal.name, appeal_id: appeal_ids)
-      .order(:appeal_id, created_at: :desc)
-
-    first_task_assignees_per_ama_appeal(ordered_tasks)
-  end
-
-  def assignees_for_ama_appeal_ids(appeal_ids)
-    active_appeals = ama_appeals_assignees(appeal_ids, Task.active)
-    on_hold_appeals = ama_appeals_assignees(appeal_ids, Task.on_hold)
+  def assignees_for_caseflow_appeal_ids(appeal_ids, appeal_type)
+    active_appeals = caseflow_appeals_assignees(appeal_ids, appeal_type, Task.active)
+    on_hold_appeals = caseflow_appeals_assignees(appeal_ids, appeal_type, Task.on_hold)
 
     on_hold_appeals.merge(active_appeals)
   end
 
-  def assignees_for_vacols_id(vacols_ids)
+  def assignees_for_vacols_and_appeals_id(vacols_ids, appeals_ids)
     statuses = VACOLS::Case.where(bfkey: vacols_ids).pluck(:bfcurloc)
-    vacols_ids.zip(statuses).to_h
+    vacols_statuses = vacols_ids.zip(statuses).to_h
+
+    # Lookup more detailed Caseflow location
+    vacols_caseflow_statuses = vacols_statuses.select { |key, value| value == "CASEFLOW" }
+    caseflow_appeal_ids = vacols_ids.zip(appeals_ids).to_h.slice(vacols_caseflow_statuses.keys)
+    byebug
+    caseflow_statuses = assignees_for_caseflow_appeal_ids(caseflow_appeal_ids, LegacyAppeal.name)
+
+    # Overwrite VACOLS Caseflow location
+    vacols_statuses.merge(caseflow_statuses)
   end
 
   def case_status_for_vacols_id(vacols_ids)
@@ -193,7 +195,16 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     vacols_ids.zip(statuses).to_h
   end
 
-  def first_task_assignees_per_ama_appeal(tasks)
+  def caseflow_appeals_assignees(appeal_ids, appeal_type, tasks)
+    ordered_tasks = tasks
+      .visible_in_queue_table_view
+      .where(appeal_type: appeal_type, appeal_id: appeal_ids)
+      .order(:appeal_id, created_at: :desc)
+
+    first_task_assignees_per_caseflow_appeal(ordered_tasks)
+  end
+
+  def first_task_assignees_per_caseflow_appeal(tasks)
     org_tasks = tasks.joins("left join organizations on tasks.assigned_to_id = organizations.id")
       .where("tasks.assigned_to_type = 'Organization'").pluck(:created_at, :appeal_id, "organizations.name")
     user_tasks = tasks.joins("left join users on tasks.assigned_to_id = users.id")
