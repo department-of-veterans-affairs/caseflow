@@ -24,7 +24,8 @@ class Rating
 
   # WARNING: profile_date is a misnomer adopted from BGS terminology.
   # It is a datetime, not a date.
-  attr_accessor :participant_id, :profile_date, :promulgation_date, :rating_profile
+  attr_accessor :participant_id, :profile_date, :promulgation_date
+  attr_writer :rating_profile
 
   ONE_YEAR_PLUS_DAYS = 372.days
   TWO_LIFETIMES_DAYS = 250.years
