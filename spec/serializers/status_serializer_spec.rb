@@ -402,7 +402,7 @@ describe StatusSerializer, :all_dbs do
     let(:benefit_type) { "compensation" }
 
     let(:sc) do
-      create(:supplemental_claim, 
+      create(:supplemental_claim,
              receipt_date: receipt_date,
              benefit_type: benefit_type)
     end
@@ -432,7 +432,7 @@ describe StatusSerializer, :all_dbs do
       end
 
       it "has status sc_decision" do
-        status = status = status_hash(sc)
+        status = status_hash(sc)
         expect(status).to_not be_nil
         expect(status[:type]).to eq(:sc_decision)
         expect(status[:details][:issues].first[:description]).to eq("Compensation issue")

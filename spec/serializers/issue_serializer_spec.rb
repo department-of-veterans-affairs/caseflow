@@ -307,7 +307,7 @@ describe IssueSerializer, :all_dbs do
         expect(issue[:active]).to eq(false)
         expect(issue[:lastAction]).to eq("allowed")
         expect(issue[:date]).to eq(dta_sc_decision_date.to_date)
-        expect(issue[:description]).to eq("Dental or oral condit#{}ion")
+        expect(issue[:description]).to eq("Dental or oral condition")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode] == "8877" }
         expect(issue2).to_not be_nil
@@ -344,7 +344,6 @@ describe IssueSerializer, :all_dbs do
     context "claim is open, pending a decision" do
       it "status gives status info of the request issue" do
         issue_statuses = issues_hash(sc.active_request_issues_or_decision_isssues)
-        
         expect(issue_statuses.empty?).to eq(false)
         expect(issue_statuses.first[:active]).to eq(true)
         expect(issue_statuses.first[:lastAction]).to be_nil
