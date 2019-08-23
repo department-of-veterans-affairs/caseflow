@@ -59,13 +59,13 @@ class ContestableIssueGenerator
   end
 
   def rating_issues
-    review.cached_serialized_ratings.inject([]) do |result, rating_hash|
+    ratings.inject([]) do |result, rating_hash|
       result + rating_hash[:issues].map { |rating_issue_hash| RatingIssue.deserialize(rating_issue_hash) }
     end
   end
 
   def rating_decisions
-    review.cached_serialized_ratings.inject([]) do |result, rating_hash|
+    ratings.inject([]) do |result, rating_hash|
       result + rating_hash[:decisions].map { |rating_decision_hash| RatingDecision.deserialize(rating_decision_hash) }
     end
   end
@@ -74,5 +74,9 @@ class ContestableIssueGenerator
     from_decision_issues.any? do |potential_duplicate|
       contestable_issue.rating_issue_reference_id == potential_duplicate.rating_issue_reference_id
     end
+  end
+
+  def ratings
+    review.cached_serialized_ratings
   end
 end

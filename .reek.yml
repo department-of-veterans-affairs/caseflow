@@ -50,6 +50,7 @@ detectors:
   MissingSafeMethod:
     enabled: false
   NestedIterators:
+    max_allowed_nesting: 2
     exclude:
       - AsyncableJobsReporter
   NilCheck:
