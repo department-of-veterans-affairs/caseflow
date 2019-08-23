@@ -14,8 +14,8 @@ describe OnHoldTasksTab, :postgres do
   let(:assignee) { create(:organization) }
   let(:show_regional_office_column) { false }
 
-  describe ".columns" do
-    subject { tab.columns }
+  describe ".column_names" do
+    subject { tab.column_names }
 
     context "when only the assignee argument is passed when instantiating the object" do
       let(:params) { { assignee: create(:organization) } }
