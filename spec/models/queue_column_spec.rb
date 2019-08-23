@@ -116,9 +116,88 @@ describe QueueColumn, :all_dbs do
       end
 
       it "returns an array with all present case types" do
-        (1..5).map do |index|
+        (1..5).each do |index|
           type_name = VACOLS::Case::TYPES[index.to_s]
           option = QueueColumn.filter_option_hash(type_name, QueueColumn.format_option_label(type_name, 1))
+
+          expect(subject).to include(option)
+        end
+      end
+    end
+
+    context "for the docket type column" do
+      let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name }
+      let(:docket_types) { Constants::DOCKET_NAME_FILTERS.keys }
+      let(:tasks_per_type) { 2 }
+      let(:tasks) { Task.where(id: create_list(:task, (docket_types.length * tasks_per_type)).map(&:id)) }
+
+      before do
+        tasks.each_with_index do |task, index|
+          create(
+            :cached_appeal,
+            appeal_type: task.appeal.class.name,
+            appeal_id: task.appeal.id,
+            docket_type: docket_types[index % docket_types.length]
+          )
+        end
+      end
+
+      it "returns an array with all present case types" do
+        docket_types.each do |docket_type|
+          type_name = Constants::DOCKET_NAME_FILTERS[docket_type]
+          label = QueueColumn.format_option_label(type_name, tasks_per_type)
+          option = QueueColumn.filter_option_hash(docket_type, label)
+
+          expect(subject).to include(option)
+        end
+      end
+    end
+
+    context "for the regional office column" do
+      let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name }
+      let(:regional_office_cities_sample) do
+        Constants::REGIONAL_OFFICE_INFORMATION.keys.sample(12).map do |ro_key|
+          Constants::REGIONAL_OFFICE_INFORMATION[ro_key]["city"]
+        end.uniq
+      end
+      let(:tasks_per_ro) { 3 }
+      let(:tasks) do
+        Task.where(id: create_list(:task, (regional_office_cities_sample.length * tasks_per_ro)).map(&:id))
+      end
+
+      before do
+        tasks.each_with_index do |task, index|
+          create(
+            :cached_appeal,
+            appeal_type: task.appeal.class.name,
+            appeal_id: task.appeal.id,
+            closest_regional_office_city: regional_office_cities_sample[index % regional_office_cities_sample.length]
+          )
+        end
+      end
+
+      it "returns an array with all present regional office cities" do
+        regional_office_cities_sample.each do |city|
+          option = QueueColumn.filter_option_hash(city, QueueColumn.format_option_label(city, tasks_per_ro))
+
+          expect(subject).to include(option)
+        end
+      end
+    end
+
+    context "for the task type column" do
+      let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name }
+      let(:root_tasks) { RootTask.where(id: create_list(:root_task, 3).map(&:id)) }
+      let(:distribution_tasks) { DistributionTask.where(id: create_list(:distribution_task, 4).map(&:id)) }
+      let(:foia_tasks) { FoiaTask.where(id: create_list(:foia_task, 5).map(&:id)) }
+      let(:tasks) { Task.where(id: root_tasks.map(&:id) + distribution_tasks.map(&:id) + foia_tasks.map(&:id)) }
+
+      it "returns an array with all present task types" do
+        [root_tasks, distribution_tasks, foia_tasks].each do |task_set|
+          task_type = task_set.first.type
+          task_label = task_set.first.label
+          label = QueueColumn.format_option_label(task_label, task_set.count)
+          option = QueueColumn.filter_option_hash(task_type, label)
 
           expect(subject).to include(option)
         end

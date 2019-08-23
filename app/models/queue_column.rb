@@ -44,8 +44,10 @@ class QueueColumn
     when Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name
       task_type_options(tasks)
     else
-      # TODO: Raise an error here.
-      []
+      fail(
+        Caseflow::Error::MustImplementInSubclass,
+        "Filterable tasks must have an associated function to collect filter options"
+      )
     end
   end
 
