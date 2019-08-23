@@ -79,10 +79,6 @@ class RatingDecision
     disability_id
   end
 
-  def reference_id
-    disability_id
-  end
-
   # If you change this method, you will need to clear cache in prod for your changes to
   # take effect immediately. See DecisionReview#cached_serialized_ratings
   def serialize
