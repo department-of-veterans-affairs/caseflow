@@ -4,7 +4,7 @@
 # periodic check that jobs we expected to run, have run.
 # if not, try them again.
 class MissedJobSweeperJob < CaseflowJob
-  queue_as :high
+  queue_with_priority :high_priority
   application_attr :queue
 
   def perform(_args)
