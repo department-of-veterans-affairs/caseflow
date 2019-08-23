@@ -240,7 +240,7 @@ describe TaskSorter, :all_dbs do
             create(:cached_appeal,
                    appeal_id: appeal.id,
                    appeal_type: LegacyAppeal.name,
-                   case_type: LegacyAppeal::TYPE_CODES[appeal.type])
+                   case_type: appeal.type)
           end
 
           appeals = [create(:appeal, :advanced_on_docket_due_to_motion), create(:appeal)]
@@ -249,7 +249,7 @@ describe TaskSorter, :all_dbs do
             create(:cached_appeal,
                    appeal_id: appeal.id,
                    appeal_type: Appeal.name,
-                   case_type: appeal.type.downcase,
+                   case_type: appeal.type,
                    is_aod: appeal.aod)
           end
         end
