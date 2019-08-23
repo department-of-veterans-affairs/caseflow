@@ -56,9 +56,9 @@ class RatingDecision
   end
 
   def decision_date
-    return promulgation_date if rating_issue?
+    return promulgation_date if rating_issue? || denial_date_near_promulgation_date?
 
-    original_denial_date || converted_begin_date || begin_date
+    denial_date
   end
 
   def contestable?
@@ -66,9 +66,7 @@ class RatingDecision
 
     return false unless decision_date
 
-    the_decision = decision_date.to_date
-    the_promulgation = promulgation_date.to_date
-    the_decision.between?((the_promulgation - 10.days), (the_promulgation + 10.days))
+    denial_date_near_promulgation_date?
   end
 
   def rating_issue?
@@ -92,6 +90,18 @@ class RatingDecision
   end
 
   private
+
+  def denial_date
+    original_denial_date || converted_begin_date || begin_date
+  end
+
+  def denial_date_near_promulgation_date?
+    return false unless denial_date
+
+    the_decision = denial_date.to_date
+    the_promulgation = promulgation_date.to_date
+    the_decision.between?((the_promulgation - 10.days), (the_promulgation + 10.days))
+  end
 
   def service_connected_decision_text
     "#{diagnostic_type} (#{diagnostic_text}) is granted as Service Connected"
