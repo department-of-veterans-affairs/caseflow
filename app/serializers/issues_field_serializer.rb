@@ -5,7 +5,7 @@ module IssuesFieldSerializer
   class_methods do
     def issues(object)
       IssueSerializer.new(object.active_request_issues_or_decision_isssues, is_collection: true)
-		     .serializable_hash[:data].collect { |issue| issue[:attributes] }
+                    .serializable_hash[:data].collect { |issue| issue[:attributes] }
     end
   end
 end

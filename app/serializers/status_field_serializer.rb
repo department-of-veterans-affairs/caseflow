@@ -3,7 +3,7 @@
 module StatusFieldSerializer
   extend ActiveSupport::Concern
   class_methods do
-    def status (object)
+    def status(object)
       StatusSerializer.new(object).serializable_hash[:data][:attributes]
     end
   end

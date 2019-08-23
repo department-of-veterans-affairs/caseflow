@@ -318,7 +318,7 @@ describe IssueSerializer, :all_dbs do
         expect(issue2[:description]).to eq("Undiagnosed hemic or lymphatic condition")
       end
     end
-	end
+  end
 
   context "#supplemental_claim" do
     let(:receipt_date) { Time.new("2018", "03", "01").utc }
