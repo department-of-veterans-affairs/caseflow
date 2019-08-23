@@ -52,7 +52,23 @@ class RatingDecision
   end
 
   def decision_date
-    original_denial_date || converted_begin_date || begin_date || promulgation_date
+    return promulgation_date if rating_issue?
+
+    original_denial_date || converted_begin_date || begin_date
+  end
+
+  def part_of_rating?
+    return true if rating_issue?
+
+    return false unless decision_date
+
+    the_decision = decision_date.to_date
+    the_promulgation = promulgation_date.to_date
+    the_decision.between?((the_promulgation - 10.days), (the_promulgation + 10.days))
+  end
+
+  def rating_issue?
+    rating_issue_reference_id.present?
   end
 
   def reference_id
