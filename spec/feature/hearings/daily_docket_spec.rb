@@ -134,7 +134,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       fill_in "Notes", with: "This is a note about the hearing!"
       click_button("Save")
 
-      expect(page).to have_content("You have successfully updated")
+      expect(page).to have_content("You have successfully updated", wait: 10)
       expect(page).to have_content("This is a note about the hearing!")
     end
   end
