@@ -107,7 +107,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       veteran_names_to_cache = veteran_names_for_correspondent_ids(vacols_folders.map { |folder| folder[2] })
       aod_status_to_cache = VACOLS::Case.aod(vacols_folders.map { |folder| folder[0] })
       case_status_to_cache = case_status_for_vacols_id(vacols_folders.map { |folder| folder[0] })
-      appeal_assignees_to_cache = assignees_for_vacols_and_appeals_id(vacols_folders.map { |folder| folder[0] }, appeal_ids)
+      appeal_assignees_to_cache = assignees_for_vacols_and_appeals_id(vacols_folders.map { |folder| folder[0] },
+                                                                      appeal_ids)
 
       values_to_cache = vacols_folders.map do |vacols_folder|
         {
@@ -179,9 +180,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     vacols_statuses = vacols_ids.zip(statuses).to_h
 
     # Lookup more detailed Caseflow location
-    vacols_caseflow_statuses = vacols_statuses.select { |key, value| value == "CASEFLOW" }
+    vacols_caseflow_statuses = vacols_statuses.select { |_key, value| value == "CASEFLOW" }
     caseflow_appeal_ids = vacols_ids.zip(appeals_ids).to_h.slice(vacols_caseflow_statuses.keys)
-    byebug
     caseflow_statuses = assignees_for_caseflow_appeal_ids(caseflow_appeal_ids, LegacyAppeal.name)
 
     # Overwrite VACOLS Caseflow location
