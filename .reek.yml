@@ -13,6 +13,7 @@ detectors:
   ControlParameter:
     exclude:
       - HearingRepository#slot_new_hearing
+      - TaskSorter#sort_requires_case_norm?
   UncommunicativeVariableName:
     exclude:
       - Address
