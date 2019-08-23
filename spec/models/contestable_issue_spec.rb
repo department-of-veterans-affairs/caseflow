@@ -73,7 +73,7 @@ describe ContestableIssue, :postgres do
         rating_issue_profile_date: profile_date,
         decision_issue: nil,
         approx_decision_date: rating_decision.begin_date,
-        description: rating_decision.diagnostic_text,
+        description: rating_decision.decision_text,
         contesting_decision_review: decision_review,
         rating_issue_diagnostic_code: diagnostic_code,
         source_review_type: nil
@@ -81,12 +81,12 @@ describe ContestableIssue, :postgres do
 
       expect(contestable_issue.serialize).to eq(
         ratingIssueReferenceId: nil,
-        ratingDecisionReferenceId: rating_decision.rating_sequence_number,
+        ratingDecisionReferenceId: rating_decision.reference_id,
         ratingIssueProfileDate: profile_date,
         ratingIssueDiagnosticCode: diagnostic_code,
         decisionIssueId: nil,
         approxDecisionDate: rating_decision.begin_date,
-        description: rating_decision.diagnostic_text,
+        description: rating_decision.decision_text,
         isRating: true,
         rampClaimId: nil,
         titleOfActiveReview: nil,
