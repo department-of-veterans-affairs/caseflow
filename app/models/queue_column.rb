@@ -5,11 +5,12 @@ class QueueColumn
 
   validates :name, :sorting_table, :sorting_columns, presence: true
 
-  attr_accessor :name, :sorting_table, :sorting_columns
+  attr_accessor :filterable, :name, :sorting_table, :sorting_columns
 
   def initialize(args)
     super
 
+    @filterable ||= false
     @sorting_table ||= Task.table_name
     @sorting_columns ||= ["created_at"]
 
@@ -23,16 +24,16 @@ class QueueColumn
   end
 
   def to_hash(tasks)
-    filtered_tasks = filter_options(tasks)
-
     {
       name: name,
-      filterable: !filtered_tasks.nil?,
-      filter_options: filtered_tasks
+      filterable: filterable,
+      filter_options: filter_options(tasks)
     }
   end
 
   def filter_options(tasks)
+    return [] unless filterable
+
     case name
     when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
       case_type_options(tasks)
@@ -42,6 +43,9 @@ class QueueColumn
       regional_office_options(tasks)
     when Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name
       task_type_options(tasks)
+    else
+      # TODO: Raise an error here.
+      []
     end
   end
 
@@ -65,7 +69,7 @@ class QueueColumn
     options = tasks.joins(CachedAppeal.left_join_from_tasks_clause)
       .group(:case_type).count.each_pair.map do |option, count|
       label = self.class.format_option_label(option, count)
-      filter_option_hash(option, label)
+      self.class.filter_option_hash(option, label)
     end
 
     # Add the AOD option as the first option in the list.
