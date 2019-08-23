@@ -31,8 +31,24 @@ class TaskSorter
 
   private
 
+  def sort_requires_case_norm?(col)
+    return false if col =~ /_at$/
+    return false if col =~ /^is_/
+    return false if col =~ /_count$/
+
+    true
+  end
+
   def order_clause
-    column.sorting_columns.map { |col| "#{column.sorting_table}.#{col} #{sort_order}" }.join(", ")
+    clauses = column.sorting_columns.map do |col|
+      tbl_clause = if sort_requires_case_norm?(col)
+                     "UPPER(#{column.sorting_table}.#{col})"
+                   else
+                     "#{column.sorting_table}.#{col}"
+                   end
+      "#{tbl_clause} #{sort_order}"
+    end
+    clauses.join(", ")
   end
 
   def column_is_valid
