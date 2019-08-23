@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WarmBgsCachesJob < CaseflowJob
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :hearing_schedule
 
   def perform(_args = {})

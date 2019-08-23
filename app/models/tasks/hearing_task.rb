@@ -10,7 +10,7 @@ class HearingTask < GenericTask
   delegate :hearing, to: :hearing_task_association, allow_nil: true
   before_validation :set_assignee
 
-  def label
+  def self.label
     "All hearing-related tasks"
   end
 
