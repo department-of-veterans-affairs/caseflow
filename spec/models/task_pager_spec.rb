@@ -243,7 +243,7 @@ describe TaskPager, :all_dbs do
 
       it "sorts by regional office city" do
         expected_order = created_tasks.sort_by do |task|
-          RegionalOffice::CITIES[task.appeal.closest_regional_office][:city].downcase
+          RegionalOffice::CITIES[task.appeal.closest_regional_office][:city].upcase.tr(" ", "_")
         end
         expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
       end
