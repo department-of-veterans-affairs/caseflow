@@ -18,6 +18,9 @@ describe RatingDecision do
   let(:promulgation_date) { Time.zone.today - 30 }
   let(:participant_id) { "1234567" }
   let(:begin_date) { profile_date + 30.days }
+  let(:disability_id) { "5678" }
+  let(:rating_issue_reference_id) { "123" }
+  let(:original_denial_date) { promulgation_date - 7 }
 
   context ".deserialize" do
     subject { described_class.deserialize(rating_decision.serialize) }
@@ -27,7 +30,8 @@ describe RatingDecision do
         profile_date: profile_date,
         promulgation_date: promulgation_date,
         rating_sequence_number: "1234",
-        disability_id: "5678",
+        rating_issue_reference_id: rating_issue_reference_id,
+        disability_id: disability_id,
         diagnostic_text: "tinnitus",
         diagnostic_code: "6260",
         begin_date: begin_date,
@@ -63,7 +67,8 @@ describe RatingDecision do
     let(:bgs_record) do
       {
         decn_tn: decision_type_name,
-        dis_sn: "67468264",
+        dis_sn: disability_id,
+        orig_denial_dt: original_denial_date,
         disability_evaluations: {
           begin_dt: begin_date,
           dgnstc_tc: "6260",
@@ -71,7 +76,7 @@ describe RatingDecision do
           dgnstc_txt: "tinnitus",
           prfl_dt: profile_date,
           rating_sn: "227606458",
-          rba_issue_id: "56780000"
+          rba_issue_id: rating_issue_reference_id
         }
       }
     end
@@ -82,8 +87,8 @@ describe RatingDecision do
       is_expected.to have_attributes(
         type_name: decision_type_name,
         rating_sequence_number: "227606458",
-        rating_issue_reference_id: "56780000",
-        disability_id: "67468264",
+        rating_issue_reference_id: rating_issue_reference_id,
+        disability_id: disability_id,
         diagnostic_text: "tinnitus",
         diagnostic_type: "Tinnitus",
         diagnostic_code: "6260",
@@ -94,12 +99,12 @@ describe RatingDecision do
       )
     end
 
-    context "with multiple disabilities" do
+    context "with multiple disability evaluations" do
       let(:bgs_record) do
         {
           decn_tn: decision_type_name,
           dis_dt: 1.year.ago,
-          dis_sn: "67468264",
+          dis_sn: disability_id,
           disability_evaluations: [
             {
               dis_dt: 1.year.ago - 1.day,
@@ -144,9 +149,76 @@ describe RatingDecision do
       end
     end
 
+    describe "#decision_text" do
+      context "Not Service Connected" do
+        let(:decision_type_name) { "Not Service Connected" }
+
+        it "returns formatted diagnosis statement" do
+          expect(subject.decision_text).to eq("Tinnitus (tinnitus) is denied as Not Service Connected")
+        end
+      end
+
+      context "Service Connected" do
+        let(:decision_type_name) { "Service Connected" }
+
+        it "returns formatted diagnosis statement" do
+          expect(subject.decision_text).to eq("Tinnitus (tinnitus) is granted as Service Connected")
+        end
+      end
+    end
+
+    describe "#contestable?" do
+      subject { described_class.from_bgs_disability(rating, bgs_record).contestable? }
+
+      context "rating_issue? is true" do
+        it { is_expected.to eq(true) }
+      end
+
+      context "rating_issue? is false" do
+        let(:rating_issue_reference_id) { nil }
+
+        context "promulgation date and original_denial_date are close" do
+          it { is_expected.to eq(true) }
+        end
+
+        context "promulgation date and original_denial_date are not close" do
+          let(:original_denial_date) { promulgation_date + 6.months }
+
+          it { is_expected.to eq(false) }
+        end
+      end
+    end
+
     describe "#decision_date" do
-      it "uses the begin_date if available" do
-        expect(subject.decision_date).to eq(begin_date)
+      context "decision is a rating issue" do
+        let(:rating_issue_reference_id) { "123" }
+
+        it "uses the promulgation_date if the decision is a rating issue" do
+          expect(subject.decision_date).to eq(promulgation_date)
+        end
+      end
+
+      context "decision is not a rating issue" do
+        let(:rating_issue_reference_id) { nil }
+        let(:original_denial_date) { Time.zone.today }
+
+        it "prefers the original_denial_date" do
+          expect(subject.decision_date).to eq(original_denial_date)
+        end
+
+        context "original_denial_date is nil" do
+          let(:original_denial_date) { nil }
+
+          it "defaults to begin_date" do
+            expect(subject.decision_date).to eq(begin_date)
+          end
+        end
+      end
+    end
+
+    describe "#reference_id" do
+      it "uses the disability id" do
+        expect(subject.reference_id).to eq(disability_id)
       end
     end
   end
