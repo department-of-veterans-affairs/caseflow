@@ -49,8 +49,6 @@ plugins:
           mass_threshold: 50
   eslint:
     enabled: true
-    config:
-      config: client/.eslintrc.js
   fixme:
     enabled: true
     exclude_patterns:
