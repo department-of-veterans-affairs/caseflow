@@ -45,34 +45,34 @@ class QueueColumn
     end
   end
 
-  private
-
   # rubocop:disable Style/FormatStringToken
-  def format_option_label(label, count)
+  def self.format_option_label(label, count)
     label ||= COPY::NULL_FILTER_LABEL
     format("%s (%d)", label, count)
   end
   # rubocop:enable Style/FormatStringToken
 
-  def filter_option_hash(value, label)
+  def self.filter_option_hash(value, label)
     value ||= COPY::NULL_FILTER_LABEL
     # Double encode the values here since we un-encode them twice in QueueFilterParameter. Once when parsing the query
     # and again when unpacking the values of the selected filters into an array.
     { value: URI.escape(URI.escape(value)), label: label }
   end
 
+  private
+
   def case_type_options(tasks)
     options = tasks.joins(CachedAppeal.left_join_from_tasks_clause)
       .group(:case_type).count.each_pair.map do |option, count|
-      label = format_option_label(option, count)
+      label = self.class.format_option_label(option, count)
       filter_option_hash(option, label)
     end
 
     # Add the AOD option as the first option in the list.
     aod_counts = tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:is_aod).count[true]
     if aod_counts
-      aod_option_label = format_option_label("AOD", aod_counts)
-      options = [filter_option_hash("is_aod", aod_option_label)] + options
+      aod_option_label = self.class.format_option_label("AOD", aod_counts)
+      options = [self.class.filter_option_hash("is_aod", aod_option_label)] + options
     end
 
     options
@@ -80,23 +80,23 @@ class QueueColumn
 
   def docket_type_options(tasks)
     tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:docket_type).count.each_pair.map do |option, count|
-      label = format_option_label(Constants::DOCKET_NAME_FILTERS[option], count)
-      filter_option_hash(option, label)
+      label = self.class.format_option_label(Constants::DOCKET_NAME_FILTERS[option], count)
+      self.class.filter_option_hash(option, label)
     end
   end
 
   def regional_office_options(tasks)
     tasks.joins(CachedAppeal.left_join_from_tasks_clause)
       .group(:closest_regional_office_city).count.each_pair.map do |option, count|
-      label = format_option_label(option, count)
-      filter_option_hash(option, label)
+      label = self.class.format_option_label(option, count)
+      self.class.filter_option_hash(option, label)
     end
   end
 
   def task_type_options(tasks)
     tasks.group(:type).count.each_pair.map do |option, count|
-      label = format_option_label(Object.const_get(option).label, count)
-      filter_option_hash(option, label)
+      label = self.class.format_option_label(Object.const_get(option).label, count)
+      self.class.filter_option_hash(option, label)
     end
   end
 end
