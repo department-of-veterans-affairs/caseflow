@@ -160,31 +160,22 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def assignees_for_ama_appeal_ids(appeal_ids)
-    active_appeals = active_ama_appeals_assignees(appeal_ids)
-    on_hold_appeals = on_hold_ama_appeals_assignees(appeal_ids)
+    active_appeals = ama_appeals_assignees(appeal_ids, Task.active)
+    on_hold_appeals = ama_appeals_assignees(appeal_ids, Task.on_hold)
 
     on_hold_appeals.merge(active_appeals)
   end
 
-  def active_ama_appeals_assignees(appeal_ids)
-    ordered_active_tasks = Task.active
+  def ama_appeals_assignees(appeal_ids, tasks)
+    ordered_tasks = tasks
       .visible_in_queue_table_view
       .where(appeal_type: Appeal.name, appeal_id: appeal_ids)
       .order(:appeal_id, created_at: :desc)
 
-    first_task_assignee_per_ama_appeal(ordered_active_tasks)
+    first_task_assignees_per_ama_appeal(ordered_tasks)
   end
 
-  def on_hold_ama_appeals_assignees(appeal_ids)
-    ordered_on_hold_tasks = Task.on_hold
-      .visible_in_queue_table_view
-      .where(appeal_type: Appeal.name, appeal_id: appeal_ids)
-      .order(:appeal_id, created_at: :desc)
-
-    first_task_assignee_per_ama_appeal(ordered_on_hold_tasks)
-  end
-
-  def first_task_assignee_per_ama_appeal(tasks)
+  def first_task_assignees_per_ama_appeal(tasks)
     org_tasks = tasks.joins("left join organizations on tasks.assigned_to_id = organizations.id")
       .where("tasks.assigned_to_type = 'Organization'").pluck(:created_at, :appeal_id, "organizations.name")
     user_tasks = tasks.joins("left join users on tasks.assigned_to_id = users.id")
