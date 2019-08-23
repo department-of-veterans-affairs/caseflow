@@ -57,7 +57,7 @@ class RatingDecision
     original_denial_date || converted_begin_date || begin_date
   end
 
-  def part_of_rating?
+  def contestable?
     return true if rating_issue?
 
     return false unless decision_date
