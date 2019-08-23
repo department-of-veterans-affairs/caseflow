@@ -49,11 +49,13 @@ class QueueColumn
 
   # rubocop:disable Style/FormatStringToken
   def format_option_label(label, count)
+    label ||= COPY::NULL_FILTER_LABEL
     format("%s (%d)", label, count)
   end
   # rubocop:enable Style/FormatStringToken
 
   def filter_option_hash(value, label)
+    value ||= COPY::NULL_FILTER_LABEL
     # Double encode the values here since we un-encode them twice in QueueFilterParameter. Once when parsing the query
     # and again when unpacking the values of the selected filters into an array.
     { value: URI.escape(URI.escape(value)), label: label }

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import { css, hover } from 'glamor';
+import COPY from '../../COPY.json';
 import FilterIcon from './FilterIcon';
 import QueueDropdownFilter from '../queue/QueueDropdownFilter';
 import FilterOption from './FilterOption';
@@ -67,7 +68,7 @@ class TableFilter extends React.PureComponent {
     const filtersForColumn = _.get(this.props.filteredByList, columnName);
 
     for (let key in countByColumnName) { // eslint-disable-line guard-for-in
-      let displayText = `<<blank>> (${countByColumnName[key]})`;
+      let displayText = `${COPY.NULL_FILTER_LABEL} (${countByColumnName[key]})`;
       let keyValue = 'null';
 
       if (key && key !== 'null' && key !== 'undefined') {
