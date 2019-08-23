@@ -155,7 +155,7 @@ class TableFilter extends React.PureComponent {
       this.filterDropdownOptions(tableData, columnName) :
       // Keeping the historical prop `getFilterValues` for backwards compatibility,
       // will remove this once all apps are using this new component.
-      // 
+      //
       // WARNING: If you use getFilterValues, it will cause some of the options to
       // not display correctly when they are checked.
       getFilterValues;
