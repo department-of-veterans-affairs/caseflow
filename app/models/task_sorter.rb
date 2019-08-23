@@ -31,10 +31,11 @@ class TaskSorter
 
   private
 
+  # some columns cannot be cast through SQL UPPER for normalized sorting.
   def sort_requires_case_norm?(col)
-    return false if col =~ /_at$/
-    return false if col =~ /^is_/
-    return false if col =~ /_count$/
+    return false if col =~ /_at$/ # no timestamps
+    return false if col =~ /^is_/ # no booleans
+    return false if col =~ /_count$/ # no integers
 
     true
   end
