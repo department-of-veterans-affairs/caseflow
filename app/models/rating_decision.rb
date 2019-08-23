@@ -51,6 +51,10 @@ class RatingDecision
     end
   end
 
+  def decision_text
+    service_connected? ? service_connected_decision_text : not_service_connected_decision_text
+  end
+
   def decision_date
     return promulgation_date if rating_issue?
 
@@ -85,5 +89,15 @@ class RatingDecision
 
   def service_connected?
     type_name == "Service Connected"
+  end
+
+  private
+
+  def service_connected_decision_text
+    "#{diagnostic_type} (#{diagnostic_text}) is granted as Service Connected"
+  end
+
+  def not_service_connected_decision_text
+    "#{diagnostic_type} (#{diagnostic_text}) is denied as Not Service Connected"
   end
 end

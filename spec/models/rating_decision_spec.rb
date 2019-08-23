@@ -149,6 +149,24 @@ describe RatingDecision do
       end
     end
 
+    describe "#decision_text" do
+      context "Not Service Connected" do
+        let(:decision_type_name) { "Not Service Connected" }
+
+        it "returns formatted diagnosis statement" do
+          expect(subject.decision_text).to eq("Tinnitus (tinnitus) is denied as Not Service Connected")
+        end
+      end
+
+      context "Service Connected" do
+        let(:decision_type_name) { "Service Connected" }
+
+        it "returns formatted diagnosis statement" do
+          expect(subject.decision_text).to eq("Tinnitus (tinnitus) is granted as Service Connected")
+        end
+      end
+    end
+
     describe "#contestable?" do
       subject { described_class.from_bgs_disability(rating, bgs_record).contestable? }
 
