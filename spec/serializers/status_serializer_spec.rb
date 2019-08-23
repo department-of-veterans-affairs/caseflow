@@ -307,31 +307,26 @@ describe StatusSerializer, :all_dbs do
         :case,
         :assigned,
         :certified,
-        bfdnod: nod_date,
         bfdsoc: soc_date,
         bfssoc1: ssoc_date1,
         bfssoc2: ssoc_date2,
         bfd19: form9_date,
-        certification_date: certification_date,
-        bfdrodec: 1.day.ago,
+        certification_date: nil,
         bfddec: decision_date,
         bfdc: disposition,
         bfcurloc: location_code,
         bfmpro: status,
         bfac: type,
         bfso: "F",
-        case_issues: latest_appeal_issues
+        case_issues: []
       )
     end
 
-    let(:latest_appeal_issues) { [] }
     let(:type) { "1" }
-    let(:nod_date) { 3.days.ago }
     let(:soc_date) { 1.day.ago }
     let(:ssoc_date1) { nil }
     let(:ssoc_date2) { nil }
     let(:form9_date) { 1.day.ago }
-    let(:certification_date) { nil }
     let(:decision_date) { nil }
     let(:disposition) { nil }
     let(:location_code) { "77" }
