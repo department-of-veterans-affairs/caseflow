@@ -15,6 +15,8 @@ class RatingDecision
                 :diagnostic_text,
                 :diagnostic_type,
                 :disability_id,
+                :original_denial_date,
+                :original_denial_indicator,
                 :participant_id,
                 :profile_date,
                 :promulgation_date,
@@ -35,6 +37,8 @@ class RatingDecision
         diagnostic_code: latest_evaluation[:dgnstc_tc],
         begin_date: latest_evaluation[:begin_dt],
         converted_begin_date: latest_evaluation[:conv_begin_dt],
+        original_denial_date: disability[:orig_denial_dt],
+        original_denial_indicator: disability[:orig_denial_ind],
         profile_date: rating.profile_date,
         promulgation_date: rating.promulgation_date,
         participant_id: rating.participant_id,
@@ -48,7 +52,7 @@ class RatingDecision
   end
 
   def decision_date
-    converted_begin_date || begin_date || promulgation_date
+    original_denial_date || converted_begin_date || begin_date || promulgation_date
   end
 
   # If you change this method, you will need to clear cache in prod for your changes to
