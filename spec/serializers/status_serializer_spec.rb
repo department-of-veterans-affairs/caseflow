@@ -295,6 +295,120 @@ describe StatusSerializer, :all_dbs do
     end
   end
 
+  context "#appeal_series" do
+    let(:series) { AppealSeries.create(appeals: appeals) }
+    let(:appeals) { [latest_appeal] }
+    let(:latest_appeal) do
+      build(:legacy_appeal, vacols_case: latest_case)
+    end
+
+    let(:latest_case) do
+      create(
+        :case,
+        :assigned,
+        :certified,
+        bfdnod: nod_date,
+        bfdsoc: soc_date,
+        bfssoc1: ssoc_date1,
+        bfssoc2: ssoc_date2,
+        bfd19: form9_date,
+        certification_date: certification_date,
+        bfdrodec: 1.day.ago,
+        bfddec: decision_date,
+        bfdc: disposition,
+        bfcurloc: location_code,
+        bfmpro: status,
+        bfac: type,
+        bfso: "F",
+        case_issues: latest_appeal_issues
+      )
+    end
+
+    let(:latest_appeal_issues) { [] }
+    let(:type) { "1" }
+    let(:nod_date) { 3.days.ago }
+    let(:soc_date) { 1.day.ago }
+    let(:ssoc_date1) { nil }
+    let(:ssoc_date2) { nil }
+    let(:form9_date) { 1.day.ago }
+    let(:certification_date) { nil }
+    let(:decision_date) { nil }
+    let(:disposition) { nil }
+    let(:location_code) { "77" }
+    let(:status) { "ADV" }
+
+    subject { status_hash(series) }
+
+    context "when there is a valid status" do
+      it "returns a hash with a type and details" do
+        expect(subject[:type]).to eq(:pending_certification)
+        expect(subject[:details].is_a?(Hash)).to be_truthy
+      end
+    end
+
+    context "when there is no known status" do
+      let(:status) { "ZZZ" }
+
+      it "returns an empty details hash" do
+        expect(subject[:details]).to eq({})
+      end
+    end
+
+    context "when it is in remand ssoc status" do
+      let(:status) { "REM" }
+      let(:decision_date) { 3.days.ago }
+      let(:ssoc_date1) { 1.year.ago }
+      let(:ssoc_date2) { 1.day.ago }
+
+      it "returns a details hash with the most recent ssoc" do
+        expect(subject[:type]).to eq(:remand_ssoc)
+        expect(subject[:details][:last_soc_date]).to eq(1.day.ago.to_date)
+        expect(subject[:details][:return_timeliness]).to eq([1, 2])
+        expect(subject[:details][:remand_ssoc_timeliness]).to eq([3, 11])
+      end
+    end
+
+    context "when it has been decided by the board" do
+      let(:status) { "REM" }
+      let(:disposition) { "1" }
+      before do
+        latest_appeal.issues << Generators::Issue.build(disposition: :allowed)
+        latest_appeal.issues << Generators::Issue.build(disposition: :remanded)
+        latest_appeal.issues << Generators::Issue.build(disposition: :field_grant)
+      end
+
+      it "returns a details hash with the decided issues" do
+        expect(subject[:type]).to eq(:remand)
+        expect(subject[:details][:remand_timeliness]).to eq([16, 29])
+        expect(subject[:details][:issues].length).to eq(2)
+        expect(subject[:details][:issues].first[:disposition]).to eq(:allowed)
+        expect(subject[:details][:issues].first[:description]).to eq(
+          "Service connection, limitation of thigh motion (flexion)"
+        )
+      end
+    end
+
+    context "when it is at VSO" do
+      let(:status) { "ACT" }
+      let(:location_code) { "55" }
+
+      it "returns a details hash with the vso name" do
+        expect(subject[:type]).to eq(:at_vso)
+        expect(subject[:details][:vso_name]).to eq("Military Order of the Purple Heart")
+      end
+    end
+
+    context "when it is pending a form 9" do
+      let(:form9_date) { nil }
+
+      it "returns a details hash with the vso name" do
+        expect(subject[:type]).to eq(:pending_form9)
+        expect(subject[:details][:certification_timeliness]).to eq([2, 8])
+        expect(subject[:details][:ssoc_timeliness]).to eq([5, 13])
+      end
+    end
+  end
+
   context "#higher_level_review" do
     let(:receipt_date) { Time.new("2018", "03", "01").utc }
     let(:benefit_type) { "compensation" }
