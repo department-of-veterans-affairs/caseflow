@@ -85,6 +85,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
                                                                     ] }
   end
 
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def cache_legacy_appeal_vacols_data(legacy_appeals)
     legacy_appeals.pluck(:vacols_id).in_groups_of(BATCH_SIZE, false).each do |vacols_ids|
       vacols_folders = VACOLS::Folder.where(ticknum: vacols_ids).pluck(:ticknum, :tinum, :ticorkey)
@@ -92,10 +94,12 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       veteran_names_to_cache = veteran_names_for_correspondent_ids(vacols_folders.map { |folder| folder[2] })
       aod_status_to_cache = VACOLS::Case.aod(vacols_folders.map { |folder| folder[0] })
       case_status_to_cache = case_status_for_vacols_id(vacols_folders.map { |folder| folder[0] })
+      appeal_assignees_to_cache = assignees_for_vacols_id(vacols_folders.map { |folder| folder[0] })
 
       values_to_cache = vacols_folders.map do |vacols_folder|
         {
           vacols_id: vacols_folder[0],
+          assignee_label: appeal_assignees_to_cache[vacols_folder[0]],
           case_type: case_status_to_cache[vacols_folder[0]],
           docket_number: vacols_folder[1],
           issue_count: issue_counts_to_cache[vacols_folder[0]] || 0,
@@ -104,11 +108,13 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         }
       end
 
-      update_columns = [:docket_number, :issue_count, :veteran_name, :case_type, :is_aod]
+      update_columns = [:assignee_label, :docket_number, :issue_count, :veteran_name, :case_type, :is_aod]
       CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:vacols_id],
                                                                       columns: update_columns }
     end
   end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   def increment_appeal_count(count, appeal_type)
     count.times do
@@ -146,6 +152,11 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       "(advance_on_docket_motions.granted = true and advance_on_docket_motions.created_at > appeals.receipt_date) "\
       "or people.date_of_birth < (current_date - interval '75 years')"
     ).pluck(:id)
+  end
+
+  def assignees_for_vacols_id(vacols_ids)
+    statuses = VACOLS::Case.where(bfkey: vacols_ids).pluck(:bfcurloc)
+    vacols_ids.zip(statuses).to_h
   end
 
   def case_status_for_vacols_id(vacols_ids)
