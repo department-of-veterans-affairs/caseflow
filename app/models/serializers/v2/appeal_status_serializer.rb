@@ -4,7 +4,7 @@ class V2::AppealStatusSerializer
   include FastJsonapi::ObjectSerializer
   include StatusFieldSerializer
   include IssuesFieldSerializer
-  
+
   set_key_transform :camel_lower
   set_type :appeal
   set_id :appeal_status_id

@@ -7,13 +7,14 @@ describe IssueSerializer, :all_dbs do
     IssueSerializer.new(object, is_collection: true).serializable_hash[:data].collect { |issue| issue[:attributes] }
   end
 
-	context "#appeal" do
-		let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
+  context "#appeal" do
+    let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
 
     let(:request_issue1) do
       create(:request_issue,
              benefit_type: "compensation", contested_rating_issue_diagnostic_code: "5002")
     end
+
     let(:request_issue2) do
       create(:request_issue,
              benefit_type: "pension", contested_rating_issue_diagnostic_code: nil)
@@ -29,7 +30,7 @@ describe IssueSerializer, :all_dbs do
     context "appeal pending a decision" do
       it "is status of the request issues" do
         issue_statuses = issues_hash(appeal.active_request_issues_or_decision_isssues)
-       
+
         expect(issue_statuses.count).to eq(2)
 
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "5002" }
@@ -46,7 +47,7 @@ describe IssueSerializer, :all_dbs do
         expect(issue2[:date]).to be_nil
         expect(issue2[:description]).to eq("Pension issue")
       end
-  	end
+    end
 
     context "have decisions, one is remanded" do
       let!(:decision_date) { receipt_date + 130.days }
@@ -133,10 +134,10 @@ describe IssueSerializer, :all_dbs do
         expect(issue2[:description]).to eq("Pension issue")
       end
     end
-	end
+  end
 
-	context "#higher_level_review" do
-		let(:receipt_date) { Time.new("2018", "03", "01").utc }
+  context "#higher_level_review" do
+    let(:receipt_date) { Time.new("2018", "03", "01").utc }
     let(:benefit_type) { "compensation" }
 
     let(:ep_status) { "PEND" }
@@ -319,8 +320,8 @@ describe IssueSerializer, :all_dbs do
     end
 	end
 
-	context "#supplemental_claim" do
-		let(:receipt_date) { Time.new("2018", "03", "01").utc }
+  context "#supplemental_claim" do
+    let(:receipt_date) { Time.new("2018", "03", "01").utc }
     let(:benefit_type) { "compensation" }
 
     let!(:sc) do
@@ -371,5 +372,5 @@ describe IssueSerializer, :all_dbs do
         expect(issue_statuses.first[:diagnosticCode]).to be_nil
       end
     end
-	end
+  end
 end

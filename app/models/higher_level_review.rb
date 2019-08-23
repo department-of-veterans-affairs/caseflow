@@ -121,7 +121,7 @@ class HigherLevelReview < ClaimReview
   end
 
   private
-  
+
   def new_end_product_establishment(issue)
     end_product_establishments.build(
       veteran_file_number: veteran_file_number,

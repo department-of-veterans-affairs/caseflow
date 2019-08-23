@@ -84,7 +84,7 @@ class SupplementalClaim < ClaimReview
       {}
     end
   end
-  
+
   private
 
   def end_product_created_by
