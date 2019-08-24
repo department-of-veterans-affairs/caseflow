@@ -56,9 +56,9 @@ class RatingDecision
   end
 
   def decision_date
-    return promulgation_date if rating_issue? || denial_date_near_promulgation_date?
+    return promulgation_date if rating_issue? || effective_date_near_promulgation_date?
 
-    denial_date
+    effective_date
   end
 
   def contestable?
@@ -66,7 +66,7 @@ class RatingDecision
 
     return false unless decision_date
 
-    denial_date_near_promulgation_date?
+    effective_date_near_promulgation_date?
   end
 
   def rating_issue?
@@ -91,14 +91,14 @@ class RatingDecision
 
   private
 
-  def denial_date
+  def effective_date
     original_denial_date || converted_begin_date || begin_date
   end
 
-  def denial_date_near_promulgation_date?
-    return false unless denial_date
+  def effective_date_near_promulgation_date?
+    return false unless effective_date
 
-    the_decision = denial_date.to_date
+    the_decision = effective_date.to_date
     the_promulgation = promulgation_date.to_date
     the_decision.between?((the_promulgation - 10.days), (the_promulgation + 10.days))
   end
