@@ -59,14 +59,16 @@ class ContestableIssueGenerator
   end
 
   def rating_issues
-    ratings.inject([]) do |result, rating_hash|
-      result + rating_hash[:issues].map { |rating_issue_hash| RatingIssue.deserialize(rating_issue_hash) }
-    end
+    rating_hash_deserialize(from: :issues, to: RatingIssue)
   end
 
   def rating_decisions
+    rating_hash_deserialize(from: :decisions, to: RatingDecision)
+  end
+
+  def rating_hash_deserialize(from:, to:)
     ratings.inject([]) do |result, rating_hash|
-      result + rating_hash[:decisions].map { |rating_decision_hash| RatingDecision.deserialize(rating_decision_hash) }
+      result + rating_hash[from].map { |hash| to.deserialize(hash) }
     end
   end
 
