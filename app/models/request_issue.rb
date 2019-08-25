@@ -817,37 +817,35 @@ class RequestIssue < ApplicationRecord
     )
   end
 
-  # RatingIssue is not in db so we pull hash from the serialized_ratings.
-  # TODO: performance could be improved by using the profile date by loading the specific rating
-  def fetch_contested_rating_issue_ui_hash
+  # RatingIssue and RatingDecision are not in db so we pull hash from the serialized_ratings.
+  # We must unwind the nested hash tree to find the child.
+  def fetch_contested_rating_child_ui_hash(haystack:, needle:, needle_value:)
     return unless decision_review.serialized_ratings
 
-    rating_issue = nil
+    rating_child = nil
 
     decision_review.serialized_ratings.each do |rating|
-      rating_issue = rating[:issues].find do |issue|
-        issue[:reference_id] == contested_rating_issue_reference_id
-      end
-      break if rating_issue
+      rating_child = rating[haystack].find { |child| child[needle] == needle_value }
+      break if rating_child
     end
 
-    rating_issue
+    rating_child
   end
 
-  # same deal with RatingDecision
+  def fetch_contested_rating_issue_ui_hash
+    fetch_contested_rating_child_ui_hash(
+      haystack: :issues,
+      needle: :reference_id,
+      needle_value: contested_rating_issue_reference_id
+    )
+  end
+
   def fetch_contested_rating_decision_ui_hash
-    return unless decision_review.serialized_ratings
-
-    rating_decision = nil
-
-    decision_review.serialized_ratings.each do |rating|
-      rating_decision = rating[:decisions].find do |decision|
-        decision[:disability_id] == contested_rating_decision_reference_id
-      end
-      break if rating_decision
-    end
-
-    rating_decision
+    fetch_contested_rating_child_ui_hash(
+      haystack: :decisions,
+      needle: :disability_id,
+      needle_value: contested_rating_decision_reference_id
+    )
   end
 
   def check_for_eligible_previous_review!
