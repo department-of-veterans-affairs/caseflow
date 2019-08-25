@@ -68,7 +68,7 @@ describe RequestIssue, :all_dbs do
       {
         diagnostic_text: "right knee",
         disability_id: contested_rating_decision_reference_id,
-        original_denial_date: rating_promulgation_date - 7.days,
+        original_denial_date: rating_promulgation_date - 7.days
       }
     ]
   end
@@ -1084,7 +1084,6 @@ describe RequestIssue, :all_dbs do
       expect(rating_request_issue.contested_rating_decision.reference_id).to eq contested_rating_decision_reference_id
       expect(rating_request_issue.contested_rating_issue).to be_nil
       expect(rating_request_issue.contested_rating_decision.decision_text).to match(/right knee/)
-      expect(rating_request_issue.contested_rating_decision.decision_date.to_date).to eq(rating_promulgation_date.to_date)
     end
   end
 

@@ -58,6 +58,7 @@ detectors:
   RepeatedConditional:
     exclude:
       - QueueConfig
+      - RequestIssue
   TooManyInstanceVariables:
     exclude:
       - AmaAppealDispatch

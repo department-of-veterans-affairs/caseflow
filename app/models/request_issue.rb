@@ -443,7 +443,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def contested_rating_issue
-    return unless decision_review
     return unless contested_rating_issue_reference_id
 
     @contested_rating_issue ||= begin
@@ -453,7 +452,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def contested_rating_decision
-    return unless decision_review
     return unless contested_rating_decision_reference_id
 
     @contested_rating_decision ||= begin
@@ -586,10 +584,10 @@ class RequestIssue < ApplicationRecord
 
   def decision_or_promulgation_date
     return decision_date if nonrating?
-    if rating?
-      return contested_rating_issue&.promulgation_date if associated_rating_issue?
-      return contested_rating_decision&.decision_date&.to_date if associated_rating_decision?
-    end
+
+    return contested_rating_issue&.promulgation_date if associated_rating_issue?
+
+    return contested_rating_decision&.decision_date&.to_date if associated_rating_decision?
   end
 
   def diagnostic_code
@@ -820,7 +818,7 @@ class RequestIssue < ApplicationRecord
   # RatingIssue and RatingDecision are not in db so we pull hash from the serialized_ratings.
   # We must unwind the nested hash tree to find the child.
   def fetch_contested_rating_child_ui_hash(haystack:, needle:, needle_value:)
-    return unless decision_review.serialized_ratings
+    return unless decision_review&.serialized_ratings
 
     rating_child = nil
 
