@@ -36,11 +36,8 @@ feature "Higher-Level Review", :all_dbs do
   let(:inaccessible) { false }
 
   let(:receipt_date) { Time.zone.today - 5.days }
-
   let(:promulgation_date) { receipt_date - 10.days }
-
   let(:benefit_type) { "compensation" }
-
   let(:untimely_days) { 372.days }
 
   let!(:current_user) do
@@ -48,54 +45,15 @@ feature "Higher-Level Review", :all_dbs do
   end
 
   let(:profile_date) { (receipt_date - 8.days).to_datetime }
+  let(:untimely_promulgation_date) { receipt_date - untimely_days - 1.day }
+  let(:untimely_profile_date) { receipt_date - untimely_days - 3.days }
+  let(:future_rating_promulgation_date) { receipt_date + 2.days }
+  let(:future_rating_profile_date) { receipt_date + 2.days }
 
-  let!(:rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: promulgation_date,
-      profile_date: profile_date,
-      issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted" },
-        { reference_id: "def456", decision_text: "PTSD denied" },
-        { reference_id: "def789", decision_text: "Looks like a VACOLS issue" }
-      ]
-    )
-  end
-
-  let!(:untimely_ratings) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - untimely_days - 1.day,
-      profile_date: receipt_date - untimely_days - 3.days,
-      issues: [
-        { reference_id: "old123", decision_text: "Untimely rating issue 1" },
-        { reference_id: "old456", decision_text: "Untimely rating issue 2" }
-      ]
-    )
-  end
-
-  let!(:future_rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date + 2.days,
-      profile_date: receipt_date + 2.days,
-      issues: [
-        { reference_id: "future1", decision_text: "Future rating issue 1" },
-        { reference_id: "future2", decision_text: "Future rating issue 2" }
-      ]
-    )
-  end
-
-  let!(:before_ama_rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
-      issues: [
-        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
-      ]
-    )
-  end
+  let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
+  let!(:untimely_ratings) { generate_untimely_rating(veteran, untimely_promulgation_date, untimely_profile_date) }
+  let!(:future_rating) { generate_future_rating(veteran, future_rating_promulgation_date, future_rating_profile_date) }
+  let!(:before_ama_rating) { generate_pre_ama_rating(veteran) }
 
   context "veteran is deceased" do
     let(:date_of_death) { Time.zone.today - 1.day }
@@ -666,27 +624,7 @@ feature "Higher-Level Review", :all_dbs do
       )
     end
 
-    let!(:rating_with_old_decisions) do
-      Generators::Rating.build(
-        participant_id: veteran.participant_id,
-        promulgation_date: receipt_date - 5.years,
-        profile_date: receipt_date - 5.years,
-        issues: [
-          { reference_id: "9876", decision_text: "Left hand broken" }
-        ],
-        decisions: [
-          {
-            rating_issue_reference_id: nil,
-            original_denial_date: receipt_date - 5.years - 3.days,
-            diagnostic_text: "Right arm broken",
-            diagnostic_type: "Bone",
-            disability_id: "123",
-            type_name: "Not Service Connected"
-          }
-        ]
-      )
-    end
-
+    let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran, receipt_date) }
     let(:old_rating_decision_text) { "Bone (Right arm broken) is denied as Not Service Connected" }
 
     let!(:request_issue_in_progress) do
