@@ -606,6 +606,9 @@ feature "Higher-Level Review", :all_dbs do
   end
 
   context "Add / Remove Issues page" do
+    before { FeatureToggle.enable!(:contestable_rating_decisions) }
+    after { FeatureToggle.disable!(:contestable_rating_decisions) }
+
     let(:higher_level_review_reference_id) { "hlr123" }
     let(:supplemental_claim_reference_id) { "sc123" }
     let(:supplemental_claim_contention_reference_id) { 5678 }
@@ -662,6 +665,29 @@ feature "Higher-Level Review", :all_dbs do
         associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
       )
     end
+
+    let!(:rating_with_old_decisions) do
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: receipt_date - 5.years,
+        profile_date: receipt_date - 5.years,
+        issues: [
+          { reference_id: "9876", decision_text: "Left hand broken" }
+        ],
+        decisions: [
+          {
+            rating_issue_reference_id: nil,
+            original_denial_date: receipt_date - 5.years - 3.days,
+            diagnostic_text: "Right arm broken",
+            diagnostic_type: "Bone",
+            disability_id: "123",
+            type_name: "Not Service Connected"
+          }
+        ]
+      )
+    end
+
+    let(:old_rating_decision_text) { "Bone (Right arm broken) is denied as Not Service Connected" }
 
     let!(:request_issue_in_progress) do
       create(
@@ -754,7 +780,7 @@ feature "Higher-Level Review", :all_dbs do
       expect(page).to have_content("Past decisions from #{rating_date}")
     end
 
-    scenario "HLR comp" do
+    scenario "compensation claim" do
       allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
         first_name: "BOB",
         last_name: "VANCE",
@@ -784,6 +810,7 @@ feature "Higher-Level Review", :all_dbs do
       expect(page).to have_content("Old injury")
       expect(page).to have_content("supplemental claim decision issue")
       expect(page).to_not have_content("Future rating issue 1")
+      expect(page).to have_content(old_rating_decision_text)
 
       # test canceling adding an issue by closing the modal
       safe_click ".close-modal"
@@ -910,6 +937,12 @@ feature "Higher-Level Review", :all_dbs do
         "A nonrating issue before AMA #{ineligible_constants.before_ama}"
       )
 
+      # add old rating decision
+      click_intake_add_issue
+      add_intake_rating_issue(old_rating_decision_text)
+      add_untimely_exemption_response("Yes")
+      expect(page).to have_content("#{old_rating_decision_text} #{ineligible_constants.before_ama}")
+
       click_intake_finish
 
       expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
@@ -922,6 +955,7 @@ feature "Higher-Level Review", :all_dbs do
       ineligible_checklist = find("ul.cf-issue-checklist")
       expect(ineligible_checklist).to have_content("Already reviewed injury is ineligible")
       expect(ineligible_checklist).to have_content("Another Description for Active Duty Adjustments is ineligible")
+      expect(ineligible_checklist).to have_content(old_rating_decision_text)
 
       # make sure that database is populated
       expect(
@@ -1066,6 +1100,13 @@ feature "Higher-Level Review", :all_dbs do
       expect(ineligible_due_to_previous_hlr).to_not eq(previous_request_issue)
       expect(ineligible_due_to_previous_hlr.contention_reference_id).to be_nil
       expect(ineligible_due_to_previous_hlr.ineligible_due_to).to eq(previous_request_issue)
+
+      old_rating_decision_request_issue = RequestIssue.find_by(
+        decision_review: higher_level_review,
+        contested_issue_description: old_rating_decision_text
+      )
+
+      expect(old_rating_decision_request_issue.contested_rating_decision_reference_id).to_not be_nil
 
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
         hash_including(
