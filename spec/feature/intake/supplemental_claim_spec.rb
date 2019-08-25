@@ -452,6 +452,9 @@ feature "Supplemental Claim Intake", :all_dbs do
   end
 
   context "Add / Remove Issues page" do
+    before { FeatureToggle.enable!(:contestable_rating_decisions) }
+    after { FeatureToggle.disable!(:contestable_rating_decisions) }
+
     let(:duplicate_reference_id) { "xyz789" }
     let(:old_reference_id) { "old1234" }
     let(:active_epe) { create(:end_product_establishment, :active) }
@@ -468,6 +471,29 @@ feature "Supplemental Claim Intake", :all_dbs do
         ]
       )
     end
+
+    let!(:rating_with_old_decisions) do
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: receipt_date - 5.years,
+        profile_date: receipt_date - 5.years,
+        issues: [
+          { reference_id: "9876", decision_text: "Left hand broken" }
+        ],
+        decisions: [
+          {
+            rating_issue_reference_id: nil,
+            original_denial_date: receipt_date - 5.years - 3.days,
+            diagnostic_text: "Right arm broken",
+            diagnostic_type: "Bone",
+            disability_id: "123",
+            type_name: "Not Service Connected"
+          }
+        ]
+      )
+    end
+
+    let(:old_rating_decision_text) { "Bone (Right arm broken) is denied as Not Service Connected" }
 
     let!(:untimely_rating_from_ramp) do
       Generators::Rating.build(
@@ -521,7 +547,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       end
     end
 
-    scenario "SC comp" do
+    scenario "compensation claim" do
       supplemental_claim, = start_supplemental_claim(veteran)
       visit "/intake/add_issues"
 
@@ -537,6 +563,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       expect(page).to have_content("Left knee granted 2")
       expect(page).to have_content("PTSD denied 2")
       expect(page).to have_content("Old injury")
+      expect(page).to have_content(old_rating_decision_text)
 
       # test canceling adding an issue by closing the modal
       safe_click ".close-modal"
@@ -624,11 +651,17 @@ feature "Supplemental Claim Intake", :all_dbs do
       )
       expect(page).to have_content("A nonrating issue before AMA")
 
+      # add old rating decision
+      click_intake_add_issue
+      add_intake_rating_issue(old_rating_decision_text)
+      expect(page).to have_content(old_rating_decision_text)
+
       click_intake_finish
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
       expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
       expect(page).to have_content('Unidentified issue: no issue matched for requested "This is an unidentified issue"')
+      expect(page).to have_content(old_rating_decision_text)
 
       success_checklist = find("ul.cf-success-checklist")
       expect(success_checklist).to have_content("Non-RAMP Issue before AMA Activation")
@@ -717,6 +750,13 @@ feature "Supplemental Claim Intake", :all_dbs do
       expect(ineligible_issue.contention_reference_id).to be_nil
       expect(RequestIssue.find_by(contested_rating_issue_reference_id: old_reference_id).eligible?).to eq(true)
 
+      old_rating_decision_request_issue = RequestIssue.find_by(
+        decision_review: supplemental_claim,
+        contested_issue_description: old_rating_decision_text
+      )
+
+      expect(old_rating_decision_request_issue.contested_rating_decision_reference_id).to_not be_nil
+
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
         hash_including(
           contentions: array_including(description: "Old injury")
@@ -724,8 +764,15 @@ feature "Supplemental Claim Intake", :all_dbs do
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        hash_including(contentions: array_including(description: old_rating_decision_text))
+      )
+
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         hash_including(
-          contentions: array_including({ description: "Left knee granted 2" }, description: "Really old injury")
+          contentions: array_including(
+            { description: "Left knee granted 2" },
+            description: "Really old injury"
+          )
         )
       )
     end
