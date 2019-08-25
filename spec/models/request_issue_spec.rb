@@ -43,6 +43,7 @@ describe RequestIssue, :all_dbs do
       promulgation_date: rating_promulgation_date,
       profile_date: (review.receipt_date - 50.days).in_time_zone,
       issues: issues,
+      decisions: decisions,
       associated_claims: associated_claims
     )
   end
@@ -50,6 +51,7 @@ describe RequestIssue, :all_dbs do
   let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
   let!(:decision_sync_processed_at) { nil }
   let!(:end_product_establishment) { nil }
+
   let(:issues) do
     [
       {
@@ -58,6 +60,16 @@ describe RequestIssue, :all_dbs do
         contention_reference_id: contention_reference_id
       },
       { reference_id: "xyz456", decision_text: "PTSD denied" }
+    ]
+  end
+
+  let(:decisions) do
+    [
+      {
+        diagnostic_text: "right knee",
+        disability_id: contested_rating_decision_reference_id,
+        original_denial_date: rating_promulgation_date - 7.days,
+      }
     ]
   end
 
@@ -1055,9 +1067,24 @@ describe RequestIssue, :all_dbs do
   end
 
   context "#contested_rating_issue" do
-    it "returns the rating issue hash that prompted the RequestIssue" do
+    it "returns the RatingIssue that prompted the RequestIssue" do
       expect(rating_request_issue.contested_rating_issue.reference_id).to eq contested_rating_issue_reference_id
       expect(rating_request_issue.contested_rating_issue.decision_text).to eq "Left knee granted"
+    end
+  end
+
+  context "#contested_rating_decision" do
+    before { FeatureToggle.enable!(:contestable_rating_decisions) }
+    after { FeatureToggle.disable!(:contestable_rating_decisions) }
+
+    let(:contested_rating_issue_reference_id) { nil }
+    let(:contested_rating_decision_reference_id) { "some-disability-id" }
+
+    it "returns the RatingDecision that prompted the RequestIssue" do
+      expect(rating_request_issue.contested_rating_decision.reference_id).to eq contested_rating_decision_reference_id
+      expect(rating_request_issue.contested_rating_issue).to be_nil
+      expect(rating_request_issue.contested_rating_decision.decision_text).to match(/right knee/)
+      expect(rating_request_issue.contested_rating_decision.decision_date.to_date).to eq(rating_promulgation_date.to_date)
     end
   end
 

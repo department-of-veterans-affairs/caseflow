@@ -1045,6 +1045,7 @@ feature "Higher-Level Review", :all_dbs do
       )
 
       expect(old_rating_decision_request_issue.contested_rating_decision_reference_id).to_not be_nil
+      expect(old_rating_decision_request_issue).to be_before_ama
 
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
         hash_including(

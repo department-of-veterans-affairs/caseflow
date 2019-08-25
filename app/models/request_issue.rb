@@ -452,6 +452,16 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  def contested_rating_decision
+    return unless decision_review
+    return unless contested_rating_decision_reference_id
+
+    @contested_rating_decision ||= begin
+      contested_rating_decision_ui_hash = fetch_contested_rating_decision_ui_hash
+      contested_rating_decision_ui_hash ? RatingDecision.deserialize(contested_rating_decision_ui_hash) : nil
+    end
+  end
+
   def contested_benefit_type
     contested_rating_issue&.benefit_type
   end
@@ -576,7 +586,10 @@ class RequestIssue < ApplicationRecord
 
   def decision_or_promulgation_date
     return decision_date if nonrating?
-    return contested_rating_issue.try(:promulgation_date) if rating?
+    if rating?
+      return contested_rating_issue&.promulgation_date if associated_rating_issue?
+      return contested_rating_decision&.decision_date&.to_date if associated_rating_decision?
+    end
   end
 
   def diagnostic_code
@@ -809,13 +822,32 @@ class RequestIssue < ApplicationRecord
   def fetch_contested_rating_issue_ui_hash
     return unless decision_review.serialized_ratings
 
-    rating_with_issue = decision_review.serialized_ratings.find do |rating|
-      rating[:issues].find { |issue| issue[:reference_id] == contested_rating_issue_reference_id }
+    rating_issue = nil
+
+    decision_review.serialized_ratings.each do |rating|
+      rating_issue = rating[:issues].find do |issue|
+        issue[:reference_id] == contested_rating_issue_reference_id
+      end
+      break if rating_issue
     end
 
-    rating_with_issue ||= { issues: [] }
+    rating_issue
+  end
 
-    rating_with_issue[:issues].find { |issue| issue[:reference_id] == contested_rating_issue_reference_id }
+  # same deal with RatingDecision
+  def fetch_contested_rating_decision_ui_hash
+    return unless decision_review.serialized_ratings
+
+    rating_decision = nil
+
+    decision_review.serialized_ratings.each do |rating|
+      rating_decision = rating[:decisions].find do |decision|
+        decision[:disability_id] == contested_rating_decision_reference_id
+      end
+      break if rating_decision
+    end
+
+    rating_decision
   end
 
   def check_for_eligible_previous_review!
