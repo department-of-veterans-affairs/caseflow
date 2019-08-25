@@ -72,6 +72,29 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     )
   end
 
+  let!(:rating_with_old_decisions) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date - 5.years,
+      profile_date: receipt_date - 5.years,
+      issues: [
+        { reference_id: "9876", decision_text: "Left hand broken" }
+      ],
+      decisions: [
+        {
+          rating_issue_reference_id: nil,
+          original_denial_date: receipt_date - 5.years - 3.days,
+          diagnostic_text: "Right arm broken",
+          diagnostic_type: "Bone",
+          disability_id: "123",
+          type_name: "Not Service Connected"
+        }
+      ]
+    )
+  end
+
+  let(:old_rating_decision_text) { "Bone (Right arm broken) is denied as Not Service Connected" }
+
   let(:decision_review_remanded) { nil }
   let(:benefit_type) { "compensation" }
 
@@ -247,6 +270,9 @@ feature "Supplemental Claim Edit issues", :all_dbs do
   end
 
   context "when there is a rating end product" do
+    before { FeatureToggle.enable!(:contestable_rating_decisions) }
+    after { FeatureToggle.disable!(:contestable_rating_decisions) }
+
     let(:request_issue) do
       RequestIssue.create!(
         contested_rating_issue_reference_id: "def456",
@@ -355,6 +381,12 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       add_intake_unidentified_issue("This is an unidentified issue")
       expect(page).to have_content("4 issues")
       expect(page).to have_content("This is an unidentified issue")
+
+      # add rating decision
+      click_intake_add_issue
+      add_intake_rating_issue(old_rating_decision_text)
+      expect(page).to have_content("5 issues")
+      expect(page).to have_content(old_rating_decision_text)
     end
 
     context "when veteran has active nonrating request issues" do
