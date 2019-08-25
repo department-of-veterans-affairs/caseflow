@@ -316,7 +316,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def rating?
-    !!associated_rating_issue? || previous_rating_issue?
+    !!associated_rating_issue? || previous_rating_issue? || !!associated_rating_decision?
   end
 
   def nonrating?
@@ -335,6 +335,10 @@ class RequestIssue < ApplicationRecord
 
   def associated_rating_issue?
     contested_rating_issue_reference_id
+  end
+
+  def associated_rating_decision?
+    contested_rating_decision_reference_id
   end
 
   def open?

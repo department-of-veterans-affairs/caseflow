@@ -9,6 +9,7 @@ describe RequestIssue, :all_dbs do
   end
 
   let(:contested_rating_issue_reference_id) { "abc123" }
+  let(:contested_rating_decision_reference_id) { nil }
   let(:profile_date) { Time.zone.now.to_s }
   let(:contention_reference_id) { "1234" }
   let(:nonrating_contention_reference_id) { "5678" }
@@ -64,6 +65,7 @@ describe RequestIssue, :all_dbs do
     {
       decision_review: review,
       contested_rating_issue_reference_id: contested_rating_issue_reference_id,
+      contested_rating_decision_reference_id: contested_rating_decision_reference_id,
       contested_rating_issue_profile_date: profile_date,
       contested_issue_description: "a rating request issue",
       ramp_claim_id: ramp_claim_id,
@@ -1136,6 +1138,16 @@ describe RequestIssue, :all_dbs do
 
     context "when there is an associated rating issue" do
       let(:contested_rating_issue_reference_id) { "123" }
+      it { is_expected.to be true }
+
+      it "nonrating? is false" do
+        expect(nonrating).to be(false)
+      end
+    end
+
+    context "where there is an associated rating decision" do
+      let(:contested_rating_decision_reference_id) { "123" }
+
       it { is_expected.to be true }
 
       it "nonrating? is false" do
