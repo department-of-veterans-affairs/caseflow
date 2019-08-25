@@ -28,7 +28,9 @@ feature "Higher Level Review Edit issues", :all_dbs do
   let!(:rating) { generate_rating_with_defined_contention(veteran, promulgation_date, profile_date) }
   let!(:rating_before_ama) { generate_pre_ama_rating(veteran) }
   let!(:rating_before_ama_from_ramp) { generate_rating_before_ama_from_ramp(veteran) }
-  let!(:ratings_with_legacy_issues) { generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days) }
+  let!(:ratings_with_legacy_issues) do
+    generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
+  end
 
   let(:legacy_opt_in_approved) { false }
 

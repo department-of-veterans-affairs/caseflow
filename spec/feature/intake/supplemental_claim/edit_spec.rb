@@ -26,7 +26,9 @@ feature "Supplemental Claim Edit issues", :all_dbs do
   let!(:rating) { generate_rating_with_defined_contention(veteran, receipt_date, profile_date) }
   let!(:rating_before_ama) { generate_pre_ama_rating(veteran) }
   let!(:rating_before_ama_from_ramp) { generate_rating_before_ama_from_ramp(veteran) }
-  let!(:ratings_with_legacy_issues) { generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days) }
+  let!(:ratings_with_legacy_issues) do
+    generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
+  end
   let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran, receipt_date) }
   let(:old_rating_decision_text) { "Bone (Right arm broken) is denied as Not Service Connected" }
 
