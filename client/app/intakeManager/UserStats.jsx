@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import Table from '../components/Table';
 import SearchBar from '../components/SearchBar';

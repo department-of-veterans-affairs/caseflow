@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -131,7 +132,10 @@ class AsyncableJobsPage extends React.PureComponent {
       {
         header: 'Name',
         valueFunction: (job, rowId) => {
-          return <a title={`row ${rowId}`} href={`/asyncable_jobs/${job.klass}/jobs/${job.id}`}>{job.klass} {job.id}</a>;
+          let title = `row ${rowId}`;
+          let href = `/asyncable_jobs/${job.klass}/jobs/${job.id}`;
+
+          return <a title={title} href={href}>{job.klass} {job.id}</a>;
         }
       },
       {
@@ -156,7 +160,7 @@ class AsyncableJobsPage extends React.PureComponent {
         header: 'User',
         valueFunction: (job) => {
           if (!job.user) {
-            return "";
+            return '';
           }
 
           return <a href={`/intake/manager?user_css_id=${job.user}`}>{job.user}</a>;
