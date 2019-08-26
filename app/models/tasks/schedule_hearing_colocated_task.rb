@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ScheduleHearingColocatedTask < ColocatedTask
+  after_update :create_schedule_hearing_task_on_completion
+
   def self.label
     Constants.CO_LOCATED_ADMIN_ACTIONS.schedule_hearing
   end
@@ -35,8 +37,16 @@ class ScheduleHearingColocatedTask < ColocatedTask
       return assigned_by.vacols_uniq_id
     end
 
-    # Schedule hearing with a task (instead of changing Location in VACOLS, the old way)
-    ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)
     LegacyAppeal::LOCATION_CODES[:caseflow]
+  end
+
+  def create_schedule_hearing_task_on_completion
+    if saved_change_to_status? &&
+       completed? &&
+       all_tasks_closed_for_appeal? &&
+       assigned_to.is_a?(Organization)
+      # Schedule hearing with a task (instead of changing Location in VACOLS, the old way)
+      ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)
+    end
   end
 end

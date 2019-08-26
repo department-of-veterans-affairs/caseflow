@@ -560,7 +560,8 @@ RSpec.feature "Task queue", :all_dbs do
         ColocatedTask.create_many_from_params([{
                                                 assigned_by: attorney,
                                                 action: :schedule_hearing,
-                                                appeal: appeal
+                                                appeal: appeal,
+                                                parent: RootTask.find_or_create_by!(appeal: appeal)
                                               }], attorney)
       end
 
@@ -572,6 +573,7 @@ RSpec.feature "Task queue", :all_dbs do
         find("button", text: "Send case").click
         expect(page).to have_content("Bob Smith's case has been sent to the Confirm schedule hearing team")
         expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
+        expect(appeal.tasks.pluck(:type)).to include(ScheduleHearingTask.name, HearingTask.name)
       end
 
       it "the case should be returned in the attorneys queue when canceled" do
@@ -585,6 +587,20 @@ RSpec.feature "Task queue", :all_dbs do
         User.authenticate!(user: attorney)
         visit("/queue")
         expect(page).to have_content(appeal.veteran_file_number)
+      end
+
+      context "for an ama appeal" do
+        let(:appeal) { create(:appeal) }
+
+        it "creates a schedule hearing task when a user assigns a colocated task back to the hearing team" do
+          visit("/queue/appeals/#{appeal.external_id}")
+          find(".Select-control", text: "Select an action…").click
+          expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
+          find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
+          find("button", text: "Send case").click
+          expect(page).to have_content("Bob Smith's case has been sent to the Confirm schedule hearing team")
+          expect(appeal.tasks.pluck(:type)).to include(ScheduleHearingTask.name, HearingTask.name)
+        end
       end
     end
   end
