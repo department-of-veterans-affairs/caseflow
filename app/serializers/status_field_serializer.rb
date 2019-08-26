@@ -4,7 +4,6 @@ module StatusFieldSerializer
   extend ActiveSupport::Concern
 
   class_methods do
-
     protected
 
     def status(object)

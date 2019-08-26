@@ -4,7 +4,6 @@ module IssuesFieldSerializer
   extend ActiveSupport::Concern
 
   class_methods do
-
     protected
 
     def issues(object)
