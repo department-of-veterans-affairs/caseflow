@@ -26,7 +26,7 @@ export class FlaggedForReviewContainer extends Component {
     }
 
     return <div>
-      <UserStats />
+      <UserStats selectedUser={this.props.selectedUser} />
       <FlaggedForReview {...this.props} />
     </div>;
   }
