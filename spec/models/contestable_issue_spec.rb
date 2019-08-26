@@ -72,7 +72,7 @@ describe ContestableIssue, :postgres do
         rating_issue_reference_id: nil,
         rating_issue_profile_date: profile_date,
         decision_issue: nil,
-        approx_decision_date: rating_decision.begin_date,
+        approx_decision_date: rating_decision.decision_date,
         description: rating_decision.decision_text,
         contesting_decision_review: decision_review,
         rating_issue_diagnostic_code: diagnostic_code,
@@ -85,14 +85,14 @@ describe ContestableIssue, :postgres do
         ratingIssueProfileDate: profile_date,
         ratingIssueDiagnosticCode: diagnostic_code,
         decisionIssueId: nil,
-        approxDecisionDate: rating_decision.begin_date,
+        approxDecisionDate: rating_decision.decision_date,
         description: rating_decision.decision_text,
         isRating: true,
         rampClaimId: nil,
         titleOfActiveReview: nil,
         sourceReviewType: nil,
         timely: true,
-        latestIssuesInChain: [{ id: nil, approxDecisionDate: rating_decision.begin_date }]
+        latestIssuesInChain: [{ id: nil, approxDecisionDate: rating_decision.decision_date }]
       )
     end
   end
