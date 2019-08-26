@@ -122,22 +122,23 @@ paths:
                         enum: [RequestIssue]
                       attributes:
                         type: object
-                        required:
-                          - decisionText
-                          - decisionDate
-                          # withdrawalDate (NOT required)
-                          # nonratingIssueCategory (NOT required)
-                        properties:
-                          decisionText:
+                        properties: # none are required
+                          notes:
                             type: string
+                          decisionIssueId:
+                            type: integer
+                          ratingIssueId:
+                            type: string
+                          legacyAppealId:
+                            type: string
+                          legacyAppealIssueId:
+                            type: integer
+                          category:
+                            $ref: "#/components/schemas/nonrating_issue_category"
                           decisionDate:
                             type: string
-                            format: date
-                          withdrawalDate:
+                          decisionText:
                             type: string
-                            format: date
-                          nonratingIssueCategory:
-                            $ref: "#/components/schemas/nonrating_issue_category"
             examples:
               pension:
                 value: {
@@ -170,18 +171,27 @@ paths:
                     },
                     "included": [
                       {
-                        "type": "NonratingIssue",
+                        "type": "RequestIssue",
                         "attributes": {
                           "decisionText": "veteran status verified",
                           "decisionDate": "2019-07-11",
-                          "withdrawalDate": null,
-                          "nonratingIssueCategory": "Eligibility | Veteran Status"
+                          "category": "Eligibility | Veteran Status"
                         }
                       },
                       {
-                        "type": "RatingIssue",
-                        "id": "def456"
-                      }
+                        "type": "RequestIssue",
+                        "attributes": {
+                          "decisionIssueId": 22
+                        }
+                      },
+                      {
+                        "type": "RequestIssue",
+                        "attributes": {
+                          "ratingIssueId": "12345678",
+                          "legacyAppealId": "9876543210",
+                          "legacyAppealIssueId": 1
+                        }
+                      },
                     ]
                   }
       responses:
@@ -264,7 +274,7 @@ paths:
                     "errors": [
                       {
                         "status": "403",
-                        "title":  "Veteran File inaccessible",
+                        "title":  "You don't have permission to view this veteran's information",
                         "code":  "veteran_not_accessible"
                       }
                     ]
@@ -285,31 +295,31 @@ paths:
                     "errors": [
                       {
                         "status": "404",
-                        "title":  "Veteran File not found",
+                        "title":  "Veteran not found",
                         "code":  "veteran_not_found"
                       }
                     ]
                   }
-                issue_not_found:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "404",
-                        "title":  "Issue not found",
-                        "code":  "issue_not_found"
-                      }
-                    ]
-                  }
-                claimant_not_found:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "404",
-                        "title":  "Claimant not found",
-                        "code":  "claimant_not_found"
-                      }
-                    ]
-                  }
+#               issue_not_found:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "404",
+#                       "title":  "Issue not found",
+#                       "code":  "issue_not_found"
+#                     }
+#                   ]
+#                 }
+#               claimant_not_found:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "404",
+#                       "title":  "Claimant not found",
+#                       "code":  "claimant_not_found"
+#                     }
+#                   ]
+#                 }
         '409':
           description: |-
             409 response
@@ -392,16 +402,6 @@ paths:
 #                     }
 #                   ]
 #                 }
-                invalid_file_number:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title":  "Invalid Veteran File number",
-                        "code":  "invalid_file_number"
-                      }
-                    ]
-                  }
 #               claimant_ineligible:
 #                 value: {
 #                   "errors": [
@@ -472,13 +472,103 @@ paths:
 #                     }
 #                   ]
 #                 }
+                incident_flash:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title": "The veteran has an incident flash",
+                        "code": "incident_flash"
+                      }
+                    ]
+                  }
+                invalid_file_number:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title": "Veteran ID not found",
+                        "code": "invalid_file_number"
+                      }
+                    ]
+                  }
+                request_issue_cannot_be_empty:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title": "A request issue cannot be empty",
+                        "code": "request_issue_cannot_be_empty"
+                      }
+                    ]
+                  }
+                request_issue_category_invalid_for_benefit_type:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title": "Request issue category for specified benefit type",
+                        "code": "request_issue_category_invalid_for_benefit_type"
+                      }
+                    ]
+                  }
+                request_issue_legacyAppealId_is_blank_when_legacyAppealIssueId_is_present:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title": "If you specify a legacy appeal issue, you must specify which legacy appeal it belongs to (legacy_appeal_id)",
+                        "code": "request_issue_legacyAppealId_is_blank_when_legacyAppealIssueId_is_present"
+                      }
+                    ]
+                  }
+                request_issue_legacyAppealIssueId_is_blank_when_legacyAppealId_is_present:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title": "If you specify a legacy appeal, you must specify which issue (legacy_appeal_issue_id) of that appeal",
+                        "code": "request_issue_legacyAppealIssueId_is_blank_when_legacyAppealId_is_present"
+                      }
+                    ]
+                  }
+                request_issue_legacy_not_opted_in:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title": "To add a legacy issue, legacyOptInApproved must be true",
+                        "code": "request_issue_legacy_not_opted_in"
+                      }
+                    ]
+                  }
+                request_issue_must_have_at_least_one_ID_field:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title": "A request issue must have at least one of the following: decisionIssueId, ratingIssueId, legacyAppealId, legacyAppealIssueId",
+                        "code": "request_issue_must_have_at_least_one_ID_field"
+                      }
+                    ]
+                  }
                 veteran_has_multiple_phone_numbers:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Veteran has multiple phone numbers",
-                        "code":  "veteran_has_multiple_phone_numbers"
+                        "title": "The veteran has multiple active phone numbers",
+                        "code": "veteran_has_multiple_phone_numbers"
+                      }
+                    ]
+                  }
+                veteran_not_modifiable:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title": "You don't have permission to intake this veteran",
+                        "code": "veteran_not_modifiable"
                       }
                     ]
                   }
@@ -487,28 +577,8 @@ paths:
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Veteran not valid",
-                        "code":  "veteran_not_valid"
-                      }
-                    ]
-                  }
-                reserved_veteran_file_number:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title":  "Reserved veteran file number",
-                        "code":  "reserved_veteran_file_number"
-                      }
-                    ]
-                  }
-                unknown_error:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title":  "Unknown error",
-                        "code":  "unknown_error"
+                        "title": "The veteran's profile has missing or invalid information required to create an EP",
+                        "code": "veteran_not_valid"
                       }
                     ]
                   }
@@ -521,6 +591,47 @@ paths:
                 properties:
                   errors:
                     $ref: "#/components/schemas/errors"
+              examples:
+                intake_review_failed:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "500",
+                        "title": "The review step of processing the intake failed for an unknown reason",
+                        "code": "intake_review_failed"
+                      }
+                    ]
+                  }
+                intake_start_failed:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "500",
+                        "title": "The start step of processing the intake failed for an unknown reason",
+                        "code": "intake_start_failed"
+                      }
+                    ]
+                  }
+                reserved_veteran_file_number:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "500",
+                        "title": "Invalid veteran file number",
+                        "code": "reserved_veteran_file_number"
+                      }
+                    ]
+                  }
+                unknown_error:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "500",
+                        "title":  "Unknown error",
+                        "code":  "unknown_error"
+                      }
+                    ]
+                  }
   /higher_level_reviews/intake_status/{uuid}:
     get:
       parameters:

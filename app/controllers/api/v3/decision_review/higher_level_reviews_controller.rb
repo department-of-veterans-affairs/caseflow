@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::V3::DecisionReview::HigherLevelReviewsController < Api::ExternalProxyController
+class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseController
   def create
     if processor.run!.errors?
       render_errors(processor.errors)
@@ -29,16 +29,3 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::ExternalProxy
     render Api::V3::DecisionReview::IntakeErrors.new(errors).render_hash
   end
 end
-
-# def mock_create
-#   mock_hlr = HigherLevelReview.new(
-#     uuid: "FAKEuuid-mock-test-fake-mocktestdata",
-#     establishment_submitted_at: Time.zone.now # having this timestamp marks it as submitted
-#   )
-#   response.set_header(
-#     "Content-Location",
-#     # id returned is static, if a mock intake_status is created, this should match
-#     "#{request.base_url}/api/v3/decision_review/higher_level_reviews/intake_status/999"
-#   )
-#   render json: intake_status(mock_hlr), status: :accepted
-# end

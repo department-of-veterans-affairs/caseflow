@@ -73,7 +73,9 @@ describe User, :all_dbs do
         "efolder_documents_fetched_at" => nil,
         "selected_regional_office" => nil,
         :display_name => css_id.upcase,
-        "name" => "Tom Brady"
+        "name" => "Tom Brady",
+        "status" => Constants.USER_STATUSES.active,
+        "status_updated_at" => nil
       }
     end
 
@@ -249,32 +251,36 @@ describe User, :all_dbs do
   end
 
   context "#selectable_organizations" do
-    let(:judge) { create :user }
-    let!(:judgeteam) { JudgeTeam.create_for_judge(judge) }
+    let(:user) { create(:user) }
+    let!(:staff) { create(:staff, :attorney_role, user: user) }
 
     subject { user.selectable_organizations }
 
-    context "when user is the team's judge" do
-      let(:user) { judge }
-
-      it "includes judge teams from the organization list" do
-        is_expected.to include(
-          id: judgeteam.id,
-          name: "Assign",
-          url: format("queue/%<id>s/assign", id: user.id)
-        )
-        expect(user.organizations).to include judgeteam
+    context "when user is not a judge in vacols and does not have a judge team" do
+      it "assign cases is not returned" do
+        is_expected.to be_empty
       end
     end
 
-    context "when user is not the team's judge" do
-      before do
-        OrganizationsUser.add_user_to_organization(user, judgeteam)
-      end
+    context "when user is a judge in vacols" do
+      let!(:staff) { create(:staff, :attorney_judge_role, user: user) }
 
-      it "excludes judge teams from the organization list" do
-        is_expected.to be_empty
-        expect(user.organizations).to include judgeteam
+      it "assign cases is returned" do
+        is_expected.to include(
+          name: "Assign",
+          url: format("queue/%<id>s/assign", id: user.id)
+        )
+      end
+    end
+
+    context "when user has a judge team" do
+      before { JudgeTeam.create_for_judge(user) }
+
+      it "assign cases is returned" do
+        is_expected.to include(
+          name: "Assign",
+          url: format("queue/%<id>s/assign", id: user.id)
+        )
       end
     end
   end
@@ -567,6 +573,34 @@ describe User, :all_dbs do
       before { OrganizationsUser.add_user_to_organization(user, create(:organization)) }
       it "returns true" do
         expect(subject).to eq(true)
+      end
+    end
+  end
+
+  describe "when the status is updated" do
+    let(:user) { create(:user) }
+
+    subject { user.update_status!(status) }
+
+    before { Timecop.freeze(Time.zone.now) }
+
+    context "with an invalid status" do
+      let(:status) { "invalid" }
+
+      it "fails and does not update the status_updated_at column" do
+        expect { subject }.to raise_error(ArgumentError)
+        expect(user.reload.status).not_to eq status
+        expect(user.status_updated_at).to eq nil
+      end
+    end
+
+    context "with a valid status" do
+      let(:status) { Constants.USER_STATUSES.inactive }
+
+      it "succeeds and updates the status_updated_at column" do
+        expect(subject).to eq true
+        expect(user.reload.status).to eq status
+        expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
       end
     end
   end

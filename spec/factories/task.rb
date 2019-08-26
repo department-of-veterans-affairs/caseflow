@@ -3,8 +3,8 @@
 FactoryBot.define do
   factory :task do
     assigned_at { rand(30..35).days.ago }
-    assigned_by { create(:user) }
-    assigned_to { create(:user) }
+    association :assigned_by, factory: :user
+    association :assigned_to, factory: :user
     appeal { create(:legacy_appeal, vacols_case: create(:case)) }
     action { nil }
     type { Task.name }
@@ -387,7 +387,7 @@ FactoryBot.define do
     factory :evidence_submission_window_task, class: EvidenceSubmissionWindowTask do
       type { EvidenceSubmissionWindowTask.name }
       appeal { create(:appeal) }
-      assigned_to { HearingsManagement.singleton }
+      assigned_to { MailTeam.singleton }
       parent { create(:assign_hearing_disposition_task, appeal: appeal) }
     end
 

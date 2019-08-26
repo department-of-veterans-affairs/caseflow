@@ -85,14 +85,16 @@ class LegacyAppeal < ApplicationRecord
            prefix: :appellant,
            allow_nil: true
 
-  delegate :vacols_representatives,
-           to: :case_record
-
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
   end
 
-  def advanced_on_docket
+  # To match Appeals AOD behavior
+  def aod?
+    aod
+  end
+
+  def advanced_on_docket?
     aod
   end
 
@@ -245,6 +247,18 @@ class LegacyAppeal < ApplicationRecord
     (disposition == "Allowed" && issues.select(&:remanded?).any?) ? "Remanded" : disposition
   end
 
+  delegate :representative_name, :representative_type,
+           :representative_address, :representatives,
+           :representative_to_hash, :representative_participant_id,
+           :vacols_representatives, to: :legacy_appeal_representative
+
+  def legacy_appeal_representative
+    @legacy_appeal_representative ||= LegacyAppealRepresentative.new(
+      power_of_attorney: power_of_attorney,
+      case_record: case_record
+    )
+  end
+
   def power_of_attorney
     # TODO: this will only return a single power of attorney. There are sometimes multiple values, eg.
     # when a contesting claimant is present. Refactor so we surface all POA data.
@@ -308,40 +322,6 @@ class LegacyAppeal < ApplicationRecord
   # checks for data accuracy and uploads the decision to VBMS
   def outcoded_by_name
     [outcoder_last_name, outcoder_first_name, outcoder_middle_initial].select(&:present?).join(", ").titleize
-  end
-
-  # Delete this method when use_representative_info_from_bgs is enabled for all users
-  def representative_code
-    power_of_attorney.vacols_representative_code
-  end
-
-  def representative_participant_id
-    power_of_attorney.bgs_participant_id
-  end
-
-  REPRESENTATIVE_METHOD_NAMES = [
-    :representative_name,
-    :representative_type,
-    :representative_address
-  ].freeze
-
-  REPRESENTATIVE_METHOD_NAMES.each do |method_name|
-    define_method(method_name) do
-      if use_representative_info_from_bgs?
-        power_of_attorney.send("bgs_#{method_name}".to_sym)
-      else
-        power_of_attorney.send("vacols_#{method_name}".to_sym)
-      end
-    end
-  end
-
-  #  LegacyHearing delegates representative here, which is equivalent to representative_name
-  def representative
-    representative_name
-  end
-
-  def representatives
-    Representative.where(participant_id: [power_of_attorney.bgs_participant_id] - [nil])
   end
 
   def contested_claim
@@ -746,7 +726,11 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def address
-    @address ||= Address.new(appellant[:address])
+    @address ||= Address.new(appellant[:address]) if appellant[:address].present?
+  end
+
+  def paper_case?
+    file_type.eql? "Paper"
   end
 
   private
@@ -781,23 +765,6 @@ class LegacyAppeal < ApplicationRecord
 
   def location_code_is_caseflow?
     location_code == LOCATION_CODES[:caseflow]
-  end
-
-  def use_representative_info_from_bgs?
-    FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&
-      (RequestStore.store[:application] == "queue" ||
-       RequestStore.store[:application] == "hearings" ||
-       RequestStore.store[:application] == "idt")
-  end
-
-  def representative_to_hash
-    {
-      name: representative_name,
-      type: representative_type,
-      code: representative_code,
-      participant_id: representative_participant_id,
-      address: representative_address
-    }
   end
 
   def matched_document(type, vacols_datetime)

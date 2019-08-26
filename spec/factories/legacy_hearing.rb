@@ -18,7 +18,7 @@ FactoryBot.define do
       end
     end
 
-    scheduled_for { hearing_day.scheduled_for }
+    scheduled_for { hearing_day&.scheduled_for }
 
     transient do
       case_hearing do

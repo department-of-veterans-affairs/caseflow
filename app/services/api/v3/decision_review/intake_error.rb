@@ -10,41 +10,15 @@ class Api::V3::DecisionReview::IntakeError
     [409, :duplicate_intake_in_progress, "Intake in progress"], # i
     [422, :incident_flash, "The veteran has an incident flash"], # i
     [422, :invalid_file_number, "Veteran ID not found"], # i
-    [
-      422,
-      :veteran_not_valid, # i
-      "The veteran's profile has missing or invalid information required to create an EP"
-    ],
     [422, :request_issue_cannot_be_empty, "A request issue cannot be empty"],
-    [
-      422,
-      :request_issue_category_invalid_for_benefit_type,
-      "Request issue category for specified benefit type"
-    ],
-    [
-      422,
-      :request_issue_must_have_at_least_one_ID_field,
-      [
-        "A request issue must have at least one of the following:",
-        "decisionIssueId,",
-        "ratingIssueId,",
-        "legacyAppealId,",
-        "legacyAppealIssueId"
-      ].join(" ")
-    ],
-    [
-      422,
-      :request_issue_legacyAppealIssueId_is_blank_when_legacyAppealId_is_present,
-      "If you specify a legacy appeal, you must specify which issue (legacy_appeal_issue_id) of that appeal"
-    ],
-    [
-      422,
-      :request_issue_legacyAppealId_is_blank_when_legacyAppealIssueId_is_present,
-      "If you specify a legacy appeal issue, you must specify which legacy appeal it belongs to (legacy_appeal_id)"
-    ],
+    [422, :request_issue_category_invalid_for_benefit_type, "Request issue category for specified benefit type"],
+    [422, :request_issue_legacyAppealId_is_blank_when_legacyAppealIssueId_is_present, "If you specify a legacy appeal issue, you must specify which legacy appeal it belongs to (legacy_appeal_id)"],
+    [422, :request_issue_legacyAppealIssueId_is_blank_when_legacyAppealId_is_present, "If you specify a legacy appeal, you must specify which issue (legacy_appeal_issue_id) of that appeal"],
     [422, :request_issue_legacy_not_opted_in, "To add a legacy issue, legacyOptInApproved must be true"],
+    [422, :request_issue_must_have_at_least_one_ID_field, ["A request issue must have at least one of the following:", "decisionIssueId,", "ratingIssueId,", "legacyAppealId,", "legacyAppealIssueId"].join(" ")],
     [422, :veteran_has_multiple_phone_numbers, "The veteran has multiple active phone numbers"], # i
     [422, :veteran_not_modifiable, "You don't have permission to intake this veteran"], # i
+    [422, :veteran_not_valid, "The veteran's profile has missing or invalid information required to create an EP"], # i
     [500, :intake_review_failed, "The review step of processing the intake failed for an unknown reason"],
     [500, :intake_start_failed, "The start step of processing the intake failed for an unknown reason"],
     [500, :reserved_veteran_file_number, "Invalid veteran file number"] # i
@@ -67,16 +41,16 @@ class Api::V3::DecisionReview::IntakeError
       when String
         obj.to_sym
       else
-        obj.try(:error_code)
+        obj.respond_to?(:error_code) ? error_code(obj.error_code) : nil
       end
     end
 
-    def find_first_error_code(array)
+    def first_that_is_or_has_an_error_code(array)
       array.find { |obj| error_code(obj) }
     end
 
     def from_first_error_code_found(array)
-      self.new find_first_error_code(array)
+      self.new first_that_is_or_has_an_error_code(array)
     end
   end
 end

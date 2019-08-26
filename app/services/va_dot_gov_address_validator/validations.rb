@@ -3,6 +3,7 @@
 module VaDotGovAddressValidator::Validations
   private
 
+  # :nocov:
   def map_country_code_to_state
     case valid_address[:country_code]
     # Guam, American Samoa, Marshall Islands, Micronesia, Northern Mariana Islands, Palau
@@ -15,9 +16,10 @@ module VaDotGovAddressValidator::Validations
     when "VI", "VQ", "PR"
       "PR"
     when "US", "USA"
-      valid_address[:state_code]
+      valid_address.dig(:state_code)
     end
   end
+  # :nocov:
 
   def valid_states
     @valid_states ||= RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? }.pluck(:state)
@@ -27,12 +29,8 @@ module VaDotGovAddressValidator::Validations
     @error_handler ||= VaDotGovAddressValidator::ErrorHandler.new(appeal: appeal, appellant_address: address)
   end
 
-  def fail_if_unable_to_validate_address
-    raise valid_address_response.error if valid_address.nil? # rubocop:disable Style/SignalException
-  end
-
   def state_code_error
-    if state_code_for_regional_office.nil? || !valid_states.include?(state_code_for_regional_office)
+    if !valid_states.include?(state_code)
       Caseflow::Error::VaDotGovForeignVeteranError.new(
         code: 500,
         message: "Appellant address is not in US territories."
@@ -40,9 +38,20 @@ module VaDotGovAddressValidator::Validations
     end
   end
 
+  def valid_address_error
+    if address.nil?
+      return Caseflow::Error::VaDotGovNullAddressError.new(
+        code: 500,
+        message: "Appellant address is missing in VBMS."
+      )
+    end
+
+    valid_address_response.error
+  end
+
   def error_status
-    @error_status ||= if valid_address.blank?
-                        error_handler.handle(valid_address_response.error)
+    @error_status ||= if valid_address_error.present?
+                        error_handler.handle(valid_address_error)
                       elsif state_code_error.present?
                         error_handler.handle(state_code_error)
                       elsif !closest_regional_office_response.success?
@@ -52,18 +61,8 @@ module VaDotGovAddressValidator::Validations
                       end
   end
 
-  def closest_regional_office_with_exceptions
-    # Delaware's RO is not actually an RO
-    # So we assign all appeals with appellants that live in Delaware to Philadelphia
-    (closest_regional_office == "RO60") ? "RO10" : closest_regional_office
-  end
-
   def appeal_is_legacy_and_veteran_requested_central_office?
     appeal.is_a?(LegacyAppeal) && appeal.hearing_request_type == :central_office
-  end
-
-  def appeal_is_legacy_and_veteran_lives_in_va_or_md?
-    appeal.is_a?(LegacyAppeal) && %w[VA MD].include?(state_code_for_regional_office)
   end
 
   def closest_regional_office_facility_id_is_san_antonio?
@@ -71,6 +70,6 @@ module VaDotGovAddressValidator::Validations
   end
 
   def veteran_lives_in_texas?
-    state_code_for_regional_office == "TX"
+    state_code == "TX"
   end
 end

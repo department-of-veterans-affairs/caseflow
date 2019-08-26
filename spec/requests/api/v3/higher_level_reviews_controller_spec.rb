@@ -3,9 +3,37 @@
 require "rails_helper"
 require "support/intake_helpers"
 require "support/vacols_database_cleaner"
-require File.expand_path("../../../../app/services/api/v3/higher_level_review_processor.rb", __dir__)
 
-describe Api::V3::DecisionReview::HigherLevelReviewsController do
+describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: :request do
+  include IntakeHelpers
+
+  before do
+    FeatureToggle.enable!(:api_v3)
+  end
+  after do
+    FeatureToggle.disable!(:api_v3)
+  end
+
+  let!(:api_key) { ApiKey.create!(consumer_name: "ApiV3 Test Consumer").key_string }
+
+=begin
+  describe "#create" do
+    it "should return a 202 on success" do
+      post "/api/v3/decision_review/higher_level_reviews", headers: { "Authorization" => "Token #{api_key}" }
+      expect(response).to have_http_status(202)
+    end
+    it "should be a jsonapi IntakeStatus response" do
+      post "/api/v3/decision_review/higher_level_reviews", headers: { "Authorization" => "Token #{api_key}" }
+      json = JSON.parse(response.body)
+      expect(json["data"].keys).to include("id", "type", "attributes")
+      expect(json["data"]["type"]).to eq "IntakeStatus"
+      expect(json["data"]["attributes"]["status"]).to be_a String
+    end
+    it "should include a Content-Location header" do
+      post "/api/v3/decision_review/higher_level_reviews", headers: { "Authorization" => "Token #{api_key}" }
+      expect(response.headers.keys).to include("Content-Location")
+      expect(response.headers["Content-Location"]).to match "/api/v3/decision_review/higher_level_reviews/intake_status"
+
   context ".intake_status" do
     it "should return a properly formatted IntakeStatus hash" do
       uuid = 444
@@ -134,18 +162,48 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController do
       end
     end
   end
+=end
 end
 
 describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: :request do
   include IntakeHelpers
 
   before do
+    FeatureToggle.enable!(:api_v3)
+
     Timecop.freeze(post_ama_start_date)
 
     [:establish_claim!, :create_contentions!, :associate_rating_request_issues!].each do |method|
       allow(Fakes::VBMSService).to receive(method).and_call_original
     end
   end
+
+  after do
+    FeatureToggle.disable!(:api_v3)
+  end
+
+  let!(:api_key) { ApiKey.create!(consumer_name: "ApiV3 Test Consumer").key_string }
+
+=begin
+  describe "#create" do
+    it "should return a 202 on success" do
+      post "/api/v3/decision_review/higher_level_reviews", headers: { "Authorization" => "Token #{api_key}" }
+      expect(response).to have_http_status(202)
+    end
+    it "should be a jsonapi IntakeStatus response" do
+      post "/api/v3/decision_review/higher_level_reviews", headers: { "Authorization" => "Token #{api_key}" }
+      json = JSON.parse(response.body)
+      expect(json["data"].keys).to include("id", "type", "attributes")
+      expect(json["data"]["type"]).to eq "IntakeStatus"
+      expect(json["data"]["attributes"]["status"]).to be_a String
+    end
+    it "should include a Content-Location header" do
+      post "/api/v3/decision_review/higher_level_reviews", headers: { "Authorization" => "Token #{api_key}" }
+      expect(response.headers.keys).to include("Content-Location")
+      expect(response.headers["Content-Location"]).to match "/api/v3/decision_review/higher_level_reviews/intake_status"
+    end
+  end
+=end
 
   let(:veteran_file_number) { "123412345" }
 
@@ -236,12 +294,12 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
   describe "#create" do
     describe "(general cases)" do
       it "should return a 202 on success" do
-        post("/api/v3/decision_review/higher_level_reviews", params: params)
+        post("/api/v3/decision_review/higher_level_reviews", params: params, headers: { "Authorization" => "Token #{api_key}"})
         expect(response).to have_http_status(202)
       end
 
       it "should return an error status on failure" do
-        post("/api/v3/decision_review/higher_level_reviews", params: {})
+        post("/api/v3/decision_review/higher_level_reviews", params: {}, headers: { "Authorization" => "Token #{api_key}"})
         expect(response).to have_http_status(:error)
       end
     end
@@ -249,7 +307,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     describe "(test error case: unknown_category_for_benefit_type)" do
       let(:category) { "Words ending in urple" }
       it "should return a 422 on this failure" do
-        post("/api/v3/decision_review/higher_level_reviews", params: params)
+        post("/api/v3/decision_review/higher_level_reviews", params: params, headers: { "Authorization" => "Token #{api_key}"})
         error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:unknown_category_for_benefit_type)
 
         expect(response).to have_http_status(error.status)
@@ -269,7 +327,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           }
         end
         it "should return 422/intake_review_failed" do
-          post("/api/v3/decision_review/higher_level_reviews", params: params)
+          post("/api/v3/decision_review/higher_level_reviews", params: params, headers: { "Authorization" => "Token #{api_key}"})
           error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:intake_review_failed)
 
           expect(response).to have_http_status(error.status)
@@ -285,7 +343,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           }
         end
         it "should return 422/unknown_error_code" do
-          post("/api/v3/decision_review/higher_level_reviews", params: params)
+          post("/api/v3/decision_review/higher_level_reviews", params: params, headers: { "Authorization" => "Token #{api_key}"})
           error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:unknown_error_code)
 
           expect(response).to have_http_status(error.status)
@@ -297,7 +355,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         let(:veteran_file_number) { "123456789" }
         it "should return 422/reserved_veteran_file_number" do
           FeatureToggle.enable!(:intake_reserved_file_number, users: [current_user.css_id])
-          post("/api/v3/decision_review/higher_level_reviews", params: params)
+          post("/api/v3/decision_review/higher_level_reviews", params: params, headers: { "Authorization" => "Token #{api_key}"})
           error = Api::V3::HigherLevelReviewProcessor.error_from_error_code(:reserved_veteran_file_number)
 
           expect(response).to have_http_status(error.status)
@@ -308,24 +366,3 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     end
   end
 end
-
-# describe "#mock_create" do
-#   it "should return a 202 on success" do
-#     post "/api/v3/decision_review/higher_level_reviews"
-#     expect(response).to have_http_status(202)
-#   end
-#   it "should be a jsonapi IntakeStatus response" do
-#     post "/api/v3/decision_review/higher_level_reviews"
-#     json = JSON.parse(response.body)
-#     expect(json["data"].keys).to include("id", "type", "attributes")
-#     expect(json["data"]["type"]).to eq "IntakeStatus"
-#     expect(json["data"]["attributes"]["status"]).to be_a String
-#   end
-#   it "should include a Content-Location header" do
-#     post "/api/v3/decision_review/higher_level_reviews"
-#     expect(response.headers.keys).to include("Content-Location")
-#     expect(response.headers["Content-Location"]).to match(
-#       "/api/v3/decision_review/higher_level_reviews/intake_status"
-#     )
-#   end
-# end

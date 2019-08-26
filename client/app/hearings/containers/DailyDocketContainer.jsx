@@ -281,6 +281,7 @@ export class DailyDocketContainer extends React.Component {
           saveHearing={this.saveHearing}
           saveSuccessful={this.props.saveSuccessful}
           openModal={this.openModal}
+          onCancelRemoveHearingDay={this.props.onCancelRemoveHearingDay}
           onClickRemoveHearingDay={this.props.onClickRemoveHearingDay}
           displayRemoveHearingDayModal={this.props.displayRemoveHearingDayModal}
           deleteHearingDay={this.deleteHearingDay}
@@ -357,7 +358,30 @@ DailyDocketContainer.propTypes = {
   displayLockModal: PropTypes.bool,
   displayLockSuccessMessage: PropTypes.bool,
   dailyDocketServerError: PropTypes.bool,
-  onErrorHearingDayLock: PropTypes.bool,
+  history: PropTypes.shape({
+    push: PropTypes.func
+  }),
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      hearingDayId: PropTypes.string
+    })
+  }),
+  handleDailyDocketServerError: PropTypes.func,
+  handleLockHearingServerError: PropTypes.func,
+  onDisplayLockModal: PropTypes.func,
+  onCancelDisplayLockModal: PropTypes.func,
+  onCancelRemoveHearingDay: PropTypes.func,
+  onClickRemoveHearingDay: PropTypes.func,
+  onErrorHearingDayLock: PropTypes.func,
+  onSuccessfulHearingDayDelete: PropTypes.func,
+  onReceiveDailyDocket: PropTypes.func,
+  onReceiveSavedHearing: PropTypes.func,
+  onReceiveHearing: PropTypes.func,
+  onResetSaveSuccessful: PropTypes.func,
+  onResetLockHearingAfterError: PropTypes.func,
+  onResetLockSuccessMessage: PropTypes.func,
+  onResetDailyDocketAfterError: PropTypes.func,
+  onUpdateLock: PropTypes.func,
   print: PropTypes.bool
 };
 
