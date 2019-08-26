@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class CaseSearchResultsForDocketNumber < ::CaseSearchResultsBase
-  validate :docket_number_presence
   validate :veterans_exist, if: :current_user_is_vso_employee?
 
   def initialize(docket_number:, user:)
@@ -22,20 +21,6 @@ class CaseSearchResultsForDocketNumber < ::CaseSearchResultsBase
   private
 
   attr_reader :docket_number
-
-  def docket_number_presence
-    return if docket_number
-
-    errors.add(:workflow, missing_docket_number_error)
-    @status = :bad_request
-  end
-
-  def missing_docket_number_error
-    {
-      "title": "Docket number missing",
-      "detail": "HTTP_CASE_SEARCH request header must include docket number"
-    }
-  end
 
   def not_found_error
     {
