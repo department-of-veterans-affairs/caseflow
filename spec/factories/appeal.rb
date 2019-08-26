@@ -115,10 +115,8 @@ FactoryBot.define do
 
         JudgeAssignTask.create!(appeal: appeal,
                                 parent: appeal.root_task,
-                                appeal_type: Appeal.name,
                                 assigned_at: evaluator.active_task_assigned_at,
-                                assigned_to: evaluator.associated_judge,
-                                action: COPY::JUDGE_ASSIGN_TASK_LABEL)
+                                assigned_to: evaluator.associated_judge)
         appeal.tasks.where(type: DistributionTask.name).update(status: :completed)
       end
     end

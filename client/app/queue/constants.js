@@ -166,10 +166,3 @@ export const PAGE_TITLES = {
 
 export const CUSTOM_HOLD_DURATION_TEXT = 'Custom';
 export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, CUSTOM_HOLD_DURATION_TEXT];
-
-export const DOCKET_NAME_FILTERS = {
-  direct_review: 'Direct Review',
-  legacy: 'Legacy',
-  hearing: 'Hearing',
-  evidence_submission: 'Evidence'
-};

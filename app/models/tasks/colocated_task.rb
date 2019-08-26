@@ -76,10 +76,6 @@ class ColocatedTask < GenericTask
     end
   end
 
-  def label
-    self.class.label
-  end
-
   def timeline_title
     "#{label} completed"
   end

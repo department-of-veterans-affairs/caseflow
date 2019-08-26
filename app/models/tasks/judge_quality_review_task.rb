@@ -12,7 +12,7 @@ class JudgeQualityReviewTask < JudgeTask
     ]
   end
 
-  def label
+  def self.label
     COPY::JUDGE_QUALITY_REVIEW_TASK_LABEL
   end
 end
