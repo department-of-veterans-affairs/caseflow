@@ -138,6 +138,10 @@ RSpec.feature "Intake Manager Page", :postgres do
 
       select_user_stats("nosuchuser")
       expect(page).to have_content("Not found: nosuchuser")
+
+      visit "/intake/manager?user_css_id=#{user1.css_id}"
+
+      expect(page).to have_content("#{busy_day_ymd} 5")
     end
   end
 
