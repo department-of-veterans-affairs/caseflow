@@ -8,7 +8,7 @@ context Api::V3::DecisionReview::IntakeErrors do
     let(:b) { Api::V3::DecisionReview::IntakeError.new(:veteran_not_accessible) }
     subject { Api::V3::DecisionReview::IntakeErrors.new([a, b]) }
     it "should return a properly formatted render hash with a correct status (the highest one)" do
-      expect(subject.render_hash).to eq(json: { errors: [a, b] }, status: [a.status, b.status].max)
+      expect(subject.render_hash).to eq(json: { errors: [a.to_h, b.to_h] }, status: [a.status, b.status].max)
     end
   end
 end

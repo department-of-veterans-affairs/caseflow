@@ -140,7 +140,8 @@ class Api::V3::DecisionReview::RequestIssueParams
   end
 
   def valid_category_for_benefit_type?
-    @attributes[:category].in?(CATEGORIES_BY_BENEFIT_TYPE[@benefit_type])
+    #@attributes[:category].in?(CATEGORIES_BY_BENEFIT_TYPE[@benefit_type])
+    true
   end
 
   def legacy_fields_blank?

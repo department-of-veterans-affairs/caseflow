@@ -28,12 +28,18 @@ class Api::V3::DecisionReview::IntakeError
 
   KNOWN_ERRORS_BY_CODE = KNOWN_ERRORS.each_with_object({}) { |array, hash| hash[array.second] = array }
 
-  # Given multiple arguments, it uses the first argument that is/has an error code
   def initialize(obj)
     @status, @code, @title = (KNOWN_ERRORS_BY_CODE[self.class.error_code(obj)] || UNKNOWN_ERROR)
   end
 
+  def to_h
+    {status: status, code: code, title: title}
+  end
+
   class << self
+    # An error_code is a symbol, a symbol derived from a string, or the symbol
+    # derived from an object's error_code method (which must return a symbol
+    # or string). A /valid/ error_code is a symbol in the KNOWN_ERRORS array.
     def error_code(obj)
       case obj
       when Symbol
@@ -45,12 +51,19 @@ class Api::V3::DecisionReview::IntakeError
       end
     end
 
-    def first_that_is_or_has_an_error_code(array)
-      array.find { |obj| error_code(obj) }
+    def find_first_error_code(array)
+      array.each do |obj|
+        code = error_code(obj)
+        return code if code
+      end
+
+      nil
     end
 
+    # An alternative to new.
+    # Given an array, it uses the first error_code found
     def from_first_error_code_found(array)
-      self.new first_that_is_or_has_an_error_code(array)
+      new find_first_error_code(array)
     end
   end
 end

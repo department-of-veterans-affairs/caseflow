@@ -9,7 +9,7 @@ class Api::V3::DecisionReview::IntakeParams
   end
 
   def veteran_file_number
-    relationships[:veteran][:data][:id]
+    relationships[:veteran][:data][:id].to_s
   end
 
   # params for IntakesController#review

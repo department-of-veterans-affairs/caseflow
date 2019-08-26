@@ -34,35 +34,45 @@ context Api::V3::DecisionReview::IntakeError do
   end
 
   context ".error_code" do
-    it "should return symbol :hello" do
+    it ":hello should return :hello" do
       expect(Api::V3::DecisionReview::IntakeError.error_code(:hello)).to eq(:hello)
     end
-    it "should return symbol :hello" do
+    it "\"hello\" should return :hello" do
       expect(Api::V3::DecisionReview::IntakeError.error_code("hello")).to eq(:hello)
     end
-    obj = Struct.new(:error_code).new(900)
-    it "should return object's error_code (#{obj.error_code})" do
-      expect(Api::V3::DecisionReview::IntakeError.error_code(obj)).to eq(
-        Api::V3::DecisionReview::IntakeError.error_code(obj.error_code)
-      )
+    it "26 should return nil" do
+      expect(Api::V3::DecisionReview::IntakeError.error_code(26)).to eq(nil)
+    end
+    klass = Struct.new(:error_code)
+    obj_with_string_error_code = klass.new("dog")
+    it "obj should return :dog" do
+      expect(Api::V3::DecisionReview::IntakeError.error_code(obj_with_string_error_code)).to eq(:dog)
+    end
+    obj_with_false_error_code = klass.new(false)
+    it "obj should return nil" do
+      expect(Api::V3::DecisionReview::IntakeError.error_code(obj_with_false_error_code)).to eq(nil)
+    end
+    nested_obj = klass.new(klass.new(klass.new(:russian_doll)))
+    it "obj should return :russian_doll" do
+      expect(Api::V3::DecisionReview::IntakeError.error_code(nested_obj)).to eq(:russian_doll)
     end
   end
 
-  context ".first_that_is_or_has_an_error_code" do
+  context ".find_first_error_code" do
     obj = Struct.new(:error_code).new("cat")
-    it "should return first that is or has error_code (#{obj.error_code})" do
+    it "should return :hello" do
       expect(
-        Api::V3::DecisionReview::IntakeError.first_that_is_or_has_an_error_code([:hello, obj])
+        Api::V3::DecisionReview::IntakeError.find_first_error_code([:hello, obj])
       ).to eq(:hello)
     end
-    it "should return first that is or has error_code (#{obj.error_code})" do
+    it "should return #{obj.error_code}" do
       expect(
-        Api::V3::DecisionReview::IntakeError.first_that_is_or_has_an_error_code([777, obj])
-      ).to eq(obj)
+        Api::V3::DecisionReview::IntakeError.find_first_error_code([777, obj])
+      ).to eq(obj.error_code.to_sym)
     end
-    it "should return first that is or has error_code (#{obj.error_code})" do
+    it "should return nil" do
       expect(
-        Api::V3::DecisionReview::IntakeError.first_that_is_or_has_an_error_code([nil, false])
+        Api::V3::DecisionReview::IntakeError.find_first_error_code([nil, false])
       ).to eq(nil)
     end
   end
