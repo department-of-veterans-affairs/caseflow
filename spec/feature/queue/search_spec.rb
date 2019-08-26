@@ -439,6 +439,13 @@ RSpec.feature "Search", :all_dbs do
 
         expect(res).to be_nil
       end
+
+      it "hides results for VSO user w/o access" do
+        vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
+        User.authenticate!(user: vso_user)
+        res = AppealFinder.new(user: vso_user).send(:filter_appeals_for_vso_user, appeals: Array.wrap(appeal), veterans: Array.wrap(appeal.veteran))
+        expect(res).to be_empty
+      end
     end
 
     context "verification of CaseSearchResultsForDocketNumber" do
