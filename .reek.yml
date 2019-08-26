@@ -13,9 +13,6 @@ detectors:
   ControlParameter:
     exclude:
       - HearingRepository#slot_new_hearing
-  CyclomaticComplexity:
-    exclude:
-      - AppealSeries#fetch_details_for_status
   UncommunicativeVariableName:
     exclude:
       - Address
