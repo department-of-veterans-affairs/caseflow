@@ -418,47 +418,13 @@ feature "Supplemental Claim Intake", :all_dbs do
     let(:old_reference_id) { "old1234" }
     let(:active_epe) { create(:end_product_establishment, :active) }
 
-    let!(:timely_ratings) do
-      Generators::Rating.build(
-        participant_id: veteran.participant_id,
-        promulgation_date: receipt_date - 40.days,
-        profile_date: receipt_date - 50.days,
-        issues: [
-          { reference_id: "xyz123", decision_text: "Left knee granted 2" },
-          { reference_id: "xyz456", decision_text: "PTSD denied 2" },
-          { reference_id: duplicate_reference_id, decision_text: "Old injury" }
-        ]
-      )
-    end
-
+    let!(:timely_ratings) { generate_timely_rating(veteran, receipt_date, duplicate_reference_id) }
     let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran, receipt_date) }
     let(:old_rating_decision_text) { "Bone (Right arm broken) is denied as Not Service Connected" }
-
     let!(:untimely_rating_from_ramp) do
-      Generators::Rating.build(
-        participant_id: veteran.participant_id,
-        promulgation_date: receipt_date - 400.days,
-        profile_date: receipt_date - 450.days,
-        issues: [
-          { reference_id: old_reference_id,
-            decision_text: "Really old injury" }
-        ],
-        associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
-      )
+      generate_untimely_rating_from_ramp(veteran, receipt_date, old_reference_id, with_associated_claims: true)
     end
-
-    let!(:before_ama_rating_from_ramp) do
-      Generators::Rating.build(
-        participant_id: veteran.participant_id,
-        promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-        profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
-        issues: [
-          { decision_text: "Issue before AMA Activation from RAMP",
-            reference_id: "ramp_ref_id" }
-        ],
-        associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
-      )
-    end
+    let!(:before_ama_rating_from_ramp) { generate_rating_before_ama_from_ramp(veteran) }
 
     let!(:request_issue_in_progress) do
       create(
