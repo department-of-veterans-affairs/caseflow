@@ -42,7 +42,7 @@ class AppealFinder
     end
 
     def find_appeal_by_docket_number(docket_number)
-      return [] if docket_number.empty?
+      return [] unless docket_number
 
       # Take the first six digits as date, remaining as ID
       parsed = docket_number.split("-")
