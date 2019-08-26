@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
+import PropTypes from 'prop-types';
 
 import BulkAssignButton from './components/BulkAssignButton';
 import TabWindow from '../components/TabWindow';
@@ -75,7 +76,9 @@ class OrganizationQueue extends React.PureComponent {
 
   columnsFromConfig = (tabConfig, tasks) => {
     return tabConfig.columns.map((column) => {
-      return this.createColumnObject(column, tabConfig, tasks);
+      const columnName = typeof (column) === 'string' ? column : column.name;
+
+      return this.createColumnObject(columnName, tabConfig, tasks);
     });
   }
 
@@ -158,6 +161,19 @@ class OrganizationQueue extends React.PureComponent {
     </AppSegment>;
   };
 }
+
+OrganizationQueue.propTypes = {
+  assignedTasks: PropTypes.array,
+  clearCaseSelectSearch: PropTypes.func,
+  completedTasks: PropTypes.array,
+  onHoldTasks: PropTypes.array,
+  organizations: PropTypes.array,
+  queueConfig: PropTypes.object,
+  success: PropTypes.object,
+  tasksAssignedByBulk: PropTypes.object,
+  trackingTasks: PropTypes.array,
+  unassignedTasks: PropTypes.array
+};
 
 const mapStateToProps = (state) => {
   const { success } = state.ui.messages;

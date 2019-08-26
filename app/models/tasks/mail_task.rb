@@ -86,10 +86,6 @@ class MailTask < GenericTask
     self.class.blocking?
   end
 
-  def label
-    self.class.label
-  end
-
   def available_actions(user)
     super(user).present? ? super(user).unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h) : []
   end

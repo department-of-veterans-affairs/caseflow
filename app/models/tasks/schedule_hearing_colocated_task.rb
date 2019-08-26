@@ -10,7 +10,7 @@ class ScheduleHearingColocatedTask < ColocatedTask
   end
 
   def available_actions(user)
-    if task_is_assigned_to_users_organization?(user)
+    if task_is_assigned_to_users_organization?(user) || assigned_to.eql?(user)
       return [
         Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h,
         Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,

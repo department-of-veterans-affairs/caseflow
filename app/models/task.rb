@@ -67,8 +67,12 @@ class Task < ApplicationRecord
     []
   end
 
+  def self.label
+    name.titlecase
+  end
+
   def label
-    self.class.name.titlecase
+    self.class.label
   end
 
   def default_instructions

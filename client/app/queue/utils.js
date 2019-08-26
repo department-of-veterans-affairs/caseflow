@@ -295,6 +295,7 @@ export const prepareAppealForStore =
         issues: prepareAppealIssuesForStore(appeal),
         decisionIssues: appeal.attributes.decision_issues,
         canEditRequestIssues: appeal.attributes.can_edit_request_issues,
+        appellantIsNotVeteran: appeal.attributes.appellant_is_not_veteran,
         appellantFullName: appeal.attributes.appellant_full_name,
         appellantAddress: appeal.attributes.appellant_address,
         appellantRelationship: appeal.attributes.appellant_relationship,

@@ -243,7 +243,7 @@ describe TaskPager, :all_dbs do
 
       it "sorts by regional office city" do
         expected_order = created_tasks.sort_by do |task|
-          RegionalOffice::CITIES[task.appeal.closest_regional_office][:city].downcase
+          RegionalOffice::CITIES[task.appeal.closest_regional_office][:city].upcase.tr(" ", "_")
         end
         expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
       end
@@ -312,7 +312,7 @@ describe TaskPager, :all_dbs do
           create(:cached_appeal,
                  appeal_id: appeal.id,
                  appeal_type: LegacyAppeal.name,
-                 case_type: LegacyAppeal::TYPE_CODES[appeal.type])
+                 case_type: appeal.type)
         end
         appeals = [appeal_1, appeal_2]
         appeals.map do |appeal|
@@ -320,7 +320,7 @@ describe TaskPager, :all_dbs do
           create(:cached_appeal,
                  appeal_id: appeal.id,
                  appeal_type: Appeal.name,
-                 case_type: appeal.type.downcase,
+                 case_type: appeal.type,
                  is_aod: appeal.aod)
         end
       end

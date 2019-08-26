@@ -15,6 +15,8 @@ class RatingDecision
                 :diagnostic_text,
                 :diagnostic_type,
                 :disability_id,
+                :original_denial_date,
+                :original_denial_indicator,
                 :participant_id,
                 :profile_date,
                 :promulgation_date,
@@ -35,6 +37,8 @@ class RatingDecision
         diagnostic_code: latest_evaluation[:dgnstc_tc],
         begin_date: latest_evaluation[:begin_dt],
         converted_begin_date: latest_evaluation[:conv_begin_dt],
+        original_denial_date: disability[:orig_denial_dt],
+        original_denial_indicator: disability[:orig_denial_ind],
         profile_date: rating.profile_date,
         promulgation_date: rating.promulgation_date,
         participant_id: rating.participant_id,
@@ -47,8 +51,32 @@ class RatingDecision
     end
   end
 
+  def decision_text
+    service_connected? ? service_connected_decision_text : not_service_connected_decision_text
+  end
+
   def decision_date
-    converted_begin_date || begin_date || promulgation_date
+    return promulgation_date if rating_issue?
+
+    original_denial_date || converted_begin_date || begin_date
+  end
+
+  def contestable?
+    return true if rating_issue?
+
+    return false unless decision_date
+
+    the_decision = decision_date.to_date
+    the_promulgation = promulgation_date.to_date
+    the_decision.between?((the_promulgation - 10.days), (the_promulgation + 10.days))
+  end
+
+  def rating_issue?
+    rating_issue_reference_id.present?
+  end
+
+  def reference_id
+    disability_id
   end
 
   # If you change this method, you will need to clear cache in prod for your changes to
@@ -61,5 +89,15 @@ class RatingDecision
 
   def service_connected?
     type_name == "Service Connected"
+  end
+
+  private
+
+  def service_connected_decision_text
+    "#{diagnostic_type} (#{diagnostic_text}) is granted as Service Connected"
+  end
+
+  def not_service_connected_decision_text
+    "#{diagnostic_type} (#{diagnostic_text}) is denied as Not Service Connected"
   end
 end
