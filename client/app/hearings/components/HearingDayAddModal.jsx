@@ -374,7 +374,31 @@ HearingDayAddModal.propTypes = {
   userId: PropTypes.number,
   userCssId: PropTypes.string,
   closeModal: PropTypes.func,
-  cancelModal: PropTypes.func
+  cancelModal: PropTypes.func,
+  roomRequired: PropTypes.bool,
+  notes: PropTypes.string,
+  coordinator: PropTypes.shape({
+    value: PropTypes.string
+  }),
+  vlj: PropTypes.shape({
+    value: PropTypes.string
+  }),
+  selectedRegionalOffice: PropTypes.shape({
+    value: PropTypes.string
+  }),
+  selectedHearingDay: PropTypes.string,
+  onAssignHearingRoom: PropTypes.func,
+  setNotes: PropTypes.func,
+  selectHearingCoordinator: PropTypes.func,
+  selectVlj: PropTypes.func,
+  onRegionalOfficeChange: PropTypes.func,
+  selectRequestType: PropTypes.func,
+  onSelectedHearingDayChange: PropTypes.func,
+  onReceiveHearingSchedule: PropTypes.func,
+  hearingSchedule: PropTypes.object,
+  requestType: PropTypes.shape({
+    value: PropTypes.string
+  })
 };
 
 const mapStateToProps = (state) => ({
