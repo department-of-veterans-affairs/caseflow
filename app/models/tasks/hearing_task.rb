@@ -37,7 +37,7 @@ class HearingTask < GenericTask
   def when_child_task_completed(child_task)
     super
 
-    return unless appeal.tasks.open.where(type: HearingTask.name).empty?
+    return unless appeal.tasks.reload.open.where(type: HearingTask.name).empty?
 
     if appeal.is_a?(LegacyAppeal)
       update_legacy_appeal_location
@@ -87,6 +87,7 @@ class HearingTask < GenericTask
   end
 
   def update_status_if_children_tasks_are_closed(_child_task)
+    children.reload
     if children.open.empty? && children.select do |child|
          child.type == AssignHearingDispositionTask.name && child.cancelled?
        end .any?
