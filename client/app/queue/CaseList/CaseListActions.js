@@ -134,29 +134,28 @@ export const fetchAppealsBySearch = (searchTerm) => (dispatch) => {
     });
 };
 
-export const appealsSearch = (searchQuery) => (dispatch) =>
-  new Promise((resolve, reject) => {
-    if (!searchQuery.length) {
-      dispatch(emptyQuerySearchAttempt());
+export const appealsSearch = (searchQuery) => async (dispatch) => {
+  if (!searchQuery.length) {
+    dispatch(emptyQuerySearchAttempt());
 
-      return reject();
-    }
+    return Promise.reject();
+  }
 
-    // Allow numbers + hyphen (for docket number)
-    const searchTerm = searchQuery.trim().replace(/[^\d-]/g, '');
+  // Allow numbers + hyphen (for docket number)
+  const searchTerm = searchQuery.trim().replace(/[^\d-]/g, '');
 
-    const validInput = (i) => validSSN(i) || validFileNum(i) || validDocketNum(i);
+  const validInput = (i) => validSSN(i) || validFileNum(i) || validDocketNum(i);
 
-    if (!validInput(searchTerm)) {
-      dispatch(invalidCaseSearchTerm(searchQuery));
+  if (!validInput(searchTerm)) {
+    dispatch(invalidCaseSearchTerm(searchQuery));
 
-      return reject();
-    }
+    return Promise.reject();
+  }
 
-    dispatch(requestAppealUsingCaseSearch());
+  dispatch(requestAppealUsingCaseSearch());
 
-    dispatch(fetchAppealsBySearch(searchTerm)).then((res) => resolve(res));
-  });
+  return await dispatch(fetchAppealsBySearch(searchTerm));
+};
 
 export const setFetchedAllCasesFor = (caseflowVeteranId) => ({
   type: Constants.SET_FETCHED_ALL_CASES_FOR,
