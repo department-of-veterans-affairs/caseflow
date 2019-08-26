@@ -45,6 +45,20 @@ RSpec.feature "Search", :all_dbs do
       end
     end
 
+    context "when using AppealFinder" do
+      it "returns results upon valid input" do
+        res = AppealFinder.find_appeals_with_file_numbers(appeal.veteran_file_number)
+
+        expect(res.first.id).to eq(appeal.id)
+      end
+
+      it "returns nil when input is invalid format" do
+        res = AppealFinder.find_appeals_with_file_numbers(invalid_veteran_id)
+
+        expect(res).to be_empty
+      end
+    end
+
     context "higher level reviews and supplemental claims" do
       context "when a claim has no higher level review and/or supplemental claims" do
         before do
@@ -424,6 +438,24 @@ RSpec.feature "Search", :all_dbs do
         res = AppealFinder.find_appeal_by_docket_number("012345-000")
 
         expect(res).to be_nil
+      end
+    end
+
+    context "verification of CaseSearchResultsForDocketNumber" do
+      it "returns correct value for docket_number_presence (valid)" do
+        res = CaseSearchResultsForDocketNumber.new(
+          docket_number: appeal.docket_number, user: current_user
+        ).send(:docket_number_presence)
+
+        expect(res).to be_nil
+      end
+
+      it "returns correct result for appeals" do
+        res = CaseSearchResultsForDocketNumber.new(
+          docket_number: appeal.docket_number, user: current_user
+        ).send(:appeals)
+
+        expect(res.first.id).to eq(appeal.id)
       end
     end
 
