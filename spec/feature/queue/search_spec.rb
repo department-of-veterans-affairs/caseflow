@@ -444,29 +444,11 @@ RSpec.feature "Search", :all_dbs do
         vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
         User.authenticate!(user: vso_user)
         res = AppealFinder.new(user: vso_user).send(
-          :filter_appeals_for_vso_user, 
-          appeals: Array.wrap(appeal), 
+          :filter_appeals_for_vso_user,
+          appeals: Array.wrap(appeal),
           veterans: Array.wrap(appeal.veteran)
         )
         expect(res).to be_empty
-      end
-    end
-
-    context "verification of CaseSearchResultsForDocketNumber" do
-      it "returns correct value for docket_number_presence (valid)" do
-        res = CaseSearchResultsForDocketNumber.new(
-          docket_number: appeal.docket_number, user: current_user
-        ).send(:docket_number_presence)
-
-        expect(res).to be_nil
-      end
-
-      it "returns correct result for appeals" do
-        res = CaseSearchResultsForDocketNumber.new(
-          docket_number: appeal.docket_number, user: current_user
-        ).send(:appeals)
-
-        expect(res.first.id).to eq(appeal.id)
       end
     end
 
