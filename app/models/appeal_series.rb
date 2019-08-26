@@ -116,6 +116,7 @@ class AppealSeries < ApplicationRecord
     end
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def fetch_details_for_status
     case status
     when :scheduled_hearing
@@ -157,6 +158,7 @@ class AppealSeries < ApplicationRecord
       {}
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   private
 

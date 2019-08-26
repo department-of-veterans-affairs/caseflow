@@ -5,7 +5,7 @@ module StatusFieldSerializer
 
   class_methods do
 
-  	protected
+    protected
 
     def status(object)
       StatusSerializer.new(object).serializable_hash[:data][:attributes]
