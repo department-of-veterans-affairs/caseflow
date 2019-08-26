@@ -37,6 +37,7 @@ describe EndProductEstablishment, :postgres do
   let(:development_item_reference_id) { nil }
   let(:limited_poa_code) { "ABC" }
   let(:limited_poa_access) { true }
+  let(:rating_profile_date) { Date.new(2018, 4, 30) }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -328,15 +329,23 @@ describe EndProductEstablishment, :postgres do
           end_product_establishment: end_product_establishment,
           decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
-          contested_rating_issue_profile_date: Date.new(2018, 4, 30),
+          contested_rating_issue_profile_date: rating_profile_date,
           contested_issue_description: "this is a big decision"
         ),
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
           decision_review: source,
+          contested_rating_decision_reference_id: "rating-decision-diagnostic-id",
+          contested_rating_issue_profile_date: rating_profile_date,
+          contested_issue_description: "foobar was denied as Not Service Connected"
+        ),
+        create(
+          :request_issue,
+          end_product_establishment: end_product_establishment,
+          decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
-          contested_rating_issue_profile_date: Date.new(2018, 4, 30),
+          contested_rating_issue_profile_date: rating_profile_date,
           vacols_id: vacols_id,
           vacols_sequence_id: vacols_sequence_id,
           contested_issue_description: "more decisionz"
@@ -346,7 +355,7 @@ describe EndProductEstablishment, :postgres do
           end_product_establishment: end_product_establishment,
           decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
-          contested_rating_issue_profile_date: Date.new(2018, 4, 30),
+          contested_rating_issue_profile_date: rating_profile_date,
           contested_issue_description: "description too long for bgs" * 20
         ),
         create(
@@ -356,7 +365,7 @@ describe EndProductEstablishment, :postgres do
           unidentified_issue_text: "identity unknown",
           decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
-          contested_rating_issue_profile_date: Date.new(2018, 4, 30)
+          contested_rating_issue_profile_date: rating_profile_date
         )
       ]
     end
@@ -380,7 +389,7 @@ describe EndProductEstablishment, :postgres do
         user: current_user
       )
 
-      expect(end_product_establishment.contentions.count).to eq(4)
+      expect(end_product_establishment.contentions.count).to eq(request_issues.count)
       expect(end_product_establishment.contentions.map(&:id)).to contain_exactly(
         *request_issues.map(&:reload).map(&:contention_reference_id).map(&:to_s)
       )
@@ -506,6 +515,27 @@ describe EndProductEstablishment, :postgres do
           claim_id: reference_id,
           rating_issue_contention_map: { request_issues[0].contested_rating_issue_reference_id => contention_ref_id }
         )
+      end
+    end
+
+    context "request issue is rating via rating decision" do
+      let!(:request_issues) do
+        [
+          create(
+            :request_issue,
+            end_product_establishment: end_product_establishment,
+            decision_review: source,
+            contested_rating_decision_reference_id: "rating-decision-diagnostic-id",
+            contested_rating_issue_profile_date: rating_profile_date,
+            contested_issue_description: "foobar was denied as Not Service Connected"
+          )
+        ]
+      end
+
+      it "skips mapping since there is no associated rating issue" do
+        subject
+        expect(request_issues.first.rating?).to be true
+        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
       end
     end
 
