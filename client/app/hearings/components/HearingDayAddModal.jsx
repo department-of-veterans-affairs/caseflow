@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import connect from 'react-redux/es/connect/connect';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import { sprintf } from 'sprintf-js';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
@@ -32,6 +33,7 @@ import Checkbox from '../../components/Checkbox';
 import Alert from '../../components/Alert';
 import ApiUtil from '../../util/ApiUtil';
 import { formatDateStr } from '../../util/DateUtil';
+import COPY from '../../../COPY.json';
 
 const notesFieldStyling = css({
   height: '100px',
@@ -262,12 +264,12 @@ class HearingDayAddModal extends React.Component {
 
   getAlertTitle = () => {
     return this.state.serverError ? 'An Error Occurred' :
-      `No Rooms Available for Hearing Day ${formatDateStr(this.props.selectedHearingDay)}`;
+      sprintf(COPY.ADD_HEARING_DAY_MODAL_ERROR_MESSAGE_TITLE, formatDateStr(this.props.selectedHearingDay));
   };
 
   getAlertMessage = () => {
     return this.state.serverError ? 'You are unable to complete this action.' :
-      'All hearing rooms are taken for the date you selected.';
+      COPY.ADD_HEARING_DAY_MODAL_ERROR_MESSAGE_DETAIL;
   };
 
   showAlert = () => {
