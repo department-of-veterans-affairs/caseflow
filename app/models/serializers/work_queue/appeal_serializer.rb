@@ -51,6 +51,8 @@ class WorkQueue::AppealSerializer
     false
   end
 
+  attribute :appellant_is_not_veteran, &:claimant_not_veteran
+
   attribute :appellant_full_name do |object|
     object.claimants[0].name if object.claimants&.any?
   end
