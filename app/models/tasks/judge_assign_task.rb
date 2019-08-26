@@ -17,7 +17,7 @@ class JudgeAssignTask < JudgeTask
     Raven.capture_message(msg, extra: { application: "tasks" }) if Time.zone.now > Time.zone.local(2019, 9, 1)
   end
 
-  def label
+  def self.label
     COPY::JUDGE_ASSIGN_TASK_LABEL
   end
 

@@ -13,6 +13,7 @@ detectors:
   ControlParameter:
     exclude:
       - HearingRepository#slot_new_hearing
+      - TaskSorter#sort_requires_case_norm?
   UncommunicativeVariableName:
     exclude:
       - Address
@@ -73,6 +74,7 @@ detectors:
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
+      - LatestRatingDisabilityEvaluation#latest_disability_evaluation
       - OnHoldTasksTab#name
 
 ### Directory specific configuration

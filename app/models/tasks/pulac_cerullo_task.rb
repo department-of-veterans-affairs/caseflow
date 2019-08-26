@@ -4,7 +4,7 @@ class PulacCerulloTask < GenericTask
   # Skip unique verification
   def verify_org_task_unique; end
 
-  def label
+  def self.label
     "Pulac-Cerullo"
   end
 end
