@@ -37,15 +37,15 @@ class ScheduleHearingColocatedTask < ColocatedTask
       return assigned_by.vacols_uniq_id
     end
 
-    LegacyAppeal::LOCATION_CODES[:caseflow]
+    LegacyAppeal::LOCATION_CODES[:schedule_hearing]
   end
 
   def create_schedule_hearing_task_on_completion
-    if saved_change_to_status? &&
+    if appeal_type.eql?(Appeal.name) &&
+       saved_change_to_status? &&
        completed? &&
        all_tasks_closed_for_appeal? &&
        assigned_to.is_a?(Organization)
-      # Schedule hearing with a task (instead of changing Location in VACOLS, the old way)
       ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)
     end
   end
