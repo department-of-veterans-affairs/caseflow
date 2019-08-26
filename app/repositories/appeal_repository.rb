@@ -21,7 +21,7 @@ class AppealRepository
     legacy_appeal_ids = tasks.select { |t| t.appeal.is_a?(LegacyAppeal) }.map(&:appeal).pluck(:vacols_id)
 
     # Do not make a VACOLS request if there are no legacy appeals in the set of tasks
-    return if legacy_appeal_ids.empty?
+    return tasks if legacy_appeal_ids.empty?
 
     # Load the VACOLS case records associated with legacy tasks into memory in a single batch. Ignore appeals that no
     # longer appear in VACOLS.
