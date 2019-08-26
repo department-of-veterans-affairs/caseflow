@@ -12,10 +12,6 @@ class AppealsController < ApplicationController
       format.json do
         case_search = request.headers["HTTP_CASE_SEARCH"]
 
-        # result = CaseSearchResultsForSearchTerm.new(
-        #   search_term: case_search, user: current_user
-        # ).call
-
         result = if docket_number?(case_search)
                    CaseSearchResultsForDocketNumber.new(
                      docket_number: case_search, user: current_user

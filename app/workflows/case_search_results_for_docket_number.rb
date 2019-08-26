@@ -37,13 +37,6 @@ class CaseSearchResultsForDocketNumber < ::CaseSearchResultsBase
     }
   end
 
-  def veterans_exist
-    return unless veterans_user_can_access.empty?
-
-    errors.add(:workflow, not_found_error)
-    @status = :not_found
-  end
-
   def not_found_error
     {
       "title": "Docket ID not found",
@@ -55,12 +48,5 @@ class CaseSearchResultsForDocketNumber < ::CaseSearchResultsBase
     # Determine vet that corresponds to docket number so we can validate user can access
     @file_numbers_for_appeals ||= appeals.map(&:veteran_file_number)
     @veterans ||= VeteranFinder.find_or_create_all(@file_numbers_for_appeals)
-  end
-
-  def prohibited_error
-    {
-      "title": "Access to Veteran file prohibited",
-      "detail": "You do not have access to this docket number"
-    }
   end
 end
