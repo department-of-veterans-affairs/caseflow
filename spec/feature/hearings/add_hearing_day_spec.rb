@@ -67,8 +67,7 @@ RSpec.feature "Add a Hearing Day", :postgres do
 
   context "When adding a Central Office Hearing" do
     let!(:hearing_day) do
-      create(:hearing_day,
-        scheduled_for: Date.new(2019, 8, 14))
+      create(:hearing_day, scheduled_for: Date.new(2019, 8, 14))
     end
 
     scenario "Hearing room 2 is already booked" do
