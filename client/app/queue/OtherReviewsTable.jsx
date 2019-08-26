@@ -11,6 +11,8 @@ import { clearCaseListSearch } from './CaseList/CaseListActions';
 import COPY from '../../COPY.json';
 import CLAIM_REVIEW_TEXT from '../../constants/CLAIM_REVIEW_TEXT.json';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { DateString } from '../util/DateUtil';
+
 
 class SubdividedTableRow extends React.PureComponent {
   render = () => {
@@ -116,6 +118,12 @@ class OtherReviewsTable extends React.PureComponent {
 
         return '';
       }
+    },
+    {
+      header: COPY.OTHER_REVIEWS_TABLE_RECEIPT_DATE_COLUMN_TITLE,
+      valueFunction: (review) => review.decisionDate ?
+        <DateString date={appeal.decisionDate} /> :
+        ''
     }
   ];
 
