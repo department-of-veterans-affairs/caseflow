@@ -28,7 +28,7 @@
     "client/node_modules"
   ],
   "dependencies": {
-    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#d386d03",
+    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#3ef2bfb",
     "@fortawesome/fontawesome-free": "^5.3.1",
     "babel-core": "^6.18.2",
     "babel-loader": "^7.1.2",
@@ -61,7 +61,7 @@
     "pdf-annotate.js": "^1.0.0",
     "pdfjs-dist": "1.10.97",
     "pluralize": "^7.0.0",
-    "prop-types": "^15.6.0",
+    "prop-types": "^15.7.2",
     "rc-collapse": "^1.7.6",
     "react": "^16.9.0",
     "react-copy-to-clipboard": "^5.0.1",
@@ -72,8 +72,8 @@
     "react-hot-loader": "^3.0.0-beta.6",
     "react-on-rails": "^8.0.6",
     "react-redux": "5.1.1",
-    "react-router": "^4.2.0",
-    "react-router-dom": "4.2.2",
+    "react-router": "^5.0.1",
+    "react-router-dom": "^5.0.1",
     "react-scroll-to-component": "^1.0.2",
     "react-scrolllock": "^3.0.1",
     "react-select": "1.0.0-rc.4",
