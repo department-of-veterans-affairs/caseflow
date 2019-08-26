@@ -131,7 +131,7 @@ class AsyncableJobsPage extends React.PureComponent {
       {
         header: 'Name',
         valueFunction: (job, rowId) => {
-          return <a title={`row ${rowId}`} href={`/asyncable_jobs/${job.klass}/jobs/${job.id}`}>{job.klass}</a>;
+          return <a title={`row ${rowId}`} href={`/asyncable_jobs/${job.klass}/jobs/${job.id}`}>{job.klass} {job.id}</a>;
         }
       },
       {
@@ -150,6 +150,16 @@ class AsyncableJobsPage extends React.PureComponent {
         header: 'Last Attempted',
         valueFunction: (job) => {
           return this.formatDate(job.attempted_at);
+        }
+      },
+      {
+        header: 'User',
+        valueFunction: (job) => {
+          if (!job.user) {
+            return "";
+          }
+
+          return <a href={`/intake/manager?user_css_id=${job.user}`}>{job.user}</a>;
         }
       },
       {

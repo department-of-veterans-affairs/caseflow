@@ -9,7 +9,7 @@ const DATE_TIME_FORMAT = 'ddd MMM DD HH:mm:ss YYYY';
 class AsyncableJobPage extends React.PureComponent {
   formatDate = (datetime) => {
     if (!datetime) {
-      return 'queued';
+      return 'n/a';
     }
 
     return moment(datetime).format(DATE_TIME_FORMAT);
@@ -45,8 +45,20 @@ class AsyncableJobPage extends React.PureComponent {
             <td>{this.formatDate(job.attempted_at)}</td>
           </tr>
           <tr>
+            <th>Canceled</th>
+            <td>{this.formatDate(job.canceled_at)}</td>
+          </tr>
+          <tr>
+            <th>Processed</th>
+            <td>{this.formatDate(job.processed_at)}</td>
+          </tr>
+          <tr>
             <th>Error</th>
             <td>{job.error}</td>
+          </tr>
+          <tr>
+            <th>User</th>
+            <td><a href={`/intake/manager?user_css_id=${job.user}`}>{job.user}</a></td>
           </tr>
         </tbody>
       </table>
