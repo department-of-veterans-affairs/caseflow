@@ -154,7 +154,6 @@ class ClaimReview < DecisionReview
   end
 
   def search_table_ui_hash
-    # binding.pry
     {
       caseflow_veteran_id: claim_veteran&.id,
       claimant_names: claimants.map(&:name).uniq, # We're not sure why we see duplicate claimants, but this helps
