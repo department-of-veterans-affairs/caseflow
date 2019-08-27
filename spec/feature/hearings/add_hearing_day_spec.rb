@@ -78,8 +78,8 @@ RSpec.feature "Add a Hearing Day", :postgres do
       fill_in "hearingDate", with: "08142019"
       click_dropdown(index: "C", text: "Central")
       find("button", text: "Confirm").click
-      expect(page).to have_content(COPY::ADD_HEARING_DAY_MODAL_ERROR_MESSAGE_DETAIL % "08/14/2019")
-      expect(page).to have_content(COPY::ADD_HEARING_DAY_MODAL_ERROR_MESSAGE_DETAIL)
+      expect(page).to have_content(COPY::ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_TITLE % "08/14/2019")
+      expect(page).to have_content(COPY::ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_DETAIL)
     end
   end
 
