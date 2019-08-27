@@ -54,6 +54,19 @@ describe VeteranFinder, :postgres do
         expect(Veteran.find_by_file_number(file_number)).to be_nil
         expect(subject).to eq([Veteran.find_by_file_number(file_number)])
       end
+
+      context "BGS returns false for can_access?" do
+        before do
+          Fakes::BGSService.inaccessible_appeal_vbms_ids << file_number
+          create(:veteran, participant_id: nil)
+        end
+
+        it "returns empty array" do
+          expect(Fakes::BGSService.new.can_access?(file_number)).to eq(false)
+          expect(Veteran.find_by_file_number(file_number)).to be_nil
+          expect(subject).to eq([])
+        end
+      end
     end
   end
 end
