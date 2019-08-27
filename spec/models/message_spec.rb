@@ -1,5 +1,13 @@
-require 'rails_helper'
+# frozen_string_literal: true
 
-RSpec.describe Message, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+require "rails_helper"
+
+describe Message do
+  describe ".unread" do
+    let!(:message) { create(:message) }
+
+    it "returns messages where read_at is nil" do
+      expect(described_class.unread.count).to eq(1)
+    end
+  end
 end

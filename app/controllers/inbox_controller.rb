@@ -18,12 +18,10 @@ class InboxController < ApplicationController
   helper_method :messages, :pagination
 
   def inbox
-    @inbox ||= InboxMessages.new(user: current_user, page_size: page_size, page: current_page) 
+    @inbox ||= InboxMessages.new(user: current_user, page_size: page_size, page: current_page)
   end
 
-  def messages
-    @messages ||= inbox.messages
-  end
+  delegate :messages, to: :inbox
 
   def message
     @message ||= Message.find(allowed_params.require(:id))
@@ -49,7 +47,7 @@ class InboxController < ApplicationController
   end
 
   def page_size
-    50 # TODO: allowed param?
+    50
   end
 
   def current_page
@@ -67,7 +65,7 @@ class InboxController < ApplicationController
   end
 
   def set_application
-    RequestStore.store[:application] = "intake" # TODO inbox?
+    RequestStore.store[:application] = "intake"
   end
 
   def verify_access
