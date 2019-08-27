@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class DependenciesCheckJob < ApplicationJob
-  queue_as :low_priority
+  queue_with_priority :low_priority
 
   def perform(_http_library = HTTPI)
     return log_missing_env_var if monitor_url.blank?

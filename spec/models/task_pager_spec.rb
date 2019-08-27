@@ -190,7 +190,7 @@ describe TaskPager, :all_dbs do
       let!(:created_tasks) { create_list(:colocated_task, 14, assigned_to: assignee) }
 
       it "sorts ColocatedTasks by action and created_at" do
-        expected_order = created_tasks.sort_by { |task| [task.action, task.created_at] }
+        expected_order = created_tasks.sort_by(&:created_at)
         expect(subject.map(&:id)).to eq(expected_order.map(&:id))
       end
     end
@@ -243,7 +243,7 @@ describe TaskPager, :all_dbs do
 
       it "sorts by regional office city" do
         expected_order = created_tasks.sort_by do |task|
-          RegionalOffice::CITIES[task.appeal.closest_regional_office][:city].downcase
+          RegionalOffice::CITIES[task.appeal.closest_regional_office][:city].upcase.tr(" ", "_")
         end
         expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
       end
@@ -273,21 +273,25 @@ describe TaskPager, :all_dbs do
       before do
         created_tasks.each do |task|
           first_name = Faker::Name.unique.first_name
-          last_name = "#{Faker::Name.unique.middle_name} #{Faker::Name.unique.last_name}"
+          last_name = "#{Faker::Name.unique.first_name} #{Faker::Name.unique.first_name}"
           task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
           create(
             :cached_appeal,
             appeal_id: task.appeal_id,
-            veteran_name: "#{last_name.split(' ').last}, #{first_name.split(' ').first}"
+            veteran_name: "#{last_name.split(' ').last}, #{first_name}"
           )
         end
       end
 
       it "sorts by veteran last and first name" do
         expected_order = created_tasks.sort_by do |task|
-          "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name.split(' ').first}"
+          "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name}"
         end
-        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+        expect(subject.map do |task|
+          "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name}"
+        end).to eq(expected_order.map do |task|
+          "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name}"
+        end)
       end
     end
 
@@ -308,7 +312,7 @@ describe TaskPager, :all_dbs do
           create(:cached_appeal,
                  appeal_id: appeal.id,
                  appeal_type: LegacyAppeal.name,
-                 case_type: LegacyAppeal::TYPE_CODES[appeal.type])
+                 case_type: appeal.type)
         end
         appeals = [appeal_1, appeal_2]
         appeals.map do |appeal|
@@ -316,7 +320,7 @@ describe TaskPager, :all_dbs do
           create(:cached_appeal,
                  appeal_id: appeal.id,
                  appeal_type: Appeal.name,
-                 case_type: appeal.type.downcase,
+                 case_type: appeal.type,
                  is_aod: appeal.aod)
         end
       end

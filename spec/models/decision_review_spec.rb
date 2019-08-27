@@ -119,6 +119,7 @@ describe DecisionReview, :postgres do
         ratingIssueReferenceId: "123",
         ratingIssueProfileDate: profile_date,
         ratingIssueDiagnosticCode: nil,
+        ratingDecisionReferenceId: nil,
         decisionIssueId: decision_issues.first.id,
         approxDecisionDate: promulgation_date,
         description: "decision issue 1",
@@ -134,6 +135,7 @@ describe DecisionReview, :postgres do
         ratingIssueReferenceId: "456",
         ratingIssueProfileDate: profile_date,
         ratingIssueDiagnosticCode: nil,
+        ratingDecisionReferenceId: nil,
         decisionIssueId: nil,
         approxDecisionDate: promulgation_date,
         description: "rating issue 2",
@@ -149,6 +151,7 @@ describe DecisionReview, :postgres do
         ratingIssueReferenceId: "789",
         ratingIssueProfileDate: profile_date + 1.day,
         ratingIssueDiagnosticCode: nil,
+        ratingDecisionReferenceId: nil,
         decisionIssueId: decision_issues.second.id,
         approxDecisionDate: promulgation_date + 1.day,
         description: "decision issue 2",
@@ -164,6 +167,7 @@ describe DecisionReview, :postgres do
         ratingIssueReferenceId: nil,
         ratingIssueProfileDate: nil,
         ratingIssueDiagnosticCode: nil,
+        ratingDecisionReferenceId: nil,
         decisionIssueId: decision_issues.third.id,
         approxDecisionDate: promulgation_date,
         description: "decision issue 3",
@@ -321,6 +325,14 @@ describe DecisionReview, :postgres do
       )
 
       expect(review.withdrawn_request_issues).to match_array([withdrawn_request_issue])
+    end
+  end
+
+  describe "#asyncable_user" do
+    it "returns CSS id of the Intake user" do
+      intake = create(:intake)
+      review = intake.detail
+      expect(review.asyncable_user).to eq(review.intake.user.css_id)
     end
   end
 end

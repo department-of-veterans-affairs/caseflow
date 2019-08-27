@@ -284,6 +284,8 @@ Rails.application.routes.draw do
     get code, :to => "errors#show", :status_code => code
   end
 
+  post "post_decision_motions", to: "post_decision_motions#create"
+
   # :nocov:
   namespace :test do
     get "/error", to: "users#show_error"

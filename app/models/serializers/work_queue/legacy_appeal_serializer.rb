@@ -20,6 +20,8 @@ class WorkQueue::LegacyAppealSerializer
 
   attribute :completed_hearing_on_previous_appeal?
 
+  attribute :appellant_is_not_veteran, &:appellant_is_not_veteran
+
   attribute :appellant_full_name, &:appellant_name
 
   attribute :appellant_address, &:appellant_address
