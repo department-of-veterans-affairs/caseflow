@@ -327,4 +327,12 @@ describe DecisionReview, :postgres do
       expect(review.withdrawn_request_issues).to match_array([withdrawn_request_issue])
     end
   end
+
+  describe "#asyncable_user" do
+    it "returns CSS id of the Intake user" do
+      intake = create(:intake)
+      review = intake.detail
+      expect(review.asyncable_user).to eq(review.intake.user.css_id)
+    end
+  end
 end
