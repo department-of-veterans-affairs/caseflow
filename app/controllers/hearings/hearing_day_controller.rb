@@ -165,11 +165,8 @@ class Hearings::HearingDayController < HearingsApplicationController
     return true unless params.key?(:assign_room)
 
     # Coming from Add Hearing Day modal and room required
-    available_room = if params[:request_type] == HearingDay::REQUEST_TYPES[:central]
-                       select_co_available_room
-                     else
+    available_room = params[:request_type] == HearingDay::REQUEST_TYPES[:central] ? select_co_available_room :
                        select_video_available_room
-                     end
 
     params.delete(:assign_room)
     params[:room] = available_room if !available_room.nil?
@@ -192,9 +189,10 @@ class Hearings::HearingDayController < HearingsApplicationController
       .group(:room).count
     available_room = nil
     (1..HearingRooms::ROOMS.size).each do |hearing_room|
-      room_count = hearing_count_by_room[hearing_room.to_s]
+      hearing_room_str = hearing_room.to_s
+      room_count = hearing_count_by_room[hearing_room_str]
       if hearing_room != 2 && (room_count.nil? || room_count == 0)
-        available_room = hearing_room.to_s
+        available_room = hearing_room_str
         break
       end
     end
