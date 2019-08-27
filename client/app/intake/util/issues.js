@@ -94,7 +94,8 @@ const contestableIssueIndexByRequestIssue = (contestableIssuesByDate, requestIss
   const foundContestableIssue = _.reduce(contestableIssuesByDate, (foundIssue, contestableIssues) => {
     return foundIssue || _.find(contestableIssues, {
       decisionIssueId: requestIssue.contested_decision_issue_id,
-      ratingIssueReferenceId: requestIssue.rating_issue_reference_id
+      ratingIssueReferenceId: requestIssue.rating_issue_reference_id,
+      ratingDecisionReferenceId: requestIssue.rating_decision_reference_id
     });
   }, null);
 
@@ -162,6 +163,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
       isRating: true,
       ratingIssueReferenceId: issue.rating_issue_reference_id,
+      ratingDecisionReferenceId: issue.rating_decision_reference_id,
       ratingIssueProfileDate: issueDate.toISOString(),
       approxDecisionDate: issue.approx_decision_date,
       decisionIssueId: issue.contested_decision_issue_id,
@@ -232,6 +234,7 @@ const formatRatingRequestIssues = (state) => {
       return {
         request_issue_id: issue.id,
         rating_issue_reference_id: issue.ratingIssueReferenceId,
+        rating_decision_reference_id: issue.ratingDecisionReferenceId,
         decision_date: issue.decisionDate,
         decision_text: issue.description,
         rating_issue_profile_date: issue.ratingIssueProfileDate,
