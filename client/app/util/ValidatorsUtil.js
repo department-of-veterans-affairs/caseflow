@@ -7,7 +7,6 @@ better fit our expected patterns.
 const MAX_LENGTH = 40;
 
 const ValidatorsUtil = {
-
   requiredValidator(value) {
     return !value || value.trim() === '';
   },
@@ -22,14 +21,17 @@ const ValidatorsUtil = {
     return !dateRegex.test(value);
   },
 
+  validSSN: (input) => input.match(/\d{9}/) || input.match(/\d{3}-\d{2}-\d{4}$/),
+  validFileNum: (input) => input.match(/\d{7,8}$/),
+  validDocketNum: (input) => input.match(/\d{6}-{1}\d+$/),
+
   scrollToAndFocusFirstError() {
     let errors = document.getElementsByClassName('usa-input-error-message');
 
     if (errors.length > 0) {
       window.scrollBy(0, errors[0].parentElement.getBoundingClientRect().top);
       Array.from(errors[0].parentElement.childNodes).forEach((node) => {
-        if (node.nodeName === 'INPUT' ||
-            node.nodeName === 'SELECT') {
+        if (node.nodeName === 'INPUT' || node.nodeName === 'SELECT') {
           node.focus();
         }
       });
