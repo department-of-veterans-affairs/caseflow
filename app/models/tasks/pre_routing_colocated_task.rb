@@ -9,6 +9,6 @@
 
 class PreRoutingColocatedTask < ColocatedTask
   def self.label
-    nil
+    self.name
   end
 end
