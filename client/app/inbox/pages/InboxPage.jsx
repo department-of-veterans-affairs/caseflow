@@ -31,7 +31,7 @@ class InboxMessagesPage extends React.PureComponent {
   sendMessageRead = (msg) => {
     let page = this;
 
-    ApiUtil.patch(`/inbox/messages/${msg.id}`, { data: { message_action: "read" } }).
+    ApiUtil.patch(`/inbox/messages/${msg.id}`, { data: { message_action: 'read' } }).
       then(
         (response) => {
           const responseObject = JSON.parse(response.text);
@@ -56,7 +56,7 @@ class InboxMessagesPage extends React.PureComponent {
     let txt = 'Mark as read';
 
     if (msg.read_at) {
-      txt = "Read " + this.formatDate(msg.read_at);
+      txt = `Read ${this.formatDate(msg.read_at)}`;
     }
 
     return txt;
@@ -94,7 +94,7 @@ class InboxMessagesPage extends React.PureComponent {
         header: 'Message',
         valueFunction: (msg) => {
           // allow raw html since we control message content.
-          return <span className="cf-inbox-message" dangerouslySetInnerHTML={{ __html: msg.text}} />;
+          return <span className="cf-inbox-message" dangerouslySetInnerHTML={{ __html: msg.text }} />;
         }
       },
       {
