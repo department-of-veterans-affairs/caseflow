@@ -547,6 +547,10 @@
 
   "UNKNOWN_REGIONAL_OFFICE": "Unknown",
 
-  "ADD_HEARING_DAY_MODAL_ERROR_MESSAGE_TITLE": "Hearing Room 2 is already assigned for %s.",
-  "ADD_HEARING_DAY_MODAL_ERROR_MESSAGE_DETAIL": "To manually add a CO hearing, please unselect, \"Assign Board Hearing Room,\" and then edit hearing day to change room number."
+  "ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_TITLE": "Hearing Room 2 is already assigned for %s.",
+  "ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_DETAIL": "To manually add a CO hearing, please unselect, \"Assign Board Hearing Room,\" and then edit hearing day to change room number.",
+
+  "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_TITLE": "No room available for %s.",
+  "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_DETAIL": "All hearing rooms are taken for the date you selected."
+ 
 }
