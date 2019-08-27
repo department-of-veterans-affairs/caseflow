@@ -7,6 +7,12 @@
 class InboxController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
 
+  def update
+    attribute = allowed_params.require(:message_action) + "_at"
+    message.update!(attribute.to_sym => Time.zone.now)
+    render json: message.to_json
+  end
+
   private
 
   helper_method :messages, :pagination
@@ -20,7 +26,7 @@ class InboxController < ApplicationController
   end
 
   def message
-    @message ||= Message.find(params.require(:message_id))
+    @message ||= Message.find(allowed_params.require(:id))
   end
 
   def pagination
@@ -57,7 +63,7 @@ class InboxController < ApplicationController
   end
 
   def allowed_params
-    params.permit(:id, :page)
+    params.permit(:id, :page, :message_action)
   end
 
   def set_application

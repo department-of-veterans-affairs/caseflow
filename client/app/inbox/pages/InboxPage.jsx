@@ -12,19 +12,38 @@ import ApiUtil from '../../util/ApiUtil';
 const DATE_TIME_FORMAT = 'ddd MMM DD HH:mm:ss YYYY';
 
 class InboxMessagesPage extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      markedRead: {}
+    };
+  }
+
   markMessageRead = (msg) => {
+    let markedRead = { ...this.state.markedRead };
+
+    markedRead[msg.id] = true;
+    this.setState({ markedRead });
     this.sendMessageRead(msg);
   }
 
   sendMessageRead = (msg) => {
     let page = this;
 
-    ApiUtil.patch(`/inbox/messages/${msg.id}`, { read: true }).
+    ApiUtil.patch(`/inbox/messages/${msg.id}`, { data: { message_action: "read" } }).
       then(
         (response) => {
           const responseObject = JSON.parse(response.text);
 
           Object.assign(msg, responseObject);
+
+          let markedRead = { ...page.state.markedRead };
+
+          markedRead[msg.id] = true;
+          page.setState({
+            markedRead
+          });
         },
         (error) => {
           throw error;
@@ -36,11 +55,23 @@ class InboxMessagesPage extends React.PureComponent {
   getButtonText = (msg) => {
     let txt = 'Mark as read';
 
+    if (msg.read_at) {
+      txt = "Read " + this.formatDate(msg.read_at);
+    }
+
     return txt;
   }
 
   formatDate = (datetime) => {
     return moment(datetime).format(DATE_TIME_FORMAT);
+  }
+
+  markAsReadButtonDisabled = (msg) => {
+    if (this.state.markedRead[msg.id] || msg.read_at) {
+      return true;
+    }
+
+    return false;
   }
 
   render = () => {
@@ -70,8 +101,9 @@ class InboxMessagesPage extends React.PureComponent {
         align: 'right',
         valueFunction: (msg) => {
           return <Button
-            id={`msg-${msg.id}`}
+            id={`inbox-message-${msg.id}`}
             title={`message ${msg.id}`}
+            disabled={this.markAsReadButtonDisabled(msg)}
             onClick={() => {
               this.markMessageRead(msg);
             }}
@@ -80,8 +112,12 @@ class InboxMessagesPage extends React.PureComponent {
       }
     ];
 
-    const rowClassNames = (rowObject) => {
-      return rowObject.read_at ? 'cf-inbox-message-read' : '';
+    const rowClassNames = (msg) => {
+      if (this.state.markedRead[msg.id] || msg.read_at) {
+        return 'cf-inbox-message-read';
+      }
+
+      return 'cf-inbox-message';
     };
 
     const pageUpdater = (idx) => {
