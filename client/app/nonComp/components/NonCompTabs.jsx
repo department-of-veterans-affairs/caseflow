@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import SearchBar from '../../components/SearchBar';
 import TabWindow from '../../components/TabWindow';
 import { TaskTableUnconnected } from '../../queue/components/TaskTable';
-import { claimantColumn, veteranParticipantIdColumn, decisionReviewTypeColumn } from './TaskTableColumns';
+import { claimantColumn, veteranParticipantIdColumn, decisionReviewTypeColumn } from '../../queue/components/TaskTableColumns';
 
 class NonCompTabsUnconnected extends React.PureComponent {
   render = () => {

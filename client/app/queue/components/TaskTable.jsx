@@ -30,7 +30,7 @@ import { hearingBadgeColumn,
   typeColumn, assignedToColumn,
   docketNumberColumn, issueCountColumn,
   daysWaitingColumn, daysOnHoldColumn,
-  readerLinkColumn, regionalOfficeColumn } from '../../nonComp/components/TaskTableColumns';
+  readerLinkColumn, regionalOfficeColumn } from './TaskTableColumns';
 
 const hasDASRecord = (task, requireDasRecord) => {
   return (task.appeal.isLegacyAppeal && requireDasRecord) ? Boolean(task.taskId) : true;

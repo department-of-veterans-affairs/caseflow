@@ -7,18 +7,18 @@ import {
   redText,
   LEGACY_APPEAL_TYPES,
   DOCKET_NAME_FILTERS
-} from '../../queue/constants';
+} from '../constants';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
 import COPY from '../../../COPY.json';
 
 import DocketTypeBadge from '../../components/DocketTypeBadge';
-import HearingBadge from '../../queue/components/HearingBadge';
-import OnHoldLabel, { numDaysOnHold } from '../../queue/components/OnHoldLabel';
-import ReaderLink from '../../queue/ReaderLink';
-import CaseDetailsLink from '../../queue/CaseDetailsLink';
+import HearingBadge from './HearingBadge';
+import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
+import ReaderLink from '../ReaderLink';
+import CaseDetailsLink from '../CaseDetailsLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
 
-import { renderAppealType, taskHasCompletedHold, actionNameOfTask, regionalOfficeCity } from '../../queue/utils';
+import { renderAppealType, taskHasCompletedHold, actionNameOfTask, regionalOfficeCity } from '../utils';
 
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
