@@ -57,6 +57,7 @@ describe VeteranFinder, :postgres do
 
       context "BGS returns false for can_access?" do
         before do
+          Fakes::BGSService.inaccessible_appeal_vbms_ids = []
           Fakes::BGSService.inaccessible_appeal_vbms_ids << file_number
           create(:veteran, participant_id: nil)
         end
