@@ -12,7 +12,7 @@ class InboxMessages
   end
 
   def messages
-    user.messages
+    user.messages.order(read_at: :desc, created_at: :desc).page(page).per(page_size)
   end
 
   private
