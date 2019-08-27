@@ -10,11 +10,17 @@ class AppealsController < ApplicationController
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        veteran_file_number = request.headers["HTTP_VETERAN_ID"]
+        case_search = request.headers["HTTP_CASE_SEARCH"]
 
-        result = CaseSearchResultsForVeteranFileNumber.new(
-          file_number_or_ssn: veteran_file_number, user: current_user
-        ).call
+        result = if docket_number?(case_search)
+                   CaseSearchResultsForDocketNumber.new(
+                     docket_number: case_search, user: current_user
+                   ).call
+                 else
+                   CaseSearchResultsForVeteranFileNumber.new(
+                     file_number_or_ssn: case_search, user: current_user
+                   ).call
+                 end
 
         render_search_results_as_json(result)
       end
@@ -220,5 +226,9 @@ class AppealsController < ApplicationController
 
   def access_error_message
     appeal.veteran.multiple_phone_numbers? ? COPY::DUPLICATE_PHONE_NUMBER_TITLE : COPY::ACCESS_DENIED_TITLE
+  end
+
+  def docket_number?(search)
+    !search.nil? && search.match?(/\d{6}-{1}\d+$/)
   end
 end

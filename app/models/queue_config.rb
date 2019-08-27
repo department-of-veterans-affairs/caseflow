@@ -3,22 +3,23 @@
 class QueueConfig
   include ActiveModel::Model
 
-  attr_accessor :organization
+  attr_accessor :assignee
 
   def initialize(args)
     super
 
-    if !organization&.is_a?(Organization)
+    if !assignee&.is_a?(Organization) && !assignee&.is_a?(User)
       fail(
         Caseflow::Error::MissingRequiredProperty,
-        message: "organization property must be an instance of Organization"
+        message: "assignee property must be an instance of Organization or User"
       )
     end
   end
 
   def to_hash_for_user(user)
+    table_title = COPY::COLOCATED_QUEUE_PAGE_TABLE_TITLE
     {
-      table_title: format(COPY::ORGANIZATION_QUEUE_TABLE_TITLE, organization.name),
+      table_title: assignee_is_org? ? format(COPY::ORGANIZATION_QUEUE_TABLE_TITLE, assignee.name) : table_title,
       active_tab: Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME,
       tasks_per_page: TaskPager::TASKS_PER_PAGE,
       use_task_pages_api: use_task_pages_api?(user),
@@ -28,23 +29,30 @@ class QueueConfig
 
   private
 
+  def assignee_is_org?
+    assignee.is_a?(Organization)
+  end
+
   def use_task_pages_api?(user)
-    FeatureToggle.enabled?(:use_task_pages_api, user: user) && organization.use_task_pages_api?
+    FeatureToggle.enabled?(:use_task_pages_api, user: user) && assignee.use_task_pages_api?
   end
 
   def tabs(user)
-    queue_tabs = organization.queue_tabs
-    use_task_pages_api?(user) ? queue_tabs : queue_tabs.reject { |queue_tab| queue_tab.is_a?(::OnHoldTasksTab) }
+    queue_tabs = assignee.queue_tabs
+
+    return queue_tabs unless !use_task_pages_api?(user) && assignee_is_org?
+
+    queue_tabs.reject { |tab| tab.is_a?(::OnHoldTasksTab) }
   end
 
   def attach_tasks_to_tab(tab, user)
-    task_pager = TaskPager.new(assignee: organization, tab_name: tab.name)
+    task_pager = TaskPager.new(assignee: assignee, tab_name: tab.name)
 
     # Only return tasks in the configuration if we are using it to populate the first page of results.
     # Otherwise avoid the overhead of the additional database requests.
     tasks = use_task_pages_api?(user) ? serialized_tasks_for_columns(task_pager.paged_tasks, tab.column_names) : []
 
-    endpoint = "#{organization.path}/task_pages?#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{tab.name}"
+    endpoint = "task_pages?#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{tab.name}"
 
     tab.to_hash.merge(
       tasks: tasks,
@@ -52,7 +60,7 @@ class QueueConfig
       # This allows us to only instantiate TaskPager if we are using the task pages API.
       task_page_count: task_pager.task_page_count,
       total_task_count: tab.tasks.count,
-      task_page_endpoint_base_path: endpoint
+      task_page_endpoint_base_path: "#{assignee_is_org? ? "#{assignee.path}/" : ''}#{endpoint}"
     )
   end
 

@@ -27,5 +27,18 @@ describe MissedJobSweeperJob, :postgres do
         expect(slack_service).to have_received(:send_notification).with(message).once
       end
     end
+
+    context "there are no stalled distributions" do
+      it "doesn't send a slack message" do
+        judge = create(:user, css_id: "MYNAMEISJUDGE")
+        allow(judge).to receive(:judge_in_vacols?) { true }
+        Distribution.create!(judge: judge)
+        Timecop.travel(Time.zone.now + 30.minutes) do
+          subject
+
+          expect(slack_service).to_not have_received(:send_notification)
+        end
+      end
+    end
   end
 end

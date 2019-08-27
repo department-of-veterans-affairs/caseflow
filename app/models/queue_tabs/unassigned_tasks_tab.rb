@@ -12,7 +12,7 @@ class UnassignedTasksTab < QueueTab
   end
 
   def description
-    COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION
+    format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, assignee.name)
   end
 
   def tasks

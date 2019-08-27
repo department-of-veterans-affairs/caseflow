@@ -56,6 +56,14 @@ describe AssignedTasksTab, :postgres do
       it "only returns the active tasks that are children of the assignee's on hold tasks" do
         expect(subject).to match_array(on_hold_tasks_children)
       end
+
+      context "when the assignee is a user" do
+        let(:assignee) { create(:user) }
+
+        it "only returns the active tasks that are children of the assignee's on hold tasks" do
+          expect(subject).to match_array(assignee_active_tasks)
+        end
+      end
     end
   end
 end

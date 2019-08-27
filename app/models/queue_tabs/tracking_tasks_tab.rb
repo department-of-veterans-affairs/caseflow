@@ -10,7 +10,7 @@ class TrackingTasksTab < QueueTab
   end
 
   def description
-    COPY::TRACKING_TASKS_TAB_DESCRIPTION
+    format(COPY::TRACKING_TASKS_TAB_DESCRIPTION, assignee.name)
   end
 
   def tasks
