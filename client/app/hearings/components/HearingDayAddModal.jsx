@@ -3,7 +3,6 @@ import { withRouter } from 'react-router-dom';
 import connect from 'react-redux/es/connect/connect';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
-import { sprintf } from 'sprintf-js';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
@@ -32,8 +31,6 @@ import { onRegionalOfficeChange } from '../../components/common/actions';
 import Checkbox from '../../components/Checkbox';
 import Alert from '../../components/Alert';
 import ApiUtil from '../../util/ApiUtil';
-import { formatDateStr } from '../../util/DateUtil';
-import COPY from '../../../COPY.json';
 
 const notesFieldStyling = css({
   height: '100px',
@@ -84,7 +81,7 @@ class HearingDayAddModal extends React.Component {
       errorMessages: [],
       roErrorMessages: [],
       serverError: false,
-      noRoomsAvailable: false
+      noRoomsAvailableError: false
     };
   }
 
@@ -101,7 +98,7 @@ class HearingDayAddModal extends React.Component {
     let roErrorMessages = [];
 
     this.setState({ serverError: false,
-      noRoomsAvailable: false });
+      noRoomsAvailableError: false });
 
     if (this.props.selectedHearingDay === '') {
       this.setState({ dateError: true });
@@ -174,8 +171,8 @@ class HearingDayAddModal extends React.Component {
 
       }, (error) => {
         if (error.response.body && error.response.body.errors &&
-        error.response.body.errors[0].title === 'No rooms available') {
-          this.setState({ noRoomsAvailable: true });
+        error.response.body.errors[0].status === 400) {
+          this.setState({ noRoomsAvailableError: error.response.body.errors[0] });
         } else {
         // All other server errors
           this.setState({ serverError: true });
@@ -263,17 +260,17 @@ class HearingDayAddModal extends React.Component {
   };
 
   getAlertTitle = () => {
-    return this.state.serverError ? 'An Error Occurred' :
-      sprintf(COPY.ADD_HEARING_DAY_MODAL_ERROR_MESSAGE_TITLE, formatDateStr(this.props.selectedHearingDay));
+    return this.state.noRoomsAvailableError ? this.state.noRoomsAvailableError.title :
+      'An error has occurred';
   };
 
   getAlertMessage = () => {
-    return this.state.serverError ? 'You are unable to complete this action.' :
-      COPY.ADD_HEARING_DAY_MODAL_ERROR_MESSAGE_DETAIL;
+    return this.state.noRoomsAvailableError ? this.state.noRoomsAvailableError.detail :
+      'You are unable to complete this action.';
   };
 
   showAlert = () => {
-    return this.state.serverError || this.state.noRoomsAvailable;
+    return this.state.serverError || this.state.noRoomsAvailableError;
   };
 
   modalMessage = () => {

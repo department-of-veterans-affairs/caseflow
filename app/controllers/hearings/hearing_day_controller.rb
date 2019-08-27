@@ -201,12 +201,27 @@ class Hearings::HearingDayController < HearingsApplicationController
     available_room
   end
 
+  def no_available_rooms_error
+    if params[:request_type] == HearingDay::REQUEST_TYPES[:central]
+      {
+        "title": COPY::ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_TITLE %
+          Date.parse(params[:scheduled_for]).strftime("%m/%d/%Y"),
+        "detail": COPY::ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_DETAIL,
+        "status": 400
+      }
+    else
+      {
+        "title": COPY::ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_TITLE %
+          Date.parse(params[:scheduled_for]).strftime("%m/%d/%Y"),
+        "detail": COPY::ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_DETAIL,
+        "status": 400
+      }
+    end
+  end
+
   def no_available_rooms
     render json: {
-      "errors": [
-        "title": "No rooms available",
-        "detail": "All rooms are taken for the date selected."
-      ]
+      "errors": [no_available_rooms_error]
     }, status: :not_found
   end
 end
