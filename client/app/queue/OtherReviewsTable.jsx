@@ -84,11 +84,7 @@ class OtherReviewsTable extends React.PureComponent {
     },
     {
       header: COPY.OTHER_REVIEWS_TABLE_RECEIPT_DATE_COLUMN_TITLE,
-      valueFunction: (review) => {
-        return <React.Fragment>
-          <DateString date={review.receiptDate} />
-        </React.Fragment>;
-      }
+      valueFunction: (review) => <DateString date={review.receiptDate} />
     },
     {
       header: COPY.OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE,
