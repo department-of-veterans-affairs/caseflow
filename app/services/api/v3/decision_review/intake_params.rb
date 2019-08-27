@@ -9,16 +9,17 @@ class Api::V3::DecisionReview::IntakeParams
   end
 
   def veteran_file_number
-    relationships[:veteran][:data][:id].to_s
+    number = relationships.try(:[], :veteran).try(:[], :data).try(:[], :id)
+    number && number.to_s
   end
 
   # params for IntakesController#review
   def review_params
     ActionController::Parameters.new(
-      informal_conference: attributes[:informalConference],
-      same_office: attributes[:sameOffice],
-      benefit_type: attributes[:benefitType],
-      receipt_date: attributes[:receiptDate],
+      informal_conference: attributes.try(:[], :informalConference),
+      same_office: attributes.try(:[], :sameOffice),
+      benefit_type: attributes.try(:[], :benefitType),
+      receipt_date: attributes.try(:[], :receiptDate) || Time.zone.now.strftime("%Y-%m-%d"),
       claimant: claimant_participant_id,
       veteran_is_not_claimant: claimant_participant_id.present? || claimant_payee_code.present?,
       payee_code: claimant_payee_code,
@@ -30,7 +31,9 @@ class Api::V3::DecisionReview::IntakeParams
 
   # params for IntakesController#complete
   def complete_params
-    request_issues
+    ActionController::Parameters.new(
+      request_issues: request_issues.map(&:intakes_controller_params)
+    )
   end
 
   def errors?
@@ -40,28 +43,28 @@ class Api::V3::DecisionReview::IntakeParams
   private
 
   def attributes
-    @params[:data][:attributes]
+    @params.try(:[], :data).try(:[], :attributes)
   end
 
   def relationships
-    @params[:data][:relationships]
+    @params.try(:[], :data).try(:[], :relationships)
   end
 
   def claimant
-    relationships[:claimant][:data]
+    relationships.try(:[],:claimant).try(:[],:data)
   end
 
   def claimant_participant_id
-    claimant[:id]
+    claimant.try(:[], :id)
   end
 
   def claimant_payee_code
-    claimant[:meta][:payeeCode]
+    claimant.try(:[], :meta).try(:[], :payeeCode)
   end
 
   def request_issues
-    @request_issues ||= @params[:included]
-      .select { |obj| obj[:type] == "RequestIssue" }
+    @request_issues ||= (@params.try(:[], :included) || [])
+      .select { |obj| obj.respond_to?(:has_key?) && obj[:type] == "RequestIssue" }
       .map do |obj|
         Api::V3::DecisionReview::RequestIssueParams.new(
           request_issue: obj,

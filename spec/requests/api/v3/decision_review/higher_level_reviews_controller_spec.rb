@@ -56,9 +56,9 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
   let(:informal_conference) { true }
   let(:same_office) { false }
   let(:legacy_opt_in_approved) { true }
-  let(:benefit_type) { "pension" }
+  let(:benefit_type) { "compensation" }
   let(:contests) { "other" }
-  let(:category) { "Penalty Period" }
+  let(:category) { "Apportionment" }
   let(:decision_date) { Time.zone.today - 10.days }
   let(:decision_text) { "Some text here." }
   let(:notes) { "not sure if this is on file" }
@@ -94,7 +94,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         type: "RequestIssue",
         attributes: {
           category: category,
-          decisionId: decision_date.strftime("%Y-%m-%d"),
+          decisionIssueId: decision_date.strftime("%Y-%m-%d"),
           decisionDate: decision_date.strftime("%Y-%m-%d"),
           decisionText: decision_text,
           notes: notes
@@ -110,17 +110,18 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
   end
 
   describe "#create" do
-    describe "(general cases)" do
+    describe "general cases" do
       it "should return a 202 on success" do
         post("/api/v3/decision_review/higher_level_reviews", params: params, headers: { "Authorization" => "Token #{api_key}"})
-        #expect(response).to have_http_status(202)
-        error = Api::V3::DecisionReview::IntakeError.new(nil)
-        expect(JSON.parse(response.body)).to eq(Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json)
+        expect(response).to have_http_status(202)
       end
 
       it "should return an error status on failure" do
         post("/api/v3/decision_review/higher_level_reviews", params: {}, headers: { "Authorization" => "Token #{api_key}"})
-        expect(response).to have_http_status(:error)
+        error = Api::V3::DecisionReview::IntakeError.new(:invalid_file_number)
+
+        expect(response).to have_http_status(error.status)
+        expect(JSON.parse(response.body)).to eq(Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json)
       end
     end
 
@@ -128,7 +129,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       let(:category) { "Words ending in urple" }
       it "should return a 422 on this failure" do
         post("/api/v3/decision_review/higher_level_reviews", params: params, headers: { "Authorization" => "Token #{api_key}"})
-        error = Api::V3::DecisionReview::IntakeError.new(:unknown_category_for_benefit_type)
+        error = Api::V3::DecisionReview::IntakeError.new(:request_issue_category_invalid_for_benefit_type)
 
         expect(response).to have_http_status(error.status)
         expect(JSON.parse(response.body)).to eq(Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json)
@@ -146,7 +147,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
             benefitType: benefit_type
           }
         end
-        it "should return 422/intake_review_failed" do
+        it "should return 500/intake_review_failed" do
           post("/api/v3/decision_review/higher_level_reviews", params: params, headers: { "Authorization" => "Token #{api_key}"})
           error = Api::V3::DecisionReview::IntakeError.new(:intake_review_failed)
 
@@ -157,30 +158,26 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
       describe "(unknown_error_code)" do
         let(:params) do
-          {
-            data: data,
-            included: []
-          }
+          {data: "cat"}
         end
-        it "should return 422/unknown_error_code" do
+        it "should return 500/unknown_error_code" do
           post("/api/v3/decision_review/higher_level_reviews", params: params, headers: { "Authorization" => "Token #{api_key}"})
           error = Api::V3::DecisionReview::IntakeError.new(:unknown_error_code)
 
           expect(response).to have_http_status(error.status)
-          expect(JSON.parse(response.body)).to eq(Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json)
+          expect(JSON.parse(response.body)["errors"][0]["title"].slice(0,7).downcase).to eq(error.title.slice(0,7).downcase)
         end
       end
 
       describe "(reserved_veteran_file_number)" do
         let(:veteran_file_number) { "123456789" }
-        it "should return 422/reserved_veteran_file_number" do
-          FeatureToggle.enable!(:intake_reserved_file_number, users: [current_user.css_id])
+        it "should return 500/reserved_veteran_file_number" do
+          allow(Rails).to receive(:deploy_env?).and_return(true)
           post("/api/v3/decision_review/higher_level_reviews", params: params, headers: { "Authorization" => "Token #{api_key}"})
           error = Api::V3::DecisionReview::IntakeError.new(:reserved_veteran_file_number)
 
           expect(response).to have_http_status(error.status)
           expect(JSON.parse(response.body)).to eq(Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json)
-          FeatureToggle.disable!(:intake_reserved_file_number, users: [current_user.css_id])
         end
       end
     end

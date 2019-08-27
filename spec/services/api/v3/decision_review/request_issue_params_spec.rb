@@ -6,31 +6,32 @@ context Api::V3::DecisionReview::RequestIssueParams do
   let(:benefit_type) { "compensation" }
   let(:all_fields_are_blank) do
     ActionController::Parameters.new(
-      "type": "RequestIssue",
-      "attributes": {}
+      type: "RequestIssue",
+      attributes: {}
     )
   end
   let(:invalid_category) do
     ActionController::Parameters.new(
-      "type": "RequestIssue",
-      "attributes": {
-        "category": 22
+      type: "RequestIssue",
+      attributes: {
+        category: 22,
+        ratingIssueId: 1
       }
     )
   end
   let(:no_ids) do
     ActionController::Parameters.new(
-      "type": "RequestIssue",
-      "attributes": {
-        "category": "Apportionment"
+      type: "RequestIssue",
+      attributes: {
+        category: "Apportionment"
       }
     )
   end
   let(:invalid_legacy_fields_or_no_opt_in) do
     ActionController::Parameters.new(
-      "type": "RequestIssue",
-      "attributes": {
-        "legacyAppealId": "9876543210",
+      type: "RequestIssue",
+      attributes: {
+        legacyAppealId: "9876543210",
       }
     )
   end

@@ -6,13 +6,13 @@
 #      type: "RequestIssue"
 #      attributes: {
 #        notes
-#        decision_issue_id
-#        rating_issue_id
-#        legacy_appeal_id
-#        legacy_appeal_issue_id
+#        decisionIssueId
+#        ratingIssueId
+#        legacyAppealId
+#        legacyAppealIssueId
 #        category
-#        decision_date
-#        decision_text
+#        decisionDate
+#        decisionText
 #      }
 #    }
 #
@@ -83,7 +83,7 @@ class Api::V3::DecisionReview::RequestIssueParams
 
   def intakes_controller_params
     @attributes.as_json.each_with_object(ActionController::Parameters.new) do |(key, value), params|
-      params[self.class.intakes_controller_key(key)] = value
+      params[self.class.intakes_controller_style_key(key)] = value
     end.merge(is_unidentified: unidentified?, benefit_type: @benefit_type)
   end
 
@@ -140,8 +140,7 @@ class Api::V3::DecisionReview::RequestIssueParams
   end
 
   def valid_category_for_benefit_type?
-    #@attributes[:category].in?(CATEGORIES_BY_BENEFIT_TYPE[@benefit_type])
-    true
+    @attributes[:category].in?(CATEGORIES_BY_BENEFIT_TYPE[@benefit_type])
   end
 
   def legacy_fields_blank?

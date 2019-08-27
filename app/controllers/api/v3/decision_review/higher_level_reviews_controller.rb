@@ -5,9 +5,19 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
     if processor.run!.errors?
       render_errors(processor.errors)
     else
-      response.set_header("Content-Location", url_for(:intake_status, processor.higher_level_review.uuid))
+      response.set_header(
+        "Content-Location",
+        url_for(
+          controller: :intake_statuses,
+          action: :show,
+          id: processor.higher_level_review.uuid
+        )
+      )
       render Api::V3::DecisionReview::IntakeStatus.new(processor.intake).render_hash
     end
+# rescue StandardError => error
+#   raise StandardError, error.message + '|' + error.backtrace.join('|')
+# end
   rescue StandardError => error
     # do we want something like intakes_controller's log_error here?
     render_errors([intake_error_code_from_exception_or_processor(error)])
