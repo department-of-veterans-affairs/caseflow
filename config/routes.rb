@@ -59,7 +59,6 @@ Rails.application.routes.draw do
     end
   end
 
-
   namespace :metrics do
     namespace :v1 do
       resources :histogram, only: :create
@@ -200,6 +199,10 @@ Rails.application.routes.draw do
     resources :jobs, controller: :asyncable_jobs, param: :id, only: [:index, :show, :update]
   end
   match '/jobs' => 'asyncable_jobs#index', via: [:get]
+
+  resources :inbox, only: [:index] do
+    resources :messages, controller: :inbox, param: :id, only: [:update]
+  end
 
   resources :users, only: [:index]
   resources :users, only: [:index] do
