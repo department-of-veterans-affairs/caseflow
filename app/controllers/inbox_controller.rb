@@ -6,6 +6,7 @@
 
 class InboxController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
+  before_action :feature_enabled?, only: [:index]
 
   def update
     attribute = allowed_params.require(:message_action) + "_at"
@@ -68,9 +69,11 @@ class InboxController < ApplicationController
     RequestStore.store[:application] = "intake"
   end
 
-  def verify_access
-    #return false unless FeatureToggle.enabled?(:inbox, user: current_user)
+  def feature_enabled?
+    FeatureToggle.enabled?(:inbox, user: current_user)
+  end
 
+  def verify_access
     return true if current_user
   end
 end
