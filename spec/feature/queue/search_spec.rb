@@ -78,6 +78,11 @@ RSpec.feature "Search", :all_dbs do
             expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
           end
 
+          it "should show the HLR / SCs receipt date" do
+            expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_RECEIPT_DATE_COLUMN_TITLE)
+            expect(higher_level_review.receipt_date.mdY).to_not be_nil
+          end
+
           it "should show edit issues page" do
             expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
             new_window = window_opened_by { click_on("edit-issues") }
