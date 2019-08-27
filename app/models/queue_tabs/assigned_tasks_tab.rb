@@ -10,11 +10,19 @@ class AssignedTasksTab < QueueTab
   end
 
   def description
-    COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION
+    if assignee_is_org?
+      return format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
+    end
+
+    COPY::COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION
   end
 
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.active.where(parent: on_hold_tasks)
+    if assignee_is_org?
+      return Task.includes(*task_includes).visible_in_queue_table_view.active.where(parent: on_hold_tasks)
+    end
+
+    Task.includes(*task_includes).visible_in_queue_table_view.active.where(assigned_to: assignee)
   end
 
   def columns
