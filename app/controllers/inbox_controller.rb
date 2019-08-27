@@ -71,6 +71,8 @@ class InboxController < ApplicationController
   end
 
   def verify_access
+    #return false unless FeatureToggle.enabled?(:inbox, user: current_user)
+
     return true if current_user
   end
 end

@@ -4,6 +4,9 @@ require "support/database_cleaner"
 require "rails_helper"
 
 feature "Inbox", :postgres do
+  before { FeatureToggle.enable!(:inbox) }
+  after { FeatureToggle.disable!(:inbox) }
+
   let!(:user) { User.authenticate!(roles: ["Mail Intake"]) }
 
   describe "index" do
