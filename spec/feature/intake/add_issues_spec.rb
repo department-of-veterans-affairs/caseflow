@@ -25,8 +25,36 @@ feature "Intake Add Issues Page", :all_dbs do
         { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" },
         { reference_id: "def789", decision_text: "Looks like a VACOLS issue" }
+      ],
+      decisions: [
+        {
+          rating_issue_reference_id: nil,
+          original_denial_date: promulgation_date - 7.days,
+          diagnostic_text: "Broken arm",
+          diagnostic_type: "Bone",
+          disability_id: "123",
+          type_name: "Not Service Connected"
+        }
       ]
     )
+  end
+
+  context "not service connected rating decision" do
+    before { FeatureToggle.enable!(:contestable_rating_decisions) }
+    after { FeatureToggle.disable!(:contestable_rating_decisions) }
+
+    let(:rating_decision_text) { "Bone (Broken arm) is denied as Not Service Connected" }
+
+    scenario "rating decision is selected" do
+      start_higher_level_review(veteran)
+      visit "/intake"
+      click_intake_continue
+      expect(page).to have_current_path("/intake/add_issues")
+
+      click_intake_add_issue
+      add_intake_rating_issue(rating_decision_text)
+      expect(page).to have_content("1. #{rating_decision_text}\nDecision date: #{promulgation_date.mdY}")
+    end
   end
 
   context "check for correct time zone" do

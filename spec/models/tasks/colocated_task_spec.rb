@@ -284,9 +284,7 @@ describe ColocatedTask, :all_dbs do
           expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
           expect(appeal_1.root_task.children.empty?)
           colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
-          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
-          expect(appeal_1.root_task.children.first.is_a?(HearingTask))
-          expect(appeal_1.root_task.children.first.children.first.is_a?(ScheduleHearingTask))
+          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:schedule_hearing]
         end
       end
 

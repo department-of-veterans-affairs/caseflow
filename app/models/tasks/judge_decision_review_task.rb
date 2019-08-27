@@ -13,7 +13,7 @@ class JudgeDecisionReviewTask < JudgeTask
     [judge_checkout_label, Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h]
   end
 
-  def label
+  def self.label
     COPY::JUDGE_DECISION_REVIEW_TASK_LABEL
   end
 end

@@ -29,10 +29,10 @@ import { renderAppealType, taskHasCompletedHold, actionNameOfTask, regionalOffic
 import { DateString } from '../../util/DateUtil';
 import {
   CATEGORIES,
-  redText,
-  DOCKET_NAME_FILTERS
+  redText
 } from '../constants';
 import COPY from '../../../COPY.json';
+import DOCKET_NAME_FILTERS from '../../../constants/DOCKET_NAME_FILTERS.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
 

@@ -205,6 +205,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("About the Veteran")
+        expect(page).not_to have_content("About the Appellant")
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to have_content("1/10/1935")
         expect(page).to have_content(appeal.veteran_address_line_1)
@@ -243,6 +244,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("About the Veteran")
+        expect(page).not_to have_content("About the Appellant")
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to_not have_content("1/10/1935")
         expect(page).to_not have_content("5/25/2016")

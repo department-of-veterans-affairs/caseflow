@@ -9,7 +9,8 @@ class ContestableIssue
   attr_accessor :rating_issue_reference_id, :approx_decision_date, :description,
                 :ramp_claim_id, :contesting_decision_review, :is_rating,
                 :decision_issue, :rating_issue_profile_date, :source_request_issues,
-                :rating_issue_diagnostic_code, :source_decision_review
+                :rating_issue_diagnostic_code, :source_decision_review,
+                :rating_decision_reference_id
 
   class << self
     def from_rating_issue(rating_issue, contesting_decision_review)
@@ -43,6 +44,19 @@ class ContestableIssue
         is_rating: decision_issue.rating?
       )
     end
+
+    def from_rating_decision(rating_decision, contesting_decision_review)
+      new(
+        rating_issue_reference_id: rating_decision.rating_issue_reference_id,
+        rating_issue_profile_date: rating_decision.profile_date.to_date,
+        rating_decision_reference_id: rating_decision.reference_id,
+        approx_decision_date: rating_decision.decision_date.to_date,
+        description: rating_decision.decision_text,
+        contesting_decision_review: contesting_decision_review,
+        rating_issue_diagnostic_code: rating_decision.diagnostic_code,
+        is_rating: true # true even if rating_reference_id is nil
+      )
+    end
   end
 
   def serialize
@@ -50,6 +64,7 @@ class ContestableIssue
       ratingIssueReferenceId: rating_issue_reference_id,
       ratingIssueProfileDate: rating_issue_profile_date.try(:to_date),
       ratingIssueDiagnosticCode: rating_issue_diagnostic_code,
+      ratingDecisionReferenceId: rating_decision_reference_id,
       decisionIssueId: decision_issue&.id,
       approxDecisionDate: approx_decision_date,
       description: description,
@@ -91,6 +106,7 @@ class ContestableIssue
   def contested_by_request_issue
     RequestIssue.active.find_by(
       contested_rating_issue_reference_id: rating_issue_reference_id,
+      contested_rating_decision_reference_id: rating_decision_reference_id,
       contested_decision_issue_id: decision_issue&.id
     )
   end

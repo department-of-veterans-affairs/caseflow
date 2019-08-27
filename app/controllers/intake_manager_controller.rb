@@ -27,6 +27,7 @@ class IntakeManagerController < ApplicationController
   end
 
   def user_css_id
-    params.require(:user_css_id)
+    params.permit(:user_css_id)[:user_css_id]
   end
+  helper_method :user_css_id
 end

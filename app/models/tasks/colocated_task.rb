@@ -12,7 +12,7 @@ class ColocatedTask < GenericTask
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
   validate :task_is_unique, on: :create
-  validate :valid_type
+  validate :valid_type, on: :create
 
   after_update :update_location_in_vacols
 
@@ -76,10 +76,6 @@ class ColocatedTask < GenericTask
     end
   end
 
-  def label
-    self.class.label
-  end
-
   def timeline_title
     "#{label} completed"
   end
@@ -119,12 +115,13 @@ class ColocatedTask < GenericTask
 
   def create_twin_of_type(params)
     task_type = ColocatedTask.find_subclass_by_action(params[:action])
-    task_type.create!(
+    ColocatedTask.create!(
       appeal: appeal,
       parent: parent,
       assigned_by: assigned_by,
       instructions: params[:instructions],
-      assigned_to: task_type.default_assignee
+      assigned_to: task_type&.default_assignee,
+      type: task_type
     )
   end
 

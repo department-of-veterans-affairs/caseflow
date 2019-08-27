@@ -1,15 +1,13 @@
 import { SEARCH_ERROR_FOR } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import * as Constants from './actionTypes';
-import _ from 'lodash';
-import {
-  onReceiveAppealDetails,
-  onReceiveClaimReviewDetails
-} from '../QueueActions';
-import {
-  prepareAppealForStore,
-  prepareClaimReviewForStore
-} from '../utils';
+
+import { size } from 'lodash';
+import { onReceiveAppealDetails, onReceiveClaimReviewDetails } from '../QueueActions';
+import { prepareAppealForStore, prepareClaimReviewForStore } from '../utils';
+import ValidatorsUtil from '../../util/ValidatorsUtil';
+
+const { validSSN, validFileNum, validDocketNum } = ValidatorsUtil;
 
 export const clearCaseListSearch = () => ({
   type: Constants.CLEAR_CASE_LIST_SEARCH
@@ -35,6 +33,10 @@ export const requestAppealUsingVeteranId = () => ({
   type: Constants.REQUEST_APPEAL_USING_VETERAN_ID
 });
 
+export const requestAppealUsingCaseSearch = () => ({
+  type: Constants.REQUEST_APPEAL_USING_CASE_SEARCH
+});
+
 export const emptyQuerySearchAttempt = () => ({
   type: Constants.SEARCH_RESULTED_IN_ERROR,
   payload: {
@@ -43,7 +45,7 @@ export const emptyQuerySearchAttempt = () => ({
   }
 });
 
-export const fetchedNoAppealsUsingVeteranId = (searchQuery) => ({
+export const fetchedNoAppeals = (searchQuery) => ({
   type: Constants.SEARCH_RESULTED_IN_ERROR,
   payload: {
     errorType: SEARCH_ERROR_FOR.NO_APPEALS,
@@ -51,21 +53,21 @@ export const fetchedNoAppealsUsingVeteranId = (searchQuery) => ({
   }
 });
 
-export const onReceiveAppealsUsingVeteranId = (appeals) => (dispatch) => {
+export const onReceiveAppeals = (appeals) => (dispatch) => {
   dispatch(onReceiveAppealDetails(prepareAppealForStore(appeals)));
   dispatch({
     type: Constants.RECEIVED_APPEALS_USING_VETERAN_ID_SUCCESS
   });
 };
 
-export const onReceiveClaimReviewsUsingVeteranId = (claimReviews) => (dispatch) => {
+export const onReceiveClaimReviews = (claimReviews) => (dispatch) => {
   dispatch(onReceiveClaimReviewDetails(prepareClaimReviewForStore(claimReviews)));
   dispatch({
     type: Constants.RECEIVED_CLAIM_REVIEWS_USING_VETERAN_ID_SUCCESS
   });
 };
 
-export const fetchAppealUsingVeteranIdFailed = (searchQuery) => ({
+export const fetchAppealFromSearchFailed = (searchQuery) => ({
   type: Constants.SEARCH_RESULTED_IN_ERROR,
   payload: {
     errorType: SEARCH_ERROR_FOR.UNKNOWN_SERVER_ERROR,
@@ -73,7 +75,7 @@ export const fetchAppealUsingVeteranIdFailed = (searchQuery) => ({
   }
 });
 
-export const fetchAppealUsingInvalidVeteranIdFailed = (searchQuery) => ({
+export const invalidCaseSearchTerm = (searchQuery) => ({
   type: Constants.SEARCH_RESULTED_IN_ERROR,
   payload: {
     errorType: SEARCH_ERROR_FOR.INVALID_VETERAN_ID,
@@ -81,7 +83,7 @@ export const fetchAppealUsingInvalidVeteranIdFailed = (searchQuery) => ({
   }
 });
 
-export const fetchAppealUsingBackendError = (searchQuery, error) => ({
+export const caseSearchBackendError = (searchQuery, error) => ({
   type: Constants.SEARCH_RESULTED_IN_ERROR,
   payload: {
     errorType: SEARCH_ERROR_FOR.BACKEND_ERROR,
@@ -90,66 +92,70 @@ export const fetchAppealUsingBackendError = (searchQuery, error) => ({
   }
 });
 
-export const fetchAppealsUsingVeteranId = (searchQuery) =>
-  (dispatch) => new Promise((resolve, reject) => {
-    if (!searchQuery.length) {
-      dispatch(emptyQuerySearchAttempt());
+const uniqueVetIdsFromCases = ({ appeals, claim_reviews }) => {
+  const veteranIds = appeals.
+    map((appeal) => appeal.attributes).
+    concat(claim_reviews).
+    map((obj) => obj.caseflow_veteran_id);
 
-      return reject();
-    }
+  return [...new Set(veteranIds)];
+};
 
-    const veteranId = searchQuery.replace(/\D/g, '');
-    // Allow for SSNs (9 digits) as well as claims file numbers (7 or 8 digits).
+export const fetchAppealsBySearch = (searchTerm) => (dispatch) => {
+  return ApiUtil.get('/appeals', { headers: { 'case-search': searchTerm } }).
+    then((response) => {
+      const returnedObject = response.text ? JSON.parse(response.text) : null;
+      const isResponseEmpty = returnedObject && !size(returnedObject.appeals) && !size(returnedObject.claim_reviews);
 
-    if (!veteranId.match(/\d{7,9}/)) {
-      dispatch(fetchAppealUsingInvalidVeteranIdFailed(searchQuery));
+      if (!returnedObject || isResponseEmpty) {
+        dispatch(fetchedNoAppeals(searchTerm));
 
-      return reject();
-    }
+        return Promise.reject();
+      }
 
-    dispatch(requestAppealUsingVeteranId());
-    ApiUtil.get('/appeals', {
-      headers: { 'veteran-id': veteranId }
+      dispatch(onReceiveAppeals(returnedObject.appeals));
+      dispatch(onReceiveClaimReviews(returnedObject.claim_reviews));
+
+      // Return with duplicates removed
+      return uniqueVetIdsFromCases(returnedObject);
     }).
-      then((response) => {
-        let isResponseEmpty;
-        const returnedObject = (response.text) ? JSON.parse(response.text) : null;
+    catch((error) => {
+      const backendError = error.response.body;
 
-        if (returnedObject) {
-          isResponseEmpty = _.size(returnedObject.appeals) === 0 &&
-            _.size(returnedObject.claim_reviews) === 0;
-        }
+      if (backendError) {
+        const errorMessage = backendError.errors[0].detail;
 
-        if (!returnedObject || isResponseEmpty) {
-          dispatch(fetchedNoAppealsUsingVeteranId(veteranId));
+        dispatch(caseSearchBackendError(searchTerm, errorMessage));
+      } else {
+        dispatch(fetchAppealFromSearchFailed(searchTerm));
+      }
 
-          return reject();
-        }
+      return Promise.reject();
+    });
+};
 
-        dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
-        dispatch(onReceiveClaimReviewsUsingVeteranId(returnedObject.claim_reviews));
+export const appealsSearch = (searchQuery) => async (dispatch) => {
+  if (!searchQuery.length) {
+    dispatch(emptyQuerySearchAttempt());
 
-        const veteranIds = returnedObject.appeals.
-          map((appeal) => appeal.attributes).
-          concat(returnedObject.claim_reviews).
-          map((obj) => obj.caseflow_veteran_id);
+    return Promise.reject();
+  }
 
-        return resolve([...new Set(veteranIds)]);
-      }).
-      catch((error) => {
-        const backendError = error.response.body;
+  // Allow numbers + hyphen (for docket number)
+  const searchTerm = searchQuery.trim().replace(/[^\d-]/g, '');
 
-        if (backendError) {
-          const errorMessage = backendError.errors[0].detail;
+  const validInput = (i) => validSSN(i) || validFileNum(i) || validDocketNum(i);
 
-          dispatch(fetchAppealUsingBackendError(searchQuery, errorMessage));
-        } else {
-          dispatch(fetchAppealUsingVeteranIdFailed(searchQuery));
-        }
+  if (!validInput(searchTerm)) {
+    dispatch(invalidCaseSearchTerm(searchQuery));
 
-        return reject();
-      });
-  });
+    return Promise.reject();
+  }
+
+  dispatch(requestAppealUsingCaseSearch());
+
+  return await dispatch(fetchAppealsBySearch(searchTerm));
+};
 
 export const setFetchedAllCasesFor = (caseflowVeteranId) => ({
   type: Constants.SET_FETCHED_ALL_CASES_FOR,
