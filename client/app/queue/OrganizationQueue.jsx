@@ -9,7 +9,7 @@ import BulkAssignButton from './components/BulkAssignButton';
 import TabWindow from '../components/TabWindow';
 import { docketNumberColumn, hearingBadgeColumn, detailsColumn,
   taskColumn, regionalOfficeColumn, issueCountColumn, typeColumn,
-  assignedToColumn, daysWaitingColumn, daysOnHoldColumn, readerLinkColumn } from './components/TaskTable';
+  assignedToColumn, daysWaitingColumn, daysOnHoldColumn, readerLinkColumn } from '../nonComp/components/TaskTableColumns';
 import QueueTable from './QueueTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import Alert from '../components/Alert';

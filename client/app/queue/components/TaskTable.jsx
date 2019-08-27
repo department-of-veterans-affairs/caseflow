@@ -24,13 +24,17 @@ import { DateString } from '../../util/DateUtil';
 
 import COPY from '../../../COPY.json';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
-import * as TaskColumns from './TaskTableCols';
+
+import { hearingBadgeColumn,
+  detailsColumn, taskColumn,
+  typeColumn, assignedToColumn,
+  docketNumberColumn, issueCountColumn,
+  daysWaitingColumn, daysOnHoldColumn,
+  readerLinkColumn, regionalOfficeColumn } from '../../nonComp/components/TaskTableColumns';
 
 const hasDASRecord = (task, requireDasRecord) => {
   return (task.appeal.isLegacyAppeal && requireDasRecord) ? Boolean(task.taskId) : true;
 };
-
-// const collapseColumn = (requireDasRecord) => (task) => hasDASRecord(task, requireDasRecord) ? 1 : 0;
 
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
@@ -52,7 +56,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   collapseColumnIfNoDASRecord = (task) => this.taskHasDASRecord(task) ? 1 : 0
 
   caseHearingColumn = () => {
-    return this.props.includeHearingBadge ? TaskColumns.hearingBadgeColumn() : null;
+    return this.props.includeHearingBadge ? hearingBadgeColumn() : null;
   }
 
   caseSelectColumn = () => {
@@ -72,12 +76,12 @@ export class TaskTableUnconnected extends React.PureComponent {
 
   caseDetailsColumn = () => {
     return this.props.includeDetailsLink ?
-      TaskColumns.detailsColumn(this.props.tasks, this.props.requireDasRecord, this.props.userRole) :
+      detailsColumn(this.props.tasks, this.props.requireDasRecord, this.props.userRole) :
       null;
   }
 
   caseTaskColumn = () => {
-    return this.props.includeTask ? TaskColumns.taskColumn(this.props.tasks) : null;
+    return this.props.includeTask ? taskColumn(this.props.tasks) : null;
   }
 
   caseDocumentIdColumn = () => {
@@ -101,19 +105,19 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   caseTypeColumn = () => {
-    return this.props.includeType ? TaskColumns.typeColumn(this.props.tasks, this.props.requireDasRecord) : null;
+    return this.props.includeType ? typeColumn(this.props.tasks, this.props.requireDasRecord) : null;
   }
 
   caseAssignedToColumn = () => {
-    return this.props.includeAssignedTo ? TaskColumns.assignedToColumn(this.props.tasks) : null;
+    return this.props.includeAssignedTo ? assignedToColumn(this.props.tasks) : null;
   }
 
   caseDocketNumberColumn = () => {
-    return this.props.includeDocketNumber ? TaskColumns.docketNumberColumn(this.props.tasks, this.props.requireDasRecord) : null;
+    return this.props.includeDocketNumber ? docketNumberColumn(this.props.tasks, this.props.requireDasRecord) : null;
   }
 
   caseIssueCountColumn = () => {
-    return this.props.includeIssueCount ? TaskColumns.issueCountColumn(this.props.requireDasRecord) : null;
+    return this.props.includeIssueCount ? issueCountColumn(this.props.requireDasRecord) : null;
   }
 
   // valueFunction could be made into its own utility/component esp, if it's just repsonsible for returning cell value
@@ -144,11 +148,11 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   caseDaysWaitingColumn = () => {
-    return this.props.includeDaysWaiting ? TaskColumns.daysWaitingColumn(this.props.requireDasRecord) : null;
+    return this.props.includeDaysWaiting ? daysWaitingColumn(this.props.requireDasRecord) : null;
   }
 
   caseDaysOnHoldColumn = () => {
-    return this.props.includeDaysOnHold ? TaskColumns.daysOnHoldColumn(this.props.requireDasRecord) : null;
+    return this.props.includeDaysOnHold ? daysOnHoldColumn(this.props.requireDasRecord) : null;
   }
 
   completedDateColumn = () => {
@@ -173,12 +177,12 @@ export class TaskTableUnconnected extends React.PureComponent {
 
   caseReaderLinkColumn = () => {
     return !this.props.userIsVsoEmployee && this.props.includeReaderLink ?
-      TaskColumns.readerLinkColumn(this.props.requireDasRecord, this.props.includeNewDocsIcon) :
+      readerLinkColumn(this.props.requireDasRecord, this.props.includeNewDocsIcon) :
       null;
   }
 
   caseRegionalOfficeColumn = () => {
-    return this.props.includeRegionalOffice ? TaskColumns.regionalOfficeColumn(this.props.tasks) : null;
+    return this.props.includeRegionalOffice ? regionalOfficeColumn(this.props.tasks) : null;
   }
 
   getQueueColumns = () =>
