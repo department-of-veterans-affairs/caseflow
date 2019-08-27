@@ -24,7 +24,7 @@ class QueueTab
       label: label,
       name: name,
       description: description,
-      columns: columns,
+      columns: columns.map { |column| column.to_hash(tasks) },
       allow_bulk_assign: allow_bulk_assign?
     }
   end
@@ -37,7 +37,11 @@ class QueueTab
 
   def description; end
 
-  def columns; end
+  def column_names; end
+
+  def columns
+    column_names.map { |column_name| QueueColumn.from_name(column_name) }
+  end
 
   def name
     self.class.tab_name

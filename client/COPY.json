@@ -39,6 +39,8 @@
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL": "%s team cases",
   "CASE_LIST_TABLE_EMPTY_TEXT": "This Veteran has no appeals at this time.",
 
+  "NULL_FILTER_LABEL": "<<blank>>",
+
   "OTHER_REVIEWS_TABLE_TITLE": "Higher Level Reviews & Supplemental Claims",
   "OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE": "EP Code(s)",
   "OTHER_REVIEWS_TABLE_APPELLANT_NAME_COLUMN_TITLE": "Appellant Name",
