@@ -18,8 +18,8 @@ describe UnassignedTasksTab, :postgres do
   let(:show_reader_link_column) { false }
   let(:allow_bulk_assign) { false }
 
-  describe ".columns" do
-    subject { tab.columns }
+  describe ".column_names" do
+    subject { tab.column_names }
 
     context "when only the assignee argument is passed when instantiating the object" do
       let(:params) { { assignee: create(:organization) } }
