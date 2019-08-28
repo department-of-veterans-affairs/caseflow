@@ -600,30 +600,8 @@ feature "Higher-Level Review", :all_dbs do
       )
     end
 
-    let!(:untimely_rating) do
-      Generators::Rating.build(
-        participant_id: veteran.participant_id,
-        promulgation_date: receipt_date - 400.days,
-        profile_date: receipt_date - 450.days,
-        issues: [
-          { reference_id: old_reference_id, decision_text: "Really old injury" }
-        ]
-      )
-    end
-
-    let!(:before_ama_rating_from_ramp) do
-      Generators::Rating.build(
-        participant_id: veteran.participant_id,
-        promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-        profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
-        issues: [
-          { decision_text: "Issue before AMA Activation from RAMP",
-            reference_id: "ramp_ref_id" }
-        ],
-        associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
-      )
-    end
-
+    let!(:untimely_rating) { generate_untimely_rating_from_ramp(veteran, receipt_date, old_reference_id) }
+    let!(:before_ama_rating_from_ramp) { generate_rating_before_ama_from_ramp(veteran) }
     let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran, receipt_date) }
     let(:old_rating_decision_text) { "Bone (Right arm broken) is denied as Not Service Connected" }
 

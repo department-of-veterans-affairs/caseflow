@@ -29,6 +29,19 @@ class CaseSearchResultsBase
     user.vso_employee?
   end
 
+  def appeals
+    AppealFinder.new(user: user).find_appeals_for_veterans(veterans_user_can_access)
+  end
+
+  def claim_reviews
+    ClaimReview.find_all_visible_by_file_number(veterans_user_can_access.map(&:file_number))
+  end
+
+  # Child classes will likely override this
+  def veterans
+    []
+  end
+
   def veterans_user_can_access
     @veterans_user_can_access ||= veterans.select { |veteran| access?(veteran.file_number) }
   end
@@ -53,6 +66,13 @@ class CaseSearchResultsBase
 
   def access?(file_number)
     !current_user_is_vso_employee? || BGSService.new.can_access?(file_number)
+  end
+
+  def veterans_exist
+    return unless veterans_user_can_access.empty?
+
+    errors.add(:workflow, not_found_error)
+    @status = :not_found
   end
 
   def error_status_or_search_results

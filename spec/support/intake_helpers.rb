@@ -602,6 +602,19 @@ module IntakeHelpers
     )
   end
 
+  def generate_timely_rating(veteran, receipt_date, duplicate_reference_id)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date - 40.days,
+      profile_date: receipt_date - 50.days,
+      issues: [
+        { reference_id: "xyz123", decision_text: "Left knee granted 2" },
+        { reference_id: "xyz456", decision_text: "PTSD denied 2" },
+        { reference_id: duplicate_reference_id, decision_text: "Old injury" }
+      ]
+    )
+  end
+
   def generate_untimely_rating(veteran, promulgation_date, profile_date)
     Generators::Rating.build(
       participant_id: veteran.participant_id,
@@ -612,6 +625,22 @@ module IntakeHelpers
         { reference_id: "old456", decision_text: "Untimely rating issue 2" }
       ]
     )
+  end
+
+  def generate_untimely_rating_from_ramp(veteran, receipt_date, old_reference_id, with_associated_claims: false)
+    args = {
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date - 400.days,
+      profile_date: receipt_date - 450.days,
+      issues: [
+        { reference_id: old_reference_id,
+          decision_text: "Really old injury" }
+      ]
+    }
+    if with_associated_claims
+      args[:associated_claims] = { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
+    end
+    Generators::Rating.build(args)
   end
 
   def generate_future_rating(veteran, promulgation_date, profile_date)
