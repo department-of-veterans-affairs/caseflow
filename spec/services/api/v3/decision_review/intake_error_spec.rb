@@ -93,22 +93,47 @@ context Api::V3::DecisionReview::IntakeError do
   end
 
   context ".from_first_error_code_found" do
-    obj_a = Struct.new(:error_code).new("dog")
-    obj_b = Struct.new(:error_code).new("intake_review_failed")
+    obj_with_invalid_code = Struct.new(:error_code).new("dog")
+    obj_with_valid_code = Struct.new(:error_code).new("intake_review_failed")
+    obj_that_returns_nil = Struct.new(:error_code).new(nil)
     it "should be unknown" do
       expect(
-        Api::V3::DecisionReview::IntakeError.from_first_error_code_found([obj_a, obj_b]).code
+        Api::V3::DecisionReview::IntakeError.from_first_error_code_found(
+          [obj_with_invalid_code, obj_with_valid_code]
+        ).code
       ).to eq(:unknown_error)
     end
     it "should be :intake_review_failed" do
       expect(
-        Api::V3::DecisionReview::IntakeError.from_first_error_code_found([obj_b, obj_a]).code
+        Api::V3::DecisionReview::IntakeError.from_first_error_code_found(
+          [obj_with_valid_code, obj_with_invalid_code]
+        ).code
       ).to eq(:intake_review_failed)
     end
     it "should be :intake_review_failed" do
       expect(
-        Api::V3::DecisionReview::IntakeError.from_first_error_code_found([nil, obj_b]).code
+        Api::V3::DecisionReview::IntakeError.from_first_error_code_found([nil, obj_with_valid_code]).code
       ).to eq(:intake_review_failed)
+    end
+    it "should be unknown" do
+      expect(
+        Api::V3::DecisionReview::IntakeError.from_first_error_code_found([obj_that_returns_nil, nil]).code
+      ).to eq(:unknown_error)
+    end
+    it "should be unknown" do
+      expect(
+        Api::V3::DecisionReview::IntakeError.from_first_error_code_found([nil, obj_that_returns_nil]).code
+      ).to eq(:unknown_error)
+    end
+    it "should be unknown" do
+      expect(
+        Api::V3::DecisionReview::IntakeError.from_first_error_code_found([nil, false]).code
+      ).to eq(:unknown_error)
+    end
+    it "should raise (array isn't supplied as argument)" do
+      expect do
+        Api::V3::DecisionReview::IntakeError.from_first_error_code_found(nil).code
+      end.to raise_error(NoMethodError)
     end
   end
 end

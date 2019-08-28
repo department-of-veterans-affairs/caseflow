@@ -15,9 +15,6 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
       )
       render Api::V3::DecisionReview::IntakeStatus.new(processor.intake).render_hash
     end
-# rescue StandardError => error
-#   raise StandardError, error.message + '|' + error.backtrace.join('|')
-# end
   rescue StandardError => error
     # do we want something like intakes_controller's log_error here?
     render_errors([intake_error_code_from_exception_or_processor(error)])
@@ -26,7 +23,11 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
   private
 
   def processor
-    @processor ||= Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(params, current_user)
+    @processor ||= begin
+                     Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(params, current_user)
+                   rescue StandardError
+                     nil
+                   end
   end
 
   # Try to create an IntakeError from the exception, otherwise the processor's intake object.

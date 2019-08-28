@@ -6,12 +6,14 @@ class Api::V3::DecisionReview::IntakeProcessor
   def initialize(params:, user:, form_type:)
     @errors = []
     @params = Api::V3::DecisionReview::IntakeParams.new(params)
-    @errors = @params.errors # initialize the errors array with any errors caught by IntakeParams
+    @errors += @params.errors
     build_intake(user, form_type) unless errors?
+  rescue StandardError
+    @errors << Api::V3::DecisionReview::IntakeError.new
   end
 
   def errors?
-    !errors.empty?
+    errors.any?
   end
 
   def run!

@@ -57,7 +57,6 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
   let(:same_office) { false }
   let(:legacy_opt_in_approved) { true }
   let(:benefit_type) { "compensation" }
-  let(:contests) { "other" }
   let(:category) { "Apportionment" }
   let(:decision_date) { Time.zone.today - 10.days }
   let(:decision_text) { "Some text here." }
@@ -71,14 +70,29 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       benefitType: benefit_type
     }
   end
-  let(:relationships) do
+  let(:veteran_obj) do
     {
-      veteran: {
-        data: {
-          type: "Veteran",
-          id: veteran_file_number
+      data: {
+        type: "Veteran",
+        id: veteran_file_number
+      }
+    }
+  end
+  let(:claimant_obj) do
+    {
+      data: {
+        type: "Claimant",
+        id: 44,
+        meta: {
+          payeeCode: { a: 1 }
         }
       }
+    }
+  end
+  let(:relationships) do
+    {
+      veteran: veteran_obj,
+      claimant: claimant_obj
     }
   end
   let(:data) do
@@ -94,7 +108,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         type: "RequestIssue",
         attributes: {
           category: category,
-          decisionIssueId: decision_date.strftime("%Y-%m-%d"),
+          decisionIssueId: 12,
           decisionDate: decision_date.strftime("%Y-%m-%d"),
           decisionText: decision_text,
           notes: notes
@@ -108,31 +122,45 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       included: included
     }
   end
+  let(:post_params) do
+    post(
+      "/api/v3/decision_review/higher_level_reviews",
+      params: params,
+      headers: { "Authorization" => "Token #{api_key}" }
+    )
+  end
 
   describe "#create" do
     describe "general cases" do
       it "should return a 202 on success" do
-        post("/api/v3/decision_review/higher_level_reviews", params: params, headers: { "Authorization" => "Token #{api_key}"})
+        post_params
         expect(response).to have_http_status(202)
       end
 
-      it "should return an error status on failure" do
-        post("/api/v3/decision_review/higher_level_reviews", params: {}, headers: { "Authorization" => "Token #{api_key}"})
-        error = Api::V3::DecisionReview::IntakeError.new(:invalid_file_number)
+      describe do
+        let(:params) { {} }
+        it "should return an error status on failure" do
+          post_params
+          error = Api::V3::DecisionReview::IntakeError.new(:malformed_request)
 
-        expect(response).to have_http_status(error.status)
-        expect(JSON.parse(response.body)).to eq(Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json)
+          expect(response).to have_http_status(error.status)
+          expect(JSON.parse(response.body)).to eq(
+            Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json
+          )
+        end
       end
     end
 
     describe "(test error case: unknown_category_for_benefit_type)" do
       let(:category) { "Words ending in urple" }
       it "should return a 422 on this failure" do
-        post("/api/v3/decision_review/higher_level_reviews", params: params, headers: { "Authorization" => "Token #{api_key}"})
+        post_params
         error = Api::V3::DecisionReview::IntakeError.new(:request_issue_category_invalid_for_benefit_type)
 
         expect(response).to have_http_status(error.status)
-        expect(JSON.parse(response.body)).to eq(Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json)
+        expect(JSON.parse(response.body)).to eq(
+          Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json
+        )
       end
     end
 
@@ -148,24 +176,13 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           }
         end
         it "should return 500/intake_review_failed" do
-          post("/api/v3/decision_review/higher_level_reviews", params: params, headers: { "Authorization" => "Token #{api_key}"})
+          post_params
           error = Api::V3::DecisionReview::IntakeError.new(:intake_review_failed)
 
           expect(response).to have_http_status(error.status)
-          expect(JSON.parse(response.body)).to eq(Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json)
-        end
-      end
-
-      describe "(unknown_error_code)" do
-        let(:params) do
-          {data: "cat"}
-        end
-        it "should return 500/unknown_error_code" do
-          post("/api/v3/decision_review/higher_level_reviews", params: params, headers: { "Authorization" => "Token #{api_key}"})
-          error = Api::V3::DecisionReview::IntakeError.new(:unknown_error_code)
-
-          expect(response).to have_http_status(error.status)
-          expect(JSON.parse(response.body)["errors"][0]["title"].slice(0,7).downcase).to eq(error.title.slice(0,7).downcase)
+          expect(JSON.parse(response.body)).to eq(
+            Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json
+          )
         end
       end
 
@@ -173,11 +190,13 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         let(:veteran_file_number) { "123456789" }
         it "should return 500/reserved_veteran_file_number" do
           allow(Rails).to receive(:deploy_env?).and_return(true)
-          post("/api/v3/decision_review/higher_level_reviews", params: params, headers: { "Authorization" => "Token #{api_key}"})
+          post_params
           error = Api::V3::DecisionReview::IntakeError.new(:reserved_veteran_file_number)
 
           expect(response).to have_http_status(error.status)
-          expect(JSON.parse(response.body)).to eq(Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json)
+          expect(JSON.parse(response.body)).to eq(
+            Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json
+          )
         end
       end
     end

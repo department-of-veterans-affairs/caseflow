@@ -3,7 +3,7 @@
 #  A RequestIssue received by the API should have this shape:
 #
 #    {
-#      type: "RequestIssue"
+#      type: "RequestIssue",
 #      attributes: {
 #        notes
 #        decisionIssueId
@@ -65,7 +65,9 @@ class Api::V3::DecisionReview::RequestIssueParams
     ratingIssueId: :rating_issue_reference_id,
     legacyAppealId: :vacols_id,
     legacyAppealIssueId: :vacols_sequence_id,
-    category: :nonrating_issue_category
+    category: :nonrating_issue_category,
+    decisionDate: :decision_date,
+    decisionText: :decision_text
   )
 
   ID_KEYS = [:decisionIssueId, :ratingIssueId, :legacyAppealId, :legacyAppealIssueId].freeze
@@ -75,10 +77,16 @@ class Api::V3::DecisionReview::RequestIssueParams
   attr_reader :error_code
 
   def initialize(request_issue:, benefit_type:, legacy_opt_in_approved:)
+    unless self.class.shape_valid?(request_issue)
+      @error_code = :request_issue_malformed # error_code
+      return
+    end
+
     @attributes = request_issue[:attributes].permit(PERMITTED_KEYS)
     @benefit_type = benefit_type
     @legacy_opt_in_approved = legacy_opt_in_approved
-    validate
+
+    validate_fields
   end
 
   def intakes_controller_params
@@ -90,8 +98,13 @@ class Api::V3::DecisionReview::RequestIssueParams
   private
 
   # sets error_code if there are problems
-  def validate
-    [:all_fields_are_blank, :invalid_category, :no_ids, :invalid_legacy_fields_or_no_opt_in].each do |test|
+  def validate_fields
+    [
+      :all_fields_are_blank,
+      :invalid_category,
+      :no_ids,
+      :invalid_legacy_fields_or_no_opt_in
+    ].each do |test|
       error_code = send test
       if error_code
         @error_code = error_code
@@ -152,6 +165,12 @@ class Api::V3::DecisionReview::RequestIssueParams
   end
 
   class << self
+    def shape_valid?(obj)
+      obj.is_a?(ActionController::Parameters) &&
+      obj[:type] == "RequestIssue" &&
+      obj[:attributes].respond_to?(:has_key?)
+    end
+
     def intakes_controller_style_key(api_style_key)
       API_STYLE_KEY_TO_INTAKES_CONTROLLER_STYLE_KEY[api_style_key] || api_style_key
     end

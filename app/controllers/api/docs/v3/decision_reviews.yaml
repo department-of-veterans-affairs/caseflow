@@ -216,27 +216,27 @@ paths:
                 properties:
                   errors:
                     $ref: "#/components/schemas/errors"
-#       '400':
-#         description: |-
-#           400 response
-#         content:
-#           application/vnd.api+json:
-#             schema:
-#               type: object
-#               properties:
-#                 errors:
-#                   $ref: "#/components/schemas/errors"
-#             examples:
-#               malformed_request:
-#                 value: {
-#                   "errors": [
-#                     {
-#                       "status": "400",
-#                       "title":  "Malformed request",
-#                       "code":  "malformed_request"
-#                     }
-#                   ]
-#                 }
+        '400':
+          description: |-
+            400 response
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                malformed_request:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "400",
+                        "title":  "Malformed request",
+                        "code":  "malformed_request"
+                      }
+                    ]
+                  }
 #       '401':
 #         description: |-
 #           401 response

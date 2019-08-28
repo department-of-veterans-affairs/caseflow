@@ -18,14 +18,12 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
     subject { Api::V3::DecisionReview::IntakeStatus.new(intake) }
     it("returns a properly formatted hash") do
       expect(subject.render_hash).to eq(
-        {
-          json: {
-            type: intake.detail_type,
-            id: intake.detail.uuid,
-            attributes: { status: intake.detail.asyncable_status }
-          },
-          status: :accepted
-        }
+        json: {
+          type: intake.detail_type,
+          id: intake.detail.uuid,
+          attributes: { status: intake.detail.asyncable_status }
+        },
+        status: :accepted
       )
     end
   end
