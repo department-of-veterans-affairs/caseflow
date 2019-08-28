@@ -157,20 +157,17 @@ class Api::V3::DecisionReview::IntakeParams
   def shape_valid?
     minimum_required_shape? &&
       (!claimant || claimant_shape_valid?) &&
-      included_shape_valid? &&
-      (
-        begin
-          request_issues
-          true
-        rescue StandardError
-          false
-        end
-      )
+      included_shape_valid?
   end
 
   def validate
     unless shape_valid?
       @errors << Api::V3::DecisionReview::IntakeError.new(:malformed_request)
+      return
+    end
+
+    unless benefit_type_valid?
+      @errors << Api::V3::DecisionReview::IntakeError.new(:invalid_benefit_type)
       return
     end
 
@@ -181,5 +178,13 @@ class Api::V3::DecisionReview::IntakeParams
     request_issues.select(&:error_code).map do |request_issue|
       Api::V3::DecisionReview::IntakeError.new(request_issue)
     end
+  rescue StandardError
+    [Api::V3::DecisionReview::IntakeError.new(:malformed_request)]
+  end
+
+  def benefit_type_valid?
+    attributes[:benefitType].in?(
+      Api::V3::DecisionReview::RequestIssueParams::CATEGORIES_BY_BENEFIT_TYPE.keys
+    )
   end
 end
