@@ -25,7 +25,7 @@ class AsyncableJobsController < ApplicationController
 
   private
 
-  helper_method :jobs, :job, :allowed_params
+  helper_method :jobs, :job, :allowed_params, :pagination
 
   def asyncable_job_klass
     klass = allowed_params[:asyncable_job_klass].constantize

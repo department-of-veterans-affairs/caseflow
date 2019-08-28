@@ -18,6 +18,8 @@ class InboxController < ApplicationController
 
   private
 
+  helper_method :pagination
+
   def inbox
     @inbox ||= InboxMessages.new(user: current_user, page_size: page_size, page: current_page)
   end

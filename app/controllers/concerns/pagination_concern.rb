@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# shared code for controllers that pagination.
+# requires methods:
+#  * total_items
+#  * allowed_params
+#
 module PaginationConcern
   extend ActiveSupport::Concern
 
@@ -11,8 +16,6 @@ module PaginationConcern
       total_items: total_items
     }
   end
-
-  helper_method :pagination
 
   def total_pages
     total_pages = (total_items / page_size).to_i
