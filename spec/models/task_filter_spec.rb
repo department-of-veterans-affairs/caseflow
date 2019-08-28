@@ -247,5 +247,75 @@ describe TaskFilter, :postgres do
         end
       end
     end
+
+    context "when filtering by case type" do
+      let(:tasks_per_type) { 3 }
+      let(:case_types) { VACOLS::Case::TYPES }
+      let(:type_1_tasks) { create_list(:task, tasks_per_type) }
+      let(:type_2_tasks) { create_list(:task, tasks_per_type) }
+      let(:type_3_tasks) { create_list(:task, tasks_per_type) }
+      let(:type_4_tasks) { create_list(:task, tasks_per_type) }
+      let(:type_5_tasks) { create_list(:task, tasks_per_type) }
+      let(:all_tasks) do
+        Task.where(id: (type_1_tasks + type_2_tasks + type_3_tasks + type_4_tasks + type_5_tasks).map(&:id).sort)
+      end
+
+      before do
+        all_tasks.each_with_index do |task, index|
+          create(
+            :cached_appeal,
+            appeal_type: task.appeal_type,
+            appeal_id: task.appeal.id,
+            is_aod: (index % tasks_per_type == 0),
+            case_type: case_types[(index / tasks_per_type + 1).to_s]
+          )
+        end
+        binding.pry
+      end
+
+      context "when filter_params is an empty array" do
+        let(:filter_params) { [] }
+
+        it "returns the same set of tasks for the filtered and unfiltered set" do
+          expect(subject.map(&:id)).to match_array(all_tasks.map(&:id))
+        end
+      end
+
+      context "when filter_params includes a non existent case type" do
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN}&val=Invalid"] }
+
+        it "returns no tasks" do
+          expect(subject).to match_array([])
+        end
+      end
+
+      fcontext "when filter includes Original" do
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN}&val=#{case_types['1']}"] }
+
+        it "returns only tasks with Original case types" do
+          expect(subject.map(&:id)).to match_array(type_1_tasks.map(&:id))
+        end
+      end
+
+      context "when filter includes Original and Supplemental" do
+        let(:filter_params) do
+          ["col=#{Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN}&val=#{case_types['1']},#{case_types['2']}"]
+        end
+
+        it "returns tasks with Original or Supplemental case types" do
+          expect(subject.map(&:id)).to match_array(type_1_tasks.map(&:id) + type_2_tasks.map(&:id))
+        end
+      end
+
+      context "when filter includes Original and Supplemental and AOD" do
+        let(:filter_params) do
+          ["col=#{Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN}&val=#{case_types['1']},#{case_types['2']},is_aod"]
+        end
+
+        it "returns tasks with Original or Supplemental case types that are also AOD" do
+          expect(subject.map(&:id)).to match_array([type_1_tasks.first.id, type_2_tasks.first.id])
+        end
+      end
+    end
   end
 end
