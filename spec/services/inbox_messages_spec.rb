@@ -17,7 +17,7 @@ describe InboxMessages, :postgres do
       expect(inbox.total).to eq(50)
       expect(inbox.messages.count).to eq(10)
 
-      message = user.messages.reload.first
+      message = user.messages.order(created_at: :desc).first
 
       expect(inbox.messages.first).to eq(message)
 
