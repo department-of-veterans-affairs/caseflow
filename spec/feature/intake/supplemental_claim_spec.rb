@@ -420,7 +420,7 @@ feature "Supplemental Claim Intake", :all_dbs do
 
     let!(:timely_ratings) { generate_timely_rating(veteran, receipt_date, duplicate_reference_id) }
     let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran, receipt_date) }
-    let(:old_rating_decision_text) { "Bone (Right arm broken) is denied as Not Service Connected" }
+    let(:old_rating_decision_text) { "Bone (Right arm broken) is denied." }
     let!(:untimely_rating_from_ramp) do
       generate_untimely_rating_from_ramp(veteran, receipt_date, old_reference_id, with_associated_claims: true)
     end
