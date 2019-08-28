@@ -58,7 +58,7 @@ export const fetchAppealUsingVeteranId = (veteranId) =>
   (dispatch) => {
     dispatch(requestAppealUsingVeteranId());
     ApiUtil.get('/reader/appeal/veteran-id?json', {
-      headers: { 'case-search': veteranId }
+      headers: { 'veteran-id': veteranId }
     },
     ENDPOINT_NAMES.APPEAL_DETAILS_BY_VET_ID).
       then((response) => {
