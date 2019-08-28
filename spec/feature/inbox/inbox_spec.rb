@@ -27,12 +27,16 @@ feature "Inbox", :postgres do
         expect(page).to have_button("inbox-message-#{user.messages.last.id}", disabled: true)
         expect(page).to have_content("Viewing 1-3 of 3 total")
 
+        # mark as read
         message = user.messages.first
+
+        expect(page).to have_button("inbox-message-#{message.id}", disabled: false)
 
         safe_click "#inbox-message-#{message.id}"
 
-        # explicit wait to overcome flakey XHR timing
-        expect(page).to have_content("Read #{message.reload.read_at.friendly_full_format}", wait: 5)
+        expect(page).to have_button("inbox-message-#{message.id}", disabled: true)
+
+        expect(message.reload.read_at).to_not be_nil
       end
     end
   end
