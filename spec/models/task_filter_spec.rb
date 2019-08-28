@@ -92,7 +92,7 @@ describe TaskFilter, :postgres do
   describe ".filtered_tasks" do
     subject { TaskFilter.new(filter_params: filter_params, tasks: all_tasks).filtered_tasks }
 
-    context "when there are a variety of task assigned to the current organization" do
+    context "when filtering by task type" do
       let(:foia_tasks) { create_list(:foia_task, 5) }
       let(:translation_tasks) { create_list(:translation_task, 6) }
       let(:generic_tasks) { create_list(:generic_task, 7) }
@@ -126,6 +126,66 @@ describe TaskFilter, :postgres do
         it "returns all translation and FOIA tasks assigned to the current organization" do
           expect(subject.map(&:type).uniq).to match_array([TranslationTask.name, FoiaTask.name])
           expect(subject.map(&:id)).to match_array(translation_tasks.map(&:id) + foia_tasks.map(&:id))
+        end
+      end
+    end
+
+    context "when filtering by regional office" do
+      let(:number_of_tasks) { 3 }
+      let(:regional_office_cities) do
+        RegionalOffice::ROS.sort.take(5).map { |ro_key| RegionalOffice::CITIES[ro_key][:city] }
+      end
+      let(:washington_tasks_1) { create_list(:task, number_of_tasks) }
+      let(:ds_tasks) { create_list(:task, number_of_tasks) }
+      let(:washington_tasks_2) { create_list(:task, number_of_tasks) }
+      let(:boston_tasks) { create_list(:task, number_of_tasks) }
+      let(:togus_tasks) { create_list(:task, number_of_tasks) }
+      let(:all_tasks) do
+        Task.where(id: (washington_tasks_1 + ds_tasks + washington_tasks_2 + boston_tasks + togus_tasks).pluck(:id))
+      end
+
+      before do
+        all_tasks.each_with_index do |task, idx|
+          create(
+            :cached_appeal,
+            appeal_type: task.appeal_type,
+            appeal_id: task.appeal.id,
+            closest_regional_office_city: regional_office_cities[idx / number_of_tasks % regional_office_cities.length]
+          )
+        end
+      end
+
+      context "when filter_params is an empty array" do
+        let(:filter_params) { [] }
+
+        it "returns the same set of tasks for the filtered and unfiltered set" do
+          expect(subject.map(&:id)).to match_array(all_tasks.map(&:id))
+        end
+      end
+
+      context "when filter_params includes a non existant city" do
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN}&val=Minas Tirith"] }
+
+        it "returns no tasks" do
+          expect(subject).to match_array([])
+        end
+      end
+
+      context "when filter includes Boston" do
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN}&val=Boston"] }
+
+        it "returns only tasks where the closest regional office is Boston" do
+          expect(subject.map(&:id)).to match_array(boston_tasks.map(&:id))
+        end
+      end
+
+      context "when filter includes Boston and Washington" do
+        let(:filter_params) do
+          ["col=#{Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN}&val=Boston,Washington"]
+        end
+
+        it "returns tasks where the closest regional office is Boston or Washington" do
+          expect(subject.map(&:id)).to match_array((boston_tasks + washington_tasks_1 + washington_tasks_2).map(&:id))
         end
       end
     end
