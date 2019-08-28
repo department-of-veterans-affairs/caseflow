@@ -165,8 +165,7 @@ class Hearings::HearingDayController < HearingsApplicationController
     return true unless params.key?(:assign_room)
 
     # Coming from Add Hearing Day modal and room required
-    available_room = params[:request_type] == HearingDay::REQUEST_TYPES[:central] ? select_co_available_room :
-                       select_video_available_room
+    available_room = (params[:request_type] == HearingDay::REQUEST_TYPES[:central]) ? select_co_available_room : select_video_available_room
 
     params.delete(:assign_room)
     params[:room] = available_room if !available_room.nil?
