@@ -47,12 +47,11 @@ class TaskFilter
       "tasks.type"
     when Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN
       "cached_appeal_attributes.closest_regional_office_city"
+    when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
+      "cached_appeal_attributes.docket_type"
     # TODO: The following columns are not yet implemented.
     # when Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN
     #   "cached_appeal_attributes.appeal_type"
-    # TODO: I think this constant may be incorrectly named.
-    # when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
-    #   "cached_appeal_attributes.docket_type"
     # when Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN
     #   "???"
     else

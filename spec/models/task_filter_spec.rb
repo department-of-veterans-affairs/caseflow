@@ -131,17 +131,18 @@ describe TaskFilter, :postgres do
     end
 
     context "when filtering by regional office" do
-      let(:number_of_tasks) { 3 }
+      let(:tasks_per_city) { 3 }
       let(:regional_office_cities) do
         RegionalOffice::ROS.sort.take(5).map { |ro_key| RegionalOffice::CITIES[ro_key][:city] }
       end
-      let(:washington_tasks_1) { create_list(:task, number_of_tasks) }
-      let(:ds_tasks) { create_list(:task, number_of_tasks) }
-      let(:washington_tasks_2) { create_list(:task, number_of_tasks) }
-      let(:boston_tasks) { create_list(:task, number_of_tasks) }
-      let(:togus_tasks) { create_list(:task, number_of_tasks) }
+      let(:washington_tasks_1) { create_list(:task, tasks_per_city) }
+      let(:ds_tasks) { create_list(:task, tasks_per_city) }
+      let(:washington_tasks_2) { create_list(:task, tasks_per_city) }
+      let(:boston_tasks) { create_list(:task, tasks_per_city) }
+      let(:togus_tasks) { create_list(:task, tasks_per_city) }
       let(:all_tasks) do
-        Task.where(id: (washington_tasks_1 + ds_tasks + washington_tasks_2 + boston_tasks + togus_tasks).pluck(:id))
+        Task.where(id: (washington_tasks_1 + ds_tasks + washington_tasks_2 + boston_tasks + togus_tasks)
+          .pluck(:id).sort)
       end
 
       before do
@@ -150,7 +151,7 @@ describe TaskFilter, :postgres do
             :cached_appeal,
             appeal_type: task.appeal_type,
             appeal_id: task.appeal.id,
-            closest_regional_office_city: regional_office_cities[idx / number_of_tasks % regional_office_cities.length]
+            closest_regional_office_city: regional_office_cities[idx / tasks_per_city % regional_office_cities.length]
           )
         end
       end
@@ -163,7 +164,7 @@ describe TaskFilter, :postgres do
         end
       end
 
-      context "when filter_params includes a non existant city" do
+      context "when filter_params includes a non existent city" do
         let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN}&val=Minas Tirith"] }
 
         it "returns no tasks" do
@@ -186,6 +187,63 @@ describe TaskFilter, :postgres do
 
         it "returns tasks where the closest regional office is Boston or Washington" do
           expect(subject.map(&:id)).to match_array((boston_tasks + washington_tasks_1 + washington_tasks_2).map(&:id))
+        end
+      end
+    end
+
+    context "when filtering by docket type" do
+      let(:tasks_per_type) { 3 }
+      let(:docket_types) { Constants::DOCKET_NAME_FILTERS.keys.sort }
+      let(:review_tasks) { create_list(:task, tasks_per_type) }
+      let(:evidence_tasks) { create_list(:task, tasks_per_type) }
+      let(:hearing_tasks) { create_list(:task, tasks_per_type) }
+      let(:legacy_tasks) { create_list(:task, tasks_per_type) }
+      let(:all_tasks) do
+        Task.where(id: (review_tasks + evidence_tasks + hearing_tasks + legacy_tasks).pluck(:id).sort)
+      end
+
+      before do
+        all_tasks.each_with_index do |task, index|
+          create(
+            :cached_appeal,
+            appeal_type: task.appeal_type,
+            appeal_id: task.appeal.id,
+            docket_type: docket_types[index / tasks_per_type % docket_types.length]
+          )
+        end
+      end
+
+      context "when filter_params is an empty array" do
+        let(:filter_params) { [] }
+
+        it "returns the same set of tasks for the filtered and unfiltered set" do
+          expect(subject.map(&:id)).to match_array(all_tasks.map(&:id))
+        end
+      end
+
+      context "when filter_params includes a non existent docket type" do
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN}&val=trial_by_combat"] }
+
+        it "returns no tasks" do
+          expect(subject).to match_array([])
+        end
+      end
+
+      context "when filter includes direct review" do
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN}&val=#{docket_types[0]}"] }
+
+        it "returns only tasks with direct review dockets" do
+          expect(subject.map(&:id)).to match_array(review_tasks.map(&:id))
+        end
+      end
+
+      context "when filter includes direct review and hearing" do
+        let(:filter_params) do
+          ["col=#{Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN}&val=#{docket_types[0]},#{docket_types[2]}"]
+        end
+
+        it "returns tasks with direct review dockets or hearing dockets" do
+          expect(subject.map(&:id)).to match_array(review_tasks.map(&:id) + hearing_tasks.map(&:id))
         end
       end
     end
