@@ -136,9 +136,7 @@ class LegacyHearing < ApplicationRecord
   end
 
   def regional_office_timezone
-    return if regional_office_key.nil?
-
-    HearingMapper.timezone(regional_office_key)
+    return regional_office_key.nil? ? HearingMapper.timezone(regional_office_key) : HearingMapper.timezone("C")
   end
 
   def time
