@@ -106,6 +106,7 @@ class LegacyHearing < ApplicationRecord
   def external_id
     vacols_id
   end
+  
   def hearing_day_id_refers_to_vacols_row?	
     (request_type == HearingDay::REQUEST_TYPES[:central] && scheduled_for.to_date < Date.new(2019, 1, 1)) ||	
       (request_type == HearingDay::REQUEST_TYPES[:video] && scheduled_for.to_date < Date.new(2019, 4, 1))	
