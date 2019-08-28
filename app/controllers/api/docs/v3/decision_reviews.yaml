@@ -542,6 +542,16 @@ paths:
                       }
                     ]
                   }
+                request_issue_malformed:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title": "Malformed RequestIssue",
+                        "code": "request_issue_malformed"
+                      }
+                    ]
+                  }
                 request_issue_must_have_at_least_one_ID_field:
                   value: {
                     "errors": [
