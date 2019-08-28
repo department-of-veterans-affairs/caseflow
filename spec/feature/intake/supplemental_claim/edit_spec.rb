@@ -30,7 +30,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
   end
   let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran, receipt_date) }
-  let(:old_rating_decision_text) { "Bone (Right arm broken) is denied as Not Service Connected" }
+  let(:old_rating_decision_text) { "Bone (Right arm broken) is denied." }
 
   let(:decision_review_remanded) { nil }
   let(:benefit_type) { "compensation" }
