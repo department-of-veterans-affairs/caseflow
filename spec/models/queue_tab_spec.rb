@@ -37,13 +37,21 @@ describe QueueTab, :postgres do
     it "interpolates assignee name in description element of hash" do
       expect(subject[:description]).to eq(format(tab.description, assignee.name))
     end
+
+    context "when the assignee is a user" do
+      let(:assignee) { create(:user) }
+
+      it "interpolates assignee name in description element of hash" do
+        expect(subject[:description]).to eq(tab.description)
+      end
+    end
   end
 
   describe ".new" do
     subject { tab }
 
-    context "when the assignee is not an organization" do
-      let(:assignee) { create(:user) }
+    context "when the assignee is not an organization or user" do
+      let(:assignee) { create(:task) }
 
       it "raises an error" do
         expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
@@ -60,6 +68,15 @@ describe QueueTab, :postgres do
 
     context "when the assignee is an organization" do
       let(:assignee) { create(:organization) }
+
+      it "is created successfully" do
+        expect { subject }.to_not raise_error
+        expect(subject).to be_a(AssignedTasksTab)
+      end
+    end
+
+    context "when the assignee is a user" do
+      let(:assignee) { create(:user) }
 
       it "is created successfully" do
         expect { subject }.to_not raise_error

@@ -13,6 +13,7 @@ detectors:
   ControlParameter:
     exclude:
       - HearingRepository#slot_new_hearing
+      - TaskSorter#sort_requires_case_norm?
   UncommunicativeVariableName:
     exclude:
       - Address
@@ -50,6 +51,7 @@ detectors:
   MissingSafeMethod:
     enabled: false
   NestedIterators:
+    max_allowed_nesting: 2
     exclude:
       - AsyncableJobsReporter
   NilCheck:
@@ -57,6 +59,7 @@ detectors:
   RepeatedConditional:
     exclude:
       - QueueConfig
+      - RequestIssue
   TooManyInstanceVariables:
     exclude:
       - AmaAppealDispatch
@@ -73,6 +76,7 @@ detectors:
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
+      - LatestRatingDisabilityEvaluation#latest_disability_evaluation
       - OnHoldTasksTab#name
 
 ### Directory specific configuration

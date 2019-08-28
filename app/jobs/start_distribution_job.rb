@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class StartDistributionJob < ApplicationJob
-  queue_as :high_priority
+  queue_with_priority :high_priority
   application_attr :queue
 
   def perform(distribution, user = nil)

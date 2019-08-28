@@ -161,6 +161,7 @@ class ClaimReview < DecisionReview
       end_product_status: search_table_statuses,
       establishment_error: establishment_error,
       review_type: self.class.to_s.underscore,
+      receipt_date: receipt_date,
       veteran_file_number: veteran_file_number,
       veteran_full_name: claim_veteran&.name&.formatted(:readable_full),
       caseflow_only_edit_issues_url: caseflow_only_edit_issues_url

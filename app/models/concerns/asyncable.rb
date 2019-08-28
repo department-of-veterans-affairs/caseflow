@@ -178,6 +178,10 @@ module Asyncable
     end
   end
 
+  def asyncable_user
+    nil # abstract method intended to be overridden
+  end
+
   def expired_without_processing?
     return false if processed?
 
@@ -225,8 +229,10 @@ module Asyncable
       submitted_at: self[self.class.submitted_at_column],
       attempted_at: self[self.class.attempted_at_column],
       processed_at: self[self.class.processed_at_column],
+      canceled_at: self[self.class.canceled_at_column],
       error: self[self.class.error_column],
-      veteran_file_number: try(:veteran).try(:file_number)
+      veteran_file_number: try(:veteran).try(:file_number),
+      user: asyncable_user
     }
   end
 end

@@ -36,7 +36,7 @@ class AttorneyTask < GenericTask
     super
   end
 
-  def label
+  def self.label
     COPY::ATTORNEY_TASK_LABEL
   end
 
