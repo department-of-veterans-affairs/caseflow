@@ -19,8 +19,6 @@ class SelectForm extends React.PureComponent {
 
   render() {
     const rampEnabled = this.props.featureToggles.rampIntake;
-    const inboxFeature = this.props.featureToggles.inbox;
-    const unreadMessages = this.props.unreadMessages;
     const enabledFormTypes = rampEnabled ? FORM_TYPES : _.pickBy(FORM_TYPES, { category: 'decisionReview' });
 
     const radioOptions = _.map(enabledFormTypes, (form) => ({
@@ -37,12 +35,6 @@ class SelectForm extends React.PureComponent {
 
     return <div>
       <h1>Welcome to Caseflow Intake!</h1>
-
-      { inboxFeature && unreadMessages && <Alert
-        title="Intake Jobs"
-        type="warning">You have <a href="/inbox">unread messages</a>.
-      </Alert>
-      }
 
       { !enableSearchableDropdown && <RadioField
         name="form-select"

@@ -1,10 +1,4 @@
-export const mapDataToInitialState = function(props = {}) {
-  const { inbox } = props;
-
-  let state = inbox;
-
-  return state;
-};
+export const mapDataToInitialState = (props = {}) => ({ ...props.inbox });
 
 export const inboxReducer = (state = mapDataToInitialState(), action) => {
   switch (action.type) {
