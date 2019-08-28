@@ -51,6 +51,9 @@ const columns = [
 
 export default class FlaggedForReview extends Component {
   render = () => {
+    return <div></div>;
+/* deprecated 2019/08/28 as unused according to Google Analytics
+   delete in a month unless we hear from actual users.
     return <div className="cf-app-segment cf-app-segment--alt cf-manager-intakes">
       <div className="cf-manage-intakes-header">
         <div>
@@ -79,5 +82,6 @@ export default class FlaggedForReview extends Component {
         </div>
       </div>
     </div>;
+*/
   }
 }
