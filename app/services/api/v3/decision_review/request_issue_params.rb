@@ -112,18 +112,10 @@ class Api::V3::DecisionReview::RequestIssueParams
 
   # sets error_code if there are problems
   def validate_fields
-    [
-      :all_fields_are_blank,
-      :invalid_category,
-      :no_ids,
-      :invalid_legacy_fields_or_no_opt_in
-    ].each do |test|
-      error_code = send test
-      if error_code
-        @error_code = error_code
-        break
-      end
-    end
+    @error_code = all_fields_are_blank ||
+                  invalid_category ||
+                  no_ids ||
+                  invalid_legacy_fields_or_no_opt_in
   end
 
   # VALIDATION HELPERS:
