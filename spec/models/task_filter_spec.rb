@@ -288,7 +288,7 @@ describe TaskFilter, :postgres do
         end
       end
 
-      fcontext "when filter includes Original" do
+      context "when filter includes Original" do
         let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN}&val=#{case_types['1']}"] }
 
         it "returns only tasks with Original case types" do
