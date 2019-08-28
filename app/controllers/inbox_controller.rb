@@ -5,6 +5,8 @@
 # but could be used for any kind of messages
 
 class InboxController < ApplicationController
+  include PaginationConcern
+
   before_action :verify_access, :react_routed, :set_application
   before_action :feature_enabled?, only: [:index]
 
@@ -16,50 +18,22 @@ class InboxController < ApplicationController
 
   private
 
-  helper_method :messages, :pagination
-
   def inbox
     @inbox ||= InboxMessages.new(user: current_user, page_size: page_size, page: current_page)
   end
 
   delegate :messages, to: :inbox
+  helper_method :messages
 
   def message
     @message ||= Message.find(allowed_params.require(:id))
-  end
-
-  def pagination
-    {
-      page_size: page_size,
-      current_page: current_page,
-      total_pages: total_pages,
-      total_messages: total_messages
-    }
   end
 
   def total_messages
     @total_messages ||= inbox.total
   end
 
-  def total_pages
-    total_pages = (total_messages / page_size).to_i
-    total_pages += 1 if total_messages % page_size
-    total_pages
-  end
-
-  def page_size
-    50
-  end
-
-  def current_page
-    (allowed_params[:page] || 1).to_i
-  end
-
-  def page_start
-    return 0 if current_page < 2
-
-    (current_page - 1) * page_size
-  end
+  alias total_items total_messages
 
   def allowed_params
     params.permit(:id, :page, :message_action)

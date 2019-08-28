@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AsyncableJobsController < ApplicationController
+  include PaginationConcern
+
   before_action :verify_access, :react_routed, :set_application
 
   def index
@@ -23,7 +25,7 @@ class AsyncableJobsController < ApplicationController
 
   private
 
-  helper_method :jobs, :job, :allowed_params, :pagination
+  helper_method :jobs, :job, :allowed_params
 
   def asyncable_job_klass
     klass = allowed_params[:asyncable_job_klass].constantize
@@ -36,15 +38,6 @@ class AsyncableJobsController < ApplicationController
     @asyncable_jobs ||= AsyncableJobs.new(page_size: page_size, page: current_page)
   end
 
-  def pagination
-    {
-      page_size: page_size,
-      current_page: current_page,
-      total_pages: total_pages,
-      total_jobs: total_jobs
-    }
-  end
-
   def total_jobs
     @total_jobs ||= begin
       if allowed_params[:asyncable_job_klass]
@@ -55,25 +48,7 @@ class AsyncableJobsController < ApplicationController
     end
   end
 
-  def total_pages
-    total_pages = (total_jobs / page_size).to_i
-    total_pages += 1 if total_jobs % page_size
-    total_pages
-  end
-
-  def page_size
-    50 # TODO: allowed param?
-  end
-
-  def current_page
-    (allowed_params[:page] || 1).to_i
-  end
-
-  def page_start
-    return 0 if current_page < 2
-
-    (current_page - 1) * page_size
-  end
+  alias total_items total_jobs
 
   def jobs
     @jobs ||= asyncable_jobs.jobs

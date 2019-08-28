@@ -222,7 +222,7 @@ class AsyncableJobsPage extends React.PureComponent {
       <Pagination
         currentPage={this.props.pagination.current_page}
         currentCases={rowObjects.length}
-        totalCases={this.props.pagination.total_jobs}
+        totalCases={this.props.pagination.total_items}
         totalPages={this.props.pagination.total_pages}
         pageSize={this.props.pagination.page_size}
         updatePage={pageUpdater} />
