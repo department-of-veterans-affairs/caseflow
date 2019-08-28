@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
 class Api::V3::DecisionReview::ReviewError < StandardError
-  def initialize(intake)
-    @intake = intake
-    msg = "intake.review!(review_params) did not throw an exception, but did return a falsey value"
-    review_errors = @intake&.detail&.errors
-    msg = ["#{msg}:", *review_errors.full_messages].join("\n") if review_errors.present?
-    super(msg)
-  end
+  attr_reader :error_code
 
-  def error_code
-    @intake.error_code || :intake_review_failed
+  def initialize(intake)
+    @error_code = intake.error_code || :intake_review_failed
+
+    msg = "intake.review!(review_params) did not throw an exception, but did return a falsey value"
+
+    review_errors = intake&.detail&.errors
+    msg = ["#{msg}:", *review_errors.full_messages].join("\n") if review_errors.present?
+
+    super(msg)
   end
 end

@@ -5,7 +5,7 @@ require "rails_helper"
 context Api::V3::DecisionReview::ReviewError do
   let(:intake) do
     intake = Intake.build(
-      user: Generators::User.build,
+      user: build_stubbed(:user),
       veteran_file_number: "64205050",
       form_type: "higher_level_review"
     )
@@ -15,12 +15,15 @@ context Api::V3::DecisionReview::ReviewError do
 
   context ".new" do
     subject { Api::V3::DecisionReview::ReviewError }
+
     it "creating the exception should not raise an exception" do
       expect { subject.new(intake) }.not_to raise_error
     end
+
     it "should have error code :intake_review_failed" do
       expect(subject.new(intake).error_code).to eq(:intake_review_failed)
     end
+
     it "should have error code :cat" do
       intake_with_error_code = intake
       intake_with_error_code.error_code = :veteran_not_valid
@@ -28,4 +31,3 @@ context Api::V3::DecisionReview::ReviewError do
     end
   end
 end
-

@@ -38,20 +38,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
   end
 
   let(:profile_date) { (receipt_date - 8.days).to_datetime }
-
-  let!(:rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: promulgation_date,
-      profile_date: profile_date,
-      issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted" },
-        { reference_id: "def456", decision_text: "PTSD denied" },
-        { reference_id: "def789", decision_text: "Looks like a VACOLS issue" }
-      ]
-    )
-  end
-
+  let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
   let(:receipt_date) { Time.zone.today - 5.days }
   let(:informal_conference) { true }
   let(:same_office) { false }

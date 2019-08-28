@@ -45,6 +45,19 @@
 #     }
 
 class Api::V3::DecisionReview::RequestIssueParams
+  class << self
+    # :reek:ManualDispatch:
+    def shape_valid?(obj)
+      obj.is_a?(ActionController::Parameters) &&
+        obj[:type] == "RequestIssue" &&
+        obj[:attributes].respond_to?(:has_key?)
+    end
+
+    def intakes_controller_style_key(api_style_key)
+      API_STYLE_KEY_TO_INTAKES_CONTROLLER_STYLE_KEY[api_style_key] || api_style_key
+    end
+  end
+
   # tweaked for happy path
   CATEGORIES_BY_BENEFIT_TYPE = Constants::ISSUE_CATEGORIES.slice("compensation")
   # CATEGORIES_BY_BENEFIT_TYPE = Constants::ISSUE_CATEGORIES
@@ -162,18 +175,5 @@ class Api::V3::DecisionReview::RequestIssueParams
 
   def legacy_fields_present_and_opted_in?
     @legacy_opt_in_approved && @attributes[:legacyAppealId].present? && @attributes[:legacyAppealIssueId].present?
-  end
-
-  class << self
-    # :reek:ManualDispatch:
-    def shape_valid?(obj)
-      obj.is_a?(ActionController::Parameters) &&
-        obj[:type] == "RequestIssue" &&
-        obj[:attributes].respond_to?(:has_key?)
-    end
-
-    def intakes_controller_style_key(api_style_key)
-      API_STYLE_KEY_TO_INTAKES_CONTROLLER_STYLE_KEY[api_style_key] || api_style_key
-    end
   end
 end

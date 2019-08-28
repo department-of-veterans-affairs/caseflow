@@ -1,6 +1,38 @@
 # frozen_string_literal: true
 
 class Api::V3::DecisionReview::IntakeError
+  class << self
+    # An error_code is a symbol, a symbol derived from a string, or the symbol
+    # derived from an object's error_code method (which must return a symbol
+    # or string). A /valid/ error_code is a symbol in the KNOWN_ERRORS array.
+    # :reek:ManualDispatch:
+    def error_code(obj)
+      case obj
+      when Symbol
+        obj
+      when String
+        obj.to_sym
+      else
+        obj.respond_to?(:error_code) ? error_code(obj.error_code) : nil
+      end
+    end
+
+    def find_first_error_code(array)
+      array.each do |obj|
+        code = error_code(obj)
+        return code if code
+      end
+
+      nil
+    end
+
+    # An alternative to new.
+    # Given an array, it uses the first error_code found
+    def from_first_error_code_found(array)
+      new find_first_error_code(array)
+    end
+  end
+
   attr_reader :status, :code, :title
 
   # columns: status | code | title
@@ -92,37 +124,5 @@ class Api::V3::DecisionReview::IntakeError
 
   def to_h
     { status: status, code: code, title: title }
-  end
-
-  class << self
-    # An error_code is a symbol, a symbol derived from a string, or the symbol
-    # derived from an object's error_code method (which must return a symbol
-    # or string). A /valid/ error_code is a symbol in the KNOWN_ERRORS array.
-    # :reek:ManualDispatch:
-    def error_code(obj)
-      case obj
-      when Symbol
-        obj
-      when String
-        obj.to_sym
-      else
-        obj.respond_to?(:error_code) ? error_code(obj.error_code) : nil
-      end
-    end
-
-    def find_first_error_code(array)
-      array.each do |obj|
-        code = error_code(obj)
-        return code if code
-      end
-
-      nil
-    end
-
-    # An alternative to new.
-    # Given an array, it uses the first error_code found
-    def from_first_error_code_found(array)
-      new find_first_error_code(array)
-    end
   end
 end
