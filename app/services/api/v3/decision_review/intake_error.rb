@@ -42,7 +42,7 @@ class Api::V3::DecisionReview::IntakeError
       :request_issue_legacy_not_opted_in,
       "To add a legacy issue, legacyOptInApproved must be true"
     ],
-    [422, :request_issue_malformed, "Malformed RequestIssue"], 
+    [422, :request_issue_malformed, "Malformed RequestIssue"],
     [
       422,
       :request_issue_must_have_at_least_one_ID_field,
@@ -91,13 +91,14 @@ class Api::V3::DecisionReview::IntakeError
   end
 
   def to_h
-    {status: status, code: code, title: title}
+    { status: status, code: code, title: title }
   end
 
   class << self
     # An error_code is a symbol, a symbol derived from a string, or the symbol
     # derived from an object's error_code method (which must return a symbol
     # or string). A /valid/ error_code is a symbol in the KNOWN_ERRORS array.
+    # :reek:ManualDispatch:
     def error_code(obj)
       case obj
       when Symbol

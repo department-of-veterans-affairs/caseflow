@@ -2,9 +2,18 @@
 
 # a collection of intake errors
 class Api::V3::DecisionReview::IntakeErrors
+  def self.shape_valid?(array)
+    array.is_a?(Array) &&
+      array.any? &&
+      array.all? { |element| element.is_a?(Api::V3::DecisionReview::IntakeError) }
+  end
+
   def initialize(errors)
-    unless errors.is_a?(Array) && !errors.empty? && errors.all? {|error| error.is_a?(Api::V3::DecisionReview::IntakeError)}
-      fail ArgumentError, "must be initialized with a non-empty array of IntakeError elements: <#{errors}>"
+    unless self.class.shape_valid?(errors)
+      fail(
+        ArgumentError,
+        "must be initialized with a non-empty array of IntakeError elements: <#{errors}>"
+      )
     end
 
     @errors = errors

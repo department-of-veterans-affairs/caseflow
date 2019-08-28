@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# :reek:ManualDispatch:
 class Api::V3::DecisionReview::IntakeParams
   attr_reader :errors
 
@@ -42,7 +43,7 @@ class Api::V3::DecisionReview::IntakeParams
   private
 
   #  minimum required shape:
-  #  
+  #
   #  {
   #    data: {
   #      type: "HigherLevelReview",
@@ -58,15 +59,7 @@ class Api::V3::DecisionReview::IntakeParams
   #    }
   #  }
 
-  def minimum_required_shape?
-    params_valid? &&
-    data_valid? &&
-    attributes_valid? &&
-    relationships_valid? &&
-    veteran_object_valid?
-  end
-
-  def params_valid?
+  def params_shape_valid?
     @params.respond_to?(:has_key?)
   end
 
@@ -74,7 +67,7 @@ class Api::V3::DecisionReview::IntakeParams
     @params[:data]
   end
 
-  def data_valid?
+  def data_shape_valid?
     data.respond_to?(:has_key?) && data[:type] == "HigherLevelReview"
   end
 
@@ -82,7 +75,7 @@ class Api::V3::DecisionReview::IntakeParams
     data[:attributes]
   end
 
-  def attributes_valid?
+  def attributes_shape_valid?
     attributes.respond_to?(:has_key?)
   end
 
@@ -90,7 +83,7 @@ class Api::V3::DecisionReview::IntakeParams
     data[:relationships]
   end
 
-  def relationships_valid?
+  def relationships_shape_valid?
     relationships.respond_to?(:has_key?)
   end
 
@@ -98,26 +91,26 @@ class Api::V3::DecisionReview::IntakeParams
     relationships[:veteran]
   end
 
-  def veteran_object_valid?
+  def veteran_shape_valid?
     veteran.respond_to?(:has_key?) &&
-    veteran[:data].respond_to?(:has_key?) &&
-    veteran[:data][:type] == "Veteran" &&
-    veteran[:data][:id].present?
+      veteran[:data].respond_to?(:has_key?) &&
+      veteran[:data][:type] == "Veteran" &&
+      veteran[:data][:id].present?
   end
 
   def claimant
     relationships[:claimant]
   end
 
-  def claimant_object_valid?
+  def claimant_shape_valid?
     claimant.respond_to?(:has_key?) &&
-    claimant[:data].respond_to?(:has_key?) &&
-    claimant[:data][:type] == "Claimant" &&
-    claimant[:data][:id].present? &&
-    claimant[:data][:meta].respond_to?(:has_key?) &&
-    claimant[:data][:meta][:payeeCode].present?
+      claimant[:data].respond_to?(:has_key?) &&
+      claimant[:data][:type] == "Claimant" &&
+      claimant[:data][:id].present? &&
+      claimant[:data][:meta].respond_to?(:has_key?) &&
+      claimant[:data][:meta][:payeeCode].present?
   end
-    
+
   def claimant_participant_id
     claimant && claimant[:data][:id]
   end
@@ -130,9 +123,9 @@ class Api::V3::DecisionReview::IntakeParams
     @params[:included] || []
   end
 
-  def included_valid?
+  def included_shape_valid?
     @params[:included].nil? ||
-    (@params[:included].is_a?(Array) && included.all? {|obj| obj.respond_to? :has_key?})
+      (@params[:included].is_a?(Array) && included.all? { |obj| obj.respond_to? :has_key? })
   end
 
   def legacy_opt_in?
@@ -153,20 +146,30 @@ class Api::V3::DecisionReview::IntakeParams
       end
   end
 
-  def validate
-    unless (
-      minimum_required_shape? &&
-      (!claimant || claimant_object_valid?) &&
-      included_valid? &&
+  def minimum_required_shape?
+    params_shape_valid? &&
+      data_shape_valid? &&
+      attributes_shape_valid? &&
+      relationships_shape_valid? &&
+      veteran_shape_valid?
+  end
+
+  def shape_valid?
+    minimum_required_shape? &&
+      (!claimant || claimant_shape_valid?) &&
+      included_shape_valid? &&
       (
         begin
           request_issues
           true
-        rescue
+        rescue StandardError
           false
         end
       )
-    )
+  end
+
+  def validate
+    unless shape_valid?
       @errors << Api::V3::DecisionReview::IntakeError.new(:malformed_request)
       return
     end

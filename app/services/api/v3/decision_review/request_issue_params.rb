@@ -165,10 +165,11 @@ class Api::V3::DecisionReview::RequestIssueParams
   end
 
   class << self
+    # :reek:ManualDispatch:
     def shape_valid?(obj)
       obj.is_a?(ActionController::Parameters) &&
-      obj[:type] == "RequestIssue" &&
-      obj[:attributes].respond_to?(:has_key?)
+        obj[:type] == "RequestIssue" &&
+        obj[:attributes].respond_to?(:has_key?)
     end
 
     def intakes_controller_style_key(api_style_key)
