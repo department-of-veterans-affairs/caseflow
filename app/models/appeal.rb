@@ -649,6 +649,11 @@ class Appeal < DecisionReview
     true
   end
 
+  def finalized_decision_issues
+    DecisionIssue.includes(:decision_review).where(participant_id: veteran.participant_id)
+      .select(&:finalized?)
+  end
+
   def finalized_decision_issues_before_receipt_date
     return [] unless receipt_date
 

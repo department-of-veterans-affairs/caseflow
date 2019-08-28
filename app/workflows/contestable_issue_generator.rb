@@ -5,7 +5,7 @@ class ContestableIssueGenerator
     @review = review
   end
 
-  delegate :finalized_decision_issues_before_receipt_date, to: :review
+  delegate :finalized_decision_issues, to: :review
   delegate :receipt_date, to: :review
 
   def contestable_issues
@@ -41,7 +41,7 @@ class ContestableIssueGenerator
   end
 
   def from_decision_issues
-    @from_decision_issues ||= finalized_decision_issues_before_receipt_date.map do |decision_issue|
+    @from_decision_issues ||= finalized_decision_issues.map do |decision_issue|
       ContestableIssue.from_decision_issue(decision_issue, review)
     end
   end
