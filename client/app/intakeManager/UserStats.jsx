@@ -101,7 +101,7 @@ export default class UserStats extends React.PureComponent {
             <SearchBar
               size="small"
               title="Enter the User ID"
-              value={this.props.selectedUser || ""}
+              value={this.props.selectedUser}
               onSubmit={this.handleUserSwitch}
               onChange={this.handleUserSelect}
               loading={this.state.isSwitching}
