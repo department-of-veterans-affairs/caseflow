@@ -5,7 +5,7 @@ import moment from 'moment';
 
 import Button from '../../components/Button';
 import Table from '../../components/Table';
-import Pagination from '../../components/Pagination';
+import EasyPagination from '../../components/EasyPagination';
 
 import ApiUtil from '../../util/ApiUtil';
 
@@ -120,27 +120,11 @@ class InboxMessagesPage extends React.PureComponent {
       return 'cf-inbox-message';
     };
 
-    const pageUpdater = (idx) => {
-      let newPage = idx + 1;
-
-      if (newPage !== this.props.pagination.current_page) {
-        let newUrl = `${window.location.href.split('?')[0]}?page=${newPage}`;
-
-        window.location = newUrl;
-      }
-    };
-
     return <div className="cf-inbox-table">
       <h1>Inbox</h1>
       <hr />
       <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} slowReRendersAreOk />
-      <Pagination
-        currentPage={this.props.pagination.current_page}
-        currentCases={rowObjects.length}
-        totalCases={this.props.pagination.total_items}
-        totalPages={this.props.pagination.total_pages}
-        pageSize={this.props.pagination.page_size}
-        updatePage={pageUpdater} />
+      <EasyPagination currentCases={rowObjects.length} pagination={this.props.pagination} />
     </div>;
   }
 }
