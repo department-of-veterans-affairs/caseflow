@@ -911,6 +911,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_active_request_issue_by_decision_issue!
+    binding.pry
     return unless contested_decision_issue_id
 
     add_duplicate_issue_error(
