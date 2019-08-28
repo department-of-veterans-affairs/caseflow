@@ -270,7 +270,6 @@ describe TaskFilter, :postgres do
             case_type: case_types[(index / tasks_per_type + 1).to_s]
           )
         end
-        binding.pry
       end
 
       context "when filter_params is an empty array" do
