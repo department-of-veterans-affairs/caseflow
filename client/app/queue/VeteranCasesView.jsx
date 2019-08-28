@@ -41,7 +41,7 @@ class VeteranCasesView extends React.PureComponent {
   createLoadPromise = () => {
     const { caseflowVeteranId, veteranId } = this.props;
 
-    return ApiUtil.get('/appeals', { headers: { 'veteran-id': veteranId } }).
+    return ApiUtil.get('/appeals', { headers: { 'case-search': veteranId } }).
       then((response) => {
         const returnedObject = JSON.parse(response.text);
 
