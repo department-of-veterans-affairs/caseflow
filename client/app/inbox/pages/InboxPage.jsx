@@ -21,7 +21,7 @@ class InboxMessagesPage extends React.PureComponent {
   }
 
   markMessageRead = (msg) => {
-    let markedRead = { ...this.state.markedRead };
+    const markedRead = { ...this.state.markedRead };
 
     markedRead[msg.id] = true;
     this.setState({ markedRead });
@@ -29,7 +29,7 @@ class InboxMessagesPage extends React.PureComponent {
   }
 
   sendMessageRead = (msg) => {
-    let page = this;
+    const page = this;
 
     ApiUtil.patch(`/inbox/messages/${msg.id}`, { data: { message_action: 'read' } }).
       then(
@@ -38,7 +38,7 @@ class InboxMessagesPage extends React.PureComponent {
 
           Object.assign(msg, responseObject);
 
-          let markedRead = { ...page.state.markedRead };
+          const markedRead = { ...page.state.markedRead };
 
           markedRead[msg.id] = true;
           page.setState({
