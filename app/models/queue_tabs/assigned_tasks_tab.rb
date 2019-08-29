@@ -25,6 +25,7 @@ class AssignedTasksTab < QueueTab
     Task.includes(*task_includes).visible_in_queue_table_view.active.where(assigned_to: assignee)
   end
 
+  # rubocop:disable Metrics/AbcSize
   def column_names
     [
       Constants.QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,
@@ -37,4 +38,5 @@ class AssignedTasksTab < QueueTab
       Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name
     ].compact
   end
+  # rubocop:enable Metrics/AbcSize
 end

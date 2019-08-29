@@ -19,6 +19,7 @@ class UnassignedTasksTab < QueueTab
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
   end
 
+  # rubocop:disable Metrics/AbcSize
   def column_names
     [
       Constants.QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,
@@ -31,6 +32,7 @@ class UnassignedTasksTab < QueueTab
       show_reader_link_column ? Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name : nil
     ].compact
   end
+  # rubocop:enable Metrics/AbcSize
 
   def allow_bulk_assign?
     !!allow_bulk_assign

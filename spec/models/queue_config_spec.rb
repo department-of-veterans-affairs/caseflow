@@ -110,7 +110,8 @@ describe QueueConfig, :postgres do
 
         it "does not include the regional column in the list of columns for any tab" do
           subject.each do |tab|
-            expect(tab[:columns].map { |col| col[:name] }).to_not include(Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name)
+            expect(tab[:columns].map { |col| col[:name] })
+              .to_not include(Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name)
           end
         end
 
@@ -155,7 +156,8 @@ describe QueueConfig, :postgres do
 
         it "includes the regional column in the list of columns for all tabs" do
           subject.each do |tab|
-            expect(tab[:columns].map { |col| col[:name] }).to include(Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name)
+            expect(tab[:columns].map { |col| col[:name] })
+              .to include(Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name)
           end
         end
       end

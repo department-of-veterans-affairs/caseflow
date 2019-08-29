@@ -25,6 +25,7 @@ class OnHoldTasksTab < QueueTab
     Task.includes(*task_includes).visible_in_queue_table_view.on_hold.where(assigned_to: assignee)
   end
 
+  # rubocop:disable Metrics/AbcSize
   def column_names
     [
       Constants.QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,
@@ -37,4 +38,5 @@ class OnHoldTasksTab < QueueTab
       Constants.QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name
     ].compact
   end
+  # rubocop:enable Metrics/AbcSize
 end
