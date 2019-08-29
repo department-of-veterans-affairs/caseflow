@@ -148,17 +148,18 @@ class TableFilter extends React.PureComponent {
       anyFiltersAreSet,
       label,
       valueName,
-      getFilterValues
+      getFilterValues,
+      filterOptions
     } = this.props;
 
-    const filterOptions = tableData && columnName ?
+    const options = filterOptions || (tableData && columnName ?
       this.filterDropdownOptions(tableData, columnName) :
       // Keeping the historical prop `getFilterValues` for backwards compatibility,
       // will remove this once all apps are using this new component.
       //
       // WARNING: If you use getFilterValues, it will cause some of the options to
       // not display correctly when they are checked.
-      getFilterValues;
+      getFilterValues);
 
     return (
       <span {...iconStyle}>
@@ -176,7 +177,7 @@ class TableFilter extends React.PureComponent {
             handleClose={this.toggleDropdown}
             addClearFiltersRow>
             <FilterOption
-              options={filterOptions}
+              options={options}
               setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)} />
           </QueueDropdownFilter>
         }
@@ -202,7 +203,8 @@ TableFilter.propTypes = {
   valueName: PropTypes.string,
   valueTransform: PropTypes.func,
   filteredByList: PropTypes.object,
-  updateFilters: PropTypes.func
+  updateFilters: PropTypes.func,
+  filterOptions: PropTypes.array
 };
 
 export default TableFilter;

@@ -56,29 +56,30 @@ class OrganizationQueue extends React.PureComponent {
     return config;
   }
 
-  createColumnObject = (column, config, tasks) => {
+  filterValuesForColumn = (columnObj) => columnObj && columnObj.filterable && columnObj.filter_options;
+
+  createColumnObject = (columnName, columnObj, config, tasks) => {
     const functionForColumn = {
       hearingBadgeColumn: hearingBadgeColumn(tasks),
       detailsColumn: detailsColumn(tasks, false, config.userRole),
-      taskColumn: taskColumn(tasks),
-      regionalOfficeColumn: regionalOfficeColumn(tasks),
-      typeColumn: typeColumn(tasks, false),
+      taskColumn: taskColumn(tasks, this.filterValuesForColumn(columnObj)),
+      regionalOfficeColumn: regionalOfficeColumn(tasks, this.filterValuesForColumn(columnObj)),
+      typeColumn: typeColumn(tasks, this.filterValuesForColumn(columnObj), false),
       assignedToColumn: assignedToColumn(tasks),
-      docketNumberColumn: docketNumberColumn(tasks, false),
+      docketNumberColumn: docketNumberColumn(tasks, this.filterValuesForColumn(columnObj), false),
       daysWaitingColumn: daysWaitingColumn(false),
       daysOnHoldColumn: daysOnHoldColumn(false),
       readerLinkColumn: readerLinkColumn(false, true),
       issueCountColumn: issueCountColumn(false)
     };
 
-    return functionForColumn[column];
+    return functionForColumn[columnName];
   }
 
   columnsFromConfig = (tabConfig, tasks) => {
     return tabConfig.columns.map((column) => {
-      const columnName = typeof (column) === 'string' ? column : column.name;
-
-      return this.createColumnObject(columnName, tabConfig, tasks);
+      return typeof (column) === 'string' ? this.createColumnObject(column, null, tabConfig, tasks) :
+        this.createColumnObject(column.name, column, tabConfig, tasks);
     });
   }
 

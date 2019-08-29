@@ -42,7 +42,7 @@ const hasDASRecord = (task, requireDasRecord) => {
 
 const collapseColumn = (requireDasRecord) => (task) => hasDASRecord(task, requireDasRecord) ? 1 : 0;
 
-export const docketNumberColumn = (tasks, requireDasRecord) => {
+export const docketNumberColumn = (tasks, filterOptions, requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
     name: QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
@@ -50,6 +50,7 @@ export const docketNumberColumn = (tasks, requireDasRecord) => {
     tableData: tasks,
     columnName: 'appeal.docketName',
     customFilterLabels: DOCKET_NAME_FILTERS,
+    filterOptions,
     anyFiltersAreSet: true,
     label: 'Filter by docket name',
     valueName: 'docketName',
@@ -102,7 +103,7 @@ export const detailsColumn = (tasks, requireDasRecord, userRole) => {
   };
 };
 
-export const taskColumn = (tasks) => {
+export const taskColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
     name: QUEUE_CONFIG.TASK_TYPE_COLUMN,
@@ -111,6 +112,7 @@ export const taskColumn = (tasks) => {
     columnName: 'label',
     anyFiltersAreSet: true,
     customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
+    filterOptions,
     label: 'Filter by task',
     valueName: 'label',
     valueFunction: (task) => actionNameOfTask(task),
@@ -119,7 +121,7 @@ export const taskColumn = (tasks) => {
   };
 };
 
-export const regionalOfficeColumn = (tasks) => {
+export const regionalOfficeColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_REGIONAL_OFFICE_COLUMN_TITLE,
     name: QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN,
@@ -127,6 +129,7 @@ export const regionalOfficeColumn = (tasks) => {
     tableData: tasks,
     columnName: 'closestRegionalOffice.location_hash.city',
     anyFiltersAreSet: true,
+    filterOptions,
     label: 'Filter by regional office',
     backendCanSort: true,
     valueFunction: (task) => {
@@ -147,7 +150,7 @@ export const issueCountColumn = (requireDasRecord) => {
   };
 };
 
-export const typeColumn = (tasks, requireDasRecord) => {
+export const typeColumn = (tasks, filterOptions, requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
     name: QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
@@ -156,6 +159,7 @@ export const typeColumn = (tasks, requireDasRecord) => {
     columnName: 'appeal.caseType',
     backendCanSort: true,
     anyFiltersAreSet: true,
+    filterOptions,
     label: 'Filter by type',
     valueName: 'caseType',
     valueFunction: (task) => hasDASRecord(task, requireDasRecord) ?
