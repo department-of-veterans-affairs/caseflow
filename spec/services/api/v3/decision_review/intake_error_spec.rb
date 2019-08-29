@@ -62,11 +62,6 @@ context Api::V3::DecisionReview::IntakeError do
     it "obj should return nil" do
       expect(Api::V3::DecisionReview::IntakeError.error_code(obj_with_false_error_code)).to eq(nil)
     end
-
-    nested_obj = klass.new(klass.new(klass.new(:russian_doll)))
-    it "obj should return :russian_doll" do
-      expect(Api::V3::DecisionReview::IntakeError.error_code(nested_obj)).to eq(:russian_doll)
-    end
   end
 
   context ".find_first_error_code" do

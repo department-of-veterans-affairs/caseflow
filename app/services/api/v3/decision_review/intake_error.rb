@@ -7,14 +7,7 @@ class Api::V3::DecisionReview::IntakeError
     # or string). A /valid/ error_code is a symbol in the KNOWN_ERRORS array.
     # :reek:ManualDispatch:
     def error_code(obj)
-      case obj
-      when Symbol
-        obj
-      when String
-        obj.to_sym
-      else
-        obj.respond_to?(:error_code) ? error_code(obj.error_code) : nil
-      end
+      obj.try(:error_code).try(:to_sym) || obj.try(:to_sym)
     end
 
     def find_first_error_code(array)
