@@ -202,7 +202,7 @@ class ClaimReview < DecisionReview
     request_issues.first.api_aoj_from_benefit_type
   end
 
-  def active_request_issues_or_decision_isssues
+  def active_request_issues_or_decision_issues
     active_status? ? request_issues.active.all : fetch_all_decision_issues
   end
 

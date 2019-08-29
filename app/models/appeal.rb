@@ -606,7 +606,7 @@ class Appeal < DecisionReview
     @events ||= AppealEvents.new(appeal: self).all
   end
 
-  def active_request_issues_or_decision_isssues
+  def active_request_issues_or_decision_issues
     decision_issues.empty? ? request_issues.active.all : fetch_all_decision_issues
   end
 
