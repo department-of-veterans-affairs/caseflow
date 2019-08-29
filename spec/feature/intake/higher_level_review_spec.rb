@@ -1168,10 +1168,10 @@ feature "Higher-Level Review", :all_dbs do
           click_intake_add_issue
 
           expect(page).to have_content("something was decided in the past")
-          
-          # We want to include all decision issues for review, even if after receipt date 
+
+          # We want to include all decision issues for review, even if after receipt date
           expect(page).to have_content("something was decided in the future")
-          
+
           expect(page).to_not have_content("Left knee granted")
         end
       end
