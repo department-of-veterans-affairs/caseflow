@@ -17,7 +17,7 @@ describe OnHoldTasksTab, :postgres do
   describe ".column_names" do
     subject { tab.column_names }
 
-    context "when only the assignee argument is passed when instantiating the object" do
+    context "when only the assignee argument is passed when instantiating an OnHoldTasksTab" do
       let(:params) { { assignee: create(:organization) } }
 
       it "returns the correct number of columns" do
