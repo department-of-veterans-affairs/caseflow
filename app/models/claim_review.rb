@@ -203,12 +203,8 @@ class ClaimReview < DecisionReview
     request_issues.first.api_aoj_from_benefit_type
   end
 
-  def issues_hash
-    issue_list = active_status? ? request_issues.active.all : fetch_all_decision_issues
-
-    return [] if issue_list.empty?
-
-    fetch_issues_status(issue_list)
+  def active_request_issues_or_decision_issues
+    active_status? ? request_issues.active.all : fetch_all_decision_issues
   end
 
   def contention_records(epe)
