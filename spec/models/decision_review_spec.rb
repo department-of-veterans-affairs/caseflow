@@ -205,9 +205,9 @@ describe DecisionReview, :postgres do
         )
       end
 
-      it "does not return decision issues in the future" do
+      it "does include decision issues in the future" do
         expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
-        expect(subject.map(&:serialize)).to_not include(hash_including(description: "future decision issue"))
+        expect(subject.map(&:serialize)).to include(hash_including(description: "future decision issue"))
         expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
         expect(subject.map(&:serialize)).to_not include(hash_including(description: "future rating issue 2"))
       end
