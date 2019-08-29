@@ -36,7 +36,8 @@ export class FlaggedForReviewContainer extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    loading: false, // state.loading,
+    loading: false,
+    // loading: state.loading,
     intakes: state.flaggedForReview
   };
 };
