@@ -1,0 +1,24 @@
+# frozen_string_literal: true
+
+require "rails_helper"
+
+describe VaDotGovAddressValidator::ClosestRegionalOfficeFinder do
+  let(:closest_facility_id) { "vba_346" } # Seattle RO
+  let(:possible_ro) { "vba_348" } # Portland RO that's has Seattle as an AHL
+  let(:facilities) do
+    RegionalOffice.facility_ids.map do |id|
+      (id == possible_ro) ? mock_facility_data(id: id, distance: 0) : mock_facility_data(id: id, distance: 200)
+    end
+  end
+
+  subject do
+    VaDotGovAddressValidator::ClosestRegionalOfficeFinder.new(
+      closest_facility_id: closest_facility_id,
+      facilities: facilities
+    )
+  end
+
+  it "finds the closest RO based on facility id" do
+    expect(subject.call).to eq "RO48" # Portland RO
+  end
+end

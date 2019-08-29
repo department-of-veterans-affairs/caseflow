@@ -201,11 +201,11 @@ describe VaDotGovAddressValidator do
   end
 end
 
-def mock_facility_data(id:, city: "Fake City", state: "PA")
+def mock_facility_data(id:, distance: 10, city: "Fake City", state: "PA")
   {
     facility_id: id,
     type: "",
-    distance: 10,
+    distance: distance,
     facility_type: "",
     name: "Fake Name",
     classification: "",
