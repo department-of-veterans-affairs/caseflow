@@ -63,11 +63,6 @@ class ClaimReview < DecisionReview
     "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
   end
 
-  def finalized_decision_issues
-    DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
-      .select(&:finalized?)
-  end
-
   def finalized_decision_issues_before_receipt_date
     return [] unless receipt_date
 
