@@ -115,7 +115,6 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
     if (issue) {
       return {
         id: String(issue.id),
-        isRating: false,
         benefitType: issue.benefit_type,
         decisionIssueId: issue.contested_decision_issue_id,
         description: issue.description,
@@ -136,15 +135,14 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         isUnidentified: issue.is_unidentified,
         notes: issue.notes,
         index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
-        isRating: true,
+        rating: !issue.category,
         ratingIssueReferenceId: issue.rating_issue_reference_id,
         ratingDecisionReferenceId: issue.rating_decision_reference_id,
         ratingIssueProfileDate: issueDate.toISOString(),
         approxDecisionDate: issue.approx_decision_date,
         decisionIssueId: issue.contested_decision_issue_id,
         titleOfActiveReview: issue.title_of_active_review,
-        rampClaimId: issue.ramp_claim_id,
-        rating: issue.rating
+        rampClaimId: issue.ramp_claim_id
       };
     }
   });
@@ -356,7 +354,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         editedDescription: issue.editedDescription,
         correctionType: issue.correctionType,
         editable: issue.editable,
-        rating: issue.rating
+        rating: !issue.category
       };
     }
 
