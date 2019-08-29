@@ -13,10 +13,17 @@ class VaDotGovAddressValidator::ClosestRegionalOfficeFinder
   end
 
   def call
+    fail_if_distances_missing
     possible_regional_offices_distances.min_by { |ro| ro[:distance] }.dig(:regional_office_key)
   end
 
   private
+
+  def fail_if_distances_missing
+    if possible_regional_offices_distances.any? { |ro| ro[:distance].nil? }
+      fail Caseflow::SerializableError, code: 500, message: "Distances are missing from possible regional office."
+    end
+  end
 
   def possible_regional_offices
     RegionalOffice::CITIES.select do |_key, val|

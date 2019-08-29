@@ -5,7 +5,7 @@ require "rails_helper"
 describe VaDotGovAddressValidator::ClosestRegionalOfficeFinder do
   let(:closest_facility_id) { "vba_346" } # Seattle RO
   let(:possible_ro) { "vba_348" } # Portland RO that's has Seattle as an AHL
-  let(:facilities) do
+  let!(:facilities) do
     RegionalOffice.facility_ids.map do |id|
       (id == possible_ro) ? mock_facility_data(id: id, distance: 0) : mock_facility_data(id: id, distance: 200)
     end
@@ -20,5 +20,17 @@ describe VaDotGovAddressValidator::ClosestRegionalOfficeFinder do
 
   it "finds the closest RO based on facility id" do
     expect(subject.call).to eq "RO48" # Portland RO
+  end
+
+  context "when a distance is missing" do
+    let!(:facilities) do
+      RegionalOffice.facility_ids.map do |id|
+        (id == possible_ro) ? mock_facility_data(id: id, distance: nil) : mock_facility_data(id: id, distance: 200)
+      end
+    end
+
+    it "raises an error" do
+      expect { subject.call }.to raise_error
+    end
   end
 end
