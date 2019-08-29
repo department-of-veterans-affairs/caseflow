@@ -4,6 +4,8 @@ require "rails_helper"
 require "support/vacols_database_cleaner"
 
 describe VaDotGovAddressValidator do
+  include HearingHelpers
+
   describe "#update_closest_ro_and_ahls", :all_dbs do
     let!(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
     let!(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
@@ -199,21 +201,4 @@ describe VaDotGovAddressValidator do
       expect(subject[:long]).to eq(-122.411164)
     end
   end
-end
-
-def mock_facility_data(id:, distance: 10, city: "Fake City", state: "PA")
-  {
-    facility_id: id,
-    type: "",
-    distance: distance,
-    facility_type: "",
-    name: "Fake Name",
-    classification: "",
-    lat: 0.0,
-    long: 0.0,
-    address: "Fake Address",
-    city: city,
-    state: state,
-    zip_code: "00000"
-  }
 end

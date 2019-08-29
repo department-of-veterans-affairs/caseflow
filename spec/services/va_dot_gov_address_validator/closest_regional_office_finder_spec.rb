@@ -3,6 +3,8 @@
 require "rails_helper"
 
 describe VaDotGovAddressValidator::ClosestRegionalOfficeFinder do
+  include HearingHelpers
+
   let(:closest_facility_id) { "vba_346" } # Seattle RO
   let(:possible_ro) { "vba_348" } # Portland RO that's has Seattle as an AHL
   let!(:facilities) do
@@ -30,7 +32,8 @@ describe VaDotGovAddressValidator::ClosestRegionalOfficeFinder do
     end
 
     it "raises an error" do
-      expect { subject.call }.to raise_error
+      error_message = "Distances are missing from possible regional office."
+      expect { subject.call }.to raise_error(Caseflow::Error::SerializableError).with_message(error_message)
     end
   end
 end
