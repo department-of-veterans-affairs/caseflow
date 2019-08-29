@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from '../../components/Button';
 import ApiUtil from '../../util/ApiUtil';
+import PropTypes from 'prop-types';
 
 class JobRestartButton extends React.PureComponent {
   constructor(props) {
@@ -101,8 +102,12 @@ class JobRestartButton extends React.PureComponent {
         this.restartJob();
       }}
       classNames={this.getButtonClassNames()}
-      >{this.getButtonText()}</Button>;
+    >{this.getButtonText()}</Button>;
   }
 }
+
+JobRestartButton.propTypes = {
+  job: PropTypes.object
+};
 
 export default JobRestartButton;

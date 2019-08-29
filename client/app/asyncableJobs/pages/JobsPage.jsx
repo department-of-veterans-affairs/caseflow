@@ -86,7 +86,7 @@ class AsyncableJobsPage extends React.PureComponent {
       {
         align: 'right',
         valueFunction: (job) => {
-          return <JobRestartButton job={job} />
+          return <JobRestartButton job={job} />;
         }
       }
     ];
