@@ -115,6 +115,14 @@ module Asyncable
         .where(canceled_at_column => nil)
         .order_by_oldest_submitted
     end
+
+    def processed
+      where.not(processed_at_column => nil)
+    end
+
+    def processed_or_canceled
+      processed.or(canceled)
+    end
   end
 
   def submit_for_processing!(delay: 0)
