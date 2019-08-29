@@ -53,7 +53,7 @@ class ScheduleHearingTask < GenericTask
     end
   end
 
-  def label
+  def self.label
     "Schedule hearing"
   end
 

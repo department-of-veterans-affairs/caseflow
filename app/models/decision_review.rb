@@ -58,6 +58,10 @@ class DecisionReview < ApplicationRecord
     end
   end
 
+  def asyncable_user
+    intake&.user&.css_id
+  end
+
   def ama_activation_date
     if intake && FeatureToggle.enabled?(:use_ama_activation_date, user: intake.user)
       Constants::DATES["AMA_ACTIVATION"].to_date
