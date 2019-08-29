@@ -39,8 +39,12 @@ class Date
 end
 
 class Time
-  def friendly_full_format
+  def unix_format
     strftime("%a %b %d %T %Y")
+  end
+
+  def friendly_full_format
+    strftime("%a %b %e %Y at %H:%M")
   end
 end
 

@@ -9,7 +9,7 @@ import EasyPagination from '../../components/EasyPagination';
 
 import ApiUtil from '../../util/ApiUtil';
 
-const DATE_TIME_FORMAT = 'ddd MMM DD HH:mm:ss YYYY';
+const DATE_TIME_FORMAT = 'ddd MMM DD YYYY [at] HH:mm';
 
 class InboxMessagesPage extends React.PureComponent {
   constructor(props) {
@@ -85,7 +85,7 @@ class InboxMessagesPage extends React.PureComponent {
 
     const columns = [
       {
-        header: 'Date',
+        header: 'Received',
         valueFunction: (msg) => {
           return this.formatDate(msg.created_at);
         }
