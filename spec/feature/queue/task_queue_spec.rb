@@ -440,46 +440,90 @@ RSpec.feature "Task queue", :all_dbs do
       User.authenticate!(user: organization_user)
       create_list(:generic_task, unassigned_count, :in_progress, assigned_to: organization)
       create_list(:generic_task, assigned_count, :on_hold, assigned_to: organization)
-      visit(organization.path)
     end
 
-    it "shows the right organization name" do
-      expect(page).to have_content(organization.name)
+    context "when not using pagination" do
+      before do
+        visit(organization.path)
+      end
+
+      it "shows the right organization name" do
+        expect(page).to have_content(organization.name)
+      end
+
+      it "shows tabs on the queue page" do
+        expect(page).to have_content(
+          format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_count)
+        )
+        expect(page).to have_content(
+          format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count)
+        )
+        expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
+      end
+
+      it "does not show all cases tab for non-VSO organization" do
+        expect(page).to_not have_content(COPY::TRACKING_TASKS_TAB_TITLE)
+      end
+
+      it "shows the right number of cases in each tab" do
+        # Unassigned tab
+        expect(page).to have_content(
+          format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
+        )
+        expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+
+        # Assigned tab
+        find("button", text: format(
+          COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count
+        )).click
+        expect(page).to have_content(
+          format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name)
+        )
+        expect(find("tbody").find_all("tr").length).to eq(assigned_count)
+      end
+
+      it "shows queue switcher dropdown" do
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
+      end
     end
 
-    it "shows tabs on the queue page" do
-      expect(page).to have_content(
-        format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_count)
-      )
-      expect(page).to have_content(
-        format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count)
-      )
-      expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
-    end
+    context "when pagination is enabled" do
+      let(:on_hold_count) { assigned_count / 2 }
 
-    it "does not show all cases tab for non-VSO organization" do
-      expect(page).to_not have_content(COPY::TRACKING_TASKS_TAB_TITLE)
-    end
+      before do
+        allow_any_instance_of(QueueConfig).to receive(:use_task_pages_api?).with(organization_user).and_return(true)
+        FeatureToggle.enable!(:use_task_pages_api)
+        Task.on_hold.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
+          .each_with_index do |task, idx|
+            child_task = create(:generic_task, parent_id: task.id)
+            child_task.update!(status: Constants.TASK_STATUSES.on_hold) if idx < on_hold_count
+          end
+      end
 
-    it "shows the right number of cases in each tab" do
-      # Unassigned tab
-      expect(page).to have_content(
-        format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
-      )
-      expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+      it "shows the on hold tab" do
+        visit(organization.path)
+        expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count / 2))
+        expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, on_hold_count))
+      end
 
-      # Assigned tab
-      find("button", text: format(
-        COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count
-      )).click
-      expect(page).to have_content(
-        format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name)
-      )
-      expect(find("tbody").find_all("tr").length).to eq(assigned_count)
-    end
+      context "displays the correct filters" do
+        let(:translation_task_count) { unassigned_count / 2 }
 
-    it "shows queue switcher dropdown" do
-      expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
+        before do
+          Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
+            .take(translation_task_count).each { |task| task.update!(type: TranslationTask.name) }
+        end
+
+        it "shows the correct filters" do
+          visit(organization.path)
+          expect(page).to have_content(
+            format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
+          )
+          page.find_all("path.unselected-filter-icon-inner").first.click
+          expect(page).to have_content("#{GenericTask.label} (#{unassigned_count / 2})")
+          expect(page).to have_content("#{TranslationTask.label} (#{unassigned_count / 2})")
+        end
+      end
     end
 
     context "when organization tasks include one associated with a LegacyAppeal that has been removed from VACOLS" do
