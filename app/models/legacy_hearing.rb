@@ -136,7 +136,7 @@ class LegacyHearing < ApplicationRecord
       return (venue_key || appeal&.regional_office_key)
     end
 
-    hearing_day&.regional_office
+    hearing_day&.regional_office || "C"
   end
 
   def regional_office
@@ -154,7 +154,7 @@ class LegacyHearing < ApplicationRecord
   end
 
   def regional_office_timezone
-    return regional_office_key.nil? ? HearingMapper.timezone(regional_office_key) : HearingMapper.timezone("C")
+    return regional_office.nil? ? HearingMapper.timezone(regional_office) : HearingMapper.timezone("C")
   end
 
   def time

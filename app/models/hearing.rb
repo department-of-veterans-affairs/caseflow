@@ -21,7 +21,6 @@ class Hearing < ApplicationRecord
   accepts_nested_attributes_for :hearing_location
 
   alias_attribute :location, :hearing_location
-  alias_attribute :regional_office_key, :hearing_day_regional_office
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
@@ -157,15 +156,25 @@ class Hearing < ApplicationRecord
         .find_or_create_by(request_issue: request_issue, hearing: self).to_hash
     end
   end
+  
+  def regional_office
+    @regional_office ||= begin
+                            RegionalOffice.find!(regional_office_key)
+                         rescue RegionalOffice::NotFoundError
+                           nil
+                          end
+  end
+
+  def regional_office_key
+    hearing_day_regional_office || "C"
+  end
 
   def regional_office_name
-    RegionalOffice::CITIES[regional_office_key][:label] unless regional_office_key.nil?
+    regional_office.to_h[:label]
   end
 
   def regional_office_timezone
-    return "America/New_York" if regional_office_key.nil?
-
-    RegionalOffice::CITIES[regional_office_key][:timezone]
+    regional_office.to_h[:timezone]
   end
 
   def current_issue_count
