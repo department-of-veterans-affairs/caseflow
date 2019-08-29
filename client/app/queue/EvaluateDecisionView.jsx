@@ -59,6 +59,7 @@ class EvaluateDecisionView extends React.PureComponent {
       quality: null,
       factors_not_considered: {},
       areas_for_improvement: {},
+      positive_feedback: {},
       comment: ''
     };
   }
@@ -181,6 +182,7 @@ class EvaluateDecisionView extends React.PureComponent {
   }
 
   setAreasOfImprovement = (event) => this.setStateAttrList(event, 'areas_for_improvement');
+  setPositiveFeedback = (event) => this.setStateAttrList(event, 'positive_feedback');
 
   render = () => {
     const {
@@ -279,6 +281,18 @@ class EvaluateDecisionView extends React.PureComponent {
         Please provide more details about <b>quality of work</b>. If none of these apply to
         this case, please share <b>additional comments</b> below.
       </Alert>}
+
+      <div className="cf-push-left" {...fullWidth}>
+        <h3>{COPY.JUDGE_EVALUATE_DECISION_POSITIVE_FEEDBACK}</h3>
+        <CheckboxGroup
+          hideLabel vertical
+          name={COPY.JUDGE_EVALUATE_DECISION_POSITIVE_FEEDBACK}
+          onChange={this.setPositiveFeedback}
+          // errorState={highlight && this.qualityIsDeficient() && _.isEmpty(this.state.positive_feedback)}
+          value={this.state.positive_feedback}
+          options={this.getDisplayOptions('positive_feedback')}
+          styling={fullWidthCheckboxLabels} />
+      </div>
 
       <div {...css(setWidth('100%'), marginTop(4))}>
         <h3 {...css(headerStyling, { float: this.qualityIsDeficient() ? 'left' : '' })}>
