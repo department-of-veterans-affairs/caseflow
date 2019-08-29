@@ -12,6 +12,14 @@ import JobRestartButton from '../components/JobRestartButton';
 const DATE_TIME_FORMAT = 'ddd MMM DD HH:mm:ss YYYY';
 
 class AsyncableJobsPage extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      restarted: 0
+    };
+  }
+
   formatDate = (datetime) => {
     if (datetime === 'restarted') {
       return datetime;
@@ -30,7 +38,7 @@ class AsyncableJobsPage extends React.PureComponent {
 
     if (rowObjects.length === 0) {
       return <div>
-        <h1>Success! There are no pending jobs.</h1>
+        <h1>{`Success! There are no pending ${this.props.asyncableJobKlass} jobs.`}</h1>
         <AsyncModelNav models={this.props.models} fetchedAt={this.props.fetchedAt} />
       </div>;
     }
@@ -39,8 +47,8 @@ class AsyncableJobsPage extends React.PureComponent {
       {
         header: 'Name',
         valueFunction: (job, rowId) => {
-          let title = `row ${rowId}`;
-          let href = `/asyncable_jobs/${job.klass}/jobs/${job.id}`;
+          const title = `row ${rowId}`;
+          const href = `/asyncable_jobs/${job.klass}/jobs/${job.id}`;
 
           return <a title={title} href={href}>{job.klass} {job.id}</a>;
         }
@@ -86,7 +94,7 @@ class AsyncableJobsPage extends React.PureComponent {
       {
         align: 'right',
         valueFunction: (job) => {
-          return <JobRestartButton job={job} />;
+          return <JobRestartButton job={job} page={this} />;
         }
       }
     ];

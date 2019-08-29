@@ -19,7 +19,8 @@ class JobRestartButton extends React.PureComponent {
   }
 
   sendRestart = () => {
-    const page = this;
+    const button = this;
+    const page = this.props.page;
     const job = this.props.job;
     const url = `/asyncable_jobs/${job.klass}/jobs/${job.id}`;
 
@@ -33,10 +34,15 @@ class JobRestartButton extends React.PureComponent {
           job.error = '';
           job.restarted = true;
 
-          page.setState({
+          button.setState({
             restarted: true,
             restarting: false
           });
+
+          // trigger table rerender
+          const jobsRestarted = page.state.restarted + 1;
+
+          page.setState({ restarted: jobsRestarted });
         },
         (error) => {
           throw error;
@@ -107,7 +113,8 @@ class JobRestartButton extends React.PureComponent {
 }
 
 JobRestartButton.propTypes = {
-  job: PropTypes.object
+  job: PropTypes.object,
+  page: PropTypes.object
 };
 
 export default JobRestartButton;

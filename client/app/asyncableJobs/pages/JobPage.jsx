@@ -9,6 +9,14 @@ import JobRestartButton from '../components/JobRestartButton';
 const DATE_TIME_FORMAT = 'ddd MMM DD HH:mm:ss YYYY';
 
 class AsyncableJobPage extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      restarted: 0
+    };
+  }
+
   formatDate = (datetime) => {
     if (!datetime) {
       return 'n/a';
@@ -64,7 +72,7 @@ class AsyncableJobPage extends React.PureComponent {
           </tr>
           <tr>
             <th></th>
-            <td><JobRestartButton job={job} /></td>
+            <td><JobRestartButton job={job} page={this} /></td>
           </tr>
         </tbody>
       </table>

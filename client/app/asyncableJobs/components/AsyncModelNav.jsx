@@ -27,16 +27,17 @@ export default class AsyncModelNav extends React.PureComponent {
       links.push(modelLink);
     }
 
-    return numLinks > 4 ? <DropdownButton lists={links} label="Job Type" /> : links;
+    return numLinks > 4 ? <DropdownButton lists={links} label="Filter by Job Type" /> : links;
   }
 
   render = () => {
 
     return <div>
       <strong>Last updated:</strong> {moment(this.props.fetchedAt).format(DATE_TIME_FORMAT)}
-      &nbsp;&#183;&nbsp;
-      <a href="/jobs" className="cf-link-btn">All jobs</a>
-      <div>{this.modelNameLinks()}</div>
+      <div>
+        {this.modelNameLinks()}
+        <a style={{ float: 'right' }} href="/jobs" className="cf-link-btn">All jobs</a>
+      </div>
     </div>;
   }
 }
