@@ -39,49 +39,49 @@ context Api::V3::DecisionReview::IntakeError do
     end
   end
 
-  context ".error_code" do
+  context ".potential_error_code" do
     it ":hello should return :hello" do
-      expect(Api::V3::DecisionReview::IntakeError.error_code(:hello)).to eq(:hello)
+      expect(Api::V3::DecisionReview::IntakeError.potential_error_code(:hello)).to eq(:hello)
     end
 
     it "\"hello\" should return :hello" do
-      expect(Api::V3::DecisionReview::IntakeError.error_code("hello")).to eq(:hello)
+      expect(Api::V3::DecisionReview::IntakeError.potential_error_code("hello")).to eq(:hello)
     end
 
     it "26 should return nil" do
-      expect(Api::V3::DecisionReview::IntakeError.error_code(26)).to eq(nil)
+      expect(Api::V3::DecisionReview::IntakeError.potential_error_code(26)).to eq(nil)
     end
 
     klass = Struct.new(:error_code)
     obj_with_string_error_code = klass.new("dog")
     it "obj should return :dog" do
-      expect(Api::V3::DecisionReview::IntakeError.error_code(obj_with_string_error_code)).to eq(:dog)
+      expect(Api::V3::DecisionReview::IntakeError.potential_error_code(obj_with_string_error_code)).to eq(:dog)
     end
 
     obj_with_false_error_code = klass.new(false)
     it "obj should return nil" do
-      expect(Api::V3::DecisionReview::IntakeError.error_code(obj_with_false_error_code)).to eq(nil)
+      expect(Api::V3::DecisionReview::IntakeError.potential_error_code(obj_with_false_error_code)).to eq(nil)
     end
   end
 
-  context ".find_first_error_code" do
+  context ".find_first_potential_error_code" do
     obj = Struct.new(:error_code).new("cat")
 
     it "should return :hello" do
       expect(
-        Api::V3::DecisionReview::IntakeError.find_first_error_code([:hello, obj])
+        Api::V3::DecisionReview::IntakeError.find_first_potential_error_code([:hello, obj])
       ).to eq(:hello)
     end
 
     it "should return #{obj.error_code}" do
       expect(
-        Api::V3::DecisionReview::IntakeError.find_first_error_code([777, obj])
+        Api::V3::DecisionReview::IntakeError.find_first_potential_error_code([777, obj])
       ).to eq(obj.error_code.to_sym)
     end
 
     it "should return nil" do
       expect(
-        Api::V3::DecisionReview::IntakeError.find_first_error_code([nil, false])
+        Api::V3::DecisionReview::IntakeError.find_first_potential_error_code([nil, false])
       ).to eq(nil)
     end
   end
@@ -103,14 +103,14 @@ context Api::V3::DecisionReview::IntakeError do
     end
   end
 
-  context ".from_first_error_code_found" do
+  context ".from_first_potential_error_code_found" do
     obj_with_invalid_code = Struct.new(:error_code).new("dog")
     obj_with_valid_code = Struct.new(:error_code).new("intake_review_failed")
     obj_that_returns_nil = Struct.new(:error_code).new(nil)
 
     it "should be unknown" do
       expect(
-        Api::V3::DecisionReview::IntakeError.from_first_error_code_found(
+        Api::V3::DecisionReview::IntakeError.from_first_potential_error_code_found(
           [obj_with_invalid_code, obj_with_valid_code]
         ).code
       ).to eq(:unknown_error)
@@ -118,7 +118,7 @@ context Api::V3::DecisionReview::IntakeError do
 
     it "should be :intake_review_failed" do
       expect(
-        Api::V3::DecisionReview::IntakeError.from_first_error_code_found(
+        Api::V3::DecisionReview::IntakeError.from_first_potential_error_code_found(
           [obj_with_valid_code, obj_with_invalid_code]
         ).code
       ).to eq(:intake_review_failed)
@@ -126,31 +126,31 @@ context Api::V3::DecisionReview::IntakeError do
 
     it "should be :intake_review_failed" do
       expect(
-        Api::V3::DecisionReview::IntakeError.from_first_error_code_found([nil, obj_with_valid_code]).code
+        Api::V3::DecisionReview::IntakeError.from_first_potential_error_code_found([nil, obj_with_valid_code]).code
       ).to eq(:intake_review_failed)
     end
 
     it "should be unknown" do
       expect(
-        Api::V3::DecisionReview::IntakeError.from_first_error_code_found([obj_that_returns_nil, nil]).code
+        Api::V3::DecisionReview::IntakeError.from_first_potential_error_code_found([obj_that_returns_nil, nil]).code
       ).to eq(:unknown_error)
     end
 
     it "should be unknown" do
       expect(
-        Api::V3::DecisionReview::IntakeError.from_first_error_code_found([nil, obj_that_returns_nil]).code
+        Api::V3::DecisionReview::IntakeError.from_first_potential_error_code_found([nil, obj_that_returns_nil]).code
       ).to eq(:unknown_error)
     end
 
     it "should be unknown" do
       expect(
-        Api::V3::DecisionReview::IntakeError.from_first_error_code_found([nil, false]).code
+        Api::V3::DecisionReview::IntakeError.from_first_potential_error_code_found([nil, false]).code
       ).to eq(:unknown_error)
     end
 
     it "should raise (array isn't supplied as argument)" do
       expect do
-        Api::V3::DecisionReview::IntakeError.from_first_error_code_found(nil).code
+        Api::V3::DecisionReview::IntakeError.from_first_potential_error_code_found(nil).code
       end.to raise_error(NoMethodError)
     end
   end

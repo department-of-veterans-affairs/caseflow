@@ -2,17 +2,18 @@
 
 class Api::V3::DecisionReview::IntakeError
   class << self
-    # An error_code is a symbol, a symbol derived from a string, or the symbol
-    # derived from an object's error_code method (which must return a symbol
-    # or string). A /valid/ error_code is a symbol in the KNOWN_ERRORS array.
+    # A valid error code is a symbol listed in the KNOWN_ERRORS array.
+    # This method attempts to extract a symbol from an object's error_code
+    # method, or, if that fails, attempts to convert the object itself to a
+    # symbol. The symbol may or may not be a valid error code. Fails with nil.
     # :reek:ManualDispatch:
-    def error_code(obj)
-      obj.try(:error_code).try(:to_sym) || obj.try(:to_sym)
+    def potential_error_code(obj)
+      (obj.try(:error_code) || obj).try(:to_sym)
     end
 
-    def find_first_error_code(array)
+    def find_first_potential_error_code(array)
       array.each do |obj|
-        code = error_code(obj)
+        code = potential_error_code(obj)
         return code if code
       end
 
@@ -20,13 +21,15 @@ class Api::V3::DecisionReview::IntakeError
     end
 
     # An alternative to new.
-    # Given an array, it uses the first error_code found
-    def from_first_error_code_found(array)
-      new find_first_error_code(array)
+    # Given an array, it uses the first potential error_code found.
+    # Note: if you supplied this array as your argument:
+    #   [:a_symbol_that_isnt_a_valid_error_code, :veteran_not_found]
+    # A new IntakeError would be created using :a_symbol_that_isnt_a_valid_error_code
+    # which would be UNKNOWN_ERROR.
+    def from_first_potential_error_code_found(array)
+      new find_first_potential_error_code(array)
     end
   end
-
-  attr_reader :status, :code, :title
 
   # columns: status | code | title
   KNOWN_ERRORS = [
@@ -111,8 +114,10 @@ class Api::V3::DecisionReview::IntakeError
 
   KNOWN_ERRORS_BY_CODE = KNOWN_ERRORS.each_with_object({}) { |array, hash| hash[array.second] = array }
 
+  attr_reader :status, :code, :title
+
   def initialize(obj = nil)
-    @status, @code, @title = (KNOWN_ERRORS_BY_CODE[self.class.error_code(obj)] || UNKNOWN_ERROR)
+    @status, @code, @title = (KNOWN_ERRORS_BY_CODE[self.class.potential_error_code(obj)] || UNKNOWN_ERROR)
   end
 
   def to_h
