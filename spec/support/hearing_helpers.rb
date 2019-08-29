@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module HearingHelpers
-  def mock_facility_data(id:, distance: 10, city: "Fake City", state: "PA")
+  def mock_facility_data(id:, distance: 10)
     {
       facility_id: id,
       type: "",
@@ -12,8 +12,8 @@ module HearingHelpers
       lat: 0.0,
       long: 0.0,
       address: "Fake Address",
-      city: city,
-      state: state,
+      city: "Fake City",
+      state: "PA",
       zip_code: "00000"
     }
   end
