@@ -110,9 +110,10 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
   }
 
   return requestIssues.map((issue) => {
+    const issueDate = new Date(issue.rating_issue_profile_date);
 
     // Nonrating issues
-    if (issue.category) {
+    if (issue) {
       return {
         id: String(issue.id),
         isRating: false,
@@ -133,57 +134,69 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         endProductCleared: issue.end_product_cleared,
         endProductCode: issue.end_product_code,
         withdrawalDate: formatDateStrUtc(issue.withdrawal_date),
-        editable: issue.editable
+        editable: issue.editable,
+        // new code
+        isUnidentified: issue.is_unidentified,
+        notes: issue.notes,
+        index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
+        isRating: true,
+        ratingIssueReferenceId: issue.rating_issue_reference_id,
+        ratingDecisionReferenceId: issue.rating_decision_reference_id,
+        ratingIssueProfileDate: issueDate.toISOString(),
+        approxDecisionDate: issue.approx_decision_date,
+        decisionIssueId: issue.contested_decision_issue_id,
+        titleOfActiveReview: issue.title_of_active_review,
+        rampClaimId: issue.ramp_claim_id
       };
     }
 
     // Unidentified issues
-    if (issue.is_unidentified) {
-      return {
-        id: String(issue.id),
-        description: issue.description,
-        contentionText: issue.contention_text,
-        notes: issue.notes,
-        isUnidentified: issue.is_unidentified,
-        vacolsId: issue.vacols_id,
-        vacolsSequenceId: issue.vacols_sequence_id,
-        vacolsIssue: issue.vacols_issue,
-        endProductCleared: issue.end_product_cleared,
-        endProductCode: issue.end_product_code,
-        withdrawalDate: formatDateStrUtc(issue.withdrawal_date),
-        editable: issue.editable
-      };
-    }
+    // if (issue.is_unidentified) {
+    //   return {
+    //     id: String(issue.id),
+    //     description: issue.description,
+    //     contentionText: issue.contention_text,
+    //     notes: issue.notes,
+    //     isUnidentified: issue.is_unidentified,
+    //     vacolsId: issue.vacols_id,
+    //     vacolsSequenceId: issue.vacols_sequence_id,
+    //     vacolsIssue: issue.vacols_issue,
+    //     endProductCleared: issue.end_product_cleared,
+    //     endProductCode: issue.end_product_code,
+    //     withdrawalDate: formatDateStrUtc(issue.withdrawal_date),
+    //     editable: issue.editable
+    //   };
+    // }
 
     // Rating issues
-    const issueDate = new Date(issue.rating_issue_profile_date);
+    // const issueDate = new Date(issue.rating_issue_profile_date);
 
-    return {
-      id: String(issue.id),
-      index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
-      isRating: true,
-      ratingIssueReferenceId: issue.rating_issue_reference_id,
-      ratingDecisionReferenceId: issue.rating_decision_reference_id,
-      ratingIssueProfileDate: issueDate.toISOString(),
-      approxDecisionDate: issue.approx_decision_date,
-      decisionIssueId: issue.contested_decision_issue_id,
-      notes: issue.notes,
-      description: issue.description,
-      ineligibleReason: issue.ineligible_reason,
-      ineligibleDueToId: issue.ineligible_due_to_id,
-      titleOfActiveReview: issue.title_of_active_review,
-      contentionText: issue.contention_text,
-      rampClaimId: issue.ramp_claim_id,
-      untimelyExemption: issue.untimelyExemption,
-      untimelyExemptionNotes: issue.untimelyExemptionNotes,
-      vacolsId: issue.vacols_id,
-      vacolsSequenceId: issue.vacols_sequence_id,
-      vacolsIssue: issue.vacols_issue,
-      endProductCleared: issue.end_product_cleared,
-      endProductCode: issue.end_product_code,
-      withdrawalDate: formatDateStrUtc(issue.withdrawal_date),
-      editable: issue.editable
-    };
+    // return {
+    //   id: String(issue.id),
+    //   index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
+    //   isRating: true,
+    //   ratingIssueReferenceId: issue.rating_issue_reference_id,
+    //   ratingDecisionReferenceId: issue.rating_decision_reference_id,
+    //   ratingIssueProfileDate: issueDate.toISOString(),
+    //   approxDecisionDate: issue.approx_decision_date,
+    //   decisionIssueId: issue.contested_decision_issue_id,
+    //   notes: issue.notes,
+    //   description: issue.description,
+    //   ineligibleReason: issue.ineligible_reason,
+    //   ineligibleDueToId: issue.ineligible_due_to_id,
+    //   titleOfActiveReview: issue.title_of_active_review,
+    //   contentionText: issue.contention_text,
+    //   rampClaimId: issue.ramp_claim_id,
+    //   untimelyExemption: issue.untimelyExemption,
+    //   untimelyExemptionNotes: issue.untimelyExemptionNotes,
+    //   vacolsId: issue.vacols_id,
+    //   vacolsSequenceId: issue.vacols_sequence_id,
+    //   vacolsIssue: issue.vacols_issue,
+    //   endProductCleared: issue.end_product_cleared,
+    //   endProductCode: issue.end_product_code,
+    //   withdrawalDate: formatDateStrUtc(issue.withdrawal_date),
+    //   editable: issue.editable
+    // };
   });
 };
 
