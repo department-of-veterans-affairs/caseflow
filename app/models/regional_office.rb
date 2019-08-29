@@ -107,7 +107,9 @@ class RegionalOffice
     end
 
     def facility_ids_for_ro(regional_office_key)
-      (CITIES[regional_office_key][:alternate_locations] || []) << CITIES[regional_office_key][:facility_locator_id]
+      (
+        (CITIES[regional_office_key][:alternate_locations] || []) << CITIES[regional_office_key][:facility_locator_id]
+      ).uniq
     end
   end
 end
