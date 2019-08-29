@@ -33,6 +33,7 @@ detectors:
       - Api::ApplicationController#on_external_error
       - Api::ApplicationController#upstream_known_error
       - AsyncableJobsReporter
+      - ClaimReviewAsyncStatsReporter#as_csv
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
       - Fakes::EndProductStore
