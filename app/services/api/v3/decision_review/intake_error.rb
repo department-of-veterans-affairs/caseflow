@@ -12,12 +12,10 @@ class Api::V3::DecisionReview::IntakeError
     end
 
     def find_first_potential_error_code(array)
-      array.each do |obj|
+      array.find do |obj|
         code = potential_error_code(obj)
-        return code if code
+        break code if code
       end
-
-      nil
     end
 
     # An alternative to new.

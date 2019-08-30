@@ -29,6 +29,14 @@ class Api::V3::DecisionReview::IntakeProcessor
     self
   end
 
+  def detail
+    intake&.detail&.reload
+  end
+
+  def uuid
+    detail&.uuid
+  end
+
   private
 
   def build_intake(user, form_type)

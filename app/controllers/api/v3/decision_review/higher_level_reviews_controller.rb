@@ -10,7 +10,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
         url_for(
           controller: :intake_statuses,
           action: :show,
-          id: processor.higher_level_review.uuid
+          id: processor.uuid
         )
       )
       render Api::V3::DecisionReview::IntakeStatus.new(processor.intake).render_hash
