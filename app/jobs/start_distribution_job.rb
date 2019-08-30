@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class StartDistributionJob < ApplicationJob
-  queue_as :high_priority
+  queue_with_priority :high_priority
   application_attr :queue
 
   def perform(distribution, user = nil)
@@ -17,6 +17,6 @@ class StartDistributionJob < ApplicationJob
   def handle_error(error)
     Rails.logger.info "StartDistributionJob failed: #{error.message}"
     Rails.logger.info error.backtrace.join("\n")
-    Raven.capture_exception(error)
+    capture_exception(error: error)
   end
 end

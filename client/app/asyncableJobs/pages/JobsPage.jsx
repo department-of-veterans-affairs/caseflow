@@ -1,10 +1,11 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
 import Button from '../../components/Button';
 import Table from '../../components/Table';
-import Pagination from '../../components/Pagination';
+import EasyPagination from '../../components/EasyPagination';
 
 import ApiUtil from '../../util/ApiUtil';
 
@@ -131,7 +132,10 @@ class AsyncableJobsPage extends React.PureComponent {
       {
         header: 'Name',
         valueFunction: (job, rowId) => {
-          return <a title={`row ${rowId}`} href={`/asyncable_jobs/${job.klass}/jobs/${job.id}`}>{job.klass}</a>;
+          let title = `row ${rowId}`;
+          let href = `/asyncable_jobs/${job.klass}/jobs/${job.id}`;
+
+          return <a title={title} href={href}>{job.klass} {job.id}</a>;
         }
       },
       {
@@ -150,6 +154,16 @@ class AsyncableJobsPage extends React.PureComponent {
         header: 'Last Attempted',
         valueFunction: (job) => {
           return this.formatDate(job.attempted_at);
+        }
+      },
+      {
+        header: 'User',
+        valueFunction: (job) => {
+          if (!job.user) {
+            return '';
+          }
+
+          return <a href={`/intake/manager?user_css_id=${job.user}`}>{job.user}</a>;
         }
       },
       {
@@ -190,28 +204,12 @@ class AsyncableJobsPage extends React.PureComponent {
       return rowObject.restarted ? 'cf-success' : '';
     };
 
-    const pageUpdater = (idx) => {
-      let newPage = idx + 1;
-
-      if (newPage !== this.props.pagination.current_page) {
-        let newUrl = `${window.location.href.split('?')[0]}?page=${newPage}`;
-
-        window.location = newUrl;
-      }
-    };
-
     return <div className="cf-asyncable-jobs-table">
       <h1>{this.props.asyncableJobKlass} Jobs</h1>
       <AsyncModelNav models={this.props.models} fetchedAt={this.props.fetchedAt} />
       <hr />
       <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} slowReRendersAreOk />
-      <Pagination
-        currentPage={this.props.pagination.current_page}
-        currentCases={rowObjects.length}
-        totalCases={this.props.pagination.total_jobs}
-        totalPages={this.props.pagination.total_pages}
-        pageSize={this.props.pagination.page_size}
-        updatePage={pageUpdater} />
+      <EasyPagination currentCases={rowObjects.length} pagination={this.props.pagination} />
     </div>;
   }
 }

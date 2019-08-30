@@ -141,6 +141,23 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       expect(page).to have_content("There are no schedulable veterans")
       expect(VACOLS::CaseHearing.first.folder_nr).to eq vacols_case.bfkey
     end
+
+    context "but facilities api throws an error" do
+      before do
+        facilities_response = ExternalApi::VADotGovService::FacilitiesResponse.new(
+          HTTPI::Response.new(200, {}, {}.to_json)
+        )
+        allow(facilities_response).to receive(:data).and_return([])
+        allow(facilities_response).to receive(:code).and_return(429)
+        allow(VADotGovService).to receive(:get_distance).and_return(facilities_response)
+      end
+
+      scenario "Schedule Veteran for video erro" do
+        visit "queue/appeals/#{legacy_appeal.vacols_id}"
+        click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
+        expect(page).to have_content("Mapping service is temporarily unavailable. Please try again later.")
+      end
+    end
   end
 
   context "when scheduling an AMA hearing" do
@@ -507,6 +524,14 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       click_button("Schedule")
 
       expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
+    end
+  end
+
+  context "No upcoming hearing days" do
+    scenario "Show status message for empty upcoming hearing days" do
+      visit "hearings/schedule/assign"
+      click_dropdown(text: "Winston-Salem, NC")
+      expect(page).to have_content("No upcoming hearing days")
     end
   end
 end

@@ -29,7 +29,7 @@ class AssignHearingDispositionTask < GenericTask
     end
   end
 
-  def label
+  def self.label
     "Select hearing disposition"
   end
 

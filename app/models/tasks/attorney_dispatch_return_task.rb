@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AttorneyDispatchReturnTask < AttorneyTask
-  def label
+  def self.label
     COPY::ATTORNEY_DISPATCH_RETURN_TASK_LABEL
   end
 
