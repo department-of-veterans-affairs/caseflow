@@ -656,7 +656,7 @@ describe Task, :all_dbs do
       end
     end
 
-    context "the params are incomplete" do
+    fcontext "the params are incomplete" do
       let(:params) { { assigned_to: judge, appeal: nil, parent_id: task.id, type: Task.name } }
 
       it "raises an error" do
