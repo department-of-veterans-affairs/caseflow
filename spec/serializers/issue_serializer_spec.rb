@@ -11,13 +11,21 @@ describe IssueSerializer, :all_dbs do
     let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
 
     let(:request_issue1) do
-      create(:request_issue,
-             benefit_type: "compensation", contested_rating_issue_diagnostic_code: "5002")
+      create(
+        :request_issue,
+        :rating,
+        benefit_type: "compensation", 
+        contested_rating_issue_diagnostic_code: "5002"
+      )
     end
 
     let(:request_issue2) do
-      create(:request_issue,
-             benefit_type: "pension", contested_rating_issue_diagnostic_code: nil)
+      create(
+        :request_issue,
+        :rating,
+        benefit_type: "pension", 
+        contested_rating_issue_diagnostic_code: nil
+      )
     end
 
     let!(:appeal) do
@@ -150,6 +158,7 @@ describe IssueSerializer, :all_dbs do
 
     let!(:request_issue1) do
       create(:request_issue,
+             :rating,
              decision_review: hlr,
              benefit_type: benefit_type,
              contested_rating_issue_diagnostic_code: "9999")
@@ -157,6 +166,7 @@ describe IssueSerializer, :all_dbs do
 
     let!(:request_issue2) do
       create(:request_issue,
+             :rating,
              decision_review: hlr,
              benefit_type: benefit_type,
              contested_rating_issue_diagnostic_code: "8877")
@@ -224,6 +234,7 @@ describe IssueSerializer, :all_dbs do
 
       let!(:dta_request_issue) do
         create(:request_issue,
+               :rating,
                decision_review: dta_sc,
                benefit_type: benefit_type,
                contested_rating_issue_diagnostic_code: "9999")
@@ -284,6 +295,7 @@ describe IssueSerializer, :all_dbs do
 
       let!(:dta_request_issue) do
         create(:request_issue,
+               :rating,
                decision_review: dta_sc,
                benefit_type: benefit_type,
                contested_rating_issue_diagnostic_code: "9999")
@@ -337,6 +349,7 @@ describe IssueSerializer, :all_dbs do
     end
     let!(:request_issue) do
       create(:request_issue,
+             :rating,
              decision_review: sc,
              benefit_type: benefit_type,
              contested_rating_issue_diagnostic_code: nil)
