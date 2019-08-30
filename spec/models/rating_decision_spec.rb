@@ -154,7 +154,7 @@ describe RatingDecision do
         let(:decision_type_name) { "Not Service Connected" }
 
         it "returns formatted diagnosis statement" do
-          expect(subject.decision_text).to eq("Tinnitus (tinnitus) is denied as Not Service Connected")
+          expect(subject.decision_text).to eq("Tinnitus (tinnitus) is denied.")
         end
       end
 
@@ -162,7 +162,7 @@ describe RatingDecision do
         let(:decision_type_name) { "Service Connected" }
 
         it "returns formatted diagnosis statement" do
-          expect(subject.decision_text).to eq("Tinnitus (tinnitus) is granted as Service Connected")
+          expect(subject.decision_text).to eq("Tinnitus (tinnitus) is granted.")
         end
       end
     end
