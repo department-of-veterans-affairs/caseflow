@@ -1218,7 +1218,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on "Search"
         click_on appeal.docket_number
 
-        new_tasks = appeal_withdrawal_mail_task.children
+        new_tasks = appeal_withdrawal_mail_task.reload.children
         expect(new_tasks.length).to eq(1)
 
         new_task = new_tasks.first
