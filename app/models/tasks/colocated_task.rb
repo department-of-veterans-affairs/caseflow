@@ -8,7 +8,7 @@
 #  - handling FOIA requests
 # Note: Full list of colocated tasks in /client/constants/CO_LOCATED_ADMIN_ACTIONS.json
 
-class ColocatedTask < GenericTask
+class ColocatedTask < Task
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
   validate :task_is_unique, on: :create
