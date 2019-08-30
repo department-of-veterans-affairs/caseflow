@@ -109,7 +109,8 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       included: included
     }
   end
-  let(:post_params) do
+
+  def post_params
     post(
       "/api/v3/decision_review/higher_level_reviews",
       params: params,
