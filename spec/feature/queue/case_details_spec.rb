@@ -205,6 +205,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("About the Veteran")
+        expect(page).not_to have_content("About the Appellant")
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to have_content("1/10/1935")
         expect(page).to have_content(appeal.veteran_address_line_1)
@@ -243,6 +244,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("About the Veteran")
+        expect(page).not_to have_content("About the Appellant")
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to_not have_content("1/10/1935")
         expect(page).to_not have_content("5/25/2016")
@@ -683,7 +685,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on "On hold (1)"
         click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
 
-        expect(page).to have_content("TASK\n#{Constants::CO_LOCATED_ADMIN_ACTIONS[on_hold_task.action]}")
+        expect(page).to have_content("TASK\n#{on_hold_task.label}")
         find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
         expect(page).to have_content("TASK INSTRUCTIONS\n#{on_hold_task.instructions[0].squeeze(' ').strip}")
         expect(page).to have_content("#{assigner_name.first[0]}. #{assigner_name.last}")

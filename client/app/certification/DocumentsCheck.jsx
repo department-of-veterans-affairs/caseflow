@@ -14,10 +14,10 @@ import Header from './Header';
 import CertificationProgressBar from './CertificationProgressBar';
 
 export class DocumentsCheck extends React.Component {
-  // TODO: updating state in ComponentWillMount is
+  // TODO: updating state in UNSAFE_componentWillMount is
   // sometimes thought of as an anti-pattern.
   // is there a better way to do this?
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.updateProgressBar();
   }
 

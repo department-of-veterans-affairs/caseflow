@@ -14,8 +14,8 @@ describe AssignedTasksTab, :postgres do
   let(:assignee) { create(:organization) }
   let(:show_regional_office_column) { false }
 
-  describe ".columns" do
-    subject { tab.columns }
+  describe ".column_names" do
+    subject { tab.column_names }
 
     context "when only the assignee argument is passed when instantiating the object" do
       let(:params) { { assignee: create(:organization) } }
@@ -55,6 +55,14 @@ describe AssignedTasksTab, :postgres do
 
       it "only returns the active tasks that are children of the assignee's on hold tasks" do
         expect(subject).to match_array(on_hold_tasks_children)
+      end
+
+      context "when the assignee is a user" do
+        let(:assignee) { create(:user) }
+
+        it "only returns the active tasks that are children of the assignee's on hold tasks" do
+          expect(subject).to match_array(assignee_active_tasks)
+        end
       end
     end
   end

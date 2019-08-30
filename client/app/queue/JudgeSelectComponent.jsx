@@ -38,7 +38,7 @@ class JudgeSelectComponent extends React.PureComponent {
     }
   };
 
-  componentWillReceiveProps = (nextProps) => {
+  UNSAFE_componentWillReceiveProps = (nextProps) => {
     if (nextProps.judges !== this.props.judges) {
       this.setDefaultJudge(nextProps.judges);
     }

@@ -239,9 +239,7 @@ class Intake < ApplicationRecord
 
   def update_person!
     # Update the person when a claimant is created
-    Person.find_or_create_by(participant_id: detail.claimant_participant_id).tap do |person|
-      person.update!(date_of_birth: BGSService.new.fetch_person_info(detail.claimant_participant_id)[:birth_date])
-    end
+    Person.find_or_create_by(participant_id: detail.claimant_participant_id).tap(&:update_cached_attributes!)
   end
 
   def find_or_build_initial_detail

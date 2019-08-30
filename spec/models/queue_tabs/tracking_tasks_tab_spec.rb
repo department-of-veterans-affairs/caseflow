@@ -8,8 +8,8 @@ describe TrackingTasksTab, :postgres do
   let(:params) { { assignee: assignee } }
   let(:assignee) { create(:organization) }
 
-  describe ".columns" do
-    subject { tab.columns }
+  describe ".column_names" do
+    subject { tab.column_names }
 
     it "returns the correct number of columns" do
       expect(subject.length).to eq(4)
