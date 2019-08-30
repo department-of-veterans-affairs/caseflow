@@ -12,7 +12,7 @@ class Api::V3::DecisionReview::IntakeParams
   end
 
   def errors?
-    errors.any?
+    !errors.empty?
   end
 
   def veteran_file_number
