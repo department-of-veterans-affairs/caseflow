@@ -231,6 +231,8 @@ class Veteran < ApplicationRecord
     CACHED_BGS_ATTRIBUTES.each do |attr|
       self[attr] = bgs_record[attr]
     end
+    # participant_id is odd case because the name is different.
+    self[:participant_id] ||= ptcpnt_id
     save!
   end
 
