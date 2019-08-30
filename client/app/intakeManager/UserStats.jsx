@@ -93,6 +93,13 @@ export default class UserStats extends React.PureComponent {
       tbl = <div>No stats available.</div>;
     }
 
+    let preselectedUser = this.props.selectedUser;
+
+    // empty string can break things on initial value.
+    if (!preselectedUser || preselectedUser === '') {
+      preselectedUser = null;
+    }
+
     return <div className="cf-app-segment cf-app-segment--alt cf-manager-intakes">
       <div id="cf-user-stats">
         <div>
@@ -101,7 +108,7 @@ export default class UserStats extends React.PureComponent {
             <SearchBar
               size="small"
               title="Enter the User ID"
-              value={this.props.selectedUser}
+              value={preselectedUser}
               onSubmit={this.handleUserSwitch}
               onChange={this.handleUserSelect}
               loading={this.state.isSwitching}
