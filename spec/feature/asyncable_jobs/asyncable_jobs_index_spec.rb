@@ -101,12 +101,12 @@ feature "Asyncable Jobs index", :postgres do
 
       expect(page).to have_content("oops!")
       expect(page).to have_content("wrong!")
-      expect(page).to have_content(hlr.establishment_submitted_at.strftime(date_format))
-      expect(page).to have_content(hlr.establishment_attempted_at.strftime(date_format))
+      expect(page).to have_content(hlr.establishment_submitted_at.unix_format)
+      expect(page).to have_content(hlr.establishment_attempted_at.unix_format)
       expect(page).to_not have_content("Restarted")
 
-      hlr_submitted = hlr.establishment_submitted_at.strftime(date_format)
-      hlr_attempted = hlr.establishment_attempted_at.strftime(date_format)
+      hlr_submitted = hlr.establishment_submitted_at.unix_format
+      hlr_attempted = hlr.establishment_attempted_at.unix_format
 
       expect(page).to have_content("HigherLevelReview #{hlr.id} #{hlr_submitted} #{hlr_attempted}")
 
