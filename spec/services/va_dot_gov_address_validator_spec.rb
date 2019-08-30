@@ -4,6 +4,8 @@ require "rails_helper"
 require "support/vacols_database_cleaner"
 
 describe VaDotGovAddressValidator do
+  include HearingHelpers
+
   describe "#update_closest_ro_and_ahls", :all_dbs do
     let!(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
     let!(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
@@ -22,14 +24,10 @@ describe VaDotGovAddressValidator do
       }
     end
     let!(:ro43_facility_id) { "vba_343" }
-    let!(:closest_regional_office_facilities) do
-      [mock_facility_data(id: ro43_facility_id)]
-    end
-    let!(:available_hearing_locations_facilities) do
-      [
-        mock_facility_data(id: ro43_facility_id),
-        mock_facility_data(id: "vba_343f")
-      ]
+    let!(:closest_facilities) do
+      RegionalOffice.facility_ids.shuffle.map do |id|
+        mock_facility_data(id: id)
+      end
     end
 
     before(:each) do
@@ -39,29 +37,19 @@ describe VaDotGovAddressValidator do
       allow_any_instance_of(VaDotGovAddressValidator).to receive(:valid_address_response)
         .and_return(valid_address_response)
 
-      closest_regional_office_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
-      allow(closest_regional_office_response).to receive(:data).and_return(closest_regional_office_facilities)
-      allow(closest_regional_office_response).to receive(:error).and_return(nil)
-      allow_any_instance_of(VaDotGovAddressValidator).to receive(:closest_regional_office_response)
-        .and_return(closest_regional_office_response)
-
-      available_hearing_locations_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
-      allow(available_hearing_locations_response).to receive(:data)
-        .and_return(available_hearing_locations_facilities)
-      allow(available_hearing_locations_response).to receive(:error).and_return(nil)
-      allow_any_instance_of(VaDotGovAddressValidator).to receive(:available_hearing_locations_response)
-        .and_return(available_hearing_locations_response)
+      closest_facility_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
+      allow(closest_facility_response).to receive(:data).and_return(closest_facilities)
+      allow(closest_facility_response).to receive(:error).and_return(nil)
+      allow_any_instance_of(VaDotGovAddressValidator).to receive(:closest_facility_response)
+        .and_return(closest_facility_response)
     end
 
     it "assigns a closest_regional_office and creates an available hearing location" do
       Appeal.first.va_dot_gov_address_validator.update_closest_ro_and_ahls
 
-      available_hearing_locations = Appeal.first.available_hearing_locations.where(
-        facility_id: available_hearing_locations_facilities.pluck(:facility_id)
-      )
-
-      expect(Appeal.first.closest_regional_office).to eq("RO43")
-      expect(available_hearing_locations.count).to eq(2)
+      ro = Appeal.first.closest_regional_office
+      expect(ro).not_to be_nil
+      expect(Appeal.first.available_hearing_locations.count).to eq(RegionalOffice.facility_ids_for_ro(ro).count)
     end
 
     context "when there is an existing available_hearing_location" do
@@ -73,6 +61,18 @@ describe VaDotGovAddressValidator do
         appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
 
         expect(AvailableHearingLocations.where(id: available_hearing_location.id).count).to eq(0)
+      end
+    end
+
+    context "when address is nil" do
+      before do
+        allow(appeal).to receive(:address).and_return(nil)
+      end
+
+      it "creates Verify Address admin action" do
+        appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
+
+        expect(appeal.tasks.where(type: "HearingAdminActionVerifyAddressTask").count).to eq(1)
       end
     end
 
@@ -115,9 +115,11 @@ describe VaDotGovAddressValidator do
           expect(appeal.tasks.where(type: "HearingAdminActionVerifyAddressTask").count).to eq(1)
         end
 
-        # this passes locally, but CircleCi is not using BGS fake address_records
-        # correctly. skipping.
-        context "and veteran's country is Philippines", skip: "fails CircleCi" do
+        context "and veteran's country is Philippines" do
+          let(:address) do
+            Address.new(country: "PHILIPPINES", city: "A City")
+          end
+
           before do
             # this mocks get_facility_data call for ErrorHandler#check_for_philippines_and_maybe_update
             philippines_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
@@ -126,14 +128,13 @@ describe VaDotGovAddressValidator do
             allow(ExternalApi::VADotGovService).to receive(:get_facility_data)
               .and_return(philippines_response)
 
-            Fakes::BGSService.address_records = Hash[appeal.veteran_file_number, { cntry_nm: "PHILIPPINES" }]
+            allow(appeal).to receive(:address).and_return(address)
           end
 
           it "assigns closest regional office to Manila" do
-            expect(appeal.va_dot_gov_address_validator).to receive(:assign_ro_and_update_ahls).with("RO58")
+            appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
             expect(appeal.closest_regional_office).to eq("RO58")
             expect(appeal.available_hearing_locations.first.facility_id).to eq("vba_358")
-            appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
           end
         end
       end
@@ -173,15 +174,6 @@ describe VaDotGovAddressValidator do
         expect(subject).to match_array ["vba_372"]
       end
     end
-
-    context "when veteran lives in Texas" do
-      let!(:valid_address_state_code) { "TX" }
-      subject { appeal.va_dot_gov_address_validator.facility_ids_to_geomatch }
-
-      it "adds San Antonio Satellite Office" do
-        expect(subject).to match_array(RegionalOffice.ro_facility_ids + %w[vha_671BY])
-      end
-    end
   end
 
   describe "#valid_address when there is an address validation error", :postgres do
@@ -209,21 +201,4 @@ describe VaDotGovAddressValidator do
       expect(subject[:long]).to eq(-122.411164)
     end
   end
-end
-
-def mock_facility_data(id:, city: "Fake City", state: "PA")
-  {
-    facility_id: id,
-    type: "",
-    distance: 10,
-    facility_type: "",
-    name: "Fake Name",
-    classification: "",
-    lat: 0.0,
-    long: 0.0,
-    address: "Fake Address",
-    city: city,
-    state: state,
-    zip_code: "00000"
-  }
 end

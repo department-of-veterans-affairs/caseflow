@@ -31,7 +31,7 @@ class InformalHearingPresentationTask < GenericTask
     []
   end
 
-  def label
+  def self.label
     COPY::IHP_TASK_LABEL
   end
 end

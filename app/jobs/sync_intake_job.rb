@@ -3,10 +3,10 @@
 # This job will fetch the number of contentions for every
 # EP known to Intake
 class SyncIntakeJob < CaseflowJob
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :intake
 
-  def perform
+  def perform(_args = {})
     # Set user to system_user to avoid sensitivity errors
     RequestStore.store[:current_user] = User.system_user
 

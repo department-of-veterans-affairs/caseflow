@@ -70,6 +70,11 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       expect(find_field("Transcript Requested", visible: false)).to be_checked
       expect(find_field("8:30", visible: false)).to be_checked
     end
+
+    scenario "User can see paper_case notification" do
+      visit "hearings/schedule/docket/" + legacy_hearing.hearing_day.id.to_s
+      expect(page).to have_content(COPY::IS_PAPER_CASE)
+    end
   end
 
   context "Daily docket with one AMA hearing" do
@@ -129,7 +134,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       fill_in "Notes", with: "This is a note about the hearing!"
       click_button("Save")
 
-      expect(page).to have_content("You have successfully updated")
+      expect(page).to have_content("You have successfully updated", wait: 10)
       expect(page).to have_content("This is a note about the hearing!")
     end
   end

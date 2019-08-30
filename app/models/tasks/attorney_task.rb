@@ -6,7 +6,7 @@
 #   - writing draft decisions for judges
 #   - adding admin actions (like translating documents)
 
-class AttorneyTask < Task
+class AttorneyTask < GenericTask
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
 
@@ -36,7 +36,7 @@ class AttorneyTask < Task
     super
   end
 
-  def label
+  def self.label
     COPY::ATTORNEY_TASK_LABEL
   end
 

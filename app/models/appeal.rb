@@ -92,7 +92,7 @@ class Appeal < DecisionReview
     # this condition is no longer needed since we only want active or on hold tasks
     return most_recently_assigned_to_label(tasks) if tasks.any?
 
-    status_hash[:type].to_s.titleize
+    fetch_status.to_s.titleize
   end
 
   def attorney_case_reviews
@@ -218,11 +218,13 @@ class Appeal < DecisionReview
     nil
   end
 
-  def advanced_on_docket
-    claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
+  def advanced_on_docket?
+    claimants.any? { |claimant| claimant.advanced_on_docket?(receipt_date) }
   end
 
-  alias aod advanced_on_docket
+  # Prefer aod? over aod going forward, as this function returns a boolean
+  alias aod? advanced_on_docket?
+  alias aod advanced_on_docket?
 
   delegate :first_name,
            :last_name,
@@ -347,10 +349,6 @@ class Appeal < DecisionReview
     else
       "bva"
     end
-  end
-
-  def status_hash
-    { type: fetch_status, details: fetch_details_for_status }
   end
 
   def fetch_status
@@ -608,12 +606,8 @@ class Appeal < DecisionReview
     @events ||= AppealEvents.new(appeal: self).all
   end
 
-  def issues_hash
-    issue_list = decision_issues.empty? ? request_issues.active.all : fetch_all_decision_issues
-
-    return [] if issue_list.empty?
-
-    fetch_issues_status(issue_list)
+  def active_request_issues_or_decision_issues
+    decision_issues.empty? ? request_issues.active.all : fetch_all_decision_issues
   end
 
   def fetch_all_decision_issues

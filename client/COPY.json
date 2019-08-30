@@ -1,9 +1,9 @@
 {
   "CASE_SEARCH_HOME_PAGE_HEADING": "Veteran Case Search",
-  "CASE_SEARCH_INPUT_PLACEHOLDER": "Enter a Veteran ID or SSN",
-  "CASE_SEARCH_INPUT_INSTRUCTION": "Please enter a valid claims file number or SSN to search for all available cases.",
+  "CASE_SEARCH_INPUT_PLACEHOLDER": "Enter a file number, SSN, or AMA docket number",
+  "CASE_SEARCH_INPUT_INSTRUCTION": "Please enter a valid claims file number, SSN, or AMA docket number (with hyphen) to search for all available cases.",
   "CASE_SEARCH_ERROR_EMPTY_SEARCH_TERM": "Cannot search for no text",
-  "CASE_SEARCH_ERROR_INVALID_ID_HEADING": "Invalid Veteran ID “%s”",
+  "CASE_SEARCH_ERROR_INVALID_ID_HEADING": "Invalid search parameter “%s”",
   "CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING": "No cases found for “%s”",
   "CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING": "Server encountered an error searching for “%s”",
   "CASE_SEARCH_ERROR_UNKNOWN_ERROR_MESSAGE": "Please retry your search and contact support if errors persist.",
@@ -39,6 +39,8 @@
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL": "%s team cases",
   "CASE_LIST_TABLE_EMPTY_TEXT": "This Veteran has no appeals at this time.",
 
+  "NULL_FILTER_LABEL": "<<blank>>",
+
   "OTHER_REVIEWS_TABLE_TITLE": "Higher Level Reviews & Supplemental Claims",
   "OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE": "EP Code(s)",
   "OTHER_REVIEWS_TABLE_APPELLANT_NAME_COLUMN_TITLE": "Appellant Name",
@@ -46,6 +48,7 @@
   "OTHER_REVIEWS_TABLE_EP_STATUS_COLUMN_TITLE": "EP Status",
   "OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE": "Tracked in Caseflow",
   "OTHER_REVIEWS_TABLE_NO_EPS_NOTE": "No EPs created",
+  "OTHER_REVIEWS_TABLE_RECEIPT_DATE_COLUMN_TITLE": "Receipt Date",
   "OTHER_REVIEWS_TABLE_EMPTY_TEXT": "This Veteran has no higher level reviews or supplemental claims at this time.",
   "OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED": "Establishment failed. Support notified.",
   "OTHER_REVIEWS_TABLE_ESTABLISHING": "Establishing...",
@@ -395,6 +398,11 @@
   "TEAM_MANAGEMENT_IHP_WRITING_VSO_OPTION": "IHP-writing VSO",
   "TEAM_MANAGEMENT_FIELD_VSO_OPTION": "Field VSO",
 
+  "LOOKUP_PARTICIPANT_ID_MODAL_TITLE": "Look Up Participant ID",
+  "LOOKUP_PARTICIPANT_ID_SELECT_USER_LABEL": "Select user",
+  "LOOKUP_PARTICIPANT_ID_MODAL_NO_ORGS_MESSAGE": "User does not belong to any POA organizations.",
+
+  "USER_MANAGEMENT_PAGE_TITLE": "%s management page",
   "USER_MANAGEMENT_INITIAL_LOAD_ERROR_TITLE": "Failed to load users",
   "USER_MANAGEMENT_INITIAL_LOAD_LOADING_MESSAGE": "Loading users...",
   "USER_MANAGEMENT_ADD_USER_ERROR_TITLE": "Failed to add user",
@@ -416,6 +424,7 @@
   "JUDGE_DECISION_REVIEW_TASK_LABEL": "Review",
   "JUDGE_QUALITY_REVIEW_TASK_LABEL": "Quality review",
   "JUDGE_DISPATCH_RETURN_TASK_LABEL": "Revise decision (BVA Dispatch)",
+  "JUDGE_ADDRESS_MOTION_TO_VACATE_TASK_LABEL": "Address Motion to Vacate",
 
   "ATTORNEY_TASK_LABEL": "Draft decision",
   "ATTORNEY_REWRITE_TASK_LABEL": "Revise decision draft",
@@ -484,6 +493,8 @@
   "UNTIMELY_EVIDENCE_BULLET_THREE": "3. Requested the Hearing appeal option and submitted evidence outside of the 90-day window after their hearing",
   "WHAT_IS_INELIGIBLE_EVIDENCE": "What is ineligible evidence?",
 
+  "INVALID_TASKS_ARGUMENT": "must be an ActiveRecord::Relation object",
+  "INVALID_SORT_COLUMN": "must be a QueueColumn",
   "TASK_PAGE_INVALID_ASSIGNEE_MESSAGE": "must be either a User or an Organization",
   "TASK_PAGE_INVALID_SORT_ORDER": "must be either asc or desc",
   "TASK_DISTRIBUTOR_ASSIGNEE_POOL_USERS_ONLY_MESSAGE": "must contain only Users",
@@ -522,6 +533,15 @@
 
   "SCHEDULE_VETERAN_FULL_HEARING_DAY_TITLE": "This hearing day is full",
   "SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL": "You are about to schedule this Veteran on a full docket. Please verify before scheduling.",
+
+  "REMOVE_HEARING_DAY_MESSAGE_TITLE": "Remove Hearing Day",
+  "REMOVE_HEARING_DAY_MESSAGE_DETAIL": "Once the hearing day is removed, users will no longer be able to schedule Veterans for this %s hearing day on %s.",
+
+  "LOCK_HEARING_DAY_MESSAGE_TITLE": "Lock Hearing Day",
+  "LOCK_HEARING_DAY_MESSAGE_DETAIL": "Completing this action will not allow more Veterans to be scheduled for this day. You can still make changes to the existing slots.",
+
+  "UNLOCK_HEARING_DAY_MESSAGE_TITLE": "Unlock Hearing Day",
+  "UNLOCK_HEARING_DAY_MESSAGE_DETAIL": "This hearing day is locked. Do you want to unlock the hearing day?",
 
   "HEARING_DATE_LOADING": "Finding upcoming hearing dates for this regional office...",
 
