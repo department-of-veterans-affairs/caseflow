@@ -103,7 +103,7 @@ class RegionalOffice
         ids += city[:alternate_locations] if city[:alternate_locations].present?
       end
 
-      ids
+      ids.uniq
     end
 
     def facility_ids_for_ro(regional_office_key)
