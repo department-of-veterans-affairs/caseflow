@@ -277,8 +277,8 @@ describe AssignHearingDispositionTask, :all_dbs do
           let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
 
           it "cancels the disposition task and its parent hearing task" do
-            expect(disposition_task.cancelled?).to be_falsey
-            expect(hearing_task.on_hold?).to be_truthy
+            expect(disposition_task.reload.cancelled?).to be_falsey
+            expect(hearing_task.reload.on_hold?).to be_truthy
 
             expect { subject }.to_not raise_error
 
@@ -473,7 +473,7 @@ describe AssignHearingDispositionTask, :all_dbs do
               expect { subject }.to_not raise_error
 
               expect(disposition_task.children.count).to eq 2
-              expect(disposition_task.children.pluck(:type)).to match_array [
+              expect(disposition_task.reload.children.pluck(:type)).to match_array [
                 TranscriptionTask.name, EvidenceSubmissionWindowTask.name
               ]
               transcription_task = disposition_task.children.find_by(type: TranscriptionTask.name)
