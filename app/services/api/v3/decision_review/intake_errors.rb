@@ -4,7 +4,7 @@
 class Api::V3::DecisionReview::IntakeErrors
   def self.shape_valid?(array)
     array.is_a?(Array) &&
-      array.any? &&
+      !array.empty? &&
       array.all? { |element| element.is_a?(Api::V3::DecisionReview::IntakeError) }
   end
 
@@ -26,15 +26,8 @@ class Api::V3::DecisionReview::IntakeErrors
   private
 
   def status
-    statuses.max
-  end
-
-  def statuses
-    @errors.each_with_object([]) do |error, statuses|
-      status = error&.status
-      next unless status
-
-      statuses.push(Integer(status || 422))
-    end
+    @errors.map(&:status).max
+  rescue StandardError
+    500
   end
 end

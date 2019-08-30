@@ -38,12 +38,6 @@ class SupplementalClaim < ClaimReview
     Array.wrap(review_status_id)
   end
 
-  def status_hash
-    # need to implement. returns the details object for the status
-
-    { type: fetch_status, details: fetch_details_for_status }
-  end
-
   def alerts
     @alerts ||= ApiStatusAlerts.new(decision_review: self).all.sort_by { |alert| alert[:details][:decisionDate] }
   end
@@ -70,6 +64,25 @@ class SupplementalClaim < ClaimReview
     return %w[higher_level_review appeal] if benefit_type == "fiduciary"
 
     %w[supplemental_claim higher_level_review appeal]
+  end
+
+  def fetch_status
+    if active?
+      :sc_recieved
+    else
+      decision_issues.empty? ? :sc_closed : :sc_decision
+    end
+  end
+
+  def fetch_details_for_status
+    case fetch_status
+    when :sc_decision
+      {
+        issues: api_issues_for_status_details_issues
+      }
+    else
+      {}
+    end
   end
 
   private
@@ -114,25 +127,6 @@ class SupplementalClaim < ClaimReview
 
   def remanded_decision_issues_needing_request_issues
     decision_review_remanded.decision_issues.remanded.uncontested.where(benefit_type: benefit_type)
-  end
-
-  def fetch_status
-    if active?
-      :sc_recieved
-    else
-      decision_issues.empty? ? :sc_closed : :sc_decision
-    end
-  end
-
-  def fetch_details_for_status
-    case fetch_status
-    when :sc_decision
-      {
-        issues: api_issues_for_status_details_issues
-      }
-    else
-      {}
-    end
   end
 
   def fetch_all_decision_issues

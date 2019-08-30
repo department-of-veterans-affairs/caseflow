@@ -7,6 +7,11 @@ class IntakeStatsController < ApplicationController
   before_action :verify_access
 
   def show
+    # deprecated 2019/08/28
+    # either remove this controller entirely or update it to reflect current AMA models.
+    render "errors/404", layout: "application", status: :not_found
+    return
+
     CalculateIntakeStatsJob.perform_later
 
     @stats = {

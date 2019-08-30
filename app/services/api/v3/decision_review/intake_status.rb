@@ -6,11 +6,12 @@ class Api::V3::DecisionReview::IntakeStatus
   end
 
   def render_hash
+    @intake.reload if @intake.id
     {
       json: {
         type: @intake.detail_type,
-        id: @intake.detail.uuid,
-        attributes: { status: @intake.detail.asyncable_status }
+        id: @intake.detail&.uuid,
+        attributes: { status: @intake.detail&.asyncable_status }
       },
       status: :accepted
     }
