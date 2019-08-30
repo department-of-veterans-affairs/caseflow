@@ -30,8 +30,7 @@ class AsyncableJobPage extends React.PureComponent {
 
     return <div className="cf-asyncable-job-table">
       <h1>{this.props.asyncableJobKlass} Job {job.id}</h1>
-      <AsyncModelNav models={this.props.models} fetchedAt={this.props.fetchedAt} />
-      <hr />
+      <AsyncModelNav models={[]} fetchedAt={this.props.fetchedAt} />
       <table className="cf-job-details">
         <tbody>
           <tr>
@@ -70,12 +69,11 @@ class AsyncableJobPage extends React.PureComponent {
             <th>User</th>
             <td><a href={`/intake/manager?user_css_id=${job.user}`}>{job.user}</a></td>
           </tr>
-          <tr>
-            <th></th>
-            <td><JobRestartButton job={job} page={this} /></td>
-          </tr>
         </tbody>
       </table>
+      <div>
+        <JobRestartButton job={job} page={this} />
+      </div>
     </div>;
   }
 }
