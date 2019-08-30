@@ -59,10 +59,10 @@ describe Appeal, :all_dbs do
 
     let!(:remanded_decision_issue_processed_in_caseflow) do
       create(
-        :decision_issue, 
+        :decision_issue,
         :rating,
-        decision_review: appeal, 
-        disposition: "remanded", 
+        decision_review: appeal,
+        disposition: "remanded",
         benefit_type: "nca",
         caseflow_decision_date: decision_date
       )

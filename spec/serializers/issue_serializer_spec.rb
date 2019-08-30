@@ -14,7 +14,7 @@ describe IssueSerializer, :all_dbs do
       create(
         :request_issue,
         :rating,
-        benefit_type: "compensation", 
+        benefit_type: "compensation",
         contested_rating_issue_diagnostic_code: "5002"
       )
     end
@@ -23,7 +23,7 @@ describe IssueSerializer, :all_dbs do
       create(
         :request_issue,
         :rating,
-        benefit_type: "pension", 
+        benefit_type: "pension",
         contested_rating_issue_diagnostic_code: nil
       )
     end

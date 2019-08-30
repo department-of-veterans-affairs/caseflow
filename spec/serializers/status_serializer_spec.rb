@@ -188,6 +188,7 @@ describe StatusSerializer, :all_dbs do
       let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
       let!(:remanded_decision_issue) do
         create(:decision_issue,
+               :nonrating,
                decision_review: appeal,
                disposition: "remanded",
                benefit_type: "nca",
@@ -418,6 +419,7 @@ describe StatusSerializer, :all_dbs do
     context "has a decision" do
       let!(:request_issue1) do
         create(:request_issue,
+               :rating,
                decision_review: hlr,
                benefit_type: benefit_type,
                contested_rating_issue_diagnostic_code: "8877")
@@ -480,6 +482,7 @@ describe StatusSerializer, :all_dbs do
 
       let!(:dta_request_issue) do
         create(:request_issue,
+               :rating,
                decision_review: dta_sc,
                benefit_type: benefit_type,
                contested_rating_issue_diagnostic_code: "9999")
