@@ -43,12 +43,8 @@ class JobRestartButton extends React.PureComponent {
           const jobsRestarted = page.state.restarted + 1;
 
           page.setState({ restarted: jobsRestarted });
-        },
-        (error) => {
-          throw error;
         }
-      ).
-      catch((error) => error);
+      );
   }
 
   getButtonClassNames = () => {
