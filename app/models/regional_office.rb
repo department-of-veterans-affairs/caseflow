@@ -95,20 +95,21 @@ class RegionalOffice
       end
     end
 
-    def ro_facility_ids
-      CITIES.values.select { |ro| ro[:facility_locator_id].present? }.pluck(:facility_locator_id).uniq
+    def facility_ids
+      ids = []
+
+      CITIES.values.each do |city|
+        ids << city[:facility_locator_id] if city[:facility_locator_id].present?
+        ids += city[:alternate_locations] if city[:alternate_locations].present?
+      end
+
+      ids.uniq
     end
 
     def facility_ids_for_ro(regional_office_key)
-      (CITIES[regional_office_key][:alternate_locations] || []) << CITIES[regional_office_key][:facility_locator_id]
-    end
-
-    def find_ro_by_facility_id(facility_id)
-      CITIES.detect do |regional_office_id, val|
-        if val[:facility_locator_id] == facility_id
-          break regional_office_id
-        end
-      end
+      (
+        (CITIES[regional_office_key][:alternate_locations] || []) << CITIES[regional_office_key][:facility_locator_id]
+      ).uniq
     end
   end
 end
