@@ -21,7 +21,8 @@ class VaDotGovAddressValidator::ClosestRegionalOfficeFinder
 
   def fail_if_distances_missing
     if possible_regional_offices_distances.any? { |ro| ro[:distance].nil? }
-      fail Caseflow::SerializableError, code: 500, message: "Distances are missing from possible regional office."
+      error_message = "Distances are missing from possible regional office."
+      fail Caseflow::Error::SerializableError, code: 500, message: error_message
     end
   end
 
