@@ -98,6 +98,7 @@ class HearingRepository
         set_vacols_values(hearing, vacols_record)
         true
       else
+        Raven.extra_context(application: "hearings")
         fail Caseflow::Error::VacolsRecordNotFound, "Hearing record with vacols id #{hearing.vacols_id} not found."
       end
     rescue ActiveRecord::RecordNotFound
@@ -171,7 +172,7 @@ class HearingRepository
         room: vacols_record.room,
         request_type: vacols_record.hearing_type,
         scheduled_for: date,
-        hearing_day_id: vacols_record.vdkey,
+        hearing_day_vacols_id: vacols_record.vdkey,
         bva_poc: vacols_record.vdbvapoc,
         judge_id: hearing.user_id
       }

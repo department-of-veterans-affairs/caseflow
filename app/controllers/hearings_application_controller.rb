@@ -5,14 +5,14 @@ class HearingsApplicationController < ApplicationController
 
   before_action :react_routed, :check_hearings_out_of_service
   before_action :verify_build_hearing_schedule_access, only: [:build_schedule_index]
-  before_action :verify_access_to_reader_or_hearings, only: [:hearing_details_index]
+  before_action :verify_access_to_reader_or_hearings, only: [:show_hearing_index]
   before_action :verify_view_hearing_schedule_access, only: [:index]
 
   def set_application
     RequestStore.store[:application] = "hearings"
   end
 
-  def hearing_details_index
+  def show_hearing_index
     render "hearings/index"
   end
 

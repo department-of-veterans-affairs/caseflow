@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe LegacyAppeal do
+describe LegacyAppeal, :all_dbs do
   before do
     Timecop.freeze(post_ama_start_date)
   end
@@ -17,7 +18,7 @@ describe LegacyAppeal do
 
   context "includes PrintsTaskTree concern" do
     context "#structure" do
-      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+      let!(:root_task) { create(:root_task, appeal: appeal) }
       let(:vacols_case) { create(:case, bfcorlid: "123456789S") }
 
       subject { appeal.structure(:id) }
@@ -28,7 +29,9 @@ describe LegacyAppeal do
       end
 
       context "the appeal has more than one parentless task" do
-        let!(:colocated_task) { FactoryBot.create(:colocated_task, appeal: appeal, parent: nil) }
+        before { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
+
+        let!(:colocated_task) { create(:colocated_task, appeal: appeal, parent: nil) }
 
         it "returns all parentless tasks" do
           expect_any_instance_of(RootTask).to receive(:structure).with(:id)
@@ -2127,12 +2130,11 @@ describe LegacyAppeal do
 
     context "when representative is returned from BGS" do
       before do
-        FeatureToggle.enable!(:use_representative_info_from_bgs)
         RequestStore.store[:application] = "queue"
       end
 
       after do
-        FeatureToggle.disable!(:use_representative_info_from_bgs)
+        RequestStore.store[:application] = nil
       end
 
       it "the appellant is returned" do

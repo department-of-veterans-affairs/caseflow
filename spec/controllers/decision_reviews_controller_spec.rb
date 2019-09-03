@@ -1,16 +1,12 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe DecisionReviewsController, type: :controller do
+describe DecisionReviewsController, :postgres, type: :controller do
   before do
-    FeatureToggle.enable!(:decision_reviews)
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
     User.stub = user
-  end
-
-  after do
-    FeatureToggle.disable!(:decision_reviews)
   end
 
   let(:non_comp_org) { create(:business_line, name: "National Cemetery Administration", url: "nca") }

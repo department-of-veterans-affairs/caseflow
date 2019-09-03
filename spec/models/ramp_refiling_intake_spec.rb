@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe RampRefilingIntake do
+describe RampRefilingIntake, :postgres do
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
@@ -435,7 +436,7 @@ describe RampRefilingIntake do
 
     context "when no end product is needed" do
       let(:option_selected) { "appeal" }
-      let(:appeal_docket) { "direct_review" }
+      let(:appeal_docket) { Constants.AMA_DOCKETS.direct_review }
 
       it "saves issues and does NOT create an end product" do
         expect(Fakes::VBMSService).to_not receive(:establish_claim!)

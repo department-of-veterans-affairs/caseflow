@@ -53,8 +53,12 @@ class ScheduleHearingTask < GenericTask
     end
   end
 
-  def label
+  def self.label
     "Schedule hearing"
+  end
+
+  def default_instructions
+    [COPY::SCHEDULE_HEARING_TASK_DEFAULT_INSTRUCTIONS]
   end
 
   def create_parent_hearing_task

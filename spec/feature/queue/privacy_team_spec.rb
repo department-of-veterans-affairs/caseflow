@@ -1,22 +1,22 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Privacy team tasks and queue" do
+RSpec.feature "Privacy team tasks and queue", :all_dbs do
   describe "Assigning ColocatedTask to Privacy team" do
-    let(:attorney) { FactoryBot.create(:user) }
+    let(:attorney) { create(:user) }
 
     let(:vlj_support_staff_team) { Colocated.singleton }
-    let(:vlj_support_staff) { FactoryBot.create(:user) }
+    let(:vlj_support_staff) { create(:user) }
 
     let(:privacy_team) { PrivacyTeam.singleton }
-    let(:privacy_team_member) { FactoryBot.create(:user) }
+    let(:privacy_team_member) { create(:user) }
 
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
     let!(:colocated_task) do
-      FactoryBot.create(
+      create(
         :colocated_task,
-        :foia,
         appeal: appeal,
         parent: root_task,
         assigned_by: attorney,
@@ -27,13 +27,13 @@ RSpec.feature "Privacy team tasks and queue" do
     let(:instructions_text) { "Instructions from VLJ support staff to Privacy team." }
 
     before do
-      FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
+      create(:staff, :attorney_role, sdomainid: attorney.css_id)
       OrganizationsUser.add_user_to_organization(vlj_support_staff, vlj_support_staff_team)
       OrganizationsUser.add_user_to_organization(privacy_team_member, privacy_team)
     end
 
     context "when appeal is a legacy appeal" do
-      let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 
       it "should be assigned and appear correctly" do
         # Log in as a member of the VLJ support staff and send the task to the Privacy team.
@@ -60,7 +60,7 @@ RSpec.feature "Privacy team tasks and queue" do
     end
 
     context "when appeal is an AMA appeal" do
-      let(:appeal) { FactoryBot.create(:appeal) }
+      let(:appeal) { create(:appeal) }
 
       it "should be assigned and appear correctly" do
         # Log in as a member of the VLJ support staff and send the task to the Privacy team.

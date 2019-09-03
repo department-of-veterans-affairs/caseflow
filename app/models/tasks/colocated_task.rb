@@ -8,16 +8,22 @@
 #  - handling FOIA requests
 # Note: Full list of colocated tasks in /client/constants/CO_LOCATED_ADMIN_ACTIONS.json
 
-class ColocatedTask < Task
+class ColocatedTask < GenericTask
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
-  validate :on_hold_duration_is_set, on: :update
   validate :task_is_unique, on: :create
-  validate :valid_action_or_type
+  validate :valid_type, on: :create
 
   after_update :update_location_in_vacols
 
   class << self
+    def create_from_params(params, user)
+      parent_task = params[:parent_id] ? Task.find(params[:parent_id]) : nil
+      verify_user_can_create!(user, parent_task)
+      params = modify_params(params)
+      create!(params)
+    end
+
     # Override so that each ColocatedTask for an appeal gets assigned to the same colocated staffer.
     def create_many_from_params(params_array, user)
       # Create all ColocatedTasks in one transaction so that if any fail they all fail.
@@ -26,12 +32,12 @@ class ColocatedTask < Task
           # Find the task type for a given action.
           create_params = params.clone
           new_task_type = find_subclass_by_action(create_params.delete(:action).to_s)
-          create_params.merge!(type: new_task_type&.name, assigned_to: Colocated.singleton)
+          create_params.merge!(type: new_task_type&.name, assigned_to: new_task_type&.default_assignee)
         end
 
         team_tasks = super(params_array, user)
 
-        all_tasks = team_tasks.map { |team_task| [team_task, team_task.children.first] }.flatten
+        all_tasks = team_tasks.map { |team_task| [team_task, team_task.children.first] }.flatten.compact
 
         all_tasks.map(&:appeal).uniq.each do |appeal|
           if appeal.is_a? LegacyAppeal
@@ -51,13 +57,23 @@ class ColocatedTask < Task
       end
     end
 
+    def default_assignee
+      Colocated.singleton
+    end
+
+    # Intentionally not including all descendants as we do not want to create any more of the old style
+    # FoiaColocatedTasks, MissingHearingTranscriptsColocatedTasks, or TranslationColocatedTasks as their
+    # PreRoutingColocatedTask versions exist only to allow tasks currently in that state in production to live
+    # out their days with their old colocated task workflow
     def find_subclass_by_action(action)
       subclasses.find { |task_class| task_class.label == Constants::CO_LOCATED_ADMIN_ACTIONS[action] }
     end
-  end
 
-  def label
-    action || self.class.label
+    def actions_assigned_to_colocated
+      Constants::CO_LOCATED_ADMIN_ACTIONS.keys.select do |action|
+        find_subclass_by_action(action).methods(false).exclude?(:default_assignee)
+      end
+    end
   end
 
   def timeline_title
@@ -67,35 +83,30 @@ class ColocatedTask < Task
   def available_actions(user)
     if assigned_to == user ||
        (task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.user_is_admin?(user))
-      base_actions = [
+
+      actions = [
+        return_to_assigner_action,
+        Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
         Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
         Constants.TASK_ACTIONS.CANCEL_TASK.to_h
       ]
 
-      base_actions.unshift(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h) if Colocated.singleton.user_is_admin?(user)
+      actions.unshift(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h) if Colocated.singleton.user_is_admin?(user)
 
-      return available_actions_with_conditions(base_actions)
+      return actions
     end
 
     []
   end
 
-  def available_actions_with_conditions(core_actions)
-    # Break this out into respective subclasses once ColocatedTasks are migrated
-    # https://github.com/department-of-veterans-affairs/caseflow/pull/11295#issuecomment-509659069
-    if %w[translation schedule_hearing].include?(action) && appeal.is_a?(LegacyAppeal)
-      return legacy_translation_or_hearing_actions(core_actions)
+  def return_to_assigner_action
+    # Use assigner so that we handle creation of the ColcoatedTask from LegacyTasks gracefully.
+    if JudgeTeam.for_judge(assigned_by)
+      Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_JUDGE.to_h
+    else
+      Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h
     end
-
-    core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
-    core_actions.unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
-
-    if action == "translation" && appeal.is_a?(Appeal)
-      return ama_translation_actions(core_actions)
-    end
-
-    core_actions
   end
 
   def actions_available?(_user)
@@ -104,40 +115,17 @@ class ColocatedTask < Task
 
   def create_twin_of_type(params)
     task_type = ColocatedTask.find_subclass_by_action(params[:action])
-    task_type.create!(
+    ColocatedTask.create!(
       appeal: appeal,
       parent: parent,
       assigned_by: assigned_by,
       instructions: params[:instructions],
-      assigned_to: Colocated.singleton
+      assigned_to: task_type&.default_assignee,
+      type: task_type
     )
   end
 
   private
-
-  def ama_translation_actions(core_actions)
-    core_actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
-    core_actions
-  end
-
-  def legacy_translation_or_hearing_actions(actions)
-    return legacy_schedule_hearing_actions(actions) if action == "schedule_hearing"
-
-    legacy_translation_actions(actions)
-  end
-
-  def legacy_schedule_hearing_actions(actions)
-    task_actions = Constants.TASK_ACTIONS
-    actions = actions.reject { |action| action[:label] == task_actions.ASSIGN_TO_PRIVACY_TEAM.to_h[:label] }
-    actions.unshift(task_actions.SCHEDULE_HEARING_SEND_TO_TEAM.to_h)
-    actions
-  end
-
-  def legacy_translation_actions(actions)
-    send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
-    send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants.CO_LOCATED_ADMIN_ACTIONS.translation)
-    actions.unshift(send_to_team)
-  end
 
   def create_and_auto_assign_child_task(_options = {})
     super(appeal: appeal)
@@ -159,47 +147,21 @@ class ColocatedTask < Task
   end
 
   def vacols_location
-    # Break this out into respective subclasses once ColocatedTasks are migrated
-    # https://github.com/department-of-veterans-affairs/caseflow/pull/11295#issuecomment-509659069
-    if action == "schedule_hearing" || type == ScheduleHearingColocatedTask.name
-      schedule_hearing_vacols_location
-    elsif action == "translation" || type == TranslationColocatedTask.name
-      translation_vacols_location
-    else
-      assigned_by.vacols_uniq_id
-    end
-  end
-
-  def schedule_hearing_vacols_location
-    # Return to attorney if the task is cancelled. For instance, if the VLJ support staff sees that the hearing was
-    # actually held.
-    return assigned_by.vacols_uniq_id if children.all? { |child| child.status == Constants.TASK_STATUSES.cancelled }
-
-    # Schedule hearing with a task (instead of changing Location in VACOLS, the old way)
-    ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)
-    LegacyAppeal::LOCATION_CODES[:caseflow]
-  end
-
-  def translation_vacols_location
-    LegacyAppeal::LOCATION_CODES[:translation]
+    assigned_by.vacols_uniq_id
   end
 
   def all_tasks_closed_for_appeal?
     appeal.tasks.open.select { |task| task.is_a?(ColocatedTask) }.none?
   end
 
-  def on_hold_duration_is_set
-    if saved_change_to_status? && on_hold? && !on_hold_duration && assigned_to.is_a?(User)
-      errors.add(:on_hold_duration, "has to be specified")
-    end
-  end
+  # GenericTask.verify_org_task_unique already performs this check
+  def verify_org_task_unique; end
 
   def task_is_unique
     ColocatedTask.where(
       appeal_id: appeal_id,
       assigned_to_id: assigned_to_id,
       assigned_to_type: assigned_to_type,
-      action: action,
       type: type,
       parent_id: parent_id,
       instructions: instructions
@@ -215,10 +177,9 @@ class ColocatedTask < Task
     end
   end
 
-  def valid_action_or_type
-    unless Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s).include?(action) ||
-           ColocatedTask.subclasses.include?(self.class)
-      errors[:base] << "Action is not included in the list"
+  def valid_type
+    unless ColocatedTask.subclasses.include?(self.class)
+      errors[:base] << "Colocated subtype is not included in the list"
     end
   end
 end
@@ -237,6 +198,7 @@ require_dependency "new_rep_arguments_colocated_task"
 require_dependency "pending_scanning_vbms_colocated_task"
 require_dependency "address_verification_colocated_task"
 require_dependency "schedule_hearing_colocated_task"
+require_dependency "stayed_appeal_colocated_task"
 require_dependency "missing_records_colocated_task"
 require_dependency "translation_colocated_task"
 require_dependency "other_colocated_task"

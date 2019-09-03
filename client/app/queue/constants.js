@@ -93,8 +93,7 @@ export const paddingLeft = (padding) => css({ paddingLeft: `${padding}rem` });
 export const CATEGORIES = {
   CASE_DETAIL: 'Appeal Details',
   QUEUE_TABLE: 'Queue Table',
-  QUEUE_TASK: 'Queue Task',
-  EVALUATE_DECISION: 'Evaluate Decision'
+  QUEUE_TASK: 'Queue Task'
 };
 
 export const TASK_ACTIONS = {
@@ -162,16 +161,8 @@ export const PAGE_TITLES = {
   REMANDS: {
     JUDGE: 'Review Remand Reasons',
     ATTORNEY: 'Select Remand Reasons'
-  },
-  EVALUATE: 'Evaluate Decision'
+  }
 };
 
 export const CUSTOM_HOLD_DURATION_TEXT = 'Custom';
 export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, CUSTOM_HOLD_DURATION_TEXT];
-
-export const DOCKET_NAME_FILTERS = {
-  direct_review: 'Direct Review',
-  legacy: 'Legacy',
-  hearing: 'Hearing',
-  evidence_submission: 'Evidence'
-};

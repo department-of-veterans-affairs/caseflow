@@ -82,10 +82,6 @@ class GenericTask < Task
     appeal.tasks.closed.order(closed_at: :desc).where(type: HearingTask.name).last
   end
 
-  def task_is_assigned_to_organization_user_administers?(user)
-    task_is_assigned_to_users_organization?(user) && user.administered_teams.include?(assigned_to)
-  end
-
   private
 
   def available_hearing_admin_actions(user)
@@ -110,10 +106,6 @@ class GenericTask < Task
     ]
   end
 
-  def task_is_assigned_to_users_organization?(user)
-    assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
-  end
-
   class << self
     def create_from_params(params, user)
       parent_task = Task.find(params[:parent_id])
@@ -134,7 +126,7 @@ class GenericTask < Task
         appeal: parent.appeal,
         assigned_by_id: child_assigned_by_id(parent, current_user),
         parent_id: parent.id,
-        assigned_to: child_task_assignee(parent, params),
+        assigned_to: params[:assigned_to] || child_task_assignee(parent, params),
         instructions: params[:instructions]
       )
     end

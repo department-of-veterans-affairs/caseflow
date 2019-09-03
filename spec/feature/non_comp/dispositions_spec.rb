@@ -1,18 +1,10 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-feature "NonComp Dispositions Task Page" do
+feature "NonComp Dispositions Task Page", :postgres do
   include IntakeHelpers
-
-  before do
-    FeatureToggle.enable!(:decision_reviews)
-  end
-
-  after do
-    FeatureToggle.disable!(:decision_reviews)
-  end
 
   def fill_in_disposition(num, disposition, description = nil)
     if description

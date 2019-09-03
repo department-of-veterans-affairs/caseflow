@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
 class FakeTask < Dispatch::Task
@@ -9,7 +10,7 @@ class FakeTask < Dispatch::Task
   end
 end
 
-describe UserQuota do
+describe UserQuota, :postgres do
   let(:team_quota) { TeamQuota.create!(date: Time.zone.today, task_type: FakeTask, user_count: 1) }
   let(:user) { Generators::User.create(full_name: "Sammy Davis Jr") }
   let(:other_user) { User.create(station_id: "ABC", css_id: "JANEY", full_name: "Jane Doe") }

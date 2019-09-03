@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import _ from 'lodash';
 import { css } from 'glamor';
@@ -103,40 +104,23 @@ export const LegacyAodDropdown = ({ hearing, readOnly, update }) => {
   />;
 };
 
-const isAodGrantableByThisUser = (aodMotion, userId) => {
-  // judges can create a new AOD motion if one is not set or was previously denied
-  if (!aodMotion) {
-    return true;
-  } else if (!aodMotion.granted) {
-    return true;
-  }
-
-  // if AOD was already granted, judge does not need to create a new motion,
-  // but can overwrite their old motion
-  return aodMotion.granted && (aodMotion.userId === userId || _.isNil(aodMotion.userId));
-};
-
 export const AmaAodDropdown = ({ hearing, readOnly, updateAodMotion, userId }) => {
   const aodMotion = hearing.advanceOnDocketMotion;
-  const aodGrantableByThisUser = isAodGrantableByThisUser(aodMotion, userId);
 
   return <SearchableDropdown
     label="AOD"
     strongLabel
-    readOnly={readOnly || !aodGrantableByThisUser}
+    readOnly={readOnly}
     name={`${hearing.externalId}-aod`}
     options={[{ value: true,
       label: 'Granted' },
     { value: false,
-      label: 'Denied' },
-    { value: null,
-      label: 'None' }]}
+      label: 'Denied' }]}
     value={aodMotion ? aodMotion.granted : null}
     searchable={false}
     onChange={(option) => {
       const granted = (option || {}).value;
-      // reset advanceOnDocketMotion if null value
-      const value = granted === null ? null : { granted,
+      const value = { granted,
         userId };
 
       updateAodMotion(value);

@@ -3,10 +3,9 @@
 FactoryBot.define do
   factory :task do
     assigned_at { rand(30..35).days.ago }
-    assigned_by { create(:user) }
-    assigned_to { create(:user) }
+    association :assigned_by, factory: :user
+    association :assigned_to, factory: :user
     appeal { create(:legacy_appeal, vacols_case: create(:case)) }
-    action { nil }
     type { Task.name }
 
     trait :assigned do
@@ -18,6 +17,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.in_progress)
+        task.children.update_all(status: Constants.TASK_STATUSES.in_progress)
       end
     end
 
@@ -28,6 +28,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.on_hold)
+        task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
       end
     end
 
@@ -38,6 +39,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.on_hold)
+        task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
       end
     end
 
@@ -49,6 +51,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.completed)
+        task.children.update_all(status: Constants.TASK_STATUSES.completed)
       end
     end
 
@@ -59,6 +62,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.completed, closed_at: 3.weeks.ago)
+        task.children.update_all(status: Constants.TASK_STATUSES.completed, closed_at: 3.weeks.ago)
       end
     end
 
@@ -67,12 +71,13 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.cancelled)
+        task.children.update_all(status: Constants.TASK_STATUSES.cancelled)
       end
     end
 
     factory :root_task, class: RootTask do
       type { RootTask.name }
-      appeal { create(:appeal) }
+      appeal
       assigned_by { nil }
       assigned_to { Bva.singleton }
     end
@@ -85,6 +90,7 @@ FactoryBot.define do
 
       after(:create) do |task|
         task.update(status: Constants.TASK_STATUSES.on_hold)
+        task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
       end
     end
 
@@ -103,6 +109,11 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
+    factory :foia_task, class: FoiaTask do
+      appeal
+      type { FoiaTask.name }
+    end
+
     factory :timed_hold_task, class: TimedHoldTask do
       type { TimedHoldTask.name }
       appeal { create(:appeal) }
@@ -111,10 +122,11 @@ FactoryBot.define do
       parent { create(:generic_task) }
     end
 
-    factory :colocated_task, traits: [Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym] do
+    factory :colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
       parent { create(:generic_task) }
+      assigned_to { Colocated.singleton }
 
-      factory :ama_colocated_task, traits: [Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym] do
+      factory :ama_colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
         appeal { create(:appeal) }
       end
 
@@ -169,6 +181,7 @@ FactoryBot.define do
       trait :missing_hearing_transcripts do
         initialize_with { MissingHearingTranscriptsColocatedTask.new(attributes) }
         type { MissingHearingTranscriptsColocatedTask.name }
+        assigned_to { MissingHearingTranscriptsColocatedTask.default_assignee }
         instructions do
           ["Good evening, could you please return this to the hearing " \
           "branch as the hearing was just held and the transcripts are " \
@@ -185,6 +198,7 @@ FactoryBot.define do
       trait :foia do
         initialize_with { FoiaColocatedTask.new(attributes) }
         type { FoiaColocatedTask.name }
+        assigned_to { FoiaColocatedTask.default_assignee }
         instructions do
           ["The Veteran's representative submitted FOIA request in December of last year, which " \
           "was acknowledged the same month. To date, there has been no response provided. " \
@@ -242,6 +256,7 @@ FactoryBot.define do
       trait :schedule_hearing do
         initialize_with { ScheduleHearingColocatedTask.new(attributes) }
         type { ScheduleHearingColocatedTask.name }
+        assigned_to { ScheduleHearingColocatedTask.default_assignee }
         instructions do
           ["The Veteran has requested a Board hearing as to all appealed issues. " \
           "To date, no Board hearing has been scheduled."]
@@ -260,11 +275,18 @@ FactoryBot.define do
       trait :translation do
         initialize_with { TranslationColocatedTask.new(attributes) }
         type { TranslationColocatedTask.name }
+        assigned_to { TranslationColocatedTask.default_assignee }
         instructions do
           ["There are multiple document files that still require translation from " \
           "Spanish to English. The files in Spanish have been marked in Caseflow. " \
           "Please have these documents translated. Thank you!"]
         end
+      end
+
+      trait :stayed_appeal do
+        initialize_with { StayedAppealColocatedTask.new(attributes) }
+        type { StayedAppealColocatedTask.name }
+        instructions { ["Appeal stayed because Veteran fulls under Blue Water Navy Veteran policy."] }
       end
 
       trait :other do
@@ -330,6 +352,7 @@ FactoryBot.define do
       type { HearingTask.name }
       assigned_to { Bva.singleton }
       appeal { create(:appeal) }
+      parent { appeal.root_task || create(:root_task, appeal: appeal) }
     end
 
     factory :schedule_hearing_task, class: ScheduleHearingTask do
@@ -337,6 +360,20 @@ FactoryBot.define do
       appeal { create(:appeal) }
       assigned_to { Bva.singleton }
       parent { create(:hearing_task, appeal: appeal) }
+    end
+
+    factory :appeal_withdrawal_mail_task, class: AppealWithdrawalMailTask do
+      type { AppealWithdrawalMailTask.name }
+      appeal { create(:appeal) }
+      assigned_to { MailTeam.singleton }
+      parent { create(:root_task, appeal: appeal) }
+    end
+
+    factory :appeal_withdrawal_bva_task, class: AppealWithdrawalMailTask do
+      type { AppealWithdrawalMailTask.name }
+      appeal { create(:appeal) }
+      assigned_to { BvaIntake.singleton }
+      parent { create(:appeal_withdrawal_mail_task, appeal: appeal) }
     end
 
     factory :no_show_hearing_task, class: NoShowHearingTask do
@@ -349,7 +386,7 @@ FactoryBot.define do
     factory :evidence_submission_window_task, class: EvidenceSubmissionWindowTask do
       type { EvidenceSubmissionWindowTask.name }
       appeal { create(:appeal) }
-      assigned_to { HearingsManagement.singleton }
+      assigned_to { MailTeam.singleton }
       parent { create(:assign_hearing_disposition_task, appeal: appeal) }
     end
 
@@ -461,6 +498,34 @@ FactoryBot.define do
       appeal { create(:appeal) }
       parent { create(:root_task) }
       assigned_by { nil }
+    end
+
+    factory :aod_motion_mail_task, class: AodMotionMailTask do
+      type { AodMotionMailTask.name }
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+      assigned_to { MailTeam.singleton }
+      assigned_by { nil }
+    end
+
+    factory :congressional_interest_mail_task, class: CongressionalInterestMailTask do
+      type { CongressionalInterestMailTask.name }
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+      assigned_to { MailTeam.singleton }
+      assigned_by { nil }
+    end
+
+    factory :vacate_motion_mail_task, class: VacateMotionMailTask do
+      type { VacateMotionMailTask.name }
+      appeal
+      association :parent, factory: :root_task
+    end
+
+    factory :judge_address_motion_to_vacate_task, class: JudgeAddressMotionToVacateTask do
+      type { JudgeAddressMotionToVacateTask.name }
+      appeal
+      association :parent, factory: :vacate_motion_mail_task
     end
   end
 end

@@ -1,18 +1,19 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe AssignHearingDispositionTask do
+describe AssignHearingDispositionTask, :all_dbs do
   describe "#update_from_params for ama appeal" do
-    let(:appeal) { FactoryBot.create(:appeal) }
-    let!(:hearing) { FactoryBot.create(:hearing, appeal: appeal) }
-    let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+    let(:appeal) { create(:appeal) }
+    let!(:hearing) { create(:hearing, appeal: appeal) }
+    let!(:root_task) { create(:root_task, appeal: appeal) }
+    let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
     let!(:disposition_task) do
       AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, hearing_task, hearing)
     end
     let(:after_disposition_update) { nil }
-    let(:user) { FactoryBot.create(:user) }
+    let(:user) { create(:user) }
     let(:params) { nil }
 
     subject { disposition_task.update_from_params(params, user) }
@@ -130,9 +131,9 @@ describe AssignHearingDispositionTask do
             subject
 
             expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
-            expect(AssignHearingDispositionTask.first.instructions).to eq [instructions_text]
+            expect(AssignHearingDispositionTask.first.instructions).to include(instructions_text)
             expect(ScheduleHearingTask.count).to eq 1
-            expect(ScheduleHearingTask.first.instructions).to eq [instructions_text]
+            expect(ScheduleHearingTask.first.instructions).to include(instructions_text)
           end
         end
       end
@@ -192,14 +193,14 @@ describe AssignHearingDispositionTask do
   end
 
   describe ".create_assign_hearing_disposition_task!" do
-    let(:appeal) { FactoryBot.create(:appeal) }
+    let(:appeal) { create(:appeal) }
     let(:parent) { nil }
-    let!(:hearing) { FactoryBot.create(:hearing, appeal: appeal) }
+    let!(:hearing) { create(:hearing, appeal: appeal) }
 
     subject { described_class.create_assign_hearing_disposition_task!(appeal, parent, hearing) }
 
     context "parent is a HearingTask" do
-      let(:parent) { FactoryBot.create(:hearing_task, appeal: appeal) }
+      let(:parent) { create(:hearing_task, appeal: appeal) }
 
       it "creates a AssignHearingDispositionTask and a HearingTaskAssociation" do
         expect(AssignHearingDispositionTask.all.count).to eq 0
@@ -218,7 +219,7 @@ describe AssignHearingDispositionTask do
     end
 
     context "parent is a RootTask" do
-      let(:parent) { FactoryBot.create(:root_task, appeal: appeal) }
+      let(:parent) { create(:root_task, appeal: appeal) }
 
       it "should throw an error" do
         expect { subject }.to raise_error(Caseflow::Error::InvalidParentTask)
@@ -228,14 +229,15 @@ describe AssignHearingDispositionTask do
 
   context "disposition updates" do
     let(:disposition) { nil }
-    let(:appeal) { FactoryBot.create(:appeal) }
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+    let(:appeal) { create(:appeal) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
+    let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
+    let(:hearing_task) { create(:hearing_task, appeal: appeal, parent: distribution_task) }
     let(:evidence_window_waived) { nil }
     let(:hearing_scheduled_for) { appeal.receipt_date + 15.days }
     let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_scheduled_for) }
     let(:hearing) do
-      FactoryBot.create(
+      create(
         :hearing,
         appeal: appeal,
         disposition: disposition,
@@ -244,24 +246,22 @@ describe AssignHearingDispositionTask do
       )
     end
     let!(:hearing_task_association) do
-      FactoryBot.create(
+      create(
         :hearing_task_association,
         hearing: hearing,
         hearing_task: hearing_task
       )
     end
-
     let!(:disposition_task) do
-      FactoryBot.create(
+      create(
         :assign_hearing_disposition_task,
         :in_progress,
         parent: hearing_task,
         appeal: appeal
       )
     end
-
     let!(:schedule_hearing_task) do
-      FactoryBot.create(
+      create(
         :schedule_hearing_task,
         :completed,
         parent: hearing_task,
@@ -277,8 +277,8 @@ describe AssignHearingDispositionTask do
           let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
 
           it "cancels the disposition task and its parent hearing task" do
-            expect(disposition_task.cancelled?).to be_falsey
-            expect(hearing_task.on_hold?).to be_truthy
+            expect(disposition_task.reload.cancelled?).to be_falsey
+            expect(hearing_task.reload.on_hold?).to be_truthy
 
             expect { subject }.to_not raise_error
 
@@ -287,6 +287,20 @@ describe AssignHearingDispositionTask do
             expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq 0
             expect(EvidenceSubmissionWindowTask.first.appeal).to eq disposition_task.appeal
             expect(EvidenceSubmissionWindowTask.first.parent).to eq disposition_task.hearing_task.parent
+          end
+
+          context "the appeal has an existing EvidenceSubmissionWindowTask" do
+            let!(:evidence_submission_window_task) do
+              create(:evidence_submission_window_task, appeal: appeal, parent: distribution_task)
+            end
+
+            it "does not raise an error" do
+              expect { subject }.to_not raise_error
+            end
+
+            it "does not attempt to create a new EvidenceSubmissionWindowTask" do
+              expect { subject }.to_not change(EvidenceSubmissionWindowTask, :count)
+            end
           end
 
           context "the appeal has a VSO" do
@@ -337,7 +351,7 @@ describe AssignHearingDispositionTask do
       end
 
       context "the appeal is a legacy appeal" do
-        let(:vacols_case) { FactoryBot.create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]) }
+        let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]) }
         let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
         let(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: disposition) }
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
@@ -459,7 +473,7 @@ describe AssignHearingDispositionTask do
               expect { subject }.to_not raise_error
 
               expect(disposition_task.children.count).to eq 2
-              expect(disposition_task.children.pluck(:type)).to match_array [
+              expect(disposition_task.reload.children.pluck(:type)).to match_array [
                 TranscriptionTask.name, EvidenceSubmissionWindowTask.name
               ]
               transcription_task = disposition_task.children.find_by(type: TranscriptionTask.name)
@@ -507,7 +521,7 @@ describe AssignHearingDispositionTask do
       end
 
       context "the appeal is a legacy appeal" do
-        let(:vacols_case) { FactoryBot.create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]) }
+        let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]) }
         let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
         let(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: disposition) }
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }

@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe RequestIssue do
+describe RequestIssue, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
 
   let(:contested_rating_issue_reference_id) { "abc123" }
+  let(:contested_rating_decision_reference_id) { nil }
   let(:profile_date) { Time.zone.now.to_s }
   let(:contention_reference_id) { "1234" }
   let(:nonrating_contention_reference_id) { "5678" }
@@ -41,6 +43,7 @@ describe RequestIssue do
       promulgation_date: rating_promulgation_date,
       profile_date: (review.receipt_date - 50.days).in_time_zone,
       issues: issues,
+      decisions: decisions,
       associated_claims: associated_claims
     )
   end
@@ -48,6 +51,7 @@ describe RequestIssue do
   let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
   let!(:decision_sync_processed_at) { nil }
   let!(:end_product_establishment) { nil }
+
   let(:issues) do
     [
       {
@@ -59,10 +63,21 @@ describe RequestIssue do
     ]
   end
 
+  let(:decisions) do
+    [
+      {
+        diagnostic_text: "right knee",
+        disability_id: contested_rating_decision_reference_id,
+        original_denial_date: rating_promulgation_date - 7.days
+      }
+    ]
+  end
+
   let(:rating_request_issue_attrs) do
     {
       decision_review: review,
       contested_rating_issue_reference_id: contested_rating_issue_reference_id,
+      contested_rating_decision_reference_id: contested_rating_decision_reference_id,
       contested_rating_issue_profile_date: profile_date,
       contested_issue_description: "a rating request issue",
       ramp_claim_id: ramp_claim_id,
@@ -830,6 +845,22 @@ describe RequestIssue do
     end
   end
 
+  context "#corrected?" do
+    let(:request_issue) { create(:request_issue, corrected_by_request_issue_id: corrected_by_id) }
+
+    subject { request_issue.corrected? }
+
+    context "when corrected" do
+      let(:corrected_by_id) { create(:request_issue).id }
+      it { is_expected.to eq true }
+    end
+
+    context "when not corrected" do
+      let(:corrected_by_id) { nil }
+      it { is_expected.to eq false }
+    end
+  end
+
   context "#ui_hash" do
     context "when there is a previous request issue in active review" do
       let!(:ratings) do
@@ -1036,9 +1067,23 @@ describe RequestIssue do
   end
 
   context "#contested_rating_issue" do
-    it "returns the rating issue hash that prompted the RequestIssue" do
+    it "returns the RatingIssue that prompted the RequestIssue" do
       expect(rating_request_issue.contested_rating_issue.reference_id).to eq contested_rating_issue_reference_id
       expect(rating_request_issue.contested_rating_issue.decision_text).to eq "Left knee granted"
+    end
+  end
+
+  context "#contested_rating_decision" do
+    before { FeatureToggle.enable!(:contestable_rating_decisions) }
+    after { FeatureToggle.disable!(:contestable_rating_decisions) }
+
+    let(:contested_rating_issue_reference_id) { nil }
+    let(:contested_rating_decision_reference_id) { "some-disability-id" }
+
+    it "returns the RatingDecision that prompted the RequestIssue" do
+      expect(rating_request_issue.contested_rating_decision.reference_id).to eq contested_rating_decision_reference_id
+      expect(rating_request_issue.contested_rating_issue).to be_nil
+      expect(rating_request_issue.contested_rating_decision.decision_text).to match(/right knee/)
     end
   end
 
@@ -1119,6 +1164,16 @@ describe RequestIssue do
 
     context "when there is an associated rating issue" do
       let(:contested_rating_issue_reference_id) { "123" }
+      it { is_expected.to be true }
+
+      it "nonrating? is false" do
+        expect(nonrating).to be(false)
+      end
+    end
+
+    context "where there is an associated rating decision" do
+      let(:contested_rating_decision_reference_id) { "123" }
+
       it { is_expected.to be true }
 
       it "nonrating? is false" do
@@ -1274,6 +1329,16 @@ describe RequestIssue do
 
       rating_request_issue.save!
       expect(request_issue_in_progress.duplicate_but_ineligible).to eq([rating_request_issue])
+    end
+
+    context "when rating issue is missing associated_rating" do
+      let(:duplicate_reference_id) { nil }
+      let(:contested_rating_issue_reference_id) { nil }
+
+      it "does not mark issue as duplicate of another issue missing an associated rating" do
+        rating_request_issue.validate_eligibility!
+        expect(rating_request_issue.ineligible_reason).to be_nil
+      end
     end
 
     it "flags duplicate appeal as in progress" do
@@ -1578,6 +1643,30 @@ describe RequestIssue do
         expect(rating_request_issue.closed_status).to eq("withdrawn")
         expect(legacy_issue_optin.reload.rollback_created_at).to be_nil
       end
+    end
+  end
+
+  context "#editable?" do
+    let(:ep_code) { "030HLRR" }
+    let(:end_product_establishment) do
+      create(:end_product_establishment,
+             :active,
+             veteran_file_number: veteran.file_number,
+             established_at: review.receipt_date - 100.days,
+             code: ep_code)
+    end
+    subject { rating_request_issue.editable? }
+
+    context "when rating exists" do
+      let(:associated_claims) do
+        [{ clm_id: end_product_establishment.reference_id, bnft_clm_tc: ep_code }]
+      end
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "when rating does not exist" do
+      it { is_expected.to eq(true) }
     end
   end
 

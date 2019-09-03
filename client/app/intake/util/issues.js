@@ -94,7 +94,8 @@ const contestableIssueIndexByRequestIssue = (contestableIssuesByDate, requestIss
   const foundContestableIssue = _.reduce(contestableIssuesByDate, (foundIssue, contestableIssues) => {
     return foundIssue || _.find(contestableIssues, {
       decisionIssueId: requestIssue.contested_decision_issue_id,
-      ratingIssueReferenceId: requestIssue.rating_issue_reference_id
+      ratingIssueReferenceId: requestIssue.rating_issue_reference_id,
+      ratingDecisionReferenceId: requestIssue.rating_decision_reference_id
     });
   }, null);
 
@@ -109,6 +110,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
   }
 
   return requestIssues.map((issue) => {
+
     // Nonrating issues
     if (issue.category) {
       return {
@@ -130,7 +132,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         vacolsIssue: issue.vacols_issue,
         endProductCleared: issue.end_product_cleared,
         endProductCode: issue.end_product_code,
-        withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
+        withdrawalDate: formatDateStrUtc(issue.withdrawal_date),
+        editable: issue.editable
       };
     }
 
@@ -147,7 +150,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         vacolsIssue: issue.vacols_issue,
         endProductCleared: issue.end_product_cleared,
         endProductCode: issue.end_product_code,
-        withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
+        withdrawalDate: formatDateStrUtc(issue.withdrawal_date),
+        editable: issue.editable
       };
     }
 
@@ -159,6 +163,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
       isRating: true,
       ratingIssueReferenceId: issue.rating_issue_reference_id,
+      ratingDecisionReferenceId: issue.rating_decision_reference_id,
       ratingIssueProfileDate: issueDate.toISOString(),
       approxDecisionDate: issue.approx_decision_date,
       decisionIssueId: issue.contested_decision_issue_id,
@@ -176,7 +181,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       vacolsIssue: issue.vacols_issue,
       endProductCleared: issue.end_product_cleared,
       endProductCode: issue.end_product_code,
-      withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
+      withdrawalDate: formatDateStrUtc(issue.withdrawal_date),
+      editable: issue.editable
     };
   });
 };
@@ -228,6 +234,7 @@ const formatRatingRequestIssues = (state) => {
       return {
         request_issue_id: issue.id,
         rating_issue_reference_id: issue.ratingIssueReferenceId,
+        rating_decision_reference_id: issue.ratingDecisionReferenceId,
         decision_date: issue.decisionDate,
         decision_text: issue.description,
         rating_issue_profile_date: issue.ratingIssueProfileDate,
@@ -350,7 +357,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         withdrawalPending: issue.withdrawalPending,
         withdrawalDate: issue.withdrawalDate,
         endProductCleared: issue.endProductCleared,
-        correctionType: issue.correctionType
+        correctionType: issue.correctionType,
+        editable: issue.editable
       };
     } else if (issue.isRating) {
       if (!issue.decisionDate && !issue.approxDecisionDate) {
@@ -383,7 +391,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         withdrawalDate: issue.withdrawalDate,
         endProductCleared: issue.endProductCleared,
         editedDescription: issue.editedDescription,
-        correctionType: issue.correctionType
+        correctionType: issue.correctionType,
+        editable: issue.editable
       };
     }
 
@@ -411,7 +420,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       endProductCleared: issue.endProductCleared,
       category: issue.category,
       editedDescription: issue.editedDescription,
-      correctionType: issue.correctionType
+      correctionType: issue.correctionType,
+      editable: issue.editable
     };
   });
 };

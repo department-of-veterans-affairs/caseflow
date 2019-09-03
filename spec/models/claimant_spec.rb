@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe Claimant do
+describe Claimant, :postgres do
   let(:name) { nil }
   let(:relationship_to_veteran) { nil }
   let(:claimant_info) do
@@ -38,7 +39,7 @@ describe Claimant do
   end
 
   context "lazy loading instance attributes from BGS" do
-    let(:claimant) { FactoryBot.create(:claimant) }
+    let(:claimant) { create(:claimant) }
 
     context "when claimant exists in BGS" do
       let(:first_name) { "HARRY" }
@@ -98,11 +99,11 @@ describe Claimant do
     end
   end
 
-  context "#advanced_on_docket" do
+  context "#advanced_on_docket?" do
     context "when claimant is over 75 years old" do
       it "returns true" do
         claimant = create(:claimant, :advanced_on_docket_due_to_age)
-        expect(claimant.advanced_on_docket(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(true)
       end
     end
 
@@ -111,14 +112,14 @@ describe Claimant do
         claimant = create(:claimant)
         create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true)
 
-        expect(claimant.advanced_on_docket(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(true)
       end
     end
 
     context "when claimant is younger than 75 years old and has no motion granted" do
       it "returns false" do
         claimant = create(:claimant)
-        expect(claimant.advanced_on_docket(1.year.ago)).to eq(false)
+        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(false)
       end
     end
   end

@@ -13,7 +13,9 @@ class WorkQueue::TaskSerializer
   attribute :started_at
   attribute :created_at
   attribute :closed_at
-  attribute :instructions
+  attribute :instructions do |object|
+    object.instructions.presence || object.default_instructions.presence || []
+  end
   attribute :appeal_type
   attribute :timeline_title
   attribute :hide_from_queue_table_view
@@ -84,7 +86,7 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :aod do |object|
-    object.appeal.try(:advanced_on_docket)
+    object.appeal.try(:advanced_on_docket?)
   end
 
   attribute :issue_count do |object|

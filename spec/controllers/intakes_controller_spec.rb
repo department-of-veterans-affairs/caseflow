@@ -1,20 +1,16 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.describe IntakesController do
+RSpec.describe IntakesController, :postgres do
   before do
     Fakes::Initializer.load!
     User.authenticate!(roles: ["Mail Intake"])
-    FeatureToggle.enable!(:intake_reserved_file_number)
 
     allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
     allow_any_instance_of(Veteran).to receive(:bgs).and_return(bgs)
     allow(bgs).to receive(:fetch_veteran_info).and_call_original
-  end
-
-  after do
-    FeatureToggle.disable!(:intake_reserved_file_number)
   end
 
   let(:bgs) { BGSService.new }
@@ -71,7 +67,10 @@ RSpec.describe IntakesController do
     context "veteran in BGS with reserved file number" do
       let(:file_number) { "123456789" }
       let!(:veteran) {} # no-op
-      before { Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica") }
+      before do
+        Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica")
+        allow(Rails).to receive(:deploy_env?).and_return(true)
+      end
 
       it "should search by reserved Veteran file number" do
         expect(Veteran.find_by_file_number_or_ssn(file_number)).to be_nil

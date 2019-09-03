@@ -14,16 +14,19 @@ class Veteran < ApplicationRecord
   bgs_attr_accessor :ptcpnt_id, :sex, :address_line1, :address_line2,
                     :address_line3, :city, :state, :country, :zip_code,
                     :military_postal_type_code, :military_post_office_type_code,
-                    :service, :date_of_birth, :date_of_death
+                    :service, :date_of_birth, :date_of_death, :email_address
 
   validates :first_name, :last_name, presence: true, on: :bgs
   validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
+
   with_options if: :alive? do
     validates :address_line1, :country, presence: true, on: :bgs
     validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
     validates :state, presence: true, if: :state_is_required?, on: :bgs
     validates :city, presence: true, unless: :military_address?, on: :bgs
   end
+
+  delegate :full_address, to: :address
 
   CHARACTER_OF_SERVICE_CODES = {
     "HON" => "Honorable",
@@ -43,15 +46,19 @@ class Veteran < ApplicationRecord
   BENEFIT_TYPE_CODE_LIVE = "1"
   BENEFIT_TYPE_CODE_DEATH = "2"
 
-  CACHED_BGS_ATTRIBUTES = [:first_name, :last_name, :middle_name, :name_suffix, :ssn].freeze
+  # key is local attribute name; value is corresponding bgs attribute name
+  CACHED_BGS_ATTRIBUTES = {
+    first_name: :first_name,
+    last_name: :last_name,
+    middle_name: :middle_name,
+    name_suffix: :name_suffix,
+    ssn: :ssn,
+    participant_id: :ptcpnt_id
+  }.freeze
 
   # TODO: get middle initial from BGS
   def name
     FullName.new(first_name, "", last_name)
-  end
-
-  def full_address
-    "#{address_line1}#{address_line2 ? " #{address_line2}" : ''}, #{city} #{state} #{zip_code}"
   end
 
   def country_requires_zip?
@@ -169,16 +176,27 @@ class Veteran < ApplicationRecord
 
   def accessible_appeals_for_poa(poa_participant_ids)
     appeals = Appeal.where(veteran_file_number: file_number).includes(:claimants)
+    legacy_appeals = LegacyAppeal.fetch_appeals_by_file_number(file_number)
 
-    claimants_participant_ids = appeals.map { |appeal| appeal.claimants.pluck(:participant_id) }.flatten
+    poas = poas_for_appeals(appeals, legacy_appeals)
 
-    poas = bgs.fetch_poas_by_participant_ids(claimants_participant_ids)
-
-    appeals.select do |appeal|
-      appeal.claimants.any? do |claimant|
-        poa_participant_ids.include?(poas[claimant[:participant_id]][:participant_id])
+    [
+      appeals.select do |appeal|
+        appeal.claimants.any? do |claimant|
+          poa_participant_ids.include?(poas[claimant[:participant_id]][:participant_id])
+        end
+      end,
+      legacy_appeals.select do |legacy_appeal|
+        poa_participant_ids.include?(poas[legacy_appeal.veteran.participant_id][:participant_id])
       end
-    end
+    ].flatten
+  end
+
+  def poas_for_appeals(appeals, legacy_appeals)
+    claimants_participant_ids = appeals.map { |appeal| appeal.claimants.pluck(:participant_id) }.flatten
+      .concat(legacy_appeals.map { |legacy_appeal| legacy_appeal.veteran.participant_id }.flatten)
+
+    bgs.fetch_poas_by_participant_ids(claimants_participant_ids.uniq)
   end
 
   def participant_id
@@ -189,29 +207,37 @@ class Veteran < ApplicationRecord
     super || (bgs_record.is_a?(Hash) ? bgs_record[:ssn] : nil)
   end
 
-  def validate_address
-    VADotGovService.validate_address(
-      address_line1: address_line1,
-      address_line2: address_line2,
-      address_line3: address_line3,
+  def address
+    @address ||= Address.new(
+      address_line_1: address_line1,
+      address_line_2: address_line2,
+      address_line_3: address_line3,
       city: city,
       state: state,
       country: country,
-      zip_code: zip_code
+      zip: zip_code
     )
+  end
+
+  def validate_address
+    response = VADotGovService.validate_address(address)
+
+    return response.data if response.success?
+
+    raise response.error # rubocop:disable Style/SignalException
   end
 
   def stale_attributes?
     return false unless accessible? && bgs_record.is_a?(Hash)
 
-    is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil?)
-    is_stale ||= CACHED_BGS_ATTRIBUTES.any? { |name| self[name] != bgs_record[name] }
+    is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil?)
+    is_stale ||= CACHED_BGS_ATTRIBUTES.any? { |local_attr, bgs_attr| self[local_attr] != bgs_record[bgs_attr] }
     is_stale
   end
 
   def update_cached_attributes!
-    CACHED_BGS_ATTRIBUTES.each do |attr|
-      self[attr] = bgs_record[attr]
+    CACHED_BGS_ATTRIBUTES.each do |local_attr, bgs_attr|
+      self[local_attr] = bgs_record[bgs_attr]
     end
     save!
   end

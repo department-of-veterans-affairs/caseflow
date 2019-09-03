@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190724201133) do
+ActiveRecord::Schema.define(version: 20190827142452) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -158,9 +158,15 @@ ActiveRecord::Schema.define(version: 20190724201133) do
   create_table "cached_appeal_attributes", id: false, force: :cascade do |t|
     t.integer "appeal_id"
     t.string "appeal_type"
+    t.string "assignee_label", comment: "Who is currently most responsible for the appeal"
+    t.string "case_type", comment: "The case type, i.e. original, post remand, CAVC remand, etc"
+    t.string "closest_regional_office_city", comment: "Closest regional office to the veteran"
     t.string "docket_number"
     t.string "docket_type"
+    t.boolean "is_aod", comment: "Whether the case is Advanced on Docket"
+    t.integer "issue_count", comment: "Number of issues on the appeal."
     t.string "vacols_id"
+    t.string "veteran_name", comment: "'LastName, FirstName' of the veteran"
     t.index ["appeal_id", "appeal_type"], name: "index_cached_appeal_attributes_on_appeal_id_and_appeal_type", unique: true
     t.index ["vacols_id"], name: "index_cached_appeal_attributes_on_vacols_id", unique: true
   end
@@ -319,7 +325,9 @@ ActiveRecord::Schema.define(version: 20190724201133) do
   create_table "distributions", force: :cascade do |t|
     t.datetime "completed_at"
     t.datetime "created_at", null: false
+    t.datetime "errored_at", comment: "when the Distribution job suffered an error"
     t.integer "judge_id"
+    t.datetime "started_at", comment: "when the Distribution job commenced"
     t.json "statistics"
     t.string "status"
     t.datetime "updated_at", null: false
@@ -497,7 +505,7 @@ ActiveRecord::Schema.define(version: 20190724201133) do
     t.text "notes"
     t.string "regional_office"
     t.string "request_type", null: false
-    t.string "room", null: false
+    t.string "room", comment: "The room at BVA where the hearing will take place"
     t.date "scheduled_for", null: false
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", null: false, comment: "The ID of the user who most recently updated the Hearing Day"
@@ -675,6 +683,7 @@ ActiveRecord::Schema.define(version: 20190724201133) do
     t.integer "appeal_id"
     t.datetime "created_at", comment: "Automatic timestamp when row was created."
     t.bigint "created_by_id", comment: "The ID of the user who created the Legacy Hearing"
+    t.bigint "hearing_day_id", comment: "The hearing day the hearing will take place on"
     t.string "military_service"
     t.boolean "prepped"
     t.text "summary"
@@ -684,6 +693,7 @@ ActiveRecord::Schema.define(version: 20190724201133) do
     t.string "vacols_id", null: false
     t.string "witness"
     t.index ["created_by_id"], name: "index_legacy_hearings_on_created_by_id"
+    t.index ["hearing_day_id"], name: "index_legacy_hearings_on_hearing_day_id"
     t.index ["updated_by_id"], name: "index_legacy_hearings_on_updated_by_id"
     t.index ["user_id"], name: "index_legacy_hearings_on_user_id"
     t.index ["vacols_id"], name: "index_legacy_hearings_on_vacols_id", unique: true
@@ -700,6 +710,14 @@ ActiveRecord::Schema.define(version: 20190724201133) do
     t.datetime "rollback_processed_at", comment: "Timestamp for when a rolled back opt-in has successfully finished being rolled back."
     t.datetime "updated_at", null: false, comment: "Automatically populated when the record is updated."
     t.index ["request_issue_id"], name: "index_legacy_issue_optins_on_request_issue_id"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "read_at", comment: "When the message was read"
+    t.string "text", comment: "The message"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false, comment: "The user for whom the message is intended"
   end
 
   create_table "non_availabilities", force: :cascade do |t|
@@ -741,6 +759,15 @@ ActiveRecord::Schema.define(version: 20190724201133) do
     t.string "participant_id", null: false
     t.datetime "updated_at", null: false
     t.index ["participant_id"], name: "index_people_on_participant_id", unique: true
+  end
+
+  create_table "post_decision_motions", force: :cascade, comment: "Stores the disposition and associated task of post-decisional motions handled by the Litigation Support Team: Motion for Reconsideration, Motion to Vacate, and Clear and Unmistakeable Error." do |t|
+    t.datetime "created_at", null: false
+    t.string "disposition", comment: "Possible options are Grant, Deny, Withdraw, and Dismiss"
+    t.bigint "task_id"
+    t.datetime "updated_at", null: false
+    t.string "vacate_type", comment: "Granted motion to vacate can be either Straight Vacate and Readjudication or Vacate and De Novo."
+    t.index ["task_id"], name: "index_post_decision_motions_on_task_id"
   end
 
   create_table "ramp_closed_appeals", id: :serial, force: :cascade, comment: "Keeps track of legacy appeals that are closed or partially closed in VACOLS due to being transitioned to a RAMP election.  This data can be used to rollback the RAMP Election if needed." do |t|
@@ -828,6 +855,7 @@ ActiveRecord::Schema.define(version: 20190724201133) do
     t.datetime "contention_updated_at", comment: "Timestamp indicating when a contention was successfully updated in VBMS."
     t.integer "contested_decision_issue_id", comment: "The ID of the decision issue that this request issue contests. A Request issue will contest either a rating issue or a decision issue"
     t.string "contested_issue_description", comment: "Description of the contested rating or decision issue. Will be either a rating issue's decision text or a decision issue's description."
+    t.string "contested_rating_decision_reference_id", comment: "The BGS id for contested rating decisions. These may not have corresponding contested_rating_issue_reference_id values."
     t.string "contested_rating_issue_diagnostic_code", comment: "If the contested issue is a rating issue, this is the rating issue's diagnostic code. Will be nil if this request issue contests a decision issue."
     t.string "contested_rating_issue_profile_date", comment: "If the contested issue is a rating issue, this is the rating issue's profile date. Will be nil if this request issue contests a decision issue."
     t.string "contested_rating_issue_reference_id", comment: "If the contested issue is a rating issue, this is the rating issue's reference id. Will be nil if this request issue contests a decision issue."
@@ -1038,8 +1066,11 @@ ActiveRecord::Schema.define(version: 20190724201133) do
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
+    t.string "status", default: "active", comment: "Whether or not the user is an active user of caseflow"
+    t.datetime "status_updated_at", comment: "When the user's status was last updated"
     t.datetime "updated_at"
     t.index "upper((css_id)::text)", name: "index_users_unique_css_id", unique: true
+    t.index ["status"], name: "index_users_on_status"
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
@@ -1123,10 +1154,12 @@ ActiveRecord::Schema.define(version: 20190724201133) do
   add_foreign_key "hearings", "users", column: "updated_by_id"
   add_foreign_key "intakes", "users"
   add_foreign_key "legacy_appeals", "appeal_series"
+  add_foreign_key "legacy_hearings", "hearing_days"
   add_foreign_key "legacy_hearings", "users"
   add_foreign_key "legacy_hearings", "users", column: "created_by_id"
   add_foreign_key "legacy_hearings", "users", column: "updated_by_id"
   add_foreign_key "organizations_users", "users"
+  add_foreign_key "post_decision_motions", "tasks"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "users"
   add_foreign_key "request_issues_updates", "users"

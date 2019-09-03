@@ -59,7 +59,6 @@ Rails.application.routes.draw do
     end
   end
 
-
   namespace :metrics do
     namespace :v1 do
       resources :histogram, only: :create
@@ -103,7 +102,7 @@ Rails.application.routes.draw do
 
   namespace :reader do
     get 'appeal/veteran-id', to: "appeal#find_appeals_by_veteran_id",
-      constraints: lambda{ |req| req.env["HTTP_VETERAN_ID"] =~ /[a-zA-Z0-9]{2,12}/ }
+      constraints: lambda{ |req| req.env["HTTP_CASE_SEARCH"] =~ /[a-zA-Z0-9]{2,12}/ }
     resources :appeal, only: [:show, :index] do
       resources :documents, only: [:show, :index]
       resources :claims_folder_searches, only: :create
@@ -125,13 +124,10 @@ Rails.application.routes.draw do
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
 
-  resources :beaam_appeals, only: [:index]
-
   resources :regional_offices, only: [:index]
   get '/regional_offices/:regional_office/hearing_dates', to: "regional_offices#hearing_dates"
 
   namespace :hearings do
-    resources :worksheets, only: [:update, :show], param: :id
     resources :appeals, only: [:update], param: :appeal_id
     resources :hearing_day, only: [:index, :show, :destroy, :update]
     resources :schedule_periods, only: [:index, :create]
@@ -140,7 +136,8 @@ Rails.application.routes.draw do
   end
   get '/hearings/dockets', to: redirect("/hearings/schedule")
   get 'hearings/schedule', to: "hearings/hearing_day#index"
-  get 'hearings/:hearing_id/details', to: "hearings_application#hearing_details_index"
+  get 'hearings/:hearing_id/details', to: "hearings_application#show_hearing_index"
+  get 'hearings/:hearing_id/worksheet', to: "hearings_application#show_hearing_index"
   get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
   get 'hearings/schedule/docket/:id/print', to: "hearings/hearing_day_print#index"
   get 'hearings/schedule/build', to: "hearings_application#build_schedule_index"
@@ -148,7 +145,6 @@ Rails.application.routes.draw do
   get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearings_application#build_schedule_index"
   get 'hearings/schedule/assign', to: "hearings_application#index"
   get 'hearings/worksheet/print', to: "hearings/worksheets_print#index"
-  get 'hearings/:id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
   get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
@@ -204,14 +200,21 @@ Rails.application.routes.draw do
   end
   match '/jobs' => 'asyncable_jobs#index', via: [:get]
 
+  scope path: "/inbox" do
+    get "/", to: "inbox#index"
+    patch "/messages/:id", to: "inbox#update"
+  end
+
   resources :users, only: [:index]
+  resources :users, only: [:index] do
+    get 'represented_organizations', on: :member
+  end
 
   get 'cases/:veteran_ids', to: 'appeals#show_case_list'
   get 'cases_to_schedule/:ro', to: 'tasks#ready_for_hearing_schedule'
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
-    get '/beaam', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
@@ -284,11 +287,13 @@ Rails.application.routes.draw do
     get code, :to => "errors#show", :status_code => code
   end
 
+  post "post_decision_motions", to: "post_decision_motions#create"
+
   # :nocov:
   namespace :test do
     get "/error", to: "users#show_error"
 
-    resources :users, only: [:index]
+    resources :users, only: [:index, :show]
     if ApplicationController.dependencies_faked?
       post "/set_user/:id", to: "users#set_user", as: "set_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'

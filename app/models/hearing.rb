@@ -41,7 +41,7 @@ class Hearing < ApplicationRecord
   delegate :docket_name, to: :appeal
   delegate :request_issues, to: :appeal
   delegate :decision_issues, to: :appeal
-  delegate :available_hearing_locations, :closest_regional_office, :advanced_on_docket, to: :appeal
+  delegate :available_hearing_locations, :closest_regional_office, :advanced_on_docket?, to: :appeal
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
   delegate :hearing_day_full?, to: :hearing_day
@@ -131,9 +131,7 @@ class Hearing < ApplicationRecord
 
   def advance_on_docket_motion
     # we're only really interested if the AOD was granted
-    motion = AdvanceOnDocketMotion.where(person_id: claimant_id).order("granted DESC NULLS LAST").first
-
-    motion&.slice(:person_id, :reason, :user_id, :granted)
+    AdvanceOnDocketMotion.where(person_id: claimant_id).order("granted DESC NULLS LAST").first
   end
 
   def scheduled_for

@@ -61,6 +61,10 @@
     "label": "Send back to attorney",
     "value": "modal/mark_task_complete"
   },
+  "COLOCATED_RETURN_TO_JUDGE": {
+    "label": "Send back to judge",
+    "value": "modal/mark_task_complete"
+  },
   "COMPLETE_TRANSCRIPTION": {
     "label": "Mark as complete: Transcribed",
     "value": "modal/mark_task_complete",
@@ -114,6 +118,11 @@
   "END_TIMED_HOLD": {
     "label": "End hold early",
     "value": "modal/end_hold"
+  },
+  "SPECIAL_CASE_MOVEMENT": {
+    "label": "Special Case Movement: Advance to judge",
+    "value": "modal/special_case_movement",
+    "func": "special_case_movement_data"
   },
   "TOGGLE_TIMED_HOLD": {
     "func": "toggle_timed_hold"
@@ -169,7 +178,7 @@
     "func": "review_decision_draft"
   },
   "SCHEDULE_HEARING_SEND_TO_TEAM": {
-    "label": "Hearing does need to be scheduled, send to hearing branch",
+    "label": "Hearing does need to be scheduled, create schedule hearing task",
     "value": "modal/send_colocated_task"
   },
   "SCHEDULE_VETERAN": {

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Hearing Schedule Daily Docket" do
+RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
 
   context "Daily docket with one legacy hearing" do
@@ -37,14 +38,6 @@ RSpec.feature "Hearing Schedule Daily Docket" do
     let!(:legacy_hearing) { create(:legacy_hearing, vacols_id: case_hearing.hearing_pkseq, appeal: legacy_appeal) }
     let!(:staff) { create(:staff, stafkey: "RO18", stc2: 2, stc3: 3, stc4: 4) }
 
-    before do
-      FeatureToggle.enable!(:use_representative_info_from_bgs)
-    end
-
-    after do
-      FeatureToggle.disable!(:use_representative_info_from_bgs)
-    end
-
     scenario "address and poa info from BGS is displayed on docket page" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
       expect(page).to have_content FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_1
@@ -76,6 +69,11 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       expect(page).to have_content("This is a note about the hearing!")
       expect(find_field("Transcript Requested", visible: false)).to be_checked
       expect(find_field("8:30", visible: false)).to be_checked
+    end
+
+    scenario "User can see paper_case notification" do
+      visit "hearings/schedule/docket/" + legacy_hearing.hearing_day.id.to_s
+      expect(page).to have_content(COPY::IS_PAPER_CASE)
     end
   end
 
@@ -127,6 +125,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User can only update notes" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      expect(page).to_not have_button("Print all Hearing Worksheets")
       expect(page).to_not have_content("Edit Hearing Day")
       expect(page).to_not have_content("Lock Hearing Day")
       expect(page).to_not have_content("Hearing Details")
@@ -135,7 +134,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       fill_in "Notes", with: "This is a note about the hearing!"
       click_button("Save")
 
-      expect(page).to have_content("You have successfully updated")
+      expect(page).to have_content("You have successfully updated", wait: 10)
       expect(page).to have_content("This is a note about the hearing!")
     end
   end
@@ -165,6 +164,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       scenario "User can update hearing prep fields" do
         visit "hearings/schedule/docket/" + legacy_hearing.hearing_day.id.to_s
 
+        expect(page).to have_button("Print all Hearing Worksheets", disabled: false)
         click_dropdown(name: "#{legacy_hearing.external_id}-disposition", index: 0)
         click_button("Confirm")
         expect(page).to have_content("You have successfully updated")
@@ -214,7 +214,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       end
 
       context "with an existing denied AOD motion made by another judge" do
-        let!(:aod_motion) do
+        before do
           AdvanceOnDocketMotion.create!(
             user_id: create(:user).id,
             person_id: person.id,
@@ -222,39 +222,22 @@ RSpec.feature "Hearing Schedule Daily Docket" do
             reason: "age"
           )
         end
-        scenario "judge can create a new AOD motion" do
+
+        scenario "judge can overwrite previous AOD motion" do
           visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
           click_dropdown(name: "#{hearing.external_id}-aod", text: "Granted")
+          click_dropdown(name: "#{hearing.external_id}-aodReason", text: "Financial Distress")
           click_button("Save")
 
+          expect(page).to have_content("There is a prior AOD decision")
+          click_button("Confirm")
+
           expect(page).to have_content("You have successfully updated")
-          expect(AdvanceOnDocketMotion.count).to eq(2)
-          judge_motions = AdvanceOnDocketMotion.where(user_id: current_user.id)
-          expect(judge_motions.count).to eq(1)
-          expect(judge_motions.first.granted).to eq(true)
-          expect(judge_motions.first.reason).to eq("age")
-        end
-      end
-
-      context "with an existing granted AOD motion made by another judge" do
-        let!(:aod_motion) do
-          AdvanceOnDocketMotion.create!(
-            user_id: create(:user).id,
-            person_id: person.id,
-            granted: true,
-            reason: "age"
-          )
-        end
-
-        scenario "judge cannot create a new AOD motion" do
-          visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-          expect(page).to have_selector(".dropdown-#{hearing.external_id}-aod .is-disabled")
-          expect(page).to have_selector(".dropdown-#{hearing.external_id}-aodReason .is-disabled")
         end
       end
 
       context "with an existing AOD motion made by same judge" do
-        let!(:aod_motion) do
+        before do
           AdvanceOnDocketMotion.create!(
             user_id: current_user.id,
             person_id: person.id,

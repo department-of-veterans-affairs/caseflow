@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-feature "correcting issues" do
-  before { FeatureToggle.enable!(:ama_decision_issues) }
-  after { FeatureToggle.disable!(:ama_decision_issues) }
-
+feature "correcting issues", :postgres do
   context "deleting a request issue that has one decision issue" do
     it "deletes the decision issue" do
       appeal = appeal_with_one_decision_issue

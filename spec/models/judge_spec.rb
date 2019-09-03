@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe Judge do
+describe Judge, :postgres do
   before do
     Timecop.freeze(Time.utc(2017, 2, 2))
   end
@@ -26,11 +27,11 @@ describe Judge do
   end
 
   context "#attorneys" do
-    let(:user) { FactoryBot.create(:user) }
+    let(:user) { create(:user) }
     let(:judge) { Judge.new(user) }
     let!(:judge_team) { JudgeTeam.create_for_judge(judge.user) }
     let(:member_count) { 5 }
-    let(:attorneys) { FactoryBot.create_list(:user, member_count) }
+    let(:attorneys) { create_list(:user, member_count) }
 
     before do
       attorneys.each do |u|

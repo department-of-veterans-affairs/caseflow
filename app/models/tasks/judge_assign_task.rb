@@ -12,14 +12,12 @@ class JudgeAssignTask < JudgeTask
     update!(type: JudgeDecisionReviewTask.name)
 
     # Tell sentry so we know this is still happening. Remove this in a month
-    msg = [
-      "Still changing JudgeAssignTask type to JudgeDecisionReviewTask.",
-      "See: https://github.com/department-of-veterans-affairs/caseflow/pull/11140#discussion_r295487938"
-    ]
-    Raven.capture_message(msg, extra: { application: "tasks" }) if Time.zone.now > Time.zone.local(2019, 8, 1)
+    msg = "Still changing JudgeAssignTask type to JudgeDecisionReviewTask."\
+          "See: https://github.com/department-of-veterans-affairs/caseflow/pull/11140#discussion_r295487938"
+    Raven.capture_message(msg, extra: { application: "tasks" }) if Time.zone.now > Time.zone.local(2019, 9, 1)
   end
 
-  def label
+  def self.label
     COPY::JUDGE_ASSIGN_TASK_LABEL
   end
 

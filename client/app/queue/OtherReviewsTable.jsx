@@ -11,6 +11,7 @@ import { clearCaseListSearch } from './CaseList/CaseListActions';
 import COPY from '../../COPY.json';
 import CLAIM_REVIEW_TEXT from '../../constants/CLAIM_REVIEW_TEXT.json';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { DateString } from '../util/DateUtil';
 
 class SubdividedTableRow extends React.PureComponent {
   render = () => {
@@ -82,6 +83,10 @@ class OtherReviewsTable extends React.PureComponent {
       }
     },
     {
+      header: COPY.OTHER_REVIEWS_TABLE_RECEIPT_DATE_COLUMN_TITLE,
+      valueFunction: (review) => <DateString date={review.receiptDate} />
+    },
+    {
       header: COPY.OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE,
       valueFunction: (review) => {
         if (review.endProductStatuses && review.endProductStatuses.length > 0) {
@@ -134,10 +139,16 @@ class OtherReviewsTable extends React.PureComponent {
   }
 }
 
+SubdividedTableRow.propTypes = {
+  rowNumber: PropTypes.number,
+  children: PropTypes.node
+};
+
 OtherReviewsTable.propTypes = {
   reviews: PropTypes.arrayOf(PropTypes.object).isRequired,
   veteranName: PropTypes.string,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  clearCaseListSearch: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe SupplementalClaim do
+describe SupplementalClaim, :postgres do
   before do
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
   end
@@ -198,109 +199,6 @@ describe SupplementalClaim do
       supplemental_claim.create_remand_issues!
 
       expect { subject }.to_not change(supplemental_claim.request_issues, :count)
-    end
-  end
-
-  context "#issues" do
-    let(:receipt_date) { Time.new("2018", "03", "01").utc }
-    let(:benefit_type) { "compensation" }
-
-    let!(:sc) do
-      create(:supplemental_claim,
-             veteran_file_number: veteran_file_number,
-             receipt_date: receipt_date,
-             benefit_type: benefit_type)
-    end
-
-    let(:ep_status) { "PEND" }
-    let!(:sc_ep) do
-      create(:end_product_establishment,
-             synced_status: ep_status, source: sc, last_synced_at: receipt_date + 100.days)
-    end
-    let!(:request_issue) do
-      create(:request_issue,
-             decision_review: sc,
-             benefit_type: benefit_type,
-             contested_rating_issue_diagnostic_code: nil)
-    end
-
-    context "claim is open, pending a decision" do
-      it "status gives status info of the request issue" do
-        issue_statuses = sc.issues_hash
-
-        expect(issue_statuses.empty?).to eq(false)
-        expect(issue_statuses.first[:active]).to eq(true)
-        expect(issue_statuses.first[:lastAction]).to be_nil
-        expect(issue_statuses.first[:date]).to be_nil
-        expect(issue_statuses.first[:description]).to eq("Compensation issue")
-        expect(issue_statuses.first[:diagnosticCode]).to be_nil
-      end
-    end
-
-    context "claim has a decision" do
-      let(:ep_status) { "CLR" }
-      let!(:decision_issue) do
-        create(:decision_issue,
-               decision_review: sc, end_product_last_action_date: receipt_date + 100.days,
-               benefit_type: benefit_type, diagnostic_code: nil)
-      end
-
-      it "status gives status info of the decision issue" do
-        issue_statuses = sc.issues_hash
-        expect(issue_statuses.empty?).to eq(false)
-        expect(issue_statuses.first[:active]).to eq(false)
-        expect(issue_statuses.first[:lastAction]).to eq("allowed")
-        expect(issue_statuses.first[:date]).to eq((receipt_date + 100.days).to_date)
-        expect(issue_statuses.first[:description]).to eq("Compensation issue")
-        expect(issue_statuses.first[:diagnosticCode]).to be_nil
-      end
-    end
-  end
-
-  context "#status" do
-    let(:receipt_date) { Time.new("2018", "03", "01").utc }
-    let(:benefit_type) { "compensation" }
-
-    let(:sc) do
-      SupplementalClaim.new(
-        veteran_file_number: veteran_file_number,
-        receipt_date: receipt_date,
-        benefit_type: benefit_type
-      )
-    end
-
-    let(:ep_status) { "PEND" }
-    let!(:sc_ep) do
-      create(:end_product_establishment,
-             synced_status: ep_status, source: sc)
-    end
-
-    context "SC received" do
-      it "has status sc_recieved" do
-        status = sc.status_hash
-        expect(status).to_not be_nil
-        expect(status[:type]).to eq(:sc_recieved)
-        expect(status[:details]).to be_empty
-      end
-    end
-
-    context "SC gets a decision" do
-      let(:ep_status) { "CLR" }
-
-      let!(:decision_issue) do
-        create(:decision_issue,
-               decision_review: sc, end_product_last_action_date: receipt_date + 100.days,
-               benefit_type: benefit_type, diagnostic_code: nil, disposition: "allowed")
-      end
-
-      it "has status sc_decision" do
-        status = sc.status_hash
-
-        expect(status).to_not be_nil
-        expect(status[:type]).to eq(:sc_decision)
-        expect(status[:details][:issues].first[:description]).to eq("Compensation issue")
-        expect(status[:details][:issues].first[:disposition]).to eq("allowed")
-      end
     end
   end
 

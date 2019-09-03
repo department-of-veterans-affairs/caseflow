@@ -10,6 +10,14 @@ class HearingTask < GenericTask
   delegate :hearing, to: :hearing_task_association, allow_nil: true
   before_validation :set_assignee
 
+  def self.label
+    "All hearing-related tasks"
+  end
+
+  def default_instructions
+    [COPY::HEARING_TASK_DEFAULT_INSTRUCTIONS]
+  end
+
   def cancel_and_recreate
     hearing_task = HearingTask.create!(
       appeal: appeal,
@@ -78,8 +86,10 @@ class HearingTask < GenericTask
     self.assigned_to = Bva.singleton
   end
 
-  def update_status_if_children_tasks_are_complete(_child_task)
-    if children.open.empty? && children.select { |c| c.type == AssignHearingDispositionTask.name && c.cancelled? }.any?
+  def update_status_if_children_tasks_are_closed(_child_task)
+    if children.open.empty? && children.select do |child|
+         child.type == AssignHearingDispositionTask.name && child.cancelled?
+       end .any?
       return update!(status: :cancelled)
     end
 

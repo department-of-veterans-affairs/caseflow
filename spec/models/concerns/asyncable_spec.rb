@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe Asyncable do
   class TestAsyncable
     include ActiveModel::Model

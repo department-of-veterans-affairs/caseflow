@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-feature "Higher-Level Review" do
+feature "Higher-Level Review", :all_dbs do
   include IntakeHelpers
 
   before do
@@ -36,11 +36,8 @@ feature "Higher-Level Review" do
   let(:inaccessible) { false }
 
   let(:receipt_date) { Time.zone.today - 5.days }
-
   let(:promulgation_date) { receipt_date - 10.days }
-
   let(:benefit_type) { "compensation" }
-
   let(:untimely_days) { 372.days }
 
   let!(:current_user) do
@@ -48,54 +45,15 @@ feature "Higher-Level Review" do
   end
 
   let(:profile_date) { (receipt_date - 8.days).to_datetime }
+  let(:untimely_promulgation_date) { receipt_date - untimely_days - 1.day }
+  let(:untimely_profile_date) { receipt_date - untimely_days - 3.days }
+  let(:future_rating_promulgation_date) { receipt_date + 2.days }
+  let(:future_rating_profile_date) { receipt_date + 2.days }
 
-  let!(:rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: promulgation_date,
-      profile_date: profile_date,
-      issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted" },
-        { reference_id: "def456", decision_text: "PTSD denied" },
-        { reference_id: "def789", decision_text: "Looks like a VACOLS issue" }
-      ]
-    )
-  end
-
-  let!(:untimely_ratings) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - untimely_days - 1.day,
-      profile_date: receipt_date - untimely_days - 3.days,
-      issues: [
-        { reference_id: "old123", decision_text: "Untimely rating issue 1" },
-        { reference_id: "old456", decision_text: "Untimely rating issue 2" }
-      ]
-    )
-  end
-
-  let!(:future_rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date + 2.days,
-      profile_date: receipt_date + 2.days,
-      issues: [
-        { reference_id: "future1", decision_text: "Future rating issue 1" },
-        { reference_id: "future2", decision_text: "Future rating issue 2" }
-      ]
-    )
-  end
-
-  let!(:before_ama_rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
-      issues: [
-        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
-      ]
-    )
-  end
+  let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
+  let!(:untimely_ratings) { generate_untimely_rating(veteran, untimely_promulgation_date, untimely_profile_date) }
+  let!(:future_rating) { generate_future_rating(veteran, future_rating_promulgation_date, future_rating_profile_date) }
+  let!(:before_ama_rating) { generate_pre_ama_rating(veteran) }
 
   context "veteran is deceased" do
     let(:date_of_death) { Time.zone.today - 1.day }
@@ -606,6 +564,9 @@ feature "Higher-Level Review" do
   end
 
   context "Add / Remove Issues page" do
+    before { FeatureToggle.enable!(:contestable_rating_decisions) }
+    after { FeatureToggle.disable!(:contestable_rating_decisions) }
+
     let(:higher_level_review_reference_id) { "hlr123" }
     let(:supplemental_claim_reference_id) { "sc123" }
     let(:supplemental_claim_contention_reference_id) { 5678 }
@@ -639,29 +600,10 @@ feature "Higher-Level Review" do
       )
     end
 
-    let!(:untimely_rating) do
-      Generators::Rating.build(
-        participant_id: veteran.participant_id,
-        promulgation_date: receipt_date - 400.days,
-        profile_date: receipt_date - 450.days,
-        issues: [
-          { reference_id: old_reference_id, decision_text: "Really old injury" }
-        ]
-      )
-    end
-
-    let!(:before_ama_rating_from_ramp) do
-      Generators::Rating.build(
-        participant_id: veteran.participant_id,
-        promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-        profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
-        issues: [
-          { decision_text: "Issue before AMA Activation from RAMP",
-            reference_id: "ramp_ref_id" }
-        ],
-        associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
-      )
-    end
+    let!(:untimely_rating) { generate_untimely_rating_from_ramp(veteran, receipt_date, old_reference_id) }
+    let!(:before_ama_rating_from_ramp) { generate_rating_before_ama_from_ramp(veteran) }
+    let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran, receipt_date) }
+    let(:old_rating_decision_text) { "Bone (Right arm broken) is denied." }
 
     let!(:request_issue_in_progress) do
       create(
@@ -754,7 +696,7 @@ feature "Higher-Level Review" do
       expect(page).to have_content("Past decisions from #{rating_date}")
     end
 
-    scenario "HLR comp" do
+    scenario "compensation claim" do
       allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
         first_name: "BOB",
         last_name: "VANCE",
@@ -784,6 +726,7 @@ feature "Higher-Level Review" do
       expect(page).to have_content("Old injury")
       expect(page).to have_content("supplemental claim decision issue")
       expect(page).to_not have_content("Future rating issue 1")
+      expect(page).to have_content(old_rating_decision_text)
 
       # test canceling adding an issue by closing the modal
       safe_click ".close-modal"
@@ -910,6 +853,12 @@ feature "Higher-Level Review" do
         "A nonrating issue before AMA #{ineligible_constants.before_ama}"
       )
 
+      # add old rating decision
+      click_intake_add_issue
+      add_intake_rating_issue(old_rating_decision_text)
+      add_untimely_exemption_response("Yes")
+      expect(page).to have_content("#{old_rating_decision_text} #{ineligible_constants.before_ama}")
+
       click_intake_finish
 
       expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
@@ -922,6 +871,7 @@ feature "Higher-Level Review" do
       ineligible_checklist = find("ul.cf-issue-checklist")
       expect(ineligible_checklist).to have_content("Already reviewed injury is ineligible")
       expect(ineligible_checklist).to have_content("Another Description for Active Duty Adjustments is ineligible")
+      expect(ineligible_checklist).to have_content(old_rating_decision_text)
 
       # make sure that database is populated
       expect(
@@ -1066,6 +1016,14 @@ feature "Higher-Level Review" do
       expect(ineligible_due_to_previous_hlr).to_not eq(previous_request_issue)
       expect(ineligible_due_to_previous_hlr.contention_reference_id).to be_nil
       expect(ineligible_due_to_previous_hlr.ineligible_due_to).to eq(previous_request_issue)
+
+      old_rating_decision_request_issue = RequestIssue.find_by(
+        decision_review: higher_level_review,
+        contested_issue_description: old_rating_decision_text
+      )
+
+      expect(old_rating_decision_request_issue.contested_rating_decision_reference_id).to_not be_nil
+      expect(old_rating_decision_request_issue).to be_before_ama
 
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
         hash_including(
@@ -1216,8 +1174,6 @@ feature "Higher-Level Review" do
       end
 
       context "no contestable issues present" do
-        before { FeatureToggle.enable!(:decision_reviews) }
-        after { FeatureToggle.disable!(:decision_reviews) }
         let!(:business_line) { create(:business_line, name: "Education", url: "education") }
 
         scenario "no rating issues show on first Add Issues modal" do

@@ -1,18 +1,13 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-describe DecisionDocument do
+describe DecisionDocument, :postgres do
   include IntakeHelpers
 
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
-    FeatureToggle.enable!(:create_board_grant_effectuations)
-  end
-
-  after do
-    FeatureToggle.disable!(:create_board_grant_effectuations)
   end
 
   let(:veteran) { create(:veteran) }
@@ -40,8 +35,6 @@ describe DecisionDocument do
 
   context "#submit_for_processing!" do
     subject { decision_document.submit_for_processing! }
-    before { FeatureToggle.enable!(:decision_document_upload) }
-    after { FeatureToggle.disable!(:decision_document_upload) }
 
     let(:expected_path) { "decisions/#{decision_document.appeal.external_id}.pdf" }
     let!(:decision_issue) { create(:decision_issue, decision_review: appeal, caseflow_decision_date: nil) }
@@ -63,29 +56,9 @@ describe DecisionDocument do
     end
 
     context "when no file" do
-      context "when :decision_document_upload feature is turned on" do
-        it "raises NoFileError" do
-          expect { subject }.to raise_error(DecisionDocument::NoFileError)
-          expect(decision_document.submitted_at).to be_nil
-        end
-      end
-
-      context "when :decision_document_upload feature is turned off" do
-        before { FeatureToggle.disable!(:decision_document_upload) }
-
-        it "marks document as having been processed immediately without uploading anything" do
-          expect(S3Service).to_not receive(:store_file).with(expected_path, /PDF/)
-          subject
-          expect(decision_document.submitted_at).to eq(Time.zone.now)
-          expect(decision_document.attempted_at).to eq(Time.zone.now)
-          expect(decision_document.processed_at).to eq(Time.zone.now)
-        end
-
-        it "updates the decision date on decision issues" do
-          subject
-          expect(decision_issue.reload.caseflow_decision_date).to_not be_nil
-          expect(decision_issue.caseflow_decision_date).to eq(decision_document.decision_date)
-        end
+      it "raises NoFileError" do
+        expect { subject }.to raise_error(DecisionDocument::NoFileError)
+        expect(decision_document.submitted_at).to be_nil
       end
     end
   end
@@ -108,7 +81,7 @@ describe DecisionDocument do
     let(:end_product_establishment) { board_grant_effectuation.end_product_establishment }
 
     let!(:granted_decision_issue) do
-      FactoryBot.create(
+      create(
         :decision_issue,
         :rating,
         disposition: "allowed",
@@ -165,7 +138,7 @@ describe DecisionDocument do
 
     context "there was no upload error" do
       let!(:denied_issue) do
-        FactoryBot.create(
+        create(
           :decision_issue,
           :rating,
           disposition: "denied",
@@ -220,7 +193,7 @@ describe DecisionDocument do
 
       context "when granted compensation issues" do
         let!(:granted_issue) do
-          FactoryBot.create(
+          create(
             :decision_issue,
             :rating,
             disposition: "allowed",
@@ -229,7 +202,7 @@ describe DecisionDocument do
         end
 
         let!(:another_granted_issue) do
-          FactoryBot.create(
+          create(
             :decision_issue,
             :rating,
             description: "i am a long description" * 20,

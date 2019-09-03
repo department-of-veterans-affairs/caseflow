@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-feature "Higher-Level Review" do
+feature "Higher-Level Review", :postgres do
   include IntakeHelpers
 
   before do
@@ -47,7 +47,7 @@ feature "Higher-Level Review" do
     end
 
     step "EPs use the updated Veteran name" do
-      expect(bgs).to have_received(:fetch_veteran_info).exactly(5).times
+      expect(bgs).to have_received(:fetch_veteran_info).exactly(6).times
 
       veteran.reload
 

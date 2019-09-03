@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe ClaimReview do
+describe ClaimReview, :postgres do
   before do
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
   end
@@ -30,13 +31,14 @@ describe ClaimReview do
   let(:same_office) { nil }
   let(:benefit_type) { "compensation" }
   let(:ineligible_reason) { nil }
+  let(:rating_profile_date) { Date.new(2018, 4, 30) }
 
   let(:rating_request_issue) do
     build(
       :request_issue,
       decision_review: claim_review,
       contested_rating_issue_reference_id: "reference-id",
-      contested_rating_issue_profile_date: Date.new(2018, 4, 30),
+      contested_rating_issue_profile_date: rating_profile_date,
       contested_issue_description: "decision text",
       benefit_type: benefit_type,
       ineligible_reason: ineligible_reason
@@ -48,7 +50,7 @@ describe ClaimReview do
       :request_issue,
       decision_review: claim_review,
       contested_rating_issue_reference_id: "reference-id2",
-      contested_rating_issue_profile_date: Date.new(2018, 4, 30),
+      contested_rating_issue_profile_date: rating_profile_date,
       contested_issue_description: "another decision text",
       benefit_type: benefit_type
     )
@@ -77,6 +79,16 @@ describe ClaimReview do
     )
   end
 
+  let(:rating_request_issue_with_rating_decision) do
+    create(
+      :request_issue,
+      decision_review: claim_review,
+      contested_rating_decision_reference_id: "rating-decision-diagnostic-id",
+      contested_rating_issue_profile_date: rating_profile_date,
+      contested_issue_description: "foobar was denied."
+    )
+  end
+
   let(:claim_review) do
     build(
       :higher_level_review,
@@ -102,6 +114,33 @@ describe ClaimReview do
       participant_id: veteran_participant_id,
       payee_code: "00"
     )
+  end
+
+  describe "#cancel_establishment!" do
+    let(:claim_review) do
+      create(
+        :higher_level_review,
+        receipt_date: receipt_date,
+        establishment_attempted_at: (ClaimReview.processing_retry_interval_hours - 1).hours.ago,
+        establishment_error: "oops!"
+      )
+    end
+
+    subject { claim_review.cancel_establishment! }
+
+    it "sets async canceled_at and closes all request_issues" do
+      request_issue = rating_request_issue.tap(&:save!)
+
+      expect(request_issue).to_not be_closed
+
+      subject
+
+      claim_review.reload
+
+      expect(claim_review).to be_canceled
+      expect(claim_review.establishment_error).to eq("oops!")
+      expect(request_issue.reload).to be_closed
+    end
   end
 
   let(:vbms_error) do
@@ -389,7 +428,7 @@ describe ClaimReview do
     end
 
     context "when there's more than one issue" do
-      let(:issues) { [rating_request_issue, non_rating_request_issue] }
+      let(:issues) { [rating_request_issue, non_rating_request_issue, rating_request_issue_with_rating_decision] }
 
       context "when they're all ineligible" do
         let(:ineligible_reason) { "duplicate_of_rating_issue_in_active_review" }
@@ -407,6 +446,8 @@ describe ClaimReview do
 
         expect(rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRR")
         expect(non_rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRNR")
+        expect(rating_request_issue_with_rating_decision.reload.end_product_establishment).to \
+          have_attributes(code: "030HLRR")
       end
 
       context "when the benefit type is pension" do
@@ -417,6 +458,8 @@ describe ClaimReview do
 
           expect(rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRRPMC")
           expect(non_rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRNRPMC")
+          expect(rating_request_issue_with_rating_decision.reload.end_product_establishment).to \
+            have_attributes(code: "030HLRRPMC")
         end
       end
     end
@@ -473,7 +516,7 @@ describe ClaimReview do
     subject { claim_review.establish! }
 
     context "when there is just one end_product_establishment" do
-      let(:issues) { [rating_request_issue, second_rating_request_issue] }
+      let(:issues) { [rating_request_issue, second_rating_request_issue, rating_request_issue_with_rating_decision] }
 
       it "establishes the claim and creates the contentions in VBMS" do
         subject
@@ -502,7 +545,11 @@ describe ClaimReview do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.last.reference_id,
-          contentions: array_including({ description: "another decision text" }, description: "decision text"),
+          contentions: array_including(
+            { description: "another decision text" },
+            { description: "foobar was denied." },
+            description: "decision text"
+          ),
           user: user
         )
 
@@ -517,6 +564,7 @@ describe ClaimReview do
         expect(claim_review.end_product_establishments.first).to be_committed
         expect(rating_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
         expect(second_rating_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
+        expect(rating_request_issue_with_rating_decision.reload.rating_issue_associated_at).to be_nil
       end
 
       context "when associate rating request issues fails" do
@@ -590,7 +638,10 @@ describe ClaimReview do
             expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
               veteran_file_number: veteran_file_number,
               claim_id: claim_review.end_product_establishments.last.reference_id,
-              contentions: [{ description: "another decision text" }],
+              contentions: containing_exactly(
+                { description: "another decision text" },
+                description: "foobar was denied."
+              ),
               user: user
             )
 
@@ -615,6 +666,7 @@ describe ClaimReview do
             second_rating_request_issue.update!(
               contention_reference_id: random_ref_id, rating_issue_associated_at: Time.zone.now
             )
+            rating_request_issue_with_rating_decision.update!(contention_reference_id: "rating-decision-contention")
           end
 
           it "doesn't create them in VBMS" do
@@ -675,7 +727,7 @@ describe ClaimReview do
           expect(claim_review.establishment_processed_at).to be_nil
 
           epe_contentions = claim_contentions_for_all_issues_on_epe
-          expect(epe_contentions.count).to eq(2)
+          expect(epe_contentions.count).to eq(3)
           expect(epe_contentions.where.not(rating_issue_associated_at: nil).count).to eq(0)
 
           allow_associate_rating_request_issues

@@ -3,10 +3,10 @@
 # This job will fetch the number of contentions for every
 # EP known to Intake
 class SyncIntakeJob < CaseflowJob
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :intake
 
-  def perform
+  def perform(_args = {})
     # Set user to system_user to avoid sensitivity errors
     RequestStore.store[:current_user] = User.system_user
 
@@ -19,7 +19,7 @@ class SyncIntakeJob < CaseflowJob
       reclosed_appeals << appeal
     rescue StandardError => error
       # Rescue and capture errors so they don't cause the job to stop
-      Raven.capture_exception(error, extra: { ramp_closed_appeal_id: appeal.id })
+      capture_exception(error: error, extra: { ramp_closed_appeal_id: appeal.id })
     end
     slack_service.send_notification(
       "Intake: Successfully reclosed #{reclosed_appeals.count} out of #{appeals_to_reclose.count} RAMP VACOLS appeals"

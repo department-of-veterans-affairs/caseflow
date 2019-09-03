@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe AppealSeries do
+describe AppealSeries, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2015, 1, 30, 12, 0, 0))
   end
@@ -290,79 +291,6 @@ describe AppealSeries do
     context "when it is in cavc status" do
       let(:status) { "CAV" }
       it { is_expected.to eq(:cavc) }
-    end
-  end
-
-  context "#status_hash" do
-    subject { series.status_hash }
-
-    context "when there is a valid status" do
-      it "returns a hash with a type and details" do
-        expect(subject[:type]).to eq(:pending_certification)
-        expect(subject[:details].is_a?(Hash)).to be_truthy
-      end
-    end
-
-    context "when there is no known status" do
-      let(:status) { "ZZZ" }
-
-      it "returns an empty details hash" do
-        expect(subject[:details]).to eq({})
-      end
-    end
-
-    context "when it is in remand ssoc status" do
-      let(:status) { "REM" }
-      let(:decision_date) { 3.days.ago }
-      let(:ssoc_date1) { 1.year.ago }
-      let(:ssoc_date2) { 1.day.ago }
-
-      it "returns a details hash with the most recent ssoc" do
-        expect(subject[:type]).to eq(:remand_ssoc)
-        expect(subject[:details][:last_soc_date]).to eq(1.day.ago.to_date)
-        expect(subject[:details][:return_timeliness]).to eq([1, 2])
-        expect(subject[:details][:remand_ssoc_timeliness]).to eq([3, 11])
-      end
-    end
-
-    context "when it has been decided by the board" do
-      let(:status) { "REM" }
-      let(:disposition) { "1" }
-      before do
-        latest_appeal.issues << Generators::Issue.build(disposition: :allowed)
-        latest_appeal.issues << Generators::Issue.build(disposition: :remanded)
-        latest_appeal.issues << Generators::Issue.build(disposition: :field_grant)
-      end
-
-      it "returns a details hash with the decided issues" do
-        expect(subject[:type]).to eq(:remand)
-        expect(subject[:details][:remand_timeliness]).to eq([16, 29])
-        expect(subject[:details][:issues].length).to eq(2)
-        expect(subject[:details][:issues].first[:disposition]).to eq(:allowed)
-        expect(subject[:details][:issues].first[:description]).to eq(
-          "Service connection, limitation of thigh motion (flexion)"
-        )
-      end
-    end
-
-    context "when it is at VSO" do
-      let(:status) { "ACT" }
-      let(:location_code) { "55" }
-
-      it "returns a details hash with the vso name" do
-        expect(subject[:type]).to eq(:at_vso)
-        expect(subject[:details][:vso_name]).to eq("Military Order of the Purple Heart")
-      end
-    end
-
-    context "when it is pending a form 9" do
-      let(:form9_date) { nil }
-
-      it "returns a details hash with the vso name" do
-        expect(subject[:type]).to eq(:pending_form9)
-        expect(subject[:details][:certification_timeliness]).to eq([2, 8])
-        expect(subject[:details][:ssoc_timeliness]).to eq([5, 13])
-      end
     end
   end
 

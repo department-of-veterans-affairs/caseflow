@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 require "mail_task"
 
-RSpec.describe Tasks::ChangeTypeController, type: :controller do
+RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
   describe "POST tasks/change_type/:id" do
     let(:user) { create(:user) }
     let(:assigner) { create(:user) }
@@ -23,15 +24,16 @@ RSpec.describe Tasks::ChangeTypeController, type: :controller do
 
     context "with the correct parameters" do
       context "for a colocated task" do
-        let(:task_class_name) { IhpColocatedTask }
+        let(:old_task_type) { :ihp }
         let(:new_task_type) { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.last }
 
         let(:parent_task) do
-          task_class_name.create!(
+          create(
+            :ama_colocated_task,
+            old_task_type,
             appeal: root_task.appeal,
             parent_id: root_task.id,
             assigned_by: assigner,
-            assigned_to: Colocated.singleton,
             instructions: [old_instructions]
           )
         end
@@ -64,6 +66,43 @@ RSpec.describe Tasks::ChangeTypeController, type: :controller do
 
           expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
           expect(parent_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+        end
+
+        context "that needs reassigning" do
+          let(:new_task_type) { :foia }
+          let(:new_task_class) { FoiaColocatedTask }
+
+          it "should update successfully" do
+            subject
+
+            expect(response.status).to eq 200
+            response_body = JSON.parse(response.body)["tasks"]["data"].sort_by { |hash| hash["id"].to_i }.reverse!
+            expect(response_body.length).to eq 4
+            expect(response_body.first["id"]).not_to eq task.id.to_s
+            expect(response_body.first["attributes"]["label"]).to eq FoiaTask.name.titlecase
+            expect(response_body.first["attributes"]["status"]).to eq task.status
+            expect(response_body.first["attributes"]["instructions"]).to include old_instructions
+            expect(response_body.first["attributes"]["instructions"]).to include new_instructions
+            expect(response_body.first["attributes"]["type"]).to eq FoiaTask.name
+            expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq FoiaColocatedTask.default_assignee.id
+            expect(response_body.first["attributes"]["assigned_by"]["pg_id"]).to eq task.assigned_by_id
+            expect(response_body.first["attributes"]["appeal_id"]).to eq task.appeal_id
+
+            new_parent_id = Task.find(response_body.first["id"]).parent_id
+            new_parent = response_body.find { |t| t["id"] == new_parent_id.to_s }
+            expect(new_parent["id"]).not_to eq parent_task.id.to_s
+            expect(new_parent["attributes"]["label"]).to eq Constants::CO_LOCATED_ADMIN_ACTIONS[new_task_type.to_s]
+            expect(new_parent["attributes"]["status"]).to eq parent_task.status
+            expect(new_parent["attributes"]["instructions"]).to include old_instructions
+            expect(new_parent["attributes"]["instructions"]).to include new_instructions
+            expect(new_parent["attributes"]["type"]).to eq FoiaColocatedTask.name
+            expect(new_parent["attributes"]["assigned_to"]["id"]).to eq FoiaColocatedTask.default_assignee.id
+            expect(new_parent["attributes"]["assigned_by"]["pg_id"]).to eq parent_task.assigned_by_id
+            expect(new_parent["attributes"]["appeal_id"]).to eq parent_task.appeal_id
+
+            expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+            expect(parent_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+          end
         end
       end
 

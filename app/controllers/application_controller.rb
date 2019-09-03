@@ -7,7 +7,7 @@ class ApplicationController < ApplicationBaseController
   before_action :set_raven_user
   before_action :verify_authentication
   before_action :set_paper_trail_whodunnit
-  before_action :deny_vso_access, except: [:unauthorized]
+  before_action :deny_vso_access, except: [:unauthorized, :feedback]
 
   rescue_from StandardError do |e|
     fail e unless e.class.method_defined?(:serialize_response)
@@ -17,8 +17,7 @@ class ApplicationController < ApplicationBaseController
   end
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
-  rescue_from VBMS::ClientError, with: :on_vbms_error
-  rescue_from VBMSError, with: :on_vbms_error
+  rescue_from BGS::ShareError, VBMS::ClientError, with: :on_external_error
 
   rescue_from Caseflow::Error::VacolsRepositoryError do |e|
     Rails.logger.error "Vacols error occured: #{e.message}"
@@ -31,6 +30,10 @@ class ApplicationController < ApplicationBaseController
   end
 
   private
+
+  def deny_non_bva_admins
+    redirect_to "/unauthorized" unless Bva.singleton.user_has_access?(current_user)
+  end
 
   def manage_teams_menu_items
     current_user.administered_teams.map do |team|
@@ -93,17 +96,6 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :application
 
-  def help_url
-    {
-      "certification" => certification_help_path,
-      "dispatch-arc" => dispatch_help_path,
-      "reader" => reader_help_path,
-      "hearings" => hearing_prep_help_path,
-      "intake" => intake_help_path
-    }[application] || help_path
-  end
-  helper_method :help_url
-
   # Link used when clicking logo
   def logo_path
     root_path
@@ -130,7 +122,8 @@ class ApplicationController < ApplicationBaseController
   def dropdown_urls
     urls = [
       { title: "Help", link: help_url },
-      { title: "Send Feedback", link: feedback_url, target: "_blank" }
+      { title: "Send Feedback", link: feedback_url, target: "_blank" },
+      { title: "Release History", link: release_history_url, target: "_blank" }
     ]
 
     if current_user&.administered_teams&.any?
@@ -169,15 +162,12 @@ class ApplicationController < ApplicationBaseController
   end
 
   def case_search_home_page
-    if feature_enabled?(:case_search_home_page)
-      return false if current_user.admin?
-      return false if current_user.organization_queue_user? || current_user.vso_employee?
-      return false if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
-      return false if current_user.colocated_in_vacols?
+    return false if current_user.admin?
+    return false if current_user.organization_queue_user? || current_user.vso_employee?
+    return false if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
+    return false if current_user.colocated_in_vacols?
 
-      return true
-    end
-    false
+    true
   end
   helper_method :case_search_home_page
 
@@ -274,15 +264,19 @@ class ApplicationController < ApplicationBaseController
     @react_routed = true
   end
 
-  def on_vbms_error(error)
-    Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+  def on_external_error(error)
+    unless error.ignorable?
+      Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+    end
+
     respond_to do |format|
+      flash[:error] = error.body
       format.html do
         render "errors/500", layout: "application", status: :internal_server_error
       end
 
       format.json do
-        render json: { errors: [:vbms_error], error_uuid: error_uuid }, status: :internal_server_error
+        render json: { errors: [:external_error], error_uuid: error_uuid }, status: :internal_server_error
       end
     end
   end
@@ -309,6 +303,22 @@ class ApplicationController < ApplicationBaseController
     "/feedback"
   end
   helper_method :feedback_url
+
+  def help_url
+    {
+      "certification" => certification_help_path,
+      "dispatch-arc" => dispatch_help_path,
+      "reader" => reader_help_path,
+      "hearings" => hearing_prep_help_path,
+      "intake" => intake_help_path
+    }[application] || help_path
+  end
+  helper_method :help_url
+
+  def release_history_url
+    "https://headwayapp.co/va-caseflow-updates"
+  end
+  helper_method :release_history_url
 
   def build_date
     return Rails.application.config.build_version[:date] if Rails.application.config.build_version

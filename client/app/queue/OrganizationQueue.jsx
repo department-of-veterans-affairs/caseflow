@@ -3,12 +3,14 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
+import { sprintf } from 'sprintf-js';
+import PropTypes from 'prop-types';
 
 import BulkAssignButton from './components/BulkAssignButton';
 import TabWindow from '../components/TabWindow';
 import { docketNumberColumn, hearingBadgeColumn, detailsColumn,
   taskColumn, regionalOfficeColumn, issueCountColumn, typeColumn,
-  assignedToColumn, daysWaitingColumn, readerLinkColumn } from './components/TaskTable';
+  assignedToColumn, daysWaitingColumn, daysOnHoldColumn, readerLinkColumn } from './components/TaskTable';
 import QueueTable from './QueueTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import Alert from '../components/Alert';
@@ -64,6 +66,7 @@ class OrganizationQueue extends React.PureComponent {
       assignedToColumn: assignedToColumn(tasks),
       docketNumberColumn: docketNumberColumn(tasks, false),
       daysWaitingColumn: daysWaitingColumn(false),
+      daysOnHoldColumn: daysOnHoldColumn(false),
       readerLinkColumn: readerLinkColumn(false, true),
       issueCountColumn: issueCountColumn(false)
     };
@@ -73,7 +76,9 @@ class OrganizationQueue extends React.PureComponent {
 
   columnsFromConfig = (tabConfig, tasks) => {
     return tabConfig.columns.map((column) => {
-      return this.createColumnObject(column, tabConfig, tasks);
+      const columnName = typeof (column) === 'string' ? column : column.name;
+
+      return this.createColumnObject(columnName, tabConfig, tasks);
     });
   }
 
@@ -81,6 +86,7 @@ class OrganizationQueue extends React.PureComponent {
     const mapper = {
       [QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME]: this.props.unassignedTasks,
       [QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME]: this.props.assignedTasks,
+      [QUEUE_CONFIG.ON_HOLD_TASKS_TAB_NAME]: this.props.onHoldTasks,
       [QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME]: this.props.completedTasks,
       [QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME]: this.props.trackingTasks
     };
@@ -93,9 +99,10 @@ class OrganizationQueue extends React.PureComponent {
       tasksWithAppealsFromRawTasks(tabConfig.tasks) :
       this.tasksForTab(tabConfig.name);
     const cols = this.columnsFromConfig(tabConfig, tasks);
+    const totalTaskCount = config.use_task_pages_api ? tabConfig.total_task_count : tasks.length;
 
     return {
-      label: tabConfig.label,
+      label: sprintf(tabConfig.label, totalTaskCount),
       page: <React.Fragment>
         <p className="cf-margin-top-0">{tabConfig.description}</p>
         { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
@@ -107,7 +114,7 @@ class OrganizationQueue extends React.PureComponent {
           useTaskPagesApi={config.use_task_pages_api}
           casesPerPage={config.tasks_per_page}
           numberOfPages={tabConfig.task_page_count}
-          totalTaskCount={tabConfig.total_task_count}
+          totalTaskCount={totalTaskCount}
           taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
           enablePagination
         />
@@ -154,6 +161,19 @@ class OrganizationQueue extends React.PureComponent {
     </AppSegment>;
   };
 }
+
+OrganizationQueue.propTypes = {
+  assignedTasks: PropTypes.array,
+  clearCaseSelectSearch: PropTypes.func,
+  completedTasks: PropTypes.array,
+  onHoldTasks: PropTypes.array,
+  organizations: PropTypes.array,
+  queueConfig: PropTypes.object,
+  success: PropTypes.object,
+  tasksAssignedByBulk: PropTypes.object,
+  trackingTasks: PropTypes.array,
+  unassignedTasks: PropTypes.array
+};
 
 const mapStateToProps = (state) => {
   const { success } = state.ui.messages;

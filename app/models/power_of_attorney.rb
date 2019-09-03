@@ -5,7 +5,7 @@
 #
 # Power of attorney (also referred to as "representative")
 # is tied to the appeal in VACOLS, but it's tied to the veteran
-# in BGS - so the two are ofen out of sync.
+# in BGS - so the two are often out of sync.
 # This class exposes information from both systems
 # and lets the user modify VACOLS with BGS information
 # (but not the other way around).

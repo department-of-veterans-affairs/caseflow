@@ -15,7 +15,12 @@ class Api::V2::HearingSerializer
   end
   attribute :first_name, &:veteran_first_name
   attribute :last_name, &:veteran_last_name
-  attribute :regional_office, &:regional_office_name
+  attribute :participant_id do |hearing|
+    hearing.appeal.veteran.participant_id
+  end
+  attribute :hearing_location do |hearing|
+    hearing.hearing_location&.name || hearing.regional_office_name
+  end
   attribute :room do |hearing|
     hearing.hearing_day.room
   end

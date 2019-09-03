@@ -29,6 +29,7 @@ module Caseflow::Error
   class VaDotGovServerError < VaDotGovAPIError; end
   class VaDotGovLimitError < VaDotGovAPIError; end
   class VaDotGovAddressCouldNotBeFoundError < VaDotGovAPIError; end
+  class VaDotGovMissingFacilityError < VaDotGovAPIError; end
   class VaDotGovInvalidInputError < VaDotGovAPIError; end
   class VaDotGovMultipleAddressError < VaDotGovAPIError; end
   class VaDotGovNullAddressError < StandardError; end
@@ -66,11 +67,30 @@ module Caseflow::Error
     end
   end
 
+  class InvalidTaskTableColumnFilter < SerializableError
+    def initialize(args)
+      @column = args[:column]
+      @code = args[:code] || 400
+      @message = args[:message] || "Cannot filter table on column: \"#{@column}\""
+    end
+  end
+
   class InvalidStatusOnTaskCreate < SerializableError
     def initialize(args)
       @task_type = args[:task_type]
       @code = args[:code] || 400
       @message = args[:message] || "Task status has to be 'assigned' on create for #{@task_type}"
+    end
+  end
+
+  class IneligibleForSpecialCaseMovement < SerializableError
+    attr_accessor :appeal_id
+
+    def initialize(args)
+      @code = args[:code] || 500
+      @appeal_id = args[:appeal_id] || nil
+      @message = args[:message] || "Appeal #{@appeal_id} must be in Case Storage and not have blocking Mail Tasks for"\
+                                   " Special Case Movement"
     end
   end
 

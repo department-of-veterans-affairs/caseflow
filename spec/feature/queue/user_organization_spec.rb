@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.feature "User organization" do
+RSpec.feature "User organization", :postgres do
   let(:role) { "org_role" }
   let!(:user) { User.authenticate!(user: create(:user, roles: [role])) }
   let!(:organization) { create(:organization, name: "Test organization", url: "test", role: role) }
@@ -43,13 +44,13 @@ RSpec.feature "User organization" do
 
       find("a", text: "#{organization.name} team management").click
       expect(page.current_path).to eq(organization.user_admin_path)
-      expect(page).to have_content("#{organization.name} team")
+      expect(page).to have_content(format(COPY::USER_MANAGEMENT_PAGE_TITLE, organization.name))
     end
 
     scenario "Adds and removes users from the organization" do
       visit organization.user_admin_path
 
-      expect(page).to have_content("#{organization.name} team")
+      expect(page).to have_content(format(COPY::USER_MANAGEMENT_PAGE_TITLE, organization.name))
 
       find(".Select-control", text: COPY::USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT).click
       expect(page).to have_content(user_with_role.full_name)
@@ -67,7 +68,7 @@ RSpec.feature "User organization" do
     end
 
     context "when there are many users in the organization" do
-      let(:other_org_user) { FactoryBot.create(:user) }
+      let(:other_org_user) { create(:user) }
       before do
         OrganizationsUser.add_user_to_organization(other_org_user, organization)
       end
@@ -91,7 +92,7 @@ RSpec.feature "User organization" do
     end
 
     context "the user is in a judge team" do
-      let!(:judge) { FactoryBot.create(:user) }
+      let!(:judge) { create(:user) }
       let!(:judgeteam) { JudgeTeam.create_for_judge(judge) }
 
       before do
@@ -124,7 +125,7 @@ RSpec.feature "User organization" do
       scenario "Adds and removes users from the organization" do
         visit organization.user_admin_path
 
-        expect(page).to have_content("#{organization.name} team")
+        expect(page).to have_content(format(COPY::USER_MANAGEMENT_PAGE_TITLE, organization.name))
       end
     end
   end

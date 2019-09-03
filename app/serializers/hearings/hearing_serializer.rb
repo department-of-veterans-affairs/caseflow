@@ -4,7 +4,20 @@ class HearingSerializer
   include FastJsonapi::ObjectSerializer
   include HearingSerializerBase
 
-  attribute :advance_on_docket_motion
+  attribute :advance_on_docket_motion do |hearing|
+    if hearing.advance_on_docket_motion.nil?
+      nil
+    else
+      {
+        judge_name: hearing.advance_on_docket_motion.user.full_name,
+        date: hearing.advance_on_docket_motion.created_at,
+        user_id: hearing.advance_on_docket_motion.user_id,
+        person_id: hearing.advance_on_docket_motion.person_id,
+        granted: hearing.advance_on_docket_motion.granted,
+        reason: hearing.advance_on_docket_motion.reason
+      }
+    end
+  end
   attribute :appeal_external_id
   attribute :appeal_id
   attribute :appellant_address_line_1, if: for_full
@@ -32,6 +45,9 @@ class HearingSerializer
   attribute :location
   attribute :military_service, if: for_full
   attribute :notes
+  attribute :paper_case do
+    false
+  end
   attribute :prepped
   attribute :readable_location
   attribute :readable_request_type

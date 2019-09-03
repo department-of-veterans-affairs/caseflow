@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.feature "MailTasks" do
-  let(:user) { FactoryBot.create(:user) }
+RSpec.feature "MailTasks", :postgres do
+  let(:user) { create(:user) }
 
   before do
     User.authenticate!(user: user)
@@ -11,7 +12,7 @@ RSpec.feature "MailTasks" do
 
   describe "Assigning a mail team task to a team member" do
     context "when task is assigned to AOD team" do
-      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:root_task) { create(:root_task) }
 
       let(:mail_team_task) do
         AodMotionMailTask.create!(
@@ -57,7 +58,7 @@ RSpec.feature "MailTasks" do
   end
 
   describe "Changing a mail team task type" do
-    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:root_task) { create(:root_task) }
     let(:old_task_type) { DeathCertificateMailTask }
     let(:new_task_type) { AddressChangeMailTask }
     let(:old_instructions) { generate_words(5) }

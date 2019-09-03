@@ -58,6 +58,14 @@ class SeedDB
     OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
     bva_intake_admin = User.create(css_id: "BVAGBLUE", station_id: 101, full_name: "BVA Intake admin")
     OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
+    special_case_movement_user = User.create(css_id: "BVAGGREEN",
+                                             station_id: 101,
+                                             full_name: "Rosalie SpecialCaseMovement Dunkle")
+    OrganizationsUser.add_user_to_organization(special_case_movement_user, SpecialCaseMovementTeam.singleton)
+    special_case_movement_admin = User.create(css_id: "BVAGAQUA",
+                                              station_id: 101,
+                                              full_name: "Bryan SpecialCaseMovementAdmin Beekman")
+    OrganizationsUser.make_user_admin(special_case_movement_admin, SpecialCaseMovementTeam.singleton)
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
@@ -336,8 +344,7 @@ class SeedDB
   end
 
   def create_case_search_only_user
-    u = User.create!(station_id: 101, css_id: "CASE_SEARCHER_ONLY", full_name: "Case search access. No Queue access")
-    FeatureToggle.enable!(:case_search_home_page, users: [u.css_id])
+    User.create!(station_id: 101, css_id: "CASE_SEARCHER_ONLY", full_name: "Case search access. No Queue access")
   end
 
   def create_dispatch_tasks(number)
@@ -453,7 +460,7 @@ class SeedDB
 
   def create_ama_hearing(day)
     vet = Generators::Veteran.build(
-      file_number: Faker::Number.number(9).to_s,
+      file_number: Faker::Number.number(digits: 9).to_s,
       first_name: Faker::Name.first_name,
       last_name: Faker::Name.last_name
     )
@@ -462,7 +469,7 @@ class SeedDB
     app = FactoryBot.create(
       :appeal,
       veteran_file_number: vet.file_number,
-      docket_type: "hearing"
+      docket_type: Constants.AMA_DOCKETS.hearing
     )
 
     # Legacy Hearings can be created here due to hearing_day_full? check
@@ -545,7 +552,7 @@ class SeedDB
 
   def create_ama_case_with_open_schedule_hearing_task(ro_key)
     vet = Generators::Veteran.build(
-      file_number: Faker::Number.number(9).to_s,
+      file_number: Faker::Number.number(digits: 9).to_s,
       first_name: Faker::Name.first_name,
       last_name: Faker::Name.last_name
     )
@@ -558,7 +565,7 @@ class SeedDB
       number_of_claimants: 1,
       closest_regional_office: ro_key,
       veteran_file_number: vet.file_number,
-      docket_type: "hearing"
+      docket_type: Constants.AMA_DOCKETS.hearing
     )
   end
 
@@ -605,7 +612,7 @@ class SeedDB
         FactoryBot.build(:claimant, participant_id: "OTHER_CLAIMANT")
       ],
       veteran_file_number: "701305078",
-      docket_type: "direct_review",
+      docket_type: Constants.AMA_DOCKETS.direct_review,
       request_issues: FactoryBot.create_list(:request_issue, 3, :nonrating, notes: notes)
     )
 
@@ -806,7 +813,7 @@ class SeedDB
       associated_judge: judge,
       active_task_assigned_at: assigned_at,
       veteran_file_number: Generators::Random.unique_ssn,
-      docket_type: "direct_review",
+      docket_type: Constants.AMA_DOCKETS.direct_review,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 2, contested_issue_description: description, notes: notes
@@ -839,7 +846,7 @@ class SeedDB
     FactoryBot.create(:attorney_case_review, task_id: child.id)
   end
 
-  def create_task_at_colocated(appeal, judge, attorney, trait = Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym)
+  def create_task_at_colocated(appeal, judge, attorney, trait = ColocatedTask.actions_assigned_to_colocated.sample.to_sym)
     parent = FactoryBot.create(
       :ama_judge_decision_review_task,
       :on_hold,
@@ -859,23 +866,21 @@ class SeedDB
 
     org_task_args = { appeal: appeal,
                       parent: atty_task,
-                      assigned_by: attorney,
-                      assigned_to: Colocated.singleton }
-    FactoryBot.create(:ama_colocated_task, :on_hold, trait, org_task_args)
+                      assigned_by: attorney }
+    FactoryBot.create(:ama_colocated_task, trait, org_task_args)
   end
 
   def create_colocated_legacy_tasks(attorney)
     [
       { vacols_id: "2096907", trait: :schedule_hearing },
       { vacols_id: "2226048", trait: :translation },
-      { vacols_id: "2249056", trait: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym },
-      { vacols_id: "2306397", trait: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym },
-      { vacols_id: "2657227", trait: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym }
+      { vacols_id: "2249056", trait: ColocatedTask.actions_assigned_to_colocated.sample.to_sym },
+      { vacols_id: "2306397", trait: ColocatedTask.actions_assigned_to_colocated.sample.to_sym },
+      { vacols_id: "2657227", trait: ColocatedTask.actions_assigned_to_colocated.sample.to_sym }
     ].each do |attrs|
       org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
-                        assigned_by: attorney,
-                        assigned_to: Colocated.singleton }
-      FactoryBot.create(:colocated_task, :on_hold, attrs[:trait], org_task_args)
+                        assigned_by: attorney }
+      FactoryBot.create(:colocated_task, attrs[:trait], org_task_args)
     end
   end
 
@@ -901,7 +906,7 @@ class SeedDB
   def create_task_at_quality_review(qr_user = nil, judge_name = nil, attorney_name = nil)
     vet = FactoryBot.create(
       :veteran,
-      file_number: Faker::Number.number(9).to_s,
+      file_number: Faker::Number.number(digits: 9).to_s,
       first_name: Faker::Name.first_name,
       last_name: Faker::Name.last_name
     )
@@ -912,7 +917,7 @@ class SeedDB
       :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: vet.file_number,
-      docket_type: "direct_review",
+      docket_type: Constants.AMA_DOCKETS.direct_review,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 1, :nonrating, notes: notes
@@ -948,11 +953,11 @@ class SeedDB
     end
   end
 
-  def create_task_at_bva_dispatch(seed = Faker::Number.number(3))
+  def create_task_at_bva_dispatch(seed = Faker::Number.number(digits: 3))
     Faker::Config.random = Random.new(seed)
     vet = FactoryBot.create(
       :veteran,
-      file_number: Faker::Number.number(9).to_s,
+      file_number: Faker::Number.number(digits: 9).to_s,
       first_name: Faker::Name.first_name,
       last_name: Faker::Name.last_name
     )
@@ -964,7 +969,7 @@ class SeedDB
       :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: vet.file_number,
-      docket_type: "hearing",
+      docket_type: Constants.AMA_DOCKETS.hearing,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 1, :nonrating, notes: notes
@@ -1053,6 +1058,13 @@ class SeedDB
       :in_progress,
       assigned_to: User.find_by(css_id: "BVAEBECKER"),
       appeal: FactoryBot.create(:appeal)
+    )
+
+    FactoryBot.create_list(
+      :appeal,
+      8,
+      :with_post_intake_tasks,
+      docket_type: Constants.AMA_DOCKETS.direct_review
     )
   end
 
@@ -1170,7 +1182,7 @@ class SeedDB
       :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: "808415990",
-      docket_type: "hearing",
+      docket_type: Constants.AMA_DOCKETS.hearing,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 1, contested_issue_description: description, notes: notes
@@ -1181,7 +1193,7 @@ class SeedDB
       :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: "992190636",
-      docket_type: "hearing",
+      docket_type: Constants.AMA_DOCKETS.hearing,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 8, contested_issue_description: description, notes: notes
@@ -1230,7 +1242,9 @@ class SeedDB
 
     create_intake_users
 
+    # Active Jobs which populate tables based on seed data
     FetchHearingLocationsForVeteransJob.perform_now
+    UpdateCachedAppealsAttributesJob.perform_now
 
     return if Rails.env.development?
 

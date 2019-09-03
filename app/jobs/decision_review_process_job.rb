@@ -3,7 +3,7 @@
 # This job will call establish! on a DecisionReview
 # or anything that acts like a DecisionReview
 class DecisionReviewProcessJob < CaseflowJob
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :intake
 
   def perform(decision_review)
@@ -13,19 +13,22 @@ class DecisionReviewProcessJob < CaseflowJob
 
     return_value = nil
 
-    Raven.extra_context(class: decision_review.class.to_s, id: decision_review.id)
+    add_extra_context_to_sentry(decision_review)
 
     begin
       return_value = decision_review.establish!
-    rescue VBMSError::Transient => error
-      decision_review.update_error!(error.inspect)
-      # no need to tell Sentry about it
     rescue StandardError => error
       decision_review.update_error!(error.inspect)
-      Raven.capture_exception(error)
+      capture_exception(error: error)
     end
 
     RequestStore.store[:current_user] = current_user
     return_value
+  end
+
+  private
+
+  def add_extra_context_to_sentry(decision_review)
+    Raven.extra_context(class: decision_review.class.to_s, id: decision_review.id)
   end
 end

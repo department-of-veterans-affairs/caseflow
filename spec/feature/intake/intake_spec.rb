@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-feature "Intake" do
+feature "Intake", :all_dbs do
   include IntakeHelpers
 
   before do
@@ -159,7 +159,7 @@ feature "Intake" do
       before do
         Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
-          .and_raise(BGS::ShareError, message: "NonUniqueResultException")
+          .and_raise(BGS::ShareError.new("NonUniqueResultException"))
       end
 
       scenario "Search for a veteran with multiple active phone numbers" do
@@ -321,13 +321,7 @@ feature "Intake" do
         User.authenticate!(roles: ["Admin Intake"])
       end
 
-      before do
-        FeatureToggle.enable!(:intake_reserved_file_number, users: [current_user.css_id])
-      end
-
-      after do
-        FeatureToggle.disable!(:intake_reserved_file_number, users: [current_user.css_id])
-      end
+      before { allow(Rails).to receive(:deploy_env?).and_return(true) }
 
       let(:veteran) do
         Generators::Veteran.build(
@@ -339,7 +333,7 @@ feature "Intake" do
       end
 
       scenario "Search for a veteran with reserved file_number" do
-        visit "/intake"
+        visit "intake"
         select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
         safe_click ".cf-submit.usa-button"
 

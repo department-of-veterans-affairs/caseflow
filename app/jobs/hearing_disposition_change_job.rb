@@ -5,7 +5,7 @@ require "action_view"
 class HearingDispositionChangeJob < CaseflowJob
   # For time_ago_in_words()
   include ActionView::Helpers::DateHelper
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :hearing_schedule
 
   def perform
@@ -25,7 +25,7 @@ class HearingDispositionChangeJob < CaseflowJob
       increment_task_count_for(label)
     rescue StandardError => error
       # Rescue from errors so we attempt to change disposition even if we hit individual errors.
-      Raven.capture_exception(error, extra: { task_id: task.id })
+      capture_exception(error: error, extra: { task_id: task.id })
       error_count += 1
     end
 

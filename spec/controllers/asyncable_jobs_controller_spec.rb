@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe AsyncableJobsController, type: :controller do
+describe AsyncableJobsController, :postgres, type: :controller do
   before do
     User.stub = user
   end
@@ -88,7 +89,7 @@ describe AsyncableJobsController, type: :controller do
         it "paginates based on asyncable_job_klass" do
           get :index, as: :html, params: { asyncable_job_klass: "HigherLevelReview" }
 
-          expect(subject.send(:pagination)).to eq(total_pages: 1, total_jobs: 1, current_page: 1, page_size: 50)
+          expect(subject.send(:pagination)).to eq(total_pages: 1, total_items: 1, current_page: 1, page_size: 50)
         end
       end
 

@@ -28,17 +28,25 @@ class MailTask < GenericTask
       MailTask.subclasses.sort_by(&:label).map { |subclass| { value: subclass.name, label: subclass.label } }
     end
 
-    def create_from_params(params, user)
-      verify_user_can_create!(user, Task.find(params[:parent_id]))
+    def parent_if_blocking_task(parent_task)
+      if blocking? && !parent_task.appeal.distributed_to_a_judge?
+        return parent_task.appeal.tasks.find_by(type: DistributionTask.name)
+      end
 
+      parent_task
+    end
+
+    def create_from_params(params, user)
       parent_task = Task.find(params[:parent_id])
+
+      verify_user_can_create!(user, parent_task)
 
       transaction do
         if parent_task.is_a?(RootTask)
           # Create a task assigned to the mail team with a child task so we can track how that child was created.
           parent_task = create!(
             appeal: parent_task.appeal,
-            parent_id: parent_task.id,
+            parent_id: parent_if_blocking_task(parent_task).id,
             assigned_to: MailTeam.singleton
           )
         end
@@ -74,8 +82,8 @@ class MailTask < GenericTask
     end
   end
 
-  def label
-    self.class.label
+  def blocking?
+    self.class.blocking?
   end
 
   def available_actions(user)

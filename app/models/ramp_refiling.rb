@@ -9,9 +9,9 @@ class RampRefiling < RampReview
   validates :appeal_docket, presence: { message: "blank" }, if: :appeal?
 
   enum appeal_docket: {
-    direct_review: "direct_review",
-    evidence_submission: "evidence_submission",
-    hearing: "hearing"
+    direct_review: Constants.AMA_DOCKETS.direct_review,
+    evidence_submission: Constants.AMA_DOCKETS.evidence_submission,
+    hearing: Constants.AMA_DOCKETS.hearing
   }
 
   def self.need_to_reprocess

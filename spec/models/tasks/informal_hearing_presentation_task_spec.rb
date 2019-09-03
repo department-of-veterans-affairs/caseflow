@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe InformalHearingPresentationTask do
+describe InformalHearingPresentationTask, :postgres do
   let(:user) { create(:user, roles: ["VSO"]) }
 
   describe ".available_actions" do
@@ -27,7 +28,7 @@ describe InformalHearingPresentationTask do
     end
 
     context "when task is assigned to an organization the user is a member of" do
-      let(:org) { Organization.find(FactoryBot.create(:organization).id) }
+      let(:org) { Organization.find(create(:organization).id) }
       let(:task) do
         InformalHearingPresentationTask.find(create(:informal_hearing_presentation_task, assigned_to: org).id)
       end
@@ -60,7 +61,7 @@ describe InformalHearingPresentationTask do
   end
 
   describe "when an IHP task is cancelled" do
-    let(:appeal) { FactoryBot.create(:appeal) }
+    let(:appeal) { create(:appeal) }
     let(:task) do
       InformalHearingPresentationTask.find(create(:informal_hearing_presentation_task, assigned_to: user).id)
     end

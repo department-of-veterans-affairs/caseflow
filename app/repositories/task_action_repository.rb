@@ -228,7 +228,12 @@ class TaskActionRepository
 
     def return_to_attorney_data(task, _user = nil)
       assignee = task.children.select { |child| child.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
-      attorneys = JudgeTeam.for_judge(task.assigned_to)&.attorneys || []
+
+      judge_team = JudgeTeam.for_judge(task.assigned_to)
+
+      # Include attorneys for all judge teams in list of possible recipients so that judges can send cases to
+      # attorneys who are not on their judge team.
+      attorneys = (judge_team&.attorneys || []) + JudgeTeam.where.not(id: judge_team&.id).map(&:attorneys).flatten
       attorneys |= [assignee] if assignee.present?
       {
         selected: assignee,
@@ -282,6 +287,17 @@ class TaskActionRepository
         selected: org,
         options: [{ label: org.name, value: org.id }],
         type: PulacCerulloTask.name
+      }
+    end
+
+    def special_case_movement_data(task, _user = nil)
+      {
+        selected: task.appeal.assigned_judge,
+        options: users_to_options(Judge.list_all),
+        type: SpecialCaseMovementTask.name,
+        modal_title: COPY::SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
+        modal_body: COPY::SPECIAL_CASE_MOVEMENT_MODAL_DETAIL,
+        modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER
       }
     end
 

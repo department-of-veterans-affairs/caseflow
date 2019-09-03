@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe TaskActionRepository do
+describe TaskActionRepository, :all_dbs do
   describe "#assign_to_user_data" do
     let(:organization) { create(:organization, name: "Organization") }
     let(:users) { create_list(:user, 3) }
@@ -44,14 +45,14 @@ describe TaskActionRepository do
   end
 
   describe "#return_to_attorney_data" do
-    let(:attorney) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Janet Avilez") }
-    let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
-    let(:judge) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
-    let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id) }
+    let(:attorney) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Janet Avilez") }
+    let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+    let(:judge) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
+    let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge.css_id) }
     let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
-    let(:judge_task) { FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge) }
+    let(:judge_task) { create(:ama_judge_decision_review_task, assigned_to: judge) }
     let!(:attorney_task) do
-      FactoryBot.create(:ama_attorney_task, assigned_to: attorney, parent: judge_task, appeal: judge_task.appeal)
+      create(:ama_attorney_task, assigned_to: attorney, parent: judge_task, appeal: judge_task.appeal)
     end
 
     subject { TaskActionRepository.return_to_attorney_data(judge_task) }
@@ -70,26 +71,48 @@ describe TaskActionRepository do
         OrganizationsUser.add_user_to_organization(attorney, judge_team)
 
         attorney_names.each do |attorney_name|
-          another_attorney_on_the_team = FactoryBot.create(
+          another_attorney_on_the_team = create(
             :user, station_id: User::BOARD_STATION_ID, full_name: attorney_name
           )
-          FactoryBot.create(:staff, :attorney_role, user: another_attorney_on_the_team)
+          create(:staff, :attorney_role, user: another_attorney_on_the_team)
           OrganizationsUser.add_user_to_organization(another_attorney_on_the_team, judge_team)
         end
       end
 
       it "shows the assigned attorney in selected, and all attorneys in options" do
         expect(subject[:selected]).to eq attorney
+
+        # + 1 because "attorney" is already in the judge team
         expect(judge_team.non_admins.count).to eq attorney_names.count + 1
         judge_team.non_admins.each do |team_attorney|
           expect(subject[:options]).to include(label: team_attorney.full_name, value: team_attorney.id)
+        end
+      end
+
+      context "there are an attorneys on other judge teamd" do
+        let(:other_teams_atty_names) { ["Wild E Beast", "Emory Millage", "Madalene Padavano", "Yvette Jessie Bailey"] }
+        let(:other_teams_attorneys) { other_teams_atty_names.map { |atty_name| create(:user, full_name: atty_name) } }
+
+        before do
+          other_teams_attorneys.each do |atty_user|
+            create(:staff, :attorney_role, user: atty_user)
+            other_judge_team = JudgeTeam.create_for_judge(create(:user))
+            OrganizationsUser.add_user_to_organization(atty_user, other_judge_team)
+          end
+        end
+
+        it "includes attorneys on other judge teams in the list of options" do
+          all_attorneys = judge_team.non_admins + other_teams_attorneys
+          expected_options = all_attorneys.map { |atty| { label: atty.full_name, value: atty.id } }
+
+          expect(subject[:options]).to match_array(expected_options)
         end
       end
     end
   end
 
   describe "#cancel_task_data" do
-    let(:task) { FactoryBot.create(:generic_task, assigned_by_id: assigner_id) }
+    let(:task) { create(:generic_task, assigned_by_id: assigner_id) }
     subject { TaskActionRepository.cancel_task_data(task) }
 
     context "when the task has no assigner" do

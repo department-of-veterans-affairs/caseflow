@@ -63,6 +63,16 @@ class ClaimReview < DecisionReview
     "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
   end
 
+  def finalized_decision_issues_before_receipt_date
+    return [] unless receipt_date
+
+    DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
+      .select(&:finalized?)
+      .select do |issue|
+        issue.approx_decision_date && issue.approx_decision_date < receipt_date
+      end
+  end
+
   # Save issues and assign it the appropriate end product establishment.
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
@@ -151,6 +161,7 @@ class ClaimReview < DecisionReview
       end_product_status: search_table_statuses,
       establishment_error: establishment_error,
       review_type: self.class.to_s.underscore,
+      receipt_date: receipt_date,
       veteran_file_number: veteran_file_number,
       veteran_full_name: claim_veteran&.name&.formatted(:readable_full),
       caseflow_only_edit_issues_url: caseflow_only_edit_issues_url
@@ -192,12 +203,8 @@ class ClaimReview < DecisionReview
     request_issues.first.api_aoj_from_benefit_type
   end
 
-  def issues_hash
-    issue_list = active_status? ? request_issues.active.all : fetch_all_decision_issues
-
-    return [] if issue_list.empty?
-
-    fetch_issues_status(issue_list)
+  def active_request_issues_or_decision_issues
+    active_status? ? request_issues.active.all : fetch_all_decision_issues
   end
 
   def contention_records(epe)
@@ -218,6 +225,17 @@ class ClaimReview < DecisionReview
       issue.end_product_code,
       EndProduct::INACTIVE_STATUSES
     ) || new_end_product_establishment(issue)
+  end
+
+  def cancel_establishment!
+    transaction do
+      canceled!
+      request_issues.each { |reqi| reqi.close!(status: :end_product_canceled) }
+    end
+  end
+
+  def can_contest_rating_issues?
+    processed_in_vbms?
   end
 
   private
@@ -241,10 +259,6 @@ class ClaimReview < DecisionReview
 
   def incomplete_tasks?
     tasks.reject(&:completed?).any?
-  end
-
-  def can_contest_rating_issues?
-    processed_in_vbms?
   end
 
   def create_decision_review_task!

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe UpdateAppellantRepresentationJob do
+describe UpdateAppellantRepresentationJob, :all_dbs do
   context "when the job runs successfully" do
     let(:new_task_count) { 3 }
     let(:closed_task_count) { 1 }
@@ -16,7 +17,7 @@ describe UpdateAppellantRepresentationJob do
     before do
       correct_task_count.times do |_|
         appeal, vso = create_appeal_and_vso
-        FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: vso)
+        create(:track_veteran_task, appeal: appeal, assigned_to: vso)
         vso_for_appeal[appeal.id] = [vso]
       end
 
@@ -27,7 +28,7 @@ describe UpdateAppellantRepresentationJob do
 
       closed_task_count.times do |_|
         appeal, vso = create_appeal_and_vso
-        FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: vso)
+        create(:track_veteran_task, appeal: appeal, assigned_to: vso)
         vso_for_appeal[appeal.id] = []
       end
 
@@ -95,7 +96,7 @@ describe UpdateAppellantRepresentationJob do
 
       correct_task_count.times do |_|
         appeal, vso = create_appeal_and_vso
-        FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: vso)
+        create(:track_veteran_task, appeal: appeal, assigned_to: vso)
         vso_for_appeal[appeal.id] = [vso]
       end
 
@@ -106,14 +107,14 @@ describe UpdateAppellantRepresentationJob do
 
       closed_task_count.times do |_|
         appeal, vso = create_appeal_and_vso
-        FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: vso)
+        create(:track_veteran_task, appeal: appeal, assigned_to: vso)
         vso_for_appeal[appeal.id] = []
       end
 
       error_indicator = "RAISE ERROR"
       error_count.times do |_|
         appeal, vso = create_appeal_and_vso
-        FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: vso)
+        create(:track_veteran_task, appeal: appeal, assigned_to: vso)
         vso_for_appeal[appeal.id] = error_indicator
       end
 
@@ -125,7 +126,13 @@ describe UpdateAppellantRepresentationJob do
     end
 
     it "the job still runs to completion but sends the errors to DataDog" do
-      expect_any_instance_of(UpdateAppellantRepresentationJob).to receive(:record_runtime).exactly(1).times
+      expect(DataDogService).to receive(:emit_gauge).with(
+        app_name: "caseflow_job",
+        metric_group: UpdateAppellantRepresentationJob.name.underscore,
+        metric_name: "runtime",
+        metric_value: anything
+      )
+
       expect_any_instance_of(UpdateAppellantRepresentationJob).to_not receive(:log_error).with(anything, anything)
 
       observed_error_count = 0
@@ -147,7 +154,12 @@ describe UpdateAppellantRepresentationJob do
     end
 
     it "sends a message to Slack that includes the error" do
-      expect_any_instance_of(UpdateAppellantRepresentationJob).to receive(:record_runtime).exactly(1).times
+      expect(DataDogService).to receive(:emit_gauge).with(
+        app_name: "caseflow_job",
+        metric_group: UpdateAppellantRepresentationJob.name.underscore,
+        metric_name: "runtime",
+        metric_value: anything
+      )
 
       slack_msg = ""
       allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
@@ -203,7 +215,7 @@ describe UpdateAppellantRepresentationJob do
       let(:appeal_count) { 6 }
 
       it "returns the appropriate ratio of legacy to ama" do
-        UpdateAppellantRepresentationJob::TOTAL_NUMBER_OF_APPEALS_TO_UPDATE = 3
+        stub_const("UpdateAppellantRepresentationJob::TOTAL_NUMBER_OF_APPEALS_TO_UPDATE", 3)
         appeal_counts = UpdateAppellantRepresentationJob.new.retrieve_number_to_update
 
         expect(appeal_counts[:number_of_legacy_appeals_to_update]).to eq(1)
@@ -214,9 +226,9 @@ describe UpdateAppellantRepresentationJob do
 end
 
 def create_appeal_and_vso
-  appeal = FactoryBot.create(:appeal)
-  FactoryBot.create(:root_task, appeal: appeal)
-  vso = FactoryBot.create(:vso)
+  appeal = create(:appeal)
+  create(:root_task, appeal: appeal)
+  vso = create(:vso)
 
   [appeal, vso]
 end

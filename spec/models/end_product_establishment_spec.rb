@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe EndProductEstablishment do
+describe EndProductEstablishment, :postgres do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
 
@@ -36,6 +37,7 @@ describe EndProductEstablishment do
   let(:development_item_reference_id) { nil }
   let(:limited_poa_code) { "ABC" }
   let(:limited_poa_access) { true }
+  let(:rating_profile_date) { Date.new(2018, 4, 30) }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -235,7 +237,7 @@ describe EndProductEstablishment do
         %w[030 031 032].each do |modifier|
           Generators::EndProduct.build(
             veteran_file_number: veteran_file_number,
-            bgs_attrs: { end_product_type_code: modifier, status_type_code: "CAN" }
+            bgs_attrs: { end_product_type_code: modifier, status_type_code: "PEND" }
           )
         end
       end
@@ -260,21 +262,6 @@ describe EndProductEstablishment do
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           hash_including(veteran_hash: veteran.reload.to_vbms_hash)
         )
-      end
-    end
-
-    context "when existing EP has status CAN" do
-      before do
-        %w[030 031 032].each do |modifier|
-          Generators::EndProduct.build(
-            veteran_file_number: veteran_file_number,
-            bgs_attrs: { end_product_type_code: modifier, status_type_code: "CAN" }
-          )
-        end
-      end
-
-      it "considers those EP modifiers as closed" do
-        expect { subject }.to raise_error(EndProductModifierFinder::NoAvailableModifiers)
       end
     end
 
@@ -342,15 +329,23 @@ describe EndProductEstablishment do
           end_product_establishment: end_product_establishment,
           decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
-          contested_rating_issue_profile_date: Date.new(2018, 4, 30),
+          contested_rating_issue_profile_date: rating_profile_date,
           contested_issue_description: "this is a big decision"
         ),
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
           decision_review: source,
+          contested_rating_decision_reference_id: "rating-decision-diagnostic-id",
+          contested_rating_issue_profile_date: rating_profile_date,
+          contested_issue_description: "foobar was denied."
+        ),
+        create(
+          :request_issue,
+          end_product_establishment: end_product_establishment,
+          decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
-          contested_rating_issue_profile_date: Date.new(2018, 4, 30),
+          contested_rating_issue_profile_date: rating_profile_date,
           vacols_id: vacols_id,
           vacols_sequence_id: vacols_sequence_id,
           contested_issue_description: "more decisionz"
@@ -360,7 +355,7 @@ describe EndProductEstablishment do
           end_product_establishment: end_product_establishment,
           decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
-          contested_rating_issue_profile_date: Date.new(2018, 4, 30),
+          contested_rating_issue_profile_date: rating_profile_date,
           contested_issue_description: "description too long for bgs" * 20
         ),
         create(
@@ -370,7 +365,7 @@ describe EndProductEstablishment do
           unidentified_issue_text: "identity unknown",
           decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
-          contested_rating_issue_profile_date: Date.new(2018, 4, 30)
+          contested_rating_issue_profile_date: rating_profile_date
         )
       ]
     end
@@ -394,7 +389,7 @@ describe EndProductEstablishment do
         user: current_user
       )
 
-      expect(end_product_establishment.contentions.count).to eq(4)
+      expect(end_product_establishment.contentions.count).to eq(request_issues.count)
       expect(end_product_establishment.contentions.map(&:id)).to contain_exactly(
         *request_issues.map(&:reload).map(&:contention_reference_id).map(&:to_s)
       )
@@ -520,6 +515,27 @@ describe EndProductEstablishment do
           claim_id: reference_id,
           rating_issue_contention_map: { request_issues[0].contested_rating_issue_reference_id => contention_ref_id }
         )
+      end
+    end
+
+    context "request issue is rating via rating decision" do
+      let!(:request_issues) do
+        [
+          create(
+            :request_issue,
+            end_product_establishment: end_product_establishment,
+            decision_review: source,
+            contested_rating_decision_reference_id: "rating-decision-diagnostic-id",
+            contested_rating_issue_profile_date: rating_profile_date,
+            contested_issue_description: "foobar was denied."
+          )
+        ]
+      end
+
+      it "skips mapping since there is no associated rating issue" do
+        subject
+        expect(request_issues.first.rating?).to be true
+        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
       end
     end
 
@@ -758,49 +774,7 @@ describe EndProductEstablishment do
         end
 
         it "re-raises error" do
-          expect { subject }.to raise_error(::BGSSyncError)
-        end
-      end
-
-      context "when VBMS/BGS has a transient internal error" do
-        before do
-          # from https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3116/
-          sample_transient_error_body = '<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">' \
-                                        "<env:Header/><env:Body><env:Fault>" \
-                                        '<faultcode xmlns:ns1="http://www.w3.org/2003/05/soap-envelope">' \
-                                        "ns1:Server</faultcode><faultstring>gov.va.vba.vbms.ws.VbmsWSException: " \
-                                        "WssVerification Exception - Security Verification Exception GUID: " \
-                                        "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</faultstring><detail>" \
-                                        '<cdm:faultDetailBean xmlns:cdm="http://vbms.vba.va.gov/cdm" ' \
-                                        'cdm:message="gov.va.vba.vbms.ws.VbmsWSException: WssVerification Exception' \
-                                        " - Security Verification Exception GUID: " \
-                                        "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
-                                        ' cdm:exceptionClassName="gov.va.vba.vbms.ws.VbmsWSException" ' \
-                                        'cdm:uid="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" ' \
-                                        'cdm:serverException="true"/></detail></env:Fault></env:Body></env:Envelope>'
-
-          error = VBMS::HTTPError.new(500, sample_transient_error_body)
-          allow_any_instance_of(BGSService).to receive(:get_end_products).and_raise(error)
-        end
-
-        it "re-raises a transient ignorable error" do
-          expect { subject }.to raise_error(::TransientBGSSyncError)
-        end
-      end
-
-      context "when VBMS/BGS has a transient network error" do
-        before do
-          # from https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2888/
-          error = Errno::ETIMEDOUT.new(
-            "Connection timed out - Connection timed out - connect(2) for " \
-            '"bepprod.vba.va.gov" port 443 (bepprod.vba.va.gov:443)'
-          )
-
-          allow_any_instance_of(BGSService).to receive(:get_end_products).and_raise(error)
-        end
-
-        it "re-raises a transient ignorable error" do
-          expect { subject }.to raise_error(::TransientBGSSyncError)
+          expect { subject }.to raise_error(BGS::ShareError)
         end
       end
 

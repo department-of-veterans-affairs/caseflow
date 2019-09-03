@@ -5,15 +5,19 @@ class TrackingTasksTab < QueueTab
     COPY::TRACKING_TASKS_TAB_TITLE
   end
 
-  def name
+  def self.tab_name
     Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME
   end
 
   def description
-    COPY::TRACKING_TASKS_TAB_DESCRIPTION
+    format(COPY::TRACKING_TASKS_TAB_DESCRIPTION, assignee.name)
   end
 
-  def columns
+  def tasks
+    TrackVeteranTask.includes(*task_includes).active.where(assigned_to: assignee)
+  end
+
+  def column_names
     [
       Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
       Constants.QUEUE_CONFIG.ISSUE_COUNT_COLUMN,

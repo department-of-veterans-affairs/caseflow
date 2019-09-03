@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Add a Hearing Day" do
+RSpec.feature "Add a Hearing Day", :postgres do
   let!(:current_user) do
     user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
     OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
@@ -108,6 +109,35 @@ RSpec.feature "Add a Hearing Day" do
       find("button", text: "Confirm").click
       expect(page).to have_content("Hearing type is a Video hearing")
       expect(page).to have_content("Please make sure you select a Regional Office")
+    end
+  end
+
+  context "has a judge and coordinator to select from the dropdown" do
+    let!(:judge) do
+      judge = create(:user)
+      create(:staff, :judge_role, sdomainid: judge.css_id)
+      judge
+    end
+    let!(:coordinator) do
+      coordinator = create(:user)
+      create(:staff, :hearing_coordinator, sdomainid: coordinator.css_id)
+      coordinator
+    end
+
+    before do
+      visit "hearings/schedule"
+      find("button", text: "Add Hearing Date").click
+      click_dropdown(index: "V", text: "Video")
+    end
+
+    scenario "select a vlj from the dropdown works" do
+      click_dropdown(name: "vlj", text: judge.full_name, wait: 30)
+      expect(page).to have_content(judge.full_name)
+    end
+
+    scenario "select a coordinator from the dropdown works" do
+      click_dropdown(name: "coordinator", text: coordinator.full_name, wait: 30)
+      expect(page).to have_content(coordinator.full_name)
     end
   end
 end

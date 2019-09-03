@@ -9,6 +9,10 @@ module DateTimeHelper
     Constants::DATES["AMA_ACTIVATION"].to_date.in_time_zone
   end
 
+  def ama_test_start_date
+    Constants::DATES["AMA_ACTIVATION_TEST"].to_date.in_time_zone
+  end
+
   def pre_ama_start_date
     ama_start_date - 2.days
   end
@@ -32,17 +36,27 @@ class Date
     strftime("%m/%d/%Y")
   end
   # rubocop:enable Naming/MethodName
-
-  # cheatsheet from https://apidock.com/ruby/DateTime/strftime
-  #   Combination:
-  #   %c - date and time (%a %b %e %T %Y)
-  #   %D - Date (%m/%d/%y)
-  #   %F - The ISO 8601 date format (%Y-%m-%d)
-  #   %v - VMS date (%e-%b-%Y)
-  #   %x - Same as %D
-  #   %X - Same as %T
-  #   %r - 12-hour time (%I:%M:%S %p)
-  #   %R - 24-hour time (%H:%M)
-  #   %T - 24-hour time (%H:%M:%S)
-  #   %+ - date(1) (%a %b %e %H:%M:%S %Z %Y)
 end
+
+class Time
+  def unix_format
+    strftime("%a %b %d %T %Y")
+  end
+
+  def friendly_full_format
+    strftime("%a %b %e %Y at %H:%M")
+  end
+end
+
+# cheatsheet from https://apidock.com/ruby/DateTime/strftime
+#   Combination:
+#   %c - date and time (%a %b %e %T %Y)
+#   %D - Date (%m/%d/%y)
+#   %F - The ISO 8601 date format (%Y-%m-%d)
+#   %v - VMS date (%e-%b-%Y)
+#   %x - Same as %D
+#   %X - Same as %T
+#   %r - 12-hour time (%I:%M:%S %p)
+#   %R - 24-hour time (%H:%M)
+#   %T - 24-hour time (%H:%M:%S)
+#   %+ - date(1) (%a %b %e %H:%M:%S %Z %Y)

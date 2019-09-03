@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe "Withdrawing an appeal" do
+describe "Withdrawing an appeal", :postgres do
   context "appeal has one request issue and it is withdrawn" do
     it "allows it to be distributed" do
       add_blocking_mail_task_to_appeal
@@ -162,7 +163,7 @@ describe "Withdrawing an appeal" do
       appeal = create(
         :appeal,
         :with_post_intake_tasks,
-        docket_type: "direct_review",
+        docket_type: Constants.AMA_DOCKETS.direct_review,
         request_issues: build_list(:request_issue, 1, contested_issue_description: "Knee pain")
       )
       create_track_veteran_tasks(appeal)
@@ -175,7 +176,7 @@ describe "Withdrawing an appeal" do
       appeal = create(
         :appeal,
         :with_post_intake_tasks,
-        docket_type: "direct_review"
+        docket_type: Constants.AMA_DOCKETS.direct_review
       )
       appeal.request_issues = build_list(
         :request_issue, 2, contested_issue_description: "Knee pain", decision_review: appeal
@@ -191,7 +192,7 @@ describe "Withdrawing an appeal" do
       appeal = create(
         :appeal,
         :with_post_intake_tasks,
-        docket_type: "direct_review"
+        docket_type: Constants.AMA_DOCKETS.direct_review
       )
       create(
         :request_issue,
@@ -214,7 +215,7 @@ describe "Withdrawing an appeal" do
       appeal = create(
         :appeal,
         :with_post_intake_tasks,
-        docket_type: "direct_review"
+        docket_type: Constants.AMA_DOCKETS.direct_review
       )
       create(
         :request_issue,

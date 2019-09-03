@@ -1,34 +1,38 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "AmaQueue" do
+RSpec.feature "AmaQueue", :all_dbs do
   def valid_document_id
     "12345-12345678"
   end
 
   context "user with case details role " do
-    let!(:appeal) { FactoryBot.create(:appeal) }
-    let(:no_queue_user) { FactoryBot.create(:user, roles: ["Case Details"]) }
+    let(:veteran_file_number) { 190_802_172 }
+    let(:veteran) { create(:veteran, file_number: veteran_file_number, first_name: "Segan", last_name: "Vecellio") }
+    let!(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
+    let(:no_queue_user) { create(:user, roles: ["Case Details"]) }
 
-    it "should not be able to access queue and redirect to search" do
-      step "case details role tries to access queue" do
-        User.authenticate!(user: no_queue_user)
+    before do
+      User.authenticate!(user: no_queue_user)
+    end
+
+    scenario "user visits queue" do
+      step "is redirected to search" do
         visit "/queue"
         expect(page).to have_content("Search")
         expect(current_path).to eq "/search"
       end
-    end
-    it "should be able to search for a case",
-       skip: "flake https://github.com/department-of-veterans-affairs/caseflow/issues/10516#issuecomment-504416406" do
-      step "by veteran file number" do
-        User.authenticate!(user: no_queue_user)
-        visit "/queue"
-        expect(page).to have_content("Search")
-        expect(current_path).to eq "/search"
-        fill_in("searchBarEmptyList", with: appeal.veteran_file_number)
-        click_on("submit-search-searchBarEmptyList")
+
+      step "searches for a veteran and clicks the search result" do
+        fill_in "searchBarEmptyList", with: appeal.veteran_file_number
+        find("#submit-search-searchBarEmptyList").click
         click_on(appeal.docket_number)
+      end
+
+      step "views their case details which does not have the view docs link" do
+        expect(page).to have_content("#{veteran.first_name} #{veteran.last_name}")
         expect(page).to_not have_content("Veteran Documents")
       end
     end
@@ -38,13 +42,13 @@ RSpec.feature "AmaQueue" do
     let(:attorney_first_name) { "Robby" }
     let(:attorney_last_name) { "McDobby" }
     let!(:attorney_user) do
-      FactoryBot.create(:user, roles: ["Reader"], full_name: "#{attorney_first_name} #{attorney_last_name}")
+      create(:user, roles: ["Reader"], full_name: "#{attorney_first_name} #{attorney_last_name}")
     end
 
-    let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
+    let(:judge_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
 
     let!(:vacols_atty) do
-      FactoryBot.create(
+      create(
         :staff,
         :attorney_role,
         sdomainid: attorney_user.css_id,
@@ -59,7 +63,6 @@ RSpec.feature "AmaQueue" do
 
     before do
       Fakes::Initializer.load!
-      FeatureToggle.enable!(:queue_beaam_appeals)
 
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
         appeals.first.claimants.first.participant_id => {
@@ -70,15 +73,11 @@ RSpec.feature "AmaQueue" do
       )
     end
 
-    after do
-      FeatureToggle.disable!(:queue_beaam_appeals)
-    end
-
     let(:poa_address) { "123 Poplar St." }
     let(:participant_id) { "600153863" }
-    let!(:root_task) { FactoryBot.create(:root_task) }
+    let!(:root_task) { create(:root_task) }
     let!(:parent_task) do
-      FactoryBot.create(:ama_judge_task, assigned_to: judge_user, appeal: appeals.first, parent: root_task)
+      create(:ama_judge_task, assigned_to: judge_user, appeal: appeals.first, parent: root_task)
     end
 
     let(:poa_name) { "Test POA" }
@@ -86,30 +85,30 @@ RSpec.feature "AmaQueue" do
     let(:file_numbers) { Array.new(3) { Random.rand(999_999_999).to_s } }
     let!(:appeals) do
       [
-        FactoryBot.create(
+        create(
           :appeal,
           :advanced_on_docket_due_to_age,
-          veteran: FactoryBot.create(
+          veteran: create(
             :veteran,
             participant_id: veteran_participant_id,
             first_name: "Pal",
             bgs_veteran_record: { first_name: "Pal" },
             file_number: file_numbers[0]
           ),
-          documents: FactoryBot.create_list(:document, 5, file_number: file_numbers[0], upload_date: 3.days.ago),
+          documents: create_list(:document, 5, file_number: file_numbers[0], upload_date: 3.days.ago),
           request_issues: build_list(:request_issue, 3, contested_issue_description: "Knee pain")
         ),
-        FactoryBot.create(
+        create(
           :appeal,
-          veteran: FactoryBot.create(:veteran, file_number: file_numbers[1]),
-          documents: FactoryBot.create_list(:document, 4, file_number: file_numbers[1]),
+          veteran: create(:veteran, file_number: file_numbers[1]),
+          documents: create_list(:document, 4, file_number: file_numbers[1]),
           request_issues: build_list(:request_issue, 2, contested_issue_description: "PTSD")
         ),
-        FactoryBot.create(
+        create(
           :appeal,
           number_of_claimants: 1,
-          veteran: FactoryBot.create(:veteran, file_number: file_numbers[2]),
-          documents: FactoryBot.create_list(:document, 3, file_number: file_numbers[2]),
+          veteran: create(:veteran, file_number: file_numbers[2]),
+          documents: create_list(:document, 3, file_number: file_numbers[2]),
           request_issues: build_list(:request_issue, 1, contested_issue_description: "Tinnitus")
         )
       ]
@@ -118,7 +117,7 @@ RSpec.feature "AmaQueue" do
     context "when appeals have tasks" do
       let!(:attorney_tasks) do
         [
-          FactoryBot.create(
+          create(
             :ama_attorney_task,
             :in_progress,
             assigned_to: attorney_user,
@@ -126,14 +125,14 @@ RSpec.feature "AmaQueue" do
             parent: parent_task,
             appeal: appeals.first
           ),
-          FactoryBot.create(
+          create(
             :ama_attorney_task,
             :in_progress,
             assigned_to: attorney_user,
             assigned_by: judge_user,
             appeal: appeals.second
           ),
-          FactoryBot.create(
+          create(
             :ama_attorney_task,
             :in_progress,
             assigned_to: attorney_user,
@@ -225,13 +224,13 @@ RSpec.feature "AmaQueue" do
     context "when user is part of translation" do
       let(:user_name) { "Translation User" }
       let(:other_user_name) { "Other User" }
-      let!(:user) { User.authenticate!(user: FactoryBot.create(:user, roles: ["Reader"], full_name: user_name)) }
-      let!(:other_user) { FactoryBot.create(:user, roles: ["Reader"], full_name: other_user_name) }
+      let!(:user) { User.authenticate!(user: create(:user, roles: ["Reader"], full_name: user_name)) }
+      let!(:other_user) { create(:user, roles: ["Reader"], full_name: other_user_name) }
       let!(:translation_organization) { Translation.singleton }
       let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
 
       let!(:translation_task) do
-        FactoryBot.create(
+        create(
           :generic_task,
           :in_progress,
           assigned_to: translation_organization,
@@ -308,10 +307,10 @@ RSpec.feature "AmaQueue" do
         let(:veteran_first_name) { "Milivoj" }
         let(:veteran_last_name) { "Veilleux" }
         let(:veteran_full_name) { "#{veteran_first_name} #{veteran_last_name}" }
-        let!(:veteran) { FactoryBot.create(:veteran, first_name: veteran_first_name, last_name: veteran_last_name) }
-        let!(:appeal) { FactoryBot.create(:appeal, veteran_file_number: veteran.file_number) }
+        let!(:veteran) { create(:veteran, first_name: veteran_first_name, last_name: veteran_last_name) }
+        let!(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
         let!(:translation_task) do
-          FactoryBot.create(
+          create(
             :translation_task,
             assigned_to: translation_organization,
             appeal: appeal,
@@ -328,17 +327,17 @@ RSpec.feature "AmaQueue" do
 
     context "when user is a vso" do
       let!(:user) do
-        User.authenticate!(user: FactoryBot.create(:user, roles: ["VSO"]))
+        User.authenticate!(user: create(:user, roles: ["VSO"]))
       end
 
       let!(:appeals) do
         [
-          FactoryBot.create(
+          create(
             :appeal,
             veteran: veteran,
             claimants: [build(:claimant, participant_id: participant_id)]
           ),
-          FactoryBot.create(
+          create(
             :appeal,
             veteran: veteran,
             claimants: [build(:claimant, participant_id: participant_id_without_vso)]
@@ -346,7 +345,7 @@ RSpec.feature "AmaQueue" do
         ]
       end
 
-      let(:veteran) { FactoryBot.create(:veteran, file_number: "44556677") }
+      let(:veteran) { create(:veteran, file_number: "44556677") }
 
       let(:participant_id) { "1234" }
       let(:participant_id_without_vso) { "5678" }
@@ -411,27 +410,27 @@ RSpec.feature "AmaQueue" do
     let(:veteran_first_name) { "Monica" }
     let(:veteran_last_name) { "Valencia" }
     let(:veteran_full_name) { "#{veteran_first_name} #{veteran_last_name}" }
-    let!(:veteran) { FactoryBot.create(:veteran, first_name: veteran_first_name, last_name: veteran_last_name) }
+    let!(:veteran) { create(:veteran, first_name: veteran_first_name, last_name: veteran_last_name) }
 
-    let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Anna Juarez") }
-    let!(:judge_staff) { FactoryBot.create(:staff, :judge_role, user: judge_user) }
+    let(:judge_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Anna Juarez") }
+    let!(:judge_staff) { create(:staff, :judge_role, user: judge_user) }
     let!(:judgeteam) { JudgeTeam.create_for_judge(judge_user) }
 
-    let(:judge_user2) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Andrea R. Harless") }
-    let!(:judge_staff2) { FactoryBot.create(:staff, :judge_role, user: judge_user2) }
+    let(:judge_user2) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Andrea R. Harless") }
+    let!(:judge_staff2) { create(:staff, :judge_role, user: judge_user2) }
     let!(:judgeteam2) { JudgeTeam.create_for_judge(judge_user2) }
 
-    let(:attorney_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Steven Ahr") }
-    let!(:attorney_staff) { FactoryBot.create(:staff, :attorney_role, user: attorney_user) }
+    let(:attorney_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Steven Ahr") }
+    let!(:attorney_staff) { create(:staff, :attorney_role, user: attorney_user) }
 
     let!(:appeal) do
-      FactoryBot.create(
+      create(
         :appeal,
         veteran_file_number: veteran.file_number,
         number_of_claimants: 1,
         request_issues: [
-          FactoryBot.create(:request_issue, contested_issue_description: "Tinnitus", notes: "Tinnitus note"),
-          FactoryBot.create(
+          create(:request_issue, contested_issue_description: "Tinnitus", notes: "Tinnitus note"),
+          create(
             :request_issue,
             contested_issue_description: "Knee pain",
             notes: "Knee pain note",
@@ -440,17 +439,17 @@ RSpec.feature "AmaQueue" do
         ]
       )
     end
-    let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let!(:root_task) { create(:root_task, appeal: appeal) }
     let!(:judge_task) do
-      FactoryBot.create(:ama_judge_task, appeal: appeal, parent: root_task, assigned_to: judge_user, status: :assigned)
+      create(:ama_judge_task, appeal: appeal, parent: root_task, assigned_to: judge_user, status: :assigned)
     end
 
     before do
       ["Elaine Abitong", "Byron Acero", "Jan Antonioni"].each do |attorney_name|
-        another_attorney_on_the_team = FactoryBot.create(
+        another_attorney_on_the_team = create(
           :user, station_id: User::BOARD_STATION_ID, full_name: attorney_name
         )
-        FactoryBot.create(:staff, :attorney_role, user: another_attorney_on_the_team)
+        create(:staff, :attorney_role, user: another_attorney_on_the_team)
         OrganizationsUser.add_user_to_organization(another_attorney_on_the_team, judgeteam)
       end
 
@@ -539,7 +538,10 @@ RSpec.feature "AmaQueue" do
 
         click_on veteran_full_name
 
-        click_dropdown(prompt: "Select an action", text: "Return to attorney")
+        click_dropdown(
+          prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+          text: Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.label
+        )
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
         fill_in "taskInstructions", with: "Please fix this"
 
@@ -668,7 +670,10 @@ RSpec.feature "AmaQueue" do
 
         click_on veteran_full_name
 
-        click_dropdown(prompt: "Select an action", text: "Return to attorney")
+        click_dropdown(
+          prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+          text: Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.label
+        )
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
         fill_in "taskInstructions", with: "Please fix this"
 
