@@ -713,6 +713,14 @@ ActiveRecord::Schema.define(version: 20190829183634) do
     t.index ["request_issue_id"], name: "index_legacy_issue_optins_on_request_issue_id"
   end
 
+  create_table "messages", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "read_at", comment: "When the message was read"
+    t.string "text", comment: "The message"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false, comment: "The user for whom the message is intended"
+  end
+
   create_table "non_availabilities", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date"

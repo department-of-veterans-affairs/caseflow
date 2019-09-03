@@ -4,9 +4,6 @@ require "support/database_cleaner"
 require "rails_helper"
 
 feature "correcting issues", :postgres do
-  before { FeatureToggle.enable!(:ama_decision_issues) }
-  after { FeatureToggle.disable!(:ama_decision_issues) }
-
   context "deleting a request issue that has one decision issue" do
     it "deletes the decision issue" do
       appeal = appeal_with_one_decision_issue
