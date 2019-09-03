@@ -186,7 +186,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
                                                                        LegacyAppeal.name)
     # Map back to VACOLs id
     caseflow_statuses_by_vacol_id = {}
-    caseflow_vacols_to_appeal_id.each do |vacol_id,appeal_id|
+    caseflow_vacols_to_appeal_id.each do |vacol_id, appeal_id|
       caseflow_statuses_by_vacol_id[vacol_id] = caseflow_statuses_by_appeal_id[appeal_id]
     end
 
