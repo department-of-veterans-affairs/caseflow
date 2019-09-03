@@ -218,7 +218,9 @@ describe TaskSorter, :all_dbs do
 
         it "sorts by veteran last and first name" do
           expected_order = tasks.sort_by do |task|
-            "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name.split(' ').first}"
+            last_name = task.appeal.veteran_last_name.split(" ").last.upcase
+            first_name = task.appeal.veteran_first_name.split(" ").first.upcase
+            "#{last_name}, #{first_name}"
           end
           expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
         end
