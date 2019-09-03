@@ -81,7 +81,7 @@ class AsyncableJobsPage extends React.PureComponent {
           let errorStr = job.error;
 
           if (errorStr) {
-            errorStr = errorStr.replace(/\s.+/, '');
+            errorStr = errorStr.replace(/\s.+/g, '');
           }
 
           return <span className="cf-job-error">{errorStr}</span>;
