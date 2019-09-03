@@ -14,6 +14,8 @@ class MissedJobSweeperJob < CaseflowJob
   private
 
   def check_distribution_jobs
+    return unless missed_distribution_jobs.any?
+
     slack_service.send_notification("Restarting jobs for Distributions: #{missed_distribution_jobs.map(&:id)}")
     missed_distribution_jobs.each { |distribution| StartDistributionJob.perform_now(distribution, distribution.judge) }
   end

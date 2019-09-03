@@ -96,13 +96,13 @@ class AppealHearingLocationsDropdown extends React.Component {
       this.props.onDropdownError(dropdownName, null);
     }).
       catch(({ response }) => {
-        let errorReason = '.';
+        let errorReason = _.get(response, 'body.errors[0].detail') || '';
 
-        if (!_.isNil(response)) {
-          errorReason = `. ${response.body.errors[0].detail}`;
+        if (errorReason !== '') {
+          errorReason = ` ${errorReason}`;
         }
 
-        const errorMsg = `Could not find hearing locations for this appellant${errorReason}`;
+        const errorMsg = `Could not find hearing locations for this appellant.${errorReason}`;
 
         this.props.onReceiveDropdownData(dropdownName, []);
         this.props.onDropdownError(dropdownName, errorMsg);
