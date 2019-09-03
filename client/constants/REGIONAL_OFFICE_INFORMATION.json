@@ -219,7 +219,7 @@
     "timezone": "America/New_York",
     "hold_hearings": true,
     "facility_locator_id": "vba_325",
-    "alternate_locations": ["vha_539", "vha_757", "vha_539"]
+    "alternate_locations": ["vha_539", "vha_757"]
   },
   "RO26": {
     "label": "Indianapolis regional office",
@@ -258,8 +258,7 @@
       "vha_657GO",
       "vha_626GH",
       "vc_0719V",
-      "vc_0701V",
-      "vc_0719V"
+      "vc_0701V"
     ]
   },
   "RO28": {

@@ -54,22 +54,12 @@ module VaDotGovAddressValidator::Validations
                         error_handler.handle(valid_address_error)
                       elsif state_code_error.present?
                         error_handler.handle(state_code_error)
-                      elsif !closest_regional_office_response.success?
-                        error_handler.handle(closest_regional_office_response.error)
-                      elsif !available_hearing_locations_response.success?
-                        error_handler.handle(available_hearing_locations_response.error)
+                      elsif !closest_facility_response.success?
+                        error_handler.handle(closest_facility_response.error)
                       end
   end
 
   def appeal_is_legacy_and_veteran_requested_central_office?
     appeal.is_a?(LegacyAppeal) && appeal.hearing_request_type == :central_office
-  end
-
-  def closest_regional_office_facility_id_is_san_antonio?
-    closest_regional_office_facility_id == "vha_671BY"
-  end
-
-  def veteran_lives_in_texas?
-    state_code == "TX"
   end
 end
