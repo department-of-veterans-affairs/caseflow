@@ -55,8 +55,9 @@ class TaskFilter
       "cached_appeal_attributes.docket_type"
     when Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN
       "cached_appeal_attributes.case_type"
+    when Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN
+      "cached_appeal_attributes.assignee_label"
     # TODO: The following columns are not yet implemented.
-    # when Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN
     #   "???"
     else
       fail(Caseflow::Error::InvalidTaskTableColumnFilter, column: column_name)

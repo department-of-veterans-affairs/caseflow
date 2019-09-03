@@ -176,6 +176,7 @@ export const assignedToColumn = (tasks) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
     name: QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN,
+    backendCanSort: true,
     enableFilter: true,
     tableData: tasks,
     columnName: 'assignedTo.name',
