@@ -33,6 +33,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
     appeals.each do |appeal|
       begin
+        appeal.reload # we only selected id and ahl_update_at, reload all columns
         geomatch_result = geomatch(appeal)
         record_geomatched_appeal(appeal.external_id, geomatch_result[:status])
         sleep 1
