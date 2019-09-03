@@ -10,7 +10,8 @@ import UserStats from './UserStats';
 
 export class FlaggedForReviewContainer extends Component {
   componentDidMount() {
-    this.props.fetchFlaggedForReview();
+    // deprecated - may remove
+    // this.props.fetchFlaggedForReview();
   }
 
   render() {
@@ -35,7 +36,8 @@ export class FlaggedForReviewContainer extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    loading: state.loading,
+    loading: false,
+    // loading: state.loading,
     intakes: state.flaggedForReview
   };
 };
