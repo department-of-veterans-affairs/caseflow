@@ -499,6 +499,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def remove_incorrectly_added_issues
+    binding.pry
     # Close the incorrectly added request issue from that DTA supplemental claim.
     # Remove contention in VBMS and cancel EP
   end
