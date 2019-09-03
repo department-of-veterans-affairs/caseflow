@@ -50,6 +50,8 @@ const tbodyStyling = css({
 const smallTopMargin = css({ marginTop: '1rem' });
 
 class LegacySelectDispositionsView extends React.PureComponent {
+  decisionReviewCheckoutFlow = () => this.props.checkoutFlow === 'dispatch_decision';
+
   getPageName = () => PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()];
 
   getNextStepUrl = () => {
@@ -68,7 +70,7 @@ class LegacySelectDispositionsView extends React.PureComponent {
 
     if (remandedIssues) {
       nextStep = 'remands';
-    } else if (userRole === USER_ROLE_TYPES.judge) {
+    } else if (this.decisionReviewCheckoutFlow()) {
       nextStep = 'evaluate';
     } else {
       nextStep = 'submit';

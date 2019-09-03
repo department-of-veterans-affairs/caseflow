@@ -38,7 +38,7 @@ class SelectRemandReasonsView extends React.Component {
     const { appealId, userRole, checkoutFlow, taskId } = this.props;
     const baseUrl = `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}`;
 
-    return `${baseUrl}/${userRole === USER_ROLE_TYPES.judge ? 'evaluate' : 'submit'}`;
+    return `${baseUrl}/${checkoutFlow === 'dispatch_decision' ? 'evaluate' : 'submit'}`;
   }
 
   goToPrevStep = () => _.each(this.state.renderedChildren, (child) => child.updateStoreIssue());
