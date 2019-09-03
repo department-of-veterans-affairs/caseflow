@@ -2,6 +2,7 @@
 
 class Rating
   include ActiveModel::Model
+  include LatestRatingDisabilityEvaluation
 
   class NilRatingProfileListError < StandardError
     def ignorable?
@@ -24,6 +25,7 @@ class Rating
   # WARNING: profile_date is a misnomer adopted from BGS terminology.
   # It is a datetime, not a date.
   attr_accessor :participant_id, :profile_date, :promulgation_date
+  attr_writer :rating_profile
 
   ONE_YEAR_PLUS_DAYS = 372.days
   TWO_LIFETIMES_DAYS = 250.years
@@ -69,6 +71,7 @@ class Rating
   end
 
   def decisions
+    return [] unless FeatureToggle.enabled?(:contestable_rating_decisions, user: RequestStore[:current_user])
     return [] unless rating_profile[:disabilities]
 
     Array.wrap(rating_profile[:disabilities]).map do |disability|
@@ -92,7 +95,7 @@ class Rating
          disability_map[disability[:dis_sn]][:date] < disability_time
 
         disability_map[disability[:dis_sn]] = {
-          dgnstc_tc: get_diagnostic_code(disability[:disability_evaluations]),
+          dgnstc_tc: get_diagnostic_code(disability),
           date: disability_time
         }
       end
@@ -101,9 +104,8 @@ class Rating
     end
   end
 
-  def get_diagnostic_code(disability_evaluations)
-    latest_evaluation = Array.wrap(disability_evaluations).max_by { |evaluation| evaluation[:dis_dt] } || {}
-    latest_evaluation.dig(:dgnstc_tc)
+  def get_diagnostic_code(disability)
+    self.class.latest_disability_evaluation(disability).dig(:dgnstc_tc)
   end
 
   def associated_claims_data

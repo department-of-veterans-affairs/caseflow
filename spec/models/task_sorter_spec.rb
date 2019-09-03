@@ -218,7 +218,9 @@ describe TaskSorter, :all_dbs do
 
         it "sorts by veteran last and first name" do
           expected_order = tasks.sort_by do |task|
-            "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name.split(' ').first}"
+            last_name = task.appeal.veteran_last_name.split(" ").last.upcase
+            first_name = task.appeal.veteran_first_name.split(" ").first.upcase
+            "#{last_name}, #{first_name}"
           end
           expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
         end
@@ -240,7 +242,7 @@ describe TaskSorter, :all_dbs do
             create(:cached_appeal,
                    appeal_id: appeal.id,
                    appeal_type: LegacyAppeal.name,
-                   case_type: LegacyAppeal::TYPE_CODES[appeal.type])
+                   case_type: appeal.type)
           end
 
           appeals = [create(:appeal, :advanced_on_docket_due_to_motion), create(:appeal)]
@@ -249,7 +251,7 @@ describe TaskSorter, :all_dbs do
             create(:cached_appeal,
                    appeal_id: appeal.id,
                    appeal_type: Appeal.name,
-                   case_type: appeal.type.downcase,
+                   case_type: appeal.type,
                    is_aod: appeal.aod)
           end
         end

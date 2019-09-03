@@ -20,18 +20,6 @@ class VACOLS::Case < VACOLS::Record
 
   BVA_DISPOSITION_CODES = %w[1 3 4 5 6 8 9].freeze
 
-  BFAC_TYPE_CACHE_KEY = {
-    "1" => "original",
-    "2" => "supplemental",
-    "3" => "post_remand",
-    "4" => "reconsideration",
-    "5" => "vacate",
-    "6" => "de_novo",
-    "7" => "post_cavc_remand",
-    "8" => "designation_of_record",
-    "9" => "cue"
-  }.freeze
-
   TYPES = {
     "1" => "Original",
     "2" => "Supplemental",

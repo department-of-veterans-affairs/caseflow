@@ -45,7 +45,9 @@ describe Rating do
       participant_id: participant_id,
       rating_sequence_number: "RatingSN#{num}",
       diagnostic_text: "Diagnostic#{num}",
-      disability_date: promulgation_date,
+      disability_date: promulgation_date - 4.days,
+      original_denial_date: promulgation_date - 7.days,
+      promulgation_date: promulgation_date,
       profile_date: profile_date
     }
   end
@@ -205,6 +207,9 @@ describe Rating do
 
   context "#decisions" do
     subject { rating.decisions }
+
+    before { FeatureToggle.enable!(:contestable_rating_decisions) }
+    after { FeatureToggle.disable!(:contestable_rating_decisions) }
 
     it "returns the decisions" do
       expect(subject.count).to eq(2)
