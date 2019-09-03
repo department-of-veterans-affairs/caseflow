@@ -44,7 +44,7 @@ class Time
   end
 
   def friendly_full_format
-    strftime("%a %b %e %Y at %H:%M")
+    strftime("%a %b %d %Y at %H:%M")
   end
 end
 
