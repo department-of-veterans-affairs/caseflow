@@ -44,6 +44,8 @@ class Hearing < ApplicationRecord
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
   delegate :hearing_day_full?, to: :hearing_day
+  delegate :regional_office_name, to: :regional_office
+  delegate :timezone, to: :regional_office, prefix: true
 
   after_create :update_fields_from_hearing_day
   before_create :check_available_slots, unless: :override_full_hearing_day_validation
@@ -156,7 +158,7 @@ class Hearing < ApplicationRecord
         .find_or_create_by(request_issue: request_issue, hearing: self).to_hash
     end
   end
-  
+
   def regional_office
     @regional_office ||= begin
                             RegionalOffice.find!(regional_office_key)
@@ -167,14 +169,6 @@ class Hearing < ApplicationRecord
 
   def regional_office_key
     hearing_day_regional_office || "C"
-  end
-
-  def regional_office_name
-    regional_office.to_h[:label]
-  end
-
-  def regional_office_timezone
-    regional_office.to_h[:timezone]
   end
 
   def current_issue_count

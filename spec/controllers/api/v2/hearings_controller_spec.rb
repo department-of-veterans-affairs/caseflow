@@ -71,7 +71,7 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
           it { expect(JSON.parse(subject.body)).to have_key("hearings") }
           it { expect(JSON.parse(subject.body)["hearings"].size).to eq 2 }
           it do
-            expect(JSON.parse(subject.body)["hearings"][0]["timezone"]).to eq ("America/New_York")
+            expect(JSON.parse(subject.body)["hearings"][0]["timezone"]).to eq("America/New_York")
           end
           it do
             expect(JSON.parse(subject.body)["hearings"][0]["hearing_location"]).to eq("Central")

@@ -19,7 +19,7 @@ class Api::V2::HearingSerializer
     hearing.appeal.veteran.participant_id
   end
   attribute :hearing_location do |hearing|
-    hearing.hearing_location&.name || hearing.regional_office.to_h[:label]
+    hearing.hearing_location&.name || hearing.regional_office.name
   end
   attribute :room do |hearing|
     hearing.hearing_day.room
@@ -33,6 +33,6 @@ class Api::V2::HearingSerializer
   end
   attribute :timezone, &:regional_office_timezone
   attribute :zip_code do |hearing|
-    hearing.hearing_location&.zip_code || hearing.regional_office.to_h[:timezone]
+    hearing.hearing_location&.zip_code || hearing.regional_office.timezone
   end
 end
