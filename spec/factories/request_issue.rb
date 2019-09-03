@@ -62,7 +62,8 @@ FactoryBot.define do
           rating_profile_date: request_issue.contested_rating_issue_profile_date.to_date,
           end_product_last_action_date: request_issue.contested_rating_issue_profile_date.to_date,
           benefit_type: request_issue.decision_review.benefit_type,
-          decision_text: "a rating decision issue"
+          decision_text: "a rating decision issue",
+          request_issues: [request_issue]
         )
 
         request_issue.update!(
@@ -85,7 +86,8 @@ FactoryBot.define do
           benefit_type: request_issue.decision_review.benefit_type,
           decision_text: "nonrating decision issue",
           end_product_last_action_date: request_issue.decision_date,
-          disposition: "nonrating decision issue dispositon"
+          disposition: "nonrating decision issue dispositon",
+          request_issues: [request_issue]
         )
 
         request_issue.update!(

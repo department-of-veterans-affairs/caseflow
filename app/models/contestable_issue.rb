@@ -119,8 +119,10 @@ class ContestableIssue
     return [self] if next_decision_issues.blank?
 
     next_decision_issues.map do |decision_issue|
+      next if decision_issue == self.decision_issue
+
       ContestableIssue.from_decision_issue(decision_issue, contesting_decision_review).latest_contestable_issues
-    end.flatten
+    end.flatten.compact
   end
 
   def conflicting_request_issue
