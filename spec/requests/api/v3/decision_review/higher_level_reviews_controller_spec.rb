@@ -139,7 +139,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       end
     end
 
-    describe "(test error case: unknown_category_for_benefit_type)" do
+    describe "test error case: unknown_category_for_benefit_type" do
       let(:category) { "Words ending in urple" }
       it "should return a 422 on this failure" do
         post_params
@@ -152,8 +152,8 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       end
     end
 
-    describe "(error cases)" do
-      describe "(intake_review_failed)" do
+    describe "error cases" do
+      describe "unknown_error" do
         let(:attributes) do
           {
             receiptDate: "wrench",
@@ -163,9 +163,9 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
             benefitType: benefit_type
           }
         end
-        it "should return 500/intake_review_failed" do
+        it "should return 500/unknown_error" do
           post_params
-          error = Api::V3::DecisionReview::IntakeError.new(:intake_review_failed)
+          error = Api::V3::DecisionReview::IntakeError.new
 
           expect(response).to have_http_status(error.status)
           expect(JSON.parse(response.body)).to eq(
@@ -174,7 +174,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         end
       end
 
-      describe "(reserved_veteran_file_number)" do
+      describe "reserved_veteran_file_number" do
         let(:veteran_file_number) { "123456789" }
         it "should return 500/reserved_veteran_file_number" do
           allow(Rails).to receive(:deploy_env?).and_return(true)
