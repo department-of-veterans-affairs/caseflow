@@ -23,11 +23,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
   private
 
   def processor
-    @processor ||= begin
-                     Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(params, current_user)
-                   rescue StandardError
-                     nil
-                   end
+    @processor ||= Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(params, User.api_user)
   end
 
   # Try to create an IntakeError from the exception, otherwise the processor's intake object.
