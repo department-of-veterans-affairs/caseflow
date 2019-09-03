@@ -83,6 +83,7 @@ class PostponeHearingModal extends React.Component {
 
   getReschedulePayload = () => {
     const {
+      // eslint-disable-next-line camelcase
       apiFormattedValues: { scheduled_time_string, hearing_day_id, hearing_location }
     } = this.props.assignHearing;
 
@@ -101,6 +102,7 @@ class PostponeHearingModal extends React.Component {
 
     if (afterDispositionUpdateAction === ACTIONS.SCHEDULE_LATER_WITH_ADMIN_ACTION) {
       const {
+        // eslint-disable-next-line camelcase
         apiFormattedValues: { with_admin_action_klass, admin_action_instructions }
       } = this.props.scheduleHearingLaterWithAdminAction;
 
