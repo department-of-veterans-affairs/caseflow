@@ -30,7 +30,7 @@ const caseQualityOpts = () => {
 
   return items.map(([value, key], idx) => {
     return { value,
-      displayText: `${items.length - idx} - ${key}` };
+      displayText: `${items.length - idx} - ${key}` };
   });
 };
 
