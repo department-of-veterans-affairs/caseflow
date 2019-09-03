@@ -12,11 +12,14 @@ import SmallLoader from '../../components/SmallLoader';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY.json';
 
-const leadMessageList = ({ veteran, formName, requestIssues }) => {
+const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, detailEditUrl }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
-  const leadMessageArr = [`${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been submitted.`];
+  const leadMessageArr = [
+    `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been submitted.`,
+    <div>You may check on the <a href={asyncJobUrl}>establishment status of the request</a>.</div>
+  ];
 
   if (eligibleRequestIssues.length !== 0) {
     if (unidentifiedIssues.length > 0) {
@@ -31,7 +34,7 @@ const leadMessageList = ({ veteran, formName, requestIssues }) => {
       );
     } else {
       leadMessageArr.push(
-        'If you need to edit this, go to VBMS claim details and click the “Edit in Caseflow” button.'
+        <div>If necessary you may <a href={detailEditUrl}>edit the issues</a> on this {formName}.</div>
       );
     }
   }
@@ -107,7 +110,9 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     const {
       veteran,
       formType,
-      intakeStatus
+      intakeStatus,
+      asyncJobUrl,
+      detailEditUrl
     } = this.props;
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const completedReview = this.props.decisionReviews[selectedForm.key];
@@ -147,6 +152,8 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       type="success"
       leadMessageList={
         leadMessageList({
+          asyncJobUrl,
+          detailEditUrl,
           veteran,
           formName: selectedForm.name,
           requestIssues
@@ -172,6 +179,8 @@ export default connect(
   (state) => ({
     veteran: state.intake.veteran,
     formType: state.intake.formType,
+    asyncJobUrl: state.intake.asyncJobUrl,
+    detailEditUrl: state.intake.detailEditUrl,
     decisionReviews: {
       higher_level_review: state.higherLevelReview,
       supplemental_claim: state.supplementalClaim,
