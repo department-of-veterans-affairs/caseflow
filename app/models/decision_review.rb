@@ -127,6 +127,10 @@ class DecisionReview < ApplicationRecord
     }
   end
 
+  def async_job_url
+    nil # must override in subclass
+  end
+
   def timely_issue?(decision_date)
     return true unless receipt_date && decision_date
 

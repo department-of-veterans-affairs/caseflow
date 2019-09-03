@@ -63,6 +63,10 @@ class ClaimReview < DecisionReview
     "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
   end
 
+  def async_job_url
+    "/asyncable_jobs/#{self.class.to_s}/jobs/#{id}"
+  end
+
   def finalized_decision_issues_before_receipt_date
     return [] unless receipt_date
 

@@ -42,7 +42,7 @@ feature "Intake Confirmation Page", :postgres do
             click_intake_continue
             click_intake_add_issue
             # Add an eligible issue
-            add_intake_nonrating_issue(date: 6.months.ago.strftime("%m/%d/%Y"))
+            add_intake_nonrating_issue(date: 6.months.ago.mdY)
             click_intake_finish
             expect(page).to have_content("Intake completed")
             expect(page).to have_content("Nonrating EP is being established")

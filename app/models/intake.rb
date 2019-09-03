@@ -194,6 +194,8 @@ class Intake < ApplicationRecord
       veteran_form_name: veteran&.name&.formatted(:form),
       veteran_is_deceased: veteran&.deceased?,
       completed_at: completed_at,
+      detail_edit_url: detail&.caseflow_only_edit_issues_url,
+      async_job_url: detail&.async_job_url,
       relationships: veteran&.relationships&.map(&:ui_hash)
     }
   end
