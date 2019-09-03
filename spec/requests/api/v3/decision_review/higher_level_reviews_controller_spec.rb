@@ -50,7 +50,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
   let(:notes) { "not sure if this is on file" }
   let(:attributes) do
     {
-      receiptDate: receipt_date.strftime("%Y-%m-%d"),
+      receiptDate: receipt_date.strftime("%F"),
       informalConference: informal_conference,
       sameOffice: same_office,
       legacyOptInApproved: legacy_opt_in_approved,
@@ -96,7 +96,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         attributes: {
           category: category,
           decisionIssueId: 12,
-          decisionDate: decision_date.strftime("%Y-%m-%d"),
+          decisionDate: decision_date.strftime("%F"),
           decisionText: decision_text,
           notes: notes
         }

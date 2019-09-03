@@ -22,7 +22,7 @@ class Api::V3::DecisionReview::IntakeParams
   # params for IntakesController#review
   def review_params
     ActionController::Parameters.new(
-      receipt_date: attributes[:receiptDate] || Time.zone.now.strftime("%Y-%m-%d"),
+      receipt_date: attributes[:receiptDate] || Time.zone.now.strftime("%F"),
       informal_conference: attributes[:informalConference],
       same_office: attributes[:sameOffice],
       benefit_type: attributes[:benefitType],

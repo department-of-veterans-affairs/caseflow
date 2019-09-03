@@ -4,14 +4,14 @@ require "rails_helper"
 
 context Api::V3::DecisionReview::IntakeParams do
   let(:veteran_file_number) { "64205050" }
-  let(:receipt_date) { (Time.zone.today - 5.days).strftime("%Y-%m-%d") }
+  let(:receipt_date) { (Time.zone.today - 5.days).strftime("%F") }
   let(:informal_conference) { true }
   let(:same_office) { false }
   let(:legacy_opt_in_approved) { true }
   let(:benefit_type) { "compensation" }
   let(:category) { "Apportionment" }
   let(:decision_issue_id) { "232" }
-  let(:decision_date) { (Time.zone.today - 10.days).strftime("%Y-%m-%d") }
+  let(:decision_date) { (Time.zone.today - 10.days).strftime("%F") }
   let(:decision_text) { "Some text here." }
   let(:legacy_appeal_id) { -1 }
   let(:legacy_appeal_issue_id) { 0 }
@@ -108,7 +108,7 @@ context Api::V3::DecisionReview::IntakeParams do
     context do
       let(:receipt_date) { nil }
       it "should return today's date if no receiptDate was provided" do
-        expect(subject.review_params[:receipt_date]).to eq(Time.now.in_time_zone.strftime("%Y-%m-%d"))
+        expect(subject.review_params[:receipt_date]).to eq(Time.now.in_time_zone.strftime("%F"))
       end
     end
 
