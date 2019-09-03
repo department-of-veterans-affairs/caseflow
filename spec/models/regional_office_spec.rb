@@ -54,20 +54,4 @@ describe RegionalOffice do
       expect(subject.last).to have_attributes(key: "RO71", city: "Pittsburgh Foreign Cases")
     end
   end
-
-  context ".ro_facility_ids" do
-    subject { RegionalOffice.ro_facility_ids }
-
-    it "returns all RO facility ids" do
-      expect(subject.count).to eq 57
-    end
-  end
-
-  context ".find_ro_by_facility_id" do
-    let(:ro_facility_id) { "vba_377" }
-
-    it "returns RO ids from facility locator id" do
-      expect(RegionalOffice.find_ro_by_facility_id(ro_facility_id)).to eq "RO77"
-    end
-  end
 end
