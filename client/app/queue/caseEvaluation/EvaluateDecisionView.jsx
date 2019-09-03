@@ -176,10 +176,7 @@ class EvaluateDecisionView extends React.PureComponent {
     this.setState({ [key]: newOpts });
   };
 
-  handleCaseQualityChange = (values) => {
-    console.log('handleCaseQualityChange', values);
-    this.setState({ ...values });
-  };
+  handleCaseQualityChange = (values) => this.setState({ ...values });
 
   render = () => {
     const { appeal, task, appealId, highlight, error, ...otherProps } = this.props;
