@@ -101,14 +101,12 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def cache_legacy_appeal_vacols_data(legacy_appeals)
     legacy_appeals.pluck(:vacols_id, :id).in_groups_of(BATCH_SIZE, false).each do |ids|
       vacols_ids = ids.map { |id| id[0] }
-      appeal_ids = ids.map { |id| id[1] }
       vacols_folders = VACOLS::Folder.where(ticknum: vacols_ids).pluck(:ticknum, :tinum, :ticorkey)
       issue_counts_to_cache = issues_counts_for_vacols_folders(vacols_ids)
       veteran_names_to_cache = veteran_names_for_correspondent_ids(vacols_folders.map { |folder| folder[2] })
       aod_status_to_cache = VACOLS::Case.aod(vacols_folders.map { |folder| folder[0] })
       case_status_to_cache = case_status_for_vacols_id(vacols_folders.map { |folder| folder[0] })
-      appeal_assignees_to_cache = assignees_for_vacols_and_appeals_id(vacols_folders.map { |folder| folder[0] },
-                                                                      appeal_ids)
+      appeal_assignees_to_cache = assignees_for_vacols_id(vacols_folders.map { |folder| folder[0] })
 
       values_to_cache = vacols_folders.map do |vacols_folder|
         {
@@ -175,17 +173,25 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     on_hold_appeals.merge(active_appeals)
   end
 
-  def assignees_for_vacols_and_appeals_id(vacols_ids, appeals_ids)
-    statuses = VACOLS::Case.where(bfkey: vacols_ids).pluck(:bfcurloc)
-    vacols_statuses = vacols_ids.zip(statuses).to_h
+  def assignees_for_vacols_id(vacols_ids)
+    # Grab statuses from VACOLS
+    vacols_statuses = vacols_ids.zip(VACOLS::Case.where(bfkey: vacols_ids).pluck(:bfcurloc)).to_h
 
-    # Lookup more detailed Caseflow location
-    vacols_caseflow_statuses = vacols_statuses.select { |_key, value| value == "CASEFLOW" }
-    caseflow_appeal_ids = vacols_ids.zip(appeals_ids).to_h.slice(vacols_caseflow_statuses.keys)
-    caseflow_statuses = assignees_for_caseflow_appeal_ids(caseflow_appeal_ids, LegacyAppeal.name)
+    # Grab the appeal_ids for the VACOLS cases in CASEFLOW status
+    caseflow_vacols_ids = vacols_statuses.select { |_key, value| value == "CASEFLOW" }.keys
+    caseflow_vacols_to_appeal_id = LegacyAppeal.where(vacols_id: caseflow_vacols_ids).pluck(:vacols_id, :id).to_h
 
-    # Overwrite VACOLS Caseflow location
-    vacols_statuses.merge(caseflow_statuses)
+    # Lookup more detailed Caseflow location for CASEFLOW vacols status
+    caseflow_statuses_by_appeal_id = assignees_for_caseflow_appeal_ids(caseflow_vacols_to_appeal_id.values,
+                                                                       LegacyAppeal.name)
+    # Map back to VACOLs id
+    caseflow_statuses_by_vacol_id = {}
+    caseflow_vacols_to_appeal_id.each do |vacol_id,appeal_id|
+      caseflow_statuses_by_vacol_id[vacol_id] = caseflow_statuses_by_appeal_id[appeal_id]
+    end
+
+    # Overwrite VACOLS Caseflow location with Caseflow detailed location
+    vacols_statuses.merge(caseflow_statuses_by_vacol_id)
   end
 
   def case_status_for_vacols_id(vacols_ids)
