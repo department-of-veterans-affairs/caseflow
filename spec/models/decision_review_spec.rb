@@ -216,12 +216,26 @@ describe DecisionReview, :postgres do
         )
       end
 
-      it "does include decision issues in the future that correspond to same review" do
-        expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
-        expect(subject.map(&:serialize)).to include(hash_including(description: "future decision issue 1"))
-        expect(subject.map(&:serialize)).to_not include(hash_including(description: "future decision issue 2"))
-        expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
-        expect(subject.map(&:serialize)).to_not include(hash_including(description: "future rating issue 2"))
+      context "without correct_claim_reviews feature toggle" do
+        it "does include decision issues in the future that correspond to same review" do
+          expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
+          expect(subject.map(&:serialize)).to_not include(hash_including(description: "future decision issue 1"))
+          expect(subject.map(&:serialize)).to_not include(hash_including(description: "future decision issue 2"))
+          expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
+          expect(subject.map(&:serialize)).to_not include(hash_including(description: "future rating issue 2"))
+        end
+      end
+
+      context "with correct_claim_reviews feature toggle" do
+        before { FeatureToggle.enable!(:correct_claim_reviews) }
+
+        it "does include decision issues in the future that correspond to same review" do
+          expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
+          expect(subject.map(&:serialize)).to include(hash_including(description: "future decision issue 1"))
+          expect(subject.map(&:serialize)).to_not include(hash_including(description: "future decision issue 2"))
+          expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
+          expect(subject.map(&:serialize)).to_not include(hash_including(description: "future rating issue 2"))
+        end
       end
     end
 
