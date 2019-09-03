@@ -9,11 +9,17 @@ class Api::V3::DecisionReview::IntakeStatus
     @intake.reload if @intake.id
     {
       json: {
-        type: @intake.detail_type,
-        id: @intake.detail&.uuid,
-        attributes: { status: @intake.detail&.asyncable_status }
+        type: intake.detail_type,
+        id: detail&.uuid,
+        attributes: { status: detail&.asyncable_status }
       },
       status: :accepted
     }
   end
+
+  private
+
+  attr_reader :intake
+
+  delegate :detail, to: :intake
 end
