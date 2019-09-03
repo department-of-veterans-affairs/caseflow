@@ -498,6 +498,11 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  def remove_incorrectly_added_issues
+    # Close the incorrectly added request issue from that DTA supplemental claim.
+    # Remove contention in VBMS and cancel EP
+  end
+
   def create_legacy_issue_optin
     LegacyIssueOptin.create!(
       request_issue: self,
@@ -912,7 +917,7 @@ class RequestIssue < ApplicationRecord
 
   def check_for_active_request_issue_by_decision_issue!
     return unless contested_decision_issue_id
-
+    return if correction?
     add_duplicate_issue_error(
       RequestIssue.active.find_by(contested_decision_issue_id: contested_decision_issue_id)
     )
