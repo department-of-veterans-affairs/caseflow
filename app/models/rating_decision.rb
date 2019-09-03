@@ -104,10 +104,10 @@ class RatingDecision
   end
 
   def service_connected_decision_text
-    "#{diagnostic_type} (#{diagnostic_text}) is granted as Service Connected"
+    "#{diagnostic_type} (#{diagnostic_text}) is granted."
   end
 
   def not_service_connected_decision_text
-    "#{diagnostic_type} (#{diagnostic_text}) is denied as Not Service Connected"
+    "#{diagnostic_type} (#{diagnostic_text}) is denied."
   end
 end
