@@ -238,7 +238,7 @@ export default class QueueTable extends React.PureComponent {
     this.updateCurrentPage(0);
   };
 
-  filterTableData = (data: Array<Object>) => {
+  filterTableData = (data) => {
     const { columns } = this.props;
     const { filteredByList } = this.state;
     let filteredData = _.clone(data);
