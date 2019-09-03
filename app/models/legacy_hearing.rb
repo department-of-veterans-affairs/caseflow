@@ -106,28 +106,27 @@ class LegacyHearing < ApplicationRecord
   def external_id
     vacols_id
   end
-  
-  def hearing_day_id_refers_to_vacols_row?	
-    (request_type == HearingDay::REQUEST_TYPES[:central] && scheduled_for.to_date < Date.new(2019, 1, 1)) ||	
-      (request_type == HearingDay::REQUEST_TYPES[:video] && scheduled_for.to_date < Date.new(2019, 4, 1))	
-  end	
 
-   def hearing_day_id	
-    if self[:hearing_day_id].nil? && !hearing_day_id_refers_to_vacols_row?	
-      begin	
-        update!(hearing_day_id: hearing_day_vacols_id)	
-      rescue ActiveRecord::InvalidForeignKey	
-        # Hearing day doesn't exist yet in Caseflow.	
-        return hearing_day_vacols_id	
-      end	
-    end	
-
-     # Returns the cached value, or nil if the hearing day id refers to a VACOLS row.	
-    self[:hearing_day_id]	
+  def hearing_day_id_refers_to_vacols_row?
+    (request_type == HearingDay::REQUEST_TYPES[:central] && scheduled_for.to_date < Date.new(2019, 1, 1)) ||
+      (request_type == HearingDay::REQUEST_TYPES[:video] && scheduled_for.to_date < Date.new(2019, 4, 1))
   end
+
+  def hearing_day_id
+    if self[:hearing_day_id].nil? && !hearing_day_id_refers_to_vacols_row?
+      begin
+        update!(hearing_day_id: hearing_day_vacols_id)
+      rescue ActiveRecord::InvalidForeignKey
+        # Hearing day doesn't exist yet in Caseflow.
+        return hearing_day_vacols_id
+      end
+    end
+
+    # Returns the cached value, or nil if the hearing day id refers to a VACOLS row.
+    self[:hearing_day_id]
+  end
+
   def hearing_day
-    # access with caution. this retrieves the hearing_day_id from vacols
-    # then looks up the HearingDay in Caseflow
     @hearing_day ||= HearingDay.find_by_id(hearing_day_id)
   end
 
@@ -154,7 +153,7 @@ class LegacyHearing < ApplicationRecord
   end
 
   def regional_office_timezone
-    return regional_office.nil? ? HearingMapper.timezone(regional_office) : HearingMapper.timezone("C")
+    regional_office.nil? ? HearingMapper.timezone(regional_office) : HearingMapper.timezone("C")
   end
 
   def time
