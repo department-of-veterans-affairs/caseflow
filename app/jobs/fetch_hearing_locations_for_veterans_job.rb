@@ -15,9 +15,11 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     ).pluck(:appeal_id)
 
     appeal_type.left_outer_joins(:available_hearing_locations)
+      .select(:id)
+      .select("MIN(available_hearing_locations.updated_at) as ahl_updated_at")
       .where(id: appeal_ids)
-      .order("available_hearing_locations.updated_at nulls first")
-      .limit(QUERY_LIMIT)
+      .group(:id)
+      .order("ahl_updated_at nulls first")
   end
 
   def appeals
