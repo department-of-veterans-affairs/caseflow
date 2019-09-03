@@ -33,15 +33,17 @@ export const ReviewMotionToVacateView = (props) => {
 ReviewMotionToVacateView.propTypes = {
   task: PropTypes.object,
   appeal: PropTypes.object,
-  judges: PropTypes.array,
+  judges: PropTypes.object,
   fetchJudges: PropTypes.func,
   submitMTVAttyReview: PropTypes.func
 };
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state, { match }) => {
+  const { taskId, appealId } = match.params;
+
   return {
-    task: taskById(state, { taskId: ownProps.taskId }),
-    appeal: appealWithDetailSelector(state, ownProps),
+    task: taskById(state, { taskId }),
+    appeal: appealWithDetailSelector(state, { appealId }),
     judges: state.queue.judges
   };
 };
