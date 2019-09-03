@@ -210,7 +210,7 @@ describe TaskSorter, :all_dbs do
             users.push(create(:user, css_id: Faker::Name.unique.first_name))
           end
           tasks.each_with_index do |task, index|
-            user = users[ index % 5 ]
+            user = users[index % 5]
             task.update!(assigned_to_id: user.id)
             create(:cached_appeal, appeal_id: task.appeal_id, assignee_label: user.css_id)
           end
