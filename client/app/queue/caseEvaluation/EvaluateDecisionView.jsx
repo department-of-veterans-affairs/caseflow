@@ -9,8 +9,6 @@ import moment from 'moment';
 import scrollToComponent from 'react-scroll-to-component';
 import { sprintf } from 'sprintf-js';
 
-import RadioField from '../../components/RadioField';
-import CheckboxGroup from '../../components/CheckboxGroup';
 import Checkbox from '../../components/Checkbox';
 import TextareaField from '../../components/TextareaField';
 import CaseTitle from '../CaseTitle';
@@ -30,7 +28,6 @@ import {
   marginTop,
   paddingLeft,
   fullWidth,
-  redText,
   VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS,
   JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH
@@ -40,19 +37,10 @@ import QueueFlowPage from '../components/QueueFlowPage';
 import { JudgeCaseQuality } from './JudgeCaseQuality';
 import { qualityIsDeficient } from '.';
 
-const setWidth = (width) =>
-  css({
-    width,
-    maxWidth: width
-  });
 const headerStyling = marginBottom(1.5);
 const inlineHeaderStyling = css(headerStyling, { float: 'left' });
 const hrStyling = css(marginTop(2), marginBottom(3));
-const qualityOfWorkAlertStyling = css({ borderLeft: '0.5rem solid #59BDE1' });
-const errorStylingNoTopMargin = css({ '&.usa-input-error': marginTop(0) });
 const subH2Styling = css(paddingLeft(1), { lineHeight: 2 });
-const subH3Styling = css(paddingLeft(1), { lineHeight: 1.75 });
-const fullWidthCheckboxLabels = css(setWidth('100%'));
 
 class EvaluateDecisionView extends React.PureComponent {
   constructor(props) {
@@ -87,6 +75,7 @@ class EvaluateDecisionView extends React.PureComponent {
     );
 
   validateForm = () => {
+    // eslint-disable-next-line camelcase
     const { areas_for_improvement, factors_not_considered, complexity, quality } = this.state;
 
     if (!complexity) {
@@ -261,6 +250,8 @@ EvaluateDecisionView.propTypes = {
   appeal: PropTypes.object,
   task: PropTypes.object,
   taskId: PropTypes.string,
+  decision: PropTypes.object,
+  taskOptions: PropTypes.object,
   error: PropTypes.object,
   highlight: PropTypes.bool,
   requestSave: PropTypes.func,

@@ -1,14 +1,5 @@
 import { css } from 'glamor';
-import {
-  marginBottom,
-  marginTop,
-  paddingLeft
-  // fullWidth,
-  // redText,
-  // VACOLS_DISPOSITIONS,
-  // ISSUE_DISPOSITIONS,
-  // JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH
-} from '../constants';
+import { marginBottom, marginTop, paddingLeft } from '../constants';
 
 export const setWidth = (width) =>
   css({
