@@ -72,7 +72,20 @@ RSpec.feature "Motion to vacate", :all_dbs do
         click_button(text: "Submit Review")
 
         # Should this go back to user's queue...?
-        # expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}")
+        expect(page.current_path).to eq("/queue")
+      end
+
+      it "motions attorney recommends denied decision to judge and fills in hyperlink" do
+        send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
+
+        find("label[for=disposition_denied]").click
+        fill_in("hyperlink", with: "https://va.gov/fake-link-to-file")
+        fill_in("instructions", with: "Attorney context/instructions for judge")
+        click_dropdown(text: judge2.display_name)
+        click_button(text: "Submit Review")
+
+        # Should this go back to user's queue...?
+        expect(page.current_path).to eq("/queue")
       end
     end
   end

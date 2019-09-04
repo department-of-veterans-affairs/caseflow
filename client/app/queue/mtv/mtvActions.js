@@ -16,14 +16,20 @@ export const submitMTVAttyReviewError = () => ({
   type: Constants.MTV_SUBMIT_ATTY_REVIEW_ERROR
 });
 
-export const submitMTVAttyReview = (data) => {
+export const submitMTVAttyReview = (data, ownProps) => {
   return async (dispatch) => {
     dispatch(submitMTVAttyReviewStarted());
 
-    const url = 'motion_to_vacate/create';
+    const url = '/post_decision_motions';
+
+    const { history } = ownProps;
 
     try {
       const res = await ApiUtil.post(url, { data });
+
+      if (history) {
+        history.push('/queue');
+      }
 
       dispatch(submitMTVAttyReviewSuccess(res));
     } catch (error) {

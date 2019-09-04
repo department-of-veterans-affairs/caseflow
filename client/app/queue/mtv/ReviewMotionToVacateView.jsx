@@ -18,7 +18,7 @@ export const ReviewMotionToVacateView = (props) => {
 
   const handleSubmit = (review) => {
     console.log('handleSubmit', review);
-    props.submitMTVAttyReview(review);
+    props.submitMTVAttyReview(review, props);
   };
 
   useEffect(() => {
