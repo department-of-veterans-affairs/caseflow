@@ -115,7 +115,8 @@ export const JudgeCaseQuality = ({ highlight = false, qualityAlertRef = null, on
       </div>
       {qualityIsDeficient(quality) && (
         <Alert ref={deficientQualityAlert} type="info" scrollOnAlert={false} styling={qualityOfWorkAlertStyling}>
-          Please provide more details about <b>quality of work</b>. If none of these apply to this case, please share{' '}
+          Please provide more details about <b>quality of work</b>.{' '}
+          If none of these apply to this case, please share{' '}
           <b>additional comments</b> below.
         </Alert>
       )}
