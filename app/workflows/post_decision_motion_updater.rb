@@ -39,12 +39,18 @@ class PostDecisionMotionUpdater
     # If it is a grant, judge assigns it to the drafting attorney,
     # otherwise, it goes back to the motions attorney
     if disposition == "granted"
-      return task_class.create!(
+      new_task = task_class.new(
         appeal: task.appeal,
         parent: task,
         assigned_by: task.assigned_to,
         assigned_to: assigned_to
       )
+      unless new_task.valid?
+        errors.messages.merge!(new_task.errors.messages)
+        return
+      end
+      new_task.save
+      return
     end
     task.update(status: Constants.TASK_STATUSES.completed)
   end
