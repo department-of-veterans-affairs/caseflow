@@ -734,11 +734,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def attorney_case_review
-    AttorneyCaseReview.find_by(task_id: "#{vacols_id}-#{vacols_case_review_creation_date_in_string_format}")
-  end
-
-  def vacols_case_review_creation_date_in_string_format
-    VacolsHelper.day_only_str(vacols_case_review.created_at)
+    AttorneyCaseReview.find_by(task_id: "#{vacols_id}-#{VacolsHelper.day_only_str(vacols_case_review.created_at)}")
   end
 
   def vacols_case_review

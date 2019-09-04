@@ -29,21 +29,29 @@ class UpdateLegacyAttorneyCaseReview
 
   attr_reader :id, :document_id, :user, :success
 
-  def appeal
-    @appeal ||= LegacyAppeal.find_by(vacols_id: id)
+  def update_attorney_case_review
+    return unless attorney_case_review
+
+    attorney_case_review.update!(document_id: document_id)
   end
 
-  def update_attorney_case_review
-    return unless appeal.attorney_case_review
-
-    appeal.attorney_case_review.update!(document_id: document_id)
+  def attorney_case_review
+    AttorneyCaseReview.find_by(task_id: "#{id}-#{vacols_case_review_creation_date_in_string_format}")
   end
 
   def update_vacols_decass_table
     VACOLS::Decass.where(
       defolder: id,
-      deadtim: appeal.vacols_case_review_creation_date_in_string_format.to_date
+      deadtim: vacols_case_review_creation_date_in_vacols_format
     ).update_all(dedocid: document_id)
+  end
+
+  def vacols_case_review_creation_date_in_vacols_format
+    vacols_case_review_creation_date_in_string_format.to_date
+  end
+
+  def vacols_case_review_creation_date_in_string_format
+    VacolsHelper.day_only_str(vacols_case_review.created_at)
   end
 
   def vacols_case_review_exists
@@ -53,7 +61,7 @@ class UpdateLegacyAttorneyCaseReview
   end
 
   def vacols_case_review
-    @vacols_case_review ||= appeal.vacols_case_review
+    @vacols_case_review ||= VACOLS::CaseAssignment.latest_task_for_appeal(id)
   end
 
   def authorized_to_edit
