@@ -16,14 +16,16 @@ import TextareaField from '../../components/TextareaField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import Button from '../../components/Button';
-import JudgeDropdown from '../../../app/components/DataDropdowns/Judge';
-import JudgeSelectComponent from '../JudgeSelectComponent';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { css } from 'glamor';
 import { MTVTaskHeader } from './MTVTaskHeader';
 
 const formatReviewAttyInstructions = ({ disposition, hyperlink, instructions }) => {
-  const parts = [instructions];
+  const parts = [`I recommend ${disposition}.`, instructions];
+
+  if (hyperlink) {
+    parts.push(`Here is the hyperlink to the draft of the denial:\n${hyperlink}`);
+  }
 
   return parts.join('\n');
 };
@@ -90,13 +92,6 @@ export const MTVAttorneyDisposition = ({ judges, task, appeal, onSubmit }) => {
             className={['mtv-review-hyperlink']}
           />
         )}
-
-        {/* <JudgeSelectComponent label={ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL} judgeSelector={judgeId} selectingJudge /> */}
-
-        {/* <JudgeDropdown
-          label={ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL}
-          onChange={(option) => option && setJudgeId(option.value)}
-        /> */}
 
         <SearchableDropdown
           name="judge"
