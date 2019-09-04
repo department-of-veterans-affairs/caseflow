@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 context Api::V3::DecisionReview::IntakeErrors do
   context ".render_hash" do
     let(:intake_start_failed_intake_error) do # status 422

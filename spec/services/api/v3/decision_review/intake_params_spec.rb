@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 context Api::V3::DecisionReview::IntakeParams do
   let(:veteran_file_number) { "64205050" }
   let(:receipt_date) { (Time.zone.today - 5.days).strftime("%F") }

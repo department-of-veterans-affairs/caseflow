@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 context Api::V3::DecisionReview::StartError do
   let(:intake) do
     intake = Intake.build(

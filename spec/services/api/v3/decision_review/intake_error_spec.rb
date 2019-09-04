@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 context Api::V3::DecisionReview::IntakeError do
   # :reek:UtilityFunction:
   def valid_error_array_shape?(array)
