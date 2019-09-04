@@ -46,7 +46,15 @@ class Veteran < ApplicationRecord
   BENEFIT_TYPE_CODE_LIVE = "1"
   BENEFIT_TYPE_CODE_DEATH = "2"
 
-  CACHED_BGS_ATTRIBUTES = [:first_name, :last_name, :middle_name, :name_suffix, :ssn].freeze
+  # key is local attribute name; value is corresponding bgs attribute name
+  CACHED_BGS_ATTRIBUTES = {
+    first_name: :first_name,
+    last_name: :last_name,
+    middle_name: :middle_name,
+    name_suffix: :name_suffix,
+    ssn: :ssn,
+    participant_id: :ptcpnt_id
+  }.freeze
 
   # TODO: get middle initial from BGS
   def name
@@ -222,14 +230,14 @@ class Veteran < ApplicationRecord
   def stale_attributes?
     return false unless accessible? && bgs_record.is_a?(Hash)
 
-    is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil?)
-    is_stale ||= CACHED_BGS_ATTRIBUTES.any? { |name| self[name] != bgs_record[name] }
+    is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil?)
+    is_stale ||= CACHED_BGS_ATTRIBUTES.any? { |local_attr, bgs_attr| self[local_attr] != bgs_record[bgs_attr] }
     is_stale
   end
 
   def update_cached_attributes!
-    CACHED_BGS_ATTRIBUTES.each do |attr|
-      self[attr] = bgs_record[attr]
+    CACHED_BGS_ATTRIBUTES.each do |local_attr, bgs_attr|
+      self[local_attr] = bgs_record[bgs_attr]
     end
     save!
   end

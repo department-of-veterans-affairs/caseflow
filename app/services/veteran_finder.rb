@@ -11,7 +11,7 @@ class VeteranFinder
     def find_or_create_by_file_number_or_ssn(file_number_or_ssn)
       veteran = Veteran.find_or_create_by_file_number_or_ssn(file_number_or_ssn)
 
-      return [] unless veteran
+      return [] unless veteran&.participant_id
 
       Veteran.where(participant_id: veteran.participant_id)
     end

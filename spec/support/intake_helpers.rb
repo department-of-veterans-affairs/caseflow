@@ -589,6 +589,142 @@ module IntakeHelpers
     )
   end
 
+  def generate_rating(veteran, promulgation_date, profile_date)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: promulgation_date,
+      profile_date: profile_date,
+      issues: [
+        { reference_id: "abc123", decision_text: "Left knee granted" },
+        { reference_id: "def456", decision_text: "PTSD denied" },
+        { reference_id: "def789", decision_text: "Looks like a VACOLS issue" }
+      ]
+    )
+  end
+
+  def generate_timely_rating(veteran, receipt_date, duplicate_reference_id)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date - 40.days,
+      profile_date: receipt_date - 50.days,
+      issues: [
+        { reference_id: "xyz123", decision_text: "Left knee granted 2" },
+        { reference_id: "xyz456", decision_text: "PTSD denied 2" },
+        { reference_id: duplicate_reference_id, decision_text: "Old injury" }
+      ]
+    )
+  end
+
+  def generate_untimely_rating(veteran, promulgation_date, profile_date)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: promulgation_date,
+      profile_date: profile_date,
+      issues: [
+        { reference_id: "old123", decision_text: "Untimely rating issue 1" },
+        { reference_id: "old456", decision_text: "Untimely rating issue 2" }
+      ]
+    )
+  end
+
+  def generate_untimely_rating_from_ramp(veteran, receipt_date, old_reference_id, with_associated_claims: false)
+    args = {
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date - 400.days,
+      profile_date: receipt_date - 450.days,
+      issues: [
+        { reference_id: old_reference_id,
+          decision_text: "Really old injury" }
+      ]
+    }
+    if with_associated_claims
+      args[:associated_claims] = { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
+    end
+    Generators::Rating.build(args)
+  end
+
+  def generate_future_rating(veteran, promulgation_date, profile_date)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: promulgation_date,
+      profile_date: profile_date,
+      issues: [
+        { reference_id: "future1", decision_text: "Future rating issue 1" },
+        { reference_id: "future2", decision_text: "Future rating issue 2" }
+      ]
+    )
+  end
+
+  def generate_pre_ama_rating(veteran)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: ama_test_start_date - 5.days,
+      profile_date: ama_test_start_date - 10.days,
+      issues: [
+        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
+      ]
+    )
+  end
+
+  def generate_rating_with_defined_contention(veteran, promulgation_date, profile_date)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: promulgation_date,
+      profile_date: profile_date,
+      issues: [
+        { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: 55 },
+        { reference_id: "def456", decision_text: "PTSD denied" },
+        { reference_id: "abcdef", decision_text: "Back pain" }
+      ]
+    )
+  end
+
+  def generate_rating_before_ama_from_ramp(veteran)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: ama_test_start_date - 5.days,
+      profile_date: ama_test_start_date - 11.days,
+      issues: [
+        { decision_text: "Issue before AMA Activation from RAMP",
+          reference_id: "ramp_ref_id" }
+      ],
+      associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
+    )
+  end
+
+  def generate_rating_with_legacy_issues(veteran, promulgation_date, profile_date)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: promulgation_date,
+      profile_date: profile_date,
+      issues: [
+        { reference_id: "has_legacy_issue", decision_text: "Issue with legacy issue not withdrawn" },
+        { reference_id: "has_ineligible_legacy_appeal", decision_text: "Issue connected to ineligible legacy appeal" }
+      ]
+    )
+  end
+
+  def generate_rating_with_old_decisions(veteran, receipt_date)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date - 5.years,
+      profile_date: receipt_date - 5.years,
+      issues: [
+        { reference_id: "9876", decision_text: "Left hand broken" }
+      ],
+      decisions: [
+        {
+          rating_issue_reference_id: nil,
+          original_denial_date: receipt_date - 5.years - 3.days,
+          diagnostic_text: "Right arm broken",
+          diagnostic_type: "Bone",
+          disability_id: "123",
+          type_name: "Not Service Connected"
+        }
+      ]
+    )
+  end
+
   def save_and_check_request_issues_with_diagnostic_codes(form_name, decision_review)
     click_intake_add_issue
     expect(page).to have_content("this is a disability")

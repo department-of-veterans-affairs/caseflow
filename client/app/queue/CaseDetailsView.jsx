@@ -107,7 +107,7 @@ class CaseDetailsView extends React.PureComponent {
           {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) &&
           <CaseHearingsDetail title="Hearings" appeal={appeal} />}
           <VeteranDetail title="About the Veteran" appeal={appeal} />
-          {!_.isNull(appeal.appellantFullName) &&
+          {!_.isNull(appeal.appellantFullName) && appeal.appellantIsNotVeteran &&
           <AppellantDetail title="About the Appellant" appeal={appeal} />}
           <CaseTimeline title="Case Timeline" appeal={appeal} />}
         </StickyNavContentArea>

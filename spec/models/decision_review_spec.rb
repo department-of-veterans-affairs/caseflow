@@ -213,42 +213,6 @@ describe DecisionReview, :postgres do
       end
     end
 
-    context "when a decision issue is voided" do
-      let(:request_issue) { create(:request_issue, corrected_by_request_issue_id: create(:request_issue).id) }
-      let!(:voided_decision_issue) do
-        create(:decision_issue,
-               :rating,
-               request_issues: [request_issue],
-               participant_id: participant_id,
-               rating_issue_reference_id: "321",
-               decision_text: "voided decision issue 1",
-               benefit_type: higher_level_review.benefit_type,
-               rating_profile_date: profile_date,
-               rating_promulgation_date: promulgation_date,
-               decision_review: higher_level_review)
-      end
-
-      let!(:rating) do
-        Generators::Rating.build(
-          issues: [
-            { reference_id: "321", decision_text: "rating issue 1" },
-            { reference_id: "654", decision_text: "rating issue 2" }
-          ],
-          promulgation_date: promulgation_date,
-          profile_date: profile_date,
-          participant_id: participant_id,
-          associated_claims: associated_claims
-        )
-      end
-
-      it "does not return voided decision issues and voided ratings" do
-        expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
-        expect(subject.map(&:serialize)).to_not include(hash_including(description: "voided decision issue"))
-        expect(subject.map(&:serialize)).to_not include(hash_including(description: "rating issue 1"))
-        expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
-      end
-    end
-
     context "when the issue is from an appeal that is not outcoded" do
       let(:outcoded_appeal) { create(:appeal, :outcoded, veteran: veteran, receipt_date: receipt_date) }
       let!(:outcoded_decision_doc) { create(:decision_document, decision_date: profile_date, appeal: outcoded_appeal) }
@@ -325,6 +289,14 @@ describe DecisionReview, :postgres do
       )
 
       expect(review.withdrawn_request_issues).to match_array([withdrawn_request_issue])
+    end
+  end
+
+  describe "#asyncable_user" do
+    it "returns CSS id of the Intake user" do
+      intake = create(:intake)
+      review = intake.detail
+      expect(review.asyncable_user).to eq(review.intake.user.css_id)
     end
   end
 end

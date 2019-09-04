@@ -58,6 +58,10 @@ class DecisionReview < ApplicationRecord
     end
   end
 
+  def asyncable_user
+    intake&.user&.css_id
+  end
+
   def ama_activation_date
     if intake && FeatureToggle.enabled?(:use_ama_activation_date, user: intake.user)
       Constants::DATES["AMA_ACTIVATION"].to_date
@@ -422,19 +426,5 @@ class DecisionReview < ApplicationRecord
     return "1 #{program} issue" if request_issues.count == 1
 
     "#{request_issues.count} #{program} issues"
-  end
-
-  def fetch_issues_status(issues_list)
-    return {} if issues_list.empty?
-
-    issues_list.map do |issue|
-      {
-        active: issue.api_status_active?,
-        lastAction: issue.api_status_last_action,
-        date: issue.api_status_last_action_date,
-        description: issue.api_status_description,
-        diagnosticCode: issue.diagnostic_code
-      }
-    end
   end
 end

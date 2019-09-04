@@ -149,7 +149,9 @@ class Task < ApplicationRecord
   end
 
   def active_child_timed_hold_task
-    children.open.find_by(type: TimedHoldTask.name)
+    children.find do |task|
+      task.open? && task.type == TimedHoldTask.name
+    end
   end
 
   def cancel_timed_hold
@@ -225,7 +227,7 @@ class Task < ApplicationRecord
   end
 
   def same_task_type?(task_to_check)
-    type.eql?(task_to_check.type)
+    type.eql?(task_to_check&.type)
   end
 
   def cancel_descendants
