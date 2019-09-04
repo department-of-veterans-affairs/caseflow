@@ -49,6 +49,11 @@ detectors:
       - Task
   IrresponsibleModule:
     enabled: false
+  ManualDispatch
+    exclude:
+      - Api::V3::DecisionReview::IntakeParams
+      - Api::V3::DecisionReview::RequestIssueParams#shape_valid?
+      - Api::V3::DecisionReview::IntakeError#potential_error_code
   MissingSafeMethod:
     enabled: false
   NestedIterators:

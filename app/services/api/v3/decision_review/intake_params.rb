@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# :reek:ManualDispatch:
 class Api::V3::DecisionReview::IntakeParams
   attr_reader :errors
 

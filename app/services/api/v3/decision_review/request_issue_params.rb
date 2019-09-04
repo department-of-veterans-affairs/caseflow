@@ -46,7 +46,6 @@
 
 class Api::V3::DecisionReview::RequestIssueParams
   class << self
-    # :reek:ManualDispatch:
     def shape_valid?(obj)
       obj.is_a?(ActionController::Parameters) &&
         obj[:type] == "RequestIssue" &&
