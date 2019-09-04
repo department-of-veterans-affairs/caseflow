@@ -10,7 +10,7 @@ class JudgeLegacyDecisionReviewTask < JudgeLegacyTask
   end
 
   def available_actions(current_user, _role)
-    return [] if current_user.vacols_roles.none? { |vrole| vrole.casecmp("judge").zero? } || current_user != assigned_to
+    return [] if current_user != assigned_to || !current_user.judge_in_vacols?
 
     [
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,

@@ -27,7 +27,7 @@ class LegacyWorkQueue
       vacols_tasks.zip(vacols_appeals).map do |task, appeal|
         user = validate_or_create_user(user, task.assigned_to_css_id)
 
-        task_class = (user_is_judge(user) && issues_have_dispositions(appeal)) ? JudgeLegacyTask : AttorneyLegacyTask
+        task_class = (user.judge_in_vacols? && issues_have_dispositions(appeal)) ? JudgeLegacyTask : AttorneyLegacyTask
 
         task_class.from_vacols(task, appeal, user)
       end
@@ -43,10 +43,6 @@ class LegacyWorkQueue
 
     def issues_have_dispositions(appeal)
       appeal.issues.all? { |issue| issue.disposition.present? }
-    end
-
-    def user_is_judge(user)
-      user&.vacols_roles&.any? { |role| role.casecmp("judge").zero? }
     end
   end
 end
