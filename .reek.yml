@@ -50,7 +50,7 @@ detectors:
       - Task
   IrresponsibleModule:
     enabled: false
-  ManualDispatch
+  ManualDispatch:
     exclude:
       - Api::V3::DecisionReview::IntakeParams
       - Api::V3::DecisionReview::RequestIssueParams#shape_valid?
