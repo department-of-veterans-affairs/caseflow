@@ -15,9 +15,11 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     ).pluck(:appeal_id)
 
     appeal_type.left_outer_joins(:available_hearing_locations)
+      .select(:id)
+      .select("MIN(available_hearing_locations.updated_at) as ahl_updated_at")
       .where(id: appeal_ids)
-      .order("available_hearing_locations.updated_at nulls first")
-      .limit(QUERY_LIMIT)
+      .group(:id)
+      .order("ahl_updated_at nulls first")
   end
 
   def appeals
@@ -31,6 +33,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
     appeals.each do |appeal|
       begin
+        appeal.reload # we only selected id and ahl_update_at, reload all columns
         geomatch_result = geomatch(appeal)
         record_geomatched_appeal(appeal.external_id, geomatch_result[:status])
         sleep 1

@@ -36,17 +36,27 @@ class Date
     strftime("%m/%d/%Y")
   end
   # rubocop:enable Naming/MethodName
-
-  # cheatsheet from https://apidock.com/ruby/DateTime/strftime
-  #   Combination:
-  #   %c - date and time (%a %b %e %T %Y)
-  #   %D - Date (%m/%d/%y)
-  #   %F - The ISO 8601 date format (%Y-%m-%d)
-  #   %v - VMS date (%e-%b-%Y)
-  #   %x - Same as %D
-  #   %X - Same as %T
-  #   %r - 12-hour time (%I:%M:%S %p)
-  #   %R - 24-hour time (%H:%M)
-  #   %T - 24-hour time (%H:%M:%S)
-  #   %+ - date(1) (%a %b %e %H:%M:%S %Z %Y)
 end
+
+class Time
+  def unix_format
+    strftime("%a %b %d %T %Y")
+  end
+
+  def friendly_full_format
+    strftime("%a %b %d %Y at %H:%M")
+  end
+end
+
+# cheatsheet from https://apidock.com/ruby/DateTime/strftime
+#   Combination:
+#   %c - date and time (%a %b %e %T %Y)
+#   %D - Date (%m/%d/%y)
+#   %F - The ISO 8601 date format (%Y-%m-%d)
+#   %v - VMS date (%e-%b-%Y)
+#   %x - Same as %D
+#   %X - Same as %T
+#   %r - 12-hour time (%I:%M:%S %p)
+#   %R - 24-hour time (%H:%M)
+#   %T - 24-hour time (%H:%M:%S)
+#   %+ - date(1) (%a %b %e %H:%M:%S %Z %Y)
