@@ -110,8 +110,6 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
   }
 
   return requestIssues.map((issue) => {
-    const issueDate = new Date(issue.rating_issue_profile_date);
-
     if (issue) {
       return {
         id: String(issue.id),
@@ -136,18 +134,19 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         notes: issue.notes,
         category: issue.category,
         index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
-        isRating: !issue.category,
+        isRating: true,
         rating: !issue.category,
         ratingIssueReferenceId: issue.rating_issue_reference_id,
         ratingDecisionReferenceId: issue.rating_decision_reference_id,
-        ratingIssueProfileDate: issueDate.toISOString(),
+        ratingIssueProfileDate: new Date(issue.rating_issue_profile_date).toISOString(),
         approxDecisionDate: issue.approx_decision_date,
         decisionIssueId: issue.contested_decision_issue_id,
         titleOfActiveReview: issue.title_of_active_review,
         rampClaimId: issue.ramp_claim_id
       };
     }
-  });
+  }
+  );
 };
 
 export const formatContestableIssues = (contestableIssues) => {
