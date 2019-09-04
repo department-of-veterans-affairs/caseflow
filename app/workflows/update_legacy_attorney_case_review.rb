@@ -29,6 +29,10 @@ class UpdateLegacyAttorneyCaseReview
 
   attr_reader :id, :document_id, :user, :success
 
+  def appeal
+    @appeal ||= LegacyAppeal.find_by(vacols_id: id)
+  end
+
   def update_attorney_case_review
     return unless appeal.attorney_case_review
 
