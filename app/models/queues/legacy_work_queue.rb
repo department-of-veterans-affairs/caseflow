@@ -42,7 +42,7 @@ class LegacyWorkQueue
     end
 
     def issues_have_dispositions(appeal)
-      appeal.issues.all? { |issue| !issue.disposition.nil? }
+      appeal.issues.all? { |issue| issue.disposition.present? }
     end
 
     def user_is_judge(user)
