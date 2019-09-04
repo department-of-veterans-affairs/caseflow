@@ -550,6 +550,7 @@
   "HEARING_DATE_LOADING": "Finding upcoming hearing dates for this regional office...",
 
   "CLAIM_REVIEW_EDIT_ERROR_MISSING_DECISION_DATE": "VBMS or SHARE: One or more ratings may be locked on this Claim. Please try again in 24 hours.",
+  "CLAIM_REVIEW_NOT_YET_PROCESSED_ERROR": "Review not yet established in VBMS. Check <a href='%s'>the job page</a> for details.",
   "CLAIM_REVIEW_EDIT_ERROR_DEFAULT": "There was an error preparing this Review for edit.",
 
   "UNKNOWN_REGIONAL_OFFICE": "Unknown",

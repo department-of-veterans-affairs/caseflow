@@ -18,7 +18,7 @@ class Error500 extends React.PureComponent {
 
     if (this.props.flashError) {
       detailedErrorMessage = <React.Fragment>
-        <p>Error: {this.props.flashError}</p>
+        <p>Error: <span dangerouslySetInnerHTML={{ __html: this.props.flashError }} /></p>
       </React.Fragment>;
     }
 

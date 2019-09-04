@@ -304,10 +304,8 @@ export class AddIssuesPage extends React.Component {
 
         {editPage && (
           <div className="cf-intake-establish-credits">
-            Established
-            <a href={this.props.asyncJobUrl}>{moment(this.props.processedAt).format('ddd MMM DD YYYY [at] HH:mm')}</a>
-            by
-            <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a>
+            Established <a href={this.props.asyncJobUrl}>{moment(this.props.processedAt).format('ddd MMM DD YYYY [at] HH:mm')}</a>
+            <span> by <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a></span>
           </div>
         )}
 

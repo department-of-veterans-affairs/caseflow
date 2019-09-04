@@ -23,6 +23,7 @@ class ClaimReview < DecisionReview
   self.abstract_class = true
 
   class NoEndProductsRequired < StandardError; end
+  class NotYetProcessed < StandardError; end
 
   class << self
     def find_by_uuid_or_reference_id!(claim_id)
@@ -49,6 +50,8 @@ class ClaimReview < DecisionReview
   end
 
   def validate_prior_to_edit
+    raise NotYetProcessed unless processed?
+
     # force sync on initial edit call so that we have latest EP status.
     # This helps prevent us editing something that recently closed upstream.
     sync_end_product_establishments!
