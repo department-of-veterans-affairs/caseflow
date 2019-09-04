@@ -8,11 +8,7 @@ export const mtvDispositionOptions = [
     value: 'denied'
   },
   {
-    displayText: 'Withdraw',
-    value: 'withdrawn'
-  },
-  {
-    displayText: 'Dismiss',
+    displayText: 'Withdraw/Dismiss',
     value: 'dismissed'
   }
 ];
