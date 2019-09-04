@@ -13,7 +13,7 @@ context Api::V3::DecisionReview::ReviewError do
 
   context ".new" do
     it do
-      expect { described_class.new(intake) }.to be_a described_class
+      expect(described_class.new(intake)).to be_a described_class
     end
 
     it "should have error code :intake_review_failed" do
