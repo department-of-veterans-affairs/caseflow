@@ -14,8 +14,8 @@ context Api::V3::DecisionReview::StartError do
   end
 
   context ".new" do
-    it "creating the exception should not raise an exception" do
-      expect { described_class.new(intake) }.not_to raise_error
+    it do
+      expect { described_class.new(intake) }.to be_a described_class
     end
 
     it "should have error code :intake_review_failed" do
