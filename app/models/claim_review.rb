@@ -50,7 +50,7 @@ class ClaimReview < DecisionReview
   end
 
   def validate_prior_to_edit
-    raise NotYetProcessed unless processed?
+    fail NotYetProcessed unless processed?
 
     # force sync on initial edit call so that we have latest EP status.
     # This helps prevent us editing something that recently closed upstream.
@@ -67,7 +67,7 @@ class ClaimReview < DecisionReview
   end
 
   def async_job_url
-    "/asyncable_jobs/#{self.class.to_s}/jobs/#{id}"
+    "/asyncable_jobs/#{self.class}/jobs/#{id}"
   end
 
   def finalized_decision_issues_before_receipt_date
