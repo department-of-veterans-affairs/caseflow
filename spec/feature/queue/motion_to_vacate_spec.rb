@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
@@ -10,8 +12,14 @@ RSpec.feature "Motion to vacate", :all_dbs do
     let!(:mail_team) { MailTeam.singleton }
     let(:lit_support_user) { create(:user, full_name: "Lit support user") }
     let(:motions_attorney) { create(:user, full_name: "Motions attorney") }
+    let(:judge1) { create(:user, full_name: "Judge the First", css_id: "JUDGE_1") }
+    let(:judge2) { create(:user, full_name: "Judge the Second", css_id: "JUDGE_2") }
+    let(:judge3) { create(:user, full_name: "Judge the Third", css_id: "JUDGE_3") }
 
     before do
+      create(:staff, :judge_role, sdomainid: judge1.css_id)
+      create(:staff, :judge_role, sdomainid: judge2.css_id)
+      create(:staff, :judge_role, sdomainid: judge3.css_id)
       OrganizationsUser.add_user_to_organization(mail_user, mail_team)
       OrganizationsUser.add_user_to_organization(lit_support_user, lit_support_team)
       OrganizationsUser.add_user_to_organization(motions_attorney, lit_support_team)
@@ -51,5 +59,29 @@ RSpec.feature "Motion to vacate", :all_dbs do
       find("div", class: "Select-option", text: "Send to judge").click
       expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{motions_attorney_task.id}/send_to_judge")
     end
+
+    context "motions attorney reviews case" do
+      let!(:motions_attorney_task) { create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney) }
+
+      it "motions attorney recommends grant decision to judge" do
+        send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
+
+        find("label[for=disposition_granted]").click
+        fill_in("instructions", with: "Attorney context/instructions for judge")
+        click_dropdown(text: judge2.display_name)
+        click_button(text: "Submit Review")
+
+        # Should this go back to user's queue...?
+        # expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}")
+      end
+    end
+  end
+
+  def send_to_judge(user:, appeal:, motions_attorney_task:)
+    User.authenticate!(user: user)
+    visit "/queue/appeals/#{appeal.uuid}"
+    find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    find("div", class: "Select-option", text: "Send to judge").click
+    expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{motions_attorney_task.id}/send_to_judge")
   end
 end
