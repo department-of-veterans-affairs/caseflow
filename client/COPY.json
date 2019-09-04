@@ -548,5 +548,12 @@
   "CLAIM_REVIEW_EDIT_ERROR_MISSING_DECISION_DATE": "VBMS or SHARE: One or more ratings may be locked on this Claim. Please try again in 24 hours.",
   "CLAIM_REVIEW_EDIT_ERROR_DEFAULT": "There was an error preparing this Review for edit.",
 
-  "UNKNOWN_REGIONAL_OFFICE": "Unknown"
+  "UNKNOWN_REGIONAL_OFFICE": "Unknown",
+
+  "ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_TITLE": "Hearing Room 2 is already assigned for %s",
+  "ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_DETAIL": "To manually add a CO hearing, please unselect, \"Assign Board Hearing Room,\" and then edit hearing day to change room number.",
+
+  "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_TITLE": "No rooms available for %s",
+  "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_DETAIL": "All hearing rooms are taken for the date you selected."
+ 
 }
