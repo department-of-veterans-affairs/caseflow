@@ -51,7 +51,7 @@ export const DispositionDropdown = ({
 
 DispositionDropdown.propTypes = {
   hearing: PropTypes.object,
-  update: PropTypes.object,
+  update: PropTypes.func,
   readOnly: PropTypes.bool,
   openDispositionModal: PropTypes.shape,
   saveHearing: PropTypes.func
@@ -72,7 +72,7 @@ export const Waive90DayHoldCheckbox = ({ hearing, readOnly, update }) => (
 Waive90DayHoldCheckbox.propTypes = {
   hearing: PropTypes.object,
   readOnly: PropTypes.bool,
-  update: PropTypes.object
+  update: PropTypes.func
 };
 
 export const TranscriptRequestedCheckbox = ({ hearing, readOnly, update }) => (
@@ -90,7 +90,7 @@ export const TranscriptRequestedCheckbox = ({ hearing, readOnly, update }) => (
 TranscriptRequestedCheckbox.propTypes = {
   hearing: PropTypes.object,
   readOnly: PropTypes.bool,
-  update: PropTypes.object
+  update: PropTypes.func
 };
 
 export const HearingDetailsLink = ({ hearing }) => (
@@ -132,7 +132,7 @@ export const LegacyAodDropdown = ({ hearing, readOnly, update }) => {
 LegacyAodDropdown.propTypes = {
   hearing: PropTypes.object,
   readOnly: PropTypes.bool,
-  update: PropTypes.object
+  update: PropTypes.func
 };
 
 export const AmaAodDropdown = ({ hearing, readOnly, updateAodMotion, userId }) => {
@@ -248,7 +248,7 @@ export const NotesField = ({ hearing, update, readOnly }) => {
 NotesField.propTypes = {
   hearing: PropTypes.object,
   readOnly: PropTypes.bool,
-  update: PropTypes.object
+  update: PropTypes.func
 };
 
 export const HearingLocationDropdown = ({ hearing, readOnly, regionalOffice, update }) => {
@@ -274,7 +274,7 @@ export const HearingLocationDropdown = ({ hearing, readOnly, regionalOffice, upd
 HearingLocationDropdown.propTypes = {
   hearing: PropTypes.object,
   readOnly: PropTypes.bool,
-  update: PropTypes.object,
+  update: PropTypes.func,
   regionalOffice: PropTypes.object
 };
 
@@ -297,7 +297,7 @@ export const HoldOpenDropdown = ({ hearing, readOnly, update }) => (
 HoldOpenDropdown.propTypes = {
   hearing: PropTypes.object,
   readOnly: PropTypes.bool,
-  update: PropTypes.object
+  update: PropTypes.func
 };
 
 export const StaticHearingDay = ({ hearing }) => (
@@ -321,7 +321,7 @@ export const TimeRadioButtons = ({ hearing, regionalOffice, update, readOnly }) 
 TimeRadioButtons.propTypes = {
   hearing: PropTypes.object,
   readOnly: PropTypes.bool,
-  update: PropTypes.object,
+  update: PropTypes.func,
   regionalOffice: PropTypes.object
 };
 
@@ -339,5 +339,5 @@ export const PreppedCheckbox = ({ hearing, update, readOnly }) => (
 PreppedCheckbox.propTypes = {
   hearing: PropTypes.object,
   readOnly: PropTypes.bool,
-  update: PropTypes.object
+  update: PropTypes.func
 };
