@@ -652,7 +652,12 @@ class LegacyAppeal < ApplicationRecord
 
   # Alias sanitized_vbms_id becauase file_number is the term used VBA wide for this veteran identifier
   def veteran_file_number
-    sanitized_vbms_id
+    vacols_file_number = sanitized_vbms_id
+    caseflow_file_number = veteran.file_number
+    if vacols_file_number != caseflow_file_number
+      Raven.capture_message("legacy appeal #{external_id} has file_number mismatch with VACOLS and Caseflow")
+    end
+    caseflow_file_number # prefer for now
   end
 
   def pending_eps
