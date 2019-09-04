@@ -21,7 +21,7 @@ import Button from '../../components/Button';
 import { css } from 'glamor';
 import { MTVTaskHeader } from './MTVTaskHeader';
 
-export const MTVJudgeDisposition = ({ attorneys, task, appeal, onSubmit }) => {
+export const MTVJudgeDisposition = ({ attorneys, task, appeal, onSubmit, submitting = false }) => {
   const { assignedTo } = task;
 
   const cancelLink = `/queue/appeals/${task.externalAppealId}`;
@@ -100,7 +100,7 @@ export const MTVJudgeDisposition = ({ attorneys, task, appeal, onSubmit }) => {
           classNames={['cf-right-side']}
           onClick={handleSubmit}
           //   loading={loading}
-          disabled={!valid()}
+          disabled={!valid() || submitting}
           styling={css({ marginLeft: '1rem' })}
         >
           Submit Review
@@ -117,6 +117,7 @@ export const MTVJudgeDisposition = ({ attorneys, task, appeal, onSubmit }) => {
 
 MTVJudgeDisposition.propTypes = {
   onSubmit: PropTypes.func.isRequired,
+  submitting: PropTypes.bool,
   task: PropTypes.object.isRequired,
   appeal: PropTypes.object.isRequired,
   attorneys: PropTypes.array.isRequired

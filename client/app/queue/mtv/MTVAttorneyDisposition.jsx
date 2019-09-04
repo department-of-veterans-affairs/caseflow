@@ -30,7 +30,7 @@ const formatReviewAttyInstructions = ({ disposition, hyperlink, instructions }) 
   return parts.join('\n');
 };
 
-export const MTVAttorneyDisposition = ({ judges, task, appeal, onSubmit }) => {
+export const MTVAttorneyDisposition = ({ judges, task, appeal, onSubmit, submitting = false }) => {
   // const { assignedTo } = task;
 
   const cancelLink = `/queue/appeals/${task.externalAppealId}`;
@@ -111,7 +111,7 @@ export const MTVAttorneyDisposition = ({ judges, task, appeal, onSubmit }) => {
           classNames={['cf-right-side']}
           onClick={handleSubmit}
           //   loading={loading}
-          disabled={!valid()}
+          disabled={!valid() || submitting}
           styling={css({ marginLeft: '1rem' })}
         >
           Submit Review
@@ -128,6 +128,7 @@ export const MTVAttorneyDisposition = ({ judges, task, appeal, onSubmit }) => {
 
 MTVAttorneyDisposition.propTypes = {
   onSubmit: PropTypes.func.isRequired,
+  submitting: PropTypes.bool,
   task: PropTypes.object.isRequired,
   appeal: PropTypes.object.isRequired,
   judges: PropTypes.array.isRequired
