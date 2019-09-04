@@ -303,10 +303,11 @@ export class AddIssuesPage extends React.Component {
         )}
 
         {editPage && (
-          <div className="cf-txt-c">Intake established by&nbsp;
+          <div className="cf-intake-establish-credits">
+            Established
+            <a href={this.props.asyncJobUrl}>{moment(this.props.processedAt).format('ddd MMM DD YYYY [at] HH:mm')}</a>
+            by
             <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a>
-            &nbsp;at&nbsp;
-            <a href={this.props.asyncJobUrl}>{moment(this.props.processedAt).format('MM/DD/YYYY HH:mm Z')}</a>
           </div>
         )}
 

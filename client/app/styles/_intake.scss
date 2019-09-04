@@ -3,6 +3,16 @@
   padding-left: 0.5em;
 }
 
+.cf-intake-establish-credits {
+  text-align: center;
+  font-size: 95%;
+
+  a {
+    margin-left: 6px;
+    margin-right: 6px;
+  }
+}
+
 // the .cf-app-intake ancestor is needed for these rules to ensure a higher
 // specificity than the stock .cf component classes.
 .cf-app-intake {
