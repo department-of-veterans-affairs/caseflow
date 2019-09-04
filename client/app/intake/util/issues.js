@@ -110,41 +110,39 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
   }
 
   return requestIssues.map((issue) => {
-    if (issue) {
-      return {
-        id: String(issue.id),
-        benefitType: issue.benefit_type,
-        decisionIssueId: issue.contested_decision_issue_id,
-        description: issue.description,
-        decisionDate: formatDateStr(issue.approx_decision_date),
-        ineligibleReason: issue.ineligible_reason,
-        ineligibleDueToId: issue.ineligible_due_to_id,
-        decisionReviewTitle: issue.decision_review_title,
-        contentionText: issue.contention_text,
-        untimelyExemption: issue.untimelyExemption,
-        untimelyExemptionNotes: issue.untimelyExemptionNotes,
-        vacolsId: issue.vacols_id,
-        vacolsSequenceId: issue.vacols_sequence_id,
-        vacolsIssue: issue.vacols_issue,
-        endProductCleared: issue.end_product_cleared,
-        endProductCode: issue.end_product_code,
-        withdrawalDate: formatDateStrUtc(issue.withdrawal_date),
-        editable: issue.editable,
-        isUnidentified: issue.is_unidentified,
-        notes: issue.notes,
-        category: issue.category,
-        index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
-        isRating: !issue.category,
-        rating: !issue.category,
-        ratingIssueReferenceId: issue.rating_issue_reference_id,
-        ratingDecisionReferenceId: issue.rating_decision_reference_id,
-        ratingIssueProfileDate: new Date(issue.rating_issue_profile_date).toISOString(),
-        approxDecisionDate: issue.approx_decision_date,
-        decisionIssueId: issue.contested_decision_issue_id,
-        titleOfActiveReview: issue.title_of_active_review,
-        rampClaimId: issue.ramp_claim_id
-      };
-    }
+    return {
+      id: String(issue.id),
+      benefitType: issue.benefit_type,
+      decisionIssueId: issue.contested_decision_issue_id,
+      description: issue.description,
+      decisionDate: formatDateStr(issue.approx_decision_date),
+      ineligibleReason: issue.ineligible_reason,
+      ineligibleDueToId: issue.ineligible_due_to_id,
+      decisionReviewTitle: issue.decision_review_title,
+      contentionText: issue.contention_text,
+      untimelyExemption: issue.untimelyExemption,
+      untimelyExemptionNotes: issue.untimelyExemptionNotes,
+      vacolsId: issue.vacols_id,
+      vacolsSequenceId: issue.vacols_sequence_id,
+      vacolsIssue: issue.vacols_issue,
+      endProductCleared: issue.end_product_cleared,
+      endProductCode: issue.end_product_code,
+      withdrawalDate: formatDateStrUtc(issue.withdrawal_date),
+      editable: issue.editable,
+      isUnidentified: issue.is_unidentified,
+      notes: issue.notes,
+      category: issue.category,
+      index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
+      isRating: !issue.category,
+      rating: issue.rating,
+      ratingIssueReferenceId: issue.rating_issue_reference_id,
+      ratingDecisionReferenceId: issue.rating_decision_reference_id,
+      ratingIssueProfileDate: new Date(issue.rating_issue_profile_date).toISOString(),
+      approxDecisionDate: issue.approx_decision_date,
+      decisionIssueId: issue.contested_decision_issue_id,
+      titleOfActiveReview: issue.title_of_active_review,
+      rampClaimId: issue.ramp_claim_id
+    };
   }
   );
 };
