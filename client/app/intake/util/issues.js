@@ -134,7 +134,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         notes: issue.notes,
         category: issue.category,
         index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
-        isRating: true,
+        isRating: !issue.category,
         rating: !issue.category,
         ratingIssueReferenceId: issue.rating_issue_reference_id,
         ratingDecisionReferenceId: issue.rating_decision_reference_id,
