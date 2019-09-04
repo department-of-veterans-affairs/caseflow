@@ -35,10 +35,10 @@ class SelectRemandReasonsView extends React.Component {
   getPageName = () => PAGE_TITLES.REMANDS[this.props.userRole.toUpperCase()];
 
   getNextStepUrl = () => {
-    const { appealId, userRole, checkoutFlow, taskId } = this.props;
+    const { appealId, checkoutFlow, taskId } = this.props;
     const baseUrl = `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}`;
 
-    return `${baseUrl}/${userRole === USER_ROLE_TYPES.judge ? 'evaluate' : 'submit'}`;
+    return `${baseUrl}/${checkoutFlow === 'dispatch_decision' ? 'evaluate' : 'submit'}`;
   }
 
   goToPrevStep = () => _.each(this.state.renderedChildren, (child) => child.updateStoreIssue());
@@ -126,9 +126,25 @@ class SelectRemandReasonsView extends React.Component {
 }
 
 SelectRemandReasonsView.propTypes = {
+  appeal: PropTypes.shape({
+    issues: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string
+      })
+    ),
+    decisionIssues: PropTypes.array,
+    isLegacyAppeal: PropTypes.bool
+  }),
+  issues: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string
+    })
+  ),
   appealId: PropTypes.string.isRequired,
+  taskId: PropTypes.string.isRequired,
   checkoutFlow: PropTypes.string.isRequired,
-  userRole: PropTypes.string.isRequired
+  userRole: PropTypes.string.isRequired,
+  editStagedAppeal: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
