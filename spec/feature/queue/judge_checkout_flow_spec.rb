@@ -239,7 +239,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       )
     end
     let!(:decision_issue) do
-      create(:decision_issue, decision_review: appeal, request_issues: appeal.request_issues)
+      create(:decision_issue, :imo, decision_review: appeal, request_issues: appeal.request_issues)
     end
 
     let(:root_task) { create(:root_task, appeal: appeal) }
@@ -272,7 +272,12 @@ RSpec.feature "Judge checkout flow", :all_dbs do
         expect(page).to have_content(COPY::DECISION_ISSUE_PAGE_TITLE)
       end
 
-      step("Navigate to evaluation page from decision issues page") do
+      step("Navigate to remand reasons page from decision issues page") do
+        click_on("Continue")
+        expect(page).to have_content("Remand Reasons")
+      end
+
+      step("Navigate to evaluation page from remand reasons page") do
         click_on("Continue")
         expect(page).to have_content(COPY::EVALUATE_DECISION_PAGE_TITLE)
       end
