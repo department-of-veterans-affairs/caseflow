@@ -253,7 +253,7 @@ context Api::V3::DecisionReview::IntakeParams do
           }
         ]
       end
-      it "should have code :" do
+      it "should have code :request_issue_cannot_be_empty" do
         expect(subject.errors.length).to eq(1)
         expect(subject.errors[0].code).to eq(:request_issue_cannot_be_empty)
       end
