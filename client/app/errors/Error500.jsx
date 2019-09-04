@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react';
 import AppFrame from '../components/AppFrame';
 import NavigationBar from '../components/NavigationBar';

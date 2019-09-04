@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import React, { Fragment } from 'react';
 import StatusMessage from '../../components/StatusMessage';
 import { connect } from 'react-redux';
@@ -5,12 +7,12 @@ import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../constants';
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
-import Alert from '../../components/Alert';
 import { legacyIssue } from '../util/issues';
 import IneligibleIssuesList from '../components/IneligibleIssuesList';
 import SmallLoader from '../../components/SmallLoader';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY.json';
+import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 
 const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, detailEditUrl }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
@@ -18,23 +20,15 @@ const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, detail
 
   const leadMessageArr = [
     `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been submitted.`,
-    <div>You may check on the <a href={asyncJobUrl}>establishment status of the request</a>.</div>
+    <div>You may check on the <a href={asyncJobUrl}>status of the VBMS establishment</a>.</div>
   ];
 
   if (eligibleRequestIssues.length !== 0) {
     if (unidentifiedIssues.length > 0) {
-      leadMessageArr.push(
-        <Alert type="warning">
-          <h2>Unidentified issue</h2>
-          <p>{COPY.UNIDENTIFIED_ALERT}</p>
-          {unidentifiedIssues.map((ri, i) => <p className="cf-red-text" key={`unidentified-alert-${i}`}>
-            Unidentified issue: no issue matched for requested "{ri.description}"
-          </p>)}
-        </Alert>
-      );
+      leadMessageArr.push(<UnidentifiedIssueAlert unidentifiedIssues={unidentifiedIssues} />);
     } else {
       leadMessageArr.push(
-        <div>If necessary you may <a href={detailEditUrl}>edit the issues</a> on this {formName}.</div>
+        <div>Once established in VBMS, you may <a href={detailEditUrl}>edit the issues</a>.</div>
       );
     }
   }

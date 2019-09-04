@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react';
 
 import _ from 'lodash';
@@ -117,6 +119,15 @@ export class AddIssuesPage extends React.Component {
     } else if (intakeData.isOutcoded) {
       return <Redirect to={PAGE_PATHS.OUTCODED} />;
     }
+  }
+
+  establishmentCredits() {
+    const tstamp = moment(this.props.processedAt).format('ddd MMM DD YYYY [at] HH:mm');
+
+    return <div className="cf-intake-establish-credits">
+      Established <a href={this.props.asyncJobUrl}>{tstamp}</a>
+      <span> by <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a></span>
+    </div>;
   }
 
   render() {
@@ -302,12 +313,7 @@ export class AddIssuesPage extends React.Component {
           <ErrorAlert errorCode="veteran_not_valid" errorData={intakeData.veteranInvalidFields} />
         )}
 
-        {editPage && (
-          <div className="cf-intake-establish-credits">
-            Established <a href={this.props.asyncJobUrl}>{moment(this.props.processedAt).format('ddd MMM DD YYYY [at] HH:mm')}</a>
-            <span> by <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a></span>
-          </div>
-        )}
+        {editPage && this.establishmentCredits()}
 
         <Table columns={columns} rowObjects={rowObjects} rowClassNames={issueChangeClassname} slowReRendersAreOk />
 
