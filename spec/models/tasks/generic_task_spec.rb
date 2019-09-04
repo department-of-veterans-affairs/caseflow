@@ -3,7 +3,7 @@
 require "support/database_cleaner"
 require "rails_helper"
 
-describe GenericTask, :postgres do
+describe Task, :postgres do
   describe ".available_actions" do
     let(:task) { nil }
     let(:user) { nil }
@@ -301,10 +301,18 @@ describe GenericTask, :postgres do
     let(:parent_assignee) { create(:user) }
     let(:current_user) { create(:user) }
     let(:assignee) { create(:user) }
+    # may need to assign to an org
+    # let(:parent) do
+    #   t = create(:task, :in_progress, assigned_to: parent_assignee)
+    #   Task.find(t.id)
+    # end
+
+    let(:parent_assignee_organization) { create(:organization) }
     let(:parent) do
-      t = create(:generic_task, :in_progress, assigned_to: parent_assignee)
-      GenericTask.find(t.id)
+        t =  create(:task, :in_progress, assigned_to: parent_assignee_organization, assigned_to_type: Organization.name)
+        Task.find(t.id)
     end
+
 
     let(:good_params) do
       {
@@ -316,6 +324,20 @@ describe GenericTask, :postgres do
     end
     let(:good_params_array) { [good_params] }
 
+    fcontext "when missing assignee" do
+      let(:bad_params) do
+        {
+          status: Constants.TASK_STATUSES.completed,
+          assigned_to_type: Organization.name,
+          assigned_to_id: nil
+        }
+      end
+      it "should raise error" do
+         expect { Task.create_many_from_params(bad_params, parent_assignee)}
+         .to raise_error(TypeError)
+      end
+    end
+
     context "when missing assignee parameter" do
       let(:params) do
         [{
@@ -325,7 +347,8 @@ describe GenericTask, :postgres do
         }]
       end
       it "should raise error before not creating child task nor update status" do
-        expect { GenericTask.create_many_from_params(params, parent_assignee).first }.to raise_error(TypeError)
+        expect { Task.create_many_from_params(params, parent_assignee_organization).first }
+        .to raise_error(Caseflow::Error::ActionForbiddenError)
       end
     end
 
