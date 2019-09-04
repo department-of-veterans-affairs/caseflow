@@ -67,9 +67,7 @@ class WarmBgsCachesJob < CaseflowJob
     hearings.each do |hearing|
       veteran = hearing.appeal.veteran
 
-      next unless veteran
-
-      if veteran.stale_attributes?
+      if veteran&.stale_attributes?
         veteran.update_cached_attributes!
         veterans_updated += 1
       end
