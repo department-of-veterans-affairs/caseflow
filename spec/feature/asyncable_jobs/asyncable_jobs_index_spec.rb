@@ -42,7 +42,7 @@ feature "Asyncable Jobs index", :postgres do
   let!(:pending_hlr) do
     create(:higher_level_review,
            establishment_last_submitted_at: 2.days.ago,
-           establishment_error: "SomeError: this is a really long exception message",
+           establishment_error: "SomeError: this is a really long exception message\nover multiple lines",
            veteran_file_number: veteran2.file_number)
   end
   let!(:request_issues_update) do
@@ -143,6 +143,7 @@ feature "Asyncable Jobs index", :postgres do
       visit "/jobs"
 
       expect(page).to_not have_content("this is a really long exception message")
+      expect(page).to_not have_content("over multiple lines")
     end
 
     it "links to Intake user" do

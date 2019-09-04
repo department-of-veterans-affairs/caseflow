@@ -71,8 +71,9 @@ class ClaimReviewAsyncStatsReporter
 
   def completion_times(claims)
     claims.reject(&:canceled?).map do |claim|
-      hash = claim.asyncable_ui_hash
-      hash[:processed_at] - hash[:submitted_at]
+      processed_at = claim[claim.class.processed_at_column]
+      submitted_at = claim[claim.class.submitted_at_column]
+      processed_at - submitted_at
     end
   end
 
