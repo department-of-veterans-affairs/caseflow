@@ -11,14 +11,13 @@ import { submitMTVAttyReview } from './mtvActions';
 import { taskById, appealWithDetailSelector } from '../selectors';
 
 export const ReviewMotionToVacateView = (props) => {
-  const { task, appeal, judges } = props;
+  const { task, appeal, judges, submitting } = props;
 
   const judgeOptions = Object.values(judges).map(({ id, display_name }) => ({ label: display_name,
     value: id }));
 
-  const handleSubmit = (review) => {
-    console.log('handleSubmit', review);
-    props.submitMTVAttyReview(review, props);
+  const handleSubmit = async (review) => {
+    await props.submitMTVAttyReview(review, props);
   };
 
   useEffect(() => {
@@ -27,7 +26,17 @@ export const ReviewMotionToVacateView = (props) => {
     }
   });
 
-  return judges && <MTVAttorneyDisposition task={task} judges={judgeOptions} appeal={appeal} onSubmit={handleSubmit} />;
+  return (
+    judges && (
+      <MTVAttorneyDisposition
+        task={task}
+        judges={judgeOptions}
+        appeal={appeal}
+        onSubmit={handleSubmit}
+        submitting={submitting}
+      />
+    )
+  );
 };
 
 ReviewMotionToVacateView.propTypes = {
@@ -35,7 +44,8 @@ ReviewMotionToVacateView.propTypes = {
   appeal: PropTypes.object,
   judges: PropTypes.object,
   fetchJudges: PropTypes.func,
-  submitMTVAttyReview: PropTypes.func
+  submitMTVAttyReview: PropTypes.func,
+  error: PropTypes.bool
 };
 
 const mapStateToProps = (state, { match }) => {
@@ -44,7 +54,9 @@ const mapStateToProps = (state, { match }) => {
   return {
     task: taskById(state, { taskId }),
     appeal: appealWithDetailSelector(state, { appealId }),
-    judges: state.queue.judges
+    judges: state.queue.judges,
+    error: state.mtv.attorneyView.error,
+    submitting: state.mtv.attorneyView.submitting
   };
 };
 

@@ -12,8 +12,9 @@ export const submitMTVAttyReviewSuccess = (task) => ({
   }
 });
 
-export const submitMTVAttyReviewError = () => ({
-  type: Constants.MTV_SUBMIT_ATTY_REVIEW_ERROR
+export const submitMTVAttyReviewError = (error) => ({
+  type: Constants.MTV_SUBMIT_ATTY_REVIEW_ERROR,
+  payload: error
 });
 
 export const submitMTVAttyReview = (data, ownProps) => {
@@ -33,7 +34,7 @@ export const submitMTVAttyReview = (data, ownProps) => {
 
       dispatch(submitMTVAttyReviewSuccess(res));
     } catch (error) {
-      dispatch(submitMTVAttyReviewError());
+      dispatch(submitMTVAttyReviewError(error));
     }
   };
 };
