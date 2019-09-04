@@ -191,7 +191,7 @@ class QueueApp extends React.PureComponent {
 
     return (
       <SelectRemandReasonsView
-        prevStep={`/queue/appeals/${appealId}/tasks/${taskId}` + `/${checkoutFlow}/dispositions`}
+        prevStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         {...props.match.params}
       />
     );
