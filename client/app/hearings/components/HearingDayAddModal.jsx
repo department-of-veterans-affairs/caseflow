@@ -31,7 +31,6 @@ import { onRegionalOfficeChange } from '../../components/common/actions';
 import Checkbox from '../../components/Checkbox';
 import Alert from '../../components/Alert';
 import ApiUtil from '../../util/ApiUtil';
-import { formatDateStr } from '../../util/DateUtil';
 
 const notesFieldStyling = css({
   height: '100px',
@@ -82,7 +81,7 @@ class HearingDayAddModal extends React.Component {
       errorMessages: [],
       roErrorMessages: [],
       serverError: false,
-      noRoomsAvailable: false
+      noRoomsAvailableError: false
     };
   }
 
@@ -99,7 +98,7 @@ class HearingDayAddModal extends React.Component {
     let roErrorMessages = [];
 
     this.setState({ serverError: false,
-      noRoomsAvailable: false });
+      noRoomsAvailableError: false });
 
     if (this.props.selectedHearingDay === '') {
       this.setState({ dateError: true });
@@ -172,8 +171,8 @@ class HearingDayAddModal extends React.Component {
 
       }, (error) => {
         if (error.response.body && error.response.body.errors &&
-        error.response.body.errors[0].title === 'No rooms available') {
-          this.setState({ noRoomsAvailable: true });
+        error.response.body.errors[0].status === 400) {
+          this.setState({ noRoomsAvailableError: error.response.body.errors[0] });
         } else {
         // All other server errors
           this.setState({ serverError: true });
@@ -261,17 +260,17 @@ class HearingDayAddModal extends React.Component {
   };
 
   getAlertTitle = () => {
-    return this.state.serverError ? 'An Error Occurred' :
-      `No Rooms Available for Hearing Day ${formatDateStr(this.props.selectedHearingDay)}`;
+    return this.state.noRoomsAvailableError ? this.state.noRoomsAvailableError.title :
+      'An error has occurred';
   };
 
   getAlertMessage = () => {
-    return this.state.serverError ? 'You are unable to complete this action.' :
-      'All hearing rooms are taken for the date you selected.';
+    return this.state.noRoomsAvailableError ? this.state.noRoomsAvailableError.detail :
+      'You are unable to complete this action.';
   };
 
   showAlert = () => {
-    return this.state.serverError || this.state.noRoomsAvailable;
+    return this.state.serverError || this.state.noRoomsAvailableError;
   };
 
   modalMessage = () => {
@@ -372,7 +371,31 @@ HearingDayAddModal.propTypes = {
   userId: PropTypes.number,
   userCssId: PropTypes.string,
   closeModal: PropTypes.func,
-  cancelModal: PropTypes.func
+  cancelModal: PropTypes.func,
+  roomRequired: PropTypes.bool,
+  notes: PropTypes.string,
+  coordinator: PropTypes.shape({
+    value: PropTypes.string
+  }),
+  vlj: PropTypes.shape({
+    value: PropTypes.string
+  }),
+  selectedRegionalOffice: PropTypes.shape({
+    value: PropTypes.string
+  }),
+  selectedHearingDay: PropTypes.string,
+  onAssignHearingRoom: PropTypes.func,
+  setNotes: PropTypes.func,
+  selectHearingCoordinator: PropTypes.func,
+  selectVlj: PropTypes.func,
+  onRegionalOfficeChange: PropTypes.func,
+  selectRequestType: PropTypes.func,
+  onSelectedHearingDayChange: PropTypes.func,
+  onReceiveHearingSchedule: PropTypes.func,
+  hearingSchedule: PropTypes.object,
+  requestType: PropTypes.shape({
+    value: PropTypes.string
+  })
 };
 
 const mapStateToProps = (state) => ({

@@ -65,6 +65,24 @@ RSpec.feature "Add a Hearing Day", :postgres do
     end
   end
 
+  context "When adding a Central Office Hearing" do
+    let!(:hearing_day) do
+      create(:hearing_day, scheduled_for: Date.new(2019, 8, 14))
+    end
+
+    scenario "Hearing room 2 is already booked" do
+      visit "hearings/schedule"
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
+      find("button", text: "Add Hearing Date").click
+      expect(page).to have_content("Add Hearing Day")
+      fill_in "hearingDate", with: "08142019"
+      click_dropdown(index: "C", text: "Central")
+      find("button", text: "Confirm").click
+      expect(page).to have_content(COPY::ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_TITLE % "08/14/2019")
+      expect(page).to have_content(COPY::ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_DETAIL)
+    end
+  end
+
   context "Add a Video Hearing Day" do
     scenario "When opening modal and selecting Central Office verify correct fields present" do
       visit "hearings/schedule"
