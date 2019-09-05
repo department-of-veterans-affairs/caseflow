@@ -27,7 +27,10 @@ class LegacyWorkQueue
       vacols_tasks.zip(vacols_appeals).map do |task, appeal|
         user = validate_or_create_user(user, task.assigned_to_css_id)
 
-        task_class = (user&.vacols_roles&.first&.downcase == "judge") ? JudgeLegacyTask : AttorneyLegacyTask
+        task_class = AttorneyLegacyTask
+        if user&.vacols_roles&.first&.downcase == "judge" || (user&.judge_in_vacols? && appeal.attorney_case_review)
+          task_class = JudgeLegacyTask
+        end
 
         task_class.from_vacols(task, appeal, user)
       end
