@@ -44,7 +44,6 @@ class Hearing < ApplicationRecord
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
   delegate :hearing_day_full?, to: :hearing_day
-  delegate :regional_office_name, to: :regional_office
   delegate :timezone, to: :regional_office, prefix: true
 
   after_create :update_fields_from_hearing_day
