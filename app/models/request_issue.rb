@@ -914,7 +914,8 @@ class RequestIssue < ApplicationRecord
     return unless contested_decision_issue_id
 
     add_duplicate_issue_error(
-      RequestIssue.active.find_by(contested_decision_issue_id: contested_decision_issue_id, correction_type: correction_type)
+      RequestIssue.active.find_by(contested_decision_issue_id: contested_decision_issue_id,
+                                  correction_type: correction_type)
     )
   end
 
