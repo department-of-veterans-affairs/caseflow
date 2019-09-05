@@ -1323,7 +1323,7 @@ describe RequestIssue, :all_dbs do
       expect(rating_request_issue.untimely?).to eq(true)
     end
 
-    fit "flags duplicate rating request issue as in progress" do
+    it "flags duplicate rating request issue as in progress" do
       rating_request_issue.contested_rating_issue_reference_id = duplicate_reference_id
       rating_request_issue.validate_eligibility!
 
@@ -1334,7 +1334,7 @@ describe RequestIssue, :all_dbs do
       expect(request_issue_in_progress.duplicate_but_ineligible).to eq([rating_request_issue])
     end
 
-    fcontext "when duplicate request issue is a correction" do
+    context "when duplicate request issue is a correction" do
      let(:correction_type) {"control"}
      let(:contested_decision_issue_id) {12}
 
