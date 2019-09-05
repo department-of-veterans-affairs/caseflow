@@ -97,12 +97,6 @@ class DecisionIssue < ApplicationRecord
     request_issues.none?(&:nonrating?)
   end
 
-  # If a decision issue is associated with request issues that were corrected,
-  # consider it invalid
-  def voided?
-    request_issues.any? && request_issues.all?(&:corrected?)
-  end
-
   def finalized?
     appeal? ? decision_review.outcoded? : disposition.present?
   end
