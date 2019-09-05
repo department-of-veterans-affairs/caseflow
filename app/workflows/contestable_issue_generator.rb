@@ -45,7 +45,7 @@ class ContestableIssueGenerator
 
     # If correction support enabled, we include all decision issues for the issue
     if FeatureToggle.enabled?(:correct_claim_reviews, user: RequestStore[:current_user])
-      issues |= review.decision_issues.select(&:finalized?)
+      issues += review.decision_issues.select(&:finalized?)
     end
 
     @from_decision_issues ||= issues.map do |decision_issue|
