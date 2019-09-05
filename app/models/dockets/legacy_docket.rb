@@ -30,41 +30,45 @@ class LegacyDocket
 
   def distribute_priority_appeals(distribution, genpop: "any", limit: 1)
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
-      legacy_appeal =  LegacyAppeal.find_or_create_by_vacols_id(record["bfkey"])
-      legacy_appeal.transaction do
-        root_task = RootTask.find_or_create_by!(appeal: legacy_appeal)
-        JudgeAssignTask.create!(appeal: legacy_appeal, parent: root_task, assigned_to: distribution.judge)
+      distributed_case = DistributedCase.new(
+        distribution: distribution,
+        case_id: record["bfkey"],
+        docket: docket_type,
+        priority: true,
+        ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
+        genpop: record["vlj"].nil?,
+        genpop_query: genpop
+      )
 
-        DistributedCase.create(
-          distribution: distribution,
-          case_id: record["bfkey"],
-          docket: docket_type,
-          priority: true,
-          ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
-          genpop: record["vlj"].nil?,
-          genpop_query: genpop
-        )
+      if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
+        DasDeprecation::CaseDistribution.create_judge_assign_task(record, distribution.judge) do
+          distributed_case.save!
+        end
+      else
+        distributed_case.save!
       end
     end
   end
 
   def distribute_nonpriority_appeals(distribution, genpop: "any", range: nil, limit: 1)
     LegacyAppeal.repository.distribute_nonpriority_appeals(distribution.judge, genpop, range, limit).map do |record|
-      legacy_appeal =  LegacyAppeal.find_or_create_by_vacols_id(record["bfkey"])
-      legacy_appeal.transaction do
-        root_task = RootTask.find_or_create_by!(appeal: legacy_appeal)
-        JudgeAssignTask.create!(appeal: legacy_appeal, parent: root_task, assigned_to: distribution.judge)
-        
-        DistributedCase.create(
-          distribution: distribution,
-          case_id: record["bfkey"],
-          docket: docket_type,
-          priority: false,
-          ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
-          docket_index: record["docket_index"],
-          genpop: record["vlj"].nil?,
-          genpop_query: genpop
-        )
+      distributed_case = DistributedCase.new(
+        distribution: distribution,
+        case_id: record["bfkey"],
+        docket: docket_type,
+        priority: false,
+        ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
+        docket_index: record["docket_index"],
+        genpop: record["vlj"].nil?,
+        genpop_query: genpop
+      )
+
+      if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
+        DasDeprecation::CaseDistribution.create_judge_assign_task(record, distribution.judge) do
+          distributed_case.save!
+        end
+      else
+        distributed_case.save!
       end
     end
   end
