@@ -188,7 +188,7 @@ describe DecisionReview, :postgres do
                end_product_last_action_date: receipt_date + 1.day,
                benefit_type: higher_level_review.benefit_type,
                decision_text: "something was decided in the future 1",
-               description: "future decision issue 1",
+               description: "future decision issue from same review",
                participant_id: veteran.participant_id)
       end
 
@@ -199,7 +199,7 @@ describe DecisionReview, :postgres do
                end_product_last_action_date: receipt_date + 1.day,
                benefit_type: supplemental_claim.benefit_type,
                decision_text: "something was decided in the future 2",
-               description: "future decision issue 2",
+               description: "future decision issue from a different review",
                participant_id: veteran.participant_id)
       end
 
@@ -219,8 +219,12 @@ describe DecisionReview, :postgres do
       context "without correct_claim_reviews feature toggle" do
         it "does include decision issues in the future that correspond to same review" do
           expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
-          expect(subject.map(&:serialize)).to_not include(hash_including(description: "future decision issue 1"))
-          expect(subject.map(&:serialize)).to_not include(hash_including(description: "future decision issue 2"))
+          expect(subject.map(&:serialize)).to_not include(
+            hash_including(description: "future decision issue from same review")
+          )
+          expect(subject.map(&:serialize)).to_not include(
+            hash_including(description: "future decision issue from a different review")
+          )
           expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
           expect(subject.map(&:serialize)).to_not include(hash_including(description: "future rating issue 2"))
         end
@@ -231,8 +235,12 @@ describe DecisionReview, :postgres do
 
         it "does include decision issues in the future that correspond to same review" do
           expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
-          expect(subject.map(&:serialize)).to include(hash_including(description: "future decision issue 1"))
-          expect(subject.map(&:serialize)).to_not include(hash_including(description: "future decision issue 2"))
+          expect(subject.map(&:serialize)).to include(
+            hash_including(description: "future decision issue from same review")
+          )
+          expect(subject.map(&:serialize)).to_not include(
+            hash_including(description: "future decision issue from a different review")
+          )
           expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
           expect(subject.map(&:serialize)).to_not include(hash_including(description: "future rating issue 2"))
         end
