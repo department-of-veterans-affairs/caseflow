@@ -43,7 +43,11 @@ describe OpenHearingTasksWithoutActiveDescendantsChecker, :all_dbs do
   let(:hearing_task_2) { create(:hearing_task, appeal: appeal, parent: root_task_2) }
   let(:schedule_hearing_task_2) { create(:schedule_hearing_task, appeal: appeal, parent: hearing_task_2) }
 
-  context "there are open hearing tasks without active descendants" do
+  context "there are open hearing tasks without active descendants and without any descendants" do
+    let(:appeal_2) { create(:appeal) }
+    let(:root_task_3) { create(:root_task, appeal: appeal_2) }
+    let!(:hearing_task_3) { create(:hearing_task, appeal: appeal_2, parent: root_task_3) }
+
     before do
       user_verify_task.update_columns(status: Constants.TASK_STATUSES.completed)
       org_verify_task.update_columns(status: Constants.TASK_STATUSES.completed)
@@ -54,8 +58,9 @@ describe OpenHearingTasksWithoutActiveDescendantsChecker, :all_dbs do
       it "builds a report that includes the IDs of the open hearing tasks" do
         subject.call
         report_lines = subject.report.split("\n")
-        expect(report_lines).to include("Found 2 open HearingTasks with no active descendant tasks.")
-        expect(report_lines).to include("HearingTask.where(id: #{[hearing_task.id, hearing_task_2.id].sort})")
+        ids = [hearing_task.id, hearing_task_2.id, hearing_task_3.id].sort
+        expect(report_lines).to include("Found #{ids.count} open HearingTasks with no active descendant tasks.")
+        expect(report_lines).to include("HearingTask.where(id: #{ids})")
       end
     end
   end

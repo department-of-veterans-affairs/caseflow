@@ -28,5 +28,19 @@
     "process_violations": "Did not adequately address due process violations",
     "remands_are_not_completed": "Remands not complete, legally sufficient or require necessary development",
     "grammar_errors": "Major or frequent spelling, grammar, typographical, usage, formatting errors"
+  },
+
+  "POSITIVE_FEEDBACK": {
+    "responsive_to_contentions_and_theories": "Responsive to contentions and theories",
+    "well_analyzed_lay_evidence": "Well-analyzed lay evidence",
+    "well_analyzed_medical_evidence": "Well-analyzed medical evidence",
+    "hidden_issue_spotting": "Good hidden issue-spotting and analysis",
+    "concise_vet_centric_writing": "Concise, understandable, Veteran-centric writing",
+    "appropriate_use_of_law": "Appropriate use of law, precedential opinion and administrative procedure",
+    "logically_organized": "Logically organized",
+    "no_substantive_revisions": "No substantive revisions",
+    "well_proofed": "Well proofed (no to minimal typos/grammar errors)",
+    "well_annotated_file": "Well-annotated file for VLJ review to include appropriate use of tags and comments",
+    "concise_detailed_remand": "Remand is concise and provides detailed, understandable directives"
   }
 }
