@@ -243,7 +243,9 @@ class QueueApp extends React.PureComponent {
     <CreateChangeHearingDispositionTaskModal {...props.match.params} />
   );
 
-  routedSendColocatedTaskModal = (props) => <CompleteTaskModal modalType="send_colocated_task" {...props.match.params} />;
+  routedSendColocatedTaskModal = (props) => {
+    return <CompleteTaskModal modalType="send_colocated_task" {...props.match.params} />;
+  };
 
   routedBulkAssignTaskModal = (props) => <BulkAssignModal {...props} />;
 
@@ -476,7 +478,10 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               exact
-              path="/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(draft_decision|dispatch_decision)/special_issues"
+              path={[
+                '/queue/appeals/:appealId/tasks/:taskId/',
+                ':checkoutFlow(draft_decision|dispatch_decision)/special_issues'
+              ].join('')}
               title={`Draft Decision | ${COPY.SPECIAL_ISSUES_PAGE_TITLE}`}
               render={this.routedSelectSpecialIssues}
             />
