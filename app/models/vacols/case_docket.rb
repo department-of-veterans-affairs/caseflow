@@ -323,7 +323,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         return appeals if appeals.empty?
 
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
-        VACOLS::Case.batch_update_vacols_location(judge.vacols_uniq_id, vacols_ids)
+        VACOLS::Case.batch_update_vacols_location('CASEFLOW', vacols_ids)
         appeals
       end
     end

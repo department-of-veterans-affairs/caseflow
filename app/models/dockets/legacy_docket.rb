@@ -30,30 +30,40 @@ class LegacyDocket
 
   def distribute_priority_appeals(distribution, genpop: "any", limit: 1)
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
-      DistributedCase.create(
-        distribution: distribution,
-        case_id: record["bfkey"],
-        docket: docket_type,
-        priority: true,
-        ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
-        genpop: record["vlj"].nil?,
-        genpop_query: genpop
-      )
+      record.transaction do
+        legacy_appeal =  LegacyAppeal.find_by(vacols_id: record["bfkey"])
+        JudgeAssignTask.create!(appeal: legacy_appeal, parent: legacy_appeal.root_task, assigned_to: judge)
+
+        DistributedCase.create(
+          distribution: distribution,
+          case_id: record["bfkey"],
+          docket: docket_type,
+          priority: true,
+          ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
+          genpop: record["vlj"].nil?,
+          genpop_query: genpop
+        )
+      end
     end
   end
 
   def distribute_nonpriority_appeals(distribution, genpop: "any", range: nil, limit: 1)
     LegacyAppeal.repository.distribute_nonpriority_appeals(distribution.judge, genpop, range, limit).map do |record|
-      DistributedCase.create(
-        distribution: distribution,
-        case_id: record["bfkey"],
-        docket: docket_type,
-        priority: false,
-        ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
-        docket_index: record["docket_index"],
-        genpop: record["vlj"].nil?,
-        genpop_query: genpop
-      )
+      record.transaction do
+        legacy_appeal =  LegacyAppeal.find_by(vacols_id: record["bfkey"])
+        JudgeAssignTask.create!(appeal: legacy_appeal, parent: legacy_appeal.root_task, assigned_to: judge)
+
+        DistributedCase.create(
+          distribution: distribution,
+          case_id: record["bfkey"],
+          docket: docket_type,
+          priority: false,
+          ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
+          docket_index: record["docket_index"],
+          genpop: record["vlj"].nil?,
+          genpop_query: genpop
+        )
+      end
     end
   end
 
