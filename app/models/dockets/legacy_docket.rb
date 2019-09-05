@@ -30,9 +30,10 @@ class LegacyDocket
 
   def distribute_priority_appeals(distribution, genpop: "any", limit: 1)
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
-      record.transaction do
-        legacy_appeal =  LegacyAppeal.find_by(vacols_id: record["bfkey"])
-        JudgeAssignTask.create!(appeal: legacy_appeal, parent: legacy_appeal.root_task, assigned_to: judge)
+      legacy_appeal =  LegacyAppeal.find_or_create_by_vacols_id(record["bfkey"])
+      legacy_appeal.transaction do
+        root_task = RootTask.find_or_create_by!(appeal: legacy_appeal)
+        JudgeAssignTask.create!(appeal: legacy_appeal, parent: root_task, assigned_to: distribution.judge)
 
         DistributedCase.create(
           distribution: distribution,
@@ -49,10 +50,11 @@ class LegacyDocket
 
   def distribute_nonpriority_appeals(distribution, genpop: "any", range: nil, limit: 1)
     LegacyAppeal.repository.distribute_nonpriority_appeals(distribution.judge, genpop, range, limit).map do |record|
-      record.transaction do
-        legacy_appeal =  LegacyAppeal.find_by(vacols_id: record["bfkey"])
-        JudgeAssignTask.create!(appeal: legacy_appeal, parent: legacy_appeal.root_task, assigned_to: judge)
-
+      legacy_appeal =  LegacyAppeal.find_or_create_by_vacols_id(record["bfkey"])
+      legacy_appeal.transaction do
+        root_task = RootTask.find_or_create_by!(appeal: legacy_appeal)
+        JudgeAssignTask.create!(appeal: legacy_appeal, parent: root_task, assigned_to: distribution.judge)
+        
         DistributedCase.create(
           distribution: distribution,
           case_id: record["bfkey"],
