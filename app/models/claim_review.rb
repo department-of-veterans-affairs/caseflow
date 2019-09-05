@@ -86,7 +86,7 @@ class ClaimReview < DecisionReview
           veteran_participant_id: veteran.participant_id
         )
       end
-      issue.remove_incorrectly_added_issues if issue.correction?
+      issue.remove_incorrectly_added_dta_issue if issue.correction?
       issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
     end
     request_issues.reload

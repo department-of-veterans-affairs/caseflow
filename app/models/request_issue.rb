@@ -498,10 +498,8 @@ class RequestIssue < ApplicationRecord
     end
   end
 
-  def remove_incorrectly_added_issues
-    binding.pry
-    # Close the incorrectly added request issue from that DTA supplemental claim.
-    # Remove contention in VBMS and cancel EP
+  def remove_incorrectly_added_dta_issue
+    RequestIssueCorrectionCleaner.new(self).remove_dta_request_issue
   end
 
   def create_legacy_issue_optin
@@ -661,6 +659,10 @@ class RequestIssue < ApplicationRecord
 
   def editable?
     !contention_connected_to_rating?
+  end
+
+  def remanded?
+    decision_review.try(:decision_review_remanded?)
   end
 
   private
@@ -951,10 +953,6 @@ class RequestIssue < ApplicationRecord
     else
       end_product_codes[:claim_review][rating? ? :rating : :nonrating]
     end
-  end
-
-  def remanded?
-    decision_review.try(:decision_review_remanded?)
   end
 
   def add_duplicate_issue_error(existing_request_issue)
