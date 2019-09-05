@@ -296,4 +296,118 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       end
     end
   end
+
+  context "when an acting judge is checking out a legacy appeal" do
+    let(:vacols_role_trait) { :attorney_judge_role }
+
+    let(:created_at) { "2019-02-14" }
+    let(:document_id) { "12345-12345678" }
+    let(:vacols_id) { appeal.vacols_id }
+
+    let!(:case_review) do
+      create(
+        :attorney_case_review,
+        work_product: "Decision",
+        document_id: document_id,
+        task_id: "#{appeal.vacols_id}-#{created_at}"
+      )
+    end
+
+    let!(:appeal) do
+      create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: create(
+          :case,
+          :assigned,
+          user: judge_user,
+          assigner: attorney_user,
+          case_issues: [
+            create(:case_issue, :disposition_allowed),
+            create(:case_issue, :disposition_granted_by_aoj)
+          ],
+          work_product: :draft_decision
+        )
+      )
+    end
+
+    before do
+      FeatureToggle.enable!(:judge_case_review_checkout)
+
+      User.authenticate!(user: judge_user)
+
+      case_assignment = double(
+        vacols_id: vacols_id,
+        assigned_by_css_id: attorney_user.css_id,
+        assigned_to_css_id: judge_user.css_id,
+        document_id: "1234-567890",
+        work_product: :draft_decision,
+        created_at: created_at.to_date
+      )
+      allow(VACOLS::CaseAssignment).to receive(:latest_task_for_appeal).with(vacols_id).and_return(case_assignment)
+    end
+
+    after do
+      FeatureToggle.disable!(:judge_case_review_checkout)
+    end
+
+    scenario "starts dispatch checkout flow" do
+      visit "/queue"
+      click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+
+      click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.label)
+      click_label "vamc"
+      click_on "Continue"
+
+      # Ensure we can reload the flow and the special issue is saved
+      click_on "Cancel"
+      click_on "Yes, cancel"
+
+      click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.label)
+
+      # Vamc should still be checked
+      expect(page).to have_field("vamc", checked: true, visible: false)
+
+      # Vamc should also be marked in the database
+      expect(appeal.special_issue_list.vamc).to eq(true)
+      click_on "Continue"
+
+      # one issue is decided, excluded from checkout flow
+      expect(appeal.issues.length).to eq 2
+
+      expect(page.find_all(".issue-disposition-dropdown").length).to eq 1
+
+      click_on "Edit Issue"
+      click_on "Delete Issue"
+      click_on "Delete issue"
+
+      click_on "Continue"
+      expect(page).to have_content("Evaluate Decision")
+
+      expect(page).to_not have_content("Select an action")
+      expect(page).to have_content("One Touch Initiative")
+      find("label", text: COPY::JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_SUBHEAD).click
+
+      find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
+      text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
+      find("label", text: text_to_click).click
+
+      find("#issues_are_not_addressed", visible: false).sibling("label").click
+
+      dummy_note = generate_words 5
+      fill_in "additional-factors", with: dummy_note
+      expect(page).to have_content(dummy_note[0..5])
+
+      click_on "Continue"
+
+      expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
+
+      expect(VACOLS::Decass.find(appeal.vacols_id).de1touch).to eq "Y"
+
+      page.driver.go_back
+      appeal_id = LegacyAppeal.last.vacols_id
+
+      expect(page).to have_current_path("/queue/appeals/#{appeal_id}")
+    end
+  end
 end
