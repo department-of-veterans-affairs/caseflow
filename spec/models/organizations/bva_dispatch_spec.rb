@@ -37,7 +37,7 @@ describe BvaDispatch, :postgres do
         let(:number_of_admins) { 3 }
 
         before do
-          admin_ids = OrganizationsUser.where(organization: bva_dispatch_org).take(number_of_admins).map(&:user_id)
+          admin_ids = bva_dispatch_org.users.order(:id).pluck(:id).take(number_of_admins)
           User.where(id: admin_ids).each { |admin| OrganizationsUser.make_user_admin(admin, bva_dispatch_org) }
         end
 
