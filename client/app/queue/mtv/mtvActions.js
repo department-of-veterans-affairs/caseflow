@@ -17,16 +17,24 @@ export const submitMTVAttyReviewError = (error) => ({
   payload: error
 });
 
-export const submitMTVAttyReview = (data, ownProps) => {
+export const submitMTVAttyReview = (newTask, ownProps) => {
   return async (dispatch) => {
     dispatch(submitMTVAttyReviewStarted());
 
-    const url = '/post_decision_motions';
+    const url = '/tasks';
 
     const { history } = ownProps;
 
+    const data = {
+      tasks: [newTask]
+    };
+
     try {
-      const res = await ApiUtil.post(url, { data });
+      // Enable this once backend is hooked up
+      // const res = await ApiUtil.post(url, { data });
+
+      // eslint-disable-next-line no-console
+      console.log('executing POST', url, data);
 
       if (history) {
         history.push('/queue');

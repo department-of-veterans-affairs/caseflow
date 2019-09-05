@@ -17,7 +17,15 @@ export const ReviewMotionToVacateView = (props) => {
     value: id }));
 
   const handleSubmit = async (review) => {
-    await props.submitMTVAttyReview(review, props);
+    const newTask = {
+      ...review,
+      parent_id: task.id,
+      type: 'JudgeAddressMotionToVacateTask',
+      external_id: appeal.externalId,
+      assigned_to_type: 'User'
+    };
+
+    await props.submitMTVAttyReview(newTask, props);
   };
 
   useEffect(() => {
