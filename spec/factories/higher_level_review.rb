@@ -10,6 +10,12 @@ FactoryBot.define do
       number_of_claimants { nil }
     end
 
+    after(:create) do |higher_level_review|
+      if !higher_level_review.intake
+        create(:intake, detail: higher_level_review, veteran_file_number: higher_level_review.veteran_file_number)
+      end
+    end
+
     trait :with_end_product_establishment do
       after(:create) do |higher_level_review|
         create(
