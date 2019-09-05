@@ -737,7 +737,7 @@ describe LegacyAppeal, :all_dbs do
             subject
 
             expect(vacols_case.reload.bfmpro).to eq("HIS")
-            expect(vacols_case.reload.bfcurloc).to eq("99")
+            expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:closed])
           end
         end
       end
@@ -777,11 +777,11 @@ describe LegacyAppeal, :all_dbs do
       before do
         RequestStore[:current_user] = user
         vacols_case.update_vacols_location!("50")
-        vacols_case.update_vacols_location!("99")
+        vacols_case.update_vacols_location!(LegacyAppeal::LOCATION_CODES[:closed])
         vacols_case.reload
 
         ramp_vacols_case.update_vacols_location!("77")
-        ramp_vacols_case.update_vacols_location!("99")
+        ramp_vacols_case.update_vacols_location!(LegacyAppeal::LOCATION_CODES[:closed])
         ramp_vacols_case.reload
       end
 
