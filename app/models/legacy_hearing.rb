@@ -14,7 +14,7 @@ class LegacyHearing < ApplicationRecord
   vacols_attr_accessor :scheduled_for, :request_type, :venue_key, :vacols_record, :disposition
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
-  vacols_attr_accessor :representative_name, :hearing_day_vacols_id
+  vacols_attr_accessor :representative_name, :hearing_day_id
   vacols_attr_accessor :docket_number, :appeal_type, :room, :bva_poc, :judge_id
 
   belongs_to :appeal, class_name: "LegacyAppeal"
@@ -135,7 +135,7 @@ class LegacyHearing < ApplicationRecord
       return (venue_key || appeal&.regional_office_key)
     end
 
-    hearing_day&.regional_office
+    hearing_day&.regional_office || "C"
   end
 
   def regional_office
@@ -153,9 +153,7 @@ class LegacyHearing < ApplicationRecord
   end
 
   def regional_office_timezone
-    return if regional_office_key.nil?
-
-    HearingMapper.timezone(regional_office_key)
+    regional_office.nil? ? HearingMapper.timezone(regional_office) : HearingMapper.timezone("C")
   end
 
   def time

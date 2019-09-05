@@ -21,7 +21,6 @@ class Hearing < ApplicationRecord
   accepts_nested_attributes_for :hearing_location
 
   alias_attribute :location, :hearing_location
-  alias_attribute :regional_office_key, :hearing_day_regional_office
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
@@ -45,6 +44,8 @@ class Hearing < ApplicationRecord
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
   delegate :hearing_day_full?, to: :hearing_day
+  delegate :regional_office_name, to: :regional_office
+  delegate :timezone, to: :regional_office, prefix: true
 
   after_create :update_fields_from_hearing_day
   before_create :check_available_slots, unless: :override_full_hearing_day_validation
@@ -158,14 +159,16 @@ class Hearing < ApplicationRecord
     end
   end
 
-  def regional_office_name
-    RegionalOffice::CITIES[regional_office_key][:label] unless regional_office_key.nil?
+  def regional_office
+    @regional_office ||= begin
+                            RegionalOffice.find!(regional_office_key)
+                         rescue RegionalOffice::NotFoundError
+                           nil
+                          end
   end
 
-  def regional_office_timezone
-    return "America/New_York" if regional_office_key.nil?
-
-    RegionalOffice::CITIES[regional_office_key][:timezone]
+  def regional_office_key
+    hearing_day_regional_office || "C"
   end
 
   def current_issue_count
