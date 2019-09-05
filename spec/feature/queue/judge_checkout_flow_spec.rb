@@ -72,6 +72,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
       text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
       find("label", text: text_to_click).click
+      find("#logically_organized", visible: false).sibling("label").click
       find("#issues_are_not_addressed", visible: false).sibling("label").click
 
       dummy_note = generate_words 5
@@ -87,6 +88,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       expect(case_review.complexity).to eq "easy"
       expect(case_review.quality).to eq "does_not_meet_expectations"
       expect(case_review.one_touch_initiative).to eq false
+      expect(case_review.positive_feedback).to include("logically_organized")
     end
   end
 
