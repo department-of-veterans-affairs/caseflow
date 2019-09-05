@@ -1168,39 +1168,7 @@ feature "Higher-Level Review", :all_dbs do
           click_intake_add_issue
 
           expect(page).to have_content("something was decided in the past")
-
-          # Don't include future issues w/o correct_claim_reviews feature toggle
           expect(page).to_not have_content("something was decided in the future")
-
-          expect(page).to_not have_content("Left knee granted")
-        end
-      end
-
-      context "correct_claim_reviews feature toggle enabled" do
-        before { FeatureToggle.enable!(:correct_claim_reviews) }
-        scenario "Contestable issues include future finalized decision issues" do
-          hlr, = start_higher_level_review(veteran, is_comp: false)
-          create(:decision_issue,
-                 decision_review: hlr,
-                 caseflow_decision_date: receipt_date - 1.day,
-                 benefit_type: hlr.benefit_type,
-                 decision_text: "something was decided in the past",
-                 participant_id: veteran.participant_id)
-          create(:decision_issue,
-                 decision_review: hlr,
-                 caseflow_decision_date: receipt_date + 1.day,
-                 benefit_type: hlr.benefit_type,
-                 decision_text: "something was decided in the future",
-                 participant_id: veteran.participant_id)
-
-          visit "/intake/add_issues"
-          click_intake_add_issue
-
-          expect(page).to have_content("something was decided in the past")
-
-          # We want to include all decision issues for review, even if after receipt date
-          expect(page).to have_content("something was decided in the future")
-
           expect(page).to_not have_content("Left knee granted")
         end
       end
