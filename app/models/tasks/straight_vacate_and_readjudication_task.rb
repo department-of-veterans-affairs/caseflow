@@ -2,4 +2,3 @@
 
 class StraightVacateAndReadjudicationTask < GenericTask
 end
-

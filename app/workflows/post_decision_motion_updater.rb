@@ -16,6 +16,7 @@ class PostDecisionMotionUpdater
     ActiveRecord::Base.transaction do
       motion = create_motion
       return unless motion
+
       perform_action_based_on_disposition
     end
   end
