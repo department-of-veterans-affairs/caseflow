@@ -3,27 +3,12 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Change hearing disposition", :all_dbs do
+RSpec.shared_examples "Change hearing disposition" do
   let(:current_full_name) { "Leonela Harbold" }
   let(:hearing_admin_user) { create(:user, full_name: current_full_name, station_id: 101) }
-  let(:hearing_day) { create(:hearing_day) }
-  let(:veteran) { create(:veteran, first_name: "Chibueze", last_name: "Vanscoy", file_number: 800_888_001) }
-  let(:regional_office_code) { "RO39" } # Denver
-  let(:appeal) do
-    create(
-      :appeal,
-      :hearing_docket,
-      closest_regional_office: regional_office_code,
-      veteran_file_number: veteran.file_number
-    )
-  end
   let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
   let(:root_task) { create(:root_task, appeal: appeal) }
   let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
-  let(:hearing_disposition) { nil }
-  let(:hearing) do
-    create(:hearing, appeal: appeal, hearing_day: hearing_day, disposition: hearing_disposition)
-  end
   let!(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
   let!(:change_task) { create(:change_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
   let(:instructions_text) { "This is why I'm changing this hearing's disposition." }
@@ -64,34 +49,43 @@ RSpec.feature "Change hearing disposition", :all_dbs do
         expect(page).to have_content("Unassigned (0)")
       end
 
-      step "visit and verify that the evidence submission window task is in the mail team queue" do
-        User.authenticate!(user: mail_user)
-        visit "/organizations/#{MailTeam.singleton.url}"
-        expect(page).to have_content("Unassigned (1)")
-        expect(page).to have_content "Evidence Submission Window Task"
-        click_on veteran_link_text
-        expect(page).to have_content ChangeHearingDispositionTask.last.label
-      end
+      if appeal.is_a? Appeal
+        step "visit and verify that the evidence submission window task is in the mail team queue" do
+          User.authenticate!(user: mail_user)
+          visit "/organizations/#{MailTeam.singleton.url}"
+          expect(page).to have_content("Unassigned (1)")
+          expect(page).to have_content "Evidence Submission Window Task"
+          click_on veteran_link_text
+          expect(page).to have_content ChangeHearingDispositionTask.last.label
+        end
 
-      step "visit and verify that the transcription task is in the transcription team queue" do
-        User.authenticate!(user: transcription_user)
-        visit "/organizations/#{TranscriptionTeam.singleton.url}"
-        expect(page).to have_content("Unassigned (1)")
-        expect(page).to have_content "Transcription Task"
-        click_on veteran_link_text
-        expect(page).to have_content ChangeHearingDispositionTask.last.label
-      end
+        step "visit and verify that the transcription task is in the transcription team queue" do
+          User.authenticate!(user: transcription_user)
+          visit "/organizations/#{TranscriptionTeam.singleton.url}"
+          expect(page).to have_content("Unassigned (1)")
+          expect(page).to have_content "Transcription Task"
+          click_on veteran_link_text
+          expect(page).to have_content ChangeHearingDispositionTask.last.label
+        end
 
-      step "visit and verify that the new hearing disposition is in the hearing schedule daily docket" do
-        User.authenticate!(user: hearing_user)
-        visit "/hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-        expect(dropdown_selected_value(find(".dropdown-#{hearing.uuid}-disposition"))).to eq "Held"
-      end
+        step "visit and verify that the new hearing disposition is in the hearing schedule daily docket" do
+          User.authenticate!(user: hearing_user)
+          visit "/hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+          expect(dropdown_selected_value(find(".dropdown-#{hearing.uuid}-disposition"))).to eq "Held"
+        end
 
-      step "visit and verify that the new hearing disposition is on the hearing details page" do
-        visit "hearings/" + hearing.external_id.to_s + "/details"
-        disposition_div = find("h4", text: "DISPOSITION").first(:xpath, "ancestor::div")
-        expect(disposition_div).to have_css("div", text: "held")
+        step "visit and verify that the new hearing disposition is on the hearing details page" do
+          visit "hearings/" + hearing.external_id.to_s + "/details"
+          disposition_div = find("h4", text: "DISPOSITION").first(:xpath, "ancestor::div")
+          expect(disposition_div).to have_css("div", text: "held")
+        end
+
+      elsif appeal.is_a? LegacyAppeal
+        step "verify that the hearing disposition is now held" do
+          click_on "Completed"
+          click_on veteran_link_text
+          expect(page).to have_content("Disposition: Held")
+        end
       end
     end
   end
@@ -162,7 +156,7 @@ RSpec.feature "Change hearing disposition", :all_dbs do
           visit "hearings/schedule/assign"
           expect(page).to have_content("Regional Office")
           click_dropdown(text: "Denver")
-          click_button("AMA Veterans Waiting")
+          click_button(waiting_button_text)
           click_on veteran_hearing_link_text
           expect(page).to have_content(ScheduleHearingTask.last.label)
         end
@@ -210,6 +204,7 @@ RSpec.feature "Change hearing disposition", :all_dbs do
 
     context "a hearing has mistakenly been marked postponed" do
       let(:hearing_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
+      let(:case_hearing_disposition) { :disposition_postponed }
       let!(:cancel_change_task) { change_task.update!(status: Constants.TASK_STATUSES.cancelled) }
       let!(:hearing_task_2) { create(:hearing_task, parent: root_task, appeal: appeal) }
       let!(:association_2) do
@@ -227,7 +222,7 @@ RSpec.feature "Change hearing disposition", :all_dbs do
           visit "hearings/schedule/assign"
           expect(page).to have_content("Regional Office")
           click_dropdown(text: "Denver")
-          click_button("AMA Veterans Waiting")
+          click_button(waiting_button_text)
           click_on veteran_hearing_link_text
           expect(page).to have_content(ScheduleHearingTask.last.label)
         end
@@ -362,7 +357,7 @@ RSpec.feature "Change hearing disposition", :all_dbs do
       let!(:task) { create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
 
       scenario "can create a change hearing disposition task" do
-        visit("/queue/appeals/#{appeal.uuid}")
+        visit(appeal_path)
         expect(page).to have_content(AssignHearingDispositionTask.last.label)
         click_dropdown(text: Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.label)
         expect(page).to have_content(COPY::CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_TITLE)
@@ -377,7 +372,7 @@ RSpec.feature "Change hearing disposition", :all_dbs do
         let!(:child_task) { create(:transcription_task, parent: task, appeal: appeal) }
 
         scenario "can create a change hearing disposition task" do
-          visit("/queue/appeals/#{appeal.uuid}")
+          visit(appeal_path)
           expect(page).to have_content(TranscriptionTask.last.label)
           click_dropdown(text: Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.label)
           fill_in "Notes", with: instructions_text
@@ -392,7 +387,7 @@ RSpec.feature "Change hearing disposition", :all_dbs do
         let!(:child_task) { create(:no_show_hearing_task, parent: task, appeal: appeal) }
 
         scenario "can create a change hearing disposition task" do
-          visit("/queue/appeals/#{appeal.uuid}")
+          visit(appeal_path)
           expect(page).to have_content(NoShowHearingTask.last.label)
           click_dropdown(text: Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.label)
           fill_in "Notes", with: instructions_text
@@ -408,7 +403,7 @@ RSpec.feature "Change hearing disposition", :all_dbs do
       let!(:task) { create(:schedule_hearing_task, parent: hearing_task, appeal: appeal) }
 
       scenario "cannot create a change hearing disposition task" do
-        visit("/queue/appeals/#{appeal.uuid}")
+        visit(appeal_path)
         expect(page).to have_content(ScheduleHearingTask.last.label)
         expect(page).to_not have_css(".Select-control")
       end
@@ -419,11 +414,58 @@ RSpec.feature "Change hearing disposition", :all_dbs do
         end
 
         scenario "cannot create a change hearing disposition task" do
-          visit("/queue/appeals/#{appeal.uuid}")
+          visit(appeal_path)
           expect(page).to have_content(HearingAdminActionIncarceratedVeteranTask.last.label)
           expect(page).to_not have_css(".Select-control")
         end
       end
     end
+  end
+end
+
+RSpec.feature "Change ama and legacy hearing disposition", :all_dbs do
+  let(:veteran) { create(:veteran, first_name: "Chibueze", last_name: "Vanscoy", file_number: 800_888_001) }
+  let(:regional_office_code) { "RO39" } # Denver
+  let(:hearing_day) { create(:hearing_day) }
+  let(:hearing_disposition) { nil }
+
+  describe "with AMA appeal" do
+    let(:appeal) do
+      create(
+        :appeal,
+        :hearing_docket,
+        closest_regional_office: regional_office_code,
+        veteran_file_number: veteran.file_number
+      )
+    end
+    let(:hearing) do
+      create(:hearing, appeal: appeal, hearing_day: hearing_day, disposition: hearing_disposition)
+    end
+    let(:waiting_button_text) { "AMA Veterans Waiting" }
+    let(:appeal_path) { "/queue/appeals/#{appeal.uuid}" }
+
+    include_examples "Change hearing disposition"
+  end
+
+  describe "with Legacy appeal" do
+    let(:case_hearing_disposition) { :disposition_nil }
+    let(:vacols_case) { create(:case, :status_active, :aod, bfcorlid: "#{veteran.file_number}S") }
+    let(:appeal) do
+      create(
+        :legacy_appeal,
+        closest_regional_office: regional_office_code,
+        vacols_case: vacols_case
+      )
+    end
+    let(:case_hearing) do
+      create(:case_hearing, case_hearing_disposition, vdkey: hearing_day.id, folder_nr: appeal.vacols_id)
+    end
+    let(:hearing) do
+      create(:legacy_hearing, appeal: appeal, vacols_id: case_hearing.hearing_pkseq, disposition: hearing_disposition)
+    end
+    let(:waiting_button_text) { "Legacy Veterans Waiting" }
+    let(:appeal_path) { "/queue/appeals/#{appeal.vacols_id}" }
+
+    include_examples "Change hearing disposition"
   end
 end
