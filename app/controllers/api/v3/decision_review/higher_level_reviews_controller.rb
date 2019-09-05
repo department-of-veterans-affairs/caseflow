@@ -23,17 +23,13 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
   private
 
   def processor
-    @processor ||= begin
-                     Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(params, current_user)
-                   rescue StandardError
-                     nil
-                   end
+    @processor ||= Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(params, User.api_user)
   end
 
   # Try to create an IntakeError from the exception, otherwise the processor's intake object.
   # If neither has an error_code, the IntakeError will be IntakeError::UNKNOWN_ERROR
   def intake_error_code_from_exception_or_processor(exception)
-    Api::V3::DecisionReview::IntakeError.from_first_potential_error_code_found([exception, processor.try(:intake)])
+    Api::V3::DecisionReview::IntakeError.from_first_potential_error_code_found([exception, processor&.intake])
   end
 
   def render_errors(errors)

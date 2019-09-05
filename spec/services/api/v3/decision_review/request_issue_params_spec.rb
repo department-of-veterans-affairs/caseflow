@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 context Api::V3::DecisionReview::RequestIssueParams do
   let(:bad_shape_not_params) do
     {

@@ -6,7 +6,6 @@ class Api::V3::DecisionReview::IntakeError
     # This method attempts to extract a symbol from an object's error_code
     # method, or, if that fails, attempts to convert the object itself to a
     # symbol. The symbol may or may not be a valid error code. Fails with nil.
-    # :reek:ManualDispatch:
     def potential_error_code(obj)
       (obj.try(:error_code) || obj).try(:to_sym)
     end
