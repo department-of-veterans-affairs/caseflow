@@ -11,10 +11,10 @@ describe AsyncableJobsController, :postgres, type: :controller do
   describe "#show" do
     context "User is not asyncable_user" do
       let(:user) { create(:default_user) }
-      let(:intake) { create(:intake) }
+      let!(:job) { create(:higher_level_review, intake: create(:intake)) }
 
       it "returns unauthorized" do
-        get :show, params: { asyncable_job_klass: intake.detail.class.to_s, id: intake.detail.id }
+        get :show, params: { asyncable_job_klass: job.class.to_s, id: job.id }
 
         expect(response.status).to eq 302
         expect(response.body).to match(/unauthorized/)
@@ -23,10 +23,10 @@ describe AsyncableJobsController, :postgres, type: :controller do
 
     context "User is asyncable_user" do
       let(:user) { create(:default_user) }
-      let(:intake) { create(:intake, user: user) }
+      let!(:job) { create(:higher_level_review, intake: create(:intake, user: user)) }
 
       it "allows view" do
-        get :show, params: { asyncable_job_klass: intake.detail.class.to_s, id: intake.detail.id }
+        get :show, params: { asyncable_job_klass: job.class.to_s, id: job.id }
 
         expect(response.status).to eq 200
       end

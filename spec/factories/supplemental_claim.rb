@@ -11,10 +11,6 @@ FactoryBot.define do
     end
 
     after(:create) do |sc, evaluator|
-      if !sc.intake
-        create(:intake, detail: sc, veteran_file_number: sc.veteran_file_number)
-      end
-
       if evaluator.number_of_claimants
         sc.claimants = create_list(:claimant, evaluator.number_of_claimants, decision_review: sc)
       end
