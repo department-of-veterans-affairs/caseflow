@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Fakes::BGSServiceGrants
+  # rubocop:disable Metrics/MethodLength
   class << self
     def existing_full_grants
       [
@@ -165,4 +166,5 @@ class Fakes::BGSServiceGrants
       ]
     end
   end
+  # rubocop:enable Metrics/MethodLength
 end
