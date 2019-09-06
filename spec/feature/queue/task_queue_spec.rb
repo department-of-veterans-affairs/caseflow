@@ -302,7 +302,6 @@ RSpec.feature "Task queue", :all_dbs do
 
     def validate_pulac_cerullo_tasks_created(task_class, label)
       visit "/queue/appeals/#{appeal.uuid}"
-      binding.pry
       find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
       find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
