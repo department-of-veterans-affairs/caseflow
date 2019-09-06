@@ -35,12 +35,16 @@ class Fakes::BGSService
     end
 
     def create_veteran_records
-      return if @veteran_records_created
+      return if veteran_records_created?
 
       record_maker = Fakes::BGSServiceRecordMaker.new
       record_maker.call
+    end
 
-      @veteran_records_created = true
+    def veteran_records_created?
+      RequestIssue.find_by(
+        contested_rating_issue_reference_id: Fakes::BGSServiceRecordMaker::KNOWN_REQUEST_ISSUE_REFERENCE_ID
+      )
     end
 
     def all_grants
@@ -90,9 +94,7 @@ class Fakes::BGSService
       @end_product_store ||= Fakes::EndProductStore.new
     end
 
-    def store_end_product_record(veteran_id, end_product)
-      end_product_store.store_end_product_record(veteran_id, end_product)
-    end
+    delegate :store_end_product_record, to: :end_product_store
   end
 
   def get_end_products(veteran_id)
@@ -119,6 +121,7 @@ class Fakes::BGSService
     (self.class.veteran_records || {})[vbms_id]
   end
 
+  # rubocop:disable Metrics/MethodLength
   def fetch_person_info(participant_id)
     # This is a limited set of test data, more fields are available.
     if participant_id == "5382910292"
@@ -146,6 +149,7 @@ class Fakes::BGSService
       }
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def may_modify?(vbms_id, _veteran_participant_id)
     return false unless can_access?(vbms_id)
@@ -190,6 +194,7 @@ class Fakes::BGSService
     []
   end
 
+  # rubocop:disable Metrics/MethodLength
   def fetch_poas_by_participant_ids(participant_ids)
     get_hash_of_poa_from_bgs_poas(
       participant_ids.map do |participant_id|
@@ -216,6 +221,7 @@ class Fakes::BGSService
       end
     )
   end
+  # rubocop:enable Metrics/MethodLength
 
   def fetch_limited_poas_by_claim_ids(claim_ids)
     result = {}

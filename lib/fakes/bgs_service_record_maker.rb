@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Fakes::BGSServiceRecordMaker
+  KNOWN_REQUEST_ISSUE_REFERENCE_ID = "in-active-review-ref-id"
+
   def call
     process_csv
   end
@@ -51,7 +53,7 @@ class Fakes::BGSServiceRecordMaker
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
   def has_many_ratings(veteran)
-    in_active_review_reference_id = "in-active-review-ref-id"
+    in_active_review_reference_id = KNOWN_REQUEST_ISSUE_REFERENCE_ID
     in_active_review_receipt_date = Time.zone.parse("2018-04-01")
     completed_review_receipt_date = in_active_review_receipt_date - 30.days
     completed_review_reference_id = "cleared-review-ref-id"
