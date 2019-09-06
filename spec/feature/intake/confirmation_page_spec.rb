@@ -27,7 +27,7 @@ feature "Intake Confirmation Page", :postgres do
           add_untimely_exemption_response("Yes")
           click_intake_finish
           expect(page).to have_content("Intake completed")
-          expect(page).to_not have_content("If you need to edit this, go to VBMS claim details")
+          expect(page).to_not have_content("Once established in VBMS, you may edit the issues")
           expect(page).to_not have_content("Informal Conference Tracked Item")
           expect(page).to have_content("Edit the notice letter to reflect the status of requested issues")
         end
@@ -46,7 +46,7 @@ feature "Intake Confirmation Page", :postgres do
             click_intake_finish
             expect(page).to have_content("Intake completed")
             expect(page).to have_content("Nonrating EP is being established")
-            expect(page).to have_content("If you need to edit this, go to VBMS claim details")
+            expect(page).to have_content("Once established in VBMS, you may edit the issues")
             expect(page).to have_content("Tracked Item") if claim_review_type == :higher_level_review
             expect(page).to have_content("Edit the notice letter to reflect the status of requested issues")
           end
