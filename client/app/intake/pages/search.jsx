@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react';
 import SearchBar from '../../components/SearchBar';
 import Alert from '../../components/Alert';
