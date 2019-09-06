@@ -181,7 +181,7 @@ describe LegacyHearing, :all_dbs do
     let!(:veteran) { create(:veteran, file_number: vbms_id) }
     let(:appeal) do
       create(:legacy_appeal, vacols_case:
-        create( :case_with_form_9, bfcorlid: vbms_id, case_issues: [create(:case_issue)]))
+        create(:case_with_form_9, bfcorlid: vbms_id, case_issues: [create(:case_issue)]))
     end
     let!(:additional_appeal) do
       create(:legacy_appeal, vacols_case:
