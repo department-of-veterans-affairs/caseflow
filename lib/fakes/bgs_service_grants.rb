@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Fakes::BGSServiceGrants
   class << self
     def existing_full_grants
