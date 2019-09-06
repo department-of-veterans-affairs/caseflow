@@ -69,7 +69,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         find("label[for=disposition_granted]").click
         fill_in("instructions", with: "Attorney context/instructions for judge")
         click_dropdown(text: judge2.display_name)
-        click_button(text: "Submit Review")
+        click_button(text: "Submit")
 
         # Should this go back to user's queue...?
         expect(page.current_path).to eq("/queue")
@@ -86,7 +86,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         fill_in("hyperlink", with: "https://va.gov/fake-link-to-file")
         fill_in("instructions", with: "Attorney context/instructions for judge")
         click_dropdown(text: judge2.display_name)
-        click_button(text: "Submit Review")
+        click_button(text: "Submit")
 
         # Should this go back to user's queue...?
         expect(page.current_path).to eq("/queue")

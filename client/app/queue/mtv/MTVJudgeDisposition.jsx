@@ -99,11 +99,10 @@ export const MTVJudgeDisposition = ({ attorneys, task, appeal, onSubmit, submitt
           name="submit"
           classNames={['cf-right-side']}
           onClick={handleSubmit}
-          //   loading={loading}
           disabled={!valid() || submitting}
           styling={css({ marginLeft: '1rem' })}
         >
-          Submit Review
+          Submit
         </Button>
         <Link to={cancelLink}>
           <Button type="button" name="Cancel" classNames={['cf-right-side', 'usa-button-secondary']}>
