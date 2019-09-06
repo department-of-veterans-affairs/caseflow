@@ -231,7 +231,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number_or_ssn(veteran_file_number)
+    @veteran ||= Veteran.find_or_create_by_file_number_or_ssn(sanitized_vbms_id)
   end
 
   def veteran_ssn
@@ -651,9 +651,20 @@ class LegacyAppeal < ApplicationRecord
     LegacyAppeal.veteran_file_number_from_bfcorlid vbms_id
   end
 
-  # Alias sanitized_vbms_id becauase file_number is the term used VBA wide for this veteran identifier
+  # The sanitized_vbms_id may be a SSN value, which may or may not be a
+  # valid file number as recognized by VBMS.
+  # Prefer what we have in the Veteran record since that originates from VBMS
+  # and therefore should be valid for external use.
   def veteran_file_number
-    sanitized_vbms_id
+    vacols_file_number = sanitized_vbms_id
+
+    return vacols_file_number unless veteran
+
+    caseflow_file_number = veteran.file_number
+    if vacols_file_number != caseflow_file_number
+      Raven.capture_message("legacy appeal #{external_id} has file_number mismatch with VACOLS and Caseflow")
+    end
+    caseflow_file_number # prefer for now
   end
 
   def pending_eps

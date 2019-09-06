@@ -1235,6 +1235,7 @@ describe RequestIssue, :all_dbs do
     let(:closed_at) { nil }
     let(:receipt_date) { review.receipt_date }
     let(:previous_contention_reference_id) { "8888" }
+    let(:correction_type) { nil }
 
     let(:previous_review) { create(:higher_level_review) }
     let!(:previous_request_issue) do
@@ -1300,9 +1301,11 @@ describe RequestIssue, :all_dbs do
     let!(:request_issue_in_progress) do
       create(
         :request_issue,
+        correction_type: correction_type,
         contested_rating_issue_reference_id: duplicate_reference_id,
         contested_issue_description: "Old injury",
-        closed_at: closed_at
+        closed_at: closed_at,
+        contested_decision_issue_id: contested_decision_issue_id
       )
     end
 
@@ -1329,6 +1332,16 @@ describe RequestIssue, :all_dbs do
 
       rating_request_issue.save!
       expect(request_issue_in_progress.duplicate_but_ineligible).to eq([rating_request_issue])
+    end
+
+    context "when duplicate request issue is a correction" do
+      let(:correction_type) { "control" }
+      let(:contested_decision_issue_id) { 12 }
+
+      it "does not flag the correction issue as a duplicate" do
+        rating_request_issue.validate_eligibility!
+        expect(rating_request_issue.ineligible_reason).to be_nil
+      end
     end
 
     context "when rating issue is missing associated_rating" do
