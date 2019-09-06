@@ -181,6 +181,28 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
+  context "#attorney_case_review" do
+    subject { appeal.attorney_case_review }
+
+    context "when there is a decass record" do
+      let!(:vacols_case) { create(:case, :assigned, user: create(:user)) }
+
+      it "searches through attorney case reviews table" do
+        expect(AttorneyCaseReview).to receive(:find_by)
+        subject
+      end
+    end
+
+    context "when there is no decass record" do
+      let!(:vacols_case) { create(:case) }
+
+      it "does not search through attorney case reviews table" do
+        expect(AttorneyCaseReview).to_not receive(:find_by)
+        subject
+      end
+    end
+  end
+
   context "#nod" do
     let(:vacols_case) do
       create(:case_with_nod)
