@@ -19,6 +19,20 @@ class Fakes::BGSService
   cattr_accessor :generate_tracked_items_requests
   attr_accessor :client
 
+  def self.can_access_cache_key(user, vbms_id)
+    "bgs_can_access_#{user.css_id}_#{user.station_id}_#{vbms_id}"
+  end
+
+  def self.bust_can_access_cache(user, vbms_id)
+    Rails.cache.delete(can_access_cache_key(user, vbms_id))
+  end
+
+  def self.mark_veteran_not_accessible(vbms_id)
+    bust_can_access_cache(RequestStore[:current_user], vbms_id)
+    self.inaccessible_appeal_vbms_ids ||= []
+    self.inaccessible_appeal_vbms_ids << vbms_id
+  end
+
   def self.create_veteran_records
     return if @veteran_records_created
 
@@ -498,25 +512,29 @@ class Fakes::BGSService
   end
 
   def may_modify?(vbms_id, _veteran_participant_id)
+    return false unless can_access?(vbms_id)
+
     !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
   end
 
   def can_access?(vbms_id)
+    is_accessible = !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
+
     if current_user
       Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 1.minute) do
-        !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
+        is_accessible
       end
     else
-      !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
+      is_accessible
     end
   end
 
   def bust_can_access_cache(user, vbms_id)
-    Rails.cache.delete(can_access_cache_key(user, vbms_id))
+    self.class.bust_can_access_cache(user, vbms_id)
   end
 
   def can_access_cache_key(user, vbms_id)
-    "bgs_can_access_#{user.css_id}_#{user.station_id}_#{vbms_id}"
+    self.class.can_access_cache_key(user, vbms_id)
   end
 
   # TODO: add more test cases
