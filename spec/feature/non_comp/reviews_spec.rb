@@ -82,12 +82,12 @@ feature "NonComp Reviews Queue", :postgres do
       )
 
       click_on "Completed tasks"
-      expect(page).to have_content("Higher-Level Review", count: 2)
+      expect(page).to have_content("Higher-Level Review", count: 1)
       expect(page).to have_content("Date Completed")
 
       # ordered by closed_at descending
       expect(page).to have_content(
-        /#{veteran_b.name} 5\d+ 0 [\d\/]+ Higher-Level Review\s#{veteran_a.name} 5\d+ 0 [\d\/]+/
+        /#{veteran_b.name} 5\d+ 0 [\d\/]+ Higher-Level Review/
       )
     end
 
