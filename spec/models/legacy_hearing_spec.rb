@@ -177,17 +177,15 @@ describe LegacyHearing, :all_dbs do
   context "#to_hash_for_worksheet" do
     subject { hearing.to_hash_for_worksheet(nil).with_indifferent_access }
 
+    let(:vbms_id) { "12345678" }
+    let!(:veteran) { create(:veteran, file_number: vbms_id) }
     let(:appeal) do
-      create(:legacy_appeal, :with_veteran, vacols_case:
-        create(
-          :case_with_form_9,
-          bfcorlid: "12345678",
-          case_issues: [create(:case_issue)]
-        ))
+      create(:legacy_appeal, vacols_case:
+        create( :case_with_form_9, bfcorlid: vbms_id, case_issues: [create(:case_issue)]))
     end
     let!(:additional_appeal) do
       create(:legacy_appeal, vacols_case:
-        create(:case_with_form_9, bfkey: "other id", bfcorlid: "12345678", case_issues: [create(:case_issue)]))
+        create(:case_with_form_9, bfkey: "other id", bfcorlid: vbms_id, case_issues: [create(:case_issue)]))
     end
     let!(:hearing) do
       create(:legacy_hearing, appeal: appeal, case_hearing: create(:case_hearing, folder_nr: appeal.vacols_id))
