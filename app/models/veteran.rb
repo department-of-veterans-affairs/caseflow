@@ -244,7 +244,7 @@ class Veteran < ApplicationRecord
 
   class << self
     def find_or_create_by_file_number(file_number, sync_name: false)
-      find_and_maybe_backfill_name(file_number, sync_name: sync_name) || create_by_file_number(file_number)
+      find_by_file_number_and_maybe_backfill_name(file_number, sync_name: sync_name) || create_by_file_number(file_number)
     end
 
     def find_by_ssn(ssn, sync_name: false)
@@ -257,21 +257,21 @@ class Veteran < ApplicationRecord
       file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
-      find_and_maybe_backfill_name(file_number, sync_name: sync_name)
+      find_by_file_number_and_maybe_backfill_name(file_number, sync_name: sync_name)
     end
 
     def find_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
       if file_number_or_ssn.to_s.length == 9
         find_by_ssn(file_number_or_ssn, sync_name: sync_name) ||
-          find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name)
+          find_by_file_number_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name)
       else
-        find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name)
+        find_by_file_number_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name)
       end
     end
 
     def find_or_create_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
       if file_number_or_ssn.to_s.length == 9
-        find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name) ||
+        find_by_file_number_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name) ||
           find_or_create_by_ssn(file_number_or_ssn, sync_name: sync_name) ||
           find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name)
       else
@@ -294,7 +294,7 @@ class Veteran < ApplicationRecord
       find_or_create_by_file_number(file_number, sync_name: sync_name)
     end
 
-    def find_and_maybe_backfill_name(file_number, sync_name: false)
+    def find_by_file_number_and_maybe_backfill_name(file_number, sync_name: false)
       veteran = find_by(file_number: file_number)
       return nil unless veteran
 
@@ -304,7 +304,7 @@ class Veteran < ApplicationRecord
       if sync_name
         Rails.logger.warn(
           %(
-          find_and_maybe_backfill_name veteran:#{file_number} accessible:#{veteran.accessible?}
+          find_by_file_number_and_maybe_backfill_name veteran:#{file_number} accessible:#{veteran.accessible?}
           )
         )
 
