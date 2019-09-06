@@ -26,7 +26,7 @@ class LegacyTasksController < ApplicationController
                               name: "LegacyTasksController.index") do
           tasks = LegacyWorkQueue.tasks_for_user(user)
           render json: {
-            tasks: json_tasks(tasks, current_role)
+            tasks: json_tasks(tasks, user, current_role)
           }
         end
       end
@@ -98,7 +98,7 @@ class LegacyTasksController < ApplicationController
     ::WorkQueue::LegacyTaskSerializer.new(task)
   end
 
-  def json_tasks(tasks, role)
-    ::WorkQueue::LegacyTaskSerializer.new(tasks, is_collection: true, params: { role: role })
+  def json_tasks(tasks, user, role)
+    ::WorkQueue::LegacyTaskSerializer.new(tasks, is_collection: true, params: { user: user, role: role })
   end
 end

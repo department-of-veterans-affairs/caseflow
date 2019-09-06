@@ -338,7 +338,7 @@ describe EndProductEstablishment, :postgres do
           decision_review: source,
           contested_rating_decision_reference_id: "rating-decision-diagnostic-id",
           contested_rating_issue_profile_date: rating_profile_date,
-          contested_issue_description: "foobar was denied as Not Service Connected"
+          contested_issue_description: "foobar was denied."
         ),
         create(
           :request_issue,
@@ -527,7 +527,7 @@ describe EndProductEstablishment, :postgres do
             decision_review: source,
             contested_rating_decision_reference_id: "rating-decision-diagnostic-id",
             contested_rating_issue_profile_date: rating_profile_date,
-            contested_issue_description: "foobar was denied as Not Service Connected"
+            contested_issue_description: "foobar was denied."
           )
         ]
       end

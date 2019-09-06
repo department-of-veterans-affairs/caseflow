@@ -66,7 +66,8 @@ class WarmBgsCachesJob < CaseflowJob
     hearings = HearingsForDayQuery.new(day: date_to_cache).call
     hearings.each do |hearing|
       veteran = hearing.appeal.veteran
-      if veteran.stale_attributes?
+
+      if veteran&.stale_attributes?
         veteran.update_cached_attributes!
         veterans_updated += 1
       end

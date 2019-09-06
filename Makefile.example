@@ -37,97 +37,101 @@
 #
 # Hopefully the targets are easy enough to remember to make this useful to others.
 #
+.DEFAULT_GOAL := help
 
-whats-next:
+whats-next:  ## TODO
 	scripts/whats-next
 
-ready:
+ready:  ## TODO
 	h=`docker-compose ps | grep healthy`; while [ "$$h" == "" ]; do h=`docker-compose ps | grep healthy`; echo $$h; sleep 1; done
 
-up:
+up:  ## Start the docker containers
 	docker-compose up -d
 
-run: up ready
+run: up ready  ## Start rails server and frontend server
 	foreman start
 
-test: clean
+test: clean  ## Run test suite
 	bundle exec rake
 
-clean:
+clean:  ## Clean logs, compiled webpack assets, and temporary files
 	rm -f log/vacols.log
 	rm -f log/test.log
 	rm -f app/assets/javascripts/*webpack*
 	rm -rf tmp/capybara
 
-vacols:
+vacols:  ## TODO
 	docker exec --tty -i VACOLS_DB bash
 
-facols:
+facols:  ## TODO
 	sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
 
 build: clean
 	bundle exec rake local:destroy local:build
 
-lint:
+lint:  ## Run linter for javascript and ruby
 	bundle exec rake lint
 
-jslint:
+jslint:  ## Run linter for javascript
 	cd client && yarn run lint
 
-security:
+security:  ## TODO
 	bundle exec rake security
 
-check: test lint
+check: test lint  ## Run tests and lint
 
-logs:
+logs:  ## TODO
 	docker-compose logs -f
 
-db:
+db:  ## TODO
 	bundle exec rails dbconsole
 
-c:
+c:  ## Start rails console
 	bundle exec rails console
 
-migrate:
+migrate:  ## Migrate rails database
 	bundle exec rake db:migrate
 
-rollback:
+rollback:  ## Rollback rails database
 	bundle exec rake db:rollback
 
-fresh:
+fresh:  ## TODO
 	git fresh
 
-reset:
+reset:  ## Resets databases
 	bundle exec rake db:drop db:create db:schema:load local:vacols:seed db:seed
 	bundle exec rails runner scripts/enable_features_dev.rb
 
-bundle-install:
+bundle-install:  ## Installs ruby dependencies
 	bundle check || bundle install
 
-client-install:
+client-install:  ## Installs javascript dependencies
 	cd client && yarn install
 
-install: bundle-install client-install
+install: bundle-install client-install  ## Installs all dependencies
 
-update: fresh install migrate
+update: fresh install migrate  ## TODO
 
-client-test:
+client-test:  ## Runs javascript tests
 	cd client && yarn run build:test
 
-one-test:
+one-test:  ## TODO
 	bundle exec rspec $$T
 
-unsafe:
+unsafe:  ## TODO
 	mv .git/hooks/pre-commit .git/hooks/pre-commit-linter
 
-safe:
+safe:  ## TODO
 	mv .git/hooks/pre-commit-linter .git/hooks/pre-commit
 
-clear-eps:
+clear-eps:  ## TODO
 	redis-cli KEYS "end_product_records_development:*" | xargs redis-cli DEL
 
-karma:
+karma:  ## TODO
 	cd client && node_modules/.bin/karma start
 
+# Self-documented makefile from https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
+help:  ## Shows help
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: test run clean lint check logs db update one-test client-test security build ready
+.PHONY: test run clean lint check logs db update one-test client-test security build ready help

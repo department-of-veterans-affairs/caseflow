@@ -12,6 +12,7 @@ class User < ApplicationRecord
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
   has_many :organizations, through: :organizations_users
+  has_many :messages
 
   BOARD_STATION_ID = "101"
 

@@ -22,10 +22,6 @@ class ContestableIssueGenerator
     from_ratings.reject { |contestable_issue| decision_issue_duplicate_exists?(contestable_issue) }
   end
 
-  def contestable_decision_issues
-    from_decision_issues.reject { |contestable_issue| contestable_issue.decision_issue&.voided? }
-  end
-
   def contestable_rating_decisions
     return [] unless FeatureToggle.enabled?(:contestable_rating_decisions, user: RequestStore[:current_user])
 
@@ -40,7 +36,7 @@ class ContestableIssueGenerator
       .map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, review) }
   end
 
-  def from_decision_issues
+  def contestable_decision_issues
     issues = finalized_decision_issues_before_receipt_date
 
     # If correction support enabled, we include all decision issues for the issue
@@ -48,7 +44,7 @@ class ContestableIssueGenerator
       issues += review.decision_issues.select(&:finalized?)
     end
 
-    @from_decision_issues ||= issues.map do |decision_issue|
+    @contestable_decision_issues ||= issues.map do |decision_issue|
       ContestableIssue.from_decision_issue(decision_issue, review)
     end
   end
@@ -80,7 +76,7 @@ class ContestableIssueGenerator
   end
 
   def decision_issue_duplicate_exists?(contestable_issue)
-    from_decision_issues.any? do |potential_duplicate|
+    contestable_decision_issues.any? do |potential_duplicate|
       contestable_issue.rating_issue_reference_id == potential_duplicate.rating_issue_reference_id
     end
   end
