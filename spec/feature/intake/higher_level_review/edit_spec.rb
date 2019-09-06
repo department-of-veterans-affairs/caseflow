@@ -37,7 +37,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
   let(:benefit_type) { "compensation" }
 
   let!(:higher_level_review) do
-    HigherLevelReview.create!(
+    create(
+      :higher_level_review,
       veteran_file_number: veteran.file_number,
       receipt_date: receipt_date,
       informal_conference: false,
@@ -49,7 +50,10 @@ feature "Higher Level Review Edit issues", :all_dbs do
   end
 
   let!(:another_higher_level_review) do
-    HigherLevelReview.create!(
+    create(
+      :higher_level_review,
+      :processed,
+      intake: create(:intake),
       veteran_file_number: veteran.file_number,
       receipt_date: receipt_date,
       informal_conference: false,
@@ -60,8 +64,9 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
   # create associated intake
   let!(:intake) do
-    Intake.create!(
-      user_id: current_user.id,
+    create(
+      :intake,
+      user: current_user,
       detail: higher_level_review,
       veteran_file_number: veteran.file_number,
       started_at: Time.zone.now,
