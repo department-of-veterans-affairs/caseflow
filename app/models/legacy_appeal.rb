@@ -736,6 +736,7 @@ class LegacyAppeal < ApplicationRecord
   def attorney_case_review
     # # Created at date will be nil if there is no decass record created for this appeal yet
     return unless vacols_case_review&.created_at
+
     AttorneyCaseReview.find_by(task_id: "#{vacols_id}-#{VacolsHelper.day_only_str(vacols_case_review.created_at)}")
   end
 
