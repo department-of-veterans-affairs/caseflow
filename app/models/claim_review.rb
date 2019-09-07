@@ -42,6 +42,7 @@ class ClaimReview < DecisionReview
 
   def ui_hash
     super.merge(
+      asyncJobUrl: async_job_url,
       benefitType: benefit_type,
       payeeCode: payee_code,
       hasClearedRatingEp: cleared_rating_ep?,
