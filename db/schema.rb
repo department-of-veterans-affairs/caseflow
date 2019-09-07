@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190827142452) do
+ActiveRecord::Schema.define(version: 20190829183634) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -638,6 +638,7 @@ ActiveRecord::Schema.define(version: 20190827142452) do
     t.integer "judge_id"
     t.string "location"
     t.boolean "one_touch_initiative"
+    t.text "positive_feedback", default: [], array: true
     t.string "quality"
     t.string "task_id"
     t.datetime "updated_at", null: false
