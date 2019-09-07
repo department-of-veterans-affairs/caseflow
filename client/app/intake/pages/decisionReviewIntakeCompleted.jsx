@@ -20,16 +20,16 @@ const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, detail
 
   const leadMessageArr = [
     `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been submitted.`,
-    <div>You may check on the <a href={asyncJobUrl}>status of the VBMS establishment</a>.</div>
+    <div>If needed, you may <a href={detailEditUrl}>correct the issues</a>.</div>
   ];
+
+  if (asyncJobUrl) {
+    leadMessageArr.push(<div>You may check on the <a href={asyncJobUrl}>status of the VBMS establishment</a>.</div>);
+  }
 
   if (eligibleRequestIssues.length !== 0) {
     if (unidentifiedIssues.length > 0) {
       leadMessageArr.push(<UnidentifiedIssueAlert unidentifiedIssues={unidentifiedIssues} />);
-    } else {
-      leadMessageArr.push(
-        <div>Once established in VBMS, you may <a href={detailEditUrl}>edit the issues</a>.</div>
-      );
     }
   }
 

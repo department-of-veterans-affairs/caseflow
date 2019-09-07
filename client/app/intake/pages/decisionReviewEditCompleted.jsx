@@ -12,7 +12,7 @@ import SmallLoader from '../../components/SmallLoader';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import END_PRODUCT_CODES from '../../../constants/END_PRODUCT_CODES.json';
 
-const leadMessageList = ({ veteran, formName, requestIssues, addedIssues }) => {
+const leadMessageList = ({ veteran, formName, requestIssues, addedIssues, detailEditUrl }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
@@ -27,16 +27,13 @@ const leadMessageList = ({ veteran, formName, requestIssues, addedIssues }) => {
   };
 
   const leadMessageArr = [
-    `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been ${editMessage()}.`
+    `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been ${editMessage()}.`,
+    <div>If needed, you may <a href={detailEditUrl}>correct the issues</a>.</div>
   ];
 
   if (eligibleRequestIssues.length !== 0) {
     if (unidentifiedIssues.length > 0) {
       leadMessageArr.push(<UnidentifiedIssueAlert unidentifiedIssues={unidentifiedIssues} />);
-    } else {
-      leadMessageArr.push(
-        'If you need to edit this, go to VBMS claim details and click the “Edit in Caseflow” button.'
-      );
     }
   }
 
@@ -70,6 +67,7 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
       afterIssues,
       updatedIssues,
       addedIssues,
+      detailEditUrl,
       redirectTo
     } = this.props;
 
@@ -111,6 +109,7 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
         type="success"
         leadMessageList={
           leadMessageList({
+            detailEditUrl,
             veteran,
             formName: selectedForm.name,
             requestIssues: afterIssues,

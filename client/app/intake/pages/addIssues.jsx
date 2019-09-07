@@ -121,11 +121,19 @@ export class AddIssuesPage extends React.Component {
     }
   }
 
-  establishmentCredits() {
+  establishmentCreditsTimestamp() {
     const tstamp = moment(this.props.processedAt).format('ddd MMM DD YYYY [at] HH:mm');
 
+    if (this.props.asyncJobUrl) {
+      return <a href={this.props.asyncJobUrl}>{tstamp}</a>;
+    }
+
+    return tstamp;
+  }
+
+  establishmentCredits() {
     return <div className="cf-intake-establish-credits">
-      Established <a href={this.props.asyncJobUrl}>{tstamp}</a>
+      Established {this.establishmentCreditsTimestamp()}
       <span> by <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a></span>
     </div>;
   }
