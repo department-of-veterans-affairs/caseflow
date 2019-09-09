@@ -134,7 +134,6 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       category: issue.category,
       index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
       isRating: !issue.category,
-      rating: issue.rating,
       ratingIssueReferenceId: issue.rating_issue_reference_id,
       ratingDecisionReferenceId: issue.rating_decision_reference_id,
       ratingIssueProfileDate: new Date(issue.rating_issue_profile_date).toISOString(),
@@ -352,8 +351,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         endProductCleared: issue.endProductCleared,
         editedDescription: issue.editedDescription,
         correctionType: issue.correctionType,
-        editable: issue.editable,
-        rating: !issue.category
+        editable: issue.editable
       };
     }
 
