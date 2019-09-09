@@ -14,11 +14,6 @@ import LoadingScreen from '../components/LoadingScreen';
 import { tasksWithAppealsFromRawTasks } from './utils';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
 
-const COLUMNS_TYPE = PropTypes.oneOfType([
-  PropTypes.arrayOf(PropTypes.object),
-  PropTypes.func
-]).isRequired;
-
 /**
  * This component can be used to easily build tables.
  * The required props are:
@@ -485,28 +480,18 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   bodyStyling: PropTypes.object,
   caption: PropTypes.string,
   casesPerPage: PropTypes.number,
-  className: PropTypes.string,
-  columns: COLUMNS_TYPE,
   defaultSort: PropTypes.shape({
     sortColName: PropTypes.string,
     sortAscending: PropTypes.bool
   }),
   enablePagination: PropTypes.bool,
   getKeyForRow: PropTypes.func,
-  headerClassName: PropTypes.string,
   id: PropTypes.string,
-  keyGetter: PropTypes.func,
   numberOfPages: PropTypes.number,
-  rowClassNames: PropTypes.func,
-  rowObjects: PropTypes.arrayOf(PropTypes.object).isRequired,
-  slowReRendersAreOk: PropTypes.bool,
   sortAscending: PropTypes.bool,
   sortColName: PropTypes.string,
   styling: PropTypes.object,
-  summary: PropTypes.string,
   taskPagesApiEndpoint: PropTypes.string,
-  tbodyId: PropTypes.string,
-  tbodyRef: PropTypes.func,
   totalTaskCount: PropTypes.number,
   useTaskPagesApi: PropTypes.bool,
   userReadableColumnNames: PropTypes.object
