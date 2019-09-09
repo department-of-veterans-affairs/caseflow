@@ -25,7 +25,9 @@ class Fakes::BGSServiceRecordMaker
 
       method_name = row_hash["bgs_key"]
 
-      send(method_name.to_sym, veteran)
+      if method_name
+        send(method_name.to_sym, veteran)
+      end
     end
   end
 
