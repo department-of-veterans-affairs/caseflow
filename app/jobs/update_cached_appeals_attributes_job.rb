@@ -27,7 +27,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     appeals = Appeal.find(open_appeals_from_tasks)
     request_issues_to_cache = request_issue_counts_for_appeal_ids(appeals.pluck(:id))
     veteran_names_to_cache = veteran_names_for_file_numbers(appeals.pluck(:veteran_file_number))
-    appeal_assignees_to_cache = assignees_for_ama_appeal_ids(appeals.pluck(:id))
+    appeal_assignees_to_cache = assignees_for_caseflow_appeal_ids(appeals.pluck(:id), Appeal.name)
 
     appeal_aod_status = aod_status_for_appeals(appeals)
 
@@ -96,17 +96,22 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
                                                                     ] }
   end
 
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def cache_legacy_appeal_vacols_data(legacy_appeals)
-    legacy_appeals.pluck(:vacols_id).in_groups_of(BATCH_SIZE, false).each do |vacols_ids|
+    legacy_appeals.pluck(:vacols_id, :id).in_groups_of(BATCH_SIZE, false).each do |ids|
+      vacols_ids = ids.map { |id| id[0] }
       vacols_folders = VACOLS::Folder.where(ticknum: vacols_ids).pluck(:ticknum, :tinum, :ticorkey)
       issue_counts_to_cache = issues_counts_for_vacols_folders(vacols_ids)
       veteran_names_to_cache = veteran_names_for_correspondent_ids(vacols_folders.map { |folder| folder[2] })
       aod_status_to_cache = VACOLS::Case.aod(vacols_folders.map { |folder| folder[0] })
       case_status_to_cache = case_status_for_vacols_id(vacols_folders.map { |folder| folder[0] })
+      appeal_assignees_to_cache = assignees_for_vacols_id(vacols_folders.map { |folder| folder[0] })
 
       values_to_cache = vacols_folders.map do |vacols_folder|
         {
           vacols_id: vacols_folder[0],
+          assignee_label: appeal_assignees_to_cache[vacols_folder[0]],
           case_type: case_status_to_cache[vacols_folder[0]],
           docket_number: vacols_folder[1],
           issue_count: issue_counts_to_cache[vacols_folder[0]] || 0,
@@ -115,11 +120,13 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         }
       end
 
-      update_columns = [:docket_number, :issue_count, :veteran_name, :case_type, :is_aod]
+      update_columns = [:assignee_label, :docket_number, :issue_count, :veteran_name, :case_type, :is_aod]
       CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:vacols_id],
                                                                       columns: update_columns }
     end
   end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   def increment_appeal_count(count, appeal_type)
     count.times do
@@ -159,30 +166,32 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     ).pluck(:id)
   end
 
-  def assignees_for_ama_appeal_ids(appeal_ids)
-    active_appeals = ama_appeals_assignees(appeal_ids, Task.active)
-    on_hold_appeals = ama_appeals_assignees(appeal_ids, Task.on_hold)
+  def assignees_for_caseflow_appeal_ids(appeal_ids, appeal_type)
+    active_appeals = caseflow_appeals_assignees(appeal_ids, appeal_type, Task.active)
+    on_hold_appeals = caseflow_appeals_assignees(appeal_ids, appeal_type, Task.on_hold)
 
     on_hold_appeals.merge(active_appeals)
   end
 
-  def ama_appeals_assignees(appeal_ids, tasks)
-    ordered_tasks = tasks
-      .visible_in_queue_table_view
-      .where(appeal_type: Appeal.name, appeal_id: appeal_ids)
-      .order(:appeal_id, created_at: :desc)
+  def assignees_for_vacols_id(vacols_ids)
+    # Grab statuses from VACOLS
+    vacols_statuses = vacols_ids.zip(VACOLS::Case.where(bfkey: vacols_ids).pluck(:bfcurloc)).to_h
 
-    first_task_assignees_per_ama_appeal(ordered_tasks)
-  end
+    # Grab the appeal_ids for the VACOLS cases in CASEFLOW status
+    caseflow_vacols_ids = vacols_statuses.select { |_key, value| value == "CASEFLOW" }.keys
+    caseflow_vacols_to_appeal_id = LegacyAppeal.where(vacols_id: caseflow_vacols_ids).pluck(:vacols_id, :id).to_h
 
-  def first_task_assignees_per_ama_appeal(tasks)
-    org_tasks = tasks.joins("left join organizations on tasks.assigned_to_id = organizations.id")
-      .where("tasks.assigned_to_type = 'Organization'").pluck(:created_at, :appeal_id, "organizations.name")
-    user_tasks = tasks.joins("left join users on tasks.assigned_to_id = users.id")
-      .where("tasks.assigned_to_type = 'User'").pluck(:created_at, :appeal_id, "users.css_id")
+    # Lookup more detailed Caseflow location for CASEFLOW vacols status
+    caseflow_statuses_by_appeal_id = assignees_for_caseflow_appeal_ids(caseflow_vacols_to_appeal_id.values,
+                                                                       LegacyAppeal.name)
+    # Map back to VACOLs id
+    caseflow_statuses_by_vacol_id = {}
+    caseflow_vacols_to_appeal_id.each do |vacol_id, appeal_id|
+      caseflow_statuses_by_vacol_id[vacol_id] = caseflow_statuses_by_appeal_id[appeal_id]
+    end
 
-    # Combine the user & org tasks, preferring the most recently created (last) task
-    (org_tasks + user_tasks).sort_by { |task| task[0] }.map { |task| task.drop(1) }.to_h
+    # Overwrite VACOLS Caseflow location with Caseflow detailed location
+    vacols_statuses.merge(caseflow_statuses_by_vacol_id)
   end
 
   def case_status_for_vacols_id(vacols_ids)
@@ -190,6 +199,25 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       VACOLS::Case::TYPES[value]
     end
     vacols_ids.zip(statuses).to_h
+  end
+
+  def caseflow_appeals_assignees(appeal_ids, appeal_type, tasks)
+    ordered_tasks = tasks
+      .visible_in_queue_table_view
+      .where(appeal_type: appeal_type, appeal_id: appeal_ids)
+      .order(:appeal_id, created_at: :desc)
+
+    first_task_assignees_per_caseflow_appeal(ordered_tasks)
+  end
+
+  def first_task_assignees_per_caseflow_appeal(tasks)
+    org_tasks = tasks.joins("left join organizations on tasks.assigned_to_id = organizations.id")
+      .where("tasks.assigned_to_type = 'Organization'").pluck(:created_at, :appeal_id, "organizations.name")
+    user_tasks = tasks.joins("left join users on tasks.assigned_to_id = users.id")
+      .where("tasks.assigned_to_type = 'User'").pluck(:created_at, :appeal_id, "users.css_id")
+
+    # Combine the user & org tasks, preferring the most recently created (last) task
+    (org_tasks + user_tasks).sort_by { |task| task[0] }.map { |task| task.drop(1) }.to_h
   end
 
   def issues_counts_for_vacols_folders(vacols_ids)

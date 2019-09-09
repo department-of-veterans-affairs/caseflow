@@ -39,9 +39,10 @@ detectors:
       - Fakes::EndProductStore
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - HearingSerializerBase
-      - VeteranAttributeCacher
       - SyncReviewsJob
       - TaskTimerJob
+      - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
+      - VeteranAttributeCacher
       - WarmBgsCachesJob
   InstanceVariableAssumption:
     exclude:
@@ -49,6 +50,11 @@ detectors:
       - Task
   IrresponsibleModule:
     enabled: false
+  ManualDispatch:
+    exclude:
+      - Api::V3::DecisionReview::IntakeParams
+      - Api::V3::DecisionReview::RequestIssueParams#shape_valid?
+      - Api::V3::DecisionReview::IntakeError#potential_error_code
   MissingSafeMethod:
     enabled: false
   NestedIterators:
