@@ -242,48 +242,50 @@ class Veteran < ApplicationRecord
     save!
   end
 
+  # find_by_* will NOT sync name
+  # find_or_create_by_* will sync name (mutates)
   class << self
-    def find_or_create_by_file_number(file_number, sync_name: false)
-      find_by_file_number_and_maybe_backfill_name(file_number, sync_name: sync_name) || create_by_file_number(file_number)
+    def looks_like_ssn?(string)
+      string.to_s.length == 9
     end
 
-    def find_by_ssn(ssn, sync_name: false)
+    def find_or_create_by_file_number(file_number)
+      find_by_file_number_and_sync(file_number) || create_by_file_number(file_number)
+    end
+
+    def find_by_ssn(ssn)
       found_locally = find_by(ssn: ssn)
-      if found_locally && sync_name && found_locally.stale_attributes?
-        found_locally.update_cached_attributes!
-      end
       return found_locally if found_locally
 
       file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
-      find_by_file_number_and_maybe_backfill_name(file_number, sync_name: sync_name)
+      find_by_file_number(file_number)
     end
 
-    def find_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
-      if file_number_or_ssn.to_s.length == 9
-        find_by_ssn(file_number_or_ssn, sync_name: sync_name) ||
-          find_by_file_number_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name)
+    def find_by_file_number_or_ssn(file_number_or_ssn)
+      if looks_like_ssn?(file_number_or_ssn)
+        find_by_ssn(file_number_or_ssn) || find_by_file_number(file_number_or_ssn)
       else
-        find_by_file_number_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name)
+        find_by_file_number(file_number_or_ssn)
       end
     end
 
-    def find_or_create_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
-      if file_number_or_ssn.to_s.length == 9
-        find_by_file_number_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name) ||
-          find_or_create_by_ssn(file_number_or_ssn, sync_name: sync_name) ||
-          find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name)
+    def find_or_create_by_file_number_or_ssn(file_number_or_ssn)
+      if looks_like_ssn?(file_number_or_ssn)
+        find_by_file_number_and_sync(file_number_or_ssn) ||
+          find_or_create_by_ssn(file_number_or_ssn) ||
+          find_or_create_by_file_number(file_number_or_ssn)
       else
-        find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name)
+        find_or_create_by_file_number(file_number_or_ssn)
       end
     end
 
     private
 
-    def find_or_create_by_ssn(ssn, sync_name: false)
+    def find_or_create_by_ssn(ssn)
       found_locally = find_by(ssn: ssn)
-      if found_locally && sync_name && found_locally.stale_attributes?
+      if found_locally&.cached_attributes_updatable?
         found_locally.update_cached_attributes!
       end
       return found_locally if found_locally
@@ -291,26 +293,20 @@ class Veteran < ApplicationRecord
       file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
-      find_or_create_by_file_number(file_number, sync_name: sync_name)
+      find_or_create_by_file_number(file_number)
     end
 
-    def find_by_file_number_and_maybe_backfill_name(file_number, sync_name: false)
+    def find_by_file_number_and_sync(file_number)
       veteran = find_by(file_number: file_number)
       return nil unless veteran
 
       # Check to see if veteran is accessible to make sure bgs_record is
       # a hash and not :not_found. Also if it's not found, bgs_record returns
       # a symbol that will blow up, so check if bgs_record is a hash first.
-      if sync_name
-        Rails.logger.warn(
-          %(
-          find_by_file_number_and_maybe_backfill_name veteran:#{file_number} accessible:#{veteran.accessible?}
-          )
-        )
+      Rails.logger.warn(%( find_by_file_number_and_sync veteran:#{file_number} accessible:#{veteran.accessible?} ))
 
-        if veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_attributes?
-          veteran.update_cached_attributes!
-        end
+      if veteran.cached_attributes_updatable?
+        veteran.update_cached_attributes!
       end
       veteran
     end
@@ -318,20 +314,18 @@ class Veteran < ApplicationRecord
     def create_by_file_number(file_number)
       veteran = Veteran.new(file_number: file_number)
 
-      unless veteran.found?
-        return nil
-      end
+      return nil unless veteran.found?
 
       return veteran unless veteran.accessible?
 
       before_create_veteran_by_file_number # Used to simulate race conditions
-      veteran.tap do |v|
-        v.update!(
-          participant_id: v.ptcpnt_id || v.bgs_record[:participant_id],
-          first_name: v.bgs_record[:first_name],
-          last_name: v.bgs_record[:last_name],
-          middle_name: v.bgs_record[:middle_name],
-          name_suffix: v.bgs_record[:name_suffix]
+      veteran.tap do |vet|
+        vet.update!(
+          participant_id: vet.ptcpnt_id || vet.bgs_record[:participant_id],
+          first_name: vet.bgs_record[:first_name],
+          last_name: vet.bgs_record[:last_name],
+          middle_name: vet.bgs_record[:middle_name],
+          name_suffix: vet.bgs_record[:name_suffix]
         )
       end
     rescue ActiveRecord::RecordNotUnique
@@ -354,6 +348,10 @@ class Veteran < ApplicationRecord
   def unload_bgs_record
     @bgs_record_loaded = false
     # instance_variable_set(:@bgs_record_loaded, false)
+  end
+
+  def cached_attributes_updatable?
+    accessible? && bgs_record.is_a?(Hash) && stale_attributes?
   end
 
   private

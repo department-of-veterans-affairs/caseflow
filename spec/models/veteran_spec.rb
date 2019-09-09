@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe Veteran, :postgres do
+describe Veteran, :all_dbs do
   let(:veteran) { Veteran.new(file_number: "44556677", first_name: "June", last_name: "Juniper") }
 
   before do
@@ -50,10 +50,9 @@ describe Veteran, :postgres do
   let(:ssn) { "123456789" }
 
   context ".find_or_create_by_file_number" do
-    subject { Veteran.find_or_create_by_file_number(file_number, sync_name: sync_name) }
+    subject { Veteran.find_or_create_by_file_number(file_number) }
 
     let(:file_number) { "444555666" }
-    let(:sync_name) { false }
 
     context "when veteran exists in the DB" do
       let!(:saved_veteran) do
@@ -115,31 +114,11 @@ describe Veteran, :postgres do
         Fakes::BGSService.veteran_records[file_number][:last_name] = "Changed"
       end
 
-      context "sync_name flag is true" do
-        let(:sync_name) { true }
-
+      context ".find_or_create_by_file_number" do
         it "updates Caseflow cache when found by file number" do
           expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
-          expect(described_class.find_or_create_by_file_number(file_number, sync_name: sync_name)).to eq(veteran)
+          expect(described_class.find_or_create_by_file_number(file_number)).to eq(veteran)
           expect(veteran.reload.last_name).to eq "Changed"
-        end
-      end
-
-      context "sync_name flag is false" do
-        let(:sync_name) { false }
-
-        it "does not update Caseflow cache when found by file number" do
-          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
-          expect(described_class.find_or_create_by_file_number(file_number, sync_name: sync_name)).to eq(veteran)
-          expect(veteran.reload.last_name).to eq "Smith"
-        end
-
-        it "no BGS method is called" do
-          BGSService.instance_methods(false).each do |method_name|
-            expect_any_instance_of(BGSService).not_to receive(method_name)
-          end
-
-          expect(described_class.find_or_create_by_file_number(file_number, sync_name: sync_name)).to eq(veteran)
         end
       end
     end
@@ -154,7 +133,7 @@ describe Veteran, :postgres do
 
       it "caches it like name" do
         expect(described_class.find_by(file_number: file_number)[:participant_id]).to be_nil
-        described_class.find_or_create_by_file_number(file_number, sync_name: sync_name)
+        described_class.find_or_create_by_file_number(file_number)
         expect(described_class.find_by(file_number: file_number)[:participant_id]).to_not be_nil
       end
     end
@@ -568,36 +547,16 @@ describe Veteran, :postgres do
         Fakes::BGSService.veteran_records[veteran.file_number][:last_name] = "Changed"
       end
 
-      context "sync_name flag is true" do
-        let(:sync_name) { true }
-
-        it "updates Caseflow cache when found by file number" do
-          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
-          expect(described_class.find_by_file_number_or_ssn(file_number, sync_name: sync_name)).to eq(veteran)
-          expect(veteran.reload.last_name).to eq "Changed"
-        end
-
-        it "updates Caseflow cache when found by SSN" do
-          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
-          expect(described_class.find_by_file_number_or_ssn(ssn, sync_name: sync_name)).to eq(veteran)
-          expect(veteran.reload.last_name).to eq "Changed"
-        end
+      it "does not update Caseflow cache when found by SSN" do
+        expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
+        expect(described_class.find_by_file_number_or_ssn(ssn)).to eq(veteran)
+        expect(veteran.reload.last_name).to eq "Smith"
       end
 
-      context "sync_name flag is false" do
-        let(:sync_name) { false }
-
-        it "does not update Caseflow cache when found by file number" do
-          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
-          expect(described_class.find_by_file_number_or_ssn(file_number, sync_name: sync_name)).to eq(veteran)
-          expect(veteran.reload.last_name).to eq "Smith"
-        end
-
-        it "does not update Caseflow cache when found by SSN" do
-          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
-          expect(described_class.find_by_file_number_or_ssn(ssn, sync_name: sync_name)).to eq(veteran)
-          expect(veteran.reload.last_name).to eq "Smith"
-        end
+      it "does not update Caseflow cache when found by file number" do
+        expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
+        expect(described_class.find_by_file_number_or_ssn(file_number)).to eq(veteran)
+        expect(veteran.reload.last_name).to eq "Smith"
       end
     end
   end
@@ -663,36 +622,16 @@ describe Veteran, :postgres do
         Fakes::BGSService.veteran_records[veteran.file_number][:last_name] = "Changed"
       end
 
-      context "sync_name flag is true" do
-        let(:sync_name) { true }
-
-        it "updates Caseflow cache when found by file number" do
-          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
-          expect(described_class.find_or_create_by_file_number_or_ssn(file_number, sync_name: sync_name)).to eq(veteran)
-          expect(veteran.reload.last_name).to eq "Changed"
-        end
-
-        it "updates Caseflow cache when found by SSN" do
-          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
-          expect(described_class.find_or_create_by_file_number_or_ssn(ssn, sync_name: sync_name)).to eq(veteran)
-          expect(veteran.reload.last_name).to eq "Changed"
-        end
+      it "updates Caseflow cache when found by file number" do
+        expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
+        expect(described_class.find_or_create_by_file_number_or_ssn(file_number)).to eq(veteran)
+        expect(veteran.reload.last_name).to eq "Changed"
       end
 
-      context "sync_name flag is false" do
-        let(:sync_name) { false }
-
-        it "does not update Caseflow cache when found by file number" do
-          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
-          expect(described_class.find_or_create_by_file_number_or_ssn(file_number, sync_name: sync_name)).to eq(veteran)
-          expect(veteran.reload.last_name).to eq "Smith"
-        end
-
-        it "does not update Caseflow cache when found by SSN" do
-          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
-          expect(described_class.find_or_create_by_file_number_or_ssn(ssn, sync_name: sync_name)).to eq(veteran)
-          expect(veteran.reload.last_name).to eq "Smith"
-        end
+      it "updates Caseflow cache when found by SSN" do
+        expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
+        expect(described_class.find_or_create_by_file_number_or_ssn(ssn)).to eq(veteran)
+        expect(veteran.reload.last_name).to eq "Changed"
       end
     end
   end

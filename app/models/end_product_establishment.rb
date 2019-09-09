@@ -318,7 +318,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number, sync_name: true)
+    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
   private
