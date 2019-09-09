@@ -300,9 +300,6 @@ class Veteran < ApplicationRecord
       veteran = find_by(file_number: file_number)
       return nil unless veteran
 
-      # Check to see if veteran is accessible to make sure bgs_record is
-      # a hash and not :not_found. Also if it's not found, bgs_record returns
-      # a symbol that will blow up, so check if bgs_record is a hash first.
       Rails.logger.warn(%( find_by_file_number_and_sync veteran:#{file_number} accessible:#{veteran.accessible?} ))
 
       if veteran.cached_attributes_updatable?
@@ -350,6 +347,9 @@ class Veteran < ApplicationRecord
     # instance_variable_set(:@bgs_record_loaded, false)
   end
 
+  # Check to see if veteran is accessible to make sure bgs_record is
+  # a hash and not :not_found. Also if it's not found, bgs_record returns
+  # a symbol that will blow up, so check if bgs_record is a hash first.
   def cached_attributes_updatable?
     accessible? && bgs_record.is_a?(Hash) && stale_attributes?
   end
