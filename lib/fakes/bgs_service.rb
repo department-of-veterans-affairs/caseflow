@@ -41,9 +41,7 @@ class Fakes::BGSService
     end
 
     def veteran_records_created?
-      RequestIssue.find_by(
-        contested_rating_issue_reference_id: Fakes::BGSServiceRecordMaker::KNOWN_REQUEST_ISSUE_REFERENCE_ID
-      )
+      veteran_store.all_keys.any?
     end
 
     def all_grants
