@@ -145,6 +145,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
     context "when user has no role" do
       let(:role) { nil }
+      let(:veteran_file_number) { create(:veteran).file_number }
 
       it "should return 200" do
         get :index, params: { user_id: user.id, role: "unknown" }
@@ -158,6 +159,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
             folder: create(:folder, tinum: "docket-number"),
             bfregoff: "RO04",
             bfcurloc: "57",
+            bfcorlid: "#{veteran_file_number}C",
             bfhr: "2",
             bfdocind: HearingDay::REQUEST_TYPES[:video]
           )
