@@ -97,7 +97,6 @@ const HeaderRow = (props) => {
             {...column}
             tableData={column.tableData || props.rowObjects}
             valueTransform={column.filterValueTransform}
-            filterOptions={[]}
             updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
             filteredByList={props.filteredByList} />;
         } else if (props.useTaskPagesApi && column.filterOptions) {
