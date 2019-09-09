@@ -107,6 +107,56 @@ feature "End Product Correction (EP 930)", :postgres do
           check_adding_unidentified_correction_issue
         end
       end
+
+      context "with future decision issues" do
+        let!(:past_claim_review) do
+          create(claim_review_type.to_sym, veteran_file_number: veteran.file_number, receipt_date: receipt_date - 1.day)
+        end
+        let!(:past_decision_issue_from_past_claim) do
+          create(:decision_issue,
+                 decision_review: past_claim_review,
+                 rating_profile_date: receipt_date - 1.day,
+                 end_product_last_action_date: receipt_date - 1.day,
+                 benefit_type: claim_review.benefit_type,
+                 decision_text: "something was decided in the past for past claim review",
+                 participant_id: veteran.participant_id)
+        end
+        let!(:future_decision_issue_from_past_claim) do
+          create(:decision_issue,
+                 decision_review: past_claim_review,
+
+                 rating_profile_date: receipt_date + 1.day,
+                 end_product_last_action_date: receipt_date + 1.day,
+                 benefit_type: claim_review.benefit_type,
+                 decision_text: "something was decided in the future for past claim review",
+                 participant_id: veteran.participant_id)
+        end
+
+        let!(:future_decision_issue) do
+          create(:decision_issue,
+                 decision_review: claim_review,
+
+                 rating_profile_date: receipt_date + 1.day,
+                 end_product_last_action_date: receipt_date + 1.day,
+                 benefit_type: claim_review.benefit_type,
+                 decision_text: "something was decided in the future for this claim review",
+                 participant_id: veteran.participant_id)
+        end
+
+        it "shows decision issues from future from this claim review" do
+          visit edit_path
+          click_intake_add_issue
+          expect(page).to have_content("Left knee granted")
+          expect(page).to have_content("something was decided in the past for past claim review")
+          expect(page).to have_content("something was decided in the future for this claim review")
+        end
+
+        it "does not show decision issues from future from past claim review" do
+          visit edit_path
+          click_intake_add_issue
+          expect(page).to_not have_content("something was decided in the future for past claim review")
+        end
+      end
     end
   end
 
