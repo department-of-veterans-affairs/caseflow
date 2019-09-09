@@ -449,7 +449,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
   context "Nonrating issue with untimely date and VACOLS opt-in" do
     before do
       setup_legacy_opt_in_appeals(veteran.file_number)
-      higher_level_review.reload # get UUID
+      higher_level_review.reload.establish!
     end
 
     let(:legacy_opt_in_approved) { true }
