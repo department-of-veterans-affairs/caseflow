@@ -43,6 +43,27 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
+  describe "#veteran_file_number" do
+    context "VACOLS has SSN as filenumber" do
+      let(:ssn) { "123456789" }
+      let(:file_number) { "12345678" }
+      let!(:veteran) { create(:veteran, ssn: ssn, file_number: file_number) }
+      let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
+
+      before do
+        allow(Raven).to receive(:capture_message) { @raven_called = true }
+      end
+
+      it "prefers the Caseflow Veteran.file_number" do
+        expect(legacy_appeal.veteran_file_number).to eq(file_number)
+        expect(legacy_appeal.vbms_id).to eq("#{ssn}S")
+        expect(legacy_appeal.sanitized_vbms_id).to eq(ssn)
+        expect(legacy_appeal.veteran_file_number).to eq(legacy_appeal.veteran.file_number)
+        expect(@raven_called).to eq(true)
+      end
+    end
+  end
+
   context "#eligible_for_soc_opt_in? and #matchable_to_request_issue?" do
     let(:soc_eligible_date) { receipt_date - 60.days }
     let(:nod_eligible_date) { receipt_date - 372.days }
@@ -178,6 +199,28 @@ describe LegacyAppeal, :all_dbs do
 
     it "returns all documents associated with the case" do
       expect(subject.size).to eq 2
+    end
+  end
+
+  context "#attorney_case_review" do
+    subject { appeal.attorney_case_review }
+
+    context "when there is a decass record" do
+      let!(:vacols_case) { create(:case, :assigned, user: create(:user)) }
+
+      it "searches through attorney case reviews table" do
+        expect(AttorneyCaseReview).to receive(:find_by)
+        subject
+      end
+    end
+
+    context "when there is no decass record" do
+      let!(:vacols_case) { create(:case) }
+
+      it "does not search through attorney case reviews table" do
+        expect(AttorneyCaseReview).to_not receive(:find_by)
+        subject
+      end
     end
   end
 

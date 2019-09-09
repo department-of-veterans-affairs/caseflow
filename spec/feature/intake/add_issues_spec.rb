@@ -43,7 +43,7 @@ feature "Intake Add Issues Page", :all_dbs do
     before { FeatureToggle.enable!(:contestable_rating_decisions) }
     after { FeatureToggle.disable!(:contestable_rating_decisions) }
 
-    let(:rating_decision_text) { "Bone (Broken arm) is denied as Not Service Connected" }
+    let(:rating_decision_text) { "Bone (Broken arm) is denied." }
 
     scenario "rating decision is selected" do
       start_higher_level_review(veteran)
