@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import Button from '../components/Button';
-import { formatDate } from '../util/DateUtil';
-import Table from '../components/Table';
+// import Button from '../components/Button';
+// import { formatDate } from '../util/DateUtil';
+// import Table from '../components/Table';
 
-const summary = 'Claims for manager review';
+// const summary = 'Claims for manager review';
 
+/*
 const formatExplanation = (intake) => {
   const explanationCopy = {
     veteran_not_accessible: 'sensitivity',
@@ -48,9 +49,14 @@ const columns = [
     valueFunction: (intake) => formatExplanation(intake)
   }
 ];
+*/
 
 export default class FlaggedForReview extends Component {
   render = () => {
+    return <div></div>;
+
+    /* deprecated 2019/08/28 as unused according to Google Analytics
+       delete in a month unless we hear from actual users.
     return <div className="cf-app-segment cf-app-segment--alt cf-manager-intakes">
       <div className="cf-manage-intakes-header">
         <div>
@@ -79,5 +85,6 @@ export default class FlaggedForReview extends Component {
         </div>
       </div>
     </div>;
+*/
   }
 }

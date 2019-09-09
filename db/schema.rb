@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190821180128) do
+ActiveRecord::Schema.define(version: 20190829183634) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -638,6 +638,7 @@ ActiveRecord::Schema.define(version: 20190821180128) do
     t.integer "judge_id"
     t.string "location"
     t.boolean "one_touch_initiative"
+    t.text "positive_feedback", default: [], array: true
     t.string "quality"
     t.string "task_id"
     t.datetime "updated_at", null: false
@@ -710,6 +711,14 @@ ActiveRecord::Schema.define(version: 20190821180128) do
     t.datetime "rollback_processed_at", comment: "Timestamp for when a rolled back opt-in has successfully finished being rolled back."
     t.datetime "updated_at", null: false, comment: "Automatically populated when the record is updated."
     t.index ["request_issue_id"], name: "index_legacy_issue_optins_on_request_issue_id"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "read_at", comment: "When the message was read"
+    t.string "text", comment: "The message"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false, comment: "The user for whom the message is intended"
   end
 
   create_table "non_availabilities", force: :cascade do |t|

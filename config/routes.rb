@@ -33,6 +33,7 @@ Rails.application.routes.draw do
     namespace :v3 do
       namespace :decision_review do
         resources :higher_level_reviews, only: :create
+        resources :intake_statuses, only: :show
       end
     end
     namespace :docs do
@@ -58,7 +59,6 @@ Rails.application.routes.draw do
       end
     end
   end
-
 
   namespace :metrics do
     namespace :v1 do
@@ -200,6 +200,11 @@ Rails.application.routes.draw do
     resources :jobs, controller: :asyncable_jobs, param: :id, only: [:index, :show, :update]
   end
   match '/jobs' => 'asyncable_jobs#index', via: [:get]
+
+  scope path: "/inbox" do
+    get "/", to: "inbox#index"
+    patch "/messages/:id", to: "inbox#update"
+  end
 
   resources :users, only: [:index]
   resources :users, only: [:index] do
