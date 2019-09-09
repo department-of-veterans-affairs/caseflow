@@ -36,6 +36,10 @@ class TaskFilter
     where_string = filters.map { |filter| "#{table_column_from_name(filter.column)} IN (?)" }.join(" AND ")
     where_arguments = filters.map(&:values)
 
+    if filter_params.any? { |filter_string| filter_string[/typeColumn&val=.*is_aod/] }
+      where_string << " AND cached_appeal_attributes.is_aod = true"
+    end
+
     [where_string] + where_arguments
   end
 
@@ -45,14 +49,13 @@ class TaskFilter
     case column_name
     when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
       "tasks.type"
+    when Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN
+      "cached_appeal_attributes.closest_regional_office_city"
+    when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
+      "cached_appeal_attributes.docket_type"
+    when Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN
+      "cached_appeal_attributes.case_type"
     # TODO: The following columns are not yet implemented.
-    # when Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN
-    #   "cached_appeals_attributes.appeal_type"
-    # when Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN
-    #   "cached_appeals_attributes.regional_office"
-    # TODO: I think this constant may be incorrectly named.
-    # when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
-    #   "cached_appeals_attributes.docket_type"
     # when Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN
     #   "???"
     else

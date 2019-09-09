@@ -40,11 +40,8 @@ feature "Supplemental Claim Intake", :all_dbs do
   end
 
   let(:inaccessible) { false }
-
   let(:receipt_date) { Time.zone.today - 30.days }
-
   let(:benefit_type) { "compensation" }
-
   let(:untimely_days) { 372.days }
 
   let!(:current_user) do
@@ -53,53 +50,15 @@ feature "Supplemental Claim Intake", :all_dbs do
 
   let(:profile_date) { (receipt_date - 15.days).to_datetime }
   let(:promulgation_date) { receipt_date - 5.days }
+  let(:untimely_promulgation_date) { receipt_date - untimely_days - 1.day }
+  let(:untimely_profile_date) { receipt_date - untimely_days - 3.days }
+  let(:future_rating_promulgation_date) { receipt_date + 2.days }
+  let(:future_rating_profile_date) { receipt_date + 2.days }
 
-  let!(:rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: promulgation_date,
-      profile_date: profile_date,
-      issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted" },
-        { reference_id: "def456", decision_text: "PTSD denied" }
-      ]
-    )
-  end
-
-  let!(:untimely_ratings) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - untimely_days - 1.day,
-      profile_date: receipt_date - untimely_days - 3.days,
-      issues: [
-        { reference_id: "old123", decision_text: "Untimely rating issue 1" },
-        { reference_id: "old456", decision_text: "Untimely rating issue 2" }
-      ]
-    )
-  end
-
-  let!(:future_rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date + 2.days,
-      profile_date: receipt_date + 2.days,
-      issues: [
-        { reference_id: "future1", decision_text: "Future rating issue 1" },
-        { reference_id: "future2", decision_text: "Future rating issue 2" }
-      ]
-    )
-  end
-
-  let!(:before_ama_rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
-      issues: [
-        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
-      ]
-    )
-  end
+  let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
+  let!(:untimely_ratings) { generate_untimely_rating(veteran, untimely_promulgation_date, untimely_profile_date) }
+  let!(:future_rating) { generate_future_rating(veteran, future_rating_promulgation_date, future_rating_profile_date) }
+  let!(:before_ama_rating) { generate_pre_ama_rating(veteran) }
 
   context "veteran is deceased" do
     let(:date_of_death) { Time.zone.today - 1.day }
@@ -452,48 +411,20 @@ feature "Supplemental Claim Intake", :all_dbs do
   end
 
   context "Add / Remove Issues page" do
+    before { FeatureToggle.enable!(:contestable_rating_decisions) }
+    after { FeatureToggle.disable!(:contestable_rating_decisions) }
+
     let(:duplicate_reference_id) { "xyz789" }
     let(:old_reference_id) { "old1234" }
     let(:active_epe) { create(:end_product_establishment, :active) }
 
-    let!(:timely_ratings) do
-      Generators::Rating.build(
-        participant_id: veteran.participant_id,
-        promulgation_date: receipt_date - 40.days,
-        profile_date: receipt_date - 50.days,
-        issues: [
-          { reference_id: "xyz123", decision_text: "Left knee granted 2" },
-          { reference_id: "xyz456", decision_text: "PTSD denied 2" },
-          { reference_id: duplicate_reference_id, decision_text: "Old injury" }
-        ]
-      )
-    end
-
+    let!(:timely_ratings) { generate_timely_rating(veteran, receipt_date, duplicate_reference_id) }
+    let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran, receipt_date) }
+    let(:old_rating_decision_text) { "Bone (Right arm broken) is denied." }
     let!(:untimely_rating_from_ramp) do
-      Generators::Rating.build(
-        participant_id: veteran.participant_id,
-        promulgation_date: receipt_date - 400.days,
-        profile_date: receipt_date - 450.days,
-        issues: [
-          { reference_id: old_reference_id,
-            decision_text: "Really old injury" }
-        ],
-        associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
-      )
+      generate_untimely_rating_from_ramp(veteran, receipt_date, old_reference_id, with_associated_claims: true)
     end
-
-    let!(:before_ama_rating_from_ramp) do
-      Generators::Rating.build(
-        participant_id: veteran.participant_id,
-        promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-        profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
-        issues: [
-          { decision_text: "Issue before AMA Activation from RAMP",
-            reference_id: "ramp_ref_id" }
-        ],
-        associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
-      )
-    end
+    let!(:before_ama_rating_from_ramp) { generate_rating_before_ama_from_ramp(veteran) }
 
     let!(:request_issue_in_progress) do
       create(
@@ -521,7 +452,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       end
     end
 
-    scenario "SC comp" do
+    scenario "compensation claim" do
       supplemental_claim, = start_supplemental_claim(veteran)
       visit "/intake/add_issues"
 
@@ -537,6 +468,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       expect(page).to have_content("Left knee granted 2")
       expect(page).to have_content("PTSD denied 2")
       expect(page).to have_content("Old injury")
+      expect(page).to have_content(old_rating_decision_text)
 
       # test canceling adding an issue by closing the modal
       safe_click ".close-modal"
@@ -624,11 +556,17 @@ feature "Supplemental Claim Intake", :all_dbs do
       )
       expect(page).to have_content("A nonrating issue before AMA")
 
+      # add old rating decision
+      click_intake_add_issue
+      add_intake_rating_issue(old_rating_decision_text)
+      expect(page).to have_content(old_rating_decision_text)
+
       click_intake_finish
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
       expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
       expect(page).to have_content('Unidentified issue: no issue matched for requested "This is an unidentified issue"')
+      expect(page).to have_content(old_rating_decision_text)
 
       success_checklist = find("ul.cf-success-checklist")
       expect(success_checklist).to have_content("Non-RAMP Issue before AMA Activation")
@@ -717,6 +655,13 @@ feature "Supplemental Claim Intake", :all_dbs do
       expect(ineligible_issue.contention_reference_id).to be_nil
       expect(RequestIssue.find_by(contested_rating_issue_reference_id: old_reference_id).eligible?).to eq(true)
 
+      old_rating_decision_request_issue = RequestIssue.find_by(
+        decision_review: supplemental_claim,
+        contested_issue_description: old_rating_decision_text
+      )
+
+      expect(old_rating_decision_request_issue.contested_rating_decision_reference_id).to_not be_nil
+
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
         hash_including(
           contentions: array_including(description: "Old injury")
@@ -724,8 +669,15 @@ feature "Supplemental Claim Intake", :all_dbs do
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        hash_including(contentions: array_including(description: old_rating_decision_text))
+      )
+
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         hash_including(
-          contentions: array_including({ description: "Left knee granted 2" }, description: "Really old injury")
+          contentions: array_including(
+            { description: "Left knee granted 2" },
+            description: "Really old injury"
+          )
         )
       )
     end

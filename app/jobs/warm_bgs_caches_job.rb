@@ -1,18 +1,23 @@
 # frozen_string_literal: true
 
 class WarmBgsCachesJob < CaseflowJob
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :hearing_schedule
 
-  def perform
+  def perform(_args = {})
     RequestStore.store[:current_user] = User.system_user
     RequestStore.store[:application] = "hearings"
 
     warm_participant_caches
     warm_veteran_attribute_caches
+    warm_people_caches
   end
 
   private
+
+  def warm_people_caches
+    Person.where(first_name: nil, last_name: nil).order(created_at: :desc).limit(5000).each(&:update_cached_attributes!)
+  end
 
   def warm_participant_caches
     RegionalOffice::CITIES.each_key do |ro_id|
@@ -61,7 +66,8 @@ class WarmBgsCachesJob < CaseflowJob
     hearings = HearingsForDayQuery.new(day: date_to_cache).call
     hearings.each do |hearing|
       veteran = hearing.appeal.veteran
-      if veteran.stale_attributes?
+
+      if veteran&.stale_attributes?
         veteran.update_cached_attributes!
         veterans_updated += 1
       end

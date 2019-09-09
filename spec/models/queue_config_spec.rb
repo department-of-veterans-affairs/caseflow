@@ -5,7 +5,7 @@ require "rails_helper"
 
 describe QueueConfig, :postgres do
   describe ".new" do
-    let(:arguments) { { organization: organization } }
+    let(:arguments) { { assignee: assignee } }
 
     subject { QueueConfig.new(arguments) }
 
@@ -18,7 +18,7 @@ describe QueueConfig, :postgres do
     end
 
     context "when object is created with a nil organization" do
-      let(:organization) { nil }
+      let(:assignee) { nil }
 
       it "raises an error" do
         expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
@@ -26,7 +26,15 @@ describe QueueConfig, :postgres do
     end
 
     context "when object is created with a valid organization" do
-      let(:organization) { create(:organization) }
+      let(:assignee) { create(:organization) }
+
+      it "successfully instantiates the object" do
+        expect { subject }.to_not raise_error
+      end
+    end
+
+    context "when object is created with a valid user" do
+      let(:assignee) { create(:user) }
 
       it "successfully instantiates the object" do
         expect { subject }.to_not raise_error
@@ -35,10 +43,10 @@ describe QueueConfig, :postgres do
   end
 
   describe ".to_hash_for_user" do
-    let(:organization) { create(:organization) }
+    let(:assignee) { create(:organization) }
     let(:user) { create(:user) }
 
-    subject { QueueConfig.new(organization: organization).to_hash_for_user(user) }
+    subject { QueueConfig.new(assignee: assignee).to_hash_for_user(user) }
 
     describe "shape of the returned hash" do
       it "returns the correct top level keys in the response" do
@@ -47,8 +55,18 @@ describe QueueConfig, :postgres do
     end
 
     describe "title" do
-      it "is formatted as expected" do
-        expect(subject[:table_title]).to eq(format(COPY::ORGANIZATION_QUEUE_TABLE_TITLE, organization.name))
+      context "when assigned to an org" do
+        it "is formatted as expected" do
+          expect(subject[:table_title]).to eq(format(COPY::ORGANIZATION_QUEUE_TABLE_TITLE, assignee.name))
+        end
+      end
+
+      context "when assigned to a user" do
+        let(:assignee) { user }
+
+        it "is formatted as expected" do
+          expect(subject[:table_title]).to eq(COPY::COLOCATED_QUEUE_PAGE_TABLE_TITLE)
+        end
       end
     end
 
@@ -59,12 +77,131 @@ describe QueueConfig, :postgres do
     end
 
     describe "tabs" do
-      subject { QueueConfig.new(organization: organization).to_hash_for_user(user)[:tabs] }
+      let(:assignee) { create(:organization) }
+
+      subject { QueueConfig.new(assignee: assignee).to_hash_for_user(user)[:tabs] }
 
       before { FeatureToggle.enable!(:use_task_pages_api) }
       after { FeatureToggle.disable!(:use_task_pages_api) }
 
-      context "with a non-VSO organization" do
+      context "with a non-VSO organization assignee" do
+        it "does not include a tab for tracking tasks" do
+          expect(subject.length).to eq(3)
+          expect(subject.pluck(:name)).to_not include(Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME)
+        end
+
+        it "has the correct shape for each tab hash" do
+          subject.each do |tab|
+            expect(tab.keys).to match_array(
+              [
+                :label,
+                :name,
+                :description,
+                :columns,
+                :allow_bulk_assign,
+                :tasks,
+                :task_page_count,
+                :total_task_count,
+                :task_page_endpoint_base_path
+              ]
+            )
+          end
+        end
+
+        it "does not include the regional column in the list of columns for any tab" do
+          subject.each do |tab|
+            expect(tab[:columns].map { |col| col[:name] }).to_not include(Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN)
+          end
+        end
+
+        context "when the organization uses the task pages API and has tasks assigned to it" do
+          before { FeatureToggle.enable!(:use_task_pages_api) }
+          after { FeatureToggle.disable!(:use_task_pages_api) }
+
+          let!(:unassigned_tasks) { create_list(:generic_task, 4, assigned_to: assignee) }
+          let!(:assigned_tasks) do
+            create_list(:generic_task, 2, parent: create(:generic_task, assigned_to: assignee))
+          end
+          let!(:on_hold_tasks) do
+            create_list(:generic_task, 2, :on_hold, parent: create(:generic_task, assigned_to: assignee))
+          end
+          let!(:completed_tasks) { create_list(:generic_task, 7, :completed, assigned_to: assignee) }
+
+          before { allow(assignee).to receive(:use_task_pages_api?).and_return(true) }
+
+          it "returns the tasks in the correct tabs" do
+            tabs = subject
+
+            # Tasks are serialized at this point so we need to convert integer task IDs to strings.
+            expect(tabs[0][:tasks].pluck(:id)).to match_array(unassigned_tasks.map { |t| t.id.to_s })
+            expect(tabs[1][:tasks].pluck(:id)).to match_array(assigned_tasks.map { |t| t.id.to_s })
+            expect(tabs[2][:tasks].pluck(:id)).to match_array(on_hold_tasks.map { |t| t.id.to_s })
+            expect(tabs[3][:tasks].pluck(:id)).to match_array(completed_tasks.map { |t| t.id.to_s })
+          end
+
+          it "displays the correct labels for the tabs" do
+            tabs = subject
+
+            expect(tabs[0][:label]).to eq(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE)
+            expect(tabs[1][:label]).to eq(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE)
+            expect(tabs[2][:label]).to eq(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE)
+            expect(tabs[3][:label]).to eq(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
+          end
+        end
+      end
+
+      context "with an organization assignee that displays regional office in queue table views" do
+        before { allow(assignee).to receive(:show_regional_office_in_queue?).and_return(true) }
+
+        it "includes the regional column in the list of columns for all tabs" do
+          subject.each do |tab|
+            expect(tab[:columns].map { |col| col[:name] }).to include(Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN)
+          end
+        end
+      end
+
+      context "when the organization assignee is a VSO" do
+        let(:assignee) { create(:vso) }
+
+        it "includes a tab for tracking tasks" do
+          expect(subject.length).to eq(4)
+          expect(subject.pluck(:name)).to include(Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME)
+        end
+
+        it "has the correct shape for each tab hash" do
+          subject.each do |tab|
+            expect(tab.keys).to match_array(
+              [
+                :label,
+                :name,
+                :description,
+                :columns,
+                :allow_bulk_assign,
+                :tasks,
+                :task_page_count,
+                :total_task_count,
+                :task_page_endpoint_base_path
+              ]
+            )
+          end
+        end
+
+        context "when the VSO has tracking tasks assigned to it" do
+          before { FeatureToggle.enable!(:use_task_pages_api) }
+          after { FeatureToggle.disable!(:use_task_pages_api) }
+
+          let!(:tracking_tasks) { create_list(:track_veteran_task, 5, assigned_to: assignee) }
+
+          it "returns the tasks in the tracking tasks tabs" do
+            # Tasks are serialized at this point so we need to convert integer task IDs to strings.
+            expect(subject[0][:tasks].pluck(:id)).to match_array(tracking_tasks.map { |t| t.id.to_s })
+          end
+        end
+      end
+
+      context "with a user assignee" do
+        let(:assignee) { create(:user) }
+
         it "does not include a tab for tracking tasks" do
           expect(subject.length).to eq(3)
           expect(subject.pluck(:name)).to_not include(Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME)
@@ -94,87 +231,39 @@ describe QueueConfig, :postgres do
           end
         end
 
-        context "when the organization uses the task pages API and has tasks assigned to it" do
+        context "when the user uses the task pages API and has tasks assigned to them" do
           before { FeatureToggle.enable!(:use_task_pages_api) }
           after { FeatureToggle.disable!(:use_task_pages_api) }
 
-          let!(:unassigned_tasks) { create_list(:generic_task, 4, assigned_to: organization) }
-          let!(:assigned_tasks) do
-            create_list(:generic_task, 2, parent: create(:generic_task, assigned_to: organization))
-          end
-          let!(:on_hold_tasks) do
-            create_list(:generic_task, 2, :on_hold, parent: create(:generic_task, assigned_to: organization))
-          end
-          let!(:completed_tasks) { create_list(:generic_task, 7, :completed, assigned_to: organization) }
+          let!(:assigned_tasks) { create_list(:generic_task, 2, assigned_to: assignee) }
+          let!(:on_hold_tasks) { create_list(:generic_task, 5, :on_hold, assigned_to: assignee) }
+          let!(:completed_tasks) { create_list(:generic_task, 7, :completed, assigned_to: assignee) }
 
-          before { allow(organization).to receive(:use_task_pages_api?).and_return(true) }
+          before { allow(assignee).to receive(:use_task_pages_api?).and_return(true) }
 
           it "returns the tasks in the correct tabs" do
             tabs = subject
 
             # Tasks are serialized at this point so we need to convert integer task IDs to strings.
-            expect(tabs[0][:tasks].pluck(:id)).to match_array(unassigned_tasks.map { |t| t.id.to_s })
-            expect(tabs[1][:tasks].pluck(:id)).to match_array(assigned_tasks.map { |t| t.id.to_s })
-            expect(tabs[2][:tasks].pluck(:id)).to match_array(on_hold_tasks.map { |t| t.id.to_s })
-            expect(tabs[3][:tasks].pluck(:id)).to match_array(completed_tasks.map { |t| t.id.to_s })
+            expect(tabs[0][:tasks].pluck(:id)).to match_array(assigned_tasks.map { |t| t.id.to_s })
+            expect(tabs[1][:tasks].pluck(:id)).to match_array(on_hold_tasks.map { |t| t.id.to_s })
+            expect(tabs[2][:tasks].pluck(:id)).to match_array(completed_tasks.map { |t| t.id.to_s })
           end
 
           it "displays the correct labels for the tabs" do
             tabs = subject
 
-            expect(tabs[0][:label]).to eq(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE)
-            expect(tabs[1][:label]).to eq(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE)
-            expect(tabs[2][:label]).to eq(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE)
-            expect(tabs[3][:label]).to eq(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
+            expect(tabs[0][:label]).to eq(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE)
+            expect(tabs[1][:label]).to eq(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE)
+            expect(tabs[2][:label]).to eq(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
           end
-        end
-      end
 
-      context "with an organization that displays regional office in queue table views" do
-        before { allow(organization).to receive(:show_regional_office_in_queue?).and_return(true) }
+          it "displays the correct descriptions for the tabs" do
+            tabs = subject
 
-        it "includes the regional column in the list of columns for all tabs" do
-          subject.each do |tab|
-            expect(tab[:columns]).to include(Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN)
-          end
-        end
-      end
-
-      context "when the organization is a VSO" do
-        let(:organization) { create(:vso) }
-
-        it "includes a tab for tracking tasks" do
-          expect(subject.length).to eq(4)
-          expect(subject.pluck(:name)).to include(Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME)
-        end
-
-        it "has the correct shape for each tab hash" do
-          subject.each do |tab|
-            expect(tab.keys).to match_array(
-              [
-                :label,
-                :name,
-                :description,
-                :columns,
-                :allow_bulk_assign,
-                :tasks,
-                :task_page_count,
-                :total_task_count,
-                :task_page_endpoint_base_path
-              ]
-            )
-          end
-        end
-
-        context "when the VSO has tracking tasks assigned to it" do
-          before { FeatureToggle.enable!(:use_task_pages_api) }
-          after { FeatureToggle.disable!(:use_task_pages_api) }
-
-          let!(:tracking_tasks) { create_list(:track_veteran_task, 5, assigned_to: organization) }
-
-          it "returns the tasks in the tracking tasks tabs" do
-            # Tasks are serialized at this point so we need to convert integer task IDs to strings.
-            expect(subject[0][:tasks].pluck(:id)).to match_array(tracking_tasks.map { |t| t.id.to_s })
+            expect(tabs[0][:description]).to eq(COPY::COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION)
+            expect(tabs[1][:description]).to eq(COPY::COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
+            expect(tabs[2][:description]).to eq(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
           end
         end
       end

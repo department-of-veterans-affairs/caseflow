@@ -30,7 +30,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
         it "returns valid response with one appeal" do
           create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)
-          request.headers["HTTP_VETERAN_ID"] = veteran_id
+          request.headers["HTTP_CASE_SEARCH"] = veteran_id
           get :index, params: options
           response_body = JSON.parse(response.body)
 
@@ -44,7 +44,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         let!(:veteran_without_associated_appeals) { create(:veteran) }
 
         it "returns valid response with empty appeals array" do
-          request.headers["HTTP_VETERAN_ID"] = veteran_without_associated_appeals.file_number
+          request.headers["HTTP_CASE_SEARCH"] = veteran_without_associated_appeals.file_number
           get :index, params: options
           response_body = JSON.parse(response.body)
 
@@ -73,7 +73,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         end
 
         it "returns appeals for veteran with appeals" do
-          request.headers["HTTP_VETERAN_ID"] = ssn
+          request.headers["HTTP_CASE_SEARCH"] = ssn
           get :index, params: options
           response_body = JSON.parse(response.body)
 
@@ -87,7 +87,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
           create(:supplemental_claim, veteran_file_number: veteran_file_number_match.file_number)
           create(:supplemental_claim, veteran_file_number: veteran_bgs_match.file_number)
 
-          request.headers["HTTP_VETERAN_ID"] = ssn
+          request.headers["HTTP_CASE_SEARCH"] = ssn
           get :index, params: options
           response_body = JSON.parse(response.body)
 
@@ -96,7 +96,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         end
 
         it "returns ssn match appeals if given file number" do
-          request.headers["HTTP_VETERAN_ID"] = veteran_bgs_match.file_number
+          request.headers["HTTP_CASE_SEARCH"] = veteran_bgs_match.file_number
           get :index, params: options
           response_body = JSON.parse(response.body)
 
@@ -108,7 +108,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
       context "with invalid Veteran file number" do
         it "returns valid response with empty appeals array" do
-          request.headers["HTTP_VETERAN_ID"] = "invalid_file_number"
+          request.headers["HTTP_CASE_SEARCH"] = "invalid_file_number"
           get :index, params: options
           response_body = JSON.parse(response.body)
 
@@ -133,7 +133,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
       context "and does not have access to the file" do
         it "responds with an error" do
-          request.headers["HTTP_VETERAN_ID"] = veteran_id
+          request.headers["HTTP_CASE_SEARCH"] = veteran_id
           Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.veteran_file_number]
 
           get :index, params: options
@@ -145,7 +145,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
       context "veteran does not exist and VSO employee does not have access to the file" do
         it "responds with an error" do
-          request.headers["HTTP_VETERAN_ID"] = "123"
+          request.headers["HTTP_CASE_SEARCH"] = "123"
           Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.veteran_file_number, "123"]
 
           expect_any_instance_of(Fakes::BGSService).to_not receive(:fetch_poas_by_participant_id)
@@ -168,7 +168,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         it "responds with appeals and claim reviews" do
           create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)
 
-          request.headers["HTTP_VETERAN_ID"] = appeal.veteran_file_number
+          request.headers["HTTP_CASE_SEARCH"] = appeal.veteran_file_number
           get :index, params: options
           response_body = JSON.parse(response.body)
 
@@ -182,7 +182,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
           appeal = create(:appeal, claimants: [build(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")])
           create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)
 
-          request.headers["HTTP_VETERAN_ID"] = "123"
+          request.headers["HTTP_CASE_SEARCH"] = "123"
 
           expect_any_instance_of(Fakes::BGSService).to_not receive(:fetch_poas_by_participant_id)
 
@@ -199,7 +199,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
           appeal = create(:appeal, claimants: [build(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")])
           create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)
           veteran_without_associated_appeals = create(:veteran)
-          request.headers["HTTP_VETERAN_ID"] = veteran_without_associated_appeals.file_number
+          request.headers["HTTP_CASE_SEARCH"] = veteran_without_associated_appeals.file_number
 
           get :index, params: options
           response_body = JSON.parse(response.body)
@@ -487,13 +487,14 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
   describe "GET veteran/:appeal_id" do
     let(:veteran_first_name) { "Test" }
     let(:veteran_last_name) { "User" }
+    let(:veteran_file_number) { "0000000000" }
     let(:correspondent) { create(:correspondent, snamef: veteran_first_name, snamel: veteran_last_name) }
     let(:appeal) do
       create(
         :legacy_appeal,
         vacols_case: create(
           :case,
-          bfcorlid: "0000000000S",
+          bfcorlid: "#{veteran_file_number}S",
           correspondent: correspondent
         )
       )
@@ -503,7 +504,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         :veteran,
         first_name: veteran_first_name,
         last_name: veteran_last_name,
-        file_number: appeal.veteran_file_number,
+        file_number: veteran_file_number,
         email_address: "test@test.com"
       )
     end

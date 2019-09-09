@@ -9,6 +9,7 @@ describe RequestIssue, :all_dbs do
   end
 
   let(:contested_rating_issue_reference_id) { "abc123" }
+  let(:contested_rating_decision_reference_id) { nil }
   let(:profile_date) { Time.zone.now.to_s }
   let(:contention_reference_id) { "1234" }
   let(:nonrating_contention_reference_id) { "5678" }
@@ -42,6 +43,7 @@ describe RequestIssue, :all_dbs do
       promulgation_date: rating_promulgation_date,
       profile_date: (review.receipt_date - 50.days).in_time_zone,
       issues: issues,
+      decisions: decisions,
       associated_claims: associated_claims
     )
   end
@@ -49,6 +51,7 @@ describe RequestIssue, :all_dbs do
   let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
   let!(:decision_sync_processed_at) { nil }
   let!(:end_product_establishment) { nil }
+
   let(:issues) do
     [
       {
@@ -60,10 +63,21 @@ describe RequestIssue, :all_dbs do
     ]
   end
 
+  let(:decisions) do
+    [
+      {
+        diagnostic_text: "right knee",
+        disability_id: contested_rating_decision_reference_id,
+        original_denial_date: rating_promulgation_date - 7.days
+      }
+    ]
+  end
+
   let(:rating_request_issue_attrs) do
     {
       decision_review: review,
       contested_rating_issue_reference_id: contested_rating_issue_reference_id,
+      contested_rating_decision_reference_id: contested_rating_decision_reference_id,
       contested_rating_issue_profile_date: profile_date,
       contested_issue_description: "a rating request issue",
       ramp_claim_id: ramp_claim_id,
@@ -1053,9 +1067,23 @@ describe RequestIssue, :all_dbs do
   end
 
   context "#contested_rating_issue" do
-    it "returns the rating issue hash that prompted the RequestIssue" do
+    it "returns the RatingIssue that prompted the RequestIssue" do
       expect(rating_request_issue.contested_rating_issue.reference_id).to eq contested_rating_issue_reference_id
       expect(rating_request_issue.contested_rating_issue.decision_text).to eq "Left knee granted"
+    end
+  end
+
+  context "#contested_rating_decision" do
+    before { FeatureToggle.enable!(:contestable_rating_decisions) }
+    after { FeatureToggle.disable!(:contestable_rating_decisions) }
+
+    let(:contested_rating_issue_reference_id) { nil }
+    let(:contested_rating_decision_reference_id) { "some-disability-id" }
+
+    it "returns the RatingDecision that prompted the RequestIssue" do
+      expect(rating_request_issue.contested_rating_decision.reference_id).to eq contested_rating_decision_reference_id
+      expect(rating_request_issue.contested_rating_issue).to be_nil
+      expect(rating_request_issue.contested_rating_decision.decision_text).to match(/right knee/)
     end
   end
 
@@ -1143,6 +1171,16 @@ describe RequestIssue, :all_dbs do
       end
     end
 
+    context "where there is an associated rating decision" do
+      let(:contested_rating_decision_reference_id) { "123" }
+
+      it { is_expected.to be true }
+
+      it "nonrating? is false" do
+        expect(nonrating).to be(false)
+      end
+    end
+
     context "when the request issue is from a dta on a previous rating issue" do
       let(:contested_rating_issue_reference_id) { nil }
       let(:contested_decision_issue_id) { decision_issue.id }
@@ -1197,6 +1235,7 @@ describe RequestIssue, :all_dbs do
     let(:closed_at) { nil }
     let(:receipt_date) { review.receipt_date }
     let(:previous_contention_reference_id) { "8888" }
+    let(:correction_type) { nil }
 
     let(:previous_review) { create(:higher_level_review) }
     let!(:previous_request_issue) do
@@ -1262,9 +1301,11 @@ describe RequestIssue, :all_dbs do
     let!(:request_issue_in_progress) do
       create(
         :request_issue,
+        correction_type: correction_type,
         contested_rating_issue_reference_id: duplicate_reference_id,
         contested_issue_description: "Old injury",
-        closed_at: closed_at
+        closed_at: closed_at,
+        contested_decision_issue_id: contested_decision_issue_id
       )
     end
 
@@ -1291,6 +1332,16 @@ describe RequestIssue, :all_dbs do
 
       rating_request_issue.save!
       expect(request_issue_in_progress.duplicate_but_ineligible).to eq([rating_request_issue])
+    end
+
+    context "when duplicate request issue is a correction" do
+      let(:correction_type) { "control" }
+      let(:contested_decision_issue_id) { 12 }
+
+      it "does not flag the correction issue as a duplicate" do
+        rating_request_issue.validate_eligibility!
+        expect(rating_request_issue.ineligible_reason).to be_nil
+      end
     end
 
     context "when rating issue is missing associated_rating" do

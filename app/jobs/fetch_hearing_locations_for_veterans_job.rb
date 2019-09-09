@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class FetchHearingLocationsForVeteransJob < ApplicationJob
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :hearing_schedule
 
   QUERY_LIMIT = 500
@@ -10,25 +10,21 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def find_appeals_ready_for_geomatching(appeal_type)
-    # Appeals that have not had an available_hearing_locations updated in the last week
-    # and where the appeal id is in a subquery of ScheduleHearingTasks
-    # that are not blocked by an VerifyAddress or ForeignVeteranCase admin action
+    appeal_ids = ScheduleHearingTask.open.where(
+      appeal_type: appeal_type.name
+    ).pluck(:appeal_id)
+
     appeal_type.left_outer_joins(:available_hearing_locations)
-      .where("#{appeal_type.table_name}.id IN (SELECT t.appeal_id FROM tasks t
-          LEFT OUTER JOIN tasks admin_actions
-          ON t.id = admin_actions.parent_id
-          AND admin_actions.type IN ('HearingAdminActionVerifyAddressTask', 'HearingAdminActionForeignVeteranCaseTask')
-          WHERE t.appeal_type = ?
-          AND admin_actions.id IS NULL AND t.type = 'ScheduleHearingTask'
-          AND t.status NOT IN ('cancelled', 'completed')
-        )", appeal_type.name)
-      .order("available_hearing_locations.updated_at nulls first")
-      .limit(QUERY_LIMIT)
+      .select(:id)
+      .select("MIN(available_hearing_locations.updated_at) as ahl_updated_at")
+      .where(id: appeal_ids)
+      .group(:id)
+      .order("ahl_updated_at nulls first")
   end
 
   def appeals
-    @appeals ||= find_appeals_ready_for_geomatching(LegacyAppeal)[0..(QUERY_LIMIT / 2).to_int] +
-                 find_appeals_ready_for_geomatching(Appeal)[0..(QUERY_LIMIT / 2).to_int]
+    @appeals ||= find_appeals_ready_for_geomatching(LegacyAppeal).first(QUERY_LIMIT / 2) +
+                 find_appeals_ready_for_geomatching(Appeal).first(QUERY_LIMIT / 2)
   end
 
   def perform
@@ -37,7 +33,8 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
     appeals.each do |appeal|
       begin
-        geomatch_result = appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
+        appeal.reload # we only selected id and ahl_update_at, reload all columns
+        geomatch_result = geomatch(appeal)
         record_geomatched_appeal(appeal.external_id, geomatch_result[:status])
         sleep 1
       rescue Caseflow::Error::VaDotGovLimitError
@@ -47,6 +44,42 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
         capture_exception(error: error, extra: { appeal_external_id: appeal.external_id })
         record_geomatched_appeal(appeal.external_id, "error")
       end
+    end
+  end
+
+  def geomatch(appeal)
+    geomatch_result = appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
+
+    case geomatch_result[:status]
+    when VaDotGovAddressValidator::STATUSES[:matched_available_hearing_locations],
+      VaDotGovAddressValidator::STATUSES[:philippines_exception]
+      cancel_admin_actions_for_matched_appeal(appeal)
+    when VaDotGovAddressValidator::STATUSES[:created_verify_address_admin_action],
+      VaDotGovAddressValidator::STATUSES[:created_foreign_veteran_admin_action]
+      create_available_hearing_location_for_errored_appeal(appeal)
+    end
+
+    geomatch_result
+  end
+
+  def cancel_admin_actions_for_matched_appeal(appeal)
+    tasks_to_cancel = Task.open.where(
+      type: %w[HearingAdminActionVerifyAddressTask HearingAdminActionForeignVeteranCaseTask],
+      appeal: appeal
+    )
+
+    tasks_to_cancel.each { |task| task.update(status: Constants.TASK_STATUSES.cancelled) }
+  end
+
+  def create_available_hearing_location_for_errored_appeal(appeal)
+    # we need a way to flag that we've seen this appeal before/recently
+    if appeal.available_hearing_locations.count == 0
+      AvailableHearingLocations.create(
+        appeal: appeal,
+        veteran_file_number: appeal.veteran_file_number || ""
+      )
+    else
+      appeal.available_hearing_locations.each(&:touch)
     end
   end
 

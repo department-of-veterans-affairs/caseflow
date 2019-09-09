@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TakeDocketSnapshotJob < ApplicationJob
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :api
 
   def perform

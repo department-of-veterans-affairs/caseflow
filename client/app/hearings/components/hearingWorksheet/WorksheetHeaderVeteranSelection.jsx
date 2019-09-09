@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Checkbox from '../../../components/Checkbox';
@@ -45,7 +46,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
   componentDidMount() {
     ApiUtil.get(`/hearings/hearing_day/${this.props.worksheet.hearing_day_id}`).
       then((response) => {
-        this.props.getHearingDayHearings(_.keyBy(JSON.parse(response.text).hearing_day.hearings, 'external_id'));
+        this.props.getHearingDayHearings(_.keyBy(response.body.hearing_day.hearings, 'external_id'));
       });
   }
 
@@ -77,7 +78,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
   render() {
 
-    const { worksheet, worksheetIssues, hearings } = this.props;
+    const { worksheet, hearings } = this.props;
 
     const docketNotLoaded = _.isEmpty(hearings);
 
@@ -93,7 +94,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
             name="worksheet-veteran-selection"
             placeholder={docketNotLoaded ? <SmallLoader spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
               message="Loading..." /> : ''}
-            options={this.getDocketVeteranOptions(hearings, worksheetIssues)}
+            options={this.getDocketVeteranOptions(hearings)}
             onChange={this.onDropdownChange}
             value={worksheet.external_id}
             searchable={false}
@@ -127,10 +128,23 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
   }
 }
 
+WorksheetHeaderVeteranSelection.propTypes = {
+  getHearingDayHearings: PropTypes.func,
+  hearings: PropTypes.object,
+  history: PropTypes.shape({
+    push: PropTypes.func
+  }),
+  setPrepped: PropTypes.func,
+  worksheet: PropTypes.shape({
+    appeal_external_id: PropTypes.string,
+    external_id: PropTypes.string,
+    hearing_day_id: PropTypes.number
+  })
+};
+
 const mapStateToProps = (state) => ({
   hearings: state.hearingWorksheet.hearings,
-  worksheet: state.hearingWorksheet.worksheet,
-  worksheetIssues: state.hearingWorksheet.worksheetIssues
+  worksheet: state.hearingWorksheet.worksheet
 });
 
 const mapDispatchToProps = (dispatch) => ({

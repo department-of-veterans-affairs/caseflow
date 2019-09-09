@@ -46,7 +46,15 @@ class Veteran < ApplicationRecord
   BENEFIT_TYPE_CODE_LIVE = "1"
   BENEFIT_TYPE_CODE_DEATH = "2"
 
-  CACHED_BGS_ATTRIBUTES = [:first_name, :last_name, :middle_name, :name_suffix, :ssn].freeze
+  # key is local attribute name; value is corresponding bgs attribute name
+  CACHED_BGS_ATTRIBUTES = {
+    first_name: :first_name,
+    last_name: :last_name,
+    middle_name: :middle_name,
+    name_suffix: :name_suffix,
+    ssn: :ssn,
+    participant_id: :ptcpnt_id
+  }.freeze
 
   # TODO: get middle initial from BGS
   def name
@@ -222,21 +230,21 @@ class Veteran < ApplicationRecord
   def stale_attributes?
     return false unless accessible? && bgs_record.is_a?(Hash)
 
-    is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil?)
-    is_stale ||= CACHED_BGS_ATTRIBUTES.any? { |name| self[name] != bgs_record[name] }
+    is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil?)
+    is_stale ||= CACHED_BGS_ATTRIBUTES.any? { |local_attr, bgs_attr| self[local_attr] != bgs_record[bgs_attr] }
     is_stale
   end
 
   def update_cached_attributes!
-    CACHED_BGS_ATTRIBUTES.each do |attr|
-      self[attr] = bgs_record[attr]
+    CACHED_BGS_ATTRIBUTES.each do |local_attr, bgs_attr|
+      self[local_attr] = bgs_record[bgs_attr]
     end
     save!
   end
 
   class << self
     def find_or_create_by_file_number(file_number, sync_name: false)
-      find_and_maybe_backfill_name(file_number, sync_name: sync_name) || create_by_file_number(file_number)
+      find_by_file_number_and_sync(file_number, sync_name: sync_name) || create_by_file_number(file_number)
     end
 
     def find_by_ssn(ssn, sync_name: false)
@@ -249,21 +257,22 @@ class Veteran < ApplicationRecord
       file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
-      find_and_maybe_backfill_name(file_number, sync_name: sync_name)
+      find_by_file_number_and_sync(file_number, sync_name: sync_name)
     end
 
     def find_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
       if file_number_or_ssn.to_s.length == 9
         find_by_ssn(file_number_or_ssn, sync_name: sync_name) ||
-          find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name)
+          find_by_file_number_and_sync(file_number_or_ssn, sync_name: sync_name)
       else
-        find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name)
+        find_by_file_number_and_sync(file_number_or_ssn, sync_name: sync_name)
       end
     end
 
     def find_or_create_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
       if file_number_or_ssn.to_s.length == 9
-        find_or_create_by_ssn(file_number_or_ssn, sync_name: sync_name) ||
+        find_by_file_number_and_sync(file_number_or_ssn, sync_name: sync_name) ||
+          find_or_create_by_ssn(file_number_or_ssn, sync_name: sync_name) ||
           find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name)
       else
         find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name)
@@ -285,7 +294,7 @@ class Veteran < ApplicationRecord
       find_or_create_by_file_number(file_number, sync_name: sync_name)
     end
 
-    def find_and_maybe_backfill_name(file_number, sync_name: false)
+    def find_by_file_number_and_sync(file_number, sync_name: false)
       veteran = find_by(file_number: file_number)
       return nil unless veteran
 
@@ -293,13 +302,9 @@ class Veteran < ApplicationRecord
       # a hash and not :not_found. Also if it's not found, bgs_record returns
       # a symbol that will blow up, so check if bgs_record is a hash first.
       if sync_name
-        Rails.logger.warn(
-          %(
-          find_and_maybe_backfill_name veteran:#{file_number} accessible:#{veteran.accessible?}
-          )
-        )
+        Rails.logger.warn(%(find_by_file_number_and_sync veteran:#{file_number} accessible:#{veteran.accessible?}))
 
-        if veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_attributes?
+        if veteran.cached_attributes_updatable?
           veteran.update_cached_attributes!
         end
       end
@@ -332,6 +337,10 @@ class Veteran < ApplicationRecord
     def before_create_veteran_by_file_number
       # noop - used to simulate race conditions
     end
+  end
+
+  def cached_attributes_updatable?
+    accessible? && bgs_record.is_a?(Hash) && stale_attributes?
   end
 
   def deceased?

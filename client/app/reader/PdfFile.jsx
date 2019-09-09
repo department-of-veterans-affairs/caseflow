@@ -106,7 +106,7 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.isVisible !== this.props.isVisible) {
       this.currentPage = 0;
     }

@@ -21,12 +21,10 @@ export const requestIssuesUpdate = (claimId, formType, state) => (dispatch) => {
   return ApiUtil.patch(`/${pathMap[formType]}/${claimId}/update`, { data }, ENDPOINT_NAMES.REQUEST_ISSUES_UPDATE).
     then(
       (response) => {
-        const responseObject = JSON.parse(response.text);
-
         dispatch({
           type: ACTIONS.REQUEST_ISSUES_UPDATE_SUCCEED,
           payload: {
-            responseObject
+            responseObject: response.body
           },
           meta: { analytics }
         });
@@ -34,12 +32,7 @@ export const requestIssuesUpdate = (claimId, formType, state) => (dispatch) => {
         return true;
       },
       (error) => {
-        let responseObject = {};
-
-        try {
-          responseObject = JSON.parse(error.response.text);
-        } catch (ex) { /* pass */ }
-
+        const responseObject = error.response.body || {};
         const responseErrorCode = responseObject.error_code;
 
         dispatch({

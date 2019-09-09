@@ -29,11 +29,10 @@ import { renderAppealType, taskHasCompletedHold, actionNameOfTask, regionalOffic
 import { DateString } from '../../util/DateUtil';
 import {
   CATEGORIES,
-  redText,
-  LEGACY_APPEAL_TYPES,
-  DOCKET_NAME_FILTERS
+  redText
 } from '../constants';
 import COPY from '../../../COPY.json';
+import DOCKET_NAME_FILTERS from '../../../constants/DOCKET_NAME_FILTERS.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
 
@@ -164,13 +163,11 @@ export const typeColumn = (tasks, requireDasRecord) => {
       <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
     span: (task) => hasDASRecord(task, requireDasRecord) ? 1 : 5,
     getSortValue: (task) => {
+      const sortString = `${task.appeal.caseType} ${task.appeal.docketNumber}`;
+
       // We append a * before the docket number if it's a priority case since * comes before
       // numbers in sort order, this forces these cases to the top of the sort.
-      if (task.appeal.isAdvancedOnDocket || task.appeal.caseType === LEGACY_APPEAL_TYPES.CAVC_REMAND) {
-        return `*${task.appeal.docketNumber}`;
-      }
-
-      return task.appeal.docketNumber;
+      return task.appeal.isAdvancedOnDocket ? `*${sortString}` : sortString;
     }
   };
 };
@@ -179,6 +176,7 @@ export const assignedToColumn = (tasks) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
     name: QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN,
+    backendCanSort: true,
     enableFilter: true,
     tableData: tasks,
     columnName: 'assignedTo.name',
