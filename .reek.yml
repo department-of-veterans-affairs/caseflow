@@ -67,6 +67,7 @@ detectors:
     exclude:
       - QueueConfig
       - RequestIssue
+      - Veteran
   TooManyInstanceVariables:
     exclude:
       - AmaAppealDispatch
