@@ -10,10 +10,12 @@ detectors:
   BooleanParameter:
     exclude:
       - HearingRepository#slot_new_hearing
+      - Veteran
   ControlParameter:
     exclude:
       - HearingRepository#slot_new_hearing
       - TaskSorter#sort_requires_case_norm?
+      - Veteran
   UncommunicativeVariableName:
     exclude:
       - Address
@@ -37,6 +39,7 @@ detectors:
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
       - Fakes::EndProductStore
+      - Fakes::BGSServiceRecordMaker
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - HearingSerializerBase
       - SyncReviewsJob

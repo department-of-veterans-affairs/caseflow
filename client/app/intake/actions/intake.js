@@ -29,24 +29,17 @@ export const doFileNumberSearch = (formType, fileNumberSearch) => (dispatch) => 
   return ApiUtil.post('/intake', { data }, ENDPOINT_NAMES.START_INTAKE).
     then(
       (response) => {
-        const responseObject = JSON.parse(response.text);
-
         dispatch({
           type: ACTIONS.FILE_NUMBER_SEARCH_SUCCEED,
           payload: {
-            intake: responseObject
+            intake: response.body
           },
           meta: { analytics }
         });
       },
       (error) => {
-        let responseObject = {};
-        let errorCode = 'default';
-
-        try {
-          responseObject = JSON.parse(error.response.text);
-          errorCode = responseObject.error_code;
-        } catch (ex) { /* pass */ }
+        const responseObject = error.response.body || {};
+        const errorCode = responseObject.error_code || 'default';
 
         dispatch({
           type: ACTIONS.FILE_NUMBER_SEARCH_FAIL,
@@ -133,4 +126,71 @@ export const submitCancel = (data) => (dispatch) => {
       }
     ).
     catch((error) => error);
+};
+
+export const submitIntakeCompleteRequest = (intakeId, data) => (dispatch) => {
+  return ApiUtil.patch(`/intake/${intakeId}/complete`, data, ENDPOINT_NAMES.COMPLETE_INTAKE).
+    then(
+      (response) => {
+        dispatch({
+          type: ACTIONS.COMPLETE_INTAKE_SUCCEED,
+          payload: {
+            intake: response.body
+          },
+          meta: { analytics }
+        });
+
+        return true;
+      },
+      (error) => {
+        const responseObject = error.response.body || {};
+        const responseErrorCode = responseObject.error_code;
+        const responseErrorData = responseObject.error_data;
+
+        dispatch({
+          type: ACTIONS.COMPLETE_INTAKE_FAIL,
+          payload: {
+            responseErrorCode,
+            responseErrorData
+          },
+          meta: { analytics }
+        });
+        throw error;
+      }
+    );
+};
+
+export const submitIntakeReviewRequest = (intakeId, data) => (dispatch) => {
+  return ApiUtil.patch(`/intake/${intakeId}/review`, data, ENDPOINT_NAMES.REVIEW_INTAKE).
+    then(
+      () => dispatch({
+        type: ACTIONS.SUBMIT_REVIEW_SUCCEED,
+        meta: { analytics }
+      }),
+      (error) => {
+        const responseObject = error.response.body || {};
+        const responseErrorCodes = responseObject.error_codes;
+
+        dispatch({
+          type: ACTIONS.SUBMIT_REVIEW_FAIL,
+          payload: {
+            responseErrorCodes
+          },
+          meta: {
+            analytics: analyticsCallback
+          }
+        });
+
+        throw error;
+      }
+    );
+};
+
+export const analyticsCallback = (triggerEvent, category, actionName) => {
+  triggerEvent(category, actionName, 'any-error');
+
+  _.forEach(
+    responseErrorCodes,
+    (errorVal, errorKey) => triggerEvent(category, actionName, `${errorKey}-${errorVal}`)
+  );
 };

@@ -159,7 +159,7 @@ class HearingDayAddModal extends React.Component {
 
     ApiUtil.post('/hearings/hearing_day.json', { data }).
       then((response) => {
-        const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+        const resp = ApiUtil.convertToCamelCase(response.body);
 
         const newHearings = Object.assign({}, this.props.hearingSchedule);
         const hearingsLength = Object.keys(newHearings).length;
@@ -368,32 +368,38 @@ class HearingDayAddModal extends React.Component {
 }
 
 HearingDayAddModal.propTypes = {
-  userId: PropTypes.number,
-  userCssId: PropTypes.string,
-  closeModal: PropTypes.func,
   cancelModal: PropTypes.func,
-  roomRequired: PropTypes.bool,
-  notes: PropTypes.string,
+  closeModal: PropTypes.func,
   coordinator: PropTypes.shape({
     value: PropTypes.string
   }),
-  vlj: PropTypes.shape({
-    value: PropTypes.string
+  hearingSchedule: PropTypes.object,
+  notes: PropTypes.string,
+  onAssignHearingRoom: PropTypes.func,
+  onReceiveHearingSchedule: PropTypes.func,
+  onRegionalOfficeChange: PropTypes.func,
+  onSelectedHearingDayChange: PropTypes.func,
+  regionalOffices: PropTypes.shape({
+    options: PropTypes.arrayOf(PropTypes.object)
   }),
+  requestType: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.shape({
+      value: PropTypes.string
+    })
+  ]),
+  roomRequired: PropTypes.bool,
+  selectHearingCoordinator: PropTypes.func,
+  selectRequestType: PropTypes.func,
+  selectVlj: PropTypes.func,
+  selectedHearingDay: PropTypes.string,
   selectedRegionalOffice: PropTypes.shape({
     value: PropTypes.string
   }),
-  selectedHearingDay: PropTypes.string,
-  onAssignHearingRoom: PropTypes.func,
   setNotes: PropTypes.func,
-  selectHearingCoordinator: PropTypes.func,
-  selectVlj: PropTypes.func,
-  onRegionalOfficeChange: PropTypes.func,
-  selectRequestType: PropTypes.func,
-  onSelectedHearingDayChange: PropTypes.func,
-  onReceiveHearingSchedule: PropTypes.func,
-  hearingSchedule: PropTypes.object,
-  requestType: PropTypes.shape({
+  userCssId: PropTypes.string,
+  userId: PropTypes.number,
+  vlj: PropTypes.shape({
     value: PropTypes.string
   })
 };
