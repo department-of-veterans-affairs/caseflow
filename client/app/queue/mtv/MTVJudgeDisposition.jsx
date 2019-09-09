@@ -21,7 +21,7 @@ import Button from '../../components/Button';
 import { css } from 'glamor';
 import { MTVTaskHeader } from './MTVTaskHeader';
 
-export const MTVJudgeDisposition = ({ attorneys, task, appeal, onSubmit, submitting = false }) => {
+export const MTVJudgeDisposition = ({ attorneys, task, appeal, onSubmit = () => {}, submitting = false }) => {
   const { assignedTo } = task;
 
   const cancelLink = `/queue/appeals/${task.externalAppealId}`;

@@ -2,16 +2,21 @@ import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 
+import { BrowserRouter } from 'react-router-dom';
 import { MTVJudgeDisposition } from '../../../../app/queue/mtv/MTVJudgeDisposition';
-import { tasks, attorneys } from './sample';
+import { tasks, attorneys, appeals } from './sample';
 
 describe('CorrectionTypeModal', () => {
   const [task] = tasks;
-  const [attorney] = attorneys;
+  const [appeal] = appeals;
 
   context('renders', () => {
     it('default elements', () => {
-      const wrapper = mount(<MTVJudgeDisposition task={task} attorneys={attorneys} onSubmit={() => null} />);
+      const wrapper = mount(
+        <BrowserRouter>
+          <MTVJudgeDisposition task={task} appeal={appeal} attorneys={attorneys} onSubmit={() => null} />
+        </BrowserRouter>
+      );
 
       const taskInstructions = wrapper.find('.mtv-task-instructions');
       const dispositionSelect = wrapper.find('.mtv-disposition-selection');
@@ -23,17 +28,5 @@ describe('CorrectionTypeModal', () => {
       expect(vacateTypeSelect.exists()).to.be.eql(false);
       expect(instructions.exists()).to.be.eql(true);
     });
-
-    // Enzyme doesn't yet allow use of state via React hooks
-    // it('vacate type type only when disposition=granted', () => {
-    //   const wrapper = mount(<MTVJudgeDisposition task={task} attorneys={attorneys} onSubmit={() => null} />);
-    //   const dispositionSelect = wrapper.find('.mtv-disposition-selection').hostNodes();
-
-    //   expect(wrapper.find('.mtv-vacate-type').exists()).to.be.eql(false);
-
-    //   dispositionSelect.find('#disposition_granted').simulate('change', { target: { value: 'granted' } });
-
-    //   expect(wrapper.find('.mtv-vacate-type').exists()).to.be.eql(true);
-    // });
   });
 });

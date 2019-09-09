@@ -1,366 +1,363 @@
 /* eslint-disable */
 export const tasks = [
   {
-    id: '541',
-    type: 'task',
-    attributes: {
-      is_legacy: false,
-      type: 'VacateMotionMailTask',
-      label: 'Motion to vacate',
-      appeal_id: 10,
-      status: 'on_hold',
-      assigned_at: '2019-08-16T11:53:06.310-04:00',
-      started_at: null,
-      created_at: '2019-08-16T11:53:06.310-04:00',
-      closed_at: null,
-      instructions: ['these are instructions and context'],
-      appeal_type: 'Appeal',
-      timeline_title: 'VacateMotionMailTask completed',
-      hide_from_queue_table_view: false,
-      hide_from_case_timeline: true,
-      hide_from_task_snapshot: true,
-      assigned_by: { first_name: 'Mail', last_name: 'member', css_id: 'JOLLY_POSTMAN', pg_id: 57 },
-      assigned_to: { css_id: null, is_organization: true, name: 'LIT_SUPPORT_USER', type: 'LitigationSupport', id: 14 },
-      assignee_name: 'Litigation Support',
-      placed_on_hold_at: '2019-08-16T11:54:11.280-04:00',
-      on_hold_duration: null,
-      docket_name: 'evidence_submission',
-      case_type: 'Original',
-      docket_number: '190721-10',
-      docket_range_date: null,
-      veteran_full_name: 'Bob Smith',
-      veteran_file_number: '500000009',
-      closest_regional_office: null,
-      external_appeal_id: '78584fa0-54b5-4ada-b760-f75abc53e19e',
-      aod: false,
-      issue_count: 0,
-      external_hearing_id: null,
-      available_hearing_locations: [],
-      previous_task: { assigned_at: null },
-      document_id: null,
-      decision_prepared_by: { first_name: null, last_name: null },
-      available_actions: []
-    }
-  },
-  {
-    id: '542',
-    type: 'task',
-    attributes: {
-      is_legacy: false,
-      type: 'VacateMotionMailTask',
-      label: 'Motion to vacate',
-      appeal_id: 10,
-      status: 'assigned',
-      assigned_at: '2019-08-16T11:54:11.263-04:00',
-      started_at: null,
-      created_at: '2019-08-16T11:54:11.263-04:00',
-      closed_at: null,
-      instructions: ['these are instructions and context'],
-      appeal_type: 'Appeal',
-      timeline_title: 'VacateMotionMailTask completed',
-      hide_from_queue_table_view: false,
-      hide_from_case_timeline: false,
-      hide_from_task_snapshot: false,
-      assigned_by: { first_name: 'Litigation', last_name: 'member', css_id: 'LIT_SUPPORT_USER', pg_id: 55 },
-      assigned_to: {
-        css_id: 'LIT_SUPPORT_USER',
-        is_organization: false,
-        name: 'LIT_SUPPORT_USER',
-        type: 'User',
-        id: 55
-      },
-      assignee_name: 'LIT_SUPPORT_USER',
-      placed_on_hold_at: null,
-      on_hold_duration: null,
-      docket_name: 'evidence_submission',
-      case_type: 'Original',
-      docket_number: '190721-10',
-      docket_range_date: null,
-      veteran_full_name: 'Bob Smith',
-      veteran_file_number: '500000009',
-      closest_regional_office: null,
-      external_appeal_id: '78584fa0-54b5-4ada-b760-f75abc53e19e',
-      aod: false,
-      issue_count: 0,
-      external_hearing_id: null,
-      available_hearing_locations: [],
-      previous_task: { assigned_at: null },
-      document_id: null,
-      decision_prepared_by: { first_name: null, last_name: null },
-      available_actions: [
-        {
-          label: 'Change task type',
-          func: 'change_task_type_data',
-          value: 'modal/change_task_type',
-          data: {
-            options: [
-              { value: 'ClearAndUnmistakeableErrorMailTask', label: 'CUE-related' },
-              { value: 'AddressChangeMailTask', label: 'Change of address' },
-              { value: 'CongressionalInterestMailTask', label: 'Congressional interest' },
-              { value: 'ControlledCorrespondenceMailTask', label: 'Controlled correspondence' },
-              { value: 'DeathCertificateMailTask', label: 'Death certificate' },
-              { value: 'EvidenceOrArgumentMailTask', label: 'Evidence or argument' },
-              { value: 'ExtensionRequestMailTask', label: 'Extension request' },
-              { value: 'FoiaRequestMailTask', label: 'FOIA request' },
-              { value: 'HearingRelatedMailTask', label: 'Hearing-related' },
-              { value: 'ReconsiderationMotionMailTask', label: 'Motion for reconsideration' },
-              { value: 'AodMotionMailTask', label: 'Motion to Advance on Docket' },
-              { value: 'VacateMotionMailTask', label: 'Motion to vacate' },
-              { value: 'OtherMotionMailTask', label: 'Other motion' },
-              { value: 'PowerOfAttorneyRelatedMailTask', label: 'Power of attorney-related' },
-              { value: 'PrivacyActRequestMailTask', label: 'Privacy act request' },
-              { value: 'PrivacyComplaintMailTask', label: 'Privacy complaint' },
-              { value: 'ReturnedUndeliverableCorrespondenceMailTask', label: 'Returned or undeliverable mail' },
-              { value: 'StatusInquiryMailTask', label: 'Status inquiry' },
-              { value: 'AppealWithdrawalMailTask', label: 'Withdrawal of appeal' }
-            ]
-          }
-        },
-        {
-          label: 'Assign to team',
-          func: 'assign_to_organization_data',
-          value: 'modal/assign_to_team',
-          data: {
-            selected: null,
-            options: [
-              { label: 'Board Dispatch', value: 1 },
-              { label: 'Case Review', value: 2 },
-              { label: 'VLJ Support Staff', value: 4 },
-              { label: 'Transcription', value: 5 },
-              { label: 'National Cemetery Administration', value: 8 },
-              { label: 'Translation', value: 9 },
-              { label: 'Quality Review', value: 10 },
-              { label: 'Mail', value: 11 },
-              { label: 'AOD', value: 12 },
-              { label: 'Privacy Team', value: 13 },
-              { label: 'Pulac-Cerullo', value: 15 },
-              { label: 'Hearings Management', value: 24 },
-              { label: 'Hearing Admin', value: 25 }
-            ],
-            type: 'GenericTask'
-          }
-        },
-        {
-          label: 'Re-assign to person',
-          func: 'assign_to_user_data',
-          value: 'modal/reassign_to_person',
-          data: {
-            selected: {
-              id: 55,
-              station_id: '101',
-              full_name: 'Litigation Support team member',
-              email: null,
-              roles: ['LIT_SUPPORT_USER', 'LIT_SUPPORT_USER'],
-              last_login_at: '2019-08-19T13:18:21.501-04:00',
-              created_at: '2019-07-22T14:15:19.446-04:00',
-              css_id: 'LIT_SUPPORT_USER',
-              efolder_documents_fetched_at: null,
-              selected_regional_office: null,
-              updated_at: '2019-08-19T13:18:21.512-04:00',
-              display_name: 'LIT_SUPPORT_USER (VACO)'
+    uniqueId: '2',
+    isLegacy: false,
+    type: 'VacateMotionMailTask',
+    appealType: 'Appeal',
+    addedByCssId: null,
+    appealId: 1,
+    externalAppealId: 'b519f92c-715e-450c-9530-3cb421d61abc',
+    assignedOn: '2019-08-09T18:23:32.835-04:00',
+    closestRegionalOffice: null,
+    createdAt: '2019-09-09T18:23:32.918-04:00',
+    closedAt: null,
+    assigneeName: 'CSS_ID3',
+    assignedTo: {
+      cssId: 'CSS_ID3',
+      name: 'Case storage',
+      id: 6,
+      isOrganization: false,
+      type: 'User'
+    },
+    assignedBy: {
+      firstName: 'Lauren',
+      lastName: 'Roth',
+      cssId: 'CSS_ID4',
+      pgId: 7
+    },
+    taskId: '2',
+    label: 'Motion to vacate',
+    documentId: null,
+    externalHearingId: null,
+    workProduct: null,
+    previousTaskAssignedOn: null,
+    placedOnHoldAt: null,
+    status: 'assigned',
+    onHoldDuration: null,
+    instructions: [],
+    decisionPreparedBy: null,
+    availableActions: [
+      {
+        label: 'Change task type',
+        value: 'modal/change_task_type',
+        func: 'change_task_type_data',
+        data: {
+          options: [
+            {
+              value: 'ClearAndUnmistakeableErrorMailTask',
+              label: 'CUE-related'
             },
-            options: [],
-            type: 'VacateMotionMailTask'
-          }
-        },
-        { label: 'Put task on hold', value: 'modal/place_timed_hold' },
-        {
-          label: 'Mark task complete',
-          func: 'complete_data',
-          value: 'modal/mark_task_complete',
-          data: { modal_body: 'You can find this case in the completed tab of your queue.' }
-        },
-        {
-          label: 'Cancel task',
-          func: 'cancel_task_data',
-          value: 'modal/cancel_task',
-          data: {
-            modal_title: 'Cancel task',
-            modal_body: 'Cancelling this task will return it to the assigner',
-            message_title: "Task for Bob Smith's case has been cancelled",
-            message_detail:
-              "If you've made a mistake, please email Litigation Support team member to manage any changes."
-          }
-        },
-        {
-          label: 'Notify OGC of Pulac-Cerullo',
-          func: 'assign_to_pulac_cerullo_data',
-          value: 'modal/assign_to_pulac_cerullo',
-          data: {
-            selected: { id: 15, name: 'Pulac-Cerullo', participant_id: null, role: null, url: 'pulac-cerullo' },
-            options: [{ label: 'Pulac-Cerullo', value: 15 }],
-            type: 'PulacCerulloTask'
-          }
+            {
+              value: 'AddressChangeMailTask',
+              label: 'Change of address'
+            },
+            {
+              value: 'CongressionalInterestMailTask',
+              label: 'Congressional interest'
+            },
+            {
+              value: 'ControlledCorrespondenceMailTask',
+              label: 'Controlled correspondence'
+            },
+            {
+              value: 'DeathCertificateMailTask',
+              label: 'Death certificate'
+            },
+            {
+              value: 'EvidenceOrArgumentMailTask',
+              label: 'Evidence or argument'
+            },
+            {
+              value: 'ExtensionRequestMailTask',
+              label: 'Extension request'
+            },
+            {
+              value: 'FoiaRequestMailTask',
+              label: 'FOIA request'
+            },
+            {
+              value: 'HearingRelatedMailTask',
+              label: 'Hearing-related'
+            },
+            {
+              value: 'ReconsiderationMotionMailTask',
+              label: 'Motion for reconsideration'
+            },
+            {
+              value: 'AodMotionMailTask',
+              label: 'Motion to Advance on Docket'
+            },
+            {
+              value: 'VacateMotionMailTask',
+              label: 'Motion to vacate'
+            },
+            {
+              value: 'OtherMotionMailTask',
+              label: 'Other motion'
+            },
+            {
+              value: 'PowerOfAttorneyRelatedMailTask',
+              label: 'Power of attorney-related'
+            },
+            {
+              value: 'PrivacyActRequestMailTask',
+              label: 'Privacy act request'
+            },
+            {
+              value: 'PrivacyComplaintMailTask',
+              label: 'Privacy complaint'
+            },
+            {
+              value: 'ReturnedUndeliverableCorrespondenceMailTask',
+              label: 'Returned or undeliverable mail'
+            },
+            {
+              value: 'StatusInquiryMailTask',
+              label: 'Status inquiry'
+            },
+            {
+              value: 'AppealWithdrawalMailTask',
+              label: 'Withdrawal of appeal'
+            }
+          ]
         }
-      ]
-    }
+      },
+      {
+        label: 'Assign to team',
+        value: 'modal/assign_to_team',
+        func: 'assign_to_organization_data',
+        data: {
+          selected: null,
+          options: [
+            {
+              label: 'Litigation Support',
+              value: 1
+            },
+            {
+              label: 'Mail',
+              value: 2
+            },
+            {
+              label: 'AOD',
+              value: 4
+            },
+            {
+              label: 'Case Review',
+              value: 5
+            }
+          ],
+          type: 'GenericTask'
+        }
+      },
+      {
+        label: 'Re-assign to person',
+        value: 'modal/reassign_to_person',
+        func: 'assign_to_user_data',
+        data: {
+          selected: {
+            id: 6,
+            created_at: '2019-09-09T18:23:32.578-04:00',
+            css_id: 'CSS_ID3',
+            efolder_documents_fetched_at: null,
+            email: null,
+            full_name: 'Motions attorney',
+            last_login_at: null,
+            roles: [],
+            selected_regional_office: null,
+            station_id: '101',
+            status: 'active',
+            status_updated_at: null,
+            updated_at: '2019-09-09T18:23:32.578-04:00',
+            display_name: 'CSS_ID3 (VACO)'
+          },
+          options: [],
+          type: 'VacateMotionMailTask'
+        }
+      },
+      {
+        label: 'Put task on hold',
+        value: 'modal/place_timed_hold'
+      },
+      {
+        label: 'Mark task complete',
+        value: 'modal/mark_task_complete',
+        func: 'complete_data',
+        data: {
+          modal_body: 'You can find this case in the completed tab of your queue.'
+        }
+      },
+      {
+        label: 'Cancel task',
+        value: 'modal/cancel_task',
+        func: 'cancel_task_data',
+        data: {
+          modal_title: 'Cancel task',
+          modal_body: 'Cancelling this task will return it to the assigner',
+          message_title: "Task for Bob Smith's case has been cancelled",
+          message_detail: "If you've made a mistake, please email Lauren Roth to manage any changes."
+        }
+      },
+      {
+        label: 'Notify OGC of Pulac-Cerullo',
+        value: 'modal/assign_to_pulac_cerullo',
+        func: 'assign_to_pulac_cerullo_data',
+        data: {
+          selected: {
+            id: 6,
+            name: 'Pulac-Cerullo',
+            participant_id: null,
+            role: null,
+            url: 'pulac-cerullo'
+          },
+          options: [
+            {
+              label: 'Pulac-Cerullo',
+              value: 6
+            }
+          ],
+          type: 'PulacCerulloTask'
+        }
+      },
+      {
+        label: 'Send to judge',
+        value: 'send_to_judge',
+        func: 'send_motion_to_vacate_to_judge_data',
+        data: {
+          selected: null,
+          options: [
+            {
+              label: 'Judge the Third',
+              value: 3
+            },
+            {
+              label: 'Judge the First',
+              value: 1
+            },
+            {
+              label: 'Judge the Second',
+              value: 2
+            }
+          ],
+          type: 'VacateMotionMailTask'
+        }
+      }
+    ],
+    timelineTitle: 'VacateMotionMailTask completed',
+    hideFromQueueTableView: false,
+    hideFromTaskSnapshot: false,
+    hideFromCaseTimeline: false
   },
   {
-    id: '540',
-    type: 'task',
-    attributes: {
-      is_legacy: false,
-      type: 'VacateMotionMailTask',
-      label: 'Motion to vacate',
-      appeal_id: 10,
-      status: 'on_hold',
-      assigned_at: '2019-08-16T11:53:06.291-04:00',
-      started_at: null,
-      created_at: '2019-08-16T11:53:06.291-04:00',
-      closed_at: null,
-      instructions: [],
-      appeal_type: 'Appeal',
-      timeline_title: 'VacateMotionMailTask completed',
-      hide_from_queue_table_view: false,
-      hide_from_case_timeline: false,
-      hide_from_task_snapshot: false,
-      assigned_by: { first_name: '', last_name: '', css_id: null, pg_id: null },
-      assigned_to: { css_id: null, is_organization: true, name: 'LIT_SUPPORT_USER', type: 'MailTeam', id: 11 },
-      assignee_name: 'Mail',
-      placed_on_hold_at: '2019-08-16T11:53:06.325-04:00',
-      on_hold_duration: null,
-      docket_name: 'evidence_submission',
-      case_type: 'Original',
-      docket_number: '190721-10',
-      docket_range_date: null,
-      veteran_full_name: 'Bob Smith',
-      veteran_file_number: '500000009',
-      closest_regional_office: null,
-      external_appeal_id: '78584fa0-54b5-4ada-b760-f75abc53e19e',
-      aod: false,
-      issue_count: 0,
-      external_hearing_id: null,
-      available_hearing_locations: [],
-      previous_task: { assigned_at: null },
-      document_id: null,
-      decision_prepared_by: { first_name: null, last_name: null },
-      available_actions: []
-    }
-  },
+    uniqueId: '3',
+    isLegacy: false,
+    type: 'RootTask',
+    appealType: 'Appeal',
+    addedByCssId: null,
+    appealId: 1,
+    externalAppealId: 'b519f92c-715e-450c-9530-3cb421d61abc',
+    assignedOn: '2019-09-09T18:23:39.454-04:00',
+    closestRegionalOffice: null,
+    createdAt: '2019-09-09T18:23:39.454-04:00',
+    closedAt: null,
+    assigneeName: "Board of Veterans' Appeals",
+    assignedTo: {
+      cssId: null,
+      name: 'Case storage',
+      id: 3,
+      isOrganization: true,
+      type: 'Bva'
+    },
+    assignedBy: {
+      firstName: '',
+      lastName: '',
+      cssId: null,
+      pgId: null
+    },
+    taskId: '3',
+    label: 'Root Task',
+    documentId: null,
+    externalHearingId: null,
+    workProduct: null,
+    previousTaskAssignedOn: null,
+    placedOnHoldAt: null,
+    status: 'assigned',
+    onHoldDuration: null,
+    instructions: [],
+    decisionPreparedBy: null,
+    availableActions: [],
+    timelineTitle: 'RootTask completed',
+    hideFromQueueTableView: false,
+    hideFromTaskSnapshot: true,
+    hideFromCaseTimeline: true
+  }
+];
+
+export const appeals = [
   {
-    id: '29',
-    type: 'task',
-    attributes: {
-      is_legacy: false,
-      type: 'DistributionTask',
-      label: 'Distribution Task',
-      appeal_id: 10,
-      status: 'on_hold',
-      assigned_at: '2019-07-22T14:15:17.034-04:00',
-      started_at: null,
-      created_at: '2019-07-22T14:15:17.034-04:00',
-      closed_at: null,
-      instructions: [],
-      appeal_type: 'Appeal',
-      timeline_title: 'DistributionTask completed',
-      hide_from_queue_table_view: false,
-      hide_from_case_timeline: false,
-      hide_from_task_snapshot: false,
-      assigned_by: { first_name: '', last_name: '', css_id: null, pg_id: null },
-      assigned_to: { css_id: null, is_organization: true, name: 'LIT_SUPPORT_USER', type: 'Bva', id: 3 },
-      assignee_name: "Board of Veterans' Appeals",
-      placed_on_hold_at: '2019-07-22T14:15:17.093-04:00',
-      on_hold_duration: null,
-      docket_name: 'evidence_submission',
-      case_type: 'Original',
-      docket_number: '190721-10',
-      docket_range_date: null,
-      veteran_full_name: 'Bob Smith',
-      veteran_file_number: '500000009',
-      closest_regional_office: null,
-      external_appeal_id: '78584fa0-54b5-4ada-b760-f75abc53e19e',
-      aod: false,
-      issue_count: 0,
-      external_hearing_id: null,
-      available_hearing_locations: [],
-      previous_task: { assigned_at: null },
-      document_id: null,
-      decision_prepared_by: { first_name: null, last_name: null },
-      available_actions: []
-    }
-  },
-  {
-    id: '30',
-    type: 'task',
-    attributes: {
-      is_legacy: false,
-      type: 'EvidenceSubmissionWindowTask',
-      label: 'Evidence Submission Window Task',
-      appeal_id: 10,
-      status: 'assigned',
-      assigned_at: '2019-07-22T14:15:17.080-04:00',
-      started_at: null,
-      created_at: '2019-07-22T14:15:17.080-04:00',
-      closed_at: null,
-      instructions: [],
-      appeal_type: 'Appeal',
-      timeline_title: 'EvidenceSubmissionWindowTask completed',
-      hide_from_queue_table_view: false,
-      hide_from_case_timeline: false,
-      hide_from_task_snapshot: false,
-      assigned_by: { first_name: '', last_name: '', css_id: null, pg_id: null },
-      assigned_to: { css_id: null, is_organization: true, name: 'LIT_SUPPORT_USER', type: 'MailTeam', id: 11 },
-      assignee_name: 'Mail',
-      placed_on_hold_at: null,
-      on_hold_duration: null,
-      docket_name: 'evidence_submission',
-      case_type: 'Original',
-      docket_number: '190721-10',
-      docket_range_date: null,
-      veteran_full_name: 'Bob Smith',
-      veteran_file_number: '500000009',
-      closest_regional_office: null,
-      external_appeal_id: '78584fa0-54b5-4ada-b760-f75abc53e19e',
-      aod: false,
-      issue_count: 0,
-      external_hearing_id: null,
-      available_hearing_locations: [],
-      previous_task: { assigned_at: null },
-      document_id: null,
-      decision_prepared_by: { first_name: null, last_name: null },
-      available_actions: []
-    }
-  },
-  {
-    id: '28',
-    type: 'task',
-    attributes: {
-      is_legacy: false,
-      type: 'RootTask',
-      label: 'Root Task',
-      appeal_id: 10,
-      status: 'on_hold',
-      assigned_at: '2019-07-22T14:15:16.994-04:00',
-      started_at: null,
-      created_at: '2019-07-22T14:15:16.994-04:00',
-      closed_at: null,
-      instructions: [],
-      appeal_type: 'Appeal',
-      timeline_title: 'RootTask completed',
-      hide_from_queue_table_view: false,
-      hide_from_case_timeline: true,
-      hide_from_task_snapshot: true,
-      assigned_by: { first_name: '', last_name: '', css_id: null, pg_id: null },
-      assigned_to: { css_id: null, is_organization: true, name: 'LIT_SUPPORT_USER', type: 'Bva', id: 3 },
-      assignee_name: "Board of Veterans' Appeals",
-      placed_on_hold_at: '2019-07-22T14:15:17.044-04:00',
-      on_hold_duration: null,
-      docket_name: 'evidence_submission',
-      case_type: 'Original',
-      docket_number: '190721-10',
-      docket_range_date: null,
-      veteran_full_name: 'Bob Smith',
-      veteran_file_number: '500000009',
-      closest_regional_office: null,
-      external_appeal_id: '78584fa0-54b5-4ada-b760-f75abc53e19e',
-      aod: false,
-      issue_count: 0,
-      external_hearing_id: null,
-      available_hearing_locations: [],
-      previous_task: { assigned_at: null },
-      document_id: null,
-      decision_prepared_by: { first_name: null, last_name: null },
-      available_actions: []
+    hearings: [],
+    completedHearingOnPreviousAppeal: false,
+    issues: [],
+    decisionIssues: [],
+    canEditRequestIssues: false,
+    appellantFullName: 'Tom Brady',
+    appellantAddress: {
+      address_line_1: '9999 MISSION ST',
+      address_line_2: 'UBER',
+      address_line_3: 'APT 2',
+      city: 'SAN FRANCISCO',
+      country: 'USA',
+      state: 'CA',
+      zip: '94103'
+    },
+    appellantRelationship: 'Spouse',
+    assignedToLocation: 'Case storage',
+    closestRegionalOffice: null,
+    availableHearingLocations: [],
+    externalId: 'b519f92c-715e-450c-9530-3cb421d61abc',
+    decisionDate: null,
+    nodDate: '2019-09-08',
+    certificationDate: null,
+    powerOfAttorney: {
+      representative_type: 'Attorney',
+      representative_name: 'Attorney McAttorneyFace',
+      representative_address: {
+        address_line_1: '9999 MISSION ST',
+        address_line_2: 'UBER',
+        address_line_3: 'APT 2',
+        city: 'SAN FRANCISCO',
+        country: 'USA',
+        state: 'CA',
+        zip: '94103'
+      }
+    },
+    regionalOffice: null,
+    caseflowVeteranId: 1,
+    documentID: null,
+    caseReviewId: null,
+    canEditDocumentId: false,
+    attorneyCaseRewriteDetails: {
+      overtime: null,
+      note_from_attorney: null,
+      untimely_evidence: null
+    },
+    veteranInfo: {
+      veteran: {
+        full_name: 'Bob Smith',
+        gender: 'M',
+        date_of_birth: '01/10/1935',
+        date_of_death: null,
+        email_address: 'Bob.Smith@test.com',
+        address: {
+          address_line_1: '1234 Main Street',
+          address_line_2: null,
+          address_line_3: null,
+          city: 'Orlando',
+          state: 'FL',
+          zip: '12345',
+          country: 'USA'
+        }
+      }
     }
   }
 ];
