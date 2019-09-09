@@ -118,7 +118,7 @@ class QueueRepository
 
     def assign_case_to_attorney!(judge:, attorney:, vacols_id:)
       transaction do
-        unless [ judge.vacols_uniq_id, 'CASEFLOW' ].include?(VACOLS::Case.find(vacols_id).bfcurloc)
+        unless VACOLS::Case.find(vacols_id).bfcurloc == judge.vacols_uniq_id
           fail Caseflow::Error::LegacyCaseAlreadyAssignedError, message: "Case already assigned"
         end
 

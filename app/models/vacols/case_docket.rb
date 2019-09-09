@@ -280,7 +280,12 @@ class VACOLS::CaseDocket < VACOLS::Record
         conn.execute(LOCK_READY_APPEALS)
         appeals = conn.exec_query(fmtd_query).to_hash
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
-        VACOLS::Case.batch_update_vacols_location(judge.vacols_uniq_id, vacols_ids)
+        location = if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
+                     LegacyAppeal::LOCATION_CODES[:caseflow]
+                   else
+                     judge.vacols_uniq_id
+                   end
+        VACOLS::Case.batch_update_vacols_location(location, vacols_ids)
         appeals
       end
     end
@@ -323,7 +328,12 @@ class VACOLS::CaseDocket < VACOLS::Record
         return appeals if appeals.empty?
 
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
-        VACOLS::Case.batch_update_vacols_location('CASEFLOW', vacols_ids)
+        location = if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
+                     LegacyAppeal::LOCATION_CODES[:caseflow]
+                   else
+                     judge.vacols_uniq_id
+                   end
+        VACOLS::Case.batch_update_vacols_location(location, vacols_ids)
         appeals
       end
     end
