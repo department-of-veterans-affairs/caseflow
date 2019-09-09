@@ -143,6 +143,21 @@ describe Veteran, :postgres do
         end
       end
     end
+
+    context "when local participant_id attribute is nil" do
+      let!(:veteran) do
+        veteran = create(:veteran, file_number: file_number)
+        veteran.update!(participant_id: nil)
+        veteran
+      end
+      let(:sync_name) { true }
+
+      it "caches it like name" do
+        expect(described_class.find_by(file_number: file_number)[:participant_id]).to be_nil
+        described_class.find_or_create_by_file_number(file_number, sync_name: sync_name)
+        expect(described_class.find_by(file_number: file_number)[:participant_id]).to_not be_nil
+      end
+    end
   end
 
   context "lazily loaded bgs attributes" do

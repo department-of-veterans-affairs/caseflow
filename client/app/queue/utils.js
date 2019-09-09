@@ -438,6 +438,7 @@ export const buildCaseReviewPayload = (
   } else {
     args.factors_not_considered = _.keys(args.factors_not_considered);
     args.areas_for_improvement = _.keys(args.areas_for_improvement);
+    args.positive_feedback = _.keys(args.positive_feedback);
 
     _.extend(payload.data.tasks, args);
   }
