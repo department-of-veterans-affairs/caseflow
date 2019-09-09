@@ -9,7 +9,7 @@ describe Veteran, :postgres do
   before do
     Timecop.freeze(Time.utc(2022, 1, 15, 12, 0, 0))
 
-    Fakes::BGSService.veteran_records = { "44556677" => veteran_record }
+    Fakes::BGSService.store_veteran_record("44556677", veteran_record)
 
     RequestStore[:current_user] = create(:user)
   end
@@ -112,7 +112,9 @@ describe Veteran, :postgres do
       let!(:veteran) { create(:veteran, file_number: file_number) }
 
       before do
-        Fakes::BGSService.veteran_records[file_number][:last_name] = "Changed"
+        vet_record = Fakes::BGSService.get_veteran_record(file_number)
+        vet_record[:last_name] = "Changed"
+        Fakes::BGSService.store_veteran_record(file_number, vet_record)
       end
 
       context "sync_name flag is true" do
@@ -565,7 +567,9 @@ describe Veteran, :postgres do
 
     context "exists in BGS with different name than in Caseflow" do
       before do
-        Fakes::BGSService.veteran_records[veteran.file_number][:last_name] = "Changed"
+        vet_record = Fakes::BGSService.get_veteran_record(file_number)
+        vet_record[:last_name] = "Changed"
+        Fakes::BGSService.store_veteran_record(file_number, vet_record)
       end
 
       context "sync_name flag is true" do
@@ -607,7 +611,7 @@ describe Veteran, :postgres do
     let(:ssn) { "666660000" }
 
     before do
-      BGSService.veteran_records = {}
+      BGSService.veteran_store.clear!
     end
 
     context "veteran exists in Caseflow" do
@@ -660,7 +664,9 @@ describe Veteran, :postgres do
       let!(:veteran) { create(:veteran, file_number: file_number, ssn: ssn) }
 
       before do
-        Fakes::BGSService.veteran_records[veteran.file_number][:last_name] = "Changed"
+        vet_record = Fakes::BGSService.get_veteran_record(veteran.file_number)
+        vet_record[:last_name] = "Changed"
+        Fakes::BGSService.store_veteran_record(veteran.file_number, vet_record)
       end
 
       context "sync_name flag is true" do
@@ -701,13 +707,15 @@ describe Veteran, :postgres do
     subject { veteran.unload_bgs_record }
 
     it "uses the new address for establishing a claim" do
-      expect(veteran.bgs_record).to include(address_line1: "122 Mullberry St.")
+      expect(veteran.bgs_record[:address_line1]).to eq("122 Mullberry St.")
 
-      Fakes::BGSService.veteran_records[veteran.file_number][:address_line1] = "Changed"
+      vet_record = Fakes::BGSService.get_veteran_record(veteran.file_number)
+      vet_record[:address_line1] = "Changed"
+      Fakes::BGSService.store_veteran_record(veteran.file_number, vet_record)
 
       subject
 
-      expect(veteran.bgs_record).to include(address_line1: "Changed")
+      expect(veteran.bgs_record[:address_line1]).to eq("Changed")
     end
   end
 
@@ -786,7 +794,9 @@ describe Veteran, :postgres do
       let(:bgs_ssn) { "666999999" }
 
       before do
-        Fakes::BGSService.veteran_records[veteran.file_number][:ssn] = bgs_ssn
+        vet_record = Fakes::BGSService.get_veteran_record(veteran.file_number)
+        vet_record[:ssn] = bgs_ssn
+        Fakes::BGSService.store_veteran_record(veteran.file_number, vet_record)
       end
 
       it { is_expected.to eq(true) }

@@ -9,7 +9,6 @@ class Fakes::BGSService
 
   cattr_accessor :end_product_records
   cattr_accessor :inaccessible_appeal_vbms_ids
-  cattr_accessor :veteran_records
   cattr_accessor :power_of_attorney_records
   cattr_accessor :address_records
   cattr_accessor :ssn_not_found
@@ -94,13 +93,26 @@ class Fakes::BGSService
       @end_product_store ||= Fakes::EndProductStore.new
     end
 
+    def veteran_store
+      @veteran_store ||= Fakes::VeteranStore.new
+    end
+
     delegate :store_end_product_record, to: :end_product_store
+    delegate :store_veteran_record, to: :veteran_store
+
+    def get_veteran_record(veteran_id)
+      veteran_store.fetch_and_inflate(veteran_id)
+    end
   end
 
   def get_end_products(veteran_id)
     store = self.class.end_product_store
     records = store.fetch_and_inflate(veteran_id) || store.fetch_and_inflate(:default) || {}
     records.values
+  end
+
+  def get_veteran_record(veteran_id)
+    self.class.get_veteran_record(veteran_id)
   end
 
   def cancel_end_product(veteran_id, end_product_code, end_product_modifier)
@@ -118,7 +130,7 @@ class Fakes::BGSService
     # BGS throws a ShareError if the veteran has too high sensitivity
     fail BGS::ShareError, "Sensitive File - Access Violation !" unless can_access?(vbms_id)
 
-    (self.class.veteran_records || {})[vbms_id]
+    get_veteran_record(vbms_id)
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -251,8 +263,9 @@ class Fakes::BGSService
   def fetch_file_number_by_ssn(ssn)
     return if ssn_not_found
 
-    (self.class.veteran_records || {}).each do |file_number, rec|
-      if rec[:ssn].to_s == ssn.to_s
+    self.class.veteran_store.all_veteran_ids.each do |file_number|
+      record = get_veteran_record(file_number)
+      if record[:ssn].to_s == ssn.to_s
         return file_number
       end
     end
