@@ -129,7 +129,6 @@ describe Veteran, :all_dbs do
         veteran.update!(participant_id: nil)
         veteran
       end
-      let(:sync_name) { true }
 
       it "caches it like name" do
         expect(described_class.find_by(file_number: file_number)[:participant_id]).to be_nil
