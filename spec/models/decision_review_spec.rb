@@ -183,12 +183,23 @@ describe DecisionReview, :postgres do
     context "when an issue was decided in the future" do
       let!(:future_decision_issue) do
         create(:decision_issue,
+               decision_review: higher_level_review,
+               rating_profile_date: receipt_date + 1.day,
+               end_product_last_action_date: receipt_date + 1.day,
+               benefit_type: higher_level_review.benefit_type,
+               decision_text: "something was decided in the future 1",
+               description: "future decision issue from same review",
+               participant_id: veteran.participant_id)
+      end
+
+      let!(:future_decision_issue2) do
+        create(:decision_issue,
                decision_review: supplemental_claim,
                rating_profile_date: receipt_date + 1.day,
                end_product_last_action_date: receipt_date + 1.day,
                benefit_type: supplemental_claim.benefit_type,
-               decision_text: "something was decided in the future",
-               description: "future decision issue",
+               decision_text: "something was decided in the future 2",
+               description: "future decision issue from a different review",
                participant_id: veteran.participant_id)
       end
 
@@ -205,11 +216,34 @@ describe DecisionReview, :postgres do
         )
       end
 
-      it "does not return decision issues in the future" do
-        expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
-        expect(subject.map(&:serialize)).to_not include(hash_including(description: "future decision issue"))
-        expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
-        expect(subject.map(&:serialize)).to_not include(hash_including(description: "future rating issue 2"))
+      context "without correct_claim_reviews feature toggle" do
+        it "does include decision issues in the future that correspond to same review" do
+          expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
+          expect(subject.map(&:serialize)).to_not include(
+            hash_including(description: "future decision issue from same review")
+          )
+          expect(subject.map(&:serialize)).to_not include(
+            hash_including(description: "future decision issue from a different review")
+          )
+          expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
+          expect(subject.map(&:serialize)).to_not include(hash_including(description: "future rating issue 2"))
+        end
+      end
+
+      context "with correct_claim_reviews feature toggle" do
+        before { FeatureToggle.enable!(:correct_claim_reviews) }
+
+        it "does include decision issues in the future that correspond to same review" do
+          expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
+          expect(subject.map(&:serialize)).to include(
+            hash_including(description: "future decision issue from same review")
+          )
+          expect(subject.map(&:serialize)).to_not include(
+            hash_including(description: "future decision issue from a different review")
+          )
+          expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
+          expect(subject.map(&:serialize)).to_not include(hash_including(description: "future rating issue 2"))
+        end
       end
     end
 
