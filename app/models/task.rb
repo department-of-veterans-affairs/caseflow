@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 ##
-# Base model for all tasks in Caseflow.
+# Base model for all tasks in generic organizational task queues in Caseflow
 # Tasks represent work to be done by judges, attorneys, VSOs, and anyone else who touches a Veteran's appeal.
+# Supports common actions like:
+#   - marking tasks complete
+#   - assigning a task to a team
+#   - assigning a task to an individual
 
 class Task < ApplicationRecord
   acts_as_tree

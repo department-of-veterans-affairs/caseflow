@@ -324,7 +324,7 @@ describe Task, :postgres do
     end
     let(:good_params_array) { [good_params] }
 
-    fcontext "when missing assignee" do
+    context "when missing assignee" do
       let(:bad_params) do
         {
           status: Constants.TASK_STATUSES.completed,
