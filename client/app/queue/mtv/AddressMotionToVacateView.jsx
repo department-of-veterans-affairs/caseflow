@@ -18,7 +18,6 @@ export const AddressMotionToVacateView = (props) => {
   }));
 
   const handleSubmit = (decision) => {
-    console.log('handleSubmit', decision);
     props.submitMTVJudgeDecision(decision);
   };
 
