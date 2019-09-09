@@ -19,444 +19,82 @@ class Fakes::BGSService
   cattr_accessor :generate_tracked_items_requests
   attr_accessor :client
 
-  def self.can_access_cache_key(user, vbms_id)
-    "bgs_can_access_#{user.css_id}_#{user.station_id}_#{vbms_id}"
-  end
-
-  def self.bust_can_access_cache(user, vbms_id)
-    Rails.cache.delete(can_access_cache_key(user, vbms_id))
-  end
-
-  def self.mark_veteran_not_accessible(vbms_id)
-    bust_can_access_cache(RequestStore[:current_user], vbms_id)
-    self.inaccessible_appeal_vbms_ids ||= []
-    self.inaccessible_appeal_vbms_ids << vbms_id
-  end
-
-  def self.create_veteran_records
-    return if @veteran_records_created
-
-    @veteran_records_created = true
-
-    file_path = Rails.root.join("local", "vacols", "bgs_setup.csv")
-
-    CSV.foreach(file_path, headers: true) do |row|
-      row_hash = row.to_h
-      file_number = row_hash["vbms_id"].chop
-      veteran = Veteran.find_by_file_number(file_number) || Generators::Veteran.build(file_number: file_number)
-      ama_begin_date = Constants::DATES["AMA_ACTIVATION"].to_date
-
-      case row_hash["bgs_key"]
-      when "has_rating"
-        Generators::Rating.build(
-          participant_id: veteran.participant_id
-        )
-      when "has_two_ratings"
-        Generators::Rating.build(
-          participant_id: veteran.participant_id
-        )
-        Generators::Rating.build(
-          participant_id: veteran.participant_id,
-          promulgation_date: ama_begin_date + 2.days,
-          issues: [
-            { decision_text: "Left knee" },
-            { decision_text: "PTSD" }
-          ]
-        )
-      when "has_many_ratings"
-        in_active_review_reference_id = "in-active-review-ref-id"
-        in_active_review_receipt_date = Time.zone.parse("2018-04-01")
-        completed_review_receipt_date = in_active_review_receipt_date - 30.days
-        completed_review_reference_id = "cleared-review-ref-id"
-        contention = Generators::Contention.build
-
-        Generators::Rating.build(
-          participant_id: veteran.participant_id
-        )
-        Generators::Rating.build(
-          participant_id: veteran.participant_id,
-          profile_date: ama_begin_date + 3.days,
-          promulgation_date: ama_begin_date + 7.days,
-          issues: [
-            { decision_text: "Left knee" },
-            { decision_text: "Right knee" },
-            { decision_text: "PTSD" },
-            { decision_text: "This rating is in active review", reference_id: in_active_review_reference_id },
-            { decision_text: "I am on a completed Higher Level Review", contention_reference_id: contention.id }
-          ]
-        )
-        Generators::Rating.build(
-          participant_id: veteran.participant_id,
-          profile_date: ama_begin_date - 10.days,
-          promulgation_date: ama_begin_date - 5.days,
-          issues: [
-            { decision_text: "Issue before AMA not from a RAMP Review", reference_id: "before_ama_ref_id" },
-            { decision_text: "Issue before AMA from a RAMP Review",
-              associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
-              reference_id: "ramp_reference_id" }
-          ]
-        )
-        ramp_begin_date = Date.new(2017, 11, 1)
-        Generators::Rating.build(
-          participant_id: veteran.participant_id,
-          profile_date: ramp_begin_date - 20.days,
-          promulgation_date: ramp_begin_date - 15.days,
-          issues: [
-            { decision_text: "Issue before test AMA not from a RAMP Review", reference_id: "before_test_ama_ref_id" },
-            { decision_text: "Issue before test AMA from a RAMP Review",
-              associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_test_claim_id" },
-              reference_id: "ramp_reference_id" }
-          ]
-        )
-        Generators::Rating.build(
-          participant_id: veteran.participant_id,
-          promulgation_date: Time.zone.today - 395,
-          profile_date: Time.zone.today - 400,
-          issues: [
-            { decision_text: "Old injury" }
-          ]
-        )
-        hlr = HigherLevelReview.find_or_create_by!(
-          veteran_file_number: veteran.file_number,
-          receipt_date: in_active_review_receipt_date
-        )
-        epe = EndProductEstablishment.find_or_create_by!(
-          reference_id: in_active_review_reference_id,
-          veteran_file_number: veteran.file_number,
-          source: hlr,
-          payee_code: EndProduct::DEFAULT_PAYEE_CODE
-        )
-        RequestIssue.find_or_create_by!(
-          decision_review: hlr,
-          benefit_type: "compensation",
-          end_product_establishment: epe,
-          contested_rating_issue_reference_id: in_active_review_reference_id
-        ) do |reqi|
-          reqi.contested_rating_issue_profile_date = (Time.zone.today - 100).to_s
-        end
-        Generators::EndProduct.build(
-          veteran_file_number: veteran.file_number,
-          bgs_attrs: { benefit_claim_id: in_active_review_reference_id }
-        )
-        previous_hlr = HigherLevelReview.find_or_create_by!(
-          veteran_file_number: veteran.file_number,
-          receipt_date: completed_review_receipt_date
-        )
-        cleared_epe = EndProductEstablishment.find_or_create_by!(
-          reference_id: completed_review_reference_id,
-          veteran_file_number: veteran.file_number,
-          source: previous_hlr,
-          synced_status: "CLR",
-          payee_code: EndProduct::DEFAULT_PAYEE_CODE
-        )
-        RequestIssue.find_or_create_by!(
-          decision_review: previous_hlr,
-          benefit_type: "compensation",
-          end_product_establishment: cleared_epe,
-          contested_rating_issue_reference_id: completed_review_reference_id,
-          contention_reference_id: contention.id
-        ) do |reqi|
-          reqi.contested_rating_issue_profile_date = Time.zone.today - 100
-        end
-        Generators::EndProduct.build(
-          veteran_file_number: veteran.file_number,
-          bgs_attrs: { benefit_claim_id: completed_review_reference_id }
-        )
-
-        Generators::Rating.build(
-          participant_id: veteran.participant_id,
-          promulgation_date: ama_begin_date + 10.days,
-          issues: [
-            { decision_text: "Lorem ipsum dolor sit amet, paulo scaevola abhorreant mei te, ex est mazim ornatus, at pro causae maiestatis." },
-            { decision_text: "Inani movet maiestatis nec no, verear periculis signiferumque in sit." },
-            { decision_text: "Et nibh euismod recusabo duo. Ne zril labitur eum, ei sit augue impedit detraxit." },
-            { decision_text: "Usu et praesent suscipiantur, mea mazim timeam liberavisse et." },
-            { decision_text: "At dicit omnes per, vim tale tota no." }
-          ]
-        )
-        Generators::Rating.build(
-          participant_id: veteran.participant_id,
-          promulgation_date: ama_begin_date + 12.days,
-          issues: [
-            { decision_text: "In mei labore oportere mediocritatem, vel ex dicta quidam corpora, fierent explicari liberavisse ei quo." },
-            { decision_text: "Vel malis impetus ne, vim cibo appareat scripserit ne, qui lucilius consectetuer ex." },
-            { decision_text: "Cu unum partiendo sadipscing has, eius explicari ius no." },
-            { decision_text: "Cu unum partiendo sadipscing has, eius explicari ius no." },
-            { decision_text: "Cibo pertinax hendrerit vis et, legendos euripidis no ius, ad sea unum harum." }
-          ]
-        )
-      when "has_supplemental_claim_with_vbms_claim_id"
-        claim_id = "600118926"
-        sc = SupplementalClaim.find_or_create_by!(
-          veteran_file_number: veteran.file_number
-        )
-        EndProductEstablishment.find_or_create_by!(
-          reference_id: claim_id,
-          veteran_file_number: veteran.file_number,
-          source: sc,
-          payee_code: EndProduct::DEFAULT_PAYEE_CODE
-        )
-        Generators::EndProduct.build(
-          veteran_file_number: veteran.file_number,
-          bgs_attrs: { benefit_claim_id: claim_id }
-        )
-        sc
-      when "has_higher_level_review_with_vbms_claim_id"
-        claim_id = "600118951"
-        contention_reference_id = veteran.file_number[0..4] + "1234"
-        hlr = HigherLevelReview.find_or_create_by!(
-          veteran_file_number: veteran.file_number
-        )
-        epe = EndProductEstablishment.find_or_create_by!(
-          reference_id: claim_id,
-          veteran_file_number: veteran.file_number,
-          source: hlr,
-          payee_code: EndProduct::DEFAULT_PAYEE_CODE
-        )
-        RequestIssue.find_or_create_by!(
-          decision_review: hlr,
-          benefit_type: "compensation",
-          end_product_establishment: epe,
-          contention_reference_id: contention_reference_id
-        )
-        Generators::Rating.build(
-          participant_id: veteran.participant_id,
-          promulgation_date: Time.zone.today - 40,
-          profile_date: Time.zone.today - 30,
-          issues: [
-            {
-              decision_text: "Higher Level Review was denied",
-              contention_reference_id: contention_reference_id
-            }
-          ]
-        )
-        Generators::EndProduct.build(
-          veteran_file_number: veteran.file_number,
-          bgs_attrs: { benefit_claim_id: claim_id }
-        )
-        hlr
-      when "has_ramp_election_with_contentions"
-        claim_id = "123456"
-        ramp_election = RampElection.find_or_create_by!(
-          veteran_file_number: veteran.file_number,
-          established_at: 1.day.ago
-        )
-        EndProductEstablishment.find_or_create_by!(reference_id: claim_id, source: ramp_election) do |e|
-          e.payee_code = EndProduct::DEFAULT_PAYEE_CODE
-          e.veteran_file_number = veteran.file_number
-          e.last_synced_at = 10.minutes.ago
-          e.synced_status = "CLR"
-        end
-        Generators::Contention.build(text: "A contention!", claim_id: claim_id)
-        Generators::EndProduct.build(
-          veteran_file_number: veteran.file_number,
-          bgs_attrs: { benefit_claim_id: claim_id }
-        )
-        ramp_election
-      end
+  class << self
+    def can_access_cache_key(user, vbms_id)
+      "bgs_can_access_#{user.css_id}_#{user.station_id}_#{vbms_id}"
     end
-  end
 
-  def self.all_grants
-    default_date = 10.days.ago.to_formatted_s(:short_date)
-    [
+    def bust_can_access_cache(user, vbms_id)
+      Rails.cache.delete(can_access_cache_key(user, vbms_id))
+    end
+
+    def mark_veteran_not_accessible(vbms_id)
+      bust_can_access_cache(RequestStore[:current_user], vbms_id)
+      self.inaccessible_appeal_vbms_ids ||= []
+      self.inaccessible_appeal_vbms_ids << vbms_id
+    end
+
+    def create_veteran_records
+      return if veteran_records_created?
+
+      record_maker = Fakes::BGSServiceRecordMaker.new
+      record_maker.call
+    end
+
+    def veteran_records_created?
+      RequestIssue.find_by(
+        contested_rating_issue_reference_id: Fakes::BGSServiceRecordMaker::KNOWN_REQUEST_ISSUE_REFERENCE_ID
+      )
+    end
+
+    def all_grants
+      Fakes::BGSServiceGrants.all
+    end
+
+    def existing_full_grants
+      Fakes::BGSServiceGrants.existing_full_grants
+    end
+
+    def existing_partial_grants
+      Fakes::BGSServiceGrants.existing_partial_grants
+    end
+
+    def no_grants
+      []
+    end
+
+    def power_of_attorney_records
       {
-        benefit_claim_id: "1",
-        claim_receive_date: 20.days.ago.to_formatted_s(:short_date),
-        claim_type_code: "070BVAGR",
-        end_product_type_code: "070",
-        status_type_code: "PEND"
-      },
-      {
-        benefit_claim_id: "2",
-        claim_receive_date: default_date,
-        claim_type_code: "070RMND",
-        end_product_type_code: "070",
-        status_type_code: "CLR"
-      },
-      {
-        benefit_claim_id: "3",
-        claim_receive_date: Time.zone.now.to_formatted_s(:short_date),
-        claim_type_code: "070BVAGR",
-        end_product_type_code: "071",
-        status_type_code: "CAN"
-      },
-      {
-        benefit_claim_id: "4",
-        claim_receive_date: 200.days.ago.to_formatted_s(:short_date),
-        claim_type_code: "070BVAGR",
-        end_product_type_code: "072",
-        status_type_code: "CLR"
-      },
-      {
-        benefit_claim_id: "5",
-        claim_receive_date: default_date,
-        claim_type_code: "170APPACT",
-        end_product_type_code: "170",
-        status_type_code: "PEND"
-      },
-      {
-        benefit_claim_id: "6",
-        claim_receive_date: default_date,
-        claim_type_code: "170APPACTPMC",
-        end_product_type_code: "171",
-        status_type_code: "PEND"
-      },
-      {
-        benefit_claim_id: "7",
-        claim_receive_date: default_date,
-        claim_type_code: "170PGAMC",
-        end_product_type_code: "170",
-        status_type_code: "PEND"
-      },
-      {
-        benefit_claim_id: "8",
-        claim_receive_date: default_date,
-        claim_type_code: "170RMD",
-        end_product_type_code: "170",
-        status_type_code: "PEND"
-      },
-      {
-        benefit_claim_id: "9",
-        claim_receive_date: default_date,
-        claim_type_code: "170RMDAMC",
-        end_product_type_code: "170",
-        status_type_code: "PEND"
-      },
-      {
-        benefit_claim_id: "10",
-        claim_receive_date: default_date,
-        claim_type_code: "170RMDPMC",
-        end_product_type_code: "170",
-        status_type_code: "PEND"
-      },
-      {
-        benefit_claim_id: "11",
-        claim_receive_date: default_date,
-        claim_type_code: "070BVAGRARC",
-        end_product_type_code: "170",
-        status_type_code: "PEND"
-      },
-      {
-        benefit_claim_id: "12",
-        claim_receive_date: default_date,
-        claim_type_code: "172BVAG",
-        end_product_type_code: "170",
-        status_type_code: "PEND"
-      },
-      {
-        benefit_claim_id: "13",
-        claim_receive_date: default_date,
-        claim_type_code: "172BVAGPMC",
-        end_product_type_code: "170",
-        status_type_code: "PEND"
-      },
-      {
-        benefit_claim_id: "14",
-        claim_receive_date: default_date,
-        claim_type_code: "400CORRC",
-        end_product_type_code: "170",
-        status_type_code: "PEND"
-      },
-      {
-        benefit_claim_id: "15",
-        claim_receive_date: default_date,
-        claim_type_code: "400CORRCPMC",
-        end_product_type_code: "170",
-        status_type_code: "PEND"
-      },
-      {
-        benefit_claim_id: "16",
-        claim_receive_date: default_date,
-        claim_type_code: "930RC",
-        end_product_type_code: "170",
-        status_type_code: "PEND"
-      },
-      {
-        benefit_claim_id: "17",
-        claim_receive_date: default_date,
-        claim_type_code: "930RCPMC",
-        end_product_type_code: "170",
-        status_type_code: "PEND"
+        "111225555" =>
+          {
+            file_number: "111225555",
+            power_of_attorney:
+              {
+                legacy_poa_cd: "3QQ",
+                nm: FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME,
+                org_type_nm: "POA Attorney",
+                ptcpnt_id: "ERROR-ID"
+              },
+            ptcpnt_id: "600085545"
+          }
       }
-    ]
-  end
+    end
 
-  def self.existing_full_grants
-    [
-      {
-        benefit_claim_id: "1",
-        claim_receive_date: 20.days.ago.to_formatted_s(:short_date),
-        claim_type_code: "070BVAGR",
-        end_product_type_code: "070",
-        status_type_code: "PEND"
-      }
-    ]
-  end
+    def clean!
+      self.ssn_not_found = false
+      self.inaccessible_appeal_vbms_ids = []
+      self.rating_records = {}
+      self.rating_profile_records = {}
+      end_product_store.clear!
+      self.manage_claimant_letter_v2_requests = nil
+      self.generate_tracked_items_requests = nil
+    end
 
-  def self.existing_partial_grants
-    [
-      {
-        benefit_claim_id: "1",
-        claim_receive_date: 10.days.ago.to_formatted_s(:short_date),
-        claim_type_code: "070RMBVAGARC",
-        end_product_type_code: "070",
-        status_type_code: "PEND"
-      },
-      {
-        benefit_claim_id: "2",
-        claim_receive_date: 10.days.ago.to_formatted_s(:short_date),
-        claim_type_code: "070RMBVAGARC",
-        end_product_type_code: "071",
-        status_type_code: "CLR"
-      },
-      {
-        benefit_claim_id: "3",
-        claim_receive_date: 200.days.ago.to_formatted_s(:short_date),
-        claim_type_code: "070RMBVAGARC",
-        end_product_type_code: "072",
-        status_type_code: "PEND"
-      }
-    ]
-  end
+    def end_product_store
+      @end_product_store ||= Fakes::EndProductStore.new
+    end
 
-  def self.no_grants
-    []
-  end
-
-  def self.power_of_attorney_records
-    {
-      "111225555" =>
-        {
-          file_number: "111225555",
-          power_of_attorney:
-            {
-              legacy_poa_cd: "3QQ",
-              nm: FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME,
-              org_type_nm: "POA Attorney",
-              ptcpnt_id: "ERROR-ID"
-            },
-          ptcpnt_id: "600085545"
-        }
-    }
-  end
-
-  def self.clean!
-    self.ssn_not_found = false
-    self.inaccessible_appeal_vbms_ids = []
-    self.rating_records = {}
-    self.rating_profile_records = {}
-    end_product_store.clear!
-    self.manage_claimant_letter_v2_requests = nil
-    self.generate_tracked_items_requests = nil
-  end
-
-  def self.end_product_store
-    @end_product_store ||= Fakes::EndProductStore.new
-  end
-
-  def self.store_end_product_record(veteran_id, end_product)
-    end_product_store.store_end_product_record(veteran_id, end_product)
+    delegate :store_end_product_record, to: :end_product_store
   end
 
   def get_end_products(veteran_id)
@@ -483,6 +121,7 @@ class Fakes::BGSService
     (self.class.veteran_records || {})[vbms_id]
   end
 
+  # rubocop:disable Metrics/MethodLength
   def fetch_person_info(participant_id)
     # This is a limited set of test data, more fields are available.
     if participant_id == "5382910292"
@@ -510,6 +149,7 @@ class Fakes::BGSService
       }
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def may_modify?(vbms_id, _veteran_participant_id)
     return false unless can_access?(vbms_id)
@@ -554,6 +194,7 @@ class Fakes::BGSService
     []
   end
 
+  # rubocop:disable Metrics/MethodLength
   def fetch_poas_by_participant_ids(participant_ids)
     get_hash_of_poa_from_bgs_poas(
       participant_ids.map do |participant_id|
@@ -580,6 +221,7 @@ class Fakes::BGSService
       end
     )
   end
+  # rubocop:enable Metrics/MethodLength
 
   def fetch_limited_poas_by_claim_ids(claim_ids)
     result = {}
