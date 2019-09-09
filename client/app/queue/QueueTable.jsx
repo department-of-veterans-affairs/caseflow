@@ -92,13 +92,19 @@ const HeaderRow = (props) => {
 
         // Keeping the historical prop `getFilterValues` for backwards compatibility,
         // will remove this once all apps are using this new component.
-        if ((!props.useTaskPagesApi && (column.enableFilter || column.getFilterValues)) ||
-            (props.useTaskPagesApi && column.filterOptions)) {
+        if (!props.useTaskPagesApi && (column.enableFilter || column.getFilterValues)) {
           filterIcon = <TableFilter
             {...column}
             tableData={column.tableData || props.rowObjects}
             valueTransform={column.filterValueTransform}
-            filterOptions={props.useTaskPagesApi && column.filterOptions}
+            filterOptions={[]}
+            updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
+            filteredByList={props.filteredByList} />;
+        } else if (props.useTaskPagesApi && column.filterOptions) {
+          filterIcon = <TableFilter
+            {...column}
+            tableData={column.tableData || props.rowObjects}
+            manualFilterOptions={props.useTaskPagesApi && column.filterOptions}
             updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
             filteredByList={props.filteredByList} />;
         }
