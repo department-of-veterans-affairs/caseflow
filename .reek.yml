@@ -37,6 +37,7 @@ detectors:
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
       - Fakes::EndProductStore
+      - Fakes::BGSServiceRecordMaker
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - HearingSerializerBase
       - SyncReviewsJob
