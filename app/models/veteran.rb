@@ -242,8 +242,6 @@ class Veteran < ApplicationRecord
     save!
   end
 
-  # find_by_* will NOT sync name
-  # find_or_create_by_* will sync name (mutates)
   class << self
     def looks_like_ssn?(string)
       string.to_s.length == 9
@@ -271,7 +269,25 @@ class Veteran < ApplicationRecord
       end
     end
 
+    def find_by_file_number_or_ssn_and_sync(file_number_or_ssn)
+      if looks_like_ssn?(file_number_or_ssn)
+        find_by_ssn_and_sync(file_number_or_ssn) || find_by_file_number_and_sync(file_number_or_ssn)
+      else
+        find_by_file_number_and_sync(file_number_or_ssn)
+      end
+    end
+
     def find_or_create_by_file_number_or_ssn(file_number_or_ssn)
+      if looks_like_ssn?(file_number_or_ssn)
+        find_by(file_number: file_number_or_ssn) ||
+          find_or_create_by_ssn(file_number_or_ssn) ||
+          find_or_create_by_file_number(file_number_or_ssn)
+      else
+        find_or_create_by_file_number(file_number_or_ssn)
+      end
+    end
+
+    def find_or_create_by_file_number_or_ssn_and_sync(file_number_or_ssn)
       if looks_like_ssn?(file_number_or_ssn)
         find_by_file_number_and_sync(file_number_or_ssn) ||
           find_or_create_by_ssn(file_number_or_ssn) ||
@@ -282,6 +298,14 @@ class Veteran < ApplicationRecord
     end
 
     private
+
+    def find_by_ssn_and_sync(ssn)
+      found_locally = find_by(ssn: ssn)
+      if found_locally&.cached_attributes_updatable?
+        found_locally.update_cached_attributes!
+      end
+      found_locally
+    end
 
     def find_or_create_by_ssn(ssn)
       found_locally = find_by(ssn: ssn)

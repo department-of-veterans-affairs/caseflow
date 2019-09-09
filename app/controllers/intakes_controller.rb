@@ -134,8 +134,7 @@ class IntakesController < ApplicationController
 
   def veteran_file_number
     # param could be file number or SSN. Make sure we return file number.
-    veteran = Veteran.find_by_file_number_or_ssn(params[:file_number])
-    veteran&.update_cached_attributes! if veteran&.cached_attributes_updatable?
+    veteran = Veteran.find_by_file_number_or_ssn_and_sync(params[:file_number])
     veteran ? veteran.file_number : params[:file_number]
   end
 
