@@ -5,7 +5,7 @@ class RequestIssueClosure
     @request_issue = request_issue
   end
 
-  delegate :closed_at, :end_product_establishment, :contention_reference_id, :correction?,
+  delegate :closed_at, :end_product_establishment, :contention_reference_id,
            :legacy_issue_optin, :contention_disposition, :canceled!, :close!, to: :request_issue
 
   def with_no_decision!
@@ -18,8 +18,6 @@ class RequestIssueClosure
     end
   end
 
-  # Close the incorrectly added request issue from that DTA supplemental claim,
-  # remove contention in VBMS and cancel EP
   def remove_issue_with_corrected_decision!
     close!(status: :removed) do
       canceled!
