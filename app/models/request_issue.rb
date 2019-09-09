@@ -918,8 +918,10 @@ class RequestIssue < ApplicationRecord
     return unless contested_decision_issue_id
     return if correction?
 
+    # When a duplicate request issue is a correction, it will not be flagged as duplicate.
     add_duplicate_issue_error(
-      RequestIssue.active.find_by(contested_decision_issue_id: contested_decision_issue_id)
+      RequestIssue.active.find_by(contested_decision_issue_id: contested_decision_issue_id,
+                                  correction_type: correction_type)
     )
   end
 
