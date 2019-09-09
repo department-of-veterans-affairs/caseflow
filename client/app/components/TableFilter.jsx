@@ -61,7 +61,6 @@ class TableFilter extends React.PureComponent {
   filterDropdownOptions = (tableDataByRow, columnName) => {
     const { customFilterLabels, enableFilterTextTransform, manualFilterOptions } = this.props;
     const filtersForColumn = _.get(this.props.filteredByList, columnName);
-    const uniqueOptions = [];
 
     if (manualFilterOptions && manualFilterOptions.length) {
       manualFilterOptions.forEach((option) => {
@@ -75,6 +74,7 @@ class TableFilter extends React.PureComponent {
       tableDataByRow,
       (row) => this.transformColumnValue(_.get(row, columnName))
     );
+    const uniqueOptions = [];
 
     for (let key in countByColumnName) { // eslint-disable-line guard-for-in
       let displayText = `${COPY.NULL_FILTER_LABEL} (${countByColumnName[key]})`;
@@ -160,7 +160,7 @@ class TableFilter extends React.PureComponent {
       getFilterValues
     } = this.props;
 
-    const options = tableData && columnName ?
+    const filterOptions = tableData && columnName ?
       this.filterDropdownOptions(tableData, columnName) :
       // Keeping the historical prop `getFilterValues` for backwards compatibility,
       // will remove this once all apps are using this new component.
@@ -185,7 +185,7 @@ class TableFilter extends React.PureComponent {
             handleClose={this.toggleDropdown}
             addClearFiltersRow>
             <FilterOption
-              options={options}
+              options={filterOptions}
               setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)} />
           </QueueDropdownFilter>
         }
