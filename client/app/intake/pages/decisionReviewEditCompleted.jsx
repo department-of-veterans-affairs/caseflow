@@ -31,10 +31,8 @@ const leadMessageList = ({ veteran, formName, requestIssues, addedIssues, detail
     <div>If needed, you may <a href={detailEditUrl}>correct the issues</a>.</div>
   ];
 
-  if (eligibleRequestIssues.length !== 0) {
-    if (unidentifiedIssues.length > 0) {
-      leadMessageArr.push(<UnidentifiedIssueAlert unidentifiedIssues={unidentifiedIssues} />);
-    }
+  if (eligibleRequestIssues.length !== 0 && unidentifiedIssues.length > 0) {
+    leadMessageArr.push(<UnidentifiedIssueAlert unidentifiedIssues={unidentifiedIssues} />);
   }
 
   leadMessageArr.push(

@@ -27,10 +27,8 @@ const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, detail
     leadMessageArr.push(<div>You may check on the <a href={asyncJobUrl}>status of the VBMS establishment</a>.</div>);
   }
 
-  if (eligibleRequestIssues.length !== 0) {
-    if (unidentifiedIssues.length > 0) {
-      leadMessageArr.push(<UnidentifiedIssueAlert unidentifiedIssues={unidentifiedIssues} />);
-    }
+  if (eligibleRequestIssues.length !== 0 && unidentifiedIssues.length > 0) {
+    leadMessageArr.push(<UnidentifiedIssueAlert unidentifiedIssues={unidentifiedIssues} />);
   }
 
   leadMessageArr.push(
