@@ -23,7 +23,7 @@ const leadMessageList = ({ veteran, formName, requestIssues, addedIssues, detail
       return 'withdrawn';
     }
 
-    return 'processed';
+    return 'submitted';
   };
 
   const leadMessageArr = [
