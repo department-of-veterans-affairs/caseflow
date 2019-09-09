@@ -482,7 +482,7 @@ export default class QueueTable extends React.PureComponent {
   }
 }
 
-QueueTable.propTypes = {
+HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes = QueueTable.propTypes = {
   tbodyId: PropTypes.string,
   tbodyRef: PropTypes.func,
   columns: PropTypes.oneOfType([
@@ -506,5 +506,17 @@ QueueTable.propTypes = {
   useTaskPagesApi: PropTypes.bool,
   taskPagesApiEndpoint: PropTypes.string,
   enablePagination: PropTypes.bool,
-  casesPerPage: PropTypes.number
+  casesPerPage: PropTypes.number,
+  sortColName: PropTypes.string,
+  sortAscending: PropTypes.bool,
+  setSortOrder: PropTypes.func,
+  updateFilteredByList: PropTypes.func,
+  filteredByList: PropTypes.object,
+  footer: PropTypes.string,
+  rowId: PropTypes.string,
+  bodyClassName: PropTypes.string,
+  bodyStyling: PropTypes.object,
+  getKeyForRow: PropTypes.func,
+  totalTaskCount: PropTypes.number,
+  numberOfPages: PropTypes.number
 };
