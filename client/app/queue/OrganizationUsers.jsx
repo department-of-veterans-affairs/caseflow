@@ -34,12 +34,10 @@ export default class OrganizationUsers extends React.PureComponent {
 
   loadingPromise = () => {
     return ApiUtil.get(`/organizations/${this.props.organization}/users`).then((response) => {
-      const resp = JSON.parse(response.text);
-
       this.setState({
-        organizationName: resp.organization_name,
-        organizationUsers: resp.organization_users.data,
-        remainingUsers: resp.remaining_users.data,
+        organizationName: response.body.organization_name,
+        organizationUsers: response.body.organization_users.data,
+        remainingUsers: response.body.remaining_users.data,
         loading: false
       });
     }, (error) => {
@@ -124,8 +122,7 @@ export default class OrganizationUsers extends React.PureComponent {
     const payload = { data: { admin: adminFlag } };
 
     ApiUtil.patch(`/organizations/${this.props.organization}/users/${user.id}`, payload).then((response) => {
-      const resp = JSON.parse(response.text);
-      const updatedUser = resp.users.data[0];
+      const updatedUser = response.body.users.data[0];
 
       // Replace the existing version of the user so it has the correct admin priveleges.
       const updatedUserList = this.state.organizationUsers.map((existingUser) => {
