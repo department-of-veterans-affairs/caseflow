@@ -485,6 +485,29 @@ RSpec.feature "Task queue", :all_dbs do
       it "shows queue switcher dropdown" do
         expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
       end
+
+      context "filters correctly" do
+        let(:translation_task_count) { unassigned_count / 2 }
+
+        before do
+          Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
+            .take(translation_task_count).each { |task| task.update!(type: TranslationTask.name) }
+          visit(organization.path)
+        end
+
+        it "shows the correct filters" do
+          page.find_all("path.unselected-filter-icon-inner").first.click
+          expect(page).to have_content("#{GenericTask.label.humanize} (#{unassigned_count / 2})")
+          expect(page).to have_content("#{TranslationTask.label.humanize} (#{translation_task_count})")
+        end
+
+        it "filters tasks correctly" do
+          expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+          page.find_all("path.unselected-filter-icon-inner").first.click
+          page.find("label", text: "#{TranslationTask.label.humanize} (#{translation_task_count})").click
+          expect(find("tbody").find_all("tr").length).to eq(translation_task_count)
+        end
+      end
     end
 
     context "when pagination is enabled" do
@@ -523,25 +546,6 @@ RSpec.feature "Task queue", :all_dbs do
           expect(page).to have_content("#{GenericTask.label} (#{unassigned_count / 2})")
           expect(page).to have_content("#{TranslationTask.label} (#{unassigned_count / 2})")
         end
-      end
-    end
-
-    context "when organization tasks include one associated with a LegacyAppeal that has been removed from VACOLS" do
-      let!(:tasks) do
-        Array.new(4) do
-          vacols_case = create(:case)
-          legacy_appeal = create(:legacy_appeal, vacols_case: vacols_case)
-          vacols_case.destroy!
-          create(:generic_task, :in_progress, appeal: legacy_appeal, assigned_to: organization)
-        end
-      end
-
-      it "loads the task queue successfully" do
-        # Re-navigate to the organization queue so we pick up the above task creation.
-        visit(organization.path)
-
-        tasks.each { |t| expect(page).to have_content(t.appeal.veteran_file_number) }
-        expect(page).to_not have_content("Information cannot be found")
       end
     end
   end
