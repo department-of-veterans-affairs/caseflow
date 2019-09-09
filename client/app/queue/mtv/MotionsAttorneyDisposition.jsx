@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 import {
-  ATTORNEY_ADDRESS_MTV_TITLE,
-  ATTORNEY_REVIEW_MTV_DESCRIPTION,
-  ATTORNEY_REVIEW_MTV_DISPOSITION_SELECT_LABEL,
-  ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL,
-  ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL,
-  ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL
+  MOTIONS_ATTORNEY_ADDRESS_MTV_TITLE,
+  MOTIONS_ATTORNEY_REVIEW_MTV_DESCRIPTION,
+  MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_SELECT_LABEL,
+  MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL,
+  MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL,
+  MOTIONS_ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL
 } from '../../../COPY.json';
 import { MTVDispositionSelection } from './MTVDispositionSelection';
 import TextareaField from '../../components/TextareaField';
@@ -30,7 +30,7 @@ const formatReviewAttyInstructions = ({ disposition, hyperlink, instructions }) 
   return parts.join('\n');
 };
 
-export const MTVAttorneyDisposition = ({ judges, task, appeal, onSubmit, submitting = false }) => {
+export const MotionsAttorneyDisposition = ({ judges, task, appeal, onSubmit, submitting = false }) => {
   // const { assignedTo } = task;
 
   const cancelLink = `/queue/appeals/${task.externalAppealId}`;
@@ -63,21 +63,21 @@ export const MTVAttorneyDisposition = ({ judges, task, appeal, onSubmit, submitt
   return (
     <div className="address-motion-to-vacate">
       <AppSegment filledBackground>
-        <MTVTaskHeader title={ATTORNEY_ADDRESS_MTV_TITLE} task={task} appeal={appeal} />
+        <MTVTaskHeader title={MOTIONS_ATTORNEY_ADDRESS_MTV_TITLE} task={task} appeal={appeal} />
 
-        <p>{ATTORNEY_REVIEW_MTV_DESCRIPTION}</p>
+        <p>{MOTIONS_ATTORNEY_REVIEW_MTV_DESCRIPTION}</p>
 
         <p className="mtv-task-instructions">{task.instructions}</p>
 
         <MTVDispositionSelection
-          label={ATTORNEY_REVIEW_MTV_DISPOSITION_SELECT_LABEL}
+          label={MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_SELECT_LABEL}
           onChange={(val) => setDisposition(val)}
           value={disposition}
         />
 
         <TextareaField
           name="instructions"
-          label={ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL}
+          label={MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL}
           onChange={(val) => setInstructions(val)}
           value={instructions}
           className={['mtv-review-instructions']}
@@ -86,7 +86,7 @@ export const MTVAttorneyDisposition = ({ judges, task, appeal, onSubmit, submitt
         {disposition && disposition === 'denied' && (
           <TextField
             name="hyperlink"
-            label={ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL}
+            label={MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL}
             value={hyperlink}
             onChange={(val) => setHyperlink(val)}
             className={['mtv-review-hyperlink']}
@@ -95,7 +95,7 @@ export const MTVAttorneyDisposition = ({ judges, task, appeal, onSubmit, submitt
 
         <SearchableDropdown
           name="judge"
-          label={ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL}
+          label={MOTIONS_ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL}
           searchable
           options={judges}
           placeholder="Select judge"
@@ -125,7 +125,7 @@ export const MTVAttorneyDisposition = ({ judges, task, appeal, onSubmit, submitt
   );
 };
 
-MTVAttorneyDisposition.propTypes = {
+MotionsAttorneyDisposition.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   submitting: PropTypes.bool,
   task: PropTypes.object.isRequired,

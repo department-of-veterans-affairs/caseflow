@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { MTVAttorneyDisposition } from './MTVAttorneyDisposition';
+import { MotionsAttorneyDisposition } from './MotionsAttorneyDisposition';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -36,7 +36,7 @@ export const ReviewMotionToVacateView = (props) => {
 
   return (
     judges && (
-      <MTVAttorneyDisposition
+      <MotionsAttorneyDisposition
         task={task}
         judges={judgeOptions}
         appeal={appeal}
