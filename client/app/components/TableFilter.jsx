@@ -59,13 +59,22 @@ class TableFilter extends React.PureComponent {
   }
 
   filterDropdownOptions = (tableDataByRow, columnName) => {
-    const { customFilterLabels, enableFilterTextTransform } = this.props;
+    const { customFilterLabels, enableFilterTextTransform, filterOptions } = this.props;
+    const filtersForColumn = _.get(this.props.filteredByList, columnName);
+    const uniqueOptions = [];
+
+    if (filterOptions.length) {
+      filterOptions.forEach((option) => {
+        option.checked = filtersForColumn ? filtersForColumn.includes(option.value) : false;
+      });
+
+      return _.sortBy(filterOptions, 'displayText');
+    }
+
     const countByColumnName = _.countBy(
       tableDataByRow,
       (row) => this.transformColumnValue(_.get(row, columnName))
     );
-    const uniqueOptions = [];
-    const filtersForColumn = _.get(this.props.filteredByList, columnName);
 
     for (let key in countByColumnName) { // eslint-disable-line guard-for-in
       let displayText = `${COPY.NULL_FILTER_LABEL} (${countByColumnName[key]})`;
@@ -148,18 +157,17 @@ class TableFilter extends React.PureComponent {
       anyFiltersAreSet,
       label,
       valueName,
-      getFilterValues,
-      filterOptions
+      getFilterValues
     } = this.props;
 
-    const options = filterOptions || (tableData && columnName ?
+    const options = tableData && columnName ?
       this.filterDropdownOptions(tableData, columnName) :
       // Keeping the historical prop `getFilterValues` for backwards compatibility,
       // will remove this once all apps are using this new component.
       //
       // WARNING: If you use getFilterValues, it will cause some of the options to
       // not display correctly when they are checked.
-      getFilterValues);
+      getFilterValues;
 
     return (
       <span {...iconStyle}>
