@@ -34,15 +34,15 @@ describe BvaDispatch, :postgres do
       end
 
       context "when members are admins" do
-        let(:number_of_admins) { 3 }
+        let(:number_of_admins) { 5 }
 
         before do
-          admin_ids = bva_dispatch_org.users.order(:id).pluck(:id).take(number_of_admins)
+          admin_ids = bva_dispatch_org.users.take(number_of_admins)
           User.where(id: admin_ids).each { |admin| OrganizationsUser.make_user_admin(admin, bva_dispatch_org) }
         end
 
-        it "should skip the admins and assign to the non admin team members" do
-          expect(subject).to eq(bva_dispatch_org.users[number_of_admins])
+        it "should skip the admins and assign to the non admin team member" do
+          expect(subject.administered_teams.include?(bva_dispatch_org)).to be false
         end
       end
     end
