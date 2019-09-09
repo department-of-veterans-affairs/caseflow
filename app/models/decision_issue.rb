@@ -70,7 +70,7 @@ class DecisionIssue < ApplicationRecord
   end
 
   def contesting_remand_request_issue
-    contesting_request_issues.find { |issue| issue.remanded? }
+    contesting_request_issues.find(:remanded?)
   end
 
   def soft_delete

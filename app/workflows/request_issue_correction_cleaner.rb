@@ -11,9 +11,7 @@ class RequestIssueCorrectionCleaner
     return unless correction_request_issue.correction?
     return unless request_issue_to_remove
 
-    request_issue_to_remove.remove!
-    RequestIssueContention.new(request_issue_to_remove).remove!
-    request_issue_to_remove.end_product_establishment&.cancel_unused_end_product!
+    RequestIssueClosure.new(request_issue_to_remove).remove_issue_with_corrected_decision!
   end
 
   private

@@ -10,16 +10,15 @@ describe "Request Issue Correction Cleaner", :postgres do
 
   let(:claim_review) do
     create(:higher_level_review,
-      veteran_file_number: veteran.file_number,
-      receipt_date: 2.weeks.ago,
-      claimants: [build(:claimant, payee_code: "00")]
-    )
+            veteran_file_number: veteran.file_number,
+            receipt_date: 2.weeks.ago,
+            claimants: [build(:claimant, payee_code: "00")])
   end
 
   let!(:remand_decision) { create(:decision_issue, decision_review: claim_review, disposition: "DTA Error") }
 
   let(:correction_request_issue) do
-    create(:request_issue, correction_type: "control", contested_decision_issue: remand_decision_issue)
+    create(:request_issue, correction_type: "control", contested_decision_issue: remand_decision)
   end
 
   describe "#remove_dta_request_issue" do
@@ -28,7 +27,7 @@ describe "Request Issue Correction Cleaner", :postgres do
     context "when the dta claim only has issue being corrected" do
       it "closes the issue, removes the contention, and cancels the EP" do
         claim_review.create_remand_supplemental_claims!
-        dta_issue_to_remove = remand_decision_issue.contesting_remand_request_issue
+        dta_issue_to_remove = remand_decision.contesting_remand_request_issue
 
         subject
 
@@ -43,13 +42,32 @@ describe "Request Issue Correction Cleaner", :postgres do
 
       it "closes the issue, removes the contention, but does not cancels the EP" do
         claim_review.create_remand_supplemental_claims!
-        dta_issue_to_remove = remand_decision_issue.contesting_remand_request_issue
+        dta_issue_to_remove = remand_decision.contesting_remand_request_issue
 
         subject
 
         expect(dta_issue_to_remove.closed_status).to eq("removed")
         expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(dta_issue_to_remove.contention)
         expect(dta_issue_to_remove.end_product_establishment.synced_status).to_not eq("CAN")
+      end
+    end
+
+    context "when the dta claim is already decided" do
+      before do
+        claim_review.create_remand_supplemental_claims!
+        dta_issue_to_remove = remand_decision.contesting_remand_request_issue
+        create(:decision_issue, decision_review: dta_issue_to_remove.decision_review, request_issues: [dta_issue_to_remove])
+        dta_issue_to_remove.close_decided_issue!
+        dta_issue_to_remove.end_product_establishment.update!(synced_status: "CLR")
+      end
+
+      it "does not remove the issue, contentions or cancel the EP" do
+        dta_issue_to_remove = remand_decision.contesting_remand_request_issue
+
+        subject
+        expect(dta_issue_to_remove.closed_status).to eq("decided")
+        expect(Fakes::VBMSService).to_not have_received(:remove_contention!)
+        expect(dta_issue_to_remove.end_product_establishment.synced_status).to eq("CLR")
       end
     end
   end
