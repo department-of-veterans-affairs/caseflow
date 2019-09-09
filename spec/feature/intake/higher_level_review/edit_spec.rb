@@ -1291,8 +1291,11 @@ feature "Higher Level Review Edit issues", :all_dbs do
     let(:last_week) { Time.zone.now - 7.days }
     let(:higher_level_review) do
       # reload to get uuid
-      create(:higher_level_review, :with_end_product_establishment, veteran_file_number: veteran.file_number,
-                                                                    benefit_type: benefit_type).reload
+      create(:higher_level_review,
+             :with_end_product_establishment,
+             :processed,
+             veteran_file_number: veteran.file_number,
+             benefit_type: benefit_type).reload
     end
     let!(:existing_request_issues) do
       [create(:request_issue, :nonrating, decision_review: higher_level_review),
