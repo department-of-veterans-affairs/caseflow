@@ -505,7 +505,7 @@ RSpec.feature "Task queue", :all_dbs do
         end
       end
 
-      context "filters correctly" do
+      context "when filtering tasks" do
         let(:translation_task_count) { unassigned_count / 2 }
 
         before do
