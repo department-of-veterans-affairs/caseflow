@@ -486,6 +486,25 @@ RSpec.feature "Task queue", :all_dbs do
         expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
       end
 
+      context "when organization tasks include one associated with a LegacyAppeal that has been removed from VACOLS" do
+        let!(:tasks) do
+          Array.new(4) do
+            vacols_case = create(:case)
+            legacy_appeal = create(:legacy_appeal, vacols_case: vacols_case)
+            vacols_case.destroy!
+            create(:generic_task, :in_progress, appeal: legacy_appeal, assigned_to: organization)
+          end
+        end
+
+        it "loads the task queue successfully" do
+          # Re-navigate to the organization queue so we pick up the above task creation.
+          visit(organization.path)
+
+          tasks.each { |t| expect(page).to have_content(t.appeal.veteran_file_number) }
+          expect(page).to_not have_content("Information cannot be found")
+        end
+      end
+
       context "filters correctly" do
         let(:translation_task_count) { unassigned_count / 2 }
 
