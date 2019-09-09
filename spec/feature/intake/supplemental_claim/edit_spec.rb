@@ -719,7 +719,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     let(:last_week) { Time.zone.now - 7.days }
     let(:supplemental_claim) do
       # reload to get uuid
-      create(:supplemental_claim, veteran_file_number: veteran.file_number).reload
+      create(:supplemental_claim, :processed, veteran_file_number: veteran.file_number).reload
     end
     let!(:existing_request_issues) do
       [create(:request_issue, :nonrating, decision_review: supplemental_claim),
@@ -781,8 +781,10 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       context "show alert when issues are withdrawn" do
         let(:supplemental_claim) do
           # reload to get uuid
-          create(:supplemental_claim, veteran_file_number: veteran.file_number,
-                                      benefit_type: "education").reload
+          create(:supplemental_claim,
+                 :processed,
+                 veteran_file_number: veteran.file_number,
+                 benefit_type: "education").reload
         end
 
         before do
