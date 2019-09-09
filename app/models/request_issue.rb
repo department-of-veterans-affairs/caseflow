@@ -498,10 +498,6 @@ class RequestIssue < ApplicationRecord
     end
   end
 
-  def remove_incorrectly_added_dta_issue
-    RequestIssueCorrectionCleaner.new(self).remove_dta_request_issue
-  end
-
   def create_legacy_issue_optin
     LegacyIssueOptin.create!(
       request_issue: self,
@@ -921,6 +917,7 @@ class RequestIssue < ApplicationRecord
   def check_for_active_request_issue_by_decision_issue!
     return unless contested_decision_issue_id
     return if correction?
+    
     add_duplicate_issue_error(
       RequestIssue.active.find_by(contested_decision_issue_id: contested_decision_issue_id)
     )

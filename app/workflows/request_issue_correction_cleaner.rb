@@ -7,7 +7,7 @@ class RequestIssueCorrectionCleaner
 
   # Close the incorrectly added request issue from that DTA supplemental claim,
   # remove contention in VBMS and cancel EP
-  def remove_dta_request_issue
+  def remove_dta_request_issue!
     return unless correction_request_issue.correction?
     return unless request_issue_to_remove
 
