@@ -31,9 +31,9 @@ class TaskFilter
   def where_clause
     return [] if filter_params.empty?
 
-    filters = filter_params.map { |filter_string| QueueFilterParameter.from_string(filter_string) }.compact
+    filters = filter_params.map { |filter_string| QueueFilterParameter.from_string(filter_string) }
 
-    where_string = filters.map { |filter| "#{table_column_from_name(filter.column)} IN (?)" }.join(" AND ")
+    where_string = TaskFilter.where_string_from_filters(filters)
     where_arguments = filters.map(&:values)
 
     if filter_params.any? { |filter_string| filter_string[/typeColumn&val=.*is_aod/] }
@@ -43,9 +43,13 @@ class TaskFilter
     [where_string] + where_arguments
   end
 
-  private
+  def self.where_string_from_filters(filters)
+    filters.map do |filter|
+      filter.values.present? ? "#{table_column_from_name(filter.column)} IN (?)" : nil
+    end.compact.join(" AND ")
+  end
 
-  def table_column_from_name(column_name)
+  def self.table_column_from_name(column_name)
     case column_name
     when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
       "tasks.type"
@@ -62,6 +66,8 @@ class TaskFilter
       fail(Caseflow::Error::InvalidTaskTableColumnFilter, column: column_name)
     end
   end
+
+  private
 
   def filter_params_is_array
     errors.add(:filter_params, "must be an array") unless filter_params&.is_a?(Array)

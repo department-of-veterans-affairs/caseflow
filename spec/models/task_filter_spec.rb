@@ -302,7 +302,7 @@ describe TaskFilter, :postgres do
         end
 
         it "returns tasks with Original or Supplemental case types" do
-          expect(subject.map(&:id)).to contain_exactly(type_1_tasks.map(&:id) + type_2_tasks.map(&:id))
+          expect(subject.map(&:id)).to match_array(type_1_tasks.map(&:id) + type_2_tasks.map(&:id))
         end
       end
 

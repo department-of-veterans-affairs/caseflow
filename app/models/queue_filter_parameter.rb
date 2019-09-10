@@ -25,7 +25,7 @@ class QueueFilterParameter
       values.reject! { |value| value.eql?("is_aod") }
     end
 
-    values.present? ? new(column: filter_hash["col"], values: values) : nil
+    new(column: filter_hash["col"], values: values)
   end
 
   def self.escaped_value(value)
