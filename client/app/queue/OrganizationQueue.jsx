@@ -56,17 +56,18 @@ class OrganizationQueue extends React.PureComponent {
     return config;
   }
 
-  filterValuesForColumn = (columnObj) => columnObj && columnObj.filterable && columnObj.filter_options;
+  filterValuesForColumn = (columnObj, config) =>
+    config.use_task_pages_api && columnObj && columnObj.filterable && columnObj.filter_options;
 
   createColumnObject = (columnName, columnObj, config, tasks) => {
     const functionForColumn = {
       hearingBadgeColumn: hearingBadgeColumn(tasks),
       detailsColumn: detailsColumn(tasks, false, config.userRole),
-      taskColumn: taskColumn(tasks, this.filterValuesForColumn(columnObj)),
-      regionalOfficeColumn: regionalOfficeColumn(tasks, this.filterValuesForColumn(columnObj)),
-      typeColumn: typeColumn(tasks, this.filterValuesForColumn(columnObj), false),
+      taskColumn: taskColumn(tasks, this.filterValuesForColumn(columnObj, config)),
+      regionalOfficeColumn: regionalOfficeColumn(tasks, this.filterValuesForColumn(columnObj, config)),
+      typeColumn: typeColumn(tasks, this.filterValuesForColumn(columnObj, config), false),
       assignedToColumn: assignedToColumn(tasks),
-      docketNumberColumn: docketNumberColumn(tasks, this.filterValuesForColumn(columnObj), false),
+      docketNumberColumn: docketNumberColumn(tasks, this.filterValuesForColumn(columnObj, config), false),
       daysWaitingColumn: daysWaitingColumn(false),
       daysOnHoldColumn: daysOnHoldColumn(false),
       readerLinkColumn: readerLinkColumn(false, true),
