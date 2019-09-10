@@ -302,17 +302,21 @@ describe TaskFilter, :postgres do
         end
 
         it "returns tasks with Original or Supplemental case types" do
-          expect(subject.map(&:id)).to match_array(type_1_tasks.map(&:id) + type_2_tasks.map(&:id))
+          expect(subject.map(&:id)).to contain_exactly(type_1_tasks.map(&:id) + type_2_tasks.map(&:id))
         end
       end
 
-      context "when filter includes Original and Supplemental and AOD" do
-        let(:filter_params) do
-          ["col=#{Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN}&val=#{case_types['1']},#{case_types['2']},is_aod"]
-        end
+      context "when filter includes AOD" do
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN}&val=is_aod"] }
 
-        it "returns tasks with Original or Supplemental case types that are also AOD" do
-          expect(subject.map(&:id)).to match_array([type_1_tasks.first.id, type_2_tasks.first.id])
+        fit "returns tasks with all case types that are also AOD" do
+          expect(subject.map(&:id)).to contain_exactly([
+                                                         type_1_tasks.first.id,
+                                                         type_2_tasks.first.id,
+                                                         type_3_tasks.first.id,
+                                                         type_5_tasks.first.id,
+                                                         type_5_tasks.first.id
+                                                       ])
         end
       end
     end
