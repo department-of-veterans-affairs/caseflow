@@ -52,6 +52,8 @@ class LegacyHearing < ApplicationRecord
            to: :appeal,
            allow_nil: true
 
+  delegate :timezone, :name, to: :regional_office, prefix: true
+
   before_create :assign_created_by_user
   before_update :assign_updated_by_user
 
@@ -144,16 +146,6 @@ class LegacyHearing < ApplicationRecord
                          rescue RegionalOffice::NotFoundError
                            nil
                           end
-  end
-
-  def regional_office_name
-    return if regional_office_key.nil?
-
-    "#{regional_office.city}, #{regional_office.state}"
-  end
-
-  def regional_office_timezone
-    regional_office.nil? ? HearingMapper.timezone(regional_office) : HearingMapper.timezone("C")
   end
 
   def time

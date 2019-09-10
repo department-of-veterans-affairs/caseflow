@@ -44,7 +44,7 @@ class Hearing < ApplicationRecord
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
   delegate :hearing_day_full?, to: :hearing_day
-  delegate :timezone, to: :regional_office, prefix: true
+  delegate :timezone, :name, to: :regional_office, prefix: true
 
   after_create :update_fields_from_hearing_day
   before_create :check_available_slots, unless: :override_full_hearing_day_validation
