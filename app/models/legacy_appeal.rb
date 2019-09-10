@@ -158,7 +158,8 @@ class LegacyAppeal < ApplicationRecord
     translation: "14",
     schedule_hearing: "57",
     case_storage: "81",
-    service_organization: "55"
+    service_organization: "55",
+    closed: "99"
   }.freeze
 
   def document_fetcher
