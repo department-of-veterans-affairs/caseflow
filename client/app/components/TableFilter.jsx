@@ -59,13 +59,22 @@ class TableFilter extends React.PureComponent {
   }
 
   filterDropdownOptions = (tableDataByRow, columnName) => {
-    const { customFilterLabels, enableFilterTextTransform } = this.props;
+    const { customFilterLabels, enableFilterTextTransform, filterOptionsFromApi } = this.props;
+    const filtersForColumn = _.get(this.props.filteredByList, columnName);
+
+    if (filterOptionsFromApi && filterOptionsFromApi.length) {
+      filterOptionsFromApi.forEach((option) => {
+        option.checked = filtersForColumn ? filtersForColumn.includes(option.value) : false;
+      });
+
+      return _.sortBy(filterOptionsFromApi, 'displayText');
+    }
+
     const countByColumnName = _.countBy(
       tableDataByRow,
       (row) => this.transformColumnValue(_.get(row, columnName))
     );
     const uniqueOptions = [];
-    const filtersForColumn = _.get(this.props.filteredByList, columnName);
 
     for (let key in countByColumnName) { // eslint-disable-line guard-for-in
       let displayText = `${COPY.NULL_FILTER_LABEL} (${countByColumnName[key]})`;
@@ -202,7 +211,8 @@ TableFilter.propTypes = {
   valueName: PropTypes.string,
   valueTransform: PropTypes.func,
   filteredByList: PropTypes.object,
-  updateFilters: PropTypes.func
+  updateFilters: PropTypes.func,
+  filterOptionsFromApi: PropTypes.array
 };
 
 export default TableFilter;
