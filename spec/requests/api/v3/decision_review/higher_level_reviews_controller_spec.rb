@@ -119,11 +119,12 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
   describe "#create" do
     describe "general cases" do
-      skip "this test is only working intermittently, and is preventing merges" do
-        it "should return a 202 on success" do
-          post_params
-          expect(response).to have_http_status(202)
-        end
+      it "should return a 202 on success" do
+        allow(User).to receive(:api_user).and_return(
+          User.find_or_create_by(station_id: "101", css_id: "APIUSER", full_name: "API User")
+        )
+        post_params
+        expect(response).to have_http_status(202)
       end
 
       describe do
