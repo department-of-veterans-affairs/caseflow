@@ -56,33 +56,29 @@ class OrganizationQueue extends React.PureComponent {
     return config;
   }
 
-  filterValuesForColumn = (columnObj, config) =>
-    config.use_task_pages_api && columnObj && columnObj.filterable && columnObj.filter_options;
+  filterValuesForColumn = (column, config) =>
+    config.use_task_pages_api && column && column.filterable && column.filter_options;
 
-  createColumnObject = (columnName, columnObj, config, tasks) => {
+  createColumnObject = (column, config, tasks) => {
     const functionForColumn = {
       hearingBadgeColumn: hearingBadgeColumn(tasks),
       detailsColumn: detailsColumn(tasks, false, config.userRole),
-      taskColumn: taskColumn(tasks, this.filterValuesForColumn(columnObj, config)),
-      regionalOfficeColumn: regionalOfficeColumn(tasks, this.filterValuesForColumn(columnObj, config)),
-      typeColumn: typeColumn(tasks, this.filterValuesForColumn(columnObj, config), false),
+      taskColumn: taskColumn(tasks, this.filterValuesForColumn(column, config)),
+      regionalOfficeColumn: regionalOfficeColumn(tasks, this.filterValuesForColumn(column, config)),
+      typeColumn: typeColumn(tasks, this.filterValuesForColumn(column, config), false),
       assignedToColumn: assignedToColumn(tasks),
-      docketNumberColumn: docketNumberColumn(tasks, this.filterValuesForColumn(columnObj, config), false),
+      docketNumberColumn: docketNumberColumn(tasks, this.filterValuesForColumn(column, config), false),
       daysWaitingColumn: daysWaitingColumn(false),
       daysOnHoldColumn: daysOnHoldColumn(false),
       readerLinkColumn: readerLinkColumn(false, true),
       issueCountColumn: issueCountColumn(false)
     };
 
-    return functionForColumn[columnName];
+    return functionForColumn[column.name];
   }
 
-  columnsFromConfig = (tabConfig, tasks) => {
-    return tabConfig.columns.map((column) => {
-      return typeof (column) === 'string' ? this.createColumnObject(column, null, tabConfig, tasks) :
-        this.createColumnObject(column.name, column, tabConfig, tasks);
-    });
-  }
+  columnsFromConfig = (tabConfig, tasks) =>
+    tabConfig.columns.map((column) => this.createColumnObject(column, tabConfig, tasks));
 
   tasksForTab = (tabName) => {
     const mapper = {
