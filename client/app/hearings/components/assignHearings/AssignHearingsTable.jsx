@@ -15,19 +15,20 @@ const tableNumberStyling = css({
 
 class AssignHearingsTable extends React.Component {
   getPaginationProps = () => {
-    const { user, tabName } = this.props;
+    const { user, tabName, enablePagination } = this.props;
 
-    if (!user.tasksPagesEnabled) {
+    if (!enablePagination) {
       return {};
     }
 
-    const endpoint = `organizations/hearings-management/task_pages?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=${tabName}`;
+    const endpoint = `/organizations/hearings-management/task_pages?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=${tabName}`;
 
     return {
       useTaskPagesApi: true,
       taskPagesApiEndpoint: endpoint,
       casesPerPage: 25,
-      enablePagination: true
+      enablePagination: true,
+      eager: true
     };
   };
 
@@ -41,7 +42,7 @@ class AssignHearingsTable extends React.Component {
         summary="scheduled-hearings-table"
         slowReRendersAreOk
         bodyStyling={tableNumberStyling}
-        {...this.getPaginationProps}
+        {...this.getPaginationProps()}
       />
     );
   }
@@ -51,7 +52,8 @@ AssignHearingsTable.propTypes = {
   user: PropTypes.object,
   columns: PropTypes.array,
   rowObjects: PropTypes.array,
-  tabName: PropTypes.string
+  tabName: PropTypes.string,
+  enablePagination: PropTypes.bool
 };
 
 export default AssignHearingsTable;

@@ -16,9 +16,7 @@ import { getIndexOfDocketLine, docketCutoffLineStyle } from './AssignHearingsDoc
 import { HearingTime, HearingDocketTag, AppealDocketTag,
   SuggestedHearingLocation, HearingAppellantName, CaseDetailsInformation } from './AssignHearingsFields';
 
-const UPCOMING_HEARINGS_TAB_NAME = 'upcomingHearings';
-const AMA_APPEALS_TAB_NAME = 'amaAppeals';
-const LEGACY_APPEALS_TAB_NAME = 'legacyAppeals';
+import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG.json';
 
 const NoUpcomingHearingDayMessage = () => (
   <StatusMessage
@@ -29,7 +27,7 @@ const NoUpcomingHearingDayMessage = () => (
   />
 );
 
-const AvailableVeteransTable = ({ rows, columns, selectedHearingDay, style = {} }) => {
+const AvailableVeteransTable = ({ rows, columns, selectedHearingDay, tabName, style = {} }) => {
   let removeTimeColumn = _.slice(columns, 0, -1);
 
   if (_.isNil(selectedHearingDay)) {
@@ -48,7 +46,7 @@ const AvailableVeteransTable = ({ rows, columns, selectedHearingDay, style = {} 
   }
 
   return <span {...style}>
-    <AssignHearingsTable columns={removeTimeColumn} rowObjects={rows} />
+    <AssignHearingsTable columns={removeTimeColumn} rowObjects={rows} tabName={tabName} enablePagination />
   </span>;
 };
 
@@ -56,6 +54,7 @@ AvailableVeteransTable.propTypes = {
   rows: PropTypes.array,
   columns: PropTypes.array,
   style: PropTypes.object,
+  tabName: PropTypes.string,
   selectedHearingDay: PropTypes.shape({
     id: PropTypes.number,
     scheduledFor: PropTypes.string
@@ -71,7 +70,7 @@ const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => {
     <Link to={`/schedule/docket/${selectedHearingDay.id}`}>
       {`View the Daily Docket for ${moment(selectedHearingDay.scheduledFor).format('M/DD/YYYY')}` }
     </Link>
-    <AssignHearingsTable columns={columns} rowObjects={rows} />
+    <AssignHearingsTable columns={columns} rowObjects={rows} tabName={QUEUE_CONFIG.UPCOMING_HEARINGS_TAB_NAME} />
   </div>;
 };
 
@@ -173,7 +172,7 @@ export default class AssignHearingsTabs extends React.Component {
 
     let locationColumn;
 
-    if (tab === UPCOMING_HEARINGS_TAB_NAME) {
+    if (tab === QUEUE_CONFIG.UPCOMING_HEARINGS_TAB_NAME) {
       locationColumn = {
         name: 'Hearing Location',
         header: 'Hearing Location',
@@ -273,15 +272,16 @@ export default class AssignHearingsTabs extends React.Component {
             page: <UpcomingHearingsTable
               selectedHearingDay={selectedHearingDay}
               rows={upcomingRows}
-              columns={this.tabWindowColumns(UPCOMING_HEARINGS_TAB_NAME)}
+              columns={this.tabWindowColumns(QUEUE_CONFIG.UPCOMING_HEARINGS_TAB_NAME)}
             />
           },
           {
             label: 'Legacy Veterans Waiting',
             page: <AvailableVeteransTable
               rows={legacyRows}
-              columns={this.tabWindowColumns(LEGACY_APPEALS_TAB_NAME)}
+              columns={this.tabWindowColumns(QUEUE_CONFIG.LEGACY_ASSIGN_HEARINGS_TAB_NAME)}
               selectedHearingDay={selectedHearingDay}
+              tabName={QUEUE_CONFIG.LEGACY_ASSIGN_HEARINGS_TAB_NAME}
             />
           },
           {
@@ -289,8 +289,9 @@ export default class AssignHearingsTabs extends React.Component {
             page: <AvailableVeteransTable
               style={this.amaDocketCutoffLineStyle(amaAppeals)}
               rows={amaRows}
-              columns={this.tabWindowColumns(AMA_APPEALS_TAB_NAME)}
+              columns={this.tabWindowColumns(QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME)}
               selectedHearingDay={selectedHearingDay}
+              tabName={QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME}
             />
           }
         ]}

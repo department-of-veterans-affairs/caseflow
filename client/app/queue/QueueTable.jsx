@@ -218,6 +218,12 @@ export default class QueueTable extends React.PureComponent {
     this.state = state;
   }
 
+  componentDidMount() {
+    if (this.props.eager) {
+      this.requestTasks();
+    }
+  }
+
   defaultRowClassNames = () => ''
 
   sortRowObjects = () => {
