@@ -315,6 +315,20 @@ describe TaskFilter, :postgres do
           expect(subject.map(&:id)).to match_array([type_1_tasks.first.id, type_2_tasks.first.id])
         end
       end
+
+      context "when filter includes only AOD" do
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN}&val=is_aod"] }
+
+        it "returns tasks with all case types that are also AOD" do
+          expect(subject.map(&:id)).to contain_exactly(
+            type_1_tasks.first.id,
+            type_2_tasks.first.id,
+            type_3_tasks.first.id,
+            type_4_tasks.first.id,
+            type_5_tasks.first.id
+          )
+        end
+      end
     end
   end
 end
