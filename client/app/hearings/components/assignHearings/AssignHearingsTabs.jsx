@@ -1,29 +1,20 @@
 import React from 'react';
-import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import moment from 'moment';
 import _ from 'lodash';
-import LEGACY_APPEAL_TYPES_BY_ID from '../../../constants/LEGACY_APPEAL_TYPES_BY_ID.json';
+import PropTypes from 'prop-types';
+import LEGACY_APPEAL_TYPES_BY_ID from '../../../../constants/LEGACY_APPEAL_TYPES_BY_ID.json';
 
-import { sortHearings } from '../utils';
-import COPY from '../../../COPY.json';
-import QueueTable from '../../queue/QueueTable';
-import TabWindow from '../../components/TabWindow';
-import DocketTypeBadge from '../../components/DocketTypeBadge';
-import { renderAppealType } from '../../queue/utils';
-import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
-import StatusMessage from '../../components/StatusMessage';
-import { getFacilityType } from '../../components/DataDropdowns/AppealHearingLocations';
+import { sortHearings } from '../../utils';
+import COPY from '../../../../COPY.json';
+import AssignHearingsTable from './AssignHearingsTable';
+import TabWindow from '../../../components/TabWindow';
+import { renderAppealType } from '../../../queue/utils';
+import StatusMessage from '../../../components/StatusMessage';
+import { getFacilityType } from '../../../components/DataDropdowns/AppealHearingLocations';
 import { getIndexOfDocketLine, docketCutoffLineStyle } from './AssignHearingsDocketLine';
-
-const tableNumberStyling = css({
-  '& tr > td:first-child': {
-    paddingRight: 0
-  },
-  '& td:nth-child(2)': {
-    paddingLeft: 0
-  }
-});
+import { HearingTime, HearingDocketTag, AppealDocketTag,
+  SuggestedHearingLocation, HearingAppellantName, CaseDetailsInformation } from './AssignHearingsFields';
 
 const UPCOMING_HEARINGS_TAB_NAME = 'upcomingHearings';
 const AMA_APPEALS_TAB_NAME = 'amaAppeals';
@@ -44,13 +35,14 @@ const AvailableVeteransTable = ({ rows, columns, style = {} }) => {
   }
 
   return <span {...style}>
-    <QueueTable
-      columns={removeTimeColumn}
-      rowObjects={rows}
-      summary="scheduled-hearings-table"
-      slowReRendersAreOk
-      bodyStyling={tableNumberStyling} />
+    <AssignHearingsTable columns={removeTimeColumn} rowObjects={rows} />
   </span>;
+};
+
+AvailableVeteransTable.propTypes = {
+  rows: PropTypes.array,
+  columns: PropTypes.array,
+  style: PropTypes.object
 };
 
 const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => {
@@ -67,14 +59,17 @@ const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => {
     <Link to={`/schedule/docket/${selectedHearingDay.id}`}>
       {`View the Daily Docket for ${moment(selectedHearingDay.scheduledFor).format('M/DD/YYYY')}` }
     </Link>
-    <QueueTable
-      columns={columns}
-      rowObjects={rows}
-      summary="scheduled-hearings-table"
-      slowReRendersAreOk
-      bodyStyling={tableNumberStyling}
-    />
+    <AssignHearingsTable columns={columns} rowObjects={rows} />
   </div>;
+};
+
+UpcomingHearingsTable.propTypes = {
+  rows: PropTypes.array,
+  columns: PropTypes.array,
+  selectedHearingDay: PropTypes.shape({
+    id: PropTypes.string,
+    scheduledFor: PropTypes.string
+  })
 };
 
 export default class AssignHearingsTabs extends React.Component {
@@ -83,55 +78,9 @@ export default class AssignHearingsTabs extends React.Component {
     return appeal.attributes.appealType === 'Appeal';
   };
 
-  getHearingTime = (date, regionalOfficeTimezone) => {
-
-    if (this.props.selectedRegionalOffice === 'C') {
-      return <div>{getTime(date)} </div>;
-    }
-
-    return <div>
-      {getTime(date)} /<br />{getTimeInDifferentTimeZone(date, regionalOfficeTimezone)}
-    </div>;
-  };
-
-  appellantName = (hearingDay) => {
-    let { appellantFirstName, appellantLastName, veteranFirstName, veteranLastName, veteranFileNumber } = hearingDay;
-
-    if (appellantFirstName && appellantLastName) {
-      return `${appellantFirstName} ${appellantLastName} | ${veteranFileNumber}`;
-    } else if (veteranFirstName && veteranLastName) {
-      return `${veteranFirstName} ${veteranLastName} | ${veteranFileNumber}`;
-    }
-
-    return `${veteranFileNumber}`;
-  };
-
-  getCaseDetailsInformation = (appeal) => {
-    if (appeal.attributes.appellantFullName) {
-      return `${appeal.attributes.appellantFullName} | ${appeal.attributes.veteranFileNumber}`;
-    }
-
-    return `${appeal.attributes.veteranFullName} | ${appeal.attributes.veteranFileNumber}`;
-  };
-
-  getHearingDocketTag = (hearing) => {
-    if (hearing.docketNumber) {
-      return <div>
-        <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
-        {hearing.docketNumber}
-      </div>;
-    }
-
-  };
-
-  getAppealDocketTag = (appeal) => {
-    if (appeal.attributes.docketNumber) {
-      return <div>
-        <DocketTypeBadge name={appeal.attributes.docketName} number={appeal.attributes.docketNumber} />
-        {appeal.attributes.docketNumber}
-      </div>;
-    }
-  };
+  isCentralOffice = () => {
+    return this.props.selectedRegionalOffice === 'C';
+  }
 
   getSuggestedHearingLocation = (locations) => {
     if (!locations || locations.length === 0) {
@@ -157,23 +106,6 @@ export default class AssignHearingsTabs extends React.Component {
     return `${city}, ${state} ${getFacilityType(location)}`;
   }
 
-  getSuggestedHearingLocationForDisplay = (row) => {
-    const location = row.suggestedLocation;
-
-    if (!location) {
-      return '';
-    }
-
-    return (
-      <span>
-        <div>{`${this.formatSuggestedHearingLocation(location)}`}</div>
-        {!_.isNil(location.distance) &&
-          <div>{`Distance: ${location.distance} miles away`}</div>
-        }
-      </span>
-    );
-  }
-
   availableVeteransRows = (appeals) => {
 
     /*
@@ -193,12 +125,12 @@ export default class AssignHearingsTabs extends React.Component {
 
     return _.map(sortedByAodCavc, (appeal, index) => ({
       number: <span>{index + 1}.</span>,
-      caseDetails: this.getCaseDetailsInformation(appeal),
+      caseDetails: <CaseDetailsInformation appeal={appeal} />,
       type: renderAppealType({
         caseType: appeal.attributes.caseType,
         isAdvancedOnDocket: appeal.attributes.aod
       }),
-      docketNumber: this.getAppealDocketTag(appeal),
+      docketNumber: <AppealDocketTag appeal={appeal} />,
       suggestedLocation: this.getSuggestedHearingLocation(appeal.attributes.availableHearingLocations),
       time: null,
       externalId: appeal.attributes.externalAppealId
@@ -209,14 +141,14 @@ export default class AssignHearingsTabs extends React.Component {
     return _.map(hearings, (hearing, index) => ({
       number: <span>{index + 1}.</span>,
       externalId: hearing.appealExternalId,
-      caseDetails: this.appellantName(hearing),
+      caseDetails: <HearingAppellantName hearing={hearing} />,
       type: renderAppealType({
         caseType: hearing.appealType,
         isAdvancedOnDocket: hearing.aod
       }),
-      docketNumber: this.getHearingDocketTag(hearing),
+      docketNumber: <HearingDocketTag hearing={hearing} />,
       hearingLocation: hearing.readableLocation,
-      time: this.getHearingTime(hearing.scheduledFor, hearing.regionalOfficeTimezone)
+      time: <HearingTime hearing={hearing} isCentralOffice={this.isCentralOffice()} />
     }));
   };
 
@@ -243,7 +175,8 @@ export default class AssignHearingsTabs extends React.Component {
         header: 'Suggested Location',
         align: 'left',
         columnName: 'suggestedLocation',
-        valueFunction: this.getSuggestedHearingLocationForDisplay,
+        valueFunction: (row) => <SuggestedHearingLocation
+          suggestedLocation={row.suggestedLocation} format={this.formatSuggestedHearingLocation} />,
         label: 'Filter by location',
         filterValueTransform: this.formatSuggestedHearingLocation,
         anyFiltersAreSet: true,
@@ -261,15 +194,15 @@ export default class AssignHearingsTabs extends React.Component {
       header: 'Case details',
       align: 'left',
       valueName: 'caseDetails',
-      valueFunction: (appeal) => <Link
-        name={appeal.externalId}
+      valueFunction: (row) => <Link
+        name={row.externalId}
         href={(() => {
           const date = moment(selectedHearingDay.scheduledFor).format('YYYY-MM-DD');
           const qry = `?hearingDate=${date}&regionalOffice=${selectedRegionalOffice}`;
 
-          return `/queue/appeals/${appeal.externalId}/${qry}`;
+          return `/queue/appeals/${row.externalId}/${qry}`;
         })()}>
-        {appeal.caseDetails}
+        {row.caseDetails}
       </Link>
     },
     {
@@ -347,3 +280,20 @@ export default class AssignHearingsTabs extends React.Component {
     </div>;
   }
 }
+
+const appealPropTypes = {
+  attributes: PropTypes.shape({
+    caseType: PropTypes.string,
+    docketNumber: PropTypes.string,
+    aod: PropTypes.bool,
+    availableHearingLocations: PropTypes.array,
+    externalAppealId: PropTypes.string
+  })
+};
+
+AssignHearingsTabs.propTypes = {
+  appealsReadyForHearing: PropTypes.arrayOf(appealPropTypes),
+  selectedHearingDay: PropTypes.string,
+  selectedRegionalOffice: PropTypes.string,
+  room: PropTypes.string
+};
