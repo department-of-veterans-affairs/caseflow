@@ -1685,7 +1685,7 @@ describe LegacyAppeal, :all_dbs do
     end
 
     before do
-      Fakes::BGSService.veteran_records = { appeal.sanitized_vbms_id => veteran_record }
+      Fakes::BGSService.store_veteran_record(appeal.sanitized_vbms_id, veteran_record)
     end
 
     it "returns veteran loaded with BGS values" do
