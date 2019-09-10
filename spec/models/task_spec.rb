@@ -656,13 +656,13 @@ describe Task, :all_dbs do
       end
     end
 
-    # fcontext "the params are incomplete" do
-    #   let(:params) { { assigned_to: judge, appeal: nil, parent_id: task.id, type: Task.name } }
-    #
-    #   it "raises an error" do
-    #     expect { subject }.to raise_error(ActiveRecord::RecordInvalid, /Appeal can't be blank/)
-    #   end
-    # end
+    context "the params are incomplete" do
+      let(:params) { { assigned_to: judge, appeal: nil, parent_id: task.id, type: Task.name } }
+
+      it "raises an error" do
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid, /Appeal can't be blank/)
+      end
+    end
   end
 
   describe ".create_and_auto_assign_child_task" do
