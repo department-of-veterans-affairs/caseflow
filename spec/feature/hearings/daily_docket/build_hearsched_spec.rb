@@ -76,13 +76,13 @@ RSpec.feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
 
     scenario "User can update fields" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      fill_in "Notes", with: "This is a note about the hearing!"
+      find("textarea", id: "#{hearing.external_id}-notes").click.send_keys("This is a note about the hearing!")
       find("label", text: "9:00 am").click
       find("label", text: "Transcript Requested").click
       click_button("Save")
       expect(page).to have_content("You have successfully updated")
 
-      click_dropdown({ text: "No Show" }, find("div .dropdown-#{hearing.external_id}-disposition"))
+      click_dropdown({ text: "No Show" }, find("div", class: "dropdown-#{hearing.external_id}-disposition"))
       click_button("Confirm")
 
       expect(page).to have_content("You have successfully updated")
