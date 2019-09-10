@@ -542,13 +542,15 @@ RSpec.feature "Task queue", :all_dbs do
           end
       end
 
+      after { FeatureToggle.disable!(:use_task_pages_api) }
+
       it "shows the on hold tab" do
         visit(organization.path)
         expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count / 2))
         expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, on_hold_count))
       end
 
-      context "displays the correct filters" do
+      context "when filtering tasks" do
         let(:translation_task_count) { unassigned_count / 2 }
 
         before do

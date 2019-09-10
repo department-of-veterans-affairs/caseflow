@@ -77,8 +77,8 @@ class OrganizationQueue extends React.PureComponent {
     return functionForColumn[column.name];
   }
 
-  columnsFromConfig = (tabConfig, tasks) =>
-    tabConfig.columns.map((column) => this.createColumnObject(column, tabConfig, tasks));
+  columnsFromConfig = (config, tabConfig, tasks) =>
+    tabConfig.columns.map((column) => this.createColumnObject(column, config, tasks));
 
   tasksForTab = (tabName) => {
     const mapper = {
@@ -96,7 +96,7 @@ class OrganizationQueue extends React.PureComponent {
     const tasks = config.use_task_pages_api ?
       tasksWithAppealsFromRawTasks(tabConfig.tasks) :
       this.tasksForTab(tabConfig.name);
-    const cols = this.columnsFromConfig(tabConfig, tasks);
+    const cols = this.columnsFromConfig(config, tabConfig, tasks);
     const totalTaskCount = config.use_task_pages_api ? tabConfig.total_task_count : tasks.length;
 
     return {
