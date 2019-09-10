@@ -41,7 +41,7 @@ class TaskSorter
   end
 
   def order_clause
-    if column.eql?(Constants.QUEUE_CONFIG.Task_TYPE_COLUMN)
+    if column.name.eql?(Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name)
       return task_type_order_clause
     end
 
@@ -57,7 +57,8 @@ class TaskSorter
   end
 
   def task_type_order_clause
-    "TODO"
+    task_types_sorted_by_label = Task.descendants.sort_by(&:label).map(&:name)
+    "position(type in '#{task_types_sorted_by_label.join(',')}') #{sort_order}"
   end
 
   def column_is_valid
