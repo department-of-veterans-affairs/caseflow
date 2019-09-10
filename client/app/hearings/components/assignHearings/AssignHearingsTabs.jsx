@@ -20,8 +20,21 @@ const UPCOMING_HEARINGS_TAB_NAME = 'upcomingHearings';
 const AMA_APPEALS_TAB_NAME = 'amaAppeals';
 const LEGACY_APPEALS_TAB_NAME = 'legacyAppeals';
 
-const AvailableVeteransTable = ({ rows, columns, style = {} }) => {
+const NoUpcomingHearingDayMessage = () => (
+  <StatusMessage
+    title={COPY.ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_HEADER}
+    type="alert"
+    messageText={COPY.ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_MESSAGE}
+    wrapInAppSegment={false}
+  />
+);
+
+const AvailableVeteransTable = ({ rows, columns, selectedHearingDay, style = {} }) => {
   let removeTimeColumn = _.slice(columns, 0, -1);
+
+  if (_.isNil(selectedHearingDay)) {
+    return <div><NoUpcomingHearingDayMessage /></div>;
+  }
 
   if (_.isEmpty(rows)) {
     return <div>
@@ -42,17 +55,16 @@ const AvailableVeteransTable = ({ rows, columns, style = {} }) => {
 AvailableVeteransTable.propTypes = {
   rows: PropTypes.array,
   columns: PropTypes.array,
-  style: PropTypes.object
+  style: PropTypes.object,
+  selectedHearingDay: PropTypes.shape({
+    id: PropTypes.number,
+    scheduledFor: PropTypes.string
+  })
 };
 
 const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => {
   if (_.isNil(selectedHearingDay)) {
-    return <StatusMessage
-      title={COPY.ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_HEADER}
-      type="alert"
-      messageText={COPY.ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_MESSAGE}
-      wrapInAppSegment={false}
-    />;
+    return <div><NoUpcomingHearingDayMessage /></div>;
   }
 
   return <div>
@@ -154,6 +166,10 @@ export default class AssignHearingsTabs extends React.Component {
 
   tabWindowColumns = (tab) => {
     const { selectedRegionalOffice, selectedHearingDay } = this.props;
+
+    if (_.isNil(selectedHearingDay)) {
+      return [];
+    }
 
     let locationColumn;
 
@@ -265,6 +281,7 @@ export default class AssignHearingsTabs extends React.Component {
             page: <AvailableVeteransTable
               rows={legacyRows}
               columns={this.tabWindowColumns(LEGACY_APPEALS_TAB_NAME)}
+              selectedHearingDay={selectedHearingDay}
             />
           },
           {
@@ -273,6 +290,7 @@ export default class AssignHearingsTabs extends React.Component {
               style={this.amaDocketCutoffLineStyle(amaAppeals)}
               rows={amaRows}
               columns={this.tabWindowColumns(AMA_APPEALS_TAB_NAME)}
+              selectedHearingDay={selectedHearingDay}
             />
           }
         ]}
