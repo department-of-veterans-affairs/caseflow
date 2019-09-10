@@ -155,7 +155,7 @@ class TaskActionRepository
       {
         selected: task.root_task.children.find { |child| child.is_a?(JudgeTask) }&.assigned_to,
         options: users_to_options(Judge.list_all),
-        type: VacateMotionMailTask.name
+        type: JudgeAddressMotionToVacateTask.name
       }
     end
 
