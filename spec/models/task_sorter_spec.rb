@@ -141,9 +141,7 @@ describe TaskSorter, :all_dbs do
 
         before do
           OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
-          tasks.each_with_index do |task, index|
-            task.update!(type: task_types[index].name)
-          end
+          tasks.each_with_index { |task, index| task.update!(type: task_types[index].name) }
         end
 
         it "sorts ColocatedTasks by label" do
