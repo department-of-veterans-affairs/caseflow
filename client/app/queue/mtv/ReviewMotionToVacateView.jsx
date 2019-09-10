@@ -19,7 +19,7 @@ export const ReviewMotionToVacateView = (props) => {
   const handleSubmit = async (review) => {
     const newTask = {
       ...review,
-      parent_id: task.id,
+      parent_id: task.taskId,
       type: 'JudgeAddressMotionToVacateTask',
       external_id: appeal.externalId,
       assigned_to_type: 'User'

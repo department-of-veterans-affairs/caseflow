@@ -30,11 +30,7 @@ export const submitMTVAttyReview = (newTask, ownProps) => {
     };
 
     try {
-      // Enable this once backend is hooked up
-      // const res = await ApiUtil.post(url, { data });
-
-      // eslint-disable-next-line no-console
-      console.log('executing POST', url, data);
+      const res = await ApiUtil.post(url, { data });
 
       if (history) {
         history.push('/queue');
