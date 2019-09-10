@@ -91,7 +91,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
     end
   end
 
-  context "Daily Docket with an uneditable disposition", focus: true do
+  context "Daily Docket with an uneditable disposition" do
     let!(:hearing) { create(:hearing) }
     let!(:hearing_task_association) do
       create(:hearing_task_association, hearing: hearing, hearing_task: create(:hearing_task, appeal: hearing.appeal))
