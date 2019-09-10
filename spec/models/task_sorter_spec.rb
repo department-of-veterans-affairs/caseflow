@@ -120,7 +120,7 @@ describe TaskSorter, :all_dbs do
         end
       end
 
-      fcontext "when sorting by task type" do
+      context "when sorting by task type" do
         let(:column_name) { Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN }
         let(:tasks) { Task.where(id: create_list(:generic_task, task_types.length).pluck(:id)) }
 
