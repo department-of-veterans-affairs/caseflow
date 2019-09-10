@@ -6,10 +6,6 @@ class OpenHearingTasksWithoutActiveDescendantsChecker < DataIntegrityChecker
     build_report(hearing_task_ids)
   end
 
-  def slack_channel
-    "#appeals-hearings"
-  end
-
   private
 
   def ids_of_open_hearing_tasks_without_active_descendants

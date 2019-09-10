@@ -11,14 +11,17 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   METRIC_GROUP_NAME = UpdateCachedAppealsAttributesJob.name.underscore
 
   def perform(_args = {})
-    start_time = Time.zone.now
-
+    ama_appeals_start = Time.zone.now
     cache_ama_appeals
+    time_segment(segment: "cache_ama_appeals", start_time: ama_appeals_start)
+
+    legacy_appeals_start = Time.zone.now
     cache_legacy_appeals
+    time_segment(segment: "cache_legacy_appeals", start_time: legacy_appeals_start)
 
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   rescue StandardError => error
-    log_error(start_time, error)
+    log_error(@start_time, error)
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -154,6 +157,17 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   private
+
+  def time_segment(segment:, start_time:)
+    job_duration_seconds = Time.zone.now - start_time
+
+    DataDogService.emit_gauge(
+      app_name: "caseflow_job_segment",
+      metric_group: segment,
+      metric_name: "runtime",
+      metric_value: job_duration_seconds
+    )
+  end
 
   def aod_status_for_appeals(appeals)
     Appeal.where(id: appeals).joins(

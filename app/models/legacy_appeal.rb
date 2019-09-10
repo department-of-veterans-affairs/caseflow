@@ -158,7 +158,8 @@ class LegacyAppeal < ApplicationRecord
     translation: "14",
     schedule_hearing: "57",
     case_storage: "81",
-    service_organization: "55"
+    service_organization: "55",
+    closed: "99"
   }.freeze
 
   def document_fetcher
@@ -745,6 +746,9 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def attorney_case_review
+    # # Created at date will be nil if there is no decass record created for this appeal yet
+    return unless vacols_case_review&.created_at
+
     AttorneyCaseReview.find_by(task_id: "#{vacols_id}-#{VacolsHelper.day_only_str(vacols_case_review.created_at)}")
   end
 

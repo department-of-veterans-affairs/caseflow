@@ -481,6 +481,25 @@ describe ClaimReview, :postgres do
         expect(claim_review.reload.end_product_establishments.count).to eq(3)
       end
     end
+
+    context "when the issue is a correction to a dta decision" do
+      before do
+        allow(RequestIssueCorrectionCleaner).to receive(:new).with(correction_request_issue).and_call_original
+        claim_review.create_remand_supplemental_claims!
+      end
+
+      let!(:remand_decision) { create(:decision_issue, decision_review: claim_review, disposition: "DTA Error") }
+      let(:correction_request_issue) do
+        build(:request_issue, correction_type: "control", contested_decision_issue: remand_decision)
+      end
+      let(:issues) { [correction_request_issue] }
+
+      it "removes the dta request issue" do
+        expect_any_instance_of(RequestIssueCorrectionCleaner).to receive(:remove_dta_request_issue!)
+
+        subject
+      end
+    end
   end
 
   context "#establish!" do

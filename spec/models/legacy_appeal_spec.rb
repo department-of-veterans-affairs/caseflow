@@ -202,6 +202,28 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
+  context "#attorney_case_review" do
+    subject { appeal.attorney_case_review }
+
+    context "when there is a decass record" do
+      let!(:vacols_case) { create(:case, :assigned, user: create(:user)) }
+
+      it "searches through attorney case reviews table" do
+        expect(AttorneyCaseReview).to receive(:find_by)
+        subject
+      end
+    end
+
+    context "when there is no decass record" do
+      let!(:vacols_case) { create(:case) }
+
+      it "does not search through attorney case reviews table" do
+        expect(AttorneyCaseReview).to_not receive(:find_by)
+        subject
+      end
+    end
+  end
+
   context "#nod" do
     let(:vacols_case) do
       create(:case_with_nod)
@@ -758,7 +780,7 @@ describe LegacyAppeal, :all_dbs do
             subject
 
             expect(vacols_case.reload.bfmpro).to eq("HIS")
-            expect(vacols_case.reload.bfcurloc).to eq("99")
+            expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:closed])
           end
         end
       end
@@ -798,11 +820,11 @@ describe LegacyAppeal, :all_dbs do
       before do
         RequestStore[:current_user] = user
         vacols_case.update_vacols_location!("50")
-        vacols_case.update_vacols_location!("99")
+        vacols_case.update_vacols_location!(LegacyAppeal::LOCATION_CODES[:closed])
         vacols_case.reload
 
         ramp_vacols_case.update_vacols_location!("77")
-        ramp_vacols_case.update_vacols_location!("99")
+        ramp_vacols_case.update_vacols_location!(LegacyAppeal::LOCATION_CODES[:closed])
         ramp_vacols_case.reload
       end
 
@@ -1965,7 +1987,7 @@ describe LegacyAppeal, :all_dbs do
     end
 
     it "Updates a legacy_appeal when an appeal is updated" do
-      appeal.update!(rice_compliance: TRUE)
+      appeal.update!(rice_compliance: true)
       expect(legacy_appeal.attributes).to eq(appeal.attributes)
     end
   end
