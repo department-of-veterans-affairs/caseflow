@@ -99,7 +99,7 @@ const HeaderRow = (props) => {
           filterIcon = <TableFilter
             {...column}
             tableData={column.tableData || props.rowObjects}
-            manualFilterOptions={props.useTaskPagesApi && column.filterOptions}
+            filterOptionsFromApi={props.useTaskPagesApi && column.filterOptions}
             updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
             filteredByList={props.filteredByList} />;
         }
