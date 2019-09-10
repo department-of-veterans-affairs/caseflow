@@ -206,13 +206,14 @@ describe Distribution, :all_dbs do
           genpop_query: "foobar"
         )
         distribution.update!(status: "completed", completed_at: today)
+        allow(Raven).to receive(:capture_exception) { @raven_called = true }
       end
 
       it "does not create a duplicate distributed_case" do
-        expect { subject.distribute! }.to raise_error(ActiveRecord::RecordNotUnique)
+        subject.distribute!
         expect(subject.valid?).to eq(true)
-        expect(subject.error?).to eq(true)
-        expect(subject.errored_at).to eq(Time.zone.now)
+        expect(subject.error?).to eq(false)
+        expect(@raven_called).to eq(true)
       end
     end
 
