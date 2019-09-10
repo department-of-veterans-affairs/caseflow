@@ -3,6 +3,7 @@
 require "bgs"
 require "fakes/end_product_store"
 
+# rubocop:disable Metrics/ClassLength
 class Fakes::BGSService
   include PowerOfAttorneyMapper
   include AddressMapper
@@ -500,3 +501,4 @@ class Fakes::BGSService
   end
   # rubocop:enable Metrics/MethodLength
 end
+# rubocop:enable Metrics/ClassLength
