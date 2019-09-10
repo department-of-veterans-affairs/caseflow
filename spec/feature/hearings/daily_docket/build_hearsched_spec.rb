@@ -74,18 +74,20 @@ RSpec.feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
     let!(:hearing) { create(:hearing, :with_tasks) }
     let!(:postponed_hearing_day) { create(:hearing_day, scheduled_for: Date.new(2019, 3, 3)) }
 
-    scenario "User can update fields", skip: "flake click_dropdown" do
+    scenario "User can update fields" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
       fill_in "Notes", with: "This is a note about the hearing!"
       find("label", text: "9:00 am").click
       find("label", text: "Transcript Requested").click
       click_button("Save")
-      click_dropdown(name: "#{hearing.external_id}-disposition", text: "No Show")
+      expect(page).to have_content("You have successfully updated")
+
+      click_dropdown({ text: "No Show" }, find("div .dropdown-#{hearing.external_id}-disposition"))
       click_button("Confirm")
 
-      expect(page).to have_content("You have successfully updated", wait: 30)
-      expect(page).to have_content("No Show", wait: 30)
-      expect(page).to have_content("This is a note about the hearing!", wait: 30)
+      expect(page).to have_content("You have successfully updated")
+      expect(page).to have_content("No Show")
+      expect(page).to have_content("This is a note about the hearing!")
       expect(find_field("Transcript Requested", visible: false)).to be_checked
       expect(find_field("9:00 am", visible: false)).to be_checked
     end
