@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 class Fakes::PersistentStore
-  REDIS_NS ||= "persistent_store_#{Rails.env}"
-
   class << self
     def redis_ns
-      REDIS_NS
+      "persistent_store_#{Rails.env}"
     end
 
     def cache_store
