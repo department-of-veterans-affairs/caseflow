@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -10,6 +11,7 @@ import { getMinutesToMilliseconds } from '../util/DateUtil';
 import { setSpecialIssues } from './QueueActions';
 
 class SpecialIssueLoadingScreen extends React.PureComponent {
+
   createLoadPromise = () => {
     const requestOptions = {
       timeout: { response: getMinutesToMilliseconds(5) }
@@ -18,8 +20,8 @@ class SpecialIssueLoadingScreen extends React.PureComponent {
     return ApiUtil.get(
       `/appeals/${this.props.appealExternalId}/special_issues`, requestOptions).then(
       (response) => {
-        // eslint-disable-next-line no-unused-vars
-        const { appeal_id, id, ...specialIssues } = JSON.parse(response.text);
+        // eslint-disable-next-line no-unused-vars, camelcase
+        const { appeal_id, id, ...specialIssues } = response.body;
 
         this.props.setSpecialIssues(specialIssues);
       }
@@ -52,6 +54,12 @@ class SpecialIssueLoadingScreen extends React.PureComponent {
     </div>;
   };
 }
+
+SpecialIssueLoadingScreen.propTypes = {
+  appealExternalId: PropTypes.string,
+  children: PropTypes.node,
+  setSpecialIssues: PropTypes.func
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setSpecialIssues

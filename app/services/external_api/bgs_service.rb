@@ -76,6 +76,8 @@ class ExternalApi::BGSService
       client.people.find_person_by_ptcpnt_id(participant_id)
     end
 
+    return {} unless bgs_info
+
     @person_info[participant_id] ||= {
       first_name: bgs_info[:first_nm],
       last_name: bgs_info[:last_nm],
@@ -203,6 +205,14 @@ class ExternalApi::BGSService
   def may_modify?(vbms_id, veteran_participant_id)
     return false unless can_access?(vbms_id)
 
+    # sometimes find_flashes works
+    begin
+      client.claimants.find_flashes(vbms_id)
+    rescue BGS::ShareError
+      return false
+    end
+
+    # sometimes the station conflict logic works
     !ExternalApi::BgsVeteranStationUserConflict.new(
       veteran_participant_id: veteran_participant_id,
       client: client

@@ -203,7 +203,7 @@ export const onAddIssue = (appealId, vacolsSequenceId) => (dispatch) => {
   ApiUtil.patch(`/hearings/appeals/${outgoingIssue.appeal_id}`, { data: { appeal: {
     worksheet_issues_attributes: [outgoingIssue] } } }).
     then((data) => {
-      const issue = JSON.parse(data.text).appeal.worksheet_issues.filter((dbIssue) => {
+      const issue = data.body.appeal.worksheet_issues.filter((dbIssue) => {
         return outgoingIssue.vacols_sequence_id === dbIssue.vacols_sequence_id;
       })[0];
 
