@@ -5,6 +5,7 @@ import { FORM_TYPES } from '../constants';
 
 const getNonVeteranClaimant = (intakeData) => {
   const claimant = intakeData.relationships.filter((relationship) => {
+    // console.log("veteran", relationship.value === intakeData.claimant);
     return relationship.value === intakeData.claimant;
   });
 
@@ -16,16 +17,16 @@ const getNonVeteranClaimant = (intakeData) => {
 };
 
 const getClaimantField = (formType, veteran, intakeData) => {
-  if (formType === 'appeal' || intakeData.benefitType === 'compensation') {
+  // if (formType === 'appeal' || intakeData.benefitType === 'compensation') {
     const claimant = intakeData.veteranIsNotClaimant ? getNonVeteranClaimant(intakeData) : veteran.name;
 
     return [{
       field: 'Claimant',
       content: claimant
     }];
-  }
+  // }
 
-  return [];
+  // return [];
 };
 
 export const legacyIssue = (issue, legacyAppeals) => {
