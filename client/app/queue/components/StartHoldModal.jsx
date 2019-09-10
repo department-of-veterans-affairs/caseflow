@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { onReceiveAmaTasks } from '../QueueActions';
@@ -58,9 +59,7 @@ class StartHoldModal extends React.Component {
 
     return this.props.requestSave(`/tasks/${task.taskId}/place_hold`, payload, successMsg).
       then((resp) => {
-        const response = JSON.parse(resp.text);
-
-        this.props.onReceiveAmaTasks(response.tasks.data);
+        this.props.onReceiveAmaTasks(resp.body.tasks.data);
       });
   }
 
@@ -103,6 +102,19 @@ class StartHoldModal extends React.Component {
     </QueueFlowModal>;
   }
 }
+
+StartHoldModal.propTypes = {
+  appeal: PropTypes.shape({
+    veteranFullName: PropTypes.string
+  }),
+  appealId: PropTypes.string,
+  highlightFormItems: PropTypes.bool,
+  onReceiveAmaTasks: PropTypes.func,
+  requestSave: PropTypes.func,
+  task: PropTypes.shape({
+    taskId: PropTypes.string
+  })
+};
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: appealWithDetailSelector(state, ownProps),
