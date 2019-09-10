@@ -43,8 +43,10 @@ class BulkTaskAssignment
         .limit(task_count).order(:created_at)
       if regional_office
         tasks = tasks.joins(
-          "INNER JOIN appeals ON appeals.id = appeal_id AND tasks.appeal_type = 'Appeal'"
-        ).where("appeals.closest_regional_office = ?", regional_office)
+          "INNER JOIN appeals ON appeals.id = appeal_id AND appeal_type = '#{Appeal.name}'"
+        ).where("closest_regional_office = ?", regional_office) +
+                tasks.joins("INNER JOIN legacy_appeals ON legacy_appeals.id = appeal_id \
+                  AND appeal_type = '#{LegacyAppeal.name}'").where("closest_regional_office = ?", regional_office)
       end
       tasks
     end
