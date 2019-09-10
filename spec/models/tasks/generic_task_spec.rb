@@ -3,7 +3,7 @@
 require "support/database_cleaner"
 require "rails_helper"
 
-describe Task, :postgres do
+describe Task, :all_dbs do
   describe ".available_actions" do
     let(:task) { nil }
     let(:user) { nil }
@@ -297,7 +297,7 @@ describe Task, :postgres do
     end
   end
 
-  describe ".create_many_from_params" do
+  fdescribe ".create_many_from_params" do
     let(:parent_assignee) { create(:user) }
     let(:current_user) { create(:user) }
     let(:assignee) { create(:user) }
