@@ -23,7 +23,11 @@ class QueueFilterParameter
       (URI.unescape(value) == COPY::NULL_FILTER_LABEL) ? nil : URI.unescape(value)
     end
 
-    new(column: filter_hash["col"], values: values)
+    if filter_hash["col"].eql?(Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name)
+      values.reject! { |value| value.eql?("is_aod") }
+    end
+
+    values.present? ? new(column: filter_hash["col"], values: values) : nil
   end
 
   private

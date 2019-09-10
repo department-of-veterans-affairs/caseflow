@@ -49,5 +49,22 @@ describe QueueFilterParameter do
         expect(subject.values).to match_array([non_null_value, nil])
       end
     end
+
+    context "when typeColumn has 'is_aod' filter" do
+      let(:filter_string) { "col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=is_aod" }
+
+      it "returns nil" do
+        expect(subject).to eq nil
+      end
+
+      context "when there are other values present" do
+        let(:good_value) { "good_value" }
+        let(:filter_string) { "col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=is_aod,#{good_value}" }
+
+        it "rejects the is_aod value" do
+          expect(subject.values).to match_array([good_value])
+        end
+      end
+    end
   end
 end
