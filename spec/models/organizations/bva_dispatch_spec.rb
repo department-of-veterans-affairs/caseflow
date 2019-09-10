@@ -32,6 +32,19 @@ describe BvaDispatch, :postgres do
       it "should return the first member of the BVA Dispatch team" do
         expect(subject).to eq(bva_dispatch_org.users.first)
       end
+
+      context "when members are admins" do
+        let(:number_of_admins) { 5 }
+
+        before do
+          admin_ids = bva_dispatch_org.users.take(number_of_admins)
+          User.where(id: admin_ids).each { |admin| OrganizationsUser.make_user_admin(admin, bva_dispatch_org) }
+        end
+
+        it "should skip the admins and assign to the non admin team member" do
+          expect(subject.administered_teams.include?(bva_dispatch_org)).to be false
+        end
+      end
     end
   end
 

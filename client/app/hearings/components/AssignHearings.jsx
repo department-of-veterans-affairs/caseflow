@@ -125,7 +125,10 @@ AssignHearings.propTypes = {
   selectedRegionalOffice: PropTypes.string,
   upcomingHearingDays: PropTypes.object,
   onSelectedHearingDayChange: PropTypes.func,
-  selectedHearingDay: PropTypes.object,
+  selectedHearingDay: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
   appealsReadyForHearing: PropTypes.object,
   userId: PropTypes.number,
   onReceiveTasks: PropTypes.func

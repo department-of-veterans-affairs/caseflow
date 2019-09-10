@@ -140,7 +140,7 @@ feature "Intake", :all_dbs do
 
     context "Veteran has too high of a sensitivity level for user" do
       before do
-        Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
+        Fakes::BGSService.mark_veteran_not_accessible(appeal.veteran_file_number)
       end
 
       scenario "Search for a veteran with a sensitivity error" do
@@ -157,7 +157,7 @@ feature "Intake", :all_dbs do
 
     context "Veteran records have been merged and Veteran has multiple active phone numbers in SHARE" do
       before do
-        Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
+        Fakes::BGSService.mark_veteran_not_accessible(appeal.veteran_file_number)
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
           .and_raise(BGS::ShareError.new("NonUniqueResultException"))
       end
@@ -174,6 +174,8 @@ feature "Intake", :all_dbs do
 
         cache_key = Fakes::BGSService.new.can_access_cache_key(current_user, "12341234")
         expect(Rails.cache.exist?(cache_key)).to eq(false)
+
+        # retry after SHARE is fixed
 
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
         Fakes::BGSService.inaccessible_appeal_vbms_ids = []
