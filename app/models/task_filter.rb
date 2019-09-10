@@ -31,13 +31,13 @@ class TaskFilter
   def where_clause
     return [] if filter_params.empty?
 
-    filters = filter_params.map { |filter_string| QueueFilterParameter.from_string(filter_string) }
+    filters = filter_params.map { |filter_string| QueueFilterParameter.from_string(filter_string) }.compact
 
     where_string = filters.map { |filter| "#{table_column_from_name(filter.column)} IN (?)" }.join(" AND ")
     where_arguments = filters.map(&:values)
 
     if filter_params.any? { |filter_string| filter_string[/typeColumn&val=.*is_aod/] }
-      where_string << " AND cached_appeal_attributes.is_aod = true"
+      where_string << "#{where_string.present? ? ' AND ' : ''}cached_appeal_attributes.is_aod = true"
     end
 
     [where_string] + where_arguments
