@@ -5,7 +5,7 @@ require "rails_helper"
 
 describe VeteranFinder, :postgres do
   before do
-    Fakes::BGSService.veteran_records = { file_number => veteran_record }
+    Fakes::BGSService.store_veteran_record(file_number, veteran_record)
     RequestStore[:current_user] = create(:user)
   end
 

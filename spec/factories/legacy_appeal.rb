@@ -6,7 +6,7 @@ FactoryBot.define do
       vacols_case { nil }
     end
 
-    vacols_id { vacols_case&.bfkey }
+    vacols_id { vacols_case&.bfkey || "123456" }
     vbms_id { vacols_case&.bfcorlid }
 
     trait :with_schedule_hearing_tasks do
