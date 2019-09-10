@@ -41,6 +41,10 @@ class TaskSorter
   end
 
   def order_clause
+    if column.eql?(Constants.QUEUE_CONFIG.Task_TYPE_COLUMN)
+      return task_type_order_clause
+    end
+
     clauses = column.sorting_columns.map do |col|
       tbl_clause = if sort_requires_case_norm?(col)
                      "UPPER(#{column.sorting_table}.#{col})"
@@ -50,6 +54,10 @@ class TaskSorter
       "#{tbl_clause} #{sort_order}"
     end
     clauses.join(", ")
+  end
+
+  def task_type_order_clause
+    "TODO"
   end
 
   def column_is_valid
