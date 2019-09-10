@@ -96,13 +96,13 @@ const HeaderRow = (props) => {
             updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
             filteredByList={props.filteredByList} />;
         } else if (props.useTaskPagesApi && column.filterOptions) {
-          filterIcon = <TableFilter
-            {...column}
-            tableData={column.tableData || props.rowObjects}
-            filterOptionsFromApi={props.useTaskPagesApi && column.filterOptions}
-            // https://github.com/department-of-veterans-affairs/caseflow/pull/11940#discussion_r322795963
-            // updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
-            filteredByList={props.filteredByList} />;
+          // https://github.com/department-of-veterans-affairs/caseflow/pull/11940#discussion_r322795963
+          // filterIcon = <TableFilter
+          //   {...column}
+          //   tableData={column.tableData || props.rowObjects}
+          //   filterOptionsFromApi={props.useTaskPagesApi && column.filterOptions}
+          //   updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
+          //   filteredByList={props.filteredByList} />;
         }
 
         const columnTitleContent = <span>{column.header || ''}</span>;
