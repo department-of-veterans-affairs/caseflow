@@ -83,6 +83,7 @@ class Fakes::BGSService
       self.rating_records = {}
       self.rating_profile_records = {}
       end_product_store.clear!
+      veteran_store.clear!
       self.manage_claimant_letter_v2_requests = nil
       self.generate_tracked_items_requests = nil
     end

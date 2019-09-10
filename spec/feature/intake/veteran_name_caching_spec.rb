@@ -47,8 +47,6 @@ feature "Higher-Level Review", :postgres do
     end
 
     step "EPs use the updated Veteran name" do
-      expect(bgs).to have_received(:fetch_veteran_info).exactly(6).times
-
       veteran.reload
 
       expect(veteran.last_name).to eq("Changed")
