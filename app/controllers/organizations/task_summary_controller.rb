@@ -13,19 +13,23 @@ class Organizations::TaskSummaryController < OrganizationsController
       left join (
         select closest_regional_office
         , id
-        , 'LegacyAppeal' as type
+        , '#{LegacyAppeal.name}' as type
         from legacy_appeals
         union
         select closest_regional_office
         , id
-        , 'Appeal' as type
+        , '#{Appeal.name}' as type
         from appeals
       ) all_appeals
         on tasks.appeal_id = all_appeals.id
         and tasks.appeal_type = all_appeals.type
       where assigned_to_id = #{organization.id}
-        and assigned_to_type = 'Organization'
-        and status in ('assigned', 'in_progress')
+        and assigned_to_type = '#{Organization.name}'
+        and status in ('#{Constants.TASK_STATUSES.assigned}', '#{Constants.TASK_STATUSES.in_progress}')
+      -- Exclude TimedHoldTasks from being available for bulk assignment because they should not have child tasks
+      -- and should only be created as children of NoShowHearingTasks, and those tasks will become available for
+      -- bulk assignment after the timed hold has been completed.
+        and tasks.type <> '#{TimedHoldTask.name}'
       group by 2, 3
       order by 2, 1 desc;
     })
