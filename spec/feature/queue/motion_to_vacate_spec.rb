@@ -73,10 +73,11 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         # Should this go back to user's queue...?
         expect(page.current_path).to eq("/queue")
+        # expect(page).to have_content("Your Queue")
 
         # Enable test once backend truly supports
-        # judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
-        # expect(judge_task).to_not be_nil
+        judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
+        expect(judge_task).to_not be_nil
       end
 
       it "motions attorney recommends denied decision to judge and fills in hyperlink" do
@@ -92,8 +93,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
         expect(page.current_path).to eq("/queue")
 
         # Enable test once backend truly supports
-        # judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
-        # expect(judge_task).to_not be_nil
+        judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
+        expect(judge_task).to_not be_nil
       end
     end
   end
