@@ -158,8 +158,7 @@ describe DocketCoordinator, :all_dbs do
 
         it "uses the maximum number possible" do
           expect(docket_coordinator.docket_proportions).to include(
-            legacy: 0.05,
-            direct_review: 0.8
+            legacy: 0.0,
           )
         end
       end
