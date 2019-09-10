@@ -662,7 +662,14 @@ class LegacyAppeal < ApplicationRecord
 
     caseflow_file_number = veteran.file_number
     if vacols_file_number != caseflow_file_number
-      Raven.capture_message("legacy appeal #{external_id} has file_number mismatch with VACOLS and Caseflow")
+      DataDogService.increment_counter(
+        metric_group: "database_disagreement",
+        metric_name: "file_number",
+        app_name: RequestStore[:application],
+        attrs: {
+          appeal_id: external_id
+        }
+      )
     end
     caseflow_file_number # prefer for now
   end
