@@ -12,9 +12,9 @@ import { submitMTVJudgeDecision } from './mtvActions';
 export const AddressMotionToVacateView = (props) => {
   const { task, appeal, attorneysOfJudge } = props;
 
-  const attyOptions = Object.values(attorneysOfJudge).map(({ id, display_name }) => ({
-    label: display_name,
-    value: id
+  const attyOptions = Object.values(attorneysOfJudge).map(({ id: value, display_name: label }) => ({
+    label,
+    value
   }));
 
   const handleSubmit = (decision) => {

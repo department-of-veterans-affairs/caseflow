@@ -13,8 +13,10 @@ import { taskById, appealWithDetailSelector } from '../selectors';
 export const ReviewMotionToVacateView = (props) => {
   const { task, appeal, judges, submitting } = props;
 
-  const judgeOptions = Object.values(judges).map(({ id, display_name }) => ({ label: display_name,
-    value: id }));
+  const judgeOptions = Object.values(judges).map(({ id: value, display_name: label }) => ({
+    label,
+    value
+  }));
 
   const handleSubmit = async (review) => {
     const newTask = {
