@@ -12,6 +12,8 @@ import DecisionReviewEditCompletedPage from '../intake/pages/decisionReviewEditC
 import Message from './pages/message';
 import { css } from 'glamor';
 import EditButtons from './components/EditButtons';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+
 
 const textAlignRightStyling = css({
   textAlign: 'right'
@@ -38,6 +40,11 @@ export default class IntakeEditFrame extends React.PureComponent {
       Go to VBMS claim details and click the “Edit in Caseflow” button to return to edit.`;
   }
 
+   displayCorrectionMessage = (details) => {
+    return <span>No changes were made to {details.veteran.name}'s (ID #{details.veteran.fileNumber}) {details.formName}.
+     If needed, you may <a href={this.props.serverIntake.editIssuesUrl} target="_blank">correct the issues.</a></span>;
+  }
+
   displayOutcodedMessage = () => {
     return 'This appeal has been outcoded and the issues are no longer editable.';
   }
@@ -45,7 +52,8 @@ export default class IntakeEditFrame extends React.PureComponent {
   render() {
     const {
       veteran,
-      formType
+      formType,
+      editIssuesUrl
     } = this.props.serverIntake;
 
     const appName = 'Intake';
@@ -82,7 +90,7 @@ export default class IntakeEditFrame extends React.PureComponent {
                   path={PAGE_PATHS.CANCEL_ISSUES}
                   title="Edit Claim Issues | Caseflow Intake"
                   component={() => {
-                    return <Message title="Edit Canceled" displayMessage={this.displayCanceledMessage} />;
+                    return <Message title="Edit Canceled" displayMessage={this.displayCorrectionMessage} />;
                   }} />
                 <PageRoute
                   exact
