@@ -97,13 +97,12 @@ const HeaderRow = (props) => {
             updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
             filteredByList={props.filteredByList} />;
         } else if (props.useTaskPagesApi && column.filterOptions) {
-          // https://github.com/department-of-veterans-affairs/caseflow/pull/11940#discussion_r322795963
-          // filterIcon = <TableFilter
-          //   {...column}
-          //   tableData={column.tableData || props.rowObjects}
-          //   filterOptionsFromApi={props.useTaskPagesApi && column.filterOptions}
-          //   updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
-          //   filteredByList={props.filteredByList} />;
+          filterIcon = <TableFilter
+            {...column}
+            tableData={column.tableData || props.rowObjects}
+            filterOptionsFromApi={props.useTaskPagesApi && column.filterOptions}
+            updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
+            filteredByList={props.filteredByList} />;
         }
 
         const columnTitleContent = <span>{column.header || ''}</span>;
@@ -347,8 +346,7 @@ export default class QueueTable extends React.PureComponent {
     ).
       concat(filterParams.map((filterParam) =>
         `${encodeURIComponent(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`)}=${encodeURIComponent(filterParam)}`
-      )
-    ).
+      )).
       join('&');
 
     return `${this.props.taskPagesApiEndpoint}&${queryString}`;
