@@ -154,7 +154,7 @@ describe DocketCoordinator, :all_dbs do
       end
 
       context "unless there aren't that many cases" do
-        let(:nonpriority_legacy_count) { 3 }
+        let(:nonpriority_legacy_count) { 0 }
 
         it "uses the maximum number possible" do
           expect(docket_coordinator.docket_proportions).to include(
