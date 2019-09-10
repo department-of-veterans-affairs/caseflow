@@ -33,12 +33,20 @@ class ExternalApi::VADotGovService::Response
 
     case code
     when 429
-      Caseflow::Error::VaDotGovLimitError.new code: code, message: body
+      Caseflow::Error::VaDotGovLimitError.new(
+        code: code,
+        message: "Mapping service is temporarily unavailable. Please try again later."
+      )
     when 400
-      Caseflow::Error::VaDotGovRequestError.new code: code, message: body
+      Caseflow::Error::VaDotGovRequestError.new(
+        code: code,
+        message: "An unexpected error occured when attempting to map veteran."
+      )
     else
-      msg = "Error: #{body}, HTTP code: #{code}"
-      Caseflow::Error::VaDotGovServerError.new code: code, message: msg
+      Caseflow::Error::VaDotGovServerError.new(
+        code: code,
+        message: "An unexpected error occured when attempting to map veteran."
+      )
     end
   end
 end

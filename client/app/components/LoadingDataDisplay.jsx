@@ -57,7 +57,7 @@ class LoadingDataDisplay extends React.PureComponent {
         let errors;
 
         if (response.response && response.response.type === 'application/json') {
-          errors = JSON.parse(response.response.text).errors;
+          errors = response.response.body.errors;
         }
 
         this.setState({
@@ -87,7 +87,8 @@ class LoadingDataDisplay extends React.PureComponent {
     this._isMounted = false;
   }
 
-  componentWillReceiveProps(nextProps) {
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.createLoadPromise.toString() !== nextProps.createLoadPromise.toString()) {
       throw new Error("Once LoadingDataDisplay is instantiated, you can't change the createLoadPromise function.");
     }
@@ -146,10 +147,19 @@ class LoadingDataDisplay extends React.PureComponent {
 }
 
 LoadingDataDisplay.propTypes = {
+  children: PropTypes.node,
   createLoadPromise: PropTypes.func.isRequired,
-  loadingComponentProps: PropTypes.object,
+  errorComponent: PropTypes.func,
+  failStatusMessageChildren: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.object
+  ]),
   failStatusMessageProps: PropTypes.object,
-  failStatusMessageChildren: PropTypes.object
+  loadingComponent: PropTypes.func,
+  loadingComponentProps: PropTypes.object,
+  slowLoadMessage: PropTypes.string,
+  slowLoadThresholdMs: PropTypes.number,
+  timeoutMs: PropTypes.number
 };
 
 LoadingDataDisplay.defaultProps = {

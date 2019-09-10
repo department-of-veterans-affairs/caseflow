@@ -46,7 +46,7 @@ class ExternalApi::VADotGovService
       response = nil
 
       until remaining_ids.empty? || response.try(:next?) == false || response.try(:success?) == false
-        response = send_facilities_request(query: query.merge(page: page, per_page: 100)).merge(response)
+        response = send_facilities_request(query: query.merge(page: page, per_page: 200)).merge(response)
 
         remaining_ids -= response.data.pluck(:facility_id)
 

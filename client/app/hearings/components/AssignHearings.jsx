@@ -58,6 +58,15 @@ const UpcomingHearingDaysNav = ({
   </div>
 );
 
+UpcomingHearingDaysNav.propTypes = {
+  upcomingHearingDays: PropTypes.object,
+  selectedHearingDay: PropTypes.shape({
+    scheduledFor: PropTypes.string,
+    room: PropTypes.string
+  }),
+  onSelectedHearingDayChange: PropTypes.func
+};
+
 export default class AssignHearings extends React.Component {
 
   room = () => {
@@ -65,7 +74,9 @@ export default class AssignHearings extends React.Component {
 
     // St. Petersburg, FL or Winston-Salem, NC
     if (selectedRegionalOffice === 'RO17' || selectedRegionalOffice === 'RO18') {
-      return selectedHearingDay.room;
+      if (selectedHearingDay) {
+        return selectedHearingDay.room;
+      }
     }
 
     return '';
@@ -114,8 +125,12 @@ AssignHearings.propTypes = {
   selectedRegionalOffice: PropTypes.string,
   upcomingHearingDays: PropTypes.object,
   onSelectedHearingDayChange: PropTypes.func,
-  selectedHearingDay: PropTypes.object,
+  selectedHearingDay: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
   appealsReadyForHearing: PropTypes.object,
   userId: PropTypes.number,
   onReceiveTasks: PropTypes.func
 };
+

@@ -122,22 +122,23 @@ paths:
                         enum: [RequestIssue]
                       attributes:
                         type: object
-                        required:
-                          - decisionText
-                          - decisionDate
-                          # withdrawalDate (NOT required)
-                          # nonratingIssueCategory (NOT required)
-                        properties:
-                          decisionText:
+                        properties: # none are required
+                          notes:
                             type: string
+                          decisionIssueId:
+                            type: integer
+                          ratingIssueId:
+                            type: string
+                          legacyAppealId:
+                            type: string
+                          legacyAppealIssueId:
+                            type: integer
+                          category:
+                            $ref: "#/components/schemas/nonrating_issue_category"
                           decisionDate:
                             type: string
-                            format: date
-                          withdrawalDate:
+                          decisionText:
                             type: string
-                            format: date
-                          nonratingIssueCategory:
-                            $ref: "#/components/schemas/nonrating_issue_category"
             examples:
               pension:
                 value: {
@@ -170,18 +171,27 @@ paths:
                     },
                     "included": [
                       {
-                        "type": "NonratingIssue",
+                        "type": "RequestIssue",
                         "attributes": {
                           "decisionText": "veteran status verified",
                           "decisionDate": "2019-07-11",
-                          "withdrawalDate": null,
-                          "nonratingIssueCategory": "Eligibility | Veteran Status"
+                          "category": "Eligibility | Veteran Status"
                         }
                       },
                       {
-                        "type": "RatingIssue",
-                        "id": "def456"
-                      }
+                        "type": "RequestIssue",
+                        "attributes": {
+                          "decisionIssueId": 22
+                        }
+                      },
+                      {
+                        "type": "RequestIssue",
+                        "attributes": {
+                          "ratingIssueId": "12345678",
+                          "legacyAppealId": "9876543210",
+                          "legacyAppealIssueId": 1
+                        }
+                      },
                     ]
                   }
       responses:
@@ -227,27 +237,27 @@ paths:
                       }
                     ]
                   }
-        '401':
-          description: |-
-            401 response
-          content:
-            application/vnd.api+json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    $ref: "#/components/schemas/errors"
-              examples:
-                unauthenticated:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "401",
-                        "title":  "Unauthenticated",
-                        "code":  "unauthenticated"
-                      }
-                    ]
-                  }
+#       '401':
+#         description: |-
+#           401 response
+#         content:
+#           application/vnd.api+json:
+#             schema:
+#               type: object
+#               properties:
+#                 errors:
+#                   $ref: "#/components/schemas/errors"
+#             examples:
+#               unauthenticated:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "401",
+#                       "title":  "Unauthenticated",
+#                       "code":  "unauthenticated"
+#                     }
+#                   ]
+#                 }
         '403':
           description: |-
             403 response
@@ -264,7 +274,7 @@ paths:
                     "errors": [
                       {
                         "status": "403",
-                        "title":  "Veteran File inaccessible",
+                        "title":  "You don't have permission to view this veteran's information",
                         "code":  "veteran_not_accessible"
                       }
                     ]
@@ -285,31 +295,31 @@ paths:
                     "errors": [
                       {
                         "status": "404",
-                        "title":  "Veteran File not found",
+                        "title":  "Veteran not found",
                         "code":  "veteran_not_found"
                       }
                     ]
                   }
-                issue_not_found:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "404",
-                        "title":  "Issue not found",
-                        "code":  "issue_not_found"
-                      }
-                    ]
-                  }
-                claimant_not_found:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "404",
-                        "title":  "Claimant not found",
-                        "code":  "claimant_not_found"
-                      }
-                    ]
-                  }
+#               issue_not_found:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "404",
+#                       "title":  "Issue not found",
+#                       "code":  "issue_not_found"
+#                     }
+#                   ]
+#                 }
+#               claimant_not_found:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "404",
+#                       "title":  "Claimant not found",
+#                       "code":  "claimant_not_found"
+#                     }
+#                   ]
+#                 }
         '409':
           description: |-
             409 response
@@ -342,53 +352,133 @@ paths:
                   errors:
                     $ref: "#/components/schemas/errors"
               examples:
-                payee_code_required:
+#               payee_code_required:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Claimant payee code may not be blank",
+#                       "code":  "payee_code_required"
+#                     }
+#                   ]
+#                 }
+#               claimant_required:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Claimant participant id may not be blank",
+#                       "code":  "claimant_required"
+#                     }
+#                   ]
+#                 }
+#               claimant_address_required:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Claimant address required",
+#                       "code":  "claimant_address_required"
+#                     }
+#                   ]
+#                 }
+#               benefit_type_requires_payee_code:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Benefit type requires payee code",
+#                       "code":  "benefit_type_requires_payee_code"
+#                     }
+#                   ]
+#                 }
+#               duplicate_of_rating_issue_in_active_review:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Duplicate rating issue",
+#                       "code":  "duplicate_of_rating_issue_in_active_review"
+#                     }
+#                   ]
+#                 }
+#               claimant_ineligible:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Claimant Ineligible (not on original Benefit Claim or no POA)",
+#                       "code":  "claimant_ineligible"
+#                     }
+#                   ]
+#                 }
+#               untimely:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Issue is ineligible because it has a prior decision date that’s older than 1 year",
+#                       "code":  "untimely"
+#                     }
+#                   ]
+#                 }
+#               before_ama:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Issue is ineligible because it has a prior decision date before February 19, 2019",
+#                       "code":  "before_ama"
+#                     }
+#                   ]
+#                 }
+#               higher_level_review_to_higher_level_review:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Issue is ineligible because it was last processed as a Higher-Level Review and this can't be done twice in a row",
+#                       "code":  "higher_level_review_to_higher_level_review"
+#                     }
+#                   ]
+#                 }
+#               appeal_to_higher_level_review:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Issue is ineligible because it was last processed as a Board Appeal which can't be followed by a Higher-Level Review",
+#                       "code":  "appeal_to_higher_level_review"
+#                     }
+#                   ]
+#                 }
+#               legacy_issue_not_withdrawn:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Issue is ineligible because the same issue is under review as a Legacy Appeal but the claimant didn’t choose to withdraw their issue from the legacy system",
+#                       "code":  "legacy_issue_not_withdrawn"
+#                     }
+#                   ]
+#                 }
+#               legacy_appeal_not_eligible:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Issue is ineligible because the same issue is under review as a Legacy Appeal and that appeal is outside the window of eligibility",
+#                       "code":  "legacy_appeal_not_eligible"
+#                     }
+#                   ]
+#                 }
+                incident_flash:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Claimant payee code may not be blank",
-                        "code":  "payee_code_required"
-                      }
-                    ]
-                  }
-                claimant_required:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title":  "Claimant participant id may not be blank",
-                        "code":  "claimant_required"
-                      }
-                    ]
-                  }
-                claimant_address_required:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title":  "Claimant address required",
-                        "code":  "claimant_address_required"
-                      }
-                    ]
-                  }
-                benefit_type_requires_payee_code:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title":  "Benefit type requires payee code",
-                        "code":  "benefit_type_requires_payee_code"
-                      }
-                    ]
-                  }
-                duplicate_of_rating_issue_in_active_review:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title":  "Duplicate rating issue",
-                        "code":  "duplicate_of_rating_issue_in_active_review"
+                        "title": "The veteran has an incident flash",
+                        "code": "incident_flash"
                       }
                     ]
                   }
@@ -397,78 +487,78 @@ paths:
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Invalid Veteran File number",
-                        "code":  "invalid_file_number"
+                        "title": "Veteran ID not found",
+                        "code": "invalid_file_number"
                       }
                     ]
                   }
-                claimant_ineligible:
+                request_issue_cannot_be_empty:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Claimant Ineligible (not on original Benefit Claim or no POA)",
-                        "code":  "claimant_ineligible"
+                        "title": "A request issue cannot be empty",
+                        "code": "request_issue_cannot_be_empty"
                       }
                     ]
                   }
-                untimely:
+                request_issue_category_invalid_for_benefit_type:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Issue is ineligible because it has a prior decision date that’s older than 1 year",
-                        "code":  "untimely"
+                        "title": "Request issue category for specified benefit type",
+                        "code": "request_issue_category_invalid_for_benefit_type"
                       }
                     ]
                   }
-                before_ama:
+                request_issue_legacyAppealId_is_blank_when_legacyAppealIssueId_is_present:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Issue is ineligible because it has a prior decision date before February 19, 2019",
-                        "code":  "before_ama"
+                        "title": "If you specify a legacy appeal issue, you must specify which legacy appeal it belongs to (legacy_appeal_id)",
+                        "code": "request_issue_legacyAppealId_is_blank_when_legacyAppealIssueId_is_present"
                       }
                     ]
                   }
-                higher_level_review_to_higher_level_review:
+                request_issue_legacyAppealIssueId_is_blank_when_legacyAppealId_is_present:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Issue is ineligible because it was last processed as a Higher-Level Review and this can't be done twice in a row",
-                        "code":  "higher_level_review_to_higher_level_review"
+                        "title": "If you specify a legacy appeal, you must specify which issue (legacy_appeal_issue_id) of that appeal",
+                        "code": "request_issue_legacyAppealIssueId_is_blank_when_legacyAppealId_is_present"
                       }
                     ]
                   }
-                appeal_to_higher_level_review:
+                request_issue_legacy_not_opted_in:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Issue is ineligible because it was last processed as a Board Appeal which can't be followed by a Higher-Level Review",
-                        "code":  "appeal_to_higher_level_review"
+                        "title": "To add a legacy issue, legacyOptInApproved must be true",
+                        "code": "request_issue_legacy_not_opted_in"
                       }
                     ]
                   }
-                legacy_issue_not_withdrawn:
+                request_issue_malformed:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Issue is ineligible because the same issue is under review as a Legacy Appeal but the claimant didn’t choose to withdraw their issue from the legacy system",
-                        "code":  "legacy_issue_not_withdrawn"
+                        "title": "Malformed RequestIssue",
+                        "code": "request_issue_malformed"
                       }
                     ]
                   }
-                legacy_appeal_not_eligible:
+                request_issue_must_have_at_least_one_ID_field:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Issue is ineligible because the same issue is under review as a Legacy Appeal and that appeal is outside the window of eligibility",
-                        "code":  "legacy_appeal_not_eligible"
+                        "title": "A request issue must have at least one of the following: decisionIssueId, ratingIssueId, legacyAppealId, legacyAppealIssueId",
+                        "code": "request_issue_must_have_at_least_one_ID_field"
                       }
                     ]
                   }
@@ -477,8 +567,18 @@ paths:
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Veteran has multiple phone numbers",
-                        "code":  "veteran_has_multiple_phone_numbers"
+                        "title": "The veteran has multiple active phone numbers",
+                        "code": "veteran_has_multiple_phone_numbers"
+                      }
+                    ]
+                  }
+                veteran_not_modifiable:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title": "You don't have permission to intake this veteran",
+                        "code": "veteran_not_modifiable"
                       }
                     ]
                   }
@@ -487,28 +587,8 @@ paths:
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Veteran not valid",
-                        "code":  "veteran_not_valid"
-                      }
-                    ]
-                  }
-                reserved_veteran_file_number:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title":  "Reserved veteran file number",
-                        "code":  "reserved_veteran_file_number"
-                      }
-                    ]
-                  }
-                unknown_error:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title":  "Unknown error",
-                        "code":  "unknown_error"
+                        "title": "The veteran's profile has missing or invalid information required to create an EP",
+                        "code": "veteran_not_valid"
                       }
                     ]
                   }
@@ -521,6 +601,47 @@ paths:
                 properties:
                   errors:
                     $ref: "#/components/schemas/errors"
+              examples:
+                intake_review_failed:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "500",
+                        "title": "The review step of processing the intake failed for an unknown reason",
+                        "code": "intake_review_failed"
+                      }
+                    ]
+                  }
+                intake_start_failed:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "500",
+                        "title": "The start step of processing the intake failed for an unknown reason",
+                        "code": "intake_start_failed"
+                      }
+                    ]
+                  }
+                reserved_veteran_file_number:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "500",
+                        "title": "Invalid veteran file number",
+                        "code": "reserved_veteran_file_number"
+                      }
+                    ]
+                  }
+                unknown_error:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "500",
+                        "title":  "Unknown error",
+                        "code":  "unknown_error"
+                      }
+                    ]
+                  }
   /higher_level_reviews/intake_status/{uuid}:
     get:
       parameters:

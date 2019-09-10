@@ -29,7 +29,7 @@ import AttorneyTaskListView from './AttorneyTaskListView';
 import ColocatedTaskListView from './ColocatedTaskListView';
 import JudgeDecisionReviewTaskListView from './JudgeDecisionReviewTaskListView';
 import JudgeAssignTaskListView from './JudgeAssignTaskListView';
-import EvaluateDecisionView from './EvaluateDecisionView';
+import EvaluateDecisionView from './caseEvaluation/EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import CompleteTaskModal from './components/CompleteTaskModal';
@@ -46,6 +46,7 @@ import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
 import AddVsoModal from './AddVsoModal';
 import AddPrivateBarModal from './AddPrivateBarModal';
+import LookupParticipantIdModal from './LookupParticipantIdModal';
 import PostponeHearingTaskModal from './PostponeHearingTaskModal';
 import ChangeTaskTypeModal from './ChangeTaskTypeModal';
 import StartHoldModal from './components/StartHoldModal';
@@ -245,6 +246,8 @@ class QueueApp extends React.PureComponent {
   routedAddVsoModal = (props) => <AddVsoModal {...props.match.params} />;
 
   routedAddPrivateBarModal = (props) => <AddPrivateBarModal {...props.match.params} />;
+
+  routedLookupParticipantIdModal = (props) => <LookupParticipantIdModal {...props.match.params} />;
 
   routedPostponeHearingTaskModal = (props) => <PostponeHearingTaskModal {...props.match.params} />;
 
@@ -507,6 +510,9 @@ class QueueApp extends React.PureComponent {
           <Route
             path="/team_management/add_private_bar"
             render={this.routedAddPrivateBarModal} />
+          <Route
+            path="/team_management/lookup_participant_id"
+            render={this.routedLookupParticipantIdModal} />
           <PageRoute
             path="/team_management"
             title="Team Management | Caseflow"

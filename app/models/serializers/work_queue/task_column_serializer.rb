@@ -74,7 +74,7 @@ class WorkQueue::TaskColumnSerializer
     columns = [Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN]
 
     if serialize_attribute?(params, columns)
-      object.appeal.try(:advanced_on_docket)
+      object.appeal.try(:advanced_on_docket?)
     end
   end
 

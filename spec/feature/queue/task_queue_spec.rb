@@ -348,23 +348,23 @@ RSpec.feature "Task queue", :all_dbs do
         find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
         find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
-        find("div", class: "Select-option", text: COPY::FOIA_REQUEST_MAIL_TASK_LABEL).click
+        find("div", class: "Select-option", text: COPY::AOD_MOTION_MAIL_TASK_LABEL).click
 
         fill_in("taskInstructions", with: instructions)
         find("button", text: "Submit").click
 
-        success_msg = format(COPY::MAIL_TASK_CREATION_SUCCESS_MESSAGE, COPY::FOIA_REQUEST_MAIL_TASK_LABEL)
+        success_msg = format(COPY::MAIL_TASK_CREATION_SUCCESS_MESSAGE, COPY::AOD_MOTION_MAIL_TASK_LABEL)
         expect(page).to have_content(success_msg)
         expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}")
 
         mail_task = root_task.children[0]
-        expect(mail_task.class).to eq(FoiaRequestMailTask)
+        expect(mail_task.class).to eq(AodMotionMailTask)
         expect(mail_task.assigned_to).to eq(MailTeam.singleton)
         expect(mail_task.children.length).to eq(1)
 
         child_task = mail_task.children[0]
-        expect(child_task.class).to eq(FoiaRequestMailTask)
-        expect(child_task.assigned_to).to eq(PrivacyTeam.singleton)
+        expect(child_task.class).to eq(AodMotionMailTask)
+        expect(child_task.assigned_to).to eq(AodTeam.singleton)
         expect(child_task.children.length).to eq(0)
       end
     end
@@ -406,23 +406,23 @@ RSpec.feature "Task queue", :all_dbs do
         find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
         find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
-        find("div", class: "Select-option", text: COPY::FOIA_REQUEST_MAIL_TASK_LABEL).click
+        find("div", class: "Select-option", text: COPY::AOD_MOTION_MAIL_TASK_LABEL).click
 
         fill_in("taskInstructions", with: instructions)
         find("button", text: "Submit").click
 
-        success_msg = format(COPY::MAIL_TASK_CREATION_SUCCESS_MESSAGE, COPY::FOIA_REQUEST_MAIL_TASK_LABEL)
+        success_msg = format(COPY::MAIL_TASK_CREATION_SUCCESS_MESSAGE, COPY::AOD_MOTION_MAIL_TASK_LABEL)
         expect(page).to have_content(success_msg)
         expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}")
 
         mail_task = root_task.children[0]
-        expect(mail_task.class).to eq(FoiaRequestMailTask)
+        expect(mail_task.class).to eq(AodMotionMailTask)
         expect(mail_task.assigned_to).to eq(MailTeam.singleton)
         expect(mail_task.children.length).to eq(1)
 
         child_task = mail_task.children[0]
-        expect(child_task.class).to eq(FoiaRequestMailTask)
-        expect(child_task.assigned_to).to eq(PrivacyTeam.singleton)
+        expect(child_task.class).to eq(AodMotionMailTask)
+        expect(child_task.assigned_to).to eq(AodTeam.singleton)
         expect(child_task.children.length).to eq(0)
       end
     end
@@ -440,65 +440,135 @@ RSpec.feature "Task queue", :all_dbs do
       User.authenticate!(user: organization_user)
       create_list(:generic_task, unassigned_count, :in_progress, assigned_to: organization)
       create_list(:generic_task, assigned_count, :on_hold, assigned_to: organization)
-      visit(organization.path)
     end
 
-    it "shows the right organization name" do
-      expect(page).to have_content(organization.name)
-    end
+    context "when not using pagination" do
+      before do
+        visit(organization.path)
+      end
 
-    it "shows tabs on the queue page" do
-      expect(page).to have_content(
-        format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_count)
-      )
-      expect(page).to have_content(
-        format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count)
-      )
-      expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
-    end
+      it "shows the right organization name" do
+        expect(page).to have_content(organization.name)
+      end
 
-    it "does not show all cases tab for non-VSO organization" do
-      expect(page).to_not have_content(COPY::TRACKING_TASKS_TAB_TITLE)
-    end
+      it "shows tabs on the queue page" do
+        expect(page).to have_content(
+          format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_count)
+        )
+        expect(page).to have_content(
+          format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count)
+        )
+        expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
+      end
 
-    it "shows the right number of cases in each tab" do
-      # Unassigned tab
-      expect(page).to have_content(
-        format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
-      )
-      expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+      it "does not show all cases tab for non-VSO organization" do
+        expect(page).to_not have_content(COPY::TRACKING_TASKS_TAB_TITLE)
+      end
 
-      # Assigned tab
-      find("button", text: format(
-        COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count
-      )).click
-      expect(page).to have_content(
-        format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name)
-      )
-      expect(find("tbody").find_all("tr").length).to eq(assigned_count)
-    end
+      it "shows the right number of cases in each tab" do
+        # Unassigned tab
+        expect(page).to have_content(
+          format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
+        )
+        expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
 
-    it "shows queue switcher dropdown" do
-      expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
-    end
+        # Assigned tab
+        find("button", text: format(
+          COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count
+        )).click
+        expect(page).to have_content(
+          format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name)
+        )
+        expect(find("tbody").find_all("tr").length).to eq(assigned_count)
+      end
 
-    context "when organization tasks include one associated with a LegacyAppeal that has been removed from VACOLS" do
-      let!(:tasks) do
-        Array.new(4) do
-          vacols_case = create(:case)
-          legacy_appeal = create(:legacy_appeal, vacols_case: vacols_case)
-          vacols_case.destroy!
-          create(:generic_task, :in_progress, appeal: legacy_appeal, assigned_to: organization)
+      it "shows queue switcher dropdown" do
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
+      end
+
+      context "when organization tasks include one associated with a LegacyAppeal that has been removed from VACOLS" do
+        let!(:tasks) do
+          Array.new(4) do
+            vacols_case = create(:case)
+            legacy_appeal = create(:legacy_appeal, vacols_case: vacols_case)
+            vacols_case.destroy!
+            create(:generic_task, :in_progress, appeal: legacy_appeal, assigned_to: organization)
+          end
+        end
+
+        it "loads the task queue successfully" do
+          # Re-navigate to the organization queue so we pick up the above task creation.
+          visit(organization.path)
+
+          tasks.each { |t| expect(page).to have_content(t.appeal.veteran_file_number) }
+          expect(page).to_not have_content("Information cannot be found")
         end
       end
 
-      it "loads the task queue successfully" do
-        # Re-navigate to the organization queue so we pick up the above task creation.
-        visit(organization.path)
+      context "when filtering tasks" do
+        let(:translation_task_count) { unassigned_count / 2 }
 
-        tasks.each { |t| expect(page).to have_content(t.appeal.veteran_file_number) }
-        expect(page).to_not have_content("Information cannot be found")
+        before do
+          Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
+            .take(translation_task_count).each { |task| task.update!(type: TranslationTask.name) }
+          visit(organization.path)
+        end
+
+        it "shows the correct filters" do
+          page.find_all("path.unselected-filter-icon-inner").first.click
+          expect(page).to have_content("#{GenericTask.label.humanize} (#{unassigned_count / 2})")
+          expect(page).to have_content("#{TranslationTask.label.humanize} (#{translation_task_count})")
+        end
+
+        it "filters tasks correctly" do
+          expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+          page.find_all("path.unselected-filter-icon-inner").first.click
+          page.find("label", text: "#{TranslationTask.label.humanize} (#{translation_task_count})").click
+          expect(find("tbody").find_all("tr").length).to eq(translation_task_count)
+        end
       end
+    end
+
+    context "when pagination is enabled" do
+      let(:on_hold_count) { assigned_count / 2 }
+
+      before do
+        allow_any_instance_of(QueueConfig).to receive(:use_task_pages_api?).with(organization_user).and_return(true)
+        FeatureToggle.enable!(:use_task_pages_api)
+        Task.on_hold.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
+          .each_with_index do |task, idx|
+            child_task = create(:generic_task, parent_id: task.id)
+            child_task.update!(status: Constants.TASK_STATUSES.on_hold) if idx < on_hold_count
+          end
+      end
+
+      after { FeatureToggle.disable!(:use_task_pages_api) }
+
+      it "shows the on hold tab" do
+        visit(organization.path)
+        expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count / 2))
+        expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, on_hold_count))
+      end
+
+      # https://github.com/department-of-veterans-affairs/caseflow/pull/11940#discussion_r322795963
+      # context "when filtering tasks" do
+      #   let(:translation_task_count) { unassigned_count / 2 }
+
+      #   before do
+      #     Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
+      #       .take(translation_task_count).each { |task| task.update!(type: TranslationTask.name) }
+      #   end
+
+      #   it "shows the correct filters" do
+      #     visit(organization.path)
+      #     expect(page).to have_content(
+      #       format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
+      #     )
+      #     page.find_all("path.unselected-filter-icon-inner").first.click
+      #     expect(page).to have_content("#{GenericTask.label} (#{unassigned_count / 2})")
+      #     expect(page).to have_content("#{TranslationTask.label} (#{unassigned_count / 2})")
+      #   end
+      # end
     end
   end
 
@@ -525,7 +595,7 @@ RSpec.feature "Task queue", :all_dbs do
         visit("/queue/appeals/#{appeal.external_id}")
 
         find(".Select-control", text: "Select an action…").click
-        find("div .Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label]).click
+        find("div .Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_JUDGE.label).click
         expect(page).to have_content("Instructions:")
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
@@ -560,7 +630,8 @@ RSpec.feature "Task queue", :all_dbs do
         ColocatedTask.create_many_from_params([{
                                                 assigned_by: attorney,
                                                 action: :schedule_hearing,
-                                                appeal: appeal
+                                                appeal: appeal,
+                                                parent: RootTask.find_or_create_by!(appeal: appeal)
                                               }], attorney)
       end
 
@@ -571,7 +642,7 @@ RSpec.feature "Task queue", :all_dbs do
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
         find("button", text: "Send case").click
         expect(page).to have_content("Bob Smith's case has been sent to the Confirm schedule hearing team")
-        expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
+        expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:schedule_hearing]
       end
 
       it "the case should be returned in the attorneys queue when canceled" do
@@ -585,6 +656,20 @@ RSpec.feature "Task queue", :all_dbs do
         User.authenticate!(user: attorney)
         visit("/queue")
         expect(page).to have_content(appeal.veteran_file_number)
+      end
+
+      context "for an ama appeal" do
+        let(:appeal) { create(:appeal) }
+
+        it "creates a schedule hearing task when a user assigns a colocated task back to the hearing team" do
+          visit("/queue/appeals/#{appeal.external_id}")
+          find(".Select-control", text: "Select an action…").click
+          expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
+          find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
+          find("button", text: "Send case").click
+          expect(page).to have_content("Bob Smith's case has been sent to the Confirm schedule hearing team")
+          expect(appeal.tasks.pluck(:type)).to include(ScheduleHearingTask.name, HearingTask.name)
+        end
       end
     end
   end

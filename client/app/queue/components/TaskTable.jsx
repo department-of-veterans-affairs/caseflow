@@ -29,11 +29,10 @@ import { renderAppealType, taskHasCompletedHold, actionNameOfTask, regionalOffic
 import { DateString } from '../../util/DateUtil';
 import {
   CATEGORIES,
-  redText,
-  LEGACY_APPEAL_TYPES,
-  DOCKET_NAME_FILTERS
+  redText
 } from '../constants';
 import COPY from '../../../COPY.json';
+import DOCKET_NAME_FILTERS from '../../../constants/DOCKET_NAME_FILTERS.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
 
@@ -43,7 +42,7 @@ const hasDASRecord = (task, requireDasRecord) => {
 
 const collapseColumn = (requireDasRecord) => (task) => hasDASRecord(task, requireDasRecord) ? 1 : 0;
 
-export const docketNumberColumn = (tasks, requireDasRecord) => {
+export const docketNumberColumn = (tasks, filterOptions, requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
     name: QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
@@ -51,6 +50,7 @@ export const docketNumberColumn = (tasks, requireDasRecord) => {
     tableData: tasks,
     columnName: 'appeal.docketName',
     customFilterLabels: DOCKET_NAME_FILTERS,
+    filterOptions,
     anyFiltersAreSet: true,
     label: 'Filter by docket name',
     valueName: 'docketName',
@@ -103,7 +103,7 @@ export const detailsColumn = (tasks, requireDasRecord, userRole) => {
   };
 };
 
-export const taskColumn = (tasks) => {
+export const taskColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
     name: QUEUE_CONFIG.TASK_TYPE_COLUMN,
@@ -112,6 +112,7 @@ export const taskColumn = (tasks) => {
     columnName: 'label',
     anyFiltersAreSet: true,
     customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
+    filterOptions,
     label: 'Filter by task',
     valueName: 'label',
     valueFunction: (task) => actionNameOfTask(task),
@@ -120,7 +121,7 @@ export const taskColumn = (tasks) => {
   };
 };
 
-export const regionalOfficeColumn = (tasks) => {
+export const regionalOfficeColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_REGIONAL_OFFICE_COLUMN_TITLE,
     name: QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN,
@@ -128,6 +129,7 @@ export const regionalOfficeColumn = (tasks) => {
     tableData: tasks,
     columnName: 'closestRegionalOffice.location_hash.city',
     anyFiltersAreSet: true,
+    filterOptions,
     label: 'Filter by regional office',
     backendCanSort: true,
     valueFunction: (task) => {
@@ -148,14 +150,16 @@ export const issueCountColumn = (requireDasRecord) => {
   };
 };
 
-export const typeColumn = (tasks, requireDasRecord) => {
+export const typeColumn = (tasks, filterOptions, requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
     name: QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
     enableFilter: true,
     tableData: tasks,
     columnName: 'appeal.caseType',
+    backendCanSort: true,
     anyFiltersAreSet: true,
+    filterOptions,
     label: 'Filter by type',
     valueName: 'caseType',
     valueFunction: (task) => hasDASRecord(task, requireDasRecord) ?
@@ -163,13 +167,11 @@ export const typeColumn = (tasks, requireDasRecord) => {
       <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
     span: (task) => hasDASRecord(task, requireDasRecord) ? 1 : 5,
     getSortValue: (task) => {
+      const sortString = `${task.appeal.caseType} ${task.appeal.docketNumber}`;
+
       // We append a * before the docket number if it's a priority case since * comes before
       // numbers in sort order, this forces these cases to the top of the sort.
-      if (task.appeal.isAdvancedOnDocket || task.appeal.caseType === LEGACY_APPEAL_TYPES.CAVC_REMAND) {
-        return `*${task.appeal.docketNumber}`;
-      }
-
-      return task.appeal.docketNumber;
+      return task.appeal.isAdvancedOnDocket ? `*${sortString}` : sortString;
     }
   };
 };
@@ -178,6 +180,7 @@ export const assignedToColumn = (tasks) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
     name: QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN,
+    backendCanSort: true,
     enableFilter: true,
     tableData: tasks,
     columnName: 'assignedTo.name',

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SlackService
-  DEFAULT_CHANNEL = "#appeals-app-alerts"
+  DEFAULT_CHANNEL = "#appeals-job-alerts"
 
   def initialize(url:)
     @url = url

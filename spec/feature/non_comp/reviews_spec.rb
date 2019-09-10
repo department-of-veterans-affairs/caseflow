@@ -4,14 +4,6 @@ require "support/database_cleaner"
 require "rails_helper"
 
 feature "NonComp Reviews Queue", :postgres do
-  before do
-    FeatureToggle.enable!(:decision_reviews)
-  end
-
-  after do
-    FeatureToggle.disable!(:decision_reviews)
-  end
-
   context "with an existing organization" do
     let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
     let(:user) { create(:default_user) }
@@ -90,12 +82,12 @@ feature "NonComp Reviews Queue", :postgres do
       )
 
       click_on "Completed tasks"
-      expect(page).to have_content("Higher-Level Review", count: 2)
+      expect(page).to have_content("Higher-Level Review", count: 1)
       expect(page).to have_content("Date Completed")
 
       # ordered by closed_at descending
       expect(page).to have_content(
-        /#{veteran_b.name} 5\d+ 0 [\d\/]+ Higher-Level Review\s#{veteran_a.name} 5\d+ 0 [\d\/]+/
+        /#{veteran_b.name} 5\d+ 0 [\d\/]+ Higher-Level Review/
       )
     end
 

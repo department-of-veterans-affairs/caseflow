@@ -145,6 +145,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
     context "when user has no role" do
       let(:role) { nil }
+      let(:veteran_file_number) { create(:veteran).file_number }
 
       it "should return 200" do
         get :index, params: { user_id: user.id, role: "unknown" }
@@ -158,6 +159,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
             folder: create(:folder, tinum: "docket-number"),
             bfregoff: "RO04",
             bfcurloc: "57",
+            bfcorlid: "#{veteran_file_number}C",
             bfhr: "2",
             bfdocind: HearingDay::REQUEST_TYPES[:video]
           )
@@ -266,7 +268,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     context "Attorney task" do
       context "when current user is a judge" do
         let(:ama_appeal) { create(:appeal) }
-        let(:ama_judge_task) { create(:ama_judge_task, assigned_to: user) }
+        let(:ama_judge_task) { create(:ama_judge_task, assigned_to: user, appeal: ama_appeal) }
         let(:role) { :judge_role }
 
         let(:params) do
@@ -687,7 +689,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(response_body["tasks"].length).to eq 4
         task = response_body["tasks"][0]
         expect(task["id"]).to eq(legacy_appeal.vacols_id)
-        expect(task["attributes"]["type"]).to eq("JudgeLegacyTask")
+        expect(task["attributes"]["type"]).to eq(JudgeLegacyDecisionReviewTask.name)
         expect(task["attributes"]["user_id"]).to eq(judge_user.css_id)
         expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
         expect(task["attributes"]["available_actions"].size).to eq 2
@@ -710,7 +712,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           expect(response_body["tasks"].length).to eq 2
           task = response_body["tasks"][0]
           expect(task["id"]).to eq(legacy_appeal2.vacols_id)
-          expect(task["attributes"]["type"]).to eq("JudgeLegacyTask")
+          expect(task["attributes"]["type"]).to eq(JudgeLegacyDecisionReviewTask.name)
           expect(task["attributes"]["user_id"]).to eq(another_judge.css_id)
           expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal2.id)
           expect(task["attributes"]["available_actions"].size).to eq 0

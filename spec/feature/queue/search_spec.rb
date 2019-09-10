@@ -8,6 +8,7 @@ RSpec.feature "Search", :all_dbs do
   let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
   let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
+  let(:invalid_docket_number) { "invaliddocket-number" }
   let(:veteran_with_no_appeals) { create(:veteran) }
   let!(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: create(:case)) }
 
@@ -44,6 +45,20 @@ RSpec.feature "Search", :all_dbs do
       end
     end
 
+    context "when using AppealFinder" do
+      it "returns results upon valid input" do
+        res = AppealFinder.find_appeals_with_file_numbers(appeal.veteran_file_number)
+
+        expect(res.first.id).to eq(appeal.id)
+      end
+
+      it "returns nil when input is invalid format" do
+        res = AppealFinder.find_appeals_with_file_numbers(invalid_veteran_id)
+
+        expect(res).to be_empty
+      end
+    end
+
     context "higher level reviews and supplemental claims" do
       context "when a claim has no higher level review and/or supplemental claims" do
         before do
@@ -76,6 +91,11 @@ RSpec.feature "Search", :all_dbs do
           it "should show the HLR / SCs table" do
             expect(page).to have_content(COPY::CASE_LIST_TABLE_EMPTY_TEXT)
             expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+          end
+
+          it "should show the HLR / SCs receipt date" do
+            expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_RECEIPT_DATE_COLUMN_TITLE)
+            expect(higher_level_review.receipt_date.mdY).to_not be_nil
           end
 
           it "should show edit issues page" do
@@ -396,6 +416,88 @@ RSpec.feature "Search", :all_dbs do
     end
   end
 
+  context "queue case search for appeals using docket number" do
+    let!(:veteran) { create(:veteran, first_name: "Testy", last_name: "McTesterson") }
+    let!(:appeal) { create(:appeal, veteran: veteran) }
+
+    def perform_search(search_term)
+      visit "/search"
+      fill_in "searchBarEmptyList", with: search_term
+      click_on "Search"
+    end
+
+    context "when using AppealFinder" do
+      it "returns results upon valid input" do
+        res = AppealFinder.find_appeal_by_docket_number(appeal.docket_number)
+
+        expect(res.id).to eq(appeal.id)
+      end
+
+      it "returns nil when docket number is invalid format" do
+        res = AppealFinder.find_appeal_by_docket_number(invalid_docket_number)
+
+        expect(res).to be_nil
+      end
+
+      it "returns nil when docket number can't be found" do
+        res = AppealFinder.find_appeal_by_docket_number("012345-000")
+
+        expect(res).to be_nil
+      end
+
+      it "hides results for VSO user w/o access" do
+        vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
+        User.authenticate!(user: vso_user)
+        res = AppealFinder.new(user: vso_user).send(
+          :filter_appeals_for_vso_user,
+          appeals: Array.wrap(appeal),
+          veterans: Array.wrap(appeal.veteran)
+        )
+        expect(res).to be_empty
+      end
+    end
+
+    context "when using invalid docket number" do
+      it "page displays invalid search message" do
+        perform_search(invalid_docket_number)
+        expect(page).to have_content(format(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_docket_number))
+      end
+    end
+
+    context "when appeal exists" do
+      it "displays correct single result" do
+        perform_search(appeal.docket_number)
+
+        expect(page).to have_content("1 case found for")
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
+      end
+    end
+
+    context "when appeal doesn't exist" do
+      let!(:non_existing_docket_number) { "010101-99999" }
+
+      it "page displays no cases found message" do
+        perform_search(non_existing_docket_number)
+        expect(page).to have_content(
+          format(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, non_existing_docket_number)
+        )
+      end
+    end
+
+    context "when VSO employee does not have access to the file number" do
+      it "displays a helpful error message on same page" do
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.veteran_file_number]
+        vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
+        User.authenticate!(user: vso_user)
+        visit "/search"
+        fill_in "searchBarEmptyList", with: appeal.docket_number
+        click_on "Search"
+
+        expect(page).to have_content("You do not have access to this claims file number")
+      end
+    end
+  end
+
   context "case search from home page" do
     let(:search_homepage_title) { COPY::CASE_SEARCH_HOME_PAGE_HEADING }
     let(:search_homepage_subtitle) { COPY::CASE_SEARCH_INPUT_INSTRUCTION }
@@ -403,12 +505,7 @@ RSpec.feature "Search", :all_dbs do
     let(:non_queue_user) { create(:user) }
 
     before do
-      FeatureToggle.enable!(:case_search_home_page)
       User.authenticate!(user: non_queue_user)
-    end
-
-    after do
-      FeatureToggle.disable!(:case_search_home_page)
     end
 
     scenario "logo links to / instead of /queue" do

@@ -143,6 +143,21 @@ describe Veteran, :postgres do
         end
       end
     end
+
+    context "when local participant_id attribute is nil" do
+      let!(:veteran) do
+        veteran = create(:veteran, file_number: file_number)
+        veteran.update!(participant_id: nil)
+        veteran
+      end
+      let(:sync_name) { true }
+
+      it "caches it like name" do
+        expect(described_class.find_by(file_number: file_number)[:participant_id]).to be_nil
+        described_class.find_or_create_by_file_number(file_number, sync_name: sync_name)
+        expect(described_class.find_by(file_number: file_number)[:participant_id]).to_not be_nil
+      end
+    end
   end
 
   context "lazily loaded bgs attributes" do
@@ -431,10 +446,12 @@ describe Veteran, :postgres do
     let!(:appeals) do
       [
         create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id)]),
-        create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id_without_vso)])
+        create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id_without_vso)]),
+        create(:legacy_appeal, vacols_case: create(:case, bfcorlid: vbms_id))
       ]
     end
 
+    let(:vbms_id) { LegacyAppeal.convert_file_number_to_vacols(veteran.file_number) }
     let(:participant_id) { "1234" }
     let(:participant_id_without_vso) { "5678" }
     let(:vso_participant_id) { "2452383" }
@@ -460,6 +477,7 @@ describe Veteran, :postgres do
 
     before do
       stub_const("BGSService", ExternalApi::BGSService)
+      veteran.update!(participant_id: participant_id)
 
       allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_ids)
         .with(array_including(participant_ids)).and_return(poas)
@@ -467,8 +485,9 @@ describe Veteran, :postgres do
 
     it "returns only the case with vso assigned to it" do
       returned_appeals = veteran.accessible_appeals_for_poa([vso_participant_id, "other vso participant id"])
-      expect(returned_appeals.count).to eq 1
+      expect(returned_appeals.count).to eq 2
       expect(returned_appeals.first).to eq appeals.first
+      expect(returned_appeals.last).to eq appeals.last
     end
   end
 

@@ -25,53 +25,11 @@ feature "Higher Level Review Edit issues", :all_dbs do
   let(:promulgation_date) { receipt_date - 1 }
   let(:profile_date) { (receipt_date - 2.days).to_datetime }
 
-  let!(:rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: promulgation_date,
-      profile_date: profile_date,
-      issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: 55 },
-        { reference_id: "def456", decision_text: "PTSD denied" },
-        { reference_id: "abcdef", decision_text: "Back pain" }
-      ]
-    )
-  end
-
-  let!(:rating_before_ama) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
-      issues: [
-        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
-      ]
-    )
-  end
-
-  let!(:rating_before_ama_from_ramp) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
-      issues: [
-        { decision_text: "Issue before AMA Activation from RAMP",
-          reference_id: "ramp_ref_id" }
-      ],
-      associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
-    )
-  end
-
+  let!(:rating) { generate_rating_with_defined_contention(veteran, promulgation_date, profile_date) }
+  let!(:rating_before_ama) { generate_pre_ama_rating(veteran) }
+  let!(:rating_before_ama_from_ramp) { generate_rating_before_ama_from_ramp(veteran) }
   let!(:ratings_with_legacy_issues) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 4.days,
-      profile_date: receipt_date - 4.days,
-      issues: [
-        { reference_id: "has_legacy_issue", decision_text: "Issue with legacy issue not withdrawn" },
-        { reference_id: "has_ineligible_legacy_appeal", decision_text: "Issue connected to ineligible legacy appeal" }
-      ]
-    )
+    generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
   end
 
   let(:legacy_opt_in_approved) { false }
@@ -1361,11 +1319,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
       before do
         education_org = create(:business_line, name: "Education", url: "education")
         OrganizationsUser.add_user_to_organization(current_user, education_org)
-        FeatureToggle.enable!(:decision_reviews)
-      end
-
-      after do
-        FeatureToggle.disable!(:decision_reviews)
       end
 
       let!(:benefit_type) { "education" }
@@ -1393,12 +1346,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       before do
         education_org = create(:business_line, name: "Education", url: "education")
         OrganizationsUser.add_user_to_organization(current_user, education_org)
-        FeatureToggle.enable!(:decision_reviews)
         FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
-      end
-
-      after do
-        FeatureToggle.disable!(:decision_reviews)
       end
 
       let(:withdraw_date) { 1.day.ago.to_date.mdY }

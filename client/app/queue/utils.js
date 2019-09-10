@@ -295,6 +295,7 @@ export const prepareAppealForStore =
         issues: prepareAppealIssuesForStore(appeal),
         decisionIssues: appeal.attributes.decision_issues,
         canEditRequestIssues: appeal.attributes.can_edit_request_issues,
+        appellantIsNotVeteran: appeal.attributes.appellant_is_not_veteran,
         appellantFullName: appeal.attributes.appellant_full_name,
         appellantAddress: appeal.attributes.appellant_address,
         appellantRelationship: appeal.attributes.appellant_relationship,
@@ -340,6 +341,7 @@ export const prepareClaimReviewForStore = (claimReviews) => {
       endProductStatuses: claimReview.end_product_status,
       establishmentError: claimReview.establishment_error,
       reviewType: claimReview.review_type,
+      receiptDate: claimReview.receipt_date,
       veteranFileNumber: claimReview.veteran_file_number,
       veteranFullName: claimReview.veteran_full_name,
       editIssuesUrl: claimReview.caseflow_only_edit_issues_url
@@ -436,6 +438,7 @@ export const buildCaseReviewPayload = (
   } else {
     args.factors_not_considered = _.keys(args.factors_not_considered);
     args.areas_for_improvement = _.keys(args.areas_for_improvement);
+    args.positive_feedback = _.keys(args.positive_feedback);
 
     _.extend(payload.data.tasks, args);
   }

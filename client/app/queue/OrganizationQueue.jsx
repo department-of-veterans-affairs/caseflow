@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
+import PropTypes from 'prop-types';
 
 import BulkAssignButton from './components/BulkAssignButton';
 import TabWindow from '../components/TabWindow';
@@ -55,29 +56,29 @@ class OrganizationQueue extends React.PureComponent {
     return config;
   }
 
+  filterValuesForColumn = (column, config) =>
+    config.use_task_pages_api && column && column.filterable && column.filter_options;
+
   createColumnObject = (column, config, tasks) => {
     const functionForColumn = {
       hearingBadgeColumn: hearingBadgeColumn(tasks),
       detailsColumn: detailsColumn(tasks, false, config.userRole),
-      taskColumn: taskColumn(tasks),
-      regionalOfficeColumn: regionalOfficeColumn(tasks),
-      typeColumn: typeColumn(tasks, false),
+      taskColumn: taskColumn(tasks, this.filterValuesForColumn(column, config)),
+      regionalOfficeColumn: regionalOfficeColumn(tasks, this.filterValuesForColumn(column, config)),
+      typeColumn: typeColumn(tasks, this.filterValuesForColumn(column, config), false),
       assignedToColumn: assignedToColumn(tasks),
-      docketNumberColumn: docketNumberColumn(tasks, false),
+      docketNumberColumn: docketNumberColumn(tasks, this.filterValuesForColumn(column, config), false),
       daysWaitingColumn: daysWaitingColumn(false),
       daysOnHoldColumn: daysOnHoldColumn(false),
       readerLinkColumn: readerLinkColumn(false, true),
       issueCountColumn: issueCountColumn(false)
     };
 
-    return functionForColumn[column];
+    return functionForColumn[column.name];
   }
 
-  columnsFromConfig = (tabConfig, tasks) => {
-    return tabConfig.columns.map((column) => {
-      return this.createColumnObject(column, tabConfig, tasks);
-    });
-  }
+  columnsFromConfig = (config, tabConfig, tasks) =>
+    tabConfig.columns.map((column) => this.createColumnObject(column, config, tasks));
 
   tasksForTab = (tabName) => {
     const mapper = {
@@ -95,7 +96,7 @@ class OrganizationQueue extends React.PureComponent {
     const tasks = config.use_task_pages_api ?
       tasksWithAppealsFromRawTasks(tabConfig.tasks) :
       this.tasksForTab(tabConfig.name);
-    const cols = this.columnsFromConfig(tabConfig, tasks);
+    const cols = this.columnsFromConfig(config, tabConfig, tasks);
     const totalTaskCount = config.use_task_pages_api ? tabConfig.total_task_count : tasks.length;
 
     return {
@@ -158,6 +159,19 @@ class OrganizationQueue extends React.PureComponent {
     </AppSegment>;
   };
 }
+
+OrganizationQueue.propTypes = {
+  assignedTasks: PropTypes.array,
+  clearCaseSelectSearch: PropTypes.func,
+  completedTasks: PropTypes.array,
+  onHoldTasks: PropTypes.array,
+  organizations: PropTypes.array,
+  queueConfig: PropTypes.object,
+  success: PropTypes.object,
+  tasksAssignedByBulk: PropTypes.object,
+  trackingTasks: PropTypes.array,
+  unassignedTasks: PropTypes.array
+};
 
 const mapStateToProps = (state) => {
   const { success } = state.ui.messages;

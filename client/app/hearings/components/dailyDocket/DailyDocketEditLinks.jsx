@@ -38,9 +38,9 @@ const LockHearingLink = ({ dailyDocket, onDisplayLockModal }) => (
 );
 
 LockHearingLink.propTypes = {
-  dailyDocket: {
+  dailyDocket: PropTypes.shape({
     lock: PropTypes.bool
-  },
+  }),
   onDisplayLockModal: PropTypes.func.isRequired
 };
 

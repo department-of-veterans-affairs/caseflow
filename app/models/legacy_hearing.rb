@@ -14,7 +14,7 @@ class LegacyHearing < ApplicationRecord
   vacols_attr_accessor :scheduled_for, :request_type, :venue_key, :vacols_record, :disposition
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
-  vacols_attr_accessor :representative_name, :hearing_day_id
+  vacols_attr_accessor :representative_name, :hearing_day_vacols_id
   vacols_attr_accessor :docket_number, :appeal_type, :room, :bva_poc, :judge_id
 
   belongs_to :appeal, class_name: "LegacyAppeal"
@@ -51,6 +51,8 @@ class LegacyHearing < ApplicationRecord
            :appellant_city, :appellant_country, :appellant_state, :appellant_zip,
            to: :appeal,
            allow_nil: true
+
+  delegate :timezone, :name, to: :regional_office, prefix: true
 
   before_create :assign_created_by_user
   before_update :assign_updated_by_user
@@ -107,9 +109,26 @@ class LegacyHearing < ApplicationRecord
     vacols_id
   end
 
+  def hearing_day_id_refers_to_vacols_row?
+    (request_type == HearingDay::REQUEST_TYPES[:central] && scheduled_for.to_date < Date.new(2019, 1, 1)) ||
+      (request_type == HearingDay::REQUEST_TYPES[:video] && scheduled_for.to_date < Date.new(2019, 4, 1))
+  end
+
+  def hearing_day_id
+    if self[:hearing_day_id].nil? && !hearing_day_id_refers_to_vacols_row?
+      begin
+        update!(hearing_day_id: hearing_day_vacols_id)
+      rescue ActiveRecord::InvalidForeignKey
+        # Hearing day doesn't exist yet in Caseflow.
+        return hearing_day_vacols_id
+      end
+    end
+
+    # Returns the cached value, or nil if the hearing day id refers to a VACOLS row.
+    self[:hearing_day_id]
+  end
+
   def hearing_day
-    # access with caution. this retrieves the hearing_day_id from vacols
-    # then looks up the HearingDay in Caseflow
     @hearing_day ||= HearingDay.find_by_id(hearing_day_id)
   end
 
@@ -118,7 +137,7 @@ class LegacyHearing < ApplicationRecord
       return (venue_key || appeal&.regional_office_key)
     end
 
-    hearing_day&.regional_office
+    hearing_day&.regional_office || "C"
   end
 
   def regional_office
@@ -127,18 +146,6 @@ class LegacyHearing < ApplicationRecord
                          rescue RegionalOffice::NotFoundError
                            nil
                           end
-  end
-
-  def regional_office_name
-    return if regional_office_key.nil?
-
-    "#{regional_office.city}, #{regional_office.state}"
-  end
-
-  def regional_office_timezone
-    return if regional_office_key.nil?
-
-    HearingMapper.timezone(regional_office_key)
   end
 
   def time

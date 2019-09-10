@@ -12,6 +12,7 @@ class User < ApplicationRecord
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
   has_many :organizations, through: :organizations_users
+  has_many :messages
 
   BOARD_STATION_ID = "101"
 
@@ -25,6 +26,11 @@ class User < ApplicationRecord
   }.freeze
 
   before_create :normalize_css_id
+
+  enum status: {
+    Constants.USER_STATUSES.active.to_sym => Constants.USER_STATUSES.active,
+    Constants.USER_STATUSES.inactive.to_sym => Constants.USER_STATUSES.inactive
+  }
 
   def username
     css_id
@@ -271,7 +277,51 @@ class User < ApplicationRecord
     orgs
   end
 
+  def update_status!(new_status)
+    update!(status: new_status, status_updated_at: Time.zone.now)
+  end
+
+  def use_task_pages_api?
+    false
+  end
+
+  def queue_tabs
+    [
+      assigned_tasks_tab,
+      on_hold_tasks_tab,
+      completed_tasks_tab
+    ]
+  end
+
+  def assigned_tasks_tab
+    ::AssignedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def on_hold_tasks_tab
+    ::OnHoldTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def completed_tasks_tab
+    ::CompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def can_bulk_assign_tasks?
+    false
+  end
+
+  def show_regional_office_in_queue?
+    false
+  end
+
+  def show_reader_link_column?
+    false
+  end
+
   private
+
+  def maybe_update_status_timestamp
+    update!(status_updated_at: Time.zone.now) if saved_change_to_attribute?(:status)
+  end
 
   def normalize_css_id
     self.css_id = css_id.upcase

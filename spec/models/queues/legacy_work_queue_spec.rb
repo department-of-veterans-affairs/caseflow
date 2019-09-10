@@ -30,7 +30,7 @@ describe LegacyWorkQueue, :all_dbs do
 
       it "returns tasks" do
         expect(subject.length).to eq(2)
-        expect(subject[0].class).to eq(JudgeLegacyTask)
+        expect(subject[0].class).to eq(JudgeLegacyDecisionReviewTask)
       end
     end
   end

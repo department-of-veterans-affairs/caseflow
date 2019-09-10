@@ -53,6 +53,7 @@ plugins:
     enabled: true
     exclude_patterns:
     - '.codeclimate.yml'
+    - 'Makefile.example'
     config:
       strings:
       - TODO

@@ -124,9 +124,9 @@ ListTable.propTypes = {
   hearingScheduleRows: PropTypes.array,
   onApply: PropTypes.func,
   openModal: PropTypes.func,
-  user: {
+  user: PropTypes.shape({
     userCanBuildHearingSchedule: PropTypes.bool
-  }
+  })
 };
 
 class ListSchedule extends React.Component {

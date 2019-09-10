@@ -7,7 +7,7 @@ class Api::V2::HearingSerializer
     hearing.hearing_location&.address
   end
   attribute :city do |hearing|
-    hearing.hearing_location&.city
+    hearing.hearing_location&.city || hearing.regional_office.city
   end
   attribute :appeal, &:appeal_external_id
   attribute :facility_id do |hearing|
@@ -18,7 +18,9 @@ class Api::V2::HearingSerializer
   attribute :participant_id do |hearing|
     hearing.appeal.veteran.participant_id
   end
-  attribute :regional_office, &:regional_office_name
+  attribute :hearing_location do |hearing|
+    hearing.hearing_location&.name || hearing.regional_office.name
+  end
   attribute :room do |hearing|
     hearing.hearing_day.room
   end
@@ -27,10 +29,10 @@ class Api::V2::HearingSerializer
     hearing.appeal.veteran_ssn
   end
   attribute :state do |hearing|
-    hearing.hearing_location&.state
+    hearing.hearing_location&.state || hearing.regional_office.state
   end
   attribute :timezone, &:regional_office_timezone
   attribute :zip_code do |hearing|
-    hearing.hearing_location&.zip_code
+    hearing.hearing_location&.zip_code || hearing.regional_office.timezone
   end
 end

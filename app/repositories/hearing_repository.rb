@@ -172,7 +172,7 @@ class HearingRepository
         room: vacols_record.room,
         request_type: vacols_record.hearing_type,
         scheduled_for: date,
-        hearing_day_id: vacols_record.vdkey,
+        hearing_day_vacols_id: vacols_record.vdkey,
         bva_poc: vacols_record.vdbvapoc,
         judge_id: hearing.user_id
       }

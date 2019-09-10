@@ -29,7 +29,7 @@ class AssignHearingDispositionTask < GenericTask
     end
   end
 
-  def label
+  def self.label
     "Select hearing disposition"
   end
 
@@ -69,7 +69,7 @@ class AssignHearingDispositionTask < GenericTask
     end
 
     if appeal.is_a? Appeal
-      EvidenceSubmissionWindowTask.create!(
+      EvidenceSubmissionWindowTask.find_or_create_by!(
         appeal: appeal,
         parent: hearing_task.parent,
         assigned_to: MailTeam.singleton

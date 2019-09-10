@@ -231,7 +231,8 @@ describe AssignHearingDispositionTask, :all_dbs do
     let(:disposition) { nil }
     let(:appeal) { create(:appeal) }
     let(:root_task) { create(:root_task, appeal: appeal) }
-    let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+    let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
+    let(:hearing_task) { create(:hearing_task, appeal: appeal, parent: distribution_task) }
     let(:evidence_window_waived) { nil }
     let(:hearing_scheduled_for) { appeal.receipt_date + 15.days }
     let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_scheduled_for) }
@@ -251,7 +252,6 @@ describe AssignHearingDispositionTask, :all_dbs do
         hearing_task: hearing_task
       )
     end
-
     let!(:disposition_task) do
       create(
         :assign_hearing_disposition_task,
@@ -260,7 +260,6 @@ describe AssignHearingDispositionTask, :all_dbs do
         appeal: appeal
       )
     end
-
     let!(:schedule_hearing_task) do
       create(
         :schedule_hearing_task,
@@ -278,8 +277,8 @@ describe AssignHearingDispositionTask, :all_dbs do
           let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
 
           it "cancels the disposition task and its parent hearing task" do
-            expect(disposition_task.cancelled?).to be_falsey
-            expect(hearing_task.on_hold?).to be_truthy
+            expect(disposition_task.reload.cancelled?).to be_falsey
+            expect(hearing_task.reload.on_hold?).to be_truthy
 
             expect { subject }.to_not raise_error
 
@@ -288,6 +287,20 @@ describe AssignHearingDispositionTask, :all_dbs do
             expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq 0
             expect(EvidenceSubmissionWindowTask.first.appeal).to eq disposition_task.appeal
             expect(EvidenceSubmissionWindowTask.first.parent).to eq disposition_task.hearing_task.parent
+          end
+
+          context "the appeal has an existing EvidenceSubmissionWindowTask" do
+            let!(:evidence_submission_window_task) do
+              create(:evidence_submission_window_task, appeal: appeal, parent: distribution_task)
+            end
+
+            it "does not raise an error" do
+              expect { subject }.to_not raise_error
+            end
+
+            it "does not attempt to create a new EvidenceSubmissionWindowTask" do
+              expect { subject }.to_not change(EvidenceSubmissionWindowTask, :count)
+            end
           end
 
           context "the appeal has a VSO" do
@@ -460,7 +473,7 @@ describe AssignHearingDispositionTask, :all_dbs do
               expect { subject }.to_not raise_error
 
               expect(disposition_task.children.count).to eq 2
-              expect(disposition_task.children.pluck(:type)).to match_array [
+              expect(disposition_task.reload.children.pluck(:type)).to match_array [
                 TranscriptionTask.name, EvidenceSubmissionWindowTask.name
               ]
               transcription_task = disposition_task.children.find_by(type: TranscriptionTask.name)

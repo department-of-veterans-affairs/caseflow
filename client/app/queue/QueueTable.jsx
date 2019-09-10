@@ -3,16 +3,12 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { css, hover } from 'glamor';
 import _ from 'lodash';
-
 import Tooltip from '../components/Tooltip';
 import { DoubleArrow } from '../components/RenderFunctions';
 import TableFilter from '../components/TableFilter';
 import FilterSummary from '../components/FilterSummary';
 import Pagination from '../components/Pagination';
-import {
-  COLORS,
-  LOGO_COLORS
-} from '../constants/AppConstants';
+import { COLORS, LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import LoadingScreen from '../components/LoadingScreen';
 import { tasksWithAppealsFromRawTasks } from './utils';
@@ -33,6 +29,8 @@ import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
  *     valueName to pull that attribute from the rowObject.
  *   - @filterValueTransform {function(any)} function that takes the value of the
  *     column, and transforms it into a string for filtering.
+ *   - @filterOptions {array[object]} array of value - displayText pairs to override the
+ *     generated filter values and counts in <TableFilter>
  *   - @enableFilterTextTransform {boolean} when true, filter text that gets displayed
  *     is automatically capitalized. default is true.
  *   - @footer {string} footer cell value for the column
@@ -98,6 +96,14 @@ const HeaderRow = (props) => {
             valueTransform={column.filterValueTransform}
             updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
             filteredByList={props.filteredByList} />;
+        } else if (props.useTaskPagesApi && column.filterOptions) {
+          // https://github.com/department-of-veterans-affairs/caseflow/pull/11940#discussion_r322795963
+          // filterIcon = <TableFilter
+          //   {...column}
+          //   tableData={column.tableData || props.rowObjects}
+          //   filterOptionsFromApi={props.useTaskPagesApi && column.filterOptions}
+          //   updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
+          //   filteredByList={props.filteredByList} />;
         }
 
         const columnTitleContent = <span>{column.header || ''}</span>;
@@ -217,10 +223,7 @@ export default class QueueTable extends React.PureComponent {
 
   sortRowObjects = () => {
     const { rowObjects } = this.props;
-    const {
-      sortColName,
-      sortAscending
-    } = this.state;
+    const { sortColName, sortAscending } = this.state;
 
     if (sortColName === null) {
       return rowObjects;
@@ -239,7 +242,7 @@ export default class QueueTable extends React.PureComponent {
     this.updateCurrentPage(0);
   };
 
-  filterTableData = (data: Array<Object>) => {
+  filterTableData = (data) => {
     const { columns } = this.props;
     const { filteredByList } = this.state;
     let filteredData = _.clone(data);
@@ -304,10 +307,7 @@ export default class QueueTable extends React.PureComponent {
   );
 
   updateCurrentPage = (newPage) => {
-    this.setState(
-      { currentPage: newPage },
-      this.requestTasks
-    );
+    this.setState({ currentPage: newPage }, this.requestTasks);
   }
 
   // /organizations/vlj-support-staff/tasks?tab=on_hold
@@ -347,7 +347,8 @@ export default class QueueTable extends React.PureComponent {
     ).
       concat(filterParams.map((filterParam) =>
         `${encodeURIComponent(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`)}=${encodeURIComponent(filterParam)}`
-      )).
+      )
+    ).
       join('&');
 
     return `${this.props.taskPagesApiEndpoint}&${queryString}`;
@@ -361,18 +362,14 @@ export default class QueueTable extends React.PureComponent {
     this.setState({ loadingComponent: <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} /> });
 
     return ApiUtil.get(this.requestUrl()).then((response) => {
-      const {
-        tasks: { data: tasks }
-      } = JSON.parse(response.text);
+      const { tasks: { data: tasks } } = response.body;
 
       this.setState({
         tasksFromApi: tasksWithAppealsFromRawTasks(tasks),
         loadingComponent: null
       });
     }).
-      catch(() => {
-        this.setState({ loadingComponent: null });
-      });
+      catch(() => this.setState({ loadingComponent: null }));
   };
 
   render() {
@@ -394,12 +391,7 @@ export default class QueueTable extends React.PureComponent {
       useTaskPagesApi
     } = this.props;
 
-    let {
-      totalTaskCount,
-      numberOfPages,
-      rowObjects,
-      casesPerPage
-    } = this.props;
+    let { totalTaskCount, numberOfPages, rowObjects, casesPerPage } = this.props;
 
     if (useTaskPagesApi) {
       if (this.state.tasksFromApi.length) {
@@ -493,7 +485,7 @@ export default class QueueTable extends React.PureComponent {
   }
 }
 
-QueueTable.propTypes = {
+HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes = QueueTable.propTypes = {
   tbodyId: PropTypes.string,
   tbodyRef: PropTypes.func,
   columns: PropTypes.oneOfType([
@@ -506,16 +498,23 @@ QueueTable.propTypes = {
   summary: PropTypes.string,
   headerClassName: PropTypes.string,
   className: PropTypes.string,
+  bodyClassName: PropTypes.string,
+  bodyStyling: PropTypes.object,
   caption: PropTypes.string,
-  id: PropTypes.string,
-  styling: PropTypes.object,
+  casesPerPage: PropTypes.number,
   defaultSort: PropTypes.shape({
     sortColName: PropTypes.string,
     sortAscending: PropTypes.bool
   }),
-  userReadableColumnNames: PropTypes.object,
-  useTaskPagesApi: PropTypes.bool,
-  taskPagesApiEndpoint: PropTypes.string,
   enablePagination: PropTypes.bool,
-  casesPerPage: PropTypes.number
+  getKeyForRow: PropTypes.func,
+  id: PropTypes.string,
+  numberOfPages: PropTypes.number,
+  sortAscending: PropTypes.bool,
+  sortColName: PropTypes.string,
+  styling: PropTypes.object,
+  taskPagesApiEndpoint: PropTypes.string,
+  totalTaskCount: PropTypes.number,
+  useTaskPagesApi: PropTypes.bool,
+  userReadableColumnNames: PropTypes.object
 };
