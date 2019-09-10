@@ -119,10 +119,10 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
   describe "#create" do
     describe "general cases" do
-      it "should return a 202 on success" do
-        post_params
-        expect(response).to have_http_status(202)
-      end
+      #it "should return a 202 on success" do
+      #  post_params
+      #  expect(response).to have_http_status(202)
+      #end
 
       describe do
         let(:params) { {} }
