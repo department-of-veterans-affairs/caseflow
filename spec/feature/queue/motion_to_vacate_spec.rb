@@ -5,16 +5,23 @@ require "rails_helper"
 
 RSpec.feature "Motion to vacate", :all_dbs do
   let!(:lit_support_team) { LitigationSupport.singleton }
-  let(:appeal) { create(:appeal) }
+  let(:receipt_date) { Time.zone.today - 20 }
+  let!(:appeal) { create(:appeal, receipt_date: receipt_date) }
 
   describe "Motion to vacate mail task" do
-    let(:mail_user) { create(:user, full_name: "Mail user") }
+    let!(:mail_user) { create(:user, full_name: "Mail user") }
     let!(:mail_team) { MailTeam.singleton }
-    let(:lit_support_user) { create(:user, full_name: "Lit support user") }
-    let(:motions_attorney) { create(:user, full_name: "Motions attorney") }
-    let(:judge1) { create(:user, full_name: "Judge the First", css_id: "JUDGE_1") }
-    let(:judge2) { create(:user, full_name: "Judge the Second", css_id: "JUDGE_2") }
-    let(:judge3) { create(:user, full_name: "Judge the Third", css_id: "JUDGE_3") }
+    let!(:lit_support_user) { create(:user, full_name: "Lit support user") }
+    let!(:motions_attorney) { create(:user, full_name: "Motions attorney") }
+    let!(:judge1) { create(:user, full_name: "Judge the First", css_id: "JUDGE_1") }
+    let!(:judge2) { create(:user, full_name: "Judge the Second", css_id: "JUDGE_2") }
+    let!(:judge3) { create(:user, full_name: "Judge the Third", css_id: "JUDGE_3") }
+    let!(:root_task) { create(:root_task, appeal: appeal) }
+    let!(:judge_review_task) do
+      create(:ama_judge_decision_review_task, :completed,
+             assigned_to: judge2, appeal: appeal, created_at: receipt_date + 3.days, parent: root_task)
+    end
+    # let!(:task) { create(:ama_judge_task, assigned_to: judge2, parent: root_task, appeal: appeal) }
 
     before do
       create(:staff, :judge_role, sdomainid: judge1.css_id)
@@ -77,6 +84,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         # Enable test once backend truly supports
         judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
         expect(judge_task).to_not be_nil
+        binding.pry
       end
 
       it "motions attorney recommends denied decision to judge and fills in hyperlink" do
