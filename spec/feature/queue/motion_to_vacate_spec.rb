@@ -71,9 +71,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
         click_dropdown(text: judge2.display_name)
         click_button(text: "Submit")
 
-        # Should this go back to user's queue...?
-        expect(page.current_path).to eq("/queue")
-        # expect(page).to have_content("Your Queue")
+        # Return back to user's queue
+        expect(page).to have_content("Your cases")
 
         # Enable test once backend truly supports
         judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
@@ -89,8 +88,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
         click_dropdown(text: judge2.display_name)
         click_button(text: "Submit")
 
-        # Should this go back to user's queue...?
-        expect(page.current_path).to eq("/queue")
+        # Return back to user's queue
+        expect(page).to have_content("Your cases")
 
         # Enable test once backend truly supports
         judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
