@@ -52,17 +52,7 @@ paths:
                         legacyOptInApproved:
                           type: boolean
                         benefitType:
-                          type: string
-                          enum:
-                            - compensation
-                            - pension
-                            - fiduciary
-                            - insurance
-                            - education
-                            - voc_rehab
-                            - loan_guaranty
-                            - vha
-                            - nca
+                          $ref: "#/components/schemas/benefit_type"
                     relationships:
                       type: object
                       required:
@@ -737,8 +727,34 @@ paths:
                       attributes:
                         type: object
                         properties:
-                          benefitType:
+                          establishment_processed_at
                             type: string
+                          active
+                            type: boolean
+                          description
+                            type: string
+                          aoj
+                            type: string
+                          programArea
+                            type: string
+                          status
+                            type: string
+                          alerts                      //* "
+                          events                      //* "
+                          evidence                    //* "
+                          receiptDate                 // string yyy-mm-dd
+                          informalConference
+                            type: boolean
+                          sameOffice
+                            type: boolean
+                          legacyOptInApproved
+                            type: boolean
+                          benefitType
+                            $ref: "#/components/schemas/benefit_type"
+
+
+
+                          benefitType:
                           veteranFileNumber:
                             type: string
                           status:
@@ -834,6 +850,18 @@ paths:
                     $ref: "#/components/schemas/errors"
 components:
   schemas:
+    benefit_type:
+      type: string
+      enum:
+        - compensation
+        - pension
+        - fiduciary
+        - insurance
+        - education
+        - voc_rehab
+        - loan_guaranty
+        - vha
+        - nca
     nonrating_issue_category:
       type: string
       enum:
