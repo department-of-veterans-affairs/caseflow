@@ -76,6 +76,8 @@ class ExternalApi::BGSService
       client.people.find_person_by_ptcpnt_id(participant_id)
     end
 
+    return {} unless bgs_info
+
     @person_info[participant_id] ||= {
       first_name: bgs_info[:first_nm],
       last_name: bgs_info[:last_nm],
