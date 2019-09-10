@@ -39,7 +39,7 @@ class LegacyDocket
         genpop: record["vlj"].nil?,
         genpop_query: genpop
       )
-      
+
       if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
         DasDeprecation::CaseDistribution.create_judge_assign_task(record, distribution.judge) do
           distributed_case.save!
