@@ -4,6 +4,7 @@ describe ExternalApi::BGSService do
   let(:bgs_veteran_service) { double("veteran") }
   let(:bgs_people_service) { double("people") }
   let(:bgs_security_service) { double("security") }
+  let(:bgs_claimants_service) { double("claimants") }
   let(:bgs_client) { double("BGS::Services") }
   let(:bgs) { ExternalApi::BGSService.new(client: bgs_client) }
   let(:veteran_record) { { name: "foo", ssn: "123" } }
@@ -57,6 +58,9 @@ describe ExternalApi::BGSService do
 
       allow(bgs_client).to receive(:security).and_return(bgs_security_service)
       allow(bgs_security_service).to receive(:find_sensitivity_level_by_participant_id) { sensitivity_level }
+
+      allow(bgs_client).to receive(:claimants).and_return(bgs_claimants_service)
+      allow(bgs_claimants_service).to receive(:find_flashes) { true }
     end
 
     let(:veteran) { build(:veteran) }
@@ -103,6 +107,16 @@ describe ExternalApi::BGSService do
 
       it "returns true" do
         expect(subject).to be_truthy
+      end
+    end
+
+    context "when Veteran is an employee at the same station as the User" do
+      before do
+        allow(bgs_claimants_service).to receive(:find_flashes) { fail BGS::ShareError, "no access" }
+      end
+
+      it "returns false" do
+        expect(subject).to be_falsey
       end
     end
 

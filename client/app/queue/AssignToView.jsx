@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -31,6 +32,7 @@ const selectedAction = (props) => {
 };
 
 class AssignToView extends React.Component {
+
   constructor(props) {
     super(props);
 
@@ -77,7 +79,7 @@ class AssignToView extends React.Component {
       }
     };
 
-    const successMsg = {
+    const assignTaskSuccessMessage = {
       title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()),
       detail: taskActionData(this.props).message_detail
     };
@@ -86,12 +88,8 @@ class AssignToView extends React.Component {
       return this.reassignTask();
     }
 
-    return this.props.requestSave('/tasks', payload, successMsg).
-      then((resp) => {
-        const response = JSON.parse(resp.text);
-
-        this.props.onReceiveAmaTasks(response.tasks.data);
-      }).
+    return this.props.requestSave('/tasks', payload, assignTaskSuccessMessage).
+      then((resp) => this.props.onReceiveAmaTasks(resp.body.tasks.data)).
       catch(() => {
         // handle the error from the frontend
       });
@@ -127,9 +125,7 @@ class AssignToView extends React.Component {
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
-        const response = JSON.parse(resp.text);
-
-        this.props.onReceiveAmaTasks(response.tasks.data);
+        this.props.onReceiveAmaTasks(resp.body.tasks.data);
       });
   }
 
@@ -208,6 +204,24 @@ class AssignToView extends React.Component {
     </QueueFlowModal>;
   }
 }
+
+AssignToView.propTypes = {
+  appeal: PropTypes.shape({
+    externalId: PropTypes.string
+  }),
+  assigneeAlreadySelected: PropTypes.bool,
+  highlightFormItems: PropTypes.bool,
+  isReassignAction: PropTypes.bool,
+  isTeamAssign: PropTypes.bool,
+  onReceiveAmaTasks: PropTypes.func,
+  requestPatch: PropTypes.func,
+  requestSave: PropTypes.func,
+  task: PropTypes.shape({
+    instructions: PropTypes.string,
+    taskId: PropTypes.string,
+    availableActions: PropTypes.arrayOf(PropTypes.object)
+  })
+};
 
 const mapStateToProps = (state, ownProps) => {
   const {

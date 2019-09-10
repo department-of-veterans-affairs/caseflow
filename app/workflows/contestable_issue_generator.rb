@@ -37,7 +37,14 @@ class ContestableIssueGenerator
   end
 
   def contestable_decision_issues
-    @contestable_decision_issues ||= finalized_decision_issues_before_receipt_date.map do |decision_issue|
+    issues = finalized_decision_issues_before_receipt_date
+
+    # If correction support enabled, we include all decision issues for the issue
+    if FeatureToggle.enabled?(:correct_claim_reviews, user: RequestStore[:current_user])
+      issues += review.decision_issues.select(&:finalized?)
+    end
+
+    @contestable_decision_issues ||= issues.map do |decision_issue|
       ContestableIssue.from_decision_issue(decision_issue, review)
     end
   end
