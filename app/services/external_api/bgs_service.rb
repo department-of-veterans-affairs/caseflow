@@ -203,6 +203,14 @@ class ExternalApi::BGSService
   def may_modify?(vbms_id, veteran_participant_id)
     return false unless can_access?(vbms_id)
 
+    # sometimes find_flashes works
+    begin
+      client.claimants.find_flashes(vbms_id)
+    rescue BGS::ShareError
+      return false
+    end
+
+    # sometimes the station conflict logic works
     !ExternalApi::BgsVeteranStationUserConflict.new(
       veteran_participant_id: veteran_participant_id,
       client: client
