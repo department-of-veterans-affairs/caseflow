@@ -39,6 +39,14 @@ class RegionalOffice
     location_hash[:state]
   end
 
+  def timezone
+    location_hash[:timezone]
+  end
+
+  def name
+    location_hash[:label]
+  end
+
   def to_h
     location_hash.merge(key: key)
   end

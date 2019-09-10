@@ -13,15 +13,13 @@ export const completeTask = (taskId, businessLine, data, claimant) => (dispatch)
   return ApiUtil.put(`/decision_reviews/${businessLine}/tasks/${taskId}`, data, 'decision-issues-update').
     then(
       (response) => {
-        const responseObject = JSON.parse(response.text);
-
         dispatch({
           type: ACTIONS.TASK_UPDATE_DECISION_ISSUES_SUCCEED,
           payload: {
             claimant,
             completedTaskId: taskId,
-            inProgressTasks: formatTasks(responseObject.in_progress_tasks),
-            completedTasks: formatTasks(responseObject.completed_tasks)
+            inProgressTasks: formatTasks(response.body.in_progress_tasks),
+            completedTasks: formatTasks(response.body.completed_tasks)
           },
           meta: { analytics }
         });
@@ -29,12 +27,7 @@ export const completeTask = (taskId, businessLine, data, claimant) => (dispatch)
         return true;
       },
       (error) => {
-        let responseObject = {};
-
-        try {
-          responseObject = JSON.parse(error.response.text);
-        } catch (ex) { /* pass */ }
-
+        const responseObject = error.response.body || {};
         const responseErrorCode = responseObject.error_code;
 
         dispatch({

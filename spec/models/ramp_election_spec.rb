@@ -101,7 +101,7 @@ describe RampElection, :postgres do
     end
 
     context "when option_selected is set" do
-      let(:veteran) { Veteran.create(file_number: veteran_file_number) }
+      let(:veteran) { create(:veteran, file_number: veteran_file_number) }
       let(:option_selected) { "supplemental_claim" }
       let(:modifier) { RampReview::END_PRODUCT_DATA_BY_OPTION[option_selected][:modifier] }
 
