@@ -7,9 +7,9 @@ class Fakes::VeteranStore < Fakes::PersistentStore
     end
   end
 
-  def all_veteran_ids
+  def all_veteran_file_numbers
     prefix = "#{self.class.redis_ns}:"
-    all_keys.map { |veteran_id| veteran_id.sub(/^#{prefix}/, "") }
+    all_keys.map { |key| key.sub(/^#{prefix}/, "") }
   end
 
   def store_veteran_record(file_number, record)

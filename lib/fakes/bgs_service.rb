@@ -100,35 +100,35 @@ class Fakes::BGSService
     delegate :store_end_product_record, to: :end_product_store
     delegate :store_veteran_record, to: :veteran_store
 
-    def get_veteran_record(veteran_id)
-      veteran_store.fetch_and_inflate(veteran_id)
+    def get_veteran_record(file_number)
+      veteran_store.fetch_and_inflate(file_number)
     end
 
-    def edit_veteran_record(veteran_id, attr, new_value)
-      vet_record = get_veteran_record(veteran_id)
+    def edit_veteran_record(file_number, attr, new_value)
+      vet_record = get_veteran_record(file_number)
       vet_record[attr] = new_value
-      store_veteran_record(veteran_id, vet_record)
+      store_veteran_record(file_number, vet_record)
     end
   end
 
-  def get_end_products(veteran_id)
+  def get_end_products(file_number)
     store = self.class.end_product_store
-    records = store.fetch_and_inflate(veteran_id) || store.fetch_and_inflate(:default) || {}
+    records = store.fetch_and_inflate(file_number) || store.fetch_and_inflate(:default) || {}
     records.values
   end
 
-  def get_veteran_record(veteran_id)
-    self.class.get_veteran_record(veteran_id)
+  def get_veteran_record(file_number)
+    self.class.get_veteran_record(file_number)
   end
 
-  def cancel_end_product(veteran_id, end_product_code, end_product_modifier)
-    end_products = get_end_products(veteran_id)
+  def cancel_end_product(file_number, end_product_code, end_product_modifier)
+    end_products = get_end_products(file_number)
     matching_eps = end_products.select do |ep|
       ep[:claim_type_code] == end_product_code && ep[:end_product_type_code] == end_product_modifier
     end
     matching_eps.each do |ep|
       ep[:status_type_code] = "CAN"
-      self.class.store_end_product_record(veteran_id, ep)
+      self.class.store_end_product_record(file_number, ep)
     end
   end
 
@@ -269,7 +269,7 @@ class Fakes::BGSService
   def fetch_file_number_by_ssn(ssn)
     return if ssn_not_found
 
-    self.class.veteran_store.all_veteran_ids.each do |file_number|
+    self.class.veteran_store.all_veteran_file_numbers.each do |file_number|
       record = get_veteran_record(file_number)
       if record[:ssn].to_s == ssn.to_s
         return file_number
