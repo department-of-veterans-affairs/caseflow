@@ -100,7 +100,8 @@ const HeaderRow = (props) => {
             {...column}
             tableData={column.tableData || props.rowObjects}
             filterOptionsFromApi={props.useTaskPagesApi && column.filterOptions}
-            updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
+            // https://github.com/department-of-veterans-affairs/caseflow/pull/11940#discussion_r322795963
+            // updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
             filteredByList={props.filteredByList} />;
         }
 
