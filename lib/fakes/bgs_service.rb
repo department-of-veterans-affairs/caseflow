@@ -101,6 +101,12 @@ class Fakes::BGSService
     def get_veteran_record(veteran_id)
       veteran_store.fetch_and_inflate(veteran_id)
     end
+
+    def edit_veteran_record(veteran_id, attr, new_value)
+      vet_record = get_veteran_record(veteran_id)
+      vet_record[attr] = new_value
+      store_veteran_record(veteran_id, vet_record)
+    end
   end
 
   def get_end_products(veteran_id)

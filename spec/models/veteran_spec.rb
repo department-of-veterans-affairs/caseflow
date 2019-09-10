@@ -112,9 +112,7 @@ describe Veteran, :postgres do
       let!(:veteran) { create(:veteran, file_number: file_number) }
 
       before do
-        vet_record = Fakes::BGSService.get_veteran_record(file_number)
-        vet_record[:last_name] = "Changed"
-        Fakes::BGSService.store_veteran_record(file_number, vet_record)
+        Fakes::BGSService.edit_veteran_record(file_number, :last_name, "Changed")
       end
 
       context "sync_name flag is true" do
@@ -567,9 +565,7 @@ describe Veteran, :postgres do
 
     context "exists in BGS with different name than in Caseflow" do
       before do
-        vet_record = Fakes::BGSService.get_veteran_record(file_number)
-        vet_record[:last_name] = "Changed"
-        Fakes::BGSService.store_veteran_record(file_number, vet_record)
+        Fakes::BGSService.edit_veteran_record(file_number, :last_name, "Changed")
       end
 
       context "sync_name flag is true" do
@@ -664,9 +660,7 @@ describe Veteran, :postgres do
       let!(:veteran) { create(:veteran, file_number: file_number, ssn: ssn) }
 
       before do
-        vet_record = Fakes::BGSService.get_veteran_record(veteran.file_number)
-        vet_record[:last_name] = "Changed"
-        Fakes::BGSService.store_veteran_record(veteran.file_number, vet_record)
+        Fakes::BGSService.edit_veteran_record(veteran.file_number, :last_name, "Changed")
       end
 
       context "sync_name flag is true" do
@@ -709,9 +703,7 @@ describe Veteran, :postgres do
     it "uses the new address for establishing a claim" do
       expect(veteran.bgs_record[:address_line1]).to eq("122 Mullberry St.")
 
-      vet_record = Fakes::BGSService.get_veteran_record(veteran.file_number)
-      vet_record[:address_line1] = "Changed"
-      Fakes::BGSService.store_veteran_record(veteran.file_number, vet_record)
+      Fakes::BGSService.edit_veteran_record(veteran.file_number, :address_line1, "Changed")
 
       subject
 
@@ -794,9 +786,7 @@ describe Veteran, :postgres do
       let(:bgs_ssn) { "666999999" }
 
       before do
-        vet_record = Fakes::BGSService.get_veteran_record(veteran.file_number)
-        vet_record[:ssn] = bgs_ssn
-        Fakes::BGSService.store_veteran_record(veteran.file_number, vet_record)
+        Fakes::BGSService.edit_veteran_record(veteran.file_number, :ssn, bgs_ssn)
       end
 
       it { is_expected.to eq(true) }

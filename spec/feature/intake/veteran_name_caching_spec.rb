@@ -38,7 +38,7 @@ feature "Higher-Level Review", :postgres do
       )
 
       step "name changes upstream" do
-        Fakes::BGSService.veteran_records[veteran.file_number][:last_name] = "Changed"
+        Fakes::BGSService.edit_veteran_record(veteran.file_number, :last_name, "Changed")
       end
 
       click_intake_finish
