@@ -3,7 +3,7 @@
 require "support/database_cleaner"
 require "rails_helper"
 
-describe DasDeprecation::CaseDistribution, :all_dbs, focus: true do
+describe DasDeprecation::CaseDistribution, :all_dbs do
   let(:judge) { create(:user, css_id: "BVATWARNER", roles: ["Hearing Prep"]) }
   describe "#create_judge_assign_task" do
     context "Non-Priority Legacy Appeal" do
