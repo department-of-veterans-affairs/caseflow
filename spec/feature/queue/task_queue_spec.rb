@@ -551,11 +551,11 @@ RSpec.feature "Task queue", :all_dbs do
       end
 
       context "when filtering tasks" do
-        let(:translation_task_count) { unassigned_count / 2 }
+        let(:foia_task_count) { unassigned_count / 2 }
 
         before do
           Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
-            .take(translation_task_count).each { |task| task.update!(type: TranslationTask.name) }
+            .take(foia_task_count).each { |task| task.update!(type: FoiaTask.name) }
           visit(organization.path)
         end
 
@@ -565,14 +565,14 @@ RSpec.feature "Task queue", :all_dbs do
           )
           page.find_all("path.unselected-filter-icon-inner").first.click
           expect(page).to have_content("#{GenericTask.label} (#{unassigned_count / 2})")
-          expect(page).to have_content("#{TranslationTask.label} (#{unassigned_count / 2})")
+          expect(page).to have_content("#{FoiaTask.label} (#{foia_task_count})")
         end
 
         it "filters tasks correctly" do
           expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
           page.find_all("path.unselected-filter-icon-inner").first.click
-          page.find("label", text: "#{TranslationTask.label} (#{translation_task_count})").click
-          expect(find("tbody").find_all("tr").length).to eq(translation_task_count)
+          page.find("label", text: "#{FoiaTask.label} (#{foia_task_count})").click
+          expect(find("tbody").find_all("tr").length).to eq(foia_task_count)
         end
       end
     end

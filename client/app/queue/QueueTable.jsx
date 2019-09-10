@@ -88,8 +88,7 @@ const HeaderRow = (props) => {
 
         // Keeping the historical prop `getFilterValues` for backwards compatibility,
         // will remove this once all apps are using this new component.
-        if ((props.useTaskPagesApi && column.backendCanFilter) ||
-            (!props.useTaskPagesApi && (column.enableFilter || column.getFilterValues))) {
+        if (!props.useTaskPagesApi && (column.enableFilter || column.getFilterValues)) {
           filterIcon = <TableFilter
             {...column}
             tableData={column.tableData || props.rowObjects}
