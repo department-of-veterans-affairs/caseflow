@@ -67,7 +67,7 @@ UpcomingHearingsTable.propTypes = {
   rows: PropTypes.array,
   columns: PropTypes.array,
   selectedHearingDay: PropTypes.shape({
-    id: PropTypes.string,
+    id: PropTypes.number,
     scheduledFor: PropTypes.string
   })
 };
@@ -281,7 +281,7 @@ export default class AssignHearingsTabs extends React.Component {
   }
 }
 
-const appealPropTypes = {
+const appealPropTypes = PropTypes.shape({
   attributes: PropTypes.shape({
     caseType: PropTypes.string,
     docketNumber: PropTypes.string,
@@ -289,11 +289,20 @@ const appealPropTypes = {
     availableHearingLocations: PropTypes.array,
     externalAppealId: PropTypes.string
   })
-};
+});
 
 AssignHearingsTabs.propTypes = {
   appealsReadyForHearing: PropTypes.arrayOf(appealPropTypes),
-  selectedHearingDay: PropTypes.string,
+  selectedHearingDay: PropTypes.shape({
+    hearings: PropTypes.object,
+    id: PropTypes.number,
+    regionalOffice: PropTypes.string,
+    regionalOfficeKey: PropTypes.string,
+    requestType: PropTypes.string,
+    room: PropTypes.string,
+    scheduledFor: PropTypes.string,
+    totalSlots: PropTypes.number
+  }),
   selectedRegionalOffice: PropTypes.string,
   room: PropTypes.string
 };

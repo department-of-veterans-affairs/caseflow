@@ -37,7 +37,7 @@ export const HearingAppellantName = ({ hearing }) => {
     appellantName = veteranFileNumber;
   }
 
-  return <React.Fragment>`${appellantName}`</React.Fragment>;
+  return <React.Fragment>{appellantName}</React.Fragment>;
 };
 
 HearingAppellantName.propTypes = {
@@ -134,7 +134,7 @@ SuggestedHearingLocation.propTypes = {
     city: PropTypes.string,
     state: PropTypes.string,
     zipCode: PropTypes.string,
-    distance: PropTypes.string,
+    distance: PropTypes.number,
     classification: PropTypes.string,
     facilityId: PropTypes.string,
     facilityType: PropTypes.string
