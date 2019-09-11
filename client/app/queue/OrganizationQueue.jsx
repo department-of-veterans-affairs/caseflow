@@ -116,7 +116,7 @@ class OrganizationQueue extends React.PureComponent {
           numberOfPages={tabConfig.task_page_count}
           totalTaskCount={totalTaskCount}
           taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
-          tabPaginationOptions={paginationOptions.tab === tabConfig.name && paginationOptions}
+          tabPaginationOptions={paginationOptions.tab === tabConfig.name ? paginationOptions : {}}
           enablePagination
         />
       </React.Fragment>
