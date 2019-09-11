@@ -202,7 +202,7 @@ export default class QueueTable extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    const { defaultSort, tabPaginationOptions, useTaskPagesApi } = this.props;
+    const { defaultSort, tabPaginationOptions = {}, useTaskPagesApi } = this.props;
     const needsTaskRequest = useTaskPagesApi && !_.isEmpty(tabPaginationOptions);
     const state = {
       sortAscending: tabPaginationOptions[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] !==
@@ -541,10 +541,6 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   useTaskPagesApi: PropTypes.bool,
   userReadableColumnNames: PropTypes.object,
   tabPaginationOptions: PropTypes.object
-};
-
-QueueTable.defaultProps = {
-  tabPaginationOptions: {}
 };
 
 /* eslint-enable max-lines */

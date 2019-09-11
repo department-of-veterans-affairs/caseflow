@@ -43,7 +43,8 @@ class OrganizationQueue extends React.PureComponent {
     const tabNames = config.tabs.map((tab) => {
       return tab.name;
     });
-    const activeTab = this.props.paginationOptions.tab || config.active_tab;
+    const { paginationOptions = {} } = this.props;
+    const activeTab = paginationOptions.tab || config.active_tab;
     const index = _.indexOf(tabNames, activeTab);
 
     return index === -1 ? 0 : index;
@@ -94,7 +95,7 @@ class OrganizationQueue extends React.PureComponent {
   }
 
   taskTableTabFactory = (tabConfig, config) => {
-    const { paginationOptions } = this.props;
+    const { paginationOptions = {} } = this.props;
     const tasks = config.use_task_pages_api ?
       tasksWithAppealsFromRawTasks(tabConfig.tasks) :
       this.tasksForTab(tabConfig.name);
@@ -116,7 +117,7 @@ class OrganizationQueue extends React.PureComponent {
           numberOfPages={tabConfig.task_page_count}
           totalTaskCount={totalTaskCount}
           taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
-          tabPaginationOptions={paginationOptions.tab === tabConfig.name ? paginationOptions : {}}
+          tabPaginationOptions={paginationOptions.tab === tabConfig.name && paginationOptions}
           enablePagination
         />
       </React.Fragment>
@@ -175,10 +176,6 @@ OrganizationQueue.propTypes = {
   trackingTasks: PropTypes.array,
   unassignedTasks: PropTypes.array,
   paginationOptions: PropTypes.object
-};
-
-QueueTable.defaultProps = {
-  paginationOptions: {}
 };
 
 const mapStateToProps = (state) => {
