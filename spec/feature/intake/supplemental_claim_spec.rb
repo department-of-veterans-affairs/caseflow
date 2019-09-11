@@ -727,7 +727,6 @@ feature "Supplemental Claim Intake", :all_dbs do
           sc, = start_supplemental_claim(veteran, is_comp: false)
 
           visit "/intake/add_issues"
-
           expect(page).to have_content("Add / Remove Issues")
           check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
           check_row("Benefit type", "Education")
@@ -743,7 +742,7 @@ feature "Supplemental Claim Intake", :all_dbs do
 
           expect(page).to_not have_content("Establish EP")
           expect(page).to have_content("Establish Supplemental Claim")
-          expect(page).to_not have_content("Claimant")
+          expect(page).to have_content("Claimant")
 
           click_intake_finish
 
