@@ -31,7 +31,7 @@ class ScheduleHearingTask < GenericTask
       video_ids_in_caseflow = VACOLS::Case.where(bfcurloc: "CASEFLOW").
         where("bfkey IN (?)", tasks.map{ |task| task.appeal.id }).pluck(:bfkey)
 
-      return tasks.where.not("legacy_appeals.id IN (?)", video_ids_in_caseflow)
+      return tasks.where("legacy_appeals.id IN (?)", video_ids_in_caseflow)
     end
 
     def legacy_appeal_tasks(regional_office, incomplete_tasks)
