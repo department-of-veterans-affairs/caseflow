@@ -723,113 +723,291 @@ paths:
                         pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
                       type:
                         type: string
+                        enum: ["HigherLevelReview"]
                         description: Will be "HigherLevelReview"
                       attributes:
                         type: object
                         properties:
-                          establishment_processed_at
-                            type: string
-                          active
+                          # establishment_processed_at:  status makes this obsolete
+                          #  type: string
+                          active:
                             type: boolean
-                          description
+                          description:
                             type: string
-                          aoj
+                          aoj:
                             type: string
-                          programArea
+                          programArea:
                             type: string
-                          status
+                          receiptDate:
                             type: string
-                          alerts                      //* "
-                          events                      //* "
-                          evidence                    //* "
-                          receiptDate                 // string yyy-mm-dd
-                          informalConference
+                            format: date
+                          informalConference:
                             type: boolean
-                          sameOffice
+                          sameOffice:
                             type: boolean
-                          legacyOptInApproved
+                          legacyOptInApproved:
                             type: boolean
-                          benefitType
-                            $ref: "#/components/schemas/benefit_type"
-
-
-
                           benefitType:
-                          veteranFileNumber:
-                            type: string
-                          status:
-                            type: object
-                            properties:
-                              type:
-                                type: string
-                              details:
-                                type: object
-                                properties:
-                                  issues:
-                                    type: array
-                                    items:
-                                      type: object
-                                      properties:
-                                        description:
-                                          type: string
-                                        disposition:
-                                          type: string
+                            $ref: "#/components/schemas/benefit_type"
+                          alerts:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                type:
+                                  $ref: "#/components/schemas/higher_level_review_alerts"
+                                details:
+                                  type: object
+                                  properties:
+                                    decisionDate:
+                                      type: string
+                                      nullable: true
+                                    availableOptions:
+                                      type: array
+                                      items:
+                                        type: string
+                                    dueDate:
+                                      type: string
+                                      nullable: true
+                                    cavcDueDate:
+                                      description: "will always be \"null\" for HLRs"
+                                      type: string
+                                      nullable: true
+                                      enum: [null]
                           events:
                             type: array
                             items:
                               type: object
                               properties:
                                 type:
-                                  type: string
-                                date:
-                                  type: string
-                                  format: date
-                      relationships:
-                        type: object
-                        properties:
-                          issues:
+                                  $ref: "#/components/schemas/higher_level_review_events"
+                                details:
+                                  type: object
+                                  properties:
+                                    date:
+                                      type: string
+                                      format: date
+                          statuses:
                             type: array
                             items:
                               type: object
                               properties:
-                                data:
+                                type:
+                                  $ref: "#/components/schemas/higher_level_review_status_types"
+                                issues:
                                   type: array
                                   items:
                                     type: object
                                     properties:
-                                      type:
+                                      description:
                                         type: string
-                                        description: Will be "RequestIssue"
-                                      id:
+                                      disposition:
                                         type: string
-                                        description: will match the included data
+                      relationships:
+                        type: object
+                        properties:
+                          veteran:
+                            type: object
+                            properties:
+                              data:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                    enum: ["Veteran"]
+                                  id:
+                                    type: string # file number
+                          claimant:
+                            type: object
+                            properties:
+                              data:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                    enum: ["Claimant"]
+                                  id:
+                                    type: string # participant id
+                          requestIssues:
+                            type: object
+                            properties:
+                              data:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    type:
+                                      type: string
+                                      enum: ["RequestIssue"]
+                                    id:
+                                      type: integer
+                          decisionIssues:
+                            type: object
+                            properties:
+                              data:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    type:
+                                      type: string
+                                      enum: ["DecisionIssues"]
+                                    id:
+                                      type: integer
                   included:
-                    description: Minimal details on the related issues.
                     type: array
                     items:
-                      type: object
-                      properties:
-                        type:
-                          type: string
-                          description: Will be "RequestIssue"
-                        id:
-                          type: string
-                        attributes:
-                          type: object
+                      anyOf:
+                        - type: object
                           properties:
-                            benefitType:
+                            type:
                               type: string
-                            active:
-                              type: boolean
-                            lastAction:
+                              enum: ["Veteran"]
+                            id:
+                              type: string # veteran file number
+                            attributes:
+                              type: object
+                              properties:
+                                firstName:
+                                  type: string
+                                  nullable: true
+                                middleName:
+                                  type: string
+                                  nullable: true
+                                lastName:
+                                  type: string
+                                  nullable: true
+                                nameSuffix:
+                                  type: string
+                                  nullable: true
+                                fileNumber:
+                                  type: string
+                                ssn:
+                                  type: string
+                                participantId:
+                                  type: string
+                        - type: object
+                          properties:
+                            type:
                               type: string
-                            date:
+                              enum: ["Claimant"]
+                            id:
+                              type: string # participant id
+                            attributes:
+                              type: object
+                              properties:
+                                firstName:
+                                  type: string
+                                  nullable: true
+                                middleName:
+                                  type: string
+                                  nullable: true
+                                lastName:
+                                  type: string
+                                  nullable: true
+                                payeeCode:
+                                  $ref: "#/components/schemas/payee_code"
+                                relationshipType:
+                                  type: string
+                        - type: object
+                          properties:
+                            type:
                               type: string
-                              format: date
-                            description:
+                              enum: ["DecisionIssue"]
+                            id:
+                              type: integer
+                            attributes:
+                              type: object
+                              properties:
+                                approx_decision_date:
+                                  type: string
+                                  nullable: true
+                                decision_text:
+                                  type: string
+                                  nullable: true
+                                disposition:
+                                  type: string
+                                  nullable: true
+                                finalized:
+                                  type: boolean
+                        - type: object
+                          properties:
+                            type:
                               type: string
-                            diagnosticCode:
-                              type: string
+                              enum: ["RequestIssue"]
+                            id:
+                              type: integer
+                            attributes:
+                              type: object
+                              properties:
+                                active:
+                                  type: boolean
+                                status_description:
+                                  type: string
+                                diagnostic_code:
+                                  type: string
+                                ratingIssueId: # rating_issue_reference_id
+                                  type: string
+                                  nullable: true
+                                ratingIssueProfileDate:
+                                  type: string
+                                  nullable: true
+                                ratingDecisionReferenceId:
+                                  type: string
+                                  nullable: true
+                                description:
+                                  type: string
+                                  nullable: true
+                                contentionText:
+                                  type: string
+                                  nullable: true
+                                approxDecisionDate:
+                                  type: string
+                                  nullable: true
+                                category:
+                                  type: string
+                                  nullable: true
+                                notes:
+                                  type: string
+                                  nullable: true
+                                isUnidentified:
+                                  type: boolean
+                                rampClaimId:
+                                  type: string
+                                  nullable: true
+                                legacyAppealId: # vacols_id
+                                  type: string
+                                  nullable: true
+                                legacyAppealIssueId: # vacols_sequence_id
+                                  type: integer
+                                  nullable: true
+                                ineligibleReason:
+                                  type: string
+                                  nullable: true
+                                ineligibleDueToId:
+                                  type: string
+                                  nullable: true
+                                decisionReviewTitle:
+                                  type: string
+                                  nullable: true
+                                titleOfActiveReview:
+                                  type: string
+                                  nullable: true
+                                decisionIssueId: # contested_decision_issue_id
+                                  type: string
+                                  nullable: true
+                                withdrawalDate:
+                                  type: string
+                                  nullable: true
+                                contestedIssueDescription:
+                                  type: string
+                                  nullable: true
+                                endProductCleared:
+                                  type: boolean
+                                endProductCode:
+                                  type: string
+                                  nullable: true
+
         '404':
           description: ID not found
           content:
@@ -862,6 +1040,24 @@ components:
         - loan_guaranty
         - vha
         - nca
+    higher_level_review_alerts:
+      type: string
+      enum: ["AmaPostDecision"]
+    higher_level_review_events:
+      type: string
+      enum:
+        - hlr_request_event
+        - hlr_decision_event
+        - hlr_dta_error_event
+        - dta_decision_event
+        - hlr_other_close_event
+    higher_level_review_status_types:
+      type: string
+      enum:
+        - hlr_received
+        - hlr_dta_error
+        - hlr_decision
+        - hlr_closed
     nonrating_issue_category:
       type: string
       enum:
