@@ -851,7 +851,7 @@ paths:
                                   properties:
                                     type:
                                       type: string
-                                      enum: ["DecisionIssues"]
+                                      enum: ["DecisionIssue"]
                                     id:
                                       type: integer
                   included:
