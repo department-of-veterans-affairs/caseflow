@@ -43,7 +43,8 @@ class OrganizationQueue extends React.PureComponent {
     const tabNames = config.tabs.map((tab) => {
       return tab.name;
     });
-    const index = _.indexOf(tabNames, config.active_tab);
+    const activeTab = (config.use_task_pages_api && this.props.paginationOptions.tab) || config.active_tab;
+    const index = _.indexOf(tabNames, activeTab);
 
     return index === -1 ? 0 : index;
   }
@@ -170,7 +171,8 @@ OrganizationQueue.propTypes = {
   success: PropTypes.object,
   tasksAssignedByBulk: PropTypes.object,
   trackingTasks: PropTypes.array,
-  unassignedTasks: PropTypes.array
+  unassignedTasks: PropTypes.array,
+  paginationOptions: PropTypes.object
 };
 
 const mapStateToProps = (state) => {

@@ -234,7 +234,10 @@ class QueueApp extends React.PureComponent {
 
   routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
-    <OrganizationQueue {...this.props} />
+    <OrganizationQueue
+      {...this.props}
+      paginationOptions={querystring.parse(window.location.search.slice(1))}
+    />
   </OrganizationQueueLoadingScreen>
 
   routedOrganizationUsers = (props) => <OrganizationUsers {...props.match.params} />;

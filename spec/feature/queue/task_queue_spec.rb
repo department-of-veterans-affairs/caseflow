@@ -550,6 +550,24 @@ RSpec.feature "Task queue", :all_dbs do
         expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, on_hold_count))
       end
 
+      context "when following a deep link to paged results" do
+        before do
+          visit("#{organization.path}?#{query_string}")
+        end
+
+        context "when specifying the tab name" do
+          let(:query_string) do
+            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME}"
+          end
+
+          it "opens the correct tab on load" do
+            expect(page.find(".cf-tab.cf-active")).to have_content(
+              format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count / 2)
+            )
+          end
+        end
+      end
+
       context "when filtering tasks" do
         let(:foia_task_count) { unassigned_count / 2 }
 
