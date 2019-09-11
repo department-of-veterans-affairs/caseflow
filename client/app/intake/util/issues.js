@@ -16,16 +16,12 @@ const getNonVeteranClaimant = (intakeData) => {
 };
 
 const getClaimantField = (formType, veteran, intakeData) => {
-  if (formType === 'appeal' || intakeData.benefitType === 'compensation') {
     const claimant = intakeData.veteranIsNotClaimant ? getNonVeteranClaimant(intakeData) : veteran.name;
 
     return [{
       field: 'Claimant',
       content: claimant
     }];
-  }
-
-  return [];
 };
 
 export const legacyIssue = (issue, legacyAppeals) => {
