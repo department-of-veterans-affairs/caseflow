@@ -109,6 +109,9 @@ class DecisionReview < ApplicationRecord
         formName: veteran&.name&.formatted(:form),
         ssn: veteran&.ssn
       },
+      intakeUser: asyncable_user,
+      editIssuesUrl: caseflow_only_edit_issues_url,
+      processedAt: establishment_processed_at,
       relationships: veteran&.relationships&.map(&:ui_hash),
       claimant: claimant_participant_id,
       veteranIsNotClaimant: veteran_is_not_claimant,
@@ -120,11 +123,18 @@ class DecisionReview < ApplicationRecord
       decisionIssues: decision_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
-      editIssuesUrl: caseflow_only_edit_issues_url,
       veteranValid: veteran&.valid?(:bgs),
       veteranInvalidFields: veteran_invalid_fields,
       processedInCaseflow: processed_in_caseflow?
     }
+  end
+
+  def caseflow_only_edit_issues_url
+    "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
+  end
+
+  def async_job_url
+    nil # must override in subclass
   end
 
   def timely_issue?(decision_date)

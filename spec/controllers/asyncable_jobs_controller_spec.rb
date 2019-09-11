@@ -8,6 +8,31 @@ describe AsyncableJobsController, :postgres, type: :controller do
     User.stub = user
   end
 
+  describe "#show" do
+    context "User is not asyncable_user" do
+      let(:user) { create(:default_user) }
+      let!(:job) { create(:higher_level_review, intake: create(:intake)) }
+
+      it "returns unauthorized" do
+        get :show, params: { asyncable_job_klass: job.class.to_s, id: job.id }
+
+        expect(response.status).to eq 302
+        expect(response.body).to match(/unauthorized/)
+      end
+    end
+
+    context "User is asyncable_user" do
+      let(:user) { create(:default_user) }
+      let!(:job) { create(:higher_level_review, intake: create(:intake, user: user)) }
+
+      it "allows view" do
+        get :show, params: { asyncable_job_klass: job.class.to_s, id: job.id }
+
+        expect(response.status).to eq 200
+      end
+    end
+  end
+
   describe "#index" do
     context "user is not Admin Intake" do
       let(:user) { create(:default_user) }
