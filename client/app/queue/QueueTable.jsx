@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -544,3 +546,5 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
 QueueTable.defaultProps = {
   tabPaginationOptions: {}
 };
+
+/* eslint-enable max-lines */
