@@ -68,14 +68,17 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
 
     context "motions attorney reviews case" do
-      let!(:motions_attorney_task) { create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney) }
+      let!(:motions_attorney_task) { create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney, parent: root_task) }
 
       it "motions attorney recommends grant decision to judge" do
         send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
 
         find("label[for=disposition_granted]").click
         fill_in("instructions", with: "Attorney context/instructions for judge")
-        click_dropdown(text: judge2.display_name)
+
+        # Ensure it has pre-selected judge previously assigned to case
+        expect(dropdown_selected_value(find(".dropdown-judge"))).to eq judge2.display_name
+
         click_button(text: "Submit")
 
         # Return back to user's queue
@@ -84,7 +87,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
         # Enable test once backend truly supports
         judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
         expect(judge_task).to_not be_nil
-        binding.pry
       end
 
       it "motions attorney recommends denied decision to judge and fills in hyperlink" do
