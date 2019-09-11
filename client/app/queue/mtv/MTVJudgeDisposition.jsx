@@ -15,13 +15,13 @@ import {
 import { MTVDispositionSelection } from './MTVDispositionSelection';
 import TextareaField from '../../components/TextareaField';
 import RadioField from '../../components/RadioField';
-import { mtvVacateTypeOptions } from './index';
+import { mtvVacateTypeOptions, mtvDispositionText } from './index';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import { css } from 'glamor';
 import { MTVTaskHeader } from './MTVTaskHeader';
-import TextField from '../../components/TextField.jsx';
+import TextField from '../../components/TextField';
 
 const vacateTypeText = (val) => {
   const opt = mtvVacateTypeOptions.find((i) => i.value === val);
@@ -30,7 +30,7 @@ const vacateTypeText = (val) => {
 };
 
 const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }) => {
-  const parts = [`I am proceeding with a ${disposition}.`];
+  const parts = [`I am proceeding with a ${mtvDispositionText[disposition]}.`];
 
   switch (disposition) {
   case 'granted':

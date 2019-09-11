@@ -13,7 +13,12 @@ export const mtvDispositionOptions = [
   }
 ];
 
-// Need to verify/match these to the backend
+export const mtvDispositionText = {
+  granted: 'grant or partial vacature',
+  denied: 'denial of all issues for vacature',
+  dismissed: 'dismissal'
+};
+
 export const mtvVacateTypeOptions = [
   {
     value: 'straight_vacate_and_readjudication',
