@@ -73,8 +73,13 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def cache_legacy_appeals
     legacy_appeals = LegacyAppeal.find(Task.open.where(appeal_type: LegacyAppeal.name).pluck(:appeal_id).uniq)
 
+    cache_postgres_data_start = Time.zone.now
     cache_legacy_appeal_postgres_data(legacy_appeals)
+    time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
+
+    cache_vacols_data_start = Time.zone.now
     cache_legacy_appeal_vacols_data(legacy_appeals)
+    time_segment(segment: "cache_legacy_appeal_vacols_data", start_time: cache_vacols_data_start)
 
     increment_appeal_count(legacy_appeals.length, LegacyAppeal.name)
   end
