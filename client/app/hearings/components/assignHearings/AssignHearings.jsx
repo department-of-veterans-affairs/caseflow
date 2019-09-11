@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
-import Button from '../../components/Button';
+import Button from '../../../components/Button';
 import { css } from 'glamor';
 import moment from 'moment';
-import { COLORS } from '../../constants/AppConstants';
+import { COLORS } from '../../../constants/AppConstants';
 import AssignHearingsTabs from './AssignHearingsTabs';
-import StatusMessage from '../../components/StatusMessage';
-import COPY from '../../../COPY.json';
+import StatusMessage from '../../../components/StatusMessage';
+import COPY from '../../../../COPY.json';
 
 const sectionNavigationListStyling = css({
   '& > li': {
@@ -133,4 +133,3 @@ AssignHearings.propTypes = {
   userId: PropTypes.number,
   onReceiveTasks: PropTypes.func
 };
-

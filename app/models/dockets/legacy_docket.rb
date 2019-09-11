@@ -30,6 +30,8 @@ class LegacyDocket
 
   def distribute_priority_appeals(distribution, genpop: "any", limit: 1)
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
+      next if preexisting_distributed_case(record["bfkey"], distribution)
+
       DistributedCase.create(
         distribution: distribution,
         case_id: record["bfkey"],
@@ -39,16 +41,12 @@ class LegacyDocket
         genpop: record["vlj"].nil?,
         genpop_query: genpop
       )
-    end
+    end.compact
   end
 
   def distribute_nonpriority_appeals(distribution, genpop: "any", range: nil, limit: 1)
     LegacyAppeal.repository.distribute_nonpriority_appeals(distribution.judge, genpop, range, limit).map do |record|
-      if DistributedCase.find_by(case_id: record["bfkey"])
-        error = ActiveRecord::RecordNotUnique.new("DistributedCase already exists")
-        Raven.capture_exception(error, extra: { vacols_id: record["bfkey"], judge: distribution.judge.css_id })
-        next
-      end
+      next if preexisting_distributed_case(record["bfkey"], distribution)
 
       DistributedCase.create(
         distribution: distribution,
@@ -60,7 +58,7 @@ class LegacyDocket
         genpop: record["vlj"].nil?,
         genpop_query: genpop
       )
-    end
+    end.compact
   end
 
   def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1)
@@ -72,6 +70,15 @@ class LegacyDocket
   end
 
   private
+
+  def preexisting_distributed_case(case_id, distribution)
+    if DistributedCase.find_by(case_id: case_id)
+      error = ActiveRecord::RecordNotUnique.new("DistributedCase already exists")
+      Raven.capture_exception(error, extra: { vacols_id: case_id, judge: distribution.judge.css_id })
+      return true
+    end
+    false
+  end
 
   def counts_by_priority_and_readiness
     @counts_by_priority_and_readiness ||= LegacyAppeal.repository.docket_counts_by_priority_and_readiness

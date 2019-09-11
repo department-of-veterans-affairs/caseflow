@@ -51,7 +51,7 @@ describe LegacyAppeal, :all_dbs do
       let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
 
       before do
-        allow(Raven).to receive(:capture_message) { @raven_called = true }
+        allow(DataDogService).to receive(:increment_counter) { @datadog_called = true }
       end
 
       it "prefers the Caseflow Veteran.file_number" do
@@ -59,7 +59,7 @@ describe LegacyAppeal, :all_dbs do
         expect(legacy_appeal.vbms_id).to eq("#{ssn}S")
         expect(legacy_appeal.sanitized_vbms_id).to eq(ssn)
         expect(legacy_appeal.veteran_file_number).to eq(legacy_appeal.veteran.file_number)
-        expect(@raven_called).to eq(true)
+        expect(@datadog_called).to eq(true)
       end
     end
   end
@@ -1685,7 +1685,7 @@ describe LegacyAppeal, :all_dbs do
     end
 
     before do
-      Fakes::BGSService.veteran_records = { appeal.sanitized_vbms_id => veteran_record }
+      Fakes::BGSService.store_veteran_record(appeal.sanitized_vbms_id, veteran_record)
     end
 
     it "returns veteran loaded with BGS values" do

@@ -20,7 +20,7 @@ import { COLORS, LOGO_COLORS } from '../../constants/AppConstants';
 import { onReceiveTasks } from '../../queue/QueueActions';
 import { setUserCssId } from '../../queue/uiReducer/uiActions';
 import { RegionalOfficeDropdown } from '../../components/DataDropdowns';
-import AssignHearings from '../components/AssignHearings';
+import AssignHearings from '../components/assignHearings/AssignHearings';
 import { getQueryParams } from '../../util/QueryParamsUtil';
 
 const centralOfficeStaticEntry = [{

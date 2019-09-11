@@ -37,8 +37,13 @@ describe PostDecisionMotionsController do
         allow(controller).to receive(:verify_authentication).and_return(true)
 
         task = create_task_without_unnecessary_models
+        assigned_to = create(:user)
 
-        params = { disposition: "granted", task_id: task.id, vacate_type: "straight_vacate_and_readjudication" }
+        params =
+          { disposition: "granted",
+            task_id: task.id,
+            vacate_type: "straight_vacate_and_readjudication",
+            assigned_to_id: assigned_to.id }
         post :create, params: { post_decision_motion: params }
 
         expect(response).to be_success
@@ -48,8 +53,8 @@ describe PostDecisionMotionsController do
   end
 
   def create_task_without_unnecessary_models
-    appeal = build_stubbed(:appeal)
-    assigned_by = build_stubbed(:user)
+    appeal = create(:appeal)
+    assigned_by = create(:user)
     parent = build_stubbed(:root_task)
     allow(parent).to receive(:when_child_task_created).and_return(true)
     create(
