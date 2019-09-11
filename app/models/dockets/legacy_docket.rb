@@ -41,9 +41,7 @@ class LegacyDocket
       )
 
       if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
-        DasDeprecation::CaseDistribution.create_judge_assign_task(record, distribution.judge) do
-          distributed_case.save!
-        end
+        DasDeprecation::CaseDistribution.create_judge_assign_task(record, distribution.judge) { distributed_case.save! }
       else
         distributed_case.save!
       end
@@ -72,9 +70,7 @@ class LegacyDocket
       )
 
       if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
-        DasDeprecation::CaseDistribution.create_judge_assign_task(record, distribution.judge) do
-          distributed_case.save!
-        end
+        DasDeprecation::CaseDistribution.create_judge_assign_task(record, distribution.judge) { distributed_case.save! }
       else
         distributed_case.save!
       end
