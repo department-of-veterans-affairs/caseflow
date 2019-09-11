@@ -124,8 +124,6 @@ class Task < ApplicationRecord
     end
   end
 
-  # FROM GENERIC Task - BEGIN COPY PASTA
-
   def available_hearing_user_actions(user)
     available_hearing_admin_actions(user) | available_hearing_mgmt_actions(user)
   end
@@ -143,8 +141,6 @@ class Task < ApplicationRecord
   def most_recent_closed_hearing_task_on_appeal
     appeal.tasks.closed.order(closed_at: :desc).where(type: HearingTask.name).last
   end
-
-  # END GENERIC TASK COPY PASTA
 
   def self.label
     name.titlecase
@@ -621,15 +617,6 @@ class Task < ApplicationRecord
   end
 
   class << self
-    # TASK
-    # def create_from_params(params, user)
-    #   parent_task = params[:parent_id] ? Task.find(params[:parent_id]) : nil
-    #   verify_user_can_create!(user, parent_task)
-    #   params = modify_params(params)
-    #   create!(params)
-    # end
-
-    # GENERIC TASK
     def create_from_params(params, user)
       parent_task = Task.find(params[:parent_id])
       fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_task.assigned_to_id == params[:assigned_to_id] &&
