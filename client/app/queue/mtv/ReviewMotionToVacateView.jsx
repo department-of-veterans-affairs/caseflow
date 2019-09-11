@@ -9,9 +9,12 @@ import { withRouter } from 'react-router-dom';
 import { fetchJudges } from '../QueueActions';
 import { submitMTVAttyReview } from './mtvActions';
 import { taskById, appealWithDetailSelector } from '../selectors';
+import { taskActionData } from '../utils';
 
 export const ReviewMotionToVacateView = (props) => {
   const { task, appeal, judges, submitting } = props;
+
+  const { selected } = taskActionData(props);
 
   const judgeOptions = Object.values(judges).map(({ id: value, display_name: label }) => ({
     label,
@@ -41,6 +44,7 @@ export const ReviewMotionToVacateView = (props) => {
       <MotionsAttorneyDisposition
         task={task}
         judges={judgeOptions}
+        selectedJudge={selected}
         appeal={appeal}
         onSubmit={handleSubmit}
         submitting={submitting}

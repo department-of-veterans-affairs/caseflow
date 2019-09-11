@@ -30,16 +30,13 @@ const formatReviewAttyInstructions = ({ disposition, hyperlink, instructions }) 
   return parts.join('\n');
 };
 
-export const MotionsAttorneyDisposition = ({ judges, task, appeal, onSubmit, submitting = false }) => {
-  // const { assignedTo } = task;
-
+export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal, onSubmit, submitting = false }) => {
   const cancelLink = `/queue/appeals/${task.externalAppealId}`;
 
   const [disposition, setDisposition] = useState(null);
   const [hyperlink, setHyperlink] = useState(null);
   const [instructions, setInstructions] = useState('');
-  // const [judgeId, setJudgeId] = useState(assignedTo ? assignedTo.id : null);
-  const [judgeId, setJudgeId] = useState(null);
+  const [judgeId, setJudgeId] = useState(selectedJudge ? selectedJudge.id : null);
 
   const handleSubmit = () => {
     const newTask = {
@@ -130,5 +127,6 @@ MotionsAttorneyDisposition.propTypes = {
   submitting: PropTypes.bool,
   task: PropTypes.object.isRequired,
   appeal: PropTypes.object.isRequired,
-  judges: PropTypes.array.isRequired
+  judges: PropTypes.array.isRequired,
+  selectedJudge: PropTypes.object
 };
