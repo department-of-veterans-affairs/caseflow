@@ -34,7 +34,7 @@ class TaskFilter
     filters = filter_params.map { |filter_string| QueueFilterParameter.from_string(filter_string) }
 
     where_string = TaskFilter.where_string_from_filters(filters)
-    where_arguments = filters.map(&:values)
+    where_arguments = filters.map(&:values).reject(&:empty?)
 
     if filter_params.any? { |filter_string| filter_string[/typeColumn&val=.*is_aod/] }
       where_string << "#{where_string.present? ? ' AND ' : ''}cached_appeal_attributes.is_aod = true"

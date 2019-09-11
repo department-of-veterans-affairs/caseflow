@@ -6,7 +6,7 @@
 #   - a RootTask is created for an appeal represented by a VSO
 #   - the power of attorney changes on an appeal
 
-class TrackVeteranTask < GenericTask
+class TrackVeteranTask < Task
   # Avoid permissions errors outlined in Github ticket #9389 by setting status here.
   before_create :set_in_progress_status
 

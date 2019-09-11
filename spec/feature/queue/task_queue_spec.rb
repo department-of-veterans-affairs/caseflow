@@ -550,25 +550,31 @@ RSpec.feature "Task queue", :all_dbs do
         expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, on_hold_count))
       end
 
-      # https://github.com/department-of-veterans-affairs/caseflow/pull/11940#discussion_r322795963
-      # context "when filtering tasks" do
-      #   let(:translation_task_count) { unassigned_count / 2 }
+      context "when filtering tasks" do
+        let(:foia_task_count) { unassigned_count / 2 }
 
-      #   before do
-      #     Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
-      #       .take(translation_task_count).each { |task| task.update!(type: TranslationTask.name) }
-      #   end
+        before do
+          Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
+            .take(foia_task_count).each { |task| task.update!(type: FoiaTask.name) }
+          visit(organization.path)
+        end
 
-      #   it "shows the correct filters" do
-      #     visit(organization.path)
-      #     expect(page).to have_content(
-      #       format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
-      #     )
-      #     page.find_all("path.unselected-filter-icon-inner").first.click
-      #     expect(page).to have_content("#{GenericTask.label} (#{unassigned_count / 2})")
-      #     expect(page).to have_content("#{TranslationTask.label} (#{unassigned_count / 2})")
-      #   end
-      # end
+        it "shows the correct filters" do
+          expect(page).to have_content(
+            format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
+          )
+          page.find_all("path.unselected-filter-icon-inner").first.click
+          expect(page).to have_content("#{GenericTask.label} (#{unassigned_count / 2})")
+          expect(page).to have_content("#{FoiaTask.label} (#{foia_task_count})")
+        end
+
+        it "filters tasks correctly" do
+          expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+          page.find_all("path.unselected-filter-icon-inner").first.click
+          page.find("label", text: "#{FoiaTask.label} (#{foia_task_count})").click
+          expect(find("tbody").find_all("tr").length).to eq(foia_task_count)
+        end
+      end
     end
   end
 

@@ -115,7 +115,7 @@ feature "Intake Edit Confirmation", :postgres do
 
           expect(page).to have_current_path("/#{edit_path}/confirmation")
           expect(page).to have_content("A #{decision_review.class.review_title} Rating EP is being canceled")
-          expect(page).to_not have_content("If you need to edit this, go to VBMS claim details")
+          expect(page).to_not have_content("Once established in VBMS, you may edit the issues")
         end
       end
     end

@@ -10,6 +10,10 @@ FactoryBot.define do
       number_of_claimants { nil }
     end
 
+    trait :processed do
+      establishment_processed_at { Time.zone.now }
+    end
+
     after(:create) do |sc, evaluator|
       if evaluator.number_of_claimants
         sc.claimants = create_list(:claimant, evaluator.number_of_claimants, decision_review: sc)
