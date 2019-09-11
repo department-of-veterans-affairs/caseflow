@@ -68,7 +68,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
 
     context "motions attorney reviews case" do
-      let!(:motions_attorney_task) { create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney, parent: root_task) }
+      let!(:motions_attorney_task) do
+        create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney, parent: root_task)
+      end
 
       it "motions attorney recommends grant decision to judge" do
         send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
