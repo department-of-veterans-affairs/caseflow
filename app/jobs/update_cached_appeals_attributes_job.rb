@@ -144,10 +144,22 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       update_columns = [:assignee_label, :docket_number, :issue_count, :veteran_name, :case_type, :is_aod]
       CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:vacols_id],
                                                                       columns: update_columns }
+
+      increment_vacols_update_count(batch_vacols_ids.count)
     end
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
+
+  def increment_vacols_update_count(count)
+    count.times do
+      DataDogService.increment_counter(
+        app_name: APP_NAME,
+        metric_group: METRIC_GROUP_NAME,
+        metric_name: "vacols_cases_cached"
+      )
+    end
+  end
 
   def increment_appeal_count(count, appeal_type)
     count.times do
