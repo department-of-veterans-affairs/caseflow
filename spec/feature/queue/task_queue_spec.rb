@@ -621,6 +621,28 @@ RSpec.feature "Task queue", :all_dbs do
             expect(find("tbody").find_all("tr").length).to eq(unassigned_count - default_cases_for_page)
           end
         end
+
+        context "when specifying filters" do
+          let(:escaped_query) do
+            {
+              Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM =>
+              ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{FoiaTask.name}"]
+            }.to_query
+          end
+
+          let(:query_string) do
+            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
+            "&#{escaped_query}"
+          end
+
+          it "filters tasks correctly" do
+            (1..foia_task_count).each do |index|
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
+            end
+            expect(find("tbody").find_all("tr").length).to eq(foia_task_count)
+            expect(find("tbody")).not_to have_content(GenericTask.label)
+          end
+        end
       end
 
       context "when filtering tasks" do

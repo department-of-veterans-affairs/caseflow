@@ -201,13 +201,30 @@ export default class QueueTable extends React.PureComponent {
     super(props);
 
     const { defaultSort, tabPaginationOptions } = this.props;
+    const filters = {};
+
+    if (tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]) {
+      const filterParams = tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`];
+
+      // filter: ["col=typeColumn&val=Original", "col=taskColumn&val=OtherColocatedTask,ArnesonColocatedTask"]
+      (Array.isArray(filterParams) ? filterParams : [filterParams]).forEach((filter) => {
+        const columnAndValues = filter.split('&');
+        const columnName = columnAndValues[0].split('=')[1];
+        const column = this.props.columns.find((col) => col.name === columnName);
+        const values = columnAndValues[1].split('=')[1].split(',');
+
+        filters[column.columnName] = values;
+      });
+    }
+
     const state = {
-      sortAscending: tabPaginationOptions.order !== QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC,
-      sortColName: tabPaginationOptions.sort_by || null,
-      filteredByList: {},
+      sortAscending: tabPaginationOptions[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] !==
+                     QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC,
+      sortColName: tabPaginationOptions[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] || null,
+      filteredByList: filters,
       tasksFromApi: [],
       loadingComponent: null,
-      currentPage: (tabPaginationOptions.page - 1) || 0
+      currentPage: (tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1) || 0
     };
 
     if (defaultSort) {
