@@ -201,28 +201,12 @@ export default class QueueTable extends React.PureComponent {
     super(props);
 
     const { defaultSort, tabPaginationOptions, useTaskPagesApi } = this.props;
-    const filters = {};
     const needsTaskRequest = useTaskPagesApi && !_.isEmpty(tabPaginationOptions);
-
-    if (tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]) {
-      const filterParams = tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`];
-
-      // filter: ["col=typeColumn&val=Original", "col=taskColumn&val=OtherColocatedTask,ArnesonColocatedTask"]
-      (Array.isArray(filterParams) ? filterParams : [filterParams]).forEach((filter) => {
-        const columnAndValues = filter.split('&');
-        const columnName = columnAndValues[0].split('=')[1];
-        const column = this.props.columns.find((col) => col.name === columnName);
-        const values = columnAndValues[1].split('=')[1].split(',');
-
-        filters[column.columnName] = values;
-      });
-    }
-
     const state = {
       sortAscending: tabPaginationOptions[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] !==
                      QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC,
       sortColName: tabPaginationOptions[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] || null,
-      filteredByList: filters,
+      filteredByList: this.getFilters(tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]),
       tasksFromApi: [],
       loadingComponent: needsTaskRequest && <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />,
       currentPage: (tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1) || 0
@@ -237,6 +221,24 @@ export default class QueueTable extends React.PureComponent {
     if (needsTaskRequest) {
       this.requestTasks();
     }
+  }
+
+  getFilters = (filterParams) => {
+    const filters = {};
+
+    if (filterParams) {
+      // filter: ["col=typeColumn&val=Original", "col=taskColumn&val=OtherColocatedTask,ArnesonColocatedTask"]
+      (Array.isArray(filterParams) ? filterParams : [filterParams]).forEach((filter) => {
+        const columnAndValues = filter.split('&');
+        const columnName = columnAndValues[0].split('=')[1];
+        const column = this.props.columns.find((col) => col.name === columnName);
+        const values = columnAndValues[1].split('=')[1].split(',');
+
+        filters[column.columnName] = values;
+      });
+    }
+
+    return filters;
   }
 
   defaultRowClassNames = () => ''
