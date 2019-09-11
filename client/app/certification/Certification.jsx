@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/ReduxBase';
 import _ from 'lodash';
 
@@ -9,7 +10,6 @@ import * as AppConstants from '../constants/AppConstants';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 
 export class Certification extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -22,20 +22,18 @@ export class Certification extends React.Component {
     const loadPromise = new Promise((resolve, reject) => {
       const makePollAttempt = () => {
         ApiUtil.get(`/certifications/${this.props.vacolsId}`).
-          then(({ text }) => {
-            const response = JSON.parse(text);
-
-            if (response.loading_data_failed) {
+          then((response) => {
+            if (response.body.loading_data_failed) {
               reject(new Error('Backend failed to load data'));
             }
 
-            if (response.loading_data) {
+            if (response.body.loading_data) {
               setTimeout(makePollAttempt, AppConstants.CERTIFICATION_DATA_POLLING_INTERVAL);
 
               return;
             }
 
-            this.setState(_.pick(response, ['certification', 'form9PdfPath']));
+            this.setState(_.pick(response.body, ['certification', 'form9PdfPath']));
             resolve();
           }, reject);
       };
@@ -79,3 +77,7 @@ export class Certification extends React.Component {
     </LoadingDataDisplay>;
   }
 }
+
+Certification.propTypes = {
+  vacolsId: PropTypes.string
+};

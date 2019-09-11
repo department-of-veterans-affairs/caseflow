@@ -68,7 +68,7 @@ describe QueueColumn, :all_dbs do
       end
 
       it "does not alter the input label" do
-        expect(subject[:label]).to eq(label)
+        expect(subject[:displayText]).to eq(label)
       end
     end
 

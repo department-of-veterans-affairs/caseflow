@@ -51,7 +51,7 @@ describe LegacyAppeal, :all_dbs do
       let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
 
       before do
-        allow(Raven).to receive(:capture_message) { @raven_called = true }
+        allow(DataDogService).to receive(:increment_counter) { @datadog_called = true }
       end
 
       it "prefers the Caseflow Veteran.file_number" do
@@ -59,7 +59,7 @@ describe LegacyAppeal, :all_dbs do
         expect(legacy_appeal.vbms_id).to eq("#{ssn}S")
         expect(legacy_appeal.sanitized_vbms_id).to eq(ssn)
         expect(legacy_appeal.veteran_file_number).to eq(legacy_appeal.veteran.file_number)
-        expect(@raven_called).to eq(true)
+        expect(@datadog_called).to eq(true)
       end
     end
   end
@@ -780,7 +780,7 @@ describe LegacyAppeal, :all_dbs do
             subject
 
             expect(vacols_case.reload.bfmpro).to eq("HIS")
-            expect(vacols_case.reload.bfcurloc).to eq("99")
+            expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:closed])
           end
         end
       end
@@ -820,11 +820,11 @@ describe LegacyAppeal, :all_dbs do
       before do
         RequestStore[:current_user] = user
         vacols_case.update_vacols_location!("50")
-        vacols_case.update_vacols_location!("99")
+        vacols_case.update_vacols_location!(LegacyAppeal::LOCATION_CODES[:closed])
         vacols_case.reload
 
         ramp_vacols_case.update_vacols_location!("77")
-        ramp_vacols_case.update_vacols_location!("99")
+        ramp_vacols_case.update_vacols_location!(LegacyAppeal::LOCATION_CODES[:closed])
         ramp_vacols_case.reload
       end
 
@@ -1685,7 +1685,7 @@ describe LegacyAppeal, :all_dbs do
     end
 
     before do
-      Fakes::BGSService.veteran_records = { appeal.sanitized_vbms_id => veteran_record }
+      Fakes::BGSService.store_veteran_record(appeal.sanitized_vbms_id, veteran_record)
     end
 
     it "returns veteran loaded with BGS values" do
@@ -1987,7 +1987,7 @@ describe LegacyAppeal, :all_dbs do
     end
 
     it "Updates a legacy_appeal when an appeal is updated" do
-      appeal.update!(rice_compliance: TRUE)
+      appeal.update!(rice_compliance: true)
       expect(legacy_appeal.attributes).to eq(appeal.attributes)
     end
   end

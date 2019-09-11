@@ -149,7 +149,7 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Right knee")
       click_intake_finish
 
-      expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+      expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
       expect(page).to have_content("Right knee")
       expect(RequestIssue.where(edited_description: "Right knee")).to_not be_nil
     end

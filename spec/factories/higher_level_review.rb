@@ -20,6 +20,10 @@ FactoryBot.define do
       end
     end
 
+    trait :processed do
+      establishment_processed_at { Time.zone.now }
+    end
+
     trait :requires_processing do
       establishment_submitted_at { (HigherLevelReview.processing_retry_interval_hours + 1).hours.ago }
       establishment_last_submitted_at { (HigherLevelReview.processing_retry_interval_hours + 1).hours.ago }
