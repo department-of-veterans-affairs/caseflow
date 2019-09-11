@@ -647,6 +647,7 @@ RSpec.feature "Task queue", :all_dbs do
 
       context "when filtering tasks" do
         it "shows the correct filters" do
+          visit(organization.path)
           expect(page).to have_content(
             format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
           )
@@ -656,6 +657,7 @@ RSpec.feature "Task queue", :all_dbs do
         end
 
         it "filters tasks correctly" do
+          visit(organization.path)
           expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
           page.find_all("path.unselected-filter-icon-inner").first.click
           page.find("label", text: "#{FoiaTask.label} (#{foia_task_count})").click
