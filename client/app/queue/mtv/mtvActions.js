@@ -62,7 +62,7 @@ export const submitMTVJudgeDecision = (data) => {
   return async (dispatch) => {
     dispatch(submitMTVJudgeDecisionStarted());
 
-    const url = 'motion_to_vacate/create';
+    const url = '/post_decision_motions';
 
     try {
       const res = await ApiUtil.post(url, { data });

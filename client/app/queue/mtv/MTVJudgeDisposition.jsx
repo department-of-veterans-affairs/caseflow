@@ -37,12 +37,15 @@ export const MTVJudgeDisposition = ({
   const [attorneyId, setAttorneyId] = useState(selectedAttorney ? selectedAttorney.id : null);
 
   const handleSubmit = () => {
-    const newTask = {
+    const result = {
+      task_id: task.id,
       instructions,
-      assigned_to_id: attorneyId
+      assigned_to_id: attorneyId,
+      disposition,
+      vacateType
     };
 
-    onSubmit(newTask);
+    onSubmit(result);
   };
 
   const valid = () => {
