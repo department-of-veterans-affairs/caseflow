@@ -210,6 +210,7 @@ Rails.application.routes.draw do
   resources :users, only: [:index] do
     get 'represented_organizations', on: :member
   end
+  get 'users/represented_organizations_by_css_id', to: 'users#represented_organizations_by_css_id'
 
   get 'cases/:veteran_ids', to: 'appeals#show_case_list'
   get 'cases_to_schedule/:ro', to: 'tasks#ready_for_hearing_schedule'

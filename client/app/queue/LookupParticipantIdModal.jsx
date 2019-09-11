@@ -5,6 +5,7 @@ import COPY from '../../COPY.json';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../components/SearchableDropdown';
+import TextField from '../components/TextField';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
@@ -17,6 +18,12 @@ import {
 } from './uiReducer/uiActions';
 import { withRouter } from 'react-router-dom';
 import QueueFlowModal from './components/QueueFlowModal';
+
+const textFieldStyling = css({
+  float: 'left',
+  padding: '0 1.5rem',
+  width: '50%'
+});
 
 const searchButtonStyling = css({
   marginTop: '1rem',
@@ -31,7 +38,9 @@ class LookupParticipantIdModal extends React.Component {
     this.state = {
       users: [],
       selectedUser: null,
-      results: null
+      results: null,
+      css_id: null,
+      station_id: null
     };
   }
 
@@ -48,7 +57,15 @@ class LookupParticipantIdModal extends React.Component {
     });
   }
 
-  selectUser = (value) => this.setState({ selectedUser: value });
+  setCssId = (value) => this.setState({ css_id: value });
+
+  setStationId = (value) => this.setState({ station_id: value });
+
+  selectUser = (value) => {
+    this.setCssId(null);
+    this.setStationId(null);
+    this.setState({ selectedUser: value });
+  }
 
   formatName = (user) => `${user.attributes.full_name} (${user.attributes.css_id})`;
 
@@ -57,7 +74,13 @@ class LookupParticipantIdModal extends React.Component {
       value: user }));
 
   search = () => {
-    const url = `/users/${this.state.selectedUser.value.id}/represented_organizations`;
+    let url = '';
+
+    if (this.state.css_id && this.state.station_id) {
+      url = `/users/represented_organizations_by_css_id?css_id=${this.state.css_id}&${this.state.station_id}`;
+    } else {
+      url = `/users/${this.state.selectedUser.value.id}/represented_organizations`;
+    }
 
     // Clear previous results before every attempt.
     this.setState({ representedOrganizations: null });
@@ -110,6 +133,22 @@ class LookupParticipantIdModal extends React.Component {
             value={this.state.selectedUser}
             onChange={this.selectUser}
             options={this.dropdownOptions()} />
+          <p {...css({ fontWeight: 'bold',
+            textAlign: 'center' })}>OR</p>
+          <div {...textFieldStyling}>
+            <TextField
+              name="CSS ID"
+              value={this.state.css_id}
+              onChange={this.setCssId}
+            />
+          </div>
+          <div {...textFieldStyling}>
+            <TextField
+              name="Station ID"
+              value={this.state.station_id}
+              onChange={this.setStationId}
+            />
+          </div>
           { this.representedOrganizationsList() }
           <div {...searchButtonStyling}>
             <Button name="Search" onClick={this.search} />
