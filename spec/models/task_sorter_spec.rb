@@ -145,7 +145,7 @@ describe TaskSorter, :all_dbs do
         end
 
         it "sorts ColocatedTasks by label" do
-          expect(subject.pluck(:id)).to eq(tasks.reload.sort_by(&:label).map(&:id))
+          expect(subject.map(&:label)).to eq(tasks.reload.sort_by(&:label).map(&:label))
         end
       end
 
