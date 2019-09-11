@@ -868,12 +868,36 @@ feature "Higher Level Review Edit issues", :all_dbs do
       end
     end
 
+    context "when claimaint is shown on any benefit type" do
+      let!(:higher_level_review) do
+        HigherLevelReview.create!(
+          veteran_file_number: veteran.file_number,
+          receipt_date: receipt_date,
+          informal_conference: false,
+          same_office: false,
+          benefit_type: :pension,
+          veteran_is_not_claimant: true,
+          legacy_opt_in_approved: legacy_opt_in_approved
+        )
+      end
+
+      let(:rating_ep_claim_id) do
+        higher_level_review.end_product_establishments.first.reference_id
+      end
+
+      it "shows claimant for pension benefit type" do
+        visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
+        check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
+        check_row("Benefit type", "Pension")
+        check_row("Claimant", "Bob Vance, Spouse (payee code 10)")
+      end
+    end
+
     it "shows request issues and allows adding/removing issues" do
       # remember to check for removal later
       existing_contention = request_issue.reload.contention
 
       visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-
       expect(page).to have_content("Edit Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
       check_row("Benefit type", "Compensation")

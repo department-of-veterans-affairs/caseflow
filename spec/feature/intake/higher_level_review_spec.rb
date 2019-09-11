@@ -1184,7 +1184,7 @@ feature "Higher-Level Review", :all_dbs do
           expect(page).to have_content("Add / Remove Issues")
           check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
           check_row("Benefit type", "Education")
-          expect(page).to_not have_content("Claimant")
+          expect(page).to have_content("Claimant")
           click_intake_add_issue
           expect(page).to_not have_content("Left knee granted")
 
