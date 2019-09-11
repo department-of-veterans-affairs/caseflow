@@ -4,6 +4,7 @@ class ClaimReviewController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
 
   EDIT_ERRORS = {
+    "ClaimReview::NotYetProcessed" => COPY::CLAIM_REVIEW_NOT_YET_PROCESSED_ERROR,
     "RequestIssue::MissingDecisionDate" => COPY::CLAIM_REVIEW_EDIT_ERROR_MISSING_DECISION_DATE,
     "StandardError" => COPY::CLAIM_REVIEW_EDIT_ERROR_DEFAULT
   }.freeze
@@ -60,7 +61,7 @@ class ClaimReviewController < ApplicationController
     Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
     Raven.capture_exception(error, extra: { error_uuid: error_uuid })
     error_class = error.class.to_s
-    flash[:error] = EDIT_ERRORS[error_class] || EDIT_ERRORS["StandardError"]
+    flash[:error] = format(EDIT_ERRORS[error_class] || EDIT_ERRORS["StandardError"], claim_review.async_job_url)
     render "errors/500", layout: "application", status: :unprocessable_entity
   end
 

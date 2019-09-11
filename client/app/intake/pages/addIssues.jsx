@@ -1,6 +1,9 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react';
 
 import _ from 'lodash';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
@@ -116,6 +119,23 @@ export class AddIssuesPage extends React.Component {
     } else if (intakeData.isOutcoded) {
       return <Redirect to={PAGE_PATHS.OUTCODED} />;
     }
+  }
+
+  establishmentCreditsTimestamp() {
+    const tstamp = moment(this.props.processedAt).format('ddd MMM DD YYYY [at] HH:mm');
+
+    if (this.props.asyncJobUrl) {
+      return <a href={this.props.asyncJobUrl}>{tstamp}</a>;
+    }
+
+    return tstamp;
+  }
+
+  establishmentCredits() {
+    return <div className="cf-intake-establish-credits">
+      Established {this.establishmentCreditsTimestamp()}
+      <span> by <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a></span>
+    </div>;
   }
 
   render() {
@@ -301,6 +321,8 @@ export class AddIssuesPage extends React.Component {
           <ErrorAlert errorCode="veteran_not_valid" errorData={intakeData.veteranInvalidFields} />
         )}
 
+        {editPage && this.establishmentCredits()}
+
         <Table columns={columns} rowObjects={rowObjects} rowClassNames={issueChangeClassname} slowReRendersAreOk />
 
         {!_.isEmpty(issuesPendingWithdrawal) && (
@@ -358,6 +380,9 @@ export const EditAddIssuesPage = connect(
       supplemental_claim: state,
       appeal: state
     },
+    processedAt: state.processedAt,
+    intakeUser: state.intakeUser,
+    asyncJobUrl: state.asyncJobUrl,
     formType: state.formType,
     veteran: state.veteran,
     featureToggles: state.featureToggles,

@@ -30,8 +30,8 @@ FactoryBot.define do
     sequence(:participant_id, 500_000_000)
 
     after(:build) do |veteran, evaluator|
-      Fakes::BGSService.veteran_records ||= {}
-      Fakes::BGSService.veteran_records[veteran.file_number] =
+      Fakes::BGSService.store_veteran_record(
+        veteran.file_number,
         evaluator.bgs_veteran_record.merge(
           file_number: veteran.file_number,
           ssn: veteran.ssn,
@@ -40,6 +40,7 @@ FactoryBot.define do
           ptcpnt_id: veteran.participant_id,
           participant_id: veteran.participant_id
         )
+      )
     end
   end
 end

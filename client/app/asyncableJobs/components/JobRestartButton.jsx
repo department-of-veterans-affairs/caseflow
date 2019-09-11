@@ -64,6 +64,8 @@ class JobRestartButton extends React.PureComponent {
       txt = 'Restarting';
     } else if (this.state.restarted) {
       txt = 'Restarted';
+    } else if (this.props.job.processed_at) {
+      txt = 'Processed';
     } else if (this.disableRestart()) {
       txt = 'Queued';
     }
@@ -73,6 +75,10 @@ class JobRestartButton extends React.PureComponent {
 
   disableRestart = () => {
     const job = this.props.job;
+
+    if (job.processed_at) {
+      return true;
+    }
 
     if (!job.attempted_at) {
       return true;

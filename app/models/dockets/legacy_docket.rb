@@ -44,6 +44,12 @@ class LegacyDocket
 
   def distribute_nonpriority_appeals(distribution, genpop: "any", range: nil, limit: 1)
     LegacyAppeal.repository.distribute_nonpriority_appeals(distribution.judge, genpop, range, limit).map do |record|
+      if DistributedCase.find_by(case_id: record["bfkey"])
+        error = ActiveRecord::RecordNotUnique.new("DistributedCase already exists")
+        Raven.capture_exception(error, extra: { vacols_id: record["bfkey"], judge: distribution.judge.css_id })
+        next
+      end
+
       DistributedCase.create(
         distribution: distribution,
         case_id: record["bfkey"],
