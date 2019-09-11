@@ -23,6 +23,7 @@ class ClaimReview < DecisionReview
   self.abstract_class = true
 
   class NoEndProductsRequired < StandardError; end
+  class NotYetProcessed < StandardError; end
 
   class << self
     def find_by_uuid_or_reference_id!(claim_id)
@@ -41,6 +42,7 @@ class ClaimReview < DecisionReview
 
   def ui_hash
     super.merge(
+      asyncJobUrl: async_job_url,
       benefitType: benefit_type,
       payeeCode: payee_code,
       hasClearedRatingEp: cleared_rating_ep?,
@@ -49,6 +51,8 @@ class ClaimReview < DecisionReview
   end
 
   def validate_prior_to_edit
+    fail NotYetProcessed unless processed?
+
     # force sync on initial edit call so that we have latest EP status.
     # This helps prevent us editing something that recently closed upstream.
     sync_end_product_establishments!
@@ -59,8 +63,8 @@ class ClaimReview < DecisionReview
     ui_hash
   end
 
-  def caseflow_only_edit_issues_url
-    "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
+  def async_job_url
+    "/asyncable_jobs/#{self.class}/jobs/#{id}"
   end
 
   def finalized_decision_issues_before_receipt_date
