@@ -63,10 +63,6 @@ class ClaimReview < DecisionReview
     ui_hash
   end
 
-  def caseflow_only_edit_issues_url
-    "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
-  end
-
   def async_job_url
     "/asyncable_jobs/#{self.class}/jobs/#{id}"
   end

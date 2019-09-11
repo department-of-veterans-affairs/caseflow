@@ -130,7 +130,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def caseflow_only_edit_issues_url
-    nil # must override in subclass
+    "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
   end
 
   def async_job_url
