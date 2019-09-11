@@ -200,8 +200,9 @@ export default class QueueTable extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    const { defaultSort, tabPaginationOptions } = this.props;
+    const { defaultSort, tabPaginationOptions, useTaskPagesApi } = this.props;
     const filters = {};
+    const needsTaskRequest = useTaskPagesApi && !_.isEmpty(tabPaginationOptions);
 
     if (tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]) {
       const filterParams = tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`];
@@ -223,7 +224,7 @@ export default class QueueTable extends React.PureComponent {
       sortColName: tabPaginationOptions[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] || null,
       filteredByList: filters,
       tasksFromApi: [],
-      loadingComponent: !_.isEmpty(tabPaginationOptions) && <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />,
+      loadingComponent: needsTaskRequest && <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />,
       currentPage: (tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1) || 0
     };
 
@@ -233,7 +234,7 @@ export default class QueueTable extends React.PureComponent {
 
     this.state = state;
 
-    if (!_.isEmpty(tabPaginationOptions)) {
+    if (needsTaskRequest) {
       this.requestTasks();
     }
   }
