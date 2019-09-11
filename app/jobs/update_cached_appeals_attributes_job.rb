@@ -145,7 +145,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:vacols_id],
                                                                       columns: update_columns }
 
-      increment_vacols_update_count(vacols_ids.count)
+      increment_vacols_update_count(batch_vacols_ids.count)
     end
   end
   # rubocop:enable Metrics/MethodLength
