@@ -108,7 +108,6 @@ class Task < ApplicationRecord
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
 
-
   # Use the existence of an organization-level task to prevent duplicates since there should only ever be one org-level
   # task active at a time for a single appeal.
   def verify_org_task_unique
