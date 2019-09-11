@@ -207,7 +207,7 @@ export default class QueueTable extends React.PureComponent {
       filteredByList: {},
       tasksFromApi: [],
       loadingComponent: null,
-      currentPage: 0
+      currentPage: (tabPaginationOptions.page - 1) || 0
     };
 
     if (defaultSort) {

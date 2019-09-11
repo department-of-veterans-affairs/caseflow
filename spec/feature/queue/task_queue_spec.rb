@@ -602,6 +602,25 @@ RSpec.feature "Task queue", :all_dbs do
             end
           end
         end
+
+        context "when specifying the page number" do
+          let(:unassigned_count) { 20 }
+          let(:default_cases_for_page) { 15 }
+          let(:page_no) { 2 }
+
+          let(:query_string) do
+            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
+            "&#{Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM}=#{page_no}"
+          end
+
+          it "opens the correct tab on load" do
+            expect(page).to have_content(
+              "Viewing #{default_cases_for_page + 1}-#{unassigned_count} of #{unassigned_count} total"
+            )
+            page.find_all(".cf-current-page").each { |btn| expect(btn).to have_content(page_no) }
+            expect(find("tbody").find_all("tr").length).to eq(unassigned_count - default_cases_for_page)
+          end
+        end
       end
 
       context "when filtering tasks" do
