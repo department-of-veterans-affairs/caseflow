@@ -3,7 +3,9 @@
 class AsyncableJobsController < ApplicationController
   include PaginationConcern
 
-  before_action :verify_access, :react_routed, :set_application
+  before_action :react_routed, :set_application
+  before_action :verify_access, only: [:index]
+  before_action :verify_job_access, only: [:show]
 
   def index
     if allowed_params[:asyncable_job_klass]
@@ -70,6 +72,12 @@ class AsyncableJobsController < ApplicationController
 
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
+  end
+
+  def verify_job_access
+    return true if current_user.css_id == job&.asyncable_user
+
+    verify_access
   end
 
   def allowed_params
