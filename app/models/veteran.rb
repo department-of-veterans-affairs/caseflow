@@ -149,7 +149,7 @@ class Veteran < ApplicationRecord
   end
 
   def incident_flash?
-    bgs_record[:block_cadd_ind] == "S"
+    bgs_record.is_a?(Hash) && bgs_record[:block_cadd_ind] == "S"
   end
 
   # Postal code might be stored in address line 3 for international addresses
