@@ -21,15 +21,20 @@ import Button from '../../components/Button';
 import { css } from 'glamor';
 import { MTVTaskHeader } from './MTVTaskHeader';
 
-export const MTVJudgeDisposition = ({ attorneys, task, appeal, onSubmit = () => null, submitting = false }) => {
-  const { assignedTo } = task;
-
+export const MTVJudgeDisposition = ({
+  attorneys,
+  selectedAttorney,
+  task,
+  appeal,
+  onSubmit = () => null,
+  submitting = false
+}) => {
   const cancelLink = `/queue/appeals/${task.externalAppealId}`;
 
   const [disposition, setDisposition] = useState(null);
   const [vacateType, setVacateType] = useState(null);
   const [instructions, setInstructions] = useState('');
-  const [attorneyId, setAttorneyId] = useState(assignedTo ? assignedTo.id : null);
+  const [attorneyId, setAttorneyId] = useState(selectedAttorney ? selectedAttorney.id : null);
 
   const handleSubmit = () => {
     const newTask = {
@@ -59,13 +64,16 @@ export const MTVJudgeDisposition = ({ attorneys, task, appeal, onSubmit = () => 
 
         <MTVDispositionSelection
           label={JUDGE_ADDRESS_MTV_DISPOSITION_SELECT_LABEL}
-          onChange={(val) => setDisposition(val)}
+          onChange={(val) => {
+            setVacateType(null);
+            setDisposition(val);
+          }}
           value={disposition}
         />
 
         {disposition && disposition === 'granted' && (
           <RadioField
-            name="disposition"
+            name="vacate_type"
             label={JUDGE_ADDRESS_MTV_VACATE_TYPE_LABEL}
             options={mtvVacateTypeOptions}
             onChange={(val) => setVacateType(val)}
@@ -90,7 +98,7 @@ export const MTVJudgeDisposition = ({ attorneys, task, appeal, onSubmit = () => 
           placeholder="Select attorney"
           onChange={(option) => option && setAttorneyId(option.value)}
           value={attorneyId}
-          // styling={css({ width: '30rem' })}
+          styling={css({ width: '30rem' })}
         />
       </AppSegment>
       <div className="controls cf-app-segment">
@@ -119,5 +127,6 @@ MTVJudgeDisposition.propTypes = {
   submitting: PropTypes.bool,
   task: PropTypes.object.isRequired,
   appeal: PropTypes.object.isRequired,
-  attorneys: PropTypes.array.isRequired
+  attorneys: PropTypes.array.isRequired,
+  selectedAttorney: PropTypes.object
 };

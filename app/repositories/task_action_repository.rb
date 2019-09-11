@@ -160,8 +160,9 @@ class TaskActionRepository
     end
 
     def address_motion_to_vacate_data(task, _user = nil)
+      attorney = task.appeal.assigned_attorney
       {
-        # selected: task.root_task.children.find { |child| child.is_a?(JudgeTask) }&.assigned_to,
+        selected: attorney,
         options: users_to_options([JudgeTeam.for_judge(task.assigned_to)&.attorneys, attorney].flatten.compact),
         type: PostDecisionMotion.name
       }
