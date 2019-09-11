@@ -61,11 +61,17 @@ feature "End Product Correction (EP 930)", :postgres do
     )
   end
 
+  let(:processed_claim_review) do
+    create(claim_review_type.to_sym,
+           :processed,
+           intake: create(:intake),
+           veteran_file_number: veteran.file_number,
+           receipt_date: receipt_date)
+  end
+
   feature "with cleared end product on higher level review" do
     let(:claim_review_type) { "higher_level_review" }
-    let!(:claim_review) do
-      create(claim_review_type.to_sym, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
-    end
+    let!(:claim_review) { processed_claim_review }
     let(:edit_path) { "#{claim_review_type.pluralize}/#{cleared_end_product.claim_id}/edit" }
     let(:ep_code) { "030HLRR" }
 
@@ -162,9 +168,7 @@ feature "End Product Correction (EP 930)", :postgres do
 
   feature "with cleared end product on supplemental claim" do
     let(:claim_review_type) { "supplemental_claim" }
-    let!(:claim_review) do
-      create(claim_review_type.to_sym, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
-    end
+    let!(:claim_review) { processed_claim_review }
     let(:edit_path) { "#{claim_review_type.pluralize}/#{cleared_end_product.claim_id}/edit" }
     let(:ep_code) { "040SCR" }
 

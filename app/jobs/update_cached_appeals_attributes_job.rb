@@ -73,8 +73,13 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def cache_legacy_appeals
     legacy_appeals = LegacyAppeal.find(Task.open.where(appeal_type: LegacyAppeal.name).pluck(:appeal_id).uniq)
 
+    cache_postgres_data_start = Time.zone.now
     cache_legacy_appeal_postgres_data(legacy_appeals)
+    time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
+
+    cache_vacols_data_start = Time.zone.now
     cache_legacy_appeal_vacols_data(legacy_appeals)
+    time_segment(segment: "cache_legacy_appeal_vacols_data", start_time: cache_vacols_data_start)
 
     increment_appeal_count(legacy_appeals.length, LegacyAppeal.name)
   end
@@ -102,24 +107,37 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def cache_legacy_appeal_vacols_data(legacy_appeals)
-    legacy_appeals.pluck(:vacols_id, :id).in_groups_of(BATCH_SIZE, false).each do |ids|
-      vacols_ids = ids.map { |id| id[0] }
-      vacols_folders = VACOLS::Folder.where(ticknum: vacols_ids).pluck(:ticknum, :tinum, :ticorkey)
-      issue_counts_to_cache = issues_counts_for_vacols_folders(vacols_ids)
-      veteran_names_to_cache = veteran_names_for_correspondent_ids(vacols_folders.map { |folder| folder[2] })
-      aod_status_to_cache = VACOLS::Case.aod(vacols_folders.map { |folder| folder[0] })
-      case_status_to_cache = case_status_for_vacols_id(vacols_folders.map { |folder| folder[0] })
-      appeal_assignees_to_cache = assignees_for_vacols_id(vacols_folders.map { |folder| folder[0] })
+    all_vacols_ids = legacy_appeals.pluck(:vacols_id).flatten
 
-      values_to_cache = vacols_folders.map do |vacols_folder|
+    all_vacols_ids.in_groups_of(BATCH_SIZE, false).each do |batch_vacols_ids|
+      vacols_folders = VACOLS::Folder
+        .where(ticknum: batch_vacols_ids)
+        .pluck(:ticknum, :tinum, :ticorkey)
+        .map do |folder|
         {
-          vacols_id: vacols_folder[0],
-          assignee_label: appeal_assignees_to_cache[vacols_folder[0]],
-          case_type: case_status_to_cache[vacols_folder[0]],
-          docket_number: vacols_folder[1],
-          issue_count: issue_counts_to_cache[vacols_folder[0]] || 0,
-          is_aod: aod_status_to_cache[vacols_folder[0]],
-          veteran_name: veteran_names_to_cache[vacols_folder[2]]
+          vacols_id: folder[0],
+          docket_number: folder[1],
+          correspondent_id: folder[2]
+        }
+      end
+
+      issue_counts_to_cache = issues_counts_for_vacols_folders(batch_vacols_ids)
+      aod_status_to_cache = VACOLS::Case.aod(batch_vacols_ids)
+      case_status_to_cache = case_status_for_vacols_id(batch_vacols_ids)
+      appeal_assignees_to_cache = assignees_for_vacols_id(batch_vacols_ids)
+
+      correspondent_ids = vacols_folders.map { |folder| folder[:correspondent_id] }
+      veteran_names_to_cache = veteran_names_for_correspondent_ids(correspondent_ids)
+
+      values_to_cache = vacols_folders.map do |folder|
+        {
+          vacols_id: folder[:vacols_id],
+          assignee_label: appeal_assignees_to_cache[folder[:vacols_id]],
+          case_type: case_status_to_cache[folder[:vacols_id]],
+          docket_number: folder[:docket_number],
+          issue_count: issue_counts_to_cache[folder[:vacols_id]] || 0,
+          is_aod: aod_status_to_cache[folder[:vacols_id]],
+          veteran_name: veteran_names_to_cache[folder[:correspondent_id]]
         }
       end
 
