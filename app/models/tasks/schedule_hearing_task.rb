@@ -27,6 +27,13 @@ class ScheduleHearingTask < GenericTask
 
     private
 
+    def filter_tasks_not_in_caseflow(tasks)
+      video_ids_in_caseflow = VACOLS::Case.where(bfcurloc: "CASEFLOW").
+        where("bfkey IN (?)", tasks.map{ |task| task.appeal.id }).pluck(:bfkey)
+
+      return tasks.where.not("legacy_appeals.id IN (?)", video_ids_in_caseflow)
+    end
+
     def legacy_appeal_tasks(regional_office, incomplete_tasks)
       joined_incomplete_tasks = incomplete_tasks.joins(
         "INNER JOIN legacy_appeals ON legacy_appeals.id = appeal_id AND tasks.appeal_type = 'LegacyAppeal'"
@@ -45,9 +52,11 @@ class ScheduleHearingTask < GenericTask
 
         # For context: https://github.com/rails/rails/issues/778#issuecomment-432603568
         if central_office_legacy_appeal_ids.empty?
-          tasks_by_ro
+          filter_tasks_not_in_caseflow(tasks_by_ro)
         else
-          tasks_by_ro.where("legacy_appeals.id NOT IN (?)", central_office_legacy_appeal_ids)
+          filter_tasks_not_in_caseflow(
+            tasks_by_ro.where("legacy_appeals.id NOT IN (?)", central_office_legacy_appeal_ids)
+          )
         end
       end
     end
