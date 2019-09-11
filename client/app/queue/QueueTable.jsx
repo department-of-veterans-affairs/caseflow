@@ -223,7 +223,7 @@ export default class QueueTable extends React.PureComponent {
       sortColName: tabPaginationOptions[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] || null,
       filteredByList: filters,
       tasksFromApi: [],
-      loadingComponent: null,
+      loadingComponent: !_.isEmpty(tabPaginationOptions) && <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />,
       currentPage: (tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1) || 0
     };
 
