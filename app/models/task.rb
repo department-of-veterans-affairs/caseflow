@@ -69,10 +69,6 @@ class Task < ApplicationRecord
   # Cautious step before removing the column from the database as part of #9057.
   self.ignored_columns = %w[action]
 
-  # def available_actions(_user)
-  #   []
-  # end
-
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def available_actions(user)
@@ -261,13 +257,6 @@ class Task < ApplicationRecord
   def self.create_many_from_params(params_array, current_user)
     params_array.map { |params| create_from_params(params, current_user) }
   end
-
-  # def self.create_from_params(params, user)
-  #   parent_task = params[:parent_id] ? Task.find(params[:parent_id]) : nil
-  #   verify_user_can_create!(user, parent_task)
-  #   params = modify_params(params)
-  #   create!(params)
-  # end
 
   def self.modify_params(params)
     if params.key?(:instructions) && !params[:instructions].is_a?(Array)
@@ -633,7 +622,7 @@ class Task < ApplicationRecord
 
   class << self
     # TASK
-    # def self.create_from_params(params, user)
+    # def create_from_params(params, user)
     #   parent_task = params[:parent_id] ? Task.find(params[:parent_id]) : nil
     #   verify_user_can_create!(user, parent_task)
     #   params = modify_params(params)
