@@ -57,15 +57,21 @@ class LookupParticipantIdModal extends React.Component {
     });
   }
 
-  setCssId = (value) => this.setState({ css_id: value });
+  setCssId = (value) => this.setState({
+    css_id: value,
+    selectedUser: null
+  });
 
-  setStationId = (value) => this.setState({ station_id: value });
+  setStationId = (value) => this.setState({
+    selectedUser: null,
+    station_id: value
+  });
 
-  selectUser = (value) => {
-    this.setCssId(null);
-    this.setStationId(null);
-    this.setState({ selectedUser: value });
-  }
+  selectUser = (value) => this.setState({
+    css_id: null,
+    selectedUser: value,
+    station_id: null
+  });
 
   formatName = (user) => `${user.attributes.full_name} (${user.attributes.css_id})`;
 
