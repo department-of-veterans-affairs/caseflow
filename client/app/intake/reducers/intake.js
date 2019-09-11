@@ -11,6 +11,12 @@ const updateFromServerIntake = (state, serverIntake) => {
     formType: {
       $set: serverIntake.form_type
     },
+    asyncJobUrl: {
+      $set: serverIntake.async_job_url
+    },
+    detailEditUrl: {
+      $set: serverIntake.detail_edit_url
+    },
     veteran: {
       name: {
         $set: serverIntake.veteran_name
@@ -31,6 +37,8 @@ const updateFromServerIntake = (state, serverIntake) => {
 export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
     id: null,
+    asyncJobUrl: null,
+    detailEditUrl: null,
     formType: null,
     fileNumberSearch: '',
     searchErrorCode: null,
