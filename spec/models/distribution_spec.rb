@@ -194,11 +194,38 @@ describe Distribution, :all_dbs do
 
     context "when a nonpriority legacy case re-distribtution is attempted" do
       before do
+        @raven_called = false
         distribution = create(:distribution, judge: judge)
         legacy_case = legacy_nonpriority_cases.first
         distribution.distributed_cases.create(
           case_id: legacy_case.bfkey,
           priority: false,
+          docket: "legacy",
+          ready_at: VacolsHelper.normalize_vacols_datetime(legacy_case.bfdloout),
+          docket_index: "123",
+          genpop: false,
+          genpop_query: "foobar"
+        )
+        distribution.update!(status: "completed", completed_at: today)
+        allow(Raven).to receive(:capture_exception) { @raven_called = true }
+      end
+
+      it "does not create a duplicate distributed_case" do
+        subject.distribute!
+        expect(subject.valid?).to eq(true)
+        expect(subject.error?).to eq(false)
+        expect(@raven_called).to eq(true)
+      end
+    end
+
+    context "when a priority legacy case re-distribtution is attempted" do
+      before do
+        @raven_called = false
+        distribution = create(:distribution, judge: judge)
+        legacy_case = legacy_priority_cases.last
+        distribution.distributed_cases.create(
+          case_id: legacy_case.bfkey,
+          priority: true,
           docket: "legacy",
           ready_at: VacolsHelper.normalize_vacols_datetime(legacy_case.bfdloout),
           docket_index: "123",
