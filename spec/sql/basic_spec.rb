@@ -9,7 +9,7 @@ describe "Basic SQL Snippet Library Test", :postgres do
     let!(:appeal) { create(:appeal) }
 
     it "runs SQL" do
-      expect_sql('basic_appeal').to eq([appeal.as_hash])
+      expect_sql("basic_appeal").to eq([appeal.as_hash])
     end
   end
 end
