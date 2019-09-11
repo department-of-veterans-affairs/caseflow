@@ -530,6 +530,7 @@ RSpec.feature "Task queue", :all_dbs do
     end
 
     context "when pagination is enabled" do
+      let(:foia_task_count) { unassigned_count / 2 }
       let(:on_hold_count) { assigned_count / 2 }
 
       before do
@@ -540,6 +541,8 @@ RSpec.feature "Task queue", :all_dbs do
             child_task = create(:generic_task, parent_id: task.id)
             child_task.update!(status: Constants.TASK_STATUSES.on_hold) if idx < on_hold_count
           end
+        Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
+          .take(foia_task_count).each { |task| task.update!(type: FoiaTask.name) }
       end
 
       after { FeatureToggle.disable!(:use_task_pages_api) }
@@ -566,17 +569,42 @@ RSpec.feature "Task queue", :all_dbs do
             )
           end
         end
+
+        context "when specifying sort column" do
+          let(:query_string) do
+            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
+            "&#{Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}"
+          end
+
+          it "sorts the correct column ascending" do
+            (1..foia_task_count).each do |index|
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
+            end
+            (foia_task_count + 1..unassigned_count).each do |index|
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(GenericTask.label)
+            end
+          end
+        end
+
+        context "when specifying sort order" do
+          let(:query_string) do
+            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
+            "&#{Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}"\
+            "&#{Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC}"
+          end
+
+          it "sorts the correct column descending" do
+            (1..foia_task_count).each do |index|
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(GenericTask.label)
+            end
+            (foia_task_count + 1..unassigned_count).each do |index|
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
+            end
+          end
+        end
       end
 
       context "when filtering tasks" do
-        let(:foia_task_count) { unassigned_count / 2 }
-
-        before do
-          Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
-            .take(foia_task_count).each { |task| task.update!(type: FoiaTask.name) }
-          visit(organization.path)
-        end
-
         it "shows the correct filters" do
           expect(page).to have_content(
             format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)

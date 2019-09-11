@@ -200,10 +200,10 @@ export default class QueueTable extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    const { defaultSort } = this.props;
+    const { defaultSort, tabPaginationOptions } = this.props;
     const state = {
-      sortAscending: true,
-      sortColName: null,
+      sortAscending: tabPaginationOptions.order !== QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC,
+      sortColName: tabPaginationOptions.sort_by || null,
       filteredByList: {},
       tasksFromApi: [],
       loadingComponent: null,
@@ -215,6 +215,10 @@ export default class QueueTable extends React.PureComponent {
     }
 
     this.state = state;
+
+    if (!_.isEmpty(tabPaginationOptions)) {
+      this.requestTasks();
+    }
   }
 
   defaultRowClassNames = () => ''
@@ -513,5 +517,10 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   taskPagesApiEndpoint: PropTypes.string,
   totalTaskCount: PropTypes.number,
   useTaskPagesApi: PropTypes.bool,
-  userReadableColumnNames: PropTypes.object
+  userReadableColumnNames: PropTypes.object,
+  tabPaginationOptions: PropTypes.object
+};
+
+QueueTable.defaultProps = {
+  tabPaginationOptions: {}
 };
