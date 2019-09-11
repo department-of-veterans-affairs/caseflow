@@ -70,10 +70,6 @@ class Appeal < DecisionReview
     )
   end
 
-  def caseflow_only_edit_issues_url
-    "/appeals/#{uuid}/edit"
-  end
-
   def type
     "Original"
   end

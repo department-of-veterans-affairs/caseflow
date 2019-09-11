@@ -43,7 +43,10 @@ class AssignHearingsTable extends React.Component {
         summary="scheduled-hearings-table"
         slowReRendersAreOk
         bodyStyling={tableNumberStyling}
+<<<<<<< HEAD
         {...this.getPaginationProps()}
+=======
+>>>>>>> 3a5b22e1c98c64ca1f74514815ce422541c37af7
       />
     );
   }
@@ -52,9 +55,13 @@ class AssignHearingsTable extends React.Component {
 AssignHearingsTable.propTypes = {
   user: PropTypes.object,
   columns: PropTypes.array,
+<<<<<<< HEAD
   rowObjects: PropTypes.array,
   tabName: PropTypes.string,
   enablePagination: PropTypes.bool
+=======
+  rowObjects: PropTypes.array
+>>>>>>> 3a5b22e1c98c64ca1f74514815ce422541c37af7
 };
 
 export default AssignHearingsTable;
