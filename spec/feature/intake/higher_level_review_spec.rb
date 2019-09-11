@@ -228,7 +228,7 @@ feature "Higher-Level Review", :all_dbs do
 
     click_intake_finish
 
-    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
     expect(page).to have_content(
       "A #{Constants.INTAKE_FORM_NAMES_SHORT.higher_level_review} Rating EP is being established:"
     )
@@ -434,7 +434,7 @@ feature "Higher-Level Review", :all_dbs do
 
     click_intake_finish
 
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: veteran_file_number,
@@ -509,7 +509,7 @@ feature "Higher-Level Review", :all_dbs do
 
     click_intake_finish
 
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
   end
 
   def complete_higher_level_review
@@ -528,7 +528,7 @@ feature "Higher-Level Review", :all_dbs do
     )
 
     click_intake_finish
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
   end
 
   scenario "intake can still be completed when ratings are backfilled" do
@@ -861,7 +861,7 @@ feature "Higher-Level Review", :all_dbs do
 
       click_intake_finish
 
-      expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+      expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
       expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
       expect(page).to have_content('Unidentified issue: no issue matched for requested "This is an unidentified issue"')
       success_checklist = find("ul.cf-success-checklist")
@@ -1082,7 +1082,7 @@ feature "Higher-Level Review", :all_dbs do
         )
         click_intake_finish
 
-        expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+        expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
 
         expect(
           RequestIssue.find_by(contested_issue_description: "appeal decision issue").ineligible_reason
