@@ -65,7 +65,7 @@ export const MTVJudgeDisposition = ({ attorneys, task, appeal, onSubmit = () => 
 
         {disposition && disposition === 'granted' && (
           <RadioField
-            name="disposition"
+            name="vacate_type"
             label={JUDGE_ADDRESS_MTV_VACATE_TYPE_LABEL}
             options={mtvVacateTypeOptions}
             onChange={(val) => setVacateType(val)}
@@ -90,7 +90,7 @@ export const MTVJudgeDisposition = ({ attorneys, task, appeal, onSubmit = () => 
           placeholder="Select attorney"
           onChange={(option) => option && setAttorneyId(option.value)}
           value={attorneyId}
-          // styling={css({ width: '30rem' })}
+          styling={css({ width: '30rem' })}
         />
       </AppSegment>
       <div className="controls cf-app-segment">

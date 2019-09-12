@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
@@ -20,12 +20,6 @@ export const AddressMotionToVacateView = (props) => {
   const handleSubmit = (decision) => {
     props.submitMTVJudgeDecision(decision);
   };
-
-  useEffect(() => {
-    if (!attyOptions.length) {
-      // dispatch to populate attys
-    }
-  });
 
   return (
     attorneysOfJudge && (

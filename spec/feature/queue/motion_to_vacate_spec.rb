@@ -84,9 +84,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
         click_button(text: "Submit")
 
         # Return back to user's queue
-        expect(page).to have_content("Your cases")
+        expect(page).to have_current_path("/queue")
 
-        # Enable test once backend truly supports
+        # Verify new task was created
         judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
         expect(judge_task).to_not be_nil
       end
@@ -101,9 +101,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
         click_button(text: "Submit")
 
         # Return back to user's queue
-        expect(page).to have_content("Your cases")
+        expect(page).to have_current_path("/queue")
 
-        # Enable test once backend truly supports
+        # Verify new task was created
         judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
         expect(judge_task).to_not be_nil
       end
