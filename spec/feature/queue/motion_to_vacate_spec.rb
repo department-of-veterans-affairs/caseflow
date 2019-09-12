@@ -167,7 +167,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       fill_in("instructions", with: "Judge context/instructions for decision")
 
       # Ensure it has pre-selected judge previously assigned to case
-      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq dropdown_txt
+      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
 
       click_button(text: "Submit")
 
@@ -185,7 +185,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       fill_in("hyperlink", with: "https://va.gov/fake-link-to-file")
 
       # Ensure it has pre-selected judge previously assigned to case
-      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq "#{drafting_attorney.full_name} (Orig. Attorney)"
+      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
 
       click_button(text: "Submit")
 
