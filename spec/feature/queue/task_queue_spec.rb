@@ -391,6 +391,7 @@ RSpec.feature "Task queue", :all_dbs do
 
     context "when a VacateMotionMailTask task is routed to Pulac Cerullo" do
       let!(:root_task) { create(:root_task) }
+
       it "creates two child tasks: one Pulac Cerullo Task, and a child of that task " \
         "assigned to the first user in the Pulac Cerullo org" do
         validate_pulac_cerullo_tasks_created(VacateMotionMailTask, COPY::VACATE_MOTION_MAIL_TASK_LABEL)
