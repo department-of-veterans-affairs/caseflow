@@ -83,7 +83,7 @@ class LookupParticipantIdModal extends React.Component {
     let url = '';
 
     if (this.state.css_id && this.state.station_id) {
-      url = `/users/represented_organizations_by_css_id?css_id=${this.state.css_id}&${this.state.station_id}`;
+      url = `/user_info/represented_organizations?css_id=${this.state.css_id}&station_id=${this.state.station_id}`;
     } else {
       url = `/users/${this.state.selectedUser.value.id}/represented_organizations`;
     }
@@ -94,8 +94,9 @@ class LookupParticipantIdModal extends React.Component {
 
     return this.props.requestGet(url).
       then((resp) => this.setState({ representedOrganizations: resp.body.represented_organizations })).
-      catch((err) => this.props.showErrorMessage({ title: 'Error',
-        detail: err.message }));
+      catch(
+        // Errors caught and displayed in requestGet().
+      );
   }
 
   representedOrganizationsList = () => {
