@@ -228,8 +228,10 @@ export default class QueueTable extends React.PureComponent {
   getFilters = (filterParams) => {
     const filters = {};
 
+    // filter: ["col=typeColumn&val=Original", "col=taskColumn&val=OtherColocatedTask,ArnesonColocatedTask"]
     if (filterParams) {
-      // filter: ["col=typeColumn&val=Original", "col=taskColumn&val=OtherColocatedTask,ArnesonColocatedTask"]
+      // When react router encouters an array of strings param with one element, it converts the param to a string
+      // rather than keeping it as the original array
       (Array.isArray(filterParams) ? filterParams : [filterParams]).forEach((filter) => {
         const columnAndValues = filter.split('&');
         const columnName = columnAndValues[0].split('=')[1];
