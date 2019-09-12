@@ -83,7 +83,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         click_button(text: "Submit")
 
         # Return back to user's queue
-        expect(page).to have_content("Your cases")
+        expect(page).to have_current_path("/queue")
 
         # Verify new task was created
         judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
@@ -100,7 +100,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         click_button(text: "Submit")
 
         # Return back to user's queue
-        expect(page).to have_content("Your cases")
+        expect(page).to have_current_path("/queue")
 
         # Verify new task was created
         judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
@@ -152,8 +152,48 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       click_button(text: "Submit")
 
+      # Return back to user's queue
+      expect(page).to have_current_path("/queue")
+
       new_task = StraightVacateAndReadjudicationTask.find_by(assigned_to: drafting_attorney)
       expect(new_task).to_not be_nil
+    end
+
+    it "judge grants motion to vacate (vacate & de novo)" do
+      address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
+      find("label[for=disposition_granted]").click
+      find("label[for=vacate-type_vacate_and_de_novo]").click
+      fill_in("instructions", with: "Judge context/instructions for decision")
+
+      # Ensure it has pre-selected judge previously assigned to case
+      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq "#{drafting_attorney.full_name} (Drafting Atty)"
+
+      click_button(text: "Submit")
+
+      # Return back to user's queue
+      expect(page).to have_current_path("/queue")
+
+      new_task = VacateAndDeNovoTask.find_by(assigned_to: drafting_attorney)
+      expect(new_task).to_not be_nil
+    end
+
+    it "judge denies motion to vacate" do
+      address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
+      find("label[for=disposition_denied]").click
+      fill_in("instructions", with: "Judge context/instructions for decision")
+      fill_in("hyperlink", with: "https://va.gov/fake-link-to-file")
+
+      # Ensure it has pre-selected judge previously assigned to case
+      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq "#{drafting_attorney.full_name} (Drafting Atty)"
+
+      click_button(text: "Submit")
+
+      # Return back to user's queue
+      expect(page).to have_current_path("/queue")
+
+      # What should we check here...?
+      # new_task = StraightVacateAndReadjudicationTask.find_by(assigned_to: drafting_attorney)
+      # expect(new_task).to_not be_nil
     end
   end
 
