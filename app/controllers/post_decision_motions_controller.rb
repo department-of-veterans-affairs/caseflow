@@ -4,14 +4,15 @@ class PostDecisionMotionsController < ApplicationController
   before_action :verify_task_access
 
   def create
-    result = PostDecisionMotion.new(motion_params)
+    motion_updater = PostDecisionMotionUpdater.new(task, motion_params)
+    motion_updater.process
 
-    if result.valid?
-      result.save
-      flash[:success] = "Disposition saved!"
-    else
-      render json: { errors: [detail: result.errors.full_messages.join(", ")] }, status: :bad_request
+    if motion_updater.errors.present?
+      render json: { errors: [detail: motion_updater.errors.full_messages.join(", ")] }, status: :bad_request
+      return
     end
+    flash[:success] = "Disposition saved!"
+    render json: {}
   end
 
   private
@@ -27,6 +28,6 @@ class PostDecisionMotionsController < ApplicationController
   end
 
   def motion_params
-    params.require(:post_decision_motion).permit(:disposition, :task_id, :vacate_type, :assigned_to)
+    params.require(:post_decision_motion).permit(:disposition, :task_id, :vacate_type, :assigned_to_id)
   end
 end
