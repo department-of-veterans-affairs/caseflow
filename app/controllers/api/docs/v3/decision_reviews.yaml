@@ -732,23 +732,31 @@ paths:
                           #  type: string
                           active:
                             type: boolean
-                          description:
+                          status:
                             type: string
                           aoj:
                             type: string
+                            nullable: true
                           programArea:
                             type: string
+                          benefitType:
+                            $ref: "#/components/schemas/benefit_type"
+                          description:
+                            type: string
+                            nullable: true
                           receiptDate:
                             type: string
                             format: date
+                            nullable: true
                           informalConference:
                             type: boolean
+                            nullable: true
                           sameOffice:
                             type: boolean
+                            nullable: true
                           legacyOptInApproved:
                             type: boolean
-                          benefitType:
-                            $ref: "#/components/schemas/benefit_type"
+                            nullable: true
                           alerts:
                             type: array
                             items:
@@ -761,6 +769,7 @@ paths:
                                   properties:
                                     decisionDate:
                                       type: string
+                                      format: date
                                       nullable: true
                                     availableOptions:
                                       type: array
@@ -768,12 +777,8 @@ paths:
                                         type: string
                                     dueDate:
                                       type: string
+                                      format: date
                                       nullable: true
-                                    cavcDueDate:
-                                      description: "will always be \"null\" for HLRs"
-                                      type: string
-                                      nullable: true
-                                      enum: [null]
                           events:
                             type: array
                             items:
@@ -781,28 +786,9 @@ paths:
                               properties:
                                 type:
                                   $ref: "#/components/schemas/higher_level_review_events"
-                                details:
-                                  type: object
-                                  properties:
-                                    date:
-                                      type: string
-                                      format: date
-                          statuses:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                type:
-                                  $ref: "#/components/schemas/higher_level_review_status_types"
-                                issues:
-                                  type: array
-                                  items:
-                                    type: object
-                                    properties:
-                                      description:
-                                        type: string
-                                      disposition:
-                                        type: string
+                                date:
+                                  type: string
+                                  format: date
                       relationships:
                         type: object
                         properties:
@@ -816,7 +802,7 @@ paths:
                                     type: string
                                     enum: ["Veteran"]
                                   id:
-                                    type: string # file number
+                                    type: string # file_number
                           claimant:
                             type: object
                             properties:
@@ -884,8 +870,10 @@ paths:
                                   type: string
                                 ssn:
                                   type: string
+                                  nullable: true
                                 participantId:
                                   type: string
+                                  nullable: true
                         - type: object
                           properties:
                             type:
@@ -907,8 +895,10 @@ paths:
                                   nullable: true
                                 payeeCode:
                                   $ref: "#/components/schemas/payee_code"
+                                  nullable: true
                                 relationshipType:
                                   type: string
+                                  nullable: true
                         - type: object
                           properties:
                             type:
@@ -919,12 +909,15 @@ paths:
                             attributes:
                               type: object
                               properties:
-                                approx_decision_date:
+                                approxDecisionDate:
+                                  type: string
+                                  format: date
+                                  nullable: true
+                                decisionText:
                                   type: string
                                   nullable: true
-                                decision_text:
+                                description:
                                   type: string
-                                  nullable: true
                                 disposition:
                                   type: string
                                   nullable: true
@@ -942,15 +935,17 @@ paths:
                               properties:
                                 active:
                                   type: boolean
-                                status_description:
+                                statusDescription:
                                   type: string
-                                diagnostic_code:
+                                diagnosticCode:
                                   type: string
+                                  nullable: true
                                 ratingIssueId: # rating_issue_reference_id
                                   type: string
                                   nullable: true
                                 ratingIssueProfileDate:
                                   type: string
+                                  format: date
                                   nullable: true
                                 ratingDecisionReferenceId:
                                   type: string
@@ -960,10 +955,9 @@ paths:
                                   nullable: true
                                 contentionText:
                                   type: string
-                                  nullable: true
                                 approxDecisionDate:
                                   type: string
-                                  nullable: true
+                                  format: date
                                 category:
                                   type: string
                                   nullable: true
@@ -972,6 +966,7 @@ paths:
                                   nullable: true
                                 isUnidentified:
                                   type: boolean
+                                  nullable: true
                                 rampClaimId:
                                   type: string
                                   nullable: true
@@ -985,7 +980,7 @@ paths:
                                   type: string
                                   nullable: true
                                 ineligibleDueToId:
-                                  type: string
+                                  type: integer
                                   nullable: true
                                 decisionReviewTitle:
                                   type: string
@@ -994,19 +989,20 @@ paths:
                                   type: string
                                   nullable: true
                                 decisionIssueId: # contested_decision_issue_id
-                                  type: string
+                                  type: integer
                                   nullable: true
                                 withdrawalDate:
                                   type: string
+                                  format: date
                                   nullable: true
                                 contestedIssueDescription:
                                   type: string
                                   nullable: true
                                 endProductCleared:
                                   type: boolean
+                                  nullable: true
                                 endProductCode:
                                   type: string
-                                  nullable: true
 
         '404':
           description: ID not found
