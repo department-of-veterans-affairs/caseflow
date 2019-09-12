@@ -156,6 +156,12 @@ RSpec.feature "Motion to vacate", :all_dbs do
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
 
+      # Verify PostDecisionMotion is created
+      motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
+      expect(motion).to_not be_nil
+      expect(motion.disposition).to eq("granted")
+
+      # Verify new task creation
       new_task = StraightVacateAndReadjudicationTask.find_by(assigned_to: drafting_attorney)
       expect(new_task).to_not be_nil
     end
@@ -174,6 +180,12 @@ RSpec.feature "Motion to vacate", :all_dbs do
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
 
+      # Verify PostDecisionMotion is created
+      motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
+      expect(motion).to_not be_nil
+      expect(motion.disposition).to eq("granted")
+
+      # Verify new task creation
       new_task = VacateAndDeNovoTask.find_by(assigned_to: drafting_attorney)
       expect(new_task).to_not be_nil
     end
@@ -192,9 +204,30 @@ RSpec.feature "Motion to vacate", :all_dbs do
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
 
-      # What should we check here...?
-      # new_task = StraightVacateAndReadjudicationTask.find_by(assigned_to: drafting_attorney)
-      # expect(new_task).to_not be_nil
+      # Verify PostDecisionMotion is created; should ultimately also check new tasks
+      motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
+      expect(motion).to_not be_nil
+      expect(motion.disposition).to eq("denied")
+    end
+
+    it "judge dismisses motion to vacate" do
+      address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
+      find("label[for=disposition_dismissed]").click
+      fill_in("instructions", with: "Judge context/instructions for decision")
+      fill_in("hyperlink", with: "https://va.gov/fake-link-to-file")
+
+      # Ensure it has pre-selected judge previously assigned to case
+      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
+
+      click_button(text: "Submit")
+
+      # Return back to user's queue
+      expect(page).to have_current_path("/queue")
+
+      # Verify PostDecisionMotion is created; should ultimately also check new tasks
+      motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
+      expect(motion).to_not be_nil
+      expect(motion.disposition).to eq("dismissed")
     end
   end
 
