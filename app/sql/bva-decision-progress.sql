@@ -1,7 +1,7 @@
 ---- The report attempts to show the status of all AMA Appeals in caseflow.
 
 ---- LIMITATIONS
--- This report willmay under count or overcount appeals in error states or extraordinary states. 
+-- This report may under count or overcount appeals in error states or extraordinary states. 
 -- i.e. open root task with no active task; cases with multiple contridictory open tasks; etc.
 -- ON HOLD and Waiting for Distribution will doublecount if the hold is with hearings or translation. This would properly be considered Waiting for Distribution.
 
