@@ -256,8 +256,8 @@ class QueueApp extends React.PureComponent {
         paginationOptions={querystring.parse(window.location.search.slice(1))}
       />
     </OrganizationQueueLoadingScreen>
-   );
-    
+  );
+
   routedOrganizationUsers = (props) => <OrganizationUsers {...props.match.params} />;
 
   routedTeamManagement = (props) => <TeamManagement {...props.match.params} />;
