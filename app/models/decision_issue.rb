@@ -19,7 +19,7 @@ class DecisionIssue < ApplicationRecord
   has_many :remand_reasons, dependent: :destroy
   belongs_to :decision_review, polymorphic: true
   has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
-  has_one :contesting_request_issue, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"
+  has_many :contesting_request_issues, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"
 
   # NOTE: These are the string identifiers for the DTA error dispositions returned from VBMS.
   # The characters an encoding is precise so don't change these unless you know they match VBMS values.
@@ -67,6 +67,10 @@ class DecisionIssue < ApplicationRecord
       joins("LEFT JOIN request_issues on decision_issues.id = request_issues.contested_decision_issue_id")
         .where("request_issues.contested_decision_issue_id IS NULL")
     end
+  end
+
+  def contesting_remand_request_issue
+    contesting_request_issues.find(&:remanded?)
   end
 
   def soft_delete

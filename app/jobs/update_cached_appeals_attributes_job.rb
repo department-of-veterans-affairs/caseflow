@@ -71,10 +71,18 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def cache_legacy_appeals
+    # Avoid lazy evaluation bugs by immediately plucking all VACOLS IDs. Lazy evaluation of the LegacyAppeal.find(...)
+    # was previously causing this code to insert legacy appeal attributes that corresponded to NULL ID fields.
     legacy_appeals = LegacyAppeal.find(Task.open.where(appeal_type: LegacyAppeal.name).pluck(:appeal_id).uniq)
+    all_vacols_ids = legacy_appeals.pluck(:vacols_id).flatten
 
+    cache_postgres_data_start = Time.zone.now
     cache_legacy_appeal_postgres_data(legacy_appeals)
-    cache_legacy_appeal_vacols_data(legacy_appeals)
+    time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
+
+    cache_vacols_data_start = Time.zone.now
+    cache_legacy_appeal_vacols_data(all_vacols_ids)
+    time_segment(segment: "cache_legacy_appeal_vacols_data", start_time: cache_vacols_data_start)
 
     increment_appeal_count(legacy_appeals.length, LegacyAppeal.name)
   end
@@ -101,35 +109,58 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
-  def cache_legacy_appeal_vacols_data(legacy_appeals)
-    legacy_appeals.pluck(:vacols_id, :id).in_groups_of(BATCH_SIZE, false).each do |ids|
-      vacols_ids = ids.map { |id| id[0] }
-      vacols_folders = VACOLS::Folder.where(ticknum: vacols_ids).pluck(:ticknum, :tinum, :ticorkey)
-      issue_counts_to_cache = issues_counts_for_vacols_folders(vacols_ids)
-      veteran_names_to_cache = veteran_names_for_correspondent_ids(vacols_folders.map { |folder| folder[2] })
-      aod_status_to_cache = VACOLS::Case.aod(vacols_folders.map { |folder| folder[0] })
-      case_status_to_cache = case_status_for_vacols_id(vacols_folders.map { |folder| folder[0] })
-      appeal_assignees_to_cache = assignees_for_vacols_id(vacols_folders.map { |folder| folder[0] })
-
-      values_to_cache = vacols_folders.map do |vacols_folder|
+  def cache_legacy_appeal_vacols_data(all_vacols_ids)
+    all_vacols_ids.in_groups_of(BATCH_SIZE, false).each do |batch_vacols_ids|
+      vacols_folders = VACOLS::Folder
+        .where(ticknum: batch_vacols_ids)
+        .pluck(:ticknum, :tinum, :ticorkey)
+        .map do |folder|
         {
-          vacols_id: vacols_folder[0],
-          assignee_label: appeal_assignees_to_cache[vacols_folder[0]],
-          case_type: case_status_to_cache[vacols_folder[0]],
-          docket_number: vacols_folder[1],
-          issue_count: issue_counts_to_cache[vacols_folder[0]] || 0,
-          is_aod: aod_status_to_cache[vacols_folder[0]],
-          veteran_name: veteran_names_to_cache[vacols_folder[2]]
+          vacols_id: folder[0],
+          docket_number: folder[1],
+          correspondent_id: folder[2]
+        }
+      end
+
+      issue_counts_to_cache = issues_counts_for_vacols_folders(batch_vacols_ids)
+      aod_status_to_cache = VACOLS::Case.aod(batch_vacols_ids)
+      case_status_to_cache = case_status_for_vacols_id(batch_vacols_ids)
+      appeal_assignees_to_cache = assignees_for_vacols_id(batch_vacols_ids)
+
+      correspondent_ids = vacols_folders.map { |folder| folder[:correspondent_id] }
+      veteran_names_to_cache = veteran_names_for_correspondent_ids(correspondent_ids)
+
+      values_to_cache = vacols_folders.map do |folder|
+        {
+          vacols_id: folder[:vacols_id],
+          assignee_label: appeal_assignees_to_cache[folder[:vacols_id]],
+          case_type: case_status_to_cache[folder[:vacols_id]],
+          docket_number: folder[:docket_number],
+          issue_count: issue_counts_to_cache[folder[:vacols_id]] || 0,
+          is_aod: aod_status_to_cache[folder[:vacols_id]],
+          veteran_name: veteran_names_to_cache[folder[:correspondent_id]]
         }
       end
 
       update_columns = [:assignee_label, :docket_number, :issue_count, :veteran_name, :case_type, :is_aod]
       CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:vacols_id],
                                                                       columns: update_columns }
+
+      increment_vacols_update_count(batch_vacols_ids.count)
     end
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
+
+  def increment_vacols_update_count(count)
+    count.times do
+      DataDogService.increment_counter(
+        app_name: APP_NAME,
+        metric_group: METRIC_GROUP_NAME,
+        metric_name: "vacols_cases_cached"
+      )
+    end
+  end
 
   def increment_appeal_count(count, appeal_type)
     count.times do

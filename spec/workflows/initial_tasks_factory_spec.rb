@@ -73,25 +73,42 @@ describe InitialTasksFactory, :postgres do
                  ])
         end
 
-        before { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
+        subject { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
 
         it "blocks distribution" do
+          subject
           expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
         end
 
         it "requires an informal hearing presentation" do
+          subject
           expect(InformalHearingPresentationTask.find_by(appeal: appeal).status).to eq("assigned")
           expect(InformalHearingPresentationTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
         end
 
         it "creates a tracking task assigned to the VSO" do
+          subject
           expect(appeal.tasks.select { |t| t.is_a?(TrackVeteranTask) }.length).to eq(1)
           expect(appeal.tasks.detect { |t| t.is_a?(TrackVeteranTask) }.assigned_to).to eq(pva)
         end
 
         it "doesn't create a InformalHearingPresentationTask for missing organization" do
+          subject
           expect(InformalHearingPresentationTask.count).to eq(1)
           expect(InformalHearingPresentationTask.first.assigned_to).to eq(pva)
+        end
+
+        context "when a TrackVeteranTask already exists for the appeal and representative" do
+          before do
+            root_task = RootTask.create!(appeal: appeal)
+            TrackVeteranTask.create!(appeal: appeal, parent: root_task, assigned_to: pva)
+          end
+
+          it "does not create a duplicate tracking task" do
+            expect(appeal.tasks.select { |t| t.is_a?(TrackVeteranTask) }.length).to eq(1)
+            subject
+            expect(appeal.reload.tasks.select { |t| t.is_a?(TrackVeteranTask) }.length).to eq(1)
+          end
         end
       end
     end

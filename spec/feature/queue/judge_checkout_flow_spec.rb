@@ -112,13 +112,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
     end
 
     before do
-      FeatureToggle.enable!(:judge_case_review_checkout)
-
       User.authenticate!(user: judge_user)
-    end
-
-    after do
-      FeatureToggle.disable!(:judge_case_review_checkout)
     end
 
     context "where work product is draft decision" do
@@ -332,8 +326,6 @@ RSpec.feature "Judge checkout flow", :all_dbs do
     end
 
     before do
-      FeatureToggle.enable!(:judge_case_review_checkout)
-
       User.authenticate!(user: judge_user)
 
       case_assignment = double(
@@ -345,10 +337,6 @@ RSpec.feature "Judge checkout flow", :all_dbs do
         created_at: created_at.to_date
       )
       allow(VACOLS::CaseAssignment).to receive(:latest_task_for_appeal).with(vacols_id).and_return(case_assignment)
-    end
-
-    after do
-      FeatureToggle.disable!(:judge_case_review_checkout)
     end
 
     scenario "starts dispatch checkout flow" do

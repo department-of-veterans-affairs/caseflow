@@ -120,5 +120,11 @@ describe Person, :postgres do
 
       it { is_expected.to eq(true) }
     end
+
+    context "BGS returns nil" do
+      let(:bgs_person) { {} }
+
+      it { is_expected.to eq(true) }
+    end
   end
 end
