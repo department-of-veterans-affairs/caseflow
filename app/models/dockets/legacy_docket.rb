@@ -28,6 +28,7 @@ class LegacyDocket
     LegacyAppeal.repository.age_of_n_oldest_priority_appeals(num)
   end
 
+  # rubocop:disable Metrics/CognitiveComplexity
   def distribute_priority_appeals(distribution, genpop: "any", limit: 1)
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
       next if preexisting_distributed_case(record["bfkey"], distribution)
@@ -47,11 +48,12 @@ class LegacyDocket
       else
         distributed_case.save!
       end
-
       distributed_case
     end.compact
   end
+  # rubocop:enable Metrics/CognitiveComplexity
 
+  # rubocop:disable Metrics/CognitiveComplexity
   def distribute_nonpriority_appeals(distribution, genpop: "any", range: nil, limit: 1)
     LegacyAppeal.repository.distribute_nonpriority_appeals(distribution.judge, genpop, range, limit).map do |record|
       next if preexisting_distributed_case(record["bfkey"], distribution)
@@ -76,6 +78,7 @@ class LegacyDocket
       distributed_case
     end.compact
   end
+  # rubocop:enable Metrics/CognitiveComplexity
 
   def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1)
     if priority

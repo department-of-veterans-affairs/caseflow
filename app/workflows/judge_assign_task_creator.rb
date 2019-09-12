@@ -4,7 +4,6 @@ class JudgeAssignTaskCreator
   def initialize(appeal:, judge:)
     @appeal = appeal
     @judge = judge
-    @genpop = genpop
   end
 
   def call
@@ -21,7 +20,7 @@ class JudgeAssignTaskCreator
 
   private
 
-  attr_reader :appeal, :judge, :genpop
+  attr_reader :appeal, :judge
 
   def task
     @task ||= JudgeAssignTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: judge)

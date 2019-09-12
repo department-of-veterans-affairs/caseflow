@@ -16,10 +16,6 @@ detectors:
       - HearingRepository#slot_new_hearing
       - TaskSorter#sort_requires_case_norm?
       - Veteran
-  CogntiveComplexity:
-    exclude:
-      - LegacyDocket#distribute_priority_appeals
-      - LegacyDocket#distribute_nonpriority_appeals
   UncommunicativeVariableName:
     exclude:
       - Address
