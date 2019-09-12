@@ -122,14 +122,30 @@ describe TaskSorter, :all_dbs do
 
       context "when sorting by task type" do
         let(:column_name) { Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN }
-        let(:tasks) { Task.where(id: create_list(:ama_colocated_task, 14).pluck(:id)) }
+        let(:tasks) { Task.where(id: create_list(:generic_task, task_types.length).pluck(:id)) }
+
+        let(:task_types) do
+          [
+            AssignHearingDispositionTask,
+            AttorneyTask,
+            InformalHearingPresentationTask,
+            HearingTask,
+            ScheduleHearingColocatedTask,
+            PreRoutingMissingHearingTranscriptsColocatedTask,
+            AttorneyRewriteTask,
+            AttorneyDispatchReturnTask,
+            AttorneyQualityReviewTask,
+            JudgeAssignTask
+          ].shuffle
+        end
 
         before do
           OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
+          tasks.each_with_index { |task, index| task.update!(type: task_types[index].name) }
         end
 
-        it "sorts ColocatedTasks by action and created_at" do
-          expect(subject.pluck(:id)).to eq(tasks.order(:type, :action, :created_at).pluck(:id))
+        it "sorts ColocatedTasks by label" do
+          expect(subject.map(&:label)).to eq(tasks.reload.sort_by(&:label).map(&:label))
         end
       end
 
@@ -196,6 +212,28 @@ describe TaskSorter, :all_dbs do
 
         it "sorts by issue count" do
           expected_order = tasks.sort_by { |task| task.appeal.issues[:request_issues].count }
+          expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+        end
+      end
+
+      context "when sorting by assigned to column" do
+        let(:column_name) { Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN }
+        let(:tasks) { Task.where(id: create_list(:generic_task, 5).pluck(:id)) }
+
+        before do
+          users = []
+          5.times do
+            users.push(create(:user, css_id: Faker::Name.unique.first_name))
+          end
+          tasks.each_with_index do |task, index|
+            user = users[index % 5]
+            task.update!(assigned_to_id: user.id)
+            create(:cached_appeal, appeal_id: task.appeal_id, assignee_label: user.css_id)
+          end
+        end
+
+        it "sorts by assigned to" do
+          expected_order = tasks.sort_by { |task| task.appeal.assigned_to_location }
           expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
         end
       end

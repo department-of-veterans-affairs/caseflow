@@ -16,7 +16,7 @@ FactoryBot.define do
       started_at { rand(1..10).days.ago }
 
       after(:create) do |task|
-        task.update(status: Constants.TASK_STATUSES.in_progress)
+        task.update_columns(status: Constants.TASK_STATUSES.in_progress)
         task.children.update_all(status: Constants.TASK_STATUSES.in_progress)
       end
     end
@@ -27,7 +27,7 @@ FactoryBot.define do
       on_hold_duration { [30, 60, 90].sample }
 
       after(:create) do |task|
-        task.update(status: Constants.TASK_STATUSES.on_hold)
+        task.update_columns(status: Constants.TASK_STATUSES.on_hold)
         task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
       end
     end
@@ -38,7 +38,7 @@ FactoryBot.define do
       on_hold_duration { 10 }
 
       after(:create) do |task|
-        task.update(status: Constants.TASK_STATUSES.on_hold)
+        task.update_columns(status: Constants.TASK_STATUSES.on_hold)
         task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
       end
     end
@@ -50,7 +50,7 @@ FactoryBot.define do
       closed_at { Time.zone.now }
 
       after(:create) do |task|
-        task.update(status: Constants.TASK_STATUSES.completed)
+        task.update_columns(status: Constants.TASK_STATUSES.completed)
         task.children.update_all(status: Constants.TASK_STATUSES.completed)
       end
     end
@@ -61,7 +61,7 @@ FactoryBot.define do
       on_hold_duration { [30, 60, 90].sample }
 
       after(:create) do |task|
-        task.update(status: Constants.TASK_STATUSES.completed, closed_at: 3.weeks.ago)
+        task.update_columns(status: Constants.TASK_STATUSES.completed, closed_at: 3.weeks.ago)
         task.children.update_all(status: Constants.TASK_STATUSES.completed, closed_at: 3.weeks.ago)
       end
     end
@@ -70,7 +70,7 @@ FactoryBot.define do
       closed_at { Time.zone.now }
 
       after(:create) do |task|
-        task.update(status: Constants.TASK_STATUSES.cancelled)
+        task.update_columns(status: Constants.TASK_STATUSES.cancelled)
         task.children.update_all(status: Constants.TASK_STATUSES.cancelled)
       end
     end
@@ -508,18 +508,19 @@ FactoryBot.define do
       assigned_by { nil }
     end
 
+    factory :vacate_motion_mail_task, class: VacateMotionMailTask do
+      type { VacateMotionMailTask.name }
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+      assigned_to { LitigationSupport.singleton }
+    end
+
     factory :congressional_interest_mail_task, class: CongressionalInterestMailTask do
       type { CongressionalInterestMailTask.name }
       appeal { create(:appeal) }
       parent { create(:root_task) }
       assigned_to { MailTeam.singleton }
       assigned_by { nil }
-    end
-
-    factory :vacate_motion_mail_task, class: VacateMotionMailTask do
-      type { VacateMotionMailTask.name }
-      appeal
-      association :parent, factory: :root_task
     end
 
     factory :judge_address_motion_to_vacate_task, class: JudgeAddressMotionToVacateTask do

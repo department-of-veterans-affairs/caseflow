@@ -10,10 +10,12 @@ detectors:
   BooleanParameter:
     exclude:
       - HearingRepository#slot_new_hearing
+      - Veteran
   ControlParameter:
     exclude:
       - HearingRepository#slot_new_hearing
       - TaskSorter#sort_requires_case_norm?
+      - Veteran
   UncommunicativeVariableName:
     exclude:
       - Address
@@ -32,16 +34,19 @@ detectors:
     exclude:
       - Api::ApplicationController#on_external_error
       - Api::ApplicationController#upstream_known_error
+      - ApplicationRecord#as_hash
       - AsyncableJobsReporter
       - ClaimReviewAsyncStatsReporter#as_csv
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
       - Fakes::EndProductStore
+      - Fakes::BGSServiceRecordMaker
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - HearingSerializerBase
-      - VeteranAttributeCacher
       - SyncReviewsJob
       - TaskTimerJob
+      - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
+      - VeteranAttributeCacher
       - WarmBgsCachesJob
   InstanceVariableAssumption:
     exclude:
@@ -49,6 +54,11 @@ detectors:
       - Task
   IrresponsibleModule:
     enabled: false
+  ManualDispatch:
+    exclude:
+      - Api::V3::DecisionReview::IntakeParams
+      - Api::V3::DecisionReview::RequestIssueParams#shape_valid?
+      - Api::V3::DecisionReview::IntakeError#potential_error_code
   MissingSafeMethod:
     enabled: false
   NestedIterators:

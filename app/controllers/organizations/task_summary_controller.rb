@@ -26,6 +26,10 @@ class Organizations::TaskSummaryController < OrganizationsController
       where assigned_to_id = #{organization.id}
         and assigned_to_type = 'Organization'
         and status in ('assigned', 'in_progress')
+      -- Exclude TimedHoldTasks from being available for bulk assignment because they should not have child tasks
+      -- and should only be created as children of NoShowHearingTasks, and those tasks will become available for
+      -- bulk assignment after the timed hold has been completed.
+        and tasks.type <> 'TimedHoldTask'
       group by 2, 3
       order by 2, 1 desc;
     })

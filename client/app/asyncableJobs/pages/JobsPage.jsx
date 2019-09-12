@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
@@ -81,7 +82,7 @@ class AsyncableJobsPage extends React.PureComponent {
           let errorStr = job.error;
 
           if (errorStr) {
-            errorStr = errorStr.replace(/\s.+/, '');
+            errorStr = errorStr.replace(/\s.+/g, '');
           }
 
           return <span className="cf-job-error">{errorStr}</span>;
@@ -118,6 +119,24 @@ class AsyncableJobsPage extends React.PureComponent {
     </div>;
   }
 }
+
+AsyncableJobsPage.propTypes = {
+  asyncableJobKlass: PropTypes.string,
+  fetchedAt: PropTypes.string,
+  jobs: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      klass: PropTypes.string
+    })
+  ),
+  models: PropTypes.arrayOf(PropTypes.string),
+  pagination: PropTypes.shape({
+    current_page: PropTypes.number,
+    page_size: PropTypes.number,
+    total_jobs: PropTypes.number,
+    total_pages: PropTypes.number
+  })
+};
 
 const JobsPage = connect(
   (state) => ({

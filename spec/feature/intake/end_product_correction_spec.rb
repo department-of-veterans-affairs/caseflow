@@ -61,11 +61,17 @@ feature "End Product Correction (EP 930)", :postgres do
     )
   end
 
+  let(:processed_claim_review) do
+    create(claim_review_type.to_sym,
+           :processed,
+           intake: create(:intake),
+           veteran_file_number: veteran.file_number,
+           receipt_date: receipt_date)
+  end
+
   feature "with cleared end product on higher level review" do
     let(:claim_review_type) { "higher_level_review" }
-    let!(:claim_review) do
-      create(claim_review_type.to_sym, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
-    end
+    let!(:claim_review) { processed_claim_review }
     let(:edit_path) { "#{claim_review_type.pluralize}/#{cleared_end_product.claim_id}/edit" }
     let(:ep_code) { "030HLRR" }
 
@@ -99,6 +105,18 @@ feature "End Product Correction (EP 930)", :postgres do
           visit edit_path
           check_adding_nonrating_correction_issue
         end
+
+        it "cancel edit on cleared eps" do
+          visit edit_path
+          click_on "Cancel"
+
+          correct_path = "/higher_level_reviews/#{cleared_end_product.claim_id}/edit/cancel"
+          expect(page).to have_current_path(correct_path)
+          expect(page).to have_content("Edit Canceled")
+          expect(page).to have_content("correct the issues")
+          click_on "correct the issues"
+          expect(page).to have_content("Edit Issues")
+        end
       end
 
       context "when a user adds an unidentified issue" do
@@ -107,14 +125,62 @@ feature "End Product Correction (EP 930)", :postgres do
           check_adding_unidentified_correction_issue
         end
       end
+
+      context "with future decision issues" do
+        let!(:past_claim_review) do
+          create(claim_review_type.to_sym, veteran_file_number: veteran.file_number, receipt_date: receipt_date - 1.day)
+        end
+        let!(:past_decision_issue_from_past_claim) do
+          create(:decision_issue,
+                 decision_review: past_claim_review,
+                 rating_profile_date: receipt_date - 1.day,
+                 end_product_last_action_date: receipt_date - 1.day,
+                 benefit_type: claim_review.benefit_type,
+                 decision_text: "something was decided in the past for past claim review",
+                 participant_id: veteran.participant_id)
+        end
+        let!(:future_decision_issue_from_past_claim) do
+          create(:decision_issue,
+                 decision_review: past_claim_review,
+
+                 rating_profile_date: receipt_date + 1.day,
+                 end_product_last_action_date: receipt_date + 1.day,
+                 benefit_type: claim_review.benefit_type,
+                 decision_text: "something was decided in the future for past claim review",
+                 participant_id: veteran.participant_id)
+        end
+
+        let!(:future_decision_issue) do
+          create(:decision_issue,
+                 decision_review: claim_review,
+
+                 rating_profile_date: receipt_date + 1.day,
+                 end_product_last_action_date: receipt_date + 1.day,
+                 benefit_type: claim_review.benefit_type,
+                 decision_text: "something was decided in the future for this claim review",
+                 participant_id: veteran.participant_id)
+        end
+
+        it "shows decision issues from future from this claim review" do
+          visit edit_path
+          click_intake_add_issue
+          expect(page).to have_content("Left knee granted")
+          expect(page).to have_content("something was decided in the past for past claim review")
+          expect(page).to have_content("something was decided in the future for this claim review")
+        end
+
+        it "does not show decision issues from future from past claim review" do
+          visit edit_path
+          click_intake_add_issue
+          expect(page).to_not have_content("something was decided in the future for past claim review")
+        end
+      end
     end
   end
 
   feature "with cleared end product on supplemental claim" do
     let(:claim_review_type) { "supplemental_claim" }
-    let!(:claim_review) do
-      create(claim_review_type.to_sym, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
-    end
+    let!(:claim_review) { processed_claim_review }
     let(:edit_path) { "#{claim_review_type.pluralize}/#{cleared_end_product.claim_id}/edit" }
     let(:ep_code) { "040SCR" }
 

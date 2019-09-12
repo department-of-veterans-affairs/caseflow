@@ -39,12 +39,18 @@ class Date
 end
 
 class Time
+  # rubocop:disable Naming/MethodName
+  def mdY
+    strftime("%m/%d/%Y")
+  end
+  # rubocop:enable Naming/MethodName
+
   def unix_format
     strftime("%a %b %d %T %Y")
   end
 
   def friendly_full_format
-    strftime("%a %b %e %Y at %H:%M")
+    strftime("%a %b %d %Y at %H:%M")
   end
 end
 

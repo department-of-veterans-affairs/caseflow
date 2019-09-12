@@ -107,7 +107,7 @@ describe EndProductEstablishment, :postgres do
       it "uses the new address for establishing a claim" do
         # first fetch Veteran's info
         expect(veteran.to_vbms_hash).to include(address_line1: "1234 FAKE ST")
-        Fakes::BGSService.veteran_records[veteran.file_number][:address_line1] = "Changed"
+        Fakes::BGSService.edit_veteran_record(veteran.file_number, :address_line1, "Changed")
 
         subject
 

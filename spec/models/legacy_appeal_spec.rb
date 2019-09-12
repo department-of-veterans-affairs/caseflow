@@ -43,6 +43,27 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
+  describe "#veteran_file_number" do
+    context "VACOLS has SSN as filenumber" do
+      let(:ssn) { "123456789" }
+      let(:file_number) { "12345678" }
+      let!(:veteran) { create(:veteran, ssn: ssn, file_number: file_number) }
+      let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
+
+      before do
+        allow(DataDogService).to receive(:increment_counter) { @datadog_called = true }
+      end
+
+      it "prefers the Caseflow Veteran.file_number" do
+        expect(legacy_appeal.veteran_file_number).to eq(file_number)
+        expect(legacy_appeal.vbms_id).to eq("#{ssn}S")
+        expect(legacy_appeal.sanitized_vbms_id).to eq(ssn)
+        expect(legacy_appeal.veteran_file_number).to eq(legacy_appeal.veteran.file_number)
+        expect(@datadog_called).to eq(true)
+      end
+    end
+  end
+
   context "#eligible_for_soc_opt_in? and #matchable_to_request_issue?" do
     let(:soc_eligible_date) { receipt_date - 60.days }
     let(:nod_eligible_date) { receipt_date - 372.days }
@@ -178,6 +199,28 @@ describe LegacyAppeal, :all_dbs do
 
     it "returns all documents associated with the case" do
       expect(subject.size).to eq 2
+    end
+  end
+
+  context "#attorney_case_review" do
+    subject { appeal.attorney_case_review }
+
+    context "when there is a decass record" do
+      let!(:vacols_case) { create(:case, :assigned, user: create(:user)) }
+
+      it "searches through attorney case reviews table" do
+        expect(AttorneyCaseReview).to receive(:find_by)
+        subject
+      end
+    end
+
+    context "when there is no decass record" do
+      let!(:vacols_case) { create(:case) }
+
+      it "does not search through attorney case reviews table" do
+        expect(AttorneyCaseReview).to_not receive(:find_by)
+        subject
+      end
     end
   end
 
@@ -737,7 +780,7 @@ describe LegacyAppeal, :all_dbs do
             subject
 
             expect(vacols_case.reload.bfmpro).to eq("HIS")
-            expect(vacols_case.reload.bfcurloc).to eq("99")
+            expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:closed])
           end
         end
       end
@@ -777,11 +820,11 @@ describe LegacyAppeal, :all_dbs do
       before do
         RequestStore[:current_user] = user
         vacols_case.update_vacols_location!("50")
-        vacols_case.update_vacols_location!("99")
+        vacols_case.update_vacols_location!(LegacyAppeal::LOCATION_CODES[:closed])
         vacols_case.reload
 
         ramp_vacols_case.update_vacols_location!("77")
-        ramp_vacols_case.update_vacols_location!("99")
+        ramp_vacols_case.update_vacols_location!(LegacyAppeal::LOCATION_CODES[:closed])
         ramp_vacols_case.reload
       end
 
@@ -1642,7 +1685,7 @@ describe LegacyAppeal, :all_dbs do
     end
 
     before do
-      Fakes::BGSService.veteran_records = { appeal.sanitized_vbms_id => veteran_record }
+      Fakes::BGSService.store_veteran_record(appeal.sanitized_vbms_id, veteran_record)
     end
 
     it "returns veteran loaded with BGS values" do
@@ -1944,7 +1987,7 @@ describe LegacyAppeal, :all_dbs do
     end
 
     it "Updates a legacy_appeal when an appeal is updated" do
-      appeal.update!(rice_compliance: TRUE)
+      appeal.update!(rice_compliance: true)
       expect(legacy_appeal.attributes).to eq(appeal.attributes)
     end
   end

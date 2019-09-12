@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TranscriptionTask < GenericTask
+class TranscriptionTask < Task
   before_create :check_parent_type
 
   def check_parent_type
