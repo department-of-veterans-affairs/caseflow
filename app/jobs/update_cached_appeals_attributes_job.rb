@@ -71,13 +71,11 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def cache_legacy_appeals
-    # We trigger evaluation of the LegacyAppeal.find(...) by gather the vacols ids immedaitely, avoding lazy double eval
-    # by passing legacy_appeals to both the cache_postgre and cache_vacols data functions.
-    # cache_legacy_appeal_vacols_data expects rows to already exist in the database
-    # evaluate the LegacyAppeal.find(...) function above to make sure both functions are working from the same
-    # set of legacy appeals
+    # Avoid lazy evaluation bugs by immediately plucking all VACOLS IDs. Lazy evaluation of the LegacyAppeal.find(...)
+    # was previously causing this code to insert legacy appeal attributes that corresponded to NULL ID fields.
     legacy_appeals = LegacyAppeal.find(Task.open.where(appeal_type: LegacyAppeal.name).pluck(:appeal_id).uniq)
     all_vacols_ids = legacy_appeals.pluck(:vacols_id).flatten
+
     cache_postgres_data_start = Time.zone.now
     cache_legacy_appeal_postgres_data(legacy_appeals)
     time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
