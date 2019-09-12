@@ -2,6 +2,7 @@
 
 class DecisionReviewsController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
+  before_action :verify_veteran_record_access, only: [:show]
 
   def index
     if business_line
@@ -99,6 +100,14 @@ class DecisionReviewsController < ApplicationController
 
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
+  end
+
+  def verify_veteran_record_access
+    if task.type == VeteranRecordRequest.name && !task.appeal.veteran&.accessible?
+      render(Caseflow::Error::ActionForbiddenError.new(
+        message: COPY::ACCESS_DENIED_TITLE
+      ).serialize_response)
+    end
   end
 
   def allowed_params
