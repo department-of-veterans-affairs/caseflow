@@ -4,20 +4,20 @@ require "support/vacols_database_cleaner"
 require "rails_helper"
 
 RSpec.feature "List Schedule for VSO", :all_dbs do
-	let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["VSO"]) }
+  let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["VSO"]) }
 
   context "Correct buttons are displayed" do
     let!(:hearing) { create(:hearing) }
 
-		scenario "No buttons are visible" do
-			visit "hearings/schedule"
+    scenario "No buttons are visible" do
+      visit "hearings/schedule"
 
-			expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER)
-			expect(page).to_not have_content("Schedule Veterans")
-			expect(page).to_not have_content("Build Schedule")
-			expect(page).to_not have_content("Add Hearing Date")
-		end
-	end
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER)
+      expect(page).to_not have_content("Schedule Veterans")
+      expect(page).to_not have_content("Build Schedule")
+      expect(page).to_not have_content("Add Hearing Date")
+    end
+  end
 
   context "VSO user view" do
     let!(:judge_one) { create(:user, full_name: "Judge One") }

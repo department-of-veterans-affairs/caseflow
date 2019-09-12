@@ -7,16 +7,16 @@ RSpec.feature "List Schedule for Hearing Prep", :all_dbs do
   let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Hearing Prep"]) }
 
   context "Correct buttons are displayed" do
-		let!(:hearing) { create(:hearing) }
+    let!(:hearing) { create(:hearing) }
 
-		scenario "No buttons are visible" do
-			visit "hearings/schedule"
-			expect(page).to have_content(COPY::HEARING_SCHEDULE_JUDGE_DEFAULT_VIEW_PAGE_HEADER)
-			expect(page).to_not have_content("Schedule Veterans")
-			expect(page).to_not have_content("Build Schedule")
-			expect(page).to_not have_content("Add Hearing Date")
-		end
-	end
+    scenario "No buttons are visible" do
+      visit "hearings/schedule"
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_JUDGE_DEFAULT_VIEW_PAGE_HEADER)
+      expect(page).to_not have_content("Schedule Veterans")
+      expect(page).to_not have_content("Build Schedule")
+      expect(page).to_not have_content("Add Hearing Date")
+    end
+  end
 
   context "Judge view" do
     context "No hearing day or hearings assigned to judge" do
@@ -82,7 +82,7 @@ RSpec.feature "List Schedule for Hearing Prep", :all_dbs do
         page.should have_css(".section-hearings-list tbody tr", count: 10)
       end
     end
-	end
+  end
 
   context "Hearing prep deprecation" do
     let!(:current_user) { User.authenticate!(roles: ["Hearing Prep"]) }
