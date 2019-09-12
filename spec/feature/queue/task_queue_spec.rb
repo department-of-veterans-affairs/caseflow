@@ -391,9 +391,6 @@ RSpec.feature "Task queue", :all_dbs do
 
     context "when a VacateMotionMailTask task is routed to Pulac Cerullo" do
       let!(:root_task) { create(:root_task) }
-      let!(:judge_user) { create(:user) }
-      let!(:judge_team) { JudgeTeam.create_for_judge(judge_user) }
-      let!(:judge_task) { create(:ama_judge_decision_review_task, assigned_to: judge_user, parent: root_task) }
 
       it "creates two child tasks: one Pulac Cerullo Task, and a child of that task " \
         "assigned to the first user in the Pulac Cerullo org" do

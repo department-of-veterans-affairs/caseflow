@@ -22,7 +22,7 @@ export const mtvDispositionText = {
 export const mtvVacateTypeOptions = [
   {
     value: 'straight_vacate_and_readjudication',
-    displayText: 'Straight Vacate + Readjudication'
+    displayText: 'Straight Vacate and Readjudication'
   },
   {
     value: 'vacate_and_de_novo',

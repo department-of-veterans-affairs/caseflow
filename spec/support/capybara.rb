@@ -20,7 +20,9 @@ else
 end
 
 Capybara.register_driver(:parallel_sniffybara) do |app|
-  chrome_options = ::Selenium::WebDriver::Chrome::Options.new
+  chrome_options = ::Selenium::WebDriver::Chrome::Options.new(
+    args: %w(--auto-open-devtools-for-tabs --window-size=2400,2400)
+  )
 
   chrome_options.add_preference(:download,
                                 prompt_for_download: false,
@@ -28,6 +30,9 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
 
   chrome_options.add_preference(:browser,
                                 disk_cache_dir: cache_directory)
+
+  chrome_options.add_extension("/Users/jcq/Downloads/React-Developer-Tools_v3.6.0.crx")
+  chrome_options.add_extension("/Users/jcq/Downloads/Redux-DevTools_v2.17.0.crx")
 
   options = {
     port: 51_674,

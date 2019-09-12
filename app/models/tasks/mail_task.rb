@@ -9,7 +9,7 @@
 #   - advance a case on docket (AOD)
 #   - withdrawing an appeal
 
-class MailTask < GenericTask
+class MailTask < Task
   # Skip unique verification for mail tasks since multiple mail tasks of each type can be created.
   def verify_org_task_unique; end
 
