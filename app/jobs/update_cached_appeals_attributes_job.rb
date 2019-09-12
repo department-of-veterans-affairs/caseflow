@@ -10,7 +10,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   APP_NAME = "caseflow_job"
   METRIC_GROUP_NAME = UpdateCachedAppealsAttributesJob.name.underscore
 
-  def perform(_args = {})
+  def perform
     ama_appeals_start = Time.zone.now
     cache_ama_appeals
     time_segment(segment: "cache_ama_appeals", start_time: ama_appeals_start)
