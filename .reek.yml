@@ -38,6 +38,7 @@ detectors:
     exclude:
       - Api::ApplicationController#on_external_error
       - Api::ApplicationController#upstream_known_error
+      - ApplicationRecord#as_hash
       - AsyncableJobsReporter
       - ClaimReviewAsyncStatsReporter#as_csv
       - DataIntegrityChecksJob
