@@ -72,11 +72,11 @@ export const MTVJudgeDisposition = ({
     });
 
     const result = {
-      task_id: task.id,
+      task_id: task.taskId,
       instructions: formattedInstructions,
       assigned_to_id: attorneyId,
       disposition,
-      vacateType
+      vacate_type: vacateType
     };
 
     onSubmit(result);
