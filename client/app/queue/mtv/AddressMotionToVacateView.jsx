@@ -16,7 +16,7 @@ export const AddressMotionToVacateView = (props) => {
   const { selected, options } = taskActionData(props);
 
   const attyOptions = options.map(({ value, label }) => ({
-    label: label + (selected && value === selected.id ? ' (Drafting Atty)' : ''),
+    label: label + (selected && value === selected.id ? ' (Orig. Attorney)' : ''),
     value
   }));
 
