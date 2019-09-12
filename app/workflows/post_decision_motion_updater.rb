@@ -3,13 +3,14 @@
 class PostDecisionMotionUpdater
   include ActiveModel::Model
 
-  attr_reader :assigned_to_id, :task, :disposition, :vacate_type
+  attr_reader :assigned_to_id, :task, :disposition, :vacate_type, :instructions
 
   def initialize(task, params)
     @task = task
     @assigned_to_id = params[:assigned_to_id]
     @disposition = params[:disposition]
     @vacate_type = params[:vacate_type]
+    @instructions = params[:instructions]
   end
 
   def process
@@ -44,7 +45,8 @@ class PostDecisionMotionUpdater
         appeal: task.appeal,
         parent: task,
         assigned_by: task.assigned_to,
-        assigned_to: assigned_to
+        assigned_to: assigned_to,
+        instructions: instructions
       )
       unless new_task.valid?
         errors.messages.merge!(new_task.errors.messages)
