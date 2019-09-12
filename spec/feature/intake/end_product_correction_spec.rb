@@ -105,6 +105,18 @@ feature "End Product Correction (EP 930)", :postgres do
           visit edit_path
           check_adding_nonrating_correction_issue
         end
+
+        it "cancel edit on cleared eps" do
+          visit edit_path
+          click_on "Cancel"
+
+          correct_path = "/higher_level_reviews/#{cleared_end_product.claim_id}/edit/cancel"
+          expect(page).to have_current_path(correct_path)
+          expect(page).to have_content("Edit Canceled")
+          expect(page).to have_content("correct the issues")
+          click_on "correct the issues"
+          expect(page).to have_content("Edit Issues")
+        end
       end
 
       context "when a user adds an unidentified issue" do
