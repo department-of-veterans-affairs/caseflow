@@ -71,14 +71,19 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def cache_legacy_appeals
+    # We trigger evaluation of the LegacyAppeal.find(...) by gather the vacols ids immedaitely, avoding lazy double eval
+    # by passing legacy_appeals to both the cache_postgre and cache_vacols data functions.
+    # cache_legacy_appeal_vacols_data expects rows to already exist in the database
+    # evaluate the LegacyAppeal.find(...) function above to make sure both functions are working from the same
+    # set of legacy appeals
     legacy_appeals = LegacyAppeal.find(Task.open.where(appeal_type: LegacyAppeal.name).pluck(:appeal_id).uniq)
-
+    all_vacols_ids = legacy_appeals.pluck(:vacols_id).flatten
     cache_postgres_data_start = Time.zone.now
     cache_legacy_appeal_postgres_data(legacy_appeals)
     time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
 
     cache_vacols_data_start = Time.zone.now
-    cache_legacy_appeal_vacols_data(legacy_appeals)
+    cache_legacy_appeal_vacols_data(all_vacols_ids)
     time_segment(segment: "cache_legacy_appeal_vacols_data", start_time: cache_vacols_data_start)
 
     increment_appeal_count(legacy_appeals.length, LegacyAppeal.name)
@@ -106,9 +111,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
-  def cache_legacy_appeal_vacols_data(legacy_appeals)
-    all_vacols_ids = legacy_appeals.pluck(:vacols_id).flatten
-
+  def cache_legacy_appeal_vacols_data(all_vacols_ids)
     all_vacols_ids.in_groups_of(BATCH_SIZE, false).each do |batch_vacols_ids|
       vacols_folders = VACOLS::Folder
         .where(ticknum: batch_vacols_ids)
