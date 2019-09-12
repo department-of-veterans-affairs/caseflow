@@ -119,7 +119,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     let!(:root_task) { create(:root_task, appeal: appeal) }
     let!(:orig_atty_task) do
       create(:ama_attorney_task, :completed,
-             assigned_to: drafting_attorney, appeal: appeal, created_at: receipt_date + 1.days, parent: root_task)
+             assigned_to: drafting_attorney, appeal: appeal, created_at: receipt_date + 1.day, parent: root_task)
     end
     let!(:judge_review_task) do
       create(:ama_judge_decision_review_task, :completed,
@@ -128,6 +128,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     let!(:judge_address_motion_to_vacate_task) do
       create(:judge_address_motion_to_vacate_task, appeal: appeal, assigned_to: judge)
     end
+    let!(:atty_option_txt) { "#{drafting_attorney.full_name} (Orig. Attorney)" }
 
     before do
       create(:staff, :judge_role, sdomainid: judge.css_id)
@@ -148,7 +149,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       fill_in("instructions", with: "Judge context/instructions for decision")
 
       # Ensure it has pre-selected judge previously assigned to case
-      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq "#{drafting_attorney.full_name} (Drafting Atty)"
+      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
 
       click_button(text: "Submit")
 
@@ -166,7 +167,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       fill_in("instructions", with: "Judge context/instructions for decision")
 
       # Ensure it has pre-selected judge previously assigned to case
-      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq "#{drafting_attorney.full_name} (Drafting Atty)"
+      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq dropdown_txt
 
       click_button(text: "Submit")
 
@@ -184,7 +185,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       fill_in("hyperlink", with: "https://va.gov/fake-link-to-file")
 
       # Ensure it has pre-selected judge previously assigned to case
-      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq "#{drafting_attorney.full_name} (Drafting Atty)"
+      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq "#{drafting_attorney.full_name} (Orig. Attorney)"
 
       click_button(text: "Submit")
 
