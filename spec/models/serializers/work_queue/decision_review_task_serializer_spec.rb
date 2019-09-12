@@ -33,7 +33,9 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
     end
 
     context "decision review has no claimants with names" do
-      let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number, veteran_is_not_claimant: true) }
+      let(:hlr) do
+        create(:higher_level_review, veteran_file_number: veteran.file_number, veteran_is_not_claimant: true)
+      end
 
       it "returns placeholder 'claimant'" do
         serializable_hash = {
