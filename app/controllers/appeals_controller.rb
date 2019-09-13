@@ -129,8 +129,7 @@ class AppealsController < ApplicationController
 
       # If there are no hearings for the VACOLS id, maybe the case doesn't
       # actually exist? This is SLOW! Only load VACOLS data if the Legacy Appeal
-      # doesn't exist in Caseflow. `LegacyAppeal.find_or_create_by_vacols_id` will
-      # ALWAYS load data from VACOLS.
+      # doesn't exist in Caseflow yet.
       if legacy_hearings.empty?
         LegacyAppeal.find_or_create_by_vacols_id(id)
       end
