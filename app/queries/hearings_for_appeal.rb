@@ -1,4 +1,4 @@
-  # frozen_string_literal: true
+# frozen_string_literal: true
 
 class HearingsForAppeal
   def initialize(appeal_id)
@@ -29,4 +29,4 @@ class HearingsForAppeal
   private
 
   attr_reader :appeal_id
-  end
+end
