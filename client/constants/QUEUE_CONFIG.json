@@ -24,6 +24,7 @@
   "TASK_DUE_DATE_COLUMN": "caseDueDateColumn",
   "TASK_HOLD_LENGTH_COLUMN": "caseDaysOnHoldColumn",
   "TASK_TYPE_COLUMN": "taskColumn",
+  "SUGGESTED_HEARING_LOCATION_COLUMN": "suggestedHearingLocationColumn",
 
   "COLUMNS": {
     "APPEAL_TYPE": {
@@ -104,7 +105,7 @@
     },
     "SUGGESTED_HEARING_LOCATION": {
       "filterable": true,
-      "name": "suggestedHearingLocation",
+      "name": "suggestedHearingLocationColumn",
       "sorting_table": "available_hearing_locations",
       "sorting_columns": ["name"]
     }

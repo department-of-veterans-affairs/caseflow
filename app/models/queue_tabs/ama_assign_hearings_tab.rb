@@ -14,7 +14,7 @@ class AmaAssignHearingsTab < QueueTab
       Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
       Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
       Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
-      Constants.QUEUE_CONFIG.SUGGEST_LOCATION_COLUMN
+      Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN
     ].compact
   end
 end

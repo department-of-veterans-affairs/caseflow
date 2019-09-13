@@ -21,7 +21,7 @@ class AssignHearingsTable extends React.Component {
       return {};
     }
 
-    const endpoint = `/organizations/hearings-management/task_pages?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=${tabName}&filter[]=col%3D${QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN}%26val%3DRO17"`;
+    const endpoint = `/organizations/hearings-management/task_pages?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=${tabName}&filters[]=col=${QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN}%26val=RO17`;
 
     return {
       useTaskPagesApi: true,
@@ -43,10 +43,7 @@ class AssignHearingsTable extends React.Component {
         summary="scheduled-hearings-table"
         slowReRendersAreOk
         bodyStyling={tableNumberStyling}
-<<<<<<< HEAD
         {...this.getPaginationProps()}
-=======
->>>>>>> 3a5b22e1c98c64ca1f74514815ce422541c37af7
       />
     );
   }
@@ -55,13 +52,9 @@ class AssignHearingsTable extends React.Component {
 AssignHearingsTable.propTypes = {
   user: PropTypes.object,
   columns: PropTypes.array,
-<<<<<<< HEAD
   rowObjects: PropTypes.array,
   tabName: PropTypes.string,
   enablePagination: PropTypes.bool
-=======
-  rowObjects: PropTypes.array
->>>>>>> 3a5b22e1c98c64ca1f74514815ce422541c37af7
 };
 
 export default AssignHearingsTable;

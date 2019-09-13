@@ -27,16 +27,7 @@ const NoUpcomingHearingDayMessage = () => (
   />
 );
 
-const NoUpcomingHearingDayMessage = () => (
-  <StatusMessage
-    title={COPY.ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_HEADER}
-    type="alert"
-    messageText={COPY.ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_MESSAGE}
-    wrapInAppSegment={false}
-  />
-);
-
-const AvailableVeteransTable = ({ rows, columns, selectedHearingDay, style = {} }) => {
+const AvailableVeteransTable = ({ rows, columns, selectedHearingDay, tabName, style = {} }) => {
   let removeTimeColumn = _.slice(columns, 0, -1);
 
   if (_.isNil(selectedHearingDay)) {
