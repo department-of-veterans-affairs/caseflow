@@ -27,13 +27,11 @@ class QueueColumn
     {
       name: name,
       filterable: filterable,
-      filter_options: filter_options(tasks)
+      filter_options: filterable ? filter_options(tasks) : []
     }
   end
 
   def filter_options(tasks)
-    return [] unless filterable
-
     case name
     when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
       case_type_options(tasks)
