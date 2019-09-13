@@ -7,23 +7,29 @@ RSpec.feature "Motion to vacate", :all_dbs do
   let!(:lit_support_team) { LitigationSupport.singleton }
   let(:receipt_date) { Time.zone.today - 20 }
   let!(:appeal) { create(:appeal, receipt_date: receipt_date) }
+  let!(:root_task) { create(:root_task, appeal: appeal) }
+  let!(:motions_attorney) { create(:user, full_name: "Motions attorney") }
+  let!(:judge) { create(:user, full_name: "Judge the First", css_id: "JUDGE_1") }
+  let!(:hyperlink) { "https://va.gov/fake-link-to-file" }
+
+  before do
+    create(:staff, :judge_role, sdomainid: judge.css_id)
+  end
 
   describe "Motion to vacate mail task" do
     let!(:mail_user) { create(:user, full_name: "Mail user") }
     let!(:mail_team) { MailTeam.singleton }
     let!(:lit_support_user) { create(:user, full_name: "Lit support user") }
-    let!(:motions_attorney) { create(:user, full_name: "Motions attorney") }
-    let!(:judge1) { create(:user, full_name: "Judge the First", css_id: "JUDGE_1") }
+
     let!(:judge2) { create(:user, full_name: "Judge the Second", css_id: "JUDGE_2") }
     let!(:judge3) { create(:user, full_name: "Judge the Third", css_id: "JUDGE_3") }
-    let!(:root_task) { create(:root_task, appeal: appeal) }
+
     let!(:judge_review_task) do
       create(:ama_judge_decision_review_task, :completed,
              assigned_to: judge2, appeal: appeal, created_at: receipt_date + 3.days, parent: root_task)
     end
 
     before do
-      create(:staff, :judge_role, sdomainid: judge1.css_id)
       create(:staff, :judge_role, sdomainid: judge2.css_id)
       create(:staff, :judge_role, sdomainid: judge3.css_id)
       OrganizationsUser.add_user_to_organization(mail_user, mail_team)
@@ -94,7 +100,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
 
         find("label[for=disposition_denied]").click
-        fill_in("hyperlink", with: "https://va.gov/fake-link-to-file")
+        fill_in("hyperlink", with: hyperlink)
         fill_in("instructions", with: "Attorney context/instructions for judge")
         click_dropdown(text: judge2.display_name)
         click_button(text: "Submit")
@@ -110,13 +116,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
   end
 
   describe "JudgeAddressMotionToVacateTask" do
-    let!(:lit_support_user) { create(:user, full_name: "Lit Support User") }
-    let!(:motions_attorney) { create(:user, full_name: "Motions Attorney") }
-    let!(:judge) { create(:user, full_name: "Judge the First", css_id: "JUDGE_1") }
     let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
     let!(:drafting_attorney) { create(:user, full_name: "Drafty McDrafter") }
 
-    let!(:root_task) { create(:root_task, appeal: appeal) }
     let!(:orig_atty_task) do
       create(:ama_attorney_task, :completed,
              assigned_to: drafting_attorney, appeal: appeal, created_at: receipt_date + 1.day, parent: root_task)
@@ -129,6 +131,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
       create(:judge_address_motion_to_vacate_task, appeal: appeal, assigned_to: judge)
     end
     let!(:atty_option_txt) { "#{drafting_attorney.full_name} (Orig. Attorney)" }
+    let!(:judge_notes) { "Here's why I made my decision..." }
+    
 
     before do
       create(:staff, :judge_role, sdomainid: judge.css_id)
@@ -146,7 +150,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
       find("label[for=disposition_granted]").click
       find("label[for=vacate-type_straight_vacate_and_readjudication]").click
-      fill_in("instructions", with: "Judge context/instructions for decision")
+      fill_in("instructions", with: judge_notes)
 
       # Ensure it has pre-selected judge previously assigned to case
       expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
@@ -162,15 +166,21 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(motion.disposition).to eq("granted")
 
       # Verify new task creation
+      instructions = format_judge_instructions(
+        notes: judge_notes,
+        disposition: "granted",
+        vacate_type: "straight_vacate_and_readjudication"
+      )
       new_task = StraightVacateAndReadjudicationTask.find_by(assigned_to: drafting_attorney)
       expect(new_task).to_not be_nil
+      expect(new_task.instructions.join("")).to eq(instructions)
     end
 
     it "judge grants motion to vacate (vacate & de novo)" do
       address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
       find("label[for=disposition_granted]").click
       find("label[for=vacate-type_vacate_and_de_novo]").click
-      fill_in("instructions", with: "Judge context/instructions for decision")
+      fill_in("instructions", with: judge_notes)
 
       # Ensure it has pre-selected judge previously assigned to case
       expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
@@ -186,15 +196,21 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(motion.disposition).to eq("granted")
 
       # Verify new task creation
+      instructions = format_judge_instructions(
+        notes: judge_notes,
+        disposition: "granted",
+        vacate_type: "vacate_and_de_novo"
+      )
       new_task = VacateAndDeNovoTask.find_by(assigned_to: drafting_attorney)
       expect(new_task).to_not be_nil
+      expect(new_task.instructions.join("")).to eq(instructions)
     end
 
     it "judge denies motion to vacate" do
       address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
       find("label[for=disposition_denied]").click
-      fill_in("instructions", with: "Judge context/instructions for decision")
-      fill_in("hyperlink", with: "https://va.gov/fake-link-to-file")
+      fill_in("instructions", with: judge_notes)
+      fill_in("hyperlink", with: hyperlink)
 
       # Ensure it has pre-selected judge previously assigned to case
       expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
@@ -213,8 +229,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
     it "judge dismisses motion to vacate" do
       address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
       find("label[for=disposition_dismissed]").click
-      fill_in("instructions", with: "Judge context/instructions for decision")
-      fill_in("hyperlink", with: "https://va.gov/fake-link-to-file")
+      fill_in("instructions", with: judge_notes)
+      fill_in("hyperlink", with: hyperlink)
 
       # Ensure it has pre-selected judge previously assigned to case
       expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
@@ -245,5 +261,41 @@ RSpec.feature "Motion to vacate", :all_dbs do
     find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
     find("div", class: "Select-option", text: "Address Motion to Vacate").click
     expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{judge_task.id}/address_motion_to_vacate")
+  end
+
+  def format_judge_instructions(notes:, disposition:, vacate_type:, hyperlink: nil)
+    parts = ["I am proceeding with a #{disposition_text(disposition)}."]
+
+    case disposition
+    when "granted"
+      parts.push("This will be a #{vacate_type_text(vacate_type)}")
+      parts.push(notes)
+    else
+      parts.push(notes)
+      parts.push("\nHere is the hyperlink to the signed denial document")
+      parts.push(hyperlink)
+    end
+
+    parts.join("\n")
+  end
+
+  def disposition_text(disposition)
+    case disposition
+    when "granted"
+      "grant or partial vacature"
+    when "denied"
+      "denial of all issues for vacature"
+    when "dismissed"
+      "dismissal"
+    end
+  end
+
+  def vacate_type_text(vacate_type)
+    case vacate_type
+    when "straight_vacate_and_readjudication"
+      "Straight Vacate and Readjudication"
+    when "vacate_and_de_novo"
+      "Vacate and De Novo"
+    end
   end
 end
