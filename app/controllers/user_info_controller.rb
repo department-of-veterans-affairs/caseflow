@@ -15,9 +15,7 @@ class UserInfoController < ApplicationController
   private
 
   def css_id
-    css_id = params[:css_id]
-
-    unless css_id.is_a?(String) && !css_id.empty? && css_id.match(/[^a-zA-Z0-9_]/).nil?
+    unless /^\w+$/.match?(params[:css_id])
       fail(
         Caseflow::Error::InvalidParameter,
         parameter: "css_id",
@@ -25,13 +23,11 @@ class UserInfoController < ApplicationController
       )
     end
 
-    css_id
+    params[:css_id]
   end
 
   def station_id
-    station_id = params[:station_id]
-
-    unless station_id.is_a?(String) && !station_id.empty? && station_id.match(/[^0-9]/).nil?
+    unless /^[0-9]+$/.match?(params[:station_id])
       fail(
         Caseflow::Error::InvalidParameter,
         parameter: "station_id",
@@ -39,6 +35,6 @@ class UserInfoController < ApplicationController
       )
     end
 
-    station_id
+    params[:station_id]
   end
 end
