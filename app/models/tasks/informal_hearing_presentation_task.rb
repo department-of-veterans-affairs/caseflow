@@ -5,7 +5,7 @@
 # IHPs are a chance for VSOs to make final arguments before a case is sent to the Board.
 # BVA typically (but not always) waits for an IHP to be submitted before making a decision.
 
-class InformalHearingPresentationTask < GenericTask
+class InformalHearingPresentationTask < Task
   # TODO: figure out how long IHP tasks will take to expire,
   # then make them timeable
   # include TimeableTask

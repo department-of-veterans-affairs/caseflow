@@ -5,7 +5,7 @@
 # is completed. When the associated hearing's disposition is set, the appropriate tasks are set as children
 #   (e.g., TranscriptionTask, EvidenceWindowTask, etc.).
 # The task is marked complete when these children tasks are completed.
-class AssignHearingDispositionTask < GenericTask
+class AssignHearingDispositionTask < Task
   validates :parent, presence: true
   before_create :check_parent_type
   delegate :hearing, to: :hearing_task, allow_nil: true

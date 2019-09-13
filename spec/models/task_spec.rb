@@ -657,10 +657,10 @@ describe Task, :all_dbs do
     end
 
     context "the params are incomplete" do
-      let(:params) { { assigned_to: judge, appeal: nil, parent_id: task.id, type: Task.name } }
+      let(:params) { { assigned_to: judge, appeal: nil, parent_id: nil, type: Task.name } }
 
       it "raises an error" do
-        expect { subject }.to raise_error(ActiveRecord::RecordInvalid, /Appeal can't be blank/)
+        expect { subject }.to raise_error(ActiveRecord::RecordNotFound, /Couldn't find Task without an ID/)
       end
     end
   end
