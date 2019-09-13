@@ -66,7 +66,7 @@ class OrganizationQueue extends React.PureComponent {
       taskColumn: taskColumn(tasks, this.filterValuesForColumn(column, config)),
       regionalOfficeColumn: regionalOfficeColumn(tasks, this.filterValuesForColumn(column, config)),
       typeColumn: typeColumn(tasks, this.filterValuesForColumn(column, config), false),
-      assignedToColumn: assignedToColumn(tasks),
+      assignedToColumn: assignedToColumn(tasks, this.filterValuesForColumn(column, config)),
       docketNumberColumn: docketNumberColumn(tasks, this.filterValuesForColumn(column, config), false),
       daysWaitingColumn: daysWaitingColumn(false),
       daysOnHoldColumn: daysOnHoldColumn(false),

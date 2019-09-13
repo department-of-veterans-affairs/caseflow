@@ -43,6 +43,8 @@ class QueueColumn
       regional_office_options(tasks)
     when Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name
       task_type_options(tasks)
+    when Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
+      assignee_options(tasks)
     else
       fail(
         Caseflow::Error::MustImplementInSubclass,
@@ -102,6 +104,14 @@ class QueueColumn
   def task_type_options(tasks)
     tasks.group(:type).count.each_pair.map do |option, count|
       label = self.class.format_option_label(Object.const_get(option).label, count)
+      self.class.filter_option_hash(option, label)
+    end
+  end
+
+  def assignee_options(tasks)
+    tasks.joins(CachedAppeal.left_join_from_tasks_clause)
+      .group(:assignee_label).count.each_pair.map do |option, count|
+      label = self.class.format_option_label(option, count)
       self.class.filter_option_hash(option, label)
     end
   end
