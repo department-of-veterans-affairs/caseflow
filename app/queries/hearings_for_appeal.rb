@@ -8,7 +8,7 @@ class HearingsForAppeal
   # This method is optimized to avoid calling VACOLS for legacy appeals.
   def held_hearings
     if Appeal::UUID_REGEX.match?(appeal_id)
-      Appeal.find_by_uuid!(id).hearings.where(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
+      Appeal.find_by_uuid!(appeal_id).hearings.where(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
     else
       # Assumes that an appeal exists in VACOLS if there are hearings
       # for it.
