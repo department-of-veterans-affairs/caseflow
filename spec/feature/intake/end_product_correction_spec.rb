@@ -112,7 +112,7 @@ feature "End Product Correction (EP 930)", :postgres do
           visit edit_path
           click_on "Cancel"
 
-          correct_path = "/higher_level_reviews/#{cleared_end_product.claim_id}/edit/cancel"
+          correct_path = "/higher_level_reviews/#{reference_id}/edit/cancel"
           expect(page).to have_current_path(correct_path)
           expect(page).to have_content("Edit Canceled")
           expect(page).to have_content("correct the issues")
