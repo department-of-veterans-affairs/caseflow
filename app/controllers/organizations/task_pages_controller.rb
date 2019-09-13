@@ -16,21 +16,16 @@ class Organizations::TaskPagesController < OrganizationsController
   #   "tab"=>"on_hold",
   #   "sort_by"=>"case_details_link",
   #   "order"=>"desc",
-  #   "filter"=>["col=docket_type&val=legacy", "col=task_action&val=translation"],
+  #   "filter"=>[
+  #     "col=docketNumberColumn&val=legacy,evidence_submission",
+  #     "col=taskColumn&val=Unaccredited rep,Extension"
+  #   ],
   #   "page"=>"3"
   # }>
 
   def index
-    tasks = TaskPager.new(
-      assignee: organization,
-      tab_name: params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM.to_sym],
-      page: params[Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM.to_sym],
-      sort_order: params[Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM.to_sym],
-      sort_by: params[Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM.to_sym]
-    ).paged_tasks
-
     render json: {
-      tasks: json_tasks(tasks)
+      tasks: json_tasks(paged_tasks)
     }
   end
 
@@ -38,6 +33,17 @@ class Organizations::TaskPagesController < OrganizationsController
 
   def organization_url
     params[:organization_url]
+  end
+
+  def paged_tasks
+    TaskPager.new(
+      assignee: organization,
+      tab_name: params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM.to_sym],
+      page: params[Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM.to_sym],
+      sort_order: params[Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM.to_sym],
+      sort_by: params[Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM.to_sym],
+      filters: params[Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM.to_sym]
+    ).paged_tasks
   end
 
   def json_tasks(tasks)

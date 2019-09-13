@@ -63,11 +63,17 @@ feature "End Product Correction (EP 930)", :postgres do
     )
   end
 
+  let(:processed_claim_review) do
+    create(claim_review_type.to_sym,
+           :processed,
+           intake: create(:intake),
+           veteran_file_number: veteran.file_number,
+           receipt_date: receipt_date)
+  end
+
   feature "with cleared end product on higher level review" do
     let(:claim_review_type) { "higher_level_review" }
-    let!(:claim_review) do
-      create(claim_review_type.to_sym, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
-    end
+    let!(:claim_review) { processed_claim_review }
     let(:edit_path) { "#{claim_review_type.pluralize}/#{reference_id}/edit" }
     let(:ep_code) { "030HLRR" }
 
@@ -100,6 +106,18 @@ feature "End Product Correction (EP 930)", :postgres do
         it "creates a correction issue and EP" do
           visit edit_path
           check_adding_nonrating_correction_issue
+        end
+
+        it "cancel edit on cleared eps" do
+          visit edit_path
+          click_on "Cancel"
+
+          correct_path = "/higher_level_reviews/#{cleared_end_product.claim_id}/edit/cancel"
+          expect(page).to have_current_path(correct_path)
+          expect(page).to have_content("Edit Canceled")
+          expect(page).to have_content("correct the issues")
+          click_on "correct the issues"
+          expect(page).to have_content("Edit Issues")
         end
       end
 
@@ -164,9 +182,7 @@ feature "End Product Correction (EP 930)", :postgres do
 
   feature "with cleared end product on supplemental claim" do
     let(:claim_review_type) { "supplemental_claim" }
-    let!(:claim_review) do
-      create(claim_review_type.to_sym, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
-    end
+    let!(:claim_review) { processed_claim_review }
     let(:edit_path) { "#{claim_review_type.pluralize}/#{reference_id}/edit" }
     let(:ep_code) { "040SCR" }
 

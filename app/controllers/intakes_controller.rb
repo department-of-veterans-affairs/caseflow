@@ -71,7 +71,7 @@ class IntakesController < ApplicationController
 
   def log_error(error)
     Raven.capture_exception(error, extra: { error_uuid: error_uuid })
-    Rails.logger.error("Error UUID #{error_uuid} : #{error}")
+    Rails.logger.error("Error UUID #{error_uuid} : #{error}\n" + error.backtrace.join("\n"))
   end
 
   helper_method :index_props

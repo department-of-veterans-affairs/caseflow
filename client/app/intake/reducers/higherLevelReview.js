@@ -73,6 +73,15 @@ const updateFromServerIntake = (state, serverIntake) => {
     relationships: {
       $set: formatRelationships(serverIntake.relationships)
     },
+    intakeUser: {
+      $set: serverIntake.intakeUser
+    },
+    asyncJobUrl: {
+      $set: serverIntake.asyncJobUrl
+    },
+    processedAt: {
+      $set: serverIntake.processedAt
+    },
     veteranValid: {
       $set: serverIntake.veteranValid
     },
@@ -116,6 +125,9 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     isReviewed: false,
     isComplete: false,
     issueCount: 0,
+    intakeUser: null,
+    processedAt: null,
+    asyncJobUrl: null,
     nonRatingRequestIssues: { },
     contestableIssues: { },
     reviewIntakeError: null,
