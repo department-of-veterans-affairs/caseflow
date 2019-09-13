@@ -16,15 +16,11 @@ import PropTypes from 'prop-types';
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
 import { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn, regionalOfficeColumn, daysWaitingColumn,
-         issueCountColumn, typeColumn, assignedToColumn, readerLinkColumn, daysOnHoldColumn } from './TaskTableColumns';
+  issueCountColumn, typeColumn, assignedToColumn, readerLinkColumn, daysOnHoldColumn } from './TaskTableColumns';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
-import { hasDASRecord, collapseColumn } from '../utils';
+import { hasDASRecord } from '../utils';
 import { DateString } from '../../util/DateUtil';
-import {
-  CATEGORIES,
-  redText
-} from '../constants';
 import COPY from '../../../COPY.json';
 import DOCKET_NAME_FILTERS from '../../../constants/DOCKET_NAME_FILTERS.json';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';

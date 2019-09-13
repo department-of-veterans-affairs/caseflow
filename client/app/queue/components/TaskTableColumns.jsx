@@ -2,7 +2,6 @@ import * as React from 'react';
 import moment from 'moment';
 import _ from 'lodash';
 
-
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import HearingBadge from './HearingBadge';
 import CaseDetailsLink from '../CaseDetailsLink';
@@ -10,18 +9,18 @@ import ReaderLink from '../ReaderLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 
-
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, actionNameOfTask, regionalOfficeCity,
-         renderAppealType } from '../utils';
+  renderAppealType } from '../utils';
 
 import COPY from '../../../COPY.json';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
 import DOCKET_NAME_FILTERS from '../../../constants/DOCKET_NAME_FILTERS.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
-
-
-
+import {
+  CATEGORIES,
+  redText
+} from '../constants';
 
 export const docketNumberColumn = (tasks, filterOptions, requireDasRecord) => {
   return {
