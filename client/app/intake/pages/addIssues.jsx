@@ -93,9 +93,8 @@ class AddIssuesPage extends React.Component {
     this.props.setIssueWithdrawalDate(value);
   };
 
-  willRedirect() {
-    const { intakeForms, formType, featureToggles } = this.props;
-    const intakeData = intakeForms[formType];
+  willRedirect(intakeData) {
+    const { formType, featureToggles } = this.props;
     const { correctClaimReviews } = featureToggles;
     const hasClearedEp = intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp;
     const editableDta = correctClaimReviews && hasClearedEp;
@@ -108,10 +107,7 @@ class AddIssuesPage extends React.Component {
     );
   }
 
-  redirect() {
-    const { intakeForms, formType } = this.props;
-    const intakeData = intakeForms[formType];
-
+  redirect(intakeData) {
     if (!formType) {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     } else if (intakeData.isDtaError) {
@@ -146,8 +142,8 @@ class AddIssuesPage extends React.Component {
     const intakeData = intakeForms[formType];
     const { useAmaActivationDate } = featureToggles;
 
-    if (this.willRedirect()) {
-      return this.redirect();
+    if (this.willRedirect(intakeData)) {
+      return this.redirect(intakeData);
     }
 
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
@@ -352,7 +348,7 @@ AddIssuesPage.propTypes = {
   correctIssue: PropTypes.func,
   editPage: PropTypes.bool,
   featureToggles: PropTypes.object,
-  formType: PropTypes.oneOf(_.map(FORM_TYPES, 'key')).isRequired,
+  formType: PropTypes.oneOf(_.map(FORM_TYPES, 'key')),
   intakeForms: PropTypes.object,
   removeIssue: PropTypes.func,
   setIssueWithdrawalDate: PropTypes.func,
@@ -365,7 +361,7 @@ AddIssuesPage.propTypes = {
   toggleUnidentifiedIssuesModal: PropTypes.func,
   toggleUntimelyExemptionModal: PropTypes.func,
   undoCorrection: PropTypes.func,
-  veteran: PropTypes.object.isRequired,
+  veteran: PropTypes.object,
   withdrawIssue: PropTypes.func
 };
 
