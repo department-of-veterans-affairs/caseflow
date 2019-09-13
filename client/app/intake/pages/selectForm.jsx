@@ -35,8 +35,6 @@ class SelectForm extends React.PureComponent {
       return <Redirect to={PAGE_PATHS.REVIEW} />;
     }
 
-    console.log(this.props);
-
     return <div>
       <h1>Welcome to Caseflow Intake!</h1>
 
