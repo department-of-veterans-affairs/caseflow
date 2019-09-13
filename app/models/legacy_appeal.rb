@@ -833,9 +833,12 @@ class LegacyAppeal < ApplicationRecord
     def find_or_create_by_vacols_id(vacols_id)
       appeal = find_or_initialize_by(vacols_id: vacols_id)
 
-      fail ActiveRecord::RecordNotFound unless appeal.check_and_load_vacols_data!
+      if appeal.new_record?
+        fail ActiveRecord::RecordNotFound unless appeal.check_and_load_vacols_data!
 
-      appeal.save
+        appeal.save
+      end
+
       appeal
     end
 
