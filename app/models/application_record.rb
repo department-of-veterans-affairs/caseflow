@@ -9,7 +9,9 @@ class ApplicationRecord < ActiveRecord::Base
     as_json.tap do |rec|
       rec.transform_values! do |value|
         if value.is_a?(Time) || value.is_a?(DateTime)
-          value.utc.strftime("%Y-%m-%d %H:%M:%S.") + value.utc.strftime(".%6N").to_f.to_s.tr("0.", "")
+          ymdhms = dt_utc.strftime("%Y-%m-%d %H:%M:%S")
+          subseconds = value.utc.strftime(".%6N").to_f.to_s.tr("0.", "")
+          "#{ymdhms}.#{subseconds}"
         else
           value.as_json
         end
