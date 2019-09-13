@@ -22,7 +22,6 @@ import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { hasDASRecord } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import COPY from '../../../COPY.json';
-import DOCKET_NAME_FILTERS from '../../../constants/DOCKET_NAME_FILTERS.json';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
 
 export class TaskTableUnconnected extends React.PureComponent {
