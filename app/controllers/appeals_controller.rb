@@ -70,14 +70,7 @@ class AppealsController < ApplicationController
 
     render json:
       if most_recently_held_hearing
-        {
-          held_by: most_recently_held_hearing.judge.present? ? most_recently_held_hearing.judge.full_name : "",
-          viewed_by_judge: !most_recently_held_hearing.hearing_views.empty?,
-          date: most_recently_held_hearing.scheduled_for,
-          type: most_recently_held_hearing.readable_request_type,
-          external_id: most_recently_held_hearing.external_id,
-          disposition: most_recently_held_hearing.disposition
-        }
+        AppealHearingSerializer::new(most_recently_held_hearing).serializable_hash[:data][:attributes]
       else
         {}
       end
