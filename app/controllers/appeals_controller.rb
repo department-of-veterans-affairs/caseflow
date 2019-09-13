@@ -75,10 +75,12 @@ class AppealsController < ApplicationController
                  legacy_hearings = HearingRepository.hearings_for_appeal(id)
 
                  # If there are no hearings for the VACOLS id, maybe the case doesn't
-                 # actually exist.
-                 fail ActiveRecord::RecordNotFound if legacy_hearings.empty? && (
-                   !LegacyAppeal.exists?(vacols_id: id) ||  !VACOLS::Case.exists?(id)
-                 )
+                 # actually exist? This is SLOW! Only load VACOLS data if the Legacy Appeal
+                 # doesn't exist in Caseflow. `LegacyAppeal.find_or_create_by_vacols_id` will
+                 # ALWAYS load data from VACOLS.
+                 if legacy_hearings.empty?
+                   LegacyAppeal.find_or_create_by_vacols_id(id) unless LegacyAppeal.exists?(id)
+                 end
 
                  legacy_hearings
                end
