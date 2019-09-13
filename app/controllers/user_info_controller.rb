@@ -17,11 +17,11 @@ class UserInfoController < ApplicationController
   def css_id
     css_id = params[:css_id]
 
-    unless css_id.is_a?(String) && !css_id.empty? && css_id.match(/[^a-zA-Z]/).nil?
+    unless css_id.is_a?(String) && !css_id.empty? && css_id.match(/[^a-zA-Z0-9_]/).nil?
       fail(
         Caseflow::Error::InvalidParameter,
         parameter: "css_id",
-        message: "css_id must contain only 1 or more letters"
+        message: "css_id must contain only 1 or more number and letter characters"
       )
     end
 
