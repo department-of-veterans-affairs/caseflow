@@ -23,7 +23,8 @@ class WorkQueue::DecisionReviewTaskSerializer
   def self.claimant_relationship(object)
     return "self" unless decision_review(object).veteran_is_not_claimant
 
-    claimant_with_name(object).try(:relationship) || "claimant"
+    claimant = claimant_with_name(object)
+    claimant.try(:relationship).present? ? claimant.relationship : "claimant"
   end
 
   attribute :claimant do |object|
