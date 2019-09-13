@@ -3,6 +3,17 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
+DISPOSITION_TEXT = {
+  granted: "grant or partial vacature",
+  denied: "denial of all issues for vacature",
+  dismissed: "dismissal"
+}.freeze
+
+VACATE_TYPE_TEXT = {
+  straight_vacate_and_readjudication: "Straight Vacate and Readjudication",
+  vacate_and_de_novo: "Vacate and De Novo"
+}.freeze
+
 RSpec.feature "Motion to vacate", :all_dbs do
   let!(:lit_support_team) { LitigationSupport.singleton }
   let(:receipt_date) { Time.zone.today - 20 }
@@ -261,37 +272,17 @@ RSpec.feature "Motion to vacate", :all_dbs do
     find("div", class: "Select-option", text: "Address Motion to Vacate").click
     expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{judge_task.id}/address_motion_to_vacate")
   end
+end
 
-  def format_judge_instructions(notes:, disposition:, vacate_type:, hyperlink: nil)
-    parts = ["I am proceeding with a #{disposition_text(disposition)}."]
+def format_judge_instructions(notes:, disposition:, vacate_type:, hyperlink: nil)
+  parts = ["I am proceeding with a #{DISPOSITION_TEXT[disposition.to_sym]}."]
 
-    parts += case disposition
-             when "granted"
-               ["This will be a #{vacate_type_text(vacate_type)}", notes]
-             else
-               [notes, "\nHere is the hyperlink to the signed denial document", hyperlink]
-             end
+  parts += case disposition
+           when "granted"
+             ["This will be a #{VACATE_TYPE_TEXT[vacate_type.to_sym]}", notes]
+           else
+             [notes, "\nHere is the hyperlink to the signed denial document", hyperlink]
+           end
 
-    parts.join("\n")
-  end
-
-  def disposition_text(disposition)
-    case disposition
-    when "granted"
-      "grant or partial vacature"
-    when "denied"
-      "denial of all issues for vacature"
-    when "dismissed"
-      "dismissal"
-    end
-  end
-
-  def vacate_type_text(vacate_type)
-    case vacate_type
-    when "straight_vacate_and_readjudication"
-      "Straight Vacate and Readjudication"
-    when "vacate_and_de_novo"
-      "Vacate and De Novo"
-    end
-  end
+  parts.join("\n")
 end
