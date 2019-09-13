@@ -35,12 +35,15 @@ class SelectForm extends React.PureComponent {
       return <Redirect to={PAGE_PATHS.REVIEW} />;
     }
 
+    console.log(this.props);
+
     return <div>
       <h1>Welcome to Caseflow Intake!</h1>
 
       { inboxFeature && unreadMessages && <Alert
         title="Intake Jobs"
-        type="warning">You have <a href="/inbox">unread messages</a>.
+        type="warning"
+        lowerMargin>You have <a href="/inbox">unread messages</a>.
       </Alert>
       }
 

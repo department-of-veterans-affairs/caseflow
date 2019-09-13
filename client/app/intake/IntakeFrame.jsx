@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import NavigationBar from '../components/NavigationBar';
 import CaseSearchLink from '../components/CaseSearchLink';
+import InboxLink from '../components/InboxLink';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { BrowserRouter, Route } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
@@ -36,6 +37,12 @@ class IntakeFrame extends React.PureComponent {
     const topMessage = this.props.veteran.fileNumber ?
       `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
 
+    let rightNavElements = <CaseSearchLink newWindow />;
+
+    if (this.props.featureToggles.inbox) {
+      rightNavElements = <span><InboxLink youveGotMail={this.props.unreadMessages} /><CaseSearchLink newWindow /></span>;
+    }
+
     return <Router basename="/intake" {...this.props.routerTestProps}>
       <div>
         { this.props.cancelModalVisible && <CancelIntakeModal
@@ -48,7 +55,7 @@ class IntakeFrame extends React.PureComponent {
             accentColor: LOGO_COLORS.INTAKE.ACCENT,
             overlapColor: LOGO_COLORS.INTAKE.OVERLAP
           }}
-          rightNavElement={<CaseSearchLink newWindow />}
+          rightNavElement={rightNavElements}
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
           topMessage={topMessage}
@@ -71,7 +78,7 @@ class IntakeFrame extends React.PureComponent {
                   exact
                   path={PAGE_PATHS.BEGIN}
                   title="Select Form | Caseflow Intake"
-                  render={() => <SelectFormPage featureToggles={this.props.featureToggles} />} />
+                  render={() => <SelectFormPage {...this.props} />} />
                 <PageRoute
                   exact
                   path={PAGE_PATHS.SEARCH}
@@ -134,6 +141,7 @@ class IntakeFrame extends React.PureComponent {
 export default connect(
   ({ intake }) => ({
     intakeId: intake.id,
+    unreadMessages: intake.unreadMessages,
     veteran: intake.veteran,
     cancelModalVisible: intake.cancelModalVisible,
     cancelIntakeRequestStatus: intake.requestStatus.cancel

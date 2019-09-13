@@ -84,6 +84,7 @@ class IntakesController < ApplicationController
       feedbackUrl: feedback_url,
       buildDate: build_date,
       featureToggles: {
+        inbox: FeatureToggle.enabled?(:inbox, user: current_user),
         useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
         rampIntake: FeatureToggle.enabled?(:ramp_intake, user: current_user),
         editContentionText: FeatureToggle.enabled?(:edit_contention_text, user: current_user)
@@ -109,8 +110,14 @@ class IntakesController < ApplicationController
     render "out_of_service", layout: "application" if Rails.cache.read("intake_out_of_service")
   end
 
+  def unread_messages?
+    current_user.messages.unread.count > 0
+  end
+
   def intake_ui_hash
-    intake_in_progress ? intake_in_progress.ui_hash : {}
+    return intake_in_progress.ui_hash.merge(unread_messages: unread_messages?) if intake_in_progress
+
+    { unread_messages: unread_messages? }
   end
 
   # TODO: This could be moved to the model.
