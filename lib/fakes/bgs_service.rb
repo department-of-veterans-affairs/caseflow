@@ -323,9 +323,11 @@ class Fakes::BGSService
   end
 
   def get_participant_id_for_user(user)
-    return VSO_PARTICIPANT_ID if user.css_id =~ /.*_VSO/
+    get_participant_id_for_css_id_and_station_id(user.css_id, user.station_id)
+  end
 
-    DEFAULT_PARTICIPANT_ID
+  def get_participant_id_for_css_id_and_station_id(css_id, _station_id)
+    /.*_VSO/.match?(css_id) ? VSO_PARTICIPANT_ID : DEFAULT_PARTICIPANT_ID
   end
 
   # rubocop:disable Metrics/MethodLength
