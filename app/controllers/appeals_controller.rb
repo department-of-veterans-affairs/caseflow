@@ -4,7 +4,14 @@ class AppealsController < ApplicationController
   before_action :react_routed
   before_action :set_application, only: [:document_count, :power_of_attorney]
   # Only whitelist endpoints VSOs should have access to.
-  skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran, :hearings]
+  skip_before_action :deny_vso_access, only: [
+    :index,
+    :power_of_attorney,
+    :show_case_list,
+    :show,
+    :veteran,
+    :most_recent_hearing
+  ]
 
   def index
     respond_to do |format|
@@ -56,7 +63,7 @@ class AppealsController < ApplicationController
     }
   end
 
-  def hearings
+  def most_recent_hearing
     log_hearings_request
 
     most_recently_held_hearing = appeal.hearings
