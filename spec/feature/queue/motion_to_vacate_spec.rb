@@ -14,6 +14,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
   before do
     create(:staff, :judge_role, sdomainid: judge.css_id)
+    OrganizationsUser.add_user_to_organization(motions_attorney, lit_support_team)
   end
 
   describe "Motion to vacate mail task" do
@@ -34,7 +35,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
       create(:staff, :judge_role, sdomainid: judge3.css_id)
       OrganizationsUser.add_user_to_organization(mail_user, mail_team)
       OrganizationsUser.add_user_to_organization(lit_support_user, lit_support_team)
-      OrganizationsUser.add_user_to_organization(motions_attorney, lit_support_team)
       FeatureToggle.enable!(:review_motion_to_vacate)
     end
 
@@ -132,7 +132,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
     let!(:atty_option_txt) { "#{drafting_attorney.full_name} (Orig. Attorney)" }
     let!(:judge_notes) { "Here's why I made my decision..." }
-    
 
     before do
       create(:staff, :judge_role, sdomainid: judge.css_id)
