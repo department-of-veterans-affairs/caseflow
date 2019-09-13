@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Hearing worksheet for Hearing Prep", :all_dbs, focus: true do
+RSpec.feature "Hearing worksheet for Hearing Prep", :all_dbs do
   let!(:current_user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let!(:legacy_hearing) { create(:legacy_hearing, user: current_user) }
 
