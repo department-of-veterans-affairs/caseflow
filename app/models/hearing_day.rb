@@ -82,7 +82,7 @@ class HearingDay < ApplicationRecord
   end
 
   def to_hash
-    ::HearingDaySerializer.new(self).serializable_hash[:data]
+    ::HearingDaySerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def hearing_day_full?
