@@ -125,7 +125,7 @@ class AppealsController < ApplicationController
       # doesn't exist in Caseflow. `LegacyAppeal.find_or_create_by_vacols_id` will
       # ALWAYS load data from VACOLS.
       if legacy_hearings.empty?
-        LegacyAppeal.find_or_create_by_vacols_id(id)
+        LegacyAppeal.find_or_create_by_vacols_id(id) unless LegacyAppeal.exists?(id)
       end
 
       legacy_hearings.select do |hearing|
