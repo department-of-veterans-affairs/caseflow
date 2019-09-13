@@ -66,11 +66,13 @@ class AppealsController < ApplicationController
   def most_recent_hearing
     log_hearings_request
 
-    most_recently_held_hearing = held_hearings_for_appeal.max_by(&:scheduled_for)
+    most_recently_held_hearing = HearingsForAppeal.new(url_appeal_uuid)
+      .held_hearings
+      .max_by(&:scheduled_for)
 
     render json:
       if most_recently_held_hearing
-        AppealHearingSerializer::new(most_recently_held_hearing).serializable_hash[:data][:attributes]
+        AppealHearingSerializer.new(most_recently_held_hearing).serializable_hash[:data][:attributes]
       else
         {}
       end
@@ -107,31 +109,6 @@ class AppealsController < ApplicationController
 
   def appeal
     @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
-  end
-
-  # This method is optimized to avoid calling VACOLS for legacy appeals.
-  def held_hearings_for_appeal
-    id = url_appeal_uuid
-
-    if Appeal::UUID_REGEX.match?(id)
-      Appeal.find_by_uuid!(id).hearings.where(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
-    else
-      # Assumes that an appeal exists in VACOLS if there are hearings
-      # for it.
-      legacy_hearings = HearingRepository.hearings_for_appeal(id)
-
-      # If there are no hearings for the VACOLS id, maybe the case doesn't
-      # actually exist? This is SLOW! Only load VACOLS data if the Legacy Appeal
-      # doesn't exist in Caseflow. `LegacyAppeal.find_or_create_by_vacols_id` will
-      # ALWAYS load data from VACOLS.
-      if legacy_hearings.empty?
-        LegacyAppeal.find_or_create_by_vacols_id(id) unless LegacyAppeal.exists?(id)
-      end
-
-      legacy_hearings.select do |hearing|
-        hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held
-      end
-    end
   end
 
   def url_appeal_uuid

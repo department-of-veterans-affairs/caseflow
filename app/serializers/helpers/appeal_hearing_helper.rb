@@ -21,7 +21,7 @@ module Helpers::AppealHearingHelper
 
   def hearings(appeal)
     appeal.hearings.map do |hearing|
-      AppealHearingSerializer::new(hearing).serializable_hash[:data][:attributes]
+      AppealHearingSerializer.new(hearing).serializable_hash[:data][:attributes]
     end
   end
 end
