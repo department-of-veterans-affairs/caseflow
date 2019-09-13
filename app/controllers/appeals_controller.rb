@@ -134,8 +134,8 @@ class AppealsController < ApplicationController
         LegacyAppeal.find_or_create_by_vacols_id(id)
       end
 
-      legacy_hearings.select do
-        |hearing| hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held
+      legacy_hearings.select do |hearing|
+        hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held
       end
     end
   end
