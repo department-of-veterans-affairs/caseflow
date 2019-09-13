@@ -96,7 +96,7 @@ class AddIssuesPage extends React.Component {
   willRedirect(intakeData) {
     const { formType, featureToggles } = this.props;
     const { correctClaimReviews } = featureToggles;
-    const hasClearedEp = intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp;
+    const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
     const editableDta = correctClaimReviews && hasClearedEp;
 
     return (
@@ -108,6 +108,8 @@ class AddIssuesPage extends React.Component {
   }
 
   redirect(intakeData) {
+    const { formType } = this.props;
+
     if (!formType) {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     } else if (intakeData.isDtaError) {
@@ -138,7 +140,6 @@ class AddIssuesPage extends React.Component {
 
   render() {
     const { intakeForms, formType, veteran, featureToggles, editPage, addingIssue } = this.props;
-
     const intakeData = intakeForms[formType];
     const { useAmaActivationDate } = featureToggles;
 
