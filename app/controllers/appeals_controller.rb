@@ -66,7 +66,24 @@ class AppealsController < ApplicationController
   def most_recent_hearing
     log_hearings_request
 
-    most_recently_held_hearing = appeal.hearings
+    id = url_appeal_uuid
+    hearings = if Appeal::UUID_REGEX.match?(id)
+                 Appeal.find_by_uuid!(id).hearings
+               else
+                 # Assumes that an appeal exists in VACOLS if there are hearings
+                 # for it.
+                 legacy_hearings = HearingRepository.hearings_for_appeal(id)
+
+                 # If there are no hearings for the VACOLS id, maybe the case doesn't
+                 # actually exist.
+                 fail ActiveRecord::RecordNotFound if legacy_hearings.empty? && (
+                   !LegacyAppeal.exists?(vacols_id: id) ||  !VACOLS::Case.exists?(id)
+                 )
+
+                 legacy_hearings
+               end
+
+    most_recently_held_hearing = hearings
       .select { |hearing| hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held }
       .max_by(&:scheduled_for)
 
