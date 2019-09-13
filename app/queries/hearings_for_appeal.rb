@@ -24,8 +24,9 @@ class HearingsForAppeal
         hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held
       end
     end
+  end
 
-    private
+  private
 
-    attr_reader :appeal_id
+  attr_reader :appeal_id
   end
