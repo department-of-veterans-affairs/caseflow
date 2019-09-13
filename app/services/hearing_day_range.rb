@@ -139,7 +139,7 @@ class HearingDayRange
 
     def hearing_day_hash_with_hearings(hearing_day, scheduled_hearings, current_user_id)
       hearing_day.to_hash.merge(
-        "hearings" => scheduled_hearings.map { |hearing| hearing.quick_to_hash(current_user_id) }
+        hearings: scheduled_hearings.map { |hearing| hearing.quick_to_hash(current_user_id) }
       )
     end
   end

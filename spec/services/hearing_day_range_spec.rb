@@ -64,9 +64,9 @@ describe HearingDayRange, :all_dbs do
 
         it "returns nested hash structure" do
           expect(subject.size).to eq 1
-          expect(subject[0]["hearings"].size).to eq 1
-          expect(subject[0]["readable_request_type"]).to eq Hearing::HEARING_TYPES[:V]
-          expect(subject[0]["hearings"][0][:appeal_id]).to eq appeal.id
+          expect(subject[0][:hearings].size).to eq 1
+          expect(subject[0][:readable_request_type]).to eq Hearing::HEARING_TYPES[:V]
+          expect(subject[0][:hearings][0][:appeal_id]).to eq appeal.id
         end
       end
     end
@@ -115,10 +115,10 @@ describe HearingDayRange, :all_dbs do
       context "get video hearings neither postponed or cancelled" do
         it "returns nested hash structure" do
           expect(subject.size).to eq 1
-          expect(subject[0]["hearings"].size).to eq 1
-          expect(subject[0]["readable_request_type"]).to eq Hearing::HEARING_TYPES[:V]
-          expect(subject[0]["hearings"][0][:appeal_id]).to eq appeal.id
-          expect(subject[0]["hearings"][0][:hearing_disp]).to eq nil
+          expect(subject[0][:hearings].size).to eq 1
+          expect(subject[0][:readable_request_type]).to eq Hearing::HEARING_TYPES[:V]
+          expect(subject[0][:hearings][0][:appeal_id]).to eq appeal.id
+          expect(subject[0][:hearings][0][:hearing_disp]).to eq nil
         end
       end
 
@@ -153,15 +153,15 @@ describe HearingDayRange, :all_dbs do
         end
 
         it "returns hearings are mapped to days" do
-          subject.sort_by! { |hearing_day| hearing_day["scheduled_for"] }
+          subject.sort_by! { |hearing_day| hearing_day[:scheduled_for] }
           expect(subject.size).to eq 3
-          expect(subject[0]["hearings"][0][:appeal_id]).to eq ama_appeal.id
-          expect(subject[1]["hearings"].size).to eq 2
-          expect(subject[1]["readable_request_type"]).to eq Hearing::HEARING_TYPES[:V]
-          expect(subject[1]["hearings"][0][:appeal_id]).to eq appeal.id
-          expect(subject[1]["hearings"][0][:hearing_disp]).to eq nil
-          expect(subject[1]["hearings"][1][:appeal_id]).to eq appeal_today.id
-          expect(subject[2]["hearings"][0][:appeal_id]).to eq appeal_tomorrow.id
+          expect(subject[0][:hearings][0][:appeal_id]).to eq ama_appeal.id
+          expect(subject[1][:hearings].size).to eq 2
+          expect(subject[1][:readable_request_type]).to eq Hearing::HEARING_TYPES[:V]
+          expect(subject[1][:hearings][0][:appeal_id]).to eq appeal.id
+          expect(subject[1][:hearings][0][:hearing_disp]).to eq nil
+          expect(subject[1][:hearings][1][:appeal_id]).to eq appeal_today.id
+          expect(subject[2][:hearings][0][:appeal_id]).to eq appeal_tomorrow.id
         end
       end
 
@@ -202,9 +202,9 @@ describe HearingDayRange, :all_dbs do
 
         it "returns nested hash structure" do
           expect(subject.size).to eq 1
-          expect(subject[0]["hearings"].size).to eq 1
-          expect(subject[0]["readable_request_type"]).to eq Hearing::HEARING_TYPES[:C]
-          expect(subject[0]["hearings"][0][:appeal_id]).to eq appeal.id
+          expect(subject[0][:hearings].size).to eq 1
+          expect(subject[0][:readable_request_type]).to eq Hearing::HEARING_TYPES[:C]
+          expect(subject[0][:hearings][0][:appeal_id]).to eq appeal.id
         end
       end
     end
