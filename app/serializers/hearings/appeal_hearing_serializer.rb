@@ -2,7 +2,7 @@
 
 class AppealHearingSerializer
   include FastJsonapi::ObjectSerializer
-    
+
   attribute :date, &:scheduled_for
   attribute :disposition
   attribute :external_id
