@@ -517,7 +517,7 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.JUDGE_MTV_CHECKOUT.value}`}
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`}
               title="Address Motion to Vacate | Caseflow"
               render={this.routedAddressMotionToVacate}
             />
