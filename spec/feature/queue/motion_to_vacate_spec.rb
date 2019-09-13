@@ -265,15 +265,12 @@ RSpec.feature "Motion to vacate", :all_dbs do
   def format_judge_instructions(notes:, disposition:, vacate_type:, hyperlink: nil)
     parts = ["I am proceeding with a #{disposition_text(disposition)}."]
 
-    case disposition
-    when "granted"
-      parts.push("This will be a #{vacate_type_text(vacate_type)}")
-      parts.push(notes)
-    else
-      parts.push(notes)
-      parts.push("\nHere is the hyperlink to the signed denial document")
-      parts.push(hyperlink)
-    end
+    parts += case disposition
+             when "granted"
+               ["This will be a #{vacate_type_text(vacate_type)}", notes]
+             else
+               [notes, "\nHere is the hyperlink to the signed denial document", hyperlink]
+             end
 
     parts.join("\n")
   end

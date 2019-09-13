@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class JudgeAddressMotionToVacateTask < JudgeTask
-  def additional_available_actions(_user)
+  def additional_available_actions(user)
     actions = [Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h]
 
     if assigned_to.is_a?(User) && FeatureToggle.enabled?(:review_motion_to_vacate, user: user)
