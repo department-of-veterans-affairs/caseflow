@@ -156,7 +156,7 @@ export const typeColumn = (tasks, filterOptions, requireDasRecord) => {
   };
 };
 
-export const assignedToColumn = (tasks) => {
+export const assignedToColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
     name: QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN,
@@ -165,6 +165,7 @@ export const assignedToColumn = (tasks) => {
     tableData: tasks,
     columnName: 'assignedTo.name',
     anyFiltersAreSet: true,
+    filterOptions,
     label: 'Filter by assignee',
     valueFunction: (task) => task.assignedTo.name,
     getSortValue: (task) => task.assignedTo.name
