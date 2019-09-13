@@ -10,7 +10,7 @@ class DataIntegrityChecksJob < CaseflowJob
     UntrackedLegacyAppealsChecker
   ].freeze
 
-  def perform(_args = {})
+  def perform
     CHECKERS.each do |klass|
       checker = klass.constantize.new
       checker.call

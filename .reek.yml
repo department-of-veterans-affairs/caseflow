@@ -52,6 +52,7 @@ detectors:
     exclude:
       - Appeal
       - Task
+      - CaseflowJob
   IrresponsibleModule:
     enabled: false
   ManualDispatch:
