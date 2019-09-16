@@ -108,20 +108,14 @@ class TasksController < ApplicationController
 
     tasks = TasksForAppeal.new(appeal: appeal, user: current_user, user_role: user_role).call
 
-    render json: {
-      tasks: json_tasks(tasks)[:data]
-    }
+    render json: { tasks: json_tasks(tasks)[:data] }
   end
 
   def ready_for_hearing_schedule
     ro = HearingDayMapper.validate_regional_office(params[:ro])
     tasks = ScheduleHearingTask.tasks_for_ro(ro)
-    AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
-    params = { user: current_user, role: user_role }
 
-    render json: AmaAndLegacyTaskSerializer.new(
-      tasks: tasks, params: params, ama_serializer: WorkQueue::RegionalOfficeTaskSerializer
-    ).call
+    render json: json_tasks(tasks, ama_serializer: WorkQueue::RegionalOfficeTaskSerializer)
   end
 
   def reschedule
@@ -241,12 +235,11 @@ class TasksController < ApplicationController
     )
   end
 
-  def json_tasks(tasks)
-    tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
-    params = { user: current_user, role: user_role }
-
-    AmaAndLegacyTaskSerializer.new(
-      tasks: tasks, params: params, ama_serializer: WorkQueue::TaskSerializer
+  def json_tasks(tasks, ama_serializer: WorkQueue::TaskSerializer)
+    AmaAndLegacyTaskSerializer.create_and_preload_legacy_appeals(
+      params: { user: current_user, role: user_role },
+      tasks: tasks,
+      ama_serializer: ama_serializer
     ).call
   end
 
