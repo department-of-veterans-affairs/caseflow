@@ -28,57 +28,55 @@ class LegacyDocket
     LegacyAppeal.repository.age_of_n_oldest_priority_appeals(num)
   end
 
-  # rubocop:disable Metrics/CognitiveComplexity
   def distribute_priority_appeals(distribution, genpop: "any", limit: 1)
-    LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
-      next if preexisting_distributed_case(record["bfkey"], distribution)
+    LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit)
+      .select { |record| !preexisting_distributed_case(record["bfkey"], distribution) }
+      .map do |record|
 
-      distributed_case = DistributedCase.new(
-        distribution: distribution,
-        case_id: record["bfkey"],
-        docket: docket_type,
-        priority: true,
-        ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
-        genpop: record["vlj"].nil?,
-        genpop_query: genpop
-      )
+        dist_case = DistributedCase.new(
+          distribution: distribution,
+          case_id: record["bfkey"],
+          docket: docket_type,
+          priority: true,
+          ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
+          genpop: record["vlj"].nil?,
+          genpop_query: genpop
+        )
 
-      if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
-        DasDeprecation::CaseDistribution.create_judge_assign_task(record, distribution.judge) { distributed_case.save! }
-      else
-        distributed_case.save!
+        if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
+          DasDeprecation::CaseDistribution.create_judge_assign_task(record, distribution.judge) { dist_case.save! }
+        else
+          dist_case.save!
+        end
+        dist_case
       end
-      distributed_case
-    end.compact
   end
-  # rubocop:enable Metrics/CognitiveComplexity
 
-  # rubocop:disable Metrics/CognitiveComplexity
   def distribute_nonpriority_appeals(distribution, genpop: "any", range: nil, limit: 1)
-    LegacyAppeal.repository.distribute_nonpriority_appeals(distribution.judge, genpop, range, limit).map do |record|
-      next if preexisting_distributed_case(record["bfkey"], distribution)
+    LegacyAppeal.repository.distribute_nonpriority_appeals(distribution.judge, genpop, range, limit)
+      .select { |record| !preexisting_distributed_case(record["bfkey"], distribution) }
+      .map do |record|
 
-      distributed_case = DistributedCase.new(
-        distribution: distribution,
-        case_id: record["bfkey"],
-        docket: docket_type,
-        priority: false,
-        ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
-        docket_index: record["docket_index"],
-        genpop: record["vlj"].nil?,
-        genpop_query: genpop
-      )
+        dist_case = DistributedCase.new(
+          distribution: distribution,
+          case_id: record["bfkey"],
+          docket: docket_type,
+          priority: false,
+          ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
+          docket_index: record["docket_index"],
+          genpop: record["vlj"].nil?,
+          genpop_query: genpop
+        )
 
-      if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
-        DasDeprecation::CaseDistribution.create_judge_assign_task(record, distribution.judge) { distributed_case.save! }
-      else
-        distributed_case.save!
+        if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
+          DasDeprecation::CaseDistribution.create_judge_assign_task(record, distribution.judge) { dist_case.save! }
+        else
+          dist_case.save!
+        end
+
+        dist_case
       end
-
-      distributed_case
-    end.compact
   end
-  # rubocop:enable Metrics/CognitiveComplexity
 
   def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1)
     if priority
