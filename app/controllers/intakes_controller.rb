@@ -91,6 +91,7 @@ class IntakesController < ApplicationController
       }
     }
   rescue StandardError => error
+    Rails.logger.error "#{error.message}\n#{error.backtrace.join("\n")}"
     Raven.capture_exception(error)
     # cancel intake so user doesn't get stuck
     intake_in_progress&.cancel!(reason: "system_error")
@@ -124,7 +125,7 @@ class IntakesController < ApplicationController
   def intake_in_progress
     return @intake_in_progress unless @intake_in_progress.nil?
 
-    @intake_in_progress = Intake.in_progress.find_by(user: current_user) || false
+    @intake_in_progress = Intake.in_progress.find_by(user: current_user)
   end
 
   def new_intake
