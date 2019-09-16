@@ -93,10 +93,9 @@ class AddIssuesPage extends React.Component {
     this.props.setIssueWithdrawalDate(value);
   };
 
-  willRedirect(intakeData) {
+  willRedirect(intakeData, hasClearedEp) {
     const { formType, featureToggles } = this.props;
     const { correctClaimReviews } = featureToggles;
-    const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
     const editableDta = correctClaimReviews && hasClearedEp;
 
     return (
@@ -107,14 +106,14 @@ class AddIssuesPage extends React.Component {
     );
   }
 
-  redirect(intakeData) {
+  redirect(intakeData, hasClearedEp) {
     const { formType } = this.props;
 
     if (!formType) {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     } else if (intakeData.isDtaError) {
       return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
-    } else if (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp) {
+    } else if (hasClearedEp) {
       return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
     } else if (intakeData.isOutcoded) {
       return <Redirect to={PAGE_PATHS.OUTCODED} />;
@@ -142,9 +141,10 @@ class AddIssuesPage extends React.Component {
     const { intakeForms, formType, veteran, featureToggles, editPage, addingIssue } = this.props;
     const intakeData = intakeForms[formType];
     const { useAmaActivationDate } = featureToggles;
+    const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
-    if (this.willRedirect(intakeData)) {
-      return this.redirect(intakeData);
+    if (this.willRedirect(intakeData, hasClearedEp)) {
+      return this.redirect(intakeData, hasClearedEp);
     }
 
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
