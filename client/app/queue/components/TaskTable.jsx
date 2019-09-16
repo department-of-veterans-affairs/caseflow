@@ -16,7 +16,8 @@ import PropTypes from 'prop-types';
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
 import { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn, regionalOfficeColumn, daysWaitingColumn,
-  issueCountColumn, typeColumn, assignedToColumn, readerLinkColumn, daysOnHoldColumn } from './TaskTableColumns';
+  issueCountColumn, typeColumn, assignedToColumn, readerLinkColumn, daysOnHoldColumn, completedToNameColumn } from
+  './TaskTableColumns';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { hasDASRecord } from '../utils';
@@ -151,14 +152,8 @@ export class TaskTableUnconnected extends React.PureComponent {
     } : null;
   }
 
-  completedToNameColumn = () => {
-    return this.props.includeCompletedToName ? {
-      header: COPY.CASE_LIST_TABLE_COMPLETED_BACK_TO_NAME_COLUMN_TITLE,
-      name: QUEUE_CONFIG.TASK_ASSIGNER_COLUMN,
-      valueFunction: (task) =>
-        task.assignedBy ? `${task.assignedBy.firstName} ${task.assignedBy.lastName}` : null,
-      getSortValue: (task) => task.assignedBy ? task.assignedBy.lastName : null
-    } : null;
+  caseCompletedToNameColumn = () => {
+    return this.props.includeCompletedToName ? completedToNameColumn() : null;
   }
 
   caseReaderLinkColumn = () => {
@@ -188,7 +183,7 @@ export class TaskTableUnconnected extends React.PureComponent {
         this.caseDaysWaitingColumn(),
         this.caseDaysOnHoldColumn(),
         this.completedDateColumn(),
-        this.completedToNameColumn(),
+        this.caseCompletedToNameColumn(),
         this.caseReaderLinkColumn()
       ])), ['order'], ['desc']);
 
