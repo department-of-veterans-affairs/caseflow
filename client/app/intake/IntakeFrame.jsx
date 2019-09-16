@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -40,7 +42,9 @@ class IntakeFrame extends React.PureComponent {
     let rightNavElements = <CaseSearchLink newWindow />;
 
     if (this.props.featureToggles.inbox) {
-      rightNavElements = <span><InboxLink youveGotMail={this.props.unreadMessages} /><CaseSearchLink newWindow /></span>;
+      rightNavElements = <span>
+        <InboxLink youveGotMail={this.props.unreadMessages} /><CaseSearchLink newWindow />
+      </span>;
     }
 
     return <Router basename="/intake" {...this.props.routerTestProps}>

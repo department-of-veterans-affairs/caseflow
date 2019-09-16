@@ -1,8 +1,8 @@
 import React from 'react';
 import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-//import { CommentIcon } from './RenderFunctions';
 import { COLORS } from '../constants/AppConstants';
+import PropTypes from 'prop-types';
 
 const containerStyling = css({
   display: 'inline table',
@@ -37,5 +37,10 @@ const InboxLink = (props) => <div {...containerStyling}>
     <h3 {...textStyling}>Inbox</h3>
   </Link>
 </div>;
+
+InboxLink.propTypes = {
+  newWindow: PropTypes.bool,
+  youveGotMail: PropTypes.bool
+};
 
 export default InboxLink;
