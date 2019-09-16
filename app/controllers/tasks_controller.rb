@@ -26,7 +26,8 @@ class TasksController < ApplicationController
     PrivacyActTask: PrivacyActTask,
     FoiaTask: FoiaTask,
     PulacCerulloTask: PulacCerulloTask,
-    SpecialCaseMovementTask: SpecialCaseMovementTask
+    SpecialCaseMovementTask: SpecialCaseMovementTask,
+    JudgeAddressMotionToVacateTask: JudgeAddressMotionToVacateTask
   }.freeze
 
   def set_application
