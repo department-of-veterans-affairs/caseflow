@@ -15,7 +15,7 @@ class PostDecisionMotionUpdater
       motion = create_motion
       return unless motion
 
-      perform_action_based_on_disposition
+      create_new_tasks
     end
   end
 
@@ -34,29 +34,33 @@ class PostDecisionMotionUpdater
     motion.save
   end
 
-  def perform_action_based_on_disposition
+  def create_new_tasks
     # If it is a grant, judge assigns it to the drafting attorney,
     # otherwise, it goes back to the motions attorney
-    if params[:disposition] == "granted"
-      new_task = task_class.new(
-        appeal: task.appeal,
-        parent: task,
-        assigned_by: task.assigned_to,
-        assigned_to: assigned_to,
-        instructions: [params[:instructions]]
-      )
-      unless new_task.valid?
-        errors.messages.merge!(new_task.errors.messages)
-        return
-      end
-      new_task.save
+
+    new_task = task_class.new(
+      appeal: task.appeal,
+      parent: task.root_task,
+      assigned_by: task.assigned_to,
+      assigned_to: assigned_to,
+      instructions: [params[:instructions]]
+    )
+
+    unless new_task.valid?
+      errors.messages.merge!(new_task.errors.messages)
       return
     end
+    new_task.save
+
     task.update(status: Constants.TASK_STATUSES.completed)
   end
 
   def task_class
-    @task_class ||= (params[:vacate_type] + "_task").classify.constantize
+    @task_class ||= (task_type + "_task").classify.constantize
+  end
+
+  def task_type
+    (params[:disposition] == "granted") ? params[:vacate_type] : "#{params[:disposition]}_motion_to_vacate"
   end
 
   def assigned_to
