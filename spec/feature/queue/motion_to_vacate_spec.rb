@@ -15,6 +15,8 @@ VACATE_TYPE_TEXT = {
 }.freeze
 
 RSpec.feature "Motion to vacate", :all_dbs do
+  include QueueHelpers
+
   let!(:lit_support_team) { LitigationSupport.singleton }
   let(:receipt_date) { Time.zone.today - 20 }
   let!(:appeal) { create(:appeal, receipt_date: receipt_date) }
@@ -224,7 +226,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       # Ensure it has pre-selected judge previously assigned to case
       expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
-
       click_button(text: "Submit")
 
       # Return back to user's queue
@@ -234,6 +235,16 @@ RSpec.feature "Motion to vacate", :all_dbs do
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
       expect(motion).to_not be_nil
       expect(motion.disposition).to eq("denied")
+
+      # Verify new task creation
+      instructions = format_judge_instructions(
+        notes: judge_notes,
+        disposition: "denied",
+        hyperlink: hyperlink
+      )
+      new_task = DeniedMotionToVacateTask.find_by(assigned_to: drafting_attorney)
+      expect(new_task).to_not be_nil
+      expect(new_task.instructions.join("")).to eq(instructions)
     end
 
     it "judge dismisses motion to vacate" do
@@ -254,6 +265,16 @@ RSpec.feature "Motion to vacate", :all_dbs do
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
       expect(motion).to_not be_nil
       expect(motion.disposition).to eq("dismissed")
+
+      # Verify new task creation
+      instructions = format_judge_instructions(
+        notes: judge_notes,
+        disposition: "dismissed",
+        hyperlink: hyperlink
+      )
+      new_task = DismissedMotionToVacateTask.find_by(assigned_to: drafting_attorney)
+      expect(new_task).to_not be_nil
+      expect(new_task.instructions.join("")).to eq(instructions)
     end
   end
 
@@ -274,15 +295,4 @@ RSpec.feature "Motion to vacate", :all_dbs do
   end
 end
 
-def format_judge_instructions(notes:, disposition:, vacate_type:, hyperlink: nil)
-  parts = ["I am proceeding with a #{DISPOSITION_TEXT[disposition.to_sym]}."]
 
-  parts += case disposition
-           when "granted"
-             ["This will be a #{VACATE_TYPE_TEXT[vacate_type.to_sym]}", notes]
-           else
-             [notes, "\nHere is the hyperlink to the signed denial document", hyperlink]
-           end
-
-  parts.join("\n")
-end
