@@ -15,7 +15,7 @@ import {
 import { MTVDispositionSelection } from './MTVDispositionSelection';
 import TextareaField from '../../components/TextareaField';
 import RadioField from '../../components/RadioField';
-import { mtvVacateTypeOptions, mtvDispositionText } from './index';
+import { DISPOSITION_TEXT, VACATE_TYPE_OPTIONS } from '../../../constants/MOTION_TO_VACATE.json';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
@@ -24,13 +24,13 @@ import { MTVTaskHeader } from './MTVTaskHeader';
 import TextField from '../../components/TextField';
 
 const vacateTypeText = (val) => {
-  const opt = mtvVacateTypeOptions.find((i) => i.value === val);
+  const opt = VACATE_TYPE_OPTIONS.find((i) => i.value === val);
 
   return opt && opt.displayText;
 };
 
 const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }) => {
-  const parts = [`I am proceeding with a ${mtvDispositionText[disposition]}.`];
+  const parts = [`I am proceeding with a ${DISPOSITION_TEXT[disposition]}.`];
 
   switch (disposition) {
   case 'granted':
@@ -118,7 +118,7 @@ export const MTVJudgeDisposition = ({
           <RadioField
             name="vacate_type"
             label={JUDGE_ADDRESS_MTV_VACATE_TYPE_LABEL}
-            options={mtvVacateTypeOptions}
+            options={VACATE_TYPE_OPTIONS}
             onChange={(val) => setVacateType(val)}
             value={vacateType}
             required

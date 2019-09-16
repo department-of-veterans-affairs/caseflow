@@ -3,17 +3,6 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-DISPOSITION_TEXT = {
-  granted: "grant or partial vacature",
-  denied: "denial of all issues for vacature",
-  dismissed: "dismissal"
-}.freeze
-
-VACATE_TYPE_TEXT = {
-  straight_vacate_and_readjudication: "Straight Vacate and Readjudication",
-  vacate_and_de_novo: "Vacate and De Novo"
-}.freeze
-
 RSpec.feature "Motion to vacate", :all_dbs do
   let!(:lit_support_team) { LitigationSupport.singleton }
   let(:receipt_date) { Time.zone.today - 20 }
@@ -162,7 +151,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       find("label[for=vacate-type_straight_vacate_and_readjudication]").click
       fill_in("instructions", with: judge_notes)
 
-      # Ensure it has pre-selected judge previously assigned to case
+      # Ensure it has pre-selected attorney previously assigned to case
       expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
 
       click_button(text: "Submit")
@@ -192,7 +181,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       find("label[for=vacate-type_vacate_and_de_novo]").click
       fill_in("instructions", with: judge_notes)
 
-      # Ensure it has pre-selected judge previously assigned to case
+      # Ensure it has pre-selected attorney previously assigned to case
       expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
 
       click_button(text: "Submit")
@@ -222,7 +211,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       fill_in("instructions", with: judge_notes)
       fill_in("hyperlink", with: hyperlink)
 
-      # Ensure it has pre-selected judge previously assigned to case
+      # Ensure it has pre-selected attorney previously assigned to case
       expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
 
       click_button(text: "Submit")
@@ -242,7 +231,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       fill_in("instructions", with: judge_notes)
       fill_in("hyperlink", with: hyperlink)
 
-      # Ensure it has pre-selected judge previously assigned to case
+      # Ensure it has pre-selected attorney previously assigned to case
       expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
 
       click_button(text: "Submit")
@@ -275,14 +264,27 @@ RSpec.feature "Motion to vacate", :all_dbs do
 end
 
 def format_judge_instructions(notes:, disposition:, vacate_type:, hyperlink: nil)
-  parts = ["I am proceeding with a #{DISPOSITION_TEXT[disposition.to_sym]}."]
+  binding.pry
+  parts = ["I am proceeding with a #{disposition_text[disposition.to_sym]}."]
 
   parts += case disposition
            when "granted"
-             ["This will be a #{VACATE_TYPE_TEXT[vacate_type.to_sym]}", notes]
+             ["This will be a #{vacate_types[vacate_type.to_sym]}", notes]
            else
              [notes, "\nHere is the hyperlink to the signed denial document", hyperlink]
            end
 
   parts.join("\n")
+end
+
+def mtv_const
+  Constants.MOTION_TO_VACATE
+end
+
+def disposition_text
+  mtv_const.DISPOSITION_TEXT.to_h
+end
+
+def vacate_types
+  mtv_const.VACATE_TYPE_OPTIONS.map { |opt| [opt["value"].to_sym, opt["displayText"]] }.to_h
 end

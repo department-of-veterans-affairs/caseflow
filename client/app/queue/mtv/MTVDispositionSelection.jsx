@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import RadioField from '../../components/RadioField';
 
-import { mtvDispositionOptions } from './index';
+import { DISPOSITION_OPTIONS } from '../../../constants/MOTION_TO_VACATE.json';
 
 export const MTVDispositionSelection = ({ label = '', value: initialVal = null, onChange }) => {
   const [value, setValue] = useState(initialVal);
@@ -18,7 +18,7 @@ export const MTVDispositionSelection = ({ label = '', value: initialVal = null, 
     <RadioField
       name="disposition"
       label={label}
-      options={mtvDispositionOptions}
+      options={DISPOSITION_OPTIONS}
       onChange={handleChange}
       value={value}
       className={['mtv-disposition-selection']}
