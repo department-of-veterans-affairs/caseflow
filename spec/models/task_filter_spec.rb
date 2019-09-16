@@ -199,7 +199,9 @@ describe TaskFilter, :postgres do
       let(:hearing_tasks) { create_list(:task, tasks_per_type) }
       let(:legacy_tasks) { create_list(:task, tasks_per_type) }
       let(:all_tasks) do
-        Task.where(id: (review_tasks + evidence_tasks + hearing_tasks + legacy_tasks).pluck(:id).sort)
+        Task
+          .where(id: (review_tasks + evidence_tasks + hearing_tasks + legacy_tasks).pluck(:id).sort)
+          .order(id: :asc)
       end
 
       before do
