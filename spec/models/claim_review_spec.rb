@@ -378,6 +378,7 @@ describe ClaimReview, :postgres do
 
   context "#create_decision_review_task_if_required!" do
     subject { claim_review.create_decision_review_task_if_required! }
+    let!(:request_issue) { create(:request_issue, decision_review: claim_review) }
 
     context "when processed in caseflow" do
       let(:benefit_type) { "vha" }
@@ -397,6 +398,14 @@ describe ClaimReview, :postgres do
           claim_review.create_decision_review_task_if_required!
           claim_review.reload
         end
+
+        it "does nothing" do
+          expect { subject }.to_not change(DecisionReviewTask, :count)
+        end
+      end
+
+      context "when the review only has ineligible issues" do
+        let!(:request_issue) { create(:request_issue, :ineligible, decision_review: claim_review) }
 
         it "does nothing" do
           expect { subject }.to_not change(DecisionReviewTask, :count)

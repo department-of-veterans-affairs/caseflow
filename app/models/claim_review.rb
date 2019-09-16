@@ -268,6 +268,7 @@ class ClaimReview < DecisionReview
 
   def create_decision_review_task!
     return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
+    return unless request_issues.active.present?
 
     DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
   end
