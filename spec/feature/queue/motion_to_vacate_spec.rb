@@ -294,5 +294,3 @@ RSpec.feature "Motion to vacate", :all_dbs do
     expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{judge_task.id}/address_motion_to_vacate")
   end
 end
-
-

@@ -10,7 +10,14 @@ describe PostDecisionMotionUpdater, :postgres do
   let(:assigned_to_id) { nil }
   let(:hyperlink) { "https://va.gov/fake-link-to-file" }
   let(:instructions) { "formatted instructions from judge" }
-  let(:params) { { vacate_type: vacate_type, disposition: disposition, assigned_to_id: assigned_to_id, instructions: instructions } }
+  let(:params) do
+    {
+      vacate_type: vacate_type,
+      disposition: disposition,
+      assigned_to_id: assigned_to_id,
+      instructions: instructions
+    }
+  end
 
   subject { PostDecisionMotionUpdater.new(task, params) }
 
