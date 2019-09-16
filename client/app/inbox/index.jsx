@@ -3,7 +3,7 @@
 import React from 'react';
 import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/ReduxBase';
 import NavigationBar from '../components/NavigationBar';
-import CaseSearchLink from '../components/CaseSearchLink';
+import IntakeLink from '../components/IntakeLink';
 import { BrowserRouter } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
 import AppFrame from '../components/AppFrame';
@@ -29,7 +29,7 @@ class Inbox extends React.PureComponent {
               accentColor: LOGO_COLORS.INTAKE.ACCENT,
               overlapColor: LOGO_COLORS.INTAKE.OVERLAP
             }}
-            rightNavElement={<CaseSearchLink />}
+            rightNavElement={<IntakeLink />}
             userDisplayName={this.props.userDisplayName}
             dropdownUrls={this.props.dropdownUrls}
             topMessage={null}
