@@ -393,6 +393,7 @@ feature "Higher-Level Review", :all_dbs do
   end
 
   let(:special_issue_reference_id) { "IAMANEPID" }
+
   it "Creates contentions with same office special issue" do
     Fakes::VBMSService.end_product_claim_id = special_issue_reference_id
 
@@ -666,15 +667,6 @@ feature "Higher-Level Review", :all_dbs do
         )
 
         expect(page).to have_content("1 issue")
-      end
-
-      scenario "form sorted in ascending order" do
-        visit "/intake"
-
-        first_form = Constants.INTAKE_FORM_NAMES.appeal
-        second_form = Constants.INTAKE_FORM_NAMES.higher_level_review
-        expect(first_form).to eq("Decision Review Request: Board Appeal (Notice of Disagreement) — VA Form 10182")
-        expect(second_form).to eq("Decision Review Request: Higher-Level Review — VA Form 20-0996")
       end
 
       scenario "validate decision date" do
