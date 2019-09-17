@@ -79,34 +79,6 @@ describe DecisionReview, :postgres do
     ]
   end
 
-  context "#cancel_unused_tasks!" do
-    subject { supplemental_claim.cancel_unused_tasks! }
-    let!(:veteran_record_request) { create(:veteran_record_request_task, appeal: supplemental_claim, assigned_to: supplemental_claim.business_line) }
-    let!(:decision_review_task) { create(:decision_review_task, appeal: supplemental_claim, assigned_to: supplemental_claim.business_line) }
-
-    context "when there are no active request issues" do
-      let!(:request_issue) { create(:request_issue, :ineligible, decision_review: supplemental_claim) }
-
-      it "cancels open business line tasks" do
-        subject
-
-        expect(veteran_record_request.reload).to be_cancelled
-        expect(decision_review_task.reload).to be_cancelled
-      end
-    end
-
-    context "when there are active request issues" do
-      let!(:request_issue) { create(:request_issue, decision_review: supplemental_claim) }
-
-      it "does not cancel the tasks" do
-        subject
-
-        expect(veteran_record_request.reload).to_not be_cancelled
-        expect(decision_review_task.reload).to_not be_cancelled
-      end
-    end
-  end
-
   context "#removed?" do
     subject { higher_level_review.removed? }
 

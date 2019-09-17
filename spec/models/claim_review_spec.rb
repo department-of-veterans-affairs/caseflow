@@ -376,8 +376,8 @@ describe ClaimReview, :postgres do
     end
   end
 
-  context "#create_decision_review_task_if_required!" do
-    subject { claim_review.create_decision_review_task_if_required! }
+  context "#create_business_line_tasks!" do
+    subject { claim_review.create_business_line_tasks! }
     let!(:request_issue) { create(:request_issue, decision_review: claim_review) }
 
     context "when processed in caseflow" do
@@ -395,7 +395,7 @@ describe ClaimReview, :postgres do
 
       context "when a task already exists" do
         before do
-          claim_review.create_decision_review_task_if_required!
+          claim_review.create_business_line_tasks!
           claim_review.reload
         end
 

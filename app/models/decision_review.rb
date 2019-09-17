@@ -342,12 +342,6 @@ class DecisionReview < ApplicationRecord
     fail Caseflow::Error::MustImplementInSubclass
   end
 
-  def cancel_unused_tasks!
-    return if request_issues.active.present?
-
-    business_line.tasks.open.each(&:cancel_task_and_child_subtasks)
-  end
-
   private
 
   def contestable_issue_generator

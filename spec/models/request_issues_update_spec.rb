@@ -254,6 +254,7 @@ describe RequestIssuesUpdate, :all_dbs do
         it "saves update, adds issues, and calls create contentions" do
           allow_create_contentions
           allow_associate_rating_request_issues
+          expect(review).to receive(:create_business_line_tasks!).once
 
           expect(subject).to be_truthy
           request_issues_update.reload

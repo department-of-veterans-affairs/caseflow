@@ -647,6 +647,22 @@ class Appeal < DecisionReview
       end
   end
 
+  def create_business_line_tasks!
+    issues_needing_tasks = request_issues.select(&:requires_record_request_task?)
+    business_lines = issues_needing_tasks.map(&:business_line).uniq
+
+    business_lines.each do |business_line|
+      next if tasks.any? { |task| task.is_a?(VeteranRecordRequest) && task.assigned_to == business_line }
+
+      VeteranRecordRequest.create!(
+        parent: root_task,
+        appeal: self,
+        assigned_at: Time.zone.now,
+        assigned_to: business_line
+      )
+    end
+  end
+
   private
 
   def most_recently_assigned_to_label(tasks)
@@ -662,21 +678,5 @@ class Appeal < DecisionReview
   ensure
     distribution_task = tasks.open.find_by(type: DistributionTask.name)
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
-  end
-
-  def create_business_line_tasks!
-    issues_for_tasks = request_issues.select(&:requires_record_request_task?)
-    business_lines = issues_for_tasks.map(&:business_line).uniq
-
-    business_lines.each do |business_line|
-      next if tasks.any? { |task| task.is_a?(VeteranRecordRequest) && task.assigned_to == business_line }
-
-      VeteranRecordRequest.create!(
-        parent: root_task,
-        appeal: self,
-        assigned_at: Time.zone.now,
-        assigned_to: business_line
-      )
-    end
   end
 end
