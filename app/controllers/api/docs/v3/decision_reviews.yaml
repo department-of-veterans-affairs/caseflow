@@ -472,6 +472,16 @@ paths:
                       }
                     ]
                   }
+                invalid_benefit_type:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title": "That Line of Business (benefit type) is either invalid or not currently supported",
+                        "code": "invalid_benefit_type"
+                      }
+                    ]
+                  }
                 invalid_file_number:
                   value: {
                     "errors": [
