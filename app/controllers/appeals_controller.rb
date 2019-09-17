@@ -4,7 +4,14 @@ class AppealsController < ApplicationController
   before_action :react_routed
   before_action :set_application, only: [:document_count, :power_of_attorney]
   # Only whitelist endpoints VSOs should have access to.
-  skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran, :hearings]
+  skip_before_action :deny_vso_access, only: [
+    :index,
+    :power_of_attorney,
+    :show_case_list,
+    :show,
+    :veteran,
+    :most_recent_hearing
+  ]
 
   def index
     respond_to do |format|
@@ -56,23 +63,16 @@ class AppealsController < ApplicationController
     }
   end
 
-  def hearings
+  def most_recent_hearing
     log_hearings_request
 
-    most_recently_held_hearing = appeal.hearings
-      .select { |hearing| hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held }
+    most_recently_held_hearing = HearingsForAppeal.new(url_appeal_uuid)
+      .held_hearings
       .max_by(&:scheduled_for)
 
     render json:
       if most_recently_held_hearing
-        {
-          held_by: most_recently_held_hearing.judge.present? ? most_recently_held_hearing.judge.full_name : "",
-          viewed_by_judge: !most_recently_held_hearing.hearing_views.empty?,
-          date: most_recently_held_hearing.scheduled_for,
-          type: most_recently_held_hearing.readable_request_type,
-          external_id: most_recently_held_hearing.external_id,
-          disposition: most_recently_held_hearing.disposition
-        }
+        AppealHearingSerializer.new(most_recently_held_hearing).serializable_hash[:data][:attributes]
       else
         {}
       end
