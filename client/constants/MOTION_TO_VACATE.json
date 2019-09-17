@@ -1,0 +1,31 @@
+{
+  "VACATE_TYPE_OPTIONS": [
+    {
+      "value": "straight_vacate_and_readjudication",
+      "displayText": "Straight Vacate and Readjudication"
+    },
+    {
+      "value": "vacate_and_de_novo",
+      "displayText": "Vacate and De Novo"
+    }
+  ],
+  "DISPOSITION_OPTIONS": [
+    {
+      "displayText": "Grant or partial vacature",
+      "value": "granted"
+    },
+    {
+      "displayText": "Deny all issues for vacature",
+      "value": "denied"
+    },
+    {
+      "displayText": "Withdraw/Dismiss",
+      "value": "dismissed"
+    }
+  ],
+  "DISPOSITION_TEXT": {
+    "granted": "grant or partial vacature",
+    "denied": "denial of all issues for vacature",
+    "dismissed": "dismissal"
+  }
+}
