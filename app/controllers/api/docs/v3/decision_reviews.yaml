@@ -728,8 +728,6 @@ paths:
                       attributes:
                         type: object
                         properties:
-                          active:
-                            type: boolean
                           status:
                             type: string
                           aoj:
