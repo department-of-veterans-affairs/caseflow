@@ -86,6 +86,7 @@ class SeedDB
     create_judge_teams
     create_hearings_user_and_tasks
     create_ama_distribution_tasks
+    create_edit_hearings_user
   end
 
   def create_ama_distribution_tasks
@@ -134,6 +135,11 @@ class SeedDB
 
     create_different_hearings_tasks
     create_change_hearing_disposition_task
+  end
+
+  def create_edit_hearings_user
+    hearings_user = User.create(css_id: "BVAYELLOW", station_id: 101, roles: ["Edit HearSched", "Build HearSched"])
+    OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
   end
 
   def create_different_hearings_tasks
