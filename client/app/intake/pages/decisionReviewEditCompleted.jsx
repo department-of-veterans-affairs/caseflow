@@ -1,17 +1,18 @@
+/* eslint-disable react/prop-types */
+
 import React, { Fragment } from 'react';
 import StatusMessage from '../../components/StatusMessage';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, FORM_TYPES } from '../constants';
 import _ from 'lodash';
-import Alert from '../../components/Alert';
+import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 import IneligibleIssuesList from '../components/IneligibleIssuesList';
 import SmallLoader from '../../components/SmallLoader';
 import { LOGO_COLORS } from '../../constants/AppConstants';
-import COPY from '../../../COPY.json';
 import END_PRODUCT_CODES from '../../../constants/END_PRODUCT_CODES.json';
 
-const leadMessageList = ({ veteran, formName, requestIssues, addedIssues }) => {
+const leadMessageList = ({ veteran, formName, requestIssues, addedIssues, detailEditUrl }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
@@ -22,29 +23,16 @@ const leadMessageList = ({ veteran, formName, requestIssues, addedIssues }) => {
       return 'withdrawn';
     }
 
-    return 'processed';
+    return 'submitted';
   };
 
   const leadMessageArr = [
-    `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been ${editMessage()}.`
+    `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been ${editMessage()}.`,
+    <div>If needed, you may <a href={detailEditUrl}>correct the issues</a>.</div>
   ];
 
-  if (eligibleRequestIssues.length !== 0) {
-    if (unidentifiedIssues.length > 0) {
-      leadMessageArr.push(
-        <Alert type="warning">
-          <h2>Unidentified issue</h2>
-          <p>{COPY.UNIDENTIFIED_ALERT}</p>
-          {unidentifiedIssues.map((ri, i) => <p className="cf-red-text" key={`unidentified-alert-${i}`}>
-            Unidentified issue: no issue matched for requested "{ri.description}"
-          </p>)}
-        </Alert>
-      );
-    } else {
-      leadMessageArr.push(
-        'If you need to edit this, go to VBMS claim details and click the “Edit in Caseflow” button.'
-      );
-    }
+  if (eligibleRequestIssues.length !== 0 && unidentifiedIssues.length > 0) {
+    leadMessageArr.push(<UnidentifiedIssueAlert unidentifiedIssues={unidentifiedIssues} />);
   }
 
   leadMessageArr.push(
@@ -77,6 +65,7 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
       afterIssues,
       updatedIssues,
       addedIssues,
+      detailEditUrl,
       redirectTo
     } = this.props;
 
@@ -118,6 +107,7 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
         type="success"
         leadMessageList={
           leadMessageList({
+            detailEditUrl,
             veteran,
             formName: selectedForm.name,
             requestIssues: afterIssues,

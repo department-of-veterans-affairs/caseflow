@@ -187,10 +187,31 @@ describe TaskPager, :all_dbs do
 
     context "when sorting by task type" do
       let(:sort_by) { Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN }
-      let!(:created_tasks) { create_list(:colocated_task, 14, assigned_to: assignee) }
+      let!(:created_tasks) do
+        Task.where(id: create_list(:colocated_task, task_types.length, assigned_to: assignee).pluck(:id))
+      end
 
-      it "sorts ColocatedTasks by action and created_at" do
-        expected_order = created_tasks.sort_by(&:created_at)
+      let(:task_types) do
+        [
+          AssignHearingDispositionTask,
+          AttorneyTask,
+          InformalHearingPresentationTask,
+          HearingTask,
+          ScheduleHearingColocatedTask,
+          PreRoutingMissingHearingTranscriptsColocatedTask,
+          AttorneyRewriteTask,
+          AttorneyDispatchReturnTask,
+          AttorneyQualityReviewTask,
+          JudgeAssignTask
+        ].shuffle
+      end
+
+      before do
+        created_tasks.each_with_index { |task, index| task.update!(type: task_types[index].name) }
+      end
+
+      it "sorts ColocatedTasks by label" do
+        expected_order = created_tasks.reload.sort_by(&:label)
         expect(subject.map(&:id)).to eq(expected_order.map(&:id))
       end
     end

@@ -8,9 +8,10 @@ import PropTypes from 'prop-types';
 
 import BulkAssignButton from './components/BulkAssignButton';
 import TabWindow from '../components/TabWindow';
-import { docketNumberColumn, hearingBadgeColumn, detailsColumn,
-  taskColumn, regionalOfficeColumn, issueCountColumn, typeColumn,
-  assignedToColumn, daysWaitingColumn, daysOnHoldColumn, readerLinkColumn } from './components/TaskTable';
+import { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn, regionalOfficeColumn, issueCountColumn,
+  typeColumn, assignedToColumn, daysWaitingColumn, daysOnHoldColumn, readerLinkColumn, completedToNameColumn } from
+  './components/TaskTableColumns';
+
 import QueueTable from './QueueTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import Alert from '../components/Alert';
@@ -43,7 +44,9 @@ class OrganizationQueue extends React.PureComponent {
     const tabNames = config.tabs.map((tab) => {
       return tab.name;
     });
-    const index = _.indexOf(tabNames, config.active_tab);
+    const { paginationOptions = {} } = this.props;
+    const activeTab = paginationOptions.tab || config.active_tab;
+    const index = _.indexOf(tabNames, activeTab);
 
     return index === -1 ? 0 : index;
   }
@@ -56,31 +59,30 @@ class OrganizationQueue extends React.PureComponent {
     return config;
   }
 
+  filterValuesForColumn = (column, config) =>
+    config.use_task_pages_api && column && column.filterable && column.filter_options;
+
   createColumnObject = (column, config, tasks) => {
     const functionForColumn = {
       hearingBadgeColumn: hearingBadgeColumn(tasks),
       detailsColumn: detailsColumn(tasks, false, config.userRole),
-      taskColumn: taskColumn(tasks),
-      regionalOfficeColumn: regionalOfficeColumn(tasks),
-      typeColumn: typeColumn(tasks, false),
-      assignedToColumn: assignedToColumn(tasks),
-      docketNumberColumn: docketNumberColumn(tasks, false),
+      taskColumn: taskColumn(tasks, this.filterValuesForColumn(column, config)),
+      regionalOfficeColumn: regionalOfficeColumn(tasks, this.filterValuesForColumn(column, config)),
+      typeColumn: typeColumn(tasks, this.filterValuesForColumn(column, config), false),
+      assignedToColumn: assignedToColumn(tasks, this.filterValuesForColumn(column, config)),
+      completedToNameColumn: completedToNameColumn(),
+      docketNumberColumn: docketNumberColumn(tasks, this.filterValuesForColumn(column, config), false),
       daysWaitingColumn: daysWaitingColumn(false),
       daysOnHoldColumn: daysOnHoldColumn(false),
       readerLinkColumn: readerLinkColumn(false, true),
       issueCountColumn: issueCountColumn(false)
     };
 
-    return functionForColumn[column];
+    return functionForColumn[column.name];
   }
 
-  columnsFromConfig = (tabConfig, tasks) => {
-    return tabConfig.columns.map((column) => {
-      const columnName = typeof (column) === 'string' ? column : column.name;
-
-      return this.createColumnObject(columnName, tabConfig, tasks);
-    });
-  }
+  columnsFromConfig = (config, tabConfig, tasks) =>
+    tabConfig.columns.map((column) => this.createColumnObject(column, config, tasks));
 
   tasksForTab = (tabName) => {
     const mapper = {
@@ -95,10 +97,11 @@ class OrganizationQueue extends React.PureComponent {
   }
 
   taskTableTabFactory = (tabConfig, config) => {
+    const { paginationOptions = {} } = this.props;
     const tasks = config.use_task_pages_api ?
       tasksWithAppealsFromRawTasks(tabConfig.tasks) :
       this.tasksForTab(tabConfig.name);
-    const cols = this.columnsFromConfig(tabConfig, tasks);
+    const cols = this.columnsFromConfig(config, tabConfig, tasks);
     const totalTaskCount = config.use_task_pages_api ? tabConfig.total_task_count : tasks.length;
 
     return {
@@ -116,6 +119,7 @@ class OrganizationQueue extends React.PureComponent {
           numberOfPages={tabConfig.task_page_count}
           totalTaskCount={totalTaskCount}
           taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
+          tabPaginationOptions={paginationOptions.tab === tabConfig.name && paginationOptions}
           enablePagination
         />
       </React.Fragment>
@@ -172,7 +176,8 @@ OrganizationQueue.propTypes = {
   success: PropTypes.object,
   tasksAssignedByBulk: PropTypes.object,
   trackingTasks: PropTypes.array,
-  unassignedTasks: PropTypes.array
+  unassignedTasks: PropTypes.array,
+  paginationOptions: PropTypes.object
 };
 
 const mapStateToProps = (state) => {

@@ -194,6 +194,7 @@ describe Distribution, :all_dbs do
 
     context "when a nonpriority legacy case re-distribtution is attempted" do
       before do
+        @raven_called = false
         distribution = create(:distribution, judge: judge)
         legacy_case = legacy_nonpriority_cases.first
         distribution.distributed_cases.create(
@@ -206,13 +207,40 @@ describe Distribution, :all_dbs do
           genpop_query: "foobar"
         )
         distribution.update!(status: "completed", completed_at: today)
+        allow(Raven).to receive(:capture_exception) { @raven_called = true }
       end
 
       it "does not create a duplicate distributed_case" do
-        expect { subject.distribute! }.to raise_error(ActiveRecord::RecordNotUnique)
+        subject.distribute!
         expect(subject.valid?).to eq(true)
-        expect(subject.error?).to eq(true)
-        expect(subject.errored_at).to eq(Time.zone.now)
+        expect(subject.error?).to eq(false)
+        expect(@raven_called).to eq(true)
+      end
+    end
+
+    context "when a priority legacy case re-distribtution is attempted" do
+      before do
+        @raven_called = false
+        distribution = create(:distribution, judge: judge)
+        legacy_case = legacy_priority_cases.last
+        distribution.distributed_cases.create(
+          case_id: legacy_case.bfkey,
+          priority: true,
+          docket: "legacy",
+          ready_at: VacolsHelper.normalize_vacols_datetime(legacy_case.bfdloout),
+          docket_index: "123",
+          genpop: false,
+          genpop_query: "foobar"
+        )
+        distribution.update!(status: "completed", completed_at: today)
+        allow(Raven).to receive(:capture_exception) { @raven_called = true }
+      end
+
+      it "does not create a duplicate distributed_case" do
+        subject.distribute!
+        expect(subject.valid?).to eq(true)
+        expect(subject.error?).to eq(false)
+        expect(@raven_called).to eq(true)
       end
     end
 
@@ -237,6 +265,35 @@ describe Distribution, :all_dbs do
         expect(subject.valid?).to eq(true)
         expect(subject.status).to eq("completed")
         expect(subject.statistics["batch_size"]).to eq(15)
+        expect(subject.distributed_cases.count).to eq(15)
+      end
+    end
+
+    context "when there are zero legacy cases eligible" do
+      let!(:legacy_priority_cases) { [] }
+      let!(:legacy_nonpriority_cases) { [] }
+      let!(:same_judge_nonpriority_hearings) { [] }
+      let!(:other_judge_hearings) { [] }
+
+      it "fills the AMA dockets" do
+        evidence_submission_cases[0...2].each do |appeal|
+          appeal.tasks
+            .find_by(type: EvidenceSubmissionWindowTask.name)
+            .update!(status: :completed)
+        end
+        subject.distribute!
+        expect(subject.valid?).to eq(true)
+        expect(subject.status).to eq("completed")
+        expect(subject.statistics["batch_size"]).to eq(15)
+        expect(subject.statistics["total_batch_size"]).to eq(45)
+        expect(subject.statistics["priority_count"]).to eq(1)
+        expect(subject.statistics["legacy_proportion"]).to eq(0.0)
+        expect(subject.statistics["direct_review_proportion"]).to be_within(0.01).of(0.13)
+        expect(subject.statistics["evidence_submission_proportion"]).to be_within(0.01).of(0.43)
+        expect(subject.statistics["hearing_proportion"]).to be_within(0.01).of(0.43)
+        expect(subject.statistics["pacesetting_direct_review_proportion"]).to eq(0.1)
+        expect(subject.statistics["interpolated_minimum_direct_review_proportion"]).to eq(0.067)
+        expect(subject.statistics["nonpriority_iterations"]).to be_between(2, 3)
         expect(subject.distributed_cases.count).to eq(15)
       end
     end

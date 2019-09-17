@@ -391,6 +391,7 @@ RSpec.feature "Task queue", :all_dbs do
 
     context "when a VacateMotionMailTask task is routed to Pulac Cerullo" do
       let!(:root_task) { create(:root_task) }
+
       it "creates two child tasks: one Pulac Cerullo Task, and a child of that task " \
         "assigned to the first user in the Pulac Cerullo org" do
         validate_pulac_cerullo_tasks_created(VacateMotionMailTask, COPY::VACATE_MOTION_MAIL_TASK_LABEL)
@@ -440,64 +441,229 @@ RSpec.feature "Task queue", :all_dbs do
       User.authenticate!(user: organization_user)
       create_list(:generic_task, unassigned_count, :in_progress, assigned_to: organization)
       create_list(:generic_task, assigned_count, :on_hold, assigned_to: organization)
-      visit(organization.path)
     end
 
-    it "shows the right organization name" do
-      expect(page).to have_content(organization.name)
-    end
+    context "when not using pagination" do
+      before do
+        visit(organization.path)
+      end
 
-    it "shows tabs on the queue page" do
-      expect(page).to have_content(
-        format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_count)
-      )
-      expect(page).to have_content(
-        format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count)
-      )
-      expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
-    end
+      it "shows the right organization name" do
+        expect(page).to have_content(organization.name)
+      end
 
-    it "does not show all cases tab for non-VSO organization" do
-      expect(page).to_not have_content(COPY::TRACKING_TASKS_TAB_TITLE)
-    end
+      it "shows tabs on the queue page" do
+        expect(page).to have_content(
+          format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_count)
+        )
+        expect(page).to have_content(
+          format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count)
+        )
+        expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
+      end
 
-    it "shows the right number of cases in each tab" do
-      # Unassigned tab
-      expect(page).to have_content(
-        format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
-      )
-      expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+      it "does not show all cases tab for non-VSO organization" do
+        expect(page).to_not have_content(COPY::TRACKING_TASKS_TAB_TITLE)
+      end
 
-      # Assigned tab
-      find("button", text: format(
-        COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count
-      )).click
-      expect(page).to have_content(
-        format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name)
-      )
-      expect(find("tbody").find_all("tr").length).to eq(assigned_count)
-    end
+      it "shows the right number of cases in each tab" do
+        # Unassigned tab
+        expect(page).to have_content(
+          format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
+        )
+        expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
 
-    it "shows queue switcher dropdown" do
-      expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
-    end
+        # Assigned tab
+        find("button", text: format(
+          COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count
+        )).click
+        expect(page).to have_content(
+          format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name)
+        )
+        expect(find("tbody").find_all("tr").length).to eq(assigned_count)
+      end
 
-    context "when organization tasks include one associated with a LegacyAppeal that has been removed from VACOLS" do
-      let!(:tasks) do
-        Array.new(4) do
-          vacols_case = create(:case)
-          legacy_appeal = create(:legacy_appeal, vacols_case: vacols_case)
-          vacols_case.destroy!
-          create(:generic_task, :in_progress, appeal: legacy_appeal, assigned_to: organization)
+      it "shows queue switcher dropdown" do
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
+      end
+
+      context "when organization tasks include one associated with a LegacyAppeal that has been removed from VACOLS" do
+        let!(:tasks) do
+          Array.new(4) do
+            vacols_case = create(:case)
+            legacy_appeal = create(:legacy_appeal, vacols_case: vacols_case)
+            vacols_case.destroy!
+            create(:generic_task, :in_progress, appeal: legacy_appeal, assigned_to: organization)
+          end
+        end
+
+        it "loads the task queue successfully" do
+          # Re-navigate to the organization queue so we pick up the above task creation.
+          visit(organization.path)
+
+          tasks.each { |t| expect(page).to have_content(t.appeal.veteran_file_number) }
+          expect(page).to_not have_content("Information cannot be found")
         end
       end
 
-      it "loads the task queue successfully" do
-        # Re-navigate to the organization queue so we pick up the above task creation.
-        visit(organization.path)
+      context "when filtering tasks" do
+        let(:translation_task_count) { unassigned_count / 2 }
 
-        tasks.each { |t| expect(page).to have_content(t.appeal.veteran_file_number) }
-        expect(page).to_not have_content("Information cannot be found")
+        before do
+          Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
+            .take(translation_task_count).each { |task| task.update!(type: TranslationTask.name) }
+          visit(organization.path)
+        end
+
+        it "shows the correct filters" do
+          page.find_all("path.unselected-filter-icon-inner").first.click
+          expect(page).to have_content("#{GenericTask.label.humanize} (#{unassigned_count / 2})")
+          expect(page).to have_content("#{TranslationTask.label.humanize} (#{translation_task_count})")
+        end
+
+        it "filters tasks correctly" do
+          expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+          page.find_all("path.unselected-filter-icon-inner").first.click
+          page.find("label", text: "#{TranslationTask.label.humanize} (#{translation_task_count})").click
+          expect(find("tbody").find_all("tr").length).to eq(translation_task_count)
+        end
+      end
+    end
+
+    context "when pagination is enabled" do
+      let(:foia_task_count) { unassigned_count / 2 }
+      let(:on_hold_count) { assigned_count / 2 }
+
+      before do
+        allow_any_instance_of(QueueConfig).to receive(:use_task_pages_api?).with(organization_user).and_return(true)
+        FeatureToggle.enable!(:use_task_pages_api)
+        Task.on_hold.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
+          .each_with_index do |task, idx|
+            child_task = create(:generic_task, parent_id: task.id)
+            child_task.update!(status: Constants.TASK_STATUSES.on_hold) if idx < on_hold_count
+          end
+        Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
+          .take(foia_task_count).each { |task| task.update!(type: FoiaTask.name) }
+      end
+
+      after { FeatureToggle.disable!(:use_task_pages_api) }
+
+      it "shows the on hold tab" do
+        visit(organization.path)
+        expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count / 2))
+        expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, on_hold_count))
+      end
+
+      context "when following a deep link to paged results" do
+        before do
+          visit("#{organization.path}?#{query_string}")
+        end
+
+        context "when specifying the tab name" do
+          let(:query_string) do
+            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME}"
+          end
+
+          it "opens the correct tab on load" do
+            expect(page.find(".cf-tab.cf-active")).to have_content(
+              format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count / 2)
+            )
+          end
+        end
+
+        context "when specifying sort column" do
+          let(:query_string) do
+            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
+            "&#{Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}"
+          end
+
+          it "sorts the correct column ascending" do
+            (1..foia_task_count).each do |index|
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
+            end
+            (foia_task_count + 1..unassigned_count).each do |index|
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(GenericTask.label)
+            end
+          end
+        end
+
+        context "when specifying sort order" do
+          let(:query_string) do
+            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
+            "&#{Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}"\
+            "&#{Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC}"
+          end
+
+          it "sorts the correct column descending" do
+            (1..foia_task_count).each do |index|
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(GenericTask.label)
+            end
+            (foia_task_count + 1..unassigned_count).each do |index|
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
+            end
+          end
+        end
+
+        context "when specifying the page number" do
+          let(:unassigned_count) { 20 }
+          let(:default_cases_for_page) { 15 }
+          let(:page_no) { 2 }
+
+          let(:query_string) do
+            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
+            "&#{Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM}=#{page_no}"
+          end
+
+          it "opens the correct tab on load" do
+            expect(page).to have_content(
+              "Viewing #{default_cases_for_page + 1}-#{unassigned_count} of #{unassigned_count} total"
+            )
+            page.find_all(".cf-current-page").each { |btn| expect(btn).to have_content(page_no) }
+            expect(find("tbody").find_all("tr").length).to eq(unassigned_count - default_cases_for_page)
+          end
+        end
+
+        context "when specifying filters" do
+          let(:escaped_query) do
+            {
+              Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM =>
+              ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{FoiaTask.name}"]
+            }.to_query
+          end
+
+          let(:query_string) do
+            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
+            "&#{escaped_query}"
+          end
+
+          it "filters tasks correctly" do
+            (1..foia_task_count).each do |index|
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
+            end
+            expect(find("tbody").find_all("tr").length).to eq(foia_task_count)
+            expect(find("tbody")).not_to have_content(GenericTask.label)
+          end
+        end
+      end
+
+      context "when filtering tasks" do
+        it "shows the correct filters" do
+          visit(organization.path)
+          expect(page).to have_content(
+            format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
+          )
+          page.find_all("path.unselected-filter-icon-inner").first.click
+          expect(page).to have_content("#{GenericTask.label} (#{unassigned_count / 2})")
+          expect(page).to have_content("#{FoiaTask.label} (#{foia_task_count})")
+        end
+
+        it "filters tasks correctly" do
+          visit(organization.path)
+          expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+          page.find_all("path.unselected-filter-icon-inner").first.click
+          page.find("label", text: "#{FoiaTask.label} (#{foia_task_count})").click
+          expect(find("tbody").find_all("tr").length).to eq(foia_task_count)
+        end
       end
     end
   end

@@ -156,6 +156,15 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
+  attribute :assigned_by do |object|
+    {
+      first_name: object.assigned_by_display_name.first,
+      last_name: object.assigned_by_display_name.last,
+      css_id: object.assigned_by.try(:css_id),
+      pg_id: object.assigned_by.try(:id)
+    }
+  end
+
   # UNUSED
 
   attribute :assignee_name do
@@ -208,15 +217,6 @@ class WorkQueue::TaskColumnSerializer
 
   attribute :hide_from_task_snapshot do
     nil
-  end
-
-  attribute :assigned_by do
-    {
-      first_name: nil,
-      last_name: nil,
-      css_id: nil,
-      pg_id: nil
-    }
   end
 
   attribute :docket_range_date do

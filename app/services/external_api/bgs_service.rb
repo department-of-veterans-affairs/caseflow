@@ -76,6 +76,8 @@ class ExternalApi::BGSService
       client.people.find_person_by_ptcpnt_id(participant_id)
     end
 
+    return {} unless bgs_info
+
     @person_info[participant_id] ||= {
       first_name: bgs_info[:first_nm],
       last_name: bgs_info[:last_nm],
@@ -274,12 +276,16 @@ class ExternalApi::BGSService
   end
 
   def get_participant_id_for_user(user)
+    get_participant_id_for_css_id_and_station_id(user.css_id, user.station_id)
+  end
+
+  def get_participant_id_for_css_id_and_station_id(css_id, station_id)
     DBService.release_db_connections
 
-    MetricsService.record("BGS: find participant id for user #{user.css_id}, #{user.station_id}",
+    MetricsService.record("BGS: find participant id for user #{css_id}, #{station_id}",
                           service: :bgs,
                           name: "security.find_participant_id") do
-      client.security.find_participant_id(css_id: user.css_id, station_id: user.station_id)
+      client.security.find_participant_id(css_id: css_id, station_id: station_id)
     end
   end
 

@@ -4,7 +4,7 @@
 # Task to record on the appeal that the special case movement manually assigned the case outside of automatic
 #   case distribution
 
-class SpecialCaseMovementTask < GenericTask
+class SpecialCaseMovementTask < Task
   before_create :verify_parent_task_type,
                 :verify_user_organization,
                 :verify_appeal_distributable
