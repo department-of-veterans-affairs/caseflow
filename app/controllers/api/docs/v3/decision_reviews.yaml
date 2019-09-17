@@ -846,61 +846,6 @@ paths:
                           properties:
                             type:
                               type: string
-                              enum: ["Veteran"]
-                            id:
-                              type: string # veteran file number
-                            attributes:
-                              type: object
-                              properties:
-                                firstName:
-                                  type: string
-                                  nullable: true
-                                middleName:
-                                  type: string
-                                  nullable: true
-                                lastName:
-                                  type: string
-                                  nullable: true
-                                nameSuffix:
-                                  type: string
-                                  nullable: true
-                                fileNumber:
-                                  type: string
-                                ssn:
-                                  type: string
-                                  nullable: true
-                                participantId:
-                                  type: string
-                                  nullable: true
-                        - type: object
-                          properties:
-                            type:
-                              type: string
-                              enum: ["Claimant"]
-                            id:
-                              type: string # participant id
-                            attributes:
-                              type: object
-                              properties:
-                                firstName:
-                                  type: string
-                                  nullable: true
-                                middleName:
-                                  type: string
-                                  nullable: true
-                                lastName:
-                                  type: string
-                                  nullable: true
-                                payeeCode:
-                                  $ref: "#/components/schemas/payee_code"
-                                  nullable: true
-                                relationshipType:
-                                  type: string
-                                  nullable: true
-                        - type: object
-                          properties:
-                            type:
-                              type: string
                               enum: ["DecisionIssue"]
                             id:
                               type: integer
