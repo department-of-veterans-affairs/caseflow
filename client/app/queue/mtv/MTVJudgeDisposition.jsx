@@ -8,40 +8,88 @@ import {
   JUDGE_ADDRESS_MTV_DESCRIPTION,
   JUDGE_ADDRESS_MTV_DISPOSITION_SELECT_LABEL,
   JUDGE_ADDRESS_MTV_VACATE_TYPE_LABEL,
+  JUDGE_ADDRESS_MTV_HYPERLINK_LABEL,
   JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL,
   JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL
 } from '../../../COPY.json';
 import { MTVDispositionSelection } from './MTVDispositionSelection';
 import TextareaField from '../../components/TextareaField';
 import RadioField from '../../components/RadioField';
-import { mtvVacateTypeOptions } from './index';
+import { DISPOSITION_TEXT, VACATE_TYPE_OPTIONS } from '../../../constants/MOTION_TO_VACATE.json';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import { css } from 'glamor';
 import { MTVTaskHeader } from './MTVTaskHeader';
+import TextField from '../../components/TextField';
 
-export const MTVJudgeDisposition = ({ attorneys, task, appeal, onSubmit = () => null, submitting = false }) => {
-  const { assignedTo } = task;
+const vacateTypeText = (val) => {
+  const opt = VACATE_TYPE_OPTIONS.find((i) => i.value === val);
 
+  return opt && opt.displayText;
+};
+
+const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }) => {
+  const parts = [`I am proceeding with a ${DISPOSITION_TEXT[disposition]}.`];
+
+  switch (disposition) {
+  case 'granted':
+    parts.push(`This will be a ${vacateTypeText(vacateType)}`);
+    parts.push(instructions);
+    break;
+  default:
+    parts.push(instructions);
+    parts.push('\nHere is the hyperlink to the signed denial document');
+    parts.push(hyperlink);
+    break;
+  }
+
+  return parts.join('\n');
+};
+
+export const MTVJudgeDisposition = ({
+  attorneys,
+  selectedAttorney,
+  task,
+  appeal,
+  onSubmit = () => null,
+  submitting = false
+}) => {
   const cancelLink = `/queue/appeals/${task.externalAppealId}`;
 
   const [disposition, setDisposition] = useState(null);
   const [vacateType, setVacateType] = useState(null);
   const [instructions, setInstructions] = useState('');
-  const [attorneyId, setAttorneyId] = useState(assignedTo ? assignedTo.id : null);
+  const [hyperlink, setHyperlink] = useState(null);
+  const [attorneyId, setAttorneyId] = useState(selectedAttorney ? selectedAttorney.id : null);
 
   const handleSubmit = () => {
-    const newTask = {
-      instructions,
-      assigned_to_id: attorneyId
+    const formattedInstructions = formatInstructions({
+      disposition,
+      vacateType,
+      hyperlink,
+      instructions
+    });
+
+    const result = {
+      task_id: task.taskId,
+      instructions: formattedInstructions,
+      assigned_to_id: attorneyId,
+      disposition,
+      vacate_type: vacateType
     };
 
-    onSubmit(newTask);
+    onSubmit(result);
   };
 
-  const valid = () => {
-    if (!disposition || !instructions || !attorneyId || (disposition === 'granted' && !vacateType)) {
+  const isValid = () => {
+    if (
+      !disposition ||
+      !instructions ||
+      !attorneyId ||
+      (disposition === 'granted' && !vacateType) ||
+      (disposition !== 'granted' && !hyperlink)
+    ) {
       return false;
     }
 
@@ -59,7 +107,10 @@ export const MTVJudgeDisposition = ({ attorneys, task, appeal, onSubmit = () => 
 
         <MTVDispositionSelection
           label={JUDGE_ADDRESS_MTV_DISPOSITION_SELECT_LABEL}
-          onChange={(val) => setDisposition(val)}
+          onChange={(val) => {
+            setVacateType(null);
+            setDisposition(val);
+          }}
           value={disposition}
         />
 
@@ -67,10 +118,22 @@ export const MTVJudgeDisposition = ({ attorneys, task, appeal, onSubmit = () => 
           <RadioField
             name="vacate_type"
             label={JUDGE_ADDRESS_MTV_VACATE_TYPE_LABEL}
-            options={mtvVacateTypeOptions}
+            options={VACATE_TYPE_OPTIONS}
             onChange={(val) => setVacateType(val)}
             value={vacateType}
+            required
             className={['mtv-vacate-type']}
+          />
+        )}
+
+        {disposition && disposition !== 'granted' && (
+          <TextField
+            name="hyperlink"
+            label={JUDGE_ADDRESS_MTV_HYPERLINK_LABEL}
+            value={hyperlink}
+            onChange={(val) => setHyperlink(val)}
+            required
+            className={['mtv-review-hyperlink']}
           />
         )}
 
@@ -99,7 +162,7 @@ export const MTVJudgeDisposition = ({ attorneys, task, appeal, onSubmit = () => 
           name="submit"
           classNames={['cf-right-side']}
           onClick={handleSubmit}
-          disabled={!valid() || submitting}
+          disabled={!isValid() || submitting}
           styling={css({ marginLeft: '1rem' })}
         >
           Submit
@@ -119,5 +182,6 @@ MTVJudgeDisposition.propTypes = {
   submitting: PropTypes.bool,
   task: PropTypes.object.isRequired,
   appeal: PropTypes.object.isRequired,
-  attorneys: PropTypes.array.isRequired
+  attorneys: PropTypes.array.isRequired,
+  selectedAttorney: PropTypes.object
 };

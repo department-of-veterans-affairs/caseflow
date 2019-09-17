@@ -21,16 +21,7 @@ module Helpers::AppealHearingHelper
 
   def hearings(appeal)
     appeal.hearings.map do |hearing|
-      {
-        held_by: hearing.judge.present? ? hearing.judge.full_name : "",
-        # this assumes only the assigned judge will view the hearing worksheet. otherwise,
-        # we should check `hearing.hearing_views.map(&:user_id).include? judge.css_id`
-        viewed_by_judge: !hearing.hearing_views.empty?,
-        date: hearing.scheduled_for,
-        type: hearing.readable_request_type,
-        external_id: hearing.external_id,
-        disposition: hearing.disposition
-      }
+      AppealHearingSerializer.new(hearing).serializable_hash[:data][:attributes]
     end
   end
 end
