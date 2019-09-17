@@ -74,7 +74,7 @@ import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import { FlashAlerts } from '../nonComp/components/Alerts';
-import { AddressMotionToVacateView } from './mtv/AddressMotionToVacateView';
+import AddressMotionToVacateView from './mtv/AddressMotionToVacateView';
 import ReviewMotionToVacateView from './mtv/ReviewMotionToVacateView';
 
 class QueueApp extends React.PureComponent {
@@ -520,7 +520,7 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.JUDGE_MTV_CHECKOUT.value}`}
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`}
               title="Address Motion to Vacate | Caseflow"
               render={this.routedAddressMotionToVacate}
             />
