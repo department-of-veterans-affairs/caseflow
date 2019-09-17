@@ -164,7 +164,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       find("label[for=vacate-type_straight_vacate_and_readjudication]").click
       fill_in("instructions", with: judge_notes)
 
-      # Ensure it has pre-selected judge previously assigned to case
+      # Ensure it has pre-selected attorney previously assigned to case
       expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
 
       click_button(text: "Submit")
@@ -194,7 +194,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       find("label[for=vacate-type_vacate_and_de_novo]").click
       fill_in("instructions", with: judge_notes)
 
-      # Ensure it has pre-selected judge previously assigned to case
+      # Ensure it has pre-selected attorney previously assigned to case
       expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
 
       click_button(text: "Submit")
@@ -224,8 +224,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
       fill_in("instructions", with: judge_notes)
       fill_in("hyperlink", with: hyperlink)
 
-      # Ensure it has pre-selected judge previously assigned to case
+      # Ensure it has pre-selected attorney previously assigned to case
       expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
+
       click_button(text: "Submit")
 
       # Return back to user's queue
@@ -253,7 +254,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       fill_in("instructions", with: judge_notes)
       fill_in("hyperlink", with: hyperlink)
 
-      # Ensure it has pre-selected judge previously assigned to case
+      # Ensure it has pre-selected attorney previously assigned to case
       expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
 
       click_button(text: "Submit")
@@ -293,4 +294,30 @@ RSpec.feature "Motion to vacate", :all_dbs do
     find("div", class: "Select-option", text: "Address Motion to Vacate").click
     expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{judge_task.id}/address_motion_to_vacate")
   end
+end
+
+def format_judge_instructions(notes:, disposition:, vacate_type:, hyperlink: nil)
+  binding.pry
+  parts = ["I am proceeding with a #{disposition_text[disposition.to_sym]}."]
+
+  parts += case disposition
+           when "granted"
+             ["This will be a #{vacate_types[vacate_type.to_sym]}", notes]
+           else
+             [notes, "\nHere is the hyperlink to the signed denial document", hyperlink]
+           end
+
+  parts.join("\n")
+end
+
+def mtv_const
+  Constants.MOTION_TO_VACATE
+end
+
+def disposition_text
+  mtv_const.DISPOSITION_TEXT.to_h
+end
+
+def vacate_types
+  mtv_const.VACATE_TYPE_OPTIONS.map { |opt| [opt["value"].to_sym, opt["displayText"]] }.to_h
 end

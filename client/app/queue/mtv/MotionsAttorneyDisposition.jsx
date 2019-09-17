@@ -19,10 +19,10 @@ import Button from '../../components/Button';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { css } from 'glamor';
 import { MTVTaskHeader } from './MTVTaskHeader';
-import { mtvDispositionText } from './index';
+import { DISPOSITION_TEXT } from '../../../constants/MOTION_TO_VACATE.json';
 
 const formatReviewAttyInstructions = ({ disposition, hyperlink, instructions }) => {
-  const parts = [`I recommend ${mtvDispositionText[disposition]}.`, instructions];
+  const parts = [`I recommend ${DISPOSITION_TEXT[disposition]}.`, instructions];
 
   if (hyperlink) {
     parts.push(`Here is the hyperlink to the draft of the denial:\n${hyperlink}`);
