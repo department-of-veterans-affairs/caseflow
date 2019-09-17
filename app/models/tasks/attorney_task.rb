@@ -40,6 +40,10 @@ class AttorneyTask < Task
     COPY::ATTORNEY_TASK_LABEL
   end
 
+  def cancel_task
+    cancel_task_and_child_subtasks
+  end
+  
   private
 
   def child_attorney_tasks_are_completed

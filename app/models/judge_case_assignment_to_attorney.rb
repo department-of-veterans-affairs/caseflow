@@ -10,27 +10,38 @@ class JudgeCaseAssignmentToAttorney
   validate :assigned_by_role_is_valid
 
   def assign_to_attorney!
-    MetricsService.record("VACOLS: assign_case_to_attorney #{vacols_id}",
-                          service: :vacols,
-                          name: "assign_case_to_attorney") do
-      self.class.repository.assign_case_to_attorney!(
-        judge: assigned_by,
-        attorney: assigned_to,
-        vacols_id: vacols_id
-      )
+    # TODO Create AttorneyTask if feature flag enabled
+    if DasDeprecation::AssignTaskToAttorney.should_perform_workflow?(appeal_id)
+      DasDeprecation::AssignTaskToAttorney.create_attorney_task(vacols_id, assigned_by, assigned_to)
+    else
+      MetricsService.record("VACOLS: assign_case_to_attorney #{vacols_id}",
+                            service: :vacols,
+                            name: "assign_case_to_attorney") do
+        self.class.repository.assign_case_to_attorney!(
+          judge: assigned_by,
+          attorney: assigned_to,
+          vacols_id: vacols_id
+        )
+      end
     end
   end
 
   def reassign_to_attorney!
-    MetricsService.record("VACOLS: reassign_case_to_attorney #{vacols_id}",
-                          service: :vacols,
-                          name: "reassign_case_to_attorney") do
-      self.class.repository.reassign_case_to_attorney!(
-        judge: assigned_by,
-        attorney: assigned_to,
-        vacols_id: vacols_id,
-        created_in_vacols_date: created_in_vacols_date
-      )
+    # TODO 'cancel' the task
+    # TODO create AttorneyTask for reassignment if featute flag is enabled
+    if DasDeprecation::AssignTaskToAttorney.should_perform_workflow?(appeal_id)
+      DasDeprecation::AssignTaskToAttorney.reassign_attorney_task(vacols_id, assigned_by, assigned_to)
+    else
+      MetricsService.record("VACOLS: reassign_case_to_attorney #{vacols_id}",
+                            service: :vacols,
+                            name: "reassign_case_to_attorney") do
+        self.class.repository.reassign_case_to_attorney!(
+          judge: assigned_by,
+          attorney: assigned_to,
+          vacols_id: vacols_id,
+          created_in_vacols_date: created_in_vacols_date
+        )
+      end
     end
   end
 
