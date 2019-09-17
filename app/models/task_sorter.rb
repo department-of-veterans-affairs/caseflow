@@ -24,9 +24,9 @@ class TaskSorter
   def sorted_tasks
     return tasks unless tasks.any?
 
-    # Always join to the CachedAppeal table because we sometimes need it, joining does not slow down the application,
-    # and conditional logic to only join sometimes adds unnecessary complexity.
-    tasks.joins(CachedAppeal.left_join_from_tasks_clause).order(order_clause)
+    # Always join to the CachedAppeal and users tables because we sometimes need it, joining does not slow down the
+    # application, and conditional logic to only join sometimes adds unnecessary complexity.
+    tasks.joins(CachedAppeal.left_join_from_tasks_clause).joins(left_join_from_users_clause).order(order_clause)
   end
 
   private
@@ -41,11 +41,14 @@ class TaskSorter
   end
 
   def order_clause
-    if column.name.eql?(Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name)
-      return task_type_order_clause
+    case column.name
+    when Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name
+      task_type_order_clause
+    when Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name
+      assigner_order_clause
+    else
+      default_order_clause
     end
-
-    default_order_clause
   end
 
   def default_order_clause
@@ -66,6 +69,14 @@ class TaskSorter
     task_types_sorted_by_label = Task.descendants.sort_by(&:label).map(&:name)
     task_type_sort_position = "type in '#{task_types_sorted_by_label.join(',')}'"
     "position(#{task_type_sort_position}) #{sort_order}"
+  end
+
+  def assigner_order_clause
+    "substring(users.full_name,\'([a-zA-Z]+)$\') #{sort_order}"
+  end
+
+  def left_join_from_users_clause
+    "left join users on users.id = tasks.assigned_by_id"
   end
 
   def column_is_valid
