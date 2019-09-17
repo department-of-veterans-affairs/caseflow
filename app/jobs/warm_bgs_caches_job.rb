@@ -4,7 +4,7 @@ class WarmBgsCachesJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
 
-  def perform(_args = {})
+  def perform
     RequestStore.store[:current_user] = User.system_user
     RequestStore.store[:application] = "hearings"
 
@@ -16,12 +16,19 @@ class WarmBgsCachesJob < CaseflowJob
   private
 
   def warm_people_caches
-    Person.where(first_name: nil, last_name: nil).order(created_at: :desc).limit(5000).each(&:update_cached_attributes!)
+    Person.where(first_name: nil, last_name: nil)
+      .order(created_at: :desc)
+      .limit(12_000)
+      .each(&:update_cached_attributes!)
+  rescue StandardError => error
+    Raven.capture_exception(error)
   end
 
   def warm_participant_caches
     RegionalOffice::CITIES.each_key do |ro_id|
       warm_ro_participant_caches([ro_id].flatten) # could be array or string
+    rescue StandardError => error
+      Raven.capture_exception(error)
     end
   end
 
@@ -45,7 +52,7 @@ class WarmBgsCachesJob < CaseflowJob
     # veteran attributes have been cached locally. This optimizes the VETText API.
     # we swallow RecordNotFound errors because some days will legitimately not have
     # hearings scheduled.
-    stop_date = (Time.zone.now + 3.weeks).to_date
+    stop_date = (Time.zone.now + 2.weeks).to_date
     date_to_cache = Time.zone.today
     veterans_updated = 0
     while date_to_cache <= stop_date

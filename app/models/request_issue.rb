@@ -657,6 +657,10 @@ class RequestIssue < ApplicationRecord
     !contention_connected_to_rating?
   end
 
+  def remanded?
+    decision_review.try(:decision_review_remanded?)
+  end
+
   private
 
   # When a request issue already has a rating in VBMS, prevent user from editing it.
@@ -912,6 +916,7 @@ class RequestIssue < ApplicationRecord
 
   def check_for_active_request_issue_by_decision_issue!
     return unless contested_decision_issue_id
+    return if correction?
 
     # When a duplicate request issue is a correction, it will not be flagged as duplicate.
     add_duplicate_issue_error(
@@ -947,10 +952,6 @@ class RequestIssue < ApplicationRecord
     else
       end_product_codes[:claim_review][rating? ? :rating : :nonrating]
     end
-  end
-
-  def remanded?
-    decision_review.try(:decision_review_remanded?)
   end
 
   def add_duplicate_issue_error(existing_request_issue)

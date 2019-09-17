@@ -71,7 +71,7 @@ class IntakesController < ApplicationController
 
   def log_error(error)
     Raven.capture_exception(error, extra: { error_uuid: error_uuid })
-    Rails.logger.error("Error UUID #{error_uuid} : #{error}")
+    Rails.logger.error("Error UUID #{error_uuid} : #{error}\n" + error.backtrace.join("\n"))
   end
 
   helper_method :index_props
@@ -84,12 +84,14 @@ class IntakesController < ApplicationController
       feedbackUrl: feedback_url,
       buildDate: build_date,
       featureToggles: {
+        inbox: FeatureToggle.enabled?(:inbox, user: current_user),
         useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
         rampIntake: FeatureToggle.enabled?(:ramp_intake, user: current_user),
         editContentionText: FeatureToggle.enabled?(:edit_contention_text, user: current_user)
       }
     }
   rescue StandardError => error
+    Rails.logger.error "#{error.message}\n#{error.backtrace.join("\n")}"
     Raven.capture_exception(error)
     # cancel intake so user doesn't get stuck
     intake_in_progress&.cancel!(reason: "system_error")
@@ -109,15 +111,21 @@ class IntakesController < ApplicationController
     render "out_of_service", layout: "application" if Rails.cache.read("intake_out_of_service")
   end
 
+  def unread_messages?
+    current_user.messages.unread.count > 0
+  end
+
   def intake_ui_hash
-    intake_in_progress ? intake_in_progress.ui_hash : {}
+    return intake_in_progress.ui_hash.merge(unread_messages: unread_messages?) if intake_in_progress
+
+    { unread_messages: unread_messages? }
   end
 
   # TODO: This could be moved to the model.
   def intake_in_progress
     return @intake_in_progress unless @intake_in_progress.nil?
 
-    @intake_in_progress = Intake.in_progress.find_by(user: current_user) || false
+    @intake_in_progress = Intake.in_progress.find_by(user: current_user)
   end
 
   def new_intake

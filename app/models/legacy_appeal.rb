@@ -158,7 +158,8 @@ class LegacyAppeal < ApplicationRecord
     translation: "14",
     schedule_hearing: "57",
     case_storage: "81",
-    service_organization: "55"
+    service_organization: "55",
+    closed: "99"
   }.freeze
 
   def document_fetcher
@@ -661,7 +662,14 @@ class LegacyAppeal < ApplicationRecord
 
     caseflow_file_number = veteran.file_number
     if vacols_file_number != caseflow_file_number
-      Raven.capture_message("legacy appeal #{external_id} has file_number mismatch with VACOLS and Caseflow")
+      DataDogService.increment_counter(
+        metric_group: "database_disagreement",
+        metric_name: "file_number",
+        app_name: RequestStore[:application],
+        attrs: {
+          appeal_id: external_id
+        }
+      )
     end
     caseflow_file_number # prefer for now
   end
@@ -745,6 +753,9 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def attorney_case_review
+    # # Created at date will be nil if there is no decass record created for this appeal yet
+    return unless vacols_case_review&.created_at
+
     AttorneyCaseReview.find_by(task_id: "#{vacols_id}-#{VacolsHelper.day_only_str(vacols_case_review.created_at)}")
   end
 

@@ -20,7 +20,7 @@ import { COLORS, LOGO_COLORS } from '../../constants/AppConstants';
 import { onReceiveTasks } from '../../queue/QueueActions';
 import { setUserCssId } from '../../queue/uiReducer/uiActions';
 import { RegionalOfficeDropdown } from '../../components/DataDropdowns';
-import AssignHearings from '../components/AssignHearings';
+import AssignHearings from '../components/assignHearings/AssignHearings';
 import { getQueryParams } from '../../util/QueryParamsUtil';
 
 const centralOfficeStaticEntry = [{
@@ -78,7 +78,7 @@ class AssignHearingsContainer extends React.PureComponent {
 
     return ApiUtil.get(requestUrl, { timeout: { response: getMinutesToMilliseconds(5) } }
     ).then((response) => {
-      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+      const resp = ApiUtil.convertToCamelCase(response.body);
 
       this.props.onReceiveUpcomingHearingDays(_.keyBy(resp.hearingDays, 'id'));
       this.props.onSelectedHearingDayChange(resp.hearingDays[0]);
@@ -93,7 +93,7 @@ class AssignHearingsContainer extends React.PureComponent {
     const requestUrl = `/cases_to_schedule/${roValue}`;
 
     return ApiUtil.get(requestUrl).then((response) => {
-      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+      const resp = ApiUtil.convertToCamelCase(response.body);
 
       this.props.onReceiveAppealsReadyForHearing(resp.data);
     });
@@ -161,9 +161,25 @@ class AssignHearingsContainer extends React.PureComponent {
   }
 }
 
-AssignHearings.propTypes = {
-  userId: PropTypes.number,
-  userCssId: PropTypes.string
+AssignHearingsContainer.propTypes = {
+  appealsReadyForHearing: PropTypes.object,
+  onReceiveAppealsReadyForHearing: PropTypes.func,
+  onReceiveTasks: PropTypes.func,
+  onReceiveUpcomingHearingDays: PropTypes.func,
+  onRegionalOfficeChange: PropTypes.func,
+  onSelectedHearingDayChange: PropTypes.func,
+  selectedHearingDay: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
+  selectedRegionalOffice: PropTypes.shape({
+    label: PropTypes.string,
+    value: PropTypes.string
+  }),
+  setUserCssId: PropTypes.func,
+  upcomingHearingDays: PropTypes.object,
+  userCssId: PropTypes.string,
+  userId: PropTypes.number
 };
 
 const mapStateToProps = (state) => ({

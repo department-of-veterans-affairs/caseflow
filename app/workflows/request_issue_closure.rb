@@ -18,6 +18,14 @@ class RequestIssueClosure
     end
   end
 
+  def remove_issue_with_corrected_decision!
+    close!(status: :removed) do
+      canceled!
+      RequestIssueContention.new(request_issue).remove!
+      request_issue.end_product_establishment&.cancel_unused_end_product!
+    end
+  end
+
   private
 
   attr_reader :request_issue

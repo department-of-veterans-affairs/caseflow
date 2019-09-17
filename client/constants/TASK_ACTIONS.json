@@ -22,6 +22,11 @@
     "value": "modal/assign_to_hearing_admin_member",
     "func": "assign_to_user_data"
   },
+  "ASSIGN_TO_MOTIONS_ATTORNEY": {
+    "label": "Assign to person",
+    "value": "modal/assign_to_person",
+    "func": "assign_to_user_data"
+  },
   "ASSIGN_TO_PERSON": {
     "label": "Assign to person",
     "value": "modal/assign_to_person",
@@ -36,6 +41,11 @@
     "label": "Assign to team",
     "value": "modal/assign_to_team",
     "func": "assign_to_organization_data"
+  },
+  "SEND_MOTION_TO_VACATE_TO_JUDGE": {
+    "label": "Send to judge",
+    "value": "send_to_judge",
+    "func": "send_motion_to_vacate_to_judge_data"
   },
   "CANCEL_FOREIGN_VETERANS_CASE_TASK": {
     "label": "Cancel hearing request",
@@ -95,6 +105,10 @@
     "label": "Return to attorney",
     "value": "modal/return_to_attorney",
     "func": "return_to_attorney_data"
+  },
+  "JUDGE_MTV_CHECKOUT": {
+    "label": "Address Motion to Vacate",
+    "value": "address"
   },
   "LIT_SUPPORT_PULAC_CERULLO": {
     "label": "Notify OGC of Pulac-Cerullo",
