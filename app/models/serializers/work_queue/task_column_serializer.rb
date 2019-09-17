@@ -119,7 +119,7 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :assigned_at do |object, params|
-    columns = [Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN]
+    columns = [Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN]
 
     if serialize_attribute?(params, columns)
       object.assigned_at
