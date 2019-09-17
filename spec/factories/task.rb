@@ -500,13 +500,6 @@ FactoryBot.define do
       assigned_by { nil }
     end
 
-    factory :decision_review_task, class: DecisionReviewTask do
-      type { DecisionReviewTask.name }
-      appeal { create(:appeal) }
-      parent { create(:root_task) }
-      assigned_by { nil }
-    end
-
     factory :aod_motion_mail_task, class: AodMotionMailTask do
       type { AodMotionMailTask.name }
       appeal { create(:appeal) }

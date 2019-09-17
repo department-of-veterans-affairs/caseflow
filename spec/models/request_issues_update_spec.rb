@@ -388,6 +388,7 @@ describe RequestIssuesUpdate, :all_dbs do
         it "saves update, removes issues, and calls remove contentions" do
           allow_remove_contention
           allow_associate_rating_request_issues
+          expect(review).to_not receive(:create_business_line_tasks!)
 
           expect(subject).to be_truthy
 
