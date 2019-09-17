@@ -26,9 +26,7 @@ class SelectForm extends React.PureComponent {
       label: form.name
     }));
 
-    const sortedDecisions = _.orderBy(radioOptions, (decisionName) => decisionName.label, 'asc');
-
-    const enableSearchableDropdown = sortedDecisions.length > 3;
+    const enableSearchableDropdown = radioOptions.length > 3;
 
     if (this.props.intakeId) {
       return <Redirect to={PAGE_PATHS.REVIEW} />;
@@ -42,7 +40,7 @@ class SelectForm extends React.PureComponent {
         label="Which form are you processing?"
         vertical
         strongLabel
-        options={sortedDecisions}
+        options={radioOptions}
         onChange={this.props.setFormType}
         value={this.props.formType}
       />
@@ -52,7 +50,7 @@ class SelectForm extends React.PureComponent {
         name="form-select"
         label="Which form are you processing?"
         placeholder="Enter or select form"
-        options={sortedDecisions}
+        options={radioOptions}
         onChange={this.setFormTypeFromDropdown}
         value={this.props.formType} />
       }

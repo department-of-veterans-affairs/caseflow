@@ -668,17 +668,6 @@ feature "Higher-Level Review", :all_dbs do
         expect(page).to have_content("1 issue")
       end
 
-      scenario "nonrating issues sorted in ascending order" do
-        start_higher_level_review(veteran_no_ratings)
-        visit "/intake/add_issues"
-
-        click_intake_add_issue
-
-        issue = Constants::ISSUE_CATEGORIES.first.flatten.min
-        click_intake_nonrating_category_dropdown
-        expect(issue).to eq("Active Duty Adjustments")
-      end
-
       scenario "form sorted in ascending order" do
         visit "/intake"
 
