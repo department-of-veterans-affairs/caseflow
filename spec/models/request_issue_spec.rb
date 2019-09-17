@@ -1088,8 +1088,29 @@ describe RequestIssue, :all_dbs do
   end
 
   context "#contested_benefit_type" do
+    subject { rating_request_issue.contested_benefit_type }
     it "returns the benefit_type of the contested_rating_issue" do
-      expect(rating_request_issue.contested_benefit_type).to eq :compensation
+      expect(subject).to eq :compensation
+    end
+
+    context "when the contested issue is a rating decision issue" do
+      let(:contested_rating_issue_reference_id) { nil }
+      let(:contested_rating_decision_reference_id) { "rating_decision_ref_id" }
+
+      it "returns compensation" do
+        expect(subject).to eq "compensation"
+      end
+    end
+
+    context "when the contested issue is neither a rating issue nor a rating decision" do
+      let(:contested_rating_issue_reference_id) { nil }
+      let(:contested_rating_decision_reference_id) { nil }
+
+      it "calls guess_benefit_type" do
+        expect(rating_request_issue).to receive(:guess_benefit_type)
+
+        subject
+      end
     end
   end
 
