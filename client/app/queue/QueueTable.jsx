@@ -209,6 +209,7 @@ export default class QueueTable extends React.PureComponent {
                      QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC,
       sortColName: tabPaginationOptions[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] || null,
       filteredByList: this.getFilters(tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]),
+      cachedTasks: {},
       tasksFromApi: [],
       loadingComponent: needsTaskRequest && <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />,
       currentPage: (tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1) || 0
@@ -384,13 +385,28 @@ export default class QueueTable extends React.PureComponent {
       return;
     }
 
+    const endpointUrl = this.requestUrl();
+
+    // If we already have the tasks cached then we set the state and return early.
+    const tasksFromCache = this.state.cachedTasks[endpointUrl];
+
+    if (tasksFromCache) {
+      this.setState({ tasksFromApi: tasksFromCache });
+
+      return Promise.resolve(true);
+    }
+
     this.setState({ loadingComponent: <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} /> });
 
-    return ApiUtil.get(this.requestUrl()).then((response) => {
+    return ApiUtil.get(endpointUrl).then((response) => {
       const { tasks: { data: tasks } } = response.body;
 
+      const preparedTasks = tasksWithAppealsFromRawTasks(tasks);
+
       this.setState({
-        tasksFromApi: tasksWithAppealsFromRawTasks(tasks),
+        cachedTasks: { ...this.state.cachedTasks,
+          [endpointUrl]: preparedTasks },
+        tasksFromApi: preparedTasks,
         loadingComponent: null
       });
     }).
