@@ -158,6 +158,8 @@ class RequestIssuesUpdate < ApplicationRecord
     process_withdrawn_issues!
     process_edited_issues!
     process_corrected_issues!
+    review.create_business_line_tasks!
+    review.cancel_unused_tasks!
   end
 
   def process_legacy_issues!

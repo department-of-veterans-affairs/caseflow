@@ -96,14 +96,14 @@ class ClaimReview < DecisionReview
     request_issues.reload
   end
 
-  def create_decision_review_task_if_required!
-    create_decision_review_task! if processed_in_caseflow?
-  end
-
   def add_user_to_business_line!
     return unless processed_in_caseflow?
 
     OrganizationsUser.add_user_to_organization(RequestStore.store[:current_user], business_line)
+  end
+
+  def create_business_line_tasks!
+    create_decision_review_task! if processed_in_caseflow?
   end
 
   # Idempotent method to create all the artifacts for this claim.
@@ -268,7 +268,7 @@ class ClaimReview < DecisionReview
 
   def create_decision_review_task!
     return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
-    return unless request_issues.active.present?
+    return if request_issues.active.blank?
 
     DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
   end
