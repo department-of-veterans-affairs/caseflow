@@ -12,6 +12,7 @@ import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
 import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES.json';
 import { validateDate, validateDateNotInFuture } from '../util/issues';
+import _ from 'lodash';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -272,6 +273,8 @@ class NonratingRequestIssueModal extends React.Component {
     const benefitTypeElement =
       formType === 'appeal' ? <BenefitType value={benefitType} onChange={this.benefitTypeOnChange} asDropdown /> : null;
 
+    const sortedIssues = _.orderBy(nonratingRequestIssueCategories(benefitType), (issues) => issues.label, 'asc');
+
     return (
       <div className="intake-add-issues">
         <Modal buttons={this.getModalButtons()} visible closeHandler={onCancel} title={`Add issue ${issueNumber}`}>
@@ -289,7 +292,7 @@ class NonratingRequestIssueModal extends React.Component {
                 label="Issue category"
                 strongLabel
                 placeholder="Select or enter..."
-                options={nonratingRequestIssueCategories(benefitType)}
+                options={sortedIssues}
                 value={category}
                 onChange={this.categoryOnChange}
               />
@@ -311,7 +314,9 @@ NonratingRequestIssueModal.propTypes = {
   onCancel: PropTypes.func,
   cancelText: PropTypes.string,
   onSkip: PropTypes.func,
-  skipText: PropTypes.string
+  skipText: PropTypes.string,
+  formType: PropTypes.string,
+  intakeData: PropTypes.object
 };
 
 NonratingRequestIssueModal.defaultProps = {
