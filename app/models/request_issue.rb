@@ -462,7 +462,7 @@ class RequestIssue < ApplicationRecord
 
   def contested_benefit_type
     return contested_rating_issue&.benefit_type if associated_rating_issue?
-    return "compensation" if associated_rating_decision?
+    return :compensation if associated_rating_decision?
 
     guess_benefit_type
   end

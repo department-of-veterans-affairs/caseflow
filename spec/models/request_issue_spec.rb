@@ -1098,7 +1098,7 @@ describe RequestIssue, :all_dbs do
       let(:contested_rating_decision_reference_id) { "rating_decision_ref_id" }
 
       it "returns compensation" do
-        expect(subject).to eq "compensation"
+        expect(subject).to eq :compensation
       end
     end
 
