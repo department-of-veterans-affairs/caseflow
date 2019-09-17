@@ -1,6 +1,6 @@
 # Caseflow Tech Lead Responsibilities
 
-## Team Leadership and Mentorship (30%-40% of time)
+## Team Leadership and Mentorship
 
 * Onboards new engineering team members to the sprint team
 * Ensures that team members have work that matches their skill level and interests
@@ -10,7 +10,7 @@
 * Reviews PRs thoroughly
 * Pairs with other engineers on the sprint team
 
-## Project Management (50% of time)
+## Project Management
 
 * Participates in collaborative project planning/explorations with product and design to:
    * Develop and vet baseline requirements for new sprint team work
@@ -21,6 +21,6 @@
   * Risks that team projects will not be able to meet their requirements or deadline
   * Personnel risks and difficulties with team members
 
-## Feature Work (10%-20% of time)
+## Feature Work
 
 * Balances individual contributor work with team coordination work, scaling up and down individual contributor work as needed to ensure team success
