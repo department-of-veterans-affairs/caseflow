@@ -97,6 +97,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         appeal_id: appeal.id,
         appeal_type: LegacyAppeal.name,
         closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
+        closest_regional_office_key: regional_office ? appeal.closest_regional_office : COPY::UNKNOWN_REGIONAL_OFFICE,
         docket_type: appeal.docket_name # "legacy"
       }
     end
@@ -104,6 +105,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
                                                                     columns: [
                                                                       :closest_regional_office_city,
+                                                                      :closest_regional_office_key,
                                                                       :vacols_id,
                                                                       :docket_type
                                                                     ] }
