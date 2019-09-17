@@ -58,16 +58,22 @@ export const submitMTVJudgeDecisionError = () => ({
   type: Constants.MTV_SUBMIT_JUDGE_DECISION_ERROR
 });
 
-export const submitMTVJudgeDecision = (data) => {
+export const submitMTVJudgeDecision = (data, ownProps) => {
   return async (dispatch) => {
     dispatch(submitMTVJudgeDecisionStarted());
 
-    const url = 'motion_to_vacate/create';
+    const { history } = ownProps;
+
+    const url = '/post_decision_motions';
 
     try {
       const res = await ApiUtil.post(url, { data });
 
       dispatch(submitMTVJudgeDecisionSuccess(res));
+
+      if (history) {
+        history.push('/queue');
+      }
     } catch (error) {
       dispatch(submitMTVJudgeDecisionError());
     }

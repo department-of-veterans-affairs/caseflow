@@ -8,42 +8,45 @@ import { withRouter } from 'react-router-dom';
 import { taskById, appealWithDetailSelector } from '../selectors';
 import { MTVJudgeDisposition } from './MTVJudgeDisposition';
 import { submitMTVJudgeDecision } from './mtvActions';
+import { taskActionData } from '../utils';
 
 export const AddressMotionToVacateView = (props) => {
-  const { task, appeal, attorneysOfJudge } = props;
+  const { task, appeal } = props;
 
-  const attyOptions = Object.values(attorneysOfJudge).map(({ id: value, display_name: label }) => ({
-    label,
+  const { selected, options } = taskActionData(props);
+
+  const attyOptions = options.map(({ value, label }) => ({
+    label: label + (selected && value === selected.id ? ' (Orig. Attorney)' : ''),
     value
   }));
 
-  const handleSubmit = (decision) => {
-    props.submitMTVJudgeDecision(decision);
+  const handleSubmit = (result) => {
+    props.submitMTVJudgeDecision(result, props);
   };
 
   return (
-    attorneysOfJudge && (
-      <MTVJudgeDisposition task={task} attorneys={attyOptions} appeal={appeal} onSubmit={handleSubmit} />
-    )
+    <MTVJudgeDisposition
+      task={task}
+      attorneys={attyOptions}
+      selectedAttorney={selected}
+      appeal={appeal}
+      onSubmit={handleSubmit}
+    />
   );
 };
 
 AddressMotionToVacateView.propTypes = {
   task: PropTypes.object,
   appeal: PropTypes.object,
-  attorneysOfJudge: PropTypes.array,
-  fetchJudges: PropTypes.func
+  submitMTVJudgeDecision: PropTypes.func
 };
 
-const mapStateToProps = (state, ownProps) => {
-  const {
-    queue: { attorneysOfJudge }
-  } = state;
+const mapStateToProps = (state, { match }) => {
+  const { taskId, appealId } = match.params;
 
   return {
-    task: taskById(state, { taskId: ownProps.taskId }),
-    appeal: appealWithDetailSelector(state, ownProps),
-    attorneysOfJudge
+    task: taskById(state, { taskId }),
+    appeal: appealWithDetailSelector(state, { appealId })
   };
 };
 
