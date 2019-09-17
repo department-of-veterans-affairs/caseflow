@@ -728,8 +728,6 @@ paths:
                       attributes:
                         type: object
                         properties:
-                          # establishment_processed_at:  status makes this obsolete
-                          #  type: string
                           active:
                             type: boolean
                           status:
