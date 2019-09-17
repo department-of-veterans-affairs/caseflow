@@ -38,7 +38,7 @@ class TasksController < ApplicationController
   #      GET /tasks?user_id=xxx&role=attorney
   #      GET /tasks?user_id=xxx&role=judge
   def index
-    tasks = queue_class.new(user: user).tasks
+    tasks = QueueForRole.new(user_role).create(user: user).tasks
     render json: { tasks: json_tasks(tasks) }
   end
 
@@ -74,7 +74,7 @@ class TasksController < ApplicationController
     end
     tasks.flatten!
 
-    tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
+    tasks_to_return = (QueueForRole.new(user_role).create(user: current_user).tasks + tasks).uniq
 
     render json: { tasks: json_tasks(tasks_to_return) }
   rescue ActiveRecord::RecordInvalid => error
@@ -98,7 +98,7 @@ class TasksController < ApplicationController
     tasks = task.update_from_params(update_params, current_user)
     tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
-    tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
+    tasks_to_return = (QueueForRole.new(user_role).create(user: current_user).tasks + tasks).uniq
 
     render json: { tasks: json_tasks(tasks_to_return) }
   end
@@ -157,10 +157,6 @@ class TasksController < ApplicationController
     if current_user.vso_employee? && task_classes.exclude?(InformalHearingPresentationTask.name.to_sym)
       fail Caseflow::Error::ActionForbiddenError, message: "VSOs cannot create that task."
     end
-  end
-
-  def queue_class
-    (user_role == "attorney") ? AttorneyQueue : GenericQueue
   end
 
   def user_role
