@@ -13,6 +13,11 @@ class Generators::Random
       from_set(set, len)
     end
 
+    def special_characters(len = 16)
+      set = (" ".."/").to_a + (":".."@").to_a + ("[".."`").to_a + ("{".."~").to_a
+      from_set(set, len)
+    end
+
     # Generate a random combination of elements from set between 1 and len characters long.
     def from_set(set, len)
       (Array.new(Random.rand(len) + 1) { set.sample }).join

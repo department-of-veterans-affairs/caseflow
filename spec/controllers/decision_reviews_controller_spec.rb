@@ -122,6 +122,11 @@ describe DecisionReviewsController, :postgres, type: :controller do
     end
 
     context "with board grant effectuation task" do
+      before do
+        @raven_called = false
+        allow(Raven).to receive(:capture_exception) { @raven_called = true }
+      end
+
       let(:task) do
         create(:board_grant_effectuation_task, :in_progress, assigned_to: non_comp_org)
       end
@@ -143,6 +148,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
         put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id }
         expect(response.status).to eq(400)
+        expect(@raven_called).to eq(true)
       end
     end
 
