@@ -32,9 +32,10 @@ describe PostDecisionMotionUpdater, :postgres do
         it "should create straight vacate and readjudication attorney task" do
           subject.process
           expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
+          abstract_task = AbstractMotionToVacateTask.find_by(parent: task)
           attorney_task = StraightVacateAndReadjudicationTask.find_by(assigned_to_id: assigned_to_id)
           expect(attorney_task).to_not be nil
-          expect(attorney_task.parent).to eq task.root_task
+          expect(attorney_task.parent).to eq abstract_task
           expect(attorney_task.assigned_by).to eq task.assigned_to
           expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
         end
@@ -46,9 +47,10 @@ describe PostDecisionMotionUpdater, :postgres do
         it "should create vacate and de novo attorney task" do
           subject.process
           expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
+          abstract_task = AbstractMotionToVacateTask.find_by(parent: task)
           attorney_task = VacateAndDeNovoTask.find_by(assigned_to_id: assigned_to_id)
           expect(attorney_task).to_not be nil
-          expect(attorney_task.parent).to eq task.root_task
+          expect(attorney_task.parent).to eq abstract_task
           expect(attorney_task.assigned_by).to eq task.assigned_to
           expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
         end
@@ -62,6 +64,7 @@ describe PostDecisionMotionUpdater, :postgres do
           subject.process
           expect(subject.errors[:assigned_to].first).to eq "can't be blank"
           expect(task.reload.status).to eq Constants.TASK_STATUSES.in_progress
+          expect(AbstractMotionToVacateTask.count).to eq 0
           expect(VacateAndDeNovoTask.count).to eq 0
         end
       end
@@ -74,6 +77,7 @@ describe PostDecisionMotionUpdater, :postgres do
           subject.process
           expect(subject.errors[:vacate_type].first).to eq "is required for granted disposition"
           expect(task.reload.status).to eq Constants.TASK_STATUSES.in_progress
+          expect(AbstractMotionToVacateTask.count).to eq 0
           expect(VacateAndDeNovoTask.count).to eq 0
         end
       end
@@ -86,9 +90,10 @@ describe PostDecisionMotionUpdater, :postgres do
       it "should create post decision motion denied attorney task" do
         subject.process
         expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
+        abstract_task = AbstractMotionToVacateTask.find_by(parent: task)
         attorney_task = DeniedMotionToVacateTask.find_by(assigned_to_id: assigned_to_id)
         expect(attorney_task).to_not be nil
-        expect(attorney_task.parent).to eq task.root_task
+        expect(attorney_task.parent).to eq abstract_task
         expect(attorney_task.assigned_by).to eq task.assigned_to
         expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
       end
@@ -101,6 +106,7 @@ describe PostDecisionMotionUpdater, :postgres do
           subject.process
           expect(subject.errors[:assigned_to].first).to eq "can't be blank"
           expect(task.reload.status).to eq Constants.TASK_STATUSES.in_progress
+          expect(AbstractMotionToVacateTask.count).to eq 0
           expect(DeniedMotionToVacateTask.count).to eq 0
         end
       end
@@ -113,9 +119,10 @@ describe PostDecisionMotionUpdater, :postgres do
       it "should create post decision motion dismissed attorney task" do
         subject.process
         expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
+        abstract_task = AbstractMotionToVacateTask.find_by(parent: task)
         attorney_task = DismissedMotionToVacateTask.find_by(assigned_to_id: assigned_to_id)
         expect(attorney_task).to_not be nil
-        expect(attorney_task.parent).to eq task.root_task
+        expect(attorney_task.parent).to eq abstract_task
         expect(attorney_task.assigned_by).to eq task.assigned_to
         expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
       end
@@ -128,6 +135,7 @@ describe PostDecisionMotionUpdater, :postgres do
           subject.process
           expect(subject.errors[:assigned_to].first).to eq "can't be blank"
           expect(task.reload.status).to eq Constants.TASK_STATUSES.in_progress
+          expect(AbstractMotionToVacateTask.count).to eq 0
           expect(DismissedMotionToVacateTask.count).to eq 0
         end
       end

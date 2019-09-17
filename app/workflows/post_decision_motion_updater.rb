@@ -35,12 +35,19 @@ class PostDecisionMotionUpdater
   end
 
   def create_new_tasks
-    # If it is a grant, judge assigns it to the drafting attorney,
-    # otherwise, it goes back to the motions attorney
+    # We create an AbstractMotionToVacateTask as sibling to the judge task
+    # to serve as parent for all successive tasks. It is created when associated with
+    # the new task in order to pass responsibility for validation to child task
+
+    abstract_task = create_abstract_task
+    unless abstract_task.valid?
+      errors.messages.merge!(abstract_task.errors.messages)
+      return
+    end
 
     new_task = task_class.new(
       appeal: task.appeal,
-      parent: task.root_task,
+      parent: abstract_task,
       assigned_by: task.assigned_to,
       assigned_to: assigned_to,
       instructions: [params[:instructions]]
@@ -53,6 +60,14 @@ class PostDecisionMotionUpdater
     new_task.save
 
     task.update(status: Constants.TASK_STATUSES.completed)
+  end
+
+  def create_abstract_task
+    AbstractMotionToVacateTask.new(
+      appeal: task.appeal,
+      parent: task,
+      assigned_to: task.assigned_to
+    )
   end
 
   def task_class
