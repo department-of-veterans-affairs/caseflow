@@ -226,6 +226,13 @@ export default class QueueTable extends React.PureComponent {
     }
   }
 
+  componentDidMount = () => {
+    if (this.props.rowObjects.length) {
+      this.setState({ cachedTasks: { ...this.state.cachedTasks,
+        [this.requestUrl()]: this.props.rowObjects } });
+    }
+  }
+
   getFilters = (filterParams) => {
     const filters = {};
 
