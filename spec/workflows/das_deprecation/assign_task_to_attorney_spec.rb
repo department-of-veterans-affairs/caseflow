@@ -23,7 +23,8 @@ describe DasDeprecation::AssignTaskToAttorney do
   let(:attorney2) { create(:user) }
   let!(:vacols_attorney2) { create(:staff, :attorney_role, user: attorney2) }
 
-  let!(:judge_assign_task) { JudgeAssignTaskCreator.new(appeal: appeal, judge: judge).call }
+  let(:root_task) { create(:root_task, appeal: appeal) }
+  let!(:judge_assign_task) { JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge) }
 
   describe "#should_perform_workflow?" do
     it "feature flag is enabled and appeal has JudgeAssignTask" do
@@ -32,37 +33,36 @@ describe DasDeprecation::AssignTaskToAttorney do
   end
 
   describe "#create_attorney_task" do
-    let!(:attorney_task) { DasDeprecation::AssignTaskToAttorney.create_attorney_task(appeal.vacols_id, judge, attorney1) }
+    let!(:task) { DasDeprecation::AssignTaskToAttorney.create_attorney_task(appeal.vacols_id, judge, attorney1) }
 
     it "task is a child of JudgeDecisionReviewTask" do
-      expect(attorney_task.parent.type).to eq("JudgeDecisionReviewTask")
+      expect(task.parent.type).to eq("JudgeDecisionReviewTask")
     end
 
     it "task is AttorneyTask" do
-      expect(attorney_task.type).to eq("AttorneyTask")
+      expect(task.type).to eq("AttorneyTask")
     end
 
     it "assigns task to attorney" do
-      expect(attorney_task.assigned_to).to eq(attorney1)
+      expect(task.assigned_to).to eq(attorney1)
     end
 
     it "appeal type is LegacyAppeal" do
-      expect(attorney_task.appeal_type).to eq("LegacyAppeal")
+      expect(task.appeal_type).to eq("LegacyAppeal")
     end
   end
 
   describe "case reassignment to Attorney" do
-    let!(:attorney_task1) { DasDeprecation::AssignTaskToAttorney.create_attorney_task(appeal.vacols_id, judge, attorney1) }
-    let!(:attorney_task2) { DasDeprecation::AssignTaskToAttorney.reassign_attorney_task(appeal.vacols_id, judge, attorney2) }
+    let!(:task1) { DasDeprecation::AssignTaskToAttorney.create_attorney_task(appeal.vacols_id, judge, attorney1) }
+    let!(:task2) { DasDeprecation::AssignTaskToAttorney.reassign_attorney_task(appeal.vacols_id, judge, attorney2) }
 
     it "cancels task" do
-      task = AttorneyTask.find_by(appeal_id: LegacyAppeal.find_by(vacols_id: appeal.vacols_id).id)
-
+      task = AttorneyTask.find(task1.id)
       expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
     end
 
     it "reassigns task to another attorney" do
-      expect(attorney_task2.assigned_to).to eq(attorney2)
+      expect(task2.assigned_to).to eq(attorney2)
     end
   end
 end

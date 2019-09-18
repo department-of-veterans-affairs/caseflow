@@ -10,7 +10,6 @@ class JudgeCaseAssignmentToAttorney
   validate :assigned_by_role_is_valid
 
   def assign_to_attorney!
-    # TODO Create AttorneyTask if feature flag enabled
     if DasDeprecation::AssignTaskToAttorney.should_perform_workflow?(appeal_id)
       DasDeprecation::AssignTaskToAttorney.create_attorney_task(vacols_id, assigned_by, assigned_to)
     else
@@ -27,8 +26,6 @@ class JudgeCaseAssignmentToAttorney
   end
 
   def reassign_to_attorney!
-    # TODO 'cancel' the task
-    # TODO create AttorneyTask for reassignment if featute flag is enabled
     if DasDeprecation::AssignTaskToAttorney.should_perform_workflow?(appeal_id)
       DasDeprecation::AssignTaskToAttorney.reassign_attorney_task(vacols_id, assigned_by, assigned_to)
     else

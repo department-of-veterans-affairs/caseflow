@@ -3,10 +3,16 @@
 class DasDeprecation::AssignTaskToAttorney
   class << self
     def create_attorney_task(vacols_id, assigned_by, assigned_to)
-      legacy_appeal = LegacyAppeal.find_by(vacols_id: vacols_id)
-      judge_review_task = JudgeDecisionReviewTask.create!(appeal: legacy_appeal, assigned_to: assigned_to)
+      appeal = LegacyAppeal.find_by(vacols_id: vacols_id)
+      judge_assign_task = JudgeAssignTask.find_by(appeal_id: LegacyAppeal.find_by(vacols_id: vacols_id).id)
+      judge_review_task = JudgeDecisionReviewTask.create!(
+        appeal: appeal,
+        assigned_to: assigned_to,
+        parent: judge_assign_task
+      )
+      judge_assign_task.update!(status: Constants.TASK_STATUSES.completed)
       AttorneyTask.create!(
-        appeal: legacy_appeal,
+        appeal: appeal,
         assigned_by: assigned_by,
         assigned_to: assigned_to,
         parent: judge_review_task
