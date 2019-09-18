@@ -3,7 +3,7 @@
 class DecisionReviewTasksForInactiveAppealsChecker < DataIntegrityChecker
   def call
     tasks_with_inactive_appeals.each do |task|
-      add_to_report "#{task.type} #{task.id} should be canceled"
+      add_to_report "#{task.type} #{task.id} should be cancelled"
     end
   end
 

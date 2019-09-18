@@ -22,7 +22,7 @@ describe DecisionReviewTasksForInactiveAppealsChecker, :postgres do
       subject.call
 
       expect(subject.report?).to eq(true)
-      expect(subject.report).to eq("#{task.type} #{task.id} should be canceled")
+      expect(subject.report).to eq("#{task.type} #{task.id} should be cancelled")
     end
   end
 end
