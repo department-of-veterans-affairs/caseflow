@@ -11,8 +11,12 @@ class AppealsWithNoTasksOrAllTasksOnHoldQuery
     stuck_query("Appeal")
   end
 
+  def established_appeals
+    Appeal.where.not(established_at: nil)
+  end
+
   def appeals_with_zero_tasks
-    Appeal.where.not(id: Task.select(:appeal_id).where(appeal_type: Appeal.name))
+    established_appeals.where.not(id: Task.select(:appeal_id).where(appeal_type: Appeal.name))
   end
 
   def tasks_for(klass_name)
