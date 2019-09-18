@@ -21,19 +21,21 @@ feature "End Product Correction (EP 930)", :postgres do
   let(:profile_date) { promulgation_date.to_datetime }
   let(:ep_code) { "030HLRR" }
 
-  let(:cleared_end_product) do
+  let(:end_product) do
     Generators::EndProduct.build(
       veteran_file_number: veteran.file_number,
-      bgs_attrs: { status_type_code: "CLR" }
+      bgs_attrs: { status_type_code: synced_status }
     )
   end
+  let(:reference_id) { end_product.claim_id }
+  let(:synced_status) { "CLR" }
 
-  let(:cleared_end_product_establishment) do
+  let(:end_product_establishment) do
     create(:end_product_establishment,
            source: claim_review,
-           synced_status: "CLR",
+           synced_status: synced_status,
            code: ep_code,
-           reference_id: cleared_end_product.claim_id)
+           reference_id: reference_id)
   end
 
   let!(:rating) do
@@ -57,16 +59,21 @@ feature "End Product Correction (EP 930)", :postgres do
       decision_date: promulgation_date,
       contested_rating_issue_profile_date: profile_date,
       contested_issue_description: "PTSD denied",
-      end_product_establishment: cleared_end_product_establishment
+      end_product_establishment: end_product_establishment
     )
+  end
+
+  let!(:claim_review) do
+    create(claim_review_type.to_sym,
+           :processed,
+           intake: create(:intake),
+           veteran_file_number: veteran.file_number,
+           receipt_date: receipt_date)
   end
 
   feature "with cleared end product on higher level review" do
     let(:claim_review_type) { "higher_level_review" }
-    let!(:claim_review) do
-      create(claim_review_type.to_sym, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
-    end
-    let(:edit_path) { "#{claim_review_type.pluralize}/#{cleared_end_product.claim_id}/edit" }
+    let(:edit_path) { "#{claim_review_type.pluralize}/#{reference_id}/edit" }
     let(:ep_code) { "030HLRR" }
 
     it "edits are prevented if correct claim reviews feature is not enabled" do
@@ -98,6 +105,18 @@ feature "End Product Correction (EP 930)", :postgres do
         it "creates a correction issue and EP" do
           visit edit_path
           check_adding_nonrating_correction_issue
+        end
+
+        it "cancel edit on cleared eps" do
+          visit edit_path
+          click_on "Cancel"
+
+          correct_path = "/higher_level_reviews/#{reference_id}/edit/cancel"
+          expect(page).to have_current_path(correct_path)
+          expect(page).to have_content("Edit Canceled")
+          expect(page).to have_content("correct the issues")
+          click_on "correct the issues"
+          expect(page).to have_content("Edit Issues")
         end
       end
 
@@ -162,10 +181,7 @@ feature "End Product Correction (EP 930)", :postgres do
 
   feature "with cleared end product on supplemental claim" do
     let(:claim_review_type) { "supplemental_claim" }
-    let!(:claim_review) do
-      create(claim_review_type.to_sym, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
-    end
-    let(:edit_path) { "#{claim_review_type.pluralize}/#{cleared_end_product.claim_id}/edit" }
+    let(:edit_path) { "#{claim_review_type.pluralize}/#{reference_id}/edit" }
     let(:ep_code) { "040SCR" }
 
     it "edits are prevented if correct claim reviews feature is not enabled" do
@@ -208,10 +224,44 @@ feature "End Product Correction (EP 930)", :postgres do
       end
     end
   end
+
+  feature "with a dta supplemental claim" do
+    before { enable_features }
+    after { disable_features }
+
+    let(:claim_review_type) { "supplemental_claim" }
+    let!(:claim_review) do
+      create(claim_review_type.to_sym,
+             :processed,
+             intake: create(:intake),
+             veteran_file_number: veteran.file_number,
+             decision_review_remanded: create(:higher_level_review, veteran_file_number: veteran.file_number),
+             receipt_date: receipt_date)
+    end
+
+    let(:edit_path) { "#{claim_review_type.pluralize}/#{reference_id}/edit" }
+    let(:ep_code) { "040SCR" }
+
+    context "when the end product is not yet cleared" do
+      let(:synced_status) { "PEND" }
+      it "prevents edit" do
+        visit edit_path
+        expect(page).to have_content("Issues Not Editable")
+      end
+    end
+
+    context "when the end product is cleared" do
+      it "allows edit and hides the add issue button" do
+        visit edit_path
+        expect(page).to have_content("Edit Issues")
+        expect(page).to_not have_css("#button-add-issue")
+      end
+    end
+  end
 end
 
 def check_page_not_editable(type)
-  expect(page).to have_current_path("/#{type}s/#{cleared_end_product.claim_id}/edit/cleared_eps")
+  expect(page).to have_current_path("/#{type}s/#{reference_id}/edit/cleared_eps")
   expect(page).to have_content("Issues Not Editable")
   expect(page).to have_content(Constants.INTAKE_FORM_NAMES.send(type))
 end
@@ -248,7 +298,7 @@ def correct_existing_request_issue(request_issue_to_correct)
 end
 
 def visit_edit_page(type)
-  visit "#{type}/#{cleared_end_product.claim_id}/edit/"
+  visit "#{type}/#{reference_id}/edit/"
   expect(page).to have_content("Edit Issues")
   expect(page).to have_content("Cleared, waiting for decision")
 end

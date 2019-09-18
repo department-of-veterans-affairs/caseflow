@@ -737,7 +737,7 @@ module IntakeHelpers
       expect(page).to have_content("View all cases")
     else
       click_intake_finish
-      expect(page).to have_content("#{form_name} has been processed.")
+      expect(page).to have_content("#{form_name} has been submitted.")
     end
 
     expect(
@@ -852,7 +852,7 @@ module IntakeHelpers
     add_intake_rating_issue("Issue with legacy issue not withdrawn")
 
     click_edit_submit
-    expect(page).to have_content("has been processed")
+    expect(page).to have_content("has been submitted")
 
     first_not_modified_request_issue = RequestIssue.find_by(
       decision_review: decision_review,

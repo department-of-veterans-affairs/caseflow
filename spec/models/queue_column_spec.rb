@@ -88,8 +88,8 @@ describe QueueColumn, :all_dbs do
       let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name }
       let(:tasks) { create_list(:task, 5) }
 
-      it "returns an empty array" do
-        expect(subject).to eq([])
+      it "raises an error" do
+        expect { subject }.to raise_error(Caseflow::Error::MustImplementInSubclass)
       end
     end
 
