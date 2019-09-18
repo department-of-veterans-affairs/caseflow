@@ -17,7 +17,13 @@ class DecisionReviewTasksForInactiveAppealsChecker < DataIntegrityChecker
     suspect_tasks = []
     BusinessLine.all.each do |business|
       tasks = business.tasks.open.includes([:assigned_to, :appeal])
-      suspect_tasks << tasks.select { |task| task.appeal.request_issues.active.none? }
+      suspect_tasks << tasks.select do |task|
+        # BoardGrantEffectuationTask only exist for appeals where all the request_issues
+        # are decided, so they are not "active". Therefore we want to keep those tasks open.
+        next if task.is_a?(BoardGrantEffectuationTask)
+
+        task.appeal.request_issues.active.none?
+      end
     end
     suspect_tasks.flatten
   end
