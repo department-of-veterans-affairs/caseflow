@@ -16,6 +16,7 @@ describe DecisionReviewTasksForInactiveAppealsChecker, :postgres do
   end
   let!(:request_issue) { create(:request_issue, :removed, decision_review: hlr) }
   let!(:task) { create(:higher_level_review_task, appeal: hlr, assigned_to: education) }
+  let!(:board_grant_effectuation_task) { create(:board_grant_effectuation_task, appeal: hlr, assigned_to: education) }
 
   describe "#call" do
     it "reports one orphaned task" do
