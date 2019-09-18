@@ -4,17 +4,30 @@ class AppealsController < ApplicationController
   before_action :react_routed
   before_action :set_application, only: [:document_count, :power_of_attorney]
   # Only whitelist endpoints VSOs should have access to.
-  skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran, :hearings]
+  skip_before_action :deny_vso_access, only: [
+    :index,
+    :power_of_attorney,
+    :show_case_list,
+    :show,
+    :veteran,
+    :most_recent_hearing
+  ]
 
   def index
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        veteran_file_number = request.headers["HTTP_VETERAN_ID"]
+        case_search = request.headers["HTTP_CASE_SEARCH"]
 
-        result = CaseSearchResultsForVeteranFileNumber.new(
-          file_number_or_ssn: veteran_file_number, user: current_user
-        ).call
+        result = if docket_number?(case_search)
+                   CaseSearchResultsForDocketNumber.new(
+                     docket_number: case_search, user: current_user
+                   ).call
+                 else
+                   CaseSearchResultsForVeteranFileNumber.new(
+                     file_number_or_ssn: case_search, user: current_user
+                   ).call
+                 end
 
         render_search_results_as_json(result)
       end
@@ -50,23 +63,16 @@ class AppealsController < ApplicationController
     }
   end
 
-  def hearings
+  def most_recent_hearing
     log_hearings_request
 
-    most_recently_held_hearing = appeal.hearings
-      .select { |hearing| hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held }
+    most_recently_held_hearing = HearingsForAppeal.new(url_appeal_uuid)
+      .held_hearings
       .max_by(&:scheduled_for)
 
     render json:
       if most_recently_held_hearing
-        {
-          held_by: most_recently_held_hearing.judge.present? ? most_recently_held_hearing.judge.full_name : "",
-          viewed_by_judge: !most_recently_held_hearing.hearing_views.empty?,
-          date: most_recently_held_hearing.scheduled_for,
-          type: most_recently_held_hearing.readable_request_type,
-          external_id: most_recently_held_hearing.external_id,
-          disposition: most_recently_held_hearing.disposition
-        }
+        AppealHearingSerializer.new(most_recently_held_hearing).serializable_hash[:data][:attributes]
       else
         {}
       end
@@ -220,5 +226,9 @@ class AppealsController < ApplicationController
 
   def access_error_message
     appeal.veteran.multiple_phone_numbers? ? COPY::DUPLICATE_PHONE_NUMBER_TITLE : COPY::ACCESS_DENIED_TITLE
+  end
+
+  def docket_number?(search)
+    !search.nil? && search.match?(/\d{6}-{1}\d+$/)
   end
 end

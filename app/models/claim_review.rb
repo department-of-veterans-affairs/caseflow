@@ -23,6 +23,7 @@ class ClaimReview < DecisionReview
   self.abstract_class = true
 
   class NoEndProductsRequired < StandardError; end
+  class NotYetProcessed < StandardError; end
 
   class << self
     def find_by_uuid_or_reference_id!(claim_id)
@@ -41,6 +42,7 @@ class ClaimReview < DecisionReview
 
   def ui_hash
     super.merge(
+      asyncJobUrl: async_job_url,
       benefitType: benefit_type,
       payeeCode: payee_code,
       hasClearedRatingEp: cleared_rating_ep?,
@@ -49,6 +51,8 @@ class ClaimReview < DecisionReview
   end
 
   def validate_prior_to_edit
+    fail NotYetProcessed unless processed?
+
     # force sync on initial edit call so that we have latest EP status.
     # This helps prevent us editing something that recently closed upstream.
     sync_end_product_establishments!
@@ -59,8 +63,8 @@ class ClaimReview < DecisionReview
     ui_hash
   end
 
-  def caseflow_only_edit_issues_url
-    "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
+  def async_job_url
+    "/asyncable_jobs/#{self.class}/jobs/#{id}"
   end
 
   def finalized_decision_issues_before_receipt_date
@@ -86,19 +90,20 @@ class ClaimReview < DecisionReview
           veteran_participant_id: veteran.participant_id
         )
       end
+      RequestIssueCorrectionCleaner.new(issue).remove_dta_request_issue! if issue.correction?
       issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
     end
     request_issues.reload
-  end
-
-  def create_decision_review_task_if_required!
-    create_decision_review_task! if processed_in_caseflow?
   end
 
   def add_user_to_business_line!
     return unless processed_in_caseflow?
 
     OrganizationsUser.add_user_to_organization(RequestStore.store[:current_user], business_line)
+  end
+
+  def create_business_line_tasks!
+    create_decision_review_task! if processed_in_caseflow?
   end
 
   # Idempotent method to create all the artifacts for this claim.
@@ -161,6 +166,7 @@ class ClaimReview < DecisionReview
       end_product_status: search_table_statuses,
       establishment_error: establishment_error,
       review_type: self.class.to_s.underscore,
+      receipt_date: receipt_date,
       veteran_file_number: veteran_file_number,
       veteran_full_name: claim_veteran&.name&.formatted(:readable_full),
       caseflow_only_edit_issues_url: caseflow_only_edit_issues_url
@@ -202,12 +208,8 @@ class ClaimReview < DecisionReview
     request_issues.first.api_aoj_from_benefit_type
   end
 
-  def issues_hash
-    issue_list = active_status? ? request_issues.active.all : fetch_all_decision_issues
-
-    return [] if issue_list.empty?
-
-    fetch_issues_status(issue_list)
+  def active_request_issues_or_decision_issues
+    active_status? ? request_issues.active.all : fetch_all_decision_issues
   end
 
   def contention_records(epe)
@@ -266,6 +268,7 @@ class ClaimReview < DecisionReview
 
   def create_decision_review_task!
     return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
+    return if request_issues.active.blank?
 
     DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
   end

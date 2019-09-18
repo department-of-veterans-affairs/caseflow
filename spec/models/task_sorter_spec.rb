@@ -120,16 +120,50 @@ describe TaskSorter, :all_dbs do
         end
       end
 
+      context "when sorting by assigner" do
+        let(:column_name) { Constants.QUEUE_CONFIG.TASK_ASSIGNER_COLUMN }
+
+        before do
+          tasks.each do |task|
+            # Update each task to be assigned some random user
+            task.update!(
+              assigned_by: create(:user, full_name: "#{Faker::Name.unique.first_name} #{Faker::Name.unique.first_name}")
+            )
+          end
+        end
+
+        it "sorts tasks by assigned_by last name" do
+          expected_order = tasks.sort_by { |task| task.assigned_by_display_name.last }
+          expect(subject.pluck(:id)).to eq(expected_order.pluck(:id))
+        end
+      end
+
       context "when sorting by task type" do
         let(:column_name) { Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN }
-        let(:tasks) { Task.where(id: create_list(:ama_colocated_task, 14).pluck(:id)) }
+        let(:tasks) { Task.where(id: create_list(:generic_task, task_types.length).pluck(:id)) }
+
+        let(:task_types) do
+          [
+            AssignHearingDispositionTask,
+            AttorneyTask,
+            InformalHearingPresentationTask,
+            HearingTask,
+            ScheduleHearingColocatedTask,
+            PreRoutingMissingHearingTranscriptsColocatedTask,
+            AttorneyRewriteTask,
+            AttorneyDispatchReturnTask,
+            AttorneyQualityReviewTask,
+            JudgeAssignTask
+          ].shuffle
+        end
 
         before do
           OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
+          tasks.each_with_index { |task, index| task.update!(type: task_types[index].name) }
         end
 
-        it "sorts ColocatedTasks by action and created_at" do
-          expect(subject.pluck(:id)).to eq(tasks.order(:type, :action, :created_at).pluck(:id))
+        it "sorts ColocatedTasks by label" do
+          expect(subject.map(&:label)).to eq(tasks.reload.sort_by(&:label).map(&:label))
         end
       end
 
@@ -200,6 +234,28 @@ describe TaskSorter, :all_dbs do
         end
       end
 
+      context "when sorting by assigned to column" do
+        let(:column_name) { Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN }
+        let(:tasks) { Task.where(id: create_list(:generic_task, 5).pluck(:id)) }
+
+        before do
+          users = []
+          5.times do
+            users.push(create(:user, css_id: Faker::Name.unique.first_name))
+          end
+          tasks.each_with_index do |task, index|
+            user = users[index % 5]
+            task.update!(assigned_to_id: user.id)
+            create(:cached_appeal, appeal_id: task.appeal_id, assignee_label: user.css_id)
+          end
+        end
+
+        it "sorts by assigned to" do
+          expected_order = tasks.sort_by { |task| task.appeal.assigned_to_location }
+          expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+        end
+      end
+
       context "when sorting by case details link column" do
         let(:column_name) { Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN }
 
@@ -218,7 +274,9 @@ describe TaskSorter, :all_dbs do
 
         it "sorts by veteran last and first name" do
           expected_order = tasks.sort_by do |task|
-            "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name.split(' ').first}"
+            last_name = task.appeal.veteran_last_name.split(" ").last.upcase
+            first_name = task.appeal.veteran_first_name.split(" ").first.upcase
+            "#{last_name}, #{first_name}"
           end
           expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
         end
@@ -240,7 +298,7 @@ describe TaskSorter, :all_dbs do
             create(:cached_appeal,
                    appeal_id: appeal.id,
                    appeal_type: LegacyAppeal.name,
-                   case_type: LegacyAppeal::TYPE_CODES[appeal.type])
+                   case_type: appeal.type)
           end
 
           appeals = [create(:appeal, :advanced_on_docket_due_to_motion), create(:appeal)]
@@ -249,7 +307,7 @@ describe TaskSorter, :all_dbs do
             create(:cached_appeal,
                    appeal_id: appeal.id,
                    appeal_type: Appeal.name,
-                   case_type: appeal.type.downcase,
+                   case_type: appeal.type,
                    is_aod: appeal.aod)
           end
         end

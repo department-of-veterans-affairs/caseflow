@@ -76,6 +76,8 @@ class ExternalApi::BGSService
       client.people.find_person_by_ptcpnt_id(participant_id)
     end
 
+    return {} unless bgs_info
+
     @person_info[participant_id] ||= {
       first_name: bgs_info[:first_nm],
       last_name: bgs_info[:last_nm],
@@ -198,16 +200,23 @@ class ExternalApi::BGSService
     end
   end
 
-  # Passing false to can_access? client method will use the find_flashes method underneath
-  # which has more robust sensitivity checks.
-  def may_modify?(vbms_id)
-    DBService.release_db_connections
+  # can_access? reflects whether a user may read a veteran's records.
+  # may_modify? reflects whether a user may establish a new claim.
+  def may_modify?(vbms_id, veteran_participant_id)
+    return false unless can_access?(vbms_id)
 
-    MetricsService.record("BGS: can_access (find_flashes): #{vbms_id}",
-                          service: :bgs,
-                          name: "may_modify?") do
-      client.can_access?(vbms_id, false)
+    # sometimes find_flashes works
+    begin
+      client.claimants.find_flashes(vbms_id)
+    rescue BGS::ShareError
+      return false
     end
+
+    # sometimes the station conflict logic works
+    !ExternalApi::BgsVeteranStationUserConflict.new(
+      veteran_participant_id: veteran_participant_id,
+      client: client
+    ).conflict?
   end
 
   def bust_can_access_cache(user, vbms_id)
@@ -267,12 +276,16 @@ class ExternalApi::BGSService
   end
 
   def get_participant_id_for_user(user)
+    get_participant_id_for_css_id_and_station_id(user.css_id, user.station_id)
+  end
+
+  def get_participant_id_for_css_id_and_station_id(css_id, station_id)
     DBService.release_db_connections
 
-    MetricsService.record("BGS: find participant id for user #{user.css_id}, #{user.station_id}",
+    MetricsService.record("BGS: find participant id for user #{css_id}, #{station_id}",
                           service: :bgs,
                           name: "security.find_participant_id") do
-      client.security.find_participant_id(css_id: user.css_id, station_id: user.station_id)
+      client.security.find_participant_id(css_id: css_id, station_id: station_id)
     end
   end
 

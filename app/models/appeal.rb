@@ -70,10 +70,6 @@ class Appeal < DecisionReview
     )
   end
 
-  def caseflow_only_edit_issues_url
-    "/appeals/#{uuid}/edit"
-  end
-
   def type
     "Original"
   end
@@ -92,7 +88,7 @@ class Appeal < DecisionReview
     # this condition is no longer needed since we only want active or on hold tasks
     return most_recently_assigned_to_label(tasks) if tasks.any?
 
-    status_hash[:type].to_s.titleize
+    fetch_status.to_s.titleize
   end
 
   def attorney_case_reviews
@@ -296,7 +292,7 @@ class Appeal < DecisionReview
 
   def create_tasks_on_intake_success!
     InitialTasksFactory.new(self).create_root_and_sub_tasks!
-    create_business_line_tasks if request_issues.any?(&:requires_record_request_task?)
+    create_business_line_tasks!
     maybe_create_translation_task
   end
 
@@ -349,10 +345,6 @@ class Appeal < DecisionReview
     else
       "bva"
     end
-  end
-
-  def status_hash
-    { type: fetch_status, details: fetch_details_for_status }
   end
 
   def fetch_status
@@ -610,12 +602,8 @@ class Appeal < DecisionReview
     @events ||= AppealEvents.new(appeal: self).all
   end
 
-  def issues_hash
-    issue_list = decision_issues.empty? ? request_issues.active.all : fetch_all_decision_issues
-
-    return [] if issue_list.empty?
-
-    fetch_issues_status(issue_list)
+  def active_request_issues_or_decision_issues
+    decision_issues.empty? ? request_issues.active.all : fetch_all_decision_issues
   end
 
   def fetch_all_decision_issues
@@ -659,6 +647,22 @@ class Appeal < DecisionReview
       end
   end
 
+  def create_business_line_tasks!
+    issues_needing_tasks = request_issues.select(&:requires_record_request_task?)
+    business_lines = issues_needing_tasks.map(&:business_line).uniq
+
+    business_lines.each do |business_line|
+      next if tasks.any? { |task| task.is_a?(VeteranRecordRequest) && task.assigned_to == business_line }
+
+      VeteranRecordRequest.create!(
+        parent: root_task,
+        appeal: self,
+        assigned_at: Time.zone.now,
+        assigned_to: business_line
+      )
+    end
+  end
+
   private
 
   def most_recently_assigned_to_label(tasks)
@@ -674,17 +678,5 @@ class Appeal < DecisionReview
   ensure
     distribution_task = tasks.open.find_by(type: DistributionTask.name)
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
-  end
-
-  def create_business_line_tasks
-    request_issues.select(&:requires_record_request_task?).each do |req_issue|
-      business_line = req_issue.business_line
-      VeteranRecordRequest.create!(
-        parent: root_task,
-        appeal: self,
-        assigned_at: Time.zone.now,
-        assigned_to: business_line
-      )
-    end
   end
 end

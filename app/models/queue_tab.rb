@@ -3,7 +3,7 @@
 class QueueTab
   include ActiveModel::Model
 
-  validate :assignee_is_organization
+  validate :assignee_is_user_or_organization
 
   attr_accessor :assignee, :show_regional_office_column
 
@@ -23,8 +23,8 @@ class QueueTab
     {
       label: label,
       name: name,
-      description: format(description, assignee.name),
-      columns: columns,
+      description: description,
+      columns: columns.map { |column| column.to_hash(tasks) },
       allow_bulk_assign: allow_bulk_assign?
     }
   end
@@ -37,7 +37,11 @@ class QueueTab
 
   def description; end
 
-  def columns; end
+  def column_names; end
+
+  def columns
+    column_names.map { |column_name| QueueColumn.from_name(column_name) }
+  end
 
   def name
     self.class.tab_name
@@ -48,6 +52,10 @@ class QueueTab
   end
 
   private
+
+  def assignee_is_org?
+    assignee.is_a?(Organization)
+  end
 
   def on_hold_tasks
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).on_hold
@@ -63,8 +71,10 @@ class QueueTab
     ]
   end
 
-  def assignee_is_organization
-    errors.add(:assignee, COPY::TASK_PAGE_INVALID_ASSIGNEE_MESSAGE) unless assignee&.is_a?(Organization)
+  def assignee_is_user_or_organization
+    unless assignee.is_a?(User) || assignee.is_a?(Organization)
+      errors.add(:assignee, COPY::TASK_PAGE_INVALID_ASSIGNEE_MESSAGE)
+    end
   end
 end
 

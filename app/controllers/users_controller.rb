@@ -14,7 +14,9 @@ class UsersController < ApplicationController
     when Constants::USER_ROLE_TYPES["hearing_coordinator"]
       return render json: { coordinators: User.list_hearing_coordinators }
     when "non_judges"
-      return render json: { non_judges: json_users(User.where.not(id: JudgeTeam.all.map(&:judge).pluck(:id))) }
+      return render json: {
+        non_judges: json_users(User.where.not(id: JudgeTeam.all.map(&:judge).reject(&:nil?).map(&:id)))
+      }
     end
     render json: {}
   end

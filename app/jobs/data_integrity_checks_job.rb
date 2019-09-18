@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class DataIntegrityChecksJob < CaseflowJob
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :queue
 
   CHECKERS = %w[
@@ -10,7 +10,7 @@ class DataIntegrityChecksJob < CaseflowJob
     UntrackedLegacyAppealsChecker
   ].freeze
 
-  def perform(_args = {})
+  def perform
     CHECKERS.each do |klass|
       checker = klass.constantize.new
       checker.call

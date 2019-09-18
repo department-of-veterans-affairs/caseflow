@@ -19,7 +19,7 @@ class DecisionIssue < ApplicationRecord
   has_many :remand_reasons, dependent: :destroy
   belongs_to :decision_review, polymorphic: true
   has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
-  has_one :contesting_request_issue, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"
+  has_many :contesting_request_issues, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"
 
   # NOTE: These are the string identifiers for the DTA error dispositions returned from VBMS.
   # The characters an encoding is precise so don't change these unless you know they match VBMS values.
@@ -69,6 +69,10 @@ class DecisionIssue < ApplicationRecord
     end
   end
 
+  def contesting_remand_request_issue
+    contesting_request_issues.find(&:remanded?)
+  end
+
   def soft_delete
     update(deleted_at: Time.zone.now)
     request_decision_issues.update_all(deleted_at: Time.zone.now)
@@ -91,12 +95,6 @@ class DecisionIssue < ApplicationRecord
   # the entire decision issue gets set to nonrating
   def rating?
     request_issues.none?(&:nonrating?)
-  end
-
-  # If a decision issue is associated with request issues that were corrected,
-  # consider it invalid
-  def voided?
-    request_issues.any? && request_issues.all?(&:corrected?)
   end
 
   def finalized?

@@ -5,12 +5,12 @@
 # A hearing task is associated with a hearing record in Caseflow and might have several child tasks to resolve
 # in order to schedule a hearing, hold it, and mark the disposition.
 
-class HearingTask < GenericTask
+class HearingTask < Task
   has_one :hearing_task_association
   delegate :hearing, to: :hearing_task_association, allow_nil: true
   before_validation :set_assignee
 
-  def label
+  def self.label
     "All hearing-related tasks"
   end
 

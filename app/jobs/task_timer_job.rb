@@ -3,10 +3,10 @@
 class TaskTimerJob < CaseflowJob
   # For time_ago_in_words()
   include ActionView::Helpers::DateHelper
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :queue
 
-  def perform(_args = {})
+  def perform
     RequestStore.store[:current_user] = User.system_user
 
     TaskTimer.requires_processing.each do |task_timer|

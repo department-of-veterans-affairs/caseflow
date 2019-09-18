@@ -33,32 +33,40 @@ class TaskFilter
 
     filters = filter_params.map { |filter_string| QueueFilterParameter.from_string(filter_string) }
 
-    where_string = filters.map { |filter| "#{table_column_from_name(filter.column)} IN (?)" }.join(" AND ")
-    where_arguments = filters.map(&:values)
+    where_string = TaskFilter.where_string_from_filters(filters)
+    where_arguments = filters.map(&:values).reject(&:empty?)
+
+    if filter_params.any? { |filter_string| filter_string[/typeColumn&val=.*is_aod/] }
+      where_string << "#{where_string.present? ? ' AND ' : ''}cached_appeal_attributes.is_aod = true"
+    end
 
     [where_string] + where_arguments
   end
 
-  private
+  def self.where_string_from_filters(filters)
+    filters.map do |filter|
+      filter.values.present? ? "#{table_column_from_name(filter.column)} IN (?)" : nil
+    end.compact.join(" AND ")
+  end
 
-  def table_column_from_name(column_name)
+  def self.table_column_from_name(column_name)
     case column_name
     when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
       "tasks.type"
-    # TODO: The following columns are not yet implemented.
-    # when Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN
-    #   "cached_appeals_attributes.appeal_type"
-    # when Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN
-    #   "cached_appeals_attributes.regional_office"
-    # TODO: I think this constant may be incorrectly named.
-    # when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
-    #   "cached_appeals_attributes.docket_type"
-    # when Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN
-    #   "???"
+    when Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN
+      "cached_appeal_attributes.closest_regional_office_city"
+    when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
+      "cached_appeal_attributes.docket_type"
+    when Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN
+      "cached_appeal_attributes.case_type"
+    when Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN
+      "cached_appeal_attributes.assignee_label"
     else
       fail(Caseflow::Error::InvalidTaskTableColumnFilter, column: column_name)
     end
   end
+
+  private
 
   def filter_params_is_array
     errors.add(:filter_params, "must be an array") unless filter_params&.is_a?(Array)

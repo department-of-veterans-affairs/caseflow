@@ -23,54 +23,14 @@ feature "Supplemental Claim Edit issues", :all_dbs do
   let(:receipt_date) { Time.zone.today - 20 }
   let(:profile_date) { (Time.zone.today - 60).to_datetime }
 
-  let!(:rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date,
-      profile_date: profile_date,
-      issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: 55 },
-        { reference_id: "def456", decision_text: "PTSD denied" },
-        { reference_id: "abcdef", decision_text: "Back pain" }
-      ]
-    )
-  end
-
-  let!(:rating_before_ama) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
-      issues: [
-        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
-      ]
-    )
-  end
-
-  let!(:rating_before_ama_from_ramp) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
-      issues: [
-        { decision_text: "Issue before AMA Activation from RAMP",
-          reference_id: "ramp_ref_id" }
-      ],
-      associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
-    )
-  end
-
+  let!(:rating) { generate_rating_with_defined_contention(veteran, receipt_date, profile_date) }
+  let!(:rating_before_ama) { generate_pre_ama_rating(veteran) }
+  let!(:rating_before_ama_from_ramp) { generate_rating_before_ama_from_ramp(veteran) }
   let!(:ratings_with_legacy_issues) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 4.days,
-      profile_date: receipt_date - 4.days,
-      issues: [
-        { reference_id: "has_legacy_issue", decision_text: "Issue with legacy issue not withdrawn" },
-        { reference_id: "has_ineligible_legacy_appeal", decision_text: "Issue connected to ineligible legacy appeal" }
-      ]
-    )
+    generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
   end
+  let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran, receipt_date) }
+  let(:old_rating_decision_text) { "Bone (Right arm broken) is denied." }
 
   let(:decision_review_remanded) { nil }
   let(:benefit_type) { "compensation" }
@@ -247,6 +207,9 @@ feature "Supplemental Claim Edit issues", :all_dbs do
   end
 
   context "when there is a rating end product" do
+    before { FeatureToggle.enable!(:contestable_rating_decisions) }
+    after { FeatureToggle.disable!(:contestable_rating_decisions) }
+
     let(:request_issue) do
       RequestIssue.create!(
         contested_rating_issue_reference_id: "def456",
@@ -355,6 +318,12 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       add_intake_unidentified_issue("This is an unidentified issue")
       expect(page).to have_content("4 issues")
       expect(page).to have_content("This is an unidentified issue")
+
+      # add rating decision
+      click_intake_add_issue
+      add_intake_rating_issue(old_rating_decision_text)
+      expect(page).to have_content("5 issues")
+      expect(page).to have_content(old_rating_decision_text)
     end
 
     context "when veteran has active nonrating request issues" do
@@ -689,6 +658,54 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     end
   end
 
+  describe "Establishment credits" do
+    let(:url_path) { "supplemental_claims" }
+    let(:decision_review) { supplemental_claim }
+    let(:request_issues) { [request_issue] }
+    let(:request_issue) do
+      create(
+        :request_issue,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: rating.profile_date,
+        decision_review: decision_review,
+        benefit_type: benefit_type,
+        contested_issue_description: "PTSD denied"
+      )
+    end
+
+    context "when the EP has not yet been established" do
+      before do
+        decision_review.reload.create_issues!(request_issues)
+      end
+
+      it "disallows editing" do
+        visit "#{url_path}/#{decision_review.uuid}/edit"
+
+        expect(page).to have_content("Review not yet established in VBMS. Check the job page for details.")
+        expect(page).to have_link("the job page")
+
+        click_link "the job page"
+
+        expect(current_path).to eq decision_review.async_job_url
+      end
+    end
+
+    context "when the EP has been established" do
+      before do
+        decision_review.reload.create_issues!(request_issues)
+        decision_review.establish!
+      end
+
+      it "shows when and by whom the Intake was performed" do
+        visit "#{url_path}/#{decision_review.uuid}/edit"
+
+        expect(page).to have_content(
+          "Established #{decision_review.establishment_processed_at.friendly_full_format} by #{intake.user.css_id}"
+        )
+      end
+    end
+  end
+
   context "when remove decision reviews is enabled for supplemental_claim" do
     before do
       OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
@@ -702,7 +719,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     let(:last_week) { Time.zone.now - 7.days }
     let(:supplemental_claim) do
       # reload to get uuid
-      create(:supplemental_claim, veteran_file_number: veteran.file_number).reload
+      create(:supplemental_claim, :processed, veteran_file_number: veteran.file_number).reload
     end
     let!(:existing_request_issues) do
       [create(:request_issue, :nonrating, decision_review: supplemental_claim),
@@ -764,8 +781,10 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       context "show alert when issues are withdrawn" do
         let(:supplemental_claim) do
           # reload to get uuid
-          create(:supplemental_claim, veteran_file_number: veteran.file_number,
-                                      benefit_type: "education").reload
+          create(:supplemental_claim,
+                 :processed,
+                 veteran_file_number: veteran.file_number,
+                 benefit_type: "education").reload
         end
 
         before do

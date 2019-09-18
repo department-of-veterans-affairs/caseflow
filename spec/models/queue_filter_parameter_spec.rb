@@ -38,5 +38,25 @@ describe QueueFilterParameter do
         expect(subject).to be_a(QueueFilterParameter)
       end
     end
+
+    context "when input string contains blank value field" do
+      let(:non_null_value) { "good_value" }
+      let(:encoded_blank_value) { URI.escape(URI.escape(COPY::NULL_FILTER_LABEL)) }
+      let(:column_name) { "fake_column" }
+      let(:filter_string) { "col=#{column_name}&val=#{non_null_value},#{encoded_blank_value}" }
+
+      it "converts the blank value to a null value" do
+        expect(subject.values).to match_array([non_null_value, nil])
+      end
+    end
+
+    context "when typeColumn has 'is_aod' filter" do
+      let(:good_value) { "good_value" }
+      let(:filter_string) { "col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=is_aod,#{good_value}" }
+
+      it "rejects the is_aod value" do
+        expect(subject.values).to match_array([good_value])
+      end
+    end
   end
 end

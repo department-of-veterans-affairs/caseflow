@@ -20,6 +20,9 @@ class AppealRepository
     # Make a single request to VACOLS to grab all of the rows we want here?
     legacy_appeal_ids = tasks.select { |t| t.appeal.is_a?(LegacyAppeal) }.map(&:appeal).pluck(:vacols_id)
 
+    # Do not make a VACOLS request if there are no legacy appeals in the set of tasks
+    return tasks if legacy_appeal_ids.empty?
+
     # Load the VACOLS case records associated with legacy tasks into memory in a single batch. Ignore appeals that no
     # longer appear in VACOLS.
     cases = (vacols_records_for_appeals(legacy_appeal_ids) || []).group_by(&:id)
@@ -407,7 +410,7 @@ class AppealRepository
         bfattid: "000"
       )
 
-      case_record.update_vacols_location!("99")
+      case_record.update_vacols_location!(LegacyAppeal::LOCATION_CODES[:closed])
 
       folder_record.update!(
         ticukey: "HISTORY",
@@ -446,7 +449,7 @@ class AppealRepository
     VACOLS::Case.transaction do
       case_record.update!(bfmpro: "HIS")
 
-      case_record.update_vacols_location!("99")
+      case_record.update_vacols_location!(LegacyAppeal::LOCATION_CODES[:closed])
 
       folder_record.update!(
         ticukey: "HISTORY",
@@ -481,7 +484,7 @@ class AppealRepository
         )
       )
 
-      follow_up_case.update_vacols_location!("99")
+      follow_up_case.update_vacols_location!(LegacyAppeal::LOCATION_CODES[:closed])
 
       VACOLS::Folder.create!(
         folder_record.remand_clone_attributes.merge(
@@ -517,7 +520,7 @@ class AppealRepository
     not_valid_to_reopen_err = AppealNotValidToReopen.new(appeal.id)
 
     fail not_valid_to_reopen_err unless case_record.bfmpro == "HIS"
-    fail not_valid_to_reopen_err unless case_record.bfcurloc == "99"
+    fail not_valid_to_reopen_err unless case_record.bfcurloc == LegacyAppeal::LOCATION_CODES[:closed]
 
     close_date = case_record.bfddec
     close_disposition = case_record.bfdc
@@ -574,7 +577,7 @@ class AppealRepository
 
     fail not_valid_to_reopen_err unless %w[P W O].include? disposition_code
     fail not_valid_to_reopen_err unless case_record.bfmpro == "HIS"
-    fail not_valid_to_reopen_err unless case_record.bfcurloc == "99"
+    fail not_valid_to_reopen_err unless case_record.bfcurloc == LegacyAppeal::LOCATION_CODES[:closed]
 
     previous_active_location = case_record.previous_active_location
 

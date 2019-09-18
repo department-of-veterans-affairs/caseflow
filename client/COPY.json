@@ -1,9 +1,9 @@
 {
   "CASE_SEARCH_HOME_PAGE_HEADING": "Veteran Case Search",
-  "CASE_SEARCH_INPUT_PLACEHOLDER": "Enter a Veteran ID or SSN",
-  "CASE_SEARCH_INPUT_INSTRUCTION": "Please enter a valid claims file number or SSN to search for all available cases.",
+  "CASE_SEARCH_INPUT_PLACEHOLDER": "Enter a file number, SSN, or AMA docket number",
+  "CASE_SEARCH_INPUT_INSTRUCTION": "Please enter a valid claims file number, SSN, or AMA docket number (with hyphen) to search for all available cases.",
   "CASE_SEARCH_ERROR_EMPTY_SEARCH_TERM": "Cannot search for no text",
-  "CASE_SEARCH_ERROR_INVALID_ID_HEADING": "Invalid Veteran ID “%s”",
+  "CASE_SEARCH_ERROR_INVALID_ID_HEADING": "Invalid search parameter “%s”",
   "CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING": "No cases found for “%s”",
   "CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING": "Server encountered an error searching for “%s”",
   "CASE_SEARCH_ERROR_UNKNOWN_ERROR_MESSAGE": "Please retry your search and contact support if errors persist.",
@@ -39,6 +39,8 @@
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL": "%s team cases",
   "CASE_LIST_TABLE_EMPTY_TEXT": "This Veteran has no appeals at this time.",
 
+  "NULL_FILTER_LABEL": "<<blank>>",
+
   "OTHER_REVIEWS_TABLE_TITLE": "Higher Level Reviews & Supplemental Claims",
   "OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE": "EP Code(s)",
   "OTHER_REVIEWS_TABLE_APPELLANT_NAME_COLUMN_TITLE": "Appellant Name",
@@ -46,6 +48,7 @@
   "OTHER_REVIEWS_TABLE_EP_STATUS_COLUMN_TITLE": "EP Status",
   "OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE": "Tracked in Caseflow",
   "OTHER_REVIEWS_TABLE_NO_EPS_NOTE": "No EPs created",
+  "OTHER_REVIEWS_TABLE_RECEIPT_DATE_COLUMN_TITLE": "Receipt Date",
   "OTHER_REVIEWS_TABLE_EMPTY_TEXT": "This Veteran has no higher level reviews or supplemental claims at this time.",
   "OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED": "Establishment failed. Support notified.",
   "OTHER_REVIEWS_TABLE_ESTABLISHING": "Establishing...",
@@ -137,6 +140,21 @@
   "JUDGE_ASSIGN_DROPDOWN_LINK_LABEL": "Assign team cases",
   "JUDGE_REVIEW_DROPDOWN_LINK_LABEL": "Your cases",
 
+  "JUDGE_ADDRESS_MTV_TITLE": "Address %s's Motion to Vacate",
+  "JUDGE_ADDRESS_MTV_DESCRIPTION": "Determine how you would like to address this motion to vacate and then assign it back to the appropriate attorney.",
+  "JUDGE_ADDRESS_MTV_DISPOSITION_SELECT_LABEL": "How will you address this motion to vacate?",
+  "JUDGE_ADDRESS_MTV_VACATE_TYPE_LABEL": "What type of vacate?",
+  "JUDGE_ADDRESS_MTV_HYPERLINK_LABEL": "Insert hyperlink to signed denial document",
+  "JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL": "Provide context and instructions on which issues you will be granting",
+  "JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL": "Assign to decisions attorney",
+
+  "MOTIONS_ATTORNEY_ADDRESS_MTV_TITLE": "Review %s's Motion to Vacate",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_DESCRIPTION": "Create your review for this motion to vacate, then send it back to the Veteran's Law Judge who originally signed the case if they are available.",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_SELECT_LABEL": "What is your reivew for this motion?",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL": "Provide context on which issues should be granted",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL": "Insert hyperlink to denial draft",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL": "Assign to judge",
+
   "IS_PAPER_CASE": "This is a paper case",
 
   "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA": "OMO - VHA",
@@ -152,6 +170,7 @@
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_SUBHEAD": "How would you rate the complexity of this case?",
   "JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL": "Quality of work",
   "JUDGE_EVALUATE_DECISION_CASE_QUALITY_SUBHEAD": "How would you rate the overall quality of this case?",
+  "JUDGE_EVALUATE_DECISION_POSITIVE_FEEDBACK": "Identify positive feedback:",
   "JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL": "Identify areas for improvement",
   "JUDGE_EVALUATE_DECISION_IMPROVEMENT_NOT_CONSIDERED": "The attorney did not properly consider and apply:",
   "JUDGE_EVALUATE_DECISION_IMPROVEMENT_AREAS_FOR_IMPROVEMENT": "Other areas for improvement:",
@@ -421,6 +440,7 @@
   "JUDGE_DECISION_REVIEW_TASK_LABEL": "Review",
   "JUDGE_QUALITY_REVIEW_TASK_LABEL": "Quality review",
   "JUDGE_DISPATCH_RETURN_TASK_LABEL": "Revise decision (BVA Dispatch)",
+  "JUDGE_ADDRESS_MOTION_TO_VACATE_TASK_LABEL": "Address Motion to Vacate",
 
   "ATTORNEY_TASK_LABEL": "Draft decision",
   "ATTORNEY_REWRITE_TASK_LABEL": "Revise decision draft",
@@ -448,6 +468,8 @@
   "RETURNED_CORRESPONDENCE_MAIL_TASK_LABEL": "Returned or undeliverable mail",
   "STATUS_INQUIRY_MAIL_TASK_LABEL": "Status inquiry",
   "VACATE_MOTION_MAIL_TASK_LABEL": "Motion to vacate",
+  "REVIEW_MOTION_TO_VACATE_TASK_LABEL": "Review motion to vacate",
+
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
 
@@ -461,6 +483,9 @@
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
   "INTAKE_WITHDRAWN_BANNER": "This review will be withdrawn. You can intake these issues as a different type of decision review, if that was requested.",
   "INTAKE_RATING_MAY_BE_PROCESS": "Rating may be in progress",
+  "INTAKE_SEARCH_ERROR_INVALID_FILE_NUMBER": "Please enter a valid Veteran ID and try again.",
+  "INTAKE_SEARCH_ERROR_NOT_ACCESSIBLE": "It looks like you do not have the necessary level of access to view this information. Please alert your manager so they can assign the form to someone else.",
+  "INTAKE_SEARCH_ERROR_NOT_MODIFIABLE": "You do not appear to have permission to establish a claim for this Veteran. Often this is because they are an employee at the same station as you. Please alert your manager so they can assign the form to someone else.",
 
   "VACOLS_OPTIN_ISSUE_NEW": "Adding this issue will automatically close VACOLS issue",
   "VACOLS_OPTIN_ISSUE_CLOSED_EDIT": "This issue has automatically closed the VACOLS issue",
@@ -542,7 +567,15 @@
   "HEARING_DATE_LOADING": "Finding upcoming hearing dates for this regional office...",
 
   "CLAIM_REVIEW_EDIT_ERROR_MISSING_DECISION_DATE": "VBMS or SHARE: One or more ratings may be locked on this Claim. Please try again in 24 hours.",
+  "CLAIM_REVIEW_NOT_YET_PROCESSED_ERROR": "Review not yet established in VBMS. Check <a href='%s'>the job page</a> for details.",
   "CLAIM_REVIEW_EDIT_ERROR_DEFAULT": "There was an error preparing this Review for edit.",
 
-  "UNKNOWN_REGIONAL_OFFICE": "Unknown"
+  "UNKNOWN_REGIONAL_OFFICE": "Unknown",
+
+  "ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_TITLE": "Hearing Room 2 is already assigned for %s",
+  "ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_DETAIL": "To manually add a CO hearing, please unselect, \"Assign Board Hearing Room,\" and then edit hearing day to change room number.",
+
+  "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_TITLE": "No rooms available for %s",
+  "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_DETAIL": "All hearing rooms are taken for the date you selected."
+ 
 }

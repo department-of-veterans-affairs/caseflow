@@ -12,11 +12,18 @@ class ColocatedTask < Task
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
   validate :task_is_unique, on: :create
-  validate :valid_type
+  validate :valid_type, on: :create
 
   after_update :update_location_in_vacols
 
   class << self
+    def create_from_params(params, user)
+      parent_task = params[:parent_id] ? Task.find(params[:parent_id]) : nil
+      verify_user_can_create!(user, parent_task)
+      params = modify_params(params)
+      create!(params)
+    end
+
     # Override so that each ColocatedTask for an appeal gets assigned to the same colocated staffer.
     def create_many_from_params(params_array, user)
       # Create all ColocatedTasks in one transaction so that if any fail they all fail.
@@ -54,6 +61,10 @@ class ColocatedTask < Task
       Colocated.singleton
     end
 
+    # Intentionally not including all descendants as we do not want to create any more of the old style
+    # FoiaColocatedTasks, MissingHearingTranscriptsColocatedTasks, or TranslationColocatedTasks as their
+    # PreRoutingColocatedTask versions exist only to allow tasks currently in that state in production to live
+    # out their days with their old colocated task workflow
     def find_subclass_by_action(action)
       subclasses.find { |task_class| task_class.label == Constants::CO_LOCATED_ADMIN_ACTIONS[action] }
     end
@@ -63,10 +74,6 @@ class ColocatedTask < Task
         find_subclass_by_action(action).methods(false).exclude?(:default_assignee)
       end
     end
-  end
-
-  def label
-    self.class.label
   end
 
   def timeline_title
@@ -108,12 +115,13 @@ class ColocatedTask < Task
 
   def create_twin_of_type(params)
     task_type = ColocatedTask.find_subclass_by_action(params[:action])
-    task_type.create!(
+    ColocatedTask.create!(
       appeal: appeal,
       parent: parent,
       assigned_by: assigned_by,
       instructions: params[:instructions],
-      assigned_to: task_type.default_assignee
+      assigned_to: task_type&.default_assignee,
+      type: task_type
     )
   end
 
@@ -145,6 +153,9 @@ class ColocatedTask < Task
   def all_tasks_closed_for_appeal?
     appeal.tasks.open.select { |task| task.is_a?(ColocatedTask) }.none?
   end
+
+  # GenericTask.verify_org_task_unique already performs this check
+  def verify_org_task_unique; end
 
   def task_is_unique
     ColocatedTask.where(

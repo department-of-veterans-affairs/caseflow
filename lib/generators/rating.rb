@@ -86,7 +86,7 @@ class Generators::Rating
       decisions_data = attrs[:decisions].map do |decision|
         {
           disability_evaluations: {
-            rba_issue_id: decision[:reference_id] || generate_external_id,
+            rba_issue_id: decision[:rating_issue_reference_id],
             dgnstc_txt: decision[:diagnostic_text],
             dgnstc_tn: decision[:diagnostic_type],
             dgnstc_tc: decision[:diagnostic_code],
@@ -95,7 +95,8 @@ class Generators::Rating
           },
           decn_tn: decision[:type_name],
           dis_sn: decision[:disability_id],
-          dis_dt: decision[:disability_date]
+          dis_dt: decision[:disability_date],
+          orig_denial_dt: decision[:original_denial_date]
         }
       end
 

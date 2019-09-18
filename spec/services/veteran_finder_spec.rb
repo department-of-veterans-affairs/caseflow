@@ -5,7 +5,7 @@ require "rails_helper"
 
 describe VeteranFinder, :postgres do
   before do
-    Fakes::BGSService.veteran_records = { file_number => veteran_record }
+    Fakes::BGSService.store_veteran_record(file_number, veteran_record)
     RequestStore[:current_user] = create(:user)
   end
 
@@ -53,6 +53,20 @@ describe VeteranFinder, :postgres do
       it "returns array of Veterans matching file_number" do
         expect(Veteran.find_by_file_number(file_number)).to be_nil
         expect(subject).to eq([Veteran.find_by_file_number(file_number)])
+      end
+
+      context "BGS returns false for can_access?" do
+        before do
+          Fakes::BGSService.inaccessible_appeal_vbms_ids = []
+          Fakes::BGSService.inaccessible_appeal_vbms_ids << file_number
+          create(:veteran, participant_id: nil)
+        end
+
+        it "returns empty array" do
+          expect(Fakes::BGSService.new.can_access?(file_number)).to eq(false)
+          expect(Veteran.find_by_file_number(file_number)).to be_nil
+          expect(subject).to eq([])
+        end
       end
     end
   end

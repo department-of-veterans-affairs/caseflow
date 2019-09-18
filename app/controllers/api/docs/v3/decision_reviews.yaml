@@ -52,17 +52,7 @@ paths:
                         legacyOptInApproved:
                           type: boolean
                         benefitType:
-                          type: string
-                          enum:
-                            - compensation
-                            - pension
-                            - fiduciary
-                            - insurance
-                            - education
-                            - voc_rehab
-                            - loan_guaranty
-                            - vha
-                            - nca
+                          $ref: "#/components/schemas/benefit_type"
                     relationships:
                       type: object
                       required:
@@ -237,27 +227,27 @@ paths:
                       }
                     ]
                   }
-        '401':
-          description: |-
-            401 response
-          content:
-            application/vnd.api+json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    $ref: "#/components/schemas/errors"
-              examples:
-                unauthenticated:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "401",
-                        "title":  "Unauthenticated",
-                        "code":  "unauthenticated"
-                      }
-                    ]
-                  }
+#       '401':
+#         description: |-
+#           401 response
+#         content:
+#           application/vnd.api+json:
+#             schema:
+#               type: object
+#               properties:
+#                 errors:
+#                   $ref: "#/components/schemas/errors"
+#             examples:
+#               unauthenticated:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "401",
+#                       "title":  "Unauthenticated",
+#                       "code":  "unauthenticated"
+#                     }
+#                   ]
+#                 }
         '403':
           description: |-
             403 response
@@ -274,7 +264,7 @@ paths:
                     "errors": [
                       {
                         "status": "403",
-                        "title":  "Veteran File inaccessible",
+                        "title":  "You don't have permission to view this veteran's information",
                         "code":  "veteran_not_accessible"
                       }
                     ]
@@ -295,31 +285,31 @@ paths:
                     "errors": [
                       {
                         "status": "404",
-                        "title":  "Veteran File not found",
+                        "title":  "Veteran not found",
                         "code":  "veteran_not_found"
                       }
                     ]
                   }
-                issue_not_found:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "404",
-                        "title":  "Issue not found",
-                        "code":  "issue_not_found"
-                      }
-                    ]
-                  }
-                claimant_not_found:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "404",
-                        "title":  "Claimant not found",
-                        "code":  "claimant_not_found"
-                      }
-                    ]
-                  }
+#               issue_not_found:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "404",
+#                       "title":  "Issue not found",
+#                       "code":  "issue_not_found"
+#                     }
+#                   ]
+#                 }
+#               claimant_not_found:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "404",
+#                       "title":  "Claimant not found",
+#                       "code":  "claimant_not_found"
+#                     }
+#                   ]
+#                 }
         '409':
           description: |-
             409 response
@@ -352,53 +342,143 @@ paths:
                   errors:
                     $ref: "#/components/schemas/errors"
               examples:
-                payee_code_required:
+#               payee_code_required:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Claimant payee code may not be blank",
+#                       "code":  "payee_code_required"
+#                     }
+#                   ]
+#                 }
+#               claimant_required:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Claimant participant id may not be blank",
+#                       "code":  "claimant_required"
+#                     }
+#                   ]
+#                 }
+#               claimant_address_required:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Claimant address required",
+#                       "code":  "claimant_address_required"
+#                     }
+#                   ]
+#                 }
+#               benefit_type_requires_payee_code:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Benefit type requires payee code",
+#                       "code":  "benefit_type_requires_payee_code"
+#                     }
+#                   ]
+#                 }
+#               duplicate_of_rating_issue_in_active_review:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Duplicate rating issue",
+#                       "code":  "duplicate_of_rating_issue_in_active_review"
+#                     }
+#                   ]
+#                 }
+#               claimant_ineligible:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Claimant Ineligible (not on original Benefit Claim or no POA)",
+#                       "code":  "claimant_ineligible"
+#                     }
+#                   ]
+#                 }
+#               untimely:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Issue is ineligible because it has a prior decision date that’s older than 1 year",
+#                       "code":  "untimely"
+#                     }
+#                   ]
+#                 }
+#               before_ama:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Issue is ineligible because it has a prior decision date before February 19, 2019",
+#                       "code":  "before_ama"
+#                     }
+#                   ]
+#                 }
+#               higher_level_review_to_higher_level_review:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Issue is ineligible because it was last processed as a Higher-Level Review and this can't be done twice in a row",
+#                       "code":  "higher_level_review_to_higher_level_review"
+#                     }
+#                   ]
+#                 }
+#               appeal_to_higher_level_review:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Issue is ineligible because it was last processed as a Board Appeal which can't be followed by a Higher-Level Review",
+#                       "code":  "appeal_to_higher_level_review"
+#                     }
+#                   ]
+#                 }
+#               legacy_issue_not_withdrawn:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Issue is ineligible because the same issue is under review as a Legacy Appeal but the claimant didn’t choose to withdraw their issue from the legacy system",
+#                       "code":  "legacy_issue_not_withdrawn"
+#                     }
+#                   ]
+#                 }
+#               legacy_appeal_not_eligible:
+#                 value: {
+#                   "errors": [
+#                     {
+#                       "status": "422",
+#                       "title":  "Issue is ineligible because the same issue is under review as a Legacy Appeal and that appeal is outside the window of eligibility",
+#                       "code":  "legacy_appeal_not_eligible"
+#                     }
+#                   ]
+#                 }
+                incident_flash:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Claimant payee code may not be blank",
-                        "code":  "payee_code_required"
+                        "title": "The veteran has an incident flash",
+                        "code": "incident_flash"
                       }
                     ]
                   }
-                claimant_required:
+                invalid_benefit_type:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Claimant participant id may not be blank",
-                        "code":  "claimant_required"
-                      }
-                    ]
-                  }
-                claimant_address_required:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title":  "Claimant address required",
-                        "code":  "claimant_address_required"
-                      }
-                    ]
-                  }
-                benefit_type_requires_payee_code:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title":  "Benefit type requires payee code",
-                        "code":  "benefit_type_requires_payee_code"
-                      }
-                    ]
-                  }
-                duplicate_of_rating_issue_in_active_review:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title":  "Duplicate rating issue",
-                        "code":  "duplicate_of_rating_issue_in_active_review"
+                        "title": "That Line of Business (benefit type) is either invalid or not currently supported",
+                        "code": "invalid_benefit_type"
                       }
                     ]
                   }
@@ -407,78 +487,78 @@ paths:
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Invalid Veteran File number",
-                        "code":  "invalid_file_number"
+                        "title": "Veteran ID not found",
+                        "code": "invalid_file_number"
                       }
                     ]
                   }
-                claimant_ineligible:
+                request_issue_cannot_be_empty:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Claimant Ineligible (not on original Benefit Claim or no POA)",
-                        "code":  "claimant_ineligible"
+                        "title": "A request issue cannot be empty",
+                        "code": "request_issue_cannot_be_empty"
                       }
                     ]
                   }
-                untimely:
+                request_issue_category_invalid_for_benefit_type:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Issue is ineligible because it has a prior decision date that’s older than 1 year",
-                        "code":  "untimely"
+                        "title": "Request issue category for specified benefit type",
+                        "code": "request_issue_category_invalid_for_benefit_type"
                       }
                     ]
                   }
-                before_ama:
+                request_issue_legacyAppealId_is_blank_when_legacyAppealIssueId_is_present:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Issue is ineligible because it has a prior decision date before February 19, 2019",
-                        "code":  "before_ama"
+                        "title": "If you specify a legacy appeal issue, you must specify which legacy appeal it belongs to (legacy_appeal_id)",
+                        "code": "request_issue_legacyAppealId_is_blank_when_legacyAppealIssueId_is_present"
                       }
                     ]
                   }
-                higher_level_review_to_higher_level_review:
+                request_issue_legacyAppealIssueId_is_blank_when_legacyAppealId_is_present:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Issue is ineligible because it was last processed as a Higher-Level Review and this can't be done twice in a row",
-                        "code":  "higher_level_review_to_higher_level_review"
+                        "title": "If you specify a legacy appeal, you must specify which issue (legacy_appeal_issue_id) of that appeal",
+                        "code": "request_issue_legacyAppealIssueId_is_blank_when_legacyAppealId_is_present"
                       }
                     ]
                   }
-                appeal_to_higher_level_review:
+                request_issue_legacy_not_opted_in:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Issue is ineligible because it was last processed as a Board Appeal which can't be followed by a Higher-Level Review",
-                        "code":  "appeal_to_higher_level_review"
+                        "title": "To add a legacy issue, legacyOptInApproved must be true",
+                        "code": "request_issue_legacy_not_opted_in"
                       }
                     ]
                   }
-                legacy_issue_not_withdrawn:
+                request_issue_malformed:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Issue is ineligible because the same issue is under review as a Legacy Appeal but the claimant didn’t choose to withdraw their issue from the legacy system",
-                        "code":  "legacy_issue_not_withdrawn"
+                        "title": "Malformed RequestIssue",
+                        "code": "request_issue_malformed"
                       }
                     ]
                   }
-                legacy_appeal_not_eligible:
+                request_issue_must_have_at_least_one_ID_field:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Issue is ineligible because the same issue is under review as a Legacy Appeal and that appeal is outside the window of eligibility",
-                        "code":  "legacy_appeal_not_eligible"
+                        "title": "A request issue must have at least one of the following: decisionIssueId, ratingIssueId, legacyAppealId, legacyAppealIssueId",
+                        "code": "request_issue_must_have_at_least_one_ID_field"
                       }
                     ]
                   }
@@ -487,8 +567,18 @@ paths:
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Veteran has multiple phone numbers",
-                        "code":  "veteran_has_multiple_phone_numbers"
+                        "title": "The veteran has multiple active phone numbers",
+                        "code": "veteran_has_multiple_phone_numbers"
+                      }
+                    ]
+                  }
+                veteran_not_modifiable:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title": "You don't have permission to intake this veteran",
+                        "code": "veteran_not_modifiable"
                       }
                     ]
                   }
@@ -497,28 +587,8 @@ paths:
                     "errors": [
                       {
                         "status": "422",
-                        "title":  "Veteran not valid",
-                        "code":  "veteran_not_valid"
-                      }
-                    ]
-                  }
-                reserved_veteran_file_number:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title":  "Reserved veteran file number",
-                        "code":  "reserved_veteran_file_number"
-                      }
-                    ]
-                  }
-                unknown_error:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title":  "Unknown error",
-                        "code":  "unknown_error"
+                        "title": "The veteran's profile has missing or invalid information required to create an EP",
+                        "code": "veteran_not_valid"
                       }
                     ]
                   }
@@ -531,6 +601,47 @@ paths:
                 properties:
                   errors:
                     $ref: "#/components/schemas/errors"
+              examples:
+                intake_review_failed:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "500",
+                        "title": "The review step of processing the intake failed for an unknown reason",
+                        "code": "intake_review_failed"
+                      }
+                    ]
+                  }
+                intake_start_failed:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "500",
+                        "title": "The start step of processing the intake failed for an unknown reason",
+                        "code": "intake_start_failed"
+                      }
+                    ]
+                  }
+                reserved_veteran_file_number:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "500",
+                        "title": "Invalid veteran file number",
+                        "code": "reserved_veteran_file_number"
+                      }
+                    ]
+                  }
+                unknown_error:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "500",
+                        "title":  "Unknown error",
+                        "code":  "unknown_error"
+                      }
+                    ]
+                  }
   /higher_level_reviews/intake_status/{uuid}:
     get:
       parameters:
@@ -622,87 +733,228 @@ paths:
                         pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
                       type:
                         type: string
+                        enum: ["HigherLevelReview"]
                         description: Will be "HigherLevelReview"
                       attributes:
                         type: object
                         properties:
-                          benefitType:
-                            type: string
-                          veteranFileNumber:
-                            type: string
                           status:
-                            type: object
-                            properties:
-                              type:
-                                type: string
-                              details:
-                                type: object
-                                properties:
-                                  issues:
-                                    type: array
-                                    items:
-                                      type: object
-                                      properties:
-                                        description:
-                                          type: string
-                                        disposition:
-                                          type: string
+                            type: string
+                          aoj:
+                            type: string
+                            nullable: true
+                          programArea:
+                            type: string
+                          benefitType:
+                            $ref: "#/components/schemas/benefit_type"
+                          description:
+                            type: string
+                            nullable: true
+                          receiptDate:
+                            type: string
+                            format: date
+                            nullable: true
+                          informalConference:
+                            type: boolean
+                            nullable: true
+                          sameOffice:
+                            type: boolean
+                            nullable: true
+                          legacyOptInApproved:
+                            type: boolean
+                            nullable: true
+                          alerts:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                type:
+                                  $ref: "#/components/schemas/higher_level_review_alerts"
+                                details:
+                                  type: object
+                                  properties:
+                                    decisionDate:
+                                      type: string
+                                      format: date
+                                      nullable: true
+                                    availableOptions:
+                                      type: array
+                                      items:
+                                        type: string
+                                    dueDate:
+                                      type: string
+                                      format: date
+                                      nullable: true
                           events:
                             type: array
                             items:
                               type: object
                               properties:
                                 type:
-                                  type: string
+                                  $ref: "#/components/schemas/higher_level_review_events"
                                 date:
                                   type: string
                                   format: date
                       relationships:
                         type: object
                         properties:
-                          issues:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                data:
-                                  type: array
-                                  items:
-                                    type: object
-                                    properties:
-                                      type:
-                                        type: string
-                                        description: Will be "RequestIssue"
-                                      id:
-                                        type: string
-                                        description: will match the included data
+                          veteran:
+                            type: object
+                            properties:
+                              data:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                    enum: ["Veteran"]
+                                  id:
+                                    type: string # file_number
+                          claimant:
+                            type: object
+                            properties:
+                              data:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                    enum: ["Claimant"]
+                                  id:
+                                    type: string # participant id
+                          requestIssues:
+                            type: object
+                            properties:
+                              data:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    type:
+                                      type: string
+                                      enum: ["RequestIssue"]
+                                    id:
+                                      type: integer
+                          decisionIssues:
+                            type: object
+                            properties:
+                              data:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    type:
+                                      type: string
+                                      enum: ["DecisionIssue"]
+                                    id:
+                                      type: integer
                   included:
-                    description: Minimal details on the related issues.
                     type: array
                     items:
-                      type: object
-                      properties:
-                        type:
-                          type: string
-                          description: Will be "RequestIssue"
-                        id:
-                          type: string
-                        attributes:
-                          type: object
+                      anyOf:
+                        - type: object
                           properties:
-                            benefitType:
+                            type:
                               type: string
-                            active:
-                              type: boolean
-                            lastAction:
+                              enum: ["DecisionIssue"]
+                            id:
+                              type: integer
+                            attributes:
+                              type: object
+                              properties:
+                                approxDecisionDate:
+                                  type: string
+                                  format: date
+                                  nullable: true
+                                decisionText:
+                                  type: string
+                                  nullable: true
+                                description:
+                                  type: string
+                                disposition:
+                                  type: string
+                                  nullable: true
+                                finalized:
+                                  type: boolean
+                        - type: object
+                          properties:
+                            type:
                               type: string
-                            date:
-                              type: string
-                              format: date
-                            description:
-                              type: string
-                            diagnosticCode:
-                              type: string
+                              enum: ["RequestIssue"]
+                            id:
+                              type: integer
+                            attributes:
+                              type: object
+                              properties:
+                                active:
+                                  type: boolean
+                                statusDescription:
+                                  type: string
+                                diagnosticCode:
+                                  type: string
+                                  nullable: true
+                                ratingIssueId: # rating_issue_reference_id
+                                  type: string
+                                  nullable: true
+                                ratingIssueProfileDate:
+                                  type: string
+                                  format: date
+                                  nullable: true
+                                ratingDecisionReferenceId:
+                                  type: string
+                                  nullable: true
+                                description:
+                                  type: string
+                                  nullable: true
+                                contentionText:
+                                  type: string
+                                approxDecisionDate:
+                                  type: string
+                                  format: date
+                                category:
+                                  type: string
+                                  nullable: true
+                                notes:
+                                  type: string
+                                  nullable: true
+                                isUnidentified:
+                                  type: boolean
+                                  nullable: true
+                                rampClaimId:
+                                  type: string
+                                  nullable: true
+                                legacyAppealId: # vacols_id
+                                  type: string
+                                  nullable: true
+                                legacyAppealIssueId: # vacols_sequence_id
+                                  type: integer
+                                  nullable: true
+                                ineligibleReason:
+                                  type: string
+                                  nullable: true
+                                ineligibleDueToId:
+                                  type: integer
+                                  nullable: true
+                                decisionReviewTitle:
+                                  type: string
+                                  nullable: true
+                                titleOfActiveReview:
+                                  type: string
+                                  nullable: true
+                                decisionIssueId: # contested_decision_issue_id
+                                  type: integer
+                                  nullable: true
+                                withdrawalDate:
+                                  type: string
+                                  format: date
+                                  nullable: true
+                                contestedIssueDescription:
+                                  type: string
+                                  nullable: true
+                                endProductCleared:
+                                  type: boolean
+                                  nullable: true
+                                endProductCode:
+                                  type: string
+
         '404':
           description: ID not found
           content:
@@ -723,6 +975,36 @@ paths:
                     $ref: "#/components/schemas/errors"
 components:
   schemas:
+    benefit_type:
+      type: string
+      enum:
+        - compensation
+        - pension
+        - fiduciary
+        - insurance
+        - education
+        - voc_rehab
+        - loan_guaranty
+        - vha
+        - nca
+    higher_level_review_alerts:
+      type: string
+      enum: ["AmaPostDecision"]
+    higher_level_review_events:
+      type: string
+      enum:
+        - hlr_request_event
+        - hlr_decision_event
+        - hlr_dta_error_event
+        - dta_decision_event
+        - hlr_other_close_event
+    higher_level_review_status_types:
+      type: string
+      enum:
+        - hlr_received
+        - hlr_dta_error
+        - hlr_decision
+        - hlr_closed
     nonrating_issue_category:
       type: string
       enum:

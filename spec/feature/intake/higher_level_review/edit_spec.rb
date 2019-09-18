@@ -25,53 +25,11 @@ feature "Higher Level Review Edit issues", :all_dbs do
   let(:promulgation_date) { receipt_date - 1 }
   let(:profile_date) { (receipt_date - 2.days).to_datetime }
 
-  let!(:rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: promulgation_date,
-      profile_date: profile_date,
-      issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: 55 },
-        { reference_id: "def456", decision_text: "PTSD denied" },
-        { reference_id: "abcdef", decision_text: "Back pain" }
-      ]
-    )
-  end
-
-  let!(:rating_before_ama) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
-      issues: [
-        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
-      ]
-    )
-  end
-
-  let!(:rating_before_ama_from_ramp) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
-      issues: [
-        { decision_text: "Issue before AMA Activation from RAMP",
-          reference_id: "ramp_ref_id" }
-      ],
-      associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
-    )
-  end
-
+  let!(:rating) { generate_rating_with_defined_contention(veteran, promulgation_date, profile_date) }
+  let!(:rating_before_ama) { generate_pre_ama_rating(veteran) }
+  let!(:rating_before_ama_from_ramp) { generate_rating_before_ama_from_ramp(veteran) }
   let!(:ratings_with_legacy_issues) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 4.days,
-      profile_date: receipt_date - 4.days,
-      issues: [
-        { reference_id: "has_legacy_issue", decision_text: "Issue with legacy issue not withdrawn" },
-        { reference_id: "has_ineligible_legacy_appeal", decision_text: "Issue connected to ineligible legacy appeal" }
-      ]
-    )
+    generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
   end
 
   let(:legacy_opt_in_approved) { false }
@@ -79,7 +37,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
   let(:benefit_type) { "compensation" }
 
   let!(:higher_level_review) do
-    HigherLevelReview.create!(
+    create(
+      :higher_level_review,
       veteran_file_number: veteran.file_number,
       receipt_date: receipt_date,
       informal_conference: false,
@@ -91,7 +50,10 @@ feature "Higher Level Review Edit issues", :all_dbs do
   end
 
   let!(:another_higher_level_review) do
-    HigherLevelReview.create!(
+    create(
+      :higher_level_review,
+      :processed,
+      intake: create(:intake),
       veteran_file_number: veteran.file_number,
       receipt_date: receipt_date,
       informal_conference: false,
@@ -102,8 +64,9 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
   # create associated intake
   let!(:intake) do
-    Intake.create!(
-      user_id: current_user.id,
+    create(
+      :intake,
+      user: current_user,
       detail: higher_level_review,
       veteran_file_number: veteran.file_number,
       started_at: Time.zone.now,
@@ -486,7 +449,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
   context "Nonrating issue with untimely date and VACOLS opt-in" do
     before do
       setup_legacy_opt_in_appeals(veteran.file_number)
-      higher_level_review.reload # get UUID
+      higher_level_review.reload.establish!
     end
 
     let(:legacy_opt_in_approved) { true }
@@ -760,6 +723,54 @@ feature "Higher Level Review Edit issues", :all_dbs do
     end
   end
 
+  describe "Establishment credits" do
+    let(:url_path) { "higher_level_reviews" }
+    let(:decision_review) { higher_level_review }
+    let(:request_issues) { [request_issue] }
+    let(:request_issue) do
+      create(
+        :request_issue,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: rating.profile_date,
+        decision_review: decision_review,
+        benefit_type: benefit_type,
+        contested_issue_description: "PTSD denied"
+      )
+    end
+
+    context "when the EP has not yet been established" do
+      before do
+        decision_review.reload.create_issues!(request_issues)
+      end
+
+      it "disallows editing" do
+        visit "#{url_path}/#{decision_review.uuid}/edit"
+
+        expect(page).to have_content("Review not yet established in VBMS. Check the job page for details.")
+        expect(page).to have_link("the job page")
+
+        click_link "the job page"
+
+        expect(current_path).to eq decision_review.async_job_url
+      end
+    end
+
+    context "when the EP has been established" do
+      before do
+        decision_review.reload.create_issues!(request_issues)
+        decision_review.establish!
+      end
+
+      it "shows when and by whom the Intake was performed" do
+        visit "#{url_path}/#{decision_review.uuid}/edit"
+
+        expect(page).to have_content(
+          "Established #{decision_review.establishment_processed_at.friendly_full_format} by #{intake.user.css_id}"
+        )
+      end
+    end
+  end
+
   context "when there is a rating end product" do
     let!(:request_issue) do
       create(
@@ -857,12 +868,36 @@ feature "Higher Level Review Edit issues", :all_dbs do
       end
     end
 
+    context "when claimaint is shown on any benefit type" do
+      let!(:higher_level_review) do
+        HigherLevelReview.create!(
+          veteran_file_number: veteran.file_number,
+          receipt_date: receipt_date,
+          informal_conference: false,
+          same_office: false,
+          benefit_type: :pension,
+          veteran_is_not_claimant: true,
+          legacy_opt_in_approved: legacy_opt_in_approved
+        )
+      end
+
+      let(:rating_ep_claim_id) do
+        higher_level_review.end_product_establishments.first.reference_id
+      end
+
+      it "shows claimant for pension benefit type" do
+        visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
+        check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
+        check_row("Benefit type", "Pension")
+        check_row("Claimant", "Bob Vance, Spouse (payee code 10)")
+      end
+    end
+
     it "shows request issues and allows adding/removing issues" do
       # remember to check for removal later
       existing_contention = request_issue.reload.contention
 
       visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-
       expect(page).to have_content("Edit Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
       check_row("Benefit type", "Compensation")
@@ -1280,8 +1315,11 @@ feature "Higher Level Review Edit issues", :all_dbs do
     let(:last_week) { Time.zone.now - 7.days }
     let(:higher_level_review) do
       # reload to get uuid
-      create(:higher_level_review, :with_end_product_establishment, veteran_file_number: veteran.file_number,
-                                                                    benefit_type: benefit_type).reload
+      create(:higher_level_review,
+             :with_end_product_establishment,
+             :processed,
+             veteran_file_number: veteran.file_number,
+             benefit_type: benefit_type).reload
     end
     let!(:existing_request_issues) do
       [create(:request_issue, :nonrating, decision_review: higher_level_review),

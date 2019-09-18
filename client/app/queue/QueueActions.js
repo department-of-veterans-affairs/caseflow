@@ -60,8 +60,7 @@ export const onReceiveAmaTasks = (amaTasks) => ({
 
 export const fetchJudges = () => (dispatch) => {
   ApiUtil.get('/users?role=Judge').then((response) => {
-    const resp = JSON.parse(response.text);
-    const judges = _.keyBy(resp.judges, 'id');
+    const judges = _.keyBy(response.body.judges, 'id');
 
     dispatch({
       type: ACTIONS.RECEIVE_JUDGE_DETAILS,
@@ -92,11 +91,9 @@ export const getNewDocumentsForAppeal = (appealId) => (dispatch) => {
   };
 
   ApiUtil.get(`/appeals/${appealId}/new_documents`, requestOptions).then((response) => {
-    const resp = JSON.parse(response.text);
-
     dispatch(receiveNewDocumentsForAppeal({
       appealId,
-      newDocuments: resp.new_documents
+      newDocuments: response.body.new_documents
     }));
   }, (error) => {
     dispatch({
@@ -129,11 +126,9 @@ export const getNewDocumentsForTask = (taskId) => (dispatch) => {
   };
 
   ApiUtil.get(`/tasks/${taskId}/new_documents`, requestOptions).then((response) => {
-    const resp = JSON.parse(response.text);
-
     dispatch(receiveNewDocumentsForTask({
       taskId,
-      newDocuments: resp.new_documents
+      newDocuments: response.body.new_documents
     }));
   }, (error) => {
     dispatch({
@@ -163,15 +158,13 @@ export const getAppealValue = (appealId, endpoint, name) => (dispatch) => {
       name
     }
   });
-  ApiUtil.get(`/appeals/${appealId}/${endpoint}`).then((resp) => {
-    const response = JSON.parse(resp.text);
-
+  ApiUtil.get(`/appeals/${appealId}/${endpoint}`).then((response) => {
     dispatch({
       type: ACTIONS.RECEIVE_APPEAL_VALUE,
       payload: {
         appealId,
         name,
-        response
+        response: response.body
       }
     });
   }, (error) => {
@@ -362,10 +355,10 @@ export const fetchTasksAndAppealsOfAttorney = (attorneyId, params) => (dispatch)
   const queryString = `?${pairs.join('&')}`;
 
   return ApiUtil.get(`/queue/${attorneyId}${queryString}`, requestOptions).then(
-    (resp) => dispatch(
+    (response) => dispatch(
       receiveTasksAndAppealsOfAttorney(
         { attorneyId,
-          ...associateTasksWithAppeals(JSON.parse(resp.text)) })),
+          ...associateTasksWithAppeals(response.body) })),
     (error) => dispatch(errorTasksAndAppealsOfAttorney({ attorneyId,
       error }))
   );
@@ -511,7 +504,7 @@ const refreshTasks = (dispatch, userId, userRole) => {
     dispatch(onReceiveQueue(extractAppealsAndAmaTasks(responses[0].body.tasks.data)));
     dispatch(onReceiveQueue({
       amaTasks: {},
-      ...associateTasksWithAppeals(JSON.parse(responses[1].text))
+      ...associateTasksWithAppeals(responses[1].body)
     }));
   });
 };

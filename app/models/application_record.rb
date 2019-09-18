@@ -2,6 +2,22 @@
 
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
+
+  # this simple transform should match the basic ActiveRecord::Result format
+  # for db results.
+  def as_hash
+    as_json.tap do |rec|
+      rec.transform_values! do |value|
+        if value.is_a?(Time) || value.is_a?(DateTime)
+          ymdhms = value.utc.strftime("%Y-%m-%d %H:%M:%S")
+          subseconds = value.utc.strftime(".%6N").to_f.to_s.sub(/^0\./, "")
+          "#{ymdhms}.#{subseconds}"
+        else
+          value.as_json
+        end
+      end
+    end
+  end
 end
 
 # :nocov:

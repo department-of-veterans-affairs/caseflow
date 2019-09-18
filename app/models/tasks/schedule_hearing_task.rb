@@ -5,7 +5,7 @@
 # Created by the intake process for any appeal electing to have a hearing.
 # Once completed, an AssignHearingDispositionTask is created.
 
-class ScheduleHearingTask < GenericTask
+class ScheduleHearingTask < Task
   before_validation :set_assignee
   before_create :create_parent_hearing_task
 
@@ -53,7 +53,7 @@ class ScheduleHearingTask < GenericTask
     end
   end
 
-  def label
+  def self.label
     "Schedule hearing"
   end
 

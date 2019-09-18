@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import { css, hover } from 'glamor';
+import COPY from '../../COPY.json';
 import FilterIcon from './FilterIcon';
 import QueueDropdownFilter from '../queue/QueueDropdownFilter';
 import FilterOption from './FilterOption';
@@ -58,16 +59,25 @@ class TableFilter extends React.PureComponent {
   }
 
   filterDropdownOptions = (tableDataByRow, columnName) => {
-    const { customFilterLabels, enableFilterTextTransform } = this.props;
+    const { customFilterLabels, enableFilterTextTransform, filterOptionsFromApi } = this.props;
+    const filtersForColumn = _.get(this.props.filteredByList, columnName);
+
+    if (filterOptionsFromApi && filterOptionsFromApi.length) {
+      filterOptionsFromApi.forEach((option) => {
+        option.checked = filtersForColumn ? filtersForColumn.includes(option.value) : false;
+      });
+
+      return _.sortBy(filterOptionsFromApi, 'displayText');
+    }
+
     const countByColumnName = _.countBy(
       tableDataByRow,
       (row) => this.transformColumnValue(_.get(row, columnName))
     );
     const uniqueOptions = [];
-    const filtersForColumn = _.get(this.props.filteredByList, columnName);
 
     for (let key in countByColumnName) { // eslint-disable-line guard-for-in
-      let displayText = `<<blank>> (${countByColumnName[key]})`;
+      let displayText = `${COPY.NULL_FILTER_LABEL} (${countByColumnName[key]})`;
       let keyValue = 'null';
 
       if (key && key !== 'null' && key !== 'undefined') {
@@ -154,7 +164,7 @@ class TableFilter extends React.PureComponent {
       this.filterDropdownOptions(tableData, columnName) :
       // Keeping the historical prop `getFilterValues` for backwards compatibility,
       // will remove this once all apps are using this new component.
-      // 
+      //
       // WARNING: If you use getFilterValues, it will cause some of the options to
       // not display correctly when they are checked.
       getFilterValues;
@@ -201,7 +211,8 @@ TableFilter.propTypes = {
   valueName: PropTypes.string,
   valueTransform: PropTypes.func,
   filteredByList: PropTypes.object,
-  updateFilters: PropTypes.func
+  updateFilters: PropTypes.func,
+  filterOptionsFromApi: PropTypes.array
 };
 
 export default TableFilter;

@@ -86,7 +86,7 @@ export class PdfViewer extends React.Component {
       ArrowDown: Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN
     }[event.key];
 
-    if (this.props.isPlacingAnnotation && direction >= 0) {
+    if (this.props.isPlacingAnnotation && this.props.placingAnnotationIconPageCoords && direction >= 0) {
       const { pageIndex, ...origCoords } = this.props.placingAnnotationIconPageCoords;
       const constrainedCoords = getNextAnnotationIconPageCoords(
         direction,
@@ -155,13 +155,15 @@ export class PdfViewer extends React.Component {
     window.removeEventListener('keydown', this.keyListener);
   }
 
-  componentWillReceiveProps = (nextProps) => {
+  /* eslint-disable camelcase */
+  UNSAFE_componentWillReceiveProps = (nextProps) => {
     const nextDocId = Number(nextProps.match.params.docId);
 
     if (nextDocId !== this.selectedDocId()) {
       this.props.handleSelectCurrentPdf(nextDocId);
     }
   }
+  /* eslint-enable "camelcase" */
 
   selectedDocIndex = () => (
     _.findIndex(this.props.documents, { id: this.selectedDocId() })
@@ -311,11 +313,30 @@ export default connect(
 )(PdfViewer);
 
 PdfViewer.propTypes = {
+  annotations: PropTypes.object,
+  appeal: PropTypes.object,
+  closeAnnotationDeleteModal: PropTypes.func,
+  closeAnnotationShareModal: PropTypes.func,
+  closeDocumentUpdatedModal: PropTypes.func,
+  deleteAnnotation: PropTypes.func,
   doc: PropTypes.object,
+  documentPathBase: PropTypes.string,
+  featureToggles: PropTypes.object,
+  fetchAppealDetails: PropTypes.func,
+  handleSelectCurrentPdf: PropTypes.func,
+  history: PropTypes.object,
+  isPlacingAnnotation: PropTypes.bool,
+  match: PropTypes.object,
+  onJumpToComment: PropTypes.func,
+  onScrollToComment: PropTypes.func,
+  pageDimensions: PropTypes.object,
   pdfWorker: PropTypes.string,
+  placingAnnotationIconPageCoords: PropTypes.object,
   scrollToComment: PropTypes.shape({
     id: PropTypes.number
   }),
+  showPlaceAnnotationIcon: PropTypes.func,
+  stopPlacingAnnotation: PropTypes.func,
   deleteAnnotationModalIsOpenFor: PropTypes.number,
   shareAnnotationModalIsOpenFor: PropTypes.number,
   documents: PropTypes.array.isRequired,

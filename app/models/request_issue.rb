@@ -202,12 +202,13 @@ class RequestIssue < ApplicationRecord
     def rating
       where.not(
         contested_rating_issue_reference_id: nil
-      ).or(where(is_unidentified: true))
+      ).or(where(is_unidentified: true)).or(where.not(contested_rating_decision_reference_id: nil))
     end
 
     def nonrating
       where(
         contested_rating_issue_reference_id: nil,
+        contested_rating_decision_reference_id: nil,
         is_unidentified: [nil, false]
       ).where.not(nonrating_issue_category: nil)
     end
@@ -245,6 +246,7 @@ class RequestIssue < ApplicationRecord
     def unidentified
       where(
         contested_rating_issue_reference_id: nil,
+        contested_rating_decision_reference_id: nil,
         is_unidentified: true
       )
     end
@@ -261,11 +263,12 @@ class RequestIssue < ApplicationRecord
 
     # rubocop:disable Metrics/MethodLength
     def attributes_from_intake_data(data)
-      contested_issue_present = data[:rating_issue_reference_id] || data[:contested_decision_issue_id]
+      contested_issue_present = attributes_look_like_contested_issue?(data)
 
       {
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
         contested_rating_issue_diagnostic_code: data[:rating_issue_diagnostic_code],
+        contested_rating_decision_reference_id: data[:rating_decision_reference_id],
         contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
         nonrating_issue_description: data[:nonrating_issue_category] ? data[:decision_text] : nil,
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
@@ -287,6 +290,12 @@ class RequestIssue < ApplicationRecord
       }
     end
     # rubocop:enable Metrics/MethodLength
+
+    def attributes_look_like_contested_issue?(data)
+      data[:rating_issue_reference_id] ||
+        data[:contested_decision_issue_id] ||
+        data[:rating_decision_reference_id]
+    end
   end
 
   delegate :veteran, to: :decision_review
@@ -307,7 +316,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def rating?
-    !!associated_rating_issue? || previous_rating_issue?
+    !!associated_rating_issue? || previous_rating_issue? || !!associated_rating_decision?
   end
 
   def nonrating?
@@ -326,6 +335,10 @@ class RequestIssue < ApplicationRecord
 
   def associated_rating_issue?
     contested_rating_issue_reference_id
+  end
+
+  def associated_rating_decision?
+    contested_rating_decision_reference_id
   end
 
   def open?
@@ -382,6 +395,7 @@ class RequestIssue < ApplicationRecord
       id: id,
       rating_issue_reference_id: contested_rating_issue_reference_id,
       rating_issue_profile_date: contested_rating_issue_profile_date,
+      rating_decision_reference_id: contested_rating_decision_reference_id,
       description: description,
       contention_text: contention_text,
       approx_decision_date: approx_decision_date_of_issue_being_contested,
@@ -429,7 +443,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def contested_rating_issue
-    return unless decision_review
     return unless contested_rating_issue_reference_id
 
     @contested_rating_issue ||= begin
@@ -438,8 +451,20 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  def contested_rating_decision
+    return unless contested_rating_decision_reference_id
+
+    @contested_rating_decision ||= begin
+      contested_rating_decision_ui_hash = fetch_contested_rating_decision_ui_hash
+      contested_rating_decision_ui_hash ? RatingDecision.deserialize(contested_rating_decision_ui_hash) : nil
+    end
+  end
+
   def contested_benefit_type
-    contested_rating_issue&.benefit_type
+    return contested_rating_issue&.benefit_type if associated_rating_issue?
+    return :compensation if associated_rating_decision?
+
+    guess_benefit_type
   end
 
   def guess_benefit_type
@@ -562,7 +587,10 @@ class RequestIssue < ApplicationRecord
 
   def decision_or_promulgation_date
     return decision_date if nonrating?
-    return contested_rating_issue.try(:promulgation_date) if rating?
+
+    return contested_rating_issue&.promulgation_date if associated_rating_issue?
+
+    return contested_rating_decision&.decision_date&.to_date if associated_rating_decision?
   end
 
   def diagnostic_code
@@ -630,6 +658,10 @@ class RequestIssue < ApplicationRecord
 
   def editable?
     !contention_connected_to_rating?
+  end
+
+  def remanded?
+    decision_review.try(:decision_review_remanded?)
   end
 
   private
@@ -790,18 +822,35 @@ class RequestIssue < ApplicationRecord
     )
   end
 
-  # RatingIssue is not in db so we pull hash from the serialized_ratings.
-  # TODO: performance could be improved by using the profile date by loading the specific rating
-  def fetch_contested_rating_issue_ui_hash
-    return unless decision_review.serialized_ratings
+  # RatingIssue and RatingDecision are not in db so we pull hash from the serialized_ratings.
+  # We must unwind the nested hash tree to find the child.
+  def fetch_contested_rating_child_ui_hash(haystack:, needle:, needle_value:)
+    return unless decision_review&.serialized_ratings
 
-    rating_with_issue = decision_review.serialized_ratings.find do |rating|
-      rating[:issues].find { |issue| issue[:reference_id] == contested_rating_issue_reference_id }
+    rating_child = nil
+
+    decision_review.serialized_ratings.each do |rating|
+      rating_child = rating[haystack].find { |child| child[needle] == needle_value }
+      break if rating_child
     end
 
-    rating_with_issue ||= { issues: [] }
+    rating_child
+  end
 
-    rating_with_issue[:issues].find { |issue| issue[:reference_id] == contested_rating_issue_reference_id }
+  def fetch_contested_rating_issue_ui_hash
+    fetch_contested_rating_child_ui_hash(
+      haystack: :issues,
+      needle: :reference_id,
+      needle_value: contested_rating_issue_reference_id
+    )
+  end
+
+  def fetch_contested_rating_decision_ui_hash
+    fetch_contested_rating_child_ui_hash(
+      haystack: :decisions,
+      needle: :disability_id,
+      needle_value: contested_rating_decision_reference_id
+    )
   end
 
   def check_for_eligible_previous_review!
@@ -870,9 +919,12 @@ class RequestIssue < ApplicationRecord
 
   def check_for_active_request_issue_by_decision_issue!
     return unless contested_decision_issue_id
+    return if correction?
 
+    # When a duplicate request issue is a correction, it will not be flagged as duplicate.
     add_duplicate_issue_error(
-      RequestIssue.active.find_by(contested_decision_issue_id: contested_decision_issue_id)
+      RequestIssue.active.find_by(contested_decision_issue_id: contested_decision_issue_id,
+                                  correction_type: correction_type)
     )
   end
 
@@ -903,10 +955,6 @@ class RequestIssue < ApplicationRecord
     else
       end_product_codes[:claim_review][rating? ? :rating : :nonrating]
     end
-  end
-
-  def remanded?
-    decision_review.try(:decision_review_remanded?)
   end
 
   def add_duplicate_issue_error(existing_request_issue)

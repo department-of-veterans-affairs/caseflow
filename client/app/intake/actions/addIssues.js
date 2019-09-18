@@ -109,6 +109,7 @@ export const addContestableIssue = (args) => (dispatch) => {
       index: args.contestableIssueIndex,
       isRating: args.isRating,
       ratingIssueReferenceId: currentIssue.ratingIssueReferenceId,
+      ratingDecisionReferenceId: currentIssue.ratingDecisionReferenceId,
       ratingIssueProfileDate: currentIssue.ratingIssueProfileDate,
       ratingIssueDiagnosticCode: currentIssue.ratingIssueDiagnosticCode,
       decisionIssueId: currentIssue.decisionIssueId,

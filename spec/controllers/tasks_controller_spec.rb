@@ -145,6 +145,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
     context "when user has no role" do
       let(:role) { nil }
+      let(:veteran_file_number) { create(:veteran).file_number }
 
       it "should return 200" do
         get :index, params: { user_id: user.id, role: "unknown" }
@@ -158,6 +159,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
             folder: create(:folder, tinum: "docket-number"),
             bfregoff: "RO04",
             bfcurloc: "57",
+            bfcorlid: "#{veteran_file_number}C",
             bfhr: "2",
             bfdocind: HearingDay::REQUEST_TYPES[:video]
           )
@@ -252,6 +254,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
   describe "POST /tasks" do
     let(:attorney) { create(:user) }
+    let(:role) { nil }
     let(:user) { create(:user) }
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 
@@ -576,6 +579,39 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(
           HearingAdminActionContestedClaimantTask.all.map(&:instructions).flatten
         ).to match_array([contested_instructions_1, contested_instructions_2])
+      end
+    end
+
+    context "When the current user is a member of the Mail team" do
+      before do
+        mail_team_user = create(:user)
+        OrganizationsUser.add_user_to_organization(mail_team_user, MailTeam.singleton)
+        User.authenticate!(user: mail_team_user)
+      end
+
+      context "when an EvidenceOrArgumentMailTask is created for an inactive appeal" do
+        let(:root_task) { create(:root_task) }
+
+        let(:params) do
+          [{
+            "external_id": root_task.appeal.external_id,
+            "type": EvidenceOrArgumentMailTask.name,
+            "parent_id": root_task.id
+          }]
+        end
+
+        before do
+          allow(EvidenceOrArgumentMailTask).to receive(:case_active?).and_return(false)
+        end
+
+        it "returns a response indicating failure to create task" do
+          subject
+
+          response_body = JSON.parse(response.body)
+
+          expect(response_body["errors"].first["status"]).to eq(500)
+          expect(response_body["errors"].first["detail"]).to eq(Caseflow::Error::MailRoutingError.new.message)
+        end
       end
     end
   end
