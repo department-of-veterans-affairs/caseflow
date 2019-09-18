@@ -13,13 +13,26 @@ class ClaimReviewAsyncStatsReporter
 
   def as_csv
     CSV.generate do |csv|
-      csv << %w[type total cancelled processed median avg max min]
+      csv << %w[
+        type
+        total
+        cancelled
+        processed
+        established_within_seven_days
+        established_within_seven_days_percent
+        median
+        avg
+        max
+        min
+      ]
       stats.each do |type, stat|
         csv << [
           type,
           stat[:total],
           stat[:canceled],
           stat[:processed],
+          stat[:established_within_seven_days],
+          stat[:established_within_seven_days_percent],
           seconds_to_hms(stat[:median].to_i),
           seconds_to_hms(stat[:avg].to_i),
           seconds_to_hms(stat[:max].to_i),
@@ -41,6 +54,8 @@ class ClaimReviewAsyncStatsReporter
         total: supplemental_claims.count,
         canceled: supplemental_claims.canceled.count,
         processed: supplemental_claims.processed.count,
+        established_within_seven_days: established_within_seven_days(supplemental_claims_completion_times),
+        established_within_seven_days_percent: percent_established_within_seven_days(supplemental_claims_completion_times),
         median: median_time(supplemental_claims_completion_times),
         avg: avg_time(supplemental_claims_completion_times),
         max: supplemental_claims_completion_times.max,
@@ -50,6 +65,8 @@ class ClaimReviewAsyncStatsReporter
         total: higher_level_reviews.count,
         canceled: higher_level_reviews.canceled.count,
         processed: higher_level_reviews.processed.count,
+        established_within_seven_days: established_within_seven_days(higher_level_reviews_completion_times),
+        established_within_seven_days_percent: percent_established_within_seven_days(higher_level_reviews_completion_times),
         median: median_time(higher_level_reviews_completion_times),
         avg: avg_time(higher_level_reviews_completion_times),
         max: higher_level_reviews_completion_times.max,
@@ -59,6 +76,8 @@ class ClaimReviewAsyncStatsReporter
         total: request_issues_updates.count,
         canceled: request_issues_updates.canceled.count,
         processed: request_issues_updates.processed.count,
+        established_within_seven_days: established_within_seven_days(request_issues_updates_completion_times),
+        established_within_seven_days_percent: percent_established_within_seven_days(request_issues_updates_completion_times),
         median: median_time(request_issues_updates_completion_times),
         avg: avg_time(request_issues_updates_completion_times),
         max: request_issues_updates_completion_times.max,
@@ -68,6 +87,14 @@ class ClaimReviewAsyncStatsReporter
   end
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
+
+  def established_within_seven_days(completion_times)
+    completion_times.select { |span| span.fdiv(86400).to_i < 7 }.count
+  end
+
+  def percent_established_within_seven_days(completion_times)
+    ((established_within_seven_days(completion_times) / completion_times.count.to_f) * 100).round(2)
+  end
 
   def completion_times(claims)
     claims.reject(&:canceled?).map do |claim|
