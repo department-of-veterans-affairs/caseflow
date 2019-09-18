@@ -138,7 +138,7 @@ class SeedDB
   end
 
   def create_edit_hearings_user
-    hearings_user = User.create(css_id: "BVAYELLOW", station_id: 101, roles: ["Edit HearSched", "Build HearSched"])
+    hearings_user = User.create(css_id: "BVAYELLOW", station_id: 101, full_name: "Build and Edit Hearing Schedule", roles: ["Edit HearSched", "Build HearSched"])
     OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
   end
 
