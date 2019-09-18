@@ -120,6 +120,24 @@ describe TaskSorter, :all_dbs do
         end
       end
 
+      context "when sorting by assigner" do
+        let(:column_name) { Constants.QUEUE_CONFIG.TASK_ASSIGNER_COLUMN }
+
+        before do
+          tasks.each do |task|
+            # Update each task to be assigned some random user
+            task.update!(
+              assigned_by: create(:user, full_name: "#{Faker::Name.unique.first_name} #{Faker::Name.unique.first_name}")
+            )
+          end
+        end
+
+        it "sorts tasks by assigned_by last name" do
+          expected_order = tasks.sort_by { |task| task.assigned_by_display_name.last }
+          expect(subject.pluck(:id)).to eq(expected_order.pluck(:id))
+        end
+      end
+
       context "when sorting by task type" do
         let(:column_name) { Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN }
         let(:tasks) { Task.where(id: create_list(:generic_task, task_types.length).pluck(:id)) }
