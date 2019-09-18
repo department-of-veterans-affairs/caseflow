@@ -8,9 +8,10 @@ import PropTypes from 'prop-types';
 
 import BulkAssignButton from './components/BulkAssignButton';
 import TabWindow from '../components/TabWindow';
-import { docketNumberColumn, hearingBadgeColumn, detailsColumn,
-  taskColumn, regionalOfficeColumn, issueCountColumn, typeColumn,
-  assignedToColumn, daysWaitingColumn, daysOnHoldColumn, readerLinkColumn } from './components/TaskTableColumns';
+import { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn, regionalOfficeColumn, issueCountColumn,
+  typeColumn, assignedToColumn, daysWaitingColumn, daysOnHoldColumn, readerLinkColumn, completedToNameColumn } from
+  './components/TaskTableColumns';
+
 import QueueTable from './QueueTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import Alert from '../components/Alert';
@@ -69,6 +70,7 @@ class OrganizationQueue extends React.PureComponent {
       regionalOfficeColumn: regionalOfficeColumn(tasks, this.filterValuesForColumn(column, config)),
       typeColumn: typeColumn(tasks, this.filterValuesForColumn(column, config), false),
       assignedToColumn: assignedToColumn(tasks, this.filterValuesForColumn(column, config)),
+      completedToNameColumn: completedToNameColumn(),
       docketNumberColumn: docketNumberColumn(tasks, this.filterValuesForColumn(column, config), false),
       daysWaitingColumn: daysWaitingColumn(false),
       daysOnHoldColumn: daysOnHoldColumn(false),
