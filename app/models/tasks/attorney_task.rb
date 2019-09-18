@@ -40,8 +40,13 @@ class AttorneyTask < Task
     COPY::ATTORNEY_TASK_LABEL
   end
 
+  # cancel task when a judge reassigns task to another attorney
   def cancel_task
-    cancel_task_and_child_subtasks
+    descendant_ids = descendants.pluck(:id)
+    Task.where(id: descendant_ids).update_all(
+      status: Constants.TASK_STATUSES.cancelled,
+      closed_at: Time.zone.now
+    )
   end
   
   private
