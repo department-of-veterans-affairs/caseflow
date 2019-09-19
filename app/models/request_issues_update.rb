@@ -12,7 +12,7 @@ class RequestIssuesUpdate < ApplicationRecord
   attr_writer :request_issues_data
   attr_reader :error_code
 
-  delegate :veteran, :cancel_active_tasks, to: :review
+  delegate :veteran, :cancel_active_tasks, :create_business_line_tasks!, to: :review
   delegate :withdrawn_issues, to: :withdrawal
   delegate :corrected_issues, :correction_issues, to: :correction
 
@@ -30,6 +30,7 @@ class RequestIssuesUpdate < ApplicationRecord
         edited_request_issue_ids: edited_issues.map(&:id),
         corrected_request_issue_ids: corrected_issues.map(&:id)
       )
+      create_business_line_tasks! if added_issues.present?
       cancel_active_tasks
       submit_for_processing!
     end

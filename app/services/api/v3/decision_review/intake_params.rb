@@ -165,6 +165,11 @@ class Api::V3::DecisionReview::IntakeParams
       return
     end
 
+    unless benefit_type_valid?
+      @errors << Api::V3::DecisionReview::IntakeError.new(:invalid_benefit_type)
+      return
+    end
+
     @errors += request_issue_errors
   end
 
@@ -174,5 +179,11 @@ class Api::V3::DecisionReview::IntakeParams
     end
   rescue StandardError
     [Api::V3::DecisionReview::IntakeError.new(:malformed_request)]
+  end
+
+  def benefit_type_valid?
+    attributes[:benefitType].in?(
+      Api::V3::DecisionReview::RequestIssueParams::CATEGORIES_BY_BENEFIT_TYPE.keys
+    )
   end
 end

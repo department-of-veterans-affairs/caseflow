@@ -36,6 +36,40 @@ describe Appeal, :all_dbs do
     end
   end
 
+  context "#create_business_line_tasks!" do
+    let(:request_issues) do
+      [
+        create(:request_issue, benefit_type: "education"),
+        create(:request_issue, benefit_type: "education"),
+        create(:request_issue, benefit_type: "nca")
+      ]
+    end
+    let(:appeal) { create(:appeal, request_issues: request_issues) }
+
+    subject { appeal.create_business_line_tasks! }
+
+    it "creates one VeteranRecordRequest task per business line" do
+      expect(VeteranRecordRequest).to receive(:create!).twice
+
+      subject
+    end
+
+    context "when the appeal has no active issues" do
+      let(:request_issues) do
+        [
+          create(:request_issue, :ineligible, benefit_type: "education"),
+          create(:request_issue, :ineligible, benefit_type: "nca")
+        ]
+      end
+
+      it "does not create business line tasks" do
+        expect(VeteranRecordRequest).to_not receive(:create!)
+
+        subject
+      end
+    end
+  end
+
   context "#create_remand_supplemental_claims!" do
     before { setup_prior_claim_with_payee_code(appeal, veteran) }
 

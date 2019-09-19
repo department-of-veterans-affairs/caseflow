@@ -5,8 +5,10 @@ class DataIntegrityChecksJob < CaseflowJob
   application_attr :queue
 
   CHECKERS = %w[
+    DecisionReviewTasksForInactiveAppealsChecker
     ExpiredAsyncJobsChecker
     OpenHearingTasksWithoutActiveDescendantsChecker
+    OpenTasksWithClosedAtChecker
     UntrackedLegacyAppealsChecker
   ].freeze
 
