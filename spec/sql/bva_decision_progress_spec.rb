@@ -12,6 +12,7 @@ describe "BVA Decision Progress report", :postgres do
     end
 
     it "generates correct report" do
+      binding.pry
       expect_sql("bva-decision-progress").to eq(expected_report)
     end
   end
