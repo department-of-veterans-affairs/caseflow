@@ -3,13 +3,11 @@
 class PostDecisionMotionUpdater
   include ActiveModel::Model
 
-  attr_reader :assigned_to_id, :task, :disposition, :vacate_type
+  attr_reader :task, :params
 
   def initialize(task, params)
     @task = task
-    @assigned_to_id = params[:assigned_to_id]
-    @disposition = params[:disposition]
-    @vacate_type = params[:vacate_type]
+    @params = params
   end
 
   def process
@@ -26,8 +24,8 @@ class PostDecisionMotionUpdater
   def create_motion
     motion = PostDecisionMotion.new(
       task: task,
-      disposition: disposition,
-      vacate_type: vacate_type
+      disposition: params[:disposition],
+      vacate_type: params[:vacate_type]
     )
     unless motion.valid?
       errors.messages.merge!(motion.errors.messages)
@@ -39,12 +37,13 @@ class PostDecisionMotionUpdater
   def perform_action_based_on_disposition
     # If it is a grant, judge assigns it to the drafting attorney,
     # otherwise, it goes back to the motions attorney
-    if disposition == "granted"
+    if params[:disposition] == "granted"
       new_task = task_class.new(
         appeal: task.appeal,
         parent: task,
         assigned_by: task.assigned_to,
-        assigned_to: assigned_to
+        assigned_to: assigned_to,
+        instructions: [params[:instructions]]
       )
       unless new_task.valid?
         errors.messages.merge!(new_task.errors.messages)
@@ -57,10 +56,10 @@ class PostDecisionMotionUpdater
   end
 
   def task_class
-    @task_class ||= (vacate_type + "_task").classify.constantize
+    @task_class ||= (params[:vacate_type] + "_task").classify.constantize
   end
 
   def assigned_to
-    @assigned_to ||= User.find_by(id: assigned_to_id)
+    @assigned_to ||= User.find_by(id: params[:assigned_to_id])
   end
 end

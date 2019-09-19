@@ -239,7 +239,7 @@ class DecisionReview < ApplicationRecord
 
     remand_supplemental_claims.each do |rsc|
       rsc.create_remand_issues!
-      rsc.create_decision_review_task_if_required!
+      rsc.create_business_line_tasks!
 
       delay = rsc.receipt_date.future? ? (rsc.receipt_date + PROCESS_DELAY_VBMS_OFFSET_HOURS.hours).utc : 0
       rsc.submit_for_processing!(delay: delay)
@@ -336,6 +336,10 @@ class DecisionReview < ApplicationRecord
 
   def withdrawn_request_issues
     request_issues.withdrawn
+  end
+
+  def create_business_line_tasks!
+    fail Caseflow::Error::MustImplementInSubclass
   end
 
   private

@@ -232,3 +232,14 @@ export const daysOnHoldColumn = (requireDasRecord) => {
     getSortValue: (task) => numDaysOnHold(task)
   };
 };
+
+export const completedToNameColumn = () => {
+  return {
+    header: COPY.CASE_LIST_TABLE_COMPLETED_BACK_TO_NAME_COLUMN_TITLE,
+    name: QUEUE_CONFIG.TASK_ASSIGNER_COLUMN,
+    backendCanSort: true,
+    valueFunction: (task) =>
+      task.assignedBy ? `${task.assignedBy.firstName} ${task.assignedBy.lastName}` : null,
+    getSortValue: (task) => task.assignedBy ? task.assignedBy.lastName : null
+  };
+};
