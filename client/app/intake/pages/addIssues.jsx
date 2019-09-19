@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import _ from 'lodash';
 import moment from 'moment';
@@ -39,7 +40,7 @@ import {
 } from '../actions/addIssues';
 import COPY from '../../../COPY.json';
 
-export class AddIssuesPage extends React.Component {
+class AddIssuesPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -92,29 +93,27 @@ export class AddIssuesPage extends React.Component {
     this.props.setIssueWithdrawalDate(value);
   };
 
-  willRedirect() {
-    const { intakeForms, formType, featureToggles } = this.props;
-    const intakeData = intakeForms[formType];
+  willRedirect(intakeData, hasClearedEp) {
+    const { formType, featureToggles } = this.props;
     const { correctClaimReviews } = featureToggles;
+    const editableDta = correctClaimReviews && hasClearedEp;
 
     return (
       !formType ||
-      intakeData.isDtaError ||
-      ((intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp) && !correctClaimReviews) ||
-      intakeData.isOutcoded
+      intakeData.isOutcoded ||
+      (hasClearedEp && !correctClaimReviews) ||
+      (intakeData.isDtaError && !editableDta)
     );
   }
 
-  redirect() {
-    const { intakeForms, formType, featureToggles } = this.props;
-    const intakeData = intakeForms[formType];
-    const { correctClaimReviews } = featureToggles;
+  redirect(intakeData, hasClearedEp) {
+    const { formType } = this.props;
 
     if (!formType) {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     } else if (intakeData.isDtaError) {
       return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
-    } else if ((intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp) && !correctClaimReviews) {
+    } else if (hasClearedEp) {
       return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
     } else if (intakeData.isOutcoded) {
       return <Redirect to={PAGE_PATHS.OUTCODED} />;
@@ -140,12 +139,12 @@ export class AddIssuesPage extends React.Component {
 
   render() {
     const { intakeForms, formType, veteran, featureToggles, editPage, addingIssue } = this.props;
-
     const intakeData = intakeForms[formType];
     const { useAmaActivationDate } = featureToggles;
+    const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
-    if (this.willRedirect()) {
-      return this.redirect();
+    if (this.willRedirect(intakeData, hasClearedEp)) {
+      return this.redirect(intakeData, hasClearedEp);
     }
 
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
@@ -273,7 +272,7 @@ export class AddIssuesPage extends React.Component {
 
     rowObjects = rowObjects.concat({
       field: ' ',
-      content: addIssueButton()
+      content: !intakeData.isDtaError && addIssueButton()
     });
 
     return (
@@ -343,6 +342,29 @@ export class AddIssuesPage extends React.Component {
     );
   }
 }
+
+AddIssuesPage.propTypes = {
+  activeIssue: PropTypes.object,
+  addingIssue: PropTypes.bool,
+  correctIssue: PropTypes.func,
+  editPage: PropTypes.bool,
+  featureToggles: PropTypes.object,
+  formType: PropTypes.oneOf(_.map(FORM_TYPES, 'key')),
+  intakeForms: PropTypes.object,
+  removeIssue: PropTypes.func,
+  setIssueWithdrawalDate: PropTypes.func,
+  toggleAddingIssue: PropTypes.func,
+  toggleAddIssuesModal: PropTypes.func,
+  toggleCorrectionTypeModal: PropTypes.func,
+  toggleIssueRemoveModal: PropTypes.func,
+  toggleLegacyOptInModal: PropTypes.func,
+  toggleNonratingRequestIssueModal: PropTypes.func,
+  toggleUnidentifiedIssuesModal: PropTypes.func,
+  toggleUntimelyExemptionModal: PropTypes.func,
+  undoCorrection: PropTypes.func,
+  veteran: PropTypes.object,
+  withdrawIssue: PropTypes.func
+};
 
 export const IntakeAddIssuesPage = connect(
   ({ intake, higherLevelReview, supplementalClaim, appeal, featureToggles, activeIssue, addingIssue }) => ({

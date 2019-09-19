@@ -140,6 +140,21 @@
   "JUDGE_ASSIGN_DROPDOWN_LINK_LABEL": "Assign team cases",
   "JUDGE_REVIEW_DROPDOWN_LINK_LABEL": "Your cases",
 
+  "JUDGE_ADDRESS_MTV_TITLE": "Address %s's Motion to Vacate",
+  "JUDGE_ADDRESS_MTV_DESCRIPTION": "Determine how you would like to address this motion to vacate and then assign it back to the appropriate attorney.",
+  "JUDGE_ADDRESS_MTV_DISPOSITION_SELECT_LABEL": "How will you address this motion to vacate?",
+  "JUDGE_ADDRESS_MTV_VACATE_TYPE_LABEL": "What type of vacate?",
+  "JUDGE_ADDRESS_MTV_HYPERLINK_LABEL": "Insert hyperlink to signed denial document",
+  "JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL": "Provide context and instructions on which issues you will be granting",
+  "JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL": "Assign to decisions attorney",
+
+  "MOTIONS_ATTORNEY_ADDRESS_MTV_TITLE": "Review %s's Motion to Vacate",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_DESCRIPTION": "Create your review for this motion to vacate, then send it back to the Veteran's Law Judge who originally signed the case if they are available.",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_SELECT_LABEL": "What is your reivew for this motion?",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL": "Provide context on which issues should be granted",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL": "Insert hyperlink to denial draft",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL": "Assign to judge",
+
   "IS_PAPER_CASE": "This is a paper case",
 
   "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA": "OMO - VHA",
@@ -453,6 +468,8 @@
   "RETURNED_CORRESPONDENCE_MAIL_TASK_LABEL": "Returned or undeliverable mail",
   "STATUS_INQUIRY_MAIL_TASK_LABEL": "Status inquiry",
   "VACATE_MOTION_MAIL_TASK_LABEL": "Motion to vacate",
+  "REVIEW_MOTION_TO_VACATE_TASK_LABEL": "Review motion to vacate",
+
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
 
