@@ -8,7 +8,7 @@ import { supplementalClaimReducer, mapDataToInitialSupplementalClaim } from './r
 import { higherLevelReviewReducer, mapDataToInitialHigherLevelReview } from './reducers/higherLevelReview';
 import { appealReducer, mapDataToInitialAppeal } from './reducers/appeal';
 import { featureToggleReducer, mapDataToFeatureToggle } from './reducers/featureToggles';
-import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/ReduxBase';
+import ReduxBase from '../components/ReduxBase';
 
 const reducer = combineReducers({
   intake: intakeReducer,
