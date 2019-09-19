@@ -116,7 +116,7 @@ export default class Modal extends React.Component {
       aria-describedby="modal_id-desc"
     >
       <ScrollLock />
-      <div className="cf-modal-body" id={id || ''} {...customStyles}>
+      <div className="cf-modal-body" aria-modal="true" id={id || ''} {...customStyles}>
         <button
           type="button"
           id={`${this.buttonIdPrefix}close`}
