@@ -4,7 +4,7 @@ class WarmBgsCachesJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
 
-  def perform(_args = {})
+  def perform
     RequestStore.store[:current_user] = User.system_user
     RequestStore.store[:application] = "hearings"
 
@@ -18,7 +18,7 @@ class WarmBgsCachesJob < CaseflowJob
   def warm_people_caches
     Person.where(first_name: nil, last_name: nil)
       .order(created_at: :desc)
-      .limit(5_000)
+      .limit(12_000)
       .each(&:update_cached_attributes!)
   rescue StandardError => error
     Raven.capture_exception(error)

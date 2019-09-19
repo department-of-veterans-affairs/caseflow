@@ -45,6 +45,19 @@ describe User, :all_dbs do
     end
   end
 
+  context ".list_hearing_coordinators" do
+    let!(:users) { create_list(:user, 5) }
+    let!(:other_users) { create_list(:user, 5) }
+    before do
+      users.each do |user|
+        OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+      end
+    end
+    it "returns a list of hearing coordinators" do
+      expect(User.list_hearing_coordinators).to match_array(users)
+    end
+  end
+
   context "#regional_office" do
     context "when RO can't be determined using station_id" do
       subject { user.regional_office }
