@@ -51,13 +51,13 @@ WITH undistributed_appeals AS (select '1. Not distributed'::text as decision_sta
                                  'UnaccreditedRepColocatedTask')
               AND tasks.appeal_type='Appeal'
               AND tasks.status IN ('assigned', 'in_progress')
--- The Appeal decision has been written and is with the judge for sign off
+-- The Appeal has been assigned to the Attorney and is being worked.
       ), decision_in_progress AS (select '5. Decision in progress'::text as decision_status, count(DISTINCT(appeal_id)) as num
             FROM tasks
             WHERE tasks.type IN ('AttorneyTask', 'AttorneyRewriteTask') 
               AND tasks.appeal_type='Appeal'
               AND tasks.status IN  ('in_progress')
--- The Appeal has been assigned to the Attorney and is being worked.
+-- The Appeal decision has been written and is with the judge for sign off
       ), decision_ready_for_sign AS (select '6. Decision ready for signature'::text as decision_status, count(DISTINCT(appeal_id)) as num
             FROM tasks
             WHERE tasks.type IN ('JudgeDecisionReviewTask') 
