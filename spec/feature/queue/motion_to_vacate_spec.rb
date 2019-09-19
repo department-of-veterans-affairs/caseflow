@@ -175,7 +175,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
       new_task = StraightVacateAndReadjudicationTask.find_by(assigned_to: drafting_attorney)
       expect(new_task).to_not be_nil
       expect(new_task.label).to eq COPY::STRAIGHT_VACATE_AND_READJUDICATION_TASK_LABEL
-      expect(new_task.available_actions(motions_attorney)).to include(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+      expect(new_task.available_actions(motions_attorney)).to include(
+        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
+      )
       expect(new_task.instructions.join("")).to eq(instructions)
     end
 
@@ -207,7 +209,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
       new_task = VacateAndDeNovoTask.find_by(assigned_to: drafting_attorney)
       expect(new_task).to_not be_nil
       expect(new_task.label).to eq COPY::VACATE_AND_DE_NOVO_TASK_LABEL
-      expect(new_task.available_actions(motions_attorney)).to include(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+      expect(new_task.available_actions(motions_attorney)).to include(
+        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
+      )
       expect(new_task.instructions.join("")).to eq(instructions)
     end
 
@@ -239,7 +243,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
       new_task = DeniedMotionToVacateTask.find_by(assigned_to: drafting_attorney)
       expect(new_task).to_not be_nil
       expect(new_task.label).to eq COPY::DENIED_MOTION_TO_VACATE_TASK_LABEL
-      expect(new_task.available_actions(motions_attorney)).to include(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+      expect(new_task.available_actions(motions_attorney)).to include(
+        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
+      )
       expect(new_task.instructions.join("")).to eq(instructions)
     end
 
@@ -271,7 +277,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
       new_task = DismissedMotionToVacateTask.find_by(assigned_to: drafting_attorney)
       expect(new_task).to_not be_nil
       expect(new_task.label).to eq COPY::DISMISSED_MOTION_TO_VACATE_TASK_LABEL
-      expect(new_task.available_actions(motions_attorney)).to include(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+      expect(new_task.available_actions(motions_attorney)).to include(
+        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
+      )
       expect(new_task.instructions.join("")).to eq(instructions)
     end
   end
