@@ -18,8 +18,6 @@ gem "dogstatsd-ruby"
 gem "fast_jsonapi"
 gem "holidays", "~> 6.4"
 gem "kaminari"
-# active_model_serializers has a default dependency on loofah 2.2.2 which has a security vuln (CVE-2018-16468)
-gem "loofah", ">= 2.2.3"
 gem "moment_timezone-rails"
 gem "newrelic_rpm"
 # nokogiri versions before 1.10.4 are vulnerable to CVE-2019-5477.
