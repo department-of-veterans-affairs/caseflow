@@ -92,22 +92,20 @@ class MailTask < Task
 
   def create_twin_of_type(params)
     task_type = Object.const_get(params[:action])
-    ActiveRecord::Base.multi_transaction do
-      parent_task = task_type.create!(
-        appeal: appeal,
-        parent: parent,
-        assigned_by: assigned_by,
-        assigned_to: MailTeam.singleton
-      )
+    parent_task = task_type.create!(
+      appeal: appeal,
+      parent: parent,
+      assigned_by: assigned_by,
+      assigned_to: MailTeam.singleton
+    )
 
-      task_type.create!(
-        appeal: appeal,
-        parent: parent_task,
-        assigned_by: assigned_by,
-        assigned_to: task_type.default_assignee(parent_task),
-        instructions: params[:instructions]
-      )
-    end
+    task_type.create!(
+      appeal: appeal,
+      parent: parent_task,
+      assigned_by: assigned_by,
+      assigned_to: task_type.default_assignee(parent_task),
+      instructions: params[:instructions]
+    )
   end
 end
 
