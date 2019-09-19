@@ -10,7 +10,7 @@ class QueueForRole
   end
 
   def create(**args)
-    user_role == "attorney" ? AttorneyQueue.new(**args) : GenericQueue.new(**args)
+    (user_role == "attorney") ? AttorneyQueue.new(**args) : GenericQueue.new(**args)
   end
 
   private
