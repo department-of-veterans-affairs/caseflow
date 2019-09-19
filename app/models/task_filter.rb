@@ -40,6 +40,8 @@ class TaskFilter
       where_string << "#{where_string.present? ? ' AND ' : ''}cached_appeal_attributes.is_aod = true"
     end
 
+    binding.pry
+
     [where_string] + where_arguments
   end
 
@@ -55,6 +57,8 @@ class TaskFilter
       "tasks.type"
     when Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN
       "cached_appeal_attributes.closest_regional_office_city"
+    when Constants.QUEUE_CONFIG.REGIONAL_OFFICE_KEY_COLUMN
+      "cached_appeal_attributes.closest_regional_office_key"
     when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
       "cached_appeal_attributes.docket_type"
     when Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN

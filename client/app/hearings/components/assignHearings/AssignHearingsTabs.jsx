@@ -34,16 +34,16 @@ const AvailableVeteransTable = ({ rows, columns, selectedHearingDay, tabName, st
     return <div><NoUpcomingHearingDayMessage /></div>;
   }
 
-  if (_.isEmpty(rows)) {
-    return <div>
-      <StatusMessage
-        title= {COPY.ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_HEADER}
-        type="alert"
-        messageText={COPY.ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_MESSAGE}
-        wrapInAppSegment={false}
-      />
-    </div>;
-  }
+  // if (_.isEmpty(rows)) {
+  //   return <div>
+  //     <StatusMessage
+  //       title= {COPY.ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_HEADER}
+  //       type="alert"
+  //       messageText={COPY.ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_MESSAGE}
+  //       wrapInAppSegment={false}
+  //     />
+  //   </div>;
+  // }
 
   return <span {...style}>
     <AssignHearingsTable columns={removeTimeColumn} rowObjects={rows} tabName={tabName} enablePagination />

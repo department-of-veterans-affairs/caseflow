@@ -6,7 +6,7 @@
   "UNASSIGNED_TASKS_TAB_NAME": "unassigned",
   "UPCOMING_HEARINGS_TAB_NAME": "upcomingHearingsTab",
   "AMA_ASSIGN_HEARINGS_TAB_NAME": "amaAssignHearingsTab",
-  "LEGACY_ASSING_HEARINGS_TAB_NAME": "legacyAssignHearingsTab",
+  "LEGACY_ASSIGN_HEARINGS_TAB_NAME": "legacyAssignHearingsTab",
 
   "APPEAL_TYPE_COLUMN": "typeColumn",
   "CASE_DETAILS_LINK_COLUMN": "detailsColumn",
@@ -17,6 +17,7 @@
   "HEARING_BADGE_COLUMN": "hearingBadgeColumn",
   "ISSUE_COUNT_COLUMN": "issueCountColumn",
   "REGIONAL_OFFICE_COLUMN": "regionalOfficeColumn",
+  "REGIONAL_OFFICE_KEY_COLUMN": "regionalOfficeKeyColumn",
   "TASK_ASSIGNEE_COLUMN": "assignedToColumn",
   "TASK_ASSIGNER_COLUMN": "completedToNameColumn",
   "TASK_CLOSED_DATE_COLUMN": "completedDateColumn",
@@ -68,6 +69,12 @@
       "name": "regionalOfficeColumn",
       "sorting_table": "cached_appeal_attributes",
       "sorting_columns": ["closest_regional_office_city"]
+    },
+    "REGIONAL_OFFICE_KEY": {
+      "filterable": true,
+      "name": "regionalOfficeKeyColumn",
+      "sorting_table": "cached_appeal_attributes",
+      "sorting_columns": ["closest_regional_office_key"]
     },
     "TASK_ASSIGNEE": {
       "name": "assignedToColumn",

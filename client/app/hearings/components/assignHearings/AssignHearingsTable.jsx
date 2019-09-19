@@ -21,7 +21,7 @@ class AssignHearingsTable extends React.Component {
       return {};
     }
 
-    const endpoint = `/organizations/hearings-management/task_pages?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=${tabName}&filters[]=col=${QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN}%26val=RO17`;
+    const endpoint = `/organizations/hearings-management/task_pages?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=${tabName}&filter[]=col=${QUEUE_CONFIG.REGIONAL_OFFICE_KEY_COLUMN}%26val=C`;
 
     return {
       useTaskPagesApi: true,

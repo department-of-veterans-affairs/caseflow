@@ -24,7 +24,6 @@ class Organizations::TaskPagesController < OrganizationsController
   # }>
 
   def index
-    binding.pry
     render json: {
       tasks: json_tasks(paged_tasks)
     }
