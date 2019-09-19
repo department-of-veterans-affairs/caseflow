@@ -547,11 +547,6 @@ class RequestIssue < ApplicationRecord
     decision_review.try(:decision_review_remanded?)
   end
 
-  # TODO: use request issue benefit type once it's populated for request issues on build
-  def temp_find_benefit_type
-    decision_review.benefit_type || benefit_type || contested_benefit_type
-  end
-
   private
 
   # When a request issue already has a rating in VBMS, prevent user from editing it.

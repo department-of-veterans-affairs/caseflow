@@ -192,7 +192,7 @@ class EndProductCodeSelector
   attr_reader :request_issue
 
   delegate :remanded?, :correction?, :correction_type, :rating?, :is_unidentified?,
-           :temp_find_benefit_type, :decision_review, :decision_review_type, to: :request_issue
+           :decision_review, :decision_review_type, to: :request_issue
 
   def call
     return choose_code(initial_ep_code_branch[:dta]) if remanded?
@@ -222,5 +222,10 @@ class EndProductCodeSelector
 
   def choose_code(end_product_codes)
     end_product_codes[benefit_type][review_type][issue_type]
+  end
+
+  # TODO: use request issue benefit type once it's populated for request issues on build
+  def temp_find_benefit_type
+    decision_review.benefit_type || benefit_type || contested_benefit_type
   end
 end
