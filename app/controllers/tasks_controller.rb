@@ -26,7 +26,8 @@ class TasksController < ApplicationController
     PrivacyActTask: PrivacyActTask,
     FoiaTask: FoiaTask,
     PulacCerulloTask: PulacCerulloTask,
-    SpecialCaseMovementTask: SpecialCaseMovementTask
+    SpecialCaseMovementTask: SpecialCaseMovementTask,
+    JudgeAddressMotionToVacateTask: JudgeAddressMotionToVacateTask
   }.freeze
 
   def set_application
@@ -78,6 +79,8 @@ class TasksController < ApplicationController
     render json: { tasks: json_tasks(tasks_to_return) }
   rescue ActiveRecord::RecordInvalid => error
     invalid_record_error(error.record)
+  rescue Caseflow::Error::MailRoutingError => error
+    render(error.serialize_response)
   end
 
   # To update attorney task

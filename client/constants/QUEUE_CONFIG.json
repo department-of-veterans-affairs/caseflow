@@ -77,6 +77,7 @@
       "sorting_columns": ["closest_regional_office_key"]
     },
     "TASK_ASSIGNEE": {
+      "filterable": true,
       "name": "assignedToColumn",
       "sorting_table": "cached_appeal_attributes",
       "sorting_columns": ["assignee_label"]

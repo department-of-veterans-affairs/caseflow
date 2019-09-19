@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import update from 'immutability-helper';
 
@@ -94,7 +95,7 @@ class NonCompDispositions extends React.PureComponent {
 
     this.state = {
       requestIssues: formatRequestIssuesWithDecisionIssues(
-        this.props.appeal.requestIssues, this.props.appeal.decisionIssues),
+        this.props.task.appeal.activeRequestIssues, this.props.appeal.decisionIssues),
       decisionDate: today,
       isFilledOut: false
     };
@@ -209,12 +210,27 @@ class NonCompDispositions extends React.PureComponent {
   }
 }
 
-const Dispositions = connect(
+NonCompDecisionIssue.propTypes = {
+  issue: PropTypes.object,
+  index: PropTypes.number,
+  onDispositionChange: PropTypes.func,
+  onDescriptionChange: PropTypes.func,
+  decisionDescription: PropTypes.string,
+  decisionDisposition: PropTypes.string,
+  disabled: PropTypes.bool
+};
+
+NonCompDispositions.propTypes = {
+  task: PropTypes.object,
+  appeal: PropTypes.object,
+  decisionIssuesStatus: PropTypes.object,
+  handleSave: PropTypes.func
+};
+
+export default connect(
   (state) => ({
     appeal: state.appeal,
     task: state.task,
     decisionIssuesStatus: state.decisionIssuesStatus
   })
 )(NonCompDispositions);
-
-export default Dispositions;

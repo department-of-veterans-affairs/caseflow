@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190829183634) do
+ActiveRecord::Schema.define(version: 20190917210301) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -161,6 +161,7 @@ ActiveRecord::Schema.define(version: 20190829183634) do
     t.string "assignee_label", comment: "Who is currently most responsible for the appeal"
     t.string "case_type", comment: "The case type, i.e. original, post remand, CAVC remand, etc"
     t.string "closest_regional_office_city", comment: "Closest regional office to the veteran"
+    t.string "closest_regional_office_key", comment: "Closest regional office to the veteran in 4 character key"
     t.string "docket_number"
     t.string "docket_type"
     t.boolean "is_aod", comment: "Whether the case is Advanced on Docket"

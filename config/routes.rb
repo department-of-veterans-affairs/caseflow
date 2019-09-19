@@ -115,7 +115,7 @@ Rails.application.routes.draw do
       get :document_count
       get :veteran
       get :power_of_attorney
-      get :hearings
+      get 'hearings', to: "appeals#most_recent_hearing"
       resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
       resources :special_issues, only: [:create, :index]
       resources :advance_on_docket_motions, only: [:create]
@@ -210,6 +210,7 @@ Rails.application.routes.draw do
   resources :users, only: [:index] do
     get 'represented_organizations', on: :member
   end
+  get 'user_info/represented_organizations'
 
   get 'cases/:veteran_ids', to: 'appeals#show_case_list'
   get 'cases_to_schedule/:ro', to: 'tasks#ready_for_hearing_schedule'
