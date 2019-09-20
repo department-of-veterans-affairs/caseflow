@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe QueueForRole, focus: true do
+describe QueueForRole do
   let(:role) { nil }
 
   subject { QueueForRole.new(role).create(user: create(:user)) }
