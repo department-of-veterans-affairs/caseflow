@@ -333,6 +333,10 @@ class RequestIssue < ApplicationRecord
     !!correction_type
   end
 
+  def decision_correction?
+    contested_decision_issue&.decision_review == decision_review
+  end
+
   def associated_rating_issue?
     contested_rating_issue_reference_id
   end
@@ -856,6 +860,7 @@ class RequestIssue < ApplicationRecord
   def check_for_eligible_previous_review!
     return unless eligible?
     return unless contested_issue
+    return if decision_correction?
 
     if decision_review.is_a?(HigherLevelReview)
       if contested_issue.source_review_type == "HigherLevelReview"
@@ -913,7 +918,10 @@ class RequestIssue < ApplicationRecord
     return unless associated_rating_issue?
 
     add_duplicate_issue_error(
-      RequestIssue.active.find_by(contested_rating_issue_reference_id: contested_rating_issue_reference_id)
+      RequestIssue.active.find_by(
+        contested_rating_issue_reference_id: contested_rating_issue_reference_id,
+        correction_type: correction_type
+      )
     )
   end
 
@@ -965,8 +973,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_active_request_issue!
-    # skip checking if nonrating ineligiblity is already set
-    return if ineligible_reason == :duplicate_of_nonrating_issue_in_active_review
     return unless eligible?
 
     check_for_active_request_issue_by_rating!
