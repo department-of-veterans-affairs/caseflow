@@ -499,7 +499,12 @@ describe ClaimReview, :postgres do
 
       let!(:remand_decision) { create(:decision_issue, decision_review: claim_review, disposition: "DTA Error") }
       let(:correction_request_issue) do
-        build(:request_issue, correction_type: "control", contested_decision_issue: remand_decision)
+        build(
+          :request_issue,
+          decision_review: claim_review,
+          correction_type: "control",
+          contested_decision_issue: remand_decision
+        )
       end
       let(:issues) { [correction_request_issue] }
 

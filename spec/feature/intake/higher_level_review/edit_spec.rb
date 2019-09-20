@@ -1528,8 +1528,13 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       context "when review has unidentified issues and non-ratings" do
         let!(:issue) do
-          create(:request_issue, :unidentified, decision_review: higher_level_review,
-                                                contested_issue_description: "This is unidentified")
+          create(
+            :request_issue,
+            :unidentified,
+            benefit_type: "compensation",
+            decision_review: higher_level_review,
+            contested_issue_description: "This is unidentified"
+          )
         end
 
         scenario "do not show edit contention text on unidentified issues" do

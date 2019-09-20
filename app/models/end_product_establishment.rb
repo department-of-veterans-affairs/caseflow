@@ -159,11 +159,11 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def rating?
-    RequestIssue::END_PRODUCT_CODES.find_all_values_for(:rating).include?(code)
+    EndProductCodeSelector::END_PRODUCT_CODES.find_all_values_for(:rating).include?(code)
   end
 
   def nonrating?
-    RequestIssue::END_PRODUCT_CODES.find_all_values_for(:nonrating).include?(code)
+    EndProductCodeSelector::END_PRODUCT_CODES.find_all_values_for(:nonrating).include?(code)
   end
 
   # Find an end product that has the traits of the end product that should be created.

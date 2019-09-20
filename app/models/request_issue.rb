@@ -83,121 +83,6 @@ class RequestIssue < ApplicationRecord
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click *Edit in Caseflow* button to fix"
 
-  END_PRODUCT_CODES = {
-    original: {
-      compensation: {
-        supplemental_claim: {
-          rating: "040SCR",
-          nonrating: "040SCNR"
-        },
-        higher_level_review: {
-          rating: "030HLRR",
-          nonrating: "030HLRNR"
-        }
-      },
-      pension: {
-        supplemental_claim: {
-          rating: "040SCRPMC",
-          nonrating: "040SCNRPMC"
-        },
-        higher_level_review: {
-          rating: "030HLRRPMC",
-          nonrating: "030HLRNRPMC"
-        }
-      }
-    },
-    dta: {
-      compensation: {
-        appeal: {
-          rating: "040BDER",
-          nonrating: "040BDENR"
-        },
-        claim_review: {
-          rating: "040HDER",
-          nonrating: "040HDENR"
-        }
-      },
-      pension: {
-        appeal: {
-          rating: "040BDERPMC",
-          nonrating: "040BDENRPMC"
-        },
-        claim_review: {
-          rating: "040HDERPMC",
-          nonrating: "040HDENRPMC"
-        }
-      }
-    },
-    correction: {
-      control: {
-        compensation: {
-          supplemental_claim: {
-            rating: "930AMASRC",
-            nonrating: "930AMASNRC"
-          },
-          higher_level_review: {
-            rating: "930AMAHRC",
-            nonrating: "930AMAHNRC"
-          }
-        },
-        pension: {
-          supplemental_claim: {
-            rating: "930AMASRCPMC",
-            nonrating: "930ASNRCPMC"
-          },
-          higher_level_review: {
-            rating: "930AMAHRCPMC",
-            nonrating: "930AHNRCPMC"
-          }
-        }
-      },
-      local_quality_error: {
-        compensation: {
-          supplemental_claim: {
-            rating: "930AMASCRLQE",
-            nonrating: "930ASCNRLQE"
-          },
-          higher_level_review: {
-            rating: "930AMAHCRLQE",
-            nonrating: "930AHCNRLQE"
-          }
-        },
-        pension: {
-          supplemental_claim: {
-            rating: "930ASCRLQPMC",
-            nonrating: "930ASCNRLPMC"
-          },
-          higher_level_review: {
-            rating: "930AHCRLQPMC",
-            nonrating: "930AHCNRLPMC"
-          }
-        }
-      },
-      national_quality_error: {
-        compensation: {
-          supplemental_claim: {
-            rating: "930AMASCRNQE",
-            nonrating: "930ASCNRNQE"
-          },
-          higher_level_review: {
-            rating: "930AMAHCRNQE",
-            nonrating: "930AHCNRNQE"
-          }
-        },
-        pension: {
-          supplemental_claim: {
-            rating: "930ASCRNQPMC",
-            nonrating: "930ASCNRNPMC"
-          },
-          higher_level_review: {
-            rating: "930AHCRNQPMC",
-            nonrating: "930AHCNRNPMC"
-          }
-        }
-      }
-    }
-  }.freeze
-
   class << self
     def rating
       where.not(
@@ -300,12 +185,22 @@ class RequestIssue < ApplicationRecord
 
   delegate :veteran, to: :decision_review
 
+  def create_for_claim_review!
+    return unless decision_review.is_a?(ClaimReview)
+
+    update!(benefit_type: decision_review.benefit_type, veteran_participant_id: veteran.participant_id)
+
+    epe = decision_review.end_product_establishment_for_issue(self)
+    update!(end_product_establishment: epe) if epe
+
+    RequestIssueCorrectionCleaner.new(self).remove_dta_request_issue! if correction?
+    create_legacy_issue_optin if legacy_issue_opted_in?
+  end
+
   def end_product_code
     return if decision_review.processed_in_caseflow?
-    return dta_end_product_code if remanded?
-    return correction_end_product_code if correction?
 
-    original_end_product_code
+    EndProductCodeSelector.new(self).call
   end
 
   def status_active?
@@ -926,35 +821,6 @@ class RequestIssue < ApplicationRecord
       RequestIssue.active.find_by(contested_decision_issue_id: contested_decision_issue_id,
                                   correction_type: correction_type)
     )
-  end
-
-  def original_end_product_code
-    choose_end_product_code(END_PRODUCT_CODES[:original][temp_find_benefit_type.to_sym])
-  end
-
-  # TODO: use request issue benefit type once it's populated for request issues on build
-  def temp_find_benefit_type
-    decision_review.benefit_type || benefit_type || contested_benefit_type
-  end
-
-  def choose_end_product_code(end_product_codes)
-    end_product_codes[decision_review_type.underscore.to_sym][(rating? || is_unidentified?) ? :rating : :nonrating]
-  end
-
-  def dta_end_product_code
-    choose_dta_end_product_code(END_PRODUCT_CODES[:dta][temp_find_benefit_type.to_sym])
-  end
-
-  def correction_end_product_code
-    choose_end_product_code(END_PRODUCT_CODES[:correction][correction_type.to_sym][temp_find_benefit_type.to_sym])
-  end
-
-  def choose_dta_end_product_code(end_product_codes)
-    if decision_review.decision_review_remanded.is_a?(Appeal)
-      end_product_codes[:appeal][rating? ? :rating : :nonrating]
-    else
-      end_product_codes[:claim_review][rating? ? :rating : :nonrating]
-    end
   end
 
   def add_duplicate_issue_error(existing_request_issue)
