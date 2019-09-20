@@ -413,9 +413,7 @@ class User < ApplicationRecord
     end
 
     def list_hearing_coordinators
-      Rails.cache.fetch("#{Rails.env}_list_of_hearing_coordinators_from_vacols") do
-        user_repository.find_all_hearing_coordinators
-      end
+      HearingsManagement.singleton.users
     end
 
     # case-insensitive search
