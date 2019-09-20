@@ -9,7 +9,7 @@ class TaskPager
 
   attr_accessor :assignee, :tab_name, :page, :sort_by, :sort_order, :filters
 
-  TASKS_PER_PAGE = 5
+  TASKS_PER_PAGE = 15
 
   def initialize(args)
     super
