@@ -34,7 +34,6 @@ gem "paranoia", "~> 2.2"
 gem "pdf-forms"
 gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git", ref: "a4249eacbf70175db63b57e9f364d0a9a79e2b43"
 gem "pg", platforms: :ruby
-gem "prometheus-client", "~> 0.7.1"
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
