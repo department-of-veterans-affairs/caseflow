@@ -26,12 +26,18 @@ const setupStore = ({ reducer, initialState, analyticsMiddlewareArgs, enhancers 
 };
 
 export default function ReduxBase(props) {
-  const { children, reducer, initialState, enhancers, analyticsMiddlewareArgs } = props;
+  const { children, reducer, initialState, enhancers, analyticsMiddlewareArgs, getStoreRef } = props;
 
   const store = setupStore({ reducer,
     initialState,
     enhancers,
     analyticsMiddlewareArgs });
+
+  // Dispatch relies on direct access to the store. It would be better to use connect(),
+  // but for now, we will expose this to grant that access.
+  if (getStoreRef) {
+    getStoreRef(store);
+  }
 
   return <Provider store={store}>{children}</Provider>;
 }
@@ -41,7 +47,8 @@ ReduxBase.propTypes = {
   reducer: PropTypes.func,
   initialState: PropTypes.object,
   enhancers: PropTypes.array,
-  analyticsMiddlewareArgs: PropTypes.array
+  analyticsMiddlewareArgs: PropTypes.array,
+  getStoreRef: PropTypes.func
 };
 
 ReduxBase.defaultProps = {
