@@ -1,8 +1,11 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import EstablishClaim, { DECISION_PAGE, FORM_PAGE, NOTE_PAGE } from
-  '../../../app/containers/EstablishClaimPage/EstablishClaim';
+import EstablishClaim, {
+  DECISION_PAGE,
+  FORM_PAGE,
+  NOTE_PAGE
+} from '../../../app/containers/EstablishClaimPage/EstablishClaim';
 import * as Constants from '../../../app/establishClaim/constants';
 import { findElementById } from '../../helpers';
 
@@ -15,15 +18,16 @@ describe('EstablishClaim', () => {
     let wrapper;
 
     beforeEach(() => {
-
       /* eslint-disable camelcase */
       const task = {
         appeal: {
           vbms_id: '516517691',
           dispatch_decision_type: 'Remand',
-          decisions: [{
-            label: null
-          }],
+          decisions: [
+            {
+              label: null
+            }
+          ],
           non_canceled_end_products_within_30_days: [],
           pending_eps: [],
           station_key: '397',
@@ -42,14 +46,16 @@ describe('EstablishClaim', () => {
         }
       };
 
-      wrapper = mount(<EstablishClaim
-        regionalOfficeCities={regionalOfficeCities}
-        pdfLink=""
-        pdfjsLink=""
-        handleAlert={func}
-        handleAlertClear={func}
-        task={task} />);
-
+      wrapper = mount(
+        <EstablishClaim
+          regionalOfficeCities={regionalOfficeCities}
+          pdfLink=""
+          pdfjsLink=""
+          handleAlert={func}
+          handleAlertClear={func}
+          task={task}
+        />
+      );
     });
 
     context('EstablishClaimForm', () => {
@@ -97,7 +103,7 @@ describe('EstablishClaim', () => {
     });
 
     context('EstablishClaimNote', () => {
-      beforeEach(() => {
+      beforeEach((done) => {
         wrapper.instance().store.dispatch({
           type: Constants.CHANGE_SPECIAL_ISSUE,
           payload: {
@@ -105,22 +111,26 @@ describe('EstablishClaim', () => {
             value: true
           }
         });
-        wrapper.setState({ reviewForm: { decisionType: { value: 'Full Grant' } } });
-        wrapper.setState({ page: NOTE_PAGE });
+        // wrapper.setState({ reviewForm: { decisionType: { value: 'Full Grant' } } });
+        wrapper.setState({ page: NOTE_PAGE }, () => done());
       });
 
       it('route claim button is disabled until checkbox is checked', () => {
         // button is disabled
-        expect(wrapper.find('.usa-button-disabled')).to.have.length(1);
+        expect(wrapper.find('.usa-button-disabled')).to.have.lengthOf(1);
 
         // click checkbox
         wrapper.find('#confirmNote').simulate('change', { target: { checked: true } });
 
-        // button is enabled
-        expect(wrapper.find('.usa-button-primary')).to.have.length(1);
+        // Ensure that state has had a chance to update
+        setImmediate(() => {
+          wrapper.update();
+
+          // button is enabled
+          expect(wrapper.find('.usa-button-primary')).to.have.lengthOf(1);
+        });
       });
     });
-
   });
 
   context('.getClaimTypeFromDecision', () => {
@@ -129,13 +139,16 @@ describe('EstablishClaim', () => {
     const mountApp = (decisionType, stationOfJurisdiction = '397') => {
       task.appeal.dispatch_decision_type = decisionType;
 
-      wrapper = mount(<EstablishClaim
-        regionalOfficeCities={{}}
-        pdfLink=""
-        pdfjsLink=""
-        handleAlert={func}
-        handleAlertClear={func}
-        task={task} />);
+      wrapper = mount(
+        <EstablishClaim
+          regionalOfficeCities={{}}
+          pdfLink=""
+          pdfjsLink=""
+          handleAlert={func}
+          handleAlertClear={func}
+          task={task}
+        />
+      );
 
       if (stationOfJurisdiction !== '397') {
         wrapper.instance().store.dispatch({
@@ -157,15 +170,16 @@ describe('EstablishClaim', () => {
     };
 
     beforeEach(() => {
-
       /* eslint-disable camelcase */
       task = {
         appeal: {
           vbms_id: '516517691',
           dispatch_decision_type: 'Remand',
-          decisions: [{
-            label: null
-          }],
+          decisions: [
+            {
+              label: null
+            }
+          ],
           non_canceled_end_products_within_30_days: [],
           pending_eps: []
         },
@@ -177,40 +191,34 @@ describe('EstablishClaim', () => {
     context('when ARC EP', () => {
       it('returns proper values for remand', () => {
         mountApp('Remand');
-        expect(wrapper.instance().getClaimTypeFromDecision()).to.
-          eql(['070RMNDARC', 'ARC Remand (070)']);
+        expect(wrapper.instance().getClaimTypeFromDecision()).to.eql(['070RMNDARC', 'ARC Remand (070)']);
       });
 
       it('returns proper values for partial grant', () => {
         mountApp('Partial Grant');
-        expect(wrapper.instance().getClaimTypeFromDecision()).to.
-          eql(['070RMBVAGARC', 'ARC Remand with BVA Grant']);
+        expect(wrapper.instance().getClaimTypeFromDecision()).to.eql(['070RMBVAGARC', 'ARC Remand with BVA Grant']);
       });
 
       it('returns proper values for full grant', () => {
         mountApp('Full Grant');
-        expect(wrapper.instance().getClaimTypeFromDecision()).to.
-          eql(['070BVAGRARC', 'ARC BVA Grant']);
+        expect(wrapper.instance().getClaimTypeFromDecision()).to.eql(['070BVAGRARC', 'ARC BVA Grant']);
       });
     });
 
     context('when Routed EP', () => {
       it('returns proper value for remand', () => {
         mountApp('Remand', '301');
-        expect(wrapper.instance().getClaimTypeFromDecision()).to.
-          eql(['070RMND', 'Remand (070)']);
+        expect(wrapper.instance().getClaimTypeFromDecision()).to.eql(['070RMND', 'Remand (070)']);
       });
 
       it('returns proper value for partial grant', () => {
         mountApp('Partial Grant', '301');
-        expect(wrapper.instance().getClaimTypeFromDecision()).to.
-          eql(['070RMNDBVAG', 'Remand with BVA Grant (070)']);
+        expect(wrapper.instance().getClaimTypeFromDecision()).to.eql(['070RMNDBVAG', 'Remand with BVA Grant (070)']);
       });
 
       it('returns proper value for full grant', () => {
         mountApp('Full Grant', '301');
-        expect(wrapper.instance().getClaimTypeFromDecision()).to.
-          eql(['070BVAGR', 'BVA Grant (070)']);
+        expect(wrapper.instance().getClaimTypeFromDecision()).to.eql(['070BVAGR', 'BVA Grant (070)']);
       });
     });
   });

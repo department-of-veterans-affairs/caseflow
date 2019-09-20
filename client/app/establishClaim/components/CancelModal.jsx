@@ -73,7 +73,7 @@ export const CancelModal = ({
 CancelModal.propTypes = {
   cancelFeedback: PropTypes.string.isRequired,
   errorMessage: PropTypes.string,
-  isCancelModalSubmitting: PropTypes.bool.isRequired,
+  isSubmittingCancelFeedback: PropTypes.bool.isRequired,
   isShowingCancelModal: PropTypes.bool.isRequired,
   handleChangeCancelFeedback: PropTypes.func.isRequired,
   handleCancelSubmit: PropTypes.func.isRequired,
@@ -83,7 +83,7 @@ CancelModal.propTypes = {
 const mapStateToProps = (state) => {
   return {
     isShowingCancelModal: state.establishClaim.isShowingCancelModal,
-    isCancelModalSubmitting: state.establishClaim.isCancelModalSubmitting,
+    isSubmittingCancelFeedback: state.establishClaim.isSubmittingCancelFeedback,
     cancelFeedback: state.establishClaim.cancelFeedback,
     errorMessage: getCancelFeedbackErrorMessage(state.establishClaim)
   };
