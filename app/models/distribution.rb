@@ -53,10 +53,6 @@ class Distribution < ApplicationRecord
 
   private
 
-  def attributes
-    { 'id': nil, 'status': nil, 'created_at': nil, 'updated_at': nil, 'distributed_cases_count': nil }
-  end
-
   def mark_as_pending
     self.status = "pending"
   end
