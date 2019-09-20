@@ -124,6 +124,7 @@ export default class AssignHearingsTabs extends React.Component {
       CAVC, AOD and normal. Prepended * and + to docket number for
       CAVC and AOD to group them first and second.
      */
+
     const sortedByAodCavc = _.sortBy(appeals, (appeal) => {
       if (appeal.attributes.caseType === LEGACY_APPEAL_TYPES_BY_ID.cavc_remand) {
         return `*${appeal.attributes.docketNumber}`;
@@ -136,7 +137,7 @@ export default class AssignHearingsTabs extends React.Component {
 
     return _.map(sortedByAodCavc, (appeal, index) => ({
       number: <span>{index + 1}.</span>,
-      caseDetails: <CaseDetailsInformation appeal={appeal} />,
+      caseDetails: <CaseDetailsInformation appeal={appeal.attributes} />,
       type: renderAppealType({
         caseType: appeal.attributes.caseType,
         isAdvancedOnDocket: appeal.attributes.aod
@@ -190,8 +191,9 @@ export default class AssignHearingsTabs extends React.Component {
         header: 'Suggested Location',
         align: 'left',
         columnName: 'suggestedLocation',
-        valueFunction: (row) => <SuggestedHearingLocation
-          suggestedLocation={row.suggestedLocation} format={this.formatSuggestedHearingLocation} />,
+        valueFunction: (task) => <SuggestedHearingLocation
+          suggestedLocation={task.appeal.availableHearingLocations[0]}
+          format={this.formatSuggestedHearingLocation} />,
         label: 'Filter by location',
         filterValueTransform: this.formatSuggestedHearingLocation,
         anyFiltersAreSet: true,
@@ -208,27 +210,32 @@ export default class AssignHearingsTabs extends React.Component {
     {
       header: 'Case details',
       align: 'left',
-      valueName: 'caseDetails',
-      valueFunction: (row) => <Link
-        name={row.externalId}
+      valueName: QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
+      valueFunction: (task) => <Link
+        name={task.externalAppealId}
         href={(() => {
           const date = moment(selectedHearingDay.scheduledFor).format('YYYY-MM-DD');
           const qry = `?hearingDate=${date}&regionalOffice=${selectedRegionalOffice}`;
 
-          return `/queue/appeals/${row.externalId}/${qry}`;
+          return `/queue/appeals/${task.externalAppealId}/${qry}`;
         })()}>
-        {row.caseDetails}
+        <CaseDetailsInformation appeal={task.appeal} />
       </Link>
     },
     {
       header: 'Type(s)',
       align: 'left',
-      valueName: 'type'
+      valueName: 'type',
+      valueFunction: (task) => renderAppealType({
+        caseType: task && task.appeal && task.appeal.caseType,
+        isAdvancedOnDocket: task && task.appeal && task.appeal.aod
+      })
     },
     {
       header: 'Docket number',
       align: 'left',
-      valueName: 'docketNumber'
+      valueName: 'docketNumber',
+      valueFunction: (task) => <AppealDocketTag appeal={task.appeal} />
     },
     locationColumn,
     {

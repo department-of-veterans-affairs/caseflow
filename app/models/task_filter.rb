@@ -40,8 +40,6 @@ class TaskFilter
       where_string << "#{where_string.present? ? ' AND ' : ''}cached_appeal_attributes.is_aod = true"
     end
 
-    binding.pry
-
     [where_string] + where_arguments
   end
 

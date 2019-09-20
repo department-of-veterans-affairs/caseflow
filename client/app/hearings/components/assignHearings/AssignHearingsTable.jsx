@@ -26,7 +26,7 @@ class AssignHearingsTable extends React.Component {
     return {
       useTaskPagesApi: true,
       taskPagesApiEndpoint: endpoint,
-      casesPerPage: 25,
+      casesPerPage: 5,
       enablePagination: true,
       eager: true,
       rowObjects: []
@@ -34,12 +34,13 @@ class AssignHearingsTable extends React.Component {
   };
 
   render () {
-    let { columns, rowObjects } = this.props;
+    let { columns, rowObjects, tabName } = this.props;
 
     return (
       <QueueTable
         columns={columns}
         rowObjects={rowObjects}
+        key={tabName}
         summary="scheduled-hearings-table"
         slowReRendersAreOk
         bodyStyling={tableNumberStyling}

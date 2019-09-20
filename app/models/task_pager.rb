@@ -9,7 +9,7 @@ class TaskPager
 
   attr_accessor :assignee, :tab_name, :page, :sort_by, :sort_order, :filters
 
-  TASKS_PER_PAGE = 15
+  TASKS_PER_PAGE = 5
 
   def initialize(args)
     super
@@ -40,7 +40,11 @@ class TaskPager
   end
 
   def tasks_for_tab
-    QueueTab.from_name(tab_name).new(assignee: assignee).tasks
+    @tasks_for_tab ||= QueueTab.from_name(tab_name).new(assignee: assignee).tasks
+  end
+
+  def total_task_count
+    tasks_for_tab.count
   end
 
   private

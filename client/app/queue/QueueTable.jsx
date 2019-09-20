@@ -231,6 +231,10 @@ export default class QueueTable extends React.PureComponent {
       this.setState({ cachedTasks: { ...this.state.cachedTasks,
         [this.requestUrl()]: this.props.rowObjects } });
     }
+
+    if (this.props.eager) {
+      this.requestTasks();
+    }
   }
 
   getFilters = (filterParams) => {
@@ -251,12 +255,6 @@ export default class QueueTable extends React.PureComponent {
     }
 
     return filters;
-  }
-
-  componentDidMount() {
-    if (this.props.eager) {
-      this.requestTasks();
-    }
   }
 
   defaultRowClassNames = () => ''
@@ -399,7 +397,6 @@ export default class QueueTable extends React.PureComponent {
     }
 
     const endpointUrl = this.requestUrl();
-
     // If we already have the tasks cached then we set the state and return early.
     const tasksFromCache = this.state.cachedTasks[endpointUrl];
 
@@ -412,7 +409,7 @@ export default class QueueTable extends React.PureComponent {
     this.setState({ loadingComponent: <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} /> });
 
     return ApiUtil.get(endpointUrl).then((response) => {
-      const { tasks: { data: tasks } } = response.body;
+      const { tasks: { data: tasks }, task_page_count, total_task_count } = response.body;
 
       const preparedTasks = tasksWithAppealsFromRawTasks(tasks);
 
@@ -420,6 +417,8 @@ export default class QueueTable extends React.PureComponent {
         cachedTasks: { ...this.state.cachedTasks,
           [endpointUrl]: preparedTasks },
         tasksFromApi: preparedTasks,
+        totalTaskCount: total_task_count,
+        taskPageCount: task_page_count,
         loadingComponent: null
       });
     }).
@@ -450,6 +449,8 @@ export default class QueueTable extends React.PureComponent {
     if (useTaskPagesApi) {
       if (this.state.tasksFromApi.length) {
         rowObjects = this.state.tasksFromApi;
+        totalTaskCount = this.state.totalTaskCount;
+        numberOfPages = this.state.task_page_count;
       }
     } else {
       // Steps to calculate table data to display:

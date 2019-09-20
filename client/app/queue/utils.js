@@ -19,6 +19,7 @@ import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMA
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import COPY from '../../COPY.json';
 import { formatDateStrUtc } from '../util/DateUtil';
+import ApiUtil from '../util/ApiUtil';
 
 /**
  * For legacy attorney checkout flow, filter out already-decided issues. Undecided
@@ -124,7 +125,8 @@ const appealAttributesFromRawTask = (task) => ({
   docketNumber: task.attributes.docket_number,
   veteranFullName: task.attributes.veteran_full_name,
   veteranFileNumber: task.attributes.veteran_file_number,
-  isPaperCase: task.attributes.paper_case
+  isPaperCase: task.attributes.paper_case,
+  availableHearingLocations: task.attributes.available_hearing_locations.map((ahl) => ApiUtil.convertToCamelCase(ahl))
 });
 
 const extractAppealsFromTasks =

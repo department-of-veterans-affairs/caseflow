@@ -85,4 +85,8 @@ class WorkQueue::LegacyTaskSerializer
   attribute :available_actions do |object, params|
     object.available_actions_unwrapper(params[:user], params[:role])
   end
+
+  attribute :available_hearing_locations do |object|
+    object.appeal.available_hearing_locations
+  end
 end
