@@ -925,11 +925,11 @@ class RequestIssue < ApplicationRecord
     )
   end
 
+  # A decision can be corrected via a 930 simultaneously with being contested by a veteran
   def check_for_active_request_issue_by_decision_issue!
     return unless contested_decision_issue_id
-    return if correction?
+    return if decision_correction?
 
-    # When a duplicate request issue is a correction, it will not be flagged as duplicate.
     add_duplicate_issue_error(
       RequestIssue.active.find_by(contested_decision_issue_id: contested_decision_issue_id,
                                   correction_type: correction_type)
