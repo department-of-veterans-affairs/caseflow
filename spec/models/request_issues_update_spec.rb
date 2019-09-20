@@ -40,11 +40,15 @@ describe RequestIssuesUpdate, :all_dbs do
     [
       Generators::Contention.build(
         claim_id: rating_end_product_establishment.reference_id,
-        text: "Service connection for PTSD was granted at 10 percent"
+        text: "Service connection for PTSD was granted at 10 percent",
+        start_date: Time.zone.now,
+        submit_date: 8.days.ago
       ),
       Generators::Contention.build(
         claim_id: rating_end_product_establishment.reference_id,
-        text: "Service connection for left knee immobility was denied"
+        text: "Service connection for left knee immobility was denied",
+        start_date: Time.zone.now,
+        submit_date: 8.days.ago
       )
     ]
   end
@@ -720,7 +724,9 @@ describe RequestIssuesUpdate, :all_dbs do
       Generators::Contention.build(
         claim_id: edited_issue.end_product_establishment.reference_id,
         text: "old request issue description",
-        id: "3"
+        id: "3",
+        start_date: Time.zone.now,
+        submit_date: 5.days.ago
       )
     end
 

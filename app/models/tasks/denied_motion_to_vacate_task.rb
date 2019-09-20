@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class StraightVacateAndReadjudicationTask < GenericTask
+class DeniedMotionToVacateTask < GenericTask
   def available_actions(user)
     actions = super(user)
 
@@ -10,6 +10,6 @@ class StraightVacateAndReadjudicationTask < GenericTask
   end
 
   def self.label
-    COPY::STRAIGHT_VACATE_AND_READJUDICATION_TASK_LABEL
+    COPY::DENIED_MOTION_TO_VACATE_TASK_LABEL
   end
 end
