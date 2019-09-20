@@ -81,15 +81,9 @@ class ClaimReview < DecisionReview
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      if processed_in_caseflow? || !issue.eligible?
-        issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
-      else
-        issue.update!(
-          end_product_establishment: end_product_establishment_for_issue(issue),
-          benefit_type: benefit_type,
-          veteran_participant_id: veteran.participant_id
-        )
-      end
+      issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
+      # binding.pry
+      issue.update!(end_product_establishment: end_product_establishment_for_issue(issue))
       RequestIssueCorrectionCleaner.new(issue).remove_dta_request_issue! if issue.correction?
       issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
     end
@@ -225,6 +219,8 @@ class ClaimReview < DecisionReview
   end
 
   def end_product_establishment_for_issue(issue)
+    return unless issue.eligible? && processed_in_vbms?
+
     end_product_establishments.find_by(
       "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
       issue.end_product_code,

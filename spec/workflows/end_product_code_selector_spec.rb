@@ -61,7 +61,7 @@ EP_CODES = [
   %w[930ARNRCNQE 930 national_quality_error dta compensation nonrating appeal],
   %w[930ARNRCPMC 930 control dta pension nonrating appeal],
   %w[930ARRCLQPMC 930 local_quality_error dta pension rating appeal],
-  %w[930ARRCNQPMC 930 national_quality_error dta pension rating appeal],
+  %w[930ARRCNQPMC 930 national_quality_error dta pension rating appeal]
 ].freeze
 
 describe "Request Issue Correction Cleaner", :postgres do
