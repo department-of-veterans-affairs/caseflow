@@ -44,7 +44,7 @@ class TaskPager
   end
 
   def total_task_count
-    tasks_for_tab.size
+    @total_task_count ||= paged_tasks.total_count
   end
 
   private
