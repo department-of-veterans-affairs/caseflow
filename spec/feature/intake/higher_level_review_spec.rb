@@ -305,7 +305,8 @@ feature "Higher-Level Review", :all_dbs do
         veteran_file_number: veteran_file_number,
         claim_id: ratings_end_product_establishment.reference_id,
         contentions: [{ description: "PTSD denied" }],
-        user: current_user
+        user: current_user,
+        claim_date: higher_level_review.receipt_date.to_date
       )
     )
 
@@ -314,7 +315,8 @@ feature "Higher-Level Review", :all_dbs do
         veteran_file_number: veteran_file_number,
         claim_id: nonratings_end_product_establishment.reference_id,
         contentions: [{ description: "Active Duty Adjustments - Description for Active Duty Adjustments" }],
-        user: current_user
+        user: current_user,
+        claim_date: higher_level_review.receipt_date.to_date
       )
     )
 
@@ -441,7 +443,8 @@ feature "Higher-Level Review", :all_dbs do
       claim_id: special_issue_reference_id,
       contentions: [{ description: "PTSD denied",
                       special_issues: [{ code: "SSR", narrative: "Same Station Review" }] }],
-      user: current_user
+      user: current_user,
+      claim_date: higher_level_review.receipt_date.to_date
     )
   end
 

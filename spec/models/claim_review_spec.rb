@@ -578,7 +578,8 @@ describe ClaimReview, :postgres do
             { description: "foobar was denied." },
             description: "decision text"
           ),
-          user: user
+          user: user,
+          claim_date: claim_review.receipt_date.to_date
         )
 
         expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
@@ -670,7 +671,8 @@ describe ClaimReview, :postgres do
                 { description: "another decision text" },
                 description: "foobar was denied."
               ),
-              user: user
+              user: user,
+              claim_date: claim_review.receipt_date.to_date
             )
 
             expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
@@ -874,7 +876,8 @@ describe ClaimReview, :postgres do
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRR").reference_id,
           contentions: [{ description: "decision text" }],
-          user: user
+          user: user,
+          claim_date: claim_review.receipt_date.to_date
         )
 
         expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
@@ -909,7 +912,8 @@ describe ClaimReview, :postgres do
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRNR").reference_id,
           contentions: [{ description: "surgery - Issue text" }],
-          user: user
+          user: user,
+          claim_date: claim_review.receipt_date.to_date
         )
 
         expect(claim_review.end_product_establishments.first).to be_committed
