@@ -264,7 +264,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
 end
 
 def format_judge_instructions(notes:, disposition:, vacate_type:, hyperlink: nil)
-  binding.pry
   parts = ["I am proceeding with a #{disposition_text[disposition.to_sym]}."]
 
   parts += case disposition

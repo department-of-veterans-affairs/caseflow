@@ -81,11 +81,7 @@ class ClaimReview < DecisionReview
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
-      # binding.pry
-      issue.update!(end_product_establishment: end_product_establishment_for_issue(issue))
-      RequestIssueCorrectionCleaner.new(issue).remove_dta_request_issue! if issue.correction?
-      issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
+      issue.create_from_intake_data!
     end
     request_issues.reload
   end
