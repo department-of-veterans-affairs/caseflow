@@ -445,14 +445,17 @@ export default class QueueTable extends React.PureComponent {
     } = this.props;
 
     let { totalTaskCount, numberOfPages, rowObjects, casesPerPage } = this.props;
+    // most tables are implemented by first fetching the first page of table data and passing it to rowObjects
+    // in that case, we should not wait for an eager load and just use the data from initial rowObjects prop
+    const shouldNotWaitForEagerLoad = !this.props.eager;
 
-    if (useTaskPagesApi) {
+    if (useTaskPagesApi && this.state.tasksFromApi) {
       if (this.state.tasksFromApi.length) {
         rowObjects = this.state.tasksFromApi;
         totalTaskCount = this.state.totalTaskCount;
-        numberOfPages = this.state.task_page_count;
+        numberOfPages = this.state.taskPageCount;
       }
-    } else {
+    } else if (shouldNotWaitForEagerLoad) {
       // Steps to calculate table data to display:
       // 1. Sort data
       rowObjects = this.sortRowObjects();
@@ -572,7 +575,8 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   totalTaskCount: PropTypes.number,
   useTaskPagesApi: PropTypes.bool,
   userReadableColumnNames: PropTypes.object,
-  tabPaginationOptions: PropTypes.object
+  tabPaginationOptions: PropTypes.object,
+  eager: PropTypes.bool
 };
 
 /* eslint-enable max-lines */
