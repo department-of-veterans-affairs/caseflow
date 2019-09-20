@@ -187,7 +187,7 @@ class RequestIssue < ApplicationRecord
 
   def create_for_claim_review!
     return unless decision_review.is_a?(ClaimReview)
-    
+
     update!(benefit_type: decision_review.benefit_type, veteran_participant_id: veteran.participant_id)
     update!(end_product_establishment: decision_review.end_product_establishment_for_issue(self))
     RequestIssueCorrectionCleaner.new(self).remove_dta_request_issue! if correction?
