@@ -81,6 +81,10 @@ class RampReview < ApplicationRecord
     end_product_modifier
   end
 
+  def claim_date
+    receipt_date
+  end
+
   def end_product_active?
     end_product_establishment.status_active?(sync: true)
   rescue EndProductEstablishment::EstablishedEndProductNotFound
