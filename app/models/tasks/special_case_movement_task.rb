@@ -13,7 +13,7 @@ class SpecialCaseMovementTask < Task
   private
 
   def close_and_create_judge_task
-    ActiveRecord::Base.multi_transaction do
+    Task.transaction do
       JudgeAssignTask.create!(appeal: appeal,
                               parent: appeal.root_task,
                               assigned_to: assigned_to,
