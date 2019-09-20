@@ -6,6 +6,7 @@ class AsyncableJobsController < ApplicationController
   before_action :react_routed, :set_application
   before_action :verify_access, only: [:index]
   before_action :verify_job_access, only: [:show]
+  skip_before_action :deny_vso_access
 
   def index
     if allowed_params[:asyncable_job_klass]

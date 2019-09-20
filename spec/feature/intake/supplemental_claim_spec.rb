@@ -268,13 +268,15 @@ feature "Supplemental Claim Intake", :all_dbs do
       veteran_file_number: veteran_file_number,
       claim_id: ratings_end_product_establishment.reference_id,
       contentions: [{ description: "PTSD denied" }],
-      user: current_user
+      user: current_user,
+      claim_date: supplemental_claim.receipt_date.to_date
     )
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: veteran_file_number,
       claim_id: nonratings_end_product_establishment.reference_id,
       contentions: [{ description: "Active Duty Adjustments - Description for Active Duty Adjustments" }],
-      user: current_user
+      user: current_user,
+      claim_date: supplemental_claim.receipt_date.to_date
     )
 
     rating_request_issue = supplemental_claim.request_issues.find_by(contested_issue_description: "PTSD denied")

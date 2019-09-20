@@ -483,7 +483,8 @@ class EndProductEstablishment < ApplicationRecord
       veteran_file_number: veteran_file_number,
       claim_id: reference_id,
       contentions: contentions,
-      user: user
+      user: user,
+      claim_date: claim_date
     )
   end
 
