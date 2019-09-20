@@ -34,7 +34,7 @@ class ContestableIssue
     def from_decision_issue(decision_issue, contesting_decision_review)
       # Do not send source review for decision issues from the same review
       # This indicates a decision correction, and checking lane-to-lane eligibility is not applicable
-      source = contesting_decision_review == decision_issue.decision_review ? nil : decision_issue.decision_review
+      source = (contesting_decision_review == decision_issue.decision_review) ? nil : decision_issue.decision_review
 
       new(
         rating_issue_reference_id: decision_issue.rating_issue_reference_id,

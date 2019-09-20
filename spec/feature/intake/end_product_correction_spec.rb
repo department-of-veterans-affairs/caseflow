@@ -167,13 +167,13 @@ feature "End Product Correction (EP 930)", :postgres do
                  participant_id: veteran.participant_id)
         end
 
-        let!(:request_issue_duplicate) {
+        let!(:request_issue_duplicate) do
           create(
             :request_issue,
             decision_review: another_claim_review,
             contested_decision_issue_id: future_decision_issue.id
           )
-        }
+        end
 
         it "allows adding decision issues from the same claim review" do
           visit edit_path
@@ -205,14 +205,14 @@ feature "End Product Correction (EP 930)", :postgres do
         context "when decision issue is already corrected" do
           before { another_claim_review.establish! }
 
-          let!(:request_issue_duplicate) {
+          let!(:request_issue_duplicate) do
             create(
               :request_issue,
               decision_review: claim_review,
               contested_decision_issue_id: future_decision_issue.id,
               correction_type: "control"
             )
-          }
+          end
 
           it "allows veteran to add decision issue to another review" do
             visit "#{claim_review_type.pluralize}/#{another_claim_review.uuid}/edit"
@@ -324,13 +324,13 @@ feature "End Product Correction (EP 930)", :postgres do
                  participant_id: veteran.participant_id)
         end
 
-        let!(:request_issue_duplicate) {
+        let!(:request_issue_duplicate) do
           create(
             :request_issue,
             decision_review: another_claim_review,
             contested_decision_issue_id: future_decision_issue.id
           )
-        }
+        end
 
         it "allows adding decision issues from the same claim review" do
           visit edit_path
@@ -362,14 +362,14 @@ feature "End Product Correction (EP 930)", :postgres do
         context "when decision issue is already corrected" do
           before { another_claim_review.establish! }
 
-          let!(:request_issue_duplicate) {
+          let!(:request_issue_duplicate) do
             create(
               :request_issue,
               decision_review: claim_review,
               contested_decision_issue_id: future_decision_issue.id,
               correction_type: "control"
             )
-          }
+          end
 
           it "allows veteran to add decision issue to another review" do
             visit "#{claim_review_type.pluralize}/#{another_claim_review.uuid}/edit"
