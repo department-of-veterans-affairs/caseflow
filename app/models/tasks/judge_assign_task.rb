@@ -2,7 +2,7 @@
 
 ##
 # Task assigned to judge from which they will assign the associated appeal to one of their attorneys by creating a
-# task to draft a decision on the appeal.
+# task (an AttorneyTask but not any of its subclasses) to draft a decision on the appeal.
 # Task is created as a result of case distribution.
 # Task should always have a RootTask as its parent.
 # Task can one or more AttorneyTask children, one or more ColocatedTask children, or no child tasks at all.
