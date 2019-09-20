@@ -3,6 +3,17 @@
 require "support/database_cleaner"
 require "rails_helper"
 
+# The EP code table below contains the combination of issue characteristics for each code
+
+# Description of fields, as they are indexed in the array
+# 0. EP code
+# 1. primary vs. 930 correction
+# 2. correction type (set to na if the EP is not for a 930 correction)
+# 3. dta vs. original
+# 4. benefit type
+# 5. issue type
+# 6. decision review type
+
 EP_CODES = [
   %w[030HLRNR primary na original compensation nonrating higher_level_review],
   %w[030HLRNRPMC primary na original pension nonrating higher_level_review],
@@ -89,7 +100,7 @@ describe "Request Issue Correction Cleaner", :postgres do
     subject { EndProductCodeSelector.new(request_issue).call }
 
     context "for an unidentified issue" do
-      let(:is_unidentified) { TRUE }
+      let(:is_unidentified) { true }
       let(:decision_review) { higher_level_review }
       let(:benefit_type) { "compensation" }
 
