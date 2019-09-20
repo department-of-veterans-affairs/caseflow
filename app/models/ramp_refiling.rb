@@ -91,7 +91,7 @@ class RampRefiling < RampReview
       claim_id: end_product_establishment.reference_id,
       contentions: contention_descriptions_to_create.map { |desc| { "description": desc } },
       user: intake_processed_by,
-      claim_date: claim_date
+      claim_date: receipt_date
     )
   end
 
