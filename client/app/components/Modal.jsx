@@ -14,19 +14,17 @@ export default class Modal extends React.Component {
     super(props);
     this.buttonIdPrefix = `${this.props.title.replace(/\s/g, '-')}-button-id-`;
   }
-
   handleTab = (event) => {
-    // Modify this to trap keyboard
     let lastButtonId = this.buttonIdPrefix + (this.props.buttons.length - 1);
     let firstButton = document.getElementById(`${this.buttonIdPrefix}close`);
     let lastButton = document.getElementById(lastButtonId);
-    // small experiment: when focus gets sent to the checkbox in modal; it goes back to the first selectable thing in modal
-    let endButton = document.getElementById('roomRequired');
+    // a more specific selector
+    let endButton = document.querySelectorAll('#modal_id .usa-button')[1];
 
     if (event.shiftKey) {
       if (firstButton === document.activeElement) {
         event.preventDefault();
-        lastButton.focus();
+        endButton.focus();
       }
     } else if (lastButton === document.activeElement) {
       event.preventDefault();
@@ -35,7 +33,6 @@ export default class Modal extends React.Component {
       event.preventDefault();
       firstButton.focus();
     }
-    // go back button doesn't have an id, may be source of issue.
   }
 
   keyHandler = (event) => {
