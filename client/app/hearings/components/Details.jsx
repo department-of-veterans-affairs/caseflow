@@ -194,7 +194,10 @@ class HearingDetails extends React.Component {
 HearingDetails.propTypes = {
   hearing: PropTypes.object.isRequired,
   goBack: PropTypes.func,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  onChangeFormData: PropTypes.func,
+  hearingDetailsForm: PropTypes.object,
+  transcriptionDetailsForm: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
