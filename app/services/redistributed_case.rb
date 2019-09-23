@@ -8,7 +8,7 @@ class RedistributedCase
     @new_distribution = new_distribution
   end
 
-  def create!
+  def allow!
     unless ok_to_redistribute?
       alert_existing_distributed_case_not_unique
       return

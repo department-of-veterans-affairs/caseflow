@@ -32,7 +32,7 @@ class LegacyDocket
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
         if existing_distributed_case(record["bfkey"])
           redistributed_case = RedistributedCase.new(case_id: record["bfkey"], new_distribution: distribution)
-          next unless redistributed_case.create!
+          next unless redistributed_case.allow!
         end
 
         dist_case = DistributedCase.new(
@@ -58,7 +58,7 @@ class LegacyDocket
     LegacyAppeal.repository.distribute_nonpriority_appeals(distribution.judge, genpop, range, limit).map do |record|
         if existing_distributed_case(record["bfkey"])
           redistributed_case = RedistributedCase.new(case_id: record["bfkey"], new_distribution: distribution)
-          next unless redistributed_case.create!
+          next unless redistributed_case.allow!
         end
 
         dist_case = DistributedCase.new(
