@@ -28,7 +28,7 @@ const CANCEL_ERRORS = {
 export const CancelModal = ({
   cancelFeedback,
   errorMessage,
-  isCancelModalSubmitting,
+  isSubmittingCancelFeedback,
   isShowingCancelModal,
   handleChangeCancelFeedback,
   handleCancelSubmit,
@@ -42,7 +42,7 @@ export const CancelModal = ({
           onClick: handleCloseCancelModal
         },
         { classNames: ['usa-button', 'usa-button-secondary'],
-          loading: isCancelModalSubmitting,
+          loading: isSubmittingCancelFeedback,
           name: 'Stop processing claim',
           onClick: handleCancelSubmit
         }
@@ -77,7 +77,9 @@ CancelModal.propTypes = {
   isShowingCancelModal: PropTypes.bool.isRequired,
   handleChangeCancelFeedback: PropTypes.func.isRequired,
   handleCancelSubmit: PropTypes.func.isRequired,
-  handleCloseCancelModal: PropTypes.func.isRequired
+  handleCloseCancelModal: PropTypes.func.isRequired,
+  handleAlert: PropTypes.func,
+  handleAlertClear: PropTypes.func
 };
 
 const mapStateToProps = (state) => {

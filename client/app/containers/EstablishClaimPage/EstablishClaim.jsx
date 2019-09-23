@@ -461,11 +461,11 @@ export default class EstablishClaim extends React.Component {
   onReceiveStore = (store) => this.store = store;
 
   render() {
-    let {
+    const {
       pdfLink,
       pdfjsLink
     } = this.props;
-    let decisionType = this.props.task.appeal.dispatch_decision_type;
+    const decisionType = this.props.task.appeal.dispatch_decision_type;
 
     const { initialState, reducer } = bootstrapRedux(this.props);
 
@@ -567,5 +567,9 @@ export default class EstablishClaim extends React.Component {
 
 EstablishClaim.propTypes = {
   regionalOfficeCities: PropTypes.object.isRequired,
-  task: PropTypes.object.isRequired
+  task: PropTypes.object.isRequired,
+  pdfLink: PropTypes.string,
+  pdfjsLink: PropTypes.string,
+  handleAlert: PropTypes.func,
+  handleAlertClear: PropTypes.func
 };
