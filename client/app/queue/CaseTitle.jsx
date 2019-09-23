@@ -54,7 +54,7 @@ class CaseTitle extends React.PureComponent {
     return <CaseTitleScaffolding heading={appeal.veteranFullName}>
       <React.Fragment>
         Veteran ID:&nbsp;
-        <CopyTextButton text={appeal.veteranFileNumber} />
+        <CopyTextButton text={appeal.veteranFileNumber} label="Veteran ID" />
       </React.Fragment>
 
       <span {...viewCasesStyling}>
@@ -66,10 +66,21 @@ class CaseTitle extends React.PureComponent {
   }
 }
 
-CaseTitle.propTypes = {
+const CaseTitleScaffolding = (props) => <div {...containingDivStyling}>
+  <h1 {...headerStyling}>{props.heading}</h1>
+  <ul {...listStyling}>
+    {props.children.map((child, i) => child && <li key={i} {...listItemStyling}>{child}</li>)}
+  </ul>
+</div>;
+
+CaseTitle.propTypes = CaseTitleScaffolding.propTypes = {
   appeal: PropTypes.object.isRequired,
   taskType: PropTypes.string,
-  analyticsSource: PropTypes.string
+  analyticsSource: PropTypes.string,
+  veteranCaseListIsVisible: PropTypes.bool,
+  toggleVeteranCaseList: PropTypes.func,
+  heading: PropTypes.string,
+  children: PropTypes.node
 };
 
 CaseTitle.defaultProps = {
@@ -87,10 +98,3 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(CaseTitle);
-
-const CaseTitleScaffolding = (props) => <div {...containingDivStyling}>
-  <h1 {...headerStyling}>{props.heading}</h1>
-  <ul {...listStyling}>
-    {props.children.map((child, i) => child && <li key={i} {...listItemStyling}>{child}</li>)}
-  </ul>
-</div>;
