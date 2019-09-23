@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+require "support/vacols_database_cleaner"
+require "rails_helper"
+
+describe JudgeRepository, :all_dbs do
+  let(:staff_count) { 3 }
+
+  let!(:judges) { create_list(:staff, staff_count, :judge_role) }
+  let!(:acting_judges) { create_list(:staff, staff_count, :attorney_judge_role) }
+  let!(:attorneys) { create_list(:staff, staff_count, :attorney_role) }
+  let!(:misc_staff) { create_list(:staff, staff_count, sactive: "I") }
+
+  context ".find_all_attorneys" do
+    subject { AttorneyRepository.find_all_attorneys }
+
+    it "should return only active attorneys, judges, and acting judges" do
+      expect(subject.length).to eq(judges.count + acting_judges.count + attorneys.count)
+    end
+  end
+end
