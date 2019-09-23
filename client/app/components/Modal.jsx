@@ -16,9 +16,12 @@ export default class Modal extends React.Component {
   }
 
   handleTab = (event) => {
+    // Modify this to trap keyboard
     let lastButtonId = this.buttonIdPrefix + (this.props.buttons.length - 1);
     let firstButton = document.getElementById(`${this.buttonIdPrefix}close`);
     let lastButton = document.getElementById(lastButtonId);
+    // small experiment: when focus gets sent to the checkbox in modal; it goes back to the first selectable thing in modal
+    let endButton = document.getElementById('roomRequired');
 
     if (event.shiftKey) {
       if (firstButton === document.activeElement) {
@@ -28,7 +31,11 @@ export default class Modal extends React.Component {
     } else if (lastButton === document.activeElement) {
       event.preventDefault();
       firstButton.focus();
+    } else if (endButton === document.activeElement) {
+      event.preventDefault();
+      firstButton.focus();
     }
+    // go back button doesn't have an id, may be source of issue.
   }
 
   keyHandler = (event) => {
@@ -114,9 +121,10 @@ export default class Modal extends React.Component {
       role="alertdialog"
       aria-labelledby="modal_id-title"
       aria-describedby="modal_id-desc"
+      aria-modal="true"
     >
       <ScrollLock />
-      <div className="cf-modal-body" aria-modal="true" id={id || ''} {...customStyles}>
+      <div className="cf-modal-body" id={id || ''} {...customStyles}>
         <button
           type="button"
           id={`${this.buttonIdPrefix}close`}
