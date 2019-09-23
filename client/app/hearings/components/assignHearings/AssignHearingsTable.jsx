@@ -26,7 +26,6 @@ class AssignHearingsTable extends React.Component {
     return {
       useTaskPagesApi: true,
       taskPagesApiEndpoint: endpoint,
-      casesPerPage: 5,
       enablePagination: true,
       eager: true,
       rowObjects: []

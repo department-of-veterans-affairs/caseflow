@@ -409,7 +409,7 @@ export default class QueueTable extends React.PureComponent {
     this.setState({ loadingComponent: <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} /> });
 
     return ApiUtil.get(endpointUrl).then((response) => {
-      const { tasks: { data: tasks }, task_page_count, total_task_count } = response.body;
+      const { tasks: { data: tasks }, task_page_count, total_task_count, tasks_per_page } = response.body;
 
       const preparedTasks = tasksWithAppealsFromRawTasks(tasks);
 
@@ -419,6 +419,7 @@ export default class QueueTable extends React.PureComponent {
         tasksFromApi: preparedTasks,
         totalTaskCount: total_task_count,
         taskPageCount: task_page_count,
+        casesPerPage: tasks_per_page,
         loadingComponent: null
       });
     }).
@@ -454,6 +455,7 @@ export default class QueueTable extends React.PureComponent {
         rowObjects = this.state.tasksFromApi;
         totalTaskCount = this.state.totalTaskCount;
         numberOfPages = this.state.taskPageCount;
+        casesPerPage = this.state.casesPerPage;
       }
     } else if (shouldNotWaitForEagerLoad) {
       // Steps to calculate table data to display:

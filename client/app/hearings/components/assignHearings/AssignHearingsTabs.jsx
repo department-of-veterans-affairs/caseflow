@@ -205,7 +205,8 @@ export default class AssignHearingsTabs extends React.Component {
     return [{
       header: '',
       align: 'left',
-      valueName: 'number'
+      valueName: 'number',
+      valueFunction: (_task, index) => `${index + 1}. `
     },
     {
       header: 'Case details',

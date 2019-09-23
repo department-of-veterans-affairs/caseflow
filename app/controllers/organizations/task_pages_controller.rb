@@ -27,7 +27,8 @@ class Organizations::TaskPagesController < OrganizationsController
     render json: {
       tasks: json_tasks(task_pager.paged_tasks),
       task_page_count: task_pager.task_page_count,
-      total_task_count: task_pager.total_task_count
+      total_task_count: task_pager.total_task_count,
+      tasks_per_page: TaskPager::TASKS_PER_PAGE
     }
   end
 
