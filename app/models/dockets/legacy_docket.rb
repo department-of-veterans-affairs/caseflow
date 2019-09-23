@@ -29,9 +29,11 @@ class LegacyDocket
   end
 
   def distribute_priority_appeals(distribution, genpop: "any", limit: 1)
-    LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit)
-      .select { |record| !preexisting_distributed_case(record["bfkey"], distribution) }
-      .map do |record|
+    LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
+        if existing_distributed_case(record["bfkey"])
+          redistributed_case = RedistributedCase.new(case_id: record["bfkey"], new_distribution: distribution)
+          next unless redistributed_case.create!
+        end
 
         dist_case = DistributedCase.new(
           distribution: distribution,
@@ -49,13 +51,15 @@ class LegacyDocket
           dist_case.save!
         end
         dist_case
-      end
+      end.compact
   end
 
   def distribute_nonpriority_appeals(distribution, genpop: "any", range: nil, limit: 1)
-    LegacyAppeal.repository.distribute_nonpriority_appeals(distribution.judge, genpop, range, limit)
-      .select { |record| !preexisting_distributed_case(record["bfkey"], distribution) }
-      .map do |record|
+    LegacyAppeal.repository.distribute_nonpriority_appeals(distribution.judge, genpop, range, limit).map do |record|
+        if existing_distributed_case(record["bfkey"])
+          redistributed_case = RedistributedCase.new(case_id: record["bfkey"], new_distribution: distribution)
+          next unless redistributed_case.create!
+        end
 
         dist_case = DistributedCase.new(
           distribution: distribution,
@@ -75,7 +79,7 @@ class LegacyDocket
         end
 
         dist_case
-      end
+      end.compact
   end
 
   def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1)
@@ -88,13 +92,8 @@ class LegacyDocket
 
   private
 
-  def preexisting_distributed_case(case_id, distribution)
-    if DistributedCase.find_by(case_id: case_id)
-      error = ActiveRecord::RecordNotUnique.new("DistributedCase already exists")
-      Raven.capture_exception(error, extra: { vacols_id: case_id, judge: distribution.judge.css_id })
-      return true
-    end
-    false
+  def existing_distributed_case(case_id)
+    DistributedCase.find_by(case_id: case_id)
   end
 
   def counts_by_priority_and_readiness
