@@ -419,10 +419,10 @@ feature "End Product Correction (EP 930)", :postgres do
     end
 
     context "when the end product is cleared" do
-      it "allows edit and hides the add issue button" do
+      it "allows edit and shows the add issue button" do
         visit edit_path
         expect(page).to have_content("Edit Issues")
-        expect(page).to_not have_css("#button-add-issue")
+        expect(page).to have_css("#button-add-issue")
       end
     end
   end
