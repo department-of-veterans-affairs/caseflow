@@ -54,7 +54,7 @@ class CaseTitle extends React.PureComponent {
     return <CaseTitleScaffolding heading={appeal.veteranFullName}>
       <React.Fragment>
         Veteran ID:&nbsp;
-        <CopyTextButton text={appeal.veteranFileNumber} />
+        <CopyTextButton text={appeal.veteranFileNumber} label="Veteran ID" />
       </React.Fragment>
 
       <span {...viewCasesStyling}>

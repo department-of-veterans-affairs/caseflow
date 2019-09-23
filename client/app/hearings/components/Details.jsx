@@ -153,7 +153,7 @@ class HearingDetails extends React.Component {
         <div {...inputFix}>
           <div {...row}>
             <h1 className="cf-margin-bottom-0">{`${veteranFirstName} ${veteranLastName}`}</h1>
-            <div>Veteran ID: <CopyTextButton text={veteranFileNumber} /></div>
+            <div>Veteran ID: <CopyTextButton text={veteranFileNumber} label="Veteran ID" /></div>
           </div>
 
           <div className="cf-help-divider" />
