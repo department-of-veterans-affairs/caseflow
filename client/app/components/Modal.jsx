@@ -15,20 +15,16 @@ export default class Modal extends React.Component {
     this.buttonIdPrefix = `${this.props.title.replace(/\s/g, '-')}-button-id-`;
   }
   handleTab = (event) => {
-    let lastButtonId = this.buttonIdPrefix + (this.props.buttons.length - 1);
+    let buttonsList = document.querySelectorAll('.cf-modal-controls button');
     let firstButton = document.getElementById(`${this.buttonIdPrefix}close`);
-    let lastButton = document.getElementById(lastButtonId);
-    // a more specific selector
-    let endButton = document.querySelectorAll('#modal_id .usa-button')[1];
+    // a more general selector for the last button in the modall
+    let endButton = buttonsList[buttonsList.length - 1];
 
     if (event.shiftKey) {
       if (firstButton === document.activeElement) {
         event.preventDefault();
         endButton.focus();
       }
-    } else if (lastButton === document.activeElement) {
-      event.preventDefault();
-      firstButton.focus();
     } else if (endButton === document.activeElement) {
       event.preventDefault();
       firstButton.focus();
