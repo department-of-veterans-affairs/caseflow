@@ -274,6 +274,16 @@ class LegacyHearing < ApplicationRecord
     end
   end
 
+  def vacols_hearing_exists?
+    begin
+      repository.load_vacols_data(self)
+      true
+    rescue Caseflow::Error::VacolsRecordNotFound => error
+      capture_exception(error)
+      false
+    end
+  end
+
   class << self
     def venues
       RegionalOffice::CITIES.merge(RegionalOffice::SATELLITE_OFFICES)
