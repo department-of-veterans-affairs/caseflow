@@ -1,3 +1,5 @@
+# Inactive users feature definition brainstorming
+
 ## Problems to solve
 
 1. when users leave the Board, mark them inactive 
