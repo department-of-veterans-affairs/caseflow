@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { BrowserRouter } from 'react-router-dom';
+
 import Alert from '../../components/Alert';
 import AppFrame from '../../components/AppFrame';
 import NavigationBar from '../../components/NavigationBar';
@@ -39,25 +39,20 @@ export default class EstablishClaimContainer extends React.Component {
         type
       }
     });
-  }
+  };
 
   handleAlertClear = () => {
     this.setState({ alert: null });
-  }
+  };
 
   render() {
-    let {
-      page,
-      ...rest
-    } = this.props;
+    const { page, ...rest } = this.props;
 
-    let {
-      alert
-    } = this.state;
+    const { alert } = this.state;
 
-    let PageComponent = Pages[page];
+    const PageComponent = Pages[page];
 
-    return <BrowserRouter>
+    return (
       <React.Fragment>
         <NavigationBar
           dropdownUrls={this.props.dropdownUrls}
@@ -67,32 +62,28 @@ export default class EstablishClaimContainer extends React.Component {
           logoProps={{
             accentColor: LOGO_COLORS.DISPATCH.ACCENT,
             overlapColor: LOGO_COLORS.DISPATCH.OVERLAP
-          }} />
-        {alert && <div className="cf-app-segment">
-          <Alert
-            type={alert.type}
-            title={alert.title}
-            message={alert.message}
-            handleClear={this.handleAlertClear}
-          />
-        </div>}
+          }}
+        />
+        {alert && (
+          <div className="cf-app-segment">
+            <Alert type={alert.type} title={alert.title} message={alert.message} handleClear={this.handleAlertClear} />
+          </div>
+        )}
         <AppFrame>
           {this.props.task && <EstablishClaimHeader appeal={this.props.task.appeal} />}
-          <PageComponent
-            {...rest}
-            handleAlert={this.handleAlert}
-            handleAlertClear={this.handleAlertClear}
-          />
-          <Footer
-            appName="Dispatch"
-            feedbackUrl={this.props.feedbackUrl}
-            buildDate={this.props.buildDate} />
+          <PageComponent {...rest} handleAlert={this.handleAlert} handleAlertClear={this.handleAlertClear} />
+          <Footer appName="Dispatch" feedbackUrl={this.props.feedbackUrl} buildDate={this.props.buildDate} />
         </AppFrame>
       </React.Fragment>
-    </BrowserRouter>;
+    );
   }
 }
 
 EstablishClaimContainer.propTypes = {
-  page: PropTypes.string.isRequired
+  page: PropTypes.string.isRequired,
+  task: PropTypes.object,
+  userDisplayName: PropTypes.string,
+  dropdownUrls: PropTypes.array,
+  feedbackUrl: PropTypes.string,
+  buildDate: PropTypes.string
 };
