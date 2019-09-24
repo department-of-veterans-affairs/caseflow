@@ -9,6 +9,7 @@
 #   - assigning a task to an individual
 
 class Task < ApplicationRecord
+  has_paper_trail
   acts_as_tree
 
   include PrintsTaskTree
