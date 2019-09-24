@@ -49,6 +49,8 @@ export default class Modal extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.keyHandler);
+    // return focus to original target
+    document.querySelector('.cf-btn-link').focus();
   }
 
   componentDidMount() {
