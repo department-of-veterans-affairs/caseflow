@@ -23,7 +23,7 @@ describe AppealTaskHistory, :postgres do
       end
 
       let(:diff) do
-        { "placed_on_hold_at" => [nil, Time.zone.now], "status" => ["assigned", "on_hold"] }
+        { "placed_on_hold_at" => [nil, Time.zone.now], "status" => %w[assigned on_hold] }
       end
 
       it "records the changeset" do
