@@ -10,10 +10,12 @@ detectors:
   BooleanParameter:
     exclude:
       - HearingRepository#slot_new_hearing
+      - LegacyDocket#distribute_appeals
       - Veteran
   ControlParameter:
     exclude:
       - HearingRepository#slot_new_hearing
+      - LegacyDocket#distribute_appeals
       - TaskSorter#sort_requires_case_norm?
       - Veteran
   UncommunicativeVariableName:
@@ -28,6 +30,7 @@ detectors:
   DataClump:
     exclude:
       - HearingSerializerBase
+      - LegacyDocket
   DuplicateMethodCall:
     enabled: false
   FeatureEnvy:
@@ -43,6 +46,7 @@ detectors:
       - Fakes::BGSServiceRecordMaker
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - HearingSerializerBase
+      - LegacyDocket#count
       - RedistributedCase#legacy_appeal_relevant_tasks
       - SyncReviewsJob
       - TaskTimerJob
@@ -56,6 +60,9 @@ detectors:
       - CaseflowJob
   IrresponsibleModule:
     enabled: false
+  LongParameterList:
+    exclude:
+      - LegacyDocket
   ManualDispatch:
     exclude:
       - Api::V3::DecisionReview::IntakeParams
@@ -90,6 +97,7 @@ detectors:
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
+      - LegacyDocket#age_of_n_oldest_priority_appeals
       - OnHoldTasksTab#name
 
 ### Directory specific configuration
