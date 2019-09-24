@@ -9,6 +9,10 @@ class AppealTaskHistory
     @events ||= build_events
   end
 
+  def summary
+    events.map(&:summary)
+  end
+
   private
 
   attr_reader :appeal
@@ -19,6 +23,6 @@ class AppealTaskHistory
     # returns that array as TaskEvent objects
     appeal.tasks.map(&:versions)
       .flatten.map { |vers| TaskEvent.new(version: vers) }
-      .sort { |ev_a, ev_b| ev_b.created_at <=> ev_a.created_at }
+      .sort_by(&:created_at).reverse
   end
 end

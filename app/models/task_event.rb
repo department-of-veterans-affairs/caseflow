@@ -11,12 +11,12 @@ class TaskEvent
   end
 
   def who
-    version.whodunnit
+    User.find(version.whodunnit)
   end
 
   delegate :created_at, to: :version
 
   def summary
-    "[#{created_at}] [#{who}]\n#{diff.pretty_inspect}"
+    "[#{created_at}] [#{who.css_id}]\n#{diff.pretty_inspect}"
   end
 end
