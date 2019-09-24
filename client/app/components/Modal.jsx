@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import ScrollLock from 'react-scrolllock';
@@ -46,7 +47,7 @@ export default class Modal extends React.Component {
   componentWillUnmount() {
     window.removeEventListener('keydown', this.keyHandler);
     // return focus to original target
-    document.querySelector('.cf-btn-link').focus();
+    // document.querySelector('.cf-btn-link').focus();
   }
 
   componentDidMount() {
