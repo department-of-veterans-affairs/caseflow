@@ -34,13 +34,14 @@ class LegacyDocket
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
       next unless existing_distribution_case_may_be_redistributed(record["bfkey"], distribution)
 
-      dist_case = new_distributed_case(distribution, record, docket_type, genpop, false)
+      dist_case = new_distributed_case(distribution, record, docket_type, genpop, true)
 
       if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
         DasDeprecation::CaseDistribution.create_judge_assign_task(record, distribution.judge) { dist_case.save! }
       else
         dist_case.save!
       end
+
       dist_case
     end.compact
   end
