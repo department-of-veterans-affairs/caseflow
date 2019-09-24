@@ -43,6 +43,7 @@ detectors:
       - Fakes::BGSServiceRecordMaker
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - HearingSerializerBase
+      - MonthlyMetricsReportJob#build_report
       - SyncReviewsJob
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
