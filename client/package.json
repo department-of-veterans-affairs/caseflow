@@ -49,7 +49,7 @@
     "font-awesome": "^4.7.0",
     "glamor": "^2.20.40",
     "history": "^4.5.1",
-    "immutability-helper": "^2.4.0",
+    "immutability-helper": "^3.0.1",
     "immutable": "^3.8.2",
     "imports-loader": "^0.7.1",
     "jsdom": "9.8.3",
