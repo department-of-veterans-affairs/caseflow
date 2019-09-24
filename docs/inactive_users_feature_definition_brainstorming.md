@@ -8,14 +8,14 @@ Hint: BVA prob cares the most about judges and attorneys, but this applies to ad
 
 ## Proposed solutions
 
-## Problem #1 options
+### Problem #1 options
 
 In Caseflow team management page (`organizations/bva/users` i think), allow users to search for a user and mark them inactive
 
 * Unknown: Who get's to mark users active/inactive?
     - LP answer: Any user BVA decides to add to the Bva organization, which i think is the only one that currently allows users to access and use the Caseflow team management page
 
-## Problem #2 options 
+### Problem #2 options 
 
 When a user is marked inactive:
 
