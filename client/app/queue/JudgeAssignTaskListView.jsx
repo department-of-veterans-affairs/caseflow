@@ -84,15 +84,13 @@ class JudgeAssignTaskListView extends React.PureComponent {
 }
 
 JudgeAssignTaskListView.propTypes = {
-  attorneysOfJudge: PropTypes.array.isRequired,
-  attorneyAppealsLoadingState: PropTypes.object.isRequired
+  attorneysOfJudge: PropTypes.array.isRequired
 };
 
 const mapStateToProps = (state) => {
   const {
     queue: {
-      attorneysOfJudge,
-      attorneyAppealsLoadingState
+      attorneysOfJudge
     },
     ui: {
       featureToggles
@@ -103,7 +101,6 @@ const mapStateToProps = (state) => {
     unassignedTasksCount: judgeAssignTasksSelector(state).length,
     tasksByUserId: getTasksByUserId(state),
     attorneysOfJudge,
-    attorneyAppealsLoadingState,
     featureToggles
   };
 };
