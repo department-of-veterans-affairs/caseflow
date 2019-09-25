@@ -372,7 +372,7 @@ describe EndProductEstablishment, :postgres do
 
     let(:contentions) do
       request_issues.map do |issue|
-        contention = { description: issue.contention_text }
+        contention = { description: issue.contention_text, contention_type: issue.contention_type }
         issue.special_issues && contention[:special_issues] = issue.special_issues
         contention
       end.reverse
@@ -457,7 +457,8 @@ describe EndProductEstablishment, :postgres do
             claim_id: end_product_establishment.reference_id,
             contentions: array_including(
               description: "I am contesting a dta decision",
-              original_contention_ids: [101, 121]
+              original_contention_ids: [101, 121],
+              contention_type: Constants.CONTENTION_TYPES.higher_level_review
             ),
             user: current_user,
             claim_date: 2.days.ago.to_date
