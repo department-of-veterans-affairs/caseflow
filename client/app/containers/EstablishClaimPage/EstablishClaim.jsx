@@ -602,7 +602,8 @@ const mapDispatchToProps = (dispatch) => ({
         value: nextModifier
       }
     });
-  }
+  },
+  dispatch
 });
 
 export default connect(
