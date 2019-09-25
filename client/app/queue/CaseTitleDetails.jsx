@@ -191,7 +191,11 @@ export class CaseTitleDetails extends React.PureComponent {
       { !userIsVsoEmployee && appeal && appeal.documentID &&
         <React.Fragment>
           <h4>{COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</h4>
-          <div id="document-id"><CopyTextButton text={this.state.value || appeal.documentID} />
+          <div id="document-id">
+            <CopyTextButton
+              text={this.state.value || appeal.documentID}
+              label={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}
+            />
             { appeal.canEditDocumentId &&
               <Button
                 linkStyling

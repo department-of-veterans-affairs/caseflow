@@ -9,7 +9,7 @@ class Generators::Contention
         id: generate_external_id,
         claim_id: generate_external_id,
         text: "Generic contention",
-        start_date: 5.days.ago,
+        start_date: Time.zone.today,
         submit_date: 5.days.ago
       }
     end
