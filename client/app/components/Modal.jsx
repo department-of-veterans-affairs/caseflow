@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import ScrollLock from 'react-scrolllock';
@@ -14,18 +15,18 @@ export default class Modal extends React.Component {
     super(props);
     this.buttonIdPrefix = `${this.props.title.replace(/\s/g, '-')}-button-id-`;
   }
-
   handleTab = (event) => {
-    let lastButtonId = this.buttonIdPrefix + (this.props.buttons.length - 1);
+    let buttonsList = document.querySelectorAll('.cf-modal-controls button');
     let firstButton = document.getElementById(`${this.buttonIdPrefix}close`);
-    let lastButton = document.getElementById(lastButtonId);
+    // a more general selector for the last button in the modall
+    let endButton = buttonsList[buttonsList.length - 1];
 
     if (event.shiftKey) {
       if (firstButton === document.activeElement) {
         event.preventDefault();
-        lastButton.focus();
+        endButton.focus();
       }
-    } else if (lastButton === document.activeElement) {
+    } else if (endButton === document.activeElement) {
       event.preventDefault();
       firstButton.focus();
     }
@@ -45,6 +46,8 @@ export default class Modal extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.keyHandler);
+    // return focus to original target
+    // document.querySelector('.cf-btn-link').focus();
   }
 
   componentDidMount() {
@@ -114,6 +117,7 @@ export default class Modal extends React.Component {
       role="alertdialog"
       aria-labelledby="modal_id-title"
       aria-describedby="modal_id-desc"
+      aria-modal="true"
     >
       <ScrollLock />
       <div className="cf-modal-body" id={id || ''} {...customStyles}>

@@ -23,10 +23,6 @@ class AttorneyQueue
     (colocated_tasks_for_attorney_tasks + caseflow_tasks).flatten
   end
 
-  def tasks_by_appeal_id(appeal_id, appeal_type)
-    tasks.select { |task| task.appeal_id == appeal_id && task.appeal_type == appeal_type }
-  end
-
   private
 
   def task_includes
