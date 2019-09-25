@@ -56,13 +56,8 @@ describe DasDeprecation::AssignTaskToAttorney do
     let!(:task1) { DasDeprecation::AssignTaskToAttorney.create_attorney_task(appeal.vacols_id, judge, attorney1) }
     let!(:task2) { DasDeprecation::AssignTaskToAttorney.reassign_attorney_task(appeal.vacols_id, judge, attorney2) }
 
-    it "cancels task" do
-      task = AttorneyTask.find(task1.id)
-      expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
-    end
-
     it "reassigns task to another attorney" do
-      expect(task2.assigned_to).to eq(attorney2)
+      expect(task2.assigned_to_id).to eq(attorney2.id)
     end
   end
 end
