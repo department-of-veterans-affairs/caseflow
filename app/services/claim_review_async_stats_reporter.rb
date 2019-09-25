@@ -11,6 +11,7 @@ class ClaimReviewAsyncStatsReporter
     @stats = build
   end
 
+  # rubocop:disable Metrics/MethodLength
   def as_csv
     CSV.generate do |csv|
       csv << %w[
@@ -41,6 +42,7 @@ class ClaimReviewAsyncStatsReporter
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 
@@ -55,7 +57,9 @@ class ClaimReviewAsyncStatsReporter
         canceled: supplemental_claims.canceled.count,
         processed: supplemental_claims.processed.count,
         established_within_seven_days: established_within_seven_days(supplemental_claims_completion_times),
-        established_within_seven_days_percent: percent_established_within_seven_days(supplemental_claims_completion_times),
+        established_within_seven_days_percent: percent_established_within_seven_days(
+          supplemental_claims_completion_times
+        ),
         median: median_time(supplemental_claims_completion_times),
         avg: avg_time(supplemental_claims_completion_times),
         max: supplemental_claims_completion_times.max,
@@ -66,7 +70,9 @@ class ClaimReviewAsyncStatsReporter
         canceled: higher_level_reviews.canceled.count,
         processed: higher_level_reviews.processed.count,
         established_within_seven_days: established_within_seven_days(higher_level_reviews_completion_times),
-        established_within_seven_days_percent: percent_established_within_seven_days(higher_level_reviews_completion_times),
+        established_within_seven_days_percent: percent_established_within_seven_days(
+          higher_level_reviews_completion_times
+        ),
         median: median_time(higher_level_reviews_completion_times),
         avg: avg_time(higher_level_reviews_completion_times),
         max: higher_level_reviews_completion_times.max,
@@ -77,7 +83,9 @@ class ClaimReviewAsyncStatsReporter
         canceled: request_issues_updates.canceled.count,
         processed: request_issues_updates.processed.count,
         established_within_seven_days: established_within_seven_days(request_issues_updates_completion_times),
-        established_within_seven_days_percent: percent_established_within_seven_days(request_issues_updates_completion_times),
+        established_within_seven_days_percent: percent_established_within_seven_days(
+          request_issues_updates_completion_times
+        ),
         median: median_time(request_issues_updates_completion_times),
         avg: avg_time(request_issues_updates_completion_times),
         max: request_issues_updates_completion_times.max,
@@ -89,7 +97,7 @@ class ClaimReviewAsyncStatsReporter
   # rubocop:enable Metrics/MethodLength
 
   def established_within_seven_days(completion_times)
-    completion_times.select { |span| span.fdiv(86400).to_i < 7 }.count
+    completion_times.select { |span| span.fdiv(86_400).to_i < 7 }.count
   end
 
   def percent_established_within_seven_days(completion_times)
