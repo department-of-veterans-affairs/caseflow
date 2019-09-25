@@ -277,11 +277,10 @@ class RequestIssue < ApplicationRecord
   end
 
   def contention_type
-    # binding.pry
     return Constants.CONTENTION_TYPES.higher_level_review if decision_review.is_a?(HigherLevelReview)
     return Constants.CONTENTION_TYPES.supplemental_claim if decision_review.is_a?(SupplementalClaim)
 
-    Constants.CONTENTION_TYPES.rep
+    Constants.CONTENTION_TYPES.default
   end
 
   # If contentions get a DTA disposition, send their IDs when creating the new DTA contentions

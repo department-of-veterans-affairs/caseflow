@@ -258,9 +258,9 @@ describe DecisionDocument, :postgres do
             claim_id: decision_document.end_product_establishments.last.reference_id,
             contentions: array_including(
               { description: granted_issue.contention_text,
-                contention_type: Constants.CONTENTION_TYPES.rep },
+                contention_type: Constants.CONTENTION_TYPES.default },
               description: another_granted_issue.contention_text,
-              contention_type: Constants.CONTENTION_TYPES.rep
+              contention_type: Constants.CONTENTION_TYPES.default
             ),
             user: User.system_user,
             claim_date: decision_document.decision_date.to_date

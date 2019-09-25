@@ -48,7 +48,7 @@ class BoardGrantEffectuation < ApplicationRecord
   end
 
   def contention_type
-    Constants.CONTENTION_TYPES.rep
+    Constants.CONTENTION_TYPES.default
   end
 
   private
