@@ -40,11 +40,15 @@ describe RequestIssuesUpdate, :all_dbs do
     [
       Generators::Contention.build(
         claim_id: rating_end_product_establishment.reference_id,
-        text: "Service connection for PTSD was granted at 10 percent"
+        text: "Service connection for PTSD was granted at 10 percent",
+        start_date: Time.zone.now,
+        submit_date: 8.days.ago
       ),
       Generators::Contention.build(
         claim_id: rating_end_product_establishment.reference_id,
-        text: "Service connection for left knee immobility was denied"
+        text: "Service connection for left knee immobility was denied",
+        start_date: Time.zone.now,
+        submit_date: 8.days.ago
       )
     ]
   end
@@ -254,6 +258,7 @@ describe RequestIssuesUpdate, :all_dbs do
         it "saves update, adds issues, and calls create contentions" do
           allow_create_contentions
           allow_associate_rating_request_issues
+          expect(review).to receive(:create_business_line_tasks!).once
 
           expect(subject).to be_truthy
           request_issues_update.reload
@@ -387,6 +392,7 @@ describe RequestIssuesUpdate, :all_dbs do
         it "saves update, removes issues, and calls remove contentions" do
           allow_remove_contention
           allow_associate_rating_request_issues
+          expect(review).to_not receive(:create_business_line_tasks!)
 
           expect(subject).to be_truthy
 
@@ -718,7 +724,9 @@ describe RequestIssuesUpdate, :all_dbs do
       Generators::Contention.build(
         claim_id: edited_issue.end_product_establishment.reference_id,
         text: "old request issue description",
-        id: "3"
+        id: "3",
+        start_date: Time.zone.now,
+        submit_date: 5.days.ago
       )
     end
 

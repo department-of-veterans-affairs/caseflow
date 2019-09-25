@@ -5,12 +5,14 @@ class DataIntegrityChecksJob < CaseflowJob
   application_attr :queue
 
   CHECKERS = %w[
+    DecisionReviewTasksForInactiveAppealsChecker
     ExpiredAsyncJobsChecker
     OpenHearingTasksWithoutActiveDescendantsChecker
+    OpenTasksWithClosedAtChecker
     UntrackedLegacyAppealsChecker
   ].freeze
 
-  def perform(_args = {})
+  def perform
     CHECKERS.each do |klass|
       checker = klass.constantize.new
       checker.call

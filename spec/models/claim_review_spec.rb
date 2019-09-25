@@ -376,8 +376,9 @@ describe ClaimReview, :postgres do
     end
   end
 
-  context "#create_decision_review_task_if_required!" do
-    subject { claim_review.create_decision_review_task_if_required! }
+  context "#create_business_line_tasks!" do
+    subject { claim_review.create_business_line_tasks! }
+    let!(:request_issue) { create(:request_issue, decision_review: claim_review) }
 
     context "when processed in caseflow" do
       let(:benefit_type) { "vha" }
@@ -394,9 +395,17 @@ describe ClaimReview, :postgres do
 
       context "when a task already exists" do
         before do
-          claim_review.create_decision_review_task_if_required!
+          claim_review.create_business_line_tasks!
           claim_review.reload
         end
+
+        it "does nothing" do
+          expect { subject }.to_not change(DecisionReviewTask, :count)
+        end
+      end
+
+      context "when the review only has ineligible issues" do
+        let!(:request_issue) { create(:request_issue, :ineligible, decision_review: claim_review) }
 
         it "does nothing" do
           expect { subject }.to_not change(DecisionReviewTask, :count)
@@ -490,7 +499,12 @@ describe ClaimReview, :postgres do
 
       let!(:remand_decision) { create(:decision_issue, decision_review: claim_review, disposition: "DTA Error") }
       let(:correction_request_issue) do
-        build(:request_issue, correction_type: "control", contested_decision_issue: remand_decision)
+        build(
+          :request_issue,
+          decision_review: claim_review,
+          correction_type: "control",
+          contested_decision_issue: remand_decision
+        )
       end
       let(:issues) { [correction_request_issue] }
 
@@ -569,7 +583,8 @@ describe ClaimReview, :postgres do
             { description: "foobar was denied." },
             description: "decision text"
           ),
-          user: user
+          user: user,
+          claim_date: claim_review.receipt_date.to_date
         )
 
         expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
@@ -661,7 +676,8 @@ describe ClaimReview, :postgres do
                 { description: "another decision text" },
                 description: "foobar was denied."
               ),
-              user: user
+              user: user,
+              claim_date: claim_review.receipt_date.to_date
             )
 
             expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
@@ -865,7 +881,8 @@ describe ClaimReview, :postgres do
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRR").reference_id,
           contentions: [{ description: "decision text" }],
-          user: user
+          user: user,
+          claim_date: claim_review.receipt_date.to_date
         )
 
         expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
@@ -900,7 +917,8 @@ describe ClaimReview, :postgres do
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRNR").reference_id,
           contentions: [{ description: "surgery - Issue text" }],
-          user: user
+          user: user,
+          claim_date: claim_review.receipt_date.to_date
         )
 
         expect(claim_review.end_product_establishments.first).to be_committed

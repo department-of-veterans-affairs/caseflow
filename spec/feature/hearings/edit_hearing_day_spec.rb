@@ -22,6 +22,13 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
   let!(:coordinator) do
     create(:staff, :hearing_coordinator)
   end
+  let!(:caseflow_coordinator) do
+    User.find_by_css_id_or_create_with_default_station_id(coordinator.sdomainid)
+  end
+
+  before do
+    OrganizationsUser.add_user_to_organization(caseflow_coordinator, HearingsManagement.singleton)
+  end
 
   context "When editing a Hearing Day" do
     scenario "Verify initial fields present when modal opened" do

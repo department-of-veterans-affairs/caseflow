@@ -160,11 +160,12 @@ class Fakes::VBMSService
     Fakes::BGSService.end_product_store.inflated_contentions_for(claim_id) || []
   end
 
-  def self.create_contentions!(veteran_file_number:, claim_id:, contentions:, user:)
+  def self.create_contentions!(veteran_file_number:, claim_id:, contentions:, claim_date:, user:)
     Rails.logger.info("Submitting contentions to VBMS...")
     Rails.logger.info("File number: #{veteran_file_number}")
     Rails.logger.info("Claim id: #{claim_id}")
     Rails.logger.info("Contentions: #{contentions.inspect}")
+    Rails.logger.info("Claim_date: #{claim_date}")
     Rails.logger.info("User:\n #{user.inspect}")
 
     # Used to simulate a contention that fails to be created in VBMS

@@ -2,6 +2,7 @@
 
 class DecisionReviewsController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
+  before_action :verify_veteran_record_access, only: [:show]
 
   def index
     if business_line
@@ -26,7 +27,9 @@ class DecisionReviewsController < ApplicationController
         business_line.tasks.reload
         render json: { in_progress_tasks: in_progress_tasks, completed_tasks: completed_tasks }, status: :ok
       else
-        render json: { error_code: task.error_code }, status: :bad_request
+        error = StandardError.new(task.error_code)
+        Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+        render json: { error_uuid: error_uuid, error_code: task.error_code }, status: :bad_request
       end
     else
       render json: { error: "Task #{task_id} not found" }, status: :not_found
@@ -47,7 +50,9 @@ class DecisionReviewsController < ApplicationController
 
   def in_progress_tasks
     apply_task_serializer(
-      business_line.tasks.open.includes([:assigned_to, :appeal]).order(assigned_at: :desc)
+      business_line.tasks.open.includes([:assigned_to, :appeal]).order(assigned_at: :desc).select do |task|
+        task.appeal.request_issues.active.any?
+      end
     )
   end
 
@@ -99,6 +104,14 @@ class DecisionReviewsController < ApplicationController
 
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
+  end
+
+  def verify_veteran_record_access
+    if task.type == VeteranRecordRequest.name && !task.appeal.veteran&.accessible?
+      render(Caseflow::Error::ActionForbiddenError.new(
+        message: COPY::ACCESS_DENIED_TITLE
+      ).serialize_response)
+    end
   end
 
   def allowed_params

@@ -47,6 +47,16 @@
     "value": "send_to_judge",
     "func": "send_motion_to_vacate_to_judge_data"
   },
+  "ADDRESS_MOTION_TO_VACATE": {
+    "label": "Address Motion to Vacate",
+    "value": "address_motion_to_vacate",
+    "func": "address_motion_to_vacate_data"
+  },
+  "SIGN_MOTION_TO_VACATE": {
+    "label": "Sign Motion to Vacate",
+    "value": "sign_motion_to_vacate",
+    "func": "sign_motion_to_vacate_data"
+  },
   "CANCEL_FOREIGN_VETERANS_CASE_TASK": {
     "label": "Cancel hearing request",
     "value": "modal/cancel_task",
@@ -105,10 +115,6 @@
     "label": "Return to attorney",
     "value": "modal/return_to_attorney",
     "func": "return_to_attorney_data"
-  },
-  "JUDGE_MTV_CHECKOUT": {
-    "label": "Address Motion to Vacate",
-    "value": "address"
   },
   "LIT_SUPPORT_PULAC_CERULLO": {
     "label": "Notify OGC of Pulac-Cerullo",

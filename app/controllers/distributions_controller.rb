@@ -38,7 +38,7 @@ class DistributionsController < ApplicationController
   end
 
   def render_single(distribution)
-    render json: { distribution: distribution.as_json }
+    render json: { distribution: DistributionSerializer.new(distribution).as_json }
   end
 
   def render_distribution_error

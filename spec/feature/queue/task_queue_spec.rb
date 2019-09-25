@@ -531,6 +531,7 @@ RSpec.feature "Task queue", :all_dbs do
     end
 
     context "when pagination is enabled" do
+      let(:foia_task_count) { unassigned_count / 2 }
       let(:on_hold_count) { assigned_count / 2 }
 
       before do
@@ -541,6 +542,8 @@ RSpec.feature "Task queue", :all_dbs do
             child_task = create(:generic_task, parent_id: task.id)
             child_task.update!(status: Constants.TASK_STATUSES.on_hold) if idx < on_hold_count
           end
+        Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
+          .take(foia_task_count).each { |task| task.update!(type: FoiaTask.name) }
       end
 
       after { FeatureToggle.disable!(:use_task_pages_api) }
@@ -551,16 +554,101 @@ RSpec.feature "Task queue", :all_dbs do
         expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, on_hold_count))
       end
 
-      context "when filtering tasks" do
-        let(:foia_task_count) { unassigned_count / 2 }
-
+      context "when following a deep link to paged results" do
         before do
-          Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
-            .take(foia_task_count).each { |task| task.update!(type: FoiaTask.name) }
-          visit(organization.path)
+          visit("#{organization.path}?#{query_string}")
         end
 
+        context "when specifying the tab name" do
+          let(:query_string) do
+            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME}"
+          end
+
+          it "opens the correct tab on load" do
+            expect(page.find(".cf-tab.cf-active")).to have_content(
+              format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count / 2)
+            )
+          end
+        end
+
+        context "when specifying sort column" do
+          let(:query_string) do
+            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
+            "&#{Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}"
+          end
+
+          it "sorts the correct column ascending" do
+            (1..foia_task_count).each do |index|
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
+            end
+            (foia_task_count + 1..unassigned_count).each do |index|
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(GenericTask.label)
+            end
+          end
+        end
+
+        context "when specifying sort order" do
+          let(:query_string) do
+            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
+            "&#{Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}"\
+            "&#{Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC}"
+          end
+
+          it "sorts the correct column descending" do
+            (1..foia_task_count).each do |index|
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(GenericTask.label)
+            end
+            (foia_task_count + 1..unassigned_count).each do |index|
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
+            end
+          end
+        end
+
+        context "when specifying the page number" do
+          let(:unassigned_count) { 20 }
+          let(:default_cases_for_page) { 15 }
+          let(:page_no) { 2 }
+
+          let(:query_string) do
+            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
+            "&#{Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM}=#{page_no}"
+          end
+
+          it "opens the correct tab on load" do
+            expect(page).to have_content(
+              "Viewing #{default_cases_for_page + 1}-#{unassigned_count} of #{unassigned_count} total"
+            )
+            page.find_all(".cf-current-page").each { |btn| expect(btn).to have_content(page_no) }
+            expect(find("tbody").find_all("tr").length).to eq(unassigned_count - default_cases_for_page)
+          end
+        end
+
+        context "when specifying filters" do
+          let(:escaped_query) do
+            {
+              Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM =>
+              ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{FoiaTask.name}"]
+            }.to_query
+          end
+
+          let(:query_string) do
+            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
+            "&#{escaped_query}"
+          end
+
+          it "filters tasks correctly" do
+            (1..foia_task_count).each do |index|
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
+            end
+            expect(find("tbody").find_all("tr").length).to eq(foia_task_count)
+            expect(find("tbody")).not_to have_content(GenericTask.label)
+          end
+        end
+      end
+
+      context "when filtering tasks" do
         it "shows the correct filters" do
+          visit(organization.path)
           expect(page).to have_content(
             format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
           )
@@ -570,6 +658,7 @@ RSpec.feature "Task queue", :all_dbs do
         end
 
         it "filters tasks correctly" do
+          visit(organization.path)
           expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
           page.find_all("path.unselected-filter-icon-inner").first.click
           page.find("label", text: "#{FoiaTask.label} (#{foia_task_count})").click

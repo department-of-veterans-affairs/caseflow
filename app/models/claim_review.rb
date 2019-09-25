@@ -80,30 +80,18 @@ class ClaimReview < DecisionReview
   # Save issues and assign it the appropriate end product establishment.
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
-    new_issues.each do |issue|
-      if processed_in_caseflow? || !issue.eligible?
-        issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
-      else
-        issue.update!(
-          end_product_establishment: end_product_establishment_for_issue(issue),
-          benefit_type: benefit_type,
-          veteran_participant_id: veteran.participant_id
-        )
-      end
-      RequestIssueCorrectionCleaner.new(issue).remove_dta_request_issue! if issue.correction?
-      issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
-    end
+    new_issues.each(&:create_for_claim_review!)
     request_issues.reload
-  end
-
-  def create_decision_review_task_if_required!
-    create_decision_review_task! if processed_in_caseflow?
   end
 
   def add_user_to_business_line!
     return unless processed_in_caseflow?
 
     OrganizationsUser.add_user_to_organization(RequestStore.store[:current_user], business_line)
+  end
+
+  def create_business_line_tasks!
+    create_decision_review_task! if processed_in_caseflow?
   end
 
   # Idempotent method to create all the artifacts for this claim.
@@ -225,6 +213,8 @@ class ClaimReview < DecisionReview
   end
 
   def end_product_establishment_for_issue(issue)
+    return unless issue.eligible? && processed_in_vbms?
+
     end_product_establishments.find_by(
       "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
       issue.end_product_code,
@@ -268,6 +258,7 @@ class ClaimReview < DecisionReview
 
   def create_decision_review_task!
     return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
+    return if request_issues.active.blank?
 
     DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
   end

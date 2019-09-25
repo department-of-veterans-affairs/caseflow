@@ -159,6 +159,19 @@ class TaskActionRepository
       }
     end
 
+    def address_motion_to_vacate_data(task, _user = nil)
+      attorney = task.appeal.assigned_attorney
+      {
+        selected: attorney,
+        options: users_to_options([JudgeTeam.for_judge(task.assigned_to)&.attorneys, attorney].flatten.compact.uniq),
+        type: PostDecisionMotion.name
+      }
+    end
+
+    def sign_motion_to_vacate_data(_task, _user = nil)
+      {}
+    end
+
     def assign_to_translation_team_data(_task, _user = nil)
       org = Translation.singleton
 
