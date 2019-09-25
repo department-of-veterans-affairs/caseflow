@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class JudgeRepository
+  # :nocov:
   def self.find_all_judges
     css_ids = judge_records.where.not(sdomainid: nil).pluck("UPPER(sdomainid)")
 
@@ -26,4 +27,5 @@ class JudgeRepository
   def self.judge_records
     VACOLS::Staff.where(svlj: %w[J A], sactive: "A")
   end
+  # :nocov:
 end
