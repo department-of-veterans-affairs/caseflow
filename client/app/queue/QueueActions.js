@@ -390,7 +390,7 @@ export const initialAssignTasksToUser = ({
 }) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   let params, url;
 
-  if (oldTask.appealType === 'Appeal') {
+  if (oldTask.appealType === 'Appeal' || !oldTask.isLegacy) {
     url = '/judge_assign_tasks';
     params = {
       data: {
@@ -417,7 +417,7 @@ export const initialAssignTasksToUser = ({
   return ApiUtil.post(url, params).
     then((resp) => resp.body).
     then((resp) => {
-      if (oldTask.appealType === 'Appeal') {
+      if (oldTask.appealType === 'Appeal'|| !oldTask.isLegacy) {
         const amaTasks = resp.tasks.data;
 
         dispatch(onReceiveAmaTasks(
@@ -446,7 +446,7 @@ export const reassignTasksToUser = ({
 }) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   let params, url;
 
-  if (oldTask.appealType === 'Appeal') {
+  if (oldTask.appealType === 'Appeal'|| !oldTask.isLegacy) {
     url = `/tasks/${oldTask.taskId}`;
     params = {
       data: {
@@ -472,7 +472,7 @@ export const reassignTasksToUser = ({
   return ApiUtil.patch(url, params).
     then((resp) => resp.body).
     then((resp) => {
-      if (oldTask.appealType === 'Appeal') {
+      if (oldTask.appealType === 'Appeal'|| !oldTask.isLegacy) {
         const amaTasks = resp.tasks.data;
 
         dispatch(onReceiveAmaTasks(
