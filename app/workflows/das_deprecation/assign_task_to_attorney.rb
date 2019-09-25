@@ -14,7 +14,6 @@ class DasDeprecation::AssignTaskToAttorney
     end
 
     def reassign_attorney_task(vacols_id, assigned_by, assigned_to)
-      binding.pry
       task = AttorneyTask.open.find_by(appeal_id: LegacyAppeal.find_by(vacols_id: vacols_id).id)
       task.update_from_params({ assigned_to_id: assigned_to.id }, assigned_by).first
     end
