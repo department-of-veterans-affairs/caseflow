@@ -70,7 +70,7 @@ export default class DropdownButton extends React.Component {
   render() {
     const { label } = this.props;
 
-    return <div className="cf-dropdown" ref={this.setWrapperRef} {...dropdownBtnContainer}>
+    return <div className="cf-dropdown" ref={this.setWrapperRef} {...dropdownBtnContainer} tabIndex="0">
       <a {...dropdownBtn}
         onClick={this.onMenuClick}
         className="cf-dropdown-trigger usa-button usa-button-secondary">
