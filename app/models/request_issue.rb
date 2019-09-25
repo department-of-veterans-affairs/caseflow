@@ -6,7 +6,7 @@ class RequestIssue < ApplicationRecord
   include DecisionSyncable
 
   # how many days before we give up trying to sync decisions
-  REQUIRES_PROCESSING_WINDOW_DAYS = 14
+  REQUIRES_PROCESSING_WINDOW_DAYS = 30
 
   # don't need to try as frequently as default 3 hours
   DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
