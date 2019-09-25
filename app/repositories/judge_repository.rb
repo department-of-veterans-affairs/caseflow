@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class JudgeRepository
+  # :nocov:
   def self.find_all_judges
     judge_records.select(&:sdomainid).map do |record|
       User.find_by_css_id_or_create_with_default_station_id(record.sdomainid)
@@ -22,4 +23,5 @@ class JudgeRepository
   def self.judge_records
     VACOLS::Staff.where(svlj: %w[J A], sactive: "A")
   end
+  # :nocov:
 end

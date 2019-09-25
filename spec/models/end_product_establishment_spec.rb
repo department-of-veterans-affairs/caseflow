@@ -386,7 +386,8 @@ describe EndProductEstablishment, :postgres do
         veteran_file_number: veteran_file_number,
         claim_id: end_product_establishment.reference_id,
         contentions: array_including(contentions),
-        user: current_user
+        user: current_user,
+        claim_date: 2.days.ago.to_date
       )
 
       expect(end_product_establishment.contentions.count).to eq(request_issues.count)
@@ -415,7 +416,8 @@ describe EndProductEstablishment, :postgres do
               code: "ASSOI", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O
             )
           ),
-          user: current_user
+          user: current_user,
+          claim_date: 2.days.ago.to_date
         )
       end
     end
@@ -457,7 +459,8 @@ describe EndProductEstablishment, :postgres do
               description: "I am contesting a dta decision",
               original_contention_ids: [101, 121]
             ),
-            user: current_user
+            user: current_user,
+            claim_date: 2.days.ago.to_date
           )
         end
       end
