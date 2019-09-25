@@ -12,19 +12,9 @@ context "api/docs/v3/decision_reviews.yaml" do
   it "has the correct benefit types" do
     benefit_types = Constants::ISSUE_CATEGORIES.keys
     benefit_types_in_spec = spec.dig(
-      "paths",
-      "/higher_level_reviews",
-      "post",
-      "requestBody",
-      "content",
-      "application/vnd.api+json",
-      "schema",
-      "properties",
-      "data",
-      "properties",
-      "attributes",
-      "properties",
-      "benefitType",
+      "components",
+      "schemas",
+      "benefit_type",
       "enum"
     )
     expect(benefit_types_in_spec).to match_array(benefit_types)
