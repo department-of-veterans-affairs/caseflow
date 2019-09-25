@@ -418,7 +418,7 @@ class Veteran < ApplicationRecord
   end
 
   def military_address?
-    !military_postal_type_code.blank?
+    military_postal_type_code.present?
   end
 
   def base_vbms_hash
