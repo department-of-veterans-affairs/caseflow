@@ -5,7 +5,7 @@ import StatusMessage from '../components/StatusMessage';
 import TaskTable from './components/TaskTable';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { reassignTasksToUser } from './QueueActions';
+import { reassignTasksToUser, fetchTasksAndAppealsOfAttorney, fetchAmaTasksOfUser } from './QueueActions';
 import { selectedTasksSelector, getAssignedTasks } from './selectors';
 import AssignWidget from './components/AssignWidget';
 import {
@@ -18,6 +18,7 @@ class AssignedCasesPage extends React.Component {
   componentDidMount = () => {
     this.props.resetSuccessMessages();
     this.props.resetErrorMessages();
+    this.fetchAttorneyTasks();
   }
 
   componentDidUpdate = (prevProps) => {
@@ -27,6 +28,17 @@ class AssignedCasesPage extends React.Component {
     if (attorneyId !== prevAttorneyId) {
       this.props.resetSuccessMessages();
       this.props.resetErrorMessages();
+      this.fetchAttorneyTasks();
+    }
+  }
+
+  fetchAttorneyTasks = () => {
+    const { match, attorneyAppealsLoadingState } = this.props;
+    const { attorneyId } = match.params;
+
+    if (!attorneyAppealsLoadingState || !(attorneyId in attorneyAppealsLoadingState)) {
+      this.props.fetchTasksAndAppealsOfAttorney(attorneyId, { role: 'judge' });
+      this.props.fetchAmaTasksOfUser(attorneyId, 'attorney');
     }
   }
 
@@ -102,5 +114,7 @@ export default (connect(
   (dispatch) => (bindActionCreators({
     reassignTasksToUser,
     resetErrorMessages,
-    resetSuccessMessages
+    resetSuccessMessages,
+    fetchTasksAndAppealsOfAttorney,
+    fetchAmaTasksOfUser
   }, dispatch)))(AssignedCasesPage));
