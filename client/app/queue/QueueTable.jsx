@@ -444,6 +444,7 @@ export default class QueueTable extends React.PureComponent {
     if (useTaskPagesApi) {
       if (this.state.tasksFromApi != null) {
         rowObjects = this.state.tasksFromApi;
+        numberOfPages = Math.ceil(rowObjects.length / casesPerPage) 
       }
     } else {
       // Steps to calculate table data to display:
