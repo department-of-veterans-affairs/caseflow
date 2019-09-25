@@ -362,6 +362,23 @@ export const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   }
+  case ACTIONS.INCREASE_TASK_COUNT_FOR_ATTORNEY: {
+    const {
+      attorneysOfJudge
+    } = state;
+
+    for (const attorney in attorneysOfJudge) {
+      if (action.payload.attorney.id === attorney.id.toString()) {
+        attorney.active_task_count += 1;
+      }
+    }
+
+    return update(state, {
+      attorneysOfJudge: {
+        $set: attorneysOfJudge
+      }
+    });
+  }
   case ACTIONS.SET_ATTORNEYS_OF_JUDGE:
     return update(state, {
       attorneysOfJudge: {
