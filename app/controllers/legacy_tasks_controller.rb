@@ -39,6 +39,14 @@ class LegacyTasksController < ApplicationController
       return assign_to_judge
     end
 
+    if DasDeprecation::AssignTaskToAttorney.should_perform_workflow?(legacy_task_params[:appeal_id])
+      appeal = LegacyAppeal.find(legacy_task_params[:appeal_id])
+      task = DasDeprecation::AssignTaskToAttorney.create_attorney_task(appeal.vacols_id, current_user, assigned_to)
+      return render json: {
+        task: ::WorkQueue::TaskSerializer.new(task)
+      }
+    end
+
     task = JudgeCaseAssignmentToAttorney.create(legacy_task_params)
     return invalid_record_error(task) unless task.valid?
 
@@ -67,6 +75,15 @@ class LegacyTasksController < ApplicationController
   end
 
   def update
+    if DasDeprecation::AssignTaskToAttorney.should_perform_workflow?(legacy_task_params[:appeal_id])
+      appeal = LegacyAppeal.find(legacy_task_params[:appeal_id])
+      assigned_to = legacy_task_params[:assigned_to]
+      task = DasDeprecation::AssignTaskToAttorney.reassign_attorney_task(appeal.vacols_id, current_user, assigned_to)
+      return render json: {
+        task: ::WorkQueue::TaskSerializer.new(task)
+      }
+    end
+
     task = JudgeCaseAssignmentToAttorney.update(legacy_task_params.merge(task_id: params[:id]))
 
     return invalid_record_error(task) unless task.valid?
