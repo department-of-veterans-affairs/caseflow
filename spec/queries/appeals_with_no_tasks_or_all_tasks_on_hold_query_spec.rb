@@ -18,12 +18,21 @@ describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
     create(:decision_document, appeal: appeal)
     appeal
   end
+  let!(:dispatched_appeal_on_hold) do
+    appeal = create(:appeal, :with_post_intake_tasks)
+    create(:bva_dispatch_task, :completed, appeal: appeal)
+    appeal
+  end
 
   describe "#call" do
     subject { described_class.new.call }
 
+    let(:stuck_appeals) do
+      [appeal_with_zero_tasks, appeal_with_all_tasks_on_hold, dispatched_appeal_on_hold]
+    end
+
     it "returns array of appeals that look stuck" do
-      expect(subject).to match_array([appeal_with_zero_tasks, appeal_with_all_tasks_on_hold])
+      expect(subject).to match_array(stuck_appeals)
     end
   end
 end
