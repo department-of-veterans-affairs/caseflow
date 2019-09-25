@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 class CreateJudgeAssignTasksForAppeals
-  def initialize(appeals:, genpop:, judge:)
+  def initialize(appeals:, judge:)
     @appeals = appeals
-    @genpop = genpop
     @judge = judge
   end
 
@@ -11,11 +10,11 @@ class CreateJudgeAssignTasksForAppeals
     return [] if appeals.empty?
 
     appeals.map do |appeal|
-      JudgeAssignTaskCreator.new(appeal: appeal, judge: judge, genpop: genpop).call
+      JudgeAssignTaskCreator.new(appeal: appeal, judge: judge).call
     end
   end
 
   private
 
-  attr_reader :appeals, :genpop, :judge
+  attr_reader :appeals, :judge
 end

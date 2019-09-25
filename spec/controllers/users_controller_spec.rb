@@ -74,7 +74,12 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
   end
 
   describe "GET /users?role=HearingCoordinator" do
-    let!(:coordinators) { create_list(:staff, 3, :hearing_coordinator) }
+    let!(:users) { create_list(:user, 3) }
+    before do
+      users.each do |user|
+        OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+      end
+    end
 
     context "when role is passed" do
       it "should return a list of hearing coordinators" do

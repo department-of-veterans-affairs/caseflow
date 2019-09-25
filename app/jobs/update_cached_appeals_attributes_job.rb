@@ -27,7 +27,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def cache_ama_appeals
-    appeals = Appeal.find(open_appeals_from_tasks)
+    appeals = Appeal.where(id: open_appeals_from_tasks)
     request_issues_to_cache = request_issue_counts_for_appeal_ids(appeals.pluck(:id))
     veteran_names_to_cache = veteran_names_for_file_numbers(appeals.pluck(:veteran_file_number))
     appeal_assignees_to_cache = assignees_for_caseflow_appeal_ids(appeals.pluck(:id), Appeal.name)
@@ -42,6 +42,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         assignee_label: appeal_assignees_to_cache[appeal.id],
         case_type: appeal.type,
         closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
+        closest_regional_office_key: regional_office ? appeal.closest_regional_office : COPY::UNKNOWN_REGIONAL_OFFICE,
         issue_count: request_issues_to_cache[appeal.id] || 0,
         docket_type: appeal.docket_type,
         docket_number: appeal.docket_number,
@@ -53,6 +54,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     update_columns = [:assignee_label,
                       :case_type,
                       :closest_regional_office_city,
+                      :closest_regional_office_key,
                       :docket_type,
                       :docket_number,
                       :is_aod,
@@ -73,7 +75,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def cache_legacy_appeals
     # Avoid lazy evaluation bugs by immediately plucking all VACOLS IDs. Lazy evaluation of the LegacyAppeal.find(...)
     # was previously causing this code to insert legacy appeal attributes that corresponded to NULL ID fields.
-    legacy_appeals = LegacyAppeal.find(Task.open.where(appeal_type: LegacyAppeal.name).pluck(:appeal_id).uniq)
+    legacy_appeals = LegacyAppeal.where(id: Task.open.where(appeal_type: LegacyAppeal.name).pluck(:appeal_id).uniq)
     all_vacols_ids = legacy_appeals.pluck(:vacols_id).flatten
 
     cache_postgres_data_start = Time.zone.now
@@ -95,6 +97,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         appeal_id: appeal.id,
         appeal_type: LegacyAppeal.name,
         closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
+        closest_regional_office_key: regional_office ? appeal.closest_regional_office : COPY::UNKNOWN_REGIONAL_OFFICE,
         docket_type: appeal.docket_name # "legacy"
       }
     end
@@ -102,6 +105,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
                                                                     columns: [
                                                                       :closest_regional_office_city,
+                                                                      :closest_regional_office_key,
                                                                       :vacols_id,
                                                                       :docket_type
                                                                     ] }
