@@ -9,6 +9,7 @@ class DataIntegrityChecksJob < CaseflowJob
     ExpiredAsyncJobsChecker
     OpenHearingTasksWithoutActiveDescendantsChecker
     OpenTasksWithClosedAtChecker
+    StuckAppealsChecker
     UntrackedLegacyAppealsChecker
   ].freeze
 
