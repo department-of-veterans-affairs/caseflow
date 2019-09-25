@@ -16,6 +16,7 @@ class AClaimReview
   end
 
   def establish!; end
+  def sort_by_last_submitted_at; end
 end
 
 describe DecisionReviewProcessJob do
@@ -61,6 +62,18 @@ describe DecisionReviewProcessJob do
       subject
 
       expect(claim_review.error).to eq(vbms_error.inspect)
+      expect(@raven_called).to be_falsey
+    end
+  end
+
+  context "job is retried after 4 hours" do
+    it "does not send error to sentry" do
+      allow(claim_review).to receive(:sort_by_last_submitted_at) { 4.hours.ago }
+      allow(claim_review).to receive(:establish!).and_raise(vbms_error)
+      capture_raven_log
+
+      subject
+
       expect(@raven_called).to be_falsey
     end
   end

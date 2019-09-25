@@ -37,7 +37,7 @@ class DecisionReviewProcessJob < CaseflowJob
   attr_reader :decision_review
 
   def ok_to_ping_sentry?
-    decision_review.sort_by_last_submitted_at > (Time.zone.now - 1.day)
+    decision_review.sort_by_last_submitted_at > (Time.zone.now - 4.hours)
   end
 
   def add_extra_context_to_sentry
