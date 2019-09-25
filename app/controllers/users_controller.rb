@@ -8,7 +8,7 @@ class UsersController < ApplicationController
     when Constants::USER_ROLE_TYPES["judge"]
       return render json: { judges: Judge.list_all }
     when Constants::USER_ROLE_TYPES["attorney"]
-      return render json: { attorneys: Judge.new(judge).attorneys } if params[:judge_id]
+      return render json: { attorneys: json_attorneys(Judge.new(judge).attorneys) } if params[:judge_id]
 
       return render json: { attorneys: Attorney.list_all }
     when Constants::USER_ROLE_TYPES["hearing_coordinator"]
@@ -33,5 +33,9 @@ class UsersController < ApplicationController
 
   def json_users(users)
     ::WorkQueue::UserSerializer.new(users, is_collection: true)
+  end
+
+  def json_attorneys(users)
+    AttorneySerializer.new(users)
   end
 end

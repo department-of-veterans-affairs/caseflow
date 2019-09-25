@@ -95,7 +95,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
               {attorneysOfJudge.
                 map((attorney) => <li key={attorney.id}>
                   <NavLink to={`/queue/${userId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
-                    {attorney.full_name} ({this.caseCountOfAttorney(attorney.id)})
+                    {attorney.full_name} ({attorney.active_task_count})
                   </NavLink>
                 </li>)}
             </ul>

@@ -365,7 +365,7 @@ export const workQueueReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_ATTORNEYS_OF_JUDGE:
     return update(state, {
       attorneysOfJudge: {
-        $set: action.payload.attorneys
+        $set: action.payload.attorneys.data.map((attorney) => attorney.attributes)
       }
     });
   case ACTIONS.REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY:
