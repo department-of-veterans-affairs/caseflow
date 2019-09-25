@@ -409,8 +409,10 @@ describe EndProductEstablishment, :postgres do
           claim_id: end_product_establishment.reference_id,
           contentions: array_including(
             { description: "this is a big decision",
-              special_issues: [{ code: "SSR", narrative: "Same Station Review" }] },
+              special_issues: [{ code: "SSR", narrative: "Same Station Review" }],
+              contention_type: Constants.CONTENTION_TYPES.higher_level_review },
             description: "more decisionz",
+            contention_type: Constants.CONTENTION_TYPES.higher_level_review,
             special_issues: array_including(
               { code: "SSR", narrative: "Same Station Review" },
               code: "ASSOI", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O

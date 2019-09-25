@@ -515,7 +515,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: veteran.file_number,
         claim_id: rating_ep_claim_id,
-        contentions: [{ description: "Left knee granted", contention_type: Constants.CONTENTION_TYPES.supplemental_claim }],
+        contentions: [{ description: "Left knee granted",
+                        contention_type: Constants.CONTENTION_TYPES.supplemental_claim }],
         user: current_user,
         claim_date: supplemental_claim.receipt_date.to_date
       )
