@@ -32,6 +32,10 @@ class ContestableIssue
     end
 
     def from_decision_issue(decision_issue, contesting_decision_review)
+      # Do not send source review for decision issues from the same review
+      # This indicates a decision correction, and checking lane-to-lane eligibility is not applicable
+      source = (contesting_decision_review == decision_issue.decision_review) ? nil : decision_issue.decision_review
+
       new(
         rating_issue_reference_id: decision_issue.rating_issue_reference_id,
         rating_issue_profile_date: decision_issue.rating_profile_date.try(:to_date),
@@ -39,7 +43,7 @@ class ContestableIssue
         description: decision_issue.description,
         decision_issue: decision_issue,
         source_request_issues: decision_issue.request_issues.active,
-        source_decision_review: decision_issue.decision_review,
+        source_decision_review: source,
         contesting_decision_review: contesting_decision_review,
         is_rating: decision_issue.rating?
       )
@@ -135,8 +139,9 @@ class ContestableIssue
 
   def conflicting_request_issue_by_decision_issue
     return unless decision_issue&.id
+    return unless source_decision_review
 
-    potentially_conflicting_request_issues.find_by(contested_decision_issue_id: decision_issue.id)
+    potentially_conflicting_request_issues.find_by(contested_decision_issue_id: decision_issue.id, correction_type: nil)
   end
 
   def potentially_conflicting_request_issues
