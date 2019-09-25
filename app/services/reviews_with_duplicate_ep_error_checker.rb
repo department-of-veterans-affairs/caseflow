@@ -25,7 +25,7 @@ class ReviewsWithDuplicateEpErrorChecker < DataIntegrityChecker
       review.veteran.end_products.select do |ep|
         ep.claim_type_code.include?(modifier) &&
           %w[CAN CLR].include?(ep.status_type_code) &&
-          [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+          [Time.zone.today, 1.day.ago.to_date].include?(ep.last_action_date)
       end.empty?
     end
   end
