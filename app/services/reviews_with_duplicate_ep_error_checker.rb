@@ -22,11 +22,11 @@ class ReviewsWithDuplicateEpErrorChecker < DataIntegrityChecker
 
   def problem_reviews(reviews:, type:)
     reviews.select do |review|
-      review.veteran&.end_products&.select do |ep|
-        ep.claim_type_code&.include?(type) &&
+      review.veteran.end_products.select do |ep|
+        ep.claim_type_code.include?(type) &&
           %w[CAN CLR].include?(ep.status_type_code) &&
           [Time.zone.today, 1.day.ago.to_date].include?(ep.last_action_date)
-      end&.empty?
+      end.empty?
     end
   end
 
