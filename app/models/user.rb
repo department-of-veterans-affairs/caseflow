@@ -413,7 +413,7 @@ class User < ApplicationRecord
     end
 
     def batch_find_by_css_id_or_create_with_default_station_id(css_ids)
-      normalized_css_ids = css_ids.map(&:upcase)
+      normalized_css_ids = css_ids.map(&:upcase).uniq
       new_user_css_ids = normalized_css_ids - User.where(css_id: normalized_css_ids).pluck(:css_id)
       User.create(new_user_css_ids.map { |css_id| { css_id: css_id, station_id: User::BOARD_STATION_ID } })
       User.where(css_id: normalized_css_ids)
