@@ -663,6 +663,10 @@ class Appeal < DecisionReview
     end
   end
 
+  def stuck?
+    AppealsWithNoTasksOrAllTasksOnHoldQuery.new.ama_appeal_stuck?(self)
+  end
+
   private
 
   def most_recently_assigned_to_label(tasks)

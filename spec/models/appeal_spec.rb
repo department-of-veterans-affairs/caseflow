@@ -1178,4 +1178,18 @@ describe Appeal, :all_dbs do
       end
     end
   end
+
+  describe "#stuck?" do
+    context "Appeal has BvaDispatchTask completed but still on hold" do
+      let(:appeal) do
+        appeal = create(:appeal, :with_post_intake_tasks)
+        create(:bva_dispatch_task, :completed, appeal: appeal)
+        appeal
+      end
+
+      it "returns true" do
+        expect(appeal.stuck?).to eq(true)
+      end
+    end
+  end
 end

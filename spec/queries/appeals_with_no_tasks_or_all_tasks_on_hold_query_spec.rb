@@ -35,4 +35,38 @@ describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
       expect(subject).to match_array(stuck_appeals)
     end
   end
+
+  describe "#ama_appeal_stuck?" do
+    subject { described_class.new.ama_appeal_stuck?(appeal) }
+
+    context "appeal_with_zero_tasks" do
+      let(:appeal) { appeal_with_zero_tasks }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "appeal_with_tasks" do
+      let(:appeal) { appeal_with_tasks }
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "appeal_with_all_tasks_on_hold" do
+      let(:appeal) { appeal_with_all_tasks_on_hold }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "appeal_with_decision_documents" do
+      let(:appeal) { appeal_with_decision_documents }
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "dispatched_appeal_on_hold" do
+      let(:appeal) { dispatched_appeal_on_hold }
+
+      it { is_expected.to eq(true) }
+    end
+  end
 end
