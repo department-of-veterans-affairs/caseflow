@@ -227,10 +227,9 @@ export default class QueueTable extends React.PureComponent {
   }
 
   componentDidMount = () => {
-    // TODO: Populate these values properly.
     const firstResponse = {
-      // task_page_count: ,
-      // tasks_per_page: ,
+      task_page_count: this.props.numberOfPages,
+      tasks_per_page: this.props.casesPerPage,
       total_task_count: this.props.rowObjects.length,
       tasks: this.props.rowObjects
     };
@@ -452,6 +451,8 @@ export default class QueueTable extends React.PureComponent {
     let { totalTaskCount, numberOfPages, rowObjects, casesPerPage } = this.props;
 
     if (useTaskPagesApi) {
+      // Use null instead of array length of zero because the intersection of several filters may result in an empty
+      // array of rows being returned from the API.
       if (this.state.tasksFromApi !== null) {
         rowObjects = this.state.tasksFromApi;
 
@@ -463,8 +464,6 @@ export default class QueueTable extends React.PureComponent {
           numberOfPages = responseFromCache.task_page_count;
           totalTaskCount = responseFromCache.total_task_count;
         }
-
-        // TODO: Page shows to tasks when clearing filters. Figure out what's going on there.
       }
     } else {
       // Steps to calculate table data to display:
@@ -499,9 +498,7 @@ export default class QueueTable extends React.PureComponent {
 
     let paginationElements = null;
 
-    // debugger;
-
-    if (enablePagination) {
+    if (enablePagination && !this.state.loadingComponent) {
       paginationElements = <Pagination
         pageSize={casesPerPage}
         currentPage={this.state.currentPage + 1}
