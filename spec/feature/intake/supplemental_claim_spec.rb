@@ -267,14 +267,20 @@ feature "Supplemental Claim Intake", :all_dbs do
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: veteran_file_number,
       claim_id: ratings_end_product_establishment.reference_id,
-      contentions: [{ description: "PTSD denied" }],
+      contentions: [{
+        description: "PTSD denied",
+        contention_type: Constants.CONTENTION_TYPES.supplemental_claim
+      }],
       user: current_user,
       claim_date: supplemental_claim.receipt_date.to_date
     )
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: veteran_file_number,
       claim_id: nonratings_end_product_establishment.reference_id,
-      contentions: [{ description: "Active Duty Adjustments - Description for Active Duty Adjustments" }],
+      contentions: [{
+        description: "Active Duty Adjustments - Description for Active Duty Adjustments",
+        contention_type: Constants.CONTENTION_TYPES.supplemental_claim
+      }],
       user: current_user,
       claim_date: supplemental_claim.receipt_date.to_date
     )
@@ -666,19 +672,27 @@ feature "Supplemental Claim Intake", :all_dbs do
 
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
         hash_including(
-          contentions: array_including(description: "Old injury")
+          contentions: array_including(
+            description: "Old injury",
+            contention_type: Constants.CONTENTION_TYPES.supplemental_claim
+          )
         )
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
-        hash_including(contentions: array_including(description: old_rating_decision_text))
+        hash_including(contentions: array_including(
+          description: old_rating_decision_text,
+          contention_type: Constants.CONTENTION_TYPES.supplemental_claim
+        ))
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         hash_including(
           contentions: array_including(
-            { description: "Left knee granted 2" },
-            description: "Really old injury"
+            { description: "Left knee granted 2",
+              contention_type: Constants.CONTENTION_TYPES.supplemental_claim },
+            description: "Really old injury",
+            contention_type: Constants.CONTENTION_TYPES.supplemental_claim
           )
         )
       )
