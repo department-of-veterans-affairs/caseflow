@@ -395,6 +395,10 @@ class Task < ApplicationRecord
       parent.assigned_to.user_has_access?(user)
   end
 
+  def assigned_to_vso_user?
+    assigned_to.is_a?(User) && assigned_to.vso_employee?
+  end
+
   def can_be_updated_by_user?(user)
     available_actions_unwrapper(user).any?
   end
