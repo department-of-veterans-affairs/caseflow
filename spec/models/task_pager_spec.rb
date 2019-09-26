@@ -84,14 +84,16 @@ describe TaskPager, :all_dbs do
   describe ".paged_tasks" do
     let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
-    let(:page) { 1 }
+    let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, page: page } }
 
-    before { create_list(:generic_task, TaskPager::TASKS_PER_PAGE + 1, assigned_to: assignee) }
+    before { create_list(:generic_task, task_count, assigned_to: assignee) }
 
     subject { TaskPager.new(arguments).paged_tasks }
 
     context "when the first page of tasks is requested" do
+      let(:page) { 1 }
+
       it "returns a full page of tasks" do
         expect(subject.count).to eq(TaskPager::TASKS_PER_PAGE)
       end
@@ -110,6 +112,41 @@ describe TaskPager, :all_dbs do
 
       it "returns a single task" do
         expect(subject.count).to eq(1)
+      end
+    end
+  end
+
+  describe ".total_task_count" do
+    let(:assignee) { create(:organization) }
+    let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
+    let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }
+    let(:arguments) { { assignee: assignee, tab_name: tab_name, page: page } }
+
+    before { create_list(:generic_task, task_count, assigned_to: assignee) }
+
+    subject { TaskPager.new(arguments).total_task_count }
+
+    context "when the first page of tasks is requested" do
+      let(:page) { 1 }
+
+      it "returns the total task count" do
+        expect(subject).to eq(task_count)
+      end
+    end
+
+    context "when the page argument is nil" do
+      let(:page) { nil }
+
+      it "returns the total task count" do
+        expect(subject).to eq(task_count)
+      end
+    end
+
+    context "when the second page of tasks is requested" do
+      let(:page) { 2 }
+
+      it "returns the total task count" do
+        expect(subject).to eq(task_count)
       end
     end
   end
