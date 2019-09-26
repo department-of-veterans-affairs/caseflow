@@ -45,6 +45,23 @@ describe InformalHearingPresentationTask, :postgres do
       end
     end
 
+    context "when task is assigned to another user in organization the user is an admin of" do
+      let(:org) { create(:organization) }
+      let(:another_user) { create(:user, roles: ["VSO"]) }
+      let(:org_task) { create(:informal_hearing_presentation_task, assigned_to: org) }
+      let(:task) { create(:informal_hearing_presentation_task, assigned_to: another_user, parent: org_task) }
+      let(:expected_actions) { [Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h] }
+
+      before do
+        allow_any_instance_of(Organization).to receive(:user_has_access?).and_return(true)
+        OrganizationsUser.make_user_admin(user, org)
+      end
+
+      it "should return team reassign action" do
+        expect(subject).to eq(expected_actions)
+      end
+    end
+
     context "when task is assigned to user" do
       let(:task) do
         InformalHearingPresentationTask.find(create(:informal_hearing_presentation_task).id)
