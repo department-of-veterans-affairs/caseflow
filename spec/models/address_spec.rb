@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Address, focus: true do
+describe Address do
   context ".full_address" do
     let(:address_line_1) { "1118 Burlington Street" }
     let(:address_line_2) { nil }
