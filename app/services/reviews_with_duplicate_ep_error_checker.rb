@@ -13,17 +13,17 @@ class ReviewsWithDuplicateEpErrorChecker < DataIntegrityChecker
   REFERENCE_LINK = "https://github.com/department-of-veterans-affairs/caseflow/issues/11081#issue-455423675"
 
   def problem_higher_level_reviews
-    problem_reviews(reviews: HigherLevelReview.where(ERROR_SELECTOR), modifier: "030")
+    problem_reviews(reviews: HigherLevelReview.where(ERROR_SELECTOR), type: "030")
   end
 
   def problem_supplemental_claims
-    problem_reviews(reviews: SupplementalClaim.where(ERROR_SELECTOR), modifier: "040")
+    problem_reviews(reviews: SupplementalClaim.where(ERROR_SELECTOR), type: "040")
   end
 
-  def problem_reviews(reviews:, modifier:)
+  def problem_reviews(reviews:, type:)
     reviews.select do |review|
       review.veteran.end_products.select do |ep|
-        ep.claim_type_code.include?(modifier) &&
+        ep.claim_type_code.include?(type) &&
           %w[CAN CLR].include?(ep.status_type_code) &&
           [Time.zone.today, 1.day.ago.to_date].include?(ep.last_action_date)
       end.empty?
