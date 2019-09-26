@@ -23,7 +23,7 @@ class Address
   end
 
   def full_address
-    addr = "#{address_line_1}"
+    addr = address_line_1.to_s
     addr += " #{address_line_2}" unless address_line_2.blank?
     addr += " #{address_line_3}" unless address_line_3.blank?
     addr += ", #{city} #{state} #{zip}"
