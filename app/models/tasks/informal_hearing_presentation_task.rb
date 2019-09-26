@@ -20,6 +20,12 @@ class InformalHearingPresentationTask < Task
       ]
     end
 
+    if task_is_assigned_to_user_within_organization?(user) && parent.assigned_to.user_is_admin?(user)
+      return [
+        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
+      ]
+    end
+
     if task_is_assigned_to_users_organization?(user)
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
