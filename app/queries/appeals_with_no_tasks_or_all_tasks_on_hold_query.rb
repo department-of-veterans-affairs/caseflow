@@ -5,6 +5,10 @@ class AppealsWithNoTasksOrAllTasksOnHoldQuery
     [stuck_appeals, appeals_with_zero_tasks, dispatched_appeals_on_hold].flatten
   end
 
+  def ama_appeal_stuck?(appeal)
+    call.include?(appeal)
+  end
+
   private
 
   def on_hold
@@ -20,17 +24,17 @@ class AppealsWithNoTasksOrAllTasksOnHoldQuery
   end
 
   def dispatched_appeals_on_hold
-    Appeal.where(id: tasks_for("Appeal")
-      .where(type: "RootTask", status: on_hold))
-      .where(id: completed_dispatch_tasks("Appeal"))
+    Appeal.where(id: tasks_for(Appeal.name)
+      .where(type: RootTask.name, status: on_hold))
+      .where(id: completed_dispatch_tasks(Appeal.name))
   end
 
   def stuck_appeals
-    stuck_query("Appeal")
+    stuck_query(Appeal.name)
   end
 
   def completed_dispatch_tasks(klass_name)
-    tasks_for(klass_name).where(type: %w[BvaDispatchTask QualityReviewTask], status: completed)
+    tasks_for(klass_name).where(type: [BvaDispatchTask.name, QualityReviewTask.name], status: completed)
   end
 
   def established_appeals
@@ -49,7 +53,7 @@ class AppealsWithNoTasksOrAllTasksOnHoldQuery
     klass = klass_name.constantize
     table = klass.table_name
     klass.where.not(id: tasks_for(klass_name).closed)
-      .where.not(id: tasks_for(klass_name).where(type: "RootTask", status: cancelled))
+      .where.not(id: tasks_for(klass_name).where(type: RootTask.name, status: cancelled))
       .joins(:tasks)
       .group("#{table}.id")
       .having("count(tasks) = count(case when tasks.status = 'on_hold' then 1 end)")
