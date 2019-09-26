@@ -1065,11 +1065,11 @@ feature "Higher Level Review Edit issues", :all_dbs do
         veteran_file_number: veteran.file_number,
         claim_id: rating_epe.reference_id,
         contentions: array_including(
-          { description: RequestIssue::UNIDENTIFIED_ISSUE_MSG, 
-            contention_type: Constants.CONTENTION_TYPES.higher_level_review  },
-          { description: "Left knee granted", 
+          { description: RequestIssue::UNIDENTIFIED_ISSUE_MSG,
             contention_type: Constants.CONTENTION_TYPES.higher_level_review },
-          { description: "Issue before AMA Activation from RAMP", 
+          { description: "Left knee granted",
+            contention_type: Constants.CONTENTION_TYPES.higher_level_review },
+          { description: "Issue before AMA Activation from RAMP",
             contention_type: Constants.CONTENTION_TYPES.higher_level_review },
           description: "PTSD denied",
           contention_type: Constants.CONTENTION_TYPES.higher_level_review
