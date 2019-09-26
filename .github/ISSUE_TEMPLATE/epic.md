@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 ### Background/context
-Imagine that your reader only has a superficial understanding of the product area, and this is your opportunity to highlight the need for this project to exist and to be accomplished. Usually, there is a problem to be solved or an experience that can be improved.test fffsdfffasdfasdasfd
+Imagine that your reader only has a superficial understanding of the product area, and this is your opportunity to highlight the need for this project to exist and to be accomplished. Usually, there is a problem to be solved or an experience that can be improved.
 
 This section can be short -- even one or two paragraphs can suffice -- but it should establish sufficient background and context.
 
