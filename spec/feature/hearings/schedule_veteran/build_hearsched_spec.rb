@@ -27,16 +27,8 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         bfcurloc: "CASEFLOW"
       )
     end
-    let!(:legacy_appeal) do
-      create(
-        :legacy_appeal, vacols_case: vacols_case
-      )
-    end
-    let!(:schedule_hearing_task) do
-      create(
-        :schedule_hearing_task, appeal: legacy_appeal
-      )
-    end
+    let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: legacy_appeal) }
 
     let!(:veteran) { create(:veteran, file_number: "123454787") }
     let!(:hearing_location_dropdown_label) { "Hearing Location" }

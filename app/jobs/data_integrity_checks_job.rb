@@ -10,6 +10,7 @@ class DataIntegrityChecksJob < CaseflowJob
     OpenHearingTasksWithoutActiveDescendantsChecker
     OpenTasksWithClosedAtChecker
     ReviewsWithDuplicateEpErrorChecker
+    StuckAppealsChecker
     UntrackedLegacyAppealsChecker
   ].freeze
 

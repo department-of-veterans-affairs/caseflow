@@ -3,13 +3,13 @@
 require "support/database_cleaner"
 require "rails_helper"
 
-describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
+describe StuckAppealsChecker, :postgres do
   let!(:appeal_with_zero_tasks) { create(:appeal) }
   let!(:appeal_with_tasks) { create(:appeal, :with_post_intake_tasks) }
   let!(:appeal_with_all_tasks_on_hold) do
     appeal = create(:appeal, :with_post_intake_tasks)
     hearing_task = create(:hearing_task, appeal: appeal, parent: appeal.root_task)
-    schedule_hearing_task = create(:schedule_hearing_task, appeal: appeal, parent: hearing_task)
+    create(:schedule_hearing_task, appeal: appeal, parent: hearing_task)
     appeal.root_task.descendants.each(&:on_hold!)
     appeal
   end
@@ -25,14 +25,11 @@ describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
   end
 
   describe "#call" do
-    subject { described_class.new.call }
+    it "reports 3 appeals stuck" do
+      subject.call
 
-    let(:stuck_appeals) do
-      [appeal_with_zero_tasks, appeal_with_all_tasks_on_hold, dispatched_appeal_on_hold]
-    end
-
-    it "returns array of appeals that look stuck" do
-      expect(subject).to match_array(stuck_appeals)
+      expect(subject.report?).to eq(true)
+      expect(subject.report).to match(/^Stuck Appeals: 3 reported/)
     end
   end
 end
