@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
+require "support/database_cleaner"
 require "rails_helper"
 
-describe ReviewsWithDuplicateEpErrorChecker, :all_dbs do
+describe ReviewsWithDuplicateEpErrorChecker, :postgres do
   # create a test ep
   def new_ep(veteran_file_number, status_type_code, last_action_date, claim_type_code)
     Generators::EndProduct.build(
