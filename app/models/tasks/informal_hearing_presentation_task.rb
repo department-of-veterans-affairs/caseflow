@@ -12,29 +12,41 @@ class InformalHearingPresentationTask < Task
 
   def available_actions(user)
     if assigned_to == user
-      return [
-        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
-        Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
-        Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
-        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
-      ]
+      return user_actions
     end
 
     if task_is_assigned_to_user_within_organization?(user) && parent.assigned_to.user_is_admin?(user)
-      return [
-        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
-      ]
+      return admin_actions
     end
 
     if task_is_assigned_to_users_organization?(user)
-      return [
-        Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
-        Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
-        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
-      ]
+      return org_actions
     end
 
     []
+  end
+
+  def user_actions
+    [
+      Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
+      Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+      Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+      Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+    ]
+  end
+
+  def admin_actions
+    [
+      Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
+    ]
+  end
+
+  def org_actions
+    [
+      Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
+      Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+      Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+    ]
   end
 
   def self.label

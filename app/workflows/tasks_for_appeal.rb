@@ -31,9 +31,7 @@ class TasksForAppeal
     appeal.tasks
       .includes(*task_includes)
       .select do |task|
-        task.assigned_to.is_a?(Representative) ||
-          (task.assigned_to.is_a?(User) && task.assigned_to.vso_employee?) ||
-          user == task.assigned_to
+        task.assigned_to.is_a?(Representative) || task.assigned_to_vso_user? || user == task.assigned_to
       end
   end
 
