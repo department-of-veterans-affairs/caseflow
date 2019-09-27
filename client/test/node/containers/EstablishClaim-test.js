@@ -45,8 +45,6 @@ describe('EstablishClaim', () => {
         }
       };
 
-      console.log('Moo?!?');
-
       wrapper = mount(
         <EstablishClaim
           regionalOfficeCities={regionalOfficeCities}
@@ -60,8 +58,6 @@ describe('EstablishClaim', () => {
           wrappingComponent: WrappingComponent
         }
       );
-
-      console.log(wrapper.debug());
     });
 
     context('navigation', () => {
