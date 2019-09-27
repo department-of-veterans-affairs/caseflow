@@ -107,7 +107,7 @@ class TableFilter extends React.PureComponent {
 
     return this.state.open || (filteredByList[columnName] || []).length > 0;
   }
-
+// move to dropdown button???
   toggleDropdown = () => this.setState({ open: !this.state.open });
 
   hideDropdown = () => this.setState({ open: false });
