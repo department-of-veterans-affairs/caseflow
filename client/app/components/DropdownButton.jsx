@@ -48,10 +48,8 @@ export default class DropdownButton extends React.Component {
       this.setState({
         menu: false
       });
-    } else if (event.key === 'Enter' || event.key === ' ') {
-      this.setState((prevState) => ({
-        menu: !prevState.menu
-      }));
+    } else if ((event.key === 'Enter' || event.key === ' ') && (this.wrapperRef.contains(event.target))) {
+      this.onMenuClick();
       event.preventDefault();
     }
   }
@@ -62,7 +60,7 @@ export default class DropdownButton extends React.Component {
   };
 
   dropdownLink = (list) => {
-    return <Link className="usa-button-secondary usa-button">
+    return <Link className="usa-button-secondary usa-button" aria-activedescendant="cf-dropdown">
       href={list.target}>{list.title}</Link>;
   }
 
@@ -76,9 +74,9 @@ export default class DropdownButton extends React.Component {
   }
 
   dropdownButtonList = () => {
-    return <ul className="cf-dropdown-menu active" {...dropdownList} aria-pressed="true" aria-haspopup="true">
+    return <ul className="cf-dropdown-menu active" {...dropdownList} aria-expanded="true">
       {this.props.lists.map((list, index) =>
-        <li key={index} role="menuitem" tabIndex="0" >
+        <li key={index} role="option" aria-selected="true" tabIndex="0" aria-activedescendant="cf-dropdown">
           {list.target ? this.dropdownLink(list) : this.dropdownAction(list)}
         </li>)}
     </ul>;
@@ -90,7 +88,7 @@ export default class DropdownButton extends React.Component {
     return <div className="cf-dropdown" ref={this.setWrapperRef} {...dropdownBtnContainer} aria-haspopup="true">
       <a {...dropdownBtn}
         onClick={this.onMenuClick}
-        className="cf-dropdown-trigger usa-button usa-button-secondary" tabIndex="0" role="button menu">
+        className="cf-dropdown-trigger usa-button usa-button-secondary" tabIndex="0" role="button">
         {label}
       </a>
       {this.state.menu && this.dropdownButtonList() }
