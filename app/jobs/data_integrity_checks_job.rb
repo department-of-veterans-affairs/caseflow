@@ -9,10 +9,15 @@ class DataIntegrityChecksJob < CaseflowJob
     ExpiredAsyncJobsChecker
     OpenHearingTasksWithoutActiveDescendantsChecker
     OpenTasksWithClosedAtChecker
+    ReviewsWithDuplicateEpErrorChecker
+    StuckAppealsChecker
     UntrackedLegacyAppealsChecker
   ].freeze
 
   def perform
+    # in case we need to access BGS e.g.
+    RequestStore.store[:current_user] = User.system_user
+
     CHECKERS.each do |klass|
       checker = klass.constantize.new
       checker.call

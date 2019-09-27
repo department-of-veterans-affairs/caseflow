@@ -9,6 +9,7 @@ class Appeal < DecisionReview
   include BgsService
   include Taskable
   include PrintsTaskTree
+  include HasTaskHistory
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -661,6 +662,10 @@ class Appeal < DecisionReview
         assigned_to: business_line
       )
     end
+  end
+
+  def stuck?
+    AppealsWithNoTasksOrAllTasksOnHoldQuery.new.ama_appeal_stuck?(self)
   end
 
   private

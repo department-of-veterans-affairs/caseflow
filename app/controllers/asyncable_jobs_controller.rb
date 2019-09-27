@@ -66,6 +66,7 @@ class AsyncableJobsController < ApplicationController
   end
 
   def verify_access
+    return true if current_user.admin?
     return true if current_user.can?("Admin Intake")
 
     Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\

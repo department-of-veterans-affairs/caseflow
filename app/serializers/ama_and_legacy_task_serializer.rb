@@ -21,6 +21,12 @@ class AmaAndLegacyTaskSerializer
     { data: legacy_tasks_hash.concat(ama_tasks_hash) }
   end
 
+  def self.create_and_preload_legacy_appeals(tasks:, params:, ama_serializer: WorkQueue::TaskSerializer)
+    tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
+
+    AmaAndLegacyTaskSerializer.new(tasks: tasks, params: params, ama_serializer: ama_serializer)
+  end
+
   private
 
   attr_reader :tasks, :params, :ama_serializer

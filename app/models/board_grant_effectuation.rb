@@ -47,6 +47,10 @@ class BoardGrantEffectuation < ApplicationRecord
     processed!
   end
 
+  def contention_type
+    Constants.CONTENTION_TYPES.default
+  end
+
   private
 
   def associated_rating
