@@ -28,11 +28,12 @@ When sketching out options for how to handle open tasks assigned users who becom
  . | Child and parent task have same type | Child and parent task have different types
  --- | --- | ---
 No parent task | Should not happen.<sup>[1](#footnote1)</sup> | Should not happen.<sup>[1](#footnote1)</sup>
-Parent task assigned to `Organization` using automatic child task assignment | e.g. `BvaDispatchTask`s assigned to the `BvaDispatch` organization. | Should not happen.
-Parent task assigned to `Organization` without automatic assignment | e.g. `QualityReviewTask`s assigned to the `QualityReview` organization. | Should not happen.
+Parent task assigned to `Organization` using automatic child task assignment | e.g. `BvaDispatchTask`s assigned to the `BvaDispatch` organization. | Should not happen.<sup>[2](#footnote2)</sup>
+Parent task assigned to `Organization` without automatic assignment | e.g. `QualityReviewTask`s assigned to the `QualityReview` organization. | Should only happen for `JudgeTask`s.<sup>[2](#footnote2)</sup>
 Parent task assigned to `User` | Should not happen. | e.g. `AttorneyTask` child of `JudgeDecisionReviewTask`
+Parent task is `RootTask` assigned to `Bva` | n/a | `JudgeAssignTask` and `JudgeDecisionReviewTask`.<sup>[2](#footnote2)</sup>
 
-The three circumstances we expect to find tasks in when they are re-assigned suggest three approaches for handling the tasks to be re-assigned.
+These five circumstances we expect to find tasks in when they are re-assigned suggest five approaches for handling the tasks to be re-assigned.
 
 1. When the child task to be re-assigned and parent task assigned to an `Organization` using automatic child task assignment have the same type we can automatically re-assign the task to the next person who would be automatically selected by child task assignment. A sketch of this approach would look something like the following:
 
@@ -71,6 +72,52 @@ end
 
 For the circumstances that we do not expect to find tasks to be-reassigned in, we can throw an exception and investigate the conditions that allowed the application to reach that state should we throw that exception.
 
+4. Handling open `JudgeAssignTask`s assigned to judges who become inactive is a little more involved. However, since those cases have not yet been distributed to attorneys, we can simply put those cases back in the pool of cases to be distributed and cancel the open `JudgeAssignTask`.
+
+```ruby
+def reassign_open_tasks_for(user)
+  user.tasks.open.each do |task|
+    ...
+
+    if task.is_a?(JudgeAssignTask)
+      if task.children.open.any?
+        fail "#{task.type} assigned to User #{user.id} for #{task.appeal_type} ID #{task.appeal_id} has open children tasks"
+      end
+      DistributionTask.create!(appeal: task.appeal, parent: task.appeal.root_task)
+      task.update!(status: Constants.TASK_STATUSES.cancelled)
+    end
+
+    ...
+  end
+end
+```
+
+5. Handling open `JudgeDecisionReviewTask`s assigned to judges who become inactive is a more complicated still. Since each `JudgeDecisionReviewTask` will have an associated `AttorneyTask` for the decision the attorney drafted for the judge's review we can use the attorney's new judge team to determine who should review the case.
+
+```ruby
+def reassign_open_tasks_for(user)
+  user.tasks.open.each do |task|
+    ...
+
+    if task.is_a?(JudgeDecisionReviewTask)
+      atty_task = task.children_attorney_tasks.not_cancelled.order(:assigned_at).last
+      if atty_task.nil?
+        fail "#{task.type} assigned to User #{user.id} for #{task.appeal_type} ID #{task.appeal_id} does not have any child AttorneyTasks"
+      end
+
+      new_supervising_judge = atty_task.assigned_to.organizations.find_by(type: JudgeTeam.name)&.judge
+      if new_supervising_judge.nil?
+        fail "#{atty_task.type} assigned to attorney User ID #{atty_task.assigned_to.id} for #{task.appeal_type} ID #{task.appeal_id} who does not belong to a JudgeTeam"
+      end
+
+      task.reassign({ assigned_to_type: User.name, assigned_to_id: new_supervising_judge.id }, nil)
+    end
+
+    ...
+  end
+end
+```
+
 ## Complications
 
 A naive approach of reassigning all tasks for each appeal in whatever order they are returned by the database likely runs into several complications, a few of which are mentioned below. We will certainly discover more as we test the implementation and run the code in production.
@@ -98,7 +145,23 @@ def reassign_open_tasks_for(user)
       task = user.tasks.open.find_by(appeal_id: appeal_info[0], appeal_type: appeal_info[1])
 
       if task.parent.nil?
-        fail "Open task assigned to User #{user.id} for #{appeal_info[1]} ID #{appeal_info[0]} has no parent task"
+        fail "Open task assigned to User #{user.id} for #{task.appeal_type} ID #{task.appeal_id} has no parent task"
+      elsif task.is_a?(JudgeAssignTask)
+        if task.children.open.any?
+          fail "#{task.type} assigned to User #{user.id} for #{task.appeal_type} ID #{task.appeal_id} has open children tasks"
+        end
+        DistributionTask.create!(appeal: task.appeal, parent: task.appeal.root_task)
+        task.update!(status: Constants.TASK_STATUSES.cancelled)
+      elsif task.is_a?(JudgeDecisionReviewTask)
+        atty_task = task.children_attorney_tasks.not_cancelled.order(:assigned_at).last
+        if atty_task.nil?
+          fail "#{task.type} assigned to User #{user.id} for #{task.appeal_type} ID #{task.appeal_id} does not have any child AttorneyTasks"
+        end
+        new_supervising_judge = atty_task.assigned_to.organizations.find_by(type: JudgeTeam.name)&.judge
+        if new_supervising_judge.nil?
+          fail "#{atty_task.type} assigned to attorney User ID #{atty_task.assigned_to.id} for #{task.appeal_type} ID #{task.appeal_id} who does not belong to a JudgeTeam"
+        end
+        task.reassign({ assigned_to_type: User.name, assigned_to_id: new_supervising_judge.id }, nil)
       elsif task.parent.automatically_assign_org_task? && task.type == task.parent.type
         task.reassign({ assigned_to_type: User.name, assigned_to_id: task.parent.assigned_to.next_assignee }, nil)
       elsif task.parent.assigned_to.is_a?(Organization) && task.type == task.parent.type
@@ -108,9 +171,9 @@ def reassign_open_tasks_for(user)
         task.parent.update!(status: Constants.TASK_STATUSES.assigned)
         task.update!(status: Constants.TASK_STATUSES.cancelled)
       elsif task.parent.assigned_to.is_a?(Organization) && task.type != task.parent.type
-        fail "Open task assigned to User #{user.id} for #{appeal_info[1]} ID #{appeal_info[0]} has a parent task of a different type assigned to an organization"
+        fail "Open task assigned to User #{user.id} for #{task.appeal_type} ID #{task.appeal_id} has a parent task of a different type assigned to an organization"
       elsif task.parent.assigned_to.is_a?(User) && task.type == task.parent.type
-        fail "Open task assigned to User #{user.id} for #{appeal_info[1]} ID #{appeal_info[0]} has a parent task of the same type assigned to a user"
+        fail "Open task assigned to User #{user.id} for #{task.appeal_type} ID #{task.appeal_id} has a parent task of the same type assigned to a user"
       end
       
       # Update the instructions with a note detailing what we've done.
@@ -140,3 +203,26 @@ group by 2;
 -------+------
 (0 rows)
 ```
+
+<a name="footnote2">2</a>: As of 27 Sep 2019 all open tasks assigned to `User`s that have parent tasks assigned to `Organization`s have the same task type as their parent task with the exception of `JudgeTask`.
+```sql
+select count(child_task.*)
+, child_task.type
+, parent_task.type
+from tasks child_task
+join tasks parent_task
+  on parent_task.id = child_task.parent_id 
+  and parent_task.type <> child_task.type
+where child_task.status not in ('cancelled', 'completed')
+  and child_task.assigned_to_type = 'User'
+  and parent_task.assigned_to_type = 'Organization'
+group by 2, 3;
+
+ count |          type           |   type   
+-------+-------------------------+----------
+  1118 | JudgeDecisionReviewTask | RootTask
+   538 | JudgeAssignTask         | RootTask
+(2 rows)
+```
+
+
