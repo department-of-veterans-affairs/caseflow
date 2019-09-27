@@ -27,6 +27,7 @@ When sketching out options for how to handle open tasks assigned users who becom
 
  . | Child and parent task have same type | Child and parent task have different types
  --- | --- | ---
+No parent task | Should not happen. | Should not happen.
 Parent task assigned to `Organization` using automatic child task assignment | e.g. `BvaDispatchTask`s assigned to the `BvaDispatch` organization. | Should not happen.
 Parent task assigned to `Organization` without automatic assignment | e.g. `QualityReviewTask`s assigned to the `QualityReview` organization. | Should not happen.
 Parent task assigned to `User` | Should not happen. | e.g. `AttorneyTask` child of `JudgeDecisionReviewTask`
@@ -94,7 +95,9 @@ def reassign_open_tasks_for(user)
 
       task = user.tasks.open.find_by(appeal_id: appeal_info[0], appeal_type: appeal_info[1])
 
-      if task.parent.automatically_assign_org_task? && task.type == task.parent.type
+      if task.parent.nil?
+        fail "Open task assigned to User #{user.id} for #{appeal_info[1]} ID #{appeal_info[0]} has no parent task"
+      elsif task.parent.automatically_assign_org_task? && task.type == task.parent.type
         task.reassign({ assigned_to_type: User.name, assigned_to_id: task.parent.assigned_to.next_assignee }, nil)
       elsif task.parent.assigned_to.is_a?(Organization) && task.type == task.parent.type
         task.parent.update!(status: Constants.TASK_STATUSES.assigned)
