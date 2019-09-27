@@ -187,6 +187,70 @@ end
 
 Additionally, it may be worthwhile to alert folks via email (or some means other than simply task re-assignment which relies on somebody checking a particular queue). Electing to send an email in addition to or in place of re-assigning a task does not change this implementation in any meaningful way since we will still need to identify the recipient of such an email (a `Organization`'s administrator, for instance) and will rely on the task tree to identify that recipient.
 
+## First targets
+
+We have already [identified two inactive users](https://github.com/department-of-veterans-affairs/caseflow/issues/12173) who will go through this process and a quick survey of their open tasks below suggests that the approach above will properly handle each of those situations.
+
+```sql
+select count(child_task.*)
+, child_task.type
+, parent_task.type
+, parent_task.assigned_to_type
+, users.css_id
+from tasks child_task
+join tasks parent_task
+  on parent_task.id = child_task.parent_id 
+join users
+  on users.id = child_task.assigned_to_id
+  and child_task.assigned_to_type = 'User'
+where child_task.status not in ('cancelled', 'completed')
+  and child_task.assigned_to_type = 'User'
+  and users.css_id in ('VSCLHALL', 'ADJEWILH')
+group by 2, 3, 4, 5
+order by 5, 1 desc, 2, 3, 4;
+
+ count |                       type                       |                       type                       | assigned_to_type |  css_id  
+-------+--------------------------------------------------+--------------------------------------------------+------------------+----------
+   103 | OtherColocatedTask                               | OtherColocatedTask                               | Organization     | ADJEWILH
+    78 | ExtensionColocatedTask                           | ExtensionColocatedTask                           | Organization     | ADJEWILH
+    55 | HearingClarificationColocatedTask                | HearingClarificationColocatedTask                | Organization     | ADJEWILH
+    29 | StayedAppealColocatedTask                        | StayedAppealColocatedTask                        | Organization     | ADJEWILH
+    27 | IhpColocatedTask                                 | IhpColocatedTask                                 | Organization     | ADJEWILH
+    24 | PoaClarificationColocatedTask                    | PoaClarificationColocatedTask                    | Organization     | ADJEWILH
+    16 | AojColocatedTask                                 | AojColocatedTask                                 | Organization     | ADJEWILH
+    14 | EvidenceOrArgumentMailTask                       | EvidenceOrArgumentMailTask                       | Organization     | ADJEWILH
+     9 | MissingRecordsColocatedTask                      | MissingRecordsColocatedTask                      | Organization     | ADJEWILH
+     8 | RetiredVljColocatedTask                          | RetiredVljColocatedTask                          | Organization     | ADJEWILH
+     8 | TimedHoldTask                                    | ExtensionColocatedTask                           | User             | ADJEWILH
+     4 | AddressVerificationColocatedTask                 | AddressVerificationColocatedTask                 | Organization     | ADJEWILH
+     2 | NewRepArgumentsColocatedTask                     | NewRepArgumentsColocatedTask                     | Organization     | ADJEWILH
+     2 | TimedHoldTask                                    | OtherColocatedTask                               | User             | ADJEWILH
+     1 | ArnesonColocatedTask                             | ArnesonColocatedTask                             | Organization     | ADJEWILH
+     1 | PendingScanningVbmsColocatedTask                 | PendingScanningVbmsColocatedTask                 | Organization     | ADJEWILH
+     1 | PreRoutingFoiaColocatedTask                      | PreRoutingFoiaColocatedTask                      | Organization     | ADJEWILH
+     1 | PreRoutingMissingHearingTranscriptsColocatedTask | PreRoutingMissingHearingTranscriptsColocatedTask | Organization     | ADJEWILH
+    75 | OtherColocatedTask                               | OtherColocatedTask                               | Organization     | VSCLHALL
+    46 | ExtensionColocatedTask                           | ExtensionColocatedTask                           | Organization     | VSCLHALL
+    30 | HearingClarificationColocatedTask                | HearingClarificationColocatedTask                | Organization     | VSCLHALL
+    22 | IhpColocatedTask                                 | IhpColocatedTask                                 | Organization     | VSCLHALL
+    15 | EvidenceOrArgumentMailTask                       | EvidenceOrArgumentMailTask                       | Organization     | VSCLHALL
+    11 | StayedAppealColocatedTask                        | StayedAppealColocatedTask                        | Organization     | VSCLHALL
+    10 | PoaClarificationColocatedTask                    | PoaClarificationColocatedTask                    | Organization     | VSCLHALL
+     9 | TimedHoldTask                                    | ExtensionColocatedTask                           | User             | VSCLHALL
+     8 | AddressVerificationColocatedTask                 | AddressVerificationColocatedTask                 | Organization     | VSCLHALL
+     6 | RetiredVljColocatedTask                          | RetiredVljColocatedTask                          | Organization     | VSCLHALL
+     3 | AojColocatedTask                                 | AojColocatedTask                                 | Organization     | VSCLHALL
+     3 | MissingRecordsColocatedTask                      | MissingRecordsColocatedTask                      | Organization     | VSCLHALL
+     2 | ArnesonColocatedTask                             | ArnesonColocatedTask                             | Organization     | VSCLHALL
+     2 | ExtensionRequestMailTask                         | ExtensionRequestMailTask                         | Organization     | VSCLHALL
+     2 | PendingScanningVbmsColocatedTask                 | PendingScanningVbmsColocatedTask                 | Organization     | VSCLHALL
+     2 | ScheduleHearingColocatedTask                     | ScheduleHearingColocatedTask                     | Organization     | VSCLHALL
+     1 | PowerOfAttorneyRelatedMailTask                   | PowerOfAttorneyRelatedMailTask                   | Organization     | VSCLHALL
+     1 | TimedHoldTask                                    | OtherColocatedTask                               | User             | VSCLHALL
+     1 | TimedHoldTask                                    | StayedAppealColocatedTask                        | User             | VSCLHALL
+(37 rows)
+```
+
 ## Footnotes
 
 <a name="footnote1">1</a>: As of 27 Sep 2019 all open tasks assigned to `User`s have parent tasks.
