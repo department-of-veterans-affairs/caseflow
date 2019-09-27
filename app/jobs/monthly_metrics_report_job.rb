@@ -26,14 +26,20 @@ class MonthlyMetricsReportJob < CaseflowJob
 
   def send_report(appeals:, async_stats:)
     msg = build_report(appeals, async_stats)
-    slack_service.send_notification(msg, self.class)
+    slack_service.send_notification(msg, self.class.to_s)
   end
 
+  # rubocop:disable Metrics/LineLength
   def build_report(appeals, async_stats)
+    sc_stats = async_stats.stats[:supplemental_claims]
+    hlr_stats = async_stats.stats[:higher_level_reviews]
     report = []
     report << "Monthly report #{start_date} to #{end_date}"
-    report << "Appeals established: #{appeals}"
+    report << "Appeals established within 7 days: #{appeals} (100%)"
+    report << "Supplemental Claims within 7 days: #{sc_stats[:established_within_seven_days]} (#{sc_stats[:established_within_seven_days_percent]}%)"
+    report << "Higher Level Reviews within 7 days: #{hlr_stats[:established_within_seven_days]} (#{hlr_stats[:established_within_seven_days_percent]}%)"
     report << async_stats.as_csv
     report.join("\n")
   end
+  # rubocop:enable Metrics/LineLength
 end
