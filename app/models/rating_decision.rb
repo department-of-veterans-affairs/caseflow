@@ -14,6 +14,7 @@ class RatingDecision
                 :diagnostic_code,
                 :diagnostic_text,
                 :diagnostic_type,
+                :disability_date,
                 :disability_id,
                 :original_denial_date,
                 :original_denial_indicator,
@@ -31,6 +32,7 @@ class RatingDecision
         type_name: disability[:decn_tn],
         rating_sequence_number: latest_evaluation[:rating_sn],
         rating_issue_reference_id: latest_evaluation[:rba_issue_id], # ok if nil
+        disability_date: disability[:dis_dt],
         disability_id: disability[:dis_sn],
         diagnostic_text: latest_evaluation[:dgnstc_txt],
         diagnostic_type: latest_evaluation[:dgnstc_tn],
@@ -92,7 +94,7 @@ class RatingDecision
   private
 
   def effective_date
-    original_denial_date || converted_begin_date || begin_date
+    original_denial_date || converted_begin_date || begin_date || disability_date
   end
 
   def effective_date_near_promulgation_date?
