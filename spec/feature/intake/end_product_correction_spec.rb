@@ -393,7 +393,7 @@ feature "End Product Correction (EP 930)", :postgres do
     end
   end
 
-  feature "with a dta supplemental claim" do
+  feature "with a remand supplemental claim" do
     before { enable_features }
     after { disable_features }
 
@@ -419,10 +419,36 @@ feature "End Product Correction (EP 930)", :postgres do
     end
 
     context "when the end product is cleared" do
-      it "allows edit and shows the add issue button" do
-        visit edit_path
-        expect(page).to have_content("Edit Issues")
-        expect(page).to have_css("#button-add-issue")
+      context "when the review has no decision issues" do
+        it "does not allow the user to add issues" do
+          visit edit_path
+          expect(page).to have_content("Edit Issues")
+          expect(page).to_not have_css("#button-add-issue")
+        end
+      end
+
+      context "when the review has decision issues" do
+        let!(:decision_issue) do
+          create(:decision_issue,
+                 decision_review: claim_review,
+
+                 rating_profile_date: receipt_date + 1.day,
+                 end_product_last_action_date: receipt_date + 1.day,
+                 benefit_type: claim_review.benefit_type,
+                 decision_text: "decision issue",
+                 participant_id: veteran.participant_id)
+        end
+
+        it "only allows user to add the review's decision issues" do
+          visit edit_path
+          expect(page).to have_content("Edit Issues")
+          click_intake_add_issue
+          expect(page).to have_content("decision issue")
+          expect(page).to_not have_content("Left knee granted")
+
+          # Do not allow adding new nonrating issues
+          expect(page).to_not have_content("None of these match")
+        end
       end
     end
   end
