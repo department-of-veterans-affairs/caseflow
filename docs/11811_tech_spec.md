@@ -27,7 +27,7 @@ When sketching out options for how to handle open tasks assigned users who becom
 
  . | Child and parent task have same type | Child and parent task have different types
  --- | --- | ---
-No parent task | Should not happen. | Should not happen.
+No parent task | Should not happen.<sup>[1](#footnote1)</sup> | Should not happen.<sup>[1](#footnote1)</sup>
 Parent task assigned to `Organization` using automatic child task assignment | e.g. `BvaDispatchTask`s assigned to the `BvaDispatch` organization. | Should not happen.
 Parent task assigned to `Organization` without automatic assignment | e.g. `QualityReviewTask`s assigned to the `QualityReview` organization. | Should not happen.
 Parent task assigned to `User` | Should not happen. | e.g. `AttorneyTask` child of `JudgeDecisionReviewTask`
@@ -123,3 +123,20 @@ end
 ## Additional considerations
 
 Additionally, it may be worthwhile to alert folks via email (or some means other than simply task re-assignment which relies on somebody checking a particular queue). Electing to send an email in addition to or in place of re-assigning a task does not change this implementation in any meaningful way since we will still need to identify the recipient of such an email (a `Organization`'s administrator, for instance) and will rely on the task tree to identify that recipient.
+
+## Footnotes
+
+<a name="footnote1">1</a>: As of 27 Sep 2019 all open tasks assigned to `User`s have parent tasks.
+```sql
+select count(*)
+, type
+from tasks
+where status not in ('cancelled', 'completed')
+  and assigned_to_type = 'User'
+  and parent_id is null
+group by 2;
+
+ count | type 
+-------+------
+(0 rows)
+```
