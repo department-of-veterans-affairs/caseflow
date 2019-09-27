@@ -82,6 +82,8 @@ A naive approach of reassigning all tasks for each appeal in whatever order they
 
 ## Recommended approach
 
+Example implementation that could be included [as a Rake task](https://github.com/department-of-veterans-affairs/caseflow/blob/master/lib/tasks/tasks.rake):
+
 ```ruby
 def reassign_open_tasks_for(user)
   ActiveRecord::Base.multi_transaction do
