@@ -779,7 +779,7 @@ RSpec.feature "AmaQueue", :all_dbs do
         expect(page).to have_content("Assigned 1 case")
       end
 
-      step "attorney completes task and returns the case to the judge" do
+      step "attorney completes task and returns the case to the judge", skip: "flake line 827" do
         User.authenticate!(user: attorney_user)
         visit "/queue"
 
