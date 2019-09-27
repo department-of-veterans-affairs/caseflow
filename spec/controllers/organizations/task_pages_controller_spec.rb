@@ -46,6 +46,20 @@ describe Organizations::TaskPagesController, :postgres, type: :controller do
       it "returns correct tasks_per_page" do
         expect(subject["tasks_per_page"]).to eq(TaskPager::TASKS_PER_PAGE)
       end
+
+      it "only instantiates TaskPager a single time" do
+        task_pager = instance_double(TaskPager)
+        expect(TaskPager).to receive(:new).and_return(task_pager).exactly(1).times
+
+        expect(task_pager).to receive(:paged_tasks)
+        expect(task_pager).to receive(:task_page_count)
+        expect(task_pager).to receive(:total_task_count)
+
+        # Prevent this call from actually firing since it will fail due to the instance_double.
+        allow_any_instance_of(::Organizations::TaskPagesController).to receive(:json_tasks).and_return([])
+
+        subject
+      end
     end
   end
 end
