@@ -30,7 +30,7 @@ When sketching out options for how to handle open tasks assigned users who becom
 No parent task | Should not happen.<sup>[1](#footnote1)</sup> | Should not happen.<sup>[1](#footnote1)</sup>
 Parent task assigned to `Organization` using automatic child task assignment | e.g. `BvaDispatchTask`s assigned to the `BvaDispatch` organization. | Should not happen.<sup>[2](#footnote2)</sup>
 Parent task assigned to `Organization` without automatic assignment | e.g. `QualityReviewTask`s assigned to the `QualityReview` organization. | Should only happen for `JudgeTask`s.<sup>[2](#footnote2)</sup>
-Parent task assigned to `User` | Should not happen. | e.g. `AttorneyTask` child of `JudgeDecisionReviewTask`
+Parent task assigned to `User` | Should not happen.<sup>[3](#footnote3)</sup> | e.g. `AttorneyTask` child of `JudgeDecisionReviewTask`
 Parent task is `RootTask` assigned to `Bva` | n/a | `JudgeAssignTask` and `JudgeDecisionReviewTask`.<sup>[2](#footnote2)</sup>
 
 These five circumstances we expect to find tasks in when they are re-assigned suggest five approaches for handling the tasks to be re-assigned.
@@ -225,4 +225,21 @@ group by 2, 3;
 (2 rows)
 ```
 
+<a name="footnote3">3</a>: As of 27 Sep 2019 all open tasks assigned to `User`s that have parent tasks assigned to `User`s have a different task type than their parent task.
+```sql
+select count(child_task.*)
+, child_task.type
+, parent_task.type
+from tasks child_task
+join tasks parent_task
+  on parent_task.id = child_task.parent_id 
+  and parent_task.type = child_task.type
+where child_task.status not in ('cancelled', 'completed')
+  and child_task.assigned_to_type = 'User'
+  and parent_task.assigned_to_type = 'User'
+group by 2, 3;
 
+ count | type | type 
+-------+------+------
+(0 rows)
+```
