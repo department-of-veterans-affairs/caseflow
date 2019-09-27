@@ -560,7 +560,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       end
     end
 
-    context "when withdraw decision reviews is enabled" do
+    fcontext "when withdraw decision reviews is enabled" do
       before do
         FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
@@ -582,6 +582,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         expect(page).to_not have_content("Withdrawn issues")
         expect(page).to_not have_content("Please include the date the withdrawal was requested")
         expect(page).to have_content("Requested issues\n1. PTSD denied")
+        # binding.pry
 
         click_withdraw_intake_issue_dropdown("PTSD denied")
 

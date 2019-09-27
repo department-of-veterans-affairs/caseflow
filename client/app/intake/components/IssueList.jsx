@@ -53,11 +53,12 @@ export default class IssuesList extends React.Component {
       formType,
       onClickIssueAction,
       withdrawReview,
-      featureToggles
+      featureToggles,
+      editPage
     } = this.props;
 
     const {
-      withdrawDecisionReviews,
+      // withdrawDecisionReviews,
       editContentionText
     } = featureToggles;
 
@@ -90,7 +91,7 @@ export default class IssuesList extends React.Component {
               </div> }
 
               { !_.isEmpty(issueActionOptions) && <div className="issue-action">
-                { withdrawDecisionReviews && <Dropdown
+                { editPage && <Dropdown
                   name={`issue-action-${issue.index}`}
                   label="Actions"
                   hideLabel
@@ -99,7 +100,7 @@ export default class IssuesList extends React.Component {
                   onChange={(option) => onClickIssueAction(issue.index, option)}
                 />
                 }
-                { !withdrawDecisionReviews && <Button
+                { !editPage && <Button
                   onClick={() => onClickIssueAction(issue.index)}
                   classNames={['cf-btn-link', 'remove-issue']}
                 >
@@ -124,5 +125,6 @@ IssuesList.propTypes = {
   formType: PropTypes.string,
   onClickIssueAction: PropTypes.func,
   withdrawReview: PropTypes.bool,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  editPage: PropTypes.bool
 };

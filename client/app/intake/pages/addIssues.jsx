@@ -250,6 +250,7 @@ class AddIssuesPage extends React.Component {
             intakeData={intakeData}
             formType={formType}
             featureToggles={featureToggles}
+            editPage={editPage}
           />
         )
       });
@@ -265,6 +266,7 @@ class AddIssuesPage extends React.Component {
             intakeData={intakeData}
             formType={formType}
             featureToggles={featureToggles}
+            editPage={editPage}
           />
         )
       });
