@@ -768,6 +768,9 @@ RSpec.feature "AmaQueue", :all_dbs do
 
         click_on veteran_full_name
 
+        # wait for page to load with veteran name
+        expect(page).to have_content(veteran_full_name)
+
         click_dropdown(prompt: "Select an action", text: "Assign to attorney")
         click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
 
@@ -821,7 +824,7 @@ RSpec.feature "AmaQueue", :all_dbs do
         expect(page).to have_content("Submit Draft Decision for Review")
         # these now should be preserved the next time the attorney checks out
         fill_in "Document ID:", with: valid_document_id
-        expect(page).to have_content(judge_user.full_name)
+        expect(page).to have_content(judge_user.full_name, wait: 10)
         fill_in "notes", with: "all done"
         click_on "Continue"
 
