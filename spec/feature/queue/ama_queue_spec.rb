@@ -757,7 +757,7 @@ RSpec.feature "AmaQueue", :all_dbs do
       end
     end
 
-    it "judge can reassign the review judge tasks to another judge" do
+    it "judge can reassign the review judge tasks to another judge", skip: "flake line 827" do
       step "judge reviews case and assigns a task to an attorney" do
         visit "/queue"
         expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
@@ -779,7 +779,7 @@ RSpec.feature "AmaQueue", :all_dbs do
         expect(page).to have_content("Assigned 1 case")
       end
 
-      step "attorney completes task and returns the case to the judge", skip: "flake line 827" do
+      step "attorney completes task and returns the case to the judge" do
         User.authenticate!(user: attorney_user)
         visit "/queue"
 
