@@ -14,6 +14,7 @@ class LegacyAppeal < ApplicationRecord
   include AddressMapper
   include Taskable
   include PrintsTaskTree
+  include HasTaskHistory
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
