@@ -251,7 +251,9 @@ class Task < ApplicationRecord
   end
 
   def self.create_many_from_params(params_array, current_user)
-    params_array.map { |params| create_from_params(params, current_user) }
+    multi_transaction do
+      params_array.map { |params| create_from_params(params, current_user) }
+    end
   end
 
   def self.modify_params(params)

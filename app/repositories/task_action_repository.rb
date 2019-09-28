@@ -168,6 +168,10 @@ class TaskActionRepository
       }
     end
 
+    def sign_motion_to_vacate_data(_task, _user = nil)
+      {}
+    end
+
     def assign_to_translation_team_data(_task, _user = nil)
       org = Translation.singleton
 

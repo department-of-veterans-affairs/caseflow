@@ -103,7 +103,7 @@ describe DecisionReview, :postgres do
   end
 
   context "#contestable_issues" do
-    subject { higher_level_review.contestable_issues }
+    subject { supplemental_claim.contestable_issues }
 
     def find_serialized_issue(serialized_contestable_issues, ref_id_or_description)
       serialized_contestable_issues.find do |i|
@@ -183,10 +183,10 @@ describe DecisionReview, :postgres do
     context "when an issue was decided in the future" do
       let!(:future_decision_issue) do
         create(:decision_issue,
-               decision_review: higher_level_review,
+               decision_review: supplemental_claim,
                rating_profile_date: receipt_date + 1.day,
                end_product_last_action_date: receipt_date + 1.day,
-               benefit_type: higher_level_review.benefit_type,
+               benefit_type: supplemental_claim.benefit_type,
                decision_text: "something was decided in the future 1",
                description: "future decision issue from same review",
                participant_id: veteran.participant_id)
@@ -194,10 +194,10 @@ describe DecisionReview, :postgres do
 
       let!(:future_decision_issue2) do
         create(:decision_issue,
-               decision_review: supplemental_claim,
+               decision_review: higher_level_review,
                rating_profile_date: receipt_date + 1.day,
                end_product_last_action_date: receipt_date + 1.day,
-               benefit_type: supplemental_claim.benefit_type,
+               benefit_type: higher_level_review.benefit_type,
                decision_text: "something was decided in the future 2",
                description: "future decision issue from a different review",
                participant_id: veteran.participant_id)

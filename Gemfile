@@ -13,7 +13,7 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "ffb77dd0395cbd5b7c1a5729f7f8275b5ec681fa"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "a11396c3ad31050fed3424bb8ab4fd5a3f09a37f"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "94c4d595c2f200d943d46377b47ea2252c6d1818"
 gem "dogstatsd-ruby"
 gem "fast_jsonapi"
 gem "holidays", "~> 6.4"
@@ -34,7 +34,6 @@ gem "paranoia", "~> 2.2"
 gem "pdf-forms"
 gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git", ref: "a4249eacbf70175db63b57e9f364d0a9a79e2b43"
 gem "pg", platforms: :ruby
-gem "prometheus-client", "~> 0.7.1"
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834

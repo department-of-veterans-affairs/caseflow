@@ -128,26 +128,31 @@ feature "End Product Correction (EP 930)", :postgres do
       end
 
       context "with future decision issues" do
-        let!(:past_claim_review) do
-          create(claim_review_type.to_sym, veteran_file_number: veteran.file_number, receipt_date: receipt_date - 1.day)
+        let!(:another_claim_review) do
+          create(
+            claim_review_type.to_sym,
+            veteran_file_number: veteran.file_number,
+            receipt_date: receipt_date + 2.days,
+            intake: create(:intake)
+          )
         end
-        let!(:past_decision_issue_from_past_claim) do
+        let!(:past_decision_issue_from_another_claim) do
           create(:decision_issue,
-                 decision_review: past_claim_review,
+                 decision_review: another_claim_review,
                  rating_profile_date: receipt_date - 1.day,
                  end_product_last_action_date: receipt_date - 1.day,
                  benefit_type: claim_review.benefit_type,
-                 decision_text: "something was decided in the past for past claim review",
+                 decision_text: "past decision issue",
                  participant_id: veteran.participant_id)
         end
-        let!(:future_decision_issue_from_past_claim) do
+        let!(:future_decision_issue_from_another_claim) do
           create(:decision_issue,
-                 decision_review: past_claim_review,
+                 decision_review: another_claim_review,
 
                  rating_profile_date: receipt_date + 1.day,
                  end_product_last_action_date: receipt_date + 1.day,
                  benefit_type: claim_review.benefit_type,
-                 decision_text: "something was decided in the future for past claim review",
+                 decision_text: "future decision issue from another review",
                  participant_id: veteran.participant_id)
         end
 
@@ -158,22 +163,78 @@ feature "End Product Correction (EP 930)", :postgres do
                  rating_profile_date: receipt_date + 1.day,
                  end_product_last_action_date: receipt_date + 1.day,
                  benefit_type: claim_review.benefit_type,
-                 decision_text: "something was decided in the future for this claim review",
+                 decision_text: "correction review decision issue",
                  participant_id: veteran.participant_id)
         end
 
-        it "shows decision issues from future from this claim review" do
+        let!(:request_issue_duplicate) do
+          create(
+            :request_issue,
+            decision_review: another_claim_review,
+            contested_decision_issue_id: future_decision_issue.id
+          )
+        end
+
+        it "allows adding decision issues from the same claim review" do
           visit edit_path
           click_intake_add_issue
           expect(page).to have_content("Left knee granted")
-          expect(page).to have_content("something was decided in the past for past claim review")
-          expect(page).to have_content("something was decided in the future for this claim review")
+          expect(page).to have_content("past decision issue")
+          expect(page).to_not have_content("future decision issue from another review")
+
+          add_intake_rating_issue("correction review decision issue")
+          select_correction_type_from_modal("control")
+          click_correction_type_modal_submit
+
+          expect(page).to have_content("correction review decision issue")
+          expect(page).to_not have_content("is ineligible because it was last processed as")
+          expect(page).to_not have_content("is ineligible because it's already under review")
+
+          click_edit_submit
+          click_number_of_issues_changed_confirmation
+          confirm_930_modal
+
+          correction_issue = RequestIssue.find_by(
+            contested_issue_description: "correction review decision issue",
+            correction_type: "control",
+            ineligible_reason: nil
+          )
+          check_confirmation_page(correction_issue)
         end
 
-        it "does not show decision issues from future from past claim review" do
-          visit edit_path
-          click_intake_add_issue
-          expect(page).to_not have_content("something was decided in the future for past claim review")
+        context "when decision issue is already corrected" do
+          before { another_claim_review.establish! }
+
+          let!(:request_issue_duplicate) do
+            create(
+              :request_issue,
+              decision_review: claim_review,
+              contested_decision_issue_id: future_decision_issue.id,
+              correction_type: "control"
+            )
+          end
+
+          it "allows veteran to add decision issue to another review" do
+            visit "#{claim_review_type.pluralize}/#{another_claim_review.uuid}/edit"
+            click_intake_add_issue
+            add_intake_rating_issue("correction review decision issue")
+            expect(page).to have_content("correction review decision issue")
+            expect(page).to_not have_content("is ineligible because it's already under review")
+            expect(page).to have_content("is ineligible because it was last processed as a Higher-Level Review")
+
+            if claim_review_type == "supplemental_claim"
+              expect(page).to_not have_content("is ineligible because it was last processed as")
+              click_edit_submit
+              click_number_of_issues_changed_confirmation
+              expect(page).to have_content("Claim Issues Saved")
+              new_issue = RequestIssue.find_by(
+                contested_issue_description: "correction review decision issue",
+                correction_type: nil,
+                ineligible_reason: nil
+              )
+              expect(new_issue).to_not be_nil
+            end
+          end
         end
       end
     end
@@ -222,6 +283,113 @@ feature "End Product Correction (EP 930)", :postgres do
           check_adding_unidentified_correction_issue
         end
       end
+
+      context "with future decision issues" do
+        let!(:another_claim_review) do
+          create(
+            claim_review_type.to_sym,
+            veteran_file_number: veteran.file_number,
+            receipt_date: receipt_date + 2.days,
+            intake: create(:intake)
+          )
+        end
+        let!(:past_decision_issue_from_another_claim) do
+          create(:decision_issue,
+                 decision_review: another_claim_review,
+                 rating_profile_date: receipt_date - 1.day,
+                 end_product_last_action_date: receipt_date - 1.day,
+                 benefit_type: claim_review.benefit_type,
+                 decision_text: "past decision issue",
+                 participant_id: veteran.participant_id)
+        end
+        let!(:future_decision_issue_from_another_claim) do
+          create(:decision_issue,
+                 decision_review: another_claim_review,
+
+                 rating_profile_date: receipt_date + 1.day,
+                 end_product_last_action_date: receipt_date + 1.day,
+                 benefit_type: claim_review.benefit_type,
+                 decision_text: "future decision issue from another review",
+                 participant_id: veteran.participant_id)
+        end
+
+        let!(:future_decision_issue) do
+          create(:decision_issue,
+                 decision_review: claim_review,
+
+                 rating_profile_date: receipt_date + 1.day,
+                 end_product_last_action_date: receipt_date + 1.day,
+                 benefit_type: claim_review.benefit_type,
+                 decision_text: "correction review decision issue",
+                 participant_id: veteran.participant_id)
+        end
+
+        let!(:request_issue_duplicate) do
+          create(
+            :request_issue,
+            decision_review: another_claim_review,
+            contested_decision_issue_id: future_decision_issue.id
+          )
+        end
+
+        it "allows adding decision issues from the same claim review" do
+          visit edit_path
+          click_intake_add_issue
+          expect(page).to have_content("Left knee granted")
+          expect(page).to have_content("past decision issue")
+          expect(page).to_not have_content("future decision issue from another review")
+
+          add_intake_rating_issue("correction review decision issue")
+          select_correction_type_from_modal("control")
+          click_correction_type_modal_submit
+
+          expect(page).to have_content("correction review decision issue")
+          expect(page).to_not have_content("is ineligible because it was last processed as")
+          expect(page).to_not have_content("is ineligible because it's already under review")
+
+          click_edit_submit
+          click_number_of_issues_changed_confirmation
+          confirm_930_modal
+
+          correction_issue = RequestIssue.find_by(
+            contested_issue_description: "correction review decision issue",
+            correction_type: "control",
+            ineligible_reason: nil
+          )
+          check_confirmation_page(correction_issue)
+        end
+
+        context "when decision issue is already corrected" do
+          before { another_claim_review.establish! }
+
+          let!(:request_issue_duplicate) do
+            create(
+              :request_issue,
+              decision_review: claim_review,
+              contested_decision_issue_id: future_decision_issue.id,
+              correction_type: "control"
+            )
+          end
+
+          it "allows veteran to add decision issue to another review" do
+            visit "#{claim_review_type.pluralize}/#{another_claim_review.uuid}/edit"
+            click_intake_add_issue
+            add_intake_rating_issue("correction review decision issue")
+            expect(page).to have_content("correction review decision issue")
+            expect(page).to_not have_content("is ineligible because it's already under review")
+            expect(page).to_not have_content("is ineligible because it was last processed as")
+            click_edit_submit
+            click_number_of_issues_changed_confirmation
+            expect(page).to have_content("Claim Issues Saved")
+            new_issue = RequestIssue.find_by(
+              contested_issue_description: "correction review decision issue",
+              correction_type: nil,
+              ineligible_reason: nil
+            )
+            expect(new_issue).to_not be_nil
+          end
+        end
+      end
     end
   end
 
@@ -251,10 +419,10 @@ feature "End Product Correction (EP 930)", :postgres do
     end
 
     context "when the end product is cleared" do
-      it "allows edit and hides the add issue button" do
+      it "allows edit and shows the add issue button" do
         visit edit_path
         expect(page).to have_content("Edit Issues")
-        expect(page).to_not have_css("#button-add-issue")
+        expect(page).to have_css("#button-add-issue")
       end
     end
   end

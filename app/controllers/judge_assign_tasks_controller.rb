@@ -2,7 +2,8 @@
 
 class JudgeAssignTasksController < TasksController
   def create
-    tasks_to_return = (tasks + queue_class.new(user: current_user).tasks).uniq
+    queue_for_role = QueueForRole.new(user_role).create(user: current_user)
+    tasks_to_return = (tasks + queue_for_role.tasks).uniq
 
     render json: { tasks: json_tasks(tasks_to_return) }
   end

@@ -52,6 +52,11 @@
     "value": "address_motion_to_vacate",
     "func": "address_motion_to_vacate_data"
   },
+  "SIGN_MOTION_TO_VACATE": {
+    "label": "Sign Motion to Vacate",
+    "value": "sign_motion_to_vacate",
+    "func": "sign_motion_to_vacate_data"
+  },
   "CANCEL_FOREIGN_VETERANS_CASE_TASK": {
     "label": "Cancel hearing request",
     "value": "modal/cancel_task",

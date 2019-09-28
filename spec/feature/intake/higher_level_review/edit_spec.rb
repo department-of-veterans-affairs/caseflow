@@ -1070,14 +1070,16 @@ feature "Higher Level Review Edit issues", :all_dbs do
           { description: "Issue before AMA Activation from RAMP" },
           description: "PTSD denied"
         ),
-        user: current_user
+        user: current_user,
+        claim_date: higher_level_review.receipt_date.to_date
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
         veteran_file_number: veteran.file_number,
         claim_id: nonrating_epe.reference_id,
         contentions: [{ description: "Active Duty Adjustments - Description for Active Duty Adjustments" }],
-        user: current_user
+        user: current_user,
+        claim_date: higher_level_review.receipt_date.to_date
       )
     end
 
@@ -1157,7 +1159,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
         veteran_file_number: veteran.file_number,
         claim_id: rating_ep_claim_id,
         contentions: [{ description: "Left knee granted" }],
-        user: current_user
+        user: current_user,
+        claim_date: higher_level_review.receipt_date.to_date
       )
       expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
         claim_id: rating_ep_claim_id,
@@ -1525,8 +1528,13 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       context "when review has unidentified issues and non-ratings" do
         let!(:issue) do
-          create(:request_issue, :unidentified, decision_review: higher_level_review,
-                                                contested_issue_description: "This is unidentified")
+          create(
+            :request_issue,
+            :unidentified,
+            benefit_type: "compensation",
+            decision_review: higher_level_review,
+            contested_issue_description: "This is unidentified"
+          )
         end
 
         scenario "do not show edit contention text on unidentified issues" do

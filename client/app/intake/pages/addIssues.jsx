@@ -272,7 +272,7 @@ class AddIssuesPage extends React.Component {
 
     rowObjects = rowObjects.concat({
       field: ' ',
-      content: !intakeData.isDtaError && addIssueButton()
+      content: addIssueButton()
     });
 
     return (

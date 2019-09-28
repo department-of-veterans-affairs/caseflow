@@ -516,7 +516,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         veteran_file_number: veteran.file_number,
         claim_id: rating_ep_claim_id,
         contentions: [{ description: "Left knee granted" }],
-        user: current_user
+        user: current_user,
+        claim_date: supplemental_claim.receipt_date.to_date
       )
       expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
         claim_id: rating_ep_claim_id,

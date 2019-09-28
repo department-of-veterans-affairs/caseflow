@@ -4,6 +4,8 @@ require "support/vacols_database_cleaner"
 require "rails_helper"
 
 RSpec.feature "Motion to vacate", :all_dbs do
+  include QueueHelpers
+
   let!(:lit_support_team) { LitigationSupport.singleton }
   let(:receipt_date) { Time.zone.today - 20 }
   let!(:appeal) { create(:appeal, receipt_date: receipt_date) }
@@ -172,6 +174,10 @@ RSpec.feature "Motion to vacate", :all_dbs do
       )
       new_task = StraightVacateAndReadjudicationTask.find_by(assigned_to: drafting_attorney)
       expect(new_task).to_not be_nil
+      expect(new_task.label).to eq COPY::STRAIGHT_VACATE_AND_READJUDICATION_TASK_LABEL
+      expect(new_task.available_actions(motions_attorney)).to include(
+        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
+      )
       expect(new_task.instructions.join("")).to eq(instructions)
     end
 
@@ -202,6 +208,10 @@ RSpec.feature "Motion to vacate", :all_dbs do
       )
       new_task = VacateAndDeNovoTask.find_by(assigned_to: drafting_attorney)
       expect(new_task).to_not be_nil
+      expect(new_task.label).to eq COPY::VACATE_AND_DE_NOVO_TASK_LABEL
+      expect(new_task.available_actions(motions_attorney)).to include(
+        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
+      )
       expect(new_task.instructions.join("")).to eq(instructions)
     end
 
@@ -223,6 +233,20 @@ RSpec.feature "Motion to vacate", :all_dbs do
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
       expect(motion).to_not be_nil
       expect(motion.disposition).to eq("denied")
+
+      # Verify new task creation
+      instructions = format_judge_instructions(
+        notes: judge_notes,
+        disposition: "denied",
+        hyperlink: hyperlink
+      )
+      new_task = DeniedMotionToVacateTask.find_by(assigned_to: drafting_attorney)
+      expect(new_task).to_not be_nil
+      expect(new_task.label).to eq COPY::DENIED_MOTION_TO_VACATE_TASK_LABEL
+      expect(new_task.available_actions(motions_attorney)).to include(
+        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
+      )
+      expect(new_task.instructions.join("")).to eq(instructions)
     end
 
     it "judge dismisses motion to vacate" do
@@ -243,6 +267,20 @@ RSpec.feature "Motion to vacate", :all_dbs do
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
       expect(motion).to_not be_nil
       expect(motion.disposition).to eq("dismissed")
+
+      # Verify new task creation
+      instructions = format_judge_instructions(
+        notes: judge_notes,
+        disposition: "dismissed",
+        hyperlink: hyperlink
+      )
+      new_task = DismissedMotionToVacateTask.find_by(assigned_to: drafting_attorney)
+      expect(new_task).to_not be_nil
+      expect(new_task.label).to eq COPY::DISMISSED_MOTION_TO_VACATE_TASK_LABEL
+      expect(new_task.available_actions(motions_attorney)).to include(
+        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
+      )
+      expect(new_task.instructions.join("")).to eq(instructions)
     end
   end
 
@@ -261,30 +299,4 @@ RSpec.feature "Motion to vacate", :all_dbs do
     find("div", class: "Select-option", text: "Address Motion to Vacate").click
     expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{judge_task.id}/address_motion_to_vacate")
   end
-end
-
-def format_judge_instructions(notes:, disposition:, vacate_type:, hyperlink: nil)
-  binding.pry
-  parts = ["I am proceeding with a #{disposition_text[disposition.to_sym]}."]
-
-  parts += case disposition
-           when "granted"
-             ["This will be a #{vacate_types[vacate_type.to_sym]}", notes]
-           else
-             [notes, "\nHere is the hyperlink to the signed denial document", hyperlink]
-           end
-
-  parts.join("\n")
-end
-
-def mtv_const
-  Constants.MOTION_TO_VACATE
-end
-
-def disposition_text
-  mtv_const.DISPOSITION_TEXT.to_h
-end
-
-def vacate_types
-  mtv_const.VACATE_TYPE_OPTIONS.map { |opt| [opt["value"].to_sym, opt["displayText"]] }.to_h
 end

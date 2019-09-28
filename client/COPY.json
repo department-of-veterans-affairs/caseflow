@@ -155,6 +155,11 @@
   "MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL": "Insert hyperlink to denial draft",
   "MOTIONS_ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL": "Assign to judge",
 
+  "VACATE_AND_DE_NOVO_TASK_LABEL": "Vacate and De Novo",
+  "STRAIGHT_VACATE_AND_READJUDICATION_TASK_LABEL": "Straight Vacate and Readjudication",
+  "DENIED_MOTION_TO_VACATE_TASK_LABEL": "Denied Motion to Vacate",
+  "DISMISSED_MOTION_TO_VACATE_TASK_LABEL": "Dismissed Motion to Vacate",
+
   "IS_PAPER_CASE": "This is a paper case",
 
   "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA": "OMO - VHA",
@@ -441,6 +446,7 @@
   "JUDGE_QUALITY_REVIEW_TASK_LABEL": "Quality review",
   "JUDGE_DISPATCH_RETURN_TASK_LABEL": "Revise decision (BVA Dispatch)",
   "JUDGE_ADDRESS_MOTION_TO_VACATE_TASK_LABEL": "Address Motion to Vacate",
+  "JUDGE_SIGN_MOTION_TO_VACATE_TASK_LABEL": "Sign Motion to Vacate",
 
   "ATTORNEY_TASK_LABEL": "Draft decision",
   "ATTORNEY_REWRITE_TASK_LABEL": "Revise decision draft",

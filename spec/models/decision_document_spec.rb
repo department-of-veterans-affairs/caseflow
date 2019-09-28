@@ -260,7 +260,8 @@ describe DecisionDocument, :postgres do
               { description: granted_issue.contention_text },
               description: another_granted_issue.contention_text
             ),
-            user: User.system_user
+            user: User.system_user,
+            claim_date: decision_document.decision_date.to_date
           )
 
           expect(granted_issue.effectuation.contention_reference_id).to_not be_nil
