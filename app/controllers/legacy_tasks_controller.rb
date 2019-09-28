@@ -14,8 +14,8 @@ class LegacyTasksController < ApplicationController
   end
 
   def index
-    current_role = (params[:role] || user.vacols_roles.first).try(:downcase)
-    return invalid_role_error unless ROLES.include?(current_role)
+    user_role = (params[:role] || user.vacols_roles.first).try(:downcase)
+    return invalid_role_error unless ROLES.include?(user_role)
 
     respond_to do |format|
       format.html do
@@ -26,7 +26,7 @@ class LegacyTasksController < ApplicationController
                               name: "LegacyTasksController.index") do
           tasks = LegacyWorkQueue.tasks_for_user(user)
           render json: {
-            tasks: json_tasks(tasks, user, current_role)
+            tasks: json_tasks(tasks, user, user_role)
           }
         end
       end
@@ -34,16 +34,18 @@ class LegacyTasksController < ApplicationController
   end
 
   def create
-    assigned_to = legacy_task_params[:assigned_to]
     if assigned_to&.vacols_roles&.length == 1 && assigned_to.judge_in_vacols?
       return assign_to_judge
     end
 
+    # return [AttorneyTask, JudgeAssignTask]
     if DasDeprecation::AssignTaskToAttorney.should_perform_workflow?(legacy_task_params[:appeal_id])
       appeal = LegacyAppeal.find(legacy_task_params[:appeal_id])
-      task = DasDeprecation::AssignTaskToAttorney.create_attorney_task(appeal.vacols_id, current_user, assigned_to)
+      tasks = DasDeprecation::AssignTaskToAttorney.create_attorney_task(appeal.vacols_id, current_user, assigned_to)
+      params = { user: current_user, role: current_role }
+
       return render json: {
-        task: ::WorkQueue::TaskSerializer.new(task)
+        tasks: ::WorkQueue::TaskSerializer.new(tasks, is_collection: true, params: params)
       }
     end
 
@@ -63,13 +65,13 @@ class LegacyTasksController < ApplicationController
     # If the user being assigned to is a judge, do not create a DECASS record, just
     # update the location to the assigned judge.
     appeal = LegacyAppeal.find(legacy_task_params[:appeal_id])
-    QueueRepository.update_location_to_judge(appeal.vacols_id, legacy_task_params[:assigned_to])
+    QueueRepository.update_location_to_judge(appeal.vacols_id, assigned_to)
 
     render json: {
       task: json_task(AttorneyLegacyTask.from_vacols(
                         VACOLS::CaseAssignment.latest_task_for_appeal(appeal.vacols_id),
                         appeal,
-                        legacy_task_params[:assigned_to]
+                        assigned_to
                       ))
     }
   end
@@ -77,8 +79,8 @@ class LegacyTasksController < ApplicationController
   def update
     if DasDeprecation::AssignTaskToAttorney.should_perform_workflow?(legacy_task_params[:appeal_id])
       appeal = LegacyAppeal.find(legacy_task_params[:appeal_id])
-      assigned_to = legacy_task_params[:assigned_to]
       task = DasDeprecation::AssignTaskToAttorney.reassign_attorney_task(appeal.vacols_id, current_user, assigned_to)
+      
       return render json: {
         task: ::WorkQueue::TaskSerializer.new(task)
       }
@@ -117,5 +119,13 @@ class LegacyTasksController < ApplicationController
 
   def json_tasks(tasks, user, role)
     ::WorkQueue::LegacyTaskSerializer.new(tasks, is_collection: true, params: { user: user, role: role })
+  end
+
+  def current_role
+    (params[:role] || current_user.vacols_roles.first).try(:downcase)
+  end
+
+  def assigned_to
+    legacy_task_params[:assigned_to]
   end
 end
