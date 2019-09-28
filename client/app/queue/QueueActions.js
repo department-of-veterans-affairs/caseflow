@@ -390,7 +390,7 @@ export const initialAssignTasksToUser = ({
 }) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   let params, url;
 
-  if (oldTask.appealType === 'Appeal' || !oldTask.isLegacy) {
+  if (oldTask.appealType === 'Appeal') {
     url = '/judge_assign_tasks';
     params = {
       data: {
@@ -417,12 +417,22 @@ export const initialAssignTasksToUser = ({
   return ApiUtil.post(url, params).
     then((resp) => resp.body).
     then((resp) => {
-      if (oldTask.appealType === 'Appeal'|| !oldTask.isLegacy) {
+      if (oldTask.appealType === 'Appeal') {
         const amaTasks = resp.tasks.data;
 
         dispatch(onReceiveAmaTasks(
           amaTasks
         ));
+      } else if (oldTask.appealType === 'LegacyAppeal' && !oldTask.isLegacy){
+        //For das depractaion, legacy_task_controller #create returns tasks not a task
+        const tasks = resp.tasks.data;
+        const allTasks = prepareAllTasksForStore(tasks);
+
+        dispatch(onReceiveTasks({
+          tasks: allTasks.tasks,
+          amaTasks: allTasks.amaTasks
+        }));
+
       } else {
         const task = resp.task.data;
         const allTasks = prepareAllTasksForStore([task]);
@@ -446,7 +456,7 @@ export const reassignTasksToUser = ({
 }) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   let params, url;
 
-  if (oldTask.appealType === 'Appeal'|| !oldTask.isLegacy) {
+  if (oldTask.appealType === 'Appeal') {
     url = `/tasks/${oldTask.taskId}`;
     params = {
       data: {
@@ -472,7 +482,7 @@ export const reassignTasksToUser = ({
   return ApiUtil.patch(url, params).
     then((resp) => resp.body).
     then((resp) => {
-      if (oldTask.appealType === 'Appeal'|| !oldTask.isLegacy) {
+      if (oldTask.appealType === 'Appeal') {
         const amaTasks = resp.tasks.data;
 
         dispatch(onReceiveAmaTasks(
