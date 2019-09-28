@@ -33,7 +33,7 @@ describe DasDeprecation::AssignTaskToAttorney do
   end
 
   describe "#create_attorney_task" do
-    let!(:task) { DasDeprecation::AssignTaskToAttorney.create_attorney_task(appeal.vacols_id, judge, attorney1) }
+    let!(:task) { DasDeprecation::AssignTaskToAttorney.create_attorney_task(appeal.vacols_id, judge, attorney1).first }
 
     it "task is a child of JudgeDecisionReviewTask" do
       expect(task.parent.type).to eq("JudgeDecisionReviewTask")
@@ -53,7 +53,7 @@ describe DasDeprecation::AssignTaskToAttorney do
   end
 
   describe "case reassignment to Attorney" do
-    let!(:task1) { DasDeprecation::AssignTaskToAttorney.create_attorney_task(appeal.vacols_id, judge, attorney1) }
+    let!(:task1) { DasDeprecation::AssignTaskToAttorney.create_attorney_task(appeal.vacols_id, judge, attorney1).first }
     let!(:task2) { DasDeprecation::AssignTaskToAttorney.reassign_attorney_task(appeal.vacols_id, judge, attorney2) }
 
     it "reassigns task to another attorney" do
