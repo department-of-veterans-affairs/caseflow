@@ -54,7 +54,7 @@ export default class IssuesList extends React.Component {
       onClickIssueAction,
       withdrawReview,
       featureToggles,
-      editPage
+      editPage 
     } = this.props;
 
     const {

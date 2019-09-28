@@ -560,12 +560,11 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       end
     end
 
-    fcontext "when withdraw decision reviews is enabled" do
+    context "when withdraw decision reviews is enabled" do
       before do
-        FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
+        OrganizationsUser.add_user_to_organization(current_user, BvaIntake.singleton)
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
       end
-      after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
 
       scenario "remove an issue with dropdown" do
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
@@ -576,13 +575,13 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
       let(:withdraw_date) { 1.day.ago.to_date.mdY }
 
-      scenario "withdraw a review" do
+      fscenario "withdraw a review" do
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
 
         expect(page).to_not have_content("Withdrawn issues")
         expect(page).to_not have_content("Please include the date the withdrawal was requested")
         expect(page).to have_content("Requested issues\n1. PTSD denied")
-        # binding.pry
+        binding.pry
 
         click_withdraw_intake_issue_dropdown("PTSD denied")
 

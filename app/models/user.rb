@@ -93,6 +93,10 @@ class User < ApplicationRecord
     HearingsManagement.singleton.users.include?(self) || TranscriptionTeam.singleton.users.include?(self)
   end
 
+  def case_review_or_regional_offices_withdraw?
+    BvaIntake.singleton.users.include?(self) || %w[NWQ VACO].exclude?(@regional_office)
+  end
+
   def administer_org_users?
     admin? || granted?("Admin Intake") || roles.include?("Admin Intake")
   end

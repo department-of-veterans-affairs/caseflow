@@ -365,7 +365,8 @@ AddIssuesPage.propTypes = {
   toggleUntimelyExemptionModal: PropTypes.func,
   undoCorrection: PropTypes.func,
   veteran: PropTypes.object,
-  withdrawIssue: PropTypes.func
+  withdrawIssue: PropTypes.func,
+  setWithdraw: PropTypes.bool
 };
 
 export const IntakeAddIssuesPage = connect(
