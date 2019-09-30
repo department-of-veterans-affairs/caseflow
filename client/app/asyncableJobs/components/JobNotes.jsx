@@ -69,6 +69,7 @@ class NewNoteForm extends React.PureComponent {
         name="Add Note"
         aria-label="Add Note"
         onChange={this.onChange}
+        value={this.state.newNote}
       />
       <div className="comment-save-button-container">
         <span className="cf-right-side">
@@ -105,19 +106,19 @@ export default class JobNotes extends React.PureComponent {
       <h3>Notes</h3>
       <NewNoteForm job={job} notes={this} />
       <div>
-        { notes.map((note) => {
-          return <div className="job-note" key={`job-note-container-${note.index}`}>
+        { notes.map((note, index) => {
+          return <div className="job-note" key={`job-note-container-${index}`}>
             <div
               className="job-note-details"
-              data-key={`job-note-${note.index}`}
-              key={`job-note-${note.index}`}
+              data-key={`job-note-${index}`}
+              key={`job-note-${index}`}
               id={`job-note-${note.id}`}>
 
               <div>
                 <span className="job-note-time">{moment(note.created_at).format(DATE_TIME_FORMAT)}</span>
                 <span className="job-note-user">{note.user}</span>
               </div>
-              <div>{note.note}</div>
+              <div className="job-note-note">{note.note}</div>
 
             </div>
           </div>;

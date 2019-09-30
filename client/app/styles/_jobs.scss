@@ -19,7 +19,7 @@
 
   .job-note {
     border-top: 1px solid $color-gray-light;
-    padding: 6px;
+    padding: 16px 0;
 
     .job-note-time {
       font-style: italic;
@@ -30,6 +30,10 @@
       margin-left: 1rem;
       font-style: italic;
       font-size: 95%;
+    }
+
+    .job-note-note {
+      white-space: pre;
     }
   }
 
