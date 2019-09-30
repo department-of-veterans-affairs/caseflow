@@ -1,0 +1,132 @@
+import _ from 'lodash';
+import React from 'react';
+import Button from '../../components/Button';
+import ApiUtil from '../../util/ApiUtil';
+import PropTypes from 'prop-types';
+import moment from 'moment';
+
+const DATE_TIME_FORMAT = 'ddd MMM DD HH:mm:ss YYYY';
+
+import Checkbox from '../../components/Checkbox';
+import TextareaField from '../../components/TextareaField';
+
+class NewNoteForm extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      saveInProgress: false,
+      checkboxSelected: false,
+      newNote: ""
+    };
+  }
+
+  onSave = () => {
+    const job = this.props.job;
+    const url = `/asyncable_jobs/${job.klass}/jobs/${job.id}/note`;
+    const form = this;
+    const notes = this.props.notes;
+
+    const data = {
+      note: this.state.newNote,
+      send_to_intake_user: this.state.checkboxSelected
+    }
+
+    ApiUtil.post(url, { data }).
+      then(
+        (response) => {
+          const newNote = JSON.parse(response.text);
+
+          form.setState({
+            saveInProgress: false,
+            checkboxSelected: false,
+            newNote: ""
+          });
+
+          // add note to current page.
+          notes.props.notes.unshift(newNote);
+          notes.setState({ reloaded: true });
+        }
+      );
+  }
+
+  onChange = (event) => {
+    this.setState({ newNote: event });
+  }
+
+  onCheckboxChange = (event) => {
+    this.setState({ checkboxSelected: event });
+  }
+
+  isSaveDisabled = () => {
+    return this.state.saveInProgress || this.state.newNote.trim().length === 0;
+  }
+
+  render = () => {
+    return <div className="comment-size-container">
+      <TextareaField
+        hideLabel={true}
+        name="Add Note"
+        aria-label="Add Note"
+        onChange={this.onChange}
+      />
+      <div className="comment-save-button-container">
+        <span className="cf-right-side">
+          <Checkbox
+            label="Send as message to user"
+            name="send_to_intake_user"
+            onChange={this.onCheckboxChange}
+            disabled={this.isSaveDisabled()}
+          />
+          <Button
+            name="save"
+            disabled={this.isSaveDisabled()}
+            onClick={this.onSave}>
+              Add Note
+          </Button>
+        </span>
+      </div>
+    </div>;
+  }
+
+}
+
+NewNoteForm.propTypes = {
+  onSave: PropTypes.func,
+  onCancel: PropTypes.func
+};
+
+export default class JobNotes extends React.PureComponent {
+
+  render = () => {
+    const { notes, job } = this.props;
+
+    return <div className="job-notes">
+      <h3>Notes</h3>
+      <NewNoteForm job={job} notes={this} />
+      <div>
+        { notes.map((note) => {
+          return <div className="job-note" key={`job-note-container-${note.index}`}>
+            <div
+              className="job-note-details"
+              data-key={`job-note-${note.index}`}
+              key={`job-note-${note.index}`}
+              id={`job-note-${note.id}`}>
+
+              <div>
+                <span className="job-note-time">{moment(note.created_at).format(DATE_TIME_FORMAT)}</span>
+                <span className="job-note-user">{note.user}</span>
+              </div>
+              <div>{note.note}</div>
+
+            </div>
+          </div>;
+        })}
+      </div>
+    </div>;
+  }
+}
+
+JobNotes.propTypes = {
+  notes: PropTypes.array
+};
