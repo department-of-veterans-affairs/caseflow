@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React from 'react';
 import Button from '../../components/Button';
 import ApiUtil from '../../util/ApiUtil';
@@ -18,7 +17,7 @@ class NewNoteForm extends React.PureComponent {
     this.state = {
       saveInProgress: false,
       checkboxSelected: false,
-      newNote: ""
+      newNote: ''
     };
   }
 
@@ -31,7 +30,7 @@ class NewNoteForm extends React.PureComponent {
     const data = {
       note: this.state.newNote,
       send_to_intake_user: this.state.checkboxSelected
-    }
+    };
 
     ApiUtil.post(url, { data }).
       then(
@@ -41,7 +40,7 @@ class NewNoteForm extends React.PureComponent {
           form.setState({
             saveInProgress: false,
             checkboxSelected: false,
-            newNote: ""
+            newNote: ''
           });
 
           // add note to current page.
@@ -66,7 +65,7 @@ class NewNoteForm extends React.PureComponent {
   render = () => {
     return <div className="comment-size-container">
       <TextareaField
-        hideLabel={true}
+        hideLabel
         name="Add Note"
         aria-label="Add Note"
         onChange={this.onChange}
@@ -94,6 +93,8 @@ class NewNoteForm extends React.PureComponent {
 }
 
 NewNoteForm.propTypes = {
+  job: PropTypes.object,
+  notes: PropTypes.array,
   onSave: PropTypes.func,
   onCancel: PropTypes.func
 };
@@ -130,5 +131,6 @@ export default class JobNotes extends React.PureComponent {
 }
 
 JobNotes.propTypes = {
+  job: PropTypes.object,
   notes: PropTypes.array
 };
