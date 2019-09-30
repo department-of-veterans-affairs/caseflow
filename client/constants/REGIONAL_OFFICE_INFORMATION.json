@@ -909,11 +909,11 @@
     "alternate_locations": null
   },
   "VACO": {
-    "label": null,
+    "label": "Board of Veterans' Appeals CO Office",
     "city": "Washington",
     "state": "DC",
     "timezone": "America/New_York",
-    "hold_hearings": false,
+    "hold_hearings": true,
     "facility_locator_id": null,
     "alternate_locations": null
   },
