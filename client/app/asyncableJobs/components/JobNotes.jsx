@@ -4,6 +4,7 @@ import Button from '../../components/Button';
 import ApiUtil from '../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import ReactMarkdown from 'react-markdown';
 
 const DATE_TIME_FORMAT = 'ddd MMM DD HH:mm:ss YYYY';
 
@@ -118,7 +119,7 @@ export default class JobNotes extends React.PureComponent {
                 <span className="job-note-time">{moment(note.created_at).format(DATE_TIME_FORMAT)}</span>
                 <span className="job-note-user">{note.user}</span>
               </div>
-              <div className="job-note-note">{note.note}</div>
+              <div className="job-note-note"><ReactMarkdown source={note.note} /></div>
 
             </div>
           </div>;
