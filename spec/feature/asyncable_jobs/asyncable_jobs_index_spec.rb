@@ -76,6 +76,20 @@ feature "Asyncable Jobs index", :postgres do
       expect(page).to have_button("Restarted", disabled: true)
       expect(page).to have_content("Attempted n/a")
     end
+
+    it "displays and adds notes" do
+      note_one = hlr.job_notes << JobNote.new(note: "hello world", user: hlr_intake.user)
+
+      visit "/asyncable_jobs/HigherLevelReview/jobs/#{hlr.id}"
+
+      expect(page).to have_content("hello world")
+
+      fill_in "Add Note", with: "another note\nwith\n## markdown header!"
+      click_button "Add Note"
+
+      expect(page).to have_content("another note\nwith\nmarkdown header!")
+      expect(hlr.reload.job_notes.count).to eq(2)
+    end
   end
 
   describe "index page" do
