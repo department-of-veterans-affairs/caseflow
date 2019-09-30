@@ -78,7 +78,7 @@ feature "Asyncable Jobs index", :postgres do
     end
 
     it "displays and adds notes" do
-      note_one = hlr.job_notes << JobNote.new(note: "hello world", user: hlr_intake.user)
+      hlr.job_notes << JobNote.new(note: "hello world", user: hlr_intake.user)
 
       visit "/asyncable_jobs/HigherLevelReview/jobs/#{hlr.id}"
 
