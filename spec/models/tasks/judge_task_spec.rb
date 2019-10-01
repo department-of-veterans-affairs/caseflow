@@ -220,7 +220,7 @@ describe JudgeTask, :all_dbs do
         )
       end
 
-      before { Timecop.freeze(Time.zone.local(2019, 9, 2)) }
+      before { Timecop.freeze(Time.zone.local(2019, 11, 2)) }
 
       it "changes the judge task type to decision review and sends an error to sentry" do
         expect(judge_task.type).to eq(JudgeAssignTask.name)
