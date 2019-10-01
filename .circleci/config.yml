@@ -69,6 +69,8 @@ jobs:
           key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
           paths:
             - ~/.cache/yarn
+            - public/assets
+            - tmp/cache/assets/sprockets
 
       - run:
           name: install dockerize
