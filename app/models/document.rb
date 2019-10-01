@@ -5,7 +5,8 @@ class Document < ApplicationRecord
   has_many :document_views
   has_many :documents_tags
   has_many :tags, through: :documents_tags
-  has_paper_trail only: [:description, :category_case_summary, :category_medical, :category_other, :category_procedural]
+  has_paper_trail only: [:description, :category_case_summary, :category_medical, :category_other, :category_procedural],
+                  save_changes: false
 
   self.inheritance_column = nil
 
