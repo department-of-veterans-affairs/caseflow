@@ -7,7 +7,7 @@ import ReactMarkdown from 'react-markdown';
 
 const DATE_TIME_FORMAT = 'ddd MMM DD HH:mm:ss YYYY';
 
-import Checkbox from '../../components/Checkbox';
+// import Checkbox from '../../components/Checkbox';  // enable once supported
 import TextareaField from '../../components/TextareaField';
 
 class NewNoteForm extends React.PureComponent {
@@ -31,6 +31,8 @@ class NewNoteForm extends React.PureComponent {
       note: this.state.newNote,
       send_to_intake_user: this.state.checkboxSelected
     };
+
+    notes.setState({ reloaded: false });
 
     ApiUtil.post(url, { data }).
       then(
@@ -62,6 +64,25 @@ class NewNoteForm extends React.PureComponent {
     return this.state.saveInProgress || this.state.newNote.trim().length === 0;
   }
 
+  isCheckboxChecked = () => {
+    return this.state.checkboxSelected;
+  }
+
+  sendToUserCheckbox = () => {
+    return <span />;
+
+    // enable once server supports it
+  /*
+    return <Checkbox
+      label="Send as message to user"
+      name="send_to_intake_user"
+      value={this.isCheckboxChecked()}
+      onChange={this.onCheckboxChange}
+      disabled={this.isSaveDisabled()}
+    />;
+  */
+  }
+
   render = () => {
     return <div className="comment-size-container">
       <TextareaField
@@ -73,12 +94,7 @@ class NewNoteForm extends React.PureComponent {
       />
       <div className="comment-save-button-container">
         <span className="cf-right-side">
-          <Checkbox
-            label="Send as message to user"
-            name="send_to_intake_user"
-            onChange={this.onCheckboxChange}
-            disabled={this.isSaveDisabled()}
-          />
+          { this.sendToUserCheckbox() }
           <Button
             name="save"
             disabled={this.isSaveDisabled()}
@@ -94,7 +110,7 @@ class NewNoteForm extends React.PureComponent {
 
 NewNoteForm.propTypes = {
   job: PropTypes.object,
-  notes: PropTypes.array,
+  notes: PropTypes.object,
   onSave: PropTypes.func,
   onCancel: PropTypes.func
 };
