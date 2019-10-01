@@ -248,11 +248,23 @@ describe EndProductEstablishment, :postgres do
     end
 
     context "when existing EP has status CLR" do
+      let(:setups) do
+        [
+          { modifier: "030", last_action_date: 2.weeks.ago.mdY },
+          { modifier: "031", last_action_date: 2.weeks.ago.mdY },
+          { modifier: "032", last_action_date: 2.weeks.ago.mdY }
+        ]
+      end
+
       before do
-        %w[030 031 032].each do |modifier|
+        setups.each do |setup|
           Generators::EndProduct.build(
             veteran_file_number: veteran_file_number,
-            bgs_attrs: { end_product_type_code: modifier, status_type_code: "CLR" }
+            bgs_attrs: {
+              end_product_type_code: setup[:modifier],
+              last_action_date: setup[:last_action_date],
+              status_type_code: "CLR"
+            }
           )
         end
       end
@@ -262,6 +274,20 @@ describe EndProductEstablishment, :postgres do
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           hash_including(veteran_hash: veteran.reload.to_vbms_hash)
         )
+      end
+
+      context "when last action date is within the last two days" do
+        let(:setups) do
+          [
+            { modifier: "030", last_action_date: 1.day.ago.mdY },
+            { modifier: "031", last_action_date: 1.day.ago.mdY },
+            { modifier: "032", last_action_date: Time.zone.today.mdY }
+          ]
+        end
+
+        it "considers those EP modifiers as taken and returns a NoAvailableModifiers error" do
+          expect { subject }.to raise_error(EndProductModifierFinder::NoAvailableModifiers)
+        end
       end
     end
 
