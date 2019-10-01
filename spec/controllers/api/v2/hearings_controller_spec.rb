@@ -74,7 +74,8 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
             expect(JSON.parse(subject.body)["hearings"][0]["timezone"]).to eq("America/New_York")
           end
           it do
-            expect(JSON.parse(subject.body)["hearings"][0]["hearing_location"]).to eq("Board of Veterans' Appeals CO Office")
+            first_location = JSON.parse(subject.body)["hearings"][0]["hearing_location"]
+            expect(first_location).to eq("Board of Veterans' Appeals CO Office")
           end
 
           it do
