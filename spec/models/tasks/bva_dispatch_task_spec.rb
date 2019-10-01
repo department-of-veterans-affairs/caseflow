@@ -103,7 +103,7 @@ describe BvaDispatchTask, :all_dbs do
 
         before { create(:root_task, appeal: legacy_appeal) }
 
-        it "should not complete the BvaDispatchTask and but should close the root task" do
+        it "should not complete the BvaDispatchTask but should close the root task" do
           allow(ProcessDecisionDocumentJob).to receive(:perform_later)
 
           BvaDispatchTask.outcode(legacy_appeal, params_legacy, user)
