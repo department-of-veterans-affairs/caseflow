@@ -1,7 +1,23 @@
 openapi: 3.0.0
 info:
   title: Decision Reviews
-  description: API version 3 for Decision Reviews provided by the Lighthouse Project
+  description: >+
+    The Decision Reviews API allows you to interact with a Veteran’s Decision Review requests, also known as benefit appeals. This API provides a secure and efficient alternative to paper or fax document submissions. Veterans Benefits Administration or Board of Veterans Appeals can begin processing Decision Review requests submitted through this API immediately, which ultimately allows VA to provide Veterans with appeal decisions more quickly.
+
+    > * For more information on the Decision Review process, including the different types of Decision Reviews, please see https://www.va.gov/decision-reviews/
+
+    > * The Decision Reviews API supports the Appeals Modernization Act (AMA) process only. Appeals going through the legacy Appeal process cannot be managed through this API. Learn more about the AMA [here](https://benefits.va.gov/benefits/appeals.asp).
+
+    ## Technical Summary
+
+    The Decision Reviews API interacts with VA's internal system, called Caseflow, that manages all benefit appeals. Caseflow is the authoritative source for all Decision Review information.
+    * The Decision Reviews API accepts a JSON payload and the participant identification is supplied as a header.
+    * The Decision Review request will be validated to ensure the Veteran information matches VA records and that the appeal information sent is valid.
+    * Detailed error messages will be returned to help your application provide meaningful information to the Veteran attempting to make the Decision Review request.
+
+    ### Authorization
+
+    API requests are authorized through a symmetric API token, provided in an HTTP header with name "apikey"
   version: 3.0.0
 servers:
   - url: https://dev-api.va.gov/services/appeals/{version}/decision_review
@@ -13,6 +29,12 @@ paths:
   /higher_level_reviews:
     post:
       summary: Creates a Higher-Level Review.
+      description: >+
+        This endpoint will submit a Decision Review request of type Higher Level Review.  This endpoint is analogous to submitting VA For 20-0996 via mail or fax.
+
+        ### Asynchronous processing
+
+        The Decision Reviews API leverages a pattern recommended by JSON API for asynchronous processing (more information [here](https://jsonapi.org/recommendations/#asynchronous-processing)).  Submitting a Decision Review is an asynchronous process due to the multiple systems that are involved.  Because of this, when a new Decision Review is submitted, the POST endpoint will return a 202 `accepted` response including an Intake UUID.  That Intake UUID is associated with the submission and can be used as an identifier for the Intake Status endpoint.  While the submission is processing the Intake Status endpoint will return a 200 response.  Once the asynchronous process is complete and the Decision Review is submitted into Caseflow, the Intake Status endpoint will return a 303 response including the Decision Review ID for the submitted Decision Review, which will allow you to retrieve the full details including the processing status. 
       requestBody:
         required: true
         content:
@@ -654,6 +676,7 @@ paths:
             format: uuid
             pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
       summary: After submitting a Higher-Level Review, you can check to see its current status
+      description: This endpoint returns whether the Higher Level Review that was sent has been processed into the Caseflow system. While the submission is processing theis endpoint will return a 200 response.  Once the asynchronous process is complete and the Decision Review is submitted into Caseflow, this endpoint will return a 303 response including the Decision Review ID for the submitted Decision Review, which will allow you to retrieve the full details via the Show endpoint.
       responses:
         '200':
           description: Status found
@@ -716,6 +739,7 @@ paths:
             format: uuid
             pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
       summary: Details of the Higher-Level Review
+      description: This endpoint returns the details of a specific Higher Level Review. This endpoint is also referred to as the Show endpoint.
       responses:
         '200':
           description: JSONAPI response detailing the specific Higher-Level Review
