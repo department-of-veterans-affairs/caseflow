@@ -169,7 +169,7 @@ ActiveRecord::Schema.define(version: 20190925205112) do
     t.string "appeal_type"
     t.string "assignee_label", comment: "Who is currently most responsible for the appeal"
     t.string "case_type", comment: "The case type, i.e. original, post remand, CAVC remand, etc"
-    t.string "closest_regional_office_city"
+    t.string "closest_regional_office_city", comment: "Closest regional office to the veteran"
     t.string "closest_regional_office_key", comment: "Closest regional office to the veteran in 4 character key"
     t.datetime "created_at"
     t.string "docket_number"
