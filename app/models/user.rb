@@ -293,7 +293,7 @@ class User < ApplicationRecord
     ]
   end
 
-  def default_active_tab
+  def self.default_active_tab
     Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
   end
 
