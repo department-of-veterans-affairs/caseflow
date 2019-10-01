@@ -18,7 +18,6 @@ class RequestIssue < ApplicationRecord
   has_many :remand_reasons, through: :decision_issues
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   has_many :hearing_issue_notes
-  has_many :job_notes, as: :job
   has_one :legacy_issue_optin
   belongs_to :correction_request_issue, class_name: "RequestIssue", foreign_key: "corrected_by_request_issue_id"
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
