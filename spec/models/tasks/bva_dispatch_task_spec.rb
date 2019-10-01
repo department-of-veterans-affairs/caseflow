@@ -101,13 +101,19 @@ describe BvaDispatchTask, :all_dbs do
           p
         end
 
-        it "should not complete the BvaDispatchTask and the task assigned to the BvaDispatch org" do
+        before { create(:root_task, appeal: legacy_appeal) }
+
+        it "should not complete the BvaDispatchTask and but should close the root task" do
           allow(ProcessDecisionDocumentJob).to receive(:perform_later)
 
           BvaDispatchTask.outcode(legacy_appeal, params_legacy, user)
 
           tasks = BvaDispatchTask.where(appeal: legacy_appeal, assigned_to: user)
           expect(tasks.length).to eq(0)
+
+          root_tasks = RootTask.where(appeal: legacy_appeal)
+          expect(root_tasks.length).to eq(1)
+          expect(root_tasks.first.status).to eq("completed")
 
           decision_document = DecisionDocument.find_by(appeal_id: legacy_appeal.id)
 
