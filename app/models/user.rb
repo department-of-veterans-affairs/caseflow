@@ -293,6 +293,10 @@ class User < ApplicationRecord
     ]
   end
 
+  def default_active_tab
+    Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
+  end
+
   def assigned_tasks_tab
     ::AssignedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end

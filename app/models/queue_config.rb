@@ -18,10 +18,9 @@ class QueueConfig
 
   def to_hash_for_user(user)
     table_title = COPY::COLOCATED_QUEUE_PAGE_TABLE_TITLE
-    active_tab = Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
     {
       table_title: assignee_is_org? ? format(COPY::ORGANIZATION_QUEUE_TABLE_TITLE, assignee.name) : table_title,
-      active_tab: assignee_is_org? ? active_tab : Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME,
+      active_tab: assignee.default_active_tab,
       tasks_per_page: TaskPager::TASKS_PER_PAGE,
       use_task_pages_api: use_task_pages_api?(user),
       tabs: tabs(user).map { |tab| attach_tasks_to_tab(tab, user) }
