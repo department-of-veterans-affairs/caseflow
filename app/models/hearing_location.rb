@@ -23,6 +23,9 @@ class HearingLocation < ApplicationRecord
   def street_address
     key = vba_372? ? "VACO" : facility_id
     addr = Constants::REGIONAL_OFFICE_FACILITY_ADDRESS[key]
+
+    return unless addr
+
     addr["address_1"]
   end
 
