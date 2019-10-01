@@ -15,7 +15,7 @@ class Api::V2::HearingsController < Api::ApplicationController
     end
 
     hash_serialized = Api::V2::HearingSerializer.new(
-      hearings, is_collection: true
+      hearings.reject { |hearing| hearing.hearing_location.nil? }, is_collection: true
     ).serializable_hash[:data]
 
     render json: {
