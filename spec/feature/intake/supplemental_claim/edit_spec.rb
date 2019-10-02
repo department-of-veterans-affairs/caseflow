@@ -220,7 +220,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         contested_rating_issue_profile_date: rating.profile_date,
         decision_review: supplemental_claim,
         benefit_type: benefit_type,
-        contested_issue_description: "PTSD denied"
+        contested_issue_description: "PTSD denied",
+        contested_decision_issue: contested_decision_issue
       )
     end
 
@@ -233,6 +234,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
     context "when it is created due to a DTA error" do
       let(:decision_review_remanded) { create(:higher_level_review) }
+      let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
 
       it "cannot be edited" do
         rating_dta_claim_id = EndProductEstablishment.find_by(
