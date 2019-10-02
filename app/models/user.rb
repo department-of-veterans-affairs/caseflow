@@ -94,7 +94,7 @@ class User < ApplicationRecord
   end
 
   def case_review_or_regional_offices_withdraw?
-    BvaIntake.singleton.users.include?(self) || %w[NWQ VACO].exclude?(@regional_office)
+    BvaIntake.singleton.users.include?(self) || %w[NWQ VACO].exclude?(regional_office)
   end
 
   def administer_org_users?

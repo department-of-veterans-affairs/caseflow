@@ -1,3 +1,4 @@
+
 /* eslint-disable */
 export const sample1 = {
   currentIssue1: {
@@ -869,7 +870,6 @@ export const sample1 = {
     claimId: '7dccd357-009c-4744-b986-4c46ad7c029e',
     featureToggles: {
       useAmaActivationDate: true,
-      withdrawDecisionReviews: true,
       editContentionText: true,
       correctClaimReviews: true
     },

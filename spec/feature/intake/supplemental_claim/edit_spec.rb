@@ -283,12 +283,9 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
       expect(page).to have_content("2. Left knee granted")
       expect(page).to_not have_content("Notes:")
-      click_remove_intake_issue("1")
+      click_remove_intake_issue_dropdown("PTSD denied")
 
       # expect a pop up
-      expect(page).to have_content("Are you sure you want to remove this issue?")
-      click_remove_issue_confirmation
-
       expect(page).not_to have_content("PTSD denied")
 
       # re-add to proceed
@@ -447,8 +444,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
       expect(page).to have_button("Save", disabled: false)
 
-      click_remove_intake_issue("2")
-      click_remove_issue_confirmation
+      click_remove_intake_issue_dropdown("Left knee granted")
 
       expect(page).to_not have_content("Left knee granted")
       expect(page).to have_button("Save", disabled: true)
@@ -483,8 +479,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
       visit "supplemental_claims/#{rating_ep_claim_id}/edit"
-      click_remove_intake_issue("1")
-      click_remove_issue_confirmation
+      click_remove_intake_issue_dropdown(1)
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
 
@@ -575,13 +570,12 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
       let(:withdraw_date) { 1.day.ago.to_date.mdY }
 
-      fscenario "withdraw a review" do
+      scenario "withdraw a review" do
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
 
         expect(page).to_not have_content("Withdrawn issues")
         expect(page).to_not have_content("Please include the date the withdrawal was requested")
         expect(page).to have_content("Requested issues\n1. PTSD denied")
-        binding.pry
 
         click_withdraw_intake_issue_dropdown("PTSD denied")
 
@@ -750,10 +744,10 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       scenario "cancel all active tasks when all request issues are removed" do
         visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
         # remove all request issues
-        supplemental_claim.request_issues.length.times do
-          click_remove_intake_issue(1)
-          click_remove_issue_confirmation
-        end
+        click_remove_intake_issue_dropdown("Apportionment")
+        click_remove_intake_issue_dropdown("Apportionment")
+        click_remove_intake_issue_dropdown("Apportionment")
+        click_remove_intake_issue_dropdown("Apportionment")
 
         click_edit_submit_and_confirm
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
@@ -771,8 +765,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       scenario "no active tasks cancelled when request issues remain" do
         visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
         # only cancel 1 of the 2 request issues
-        click_remove_intake_issue(1)
-        click_remove_issue_confirmation
+        click_remove_intake_issue_dropdown(1)
         click_edit_submit_and_confirm
 
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
@@ -792,7 +785,6 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         before do
           education_org = create(:business_line, name: "Education", url: "education")
           OrganizationsUser.add_user_to_organization(current_user, education_org)
-          FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
         end
 
         let(:withdraw_date) { 1.day.ago.to_date.mdY }
@@ -851,9 +843,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       context "when review has no active tasks" do
         scenario "no tasks are cancelled when all request issues are removed" do
           visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
-          click_remove_intake_issue(1)
-          click_remove_issue_confirmation
-          click_edit_submit_and_confirm
+          click_remove_intake_issue_dropdown(1)
 
           expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
           expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
