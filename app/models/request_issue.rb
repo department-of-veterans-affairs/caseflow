@@ -566,7 +566,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def remanded?
-    contested_decision_issue.remanded?
+    contested_decision_issue&.remanded?
   end
 
   private
