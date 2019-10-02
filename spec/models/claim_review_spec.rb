@@ -498,20 +498,20 @@ describe ClaimReview, :postgres do
       end
 
       let(:claim_review) do
-         create(
-           :supplemental_claim,
-           veteran_file_number: veteran_file_number,
-           benefit_type: benefit_type,
-           decision_review_remanded: dr_remanded
-         )
+        create(
+         :supplemental_claim,
+         veteran_file_number: veteran_file_number,
+         benefit_type: benefit_type,
+         decision_review_remanded: dr_remanded
+        )
       end
       let(:dr_remanded) do
-         create(
-           :higher_level_review,
-           veteran_file_number: veteran_file_number,
-           benefit_type: benefit_type,
-           number_of_claimants: 1
-         )
+        create(
+         :higher_level_review,
+         veteran_file_number: veteran_file_number,
+         benefit_type: benefit_type,
+         number_of_claimants: 1
+        )
       end
       let!(:remand_decision) { create(:decision_issue, decision_review: dr_remanded, disposition: "DTA Error") }
       let(:correction_request_issue) do
