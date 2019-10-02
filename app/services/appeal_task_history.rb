@@ -23,6 +23,6 @@ class AppealTaskHistory
     # returns that array as TaskEvent objects
     appeal.tasks.map(&:versions)
       .flatten.map { |vers| TaskEvent.new(version: vers) }
-      .sort_by(&:created_at).reverse
+      .sort_by { |event| [event.version.created_at, event.version.id] }.reverse
   end
 end

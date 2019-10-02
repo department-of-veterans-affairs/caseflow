@@ -416,12 +416,20 @@
       "zip" : "77030"
    },
    "vba_372" : {
-      "address_1" : "425 I Street, N.W.",
+      "address_1" : "1722 I Street, N.W.",
       "address_2" : null,
       "address_3" : null,
       "city" : "Washington",
       "state" : "DC",
       "zip" : "20421"
+   },
+   "VACO" : {
+      "address_1" : "425 I Street, N.W.",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "Washington",
+      "state" : "DC",
+      "zip" : "20001"
    },
    "vba_373" : {
       "address_1" : "275 Chestnut Street",
