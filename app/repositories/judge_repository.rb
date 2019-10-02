@@ -3,9 +3,9 @@
 class JudgeRepository
   # :nocov:
   def self.find_all_judges
-    judge_records.select(&:sdomainid).map do |record|
-      User.find_by_css_id_or_create_with_default_station_id(record.sdomainid)
-    end
+    css_ids = judge_records.where.not(sdomainid: nil).pluck("UPPER(sdomainid)")
+
+    User.batch_find_by_css_id_or_create_with_default_station_id(css_ids)
   end
 
   def self.find_all_judges_with_name_and_id

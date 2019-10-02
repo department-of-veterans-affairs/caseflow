@@ -579,9 +579,12 @@ describe ClaimReview, :postgres do
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.last.reference_id,
           contentions: array_including(
-            { description: "another decision text" },
-            { description: "foobar was denied." },
-            description: "decision text"
+            { description: "another decision text",
+              contention_type: Constants.CONTENTION_TYPES.higher_level_review },
+            { description: "foobar was denied.",
+              contention_type: Constants.CONTENTION_TYPES.higher_level_review },
+            description: "decision text",
+            contention_type: Constants.CONTENTION_TYPES.higher_level_review
           ),
           user: user,
           claim_date: claim_review.receipt_date.to_date
@@ -673,8 +676,10 @@ describe ClaimReview, :postgres do
               veteran_file_number: veteran_file_number,
               claim_id: claim_review.end_product_establishments.last.reference_id,
               contentions: containing_exactly(
-                { description: "another decision text" },
-                description: "foobar was denied."
+                { description: "another decision text",
+                  contention_type: Constants.CONTENTION_TYPES.higher_level_review },
+                description: "foobar was denied.",
+                contention_type: Constants.CONTENTION_TYPES.higher_level_review
               ),
               user: user,
               claim_date: claim_review.receipt_date.to_date
@@ -880,7 +885,8 @@ describe ClaimReview, :postgres do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRR").reference_id,
-          contentions: [{ description: "decision text" }],
+          contentions: array_including(description: "decision text",
+                                       contention_type: Constants.CONTENTION_TYPES.higher_level_review),
           user: user,
           claim_date: claim_review.receipt_date.to_date
         )
@@ -916,7 +922,8 @@ describe ClaimReview, :postgres do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRNR").reference_id,
-          contentions: [{ description: "surgery - Issue text" }],
+          contentions: array_including(description: "surgery - Issue text",
+                                       contention_type: Constants.CONTENTION_TYPES.higher_level_review),
           user: user,
           claim_date: claim_review.receipt_date.to_date
         )

@@ -6,7 +6,7 @@ class RequestIssue < ApplicationRecord
   include DecisionSyncable
 
   # how many days before we give up trying to sync decisions
-  REQUIRES_PROCESSING_WINDOW_DAYS = 14
+  REQUIRES_PROCESSING_WINDOW_DAYS = 30
 
   # don't need to try as frequently as default 3 hours
   DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
@@ -18,6 +18,7 @@ class RequestIssue < ApplicationRecord
   has_many :remand_reasons, through: :decision_issues
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   has_many :hearing_issue_notes
+  has_many :job_notes, as: :job
   has_one :legacy_issue_optin
   belongs_to :correction_request_issue, class_name: "RequestIssue", foreign_key: "corrected_by_request_issue_id"
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
@@ -146,7 +147,6 @@ class RequestIssue < ApplicationRecord
 
     private
 
-    # rubocop:disable Metrics/MethodLength
     def attributes_from_intake_data(data)
       contested_issue_present = attributes_look_like_contested_issue?(data)
 
@@ -174,7 +174,6 @@ class RequestIssue < ApplicationRecord
         correction_type: data[:correction_type]
       }
     end
-    # rubocop:enable Metrics/MethodLength
 
     def attributes_look_like_contested_issue?(data)
       data[:rating_issue_reference_id] ||
@@ -276,6 +275,13 @@ class RequestIssue < ApplicationRecord
     specials << { code: "ASSOI", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O } if legacy_issue_opted_in?
     specials << { code: "SSR", narrative: "Same Station Review" } if decision_review.try(:same_office)
     return specials unless specials.empty?
+  end
+
+  def contention_type
+    return Constants.CONTENTION_TYPES.higher_level_review if decision_review.is_a?(HigherLevelReview)
+    return Constants.CONTENTION_TYPES.supplemental_claim if decision_review.is_a?(SupplementalClaim)
+
+    Constants.CONTENTION_TYPES.default
   end
 
   # If contentions get a DTA disposition, send their IDs when creating the new DTA contentions

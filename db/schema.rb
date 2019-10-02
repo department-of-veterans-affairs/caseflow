@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190920213522) do
+ActiveRecord::Schema.define(version: 20190925205112) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -667,6 +667,18 @@ ActiveRecord::Schema.define(version: 20190920213522) do
     t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number"
   end
 
+  create_table "job_notes", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at"
+    t.bigint "job_id", null: false, comment: "The job to which the note applies"
+    t.string "job_type", null: false
+    t.text "note", null: false, comment: "The note"
+    t.boolean "send_to_intake_user", default: false, comment: "Should the note trigger a message to the job intake user"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at"
+    t.bigint "user_id", null: false, comment: "The user who created the note"
+    t.index ["job_type", "job_id"], name: "index_job_notes_on_job_type_and_job_id"
+    t.index ["user_id"], name: "index_job_notes_on_user_id"
+  end
+
   create_table "judge_case_reviews", force: :cascade do |t|
     t.text "areas_for_improvement", default: [], array: true
     t.integer "attorney_id"
@@ -1154,6 +1166,7 @@ ActiveRecord::Schema.define(version: 20190920213522) do
     t.integer "item_id", null: false
     t.string "item_type", null: false
     t.text "object"
+    t.text "object_changes"
     t.string "whodunnit"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end

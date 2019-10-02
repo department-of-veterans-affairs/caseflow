@@ -1065,10 +1065,14 @@ feature "Higher Level Review Edit issues", :all_dbs do
         veteran_file_number: veteran.file_number,
         claim_id: rating_epe.reference_id,
         contentions: array_including(
-          { description: RequestIssue::UNIDENTIFIED_ISSUE_MSG },
-          { description: "Left knee granted" },
-          { description: "Issue before AMA Activation from RAMP" },
-          description: "PTSD denied"
+          { description: RequestIssue::UNIDENTIFIED_ISSUE_MSG,
+            contention_type: Constants.CONTENTION_TYPES.higher_level_review },
+          { description: "Left knee granted",
+            contention_type: Constants.CONTENTION_TYPES.higher_level_review },
+          { description: "Issue before AMA Activation from RAMP",
+            contention_type: Constants.CONTENTION_TYPES.higher_level_review },
+          description: "PTSD denied",
+          contention_type: Constants.CONTENTION_TYPES.higher_level_review
         ),
         user: current_user,
         claim_date: higher_level_review.receipt_date.to_date
@@ -1077,7 +1081,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
         veteran_file_number: veteran.file_number,
         claim_id: nonrating_epe.reference_id,
-        contentions: [{ description: "Active Duty Adjustments - Description for Active Duty Adjustments" }],
+        contentions: [{ description: "Active Duty Adjustments - Description for Active Duty Adjustments",
+                        contention_type: Constants.CONTENTION_TYPES.higher_level_review }],
         user: current_user,
         claim_date: higher_level_review.receipt_date.to_date
       )
@@ -1158,7 +1163,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: veteran.file_number,
         claim_id: rating_ep_claim_id,
-        contentions: [{ description: "Left knee granted" }],
+        contentions: [{ description: "Left knee granted",
+                        contention_type: Constants.CONTENTION_TYPES.higher_level_review }],
         user: current_user,
         claim_date: higher_level_review.receipt_date.to_date
       )
