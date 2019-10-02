@@ -299,13 +299,13 @@ describe Document, :postgres do
   context "versioning" do
     it "saves new version on update description" do
       document.save
-      expect(document.versions.length).to eq 1
+      expect(document.versions.length).to eq 0
       expect(document.description).to eq("Document description")
 
       document.description = "Updated description"
       document.save
 
-      expect(document.versions.length).to eq 2
+      expect(document.versions.length).to eq 1
       expect(document.reload.description).to eq("Updated description")
     end
   end

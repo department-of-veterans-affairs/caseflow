@@ -329,8 +329,10 @@ describe RequestIssuesUpdate, :all_dbs do
               hash_including(
                 veteran_file_number: review.veteran_file_number,
                 contentions: array_including(
-                  description: request_issue_to_correct.description,
-                  contention_type: Constants.CONTENTION_TYPES.higher_level_review
+                  hash_including(
+                    description: request_issue_to_correct.description,
+                    contention_type: Constants.CONTENTION_TYPES.higher_level_review
+                  )
                 )
               )
             )
