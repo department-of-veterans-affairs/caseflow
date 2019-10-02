@@ -344,8 +344,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         ri_legacy_issue_not_withdrawn.contention_text
       )
       expect_ineligible_issue(ri_legacy_issue_not_withdrawn_num)
-      click_remove_intake_issue(ri_legacy_issue_not_withdrawn_num)
-      click_remove_issue_confirmation
+      click_remove_intake_issue_dropdown(ri_legacy_issue_not_withdrawn.contention_text)
 
       expect(page).to_not have_content(
         "#{ri_legacy_issue_not_withdrawn.contention_text} #{ineligible.legacy_issue_not_withdrawn}"
@@ -364,9 +363,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       # 4
       ri_with_previous_hlr_issue_num = find_intake_issue_number_by_text(ri_with_previous_hlr.contention_text)
       expect_ineligible_issue(ri_with_previous_hlr_issue_num)
-      click_remove_intake_issue(ri_with_previous_hlr_issue_num)
-      click_remove_issue_confirmation
-
+      click_remove_intake_issue_dropdown(ri_with_previous_hlr.contention_text)
       expect(page).to_not have_content(
         "#{ri_with_previous_hlr.contention_text} #{ineligible.higher_level_review_to_higher_level_review}"
       )
@@ -383,8 +380,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       # 5
       ri_in_review_issue_num = find_intake_issue_number_by_text(ri_in_review.contention_text)
       expect_ineligible_issue(ri_in_review_issue_num)
-      click_remove_intake_issue(ri_in_review_issue_num)
-      click_remove_issue_confirmation
+      click_remove_intake_issue_dropdown(ri_in_review.contention_text)
 
       expect(page).to_not have_content(
         "#{ri_in_review.contention_text} is ineligible because it's already under review as a Higher-Level Review"
@@ -402,8 +398,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       # 6
       untimely_request_issue_num = find_intake_issue_number_by_text(untimely_request_issue.contention_text)
       expect_ineligible_issue(untimely_request_issue_num)
-      click_remove_intake_issue(untimely_request_issue_num)
-      click_remove_issue_confirmation
+      click_remove_intake_issue_dropdown(untimely_request_issue.contention_text)
 
       expect(page).to_not have_content(
         "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
@@ -428,8 +423,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       # 7
       ri_before_ama_num = find_intake_issue_number_by_text(ri_before_ama.contention_text)
       expect_ineligible_issue(ri_before_ama_num)
-      click_remove_intake_issue(ri_before_ama_num)
-      click_remove_issue_confirmation
+      click_remove_intake_issue_dropdown(ri_before_ama.contention_text)
 
       expect(page).to_not have_content(
         "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
@@ -688,9 +682,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
     it "does not mention VBMS when removing an issue" do
       visit "/higher_level_reviews/#{higher_level_review.uuid}/edit"
       expect(page).to have_content(request_issue.nonrating_issue_description)
-
-      click_remove_intake_issue_by_text(request_issue.nonrating_issue_description)
-      expect(page).to have_content("The contention you selected will be removed from the decision review.")
+      click_remove_intake_issue_dropdown(request_issue.nonrating_issue_description)
     end
   end
 
@@ -925,8 +917,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       expect(page).to_not have_content("Notes:")
 
       # remove existing issue
-      click_remove_intake_issue("1")
-      click_remove_issue_confirmation
+      click_remove_intake_issue_dropdown(1)
       expect(page).not_to have_content("PTSD denied")
 
       # re-add to proceed
@@ -1088,7 +1079,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       )
     end
 
-    it "enables save button only when dirty" do
+    fit "enables save button only when dirty" do
       visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
       expect(page).to have_button("Save", disabled: true)
@@ -1097,8 +1088,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       add_intake_rating_issue("Left knee granted")
       expect(page).to have_button("Save", disabled: false)
 
-      click_remove_intake_issue("2")
-      click_remove_issue_confirmation
+      click_remove_intake_issue_dropdown("Left knee granted")
       expect(page).to_not have_content("Left knee granted")
       expect(page).to have_button("Save", disabled: true)
     end
@@ -1135,8 +1125,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       contention_to_remove = request_issue.reload.contention
 
       visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-      click_remove_intake_issue("1")
-      click_remove_issue_confirmation
+      click_remove_intake_issue_dropdown(1)
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
 
@@ -1214,9 +1203,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
     end
 
     context "when withdraw decision reviews is enabled" do
-      before { FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id]) }
-      after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
-
       scenario "remove an issue with dropdown" do
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
         expect(page).to have_content("PTSD denied")
@@ -1355,11 +1341,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
       scenario "cancel all active tasks when all request issues are removed" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         # remove all request issues
-        higher_level_review.request_issues.length.times do
-          click_remove_intake_issue(1)
-          click_remove_issue_confirmation
-        end
-
+        click_remove_intake_issue_dropdown(1)
+        click_remove_intake_issue_dropdown(2)
         click_edit_submit_and_confirm
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         sleep 1
@@ -1375,8 +1358,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       scenario "no active tasks cancelled when request issues remain" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         # only cancel 1 of the 2 request issues
-        click_remove_intake_issue(1)
-        click_remove_issue_confirmation
+        click_remove_intake_issue_dropdown("Apportionment")
         click_edit_submit_and_confirm
 
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
@@ -1388,14 +1370,10 @@ feature "Higher Level Review Edit issues", :all_dbs do
       scenario "remove all vbms decisions reviews" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         # remove all request issues
-        higher_level_review.request_issues.length.times do
-          click_remove_intake_issue(1)
-          click_remove_issue_confirmation
-        end
+        click_remove_intake_issue_dropdown(1)
+        click_remove_intake_issue_dropdown(2)
 
         click_edit_submit
-        expect(page).to have_content("Remove review?")
-        expect(page).to have_content("This will remove the review and cancel all the End Products associated with it")
         click_intake_confirm
         expect(page).to have_content("Review Removed")
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
@@ -1415,10 +1393,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
       scenario "show alert message when all decision reviews are removed " do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         # remove all request issues
-        higher_level_review.request_issues.length.times do
-          click_remove_intake_issue(1)
-          click_remove_issue_confirmation
-        end
+        click_remove_intake_issue_dropdown(1)
+        click_remove_intake_issue_dropdown(2)
 
         click_edit_submit
         expect(page).to have_content("Remove review?")
@@ -1435,7 +1411,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
       before do
         education_org = create(:business_line, name: "Education", url: "education")
         OrganizationsUser.add_user_to_organization(current_user, education_org)
-        FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
       end
 
       let(:withdraw_date) { 1.day.ago.to_date.mdY }
@@ -1496,7 +1471,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
     context "when a rating decision text is edited" do
       before do
-        FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
         FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
       end
 
@@ -1555,8 +1529,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
     context "when review has no active tasks" do
       scenario "no tasks are cancelled when all request issues are removed" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
-        click_remove_intake_issue(1)
-        click_remove_issue_confirmation
+        click_remove_intake_issue_dropdown(1)
         click_edit_submit_and_confirm
 
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)

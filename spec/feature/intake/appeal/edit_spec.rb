@@ -82,9 +82,7 @@ feature "Appeal Edit issues", :all_dbs do
     expect(page).to have_content(nonrating_request_issue.description)
 
     # remove an issue
-    nonrating_intake_num = find_intake_issue_number_by_text(nonrating_request_issue.nonrating_issue_category)
-    click_remove_intake_issue(nonrating_intake_num)
-    click_remove_issue_confirmation
+    click_remove_intake_issue_dropdown(nonrating_request_issue.description)
     expect(page).not_to have_content(nonrating_request_issue.description)
     expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
@@ -120,9 +118,7 @@ feature "Appeal Edit issues", :all_dbs do
     expect(page).to have_button("Save", disabled: true)
 
     # remove
-    issue_num = find_intake_issue_number_by_text(issue_description)
-    click_remove_intake_issue(issue_num)
-    click_remove_issue_confirmation
+    click_remove_intake_issue_dropdown(1)
     expect(page).not_to have_content(issue_description)
     expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
@@ -143,10 +139,8 @@ feature "Appeal Edit issues", :all_dbs do
     scenario "allows all request issues to be removed and saved" do
       visit "appeals/#{appeal.uuid}/edit/"
       # remove all issues
-      click_remove_intake_issue(1)
-      click_remove_issue_confirmation
-      click_remove_intake_issue(1)
-      click_remove_issue_confirmation
+      click_remove_intake_issue_dropdown("PTSD denied")
+      click_remove_intake_issue_dropdown("Military Retired Pay")
       expect(page).to have_button("Save", disabled: false)
     end
   end
@@ -262,8 +256,7 @@ feature "Appeal Edit issues", :all_dbs do
 
         # Check rollback
         visit "appeals/#{appeal.uuid}/edit/"
-        click_remove_intake_issue_by_text("Back pain")
-        click_remove_issue_confirmation
+        click_remove_intake_issue_dropdown("Back pain")
         click_edit_submit_and_confirm
 
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
@@ -348,9 +341,7 @@ feature "Appeal Edit issues", :all_dbs do
       )
       expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
       expect(page).to have_button("Save", disabled: true)
-
-      click_remove_intake_issue_by_text("Left knee granted")
-      click_remove_issue_confirmation
+      click_remove_intake_issue_dropdown("Left knee granted")
       expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
       expect(page).to have_button("Save", disabled: false)
 
@@ -645,10 +636,10 @@ feature "Appeal Edit issues", :all_dbs do
       scenario "cancel all active tasks when all request issues are removed" do
         visit "appeals/#{appeal.uuid}/edit"
         # remove all request issues
-        appeal.request_issues.length.times do
-          click_remove_intake_issue(1)
-          click_remove_issue_confirmation
-        end
+        click_remove_intake_issue_dropdown("Apportionment")
+        click_remove_intake_issue_dropdown("Apportionment")
+        click_remove_intake_issue_dropdown("PTSD denied")
+        click_remove_intake_issue_dropdown("Military Retired Pay")
 
         click_edit_submit_and_confirm
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
@@ -668,18 +659,15 @@ feature "Appeal Edit issues", :all_dbs do
       context "when appeal is non-comp benefit type" do
         let!(:request_issue) { create(:request_issue, benefit_type: "education") }
 
-        scenario "remove all non-comp decision reviews" do
+        fscenario "remove all non-comp decision reviews" do
           visit "appeals/#{appeal.uuid}/edit"
-          # remove all request issues
-          appeal.request_issues.length.times do
-            click_remove_intake_issue(1)
-            click_remove_issue_confirmation
-          end
 
-          click_edit_submit
-          expect(page).to have_content("Remove review?")
-          expect(page).to have_content("This review and all tasks associated with it will be removed.")
-          click_intake_confirm
+          # remove all request issues
+          click_remove_intake_issue_dropdown("Apportionment")
+          click_remove_intake_issue_dropdown("Apportionment")
+          click_remove_intake_issue_dropdown("PTSD denied")
+          click_remove_intake_issue_dropdown("Military Retired Pay")
+          click_edit_submit_and_confirm
 
           expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
           expect(page).to have_content("Edit Completed")
@@ -689,8 +677,11 @@ feature "Appeal Edit issues", :all_dbs do
       context "when review has no active tasks" do
         scenario "no tasks are cancelled when all request issues are removed" do
           visit "appeals/#{appeal.uuid}/edit"
-          click_remove_intake_issue(1)
-          click_remove_issue_confirmation
+
+          click_remove_intake_issue_dropdown("Apportionment")
+          click_remove_intake_issue_dropdown("Apportionment")
+          click_remove_intake_issue_dropdown("PTSD denied")
+          click_remove_intake_issue_dropdown("Military Retired Pay")
           click_edit_submit_and_confirm
           expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         end
@@ -700,10 +691,11 @@ feature "Appeal Edit issues", :all_dbs do
         scenario "show timestamp when all request issues are cancelled" do
           visit "appeals/#{appeal.uuid}/edit"
           # remove all request issues
-          appeal.request_issues.length.times do
-            click_remove_intake_issue(1)
-            click_remove_issue_confirmation
-          end
+
+          click_remove_intake_issue_dropdown("Apportionment")
+          click_remove_intake_issue_dropdown("Apportionment")
+          click_remove_intake_issue_dropdown("PTSD denied")
+          click_remove_intake_issue_dropdown("Military Retired Pay")
 
           click_edit_submit_and_confirm
           expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
