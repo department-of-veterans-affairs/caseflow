@@ -13,8 +13,7 @@ FactoryBot.define do
 
     hearing_location do
       if regional_office.present?
-        venue = LegacyHearing.venues[regional_office]
-        HearingLocation.create(name: venue[:label])
+        create(:hearing_location, regional_office: regional_office)
       end
     end
 
