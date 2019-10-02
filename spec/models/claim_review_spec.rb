@@ -494,10 +494,26 @@ describe ClaimReview, :postgres do
     context "when the issue is a correction to a dta decision" do
       before do
         allow(RequestIssueCorrectionCleaner).to receive(:new).with(correction_request_issue).and_call_original
-        claim_review.create_remand_supplemental_claims!
+        dr_remanded.create_remand_supplemental_claims!
       end
 
-      let!(:remand_decision) { create(:decision_issue, decision_review: claim_review, disposition: "DTA Error") }
+      let(:claim_review) do
+         create(
+           :supplemental_claim,
+           veteran_file_number: veteran_file_number,
+           benefit_type: benefit_type,
+           decision_review_remanded: dr_remanded
+         )
+      end
+      let(:dr_remanded) do
+         create(
+           :higher_level_review,
+           veteran_file_number: veteran_file_number,
+           benefit_type: benefit_type,
+           number_of_claimants: 1
+         )
+      end
+      let!(:remand_decision) { create(:decision_issue, decision_review: dr_remanded, disposition: "DTA Error") }
       let(:correction_request_issue) do
         build(
           :request_issue,

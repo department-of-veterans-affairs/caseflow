@@ -65,6 +65,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     ).reference_id
   end
 
+  let(:contested_decision_issue) { nil }
+
   before do
     supplemental_claim.create_claimants!(participant_id: "5382910292", payee_code: "10")
 
@@ -113,7 +115,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         nonrating_issue_category: "Military Retired Pay",
         nonrating_issue_description: "nonrating description",
         benefit_type: benefit_type,
-        decision_date: 1.month.ago
+        decision_date: 1.month.ago,
+        contested_decision_issue: contested_decision_issue
       )
     end
 
@@ -124,6 +127,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
     context "when it is created due to a DTA error" do
       let(:decision_review_remanded) { create(:higher_level_review) }
+      let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
 
       it "cannot be edited" do
         nonrating_dta_claim_id = EndProductEstablishment.find_by(
