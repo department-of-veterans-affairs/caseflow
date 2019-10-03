@@ -61,6 +61,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
       expect(intake_status.to_json[:errors][0][:status]).to be > 399
     end
   end
+
   context "#http_status" do
     it("returns NO_DECISION_REVIEW_HTTP_STATUS when the intake has no decision review") do
       intake = fake_intake
@@ -94,6 +95,29 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
       intake_status = new_intake_status(intake)
 
       expect(intake_status.http_status).to eq(Api::V3::DecisionReview::IntakeStatus::SUBMITTED_HTTP_STATUS)
+    end
+  end
+
+  context "#decision_review_url" do
+    it("returns nil when the intake has no decision review") do
+      intake = fake_intake
+
+      intake_status = new_intake_status(intake)
+
+      expect(intake_status.decision_review_url).to be_nil
+    end
+
+    it("returns nil when the intake has not been submitted") do
+      decision_review = fake_higher_level_review
+
+      asyncable_status = :not_yet_submitted
+      allow(decision_review).to receive(:asyncable_status) { asyncable_status }
+
+      intake = fake_intake(decision_review)
+
+      intake_status = new_intake_status(intake)
+
+      expect(intake_status.decision_review_url).to be_nil
     end
   end
 end
