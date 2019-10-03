@@ -5,8 +5,8 @@ class Api::V3::DecisionReview::IntakeStatus
   NOT_SUBMITTED_HTTP_STATUS = 200
   NO_DECISION_REVIEW_HTTP_STATUS = 500
 
-  def initialize(intake, reload: true)
-    @intake = reload ? intake.reload : intake
+  def initialize(intake, opts = {reload: true})
+    @intake = opts[:reload] ? intake.reload : intake
   end
 
   def to_json(*_args)
