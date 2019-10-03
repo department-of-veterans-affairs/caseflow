@@ -676,7 +676,7 @@ paths:
             format: uuid
             pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
       summary: After submitting a Higher-Level Review, you can check to see its current status
-      description: This endpoint returns whether the Higher Level Review that was sent has been processed into the Caseflow system. While the submission is processing theis endpoint will return a 200 response.  Once the asynchronous process is complete and the Decision Review is submitted into Caseflow, this endpoint will return a 303 response including the Decision Review ID for the submitted Decision Review, which will allow you to retrieve the full details via the Show endpoint.
+      description: This endpoint returns whether the Higher Level Review that was sent has been processed into the Caseflow system. While the submission is processing, this endpoint will return a 200 response.  Once the asynchronous process is complete and the Decision Review is submitted into Caseflow, this endpoint will return a 303 response including the Decision Review ID for the submitted Decision Review, which will allow you to retrieve the full details via the Show endpoint.
       responses:
         '200':
           description: Status found
