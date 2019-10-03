@@ -38,7 +38,7 @@ class ContestableIssueGenerator
 
   def contestable_decision_issues
     issues = []
-    issues += finalized_decision_issues_before_receipt_date unless review.try(&:decision_review_remanded?)
+    issues += finalized_decision_issues_before_receipt_date unless review.try(:decision_review_remanded?)
 
     # If correction support enabled, we include all decision issues for the issue
     if FeatureToggle.enabled?(:correct_claim_reviews, user: RequestStore[:current_user])

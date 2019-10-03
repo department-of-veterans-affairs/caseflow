@@ -483,7 +483,7 @@ def correct_existing_request_issue(request_issue_to_correct)
   select_correction_type_from_modal("control")
   check_correction_type_modal_button_status(false)
   click_correction_type_modal_submit
-
+binding.pry
   click_edit_submit
   confirm_930_modal
   correction_issue = request_issue_to_correct.reload.correction_request_issue
