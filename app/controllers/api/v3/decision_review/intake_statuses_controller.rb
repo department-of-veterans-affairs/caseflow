@@ -7,8 +7,8 @@ class Api::V3::DecisionReview::IntakeStatusesController < Api::V3::BaseControlle
       return
     end
 
-    location = intake_status.decision_review_url
-    response.set_header("Location", location) if location
+    args = intake_status.show_decision_review_url_for_args
+    response.set_header("Location", url_for(args)) if args
 
     render json: intake_status.to_json, status: intake_status.http_status
   rescue StandardError

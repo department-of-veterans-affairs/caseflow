@@ -19,14 +19,15 @@ class Api::V3::DecisionReview::IntakeStatus
     submitted? ? SUBMITTED_HTTP_STATUS : NOT_SUBMITTED_HTTP_STATUS
   end
 
-  def decision_review_url
+  # arguments for url_for
+  def show_decision_review_url_for_args
     return nil unless submitted?
 
-    url_for(
+    {
       controller: decision_review_controller,
       action: :show,
       id: decision_review.uuid
-    )
+    }
   end
 
   private

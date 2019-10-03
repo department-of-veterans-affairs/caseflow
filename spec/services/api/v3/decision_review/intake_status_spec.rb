@@ -98,13 +98,13 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
     end
   end
 
-  context "#decision_review_url" do
+  context "#show_decision_review_url_for_args" do
     it("returns nil when the intake has no decision review") do
       intake = fake_intake
 
       intake_status = new_intake_status(intake)
 
-      expect(intake_status.decision_review_url).to be_nil
+      expect(intake_status.show_decision_review_url_for_args).to be_nil
     end
 
     it("returns nil when the intake has not been submitted") do
@@ -117,7 +117,27 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
 
       intake_status = new_intake_status(intake)
 
-      expect(intake_status.decision_review_url).to be_nil
+      expect(intake_status.show_decision_review_url_for_args).to be_nil
+    end
+
+    it("returns a route when the decision review is a HigherLevelReview in :submitted state") do
+      decision_review = fake_higher_level_review
+
+      asyncable_status = :submitted
+      allow(decision_review).to receive(:asyncable_status) { asyncable_status }
+
+      uuid = "cat"
+      allow(decision_review).to receive(:uuid) { uuid }
+
+      intake = fake_intake(decision_review)
+
+      intake_status = new_intake_status(intake)
+
+      expect(intake_status.show_decision_review_url_for_args).to be_a(Hash)
+      expect(intake_status.show_decision_review_url_for_args.keys).to contain_exactly(:controller, :action, :id)
+      expect(intake_status.show_decision_review_url_for_args[:controller]).to be_a(Symbol)
+      expect(intake_status.show_decision_review_url_for_args[:action]).to eq(:show)
+      expect(intake_status.show_decision_review_url_for_args[:id]).to eq(uuid)
     end
   end
 end
