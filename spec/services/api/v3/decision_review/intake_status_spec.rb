@@ -1,14 +1,15 @@
 # frozen_string_literal: true
 
 require "support/database_cleaner"
+require "rails_helper"
 
 context Api::V3::DecisionReview::IntakeStatus, :postgres do
-  include IntakeHelpers
+  let(:veteran_file_number) { "123456789" }
 
   def fake_intake
     intake = Intake.build(
       user: Generators::User.build,
-      veteran_file_number: "64205050",
+      veteran_file_number: veteran_file_number,
       form_type: "higher_level_review"
     )
     intake.save
@@ -16,7 +17,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
   end
 
   def fake_higher_level_review
-    HigherLevelReview.create!(veteran_file_number: test_veteran.file_number)
+    HigherLevelReview.create!(veteran_file_number: veteran_file_number)
   end
 
   context "#to_json" do
@@ -36,8 +37,8 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
       intake_status = Api::V3::DecisionReview::IntakeStatus.new(intake)
 
       expect(intake_status).to be_truthy
-      expect(intake.detail).to eq("snte")
-      expect(intake_status.to_json).to eq("snte")
+      expect(intake.detail).to be_truthy
+      expect(intake_status.to_json).to be_truthy
       expect(intake_status.to_json[:data][:type]).to eq(decision_review.class.name)
       expect(intake_status.to_json[:data][:id]).to eq(uuid)
       expect(intake_status.to_json[:data][:atributes][:status]).to eq(asyncable_status)
