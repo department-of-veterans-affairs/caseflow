@@ -90,6 +90,10 @@ RSpec.feature "MailTasks", :postgres do
       # Visit case details page
       visit "/queue/appeals/#{task.appeal.uuid}"
 
+      # Make sure mail team tasks do not show in task snapshot
+      expect(find("#currently-active-tasks")).not_to have_content("ASSIGNED TO\nMail")
+      expect(find_all("#currently-active-tasks tr").length).to eq 1
+
       # Navigate to the change task type modal
       find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h[:label]).click

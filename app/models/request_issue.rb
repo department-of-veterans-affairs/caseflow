@@ -566,7 +566,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def remanded?
-    decision_review.try(:decision_review_remanded?)
+    contested_decision_issue&.remanded?
   end
 
   private
