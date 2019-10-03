@@ -19,27 +19,12 @@ class Api::V3::DecisionReview::IntakeStatus
     submitted? ? SUBMITTED_HTTP_STATUS : NOT_SUBMITTED_HTTP_STATUS
   end
 
-  # arguments for url_for
-  def show_decision_review_url_for_args
-    return nil unless submitted?
-
-    {
-      controller: decision_review_controller,
-      action: :show,
-      id: decision_review.uuid
-    }
-  end
-
   private
 
   attr_reader :intake
 
   def decision_review
     intake.detail
-  end
-
-  def decision_review_controller
-    decision_review.class.name.underscore.pluralize.to_sym
   end
 
   def submitted?

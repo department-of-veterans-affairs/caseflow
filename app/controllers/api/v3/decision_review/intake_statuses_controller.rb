@@ -7,9 +7,7 @@ class Api::V3::DecisionReview::IntakeStatusesController < Api::V3::BaseControlle
       return
     end
 
-    args = intake_status.show_decision_review_url_for_args
-    response.set_header("Location", url_for(args)) if args
-
+    response.set_header("Location", decision_review_url)
     render json: intake_status.to_json, status: intake_status.http_status
   rescue StandardError
     render_unknown_error
@@ -50,5 +48,17 @@ class Api::V3::DecisionReview::IntakeStatusesController < Api::V3::BaseControlle
       json: { errors: [{ status: status, code: code, title: title }] },
       status: status
     )
+  end
+
+  def decision_review_url
+    url_for(
+      controller: decision_review_controller,
+      action: :show,
+      id: decision_review.uuid
+    )
+  end
+
+  def decision_review_controller
+    decision_review.class.name.underscore.pluralize.to_sym
   end
 end
