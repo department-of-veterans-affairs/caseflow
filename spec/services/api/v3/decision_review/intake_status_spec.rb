@@ -18,6 +18,14 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
     HigherLevelReview.create!(veteran_file_number: veteran_file_number)
   end
 
+  def fake_supplemental_claim
+    SupplementalClaim.create!(veteran_file_number: veteran_file_number)
+  end
+
+  def fake_appeal
+    Appeal.create!(veteran_file_number: veteran_file_number)
+  end
+
   def new_intake_status(intake)
     Api::V3::DecisionReview::IntakeStatus.new(intake, reload: false)
   end
@@ -122,6 +130,46 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
 
     it("returns a route when the decision review is a HigherLevelReview in :submitted state") do
       decision_review = fake_higher_level_review
+
+      asyncable_status = :submitted
+      allow(decision_review).to receive(:asyncable_status) { asyncable_status }
+
+      uuid = "cat"
+      allow(decision_review).to receive(:uuid) { uuid }
+
+      intake = fake_intake(decision_review)
+
+      intake_status = new_intake_status(intake)
+
+      expect(intake_status.show_decision_review_url_for_args).to be_a(Hash)
+      expect(intake_status.show_decision_review_url_for_args.keys).to contain_exactly(:controller, :action, :id)
+      expect(intake_status.show_decision_review_url_for_args[:controller]).to be_a(Symbol)
+      expect(intake_status.show_decision_review_url_for_args[:action]).to eq(:show)
+      expect(intake_status.show_decision_review_url_for_args[:id]).to eq(uuid)
+    end
+
+    it("returns a route when the decision review is a SupplementalClaim in :submitted state") do
+      decision_review = fake_supplemental_claim
+
+      asyncable_status = :submitted
+      allow(decision_review).to receive(:asyncable_status) { asyncable_status }
+
+      uuid = "cat"
+      allow(decision_review).to receive(:uuid) { uuid }
+
+      intake = fake_intake(decision_review)
+
+      intake_status = new_intake_status(intake)
+
+      expect(intake_status.show_decision_review_url_for_args).to be_a(Hash)
+      expect(intake_status.show_decision_review_url_for_args.keys).to contain_exactly(:controller, :action, :id)
+      expect(intake_status.show_decision_review_url_for_args[:controller]).to be_a(Symbol)
+      expect(intake_status.show_decision_review_url_for_args[:action]).to eq(:show)
+      expect(intake_status.show_decision_review_url_for_args[:id]).to eq(uuid)
+    end
+
+    it("returns a route when the decision review is an Appeal (board appeal) in :submitted state") do
+      decision_review = fake_appeal
 
       asyncable_status = :submitted
       allow(decision_review).to receive(:asyncable_status) { asyncable_status }
