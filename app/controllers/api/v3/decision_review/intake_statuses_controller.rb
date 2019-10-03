@@ -22,7 +22,7 @@ class Api::V3::DecisionReview::IntakeStatusesController < Api::V3::BaseControlle
   end
 
   def decision_review
-    @decision_review ||= DecisionReview.where_uuid(uuid)
+    @decision_review ||= DecisionReview.by_uuid(uuid)
   end
 
   def intake
