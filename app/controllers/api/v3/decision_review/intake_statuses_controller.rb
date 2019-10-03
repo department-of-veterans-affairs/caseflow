@@ -7,10 +7,10 @@ class Api::V3::DecisionReview::IntakeStatusesController < Api::V3::BaseControlle
       return
     end
 
-    render_hash, headers = intake_status.render_hash_and_headers
+    location = intake_status.decision_review_url
+    response.set_header("Location", location) if location
 
-    load_headers(headers)
-    render render_hash
+    render json: intake_status.to_json, status: intake_status.http_status
   rescue StandardError
     render_unknown_error
   end
@@ -30,11 +30,7 @@ class Api::V3::DecisionReview::IntakeStatusesController < Api::V3::BaseControlle
   end
 
   def intake_status
-    Api::V3::DecisionReview::IntakeStatus.new(intake)
-  end
-
-  def load_headers(headers)
-    headers.each { |key, val| response.set_header(key, val) }
+    @intake_status ||= Api::V3::DecisionReview::IntakeStatus.new(intake)
   end
 
   def render_unknown_error
@@ -56,19 +52,3 @@ class Api::V3::DecisionReview::IntakeStatusesController < Api::V3::BaseControlle
     )
   end
 end
-
-# i think render_hash should become render_hash_and_headers
-#
-# [{json, status}, {Location: stnrset}]
-#
-# returns 200
-# until 300
-#
-#
-# HigherLevelReviewController needs to override this and return 202
-#
-# update docs for more asyncable statuses
-#
-# make intake_status_error class ?
-#
-# update docs to add status to returns?

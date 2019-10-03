@@ -1,60 +1,69 @@
 # frozen_string_literal: true
 
 class Api::V3::DecisionReview::IntakeStatus
+  SUBMITTED_HTTP_STATUS = 303
+  NOT_SUBMITTED_HTTP_STATUS = 200
+  NO_DECISION_REVIEW_HTTP_STATUS = 500
+
   def initialize(intake)
-    @intake = intake
+    @intake = intake.reload
   end
 
-  # returns an array of two elements
-  #  [0] the arguments for the render command
-  #  [1] any headers that need to be set (will default to {}
-  def render_hash_and_headers
-    @intake.reload if @intake.id
+  def to_json(*_args)
+    decision_review ? decision_review_json : no_decision_review_json
+  end
 
-    return no_decision_review_render_hash_and_headers unless detail
+  def http_status
+    return NO_DECISION_REVIEW_HTTP_STATUS unless decision_review
 
-    decision_review_status, http_status, headers = statuses_and_headers
+    submitted? ? SUBMITTED_HTTP_STATUS : NOT_SUBMITTED_HTTP_STATUS
+  end
 
-    [
-      { # arguments for render
-        json: {
-          type: intake.detail_type,
-          id: detail.uuid,
-          attributes: { status: decision_review_status }
-        },
-        status: http_status
-      },
-      headers # headers
-    ]
+  def decision_review_url
+    return nil unless submitted?
+
+    url_for(
+      controller: decision_review_controller,
+      action: :show,
+      id: decision_review.uuid
+    )
   end
 
   private
 
   attr_reader :intake
 
-  delegate :detail, to: :intake
-
-  def no_decision_review_render_hash_and_headers
-    error = {
-      status: 500,
-      code: :intake_has_no_associated_decision_review,
-      title: "Intake has no associated decision review."
-    }
-
-    [
-      { json: { errors: [error] }, status: error[:status] }, # arguments for render
-      {} # headers
-    ]
+  def decision_review
+    intake.detail
   end
 
-  def statuses_and_headers
-    decision_review_status = detail.asyncable_status
-    http_status, headers = if decision_review_status == :submitted
-                             [:see_other, { Location: "" }]
-                           else
-                             [:ok, {}]
-                           end
+  def decision_review_controller
+    decision_review.class.name.underscore.pluralize.to_sym
+  end
 
-    [decision_review_status, http_status, headers]
+  def submitted?
+    decision_review&.asyncable_status == :submitted
+  end
+
+  def decision_review_json
+    {
+      data: {
+        type: decision_review.class.name,
+        id: decision_review.uuid,
+        attributes: { status: decision_review.asyncable_status }
+      }
+    }
+  end
+
+  def no_decision_review_json
+    {
+      errors: [
+        {
+          status: NO_DECISION_REVIEW_HTTP_STATUS,
+          code: :intake_not_connected_to_a_decision_review,
+          title: "This intake is not connected to a decision review."
+        }
+      ]
+    }
   end
 end

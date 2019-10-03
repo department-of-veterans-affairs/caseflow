@@ -33,7 +33,7 @@ Rails.application.routes.draw do
     namespace :v3 do
       namespace :decision_review do
         resources :higher_level_reviews, only: :create
-        resources :intake_statuses, only: :show
+        resources :intake_statuses, only: :show, param: :uuid
       end
     end
     namespace :docs do
