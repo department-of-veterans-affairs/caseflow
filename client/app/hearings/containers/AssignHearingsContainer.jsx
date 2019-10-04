@@ -92,7 +92,8 @@ class AssignHearingsContainer extends React.PureComponent {
 
     const requestUrl = `/cases_to_schedule/${roValue}`;
 
-    return ApiUtil.get(requestUrl).then((response) => {
+    return ApiUtil.get(requestUrl, { timeout: { response: getMinutesToMilliseconds(5) } }
+    ).then((response) => {
       const resp = ApiUtil.convertToCamelCase(response.body);
 
       this.props.onReceiveAppealsReadyForHearing(resp.data);

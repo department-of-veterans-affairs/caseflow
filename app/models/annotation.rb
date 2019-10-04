@@ -5,7 +5,7 @@ class Annotation < ApplicationRecord
   belongs_to :user
   validates :comment, presence: true
 
-  has_paper_trail
+  has_paper_trail save_changes: false, on: [:update, :destroy]
 
   def to_hash
     serializable_hash(
