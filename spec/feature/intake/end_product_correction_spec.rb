@@ -431,7 +431,6 @@ feature "End Product Correction (EP 930)", :postgres do
         let!(:decision_issue) do
           create(:decision_issue,
                  decision_review: claim_review,
-
                  rating_profile_date: receipt_date + 1.day,
                  end_product_last_action_date: receipt_date + 1.day,
                  benefit_type: claim_review.benefit_type,
@@ -477,13 +476,11 @@ end
 
 def correct_existing_request_issue(request_issue_to_correct)
   click_correct_intake_issue_dropdown(request_issue_to_correct.description)
-
   check_correction_type_modal_elements
   check_correction_type_modal_button_status(true)
   select_correction_type_from_modal("control")
   check_correction_type_modal_button_status(false)
   click_correction_type_modal_submit
-binding.pry
   click_edit_submit
   confirm_930_modal
   correction_issue = request_issue_to_correct.reload.correction_request_issue
