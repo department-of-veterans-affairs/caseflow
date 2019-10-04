@@ -612,7 +612,7 @@ describe User, :all_dbs do
     end
   end
 
-  fdescribe ".can_withdraw_issues?" do
+  describe ".can_withdraw_issues?" do
     let(:user) { create(:user) }
 
     subject { user.can_withdraw_issues? }
@@ -620,6 +620,12 @@ describe User, :all_dbs do
     context "when the current user is not a member of Case-review Organization" do
       it "returns false" do
         expect(subject).to eq(false)
+      end
+      context "when the user is at a regional office" do
+        before { allow(user).to receive(:regional_office).and_return("RO85") }
+        it "returns true" do
+          expect(subject).to eq(true)
+        end
       end
     end
 
