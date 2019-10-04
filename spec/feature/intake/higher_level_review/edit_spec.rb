@@ -1079,7 +1079,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       )
     end
 
-    fit "enables save button only when dirty" do
+    it "enables save button only when dirty" do
       visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
       expect(page).to have_button("Save", disabled: true)
@@ -1125,7 +1125,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       contention_to_remove = request_issue.reload.contention
 
       visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-      click_remove_intake_issue_dropdown(1)
+      click_remove_intake_issue_dropdown("PTSD denied")
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
 
@@ -1341,8 +1341,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
       scenario "cancel all active tasks when all request issues are removed" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         # remove all request issues
-        click_remove_intake_issue_dropdown(1)
-        click_remove_intake_issue_dropdown(2)
+        click_remove_intake_issue_dropdown("Apportionment")
+        click_remove_intake_issue_dropdown("Apportionment")
         click_edit_submit_and_confirm
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         sleep 1
@@ -1370,8 +1370,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
       scenario "remove all vbms decisions reviews" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         # remove all request issues
-        click_remove_intake_issue_dropdown(1)
-        click_remove_intake_issue_dropdown(2)
+        click_remove_intake_issue_dropdown("Apportionment")
+        click_remove_intake_issue_dropdown("Apportionment")
 
         click_edit_submit
         click_intake_confirm
@@ -1393,8 +1393,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
       scenario "show alert message when all decision reviews are removed " do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         # remove all request issues
-        click_remove_intake_issue_dropdown(1)
-        click_remove_intake_issue_dropdown(2)
+        click_remove_intake_issue_dropdown("Apportionment")
+        click_remove_intake_issue_dropdown("Apportionment")
 
         click_edit_submit
         expect(page).to have_content("Remove review?")
@@ -1419,8 +1419,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
       scenario "show alert message when all decision reviews are withdrawn" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
 
-        click_withdraw_intake_issue_dropdown(1)
-        click_withdraw_intake_issue_dropdown(2)
+        click_withdraw_intake_issue_dropdown("Apportionment")
+        click_withdraw_intake_issue_dropdown("Apportionment")
 
         fill_in "withdraw-date", with: withdraw_date
         click_edit_submit
@@ -1431,8 +1431,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       scenario "show alert message when a decision review is withdrawn" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
-
-        click_withdraw_intake_issue_dropdown(1)
+        click_withdraw_intake_issue_dropdown("Apportionment")
         fill_in "withdraw-date", with: withdraw_date
         click_edit_submit
 
@@ -1458,9 +1457,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
           description: "Description for Accrued",
           date: 1.day.ago.to_date.mdY
         )
-
-        click_remove_intake_issue_dropdown(1)
-        click_withdraw_intake_issue_dropdown(2)
+        click_remove_intake_issue_dropdown("Apportionment")
+        click_withdraw_intake_issue_dropdown("Apportionment")
         fill_in "withdraw-date", with: withdraw_date
         click_edit_submit
 
@@ -1529,7 +1527,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
     context "when review has no active tasks" do
       scenario "no tasks are cancelled when all request issues are removed" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
-        click_remove_intake_issue_dropdown(1)
+        click_remove_intake_issue_dropdown("Apportionment")
         click_edit_submit_and_confirm
 
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)

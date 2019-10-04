@@ -479,7 +479,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
       visit "supplemental_claims/#{rating_ep_claim_id}/edit"
-      click_remove_intake_issue_dropdown(1)
+      click_remove_intake_issue_dropdown("PTSD denied")
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
 
@@ -765,7 +765,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       scenario "no active tasks cancelled when request issues remain" do
         visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
         # only cancel 1 of the 2 request issues
-        click_remove_intake_issue_dropdown(1)
+        click_remove_intake_issue_dropdown("Apportionment")
         click_edit_submit_and_confirm
 
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
@@ -830,8 +830,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
             description: "Description for Accrued",
             date: 1.day.ago.to_date.mdY
           )
-          click_remove_intake_issue_dropdown(1)
-          click_withdraw_intake_issue_dropdown(2)
+          click_remove_intake_issue_dropdown("Apportionment")
+          click_withdraw_intake_issue_dropdown("Apportionment")
           fill_in "withdraw-date", with: withdraw_date
           click_edit_submit
 
@@ -843,7 +843,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       context "when review has no active tasks" do
         scenario "no tasks are cancelled when all request issues are removed" do
           visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
-          click_remove_intake_issue_dropdown(1)
+          click_remove_intake_issue_dropdown("Apportionment")
 
           expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
           expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)

@@ -116,9 +116,8 @@ feature "Appeal Edit issues", :all_dbs do
 
     expect(page).to have_content(issue_description)
     expect(page).to have_button("Save", disabled: true)
-
     # remove
-    click_remove_intake_issue_dropdown(1)
+    click_remove_intake_issue_dropdown(issue_description)
     expect(page).not_to have_content(issue_description)
     expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
@@ -401,14 +400,6 @@ feature "Appeal Edit issues", :all_dbs do
   end
 
   context "when withdraw decision reviews is enabled" do
-    before do
-      FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
-    end
-
-    after do
-      FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id])
-    end
-
     scenario "remove an issue with dropdown and show alert message" do
       visit "appeals/#{appeal.uuid}/edit/"
       expect(page).to have_content("PTSD denied")
@@ -547,7 +538,7 @@ feature "Appeal Edit issues", :all_dbs do
       click_intake_add_issue
       add_intake_rating_issue("Back pain")
 
-      click_remove_intake_issue_dropdown(1)
+      click_remove_intake_issue_dropdown("Military Retired Pay")
 
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
@@ -659,7 +650,7 @@ feature "Appeal Edit issues", :all_dbs do
       context "when appeal is non-comp benefit type" do
         let!(:request_issue) { create(:request_issue, benefit_type: "education") }
 
-        fscenario "remove all non-comp decision reviews" do
+        scenario "remove all non-comp decision reviews" do
           visit "appeals/#{appeal.uuid}/edit"
 
           # remove all request issues

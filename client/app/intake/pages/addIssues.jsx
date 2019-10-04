@@ -367,7 +367,6 @@ AddIssuesPage.propTypes = {
   undoCorrection: PropTypes.func,
   veteran: PropTypes.object,
   withdrawIssue: PropTypes.func,
-  setWithdraw: PropTypes.bool,
   userCanWithdrawIssues: PropTypes.bool
 };
 

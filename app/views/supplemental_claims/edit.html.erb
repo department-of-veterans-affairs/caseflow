@@ -1,7 +1,7 @@
 <% content_for :full_page_content do %>
   <%= react_component("IntakeEdit", props: {
     userDisplayName: current_user.display_name,
-    userCanWithdrawIssues: current_user.case_review_or_regional_offices_withdraw?,
+    userCanWithdrawIssues: current_user.can_withdraw_issues?,
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date,

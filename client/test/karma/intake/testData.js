@@ -1,4 +1,3 @@
-
 /* eslint-disable */
 export const sample1 = {
   currentIssue1: {

@@ -93,7 +93,7 @@ class User < ApplicationRecord
     HearingsManagement.singleton.users.include?(self) || TranscriptionTeam.singleton.users.include?(self)
   end
 
-  def case_review_or_regional_offices_withdraw?
+  def can_withdraw_issues?
     BvaIntake.singleton.users.include?(self) || %w[NWQ VACO].exclude?(regional_office)
   end
 
