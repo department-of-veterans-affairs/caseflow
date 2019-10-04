@@ -41,8 +41,13 @@ describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :re
 
       hlr = fake_higher_level_review
 
-      uuid = "cat"
-      allow(hlr).to receive(:uuid) { uuid }
+      # uuid = "cat"
+      # allow(hlr).to receive(:uuid) { uuid }
+
+      uuid = hlr.uuid
+      puts "$$$$"
+      puts uuid 
+      puts "$$$$"
 
       asyncable_status = "dog"
       allow(hlr).to receive(:asyncable_status) { asyncable_status }
@@ -51,8 +56,8 @@ describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :re
 
       get "/api/v3/decision_review/intake_statuses/#{hlr.uuid}", headers: { "Authorization" => "Token #{api_key}" }
 
-      expect(response.body).to eq("")
       expect(response).to have_http_status(202)
+      expect(response.body).to eq("")
     end
   end
 end
