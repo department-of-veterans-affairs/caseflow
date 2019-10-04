@@ -27,7 +27,8 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
   end
 
   def new_intake_status(intake)
-    Api::V3::DecisionReview::IntakeStatus.new(intake, reload: false)
+    # Api::V3::DecisionReview::IntakeStatus.new(intake, reload: false)
+    Api::V3::DecisionReview::IntakeStatus.new(intake)
   end
 
   context "#to_json" do

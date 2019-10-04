@@ -14,7 +14,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
       url_for(
         controller: :intake_statuses,
         action: :show,
-        uuid: processor.uuid
+        id: processor.uuid
       )
     )
 
@@ -22,6 +22,11 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
   rescue StandardError => error
     # do we want something like intakes_controller's log_error here?
     render_errors([intake_error_code_from_exception_or_processor(error)])
+  end
+
+  # stub
+  def show
+    render json: {}, status: :ok
   end
 
   private

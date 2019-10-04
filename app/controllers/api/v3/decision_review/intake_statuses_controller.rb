@@ -16,7 +16,7 @@ class Api::V3::DecisionReview::IntakeStatusesController < Api::V3::BaseControlle
   private
 
   def uuid
-    params[:uuid]
+    params[:id]
   end
 
   def decision_review
@@ -54,7 +54,7 @@ class Api::V3::DecisionReview::IntakeStatusesController < Api::V3::BaseControlle
     url_for(
       controller: decision_review_controller,
       action: :show,
-      uuid: decision_review.uuid
+      id: decision_review.uuid
     )
   end
 
