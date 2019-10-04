@@ -120,9 +120,11 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
   describe "#create" do
     describe "general cases" do
       it "should return a 202 on success" do
-        allow(User).to receive(:api_user) { User.create!(full_name: "Hello") }
+        allow(User).to receive(:api_user) do
+          val = "ABC"
+          User.create!(station_id: val, css_id: val, full_name: val)
+        end
         post_params
-        expect(JSON.parse(response.body)).to eq("stn")
         expect(response).to have_http_status(202)
       end
 
@@ -165,9 +167,13 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
             benefitType: benefit_type
           }
         end
-        it "should return 500/unknown_error" do
+        it "should return 500/intake_review_failed" do
+          allow(User).to receive(:api_user) do
+            val = "ABC"
+            User.create!(station_id: val, css_id: val, full_name: val)
+          end
           post_params
-          error = Api::V3::DecisionReview::IntakeError.new
+          error = Api::V3::DecisionReview::IntakeError.new(:intake_review_failed)
 
           expect(response).to have_http_status(error.status)
           expect(JSON.parse(response.body)).to eq(
@@ -179,7 +185,11 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       describe "reserved_veteran_file_number" do
         let(:veteran_file_number) { "123456789" }
         it "should return 500/reserved_veteran_file_number" do
-          allow(Rails).to receive(:deploy_env?).and_return(true)
+          allow(User).to receive(:api_user) do
+            val = "ABC"
+            User.create!(station_id: val, css_id: val, full_name: val)
+          end
+          allow(Rails).to receive(:deploy_env?).with(:prod).and_return(true)
           post_params
           error = Api::V3::DecisionReview::IntakeError.new(:reserved_veteran_file_number)
 

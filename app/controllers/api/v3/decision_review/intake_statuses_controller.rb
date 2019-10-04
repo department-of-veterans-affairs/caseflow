@@ -54,7 +54,7 @@ class Api::V3::DecisionReview::IntakeStatusesController < Api::V3::BaseControlle
     url_for(
       controller: decision_review_controller,
       action: :show,
-      id: decision_review.uuid
+      uuid: decision_review.uuid
     )
   end
 
