@@ -4,6 +4,14 @@ require "support/intake_helpers"
 require "support/database_cleaner"
 
 describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :request do
+  before do
+    FeatureToggle.enable!(:api_v3)
+  end
+
+  after do
+    FeatureToggle.disable!(:api_v3)
+  end
+
   let(:veteran_file_number) { "64205050" }
 
   def fake_intake(detail = nil)
@@ -41,10 +49,10 @@ describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :re
 
       intake = fake_intake(hlr)
 
-      get "/api/v3/decision_review/intake_status/#{hlr.uuid}", headers: { "Authorization" => "Token #{api_key}" }
+      get "/api/v3/decision_review/intake_statuses/#{hlr.uuid}", headers: { "Authorization" => "Token #{api_key}" }
 
-      expect(response).to have_http_status(202)
       expect(response.body).to eq("")
+      expect(response).to have_http_status(202)
     end
   end
 end
