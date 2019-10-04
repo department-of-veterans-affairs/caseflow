@@ -214,6 +214,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       RequestIssue.create!(
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: rating.profile_date,
+        decision_date: rating.promulgation_date,
         decision_review: supplemental_claim,
         benefit_type: benefit_type,
         contested_issue_description: "PTSD denied"
