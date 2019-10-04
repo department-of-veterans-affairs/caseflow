@@ -29,7 +29,7 @@ feature "correcting issues", :postgres do
     it "deletes all decision issues" do
       appeal = appeal_with_multiple_decision_issues
       create_judge_decision_review_task_for(appeal)
-      request_issue = RequestIssue.find_by(notes: "with many decision issues")
+      request_issue = RequestIssue.find_by(contested_rating_issue_reference_id: "rating_issue3")
 
       visit_appeals_page_as_judge(appeal)
       remove_request_issue_as_a_judge(request_issue)
@@ -133,8 +133,7 @@ feature "correcting issues", :postgres do
       :request_issue,
       :rating,
       notes: notes,
-      decision_issues: decision_issues,
-      contested_issue_description: "PTSD denied"
+      decision_issues: decision_issues
     )
   end
 
@@ -156,9 +155,9 @@ feature "correcting issues", :postgres do
     click_link "(#{appeal.veteran_file_number})"
   end
 
-  def remove_request_issue_as_a_judge(_request_issue)
+  def remove_request_issue_as_a_judge(request_issue)
     click_link "Correct issues"
-    click_remove_intake_issue_dropdown("PTSD denied")
+    click_remove_intake_issue_dropdown(request_issue.description)
     click_edit_submit_and_confirm
   end
 end
