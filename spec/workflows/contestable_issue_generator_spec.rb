@@ -71,7 +71,7 @@ describe "Contestable Issue Generator", :postgres do
 
       it "returns decision issues from the same review" do
         expect(subject.count).to eq(3)
-        expect(subject.select{ |issue| issue.description == "review decision issue" }.empty?).to be false
+        expect(subject.select { |issue| issue.description == "review decision issue" }.empty?).to be false
       end
     end
 
@@ -80,7 +80,7 @@ describe "Contestable Issue Generator", :postgres do
         create(
           :supplemental_claim,
           veteran_file_number: veteran.file_number,
-          decision_review_remanded: hlr,
+          decision_review_remanded: hlr
         )
       end
 
