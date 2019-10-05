@@ -7,7 +7,7 @@ class Api::V3::DecisionReview::IntakeStatusesController < Api::V3::BaseControlle
       return
     end
 
-    response.set_header("Location", decision_review_url)
+    response.set_header("Location", decision_review_url) if intake_status.submitted?
     render json: intake_status.to_json, status: intake_status.http_status
   rescue StandardError
     render_unknown_error

@@ -5,10 +5,6 @@ class Api::V3::DecisionReview::IntakeStatus
   NOT_SUBMITTED_HTTP_STATUS = 200
   NO_DECISION_REVIEW_HTTP_STATUS = 500
 
-  # def initialize(intake, opts = {reload: true})
-  #   @intake = opts[:reload] ? intake.reload : intake
-  # end
-
   def initialize(intake)
     @intake = intake
   end
@@ -23,16 +19,16 @@ class Api::V3::DecisionReview::IntakeStatus
     submitted? ? SUBMITTED_HTTP_STATUS : NOT_SUBMITTED_HTTP_STATUS
   end
 
+  def submitted?
+    decision_review&.asyncable_status == :submitted
+  end
+
   private
 
   attr_reader :intake
 
   def decision_review
     intake.detail
-  end
-
-  def submitted?
-    decision_review&.asyncable_status == :submitted
   end
 
   def decision_review_json
