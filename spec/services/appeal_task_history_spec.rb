@@ -36,15 +36,17 @@ describe AppealTaskHistory, :postgres do
         expect(appeal_history.events.length).to eq(3)
         expect(legacy_appeal_history.events.length).to eq(3)
 
-        expect(appeal_history.events.first).to be_a(TaskEvent)
-        expect(appeal_history.events.first.who).to eq(user)
-        expect(appeal_history.events.first.summary).to match(/\[#{user.css_id}\]/)
-        expect(appeal_history.events.first.diff).to eq(diff)
+        appeal_event = appeal_history.events[1]
+        expect(appeal_event).to be_a(TaskEvent)
+        expect(appeal_event.who).to eq(user)
+        expect(appeal_event.summary).to match(/\[#{user.css_id}\]/)
+        expect(appeal_event.diff).to eq(diff)
 
-        expect(legacy_appeal_history.events.first).to be_a(TaskEvent)
-        expect(legacy_appeal_history.events.first.who).to eq(user)
-        expect(legacy_appeal_history.events.first.summary).to match(/\[#{user.css_id}\]/)
-        expect(legacy_appeal_history.events.first.diff).to eq(diff)
+        legacy_appeal_event = legacy_appeal_history.events[1]
+        expect(legacy_appeal_event).to be_a(TaskEvent)
+        expect(legacy_appeal_event.who).to eq(user)
+        expect(legacy_appeal_event.summary).to match(/\[#{user.css_id}\]/)
+        expect(legacy_appeal_event.diff).to eq(diff)
       end
     end
   end
