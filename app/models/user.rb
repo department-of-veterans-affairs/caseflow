@@ -293,6 +293,10 @@ class User < ApplicationRecord
     ]
   end
 
+  def self.default_active_tab
+    Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
+  end
+
   def assigned_tasks_tab
     ::AssignedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
@@ -410,6 +414,13 @@ class User < ApplicationRecord
 
     def find_by_css_id_or_create_with_default_station_id(css_id)
       find_by_css_id(css_id) || User.create(css_id: css_id.upcase, station_id: BOARD_STATION_ID)
+    end
+
+    def batch_find_by_css_id_or_create_with_default_station_id(css_ids)
+      normalized_css_ids = css_ids.map(&:upcase)
+      new_user_css_ids = normalized_css_ids - User.where(css_id: normalized_css_ids).pluck(:css_id)
+      User.create(new_user_css_ids.map { |css_id| { css_id: css_id, station_id: User::BOARD_STATION_ID } })
+      User.where(css_id: normalized_css_ids)
     end
 
     def list_hearing_coordinators

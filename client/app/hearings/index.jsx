@@ -1,5 +1,5 @@
 import React from 'react';
-import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/ReduxBase';
+import ReduxBase from '../components/ReduxBase';
 import reducers from './reducers/index';
 import HearingsApp from './HearingsApp';
 

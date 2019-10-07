@@ -14,6 +14,7 @@ detectors:
   ControlParameter:
     exclude:
       - HearingRepository#slot_new_hearing
+      - Task#actions_allowable?
       - TaskSorter#sort_requires_case_norm?
       - Veteran
   UncommunicativeVariableName:
@@ -34,6 +35,7 @@ detectors:
     exclude:
       - Api::ApplicationController#on_external_error
       - Api::ApplicationController#upstream_known_error
+      - AppealTaskHistory#build_events
       - ApplicationRecord#as_hash
       - AsyncableJobsReporter
       - ClaimReviewAsyncStatsReporter#as_csv
@@ -43,6 +45,7 @@ detectors:
       - Fakes::BGSServiceRecordMaker
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - HearingSerializerBase
+      - MonthlyMetricsReportJob#build_report
       - SyncReviewsJob
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
@@ -70,6 +73,7 @@ detectors:
     enabled: false
   RepeatedConditional:
     exclude:
+      - HearingLocation
       - QueueConfig
       - RequestIssue
   TooManyInstanceVariables:

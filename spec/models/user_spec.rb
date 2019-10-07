@@ -45,6 +45,28 @@ describe User, :all_dbs do
     end
   end
 
+  context ".batch_find_by_css_id_or_create_with_default_station_id" do
+    subject { User.batch_find_by_css_id_or_create_with_default_station_id(css_ids) }
+
+    context "when the input list of CSS IDs includes a lowercase CSS ID" do
+      let(:lowercase_css_id) { Generators::Random.from_set(("a".."z").to_a, 16) }
+      let(:css_ids) { [lowercase_css_id] }
+
+      context "when the User record for the lowercase CSS ID does not yet exist in the database" do
+        it "returns the newly created User record for that CSS ID" do
+          expect(subject.length).to eq(1)
+        end
+      end
+
+      context "when the User record for the lowercase CSS ID already exists in the database" do
+        before { User.create(css_id: lowercase_css_id, station_id: User::BOARD_STATION_ID) }
+        it "returns the existing User record for that CSS ID" do
+          expect(subject.length).to eq(1)
+        end
+      end
+    end
+  end
+
   context ".list_hearing_coordinators" do
     let!(:users) { create_list(:user, 5) }
     let!(:other_users) { create_list(:user, 5) }
