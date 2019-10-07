@@ -68,9 +68,6 @@ class Task < ApplicationRecord
                                  )
                                }
 
-  # Cautious step before removing the column from the database as part of #9057.
-  self.ignored_columns = %w[action]
-
   ############################################################################################
   ## class methods
   class << self
