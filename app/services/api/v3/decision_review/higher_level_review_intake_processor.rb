@@ -6,6 +6,6 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor < Api::V3::Decis
   end
 
   def higher_level_review
-    @intake&.detail
+    intake&.detail
   end
 end
