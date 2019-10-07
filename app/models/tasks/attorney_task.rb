@@ -67,8 +67,10 @@ class AttorneyTask < Task
   end
 
   def send_back_to_judge_assign
-    cancel_parent_judge_review
-    open_judge_assign_task
+    transaction do
+      cancel_parent_judge_review
+      open_judge_assign_task
+    end
   end
 
   def cancel_parent_judge_review
