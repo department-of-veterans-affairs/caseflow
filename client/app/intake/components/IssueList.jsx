@@ -8,6 +8,7 @@ import Dropdown from '../../components/Dropdown';
 import EditContentionTitle from '../components/EditContentionTitle';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
+import _ from 'lodash';
 
 const nonEditableIssueStyling = css({
   color: COLORS.GREY,
@@ -15,33 +16,34 @@ const nonEditableIssueStyling = css({
 });
 
 export default class IssuesList extends React.Component {
-
   generateIssueActionOptions = (issue, userCanWithdrawIssues) => {
     let options = [];
 
+    if (!issue.withdrawalDate && !issue.withdrawalPending) {
+      if (userCanWithdrawIssues) {
+        options.push(
+          { displayText: 'Withdraw issue',
+            value: 'withdraw' }
+        );
+      }
+      options.push(
+        { displayText: 'Remove issue',
+          value: 'remove' }
+      );
+    }
     if (issue.correctionType && issue.endProductCleared) {
       options.push({ displayText: 'Undo correction',
         value: 'undo_correction' });
-    } else if (issue.correctionType) {
+    }
+    if (issue.correctionType) {
       options.push(
         { displayText: 'Remove issue',
           value: 'remove' }
       );
-    } else if (issue.endProductCleared) {
+    }
+    if (issue.endProductCleared) {
       options.push({ displayText: 'Correct issue',
         value: 'correct' });
-    } else if (!issue.withdrawalDate && !issue.withdrawalPending && userCanWithdrawIssues) {
-      options.push(
-        { displayText: 'Withdraw issue',
-          value: 'withdraw' },
-        { displayText: 'Remove issue',
-          value: 'remove' }
-      );
-    } else {
-      options.push(
-        { displayText: 'Remove issue',
-          value: 'remove' }
-      );
     }
 
     return options;
@@ -92,7 +94,7 @@ export default class IssuesList extends React.Component {
               </div> }
 
               <div className="issue-action">
-                {editPage && issue.editable && <Dropdown
+                {editPage && issue.editable && !_.isEmpty(issueActionOptions) && <Dropdown
                   name={`issue-action-${issue.index}`}
                   label="Actions"
                   hideLabel

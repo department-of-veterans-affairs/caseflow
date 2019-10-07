@@ -561,7 +561,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       end
     end
 
-    context "when withdraw decision reviews is enabled" do
+    context "when a user can withdraw issues" do
       before do
         OrganizationsUser.add_user_to_organization(current_user, BvaIntake.singleton)
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original

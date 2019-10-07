@@ -170,9 +170,9 @@ feature "correcting issues", :postgres do
     click_link "(#{appeal.veteran_file_number})"
   end
 
-  def remove_request_issue_as_a_judge(request_issue)
+  def remove_request_issue_as_a_judge(description)
     click_link "Correct issues"
-    click_remove_intake_issue_dropdown(request_issue)
+    click_remove_intake_issue_dropdown(description)
     click_edit_submit_and_confirm
   end
 end
