@@ -53,7 +53,7 @@ export default class DropdownButton extends React.Component {
   }
 
   dropdownAction = (list) => {
-    return <a onClick={() => {
+    return <a href="#" onClick={() => {
       if (this.props.onClick) {
         this.props.onClick(list.value);
       }
@@ -64,7 +64,7 @@ export default class DropdownButton extends React.Component {
   dropdownButtonList = () => {
     return <ul className="cf-dropdown-menu active" {...dropdownList} >
       {this.props.lists.map((list, index) =>
-        <li key={index} tabIndex="0">
+        <li key={index}>
           {list.target ? this.dropdownLink(list) : this.dropdownAction(list)}
         </li>)}
     </ul>;
