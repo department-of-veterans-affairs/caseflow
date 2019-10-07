@@ -2,9 +2,12 @@
 
 class Api::V3::DecisionReview::IntakeStatusesController < Api::V3::BaseController
   def show
-    render_intake_status_for_decision_review if decision_review
+    if !decision_review
+      render_no_decision_review_error
+      return
+    end
 
-    render_no_decision_review_error
+    render_intake_status_for_decision_review
   rescue StandardError
     render_unknown_error
   end

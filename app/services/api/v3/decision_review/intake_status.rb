@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class Api::V3::DecisionReview::IntakeStatus
+  NO_DECISION_REVIEW_HTTP_STATUS = 500
   SUBMITTED_HTTP_STATUS = 303
   NOT_SUBMITTED_HTTP_STATUS = 200
-  NO_DECISION_REVIEW_HTTP_STATUS = 500
+  NOT_SUBMITTED_HTTP_STATUS_FOR_NEW_INTAKE = 202
 
   def initialize(intake)
     @intake = intake
@@ -14,9 +15,11 @@ class Api::V3::DecisionReview::IntakeStatus
   end
 
   def http_status
-    return NO_DECISION_REVIEW_HTTP_STATUS unless decision_review
+    error_or_submitted_status || NOT_SUBMITTED_HTTP_STATUS
+  end
 
-    submitted? ? SUBMITTED_HTTP_STATUS : NOT_SUBMITTED_HTTP_STATUS
+  def http_status_for_new_intake
+    error_or_submitted_status || NOT_SUBMITTED_HTTP_STATUS_FOR_NEW_INTAKE
   end
 
   def submitted?
@@ -51,5 +54,12 @@ class Api::V3::DecisionReview::IntakeStatus
         }
       ]
     }
+  end
+
+  def error_or_submitted_status
+    return NO_DECISION_REVIEW_HTTP_STATUS unless decision_review
+    return SUBMITTED_HTTP_STATUS if submitted?
+
+    nil
   end
 end

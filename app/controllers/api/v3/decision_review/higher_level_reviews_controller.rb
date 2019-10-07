@@ -18,7 +18,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
       )
     )
 
-    render json: intake_status.to_json, status: creation_http_status
+    render json: intake_status.to_json, status: intake_status.http_status_for_new_intake
   rescue StandardError => error
     # do we want something like intakes_controller's log_error here?
     render_errors([intake_error_code_from_exception_or_processor(error)])
@@ -37,16 +37,6 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
 
   def intake_status
     @intake_status ||= Api::V3::DecisionReview::IntakeStatus.new(processor.intake)
-  end
-
-  # following https://jsonapi.org/recommendations/#asynchronous-processing
-  # the first status returned is 202, not 200
-  def creation_http_status
-    if intake_status.http_status == Api::V3::DecisionReview::IntakeStatus::NOT_SUBMITTED_HTTP_STATUS
-      SUCCESSFUL_CREATION_HTTP_STATUS
-    else
-      intake_status.http_status
-    end
   end
 
   # Try to create an IntakeError from the exception, otherwise the processor's intake object.
