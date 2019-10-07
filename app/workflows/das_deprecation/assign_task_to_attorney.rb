@@ -10,7 +10,7 @@ class DasDeprecation::AssignTaskToAttorney
         assigned_by: assigned_by,
         assigned_to: assigned_to
       }
-    
+
       attorney_task, _, judge_assign_task = AttorneyTaskCreator.new(judge_assign_task, task_params).call
       [attorney_task, judge_assign_task]
     end

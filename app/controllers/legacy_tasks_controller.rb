@@ -40,13 +40,7 @@ class LegacyTasksController < ApplicationController
 
     # return [AttorneyTask, JudgeAssignTask]
     if DasDeprecation::AssignTaskToAttorney.should_perform_workflow?(legacy_task_params[:appeal_id])
-      appeal = LegacyAppeal.find(legacy_task_params[:appeal_id])
-      tasks = DasDeprecation::AssignTaskToAttorney.create_attorney_task(appeal.vacols_id, current_user, assigned_to)
-      params = { user: current_user, role: current_role }
-
-      return render json: {
-        tasks: ::WorkQueue::TaskSerializer.new(tasks, is_collection: true, params: params)
-      }
+      return create_with_das
     end
 
     task = JudgeCaseAssignmentToAttorney.create(legacy_task_params)
@@ -78,12 +72,7 @@ class LegacyTasksController < ApplicationController
 
   def update
     if DasDeprecation::AssignTaskToAttorney.should_perform_workflow?(legacy_task_params[:appeal_id])
-      appeal = LegacyAppeal.find(legacy_task_params[:appeal_id])
-      task = DasDeprecation::AssignTaskToAttorney.reassign_attorney_task(appeal.vacols_id, current_user, assigned_to)
-      
-      return render json: {
-        task: ::WorkQueue::TaskSerializer.new(task)
-      }
+      return reassign_with_das
     end
 
     task = JudgeCaseAssignmentToAttorney.update(legacy_task_params.merge(task_id: params[:id]))
@@ -127,5 +116,24 @@ class LegacyTasksController < ApplicationController
 
   def assigned_to
     legacy_task_params[:assigned_to]
+  end
+
+  def create_with_das
+    appeal = LegacyAppeal.find(legacy_task_params[:appeal_id])
+    tasks = DasDeprecation::AssignTaskToAttorney.create_attorney_task(appeal.vacols_id, current_user, assigned_to)
+    params = { user: current_user, role: current_role }
+
+    render json: {
+      tasks: ::WorkQueue::TaskSerializer.new(tasks, is_collection: true, params: params)
+    }
+  end
+
+  def reassign_with_das
+    appeal = LegacyAppeal.find(legacy_task_params[:appeal_id])
+    task = DasDeprecation::AssignTaskToAttorney.reassign_attorney_task(appeal.vacols_id, current_user, assigned_to)
+
+    render json: {
+      task: ::WorkQueue::TaskSerializer.new(task)
+    }
   end
 end
