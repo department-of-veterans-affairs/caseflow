@@ -63,12 +63,12 @@ describe ExternalApi::BGSService do
           postal_cd: "TX",
           ptcpnt_addrs_type_nm: "Mailing",
           zip_prefix_nbr: "66666"
-        },
+        }
       ]
     end
 
     context "when no addresses exist" do
-      let(:address_records) { }
+      let(:address_records) {}
 
       it "returns nil" do
         expect(subject).to eq(nil)
