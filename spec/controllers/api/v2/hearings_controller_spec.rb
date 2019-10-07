@@ -62,6 +62,14 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
             ]
           end
 
+          before do
+            create(:hearing,
+                   regional_office: "VACO",
+                   hearing_day: hearing_day,
+                   scheduled_time: "12:30PM",
+                   disposition: "postponed")
+          end
+
           subject do
             get :show, params: { hearing_day: "2019-07-07" }
             response
