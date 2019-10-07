@@ -210,8 +210,8 @@ export default class QueueTable extends React.PureComponent {
                      QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC,
       sortColName: tabPaginationOptions[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] || null,
       filteredByList: this.getFilters(tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]),
-      cachedTasks: {},
-      tasksFromApi: [],
+      cachedResponses: {},
+      tasksFromApi: null,
       loadingComponent: needsTaskRequest && <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />,
       currentPage: (tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1) || 0
     };
@@ -228,9 +228,16 @@ export default class QueueTable extends React.PureComponent {
   }
 
   componentDidMount = () => {
+    const firstResponse = {
+      task_page_count: this.props.numberOfPages,
+      tasks_per_page: this.props.casesPerPage,
+      total_task_count: this.props.rowObjects.length,
+      tasks: this.props.rowObjects
+    };
+
     if (this.props.rowObjects.length) {
-      this.setState({ cachedTasks: { ...this.state.cachedTasks,
-        [this.requestUrl()]: this.props.rowObjects } });
+      this.setState({ cachedResponses: { ...this.state.cachedResponses,
+        [this.requestUrl()]: firstResponse } });
     }
   }
 
@@ -396,10 +403,10 @@ export default class QueueTable extends React.PureComponent {
     const endpointUrl = this.requestUrl();
 
     // If we already have the tasks cached then we set the state and return early.
-    const tasksFromCache = this.state.cachedTasks[endpointUrl];
+    const responseFromCache = this.state.cachedResponses[endpointUrl];
 
-    if (tasksFromCache) {
-      this.setState({ tasksFromApi: tasksFromCache });
+    if (responseFromCache) {
+      this.setState({ tasksFromApi: responseFromCache.tasks });
 
       return Promise.resolve(true);
     }
@@ -411,9 +418,11 @@ export default class QueueTable extends React.PureComponent {
 
       const preparedTasks = tasksWithAppealsFromRawTasks(tasks);
 
+      const preparedResponse = Object.assign(response.body, { tasks: preparedTasks });
+
       this.setState({
-        cachedTasks: { ...this.state.cachedTasks,
-          [endpointUrl]: preparedTasks },
+        cachedResponses: { ...this.state.cachedResponses,
+          [endpointUrl]: preparedResponse },
         tasksFromApi: preparedTasks,
         loadingComponent: null
       });
@@ -443,8 +452,19 @@ export default class QueueTable extends React.PureComponent {
     let { totalTaskCount, numberOfPages, rowObjects, casesPerPage } = this.props;
 
     if (useTaskPagesApi) {
-      if (this.state.tasksFromApi.length) {
+      // Use null instead of array length of zero because the intersection of several filters may result in an empty
+      // array of rows being returned from the API.
+      if (this.state.tasksFromApi !== null) {
         rowObjects = this.state.tasksFromApi;
+
+        // If we already have the response cached then use the attributes of the response to set the pagination vars.
+        const endpointUrl = this.requestUrl();
+        const responseFromCache = this.state.cachedResponses[endpointUrl];
+
+        if (responseFromCache) {
+          numberOfPages = responseFromCache.task_page_count;
+          totalTaskCount = responseFromCache.total_task_count;
+        }
       }
     } else {
       // Steps to calculate table data to display:
@@ -479,7 +499,7 @@ export default class QueueTable extends React.PureComponent {
 
     let paginationElements = null;
 
-    if (enablePagination) {
+    if (enablePagination && !this.state.loadingComponent) {
       paginationElements = <Pagination
         pageSize={casesPerPage}
         currentPage={this.state.currentPage + 1}

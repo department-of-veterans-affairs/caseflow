@@ -40,7 +40,11 @@ class TaskPager
   end
 
   def tasks_for_tab
-    QueueTab.from_name(tab_name).new(assignee: assignee).tasks
+    @tasks_for_tab ||= QueueTab.from_name(tab_name).new(assignee: assignee).tasks
+  end
+
+  def total_task_count
+    @total_task_count ||= paged_tasks.total_count
   end
 
   private
