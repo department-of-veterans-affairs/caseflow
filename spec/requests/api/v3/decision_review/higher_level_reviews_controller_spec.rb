@@ -36,6 +36,13 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     User.authenticate!(roles: ["Admin Intake"])
   end
 
+  let(:mock_api_user) do
+    allow(User).to receive(:api_user) do
+      val = "ABC"
+      User.create!(station_id: val, css_id: val, full_name: val)
+    end
+  end
+
   let(:profile_date) { (receipt_date - 8.days).to_datetime }
   let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
   let(:receipt_date) { Time.zone.today - 5.days }
@@ -120,10 +127,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
   describe "#create" do
     describe "general cases" do
       it "should return a 202 on success" do
-        allow(User).to receive(:api_user) do
-          val = "ABC"
-          User.create!(station_id: val, css_id: val, full_name: val)
-        end
+        mock_api_user
         post_params
         expect(response).to have_http_status(202)
       end
@@ -168,10 +172,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           }
         end
         it "should return 500/intake_review_failed" do
-          allow(User).to receive(:api_user) do
-            val = "ABC"
-            User.create!(station_id: val, css_id: val, full_name: val)
-          end
+          mock_api_user
           post_params
           error = Api::V3::DecisionReview::IntakeError.new(:intake_review_failed)
 
@@ -185,10 +186,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       describe "reserved_veteran_file_number" do
         let(:veteran_file_number) { "123456789" }
         it "should return 500/reserved_veteran_file_number" do
-          allow(User).to receive(:api_user) do
-            val = "ABC"
-            User.create!(station_id: val, css_id: val, full_name: val)
-          end
+          mock_api_user
           allow(Rails).to receive(:deploy_env?).with(:prod).and_return(true)
           post_params
           error = Api::V3::DecisionReview::IntakeError.new(:reserved_veteran_file_number)
