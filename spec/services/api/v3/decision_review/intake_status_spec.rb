@@ -6,7 +6,7 @@ require "rails_helper"
 context Api::V3::DecisionReview::IntakeStatus, :postgres do
   let(:veteran_file_number) { "123456789" }
 
-  let(:fake_intake) do
+  let(:create_intake) do
     lambda do |detail = nil|
       Intake.create!(
         user: Generators::User.build,
@@ -16,15 +16,15 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
     end
   end
 
-  let(:fake_higher_level_review) do
+  let(:create_higher_level_review) do
     HigherLevelReview.create!(veteran_file_number: veteran_file_number)
   end
 
-  let(:fake_supplemental_claim) do
+  let(:create_supplemental_claim) do
     SupplementalClaim.create!(veteran_file_number: veteran_file_number)
   end
 
-  let(:fake_appeal) do
+  let(:create_appeal) do
     Appeal.create!(veteran_file_number: veteran_file_number)
   end
 
@@ -34,7 +34,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
 
   context "#to_json" do
     it("returns the correctly-formatted JSON:API response when the intake has a decision review") do
-      decision_review = fake_higher_level_review
+      decision_review = create_higher_level_review
 
       asyncable_status = "dog"
       allow(decision_review).to receive(:asyncable_status) { asyncable_status }
@@ -42,7 +42,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
       uuid = "cat"
       allow(decision_review).to receive(:uuid) { uuid }
 
-      intake = fake_intake[decision_review]
+      intake = create_intake[decision_review]
 
       intake_status = new_intake_status[intake]
 
@@ -58,7 +58,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
     end
 
     it("returns an error when the intake does not have a decision review") do
-      intake = fake_intake[]
+      intake = create_intake[]
 
       intake_status = new_intake_status[intake]
 
@@ -74,7 +74,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
 
   context "#http_status" do
     it("returns NO_DECISION_REVIEW_HTTP_STATUS when the intake has no decision review") do
-      intake = fake_intake[]
+      intake = create_intake[]
 
       intake_status = new_intake_status[intake]
 
@@ -84,12 +84,12 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
     end
 
     it("returns NOT_SUBMITTED_HTTP_STATUS if asyncable_status isn't :submitted") do
-      decision_review = fake_higher_level_review
+      decision_review = create_higher_level_review
 
       asyncable_status = "zebra"
       allow(decision_review).to receive(:asyncable_status) { asyncable_status }
 
-      intake = fake_intake[decision_review]
+      intake = create_intake[decision_review]
 
       intake_status = new_intake_status[intake]
 
@@ -99,12 +99,12 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
     end
 
     it("returns SUBMITTED_HTTP_STATUS if asyncable_status is :submitted") do
-      decision_review = fake_higher_level_review
+      decision_review = create_higher_level_review
 
       asyncable_status = :submitted
       allow(decision_review).to receive(:asyncable_status) { asyncable_status }
 
-      intake = fake_intake[decision_review]
+      intake = create_intake[decision_review]
 
       intake_status = new_intake_status[intake]
 
@@ -116,7 +116,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
 
   context "#http_status_for_new_intake" do
     it("returns NO_DECISION_REVIEW_HTTP_STATUS when the intake has no decision review") do
-      intake = fake_intake[]
+      intake = create_intake[]
 
       intake_status = new_intake_status[intake]
 
@@ -126,12 +126,12 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
     end
 
     it("returns NOT_SUBMITTED_HTTP_STATUS_FOR_NEW_INTAKE if asyncable_status isn't :submitted") do
-      decision_review = fake_higher_level_review
+      decision_review = create_higher_level_review
 
       asyncable_status = "zebra"
       allow(decision_review).to receive(:asyncable_status) { asyncable_status }
 
-      intake = fake_intake[decision_review]
+      intake = create_intake[decision_review]
 
       intake_status = new_intake_status[intake]
 
@@ -141,12 +141,12 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
     end
 
     it("returns SUBMITTED_HTTP_STATUS if asyncable_status is :submitted") do
-      decision_review = fake_higher_level_review
+      decision_review = create_higher_level_review
 
       asyncable_status = :submitted
       allow(decision_review).to receive(:asyncable_status) { asyncable_status }
 
-      intake = fake_intake[decision_review]
+      intake = create_intake[decision_review]
 
       intake_status = new_intake_status[intake]
 
