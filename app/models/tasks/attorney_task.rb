@@ -14,6 +14,8 @@ class AttorneyTask < Task
   validate :assigned_to_role_is_valid
   validate :child_attorney_tasks_are_completed, on: :create
 
+  after_update :send_back_to_judge_assign, if: :task_just_cancelled?
+
   def available_actions(user)
     if parent.is_a?(JudgeTask) && parent.assigned_to == user
       return [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
@@ -23,7 +25,8 @@ class AttorneyTask < Task
 
     [
       Constants.TASK_ACTIONS.REVIEW_DECISION_DRAFT.to_h,
-      Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h
+      Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+      Constants.TASK_ACTIONS.CANCEL_TASK.to_h
     ]
   end
 
@@ -54,5 +57,22 @@ class AttorneyTask < Task
 
   def assigned_by_role_is_valid
     errors.add(:assigned_by, "has to be a judge") if assigned_by && !assigned_by.judge_in_vacols?
+  end
+
+  def task_just_cancelled?
+    saved_change_to_attribute?("status") && cancelled?
+  end
+
+  def send_back_to_judge_assign
+    cancel_parent_judge_review
+    open_judge_assign_task
+  end
+
+  def cancel_parent_judge_review
+    parent.update!(status: Constants.TASK_STATUSES.cancelled)
+  end
+
+  def open_judge_assign_task
+    JudgeAssignTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: assigned_by)
   end
 end
