@@ -114,6 +114,10 @@ RSpec.feature "Motion to vacate", :all_dbs do
         judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
         expect(judge_task).to_not be_nil
       end
+
+      it "motions attorney triggers Pulac-Cerullo" do
+        notify_of_pulac_cerullo(user: motions_attorney, appeal: appeal)
+      end
     end
   end
 
@@ -287,11 +291,23 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
   end
 
+  def notify_of_pulac_cerullo(user:, appeal:)
+    User.authenticate!(user: user)
+    visit "/queue/appeals/#{appeal.uuid}"
+
+    find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    find("div", class: "Select-option", text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label).click
+    expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_1)
+    expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_2)
+    find("button", class: "usa-button", text: "Submit").click
+  end
+
   def send_to_judge(user:, appeal:, motions_attorney_task:)
     User.authenticate!(user: user)
     visit "/queue/appeals/#{appeal.uuid}"
 
     check_cavc_alert
+    verify_cavc_conflict_action
 
     find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
     find("div", class: "Select-option", text: "Send to judge").click
@@ -303,6 +319,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     visit "/queue/appeals/#{appeal.uuid}"
 
     check_cavc_alert
+    verify_cavc_conflict_action
 
     find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
     find("div", class: "Select-option", text: "Address Motion to Vacate").click
@@ -313,5 +330,13 @@ RSpec.feature "Motion to vacate", :all_dbs do
     expect(page).to have_css(".usa-alert-warning")
     alert = find(".usa-alert-warning")
     expect(alert).to have_content("Check CAVC for conflict of jurisdiction")
+  end
+
+  def verify_cavc_conflict_action
+    # Open dropdown
+    action_dropdown = find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    expect(page).to have_content(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label)
+    # Close dropdown
+    action_dropdown.click
   end
 end

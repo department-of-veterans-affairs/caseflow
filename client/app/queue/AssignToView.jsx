@@ -7,10 +7,7 @@ import { sprintf } from 'sprintf-js';
 
 import COPY from '../../COPY.json';
 
-import {
-  taskById,
-  appealWithDetailSelector
-} from './selectors';
+import { taskById, appealWithDetailSelector } from './selectors';
 
 import { onReceiveAmaTasks } from './QueueActions';
 
@@ -18,10 +15,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
 import QueueFlowModal from './components/QueueFlowModal';
 
-import {
-  requestPatch,
-  requestSave
-} from './uiReducer/uiActions';
+import { requestPatch, requestSave } from './uiReducer/uiActions';
 
 import { taskActionData } from './utils';
 
@@ -32,7 +26,6 @@ const selectedAction = (props) => {
 };
 
 class AssignToView extends React.Component {
-
   constructor(props) {
     super(props);
 
@@ -56,26 +49,23 @@ class AssignToView extends React.Component {
 
   validateForm = () => {
     return this.state.selectedValue !== null && this.state.instructions !== '';
-  }
+  };
 
   submit = () => {
-    const {
-      appeal,
-      task,
-      isReassignAction,
-      isTeamAssign
-    } = this.props;
+    const { appeal, task, isReassignAction, isTeamAssign } = this.props;
 
     const payload = {
       data: {
-        tasks: [{
-          type: taskActionData(this.props).type ? taskActionData(this.props).type : 'GenericTask',
-          external_id: appeal.externalId,
-          parent_id: task.taskId,
-          assigned_to_id: this.state.selectedValue,
-          assigned_to_type: isTeamAssign ? 'Organization' : 'User',
-          instructions: this.state.instructions
-        }]
+        tasks: [
+          {
+            type: taskActionData(this.props).type ? taskActionData(this.props).type : 'GenericTask',
+            external_id: appeal.externalId,
+            parent_id: task.taskId,
+            assigned_to_id: this.state.selectedValue,
+            assigned_to_type: isTeamAssign ? 'Organization' : 'User',
+            instructions: this.state.instructions
+          }
+        ]
       }
     };
 
@@ -88,12 +78,13 @@ class AssignToView extends React.Component {
       return this.reassignTask();
     }
 
-    return this.props.requestSave('/tasks', payload, assignTaskSuccessMessage).
+    return this.props.
+      requestSave('/tasks', payload, assignTaskSuccessMessage).
       then((resp) => this.props.onReceiveAmaTasks(resp.body.tasks.data)).
       catch(() => {
         // handle the error from the frontend
       });
-  }
+  };
 
   getAssignee = () => {
     let assignee = 'person';
@@ -105,7 +96,7 @@ class AssignToView extends React.Component {
     });
 
     return assignee;
-  }
+  };
 
   reassignTask = () => {
     const task = this.props.task;
@@ -123,11 +114,10 @@ class AssignToView extends React.Component {
 
     const successMsg = { title: sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) };
 
-    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
-      then((resp) => {
-        this.props.onReceiveAmaTasks(resp.body.tasks.data);
-      });
-  }
+    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).then((resp) => {
+      this.props.onReceiveAmaTasks(resp.body.tasks.data);
+    });
+  };
 
   determineTitle = (props, action, isPulacCerullo, actionData) => {
     if (actionData.modal_title) {
@@ -142,7 +132,7 @@ class AssignToView extends React.Component {
     }
 
     return COPY.ASSIGN_TASK_TITLE;
-  }
+  };
 
   determinePlaceholder = (props, actionData) => {
     if (actionData.modal_selector_placeholder) {
@@ -154,14 +144,10 @@ class AssignToView extends React.Component {
     }
 
     return COPY.ASSIGN_TO_USER_DROPDOWN;
-  }
+  };
 
   render = () => {
-    const {
-      assigneeAlreadySelected,
-      highlightFormItems,
-      task
-    } = this.props;
+    const { assigneeAlreadySelected, highlightFormItems, task } = this.props;
 
     const action = this.props.task && this.props.task.availableActions.length > 0 ? selectedAction(this.props) : null;
     const actionData = taskActionData(this.props);
@@ -171,38 +157,53 @@ class AssignToView extends React.Component {
       return null;
     }
 
-    return <QueueFlowModal
-      title={this.determineTitle(this.props, action, isPulacCerullo, actionData)}
-      pathAfterSubmit = {(actionData && actionData.redirect_after) || '/queue'}
-      submit={this.submit}
-      validateForm={isPulacCerullo ? () => {
-        return true;
-      } : this.validateForm}
-    >
-      <div>{actionData.modal_body ? actionData.modal_body : ''}</div>
-      { !assigneeAlreadySelected && <React.Fragment>
-        <SearchableDropdown
-          name="Assign to selector"
-          searchable
-          hideLabel
-          errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
-          placeholder={this.determinePlaceholder(this.props, actionData)}
-          value={this.state.selectedValue}
-          onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
-          options={taskActionData(this.props).options} />
-        <br />
-      </React.Fragment> }
-      { !isPulacCerullo &&
-            <TextareaField
-              name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
-              errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-              id="taskInstructions"
-              onChange={(value) => this.setState({ instructions: value })}
-              value={this.state.instructions} />
-      }
-      {isPulacCerullo && COPY.PULAC_CERULLO_MODAL_BODY }
-    </QueueFlowModal>;
-  }
+    return (
+      <QueueFlowModal
+        title={this.determineTitle(this.props, action, isPulacCerullo, actionData)}
+        pathAfterSubmit={(actionData && actionData.redirect_after) || '/queue'}
+        submit={this.submit}
+        validateForm={
+          isPulacCerullo ?
+            () => {
+              return true;
+            } :
+            this.validateForm
+        }
+      >
+        <div>{actionData.modal_body ? actionData.modal_body : ''}</div>
+        {!assigneeAlreadySelected && (
+          <React.Fragment>
+            <SearchableDropdown
+              name="Assign to selector"
+              searchable
+              hideLabel
+              errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
+              placeholder={this.determinePlaceholder(this.props, actionData)}
+              value={this.state.selectedValue}
+              onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
+              options={taskActionData(this.props).options}
+            />
+            <br />
+          </React.Fragment>
+        )}
+        {!isPulacCerullo && (
+          <TextareaField
+            name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+            errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+            id="taskInstructions"
+            onChange={(value) => this.setState({ instructions: value })}
+            value={this.state.instructions}
+          />
+        )}
+        {isPulacCerullo && (
+          <div>
+            <p>{COPY.PULAC_CERULLO_MODAL_BODY_1}</p>
+            <p>{COPY.PULAC_CERULLO_MODAL_BODY_2}</p>
+          </div>
+        )}
+      </QueueFlowModal>
+    );
+  };
 }
 
 AssignToView.propTypes = {
@@ -224,9 +225,7 @@ AssignToView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const {
-    highlightFormItems
-  } = state.ui;
+  const { highlightFormItems } = state.ui;
 
   return {
     highlightFormItems,
@@ -235,10 +234,19 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestPatch,
-  requestSave,
-  onReceiveAmaTasks
-}, dispatch);
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      requestPatch,
+      requestSave,
+      onReceiveAmaTasks
+    },
+    dispatch
+  );
 
-export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(AssignToView)));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(AssignToView)
+);
