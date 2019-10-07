@@ -18,7 +18,10 @@ class AttorneyTask < Task
 
   def available_actions(user)
     if parent.is_a?(JudgeTask) && parent.assigned_to == user
-      return [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
+      return [
+        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
+        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+      ]
     end
 
     return [] if assigned_to != user

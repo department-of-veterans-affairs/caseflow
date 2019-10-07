@@ -10,7 +10,13 @@ describe AttorneyTask, :all_dbs do
   let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge.css_id) }
   let(:appeal) { create(:appeal) }
   let!(:parent) do
-    create(:ama_judge_decision_review_task, assigned_by: judge, appeal: appeal, parent: appeal.root_task)
+    create(
+      :ama_judge_decision_review_task,
+      assigned_by: judge,
+      assigned_to: judge,
+      appeal: appeal,
+      parent: appeal.root_task
+    )
   end
 
   context ".create" do
@@ -78,8 +84,9 @@ describe AttorneyTask, :all_dbs do
         status: Constants.TASK_STATUSES.assigned
       )
     end
+    let(:user) { attorney }
 
-    subject { task.available_actions(attorney) }
+    subject { task.available_actions(user) }
 
     it "does not include the ability to place task on hold" do
       expect(subject).to_not include(Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h)
@@ -93,6 +100,19 @@ describe AttorneyTask, :all_dbs do
       ]
 
       expect(subject).to eq(expected_actions)
+    end
+
+    context "when the current user is the assigning judge" do
+      let(:user) { judge }
+
+      it "includes actions to cancel the task and reassign to another attorney" do
+        expected_actions = [
+          Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
+          Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+        ]
+
+        expect(subject).to eq(expected_actions)
+      end
     end
   end
 
