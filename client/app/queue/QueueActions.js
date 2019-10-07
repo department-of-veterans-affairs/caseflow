@@ -385,6 +385,35 @@ export const bulkAssignTasks =
     }
   });
 
+// isInitial is only used for das deprecation 
+const dispatchOldTasks = (dispatch, oldTask, resp, isInitial=false) => {
+  if (oldTask.appealType === 'Appeal') {
+    const amaTasks = resp.tasks.data;
+
+    dispatch(onReceiveAmaTasks(
+      amaTasks
+    ));
+  } else if (isInitial && (oldTask.appealType === 'LegacyAppeal' && !oldTask.isLegacy)) {
+    //For das depractaion, legacy_task_controller #create returns tasks not a task
+    const tasks = resp.tasks.data;
+    const allTasks = prepareAllTasksForStore(tasks);
+
+    dispatch(onReceiveTasks({
+      tasks: allTasks.tasks,
+      amaTasks: allTasks.amaTasks
+    }));
+
+  } else {
+    const task = resp.task.data;
+    const allTasks = prepareAllTasksForStore([task]);
+
+    dispatch(onReceiveTasks({
+      tasks: allTasks.tasks,
+      amaTasks: allTasks.amaTasks
+    }));
+  }
+};
+
 export const initialAssignTasksToUser = ({
   tasks, assigneeId, previousAssigneeId
 }) => (dispatch) => Promise.all(tasks.map((oldTask) => {
@@ -417,32 +446,8 @@ export const initialAssignTasksToUser = ({
   return ApiUtil.post(url, params).
     then((resp) => resp.body).
     then((resp) => {
-      if (oldTask.appealType === 'Appeal') {
-        const amaTasks = resp.tasks.data;
-
-        dispatch(onReceiveAmaTasks(
-          amaTasks
-        ));
-      } else if (oldTask.appealType === 'LegacyAppeal' && !oldTask.isLegacy){
-        //For das depractaion, legacy_task_controller #create returns tasks not a task
-        const tasks = resp.tasks.data;
-        const allTasks = prepareAllTasksForStore(tasks);
-
-        dispatch(onReceiveTasks({
-          tasks: allTasks.tasks,
-          amaTasks: allTasks.amaTasks
-        }));
-
-      } else {
-        const task = resp.task.data;
-        const allTasks = prepareAllTasksForStore([task]);
-
-        dispatch(onReceiveTasks({
-          tasks: allTasks.tasks,
-          amaTasks: allTasks.amaTasks
-        }));
-      }
-
+      dispatchOldTasks(dispatch, oldTask, resp, true);
+      
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
         taskId: oldTask.uniqueId,
@@ -482,21 +487,7 @@ export const reassignTasksToUser = ({
   return ApiUtil.patch(url, params).
     then((resp) => resp.body).
     then((resp) => {
-      if (oldTask.appealType === 'Appeal') {
-        const amaTasks = resp.tasks.data;
-
-        dispatch(onReceiveAmaTasks(
-          amaTasks
-        ));
-      } else {
-        const task = resp.task.data;
-        const allTasks = prepareAllTasksForStore([task]);
-
-        dispatch(onReceiveTasks({
-          tasks: allTasks.tasks,
-          amaTasks: allTasks.amaTasks
-        }));
-      }
+      dispatchOldTasks(dispatch, oldTask, resp);
 
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
