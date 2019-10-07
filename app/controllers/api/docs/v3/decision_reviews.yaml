@@ -642,18 +642,18 @@ paths:
                       }
                     ]
                   }
-  /higher_level_reviews/intake_status/{uuid}:
+  /intake_statuses/{uuid}:
     get:
       parameters:
         - name: uuid
           in: path
           required: true
-          description: UUID of an Accepted Higher-Level Review
+          description: UUID of an Accepted Decision Review
           schema:
             type : string
             format: uuid
             pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
-      summary: After submitting a Higher-Level Review, you can check to see its current status
+      summary: After submitting a Decision Review, you can check to see its current status
       responses:
         '200':
           description: Status found
@@ -676,7 +676,7 @@ paths:
               schema:
                 type: string
                 format: url
-              description: Link to HigherLevelReview
+              description: Link to DecisionReview
         '404':
           description: id not found
           content:
@@ -1281,6 +1281,7 @@ components:
                   type: string
                   enum:
                     - processed
+                    - canceled
                     - attempted
                     - submitted
-                    - canceled
+                    - not_submitted_yet
