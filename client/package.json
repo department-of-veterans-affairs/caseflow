@@ -70,6 +70,7 @@
     "react-draft-wysiwyg": "^1.12.11",
     "react-highlight-words": "^0.8.0",
     "react-hot-loader": "^3.0.0-beta.6",
+    "react-markdown": "^4.2.2",
     "react-on-rails": "^8.0.6",
     "react-redux": "^7.1.0",
     "react-router": "^5.0.1",

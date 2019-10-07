@@ -6,7 +6,7 @@ class ApplicationRecord < ActiveRecord::Base
   # this simple transform should match the basic ActiveRecord::Result format
   # for db results.
   def as_hash
-    as_json.tap do |rec|
+    as_json.with_indifferent_access.tap do |rec|
       rec.transform_values! do |value|
         if value.is_a?(Time) || value.is_a?(DateTime)
           ymdhms = value.utc.strftime("%Y-%m-%d %H:%M:%S")
