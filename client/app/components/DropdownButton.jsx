@@ -25,13 +25,11 @@ export default class DropdownButton extends React.Component {
   }
 
   componentDidMount = () => {
-    document.addEventListener('keydown', this.keyHandler);
     document.addEventListener('mousedown', this.onClickOutside);
   }
 
   componentWillUnmount = () => {
     document.removeEventListener('mousedown', this.onClickOutside);
-    document.removeEventListener('keydown', this.keyHandler);
   }
   setWrapperRef = (node) => this.wrapperRef = node
 
@@ -43,16 +41,6 @@ export default class DropdownButton extends React.Component {
     }
   }
 
-  keyHandler = (event) => {
-    if (event.key === 'Escape') {
-      this.setState({
-        menu: false
-      });
-    } else if ((event.key === 'Enter' || event.key === ' ') && (this.wrapperRef.contains(event.target))) {
-      this.onMenuClick();
-      event.preventDefault();
-    }
-  }
   onMenuClick = () => {
     this.setState((prevState) => ({
       menu: !prevState.menu
@@ -60,7 +48,7 @@ export default class DropdownButton extends React.Component {
   };
 
   dropdownLink = (list) => {
-    return <Link className="usa-button-secondary usa-button" aria-activedescendant="cf-dropdown">
+    return <Link className="usa-button-secondary usa-button">
       href={list.target}>{list.title}</Link>;
   }
 
@@ -74,9 +62,9 @@ export default class DropdownButton extends React.Component {
   }
 
   dropdownButtonList = () => {
-    return <ul className="cf-dropdown-menu active" {...dropdownList} aria-expanded="true">
+    return <ul className="cf-dropdown-menu active" {...dropdownList} >
       {this.props.lists.map((list, index) =>
-        <li key={index} role="option" aria-selected="true" tabIndex="0" aria-activedescendant="cf-dropdown">
+        <li key={index} tabIndex="0">
           {list.target ? this.dropdownLink(list) : this.dropdownAction(list)}
         </li>)}
     </ul>;
@@ -85,13 +73,13 @@ export default class DropdownButton extends React.Component {
   render() {
     const { label } = this.props;
 
-    return <div className="cf-dropdown" ref={this.setWrapperRef} {...dropdownBtnContainer} aria-haspopup="true">
-      <a {...dropdownBtn}
+    return <div className="cf-dropdown" ref={this.setWrapperRef} {...dropdownBtnContainer} >
+      <button {...dropdownBtn}
         onClick={this.onMenuClick}
-        className="cf-dropdown-trigger usa-button usa-button-secondary" tabIndex="0" role="button">
+        className="cf-dropdown-trigger usa-button usa-button-secondary">
         {label}
-      </a>
-      {this.state.menu && this.dropdownButtonList() }
+        {this.state.menu && this.dropdownButtonList() }
+      </button>
     </div>;
   }
 }
