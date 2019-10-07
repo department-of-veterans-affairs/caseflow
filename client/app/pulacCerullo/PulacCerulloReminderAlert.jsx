@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Alert from '../components/Alert';
 import CopyTextButton from '../components/CopyTextButton';
 import { chairmanMemoUrl, cavcUrl } from '.';

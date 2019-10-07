@@ -129,8 +129,11 @@ RSpec.feature "Motion to vacate", :all_dbs do
       create(:ama_judge_decision_review_task, :completed,
              assigned_to: judge, appeal: appeal, created_at: receipt_date + 3.days, parent: root_task)
     end
+    let!(:vacate_motion_mail_task) do
+      create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney, parent: root_task)
+    end
     let!(:judge_address_motion_to_vacate_task) do
-      create(:judge_address_motion_to_vacate_task, appeal: appeal, assigned_to: judge)
+      create(:judge_address_motion_to_vacate_task, appeal: appeal, assigned_to: judge, parent: vacate_motion_mail_task)
     end
     let!(:atty_option_txt) { "#{drafting_attorney.full_name} (Orig. Attorney)" }
     let!(:judge_notes) { "Here's why I made my decision..." }
@@ -287,6 +290,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
   def send_to_judge(user:, appeal:, motions_attorney_task:)
     User.authenticate!(user: user)
     visit "/queue/appeals/#{appeal.uuid}"
+
+    check_cavc_alert
+
     find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
     find("div", class: "Select-option", text: "Send to judge").click
     expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{motions_attorney_task.id}/send_to_judge")
@@ -295,8 +301,17 @@ RSpec.feature "Motion to vacate", :all_dbs do
   def address_motion_to_vacate(user:, appeal:, judge_task:)
     User.authenticate!(user: user)
     visit "/queue/appeals/#{appeal.uuid}"
+
+    check_cavc_alert
+
     find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
     find("div", class: "Select-option", text: "Address Motion to Vacate").click
     expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{judge_task.id}/address_motion_to_vacate")
+  end
+
+  def check_cavc_alert
+    expect(page).to have_css(".usa-alert-warning")
+    alert = find(".usa-alert-warning")
+    expect(alert).to have_content("Check CAVC for conflict of jurisdiction")
   end
 end
