@@ -156,8 +156,8 @@ class ExternalApi::BGSService
   end
 
   def find_address_by_participant_id(participant_id)
-    finder = ExternalApi::BgsAddressFinder.new(participant_id: participant_id, client: self)
-    @addresses[participant_id] ||= finder.mailing_address
+    finder = ExternalApi::BgsAddressFinder.new(participant_id: participant_id, client: client)
+    @addresses[participant_id] ||= finder.mailing_address || finder.addresses.last
   end
 
   # This method checks to see if the current user has access to this case

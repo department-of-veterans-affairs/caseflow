@@ -35,7 +35,9 @@ class ExternalApi::BgsAddressFinder
 
     # The very first element of the array might not necessarily be an address
     bgs_addresses = Array.wrap(response).select { |addr| addr.key?(:addrs_one_txt) }
-    bgs_addresses.map { |addr| get_address_from_bgs_address(addr).merge(type: addr[:ptcpnt_addrs_type_nm]) }
+    bgs_addresses
+      .sort_by { |addr| addr[:efctv_dt] }
+      .map { |addr| get_address_from_bgs_address(addr).merge(type: addr[:ptcpnt_addrs_type_nm]) }
   end
 
   def client
