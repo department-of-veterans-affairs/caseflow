@@ -5,6 +5,7 @@ import { cavcUrl } from '.';
 import Modal from '../components/Modal';
 import COPY from '../../COPY.json';
 import RadioField from '../components/RadioField';
+import CopyTextButton from '../components/CopyTextButton';
 
 const title = 'Check CAVC for Conflict of Jurisdiction';
 const radioOpts = [
@@ -46,8 +47,11 @@ export const PulacCerulloReminderModal = ({ appellantName, onSubmit, onCancel })
       closeHandler={cancelHandler}
     >
       <p>
-        Before sending this case to Dispatch, be sure there is no Notice of Appeal (NOA) on file at the{' '}
-        <a href={cavcUrl}>CAVC website</a>.
+        Before sending this case to Dispatch, be sure there is no Notice of Appeal (NOA) on file at the CAVC website.
+      </p>
+      <p>
+        Copy and paste the CAVC webiste link into Internet Explorer{' '}
+        <CopyTextButton text={new URL(cavcUrl).hostname} textToCopy={cavcUrl} label="uscourts.cavc.gov" />
       </p>
       <p>
         <strong>Does this decision have an NOA on file at CAVC?</strong>
