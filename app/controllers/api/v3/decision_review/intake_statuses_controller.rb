@@ -2,13 +2,9 @@
 
 class Api::V3::DecisionReview::IntakeStatusesController < Api::V3::BaseController
   def show
-    unless decision_review
-      render_no_decision_review_error
-      return
-    end
+    render_intake_status_for_decision_review if decision_review
 
-    response.set_header("Location", decision_review_url) if intake_status.submitted?
-    render json: intake_status.to_json, status: intake_status.http_status
+    render_no_decision_review_error
   rescue StandardError
     render_unknown_error
   end
@@ -48,6 +44,11 @@ class Api::V3::DecisionReview::IntakeStatusesController < Api::V3::BaseControlle
       json: { errors: [{ status: status, code: code, title: title }] },
       status: status
     )
+  end
+
+  def render_intake_status_for_decision_review
+    response.set_header("Location", decision_review_url) if intake_status.submitted?
+    render json: intake_status.to_json, status: intake_status.http_status
   end
 
   def decision_review_url

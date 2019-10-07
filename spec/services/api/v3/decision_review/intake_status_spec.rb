@@ -10,7 +10,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
     Intake.create!(
       user: Generators::User.build,
       veteran_file_number: veteran_file_number,
-      detail: detail,
+      detail: detail
     )
   end
 
@@ -64,9 +64,9 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
       expect(intake_status.to_json).to be_a(Hash)
       expect(intake_status.to_json.keys).to contain_exactly(:errors)
       expect(intake_status.to_json[:errors]).to be_a(Array)
-      expect(intake_status.to_json[:errors].length).to eq(1) 
-      expect(intake_status.to_json[:errors][0]).to be_a(Hash) 
-      expect(intake_status.to_json[:errors][0].keys).to contain_exactly(:status, :code, :title) 
+      expect(intake_status.to_json[:errors].length).to eq(1)
+      expect(intake_status.to_json[:errors][0]).to be_a(Hash)
+      expect(intake_status.to_json[:errors][0].keys).to contain_exactly(:status, :code, :title)
       expect(intake_status.to_json[:errors][0][:status]).to be > 399
     end
   end

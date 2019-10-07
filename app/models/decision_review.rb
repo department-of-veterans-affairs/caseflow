@@ -68,7 +68,7 @@ class DecisionReview < ApplicationRecord
     end
 
     def concrete_descendants
-      @@concrete_descendants ||= descendants.reject { |klass| klass.abstract_class }
+      @concrete_descendants ||= descendants.reject(&:abstract_class)
     end
   end
 
