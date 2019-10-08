@@ -300,6 +300,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
     expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_1)
     expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_2)
     find("button", class: "usa-button", text: "Submit").click
+
+    expect(page).to have_content(COPY::PULAC_CERULLO_SUCCESS_TITLE)
+    expect(page).to have_content(COPY::PULAC_CERULLO_SUCCESS_DETAIL.gsub("%s", appeal.veteran_full_name))
   end
 
   def send_to_judge(user:, appeal:, motions_attorney_task:)

@@ -25,6 +25,14 @@ const selectedAction = (props) => {
   return actionData.selected ? actionData.options.find((option) => option.value === actionData.selected.id) : null;
 };
 
+const vetNameFromAppeal = (appeal) => {
+  const {
+    veteranInfo: { veteran }
+  } = appeal;
+
+  return veteran.full_name;
+};
+
 class AssignToView extends React.Component {
   constructor(props) {
     super(props);
@@ -54,6 +62,9 @@ class AssignToView extends React.Component {
   submit = () => {
     const { appeal, task, isReassignAction, isTeamAssign } = this.props;
 
+    const action = this.props.task && this.props.task.availableActions.length > 0 ? selectedAction(this.props) : null;
+    const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
+
     const payload = {
       data: {
         tasks: [
@@ -74,12 +85,17 @@ class AssignToView extends React.Component {
       detail: taskActionData(this.props).message_detail
     };
 
+    const pulacCerulloSuccessMessage = {
+      title: COPY.PULAC_CERULLO_SUCCESS_TITLE,
+      detail: sprintf(COPY.PULAC_CERULLO_SUCCESS_DETAIL, vetNameFromAppeal(appeal))
+    };
+
     if (isReassignAction) {
       return this.reassignTask();
     }
 
     return this.props.
-      requestSave('/tasks', payload, assignTaskSuccessMessage).
+      requestSave('/tasks', payload, isPulacCerullo ? pulacCerulloSuccessMessage : assignTaskSuccessMessage).
       then((resp) => this.props.onReceiveAmaTasks(resp.body.tasks.data)).
       catch(() => {
         // handle the error from the frontend
