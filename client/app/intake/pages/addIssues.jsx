@@ -270,9 +270,11 @@ class AddIssuesPage extends React.Component {
       });
     }
 
+    const hideAddIssueButton = intakeData.isDtaError && _.isEmpty(intakeData.contestableIssues);
+
     rowObjects = rowObjects.concat({
       field: ' ',
-      content: addIssueButton()
+      content: !hideAddIssueButton && addIssueButton()
     });
 
     return (
