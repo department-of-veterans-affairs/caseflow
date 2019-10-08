@@ -111,8 +111,6 @@ class AddIssuesPage extends React.Component {
 
     if (!formType) {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
-    } else if (intakeData.isDtaError) {
-      return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
     } else if (hasClearedEp) {
       return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
     } else if (intakeData.isOutcoded) {

@@ -100,13 +100,6 @@ export default class IntakeEditFrame extends React.PureComponent {
                   component={DecisionReviewEditCompletedPage} />
                 <PageRoute
                   exact
-                  path={PAGE_PATHS.DTA_CLAIM}
-                  title="Edit Claim Issues | Caseflow Intake"
-                  component={() => {
-                    return <Message title="Issues Not Editable" displayMessage={this.displayDtaMessage} />;
-                  }} />
-                <PageRoute
-                  exact
                   path={PAGE_PATHS.CLEARED_EPS}
                   title="Edit Claim Issues | Caseflow Intake"
                   component={() => {
@@ -157,4 +150,3 @@ IntakeEditFrame.propTypes = {
   routerTestProps: PropTypes.object,
   router: PropTypes.object
 };
-
