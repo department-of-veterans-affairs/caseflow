@@ -23,6 +23,7 @@ describe "BVA Decision Progress report", :postgres do
     end
 
     let(:user) { create(:default_user) }
+    let(:org) { create(:organization) }
     let!(:not_distributed) { create(:appeal, :ready_for_distribution) }
     let!(:not_distributed_with_timed_hold) do
       create(:appeal, :ready_for_distribution).tap do |appeal|
@@ -53,7 +54,9 @@ describe "BVA Decision Progress report", :postgres do
     end
     let!(:decision_dispatched) do
       create(:appeal).tap do |appeal|
-        create(:bva_dispatch_task, :completed, appeal: appeal)
+        org_parent_task = create(:bva_dispatch_task, :completed, appeal: appeal, assigned_to: org)
+        create(:bva_dispatch_task, :completed, parent: org_parent_task, appeal: appeal)
+        org_parent_task.completed!
       end
     end
     let!(:dispatched_with_subsequent_assigned_task) do
