@@ -27,8 +27,6 @@ class User < ApplicationRecord
 
   before_create :normalize_css_id
 
-  after_update :remove_user_from_auto_assign_orgs, if: :user_just_made_inactive?
-
   enum status: {
     Constants.USER_STATUSES.active.to_sym => Constants.USER_STATUSES.active,
     Constants.USER_STATUSES.inactive.to_sym => Constants.USER_STATUSES.inactive
@@ -281,6 +279,7 @@ class User < ApplicationRecord
 
   def update_status!(new_status)
     update!(status: new_status, status_updated_at: Time.zone.now)
+    remove_user_from_auto_assign_orgs if new_status.eql?(Constants.USER_STATUSES.inactive)
   end
 
   def use_task_pages_api?
@@ -324,10 +323,6 @@ class User < ApplicationRecord
   end
 
   private
-
-  def user_just_made_inactive?
-    saved_change_to_attribute?("status") && inactive?
-  end
 
   def remove_user_from_auto_assign_orgs
     auto_assign_orgs = organizations.select(&:automatically_assign_to_member?)
