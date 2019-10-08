@@ -11,11 +11,11 @@ const title = 'Check CAVC for Conflict of Jurisdiction';
 const radioOpts = [
   {
     displayText: 'Yes, assign to Litigation Support to determine jurisdiction',
-    value: true
+    value: 'yes'
   },
   {
     displayText: 'No, continue sending for Dispatch',
-    value: false
+    value: 'no'
   }
 ];
 
@@ -62,7 +62,7 @@ export const PulacCerulloReminderModal = ({ appellantName, onSubmit, onCancel })
         )}
       </p>
       <RadioField
-        name="Which information source shows the correct representative for this appeal?"
+        name=""
         options={radioOpts}
         value={hasCavc}
         onChange={(val) => setHasCavc(val)}
