@@ -15,6 +15,7 @@ WITH undistributed_appeals AS (select '1. Not distributed'::text as decision_sta
             WHERE tasks.type IN ('DistributionTask')
               AND tasks.appeal_type='Appeal'
               AND tasks.status IN  ('on_hold', 'assigned', 'in_progress')
+              AND tasks.appeal_id NOT IN (SELECT appeal_id FROM tasks WHERE tasks.appeal_type='Appeal' AND tasks.type = 'TimedHoldTask' AND tasks.status IN ('on_hold', 'assigned', 'in_progress'))
 -- The Appeal has been distributed to the judge, but not yet assigned to an attorney for working.
       ), distributed_to_judge AS (select '2. Distributed to judge'::text as decision_status, count(DISTINCT(appeal_id)) as num
             FROM tasks
