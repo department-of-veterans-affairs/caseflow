@@ -5,7 +5,7 @@ require "rails_helper"
 
 RSpec.feature "Log in as User", :postgres do
   before do
-    User.create(station_id: "283", css_id: "ANNE MERICA")
+    create(:user, station_id: "283", css_id: "USER LOGIN")
     User.authenticate!
   end
 
@@ -34,15 +34,15 @@ RSpec.feature "Log in as User", :postgres do
 
     def test_global_admin_masquerade
       visit "test/users"
-      fill_in "User ID", with: "ANNE MERICA"
+      fill_in "User ID", with: "USER LOGIN"
       safe_click("#button-Log-in-as-user")
-      expect(page).to have_content("ANNE MERICA (DSUSER)")
+      expect(page).to have_content("USER LOGIN (DSUSER)")
       expect(page).to have_content("Certification Help")
 
       visit "test/users"
       expect(page).not_to have_content("Log in as user")
 
-      find("a", text: "ANNE MERICA (DSUSER)").click
+      find("a", text: "USER LOGIN (DSUSER)").click
       find("a", text: "Sign Out").click
       expect(page).to have_content("DSUSER")
       expect(page).to have_content("admin page")
