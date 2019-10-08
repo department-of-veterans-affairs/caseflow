@@ -76,6 +76,7 @@ WITH undistributed_appeals AS (select '1. Not distributed'::text as decision_sta
             WHERE tasks.type IN ('BvaDispatchTask') 
               AND tasks.appeal_type='Appeal'
               AND tasks.status IN ('completed')
+              AND tasks.appeal_id NOT IN (SELECT appeal_id FROM tasks WHERE tasks.appeal_type='Appeal' AND tasks.status IN ('on_hold', 'assigned', 'in_progress'))
 -- The Appeal is currently on a timed hold
       ), appeal_on_hold AS (select 'ON HOLD'::text as decision_status, count(1) as num
             FROM tasks
