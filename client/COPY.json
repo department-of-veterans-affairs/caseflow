@@ -421,6 +421,8 @@
 
   "USER_MANAGEMENT_PAGE_DROPDOWN_LINK": "Caseflow user management",
   "USER_MANAGEMENT_STATUS_CHANGE_ERROR_TITLE": "Failed to modify user status",
+  "USER_MANAGEMENT_INITIAL_ERROR_TITLE": "Failed to load user statuses",
+  "USER_MANAGEMENT_INITIAL_LOADING_MESSAGE": "Loading user statuses...",
   "USER_MANAGEMENT_GIVE_USER_ACTIVE_STATUS_BUTTON_TEXT": "Make user active",
   "USER_MANAGEMENT_GIVE_USER_INACTIVE_STATUS_BUTTON_TEXT": "Make user inactive",
   "USER_MANAGEMENT_SELECT_USER_DROPDOWN_LABEL": "Change user status:",

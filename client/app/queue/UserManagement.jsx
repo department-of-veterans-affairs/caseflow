@@ -132,10 +132,10 @@ export default class UserManagement extends React.PureComponent {
     createLoadPromise={this.loadingPromise}
     loadingComponentProps={{
       spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
-      message: COPY.USER_MANAGEMENT_INITIAL_LOAD_LOADING_MESSAGE
+      message: COPY.USER_MANAGEMENT_INITIAL_LOADING_MESSAGE
     }}
     failStatusMessageProps={{
-      title: COPY.USER_MANAGEMENT_INITIAL_LOAD_ERROR_TITLE
+      title: COPY.USER_MANAGEMENT_INITIAL_ERROR_TITLE
     }}>
     <AppSegment filledBackground>
       { this.state.error && <Alert title={this.state.error.title} type="error">
