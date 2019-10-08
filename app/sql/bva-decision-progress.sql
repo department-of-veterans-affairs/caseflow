@@ -69,7 +69,7 @@ WITH undistributed_appeals AS (select '1. Not distributed'::text as decision_sta
             WHERE tasks.type IN ('BvaDispatchTask', 'QualityReviewTask') 
               AND tasks.appeal_type='Appeal'
               AND tasks.status IN ('assigned', 'in_progress')
--- The Appeal dispatch is completed. Case is complete
+-- The Appeal dispatch is completed. Case is complete with no open tasks.
       ), decision_dispatched AS (select '8. Decision dispatched'::text as decision_status, count(DISTINCT(appeal_id)) as num
             FROM tasks
             JOIN public.appeals AS appeals ON tasks.appeal_id = appeals.id  
