@@ -26,7 +26,7 @@ class UsersController < ApplicationController
       user_to_modify.update_status!(params[:status])
     end
 
-    render json: { users: json_users([user_to_modify]) }, status: :ok
+    render json: { user: user_to_modify }, status: :ok
   end
 
   def represented_organizations
