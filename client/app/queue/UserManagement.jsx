@@ -78,12 +78,25 @@ export default class UserManagement extends React.PureComponent {
         selectedUser: updatedUser,
         changingActiveStatus: { ...this.state.changingActiveStatus,
           [user.id]: false },
-        error: null
+        error: null,
+        success: {
+          title: sprintf(
+            status === USER_STATUSES.inactive ?
+              COPY.USER_MANAGEMENT_INACTIVE_SUCCESS_TITLE :
+              COPY.USER_MANAGEMENT_ACTIVE_SUCCESS_TITLE,
+            this.formatName(user)),
+          body: sprintf(
+            status === USER_STATUSES.inactive ?
+              COPY.USER_MANAGEMENT_INACTIVE_SUCCESS_BODY :
+              COPY.USER_MANAGEMENT_ACTIVE_SUCCESS_BODY,
+            this.formatName(user))
+        }
       });
     }, (error) => {
       this.setState({
         changingActiveStatus: { ...this.state.changingActiveStatus,
           [user.id]: false },
+        success: null,
         error: {
           title: COPY.USER_MANAGEMENT_STATUS_CHANGE_ERROR_TITLE,
           body: error.message
@@ -140,8 +153,10 @@ export default class UserManagement extends React.PureComponent {
     }}>
     <AppSegment filledBackground>
       { this.state.error && <Alert title={this.state.error.title} type="error">{this.state.error.body}</Alert> }
+      { this.state.success && <Alert title={this.state.success.title} type="success">{this.state.success.body}</Alert> }
       <div>
-        <h1>{sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, 'Caseflow user')}</h1>
+        <h1>{COPY.USER_MANAGEMENT_STATUS_PAGE_TITLE}</h1>
+        <p>{COPY.USER_MANAGEMENT_PAGE_DESCRIPTION}</p>
         {this.mainContent()}
       </div>
     </AppSegment>
