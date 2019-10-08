@@ -33,106 +33,12 @@ describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :re
     end
   end
 
-  let(:new_higher_level_review) do
-    HigherLevelReview.create!(veteran_file_number: veteran_file_number)
-  end
-
-  # mocked intake and decision review (no DB)
-  let(:fake_intake) do
-    fake_decision_review = Class.new do
-      attr_reader :uuid, :asyncable_status, :class, :intake
-
-      def initialize(opts)
-        @uuid, @asyncable_status, @class, @intake = opts.values_at(
-          :uuid, :asyncable_status, :class, :intake
-        )
-      end
-    end
-
-    Class.new do
-      attr_reader :detail
-
-      # using define_method so that fake_decision_review is in scope
-      define_method(:initialize) do |opts = {}|
-        @detail = fake_decision_review.new(opts.merge(intake: self))
-      end
-    end
-  end
-
-  describe "ensure the fakes still faithfully mock the real classes" do
-    describe "FakeIntake" do
-      it "has a :detail method (has a DecisionReview)" do
-        expect(fake_intake.new).to respond_to(:detail)
-      end
-
-      it "has a detail (DecisionReview) with a :uuid method" do
-        expect(fake_intake.new.detail).to respond_to(:uuid)
-      end
-
-      it "has a detail with an :asyncable_status method" do
-        expect(fake_intake.new.detail).to respond_to(:asyncable_status)
-      end
-
-      it "has a detail with an :intake method" do
-        expect(fake_intake.new.detail).to respond_to(:intake)
-      end
-    end
-
-    describe Intake do
-      it "has a :detail method" do
-        expect(Intake.new).to respond_to(:detail)
-      end
-    end
-
-    describe HigherLevelReview do
-      it "has a :uuid method" do
-        expect(HigherLevelReview.new).to respond_to(:uuid)
-      end
-
-      it "has an :asyncable_status method" do
-        expect(HigherLevelReview.new).to respond_to(:asyncable_status)
-      end
-
-      it "has an :intake method" do
-        expect(HigherLevelReview.new).to respond_to(:intake)
-      end
-    end
-
-    describe SupplementalClaim do
-      it "has a :uuid method" do
-        expect(SupplementalClaim.new).to respond_to(:uuid)
-      end
-
-      it "has an :asyncable_status method" do
-        expect(SupplementalClaim.new).to respond_to(:asyncable_status)
-      end
-
-      it "has an :intake method" do
-        expect(SupplementalClaim.new).to respond_to(:intake)
-      end
-    end
-
-    describe Appeal do
-      it "has a :uuid method" do
-        expect(Appeal.new).to respond_to(:uuid)
-      end
-
-      it "has an :asyncable_status method" do
-        expect(Appeal.new).to respond_to(:asyncable_status)
-      end
-
-      it "has an :intake method" do
-        expect(Appeal.new).to respond_to(:intake)
-      end
-    end
-  end
-
   describe "#show" do
     it(
       "should return status NOT_SUBMITTED_HTTP_STATUS, the appropriate JSON " \
       "body, and no headers, if decision_review isn't submitted"
     ) do
-      hlr = new_higher_level_review
+      hlr = HigherLevelReview.create!(veteran_file_number: veteran_file_number)
       hlr.reload # sets uuid
       new_intake[hlr]
 
@@ -158,20 +64,10 @@ describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :re
       "should return status SUBMITTED_HTTP_STATUS, the appropriate JSON " \
       "body, and a Location header, if decision_review /is/ submitted"
     ) do
-
-      decision_review_class = HigherLevelReview
-      uuid = "mouse"
-      asyncable_status = :submitted
-
-      intake = fake_intake.new(
-        class: decision_review_class,
-        uuid: uuid,
-        asyncable_status: asyncable_status
-      )
-
-      allow(DecisionReview).to receive(:by_uuid) do
-        intake.detail
-      end
+      hlr = create(:higher_level_review, :requires_processing)
+      hlr.reload # sets uuid
+      uuid = hlr.uuid
+      new_intake[hlr]
 
       get(
         "/api/v3/decision_review/intake_statuses/#{uuid}",
@@ -183,15 +79,15 @@ describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :re
       )
       expect(JSON.parse(response.body)).to eq(
         "data" => {
-          "type" => decision_review_class.name,
+          "type" => hlr.class.name,
           "id" => uuid,
-          "attributes" => { "status" => asyncable_status.to_s }
+          "attributes" => { "status" => "submitted" }
         }
       )
       expect(response.headers).to include("Location")
       expect(response.headers["Location"]).to eq(
         "http://www.example.com/api/v3/decision_review/" \
-        "#{decision_review_class.name.underscore.pluralize}/#{uuid}"
+        "#{hlr.class.name.underscore.pluralize}/#{uuid}"
       )
     end
 
