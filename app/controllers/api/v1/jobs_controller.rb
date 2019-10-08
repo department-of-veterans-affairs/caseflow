@@ -10,6 +10,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "dependencies_report_service_log" => DependenciesReportServiceLogJob,
     "heartbeat" => HeartbeatTasksJob,
     "missed_job_sweeper" => MissedJobSweeperJob,
+    "monthly_metrics" => MonthlyMetricsReportJob,
     "out_of_service_reminder" => OutOfServiceReminderJob,
     "prepare_establish_claim" => PrepareEstablishClaimTasksJob,
     "reassign_old_tasks" => ReassignOldTasksJob,

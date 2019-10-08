@@ -2,6 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import connect from 'react-redux/es/connect/connect';
 import PropTypes from 'prop-types';
+import { debounce } from 'lodash';
 import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
@@ -237,11 +238,11 @@ class HearingDayAddModal extends React.Component {
     this.resetErrorState();
   };
 
-  resetErrorState = () => {
+  resetErrorState = debounce(() => {
     this.setState({ dateError: false,
       typeError: false,
       roError: false });
-  };
+  }, 250);
 
   onVljChange = (value) => {
     this.props.selectVlj(value);
