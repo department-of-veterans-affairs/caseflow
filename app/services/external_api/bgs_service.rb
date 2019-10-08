@@ -19,7 +19,7 @@ class ExternalApi::BGSService
     @person_info = {}
     @poas = {}
     @poa_by_participant_ids = {}
-    @poa_addresses = {}
+    @addresses = {}
     @people_by_ssn = {}
   end
 
@@ -156,23 +156,8 @@ class ExternalApi::BGSService
   end
 
   def find_address_by_participant_id(participant_id)
-    DBService.release_db_connections
-
-    unless @poa_addresses[participant_id]
-      bgs_address = MetricsService.record("BGS: fetch address by participant_id: #{participant_id}",
-                                          service: :bgs,
-                                          name: "address.find_by_participant_id") do
-        client.address.find_all_by_participant_id(participant_id)
-      end
-      if bgs_address
-        # Count on addresses being sorted with most recent first if we return a list of addresses.
-        # The very first element of the array might not necessarily be an address
-        bgs_address = bgs_address.select { |a| a.key?(:addrs_one_txt) }[0] if bgs_address.is_a?(Array)
-        @poa_addresses[participant_id] = get_address_from_bgs_address(bgs_address)
-      end
-    end
-
-    @poa_addresses[participant_id]
+    finder = ExternalApi::BgsAddressFinder.new(participant_id: participant_id, client: client)
+    @addresses[participant_id] ||= finder.mailing_address || finder.addresses.last
   end
 
   # This method checks to see if the current user has access to this case
