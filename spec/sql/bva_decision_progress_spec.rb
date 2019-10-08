@@ -10,7 +10,7 @@ describe "BVA Decision Progress report", :postgres do
       [
         { "decision_status" => "1. Not distributed", "num" => 1 },
         { "decision_status" => "2. Distributed to judge", "num" => 1 },
-        { "decision_status" => "3. Assigned to attorney", "num" => 1 },
+        { "decision_status" => "3. Assigned to attorney", "num" => 2 },
         { "decision_status" => "4. Assigned to colocated", "num" => 1 },
         { "decision_status" => "5. Decision in progress", "num" => 1 },
         { "decision_status" => "6. Decision ready for signature", "num" => 1 },
@@ -49,6 +49,12 @@ describe "BVA Decision Progress report", :postgres do
     let!(:decision_dispatched) do
       create(:appeal).tap do |appeal|
         create(:bva_dispatch_task, :completed, appeal: appeal)
+      end
+    end
+    let!(:dispatched_with_subsequent_assigned_task) do
+      create(:appeal).tap do |appeal|
+        create(:bva_dispatch_task, :completed, appeal: appeal)
+        create(:ama_attorney_task, assigned_to: user, appeal: appeal)
       end
     end
     let!(:cancelled) do
