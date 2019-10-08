@@ -138,9 +138,7 @@ export default class UserManagement extends React.PureComponent {
       title: COPY.USER_MANAGEMENT_INITIAL_ERROR_TITLE
     }}>
     <AppSegment filledBackground>
-      { this.state.error && <Alert title={this.state.error.title} type="error">
-        {this.state.error.body}
-      </Alert>}
+      { this.state.error && <Alert title={this.state.error.title} type="error">{this.state.error.body}</Alert> }
       <div>
         <h1>{sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, 'Caseflow user')}</h1>
         {this.mainContent()}
