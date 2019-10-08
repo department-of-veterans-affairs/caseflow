@@ -153,9 +153,9 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
             patch :update, params: params
 
             expect(response.status).to eq 200
-            response_body = JSON.parse(response.body)["users"]["data"]
+            response_body = JSON.parse(response.body)
             expect(response_body.length).to eq 1
-            expect(response_body.first["attributes"]["status"]).to eq new_status
+            expect(response_body["user"]["status"]).to eq new_status
           end
         end
 
@@ -166,9 +166,9 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
             patch :update, params: params
 
             expect(response.status).to eq 200
-            response_body = JSON.parse(response.body)["users"]["data"]
+            response_body = JSON.parse(response.body)
             expect(response_body.length).to eq 1
-            expect(response_body.first["attributes"]["status"]).to eq old_status
+            expect(response_body["user"]["status"]).to eq old_status
           end
         end
       end
