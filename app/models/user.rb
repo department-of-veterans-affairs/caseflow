@@ -278,8 +278,10 @@ class User < ApplicationRecord
   end
 
   def update_status!(new_status)
-    update!(status: new_status, status_updated_at: Time.zone.now)
-    remove_user_from_auto_assign_orgs if new_status.eql?(Constants.USER_STATUSES.inactive)
+    transaction do
+      remove_user_from_auto_assign_orgs if new_status.eql?(Constants.USER_STATUSES.inactive)
+      update!(status: new_status, status_updated_at: Time.zone.now)
+    end
   end
 
   def use_task_pages_api?
