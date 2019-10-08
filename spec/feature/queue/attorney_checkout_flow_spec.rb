@@ -646,7 +646,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           expect(page).to have_content "Program"
           selected_vals = select_issue_level_options(opt_set)
           click_on "Continue"
-          selected_vals.each { |v| expect(page).to have_content v }
+          selected_vals.compact.each { |v| expect(page).to have_content v }
         end
       end
 

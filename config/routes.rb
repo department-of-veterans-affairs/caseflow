@@ -198,6 +198,7 @@ Rails.application.routes.draw do
 
   resources :asyncable_jobs, param: :klass, only: [] do
     resources :jobs, controller: :asyncable_jobs, param: :id, only: [:index, :show, :update]
+    post "jobs/:id/note", to: "asyncable_jobs#add_note"
   end
   match '/jobs' => 'asyncable_jobs#index', via: [:get]
 
