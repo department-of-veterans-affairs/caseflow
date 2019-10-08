@@ -77,7 +77,8 @@ export default class UserManagement extends React.PureComponent {
         users: updatedUserList,
         selectedUser: updatedUser,
         changingActiveStatus: { ...this.state.changingActiveStatus,
-          [user.id]: false }
+          [user.id]: false },
+        error: null
       });
     }, (error) => {
       this.setState({
