@@ -39,7 +39,7 @@ class TasksController < ApplicationController
   #      GET /tasks?user_id=xxx&role=judge
   def index
     tasks = QueueForRole.new(user_role).create(user: user).tasks
-    render json: { tasks: json_tasks(tasks) }
+    render json: { tasks: json_tasks(tasks), queue_config: queue_config }
   end
 
   # To create colocated task
@@ -152,6 +152,10 @@ class TasksController < ApplicationController
   end
 
   private
+
+  def queue_config
+    QueueConfig.new(assignee: user).to_hash_for_user(current_user)
+  end
 
   def verify_task_access
     if current_user.vso_employee? && task_classes.exclude?(InformalHearingPresentationTask.name.to_sym)

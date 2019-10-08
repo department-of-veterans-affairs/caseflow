@@ -8,6 +8,7 @@ class RequestIssuesUpdate < ApplicationRecord
 
   belongs_to :user
   belongs_to :review, polymorphic: true
+  has_many :job_notes, as: :job
 
   attr_writer :request_issues_data
   attr_reader :error_code
