@@ -16,10 +16,22 @@ const nonEditableIssueStyling = css({
 });
 
 export default class IssuesList extends React.Component {
+
   generateIssueActionOptions = (issue, userCanWithdrawIssues) => {
     let options = [];
 
-    if (!issue.withdrawalDate && !issue.withdrawalPending) {
+    if (issue.correctionType && issue.endProductCleared) {
+      options.push({ displayText: 'Undo correction',
+        value: 'undo_correction' });
+    } else if (issue.correctionType) {
+      options.push(
+        { displayText: 'Remove issue',
+          value: 'remove' }
+      );
+    } else if (issue.endProductCleared) {
+      options.push({ displayText: 'Correct issue',
+        value: 'correct' });
+    } else if (!issue.withdrawalDate && !issue.withdrawalPending) {
       if (userCanWithdrawIssues) {
         options.push(
           { displayText: 'Withdraw issue',
@@ -30,20 +42,6 @@ export default class IssuesList extends React.Component {
         { displayText: 'Remove issue',
           value: 'remove' }
       );
-    }
-    if (issue.correctionType && issue.endProductCleared) {
-      options.push({ displayText: 'Undo correction',
-        value: 'undo_correction' });
-    }
-    if (issue.correctionType) {
-      options.push(
-        { displayText: 'Remove issue',
-          value: 'remove' }
-      );
-    }
-    if (issue.endProductCleared) {
-      options.push({ displayText: 'Correct issue',
-        value: 'correct' });
     }
 
     return options;
