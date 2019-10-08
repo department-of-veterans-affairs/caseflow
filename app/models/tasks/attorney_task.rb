@@ -17,7 +17,7 @@ class AttorneyTask < Task
   after_update :send_back_to_judge_assign, if: :task_just_cancelled?
 
   def available_actions(user)
-    if parent.is_a?(JudgeTask) && parent.assigned_to == user
+    if parent.is_a?(JudgeTask) && (parent.assigned_to == user || assigned_by == user)
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
         Constants.TASK_ACTIONS.CANCEL_TASK.to_h
