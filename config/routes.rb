@@ -207,7 +207,7 @@ Rails.application.routes.draw do
     patch "/messages/:id", to: "inbox#update"
   end
 
-  resources :users, only: [:index]
+  resources :users, only: [:index, :update]
   resources :users, only: [:index] do
     get 'represented_organizations', on: :member
   end
