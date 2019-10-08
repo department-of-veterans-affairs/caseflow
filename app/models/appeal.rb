@@ -630,15 +630,17 @@ class Appeal < DecisionReview
   end
 
   def address
-    @address ||= Address.new(
-      address_line_1: appellant.address_line_1,
-      address_line_2: appellant.address_line_2,
-      address_line_3: appellant.address_line_3,
-      city: appellant.city,
-      country: appellant.country,
-      state: appellant.state,
-      zip: appellant.zip
-    ) if appellant.address.present?
+    if appellant.address.present?
+      @address ||= Address.new(
+        address_line_1: appellant.address_line_1,
+        address_line_2: appellant.address_line_2,
+        address_line_3: appellant.address_line_3,
+        city: appellant.city,
+        country: appellant.country,
+        state: appellant.state,
+        zip: appellant.zip
+      )
+    end
   end
 
   # we always want to show ratings on intake
