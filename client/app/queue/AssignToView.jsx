@@ -33,6 +33,10 @@ const vetNameFromAppeal = (appeal) => {
   return veteran.full_name;
 };
 
+const getAction = (props) => {
+  return props.task && props.task.availableActions.length > 0 ? selectedAction(props) : null;
+};
+
 class AssignToView extends React.Component {
   constructor(props) {
     super(props);
@@ -62,7 +66,7 @@ class AssignToView extends React.Component {
   submit = () => {
     const { appeal, task, isReassignAction, isTeamAssign } = this.props;
 
-    const action = this.props.task && this.props.task.availableActions.length > 0 ? selectedAction(this.props) : null;
+    const action = getAction(this.props);
     const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
 
     const payload = {
@@ -165,7 +169,7 @@ class AssignToView extends React.Component {
   render = () => {
     const { assigneeAlreadySelected, highlightFormItems, task } = this.props;
 
-    const action = this.props.task && this.props.task.availableActions.length > 0 ? selectedAction(this.props) : null;
+    const action = getAction(this.props);
     const actionData = taskActionData(this.props);
     const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
 
@@ -173,19 +177,23 @@ class AssignToView extends React.Component {
       return null;
     }
 
+    const modalProps = {
+      title: this.determineTitle(this.props, action, isPulacCerullo, actionData),
+      pathAfterSubmit: (actionData && actionData.redirect_after) || '/queue',
+      submit: this.submit,
+      validateForm: isPulacCerullo ?
+        () => {
+          return true;
+        } :
+        this.validateForm
+    };
+
+    if (isPulacCerullo) {
+      modalProps.button = 'Notify';
+    }
+
     return (
-      <QueueFlowModal
-        title={this.determineTitle(this.props, action, isPulacCerullo, actionData)}
-        pathAfterSubmit={(actionData && actionData.redirect_after) || '/queue'}
-        submit={this.submit}
-        validateForm={
-          isPulacCerullo ?
-            () => {
-              return true;
-            } :
-            this.validateForm
-        }
-      >
+      <QueueFlowModal {...modalProps}>
         <div>{actionData.modal_body ? actionData.modal_body : ''}</div>
         {!assigneeAlreadySelected && (
           <React.Fragment>

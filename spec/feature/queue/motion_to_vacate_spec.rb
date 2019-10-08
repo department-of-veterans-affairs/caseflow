@@ -299,7 +299,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     find("div", class: "Select-option", text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label).click
     expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_1)
     expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_2)
-    find("button", class: "usa-button", text: "Submit").click
+    find("button", class: "usa-button", text: "Notify").click
 
     expect(page).to have_content(COPY::PULAC_CERULLO_SUCCESS_TITLE)
     expect(page).to have_content(COPY::PULAC_CERULLO_SUCCESS_DETAIL.gsub("%s", appeal.veteran_full_name))
