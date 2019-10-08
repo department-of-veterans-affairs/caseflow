@@ -230,6 +230,8 @@ Rails.application.routes.draw do
   post '/team_management/national_vso', to: 'team_management#create_national_vso'
   post '/team_management/field_vso', to: 'team_management#create_field_vso'
 
+  resources :user_management, only: [:index, :update]
+
   get '/search', to: 'appeals#show_case_list'
 
   resources :legacy_tasks, only: [:create, :update]
