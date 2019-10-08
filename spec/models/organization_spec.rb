@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-describe Organization do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe Organization, :postgres do
   describe ".create" do
     context "when the input URL has uppercase letters and spaces" do
       let(:url_in) { "My URL_goes here" }
@@ -120,7 +123,7 @@ describe Organization do
   end
 
   describe ".next_assignee" do
-    let(:org) { FactoryBot.create(:organization) }
+    let(:org) { create(:organization) }
     let(:appeal) { nil }
 
     subject { org.next_assignee(appeal: appeal) }
@@ -132,7 +135,7 @@ describe Organization do
     end
 
     context "when appeal is specified" do
-      let(:appeal) { FactoryBot.create(:appeal) }
+      let(:appeal) { create(:appeal) }
       it "should return nil" do
         expect(subject).to eq(nil)
       end
@@ -140,12 +143,78 @@ describe Organization do
   end
 
   describe ".automatically_assign_to_member?" do
-    let(:org) { FactoryBot.create(:organization) }
+    let(:org) { create(:organization) }
 
     subject { org.automatically_assign_to_member? }
 
     it "should return false" do
       expect(subject).to eq(false)
+    end
+  end
+
+  describe ".show_regional_office_in_queue?" do
+    subject { organization.show_regional_office_in_queue? }
+
+    context "for a generic organization" do
+      let(:organization) { create(:organization) }
+
+      it "does not show the regional office column in the queue table view" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "for HearingAdmin organization" do
+      let(:organization) { HearingAdmin.singleton }
+
+      it "shows the regional office column in the queue table view" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "for HearingsManagement organization" do
+      let(:organization) { HearingsManagement.singleton }
+
+      it "shows the regional office column in the queue table view" do
+        expect(subject).to eq(true)
+      end
+    end
+  end
+
+  describe ".use_task_pages_api?" do
+    subject { organization.use_task_pages_api? }
+
+    context "for a generic organization" do
+      let(:organization) { create(:organization) }
+
+      it "does not use the task pages API" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "for VLJ Support Staff" do
+      let(:organization) { Colocated.singleton }
+
+      it "uses the task pages API" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "for HearingsManagement organization" do
+      let(:organization) { HearingsManagement.singleton }
+
+      it "uses the task pages API" do
+        expect(subject).to eq(true)
+      end
+    end
+  end
+
+  describe ".queue_tabs" do
+    let(:org) { create(:organization) }
+
+    it "returns the expected 4 tabs" do
+      expect(org.queue_tabs.map(&:class)).to eq(
+        [UnassignedTasksTab, AssignedTasksTab, OnHoldTasksTab, CompletedTasksTab]
+      )
     end
   end
 end

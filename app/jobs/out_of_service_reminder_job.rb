@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class OutOfServiceReminderJob < ApplicationJob
-  queue_as :low_priority
+  queue_with_priority :low_priority
 
   def perform
     apps = %w[certification dispatch hearing_prep reader]

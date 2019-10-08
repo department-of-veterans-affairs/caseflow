@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 // This lil' bundle o' joy is a workaround for an Enzyme bug.
 // The Enzyme full renderer produces a structure like:
 //
@@ -13,6 +11,4 @@ import _ from 'lodash';
 //
 // To work around this, we manually find the element that's an actual DOM node,
 // and not a React element.
-export const findElementById = (wrapper, id) => wrapper.
-  find({ id }).
-  findWhere((node) => _.isString(node.type()) && node.getDOMNode().id === id);
+export const findElementById = (wrapper, id) => wrapper.find({ id }).hostNodes();

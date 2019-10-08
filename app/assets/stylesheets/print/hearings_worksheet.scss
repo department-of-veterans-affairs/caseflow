@@ -1,0 +1,39 @@
+@import 'uswds/src/stylesheets/lib/addons/_font-stacks.scss';
+@import 'uswds/src/stylesheets/core/_variables.scss';
+
+@media print {
+  #cf-hearings-worksheet-summary,
+  .cf-hearing-worksheet-issues-wrapper {
+    page-break-inside: avoid;
+  }
+
+  .cf-printed-worksheet {
+    page-break-before: always;
+    width: 100%;
+    margin: 0px;
+  }
+
+  table {
+    thead {
+      .cf-print-footer {
+        float: right;
+        position: relative;
+        top: 958px;
+        height: 0px;
+      }
+    }
+
+    tr,
+    tr > td {
+      margin: 0px;
+      padding: 0px;
+      display: block;
+      border: none;
+    }
+  }
+
+  @page {
+    size: 8.5in 11in;
+    margin: 0.4in 0.35in;
+  }
+}

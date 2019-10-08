@@ -12,7 +12,7 @@ class BackToQueueLink extends React.PureComponent {
     } = this.props;
 
     if (!queueTaskType) {
-      return 'Your Queue';
+      return 'your cases';
     }
 
     if (!veteranFullName) {
@@ -49,7 +49,8 @@ BackToQueueLink.propTypes = {
   vbmsId: PropTypes.string,
   veteranFullName: PropTypes.string,
   queueTaskType: PropTypes.string,
-  useReactRouter: PropTypes.bool
+  useReactRouter: PropTypes.bool,
+  collapseTopMargin: PropTypes.string
 };
 
 export default BackToQueueLink;

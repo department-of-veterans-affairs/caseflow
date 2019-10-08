@@ -1,49 +1,38 @@
+/* eslint-disable react/prop-types */
+
 import React, { Fragment } from 'react';
 import StatusMessage from '../../components/StatusMessage';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, FORM_TYPES } from '../constants';
 import _ from 'lodash';
-import Alert from '../../components/Alert';
+import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 import IneligibleIssuesList from '../components/IneligibleIssuesList';
 import SmallLoader from '../../components/SmallLoader';
 import { LOGO_COLORS } from '../../constants/AppConstants';
-import COPY from '../../../COPY.json';
+import END_PRODUCT_CODES from '../../../constants/END_PRODUCT_CODES.json';
 
-const leadMessageList = ({ veteran, formName, requestIssues, addedIssues }) => {
+const leadMessageList = ({ veteran, formName, requestIssues, addedIssues, detailEditUrl }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
   const editMessage = () => {
     if (requestIssues.length === 0) {
       return 'removed';
-    } else if (_.every(addedIssues, (ri) => ri.withdrawalPending)) {
+    } else if (_.every(addedIssues, (ri) => ri.withdrawalPending || ri.withdrawalDate)) {
       return 'withdrawn';
     }
 
-    return 'processed';
+    return 'submitted';
   };
 
   const leadMessageArr = [
-    `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been ${editMessage()}.`
+    `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been ${editMessage()}.`,
+    <div>If needed, you may <a href={detailEditUrl}>correct the issues</a>.</div>
   ];
 
-  if (eligibleRequestIssues.length !== 0) {
-    if (unidentifiedIssues.length > 0) {
-      leadMessageArr.push(
-        <Alert type="warning">
-          <h2>Unidentified issue</h2>
-          <p>{COPY.INDENTIFIED_ALERT}</p>
-          {unidentifiedIssues.map((ri, i) => <p className="cf-red-text" key={`unidentified-alert-${i}`}>
-            Unidentified issue: no issue matched for requested "{ri.description}"
-          </p>)}
-        </Alert>
-      );
-    } else {
-      leadMessageArr.push(
-        'If you need to edit this, go to VBMS claim details and click the “Edit in Caseflow” button.'
-      );
-    }
+  if (eligibleRequestIssues.length !== 0 && unidentifiedIssues.length > 0) {
+    leadMessageArr.push(<UnidentifiedIssueAlert unidentifiedIssues={unidentifiedIssues} />);
   }
 
   leadMessageArr.push(
@@ -53,67 +42,18 @@ const leadMessageList = ({ veteran, formName, requestIssues, addedIssues }) => {
   return leadMessageArr;
 };
 
-const getEndProductUpdate = ({
-  formType,
-  isRating,
-  issuesBefore,
-  issuesAfter
-}) => {
-  const claimReviewName = _.find(FORM_TYPES, { key: formType }).shortName;
-  const epType = isRating ? 'Rating' : 'Nonrating';
-  const issueFilter = isRating ?
-    (i) => !i.ineligibleReason && (i.isRating || i.isUnidentified) :
-    (i) => !i.ineligibleReason && i.isRating === false;
-  const epIssuesBefore = issuesBefore.filter(issueFilter);
-  const epIssuesAfter = issuesAfter.filter(issueFilter);
-  const epBefore = epIssuesBefore.length > 0;
-  const epAfter = epIssuesAfter.length > 0;
-  const epChanged = !_.isEqual(epIssuesBefore, epIssuesAfter);
+const endProductUpdate = (epCode, issues, action) => {
+  const epIssues = issues.filter((ri) => ri.endProductCode === epCode);
+  const epDescription = END_PRODUCT_CODES[epCode];
 
-  if (epBefore && !epAfter) {
-    return <Fragment>
-      <strong>A {claimReviewName} {epType} EP is being canceled.</strong>
-      <p>All contentions on this EP were removed</p>
-    </Fragment>;
-  } else if (epBefore && epAfter && epChanged) {
-    return <Fragment>
-      <strong>Contentions on {claimReviewName} {epType} EP are being updated:</strong>
-      {
-        epIssuesAfter.map(
-          (ri, i) => <p key={`${epType}-issue-${i}`}>Contention: {ri.contentionText}</p>
-        )
-      }
-    </Fragment>;
-  } else if (!epBefore && epAfter) {
-    return <Fragment>
-      <strong>A {claimReviewName} {epType} EP is being established:</strong>
-      {
-        epIssuesAfter.map(
-          (ri, i) => <p key={`${epType}-issue-${i}`}>Contention: {ri.contentionText}</p>
-        )
-      }
-    </Fragment>;
-  }
-};
-
-const getChecklistItems = (formType, issuesBefore, issuesAfter, isInformalConferenceRequested) => {
-  const eligibleRequestIssues = issuesAfter.filter((i) => !i.ineligibleReason);
-
-  return _.compact([
-    getEndProductUpdate({
-      formType,
-      isRating: true,
-      issuesBefore,
-      issuesAfter
-    }),
-    getEndProductUpdate({
-      formType,
-      isRating: false,
-      issuesBefore,
-      issuesAfter
-    }),
-    (eligibleRequestIssues.length > 0 && isInformalConferenceRequested) ? 'Informal Conference Tracked Item' : null
-  ]);
+  return <Fragment key={`ep-update-${epCode}`}>
+    <ul className="cf-success-checklist cf-left-padding">
+      <li>
+        <strong>A {epDescription} EP is being {action}:</strong>
+        { epIssues.map((ri, i) => <p key={`${epCode}-issue-${i}`}>Contention: {ri.contentionText}</p>) }
+      </li>
+    </ul>
+  </Fragment>;
 };
 
 class DecisionReviewEditCompletedPage extends React.PureComponent {
@@ -121,14 +61,15 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
     const {
       veteran,
       formType,
-      issuesBefore,
-      issuesAfter,
+      beforeIssues,
+      afterIssues,
+      updatedIssues,
       addedIssues,
-      informalConference,
+      detailEditUrl,
       redirectTo
     } = this.props;
 
-    if (!issuesBefore) {
+    if (!beforeIssues) {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     }
 
@@ -136,53 +77,78 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
       window.location.href = redirectTo;
 
       return <SmallLoader message="Loading ..." spinnerColor={LOGO_COLORS.CERTIFICATION.ACCENT} />;
-
     }
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
-    const ineligibleRequestIssues = issuesAfter.filter((ri) => ri.ineligibleReason);
+    const ineligibleRequestIssues = afterIssues.filter((ri) => ri.ineligibleReason);
     const withdrawnRequestIssues = addedIssues.filter((ri) => ri.withdrawalPending);
-    const hasWithdrawnIssues = !_.isEmpty(withdrawnRequestIssues);
+    const editedRequestIssues = addedIssues.filter((ri) => ri.editedDescription);
     const pageTitle = () => {
-      if (issuesAfter.length === 0) {
+      if (afterIssues.length === 0) {
         return 'Review Removed';
-      } else if (hasWithdrawnIssues) {
+      } else if (_.every(addedIssues, (ri) => ri.withdrawalPending || ri.withdrawalDate)) {
         return 'Review Withdrawn';
       }
 
       return 'Claim Issues Saved';
     };
 
+    const beforeEps = _.uniq(_.map(beforeIssues, 'endProductCode'));
+    const afterEps = _.uniq(_.map(afterIssues.filter((ri) => !ri.withdrawalDate), 'endProductCode'));
+    const allChangedEps = _.uniq(_.map(updatedIssues, 'endProductCode'));
+    const removedEps = _.difference(beforeEps, afterEps);
+    const establishedEps = _.difference(allChangedEps, beforeEps);
+    const updatedEps = _.difference(allChangedEps, removedEps, establishedEps);
+
+    // render() return:
     return <div>
       <StatusMessage
         title= {pageTitle()}
         type="success"
         leadMessageList={
           leadMessageList({
+            detailEditUrl,
             veteran,
             formName: selectedForm.name,
-            requestIssues: issuesAfter,
+            requestIssues: afterIssues,
             addedIssues
           })
         }
-        checklist={
-          getChecklistItems(
-            formType,
-            issuesBefore,
-            issuesAfter,
-            informalConference
-          )
-        }
         wrapInAppSegment={false}
       />
-      { ineligibleRequestIssues.length > 0 && <IneligibleIssuesList issues={ineligibleRequestIssues} /> }
-      { hasWithdrawnIssues && <Fragment>
+      { !_.isEmpty(establishedEps) && establishedEps.map((epCode) => {
+        return endProductUpdate(epCode, updatedIssues, 'established');
+      })}
+
+      { !_.isEmpty(updatedEps) && updatedEps.map((epCode) => {
+        const remainingIssues = afterIssues.filter((ri) => !ri.withdrawalDate);
+
+        return endProductUpdate(epCode, remainingIssues, 'updated');
+      })}
+
+      { !_.isEmpty(removedEps) && removedEps.map((epCode) => {
+        return endProductUpdate(epCode, beforeIssues, 'canceled');
+      })}
+
+      { !_.isEmpty(ineligibleRequestIssues) > 0 && <IneligibleIssuesList issues={ineligibleRequestIssues} /> }
+      { !_.isEmpty(withdrawnRequestIssues) && <Fragment>
         <ul className="cf-issue-checklist cf-left-padding">
           <li>
             <strong>Withdrawn</strong>
             {withdrawnRequestIssues.map((ri, i) =>
               <p key={`withdrawn-issue-${i}`}>
                 {ri.contentionText}
+              </p>)}
+          </li>
+        </ul>
+      </Fragment> }
+      { !_.isEmpty(editedRequestIssues) && <Fragment>
+        <ul className="cf-success-checklist cf-left-padding">
+          <li>
+            <strong>Edited</strong>
+            {editedRequestIssues.map((ri, i) =>
+              <p key={`withdrawn-issue-${i}`}>
+                {ri.editedDescription}
               </p>)}
           </li>
         </ul>
@@ -196,10 +162,10 @@ export default connect(
   (state) => ({
     formType: state.formType,
     veteran: state.veteran,
-    issuesBefore: state.issuesBefore,
-    issuesAfter: state.issuesAfter,
+    beforeIssues: state.beforeIssues,
+    afterIssues: state.afterIssues,
+    updatedIssues: state.updatedIssues,
     addedIssues: state.addedIssues,
-    informalConference: state.informalConference,
     redirectTo: state.redirectTo
   })
 )(DecisionReviewEditCompletedPage);

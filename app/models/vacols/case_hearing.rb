@@ -6,6 +6,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   self.sequence_name = "hearsched_pkseq"
 
   attribute :hearing_date, :datetime
+  attribute :notes1, :ascii_string
   validates :hearing_type, :hearing_date, :room, presence: true, on: :create
 
   has_one :staff, foreign_key: :sattyid, primary_key: :board_member
@@ -116,22 +117,6 @@ class VACOLS::CaseHearing < VACOLS::Record
         .joins("left outer join corres on corres.stafkey = bfcorkey")
         .where(hearing_type: HEARING_TYPES)
     end
-  end
-
-  def scheduled_for
-    hearing_date
-  end
-
-  def request_type
-    hearing_type
-  end
-
-  def judge_id
-    board_member
-  end
-
-  def master_record_type
-    :video if folder_nr&.include?("VIDEO")
   end
 
   def update_hearing!(hearing_info)

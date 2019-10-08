@@ -2,7 +2,6 @@
 
 class Distribution < ApplicationRecord
   include ActiveModel::Serializers::JSON
-  include LegacyCaseDistribution
   include AmaCaseDistribution
 
   has_many :distributed_cases
@@ -21,6 +20,12 @@ class Distribution < ApplicationRecord
   CASES_PER_ATTORNEY = 3
   ALTERNATIVE_BATCH_SIZE = 15
 
+  class << self
+    def pending_for_judge(judge)
+      find_by(status: %w[pending started], judge: judge)
+    end
+  end
+
   def distribute!
     return unless %w[pending error].include? status
 
@@ -28,29 +33,29 @@ class Distribution < ApplicationRecord
       return unless valid?(context: :create)
     end
 
-    update(status: "started")
+    update!(status: :started, started_at: Time.zone.now)
 
-    if FeatureToggle.enabled?(:ama_auto_case_distribution, user: RequestStore.store[:current_user])
+    # this might take awhile due to VACOLS, so set our timeout to 3 minutes (in milliseconds).
+    transaction_time_out = 3 * 60 * 1000
+
+    multi_transaction do
+      ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = #{transaction_time_out}"
+
       ama_distribution
-      update(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
-    else
-      legacy_distribution
-      update(status: "completed", completed_at: Time.zone.now, statistics: legacy_statistics)
+
+      update!(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
     end
   rescue StandardError => error
-    update(status: "error")
+    # DO NOT use update! because we want to avoid validations and saving any cached associations.
+    update_columns(status: "error", errored_at: Time.zone.now)
     raise error
   end
 
-  def self.pending_for_judge(judge)
-    where(status: %w[pending started], judge: judge)
+  def distributed_cases_count
+    (status == "completed") ? distributed_cases.count : 0
   end
 
   private
-
-  def attributes
-    { 'id': nil, 'status': nil, 'created_at': nil, 'updated_at': nil, 'distributed_cases_count': nil }
-  end
 
   def mark_as_pending
     self.status = "pending"
@@ -69,7 +74,7 @@ class Distribution < ApplicationRecord
   end
 
   def validate_judge_has_no_pending_distributions
-    errors.add(:judge, :pending_distribution) if self.class.pending_for_judge(judge).any?
+    errors.add(:judge, :pending_distribution) if self.class.pending_for_judge(judge)
   end
 
   def judge_tasks
@@ -117,9 +122,5 @@ class Distribution < ApplicationRecord
 
   def total_batch_size
     JudgeTeam.includes(:non_admin_users).flat_map(&:non_admin_users).size * CASES_PER_ATTORNEY
-  end
-
-  def distributed_cases_count
-    (status == "completed") ? distributed_cases.count : 0
   end
 end

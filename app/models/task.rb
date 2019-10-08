@@ -1,28 +1,39 @@
 # frozen_string_literal: true
 
 ##
-# Base model for all tasks in Caseflow.
+# Base model for all tasks in generic organizational task queues in Caseflow
 # Tasks represent work to be done by judges, attorneys, VSOs, and anyone else who touches a Veteran's appeal.
+# Supports common actions like:
+#   - marking tasks complete
+#   - assigning a task to a team
+#   - assigning a task to an individual
 
+# rubocop:disable Metrics/ClassLength
 class Task < ApplicationRecord
+  has_paper_trail on: [:update, :destroy]
   acts_as_tree
+
+  include PrintsTaskTree
 
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
-  has_many :attorney_case_reviews
+  has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
 
   validates :assigned_to, :appeal, :type, :status, presence: true
+  validate :status_is_valid_on_create, on: :create
 
   before_create :set_assigned_at
-  after_create :create_and_auto_assign_child_task, if: :automatically_assign_org_task?
-  after_create :put_parent_on_hold
+  before_create :verify_org_task_unique
 
-  before_update :set_timestamps
+  after_create :create_and_auto_assign_child_task, if: :automatically_assign_org_task?
+  after_create :tell_parent_task_child_task_created
+
+  before_save :set_timestamp
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
-  after_update :cancel_timed_hold, unless: :task_just_placed_on_hold?
+  after_update :cancel_task_timers, if: :task_just_closed?
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -32,11 +43,24 @@ class Task < ApplicationRecord
     Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled
   }
 
-  scope :active, -> { where.not(status: inactive_statuses) }
+  # This suppresses a warning about the :open scope overwriting the Kernel#open method
+  # https://ruby-doc.org/core-2.6.3/Kernel.html#method-i-open
+  class << self; undef_method :open; end
 
-  scope :inactive, -> { where(status: inactive_statuses) }
+  scope :active, -> { where(status: active_statuses) }
 
-  scope :not_tracking, -> { where.not(type: TrackVeteranTask.name) }
+  scope :open, -> { where(status: open_statuses) }
+
+  scope :closed, -> { where(status: closed_statuses) }
+
+  scope :not_cancelled, -> { where.not(status: Constants.TASK_STATUSES.cancelled) }
+
+  # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
+  scope :visible_in_queue_table_view, lambda {
+    where.not(
+      type: Task.descendants.select(&:hide_from_queue_table_view).map(&:name)
+    )
+  }
 
   scope :not_decisions_review, lambda {
                                  where.not(
@@ -44,52 +68,211 @@ class Task < ApplicationRecord
                                  )
                                }
 
-  def available_actions(_user)
+  ############################################################################################
+  ## class methods
+  class << self
+    def label
+      name.titlecase
+    end
+
+    def closed_statuses
+      [Constants.TASK_STATUSES.completed, Constants.TASK_STATUSES.cancelled]
+    end
+
+    def active_statuses
+      [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
+    end
+
+    def open_statuses
+      active_statuses.concat([Constants.TASK_STATUSES.on_hold])
+    end
+
+    def recently_closed
+      closed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now)
+    end
+
+    def incomplete_or_recently_closed
+      open.or(recently_closed)
+    end
+
+    def create_many_from_params(params_array, current_user)
+      multi_transaction do
+        params_array.map { |params| create_from_params(params, current_user) }
+      end
+    end
+
+    def modify_params(params)
+      if params.key?(:instructions) && !params[:instructions].is_a?(Array)
+        params[:instructions] = [params[:instructions]]
+      end
+      params.delete(:action)
+      params
+    end
+
+    def hide_from_queue_table_view
+      false
+    end
+
+    def verify_user_can_create!(user, parent)
+      can_create = parent&.available_actions(user)&.map do |action|
+        parent.build_action_hash(action, user)
+      end&.any? do |action|
+        action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
+      end
+
+      if !parent&.actions_allowable?(user) || !can_create
+        user_description = user ? "User #{user.id}" : "nil User"
+        parent_description = parent ? " from #{parent.class.name} #{parent.id}" : ""
+        message = "#{user_description} cannot assign #{name}#{parent_description}."
+        fail Caseflow::Error::ActionForbiddenError, message: message
+      end
+    end
+
+    def child_task_assignee(_parent, params)
+      Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
+    end
+
+    def child_assigned_by_id(parent, current_user)
+      return current_user.id if current_user
+      return parent.assigned_to_id if parent && parent.assigned_to_type == User.name
+    end
+
+    def most_recently_assigned
+      order(:updated_at).last
+    end
+
+    def create_from_params(params, user)
+      parent_task = Task.find(params[:parent_id])
+      fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_task.assigned_to_id == params[:assigned_to_id] &&
+                                                           parent_task.assigned_to_type == params[:assigned_to_type]
+
+      verify_user_can_create!(user, parent_task)
+
+      params = modify_params(params)
+      child = create_child_task(parent_task, user, params)
+      parent_task.update!(status: params[:status]) if params[:status]
+      child
+    end
+
+    def create_child_task(parent, current_user, params)
+      Task.create!(
+        type: name,
+        appeal: parent.appeal,
+        assigned_by_id: child_assigned_by_id(parent, current_user),
+        parent_id: parent.id,
+        assigned_to: params[:assigned_to] || child_task_assignee(parent, params),
+        instructions: params[:instructions]
+      )
+    end
+  end
+
+  ########################################################################################
+  ## instance methods
+
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
+  def available_actions(user)
+    return [] unless user
+
+    if assigned_to == user
+      return [
+        Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
+        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
+        Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+        Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+      ]
+    end
+
+    if task_is_assigned_to_user_within_organization?(user)
+      return [
+        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
+      ]
+    end
+
+    if task_is_assigned_to_users_organization?(user)
+      return [
+        Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
+        Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
+        Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+      ]
+    end
+
     []
+  end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
+
+  # Use the existence of an organization-level task to prevent duplicates since there should only ever be one org-level
+  # task active at a time for a single appeal.
+  def verify_org_task_unique
+    return if !open?
+
+    if appeal.tasks.open.where(
+      type: type,
+      assigned_to: assigned_to,
+      parent: parent
+    ).any? && assigned_to.is_a?(Organization)
+      fail(
+        Caseflow::Error::DuplicateOrgTask,
+        appeal_id: appeal.id,
+        task_type: self.class.name,
+        assignee_type: assigned_to.class.name,
+        parent_id: parent&.id
+      )
+    end
+  end
+
+  def available_hearing_user_actions(user)
+    available_hearing_admin_actions(user) | available_hearing_mgmt_actions(user)
+  end
+
+  def create_change_hearing_disposition_task(instructions = nil)
+    hearing_task = ancestor_task_of_type(HearingTask)
+
+    if hearing_task.blank?
+      fail(Caseflow::Error::ActionForbiddenError, message: COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR)
+    end
+
+    hearing_task.create_change_hearing_disposition_task(instructions)
+  end
+
+  def most_recent_closed_hearing_task_on_appeal
+    appeal.tasks.closed.order(closed_at: :desc).where(type: HearingTask.name).last
   end
 
   def label
-    self.class.name.titlecase
+    self.class.label
   end
 
-  def self.inactive_statuses
-    [Constants.TASK_STATUSES.completed, Constants.TASK_STATUSES.cancelled]
+  def default_instructions
+    []
   end
 
   # When a status is "active" we expect properties of the task to change. When a task is not "active" we expect that
   # properties of the task will not change.
-  def active?
-    !self.class.inactive_statuses.include?(status)
+  def open?
+    !self.class.closed_statuses.include?(status)
   end
 
-  def active_with_no_children?
-    active? && children.empty?
+  def open_with_no_children?
+    open? && children.empty?
+  end
+
+  def active?
+    self.class.active_statuses.include?(status)
   end
 
   # available_actions() returns an array of options selected by
   # the subclass from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
   def available_actions_unwrapper(user)
-    actions = actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action, user) } : []
-
-    # Make sure each task action has a unique URL so we can determine which action we are selecting on the frontend.
-    if actions.length > actions.pluck(:value).uniq.length
-      fail Caseflow::Error::DuplicateTaskActionPaths, task_id: id, user_id: user.id, labels: actions.pluck(:label)
-    end
-
-    actions
-  end
-
-  def appropriate_timed_hold_task_action
-    on_timed_hold? ? Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h : Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
+    actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action, user) } : []
   end
 
   def build_action_hash(action, user)
-    {
-      label: action[:label],
-      value: action[:value],
-      data: action[:func] ? TaskActionRepository.send(action[:func], self, user) : nil
-    }
+    TaskActionHelper.build_hash(action, self, user)
   end
 
   # A wrapper around actions_allowable that also disallows doing actions to on_hold tasks.
@@ -100,7 +283,7 @@ class Task < ApplicationRecord
   end
 
   def actions_allowable?(user)
-    return false if !active?
+    return false if !open?
 
     # Users who are assigned a subtask of an organization don't have actions on the organizational task.
     return false if assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
@@ -125,7 +308,7 @@ class Task < ApplicationRecord
   end
 
   def active_child_timed_hold_task
-    children.active.find_by(type: TimedHoldTask.name)
+    children.open.find { |task| task.type == TimedHoldTask.name }
   end
 
   def cancel_timed_hold
@@ -133,38 +316,56 @@ class Task < ApplicationRecord
   end
 
   def calculated_placed_on_hold_at
-    active_child_timed_hold_task&.timer_start_time
+    active_child_timed_hold_task&.timer_start_time || placed_on_hold_at
   end
 
   def calculated_on_hold_duration
     timed_hold_task = active_child_timed_hold_task
-    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i
+    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i || on_hold_duration
   end
 
-  def self.recently_closed
-    inactive.where(closed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
-  end
+  def update_task_type(params)
+    multi_transaction do
+      new_branch_task = first_ancestor_of_type.create_twin_of_type(params)
+      new_child_task = new_branch_task.last_descendant_of_type
 
-  def self.incomplete_or_recently_closed
-    active.or(recently_closed)
-  end
+      if assigned_to.is_a?(User) && new_child_task.assigned_to.is_a?(User) &&
+         parent.assigned_to_same_org?(new_child_task.parent)
+        new_child_task.update!(assigned_to: assigned_to)
+      end
 
-  def self.create_many_from_params(params_array, current_user)
-    params_array.map { |params| create_from_params(params, current_user) }
-  end
+      # Move children from the old childmost task to the new childmost task
+      children.open.each { |child| child.update!(parent_id: last_descendant_of_type.id) }
+      # Cancel all tasks under the old task type branch
+      first_ancestor_of_type.cancel_descendants
 
-  def self.create_from_params(params, user)
-    parent_task = params[:parent_id] ? Task.find(params[:parent_id]) : nil
-    verify_user_can_create!(user, parent_task)
-    params = modify_params(params)
-    create!(params)
-  end
-
-  def self.modify_params(params)
-    if params.key?(:instructions) && !params[:instructions].is_a?(Array)
-      params[:instructions] = [params[:instructions]]
+      [first_ancestor_of_type.descendants, new_branch_task.first_ancestor_of_type.descendants].flatten
     end
-    params
+  end
+
+  def assigned_to_same_org?(task_to_check)
+    assigned_to.is_a?(Organization) && assigned_to.eql?(task_to_check.assigned_to)
+  end
+
+  def first_ancestor_of_type
+    same_task_type?(parent) ? parent.first_ancestor_of_type : self
+  end
+
+  def last_descendant_of_type
+    child_of_task_type = children.open.detect { |child| same_task_type?(child) }
+    child_of_task_type&.last_descendant_of_type || self
+  end
+
+  def same_task_type?(task_to_check)
+    type.eql?(task_to_check&.type)
+  end
+
+  def cancel_descendants
+    descendants.each { |desc| desc.update!(status: Constants.TASK_STATUSES.cancelled) }
+  end
+
+  def create_twin_of_type(_params)
+    fail Caseflow::Error::ActionForbiddenError, message: "Cannot change type of this task"
   end
 
   def update_from_params(params, current_user)
@@ -183,7 +384,7 @@ class Task < ApplicationRecord
   end
 
   def hide_from_queue_table_view
-    false
+    self.class.hide_from_queue_table_view
   end
 
   def duplicate_org_task
@@ -231,14 +432,27 @@ class Task < ApplicationRecord
     ["", ""]
   end
 
-  def when_child_task_completed
-    update_status_if_children_tasks_are_complete
+  def when_child_task_completed(child_task)
+    update_status_if_children_tasks_are_closed(child_task)
+  end
+
+  def when_child_task_created(child_task)
+    cancel_timed_hold unless child_task.is_a?(TimedHoldTask)
+    update!(status: :on_hold) if !on_hold?
+  end
+
+  def task_is_assigned_to_users_organization?(user)
+    assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
   end
 
   def task_is_assigned_to_user_within_organization?(user)
     parent&.assigned_to.is_a?(Organization) &&
       assigned_to.is_a?(User) &&
       parent.assigned_to.user_has_access?(user)
+  end
+
+  def assigned_to_vso_user?
+    assigned_to.is_a?(User) && assigned_to.vso_employee?
   end
 
   def can_be_updated_by_user?(user)
@@ -251,47 +465,20 @@ class Task < ApplicationRecord
     end
   end
 
-  def self.verify_user_can_create!(user, parent)
-    can_create = parent&.available_actions(user)&.map do |action|
-      parent.build_action_hash(action, user)
-    end&.any? do |action|
-      action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
-    end
-
-    if !parent&.actions_allowable?(user) || !can_create
-      user_description = user ? "User #{user.id}" : "nil User"
-      parent_description = parent ? " from #{parent.class.name} #{parent.id}" : ""
-      message = "#{user_description} cannot assign #{name}#{parent_description}."
-      fail Caseflow::Error::ActionForbiddenError, message: message
-    end
-  end
-
   def reassign(reassign_params, current_user)
-    sibling = dup.tap do |t|
-      t.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
-      t.assigned_to = self.class.child_task_assignee(parent, reassign_params)
-      t.instructions = [instructions, reassign_params[:instructions]].flatten
-      t.save!
+    sibling = dup.tap do |task|
+      task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
+      task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
+      task.instructions = [instructions, reassign_params[:instructions]].flatten
+      task.status = Constants.TASK_STATUSES.assigned
+      task.save!
     end
 
     update!(status: Constants.TASK_STATUSES.cancelled)
 
-    children.active.each { |t| t.update!(parent_id: sibling.id) }
+    children.open.each { |task| task.update!(parent_id: sibling.id) }
 
     [sibling, self, sibling.children].flatten
-  end
-
-  def self.child_task_assignee(_parent, params)
-    Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
-  end
-
-  def self.child_assigned_by_id(parent, current_user)
-    return current_user.id if current_user
-    return parent.assigned_to_id if parent && parent.assigned_to_type == User.name
-  end
-
-  def self.most_recently_assigned
-    order(:updated_at).last
   end
 
   def root_task(task_id = nil)
@@ -319,7 +506,7 @@ class Task < ApplicationRecord
   def cancel_task_and_child_subtasks
     # Cancel all descendants at the same time to avoid after_update hooks marking some tasks as completed.
     descendant_ids = descendants.pluck(:id)
-    Task.active.where(id: descendant_ids).update_all(
+    Task.open.where(id: descendant_ids).update_all(
       status: Constants.TASK_STATUSES.cancelled,
       closed_at: Time.zone.now
     )
@@ -330,14 +517,12 @@ class Task < ApplicationRecord
   end
 
   def update_if_hold_expired!
-    update!(status: Constants.TASK_STATUSES.in_progress) if on_hold_expired?
+    update!(status: Constants.TASK_STATUSES.in_progress) if old_style_hold_expired?
   end
 
-  def on_hold_expired?
-    return true if on_hold? && placed_on_hold_at && on_hold_duration &&
-                   placed_on_hold_at + on_hold_duration.days < Time.zone.now
-
-    false
+  def old_style_hold_expired?
+    !on_timed_hold? && on_hold? && placed_on_hold_at && on_hold_duration &&
+      (placed_on_hold_at + on_hold_duration.days < Time.zone.now)
   end
 
   def serializer_class
@@ -349,6 +534,28 @@ class Task < ApplicationRecord
   end
 
   private
+
+  def available_hearing_admin_actions(user)
+    return [] unless HearingAdmin.singleton.user_has_access?(user)
+
+    hearing_task = ancestor_task_of_type(HearingTask)
+    return [] unless hearing_task&.open? && hearing_task&.disposition_task&.present?
+
+    [
+      Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.to_h
+    ]
+  end
+
+  def available_hearing_mgmt_actions(user)
+    return [] unless type == ScheduleHearingTask.name
+    return [] unless HearingsManagement.singleton.user_has_access?(user)
+
+    return [] if most_recent_closed_hearing_task_on_appeal&.hearing&.disposition.blank?
+
+    [
+      Constants.TASK_ACTIONS.CREATE_CHANGE_PREVIOUS_HEARING_DISPOSITION_TASK.to_h
+    ]
+  end
 
   def create_and_auto_assign_child_task(options = {})
     dup.tap do |child_task|
@@ -363,50 +570,84 @@ class Task < ApplicationRecord
   end
 
   def update_parent_status
-    parent.when_child_task_completed
+    parent.when_child_task_completed(self)
   end
 
-  def update_children_status_after_closed; end
+  def tell_parent_task_child_task_created
+    parent&.when_child_task_created(self)
+  end
+
+  def update_children_status_after_closed
+    active_child_timed_hold_task&.update!(status: Constants.TASK_STATUSES.cancelled)
+  end
+
+  def cancel_task_timers
+    task_timers.processable.each do |task_timer|
+      task_timer.update!(canceled_at: Time.zone.now)
+    end
+  end
 
   def task_just_closed?
-    saved_change_to_attribute?("status") && !active?
+    saved_change_to_attribute?("status") && !open?
   end
 
   def task_just_closed_and_has_parent?
     task_just_closed? && parent
   end
 
-  def task_just_placed_on_hold?
-    saved_change_to_attribute?(:placed_on_hold_at)
+  def update_status_if_children_tasks_are_closed(child_task)
+    if children.any? && children.open.empty? && on_hold?
+      if assigned_to.is_a?(Organization) && cascade_closure_from_child_task?(child_task)
+        return all_children_cancelled_or_completed
+      end
+
+      update!(status: Constants.TASK_STATUSES.assigned)
+    end
   end
 
-  def update_status_if_children_tasks_are_complete
-    if children.any? && children.select(&:active?).empty?
-      return update!(status: Constants.TASK_STATUSES.completed) if assigned_to.is_a?(Organization)
-      return update!(status: :assigned) if on_hold?
+  def all_children_cancelled_or_completed
+    if all_children_cancelled?
+      update!(status: Constants.TASK_STATUSES.cancelled)
+    else
+      update!(status: Constants.TASK_STATUSES.completed)
     end
+  end
+
+  def all_children_cancelled?
+    children.pluck(:status).uniq == [Constants.TASK_STATUSES.cancelled]
+  end
+
+  def cascade_closure_from_child_task?(child_task)
+    type == child_task&.type
   end
 
   def set_assigned_at
     self.assigned_at = created_at unless assigned_at
   end
 
-  def put_parent_on_hold
-    parent&.update(status: :on_hold)
+  STATUS_TIMESTAMPS = {
+    assigned: :assigned_at,
+    in_progress: :started_at,
+    on_hold: :placed_on_hold_at,
+    completed: :closed_at,
+    cancelled: :closed_at
+  }.freeze
+
+  def set_timestamp
+    return unless will_save_change_to_attribute?(:status)
+
+    timestamp_to_update = STATUS_TIMESTAMPS[status_change_to_be_saved&.last&.to_sym]
+    return if will_save_change_to_attribute?(timestamp_to_update)
+
+    self[timestamp_to_update] = Time.zone.now
   end
 
-  def set_timestamps
-    if will_save_change_to_status?
-      case status_change_to_be_saved&.last&.to_sym
-      when :assigned
-        self.assigned_at = updated_at
-      when :in_progress
-        self.started_at = updated_at
-      when :on_hold
-        self.placed_on_hold_at = updated_at
-      when :completed, :cancelled
-        self.closed_at = updated_at
-      end
+  def status_is_valid_on_create
+    if status != Constants.TASK_STATUSES.assigned
+      fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
     end
+
+    true
   end
 end
+# rubocop:enable Metrics/ClassLength

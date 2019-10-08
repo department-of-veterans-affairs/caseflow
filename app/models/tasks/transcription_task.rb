@@ -1,21 +1,24 @@
 # frozen_string_literal: true
 
-class TranscriptionTask < GenericTask
+class TranscriptionTask < Task
   before_create :check_parent_type
 
-  class NonDispositionTaskParent < StandardError; end
-
   def check_parent_type
-    fail NonDispositionTaskParent unless parent.is_a? DispositionTask
+    unless parent.is_a?(AssignHearingDispositionTask) || parent.is_a?(MissingHearingTranscriptsColocatedTask)
+      fail(
+        Caseflow::Error::InvalidParentTask,
+        message: "TranscriptionTask parents must be AssignHearingDispositionTask/MissingHearingTranscriptsColocatedTask"
+      )
+    end
   end
 
   def available_actions(user)
-    hearing_admin_actions = available_hearing_admin_actions(user)
+    hearing_admin_actions = available_hearing_user_actions(user)
 
     if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
       [
         Constants.TASK_ACTIONS.RESCHEDULE_HEARING.to_h,
-        appropriate_timed_hold_task_action,
+        Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
         Constants.TASK_ACTIONS.COMPLETE_TRANSCRIPTION.to_h,
         Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.to_h
       ] | hearing_admin_actions

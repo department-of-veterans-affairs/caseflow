@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-describe DecisionReview do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe DecisionReview, :postgres do
   before do
     Time.zone = "UTC"
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -11,9 +14,16 @@ describe DecisionReview do
   let(:higher_level_review) do
     create(:higher_level_review, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
   end
-
+  let(:decision_review_remanded) { nil }
+  let(:benefit_type) { "compensation" }
   let(:supplemental_claim) do
-    create(:supplemental_claim, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
+    create(
+      :supplemental_claim,
+      veteran_file_number: veteran.file_number,
+      receipt_date: receipt_date,
+      decision_review_remanded: decision_review_remanded,
+      benefit_type: benefit_type
+    )
   end
 
   let(:receipt_date) { Time.zone.today }
@@ -60,11 +70,9 @@ describe DecisionReview do
       create(:decision_issue,
              :nonrating,
              participant_id: participant_id,
-             rating_issue_reference_id: nil,
              decision_text: "decision issue 3",
+             end_product_last_action_date: promulgation_date,
              benefit_type: higher_level_review.benefit_type,
-             rating_profile_date: profile_date + 2.days,
-             rating_promulgation_date: promulgation_date + 2.days,
              decision_review: higher_level_review),
       create(:decision_issue,
              :rating,
@@ -76,6 +84,36 @@ describe DecisionReview do
              decision_review: appeal,
              caseflow_decision_date: profile_date + 3.days)
     ]
+  end
+
+  context "#can_contest_rating_issues?" do
+    subject { decision_review.can_contest_rating_issues? }
+
+    context "for an appeal" do
+      let(:decision_review) { appeal }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "for a claim review" do
+      let(:decision_review) { supplemental_claim }
+
+      context "when processed in vbms" do
+        it { is_expected.to eq(true) }
+
+        context "when the decision review is a remand supplemental claim" do
+          let(:decision_review_remanded) { create(:higher_level_review) }
+
+          it { is_expected.to eq(false) }
+        end
+      end
+
+      context "when processed in caseflow" do
+        let(:benefit_type) { "education" }
+
+        it { is_expected.to eq(false) }
+      end
+    end
   end
 
   context "#removed?" do
@@ -102,10 +140,12 @@ describe DecisionReview do
   end
 
   context "#contestable_issues" do
-    subject { higher_level_review.contestable_issues }
+    subject { supplemental_claim.contestable_issues }
 
-    def find_serialized_issue(serialized_contestable_issues, ref_id)
-      serialized_contestable_issues.find { |ci| ci[:ratingIssueReferenceId] == ref_id }
+    def find_serialized_issue(serialized_contestable_issues, ref_id_or_description)
+      serialized_contestable_issues.find do |i|
+        i[:isRating] ? i[:ratingIssueReferenceId] == ref_id_or_description : i[:description] == ref_id_or_description
+      end
     end
 
     it "creates a list of contestable rating and decision issues" do
@@ -116,9 +156,11 @@ describe DecisionReview do
         ratingIssueReferenceId: "123",
         ratingIssueProfileDate: profile_date,
         ratingIssueDiagnosticCode: nil,
+        ratingDecisionReferenceId: nil,
         decisionIssueId: decision_issues.first.id,
         approxDecisionDate: promulgation_date,
         description: "decision issue 1",
+        isRating: true,
         rampClaimId: nil,
         titleOfActiveReview: nil,
         sourceReviewType: "HigherLevelReview",
@@ -130,9 +172,11 @@ describe DecisionReview do
         ratingIssueReferenceId: "456",
         ratingIssueProfileDate: profile_date,
         ratingIssueDiagnosticCode: nil,
+        ratingDecisionReferenceId: nil,
         decisionIssueId: nil,
         approxDecisionDate: promulgation_date,
         description: "rating issue 2",
+        isRating: true,
         rampClaimId: nil,
         titleOfActiveReview: nil,
         sourceReviewType: nil,
@@ -144,9 +188,11 @@ describe DecisionReview do
         ratingIssueReferenceId: "789",
         ratingIssueProfileDate: profile_date + 1.day,
         ratingIssueDiagnosticCode: nil,
+        ratingDecisionReferenceId: nil,
         decisionIssueId: decision_issues.second.id,
         approxDecisionDate: promulgation_date + 1.day,
         description: "decision issue 2",
+        isRating: true,
         rampClaimId: nil,
         titleOfActiveReview: nil,
         sourceReviewType: "HigherLevelReview",
@@ -154,18 +200,20 @@ describe DecisionReview do
         latestIssuesInChain: [{ id: decision_issues.second.id, approxDecisionDate: promulgation_date + 1.day }]
       )
 
-      expect(find_serialized_issue(serialized_contestable_issues, nil)).to eq(
+      expect(find_serialized_issue(serialized_contestable_issues, "decision issue 3")).to eq(
         ratingIssueReferenceId: nil,
-        ratingIssueProfileDate: profile_date + 2.days,
+        ratingIssueProfileDate: nil,
         ratingIssueDiagnosticCode: nil,
+        ratingDecisionReferenceId: nil,
         decisionIssueId: decision_issues.third.id,
-        approxDecisionDate: promulgation_date + 2.days,
+        approxDecisionDate: promulgation_date,
         description: "decision issue 3",
+        isRating: false,
         rampClaimId: nil,
         titleOfActiveReview: nil,
         sourceReviewType: "HigherLevelReview",
         timely: true,
-        latestIssuesInChain: [{ id: decision_issues.third.id, approxDecisionDate: promulgation_date + 2.days }]
+        latestIssuesInChain: [{ id: decision_issues.third.id, approxDecisionDate: promulgation_date }]
       )
     end
 
@@ -176,8 +224,19 @@ describe DecisionReview do
                rating_profile_date: receipt_date + 1.day,
                end_product_last_action_date: receipt_date + 1.day,
                benefit_type: supplemental_claim.benefit_type,
-               decision_text: "something was decided in the future",
-               description: "future decision issue",
+               decision_text: "something was decided in the future 1",
+               description: "future decision issue from same review",
+               participant_id: veteran.participant_id)
+      end
+
+      let!(:future_decision_issue2) do
+        create(:decision_issue,
+               decision_review: higher_level_review,
+               rating_profile_date: receipt_date + 1.day,
+               end_product_last_action_date: receipt_date + 1.day,
+               benefit_type: higher_level_review.benefit_type,
+               decision_text: "something was decided in the future 2",
+               description: "future decision issue from a different review",
                participant_id: veteran.participant_id)
       end
 
@@ -194,15 +253,38 @@ describe DecisionReview do
         )
       end
 
-      it "does not return Decision Issues in the future" do
-        expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
-        expect(subject.map(&:serialize)).to_not include(hash_including(description: "future decision issue"))
-        expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
-        expect(subject.map(&:serialize)).to_not include(hash_including(description: "future rating issue 2"))
+      context "without correct_claim_reviews feature toggle" do
+        it "does include decision issues in the future that correspond to same review" do
+          expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
+          expect(subject.map(&:serialize)).to_not include(
+            hash_including(description: "future decision issue from same review")
+          )
+          expect(subject.map(&:serialize)).to_not include(
+            hash_including(description: "future decision issue from a different review")
+          )
+          expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
+          expect(subject.map(&:serialize)).to_not include(hash_including(description: "future rating issue 2"))
+        end
+      end
+
+      context "with correct_claim_reviews feature toggle" do
+        before { FeatureToggle.enable!(:correct_claim_reviews) }
+
+        it "does include decision issues in the future that correspond to same review" do
+          expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
+          expect(subject.map(&:serialize)).to include(
+            hash_including(description: "future decision issue from same review")
+          )
+          expect(subject.map(&:serialize)).to_not include(
+            hash_including(description: "future decision issue from a different review")
+          )
+          expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
+          expect(subject.map(&:serialize)).to_not include(hash_including(description: "future rating issue 2"))
+        end
       end
     end
 
-    context "when the issue is from an Appeal that is not outcoded" do
+    context "when the issue is from an appeal that is not outcoded" do
       let(:outcoded_appeal) { create(:appeal, :outcoded, veteran: veteran, receipt_date: receipt_date) }
       let!(:outcoded_decision_doc) { create(:decision_document, decision_date: profile_date, appeal: outcoded_appeal) }
 
@@ -229,6 +311,63 @@ describe DecisionReview do
         expect(subject.map(&:serialize)).to include(hash_including(description: "completed appeal issue"))
         expect(subject.map(&:serialize)).to_not include(hash_including(description: "active appeal issue"))
       end
+    end
+  end
+
+  describe ".withdrawn?" do
+    it "calls WithdrawnDecisionReviewPolicy" do
+      appeal = build_stubbed(:appeal)
+      policy = instance_double(WithdrawnDecisionReviewPolicy)
+
+      expect(WithdrawnDecisionReviewPolicy).to receive(:new)
+        .with(appeal).and_return(policy)
+      expect(policy).to receive(:satisfied?)
+
+      appeal.withdrawn?
+    end
+  end
+
+  describe "#active_request_issues" do
+    it "only returns active request issues" do
+      review = build_stubbed(:appeal)
+      active_request_issue = create(:request_issue, decision_review: review)
+      inactive_request_issue = create(
+        :request_issue, closed_at: Time.zone.now, decision_review: review
+      )
+      withdrawn_request_issue = create(
+        :request_issue,
+        closed_status: "withdrawn",
+        closed_at: Time.zone.now,
+        decision_review: review
+      )
+
+      expect(review.active_request_issues).to match_array([active_request_issue])
+    end
+  end
+
+  describe "#withdrawn_request_issues" do
+    it "only returns withdrawn request issues" do
+      review = build_stubbed(:appeal)
+      active_request_issue = create(:request_issue, decision_review: review)
+      withdrawn_request_issue = create(
+        :request_issue,
+        closed_status: "withdrawn",
+        closed_at: Time.zone.now,
+        decision_review: review
+      )
+      inactive_request_issue = create(
+        :request_issue, closed_at: Time.zone.now, decision_review: review
+      )
+
+      expect(review.withdrawn_request_issues).to match_array([withdrawn_request_issue])
+    end
+  end
+
+  describe "#asyncable_user" do
+    it "returns CSS id of the Intake user" do
+      intake = create(:intake)
+      review = intake.detail
+      expect(review.asyncable_user).to eq(review.intake.user.css_id)
     end
   end
 end

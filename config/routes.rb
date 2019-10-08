@@ -28,7 +28,20 @@ Rails.application.routes.draw do
     end
     namespace :v2 do
       resources :appeals, only: :index
+      resources :hearings, only: :show, param: :hearing_day
     end
+    namespace :v3 do
+      namespace :decision_review do
+        resources :higher_level_reviews, only: :create
+        resources :intake_statuses, only: :show
+      end
+    end
+    namespace :docs do
+      namespace :v3, defaults: { format: 'json' } do
+        get 'decision_reviews', to: 'docs#decision_reviews'
+      end
+    end
+    get "metadata", to: 'metadata#index'
   end
 
   namespace :idt do
@@ -46,7 +59,6 @@ Rails.application.routes.draw do
       end
     end
   end
-
 
   namespace :metrics do
     namespace :v1 do
@@ -91,7 +103,7 @@ Rails.application.routes.draw do
 
   namespace :reader do
     get 'appeal/veteran-id', to: "appeal#find_appeals_by_veteran_id",
-      constraints: lambda{ |req| req.env["HTTP_VETERAN_ID"] =~ /[a-zA-Z0-9]{2,12}/ }
+      constraints: lambda{ |req| req.env["HTTP_CASE_SEARCH"] =~ /[a-zA-Z0-9]{2,12}/ }
     resources :appeal, only: [:show, :index] do
       resources :documents, only: [:show, :index]
       resources :claims_folder_searches, only: :create
@@ -103,7 +115,7 @@ Rails.application.routes.draw do
       get :document_count
       get :veteran
       get :power_of_attorney
-      get :hearings
+      get 'hearings', to: "appeals#most_recent_hearing"
       resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
       resources :special_issues, only: [:create, :index]
       resources :advance_on_docket_motions, only: [:create]
@@ -113,13 +125,10 @@ Rails.application.routes.draw do
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
 
-  resources :beaam_appeals, only: [:index]
-
   resources :regional_offices, only: [:index]
-  get '/regional_offices/:regional_office/open_hearing_dates', to: "regional_offices#open_hearing_dates"
+  get '/regional_offices/:regional_office/hearing_dates', to: "regional_offices#hearing_dates"
 
   namespace :hearings do
-    resources :worksheets, only: [:update, :show], param: :id
     resources :appeals, only: [:update], param: :appeal_id
     resources :hearing_day, only: [:index, :show, :destroy, :update]
     resources :schedule_periods, only: [:index, :create]
@@ -128,14 +137,15 @@ Rails.application.routes.draw do
   end
   get '/hearings/dockets', to: redirect("/hearings/schedule")
   get 'hearings/schedule', to: "hearings/hearing_day#index"
-  get 'hearings/:hearing_id/details', to: "hearing_schedule#hearing_details_index"
+  get 'hearings/:hearing_id/details', to: "hearings_application#show_hearing_index"
+  get 'hearings/:hearing_id/worksheet', to: "hearings_application#show_hearing_index"
   get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
-  get 'hearings/schedule/build', to: "hearing_schedule#build_schedule_index"
-  get 'hearings/schedule/build/upload', to: "hearing_schedule#build_schedule_index"
-  get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearing_schedule#build_schedule_index"
-  get 'hearings/schedule/assign', to: "hearing_schedule#index"
-  get 'hearings/:id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
-  get 'hearings/:id/worksheet/print', to: "hearings/worksheets#show_print"
+  get 'hearings/schedule/docket/:id/print', to: "hearings/hearing_day_print#index"
+  get 'hearings/schedule/build', to: "hearings_application#build_schedule_index"
+  get 'hearings/schedule/build/upload', to: "hearings_application#build_schedule_index"
+  get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearings_application#build_schedule_index"
+  get 'hearings/schedule/assign', to: "hearings_application#index"
+  get 'hearings/worksheet/print', to: "hearings/worksheets_print#index"
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
   get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
@@ -188,17 +198,26 @@ Rails.application.routes.draw do
 
   resources :asyncable_jobs, param: :klass, only: [] do
     resources :jobs, controller: :asyncable_jobs, param: :id, only: [:index, :show, :update]
+    post "jobs/:id/note", to: "asyncable_jobs#add_note"
   end
   match '/jobs' => 'asyncable_jobs#index', via: [:get]
 
-  resources :users, only: [:index]
+  scope path: "/inbox" do
+    get "/", to: "inbox#index"
+    patch "/messages/:id", to: "inbox#update"
+  end
 
-  get 'cases/:caseflow_veteran_id', to: 'appeals#show_case_list'
+  resources :users, only: [:index]
+  resources :users, only: [:index] do
+    get 'represented_organizations', on: :member
+  end
+  get 'user_info/represented_organizations'
+
+  get 'cases/:veteran_ids', to: 'appeals#show_case_list'
   get 'cases_to_schedule/:ro', to: 'tasks#ready_for_hearing_schedule'
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
-    get '/beaam', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
@@ -207,28 +226,38 @@ Rails.application.routes.draw do
   resources :team_management, only: [:index, :update]
   get '/team_management(*rest)', to: 'team_management#index'
   post '/team_management/judge_team/:user_id', to: 'team_management#create_judge_team'
+  post '/team_management/private_bar', to: 'team_management#create_private_bar'
   post '/team_management/national_vso', to: 'team_management#create_national_vso'
   post '/team_management/field_vso', to: 'team_management#create_field_vso'
 
-  get '/search', to: 'queue#index'
+  get '/search', to: 'appeals#show_case_list'
 
   resources :legacy_tasks, only: [:create, :update]
   resources :tasks, only: [:index, :create, :update] do
     member do
       post :reschedule
       post :request_hearing_disposition_change
+      patch :change_type, to: 'tasks/change_type#update'
     end
     resources(:place_hold, only: [:create], controller: 'tasks/place_hold')
     resources(:end_hold, only: [:create], controller: 'tasks/end_hold')
   end
+
   resources :judge_assign_tasks, only: [:create]
+
+  resources :bulk_task_assignments, only: [:create]
 
   resources :distributions, only: [:new, :show]
 
   resources :organizations, only: [:show], param: :url do
     resources :tasks, only: [:index], controller: 'organizations/tasks'
+    resources :task_pages, only: [:index], controller: 'organizations/task_pages'
     resources :users, only: [:index, :create, :update, :destroy], controller: 'organizations/users'
+    # Maintain /organizations/members for backwards compatability for a few days.
+    resources :members, only: [:index], controller: 'organizations/task_summary'
+    resources :task_summary, only: [:index], controller: 'organizations/task_summary'
   end
+  get '/organizations/:url/modal(*rest)', to: 'organizations#show'
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
   patch '/case_reviews/:id', to: 'case_reviews#update'
@@ -261,9 +290,13 @@ Rails.application.routes.draw do
     get code, :to => "errors#show", :status_code => code
   end
 
+  post "post_decision_motions", to: "post_decision_motions#create"
+
   # :nocov:
   namespace :test do
-    resources :users, only: [:index]
+    get "/error", to: "users#show_error"
+
+    resources :users, only: [:index, :show]
     if ApplicationController.dependencies_faked?
       post "/set_user/:id", to: "users#set_user", as: "set_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'
@@ -272,6 +305,5 @@ Rails.application.routes.draw do
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
     post "/toggle_feature", to: "users#toggle_feature", as: "toggle_feature"
   end
-
   # :nocov:
 end

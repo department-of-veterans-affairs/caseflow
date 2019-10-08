@@ -29,6 +29,13 @@ class AsyncableJobs
       expired_jobs << klass.potentially_stuck
     end
     jobs = expired_jobs.flatten.sort_by(&:sort_by_last_submitted_at)
+
+    return paginated_jobs(jobs) if page_size > 0
+
+    jobs
+  end
+
+  def paginated_jobs(jobs)
     @total_jobs = jobs.length
     @total_pages = (total_jobs / page_size).to_i
     @total_pages += 1 if total_jobs % page_size

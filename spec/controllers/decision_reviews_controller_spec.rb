@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
-describe DecisionReviewsController, type: :controller do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe DecisionReviewsController, :postgres, type: :controller do
   before do
-    FeatureToggle.enable!(:decision_reviews)
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
     User.stub = user
-  end
-
-  after do
-    FeatureToggle.disable!(:decision_reviews)
   end
 
   let(:non_comp_org) { create(:business_line, name: "National Cemetery Administration", url: "nca") }
@@ -21,6 +19,16 @@ describe DecisionReviewsController, type: :controller do
 
         expect(response.status).to eq 302
         expect(response.body).to match(/unauthorized/)
+      end
+    end
+
+    context "user has Admin Intake role" do
+      let(:user) { User.authenticate!(roles: ["Admin Intake"]) }
+
+      it "displays org queue page" do
+        get :index, params: { business_line_slug: non_comp_org.url }
+
+        expect(response.status).to eq 200
       end
     end
 
@@ -59,7 +67,7 @@ describe DecisionReviewsController, type: :controller do
   end
 
   describe "#show" do
-    let(:task) { create(:higher_level_review_task).becomes(DecisionReviewTask) }
+    let(:task) { create(:higher_level_review_task) }
 
     context "user is in org" do
       before do
@@ -77,6 +85,19 @@ describe DecisionReviewsController, type: :controller do
           get :show, params: { decision_review_business_line_slug: non_comp_org.url, task_id: 0 }
 
           expect(response.status).to eq 404
+        end
+      end
+
+      context "when it is a veteran record request and veteran is not accessible by user" do
+        let(:task) { create(:veteran_record_request_task) }
+        before do
+          allow_any_instance_of(Veteran).to receive(:accessible?).and_return(false)
+        end
+
+        it "returns 403" do
+          get :show, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id }
+
+          expect(response.status).to eq 403
         end
       end
     end
@@ -101,9 +122,13 @@ describe DecisionReviewsController, type: :controller do
     end
 
     context "with board grant effectuation task" do
+      before do
+        @raven_called = false
+        allow(Raven).to receive(:capture_exception) { @raven_called = true }
+      end
+
       let(:task) do
-        create(:board_grant_effectuation_task, status: "in_progress", assigned_to: non_comp_org)
-          .becomes(BoardGrantEffectuationTask)
+        create(:board_grant_effectuation_task, :in_progress, assigned_to: non_comp_org)
       end
 
       it "marks task as completed" do
@@ -123,14 +148,12 @@ describe DecisionReviewsController, type: :controller do
 
         put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id }
         expect(response.status).to eq(400)
+        expect(@raven_called).to eq(true)
       end
     end
 
     context "with decision review task" do
-      let(:task) do
-        create(:higher_level_review_task, status: "in_progress", assigned_to: non_comp_org)
-          .becomes(DecisionReviewTask)
-      end
+      let(:task) { create(:higher_level_review_task, :in_progress, assigned_to: non_comp_org) }
 
       let!(:request_issues) do
         [

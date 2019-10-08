@@ -48,3 +48,16 @@ if !result.empty?
     "Please make sure `rake db:seed` still runs without issues."
   )
 end
+
+# Remind folks to tag new specs appropriately if they require the DB
+new_specs = git.added_files.grep(/.*_spec\.rb/)
+
+if !new_specs.empty?
+  warn(
+    "This PR adds one or more new specs. If the specs use the DB, see if " \
+    "you can rewrite them so they don't use the DB, such as by using `build_stubbed`. " \
+    "If they must use the DB, please remember to add the appropriate require statements " \
+    "and either the `:postgres` or `:all_dbs` tags, as documented in our Wiki: " \
+    "https://github.com/department-of-veterans-affairs/caseflow/wiki/Testing-Best-Practices#tests-that-write-to-the-db"
+  )
+end

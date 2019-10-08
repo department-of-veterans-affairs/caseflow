@@ -11,19 +11,22 @@ class Veteran < ApplicationRecord
            foreign_key: :veteran_file_number,
            primary_key: :file_number, class_name: "AvailableHearingLocations"
 
-  bgs_attr_accessor :ptcpnt_id, :sex, :ssn, :address_line1, :address_line2,
+  bgs_attr_accessor :ptcpnt_id, :sex, :address_line1, :address_line2,
                     :address_line3, :city, :state, :country, :zip_code,
                     :military_postal_type_code, :military_post_office_type_code,
-                    :service, :date_of_birth, :date_of_death
+                    :service, :date_of_birth, :date_of_death, :email_address
 
-  validates :ssn, :first_name, :last_name, presence: true, on: :bgs
+  validates :first_name, :last_name, presence: true, on: :bgs
   validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
+
   with_options if: :alive? do
     validates :address_line1, :country, presence: true, on: :bgs
     validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
     validates :state, presence: true, if: :state_is_required?, on: :bgs
     validates :city, presence: true, unless: :military_address?, on: :bgs
   end
+
+  delegate :full_address, to: :address
 
   CHARACTER_OF_SERVICE_CODES = {
     "HON" => "Honorable",
@@ -43,13 +46,19 @@ class Veteran < ApplicationRecord
   BENEFIT_TYPE_CODE_LIVE = "1"
   BENEFIT_TYPE_CODE_DEATH = "2"
 
+  # key is local attribute name; value is corresponding bgs attribute name
+  CACHED_BGS_ATTRIBUTES = {
+    first_name: :first_name,
+    last_name: :last_name,
+    middle_name: :middle_name,
+    name_suffix: :name_suffix,
+    ssn: :ssn,
+    participant_id: :ptcpnt_id
+  }.freeze
+
   # TODO: get middle initial from BGS
   def name
     FullName.new(first_name, "", last_name)
-  end
-
-  def full_address
-    "#{address_line1}#{address_line2 ? " #{address_line2}" : ''}, #{city} #{state} #{zip_code}"
   end
 
   def country_requires_zip?
@@ -103,28 +112,14 @@ class Veteran < ApplicationRecord
     @benefit_type_code ||= deceased? ? BENEFIT_TYPE_CODE_DEATH : BENEFIT_TYPE_CODE_LIVE
   end
 
-  def bgs
-    BGSService.new
-  end
-
   def fetch_bgs_record
     result = bgs.fetch_veteran_info(file_number)
 
     # If the result is nil, the veteran wasn't found.
-    # If the file number is nil, that's another way of saying the veteran wasn't found.
-    result && result[:file_number] && result
+    # If the participant id is nil, that's another way of saying the veteran wasn't found.
+    return result if result && result[:ptcpnt_id]
   rescue BGS::ShareError => error
-    @access_error = error.message
-
-    # Now that we are always checking find_flashes for access control before we fetch the
-    # veteran, we should never see this error. Reporting it to sentry if it happens
-    unless error.message.match?(/Sensitive File/)
-      Raven.capture_exception(error)
-      raise error
-    end
-
-    # Set the veteran as inaccessible if a sensitivity error is thrown
-    @accessible = false
+    handle_bgs_share_error(error)
   end
 
   def accessible?
@@ -153,6 +148,10 @@ class Veteran < ApplicationRecord
     @relationships ||= fetch_relationships
   end
 
+  def incident_flash?
+    bgs_record.is_a?(Hash) && bgs_record[:block_cadd_ind] == "S"
+  end
+
   # Postal code might be stored in address line 3 for international addresses
   def zip_code
     @zip_code || (@address_line3 if (@address_line3 || "").match?(/(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/))
@@ -177,62 +176,104 @@ class Veteran < ApplicationRecord
 
   def accessible_appeals_for_poa(poa_participant_ids)
     appeals = Appeal.where(veteran_file_number: file_number).includes(:claimants)
+    legacy_appeals = LegacyAppeal.fetch_appeals_by_file_number(file_number)
 
-    claimants_participant_ids = appeals.map { |appeal| appeal.claimants.pluck(:participant_id) }.flatten
+    poas = poas_for_appeals(appeals, legacy_appeals)
 
-    poas = bgs.fetch_poas_by_participant_ids(claimants_participant_ids)
-
-    appeals.select do |appeal|
-      appeal.claimants.any? do |claimant|
-        poa_participant_ids.include?(poas[claimant[:participant_id]][:participant_id])
+    [
+      appeals.select do |appeal|
+        appeal.claimants.any? do |claimant|
+          poa_participant_ids.include?(poas[claimant[:participant_id]][:participant_id])
+        end
+      end,
+      legacy_appeals.select do |legacy_appeal|
+        poa_participant_ids.include?(poas[legacy_appeal.veteran.participant_id][:participant_id])
       end
-    end
+    ].flatten
+  end
+
+  def poas_for_appeals(appeals, legacy_appeals)
+    claimants_participant_ids = appeals.map { |appeal| appeal.claimants.pluck(:participant_id) }.flatten
+      .concat(legacy_appeals.map { |legacy_appeal| legacy_appeal.veteran.participant_id }.flatten)
+
+    bgs.fetch_poas_by_participant_ids(claimants_participant_ids.uniq)
   end
 
   def participant_id
     super || ptcpnt_id
   end
 
-  def validate_address
-    VADotGovService.validate_address(
-      address_line1: address_line1,
-      address_line2: address_line2,
-      address_line3: address_line3,
+  def ssn
+    super || (bgs_record.is_a?(Hash) ? bgs_record[:ssn] : nil)
+  end
+
+  def address
+    @address ||= Address.new(
+      address_line_1: address_line1,
+      address_line_2: address_line2,
+      address_line_3: address_line3,
       city: city,
       state: state,
       country: country,
-      zip_code: zip_code
+      zip: zip_code
     )
   end
 
-  def stale_name?
+  def validate_address
+    response = VADotGovService.validate_address(address)
+
+    return response.data if response.success?
+
+    raise response.error # rubocop:disable Style/SignalException
+  end
+
+  def stale_attributes?
     return false unless accessible? && bgs_record.is_a?(Hash)
 
-    is_stale = (first_name.nil? || last_name.nil?)
-    [:first_name, :last_name, :middle_name, :name_suffix].each do |name|
-      is_stale = true if self[name] != bgs_record[name]
-    end
+    is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil?)
+    is_stale ||= CACHED_BGS_ATTRIBUTES.any? { |local_attr, bgs_attr| self[local_attr] != bgs_record[bgs_attr] }
     is_stale
+  end
+
+  def update_cached_attributes!
+    CACHED_BGS_ATTRIBUTES.each do |local_attr, bgs_attr|
+      self[local_attr] = bgs_record[bgs_attr]
+    end
+    save!
   end
 
   class << self
     def find_or_create_by_file_number(file_number, sync_name: false)
-      find_and_maybe_backfill_name(file_number, sync_name: sync_name) || create_by_file_number(file_number)
+      find_by_file_number_and_sync(file_number, sync_name: sync_name) || create_by_file_number(file_number)
+    end
+
+    def find_by_ssn(ssn, sync_name: false)
+      found_locally = find_by(ssn: ssn)
+      if found_locally && sync_name && found_locally.stale_attributes?
+        found_locally.update_cached_attributes!
+      end
+      return found_locally if found_locally
+
+      file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
+      return unless file_number
+
+      find_by_file_number_and_sync(file_number, sync_name: sync_name)
     end
 
     def find_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
       if file_number_or_ssn.to_s.length == 9
-        find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name) ||
-          find_by_ssn(file_number_or_ssn, sync_name: sync_name)
+        find_by_ssn(file_number_or_ssn, sync_name: sync_name) ||
+          find_by_file_number_and_sync(file_number_or_ssn, sync_name: sync_name)
       else
-        find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name)
+        find_by_file_number_and_sync(file_number_or_ssn, sync_name: sync_name)
       end
     end
 
     def find_or_create_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
       if file_number_or_ssn.to_s.length == 9
-        find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name) ||
-          find_or_create_by_ssn(file_number_or_ssn, sync_name: sync_name)
+        find_by_file_number_and_sync(file_number_or_ssn, sync_name: sync_name) ||
+          find_or_create_by_ssn(file_number_or_ssn, sync_name: sync_name) ||
+          find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name)
       else
         find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name)
       end
@@ -240,21 +281,20 @@ class Veteran < ApplicationRecord
 
     private
 
-    def find_by_ssn(ssn, sync_name: false)
-      file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
-      return unless file_number
-
-      find_and_maybe_backfill_name(file_number, sync_name: sync_name)
-    end
-
     def find_or_create_by_ssn(ssn, sync_name: false)
+      found_locally = find_by(ssn: ssn)
+      if found_locally && sync_name && found_locally.stale_attributes?
+        found_locally.update_cached_attributes!
+      end
+      return found_locally if found_locally
+
       file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
       find_or_create_by_file_number(file_number, sync_name: sync_name)
     end
 
-    def find_and_maybe_backfill_name(file_number, sync_name: false)
+    def find_by_file_number_and_sync(file_number, sync_name: false)
       veteran = find_by(file_number: file_number)
       return nil unless veteran
 
@@ -262,19 +302,10 @@ class Veteran < ApplicationRecord
       # a hash and not :not_found. Also if it's not found, bgs_record returns
       # a symbol that will blow up, so check if bgs_record is a hash first.
       if sync_name
-        Rails.logger.warn(
-          %(
-          find_and_maybe_backfill_name veteran:#{file_number} accessible:#{veteran.accessible?}
-          )
-        )
+        Rails.logger.warn(%(find_by_file_number_and_sync veteran:#{file_number} accessible:#{veteran.accessible?}))
 
-        if veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_name?
-          veteran.update!(
-            first_name: veteran.bgs_record[:first_name],
-            last_name: veteran.bgs_record[:last_name],
-            middle_name: veteran.bgs_record[:middle_name],
-            name_suffix: veteran.bgs_record[:name_suffix]
-          )
+        if veteran.cached_attributes_updatable?
+          veteran.update_cached_attributes!
         end
       end
       veteran
@@ -284,22 +315,15 @@ class Veteran < ApplicationRecord
       veteran = Veteran.new(file_number: file_number)
 
       unless veteran.found?
-        Rails.logger.warn(
-          %(create_by_file_number file_number:#{file_number} found:false accessible:#{veteran.accessible?})
-        )
         return nil
       end
-
-      Rails.logger.warn(
-        %(create_by_file_number file_number:#{file_number} found:true accessible:#{veteran.accessible?})
-      )
 
       return veteran unless veteran.accessible?
 
       before_create_veteran_by_file_number # Used to simulate race conditions
       veteran.tap do |v|
         v.update!(
-          participant_id: v.ptcpnt_id,
+          participant_id: v.ptcpnt_id || v.bgs_record[:participant_id],
           first_name: v.bgs_record[:first_name],
           last_name: v.bgs_record[:last_name],
           middle_name: v.bgs_record[:middle_name],
@@ -315,6 +339,10 @@ class Veteran < ApplicationRecord
     end
   end
 
+  def cached_attributes_updatable?
+    accessible? && bgs_record.is_a?(Hash) && stale_attributes?
+  end
+
   def deceased?
     !date_of_death.nil?
   end
@@ -325,10 +353,24 @@ class Veteran < ApplicationRecord
 
   def unload_bgs_record
     @bgs_record_loaded = false
-    # instance_variable_set(:@bgs_record_loaded, false)
+    @bgs_record = nil
   end
 
   private
+
+  def handle_bgs_share_error(error)
+    @access_error = error.message
+
+    # Now that we are always checking find_flashes for access control before we fetch the
+    # veteran, we should never see this error. Reporting it to sentry if it happens
+    unless error.message.match?(/Sensitive File/)
+      Raven.capture_exception(error)
+      fail error
+    end
+
+    # Set the veteran as inaccessible if a sensitivity error is thrown
+    @accessible = false
+  end
 
   def fetch_end_products
     bgs_end_products = bgs.get_end_products(file_number)
@@ -378,7 +420,7 @@ class Veteran < ApplicationRecord
   def vbms_attributes
     self.class.bgs_attributes \
       - [:military_postal_type_code, :military_post_office_type_code, :ptcpnt_id] \
-      + [:file_number, :address_type, :first_name, :last_name, :name_suffix]
+      + [:file_number, :address_type, :first_name, :last_name, :name_suffix, :ssn]
   end
 
   def military_address?

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-require "support/intake_helpers"
+require "support/vacols_database_cleaner"
+require "rails_helper"
 
-feature "Intake Add Issues Page" do
+feature "Intake Add Issues Page", :all_dbs do
   include IntakeHelpers
 
   before do
@@ -24,8 +25,36 @@ feature "Intake Add Issues Page" do
         { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" },
         { reference_id: "def789", decision_text: "Looks like a VACOLS issue" }
+      ],
+      decisions: [
+        {
+          rating_issue_reference_id: nil,
+          original_denial_date: promulgation_date - 7.days,
+          diagnostic_text: "Broken arm",
+          diagnostic_type: "Bone",
+          disability_id: "123",
+          type_name: "Not Service Connected"
+        }
       ]
     )
+  end
+
+  context "not service connected rating decision" do
+    before { FeatureToggle.enable!(:contestable_rating_decisions) }
+    after { FeatureToggle.disable!(:contestable_rating_decisions) }
+
+    let(:rating_decision_text) { "Bone (Broken arm) is denied." }
+
+    scenario "rating decision is selected" do
+      start_higher_level_review(veteran)
+      visit "/intake"
+      click_intake_continue
+      expect(page).to have_current_path("/intake/add_issues")
+
+      click_intake_add_issue
+      add_intake_rating_issue(rating_decision_text)
+      expect(page).to have_content("1. #{rating_decision_text}\nDecision date: #{promulgation_date.mdY}")
+    end
   end
 
   context "check for correct time zone" do
@@ -77,9 +106,10 @@ feature "Intake Add Issues Page" do
         # Add a rating issue
         click_intake_add_issue
         add_intake_rating_issue("Left knee granted")
+
         expect(page).to have_content("The Veteran's profile has missing or invalid information")
         expect(page).to have_content(
-          "the corporate database, then retry establishing the EP in Caseflow: ssn, country."
+          "the corporate database, then retry establishing the EP in Caseflow: country."
         )
         expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
         expect(page).to have_button("Establish appeal", disabled: true)
@@ -102,6 +132,26 @@ feature "Intake Add Issues Page" do
         expect(page).to have_content("The Veteran's profile has missing or invalid information")
         expect(page).to have_button("Establish appeal", disabled: true)
       end
+    end
+  end
+
+  context "when edit contention text feature is enabled" do
+    before { FeatureToggle.enable!(:edit_contention_text) }
+
+    it "Allows editing contention text on intake" do
+      start_higher_level_review(veteran)
+      visit "/intake"
+      click_intake_continue
+      click_intake_add_issue
+      add_intake_rating_issue("Left knee granted")
+      edit_contention_text("Left knee granted", "Right knee")
+      expect(page).to_not have_content("Left knee granted")
+      expect(page).to have_content("Right knee")
+      click_intake_finish
+
+      expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
+      expect(page).to have_content("Right knee")
+      expect(RequestIssue.where(edited_description: "Right knee")).to_not be_nil
     end
   end
 

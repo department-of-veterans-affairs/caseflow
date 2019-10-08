@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
-require "support/intake_helpers"
+require "support/vacols_database_cleaner"
+require "rails_helper"
 
-feature "Appeal Intake" do
+feature "Appeal Intake", :all_dbs do
   include IntakeHelpers
 
   before do
-    # Test that this works when only enabled on the current user
-
-    Timecop.freeze(post_ramp_start_date)
+    Timecop.freeze(post_ama_start_date)
   end
 
   let!(:current_user) do
@@ -36,53 +35,18 @@ feature "Appeal Intake" do
   end
 
   let(:future_date) { (Time.zone.now + 30.days).to_date }
-
-  let(:receipt_date) { (post_ramp_start_date - 30.days).to_date }
-
+  let(:receipt_date) { (post_ama_start_date - 30.days).to_date }
   let(:untimely_days) { 372.days }
-
-  let(:profile_date) { (post_ramp_start_date - 35.days).to_datetime }
-
+  let(:profile_date) { (post_ama_start_date - 35.days).to_datetime }
   let(:nonrating_date) { Time.zone.yesterday }
-
   let(:untimely_date) { (receipt_date - untimely_days - 1.day).to_date }
-
   let(:promulgation_date) { receipt_date - 5.days }
+  let(:untimely_promulgation_date) { receipt_date - untimely_days - 1.day }
+  let(:untimely_profile_date) { receipt_date - untimely_days - 3.days }
 
-  let!(:rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: promulgation_date,
-      profile_date: profile_date,
-      issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted" },
-        { reference_id: "def456", decision_text: "PTSD denied" }
-      ]
-    )
-  end
-
-  let!(:untimely_rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - untimely_days - 1.day,
-      profile_date: receipt_date - untimely_days - 3.days,
-      issues: [
-        { reference_id: "old123", decision_text: "Untimely rating issue 1" },
-        { reference_id: "old456", decision_text: "Untimely rating issue 2" }
-      ]
-    )
-  end
-
-  let!(:before_ama_rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
-      issues: [
-        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
-      ]
-    )
-  end
+  let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
+  let!(:untimely_rating) { generate_untimely_rating(veteran, untimely_promulgation_date, untimely_profile_date) }
+  let!(:before_ama_rating) { generate_pre_ama_rating(veteran) }
 
   let(:no_ratings_err) { Rating::NilRatingProfileListError.new("none!") }
 
@@ -186,7 +150,7 @@ feature "Appeal Intake" do
 
     click_intake_finish
 
-    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES_SHORT.appeal} created:")
     expect(page).to have_content("Issue: Active Duty Adjustments - Description for Active Duty Adjustments")
 
@@ -290,7 +254,7 @@ feature "Appeal Intake" do
 
     click_intake_finish
 
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
   end
 
   def complete_appeal
@@ -301,7 +265,7 @@ feature "Appeal Intake" do
     click_intake_add_issue
 
     # expect the rating modal to be skipped
-    expect(page).to have_content("Does issue 1 match any of these issue categories?")
+    expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
@@ -309,7 +273,7 @@ feature "Appeal Intake" do
     )
 
     click_intake_finish
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
   end
 
   scenario "intake can still be completed when ratings are backfilled" do
@@ -370,35 +334,9 @@ feature "Appeal Intake" do
     promulgation_date = receipt_date - 40.days
     rating_date = promulgation_date.mdY
 
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: promulgation_date,
-      profile_date: receipt_date - 50.days,
-      issues: [
-        { reference_id: "xyz123", decision_text: "Left knee granted 2" },
-        { reference_id: "xyz456", decision_text: "PTSD denied 2" },
-        { reference_id: duplicate_reference_id, decision_text: "Old injury in review" }
-      ]
-    )
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 400.days,
-      profile_date: receipt_date - 450.days,
-      issues: [
-        { reference_id: old_reference_id, decision_text: "Really old injury" }
-      ]
-    )
-
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
-      issues: [
-        { decision_text: "Issue before AMA Activation from RAMP",
-          reference_id: "ramp_ref_id" }
-      ],
-      associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
-    )
+    generate_timely_rating(veteran, receipt_date, duplicate_reference_id)
+    generate_untimely_rating_from_ramp(veteran, receipt_date, old_reference_id)
+    generate_rating_before_ama_from_ramp(veteran)
 
     epe = create(:end_product_establishment, :active)
     request_issue_in_progress = create(
@@ -479,9 +417,9 @@ feature "Appeal Intake" do
 
     # add ineligible issue
     click_intake_add_issue
-    add_intake_rating_issue("Old injury in review")
+    add_intake_rating_issue("Old injury")
     expect(page).to have_content("4 issues")
-    expect(page).to have_content("4. Old injury in review is ineligible because it's already under review as a Appeal")
+    expect(page).to have_content("4. Old injury is ineligible because it's already under review as a Appeal")
     expect_ineligible_issue(4)
 
     # add untimely rating request issue
@@ -491,7 +429,6 @@ feature "Appeal Intake" do
     expect(page).to have_content("5 issues")
     expect(page).to have_content("I am an exemption note")
     expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
-    expect_ineligible_issue(5)
 
     # remove and re-add with different answer to exemption
     click_remove_intake_issue("5")
@@ -520,6 +457,7 @@ feature "Appeal Intake" do
     # add before_ama ratings
     click_intake_add_issue
     add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
+    add_untimely_exemption_response("Yes")
     expect(page).to have_content(
       "7. Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
     )
@@ -528,6 +466,7 @@ feature "Appeal Intake" do
     # Eligible because it comes from a RAMP decision
     click_intake_add_issue
     add_intake_rating_issue("Issue before AMA Activation from RAMP")
+    add_untimely_exemption_response("Yes")
     expect(page).to have_content("8. Issue before AMA Activation from RAMP\nDecision date:")
 
     # nonrating before_ama
@@ -538,6 +477,7 @@ feature "Appeal Intake" do
       description: "A nonrating issue before AMA",
       date: pre_ramp_start_date.to_date.mdY
     )
+    add_untimely_exemption_response("Yes")
     expect(page).to have_content(
       "A nonrating issue before AMA #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
     )
@@ -545,7 +485,7 @@ feature "Appeal Intake" do
 
     click_intake_finish
 
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
     expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
     expect(page).to have_content('Unidentified issue: no issue matched for requested "This is an unidentified issue"')
 
@@ -682,7 +622,7 @@ feature "Appeal Intake" do
       )
       click_intake_finish
 
-      expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+      expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
       expect(
         RequestIssue.find_by(contested_issue_description: "appeal decision issue").ineligible_reason
       ).to eq("appeal_to_appeal")
@@ -845,7 +785,7 @@ feature "Appeal Intake" do
         add_intake_rating_issue("ankylosis of hip")
 
         expect(page).to have_content(
-          "#{Constants.INTAKE_STRINGS.adding_this_issue_vacols_optin}:\nService connection, ankylosis of hip"
+          "#{COPY::VACOLS_OPTIN_ISSUE_NEW}:\nService connection, ankylosis of hip"
         )
 
         click_intake_finish
@@ -862,7 +802,7 @@ feature "Appeal Intake" do
                  vacols_sequence_id: "1"
                )).to_not be_nil
 
-        expect(page).to have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
+        expect(page).to have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
       end
     end
 
@@ -898,7 +838,7 @@ feature "Appeal Intake" do
                  vacols_sequence_id: "1"
                )).to_not be_nil
 
-        expect(page).to_not have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
+        expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
       end
     end
   end

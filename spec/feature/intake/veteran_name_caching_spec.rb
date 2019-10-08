@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-require "support/intake_helpers"
+require "support/database_cleaner"
+require "rails_helper"
 
-feature "Higher-Level Review" do
+feature "Higher-Level Review", :postgres do
   include IntakeHelpers
 
   before do
@@ -33,11 +34,11 @@ feature "Higher-Level Review" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: Time.zone.now.strftime("%D")
+        date: Time.zone.now.strftime("%m/%d/%Y")
       )
 
       step "name changes upstream" do
-        Fakes::BGSService.veteran_records[veteran.file_number][:last_name] = "Changed"
+        Fakes::BGSService.edit_veteran_record(veteran.file_number, :last_name, "Changed")
       end
 
       click_intake_finish
@@ -46,8 +47,6 @@ feature "Higher-Level Review" do
     end
 
     step "EPs use the updated Veteran name" do
-      expect(bgs).to have_received(:fetch_veteran_info).exactly(5).times
-
       veteran.reload
 
       expect(veteran.last_name).to eq("Changed")

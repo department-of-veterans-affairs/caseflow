@@ -41,6 +41,9 @@ describe('LoadingDataDisplay', () => {
     );
 
     return wait().then(() => {
+      // Force component re-render due to async setState
+      wrapper.update();
+
       expect(wrapper.text()).to.include(requestSucceededMessage);
     });
   });
@@ -60,6 +63,9 @@ describe('LoadingDataDisplay', () => {
     );
 
     return wait().then(() => {
+      // Force component re-render due to async setState
+      wrapper.update();
+
       expect(wrapper.text()).to.include('Fail message');
     });
   });
@@ -78,6 +84,9 @@ describe('LoadingDataDisplay', () => {
     );
 
     return wait().then(() => {
+      // Force component re-render due to async setState
+      wrapper.update();
+
       expect(wrapper.text()).to.include('you do not have the necessary level of access');
     });
   });
@@ -96,6 +105,9 @@ describe('LoadingDataDisplay', () => {
     );
 
     return wait().then(() => {
+      // Force component re-render due to async setState
+      wrapper.update();
+
       expect(wrapper.text()).to.include('not find the information');
     });
   });
@@ -118,6 +130,9 @@ describe('LoadingDataDisplay', () => {
     );
 
     return wait(SLOW_TIMEOUT_MS / 2).then(() => {
+      // Force component re-render due to async setState
+      wrapper.update();
+
       expect(wrapper.text()).to.include('Loading is taking longer than usual...');
     });
   });
@@ -142,8 +157,10 @@ describe('LoadingDataDisplay', () => {
     );
 
     return wait(TIMEOUT_MS / 2).then(() => {
+      // Force component re-render due to async setState
+      wrapper.update();
+
       expect(wrapper.text()).to.include('Fail message');
     });
   });
-
 });

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
+require "support/vacols_database_cleaner"
+require "rails_helper"
+
+RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Build HearSched"]) }
   let!(:ro_schedule_period) { create(:ro_schedule_period) }
   let!(:judge_schedule_period) { create(:judge_schedule_period) }
@@ -76,9 +79,9 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
           type: "RoSchedulePeriod",
           start_date: "2018/01/01",
           end_date: "2018/06/01",
-          file_name: "fakeFileName.xlsx"
-        },
-        file: base64_header + Base64.encode64(File.open("spec/support/validRoSpreadsheet.xlsx").read)
+          file_name: "fakeFileName.xlsx",
+          file: base64_header + Base64.encode64(File.open("spec/support/validRoSpreadsheet.xlsx").read)
+        }
       }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
@@ -86,20 +89,20 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
     end
 
     it "returns an error for an invalid spreadsheet" do
-      error = "Validation failed: HearingSchedule::ValidateRoSpreadsheet::RoTemplateNotFollowed"
+      error = "The RO non-availability template was not followed. Redownload the template and try again."
       base64_header = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,"
       post :create, params: {
         schedule_period: {
           type: "RoSchedulePeriod",
           start_date: "2018/01/01",
           end_date: "2018/06/01",
-          file_name: "fakeFileName.xlsx"
-        },
-        file: base64_header + Base64.encode64(File.open("spec/support/roTemplateNotFollowed.xlsx").read)
+          file_name: "fakeFileName.xlsx",
+          file: base64_header + Base64.encode64(File.open("spec/support/roTemplateNotFollowed.xlsx").read)
+        }
       }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
-      expect(response_body["error"]).to eq error
+      expect(response_body["error"]).to include error
     end
   end
 
@@ -117,7 +120,7 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
       @controller = Hearings::HearingDayController.new
       get :index, params: { start_date: "2018-01-01", end_date: "2018-06-01" }, as: :json
       expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)["hearings"].size).to eq(442)
+      expect(JSON.parse(response.body)["hearings"].size).to eq(434)
     end
 
     it "persist twice and second request should return an error" do

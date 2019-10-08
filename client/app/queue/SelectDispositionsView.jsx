@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -21,11 +22,9 @@ import {
 } from './QueueActions';
 import { hideSuccessMessage } from './uiReducer/uiActions';
 import {
-  PAGE_TITLES,
   VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS
 } from './constants';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
@@ -62,20 +61,19 @@ class SelectDispositionsView extends React.PureComponent {
     };
   }
 
+  decisionReviewCheckoutFlow = () => this.props.checkoutFlow === 'dispatch_decision';
+
   componentDidMount = () => {
-    if (this.props.userRole === USER_ROLE_TYPES.attorney) {
+    if (!this.decisionReviewCheckoutFlow()) {
       this.props.setDecisionOptions({ work_product: 'Decision' });
     }
   }
-
-  getPageName = () => PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()];
 
   getNextStepUrl = () => {
     const {
       appealId,
       taskId,
       checkoutFlow,
-      userRole,
       appeal: { decisionIssues }
     } = this.props;
 
@@ -87,7 +85,7 @@ class SelectDispositionsView extends React.PureComponent {
 
     if (remandedIssues) {
       nextStep = 'remands';
-    } else if (userRole === USER_ROLE_TYPES.judge) {
+    } else if (this.decisionReviewCheckoutFlow()) {
       nextStep = 'evaluate';
     } else {
       nextStep = 'submit';
@@ -130,11 +128,12 @@ class SelectDispositionsView extends React.PureComponent {
   openDecisionHandler = (requestIssueId, decisionIssue) => () => {
     const benefitType = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).program;
     const diagnosticCode = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).diagnostic_code;
+    const closedStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).closed_status;
 
     const newDecisionIssue = {
       id: `temporary-id-${uuid.v4()}`,
       description: '',
-      disposition: null,
+      disposition: closedStatus,
       benefit_type: benefitType,
       diagnostic_code: diagnosticCode,
       request_issue_ids: [requestIssueId]
@@ -435,15 +434,13 @@ class SelectDispositionsView extends React.PureComponent {
 
 SelectDispositionsView.propTypes = {
   appealId: PropTypes.string.isRequired,
-  checkoutFlow: PropTypes.string.isRequired,
-  userRole: PropTypes.string.isRequired
+  checkoutFlow: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
   success: state.ui.messages.success,
-  highlight: state.ui.highlightFormItems,
-  ..._.pick(state.ui, 'userRole')
+  highlight: state.ui.highlightFormItems
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

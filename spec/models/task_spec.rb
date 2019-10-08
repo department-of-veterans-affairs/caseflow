@@ -1,53 +1,115 @@
 # frozen_string_literal: true
 
-describe Task do
+require "support/vacols_database_cleaner"
+require "rails_helper"
+
+describe Task, :all_dbs do
+  context "includes PrintsTaskTree concern" do
+    describe ".structure" do
+      let(:root_task) { create(:root_task, :on_hold) }
+      let!(:bva_task) { create(:bva_dispatch_task, :in_progress, parent: root_task) }
+      let(:judge_task) { create(:ama_judge_task, :completed, parent: root_task) }
+      let!(:attorney_task) { create(:ama_attorney_task, :completed, parent: judge_task) }
+
+      subject { root_task.structure(:id, :status) }
+
+      it "outputs the task structure" do
+        root_key = "#{root_task.type} #{root_task.id}, #{root_task.status}".to_sym
+        judge_key = "#{judge_task.type} #{judge_task.id}, #{judge_task.status}".to_sym
+        bva_key = "#{bva_task.type} #{bva_task.id}, #{bva_task.status}".to_sym
+        attorney_key = "#{attorney_task.type} #{attorney_task.id}, #{attorney_task.status}".to_sym
+
+        expect(subject.key?(root_key)).to be_truthy
+        expect(subject[root_key].count).to eq 2
+        judge_task_found = false
+        bva_task_found = false
+        subject[root_key].each do |child_task|
+          if child_task.key? judge_key
+            judge_task_found = true
+            expect(child_task[judge_key].count).to eq 1
+            expect(child_task[judge_key].first.key?(attorney_key)).to be_truthy
+            expect(child_task[judge_key].first[attorney_key]).to eq []
+          elsif child_task.key? bva_key
+            bva_task_found = true
+          end
+        end
+        expect(judge_task_found).to be_truthy
+        expect(bva_task_found).to be_truthy
+      end
+    end
+  end
+
   describe ".when_child_task_completed" do
+    let(:task) { create(:task, :on_hold, type: Task.name) }
+    let(:child) { create(:task, :completed, type: Task.name, parent: task) }
+
+    subject { task.when_child_task_completed(child) }
+
     context "when on_hold task is assigned to a person" do
-      let(:task) { FactoryBot.create(:task, :on_hold, type: "Task") }
       context "when task has no child tasks" do
+        let(:child) { nil }
+
         it "should not change the task's status" do
           status_before = task.status
-          task.when_child_task_completed
+          subject
           expect(task.status).to eq(status_before)
         end
       end
 
       context "when task has 1 incomplete child task" do
-        before { FactoryBot.create(:task, :in_progress, type: "Task", parent_id: task.id) }
+        let(:child) { create(:task, :in_progress, type: Task.name, parent_id: task.id) }
+
         it "should not change the task's status" do
           status_before = task.status
-          task.when_child_task_completed
+          subject
           expect(task.status).to eq(status_before)
         end
       end
 
       context "when task has 1 complete child task" do
-        before { FactoryBot.create(:task, :completed, type: "Task", parent_id: task.id) }
+        let(:child) { create(:task, :completed, type: Task.name, parent_id: task.id) }
+
         it "should change task's status to assigned" do
           status_before = task.status
-          task.when_child_task_completed
+          subject
           expect(task.status).to_not eq(status_before)
           expect(task.status).to eq("assigned")
         end
       end
 
-      context "when task has some complete and some incomplete child tasks" do
-        before do
-          FactoryBot.create_list(:task, 3, :completed, type: "Task", parent_id: task.id)
-          FactoryBot.create_list(:task, 2, :in_progress, type: "Task", parent_id: task.id)
+      context "when task is already closed" do
+        let!(:task) { create(:task, :on_hold, type: Task.name) }
+        let!(:child) { create(:task, :completed, type: Task.name, parent: task) }
+
+        before { task.update!(status: Constants.TASK_STATUSES.completed) }
+
+        it "does not change the status of the task" do
+          subject
+          expect(task.status).to eq(Constants.TASK_STATUSES.completed)
         end
+      end
+
+      context "when task has some complete and some incomplete child tasks" do
+        let!(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
+        let(:incomplete_children) do
+          create_list(:task, 2, :in_progress, type: Task.name, parent_id: task.id)
+        end
+        let(:child) { incomplete_children.last }
+
         it "should not change the task's status" do
           status_before = task.status
-          task.when_child_task_completed
+          subject
           expect(task.status).to eq(status_before)
         end
       end
 
       context "when task has only complete child tasks" do
-        before { FactoryBot.create_list(:task, 4, :completed, type: "Task", parent_id: task.id) }
+        let(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
+        let(:child) { completed_children.last }
+
         it "should change task's status to assigned" do
           status_before = task.status
-          task.when_child_task_completed
+          subject
           expect(task.status).to_not eq(status_before)
           expect(task.status).to eq("assigned")
         end
@@ -56,46 +118,78 @@ describe Task do
 
     context "when on_hold task is assigned to an organization" do
       let(:organization) { Organization.create!(name: "Other organization", url: "other") }
-      let(:task) { FactoryBot.create(:task, :on_hold, type: "Task", assigned_to: organization) }
+      let(:task) { create(:task, :on_hold, type: Task.name, assigned_to: organization) }
+
       context "when task has no child tasks" do
+        let(:child) { nil }
+
         it "should not update any attribute of the task" do
-          expect_any_instance_of(Task).to_not receive(:update!)
-          task.when_child_task_completed
+          task_status = task.status
+          subject
+          expect(task.reload.status).to eq task_status
         end
       end
 
       context "when task has 1 incomplete child task" do
-        before { FactoryBot.create(:task, :in_progress, type: "Task", parent_id: task.id) }
+        let(:child) { create(:task, :in_progress, type: Task.name, parent_id: task.id) }
+
         it "should not update any attribute of the task" do
-          expect_any_instance_of(Task).to_not receive(:update!)
-          task.when_child_task_completed
+          task_status = task.status
+          subject
+          expect(task.reload.status).to eq task_status
         end
       end
 
       context "when task has 1 complete child task" do
-        before { FactoryBot.create(:task, :completed, type: "Task", parent_id: task.id) }
+        let(:child) { create(:task, :completed, type: Task.name, parent_id: task.id) }
+
         it "should update the task" do
-          expect_any_instance_of(Task).to receive(:update!)
-          task.when_child_task_completed
+          subject
+          expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
+        end
+      end
+
+      context "when task is already closed" do
+        let!(:task) { create(:task, :on_hold, type: Task.name, assigned_to: organization) }
+        let!(:child) { create(:task, :completed, type: Task.name, parent: task) }
+
+        before { task.update!(status: Constants.TASK_STATUSES.completed) }
+
+        it "does not change the status of the task" do
+          subject
+          expect(task.status).to eq(Constants.TASK_STATUSES.completed)
         end
       end
 
       context "when task has some complete and some incomplete child tasks" do
-        before do
-          FactoryBot.create_list(:task, 3, :completed, type: "Task", parent_id: task.id)
-          FactoryBot.create_list(:task, 2, :in_progress, type: "Task", parent_id: task.id)
+        let!(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
+        let(:incomplete_children) do
+          create_list(:task, 2, :in_progress, type: Task.name, parent_id: task.id)
         end
+        let(:child) { incomplete_children.last }
+
         it "should not update any attribute of the task" do
-          expect_any_instance_of(Task).to_not receive(:update!)
-          task.when_child_task_completed
+          task_status = task.status
+          subject
+          expect(task.reload.status).to eq task_status
         end
       end
 
       context "when task has only complete child tasks" do
-        before { FactoryBot.create_list(:task, 4, :completed, type: "Task", parent_id: task.id) }
+        let(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
+        let(:child) { completed_children.last }
+
         it "should update the task" do
-          expect_any_instance_of(Task).to receive(:update!)
-          task.when_child_task_completed
+          subject
+          expect(task.status).to eq(Constants.TASK_STATUSES.completed)
+        end
+      end
+
+      context "when child task has a different type than parent" do
+        let!(:child) { create(:generic_task, :completed, parent_id: task.id) }
+        it "sets the status of the parent to assigned" do
+          subject
+          expect(task.reload.status).to eq(Constants.TASK_STATUSES.assigned)
         end
       end
     end
@@ -106,7 +200,7 @@ describe Task do
 
     context "when user is an assignee" do
       let(:user) { create(:user) }
-      let(:task) { create(:generic_task, assigned_to: user).becomes(GenericTask) }
+      let(:task) { create(:generic_task, assigned_to: user) }
 
       it { is_expected.to be_truthy }
     end
@@ -120,7 +214,7 @@ describe Task do
   end
 
   describe "#prepared_by_display_name" do
-    let(:task) { create(:task, type: "Task") }
+    let(:task) { create(:task, type: Task.name) }
 
     context "when there is no attorney_case_review" do
       it "should return nil" do
@@ -129,7 +223,7 @@ describe Task do
     end
 
     context "when there is an attorney_case_review" do
-      let!(:child) { create(:task, type: "Task", appeal: task.appeal, parent_id: task.id) }
+      let!(:child) { create(:task, type: Task.name, appeal: task.appeal, parent_id: task.id) }
       let!(:attorney_case_reviews) do
         create(:attorney_case_review, task_id: child.id, attorney: create(:user, full_name: "Bob Smith"))
       end
@@ -162,7 +256,7 @@ describe Task do
   end
 
   describe "#latest_attorney_case_review" do
-    let(:task) { create(:task, type: "Task") }
+    let(:task) { create(:task, type: Task.name) }
 
     context "when there is no sub task" do
       it "should return nil" do
@@ -171,7 +265,7 @@ describe Task do
     end
 
     context "when there is a sub task" do
-      let!(:child) { create(:task, type: "Task", appeal: task.appeal, parent_id: task.id) }
+      let!(:child) { create(:task, type: Task.name, appeal: task.appeal, parent_id: task.id) }
       let!(:attorney_case_reviews) do
         [
           create(:attorney_case_review, task_id: child.id, created_at: 1.day.ago),
@@ -192,7 +286,7 @@ describe Task do
     let!(:third_level_task) { create_list(:task, 2, appeal: appeal, parent: second_level_tasks.first) }
 
     it "cancels all tasks and child subtasks" do
-      top_level_task.cancel_task_and_child_subtasks
+      top_level_task.reload.cancel_task_and_child_subtasks
 
       [top_level_task, *second_level_tasks, *third_level_task].each do |task|
         expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
@@ -202,10 +296,10 @@ describe Task do
 
   describe ".root_task" do
     context "when sub-sub-sub...task has a root task" do
-      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:root_task) { create(:root_task) }
       let(:task) do
-        t = FactoryBot.create(:generic_task, parent_id: root_task.id)
-        5.times { t = FactoryBot.create(:generic_task, parent_id: t.id) }
+        t = create(:generic_task, parent_id: root_task.id)
+        5.times { t = create(:generic_task, parent_id: t.id) }
         GenericTask.last
       end
 
@@ -216,8 +310,8 @@ describe Task do
 
     context "when sub-sub-sub...task does not have a root task" do
       let(:task) do
-        t = FactoryBot.create(:generic_task)
-        5.times { t = FactoryBot.create(:generic_task, parent_id: t.id) }
+        t = create(:generic_task)
+        5.times { t = create(:generic_task, parent_id: t.id) }
         GenericTask.last
       end
 
@@ -230,7 +324,7 @@ describe Task do
     end
 
     context "task is root task" do
-      let(:task) { FactoryBot.create(:root_task) }
+      let(:task) { create(:root_task) }
       it "should return itself" do
         expect(task.root_task.id).to eq(task.id)
       end
@@ -238,16 +332,16 @@ describe Task do
   end
 
   describe ".descendants" do
-    let(:parent_task) { FactoryBot.create(:generic_task) }
+    let(:parent_task) { create(:generic_task) }
 
-    subject { parent_task.descendants }
+    subject { parent_task.reload.descendants }
 
     context "when a task has some descendants" do
       let(:children_count) { 6 }
       let(:grandkids_per_child) { 4 }
-      let(:children) { FactoryBot.create_list(:generic_task, children_count, parent: parent_task) }
+      let(:children) { create_list(:generic_task, children_count, parent: parent_task) }
 
-      before { children.each { |t| FactoryBot.create_list(:generic_task, grandkids_per_child, parent: t) } }
+      before { children.each { |t| create_list(:generic_task, grandkids_per_child, parent: t) } }
 
       it "returns a list of all descendants and itself" do
         total_grandkid_count = children_count * grandkids_per_child
@@ -264,32 +358,8 @@ describe Task do
   end
 
   describe ".available_actions_unwrapper" do
-    let(:user) { FactoryBot.create(:user) }
-    let(:task) { FactoryBot.create(:generic_task, assigned_to: user) }
-
-    context "when task/user combination result in multiple available actions with same path" do
-      let(:path) { "modal/path_to_modal" }
-      let(:labels) { ["First option", "Second option"] }
-
-      before do
-        allow(task).to receive(:actions_available?).and_return(true)
-
-        dummy_actions = [
-          { label: labels[0], value: path },
-          { label: labels[1], value: path }
-        ]
-        allow(task).to receive(:available_actions).and_return(dummy_actions)
-      end
-
-      it "should throw an error" do
-        expect { task.available_actions_unwrapper(user) }.to(raise_error) do |e|
-          expect(e).to be_a(Caseflow::Error::DuplicateTaskActionPaths)
-          expect(e.task_id).to eq(task.id)
-          expect(e.user_id).to eq(user.id)
-          expect(e.labels).to match_array(labels)
-        end
-      end
-    end
+    let(:user) { create(:user) }
+    let(:task) { create(:generic_task, assigned_to: user) }
 
     context "without a timed hold task" do
       it "doesn't include end timed hold in the returned actions" do
@@ -300,7 +370,7 @@ describe Task do
 
     context "with a timed hold task" do
       let!(:timed_hold_task) do
-        FactoryBot.create(:timed_hold_task, appeal: task.appeal, assigned_to: user, days_on_hold: 18, parent: task)
+        create(:timed_hold_task, appeal: task.appeal, assigned_to: user, days_on_hold: 18, parent: task)
       end
 
       it "includes end timed hold in the returned actions" do
@@ -311,19 +381,19 @@ describe Task do
   end
 
   describe "timed hold task is cancelled when parent is updated" do
-    let(:user) { FactoryBot.create(:user) }
-    let(:task) { FactoryBot.create(:generic_task, assigned_to: user) }
+    let(:user) { create(:user) }
+    let(:task) { create(:generic_task, assigned_to: user) }
 
     context "there is an active timed hold task child" do
       let!(:timed_hold_task) do
-        FactoryBot.create(:timed_hold_task, appeal: task.appeal, assigned_to: user, days_on_hold: 18, parent: task)
+        create(:timed_hold_task, appeal: task.appeal, assigned_to: user, days_on_hold: 18, parent: task)
       end
 
       context "status is updated" do
         subject { task.update!(status: Constants.TASK_STATUSES.completed) }
 
         it "cancels the child timed hold task" do
-          expect(timed_hold_task.reload.active?).to be_truthy
+          expect(timed_hold_task.reload.open?).to be_truthy
 
           subject
 
@@ -332,14 +402,22 @@ describe Task do
       end
 
       context "a new child task is added" do
-        let(:root_task) { FactoryBot.create(:root_task) }
+        let(:root_task) { create(:root_task) }
         let(:hearing_task) do
-          FactoryBot.create(
-            :hearing_task, parent: root_task, appeal: root_task.appeal, assigned_to: HearingsManagement.singleton
+          create(
+            :hearing_task,
+            parent: root_task,
+            appeal: root_task.appeal,
+            assigned_to: HearingsManagement.singleton
           )
         end
         let(:task) do
-          FactoryBot.create(:disposition_task, parent: hearing_task, appeal: root_task.appeal, assigned_to: user)
+          create(
+            :assign_hearing_disposition_task,
+            parent: hearing_task,
+            appeal: root_task.appeal,
+            assigned_to: user
+          )
         end
 
         subject do
@@ -351,7 +429,7 @@ describe Task do
         end
 
         it "cancels the child timed hold task" do
-          expect(timed_hold_task.reload.active?).to be_truthy
+          expect(timed_hold_task.reload.open?).to be_truthy
           expect(task.reload.on_hold?).to be_truthy
           expect(task.reload.children.count).to eq 1
 
@@ -360,7 +438,7 @@ describe Task do
           expect(task.reload.children.count).to eq 2
           transcription_task = task.reload.children.find { |child| child.is_a?(TranscriptionTask) }
           expect(transcription_task).to_not be_nil
-          expect(transcription_task.active?).to be_truthy
+          expect(transcription_task.open?).to be_truthy
           expect(timed_hold_task.reload.cancelled?).to be_truthy
           expect(task.reload.on_hold?).to be_truthy
         end
@@ -369,14 +447,14 @@ describe Task do
       context "instructions are updated" do
         subject { task.update!(instructions: ["These are my new instructions"]) }
 
-        it "cancels the child timed hold task" do
-          expect(timed_hold_task.reload.active?).to be_truthy
+        it "doesn not cancel the child timed hold task" do
+          expect(timed_hold_task.reload.open?).to be_truthy
           expect(task.reload.on_hold?).to be_truthy
 
           subject
 
-          expect(timed_hold_task.reload.cancelled?).to be_truthy
-          expect(task.reload.on_hold?).to be_falsey
+          expect(timed_hold_task.reload.open?).to be_truthy
+          expect(task.reload.on_hold?).to be_truthy
         end
       end
     end
@@ -393,13 +471,59 @@ describe Task do
     end
   end
 
+  describe ".open?" do
+    let(:trait) { nil }
+    let(:task) { create(:generic_task, trait) }
+    subject { task.open? }
+
+    context "when status is assigned" do
+      let(:trait) { :assigned }
+
+      it "is open" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when status is in_progress" do
+      let(:trait) { :in_progress }
+
+      it "is open" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when status is on_hold" do
+      let(:trait) { :on_hold }
+
+      it "is open" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when status is completed" do
+      let(:trait) { :completed }
+
+      it "is not open" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when status is cancelled" do
+      let(:trait) { :cancelled }
+
+      it "is not open" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
   describe ".active?" do
-    let(:status) { nil }
-    let(:task) { FactoryBot.create(:generic_task, status: status) }
+    let(:trait) { nil }
+    let(:task) { create(:generic_task, trait) }
     subject { task.active? }
 
     context "when status is assigned" do
-      let(:status) { Constants.TASK_STATUSES.assigned }
+      let(:trait) { :assigned }
 
       it "is active" do
         expect(subject).to eq(true)
@@ -407,7 +531,7 @@ describe Task do
     end
 
     context "when status is in_progress" do
-      let(:status) { Constants.TASK_STATUSES.in_progress }
+      let(:trait) { :in_progress }
 
       it "is active" do
         expect(subject).to eq(true)
@@ -415,15 +539,15 @@ describe Task do
     end
 
     context "when status is on_hold" do
-      let(:status) { Constants.TASK_STATUSES.on_hold }
+      let(:trait) { :on_hold }
 
-      it "is active" do
-        expect(subject).to eq(true)
+      it "is not active" do
+        expect(subject).to eq(false)
       end
     end
 
     context "when status is completed" do
-      let(:status) { Constants.TASK_STATUSES.completed }
+      let(:trait) { :completed }
 
       it "is not active" do
         expect(subject).to eq(false)
@@ -431,7 +555,7 @@ describe Task do
     end
 
     context "when status is cancelled" do
-      let(:status) { Constants.TASK_STATUSES.cancelled }
+      let(:trait) { :cancelled }
 
       it "is not active" do
         expect(subject).to eq(false)
@@ -443,7 +567,7 @@ describe Task do
     let(:user) { create(:user) }
 
     context "when task status is on_hold" do
-      let(:task) { create(:generic_task, status: "on_hold") }
+      let(:task) { create(:generic_task, :on_hold) }
 
       it "returns false" do
         expect(task.actions_available?(user)).to eq(false)
@@ -455,7 +579,7 @@ describe Task do
     let(:user) { create(:user) }
 
     context "when task status is completed" do
-      let(:task) { create(:generic_task, status: "completed") }
+      let(:task) { create(:generic_task, :completed) }
 
       it "returns false" do
         expect(task.actions_allowable?(user)).to eq(false)
@@ -475,15 +599,15 @@ describe Task do
   end
 
   describe "#create_from_params" do
-    let!(:judge) { FactoryBot.create(:user) }
-    let!(:attorney) { FactoryBot.create(:user) }
-    let!(:appeal) { FactoryBot.create(:appeal) }
-    let!(:task) { FactoryBot.create(:task, type: "Task", appeal: appeal) }
-    let(:params) { { assigned_to: judge, appeal: task.appeal, parent_id: task.id, type: "Task" } }
+    let!(:judge) { create(:user) }
+    let!(:attorney) { create(:user) }
+    let!(:appeal) { create(:appeal) }
+    let!(:task) { create(:task, type: Task.name, appeal: appeal) }
+    let(:params) { { assigned_to: judge, appeal: task.appeal, parent_id: task.id, type: Task.name } }
 
     before do
-      FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id)
-      FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
+      create(:staff, :judge_role, sdomainid: judge.css_id)
+      create(:staff, :attorney_role, sdomainid: attorney.css_id)
 
       # Monkey patching might not be the best option, but we want to define a test_func
       # for our available actions unwrapper to call. This is the simplest way to do it
@@ -511,7 +635,7 @@ describe Task do
     end
 
     context "the task is attached to a legacy appeal" do
-      let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: create(:case)) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 
       it "the parent task is 'on hold'" do
         expect(task.status).to eq("assigned")
@@ -533,16 +657,16 @@ describe Task do
     end
 
     context "the params are incomplete" do
-      let(:params) { { assigned_to: judge, appeal: nil, parent_id: task.id, type: "Task" } }
+      let(:params) { { assigned_to: judge, appeal: nil, parent_id: nil, type: Task.name } }
 
       it "raises an error" do
-        expect { subject }.to raise_error(ActiveRecord::RecordInvalid, /Appeal can't be blank/)
+        expect { subject }.to raise_error(ActiveRecord::RecordNotFound, /Couldn't find Task without an ID/)
       end
     end
   end
 
   describe ".create_and_auto_assign_child_task" do
-    subject { Task.create!(assigned_to: org, appeal: FactoryBot.create(:appeal), type: Task.name) }
+    subject { create(:task, assigned_to: org, appeal: create(:appeal)) }
 
     context "when the task is assigned to an organization that automatically assigns tasks to its members" do
       class AutoAssignOrg < Organization
@@ -553,8 +677,8 @@ describe Task do
         end
       end
 
-      let(:user) { FactoryBot.create(:user) }
-      let(:org) { AutoAssignOrg.create(assignee: user) }
+      let(:user) { create(:user) }
+      let(:org) { AutoAssignOrg.create!(url: "autoassign", name: "AutoAssign", assignee: user) }
 
       it "should create a child task when a task assigned to the organization is created" do
         expect(subject.children.length).to eq(1)
@@ -562,7 +686,7 @@ describe Task do
     end
 
     context "when the task is assigned to an organization that does not automatically assign tasks to its members" do
-      let(:org) { FactoryBot.create(:organization) }
+      let(:org) { create(:organization) }
 
       it "should not create a child task when a task assigned to the organization is created" do
         expect(subject.children).to eq([])
@@ -571,8 +695,8 @@ describe Task do
   end
 
   describe "#verify_user_can_create!" do
-    let(:user) { FactoryBot.create(:user) }
-    let(:task) { FactoryBot.create(:generic_task) }
+    let(:user) { create(:user) }
+    let(:task) { create(:generic_task) }
 
     before do
       allow(task).to receive(:available_actions).and_return(dummy_actions)
@@ -625,7 +749,7 @@ describe Task do
   end
 
   describe ".set_timestamps" do
-    let(:task) { FactoryBot.create(:task) }
+    let(:task) { create(:task) }
 
     context "when status changes to in_progress" do
       let(:status) { Constants.TASK_STATUSES.in_progress }
@@ -666,20 +790,180 @@ describe Task do
         expect(task.closed_at).to_not eq(nil)
       end
     end
+
+    context "when a timestamp is passed" do
+      it "should set passed timestamps" do
+        two_weeks_ago = 2.weeks.ago
+        expect(task.placed_on_hold_at).to eq(nil)
+        task.update!(status: Constants.TASK_STATUSES.on_hold, placed_on_hold_at: two_weeks_ago)
+        expect(task.placed_on_hold_at).to eq(two_weeks_ago)
+
+        # change status to completed
+        one_week_ago = 1.week.ago
+        task.update!(status: Constants.TASK_STATUSES.completed, closed_at: one_week_ago)
+        expect(task.closed_at).to eq(one_week_ago)
+
+        # change the status back to on hold and ensure timestamp is updated
+        task.update!(status: Constants.TASK_STATUSES.on_hold, placed_on_hold_at: one_week_ago)
+        expect(task.placed_on_hold_at).to eq(one_week_ago)
+
+        task.update!(status: Constants.TASK_STATUSES.in_progress, started_at: two_weeks_ago)
+        expect(task.started_at).to eq(two_weeks_ago)
+      end
+    end
   end
 
   describe "task timer relationship" do
-    let(:task) { FactoryBot.create(:generic_task) }
+    let(:task) { create(:generic_task) }
     let(:task_id) { task.id }
     let(:task_timer_count) { 4 }
-    let!(:task_timers) { Array.new(task_timer_count) { TaskTimer.create!(task: task) } }
+    let!(:task_timers) { Array.new(task_timer_count) { TaskTimer.create!(task: task, last_submitted_at: 2.days.ago) } }
 
     it "returns and destroys related timers" do
       expect(TaskTimer.where(task_id: task_id).count).to eq(task_timer_count)
-      expect(task.task_timers).to eq(task_timers)
+      expect(task.task_timers.to_a).to match_array(task_timers)
 
       task.destroy!
       expect(TaskTimer.where(task_id: task_id).count).to eq(0)
+    end
+
+    it "cancels related timers on cancel" do
+      task.update!(status: Constants.TASK_STATUSES.cancelled)
+      task.task_timers.each do |task_timer|
+        expect(task_timer.canceled_at).not_to eq(nil)
+      end
+    end
+  end
+
+  describe ".old_style_hold_expired?" do
+    subject { task.old_style_hold_expired? }
+
+    context "when a task is on an active old-style hold" do
+      let(:task) { create(:task, :on_hold) }
+
+      it "recognizes that the old style hold has not expired" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when a task has completed an old-style hold" do
+      let(:task) { create(:task, :on_hold) }
+
+      it "recognizes that the old style hold has expired" do
+        task.update(placed_on_hold_at: 200.days.ago)
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when a task has a completed old-style hold as well as a new timed hold" do
+      let(:task) { create(:task, :on_hold, placed_on_hold_at: 200.days.ago) }
+      before { TimedHoldTask.create_from_parent(task, days_on_hold: 16) }
+
+      it "does not recognize that the task has completed the old-style hold" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
+  describe ".assigned_to_same_org?" do
+    subject { task.assigned_to_same_org?(other_task) }
+
+    before { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
+
+    context "when other task is assigned to a user" do
+      let(:task) { create(:task, assigned_to: Colocated.singleton) }
+      let(:other_task) { create(:task, assigned_to: create(:user)) }
+
+      it "should be false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when other task is assigned to another org" do
+      let(:task) { create(:task, assigned_to: Colocated.singleton) }
+      let(:other_task) { create(:task, assigned_to: MailTeam.singleton) }
+
+      it "should be false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when other task is assigned to same org" do
+      let(:task) { create(:task, assigned_to: Colocated.singleton) }
+      let(:other_task) { create(:task, assigned_to: Colocated.singleton) }
+
+      it "should be true" do
+        expect(subject).to eq(true)
+      end
+    end
+  end
+
+  describe ".first_ancestor_of_type" do
+    let(:user) { create(:user) }
+
+    subject { task.first_ancestor_of_type }
+
+    context "when the task has no parents of the same type" do
+      let(:task) { create(:colocated_task, parent: create(:root_task), assigned_to: user) }
+
+      it "should should return itself" do
+        expect(subject.id).to eq(task.id)
+      end
+    end
+
+    context "when the task has a grandparent of the same type, but a different parent" do
+      let(:grandparent_task) { create(:colocated_task, :ihp, assigned_to: user) }
+      let(:parent_task) { create(:ama_judge_task, parent: grandparent_task, assigned_to: user) }
+      let(:task) { create(:colocated_task, :ihp, parent: parent_task, assigned_to: user) }
+
+      it "should should return itself" do
+        expect(subject.id).to eq(task.id)
+      end
+    end
+
+    context "when the task has both a parent and grandparent of the same type" do
+      let(:grandparent_task) { create(:colocated_task, :ihp, assigned_to: user) }
+      let(:parent_task) { create(:colocated_task, :ihp, parent: grandparent_task, assigned_to: user) }
+      let(:task) { create(:colocated_task, :ihp, parent: parent_task, assigned_to: user) }
+
+      it "should should return the grandparent" do
+        expect(subject.id).to eq(grandparent_task.id)
+      end
+    end
+  end
+
+  describe ".last_descendant_of_type" do
+    let(:user) { create(:user) }
+
+    subject { task.last_descendant_of_type }
+
+    context "when the task has no children of the same type" do
+      let(:task) { create(:colocated_task, assigned_to: user) }
+      let(:child_task) { create(:ama_judge_task, parent: task) }
+
+      it "should should return itself" do
+        expect(subject.id).to eq(task.id)
+      end
+    end
+
+    context "when the task has a grandchild of the same type, but a different child" do
+      let(:task) { create(:colocated_task, :ihp, assigned_to: user) }
+      let(:child_task) { create(:ama_judge_task, type: JudgeAssignTask.name, parent: task) }
+      let(:grandchild_task) { create(:colocated_task, :ihp, parent: child_task, assigned_to: user) }
+
+      it "should should return itself" do
+        expect(subject.id).to eq(task.id)
+      end
+    end
+
+    context "when the task has both a parent and grandparent of the same type" do
+      let(:task) { create(:colocated_task, :ihp, assigned_to: user) }
+      let(:child_task) { create(:colocated_task, :ihp, parent: task, assigned_to: user) }
+      let!(:grandchild_task) { create(:colocated_task, :ihp, parent: child_task, assigned_to: user) }
+
+      it "should should return the grandchild" do
+        expect(subject.id).to eq(grandchild_task.id)
+      end
     end
   end
 end

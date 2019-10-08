@@ -2,17 +2,12 @@ import INTAKE_FORM_NAMES from '../../constants/INTAKE_FORM_NAMES.json';
 import INTAKE_FORM_NAMES_SHORT from '../../constants/INTAKE_FORM_NAMES_SHORT.json';
 
 export const FORM_TYPES = {
-  RAMP_ELECTION: {
-    key: 'ramp_election',
-    name: INTAKE_FORM_NAMES.ramp_election,
-    category: 'ramp',
-    formName: 'rampElection'
-  },
-  RAMP_REFILING: {
-    key: 'ramp_refiling',
-    name: INTAKE_FORM_NAMES.ramp_refiling,
-    category: 'ramp',
-    formName: 'rampRefiling'
+  APPEAL: {
+    key: 'appeal',
+    name: INTAKE_FORM_NAMES.appeal,
+    shortName: INTAKE_FORM_NAMES_SHORT.appeal,
+    category: 'decisionReview',
+    formName: 'appeal'
   },
   HIGHER_LEVEL_REVIEW: {
     key: 'higher_level_review',
@@ -28,12 +23,17 @@ export const FORM_TYPES = {
     category: 'decisionReview',
     formName: 'supplementalClaim'
   },
-  APPEAL: {
-    key: 'appeal',
-    name: INTAKE_FORM_NAMES.appeal,
-    shortName: INTAKE_FORM_NAMES_SHORT.appeal,
-    category: 'decisionReview',
-    formName: 'appeal'
+   RAMP_REFILING: {
+    key: 'ramp_refiling',
+    name: INTAKE_FORM_NAMES.ramp_refiling,
+    category: 'ramp',
+    formName: 'rampRefiling'
+  },
+  RAMP_ELECTION: {
+    key: 'ramp_election',
+    name: INTAKE_FORM_NAMES.ramp_election,
+    category: 'ramp',
+    formName: 'rampElection'
   }
 };
 
@@ -93,11 +93,13 @@ export const ACTIONS = {
   SET_APPEAL_DOCKET: 'SET_APPEAL_DOCKET',
   SET_DOCKET_TYPE: 'SET_DOCKET_TYPE',
   TOGGLE_CANCEL_MODAL: 'TOGGLE_CANCEL_MODAL',
+  TOGGLE_ADDING_ISSUE: 'TOGGLE_ADDING_ISSUE',
   TOGGLE_ADD_ISSUES_MODAL: 'TOGGLE_ADD_ISSUES_MODAL',
   TOGGLE_NONRATING_REQUEST_ISSUE_MODAL: 'TOGGLE_NONRATING_REQUEST_ISSUE_MODAL',
   TOGGLE_UNIDENTIFIED_ISSUES_MODAL: 'TOGGLE_UNIDENTIFIED_ISSUES_MODAL',
   TOGGLE_UNTIMELY_EXEMPTION_MODAL: 'TOGGLE_UNTIMELY_EXEMPTION_MODAL',
   TOGGLE_ISSUE_REMOVE_MODAL: 'TOGGLE_ISSUE_REMOVE_MODAL',
+  TOGGLE_CORRECTION_TYPE_MODAL: 'TOGGLE_CORRECTION_TYPE_MODAL',
   TOGGLE_LEGACY_OPT_IN_MODAL: 'TOGGLE_LEGACY_OPT_IN_MODAL',
   SUBMIT_REVIEW_START: 'SUBMIT_REVIEW_START',
   SUBMIT_REVIEW_SUCCEED: 'SUBMIT_REVIEW_SUCCEED',
@@ -116,6 +118,8 @@ export const ACTIONS = {
   REMOVE_ISSUE: 'REMOVE_ISSUE',
   WITHDRAW_ISSUE: 'WITHDRAW_ISSUE',
   SET_ISSUE_WITHDRAWAL_DATE: 'SET_ISSUE_WITHDRAWAL_DATE',
+  CORRECT_ISSUE: 'CORRECT_ISSUE',
+  UNDO_CORRECTION: 'UNDO_CORRECTION',
   ADD_NONRATING_REQUEST_ISSUE: 'ADD_NONRATING_REQUEST_ISSUE',
   NEW_NONRATING_REQUEST_ISSUE: 'NEW_NONRATING_REQUEST_ISSUE',
   SET_ISSUE_CATEGORY: 'SET_ISSUE_CATEGORY',

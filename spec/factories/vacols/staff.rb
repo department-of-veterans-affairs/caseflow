@@ -4,11 +4,12 @@ FactoryBot.define do
   factory :staff, class: VACOLS::Staff do
     transient do
       user { nil }
+      sequence(:generated_slogid) { |n| "ID#{n}" }
     end
 
     sequence(:sattyid)
     sequence(:stafkey)
-    sequence(:slogid) { |n| "ID#{n}" }
+    slogid { generated_slogid }
     sequence(:sdomainid) do |n|
       if user
         user.css_id

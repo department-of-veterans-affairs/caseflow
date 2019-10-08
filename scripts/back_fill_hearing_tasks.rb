@@ -11,7 +11,7 @@
 #
 
 legacy_sched_hear_tasks = Task
-  .where("(type='ScheduleHearingTask' OR type='DispositionTask') AND appeal_type='LegacyAppeal'")
+  .where("(type='ScheduleHearingTask' OR type='AssignHearingDispositionTask') AND appeal_type='LegacyAppeal'")
   .select do |task|
   task.parent.type == "RootTask"
 end

@@ -5,7 +5,7 @@ require "action_view"
 class UpdateAppellantRepresentationJob < CaseflowJob
   # For time_ago_in_words()
   include ActionView::Helpers::DateHelper
-  queue_as :low_priority
+  queue_with_priority :low_priority
 
   APP_NAME = "caseflow_job"
   METRIC_GROUP_NAME = UpdateAppellantRepresentationJob.name.underscore
@@ -29,11 +29,11 @@ class UpdateAppellantRepresentationJob < CaseflowJob
       # TODO: Add an alert if we've been running for longer than x number of minutes?
     rescue StandardError => error
       # Rescue from errors when looping over appeals so that we attempt to sync tracking tasks for each appeal.
-      Raven.capture_exception(error, extra: { appeal_id: appeal.id })
+      capture_exception(error: error, extra: { appeal_id: appeal.id })
       increment_task_count("error", appeal.id)
     end
 
-    record_runtime(start_time)
+    datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   rescue StandardError => error
     log_error(start_time, error)
   end
@@ -69,23 +69,12 @@ class UpdateAppellantRepresentationJob < CaseflowJob
 
   def legacy_appeals_with_hearings
     LegacyAppeal.joins(:tasks).where(
-      "tasks.type = ? AND tasks.status NOT IN (?)", "DispositionTask", Task.inactive_statuses
+      "tasks.type = ? AND tasks.status NOT IN (?)", "AssignHearingDispositionTask", Task.closed_statuses
     )
   end
 
   def active_appeals
-    Appeal.joins(:tasks).where("tasks.type = ? AND tasks.status NOT IN (?)", "RootTask", Task.inactive_statuses)
-  end
-
-  def record_runtime(start_time)
-    job_duration_seconds = Time.zone.now - start_time
-
-    DataDogService.emit_gauge(
-      app_name: APP_NAME,
-      metric_group: METRIC_GROUP_NAME,
-      metric_name: "runtime",
-      metric_value: job_duration_seconds
-    )
+    Appeal.joins(:tasks).where("tasks.type = ? AND tasks.status NOT IN (?)", "RootTask", Task.closed_statuses)
   end
 
   def increment_task_count(task_effect, appeal_id, count = 1)
@@ -111,6 +100,6 @@ class UpdateAppellantRepresentationJob < CaseflowJob
 
     slack_service.send_notification(msg)
 
-    record_runtime(start_time)
+    datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end
 end

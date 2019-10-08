@@ -31,31 +31,7 @@ class ExternalApi::VBMSService
   end
 
   def self.fetch_documents_for(appeal, _user = nil)
-    DBService.release_db_connections
-
-    @vbms_client ||= init_vbms_client
-
-    veteran_file_number = appeal.veteran_file_number
-    request = VBMS::Requests::FindDocumentVersionReference.new(veteran_file_number)
-
-    begin
-      documents = send_and_log_request(veteran_file_number, request)
-    rescue VBMSError::FilenumberDoesNotExist
-      alternative_file_number = ExternalApi::BGSService.new.fetch_veteran_info(veteran_file_number)[:claim_number]
-
-      raise if alternative_file_number == veteran_file_number
-
-      request = VBMS::Requests::FindDocumentVersionReference.new(alternative_file_number)
-      documents = send_and_log_request(alternative_file_number, request)
-    end
-
-    Rails.logger.info("Document list length: #{documents.length}")
-
-    {
-      manifest_vbms_fetched_at: nil,
-      manifest_vva_fetched_at: nil,
-      documents: documents.map { |vbms_document| Document.from_vbms_document(vbms_document, veteran_file_number) }
-    }
+    ExternalApi::VbmsDocumentsForAppeal.new(file_number: appeal.veteran_file_number).fetch
   end
 
   def self.fetch_document_series_for(appeal)
@@ -127,7 +103,7 @@ class ExternalApi::VBMSService
     send_and_log_request(claim_id, request)
   end
 
-  def self.create_contentions!(veteran_file_number:, claim_id:, contentions:, user:)
+  def self.create_contentions!(veteran_file_number:, claim_id:, contentions:, claim_date:, user:)
     # Contentions should be an array of objects representing the contention descriptions and special issues
     # [{description: "contention description", special_issues: [{ code: "SSR", narrative: "Same Station Review" }]}]
     @vbms_client ||= init_vbms_client
@@ -136,6 +112,7 @@ class ExternalApi::VBMSService
       veteran_file_number: veteran_file_number,
       claim_id: claim_id,
       contentions: contentions,
+      claim_date: claim_date,
       v5: FeatureToggle.enabled?(:claims_service_v5),
       send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
@@ -147,6 +124,18 @@ class ExternalApi::VBMSService
     @vbms_client ||= init_vbms_client
 
     request = VBMS::Requests::RemoveContention.new(
+      contention: contention,
+      v5: FeatureToggle.enabled?(:claims_service_v5),
+      send_userid: FeatureToggle.enabled?(:vbms_include_user)
+    )
+
+    send_and_log_request(contention.claim_id, request, vbms_client_with_user(User.system_user))
+  end
+
+  def self.update_contention!(contention)
+    @vbms_client ||= init_vbms_client
+
+    request = VBMS::Requests::UpdateContention.new(
       contention: contention,
       v5: FeatureToggle.enabled?(:claims_service_v5),
       send_userid: FeatureToggle.enabled?(:vbms_include_user)
@@ -173,14 +162,6 @@ class ExternalApi::VBMSService
     request = VBMS::Requests::GetDispositions.new(claim_id: claim_id)
 
     send_and_log_request(claim_id, request)
-  end
-
-  def self.list_document_types
-    @vbms_client ||= init_vbms_client
-
-    request = VBMS::Requests::ListTypeCategory.new
-
-    send_and_log_request(nil, request)
   end
 
   def self.vbms_client_with_user(user)
@@ -210,9 +191,5 @@ class ExternalApi::VBMSService
                           name: name) do
       (override_vbms_client || @vbms_client).send_request(request)
     end
-  rescue VBMS::ClientError => error
-    Rails.logger.error "#{error.message}\n#{error.backtrace.join("\n")}"
-
-    raise VBMSError.from_vbms_http_error(error)
   end
 end

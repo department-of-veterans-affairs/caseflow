@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe FullName do
   let(:first) { "Charles" }
   let(:middle) { "E" }

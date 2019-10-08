@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-require "support/intake_helpers"
+require "support/database_cleaner"
+require "rails_helper"
 
-describe DecisionIssue do
+describe DecisionIssue, :postgres do
   include IntakeHelpers
 
   before do
@@ -223,7 +224,7 @@ describe DecisionIssue do
       let(:disposition) { "denied" }
 
       context "is not outcoded" do
-        let(:decision_review) { create(:appeal, :with_tasks) }
+        let(:decision_review) { create(:appeal, :with_post_intake_tasks) }
 
         it { is_expected.to be_falsey }
       end

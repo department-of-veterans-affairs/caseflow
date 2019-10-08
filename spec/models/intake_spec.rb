@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-describe Intake do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe Intake, :postgres do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
 
@@ -488,7 +491,7 @@ describe Intake do
       context "Veteran has multiple phone numbers" do
         before do
           allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
-            .and_raise(BGS::ShareError, message: "NonUniqueResultException")
+            .and_raise(BGS::ShareError.new("NonUniqueResultException"))
         end
 
         it "adds veteran_has_multiple_phone_numbers and returns false" do

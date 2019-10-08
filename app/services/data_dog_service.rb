@@ -11,6 +11,18 @@ class DataDogService
     @statsd.increment(stat_name, tags: tags)
   end
 
+  def self.record_runtime(metric_group:, app_name:, start_time:)
+    metric_name = "runtime"
+    job_duration_seconds = Time.zone.now - start_time
+
+    emit_gauge(
+      app_name: app_name,
+      metric_group: metric_group,
+      metric_name: metric_name,
+      metric_value: job_duration_seconds
+    )
+  end
+
   def self.emit_gauge(metric_group:, metric_name:, metric_value:, app_name:, attrs: {})
     tags = get_tags(app_name, attrs)
     stat_name = get_stat_name(metric_group, metric_name)

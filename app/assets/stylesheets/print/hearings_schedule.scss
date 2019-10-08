@@ -1,0 +1,26 @@
+@import 'uswds/src/stylesheets/lib/addons/_font-stacks.scss';
+@import 'uswds/src/stylesheets/core/_variables.scss';
+
+@media print {
+  .cf-app-hearings {
+    background: $color-white;
+    height: auto;
+  }
+
+  header,
+  .cf-app-footer {
+    display: none;
+  }
+
+  .cf-daily-docket-printed.cf-app-segment:first-child,
+  .cf-daily-docket-printed .cf-app-segment:first-child {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+  }
+
+  @page {
+    size: 8.5in 11in;
+    margin: 0.5in 0.5in;
+  }
+}

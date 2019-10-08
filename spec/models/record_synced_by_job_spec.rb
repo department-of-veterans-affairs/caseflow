@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe RecordSyncedByJob do
+describe RecordSyncedByJob, :postgres do
   context ".next_records_to_process" do
     let(:appeal_without_sync) { create(:appeal) }
     let(:recent_appeal_with_sync) { create(:appeal) }
@@ -13,7 +14,7 @@ describe RecordSyncedByJob do
     end
 
     let!(:old_record_synced_by_job) do
-      RecordSyncedByJob.create!(record: recent_appeal_with_sync, processed_at: 2.days.ago)
+      RecordSyncedByJob.create!(record: old_appeal_with_sync, processed_at: 2.days.ago)
     end
 
     context "when the limit is 1" do

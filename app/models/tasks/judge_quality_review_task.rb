@@ -6,13 +6,13 @@
 class JudgeQualityReviewTask < JudgeTask
   def additional_available_actions(_user)
     [
-      Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
+      Constants.TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.to_h,
       Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
       Constants.TASK_ACTIONS.CANCEL_TASK.to_h
     ]
   end
 
-  def label
+  def self.label
     COPY::JUDGE_QUALITY_REVIEW_TASK_LABEL
   end
 end

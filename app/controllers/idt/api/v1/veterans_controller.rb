@@ -26,10 +26,19 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
   end
 
   def poa
-    @poa ||= begin
-      poa = bgs.fetch_poa_by_file_number(veteran[:file_number])
-      poa.merge(bgs.find_address_by_participant_id(poa[:participant_id]))
-    end
+    @poa ||= fetch_poa_with_address
+  end
+
+  def fetch_poa_with_address
+    poa = bgs.fetch_poa_by_file_number(veteran[:file_number])
+
+    return {} unless poa
+
+    poa_address = bgs.find_address_by_participant_id(poa[:participant_id])
+
+    return poa unless poa_address
+
+    poa.merge(poa_address)
   end
 
   def json_veteran_details

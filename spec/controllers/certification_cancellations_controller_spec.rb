@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-# spec/controllers/articles_controller_spec.rb
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.describe CertificationCancellationsController, type: :controller do
+RSpec.describe CertificationCancellationsController, :postgres, type: :controller do
   let!(:current_user) { User.authenticate! }
 
   describe "Responds to" do

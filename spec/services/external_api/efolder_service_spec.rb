@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 require "faker"
 
-describe ExternalApi::EfolderService do
+describe ExternalApi::EfolderService, :postgres do
   let(:base_url) { Faker::Internet.url }
   let(:efolder_key) { Faker::Internet.device_token }
 
@@ -34,6 +35,31 @@ describe ExternalApi::EfolderService do
     end
   end
 
+  context "#document_count" do
+    let(:user) { Generators::User.create }
+    let(:file_number) { "1234" }
+    let(:expected_response) { HTTPI::Response.new(200, [], { documents: "20" }.to_json) }
+
+    before do
+      allow(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url)
+      allow(ExternalApi::EfolderService).to receive(:efolder_key).and_return(efolder_key)
+      allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(expected_response)
+    end
+
+    subject { ExternalApi::EfolderService.document_count(file_number, user) }
+
+    it "returns document count" do
+      expect(subject).to eq("20")
+    end
+
+    it "caches result" do
+      cache_key = "Efolder-document-count-#{file_number}"
+      expect(Rails.cache.exist?(cache_key)).to eq(false)
+      subject
+      expect(Rails.cache.exist?(cache_key)).to eq(true)
+    end
+  end
+
   context "#generate_efolder_request" do
     let(:user) { Generators::User.create }
     let(:appeal) { Generators::LegacyAppeal.build }
@@ -43,7 +69,7 @@ describe ExternalApi::EfolderService do
     let(:manifest_vva_fetched_at) { Time.zone.now.strftime(fetched_at_format) }
     let(:expected_response) { construct_response(records, sources) }
 
-    subject { ExternalApi::EfolderService.generate_efolder_request(vbms_id, user) }
+    subject { ExternalApi::EfolderService.generate_efolder_request(vbms_id, user, 3) }
 
     context "metrics" do
       let(:sources) do
@@ -316,6 +342,32 @@ describe ExternalApi::EfolderService do
         end
 
         it { is_expected.to eq expected_result }
+      end
+
+      context "when both sources come back as pending" do
+        let(:sources) do
+          [
+            {
+              source: "VVA",
+              status: "pending",
+              fetched_at: manifest_vva_fetched_at
+            },
+            {
+              source: "VBMS",
+              status: "pending",
+              fetched_at: manifest_vbms_fetched_at
+            }
+          ]
+        end
+        let(:records) { [] }
+
+        let(:expected_result) do
+          {
+            documents: [],
+            manifest_vbms_fetched_at: manifest_vbms_fetched_at,
+            manifest_vva_fetched_at: manifest_vva_fetched_at
+          }
+        end
       end
 
       context "when one source comes back as failed" do

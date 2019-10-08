@@ -30,4 +30,13 @@ class VACOLS::Record < ApplicationRecord
     slogid = RequestStore.store[:current_user].vacols_uniq_id
     slogid.nil? ? "" : slogid.upcase
   end
+
+  # AsciiString attribute type not applied to update_all() class method
+  # so must override and do encoding fixes here.
+  def self.sanitize_sql_hash_for_assignment(attrs, table)
+    attrs.each do |attr, value|
+      attrs[attr] = AsciiConverter.new(string: value.to_s).convert
+    end
+    super
+  end
 end

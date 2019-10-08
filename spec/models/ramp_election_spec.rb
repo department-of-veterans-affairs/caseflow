@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-describe RampElection do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe RampElection, :postgres do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
@@ -98,7 +101,7 @@ describe RampElection do
     end
 
     context "when option_selected is set" do
-      let(:veteran) { Veteran.create(file_number: veteran_file_number) }
+      let(:veteran) { create(:veteran, file_number: veteran_file_number) }
       let(:option_selected) { "supplemental_claim" }
       let(:modifier) { RampReview::END_PRODUCT_DATA_BY_OPTION[option_selected][:modifier] }
 
@@ -198,7 +201,7 @@ describe RampElection do
 
         context "when the error is caught by VBMSError wrapper" do
           let(:vbms_error) do
-            VBMSError::DuplicateEP.new("A duplicate claim for this EP code already exists in CorpDB.")
+            VBMS::DuplicateEP.new(500, "A duplicate claim for this EP code already exists in CorpDB.")
           end
 
           it "raises a parsed EstablishClaimFailedInVBMS error" do

@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
-describe MailTask do
-  let(:user) { FactoryBot.create(:user) }
+require "support/database_cleaner"
+require "rails_helper"
+
+describe MailTask, :postgres do
+  let(:user) { create(:user) }
   let(:mail_team) { MailTeam.singleton }
-  let(:root_task) { FactoryBot.create(:root_task) }
+  let(:root_task) { create(:root_task) }
   before do
     OrganizationsUser.add_user_to_organization(user, mail_team)
   end
@@ -51,12 +54,34 @@ describe MailTask do
     end
 
     context "when user is not a member of the mail team" do
-      let(:non_mail_user) { FactoryBot.create(:user) }
+      let(:non_mail_user) { create(:user) }
 
       it "should raise an error" do
         expect { task_class.create_from_params(params, non_mail_user) }.to raise_error(
           Caseflow::Error::ActionForbiddenError
         )
+      end
+    end
+
+    context "when the task is a blocking mail task" do
+      let(:task_class) { FoiaRequestMailTask }
+      let!(:distribution_task) { create(:distribution_task, parent: root_task, appeal: root_task.appeal) }
+
+      it "creates FoiaRequestMailTask as a child of the distribution task" do
+        expect { task_class.create_from_params(params, user) }.to_not raise_error
+        expect(distribution_task.children.length).to eq(1)
+
+        mail_task = distribution_task.children[0]
+        expect(mail_task.class).to eq(task_class)
+        expect(mail_task.assigned_to).to eq(mail_team)
+        expect(mail_task.children.length).to eq(1)
+
+        child_task = mail_task.children[0]
+        expect(child_task.class).to eq(task_class)
+        expect(child_task.assigned_to).to eq(PrivacyTeam.singleton)
+        expect(child_task.children.length).to eq(0)
+
+        expect(root_task.appeal.ready_for_distribution?).to eq false
       end
     end
   end
@@ -68,20 +93,31 @@ describe MailTask do
   end
 
   describe ".pending_hearing_task?" do
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let(:root_task) { create(:root_task) }
+    let(:appeal) { root_task.appeal }
 
     subject { MailTask.pending_hearing_task?(root_task) }
 
-    context "when the task's appeal is in the hearing docket" do
-      let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
-      it "should be true" do
+    context "when the task's appeal has an open HearingTask" do
+      before { create(:hearing_task, parent: root_task, appeal: appeal) }
+
+      it "indicates there there is a pending_hearing_task" do
         expect(subject).to eq(true)
       end
     end
 
-    context "when the task's appeal is not in the hearing docket" do
-      let(:appeal) { FactoryBot.create(:appeal) }
-      it "should be false" do
+    context "when the task's appeal has a closed HearingTask" do
+      before do
+        create(:hearing_task, :completed, parent: root_task, appeal: appeal)
+      end
+
+      it "indicates there there is not a pending_hearing_task" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when the task's appeal does not have any HearingTasks" do
+      it "indicates there there is not a pending_hearing_task" do
         expect(subject).to eq(false)
       end
     end
@@ -118,7 +154,7 @@ describe MailTask do
 
     context "when all individually assigned tasks are complete" do
       before do
-        FactoryBot.create_list(:generic_task, 4, :completed, appeal: root_task.appeal)
+        create_list(:generic_task, 4, :completed, appeal: root_task.appeal)
       end
 
       it "should return nil" do
@@ -127,14 +163,14 @@ describe MailTask do
     end
 
     context "when the most recent active task is assigned to an organization" do
-      let(:user) { FactoryBot.create(:user) }
-      let(:user_task) { FactoryBot.create(:generic_task, appeal: root_task.appeal, assigned_to: user) }
+      let(:user) { create(:user) }
+      let(:user_task) { create(:generic_task, appeal: root_task.appeal, assigned_to: user) }
 
       before do
-        FactoryBot.create(
+        create(
           :generic_task,
           appeal: root_task.appeal,
-          assigned_to: FactoryBot.create(:organization),
+          assigned_to: create(:organization),
           parent: user_task
         )
       end
@@ -149,11 +185,11 @@ describe MailTask do
     end
 
     context "when there are multiple active tasks assigned to individual users" do
-      let(:user) { FactoryBot.create(:user) }
+      let(:user) { create(:user) }
 
       before do
-        FactoryBot.create_list(:generic_task, 6, appeal: root_task.appeal)
-        FactoryBot.create(:generic_task, appeal: root_task.appeal, assigned_to: user)
+        create_list(:generic_task, 6, appeal: root_task.appeal)
+        create(:generic_task, appeal: root_task.appeal, assigned_to: user)
       end
 
       it "should return the user who was assigned the most recently created task" do
@@ -205,8 +241,8 @@ describe MailTask do
     context "for an AppealWithdrawalMailTask" do
       let(:task_class) { AppealWithdrawalMailTask }
 
-      it "should always route to the VLJ support staff" do
-        expect(subject).to eq(Colocated.singleton)
+      it "should always route to BVA Intake" do
+        expect(subject).to eq(BvaIntake.singleton)
       end
     end
 
@@ -390,10 +426,10 @@ describe MailTask do
       end
 
       context "when the appeal is active, does not have any hearing tasks, but does have individually assigned tasks" do
-        let(:user) { FactoryBot.create(:user) }
+        let(:user) { create(:user) }
         before do
-          FactoryBot.create_list(:generic_task, 4, appeal: root_task.appeal)
-          FactoryBot.create(:generic_task, appeal: root_task.appeal, assigned_to: user)
+          create_list(:generic_task, 4, appeal: root_task.appeal)
+          create(:generic_task, appeal: root_task.appeal, assigned_to: user)
         end
 
         it "should route to the user who is assigned the most recently created active task" do
@@ -429,6 +465,47 @@ describe MailTask do
 
       it "should always route to Lit Support" do
         expect(subject).to eq(LitigationSupport.singleton)
+      end
+    end
+  end
+
+  describe ".available_actions" do
+    let(:mail_task) { task_class.create!(appeal: root_task.appeal, parent_id: root_task.id, assigned_to: mail_team) }
+
+    subject { mail_task.available_actions(user) }
+
+    context "when the current user is not a member of the lit support team" do
+      let(:generic_task_actions) do
+        [
+          Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
+          Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
+          Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
+          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+          Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+        ]
+      end
+
+      before { allow_any_instance_of(LitigationSupport).to receive(:user_has_access?).and_return(false) }
+
+      context "for a ClearAndUnmistakeableErrorMailTask" do
+        let(:task_class) { ClearAndUnmistakeableErrorMailTask }
+        it "returns the available_actions as defined by GenericTask" do
+          expect(subject).to eq(generic_task_actions)
+        end
+      end
+
+      context "for a ReconsiderationMotionMailTask" do
+        let(:task_class) { ReconsiderationMotionMailTask }
+        it "returns the available_actions as defined by GenericTask" do
+          expect(subject).to eq(generic_task_actions)
+        end
+      end
+
+      context "for a VacateMotionMailTask" do
+        let(:task_class) { VacateMotionMailTask }
+        it "returns the available_actions as defined by GenericTask" do
+          expect(subject).to eq(generic_task_actions)
+        end
       end
     end
   end

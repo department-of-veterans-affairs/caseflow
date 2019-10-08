@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.feature "SwitchApps" do
+RSpec.feature "SwitchApps", :postgres do
   context "A user with just Queue access" do
     let!(:user) do
       User.authenticate!(user: create(:user, roles: ["Reader"]))

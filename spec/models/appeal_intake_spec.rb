@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-describe AppealIntake do
+require "support/vacols_database_cleaner"
+require "rails_helper"
+
+describe AppealIntake, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
@@ -79,7 +82,7 @@ describe AppealIntake do
     subject { intake.review!(request_params) }
 
     let(:receipt_date) { "2018-05-25" }
-    let(:docket_type) { "hearing" }
+    let(:docket_type) { Constants.AMA_DOCKETS.hearing }
     let(:claimant) { nil }
     let(:payee_code) { nil }
     let(:legacy_opt_in_approved) { true }
@@ -102,7 +105,7 @@ describe AppealIntake do
 
       expect(intake.detail).to have_attributes(
         receipt_date: Date.new(2018, 5, 25),
-        docket_type: "hearing",
+        docket_type: Constants.AMA_DOCKETS.hearing,
         legacy_opt_in_approved: true,
         veteran_is_not_claimant: false
       )
@@ -165,14 +168,21 @@ describe AppealIntake do
 
       context "claimant is nil" do
         let(:claimant) { nil }
-        let(:receipt_date) { 3.days.from_now }
 
         it "is expected to add an error that claimant cannot be blank" do
           expect(subject).to be_falsey
           expect(detail.errors[:claimant]).to include("blank")
-          expect(detail.errors[:receipt_date]).to include("in_future")
           expect(detail.claimants).to be_empty
         end
+      end
+    end
+
+    context "receipt date is in the future" do
+      let(:receipt_date) { 3.days.from_now }
+
+      it "is invalid" do
+        expect(subject).to be_falsey
+        expect(detail.errors[:receipt_date]).to include("in_future")
       end
     end
   end
@@ -202,7 +212,7 @@ describe AppealIntake do
         veteran_file_number: veteran_file_number,
         receipt_date: 3.days.ago,
         legacy_opt_in_approved: legacy_opt_in_approved,
-        docket_type: "direct_review"
+        docket_type: Constants.AMA_DOCKETS.direct_review
       )
     end
 
@@ -222,7 +232,7 @@ describe AppealIntake do
         decision_date: Date.new(2018, 12, 25),
         nonrating_issue_description: "nonrating request issue decision text"
       )
-      expect(intake.detail.tasks.count).to eq 1
+      expect(intake.detail.tasks.count).to eq 2
       expect(intake.detail.submitted?).to eq true
       expect(intake.detail.attempted?).to eq true
       expect(intake.detail.processed?).to eq true

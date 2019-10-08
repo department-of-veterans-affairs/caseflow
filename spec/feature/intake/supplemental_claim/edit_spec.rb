@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-require "support/intake_helpers"
+require "support/vacols_database_cleaner"
+require "rails_helper"
 
-feature "Supplemental Claim Edit issues" do
+feature "Supplemental Claim Edit issues", :all_dbs do
   include IntakeHelpers
 
   before do
@@ -22,54 +23,14 @@ feature "Supplemental Claim Edit issues" do
   let(:receipt_date) { Time.zone.today - 20 }
   let(:profile_date) { (Time.zone.today - 60).to_datetime }
 
-  let!(:rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date,
-      profile_date: profile_date,
-      issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: 55 },
-        { reference_id: "def456", decision_text: "PTSD denied" },
-        { reference_id: "abcdef", decision_text: "Back pain" }
-      ]
-    )
-  end
-
-  let!(:rating_before_ama) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
-      issues: [
-        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
-      ]
-    )
-  end
-
-  let!(:rating_before_ama_from_ramp) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
-      issues: [
-        { decision_text: "Issue before AMA Activation from RAMP",
-          reference_id: "ramp_ref_id" }
-      ],
-      associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
-    )
-  end
-
+  let!(:rating) { generate_rating_with_defined_contention(veteran, receipt_date, profile_date) }
+  let!(:rating_before_ama) { generate_pre_ama_rating(veteran) }
+  let!(:rating_before_ama_from_ramp) { generate_rating_before_ama_from_ramp(veteran) }
   let!(:ratings_with_legacy_issues) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 4.days,
-      profile_date: receipt_date - 4.days,
-      issues: [
-        { reference_id: "has_legacy_issue", decision_text: "Issue with legacy issue not withdrawn" },
-        { reference_id: "has_ineligible_legacy_appeal", decision_text: "Issue connected to ineligible legacy appeal" }
-      ]
-    )
+    generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
   end
+  let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran, receipt_date) }
+  let(:old_rating_decision_text) { "Bone (Right arm broken) is denied." }
 
   let(:decision_review_remanded) { nil }
   let(:benefit_type) { "compensation" }
@@ -104,6 +65,8 @@ feature "Supplemental Claim Edit issues" do
     ).reference_id
   end
 
+  let(:contested_decision_issue) { nil }
+
   before do
     supplemental_claim.create_claimants!(participant_id: "5382910292", payee_code: "10")
 
@@ -117,15 +80,43 @@ feature "Supplemental Claim Edit issues" do
     )
   end
 
+  context "when contentions disappear from VBMS between creation and edit" do
+    let(:request_issue) do
+      create(
+        :request_issue,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: rating.profile_date,
+        decision_review: supplemental_claim,
+        benefit_type: benefit_type,
+        contested_issue_description: "PTSD denied"
+      )
+    end
+
+    before do
+      supplemental_claim.create_issues!([request_issue])
+      supplemental_claim.establish!
+      supplemental_claim.reload
+      request_issue.reload
+      Fakes::VBMSService.remove_contention!(request_issue.contention)
+    end
+
+    it "automatically removes issues" do
+      visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
+
+      expect(page).to_not have_content("PTSD denied")
+      expect(request_issue.reload).to be_closed
+    end
+  end
+
   context "when there is a non-rating end product" do
     let!(:nonrating_request_issue) do
       RequestIssue.create!(
         decision_review: supplemental_claim,
         nonrating_issue_category: "Military Retired Pay",
         nonrating_issue_description: "nonrating description",
-        contention_reference_id: "1234",
         benefit_type: benefit_type,
-        decision_date: 1.month.ago
+        decision_date: 1.month.ago,
+        contested_decision_issue: contested_decision_issue
       )
     end
 
@@ -136,6 +127,7 @@ feature "Supplemental Claim Edit issues" do
 
     context "when it is created due to a DTA error" do
       let(:decision_review_remanded) { create(:higher_level_review) }
+      let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
 
       it "cannot be edited" do
         nonrating_dta_claim_id = EndProductEstablishment.find_by(
@@ -219,13 +211,18 @@ feature "Supplemental Claim Edit issues" do
   end
 
   context "when there is a rating end product" do
+    before { FeatureToggle.enable!(:contestable_rating_decisions) }
+    after { FeatureToggle.disable!(:contestable_rating_decisions) }
+
     let(:request_issue) do
       RequestIssue.create!(
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: rating.profile_date,
+        decision_date: rating.promulgation_date,
         decision_review: supplemental_claim,
         benefit_type: benefit_type,
-        contested_issue_description: "PTSD denied"
+        contested_issue_description: "PTSD denied",
+        contested_decision_issue: contested_decision_issue
       )
     end
 
@@ -238,6 +235,7 @@ feature "Supplemental Claim Edit issues" do
 
     context "when it is created due to a DTA error" do
       let(:decision_review_remanded) { create(:higher_level_review) }
+      let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
 
       it "cannot be edited" do
         rating_dta_claim_id = EndProductEstablishment.find_by(
@@ -327,6 +325,12 @@ feature "Supplemental Claim Edit issues" do
       add_intake_unidentified_issue("This is an unidentified issue")
       expect(page).to have_content("4 issues")
       expect(page).to have_content("This is an unidentified issue")
+
+      # add rating decision
+      click_intake_add_issue
+      add_intake_rating_issue(old_rating_decision_text)
+      expect(page).to have_content("5 issues")
+      expect(page).to have_content(old_rating_decision_text)
     end
 
     context "when veteran has active nonrating request issues" do
@@ -457,14 +461,6 @@ feature "Supplemental Claim Edit issues" do
       expect(page).to have_button("Save", disabled: true)
     end
 
-    it "Does not allow save if no issues are selected" do
-      visit "supplemental_claims/#{rating_ep_claim_id}/edit"
-      click_remove_intake_issue("1")
-      click_remove_issue_confirmation
-
-      expect(page).to have_button("Save", disabled: true)
-    end
-
     scenario "shows error message if an update is in progress" do
       RequestIssuesUpdate.create!(
         review: supplemental_claim,
@@ -526,8 +522,10 @@ feature "Supplemental Claim Edit issues" do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: veteran.file_number,
         claim_id: rating_ep_claim_id,
-        contentions: [{ description: "Left knee granted" }],
-        user: current_user
+        contentions: [{ description: "Left knee granted",
+                        contention_type: Constants.CONTENTION_TYPES.supplemental_claim }],
+        user: current_user,
+        claim_date: supplemental_claim.receipt_date.to_date
       )
       expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
         claim_id: rating_ep_claim_id,
@@ -550,29 +548,6 @@ feature "Supplemental Claim Edit issues" do
 
       scenario "from landing page" do
         click_cancel("/")
-      end
-    end
-
-    feature "with cleared end product" do
-      let!(:cleared_end_product) do
-        Generators::EndProduct.build(
-          veteran_file_number: veteran.file_number,
-          bgs_attrs: { status_type_code: "CLR" }
-        )
-      end
-
-      let!(:cleared_end_product_establishment) do
-        create(:end_product_establishment,
-               source: supplemental_claim,
-               synced_status: "CLR",
-               reference_id: cleared_end_product.claim_id)
-      end
-
-      scenario "prevents edits on eps that have cleared" do
-        visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
-        expect(page).to have_current_path("/supplemental_claims/#{rating_ep_claim_id}/edit/cleared_eps")
-        expect(page).to have_content("Issues Not Editable")
-        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
       end
     end
 
@@ -618,7 +593,7 @@ feature "Supplemental Claim Edit issues" do
         click_withdraw_intake_issue_dropdown("PTSD denied")
 
         expect(page).to_not have_content("Requested issues\n1. PTSD denied")
-        expect(page).to have_content("1. PTSD denied\nDecision date: 01/20/2018\nWithdraw pending")
+        expect(page).to have_content("1. PTSD denied\nDecision date: 05/10/2019\nWithdrawal pending")
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
         fill_in "withdraw-date", with: withdraw_date
@@ -665,7 +640,7 @@ feature "Supplemental Claim Edit issues" do
 
         expect(page).to_not have_content("Requested issues\n1. PTSD denied")
         expect(page).to have_content(
-          /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
+          /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdrawal pending/i
         )
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -675,7 +650,7 @@ feature "Supplemental Claim Edit issues" do
         expect(page).to have_current_path(
           "/supplemental_claims/#{rating_ep_claim_id}/edit/confirmation"
         )
-        expect(page).to have_content("Review Withdrawn")
+        expect(page).to have_content("Claim Issues Saved")
 
         withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
         expect(withdrawn_issue).to_not be_nil
@@ -686,15 +661,62 @@ feature "Supplemental Claim Edit issues" do
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
 
         expect(page).to have_content("Requested issues\n1. Left knee granted")
-        expect(page).to have_content("Withdrawn issues\n2. PTSD denied\nDecision date: 01/20/2018\nWithdrawn on")
+        expect(page).to have_content("Withdrawn issues\n2. PTSD denied\nDecision date: 05/10/2019\nWithdrawn on")
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
+      end
+    end
+  end
+
+  describe "Establishment credits" do
+    let(:url_path) { "supplemental_claims" }
+    let(:decision_review) { supplemental_claim }
+    let(:request_issues) { [request_issue] }
+    let(:request_issue) do
+      create(
+        :request_issue,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: rating.profile_date,
+        decision_review: decision_review,
+        benefit_type: benefit_type,
+        contested_issue_description: "PTSD denied"
+      )
+    end
+
+    context "when the EP has not yet been established" do
+      before do
+        decision_review.reload.create_issues!(request_issues)
+      end
+
+      it "disallows editing" do
+        visit "#{url_path}/#{decision_review.uuid}/edit"
+
+        expect(page).to have_content("Review not yet established in VBMS. Check the job page for details.")
+        expect(page).to have_link("the job page")
+
+        click_link "the job page"
+
+        expect(current_path).to eq decision_review.async_job_url
+      end
+    end
+
+    context "when the EP has been established" do
+      before do
+        decision_review.reload.create_issues!(request_issues)
+        decision_review.establish!
+      end
+
+      it "shows when and by whom the Intake was performed" do
+        visit "#{url_path}/#{decision_review.uuid}/edit"
+
+        expect(page).to have_content(
+          "Established #{decision_review.establishment_processed_at.friendly_full_format} by #{intake.user.css_id}"
+        )
       end
     end
   end
 
   context "when remove decision reviews is enabled for supplemental_claim" do
     before do
-      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
       OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
 
       # skip the sync call since all edit requests require resyncing
@@ -702,15 +724,11 @@ feature "Supplemental Claim Edit issues" do
       allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
     end
 
-    after do
-      FeatureToggle.disable!(:remove_decision_reviews, users: [current_user.css_id])
-    end
-
     let(:today) { Time.zone.now }
     let(:last_week) { Time.zone.now - 7.days }
     let(:supplemental_claim) do
       # reload to get uuid
-      create(:supplemental_claim, veteran_file_number: veteran.file_number).reload
+      create(:supplemental_claim, :processed, veteran_file_number: veteran.file_number).reload
     end
     let!(:existing_request_issues) do
       [create(:request_issue, :nonrating, decision_review: supplemental_claim),
@@ -772,19 +790,16 @@ feature "Supplemental Claim Edit issues" do
       context "show alert when issues are withdrawn" do
         let(:supplemental_claim) do
           # reload to get uuid
-          create(:supplemental_claim, veteran_file_number: veteran.file_number,
-                                      benefit_type: "education").reload
+          create(:supplemental_claim,
+                 :processed,
+                 veteran_file_number: veteran.file_number,
+                 benefit_type: "education").reload
         end
 
         before do
           education_org = create(:business_line, name: "Education", url: "education")
           OrganizationsUser.add_user_to_organization(current_user, education_org)
-          FeatureToggle.enable!(:decision_reviews)
           FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
-        end
-
-        after do
-          FeatureToggle.disable!(:decision_reviews)
         end
 
         let(:withdraw_date) { 1.day.ago.to_date.mdY }
@@ -824,13 +839,12 @@ feature "Supplemental Claim Edit issues" do
         scenario "show alert message when a decision review is added, removed and withdrawn" do
           visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
           click_intake_add_issue
-          expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
+          expect(page.text).to match(/Does issue \d+ match any of these non-rating issue categories?/)
           add_intake_nonrating_issue(
             category: "Accrued",
             description: "Description for Accrued",
             date: 1.day.ago.to_date.mdY
           )
-
           click_remove_intake_issue_dropdown(1)
           click_withdraw_intake_issue_dropdown(2)
           fill_in "withdraw-date", with: withdraw_date

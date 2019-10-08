@@ -7,12 +7,14 @@ checks:
     config:
       threshold: 4
   file-lines:
+    enabled: false
     config:
       threshold: 250
   method-complexity:
     config:
       threshold: 5
   method-count:
+    enabled: false
     config:
       threshold: 20
   method-lines:
@@ -51,6 +53,7 @@ plugins:
     enabled: true
     exclude_patterns:
     - '.codeclimate.yml'
+    - 'Makefile.example'
     config:
       strings:
       - TODO
@@ -60,6 +63,9 @@ plugins:
       - XXX
   reek:
     enabled: true
+    checks:
+      Attribute:
+        enabled: false
     exclude_patterns:
     - 'db/migrate/*'
   rubocop:
@@ -75,4 +81,3 @@ exclude_patterns:
   - 'app/mappers/zip_code_to_lat_lng_mapper.rb'
   - 'tmp/**/*'
   - 'app/assets/**/*'
-  - 'spec/**/*'

@@ -37,7 +37,9 @@ class SchedulePeriod < ApplicationRecord
   S3_SUB_BUCKET = "hearing_schedule"
 
   def validate_schedule_period
-    errors[:base] << OverlappingSchedulePeriods if dates_finalized_or_being_finalized?
+    if dates_finalized_or_being_finalized?
+      errors[:base] << OverlappingSchedulePeriods.new("You have already uploaded a file for these dates.")
+    end
   end
 
   def spreadsheet_location

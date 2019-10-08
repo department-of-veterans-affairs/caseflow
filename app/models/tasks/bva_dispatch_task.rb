@@ -4,7 +4,22 @@
 # Task assigned to BVA Dispatch team members whenever a judge completes a case review.
 # This indicates that an appeal is decided and the appellant is about to be notified of the decision.
 
-class BvaDispatchTask < GenericTask
+class BvaDispatchTask < Task
+  def available_actions(user)
+    return [] unless user
+
+    actions = super(user)
+    if assigned_to == user || parent.task_is_assigned_to_organization_user_administers?(user)
+      actions.unshift(Constants.TASK_ACTIONS.DISPATCH_RETURN_TO_JUDGE.to_h)
+    end
+
+    actions
+  end
+
+  def task_is_assigned_to_organization_user_administers?(user)
+    task_is_assigned_to_users_organization?(user) && user.administered_teams.include?(assigned_to)
+  end
+
   class << self
     def create_from_root_task(root_task)
       create!(assigned_to: BvaDispatch.singleton, parent_id: root_task.id, appeal: root_task.appeal)
@@ -12,54 +27,10 @@ class BvaDispatchTask < GenericTask
 
     def outcode(appeal, params, user)
       if appeal.is_a?(Appeal)
-        tasks = where(appeal: appeal, assigned_to: user)
-        throw_error_if_no_tasks_or_if_task_is_completed(appeal, tasks, user)
-        task = tasks[0]
+        AmaAppealDispatch.new(appeal: appeal, user: user, params: params).call
+      elsif appeal.is_a?(LegacyAppeal)
+        LegacyAppealDispatch.new(appeal: appeal, params: params).call
       end
-
-      params[:appeal_id] = appeal.id
-      params[:appeal_type] = appeal.class.name
-      create_decision_document!(params)
-
-      if appeal.is_a?(Appeal)
-        task.update!(status: Constants.TASK_STATUSES.completed)
-        task.root_task.update!(status: Constants.TASK_STATUSES.completed)
-        appeal.request_issues.each(&:close_decided_issue!)
-      end
-    rescue ActiveRecord::RecordInvalid => error
-      if error.message.match?(/^Validation failed:/)
-        raise(Caseflow::Error::OutcodeValidationFailure, message: error.message)
-      end
-
-      raise error
-    end
-
-    private
-
-    def create_decision_document!(params)
-      DecisionDocument.create!(params).tap do |decision_document|
-        delay = if decision_document.decision_date.future?
-                  decision_document.decision_date + DecisionDocument::PROCESS_DELAY_VBMS_OFFSET_HOURS.hours
-                else
-                  0
-                end
-
-        decision_document.submit_for_processing!(delay: delay)
-
-        unless decision_document.processed? || decision_document.decision_date.future?
-          ProcessDecisionDocumentJob.perform_later(decision_document.id)
-        end
-      end
-    end
-
-    def throw_error_if_no_tasks_or_if_task_is_completed(appeal, tasks, user)
-      if tasks.count != 1
-        fail Caseflow::Error::BvaDispatchTaskCountMismatch, appeal_id: appeal.id, user_id: user.id, tasks: tasks
-      end
-
-      task = tasks[0]
-
-      fail(Caseflow::Error::BvaDispatchDoubleOutcode, appeal_id: appeal.id, task_id: task.id) if task.completed?
     end
   end
 end

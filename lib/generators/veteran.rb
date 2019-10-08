@@ -34,7 +34,7 @@ class Generators::Veteran
         eft_account_number: nil,
         eft_account_type: nil,
         eft_routing_number: nil,
-        email_address: nil,
+        email_address: "america@example.com",
         fiduciary_decision_category_type_code: nil,
         fiduciary_folder_location: nil,
         file_number: "111223334",
@@ -59,7 +59,7 @@ class Generators::Veteran
         return_message: "Records found.",
         salutation_name: nil,
         sensitive_level_of_record: "0",
-        ssn: "111223334",
+        ssn: Generators::Random.unique_ssn,
         state: "VA",
         suffix_name: "II",
         temporary_custodian_indicator: nil,
@@ -93,8 +93,7 @@ class Generators::Veteran
     # rubocop:enable Metrics/MethodLength
 
     def build(attrs = {})
-      Fakes::BGSService.veteran_records ||= {}
-      Fakes::BGSService.veteran_records[attrs[:file_number]] = default_attrs(attrs[:file_number]).merge(attrs)
+      Fakes::BGSService.store_veteran_record(attrs[:file_number], default_attrs(attrs[:file_number]).merge(attrs))
       Veteran.new(file_number: attrs[:file_number],
                   first_name: attrs[:first_name],
                   last_name: attrs[:last_name],

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "rails_helper"
+require "support/database_cleaner"
 
-describe DocumentSeriesIdAssigner do
+describe DocumentSeriesIdAssigner, :postgres do
   describe "#call" do
     let(:appeal) do
       Generators::LegacyAppeal.build

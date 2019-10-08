@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
-describe LegacyHearing do
+require "support/vacols_database_cleaner"
+require "rails_helper"
+
+describe LegacyHearing, :all_dbs do
   before do
-    RequestStore[:current_user] = OpenStruct.new(css_id: "Test user", station_id: "101", uniq_id: "1234")
+    RequestStore[:current_user] = create(:user, css_id: "Test user", station_id: "101")
   end
 
   let(:hearing) do
@@ -54,7 +57,9 @@ describe LegacyHearing do
 
     context "when the hearing has an open disposition task" do
       let!(:hearing_task_association) { create(:hearing_task_association, hearing: hearing) }
-      let!(:disposition_task) { create(:disposition_task, parent: hearing_task_association.hearing_task) }
+      let!(:disposition_task) do
+        create(:assign_hearing_disposition_task, parent: hearing_task_association.hearing_task)
+      end
 
       it { is_expected.to eq(true) }
     end
@@ -62,9 +67,13 @@ describe LegacyHearing do
     context "when the hearing has a cancelled disposition task" do
       let!(:hearing_task_association) { create(:hearing_task_association, hearing: hearing) }
       let!(:disposition_task) do
-        create(:disposition_task,
-               parent: hearing_task_association.hearing_task,
-               status: Constants.TASK_STATUSES.cancelled)
+        create(:assign_hearing_disposition_task,
+               :cancelled,
+               parent: hearing_task_association.hearing_task)
+      end
+
+      before do
+        hearing_task_association.hearing_task.update(status: :in_progress)
       end
 
       it { is_expected.to eq(false) }
@@ -72,7 +81,9 @@ describe LegacyHearing do
 
     context "when the hearing has a disposition task with children" do
       let!(:hearing_task_association) { create(:hearing_task_association, hearing: hearing) }
-      let!(:disposition_task) { create(:disposition_task, parent: hearing_task_association.hearing_task) }
+      let!(:disposition_task) do
+        create(:assign_hearing_disposition_task, parent: hearing_task_association.hearing_task)
+      end
       let!(:transcription_task) { create(:transcription_task, parent: disposition_task) }
 
       it { is_expected.to eq(false) }
@@ -166,17 +177,15 @@ describe LegacyHearing do
   context "#to_hash_for_worksheet" do
     subject { hearing.to_hash_for_worksheet(nil).with_indifferent_access }
 
+    let(:vbms_id) { "12345678" }
+    let!(:veteran) { create(:veteran, file_number: vbms_id) }
     let(:appeal) do
-      create(:legacy_appeal, :with_veteran, vacols_case:
-        create(
-          :case_with_form_9,
-          bfcorlid: "12345678",
-          case_issues: [create(:case_issue)]
-        ))
+      create(:legacy_appeal, vacols_case:
+        create(:case_with_form_9, bfcorlid: vbms_id, case_issues: [create(:case_issue)]))
     end
     let!(:additional_appeal) do
       create(:legacy_appeal, vacols_case:
-        create(:case_with_form_9, bfkey: "other id", bfcorlid: "12345678", case_issues: [create(:case_issue)]))
+        create(:case_with_form_9, bfkey: "other id", bfcorlid: vbms_id, case_issues: [create(:case_issue)]))
     end
     let!(:hearing) do
       create(:legacy_hearing, appeal: appeal, case_hearing: create(:case_hearing, folder_nr: appeal.vacols_id))
@@ -193,8 +202,12 @@ describe LegacyHearing do
 
     context "when a hearing & appeal exist" do
       it "returns expected keys" do
+        expect(subject["appellant_address_line_1"]).to eq(appeal.appellant_address_line_1)
+        expect(subject["appellant_address_line_2"]).to eq(appeal.appellant_address_line_2)
         expect(subject["appellant_city"]).to eq(appeal.appellant_city)
+        expect(subject["appellant_country"]).to eq(appeal.appellant_country)
         expect(subject["appellant_state"]).to eq(appeal.appellant_state)
+        expect(subject["appellant_zip"]).to eq(appeal.appellant_zip)
         expect(subject["veteran_age"]).to eq(appeal.veteran_age)
         expect(subject["veteran_gender"]).to eq(appeal.veteran_gender)
         expect(subject["veteran_first_name"]).to eq(hearing.veteran_first_name)
@@ -347,6 +360,72 @@ describe LegacyHearing do
         expect(hearing.add_on).to eq true
         expect(hearing.hold_open).to eq 60
         expect(hearing.representative_name).to eq "DAV - DON REED"
+      end
+    end
+  end
+
+  context "#hearing_day" do
+    context "associated hearing day exists" do
+      let(:hearing_day) { create(:hearing_day) }
+      let(:legacy_hearing) { create(:legacy_hearing, hearing_day: hearing_day) }
+
+      context "and hearing day id refers to a row in Caseflow" do
+        it "get hearing day returns the associated hearing day successfully" do
+          expect(legacy_hearing.hearing_day).to eq hearing_day
+        end
+
+        it "get hearing day calls update once" do
+          expect(legacy_hearing).to receive(:update!).once
+
+          legacy_hearing.hearing_day
+        end
+
+        it "get hearing day calls VACOLS only once" do
+          expect(HearingRepository).to receive(:load_vacols_data).once
+
+          legacy_hearing.hearing_day
+          legacy_hearing.hearing_day
+        end
+      end
+
+      context "and hearing day id refers to a row in VACOLS" do
+        let(:hearing_day) do
+          create(
+            :hearing_day,
+            scheduled_for: Time.zone.local(2018, 1, 1),
+            request_type: HearingDay::REQUEST_TYPES[:central]
+          )
+        end
+
+        it "get hearing day returns nil" do
+          expect(legacy_hearing.hearing_day).to eq nil
+        end
+
+        it "get hearing day calls hearing_day_id_refers_to_vacols_row" do
+          expect(legacy_hearing).to receive(:hearing_day_id_refers_to_vacols_row?).once
+
+          legacy_hearing.hearing_day
+        end
+
+        it "get hearing day never calls update!" do
+          expect(legacy_hearing).to_not receive(:update!)
+
+          legacy_hearing.hearing_day
+        end
+      end
+    end
+
+    context "associated hearing day does not exist" do
+      let(:legacy_hearing) do
+        create(
+          :legacy_hearing,
+          hearing_day: nil,
+          case_hearing: create(:case_hearing, vdkey: "123456")
+        )
+      end
+
+      it "get hearing day returns nil" do
+        expect(legacy_hearing.hearing_day).to eq nil
       end
     end
   end

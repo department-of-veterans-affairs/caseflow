@@ -29,9 +29,14 @@ class CompleteCaseReview
   end
 
   def create_quality_review_task
+    # Some situations do not want to move onto the QR task
+    # Where the appeal is a Legacy appeal
+    # We are in a non-Judge case review
+    # The case review is on a flow that already did QR creation
     return if case_review.appeal.is_a?(LegacyAppeal) ||
               !case_review.is_a?(JudgeCaseReview) ||
-              case_review.task.parent.is_a?(QualityReviewTask)
+              case_review.task.parent.is_a?(QualityReviewTask) ||
+              case_review.task.parent.is_a?(BvaDispatchTask)
 
     root_task = case_review.task.root_task
     if QualityReviewCaseSelector.select_case_for_quality_review?
@@ -45,7 +50,7 @@ class CompleteCaseReview
     return if success
 
     {
-      title: "Record is invalid",
+      title: COPY::INVALID_RECORD_ERROR_TITLE,
       detail: case_review.errors.full_messages.join(", ")
     }
   end

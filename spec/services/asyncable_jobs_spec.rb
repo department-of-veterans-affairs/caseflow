@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-describe AsyncableJobs do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe AsyncableJobs, :postgres do
   let(:veteran) { create(:veteran) }
   let!(:hlr) do
     create(:higher_level_review,
@@ -90,12 +93,24 @@ describe AsyncableJobs do
   end
 
   describe "#total_jobs" do
-    subject { described_class.new(page: 2, page_size: 4) }
+    context "page_size > 0" do
+      subject { described_class.new(page: 2, page_size: 4) }
 
-    it "paginates" do
-      expect(subject.jobs.length).to eq(2)
-      expect(subject.total_jobs).to eq(6)
-      expect(subject.total_pages).to eq(2)
+      it "paginates" do
+        expect(subject.jobs.length).to eq(2)
+        expect(subject.total_jobs).to eq(6)
+        expect(subject.total_pages).to eq(2)
+      end
+    end
+
+    context "page_size < 0" do
+      subject { described_class.new(page_size: -1) }
+
+      it "does not paginate" do
+        expect(subject.jobs.length).to eq(6)
+        expect(subject.total_jobs).to be_nil
+        expect(subject.total_pages).to be_nil
+      end
     end
   end
 end

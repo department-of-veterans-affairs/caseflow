@@ -1,18 +1,10 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-feature "NonComp Dispositions Task Page" do
+feature "NonComp Dispositions Task Page", :postgres do
   include IntakeHelpers
-
-  before do
-    FeatureToggle.enable!(:decision_reviews)
-  end
-
-  after do
-    FeatureToggle.disable!(:decision_reviews)
-  end
 
   def fill_in_disposition(num, disposition, description = nil)
     if description
@@ -75,6 +67,17 @@ feature "NonComp Dispositions Task Page" do
       end
     end
 
+    let!(:ineligible_request_issue) do
+      create(:request_issue,
+             :nonrating,
+             :ineligible,
+             nonrating_issue_description: "ineligible issue",
+             end_product_establishment: epe,
+             veteran_participant_id: veteran.participant_id,
+             decision_review: decision_review,
+             benefit_type: decision_review.benefit_type)
+    end
+
     let!(:in_progress_task) do
       create(:higher_level_review_task, :in_progress, appeal: decision_review, assigned_to: non_comp_org)
     end
@@ -134,12 +137,13 @@ feature "NonComp Dispositions Task Page" do
       expect(page).to have_current_path("/#{business_line_url}")
     end
 
-    scenario "saves decision issues" do
+    scenario "saves decision issues for eligible request issues" do
       visit dispositions_url
       expect(page).to have_button("Complete", disabled: true)
       expect(page).to have_link("Edit Issues")
+      expect(page).to_not have_content("ineligible issue")
 
-      # set description & disposition for each request issue
+      # set description & disposition for each active request issue
       fill_in_disposition(0, "Granted")
       fill_in_disposition(1, "DTA Error", "test description")
       fill_in_disposition(2, "Denied", "denied")

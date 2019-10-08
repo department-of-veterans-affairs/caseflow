@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-describe SupplementalClaimIntake do
+require "support/vacols_database_cleaner"
+require "rails_helper"
+
+describe SupplementalClaimIntake, :all_dbs do
   before do
     Time.zone = "Eastern Time (US & Canada)"
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
@@ -126,8 +129,10 @@ describe SupplementalClaimIntake do
       end
 
       context "claimant is missing address" do
+        let(:empty_address) { { address_line_1: nil, address_line_2: nil, city: nil, state: nil, zip: nil } }
+
         before do
-          allow_any_instance_of(BgsAddressService).to receive(:address).and_return(nil)
+          allow_any_instance_of(BgsAddressService).to receive(:fetch_bgs_record).and_return(empty_address)
         end
 
         it "adds claimant address required error" do
@@ -285,8 +290,10 @@ describe SupplementalClaimIntake do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
         claim_id: ratings_end_product_establishment.reference_id,
-        contentions: [{ description: "decision text" }],
-        user: user
+        contentions: array_including(description: "decision text",
+                                     contention_type: Constants.CONTENTION_TYPES.supplemental_claim),
+        user: user,
+        claim_date: detail.receipt_date.to_date
       )
 
       expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(

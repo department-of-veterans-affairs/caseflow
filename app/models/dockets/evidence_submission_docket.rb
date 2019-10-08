@@ -2,6 +2,6 @@
 
 class EvidenceSubmissionDocket < Docket
   def docket_type
-    "evidence_submission"
+    Constants.AMA_DOCKETS.evidence_submission
   end
 end

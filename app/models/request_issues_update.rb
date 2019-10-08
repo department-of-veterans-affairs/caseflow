@@ -8,32 +8,35 @@ class RequestIssuesUpdate < ApplicationRecord
 
   belongs_to :user
   belongs_to :review, polymorphic: true
+  has_many :job_notes, as: :job
 
   attr_writer :request_issues_data
   attr_reader :error_code
 
-  delegate :veteran, to: :review
+  delegate :veteran, :cancel_active_tasks, :create_business_line_tasks!, to: :review
+  delegate :withdrawn_issues, to: :withdrawal
+  delegate :corrected_issues, :correction_issues, to: :correction
 
   def perform!
     return false unless validate_before_perform
     return false if processed?
 
     transaction do
-      review.create_issues!(new_issues)
-      process_removed_issues!
-      process_legacy_issues!
-      process_withdrawn_issues!
+      process_issues!
       review.mark_rating_request_issues_to_reassociate!
-
       update!(
         before_request_issue_ids: before_issues.map(&:id),
         after_request_issue_ids: after_issues.map(&:id),
-        withdrawn_request_issue_ids: withdrawn_issues.map(&:id)
+        withdrawn_request_issue_ids: withdrawn_issues.map(&:id),
+        edited_request_issue_ids: edited_issues.map(&:id),
+        corrected_request_issue_ids: corrected_issues.map(&:id)
       )
+      create_business_line_tasks! if added_issues.present?
       cancel_active_tasks
       submit_for_processing!
-      process_job
     end
+
+    process_job
 
     true
   end
@@ -51,11 +54,15 @@ class RequestIssuesUpdate < ApplicationRecord
   def establish!
     attempted!
 
-    review.establish!
+    # re-assign user to whomever edited the Claim.
+    # this works around issue when original user is no longer authorized for VBMS.
+    review.end_product_establishments.each { |epe| epe.user = user } if review.processed_in_vbms?
 
+    review.establish!
+    edited_issues.each { |issue| RequestIssueContention.new(issue).update_text! }
     potential_end_products_to_remove = []
     removed_or_withdrawn_issues.select(&:end_product_establishment).each do |request_issue|
-      request_issue.end_product_establishment.remove_contention!(request_issue)
+      RequestIssueContention.new(request_issue).remove!
       potential_end_products_to_remove << request_issue.end_product_establishment
     end
 
@@ -64,7 +71,7 @@ class RequestIssuesUpdate < ApplicationRecord
     processed!
   end
 
-  def created_issues
+  def added_issues
     after_issues - before_issues
   end
 
@@ -76,10 +83,6 @@ class RequestIssuesUpdate < ApplicationRecord
     removed_issues + withdrawn_issues
   end
 
-  def persisted_issues
-    after_issues - withdrawn_issues
-  end
-
   def before_issues
     @before_issues ||= before_request_issue_ids ? fetch_before_issues : calculate_before_issues
   end
@@ -88,19 +91,19 @@ class RequestIssuesUpdate < ApplicationRecord
     @after_issues ||= after_request_issue_ids ? fetch_after_issues : calculate_after_issues
   end
 
-  def withdrawn_issues
-    @withdrawn_issues ||= withdrawn_request_issue_ids ? fetch_withdrawn_issues : calculate_withdrawn_issues
+  def edited_issues
+    @edited_issues ||= edited_request_issue_ids ? fetch_edited_issues : calculate_edited_issues
+  end
+
+  def all_updated_issues
+    added_issues + removed_issues + withdrawn_issues + edited_issues + correction_issues
   end
 
   private
 
   def changes?
-    review.request_issues.active_or_ineligible.count != @request_issues_data.count || !new_issues.empty? ||
-      !withdrawn_issues.empty?
-  end
-
-  def new_issues
-    after_issues.reject(&:persisted?)
+    review.request_issues.active_or_ineligible.count != @request_issues_data.count || !added_issues.empty? ||
+      withdrawn_issues.any? || edited_issues.any? || corrected_issues.any?
   end
 
   def calculate_after_issues
@@ -112,16 +115,16 @@ class RequestIssuesUpdate < ApplicationRecord
     end
   end
 
-  def calculate_withdrawn_issues
-    withdrawn_issue_data.map do |issue_data|
+  def calculate_edited_issues
+    edited_issue_data.map do |issue_data|
       review.find_or_build_request_issue_from_intake_data(issue_data)
     end
   end
 
-  def withdrawn_issue_data
+  def edited_issue_data
     return [] unless @request_issues_data
 
-    @request_issues_data.select { |ri| !ri[:withdrawal_date].nil? && ri[:request_issue_id] }
+    @request_issues_data.select { |ri| ri[:edited_description].present? && ri[:request_issue_id] }
   end
 
   def calculate_before_issues
@@ -129,19 +132,13 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def validate_before_perform
-    if @request_issues_data.blank? && !allow_zero_request_issues?
-      @error_code = :request_issues_data_empty
-    elsif !changes?
+    if !changes?
       @error_code = :no_changes
     elsif RequestIssuesUpdate.where(review: review).processable.exists?
       @error_code = :previous_update_not_done_processing
     end
 
     !@error_code
-  end
-
-  def allow_zero_request_issues?
-    FeatureToggle.enabled?(:remove_decision_reviews, user: RequestStore.store[:current_user])
   end
 
   def fetch_before_issues
@@ -152,8 +149,17 @@ class RequestIssuesUpdate < ApplicationRecord
     RequestIssue.where(id: after_request_issue_ids)
   end
 
-  def fetch_withdrawn_issues
-    RequestIssue.where(id: withdrawn_request_issue_ids)
+  def fetch_edited_issues
+    RequestIssue.where(id: edited_request_issue_ids)
+  end
+
+  def process_issues!
+    review.create_issues!(added_issues)
+    process_removed_issues!
+    process_legacy_issues!
+    process_withdrawn_issues!
+    process_edited_issues!
+    process_corrected_issues!
   end
 
   def process_legacy_issues!
@@ -161,17 +167,40 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def process_withdrawn_issues!
-    return if withdrawn_issues.empty?
+    withdrawal.call
+  end
 
-    withdrawal_date = withdrawn_issue_data.first[:withdrawal_date]
-    withdrawn_issues.each { |ri| ri.withdraw!(withdrawal_date) }
+  def withdrawal
+    @withdrawal ||= RequestIssueWithdrawal.new(
+      user: user,
+      review: review,
+      request_issues_data: @request_issues_data
+    )
+  end
+
+  def process_edited_issues!
+    return if edited_issues.empty?
+
+    edited_issue_data.each do |edited_issue|
+      RequestIssue.find(
+        edited_issue[:request_issue_id].to_s
+      ).save_edited_contention_text!(edited_issue[:edited_description])
+    end
   end
 
   def process_removed_issues!
     removed_issues.each(&:remove!)
   end
 
-  def cancel_active_tasks
-    persisted_issues.empty? && review.cancel_active_tasks
+  def correction
+    @correction ||= RequestIssueCorrection.new(
+      review: review,
+      corrected_request_issue_ids: corrected_request_issue_ids,
+      request_issues_data: @request_issues_data
+    )
+  end
+
+  def process_corrected_issues!
+    correction.call
   end
 end

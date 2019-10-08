@@ -5,7 +5,7 @@ class RegionalOfficeEmail
   attr_accessor :recipient, :ro_id
 
   def ro_name
-    ro_city ? "#{ro_city[:city]}, #{ro_city[:state]}" : "Unknown"
+    ro_city ? "#{ro_city[:city]}, #{ro_city[:state]}" : COPY::UNKNOWN_REGIONAL_OFFICE
   end
 
   private

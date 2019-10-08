@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe SyncIntakeJob do
   context ".perform" do
     before do

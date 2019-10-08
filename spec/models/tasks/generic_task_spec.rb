@@ -1,19 +1,22 @@
 # frozen_string_literal: true
 
-describe GenericTask do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe GenericTask, :postgres do
   describe ".available_actions" do
     let(:task) { nil }
     let(:user) { nil }
     subject { task.available_actions(user) }
 
     context "when task is assigned to user" do
-      let(:task) { GenericTask.find(FactoryBot.create(:generic_task).id) }
+      let(:task) { GenericTask.find(create(:generic_task).id) }
       let(:user) { task.assigned_to }
       let(:expected_actions) do
         [
           Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
           Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
-          Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h,
+          Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
           Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
           Constants.TASK_ACTIONS.CANCEL_TASK.to_h
         ]
@@ -24,8 +27,8 @@ describe GenericTask do
     end
 
     context "when task is assigned to somebody else" do
-      let(:task) { GenericTask.find(FactoryBot.create(:generic_task).id) }
-      let(:user) { FactoryBot.create(:user) }
+      let(:task) { GenericTask.find(create(:generic_task).id) }
+      let(:user) { create(:user) }
       let(:expected_actions) { [] }
       it "should return an empty array" do
         expect(subject).to eq(expected_actions)
@@ -33,9 +36,9 @@ describe GenericTask do
     end
 
     context "when task is assigned to an organization the user is a member of" do
-      let(:org) { Organization.find(FactoryBot.create(:organization).id) }
-      let(:task) { GenericTask.find(FactoryBot.create(:generic_task, assigned_to: org).id) }
-      let(:user) { FactoryBot.create(:user) }
+      let(:org) { Organization.find(create(:organization).id) }
+      let(:task) { GenericTask.find(create(:generic_task, assigned_to: org).id) }
+      let(:user) { create(:user) }
       let(:expected_actions) do
         [
           Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
@@ -51,30 +54,30 @@ describe GenericTask do
     end
   end
 
-  describe ".available_hearing_admin_actions" do
-    let!(:task) { FactoryBot.create(:generic_task) }
-    let(:user) { FactoryBot.create(:user) }
+  describe ".available_hearing_user_actions" do
+    let!(:task) { create(:generic_task) }
+    let(:user) { create(:user) }
 
-    subject { task.available_hearing_admin_actions(user) }
+    subject { task.available_hearing_user_actions(user) }
 
     it "returns no actions when task doesn't have an active hearing task ancestor" do
       expect(subject).to eq []
     end
 
     context "task has an active hearing task ancestor" do
-      let(:appeal) { FactoryBot.create(:appeal) }
-      let!(:hearing_task) { FactoryBot.create(:hearing_task, appeal: appeal) }
-      let(:disposition_task_type) { :disposition_task }
-      let(:disposition_task_status) { Constants.TASK_STATUSES.assigned }
+      let(:appeal) { create(:appeal) }
+      let!(:hearing_task) { create(:hearing_task, appeal: appeal) }
+      let(:disposition_task_type) { :assign_hearing_disposition_task }
+      let(:trait) { :assigned }
       let!(:disposition_task) do
-        FactoryBot.create(
+        create(
           disposition_task_type,
+          trait,
           parent: hearing_task,
-          appeal: appeal,
-          status: disposition_task_status
+          appeal: appeal
         )
       end
-      let!(:task) { FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
+      let!(:task) { create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
 
       context "user is a member of hearings management" do
         before do
@@ -97,7 +100,7 @@ describe GenericTask do
       end
 
       context "hearing task has an inactive child disposition task" do
-        let(:disposition_task_status) { Constants.TASK_STATUSES.cancelled }
+        let(:trait) { :cancelled }
 
         it "returns no actions" do
           expect(subject).to eq []
@@ -112,16 +115,70 @@ describe GenericTask do
         end
       end
     end
+
+    context "task's appeal has an inactive hearing task associated with a hearing with a disposition" do
+      let!(:appeal) { create(:appeal) }
+      let!(:past_hearing_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
+      let!(:hearing) do
+        create(:hearing, appeal: appeal, disposition: past_hearing_disposition)
+      end
+      let!(:hearing_task) do
+        create(:hearing_task, :completed, appeal: appeal)
+      end
+      let!(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
+      let!(:hearing_task_2) { create(:hearing_task, appeal: appeal) }
+      let!(:association_2) do
+        create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
+      end
+
+      context "user is a member of hearings management and task is a ScheduleHearingTask" do
+        let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
+
+        before do
+          OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+        end
+
+        it "returns a create change previous hearing disposition task action" do
+          expect(subject).to eq [Constants.TASK_ACTIONS.CREATE_CHANGE_PREVIOUS_HEARING_DISPOSITION_TASK.to_h]
+        end
+
+        context "past hearing disposition is nil" do
+          let!(:past_hearing_disposition) { nil }
+
+          it "returns no actions" do
+            expect(subject).to eq []
+          end
+        end
+
+        context "task is not a ScheduleHearingTask" do
+          let!(:task) { create(:assign_hearing_disposition_task, parent: hearing_task_2, appeal: appeal) }
+
+          it "returns no actions" do
+            expect(subject).to eq []
+          end
+        end
+      end
+
+      context "user is a member of hearing admin" do
+        before do
+          OrganizationsUser.add_user_to_organization(user, HearingAdmin.singleton)
+        end
+
+        it "returns no actions" do
+          expect(subject).to eq []
+        end
+      end
+    end
   end
 
   describe ".available_actions_unwrapper" do
-    let(:user) { FactoryBot.create(:user) }
-    let(:task) { GenericTask.find(FactoryBot.create(:generic_task, assigned_to: assignee, status: status).id) }
+    let(:user) { create(:user) }
+    let(:task) { GenericTask.find(create(:generic_task, trait, assigned_to: assignee).id) }
     subject { task.available_actions_unwrapper(user) }
 
     context "when task assigned to the user is has been completed" do
       let(:assignee) { user }
-      let(:status) { Constants.TASK_STATUSES.completed }
+      let(:trait) { :completed }
       let(:expected_actions) { [] }
       it "should return an empty list" do
         expect(subject).to eq(expected_actions)
@@ -129,8 +186,8 @@ describe GenericTask do
     end
 
     context "when task assigned to an organization the user is a member of is on hold" do
-      let(:assignee) { Organization.find(FactoryBot.create(:organization).id) }
-      let(:status) { Constants.TASK_STATUSES.on_hold }
+      let(:assignee) { Organization.find(create(:organization).id) }
+      let(:trait) { :on_hold }
       let(:expected_actions) { [] }
       before { allow_any_instance_of(Organization).to receive(:user_has_access?).and_return(true) }
       it "should return an empty list" do
@@ -140,11 +197,11 @@ describe GenericTask do
   end
 
   describe ".verify_user_can_update!" do
-    let(:user) { FactoryBot.create(:user) }
-    let(:other_user) { FactoryBot.create(:user) }
-    let(:org) { FactoryBot.create(:organization) }
-    let(:other_org) { FactoryBot.create(:organization) }
-    let(:task) { GenericTask.find(FactoryBot.create(:generic_task, :in_progress, assigned_to: assignee).id) }
+    let(:user) { create(:user) }
+    let(:other_user) { create(:user) }
+    let(:org) { create(:organization) }
+    let(:other_org) { create(:organization) }
+    let(:task) { GenericTask.find(create(:generic_task, :in_progress, assigned_to: assignee).id) }
 
     before do
       OrganizationsUser.add_user_to_organization(user, org)
@@ -180,9 +237,9 @@ describe GenericTask do
   end
 
   describe ".update_from_params" do
-    let(:user) { FactoryBot.create(:user) }
-    let(:org) { FactoryBot.create(:organization) }
-    let(:task) { GenericTask.find(FactoryBot.create(:generic_task, :in_progress, assigned_to: assignee).id) }
+    let(:user) { create(:user) }
+    let(:org) { create(:organization) }
+    let(:task) { GenericTask.find(create(:generic_task, :in_progress, assigned_to: assignee).id) }
 
     context "task is assigned to an organization" do
       let(:assignee) { org }
@@ -208,7 +265,7 @@ describe GenericTask do
     end
 
     context "task is assigned to a person" do
-      let(:other_user) { FactoryBot.create(:user) }
+      let(:other_user) { create(:user) }
       let(:assignee) { user }
 
       context "who is not the current user" do
@@ -241,11 +298,11 @@ describe GenericTask do
   end
 
   describe ".create_many_from_params" do
-    let(:parent_assignee) { FactoryBot.create(:user) }
-    let(:current_user) { FactoryBot.create(:user) }
-    let(:assignee) { FactoryBot.create(:user) }
+    let(:parent_assignee) { create(:user) }
+    let(:current_user) { create(:user) }
+    let(:assignee) { create(:user) }
     let(:parent) do
-      t = FactoryBot.create(:generic_task, :in_progress, assigned_to: parent_assignee)
+      t = create(:generic_task, :in_progress, assigned_to: parent_assignee)
       GenericTask.find(t.id)
     end
 
@@ -321,8 +378,8 @@ describe GenericTask do
     end
 
     context "when parent task is assigned to an organization" do
-      let(:org) { FactoryBot.create(:organization) }
-      let(:parent) { GenericTask.find(FactoryBot.create(:generic_task, :in_progress, assigned_to: org).id) }
+      let(:org) { create(:organization) }
+      let(:parent) { GenericTask.find(create(:generic_task, :in_progress, assigned_to: org).id) }
 
       context "when there is no current user" do
         it "should raise error and not create the child task nor update status" do
@@ -345,12 +402,12 @@ describe GenericTask do
   end
 
   describe ".reassign" do
-    let(:org) { Organization.find(FactoryBot.create(:organization).id) }
-    let(:root_task) { RootTask.find(FactoryBot.create(:root_task).id) }
-    let(:org_task) { GenericTask.find(FactoryBot.create(:generic_task, parent_id: root_task.id, assigned_to: org).id) }
-    let(:task) { GenericTask.find(FactoryBot.create(:generic_task, parent_id: org_task.id).id) }
+    let(:org) { Organization.find(create(:organization).id) }
+    let(:root_task) { RootTask.find(create(:root_task).id) }
+    let(:org_task) { GenericTask.find(create(:generic_task, parent_id: root_task.id, assigned_to: org).id) }
+    let(:task) { GenericTask.find(create(:generic_task, parent_id: org_task.id).id) }
     let(:old_assignee) { task.assigned_to }
-    let(:new_assignee) { FactoryBot.create(:user) }
+    let(:new_assignee) { create(:user) }
     let(:params) do
       {
         assigned_to_id: new_assignee.id,
@@ -379,15 +436,15 @@ describe GenericTask do
     context "When old assignee reassigns task with several child tasks to a new user" do
       let(:completed_children_cnt) { 4 }
       let!(:completed_children) do
-        FactoryBot.create_list(
+        create_list(
           :generic_task,
           completed_children_cnt,
-          parent_id: task.id,
-          status: Constants.TASK_STATUSES.completed
+          :completed,
+          parent_id: task.id
         )
       end
       let(:incomplete_children_cnt) { 5 }
-      let!(:incomplete_children) { FactoryBot.create_list(:generic_task, incomplete_children_cnt, parent_id: task.id) }
+      let!(:incomplete_children) { create_list(:generic_task, incomplete_children_cnt, parent_id: task.id) }
 
       it "reassign method should return list with old and new tasks and incomplete child tasks" do
         expect(subject.length).to eq(2 + incomplete_children_cnt)
@@ -397,7 +454,7 @@ describe GenericTask do
         expect { subject }.to_not raise_error
         expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
 
-        new_task = task.parent.children.active.first
+        new_task = task.parent.children.open.first
         expect(new_task.children.length).to eq(incomplete_children_cnt)
 
         task.reload
@@ -408,14 +465,14 @@ describe GenericTask do
 
   describe ".verify_org_task_unique" do
     context "when attempting to create two tasks for different appeals assigned to the same organization" do
-      let(:organization) { FactoryBot.create(:organization) }
-      let(:appeals) { FactoryBot.create_list(:appeal, 2) }
-      let(:root_task) { FactoryBot.create(:root_task) }
-      let(:root_task_2) { FactoryBot.create(:root_task) }
-      let(:root_task_3) { FactoryBot.create(:root_task) }
+      let(:organization) { create(:organization) }
+      let(:appeals) { create_list(:appeal, 2) }
+      let(:root_task) { create(:root_task) }
+      let(:root_task_2) { create(:root_task) }
+      let(:root_task_3) { create(:root_task) }
 
       before do
-        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+        OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
         BvaDispatchTask.create_from_root_task(root_task)
         QualityReviewTask.create_from_root_task(root_task_3).update!(status: "completed")
       end

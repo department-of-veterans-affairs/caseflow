@@ -1,14 +1,15 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe Veteran do
+describe Veteran, :postgres do
   let(:veteran) { Veteran.new(file_number: "44556677", first_name: "June", last_name: "Juniper") }
 
   before do
     Timecop.freeze(Time.utc(2022, 1, 15, 12, 0, 0))
 
-    Fakes::BGSService.veteran_records = { "44556677" => veteran_record }
+    Fakes::BGSService.store_veteran_record("44556677", veteran_record)
 
     RequestStore[:current_user] = create(:user)
   end
@@ -22,7 +23,7 @@ describe Veteran do
       middle_name: "Janice",
       last_name: "Juniper",
       name_suffix: "II",
-      ssn: "123456789",
+      ssn: ssn,
       address_line1: "122 Mullberry St.",
       address_line2: "PO BOX 123",
       address_line3: address_line3,
@@ -46,6 +47,7 @@ describe Veteran do
   let(:address_line3) { "Daisies" }
   let(:date_of_birth) { "21/12/1989" }
   let(:service) { [{ branch_of_service: "army" }] }
+  let(:ssn) { "123456789" }
 
   context ".find_or_create_by_file_number" do
     subject { Veteran.find_or_create_by_file_number(file_number, sync_name: sync_name) }
@@ -110,7 +112,7 @@ describe Veteran do
       let!(:veteran) { create(:veteran, file_number: file_number) }
 
       before do
-        Fakes::BGSService.veteran_records[file_number][:last_name] = "Changed"
+        Fakes::BGSService.edit_veteran_record(file_number, :last_name, "Changed")
       end
 
       context "sync_name flag is true" do
@@ -139,6 +141,21 @@ describe Veteran do
 
           expect(described_class.find_or_create_by_file_number(file_number, sync_name: sync_name)).to eq(veteran)
         end
+      end
+    end
+
+    context "when local participant_id attribute is nil" do
+      let!(:veteran) do
+        veteran = create(:veteran, file_number: file_number)
+        veteran.update!(participant_id: nil)
+        veteran
+      end
+      let(:sync_name) { true }
+
+      it "caches it like name" do
+        expect(described_class.find_by(file_number: file_number)[:participant_id]).to be_nil
+        described_class.find_or_create_by_file_number(file_number, sync_name: sync_name)
+        expect(described_class.find_by(file_number: file_number)[:participant_id]).to_not be_nil
       end
     end
   end
@@ -237,7 +254,8 @@ describe Veteran do
         country: "USA",
         date_of_birth: "21/12/1989",
         zip_code: "94117",
-        address_type: ""
+        address_type: "",
+        email_address: nil
       )
     end
 
@@ -428,10 +446,12 @@ describe Veteran do
     let!(:appeals) do
       [
         create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id)]),
-        create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id_without_vso)])
+        create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id_without_vso)]),
+        create(:legacy_appeal, vacols_case: create(:case, bfcorlid: vbms_id))
       ]
     end
 
+    let(:vbms_id) { LegacyAppeal.convert_file_number_to_vacols(veteran.file_number) }
     let(:participant_id) { "1234" }
     let(:participant_id_without_vso) { "5678" }
     let(:vso_participant_id) { "2452383" }
@@ -457,6 +477,7 @@ describe Veteran do
 
     before do
       stub_const("BGSService", ExternalApi::BGSService)
+      veteran.update!(participant_id: participant_id)
 
       allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_ids)
         .with(array_including(participant_ids)).and_return(poas)
@@ -464,8 +485,9 @@ describe Veteran do
 
     it "returns only the case with vso assigned to it" do
       returned_appeals = veteran.accessible_appeals_for_poa([vso_participant_id, "other vso participant id"])
-      expect(returned_appeals.count).to eq 1
+      expect(returned_appeals.count).to eq 2
       expect(returned_appeals.first).to eq appeals.first
+      expect(returned_appeals.last).to eq appeals.last
     end
   end
 
@@ -485,6 +507,24 @@ describe Veteran do
     context "when the date has already passed this year" do
       let(:date_of_birth) { "1/1/1987" }
       it { is_expected.to eq(35) }
+    end
+  end
+
+  context "#ssn" do
+    subject { veteran.ssn }
+
+    context "when populated returns the value" do
+      it { is_expected.to eq("123456789") }
+    end
+
+    context "when there is no ssn returns nil" do
+      let(:ssn) { nil }
+      it { is_expected.to eq(nil) }
+    end
+
+    context "when there is no veteran record returns nil" do
+      let(:veteran_record) { nil }
+      it { is_expected.to eq(nil) }
     end
   end
 
@@ -508,8 +548,8 @@ describe Veteran do
 
   describe ".find_by_file_number_or_ssn" do
     let(:file_number) { "123456789" }
-    let(:ssn) { file_number.to_s.reverse } # our fakes do this
-    let!(:veteran) { create(:veteran, file_number: file_number) }
+    let(:ssn) { "666660000" }
+    let!(:veteran) { create(:veteran, file_number: file_number, ssn: ssn) }
 
     it "fetches based on file_number" do
       expect(described_class.find_by_file_number_or_ssn(file_number)).to eq(veteran)
@@ -525,7 +565,7 @@ describe Veteran do
 
     context "exists in BGS with different name than in Caseflow" do
       before do
-        Fakes::BGSService.veteran_records[veteran.file_number][:last_name] = "Changed"
+        Fakes::BGSService.edit_veteran_record(file_number, :last_name, "Changed")
       end
 
       context "sync_name flag is true" do
@@ -564,10 +604,14 @@ describe Veteran do
 
   describe ".find_or_create_by_file_number_or_ssn" do
     let(:file_number) { "123456789" }
-    let(:ssn) { file_number.to_s.reverse } # our fakes do this
+    let(:ssn) { "666660000" }
+
+    before do
+      BGSService.veteran_store.clear!
+    end
 
     context "veteran exists in Caseflow" do
-      let!(:veteran) { create(:veteran, file_number: file_number) }
+      let!(:veteran) { create(:veteran, file_number: file_number, ssn: ssn) }
 
       it "fetches based on file_number" do
         expect(described_class.find_or_create_by_file_number_or_ssn(file_number)).to eq(veteran)
@@ -591,7 +635,7 @@ describe Veteran do
     end
 
     context "does not exist in Caseflow" do
-      let!(:veteran) { create(:veteran, file_number: file_number) }
+      let!(:veteran) { create(:veteran, file_number: file_number, ssn: ssn) }
 
       before do
         veteran.destroy! # leaves it in BGS
@@ -613,10 +657,10 @@ describe Veteran do
     end
 
     context "exists in BGS with different name than in Caseflow" do
-      let!(:veteran) { create(:veteran, file_number: file_number) }
+      let!(:veteran) { create(:veteran, file_number: file_number, ssn: ssn) }
 
       before do
-        Fakes::BGSService.veteran_records[veteran.file_number][:last_name] = "Changed"
+        Fakes::BGSService.edit_veteran_record(veteran.file_number, :last_name, "Changed")
       end
 
       context "sync_name flag is true" do
@@ -657,25 +701,27 @@ describe Veteran do
     subject { veteran.unload_bgs_record }
 
     it "uses the new address for establishing a claim" do
-      expect(veteran.bgs_record).to include(address_line1: "122 Mullberry St.")
+      expect(veteran.bgs_record[:address_line1]).to eq("122 Mullberry St.")
 
-      Fakes::BGSService.veteran_records[veteran.file_number][:address_line1] = "Changed"
+      Fakes::BGSService.edit_veteran_record(veteran.file_number, :address_line1, "Changed")
 
       subject
 
-      expect(veteran.bgs_record).to include(address_line1: "Changed")
+      expect(veteran.bgs_record[:address_line1]).to eq("Changed")
     end
   end
 
-  describe "#stale_name?" do
+  describe "#stale_attributes?" do
     let(:first_name) { "Jane" }
     let(:last_name) { "Doe" }
     let(:middle_name) { "Q" }
     let(:name_suffix) { "Esq" }
+    let(:ssn) { "666000000" }
     let(:bgs_first_name) { first_name }
     let(:bgs_last_name) { last_name }
     let(:bgs_middle_name) { middle_name }
     let(:bgs_name_suffix) { name_suffix }
+    let(:bgs_ssn) { ssn }
     let!(:veteran) do
       create(
         :veteran,
@@ -683,16 +729,18 @@ describe Veteran do
         last_name: last_name,
         middle_name: middle_name,
         name_suffix: name_suffix,
+        ssn: ssn,
         bgs_veteran_record: {
           first_name: bgs_first_name,
           last_name: bgs_last_name,
           middle_name: bgs_middle_name,
-          name_suffix: bgs_name_suffix
+          name_suffix: bgs_name_suffix,
+          ssn: bgs_ssn
         }
       )
     end
 
-    subject { veteran.stale_name? }
+    subject { veteran.stale_attributes? }
 
     context "no difference" do
       it { is_expected.to eq(false) }
@@ -730,6 +778,16 @@ describe Veteran do
 
     context "name_suffix does not match BGS" do
       let(:bgs_name_suffix) { "Changed" }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "ssn does not match BGS" do
+      let(:bgs_ssn) { "666999999" }
+
+      before do
+        Fakes::BGSService.edit_veteran_record(veteran.file_number, :ssn, bgs_ssn)
+      end
 
       it { is_expected.to eq(true) }
     end

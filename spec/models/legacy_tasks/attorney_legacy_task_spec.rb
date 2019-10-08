@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-describe AttorneyLegacyTask do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe AttorneyLegacyTask, :postgres do
   before do
     Timecop.freeze(Time.utc(2015, 1, 30, 12, 0, 0))
   end

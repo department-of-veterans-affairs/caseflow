@@ -43,7 +43,6 @@ export default class TestUsers extends React.PureComponent {
   };
 
   userIdOnChange = (value) => this.setState({ userId: value });
-  stationIdOnChange = (value) => this.setState({ stationId: value });
   featureToggleOnChange = (value, deletedValue) => {
     ApiUtil.post('/test/toggle_feature', { data: {
       enable: value,
@@ -56,15 +55,15 @@ export default class TestUsers extends React.PureComponent {
 
   handleLogInAsUser = () => {
     this.setState({ isLoggingIn: true });
-    ApiUtil.post(`/test/log_in_as_user?id=${this.state.userId}&station_id=${this.state.stationId}`).
+    ApiUtil.post(`/test/log_in_as_user?id=${this.state.userId}`).
       then(() => {
         window.location = '/help';
       }).
       catch((err) => {
         this.setState(
           { isLoggingIn: false,
-            userId: '',
-            stationId: '' });
+            userId: ''
+          });
         console.warn(err);
       });
   }
@@ -146,6 +145,12 @@ export default class TestUsers extends React.PureComponent {
         <AppFrame>
           <AppSegment filledBackground>
             <h1>Welcome to the Caseflow admin page.</h1>
+            { this.props.userSession &&
+              <div>
+                <p>Your session</p>
+                <pre>{JSON.stringify(this.props.userSession, null, 2)}</pre>
+              </div>
+            }
             { this.props.dependenciesFaked &&
               <div>
                 <p>
@@ -207,11 +212,6 @@ export default class TestUsers extends React.PureComponent {
                 name="userId"
                 value={this.state.userId}
                 onChange={this.userIdOnChange} />
-              <TextField
-                label="Station ID:"
-                name="stationId"
-                value={this.state.stationId}
-                onChange={this.stationIdOnChange} />
               <Button
                 onClick={this.handleLogInAsUser}
                 name="Log in as user"

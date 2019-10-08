@@ -132,7 +132,8 @@ export const getHearingWorksheetLink = (hearings) => {
       {hearings.map((hearing, key) => {
         return <div>
           <a target="_blank"
-            href={`/hearings/${hearing.external_id}/worksheet/print?keep_open=true`}
+            href={`/hearings/worksheet/print?keep_open=true&hearing_ids=${hearing.external_id}`}
+            rel="noopener noreferrer"
             key={key}>Hearing Worksheet</a>
         </div>;
       })}
@@ -164,9 +165,8 @@ export const handleErrorWithSafeNavigation = (response) => {
   if (!isJson) {
     return null;
   }
-  const jsonResponseText = _.get(response, 'response.text');
-  const parsedResponseText = JSON.parse(jsonResponseText);
-  const error = _.get(parsedResponseText, 'errors[0].detail', null);
+  const jsonResponse = _.get(response, 'response.body');
+  const error = _.get(jsonResponse, 'errors[0].detail', null);
 
   return error;
 };

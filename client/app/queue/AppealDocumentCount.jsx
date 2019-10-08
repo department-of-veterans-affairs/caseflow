@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import ApiUtil from '../util/ApiUtil';
-
+import { getMinutesToMilliseconds } from '../util/DateUtil';
 import { loadAppealDocCount, setAppealDocCount, errorFetchingDocumentCount } from './QueueActions';
 
 import { css } from 'glamor';
@@ -31,15 +31,13 @@ class AppealDocumentCount extends React.PureComponent {
 
     const requestOptions = {
       withCredentials: true,
-      timeout: { response: 5 * 60 * 1000 }
+      timeout: { response: getMinutesToMilliseconds(5) }
     };
 
     this.props.loadAppealDocCount(this.props.externalId);
 
     ApiUtil.get(`/appeals/${this.props.externalId}/document_count`, requestOptions).then((response) => {
-      const resp = JSON.parse(response.text);
-
-      this.props.setAppealDocCount(this.props.externalId, resp.document_count);
+      this.props.setAppealDocCount(this.props.externalId, response.body.document_count);
     }, () => {
       this.props.errorFetchingDocumentCount(this.props.externalId);
     });
@@ -65,7 +63,16 @@ class AppealDocumentCount extends React.PureComponent {
 
 AppealDocumentCount.propTypes = {
   appeal: PropTypes.object.isRequired,
-  loadingText: PropTypes.bool
+  docCountForAppeal: PropTypes.shape({
+    docCountText: PropTypes.number,
+    loading: PropTypes.bool,
+    error: PropTypes.bool
+  }),
+  errorFetchingDocumentCount: PropTypes.func,
+  externalId: PropTypes.string,
+  loadAppealDocCount: PropTypes.func,
+  loadingText: PropTypes.bool,
+  setAppealDocCount: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {

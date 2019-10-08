@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
-describe HearingAdminActionTask do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe HearingAdminActionTask, :postgres do
   let!(:veteran) { create(:veteran) }
   let!(:appeal) { create(:appeal, veteran: veteran) }
+  let!(:hearings_management_user) { create(:hearings_coordinator) }
 
   context "create a new HearingAdminActionTask" do
-    let!(:hearings_management_user) { FactoryBot.create(:hearings_coordinator) }
-    let!(:parent_task) { FactoryBot.create(:schedule_hearing_task, appeal: appeal) }
+    let!(:parent_task) { create(:schedule_hearing_task, appeal: appeal) }
     let(:task_params) { { appeal: appeal, parent_id: parent_task.id } }
 
     before do
@@ -45,7 +48,7 @@ describe HearingAdminActionTask do
     end
 
     context "there is a hearing admin org user" do
-      let(:hearing_admin_user) { FactoryBot.create(:user, station_id: 101) }
+      let(:hearing_admin_user) { create(:user, station_id: 101) }
 
       before do
         OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
@@ -54,25 +57,6 @@ describe HearingAdminActionTask do
       it "has no actions available to the hearing admin user" do
         expect(subject.available_actions_unwrapper(hearing_admin_user).count).to eq 0
       end
-    end
-  end
-
-  describe "VerifyAddressTask after update" do
-    let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal) }
-    let!(:verify_address_task) do
-      HearingAdminActionVerifyAddressTask.create!(
-        appeal: appeal,
-        parent: schedule_hearing_task,
-        assigned_to: HearingsManagement.singleton
-      )
-    end
-
-    it "finds closest_ro for veteran" do
-      VADotGovService = Fakes::VADotGovService
-      verify_address_task.update!(status: "completed")
-
-      expect(Appeal.first.closest_regional_office).to eq "RO17"
-      expect(Appeal.first.available_hearing_locations.count).to eq 2
     end
   end
 end

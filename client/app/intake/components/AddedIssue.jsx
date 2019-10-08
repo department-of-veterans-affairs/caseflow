@@ -1,8 +1,10 @@
+/* eslint-disable react/prop-types */
+
 import _ from 'lodash';
 import React from 'react';
 
 import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
-import INTAKE_STRINGS from '../../../constants/INTAKE_STRINGS.json';
+import COPY from '../../../COPY.json';
 
 import { legacyIssue } from '../util/issues';
 
@@ -17,7 +19,17 @@ class AddedIssue extends React.PureComponent {
       return true;
     }
 
-    let existingRequestIssue = _.filter(requestIssues, { rating_issue_reference_id: issue.ratingIssueReferenceId })[0];
+    let existingRequestIssue = _.filter(
+      requestIssues,
+      { rating_issue_reference_id: issue.ratingIssueReferenceId }
+    )[0];
+
+    if (!existingRequestIssue) {
+      existingRequestIssue = _.filter(
+        requestIssues,
+        { rating_decision_reference_id: issue.ratingDecisionReferenceId }
+      )[0];
+    }
 
     if (existingRequestIssue && !existingRequestIssue.ineligible_reason) {
       return false;
@@ -101,13 +113,18 @@ class AddedIssue extends React.PureComponent {
       }
       { issue.vacolsId && !eligibleState.errorMsg &&
         <div className="issue-vacols">
-          <span className="msg">{ INTAKE_STRINGS.adding_this_issue_vacols_optin }:</span>
+          <span className="msg">
+            { issue.referenceId ? COPY.VACOLS_OPTIN_ISSUE_CLOSED_EDIT : COPY.VACOLS_OPTIN_ISSUE_NEW }:
+          </span>
           <span className="desc">{ legacyIssue(issue, this.props.legacyAppeals).description }</span>
         </div>
       }
-      { issue.withdrawalPending && <p>Withdraw pending</p> }
+      { issue.withdrawalPending && <p>Withdrawal pending</p> }
       { issue.withdrawalDate && <p>Withdrawn on {issue.withdrawalDate}</p> }
-
+      { issue.endProductCleared && <p>Status: Cleared, waiting for decision</p> }
+      { issue.correctionType && <p className="correction-pending">
+          This issue will be added to a 930 EP for correction
+      </p> }
     </div>;
   }
 

@@ -60,7 +60,7 @@ class CaseListTable extends React.PureComponent {
       },
       {
         header: COPY.CASE_LIST_TABLE_APPEAL_STATUS_COLUMN_TITLE,
-        valueFunction: (appeal) => appeal.status
+        valueFunction: (appeal) => appeal.withdrawn === true ? 'Withdrawn' : appeal.status
       },
       {
         header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,

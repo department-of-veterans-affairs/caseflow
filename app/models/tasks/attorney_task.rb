@@ -14,22 +14,23 @@ class AttorneyTask < Task
   validate :assigned_to_role_is_valid
   validate :child_attorney_tasks_are_completed, on: :create
 
+  after_update :send_back_to_judge_assign, if: :task_just_cancelled?
+
   def available_actions(user)
-    if parent.is_a?(JudgeTask) && parent.assigned_to == user
-      return [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
+    # Both the judge who assigned this task and the judge who is assigned the parent review task get these actions
+    if parent.is_a?(JudgeTask) && (parent.assigned_to == user || assigned_by == user)
+      return [
+        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
+        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+      ]
     end
 
     return [] if assigned_to != user
 
-    review_decision_label = if ama?
-                              Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h
-                            else
-                              Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h
-                            end
     [
-      review_decision_label,
+      Constants.TASK_ACTIONS.REVIEW_DECISION_DRAFT.to_h,
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      appropriate_timed_hold_task_action
+      Constants.TASK_ACTIONS.CANCEL_TASK.to_h
     ]
   end
 
@@ -42,14 +43,14 @@ class AttorneyTask < Task
     super
   end
 
-  def label
+  def self.label
     COPY::ATTORNEY_TASK_LABEL
   end
 
   private
 
   def child_attorney_tasks_are_completed
-    if parent&.children_attorney_tasks&.active&.any?
+    if parent&.children_attorney_tasks&.open&.any?
       errors.add(:parent, "has open child tasks")
     end
   end
@@ -60,5 +61,24 @@ class AttorneyTask < Task
 
   def assigned_by_role_is_valid
     errors.add(:assigned_by, "has to be a judge") if assigned_by && !assigned_by.judge_in_vacols?
+  end
+
+  def task_just_cancelled?
+    saved_change_to_attribute?("status") && cancelled?
+  end
+
+  def send_back_to_judge_assign
+    transaction do
+      cancel_parent_judge_review
+      open_judge_assign_task
+    end
+  end
+
+  def cancel_parent_judge_review
+    parent.update!(status: Constants.TASK_STATUSES.cancelled)
+  end
+
+  def open_judge_assign_task
+    JudgeAssignTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: assigned_by)
   end
 end

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-require "support/intake_helpers"
+require "support/database_cleaner"
+require "rails_helper"
 
-feature "Intake Confirmation Page" do
+feature "Intake Confirmation Page", :postgres do
   include IntakeHelpers
 
   before { setup_intake_flags }
@@ -15,7 +16,7 @@ feature "Intake Confirmation Page" do
       context "HRL allows ineligible issues to remain due to untimeliness" do
         let(:claim_review_type) { :higher_level_review }
 
-        it "does not show edit in VBMS or tracked item if there is no End Product" do
+        it "does not show tracked item if there is no End Product" do
           start_claim_review(claim_review_type)
 
           visit "/intake"
@@ -26,7 +27,7 @@ feature "Intake Confirmation Page" do
           add_untimely_exemption_response("Yes")
           click_intake_finish
           expect(page).to have_content("Intake completed")
-          expect(page).to_not have_content("If you need to edit this, go to VBMS claim details")
+          expect(page).to have_content("If needed, you may correct the issues")
           expect(page).to_not have_content("Informal Conference Tracked Item")
           expect(page).to have_content("Edit the notice letter to reflect the status of requested issues")
         end
@@ -41,11 +42,11 @@ feature "Intake Confirmation Page" do
             click_intake_continue
             click_intake_add_issue
             # Add an eligible issue
-            add_intake_nonrating_issue(date: 6.months.ago.strftime("%m/%d/%Y"))
+            add_intake_nonrating_issue(date: 6.months.ago.mdY)
             click_intake_finish
             expect(page).to have_content("Intake completed")
             expect(page).to have_content("Nonrating EP is being established")
-            expect(page).to have_content("If you need to edit this, go to VBMS claim details")
+            expect(page).to have_content("If needed, you may correct the issues")
             expect(page).to have_content("Tracked Item") if claim_review_type == :higher_level_review
             expect(page).to have_content("Edit the notice letter to reflect the status of requested issues")
           end

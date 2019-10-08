@@ -8,7 +8,7 @@ FactoryBot.define do
     untimely_evidence { false }
     work_product { "Decision" }
     document_type { "draft_decision" }
-    reviewing_judge { create(:user) }
-    attorney { create(:user) }
+    association :reviewing_judge, factory: :user
+    association :attorney, factory: :user
   end
 end

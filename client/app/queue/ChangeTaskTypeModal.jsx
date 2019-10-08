@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -22,6 +23,7 @@ import { taskActionData, actionNameOfTask } from './utils';
 import QueueFlowModal from './components/QueueFlowModal';
 
 class ChangeTaskTypeModal extends React.PureComponent {
+
   constructor(props) {
     super(props);
 
@@ -34,16 +36,13 @@ class ChangeTaskTypeModal extends React.PureComponent {
   validateForm = () => Boolean(this.state.actionOption) && Boolean(this.state.instructions);
 
   buildPayload = () => {
-    const { appeal } = this.props;
     const { actionOption, instructions } = this.state;
 
     return {
       data: {
         task: {
           action: actionOption.value,
-          instructions,
-          type: taskActionData(this.props).type || actionOption.value,
-          external_id: appeal.externalId
+          instructions
         }
       }
     };
@@ -62,11 +61,9 @@ class ChangeTaskTypeModal extends React.PureComponent {
       detail: COPY.CHANGE_TASK_TYPE_CONFIRMATION_DETAIL
     };
 
-    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
+    return this.props.requestPatch(`/tasks/${task.taskId}/change_type`, payload, successMsg).
       then((response) => {
-        const amaTasks = JSON.parse(response.text).tasks.data;
-
-        this.props.onReceiveAmaTasks({ amaTasks });
+        this.props.onReceiveAmaTasks({ amaTasks: response.body.tasks.data });
       }).
       catch(() => {
         // handle the error from the frontend
@@ -116,6 +113,22 @@ class ChangeTaskTypeModal extends React.PureComponent {
     </QueueFlowModal>;
   }
 }
+
+ChangeTaskTypeModal.propTypes = {
+  appealId: PropTypes.string,
+  error: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
+  }),
+  highlightFormItems: PropTypes.bool,
+  highlightInvalidFormItems: PropTypes.func,
+  onReceiveAmaTasks: PropTypes.func,
+  requestPatch: PropTypes.func,
+  setAppealAttrs: PropTypes.func,
+  task: PropTypes.shape({
+    taskId: PropTypes.string
+  })
+};
 
 const mapStateToProps = (state, ownProps) => ({
   highlightFormItems: state.ui.highlightFormItems,

@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react';
 import AppFrame from '../components/AppFrame';
 import NavigationBar from '../components/NavigationBar';
@@ -18,7 +20,7 @@ class Error500 extends React.PureComponent {
 
     if (this.props.flashError) {
       detailedErrorMessage = <React.Fragment>
-        <p>Error: {this.props.flashError}</p>
+        <p>Error: <span dangerouslySetInnerHTML={{ __html: this.props.flashError }} /></p>
       </React.Fragment>;
     }
 
@@ -35,7 +37,9 @@ class Error500 extends React.PureComponent {
           }} />
         <AppFrame>
           <StatusMessage title="Something went wrong." type="alert">
-            If you continue to see this page, please contact the help desk.
+            If you continue to see this page, please contact the Caseflow team
+            via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket
+            via <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a>.
 
             <div>Error code: {this.props.errorUUID}</div>
 

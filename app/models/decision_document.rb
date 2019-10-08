@@ -10,6 +10,7 @@ class DecisionDocument < ApplicationRecord
   belongs_to :appeal, polymorphic: true
   has_many :end_product_establishments, as: :source
   has_many :effectuations, class_name: "BoardGrantEffectuation"
+  has_many :job_notes, as: :job
 
   validates :citation_number, format: { with: /\AA?\d{8}\Z/i }
 
@@ -34,12 +35,15 @@ class DecisionDocument < ApplicationRecord
     output_location
   end
 
-  def submit_for_processing!(delay: 0)
+  def submit_for_processing!(delay: processing_delay)
     update_decision_issue_decision_dates! if appeal.is_a?(Appeal)
-    return no_processing_required! unless upload_enabled?
 
     cache_file!
     super
+
+    if not_processed_or_decision_date_not_in_the_future?
+      ProcessDecisionDocumentJob.perform_later(id)
+    end
   end
 
   def process!
@@ -50,7 +54,7 @@ class DecisionDocument < ApplicationRecord
     attempted!
     upload_to_vbms!
 
-    if FeatureToggle.enabled?(:create_board_grant_effectuations) && appeal.is_a?(Appeal)
+    if appeal.is_a?(Appeal)
       create_board_grant_effectuations!
       process_board_grant_effectuations!
       appeal.create_remand_supplemental_claims!
@@ -65,6 +69,10 @@ class DecisionDocument < ApplicationRecord
   # Used by EndProductEstablishment to determine what modifier to use for the effectuation EPs
   def valid_modifiers
     HigherLevelReview::END_PRODUCT_MODIFIERS
+  end
+
+  def invalid_modifiers
+    []
   end
 
   # The decision document is the source for all board grant eps, so we define this method
@@ -112,10 +120,6 @@ class DecisionDocument < ApplicationRecord
     update!(uploaded_to_vbms_at: Time.zone.now)
   end
 
-  def upload_enabled?
-    FeatureToggle.enabled?(:decision_document_upload, user: RequestStore.store[:current_user])
-  end
-
   def pdf_name
     appeal.external_id + ".pdf"
   end
@@ -132,5 +136,17 @@ class DecisionDocument < ApplicationRecord
     fail NoFileError unless @file
 
     S3Service.store_file(s3_location, Base64.decode64(@file))
+  end
+
+  def processing_delay
+    return decision_date + PROCESS_DELAY_VBMS_OFFSET_HOURS.hours if decision_date.future?
+
+    0
+  end
+
+  def not_processed_or_decision_date_not_in_the_future?
+    return true unless processed? || decision_date.future?
+
+    false
   end
 end

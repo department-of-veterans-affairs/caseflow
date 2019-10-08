@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-require "support/intake_helpers"
+require "support/vacols_database_cleaner"
+require "rails_helper"
 
-feature "Appeal Edit issues" do
+feature "Appeal Edit issues", :all_dbs do
   include IntakeHelpers
 
   before do
@@ -29,53 +30,11 @@ feature "Appeal Edit issues" do
   let(:receipt_date) { Time.zone.today - 20.days }
   let(:profile_date) { (receipt_date - 30.days).to_datetime }
 
-  let!(:rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date,
-      profile_date: profile_date,
-      issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: 55 },
-        { reference_id: "def456", decision_text: "PTSD denied" },
-        { reference_id: "abcdef", decision_text: "Back pain" }
-      ]
-    )
-  end
-
-  let!(:rating_before_ama) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
-      issues: [
-        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
-      ]
-    )
-  end
-
-  let!(:rating_before_ama_from_ramp) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
-      issues: [
-        { decision_text: "Issue before AMA Activation from RAMP",
-          reference_id: "ramp_ref_id" }
-      ],
-      associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
-    )
-  end
-
+  let!(:rating) { generate_rating_with_defined_contention(veteran, receipt_date, profile_date) }
+  let!(:rating_before_ama) { generate_pre_ama_rating(veteran) }
+  let!(:rating_before_ama_from_ramp) { generate_rating_before_ama_from_ramp(veteran) }
   let!(:ratings_with_legacy_issues) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 4.days,
-      profile_date: receipt_date - 4.days,
-      issues: [
-        { reference_id: "has_legacy_issue", decision_text: "Issue with legacy issue not withdrawn" },
-        { reference_id: "has_ineligible_legacy_appeal", decision_text: "Issue connected to ineligible legacy appeal" }
-      ]
-    )
+    generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
   end
 
   let(:legacy_opt_in_approved) { false }
@@ -181,10 +140,6 @@ feature "Appeal Edit issues" do
   end
 
   context "with remove decision review enabled" do
-    before do
-      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
-    end
-
     scenario "allows all request issues to be removed and saved" do
       visit "appeals/#{appeal.uuid}/edit/"
       # remove all issues
@@ -248,7 +203,7 @@ feature "Appeal Edit issues" do
                           nonrating_request_issue.id, rating_request_issue.id]
 
       # duplicate issues should be neither added nor removed
-      expect(request_issue_update.created_issues.map(&:id)).to_not include(non_modified_ids)
+      expect(request_issue_update.added_issues.map(&:id)).to_not include(non_modified_ids)
       expect(request_issue_update.removed_issues.map(&:id)).to_not include(non_modified_ids)
     end
   end
@@ -280,9 +235,7 @@ feature "Appeal Edit issues" do
         click_intake_add_issue
         add_intake_rating_issue("Back pain")
         add_intake_rating_issue("ankylosis of hip") # eligible issue
-
-        safe_click("#button-submit-update")
-        safe_click ".confirm"
+        click_edit_submit_and_confirm
 
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
@@ -311,8 +264,7 @@ feature "Appeal Edit issues" do
         visit "appeals/#{appeal.uuid}/edit/"
         click_remove_intake_issue_by_text("Back pain")
         click_remove_issue_confirmation
-        safe_click("#button-submit-update")
-        safe_click ".confirm"
+        click_edit_submit_and_confirm
 
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
         expect(li_optin.reload.rollback_processed_at).to_not be_nil
@@ -360,6 +312,7 @@ feature "Appeal Edit issues" do
       create(:veteran,
              first_name: "Ed",
              last_name: "Merica",
+             ssn: nil,
              bgs_veteran_record: {
                sex: nil,
                ssn: nil,
@@ -391,7 +344,7 @@ feature "Appeal Edit issues" do
       expect(page).to have_content("The Veteran's profile has missing or invalid information")
       expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
       expect(page).to have_content(
-        "the corporate database, then retry establishing the EP in Caseflow: ssn, country"
+        "the corporate database, then retry establishing the EP in Caseflow: country"
       )
       expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
       expect(page).to have_button("Save", disabled: true)
@@ -521,7 +474,7 @@ feature "Appeal Edit issues" do
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdrawal pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -565,7 +518,7 @@ feature "Appeal Edit issues" do
 
       expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdrawal pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -583,10 +536,8 @@ feature "Appeal Edit issues" do
       visit "appeals/#{appeal.uuid}/edit/"
 
       expect(page).to have_content(
-        /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 01\/20\/2018\s*Withdrawn on/i
+        /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 05\/10\/2019\s*Withdrawn on/i
       )
-      expect(page).to have_content("Please include the date the withdrawal was requested")
-      expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
     end
 
     scenario "show alert when issue is added, removed and withdrawn" do
@@ -610,7 +561,7 @@ feature "Appeal Edit issues" do
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdrawal pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -629,9 +580,8 @@ feature "Appeal Edit issues" do
       expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
     end
 
-    scenario "show alert when issue is withdrawn before receipt date" do
+    scenario "show alert when withdrawal date is not valid" do
       visit "appeals/#{appeal.uuid}/edit/"
-
       click_withdraw_intake_issue_dropdown("PTSD denied")
       fill_in "withdraw-date", with: 50.days.ago.to_date.mdY
 
@@ -639,28 +589,24 @@ feature "Appeal Edit issues" do
         "We cannot process your request. Please select a date after the Appeal's receipt date."
       )
       expect(page).to have_button("Save", disabled: true)
-    end
 
-    scenario "show alert when issue is withdrawn after current date" do
-      visit "appeals/#{appeal.uuid}/edit/"
-
-      click_withdraw_intake_issue_dropdown("PTSD denied")
       fill_in "withdraw-date", with: 2.years.from_now.to_date.mdY
 
       expect(page).to have_content("We cannot process your request. Please select a date prior to today's date.")
       expect(page).to have_button("Save", disabled: true)
+
+      fill_in "withdraw-date", with: "14/20/2019"
+
+      expect(page).to have_content("We cannot process your request. Please enter a valid date.")
+      expect(page).to have_button("Save", disabled: true)
+
+      fill_in "withdraw-date", with: withdraw_date
+      expect(page).to_not have_content("We cannot process your request.")
+      expect(page).to have_button("Save", disabled: false)
     end
   end
 
   context "when remove decision reviews is enabled" do
-    before do
-      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
-    end
-
-    after do
-      FeatureToggle.disable!(:remove_decision_reviews, users: [current_user.css_id])
-    end
-
     let(:today) { Time.zone.now }
     let(:appeal) do
       # reload to get uuid
@@ -677,6 +623,14 @@ feature "Appeal Edit issues" do
              appeal: appeal,
              assigned_to: non_comp_org,
              closed_at: last_week)
+    end
+
+    let!(:cancelled_task) do
+      create(:appeal_task,
+             :cancelled,
+             appeal: appeal,
+             assigned_to: non_comp_org,
+             closed_at: Time.zone.now)
     end
 
     context "when review has multiple active tasks" do
@@ -743,14 +697,6 @@ feature "Appeal Edit issues" do
       end
 
       context "when appeal task is cancelled" do
-        let!(:task) do
-          create(:appeal_task,
-                 status: Constants.TASK_STATUSES.cancelled,
-                 appeal: appeal,
-                 assigned_to: non_comp_org,
-                 closed_at: Time.zone.now)
-        end
-
         scenario "show timestamp when all request issues are cancelled" do
           visit "appeals/#{appeal.uuid}/edit"
           # remove all request issues
@@ -765,8 +711,8 @@ feature "Appeal Edit issues" do
           visit "appeals/#{appeal.uuid}/edit"
           expect(page).not_to have_content(existing_request_issues.first.description)
           expect(page).not_to have_content(existing_request_issues.second.description)
-          expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
-          expect(task.closed_at).to eq(Time.zone.now)
+          expect(cancelled_task.status).to eq(Constants.TASK_STATUSES.cancelled)
+          expect(cancelled_task.closed_at).to eq(Time.zone.now)
         end
       end
     end

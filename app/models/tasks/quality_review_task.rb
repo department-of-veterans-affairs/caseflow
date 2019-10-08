@@ -3,14 +3,14 @@
 ##
 # Task to track when an appeal has been randomly selected to be quality reviewed by the Quality Review team.
 
-class QualityReviewTask < GenericTask
+class QualityReviewTask < Task
   def available_actions(user)
     return super if assigned_to != user
 
     [
       Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
-      Constants.TASK_ACTIONS.RETURN_TO_JUDGE.to_h,
-      appropriate_timed_hold_task_action,
+      Constants.TASK_ACTIONS.QR_RETURN_TO_JUDGE.to_h,
+      Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
       Constants.TASK_ACTIONS.CANCEL_TASK.to_h
     ]
   end

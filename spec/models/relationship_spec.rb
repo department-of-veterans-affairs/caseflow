@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-describe Relationship do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe Relationship, :postgres do
   let(:veteran) { create(:veteran) }
   let(:relationship_type) { "Spouse" }
   let(:gender) { nil }

@@ -85,7 +85,7 @@ class ApiStatusAlerts
   def evidentiary_period
     return unless decision_review.evidence_submission_hold_pending?
 
-    task = decision_review.tasks.active.find_by(type: EvidenceSubmissionWindowTask.name)
+    task = decision_review.tasks.open.find_by(type: EvidenceSubmissionWindowTask.name)
 
     {
       type: "evidentiary_period",

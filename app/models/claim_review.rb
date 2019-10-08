@@ -23,6 +23,7 @@ class ClaimReview < DecisionReview
   self.abstract_class = true
 
   class NoEndProductsRequired < StandardError; end
+  class NotYetProcessed < StandardError; end
 
   class << self
     def find_by_uuid_or_reference_id!(claim_id)
@@ -33,50 +34,64 @@ class ClaimReview < DecisionReview
       claim_review
     end
 
-    def find_all_visible_by_file_number(file_number)
-      HigherLevelReview.where(veteran_file_number: file_number).reject(&:removed?) +
-        SupplementalClaim.where(veteran_file_number: file_number).reject(&:removed?)
+    def find_all_visible_by_file_number(*file_numbers)
+      HigherLevelReview.where(veteran_file_number: file_numbers).reject(&:removed?) +
+        SupplementalClaim.where(veteran_file_number: file_numbers).reject(&:removed?)
     end
   end
 
   def ui_hash
     super.merge(
+      asyncJobUrl: async_job_url,
       benefitType: benefit_type,
       payeeCode: payee_code,
-      hasClearedEP: cleared_ep?
+      hasClearedRatingEp: cleared_rating_ep?,
+      hasClearedNonratingEp: cleared_nonrating_ep?
     )
   end
 
-  def caseflow_only_edit_issues_url
-    "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
+  def validate_prior_to_edit
+    fail NotYetProcessed unless processed?
+
+    # force sync on initial edit call so that we have latest EP status.
+    # This helps prevent us editing something that recently closed upstream.
+    sync_end_product_establishments!
+
+    verify_contentions
+
+    # this will raise any errors for missing data
+    ui_hash
+  end
+
+  def async_job_url
+    "/asyncable_jobs/#{self.class}/jobs/#{id}"
+  end
+
+  def finalized_decision_issues_before_receipt_date
+    return [] unless receipt_date
+
+    DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
+      .select(&:finalized?)
+      .select do |issue|
+        issue.approx_decision_date && issue.approx_decision_date < receipt_date
+      end
   end
 
   # Save issues and assign it the appropriate end product establishment.
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
-    new_issues.each do |issue|
-      if processed_in_caseflow? || !issue.eligible?
-        issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
-      else
-        issue.update!(
-          end_product_establishment: end_product_establishment_for_issue(issue),
-          benefit_type: benefit_type,
-          veteran_participant_id: veteran.participant_id
-        )
-      end
-      issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
-    end
+    new_issues.each(&:create_for_claim_review!)
     request_issues.reload
-  end
-
-  def create_decision_review_task_if_required!
-    create_decision_review_task! if processed_in_caseflow?
   end
 
   def add_user_to_business_line!
     return unless processed_in_caseflow?
 
     OrganizationsUser.add_user_to_organization(RequestStore.store[:current_user], business_line)
+  end
+
+  def create_business_line_tasks!
+    create_decision_review_task! if processed_in_caseflow?
   end
 
   # Idempotent method to create all the artifacts for this claim.
@@ -89,19 +104,8 @@ class ClaimReview < DecisionReview
       fail NoEndProductsRequired, message: "Decision reviews processed in Caseflow should not have End Products"
     end
 
-    end_product_establishments.each do |end_product_establishment|
-      end_product_establishment.perform!
-      end_product_establishment.create_contentions!
-      end_product_establishment.associate_rating_request_issues!
-      if informal_conference?
-        end_product_establishment.generate_claimant_letter!
-        end_product_establishment.generate_tracked_item!
-      end
-      end_product_establishment.commit!
-    end
-
+    end_product_establishments.each(&:establish!)
     process_legacy_issues!
-
     clear_error!
     processed!
   end
@@ -134,10 +138,6 @@ class ClaimReview < DecisionReview
     end
   end
 
-  def cleared_ep?
-    end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
-  end
-
   def active?
     processed_in_vbms? ? end_product_establishments.any? { |ep| ep.status_active?(sync: false) } : incomplete_tasks?
   end
@@ -154,8 +154,10 @@ class ClaimReview < DecisionReview
       end_product_status: search_table_statuses,
       establishment_error: establishment_error,
       review_type: self.class.to_s.underscore,
+      receipt_date: receipt_date,
       veteran_file_number: veteran_file_number,
-      veteran_full_name: claim_veteran&.name&.formatted(:readable_full)
+      veteran_full_name: claim_veteran&.name&.formatted(:readable_full),
+      caseflow_only_edit_issues_url: caseflow_only_edit_issues_url
     }
   end
 
@@ -194,12 +196,8 @@ class ClaimReview < DecisionReview
     request_issues.first.api_aoj_from_benefit_type
   end
 
-  def issues_hash
-    issue_list = active_status? ? request_issues.active.all : fetch_all_decision_issues
-
-    return [] if issue_list.empty?
-
-    fetch_issues_status(issue_list)
+  def active_request_issues_or_decision_issues
+    active_status? ? request_issues.active.all : fetch_all_decision_issues
   end
 
   def contention_records(epe)
@@ -210,36 +208,63 @@ class ClaimReview < DecisionReview
     epe.request_issues
   end
 
-  private
-
-  def incomplete_tasks?
-    tasks.reject(&:completed?).any?
-  end
-
-  def can_contest_rating_issues?
-    processed_in_vbms?
-  end
-
-  def create_decision_review_task!
-    return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
-
-    DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
-  end
-
-  def informal_conference?
-    false
-  end
-
-  def intake_processed_by
-    intake ? intake.user : nil
+  def cancel_active_tasks
+    ClaimReviewActiveTaskCancellation.new(self).call
   end
 
   def end_product_establishment_for_issue(issue)
+    return unless issue.eligible? && processed_in_vbms?
+
     end_product_establishments.find_by(
       "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
       issue.end_product_code,
       EndProduct::INACTIVE_STATUSES
     ) || new_end_product_establishment(issue)
+  end
+
+  def cancel_establishment!
+    transaction do
+      canceled!
+      request_issues.each { |reqi| reqi.close!(status: :end_product_canceled) }
+    end
+  end
+
+  def can_contest_rating_issues?
+    processed_in_vbms? && !try(:decision_review_remanded?)
+  end
+
+  private
+
+  def cleared_end_products
+    @cleared_end_products ||= end_product_establishments.select { |ep| ep.status_cleared?(sync: true) }
+  end
+
+  def cleared_rating_ep?
+    cleared_end_products.any?(&:rating?)
+  end
+
+  def cleared_nonrating_ep?
+    cleared_end_products.any?(&:nonrating?)
+  end
+
+  def verify_contentions
+    # any open request_issues that have contention_reference_id pointers that no longer resolve should be removed.
+    request_issues.select(&:open?).select(&:contention_missing?).each(&:remove!)
+  end
+
+  def incomplete_tasks?
+    tasks.reject(&:completed?).any?
+  end
+
+  def create_decision_review_task!
+    return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
+    return if request_issues.active.blank?
+
+    DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
+  end
+
+  def intake_processed_by
+    intake ? intake.user : nil
   end
 
   def matching_request_issue(contention_id)

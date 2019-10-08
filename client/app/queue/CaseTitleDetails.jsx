@@ -1,5 +1,6 @@
 import { css } from 'glamor';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Modal from '../components/Modal';
 import TextField from '../components/TextField';
@@ -77,6 +78,8 @@ const CaseDetailTitleScaffolding = (props) => <div {...containingDivStyling}>
   </ul>
 </div>;
 
+CaseDetailTitleScaffolding.propTypes = { children: PropTypes.node.isRequired };
+
 export class CaseTitleDetails extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -153,8 +156,7 @@ export class CaseTitleDetails extends React.PureComponent {
         </div>
       </React.Fragment>
 
-      { !userIsVsoEmployee &&
-      !this.props.hasCaseDetailsRole &&
+      { !userIsVsoEmployee && this.props.userCanAccessReader &&
         <React.Fragment>
           <h4>Veteran Documents</h4>
           <div>
@@ -189,7 +191,11 @@ export class CaseTitleDetails extends React.PureComponent {
       { !userIsVsoEmployee && appeal && appeal.documentID &&
         <React.Fragment>
           <h4>{COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</h4>
-          <div id="document-id"><CopyTextButton text={this.state.value || appeal.documentID} />
+          <div id="document-id">
+            <CopyTextButton
+              text={this.state.value || appeal.documentID}
+              label={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}
+            />
             { appeal.canEditDocumentId &&
               <Button
                 linkStyling
@@ -226,18 +232,29 @@ export class CaseTitleDetails extends React.PureComponent {
           </Modal>}
         </React.Fragment> }
 
-      { !userIsVsoEmployee && appeal.assignedJudge && <React.Fragment>
+      { !userIsVsoEmployee && appeal.assignedJudge && !appeal.removed && <React.Fragment>
         <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</h4>
         <div>{appeal.assignedJudge.full_name}</div>
       </React.Fragment> }
 
-      { !userIsVsoEmployee && appeal.assignedAttorney && <React.Fragment>
+      { !userIsVsoEmployee && appeal.assignedAttorney && !appeal.removed && <React.Fragment>
         <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</h4>
         <div>{appeal.assignedAttorney.full_name}</div>
       </React.Fragment> }
     </CaseDetailTitleScaffolding>;
   };
 }
+
+CaseTitleDetails.propTypes = {
+  appeal: PropTypes.object.isRequired,
+  appealId: PropTypes.string.isRequired,
+  canEditAod: PropTypes.bool,
+  redirectUrl: PropTypes.string,
+  requestPatch: PropTypes.func.isRequired,
+  taskType: PropTypes.string,
+  userIsVsoEmployee: PropTypes.bool.isRequired,
+  userCanAccessReader: PropTypes.bool
+};
 
 const mapStateToProps = (state, ownProps) => {
   const { featureToggles, userRole, canEditAod } = state.ui;

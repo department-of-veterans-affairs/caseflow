@@ -29,6 +29,20 @@ class HearingSchedule::ValidateRoSpreadsheet
   class AllocationDuplicateRo < StandardError; end
   class AllocationTemplateNotFollowed < StandardError; end
 
+  RO_TEMPLATE_ERROR = "The RO non-availability template was not followed. Redownload the template and try again."
+  CO_TEMPLATE_ERROR = "The CO non-availability template was not followed. Redownload the template and try again."
+  ALLOCATION_TEMPLATE_ERROR = "The allocation template was not followed. Redownload the template and try again."
+  RO_DATES_NOT_CORRECT_FORMAT = "The following dates are incorrectly formatted in the RO spreadsheet: "
+  RO_DATES_NOT_IN_RANGE = "The following dates in the RO spreadsheet are out of range: "
+  RO_LISTED_INCORRECTLY = "The ROs are listed incorrectly in the RO spreadsheet. Redownload the template and try again."
+  CO_DATES_NOT_CORRECT_FORMAT = "The following dates are incorrectly formatted in the CO spreadsheet: "
+  CO_DATES_NOT_UNIQUE = "The following dates in the CO spreadsheet are listed more than once: "
+  CO_DATES_NOT_IN_RANGE = "The following dates in the CO spreadsheet are out of range: "
+  ALLOCATION_NOT_CORRECT_FORMAT = "The following allocations are incorrectly formatted: "
+  ALLOCATION_LISTED_INCORRECTLY = "The ROs are listed incorrectly in the allocation spreadsheet. " \
+                                  "Redownload the template and try again."
+  ALLOCATION_DUPLICATE_RO = "The following ROs are listed more than once in the allocation spreadsheet: "
+
   def initialize(spreadsheet, start_date, end_date)
     get_spreadsheet_data = HearingSchedule::GetSpreadsheetData.new(spreadsheet)
     @errors = []
@@ -62,73 +76,112 @@ class HearingSchedule::ValidateRoSpreadsheet
     unless @ro_spreadsheet_template[:title] == RO_NON_AVAILABILITY_TITLE &&
            @ro_spreadsheet_template[:example_row].compact == RO_NON_AVAILABILITY_EXAMPLE_ROW &&
            @ro_spreadsheet_template[:empty_column] == RO_NON_AVAILABILITY_EMPTY_COLUMN
-      @errors << RoTemplateNotFollowed
+      @errors << RoTemplateNotFollowed.new(RO_TEMPLATE_ERROR)
     end
   end
 
-  def validate_ro_date_formats
-    @ro_spreadsheet_data.all? do |row|
-      row["date"].instance_of?(Date) || row["date"] == "N/A"
-    end
+  def filter_incorrectly_formatted_ro_dates
+    @ro_spreadsheet_data.reject do |row|
+      HearingSchedule::DateValidators.new(row["date"]).date_correctly_formatted?
+    end.pluck("date")
   end
 
-  def validate_ro_dates_in_range
-    @ro_spreadsheet_data.all? do |row|
-      !row["date"].instance_of?(Date) || (row["date"] >= @start_date && row["date"] <= @end_date)
-    end
+  def filter_nonunique_ro_dates
+    HearingSchedule::UniquenessValidators.new(@ro_spreadsheet_data).duplicate_rows.pluck("ro_code").uniq
+  end
+
+  def filter_out_of_range_ro_dates
+    out_of_range_dates = @ro_spreadsheet_data.reject do |row|
+      HearingSchedule::DateValidators.new(row["date"], @start_date, @end_date).date_in_range?
+    end.pluck("date")
+
+    out_of_range_dates.map { |date| date.strftime("%m/%d/%Y") }
   end
 
   def validate_ro_non_availability_dates
-    @errors << RoDatesNotCorrectFormat unless validate_ro_date_formats
-    @errors << RoDatesNotUnique unless @ro_spreadsheet_data.uniq == @ro_spreadsheet_data
-    @errors << RoDatesNotInRange unless validate_ro_dates_in_range
-    @errors << RoListedIncorrectly unless validate_ros_with_hearings(@ro_spreadsheet_data)
+    incorrectly_formatted_ro_dates = filter_incorrectly_formatted_ro_dates
+    if incorrectly_formatted_ro_dates.count > 0
+      @errors << RoDatesNotCorrectFormat.new(RO_DATES_NOT_CORRECT_FORMAT + incorrectly_formatted_ro_dates.to_s)
+    end
+    nonunique_ro_dates = filter_nonunique_ro_dates
+    if nonunique_ro_dates.count > 0
+      @errors << RoDatesNotUnique.new("The following ROs have nonunique dates: " + nonunique_ro_dates.to_s)
+    end
+    out_of_range_ro_dates = filter_out_of_range_ro_dates
+    if out_of_range_ro_dates.count > 0
+      @errors << RoDatesNotInRange.new(RO_DATES_NOT_IN_RANGE + out_of_range_ro_dates.to_s)
+    end
+    @errors << RoListedIncorrectly.new(RO_LISTED_INCORRECTLY) unless validate_ros_with_hearings(@ro_spreadsheet_data)
   end
 
   def validate_co_non_availability_template
     unless @co_spreadsheet_template[:title] == CO_SPREADSHEET_TITLE &&
            @co_spreadsheet_template[:example_row].compact == CO_SPREADSHEET_EXAMPLE_ROW &&
            @co_spreadsheet_template[:empty_column] == CO_SPREADSHEET_EMPTY_COLUMN
-      @errors << CoTemplateNotFollowed
+      @errors << CoTemplateNotFollowed.new(CO_TEMPLATE_ERROR)
     end
   end
 
-  def validate_co_non_availability_dates_formats
-    @co_spreadsheet_data.all? do |date|
-      date.instance_of?(Date) || date == "N/A"
+  def filter_incorrectly_formatted_co_dates
+    @co_spreadsheet_data.reject do |date|
+      HearingSchedule::DateValidators.new(date).date_correctly_formatted?
     end
   end
 
-  def validate_co_non_availability_dates_in_range
-    @co_spreadsheet_data.all? do |date|
-      !date.instance_of?(Date) || date >= @start_date && date <= @end_date
+  def filter_out_of_co_range_dates
+    out_of_range_dates = @co_spreadsheet_data.reject do |date|
+      HearingSchedule::DateValidators.new(date, @start_date, @end_date).date_in_range?
     end
+
+    out_of_range_dates.map { |date| date.strftime("%m/%d/%Y") }
+  end
+
+  def filter_nonunique_co_dates
+    HearingSchedule::UniquenessValidators.new(@co_spreadsheet_data).duplicate_rows.uniq
   end
 
   def validate_co_non_availability_dates
-    @errors << CoDatesNotCorrectFormat unless validate_co_non_availability_dates_formats
-    @errors << CoDatesNotUnique unless @co_spreadsheet_data.uniq == @co_spreadsheet_data
-    @errors << CoDatesNotInRange unless validate_co_non_availability_dates_in_range
+    incorrectly_formatted_co_dates = filter_incorrectly_formatted_co_dates
+    if incorrectly_formatted_co_dates.count > 0
+      @errors << CoDatesNotCorrectFormat.new(CO_DATES_NOT_CORRECT_FORMAT + incorrectly_formatted_co_dates.to_s)
+    end
+    nonunique_co_dates = filter_nonunique_co_dates
+    if nonunique_co_dates.count > 0
+      @errors << CoDatesNotUnique.new(CO_DATES_NOT_UNIQUE + nonunique_co_dates.to_s)
+    end
+    out_of_range_co_dates = filter_out_of_co_range_dates
+    if out_of_range_co_dates.count > 0
+      @errors << CoDatesNotInRange.new(CO_DATES_NOT_IN_RANGE + out_of_range_co_dates.to_s)
+    end
   end
 
   def validate_hearing_allocation_template
     unless @allocation_spreadsheet_template[:title] == HEARING_ALLOCATION_SHEET_TITLE &&
            @allocation_spreadsheet_template[:example_row].compact == HEARING_ALLOCATION_SHEET_EXAMPLE_ROW &&
            @allocation_spreadsheet_template[:empty_column] == HEARING_ALLOCATION_SHEET_EMPTY_COLUMN
-      @errors << AllocationTemplateNotFollowed
+      @errors << AllocationTemplateNotFollowed.new(ALLOCATION_TEMPLATE_ERROR)
     end
   end
 
+  def filter_incorrectly_formatted_allocations
+    @allocation_spreadsheet_data.reject { |row| row["allocated_days"].is_a?(Numeric) }.pluck("allocated_days")
+  end
+
+  def filter_nonunique_allocations
+    HearingSchedule::UniquenessValidators.new(@allocation_spreadsheet_data.pluck("ro_code")).duplicate_rows.uniq
+  end
+
   def validate_hearing_allocation_days
-    unless @allocation_spreadsheet_data.all? { |row| row["allocated_days"].is_a?(Numeric) }
-      @errors << AllocationNotCorrectFormat
+    incorrectly_formatted_allocations = filter_incorrectly_formatted_allocations
+    if incorrectly_formatted_allocations.count > 0
+      @errors << AllocationNotCorrectFormat.new(ALLOCATION_NOT_CORRECT_FORMAT + incorrectly_formatted_allocations.to_s)
     end
     unless validate_ros_with_hearings(@allocation_spreadsheet_data)
-      @errors << AllocationRoListedIncorrectly
+      @errors << AllocationRoListedIncorrectly.new(ALLOCATION_LISTED_INCORRECTLY)
     end
-    ro_codes = @allocation_spreadsheet_data.collect { |ro| ro["ro_code"] }
-    unless ro_codes.uniq == ro_codes
-      @errors << AllocationDuplicateRo
+    nonunique_allocations = filter_nonunique_allocations
+    if nonunique_allocations.count > 0
+      @errors << AllocationDuplicateRo.new(ALLOCATION_DUPLICATE_RO + nonunique_allocations.to_s)
     end
   end
 

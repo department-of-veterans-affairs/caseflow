@@ -14,6 +14,10 @@ The name "Bat Team" refers to the ["batman" military role](https://en.wikipedia.
 It is a [growing software industry practice](https://twitter.com/mipsytipsy/status/1059392900239306755)
 and an experiment in [agile development](https://www.icidigital.com/blog/web-development/batman-can-save-agile-team).
 
+## Frequently Asked Questions
+
+Everyone on the team is to update and reference the Bat Team [FAQ page](https://github.com/department-of-veterans-affairs/caseflow/wiki/Batman-Team)
+
 ## Rituals
 
 The Bat Team listens in the #appeals-batteam channel. They should be the only engineers actively participating
@@ -32,6 +36,38 @@ for the next team.
 
 ## Protocols
 
+### Pull Requests
+
+Drop links to PRs in the #appeals-batteam channel with the :git-pull-request: emoji. We review each others'
+PRs, which typically fix tests or Sentry-alert-related bugs.
+
+### Flakey tests
+
+A signficant blocker for sprint teams is flakey tests. Right now we track them on a single
+[GitHub issue](https://github.com/department-of-veterans-affairs/caseflow/issues/10516).
+
+We spend time-boxed effort to fix the tests, and if we can't do it in the 1 or 2 hours we allot ourselves,
+we skip the tests with a reason that refers to the CircleCI URL with the flake and a note about Bat Team efforts.
+
+If you skip the test, consider adding the reason why to the
+[Engineering Huddle agenda](https://github.com/department-of-veterans-affairs/caseflow/issues/10569)
+if you think it merits wider conversation.
+
+### Slack
+
+Join the #appeals-batteam channel. Support and product folks will be in there and will bring issues to our attention.
+
+If you want to acknowledge a slack message but don't have time to look at it immediately, use the :bat:
+emoji response.
+
+If you are actively looking into a slack message, add the :eyes: emoji response.
+
+When a slack message has been adequately addressed (question answered, or GitHub issue created, etc),
+add the :white_check_mark: emoji.
+
+Prioritize pairing during investigations. This gives everyone a chance to learn about parts of Caseflow that
+they might not know as well.
+
 ### Sentry and Slack
 
 Each Bat Team member should take responsibility for one or more Slack channels and monitor for Sentry alerts. These
@@ -40,10 +76,13 @@ come from the production Caseflow system.
 When a new Sentry alert appears in Slack, it should be investigated asap. If you cannot investigate it immediately,
 emoji tag it with the :bat: emoji.
 
-If a Github ticket already exists for the underlying issue, the Sentry alert should be ignored for a week.
+Prioritize pairing during investigations. This gives everyone a chance to learn about parts of Caseflow that
+they might not know as well.
+
+If a Github ticket already exists for the underlying issue, the Sentry alert should be ignored for a month.
 
 If a Github ticket does not yet exist, create a Github ticket, with a link to the Sentry incident
-in the ticket description.
+in the ticket description. Add the `sentry-alert` label to the new ticket, and any appropriate product-specific labels.
 
 The key evaluation is whether this incident reflects an immediate production issue,
 particularly affecting data integrity, or whether it can be picked up during normal sprint planning.
@@ -52,5 +91,5 @@ and consult with them about next steps. If it's an outage of some kind, we shoul
 The Bat Team should do just enough investigation to determine further action.
 
 Mark the Sentry alert in Slack with the green checkmark emoji when it has been triaged, and you can ignore the alert
-in Sentry for a week.
+in Sentry for a month.
 

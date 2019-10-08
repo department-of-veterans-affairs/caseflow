@@ -1,40 +1,34 @@
+/* eslint-disable react/prop-types */
+
 import React, { Fragment } from 'react';
 import StatusMessage from '../../components/StatusMessage';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../constants';
-import INTAKE_STRINGS from '../../../constants/INTAKE_STRINGS.json';
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
-import Alert from '../../components/Alert';
 import { legacyIssue } from '../util/issues';
 import IneligibleIssuesList from '../components/IneligibleIssuesList';
 import SmallLoader from '../../components/SmallLoader';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY.json';
+import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 
-const leadMessageList = ({ veteran, formName, requestIssues }) => {
+const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, detailEditUrl }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
-  const leadMessageArr = [`${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been processed.`];
+  const leadMessageArr = [
+    `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been submitted.`,
+    <div>If needed, you may <a href={detailEditUrl}>correct the issues</a>.</div>
+  ];
 
-  if (eligibleRequestIssues.length !== 0) {
-    if (unidentifiedIssues.length > 0) {
-      leadMessageArr.push(
-        <Alert type="warning">
-          <h2>Unidentified issue</h2>
-          <p>{COPY.INDENTIFIED_ALERT}</p>
-          {unidentifiedIssues.map((ri, i) => <p className="cf-red-text" key={`unidentified-alert-${i}`}>
-            Unidentified issue: no issue matched for requested "{ri.description}"
-          </p>)}
-        </Alert>
-      );
-    } else {
-      leadMessageArr.push(
-        'If you need to edit this, go to VBMS claim details and click the “Edit in Caseflow” button.'
-      );
-    }
+  if (asyncJobUrl) {
+    leadMessageArr.push(<div>You may check on the <a href={asyncJobUrl}>status of the VBMS establishment</a>.</div>);
+  }
+
+  if (eligibleRequestIssues.length !== 0 && unidentifiedIssues.length > 0) {
+    leadMessageArr.push(<UnidentifiedIssueAlert unidentifiedIssues={unidentifiedIssues} />);
   }
 
   leadMessageArr.push(
@@ -93,7 +87,7 @@ class VacolsOptInList extends React.PureComponent {
     <Fragment>
       <ul className="cf-success-checklist cf-left-padding">
         <li>
-          <strong>{INTAKE_STRINGS.vacols_optin_issue_closed}</strong>
+          <strong>{COPY.VACOLS_OPTIN_ISSUE_CLOSED}</strong>
           {this.props.issues.map((ri, i) =>
             <p key={`vacols-issue-${i}`} className="">
               {legacyIssue(ri, this.props.legacyAppeals).description}
@@ -108,7 +102,9 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     const {
       veteran,
       formType,
-      intakeStatus
+      intakeStatus,
+      asyncJobUrl,
+      detailEditUrl
     } = this.props;
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const completedReview = this.props.decisionReviews[selectedForm.key];
@@ -148,6 +144,8 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       type="success"
       leadMessageList={
         leadMessageList({
+          asyncJobUrl,
+          detailEditUrl,
           veteran,
           formName: selectedForm.name,
           requestIssues
@@ -173,6 +171,8 @@ export default connect(
   (state) => ({
     veteran: state.intake.veteran,
     formType: state.intake.formType,
+    asyncJobUrl: state.intake.asyncJobUrl,
+    detailEditUrl: state.intake.detailEditUrl,
     decisionReviews: {
       higher_level_review: state.higherLevelReview,
       supplemental_claim: state.supplementalClaim,

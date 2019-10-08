@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe CaseReviewsController, type: :controller do
+require "support/vacols_database_cleaner"
+require "rails_helper"
+
+RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
   before do
     Fakes::Initializer.load!
     User.authenticate!(roles: ["System Admin"])
@@ -24,7 +27,7 @@ RSpec.describe CaseReviewsController, type: :controller do
         end
 
         let(:root_task) { create(:root_task) }
-        let(:judge_task) { create(:ama_judge_task, assigned_to: judge, parent: root_task) }
+        let(:judge_task) { create(:ama_judge_decision_review_task, assigned_to: judge, parent: root_task) }
         let(:task) { create(:ama_attorney_task, assigned_to: attorney, assigned_by: judge, parent: judge_task) }
 
         context "when creating a draft decision" do
@@ -51,13 +54,11 @@ RSpec.describe CaseReviewsController, type: :controller do
             end
 
             it "should not be successful" do
-              FeatureToggle.enable!(:ama_decision_issues)
               post :complete, params: { task_id: task.id, tasks: params }
               expect(response.status).to eq 400
               response_body = JSON.parse(response.body)
               msg = "Validation failed: Disposition can't be blank, Disposition is not included in the list"
               expect(response_body["errors"].first["detail"]).to eq msg
-              FeatureToggle.disable!(:ama_decision_issues)
             end
           end
 
@@ -84,12 +85,10 @@ RSpec.describe CaseReviewsController, type: :controller do
             end
 
             it "should not be successful" do
-              FeatureToggle.enable!(:ama_decision_issues)
               post :complete, params: { task_id: task.id, tasks: params }
               expect(response.status).to eq 400
               response_body = JSON.parse(response.body)
               expect(response_body["errors"].first["detail"]).to eq "Not every request issue has a decision issue"
-              FeatureToggle.disable!(:ama_decision_issues)
             end
           end
 
@@ -163,7 +162,7 @@ RSpec.describe CaseReviewsController, type: :controller do
 
         before do
           # Add somebody to the BVA dispatch team so automatic task assignment for AMA cases succeeds.
-          OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+          OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
         end
 
         context "when all parameters are present to send to sign a decision" do

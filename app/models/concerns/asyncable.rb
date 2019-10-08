@@ -115,20 +115,29 @@ module Asyncable
         .where(canceled_at_column => nil)
         .order_by_oldest_submitted
     end
+
+    def processed
+      where.not(processed_at_column => nil)
+    end
+
+    def processed_or_canceled
+      processed.or(canceled)
+    end
   end
 
   def submit_for_processing!(delay: 0)
     # One minute offset to prevent "this date is in the future" errors with external services
     when_to_start = delay.try(:to_datetime) ? delay.to_datetime + 1.minute : Time.zone.now + delay
 
-    # Add the `processing_retry_interval_hours` to the delay time, since it should not be considered
+    # Subtract the `processing_retry_interval_hours` from the delay time,
+    # to offset its presence in the `previously_attmpted_ready_for_retry` logic.
     if delay != 0
       when_to_start -= self.class.processing_retry_interval_hours.hours
     end
 
     update!(
       self.class.last_submitted_at_column => when_to_start,
-      self.class.submitted_at_column => when_to_start,
+      self.class.submitted_at_column => delay.try(:to_datetime) ? delay.to_datetime : Time.zone.now,
       self.class.processed_at_column => nil
     )
   end
@@ -142,19 +151,9 @@ module Asyncable
   end
 
   def canceled!
+    return if processed?
+
     update!(self.class.canceled_at_column => Time.zone.now)
-  end
-
-  # There are sometimes cases where no processing required, and we can mark submitted and processed all in one
-  def no_processing_required!
-    now = Time.zone.now
-
-    update!(
-      self.class.last_submitted_at_column => now,
-      self.class.submitted_at_column => now,
-      self.class.attempted_at_column => now,
-      self.class.processed_at_column => now
-    )
   end
 
   def processed?
@@ -173,6 +172,24 @@ module Asyncable
     !!self[self.class.canceled_at_column]
   end
 
+  def asyncable_status
+    if processed?
+      :processed
+    elsif canceled?
+      :canceled
+    elsif attempted?
+      :attempted
+    elsif submitted?
+      :submitted
+    else
+      :not_yet_submitted
+    end
+  end
+
+  def asyncable_user
+    nil # abstract method intended to be overridden
+  end
+
   def expired_without_processing?
     return false if processed?
 
@@ -183,7 +200,7 @@ module Asyncable
   end
 
   def submitted_and_ready?
-    !!self[self.class.submitted_at_column] && self[self.class.submitted_at_column] <= Time.zone.now
+    submitted? && self[self.class.last_submitted_at_column] <= Time.zone.now
   end
 
   def submitted_not_processed?
@@ -220,8 +237,10 @@ module Asyncable
       submitted_at: self[self.class.submitted_at_column],
       attempted_at: self[self.class.attempted_at_column],
       processed_at: self[self.class.processed_at_column],
+      canceled_at: self[self.class.canceled_at_column],
       error: self[self.class.error_column],
-      veteran_file_number: try(:veteran).try(:file_number)
+      veteran_file_number: try(:veteran).try(:file_number),
+      user: asyncable_user
     }
   end
 end

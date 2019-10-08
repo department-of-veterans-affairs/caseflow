@@ -330,14 +330,12 @@ export const createAnnotation = (annotation) => (dispatch) => {
   ApiUtil.post(`/document/${annotation.documentId}/annotation`, { data }, ENDPOINT_NAMES.ANNOTATION).
     then(
       (response) => {
-        const responseObject = JSON.parse(response.text);
-
         dispatch({
           type: Constants.REQUEST_CREATE_ANNOTATION_SUCCESS,
           payload: {
             annotation: {
               ...annotation,
-              ...responseObject
+              ...response.body
             },
             annotationTemporaryId: temporaryId
           }

@@ -44,21 +44,31 @@ export default class DropdownButton extends React.Component {
     }));
   };
 
-  render() {
-    const {
-      label,
-      lists
-    } = this.props;
+  dropdownLink = (list) => {
+    return <Link className="usa-button-secondary usa-button"
+      href={list.target}>{list.title}</Link>;
+  }
 
-    const dropdownButtonList = () => {
-      return <ul className="cf-dropdown-menu active" {...dropdownList}>
-        {lists.map((list, index) =>
-          <li key={index}>
-            <Link className="usa-button-secondary usa-button"
-              href={list.target}>{list.title}</Link>
-          </li>)}
-      </ul>;
-    };
+  dropdownAction = (list) => {
+    return <a onClick={() => {
+      if (this.props.onClick) {
+        this.props.onClick(list.value);
+      }
+      this.onMenuClick();
+    }}>{list.title}</a>;
+  }
+
+  dropdownButtonList = () => {
+    return <ul className="cf-dropdown-menu active" {...dropdownList}>
+      {this.props.lists.map((list, index) =>
+        <li key={index}>
+          {list.target ? this.dropdownLink(list) : this.dropdownAction(list)}
+        </li>)}
+    </ul>;
+  }
+
+  render() {
+    const { label } = this.props;
 
     return <div className="cf-dropdown" ref={this.setWrapperRef} {...dropdownBtnContainer}>
       <a {...dropdownBtn}
@@ -66,15 +76,22 @@ export default class DropdownButton extends React.Component {
         className="cf-dropdown-trigger usa-button usa-button-secondary">
         {label}
       </a>
-      {this.state.menu && dropdownButtonList() }
+      {this.state.menu && this.dropdownButtonList() }
     </div>;
   }
 }
 
 DropdownButton.propTypes = {
-  list: PropTypes.arrayOf(PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    target: PropTypes.string.isRequired
-  })),
+  list: PropTypes.arrayOf(PropTypes.oneOfType([
+    PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      target: PropTypes.string.isRequired
+    }),
+    PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      value: PropTypes.any.isRequired
+    })
+  ])),
+  onClick: PropTypes.func,
   label: PropTypes.string.isRequired
 };

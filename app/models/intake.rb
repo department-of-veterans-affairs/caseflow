@@ -21,8 +21,11 @@ class Intake < ApplicationRecord
     veteran_not_found: "veteran_not_found",
     veteran_has_multiple_phone_numbers: "veteran_has_multiple_phone_numbers",
     veteran_not_accessible: "veteran_not_accessible",
+    veteran_not_modifiable: "veteran_not_modifiable",
     veteran_not_valid: "veteran_not_valid",
-    duplicate_intake_in_progress: "duplicate_intake_in_progress"
+    duplicate_intake_in_progress: "duplicate_intake_in_progress",
+    reserved_veteran_file_number: "reserved_veteran_file_number",
+    incident_flash: "incident_flash"
   }.freeze
 
   FORM_TYPES = {
@@ -35,70 +38,52 @@ class Intake < ApplicationRecord
 
   attr_reader :error_data
 
-  def self.in_progress
-    where(completed_at: nil).where(started_at: IN_PROGRESS_EXPIRES_AFTER.ago..Time.zone.now)
+  after_initialize :strip_file_number
+
+  def strip_file_number
+    return if veteran_file_number.nil?
+
+    veteran_file_number.strip!
   end
 
-  def self.expired
-    where(completed_at: nil).where(started_at: Time.zone.at(0)...IN_PROGRESS_EXPIRES_AFTER.ago)
+  def store_error_data(error_data)
+    @error_data = error_data
   end
 
-  def self.build(form_type:, veteran_file_number:, user:)
-    intake_classname = FORM_TYPES[form_type.to_sym]
-
-    fail FormTypeNotSupported unless intake_classname
-
-    intake_classname.constantize.new(
-      veteran_file_number: veteran_file_number,
-      user: user
-    )
-  end
-
-  def self.close_expired_intakes!
-    Intake.expired.each do |intake|
-      intake.complete_with_status!(:expired)
-      intake.cancel_detail!
+  class << self
+    def in_progress
+      where(completed_at: nil).where(started_at: IN_PROGRESS_EXPIRES_AFTER.ago..Time.zone.now)
     end
-  end
 
-  def self.flagged_for_manager_review
-    Intake.select("intakes.*, intakes.type as form_type, users.full_name")
-      .joins(:user,
-             # Exclude an intake from results if an intake with the same veteran_file_number
-             # and intake type has succeeded since the completed_at time (indicating the issue has been resolved)
-             "LEFT JOIN
-               (SELECT veteran_file_number,
-                 type,
-                 MAX(completed_at) as succeeded_at
-               FROM intakes
-               WHERE completion_status = 'success'
-               GROUP BY veteran_file_number, type) latest_success
-               ON intakes.veteran_file_number = latest_success.veteran_file_number
-               AND intakes.type = latest_success.type",
-             # To exclude ramp elections that were established outside of Caseflow
-             "LEFT JOIN ramp_elections ON intakes.veteran_file_number = ramp_elections.veteran_file_number")
-      .where.not(completion_status: "success")
-      .where(error_code: [nil, "veteran_not_accessible", "veteran_not_valid"])
-      .where(
-        "(intakes.completed_at > latest_success.succeeded_at OR latest_success.succeeded_at IS NULL)
-        AND NOT (intakes.type = 'RampElectionIntake' AND ramp_elections.established_at IS NOT NULL)"
+    def expired
+      where(completed_at: nil).where(started_at: Time.zone.at(0)...IN_PROGRESS_EXPIRES_AFTER.ago)
+    end
+
+    def build(form_type:, veteran_file_number:, user:)
+      intake_classname = FORM_TYPES[form_type.to_sym]
+
+      fail FormTypeNotSupported unless intake_classname
+
+      intake_classname.constantize.new(
+        veteran_file_number: veteran_file_number.strip,
+        user: user
       )
-  end
-
-  def self.user_stats(user, n_days = 60)
-    stats = {}
-    Intake.select("intakes.*, date(completed_at) as day_completed")
-      .where(user: user)
-      .where("completed_at > ?", Time.zone.now.end_of_day - n_days.days)
-      .where(completion_status: "success")
-      .order("day_completed").each do |intake|
-      completed = intake[:day_completed].iso8601
-      type = intake.detail_type.underscore.to_sym
-      stats[completed] ||= { type => 0, date: completed }
-      stats[completed][type] ||= 0
-      stats[completed][type] += 1
     end
-    stats.sort.map { |entry| entry[1] }.reverse
+
+    def close_expired_intakes!
+      Intake.expired.each do |intake|
+        intake.complete_with_status!(:expired)
+        intake.cancel_detail!
+      end
+    end
+
+    def flagged_for_manager_review
+      IntakesFlaggedForManagerReviewQuery.call
+    end
+
+    def user_stats(user, n_days = 60)
+      IntakeUserStats.new(user: user, n_days: n_days).call
+    end
   end
 
   def pending?
@@ -187,30 +172,13 @@ class Intake < ApplicationRecord
   end
 
   def validate_start
-    if !file_number_valid?
-      self.error_code = :invalid_file_number
+    validator = IntakeStartValidator.new(intake: self)
 
-    elsif !veteran
-      self.error_code = :veteran_not_found
+    return false unless validator.validate
 
-    elsif !veteran.accessible?
-      set_veteran_accessible_error
-
-    elsif duplicate_intake_in_progress
-      self.error_code = :duplicate_intake_in_progress
-      @error_data = { processed_by: duplicate_intake_in_progress.user.full_name }
-
-    else
-      validate_detail_on_start
-
-    end
+    validate_detail_on_start
 
     !error_code
-  end
-
-  def duplicate_intake_in_progress
-    @duplicate_intake_in_progress ||=
-      Intake.in_progress.find_by(type: type, veteran_file_number: veteran_file_number)
   end
 
   def veteran
@@ -257,13 +225,12 @@ class Intake < ApplicationRecord
     }
   end
 
-  private
-
-  def set_veteran_accessible_error
-    return unless !veteran.accessible?
-
-    self.error_code = veteran.multiple_phone_numbers? ? :veteran_has_multiple_phone_numbers : :veteran_not_accessible
+  # Optionally implement this methods in subclass
+  def validate_detail_on_start
+    true
   end
+
+  private
 
   # Optional step called after the intake is validated and not-yet-marked as started
   def after_validated_pre_start!
@@ -272,21 +239,7 @@ class Intake < ApplicationRecord
 
   def update_person!
     # Update the person when a claimant is created
-    Person.find_or_create_by(participant_id: detail.claimant_participant_id).tap do |person|
-      person.update!(date_of_birth: BGSService.new.fetch_person_info(detail.claimant_participant_id)[:birth_date])
-    end
-  end
-
-  def file_number_valid?
-    return false unless veteran_file_number
-
-    self.veteran_file_number = veteran_file_number.strip
-    veteran_file_number =~ /^[0-9]{8,9}$/
-  end
-
-  # Optionally implement this methods in subclass
-  def validate_detail_on_start
-    true
+    Person.find_or_create_by(participant_id: detail.claimant_participant_id).tap(&:update_cached_attributes!)
   end
 
   def find_or_build_initial_detail

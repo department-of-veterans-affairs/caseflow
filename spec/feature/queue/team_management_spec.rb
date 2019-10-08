@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Team management page" do
-  let(:user) { FactoryBot.create(:user) }
+RSpec.feature "Team management page", :postgres do
+  let(:user) { create(:user) }
 
   before do
     OrganizationsUser.add_user_to_organization(user, Bva.singleton)
@@ -12,7 +13,7 @@ RSpec.feature "Team management page" do
 
   describe "Navigation to team management page" do
     context "when user is not in Bva organization" do
-      let(:non_bva_user) { FactoryBot.create(:user) }
+      let(:non_bva_user) { create(:user) }
       before { User.authenticate!(user: non_bva_user) }
 
       scenario "link does not appear in dropdown menu" do

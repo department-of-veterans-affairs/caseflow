@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-require "support/intake_helpers"
+require "support/vacols_database_cleaner"
+require "rails_helper"
 
-feature "Appeal time zone" do
+feature "Appeal time zone", :all_dbs do
   include IntakeHelpers
 
   before do

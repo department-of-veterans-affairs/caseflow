@@ -1,3 +1,5 @@
+const PropTypes = require('prop-types');
+
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -47,6 +49,7 @@ const smallBottomMargin = css({ marginBottom: '1rem' });
 const noLeftPadding = css({ paddingLeft: 0 });
 
 class AddEditIssueView extends React.Component {
+
   componentDidMount = () => {
     const { issueId, appealId } = this.props;
 
@@ -124,7 +127,7 @@ class AddEditIssueView extends React.Component {
       );
     }
 
-    requestPromise.then((resp) => this.updateIssuesFromServer(JSON.parse(resp.text))).
+    requestPromise.then((resp) => this.updateIssuesFromServer(resp.body)).
       catch(() => {
         // handle the error from the frontend
       });
@@ -157,7 +160,7 @@ class AddEditIssueView extends React.Component {
     this.props.requestDelete(
       `/appeals/${appealId}/issues/${String(issue.id)}`, {},
       { title: `You deleted issue ${issueIndex + 1}.` }
-    ).then((resp) => this.props.deleteEditingAppealIssue(appealId, issueId, JSON.parse(resp.text)));
+    ).then((resp) => this.props.deleteEditingAppealIssue(appealId, issueId, resp.body));
   };
 
   renderDiagnosticCodes = () => _.keys(DIAGNOSTIC_CODE_DESCRIPTIONS).map((value) => ({
@@ -330,6 +333,48 @@ class AddEditIssueView extends React.Component {
     </QueueFlowPage>;
   };
 }
+
+AddEditIssueView.propTypes = {
+  action: PropTypes.string,
+  appeal: PropTypes.shape({
+    docketName: PropTypes.string,
+    externalId: PropTypes.string,
+    issues: PropTypes.object
+  }),
+  appealId: PropTypes.string,
+  cancelEditingAppealIssue: PropTypes.func,
+  codes: PropTypes.arrayOf(PropTypes.string),
+  deleteEditingAppealIssue: PropTypes.func,
+  deleteIssueModal: PropTypes.bool,
+  detail: PropTypes.string,
+  docketName: PropTypes.string,
+  error: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
+  }),
+  externalId: PropTypes.string,
+  hideModal: PropTypes.func,
+  highlight: PropTypes.bool,
+  highlightInvalidFormItems: PropTypes.func,
+  id: PropTypes.number,
+  issue: PropTypes.shape({
+    id: PropTypes.number,
+    type: PropTypes.string,
+    codes: PropTypes.arrayOf(PropTypes.string),
+    program: PropTypes.string
+  }),
+  issueId: PropTypes.string,
+  issues: PropTypes.object,
+  requestDelete: PropTypes.func,
+  requestSave: PropTypes.func,
+  requestUpdate: PropTypes.func,
+  saveEditedAppealIssue: PropTypes.func,
+  showModal: PropTypes.func,
+  startEditingAppealIssue: PropTypes.func,
+  title: PropTypes.string,
+  type: PropTypes.string,
+  updateEditingAppealIssue: PropTypes.func
+};
 
 const mapStateToProps = (state, ownProps) => ({
   highlight: state.ui.highlightFormItems,

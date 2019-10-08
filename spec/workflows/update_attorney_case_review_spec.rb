@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe UpdateAttorneyCaseReview do
+describe UpdateAttorneyCaseReview, :postgres do
   describe "#call" do
     context "when the current user is not associated with the case" do
       it "does not update the case review" do

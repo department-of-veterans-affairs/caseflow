@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
-require "support/intake_helpers"
 
-feature "Intake" do
+feature "Intake", :all_dbs do
   include IntakeHelpers
 
   before do
@@ -66,6 +66,19 @@ feature "Intake" do
       User.authenticate!(roles: ["Mail Intake"])
     end
 
+    context "user has unread Inbox messages" do
+      before { FeatureToggle.enable!(:inbox, users: [current_user.css_id]) }
+      after { FeatureToggle.disable!(:inbox) }
+
+      scenario "user sees Alert on Intake start page" do
+        create(:message, user: current_user)
+
+        visit "/intake"
+
+        expect(page).to have_content("You have unread messages")
+      end
+    end
+
     scenario "User visits help page" do
       visit "/intake/help"
       expect(page).to have_content("Welcome to the Intake Help page!")
@@ -96,7 +109,6 @@ feature "Intake" do
 
       fill_in search_bar_title, with: "5678"
       click_on "Search"
-
       expect(page).to have_current_path("/intake/search")
       expect(page).to have_content("Veteran ID not found")
 
@@ -123,9 +135,25 @@ feature "Intake" do
       expect(page).to have_content(/Error code \w+-\w+-\w+-\w+/)
     end
 
+    scenario "Search for a veteran with an incident flash" do
+      allow_any_instance_of(Veteran).to receive(:incident_flash?).and_return true
+      visit "/intake"
+      select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+      safe_click ".cf-submit.usa-button"
+
+      expect(page).to have_content(search_page_title)
+
+      fill_in search_bar_title, with: "12341234"
+      click_on "Search"
+
+      expect(page).to have_current_path("/intake/search")
+      expect(page).to have_content("The Veteran has an incident flash")
+      expect(page).to have_content(COPY::INCIDENT_FLASH_ERROR_START)
+    end
+
     context "Veteran has too high of a sensitivity level for user" do
       before do
-        Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
+        Fakes::BGSService.mark_veteran_not_accessible(appeal.veteran_file_number)
       end
 
       scenario "Search for a veteran with a sensitivity error" do
@@ -142,9 +170,9 @@ feature "Intake" do
 
     context "Veteran records have been merged and Veteran has multiple active phone numbers in SHARE" do
       before do
-        Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
+        Fakes::BGSService.mark_veteran_not_accessible(appeal.veteran_file_number)
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
-          .and_raise(BGS::ShareError, message: "NonUniqueResultException")
+          .and_raise(BGS::ShareError.new("NonUniqueResultException"))
       end
 
       scenario "Search for a veteran with multiple active phone numbers" do
@@ -160,6 +188,8 @@ feature "Intake" do
         cache_key = Fakes::BGSService.new.can_access_cache_key(current_user, "12341234")
         expect(Rails.cache.exist?(cache_key)).to eq(false)
 
+        # retry after SHARE is fixed
+
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
         Fakes::BGSService.inaccessible_appeal_vbms_ids = []
         visit "/intake"
@@ -170,6 +200,22 @@ feature "Intake" do
 
         expect(page).to have_current_path("/intake/review_request")
         expect(Rails.cache.exist?(cache_key)).to eq(true)
+      end
+    end
+
+    context "Veteran is an employee at the same station as the User" do
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:may_modify?).and_return(false)
+      end
+
+      scenario "Search for a Veteran that the user may not modify" do
+        visit "/intake"
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        safe_click ".cf-submit.usa-button"
+        fill_in search_bar_title, with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_content("You don't have permission to intake this Veteran")
       end
     end
 
@@ -198,7 +244,7 @@ feature "Intake" do
         expect(page).to have_current_path("/intake/search")
         expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
         expect(page).to have_content(
-          "the corporate database, then retry establishing the EP in Caseflow: ssn, country."
+          "the corporate database, then retry establishing the EP in Caseflow: country."
         )
         expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
       end
@@ -282,6 +328,35 @@ feature "Intake" do
         # verify user can proceed with new intake
         visit "/intake"
         expect(page).to have_content("Welcome to Caseflow Intake!")
+      end
+    end
+
+    context "Veteran has reserved file number" do
+      let!(:current_user) do
+        User.authenticate!(roles: ["Admin Intake"])
+      end
+
+      before { allow(Rails).to receive(:deploy_env?).and_return(true) }
+
+      let(:veteran) do
+        Generators::Veteran.build(
+          file_number: "123456789",
+          address_line1: "this address is more than 20 chars",
+          first_name: "Ed",
+          last_name: "Merica"
+        )
+      end
+
+      scenario "Search for a veteran with reserved file_number" do
+        visit "intake"
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        safe_click ".cf-submit.usa-button"
+
+        fill_in search_bar_title, with: "123456789"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/search")
+        expect(page).to have_content("Invalid file number")
       end
     end
   end

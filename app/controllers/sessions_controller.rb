@@ -59,11 +59,6 @@ class SessionsController < ApplicationController
     end
   end
 
-  def remove_user_from_session
-    session.delete(:regional_office)
-    session.delete("user")
-  end
-
   def add_user_to_session(user_id)
     user = User.find(user_id)
     session["user"] = user.to_session_hash
@@ -71,4 +66,11 @@ class SessionsController < ApplicationController
     RequestStore[:current_user] = user
   end
   # :nocov:
+
+  private
+
+  def remove_user_from_session
+    session.delete(:regional_office)
+    session.delete("user")
+  end
 end

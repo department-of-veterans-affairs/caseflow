@@ -56,7 +56,7 @@ class JudgeDropdown extends React.Component {
         strongLabel
         readOnly={readOnly}
         value={this.getSelectedOption()}
-        onChange={(option) => onChange(option.value, option.label)}
+        onChange={(option) => onChange((option || {}).value, (option || {}).label)}
         options={options}
         errorMessage={errorMessage}
         placeholder={placeholder} />

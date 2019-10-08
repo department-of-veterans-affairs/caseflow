@@ -91,7 +91,6 @@ Facilitates the transfer of cases from the Agency of Original Jurisdiction (AOJ)
 | --- | --- | ---|
 | Caseflow | [caseflow](https://github.com/department-of-veterans-affairs/caseflow) | [CircleCI - Caseflow](https://circleci.com/gh/department-of-veterans-affairs/caseflow) |
 | eFolder Express | [caseflow-efolder](https://github.com/department-of-veterans-affairs/caseflow-efolder) | [Travis CI - eFolder](https://travis-ci.org/department-of-veterans-affairs/caseflow-efolder) |
-| Caseflow Feedback | [caseflow-feedback](https://github.com/department-of-veterans-affairs/caseflow-feedback) | [Travis CI - Caseflow Feedback](https://travis-ci.org/department-of-veterans-affairs/caseflow-feedback) |
 | Commons | [caseflow-commons](https://github.com/department-of-veterans-affairs/caseflow-commons) | [Travis CI - Commons](https://travis-ci.org/department-of-veterans-affairs/caseflow-commons) |
 
 ## Developer Setup ####################################
@@ -221,9 +220,6 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 
 You probably have to create an Oracle account to download these.
 
-Add this to your env to squash oracle errors on startup:
-`export NLS_LANG=AMERICAN_AMERICA.US7ASCII`
-
 (May need to have your user own the oracle /opt directory?)
 
 **Windows**
@@ -305,8 +301,8 @@ Navigate to the directory you'd like to clone this repo into and run:
 cd caseflow
 rbenv install $(cat .ruby-version)
 rbenv rehash
-BUNDLED_WITH= #[Gemfile.lock bundled-with]
-gem install bundler -v $BUNDLED_WITH
+# BUNDLED_WITH<VERSION> is at the bottom Gemfile.lock
+gem install bundler -v BUNDLED_WITH
 # If when running gem install bundler above you get a permissions error,
 # this means you have not propertly configured your rbenv.
 # Debug.
@@ -334,12 +330,24 @@ Add these to your `.bash_profile`:
 export POSTGRES_HOST=localhost
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
-export NLS_LANG=AMERICAN_AMERICA.US7ASCII
+export NLS_LANG=AMERICAN_AMERICA.UTF8
 ```
 
 The last env var silences one of the Oracle warnings on startup.
 
 (Reload the file `source ~/.bash_profile`)
+
+#### Makefile
+
+An example Makefile is included in the repo, that can ease some of the setup and common development tasks. To use it,
+try:
+
+```
+% ln -s Makefile.example Makefile
+```
+
+Many of the examples that follow have alternate `make` targets for convenience. They are spelled out here
+for clarity as to what is happening "behind the scenes."
 
 #### Database environment setup
 
@@ -357,11 +365,37 @@ Your development setup of caseflow runs Redis, Postgres and OracleDB (VACOLS) in
 
 ### Running Caseflow ###################################################
 
-#### All in one ########################################################################
+To run caseflow:
 ```
+make run
+```
+
+**Note:** The Docker containers must always be running in order for the Rails application to start successfully. Some rake tasks will start them automatically, but if you restart your computer or otherwise stop Docker, you'll want to run `docker-compose up -d` to start the containers initially.
+
+```
+docker-compose up -d
 foreman start
 ```
+
+Spinning up the docker containers is fast, but not instantaneous Occasionally, running `foreman start` *immediately* after `docker-compose up -d`, can cause the rails server to fail to start because not all of the containers are ready. For example, the following _may_ not work:
+
+```
+docker-compose up -d && foreman start
+```
+
+`Makefile.example` provides a bunch of useful shortcuts, one of which is the `run` directive. `run` will ensure that all of the dockers containers are ready before running `foreman start`.
+
+Example:
+
+```
+make -f Makefile.example run
+```
+
 #### Separate Front & Backend Servers ####################################################
+
+`foreman start` starts both the back-end server and the front-end server.
+
+They can, alternatively, be started separately:
 
 _Backend_
 `REACT_ON_RAILS_ENV=HOT bundle exec rails s -p 3000`
@@ -400,7 +434,28 @@ You can also use Psequel (instead of SQL Developer) with the following setup (us
 
 #### FACOLS
 
-To connect to FACOLS, we recommend using [SQL Developer](https://www.oracle.com/database/technologies/appdev/sql-developer.html). Connection details can be found in the docker-compose.yml file.
+To connect to FACOLS, we recommend using SQL Plus Instant Client or [SQL Developer](https://www.oracle.com/database/technologies/appdev/sql-developer.html). Connection details can be found in the docker-compose.yml file.
+
+To install SQL Plus Instant Client on a Mac, run the following Homebrew install commands:
+
+```sh
+brew tap InstantClientTap/instantclient
+brew install instantclient-sqlplus
+```
+
+Homebrew will error and give you instructions to complete a successful installation.
+
+Once SQL Plus is installed, you can connect to FACOLS with this command:
+
+```sh
+sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
+```
+
+Alternately, you can run SQL commands on FACOLS via the rails console using this syntax:
+
+```ruby
+VACOLS::Case.connection.exec_query("SELECT hearing_pkseq from HEARSCHED").to_hash
+```
 
 ### Debugging Tools
 [RailsPanel](https://github.com/dejan/rails_panel) is a great Chrome extension
@@ -412,7 +467,9 @@ already included in this repo.
 
 To run the test suite:
 
-    bundle exec rake
+```
+% make test
+```
 
 ### Testing frontend changes in feature specs
 
@@ -610,4 +667,4 @@ We have a lot of technical documentation spread over a lot of different reposito
 - [Test data setup in lower environments](https://github.com/department-of-veterans-affairs/appeals-qa/tree/master/docs)
 - [Caseflow specific devops documentation](https://github.com/department-of-veterans-affairs/appeals-deployment/tree/master/docs) This folder also contains our [first responder manual](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/first-responder-manual.md), which is super in understanding our production systems.
 - [Non-Caseflow specific devops documentation](https://github.com/department-of-veterans-affairs/devops/tree/master/docs). This documentation is shared with the vets.gov team, so not all of it is relevant.
-- [Project documentation](https://github.com/department-of-veterans-affairs/appeals-design-research/tree/master/Projects)
+- [Project documentation](https://github.com/department-of-veterans-affairs/appeals-design-research/tree/master/Project%20Folders)

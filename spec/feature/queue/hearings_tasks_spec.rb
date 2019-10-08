@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Hearings tasks workflows" do
-  let(:user) { FactoryBot.create(:user) }
+RSpec.feature "Hearings tasks workflows", :all_dbs do
+  let(:user) { create(:user) }
 
   before do
     OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
@@ -11,23 +12,26 @@ RSpec.feature "Hearings tasks workflows" do
   end
 
   describe "Postponing a NoShowHearingTask" do
-    let(:veteran) { FactoryBot.create(:veteran, first_name: "Semka", last_name: "Venturini", file_number: 800_888_002) }
-    let(:appeal) { FactoryBot.create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number) }
+    let(:veteran) { create(:veteran, first_name: "Semka", last_name: "Venturini", file_number: 800_888_002) }
+    let(:appeal) { create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number) }
     let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let(:distribution_task) { FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task) }
-    let(:parent_hearing_task) { FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal) }
-    let!(:completed_scheduling_task) do
-      FactoryBot.create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
+    let(:root_task) { create(:root_task, appeal: appeal) }
+    let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
+    let(:parent_hearing_task) { create(:hearing_task, parent: distribution_task, appeal: appeal) }
+    let(:disposition_task) do
+      create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
     end
-    let(:disposition_task) { FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal) }
     let!(:no_show_hearing_task) do
-      FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+      create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+    end
+
+    let!(:completed_scheduling_task) do
+      create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
     end
 
     it "closes current branch of task tree and starts a new one" do
       expect(distribution_task.children.count).to eq(1)
-      expect(distribution_task.children.active.count).to eq(1)
+      expect(distribution_task.children.open.count).to eq(1)
 
       visit("/queue/appeals/#{appeal.uuid}")
       click_dropdown(text: Constants.TASK_ACTIONS.RESCHEDULE_NO_SHOW_HEARING.label)
@@ -36,9 +40,9 @@ RSpec.feature "Hearings tasks workflows" do
       expect(page).to have_content("Success")
 
       expect(distribution_task.children.count).to eq(2)
-      expect(distribution_task.children.active.count).to eq(1)
+      expect(distribution_task.children.open.count).to eq(1)
 
-      new_parent_hearing_task = distribution_task.children.active.first
+      new_parent_hearing_task = distribution_task.children.open.first
       expect(new_parent_hearing_task).to be_a(HearingTask)
       expect(new_parent_hearing_task.children.first).to be_a(ScheduleHearingTask)
 
@@ -46,13 +50,13 @@ RSpec.feature "Hearings tasks workflows" do
     end
 
     context "with a hearing and a hearing admin member" do
-      let(:hearing_day) { FactoryBot.create(:hearing_day) }
-      let(:hearing) { FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day) }
+      let(:hearing_day) { create(:hearing_day) }
+      let(:hearing) { create(:hearing, appeal: appeal, hearing_day: hearing_day) }
       let!(:association) do
-        FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
+        create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
       end
       let(:admin_full_name) { "Zagorka Hrenic" }
-      let(:hearing_admin_user) { FactoryBot.create(:user, full_name: admin_full_name, station_id: 101) }
+      let(:hearing_admin_user) { create(:user, full_name: admin_full_name, station_id: 101) }
       let(:instructions_text) { "This is why I want a hearing disposition change!" }
 
       before do
@@ -104,25 +108,28 @@ RSpec.feature "Hearings tasks workflows" do
       expect(task.reload.status).to eq(Constants.TASK_STATUSES.completed)
     end
 
-    let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let(:distribution_task) { FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task) }
-    let(:parent_hearing_task) { FactoryBot.create(:hearing_task, parent: hearing_task_parent, appeal: appeal) }
-    let!(:completed_scheduling_task) do
-      FactoryBot.create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
+    let(:appeal) { create(:appeal, :hearing_docket) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
+    let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
+    let(:parent_hearing_task) { create(:hearing_task, parent: hearing_task_parent, appeal: appeal) }
+    let(:disposition_task) do
+      create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
     end
-    let(:disposition_task) { FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal) }
     let!(:no_show_hearing_task) do
-      FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+      create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+    end
+
+    let!(:completed_scheduling_task) do
+      create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
     end
 
     context "when the appeal is a LegacyAppeal" do
-      let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
       let(:hearing_task_parent) { root_task }
 
       context "when the appellant is represented by a VSO" do
         before do
-          FactoryBot.create(:vso)
+          create(:vso)
           allow_any_instance_of(LegacyAppeal).to receive(:representatives) { Representative.all }
         end
 
@@ -132,7 +139,7 @@ RSpec.feature "Hearings tasks workflows" do
           mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
 
           expect(Task.count).to eq(caseflow_task_count_before)
-          expect(Task.active.where.not(type: RootTask.name).count).to eq(0)
+          expect(Task.open.where.not(type: RootTask.name).count).to eq(0)
 
           # Re-find the appeal so we re-fetch information from VACOLS.
           refreshed_appeal = LegacyAppeal.find(appeal.id)
@@ -147,7 +154,7 @@ RSpec.feature "Hearings tasks workflows" do
           mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
 
           expect(Task.count).to eq(caseflow_task_count_before)
-          expect(Task.active.where.not(type: RootTask.name).count).to eq(0)
+          expect(Task.open.where.not(type: RootTask.name).count).to eq(0)
 
           # Re-find the appeal so we re-fetch information from VACOLS.
           refreshed_appeal = LegacyAppeal.find(appeal.id)
@@ -161,7 +168,7 @@ RSpec.feature "Hearings tasks workflows" do
 
       context "when the appellant is represented by a VSO" do
         before do
-          FactoryBot.create(:vso)
+          create(:vso)
           allow_any_instance_of(Appeal).to receive(:representatives) { Representative.all }
         end
 
@@ -172,7 +179,7 @@ RSpec.feature "Hearings tasks workflows" do
             mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
 
             # DispositionTask has been closed and no IHP tasks have been created for this appeal.
-            expect(parent_hearing_task.reload.children.active.count).to eq(0)
+            expect(parent_hearing_task.reload.children.open.count).to eq(0)
             expect(InformalHearingPresentationTask.count).to eq(0)
 
             expect(distribution_task.reload.ready_for_distribution?).to eq(true)
@@ -186,8 +193,8 @@ RSpec.feature "Hearings tasks workflows" do
             mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
 
             # DispositionTask has been closed but IHP task has been created for this appeal.
-            expect(parent_hearing_task.parent.reload.children.active.count).to eq(1)
-            expect(parent_hearing_task.parent.children.active.first).to be_a(InformalHearingPresentationTask)
+            expect(parent_hearing_task.parent.reload.children.open.count).to eq(1)
+            expect(parent_hearing_task.parent.children.open.first).to be_a(InformalHearingPresentationTask)
 
             expect(distribution_task.reload.ready_for_distribution?).to eq(false)
           end
@@ -199,7 +206,7 @@ RSpec.feature "Hearings tasks workflows" do
           mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
 
           # DispositionTask has been closed and no IHP tasks have been created for this appeal.
-          expect(parent_hearing_task.reload.children.active.count).to eq(0)
+          expect(parent_hearing_task.reload.children.open.count).to eq(0)
           expect(InformalHearingPresentationTask.count).to eq(0)
 
           expect(distribution_task.reload.ready_for_distribution?).to eq(true)

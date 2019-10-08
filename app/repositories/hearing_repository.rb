@@ -47,7 +47,8 @@ class HearingRepository
         vdbvapoc: hearing_day.bva_poc
       )
 
-      vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).find_by(vdkey: hearing_day.id)
+      vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).where(vdkey: hearing_day.id)
+        .order(addtime: :desc).last
       hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
 
       hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
@@ -55,28 +56,34 @@ class HearingRepository
       hearing
     end
 
-    def slot_new_hearing(hearing_day_id, scheduled_time_string:, appeal:, hearing_location_attrs: nil)
+    def slot_new_hearing(
+      hearing_day_id,
+      scheduled_time_string:,
+      appeal:,
+      hearing_location_attrs: nil,
+      override_full_hearing_day_validation: false
+    )
       hearing_day = HearingDay.find(hearing_day_id)
-      fail HearingDayFull if hearing_day.hearing_day_full?
 
-      hearing = if appeal.is_a?(LegacyAppeal)
-                  scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
-                    scheduled_for: hearing_day.scheduled_for,
-                    scheduled_time_string: scheduled_time_string
-                  )
-                  vacols_hearing = create_vacols_hearing(hearing_day, appeal, scheduled_for, hearing_location_attrs)
-                  AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
-                  vacols_hearing
-                else
-                  Hearing.create!(
-                    appeal: appeal,
-                    hearing_day_id: hearing_day.id,
-                    hearing_location_attributes: hearing_location_attrs || {},
-                    scheduled_time: scheduled_time_string
-                  )
-                end
+      fail HearingDayFull if !override_full_hearing_day_validation && hearing_day.hearing_day_full?
 
-      hearing
+      if appeal.is_a?(LegacyAppeal)
+        scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
+          scheduled_for: hearing_day.scheduled_for,
+          scheduled_time_string: scheduled_time_string
+        )
+        vacols_hearing = create_vacols_hearing(hearing_day, appeal, scheduled_for, hearing_location_attrs)
+        AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+        vacols_hearing
+      else
+        Hearing.create!(
+          appeal: appeal,
+          hearing_day_id: hearing_day.id,
+          hearing_location_attributes: hearing_location_attrs || {},
+          scheduled_time: scheduled_time_string,
+          override_full_hearing_day_validation: override_full_hearing_day_validation
+        )
+      end
     end
 
     def load_vacols_data(hearing)
@@ -91,6 +98,7 @@ class HearingRepository
         set_vacols_values(hearing, vacols_record)
         true
       else
+        Raven.extra_context(application: "hearings")
         fail Caseflow::Error::VacolsRecordNotFound, "Hearing record with vacols id #{hearing.vacols_id} not found."
       end
     rescue ActiveRecord::RecordNotFound
@@ -107,13 +115,16 @@ class HearingRepository
     end
 
     def hearings_for(case_hearings)
-      uniq_case_hearings = case_hearings.uniq
-      vacols_ids = uniq_case_hearings.map { |record| record[:hearing_pkseq] }.compact
+      vacols_ids = case_hearings.map { |record| record[:hearing_pkseq] }.compact
+
+      if vacols_ids.uniq.length != vacols_ids.length
+        Raven.capture_message("hearings_for has been sent non-unique vacols ids #{vacols_ids}")
+      end
 
       fetched_hearings = LegacyHearing.where(vacols_id: vacols_ids).includes(:appeal, :user, :hearing_views)
       fetched_hearings_hash = fetched_hearings.index_by { |hearing| hearing.vacols_id.to_i }
 
-      uniq_case_hearings.map do |vacols_record|
+      case_hearings.map do |vacols_record|
         hearing = LegacyHearing
           .assign_or_create_from_vacols_record(vacols_record,
                                                legacy_hearing: fetched_hearings_hash[vacols_record.hearing_pkseq])
@@ -144,19 +155,12 @@ class HearingRepository
         venue_key: vacols_record.hearing_venue,
         disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS[vacols_record.hearing_disp.try(:to_sym)],
         representative_name: vacols_record.repname,
-        representative: VACOLS::Case::REPRESENTATIVES[vacols_record.bfso][:full_name],
         aod: VACOLS::CaseHearing::HEARING_AODS[vacols_record.aod.try(:to_sym)],
         hold_open: vacols_record.holddays,
         transcript_requested: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.tranreq.try(:to_sym)],
         transcript_sent_date: AppealRepository.normalize_vacols_date(vacols_record.transent),
         add_on: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.addon.try(:to_sym)],
         notes: vacols_record.notes1,
-        appellant_address_line_1: vacols_record.saddrst1,
-        appellant_address_line_2: vacols_record.saddrst2,
-        appellant_city: vacols_record.saddrcty,
-        appellant_state: vacols_record.saddrstt,
-        appellant_country: vacols_record.saddrcnty,
-        appellant_zip: vacols_record.saddrzip,
         appeal_type: VACOLS::Case::TYPES[vacols_record.bfac],
         docket_number: vacols_record.tinum || "Missing Docket Number",
         veteran_first_name: vacols_record.snamef,
@@ -168,8 +172,7 @@ class HearingRepository
         room: vacols_record.room,
         request_type: vacols_record.hearing_type,
         scheduled_for: date,
-        hearing_day_id: vacols_record.vdkey,
-        master_record: false,
+        hearing_day_vacols_id: vacols_record.vdkey,
         bva_poc: vacols_record.vdbvapoc,
         judge_id: hearing.user_id
       }

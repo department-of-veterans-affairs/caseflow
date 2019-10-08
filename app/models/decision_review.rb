@@ -13,11 +13,15 @@ class DecisionReview < ApplicationRecord
   has_many :request_decision_issues, through: :request_issues
   has_many :decision_issues, as: :decision_review, dependent: :destroy
   has_many :tasks, as: :appeal, dependent: :destroy
+  has_many :request_issues_updates, as: :review, dependent: :destroy
   has_one :intake, as: :detail
+  has_many :job_notes, as: :job
 
   cache_attribute :cached_serialized_ratings, cache_key: :ratings_cache_key, expires_in: 1.day do
     ratings_with_issues.map(&:serialize)
   end
+
+  delegate :contestable_issues, to: :contestable_issue_generator
 
   # The Asyncable module requires we define these.
   # establishment_submitted_at - when our db is ready to push to exernal services
@@ -55,6 +59,10 @@ class DecisionReview < ApplicationRecord
     end
   end
 
+  def asyncable_user
+    intake&.user&.css_id
+  end
+
   def ama_activation_date
     if intake && FeatureToggle.enabled?(:use_ama_activation_date, user: intake.user)
       Constants::DATES["AMA_ACTIVATION"].to_date
@@ -88,6 +96,12 @@ class DecisionReview < ApplicationRecord
     id.to_s
   end
 
+  def withdrawal_date
+    return unless withdrawn?
+
+    request_issues.withdrawn.map(&:withdrawal_date).compact.max
+  end
+
   def ui_hash
     {
       veteran: {
@@ -96,6 +110,9 @@ class DecisionReview < ApplicationRecord
         formName: veteran&.name&.formatted(:form),
         ssn: veteran&.ssn
       },
+      intakeUser: asyncable_user,
+      editIssuesUrl: caseflow_only_edit_issues_url,
+      processedAt: establishment_processed_at,
       relationships: veteran&.relationships&.map(&:ui_hash),
       claimant: claimant_participant_id,
       veteranIsNotClaimant: veteran_is_not_claimant,
@@ -107,11 +124,18 @@ class DecisionReview < ApplicationRecord
       decisionIssues: decision_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
-      editIssuesUrl: caseflow_only_edit_issues_url,
       veteranValid: veteran&.valid?(:bgs),
       veteranInvalidFields: veteran_invalid_fields,
       processedInCaseflow: processed_in_caseflow?
     }
+  end
+
+  def caseflow_only_edit_issues_url
+    "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
+  end
+
+  def async_job_url
+    nil # must override in subclass
   end
 
   def timely_issue?(decision_date)
@@ -145,6 +169,10 @@ class DecisionReview < ApplicationRecord
     claimant_participant_id && claimant_participant_id != veteran.participant_id
   end
 
+  def finalized_decision_issues_before_receipt_date
+    fail NotImplementedError
+  end
+
   def payee_code
     return nil if claimants.empty?
 
@@ -153,6 +181,10 @@ class DecisionReview < ApplicationRecord
 
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
+  end
+
+  def veteran_ssn
+    veteran&.ssn
   end
 
   def mark_rating_request_issues_to_reassociate!
@@ -184,16 +216,6 @@ class DecisionReview < ApplicationRecord
     # no-op
   end
 
-  def cancel_active_tasks
-    tasks.each(&:cancel_task_and_child_subtasks)
-  end
-
-  def contestable_issues
-    return contestable_issues_from_decision_issues unless can_contest_rating_issues?
-
-    contestable_issues_from_ratings + contestable_issues_from_decision_issues
-  end
-
   def active_nonrating_request_issues
     @active_nonrating_request_issues ||= RequestIssue.nonrating.active
       .where(veteran_participant_id: veteran.participant_id)
@@ -218,7 +240,7 @@ class DecisionReview < ApplicationRecord
 
     remand_supplemental_claims.each do |rsc|
       rsc.create_remand_issues!
-      rsc.create_decision_review_task_if_required!
+      rsc.create_business_line_tasks!
 
       delay = rsc.receipt_date.future? ? (rsc.receipt_date + PROCESS_DELAY_VBMS_OFFSET_HOURS.hours).utc : 0
       rsc.submit_for_processing!(delay: delay)
@@ -282,7 +304,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def find_or_build_request_issue_from_intake_data(data)
-    return request_issues.active_or_ineligible.find(data[:request_issue_id]) if data[:request_issue_id]
+    return request_issues.find(data[:request_issue_id]) if data[:request_issue_id]
 
     RequestIssue.from_intake_data(data, decision_review: self)
   end
@@ -305,7 +327,27 @@ class DecisionReview < ApplicationRecord
     request_issues.any? && request_issues.all?(&:removed?)
   end
 
+  def withdrawn?
+    WithdrawnDecisionReviewPolicy.new(self).satisfied?
+  end
+
+  def active_request_issues
+    request_issues.active
+  end
+
+  def withdrawn_request_issues
+    request_issues.withdrawn
+  end
+
+  def create_business_line_tasks!
+    fail Caseflow::Error::MustImplementInSubclass
+  end
+
   private
+
+  def contestable_issue_generator
+    @contestable_issue_generator ||= ContestableIssueGenerator.new(self)
+  end
 
   def veteran_invalid_fields
     return unless intake
@@ -322,42 +364,6 @@ class DecisionReview < ApplicationRecord
 
   def can_contest_rating_issues?
     fail Caseflow::Error::MustImplementInSubclass
-  end
-
-  def cached_rating_issues
-    cached_serialized_ratings.inject([]) do |result, rating_hash|
-      result + rating_hash[:issues].map { |rating_issue_hash| RatingIssue.deserialize(rating_issue_hash) }
-    end
-  end
-
-  def unfiltered_contestable_issues_from_ratings
-    return [] unless receipt_date
-
-    cached_rating_issues
-      .select { |issue| issue.profile_date && issue.profile_date.to_date < receipt_date }
-      .map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, self) }
-  end
-
-  def contestable_issues_from_ratings
-    unfiltered_contestable_issues_from_ratings.reject do |contestable_issue|
-      contestable_issues_from_decision_issues.any? do |potential_duplicate|
-        contestable_issue.rating_issue_reference_id == potential_duplicate.rating_issue_reference_id
-      end
-    end
-  end
-
-  def contestable_decision_issues
-    return [] unless receipt_date
-
-    DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
-      .select(&:finalized?)
-      .select do |issue|
-        issue.approx_decision_date && issue.approx_decision_date < receipt_date
-      end
-  end
-
-  def contestable_issues_from_decision_issues
-    contestable_decision_issues.map { |decision_issue| ContestableIssue.from_decision_issue(decision_issue, self) }
   end
 
   def available_legacy_appeals
@@ -435,19 +441,5 @@ class DecisionReview < ApplicationRecord
     return "1 #{program} issue" if request_issues.count == 1
 
     "#{request_issues.count} #{program} issues"
-  end
-
-  def fetch_issues_status(issues_list)
-    return {} if issues_list.empty?
-
-    issues_list.map do |issue|
-      {
-        active: issue.api_status_active?,
-        lastAction: issue.api_status_last_action,
-        date: issue.api_status_last_action_date,
-        description: issue.api_status_description,
-        diagnosticCode: issue.diagnostic_code
-      }
-    end
   end
 end

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
+require "support/vacols_database_cleaner"
+require "rails_helper"
+
+RSpec.describe Idt::Api::V1::VeteransController, :all_dbs, type: :controller do
   describe "GET /idt/api/v1/veterans" do
     let(:user) { create(:user, css_id: "TEST_ID", full_name: "George Michael") }
     let(:token) do
@@ -14,7 +17,7 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
     context "when request header contains valid token" do
       let(:role) { :attorney_role }
       let(:file_number) { "111222333" }
-      let!(:ssn) { file_number.to_s.reverse } # our fakes do this
+      let!(:ssn) { "666660000" }
       let!(:veteran) { create(:veteran, file_number: file_number, ssn: ssn) }
       let!(:power_of_attorney) { PowerOfAttorney.new(file_number: file_number) }
       let!(:power_of_attorney_address) { power_of_attorney.bgs_representative_address }
@@ -56,6 +59,42 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
       before do
         create(:staff, role, sdomainid: user.css_id)
         request.headers["TOKEN"] = token
+      end
+
+      context "POA is nil" do
+        before do
+          request.headers["FILENUMBER"] = file_number
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
+        end
+
+        it "returns empty hash" do
+          get :details
+
+          expect(response.status).to eq 200
+
+          response_body = JSON.parse(response.body)
+
+          expect(response_body["poa"]).to eq({})
+        end
+      end
+
+      context "POA has no address" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id).and_return(nil)
+          request.headers["FILENUMBER"] = file_number
+        end
+
+        it "returns just the POA name" do
+          get :details
+
+          response_body = JSON.parse(response.body)
+
+          expect(response_body["poa"]).to eq(
+            "representative_type" => "Attorney",
+            "representative_name" => "Clarence Darrow",
+            "participant_id" => power_of_attorney.bgs_participant_id
+          )
+        end
       end
 
       context "and a veteran's file number as a string" do

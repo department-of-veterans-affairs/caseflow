@@ -48,6 +48,69 @@ class EndProduct
     "030BGNRPMC" => "PMC Board Grant Non-Rating"
   }.freeze
 
+  CORRECTION_REVIEW_CODES = {
+    "930ABGNRCLQE" => "AMA BVA Grant Non-Rating Correction of LQE",
+    "930ABGNRCNQE" => "AMA BVA Grant Non-Rating Correction of NQE",
+    "930ABGNRCPMC" => "AMA PMC BVA Grant Non-Rating Control",
+    "930ABGRCLPMC" => "AMA PMC BVA Grant Rating Correction of LQE",
+    "930ABGRCLQE" => "AMA BVA Grant Rating Correction of LQE",
+    "930ABGRCNQE" => "AMA BVA Grant Rating Correction of NQE",
+    "930ABGRCPMC" => "AMA PMC BVA Grant Rating Control",
+    "930ABNRCLPMC" => "AMA PMC BVA Grant Non-Rating Correction of LQE",
+    "930ABNRCNPMC" => "AMA PMC BVA Grant Non-Rating Correction of NQE",
+    "930ABRCNQPMC" => "AMA PMC BVA Grant Rating Correction of NQE",
+    "930AHCNRLPMC" => "AMA PMC HLR Correction of Non-Rating LQE",
+    "930AHCNRLQE" => "AMA HLR Correction of Non-Rating LQE",
+    "930AHCNRNPMC" => "AMA PMC HLR Correction of Non-Rating NQE",
+    "930AHCNRNQE" => "AMA HLR Correction of Non-Rating NQE",
+    "930AHCRLQPMC" => "AMA PMC HLR Correction of Rating LQE",
+    "930AHCRNQPMC" => "AMA PMC HLR Correction of Rating NQE",
+    "930AHNRCPMC" => "AMA PMC HLR Non-Rating Control",
+    "930AMABDENCL" => "AMA Board DTA Error NR - Correction of LQE",
+    "930AMABDENCN" => "AMA Board DTA Error NR - Correction of NQE",
+    "930AMABDENR" => "AMA Board DTA Error Non-Rating",
+    "930AMABDER" => "AMA Board DTA Error Rating",
+    "930AMABDERCL" => "AMA Board DTA Error Rating - Correction of LQE",
+    "930AMABDERCN" => "AMA Board DTA Error Rating - Correction of NQE",
+    "930AMABGNRC" => "AMA BVA Grant Non-Rating Control",
+    "930AMABGRC" => "AMA BVA Grant Rating Control",
+    "930AMAHCRLQE" => "AMA HLR Correction of Rating LQE",
+    "930AMAHCRNQE" => "AMA HLR Correction of Rating NQE",
+    "930AMAHDENCL" => "AMA HLR DTA Error NR - Correction of LQE",
+    "930AMAHDENCN" => "AMA HLR DTA Error NR - Correction of NQE",
+    "930AMAHDENR" => "AMA HLR DTA Error Non-Rating",
+    "930AMAHDER" => "AMA HLR DTA Error Rating",
+    "930AMAHDERCL" => "AMA HLR DTA Error Rating - Correction of LQE",
+    "930AMAHDERCN" => "AMA HLR DTA Error Rating - Correction of NQE",
+    "930AMAHNRC" => "AMA HLR Non-Rating Control",
+    "930AMAHRC" => "AMA HLR Rating Control",
+    "930AMAHRCPMC" => "AMA PMC HLR Rating Control",
+    "930AMARNRC" => "AMA Remand Non-Rating Control",
+    "930AMARRC" => "AMA Remand Rating Control",
+    "930AMARRCLQE" => "AMA Remand Rating Correction of LQE",
+    "930AMARRCNQE" => "AMA Remand Rating Correction of NQE",
+    "930AMARRCPMC" => "AMA PMC Remand Rating Control",
+    "930AMASCRLQE" => "AMA Supp Correction of Rating LQE",
+    "930AMASCRNQE" => "AMA Supp Correction of Rating NQE",
+    "930AMASNRC" => "AMA Supp Non-Rating Control",
+    "930AMASRC" => "AMA Supp Rating Control",
+    "930AMASRCPMC" => "AMA PMC Supp Rating Control",
+    "930ARNRCLPMC" => "AMA PMC Remand Non-Rating Correction of LQE",
+    "930ARNRCLQE" => "AMA Remand Non-Rating Correction of LQE",
+    "930ARNRCNPMC" => "AMA PMC Remand Non-Rating Correction of NQE",
+    "930ARNRCNQE" => "AMA Remand Non-Rating Correction of NQE",
+    "930ARNRCPMC" => "AMA PMC Remand Non-Rating Control",
+    "930ARRCLQPMC" => "AMA PMC Remand Rating Correction of LQE",
+    "930ARRCNQPMC" => "AMA PMC Remand Rating Correction of NQE",
+    "930ASCNRLPMC" => "AMA PMC Supp Correction of Non-Rating LQE",
+    "930ASCNRLQE" => "AMA Supp Correction of Non-Rating LQE",
+    "930ASCNRNPMC" => "AMA PMC Supp Correction of Non-Rating NQE",
+    "930ASCNRNQE" => "AMA Supp Correction of Non-Rating NQE",
+    "930ASCRLQPMC" => "AMA PMC Supp Correction of Rating LQE",
+    "930ASCRNQPMC" => "AMA PMC Supp Correction of Rating NQE",
+    "930ASNRCPMC" => "AMA PMC Supp Non-Rating Control"
+  }.freeze
+
   DISPATCH_CODES = {
     # TODO(jd): Remove this when we've verified they are
     # no longer needed. Maybe 30 days after May 2017?
@@ -79,7 +142,11 @@ class EndProduct
     "070RMBVAGPMC" => "PMC Remand with BVA Grant"
   }.freeze
 
-  CODES = DISPATCH_CODES.merge(RAMP_CODES).merge(DECISION_REVIEW_CODES).merge(DTA_CODES).merge(EFFECTUATION_CODES)
+  CODES = DISPATCH_CODES.merge(RAMP_CODES)
+    .merge(DECISION_REVIEW_CODES)
+    .merge(DTA_CODES)
+    .merge(EFFECTUATION_CODES)
+    .merge(CORRECTION_REVIEW_CODES)
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 
@@ -184,11 +251,23 @@ class EndProduct
   end
 
   def station_description
-    regional_office ? regional_office.station_description : "Unknown"
+    regional_office ? regional_office.station_description : COPY::UNKNOWN_REGIONAL_OFFICE
   end
 
   def active?
     !INACTIVE_STATUSES.include?(status_type_code)
+  end
+
+  def cleared?
+    status_type_code == "CLR"
+  end
+
+  def canceled?
+    status_type_code == "CAN"
+  end
+
+  def recent?
+    [Time.zone.today, 1.day.ago.to_date].include? last_action_date
   end
 
   def contentions

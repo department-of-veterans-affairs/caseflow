@@ -1,24 +1,19 @@
 # frozen_string_literal: true
 
-describe DirectReviewDocket do
-  before do
-    FeatureToggle.enable!(:ama_acd_tasks)
-  end
+require "support/database_cleaner"
+require "rails_helper"
 
-  after do
-    FeatureToggle.disable!(:ama_acd_tasks)
-  end
-
+describe DirectReviewDocket, :postgres do
   context "#due_count" do
     subject { DirectReviewDocket.new.due_count }
 
     before do
       Timecop.freeze(Date.new(2021, 2, 19))
 
-      (300..309).each do |i|
+      (269..279).each do |i|
         appeal = create(:appeal,
-                        :with_tasks,
-                        docket_type: "direct_review",
+                        :with_post_intake_tasks,
+                        docket_type: Constants.AMA_DOCKETS.direct_review,
                         receipt_date: i.days.ago)
         appeal.set_target_decision_date!
       end
@@ -38,15 +33,15 @@ describe DirectReviewDocket do
 
         (102..105).each do |i|
           appeal = create(:appeal,
-                          :with_tasks,
-                          docket_type: "direct_review",
+                          :with_post_intake_tasks,
+                          docket_type: Constants.AMA_DOCKETS.direct_review,
                           receipt_date: i.days.ago)
           appeal.set_target_decision_date!
         end
       end
 
       it "returns the time until due" do
-        expect(subject).to eq(200)
+        expect(subject).to eq(170)
       end
     end
 
@@ -62,19 +57,15 @@ describe DirectReviewDocket do
   context "#nonpriority_receipts_per_year" do
     subject { DirectReviewDocket.new.nonpriority_receipts_per_year }
 
-    context "before April 1st, 2019" do
-      before { Timecop.freeze(Date.new(2019, 3, 30)) }
-
-      it "returns baseline" do
-        expect(subject).to eq(38_500)
-      end
-    end
-
     context "before Feb 29th, 2020" do
       before do
         # 364 days after March 1st 2019
         Timecop.freeze(Date.new(2020, 2, 28))
-        100.times { create(:appeal, docket_type: "direct_review", receipt_date: Date.new(2019, 11, 28)) }
+        100.times do
+          create(:appeal,
+                 docket_type: Constants.AMA_DOCKETS.direct_review,
+                 receipt_date: Date.new(2019, 11, 28))
+        end
       end
 
       it "returns weighted number of appeals" do
@@ -85,8 +76,16 @@ describe DirectReviewDocket do
     context "after Feb 29th, 2020" do
       before do
         Timecop.freeze(Date.new(2022, 2, 28))
-        5.times { create(:appeal, docket_type: "direct_review", receipt_date: Date.new(2021, 1, 1)) }
-        5.times { create(:appeal, docket_type: "direct_review", receipt_date: Date.new(2021, 4, 1)) }
+        5.times do
+          create(:appeal,
+                 docket_type: Constants.AMA_DOCKETS.direct_review,
+                 receipt_date: Date.new(2021, 1, 1))
+        end
+        5.times do
+          create(:appeal,
+                 docket_type: Constants.AMA_DOCKETS.direct_review,
+                 receipt_date: Date.new(2021, 4, 1))
+        end
       end
 
       it "returns number of appeals in the last year" do

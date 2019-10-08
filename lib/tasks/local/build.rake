@@ -3,8 +3,8 @@
 namespace :local do
   desc "build local development environment"
   task :build do
-    puts "Building docker services from configuration"
-    system("./local/vacols/build_push.sh local") || abort
+    puts "Downloading facols image from ECR"
+    system("./local/vacols/build_push.sh rake") || abort
 
     puts "Starting docker containers in the background"
     system("docker-compose up -d") || abort
@@ -24,6 +24,9 @@ namespace :local do
 
     puts "Seeding FACOLS"
     system("RAILS_ENV=development bundle exec rake local:vacols:seed") || abort
+
+    puts "Seeding FACOLS TEST"
+    system("RAILS_ENV=test bundle exec rake spec:setup_vacols") || abort
 
     puts "Enabling feature flags"
     system("bundle exec rails runner scripts/enable_features_dev.rb") || abort

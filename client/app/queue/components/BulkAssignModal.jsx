@@ -1,12 +1,18 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 
 import ApiUtil from '../../util/ApiUtil';
-
-import Button from '../../components/Button';
-import Modal from '../../components/Modal';
+import QueueFlowModal from './QueueFlowModal';
 import Dropdown from '../../components/Dropdown';
+import { cityForRegionalOfficeCode } from '../utils';
+import { bulkAssignTasks } from '../QueueActions';
+import { setActiveOrganization } from '../uiReducer/uiActions';
+import LoadingScreen from '../../components/LoadingScreen';
+import { LOGO_COLORS } from '../../constants/AppConstants';
+import COPY from '../../../COPY.json';
 
 const BULK_ASSIGN_ISSUE_COUNT = [5, 10, 20, 30, 40, 50];
 
@@ -15,9 +21,11 @@ class BulkAssignModal extends React.PureComponent {
     super(props);
 
     this.state = {
-      showModal: false,
-      showErrors: false,
       users: [],
+      // Expect each row in taskCountForTypeAndRegionalOffice to have the following shape:
+      // { count: 12, type: "NoShowHearingTask", regional_office: "RO31" }
+      taskCountForTypeAndRegionalOffice: [],
+      loadingComponent: null,
       modal: {
         assignedUser: null,
         regionalOffice: null,
@@ -28,21 +36,18 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   componentDidMount() {
-    let fetchedUsers;
+    this.setState({ loadingComponent: <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} /> });
 
-    if (this.props.organizationUrl) {
-      ApiUtil.get(`/organizations/${this.props.organizationUrl}/users.json`).then((resp) => {
-        fetchedUsers = resp.body.organization_users.data;
-
-        this.setState({ users: fetchedUsers });
+    ApiUtil.get(`/organizations/${this.organizationUrl()}/task_summary.json`).then((resp) => {
+      this.setState({
+        users: resp.body.members.data,
+        taskCountForTypeAndRegionalOffice: JSON.parse(resp.body.task_counts),
+        loadingComponent: null
       });
-    }
-  }
-
-  handleModalToggle = () => {
-    const modalStatus = this.state.showModal;
-
-    this.setState({ showModal: !modalStatus });
+    }).
+      catch(() => {
+        this.setState({ loadingComponent: null });
+      });
   }
 
   onFieldChange = (value, field) => {
@@ -53,137 +58,117 @@ class BulkAssignModal extends React.PureComponent {
     this.forceUpdate();
   }
 
-  generateErrors = () => {
-    const requiredFields = ['assignedUser', 'taskType', 'numberOfTasks'];
-    const undefinedFields = _.keys(_.omitBy(this.state.modal, _.isString));
-    const errorFields = [];
-
-    undefinedFields.forEach((field) => {
-      if (requiredFields.includes(field)) {
-        errorFields.push(field);
-      }
-    });
-
-    return errorFields;
-  }
-
   bulkAssignTasks = () => {
-    this.setState({ showErrors: true });
+    this.props.bulkAssignTasks(this.state.modal);
 
-    if (this.generateErrors().length === 0) {
-      this.props.assignTasks(this.state.modal);
-      this.handleModalToggle();
+    const {
+      taskType: task_type,
+      numberOfTasks: task_count,
+      assignedUser: assigned_to_id,
+      regionalOffice: regional_office
+    } = this.state.modal;
+
+    const data = { bulk_task_assignment: {
+      organization_url: this.organizationUrl(),
+      regional_office,
+      assigned_to_id,
+      task_type,
+      task_count }
+    };
+
+    return ApiUtil.post('/bulk_task_assignments', { data }).then(() => {
+      this.props.history.push(`/organizations/${this.organizationUrl()}`);
+      window.location.reload();
+    }).
+      catch(() => {
+        // handle the error
+      });
+  }
+
+  filterOptionsByRegionalOffice = (rows) => {
+    if (!this.state.modal.regionalOffice) {
+      return rows;
     }
+
+    return rows.filter((row) => row.regional_office === this.state.modal.regionalOffice);
   }
 
-  getDisplayTextOption = (options) => {
-    const optionsWithDisplayText = [
-      {
-        value: null,
-        displayText: ''
-      }
-    ];
+  filterOptionsByTaskType = (rows) => {
+    if (!this.state.modal.taskType) {
+      return rows;
+    }
 
-    options.forEach((option) => {
-      if (option !== null) {
-        if (typeof option === 'object') {
-          optionsWithDisplayText.push(option);
-        } else {
-          optionsWithDisplayText.push(
-            {
-              value: option,
-              displayText: option
-            }
-          );
-        }
-      }
-    });
-
-    return optionsWithDisplayText;
-  }
-
-  displayErrorMessage = (field) => {
-    return this.state.showErrors && this.generateErrors().includes(field) ? 'Please select a value' : null;
-  }
-
-  filterTasks = (fieldName, fieldValue, tasks) => {
-    let filteredTasks = tasks;
-
-    filteredTasks = fieldValue ?
-      _.filter(filteredTasks, { [fieldName]: fieldValue }) :
-      filteredTasks;
-
-    return filteredTasks;
+    return rows.filter((row) => row.type === this.state.modal.taskType);
   }
 
   generateUserOptions = () => {
     const users = this.state.users.map((user) => {
       return {
-        value: user.attributes.css_id,
+        value: user.id,
         displayText: `${user.attributes.css_id} ${user.attributes.full_name}`
       };
-    });
-
-    users.unshift({
-      value: null,
-      displayText: ''
     });
 
     return users;
   }
 
-  generateRegionalOfficeOptions = () => {
-    const options = _.uniq(this.props.tasks.map((task) => task.closestRegionalOffice));
+  prependBlankOption = (options) => ([{ value: null,
+    displayText: '' }].concat(options));
 
-    return this.getDisplayTextOption(options);
+  generateRegionalOfficeOptions = () => {
+    const allRows = this.state.taskCountForTypeAndRegionalOffice;
+
+    // Remove rows with null regional office codes.
+    const validRows = allRows.filter((row) => row.regional_office);
+    const filteredRows = this.filterOptionsByTaskType(validRows);
+
+    const uniqueRows = _.uniq(filteredRows.map((row) => row.regional_office));
+    const rowsSortedByCityName = _.sortBy(uniqueRows, [(roCode) => cityForRegionalOfficeCode(roCode)]);
+
+    return this.prependBlankOption(
+      rowsSortedByCityName.map((roCode) => ({
+        value: roCode,
+        displayText: cityForRegionalOfficeCode(roCode)
+      }))
+    );
   }
 
   generateTaskTypeOptions = () => {
-    let filteredTasks = this.props.tasks;
+    const allRows = this.state.taskCountForTypeAndRegionalOffice;
+    const filteredRows = this.filterOptionsByRegionalOffice(allRows);
 
-    if (this.state.modal.regionalOffice) {
-      filteredTasks = _.filter(filteredTasks, { closestRegionalOffice: this.state.modal.regionalOffice });
-    }
+    return this.prependBlankOption(_.uniq(filteredRows.map((row) => row.type)).map((type) => ({
+      value: type,
+      displayText: type.replace(/([a-z])([A-Z])/g, '$1 $2')
+    })
+    ));
+  }
 
-    const uniqueTasks = _.uniq(filteredTasks.map((task) => task.type));
-    const taskOptions = uniqueTasks.map((task) => {
-      return {
-        value: task,
-        displayText: task.replace(/([a-z])([A-Z])/g, '$1 $2')
-      };
-    });
+  assignableTaskCount = () => {
+    const allRows = this.state.taskCountForTypeAndRegionalOffice;
+    const filteredRows = this.filterOptionsByTaskType(this.filterOptionsByRegionalOffice(allRows));
 
-    taskOptions.unshift({
-      value: null,
-      displayText: ''
-    });
-
-    return taskOptions;
+    return filteredRows.map((row) => row.count).reduce((first, second) => first + second, 0);
   }
 
   generateNumberOfTaskOptions = () => {
     const actualOptions = [];
-    const issueCounts = this.props.issueCountOptions || BULK_ASSIGN_ISSUE_COUNT;
-    let filteredTasks = this.props.tasks;
+    const issueCounts = BULK_ASSIGN_ISSUE_COUNT;
 
-    // filter by regional office
-    filteredTasks = this.filterTasks('closestRegionalOffice', this.state.modal.regionalOffice, filteredTasks);
-
-    // filter by task type
-    filteredTasks = this.filterTasks('type', this.state.modal.taskType, filteredTasks);
+    const assignableTaskCount = this.assignableTaskCount();
 
     for (let i = 0; i < issueCounts.length; i++) {
-      if (filteredTasks && filteredTasks.length < issueCounts[i]) {
+      if (assignableTaskCount < issueCounts[i]) {
         actualOptions.push({
-          value: filteredTasks.length,
-          displayText: `${filteredTasks.length} (all available tasks)`
+          value: assignableTaskCount,
+          displayText: `${assignableTaskCount} (all available tasks)`
         });
-
         break;
-      } else {
+      }
+      if (assignableTaskCount > issueCounts[i]) {
         actualOptions.push({
-          value: issueCounts[1],
-          displayText: issueCounts[1]
+          value: issueCounts[i],
+          displayText: issueCounts[i]
         });
       }
     }
@@ -191,57 +176,60 @@ class BulkAssignModal extends React.PureComponent {
     return actualOptions;
   }
 
-  generateDropdown = (label, fieldName, options, isRequired) => {
-    return (
-      <Dropdown
-        name={label}
-        options={options}
-        value={this.state.modal[fieldName]}
-        defaultText="Select"
-        onChange={(value) => this.onFieldChange(value, fieldName)}
-        errorMessage={this.displayErrorMessage(fieldName)}
-        required={isRequired}
-      />
-    );
+  validateForm = () => {
+    return this.state.modal.assignedUser !== null &&
+      this.state.modal.taskType !== null &&
+      this.state.modal.numberOfTasks !== null;
   }
 
-  render() {
-    const isBulkAssignEnabled = this.props.enableBulkAssign && this.props.organizationUrl;
-    // const bulkAssignButton = <Button classNames={['bulk-assign-button']} onClick={this.handleModalToggle}>
-    //   Assign Tasks</Button>;
-    const confirmButton = <Button classNames={['usa-button-secondary']} onClick={this.bulkAssignTasks}>
-      Assign</Button>;
-    const cancelButton = <Button linkStyling onClick={this.handleModalToggle}>Cancel</Button>;
-    const modal = (
-      <Modal
-        title="Assign Tasks"
-        closeHandler={this.handleModalToggle}
-        confirmButton={confirmButton}
-        cancelButton={cancelButton} >
-        {this.generateDropdown('Assign to', 'assignedUser', this.generateUserOptions(), true)}
-        {this.generateDropdown('Regional office', 'regionalOffice', this.generateRegionalOfficeOptions(), false)}
-        {this.generateDropdown('Select task type', 'taskType', this.generateTaskTypeOptions(), true)}
-        {this.generateDropdown('Select number of tasks to assign', 'numberOfTasks',
-          this.generateNumberOfTaskOptions(), true)}
-      </Modal>
-    );
+  generateDropdown = (label, fieldName, options, isRequired) => <Dropdown
+    name={label}
+    options={options}
+    value={this.state.modal[fieldName]}
+    defaultText="Select"
+    onChange={(value) => this.onFieldChange(value, fieldName)}
+    errorMessage={this.props.highlightFormItems &&
+      !this.state.modal[fieldName] &&
+      isRequired ? 'Please select a value' : null}
+    required={isRequired}
+  />;
 
-    return (
-      <div>
-        {isBulkAssignEnabled && this.state.showModal && modal}
-        {/* hide the button until the backend work is complete: */}
-        {/* {isBulkAssignEnabled && bulkAssignButton} */}
-      </div>
-    );
+  organizationUrl = () => this.props.location.pathname.split('/')[2];
+
+  render = () => {
+    if (this.state.loadingComponent) {
+      return this.state.loadingComponent;
+    }
+
+    return <QueueFlowModal
+      pathAfterSubmit={`/organizations/${this.organizationUrl()}`}
+      button={COPY.BULK_ASSIGN_BUTTON_TEXT}
+      submit={this.bulkAssignTasks}
+      validateForm={this.validateForm}
+      title={COPY.BULK_ASSIGN_MODAL_TITLE}>
+      {this.generateDropdown('Assign to', 'assignedUser', this.generateUserOptions(), true)}
+      {this.generateDropdown('Regional office', 'regionalOffice', this.generateRegionalOfficeOptions(), false)}
+      {this.generateDropdown('Select task type', 'taskType', this.generateTaskTypeOptions(), true)}
+      {this.generateDropdown('Select number of tasks to assign', 'numberOfTasks',
+        this.generateNumberOfTaskOptions(), true)}
+    </QueueFlowModal>;
   }
+  ;
 }
 
-BulkAssignModal.propTypes = {
-  enableBulkAssign: PropTypes.bool,
-  tasks: PropTypes.array.isRequired,
-  organizationUrl: PropTypes.string,
-  assignTasks: PropTypes.func.isRequired,
-  issueCountOptions: PropTypes.array
+const mapStateToProps = (state) => {
+  const {
+    highlightFormItems
+  } = state.ui;
+
+  return {
+    highlightFormItems
+  };
 };
 
-export default BulkAssignModal;
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({ bulkAssignTasks,
+    setActiveOrganization }, dispatch)
+);
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(BulkAssignModal));

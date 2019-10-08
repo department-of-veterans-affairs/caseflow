@@ -1,29 +1,99 @@
 ### Generic smell configuration
+### Please keep these alphabetical
 detectors:
   # You can disable smells completely
+  Attribute:
+    exclude:
+      - BulkTaskAssignment
+      - Hearing#override_full_hearing_day_validation
+      - QueueConfig
+  BooleanParameter:
+    exclude:
+      - HearingRepository#slot_new_hearing
+      - Veteran
+  ControlParameter:
+    exclude:
+      - HearingRepository#slot_new_hearing
+      - Task#actions_allowable?
+      - TaskSorter#sort_requires_case_norm?
+      - Veteran
+  UncommunicativeVariableName:
+    exclude:
+      - Address
+  LongParameterList:
+    exclude:
+      - Address
+  UncommunicativeParameterName:
+    exclude:
+      - Address
+  DataClump:
+    exclude:
+      - HearingSerializerBase
   DuplicateMethodCall:
     enabled: false
-  TooManyMethods:
+  FeatureEnvy:
     exclude:
-      - RootTask
+      - Api::ApplicationController#on_external_error
+      - Api::ApplicationController#upstream_known_error
+      - AppealTaskHistory#build_events
+      - ApplicationRecord#as_hash
+      - AsyncableJobsReporter
+      - ClaimReviewAsyncStatsReporter#as_csv
+      - DataIntegrityChecksJob
+      - DecisionIssueSyncJob
+      - Fakes::EndProductStore
+      - Fakes::BGSServiceRecordMaker
+      - FetchDocumentsForReaderJob#fetch_for_appeal
+      - HearingSerializerBase
+      - MonthlyMetricsReportJob#build_report
+      - SyncReviewsJob
+      - TaskTimerJob
+      - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
+      - VeteranAttributeCacher
+      - WarmBgsCachesJob
   InstanceVariableAssumption:
     exclude:
       - Appeal
       - Task
+      - CaseflowJob
   IrresponsibleModule:
     enabled: false
+  ManualDispatch:
+    exclude:
+      - Api::V3::DecisionReview::IntakeParams
+      - Api::V3::DecisionReview::RequestIssueParams#shape_valid?
+      - Api::V3::DecisionReview::IntakeError#potential_error_code
   MissingSafeMethod:
     enabled: false
+  NestedIterators:
+    max_allowed_nesting: 2
+    exclude:
+      - AsyncableJobsReporter
   NilCheck:
+    enabled: false
+  RepeatedConditional:
+    exclude:
+      - HearingLocation
+      - QueueConfig
+      - RequestIssue
+  TooManyInstanceVariables:
+    exclude:
+      - AmaAppealDispatch
+      - LegacyAppealDispatch
+      - Address
+  TooManyMethods:
     enabled: false
   TooManyStatements:
     enabled: false
   UtilityFunction:
     public_methods_only: true
     exclude:
+      - HearingAdminActionVerifyAddressTask#available_hearing_admin_actions
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
+      - LatestRatingDisabilityEvaluation#latest_disability_evaluation
+      - OnHoldTasksTab#name
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.
@@ -33,6 +103,9 @@ detectors:
 directories:
   "app/controllers":
     InstanceVariableAssumption:
+      enabled: false
+  "app/jobs":
+    UtilityFunction:
       enabled: false
 
 ### Excluding directories

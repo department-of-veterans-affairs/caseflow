@@ -7,9 +7,10 @@ class ContestableIssue
   # approx_decision_date is our best guess at the decision date.
   # it is used for timeliness checks on the client side and for user display.
   attr_accessor :rating_issue_reference_id, :approx_decision_date, :description,
-                :ramp_claim_id, :contesting_decision_review,
+                :ramp_claim_id, :contesting_decision_review, :is_rating,
                 :decision_issue, :rating_issue_profile_date, :source_request_issues,
-                :rating_issue_diagnostic_code, :source_decision_review
+                :rating_issue_diagnostic_code, :source_decision_review,
+                :rating_decision_reference_id
 
   class << self
     def from_rating_issue(rating_issue, contesting_decision_review)
@@ -21,6 +22,7 @@ class ContestableIssue
         ramp_claim_id: rating_issue.ramp_claim_id,
         contesting_decision_review: contesting_decision_review,
         rating_issue_diagnostic_code: rating_issue.diagnostic_code,
+        is_rating: true,
 
         # TODO: These should never be set unless there is a decision issue. We should refactor this to
         # account for that.
@@ -30,6 +32,10 @@ class ContestableIssue
     end
 
     def from_decision_issue(decision_issue, contesting_decision_review)
+      # Do not send source review for decision issues from the same review
+      # This indicates a decision correction, and checking lane-to-lane eligibility is not applicable
+      source = (contesting_decision_review == decision_issue.decision_review) ? nil : decision_issue.decision_review
+
       new(
         rating_issue_reference_id: decision_issue.rating_issue_reference_id,
         rating_issue_profile_date: decision_issue.rating_profile_date.try(:to_date),
@@ -37,8 +43,22 @@ class ContestableIssue
         description: decision_issue.description,
         decision_issue: decision_issue,
         source_request_issues: decision_issue.request_issues.active,
-        source_decision_review: decision_issue.decision_review,
-        contesting_decision_review: contesting_decision_review
+        source_decision_review: source,
+        contesting_decision_review: contesting_decision_review,
+        is_rating: decision_issue.rating?
+      )
+    end
+
+    def from_rating_decision(rating_decision, contesting_decision_review)
+      new(
+        rating_issue_reference_id: rating_decision.rating_issue_reference_id,
+        rating_issue_profile_date: rating_decision.profile_date.to_date,
+        rating_decision_reference_id: rating_decision.reference_id,
+        approx_decision_date: rating_decision.decision_date.to_date,
+        description: rating_decision.decision_text,
+        contesting_decision_review: contesting_decision_review,
+        rating_issue_diagnostic_code: rating_decision.diagnostic_code,
+        is_rating: true # true even if rating_reference_id is nil
       )
     end
   end
@@ -48,6 +68,7 @@ class ContestableIssue
       ratingIssueReferenceId: rating_issue_reference_id,
       ratingIssueProfileDate: rating_issue_profile_date.try(:to_date),
       ratingIssueDiagnosticCode: rating_issue_diagnostic_code,
+      ratingDecisionReferenceId: rating_decision_reference_id,
       decisionIssueId: decision_issue&.id,
       approxDecisionDate: approx_decision_date,
       description: description,
@@ -55,7 +76,8 @@ class ContestableIssue
       titleOfActiveReview: title_of_active_review,
       sourceReviewType: source_review_type,
       timely: timely?,
-      latestIssuesInChain: serialize_latest_decision_issues
+      latestIssuesInChain: serialize_latest_decision_issues,
+      isRating: is_rating
     }
   end
 
@@ -88,6 +110,7 @@ class ContestableIssue
   def contested_by_request_issue
     RequestIssue.active.find_by(
       contested_rating_issue_reference_id: rating_issue_reference_id,
+      contested_rating_decision_reference_id: rating_decision_reference_id,
       contested_decision_issue_id: decision_issue&.id
     )
   end
@@ -116,8 +139,9 @@ class ContestableIssue
 
   def conflicting_request_issue_by_decision_issue
     return unless decision_issue&.id
+    return unless source_decision_review
 
-    potentially_conflicting_request_issues.find_by(contested_decision_issue_id: decision_issue.id)
+    potentially_conflicting_request_issues.find_by(contested_decision_issue_id: decision_issue.id, correction_type: nil)
   end
 
   def potentially_conflicting_request_issues

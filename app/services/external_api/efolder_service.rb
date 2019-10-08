@@ -4,9 +4,12 @@ require "json"
 
 class ExternalApi::EfolderService
   def self.document_count(file_number, user)
-    headers = { "FILE-NUMBER" => file_number }
-    response = send_efolder_request("/api/v2/document_counts", user, headers)
-    response[:documents]
+    Rails.cache.fetch("Efolder-document-count-#{file_number}", expires_in: 4.hours) do
+      headers = { "FILE-NUMBER" => file_number }
+      response = send_efolder_request("/api/v2/document_counts", user, headers)
+      response_body = JSON.parse(response.body)
+      response_body["documents"]
+    end
   end
 
   def self.fetch_documents_for(appeal, user)
@@ -33,9 +36,7 @@ class ExternalApi::EfolderService
       response = send_efolder_request("/api/v2/manifests/#{manifest_id}", user, headers)
     end
 
-    msg = "Failed to fetch manifest after #{retry_attempts_count} seconds for #{vbms_id}, \
-      user_id: #{user.id}, response attributes: #{response_attrs}"
-    fail Caseflow::Error::DocumentRetrievalError, code: 504, message: msg
+    generate_response(response_attrs, vbms_id)
   end
 
   def self.check_for_error(response_body:, code:, vbms_id:, user_id:)

@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 class Organizations::UsersController < OrganizationsController
-  # We are skipping the verification step when requesting json in order to allow the list of
-  # hearing admin users to be sent to the front-end when enabling the bulk assign task feature
-  # skip_before_action :verify_organization_access, only: [:index]
-
   def index
     respond_to do |format|
       format.html { render template: "queue/index" }
@@ -74,10 +70,6 @@ class Organizations::UsersController < OrganizationsController
   def json_users(users)
     ::WorkQueue::UserSerializer.new(users, is_collection: true)
   end
-
-  # def requesting_json
-  #   request.format.json?
-  # end
 
   def json_administered_users(users)
     ::WorkQueue::AdministeredUserSerializer.new(

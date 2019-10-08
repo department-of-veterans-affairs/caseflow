@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/database_cleaner"
 require "rails_helper"
 
-describe DecisionIssueSyncJob do
+describe DecisionIssueSyncJob, :postgres do
   let(:epe) { create(:end_product_establishment, :cleared, established_at: Time.zone.today) }
   let(:request_issue) { create(:request_issue, end_product_establishment: epe) }
   let(:no_ratings_err) { Rating::NilRatingProfileListError.new("none!") }
@@ -20,7 +21,7 @@ describe DecisionIssueSyncJob do
 
     subject
 
-    expect(request_issue.decision_sync_error).to eq("Rating::NilRatingProfileListError")
+    expect(request_issue.decision_sync_error).to eq("#<Rating::NilRatingProfileListError: none!>")
     expect(@raven_called).to eq(false)
   end
 
@@ -30,7 +31,7 @@ describe DecisionIssueSyncJob do
 
     subject
 
-    expect(request_issue.decision_sync_error).to eq("network!")
+    expect(request_issue.decision_sync_error).to eq("#<BGS::ShareError: network!>")
     expect(@raven_called).to eq(true)
   end
 
@@ -40,7 +41,7 @@ describe DecisionIssueSyncJob do
 
     subject
 
-    expect(request_issue.decision_sync_error).to eq("random error")
+    expect(request_issue.decision_sync_error).to eq("#<StandardError: random error>")
     expect(@raven_called).to eq(true)
   end
 

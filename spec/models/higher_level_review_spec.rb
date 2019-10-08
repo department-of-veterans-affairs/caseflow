@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-describe HigherLevelReview do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe HigherLevelReview, :postgres do
   before do
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
   end
@@ -51,6 +54,7 @@ describe HigherLevelReview do
         let(:benefit_type) { "compensation" }
 
         it "adds an error" do
+          veteran.update(first_name: nil)
           expect(subject).to eq false
           expect(higher_level_review.errors[:veteran]).to include("veteran_not_valid")
         end
@@ -324,6 +328,8 @@ describe HigherLevelReview do
 
         context "when decision date is in the future" do
           let(:caseflow_decision_date) { 1.day.from_now }
+          let(:vbms_offset) { DecisionReview::PROCESS_DELAY_VBMS_OFFSET_HOURS.hours }
+
           it "creates a DTA Supplemental claim, but does not start processing until hours after the claim_date" do
             subject
             dta_sc = SupplementalClaim.find_by(
@@ -331,9 +337,9 @@ describe HigherLevelReview do
               decision_review_remanded: higher_level_review
             )
             expect(dta_sc).to_not be_nil
-            expect(dta_sc.establishment_submitted_at).to eq(
-              caseflow_decision_date.to_date +
-              DecisionReview::PROCESS_DELAY_VBMS_OFFSET_HOURS.hours -
+            expect(dta_sc.establishment_submitted_at).to eq((dta_sc.receipt_date + vbms_offset).utc)
+            expect(dta_sc.establishment_last_submitted_at).to eq(
+              caseflow_decision_date.to_date + vbms_offset -
               SupplementalClaim.processing_retry_interval_hours.hours + 1.minute
             )
             expect do
@@ -456,307 +462,6 @@ describe HigherLevelReview do
 
         dta_decision_event = events.find { |e| e.type == :dta_decision }
         expect(dta_decision_event.date.to_date).to eq(promulgation_date.to_date)
-      end
-    end
-  end
-
-  context "#issues" do
-    let(:receipt_date) { Time.new("2018", "03", "01").utc }
-    let(:benefit_type) { "compensation" }
-
-    let(:ep_status) { "PEND" }
-    let!(:hlr_ep) do
-      create(:end_product_establishment,
-             synced_status: ep_status,
-             source: hlr,
-             last_synced_at: receipt_date + 100.days)
-    end
-
-    let!(:request_issue1) do
-      create(:request_issue,
-             decision_review: hlr,
-             benefit_type: benefit_type,
-             contested_rating_issue_diagnostic_code: "9999")
-    end
-
-    let!(:request_issue2) do
-      create(:request_issue,
-             decision_review: hlr,
-             benefit_type: benefit_type,
-             contested_rating_issue_diagnostic_code: "8877")
-    end
-
-    let!(:request_issue3) do
-      create(:request_issue,
-             decision_review: hlr,
-             benefit_type: benefit_type,
-             ineligible_reason: :untimely)
-    end
-
-    let!(:hlr) do
-      create(:higher_level_review,
-             veteran_file_number: veteran_file_number,
-             receipt_date: receipt_date,
-             benefit_type: benefit_type)
-    end
-
-    context "claim open pending decision" do
-      it "gets status for the request issues" do
-        issue_statuses = hlr.issues_hash
-
-        expect(issue_statuses.count).to eq(2)
-
-        issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }
-        expect(issue).to_not be_nil
-
-        expect(issue[:active]).to eq(true)
-        expect(issue[:lastAction]).to be_nil
-        expect(issue[:date]).to be_nil
-        expect(issue[:description]).to eq("Dental or oral condition")
-
-        issue2 = issue_statuses.find { |i| i[:diagnosticCode] == "8877" }
-        expect(issue2).to_not be_nil
-        expect(issue2[:active]).to eq(true)
-        expect(issue2[:lastAction]).to be_nil
-        expect(issue2[:date]).to be_nil
-        expect(issue2[:description]).to eq("Undiagnosed hemic or lymphatic condition")
-      end
-    end
-
-    context "decision on HLR, one decision has a DTA error" do
-      let(:ep_status) { "CLR" }
-      let!(:hlr_decision_issue_with_dta_error) do
-        create(:decision_issue,
-               decision_review: hlr,
-               disposition: DecisionIssue::DTA_ERROR_PMR,
-               benefit_type: benefit_type,
-               end_product_last_action_date: receipt_date + 30.days,
-               diagnostic_code: "9999")
-      end
-
-      let!(:hlr_decision_issue) do
-        create(:decision_issue,
-               decision_review: hlr,
-               disposition: "denied",
-               benefit_type: benefit_type,
-               end_product_last_action_date: receipt_date + 30.days,
-               diagnostic_code: "8877")
-      end
-
-      let!(:dta_sc) do
-        create(:supplemental_claim,
-               veteran_file_number: veteran_file_number,
-               decision_review_remanded: hlr)
-      end
-
-      let(:dta_ep_status) { "PEND" }
-      let!(:dta_ep) do
-        create(:end_product_establishment,
-               source: dta_sc,
-               synced_status: dta_ep_status)
-      end
-
-      let!(:dta_request_issue) do
-        create(:request_issue,
-               decision_review: dta_sc,
-               benefit_type: benefit_type,
-               contested_rating_issue_diagnostic_code: "9999")
-      end
-
-      it "will still show the status for the request issues" do
-        issue_statuses = hlr.issues_hash
-
-        expect(issue_statuses.empty?).to eq(false)
-
-        issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }
-        expect(issue).to_not be_nil
-        expect(issue[:active]).to eq(true)
-        expect(issue[:lastAction]).to be_nil
-        expect(issue[:date]).to be_nil
-        expect(issue[:description]).to eq("Dental or oral condition")
-
-        issue2 = issue_statuses.find { |i| i[:diagnosticCode] == "8877" }
-        expect(issue2).to_not be_nil
-        expect(issue2[:active]).to eq(true)
-        expect(issue[:lastAction]).to be_nil
-        expect(issue[:date]).to be_nil
-        expect(issue2[:description]).to eq("Undiagnosed hemic or lymphatic condition")
-      end
-    end
-
-    context "dta sc decision" do
-      let(:ep_status) { "CLR" }
-
-      let(:hlr_decision_date) { receipt_date + 30.days }
-      let!(:hlr_decision_issue_with_dta_error) do
-        create(:decision_issue,
-               decision_review: hlr,
-               disposition: DecisionIssue::DTA_ERROR_PMR,
-               benefit_type: benefit_type,
-               end_product_last_action_date: hlr_decision_date,
-               diagnostic_code: "9999")
-      end
-
-      let!(:hlr_decision_issue) do
-        create(:decision_issue,
-               decision_review: hlr,
-               disposition: "denied",
-               benefit_type: benefit_type,
-               end_product_last_action_date: hlr_decision_date,
-               diagnostic_code: "8877")
-      end
-
-      let!(:dta_sc) do
-        create(:supplemental_claim,
-               veteran_file_number: veteran_file_number,
-               decision_review_remanded: hlr)
-      end
-
-      let!(:dta_ep) do
-        create(:end_product_establishment,
-               source: dta_sc,
-               synced_status: "CLR")
-      end
-
-      let!(:dta_request_issue) do
-        create(:request_issue,
-               decision_review: dta_sc,
-               benefit_type: benefit_type,
-               contested_rating_issue_diagnostic_code: "9999")
-      end
-
-      let(:dta_sc_decision_date) { receipt_date + 60.days }
-      let!(:dta_sc_decision_issue) do
-        create(:decision_issue,
-               decision_review: dta_sc,
-               disposition: "allowed",
-               benefit_type: benefit_type,
-               end_product_last_action_date: dta_sc_decision_date,
-               diagnostic_code: "9999")
-      end
-
-      it "will get the status for the decisions issues" do
-        issue_statuses = hlr.issues_hash
-        expect(issue_statuses.empty?).to eq(false)
-
-        issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }
-        expect(issue).to_not be_nil
-        expect(issue[:active]).to eq(false)
-        expect(issue[:lastAction]).to eq("allowed")
-        expect(issue[:date]).to eq(dta_sc_decision_date.to_date)
-        expect(issue[:description]).to eq("Dental or oral condition")
-
-        issue2 = issue_statuses.find { |i| i[:diagnosticCode] == "8877" }
-        expect(issue2).to_not be_nil
-        expect(issue2[:active]).to eq(false)
-        expect(issue2[:lastAction]).to eq("denied")
-        expect(issue2[:date]).to eq(hlr_decision_date.to_date)
-        expect(issue2[:description]).to eq("Undiagnosed hemic or lymphatic condition")
-      end
-    end
-  end
-
-  context "#status_hash" do
-    let(:receipt_date) { Time.new("2018", "03", "01").utc }
-    let(:benefit_type) { "compensation" }
-    let(:hlr_decision_date) { receipt_date + 30.days }
-
-    let!(:hlr) do
-      create(:higher_level_review,
-             veteran_file_number: veteran_file_number,
-             receipt_date: receipt_date,
-             benefit_type: benefit_type)
-    end
-
-    context "has a decision" do
-      let!(:request_issue1) do
-        create(:request_issue,
-               decision_review: hlr,
-               benefit_type: benefit_type,
-               contested_rating_issue_diagnostic_code: "8877")
-      end
-
-      let!(:hlr_ep) do
-        create(:end_product_establishment,
-               :cleared,
-               source: hlr,
-               last_synced_at: hlr_decision_date)
-      end
-
-      let!(:hlr_decision_issue) do
-        create(:decision_issue,
-               decision_review: hlr,
-               disposition: "denied",
-               benefit_type: benefit_type,
-               end_product_last_action_date: hlr_decision_date,
-               diagnostic_code: "8877")
-      end
-
-      it "has decision status and status details" do
-        status = hlr.status_hash
-        expect(status[:type]).to eq(:hlr_decision)
-        expect(status[:details][:issues].first[:description]).to eq("Undiagnosed hemic or lymphatic condition")
-        expect(status[:details][:issues].first[:disposition]).to eq("denied")
-      end
-    end
-
-    context "dta error" do
-      let(:receipt_date) { Time.new("2018", "03", "01").utc }
-      let(:benefit_type) { "compensation" }
-      let!(:hlr) do
-        create(:higher_level_review,
-               veteran_file_number: veteran_file_number,
-               receipt_date: receipt_date,
-               benefit_type: benefit_type)
-      end
-
-      let(:hlr_decision_date) { receipt_date + 30.days }
-
-      let!(:hlr_decision_issue_with_dta_error) do
-        create(:decision_issue,
-               decision_review: hlr,
-               disposition: DecisionIssue::DTA_ERROR_PMR,
-               benefit_type: benefit_type,
-               end_product_last_action_date: hlr_decision_date,
-               diagnostic_code: "9999")
-      end
-
-      let!(:dta_sc) do
-        create(:supplemental_claim,
-               veteran_file_number: veteran_file_number,
-               decision_review_remanded: hlr)
-      end
-
-      let!(:dta_ep) do
-        create(:end_product_establishment,
-               :cleared,
-               source: dta_sc)
-      end
-
-      let!(:dta_request_issue) do
-        create(:request_issue,
-               decision_review: dta_sc,
-               benefit_type: benefit_type,
-               contested_rating_issue_diagnostic_code: "9999")
-      end
-
-      let(:dta_sc_decision_date) { receipt_date + 60.days }
-
-      let!(:dta_sc_decision_issue) do
-        create(:decision_issue,
-               decision_review: dta_sc,
-               disposition: "allowed",
-               benefit_type: benefit_type,
-               end_product_last_action_date: dta_sc_decision_date,
-               diagnostic_code: "9999")
-      end
-
-      it "has decision status and status details for the dta sc decision" do
-        status = hlr.status_hash
-
-        expect(status[:type]).to eq(:hlr_decision)
-        expect(status[:details][:issues].first[:description]).to eq("Dental or oral condition")
-        expect(status[:details][:issues].first[:disposition]).to eq("allowed")
       end
     end
   end

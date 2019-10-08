@@ -6,7 +6,10 @@
 # which went into effect Feb 19, 2019.
 
 class Appeal < DecisionReview
+  include BgsService
   include Taskable
+  include PrintsTaskTree
+  include HasTaskHistory
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -21,68 +24,19 @@ class Appeal < DecisionReview
   has_one :special_issue_list
   has_many :record_synced_by_job, as: :record
 
-  validate :validate_receipt_date
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
+    validate :validate_receipt_date
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
     validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }
     validates_associated :claimants
   end
 
-  scope :join_aod_motions, lambda {
-    joins(claimants: :person)
-      .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
-  }
-
-  scope :all_priority, lambda {
-    join_aod_motions
-      .where("advance_on_docket_motions.created_at > appeals.established_at")
-      .where("advance_on_docket_motions.granted = ?", true)
-      .or(join_aod_motions
-        .where("people.date_of_birth <= ?", 75.years.ago))
-      .group("appeals.id")
-  }
-
-  # rubocop:disable Metrics/LineLength
-  scope :all_nonpriority, lambda {
-    join_aod_motions
-      .where("people.date_of_birth > ?", 75.years.ago)
-      .group("appeals.id")
-      .having("count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
-  }
-  # rubocop:enable Metrics/LineLength
-
-  scope :ready_for_distribution, lambda {
-    joins(:tasks)
-      .group("appeals.id")
-      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
-              DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
-      .having("count(case when tasks.type in (?) and tasks.status not in (?) then 1 end) = ?",
-              MailTask.blocking_subclasses, Task.inactive_statuses, 0)
-  }
-
-  scope :non_ihp, lambda {
-    joins(:tasks)
-      .group("appeals.id")
-      .having("count(case when tasks.type = ? then 1 end) = ?",
-              InformalHearingPresentationTask.name, 0)
-  }
-
   scope :active, lambda {
     joins(:tasks)
       .group("appeals.id")
       .having("count(case when tasks.type = ? and tasks.status not in (?) then 1 end) >= ?",
-              RootTask.name, Task.inactive_statuses, 1)
-  }
-
-  scope :ordered_by_distribution_ready_date, lambda {
-    joins(:tasks)
-      .group("appeals.id")
-      .order("max(case when tasks.type = 'DistributionTask' then tasks.assigned_at end)")
-  }
-
-  scope :priority_ordered_by_distribution_ready_date, lambda {
-    from(all_priority).ordered_by_distribution_ready_date
+              RootTask.name, Task.closed_statuses, 1)
   }
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
@@ -109,24 +63,12 @@ class Appeal < DecisionReview
     end
   end
 
-  def self.nonpriority_decisions_per_year
-    appeal_ids = all_nonpriority
-      .joins(:decision_documents)
-      .where("decision_date > ?", 1.year.ago)
-      .select("appeals.id")
-    where(id: appeal_ids).count
-  end
-
   def ui_hash
     super.merge(
       docketType: docket_type,
       isOutcoded: outcoded?,
       formType: "appeal"
     )
-  end
-
-  def caseflow_only_edit_issues_url
-    "/appeals/#{uuid}/edit"
   end
 
   def type
@@ -138,15 +80,16 @@ class Appeal < DecisionReview
   def assigned_to_location
     return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
-    active_tasks = tasks.active.not_tracking
+    active_tasks = tasks.active.visible_in_queue_table_view
     return most_recently_assigned_to_label(active_tasks) if active_tasks.any?
 
-    on_hold_tasks = tasks.on_hold.not_tracking
+    on_hold_tasks = tasks.on_hold.visible_in_queue_table_view
     return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
 
+    # this condition is no longer needed since we only want active or on hold tasks
     return most_recently_assigned_to_label(tasks) if tasks.any?
 
-    status_hash[:type].to_s.titleize
+    fetch_status.to_s.titleize
   end
 
   def attorney_case_reviews
@@ -166,7 +109,7 @@ class Appeal < DecisionReview
   end
 
   def reviewing_judge_name
-    task = tasks.order(created_at: :desc).detect { |t| t.is_a?(JudgeTask) }
+    task = tasks.not_cancelled.where(type: JudgeDecisionReviewTask.name).order(created_at: :desc).first
     task ? task.assigned_to.try(:full_name) : ""
   end
 
@@ -207,7 +150,20 @@ class Appeal < DecisionReview
   end
 
   def active?
-    tasks.active.where(type: RootTask.name).any?
+    tasks.open.where(type: RootTask.name).any?
+  end
+
+  def ready_for_distribution?
+    # Appeals are ready for distribution when the DistributionTask is the active task, meaning there are no outstanding
+    #   Evidence Window or Hearing tasks, and when there are no mail tasks that legally restrict the distribution of
+    #   the case, aka blocking mail tasks
+    return false unless tasks.active.where(type: DistributionTask.name).any?
+
+    MailTask.open.where(appeal: self).find_each do |mail_task|
+      return false if mail_task.blocking?
+    end
+
+    true
   end
 
   def ready_for_distribution_at
@@ -255,21 +211,21 @@ class Appeal < DecisionReview
     veteran_if_exists&.available_hearing_locations
   end
 
-  delegate :city,
-           :state, to: :appellant, prefix: true
-
   def regional_office
     nil
   end
 
-  def advanced_on_docket
-    claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
+  def advanced_on_docket?
+    claimants.any? { |claimant| claimant.advanced_on_docket?(receipt_date) }
   end
+
+  # Prefer aod? over aod going forward, as this function returns a boolean
+  alias aod? advanced_on_docket?
+  alias aod advanced_on_docket?
 
   delegate :first_name,
            :last_name,
-           :name_suffix,
-           :ssn, to: :veteran, prefix: true, allow_nil: true
+           :name_suffix, to: :veteran, prefix: true, allow_nil: true
 
   def appellant
     claimants.first
@@ -279,6 +235,7 @@ class Appeal < DecisionReview
            :last_name,
            :middle_name,
            :name_suffix,
+           :address_line_1,
            :city,
            :zip,
            :state, to: :appellant, prefix: true, allow_nil: true
@@ -335,8 +292,8 @@ class Appeal < DecisionReview
   end
 
   def create_tasks_on_intake_success!
-    RootTask.create_root_and_sub_tasks!(self)
-    create_business_line_tasks if request_issues.any?(&:requires_record_request_task?)
+    InitialTasksFactory.new(self).create_root_and_sub_tasks!
+    create_business_line_tasks!
     maybe_create_translation_task
   end
 
@@ -389,10 +346,6 @@ class Appeal < DecisionReview
     else
       "bva"
     end
-  end
-
-  def status_hash
-    { type: fetch_status, details: fetch_details_for_status }
   end
 
   def fetch_status
@@ -523,7 +476,7 @@ class Appeal < DecisionReview
   end
 
   def pending_schedule_hearing_task?
-    tasks.active.where(type: ScheduleHearingTask.name).any?
+    tasks.open.where(type: ScheduleHearingTask.name).any?
   end
 
   def hearing_pending?
@@ -531,20 +484,16 @@ class Appeal < DecisionReview
   end
 
   def evidence_submission_hold_pending?
-    tasks.active.where(type: EvidenceSubmissionWindowTask.name).any?
+    tasks.open.where(type: EvidenceSubmissionWindowTask.name).any?
   end
 
   def at_vso?
     # This task is always open, this can be used once that task is completed
-    # tasks.active.where(type: InformalHearingPresentationTask.name).any?
+    # tasks.open.where(type: InformalHearingPresentationTask.name).any?
   end
 
   def distributed_to_a_judge?
     tasks.any? { |t| t.is_a?(JudgeTask) }
-  end
-
-  def withdrawn?
-    root_task&.status == Constants.TASK_STATUSES.cancelled
   end
 
   def alerts
@@ -621,6 +570,10 @@ class Appeal < DecisionReview
     true
   end
 
+  def processed_in_vbms?
+    false
+  end
+
   def first_distributed_to_judge_date
     judge_tasks = tasks.select { |t| t.is_a?(JudgeTask) }
     return unless judge_tasks.any?
@@ -650,12 +603,8 @@ class Appeal < DecisionReview
     @events ||= AppealEvents.new(appeal: self).all
   end
 
-  def issues_hash
-    issue_list = decision_issues.empty? ? request_issues.active.all : fetch_all_decision_issues
-
-    return [] if issue_list.empty?
-
-    fetch_issues_status(issue_list)
+  def active_request_issues_or_decision_issues
+    decision_issues.empty? ? request_issues.active.all : fetch_all_decision_issues
   end
 
   def fetch_all_decision_issues
@@ -676,25 +625,36 @@ class Appeal < DecisionReview
     %w[supplemental_claim cavc]
   end
 
-  private
-
-  def most_recently_assigned_to_label(tasks)
-    tasks.order(:updated_at).last.assigned_to_label
+  def cancel_active_tasks
+    AppealActiveTaskCancellation.new(self).call
   end
 
-  def maybe_create_translation_task
-    veteran_state_code = veteran&.state
-    va_dot_gov_address = veteran.validate_address
-    state_code = va_dot_gov_address&.dig(:state_code) || veteran_state_code
-  rescue Caseflow::Error::VaDotGovAPIError
-    state_code = veteran_state_code
-  ensure
-    TranslationTask.create_from_root_task(root_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
+  def address
+    @address ||= Address.new(appellant.address) if appellant.address.present?
   end
 
-  def create_business_line_tasks
-    request_issues.select(&:requires_record_request_task?).each do |req_issue|
-      business_line = req_issue.business_line
+  # we always want to show ratings on intake
+  def can_contest_rating_issues?
+    true
+  end
+
+  def finalized_decision_issues_before_receipt_date
+    return [] unless receipt_date
+
+    DecisionIssue.includes(:decision_review).where(participant_id: veteran.participant_id)
+      .select(&:finalized?)
+      .select do |issue|
+        issue.approx_decision_date && issue.approx_decision_date < receipt_date
+      end
+  end
+
+  def create_business_line_tasks!
+    issues_needing_tasks = request_issues.select(&:requires_record_request_task?)
+    business_lines = issues_needing_tasks.map(&:business_line).uniq
+
+    business_lines.each do |business_line|
+      next if tasks.any? { |task| task.is_a?(VeteranRecordRequest) && task.assigned_to == business_line }
+
       VeteranRecordRequest.create!(
         parent: root_task,
         appeal: self,
@@ -704,22 +664,24 @@ class Appeal < DecisionReview
     end
   end
 
-  def bgs
-    BGSService.new
+  def stuck?
+    AppealsWithNoTasksOrAllTasksOnHoldQuery.new.ama_appeal_stuck?(self)
   end
 
-  # we always want to show ratings on intake
-  def can_contest_rating_issues?
-    true
+  private
+
+  def most_recently_assigned_to_label(tasks)
+    tasks.order(:created_at).last&.assigned_to_label
   end
 
-  def contestable_decision_issues
-    return [] unless receipt_date
-
-    DecisionIssue.includes(:decision_review).where(participant_id: veteran.participant_id)
-      .select(&:finalized?)
-      .select do |issue|
-        issue.approx_decision_date && issue.approx_decision_date < receipt_date
-      end
+  def maybe_create_translation_task
+    veteran_state_code = veteran&.state
+    va_dot_gov_address = veteran.validate_address
+    state_code = va_dot_gov_address&.dig(:state_code) || veteran_state_code
+  rescue Caseflow::Error::VaDotGovAPIError
+    state_code = veteran_state_code
+  ensure
+    distribution_task = tasks.open.find_by(type: DistributionTask.name)
+    TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
   end
 end

@@ -7,10 +7,10 @@ class ExternalApi::BGSService
   include PowerOfAttorneyMapper
   include AddressMapper
 
-  attr_accessor :client
+  attr_reader :client
 
-  def initialize
-    @client = init_client
+  def initialize(client: init_client)
+    @client = client
 
     # These instance variables are used for caching their
     # respective requests
@@ -19,7 +19,7 @@ class ExternalApi::BGSService
     @person_info = {}
     @poas = {}
     @poa_by_participant_ids = {}
-    @poa_addresses = {}
+    @addresses = {}
     @people_by_ssn = {}
   end
 
@@ -58,10 +58,12 @@ class ExternalApi::BGSService
     DBService.release_db_connections
 
     @veteran_info[vbms_id] ||=
-      MetricsService.record("BGS: fetch veteran info for vbms id: #{vbms_id}",
-                            service: :bgs,
-                            name: "veteran.find_by_file_number") do
-        client.veteran.find_by_file_number(vbms_id)
+      Rails.cache.fetch(fetch_veteran_info_cache_key(vbms_id), expires_in: 10.minutes) do
+        MetricsService.record("BGS: fetch veteran info for vbms id: #{vbms_id}",
+                              service: :bgs,
+                              name: "veteran.find_by_file_number") do
+          client.veteran.find_by_file_number(vbms_id)
+        end
       end
   end
 
@@ -74,10 +76,13 @@ class ExternalApi::BGSService
       client.people.find_person_by_ptcpnt_id(participant_id)
     end
 
+    return {} unless bgs_info
+
     @person_info[participant_id] ||= {
       first_name: bgs_info[:first_nm],
       last_name: bgs_info[:last_nm],
       middle_name: bgs_info[:middle_nm],
+      name_suffix: bgs_info[:suffix_nm],
       birth_date: bgs_info[:brthdy_dt]
     }
   end
@@ -151,44 +156,60 @@ class ExternalApi::BGSService
   end
 
   def find_address_by_participant_id(participant_id)
-    DBService.release_db_connections
-
-    unless @poa_addresses[participant_id]
-      bgs_address = MetricsService.record("BGS: fetch address by participant_id: #{participant_id}",
-                                          service: :bgs,
-                                          name: "address.find_by_participant_id") do
-        client.address.find_all_by_participant_id(participant_id)
-      end
-      if bgs_address
-        # Count on addresses being sorted with most recent first if we return a list of addresses.
-        # The very first element of the array might not necessarily be an address
-        bgs_address = bgs_address.select { |a| a.key?(:addrs_one_txt) }[0] if bgs_address.is_a?(Array)
-        @poa_addresses[participant_id] = get_address_from_bgs_address(bgs_address)
-      end
-    end
-
-    @poa_addresses[participant_id]
+    finder = ExternalApi::BgsAddressFinder.new(participant_id: participant_id, client: client)
+    @addresses[participant_id] ||= finder.mailing_address || finder.addresses.last
   end
 
   # This method checks to see if the current user has access to this case
   # in BGS. Cases in BGS are assigned a "sensitivity level" which may be
-  # higher than that of the current employee
+  # higher than that of the current employee.
+  #
+  # We cache at 2 levels: the boolean check per user, and the veteran record itself.
+  # The veteran record is so that subsequent calls to fetch_veteran_info can read from cache.
   def can_access?(vbms_id)
-    current_user = RequestStore[:current_user]
-
     Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 24.hours) do
       DBService.release_db_connections
 
       MetricsService.record("BGS: can_access? (find_by_file_number): #{vbms_id}",
                             service: :bgs,
                             name: "can_access?") do
-        client.can_access?(vbms_id, true)
+        record = client.veteran.find_by_file_number(vbms_id)
+        # local memo cache for this object
+        @veteran_info[vbms_id] ||= record
+        # persist cache for other objects
+        Rails.cache.write(fetch_veteran_info_cache_key(vbms_id), record, expires_in: 10.minutes)
+        true
+      rescue BGS::ShareError
+        false
       end
     end
   end
 
+  # can_access? reflects whether a user may read a veteran's records.
+  # may_modify? reflects whether a user may establish a new claim.
+  def may_modify?(vbms_id, veteran_participant_id)
+    return false unless can_access?(vbms_id)
+
+    # sometimes find_flashes works
+    begin
+      client.claimants.find_flashes(vbms_id)
+    rescue BGS::ShareError
+      return false
+    end
+
+    # sometimes the station conflict logic works
+    !ExternalApi::BgsVeteranStationUserConflict.new(
+      veteran_participant_id: veteran_participant_id,
+      client: client
+    ).conflict?
+  end
+
   def bust_can_access_cache(user, vbms_id)
     Rails.cache.delete(can_access_cache_key(user, vbms_id))
+  end
+
+  def bust_fetch_veteran_info_cache(vbms_id)
+    Rails.cache.delete(fetch_veteran_info_cache_key(vbms_id))
   end
 
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
@@ -240,12 +261,16 @@ class ExternalApi::BGSService
   end
 
   def get_participant_id_for_user(user)
+    get_participant_id_for_css_id_and_station_id(user.css_id, user.station_id)
+  end
+
+  def get_participant_id_for_css_id_and_station_id(css_id, station_id)
     DBService.release_db_connections
 
-    MetricsService.record("BGS: find participant id for user #{user.css_id}, #{user.station_id}",
+    MetricsService.record("BGS: find participant id for user #{css_id}, #{station_id}",
                           service: :bgs,
                           name: "security.find_participant_id") do
-      client.security.find_participant_id(css_id: user.css_id, station_id: user.station_id)
+      client.security.find_participant_id(css_id: css_id, station_id: station_id)
     end
   end
 
@@ -285,14 +310,19 @@ class ExternalApi::BGSService
 
   private
 
+  def current_user
+    RequestStore[:current_user]
+  end
+
   def can_access_cache_key(user, vbms_id)
     "bgs_can_access_#{user.css_id}_#{user.station_id}_#{vbms_id}"
   end
 
-  def init_client
-    # Fetch current_user from global thread
-    current_user = RequestStore[:current_user]
+  def fetch_veteran_info_cache_key(vbms_id)
+    "bgs_veteran_info_#{vbms_id}"
+  end
 
+  def init_client
     forward_proxy_url = FeatureToggle.enabled?(:bgs_forward_proxy) ? ENV["RUBY_BGS_PROXY_BASE_URL"] : nil
 
     BGS::Services.new(

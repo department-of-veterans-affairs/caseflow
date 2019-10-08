@@ -3,23 +3,15 @@
 # This job will retrieve cases from VACOLS via the AppealRepository
 # and all documents for these cases in VBMS and store them
 class RetrieveDocumentsForReaderJob < ApplicationJob
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :reader
 
-  DEFAULT_USERS_LIMIT = 3
-  def perform(args = {})
-    # specified limit of users we fetch for
-    limit = args["limit"] || DEFAULT_USERS_LIMIT
-    find_all_reader_users_by_documents_fetched_at(limit).each do |user|
-      start_fetch_job(user)
-    end
+  def perform
+    users = BatchUsersForReaderQuery.process
+    users.each { |user| start_fetch_job(user) }
   end
 
   def start_fetch_job(user)
     FetchDocumentsForReaderUserJob.perform_later(user)
-  end
-
-  def find_all_reader_users_by_documents_fetched_at(limit = 10)
-    ReaderUser.all_by_documents_fetched_at(limit)
   end
 end

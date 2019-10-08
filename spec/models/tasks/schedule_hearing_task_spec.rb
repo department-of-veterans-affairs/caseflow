@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
-describe ScheduleHearingTask do
-  let(:vacols_case) { FactoryBot.create(:case, bfcurloc: "57") }
-  let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
-  let!(:hearings_management_user) { FactoryBot.create(:hearings_coordinator) }
+require "support/vacols_database_cleaner"
+require "rails_helper"
+
+describe ScheduleHearingTask, :all_dbs do
+  let(:vacols_case) { create(:case, bfcurloc: "57") }
+  let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+  let!(:hearings_management_user) { create(:hearings_coordinator) }
   let(:test_hearing_date_vacols) do
     Time.use_zone("Eastern Time (US & Canada)") do
       Time.zone.local(2018, 11, 2, 6, 0, 0)
@@ -21,18 +24,10 @@ describe ScheduleHearingTask do
   end
 
   context "create a new ScheduleHearingTask" do
-    let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
-
-    before do
-      FeatureToggle.enable!(:ama_acd_tasks)
-    end
-
-    after do
-      FeatureToggle.disable!(:ama_acd_tasks)
-    end
+    let(:appeal) { create(:appeal, :hearing_docket) }
 
     subject do
-      RootTask.create_root_and_sub_tasks! appeal
+      InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
     end
 
     it "is assigned to the Bva org by default" do
@@ -55,7 +50,7 @@ describe ScheduleHearingTask do
     end
 
     context "there is a hearing admin org user" do
-      let(:hearing_admin_user) { FactoryBot.create(:user, station_id: 101) }
+      let(:hearing_admin_user) { create(:user, station_id: 101) }
 
       before do
         OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
@@ -71,9 +66,9 @@ describe ScheduleHearingTask do
   end
 
   context "create a ScheduleHearingTask with parent other than HearingTask type" do
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
 
-    subject { FactoryBot.create(:schedule_hearing_task, parent: root_task) }
+    subject { create(:schedule_hearing_task, parent: root_task) }
 
     it "creates a HearingTask in between the input parent and the ScheduleHearingTask" do
       expect { subject }.to_not raise_error
@@ -82,7 +77,7 @@ describe ScheduleHearingTask do
     end
   end
 
-  context "#update_from_params" do
+  describe "#update_from_params" do
     context "AMA appeal" do
       let(:hearing_day) do
         create(:hearing_day,
@@ -111,11 +106,11 @@ describe ScheduleHearingTask do
         expect(Hearing.first.appeal).to eq(schedule_hearing_task.appeal)
       end
 
-      it "creates a DispositionTask and associated object" do
+      it "creates a AssignHearingDispositionTask and associated object" do
         schedule_hearing_task.update_from_params(update_params, hearings_management_user)
 
-        expect(DispositionTask.count).to eq(1)
-        expect(DispositionTask.first.appeal).to eq(schedule_hearing_task.appeal)
+        expect(AssignHearingDispositionTask.count).to eq(1)
+        expect(AssignHearingDispositionTask.first.appeal).to eq(schedule_hearing_task.appeal)
         expect(HearingTaskAssociation.count).to eq(1)
         expect(HearingTaskAssociation.first.hearing).to eq(Hearing.first)
         expect(HearingTaskAssociation.first.hearing_task).to eq(HearingTask.first)
@@ -192,7 +187,66 @@ describe ScheduleHearingTask do
     end
   end
 
-  context ".tasks_for_ro" do
+  describe "#create_change_hearing_disposition_task" do
+    let(:appeal) { create(:appeal) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
+    let(:past_hearing_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
+    let(:hearing) { create(:hearing, appeal: appeal, disposition: past_hearing_disposition) }
+    let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+    let!(:disposition_task) do
+      create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal)
+    end
+    let!(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
+    let!(:hearing_task_2) { create(:hearing_task, parent: root_task, appeal: appeal) }
+    let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
+    let(:instructions) { "These are my detailed instructions for a schedule hearing task." }
+
+    before do
+      [hearing_task, disposition_task].each { |task| task&.update!(status: Constants.TASK_STATUSES.completed) }
+      create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
+    end
+
+    subject { task.create_change_hearing_disposition_task(instructions) }
+
+    it "creates new hearing and change hearing disposition tasks and cancels unwanted tasks" do
+      subject
+
+      expect(hearing_task.reload.open?).to be_falsey
+      expect(disposition_task.reload.open?).to be_falsey
+      expect(hearing_task_2.reload.status).to eq Constants.TASK_STATUSES.cancelled
+      expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+      new_hearing_tasks = appeal.tasks.open.where(type: HearingTask.name)
+      expect(new_hearing_tasks.count).to eq 1
+      expect(new_hearing_tasks.first.hearing).to eq hearing
+      new_change_tasks = appeal.tasks.open.where(type: ChangeHearingDispositionTask.name)
+      expect(new_change_tasks.count).to eq 1
+      expect(new_change_tasks.first.parent).to eq new_hearing_tasks.first
+    end
+
+    context "the past hearing disposition is nil" do
+      let(:past_hearing_disposition) { nil }
+
+      it "raises an error" do
+        expect { subject }
+          .to raise_error(Caseflow::Error::ActionForbiddenError)
+          .with_message(COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR)
+      end
+    end
+
+    context "there's no past inactive hearing task" do
+      let(:hearing_task) { nil }
+      let(:disposition_task) { nil }
+      let(:association) { nil }
+
+      it "raises an error" do
+        expect { subject }
+          .to raise_error(Caseflow::Error::ActionForbiddenError)
+          .with_message(COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR)
+      end
+    end
+  end
+
+  describe "#tasks_for_ro" do
     let(:regional_office) { "RO17" }
     let(:number_of_cases) { 10 }
 

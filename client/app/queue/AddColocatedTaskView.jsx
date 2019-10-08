@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -38,6 +39,7 @@ const adminActionTemplate = () => {
 };
 
 class AddColocatedTaskView extends React.PureComponent {
+
   constructor(props) {
     super(props);
 
@@ -107,10 +109,8 @@ class AddColocatedTaskView extends React.PureComponent {
 
     this.props.requestSave('/tasks', payload, successMsg).
       then((resp) => {
-        const response = JSON.parse(resp.text);
-
         // Remove any duplicate tasks returned by creating multiple admin actions
-        const filteredTasks = _.sortedUniqBy(response.tasks.data, (amaTask) => {
+        const filteredTasks = _.sortedUniqBy(resp.body.tasks.data, (amaTask) => {
           if (amaTask.attributes.external_appeal_id === task.externalAppealId) {
             return amaTask.attributes.external_appeal_id;
           }
@@ -209,6 +209,29 @@ class AddColocatedTaskView extends React.PureComponent {
     </QueueFlowPage>;
   }
 }
+
+AddColocatedTaskView.propTypes = {
+  appeal: PropTypes.shape({
+    externalId: PropTypes.string
+  }),
+  deleteTask: PropTypes.func,
+  error: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
+  }),
+  highlightFormItems: PropTypes.bool,
+  highlightInvalidFormItems: PropTypes.func,
+  onReceiveTasks: PropTypes.func,
+  requestSave: PropTypes.func,
+  role: PropTypes.string,
+  setAppealAttrs: PropTypes.func,
+  task: PropTypes.shape({
+    externalAppealId: PropTypes.string,
+    uniqueId: PropTypes.string,
+    taskId: PropTypes.string,
+    isLegacy: PropTypes.bool
+  })
+};
 
 const mapStateToProps = (state, ownProps) => ({
   highlightFormItems: state.ui.highlightFormItems,

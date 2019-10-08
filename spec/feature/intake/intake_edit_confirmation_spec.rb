@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "support/intake_helpers"
-require "byebug"
+require "support/database_cleaner"
+require "rails_helper"
 
-feature "Intake Edit Confirmation" do
+feature "Intake Edit Confirmation", :postgres do
   include IntakeHelpers
 
   before { setup_intake_flags }
@@ -51,7 +51,7 @@ feature "Intake Edit Confirmation" do
             visit edit_path
             click_intake_add_issue
             click_intake_no_matching_issues
-            add_intake_nonrating_issue(date: (decision_review.receipt_date - 1.month).strftime("%D"))
+            add_intake_nonrating_issue(date: (decision_review.receipt_date - 1.month).mdY)
             click_edit_submit
             click_number_of_issues_changed_confirmation
 
@@ -64,7 +64,7 @@ feature "Intake Edit Confirmation" do
             # first add a nonrating issue so we can remove the rating issue & EP
             click_intake_add_issue
             click_intake_no_matching_issues
-            add_intake_nonrating_issue(date: (decision_review.receipt_date - 1.month).strftime("%D"))
+            add_intake_nonrating_issue(date: (decision_review.receipt_date - 1.month).mdY)
             click_remove_intake_issue(1)
             click_remove_issue_confirmation
             click_edit_submit
@@ -82,7 +82,7 @@ feature "Intake Edit Confirmation" do
 
             expect(page).to have_current_path("/#{edit_path}/confirmation")
             expect(page).to have_content(
-              "Contentions on #{decision_review.class.review_title} Rating EP are being updated"
+              "#{decision_review.class.review_title} Rating EP is being updated:"
             )
           end
 
@@ -94,7 +94,7 @@ feature "Intake Edit Confirmation" do
             click_still_have_unidentified_issue_confirmation
             click_number_of_issues_changed_confirmation
             expect(page).to have_current_path("/#{edit_path}/confirmation")
-            expect(page).to have_content(COPY::INDENTIFIED_ALERT)
+            expect(page).to have_content(COPY::UNIDENTIFIED_ALERT)
           end
         end
       end
@@ -115,42 +115,8 @@ feature "Intake Edit Confirmation" do
 
           expect(page).to have_current_path("/#{edit_path}/confirmation")
           expect(page).to have_content("A #{decision_review.class.review_title} Rating EP is being canceled")
-          expect(page).to_not have_content("If you need to edit this, go to VBMS claim details")
+          expect(page).to_not have_content("Once established in VBMS, you may edit the issues")
         end
-      end
-    end
-
-    describe "given behavior specific to Higher-Level Reviews" do
-      let(:decision_review) { create(:higher_level_review, veteran_file_number: create(:veteran).file_number) }
-      let(:edit_path) { "higher_level_reviews/#{get_claim_id(decision_review)}/edit" }
-
-      it "shows if an informal conference was requested" do
-        decision_review.update!(informal_conference: true)
-
-        visit edit_path
-        click_intake_add_issue
-        add_intake_rating_issue("Left knee granted")
-        click_edit_submit
-        click_number_of_issues_changed_confirmation
-
-        expect(page).to have_current_path("/#{edit_path}/confirmation")
-        expect(page).to have_content("Informal Conference Tracked Item")
-      end
-
-      it "does not show informal conference request if there are no end products" do
-        decision_review.update!(informal_conference: true)
-
-        visit edit_path
-        click_intake_add_issue
-        click_intake_no_matching_issues
-        add_intake_nonrating_issue(date: (decision_review.receipt_date - 2.years).strftime("%D"))
-        add_untimely_exemption_response("Yes")
-        click_remove_intake_issue(1)
-        click_remove_issue_confirmation
-        click_edit_submit
-
-        expect(page).to have_current_path("/#{edit_path}/confirmation")
-        expect(page).to_not have_content("Informal Conference Tracked Item")
       end
     end
 

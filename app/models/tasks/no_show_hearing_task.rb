@@ -2,11 +2,23 @@
 
 # Task created after an appellant no-shows for a hearing. Gives the hearings team the options to decide how to handle
 # the no-show hearing after the judge indicates that the appellant no-showed.
-class NoShowHearingTask < GenericTask
+class NoShowHearingTask < Task
   before_validation :set_assignee
 
+  def self.create_with_hold(parent_task)
+    multi_transaction do
+      create!(parent: parent_task, appeal: parent_task.appeal).tap do |no_show_hearing_task|
+        TimedHoldTask.create_from_parent(
+          no_show_hearing_task,
+          days_on_hold: 25,
+          instructions: ["Mail must be received within 14 days of the original hearing date."]
+        )
+      end
+    end
+  end
+
   def available_actions(user)
-    hearing_admin_actions = available_hearing_admin_actions(user)
+    hearing_admin_actions = available_hearing_user_actions(user)
 
     if (assigned_to &.== user) || task_is_assigned_to_users_organization?(user)
       [

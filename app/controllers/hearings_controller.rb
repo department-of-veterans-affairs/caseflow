@@ -1,16 +1,33 @@
 # frozen_string_literal: true
 
-class HearingsController < ApplicationController
-  before_action :verify_access, except: [:show_print, :show, :update, :find_closest_hearing_locations]
-  before_action :verify_access_to_reader_or_hearings, only: [:show_print, :show]
-  before_action :verify_access_to_hearing_prep_or_schedule, only: [:update]
-  before_action :check_hearing_prep_out_of_service
+class HearingsController < HearingsApplicationController
+  include HearingsConcerns::VerifyAccess
+
+  before_action :verify_access_to_hearings, except: [:show]
+  before_action :verify_access_to_reader_or_hearings, only: [:show]
+
+  rescue_from ActiveRecord::RecordNotFound do |error|
+    Rails.logger.debug "Unable to find hearing in Caseflow: #{error.message}"
+    render json: { "errors": ["message": error.message, code: 1000] }, status: :not_found
+  end
+
+  rescue_from ActiveRecord::RecordInvalid, Caseflow::Error::VacolsRepositoryError do |error|
+    Rails.logger.debug "Unable to find hearing in VACOLS: #{error.message}"
+    render json: { "errors": ["message": error.message, code: 1001] }, status: :not_found
+  end
 
   def show
-    render json: hearing.to_hash(current_user.id)
+    render json: hearing.to_hash_for_worksheet(current_user.id)
   end
 
   def update
+    update_hearing
+    update_advance_on_docket_motion unless advance_on_docket_motion_params.empty?
+
+    render json: hearing.to_hash(current_user.id)
+  end
+
+  def update_hearing
     if hearing.is_a?(LegacyHearing)
       params = HearingTimeService.build_legacy_params_with_time(hearing, update_params_legacy)
       hearing.update_caseflow_and_vacols(params)
@@ -21,43 +38,33 @@ class HearingsController < ApplicationController
       Transcription.find_or_create_by(hearing: hearing)
       hearing.update!(params)
     end
-
-    render json: hearing.to_hash(current_user.id)
   end
 
-  def logo_name
-    "Hearings"
-  end
+  def update_advance_on_docket_motion
+    advance_on_docket_motion_params.require(:reason)
 
-  def logo_path
-    hearings_dockets_path
+    motion = hearing.advance_on_docket_motion || AdvanceOnDocketMotion.find_or_create_by!(
+      person_id: advance_on_docket_motion_params[:person_id]
+    )
+    motion.update(advance_on_docket_motion_params)
   end
 
   def find_closest_hearing_locations
-    begin
-      HearingDayMapper.validate_regional_office(params["regional_office"])
+    HearingDayMapper.validate_regional_office(params["regional_office"])
 
-      appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params["appeal_id"])
+    appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params["appeal_id"])
+    facility_ids = RegionalOffice.facility_ids_for_ro(params["regional_office"])
+    facility_response = appeal.va_dot_gov_address_validator.get_distance_to_facilities(facility_ids: facility_ids)
 
-      facility_ids = (RegionalOffice::CITIES[params["regional_office"]][:alternate_locations] ||
-                     []) << RegionalOffice::CITIES[params["regional_office"]][:facility_locator_id]
-
-      locations = appeal.va_dot_gov_address_validator.get_distance_to_facilities(facility_ids: facility_ids)
-
-      render json: { hearing_locations: locations }
-    rescue Caseflow::Error::VaDotGovAPIError => error
-      messages = error.message.dig("messages") || []
-      render json: { message: messages[0]&.dig("key") || error.message }, status: :bad_request
-    rescue StandardError => error
-      render json: { message: error.message }, status: :internal_server_error
+    if facility_response.success?
+      render json: { hearing_locations: facility_response.data }
+    else
+      capture_exception(facility_response.error) if facility_response.error.code == 400
+      render facility_response.error.serialize_response
     end
   end
 
   private
-
-  def check_hearing_prep_out_of_service
-    render "out_of_service", layout: "application" if Rails.cache.read("hearing_prep_out_of_service")
-  end
 
   def hearing
     @hearing ||= Hearing.find_hearing_by_uuid_or_vacols_id(hearing_external_id)
@@ -67,24 +74,13 @@ class HearingsController < ApplicationController
     params[:id]
   end
 
-  def verify_access
-    verify_authorized_roles("Hearing Prep")
-  end
-
-  def verify_access_to_reader_or_hearings
-    verify_authorized_roles("Reader", "Hearing Prep", "Edit HearSched", "Build HearSched")
-  end
-
-  def verify_access_to_hearing_prep_or_schedule
-    verify_authorized_roles("Hearing Prep", "Edit HearSched", "Build HearSched", "RO ViewHearSched")
-  end
-
-  def set_application
-    RequestStore.store[:application] = "hearings"
-  end
-
+  # rubocop:disable Metrics/MethodLength
   def update_params_legacy
-    params.require("hearing").permit(:notes,
+    params.require("hearing").permit(:representative_name,
+                                     :witness,
+                                     :military_service,
+                                     :summary,
+                                     :notes,
                                      :disposition,
                                      :hold_open,
                                      :aod,
@@ -103,9 +99,12 @@ class HearingsController < ApplicationController
                                      ])
   end
 
-  # rubocop:disable Metrics/MethodLength
   def update_params
-    params.require("hearing").permit(:notes,
+    params.require("hearing").permit(:representative_name,
+                                     :witness,
+                                     :military_service,
+                                     :summary,
+                                     :notes,
                                      :disposition,
                                      :hold_open,
                                      :transcript_requested,
@@ -127,7 +126,13 @@ class HearingsController < ApplicationController
                                        :problem_type, :requested_remedy,
                                        :sent_to_transcriber_date, :task_number,
                                        :transcriber, :uploaded_to_vbms_date
-                                     ])
+                                     ],
+                                     hearing_issue_notes_attributes: [:id, :allow, :deny, :remand,
+                                                                      :dismiss, :reopen, :worksheet_notes])
   end
   # rubocop:enable Metrics/MethodLength
+
+  def advance_on_docket_motion_params
+    params.fetch(:advance_on_docket_motion, {}).permit(:user_id, :person_id, :reason, :granted)
+  end
 end

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe CacheManager do
   before do
     redis_store = ActiveSupport::Cache.lookup_store(:redis_store,
@@ -9,7 +11,7 @@ describe CacheManager do
   end
 
   let(:stats_cache_key) { "IntakeStats-last-calculated-timestamp" }
-  let(:ro_schedule_period) { create(:ro_schedule_period) }
+  let(:ro_schedule_period) { build_stubbed(:ro_schedule_period) }
   let(:ro_cache_key) { "RoSchedulePeriod-#{ro_schedule_period.id}-cached-submitting_to_vacols" }
 
   describe "#all_cache_keys" do

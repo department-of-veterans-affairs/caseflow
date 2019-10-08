@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-describe SchedulePeriod do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe SchedulePeriod, :postgres do
   let!(:schedule_period) { create(:ro_schedule_period) }
 
   context "spreadsheet" do

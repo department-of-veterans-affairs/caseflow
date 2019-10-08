@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-describe RampRefiling do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe RampRefiling, :postgres do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
     FeatureToggle.enable!(:ramp_intake)
@@ -182,7 +185,8 @@ describe RampRefiling do
               { description: "Leg" },
               { description: "#{('Long Description' * 20).slice(0, 252)}..." }
             ],
-            user: user
+            user: user,
+            claim_date: ramp_refiling.receipt_date.to_date
           )
         end
       end
@@ -202,7 +206,8 @@ describe RampRefiling do
             { description: "Leg" },
             { description: "#{('Long Description' * 20).slice(0, 252)}..." }
           ],
-          user: user
+          user: user,
+          claim_date: ramp_refiling.receipt_date.to_date
         )
 
         expect(issues.first.reload.contention_reference_id).to_not be_nil

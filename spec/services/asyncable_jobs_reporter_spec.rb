@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-describe AsyncableJobsReporter do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe AsyncableJobsReporter, :postgres do
   before do
     seven_am_random_date = Time.new(2019, 3, 29, 7, 0, 0).in_time_zone
     Timecop.freeze(seven_am_random_date)
@@ -9,6 +12,7 @@ describe AsyncableJobsReporter do
   let(:veteran) { create(:veteran) }
   let!(:hlr) do
     create(:higher_level_review,
+           establishment_submitted_at: 7.days.ago,
            establishment_last_submitted_at: 7.days.ago,
            establishment_attempted_at: 7.days.ago,
            establishment_error: "bad problem",
@@ -16,6 +20,7 @@ describe AsyncableJobsReporter do
   end
   let!(:sc) do
     create(:supplemental_claim,
+           establishment_submitted_at: 6.days.ago,
            establishment_last_submitted_at: 6.days.ago,
            establishment_attempted_at: 7.days.ago,
            establishment_error: "problem\nwith multiple\nlines",
@@ -23,6 +28,7 @@ describe AsyncableJobsReporter do
   end
   let!(:sc2) do
     create(:supplemental_claim,
+           establishment_submitted_at: 6.days.ago,
            establishment_last_submitted_at: 6.days.ago,
            establishment_attempted_at: 7.days.ago,
            establishment_error: "bad problem",
@@ -36,11 +42,13 @@ describe AsyncableJobsReporter do
   end
   let!(:sc_not_attempted) do
     create(:supplemental_claim,
+           establishment_submitted_at: 2.days.ago,
            establishment_last_submitted_at: 2.days.ago,
            veteran_file_number: veteran.file_number)
   end
   let!(:sc_not_attempted_expired) do
     create(:supplemental_claim,
+           establishment_submitted_at: 8.days.ago,
            establishment_last_submitted_at: 8.days.ago,
            veteran_file_number: veteran.file_number)
   end
@@ -76,6 +84,15 @@ describe AsyncableJobsReporter do
         SupplementalClaim has 5 total jobs in queue
       HEREDOC
       expect(subject.summarize).to eq(msg.chomp)
+    end
+  end
+
+  describe "#as_csv" do
+    it "returns a CSV-formatted string" do
+      csv = subject.as_csv
+      expect(csv)
+        .to match(/SupplementalClaim,\d+,#{6.days.ago},#{6.days.ago},#{7.days.ago},bad,#{veteran.participant_id}/)
+      expect(CSV.parse(csv).count).to eq(7) # jobs + header
     end
   end
 end

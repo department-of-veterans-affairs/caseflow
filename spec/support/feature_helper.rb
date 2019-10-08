@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ModuleLength
 module FeatureHelper
   def find_table_cell(vacols_id, row_header)
     header = find(:xpath, "//thead/tr/th", text: row_header)
@@ -63,6 +64,40 @@ module FeatureHelper
     puts "  __skipped step: #{title}" if ENV["SHOW_STEPS"]
   end
 
+  def safe_click(selector)
+    scroll_to(selector)
+    page.first(selector).click
+  end
+
+  def click_label(label_for)
+    safe_click("label[for='#{label_for}']")
+  end
+
+  def get_computed_styles(selector, style_key)
+    sanitized_selector = selector.gsub("'", "\\\\'")
+
+    page.evaluate_script <<-EOS
+      function() {
+        var elem = document.querySelector('#{sanitized_selector}');
+        if (!elem) {
+          // It would be nice to throw an actual error but I am not sure Capybara will
+          // process that well.
+          return 'query selector `#{sanitized_selector}` did not match any elements';
+        }
+        return window.getComputedStyle(elem)['#{style_key}'];
+      }();
+    EOS
+  end
+
+  def be_titled(title)
+    have_xpath("//title[contains(.,'#{title}')]", visible: false)
+  end
+
+  def hang
+    puts "Hanging the test indefinitely so you can debug in the browser."
+    sleep(10_000)
+  end
+
   private
 
   def dropdown_click(dropdown)
@@ -113,3 +148,4 @@ module FeatureHelper
     Array.new(length) { charset.sample }.join
   end
 end
+# rubocop:enable Metrics/ModuleLength

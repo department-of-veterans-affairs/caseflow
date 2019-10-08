@@ -49,7 +49,7 @@ class CaseHearingsDetail extends React.PureComponent {
             <Link
               rel="noopener"
               target="_blank"
-              href={`/hearings/${hearing.externalId}/worksheet/print?keep_open=true`}>
+              href={`/hearings/worksheet/print?keep_open=true&hearing_ids=${hearing.externalId}`}>
               {COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY}
             </Link>
           </Tooltip>

@@ -7,7 +7,7 @@ class Contention
     self.description = description
   end
 
-  # BGS limits contention text to 255 characters
+  # BGS limits contention text to 255 bytes
   def text
     return unless description
 

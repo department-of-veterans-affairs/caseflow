@@ -10,6 +10,8 @@ class LegacyOptinManager
   end
 
   def process!
+    return if legacy_issue_opt_ins.empty?
+
     VACOLS::Case.transaction do
       ApplicationRecord.transaction do
         pending_rollbacks.each(&:rollback!)

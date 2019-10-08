@@ -6,10 +6,13 @@ class WorkQueue::VeteranSerializer
   attribute :full_name, &:veteran_full_name
   attribute :gender, &:veteran_gender
   attribute :date_of_birth do |object|
-    object.veteran ? object.veteran.date_of_birth : nil
+    object.veteran&.date_of_birth
   end
   attribute :date_of_death do |object|
-    object.veteran ? object.veteran.date_of_death : nil
+    object.veteran&.date_of_death
+  end
+  attribute :email_address do |object|
+    object.veteran&.email_address
   end
   attribute :address do |object|
     if object.veteran_address_line_1

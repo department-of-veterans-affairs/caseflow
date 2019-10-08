@@ -1,8 +1,36 @@
 # frozen_string_literal: true
 
-describe AsyncableJobsController, type: :controller do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe AsyncableJobsController, :postgres, type: :controller do
   before do
     User.stub = user
+  end
+
+  describe "#show" do
+    context "User is not asyncable_user" do
+      let(:user) { create(:default_user) }
+      let!(:job) { create(:higher_level_review, intake: create(:intake)) }
+
+      it "returns unauthorized" do
+        get :show, params: { asyncable_job_klass: job.class.to_s, id: job.id }
+
+        expect(response.status).to eq 302
+        expect(response.body).to match(/unauthorized/)
+      end
+    end
+
+    context "User is asyncable_user" do
+      let(:user) { create(:default_user) }
+      let!(:job) { create(:higher_level_review, intake: create(:intake, user: user)) }
+
+      it "allows view" do
+        get :show, params: { asyncable_job_klass: job.class.to_s, id: job.id }
+
+        expect(response.status).to eq 200
+      end
+    end
   end
 
   describe "#index" do
@@ -14,6 +42,20 @@ describe AsyncableJobsController, type: :controller do
 
         expect(response.status).to eq 302
         expect(response.body).to match(/unauthorized/)
+      end
+    end
+
+    context "user is Global Admin" do
+      before do
+        allow(user).to receive(:admin?) { true }
+      end
+
+      let(:user) { create(:default_user) }
+
+      it "allows access" do
+        get :index
+
+        expect(response.status).to eq 200
       end
     end
 
@@ -86,7 +128,7 @@ describe AsyncableJobsController, type: :controller do
         it "paginates based on asyncable_job_klass" do
           get :index, as: :html, params: { asyncable_job_klass: "HigherLevelReview" }
 
-          expect(subject.send(:pagination)).to eq(total_pages: 1, total_jobs: 1, current_page: 1, page_size: 50)
+          expect(subject.send(:pagination)).to eq(total_pages: 1, total_items: 1, current_page: 1, page_size: 50)
         end
       end
 

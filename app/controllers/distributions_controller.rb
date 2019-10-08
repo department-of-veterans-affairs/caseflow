@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 class DistributionsController < ApplicationController
+  include RunAsyncable
+
   def set_application
     RequestStore.store[:application] = "queue"
   end
 
   def new
-    return render_403_error(:feature_not_enabled) unless feature_enabled?
-
     distribution = Distribution.create!(judge: current_user)
     enqueue_distribution_job(distribution)
     render_single(distribution)
@@ -30,15 +30,15 @@ class DistributionsController < ApplicationController
   private
 
   def enqueue_distribution_job(distribution)
-    if Rails.env.development? || Rails.env.test?
-      StartDistributionJob.perform_now(distribution)
-    else
+    if run_async?
       StartDistributionJob.perform_later(distribution, current_user)
+    else
+      StartDistributionJob.perform_now(distribution)
     end
   end
 
   def render_single(distribution)
-    render json: { distribution: distribution.as_json }
+    render json: { distribution: DistributionSerializer.new(distribution).as_json }
   end
 
   def render_distribution_error
@@ -86,12 +86,6 @@ class DistributionsController < ApplicationController
         "title": "Forbidden",
         "detail": "You don't have permission to access this distribution."
       }
-    when :feature_not_enabled
-      {
-        "error": error,
-        "title": "Automatic case distribution not enabled",
-        "detail": "The automatic case distribution feature has not yet been enabled for you."
-      }
     else
       {
         "error": error,
@@ -101,11 +95,7 @@ class DistributionsController < ApplicationController
     end
   end
 
-  def feature_enabled?
-    FeatureToggle.enabled?(:automatic_case_distribution, user: current_user)
-  end
-
   def pending_distribution
-    Distribution.pending_for_judge(current_user).first
+    Distribution.pending_for_judge(current_user)
   end
 end

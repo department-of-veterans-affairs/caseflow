@@ -5,10 +5,18 @@
 # A hearing task is associated with a hearing record in Caseflow and might have several child tasks to resolve
 # in order to schedule a hearing, hold it, and mark the disposition.
 
-class HearingTask < GenericTask
+class HearingTask < Task
   has_one :hearing_task_association
   delegate :hearing, to: :hearing_task_association, allow_nil: true
   before_validation :set_assignee
+
+  def self.label
+    "All hearing-related tasks"
+  end
+
+  def default_instructions
+    [COPY::HEARING_TASK_DEFAULT_INSTRUCTIONS]
+  end
 
   def cancel_and_recreate
     hearing_task = HearingTask.create!(
@@ -26,15 +34,15 @@ class HearingTask < GenericTask
     true
   end
 
-  def when_child_task_completed
+  def when_child_task_completed(child_task)
     super
 
-    return unless appeal.tasks.active.where(type: HearingTask.name).empty?
+    return unless appeal.tasks.open.where(type: HearingTask.name).empty?
 
     if appeal.is_a?(LegacyAppeal)
       update_legacy_appeal_location
     else
-      RootTask.create_ihp_tasks!(appeal, parent)
+      IhpTasksFactory.new(parent).create_ihp_tasks!
     end
   end
 
@@ -50,25 +58,39 @@ class HearingTask < GenericTask
     AppealRepository.update_location!(appeal, location)
   end
 
-  def create_change_hearing_disposition_task_and_complete_children(instructions = nil)
-    any_disposition_task = children.active.find_by(type: [DispositionTask.name, ChangeHearingDispositionTask.name])
+  def create_change_hearing_disposition_task(instructions = nil)
+    task_names = [AssignHearingDispositionTask.name, ChangeHearingDispositionTask.name]
+    active_disposition_tasks = children.open.where(type: task_names).to_a
 
-    any_disposition_task&.create_change_hearing_disposition_task_and_complete(instructions)
+    multi_transaction do
+      ChangeHearingDispositionTask.create!(
+        appeal: appeal,
+        parent: self,
+        instructions: instructions.present? ? [instructions] : nil
+      )
+      active_disposition_tasks.each { |task| task.update!(status: Constants.TASK_STATUSES.completed) }
+    end
   end
 
   def disposition_task
-    children.active.detect { |child| child.type == DispositionTask.name }
+    children.open.detect { |child| child.type == AssignHearingDispositionTask.name }
   end
 
   private
+
+  def cascade_closure_from_child_task?(_child_task)
+    true
+  end
 
   def set_assignee
     self.assigned_to = Bva.singleton
   end
 
-  def update_status_if_children_tasks_are_complete
-    if children.select(&:active?).empty?
-      return update!(status: :cancelled) if children.select { |c| c.type == DispositionTask.name && c.cancelled? }.any?
+  def update_status_if_children_tasks_are_closed(_child_task)
+    if children.open.empty? && children.select do |child|
+         child.type == AssignHearingDispositionTask.name && child.cancelled?
+       end .any?
+      return update!(status: :cancelled)
     end
 
     super

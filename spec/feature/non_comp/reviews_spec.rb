@@ -1,14 +1,9 @@
 # frozen_string_literal: true
 
-feature "NonComp Reviews Queue" do
-  before do
-    FeatureToggle.enable!(:decision_reviews)
-  end
+require "support/database_cleaner"
+require "rails_helper"
 
-  after do
-    FeatureToggle.disable!(:decision_reviews)
-  end
-
+feature "NonComp Reviews Queue", :postgres do
   context "with an existing organization" do
     let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
     let(:user) { create(:default_user) }
@@ -18,30 +13,16 @@ feature "NonComp Reviews Queue" do
     let(:veteran_c) { create(:veteran, first_name: "Ccc") }
     let(:hlr_a) { create(:higher_level_review, veteran_file_number: veteran_a.file_number) }
     let(:hlr_b) { create(:higher_level_review, veteran_file_number: veteran_b.file_number) }
+    let(:hlr_c) { create(:higher_level_review, veteran_file_number: veteran_c.file_number) }
     let(:appeal) { create(:appeal, veteran: veteran_c) }
+
+    let!(:request_issue_a) { create(:request_issue, :rating, decision_review: hlr_a) }
+    let!(:request_issue_b) { create(:request_issue, :rating, decision_review: hlr_b) }
+    let!(:request_issue_c) { create(:request_issue, :rating, :removed, decision_review: hlr_c) }
+    let!(:request_issue_d) { create(:request_issue, :rating, decision_review: appeal) }
 
     let(:today) { Time.zone.now }
     let(:last_week) { Time.zone.now - 7.days }
-
-    let!(:in_progress_tasks) do
-      [
-        create(:higher_level_review_task,
-               :in_progress,
-               appeal: hlr_a,
-               assigned_to: non_comp_org,
-               assigned_at: last_week),
-        create(:higher_level_review_task,
-               :in_progress,
-               appeal: hlr_b,
-               assigned_to: non_comp_org,
-               assigned_at: today),
-        create(:board_grant_effectuation_task,
-               :in_progress,
-               appeal: appeal,
-               assigned_to: non_comp_org,
-               assigned_at: 1.day.ago)
-      ]
-    end
 
     let!(:completed_tasks) do
       [
@@ -55,6 +36,31 @@ feature "NonComp Reviews Queue" do
                appeal: hlr_b,
                assigned_to: non_comp_org,
                closed_at: today)
+      ]
+    end
+
+    let!(:in_progress_tasks) do
+      [
+        create(:higher_level_review_task,
+               :in_progress,
+               appeal: hlr_a,
+               assigned_to: non_comp_org,
+               assigned_at: last_week),
+        create(:higher_level_review_task,
+               :in_progress,
+               appeal: hlr_b,
+               assigned_to: non_comp_org,
+               assigned_at: today),
+        create(:higher_level_review_task,
+               :in_progress,
+               appeal: hlr_c,
+               assigned_to: non_comp_org,
+               assigned_at: today),
+        create(:board_grant_effectuation_task,
+               :in_progress,
+               appeal: appeal,
+               assigned_to: non_comp_org,
+               assigned_at: 1.day.ago)
       ]
     end
 
@@ -87,13 +93,23 @@ feature "NonComp Reviews Queue" do
       )
 
       click_on "Completed tasks"
-      expect(page).to have_content("Higher-Level Review", count: 2)
+      expect(page).to have_content("Higher-Level Review", count: 1)
       expect(page).to have_content("Date Completed")
 
       # ordered by closed_at descending
       expect(page).to have_content(
-        /#{veteran_b.name} 5\d+ 0 [\d\/]+ Higher-Level Review\s#{veteran_a.name} 5\d+ 0 [\d\/]+/
+        /#{veteran_b.name} 5\d+ 1 [\d\/]+ Higher-Level Review/
       )
+    end
+
+    scenario "filtering reviews" do
+      visit "decision_reviews/nco"
+      find(".unselected-filter-icon").click
+      find("label", text: "Higher-level review").click
+      expect(page).to have_content("Higher-Level Review")
+      expect(page).to_not have_content("Board Grant")
+      find(".cf-clear-filters-link").click
+      expect(page).to have_content("Board Grant")
     end
 
     context "with user enabled for intake" do

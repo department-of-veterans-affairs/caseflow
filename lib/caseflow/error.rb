@@ -29,6 +29,7 @@ module Caseflow::Error
   class VaDotGovServerError < VaDotGovAPIError; end
   class VaDotGovLimitError < VaDotGovAPIError; end
   class VaDotGovAddressCouldNotBeFoundError < VaDotGovAPIError; end
+  class VaDotGovMissingFacilityError < VaDotGovAPIError; end
   class VaDotGovInvalidInputError < VaDotGovAPIError; end
   class VaDotGovMultipleAddressError < VaDotGovAPIError; end
   class VaDotGovNullAddressError < StandardError; end
@@ -43,6 +44,14 @@ module Caseflow::Error
     end
   end
 
+  class InvalidParameter < SerializableError
+    def initialize(args = {})
+      @code = args[:code] || 400
+      @parameter = args[:parameter] || ""
+      @message = args[:message] || "Invalid parameter '#{@parameter}'"
+    end
+  end
+
   class NoRootTask < SerializableError
     def initialize(args)
       @task_id = args[:task_id]
@@ -51,24 +60,53 @@ module Caseflow::Error
     end
   end
 
+  class MissingRequiredProperty < SerializableError
+    def initialize(args)
+      @code = args[:code] || 400
+      @message = args[:message]
+    end
+  end
+
+  class InvalidTaskTableTab < SerializableError
+    def initialize(args)
+      @tab_name = args[:tab_name]
+      @code = args[:code] || 400
+      @message = args[:message] || "\"#{@tab_name}\" is not a valid tab name"
+    end
+  end
+
+  class InvalidTaskTableColumnFilter < SerializableError
+    def initialize(args)
+      @column = args[:column]
+      @code = args[:code] || 400
+      @message = args[:message] || "Cannot filter table on column: \"#{@column}\""
+    end
+  end
+
+  class InvalidStatusOnTaskCreate < SerializableError
+    def initialize(args)
+      @task_type = args[:task_type]
+      @code = args[:code] || 400
+      @message = args[:message] || "Task status has to be 'assigned' on create for #{@task_type}"
+    end
+  end
+
+  class IneligibleForSpecialCaseMovement < SerializableError
+    attr_accessor :appeal_id
+
+    def initialize(args)
+      @code = args[:code] || 500
+      @appeal_id = args[:appeal_id] || nil
+      @message = args[:message] || "Appeal #{@appeal_id} must be in Case Storage and not have blocking Mail Tasks for"\
+                                   " Special Case Movement"
+    end
+  end
+
   class InvalidParentTask < SerializableError
     def initialize(args)
       @task_type = args[:task_type]
       @code = args[:code] || 500
       @message = args[:message] || "Invalid parent type for task #{@task_type}"
-    end
-  end
-
-  class DuplicateTaskActionPaths < SerializableError
-    attr_accessor :task_id, :user_id, :labels
-
-    def initialize(args)
-      @task_id = args[:task_id]
-      @user_id = args[:user_id]
-      @labels = args[:labels]
-      @code = args[:code] || 500
-      @message = args[:message] || "Task #{@task_id} for user #{user_id} has more than one available action"\
-                                   " with same path. Labels: #{labels.join(', ')}"
     end
   end
 
@@ -179,6 +217,7 @@ module Caseflow::Error
       @error_code = error_code
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity
     def self.from_vbms_error(error)
       case error.body
       when /PIF is already in use/
@@ -198,6 +237,7 @@ module Caseflow::Error
         error
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
   end
 
   class MissingTimerMethod < StandardError; end

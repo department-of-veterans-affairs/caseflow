@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react';
 import SearchBar from '../../components/SearchBar';
 import Alert from '../../components/Alert';
@@ -50,6 +52,16 @@ const veteranNotFoundInstructions = <div>
   </p>
 </div>;
 
+const incidentFlashTeamEmail = React.createElement(
+  'a', { href: 'mailto:IncidentTeam.VBASLC@va.gov ? Subject=Temporarily%20unlock%20incident%20flash' },
+  'incident team'
+);
+
+const incidentFlashError = React.createElement(
+  'span', { id: 'incidentFlashError' }, COPY.INCIDENT_FLASH_ERROR_START, incidentFlashTeamEmail,
+  COPY.INCIDENT_FLASH_ERROR_END
+);
+
 class Search extends React.PureComponent {
   handleSearchSubmit = () => (
     this.props.doFileNumberSearch(this.props.formType, this.props.fileNumberSearchInput)
@@ -63,11 +75,15 @@ class Search extends React.PureComponent {
     const searchErrors = {
       invalid_file_number: {
         title: 'Veteran ID not found',
-        body: 'Please enter a valid Veteran ID and try again.'
+        body: COPY.INTAKE_SEARCH_ERROR_INVALID_FILE_NUMBER
       },
       veteran_not_found: {
         title: 'Veteran not found',
         body: veteranNotFoundInstructions
+      },
+      reserved_veteran_file_number: {
+        title: 'Invalid file number',
+        body: COPY.INTAKE_SEARCH_ERROR_INVALID_FILE_NUMBER
       },
       veteran_has_multiple_phone_numbers: {
         title: 'The Veteran has multiple active phone numbers',
@@ -75,12 +91,19 @@ class Search extends React.PureComponent {
       },
       veteran_not_accessible: {
         title: "You don't have permission to view this Veteran's information",
-        body: 'It looks like you do not have the necessary level of access to view this information.' +
-          ' Please alert your manager so they can assign the form to someone else.'
+        body: COPY.INTAKE_SEARCH_ERROR_NOT_ACCESSIBLE
+      },
+      veteran_not_modifiable: {
+        title: "You don't have permission to intake this Veteran",
+        body: COPY.INTAKE_SEARCH_ERROR_NOT_MODIFIABLE
       },
       veteran_not_valid: {
         title: 'The Veteran\'s profile has missing or invalid information required to create an EP.',
         body: invalidVeteranInstructions(searchErrorData)
+      },
+      incident_flash: {
+        title: 'The Veteran has an incident flash',
+        body: incidentFlashError
       },
       did_not_receive_ramp_election: {
         title: 'A RAMP Opt-in Notice Letter was not sent to this Veteran.',
@@ -136,7 +159,11 @@ class Search extends React.PureComponent {
 
     searchErrors.default.body = <div>
       <div>{`Error code ${searchErrorCode}.`}</div>
-      <div>Please try again. If the problem persists, please contact Caseflow support.</div>
+      <div>
+        Please try again. If the problem persists, please contact the Caseflow team
+        via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket
+        via <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a>.
+      </div>
     </div>;
 
     const error = searchErrors[searchErrorCode] || searchErrors.default;

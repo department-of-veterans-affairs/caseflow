@@ -1,13 +1,26 @@
+<% content_for :head do %>
+<% if local_assigns.has_key?(:override_stylesheet) %>
+<%= stylesheet_link_tag override_stylesheet, media: 'all' %>
+<% end %>
+<% if local_assigns.has_key?(:print_stylesheet) %>
+<%= stylesheet_link_tag print_stylesheet, media: 'print' %>
+<% end %>
+<% end %>
+
 <% content_for :full_page_content do %>
 <%= react_component("Hearings", props: {
-  hearings: {
-    veteran_law_judge: current_user.to_hash,
-    userDisplayName: current_user.display_name,
-    dropdownUrls: dropdown_urls,
-    applicationUrls: application_urls,
-    dailyDocket: {},
-    feedbackUrl: feedback_url,
-    buildDate: build_date
-  }
+  userDisplayName: current_user.display_name,
+  dropdownUrls: dropdown_urls,
+  applicationUrls: application_urls,
+  feedbackUrl: feedback_url,
+  buildDate: build_date,
+  userCanAssignHearingSchedule: current_user.can_assign_hearing_schedule?,
+  userCanBuildHearingSchedule: current_user.can?('Build HearSched'),
+  userCanViewHearingSchedule: current_user.can_view_hearing_schedule?,
+  userCanVsoHearingSchedule: current_user.can_vso_hearing_schedule?,
+  userHasHearingPrepRole: current_user.can?('Hearing Prep'),
+  userInHearingOrTranscriptionOrganization: current_user.in_hearing_or_transcription_organization?,
+  userId: current_user.id,
+  userCssId: current_user.css_id
 }) %>
 <% end %>

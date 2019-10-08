@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -31,6 +32,7 @@ const selectedAction = (props) => {
 };
 
 class AssignToView extends React.Component {
+
   constructor(props) {
     super(props);
 
@@ -77,7 +79,7 @@ class AssignToView extends React.Component {
       }
     };
 
-    const successMsg = {
+    const assignTaskSuccessMessage = {
       title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()),
       detail: taskActionData(this.props).message_detail
     };
@@ -86,12 +88,8 @@ class AssignToView extends React.Component {
       return this.reassignTask();
     }
 
-    return this.props.requestSave('/tasks', payload, successMsg).
-      then((resp) => {
-        const response = JSON.parse(resp.text);
-
-        this.props.onReceiveAmaTasks(response.tasks.data);
-      }).
+    return this.props.requestSave('/tasks', payload, assignTaskSuccessMessage).
+      then((resp) => this.props.onReceiveAmaTasks(resp.body.tasks.data)).
       catch(() => {
         // handle the error from the frontend
       });
@@ -127,10 +125,35 @@ class AssignToView extends React.Component {
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
-        const response = JSON.parse(resp.text);
-
-        this.props.onReceiveAmaTasks(response.tasks.data);
+        this.props.onReceiveAmaTasks(resp.body.tasks.data);
       });
+  }
+
+  determineTitle = (props, action, isPulacCerullo, actionData) => {
+    if (actionData.modal_title) {
+      return actionData.modal_title;
+    }
+    if (props.assigneeAlreadySelected && action) {
+      if (isPulacCerullo) {
+        return sprintf(COPY.NOTIFY_OGC_OF, action.label);
+      }
+
+      return sprintf(COPY.ASSIGN_TASK_TO_TITLE, action.label);
+    }
+
+    return COPY.ASSIGN_TASK_TITLE;
+  }
+
+  determinePlaceholder = (props, actionData) => {
+    if (actionData.modal_selector_placeholder) {
+      return actionData.modal_selector_placeholder;
+    }
+
+    if (this.props.isTeamAssign) {
+      return COPY.ASSIGN_TO_TEAM_DROPDOWN;
+    }
+
+    return COPY.ASSIGN_TO_USER_DROPDOWN;
   }
 
   render = () => {
@@ -142,40 +165,63 @@ class AssignToView extends React.Component {
 
     const action = this.props.task && this.props.task.availableActions.length > 0 ? selectedAction(this.props) : null;
     const actionData = taskActionData(this.props);
+    const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
 
     if (!task || task.availableActions.length === 0) {
       return null;
     }
 
     return <QueueFlowModal
-      title={(this.props.assigneeAlreadySelected && action) ?
-        sprintf(COPY.ASSIGN_TASK_TO_TITLE, action.label) :
-        COPY.ASSIGN_TASK_TITLE}
+      title={this.determineTitle(this.props, action, isPulacCerullo, actionData)}
       pathAfterSubmit = {(actionData && actionData.redirect_after) || '/queue'}
       submit={this.submit}
-      validateForm={this.validateForm}
+      validateForm={isPulacCerullo ? () => {
+        return true;
+      } : this.validateForm}
     >
+      <div>{actionData.modal_body ? actionData.modal_body : ''}</div>
       { !assigneeAlreadySelected && <React.Fragment>
         <SearchableDropdown
           name="Assign to selector"
           searchable
           hideLabel
           errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
-          placeholder={this.props.isTeamAssign ? COPY.ASSIGN_TO_TEAM_DROPDOWN : COPY.ASSIGN_TO_USER_DROPDOWN}
+          placeholder={this.determinePlaceholder(this.props, actionData)}
           value={this.state.selectedValue}
           onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
           options={taskActionData(this.props).options} />
         <br />
       </React.Fragment> }
-      <TextareaField
-        name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
-        errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-        id="taskInstructions"
-        onChange={(value) => this.setState({ instructions: value })}
-        value={this.state.instructions} />
+      { !isPulacCerullo &&
+            <TextareaField
+              name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+              errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+              id="taskInstructions"
+              onChange={(value) => this.setState({ instructions: value })}
+              value={this.state.instructions} />
+      }
+      {isPulacCerullo && COPY.PULAC_CERULLO_MODAL_BODY }
     </QueueFlowModal>;
   }
 }
+
+AssignToView.propTypes = {
+  appeal: PropTypes.shape({
+    externalId: PropTypes.string
+  }),
+  assigneeAlreadySelected: PropTypes.bool,
+  highlightFormItems: PropTypes.bool,
+  isReassignAction: PropTypes.bool,
+  isTeamAssign: PropTypes.bool,
+  onReceiveAmaTasks: PropTypes.func,
+  requestPatch: PropTypes.func,
+  requestSave: PropTypes.func,
+  task: PropTypes.shape({
+    instructions: PropTypes.string,
+    taskId: PropTypes.string,
+    availableActions: PropTypes.arrayOf(PropTypes.object)
+  })
+};
 
 const mapStateToProps = (state, ownProps) => {
   const {

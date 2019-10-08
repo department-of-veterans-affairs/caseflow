@@ -16,6 +16,22 @@ class Organization < ApplicationRecord
     organizations_users.includes(:user).select(&:admin?).map(&:user)
   end
 
+  def can_bulk_assign_tasks?
+    false
+  end
+
+  def show_regional_office_in_queue?
+    false
+  end
+
+  def show_reader_link_column?
+    true
+  end
+
+  def use_task_pages_api?
+    false
+  end
+
   def non_admins
     organizations_users.includes(:user).non_admin.map(&:user)
   end
@@ -57,6 +73,44 @@ class Organization < ApplicationRecord
 
   def user_admin_path
     "#{path}/users"
+  end
+
+  def self.default_active_tab
+    Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
+  end
+
+  def queue_tabs
+    [
+      unassigned_tasks_tab,
+      assigned_tasks_tab,
+      on_hold_tasks_tab,
+      completed_tasks_tab
+    ]
+  end
+
+  def unassigned_tasks_tab
+    ::UnassignedTasksTab.new(
+      assignee: self,
+      show_regional_office_column: show_regional_office_in_queue?,
+      show_reader_link_column: show_reader_link_column?,
+      allow_bulk_assign: can_bulk_assign_tasks?
+    )
+  end
+
+  def assigned_tasks_tab
+    ::AssignedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def on_hold_tasks_tab
+    ::OnHoldTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def completed_tasks_tab
+    ::CompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def ama_task_serializer
+    WorkQueue::TaskSerializer
   end
 
   private

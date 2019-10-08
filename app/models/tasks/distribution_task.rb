@@ -3,13 +3,19 @@
 ##
 # Task that signals that an appeal is ready for distribution to a judge, including for auto case distribution.
 
-class DistributionTask < GenericTask
-  # Prevent this task from being marked complete
-  # when a child task (e.g. evidence submission)
-  # is marked complete because distribution tasks are used
-  # to signal that cases are ready for assignment to judges.
-  def update_status_if_children_tasks_are_complete
-    ready_for_distribution! if children.any? && children.active.none?
+class DistributionTask < Task
+  before_validation :set_assignee
+
+  def available_actions(user)
+    return [] unless user
+
+    if special_case_movement_available?(user)
+      return [
+        Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.to_h
+      ]
+    end
+
+    []
   end
 
   def ready_for_distribution!
@@ -22,5 +28,16 @@ class DistributionTask < GenericTask
 
   def ready_for_distribution_at
     assigned_at
+  end
+
+  private
+
+  def special_case_movement_available?(user)
+    ::SpecialCaseMovementTeam.singleton.user_has_access?(user) &&
+      appeal.ready_for_distribution?
+  end
+
+  def set_assignee
+    self.assigned_to ||= Bva.singleton
   end
 end

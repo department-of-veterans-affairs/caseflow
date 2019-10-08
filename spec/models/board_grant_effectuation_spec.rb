@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-describe BoardGrantEffectuation do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe BoardGrantEffectuation, :postgres do
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
   end
@@ -25,7 +28,7 @@ describe BoardGrantEffectuation do
   let(:processed_at) { nil }
 
   let!(:granted_decision_issue) do
-    FactoryBot.create(
+    create(
       :decision_issue,
       rating_or_nonrating,
       disposition: "allowed",
@@ -128,7 +131,7 @@ describe BoardGrantEffectuation do
 
     context "when matching end product establishment exists" do
       let!(:matching_end_product_establishment) do
-        FactoryBot.create(
+        create(
           :end_product_establishment,
           code: "030BGR",
           source: decision_document,
@@ -137,7 +140,7 @@ describe BoardGrantEffectuation do
       end
 
       let!(:not_matching_end_product_establishment) do
-        FactoryBot.create(
+        create(
           :end_product_establishment,
           code: "030BGRNR",
           source: decision_document
@@ -145,7 +148,7 @@ describe BoardGrantEffectuation do
       end
 
       let!(:already_established_end_product_establishment) do
-        FactoryBot.create(
+        create(
           :end_product_establishment,
           code: "030BGR",
           source: decision_document,
@@ -207,6 +210,22 @@ describe BoardGrantEffectuation do
             code: "030BGR"
           )
         end
+
+        context "when it is a correction" do
+          it "creates rating correction end product establishment" do
+            allow_any_instance_of(BoardGrantEffectuation).to receive(:correction?).and_return(true)
+
+            expect(subject.end_product_establishment).to have_attributes(
+              source: decision_document,
+              veteran_file_number: decision_document.appeal.veteran.file_number,
+              claim_date: decision_document.decision_date,
+              payee_code: "00",
+              benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
+              user: User.system_user,
+              code: "930AMABGRC"
+            )
+          end
+        end
       end
 
       context "when non rating issue" do
@@ -214,7 +233,7 @@ describe BoardGrantEffectuation do
 
         # Create a not matching end product establishment to make sure that never matches
         let!(:not_matching_end_product_establishment) do
-          FactoryBot.create(
+          create(
             :end_product_establishment,
             code: "030BGR",
             source: decision_document
@@ -231,6 +250,22 @@ describe BoardGrantEffectuation do
             user: User.system_user,
             code: "030BGRNR"
           )
+        end
+
+        context "when it is a correction" do
+          it "creates non-rating correction end product establishment" do
+            allow_any_instance_of(BoardGrantEffectuation).to receive(:correction?).and_return(true)
+
+            expect(subject.end_product_establishment).to have_attributes(
+              source: decision_document,
+              veteran_file_number: decision_document.appeal.veteran.file_number,
+              claim_date: decision_document.decision_date,
+              payee_code: "00",
+              benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
+              user: User.system_user,
+              code: "930AMABGNRC"
+            )
+          end
         end
       end
     end
@@ -252,6 +287,22 @@ describe BoardGrantEffectuation do
             code: "030BGRPMC"
           )
         end
+
+        context "when it is a correction" do
+          it "creates rating correction end product establishment" do
+            allow_any_instance_of(BoardGrantEffectuation).to receive(:correction?).and_return(true)
+
+            expect(subject.end_product_establishment).to have_attributes(
+              source: decision_document,
+              veteran_file_number: decision_document.appeal.veteran.file_number,
+              claim_date: decision_document.decision_date,
+              payee_code: "00",
+              benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
+              user: User.system_user,
+              code: "930ABGRCPMC"
+            )
+          end
+        end
       end
 
       context "when non rating issue" do
@@ -259,7 +310,7 @@ describe BoardGrantEffectuation do
 
         # Create a not matching end product establishment to make sure that never matches
         let!(:not_matching_end_product_establishment) do
-          FactoryBot.create(
+          create(
             :end_product_establishment,
             code: "030BGR",
             source: decision_document
@@ -276,6 +327,22 @@ describe BoardGrantEffectuation do
             user: User.system_user,
             code: "030BGNRPMC"
           )
+        end
+
+        context "when it is a correction" do
+          it "creates non-rating correction end product establishment" do
+            allow_any_instance_of(BoardGrantEffectuation).to receive(:correction?).and_return(true)
+
+            expect(subject.end_product_establishment).to have_attributes(
+              source: decision_document,
+              veteran_file_number: decision_document.appeal.veteran.file_number,
+              claim_date: decision_document.decision_date,
+              payee_code: "00",
+              benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
+              user: User.system_user,
+              code: "930ABGNRCPMC"
+            )
+          end
         end
       end
     end

@@ -219,7 +219,7 @@ module IntakeHelpers
     legacy_issues: false
   )
     add_button_text = legacy_issues ? "Next" : "Add this issue"
-    expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
+    expect(page.text).to match(/Does issue \d+ match any of these non-rating issue categories?/)
     expect(page).to have_button(add_button_text, disabled: true)
 
     # has_css will wait 5 seconds by default, and we want an instant decision.
@@ -271,6 +271,21 @@ module IntakeHelpers
     find("#issue-action-#{issue_num}_withdraw").click
   end
 
+  def click_correct_intake_issue_dropdown(text)
+    issue_el = find_intake_issue_by_text(text)
+    issue_num = issue_el[:"data-key"].sub(/^issue-/, "")
+    find("#issue-action-#{issue_num}").click
+    find("#issue-action-#{issue_num}_correct").click
+  end
+
+  def select_correction_type_from_modal(value)
+    find("label[for=correctionType_#{value}]").click
+  end
+
+  def click_correction_type_modal_submit
+    find(".correction-type-submit").click
+  end
+
   def click_remove_intake_issue_by_text(text)
     issue_el = find_intake_issue_by_text(text)
     issue_el.find(".remove-issue").click
@@ -282,6 +297,18 @@ module IntakeHelpers
 
   def click_edit_contention_issue
     safe_click ".edit-contention-issue"
+  end
+
+  def edit_contention_text(old_text, new_text)
+    issue_to_edit = find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue-container"]')
+      .select { |issue| issue.text.match?(/#{old_text}/) }.find(".issue-edit-text").first
+
+    within issue_to_edit do
+      click_edit_contention_issue
+    end
+
+    fill_in(with: new_text)
+    click_button("Submit")
   end
 
   def click_number_of_issues_changed_confirmation
@@ -311,6 +338,14 @@ module IntakeHelpers
   def find_intake_issue_number_by_text(text)
     find_intake_issue_by_text(text).find(".issue-num").text.delete(".")
   end
+
+  # def find_correction_type_by_value(value)
+  #   find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue-container"]').each do |node|
+  #     if node.text.match?(/#{text}/)
+  #       return node.find(".issue")
+  #     end
+  #   end
+  # end
 
   def expect_ineligible_issue(number)
     number = number.strip if number.is_a?(String)
@@ -554,6 +589,142 @@ module IntakeHelpers
     )
   end
 
+  def generate_rating(veteran, promulgation_date, profile_date)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: promulgation_date,
+      profile_date: profile_date,
+      issues: [
+        { reference_id: "abc123", decision_text: "Left knee granted" },
+        { reference_id: "def456", decision_text: "PTSD denied" },
+        { reference_id: "def789", decision_text: "Looks like a VACOLS issue" }
+      ]
+    )
+  end
+
+  def generate_timely_rating(veteran, receipt_date, duplicate_reference_id)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date - 40.days,
+      profile_date: receipt_date - 50.days,
+      issues: [
+        { reference_id: "xyz123", decision_text: "Left knee granted 2" },
+        { reference_id: "xyz456", decision_text: "PTSD denied 2" },
+        { reference_id: duplicate_reference_id, decision_text: "Old injury" }
+      ]
+    )
+  end
+
+  def generate_untimely_rating(veteran, promulgation_date, profile_date)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: promulgation_date,
+      profile_date: profile_date,
+      issues: [
+        { reference_id: "old123", decision_text: "Untimely rating issue 1" },
+        { reference_id: "old456", decision_text: "Untimely rating issue 2" }
+      ]
+    )
+  end
+
+  def generate_untimely_rating_from_ramp(veteran, receipt_date, old_reference_id, with_associated_claims: false)
+    args = {
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date - 400.days,
+      profile_date: receipt_date - 450.days,
+      issues: [
+        { reference_id: old_reference_id,
+          decision_text: "Really old injury" }
+      ]
+    }
+    if with_associated_claims
+      args[:associated_claims] = { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
+    end
+    Generators::Rating.build(args)
+  end
+
+  def generate_future_rating(veteran, promulgation_date, profile_date)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: promulgation_date,
+      profile_date: profile_date,
+      issues: [
+        { reference_id: "future1", decision_text: "Future rating issue 1" },
+        { reference_id: "future2", decision_text: "Future rating issue 2" }
+      ]
+    )
+  end
+
+  def generate_pre_ama_rating(veteran)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: ama_test_start_date - 5.days,
+      profile_date: ama_test_start_date - 10.days,
+      issues: [
+        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
+      ]
+    )
+  end
+
+  def generate_rating_with_defined_contention(veteran, promulgation_date, profile_date)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: promulgation_date,
+      profile_date: profile_date,
+      issues: [
+        { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: 55 },
+        { reference_id: "def456", decision_text: "PTSD denied" },
+        { reference_id: "abcdef", decision_text: "Back pain" }
+      ]
+    )
+  end
+
+  def generate_rating_before_ama_from_ramp(veteran)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: ama_test_start_date - 5.days,
+      profile_date: ama_test_start_date - 11.days,
+      issues: [
+        { decision_text: "Issue before AMA Activation from RAMP",
+          reference_id: "ramp_ref_id" }
+      ],
+      associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
+    )
+  end
+
+  def generate_rating_with_legacy_issues(veteran, promulgation_date, profile_date)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: promulgation_date,
+      profile_date: profile_date,
+      issues: [
+        { reference_id: "has_legacy_issue", decision_text: "Issue with legacy issue not withdrawn" },
+        { reference_id: "has_ineligible_legacy_appeal", decision_text: "Issue connected to ineligible legacy appeal" }
+      ]
+    )
+  end
+
+  def generate_rating_with_old_decisions(veteran, receipt_date)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date - 5.years,
+      profile_date: receipt_date - 5.years,
+      issues: [
+        { reference_id: "9876", decision_text: "Left hand broken" }
+      ],
+      decisions: [
+        {
+          rating_issue_reference_id: nil,
+          original_denial_date: receipt_date - 5.years - 3.days,
+          diagnostic_text: "Right arm broken",
+          diagnostic_type: "Bone",
+          disability_id: "123",
+          type_name: "Not Service Connected"
+        }
+      ]
+    )
+  end
+
   def save_and_check_request_issues_with_diagnostic_codes(form_name, decision_review)
     click_intake_add_issue
     expect(page).to have_content("this is a disability")
@@ -566,7 +737,7 @@ module IntakeHelpers
       expect(page).to have_content("View all cases")
     else
       click_intake_finish
-      expect(page).to have_content("#{form_name} has been processed.")
+      expect(page).to have_content("#{form_name} has been submitted.")
     end
 
     expect(
@@ -662,10 +833,10 @@ module IntakeHelpers
 
   # rubocop:disable Metrics/AbcSize
   def verify_request_issue_contending_decision_issue_not_readded(
-      page_url,
-      decision_review,
-      contested_decision_issues
-    )
+    page_url,
+    decision_review,
+    contested_decision_issues
+  )
     # verify that not modifying a request issue contesting a decision issue
     # does not result in readding
 
@@ -681,7 +852,7 @@ module IntakeHelpers
     add_intake_rating_issue("Issue with legacy issue not withdrawn")
 
     click_edit_submit
-    expect(page).to have_content("has been processed")
+    expect(page).to have_content("has been submitted")
 
     first_not_modified_request_issue = RequestIssue.find_by(
       decision_review: decision_review,
@@ -700,7 +871,7 @@ module IntakeHelpers
     request_issue_update = RequestIssuesUpdate.find_by(review: decision_review)
 
     # existing issues should not be added or removed
-    expect(request_issue_update.created_issues.map(&:id)).to_not include(non_modified_ids)
+    expect(request_issue_update.added_issues.map(&:id)).to_not include(non_modified_ids)
     expect(request_issue_update.removed_issues.map(&:id)).to_not include(non_modified_ids)
   end
   # rubocop:enable Metrics/AbcSize

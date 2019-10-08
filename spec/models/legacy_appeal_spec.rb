@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
-describe LegacyAppeal do
+require "support/vacols_database_cleaner"
+require "rails_helper"
+
+describe LegacyAppeal, :all_dbs do
   before do
-    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    Timecop.freeze(post_ama_start_date)
   end
 
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
@@ -11,6 +14,54 @@ describe LegacyAppeal do
 
   let(:appeal) do
     create(:legacy_appeal, vacols_case: vacols_case)
+  end
+
+  context "includes PrintsTaskTree concern" do
+    context "#structure" do
+      let!(:root_task) { create(:root_task, appeal: appeal) }
+      let(:vacols_case) { create(:case, bfcorlid: "123456789S") }
+
+      subject { appeal.structure(:id) }
+
+      it "returns the task structure" do
+        expect_any_instance_of(RootTask).to receive(:structure).with(:id)
+        expect(subject.key?(:"LegacyAppeal #{appeal.id} [id]")).to be_truthy
+      end
+
+      context "the appeal has more than one parentless task" do
+        before { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
+
+        let!(:colocated_task) { create(:colocated_task, appeal: appeal, parent: nil) }
+
+        it "returns all parentless tasks" do
+          expect_any_instance_of(RootTask).to receive(:structure).with(:id)
+          expect_any_instance_of(ColocatedTask).to receive(:structure).with(:id)
+          expect(subject.key?(:"LegacyAppeal #{appeal.id} [id]")).to be_truthy
+          expect(subject[:"LegacyAppeal #{appeal.id} [id]"].count).to eq 2
+        end
+      end
+    end
+  end
+
+  describe "#veteran_file_number" do
+    context "VACOLS has SSN as filenumber" do
+      let(:ssn) { "123456789" }
+      let(:file_number) { "12345678" }
+      let!(:veteran) { create(:veteran, ssn: ssn, file_number: file_number) }
+      let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
+
+      before do
+        allow(DataDogService).to receive(:increment_counter) { @datadog_called = true }
+      end
+
+      it "prefers the Caseflow Veteran.file_number" do
+        expect(legacy_appeal.veteran_file_number).to eq(file_number)
+        expect(legacy_appeal.vbms_id).to eq("#{ssn}S")
+        expect(legacy_appeal.sanitized_vbms_id).to eq(ssn)
+        expect(legacy_appeal.veteran_file_number).to eq(legacy_appeal.veteran.file_number)
+        expect(@datadog_called).to eq(true)
+      end
+    end
   end
 
   context "#eligible_for_soc_opt_in? and #matchable_to_request_issue?" do
@@ -24,6 +75,20 @@ describe LegacyAppeal do
 
     let(:issues) { [Generators::Issue.build(vacols_sequence_id: 1, disposition: nil)] }
 
+    context "when the ssoc date is before when AMA was launched" do
+      let(:ama_date) { Constants::DATES["AMA_ACTIVATION"].to_date }
+      let(:receipt_date) { ama_date + 1.day }
+
+      scenario "when the ssoc date is before AMA was launched" do
+        allow(appeal).to receive(:active?).and_return(true)
+        allow(appeal).to receive(:issues).and_return(issues)
+        allow(appeal).to receive(:soc_date).and_return(Constants::DATES["AMA_ACTIVATION"].to_date - 1.day)
+
+        expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+      end
+    end
+
     scenario "when is active but not eligible" do
       allow(appeal).to receive(:active?).and_return(true)
       allow(appeal).to receive(:issues).and_return(issues)
@@ -31,6 +96,17 @@ describe LegacyAppeal do
       allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
 
       expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
+      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+    end
+
+    scenario "when is active and soc is not eligible but ssoc is" do
+      allow(appeal).to receive(:active?).and_return(true)
+      allow(appeal).to receive(:issues).and_return(issues)
+      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
+      allow(appeal).to receive(:ssoc_dates).and_return([soc_eligible_date + 1.day])
+      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
+
+      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(true)
       expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
     end
 
@@ -123,6 +199,28 @@ describe LegacyAppeal do
 
     it "returns all documents associated with the case" do
       expect(subject.size).to eq 2
+    end
+  end
+
+  context "#attorney_case_review" do
+    subject { appeal.attorney_case_review }
+
+    context "when there is a decass record" do
+      let!(:vacols_case) { create(:case, :assigned, user: create(:user)) }
+
+      it "searches through attorney case reviews table" do
+        expect(AttorneyCaseReview).to receive(:find_by)
+        subject
+      end
+    end
+
+    context "when there is no decass record" do
+      let!(:vacols_case) { create(:case) }
+
+      it "does not search through attorney case reviews table" do
+        expect(AttorneyCaseReview).to_not receive(:find_by)
+        subject
+      end
     end
   end
 
@@ -682,7 +780,7 @@ describe LegacyAppeal do
             subject
 
             expect(vacols_case.reload.bfmpro).to eq("HIS")
-            expect(vacols_case.reload.bfcurloc).to eq("99")
+            expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:closed])
           end
         end
       end
@@ -722,11 +820,11 @@ describe LegacyAppeal do
       before do
         RequestStore[:current_user] = user
         vacols_case.update_vacols_location!("50")
-        vacols_case.update_vacols_location!("99")
+        vacols_case.update_vacols_location!(LegacyAppeal::LOCATION_CODES[:closed])
         vacols_case.reload
 
         ramp_vacols_case.update_vacols_location!("77")
-        ramp_vacols_case.update_vacols_location!("99")
+        ramp_vacols_case.update_vacols_location!(LegacyAppeal::LOCATION_CODES[:closed])
         ramp_vacols_case.reload
       end
 
@@ -1582,10 +1680,12 @@ describe LegacyAppeal do
     let(:vacols_case) { create(:case) }
     subject { appeal.veteran }
 
-    let(:veteran_record) { { file_number: appeal.sanitized_vbms_id, first_name: "Ed", last_name: "Merica" } }
+    let(:veteran_record) do
+      { file_number: appeal.sanitized_vbms_id, first_name: "Ed", last_name: "Merica", ptcpnt_id: "1234" }
+    end
 
     before do
-      Fakes::BGSService.veteran_records = { appeal.sanitized_vbms_id => veteran_record }
+      Fakes::BGSService.store_veteran_record(appeal.sanitized_vbms_id, veteran_record)
     end
 
     it "returns veteran loaded with BGS values" do
@@ -1887,7 +1987,7 @@ describe LegacyAppeal do
     end
 
     it "Updates a legacy_appeal when an appeal is updated" do
-      appeal.update!(rice_compliance: TRUE)
+      appeal.update!(rice_compliance: true)
       expect(legacy_appeal.attributes).to eq(appeal.attributes)
     end
   end
@@ -2073,12 +2173,11 @@ describe LegacyAppeal do
 
     context "when representative is returned from BGS" do
       before do
-        FeatureToggle.enable!(:use_representative_info_from_bgs)
         RequestStore.store[:application] = "queue"
       end
 
       after do
-        FeatureToggle.disable!(:use_representative_info_from_bgs)
+        RequestStore.store[:application] = nil
       end
 
       it "the appellant is returned" do
@@ -2324,7 +2423,7 @@ describe LegacyAppeal do
 
           before do
             on_hold_root = create(:root_task, appeal: appeal, updated_at: pre_ama - 1)
-            create(:generic_task, status: :on_hold, appeal: appeal, parent: on_hold_root, updated_at: pre_ama + 1)
+            create(:generic_task, :on_hold, appeal: appeal, parent: on_hold_root, updated_at: pre_ama + 1)
           end
 
           it "it returns something" do

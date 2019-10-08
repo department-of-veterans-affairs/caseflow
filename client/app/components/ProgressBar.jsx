@@ -36,7 +36,7 @@ export default class ProgressBar extends React.Component {
 ProgressBar.propTypes = {
   sections: PropTypes.arrayOf(
     PropTypes.shape({
-      activated: PropTypes.boolean,
+      activated: PropTypes.bool,
       title: PropTypes.string
     })
   )

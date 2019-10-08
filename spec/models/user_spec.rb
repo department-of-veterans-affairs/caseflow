@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe User do
+describe User, :all_dbs do
   let(:css_id) { "TomBrady" }
   let(:session) { { "user" => { "id" => css_id, "station_id" => "310", "name" => "Tom Brady" } } }
   let(:user) { User.from_session(session) }
@@ -19,6 +20,14 @@ describe User do
     Fakes::AuthenticationService.user_session = nil
   end
 
+  context ".api_user" do
+    it "returns the api user" do
+      expect(User.api_user.station_id).to eq "101"
+      expect(User.api_user.css_id).to eq "APIUSER"
+      expect(User.api_user.full_name).to eq "API User"
+    end
+  end
+
   context ".find_by_css_id" do
     let!(:user) { create(:user, css_id: "FOOBAR") }
 
@@ -33,6 +42,41 @@ describe User do
     it "forces the css id to UPCASE" do
       expect(css_id.upcase).to_not eq(css_id)
       expect(subject.css_id).to eq(css_id.upcase)
+    end
+  end
+
+  context ".batch_find_by_css_id_or_create_with_default_station_id" do
+    subject { User.batch_find_by_css_id_or_create_with_default_station_id(css_ids) }
+
+    context "when the input list of CSS IDs includes a lowercase CSS ID" do
+      let(:lowercase_css_id) { Generators::Random.from_set(("a".."z").to_a, 16) }
+      let(:css_ids) { [lowercase_css_id] }
+
+      context "when the User record for the lowercase CSS ID does not yet exist in the database" do
+        it "returns the newly created User record for that CSS ID" do
+          expect(subject.length).to eq(1)
+        end
+      end
+
+      context "when the User record for the lowercase CSS ID already exists in the database" do
+        before { User.create(css_id: lowercase_css_id, station_id: User::BOARD_STATION_ID) }
+        it "returns the existing User record for that CSS ID" do
+          expect(subject.length).to eq(1)
+        end
+      end
+    end
+  end
+
+  context ".list_hearing_coordinators" do
+    let!(:users) { create_list(:user, 5) }
+    let!(:other_users) { create_list(:user, 5) }
+    before do
+      users.each do |user|
+        OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+      end
+    end
+    it "returns a list of hearing coordinators" do
+      expect(User.list_hearing_coordinators).to match_array(users)
     end
   end
 
@@ -61,9 +105,12 @@ describe User do
         "pg_user_id" => user.id,
         "email" => nil,
         "roles" => [],
+        "efolder_documents_fetched_at" => nil,
         "selected_regional_office" => nil,
         :display_name => css_id.upcase,
-        "name" => "Tom Brady"
+        "name" => "Tom Brady",
+        "status" => Constants.USER_STATUSES.active,
+        "status_updated_at" => nil
       }
     end
 
@@ -239,32 +286,36 @@ describe User do
   end
 
   context "#selectable_organizations" do
-    let(:judge) { FactoryBot.create :user }
-    let!(:judgeteam) { JudgeTeam.create_for_judge(judge) }
+    let(:user) { create(:user) }
+    let!(:staff) { create(:staff, :attorney_role, user: user) }
 
     subject { user.selectable_organizations }
 
-    context "when user is the team's judge" do
-      let(:user) { judge }
-
-      it "includes judge teams from the organization list" do
-        is_expected.to include(
-          :id => judgeteam.id,
-          :name => "Assign",
-          :url => "queue/%<id>s/assign" % [id: user.id]
-        )
-        expect(user.organizations).to include judgeteam
+    context "when user is not a judge in vacols and does not have a judge team" do
+      it "assign cases is not returned" do
+        is_expected.to be_empty
       end
     end
 
-    context "when user is not the team's judge" do
-      before do
-        OrganizationsUser.add_user_to_organization(user, judgeteam)
-      end
+    context "when user is a judge in vacols" do
+      let!(:staff) { create(:staff, :attorney_judge_role, user: user) }
 
-      it "excludes judge teams from the organization list" do
-        is_expected.to be_empty
-        expect(user.organizations).to include judgeteam
+      it "assign cases is returned" do
+        is_expected.to include(
+          name: "Assign",
+          url: format("queue/%<id>s/assign", id: user.id)
+        )
+      end
+    end
+
+    context "when user has a judge team" do
+      before { JudgeTeam.create_for_judge(user) }
+
+      it "assign cases is returned" do
+        is_expected.to include(
+          name: "Assign",
+          url: format("queue/%<id>s/assign", id: user.id)
+        )
       end
     end
   end
@@ -340,45 +391,6 @@ describe User do
     context "when user with roles that contain Admin Intake" do
       before { session["user"]["roles"] = ["Admin Intake"] }
       it { is_expected.to be_truthy }
-    end
-  end
-
-  context "#can_edit_request_issues?" do
-    let(:appeal) { create(:appeal) }
-
-    subject { user.can_edit_request_issues?(appeal) }
-
-    context "when appeal has in-progress attorney task assigned to user" do
-      let!(:task) do
-        create(:task,
-               type: "AttorneyTask",
-               appeal: appeal,
-               assigned_to: user,
-               status: Constants.TASK_STATUSES.assigned)
-      end
-      it { is_expected.to be true }
-    end
-
-    context "when appeal has in-progress judge task assigned to user" do
-      let!(:task) do
-        create(:task,
-               type: "JudgeDecisionReviewTask",
-               appeal: appeal,
-               assigned_to: user,
-               status: Constants.TASK_STATUSES.in_progress)
-      end
-      it { is_expected.to be true }
-    end
-
-    context "when appeal has completed task assigned to user" do
-      let!(:task) do
-        create(:task,
-               type: "AttorneyTask",
-               appeal: appeal,
-               assigned_to: user,
-               status: Constants.TASK_STATUSES.completed)
-      end
-      it { is_expected.to be false }
     end
   end
 
@@ -582,7 +594,7 @@ describe User do
   end
 
   describe ".organization_queue_user?" do
-    let(:user) { FactoryBot.create(:user) }
+    let(:user) { create(:user) }
 
     subject { user.organization_queue_user? }
 
@@ -593,9 +605,37 @@ describe User do
     end
 
     context "when the user is a member of some organizations" do
-      before { OrganizationsUser.add_user_to_organization(user, FactoryBot.create(:organization)) }
+      before { OrganizationsUser.add_user_to_organization(user, create(:organization)) }
       it "returns true" do
         expect(subject).to eq(true)
+      end
+    end
+  end
+
+  describe "when the status is updated" do
+    let(:user) { create(:user) }
+
+    subject { user.update_status!(status) }
+
+    before { Timecop.freeze(Time.zone.now) }
+
+    context "with an invalid status" do
+      let(:status) { "invalid" }
+
+      it "fails and does not update the status_updated_at column" do
+        expect { subject }.to raise_error(ArgumentError)
+        expect(user.reload.status).not_to eq status
+        expect(user.status_updated_at).to eq nil
+      end
+    end
+
+    context "with a valid status" do
+      let(:status) { Constants.USER_STATUSES.inactive }
+
+      it "succeeds and updates the status_updated_at column" do
+        expect(subject).to eq true
+        expect(user.reload.status).to eq status
+        expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
       end
     end
   end

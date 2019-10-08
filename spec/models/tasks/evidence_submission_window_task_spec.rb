@@ -1,16 +1,11 @@
 # frozen_string_literal: true
 
-describe EvidenceSubmissionWindowTask do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe EvidenceSubmissionWindowTask, :postgres do
   let(:participant_id_with_pva) { "000000" }
   let(:participant_id_with_no_vso) { "11111" }
-
-  before do
-    FeatureToggle.enable!(:ama_acd_tasks)
-  end
-  after do
-    FeatureToggle.disable!(:ama_acd_tasks)
-  end
-
   let!(:receipt_date) { 2.days.ago }
   let!(:appeal) do
     create(:appeal, docket_type: "evidence_submission", receipt_date: receipt_date, claimants: [
@@ -45,7 +40,7 @@ describe EvidenceSubmissionWindowTask do
 
   context "on complete" do
     it "creates an ihp task if the appeal has a vso" do
-      RootTask.create_root_and_sub_tasks!(appeal)
+      InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq(0)
       EvidenceSubmissionWindowTask.find_by(appeal: appeal).when_timer_ends
       expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq(1)
@@ -53,16 +48,18 @@ describe EvidenceSubmissionWindowTask do
     end
 
     it "marks appeal as ready for distribution if the appeal doesn't have a vso" do
-      RootTask.create_root_and_sub_tasks!(appeal_no_vso)
+      InitialTasksFactory.new(appeal_no_vso).create_root_and_sub_tasks!
       EvidenceSubmissionWindowTask.find_by(appeal: appeal_no_vso).update!(status: "completed")
       expect(DistributionTask.find_by(appeal: appeal_no_vso).status).to eq("assigned")
     end
   end
 
   context "timer_delay" do
-    context "parent is not a DispositionTask" do
+    context "parent is not a AssignHearingDispositionTask" do
+      before { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
+
       let(:task) do
-        EvidenceSubmissionWindowTask.create!(appeal: appeal, assigned_to: Bva.singleton)
+        appeal.tasks.last
       end
 
       it "is marked as complete and vso tasks are created in 90 days" do
@@ -76,12 +73,12 @@ describe EvidenceSubmissionWindowTask do
       end
     end
 
-    context "parent is a DispositionTask and there is a held hearing" do
-      let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-      let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+    context "parent is a AssignHearingDispositionTask and there is a held hearing" do
+      let(:root_task) { create(:root_task, appeal: appeal) }
+      let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
       let(:hearing_day) { create(:hearing_day, scheduled_for: appeal.receipt_date + 15.days) }
       let(:hearing) do
-        FactoryBot.create(
+        create(
           :hearing,
           appeal: appeal,
           disposition: Constants.HEARING_DISPOSITION_TYPES.held,
@@ -89,18 +86,18 @@ describe EvidenceSubmissionWindowTask do
         )
       end
       let!(:hearing_task_association) do
-        FactoryBot.create(
+        create(
           :hearing_task_association,
           hearing: hearing,
           hearing_task: hearing_task
         )
       end
       let!(:parent) do
-        FactoryBot.create(
-          :disposition_task,
+        create(
+          :assign_hearing_disposition_task,
+          :in_progress,
           parent: hearing_task,
-          appeal: appeal,
-          status: Constants.TASK_STATUSES.in_progress
+          appeal: appeal
         )
       end
       let!(:task) do

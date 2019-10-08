@@ -1,36 +1,47 @@
 # frozen_string_literal: true
 
-describe TimeableTask do
-  NOW = Time.utc(2018, 4, 24, 12, 0, 0)
+require "support/database_cleaner"
+require "rails_helper"
 
-  class SomeTimedTask < GenericTask
+describe TimeableTask, :postgres do
+  let(:now) { Time.utc(2018, 4, 24, 12, 0, 0) }
+
+  module CurrentDate
+    def now
+      Time.utc(2018, 4, 24, 12, 0, 0)
+    end
+  end
+
+  class SomeTimedTask < Task
     include TimeableTask
+    include CurrentDate
 
     def when_timer_ends; end
 
     def timer_ends_at
-      NOW + 5.days
+      now + 5.days
     end
   end
 
-  class AnotherTimedTask < GenericTask
+  class AnotherTimedTask < Task
     include TimeableTask
 
     def timer_ends_at; end
   end
 
-  class OldTimedTask < GenericTask
+  class OldTimedTask < Task
     include TimeableTask
+    include CurrentDate
 
     def when_timer_ends; end
 
     def timer_ends_at
-      NOW - 5.days
+      now - 5.days
     end
   end
 
   before do
-    Timecop.freeze(NOW)
+    Timecop.freeze(now)
   end
 
   let(:appeal) { create(:appeal, receipt_date: 10.days.ago) }
@@ -39,19 +50,20 @@ describe TimeableTask do
     task = SomeTimedTask.create!(appeal: appeal, assigned_to: Bva.singleton)
     timers = TaskTimer.where(task: task)
     expect(timers.length).to eq(1)
-    delayed_start = Time.zone.now + 5.days - 3.hours + 1.minute
+
+    delayed_start = Time.zone.now + 5.days - TaskTimer.processing_retry_interval_hours.hours + 1.minute
+
     expect(timers.first.last_submitted_at).to eq(delayed_start)
-    expect(timers.first.submitted_at).to eq(delayed_start)
+    expect(timers.first.submitted_at).to eq(task.timer_ends_at)
   end
 
-  it "queues itself when the delay is in the past" do
+  it "queues itself immediately when the delay is in the past" do
     task = OldTimedTask.create!(appeal: appeal, assigned_to: Bva.singleton)
     timers = TaskTimer.where(task: task)
     expect(timers.length).to eq(1)
     expect(timers.first.submitted_and_ready?).to eq(true)
-    expect(timers.first.last_submitted_at).to eq(NOW)
-    delay_in_the_past = Time.zone.now - 5.days - 3.hours + 1.minute
-    expect(timers.first.submitted_at).to eq(delay_in_the_past)
+    expect(timers.first.submitted_at).to eq(task.timer_ends_at)
+    expect(timers.first.last_submitted_at).to eq(now)
   end
 
   context "when not correctly configured" do

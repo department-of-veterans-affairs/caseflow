@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { onReceiveAmaTasks } from '../QueueActions';
@@ -18,9 +19,7 @@ class EndHoldModal extends React.Component {
 
     return this.props.requestSave(`/tasks/${task.taskId}/end_hold`, {}, successMsg).
       then((resp) => {
-        const response = JSON.parse(resp.text);
-
-        this.props.onReceiveAmaTasks(response.tasks.data);
+        this.props.onReceiveAmaTasks(resp.body.tasks.data);
       });
   }
 
@@ -32,6 +31,15 @@ class EndHoldModal extends React.Component {
     <p>{COPY.END_HOLD_MODAL_BODY}</p>
   </QueueFlowModal>;
 }
+
+EndHoldModal.propTypes = {
+  appealId: PropTypes.string,
+  onReceiveAmaTasks: PropTypes.func,
+  requestSave: PropTypes.func,
+  task: PropTypes.shape({
+    taskId: PropTypes.string
+  })
+};
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId })

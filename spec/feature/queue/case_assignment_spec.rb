@@ -1,32 +1,33 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Case Assignment flows" do
-  let(:attorney_user) { FactoryBot.create(:user) }
-  let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+RSpec.feature "Case Assignment flows", :all_dbs do
+  let(:attorney_user) { create(:user) }
+  let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
-  let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
-  let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+  let(:judge_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
+  let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
 
   context "given a valid legacy appeal and an attorney user" do
     let!(:appeals) do
       Array.new(3) do
-        FactoryBot.create(
+        create(
           :legacy_appeal,
           :with_veteran,
-          vacols_case: FactoryBot.create(
+          vacols_case: create(
             :case,
             :assigned,
             user: attorney_user,
-            case_issues: FactoryBot.create_list(:case_issue, 1)
+            case_issues: create_list(:case_issue, 1)
           )
         )
       end
     end
 
     before do
-      u = FactoryBot.create(:user)
+      u = create(:user)
       OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
 
       User.authenticate!(user: attorney_user)
@@ -40,16 +41,38 @@ RSpec.feature "Case Assignment flows" do
 
       expect(page).to have_content(COPY::ADD_COLOCATED_TASK_SUBHEAD)
 
-      # step "fills in and submits the form for a new admin action"
-      opt_idx = rand(Constants::CO_LOCATED_ADMIN_ACTIONS.length)
-      selected_opt_0 = Constants::CO_LOCATED_ADMIN_ACTIONS.values[opt_idx]
+      # step "fills in and submits the form for two identical admin actions"
+      action = ColocatedTask.actions_assigned_to_colocated.sample
+      selected_opt_0 = Constants::CO_LOCATED_ADMIN_ACTIONS[action]
+      instructions = generate_words(5)
 
       click_dropdown(text: selected_opt_0) do
         visible_options = page.find_all(".Select-option")
         expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
       end
 
-      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: generate_words(5)
+      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions
+
+      click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
+
+      expect(all('div[id^="action_"]').count).to eq 2
+
+      within all('div[id^="action_"]')[1] do
+        click_dropdown(text: selected_opt_0)
+        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions
+      end
+
+      click_on COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL
+
+      expect(page).to have_content(
+        format(COPY::ADD_COLOCATED_TASK_ACTION_DUPLICATE_ERROR, selected_opt_0.upcase, instructions)
+      )
+
+      # step "removes the duplicate and submits the form for a new admin action"
+
+      within all('div[id^="action_"]')[1] do
+        click_on COPY::ADD_COLOCATED_TASK_REMOVE_BUTTON_LABEL
+      end
 
       click_on COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL
 
@@ -59,15 +82,15 @@ RSpec.feature "Case Assignment flows" do
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 2))
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
 
-      # step "navigates again to the 'submit admin action' page"
+      # step "navigates to the 'submit admin action' page for a different veteran"
       click_on "#{appeals[1].veteran_full_name} (#{appeals[1].sanitized_vbms_id})"
       click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label])
 
       expect(page).to have_content(COPY::ADD_COLOCATED_TASK_SUBHEAD)
 
       # step "fills in the form for a new admin action"
-      opt_idx = rand(Constants::CO_LOCATED_ADMIN_ACTIONS.length)
-      selected_opt_1 = Constants::CO_LOCATED_ADMIN_ACTIONS.values[opt_idx]
+      action = ColocatedTask.actions_assigned_to_colocated.sample
+      selected_opt_1 = Constants::CO_LOCATED_ADMIN_ACTIONS[action]
 
       click_dropdown(text: selected_opt_1)
       fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: generate_words(4)
@@ -77,8 +100,8 @@ RSpec.feature "Case Assignment flows" do
 
       expect(all('div[id^="action_"]').count).to eq 2
 
-      opt_idx = rand(Constants::CO_LOCATED_ADMIN_ACTIONS.length)
-      selected_opt_2 = Constants::CO_LOCATED_ADMIN_ACTIONS.values[opt_idx]
+      action = ColocatedTask.actions_assigned_to_colocated.sample
+      selected_opt_2 = Constants::CO_LOCATED_ADMIN_ACTIONS[action]
 
       within all('div[id^="action_"]')[1] do
         click_dropdown(text: selected_opt_2)
@@ -92,8 +115,8 @@ RSpec.feature "Case Assignment flows" do
 
       expect(all('div[id^="action_"]').count).to eq 3
 
-      opt_idx = rand(Constants::CO_LOCATED_ADMIN_ACTIONS.length)
-      selected_opt_3 = Constants::CO_LOCATED_ADMIN_ACTIONS.values[opt_idx]
+      action = ColocatedTask.actions_assigned_to_colocated.sample
+      selected_opt_3 = Constants::CO_LOCATED_ADMIN_ACTIONS[action]
 
       within all('div[id^="action_"]')[2] do
         click_dropdown(text: selected_opt_3)

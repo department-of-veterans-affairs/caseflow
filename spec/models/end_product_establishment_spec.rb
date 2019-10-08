@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-describe EndProductEstablishment do
+require "support/database_cleaner"
+require "rails_helper"
+
+describe EndProductEstablishment, :postgres do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
 
@@ -25,7 +28,7 @@ describe EndProductEstablishment do
   let(:reference_id) { nil }
   let(:same_office) { false }
   let(:source) { create(:higher_level_review, veteran_file_number: veteran_file_number, same_office: same_office) }
-  let(:invalid_modifiers) { nil }
+  let(:invalid_modifiers) { [] }
   let(:synced_status) { nil }
   let(:committed_at) { nil }
   let(:fake_claim_id) { "FAKECLAIMID" }
@@ -34,6 +37,7 @@ describe EndProductEstablishment do
   let(:development_item_reference_id) { nil }
   let(:limited_poa_code) { "ABC" }
   let(:limited_poa_access) { true }
+  let(:rating_profile_date) { Date.new(2018, 4, 30) }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -103,7 +107,7 @@ describe EndProductEstablishment do
       it "uses the new address for establishing a claim" do
         # first fetch Veteran's info
         expect(veteran.to_vbms_hash).to include(address_line1: "1234 FAKE ST")
-        Fakes::BGSService.veteran_records[veteran.file_number][:address_line1] = "Changed"
+        Fakes::BGSService.edit_veteran_record(veteran.file_number, :address_line1, "Changed")
 
         subject
 
@@ -130,11 +134,11 @@ describe EndProductEstablishment do
       end
     end
 
-    context "when eps with a valid modifiers already exist" do
+    context "when eps with a valid modifier already exists" do
       let!(:past_created_ep) do
         Generators::EndProduct.build(
           veteran_file_number: veteran_file_number,
-          bgs_attrs: { end_product_type_code: "030" }
+          bgs_attrs: { end_product_type_code: "030", status_type_code: "PEND" }
         )
       end
 
@@ -163,6 +167,37 @@ describe EndProductEstablishment do
         expect(end_product_establishment.reload).to have_attributes(
           modifier: "031"
         )
+      end
+
+      context "when it is a correction end product" do
+        let(:code) { "930AMABGRC" }
+
+        it "creates an end product with the correction valid modifier" do
+          subject
+          expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+            claim_hash: {
+              benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH,
+              payee_code: "00",
+              predischarge: false,
+              claim_type: "Claim",
+              end_product_modifier: "930",
+              end_product_code: "930AMABGRC",
+              end_product_label: "AMA BVA Grant Rating Control",
+              station_of_jurisdiction: "397",
+              date: 2.days.ago.to_date,
+              suppress_acknowledgement_letter: false,
+              gulf_war_registry: false,
+              claimant_participant_id: "11223344",
+              limited_poa_code: "ABC",
+              limited_poa_access: true
+            },
+            veteran_hash: veteran.reload.to_vbms_hash,
+            user: current_user
+          )
+          expect(end_product_establishment.reload).to have_attributes(
+            modifier: "930"
+          )
+        end
       end
 
       context "when invalid modifiers is set" do
@@ -202,22 +237,34 @@ describe EndProductEstablishment do
         %w[030 031 032].each do |modifier|
           Generators::EndProduct.build(
             veteran_file_number: veteran_file_number,
-            bgs_attrs: { end_product_type_code: modifier }
+            bgs_attrs: { end_product_type_code: modifier, status_type_code: "PEND" }
           )
         end
       end
 
       it "returns NoAvailableModifiers error" do
-        expect { subject }.to raise_error(EndProductEstablishment::NoAvailableModifiers)
+        expect { subject }.to raise_error(EndProductModifierFinder::NoAvailableModifiers)
       end
     end
 
-    context "when existing EP has status CLR or CAN" do
+    context "when existing EP has status CLR" do
+      let(:setups) do
+        [
+          { modifier: "030", last_action_date: 2.weeks.ago.mdY },
+          { modifier: "031", last_action_date: 2.weeks.ago.mdY },
+          { modifier: "032", last_action_date: 2.weeks.ago.mdY }
+        ]
+      end
+
       before do
-        %w[030 031 032].each do |modifier|
+        setups.each do |setup|
           Generators::EndProduct.build(
             veteran_file_number: veteran_file_number,
-            bgs_attrs: { end_product_type_code: modifier, status_type_code: %w[CLR CAN].sample }
+            bgs_attrs: {
+              end_product_type_code: setup[:modifier],
+              last_action_date: setup[:last_action_date],
+              status_type_code: "CLR"
+            }
           )
         end
       end
@@ -227,6 +274,20 @@ describe EndProductEstablishment do
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           hash_including(veteran_hash: veteran.reload.to_vbms_hash)
         )
+      end
+
+      context "when last action date is within the last two days" do
+        let(:setups) do
+          [
+            { modifier: "030", last_action_date: 1.day.ago.mdY },
+            { modifier: "031", last_action_date: 1.day.ago.mdY },
+            { modifier: "032", last_action_date: Time.zone.today.mdY }
+          ]
+        end
+
+        it "considers those EP modifiers as taken and returns a NoAvailableModifiers error" do
+          expect { subject }.to raise_error(EndProductModifierFinder::NoAvailableModifiers)
+        end
       end
     end
 
@@ -294,15 +355,23 @@ describe EndProductEstablishment do
           end_product_establishment: end_product_establishment,
           decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
-          contested_rating_issue_profile_date: Date.new(2018, 4, 30),
+          contested_rating_issue_profile_date: rating_profile_date,
           contested_issue_description: "this is a big decision"
         ),
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
           decision_review: source,
+          contested_rating_decision_reference_id: "rating-decision-diagnostic-id",
+          contested_rating_issue_profile_date: rating_profile_date,
+          contested_issue_description: "foobar was denied."
+        ),
+        create(
+          :request_issue,
+          end_product_establishment: end_product_establishment,
+          decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
-          contested_rating_issue_profile_date: Date.new(2018, 4, 30),
+          contested_rating_issue_profile_date: rating_profile_date,
           vacols_id: vacols_id,
           vacols_sequence_id: vacols_sequence_id,
           contested_issue_description: "more decisionz"
@@ -312,7 +381,7 @@ describe EndProductEstablishment do
           end_product_establishment: end_product_establishment,
           decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
-          contested_rating_issue_profile_date: Date.new(2018, 4, 30),
+          contested_rating_issue_profile_date: rating_profile_date,
           contested_issue_description: "description too long for bgs" * 20
         ),
         create(
@@ -322,14 +391,14 @@ describe EndProductEstablishment do
           unidentified_issue_text: "identity unknown",
           decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
-          contested_rating_issue_profile_date: Date.new(2018, 4, 30)
+          contested_rating_issue_profile_date: rating_profile_date
         )
       ]
     end
 
     let(:contentions) do
       request_issues.map do |issue|
-        contention = { description: issue.contention_text }
+        contention = { description: issue.contention_text, contention_type: issue.contention_type }
         issue.special_issues && contention[:special_issues] = issue.special_issues
         contention
       end.reverse
@@ -343,10 +412,11 @@ describe EndProductEstablishment do
         veteran_file_number: veteran_file_number,
         claim_id: end_product_establishment.reference_id,
         contentions: array_including(contentions),
-        user: current_user
+        user: current_user,
+        claim_date: 2.days.ago.to_date
       )
 
-      expect(end_product_establishment.contentions.count).to eq(4)
+      expect(end_product_establishment.contentions.count).to eq(request_issues.count)
       expect(end_product_establishment.contentions.map(&:id)).to contain_exactly(
         *request_issues.map(&:reload).map(&:contention_reference_id).map(&:to_s)
       )
@@ -365,15 +435,63 @@ describe EndProductEstablishment do
           claim_id: end_product_establishment.reference_id,
           contentions: array_including(
             { description: "this is a big decision",
-              special_issues: [{ code: "SSR", narrative: "Same Station Review" }] },
+              special_issues: [{ code: "SSR", narrative: "Same Station Review" }],
+              contention_type: Constants.CONTENTION_TYPES.higher_level_review },
             description: "more decisionz",
+            contention_type: Constants.CONTENTION_TYPES.higher_level_review,
             special_issues: array_including(
               { code: "SSR", narrative: "Same Station Review" },
               code: "ASSOI", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O
             )
           ),
-          user: current_user
+          user: current_user,
+          claim_date: 2.days.ago.to_date
         )
+      end
+    end
+
+    context "when issues are from dta decisions" do
+      let!(:prior_request_issues) do
+        [
+          create(:request_issue, contention_reference_id: "101"),
+          create(:request_issue, contention_reference_id: "121")
+        ]
+      end
+
+      let!(:dta_decision_issue) do
+        create(:decision_issue, request_issues: prior_request_issues, disposition: "DTA Error")
+      end
+
+      let!(:request_issues) do
+        [
+          create(
+            :request_issue,
+            end_product_establishment: end_product_establishment,
+            decision_review: source,
+            contested_decision_issue: dta_decision_issue,
+            contested_issue_description: "I am contesting a dta decision"
+          )
+        ]
+      end
+
+      context "when send send_original_dta_contentions is enabled" do
+        before { FeatureToggle.enable!(:send_original_dta_contentions) }
+
+        it "sends the original contention ids when creating the contention" do
+          subject
+
+          expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
+            veteran_file_number: veteran_file_number,
+            claim_id: end_product_establishment.reference_id,
+            contentions: array_including(
+              description: "I am contesting a dta decision",
+              original_contention_ids: [101, 121],
+              contention_type: Constants.CONTENTION_TYPES.higher_level_review
+            ),
+            user: current_user,
+            claim_date: 2.days.ago.to_date
+          )
+        end
       end
     end
   end
@@ -429,6 +547,27 @@ describe EndProductEstablishment do
           claim_id: reference_id,
           rating_issue_contention_map: { request_issues[0].contested_rating_issue_reference_id => contention_ref_id }
         )
+      end
+    end
+
+    context "request issue is rating via rating decision" do
+      let!(:request_issues) do
+        [
+          create(
+            :request_issue,
+            end_product_establishment: end_product_establishment,
+            decision_review: source,
+            contested_rating_decision_reference_id: "rating-decision-diagnostic-id",
+            contested_rating_issue_profile_date: rating_profile_date,
+            contested_issue_description: "foobar was denied."
+          )
+        ]
+      end
+
+      it "skips mapping since there is no associated rating issue" do
+        subject
+        expect(request_issues.first.rating?).to be true
+        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
       end
     end
 
@@ -534,59 +673,6 @@ describe EndProductEstablishment do
       it "does not recommit the end product establishment" do
         subject
         expect(end_product_establishment.committed_at).to eq(2.days.ago)
-      end
-    end
-  end
-
-  context "#remove_contention!" do
-    before do
-      allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
-    end
-
-    let(:reference_id) { "stevenasmith" }
-    let(:request_issue_contention_reference_id) { contention_reference_id }
-    let(:contention_reference_id) { "1234" }
-
-    let(:request_issue) do
-      RequestIssue.new(
-        decision_review: source,
-        contested_rating_issue_reference_id: "reference-id",
-        contested_rating_issue_profile_date: Date.new(2018, 4, 30),
-        contested_issue_description: "this is a big decision",
-        benefit_type: "compensation",
-        contention_reference_id: request_issue_contention_reference_id
-      )
-    end
-
-    let!(:contention) do
-      Generators::Contention.build(id: contention_reference_id, claim_id: reference_id, text: "Left knee")
-    end
-
-    subject { end_product_establishment.remove_contention!(request_issue) }
-
-    it "calls VBMS with the appropriate arguments to remove the contention" do
-      subject
-
-      expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention)
-      expect(request_issue.contention_removed_at).to eq(Time.zone.now)
-    end
-
-    context "when VBMS throws an error" do
-      before do
-        allow(Fakes::VBMSService).to receive(:remove_contention!).and_raise(vbms_error)
-      end
-
-      it "does not remove contentions" do
-        expect { subject }.to raise_error(vbms_error)
-        expect(request_issue.contention_removed_at).to be_nil
-      end
-    end
-
-    context "when contention does not exist" do
-      let(:request_issue_contention_reference_id) { "9999" }
-
-      it "raises ContentionNotFound error" do
-        expect { subject }.to raise_error(EndProductEstablishment::ContentionNotFound)
       end
     end
   end
@@ -700,10 +786,11 @@ describe EndProductEstablishment do
     context "when a matching end product has been established" do
       let(:reference_id) { matching_ep.claim_id }
       let(:status_type_code) { "CLR" }
+      let(:claim_type_code) { "030HLRR" }
       let!(:matching_ep) do
         Generators::EndProduct.build(
           veteran_file_number: veteran_file_number,
-          bgs_attrs: { status_type_code: status_type_code }
+          bgs_attrs: { status_type_code: status_type_code, claim_type_code: claim_type_code }
         )
       end
 
@@ -719,49 +806,7 @@ describe EndProductEstablishment do
         end
 
         it "re-raises error" do
-          expect { subject }.to raise_error(::BGSSyncError)
-        end
-      end
-
-      context "when VBMS/BGS has a transient internal error" do
-        before do
-          # from https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3116/
-          sample_transient_error_body = '<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">' \
-                                        "<env:Header/><env:Body><env:Fault>" \
-                                        '<faultcode xmlns:ns1="http://www.w3.org/2003/05/soap-envelope">' \
-                                        "ns1:Server</faultcode><faultstring>gov.va.vba.vbms.ws.VbmsWSException: " \
-                                        "WssVerification Exception - Security Verification Exception GUID: " \
-                                        "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</faultstring><detail>" \
-                                        '<cdm:faultDetailBean xmlns:cdm="http://vbms.vba.va.gov/cdm" ' \
-                                        'cdm:message="gov.va.vba.vbms.ws.VbmsWSException: WssVerification Exception' \
-                                        " - Security Verification Exception GUID: " \
-                                        "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
-                                        ' cdm:exceptionClassName="gov.va.vba.vbms.ws.VbmsWSException" ' \
-                                        'cdm:uid="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" ' \
-                                        'cdm:serverException="true"/></detail></env:Fault></env:Body></env:Envelope>'
-
-          error = VBMS::HTTPError.new(500, sample_transient_error_body)
-          allow_any_instance_of(BGSService).to receive(:get_end_products).and_raise(error)
-        end
-
-        it "re-raises a transient ignorable error" do
-          expect { subject }.to raise_error(::TransientBGSSyncError)
-        end
-      end
-
-      context "when VBMS/BGS has a transient network error" do
-        before do
-          # from https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2888/
-          error = Errno::ETIMEDOUT.new(
-            "Connection timed out - Connection timed out - connect(2) for " \
-            '"bepprod.vba.va.gov" port 443 (bepprod.vba.va.gov:443)'
-          )
-
-          allow_any_instance_of(BGSService).to receive(:get_end_products).and_raise(error)
-        end
-
-        it "re-raises a transient ignorable error" do
-          expect { subject }.to raise_error(::TransientBGSSyncError)
+          expect { subject }.to raise_error(BGS::ShareError)
         end
       end
 
@@ -782,12 +827,27 @@ describe EndProductEstablishment do
         end
       end
 
+      context "when the end product has been cleared and no decision issues are expected" do
+        let(:status_type_code) { "CLR" }
+        let(:claim_type_code) { "400RA" }
+
+        it "closes request issues with no_decision" do
+          subject
+
+          expect(end_product_establishment.reload.synced_status).to eq("CLR")
+          expect(request_issues.first.reload.closed_at).to eq(Time.zone.now)
+          expect(request_issues.first.closed_status).to eq("no_decision")
+        end
+      end
+
       context "when the end product is canceled" do
         let(:status_type_code) { "CAN" }
 
-        it "closes request issues" do
+        it "closes request issues and cancels establishment" do
           subject
+
           expect(end_product_establishment.reload.synced_status).to eq("CAN")
+          expect(end_product_establishment.source.canceled?).to be true
           expect(request_issues.first.reload.closed_at).to eq(Time.zone.now)
           expect(request_issues.first.closed_status).to eq("end_product_canceled")
         end
@@ -951,7 +1011,10 @@ describe EndProductEstablishment do
         subject
 
         # delay in processing should be 1 day for rating (minus the processing offset of 12.hours)
-        expect(rating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now + 12.hours)
+        expect(rating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now)
+        expect(rating_issue.reload.decision_sync_last_submitted_at).to eq(
+          Time.zone.now + RequestIssue.processing_retry_interval_hours.hours
+        )
         # immediatly for nonrating
         expect(nonrating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now)
 
@@ -975,7 +1038,10 @@ describe EndProductEstablishment do
         subject
 
         # delay in processing should be 1 day (minus the processing offset of 12.hours)
-        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to eq(Time.zone.now + 12.hours)
+        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to eq(Time.zone.now)
+        expect(board_grant_effectuation.reload.decision_sync_last_submitted_at).to eq(
+          Time.zone.now + BoardGrantEffectuation.processing_retry_interval_hours.hours
+        )
         expect(DecisionIssueSyncJob).to_not have_been_enqueued.with(board_grant_effectuation)
       end
     end

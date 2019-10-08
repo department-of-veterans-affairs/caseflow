@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe IntakesController do
+require "support/database_cleaner"
+require "rails_helper"
+
+RSpec.describe IntakesController, :postgres do
   before do
     Fakes::Initializer.load!
     User.authenticate!(roles: ["Mail Intake"])
@@ -13,9 +16,9 @@ RSpec.describe IntakesController do
   let(:bgs) { BGSService.new }
 
   describe "#create" do
-    let(:file_number) { "123456789" }
-    let(:ssn) { file_number.to_s.reverse } # our fakes do this
-    let!(:veteran) { create(:veteran, file_number: file_number) }
+    let(:file_number) { "123456788" }
+    let(:ssn) { "666660000" }
+    let!(:veteran) { create(:veteran, file_number: file_number, ssn: ssn) }
 
     it "should search by Veteran file number" do
       post :create, params: { file_number: file_number, form_type: "higher_level_review" }
@@ -61,6 +64,22 @@ RSpec.describe IntakesController do
       end
     end
 
+    context "veteran in BGS with reserved file number" do
+      let(:file_number) { "123456789" }
+      let!(:veteran) {} # no-op
+      before do
+        Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica")
+        allow(Rails).to receive(:deploy_env?).and_return(true)
+      end
+
+      it "should search by reserved Veteran file number" do
+        expect(Veteran.find_by_file_number_or_ssn(file_number)).to be_nil
+        post :create, params: { file_number: file_number, form_type: "higher_level_review" }
+        expect(response.status).to eq(422)
+        expect(Intake.last.veteran_file_number).to eq(file_number)
+      end
+    end
+
     context "veteran in BGS and not accessible to user" do
       before do
         Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica")
@@ -79,6 +98,22 @@ RSpec.describe IntakesController do
         expect(Veteran.find_by_file_number_or_ssn(file_number)).to be_nil
         expect(Intake.find_by(veteran_file_number: file_number)).to_not be_nil
         expect(bgs).to have_received(:fetch_veteran_info).exactly(1).times
+      end
+    end
+
+    context "veteran in BGS but user may not modify" do
+      before do
+        Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica")
+        allow_any_instance_of(Fakes::BGSService).to receive(:may_modify?).and_return(false)
+      end
+
+      let(:file_number) { "999887777" }
+
+      it "does not allow user to proceed with Intake" do
+        post :create, params: { file_number: file_number, form_type: "higher_level_review" }
+
+        expect(response.status).to eq(422)
+        expect(controller.send(:new_intake).error_code).to eq("veteran_not_modifiable")
       end
     end
   end

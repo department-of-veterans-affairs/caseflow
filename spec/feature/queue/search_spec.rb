@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Search" do
-  let(:attorney_user) { FactoryBot.create(:user) }
-  let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+RSpec.feature "Search", :all_dbs do
+  let(:attorney_user) { create(:user) }
+  let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
   let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
-  let(:veteran_with_no_appeals) { FactoryBot.create(:veteran) }
-  let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)) }
+  let(:invalid_docket_number) { "invaliddocket-number" }
+  let(:veteran_with_no_appeals) { create(:veteran) }
+  let!(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: create(:case)) }
 
   before do
     User.authenticate!(user: attorney_user)
@@ -27,16 +29,33 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id, fill_options: { clear: :backspace }
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
         expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
       end
 
-      it "clicking on the x in the search bar returns browser to queue list page" do
+      it "clicking on the x in the search bar clears the search bar" do
+        expect(page).to have_field("search", with: invalid_veteran_id)
+
         click_on "button-clear-search"
-        expect(page).to_not have_content("1 case found for")
+
+        expect(page).to_not have_field("search", with: invalid_veteran_id)
+      end
+    end
+
+    context "when using AppealFinder" do
+      it "returns results upon valid input" do
+        res = AppealFinder.find_appeals_with_file_numbers(appeal.veteran_file_number)
+
+        expect(res.first.id).to eq(appeal.id)
+      end
+
+      it "returns nil when input is invalid format" do
+        res = AppealFinder.find_appeals_with_file_numbers(invalid_veteran_id)
+
+        expect(res).to be_empty
       end
     end
 
@@ -55,8 +74,15 @@ RSpec.feature "Search" do
 
       context "when a claim has a higher level review and/or supplemental claim" do
         context "and it has no appeals" do
-          let!(:veteran) { FactoryBot.create(:veteran) }
-          let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+          let!(:veteran) { create(:veteran) }
+          let!(:higher_level_review) do
+            create(:higher_level_review, :processed, veteran_file_number: veteran.file_number)
+          end
+          let!(:intake_user) { create(:intake_user) }
+
+          before do
+            User.authenticate!(user: intake_user)
+          end
 
           before do
             visit "/search"
@@ -67,6 +93,19 @@ RSpec.feature "Search" do
           it "should show the HLR / SCs table" do
             expect(page).to have_content(COPY::CASE_LIST_TABLE_EMPTY_TEXT)
             expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+          end
+
+          it "should show the HLR / SCs receipt date" do
+            expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_RECEIPT_DATE_COLUMN_TITLE)
+            expect(higher_level_review.receipt_date.mdY).to_not be_nil
+          end
+
+          it "should show edit issues page" do
+            expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+            new_window = window_opened_by { click_on("edit-issues") }
+            within_window new_window do
+              expect(page).to have_content("Edit Issues")
+            end
           end
         end
 
@@ -110,7 +149,6 @@ RSpec.feature "Search" do
 
               it "does not show removed decision reviews" do
                 perform_search
-
                 expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Supplemental Claim")
                 expect(page).to_not have_css(".cf-other-reviews-table > tbody", text: "Higher Level Review")
                 expect(page).to_not have_css(".cf-case-list-table > tbody", text: "Original")
@@ -183,6 +221,8 @@ RSpec.feature "Search" do
               context "the EP has been established" do
                 before do
                   higher_level_review.reload.establish!
+                  end_product_establishment_1.commit!
+                  end_product_establishment_2.commit!
                 end
 
                 it "shows the end product status" do
@@ -230,10 +270,10 @@ RSpec.feature "Search" do
         end
 
         let!(:appeal_with_hearing) do
-          FactoryBot.create(
+          create(
             :legacy_appeal,
             :with_veteran,
-            vacols_case: FactoryBot.create(
+            vacols_case: create(
               :case,
               case_hearings: hearings
             )
@@ -288,16 +328,19 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id, fill_options: { clear: :backspace }
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
         expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
       end
 
-      it "clicking on the x in the search bar returns browser to queue list page" do
+      it "clicking on the x in the search bar clears the search bar" do
+        expect(page).to have_field("search", with: veteran_with_no_appeals.file_number)
+
         click_on "button-clear-search"
-        expect(page).to_not have_content("1 case found for")
+
+        expect(page).to_not have_field("search", with: veteran_with_no_appeals.file_number)
       end
     end
 
@@ -319,7 +362,7 @@ RSpec.feature "Search" do
         vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
         User.authenticate!(user: vso_user)
         visit "/search"
-        fill_in "searchBarEmptyList", with: "123456789"
+        fill_in "searchBarEmptyList", with: "666660000"
         click_on "Search"
 
         expect(page).to have_content("Could not find a Veteran matching the file number")
@@ -328,12 +371,12 @@ RSpec.feature "Search" do
 
     context "when one appeal found" do
       let!(:paper_appeal) do
-        FactoryBot.create(
+        create(
           :legacy_appeal,
           :with_veteran,
-          vacols_case: FactoryBot.create(
+          vacols_case: create(
             :case,
-            folder: FactoryBot.build(:folder, :paper_case)
+            folder: build(:folder, :paper_case)
           )
         )
       end
@@ -375,19 +418,96 @@ RSpec.feature "Search" do
     end
   end
 
+  context "queue case search for appeals using docket number" do
+    let!(:veteran) { create(:veteran, first_name: "Testy", last_name: "McTesterson") }
+    let!(:appeal) { create(:appeal, veteran: veteran) }
+
+    def perform_search(search_term)
+      visit "/search"
+      fill_in "searchBarEmptyList", with: search_term
+      click_on "Search"
+    end
+
+    context "when using AppealFinder" do
+      it "returns results upon valid input" do
+        res = AppealFinder.find_appeal_by_docket_number(appeal.docket_number)
+
+        expect(res.id).to eq(appeal.id)
+      end
+
+      it "returns nil when docket number is invalid format" do
+        res = AppealFinder.find_appeal_by_docket_number(invalid_docket_number)
+
+        expect(res).to be_nil
+      end
+
+      it "returns nil when docket number can't be found" do
+        res = AppealFinder.find_appeal_by_docket_number("012345-000")
+
+        expect(res).to be_nil
+      end
+
+      it "hides results for VSO user w/o access" do
+        vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
+        User.authenticate!(user: vso_user)
+        res = AppealFinder.new(user: vso_user).send(
+          :filter_appeals_for_vso_user,
+          appeals: Array.wrap(appeal),
+          veterans: Array.wrap(appeal.veteran)
+        )
+        expect(res).to be_empty
+      end
+    end
+
+    context "when using invalid docket number" do
+      it "page displays invalid search message" do
+        perform_search(invalid_docket_number)
+        expect(page).to have_content(format(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_docket_number))
+      end
+    end
+
+    context "when appeal exists" do
+      it "displays correct single result" do
+        perform_search(appeal.docket_number)
+
+        expect(page).to have_content("1 case found for")
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
+      end
+    end
+
+    context "when appeal doesn't exist" do
+      let!(:non_existing_docket_number) { "010101-99999" }
+
+      it "page displays no cases found message" do
+        perform_search(non_existing_docket_number)
+        expect(page).to have_content(
+          format(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, non_existing_docket_number)
+        )
+      end
+    end
+
+    context "when VSO employee does not have access to the file number" do
+      it "displays a helpful error message on same page" do
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.veteran_file_number]
+        vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
+        User.authenticate!(user: vso_user)
+        visit "/search"
+        fill_in "searchBarEmptyList", with: appeal.docket_number
+        click_on "Search"
+
+        expect(page).to have_content("You do not have access to this claims file number")
+      end
+    end
+  end
+
   context "case search from home page" do
     let(:search_homepage_title) { COPY::CASE_SEARCH_HOME_PAGE_HEADING }
     let(:search_homepage_subtitle) { COPY::CASE_SEARCH_INPUT_INSTRUCTION }
 
-    let(:non_queue_user) { FactoryBot.create(:user) }
+    let(:non_queue_user) { create(:user) }
 
     before do
-      FeatureToggle.enable!(:case_search_home_page)
       User.authenticate!(user: non_queue_user)
-    end
-
-    after do
-      FeatureToggle.disable!(:case_search_home_page)
     end
 
     scenario "logo links to / instead of /queue" do
@@ -407,7 +527,7 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id, fill_options: { clear: :backspace }
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
@@ -439,7 +559,7 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id, fill_options: { clear: :backspace }
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
@@ -484,6 +604,25 @@ RSpec.feature "Search" do
         click_on appeal.docket_number
         expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
       end
+    end
+  end
+
+  context "has withdrawn decision reviews" do
+    let!(:caseflow_appeal) { create(:appeal) }
+
+    def perform_search
+      visit "/search"
+      fill_in "searchBarEmptyList", with: caseflow_appeal.veteran_file_number
+      click_on "Search"
+    end
+
+    it "shows 'Withdrawn' text on search results page" do
+      policy = instance_double(WithdrawnDecisionReviewPolicy)
+      allow(WithdrawnDecisionReviewPolicy).to receive(:new).with(caseflow_appeal).and_return policy
+      allow(policy).to receive(:satisfied?).and_return true
+      perform_search
+
+      expect(page).to have_content("Withdrawn")
     end
   end
 end

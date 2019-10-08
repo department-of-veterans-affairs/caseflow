@@ -42,6 +42,7 @@ export default class Dropdown extends React.Component {
           <option
             value={option.value}
             id={`${name}_${option.value}`}
+            disabled={option.disabled}
             key={index}>{option.displayText}
           </option>
         )}

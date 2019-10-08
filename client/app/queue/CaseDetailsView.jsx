@@ -82,7 +82,8 @@ class CaseDetailsView extends React.PureComponent {
       <AppSegment filledBackground>
         <CaseTitle appeal={appeal} />
         <CaseTitleDetails appealId={appealId} redirectUrl={window.location.pathname}
-          hasCaseDetailsRole={this.props.hasCaseDetailsRole} />
+          userCanAccessReader={this.props.userCanAccessReader}
+        />
         { this.props.veteranCaseListIsVisible &&
           <VeteranCasesView
             caseflowVeteranId={appeal.caseflowVeteranId}
@@ -106,7 +107,7 @@ class CaseDetailsView extends React.PureComponent {
           {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) &&
           <CaseHearingsDetail title="Hearings" appeal={appeal} />}
           <VeteranDetail title="About the Veteran" appeal={appeal} />
-          {!_.isNull(appeal.appellantFullName) &&
+          {!_.isNull(appeal.appellantFullName) && appeal.appellantIsNotVeteran &&
           <AppellantDetail title="About the Appellant" appeal={appeal} />}
           <CaseTimeline title="Case Timeline" appeal={appeal} />}
         </StickyNavContentArea>
@@ -116,8 +117,14 @@ class CaseDetailsView extends React.PureComponent {
 }
 
 CaseDetailsView.propTypes = {
+  appeal: PropTypes.object,
   appealId: PropTypes.string.isRequired,
-  hasCaseDetailsRole: PropTypes.bool
+  error: PropTypes.object,
+  resetErrorMessages: PropTypes.func,
+  setHearingDay: PropTypes.func,
+  success: PropTypes.object,
+  userCanAccessReader: PropTypes.bool,
+  veteranCaseListIsVisible: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => {
