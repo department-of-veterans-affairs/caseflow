@@ -20,6 +20,11 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
     render_errors([intake_error_code_from_exception_or_processor(error)])
   end
 
+  def show
+    higher_level_review = HighLevelReview.find_by_uuid(params[:id])
+    render json: Api::V3::HigherLevelReviewSerializer.new(higher_level_review)
+  end
+
   private
 
   def processor

@@ -117,6 +117,21 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     )
   end
 
+  fdescribe "#show" do
+    let(:higher_level_review) { create(:higher_level_review) }
+    def get_higher_level_review
+      get(
+        "/api/v3/decision_review/higher_level_reviews/#{higher_level_review.uuid}",
+        headers: { "Authorization" => "Token #{api_key}" }
+      )
+    end
+    it 'should return ok' do
+      get_higher_level_review
+      expect(response.body).to eq ""
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
   describe "#create" do
     describe "general cases" do
       it "should return a 202 on success" do
