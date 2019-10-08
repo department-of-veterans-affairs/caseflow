@@ -17,6 +17,7 @@ class AttorneyTask < Task
   after_update :send_back_to_judge_assign, if: :task_just_cancelled?
 
   def available_actions(user)
+    # Both the judge who assigned this task and the judge who is assigned the parent review task get these actions
     if parent.is_a?(JudgeTask) && (parent.assigned_to == user || assigned_by == user)
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
