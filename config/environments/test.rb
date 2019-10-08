@@ -69,10 +69,6 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
-  ENV["METRICS_USERNAME"] = "caseflow"
-  ENV["METRICS_PASSWORD"] = "caseflow"
-  ENV["SIDEKIQ_USERNAME"] ||= "caseflow"
-  ENV["SIDEKIQ_PASSWORD"] ||= "caseflow"
   ENV["VA_DOT_GOV_API_URL"] = "https://staging-api.va.gov/"
 
   # For testing uncertification methods
