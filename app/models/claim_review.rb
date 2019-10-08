@@ -230,7 +230,7 @@ class ClaimReview < DecisionReview
   end
 
   def can_contest_rating_issues?
-    processed_in_vbms?
+    processed_in_vbms? && !try(:decision_review_remanded?)
   end
 
   private
