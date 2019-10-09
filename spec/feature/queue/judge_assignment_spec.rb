@@ -80,7 +80,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
   end
 
   context "Can move appeals between attorneys" do
-   scenario "submits draft decision" do
+    scenario "submits draft decision" do
       judge_task_one = create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
       judge_task_two = create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_two)
 
