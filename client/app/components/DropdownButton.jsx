@@ -105,5 +105,6 @@ DropdownButton.propTypes = {
     })
   ])),
   onClick: PropTypes.func,
-  label: PropTypes.string.isRequired
+  label: PropTypes.string.isRequired,
+  lists: PropTypes.array.isRequired
 };
