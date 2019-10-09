@@ -1054,7 +1054,7 @@ paths:
                                   type: string
                                   nullable: true
                                   pattern: '^\d{4}-\d{2}-\d{2}$'
-                                  description: "(yyyy-mm-dd) RatingIssue date"
+                                  description: "(yyyy-mm-dd) RatingIssue profile date"
                                 ratingIssueDiagnosticCode:
                                   type: string
                                   nullable: true
