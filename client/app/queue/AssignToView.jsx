@@ -145,7 +145,7 @@ class AssignToView extends React.Component {
     }
     if (props.assigneeAlreadySelected && action) {
       if (isPulacCerullo) {
-        return sprintf(COPY.NOTIFY_OGC_OF, action.label);
+        return COPY.PULAC_CERULLO_MODAL_TITLE;
       }
 
       return sprintf(COPY.ASSIGN_TASK_TO_TITLE, action.label);
