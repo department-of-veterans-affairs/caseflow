@@ -84,7 +84,15 @@ class JudgeAssignTaskListView extends React.PureComponent {
 }
 
 JudgeAssignTaskListView.propTypes = {
-  attorneysOfJudge: PropTypes.array.isRequired
+  attorneysOfJudge: PropTypes.array.isRequired,
+  resetSuccessMessages: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
+  resetSaveState: PropTypes.func,
+  clearCaseSelectSearch: PropTypes.func,
+  match: PropTypes.object,
+  userId: PropTypes.number,
+  unassignedTasksCount: PropTypes.number,
+  organizations: PropTypes.array
 };
 
 const mapStateToProps = (state) => {

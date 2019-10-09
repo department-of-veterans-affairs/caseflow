@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
+
 import StatusMessage from '../components/StatusMessage';
 import TaskTable from './components/TaskTable';
 import SmallLoader from '../components/SmallLoader';
@@ -88,6 +90,21 @@ class AssignedCasesPage extends React.Component {
     </React.Fragment>;
   }
 }
+
+AssignedCasesPage.propTypes = {
+  resetSuccessMessages: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
+  match: PropTypes.object,
+  attorneyAppealsLoadingState: PropTypes.object,
+  fetchTasksAndAppealsOfAttorney: PropTypes.func,
+  fetchAmaTasksOfUser: PropTypes.func,
+  attorneysOfJudge: PropTypes.array,
+  reassignTasksToUser: PropTypes.func,
+  tasksOfAttorney: PropTypes.array,
+  selectedTasks: PropTypes.array,
+  success: PropTypes.object,
+  error: PropTypes.object
+};
 
 const mapStateToProps = (state, ownProps) => {
   const { attorneyAppealsLoadingState, attorneysOfJudge } = state.queue;
