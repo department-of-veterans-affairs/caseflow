@@ -282,7 +282,10 @@ class User < ApplicationRecord
   end
 
   def update_status!(new_status)
-    update!(status: new_status, status_updated_at: Time.zone.now)
+    transaction do
+      remove_user_from_auto_assign_orgs if new_status.eql?(Constants.USER_STATUSES.inactive)
+      update!(status: new_status, status_updated_at: Time.zone.now)
+    end
   end
 
   def use_task_pages_api?
@@ -327,8 +330,11 @@ class User < ApplicationRecord
 
   private
 
-  def maybe_update_status_timestamp
-    update!(status_updated_at: Time.zone.now) if saved_change_to_attribute?(:status)
+  def remove_user_from_auto_assign_orgs
+    auto_assign_orgs = organizations.select(&:automatically_assign_to_member?)
+    auto_assign_orgs.each do |organization|
+      OrganizationsUser.remove_user_from_organization(self, organization)
+    end
   end
 
   def normalize_css_id

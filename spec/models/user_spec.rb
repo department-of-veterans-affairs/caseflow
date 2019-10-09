@@ -662,6 +662,38 @@ describe User, :all_dbs do
         expect(user.reload.status).to eq status
         expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
       end
+
+      context "when the user is a member of an org that automatically assigns tasks" do
+        before do
+          OrganizationsUser.add_user_to_organization(user, create(:organization))
+          OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
+        end
+
+        context "when marking the user inactive" do
+          it "only removes users from the auto assign organization" do
+            expect(user.selectable_organizations.length).to eq 2
+            expect(subject).to eq true
+            expect(user.reload.status).to eq status
+            expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+            expect(user.selectable_organizations.length).to eq 1
+            expect(user.selectable_organizations).not_to include Colocated.singleton
+          end
+        end
+
+        context "when marking the user active" do
+          let(:user) { create(:user, status: Constants.USER_STATUSES.inactive) }
+          let(:status) { Constants.USER_STATUSES.active }
+
+          it "does not remove the user from any organizations" do
+            expect(user.selectable_organizations.length).to eq 2
+            expect(subject).to eq true
+            expect(user.reload.status).to eq status
+            expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+            expect(user.selectable_organizations.length).to eq 2
+            expect(user.selectable_organizations).to include Colocated.singleton
+          end
+        end
+      end
     end
   end
 end
