@@ -9,7 +9,7 @@ describe HearingRepository, :all_dbs do
     Time.zone = "America/Chicago"
   end
 
-  context ".fetch_hearings_for_parent", focus: true do
+  context ".fetch_hearings_for_parent" do
     let(:hearing_date) { Time.utc(2019, 5, 2) }
     let(:case_hearing) { create(:case_hearing, hearing_date: hearing_date) }
     
