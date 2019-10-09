@@ -61,8 +61,11 @@ clean:  ## Clean logs, compiled webpack assets, and temporary files
 	rm -rf public/assets
 	rm -rf tmp/capybara
 
-facols:  ## Connect to your local FACOLS instance
+facols-box:  ## Connect to the docker FACOLS instance
 	docker exec --tty -i VACOLS_DB bash
+
+facols:  ## Connect directly to the FACOLS oracle database, requires sqlplus
+	sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
 
 build: clean
 	bundle exec rake local:destroy local:build
@@ -93,7 +96,7 @@ migrate:  ## Migrate rails database
 rollback:  ## Rollback rails database
 	bundle exec rake db:rollback
 
-fresh:  ## TODO
+fresh:  ## https://github.com/imsky/git-fresh
 	git fresh
 
 reset:  ## Resets databases
