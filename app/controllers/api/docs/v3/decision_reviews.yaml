@@ -1006,13 +1006,13 @@ paths:
                           properties:
                             type:
                               type: string
-                              enum: ["Issue"]
+                              enum: ["ContestableIssue"]
                             attributes:
                               type: object
                               properties:
                                 legacyAppealId: # vacols_id
                                   type: string
-                                  description: "The ID of the legacy appeal in VACOLS"
+                                  description: "The ID of the LegacyAppeal in VACOLS"
                                 legacyAppealIssueId: # vacols_sequence_id
                                   type: integer
                                   description: "The ID of the specific issue of the referenced LegacyAppeal (One does not contest an entire LegacyAppeal, but, rather, a specific issue on a LegacyAppeal)"
@@ -1042,7 +1042,7 @@ paths:
                           properties:
                             type:
                               type: string
-                              enum: ["Issue"]
+                              enum: ["ContestableIssue"]
                             attributes:
                               type: object
                               properties:
@@ -1054,35 +1054,43 @@ paths:
                                   type: string
                                   nullable: true
                                   pattern: '^\d{4}-\d{2}-\d{2}$'
-                                  description: "RatingIssue date"
+                                  description: "(yyyy-mm-dd) RatingIssue date"
                                 ratingIssueDiagnosticCode:
                                   type: string
                                   nullable: true
-                                  description: "XXXXX"
+                                  description: "RatingIssue diagnostic code"
                                 ratingDecisionId:
                                   type: string
                                   nullable: true
+                                  description: "The BGS ID for the contested rating decision. This may be populated while ratingIssueId is nil"
                                 decisionIssueId:
                                   type: string
                                   nullable: true
+                                  description: "DecisionIssue date"
                                 approxDecisionDate:
                                   type: string
                                   nullable: true
                                   pattern: '^\d{4}-\d{2}-\d{2}$'
+                                  description: "(yyyy-mm-dd) Approximate decision date"
                                 description:
                                   type: string
                                   nullable: true
+                                  description: "Description"
                                 rampClaimId:
                                   type: string
                                   nullable: true
+                                  description: "RampClaim ID"
                                 titleOfActiveReview:
                                   type: string
                                   nullable: true
+                                  description: "Title of active review"
                                 sourceReviewType:
                                   type: string
                                   nullable: true
+                                  description: "Source review type"
                                 timely:
                                   type: boolean
+                                  description: "An issue is timely if it has been less than 372 days since its receipt date. Untimely issues (timely == false), must accompanied by a timeliness exemption"
                                 latestIssuesInChain:
                                   type: array
                                   items:
@@ -1095,8 +1103,10 @@ paths:
                                         type: string
                                         nullable: true
                                         pattern: '^\d{4}-\d{2}-\d{2}$'
+                                  description: "Shows the chain of decision and rating issues that preceded this issue. Only the most recent issue can be contested (the object itself that contains the latestIssuesInChain attribute)."
                                 isRating:
                                   type: boolean
+                                  description: "Whether or not this is a RatingIssue"
 components:
   schemas:
     benefit_type:
