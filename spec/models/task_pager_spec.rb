@@ -165,7 +165,7 @@ describe TaskPager, :all_dbs do
     subject { task_pager.sorted_tasks(tasks) }
 
     context "when sorting by closed_at date" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.TASK_CLOSED_DATE_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name }
       let(:tab_name) { Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME }
 
       before do
@@ -191,7 +191,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by days waiting" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name }
 
       before do
         created_tasks.each do |task|
@@ -207,7 +207,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by due date" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.TASK_DUE_DATE.name }
 
       before do
         created_tasks.each do |task|
@@ -223,7 +223,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by task type" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name }
       let!(:created_tasks) do
         Task.where(id: create_list(:colocated_task, task_types.length, assigned_to: assignee).pluck(:id))
       end
@@ -254,7 +254,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by days on hold" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.TASK_HOLD_LENGTH.name }
 
       before do
         created_tasks.each do |task|
@@ -270,7 +270,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by docket number column" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name }
 
       before do
         created_tasks.each do |task|
@@ -285,7 +285,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by closest regional office column" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name }
 
       before do
         regional_offices = RegionalOffice::ROS
@@ -308,7 +308,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by issue count column" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.ISSUE_COUNT_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name }
 
       before do
         issue_counts = (0..created_tasks.length).to_a.shuffle
@@ -326,7 +326,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by case details link column" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name }
 
       before do
         created_tasks.each do |task|
@@ -354,7 +354,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by Appeal Type column" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name }
       let!(:created_tasks) { [] }
 
       let(:legacy_appeal_1) { create(:legacy_appeal, vacols_case: create(:case, :type_original)) }
@@ -415,7 +415,7 @@ describe TaskPager, :all_dbs do
       end
 
       context "when filter includes TranslationTasks" do
-        let(:filters) { ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{TranslationTask.name}"] }
+        let(:filters) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name}"] }
 
         it "returns only translation tasks assigned to the current organization" do
           expect(subject.map(&:id)).to_not match_array(task_pager.tasks_for_tab.map(&:id))
@@ -426,7 +426,7 @@ describe TaskPager, :all_dbs do
 
       context "when filter includes TranslationTasks and FoiaTasks" do
         let(:filters) do
-          ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{TranslationTask.name},#{FoiaTask.name}"]
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name},#{FoiaTask.name}"]
         end
 
         it "returns all translation and FOIA tasks assigned to the current organization" do

@@ -81,7 +81,4 @@ Rails.application.configure do
   config.s3_bucket_name = ENV["AWS_BUCKET_NAME"]
 
   config.google_analytics_account = "UA-74789258-5"
-
-  ENV["SIDEKIQ_USERNAME"] ||= "caseflow"
-  ENV["SIDEKIQ_PASSWORD"] ||= "caseflow"
 end
