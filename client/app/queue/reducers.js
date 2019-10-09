@@ -367,11 +367,11 @@ export const workQueueReducer = (state = initialState, action = {}) => {
       attorneysOfJudge
     } = state;
 
-    for (const attorney in attorneysOfJudge) {
+    attorneysOfJudge.forEach((attorney) => {
       if (action.payload.attorney.id === attorney.id.toString()) {
         attorney.active_task_count += 1;
       }
-    }
+    });
 
     return update(state, {
       attorneysOfJudge: {
