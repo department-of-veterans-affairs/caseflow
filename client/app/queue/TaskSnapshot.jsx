@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { appealWithDetailSelector, taskSnapshotTasksForAppeal } from './selectors';
@@ -8,7 +8,6 @@ import TaskRows from './components/TaskRows';
 import COPY from '../../COPY.json';
 import { sectionSegmentStyling, sectionHeadingStyling, anchorJumpLinkStyling } from './StickyNavContentArea';
 import { PulacCerulloReminderAlert } from '../pulacCerullo/PulacCerulloReminderAlert';
-import { needsPulacCerulloAlert } from '../pulacCerullo';
 
 const tableStyling = css({
   width: '100%',
@@ -20,9 +19,7 @@ const alertStyling = css({
   marginBottom: 0
 });
 
-export const TaskSnapshot = ({ appeal, hideDropdown, tasks }) => {
-  const doPulacCerulloReminder = useMemo(() => needsPulacCerulloAlert(tasks), [tasks]);
-
+export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAlert }) => {
   const sectionBody = tasks.length ? (
     <table {...tableStyling}>
       <tbody>{<TaskRows appeal={appeal} taskList={tasks} timeline={false} hideDropdown={hideDropdown} />}</tbody>
@@ -39,7 +36,7 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks }) => {
         </a>
         {<AddNewTaskButton appealId={appeal.externalId} />}
       </h2>
-      {doPulacCerulloReminder && (
+      {showPulacCerulloAlert && (
         <div {...sectionSegmentStyling} {...alertStyling}>
           <PulacCerulloReminderAlert />
         </div>
@@ -52,7 +49,8 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks }) => {
 TaskSnapshot.propTypes = {
   tasks: PropTypes.array,
   appeal: PropTypes.object,
-  hideDropdown: PropTypes.bool
+  hideDropdown: PropTypes.bool,
+  showPulacCerulloAlert: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => {
