@@ -111,6 +111,10 @@
     "label": "Ready for Dispatch",
     "value": "dispatch_decision/dispositions"
   },
+  "JUDGE_CHECKOUT_PULAC_CERULLO_REMINDER": {
+    "label": "Ready for Dispatch",
+    "value": "modal/check_cavc"
+  },
   "JUDGE_RETURN_TO_ATTORNEY": {
     "label": "Return to attorney",
     "value": "modal/return_to_attorney",
