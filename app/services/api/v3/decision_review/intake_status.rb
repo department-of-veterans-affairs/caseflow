@@ -5,13 +5,22 @@ class Api::V3::DecisionReview::IntakeStatus
   SUBMITTED_HTTP_STATUS = 303
   NOT_SUBMITTED_HTTP_STATUS = 200
   NOT_SUBMITTED_HTTP_STATUS_FOR_NEW_INTAKE = 202
+  NO_DECISION_REVIEW_JSON = {
+    errors: [
+      {
+        status: NO_DECISION_REVIEW_HTTP_STATUS,
+        code: :intake_not_connected_to_a_decision_review,
+        title: "This intake is not connected to a decision review."
+      }
+    ]
+  }.freeze
 
   def initialize(intake)
     @intake = intake
   end
 
   def to_json(*_args)
-    decision_review ? decision_review_json : no_decision_review_json
+    decision_review ? decision_review_json : NO_DECISION_REVIEW_JSON
   end
 
   def http_status
@@ -41,18 +50,6 @@ class Api::V3::DecisionReview::IntakeStatus
         id: decision_review.uuid,
         attributes: { status: decision_review.asyncable_status }
       }
-    }
-  end
-
-  def no_decision_review_json
-    {
-      errors: [
-        {
-          status: NO_DECISION_REVIEW_HTTP_STATUS,
-          code: :intake_not_connected_to_a_decision_review,
-          title: "This intake is not connected to a decision review."
-        }
-      ]
     }
   end
 
