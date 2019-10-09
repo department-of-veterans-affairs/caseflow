@@ -20,7 +20,7 @@ const radioOpts = [
   }
 ];
 
-export const PulacCerulloReminderModal = ({ appellantName, onSubmit, onCancel }) => {
+export const PulacCerulloReminderModal = ({ onSubmit, onCancel }) => {
   const [hasCavc, setHasCavc] = useState(null);
 
   const cancelHandler = () => onCancel();
@@ -54,7 +54,7 @@ export const PulacCerulloReminderModal = ({ appellantName, onSubmit, onCancel })
         Copy and paste the CAVC webiste link into Internet Explorer{' '}
         <CopyTextButton text={new URL(cavcUrl).hostname} textToCopy={cavcUrl} label="uscourts.cavc.gov" />
       </p>
-      
+
       <RadioField
         name="hasCavc"
         label={radioLabel}

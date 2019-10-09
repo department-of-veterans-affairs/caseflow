@@ -321,7 +321,12 @@ RSpec.feature "Motion to vacate", :all_dbs do
       create(:abstract_motion_to_vacate_task, appeal: appeal, parent: vacate_motion_mail_task)
     end
     let!(:judge_sign_motion_to_vacate_task) do
-      create(:judge_sign_motion_to_vacate_task, appeal: appeal, assigned_to: judge, parent: abstract_motion_to_vacate_task)
+      create(
+        :judge_sign_motion_to_vacate_task,
+        appeal: appeal,
+        assigned_to: judge,
+        parent: abstract_motion_to_vacate_task
+      )
     end
 
     before do
