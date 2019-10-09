@@ -71,8 +71,16 @@ describe QueueConfig, :postgres do
     end
 
     describe "active_tab" do
-      it "is always the unassigned tab" do
+      it "is the unassigned tab" do
         expect(subject[:active_tab]).to eq(Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME)
+      end
+
+      context "when assigned to a user" do
+        let(:assignee) { user }
+
+        it "is the assigned tab" do
+          expect(subject[:active_tab]).to eq(Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME)
+        end
       end
     end
 

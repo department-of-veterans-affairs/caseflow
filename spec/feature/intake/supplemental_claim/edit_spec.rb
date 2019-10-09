@@ -65,6 +65,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     ).reference_id
   end
 
+  let(:contested_decision_issue) { nil }
+
   before do
     supplemental_claim.create_claimants!(participant_id: "5382910292", payee_code: "10")
 
@@ -113,7 +115,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         nonrating_issue_category: "Military Retired Pay",
         nonrating_issue_description: "nonrating description",
         benefit_type: benefit_type,
-        decision_date: 1.month.ago
+        decision_date: 1.month.ago,
+        contested_decision_issue: contested_decision_issue
       )
     end
 
@@ -124,6 +127,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
     context "when it is created due to a DTA error" do
       let(:decision_review_remanded) { create(:higher_level_review) }
+      let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
 
       it "cannot be edited" do
         nonrating_dta_claim_id = EndProductEstablishment.find_by(
@@ -214,9 +218,11 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       RequestIssue.create!(
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: rating.profile_date,
+        decision_date: rating.promulgation_date,
         decision_review: supplemental_claim,
         benefit_type: benefit_type,
-        contested_issue_description: "PTSD denied"
+        contested_issue_description: "PTSD denied",
+        contested_decision_issue: contested_decision_issue
       )
     end
 
@@ -229,6 +235,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
     context "when it is created due to a DTA error" do
       let(:decision_review_remanded) { create(:higher_level_review) }
+      let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
 
       it "cannot be edited" do
         rating_dta_claim_id = EndProductEstablishment.find_by(
@@ -515,7 +522,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: veteran.file_number,
         claim_id: rating_ep_claim_id,
-        contentions: [{ description: "Left knee granted" }],
+        contentions: [{ description: "Left knee granted",
+                        contention_type: Constants.CONTENTION_TYPES.supplemental_claim }],
         user: current_user,
         claim_date: supplemental_claim.receipt_date.to_date
       )
