@@ -7,14 +7,15 @@ import COPY from '../../COPY.json';
 import RadioField from '../components/RadioField';
 import CopyTextButton from '../components/CopyTextButton';
 
-const title = 'Check CAVC for Conflict of Jurisdiction';
+const title = COPY.PULAC_CERULLO_REMINDER_MODAL_TITLE;
+const radioLabel = COPY.PULAC_CERULLO_REMINDER_MODAL_LABEL;
 const radioOpts = [
   {
-    displayText: 'No, continue sending to Dispatch',
+    displayText: COPY.PULAC_CERULLO_REMINDER_MODAL_OPT_FALSE,
     value: 'no'
   },
   {
-    displayText: 'Yes, notify Litigation Support of jurisdictional conflict',
+    displayText: COPY.PULAC_CERULLO_REMINDER_MODAL_OPT_TRUE,
     value: 'yes'
   }
 ];
@@ -53,15 +54,14 @@ export const PulacCerulloReminderModal = ({ appellantName, onSubmit, onCancel })
         Copy and paste the CAVC webiste link into Internet Explorer{' '}
         <CopyTextButton text={new URL(cavcUrl).hostname} textToCopy={cavcUrl} label="uscourts.cavc.gov" />
       </p>
-      <p>
-        <strong>Does this decision have an NOA on file at CAVC?</strong>
-        {appellantName && (
-          <div>
-            <strong>(Apellant name: {appellantName}</strong>
-          </div>
-        )}
-      </p>
-      <RadioField name="" options={radioOpts} value={hasCavc} onChange={(val) => setHasCavc(val)} />
+      
+      <RadioField
+        name="hasCavc"
+        label={radioLabel}
+        options={radioOpts}
+        value={hasCavc}
+        onChange={(val) => setHasCavc(val)}
+      />
     </Modal>
   );
 };
