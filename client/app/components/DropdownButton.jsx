@@ -26,10 +26,12 @@ export default class DropdownButton extends React.Component {
 
   componentDidMount = () => {
     document.addEventListener('mousedown', this.onClickOutside);
+    document.addEventListener('keydown', this.onClickOutside);
   }
 
   componentWillUnmount = () => {
     document.removeEventListener('mousedown', this.onClickOutside);
+    document.removeEventListener('keydown', this.onClickOutside);
   }
   setWrapperRef = (node) => this.wrapperRef = node
 
@@ -38,6 +40,11 @@ export default class DropdownButton extends React.Component {
       this.setState({
         menu: false
       });
+    } else if (event.key === 'Escape') {
+      this.setState({
+        menu: false
+      });
+      event.preventDefault();
     }
   }
 
@@ -53,7 +60,7 @@ export default class DropdownButton extends React.Component {
   }
 
   dropdownAction = (list) => {
-    return <a href="#" onClick={() => {
+    return <a href="#" role="menuitem" onClick={() => {
       if (this.props.onClick) {
         this.props.onClick(list.value);
       }
@@ -62,9 +69,9 @@ export default class DropdownButton extends React.Component {
   }
 
   dropdownButtonList = () => {
-    return <ul className="cf-dropdown-menu active" {...dropdownList} >
+    return <ul className="cf-dropdown-menu active" role="menu" {...dropdownList} >
       {this.props.lists.map((list, index) =>
-        <li key={index}>
+        <li key={index} role="none">
           {list.target ? this.dropdownLink(list) : this.dropdownAction(list)}
         </li>)}
     </ul>;
@@ -75,6 +82,8 @@ export default class DropdownButton extends React.Component {
 
     return <div className="cf-dropdown" ref={this.setWrapperRef} {...dropdownBtnContainer} >
       <button {...dropdownBtn}
+        aria-haspopup="menu"
+        aria-expanded="true"
         onClick={this.onMenuClick}
         className="cf-dropdown-trigger usa-button usa-button-secondary">
         {label}
