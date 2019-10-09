@@ -48,45 +48,45 @@ RSpec.feature "Users management page", :postgres do
         visit("/queue")
         find("#menu-trigger").click
         find_link(COPY::USER_MANAGEMENT_PAGE_DROPDOWN_LINK).click
-        expect(page).to have_content COPY::USER_MANAGEMENT_STATUS_PAGE_TITLE
-        expect(page).to have_content COPY::USER_MANAGEMENT_PAGE_DESCRIPTION
+        expect(page).to have_content(COPY::USER_MANAGEMENT_STATUS_PAGE_TITLE)
+        expect(page).to have_content(COPY::USER_MANAGEMENT_PAGE_DESCRIPTION)
       end
 
       step "user searches for and selects another user" do
         page.find(".Select-control .Select-placeholder", text: COPY::USER_MANAGEMENT_SELECT_USER_DROPDOWN_TEXT).click
-        expect(page.find_all(".Select-option").length).to eq 3)
+        expect(page.find_all(".Select-option").length).to eq(3)
         page.find(".Select-menu-outer .Select-option", text: active_user.css_id).click
-        expect(page).to have_content "#{active_user.full_name} (#{active_user.css_id})"
+        expect(page).to have_content("#{active_user.full_name} (#{active_user.css_id})")
       end
 
       step "user marks another user inactive" do
-        expect(page).to have_content COPY::USER_MANAGEMENT_GIVE_USER_INACTIVE_STATUS_BUTTON_TEXT
+        expect(page).to have_content(COPY::USER_MANAGEMENT_GIVE_USER_INACTIVE_STATUS_BUTTON_TEXT)
         page.find("button", text: COPY::USER_MANAGEMENT_GIVE_USER_INACTIVE_STATUS_BUTTON_TEXT).click
-        expect(page).to have_content COPY::USER_MANAGEMENT_GIVE_USER_ACTIVE_STATUS_BUTTON_TEXT
+        expect(page).to have_content(COPY::USER_MANAGEMENT_GIVE_USER_ACTIVE_STATUS_BUTTON_TEXT)
         expect(page).to have_content(
           format(COPY::USER_MANAGEMENT_INACTIVE_SUCCESS_TITLE, "#{active_user.full_name} (#{active_user.css_id})")
         )
         expect(page).to have_content(
           format(COPY::USER_MANAGEMENT_INACTIVE_SUCCESS_BODY, "#{active_user.full_name} (#{active_user.css_id})")
         )
-        expect(inactive_user.reload.status).to eq Constants.USER_STATUSES.inactive)
+        expect(inactive_user.reload.status).to eq(Constants.USER_STATUSES.inactive)
       end
 
       step "user marks another user active" do
         page.find(".Select-control .Select-placeholder", text: COPY::USER_MANAGEMENT_SELECT_USER_DROPDOWN_TEXT).click
         expect(page.find_all(".Select-option").length).to be 3
         page.find(".Select-menu-outer .Select-option", text: inactive_user.css_id).click
-        expect(page).to have_content "#{inactive_user.full_name} (#{inactive_user.css_id})"
-        expect(page).to have_content COPY::USER_MANAGEMENT_GIVE_USER_ACTIVE_STATUS_BUTTON_TEXT
+        expect(page).to have_content("#{inactive_user.full_name} (#{inactive_user.css_id})")
+        expect(page).to have_content(COPY::USER_MANAGEMENT_GIVE_USER_ACTIVE_STATUS_BUTTON_TEXT)
         page.find("button", text: COPY::USER_MANAGEMENT_GIVE_USER_ACTIVE_STATUS_BUTTON_TEXT).click
-        expect(page).to have_content COPY::USER_MANAGEMENT_GIVE_USER_INACTIVE_STATUS_BUTTON_TEXT
+        expect(page).to have_content(COPY::USER_MANAGEMENT_GIVE_USER_INACTIVE_STATUS_BUTTON_TEXT)
         expect(page).to have_content(
           format(COPY::USER_MANAGEMENT_ACTIVE_SUCCESS_TITLE, "#{inactive_user.full_name} (#{inactive_user.css_id})")
         )
         expect(page).to have_content(
           format(COPY::USER_MANAGEMENT_ACTIVE_SUCCESS_BODY, "#{inactive_user.full_name} (#{inactive_user.css_id})")
         )
-        expect(inactive_user.reload.status).to eq Constants.USER_STATUSES.active)
+        expect(inactive_user.reload.status).to eq(Constants.USER_STATUSES.active)
       end
     end
   end
