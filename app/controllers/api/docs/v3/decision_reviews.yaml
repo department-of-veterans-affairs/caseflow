@@ -1064,9 +1064,9 @@ paths:
                                   nullable: true
                                   description: "The BGS ID for the contested rating decision. This may be populated while ratingIssueId is nil"
                                 decisionIssueId:
-                                  type: string
+                                  type: integer
                                   nullable: true
-                                  description: "DecisionIssue date"
+                                  description: "DecisionIssue ID"
                                 approxDecisionDate:
                                   type: string
                                   nullable: true
