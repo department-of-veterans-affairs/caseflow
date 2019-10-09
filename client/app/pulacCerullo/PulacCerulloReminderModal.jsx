@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-
 import Modal from '../components/Modal';
 import COPY from '../../COPY.json';
 import RadioField from '../components/RadioField';
 import { CavcLinkInfo } from './CavcLinkInfo';
-
 
 const title = COPY.PULAC_CERULLO_REMINDER_MODAL_TITLE;
 const radioLabel = COPY.PULAC_CERULLO_REMINDER_MODAL_LABEL;
