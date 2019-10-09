@@ -171,6 +171,7 @@ SearchBar.propTypes = {
   onClick: PropTypes.func,
   onClearSearch: PropTypes.func,
   recordSearch: PropTypes.func,
+  isSearchAhead: PropTypes.bool,
   loading: PropTypes.bool,
   value: PropTypes.string,
   analyticsCategory: PropTypes.string,
