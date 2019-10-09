@@ -12,7 +12,7 @@ describe HearingRepository, :all_dbs do
   context ".fetch_hearings_for_parent" do
     let(:hearing_date) { Time.utc(2019, 5, 2) }
     let(:case_hearing) { create(:case_hearing, hearing_date: hearing_date) }
- 
+
     subject { HearingRepository.fetch_hearings_for_parents(case_hearing.vdkey) }
 
     it "should have one record" do
