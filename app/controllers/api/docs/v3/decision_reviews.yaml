@@ -1087,7 +1087,7 @@ paths:
                                 sourceReviewType:
                                   type: string
                                   nullable: true
-                                  description: "Source review type"
+                                  description: "The type of DecisionReview (HigherLevelReview, SupplementalClaim, Appeal) the issue was last decided on (if any)"
                                 timely:
                                   type: boolean
                                   description: "An issue is timely if it has been less than 372 days since its receipt date. Untimely issues (timely == false), must accompanied by a timeliness exemption"
