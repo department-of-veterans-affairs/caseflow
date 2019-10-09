@@ -640,6 +640,7 @@ RSpec.feature "Task queue", :all_dbs do
             (1..foia_task_count).each do |index|
               expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
             end
+            expect(page).to have_content("Viewing 1-#{foia_task_count} of #{foia_task_count} total")
             expect(find("tbody").find_all("tr").length).to eq(foia_task_count)
             expect(find("tbody")).not_to have_content(GenericTask.label)
           end

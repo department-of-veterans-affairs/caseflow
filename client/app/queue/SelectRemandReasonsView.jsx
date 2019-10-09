@@ -93,7 +93,7 @@ class SelectRemandReasonsView extends React.Component {
     }
 
     this.setState({
-      renderedChildren: [...this.state.renderedChildren, ref.getWrappedInstance()]
+      renderedChildren: [...this.state.renderedChildren, ref]
     });
   }
 

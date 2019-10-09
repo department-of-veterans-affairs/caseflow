@@ -3,12 +3,12 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Build Hearing Schedule", :all_dbs do
-  context "Build RO Hearing Schedule" do
-    let!(:current_user) do
-      User.authenticate!(roles: ["Build HearSched"])
-    end
+RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
+  let!(:current_user) do
+    User.authenticate!(roles: ["Build HearSched"])
+  end
 
+  context "Build RO Hearing Schedule" do
     scenario "RO assignment process" do
       visit "hearings/schedule/build"
       click_on "Upload files"
@@ -45,10 +45,6 @@ RSpec.feature "Build Hearing Schedule", :all_dbs do
       create(:hearing_day,
              request_type: HearingDay::REQUEST_TYPES[:central],
              scheduled_for: Date.new(2018, 4, 20))
-    end
-
-    let!(:current_user) do
-      User.authenticate!(roles: ["Build HearSched"])
     end
 
     scenario "Judge assignment process" do
