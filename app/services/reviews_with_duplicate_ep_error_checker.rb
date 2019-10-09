@@ -41,13 +41,13 @@ class ReviewsWithDuplicateEpErrorChecker < DataIntegrityChecker
     if hlr_count.positive?
       add_to_report "Found #{hlr_count} #{'HigherLevelReview'.pluralize(hlr_count)} with " \
         "DuplicateEP #{'error'.pluralize(hlr_count)}."
-      add_to_report "HigherLevelReview.where(id: #{hlr_ids})"
+      add_to_report "`HigherLevelReview.where(id: #{hlr_ids})`"
     end
 
     if sc_count.positive?
       add_to_report "Found #{sc_count} #{'SupplementalClaim'.pluralize(sc_count)} with " \
         "DuplicateEP #{'error'.pluralize(sc_count)}."
-      add_to_report "SupplementalClaim.where(id: #{sc_ids})"
+      add_to_report "`SupplementalClaim.where(id: #{sc_ids})`"
     end
 
     add_to_report "The #{'review'.pluralize(sc_count + hlr_count)} may not progress without manual resolution."
