@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :deny_non_bva_admins, only: [:represented_organizations, :update]
+  before_action :deny_non_bva_admins, only: [:represented_organizations, :update, :search_by_css_id]
 
   def index
     case params[:role]
@@ -18,7 +18,15 @@ class UsersController < ApplicationController
         non_judges: json_users(User.where.not(id: JudgeTeam.all.map(&:judge).reject(&:nil?).map(&:id)))
       }
     end
-    render json: { users: User.all }
+    render json: {}
+  end
+
+  def search_by_css_id
+    user = User.find_by_css_id(css_id)
+
+    fail ActiveRecord::RecordNotFound unless user
+
+    render json: { user: user }
   end
 
   def update
@@ -38,6 +46,18 @@ class UsersController < ApplicationController
   end
 
   private
+
+  def css_id
+    unless params[:css_id]
+      fail(
+        Caseflow::Error::InvalidParameter,
+        parameter: "css_id",
+        message: "Must provide a css id"
+      )
+    end
+
+    params[:css_id]
+  end
 
   def user_to_modify
     @user_to_modify ||= User.find(params.require(:id))
