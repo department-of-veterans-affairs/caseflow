@@ -992,7 +992,7 @@ paths:
       summary: Returns all contestable issues for a specific veteran.
       responses:
         '200':
-          description: JSONAPI response detailing the specific Higher-Level Review
+          description: JSON:API response returning all contestable issues for a specific veteran.
           content:
             application/vnd.api+json:
               schema:
