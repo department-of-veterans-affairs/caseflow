@@ -3,7 +3,6 @@
 ---- LIMITATIONS
 -- This report may under count or overcount appeals in error states or extraordinary states. 
 -- i.e. open root task with no active task; cases with multiple contridictory open tasks; etc.
--- ON HOLD and Waiting for Distribution will doublecount if the hold is with hearings or translation. This would properly be considered Waiting for Distribution.
 
 ---- Collecting each status & count
 -- It is possible for some tasks to be worked simultaneously within a category, so we count distinct appeal ids rather than total number of tasks.
