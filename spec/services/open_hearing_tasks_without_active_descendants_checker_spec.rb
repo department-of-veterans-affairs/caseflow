@@ -60,7 +60,7 @@ describe OpenHearingTasksWithoutActiveDescendantsChecker, :all_dbs do
         report_lines = subject.report.split("\n")
         ids = [hearing_task.id, hearing_task_2.id, hearing_task_3.id].sort
         expect(report_lines).to include("Found #{ids.count} open HearingTasks with no active descendant tasks.")
-        expect(report_lines).to include("HearingTask.where(id: #{ids})")
+        expect(report_lines).to include("`HearingTask.where(id: #{ids})`")
       end
     end
   end
