@@ -612,6 +612,31 @@ describe User, :all_dbs do
     end
   end
 
+  describe ".can_withdraw_issues?" do
+    let(:user) { create(:user) }
+
+    subject { user.can_withdraw_issues? }
+
+    context "when the current user is not a member of Case-review Organization" do
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+      context "when the user is at a regional office" do
+        before { allow(user).to receive(:regional_office).and_return("RO85") }
+        it "returns true" do
+          expect(subject).to eq(true)
+        end
+      end
+    end
+
+    context "when the user is a member of Case review Organization" do
+      before { OrganizationsUser.add_user_to_organization(user, BvaIntake.singleton) }
+      it "returns true" do
+        expect(subject).to eq(true)
+      end
+    end
+  end
+
   describe "when the status is updated" do
     let(:user) { create(:user) }
 
@@ -636,6 +661,38 @@ describe User, :all_dbs do
         expect(subject).to eq true
         expect(user.reload.status).to eq status
         expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+      end
+
+      context "when the user is a member of an org that automatically assigns tasks" do
+        before do
+          OrganizationsUser.add_user_to_organization(user, create(:organization))
+          OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
+        end
+
+        context "when marking the user inactive" do
+          it "only removes users from the auto assign organization" do
+            expect(user.selectable_organizations.length).to eq 2
+            expect(subject).to eq true
+            expect(user.reload.status).to eq status
+            expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+            expect(user.selectable_organizations.length).to eq 1
+            expect(user.selectable_organizations).not_to include Colocated.singleton
+          end
+        end
+
+        context "when marking the user active" do
+          let(:user) { create(:user, status: Constants.USER_STATUSES.inactive) }
+          let(:status) { Constants.USER_STATUSES.active }
+
+          it "does not remove the user from any organizations" do
+            expect(user.selectable_organizations.length).to eq 2
+            expect(subject).to eq true
+            expect(user.reload.status).to eq status
+            expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+            expect(user.selectable_organizations.length).to eq 2
+            expect(user.selectable_organizations).to include Colocated.singleton
+          end
+        end
       end
     end
   end

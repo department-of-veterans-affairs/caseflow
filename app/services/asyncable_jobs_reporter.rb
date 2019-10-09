@@ -40,7 +40,8 @@ class AsyncableJobsReporter
         summary[cls][age].keys.sort.each do |err|
           count = summary[cls][age][err]
           total += count
-          output << "#{cls} has #{count} jobs #{age} days old with error #{err}"
+          err_output = err.gsub(/^[#<]+|[,:]+$/, "")
+          output << "#{cls} has #{count} jobs #{age} days old with error #{err_output}"
         end
       end
       output << "#{cls} has #{total} total jobs in queue"
