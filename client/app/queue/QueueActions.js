@@ -427,9 +427,7 @@ export const initialAssignTasksToUser = ({
       if (oldTask.appealType === 'Appeal') {
         const amaTasks = resp.tasks.data;
 
-        dispatch(onReceiveAmaTasks(
-          amaTasks
-        ));
+        dispatch(onReceiveAmaTasks(amaTasks));
       } else {
         const task = resp.task.data;
         const allTasks = prepareAllTasksForStore([task]);
@@ -440,14 +438,14 @@ export const initialAssignTasksToUser = ({
         }));
       }
 
+      dispatch(incrementTaskCountForAttorney({
+        id: assigneeId
+      }));
+
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
         taskId: oldTask.uniqueId,
         selected: false
-      }));
-
-      dispatch(incrementTaskCountForAttorney({
-        id: assigneeId
       }));
     });
 }));
