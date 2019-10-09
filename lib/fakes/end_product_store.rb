@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
-class Fakes::EndProductStore
-  REDIS_NS ||= "end_product_records_#{Rails.env}"
+class Fakes::EndProductStore < Fakes::PersistentStore
+  class << self
+    def redis_ns
+      "end_product_records_#{Rails.env}"
+    end
+  end
 
   class Contention < OpenStruct
     def initialize(hash)
@@ -51,31 +55,6 @@ class Fakes::EndProductStore
     end
   end
 
-  def self.cache_store
-    @cache_store ||= begin
-      redis_conn = Redis.new(url: Rails.application.secrets.redis_url_cache)
-      Redis::Namespace.new(REDIS_NS, redis: redis_conn)
-    end
-  end
-
-  def self.all_keys
-    cache_store.redis.keys("#{REDIS_NS}:*")
-  end
-
-  def all_keys
-    self.class.all_keys
-  end
-
-  def clear!
-    self.class.all_keys.each do |key|
-      self.class.cache_store.redis.del(key)
-    end
-  end
-
-  def delete(key)
-    self.class.cache_store.redis.del(key)
-  end
-
   def store_end_product_record(veteran_id, end_product)
     claim_id = end_product[:benefit_claim_id]
     existing_eps = fetch_and_inflate(veteran_id)
@@ -85,11 +64,6 @@ class Fakes::EndProductStore
     else
       deflate_and_store(veteran_id, claim_id => end_product)
     end
-  end
-
-  def fetch_and_inflate(key)
-    json_str = self.class.cache_store.get(key)
-    json_str ? JSON.parse(json_str, symbolize_names: true) : nil
   end
 
   def update_ep_status(veteran_id, claim_id, new_status)
@@ -150,10 +124,6 @@ class Fakes::EndProductStore
   def disposition_child_store(disposition)
     claim_id = disposition.claim_id
     ChildStore.new(parent_key: disposition_key(claim_id), child: disposition, child_key: disposition.contention_id)
-  end
-
-  def deflate_and_store(key, payload)
-    self.class.cache_store.set(key, payload.to_json)
   end
 
   def children_to_structs(key)

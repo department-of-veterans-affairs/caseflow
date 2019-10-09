@@ -41,16 +41,20 @@ class VaDotGovAddressValidator
 
   def closest_regional_office
     @closest_regional_office ||= begin
-      return unless closest_regional_office_response.success?
+      return unless closest_facility_response.success?
 
-      return "RO62" if closest_regional_office_facility_id_is_san_antonio?
-
-      RegionalOffice.find_ro_by_facility_id(closest_regional_office_facility_id)
+      VaDotGovAddressValidator::ClosestRegionalOfficeFinder.new(
+        facilities: closest_facility_response.data,
+        closest_facility_id: closest_facility_id
+      ).call
     end
   end
 
   def available_hearing_locations
-    @available_hearing_locations ||= available_hearing_locations_response.data
+    @available_hearing_locations ||= begin
+      ids = RegionalOffice.facility_ids_for_ro(closest_regional_office)
+      closest_facility_response.data.select { |facility| ids.include?(facility[:facility_id]) }
+    end
   end
 
   def assign_ro_and_update_ahls(new_ro)
@@ -81,13 +85,7 @@ class VaDotGovAddressValidator
     # only match to Central office if veteran requested central office
     return ["vba_372"] if appeal_is_legacy_and_veteran_requested_central_office?
 
-    facility_ids = RegionalOffice.ro_facility_ids
-    # veterans whose closest AHL is San Antonio should have Houston as the RO
-    # even though Waco may be closer. This is a RO/AHL policy quirk.
-    # see https://github.com/department-of-veterans-affairs/caseflow/issues/9858
-    facility_ids << "vha_671BY" if veteran_lives_in_texas? # include San Antonio facility id
-
-    facility_ids
+    RegionalOffice.facility_ids
   end
 
   private
@@ -126,24 +124,16 @@ class VaDotGovAddressValidator
     @valid_address_response ||= VADotGovService.validate_address(address)
   end
 
-  def closest_regional_office_response
-    @closest_regional_office_response ||= VADotGovService.get_distance(
+  def closest_facility_response
+    @closest_facility_response ||= VADotGovService.get_distance(
       ids: facility_ids_to_geomatch,
       lat: valid_address[:lat],
       long: valid_address[:long]
     )
   end
 
-  def closest_regional_office_facility_id
-    closest_regional_office_response.data[0]&.dig(:facility_id)
-  end
-
-  def available_hearing_locations_response
-    @available_hearing_locations_response ||= VADotGovService.get_distance(
-      lat: valid_address[:lat],
-      long: valid_address[:long],
-      ids: RegionalOffice.facility_ids_for_ro(closest_regional_office)
-    )
+  def closest_facility_id
+    closest_facility_response.data[0]&.dig(:facility_id)
   end
 
   def validate_zip_code

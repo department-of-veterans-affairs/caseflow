@@ -33,6 +33,12 @@ FactoryBot.define do
       closed_status { :removed }
     end
 
+    trait :ineligible do
+      closed_at { Time.zone.now }
+      closed_status { :ineligible }
+      ineligible_reason { :untimely }
+    end
+
     trait :decided do
       closed_at { Time.zone.now }
       closed_status { :decided }

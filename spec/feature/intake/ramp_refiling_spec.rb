@@ -415,7 +415,8 @@ RSpec.feature "RAMP Refiling Intake", :postgres do
         veteran_file_number: "12341234",
         claim_id: "SHANE9123242",
         contentions: [{ description: "Left knee rating increase" }],
-        user: current_user
+        user: current_user,
+        claim_date: ramp_refiling.receipt_date.to_date
       )
 
       expect(ramp_refiling.issues.count).to eq(1)

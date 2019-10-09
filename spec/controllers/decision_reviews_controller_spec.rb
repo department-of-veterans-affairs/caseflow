@@ -87,6 +87,19 @@ describe DecisionReviewsController, :postgres, type: :controller do
           expect(response.status).to eq 404
         end
       end
+
+      context "when it is a veteran record request and veteran is not accessible by user" do
+        let(:task) { create(:veteran_record_request_task) }
+        before do
+          allow_any_instance_of(Veteran).to receive(:accessible?).and_return(false)
+        end
+
+        it "returns 403" do
+          get :show, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id }
+
+          expect(response.status).to eq 403
+        end
+      end
     end
 
     context "user is not in org" do
@@ -109,6 +122,11 @@ describe DecisionReviewsController, :postgres, type: :controller do
     end
 
     context "with board grant effectuation task" do
+      before do
+        @raven_called = false
+        allow(Raven).to receive(:capture_exception) { @raven_called = true }
+      end
+
       let(:task) do
         create(:board_grant_effectuation_task, :in_progress, assigned_to: non_comp_org)
       end
@@ -130,6 +148,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
         put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id }
         expect(response.status).to eq(400)
+        expect(@raven_called).to eq(true)
       end
     end
 

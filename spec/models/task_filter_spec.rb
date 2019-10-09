@@ -199,7 +199,9 @@ describe TaskFilter, :postgres do
       let(:hearing_tasks) { create_list(:task, tasks_per_type) }
       let(:legacy_tasks) { create_list(:task, tasks_per_type) }
       let(:all_tasks) do
-        Task.where(id: (review_tasks + evidence_tasks + hearing_tasks + legacy_tasks).pluck(:id).sort)
+        Task
+          .where(id: (review_tasks + evidence_tasks + hearing_tasks + legacy_tasks).pluck(:id).sort)
+          .order(id: :asc)
       end
 
       before do
@@ -313,6 +315,74 @@ describe TaskFilter, :postgres do
 
         it "returns tasks with Original or Supplemental case types that are also AOD" do
           expect(subject.map(&:id)).to match_array([type_1_tasks.first.id, type_2_tasks.first.id])
+        end
+      end
+
+      context "when filter includes only AOD" do
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN}&val=is_aod"] }
+
+        it "returns tasks with all case types that are also AOD" do
+          expect(subject.map(&:id)).to contain_exactly(
+            type_1_tasks.first.id,
+            type_2_tasks.first.id,
+            type_3_tasks.first.id,
+            type_4_tasks.first.id,
+            type_5_tasks.first.id
+          )
+        end
+      end
+    end
+
+    context "when filtering by assignee" do
+      let(:tasks_per_user) { 3 }
+      let(:users) { create_list(:user, 3) }
+      let(:first_user_tasks) { create_list(:generic_task, tasks_per_user, assigned_to: users.first) }
+      let(:second_user_tasks) { create_list(:generic_task, tasks_per_user, assigned_to: users.second) }
+      let(:third_user_tasks) { create_list(:generic_task, tasks_per_user, assigned_to: users.third) }
+      let(:all_tasks) { Task.where(id: (first_user_tasks + second_user_tasks + third_user_tasks).pluck(:id)) }
+
+      before do
+        all_tasks.each do |task|
+          create(
+            :cached_appeal,
+            appeal_type: task.appeal_type,
+            appeal_id: task.appeal.id,
+            assignee_label: task.appeal.assigned_to_location
+          )
+        end
+      end
+
+      context "when filter_params is an empty array" do
+        let(:filter_params) { [] }
+
+        it "returns the same set of tasks for the filtered and unfiltered set" do
+          expect(subject.map(&:id)).to match_array(all_tasks.map(&:id))
+        end
+      end
+
+      context "when filter_params includes a non existent user" do
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN}&val=NON_EXISTANT_USER"] }
+
+        it "returns no tasks" do
+          expect(subject).to match_array([])
+        end
+      end
+
+      context "when filter includes the first user's css_id" do
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN}&val=#{users.first.css_id}"] }
+
+        it "returns only tasks where the closest regional office is Boston" do
+          expect(subject.map(&:id)).to match_array(first_user_tasks.map(&:id))
+        end
+      end
+
+      context "when filter includes Boston and Washington" do
+        let(:filter_params) do
+          ["col=#{Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN}&val=#{users.first.css_id},#{users.second.css_id}"]
+        end
+
+        it "returns tasks where the closest regional office is Boston or Washington" do
+          expect(subject.map(&:id)).to match_array((first_user_tasks + second_user_tasks).map(&:id))
         end
       end
     end

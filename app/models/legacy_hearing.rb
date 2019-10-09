@@ -52,6 +52,8 @@ class LegacyHearing < ApplicationRecord
            to: :appeal,
            allow_nil: true
 
+  delegate :timezone, :name, to: :regional_office, prefix: true
+
   before_create :assign_created_by_user
   before_update :assign_updated_by_user
 
@@ -135,7 +137,7 @@ class LegacyHearing < ApplicationRecord
       return (venue_key || appeal&.regional_office_key)
     end
 
-    hearing_day&.regional_office
+    hearing_day&.regional_office || "C"
   end
 
   def regional_office
@@ -144,18 +146,6 @@ class LegacyHearing < ApplicationRecord
                          rescue RegionalOffice::NotFoundError
                            nil
                           end
-  end
-
-  def regional_office_name
-    return if regional_office_key.nil?
-
-    "#{regional_office.city}, #{regional_office.state}"
-  end
-
-  def regional_office_timezone
-    return if regional_office_key.nil?
-
-    HearingMapper.timezone(regional_office_key)
   end
 
   def time

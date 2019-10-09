@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { formatDateStr } from '../../util/DateUtil';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -82,6 +83,7 @@ class PostponeHearingModal extends React.Component {
 
   getReschedulePayload = () => {
     const {
+      // eslint-disable-next-line camelcase
       apiFormattedValues: { scheduled_time_string, hearing_day_id, hearing_location }
     } = this.props.assignHearing;
 
@@ -100,6 +102,7 @@ class PostponeHearingModal extends React.Component {
 
     if (afterDispositionUpdateAction === ACTIONS.SCHEDULE_LATER_WITH_ADMIN_ACTION) {
       const {
+        // eslint-disable-next-line camelcase
         apiFormattedValues: { with_admin_action_klass, admin_action_instructions }
       } = this.props.scheduleHearingLaterWithAdminAction;
 
@@ -164,9 +167,7 @@ class PostponeHearingModal extends React.Component {
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, this.getSuccessMsg()).
       then((resp) => {
         this.setState({ isPosting: false });
-        const response = JSON.parse(resp.text);
-
-        this.props.onReceiveAmaTasks(response.tasks.data);
+        this.props.onReceiveAmaTasks(resp.body.tasks.data);
       }, () => {
         this.setState({ isPosting: false });
 
@@ -221,6 +222,43 @@ class PostponeHearingModal extends React.Component {
     );
   };
 }
+
+PostponeHearingModal.propTypes = {
+  appeal: PropTypes.shape({
+    closestRegionalOffice: PropTypes.string,
+    externalId: PropTypes.string,
+    veteranFullName: PropTypes.string
+  }),
+  assignHearing: PropTypes.shape({
+    apiFormattedValues: PropTypes.shape({
+      scheduled_time_string: PropTypes.string,
+      hearing_day_id: PropTypes.string,
+      hearing_location: PropTypes.string
+    }),
+    errorMessages: PropTypes.shape({
+      hasErrorMessages: PropTypes.bool
+    }),
+    hearingDay: PropTypes.shape({
+      hearingDate: PropTypes.string
+    })
+  }),
+  onReceiveAmaTasks: PropTypes.func,
+  onReceiveAppealDetails: PropTypes.func,
+  requestPatch: PropTypes.func,
+  scheduleHearingLaterWithAdminAction: PropTypes.shape({
+    apiFormattedValues: PropTypes.shape({
+      with_admin_action_klass: PropTypes.bool,
+      admin_action_instructions: PropTypes.string
+    }),
+    errorMessages: PropTypes.shape({
+      hasErrorMessages: PropTypes.bool
+    })
+  }),
+  showErrorMessage: PropTypes.func,
+  task: PropTypes.shape({
+    taskId: PropTypes.string
+  })
+};
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),

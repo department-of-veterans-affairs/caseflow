@@ -150,7 +150,7 @@ feature "Appeal Intake", :all_dbs do
 
     click_intake_finish
 
-    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES_SHORT.appeal} created:")
     expect(page).to have_content("Issue: Active Duty Adjustments - Description for Active Duty Adjustments")
 
@@ -254,7 +254,7 @@ feature "Appeal Intake", :all_dbs do
 
     click_intake_finish
 
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
   end
 
   def complete_appeal
@@ -273,7 +273,7 @@ feature "Appeal Intake", :all_dbs do
     )
 
     click_intake_finish
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
   end
 
   scenario "intake can still be completed when ratings are backfilled" do
@@ -485,7 +485,7 @@ feature "Appeal Intake", :all_dbs do
 
     click_intake_finish
 
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
     expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
     expect(page).to have_content('Unidentified issue: no issue matched for requested "This is an unidentified issue"')
 
@@ -622,7 +622,7 @@ feature "Appeal Intake", :all_dbs do
       )
       click_intake_finish
 
-      expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+      expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
       expect(
         RequestIssue.find_by(contested_issue_description: "appeal decision issue").ineligible_reason
       ).to eq("appeal_to_appeal")

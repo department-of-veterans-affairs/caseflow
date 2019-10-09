@@ -438,6 +438,7 @@ export const buildCaseReviewPayload = (
   } else {
     args.factors_not_considered = _.keys(args.factors_not_considered);
     args.areas_for_improvement = _.keys(args.areas_for_improvement);
+    args.positive_feedback = _.keys(args.positive_feedback);
 
     _.extend(payload.data.tasks, args);
   }
@@ -571,3 +572,9 @@ export const cityForRegionalOfficeCode = (code) => {
 
   return regionalOffice ? regionalOffice.city : COPY.UNKNOWN_REGIONAL_OFFICE;
 };
+
+export const hasDASRecord = (task, requireDasRecord) => {
+  return (task.appeal.isLegacyAppeal && requireDasRecord) ? Boolean(task.taskId) : true;
+};
+
+export const collapseColumn = (requireDasRecord) => (task) => hasDASRecord(task, requireDasRecord) ? 1 : 0;

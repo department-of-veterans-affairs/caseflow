@@ -44,9 +44,13 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     context "Datadog" do
       let(:emitted_gauges) { [] }
       let(:job_gauges) do
-        emitted_gauges.select do |gauge|
-          gauge[:metric_group] == "update_cached_appeals_attributes_job"
-        end
+        emitted_gauges.select { |gauge| gauge[:metric_group] == "update_cached_appeals_attributes_job" }
+      end
+      let(:cached_appeals_count_gauges) do
+        job_gauges.select { |gauge| gauge[:metric_name] == "appeals_to_cache" }
+      end
+      let(:cached_vacols_legacy_cases_gauges) do
+        job_gauges.select { |gauge| gauge[:metric_name] == "vacols_cases_cached" }
       end
 
       it "records the jobs runtime" do
@@ -71,7 +75,8 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
 
         UpdateCachedAppealsAttributesJob.perform_now
 
-        expect(job_gauges.count).to eq(open_appeals.length)
+        expect(cached_appeals_count_gauges.count).to eq(open_appeals.length)
+        expect(cached_vacols_legacy_cases_gauges.count).to eq(legacy_appeals.length)
       end
     end
   end

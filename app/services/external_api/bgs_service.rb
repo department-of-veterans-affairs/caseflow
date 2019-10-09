@@ -19,7 +19,7 @@ class ExternalApi::BGSService
     @person_info = {}
     @poas = {}
     @poa_by_participant_ids = {}
-    @poa_addresses = {}
+    @addresses = {}
     @people_by_ssn = {}
   end
 
@@ -75,6 +75,8 @@ class ExternalApi::BGSService
                                      name: "people.find_person_by_ptcpnt_id") do
       client.people.find_person_by_ptcpnt_id(participant_id)
     end
+
+    return {} unless bgs_info
 
     @person_info[participant_id] ||= {
       first_name: bgs_info[:first_nm],
@@ -154,23 +156,8 @@ class ExternalApi::BGSService
   end
 
   def find_address_by_participant_id(participant_id)
-    DBService.release_db_connections
-
-    unless @poa_addresses[participant_id]
-      bgs_address = MetricsService.record("BGS: fetch address by participant_id: #{participant_id}",
-                                          service: :bgs,
-                                          name: "address.find_by_participant_id") do
-        client.address.find_all_by_participant_id(participant_id)
-      end
-      if bgs_address
-        # Count on addresses being sorted with most recent first if we return a list of addresses.
-        # The very first element of the array might not necessarily be an address
-        bgs_address = bgs_address.select { |a| a.key?(:addrs_one_txt) }[0] if bgs_address.is_a?(Array)
-        @poa_addresses[participant_id] = get_address_from_bgs_address(bgs_address)
-      end
-    end
-
-    @poa_addresses[participant_id]
+    finder = ExternalApi::BgsAddressFinder.new(participant_id: participant_id, client: client)
+    @addresses[participant_id] ||= finder.mailing_address || finder.addresses.last
   end
 
   # This method checks to see if the current user has access to this case
@@ -203,6 +190,14 @@ class ExternalApi::BGSService
   def may_modify?(vbms_id, veteran_participant_id)
     return false unless can_access?(vbms_id)
 
+    # sometimes find_flashes works
+    begin
+      client.claimants.find_flashes(vbms_id)
+    rescue BGS::ShareError
+      return false
+    end
+
+    # sometimes the station conflict logic works
     !ExternalApi::BgsVeteranStationUserConflict.new(
       veteran_participant_id: veteran_participant_id,
       client: client
@@ -266,12 +261,16 @@ class ExternalApi::BGSService
   end
 
   def get_participant_id_for_user(user)
+    get_participant_id_for_css_id_and_station_id(user.css_id, user.station_id)
+  end
+
+  def get_participant_id_for_css_id_and_station_id(css_id, station_id)
     DBService.release_db_connections
 
-    MetricsService.record("BGS: find participant id for user #{user.css_id}, #{user.station_id}",
+    MetricsService.record("BGS: find participant id for user #{css_id}, #{station_id}",
                           service: :bgs,
                           name: "security.find_participant_id") do
-      client.security.find_participant_id(css_id: user.css_id, station_id: user.station_id)
+      client.security.find_participant_id(css_id: css_id, station_id: station_id)
     end
   end
 

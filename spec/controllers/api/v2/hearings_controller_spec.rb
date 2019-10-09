@@ -57,9 +57,17 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
         context "ama hearings" do
           let!(:hearings) do
             [
-              create(:hearing, hearing_day: hearing_day, scheduled_time: "9:30AM"),
-              create(:hearing, hearing_day: hearing_day, scheduled_time: "10:30AM")
+              create(:hearing, regional_office: "VACO", hearing_day: hearing_day, scheduled_time: "9:30AM"),
+              create(:hearing, regional_office: "VACO", hearing_day: hearing_day, scheduled_time: "10:30AM")
             ]
+          end
+
+          before do
+            create(:hearing,
+                   regional_office: "VACO",
+                   hearing_day: hearing_day,
+                   scheduled_time: "12:30PM",
+                   disposition: "postponed")
           end
 
           subject do
@@ -70,6 +78,14 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
           it { expect(subject.status).to eq 200 }
           it { expect(JSON.parse(subject.body)).to have_key("hearings") }
           it { expect(JSON.parse(subject.body)["hearings"].size).to eq 2 }
+          it do
+            expect(JSON.parse(subject.body)["hearings"][0]["timezone"]).to eq("America/New_York")
+          end
+          it do
+            first_location = JSON.parse(subject.body)["hearings"][0]["hearing_location"]
+            expect(first_location).to eq("Board of Veterans' Appeals CO Office")
+          end
+
           it do
             response_body = JSON.parse(subject.body)
             expected_times = hearings.map(&:scheduled_for)
@@ -86,7 +102,7 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
         context "legacy hearings" do
           let!(:hearings) do
             [
-              create(:legacy_hearing, hearing_day: hearing_day)
+              create(:legacy_hearing, regional_office: "RO42", hearing_day: hearing_day)
             ]
           end
 
@@ -110,8 +126,10 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
         end
         let!(:hearings) do
           [
+            create(:hearing, regional_office: "RO42", hearing_day: hearing_days[0]),
             create(:hearing, hearing_day: hearing_days[0]),
-            create(:legacy_hearing, hearing_day: hearing_days[1])
+            create(:legacy_hearing, hearing_day: hearing_days[1]),
+            create(:legacy_hearing, regional_office: "RO42", hearing_day: hearing_days[1])
           ]
         end
 

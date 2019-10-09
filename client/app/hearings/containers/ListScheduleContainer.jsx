@@ -92,7 +92,7 @@ export class ListScheduleContainer extends React.Component {
     };
 
     return ApiUtil.get(requestUrl, requestOptions).then((response) => {
-      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+      const resp = ApiUtil.convertToCamelCase(response.body);
 
       this.props.onReceiveHearingSchedule(resp.hearings);
       this.props.onViewStartDateChange(formatDateStr(resp.startDate, dateFormatString, dateFormatString));

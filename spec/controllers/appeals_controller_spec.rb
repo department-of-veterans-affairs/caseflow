@@ -487,13 +487,14 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
   describe "GET veteran/:appeal_id" do
     let(:veteran_first_name) { "Test" }
     let(:veteran_last_name) { "User" }
+    let(:veteran_file_number) { "0000000000" }
     let(:correspondent) { create(:correspondent, snamef: veteran_first_name, snamel: veteran_last_name) }
     let(:appeal) do
       create(
         :legacy_appeal,
         vacols_case: create(
           :case,
-          bfcorlid: "0000000000S",
+          bfcorlid: "#{veteran_file_number}S",
           correspondent: correspondent
         )
       )
@@ -503,7 +504,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         :veteran,
         first_name: veteran_first_name,
         last_name: veteran_last_name,
-        file_number: appeal.veteran_file_number,
+        file_number: veteran_file_number,
         email_address: "test@test.com"
       )
     end

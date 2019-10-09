@@ -3,7 +3,7 @@
 ##
 # Task that signals that an appeal is ready for distribution to a judge, including for auto case distribution.
 
-class DistributionTask < GenericTask
+class DistributionTask < Task
   before_validation :set_assignee
 
   def available_actions(user)

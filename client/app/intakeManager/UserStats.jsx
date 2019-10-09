@@ -1,10 +1,12 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
+import PropTypes from 'prop-types';
 import Table from '../components/Table';
 import SearchBar from '../components/SearchBar';
 import ApiUtil from '../util/ApiUtil';
 
 export default class UserStats extends React.PureComponent {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -35,7 +37,7 @@ export default class UserStats extends React.PureComponent {
     ApiUtil.get(`/intake/manager/users/${userId}`).then((response) => {
       this.setState({
         error: false,
-        userStats: JSON.parse(response.text),
+        userStats: response.body,
         userStatsFetched: true,
         isSwitching: false
       });
@@ -93,6 +95,13 @@ export default class UserStats extends React.PureComponent {
       tbl = <div>No stats available.</div>;
     }
 
+    let preselectedUser = this.props.selectedUser;
+
+    // empty string can break things on initial value.
+    if (!preselectedUser || preselectedUser === '') {
+      preselectedUser = null;
+    }
+
     return <div className="cf-app-segment cf-app-segment--alt cf-manager-intakes">
       <div id="cf-user-stats">
         <div>
@@ -101,7 +110,7 @@ export default class UserStats extends React.PureComponent {
             <SearchBar
               size="small"
               title="Enter the User ID"
-              value={this.props.selectedUser}
+              value={preselectedUser}
               onSubmit={this.handleUserSwitch}
               onChange={this.handleUserSelect}
               loading={this.state.isSwitching}
@@ -115,3 +124,7 @@ export default class UserStats extends React.PureComponent {
     </div>;
   }
 }
+
+UserStats.propTypes = {
+  selectedUser: PropTypes.string
+};

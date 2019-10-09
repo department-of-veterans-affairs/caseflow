@@ -30,7 +30,7 @@ class AmaAppealDispatch
               :decision_date, :redacted_document_location, :file
 
   def dispatch_tasks
-    @dispatch_tasks ||= BvaDispatchTask.where(appeal: appeal, assigned_to: user)
+    @dispatch_tasks ||= BvaDispatchTask.not_cancelled.where(appeal: appeal, assigned_to: user)
   end
 
   def dispatch_task

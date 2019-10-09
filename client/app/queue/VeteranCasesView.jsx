@@ -43,7 +43,7 @@ class VeteranCasesView extends React.PureComponent {
 
     return ApiUtil.get('/appeals', { headers: { 'case-search': veteranId } }).
       then((response) => {
-        const returnedObject = JSON.parse(response.text);
+        const returnedObject = response.body;
 
         if (!returnedObject.appeals.length) {
           return Promise.reject(response);
@@ -86,13 +86,13 @@ class VeteranCasesView extends React.PureComponent {
 }
 
 VeteranCasesView.propTypes = {
+  appeals: PropTypes.arrayOf(PropTypes.object),
   caseflowVeteranId: PropTypes.number,
-  veteranId: PropTypes.string,
+  fetchedAllCasesFor: PropTypes.object,
   hideVeteranCaseList: PropTypes.func,
   onReceiveAppealDetails: PropTypes.func,
   setFetchedAllCasesFor: PropTypes.func,
-  appeals: PropTypes.array,
-  fetchedAllCasesFor: PropTypes.object
+  veteranId: PropTypes.string
 };
 
 VeteranCasesView.defaultProps = {

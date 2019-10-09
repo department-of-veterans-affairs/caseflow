@@ -44,6 +44,14 @@ module Caseflow::Error
     end
   end
 
+  class InvalidParameter < SerializableError
+    def initialize(args = {})
+      @code = args[:code] || 400
+      @parameter = args[:parameter] || ""
+      @message = args[:message] || "Invalid parameter '#{@parameter}'"
+    end
+  end
+
   class NoRootTask < SerializableError
     def initialize(args)
       @task_id = args[:task_id]
@@ -209,6 +217,7 @@ module Caseflow::Error
       @error_code = error_code
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity
     def self.from_vbms_error(error)
       case error.body
       when /PIF is already in use/
@@ -228,6 +237,7 @@ module Caseflow::Error
         error
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
   end
 
   class MissingTimerMethod < StandardError; end

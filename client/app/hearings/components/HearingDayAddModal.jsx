@@ -2,6 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import connect from 'react-redux/es/connect/connect';
 import PropTypes from 'prop-types';
+import { debounce } from 'lodash';
 import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
@@ -31,7 +32,6 @@ import { onRegionalOfficeChange } from '../../components/common/actions';
 import Checkbox from '../../components/Checkbox';
 import Alert from '../../components/Alert';
 import ApiUtil from '../../util/ApiUtil';
-import { formatDateStr } from '../../util/DateUtil';
 
 const notesFieldStyling = css({
   height: '100px',
@@ -82,7 +82,7 @@ class HearingDayAddModal extends React.Component {
       errorMessages: [],
       roErrorMessages: [],
       serverError: false,
-      noRoomsAvailable: false
+      noRoomsAvailableError: false
     };
   }
 
@@ -99,7 +99,7 @@ class HearingDayAddModal extends React.Component {
     let roErrorMessages = [];
 
     this.setState({ serverError: false,
-      noRoomsAvailable: false });
+      noRoomsAvailableError: false });
 
     if (this.props.selectedHearingDay === '') {
       this.setState({ dateError: true });
@@ -160,7 +160,7 @@ class HearingDayAddModal extends React.Component {
 
     ApiUtil.post('/hearings/hearing_day.json', { data }).
       then((response) => {
-        const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+        const resp = ApiUtil.convertToCamelCase(response.body);
 
         const newHearings = Object.assign({}, this.props.hearingSchedule);
         const hearingsLength = Object.keys(newHearings).length;
@@ -172,8 +172,8 @@ class HearingDayAddModal extends React.Component {
 
       }, (error) => {
         if (error.response.body && error.response.body.errors &&
-        error.response.body.errors[0].title === 'No rooms available') {
-          this.setState({ noRoomsAvailable: true });
+        error.response.body.errors[0].status === 400) {
+          this.setState({ noRoomsAvailableError: error.response.body.errors[0] });
         } else {
         // All other server errors
           this.setState({ serverError: true });
@@ -238,11 +238,11 @@ class HearingDayAddModal extends React.Component {
     this.resetErrorState();
   };
 
-  resetErrorState = () => {
+  resetErrorState = debounce(() => {
     this.setState({ dateError: false,
       typeError: false,
       roError: false });
-  };
+  }, 250);
 
   onVljChange = (value) => {
     this.props.selectVlj(value);
@@ -261,17 +261,17 @@ class HearingDayAddModal extends React.Component {
   };
 
   getAlertTitle = () => {
-    return this.state.serverError ? 'An Error Occurred' :
-      `No Rooms Available for Hearing Day ${formatDateStr(this.props.selectedHearingDay)}`;
+    return this.state.noRoomsAvailableError ? this.state.noRoomsAvailableError.title :
+      'An error has occurred';
   };
 
   getAlertMessage = () => {
-    return this.state.serverError ? 'You are unable to complete this action.' :
-      'All hearing rooms are taken for the date you selected.';
+    return this.state.noRoomsAvailableError ? this.state.noRoomsAvailableError.detail :
+      'You are unable to complete this action.';
   };
 
   showAlert = () => {
-    return this.state.serverError || this.state.noRoomsAvailable;
+    return this.state.serverError || this.state.noRoomsAvailableError;
   };
 
   modalMessage = () => {
@@ -369,10 +369,40 @@ class HearingDayAddModal extends React.Component {
 }
 
 HearingDayAddModal.propTypes = {
-  userId: PropTypes.number,
-  userCssId: PropTypes.string,
+  cancelModal: PropTypes.func,
   closeModal: PropTypes.func,
-  cancelModal: PropTypes.func
+  coordinator: PropTypes.shape({
+    value: PropTypes.string
+  }),
+  hearingSchedule: PropTypes.object,
+  notes: PropTypes.string,
+  onAssignHearingRoom: PropTypes.func,
+  onReceiveHearingSchedule: PropTypes.func,
+  onRegionalOfficeChange: PropTypes.func,
+  onSelectedHearingDayChange: PropTypes.func,
+  regionalOffices: PropTypes.shape({
+    options: PropTypes.arrayOf(PropTypes.object)
+  }),
+  requestType: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.shape({
+      value: PropTypes.string
+    })
+  ]),
+  roomRequired: PropTypes.bool,
+  selectHearingCoordinator: PropTypes.func,
+  selectRequestType: PropTypes.func,
+  selectVlj: PropTypes.func,
+  selectedHearingDay: PropTypes.string,
+  selectedRegionalOffice: PropTypes.shape({
+    value: PropTypes.string
+  }),
+  setNotes: PropTypes.func,
+  userCssId: PropTypes.string,
+  userId: PropTypes.number,
+  vlj: PropTypes.shape({
+    value: PropTypes.string
+  })
 };
 
 const mapStateToProps = (state) => ({

@@ -12,6 +12,7 @@ import DecisionReviewEditCompletedPage from '../intake/pages/decisionReviewEditC
 import Message from './pages/message';
 import { css } from 'glamor';
 import EditButtons from './components/EditButtons';
+import PropTypes from 'prop-types';
 
 const textAlignRightStyling = css({
   textAlign: 'right'
@@ -34,8 +35,16 @@ export default class IntakeEditFrame extends React.PureComponent {
   }
 
   displayCanceledMessage = (details) => {
+    const { editIssuesUrl, hasClearedNonratingEp, hasClearedRatingEp } = this.props.serverIntake;
+
+    if (hasClearedNonratingEp || hasClearedRatingEp) {
+      return <span>No changes were made to {details.veteran.name}'s (ID #{details.veteran.fileNumber})&nbsp;
+      {details.formName}. If needed, you may <a href={editIssuesUrl}>correct the issues.</a></span>;
+    }
+
     return `No changes were made to ${details.veteran.name}'s (ID #${details.veteran.fileNumber}) ${details.formName}.
       Go to VBMS claim details and click the “Edit in Caseflow” button to return to edit.`;
+
   }
 
   displayOutcodedMessage = () => {
@@ -131,3 +140,21 @@ export default class IntakeEditFrame extends React.PureComponent {
     </Router>;
   }
 }
+
+IntakeEditFrame.propTypes = {
+  feedbackUrl: PropTypes.string.isRequired,
+  buildDate: PropTypes.string,
+  serverIntake: PropTypes.shape({
+    veteran: PropTypes.object,
+    formType: PropTypes.string,
+    editIssuesUrl: PropTypes.string,
+    hasClearedNonratingEp: PropTypes.bool,
+    hasClearedRatingEp: PropTypes.bool
+  }),
+  dropdownUrls: PropTypes.array,
+  userDisplayName: PropTypes.string,
+  claimId: PropTypes.string,
+  routerTestProps: PropTypes.object,
+  router: PropTypes.object
+};
+

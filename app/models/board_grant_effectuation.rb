@@ -12,6 +12,7 @@ class BoardGrantEffectuation < ApplicationRecord
   belongs_to :granted_decision_issue, class_name: "DecisionIssue"
   belongs_to :decision_document
   belongs_to :end_product_establishment
+  has_many :job_notes, as: :job
 
   validates :granted_decision_issue, presence: true
   before_save :hydrate_from_granted_decision_issue, on: :create
@@ -45,6 +46,10 @@ class BoardGrantEffectuation < ApplicationRecord
     update_from_matching_rating_issue!
     clear_error!
     processed!
+  end
+
+  def contention_type
+    Constants.CONTENTION_TYPES.default
   end
 
   private

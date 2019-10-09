@@ -2,7 +2,7 @@
 
 class DirectReviewDocket < Docket
   DAYS_TO_DECISION_GOAL = 365
-  DAYS_BEFORE_GOAL_DUE_FOR_DISTRIBUTION = 60
+  DAYS_BEFORE_GOAL_DUE_FOR_DISTRIBUTION = 90
 
   def docket_type
     Constants.AMA_DOCKETS.direct_review

@@ -2,17 +2,12 @@ import INTAKE_FORM_NAMES from '../../constants/INTAKE_FORM_NAMES.json';
 import INTAKE_FORM_NAMES_SHORT from '../../constants/INTAKE_FORM_NAMES_SHORT.json';
 
 export const FORM_TYPES = {
-  RAMP_ELECTION: {
-    key: 'ramp_election',
-    name: INTAKE_FORM_NAMES.ramp_election,
-    category: 'ramp',
-    formName: 'rampElection'
-  },
-  RAMP_REFILING: {
-    key: 'ramp_refiling',
-    name: INTAKE_FORM_NAMES.ramp_refiling,
-    category: 'ramp',
-    formName: 'rampRefiling'
+  APPEAL: {
+    key: 'appeal',
+    name: INTAKE_FORM_NAMES.appeal,
+    shortName: INTAKE_FORM_NAMES_SHORT.appeal,
+    category: 'decisionReview',
+    formName: 'appeal'
   },
   HIGHER_LEVEL_REVIEW: {
     key: 'higher_level_review',
@@ -28,12 +23,17 @@ export const FORM_TYPES = {
     category: 'decisionReview',
     formName: 'supplementalClaim'
   },
-  APPEAL: {
-    key: 'appeal',
-    name: INTAKE_FORM_NAMES.appeal,
-    shortName: INTAKE_FORM_NAMES_SHORT.appeal,
-    category: 'decisionReview',
-    formName: 'appeal'
+   RAMP_REFILING: {
+    key: 'ramp_refiling',
+    name: INTAKE_FORM_NAMES.ramp_refiling,
+    category: 'ramp',
+    formName: 'rampRefiling'
+  },
+  RAMP_ELECTION: {
+    key: 'ramp_election',
+    name: INTAKE_FORM_NAMES.ramp_election,
+    category: 'ramp',
+    formName: 'rampElection'
   }
 };
 

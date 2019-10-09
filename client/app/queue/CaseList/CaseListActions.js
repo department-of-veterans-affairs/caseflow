@@ -120,7 +120,7 @@ export const fetchAppealsBySearch = (searchTerm) => (dispatch) => {
       return uniqueVetIdsFromCases(returnedObject);
     }).
     catch((error) => {
-      const backendError = error.response.body;
+      const backendError = _.get(error.response, 'body');
 
       if (backendError) {
         const errorMessage = backendError.errors[0].detail;

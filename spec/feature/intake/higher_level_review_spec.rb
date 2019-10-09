@@ -228,7 +228,7 @@ feature "Higher-Level Review", :all_dbs do
 
     click_intake_finish
 
-    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
     expect(page).to have_content(
       "A #{Constants.INTAKE_FORM_NAMES_SHORT.higher_level_review} Rating EP is being established:"
     )
@@ -304,8 +304,10 @@ feature "Higher-Level Review", :all_dbs do
       hash_including(
         veteran_file_number: veteran_file_number,
         claim_id: ratings_end_product_establishment.reference_id,
-        contentions: [{ description: "PTSD denied" }],
-        user: current_user
+        contentions: array_including(description: "PTSD denied",
+                                     contention_type: Constants.CONTENTION_TYPES.higher_level_review),
+        user: current_user,
+        claim_date: higher_level_review.receipt_date.to_date
       )
     )
 
@@ -313,8 +315,10 @@ feature "Higher-Level Review", :all_dbs do
       hash_including(
         veteran_file_number: veteran_file_number,
         claim_id: nonratings_end_product_establishment.reference_id,
-        contentions: [{ description: "Active Duty Adjustments - Description for Active Duty Adjustments" }],
-        user: current_user
+        contentions: [{ description: "Active Duty Adjustments - Description for Active Duty Adjustments",
+                        contention_type: Constants.CONTENTION_TYPES.higher_level_review }],
+        user: current_user,
+        claim_date: higher_level_review.receipt_date.to_date
       )
     )
 
@@ -434,14 +438,16 @@ feature "Higher-Level Review", :all_dbs do
 
     click_intake_finish
 
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: veteran_file_number,
       claim_id: special_issue_reference_id,
       contentions: [{ description: "PTSD denied",
+                      contention_type: Constants.CONTENTION_TYPES.higher_level_review,
                       special_issues: [{ code: "SSR", narrative: "Same Station Review" }] }],
-      user: current_user
+      user: current_user,
+      claim_date: higher_level_review.receipt_date.to_date
     )
   end
 
@@ -509,7 +515,7 @@ feature "Higher-Level Review", :all_dbs do
 
     click_intake_finish
 
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
   end
 
   def complete_higher_level_review
@@ -528,7 +534,7 @@ feature "Higher-Level Review", :all_dbs do
     )
 
     click_intake_finish
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
   end
 
   scenario "intake can still be completed when ratings are backfilled" do
@@ -861,7 +867,7 @@ feature "Higher-Level Review", :all_dbs do
 
       click_intake_finish
 
-      expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+      expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
       expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
       expect(page).to have_content('Unidentified issue: no issue matched for requested "This is an unidentified issue"')
       success_checklist = find("ul.cf-success-checklist")
@@ -1037,7 +1043,8 @@ feature "Higher-Level Review", :all_dbs do
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         hash_including(
-          contentions: array_including(description: "Left knee granted 2")
+          contentions: array_including(description: "Left knee granted 2",
+                                       contention_type: Constants.CONTENTION_TYPES.higher_level_review)
         )
       )
     end
@@ -1082,7 +1089,7 @@ feature "Higher-Level Review", :all_dbs do
         )
         click_intake_finish
 
-        expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+        expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
 
         expect(
           RequestIssue.find_by(contested_issue_description: "appeal decision issue").ineligible_reason
@@ -1184,7 +1191,7 @@ feature "Higher-Level Review", :all_dbs do
           expect(page).to have_content("Add / Remove Issues")
           check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
           check_row("Benefit type", "Education")
-          expect(page).to_not have_content("Claimant")
+          expect(page).to have_content("Claimant")
           click_intake_add_issue
           expect(page).to_not have_content("Left knee granted")
 

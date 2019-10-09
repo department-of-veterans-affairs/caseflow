@@ -12,6 +12,7 @@ import uiReducer from './uiReducer/uiReducer';
 import teamManagementReducer from './teamManagement/reducers';
 
 import commonComponentsReducer from '../components/common/reducers';
+import mtvReducer from './mtv/reducers';
 
 // TODO: Remove this when we move entirely over to the appeals search.
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
@@ -107,9 +108,8 @@ export const workQueueReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.DELETE_APPEAL: {
     const amaTasksIds = _.map(
-      _.filter(
-        state.amaTasks, (task) => task.externalAppealId === action.payload.appealId
-      ), (task) => task.uniqueId
+      _.filter(state.amaTasks, (task) => task.externalAppealId === action.payload.appealId),
+      (task) => task.uniqueId
     );
 
     return update(state, {
@@ -319,7 +319,7 @@ export const workQueueReducer = (state = initialState, action = {}) => {
     const editingExistingIssue = _.map(issues, 'id').includes(editingIssueId);
 
     if (editingExistingIssue) {
-      updatedIssues = _.map(issues, (issue) => issue.id === editingIssueId ? editingIssue : issue);
+      updatedIssues = _.map(issues, (issue) => (issue.id === editingIssueId ? editingIssue : issue));
     } else {
       updatedIssues = issues.concat(editingIssue);
     }
@@ -341,7 +341,9 @@ export const workQueueReducer = (state = initialState, action = {}) => {
   }
   case ACTIONS.DELETE_EDITING_APPEAL_ISSUE: {
     const { appealId, issueId } = action.payload;
-    const { stagedChanges: { appeals } } = state;
+    const {
+      stagedChanges: { appeals }
+    } = state;
 
     const issues = _.reject(appeals[appealId].issues, (issue) => issue.id === Number(issueId));
 
@@ -555,7 +557,8 @@ const rootReducer = combineReducers({
   queue: workQueueReducer,
   teamManagement: teamManagementReducer,
   ui: uiReducer,
-  components: commonComponentsReducer
+  components: commonComponentsReducer,
+  mtv: mtvReducer
 });
 
 export default timeFunction(

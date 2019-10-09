@@ -188,7 +188,7 @@ feature "Supplemental Claim Intake", :all_dbs do
 
     click_intake_finish
 
-    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
+    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been submitted.")
     expect(page).to have_content(
       "A #{Constants.INTAKE_FORM_NAMES_SHORT.supplemental_claim} Rating EP is being established:"
     )
@@ -267,14 +267,22 @@ feature "Supplemental Claim Intake", :all_dbs do
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: veteran_file_number,
       claim_id: ratings_end_product_establishment.reference_id,
-      contentions: [{ description: "PTSD denied" }],
-      user: current_user
+      contentions: [{
+        description: "PTSD denied",
+        contention_type: Constants.CONTENTION_TYPES.supplemental_claim
+      }],
+      user: current_user,
+      claim_date: supplemental_claim.receipt_date.to_date
     )
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: veteran_file_number,
       claim_id: nonratings_end_product_establishment.reference_id,
-      contentions: [{ description: "Active Duty Adjustments - Description for Active Duty Adjustments" }],
-      user: current_user
+      contentions: [{
+        description: "Active Duty Adjustments - Description for Active Duty Adjustments",
+        contention_type: Constants.CONTENTION_TYPES.supplemental_claim
+      }],
+      user: current_user,
+      claim_date: supplemental_claim.receipt_date.to_date
     )
 
     rating_request_issue = supplemental_claim.request_issues.find_by(contested_issue_description: "PTSD denied")
@@ -385,7 +393,7 @@ feature "Supplemental Claim Intake", :all_dbs do
 
     click_intake_finish
 
-    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
+    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been submitted.")
   end
 
   context "ratings with disabiliity codes" do
@@ -563,7 +571,7 @@ feature "Supplemental Claim Intake", :all_dbs do
 
       click_intake_finish
 
-      expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
+      expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been submitted.")
       expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
       expect(page).to have_content('Unidentified issue: no issue matched for requested "This is an unidentified issue"')
       expect(page).to have_content(old_rating_decision_text)
@@ -664,19 +672,27 @@ feature "Supplemental Claim Intake", :all_dbs do
 
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
         hash_including(
-          contentions: array_including(description: "Old injury")
+          contentions: array_including(
+            description: "Old injury",
+            contention_type: Constants.CONTENTION_TYPES.supplemental_claim
+          )
         )
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
-        hash_including(contentions: array_including(description: old_rating_decision_text))
+        hash_including(contentions: array_including(
+          description: old_rating_decision_text,
+          contention_type: Constants.CONTENTION_TYPES.supplemental_claim
+        ))
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         hash_including(
           contentions: array_including(
-            { description: "Left knee granted 2" },
-            description: "Really old injury"
+            { description: "Left knee granted 2",
+              contention_type: Constants.CONTENTION_TYPES.supplemental_claim },
+            description: "Really old injury",
+            contention_type: Constants.CONTENTION_TYPES.supplemental_claim
           )
         )
       )
@@ -727,7 +743,6 @@ feature "Supplemental Claim Intake", :all_dbs do
           sc, = start_supplemental_claim(veteran, is_comp: false)
 
           visit "/intake/add_issues"
-
           expect(page).to have_content("Add / Remove Issues")
           check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
           check_row("Benefit type", "Education")
@@ -743,7 +758,7 @@ feature "Supplemental Claim Intake", :all_dbs do
 
           expect(page).to_not have_content("Establish EP")
           expect(page).to have_content("Establish Supplemental Claim")
-          expect(page).to_not have_content("Claimant")
+          expect(page).to have_content("Claimant")
 
           click_intake_finish
 

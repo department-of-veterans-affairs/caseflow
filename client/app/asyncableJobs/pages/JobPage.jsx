@@ -4,10 +4,20 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 
 import AsyncModelNav from '../components/AsyncModelNav';
+import JobRestartButton from '../components/JobRestartButton';
+import JobNotes from '../components/JobNotes';
 
 const DATE_TIME_FORMAT = 'ddd MMM DD HH:mm:ss YYYY';
 
 class AsyncableJobPage extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      restarted: 0
+    };
+  }
+
   formatDate = (datetime) => {
     if (!datetime) {
       return 'n/a';
@@ -17,12 +27,11 @@ class AsyncableJobPage extends React.PureComponent {
   }
 
   render = () => {
-    const { job } = this.props;
+    const { job, notes } = this.props;
 
-    return <div className="cf-asyncable-jobs-table">
+    return <div className="cf-asyncable-job-table">
       <h1>{this.props.asyncableJobKlass} Job {job.id}</h1>
-      <AsyncModelNav models={this.props.models} fetchedAt={this.props.fetchedAt} />
-      <hr />
+      <AsyncModelNav models={[]} fetchedAt={this.props.fetchedAt} />
       <table className="cf-job-details">
         <tbody>
           <tr>
@@ -63,6 +72,12 @@ class AsyncableJobPage extends React.PureComponent {
           </tr>
         </tbody>
       </table>
+      <div>
+        <JobRestartButton job={job} page={this} />
+      </div>
+      <div>
+        <JobNotes job={job} notes={notes} />
+      </div>
     </div>;
   }
 }
@@ -70,6 +85,7 @@ class AsyncableJobPage extends React.PureComponent {
 const JobPage = connect(
   (state) => ({
     job: state.job,
+    notes: state.notes,
     fetchedAt: state.fetchedAt,
     models: state.models,
     asyncableJobKlass: state.asyncableJobKlass

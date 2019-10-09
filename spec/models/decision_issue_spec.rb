@@ -265,27 +265,6 @@ describe DecisionIssue, :postgres do
     end
   end
 
-  context "#voided?" do
-    subject { decision_issue.voided? }
-
-    context "when all request issues are corrected" do
-      let(:request_issues) do
-        [create(:request_issue, corrected_by_request_issue_id: create(:request_issue).id)]
-      end
-
-      it { is_expected.to eq true }
-    end
-
-    context "when not all request issues are corrected" do
-      let(:request_issues) do
-        [create(:request_issue, corrected_by_request_issue_id: create(:request_issue).id),
-         create(:request_issue)]
-      end
-
-      it { is_expected.to eq false }
-    end
-  end
-
   context "#approx_decision_date" do
     subject { decision_issue.approx_decision_date }
 

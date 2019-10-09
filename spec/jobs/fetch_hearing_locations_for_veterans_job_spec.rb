@@ -57,7 +57,7 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
     let!(:legacy_appeal) { create(:legacy_appeal, vbms_id: "123456789S", vacols_case: vacols_case) }
 
     before(:each) do
-      Fakes::BGSService.veteran_records = { "123456789" => veteran_record(file_number: "123456789S", state: "MA") }
+      Fakes::BGSService.store_veteran_record("123456789", veteran_record(file_number: "123456789S", state: "MA"))
     end
 
     describe "#appeals" do

@@ -4,7 +4,7 @@
 # Root task that tracks an appeal all the way through the appeal lifecycle.
 # This task is closed when an appeal has been completely resolved.
 
-class RootTask < GenericTask
+class RootTask < Task
   before_create :verify_root_task_unique
   # Set assignee to the Bva organization automatically so we don't have to set it when we create RootTasks.
   after_initialize :set_assignee, if: -> { assigned_to_id.nil? }

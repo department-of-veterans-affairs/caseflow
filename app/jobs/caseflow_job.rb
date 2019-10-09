@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class CaseflowJob < ApplicationJob
-  def initialize(_args = {})
-    super
-    @start_time = Time.zone.now
+  attr_accessor :start_time
+
+  before_perform do |job|
+    job.start_time = Time.zone.now
   end
 
   def datadog_report_runtime(metric_group_name:)

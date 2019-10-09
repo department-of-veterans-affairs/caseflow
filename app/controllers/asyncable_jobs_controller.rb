@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
 class AsyncableJobsController < ApplicationController
-  before_action :verify_access, :react_routed, :set_application
+  include PaginationConcern
+
+  before_action :react_routed, :set_application
+  before_action :verify_access, only: [:index]
+  before_action :verify_job_access, only: [:show]
+  skip_before_action :deny_vso_access
 
   def index
     if allowed_params[:asyncable_job_klass]
@@ -21,6 +26,16 @@ class AsyncableJobsController < ApplicationController
     render json: job.asyncable_ui_hash
   end
 
+  def add_note
+    job_note = JobNote.create!(
+      job: job,
+      user: current_user,
+      note: allowed_params[:note],
+      send_to_intake_user: allowed_params[:send_to_intake_user]
+    )
+    render json: job_note.ui_hash
+  end
+
   private
 
   helper_method :jobs, :job, :allowed_params, :pagination
@@ -36,15 +51,6 @@ class AsyncableJobsController < ApplicationController
     @asyncable_jobs ||= AsyncableJobs.new(page_size: page_size, page: current_page)
   end
 
-  def pagination
-    {
-      page_size: page_size,
-      current_page: current_page,
-      total_pages: total_pages,
-      total_jobs: total_jobs
-    }
-  end
-
   def total_jobs
     @total_jobs ||= begin
       if allowed_params[:asyncable_job_klass]
@@ -55,25 +61,7 @@ class AsyncableJobsController < ApplicationController
     end
   end
 
-  def total_pages
-    total_pages = (total_jobs / page_size).to_i
-    total_pages += 1 if total_jobs % page_size
-    total_pages
-  end
-
-  def page_size
-    50 # TODO: allowed param?
-  end
-
-  def current_page
-    (allowed_params[:page] || 1).to_i
-  end
-
-  def page_start
-    return 0 if current_page < 2
-
-    (current_page - 1) * page_size
-  end
+  alias total_items total_jobs
 
   def jobs
     @jobs ||= asyncable_jobs.jobs
@@ -88,6 +76,7 @@ class AsyncableJobsController < ApplicationController
   end
 
   def verify_access
+    return true if current_user.admin?
     return true if current_user.can?("Admin Intake")
 
     Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
@@ -97,7 +86,13 @@ class AsyncableJobsController < ApplicationController
     redirect_to "/unauthorized"
   end
 
+  def verify_job_access
+    return true if current_user.css_id == job&.asyncable_user
+
+    verify_access
+  end
+
   def allowed_params
-    params.permit(:asyncable_job_klass, :id, :page)
+    params.permit(:asyncable_job_klass, :id, :page, :note, :send_to_intake_user)
   end
 end

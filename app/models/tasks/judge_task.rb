@@ -5,7 +5,7 @@
 # JudgeQualityReviewTasks, JudgeDecisionReviewTasks,
 # JudgeDispatchReturnTasks, and JudgeAssignTasks.
 
-class JudgeTask < GenericTask
+class JudgeTask < Task
   def available_actions(user)
     [
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,

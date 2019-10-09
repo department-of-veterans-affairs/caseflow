@@ -286,7 +286,7 @@ describe Task, :all_dbs do
     let!(:third_level_task) { create_list(:task, 2, appeal: appeal, parent: second_level_tasks.first) }
 
     it "cancels all tasks and child subtasks" do
-      top_level_task.cancel_task_and_child_subtasks
+      top_level_task.reload.cancel_task_and_child_subtasks
 
       [top_level_task, *second_level_tasks, *third_level_task].each do |task|
         expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
@@ -334,7 +334,7 @@ describe Task, :all_dbs do
   describe ".descendants" do
     let(:parent_task) { create(:generic_task) }
 
-    subject { parent_task.descendants }
+    subject { parent_task.reload.descendants }
 
     context "when a task has some descendants" do
       let(:children_count) { 6 }
@@ -657,10 +657,10 @@ describe Task, :all_dbs do
     end
 
     context "the params are incomplete" do
-      let(:params) { { assigned_to: judge, appeal: nil, parent_id: task.id, type: Task.name } }
+      let(:params) { { assigned_to: judge, appeal: nil, parent_id: nil, type: Task.name } }
 
       it "raises an error" do
-        expect { subject }.to raise_error(ActiveRecord::RecordInvalid, /Appeal can't be blank/)
+        expect { subject }.to raise_error(ActiveRecord::RecordNotFound, /Couldn't find Task without an ID/)
       end
     end
   end

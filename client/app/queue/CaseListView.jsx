@@ -48,10 +48,8 @@ class CaseListView extends React.PureComponent {
 
     return ApiUtil.get('/search', { query: { veteran_ids: caseflowVeteranIds.join(',') } }).
       then((response) => {
-        const returnedObject = JSON.parse(response.text);
-
-        this.props.onReceiveAppeals(returnedObject.appeals);
-        this.props.onReceiveClaimReviews(returnedObject.claim_reviews);
+        this.props.onReceiveAppeals(response.body.appeals);
+        this.props.onReceiveClaimReviews(response.body.claim_reviews);
       });
   };
 
@@ -123,8 +121,8 @@ class CaseListView extends React.PureComponent {
 }
 
 CaseListView.propTypes = {
-  caseflowVeteranIds: PropTypes.arrayOf(PropTypes.string),
   appeals: PropTypes.arrayOf(PropTypes.object),
+  caseflowVeteranIds: PropTypes.arrayOf(PropTypes.string),
   claimReviews: PropTypes.arrayOf(PropTypes.object),
   onReceiveAppeals: PropTypes.func,
   onReceiveClaimReviews: PropTypes.func

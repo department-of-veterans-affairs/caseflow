@@ -276,7 +276,7 @@ describe AppealRepository, :all_dbs do
     context "when missing legacy appeals" do
       let!(:cases) { create_list(:case, 10, bfcurloc: "57", bfhr: "1") }
 
-      it "creates the legacy appeal and creates schedule hearing tasks" do
+      it "creates the legacy appeal and creates schedule hearing tasks", skip: "flake on last expect" do
         AppealRepository.create_schedule_hearing_tasks
 
         expect(LegacyAppeal.all.pluck(:vacols_id)).to match_array(cases.pluck(:bfkey))

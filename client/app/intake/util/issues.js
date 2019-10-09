@@ -16,16 +16,12 @@ const getNonVeteranClaimant = (intakeData) => {
 };
 
 const getClaimantField = (formType, veteran, intakeData) => {
-  if (formType === 'appeal' || intakeData.benefitType === 'compensation') {
     const claimant = intakeData.veteranIsNotClaimant ? getNonVeteranClaimant(intakeData) : veteran.name;
 
     return [{
       field: 'Claimant',
       content: claimant
     }];
-  }
-
-  return [];
 };
 
 export const legacyIssue = (issue, legacyAppeals) => {
@@ -110,70 +106,16 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
   }
 
   return requestIssues.map((issue) => {
-
-    // Nonrating issues
-    if (issue.category) {
-      return {
-        id: String(issue.id),
-        isRating: false,
-        benefitType: issue.benefit_type,
-        category: issue.category,
-        decisionIssueId: issue.contested_decision_issue_id,
-        description: issue.description,
-        decisionDate: formatDateStr(issue.approx_decision_date),
-        ineligibleReason: issue.ineligible_reason,
-        ineligibleDueToId: issue.ineligible_due_to_id,
-        decisionReviewTitle: issue.decision_review_title,
-        contentionText: issue.contention_text,
-        untimelyExemption: issue.untimelyExemption,
-        untimelyExemptionNotes: issue.untimelyExemptionNotes,
-        vacolsId: issue.vacols_id,
-        vacolsSequenceId: issue.vacols_sequence_id,
-        vacolsIssue: issue.vacols_issue,
-        endProductCleared: issue.end_product_cleared,
-        endProductCode: issue.end_product_code,
-        withdrawalDate: formatDateStrUtc(issue.withdrawal_date),
-        editable: issue.editable
-      };
-    }
-
-    // Unidentified issues
-    if (issue.is_unidentified) {
-      return {
-        id: String(issue.id),
-        description: issue.description,
-        contentionText: issue.contention_text,
-        notes: issue.notes,
-        isUnidentified: issue.is_unidentified,
-        vacolsId: issue.vacols_id,
-        vacolsSequenceId: issue.vacols_sequence_id,
-        vacolsIssue: issue.vacols_issue,
-        endProductCleared: issue.end_product_cleared,
-        endProductCode: issue.end_product_code,
-        withdrawalDate: formatDateStrUtc(issue.withdrawal_date),
-        editable: issue.editable
-      };
-    }
-
-    // Rating issues
-    const issueDate = new Date(issue.rating_issue_profile_date);
-
     return {
       id: String(issue.id),
-      index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
-      isRating: true,
-      ratingIssueReferenceId: issue.rating_issue_reference_id,
-      ratingDecisionReferenceId: issue.rating_decision_reference_id,
-      ratingIssueProfileDate: issueDate.toISOString(),
-      approxDecisionDate: issue.approx_decision_date,
+      benefitType: issue.benefit_type,
       decisionIssueId: issue.contested_decision_issue_id,
-      notes: issue.notes,
       description: issue.description,
+      decisionDate: formatDateStr(issue.approx_decision_date),
       ineligibleReason: issue.ineligible_reason,
       ineligibleDueToId: issue.ineligible_due_to_id,
-      titleOfActiveReview: issue.title_of_active_review,
+      decisionReviewTitle: issue.decision_review_title,
       contentionText: issue.contention_text,
-      rampClaimId: issue.ramp_claim_id,
       untimelyExemption: issue.untimelyExemption,
       untimelyExemptionNotes: issue.untimelyExemptionNotes,
       vacolsId: issue.vacols_id,
@@ -182,9 +124,22 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       endProductCleared: issue.end_product_cleared,
       endProductCode: issue.end_product_code,
       withdrawalDate: formatDateStrUtc(issue.withdrawal_date),
-      editable: issue.editable
+      editable: issue.editable,
+      isUnidentified: issue.is_unidentified,
+      notes: issue.notes,
+      category: issue.category,
+      index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
+      isRating: !issue.category,
+      ratingIssueReferenceId: issue.rating_issue_reference_id,
+      ratingDecisionReferenceId: issue.rating_decision_reference_id,
+      ratingIssueProfileDate: new Date(issue.rating_issue_profile_date).toISOString(),
+      approxDecisionDate: issue.approx_decision_date,
+      decisionIssueId: issue.contested_decision_issue_id,
+      titleOfActiveReview: issue.title_of_active_review,
+      rampClaimId: issue.ramp_claim_id
     };
-  });
+  }
+  );
 };
 
 export const formatContestableIssues = (contestableIssues) => {

@@ -9,7 +9,7 @@
 #   - advance a case on docket (AOD)
 #   - withdrawing an appeal
 
-class MailTask < GenericTask
+class MailTask < Task
   # Skip unique verification for mail tasks since multiple mail tasks of each type can be created.
   def verify_org_task_unique; end
 
@@ -80,6 +80,10 @@ class MailTask < GenericTask
     def most_recent_active_task_assignee(parent)
       parent.appeal.tasks.open.where(assigned_to_type: User.name).order(:created_at).last&.assigned_to
     end
+  end
+
+  def hide_from_task_snapshot
+    super || assigned_to.eql?(MailTeam.singleton)
   end
 
   def blocking?

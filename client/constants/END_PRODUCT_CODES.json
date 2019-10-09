@@ -103,5 +103,6 @@
   "930ASCRNQPMC": "PMC Supplemental Claim Correction of Rating NQE 930",
   "930ASNRCPMC": "PMC Supplemental Claim Non-Rating Control 930",
   "930RC": "Rating Control",
-  "930RCPMC": "PMC-Rating Control"
+  "930RCPMC": "PMC-Rating Control",
+  "930AMASDO": "AMA Supplemental Difference of Opinion"
 }

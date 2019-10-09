@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+
 import React from 'react';
 import _ from 'lodash';
 import { css } from 'glamor';
@@ -11,6 +11,7 @@ import TextareaField from '../../../components/TextareaField';
 import { AppealHearingLocationsDropdown } from '../../../components/DataDropdowns';
 import HearingTime from '../modalForms/HearingTime';
 import { pencilSymbol } from '../../../components/RenderFunctions';
+import PropTypes from 'prop-types';
 
 import { DISPOSITION_OPTIONS } from '../../constants';
 
@@ -48,6 +49,14 @@ export const DispositionDropdown = ({
   /></div>;
 };
 
+DispositionDropdown.propTypes = {
+  hearing: PropTypes.object,
+  update: PropTypes.func,
+  readOnly: PropTypes.bool,
+  openDispositionModal: PropTypes.shape,
+  saveHearing: PropTypes.func
+};
+
 export const Waive90DayHoldCheckbox = ({ hearing, readOnly, update }) => (
   <div>
     <b>Waive 90 Day Evidence Hold</b>
@@ -60,6 +69,12 @@ export const Waive90DayHoldCheckbox = ({ hearing, readOnly, update }) => (
   </div>
 );
 
+Waive90DayHoldCheckbox.propTypes = {
+  hearing: PropTypes.object,
+  readOnly: PropTypes.bool,
+  update: PropTypes.func
+};
+
 export const TranscriptRequestedCheckbox = ({ hearing, readOnly, update }) => (
   <div>
     <b>Copy Requested by Appellant/Rep</b>
@@ -71,6 +86,12 @@ export const TranscriptRequestedCheckbox = ({ hearing, readOnly, update }) => (
       disabled={readOnly} />
   </div>
 );
+
+TranscriptRequestedCheckbox.propTypes = {
+  hearing: PropTypes.object,
+  readOnly: PropTypes.bool,
+  update: PropTypes.func
+};
 
 export const HearingDetailsLink = ({ hearing }) => (
   <div>
@@ -85,6 +106,10 @@ export const HearingDetailsLink = ({ hearing }) => (
     </div>
   </div>
 );
+
+HearingDetailsLink.propTypes = {
+  hearing: PropTypes.object
+};
 
 export const LegacyAodDropdown = ({ hearing, readOnly, update }) => {
   return <SearchableDropdown
@@ -102,6 +127,12 @@ export const LegacyAodDropdown = ({ hearing, readOnly, update }) => {
     value={hearing.aod}
     searchable={false}
   />;
+};
+
+LegacyAodDropdown.propTypes = {
+  hearing: PropTypes.object,
+  readOnly: PropTypes.bool,
+  update: PropTypes.func
 };
 
 export const AmaAodDropdown = ({ hearing, readOnly, updateAodMotion, userId }) => {
@@ -126,6 +157,13 @@ export const AmaAodDropdown = ({ hearing, readOnly, updateAodMotion, userId }) =
       updateAodMotion(value);
     }}
   />;
+};
+
+AmaAodDropdown.propTypes = {
+  hearing: PropTypes.object,
+  readOnly: PropTypes.bool,
+  updateAodMotion: PropTypes.func,
+  userId: PropTypes.number
 };
 
 export const AodReasonDropdown = ({ hearing, readOnly, updateAodMotion, userId, invalid }) => {
@@ -154,6 +192,14 @@ export const AodReasonDropdown = ({ hearing, readOnly, updateAodMotion, userId, 
   />;
 };
 
+AodReasonDropdown.propTypes = {
+  hearing: PropTypes.object,
+  readOnly: PropTypes.bool,
+  updateAodMotion: PropTypes.func,
+  userId: PropTypes.number,
+  invalid: PropTypes.bool
+};
+
 export const HearingPrepWorkSheetLink = ({ hearing }) => (
   <div>
     <b>Hearing Prep Worksheet</b><br />
@@ -168,6 +214,10 @@ export const HearingPrepWorkSheetLink = ({ hearing }) => (
   </div>
 );
 
+HearingPrepWorkSheetLink.propTypes = {
+  hearing: PropTypes.object
+};
+
 export const StaticRegionalOffice = ({ hearing }) => (
   <div>
     <b>Regional Office</b><br />
@@ -176,6 +226,10 @@ export const StaticRegionalOffice = ({ hearing }) => (
     </div>
   </div>
 );
+
+StaticRegionalOffice.propTypes = {
+  hearing: PropTypes.object
+};
 
 export const NotesField = ({ hearing, update, readOnly }) => {
   const disabled = readOnly || ['postponed', 'cancelled'].indexOf(hearing.disposition) > -1;
@@ -189,6 +243,12 @@ export const NotesField = ({ hearing, update, readOnly }) => {
     textAreaStyling={css({ height: '50px' })}
     value={hearing.notes || ''}
   />;
+};
+
+NotesField.propTypes = {
+  hearing: PropTypes.object,
+  readOnly: PropTypes.bool,
+  update: PropTypes.func
 };
 
 export const HearingLocationDropdown = ({ hearing, readOnly, regionalOffice, update }) => {
@@ -211,6 +271,13 @@ export const HearingLocationDropdown = ({ hearing, readOnly, regionalOffice, upd
   />;
 };
 
+HearingLocationDropdown.propTypes = {
+  hearing: PropTypes.object,
+  readOnly: PropTypes.bool,
+  update: PropTypes.func,
+  regionalOffice: PropTypes.object
+};
+
 export const HoldOpenDropdown = ({ hearing, readOnly, update }) => (
   <SearchableDropdown
     label="Hold Open"
@@ -227,6 +294,12 @@ export const HoldOpenDropdown = ({ hearing, readOnly, update }) => (
     searchable={false} />
 );
 
+HoldOpenDropdown.propTypes = {
+  hearing: PropTypes.object,
+  readOnly: PropTypes.bool,
+  update: PropTypes.func
+};
+
 export const StaticHearingDay = ({ hearing }) => (
   <div>
     <b>Hearing Day</b><br />
@@ -234,12 +307,22 @@ export const StaticHearingDay = ({ hearing }) => (
   </div>
 );
 
+StaticHearingDay.propTypes = {
+  hearing: PropTypes.object
+};
 export const TimeRadioButtons = ({ hearing, regionalOffice, update, readOnly }) => {
   return <HearingTime
     regionalOffice={regionalOffice}
     value={hearing.scheduledTimeString}
     readOnly={readOnly}
     onChange={(scheduledTimeString) => update({ scheduledTimeString })} />;
+};
+
+TimeRadioButtons.propTypes = {
+  hearing: PropTypes.object,
+  readOnly: PropTypes.bool,
+  update: PropTypes.func,
+  regionalOffice: PropTypes.object
 };
 
 export const PreppedCheckbox = ({ hearing, update, readOnly }) => (
@@ -252,3 +335,9 @@ export const PreppedCheckbox = ({ hearing, update, readOnly }) => (
       onChange={(prepped) => update({ prepped })} />
   </div>
 );
+
+PreppedCheckbox.propTypes = {
+  hearing: PropTypes.object,
+  readOnly: PropTypes.bool,
+  update: PropTypes.func
+};
