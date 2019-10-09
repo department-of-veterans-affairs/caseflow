@@ -304,8 +304,10 @@ feature "Higher-Level Review", :all_dbs do
       hash_including(
         veteran_file_number: veteran_file_number,
         claim_id: ratings_end_product_establishment.reference_id,
-        contentions: [{ description: "PTSD denied" }],
-        user: current_user
+        contentions: array_including(description: "PTSD denied",
+                                     contention_type: Constants.CONTENTION_TYPES.higher_level_review),
+        user: current_user,
+        claim_date: higher_level_review.receipt_date.to_date
       )
     )
 
@@ -313,8 +315,10 @@ feature "Higher-Level Review", :all_dbs do
       hash_including(
         veteran_file_number: veteran_file_number,
         claim_id: nonratings_end_product_establishment.reference_id,
-        contentions: [{ description: "Active Duty Adjustments - Description for Active Duty Adjustments" }],
-        user: current_user
+        contentions: [{ description: "Active Duty Adjustments - Description for Active Duty Adjustments",
+                        contention_type: Constants.CONTENTION_TYPES.higher_level_review }],
+        user: current_user,
+        claim_date: higher_level_review.receipt_date.to_date
       )
     )
 
@@ -440,8 +444,10 @@ feature "Higher-Level Review", :all_dbs do
       veteran_file_number: veteran_file_number,
       claim_id: special_issue_reference_id,
       contentions: [{ description: "PTSD denied",
+                      contention_type: Constants.CONTENTION_TYPES.higher_level_review,
                       special_issues: [{ code: "SSR", narrative: "Same Station Review" }] }],
-      user: current_user
+      user: current_user,
+      claim_date: higher_level_review.receipt_date.to_date
     )
   end
 
@@ -1037,7 +1043,8 @@ feature "Higher-Level Review", :all_dbs do
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         hash_including(
-          contentions: array_including(description: "Left knee granted 2")
+          contentions: array_including(description: "Left knee granted 2",
+                                       contention_type: Constants.CONTENTION_TYPES.higher_level_review)
         )
       )
     end

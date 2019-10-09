@@ -112,7 +112,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def build_contentions(records_ready_for_contentions)
     records_ready_for_contentions.map do |issue|
-      contention = { description: issue.contention_text }
+      contention = { description: issue.contention_text, contention_type: issue.contention_type }
       issue.try(:special_issues) && contention[:special_issues] = issue.special_issues
 
       if FeatureToggle.enabled?(:send_original_dta_contentions, user: RequestStore.store[:current_user])
@@ -159,11 +159,11 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def rating?
-    RequestIssue::END_PRODUCT_CODES.find_all_values_for(:rating).include?(code)
+    EndProductCodeSelector::END_PRODUCT_CODES.find_all_values_for(:rating).include?(code)
   end
 
   def nonrating?
-    RequestIssue::END_PRODUCT_CODES.find_all_values_for(:nonrating).include?(code)
+    EndProductCodeSelector::END_PRODUCT_CODES.find_all_values_for(:nonrating).include?(code)
   end
 
   # Find an end product that has the traits of the end product that should be created.
@@ -483,7 +483,8 @@ class EndProductEstablishment < ApplicationRecord
       veteran_file_number: veteran_file_number,
       claim_id: reference_id,
       contentions: contentions,
-      user: user
+      user: user,
+      claim_date: claim_date
     )
   end
 

@@ -51,11 +51,11 @@ class Distribution < ApplicationRecord
     raise error
   end
 
-  private
-
-  def attributes
-    { 'id': nil, 'status': nil, 'created_at': nil, 'updated_at': nil, 'distributed_cases_count': nil }
+  def distributed_cases_count
+    (status == "completed") ? distributed_cases.count : 0
   end
+
+  private
 
   def mark_as_pending
     self.status = "pending"
@@ -122,9 +122,5 @@ class Distribution < ApplicationRecord
 
   def total_batch_size
     JudgeTeam.includes(:non_admin_users).flat_map(&:non_admin_users).size * CASES_PER_ATTORNEY
-  end
-
-  def distributed_cases_count
-    (status == "completed") ? distributed_cases.count : 0
   end
 end

@@ -376,8 +376,9 @@ describe ClaimReview, :postgres do
     end
   end
 
-  context "#create_decision_review_task_if_required!" do
-    subject { claim_review.create_decision_review_task_if_required! }
+  context "#create_business_line_tasks!" do
+    subject { claim_review.create_business_line_tasks! }
+    let!(:request_issue) { create(:request_issue, decision_review: claim_review) }
 
     context "when processed in caseflow" do
       let(:benefit_type) { "vha" }
@@ -394,9 +395,17 @@ describe ClaimReview, :postgres do
 
       context "when a task already exists" do
         before do
-          claim_review.create_decision_review_task_if_required!
+          claim_review.create_business_line_tasks!
           claim_review.reload
         end
+
+        it "does nothing" do
+          expect { subject }.to_not change(DecisionReviewTask, :count)
+        end
+      end
+
+      context "when the review only has ineligible issues" do
+        let!(:request_issue) { create(:request_issue, :ineligible, decision_review: claim_review) }
 
         it "does nothing" do
           expect { subject }.to_not change(DecisionReviewTask, :count)
@@ -485,12 +494,33 @@ describe ClaimReview, :postgres do
     context "when the issue is a correction to a dta decision" do
       before do
         allow(RequestIssueCorrectionCleaner).to receive(:new).with(correction_request_issue).and_call_original
-        claim_review.create_remand_supplemental_claims!
+        dr_remanded.create_remand_supplemental_claims!
       end
 
-      let!(:remand_decision) { create(:decision_issue, decision_review: claim_review, disposition: "DTA Error") }
+      let(:claim_review) do
+        create(
+          :supplemental_claim,
+          veteran_file_number: veteran_file_number,
+          benefit_type: benefit_type,
+          decision_review_remanded: dr_remanded
+        )
+      end
+      let(:dr_remanded) do
+        create(
+          :higher_level_review,
+          veteran_file_number: veteran_file_number,
+          benefit_type: benefit_type,
+          number_of_claimants: 1
+        )
+      end
+      let!(:remand_decision) { create(:decision_issue, decision_review: dr_remanded, disposition: "DTA Error") }
       let(:correction_request_issue) do
-        build(:request_issue, correction_type: "control", contested_decision_issue: remand_decision)
+        build(
+          :request_issue,
+          decision_review: claim_review,
+          correction_type: "control",
+          contested_decision_issue: remand_decision
+        )
       end
       let(:issues) { [correction_request_issue] }
 
@@ -565,11 +595,15 @@ describe ClaimReview, :postgres do
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.last.reference_id,
           contentions: array_including(
-            { description: "another decision text" },
-            { description: "foobar was denied." },
-            description: "decision text"
+            { description: "another decision text",
+              contention_type: Constants.CONTENTION_TYPES.higher_level_review },
+            { description: "foobar was denied.",
+              contention_type: Constants.CONTENTION_TYPES.higher_level_review },
+            description: "decision text",
+            contention_type: Constants.CONTENTION_TYPES.higher_level_review
           ),
-          user: user
+          user: user,
+          claim_date: claim_review.receipt_date.to_date
         )
 
         expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
@@ -658,10 +692,13 @@ describe ClaimReview, :postgres do
               veteran_file_number: veteran_file_number,
               claim_id: claim_review.end_product_establishments.last.reference_id,
               contentions: containing_exactly(
-                { description: "another decision text" },
-                description: "foobar was denied."
+                { description: "another decision text",
+                  contention_type: Constants.CONTENTION_TYPES.higher_level_review },
+                description: "foobar was denied.",
+                contention_type: Constants.CONTENTION_TYPES.higher_level_review
               ),
-              user: user
+              user: user,
+              claim_date: claim_review.receipt_date.to_date
             )
 
             expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
@@ -864,8 +901,10 @@ describe ClaimReview, :postgres do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRR").reference_id,
-          contentions: [{ description: "decision text" }],
-          user: user
+          contentions: array_including(description: "decision text",
+                                       contention_type: Constants.CONTENTION_TYPES.higher_level_review),
+          user: user,
+          claim_date: claim_review.receipt_date.to_date
         )
 
         expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
@@ -899,8 +938,10 @@ describe ClaimReview, :postgres do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRNR").reference_id,
-          contentions: [{ description: "surgery - Issue text" }],
-          user: user
+          contentions: array_including(description: "surgery - Issue text",
+                                       contention_type: Constants.CONTENTION_TYPES.higher_level_review),
+          user: user,
+          claim_date: claim_review.receipt_date.to_date
         )
 
         expect(claim_review.end_product_establishments.first).to be_committed

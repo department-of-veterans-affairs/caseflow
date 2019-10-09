@@ -58,6 +58,27 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
     end
   end
 
+  context "Acting judge can see team and other users load" do
+    let!(:vacols_user_one) { create(:staff, :attorney_judge_role, user: judge_one.user) }
+
+    scenario "visits 'Assign' view" do
+      visit "/queue"
+
+      find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+      expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
+      click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+
+      expect(page).to have_content("Cases to Assign")
+      expect(page).to have_content("Moe Syzlak")
+      expect(page).to have_content("Alice Macgyvertwo")
+
+      safe_click ".Select"
+      click_dropdown(text: "Other")
+      safe_click ".dropdown-Other"
+      expect(page.find(".dropdown-Other")).to have_content judge_two.user.full_name
+    end
+  end
+
   context "Can move appeals between attorneys" do
     scenario "submits draft decision" do
       judge_task_one = create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)

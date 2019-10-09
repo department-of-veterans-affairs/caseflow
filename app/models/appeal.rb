@@ -9,6 +9,7 @@ class Appeal < DecisionReview
   include BgsService
   include Taskable
   include PrintsTaskTree
+  include HasTaskHistory
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -292,7 +293,7 @@ class Appeal < DecisionReview
 
   def create_tasks_on_intake_success!
     InitialTasksFactory.new(self).create_root_and_sub_tasks!
-    create_business_line_tasks if request_issues.any?(&:requires_record_request_task?)
+    create_business_line_tasks!
     maybe_create_translation_task
   end
 
@@ -629,7 +630,17 @@ class Appeal < DecisionReview
   end
 
   def address
-    @address ||= Address.new(appellant.address) if appellant.address.present?
+    if appellant.address.present?
+      @address ||= Address.new(
+        address_line_1: appellant.address_line_1,
+        address_line_2: appellant.address_line_2,
+        address_line_3: appellant.address_line_3,
+        city: appellant.city,
+        country: appellant.country,
+        state: appellant.state,
+        zip: appellant.zip
+      )
+    end
   end
 
   # we always want to show ratings on intake
@@ -647,6 +658,26 @@ class Appeal < DecisionReview
       end
   end
 
+  def create_business_line_tasks!
+    issues_needing_tasks = request_issues.select(&:requires_record_request_task?)
+    business_lines = issues_needing_tasks.map(&:business_line).uniq
+
+    business_lines.each do |business_line|
+      next if tasks.any? { |task| task.is_a?(VeteranRecordRequest) && task.assigned_to == business_line }
+
+      VeteranRecordRequest.create!(
+        parent: root_task,
+        appeal: self,
+        assigned_at: Time.zone.now,
+        assigned_to: business_line
+      )
+    end
+  end
+
+  def stuck?
+    AppealsWithNoTasksOrAllTasksOnHoldQuery.new.ama_appeal_stuck?(self)
+  end
+
   private
 
   def most_recently_assigned_to_label(tasks)
@@ -662,17 +693,5 @@ class Appeal < DecisionReview
   ensure
     distribution_task = tasks.open.find_by(type: DistributionTask.name)
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
-  end
-
-  def create_business_line_tasks
-    request_issues.select(&:requires_record_request_task?).each do |req_issue|
-      business_line = req_issue.business_line
-      VeteranRecordRequest.create!(
-        parent: root_task,
-        appeal: self,
-        assigned_at: Time.zone.now,
-        assigned_to: business_line
-      )
-    end
   end
 end
