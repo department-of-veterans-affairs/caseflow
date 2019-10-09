@@ -2,7 +2,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import _ from 'lodash';
 import moment from 'moment';
 import { connect } from 'react-redux';
@@ -138,7 +137,7 @@ class AddIssuesPage extends React.Component {
   }
 
   render() {
-    const { intakeForms, formType, veteran, featureToggles, editPage, addingIssue } = this.props;
+    const { intakeForms, formType, veteran, featureToggles, editPage, addingIssue, userCanWithdrawIssues } = this.props;
     const intakeData = intakeForms[formType];
     const { useAmaActivationDate } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
@@ -250,6 +249,8 @@ class AddIssuesPage extends React.Component {
             intakeData={intakeData}
             formType={formType}
             featureToggles={featureToggles}
+            userCanWithdrawIssues={userCanWithdrawIssues}
+            editPage={editPage}
           />
         )
       });
@@ -265,6 +266,8 @@ class AddIssuesPage extends React.Component {
             intakeData={intakeData}
             formType={formType}
             featureToggles={featureToggles}
+            userCanWithdrawIssues={userCanWithdrawIssues}
+            editPage={editPage}
           />
         )
       });
@@ -365,7 +368,8 @@ AddIssuesPage.propTypes = {
   toggleUntimelyExemptionModal: PropTypes.func,
   undoCorrection: PropTypes.func,
   veteran: PropTypes.object,
-  withdrawIssue: PropTypes.func
+  withdrawIssue: PropTypes.func,
+  userCanWithdrawIssues: PropTypes.bool
 };
 
 export const IntakeAddIssuesPage = connect(
@@ -412,7 +416,8 @@ export const EditAddIssuesPage = connect(
     featureToggles: state.featureToggles,
     editPage: true,
     activeIssue: state.activeIssue,
-    addingIssue: state.addingIssue
+    addingIssue: state.addingIssue,
+    userCanWithdrawIssues: state.userCanWithdrawIssues
   }),
   (dispatch) =>
     bindActionCreators(
