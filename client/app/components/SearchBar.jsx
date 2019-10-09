@@ -125,7 +125,7 @@ export default class SearchBar extends React.Component {
 
     return <span className={searchTypeClasses} role="search">
       <label className={title ? label : 'usa-sr-only'} htmlFor={id}>
-        {title || 'Search'}
+        {title || ''}
       </label>
       <input
         ref={this.setInputRef}
