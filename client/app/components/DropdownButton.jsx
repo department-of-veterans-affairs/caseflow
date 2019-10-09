@@ -55,7 +55,7 @@ export default class DropdownButton extends React.Component {
   };
 
   dropdownLink = (list) => {
-    return <Link className="usa-button-secondary usa-button">
+    return <Link className="usa-button-secondary usa-button"
       href={list.target}>{list.title}</Link>;
   }
 
@@ -69,9 +69,9 @@ export default class DropdownButton extends React.Component {
   }
 
   dropdownButtonList = () => {
-    return <ul className="cf-dropdown-menu active" {...dropdownList} >
+    return <ul className="cf-dropdown-menu active" {...dropdownList}>
       {this.props.lists.map((list, index) =>
-        <li key={index} role="none">
+        <li key={index}>
           {list.target ? this.dropdownLink(list) : this.dropdownAction(list)}
         </li>)}
     </ul>;
@@ -87,8 +87,8 @@ export default class DropdownButton extends React.Component {
         onClick={this.onMenuClick}
         className="cf-dropdown-trigger usa-button usa-button-secondary">
         {label}
-        {this.state.menu && this.dropdownButtonList() }
       </button>
+      {this.state.menu && this.dropdownButtonList() }
     </div>;
   }
 }
