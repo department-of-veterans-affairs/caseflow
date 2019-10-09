@@ -48,8 +48,10 @@ export default class UserManagement extends React.PureComponent {
 
   dropdownOptions = () => {
     return this.state.users.map((user) => {
-      return { label: this.formatName(user),
-        value: user };
+      return {
+        label: this.formatName(user),
+        value: user
+      };
     });
   };
 
@@ -59,8 +61,10 @@ export default class UserManagement extends React.PureComponent {
 
   toggleUserStatus = (user, status) => () => {
     this.setState({
-      changingActiveStatus: { ...this.state.changingActiveStatus,
-        [user.id]: true }
+      changingActiveStatus: {
+        ...this.state.changingActiveStatus,
+        [user.id]: true
+      }
     });
 
     const payload = { data: { status } };
@@ -73,29 +77,31 @@ export default class UserManagement extends React.PureComponent {
         return (existingUser.id === updatedUser.id) ? updatedUser : existingUser;
       });
 
+      const successAlert = status === USER_STATUSES.inactive ?
+        {
+          title: sprintf(COPY.USER_MANAGEMENT_INACTIVE_SUCCESS_TITLE, this.formatName(user)),
+          body: sprintf(COPY.USER_MANAGEMENT_INACTIVE_SUCCESS_BODY, this.formatName(user))
+        } : {
+          title: sprintf(COPY.USER_MANAGEMENT_ACTIVE_SUCCESS_TITLE, this.formatName(user)),
+          body: sprintf(COPY.USER_MANAGEMENT_ACTIVE_SUCCESS_BODY, this.formatName(user))
+        };
+
       this.setState({
         users: updatedUserList,
         selectedUser: updatedUser,
-        changingActiveStatus: { ...this.state.changingActiveStatus,
-          [user.id]: false },
+        changingActiveStatus: {
+          ...this.state.changingActiveStatus,
+          [user.id]: false
+        },
         error: null,
-        success: {
-          title: sprintf(
-            status === USER_STATUSES.inactive ?
-              COPY.USER_MANAGEMENT_INACTIVE_SUCCESS_TITLE :
-              COPY.USER_MANAGEMENT_ACTIVE_SUCCESS_TITLE,
-            this.formatName(user)),
-          body: sprintf(
-            status === USER_STATUSES.inactive ?
-              COPY.USER_MANAGEMENT_INACTIVE_SUCCESS_BODY :
-              COPY.USER_MANAGEMENT_ACTIVE_SUCCESS_BODY,
-            this.formatName(user))
-        }
+        success: successAlert
       });
     }, (error) => {
       this.setState({
-        changingActiveStatus: { ...this.state.changingActiveStatus,
-          [user.id]: false },
+        changingActiveStatus: {
+          ...this.state.changingActiveStatus,
+          [user.id]: false
+        },
         success: null,
         error: {
           title: COPY.USER_MANAGEMENT_STATUS_CHANGE_ERROR_TITLE,
@@ -105,9 +111,7 @@ export default class UserManagement extends React.PureComponent {
     });
   }
 
-  selectUser = (user) => {
-    this.setState({ selectedUser: user.value });
-  }
+  selectUser = (user) => this.setState({ selectedUser: user.value });
 
   selectedUserDisplay = (user) => {
     return <span>{this.formatName(user)} &nbsp;
@@ -148,9 +152,7 @@ export default class UserManagement extends React.PureComponent {
       spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
       message: COPY.USER_MANAGEMENT_INITIAL_LOADING_MESSAGE
     }}
-    failStatusMessageProps={{
-      title: COPY.USER_MANAGEMENT_INITIAL_ERROR_TITLE
-    }}>
+    failStatusMessageProps={{ title: COPY.USER_MANAGEMENT_INITIAL_ERROR_TITLE }}>
     <AppSegment filledBackground>
       { this.state.error && <Alert title={this.state.error.title} type="error">{this.state.error.body}</Alert> }
       { this.state.success && <Alert title={this.state.success.title} type="success">{this.state.success.body}</Alert> }
