@@ -1027,6 +1027,7 @@ paths:
                     items:
                       anyOf:
                         - type: object
+                          description: "A contestable legacy issue (to contest this, you include it as a RequestIssue when creating a HigherLevelReview, SupplementalClaim, or Appeal)"
                           properties:
                             type:
                               type: string
@@ -1063,6 +1064,7 @@ paths:
                                   nullable: true
                                   description: "Note"
                         - type: object
+                          description: "A contestable non-legacy issue (to contest this, you include it as a RequestIssue when creating a HigherLevelReview, SupplementalClaim, or Appeal)"
                           properties:
                             type:
                               type: string
