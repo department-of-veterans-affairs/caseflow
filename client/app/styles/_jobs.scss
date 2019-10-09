@@ -13,3 +13,33 @@
 .cf-asyncable-jobs-table {
   font-size: 90%;
 }
+
+.job-notes {
+  margin-top: 16px;
+
+  .job-note {
+    border-top: 1px solid $color-gray-light;
+    padding: 16px 0;
+
+    .job-note-time {
+      font-style: italic;
+      font-size: 95%;
+    }
+
+    .job-note-user {
+      margin-left: 1rem;
+      font-style: italic;
+      font-size: 95%;
+    }
+
+    .job-note-note {
+      white-space: pre;
+    }
+  }
+
+  .cf-form-checkboxes,
+  .cf-form-checkbox {
+    display: inline-block;
+    margin-right: 1rem;
+  }
+}
