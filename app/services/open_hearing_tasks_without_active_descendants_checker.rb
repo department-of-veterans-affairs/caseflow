@@ -23,6 +23,6 @@ class OpenHearingTasksWithoutActiveDescendantsChecker < DataIntegrityChecker
 
     add_to_report "Found #{count} open #{'HearingTask'.pluralize(count)} with no active descendant tasks."
     add_to_report "The #{'hearing'.pluralize(count)} may not progress without manual intervention."
-    add_to_report "HearingTask.where(id: #{ids})"
+    add_to_report "`HearingTask.where(id: #{ids})`"
   end
 end
