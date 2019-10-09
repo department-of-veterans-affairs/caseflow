@@ -236,7 +236,7 @@ export const daysOnHoldColumn = (requireDasRecord) => {
 export const completedToNameColumn = () => {
   return {
     header: COPY.CASE_LIST_TABLE_COMPLETED_BACK_TO_NAME_COLUMN_TITLE,
-    name: QUEUE_CONFIG.TASK_ASSIGNER_COLUMN,
+    name: QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name,
     backendCanSort: true,
     valueFunction: (task) =>
       task.assignedBy ? `${task.assignedBy.firstName} ${task.assignedBy.lastName}` : null,

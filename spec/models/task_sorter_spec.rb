@@ -121,7 +121,7 @@ describe TaskSorter, :all_dbs do
       end
 
       context "when sorting by assigner" do
-        let(:column_name) { Constants.QUEUE_CONFIG.TASK_ASSIGNER_COLUMN }
+        let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name }
 
         before do
           tasks.each do |task|
