@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import { cavcUrl } from '.';
+
 import Modal from '../components/Modal';
 import COPY from '../../COPY.json';
 import RadioField from '../components/RadioField';
-import CopyTextButton from '../components/CopyTextButton';
+import { CavcLinkInfo } from './CavcLinkInfo';
+
 
 const title = COPY.PULAC_CERULLO_REMINDER_MODAL_TITLE;
 const radioLabel = COPY.PULAC_CERULLO_REMINDER_MODAL_LABEL;
@@ -50,10 +51,7 @@ export const PulacCerulloReminderModal = ({ onSubmit, onCancel }) => {
       <p>
         Before sending this case to Dispatch, be sure there is no Notice of Appeal (NOA) on file at the CAVC website.
       </p>
-      <p>
-        Copy and paste the CAVC webiste link into Internet Explorer{' '}
-        <CopyTextButton text={new URL(cavcUrl).hostname} textToCopy={cavcUrl} label="uscourts.cavc.gov" />
-      </p>
+      <CavcLinkInfo />
 
       <RadioField
         name="hasCavc"

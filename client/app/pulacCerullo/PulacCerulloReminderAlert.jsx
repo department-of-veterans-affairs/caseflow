@@ -1,7 +1,7 @@
 import React from 'react';
 import Alert from '../components/Alert';
-import CopyTextButton from '../components/CopyTextButton';
-import { chairmanMemoUrl, cavcUrl } from '.';
+import { chairmanMemoUrl } from '.';
+import { CavcLinkInfo } from './CavcLinkInfo';
 
 export const PulacCerulloReminderAlert = () => {
   return (
@@ -20,10 +20,7 @@ export const PulacCerulloReminderAlert = () => {
         See <a href={chairmanMemoUrl}>Chairman's Memorandum No. 01-10-18</a> for more information about how to conduct
         NOA checks.
       </p>
-      <p>
-        Copy and paste the CAVC webiste link into Internet Explorer{' '}
-        <CopyTextButton text={new URL(cavcUrl).hostname} textToCopy={cavcUrl} label="uscourts.cavc.gov" />
-      </p>
+      <CavcLinkInfo />
     </Alert>
   );
 };
