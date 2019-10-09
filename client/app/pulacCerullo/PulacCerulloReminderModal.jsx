@@ -10,12 +10,12 @@ import CopyTextButton from '../components/CopyTextButton';
 const title = 'Check CAVC for Conflict of Jurisdiction';
 const radioOpts = [
   {
-    displayText: 'Yes, assign to Litigation Support to determine jurisdiction',
-    value: 'yes'
+    displayText: 'No, continue sending to Dispatch',
+    value: 'no'
   },
   {
-    displayText: 'No, continue sending for Dispatch',
-    value: 'no'
+    displayText: 'Yes, notify Litigation Support of jurisdictional conflict',
+    value: 'yes'
   }
 ];
 
@@ -25,7 +25,7 @@ export const PulacCerulloReminderModal = ({ appellantName, onSubmit, onCancel })
   const cancelHandler = () => onCancel();
   const submitHandler = () => {
     //   Should we perform / return separate actions? Likely just return the selection
-    onSubmit({ hasCavc });
+    onSubmit({ hasCavc: hasCavc === 'yes' });
   };
 
   return (
@@ -61,14 +61,7 @@ export const PulacCerulloReminderModal = ({ appellantName, onSubmit, onCancel })
           </div>
         )}
       </p>
-      <RadioField
-        name=""
-        options={radioOpts}
-        value={hasCavc}
-        onChange={(val) => setHasCavc(val)}
-        errorMessage="Field is required"
-        required
-      />
+      <RadioField name="" options={radioOpts} value={hasCavc} onChange={(val) => setHasCavc(val)} />
     </Modal>
   );
 };
