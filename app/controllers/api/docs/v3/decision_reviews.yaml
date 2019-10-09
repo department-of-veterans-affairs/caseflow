@@ -1083,7 +1083,7 @@ paths:
                                 titleOfActiveReview:
                                   type: string
                                   nullable: true
-                                  description: "Title of active review"
+                                  description: "Title of DecisionReview that this issue is still active on"
                                 sourceReviewType:
                                   type: string
                                   nullable: true
