@@ -425,12 +425,9 @@ export const initialAssignTasksToUser = ({
     then((resp) => resp.body).
     then((resp) => {
       if (oldTask.appealType === 'Appeal') {
-        const amaTasks = resp.tasks.data;
-
-        dispatch(onReceiveAmaTasks(amaTasks));
+        dispatch(onReceiveAmaTasks(resp.tasks.data));
       } else {
-        const task = resp.task.data;
-        const allTasks = prepareAllTasksForStore([task]);
+        const allTasks = prepareAllTasksForStore([resp.task.data]);
 
         dispatch(onReceiveTasks({
           tasks: allTasks.tasks,
