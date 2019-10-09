@@ -9,13 +9,22 @@ class JudgeLegacyDecisionReviewTask < JudgeLegacyTask
     end
   end
 
-  def available_actions(current_user, _role)
-    return [] if current_user != assigned_to || !current_user.judge_in_vacols?
+  def available_actions(current_user, role)
+    #return [] if current_user != assigned_to || !current_user.judge_in_vacols?
+    return [] if role != "judge" || current_user != assigned_to
 
-    [
+
+    actions = [
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
       review_action
     ]
+
+    byebug
+    if appeal.notice_of_death_date
+      actions << Constants.TASK_ACTIONS.DEATH_DISMISSAL.to_h
+    end
+
+    actions
   end
 
   def label

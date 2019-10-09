@@ -2,6 +2,11 @@
 
 class AttorneyLegacyTask < LegacyTask
   def available_actions(current_user, role)
+    # Assigning judge can invoke death dismissal
+    if role == "judge" && current_user.id == assigned_by.pg_id && appeal.notice_of_death_date
+      return [ Constants.TASK_ACTIONS.DEATH_DISMISSAL.to_h ] 
+    end
+
     return [] if role != "attorney" || current_user != assigned_to
 
     # AttorneyLegacyTasks are drawn from the VACOLS.BRIEFF table but should not be actionable unless there is a case
