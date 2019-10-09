@@ -235,7 +235,7 @@ describe TaskSorter, :all_dbs do
       end
 
       context "when sorting by assigned to column" do
-        let(:column_name) { Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN }
+        let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name }
         let(:tasks) { Task.where(id: create_list(:generic_task, 5).pluck(:id)) }
 
         before do

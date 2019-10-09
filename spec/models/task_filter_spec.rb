@@ -319,7 +319,7 @@ describe TaskFilter, :postgres do
       end
 
       context "when filter includes only AOD" do
-        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN}&val=is_aod"] }
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=is_aod"] }
 
         it "returns tasks with all case types that are also AOD" do
           expect(subject.map(&:id)).to contain_exactly(
@@ -361,7 +361,7 @@ describe TaskFilter, :postgres do
       end
 
       context "when filter_params includes a non existent user" do
-        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN}&val=NON_EXISTANT_USER"] }
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name}&val=NON_EXISTANT_USER"] }
 
         it "returns no tasks" do
           expect(subject).to match_array([])
@@ -369,7 +369,7 @@ describe TaskFilter, :postgres do
       end
 
       context "when filter includes the first user's css_id" do
-        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN}&val=#{users.first.css_id}"] }
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name}&val=#{users.first.css_id}"] }
 
         it "returns only tasks where the closest regional office is Boston" do
           expect(subject.map(&:id)).to match_array(first_user_tasks.map(&:id))
@@ -378,7 +378,7 @@ describe TaskFilter, :postgres do
 
       context "when filter includes Boston and Washington" do
         let(:filter_params) do
-          ["col=#{Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN}&val=#{users.first.css_id},#{users.second.css_id}"]
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name}&val=#{users.first.css_id},#{users.second.css_id}"]
         end
 
         it "returns tasks where the closest regional office is Boston or Washington" do
