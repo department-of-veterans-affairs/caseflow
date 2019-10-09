@@ -146,8 +146,8 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
     context "when the requestor is a BVA admin" do
       before { allow_any_instance_of(Bva).to receive(:user_has_access?).and_return(true) }
 
-      context "when no css_id parameters is provided" do
-        it "raises an error" do
+      context "when no css_id parameter is provided" do
+        it "returns an error" do
           subject
 
           expect(response.status).to eq(400)
@@ -156,18 +156,18 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
         end
       end
 
-      context "when an incorrect css_id parameters is provided" do
+      context "when an incorrect css_id parameter is provided" do
         let(:css_id) { "0" }
         let(:params) { { css_id: css_id } }
 
-        it "raises an error" do
+        it "returns an error" do
           subject
 
           expect(response.status).to eq(404)
         end
       end
 
-      context "when valid css_id parameters is provided" do
+      context "when a valid css_id parameter is provided" do
         let(:params) { { css_id: user.css_id } }
 
         it "returns a valid response with the expected user" do
