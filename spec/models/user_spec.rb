@@ -612,6 +612,31 @@ describe User, :all_dbs do
     end
   end
 
+  describe ".can_withdraw_issues?" do
+    let(:user) { create(:user) }
+
+    subject { user.can_withdraw_issues? }
+
+    context "when the current user is not a member of Case-review Organization" do
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+      context "when the user is at a regional office" do
+        before { allow(user).to receive(:regional_office).and_return("RO85") }
+        it "returns true" do
+          expect(subject).to eq(true)
+        end
+      end
+    end
+
+    context "when the user is a member of Case review Organization" do
+      before { OrganizationsUser.add_user_to_organization(user, BvaIntake.singleton) }
+      it "returns true" do
+        expect(subject).to eq(true)
+      end
+    end
+  end
+
   describe "when the status is updated" do
     let(:user) { create(:user) }
 
