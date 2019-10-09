@@ -14,8 +14,8 @@ class WorkQueue::TaskColumnSerializer
 
   attribute :docket_number do |object, params|
     columns = [
-      Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
-      Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
+      Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name
     ]
 
     if serialize_attribute?(params, columns)
@@ -25,9 +25,9 @@ class WorkQueue::TaskColumnSerializer
 
   attribute :external_appeal_id do |object, params|
     columns = [
-      Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
-      Constants.QUEUE_CONFIG.HEARING_BADGE_COLUMN,
-      Constants.QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN
+      Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
+      Constants.QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name
     ]
 
     if serialize_attribute?(params, columns)
@@ -37,8 +37,8 @@ class WorkQueue::TaskColumnSerializer
 
   attribute :paper_case do |object, params|
     columns = [
-      Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
-      Constants.QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN
+      Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name
     ]
 
     if serialize_attribute?(params, columns)
@@ -47,7 +47,7 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :veteran_full_name do |object, params|
-    columns = [Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN]
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name]
 
     if serialize_attribute?(params, columns)
       object.appeal.veteran_full_name
@@ -55,7 +55,7 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :veteran_file_number do |object, params|
-    columns = [Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN]
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name]
 
     if serialize_attribute?(params, columns)
       object.appeal.veteran_file_number
@@ -63,7 +63,7 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :issue_count do |object, params|
-    columns = [Constants.QUEUE_CONFIG.ISSUE_COUNT_COLUMN]
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name]
 
     if serialize_attribute?(params, columns)
       object.appeal.number_of_issues
@@ -71,7 +71,7 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :aod do |object, params|
-    columns = [Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN]
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name]
 
     if serialize_attribute?(params, columns)
       object.appeal.try(:advanced_on_docket?)
@@ -79,7 +79,7 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :case_type do |object, params|
-    columns = [Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN]
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name]
 
     if serialize_attribute?(params, columns)
       object.appeal.try(:type)
@@ -87,7 +87,7 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :label do |object, params|
-    columns = [Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN]
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]
 
     if serialize_attribute?(params, columns)
       object.label
@@ -95,7 +95,7 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :placed_on_hold_at do |object, params|
-    columns = [Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN]
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]
 
     if serialize_attribute?(params, columns)
       object.calculated_placed_on_hold_at
@@ -103,7 +103,7 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :on_hold_duration do |object, params|
-    columns = [Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN]
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]
 
     if serialize_attribute?(params, columns)
       object.calculated_on_hold_duration
@@ -111,7 +111,7 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :status do |object, params|
-    columns = [Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN]
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]
 
     if serialize_attribute?(params, columns)
       object.status
@@ -119,7 +119,7 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :assigned_at do |object, params|
-    columns = [Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN]
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]
 
     if serialize_attribute?(params, columns)
       object.assigned_at
@@ -127,7 +127,7 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :closest_regional_office do |object, params|
-    columns = [Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN]
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name]
 
     if serialize_attribute?(params, columns)
       object.appeal.closest_regional_office && RegionalOffice.find!(object.appeal.closest_regional_office)
@@ -135,7 +135,7 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :assigned_to do |object, params|
-    columns = [Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN]
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]
 
     if serialize_attribute?(params, columns)
       {
