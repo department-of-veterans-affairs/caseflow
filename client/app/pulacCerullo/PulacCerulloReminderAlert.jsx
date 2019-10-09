@@ -17,8 +17,11 @@ export const PulacCerulloReminderAlert = () => {
         </i>
       </p>
       <p>
-        See <a href={chairmanMemoUrl}>Chairman's Memorandum No. 01-10-18</a> for more information about how to conduct
-        NOA checks.
+        See{' '}
+        <a href={chairmanMemoUrl} target="_blank" rel="noopener noreferrer">
+          Chairman's Memorandum No. 01-10-18
+        </a>{' '}
+        for more information about how to conduct NOA checks.
       </p>
       <CavcLinkInfo />
     </Alert>
