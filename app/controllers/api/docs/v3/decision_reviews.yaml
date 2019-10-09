@@ -407,7 +407,7 @@ paths:
 #                   "errors": [
 #                     {
 #                       "status": "422",
-#                       "title":  "Issue is ineligible because it has a prior decision date that’s older than 1 year",
+#                       "title":  "Issue is ineligible because it has a prior decision date that’s older than 372 days",
 #                       "code":  "untimely"
 #                     }
 #                   ]
@@ -1090,7 +1090,7 @@ paths:
                                   description: "The type of DecisionReview (HigherLevelReview, SupplementalClaim, Appeal) the issue was last decided on (if any)"
                                 timely:
                                   type: boolean
-                                  description: "An issue is timely if it has been less than 372 days since its receipt date. Untimely issues (timely == false), must accompanied by a timeliness exemption"
+                                  description: "An issue is timely if the receipt date is within 372 dates of the decision date."
                                 latestIssuesInChain:
                                   type: array
                                   items:
