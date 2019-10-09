@@ -60,7 +60,7 @@ export default class DropdownButton extends React.Component {
   }
 
   dropdownAction = (list) => {
-    return <a href="#" role="menuitem" onClick={() => {
+    return <a href="#" onClick={() => {
       if (this.props.onClick) {
         this.props.onClick(list.value);
       }
@@ -69,7 +69,7 @@ export default class DropdownButton extends React.Component {
   }
 
   dropdownButtonList = () => {
-    return <ul className="cf-dropdown-menu active" role="menu" {...dropdownList} >
+    return <ul className="cf-dropdown-menu active" {...dropdownList} >
       {this.props.lists.map((list, index) =>
         <li key={index} role="none">
           {list.target ? this.dropdownLink(list) : this.dropdownAction(list)}
@@ -82,7 +82,7 @@ export default class DropdownButton extends React.Component {
 
     return <div className="cf-dropdown" ref={this.setWrapperRef} {...dropdownBtnContainer} >
       <button {...dropdownBtn}
-        aria-haspopup="menu"
+        aria-haspopup="true"
         aria-expanded="true"
         onClick={this.onMenuClick}
         className="cf-dropdown-trigger usa-button usa-button-secondary">
