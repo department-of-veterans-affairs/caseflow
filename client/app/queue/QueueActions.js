@@ -306,8 +306,8 @@ export const saveEditedAppealIssue = (appealId, attributes) => (dispatch) => {
   }
 };
 
-export const increaseTaskCountForAttorney = (attorney) => ({
-  type: ACTIONS.INCREASE_TASK_COUNT_FOR_ATTORNEY,
+export const incrementTaskCountForAttorney = (attorney) => ({
+  type: ACTIONS.INCREMENT_TASK_COUNT_FOR_ATTORNEY,
   payload: {
     attorney
   }
@@ -446,7 +446,7 @@ export const initialAssignTasksToUser = ({
         selected: false
       }));
 
-      dispatch(increaseTaskCountForAttorney({
+      dispatch(incrementTaskCountForAttorney({
         id: assigneeId
       }));
     });
