@@ -112,7 +112,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def build_contentions(records_ready_for_contentions)
     records_ready_for_contentions.map do |issue|
-      contention = { description: issue.contention_text }
+      contention = { description: issue.contention_text, contention_type: issue.contention_type }
       issue.try(:special_issues) && contention[:special_issues] = issue.special_issues
 
       if FeatureToggle.enabled?(:send_original_dta_contentions, user: RequestStore.store[:current_user])

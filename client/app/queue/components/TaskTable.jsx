@@ -112,7 +112,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   caseDueDateColumn = () => {
     return this.props.includeDueDate ? {
       header: COPY.CASE_LIST_TABLE_DAYS_WAITING_COLUMN_TITLE,
-      name: QUEUE_CONFIG.TASK_DUE_DATE_COLUMN,
+      name: QUEUE_CONFIG.COLUMNS.TASK_DUE_DATE.name,
       tooltip: <React.Fragment>Calendar days this case <br /> has been assigned to you</React.Fragment>,
       align: 'center',
       valueFunction: (task) => {
@@ -145,7 +145,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   completedDateColumn = () => {
     return this.props.includeCompletedDate ? {
       header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
-      name: QUEUE_CONFIG.TASK_CLOSED_DATE_COLUMN,
+      name: QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name,
       valueFunction: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null,
       backendCanSort: true,
       getSortValue: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null

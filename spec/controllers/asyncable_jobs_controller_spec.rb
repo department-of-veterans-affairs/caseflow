@@ -45,6 +45,20 @@ describe AsyncableJobsController, :postgres, type: :controller do
       end
     end
 
+    context "user is Global Admin" do
+      before do
+        allow(user).to receive(:admin?) { true }
+      end
+
+      let(:user) { create(:default_user) }
+
+      it "allows access" do
+        get :index
+
+        expect(response.status).to eq 200
+      end
+    end
+
     context "user is Admin Intake" do
       let(:user) { User.authenticate!(roles: ["Admin Intake"]) }
       let(:veteran) { create(:veteran) }
