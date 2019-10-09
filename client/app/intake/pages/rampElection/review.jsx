@@ -47,6 +47,7 @@ class Review extends React.PureComponent {
         value={receiptDate}
         onChange={this.props.setReceiptDate}
         errorMessage={receiptDateError}
+        type="date"
         strongLabel
       />
 

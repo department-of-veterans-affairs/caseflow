@@ -100,7 +100,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
   case 'appeal':
     return {
       docket_type: intakeData.docketType,
-      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      receipt_date: intakeData.receiptDate,
       claimant: intakeData.claimant,
       veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
       payee_code: intakeData.payeeCode,
@@ -108,7 +108,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
     };
   case 'supplementalClaim':
     return {
-      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      receipt_date: intakeData.receiptDate,
       benefit_type: intakeData.benefitType,
       claimant: intakeData.claimant,
       veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
@@ -120,7 +120,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
       informal_conference: intakeData.informalConference,
       same_office: intakeData.sameOffice,
       benefit_type: intakeData.benefitType,
-      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      receipt_date: intakeData.receiptDate,
       claimant: intakeData.claimant,
       veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
       payee_code: intakeData.payeeCode,
@@ -128,7 +128,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
     };
   default:
     return {
-      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      receipt_date: intakeData.receiptDate,
       claimant: intakeData.claimant,
       veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
       payee_code: intakeData.payeeCode,
