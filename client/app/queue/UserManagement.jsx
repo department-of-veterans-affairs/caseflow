@@ -7,9 +7,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import ApiUtil from '../util/ApiUtil';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
-import LoadingDataDisplay from '../components/LoadingDataDisplay';
 
-import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY.json';
 import USER_STATUSES from '../../constants/USER_STATUSES.json';
 import TextField from '../components/TextField';
@@ -17,13 +15,12 @@ import TextField from '../components/TextField';
 const buttonPaddingStyle = css({ margin: '0 1rem' });
 
 const textFieldStyling = css({
-  float: 'left',
   padding: '0 1.5rem',
   width: '50%'
 });
 
 const searchButtonStyling = css({
-  marginTop: '1rem',
+  marginBottom: '1rem',
   textAlign: 'right',
   width: '100%'
 });
@@ -130,17 +127,19 @@ export default class UserManagement extends React.PureComponent {
 
   mainContent = () => {
     return <React.Fragment>
-      <div {...textFieldStyling}>
-        <TextField
-          name="CSS ID"
-          value={this.state.css_id}
-          onChange={this.setCssId}
-        />
+      <div>
+        <div {...textFieldStyling}>
+          <TextField
+            name="CSS ID"
+            value={this.state.css_id}
+            onChange={this.setCssId}
+          />
+        </div>
+        <div {...searchButtonStyling}>
+          <Button name="Search" onClick={this.search} />
+        </div>
       </div>
-      <div {...searchButtonStyling}>
-        <Button name="Search" onClick={this.search} />
-      </div>
-      <span>{this.state.selectedUser && this.selectedUserDisplay(this.state.selectedUser)}</span>
+      <div>{this.state.selectedUser && this.selectedUserDisplay(this.state.selectedUser)}</div>
     </React.Fragment>;
   }
 

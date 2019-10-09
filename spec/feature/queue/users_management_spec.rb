@@ -52,10 +52,15 @@ RSpec.feature "Users management page", :postgres do
         expect(page).to have_content(COPY::USER_MANAGEMENT_PAGE_DESCRIPTION)
       end
 
-      step "user searches for and selects another user" do
-        page.find(".Select-control .Select-placeholder", text: COPY::USER_MANAGEMENT_SELECT_USER_DROPDOWN_TEXT).click
-        expect(page.find_all(".Select-option").length).to eq(3)
-        page.find(".Select-menu-outer .Select-option", text: active_user.css_id).click
+      step "user searches for a non existant user" do
+        fill_in "CSS ID", with: "0"
+        page.find("button", text: "Search").click
+        expect(page).to have_content(COPY::USER_MANAGEMENT_USER_SEARCH_ERROR_TITLE)
+      end
+
+      step "user searches for a non existant user" do
+        fill_in "CSS ID", with: active_user.css_id
+        page.find("button", text: "Search").click
         expect(page).to have_content("#{active_user.full_name} (#{active_user.css_id})")
       end
 
@@ -73,9 +78,8 @@ RSpec.feature "Users management page", :postgres do
       end
 
       step "user marks another user active" do
-        page.find(".Select-control .Select-placeholder", text: COPY::USER_MANAGEMENT_SELECT_USER_DROPDOWN_TEXT).click
-        expect(page.find_all(".Select-option").length).to be 3
-        page.find(".Select-menu-outer .Select-option", text: inactive_user.css_id).click
+        fill_in "CSS ID", with: inactive_user.css_id
+        page.find("button", text: "Search").click
         expect(page).to have_content("#{inactive_user.full_name} (#{inactive_user.css_id})")
         expect(page).to have_content(COPY::USER_MANAGEMENT_GIVE_USER_ACTIVE_STATUS_BUTTON_TEXT)
         page.find("button", text: COPY::USER_MANAGEMENT_GIVE_USER_ACTIVE_STATUS_BUTTON_TEXT).click
