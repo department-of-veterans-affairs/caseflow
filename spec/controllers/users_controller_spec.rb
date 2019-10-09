@@ -132,10 +132,10 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
 
     before { User.authenticate!(user: user) }
 
-    context "when the requestor is not a BVA admin" do
+    context "when the user is not a BVA admin" do
       before { allow_any_instance_of(Bva).to receive(:user_has_access?).and_return(false) }
 
-      it "redirects to unauthorized" do
+      it "redirects to /unauthorized" do
         subject
 
         expect(response.status).to eq(302)
@@ -143,7 +143,7 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
       end
     end
 
-    context "when the requestor is a BVA admin" do
+    context "when the user is a BVA admin" do
       before { allow_any_instance_of(Bva).to receive(:user_has_access?).and_return(true) }
 
       context "when no css_id parameter is provided" do
