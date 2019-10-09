@@ -55,9 +55,7 @@ export default class UserManagement extends React.PureComponent {
     });
   };
 
-  formatName = (user) => {
-    return `${user.full_name} (${user.css_id})`;
-  };
+  formatName = (user) => `${user.full_name} (${user.css_id})`;
 
   toggleUserStatus = (user, status) => () => {
     this.setState({
@@ -111,7 +109,7 @@ export default class UserManagement extends React.PureComponent {
     });
   }
 
-  selectUser = (user) => this.setState({ selectedUser: user.value });
+  setSelectedUser = (user) => this.setState({ selectedUser: user.value });
 
   selectedUserDisplay = (user) => {
     return <span>{this.formatName(user)} &nbsp;
@@ -140,7 +138,7 @@ export default class UserManagement extends React.PureComponent {
         name={COPY.USER_MANAGEMENT_SELECT_USER_DROPDOWN_TEXT}
         hideLabel
         value={null}
-        onChange={this.selectUser}
+        onChange={this.setSelectedUser}
         options={this.dropdownOptions()} />
       <span>{this.state.selectedUser && this.selectedUserDisplay(this.state.selectedUser)}</span>
     </React.Fragment>;
