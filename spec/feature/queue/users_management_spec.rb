@@ -54,7 +54,7 @@ RSpec.feature "Users management page", :postgres do
 
       step "user searches for and selects another user" do
         page.find(".Select-control .Select-placeholder", text: COPY::USER_MANAGEMENT_SELECT_USER_DROPDOWN_TEXT).click
-        expect(page.find_all(".Select-option").length).to eq 3
+        expect(page.find_all(".Select-option").length).to eq 3)
         page.find(".Select-menu-outer .Select-option", text: active_user.css_id).click
         expect(page).to have_content "#{active_user.full_name} (#{active_user.css_id})"
       end
@@ -69,7 +69,7 @@ RSpec.feature "Users management page", :postgres do
         expect(page).to have_content(
           format(COPY::USER_MANAGEMENT_INACTIVE_SUCCESS_BODY, "#{active_user.full_name} (#{active_user.css_id})")
         )
-        expect(inactive_user.reload.status).to eq Constants.USER_STATUSES.inactive
+        expect(inactive_user.reload.status).to eq Constants.USER_STATUSES.inactive)
       end
 
       step "user marks another user active" do
@@ -86,7 +86,7 @@ RSpec.feature "Users management page", :postgres do
         expect(page).to have_content(
           format(COPY::USER_MANAGEMENT_ACTIVE_SUCCESS_BODY, "#{inactive_user.full_name} (#{inactive_user.css_id})")
         )
-        expect(inactive_user.reload.status).to eq Constants.USER_STATUSES.active
+        expect(inactive_user.reload.status).to eq Constants.USER_STATUSES.active)
       end
     end
   end

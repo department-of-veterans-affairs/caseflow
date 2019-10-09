@@ -14,16 +14,16 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
     context "when role is passed" do
       it "should return a list of only judges", skip: "flake" do
         get :index, params: { role: "Judge" }
-        expect(response.status).to eq 200
+        expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
-        expect(response_body["judges"].size).to eq 3
+        expect(response_body["judges"].size).to eq(3)
       end
     end
 
     context "when role is not passed" do
       it "should return an empty hash" do
         get :index
-        expect(response.status).to eq 200
+        expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
         expect(response_body).to eq({})
       end
@@ -55,9 +55,9 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
 
       it "should return a list of attorneys on the judge's team" do
         subject
-        expect(response.status).to eq 200
+        expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
-        expect(response_body["attorneys"].size).to eq team_member_count
+        expect(response_body["attorneys"].size).to eq(team_member_count)
       end
     end
 
@@ -66,9 +66,9 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
 
       it "should return a list of all attorneys and judges", skip: "flake" do
         subject
-        expect(response.status).to eq 200
+        expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
-        expect(response_body["attorneys"].size).to eq team_member_count + solo_count + 2
+        expect(response_body["attorneys"].size).to eq(team_member_count + solo_count + 2)
       end
     end
   end
@@ -84,9 +84,9 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
     context "when role is passed" do
       it "should return a list of hearing coordinators" do
         get :index, params: { role: "HearingCoordinator" }
-        expect(response.status).to eq 200
+        expect(response.status).to eq(200
         response_body = JSON.parse(response.body)
-        expect(response_body["coordinators"].size).to eq 3
+        expect(response_body["coordinators"].size).to eq(3)
       end
     end
   end
@@ -97,9 +97,9 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
     context "when role is passed" do
       it "should return a list of judges", skip: "flake" do
         get :index, params: { role: "Judge" }
-        expect(response.status).to eq 200
+        expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
-        expect(response_body["judges"].size).to eq 3
+        expect(response_body["judges"].size).to eq(3)
       end
     end
   end
@@ -192,7 +192,7 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
       it "returns unauthorized" do
         patch :update, params: params
 
-        expect(response.status).to eq 302
+        expect(response.status).to eq(302)
         expect(response).to redirect_to("/unauthorized")
       end
     end
@@ -205,10 +205,10 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
           it "marks the user as inactive" do
             patch :update, params: params
 
-            expect(response.status).to eq 200
+            expect(response.status).to eq(200)
             response_body = JSON.parse(response.body)
-            expect(response_body.length).to eq 1
-            expect(response_body["user"]["status"]).to eq new_status
+            expect(response_body.length).to eq(1)
+            expect(response_body["user"]["status"]).to eq(new_status)
           end
         end
 
@@ -218,10 +218,10 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
           it "does not change the user status" do
             patch :update, params: params
 
-            expect(response.status).to eq 200
+            expect(response.status).to eq(200)
             response_body = JSON.parse(response.body)
-            expect(response_body.length).to eq 1
-            expect(response_body["user"]["status"]).to eq old_status
+            expect(response_body.length).to eq(1)
+            expect(response_body["user"]["status"]).to eq(old_status)
           end
         end
       end

@@ -210,7 +210,6 @@ Rails.application.routes.draw do
   resources :users, only: [:index, :update]
   resources :users, only: [:index] do
     get 'represented_organizations', on: :member
-    get 'represented_organizations', on: :member
   end
   get 'user', to: 'users#search_by_css_id'
   get 'user_info/represented_organizations'
