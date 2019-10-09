@@ -59,7 +59,7 @@ class TaskFilter
       "cached_appeal_attributes.docket_type"
     when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
       "cached_appeal_attributes.case_type"
-    when Constants.QUEUE_CONFIG.TASK_ASSIGNEE.name
+    when Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
       "cached_appeal_attributes.assignee_label"
     else
       fail(Caseflow::Error::InvalidTaskTableColumnFilter, column: column_name)
