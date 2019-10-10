@@ -137,13 +137,11 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     end
   end
 
-  let(:nonrating_issue_category) { "Military Retired Pay" }
-
   context "when there is a non-rating end product" do
     let!(:nonrating_request_issue) do
       RequestIssue.create!(
         decision_review: supplemental_claim,
-        nonrating_issue_category: nonrating_issue_category,
+        nonrating_issue_category: "Military Retired Pay",
         nonrating_issue_description: "nonrating description",
         benefit_type: benefit_type,
         decision_date: 1.month.ago,
