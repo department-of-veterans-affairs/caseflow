@@ -301,7 +301,7 @@ RSpec.feature "Task queue", :all_dbs do
     end
 
     def validate_pulac_cerullo_tasks_created(task_class, label)
-      validate_pulac_cerullo_tasks_created_setup(task_class, label)
+      validate_pulac_cerullo_tasks_created_setup(label)
 
       validate_pulac_cerullo_tasks_created_success_msg(label)
 
@@ -341,7 +341,7 @@ RSpec.feature "Task queue", :all_dbs do
       expect(pulac_cerullo_user_task.assigned_to).to eq(pulac_user)
     end
 
-    def validate_pulac_cerullo_tasks_created_setup(task_class, label)
+    def validate_pulac_cerullo_tasks_created_setup(label)
       visit "/queue/appeals/#{appeal.uuid}"
       find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
