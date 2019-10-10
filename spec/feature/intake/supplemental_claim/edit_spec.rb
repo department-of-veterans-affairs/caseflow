@@ -108,11 +108,42 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     end
   end
 
+  context "when the rating issue is locked" do
+    let(:url_path) { "supplemental_claims" }
+    let(:decision_review) { supplemental_claim }
+    let(:request_issue) do
+      create(
+        :request_issue,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: rating.profile_date,
+        decision_review: decision_review,
+        benefit_type: benefit_type,
+        contested_issue_description: "PTSD denied"
+      )
+    end
+
+    let(:request_issues) { [request_issue] }
+
+    before do
+      decision_review.reload.create_issues!(request_issues)
+      decision_review.establish!
+      decision_review.veteran.update!(participant_id: "locked_rating")
+    end
+
+    it "returns an error message about the locked rating" do
+      visit "#{url_path}/#{decision_review.uuid}/edit"
+
+      expect(page).to have_content("One or more ratings may be locked on this Claim.")
+    end
+  end
+
+  let(:nonrating_issue_category) { "Military Retired Pay" }
+
   context "when there is a non-rating end product" do
     let!(:nonrating_request_issue) do
       RequestIssue.create!(
         decision_review: supplemental_claim,
-        nonrating_issue_category: "Military Retired Pay",
+        nonrating_issue_category: nonrating_issue_category,
         nonrating_issue_description: "nonrating description",
         benefit_type: benefit_type,
         decision_date: 1.month.ago,
@@ -151,34 +182,37 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         "/supplemental_claims/#{nonrating_ep_claim_id}/edit/confirmation"
       )
     end
-  end
 
-  context "when the rating issue is locked" do
-    let(:url_path) { "supplemental_claims" }
-    let(:decision_review) { supplemental_claim }
-    let(:request_issue) do
-      create(
-        :request_issue,
-        contested_rating_issue_reference_id: "def456",
-        contested_rating_issue_profile_date: rating.profile_date,
-        decision_review: decision_review,
-        benefit_type: benefit_type,
-        contested_issue_description: "PTSD denied"
-      )
-    end
+    context "when it is created due to a DTA error" do
+      before { FeatureToggle.enable!(:edit_contention_text) }
+      after { FeatureToggle.disable!(:edit_contention_text) }
 
-    let(:request_issues) { [request_issue] }
+      let(:decision_review_remanded) { create(:higher_level_review) }
+      let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
 
-    before do
-      decision_review.reload.create_issues!(request_issues)
-      decision_review.establish!
-      decision_review.veteran.update!(participant_id: "locked_rating")
-    end
+      it "only allows users to edit contention text" do
+        nonrating_dta_claim_id = EndProductEstablishment.find_by(
+          source: supplemental_claim,
+          code: "040HDENR"
+        ).reference_id
 
-    it "returns an error message about the locked rating" do
-      visit "#{url_path}/#{decision_review.uuid}/edit"
+        visit "supplemental_claims/#{nonrating_dta_claim_id}/edit"
 
-      expect(page).to have_content("One or more ratings may be locked on this Claim.")
+        expect(page).to have_content("Edit Issues")
+
+        # User cannot add issues
+        expect(page).to_not have_css("#button-add-issue")
+
+        # User cannot remove issues
+        expect(page).to_not have_css(".remove-issue")
+
+        # User can edit contention text
+        edit_contention_text("Military Retired Pay", "New description")
+        expect(page).to have_content("New description")
+        click_edit_submit
+
+        expect(RequestIssue.where(edited_description: "New description")).to_not be_nil
+      end
     end
   end
 
@@ -203,6 +237,38 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     before do
       supplemental_claim.create_issues!(request_issues)
       supplemental_claim.establish!
+    end
+
+    context "when it is created due to a DTA error" do
+      before { FeatureToggle.enable!(:edit_contention_text) }
+      after { FeatureToggle.disable!(:edit_contention_text) }
+
+      let(:decision_review_remanded) { create(:higher_level_review) }
+      let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
+
+      it "only allows users to edit contention text" do
+        rating_dta_claim_id = EndProductEstablishment.find_by(
+          source: supplemental_claim,
+          code: "040HDER"
+        ).reference_id
+
+        visit "supplemental_claims/#{rating_dta_claim_id}/edit"
+
+        expect(page).to have_content("Edit Issues")
+
+        # User cannot add issues
+        expect(page).to_not have_css("#button-add-issue")
+
+        # User cannot remove issues
+        expect(page).to_not have_css(".remove-issue")
+
+        # User can edit contention text
+        edit_contention_text("PTSD denied", "New description")
+        expect(page).to have_content("New description")
+        click_edit_submit
+
+        expect(RequestIssue.where(edited_description: "New description")).to_not be_nil
+      end
     end
 
     it "shows request issues and allows adding/removing issues" do

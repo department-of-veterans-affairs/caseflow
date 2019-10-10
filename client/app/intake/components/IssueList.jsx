@@ -16,8 +16,7 @@ const nonEditableIssueStyling = css({
 });
 
 export default class IssuesList extends React.Component {
-
-  generateIssueActionOptions = (issue, userCanWithdrawIssues) => {
+  generateIssueActionOptions = (issue, userCanWithdrawIssues, isDtaError) => {
     let options = [];
 
     if (issue.correctionType && issue.endProductCleared) {
@@ -31,7 +30,7 @@ export default class IssuesList extends React.Component {
     } else if (issue.endProductCleared) {
       options.push({ displayText: 'Correct issue',
         value: 'correct' });
-    } else if (!issue.withdrawalDate && !issue.withdrawalPending) {
+    } else if (!issue.withdrawalDate && !issue.withdrawalPending && !isDtaError) {
       if (userCanWithdrawIssues) {
         options.push(
           { displayText: 'Withdraw issue',
@@ -67,10 +66,15 @@ export default class IssuesList extends React.Component {
       <div>
         { withdrawReview && <p className="cf-red-text">{COPY.INTAKE_WITHDRAWN_BANNER}</p> }
         { issues.map((issue) => {
-          const editableContentionText = Boolean(formType !== FORM_TYPES.APPEAL.key &&
-            !issue.category && !issue.ineligibleReason && !issue.endProductCleared && !issue.isUnidentified
-          );
-          let issueActionOptions = this.generateIssueActionOptions(issue, userCanWithdrawIssues);
+          // Issues from rating issues or decision issues have editable contention text. New non-rating issues do not.
+          const editableIssueType = Boolean(issue.decisionIssueId || issue.ratingIssueReferenceId ||
+            issue.ratingDecisionReferenceId);
+          const editableIssueProperties = Boolean(!issue.ineligibleReason && !issue.endProductCleared &&
+            !issue.isUnidentified);
+          const editableContentionText = Boolean(formType !== FORM_TYPES.APPEAL.key && editableIssueType &&
+            editableIssueProperties);
+
+          const issueActionOptions = this.generateIssueActionOptions(issue, userCanWithdrawIssues, intakeData.isDtaError);
 
           return <div className="issue-container" key={`issue-container-${issue.index}`}>
             <div
