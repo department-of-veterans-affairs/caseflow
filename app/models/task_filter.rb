@@ -51,15 +51,15 @@ class TaskFilter
 
   def self.table_column_from_name(column_name)
     case column_name
-    when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
+    when Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name
       "tasks.type"
-    when Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN
+    when Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name
       "cached_appeal_attributes.closest_regional_office_city"
-    when Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
+    when Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name
       "cached_appeal_attributes.docket_type"
-    when Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN
+    when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
       "cached_appeal_attributes.case_type"
-    when Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN
+    when Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
       "cached_appeal_attributes.assignee_label"
     else
       fail(Caseflow::Error::InvalidTaskTableColumnFilter, column: column_name)

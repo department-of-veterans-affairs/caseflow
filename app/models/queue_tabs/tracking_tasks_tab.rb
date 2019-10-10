@@ -19,10 +19,10 @@ class TrackingTasksTab < QueueTab
 
   def column_names
     [
-      Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
-      Constants.QUEUE_CONFIG.ISSUE_COUNT_COLUMN,
-      Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
-      Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
+      Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
+      Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
+      Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name
     ]
   end
 end
