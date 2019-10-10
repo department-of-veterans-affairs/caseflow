@@ -13,15 +13,11 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def perform
     ama_appeals_start = Time.zone.now
     cache_ama_appeals
-    time_segment(segment: "cache_ama_appeals", start_time: ama_appeals_start)
+    datadog_report_time_segment(segment: "cache_ama_appeals", start_time: ama_appeals_start)
 
     legacy_appeals_start = Time.zone.now
     cache_legacy_appeals
-    time_segment(segment: "cache_legacy_appeals", start_time: legacy_appeals_start)
-
-    user_cache_start = Time.zone.now
-    CacheUser.sync_from_vacols
-    time_segment(segment: "cache_users", start_time: user_cache_start)
+    datadog_report_time_segment(segment: "cache_legacy_appeals", start_time: legacy_appeals_start)
 
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   rescue StandardError => error
@@ -84,11 +80,11 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
     cache_postgres_data_start = Time.zone.now
     cache_legacy_appeal_postgres_data(legacy_appeals)
-    time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
+    datadog_report_time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
 
     cache_vacols_data_start = Time.zone.now
     cache_legacy_appeal_vacols_data(all_vacols_ids)
-    time_segment(segment: "cache_legacy_appeal_vacols_data", start_time: cache_vacols_data_start)
+    datadog_report_time_segment(segment: "cache_legacy_appeal_vacols_data", start_time: cache_vacols_data_start)
 
     increment_appeal_count(legacy_appeals.length, LegacyAppeal.name)
   end
@@ -199,17 +195,6 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   private
-
-  def time_segment(segment:, start_time:)
-    job_duration_seconds = Time.zone.now - start_time
-
-    DataDogService.emit_gauge(
-      app_name: "caseflow_job_segment",
-      metric_group: segment,
-      metric_name: "runtime",
-      metric_value: job_duration_seconds
-    )
-  end
 
   def aod_status_for_appeals(appeals)
     Appeal.where(id: appeals).joins(
