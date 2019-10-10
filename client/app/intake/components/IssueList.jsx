@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import COPY from '../../../COPY.json';
@@ -7,9 +6,9 @@ import AddedIssue from './AddedIssue';
 import Button from '../../components/Button';
 import Dropdown from '../../components/Dropdown';
 import EditContentionTitle from '../components/EditContentionTitle';
-
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
+import _ from 'lodash';
 
 const nonEditableIssueStyling = css({
   color: COLORS.GREY,
@@ -18,12 +17,10 @@ const nonEditableIssueStyling = css({
 
 export default class IssuesList extends React.Component {
 
-  generateIssueActionOptions = (issue) => {
+  generateIssueActionOptions = (issue, userCanWithdrawIssues) => {
     let options = [];
 
-    if (!issue.editable) {
-      return options;
-    } else if (issue.correctionType && issue.endProductCleared) {
+    if (issue.correctionType && issue.endProductCleared) {
       options.push({ displayText: 'Undo correction',
         value: 'undo_correction' });
     } else if (issue.correctionType) {
@@ -35,9 +32,13 @@ export default class IssuesList extends React.Component {
       options.push({ displayText: 'Correct issue',
         value: 'correct' });
     } else if (!issue.withdrawalDate && !issue.withdrawalPending) {
+      if (userCanWithdrawIssues) {
+        options.push(
+          { displayText: 'Withdraw issue',
+            value: 'withdraw' }
+        );
+      }
       options.push(
-        { displayText: 'Withdraw issue',
-          value: 'withdraw' },
         { displayText: 'Remove issue',
           value: 'remove' }
       );
@@ -53,11 +54,12 @@ export default class IssuesList extends React.Component {
       formType,
       onClickIssueAction,
       withdrawReview,
-      featureToggles
+      featureToggles,
+      userCanWithdrawIssues,
+      editPage
     } = this.props;
 
     const {
-      withdrawDecisionReviews,
       editContentionText
     } = featureToggles;
 
@@ -68,7 +70,7 @@ export default class IssuesList extends React.Component {
           const editableContentionText = Boolean(formType !== FORM_TYPES.APPEAL.key &&
             !issue.category && !issue.ineligibleReason && !issue.endProductCleared && !issue.isUnidentified
           );
-          let issueActionOptions = this.generateIssueActionOptions(issue);
+          let issueActionOptions = this.generateIssueActionOptions(issue, userCanWithdrawIssues);
 
           return <div className="issue-container" key={`issue-container-${issue.index}`}>
             <div
@@ -85,28 +87,27 @@ export default class IssuesList extends React.Component {
                 legacyAppeals={intakeData.legacyAppeals}
                 formType={formType} />
 
-              { _.isEmpty(issueActionOptions) && <div className="issue-action">
+              { !issue.editable && <div className="issue-action">
                 <span {...nonEditableIssueStyling}>{COPY.INTAKE_RATING_MAY_BE_PROCESS}</span>
               </div> }
 
-              { !_.isEmpty(issueActionOptions) && <div className="issue-action">
-                { withdrawDecisionReviews && <Dropdown
+              <div className="issue-action">
+                {editPage && issue.editable && !_.isEmpty(issueActionOptions) && <Dropdown
                   name={`issue-action-${issue.index}`}
                   label="Actions"
                   hideLabel
                   options={issueActionOptions}
                   defaultText="Select action"
                   onChange={(option) => onClickIssueAction(issue.index, option)}
-                />
-                }
-                { !withdrawDecisionReviews && <Button
+                /> }
+                {!editPage && <Button
                   onClick={() => onClickIssueAction(issue.index)}
                   classNames={['cf-btn-link', 'remove-issue']}
                 >
                   <i className="fa fa-trash-o" aria-hidden="true"></i><br />Remove
-                </Button>
-                }
-              </div> }
+                </Button>}
+
+              </div>
             </div>
             {editContentionText && editableContentionText && <EditContentionTitle
               issue= {issue}
@@ -124,5 +125,7 @@ IssuesList.propTypes = {
   formType: PropTypes.string,
   onClickIssueAction: PropTypes.func,
   withdrawReview: PropTypes.bool,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  userCanWithdrawIssues: PropTypes.bool,
+  editPage: PropTypes.bool
 };
