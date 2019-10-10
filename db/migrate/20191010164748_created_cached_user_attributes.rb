@@ -1,6 +1,6 @@
 class CreatedCachedUserAttributes < ActiveRecord::Migration[5.1]
   def change
-    create_table :cached_user_attributes, id: false do |t|
+    create_table :cached_user_attributes, id: false, comment: "VACOLS cached staff table attributes" do |t|
       t.timestamps null: false
       t.string :sdomainid, length: 20, null: false
       t.string :sattyid, length: 4

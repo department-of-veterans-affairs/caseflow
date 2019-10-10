@@ -183,7 +183,7 @@ ActiveRecord::Schema.define(version: 20191010164748) do
     t.index ["vacols_id"], name: "index_cached_appeal_attributes_on_vacols_id", unique: true
   end
 
-  create_table "cached_user_attributes", id: false, force: :cascade do |t|
+  create_table "cached_user_attributes", id: false, force: :cascade, comment: "VACOLS cached staff table attributes" do |t|
     t.datetime "created_at", null: false
     t.string "sactive", null: false
     t.string "sattyid"
