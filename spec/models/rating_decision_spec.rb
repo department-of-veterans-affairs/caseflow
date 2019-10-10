@@ -22,7 +22,7 @@ describe RatingDecision do
   let(:rating_issue_reference_id) { "123" }
   let(:original_denial_date) { promulgation_date - 7 }
 
-  context ".deserialize" do
+  describe ".deserialize" do
     subject { described_class.deserialize(rating_decision.serialize) }
 
     let(:rating_decision) do
@@ -43,7 +43,7 @@ describe RatingDecision do
     it { is_expected.to be_a(described_class) }
   end
 
-  context ".from_bgs_disability" do
+  describe ".from_bgs_disability" do
     subject { described_class.from_bgs_disability(rating, bgs_record) }
 
     let(:decision_type_name) { "Service Connected" }
