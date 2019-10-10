@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 # cache VACOLS staff data in the Caseflow db for easier correlation
-# between systems.
+# between systems. Best use case is SQL joins for metrics/reporting.
 
-# TODO some methods in app/repositories/user_repository.rb might be able to
+# For future work: some methods in app/repositories/user_repository.rb might be able to
 # take advantage of this table, rather than using the Redis cache of VACOLS::Staff.
 
 class CachedUser < ApplicationRecord
