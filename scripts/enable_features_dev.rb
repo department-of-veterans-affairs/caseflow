@@ -57,3 +57,5 @@ all_features.each_with_object([]) do |feature, result|
   result << { "feature" => feature, "enable_all" => true }
   FeatureToggle.sync! result.to_yaml
 end
+
+puts "Enabled #{all_features.count} features: #{all_features.sort.join(', ')}"
