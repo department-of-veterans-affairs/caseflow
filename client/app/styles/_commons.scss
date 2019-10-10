@@ -951,14 +951,16 @@ fieldset {
   }
 
   // Account for proper alignment of long labels so they don't wrap under the checkbox
-  [type='checkbox'] + label {
-    padding-left: 3.02rem;
-    text-indent: -2rem;
+  &.cf-checkbox-group {
+    [type='checkbox'] + label {
+      padding-left: 3.02rem;
+      text-indent: -2rem;
 
-    &::before {
-      position: relative;
-      left: -0.6em;
-      margin-right: 0;
+      &::before {
+        position: relative;
+        left: -0.6em;
+        margin-right: 0;
+      }
     }
   }
 }
