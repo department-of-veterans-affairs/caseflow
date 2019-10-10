@@ -19,6 +19,10 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     cache_legacy_appeals
     time_segment(segment: "cache_legacy_appeals", start_time: legacy_appeals_start)
 
+    user_cache_start = Time.zone.now
+    CacheUser.sync_from_vacols
+    time_segment(segment: "cache_users", start_time: user_cache_start)
+
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   rescue StandardError => error
     log_error(@start_time, error)
