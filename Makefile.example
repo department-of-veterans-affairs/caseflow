@@ -61,7 +61,7 @@ clean:  ## Clean logs, compiled webpack assets, and temporary files
 	rm -rf public/assets
 	rm -rf tmp/capybara
 
-facols-box:  ## Connect to the docker FACOLS instance
+facols-bash:  ## Connect to the docker FACOLS instance
 	docker exec --tty -i VACOLS_DB bash
 
 facols:  ## Connect directly to the FACOLS oracle database, requires sqlplus
