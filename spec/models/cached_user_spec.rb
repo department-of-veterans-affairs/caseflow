@@ -20,7 +20,7 @@ describe CachedUser, :all_dbs do
     end
 
     context "VACOLS staff attributes change" do
-       before do
+      before do
         5.times { create(:staff) }
       end
 
