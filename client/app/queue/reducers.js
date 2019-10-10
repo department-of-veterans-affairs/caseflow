@@ -420,7 +420,7 @@ const setAttorneysOfJudge = (state, action) => {
   });
 };
 
-const incermentTaskCountForAttorney = (state, action) => {
+const incrementTaskCountForAttorney = (state, action) => {
   const {
     attorneysOfJudge
   } = state;
@@ -438,7 +438,7 @@ const incermentTaskCountForAttorney = (state, action) => {
   });
 };
 
-const decermentTaskCountForAttorney = (state, action) => {
+const decrementTaskCountForAttorney = (state, action) => {
   const {
     attorneysOfJudge
   } = state;
@@ -682,8 +682,8 @@ export const workQueueReducer = createReducer({
   [ACTIONS.SAVE_EDITED_APPEAL_ISSUE]: saveEditedAppealIssue,
   [ACTIONS.DELETE_EDITING_APPEAL_ISSUE]: deleteEditingAppealIssue,
   [ACTIONS.SET_ATTORNEYS_OF_JUDGE]: setAttorneysOfJudge,
-  [ACTIONS.INCREMENT_TASK_COUNT_FOR_ATTORNEY]: incermentTaskCountForAttorney,
-  [ACTIONS.DECREMENT_TASK_COUNT_FOR_ATTORNEY]: decermentTaskCountForAttorney,
+  [ACTIONS.INCREMENT_TASK_COUNT_FOR_ATTORNEY]: incrementTaskCountForAttorney,
+  [ACTIONS.DECREMENT_TASK_COUNT_FOR_ATTORNEY]: decrementTaskCountForAttorney,
   [ACTIONS.REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY]: requestTasksAndAppealsOfAttorney,
   [ACTIONS.SET_TASKS_AND_APPEALS_OF_ATTORNEY]: setTasksAndAppealsOfAttorney,
   [ACTIONS.ERROR_TASKS_AND_APPEALS_OF_ATTORNEY]: errorTasksAndAppealsOfAttorney,
