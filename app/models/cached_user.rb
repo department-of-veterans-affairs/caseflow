@@ -2,6 +2,7 @@
 
 class CachedUser < ApplicationRecord
   self.table_name = "cached_user_attributes"
+  self.primary_key = "sdomainid"
 
   class << self
     def sync_from_vacols
