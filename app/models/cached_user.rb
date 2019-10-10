@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# cache VACOLS staff data in the Caseflow db for easier correlation
+# between systems.
+
+# TODO some methods in app/repositories/user_repository.rb might be able to
+# take advantage of this table, rather than using the Redis cache of VACOLS::Staff.
+
 class CachedUser < ApplicationRecord
   self.table_name = "cached_user_attributes"
   self.primary_key = "sdomainid"
