@@ -60,7 +60,7 @@ export default class DropdownButton extends React.Component {
   }
 
   dropdownAction = (list) => {
-    return <a href={list.value} onClick={() => {
+    return <a href={`#${list.value}`} onClick={() => {
       if (this.props.onClick) {
         this.props.onClick(list.value);
       }
