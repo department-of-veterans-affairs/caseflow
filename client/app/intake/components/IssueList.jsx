@@ -74,7 +74,9 @@ export default class IssuesList extends React.Component {
           const editableContentionText = Boolean(formType !== FORM_TYPES.APPEAL.key && editableIssueType &&
             editableIssueProperties);
 
-          const issueActionOptions = this.generateIssueActionOptions(issue, userCanWithdrawIssues, intakeData.isDtaError);
+          const issueActionOptions = this.generateIssueActionOptions(
+            issue, userCanWithdrawIssues, intakeData.isDtaError
+          );
 
           return <div className="issue-container" key={`issue-container-${issue.index}`}>
             <div
