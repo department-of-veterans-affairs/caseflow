@@ -65,6 +65,7 @@ import OrganizationQueue from './OrganizationQueue';
 import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 import TeamManagement from './TeamManagement';
+import UserManagement from './UserManagement';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -261,6 +262,8 @@ class QueueApp extends React.PureComponent {
   routedOrganizationUsers = (props) => <OrganizationUsers {...props.match.params} />;
 
   routedTeamManagement = (props) => <TeamManagement {...props.match.params} />;
+
+  routedUserManagement = (props) => <UserManagement {...props.match.params} />;
 
   routedAddJudgeTeam = (props) => <AddJudgeTeamModal {...props.match.params} />;
 
@@ -590,6 +593,7 @@ class QueueApp extends React.PureComponent {
             <Route path="/team_management/add_private_bar" render={this.routedAddPrivateBarModal} />
             <Route path="/team_management/lookup_participant_id" render={this.routedLookupParticipantIdModal} />
             <PageRoute path="/team_management" title="Team Management | Caseflow" render={this.routedTeamManagement} />
+            <PageRoute path="/user_management" title="User Management | Caseflow" render={this.routedUserManagement} />
           </div>
         </AppFrame>
         <Footer wideApp appName="" feedbackUrl={this.props.feedbackUrl} buildDate={this.props.buildDate} />
