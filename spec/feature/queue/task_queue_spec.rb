@@ -301,6 +301,47 @@ RSpec.feature "Task queue", :all_dbs do
     end
 
     def validate_pulac_cerullo_tasks_created(task_class, label)
+      validate_pulac_cerullo_tasks_created_setup(task_class, label)
+
+      validate_pulac_cerullo_tasks_created_success_msg(label)
+
+      click_dropdown(text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label)
+      click_button(text: "Notify")
+
+      mail_task = root_task.reload.children[0]
+      validate_pulac_cerullo_tasks_created_mail_task(mail_task, task_class)
+
+      child_task = mail_task.children[0]
+      validate_pulac_cerullo_tasks_created_child_task(child_task, task_class)
+
+      validate_pulac_cerullo_tasks_created_teardown
+    end
+
+    def validate_pulac_cerullo_tasks_created_success_msg(label)
+      success_msg = format(COPY::MAIL_TASK_CREATION_SUCCESS_MESSAGE, label)
+      expect(page).to have_content(success_msg)
+      expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}")
+      visit "/queue/appeals/#{appeal.uuid}"
+    end
+
+    def validate_pulac_cerullo_tasks_created_mail_task(mail_task, task_class)
+      expect(mail_task.class).to eq(task_class)
+      expect(mail_task.assigned_to).to eq(MailTeam.singleton)
+      expect(mail_task.children.length).to eq(1)
+      sleep 1
+    end
+
+    def validate_pulac_cerullo_tasks_created_child_task(child_task, task_class)
+      pulac_cerullo_task = child_task.children[0]
+      pulac_cerullo_user_task = pulac_cerullo_task.children[0]
+      expect(child_task.class).to eq(task_class)
+      expect(pulac_cerullo_task.type).to eq("PulacCerulloTask")
+      expect(pulac_cerullo_task.assigned_to.is_a?(Organization)).to eq(true)
+      expect(pulac_cerullo_task.assigned_to.class).to eq(PulacCerullo)
+      expect(pulac_cerullo_user_task.assigned_to).to eq(pulac_user)
+    end
+
+    def validate_pulac_cerullo_tasks_created_setup(task_class, label)
       visit "/queue/appeals/#{appeal.uuid}"
       find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
@@ -309,30 +350,9 @@ RSpec.feature "Task queue", :all_dbs do
 
       fill_in("taskInstructions", with: instructions)
       find("button", text: "Submit").click
+    end
 
-      success_msg = format(COPY::MAIL_TASK_CREATION_SUCCESS_MESSAGE, label)
-      expect(page).to have_content(success_msg)
-      expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}")
-      visit "/queue/appeals/#{appeal.uuid}"
-
-      click_dropdown(text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label)
-      click_button(text: "Submit")
-
-      mail_task = root_task.reload.children[0]
-      expect(mail_task.class).to eq(task_class)
-      expect(mail_task.assigned_to).to eq(MailTeam.singleton)
-      expect(mail_task.children.length).to eq(1)
-      sleep 1
-      child_task = mail_task.children[0]
-
-      pulac_cerullo_task = child_task.children[0]
-      pulac_cerullo_user_task = pulac_cerullo_task.children[0]
-      expect(child_task.class).to eq(task_class)
-      expect(pulac_cerullo_task.type).to eq("PulacCerulloTask")
-      expect(pulac_cerullo_task.assigned_to.is_a?(Organization)).to eq(true)
-      expect(pulac_cerullo_task.assigned_to.class).to eq(PulacCerullo)
-      expect(pulac_cerullo_user_task.assigned_to).to eq(pulac_user)
-
+    def validate_pulac_cerullo_tasks_created_teardown
       User.unauthenticate!
       User.authenticate!(user: pulac_user)
       visit "/queue"
