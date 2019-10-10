@@ -156,7 +156,7 @@ h2 {
   font-size: 24px;
   margin-bottom: 30px;
 
-  &[id="page-title"] {
+  &[id='page-title'] {
     margin-left: 0;
   }
 }
@@ -189,21 +189,21 @@ dd {
 //  or  <h4 className="cf-margin-bottom-0">
 //  or  <img className="cf-padding-right-6rem cf-padding-left-0rem">
 
-$styles: ("margin"), ("padding");
-$directions: ("top"), ("bottom"), ("left"), ("right");
+$styles: ('margin'), ('padding');
+$directions: ('top'), ('bottom'), ('left'), ('right');
 $rems: (
-  "0",
-  "0rem",
-  "1rem",
-  "2rem",
-  "3rem",
-  "4rem",
-  "5rem",
-  "6rem",
-  "7rem",
-  "8rem",
-  "9rem",
-  "10rem"
+  '0',
+  '0rem',
+  '1rem',
+  '2rem',
+  '3rem',
+  '4rem',
+  '5rem',
+  '6rem',
+  '7rem',
+  '8rem',
+  '9rem',
+  '10rem'
 );
 
 @each $style in $styles {
@@ -220,7 +220,7 @@ $rems: (
 // Icons
 //-----------------------------------*/
 
-[class|="cf-icon"] {
+[class|='cf-icon'] {
   display: inline-block;
   height: 0.8em; // Should be an em
   margin: 0 0.1ex;
@@ -346,7 +346,7 @@ $rems: (
   &::after {
     background: url(#{$image-path}/arrow-down.svg) 50% 100% no-repeat;
     background-size: 0.75em;
-    content: " ";
+    content: ' ';
     display: inline-block;
     height: 1rem;
     margin-left: 1rem;
@@ -439,7 +439,7 @@ svg title {
   }
 
   &::before {
-    content: " ";
+    content: ' ';
     background: rgba($color-gray-dark, 0.4);
     position: fixed;
     height: inherit;
@@ -482,7 +482,7 @@ svg title {
   top: rem(10px);
   width: 1.5rem;
 
-  &[type="button"] {
+  &[type='button'] {
     margin-right: 0;
   }
 
@@ -692,8 +692,8 @@ form {
 }
 
 //------ Buttons --------*/
-[type="submit"],
-[type="button"],
+[type='submit'],
+[type='button'],
 .usa-button {
   margin-top: 0;
   margin-bottom: 0;
@@ -817,7 +817,7 @@ form {
   strong,
   b {
     &::after {
-      content: "* ";
+      content: '* ';
       color: $color-secondary;
       font-family: inherit;
     }
@@ -827,18 +827,18 @@ form {
     @extend .usa-input-error-message;
 
     &::before {
-      content: "* ";
+      content: '* ';
     }
   }
 }
 
 input {
-  &[type="number"] {
+  &[type='number'] {
     display: inline;
   }
 }
 
-[type="checkbox"]:disabled + label {
+[type='checkbox']:disabled + label {
   color: $color-gray-dark;
 }
 
@@ -853,7 +853,7 @@ input {
   }
 
   input {
-    &[type="number"] {
+    &[type='number'] {
       width: 60px;
       height: 35px;
     }
@@ -861,7 +861,7 @@ input {
 
   .cf-form-int-input {
     input {
-      &[class*="cf-form-textinput"] {
+      &[class*='cf-form-textinput'] {
         margin: 0 12px;
         width: 3em;
         height: 36px;
@@ -951,7 +951,7 @@ fieldset {
   }
 
   // Account for proper alignment of long labels so they don't wrap under the checkbox
-  [type="checkbox"] + label {
+  [type='checkbox'] + label {
     padding-left: 3.02rem;
     text-indent: -2rem;
 
@@ -983,7 +983,7 @@ fieldset {
 }
 
 .usa-input-error {
-  [type="radio"] + label::before {
+  [type='radio'] + label::before {
     box-shadow: 0 0 0 2px $color-white, 0 0 0 3px $color-gray-medium;
   }
 }
@@ -1028,7 +1028,7 @@ fieldset {
   width: 50%;
 
   li::before {
-    content: "";
+    content: '';
   }
 
   .cf-icon-success--bg {
@@ -1072,7 +1072,7 @@ fieldset {
 }
 
 ul {
-  &[id="toc"] {
+  &[id='toc'] {
     li {
       padding-bottom: 10px;
     }
@@ -1144,7 +1144,7 @@ button {
   .cf-loading-icon-back,
   .cf-loading-icon-front {
     &::after {
-      content: " ";
+      content: ' ';
       display: inline-block;
       width: 0;
       height: 0;
@@ -1158,7 +1158,7 @@ button {
   &.cf-dispatch,
   .cf-loading-icon-front {
     &::after {
-      content: " ";
+      content: ' ';
       display: inline-block;
       width: 0;
       height: 0;
@@ -1221,7 +1221,7 @@ button {
 .usa-accordion-button {
   background-image: url(#{$image-path}/minus.svg);
 
-  &[aria-expanded="false"] {
+  &[aria-expanded='false'] {
     background-image: url(#{$image-path}/plus.svg);
   }
 }
