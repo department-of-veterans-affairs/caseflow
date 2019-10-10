@@ -621,105 +621,60 @@ const errorOnReceiveAppealValue = (state, action) => {
 
 const setQueueConfig = (state, action) => update(state, { queueConfig: { $set: action.payload.config } });
 
-// eslint-disable-next-line max-statements
-export const workQueueReducer = (state = initialState, action = {}) => {
-  switch (action.type) {
-  case ACTIONS.RECEIVE_QUEUE_DETAILS:
-    return receiveQueueDetails(state, action);
-  case ACTIONS.RECEIVE_APPEAL_DETAILS:
-    return receiveAppealDetails(state, action);
-  case ACTIONS.RECEIVE_CLAIM_REVIEW_DETAILS:
-    return receiveClaimReviewDetails(state, action);
-  case ACTIONS.RECEIVE_TASKS:
-    return receiveTasks(state, action);
-  case ACTIONS.RECEIVE_AMA_TASKS:
-    return receiveAmaTasks(state, action);
-  case ACTIONS.RECEIVE_JUDGE_DETAILS:
-    return receiveJudgeDetails(state, action);
-  case ACTIONS.DELETE_APPEAL:
-    return deleteAppeal(state, action);
-  case ACTIONS.DELETE_TASK:
-    return deleteTask(state, action);
-  case ACTIONS.EDIT_APPEAL:
-    return editAppeal(state, action);
-  case ACTIONS.RECEIVE_NEW_FILES_FOR_APPEAL:
-    return receiveNewFilesForAppeal(state, action);
-  case ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_APPEAL:
-    return errorOnReceiveNewFilesForAppeal(state, action);
-  case ACTIONS.STARTED_LOADING_DOCUMENTS_FOR_APPEAL:
-    return startedLoadingDocumentsForAppeal(state, action);
-  case ACTIONS.RECEIVE_NEW_FILES_FOR_TASK:
-    return receiveNewFilesForTask(state, action);
-  case ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_TASK:
-    return errorOnReceiveNewFilesForTask(state, action);
-  case ACTIONS.STARTED_LOADING_DOCUMENTS_FOR_TASK:
-    return startedLoadingDocumentsForTask(state, action);
-  case ACTIONS.STARTED_DOC_COUNT_REQUEST:
-    return startedDocCountRequest(state, action);
-  case ACTIONS.ERROR_ON_RECEIVE_DOCUMENT_COUNT:
-    return errorOnReceiveDocumentCount(state, action);
-  case ACTIONS.SET_APPEAL_DOC_COUNT:
-    return setAppealDocCount(state, action);
-  case ACTIONS.SET_MOST_RECENTLY_HELD_HEARING_FOR_APPEAL:
-    return setMostRecentlyHeldHearingForAppeal(state, action);
-  case ACTIONS.SET_DECISION_OPTIONS:
-    return setDecisionOptions(state, action);
-  case ACTIONS.RESET_DECISION_OPTIONS:
-    return resetDecisionOptions(state, action);
-  case ACTIONS.STAGE_APPEAL:
-    return stageAppeal(state, action);
-  case ACTIONS.EDIT_STAGED_APPEAL:
-    return editStagedAppeal(state, action);
-  case ACTIONS.CHECKOUT_STAGED_APPEAL:
-    return checkoutStagedAppeal(state, action);
-  case ACTIONS.START_EDITING_APPEAL_ISSUE:
-    return startEditingAppealIssue(state, action);
-  case ACTIONS.CANCEL_EDITING_APPEAL_ISSUE:
-    return cancelEditingAppealIssue(state, action);
-  case ACTIONS.UPDATE_EDITING_APPEAL_ISSUE:
-    return updateEditingAppealIssue(state, action);
-  case ACTIONS.SAVE_EDITED_APPEAL_ISSUE:
-    return saveEditedAppealIssue(state, action);
-  case ACTIONS.DELETE_EDITING_APPEAL_ISSUE:
-    return deleteEditingAppealIssue(state, action);
-  case ACTIONS.SET_ATTORNEYS_OF_JUDGE:
-    return setAttorneysOfJudge(state, action);
-  case ACTIONS.REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY:
-    return requestTasksAndAppealsOfAttorney(state, action);
-  case ACTIONS.SET_TASKS_AND_APPEALS_OF_ATTORNEY:
-    return setTasksAndAppealsOfAttorney(state, action);
-  case ACTIONS.ERROR_TASKS_AND_APPEALS_OF_ATTORNEY:
-    return errorTasksAndAppealsOfAttorney(state, action);
-  case ACTIONS.SET_SELECTION_OF_TASK_OF_USER:
-    return setSelectionOfTaskOfUser(state, action);
-  case ACTIONS.BULK_ASSIGN_TASKS:
-    return bulkAssignTasks(state, action);
-  case ACTIONS.SET_PENDING_DISTRIBUTION:
-    return setPendingDistribution(state, action);
-  case ACTIONS.RECEIVE_ALL_ATTORNEYS:
-    return receiveAllAttorneys(state, action);
-  case ACTIONS.ERROR_LOADING_ATTORNEYS:
-    return errorLoadingAttorneys(state, action);
-  case ACTIONS.SET_TASK_ATTRS:
-    return setTaskAttrs(state, action);
-  case ACTIONS.SET_APPEAL_ATTRS:
-    return setAppealAttrs(state, action);
-  case ACTIONS.SET_SPECIAL_ISSUE:
-    return setSpecialIssue(state, action);
-  case ACTIONS.SET_APPEAL_AOD:
-    return setAppealAod(state, action);
-  case ACTIONS.STARTED_LOADING_APPEAL_VALUE:
-    return startedLoadingAppealValue(state, action);
-  case ACTIONS.RECEIVE_APPEAL_VALUE:
-    return receiveAppealValue(state, action);
-  case ACTIONS.ERROR_ON_RECEIVE_APPEAL_VALUE:
-    return errorOnReceiveAppealValue(state, action);
-  case ACTIONS.SET_QUEUE_CONFIG:
-    return setQueueConfig(state, action);
-  default:
-    return state;
-  }
+const createReducer = (handlers) => {
+  return (state = initialState, action) => {
+    return Object.prototype.hasOwnProperty.call(handlers, action.type) ? handlers[action.type](state, action) : state;
+  };
 };
+
+export const workQueueReducer = createReducer({
+  [ACTIONS.RECEIVE_QUEUE_DETAILS]: receiveQueueDetails,
+  [ACTIONS.RECEIVE_APPEAL_DETAILS]: receiveAppealDetails,
+  [ACTIONS.RECEIVE_CLAIM_REVIEW_DETAILS]: receiveClaimReviewDetails,
+  [ACTIONS.RECEIVE_TASKS]: receiveTasks,
+  [ACTIONS.RECEIVE_AMA_TASKS]: receiveAmaTasks,
+  [ACTIONS.RECEIVE_JUDGE_DETAILS]: receiveJudgeDetails,
+  [ACTIONS.DELETE_APPEAL]: deleteAppeal,
+  [ACTIONS.DELETE_TASK]: deleteTask,
+  [ACTIONS.EDIT_APPEAL]: editAppeal,
+  [ACTIONS.RECEIVE_NEW_FILES_FOR_APPEAL]: receiveNewFilesForAppeal,
+  [ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_APPEAL]: errorOnReceiveNewFilesForAppeal,
+  [ACTIONS.STARTED_LOADING_DOCUMENTS_FOR_APPEAL]: startedLoadingDocumentsForAppeal,
+  [ACTIONS.RECEIVE_NEW_FILES_FOR_TASK]: receiveNewFilesForTask,
+  [ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_TASK]: errorOnReceiveNewFilesForTask,
+  [ACTIONS.STARTED_LOADING_DOCUMENTS_FOR_TASK]: startedLoadingDocumentsForTask,
+  [ACTIONS.STARTED_DOC_COUNT_REQUEST]: startedDocCountRequest,
+  [ACTIONS.ERROR_ON_RECEIVE_DOCUMENT_COUNT]: errorOnReceiveDocumentCount,
+  [ACTIONS.SET_APPEAL_DOC_COUNT]: setAppealDocCount,
+  [ACTIONS.SET_MOST_RECENTLY_HELD_HEARING_FOR_APPEAL]: setMostRecentlyHeldHearingForAppeal,
+  [ACTIONS.SET_DECISION_OPTIONS]: setDecisionOptions,
+  [ACTIONS.RESET_DECISION_OPTIONS]: resetDecisionOptions,
+  [ACTIONS.STAGE_APPEAL]: stageAppeal,
+  [ACTIONS.EDIT_STAGED_APPEAL]: editStagedAppeal,
+  [ACTIONS.CHECKOUT_STAGED_APPEAL]: checkoutStagedAppeal,
+  [ACTIONS.START_EDITING_APPEAL_ISSUE]: startEditingAppealIssue,
+  [ACTIONS.CANCEL_EDITING_APPEAL_ISSUE]: cancelEditingAppealIssue,
+  [ACTIONS.UPDATE_EDITING_APPEAL_ISSUE]: updateEditingAppealIssue,
+  [ACTIONS.SAVE_EDITED_APPEAL_ISSUE]: saveEditedAppealIssue,
+  [ACTIONS.DELETE_EDITING_APPEAL_ISSUE]: deleteEditingAppealIssue,
+  [ACTIONS.SET_ATTORNEYS_OF_JUDGE]: setAttorneysOfJudge,
+  [ACTIONS.REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY]: requestTasksAndAppealsOfAttorney,
+  [ACTIONS.SET_TASKS_AND_APPEALS_OF_ATTORNEY]: setTasksAndAppealsOfAttorney,
+  [ACTIONS.ERROR_TASKS_AND_APPEALS_OF_ATTORNEY]: errorTasksAndAppealsOfAttorney,
+  [ACTIONS.SET_SELECTION_OF_TASK_OF_USER]: setSelectionOfTaskOfUser,
+  [ACTIONS.BULK_ASSIGN_TASKS]: bulkAssignTasks,
+  [ACTIONS.SET_PENDING_DISTRIBUTION]: setPendingDistribution,
+  [ACTIONS.RECEIVE_ALL_ATTORNEYS]: receiveAllAttorneys,
+  [ACTIONS.ERROR_LOADING_ATTORNEYS]: errorLoadingAttorneys,
+  [ACTIONS.SET_TASK_ATTRS]: setTaskAttrs,
+  [ACTIONS.SET_APPEAL_ATTRS]: setAppealAttrs,
+  [ACTIONS.SET_SPECIAL_ISSUE]: setSpecialIssue,
+  [ACTIONS.SET_APPEAL_AOD]: setAppealAod,
+  [ACTIONS.STARTED_LOADING_APPEAL_VALUE]: startedLoadingAppealValue,
+  [ACTIONS.RECEIVE_APPEAL_VALUE]: receiveAppealValue,
+  [ACTIONS.ERROR_ON_RECEIVE_APPEAL_VALUE]: errorOnReceiveAppealValue,
+  [ACTIONS.SET_QUEUE_CONFIG]: setQueueConfig
+});
 
 const rootReducer = combineReducers({
   caseList: caseListReducer,
