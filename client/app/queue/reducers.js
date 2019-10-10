@@ -464,6 +464,18 @@ const requestTasksAndAppealsOfAttorney = (state, action) => {
           state: 'LOADING'
         }
       }
+    }
+  });
+};
+
+const setTasksAndAppealsOfAttorney = (state, action) => {
+  return update(state, {
+    attorneyAppealsLoadingState: {
+      [action.payload.attorneyId]: {
+        $set: {
+          state: 'LOADED'
+        }
+      }
     },
     appeals: {
       $merge: action.payload.appeals
