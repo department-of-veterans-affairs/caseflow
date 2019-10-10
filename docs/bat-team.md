@@ -16,7 +16,7 @@ and an experiment in [agile development](https://www.icidigital.com/blog/web-dev
 
 ## Frequently Asked Questions
 
-Everyone on the team is to update and reference the Bat Team [FAQ page](https://github.com/department-of-veterans-affairs/caseflow/wiki/Batman-Team)
+Everyone on the team is to update and reference the Bat Team [FAQ page](https://github.com/department-of-veterans-affairs/caseflow/wiki/Bat-Team)
 
 ## Rituals
 
