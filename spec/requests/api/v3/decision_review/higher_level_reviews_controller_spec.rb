@@ -127,8 +127,22 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     end
     it 'should return ok' do
       get_higher_level_review
-      expect(response.body).to eq ""
       expect(response).to have_http_status(:ok)
+    end
+    it 'should be json with a data key and included key' do
+      get_higher_level_review
+      json = JSON.parse(response.body)
+      expect(json.keys).to include('data', 'included')
+    end
+    describe 'data' do
+      subject do
+        get_higher_level_review
+        JSON.parse(response.body)['data']
+      end
+      it 'should have attributes' do
+        expect(subject['attributes']).to_not be_empty
+      end
+      describe 'attributes'
     end
   end
 
