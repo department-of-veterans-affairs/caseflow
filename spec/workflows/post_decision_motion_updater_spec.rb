@@ -106,6 +106,20 @@ describe PostDecisionMotionUpdater, :postgres do
         expect(attorney_task.assigned_to).to eq mtv_mail_task.assigned_to
         expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
       end
+
+      it "should assign new task to org if prev atty is inactive" do
+        motions_atty.update_status!(Constants.USER_STATUSES.inactive)
+
+        subject.process
+        expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
+        abstract_task = AbstractMotionToVacateTask.find_by(parent: task.parent)
+        attorney_task = DeniedMotionToVacateTask.find_by(parent: abstract_task)
+        expect(attorney_task).to_not be nil
+        expect(attorney_task.parent).to eq abstract_task
+        expect(attorney_task.assigned_by).to eq task.assigned_to
+        expect(attorney_task.assigned_to).to eq LitigationSupport.singleton
+        expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
+      end
     end
 
     context "when disposition is dismissed" do
@@ -120,6 +134,20 @@ describe PostDecisionMotionUpdater, :postgres do
         expect(attorney_task.parent).to eq abstract_task
         expect(attorney_task.assigned_by).to eq task.assigned_to
         expect(attorney_task.assigned_to).to eq mtv_mail_task.assigned_to
+        expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
+      end
+
+      it "should assign new task to org if prev atty is inactive" do
+        motions_atty.update_status!(Constants.USER_STATUSES.inactive)
+
+        subject.process
+        expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
+        abstract_task = AbstractMotionToVacateTask.find_by(parent: task.parent)
+        attorney_task = DismissedMotionToVacateTask.find_by(parent: abstract_task)
+        expect(attorney_task).to_not be nil
+        expect(attorney_task.parent).to eq abstract_task
+        expect(attorney_task.assigned_by).to eq task.assigned_to
+        expect(attorney_task.assigned_to).to eq LitigationSupport.singleton
         expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
       end
     end

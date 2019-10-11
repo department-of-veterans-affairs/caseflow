@@ -87,11 +87,15 @@ class PostDecisionMotionUpdater
   end
 
   def assigned_to
-    @assigned_to ||= (denied_or_dismissed? ? prev_attorney : User.find_by(id: params[:assigned_to_id]))
+    @assigned_to ||= (denied_or_dismissed? ? prev_motions_attorney_or_org : User.find_by(id: params[:assigned_to_id]))
   end
 
-  def prev_attorney
+  def prev_motions_attorney
     mtv_mail_task.assigned_to
+  end
+
+  def prev_motions_attorney_or_org
+    prev_motions_attorney.inactive? ? LitigationSupport.singleton : prev_motions_attorney
   end
 
   def mtv_mail_task
