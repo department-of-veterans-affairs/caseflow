@@ -36,7 +36,6 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
         appeal.reload # we only selected id and ahl_update_at, reload all columns
         geomatch_result = geomatch(appeal)
         record_geomatched_appeal(appeal.external_id, geomatch_result[:status])
-        sleep 1
       rescue Caseflow::Error::VaDotGovLimitError
         record_geomatched_appeal(appeal.external_id, "limit_error")
         break
