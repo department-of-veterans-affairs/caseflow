@@ -8,7 +8,12 @@ class RatingDecision
   include ActiveModel::Model
   include LatestRatingDisabilityEvaluation
 
+  # arbitrary but observed date before which rating data is sparsely populated.
   MODERN_RECORDKEEPING_CUTOFF_DATE = "2005-01-01"
+
+  # the flexible window for calculating the contestable decision date.
+  # this is the number of days +/- the effective date.
+  GRACE_PERIOD = 10
 
   attr_accessor :begin_date,
                 :benefit_type,
@@ -95,6 +100,10 @@ class RatingDecision
 
   private
 
+  # the "effective date" is the name we give the original decision date.
+  # we have to make educated guesses because there are a variety of "date" attributes
+  # on a rating decision and they are not populated consistently.
+
   def effective_start_date_of_original_decision
     original_denial_date || converted_begin_date || begin_date
   end
@@ -116,7 +125,7 @@ class RatingDecision
 
     the_decision = effective_date.to_date
     the_promulgation = promulgation_date.to_date
-    the_decision.between?((the_promulgation - 10.days), (the_promulgation + 10.days))
+    the_decision.between?((the_promulgation - GRACE_PERIOD.days), (the_promulgation + GRACE_PERIOD.days))
   end
 
   def effective_date_near_profile_date?
@@ -124,7 +133,7 @@ class RatingDecision
 
     the_decision = effective_date.to_date
     the_profile = profile_date.to_date
-    the_decision.between?((the_profile - 10.days), (the_profile + 10.days))
+    the_decision.between?((the_profile - GRACE_PERIOD.days), (the_profile + GRACE_PERIOD.days))
   end
 
   def service_connected_decision_text
