@@ -41,7 +41,7 @@ class CaseHearingsDetail extends React.PureComponent {
       </React.Fragment>
     }];
 
-    if (hearing.viewedByJudge && !userIsVsoEmployee) {
+    if (!userIsVsoEmployee) {
       hearingAttrs.push(
         {
           label: '',
