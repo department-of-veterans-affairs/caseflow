@@ -129,8 +129,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
       create(:ama_judge_decision_review_task, :completed,
              assigned_to: judge, appeal: appeal, created_at: receipt_date + 3.days, parent: root_task)
     end
+    let!(:mtv_mail_task) { create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney) }
     let!(:judge_address_motion_to_vacate_task) do
-      create(:judge_address_motion_to_vacate_task, appeal: appeal, assigned_to: judge)
+      create(:judge_address_motion_to_vacate_task, appeal: appeal, parent: mtv_mail_task, assigned_to: judge)
     end
     let!(:atty_option_txt) { "#{drafting_attorney.full_name} (Orig. Attorney)" }
     let!(:judge_notes) { "Here's why I made my decision..." }
@@ -240,7 +241,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         disposition: "denied",
         hyperlink: hyperlink
       )
-      new_task = DeniedMotionToVacateTask.find_by(assigned_to: drafting_attorney)
+      new_task = DeniedMotionToVacateTask.find_by(assigned_to: motions_attorney)
       expect(new_task).to_not be_nil
       expect(new_task.label).to eq COPY::DENIED_MOTION_TO_VACATE_TASK_LABEL
       expect(new_task.available_actions(motions_attorney)).to include(
@@ -274,7 +275,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         disposition: "dismissed",
         hyperlink: hyperlink
       )
-      new_task = DismissedMotionToVacateTask.find_by(assigned_to: drafting_attorney)
+      new_task = DismissedMotionToVacateTask.find_by(assigned_to: motions_attorney)
       expect(new_task).to_not be_nil
       expect(new_task.label).to eq COPY::DISMISSED_MOTION_TO_VACATE_TASK_LABEL
       expect(new_task.available_actions(motions_attorney)).to include(

@@ -65,9 +65,13 @@ class PostDecisionMotionUpdater
   def create_abstract_task
     AbstractMotionToVacateTask.new(
       appeal: task.appeal,
-      parent: task,
+      parent: task.parent,
       assigned_to: task.assigned_to
     )
+  end
+
+  def disposition
+    params[:disposition]
   end
 
   def task_class
@@ -78,7 +82,19 @@ class PostDecisionMotionUpdater
     (params[:disposition] == "granted") ? params[:vacate_type] : "#{params[:disposition]}_motion_to_vacate"
   end
 
+  def denied_or_dismissed?
+    %w[denied dismissed].include? disposition
+  end
+
   def assigned_to
-    @assigned_to ||= User.find_by(id: params[:assigned_to_id])
+    @assigned_to ||= (denied_or_dismissed? ? prev_attorney : User.find_by(id: params[:assigned_to_id]))
+  end
+
+  def prev_attorney
+    mtv_mail_task.assigned_to
+  end
+
+  def mtv_mail_task
+    task.parent
   end
 end
