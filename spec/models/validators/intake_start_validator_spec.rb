@@ -4,32 +4,38 @@ require "rails_helper"
 require "support/database_cleaner"
 
 describe IntakeStartValidator, :postgres do
-  context "#user_may_modify_veteran_file?" do
+  context "#validate" do
     let(:user) { create(:user) }
 
     let(:veteran) { create(:veteran) }
 
     let(:intake) do
-      create(:intake, veteran_file_number: veteran.file_number, user: user)
+      # IntakeStartValidator expects an uncommitted intake (hence new)
+      Intake.new(veteran_file_number: veteran.file_number, user: user)
     end
 
     let(:validator) do
       described_class.new(intake: intake)
     end
 
-    it "returns true when BGS allows modification" do
+    let(:validate_error_code) do
+      validator.validate
+      intake.error_code
+    end
+
+    it "sets no error_code when BGS allows modification" do
       allow_any_instance_of(BGSService).to receive(:may_modify?) { true }
-      expect(validator.send(:user_may_modify_veteran_file?)).to be true
+      expect(validate_error_code).to be nil
     end
 
-    it "returns false when BGS does not allow modification" do
+    it "sets error_code \"veteran_not_modifiable\" when BGS does not allow modification" do
       allow_any_instance_of(BGSService).to receive(:may_modify?) { false }
-      expect(validator.send(:user_may_modify_veteran_file?)).to be false
+      expect(validate_error_code).to eq "veteran_not_modifiable"
     end
 
-    it "returns true when user is User.api_user" do
+    it "sets no error_code when user is User.api_user" do
       user = User.api_user
-      expect(validator.send(:user_may_modify_veteran_file?)).to be true
+      expect(validate_error_code).to be nil
     end
   end
 end
