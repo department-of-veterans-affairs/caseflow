@@ -117,9 +117,11 @@ class SaveButtonUnconnected extends React.Component {
 
     const withdrawDateError = new Date(withdrawalDate) < new Date(receiptDate) || new Date(withdrawalDate) > new Date();
 
+    const validateWithdrawDateError = withdrawalDate && !withdrawDateError;
+
     const withdrawDateValid = _.every(
       addedIssues, (issue) => !issue.withdrawalPending
-    ) || withdrawalDate && !withdrawDateError;
+    ) || validateWithdrawDateError;
 
     const saveDisabled = _.isEqual(
       addedIssues, originalIssues
@@ -208,7 +210,10 @@ SaveButtonUnconnected.propTypes = {
   requestIssuesUpdate: PropTypes.func,
   formType: PropTypes.string,
   claimId: PropTypes.string,
-  history: PropTypes.object
+  history: PropTypes.object,
+  state: PropTypes.shape({
+    addedIssues: PropTypes.array
+  })
 };
 
 const SaveButton = connect(

@@ -54,7 +54,7 @@ export const submitReview = (intakeId, rampRefiling) => (dispatch) => {
 
   const data = {
     option_selected: rampRefiling.optionSelected,
-    receipt_date: formatDateStringForApi(rampRefiling.receiptDate),
+    receipt_date: rampRefiling.receiptDate,
     appeal_docket: rampRefiling.appealDocket
   };
 

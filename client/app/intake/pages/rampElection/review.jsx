@@ -74,7 +74,7 @@ Review.propTypes = {
   setReceiptDate: PropTypes.func,
   setOptionSelected: PropTypes.func,
   rampElectionStatus: PropTypes.string,
-  reviewIntakeError: PropTypes.string
+  reviewIntakeError: PropTypes.bool
 };
 
 export default connect(

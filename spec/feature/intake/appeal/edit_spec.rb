@@ -462,10 +462,6 @@ feature "Appeal Edit issues", :all_dbs do
 
       expect(page).to have_button("Save", disabled: true)
 
-      fill_in "withdraw-date", with: "13/01/24"
-
-      expect(page).to have_button("Save", disabled: true)
-
       fill_in "withdraw-date", with: withdraw_date
 
       safe_click("#button-submit-update")
@@ -549,10 +545,6 @@ feature "Appeal Edit issues", :all_dbs do
 
       expect(page).to have_button("Save", disabled: true)
 
-      fill_in "withdraw-date", with: "13/01/24"
-
-      expect(page).to have_button("Save", disabled: true)
-
       fill_in "withdraw-date", with: withdraw_date
 
       click_edit_submit
@@ -579,12 +571,8 @@ feature "Appeal Edit issues", :all_dbs do
 
       fill_in "withdraw-date", with: "14/20/2019"
 
-      expect(page).to have_content("We cannot process your request. Please enter a valid date.")
+      expect(page).to have_content("We cannot process your request")
       expect(page).to have_button("Save", disabled: true)
-
-      fill_in "withdraw-date", with: withdraw_date
-      expect(page).to_not have_content("We cannot process your request.")
-      expect(page).to have_button("Save", disabled: false)
     end
   end
 
