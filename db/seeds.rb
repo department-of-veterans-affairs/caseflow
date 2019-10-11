@@ -1223,6 +1223,35 @@ class SeedDB
     end
   end
 
+  def create_inbox_messages
+    user = User.find_by_css_id "BVAYELLOW"
+
+    veteran1 = Veteran.find_or_create_by_file_number "994806951"
+    veteran2 = Veteran.find_or_create_by_file_number "520353651"
+
+    appeal1 = FactoryBot.create(:appeal, veteran_file_number: veteran1.file_number)
+    appeal2 = FactoryBot.create(
+      :legacy_appeal,
+      vacols_case: FactoryBot.create(:case),
+      vbms_id: "#{veteran2.file_number}S"
+    )
+
+    message1 = <<~MSG
+      <a href="/queue/appeals/#{appeal1.uuid}">Veteran ID #{veteran1.file_number}</a> - Virtual hearing not scheduled
+      Caseflow is having trouble contacting the virtual hearing scheduler.
+      For help, submit a support ticket using <a href="https://yourit.va.gov/">YourIT</a>.
+    MSG
+
+    message2 = <<~MSG
+      <a href="/queue/appeals/#{appeal2.vacols_id}">Veteran ID #{veteran2.file_number}</a> - Hearing time not updated
+      Caseflow is having trouble contacting the virtual hearing scheduler.
+      For help, submit a support ticket using <a href="https://yourit.va.gov/">YourIT</a>.
+    MSG
+
+    Message.create(text: message1, detail: appeal1, user: user)
+    Message.create(text: message2, detail: appeal2, user: user)
+  end
+
   def seed
     clean_db
     # Annotations and tags don't come from VACOLS, so our seeding should
@@ -1247,6 +1276,8 @@ class SeedDB
     create_veteran_record_request_tasks
 
     create_intake_users
+
+    create_inbox_messages
 
     # Active Jobs which populate tables based on seed data
     FetchHearingLocationsForVeteransJob.perform_now
