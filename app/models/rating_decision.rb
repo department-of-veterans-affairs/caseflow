@@ -106,7 +106,7 @@ class RatingDecision
   end
 
   def effective_start_date_prior_to_modern_recordkeeping?
-    return true unless effective_start_date_of_original_decision
+    return false unless effective_start_date_of_original_decision
 
     effective_start_date_of_original_decision.to_date < MODERN_RECORDKEEPING_CUTOFF_DATE.to_date
   end
