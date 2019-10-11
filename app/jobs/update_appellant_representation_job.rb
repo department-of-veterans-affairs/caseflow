@@ -6,6 +6,7 @@ class UpdateAppellantRepresentationJob < CaseflowJob
   # For time_ago_in_words()
   include ActionView::Helpers::DateHelper
   queue_with_priority :low_priority
+  application_attr :queue
 
   APP_NAME = "caseflow_job"
   METRIC_GROUP_NAME = UpdateAppellantRepresentationJob.name.underscore
