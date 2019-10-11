@@ -19,6 +19,7 @@ describe RatingDecision do
   let(:participant_id) { "1234567" }
   let(:begin_date) { profile_date + 30.days }
   let(:disability_id) { "5678" }
+  let(:disability_date) { profile_date }
   let(:rating_issue_reference_id) { "123" }
   let(:original_denial_date) { promulgation_date - 7 }
 
@@ -32,6 +33,7 @@ describe RatingDecision do
         rating_sequence_number: "1234",
         rating_issue_reference_id: rating_issue_reference_id,
         disability_id: disability_id,
+        disability_date: disability_date,
         diagnostic_text: "tinnitus",
         diagnostic_code: "6260",
         begin_date: begin_date,
@@ -68,6 +70,7 @@ describe RatingDecision do
       {
         decn_tn: decision_type_name,
         dis_sn: disability_id,
+        dis_dt: disability_date,
         orig_denial_dt: original_denial_date,
         disability_evaluations: {
           begin_dt: begin_date,
@@ -185,6 +188,20 @@ describe RatingDecision do
           let(:original_denial_date) { promulgation_date + 6.months }
 
           it { is_expected.to eq(false) }
+        end
+
+        context "profile date is near original_denial_date but not promulgation date" do
+          let(:original_denial_date) { promulgation_date - 6.months }
+          let(:profile_date) { promulgation_date - 6.months + 3.days }
+
+          it { is_expected.to eq(true) }
+        end
+
+        context "original_denial_date is pre-2005, disability date is near promulgation date" do
+          let(:original_denial_date) { Time.utc(2004, 1, 1, 12, 0, 0) }
+          let(:disability_date) { promulgation_date - 7.days }
+
+          it { is_expected.to eq(true) }
         end
       end
     end

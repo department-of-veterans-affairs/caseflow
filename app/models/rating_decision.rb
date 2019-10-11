@@ -8,6 +8,8 @@ class RatingDecision
   include ActiveModel::Model
   include LatestRatingDisabilityEvaluation
 
+  MODERN_RECORDKEEPING_CUTOFF_DATE = "2005-01-01"
+
   attr_accessor :begin_date,
                 :benefit_type,
                 :converted_begin_date,
@@ -68,7 +70,7 @@ class RatingDecision
 
     return false unless decision_date
 
-    effective_date_near_promulgation_date?
+    effective_date_near_promulgation_date? || effective_date_near_profile_date?
   end
 
   def rating_issue?
@@ -93,8 +95,20 @@ class RatingDecision
 
   private
 
+  def effective_start_date_of_original_decision
+    original_denial_date || converted_begin_date || begin_date
+  end
+
   def effective_date
-    original_denial_date || converted_begin_date || begin_date || disability_date
+    return disability_date if effective_start_date_prior_to_modern_recordkeeping?
+
+    effective_start_date_of_original_decision || disability_date
+  end
+
+  def effective_start_date_prior_to_modern_recordkeeping?
+    return true unless effective_start_date_of_original_decision
+
+    effective_start_date_of_original_decision.to_date < MODERN_RECORDKEEPING_CUTOFF_DATE.to_date
   end
 
   def effective_date_near_promulgation_date?
@@ -103,6 +117,14 @@ class RatingDecision
     the_decision = effective_date.to_date
     the_promulgation = promulgation_date.to_date
     the_decision.between?((the_promulgation - 10.days), (the_promulgation + 10.days))
+  end
+
+  def effective_date_near_profile_date?
+    return false unless effective_date
+
+    the_decision = effective_date.to_date
+    the_profile = profile_date.to_date
+    the_decision.between?((the_profile - 10.days), (the_profile + 10.days))
   end
 
   def service_connected_decision_text
