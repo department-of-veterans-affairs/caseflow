@@ -47,8 +47,6 @@ export const isCorrection = (isRating, intakeData) => {
 
 export const getReceiptDateError = (responseErrorCodes, state) => (
   {
-    // blank:
-    //   'Please enter a valid receipt date.',
     in_future:
       'Receipt date cannot be in the future.',
     before_ramp: 'Receipt Date cannot be earlier than RAMP start date, 11/01/2017.',

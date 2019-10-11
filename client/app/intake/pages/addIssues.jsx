@@ -213,9 +213,6 @@ class AddIssuesPage extends React.Component {
 
         return msg;
       }
-      //  else if (intakeData.withdrawalDate && intakeData.withdrawalDate.length >= 10) {
-      //   msg = 'We cannot process your request. Please enter a valid date.';
-      // }
     };
 
     const columns = [{ valueName: 'field' }, { valueName: 'content' }];
