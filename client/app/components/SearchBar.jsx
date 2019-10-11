@@ -42,6 +42,7 @@ export default class SearchBar extends React.Component {
     }
   }
 
+  /* eslint-disable camelcase */
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.value !== nextProps.value) {
       this.clearSearchCallback();
@@ -52,6 +53,7 @@ export default class SearchBar extends React.Component {
       }, 500);
     }
   }
+  /* eslint-enable camelcase */
 
   onBlur = () => {
     if (this.clearSearchCallback()) {
