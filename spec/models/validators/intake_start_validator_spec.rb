@@ -33,9 +33,12 @@ describe IntakeStartValidator, :postgres do
       expect(validate_error_code).to eq "veteran_not_modifiable"
     end
 
-    it "sets no error_code when user is User.api_user" do
-      user = User.api_user
-      expect(validate_error_code).to be nil
+    context "user is api_user" do
+      let(:user) { User.api_user }
+
+      it "sets no error_code when user is User.api_user" do
+        expect(validate_error_code).to be nil
+      end
     end
   end
 end
