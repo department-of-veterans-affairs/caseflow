@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191010164748) do
+ActiveRecord::Schema.define(version: 20191010195542) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -780,10 +780,13 @@ ActiveRecord::Schema.define(version: 20191010164748) do
 
   create_table "messages", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.integer "detail_id", comment: "ID of the related object"
+    t.string "detail_type", comment: "Model name of the related object"
     t.datetime "read_at", comment: "When the message was read"
     t.string "text", comment: "The message"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false, comment: "The user for whom the message is intended"
+    t.index ["detail_type", "detail_id"], name: "index_messages_on_detail_type_and_detail_id"
   end
 
   create_table "non_availabilities", force: :cascade do |t|
