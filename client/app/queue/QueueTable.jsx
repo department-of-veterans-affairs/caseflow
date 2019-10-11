@@ -281,12 +281,11 @@ export default class QueueTable extends React.PureComponent {
   }
 
   updateFilteredByList = (newList) => {
-    this.setState({ filteredByList: newList });
+    this.setState({ filteredByList: newList }, this.updateAddressBar);
 
     // When filters are added or changed, default back to the first page of data
     // because the number of pages could have changed as data is filtered out.
     this.updateCurrentPage(0);
-    this.updateAddressBar();
   };
 
   filterTableData = (data) => {
