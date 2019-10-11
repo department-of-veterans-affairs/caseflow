@@ -415,7 +415,7 @@ const deleteEditingAppealIssue = (state, action) => {
 const setAttorneysOfJudge = (state, action) => {
   return update(state, {
     attorneysOfJudge: {
-      $set: action.payload.attorneys
+      $set: action.payload.attorneys.data.map((attorney) => attorney.attributes)
     }
   });
 };
