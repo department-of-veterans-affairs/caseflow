@@ -410,14 +410,6 @@ feature "End Product Correction (EP 930)", :postgres do
     let(:edit_path) { "#{claim_review_type.pluralize}/#{reference_id}/edit" }
     let(:ep_code) { "040SCR" }
 
-    context "when the end product is not yet cleared" do
-      let(:synced_status) { "PEND" }
-      it "prevents edit" do
-        visit edit_path
-        expect(page).to have_content("Issues Not Editable")
-      end
-    end
-
     context "when the end product is cleared" do
       context "when the review has no decision issues" do
         it "does not allow the user to add issues" do
