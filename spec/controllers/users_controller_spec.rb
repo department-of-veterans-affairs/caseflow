@@ -57,7 +57,7 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
         subject
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
-        expect(response_body["attorneys"].size).to eq(team_member_count)
+        expect(response_body["attorneys"]["data"].size).to eq(team_member_count)
       end
     end
 
