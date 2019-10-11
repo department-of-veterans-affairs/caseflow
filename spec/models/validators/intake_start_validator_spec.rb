@@ -10,35 +10,26 @@ describe IntakeStartValidator, :postgres do
     let(:veteran) { create(:veteran) }
 
     let(:intake) do
-      ->(u) do
-        create(:intake, veteran_file_number: veteran.file_number, user: u)
-      end
+      create(:intake, veteran_file_number: veteran.file_number, user: user)
     end
 
     let(:validator) do
-      ->(u) do
-        described_class.new(intake: intake[user: u])
-      end
+      described_class.new(intake: intake)
     end
 
-    # before do
-    #   allow_any_instance_of(BGSService).to receive(:may_modify?) { raise }
-    # end
-
-    it do
+    it "returns true when BGS allows modification" do
       allow_any_instance_of(BGSService).to receive(:may_modify?) { true }
-      expect(validator[user].send(:user_may_modify_veteran_file?)).to be true
+      expect(validator.send(:user_may_modify_veteran_file?)).to be true
     end
 
-    it do
+    it "returns false when BGS does not allow modification" do
       allow_any_instance_of(BGSService).to receive(:may_modify?) { false }
-      expect(validator[user].send(:user_may_modify_veteran_file?)).to be false
+      expect(validator.send(:user_may_modify_veteran_file?)).to be false
     end
 
-    it "returns true when user is api_user" do
-      expect(
-        validator[User.api_user].send(:user_may_modify_veteran_file?)
-      ).to be true
+    it "returns true when user is User.api_user" do
+      user = User.api_user
+      expect(validator.send(:user_may_modify_veteran_file?)).to be true
     end
   end
 end
