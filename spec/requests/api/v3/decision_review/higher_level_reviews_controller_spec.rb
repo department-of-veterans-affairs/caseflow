@@ -134,7 +134,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       json = JSON.parse(response.body)
       expect(json.keys).to include('data', 'included')
     end
-    describe 'data' do
+    context 'data' do
       subject do
         get_higher_level_review
         JSON.parse(response.body)['data']
@@ -142,7 +142,11 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       it 'should have attributes' do
         expect(subject['attributes']).to_not be_empty
       end
-      describe 'attributes'
+      context 'attributes'
+      it 'should have relationships' do
+        expect(subject['relationships']).to_not be_empty
+      end
+      context 'relationships'
     end
   end
 
