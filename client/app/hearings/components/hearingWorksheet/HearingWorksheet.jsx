@@ -16,6 +16,7 @@ import CFRichTextEditor from '../../../components/CFRichTextEditor';
 import Button from '../../../components/Button';
 import ContentSection from '../../../components/ContentSection';
 import HearingWorksheetDocs from './HearingWorksheetDocs';
+import ApiUtil from '../../../util/ApiUtil';
 
 import {
   onSummaryChange,
@@ -83,6 +84,11 @@ class WorksheetFormEntry extends React.PureComponent {
 export class HearingWorksheet extends React.PureComponent {
   componentDidMount() {
     document.title = getWorksheetTitle(this.props.worksheet);
+    this.postHearingView();
+  }
+
+  postHearingView = () => {
+    ApiUtil.post(`/hearings/hearing_view/${this.props.worksheet.external_id}`);
   }
 
   save = (worksheet, worksheetIssues) => () => {
