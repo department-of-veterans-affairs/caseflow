@@ -35,6 +35,7 @@ const inputFix = css({
 
 const HEARING_DETAILS_FORM_NAME = 'hearingDetails';
 const TRANSCRIPTION_DETAILS_FORM_NAME = 'transcriptionDetails';
+const VIRTUAL_HEARING_FORM_NAME = 'virtualHearing';
 
 class HearingDetails extends React.Component {
   constructor(props) {
@@ -53,6 +54,7 @@ class HearingDetails extends React.Component {
   componentDidMount() {
     const { hearing } = this.props;
     const transcription = hearing.transcription || {};
+    const virtualHearing = hearing.virtualHearing || {};
 
     this.props.onChangeFormData(HEARING_DETAILS_FORM_NAME, {
       bvaPoc: hearing.bvaPoc,
@@ -60,6 +62,8 @@ class HearingDetails extends React.Component {
       evidenceWindowWaived: hearing.evidenceWindowWaived || false,
       room: hearing.room,
       notes: hearing.notes,
+      scheduledFor: hearing.scheduledFor,
+      scheduledTimeString: hearing.scheduledTimeString,
       // Transcription Request
       transcriptRequested: hearing.transcriptRequested,
       transcriptSentDate: DateUtil.formatDateStr(hearing.transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD')
@@ -76,6 +80,12 @@ class HearingDetails extends React.Component {
       problemType: transcription.problemType,
       problemNoticeSentDate: DateUtil.formatDateStr(transcription.problemNoticeSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
       requestedRemedy: transcription.requestedRemedy
+    });
+
+    this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, {
+      veteranEmail: virtualHearing.veteranEmail,
+      representativeEmail: virtualHearing.representativeEmail,
+      active: virtualHearing.active
     });
   }
 
@@ -134,7 +144,7 @@ class HearingDetails extends React.Component {
       veteranFileNumber
     } = this.props.hearing;
 
-    const { hearingDetailsForm, transcriptionDetailsForm } = this.props;
+    const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = this.props;
 
     const { disabled, success, error } = this.state;
 
@@ -166,6 +176,7 @@ class HearingDetails extends React.Component {
             setHearing={this.setHearing}
             transcription={transcriptionDetailsForm || {}}
             hearing={hearingDetailsForm || {}}
+            virtualHearing={virtualHearingForm || {}}
             isLegacy={this.state.isLegacy}
             disabled={disabled} />
           <div>
@@ -202,7 +213,8 @@ HearingDetails.propTypes = {
 
 const mapStateToProps = (state) => ({
   hearingDetailsForm: state.components.forms[HEARING_DETAILS_FORM_NAME],
-  transcriptionDetailsForm: state.components.forms[TRANSCRIPTION_DETAILS_FORM_NAME]
+  transcriptionDetailsForm: state.components.forms[TRANSCRIPTION_DETAILS_FORM_NAME],
+  virtualHearingForm: state.components.forms[VIRTUAL_HEARING_FORM_NAME]
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

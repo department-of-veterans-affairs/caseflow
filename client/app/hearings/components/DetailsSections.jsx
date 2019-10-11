@@ -17,6 +17,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import DateSelector from '../../components/DateSelector';
 import RadioField from '../../components/RadioField';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
+import VirtualHearingModal from './VirtualHearingModal';
 
 import DetailsOverview from './DetailsOverview';
 
@@ -80,7 +81,7 @@ export const Overview = ({
 
 const Details = ({
   hearing: { judgeId, room, evidenceWindowWaived, notes, bvaPoc },
-  set, readOnly, isLegacy
+  set, readOnly, isLegacy, openVirtualHearingModal
 }) => (
   <React.Fragment>
     <div {...rowThirds}>
@@ -98,6 +99,9 @@ const Details = ({
             label: 'Virtual'
           }
         ]}
+        onChange={(option) => {
+          openVirtualHearingModal(option)
+        }}
       />
     </div>
     <div {...rowThirds}>
@@ -324,7 +328,7 @@ const TranscriptionRequest = ({
   </div>
 );
 
-const Sections = ({ transcription, hearing, disabled, setHearing, setTranscription, isLegacy }) => (
+const Sections = ({ transcription, hearing, disabled, setHearing, setTranscription, isLegacy, virtualHearing }) => (
   <React.Fragment>
     <Details
       hearing={hearing}
@@ -332,7 +336,7 @@ const Sections = ({ transcription, hearing, disabled, setHearing, setTranscripti
       readOnly={disabled}
       isLegacy={isLegacy} />
     <div className="cf-help-divider" />
-
+    <VirtualHearingModal hearing={hearing} virtualHearing={virtualHearing} />
     {!isLegacy &&
       <div>
         <h2>Transcription Details</h2>
