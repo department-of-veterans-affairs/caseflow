@@ -56,7 +56,10 @@ Dropdown.propTypes = {
   label: PropTypes.string,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func,
-  options: PropTypes.array.isRequired,
+  options: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.any,
+    displayText: PropTypes.string
+  })).isRequired,
   readOnly: PropTypes.bool,
   required: PropTypes.bool,
   value: PropTypes.string

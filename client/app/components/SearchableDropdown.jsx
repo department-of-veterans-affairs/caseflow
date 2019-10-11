@@ -179,7 +179,10 @@ SearchableDropdown.propTypes = {
   hideLabel: PropTypes.bool,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func,
-  options: PropTypes.array,
+  options: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.any,
+    label: PropTypes.string
+  })),
   readOnly: PropTypes.bool,
   required: PropTypes.bool,
   placeholder: PropTypes.oneOfType([

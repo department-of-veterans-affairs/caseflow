@@ -84,6 +84,23 @@ const Details = ({
 }) => (
   <React.Fragment>
     <div {...rowThirds}>
+      <SearchableDropdown
+        label="Hearing Type"
+        name="hearing-type"
+        strongLabel
+        options={[
+          {
+            value: false,
+            label: 'Video'
+          },
+          {
+            value: true,
+            label: 'Virtual'
+          }
+        ]}
+      />
+    </div>
+    <div {...rowThirds}>
       <JudgeDropdown
         name="judgeDropdown"
         value={judgeId}
