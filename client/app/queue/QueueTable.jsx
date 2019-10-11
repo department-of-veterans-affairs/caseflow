@@ -225,6 +225,10 @@ export default class QueueTable extends React.PureComponent {
     if (needsTaskRequest) {
       this.requestTasks();
     }
+
+    if (useTaskPagesApi) {
+      this.updateAddressBar();
+    }
   }
 
   componentDidMount = () => {
@@ -282,6 +286,7 @@ export default class QueueTable extends React.PureComponent {
     // When filters are added or changed, default back to the first page of data
     // because the number of pages could have changed as data is filtered out.
     this.updateCurrentPage(0);
+    this.updateAddressBar();
   };
 
   filterTableData = (data) => {
@@ -352,12 +357,27 @@ export default class QueueTable extends React.PureComponent {
     this.setState({ currentPage: newPage }, this.requestTasks);
   }
 
+  updateAddressBar = () => {
+    history.pushState('', '', this.deepLink());
+  }
+
+  deepLink = () => {
+    const base = `${window.location.origin}${window.location.pathname}`;
+    const tab = this.props.taskPagesApiEndpoint.split('?')[1];
+
+    return `${base}?${tab}${this.requestQueryString()}`;
+  }
+
   // /organizations/vlj-support-staff/tasks?tab=on_hold
   // &page=2
   // &sort_by=detailsColumn
   // &order=desc
   // &filter[]=col=docketNumberColumn&val=legacy,evidence_submission&filters[]=col=taskColumn&val=Unaccredited rep
   requestUrl = () => {
+    return `${this.props.taskPagesApiEndpoint}${this.requestQueryString()}`;
+  };
+
+  requestQueryString = () => {
     const { filteredByList } = this.state;
     const filterParams = [];
 
@@ -392,7 +412,7 @@ export default class QueueTable extends React.PureComponent {
       )).
       join('&');
 
-    return `${this.props.taskPagesApiEndpoint}&${queryString}`;
+    return `&${queryString}`;
   }
 
   requestTasks = () => {
@@ -426,6 +446,8 @@ export default class QueueTable extends React.PureComponent {
         tasksFromApi: preparedTasks,
         loadingComponent: null
       });
+
+      this.updateAddressBar();
     }).
       catch(() => this.setState({ loadingComponent: null }));
   };
