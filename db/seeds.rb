@@ -1252,36 +1252,43 @@ class SeedDB
     Message.create(text: message2, detail: appeal2, user: user)
   end
 
-  def seed
-    clean_db
-    # Annotations and tags don't come from VACOLS, so our seeding should
-    # create them in all envs
-    create_annotations
-    create_tags
-    create_users
-    create_ama_appeals
-    create_hearing_days
-    create_veterans_ready_for_hearing
-    create_tasks
-    create_higher_level_review_tasks
-
-    setup_dispatch
-    create_previously_held_hearing_data
-    create_legacy_issues_eligible_for_opt_in
-
-    create_higher_level_reviews_and_supplemental_claims
-
-    create_ama_hearing_appeals
-    create_board_grant_tasks
-    create_veteran_record_request_tasks
-
-    create_intake_users
-
-    create_inbox_messages
-
+  def perform_seeding_jobs
     # Active Jobs which populate tables based on seed data
     FetchHearingLocationsForVeteransJob.perform_now
     UpdateCachedAppealsAttributesJob.perform_now
+    NightlySyncsJob.perform_now
+  end
+
+  def call_and_log_seed_step(step)
+    Rails.logger.debug("Starting seed step #{step}")
+    send(step)
+    Rails.logger.debug("Finished seed step #{step}")
+  end
+
+  def seed
+    call_and_log_seed_step :clean_db
+
+    # Annotations and tags don't come from VACOLS, so our seeding should
+    # create them in all envs
+    call_and_log_seed_step :create_annotations
+    call_and_log_seed_step :create_tags
+
+    call_and_log_seed_step :create_users
+    call_and_log_seed_step :create_ama_appeals
+    call_and_log_seed_step :create_hearing_days
+    call_and_log_seed_step :create_veterans_ready_for_hearing
+    call_and_log_seed_step :create_tasks
+    call_and_log_seed_step :create_higher_level_review_tasks
+    call_and_log_seed_step :setup_dispatch
+    call_and_log_seed_step :create_previously_held_hearing_data
+    call_and_log_seed_step :create_legacy_issues_eligible_for_opt_in
+    call_and_log_seed_step :create_higher_level_reviews_and_supplemental_claims
+    call_and_log_seed_step :create_ama_hearing_appeals
+    call_and_log_seed_step :create_board_grant_tasks
+    call_and_log_seed_step :create_veteran_record_request_tasks
+    call_and_log_seed_step :create_intake_users
+    call_and_log_seed_step :create_inbox_messages
+    call_and_log_seed_step :perform_seeding_jobs
 
     return if Rails.env.development?
 
