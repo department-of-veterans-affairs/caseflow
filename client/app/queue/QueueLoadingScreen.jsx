@@ -79,7 +79,7 @@ class QueueLoadingScreen extends React.PureComponent {
     this.props.fetchAllAttorneys();
 
     return ApiUtil.get(`/users?role=Attorney&judge_id=${this.props.userId}`).
-      then((resp) => this.props.setAttorneysOfJudge(resp.body.attorneys.data));
+      then((resp) => this.props.setAttorneysOfJudge(resp.body.attorneys));
   }
 
   createLoadPromise = () => Promise.all([
