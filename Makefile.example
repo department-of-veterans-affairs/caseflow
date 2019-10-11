@@ -42,7 +42,7 @@
 whats-next:  ## TODO
 	scripts/whats-next
 
-ready:  ## TODO
+ready:  ## Helper command that watches the docker containers to finish start up
 	h=`docker-compose ps | grep healthy`; while [ "$$h" == "" ]; do h=`docker-compose ps | grep healthy`; echo $$h; sleep 1; done
 
 up:  ## Start the docker containers
@@ -61,10 +61,10 @@ clean:  ## Clean logs, compiled webpack assets, and temporary files
 	rm -rf public/assets
 	rm -rf tmp/capybara
 
-vacols:  ## TODO
+facols-bash:  ## Connect to the docker FACOLS instance
 	docker exec --tty -i VACOLS_DB bash
 
-facols:  ## TODO
+facols:  ## Connect directly to the FACOLS oracle database, requires sqlplus
 	sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
 
 build: clean
@@ -76,15 +76,15 @@ lint:  ## Run linter for javascript and ruby
 jslint:  ## Run linter for javascript
 	cd client && yarn run lint
 
-security:  ## TODO
+security:  ## Runs brakeman vulnerability scan
 	bundle exec rake security
 
 check: test lint  ## Run tests and lint
 
-logs:  ## TODO
+logs:  ## Follow the docker logs
 	docker-compose logs -f
 
-db:  ## TODO
+db:  ## Connect to your dev postgres (caseflow) db
 	bundle exec rails dbconsole
 
 c:  ## Start rails console
@@ -96,7 +96,7 @@ migrate:  ## Migrate rails database
 rollback:  ## Rollback rails database
 	bundle exec rake db:rollback
 
-fresh:  ## TODO
+fresh:  ## https://github.com/imsky/git-fresh
 	git fresh
 
 reset:  ## Resets databases
@@ -116,7 +116,7 @@ update: fresh install migrate  ## TODO
 client-test:  ## Runs javascript tests
 	cd client && yarn run build:test
 
-one-test:  ## TODO
+one-test:  ## run the test passed in
 	bundle exec rspec $$T
 
 unsafe:  ## TODO

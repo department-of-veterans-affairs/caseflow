@@ -18,12 +18,17 @@ describe "BVA Decision Progress report", :postgres do
         { "decision_status" => "8. Decision dispatched", "num" => 1 },
         { "decision_status" => "CANCELLED", "num" => 1 },
         { "decision_status" => "MISC", "num" => 1 },
-        { "decision_status" => "ON HOLD", "num" => 1 }
+        { "decision_status" => "ON HOLD", "num" => 2 }
       ]
     end
 
     let(:user) { create(:default_user) }
     let!(:not_distributed) { create(:appeal, :ready_for_distribution) }
+    let!(:not_distributed_with_timed_hold) do
+      create(:appeal, :ready_for_distribution).tap do |appeal|
+        create(:timed_hold_task, appeal: appeal)
+      end
+    end
     let!(:distributed_to_judge) { create(:appeal, :assigned_to_judge) }
     let!(:assigned_to_attorney) { create(:appeal).tap { |appeal| create(:ama_attorney_task, appeal: appeal) } }
     let!(:assigned_to_colocated) do

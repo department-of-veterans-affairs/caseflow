@@ -2,7 +2,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import _ from 'lodash';
 import moment from 'moment';
 import { connect } from 'react-redux';
@@ -96,13 +95,11 @@ class AddIssuesPage extends React.Component {
   willRedirect(intakeData, hasClearedEp) {
     const { formType, featureToggles } = this.props;
     const { correctClaimReviews } = featureToggles;
-    const editableDta = correctClaimReviews && hasClearedEp;
 
     return (
       !formType ||
       intakeData.isOutcoded ||
-      (hasClearedEp && !correctClaimReviews) ||
-      (intakeData.isDtaError && !editableDta)
+      (hasClearedEp && !correctClaimReviews)
     );
   }
 
@@ -111,8 +108,6 @@ class AddIssuesPage extends React.Component {
 
     if (!formType) {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
-    } else if (intakeData.isDtaError) {
-      return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
     } else if (hasClearedEp) {
       return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
     } else if (intakeData.isOutcoded) {
@@ -138,7 +133,7 @@ class AddIssuesPage extends React.Component {
   }
 
   render() {
-    const { intakeForms, formType, veteran, featureToggles, editPage, addingIssue } = this.props;
+    const { intakeForms, formType, veteran, featureToggles, editPage, addingIssue, userCanWithdrawIssues } = this.props;
     const intakeData = intakeForms[formType];
     const { useAmaActivationDate } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
@@ -250,6 +245,8 @@ class AddIssuesPage extends React.Component {
             intakeData={intakeData}
             formType={formType}
             featureToggles={featureToggles}
+            userCanWithdrawIssues={userCanWithdrawIssues}
+            editPage={editPage}
           />
         )
       });
@@ -265,6 +262,8 @@ class AddIssuesPage extends React.Component {
             intakeData={intakeData}
             formType={formType}
             featureToggles={featureToggles}
+            userCanWithdrawIssues={userCanWithdrawIssues}
+            editPage={editPage}
           />
         )
       });
@@ -272,10 +271,12 @@ class AddIssuesPage extends React.Component {
 
     const hideAddIssueButton = intakeData.isDtaError && _.isEmpty(intakeData.contestableIssues);
 
-    rowObjects = rowObjects.concat({
-      field: ' ',
-      content: !hideAddIssueButton && addIssueButton()
-    });
+    if (!hideAddIssueButton) {
+      rowObjects = rowObjects.concat({
+        field: ' ',
+        content: addIssueButton()
+      });
+    }
 
     return (
       <div className="cf-intake-edit">
@@ -365,7 +366,8 @@ AddIssuesPage.propTypes = {
   toggleUntimelyExemptionModal: PropTypes.func,
   undoCorrection: PropTypes.func,
   veteran: PropTypes.object,
-  withdrawIssue: PropTypes.func
+  withdrawIssue: PropTypes.func,
+  userCanWithdrawIssues: PropTypes.bool
 };
 
 export const IntakeAddIssuesPage = connect(
@@ -412,7 +414,8 @@ export const EditAddIssuesPage = connect(
     featureToggles: state.featureToggles,
     editPage: true,
     activeIssue: state.activeIssue,
-    addingIssue: state.addingIssue
+    addingIssue: state.addingIssue,
+    userCanWithdrawIssues: state.userCanWithdrawIssues
   }),
   (dispatch) =>
     bindActionCreators(
