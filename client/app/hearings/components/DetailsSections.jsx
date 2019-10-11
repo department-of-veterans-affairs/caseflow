@@ -329,9 +329,19 @@ const TranscriptionRequest = ({
 );
 
 class Sections extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      modalOpen: false
+    };
+  }
+
+  openVHModal = () => {
+    this.setState({ modalOpen: true });
+  }
 
   render () {
-    const { transcription, hearing, disabled, setHearing, setTranscription, isLegacy, virtualHearing, modalOpen } = this.props;
+    const { transcription, hearing, disabled, setHearing, setTranscription, isLegacy, virtualHearing} = this.props;
 
     return (
       <React.Fragment>
@@ -339,9 +349,10 @@ class Sections extends React.Component {
           hearing={hearing}
           set={setHearing}
           readOnly={disabled}
-          isLegacy={isLegacy} />
+          isLegacy={isLegacy}
+          openVirtualHearingModal={this.openVHModal} />
         <div className="cf-help-divider" />
-        {modalOpen && <VirtualHearingModal hearing={hearing} virtualHearing={virtualHearing} />}
+        {this.state.modalOpen && <VirtualHearingModal hearing={hearing} virtualHearing={virtualHearing} />}
         {!isLegacy &&
           <div>
             <h2>Transcription Details</h2>
