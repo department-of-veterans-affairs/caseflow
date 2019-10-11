@@ -17,8 +17,7 @@ import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../constants';
-import { formatAddedIssues, getAddIssuesFields, validateDate } from '../util/issues';
-import { formatDateStr } from '../../util/DateUtil';
+import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
 import IssueList from '../components/IssueList';
 
@@ -160,7 +159,6 @@ class AddIssuesPage extends React.Component {
     const previouslywithdrawnIssues = issues.filter((issue) => issue.withdrawalDate);
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
     const withdrawnIssues = previouslywithdrawnIssues.concat(issuesPendingWithdrawal);
-    const withdrawDatePlaceholder = formatDateStr(new Date());
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
 
@@ -206,17 +204,18 @@ class AddIssuesPage extends React.Component {
       const formName = _.find(FORM_TYPES, { key: formType }).shortName;
       let msg;
 
-      if (validateDate(intakeData.withdrawalDate)) {
+      if (intakeData.withdrawalDate) {
         if (withdrawalDate < receiptDate) {
           msg = `We cannot process your request. Please select a date after the ${formName}'s receipt date.`;
         } else if (withdrawalDate > currentDate) {
           msg = "We cannot process your request. Please select a date prior to today's date.";
         }
-      } else if (intakeData.withdrawalDate && intakeData.withdrawalDate.length >= 10) {
-        msg = 'We cannot process your request. Please enter a valid date.';
-      }
 
-      return msg;
+        return msg;
+      }
+      //  else if (intakeData.withdrawalDate && intakeData.withdrawalDate.length >= 10) {
+      //   msg = 'We cannot process your request. Please enter a valid date.';
+      // }
     };
 
     const columns = [{ valueName: 'field' }, { valueName: 'content' }];
@@ -337,8 +336,8 @@ class AddIssuesPage extends React.Component {
                 name="withdraw-date"
                 value={intakeData.withdrawalDate}
                 onChange={this.withdrawalDateOnChange}
-                placeholder={withdrawDatePlaceholder}
                 dateErrorMessage={withdrawError()}
+                type="date"
               />
             </InlineForm>
           </div>

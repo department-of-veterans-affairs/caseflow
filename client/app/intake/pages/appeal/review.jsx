@@ -17,6 +17,7 @@ import { setReceiptDate } from '../../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
+import PropTypes from 'prop-types';
 
 class Review extends React.PureComponent {
   render() {
@@ -85,6 +86,21 @@ class Review extends React.PureComponent {
     </div>;
   }
 }
+
+Review.propTypes = {
+  veteranName: PropTypes.string,
+  receiptDate: PropTypes.string,
+  receiptDateError: PropTypes.string,
+  docketType: PropTypes.string,
+  docketTypeError: PropTypes.string,
+  legacyOptInApproved: PropTypes.string,
+  legacyOptInApprovedError: PropTypes.string,
+  reviewIntakeError: PropTypes.string,
+  setDocketType: PropTypes.func,
+  setReceiptDate: PropTypes.func,
+  setLegacyOptInApproved: PropTypes.func,
+  appealStatus: PropTypes.string
+};
 
 const SelectClaimantConnected = connect(
   ({ appeal, intake }) => ({

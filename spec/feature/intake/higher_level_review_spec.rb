@@ -188,7 +188,6 @@ feature "Higher-Level Review", :all_dbs do
     expect(find("#legacy-opt-in_false", visible: false)).to be_checked
 
     click_intake_continue
-
     expect(page).to have_current_path("/intake/add_issues")
 
     higher_level_review = HigherLevelReview.find_by(veteran_file_number: veteran_file_number)
@@ -683,13 +682,11 @@ feature "Higher-Level Review", :all_dbs do
         fill_in "Issue category", with: "Apportionment"
         find("#issue-category").send_keys :enter
 
-        fill_in "Decision date", with: "13/04/2019"
-        expect(page).to have_content("Please enter a valid decision date")
+        fill_in "Decision date", with: "12/04/2019"
+        expect(page).to have_content("Decision date cannot be in the future")
 
         Timecop.return
         fill_in "Decision date", with: Time.zone.tomorrow.mdY
-
-        expect(page).to have_content("Decision date cannot be in the future")
       end
     end
 
