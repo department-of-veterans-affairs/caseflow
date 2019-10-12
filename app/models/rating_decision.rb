@@ -9,7 +9,7 @@ class RatingDecision
   include LatestRatingDisabilityEvaluation
 
   # arbitrary but observed date before which rating data is sparsely populated.
-  MODERN_RECORDKEEPING_CUTOFF_DATE = "2005-01-01"
+  MODERN_RECORDKEEPING_CUTOFF_DATE = "2006-01-01"
 
   # the flexible window for calculating the contestable decision date.
   # this is the number of days +/- the effective date.
