@@ -18,6 +18,7 @@ describe RatingDecision do
   let(:promulgation_date) { Time.zone.today - 30 }
   let(:participant_id) { "1234567" }
   let(:begin_date) { profile_date + 30.days }
+  let(:converted_begin_date) { begin_date + 2.days }
   let(:disability_id) { "5678" }
   let(:disability_date) { profile_date }
   let(:rating_issue_reference_id) { "123" }
@@ -74,6 +75,7 @@ describe RatingDecision do
         orig_denial_dt: original_denial_date,
         disability_evaluations: {
           begin_dt: begin_date,
+          conv_begin_dt: converted_begin_date,
           dgnstc_tc: "6260",
           dgnstc_tn: "Tinnitus",
           dgnstc_txt: "tinnitus",
@@ -218,8 +220,9 @@ describe RatingDecision do
       context "decision is not a rating issue" do
         let(:rating_issue_reference_id) { nil }
         let(:original_denial_date) { Time.zone.today }
+        let(:begin_date) { Time.zone.tomorrow }
 
-        it "prefers the original_denial_date" do
+        it "prefers the original_denial_date as the oldest date" do
           expect(subject.decision_date).to eq(original_denial_date)
         end
 

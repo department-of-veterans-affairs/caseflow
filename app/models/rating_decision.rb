@@ -105,7 +105,7 @@ class RatingDecision
   # on a rating decision and they are not populated consistently.
 
   def effective_start_date_of_original_decision
-    original_denial_date || converted_begin_date || begin_date
+    [original_denial_date, converted_begin_date, begin_date].compact.min
   end
 
   def effective_date
