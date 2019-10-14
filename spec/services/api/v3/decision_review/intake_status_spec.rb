@@ -6,73 +6,61 @@ require "rails_helper"
 context Api::V3::DecisionReview::IntakeStatus, :postgres do
   let(:veteran_file_number) { "123456789" }
 
-  let(:create_intake) do
-    lambda do |detail = nil|
-      Intake.create!(
-        user: Generators::User.build,
-        veteran_file_number: veteran_file_number,
-        detail: detail
-      )
-    end
+  let(:higher_level_review) do
+    create(:higher_level_review, veteran_file_number: veteran_file_number)
   end
 
-  let(:create_higher_level_review) do
-    HigherLevelReview.create!(veteran_file_number: veteran_file_number)
-  end
-
-  let(:create_supplemental_claim) do
-    SupplementalClaim.create!(veteran_file_number: veteran_file_number)
-  end
-
-  let(:create_appeal) do
-    Appeal.create!(veteran_file_number: veteran_file_number)
-  end
-
-  let(:new_intake_status) do
-    ->(intake) { Api::V3::DecisionReview::IntakeStatus.new(intake) }
+  let(:intake) do
+    create(:intake, veteran_file_number: veteran_file_number, detail: decision_review)
   end
 
   context "#to_json" do
-    it("returns the correctly-formatted JSON:API response when the intake has a decision review") do
-      decision_review = create_higher_level_review
+    subject { intake_status = described_class.new(intake) }
 
-      asyncable_status = "dog"
-      allow(decision_review).to receive(:asyncable_status) { asyncable_status }
+    context do
+      let(:decision_review) do
+        hlr = higher_level_review
 
-      uuid = "cat"
-      allow(decision_review).to receive(:uuid) { uuid }
+        asyncable_status = "dog"
+        allow(hlr).to receive(:asyncable_status) { asyncable_status }
 
-      intake = create_intake[decision_review]
+        uuid = "cat"
+        allow(hlr).to receive(:uuid) { uuid }
 
-      intake_status = new_intake_status[intake]
+        hlr
+      end
 
-      expect(intake_status.to_json).to be_a(Hash)
-      expect(intake_status.to_json.keys).to contain_exactly(:data)
-      expect(intake_status.to_json[:data]).to be_a(Hash)
-      expect(intake_status.to_json[:data].keys).to contain_exactly(:type, :id, :attributes)
-      expect(intake_status.to_json[:data][:type]).to eq(decision_review.class.name)
-      expect(intake_status.to_json[:data][:id]).to eq(uuid)
-      expect(intake_status.to_json[:data][:attributes]).to be_a(Hash)
-      expect(intake_status.to_json[:data][:attributes].keys).to contain_exactly(:status)
-      expect(intake_status.to_json[:data][:attributes][:status]).to eq(asyncable_status)
+      it("returns the correctly-formatted JSON:API response when the intake has a decision review") do
+        expect(intake_status.to_json).to be_a(Hash)
+        expect(intake_status.to_json.keys).to contain_exactly(:data)
+        expect(intake_status.to_json[:data]).to be_a(Hash)
+        expect(intake_status.to_json[:data].keys).to contain_exactly(:type, :id, :attributes)
+        expect(intake_status.to_json[:data][:type]).to eq(decision_review.class.name)
+        expect(intake_status.to_json[:data][:id]).to eq(uuid)
+        expect(intake_status.to_json[:data][:attributes]).to be_a(Hash)
+        expect(intake_status.to_json[:data][:attributes].keys).to contain_exactly(:status)
+        expect(intake_status.to_json[:data][:attributes][:status]).to eq(asyncable_status)
+      end
     end
 
-    it("returns an error when the intake does not have a decision review") do
-      intake = create_intake[]
+    context do
+      let(:decision_review) { nil }
 
-      intake_status = new_intake_status[intake]
-
-      expect(intake_status.to_json).to be_a(Hash)
-      expect(intake_status.to_json.keys).to contain_exactly(:errors)
-      expect(intake_status.to_json[:errors]).to be_a(Array)
-      expect(intake_status.to_json[:errors].length).to eq(1)
-      expect(intake_status.to_json[:errors][0]).to be_a(Hash)
-      expect(intake_status.to_json[:errors][0].keys).to contain_exactly(:status, :code, :title)
-      expect(intake_status.to_json[:errors][0][:status]).to be > 399
+      it("returns an error when the intake does not have a decision review") do
+        expect(subject.to_json).to be_a(Hash)
+        expect(subject.to_json.keys).to contain_exactly(:errors)
+        expect(subject.to_json[:errors]).to be_a(Array)
+        expect(subject.to_json[:errors].length).to eq(1)
+        expect(subject.to_json[:errors][0]).to be_a(Hash)
+        expect(subject.to_json[:errors][0].keys).to contain_exactly(:status, :code, :title)
+        expect(subject.to_json[:errors][0][:status]).to be > 399
+      end
     end
   end
 
   context "#http_status" do
+    context do
+      let(:decision_review) { nil }
     it("returns NO_DECISION_REVIEW_HTTP_STATUS when the intake has no decision review") do
       intake = create_intake[]
 
