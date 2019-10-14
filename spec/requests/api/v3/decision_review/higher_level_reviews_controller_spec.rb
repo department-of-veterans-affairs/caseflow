@@ -139,6 +139,12 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         get_higher_level_review
         JSON.parse(response.body)['data']
       end
+      it 'should have HigherLevelReview as the type' do
+        expect(subject['type']).to eq 'HigherLevelReview'
+      end
+      it 'should have an id' do
+        expect(subject['id']).to eq higher_level_review.uuid
+      end
       it 'should have attributes' do
         expect(subject['attributes']).to_not be_empty
       end
@@ -146,7 +152,31 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       it 'should have relationships' do
         expect(subject['relationships']).to_not be_empty
       end
-      context 'relationships'
+      context 'relationships' do
+        subject do
+          get_higher_level_review
+          JSON.parse(response.body)['data']['relationships']
+        end
+        it 'should include the veteran'
+        it 'should include the claimant'
+        it 'should include request issues'
+        it 'should include decision issues'
+      end
+    end
+    context 'included' do
+      subject do
+        get_higher_level_review
+        JSON.parse(response.body)['included']
+      end
+      it 'should be an array' do
+        expect(subject).to be_a Array
+      end
+      it 'should include one veteran' do
+        expect(subject.any?{|obj| obj['type'] == 'Veteran'}).to eq true
+      end
+      it 'should include a claimaint when present'
+      it 'should include DecisionIssues'
+      it 'should include RequestIssues'
     end
   end
 
