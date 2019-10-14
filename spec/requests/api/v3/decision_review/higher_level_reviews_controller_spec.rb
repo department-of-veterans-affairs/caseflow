@@ -117,7 +117,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     )
   end
 
-  fdescribe "#show" do
+  describe "#show" do
     let(:higher_level_review) { create(:higher_level_review) }
     def get_higher_level_review
       get(
@@ -149,7 +149,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       it 'should have attributes' do
         expect(subject['attributes']).to_not be_empty
       end
-      context 'attributes' do
+      fcontext 'attributes' do
         subject do
           get_higher_level_review
           JSON.parse(response.body)['data']['attributes']
@@ -157,7 +157,9 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         it 'should include status' do
           expect(subject['status']).to eq higher_level_review.fetch_status.to_s
         end
-        it 'should include aoj'
+        it 'should include aoj' do
+          expect(subject['aoj']).to eq higher_level_review.aoj
+        end
         it 'should include programArea'
         it 'should include benefitType'
         it 'should include description'

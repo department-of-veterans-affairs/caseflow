@@ -8,4 +8,6 @@ class Api::V3::HigherLevelReviewSerializer
   attribute :status do |obect|
     obect.fetch_status
   end
+
+  attribute :aoj
 end
