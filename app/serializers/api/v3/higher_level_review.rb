@@ -10,4 +10,5 @@ class Api::V3::HigherLevelReviewSerializer
   end
 
   attribute :aoj
+  attribute :program_area, &:program
 end

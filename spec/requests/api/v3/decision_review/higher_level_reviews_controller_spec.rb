@@ -160,7 +160,9 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         it 'should include aoj' do
           expect(subject['aoj']).to eq higher_level_review.aoj
         end
-        it 'should include programArea'
+        it 'should include programArea' do
+          expect(subject['programArea']).to eq higher_level_review.program
+        end
         it 'should include benefitType'
         it 'should include description'
         it 'should include receiptDate'
