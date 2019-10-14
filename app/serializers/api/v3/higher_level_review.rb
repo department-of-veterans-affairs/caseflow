@@ -3,4 +3,5 @@ class Api::V3::HigherLevelReviewSerializer
   set_key_transform :camel_lower
 
   set_id :uuid
+  set_type 'HigherLevelReview'
 end
