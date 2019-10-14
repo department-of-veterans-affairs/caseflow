@@ -154,20 +154,20 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           get_higher_level_review
           JSON.parse(response.body)['data']['attributes']
         end
-        it 'should inlcude status' do
+        it 'should include status' do
           expect(subject['status']).to eq higher_level_review.fetch_status.to_s
         end
-        it 'should inlcude aoj'
-        it 'should inlcude programArea'
-        it 'should inlcude benefitType'
-        it 'should inlcude description'
-        it 'should inlcude receiptDate'
-        it 'should inlcude informalConference'
-        it 'should inlcude sameOffice'
-        it 'should inlcude legacyOptInApproved'
-        it 'should inlcude alerts'
+        it 'should include aoj'
+        it 'should include programArea'
+        it 'should include benefitType'
+        it 'should include description'
+        it 'should include receiptDate'
+        it 'should include informalConference'
+        it 'should include sameOffice'
+        it 'should include legacyOptInApproved'
+        it 'should include alerts'
         context 'alerts'
-        it 'should inlcude events'
+        it 'should include events'
         context 'events'
       end
       it 'should have relationships' do
