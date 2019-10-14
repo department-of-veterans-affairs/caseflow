@@ -127,6 +127,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     end
     it 'should return ok' do
       get_higher_level_review
+      # byebug
       expect(response).to have_http_status(:ok)
     end
     it 'should be json with a data key and included key' do
@@ -148,7 +149,27 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       it 'should have attributes' do
         expect(subject['attributes']).to_not be_empty
       end
-      context 'attributes'
+      context 'attributes' do
+        subject do
+          get_higher_level_review
+          JSON.parse(response.body)['data']['attributes']
+        end
+        it 'should inlcude status' do
+          expect(subject['status']).to eq higher_level_review.fetch_status.to_s
+        end
+        it 'should inlcude aoj'
+        it 'should inlcude programArea'
+        it 'should inlcude benefitType'
+        it 'should inlcude description'
+        it 'should inlcude receiptDate'
+        it 'should inlcude informalConference'
+        it 'should inlcude sameOffice'
+        it 'should inlcude legacyOptInApproved'
+        it 'should inlcude alerts'
+        context 'alerts'
+        it 'should inlcude events'
+        context 'events'
+      end
       it 'should have relationships' do
         expect(subject['relationships']).to_not be_empty
       end
