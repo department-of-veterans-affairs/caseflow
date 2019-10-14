@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module SQLHelpers
-  def expect_sql(file_name)
+  def execute_sql(file_name)
     base_dir = Rails.root.join("app", "sql")
     sql_file = File.join(base_dir, file_name + ".sql")
     if !File.exist?(sql_file)
@@ -10,7 +10,11 @@ module SQLHelpers
     sql = File.read(sql_file)
 
     result = ApplicationRecord.connection.exec_query(sql)
+    result.to_ary
+  end
 
-    expect(result.to_ary)
+  def expect_sql(file_name)
+    result = execute_sql(file_name)
+    expect(result)
   end
 end
