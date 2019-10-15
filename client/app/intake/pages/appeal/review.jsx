@@ -93,7 +93,7 @@ Review.propTypes = {
   receiptDateError: PropTypes.string,
   docketType: PropTypes.string,
   docketTypeError: PropTypes.string,
-  legacyOptInApproved: PropTypes.string,
+  legacyOptInApproved: PropTypes.bool,
   legacyOptInApprovedError: PropTypes.string,
   reviewIntakeError: PropTypes.string,
   setDocketType: PropTypes.func,
