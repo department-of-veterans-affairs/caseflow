@@ -102,7 +102,9 @@ describe "AMA Cases Tableau data source", :postgres do
 
     it "join staff tables and computes status" do
       result = execute_sql("ama-cases")
-      appeals_by_status = result.map { |r| [r["appeal_id"], r["appeal_task_status.decision_status"]] }.to_h
+      appeals_by_status = result.map { |r| [r["id"], r["appeal_task_status.decision_status"]] }.to_h
+
+      binding.pry
 
       expect(appeals_by_status).to eq(expected_report)
     end
