@@ -32,7 +32,7 @@ const DetailsOverview = ({
     readableLocation, disposition, readableRequestType, hearingDayId, aod
   }
 }) => (
-  <DetailsOverview columns={[
+  <Overview columns={[
     {
       label: 'Hearing Date',
       value: readableRequestType === 'Travel' ? <strong>{DateUtil.formatDateStr(scheduledFor)}</strong> :
