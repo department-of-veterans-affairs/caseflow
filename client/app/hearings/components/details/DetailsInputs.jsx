@@ -20,7 +20,7 @@ const DetailsInputs = ({
     <div {...rowThirds}>
       {enableVirtualHearings && <SearchableDropdown
         label="Hearing Type"
-        name="hearing-type"
+        name="hearingType"
         strongLabel
         options={[
           {

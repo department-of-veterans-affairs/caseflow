@@ -21,7 +21,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
     end
   end
 
-  context "Hearing details for AMA hearing" do
+  context "Hearing details for AMA hearing", focus: true do
     let!(:current_user) do
       OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
       User.authenticate!(user: user)
@@ -60,6 +60,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
     let!(:current_user) do
       OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
       User.authenticate!(user: user)
+      FeatureToggle.enable!(:schedule_virtual_hearings)
     end
     let!(:legacy_hearing) { create(:legacy_hearing) }
 
@@ -71,6 +72,19 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       expect(page).to have_field("hearingRoomDropdown", disabled: false)
       expect(page).to have_field("Notes", disabled: false)
       expect(page).to have_no_selector("label", text: "Yes, Waive 90 Day Evidence Hold")
+    end
+
+    scenario "User can change virtual hearings" do
+      visit "hearings/" + legacy_hearing.external_id.to_s + "/details"
+
+      click_dropdown(name: "hearingType", index: 1)
+      expect(page).to have_content("Change to Virtual Hearing")
+
+      fill_in "vet-email", with: "email@testingEmail.com"
+      fill_in "rep-email", with: "email@testingEmail.com"
+      click_button("Change and Send Email")
+
+      expect(page).to have_content("Hearing Successfully Updated")
     end
 
     scenario "User can select judge, hearing room, hearing coordinator, and add notes" do

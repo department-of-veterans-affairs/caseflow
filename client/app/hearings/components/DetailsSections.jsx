@@ -50,7 +50,7 @@ class DetailsSections extends React.Component {
           openModal={this.openModal}
           hearing={hearing}
           update={updateHearing}
-          enableVirtualHearings={true || user.userCanScheduleVirtualHearings}
+          enableVirtualHearings={user.userCanScheduleVirtualHearings}
           virtualHearing={virtualHearing}
           updateVirtualHearing={updateVirtualHearing}
           readOnly={disabled}
