@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { cavcUrl } from '.';
-import CopyTextButton from '../components/CopyTextButton';
+import CopyTextButton from '../../components/CopyTextButton';
 
 export const CavcLinkInfo = () => (
   <div>
