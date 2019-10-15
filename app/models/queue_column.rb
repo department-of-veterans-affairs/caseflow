@@ -78,7 +78,7 @@ class QueueColumn
     aod_counts = tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:is_aod).count[true]
     if aod_counts
       aod_option_label = self.class.format_option_label("AOD", aod_counts)
-      options = [self.class.filter_option_hash("is_aod", aod_option_label)] + options
+      options = [self.class.filter_option_hash(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key, aod_option_label)] + options
     end
 
     options
