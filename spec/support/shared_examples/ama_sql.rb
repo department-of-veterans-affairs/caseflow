@@ -1,11 +1,20 @@
 # frozen_string_literal: true
 
 shared_context "AMA Tableau SQL", shared_context: :metadata do
-  let!(:staff) { create(:staff, :attorney_judge_role) }
-  let(:user) do
+  before do
     CachedUser.sync_from_vacols
-    user = create(:user, css_id: CachedUser.first.sdomainid)
+  end
+
+  let(:judge) do
+    staff = create(:staff)
+    user = create(:user, css_id: staff.sdomainid)
     allow(user).to receive(:judge_in_vacols?) { true }
+    user
+  end
+  let(:attorney) do
+    staff = create(:staff)
+    user = create(:user, css_id: staff.sdomainid)
+    allow(user).to receive(:attorney_in_vacols?) { true }
     user
   end
   let!(:aod_person) { create(:person, date_of_birth: 76.years.ago, participant_id: aod_veteran.participant_id) }
@@ -30,13 +39,13 @@ shared_context "AMA Tableau SQL", shared_context: :metadata do
   let!(:assigned_to_colocated) do
     create(:appeal).tap do |appeal|
       root_task = create(:root_task, appeal: appeal)
-      create(:ama_colocated_task, appeal: appeal, assigned_to: user, parent: root_task)
+      create(:ama_colocated_task, appeal: appeal, assigned_to: attorney, parent: root_task)
     end
   end
   let!(:decision_in_progress) do
     create(:appeal).tap do |appeal|
       create(:root_task, appeal: appeal)
-      create(:ama_attorney_task, :in_progress, appeal: appeal, assigned_by: user, parent: appeal.root_task)
+      create(:ama_attorney_task, :in_progress, appeal: appeal, assigned_by: judge, parent: appeal.root_task)
     end
   end
   let!(:decision_ready_for_signature) do
@@ -62,7 +71,7 @@ shared_context "AMA Tableau SQL", shared_context: :metadata do
     create(:appeal).tap do |appeal|
       root_task = create(:root_task, appeal: appeal)
       create(:bva_dispatch_task, :completed, appeal: appeal, parent: root_task)
-      create(:ama_attorney_task, assigned_to: user, appeal: appeal, parent: root_task)
+      create(:ama_attorney_task, assigned_to: attorney, appeal: appeal, parent: root_task)
     end
   end
   let!(:cancelled) do
