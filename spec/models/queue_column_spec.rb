@@ -113,7 +113,8 @@ describe QueueColumn, :all_dbs do
       it "returns an array that includes AOD option" do
         option = QueueColumn.filter_option_hash(
           Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key,
-          QueueColumn.format_option_label("AOD", aod_count))
+          QueueColumn.format_option_label("AOD", aod_count)
+          )
         expect(subject).to include(option)
       end
 

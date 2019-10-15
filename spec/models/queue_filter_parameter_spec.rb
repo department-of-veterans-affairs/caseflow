@@ -55,7 +55,7 @@ describe QueueFilterParameter do
       let(:filter_string) { "col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=is_aod,#{good_value}" }
 
       it "rejects the is_aod value" do
-        expect(subject.values).to match_array([good_value])
+        expect(subject.values).to match_array([good_value, Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key])
       end
     end
   end

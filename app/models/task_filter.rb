@@ -42,20 +42,22 @@ class TaskFilter
   def self.where_string_from_filters(filters)
     filters.map do |filter|
       if filter.values.present?
-        clause="#{table_column_from_name(filter.column)} IN (?)"
-        case filter.column
-        when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
-          if filter.values.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
-              filter.values.delete(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
-              is_aod_clause = "cached_appeal_attributes.is_aod = true"
-              clause = filter.values.empty? ? is_aod_clause : "(#{clause} OR #{is_aod_clause})"
-          end
-        end
-        clause
-      else
-        nil
+        create_where_clause(filter)
       end
     end.compact.join(" AND ")
+  end
+
+  def self.create_where_clause(filter)
+    clause = "#{table_column_from_name(filter.column)} IN (?)"
+    case filter.column
+    when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
+      if filter.values.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
+        filter.values.delete(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
+        is_aod_clause = "cached_appeal_attributes.is_aod = true"
+        clause = filter.values.empty? ? is_aod_clause : "(#{clause} OR #{is_aod_clause})"
+      end
+    end
+    clause
   end
 
   def self.table_column_from_name(column_name)
@@ -74,6 +76,7 @@ class TaskFilter
       fail(Caseflow::Error::InvalidTaskTableColumnFilter, column: column_name)
     end
   end
+
 
   private
 
