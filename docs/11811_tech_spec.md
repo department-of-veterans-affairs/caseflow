@@ -19,7 +19,7 @@ This does not attempt to do any of the following:
 
 * This document assumes that this process begins after the application has identified the inactive user (or user who just left an organization) whose open tasks we want to handle.
 * The existing reassign() function will satisfy the mechanical problem of reassigning tasks even when they are not the terminal node in a branch of the task tree. That is, if a user becomes inactive, tasks that are children of tasks assigned to the newly-inactive user will still be available for action.
-* The application does not care if the task's assignee is no longer a member of the organizationally-assigned parent task is assigned when we are re-assigning their tasks. That is, if we are re-assigning the inactive user Billie's `AojColocatedTask` which has a parent `AojColocatedTask` assigned to the `Colocated` organization, we do not care if Billie is still a member of the `Colocated` organization or not.
+* The application does not care if the task's assignee is no longer a member of the organization to which the organizationally-assigned parent task is assigned when we are re-assigning their tasks. That is, if we are re-assigning the inactive user Billie's `AojColocatedTask` which has a parent `AojColocatedTask` assigned to the `Colocated` organization, we do not care if Billie is still a member of the `Colocated` organization or not.
 
 ## Options
 
