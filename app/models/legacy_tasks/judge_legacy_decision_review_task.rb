@@ -19,7 +19,6 @@ class JudgeLegacyDecisionReviewTask < JudgeLegacyTask
       review_action
     ]
 
-    byebug
     if appeal.notice_of_death_date
       actions << Constants.TASK_ACTIONS.DEATH_DISMISSAL.to_h
     end
