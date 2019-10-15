@@ -203,8 +203,22 @@ export default class QueueTable extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    const { defaultSort, tabPaginationOptions = {}, useTaskPagesApi } = this.props;
+    const { tabPaginationOptions = {}, useTaskPagesApi } = this.props;
     const needsTaskRequest = useTaskPagesApi && !_.isEmpty(tabPaginationOptions);
+
+    this.state = this.initialState(tabPaginationOptions, needsTaskRequest);
+
+    if (needsTaskRequest) {
+      this.requestTasks();
+    }
+
+    if (useTaskPagesApi) {
+      this.updateAddressBar();
+    }
+  }
+
+  initialState = (tabPaginationOptions, needsTaskRequest) => {
+    const { defaultSort } = this.props;
     const state = {
       sortAscending: tabPaginationOptions[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] !==
                      QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC,
@@ -220,15 +234,7 @@ export default class QueueTable extends React.PureComponent {
       Object.assign(state, defaultSort);
     }
 
-    this.state = state;
-
-    if (needsTaskRequest) {
-      this.requestTasks();
-    }
-
-    if (useTaskPagesApi) {
-      this.updateAddressBar();
-    }
+    return state;
   }
 
   componentDidMount = () => {
