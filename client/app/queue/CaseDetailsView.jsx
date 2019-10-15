@@ -28,7 +28,7 @@ import COPY from '../../COPY.json';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { appealWithDetailSelector, getAllTasksForAppeal } from './selectors';
-import { needsPulacCerulloAlert } from '../pulacCerullo';
+import { needsPulacCerulloAlert } from './pulacCerullo';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({

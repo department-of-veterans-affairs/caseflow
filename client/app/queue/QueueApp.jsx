@@ -77,7 +77,7 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import { FlashAlerts } from '../nonComp/components/Alerts';
 import AddressMotionToVacateView from './mtv/AddressMotionToVacateView';
 import ReviewMotionToVacateView from './mtv/ReviewMotionToVacateView';
-import { PulacCerulloReminderModal } from '../pulacCerullo/PulacCerulloReminderModal';
+import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {

@@ -7,7 +7,7 @@ import AddNewTaskButton from './components/AddNewTaskButton';
 import TaskRows from './components/TaskRows';
 import COPY from '../../COPY.json';
 import { sectionSegmentStyling, sectionHeadingStyling, anchorJumpLinkStyling } from './StickyNavContentArea';
-import { PulacCerulloReminderAlert } from '../pulacCerullo/PulacCerulloReminderAlert';
+import { PulacCerulloReminderAlert } from './pulacCerullo/PulacCerulloReminderAlert';
 
 const tableStyling = css({
   width: '100%',
