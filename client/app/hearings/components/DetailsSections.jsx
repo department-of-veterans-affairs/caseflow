@@ -89,7 +89,7 @@ Overview.propTypes = {
     readableLocation: PropTypes.string,
     disposition: PropTypes.string,
     readableRequestType: PropTypes.string,
-    hearingDayId: PropTypes.string,
+    hearingDayId: PropTypes.number,
     aod: PropTypes.bool
   })
 };
@@ -114,10 +114,12 @@ const Details = ({
             label: 'Virtual'
           }
         ]}
-        value={virtualHearing ? virtualHearing.active : false}
+        value={virtualHearing.active || false}
         onChange={(option) => {
+          if (virtualHearing.active || option.value) {
+            openModal();
+          }
           updateVirtualHearing({ active: option.value });
-          openModal();
         }}
       />}
     </div>
@@ -171,11 +173,11 @@ const Details = ({
 
 Details.propTypes = {
   hearing: PropTypes.shape({
-    judgeId: PropTypes.number,
+    judgeId: PropTypes.string,
     room: PropTypes.string,
     evidenceWindowWaived: PropTypes.bool,
     notes: PropTypes.string,
-    bvaPoc: PropTypes.bool
+    bvaPoc: PropTypes.string
   }),
   update: PropTypes.func,
   readOnly: PropTypes.bool,
@@ -399,7 +401,7 @@ class Sections extends React.Component {
   }
 
   openModal = () => this.setState({ modalOpen: true })
-  closeModal = () => this.setState({ modelOpen: false })
+  closeModal = () => this.setState({ modalOpen: false })
 
   resetVirtualHearing = () => {
     const { initialHearingState: { virtualHearing } } = this.props;

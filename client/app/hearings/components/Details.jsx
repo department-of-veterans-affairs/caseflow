@@ -52,9 +52,13 @@ class HearingDetails extends React.Component {
   }
 
   componentDidMount() {
+    this.setInitialFormData();
+  }
+
+  setInitialFormData = () => {
     const { hearing } = this.props;
     const transcription = hearing.transcription || {};
-    const virtualHearing = hearing.virtualHearing || {};
+    const virtualHearing = hearing.virtualHearing;
 
     this.props.onChangeFormData(HEARING_DETAILS_FORM_NAME, {
       bvaPoc: hearing.bvaPoc,
@@ -82,11 +86,13 @@ class HearingDetails extends React.Component {
       requestedRemedy: transcription.requestedRemedy
     });
 
-    this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, {
-      veteranEmail: virtualHearing.veteranEmail,
-      representativeEmail: virtualHearing.representativeEmail,
-      active: virtualHearing.active
-    });
+    if (virtualHearing) {
+      this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, {
+        veteranEmail: virtualHearing.veteranEmail,
+        representativeEmail: virtualHearing.representativeEmail,
+        active: virtualHearing.active
+      });
+    }
   }
 
   updateHearing = (values) => {
@@ -132,6 +138,8 @@ class HearingDetails extends React.Component {
         success: true,
         error: false
       });
+
+      this.setInitialFormData();
     }).
       catch((error) => {
         this.setState({
@@ -182,6 +190,7 @@ class HearingDetails extends React.Component {
             initialHearingState={this.props.hearing}
             updateTranscription={this.updateTranscription}
             updateHearing={this.updateHearing}
+            updateVirtualHearing={this.updateVirtualHearing}
             transcription={transcriptionDetailsForm || {}}
             hearing={hearingDetailsForm || {}}
             virtualHearing={virtualHearingForm || {}}
