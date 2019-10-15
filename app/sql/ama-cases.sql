@@ -286,7 +286,7 @@ FROM (
   LEFT JOIN "public"."veterans" "Veteran" ON ("Appeals"."veteran_file_number" = CAST("Veteran"."file_number" AS TEXT))
   LEFT JOIN (
     WITH people_with_age AS (
-      SELECT *, (DATE_PART('year', CURRENT_DATE) - DATE_PART('year', people.date_of_birth)) AS "veteran.age"
+      SELECT *, extract(YEAR FROM AGE(CURRENT_DATE, people.date_of_birth)) AS "veteran.age"
       FROM people
     )
   SELECT

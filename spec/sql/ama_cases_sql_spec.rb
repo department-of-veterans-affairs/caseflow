@@ -13,9 +13,15 @@ describe "AMA Cases Tableau data source", :postgres do
       allow(user).to receive(:judge_in_vacols?) { true }
       user
     end
-    let!(:not_distributed) { create(:appeal, :ready_for_distribution) }
+    let!(:aod_person) { create(:person, date_of_birth: 76.years.ago, participant_id: aod_veteran.participant_id) }
+    let!(:person) { create(:person, date_of_birth: 65.years.ago, participant_id: veteran.participant_id) }
+    let(:aod_veteran) { create(:veteran) }
+    let(:veteran) { create(:veteran) }
+    let!(:not_distributed) do
+      create(:appeal, :ready_for_distribution, veteran_file_number: veteran.file_number)
+    end
     let!(:not_distributed_with_timed_hold) do
-      create(:appeal, :ready_for_distribution).tap do |appeal|
+      create(:appeal, :ready_for_distribution, veteran_file_number: aod_veteran.file_number).tap do |appeal|
         create(:timed_hold_task, appeal: appeal, parent: appeal.root_task)
       end
     end
@@ -107,6 +113,19 @@ describe "AMA Cases Tableau data source", :postgres do
       binding.pry
 
       expect(appeals_by_status).to eq(expected_report)
+    end
+
+    it "calculates age and AOD based on person.dob" do
+      result = execute_sql("ama-cases")
+
+      aod_case = result.find { |r| r["id"] == not_distributed_with_timed_hold.id }
+      non_aod_case = result.find { |r| r["id"] == not_distributed.id }
+
+      expect(aod_case["aod_is_advanced_on_docket"]).to eq(true)
+      expect(aod_case["aod_veteran.age"]).to eq(76.0)
+
+      expect(non_aod_case["aod_is_advanced_on_docket"]).to eq(false)
+      expect(non_aod_case["aod_veteran.age"]).to eq(65.0)
     end
   end
 end
