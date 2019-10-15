@@ -95,9 +95,9 @@ shared_context "AMA Tableau SQL", shared_context: :metadata do
       decision_ready_for_signature.id => ["6. Decision ready for signature", "05"],
       decision_signed.id => ["7. Decision signed", "06"],
       decision_dispatched.id => ["8. Decision dispatched", "07"],
-      cancelled.id => ["CANCELLED", "09"],
+      cancelled.id => %w[CANCELLED 09],
       on_hold.id => ["ON HOLD", "08"],
-      misc.id => ["MISC", "10"]
+      misc.id => %w[MISC 10]
     }
   end
 end
