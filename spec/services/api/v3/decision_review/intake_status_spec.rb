@@ -41,7 +41,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
 
       it("has the correct values") do
         expect(subject.to_json[:data][:type]).to eq(decision_review.class.name)
-        expect(subject.to_json[:data][:id]).to eq(higher_level_review.uuid)
+        expect(subject.to_json[:data][:id]).to eq(decision_review.uuid)
         expect(subject.to_json[:data][:attributes][:status]).to eq(asyncable_status)
       end
     end
@@ -63,7 +63,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
 
       it("has the correct values") do
         expect(json[:data][:type]).to eq(decision_review.class.name)
-        expect(json[:data][:id]).to eq(higher_level_review.uuid)
+        expect(json[:data][:id]).to eq(decision_review.uuid)
         expect(json[:data][:attributes][:status]).to eq(asyncable_status)
       end
     end

@@ -3,17 +3,10 @@
 require "support/database_cleaner"
 
 describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :request do
-  before do
-    FeatureToggle.enable!(:api_v3)
-  end
+  before { FeatureToggle.enable!(:api_v3) }
+  after { FeatureToggle.disable!(:api_v3) }
 
-  after do
-    FeatureToggle.disable!(:api_v3)
-  end
-
-  let!(:current_user) do
-    User.authenticate!(roles: ["Admin Intake"])
-  end
+  let!(:current_user) { User.authenticate!(roles: ["Admin Intake"]) }
 
   let!(:api_key) do
     ApiKey.create!(consumer_name: "ApiV3 Test Consumer").key_string
@@ -23,96 +16,159 @@ describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :re
     "64205050"
   end
 
-  let(:new_intake) do
-    lambda do |detail = nil|
-      Intake.create!(
-        user: Generators::User.build,
-        veteran_file_number: veteran_file_number,
-        detail: detail
-      )
-    end
+  let(:higher_level_review) do
+    hlr = create(:higher_level_review, veteran_file_number: veteran_file_number)
+    hlr.reload # set uuid
+    hlr
+  end
+
+  let(:decision_review) { higher_level_review }
+
+  let(:uuid) { intake.detail.uuid }
+
+  let(:intake) do
+    intake = create(
+      :intake,
+      user: Generators::User.build,
+      veteran_file_number: veteran_file_number,
+      detail: decision_review
+    )
+    intake.detail = decision_review
+    intake
   end
 
   describe "#show" do
-    it(
-      "should return status NOT_SUBMITTED_HTTP_STATUS, the appropriate JSON " \
-      "body, and no headers, if decision_review isn't submitted"
-    ) do
-      hlr = HigherLevelReview.create!(veteran_file_number: veteran_file_number)
-      hlr.reload # sets uuid
-      new_intake[hlr]
-
+    it "returns status NOT_SUBMITTED_HTTP_STATUS" do
       get(
-        "/api/v3/decision_review/intake_statuses/#{hlr.uuid}",
+        "/api/v3/decision_review/intake_statuses/#{uuid}",
         headers: { "Authorization" => "Token #{api_key}" }
       )
 
       expect(response).to have_http_status(
         Api::V3::DecisionReview::IntakeStatus::NOT_SUBMITTED_HTTP_STATUS
       )
-      expect(JSON.parse(response.body)).to eq(
-        "data" => {
-          "type" => hlr.class.name,
-          "id" => hlr.uuid,
-          "attributes" => { "status" => "not_yet_submitted" }
-        }
-      )
-      expect(response.headers).not_to include("Location")
     end
 
-    it(
-      "should return status SUBMITTED_HTTP_STATUS, the appropriate JSON " \
-      "body, and a Location header, if decision_review /is/ submitted"
-    ) do
-      hlr = create(:higher_level_review, :requires_processing)
-      hlr.reload # sets uuid
-      uuid = hlr.uuid
-      new_intake[hlr]
-
+    it("is correctly shaped") do
       get(
         "/api/v3/decision_review/intake_statuses/#{uuid}",
         headers: { "Authorization" => "Token #{api_key}" }
       )
-
-      expect(response).to have_http_status(
-        Api::V3::DecisionReview::IntakeStatus::SUBMITTED_HTTP_STATUS
-      )
-      expect(JSON.parse(response.body)).to eq(
-        "data" => {
-          "type" => hlr.class.name,
-          "id" => uuid,
-          "attributes" => { "status" => "submitted" }
-        }
-      )
-      expect(response.headers).to include("Location")
-      expect(response.headers["Location"]).to eq(
-        "http://www.example.com/api/v3/decision_review/" \
-        "#{hlr.class.name.underscore.pluralize}/#{uuid}"
-      )
+      expect(JSON.parse(response.body).keys).to contain_exactly("data")
+      expect(JSON.parse(response.body)["data"]).to be_a(Hash)
+      expect(JSON.parse(response.body)["data"].keys).to contain_exactly("type", "id", "attributes")
+      expect(JSON.parse(response.body)["data"]["attributes"]).to be_a(Hash)
+      expect(JSON.parse(response.body)["data"]["attributes"].keys).to contain_exactly("status")
     end
 
-    it(
-      "should return status 404, the appropriate error JSON body, and " \
-      "should not have the Location header, if there's no decision review"
-    ) do
-      uuid = "-0"
-
+    it("has the correct values") do
       get(
         "/api/v3/decision_review/intake_statuses/#{uuid}",
         headers: { "Authorization" => "Token #{api_key}" }
       )
+      expect(JSON.parse(response.body)["data"]["type"]).to eq(decision_review.class.name)
+      expect(JSON.parse(response.body)["data"]["id"]).to eq(uuid)
+      expect(JSON.parse(response.body)["data"]["attributes"]["status"]).to eq("not_yet_submitted")
+    end
 
-      expect(response).to have_http_status(404)
-      expect(JSON.parse(response.body)).to eq(
-        "errors" => [
-          {
-            "status" => 404,
-            "code" => "decision_review_not_found",
-            "title" => "Unable to find a DecisionReview with uuid: #{uuid}"
-          }
-        ]
+    it "does not have the Location header" do
+      get(
+        "/api/v3/decision_review/intake_statuses/#{uuid}",
+        headers: { "Authorization" => "Token #{api_key}" }
       )
       expect(response.headers).not_to include("Location")
+    end
+
+    context "submitted decision review" do
+      let(:higher_level_review) do
+        hlr = create(:higher_level_review, :requires_processing)
+        hlr.reload # set uuid
+        hlr
+      end
+
+      it "returns status SUBMITTED_HTTP_STATUS" do
+        get(
+          "/api/v3/decision_review/intake_statuses/#{uuid}",
+          headers: { "Authorization" => "Token #{api_key}" }
+        )
+        expect(response).to have_http_status(
+          Api::V3::DecisionReview::IntakeStatus::SUBMITTED_HTTP_STATUS
+        )
+      end
+
+      it("is correctly shaped") do
+        get(
+          "/api/v3/decision_review/intake_statuses/#{uuid}",
+          headers: { "Authorization" => "Token #{api_key}" }
+        )
+        expect(JSON.parse(response.body).keys).to contain_exactly("data")
+        expect(JSON.parse(response.body)["data"]).to be_a(Hash)
+        expect(JSON.parse(response.body)["data"].keys).to contain_exactly("type", "id", "attributes")
+        expect(JSON.parse(response.body)["data"]["attributes"]).to be_a(Hash)
+        expect(JSON.parse(response.body)["data"]["attributes"].keys).to contain_exactly("status")
+      end
+
+      it("returns the class") do
+        get(
+          "/api/v3/decision_review/intake_statuses/#{uuid}",
+          headers: { "Authorization" => "Token #{api_key}" }
+        )
+        expect(JSON.parse(response.body)["data"]["type"]).to eq(decision_review.class.name)
+        expect(JSON.parse(response.body)["data"]["id"]).to eq(uuid)
+        expect(JSON.parse(response.body)["data"]["attributes"]["status"]).to eq("submitted")
+      end
+
+      it "has the Location header" do
+        get(
+          "/api/v3/decision_review/intake_statuses/#{uuid}",
+          headers: { "Authorization" => "Token #{api_key}" }
+        )
+        expect(response.headers).to include("Location")
+      end
+
+      it "returns the location of the decision_review" do
+        get(
+          "/api/v3/decision_review/intake_statuses/#{uuid}",
+          headers: { "Authorization" => "Token #{api_key}" }
+        )
+        expect(response.headers["Location"]).to eq(
+          "http://www.example.com/api/v3/decision_review/" \
+          "#{decision_review.class.name.underscore.pluralize}/#{uuid}"
+        )
+      end
+    end
+
+    context "bad uuid" do
+      let(:uuid) { "-0" }
+
+      it("is correctly shaped") do
+        get(
+          "/api/v3/decision_review/intake_statuses/#{uuid}",
+          headers: { "Authorization" => "Token #{api_key}" }
+        )
+        expect(JSON.parse(response.body).keys).to contain_exactly("errors")
+        expect(JSON.parse(response.body)["errors"]).to be_a(Array)
+        expect(JSON.parse(response.body)["errors"].length).to eq(1)
+        expect(JSON.parse(response.body)["errors"][0]).to be_a(Hash)
+        expect(JSON.parse(response.body)["errors"][0].keys).to contain_exactly("status", "code", "title")
+      end
+
+      it "returns http status 404" do
+        get(
+          "/api/v3/decision_review/intake_statuses/#{uuid}",
+          headers: { "Authorization" => "Token #{api_key}" }
+        )
+        expect(response).to have_http_status(404)
+        expect(JSON.parse(response.body)["errors"][0]["status"]).to be 404
+      end
+
+      it "does not have the Location header" do
+        get(
+          "/api/v3/decision_review/intake_statuses/#{uuid}",
+          headers: { "Authorization" => "Token #{api_key}" }
+        )
+        expect(response.headers).not_to include("Location")
+      end
     end
   end
 end
