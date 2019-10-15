@@ -158,6 +158,7 @@ class LegacyAppeal < ApplicationRecord
     transcription: "33",
     translation: "14",
     schedule_hearing: "57",
+    sr_council_dvc: "66",
     case_storage: "81",
     service_organization: "55",
     closed: "99"
