@@ -12,7 +12,8 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import * as DateUtil from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 
-import DetailsSections, { Overview } from './DetailsSections';
+import DetailsSections from './DetailsSections';
+import DetailsOverview from './details/DetailsOverview';
 import { onChangeFormData } from '../../components/common/actions';
 
 const row = css({
@@ -181,7 +182,7 @@ class HearingDetails extends React.Component {
 
           <div className="cf-help-divider" />
           <h2>Hearing Details</h2>
-          <Overview hearing={this.props.hearing} />
+          <DetailsOverview hearing={this.props.hearing} />
           <div className="cf-help-divider" />
 
           <DetailsSections
