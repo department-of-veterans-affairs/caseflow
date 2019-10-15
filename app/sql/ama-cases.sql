@@ -217,12 +217,12 @@ FROM (
       ) as bva_dispatch_or_quality_review_task_status,
       (select tasks.status
         FROM tasks AS tasks
-        where tasks.appeal_id = appeals.id AND tasks.type  = 'JudgeDispatchReturnTask'
---          'JudgeQualityReviewTask',
---          'JudgeDispatchReturnTask'
---          'AttorneyQualityReviewTask',
---          'AttorneyDispatchReturnTask'
---        )
+        where tasks.appeal_id = appeals.id AND tasks.type IN (
+          'JudgeQualityReviewTask',
+          'JudgeDispatchReturnTask',
+          'AttorneyQualityReviewTask',
+          'AttorneyDispatchReturnTask'
+        )
         limit 1
       ) as misc_task_status
       from public.appeals as appeals )
