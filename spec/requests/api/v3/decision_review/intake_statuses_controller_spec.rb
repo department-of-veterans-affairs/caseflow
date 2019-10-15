@@ -3,9 +3,6 @@
 require "support/database_cleaner"
 
 describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :request do
-  before { FeatureToggle.enable!(:api_v3) }
-  after { FeatureToggle.disable!(:api_v3) }
-
   let!(:current_user) { User.authenticate!(roles: ["Admin Intake"]) }
 
   let!(:api_key) do
@@ -37,23 +34,25 @@ describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :re
     intake
   end
 
+  before do
+    FeatureToggle.enable!(:api_v3)
+
+    get(
+      "/api/v3/decision_review/intake_statuses/#{uuid}",
+      headers: { "Authorization" => "Token #{api_key}" }
+    )
+  end
+
+  after { FeatureToggle.disable!(:api_v3) }
+
   describe "#show" do
     it "returns status NOT_SUBMITTED_HTTP_STATUS" do
-      get(
-        "/api/v3/decision_review/intake_statuses/#{uuid}",
-        headers: { "Authorization" => "Token #{api_key}" }
-      )
-
       expect(response).to have_http_status(
         Api::V3::DecisionReview::IntakeStatus::NOT_SUBMITTED_HTTP_STATUS
       )
     end
 
     it("is correctly shaped") do
-      get(
-        "/api/v3/decision_review/intake_statuses/#{uuid}",
-        headers: { "Authorization" => "Token #{api_key}" }
-      )
       expect(JSON.parse(response.body).keys).to contain_exactly("data")
       expect(JSON.parse(response.body)["data"]).to be_a(Hash)
       expect(JSON.parse(response.body)["data"].keys).to contain_exactly("type", "id", "attributes")
@@ -62,20 +61,12 @@ describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :re
     end
 
     it("has the correct values") do
-      get(
-        "/api/v3/decision_review/intake_statuses/#{uuid}",
-        headers: { "Authorization" => "Token #{api_key}" }
-      )
       expect(JSON.parse(response.body)["data"]["type"]).to eq(decision_review.class.name)
       expect(JSON.parse(response.body)["data"]["id"]).to eq(uuid)
       expect(JSON.parse(response.body)["data"]["attributes"]["status"]).to eq("not_yet_submitted")
     end
 
     it "does not have the Location header" do
-      get(
-        "/api/v3/decision_review/intake_statuses/#{uuid}",
-        headers: { "Authorization" => "Token #{api_key}" }
-      )
       expect(response.headers).not_to include("Location")
     end
 
@@ -87,20 +78,12 @@ describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :re
       end
 
       it "returns status SUBMITTED_HTTP_STATUS" do
-        get(
-          "/api/v3/decision_review/intake_statuses/#{uuid}",
-          headers: { "Authorization" => "Token #{api_key}" }
-        )
         expect(response).to have_http_status(
           Api::V3::DecisionReview::IntakeStatus::SUBMITTED_HTTP_STATUS
         )
       end
 
       it("is correctly shaped") do
-        get(
-          "/api/v3/decision_review/intake_statuses/#{uuid}",
-          headers: { "Authorization" => "Token #{api_key}" }
-        )
         expect(JSON.parse(response.body).keys).to contain_exactly("data")
         expect(JSON.parse(response.body)["data"]).to be_a(Hash)
         expect(JSON.parse(response.body)["data"].keys).to contain_exactly("type", "id", "attributes")
@@ -109,28 +92,16 @@ describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :re
       end
 
       it("returns the class") do
-        get(
-          "/api/v3/decision_review/intake_statuses/#{uuid}",
-          headers: { "Authorization" => "Token #{api_key}" }
-        )
         expect(JSON.parse(response.body)["data"]["type"]).to eq(decision_review.class.name)
         expect(JSON.parse(response.body)["data"]["id"]).to eq(uuid)
         expect(JSON.parse(response.body)["data"]["attributes"]["status"]).to eq("submitted")
       end
 
       it "has the Location header" do
-        get(
-          "/api/v3/decision_review/intake_statuses/#{uuid}",
-          headers: { "Authorization" => "Token #{api_key}" }
-        )
         expect(response.headers).to include("Location")
       end
 
       it "returns the location of the decision_review" do
-        get(
-          "/api/v3/decision_review/intake_statuses/#{uuid}",
-          headers: { "Authorization" => "Token #{api_key}" }
-        )
         expect(response.headers["Location"]).to eq(
           "http://www.example.com/api/v3/decision_review/" \
           "#{decision_review.class.name.underscore.pluralize}/#{uuid}"
@@ -142,10 +113,6 @@ describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :re
       let(:uuid) { "-0" }
 
       it("is correctly shaped") do
-        get(
-          "/api/v3/decision_review/intake_statuses/#{uuid}",
-          headers: { "Authorization" => "Token #{api_key}" }
-        )
         expect(JSON.parse(response.body).keys).to contain_exactly("errors")
         expect(JSON.parse(response.body)["errors"]).to be_a(Array)
         expect(JSON.parse(response.body)["errors"].length).to eq(1)
@@ -154,19 +121,11 @@ describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :re
       end
 
       it "returns http status 404" do
-        get(
-          "/api/v3/decision_review/intake_statuses/#{uuid}",
-          headers: { "Authorization" => "Token #{api_key}" }
-        )
         expect(response).to have_http_status(404)
         expect(JSON.parse(response.body)["errors"][0]["status"]).to be 404
       end
 
       it "does not have the Location header" do
-        get(
-          "/api/v3/decision_review/intake_statuses/#{uuid}",
-          headers: { "Authorization" => "Token #{api_key}" }
-        )
         expect(response.headers).not_to include("Location")
       end
     end
