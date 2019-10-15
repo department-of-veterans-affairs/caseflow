@@ -85,19 +85,19 @@ shared_context "AMA Tableau SQL", shared_context: :metadata do
 
   let(:expected_report) do
     {
-      not_distributed.id => "1. Not distributed",
-      not_distributed_with_timed_hold.id => "ON HOLD",
-      distributed_to_judge.id => "2. Distributed to judge",
-      assigned_to_attorney.id => "3. Assigned to attorney",
-      dispatched_with_subsequent_assigned_task.id => "3. Assigned to attorney",
-      assigned_to_colocated.id => "4. Assigned to colocated",
-      decision_in_progress.id => "5. Decision in progress",
-      decision_ready_for_signature.id => "6. Decision ready for signature",
-      decision_signed.id => "7. Decision signed",
-      decision_dispatched.id => "8. Decision dispatched",
-      cancelled.id => "CANCELLED",
-      on_hold.id => "ON HOLD",
-      misc.id => "MISC"
+      not_distributed.id => ["1. Not distributed", "00"],
+      not_distributed_with_timed_hold.id => ["ON HOLD", "08"],
+      distributed_to_judge.id => ["2. Distributed to judge", "01"],
+      assigned_to_attorney.id => ["3. Assigned to attorney", "02"],
+      dispatched_with_subsequent_assigned_task.id => ["3. Assigned to attorney", "02"],
+      assigned_to_colocated.id => ["4. Assigned to colocated", "03"],
+      decision_in_progress.id => ["5. Decision in progress", "04"],
+      decision_ready_for_signature.id => ["6. Decision ready for signature", "05"],
+      decision_signed.id => ["7. Decision signed", "06"],
+      decision_dispatched.id => ["8. Decision dispatched", "07"],
+      cancelled.id => ["CANCELLED", "09"],
+      on_hold.id => ["ON HOLD", "08"],
+      misc.id => ["MISC", "10"]
     }
   end
 end
