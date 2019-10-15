@@ -17,7 +17,7 @@ describe CompletedTasksTab, :postgres do
   describe ".column_names" do
     subject { tab.column_names }
 
-    context "when only the assignee argument is passed when instantiating the object" do
+    context "when only the assignee argument is passed when instantiating a CompletedTasksTab" do
       let(:params) { { assignee: create(:organization) } }
 
       it "returns the correct number of columns" do
@@ -25,7 +25,7 @@ describe CompletedTasksTab, :postgres do
       end
 
       it "does not include regional office column" do
-        expect(subject).to_not include(Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN)
+        expect(subject).to_not include(Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name)
       end
     end
 
@@ -33,7 +33,7 @@ describe CompletedTasksTab, :postgres do
       let(:show_regional_office_column) { true }
 
       it "includes the regional office column" do
-        expect(subject).to include(Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN)
+        expect(subject).to include(Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name)
       end
     end
   end
