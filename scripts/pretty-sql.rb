@@ -18,7 +18,7 @@ class SQLFormatter
   def self.build_formatter
     rule = AnbtSql::Rule.new
     rule.keyword = AnbtSql::Rule::KEYWORD_UPPER_CASE
-    rule.kw_nl_x = %w(OR THEN ELSE WHEN)
+    rule.kw_nl_x = %w[OR THEN ELSE WHEN]
     %w[count sum substr date].each { |func_name| rule.function_names << func_name.upcase }
     rule.indent_string = "  "
     AnbtSql::Formatter.new(rule)
