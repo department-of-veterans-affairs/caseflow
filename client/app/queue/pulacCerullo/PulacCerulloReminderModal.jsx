@@ -23,10 +23,7 @@ export const PulacCerulloReminderModal = ({ onSubmit, onCancel }) => {
   const [hasCavc, setHasCavc] = useState(null);
 
   const cancelHandler = () => onCancel();
-  const submitHandler = () => {
-    //   Should we perform / return separate actions? Likely just return the selection
-    onSubmit({ hasCavc: hasCavc === 'yes' });
-  };
+  const submitHandler = () => onSubmit({ hasCavc: hasCavc === 'yes' });
 
   return (
     <Modal
