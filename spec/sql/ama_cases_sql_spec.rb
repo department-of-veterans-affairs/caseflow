@@ -34,7 +34,7 @@ describe "AMA Cases Tableau data source", :postgres do
     end
     let!(:decision_in_progress) do
       create(:appeal).tap do |appeal|
-        root_task = create(:root_task, appeal: appeal)
+        create(:root_task, appeal: appeal)
         create(:ama_attorney_task, :in_progress, appeal: appeal, assigned_by: user, parent: appeal.root_task)
       end
     end

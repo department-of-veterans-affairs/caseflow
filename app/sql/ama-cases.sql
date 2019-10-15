@@ -67,131 +67,131 @@ SELECT CAST("Appeals"."docket_number" AS TEXT) AS "docket_number",
   "AOD Details"."is_advanced_on_docket" AS "aod_is_advanced_on_docket"
 FROM (
   WITH appeal_task_status AS (SELECT *,
-            (select tasks.id
-              FROM tasks  AS tasks
-              where tasks.appeal_id = appeals.id AND tasks.type = 'AttorneyTask'
-              limit 1
-            ) as attorney_task_id,
-            (select tasks.status
-              FROM tasks  AS tasks
-              where tasks.appeal_id = appeals.id  AND (tasks.type = 'AttorneyTask' or tasks.type = 'AttorneyRewriteTask')
-              limit 1
-            ) as attorney_task_status,
-            (select tasks.started_at
-              FROM tasks  AS tasks
-              where tasks.appeal_id = appeals.id  AND (tasks.type = 'AttorneyTask' or tasks.type = 'AttorneyRewriteTask')
-              limit 1
-            ) as attorney_task_status_started_date,
-            (select tasks.assigned_at
-              FROM tasks  AS tasks
-              where tasks.appeal_id = appeals.id  AND (tasks.type = 'AttorneyTask' or tasks.type = 'AttorneyRewriteTask')
-              limit 1
-            ) as attorney_task_status_assigned_date,
-            (select tasks.status
-              FROM tasks  AS tasks
-              where tasks.appeal_id = appeals.id  AND tasks.type IN ('JudgeAssignTask', 'JudgeDecisionReviewTask')
-              limit 1
-            ) as judge_task_status,
-            (select tasks.status
-              FROM tasks  AS tasks
-              where tasks.appeal_id = appeals.id  AND tasks.type = 'JudgeAssignTask'
-              limit 1
-            ) as judge_assign_task_status,
-            (select tasks.assigned_at
-              FROM tasks  AS tasks
-              where tasks.appeal_id = appeals.id  AND tasks.type = 'JudgeAssignTask'
-              limit 1
-            ) as judge_assign_task_status_assigned_date,
-            (select tasks.started_at
-              FROM tasks  AS tasks
-              where tasks.appeal_id = appeals.id  AND tasks.type = 'JudgeAssignTask'
-              limit 1
-            ) as judge_assign_task_status_started_date,
-            (select tasks.closed_at
-              FROM tasks  AS tasks
-              where tasks.appeal_id = appeals.id  AND tasks.type = 'JudgeAssignTask'
-              limit 1
-            ) as judge_assign_task_status_completed_date,
-            (select tasks.status
-              FROM tasks  AS tasks
-              where tasks.appeal_id = appeals.id  AND tasks.type = 'JudgeDecisionReviewTask'
-              limit 1
-            ) as judge_decision_review_task_status,
-            (select tasks.assigned_at
-              FROM tasks  AS tasks
-              where tasks.appeal_id = appeals.id  AND tasks.type = 'JudgeDecisionReviewTask'
-              limit 1
-            ) as judge_decision_review_task_status_assigned_date,
-            (select tasks.started_at
-              FROM tasks  AS tasks
-              where tasks.appeal_id = appeals.id  AND tasks.type = 'JudgeDecisionReviewTask'
-              limit 1
-            ) as judge_decision_review_task_status_started_date,
-            (select tasks.closed_at
-              FROM tasks  AS tasks
-              where tasks.appeal_id = appeals.id  AND tasks.type = 'JudgeDecisionReviewTask'
-              limit 1
-            ) as judge_decision_review_task_status_completed_date,
+      (select tasks.id
+        FROM tasks  AS tasks
+        where tasks.appeal_id = appeals.id AND tasks.type = 'AttorneyTask'
+        limit 1
+      ) as attorney_task_id,
       (select tasks.status
-              FROM tasks  AS tasks
-              where tasks.appeal_id = appeals.id  AND tasks.type LIKE '%ColocatedTask%' AND tasks.appeal_type='Appeal'
-              order by tasks.closed_at desc
-              limit 1
-            ) as colocated_task_status,
-            (select tasks.status
-              FROM tasks  AS tasks
-              where tasks.appeal_id = appeals.id  AND tasks.type = 'QualityReviewTask'
-              limit 1
-            ) as quality_review_task_status,
-            (select users.id
-              FROM tasks  AS tasks
-              join users on tasks.assigned_to_id = users.id
-              where tasks.appeal_id = appeals.id  AND tasks.type = 'AttorneyTask'
-              limit 1
-            ) as attorney_id,
-            (select users.full_name
-              FROM tasks  AS tasks
-              join users on tasks.assigned_to_id = users.id
-              where tasks.appeal_id = appeals.id  AND tasks.type = 'AttorneyTask'
-              limit 1
-            ) as attorney_name,
-            (select cached_user_attributes.sattyid
-              FROM tasks  AS tasks
-              join users on tasks.assigned_to_id = users.id
-              join cached_user_attributes on users.css_id = cached_user_attributes.sdomainid
-              where tasks.appeal_id = appeals.id  AND tasks.type = 'AttorneyTask'
-              limit 1
-            ) as attorney_vacols_sattyid,
-            (select cached_user_attributes.sattyid
-              FROM tasks  AS tasks
-              join users on tasks.assigned_to_id = users.id
-              join cached_user_attributes on users.css_id = cached_user_attributes.sdomainid
-              where tasks.appeal_id = appeals.id  AND tasks.type IN ('JudgeAssignTask', 'JudgeDecisionReviewTask')
-              limit 1
-            ) as judge_vacols_sattyid,
-            (select users.id
-              FROM tasks  AS tasks
-              join users on tasks.assigned_to_id = users.id
-              where tasks.appeal_id = appeals.id  AND tasks.type IN ('JudgeAssignTask', 'JudgeDecisionReviewTask')
-              limit 1
-            ) as judge_id,
-            (select users.full_name
-              FROM tasks  AS tasks
-              join users on tasks.assigned_to_id = users.id
-              where tasks.appeal_id = appeals.id  AND tasks.type IN ('JudgeAssignTask', 'JudgeDecisionReviewTask')
-              limit 1
-            ) as judge_name,
-            (select tasks.status
-              FROM tasks  AS tasks
-              where tasks.appeal_id = appeals.id  AND tasks.type = 'BvaDispatchTask'
-              limit 1
-            ) as bva_dispatch_task_status,
-            (select tasks.closed_at
-              FROM tasks  AS tasks
-              where tasks.appeal_id = appeals.id  AND tasks.type = 'BvaDispatchTask'
-              limit 1
-            ) as bva_dispatch_task_status_completed_date
-            from public.appeals as appeals )
+        FROM tasks  AS tasks
+        where tasks.appeal_id = appeals.id  AND (tasks.type = 'AttorneyTask' or tasks.type = 'AttorneyRewriteTask')
+        limit 1
+      ) as attorney_task_status,
+      (select tasks.started_at
+        FROM tasks  AS tasks
+        where tasks.appeal_id = appeals.id  AND (tasks.type = 'AttorneyTask' or tasks.type = 'AttorneyRewriteTask')
+        limit 1
+      ) as attorney_task_status_started_date,
+      (select tasks.assigned_at
+        FROM tasks  AS tasks
+        where tasks.appeal_id = appeals.id  AND (tasks.type = 'AttorneyTask' or tasks.type = 'AttorneyRewriteTask')
+        limit 1
+      ) as attorney_task_status_assigned_date,
+      (select tasks.status
+        FROM tasks  AS tasks
+        where tasks.appeal_id = appeals.id  AND tasks.type IN ('JudgeAssignTask', 'JudgeDecisionReviewTask')
+        limit 1
+      ) as judge_task_status,
+      (select tasks.status
+        FROM tasks  AS tasks
+        where tasks.appeal_id = appeals.id  AND tasks.type = 'JudgeAssignTask'
+        limit 1
+      ) as judge_assign_task_status,
+      (select tasks.assigned_at
+        FROM tasks  AS tasks
+        where tasks.appeal_id = appeals.id  AND tasks.type = 'JudgeAssignTask'
+        limit 1
+      ) as judge_assign_task_status_assigned_date,
+      (select tasks.started_at
+        FROM tasks  AS tasks
+        where tasks.appeal_id = appeals.id  AND tasks.type = 'JudgeAssignTask'
+        limit 1
+      ) as judge_assign_task_status_started_date,
+      (select tasks.closed_at
+        FROM tasks  AS tasks
+        where tasks.appeal_id = appeals.id  AND tasks.type = 'JudgeAssignTask'
+        limit 1
+      ) as judge_assign_task_status_completed_date,
+      (select tasks.status
+        FROM tasks  AS tasks
+        where tasks.appeal_id = appeals.id  AND tasks.type = 'JudgeDecisionReviewTask'
+        limit 1
+      ) as judge_decision_review_task_status,
+      (select tasks.assigned_at
+        FROM tasks  AS tasks
+        where tasks.appeal_id = appeals.id  AND tasks.type = 'JudgeDecisionReviewTask'
+        limit 1
+      ) as judge_decision_review_task_status_assigned_date,
+      (select tasks.started_at
+        FROM tasks  AS tasks
+        where tasks.appeal_id = appeals.id  AND tasks.type = 'JudgeDecisionReviewTask'
+        limit 1
+      ) as judge_decision_review_task_status_started_date,
+      (select tasks.closed_at
+        FROM tasks  AS tasks
+        where tasks.appeal_id = appeals.id  AND tasks.type = 'JudgeDecisionReviewTask'
+        limit 1
+      ) as judge_decision_review_task_status_completed_date,
+      (select tasks.status
+        FROM tasks  AS tasks
+        where tasks.appeal_id = appeals.id  AND tasks.type LIKE '%ColocatedTask%' AND tasks.appeal_type='Appeal'
+        order by tasks.closed_at desc
+        limit 1
+      ) as colocated_task_status,
+      (select tasks.status
+        FROM tasks  AS tasks
+        where tasks.appeal_id = appeals.id  AND tasks.type = 'QualityReviewTask'
+        limit 1
+      ) as quality_review_task_status,
+      (select users.id
+        FROM tasks  AS tasks
+        join users on tasks.assigned_to_id = users.id
+        where tasks.appeal_id = appeals.id  AND tasks.type = 'AttorneyTask'
+        limit 1
+      ) as attorney_id,
+      (select users.full_name
+        FROM tasks  AS tasks
+        join users on tasks.assigned_to_id = users.id
+        where tasks.appeal_id = appeals.id  AND tasks.type = 'AttorneyTask'
+        limit 1
+      ) as attorney_name,
+      (select cached_user_attributes.sattyid
+        FROM tasks  AS tasks
+        join users on tasks.assigned_to_id = users.id
+        join cached_user_attributes on users.css_id = cached_user_attributes.sdomainid
+        where tasks.appeal_id = appeals.id  AND tasks.type = 'AttorneyTask'
+        limit 1
+      ) as attorney_vacols_sattyid,
+      (select cached_user_attributes.sattyid
+        FROM tasks  AS tasks
+        join users on tasks.assigned_to_id = users.id
+        join cached_user_attributes on users.css_id = cached_user_attributes.sdomainid
+        where tasks.appeal_id = appeals.id  AND tasks.type IN ('JudgeAssignTask', 'JudgeDecisionReviewTask')
+        limit 1
+      ) as judge_vacols_sattyid,
+      (select users.id
+        FROM tasks  AS tasks
+        join users on tasks.assigned_to_id = users.id
+        where tasks.appeal_id = appeals.id  AND tasks.type IN ('JudgeAssignTask', 'JudgeDecisionReviewTask')
+        limit 1
+      ) as judge_id,
+      (select users.full_name
+        FROM tasks  AS tasks
+        join users on tasks.assigned_to_id = users.id
+        where tasks.appeal_id = appeals.id  AND tasks.type IN ('JudgeAssignTask', 'JudgeDecisionReviewTask')
+        limit 1
+      ) as judge_name,
+      (select tasks.status
+        FROM tasks  AS tasks
+        where tasks.appeal_id = appeals.id  AND tasks.type = 'BvaDispatchTask'
+        limit 1
+      ) as bva_dispatch_task_status,
+      (select tasks.closed_at
+        FROM tasks  AS tasks
+        where tasks.appeal_id = appeals.id  AND tasks.type = 'BvaDispatchTask'
+        limit 1
+      ) as bva_dispatch_task_status_completed_date
+      from public.appeals as appeals )
   SELECT to_char((DATE(appeal_task_status.receipt_date )), 'yymmdd') || '-' || appeal_task_status.id  AS "docket_number",
           appeal_task_status.*,
     CASE
