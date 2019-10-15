@@ -282,7 +282,7 @@
   "SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER": "Select a judge",
 
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
-  "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to the assigner",
+  "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to %s",
   "CANCEL_TASK_CONFIRMATION": "Task for %s's case has been cancelled",
   "CANCEL_TASK_CONFIRMATION_DETAIL": "Task for %s's case has been cancelled",
 
@@ -418,6 +418,18 @@
   "TEAM_MANAGEMENT_ADD_VSO_MODAL_TITLE": "Create VSO",
   "TEAM_MANAGEMENT_IHP_WRITING_VSO_OPTION": "IHP-writing VSO",
   "TEAM_MANAGEMENT_FIELD_VSO_OPTION": "Field VSO",
+
+  "USER_MANAGEMENT_PAGE_DROPDOWN_LINK": "Caseflow user management",
+  "USER_MANAGEMENT_STATUS_PAGE_TITLE": "Caseflow user status management",
+  "USER_MANAGEMENT_PAGE_DESCRIPTION": "Making a user inactive will remove them from any organization that automatically assigns tasks to team members.",
+  "USER_MANAGEMENT_STATUS_CHANGE_ERROR_TITLE": "Failed to modify user status",
+  "USER_MANAGEMENT_GIVE_USER_ACTIVE_STATUS_BUTTON_TEXT": "Make user active",
+  "USER_MANAGEMENT_GIVE_USER_INACTIVE_STATUS_BUTTON_TEXT": "Make user inactive",
+  "USER_MANAGEMENT_ACTIVE_SUCCESS_TITLE": "Successfully made %s ACTIVE",
+  "USER_MANAGEMENT_INACTIVE_SUCCESS_TITLE": "Successfully made %s INACTIVE",
+  "USER_MANAGEMENT_ACTIVE_SUCCESS_BODY": "%s will need to be added to organizations that automatically assign tasks to team members via the team management page",
+  "USER_MANAGEMENT_INACTIVE_SUCCESS_BODY": "%s has been removed from organizations that automatically assign tasks to team members. If this was a mistake, mark the user ACTIVE and add them to their organizations on the team management page",
+  "USER_MANAGEMENT_USER_SEARCH_ERROR_TITLE": "Error searching for user",
 
   "LOOKUP_PARTICIPANT_ID_MODAL_TITLE": "Look Up Participant ID",
   "LOOKUP_PARTICIPANT_ID_SELECT_USER_LABEL": "Select user",
@@ -583,5 +595,5 @@
 
   "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_TITLE": "No rooms available for %s",
   "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_DETAIL": "All hearing rooms are taken for the date you selected."
- 
+
 }

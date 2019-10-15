@@ -46,7 +46,6 @@ export const PAGE_PATHS = {
   COMPLETED: '/completed',
   CANCEL_ISSUES: '/cancel',
   CONFIRMATION: '/confirmation',
-  DTA_CLAIM: '/dta',
   CLEARED_EPS: '/cleared_eps',
   OUTCODED: '/outcoded'
 };

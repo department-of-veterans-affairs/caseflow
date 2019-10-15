@@ -13,9 +13,8 @@ class Api::V2::HearingsController < Api::ApplicationController
     rescue ActiveRecord::RecordNotFound
       return hearing_day_not_found
     end
-
     hash_serialized = Api::V2::HearingSerializer.new(
-      hearings, is_collection: true
+      hearings.select { |hearing| hearing.hearing_location.present? && hearing.disposition.nil? }, is_collection: true
     ).serializable_hash[:data]
 
     render json: {

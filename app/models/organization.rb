@@ -75,6 +75,10 @@ class Organization < ApplicationRecord
     "#{path}/users"
   end
 
+  def self.default_active_tab
+    Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
+  end
+
   def queue_tabs
     [
       unassigned_tasks_tab,

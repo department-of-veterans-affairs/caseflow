@@ -192,15 +192,18 @@ export class ListScheduleContainer extends React.Component {
           <h1 className="cf-push-left">
             {this.getHeader()}
           </h1>
-          {user.userCanBuildHearingSchedule &&
-            <span className="cf-push-right">
-              <Link button="secondary" to="/schedule/build">Build Schedule</Link>
-            </span>
-          }{user.userCanAssignHearingSchedule &&
-            <span className="cf-push-right"{...actionButtonsStyling} >
+          <div className="cf-push-right">
+            {user.userCanAssignHearingSchedule &&
+            <span className="cf-push-left" {...actionButtonsStyling}>
               <Link button="primary" to="/schedule/assign">Schedule Veterans</Link>
             </span>
-          }
+            }
+            {user.userCanBuildHearingSchedule &&
+            <span className="cf-push-left">
+              <Link button="secondary" to="/schedule/build">Build Schedule</Link>
+            </span>
+            }
+          </div>
           <div className="cf-help-divider" {...hearingSchedStyling} ></div>
           <ListSchedule
             hearingSchedule={this.props.hearingSchedule}
