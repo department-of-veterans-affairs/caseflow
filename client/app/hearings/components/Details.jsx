@@ -94,6 +94,11 @@ class HearingDetails extends React.Component {
     this.setState({ updated: true });
   }
 
+  setVirtualHearing = (key, value) => {
+    this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, { [key]: value });
+    this.setState({ updated: true });
+  }
+
   setTranscription = (key, value) => {
     this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, { [key]: value });
     this.setState({ updated: true });
@@ -118,7 +123,7 @@ class HearingDetails extends React.Component {
 
     this.setState({ loading: true });
 
-    ApiUtil.patch(`/hearings/${externalId}`, {
+    return ApiUtil.patch(`/hearings/${externalId}`, {
       data: ApiUtil.convertToSnakeCase(data)
     }).then(() => {
       this.setState({
@@ -172,6 +177,8 @@ class HearingDetails extends React.Component {
           <div className="cf-help-divider" />
 
           <DetailsSections
+            submit={this.submit}
+            initialHearingState={this.props.hearing}
             setTranscription={this.setTranscription}
             setHearing={this.setHearing}
             transcription={transcriptionDetailsForm || {}}
@@ -208,7 +215,8 @@ HearingDetails.propTypes = {
   disabled: PropTypes.bool,
   onChangeFormData: PropTypes.func,
   hearingDetailsForm: PropTypes.object,
-  transcriptionDetailsForm: PropTypes.object
+  transcriptionDetailsForm: PropTypes.object,
+  virtualHearingForm: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({

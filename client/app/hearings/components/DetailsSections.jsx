@@ -81,7 +81,7 @@ export const Overview = ({
 
 const Details = ({
   hearing: { judgeId, room, evidenceWindowWaived, notes, bvaPoc },
-  set, readOnly, isLegacy, openVirtualHearingModal
+  set, readOnly, isLegacy, openModal, setVirtualHearing
 }) => (
   <React.Fragment>
     <div {...rowThirds}>
@@ -100,7 +100,8 @@ const Details = ({
           }
         ]}
         onChange={(option) => {
-          openVirtualHearingModal(option)
+          setVirtualHearing({ active: option.value });
+          openModal();
         }}
       />
     </div>
@@ -330,18 +331,54 @@ const TranscriptionRequest = ({
 
 class Sections extends React.Component {
 
+  constructor (props) {
+    super(props);
+
+    this.state = {
+      modalOpen: false
+    };
+  }
+
+  openModal = () => this.setState({ modalOpen: true })
+  closeModal = () => this.setState({ modelOpen: false })
+
+  resetVirtualHearing = () => {
+    const { initialHearingState: { virtualHearing } } = this.props;
+
+    if (virtualHearing) {
+      const { veteranEmail, representativeEmail } = virtualHearing;
+
+      this.props.setVirtualHearing({
+        veteranEmail,
+        representativeEmail
+      });
+    } else {
+      this.props.setVirtualHearing(null);
+    }
+
+    this.closeModal();
+  }
+
   render () {
-    const { transcription, hearing, disabled, setHearing, setTranscription, isLegacy, virtualHearing, modalOpen } = this.props;
+    const { transcription, hearing, disabled, setHearing, setTranscription, setVirtualHearing, isLegacy, virtualHearing, submit } = this.props;
+    const { modalOpen } = this.state;
 
     return (
       <React.Fragment>
         <Details
+          openModal={this.openModal}
           hearing={hearing}
           set={setHearing}
+          setVirtualHearing={setVirtualHearing}
           readOnly={disabled}
           isLegacy={isLegacy} />
         <div className="cf-help-divider" />
-        {modalOpen && <VirtualHearingModal hearing={hearing} virtualHearing={virtualHearing} />}
+        {modalOpen && <VirtualHearingModal
+          hearing={hearing}
+          virtualHearing={virtualHearing}
+          update={setVirtualHearing}
+          submit={() => submit().then(this.closeModal)}
+          reset={this.resetVirtualHearing} />}
         {!isLegacy &&
           <div>
             <h2>Transcription Details</h2>
