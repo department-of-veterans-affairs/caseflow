@@ -212,9 +212,7 @@ export default class QueueTable extends React.PureComponent {
       this.requestTasks();
     }
 
-    if (useTaskPagesApi) {
-      this.updateAddressBar();
-    }
+    this.updateAddressBar();
   }
 
   initialState = (tabPaginationOptions, needsTaskRequest) => {
@@ -363,7 +361,9 @@ export default class QueueTable extends React.PureComponent {
   }
 
   updateAddressBar = () => {
-    history.pushState('', '', this.deepLink());
+    if (this.props.useTaskPagesApi) {
+      history.pushState('', '', this.deepLink());
+    }
   }
 
   deepLink = () => {
