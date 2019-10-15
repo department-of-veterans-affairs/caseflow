@@ -5,10 +5,12 @@ class Api::V3::HigherLevelReviewSerializer
   set_id :uuid
   set_type 'HigherLevelReview' # FIXME fasjonapi is making first letter lower
 
-  attribute :status do |obect|
-    obect.fetch_status
+  attribute :status do |object|
+    object.fetch_status
   end
 
-  attribute :aoj
+  attributes :aoj, :description, :benefit_type, :receipt_date, :informal_conference, :same_office, :legacy_opt_in_approved
   attribute :program_area, &:program
+  attribute :alerts
+  attribute :events
 end

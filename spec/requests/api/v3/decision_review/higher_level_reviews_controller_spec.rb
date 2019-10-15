@@ -149,7 +149,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       it 'should have attributes' do
         expect(subject['attributes']).to_not be_empty
       end
-      fcontext 'attributes' do
+      context 'attributes' do
         subject do
           get_higher_level_review
           JSON.parse(response.body)['data']['attributes']
@@ -163,16 +163,54 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         it 'should include programArea' do
           expect(subject['programArea']).to eq higher_level_review.program
         end
-        it 'should include benefitType'
-        it 'should include description'
-        it 'should include receiptDate'
-        it 'should include informalConference'
-        it 'should include sameOffice'
-        it 'should include legacyOptInApproved'
-        it 'should include alerts'
-        context 'alerts'
-        it 'should include events'
-        context 'events'
+        it 'should include benefitType' do
+          expect(subject['benefitType']).to eq higher_level_review.benefit_type
+        end
+        it 'should include description' do
+          # TODO make this non-null?
+          expect(subject['description']).to eq higher_level_review.description
+        end
+        it 'should include receiptDate' do
+          expect(subject['receiptDate']).to eq higher_level_review.receipt_date.strftime('%F')
+        end
+        it 'should include informalConference' do
+          # TODO make this non-null?
+          expect(subject['informalConference']).to eq higher_level_review.informal_conference
+        end
+        it 'should include sameOffice' do
+          # TODO make this non-null?
+          expect(subject['sameOffice']).to eq higher_level_review.same_office
+        end
+        it 'should include legacyOptInApproved' do
+          # TODO make this non-null?
+          expect(subject['legacyOptInApproved']).to eq higher_level_review.legacy_opt_in_approved
+        end
+        it 'should include alerts' do
+          expect(subject['alerts']).to be_a Array
+        end
+        context 'alerts' do
+          subject do
+            get_higher_level_review
+            JSON.parse(response.body)['data']['attributes']['alerts']
+          end
+          it 'should have the same alerts' do
+            expect(subject.count).to eq higher_level_review.alerts.count
+          end
+          it 'should ensure the value matches'
+        end
+        it 'should include events' do
+          expect(subject['events']).to be_a Array
+        end
+        context 'events' do
+          subject do
+            get_higher_level_review
+            JSON.parse(response.body)['data']['attributes']['events']
+          end
+          it 'should have the same events' do
+            expect(subject.count).to eq higher_level_review.events.count
+          end
+          it 'should ensure the value matches'
+        end
       end
       it 'should have relationships' do
         expect(subject['relationships']).to_not be_empty
