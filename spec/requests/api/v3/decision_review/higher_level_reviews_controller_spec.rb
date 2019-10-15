@@ -220,7 +220,10 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           get_higher_level_review
           JSON.parse(response.body)['data']['relationships']
         end
-        it 'should include the veteran'
+        xit 'should include the veteran' do
+          # TODO include a veteran that will put results here
+          expect(subject['veteran']['id']).to eq higher_level_review.veteran.id
+        end
         it 'should include the claimant'
         it 'should include request issues'
         it 'should include decision issues'

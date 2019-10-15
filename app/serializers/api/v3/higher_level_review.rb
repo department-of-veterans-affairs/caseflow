@@ -13,4 +13,8 @@ class Api::V3::HigherLevelReviewSerializer
   attribute :program_area, &:program
   attribute :alerts
   attribute :events
+
+  has_one :veteran, if: Proc.new { |record| record.veteran } do |object|
+    { id: object.veteran.id, type: 'veteran' }
+  end
 end
