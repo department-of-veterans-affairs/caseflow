@@ -89,18 +89,18 @@ class HearingDetails extends React.Component {
     });
   }
 
-  setHearing = (key, value) => {
-    this.props.onChangeFormData(HEARING_DETAILS_FORM_NAME, { [key]: value });
+  updateHearing = (values) => {
+    this.props.onChangeFormData(HEARING_DETAILS_FORM_NAME, values);
     this.setState({ updated: true });
   }
 
-  setVirtualHearing = (key, value) => {
-    this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, { [key]: value });
+  updateVirtualHearing = (values) => {
+    this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, values);
     this.setState({ updated: true });
   }
 
-  setTranscription = (key, value) => {
-    this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, { [key]: value });
+  updateTranscription = (values) => {
+    this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, values);
     this.setState({ updated: true });
   }
 
@@ -177,10 +177,11 @@ class HearingDetails extends React.Component {
           <div className="cf-help-divider" />
 
           <DetailsSections
+            user={this.props.user}
             submit={this.submit}
             initialHearingState={this.props.hearing}
-            setTranscription={this.setTranscription}
-            setHearing={this.setHearing}
+            updateTranscription={this.updateTranscription}
+            updateHearing={this.updateHearing}
             transcription={transcriptionDetailsForm || {}}
             hearing={hearingDetailsForm || {}}
             virtualHearing={virtualHearingForm || {}}
@@ -210,6 +211,9 @@ class HearingDetails extends React.Component {
 }
 
 HearingDetails.propTypes = {
+  user: PropTypes.shape({
+    userCanScheduleVirtualHearings: PropTypes.bool
+  }),
   hearing: PropTypes.object.isRequired,
   goBack: PropTypes.func,
   disabled: PropTypes.bool,

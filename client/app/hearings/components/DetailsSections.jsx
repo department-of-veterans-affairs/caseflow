@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
@@ -39,8 +40,8 @@ const rowThirds = css({
 export const Overview = ({
   hearing: {
     scheduledFor, docketName, docketNumber, regionalOfficeName,
-    readableLocation, disposition, readableRequestType, hearingDayId,
-    aod }
+    readableLocation, disposition, readableRequestType, hearingDayId, aod
+  }
 }) => (
   <DetailsOverview columns={[
     {
@@ -79,13 +80,27 @@ export const Overview = ({
   ]} />
 );
 
+Overview.propTypes = {
+  hearing: PropTypes.shape({
+    scheduledFor: PropTypes.string,
+    docketName: PropTypes.string,
+    docketNumber: PropTypes.string,
+    regionalOfficeName: PropTypes.string,
+    readableLocation: PropTypes.string,
+    disposition: PropTypes.string,
+    readableRequestType: PropTypes.string,
+    hearingDayId: PropTypes.string,
+    aod: PropTypes.bool
+  })
+};
+
 const Details = ({
-  hearing: { judgeId, room, evidenceWindowWaived, notes, bvaPoc },
-  set, readOnly, isLegacy, openModal, setVirtualHearing
+  hearing, update, readOnly, isLegacy, openModal, updateVirtualHearing, virtualHearing,
+  enableVirtualHearings
 }) => (
   <React.Fragment>
     <div {...rowThirds}>
-      <SearchableDropdown
+      {enableVirtualHearings && <SearchableDropdown
         label="Hearing Type"
         name="hearing-type"
         strongLabel
@@ -99,32 +114,33 @@ const Details = ({
             label: 'Virtual'
           }
         ]}
+        value={virtualHearing ? virtualHearing.active : false}
         onChange={(option) => {
-          setVirtualHearing({ active: option.value });
+          updateVirtualHearing({ active: option.value });
           openModal();
         }}
-      />
+      />}
     </div>
     <div {...rowThirds}>
       <JudgeDropdown
         name="judgeDropdown"
-        value={judgeId}
+        value={hearing.judgeId}
         readOnly={readOnly}
-        onChange={(val) => set('judgeId', val)}
+        onChange={(judgeId) => update({ judgeId })}
       />
     </div>
     <div {...rowThirds}>
       <HearingRoomDropdown
         name="hearingRoomDropdown"
-        value={room}
+        value={hearing.room}
         readOnly={readOnly}
-        onChange={(val) => set('room', val)}
+        onChange={(room) => update({ room })}
       />
       <HearingCoordinatorDropdown
         name="hearingCoordinatorDropdown"
-        value={bvaPoc}
+        value={hearing.bvaPoc}
         readOnly={readOnly}
-        onChange={(val) => set('bvaPoc', val)}
+        onChange={(bvaPoc) => update({ bvaPoc })}
       />
       {!isLegacy &&
         <div>
@@ -133,8 +149,8 @@ const Details = ({
             label="Yes, Waive 90 Day Evidence Hold"
             name="evidenceWindowWaived"
             disabled={readOnly}
-            value={evidenceWindowWaived || false}
-            onChange={(val) => set('evidenceWindowWaived', val)}
+            value={hearing.evidenceWindowWaived || false}
+            onChange={(evidenceWindowWaived) => update({ evidenceWindowWaived })}
           />
         </div>
       }
@@ -147,16 +163,34 @@ const Details = ({
         maxWidth: '100%'
       })}
       disabled={readOnly}
-      value={notes || ''}
-      onChange={(val) => set('notes', val)}
+      value={hearing.notes || ''}
+      onChange={(notes) => update({ notes })}
     />
   </React.Fragment>
 );
 
-const TranscriptionDetails = ({
-  transcription: { taskNumber, transcriber, sentToTranscriberDate, expectedReturnDate, uploadedToVbmsDate },
-  set, readOnly
-}) => (
+Details.propTypes = {
+  hearing: PropTypes.shape({
+    judgeId: PropTypes.number,
+    room: PropTypes.string,
+    evidenceWindowWaived: PropTypes.bool,
+    notes: PropTypes.string,
+    bvaPoc: PropTypes.bool
+  }),
+  update: PropTypes.func,
+  readOnly: PropTypes.bool,
+  isLegacy: PropTypes.bool,
+  openModal: PropTypes.func,
+  updateVirtualHearing: PropTypes.func,
+  virtualHearing: PropTypes.shape({
+    veteranEmail: PropTypes.string,
+    representativeEmail: PropTypes.string,
+    active: PropTypes.bool
+  }),
+  enableVirtualHearings: PropTypes.bool
+};
+
+const TranscriptionDetails = ({ transcription, update, readOnly }) => (
   <React.Fragment>
     <div {...rowThirds}>
       <TextField
@@ -164,15 +198,15 @@ const TranscriptionDetails = ({
         label="Task #"
         strongLabel
         readOnly={readOnly}
-        value={taskNumber}
-        onChange={(val) => set('taskNumber', val)}
+        value={transcription.taskNumber}
+        onChange={(taskNumber) => update({ taskNumber })}
       />
       <SearchableDropdown
         name="transcriber"
         label="Transcriber"
         strongLabel
         readOnly={readOnly}
-        value={transcriber}
+        value={transcription.transcriber}
         options={[
           {
             label: '',
@@ -191,7 +225,7 @@ const TranscriptionDetails = ({
             value: 'The Ravens Group, Inc.'
           }
         ]}
-        onChange={(val) => set('transcriber', (val || {}).value)}
+        onChange={(option) => update({ transcriber: (option || {}).value })}
       />
     </div>
     <div {...rowThirds}>
@@ -201,8 +235,8 @@ const TranscriptionDetails = ({
         strongLabel
         type="date"
         readOnly={readOnly}
-        value={sentToTranscriberDate}
-        onChange={(val) => set('sentToTranscriberDate', val)}
+        value={transcription.sentToTranscriberDate}
+        onChange={(sentToTranscriberDate) => update({ sentToTranscriberDate })}
       />
       <DateSelector
         name="expectedReturnDate"
@@ -210,8 +244,8 @@ const TranscriptionDetails = ({
         strongLabel
         type="date"
         readOnly={readOnly}
-        value={expectedReturnDate}
-        onChange={(val) => set('expectedReturnDate', val)}
+        value={transcription.expectedReturnDate}
+        onChange={(expectedReturnDate) => update({ expectedReturnDate })}
       />
       <DateSelector
         name="uploadedToVbmsDate"
@@ -219,24 +253,33 @@ const TranscriptionDetails = ({
         strongLabel
         type="date"
         readOnly={readOnly}
-        value={uploadedToVbmsDate}
-        onChange={(val) => set('uploadedToVbmsDate', val)}
+        value={transcription.uploadedToVbmsDate}
+        onChange={(uploadedToVbmsDate) => update({ uploadedToVbmsDate })}
       />
     </div>
   </React.Fragment>
 );
 
-const TranscriptionProblem = ({
-  transcription: { problemType, problemNoticeSentDate, requestedRemedy },
-  set, readOnly
-}) => (
+TranscriptionDetails.propTypes = {
+  transcription: PropTypes.shape({
+    taskNumber: PropTypes.string,
+    transcriber: PropTypes.string,
+    sentToTranscriberDate: PropTypes.string,
+    expectedReturnDate: PropTypes.string,
+    uploadedToVbmsDate: PropTypes.string
+  }),
+  update: PropTypes.func,
+  readOnly: PropTypes.bool
+};
+
+const TranscriptionProblem = ({ transcription, update, readOnly }) => (
   <div {...rowThirds}>
     <SearchableDropdown
       name="problemType"
       label="Transcription Problem Type"
       strongLabel
       readOnly={readOnly}
-      value={problemType}
+      value={transcription.problemType}
       options={[
         {
           label: '',
@@ -259,16 +302,16 @@ const TranscriptionProblem = ({
           value: 'Other (see notes)'
         }
       ]}
-      onChange={(val) => set('problemType', (val || {}).value)}
+      onChange={(option) => update({ problemType: (option || {}).value })}
     />
     <DateSelector
       name="problemNoticeSentDate"
       label="Problem Notice Sent"
       strongLabel
       type="date"
-      readOnly={readOnly || _.isEmpty(problemType)}
-      value={problemNoticeSentDate}
-      onChange={(val) => set('problemNoticeSentDate', val)}
+      readOnly={readOnly || _.isEmpty(transcription.problemType)}
+      value={transcription.problemNoticeSentDate}
+      onChange={(problemNoticeSentDate) => update({ problemNoticeSentDate })}
     />
     <RadioField
       name="requestedRemedy"
@@ -278,43 +321,50 @@ const TranscriptionProblem = ({
         {
           value: '',
           displayText: 'None',
-          disabled: readOnly || _.isEmpty(problemType)
+          disabled: readOnly || _.isEmpty(transcription.problemType)
         },
         {
           value: 'Proceed without transcript',
           displayText: 'Proceeed without transcript',
-          disabled: readOnly || _.isEmpty(problemType)
+          disabled: readOnly || _.isEmpty(transcription.problemType)
         },
         {
           value: 'Proceed with partial transcript',
           displayText: 'Process with partial transcript',
-          disabled: readOnly || _.isEmpty(problemType)
+          disabled: readOnly || _.isEmpty(transcription.problemType)
         },
         {
           value: 'New hearing',
           displayText: 'New hearing',
-          disabled: readOnly || _.isEmpty(problemType)
+          disabled: readOnly || _.isEmpty(transcription.problemType)
         }
       ]}
-      value={requestedRemedy || ''}
-      onChange={(val) => set('requestedRemedy', val)}
+      value={transcription.requestedRemedy || ''}
+      onChange={(requestedRemedy) => update({ requestedRemedy })}
     />
   </div>
 );
 
-const TranscriptionRequest = ({
-  hearing: { transcriptRequested, transcriptSentDate },
-  set, readOnly
-}) => (
+TranscriptionProblem.propTypes = {
+  transcription: PropTypes.shape({
+    problemType: PropTypes.string,
+    problemNoticeSentDate: PropTypes.string,
+    requestedRemedy: PropTypes.string
+  }),
+  update: PropTypes.func,
+  readOnly: PropTypes.bool
+};
+
+const TranscriptionRequest = ({ hearing, update, readOnly }) => (
   <div {...rowThirds}>
     <div>
       <strong>Copy Requested by Appellant/Rep</strong>
       <Checkbox
         name="copyRequested"
         label="Yes, Transcript Requested"
-        value={transcriptRequested || false}
+        value={hearing.transcriptRequested || false}
         disabled={readOnly}
-        onChange={(val) => set('transcriptRequested', val)}
+        onChange={(transcriptRequested) => update({ transcriptRequested })}
       />
     </div>
     <DateSelector
@@ -323,11 +373,20 @@ const TranscriptionRequest = ({
       strongLabel
       type="date"
       readOnly={readOnly}
-      value={transcriptSentDate}
-      onChange={(val) => set('transcriptSentDate', val)}
+      value={hearing.transcriptSentDate}
+      onChange={(transcriptSentDate) => update({ transcriptSentDate })}
     />
   </div>
 );
+
+TranscriptionRequest.propTypes = {
+  hearing: PropTypes.shape({
+    transcriptRequested: PropTypes.bool,
+    transcriptSentDate: PropTypes.string
+  }),
+  update: PropTypes.func,
+  readOnly: PropTypes.bool
+};
 
 class Sections extends React.Component {
 
@@ -348,19 +407,22 @@ class Sections extends React.Component {
     if (virtualHearing) {
       const { veteranEmail, representativeEmail } = virtualHearing;
 
-      this.props.setVirtualHearing({
+      this.props.updateVirtualHearing({
         veteranEmail,
         representativeEmail
       });
     } else {
-      this.props.setVirtualHearing(null);
+      this.props.updateVirtualHearing(null);
     }
 
     this.closeModal();
   }
 
   render () {
-    const { transcription, hearing, disabled, setHearing, setTranscription, setVirtualHearing, isLegacy, virtualHearing, submit } = this.props;
+    const {
+      transcription, hearing, disabled, updateHearing, updateTranscription, updateVirtualHearing,
+      isLegacy, virtualHearing, submit, user
+    } = this.props;
     const { modalOpen } = this.state;
 
     return (
@@ -368,15 +430,17 @@ class Sections extends React.Component {
         <Details
           openModal={this.openModal}
           hearing={hearing}
-          set={setHearing}
-          setVirtualHearing={setVirtualHearing}
+          update={updateHearing}
+          enableVirtualHearings={true || user.userCanScheduleVirtualHearings}
+          virtualHearing={virtualHearing}
+          updateVirtualHearing={updateVirtualHearing}
           readOnly={disabled}
           isLegacy={isLegacy} />
         <div className="cf-help-divider" />
         {modalOpen && <VirtualHearingModal
           hearing={hearing}
           virtualHearing={virtualHearing}
-          update={setVirtualHearing}
+          update={updateVirtualHearing}
           submit={() => submit().then(this.closeModal)}
           reset={this.resetVirtualHearing} />}
         {!isLegacy &&
@@ -384,21 +448,21 @@ class Sections extends React.Component {
             <h2>Transcription Details</h2>
             <TranscriptionDetails
               transcription={transcription}
-              set={setTranscription}
+              update={updateTranscription}
               readOnly={disabled} />
             <div className="cf-help-divider" />
 
             <h2>Transcription Problem</h2>
             <TranscriptionProblem
               transcription={transcription}
-              set={setTranscription}
+              update={updateTranscription}
               readOnly={disabled} />
             <div className="cf-help-divider" />
 
             <h2>Transcription Request</h2>
             <TranscriptionRequest
               hearing={hearing}
-              set={setHearing}
+              update={updateHearing}
               readOnly={disabled} />
             <div className="cf-help-divider" />
           </div>
@@ -407,5 +471,27 @@ class Sections extends React.Component {
     );
   }
 }
+
+Sections.propTypes = {
+  transcription: PropTypes.object,
+  hearing: PropTypes.object,
+  virtualHearing: PropTypes.object,
+  initialHearingState: PropTypes.shape({
+    virtualHearing: PropTypes.shape({
+      veteranEmail: PropTypes.string,
+      representativeEmail: PropTypes.string,
+      active: PropTypes.bool
+    })
+  }),
+  disabled: PropTypes.bool,
+  updateHearing: PropTypes.func,
+  updateTranscription: PropTypes.func,
+  updateVirtualHearing: PropTypes.func,
+  isLegacy: PropTypes.bool,
+  submit: PropTypes.func,
+  user: PropTypes.shape({
+    userCanScheduleVirtualHearings: PropTypes.bool
+  })
+};
 
 export default Sections;
