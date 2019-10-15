@@ -54,7 +54,8 @@ class DetailsSections extends React.Component {
           virtualHearing={virtualHearing}
           updateVirtualHearing={updateVirtualHearing}
           readOnly={disabled}
-          isLegacy={isLegacy} />
+          isLegacy={isLegacy}
+          openVirtualHearingModal={this.openVHModal} />
         <div className="cf-help-divider" />
         {modalOpen && <VirtualHearingModal
           hearing={hearing}
