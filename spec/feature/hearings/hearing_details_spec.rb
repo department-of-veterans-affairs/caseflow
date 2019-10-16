@@ -21,7 +21,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
     end
   end
 
-  context "Hearing details for AMA hearing", focus: true do
+  context "Hearing details for AMA hearing" do
     let!(:current_user) do
       OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
       User.authenticate!(user: user)
