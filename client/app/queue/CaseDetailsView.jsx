@@ -1,7 +1,7 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useMemo } from 'react';
+import { connect, useSelector } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 
@@ -27,9 +27,8 @@ import { COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY.json';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-import {
-  appealWithDetailSelector
-} from './selectors';
+import { appealWithDetailSelector, getAllTasksForAppeal } from './selectors';
+import { needsPulacCerulloAlert } from './pulacCerullo';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -49,76 +48,92 @@ const alertPaddingStyle = css({
   marginTop: '2rem'
 });
 
-class CaseDetailsView extends React.PureComponent {
-  componentDidMount = () => {
+export const CaseDetailsView = (props) => {
+  const { appealId } = props;
+  const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
+  const tasks = useSelector((state) => getAllTasksForAppeal(state, { appealId }));
+
+  const success = useSelector((state) => state.ui.messages.success);
+  const error = useSelector((state) => state.ui.messages.error);
+  const veteranCaseListIsVisible = useSelector((state) => state.ui.veteranCaseListIsVisible);
+
+  useEffect(() => {
     window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
-    this.props.resetErrorMessages();
+    props.resetErrorMessages();
 
     const { hearingDate, regionalOffice } = getQueryParams(window.location.search);
 
     if (hearingDate && regionalOffice) {
-      this.props.setHearingDay({
+      props.setHearingDay({
         hearingDate,
         regionalOffice
       });
     }
-  }
+  }, []);
 
-  render = () => {
-    const {
-      appealId,
-      appeal,
-      error,
-      success
-    } = this.props;
+  const doPulacCerulloReminder = useMemo(() => needsPulacCerulloAlert(tasks), [tasks]);
 
-    return <React.Fragment>
-      {error && <div {...alertPaddingStyle}><Alert title={error.title} type="error">
-        {error.detail}
-      </Alert></div>}
-      {success && <div {...alertPaddingStyle}><Alert type="success" title={success.title} scrollOnAlert={false}>
-        {success.detail}
-      </Alert></div>}
+  return (
+    <React.Fragment>
+      {error && (
+        <div {...alertPaddingStyle}>
+          <Alert title={error.title} type="error">
+            {error.detail}
+          </Alert>
+        </div>
+      )}
+      {success && (
+        <div {...alertPaddingStyle}>
+          <Alert type="success" title={success.title} scrollOnAlert={false}>
+            {success.detail}
+          </Alert>
+        </div>
+      )}
       <AppSegment filledBackground>
         <CaseTitle appeal={appeal} />
-        <CaseTitleDetails appealId={appealId} redirectUrl={window.location.pathname}
-          userCanAccessReader={this.props.userCanAccessReader}
+        <CaseTitleDetails
+          appealId={appealId}
+          redirectUrl={window.location.pathname}
+          userCanAccessReader={props.userCanAccessReader}
         />
-        { this.props.veteranCaseListIsVisible &&
-          <VeteranCasesView
-            caseflowVeteranId={appeal.caseflowVeteranId}
-            veteranId={appeal.veteranFileNumber}
-          />
-        }
-        <TaskSnapshot appealId={appealId} />
+        {veteranCaseListIsVisible && (
+          <VeteranCasesView caseflowVeteranId={appeal.caseflowVeteranId} veteranId={appeal.veteranFileNumber} />
+        )}
+        <TaskSnapshot appealId={appealId} showPulacCerulloAlert={doPulacCerulloReminder} />
         <hr {...horizontalRuleStyling} />
         <StickyNavContentArea>
           <CaseDetailsIssueList
             title="Issues"
             isLegacyAppeal={appeal.isLegacyAppeal}
-            additionalHeaderContent={appeal.canEditRequestIssues &&
-              <span className="cf-push-right" {...anchorEditLinkStyling}>
-                <Link href={`/appeals/${appealId}/edit`}>{COPY.CORRECT_REQUEST_ISSUES_LINK}</Link>
-              </span>}
+            additionalHeaderContent={
+              appeal.canEditRequestIssues && (
+                <span className="cf-push-right" {...anchorEditLinkStyling}>
+                  <Link href={`/appeals/${appealId}/edit`}>{COPY.CORRECT_REQUEST_ISSUES_LINK}</Link>
+                </span>
+              )
+            }
             issues={appeal.issues}
             decisionIssues={appeal.decisionIssues}
           />
           <PowerOfAttorneyDetail title="Power of Attorney" appealId={appealId} />
-          {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) &&
-          <CaseHearingsDetail title="Hearings" appeal={appeal} />}
+          {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) && (
+            <CaseHearingsDetail title="Hearings" appeal={appeal} />
+          )}
           <VeteranDetail title="About the Veteran" appeal={appeal} />
-          {!_.isNull(appeal.appellantFullName) && appeal.appellantIsNotVeteran &&
-          <AppellantDetail title="About the Appellant" appeal={appeal} />}
+          {!_.isNull(appeal.appellantFullName) && appeal.appellantIsNotVeteran && (
+            <AppellantDetail title="About the Appellant" appeal={appeal} />
+          )}
           <CaseTimeline title="Case Timeline" appeal={appeal} />}
         </StickyNavContentArea>
       </AppSegment>
-    </React.Fragment>;
-  };
-}
+    </React.Fragment>
+  );
+};
 
 CaseDetailsView.propTypes = {
   appeal: PropTypes.object,
   appealId: PropTypes.string.isRequired,
+  tasks: PropTypes.array,
   error: PropTypes.object,
   resetErrorMessages: PropTypes.func,
   setHearingDay: PropTypes.func,
@@ -127,24 +142,17 @@ CaseDetailsView.propTypes = {
   veteranCaseListIsVisible: PropTypes.bool
 };
 
-const mapStateToProps = (state, ownProps) => {
-  const { success, error } = state.ui.messages;
-  const { veteranCaseListIsVisible } = state.ui;
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      resetErrorMessages,
+      resetSuccessMessages,
+      setHearingDay
+    },
+    dispatch
+  );
 
-  return {
-    appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
-    success,
-    error,
-    veteranCaseListIsVisible
-  };
-};
-
-const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({
-    resetErrorMessages,
-    resetSuccessMessages,
-    setHearingDay
-  }, dispatch)
-);
-
-export default connect(mapStateToProps, mapDispatchToProps)(CaseDetailsView);
+export default connect(
+  null,
+  mapDispatchToProps
+)(CaseDetailsView);
