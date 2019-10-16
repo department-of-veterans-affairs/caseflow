@@ -114,7 +114,7 @@ DetailsSections.propTypes = {
   })
 };
 
-// These props set through Redux
+// These props are set through Redux
 // set default values for time between mount
 // and redux state being set
 DetailsSections.defaultProps = {
