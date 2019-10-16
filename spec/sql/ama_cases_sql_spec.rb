@@ -2,7 +2,7 @@
 
 require "support/database_cleaner"
 
-describe "AMA Cases Tableau data source", :postgres do
+describe "AMA Cases Tableau data source", :all_dbs do
   include SQLHelpers
 
   include_context "AMA Tableau SQL"
