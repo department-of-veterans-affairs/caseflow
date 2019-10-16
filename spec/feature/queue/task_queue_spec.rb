@@ -316,13 +316,14 @@ RSpec.feature "Task queue", :all_dbs do
       visit "/queue/appeals/#{appeal.uuid}"
 
       click_dropdown(text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label)
-      click_button(text: "Submit")
+      click_button(text: "Notify")
 
       mail_task = root_task.reload.children[0]
       expect(mail_task.class).to eq(task_class)
       expect(mail_task.assigned_to).to eq(MailTeam.singleton)
       expect(mail_task.children.length).to eq(1)
       sleep 1
+
       child_task = mail_task.children[0]
 
       pulac_cerullo_task = child_task.children[0]
