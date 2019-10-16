@@ -312,6 +312,8 @@ class Veteran < ApplicationRecord
     end
 
     def create_by_file_number(file_number)
+      fail "file_number must not be nil" if file_number.blank?
+
       veteran = Veteran.new(file_number: file_number)
 
       unless veteran.found?

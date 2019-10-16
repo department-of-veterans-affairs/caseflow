@@ -841,6 +841,8 @@ class LegacyAppeal < ApplicationRecord
     end
 
     def veteran_file_number_from_bfcorlid(bfcorlid)
+      return bfcorlid unless bfcorlid =~ /\d/
+
       numeric = bfcorlid.gsub(/[^0-9]/, "")
 
       # ensure 8 digits if "C"-type id

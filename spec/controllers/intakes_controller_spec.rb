@@ -119,11 +119,10 @@ RSpec.describe IntakesController, :postgres do
   end
 
   describe "#complete" do
-    # TODO: this is just testing the current implementation; should make this more behavioral
     it "should call complete! and return a 200" do
-      intake = Intake.new(user_id: current_user.id, started_at: Time.zone.now)
-      intake.save!
-      allow_any_instance_of(Intake).to receive(:complete!)
+      intake = create(:intake, user_id: current_user.id, started_at: Time.zone.now)
+      allow(controller).to receive(:intake) { intake }
+      allow(intake).to receive(:complete!) { true }
       post :complete, params: { id: intake.id }
       expect(response.status).to eq(200)
     end
