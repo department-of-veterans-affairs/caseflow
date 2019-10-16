@@ -32,7 +32,7 @@ const DetailsInputs = ({
             label: 'Virtual'
           }
         ]}
-        value={virtualHearing ? virtualHearing.active || false : false}
+        value={virtualHearing.active || false}
         onChange={(option) => {
           if ((virtualHearing && virtualHearing.active) || option.value) {
             openModal();

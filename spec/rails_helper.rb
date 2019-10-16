@@ -40,25 +40,6 @@ Time.zone = ENV["TZ"]
 User.authentication_service = Fakes::AuthenticationService
 CAVCDecision.repository = Fakes::CAVCDecisionRepository
 
-class JavascriptErrorFormatter
-  RSpec::Core::Formatters.register self, :example_failed
-
-  def initialize(out)
-    @out = out
-  end
-
-  def example_failed(notification)
-    example = notification.example
-
-    return if example.pending || example.metadata[:type] != :feature
-
-    logs = example.metadata[:page].driver.browser.manage.logs.get(:browser)
-    logs.each do |log|
-      warn log.message if log.level == "SEVERE"
-    end
-  end
-end
-
 RSpec.configure do |config|
   # This checks whether compiled webpack assets already exist
   # If it does, it will not execute ReactOnRails, since that slows down tests
@@ -113,9 +94,4 @@ RSpec.configure do |config|
   config.include FakeDateHelper
   config.include FeatureHelper, type: :feature
   config.include DateTimeHelper
-
-  config.after(type: :feature) do |example|
-    example.metadata[:page] = page
-  end
-  config.add_formatter JavascriptErrorFormatter
 end
