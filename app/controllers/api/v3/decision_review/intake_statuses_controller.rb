@@ -50,7 +50,7 @@ class Api::V3::DecisionReview::IntakeStatusesController < Api::V3::BaseControlle
   end
 
   def render_intake_status_for_decision_review
-    response.set_header("Location", decision_review_url) if intake_status.submitted?
+    response.set_header("Location", decision_review_url) if intake_status.processed?
     render json: intake_status.to_json, status: intake_status.http_status
   end
 

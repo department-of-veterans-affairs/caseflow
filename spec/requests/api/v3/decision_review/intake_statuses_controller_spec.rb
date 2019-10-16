@@ -46,40 +46,48 @@ describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :re
   after { FeatureToggle.disable!(:api_v3) }
 
   describe "#show" do
-    it "returns status NOT_SUBMITTED_HTTP_STATUS" do
-      expect(response).to have_http_status(
-        Api::V3::DecisionReview::IntakeStatus::NOT_SUBMITTED_HTTP_STATUS
-      )
-    end
-
-    it("is correctly shaped") do
-      expect(JSON.parse(response.body).keys).to contain_exactly("data")
-      expect(JSON.parse(response.body)["data"]).to be_a(Hash)
-      expect(JSON.parse(response.body)["data"].keys).to contain_exactly("type", "id", "attributes")
-      expect(JSON.parse(response.body)["data"]["attributes"]).to be_a(Hash)
-      expect(JSON.parse(response.body)["data"]["attributes"].keys).to contain_exactly("status")
-    end
-
-    it("has the correct values") do
-      expect(JSON.parse(response.body)["data"]["type"]).to eq(decision_review.class.name)
-      expect(JSON.parse(response.body)["data"]["id"]).to eq(uuid)
-      expect(JSON.parse(response.body)["data"]["attributes"]["status"]).to eq("not_yet_submitted")
-    end
-
-    it "does not have the Location header" do
-      expect(response.headers).not_to include("Location")
-    end
-
-    context "submitted decision review" do
+    context "unprocessed decision review" do
       let(:higher_level_review) do
         hlr = create(:higher_level_review, :requires_processing)
         hlr.reload # set uuid
         hlr
       end
 
-      it "returns status SUBMITTED_HTTP_STATUS" do
+      it "returns status NOT_PROCESSED_HTTP_STATUS" do
         expect(response).to have_http_status(
-          Api::V3::DecisionReview::IntakeStatus::SUBMITTED_HTTP_STATUS
+          Api::V3::DecisionReview::IntakeStatus::NOT_PROCESSED_HTTP_STATUS
+        )
+      end
+
+      it("is correctly shaped") do
+        expect(JSON.parse(response.body).keys).to contain_exactly("data")
+        expect(JSON.parse(response.body)["data"]).to be_a(Hash)
+        expect(JSON.parse(response.body)["data"].keys).to contain_exactly("type", "id", "attributes")
+        expect(JSON.parse(response.body)["data"]["attributes"]).to be_a(Hash)
+        expect(JSON.parse(response.body)["data"]["attributes"].keys).to contain_exactly("status")
+      end
+
+      it("has the correct values") do
+        expect(JSON.parse(response.body)["data"]["type"]).to eq(decision_review.class.name)
+        expect(JSON.parse(response.body)["data"]["id"]).to eq(uuid)
+        expect(JSON.parse(response.body)["data"]["attributes"]["status"]).to eq("submitted")
+      end
+
+      it "does not have the Location header" do
+        expect(response.headers).not_to include("Location")
+      end
+    end
+
+    context "processed decision review" do
+      let(:higher_level_review) do
+        hlr = create(:higher_level_review, :processed)
+        hlr.reload # set uuid
+        hlr
+      end
+
+      it "returns status PROCESSED_HTTP_STATUS" do
+        expect(response).to have_http_status(
+          Api::V3::DecisionReview::IntakeStatus::PROCESSED_HTTP_STATUS
         )
       end
 
@@ -94,7 +102,7 @@ describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :re
       it("returns the class") do
         expect(JSON.parse(response.body)["data"]["type"]).to eq(decision_review.class.name)
         expect(JSON.parse(response.body)["data"]["id"]).to eq(uuid)
-        expect(JSON.parse(response.body)["data"]["attributes"]["status"]).to eq("submitted")
+        expect(JSON.parse(response.body)["data"]["attributes"]["status"]).to eq("processed")
       end
 
       it "has the Location header" do

@@ -123,6 +123,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
   describe "#create" do
     it "should return a 202 on success" do
+      allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
       allow(User).to receive(:api_user).and_return(mock_api_user)
       post(*post_params)
 

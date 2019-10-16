@@ -24,8 +24,8 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
   context "#to_json" do
     let(:json) { subject.to_json }
 
-    context "when asyncable status is submitted" do
-      let(:asyncable_status) { :submitted }
+    context "when asyncable status is processed" do
+      let(:asyncable_status) { :processed }
 
       it "returns the correct json" do
         expect(subject.to_json).to be_a(Hash)
@@ -46,7 +46,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
       end
     end
 
-    context "when asyncable status isn't :submitted" do
+    context "when asyncable status isn't :processed" do
       let(:asyncable_status) { "dog" }
 
       it("returns json") do
@@ -90,22 +90,22 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
   end
 
   context "#http_status" do
-    context "when asyncable status is submitted" do
-      let(:asyncable_status) { :submitted }
+    context "when asyncable status is processed" do
+      let(:asyncable_status) { :processed }
 
-      it("returns SUBMITTED_HTTP_STATUS") do
+      it("returns PROCESSED_HTTP_STATUS") do
         expect(subject.http_status).to eq(
-          Api::V3::DecisionReview::IntakeStatus::SUBMITTED_HTTP_STATUS
+          Api::V3::DecisionReview::IntakeStatus::PROCESSED_HTTP_STATUS
         )
       end
     end
 
-    context "when asyncable status isn't :submitted" do
+    context "when asyncable status isn't :processed" do
       let(:asyncable_status) { "zebra" }
 
-      it("returns NOT_SUBMITTED_HTTP_STATUS") do
+      it("returns NOT_PROCESSED_HTTP_STATUS") do
         expect(subject.http_status).to eq(
-          Api::V3::DecisionReview::IntakeStatus::NOT_SUBMITTED_HTTP_STATUS
+          Api::V3::DecisionReview::IntakeStatus::NOT_PROCESSED_HTTP_STATUS
         )
       end
     end
@@ -122,22 +122,22 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
   end
 
   context "#http_status_for_new_intake" do
-    context "when asyncable status is submitted" do
-      let(:asyncable_status) { :submitted }
+    context "when asyncable status is processed" do
+      let(:asyncable_status) { :processed }
 
-      it("returns SUBMITTED_HTTP_STATUS") do
+      it("returns PROCESSED_HTTP_STATUS") do
         expect(subject.http_status_for_new_intake).to eq(
-          Api::V3::DecisionReview::IntakeStatus::SUBMITTED_HTTP_STATUS
+          Api::V3::DecisionReview::IntakeStatus::PROCESSED_HTTP_STATUS
         )
       end
     end
 
-    context "when asyncable status isn't :submitted" do
+    context "when asyncable status isn't :processed" do
       let(:asyncable_status) { "zebra" }
 
-      it("returns NOT_SUBMITTED_HTTP_STATUS_FOR_NEW_INTAKE") do
+      it("returns NOT_PROCESSED_HTTP_STATUS_FOR_NEW_INTAKE") do
         expect(subject.http_status_for_new_intake).to eq(
-          Api::V3::DecisionReview::IntakeStatus::NOT_SUBMITTED_HTTP_STATUS_FOR_NEW_INTAKE
+          Api::V3::DecisionReview::IntakeStatus::NOT_PROCESSED_HTTP_STATUS_FOR_NEW_INTAKE
         )
       end
     end
