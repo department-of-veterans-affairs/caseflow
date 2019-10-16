@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 shared_context "AMA Tableau SQL", shared_context: :metadata do
-  let!(:staff) { create(:staff) }
+  let!(:staff) { create(:staff, :attorney_judge_role) }
   let(:user) do
     CachedUser.sync_from_vacols
     user = create(:user, css_id: CachedUser.first.sdomainid)
