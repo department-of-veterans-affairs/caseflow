@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
+require "support/vacols_database_cleaner"
 
 describe "AMA Tasks Tableau data source", :all_dbs do
   include SQLHelpers
