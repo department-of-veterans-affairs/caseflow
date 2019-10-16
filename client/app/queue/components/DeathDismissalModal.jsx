@@ -40,13 +40,14 @@ class DeathDismissalModal extends React.PureComponent {
   };
 
   submitDeathDismissal = () => {
+    const { appeal } = this.props;
     // Pull anything we need out of props and state
     // Create a payload
     const payload = {
       data: {}
     };
 
-    return this.props.requestSave(`/death_dismissal`, payload, this.getSuccessMsg()).
+    return this.props.requestSave(`/appeal/${appeal.id}/death_dismissal`, payload, this.getSuccessMsg()).
       then(() => {
         history.goBack();
       }, () => {
