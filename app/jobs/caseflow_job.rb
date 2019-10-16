@@ -15,6 +15,17 @@ class CaseflowJob < ApplicationJob
     )
   end
 
+  def datadog_report_time_segment(segment:, start_time:)
+    job_duration_seconds = Time.zone.now - start_time
+
+    DataDogService.emit_gauge(
+      app_name: "caseflow_job_segment",
+      metric_group: segment,
+      metric_name: "runtime",
+      metric_value: job_duration_seconds
+    )
+  end
+
   def slack_url
     ENV["SLACK_DISPATCH_ALERT_URL"]
   end

@@ -42,7 +42,7 @@ class AppealsWithNoTasksOrAllTasksOnHoldQuery
   end
 
   def appeals_with_zero_tasks
-    established_appeals.where.not(id: Task.select(:appeal_id).where(appeal_type: Appeal.name))
+    established_appeals.left_outer_joins(:tasks).where(tasks: { id: nil })
   end
 
   def tasks_for(klass_name)

@@ -71,6 +71,8 @@ class IntakeStartValidator
   end
 
   def user_may_modify_veteran_file?
+    return true if intake.user == User.api_user
+
     BGSService.new.may_modify?(veteran_file_number, veteran.participant_id)
   end
 end

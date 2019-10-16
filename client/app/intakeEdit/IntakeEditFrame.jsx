@@ -25,11 +25,6 @@ export default class IntakeEditFrame extends React.PureComponent {
       via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via YourIT.`;
   }
 
-  displayDtaMessage = () => {
-    return `Because this claim was created by Caseflow to resolve DTA errors,
-      its issues may not be edited. You can close this window and return to VBMS.`;
-  }
-
   displayConfirmationMessage = (details) => {
     return `${details.veteran.name}'s claim review has been successfully edited. You can close this window.`;
   }
@@ -100,13 +95,6 @@ export default class IntakeEditFrame extends React.PureComponent {
                   component={DecisionReviewEditCompletedPage} />
                 <PageRoute
                   exact
-                  path={PAGE_PATHS.DTA_CLAIM}
-                  title="Edit Claim Issues | Caseflow Intake"
-                  component={() => {
-                    return <Message title="Issues Not Editable" displayMessage={this.displayDtaMessage} />;
-                  }} />
-                <PageRoute
-                  exact
                   path={PAGE_PATHS.CLEARED_EPS}
                   title="Edit Claim Issues | Caseflow Intake"
                   component={() => {
@@ -157,4 +145,3 @@ IntakeEditFrame.propTypes = {
   routerTestProps: PropTypes.object,
   router: PropTypes.object
 };
-
