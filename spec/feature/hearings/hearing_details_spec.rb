@@ -64,7 +64,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
     end
     let!(:legacy_hearing) { create(:legacy_hearing) }
 
-    scenario "User can edit Judge" do
+    scenario "User can edit Judge and change virtual hearings" do
       visit "hearings/" + legacy_hearing.external_id.to_s + "/details"
 
       expect(page).to have_field("judgeDropdown", disabled: false)
@@ -72,10 +72,6 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       expect(page).to have_field("hearingRoomDropdown", disabled: false)
       expect(page).to have_field("Notes", disabled: false)
       expect(page).to have_no_selector("label", text: "Yes, Waive 90 Day Evidence Hold")
-    end
-
-    scenario "User can change virtual hearings" do
-      visit "hearings/" + legacy_hearing.external_id.to_s + "/details"
 
       click_dropdown(name: "hearingType", index: 1)
       expect(page).to have_content("Change to Virtual Hearing")
