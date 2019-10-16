@@ -211,6 +211,35 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
     end
   end
 
+  describe "Reassigning a legacy appeal to another judge from the case details page" do
+    let!(:vacols_case) { create(:case, staff: vacols_user_one) }
+    let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let!(:decass) { create(:decass, defolder: vacols_case.bfkey) }
+
+    it "should allow us to assign a case to a judge from the case details page" do
+      visit("/queue/#{judge_one.user.id}/assign")
+      expect(page).to have_content("#{appeal.veteran_first_name} #{appeal.veteran_last_name}")
+      expect(page).to have_content("Cases to Assign (1)")
+      click_on("#{appeal.veteran_first_name} #{appeal.veteran_last_name}")
+
+      click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.label)
+      click_dropdown(prompt: "Select a user", text: judge_two.user.full_name)
+      fill_in("taskInstructions", with: "Test")
+      click_on("Submit")
+
+      click_on("Switch views")
+      click_on("Assign team cases")
+
+      expect(page).to_not have_content("#{appeal.veteran_first_name} #{appeal.veteran_last_name}")
+      expect(page).to have_content("Cases to Assign (0)")
+
+      User.authenticate!(user: judge_two.user)
+      visit("/queue/#{judge_two.user.id}/assign")
+      expect(page).to have_content("Cases to Assign (1)")
+      expect(page).to have_content("#{appeal.veteran_first_name} #{appeal.veteran_last_name}")
+    end
+  end
+
   describe "Assigning a legacy appeal to an attorney from the case details page" do
     let!(:vacols_case) { create(:case, staff: vacols_user_one) }
     let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
