@@ -1,6 +1,5 @@
 import { ACTIONS } from './actionTypes';
 import { update } from '../../util/ReducerUtil';
-import _ from 'lodash';
 
 export const initialState = {
   dropdowns: {

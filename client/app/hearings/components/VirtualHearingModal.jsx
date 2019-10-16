@@ -5,6 +5,19 @@ import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import TextField from '../../components/TextField';
 import moment from 'moment';
+import COPY from '../../../COPY.json';
+
+const formatTimeString = (hearing) => {
+  let timeString = `${moment(hearing.centralOfficeTimeString, 'hh:mm').format('h:mm a')} ET`;
+
+  if (hearing.regionalOfficeTimezone !== 'America/New_York') {
+    timeString += ` / ${moment(hearing.scheduledTimeString, 'hh:mm').format('h:mm a')} `;
+    timeString += moment().tz(hearing.regionalOfficeTimezone).
+      format('z');
+  }
+
+  return timeString;
+};
 
 const VirtualHearingModal = ({ virtualHearing, hearing, update, submit, reset }) => (
   <div>
@@ -21,11 +34,11 @@ const VirtualHearingModal = ({ virtualHearing, hearing, update, submit, reset })
         <Button linkStyling onClick={reset}>Cancel</Button>
       }>
       <p>
-        Calendar invites will be emailed to the Veteran, POA/Representative, and VLJ.
+        {COPY.VIRTUAL_HEARING_MODAL_INTRO}
       </p>
       <div>
         <strong>{'Date:'}&nbsp;</strong>{moment(hearing.scheduledFor).format('MM/DD/YYYY')}<br />
-        <strong>{'Time:'}&nbsp;</strong>{moment(hearing.scheduledTimeString, 'hh:mm').format('LT')}
+        <strong>{'Time:'}&nbsp;</strong>{formatTimeString(hearing)}
       </div>
       <TextField
         strongLabel
@@ -40,10 +53,7 @@ const VirtualHearingModal = ({ virtualHearing, hearing, update, submit, reset })
         label="POA/Representative Email"
         onChange={(representativeEmail) => update({ representativeEmail })} />
 
-      <p>
-        Changes to the Veteran and POA/Representative emails will be used to send calendar invites and reminders
-        <strong>for this hearing only</strong>.
-      </p>
+      <p dangerouslySetInnerHTML={{ __html: COPY.VIRTUAL_HEARING_MODAL_CONFIRMATION }} />
     </Modal>
   </div>
 );
@@ -55,11 +65,11 @@ VirtualHearingModal.propTypes = {
   }),
   hearing: PropTypes.shape({
     scheduledFor: PropTypes.string,
-    scheduledTimeString: PropTypes.string
+    scheduledTimeString: PropTypes.string,
+    regionalOfficeTimezone: PropTypes.string,
+    centralOfficeTimeString: PropTypes.string
   }).isRequired,
   update: PropTypes.func,
-  closeModal: PropTypes.func,
-  openModal: PropTypes.func,
   submit: PropTypes.func,
   reset: PropTypes.func
 };
