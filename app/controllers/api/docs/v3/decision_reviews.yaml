@@ -1025,114 +1025,76 @@ paths:
                   data:
                     type: array
                     items:
-                      anyOf:
-                        - type: object
-                          description: "A contestable legacy issue (to contest this, you include it as a RequestIssue when creating a HigherLevelReview, SupplementalClaim, or Appeal)"
+                      type: object
+                      description: "A contestable issue (to contest this, you include it as a RequestIssue when creating a HigherLevelReview, SupplementalClaim, or Appeal)"
+                      properties:
+                        type:
+                          type: string
+                          enum: ["ContestableIssue"]
+                        attributes:
+                          type: object
                           properties:
-                            type:
+                            ratingIssueId:
                               type: string
-                              enum: ["ContestableIssue"]
-                            attributes:
-                              type: object
-                              properties:
-                                legacyAppealId: # vacols_id
-                                  type: string
-                                  description: "The ID of the LegacyAppeal in VACOLS"
-                                legacyAppealIssueId: # vacols_sequence_id
-                                  type: integer
-                                  description: "The ID of the specific issue of the referenced LegacyAppeal (One does not contest an entire LegacyAppeal, but, rather, a specific issue on a LegacyAppeal)"
-                                nodDate:
-                                  type: string
-                                  nullable: true
-                                  pattern: '^\d{4}-\d{2}-\d{2}$'
-                                  description: "(yyyy-mm-dd) \"Notice of Disagreement\" date"
-                                description:
-                                  type: string
-                                  nullable: true
-                                  description: "Description of the issue"
-                                disposition:
-                                  type: string
-                                  nullable: true
-                                  description: "Disposition of the issue"
-                                closeDate:
-                                  type: string
-                                  nullable: true
-                                  pattern: '^\d{4}-\d{2}-\d{2}$'
-                                  description: "Date of disposition"
-                                note:
-                                  type: string
-                                  nullable: true
-                                  description: "Note"
-                        - type: object
-                          description: "A contestable non-legacy issue (to contest this, you include it as a RequestIssue when creating a HigherLevelReview, SupplementalClaim, or Appeal)"
-                          properties:
-                            type:
+                              nullable: true
+                              description: "RatingIssue ID"
+                            ratingIssueProfileDate:
                               type: string
-                              enum: ["ContestableIssue"]
-                            attributes:
-                              type: object
-                              properties:
-                                ratingIssueId:
-                                  type: string
-                                  nullable: true
-                                  description: "RatingIssue ID"
-                                ratingIssueProfileDate:
-                                  type: string
-                                  nullable: true
-                                  pattern: '^\d{4}-\d{2}-\d{2}$'
-                                  description: "(yyyy-mm-dd) RatingIssue profile date"
-                                ratingIssueDiagnosticCode:
-                                  type: string
-                                  nullable: true
-                                  description: "RatingIssue diagnostic code"
-                                ratingDecisionId:
-                                  type: string
-                                  nullable: true
-                                  description: "The BGS ID for the contested rating decision. This may be populated while ratingIssueId is nil"
-                                decisionIssueId:
-                                  type: integer
-                                  nullable: true
-                                  description: "DecisionIssue ID"
-                                approxDecisionDate:
-                                  type: string
-                                  nullable: true
-                                  pattern: '^\d{4}-\d{2}-\d{2}$'
-                                  description: "(yyyy-mm-dd) Approximate decision date"
-                                description:
-                                  type: string
-                                  nullable: true
-                                  description: "Description"
-                                rampClaimId:
-                                  type: string
-                                  nullable: true
-                                  description: "RampClaim ID"
-                                titleOfActiveReview:
-                                  type: string
-                                  nullable: true
-                                  description: "Title of DecisionReview that this issue is still active on"
-                                sourceReviewType:
-                                  type: string
-                                  nullable: true
-                                  description: "The type of DecisionReview (HigherLevelReview, SupplementalClaim, Appeal) the issue was last decided on (if any)"
-                                timely:
-                                  type: boolean
-                                  description: "An issue is timely if the receipt date is within 372 dates of the decision date."
-                                latestIssuesInChain:
-                                  type: array
-                                  items:
-                                    type: object
-                                    properties:
-                                      id:
-                                        type: string
-                                        nullable: true
-                                      approxDecisionDate:
-                                        type: string
-                                        nullable: true
-                                        pattern: '^\d{4}-\d{2}-\d{2}$'
-                                  description: "Shows the chain of decision and rating issues that preceded this issue. Only the most recent issue can be contested (the object itself that contains the latestIssuesInChain attribute)."
-                                isRating:
-                                  type: boolean
-                                  description: "Whether or not this is a RatingIssue"
+                              nullable: true
+                              pattern: '^\d{4}-\d{2}-\d{2}$'
+                              description: "(yyyy-mm-dd) RatingIssue profile date"
+                            ratingIssueDiagnosticCode:
+                              type: string
+                              nullable: true
+                              description: "RatingIssue diagnostic code"
+                            ratingDecisionId:
+                              type: string
+                              nullable: true
+                              description: "The BGS ID for the contested rating decision. This may be populated while ratingIssueId is nil"
+                            decisionIssueId:
+                              type: integer
+                              nullable: true
+                              description: "DecisionIssue ID"
+                            approxDecisionDate:
+                              type: string
+                              nullable: true
+                              pattern: '^\d{4}-\d{2}-\d{2}$'
+                              description: "(yyyy-mm-dd) Approximate decision date"
+                            description:
+                              type: string
+                              nullable: true
+                              description: "Description"
+                            rampClaimId:
+                              type: string
+                              nullable: true
+                              description: "RampClaim ID"
+                            titleOfActiveReview:
+                              type: string
+                              nullable: true
+                              description: "Title of DecisionReview that this issue is still active on"
+                            sourceReviewType:
+                              type: string
+                              nullable: true
+                              description: "The type of DecisionReview (HigherLevelReview, SupplementalClaim, Appeal) the issue was last decided on (if any)"
+                            timely:
+                              type: boolean
+                              description: "An issue is timely if the receipt date is within 372 dates of the decision date."
+                            latestIssuesInChain:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: string
+                                    nullable: true
+                                  approxDecisionDate:
+                                    type: string
+                                    nullable: true
+                                    pattern: '^\d{4}-\d{2}-\d{2}$'
+                              description: "Shows the chain of decision and rating issues that preceded this issue. Only the most recent issue can be contested (the object itself that contains the latestIssuesInChain attribute)."
+                            isRating:
+                              type: boolean
+                              description: "Whether or not this is a RatingIssue"
 components:
   schemas:
     benefit_type:
