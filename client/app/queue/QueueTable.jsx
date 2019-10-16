@@ -203,8 +203,20 @@ export default class QueueTable extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    const { defaultSort, tabPaginationOptions = {}, useTaskPagesApi } = this.props;
+    const { tabPaginationOptions = {}, useTaskPagesApi } = this.props;
     const needsTaskRequest = useTaskPagesApi && !_.isEmpty(tabPaginationOptions);
+
+    this.state = this.initialState(tabPaginationOptions, needsTaskRequest);
+
+    if (needsTaskRequest) {
+      this.requestTasks();
+    }
+
+    this.updateAddressBar();
+  }
+
+  initialState = (tabPaginationOptions, needsTaskRequest) => {
+    const { defaultSort } = this.props;
     const state = {
       sortAscending: tabPaginationOptions[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] !==
                      QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC,
@@ -220,11 +232,7 @@ export default class QueueTable extends React.PureComponent {
       Object.assign(state, defaultSort);
     }
 
-    this.state = state;
-
-    if (needsTaskRequest) {
-      this.requestTasks();
-    }
+    return state;
   }
 
   componentDidMount = () => {
@@ -277,7 +285,7 @@ export default class QueueTable extends React.PureComponent {
   }
 
   updateFilteredByList = (newList) => {
-    this.setState({ filteredByList: newList });
+    this.setState({ filteredByList: newList }, this.updateAddressBar);
 
     // When filters are added or changed, default back to the first page of data
     // because the number of pages could have changed as data is filtered out.
@@ -352,12 +360,29 @@ export default class QueueTable extends React.PureComponent {
     this.setState({ currentPage: newPage }, this.requestTasks);
   }
 
+  updateAddressBar = () => {
+    if (this.props.useTaskPagesApi) {
+      history.pushState('', '', this.deepLink());
+    }
+  }
+
+  deepLink = () => {
+    const base = `${window.location.origin}${window.location.pathname}`;
+    const tab = this.props.taskPagesApiEndpoint.split('?')[1];
+
+    return `${base}?${tab}${this.requestQueryString()}`;
+  }
+
   // /organizations/vlj-support-staff/tasks?tab=on_hold
   // &page=2
   // &sort_by=detailsColumn
   // &order=desc
   // &filter[]=col=docketNumberColumn&val=legacy,evidence_submission&filters[]=col=taskColumn&val=Unaccredited rep
   requestUrl = () => {
+    return `${this.props.taskPagesApiEndpoint}${this.requestQueryString()}`;
+  };
+
+  requestQueryString = () => {
     const { filteredByList } = this.state;
     const filterParams = [];
 
@@ -392,7 +417,7 @@ export default class QueueTable extends React.PureComponent {
       )).
       join('&');
 
-    return `${this.props.taskPagesApiEndpoint}&${queryString}`;
+    return `&${queryString}`;
   }
 
   requestTasks = () => {
@@ -426,6 +451,8 @@ export default class QueueTable extends React.PureComponent {
         tasksFromApi: preparedTasks,
         loadingComponent: null
       });
+
+      this.updateAddressBar();
     }).
       catch(() => this.setState({ loadingComponent: null }));
   };
