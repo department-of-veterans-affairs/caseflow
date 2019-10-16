@@ -192,9 +192,9 @@ class HearingDetails extends React.Component {
             updateTranscription={this.updateTranscription}
             updateHearing={this.updateHearing}
             updateVirtualHearing={this.updateVirtualHearing}
-            transcription={transcriptionDetailsForm || {}}
-            hearing={hearingDetailsForm || {}}
-            virtualHearing={virtualHearingForm || {}}
+            transcription={transcriptionDetailsForm}
+            hearing={hearingDetailsForm}
+            virtualHearing={virtualHearingForm}
             isLegacy={this.state.isLegacy}
             disabled={disabled} />
           <div>

@@ -55,7 +55,7 @@ class DetailsSections extends React.Component {
           updateVirtualHearing={updateVirtualHearing}
           readOnly={disabled}
           isLegacy={isLegacy}
-          openVirtualHearingModal={this.openVHModal} />
+          openVirtualHearingModal={this.openModal} />
         <div className="cf-help-divider" />
         {modalOpen && <VirtualHearingModal
           hearing={hearing}
@@ -112,6 +112,14 @@ DetailsSections.propTypes = {
   user: PropTypes.shape({
     userCanScheduleVirtualHearings: PropTypes.bool
   })
+};
+
+// These props set through Redux
+// set default values for time between mount
+// and redux state being set
+DetailsSections.defaultProps = {
+  hearing: {},
+  transcription: {}
 };
 
 export default DetailsSections;
