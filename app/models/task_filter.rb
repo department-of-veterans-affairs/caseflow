@@ -51,13 +51,18 @@ class TaskFilter
     clause = "#{table_column_from_name(filter.column)} IN (?)"
     case filter.column
     when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
-      if filter.values.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
-        filter.values.delete(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
-        is_aod_clause = "cached_appeal_attributes.is_aod = true"
-        clause = filter.values.empty? ? is_aod_clause : "(#{clause} OR #{is_aod_clause})"
+      filter_selections = filter.values
+      if filter_selections.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
+        clause = extract_aod_clause(filter, clause)
       end
     end
     clause
+  end
+
+  def self.extract_aod_clause(filter, orig_clause)
+    filter.values.delete(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
+    is_aod_clause = "cached_appeal_attributes.is_aod = true"
+    filter.values.empty? ? is_aod_clause : "(#{orig_clause} OR #{is_aod_clause})"
   end
 
   def self.table_column_from_name(column_name)
@@ -76,7 +81,6 @@ class TaskFilter
       fail(Caseflow::Error::InvalidTaskTableColumnFilter, column: column_name)
     end
   end
-
 
   private
 
