@@ -528,5 +528,17 @@ FactoryBot.define do
       appeal
       association :parent, factory: :vacate_motion_mail_task
     end
+
+    factory :abstract_motion_to_vacate_task, class: AbstractMotionToVacateTask do
+      type { AbstractMotionToVacateTask.name }
+      appeal
+      association :parent, factory: :vacate_motion_mail_task
+    end
+
+    factory :judge_sign_motion_to_vacate_task, class: JudgeSignMotionToVacateTask do
+      type { JudgeSignMotionToVacateTask.name }
+      appeal
+      association :parent, factory: :abstract_motion_to_vacate_task
+    end
   end
 end

@@ -518,61 +518,65 @@ SELECT
             ELSE 'UNKNOWN'
           END AS "appeal_task_status.decision_status"
           ,CASE
-            WHEN appeal_task_status.judge_task_status IS NULL
-            THEN '00'
-            WHEN (
-              appeal_task_status.judge_task_status = 'assigned'
-              OR appeal_task_status.judge_task_status = 'in_progress'
-              OR (
-                appeal_task_status.colocated_task_status = 'assigned'
-                OR appeal_task_status.colocated_task_status = 'on_hold'
+            WHEN appeal_task_status.distribution_task_status IN (
+              'on_hold'
+              ,'assigned'
+              ,'in_progress'
+            )
+            AND (
+              appeal_task_status.timed_hold_task_status IS NULL
+              OR appeal_task_status.timed_hold_task_status NOT IN (
+                'on_hold'
+                ,'assigned'
+                ,'in_progress'
               )
             )
-            AND appeal_task_status.attorney_task_status IS NULL
-            THEN '01'
-            WHEN (
-              appeal_task_status.judge_task_status = 'on_hold'
-              OR appeal_task_status.quality_review_task_status = 'on_hold'
+            THEN '00' -- '1. Not distributed'
+            WHEN appeal_task_status.judge_task_status IN (
+              'assigned'
+              ,'in_progress'
             )
-            AND appeal_task_status.attorney_task_status = 'assigned'
-            THEN '02'
-            WHEN (
-              appeal_task_status.judge_task_status = 'on_hold'
-              OR appeal_task_status.attorney_task_status = 'on_hold'
+            THEN '01' -- '2. Distributed to judge'
+            WHEN appeal_task_status.attorney_task_status = 'assigned'
+            THEN '02' -- '3. Assigned to attorney'
+            WHEN appeal_task_status.colocated_task_status IN (
+              'assigned'
+              ,'in_progress'
             )
-            AND appeal_task_status.colocated_task_status = 'assigned'
-            OR appeal_task_status.colocated_task_status = 'in_progress'
-            THEN '03'
-            WHEN (
-              appeal_task_status.judge_task_status = 'on_hold'
-              OR appeal_task_status.quality_review_task_status = 'on_hold'
+            THEN '03' -- '4. Assigned to colocated'
+            WHEN appeal_task_status.attorney_task_status = 'in_progress'
+            THEN '04' -- '5. Decision in progress'
+            WHEN appeal_task_status.judge_decision_review_task_status IN (
+              'assigned'
+              ,'in_progress'
             )
-            AND appeal_task_status.attorney_task_status = 'in_progress'
-            THEN '04'
-            WHEN (
-              appeal_task_status.judge_task_status = 'assigned'
-              OR appeal_task_status.judge_task_status = 'in_progress'
+            THEN '05' -- '6. Decision ready for signature'
+            WHEN appeal_task_status.bva_dispatch_or_quality_review_task_status IN (
+              'assigned'
+              ,'in_progress'
             )
-            AND appeal_task_status.attorney_task_status = 'completed'
-            THEN '05'
-            WHEN appeal_task_status.judge_task_status = 'completed'
-            AND appeal_task_status.attorney_task_status = 'completed'
-            AND (
-              appeal_task_status.bva_dispatch_task_status IS NULL
-              OR appeal_task_status.bva_dispatch_task_status != 'completed'
+            THEN '06' -- '7. Decision signed'
+            WHEN appeal_task_status.bva_dispatch_task_status = 'completed'
+            AND appeal_task_status.root_task_status NOT IN (
+              'on_hold'
+              ,'assigned'
+              ,'in_progress'
             )
-            THEN '06'
-            WHEN appeal_task_status.judge_task_status = 'completed'
-            AND appeal_task_status.attorney_task_status = 'completed'
-            AND appeal_task_status.bva_dispatch_task_status = 'completed'
-            THEN '07'
-            WHEN appeal_task_status.judge_task_status = 'on_hold'
-            AND appeal_task_status.attorney_task_status = 'on_hold'
-            AND appeal_task_status.colocated_task_status = 'on_hold'
-            THEN '08'
-            WHEN appeal_task_status.judge_task_status = 'cancelled'
-            OR appeal_task_status.attorney_task_status = 'cancelled'
-            THEN '09'
+            THEN '07' -- '8. Decision dispatched'
+            WHEN appeal_task_status.timed_hold_task_status IN (
+              'on_hold'
+              ,'assigned'
+              ,'in_progress'
+            )
+            THEN '08' -- 'ON HOLD'
+            WHEN appeal_task_status.root_task_status = 'cancelled'
+            THEN '09' -- 'CANCELLED'
+            WHEN appeal_task_status.misc_task_status IN (
+              'assigned'
+              ,'in_progress'
+            )
+            THEN '10' -- 'MISC'
+            ELSE '11' -- 'UNKNOWN'
           END AS "appeal_task_status.decision_status__sort_"
           ,CASE
             WHEN appeal_task_status.judge_task_status = 'completed'
