@@ -36,6 +36,8 @@ class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
   end
 
   def veterans
+    return [] if file_number_or_ssn.blank?
+
     @veterans ||= VeteranFinder.find_or_create_all(file_number_or_ssn)
   end
 end

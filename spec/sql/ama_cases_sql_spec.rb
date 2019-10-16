@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
+require "support/vacols_database_cleaner"
 
 describe "AMA Cases Tableau data source", :all_dbs do
   include SQLHelpers
@@ -10,7 +10,9 @@ describe "AMA Cases Tableau data source", :all_dbs do
   context "expected report" do
     it "join staff tables and computes status" do
       result = execute_sql("ama-cases")
-      appeals_by_status = result.map { |r| [r["id"], r["appeal_task_status.decision_status"]] }.to_h
+      appeals_by_status = result.map do |r|
+        [r["id"], [r["appeal_task_status.decision_status"], r["appeal_task_status.decision_status__sort_"]]]
+      end.to_h
 
       expect(appeals_by_status).to eq(expected_report)
     end
