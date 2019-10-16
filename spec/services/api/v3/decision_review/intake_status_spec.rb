@@ -31,7 +31,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
         expect(subject.to_json).to be_a(Hash)
       end
 
-      it("is correctly shaped") do
+      it "is correctly shaped" do
         expect(subject.to_json.keys).to contain_exactly(:data)
         expect(subject.to_json[:data]).to be_a(Hash)
         expect(subject.to_json[:data].keys).to contain_exactly(:type, :id, :attributes)
@@ -39,7 +39,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
         expect(subject.to_json[:data][:attributes].keys).to contain_exactly(:status)
       end
 
-      it("has the correct values") do
+      it "has the correct values" do
         expect(subject.to_json[:data][:type]).to eq(decision_review.class.name)
         expect(subject.to_json[:data][:id]).to eq(decision_review.uuid)
         expect(subject.to_json[:data][:attributes][:status]).to eq(asyncable_status)
@@ -49,11 +49,11 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
     context "when asyncable status isn't :processed" do
       let(:asyncable_status) { "dog" }
 
-      it("returns json") do
+      it "returns json" do
         expect(json).to be_a(Hash)
       end
 
-      it("is correctly shaped") do
+      it "is correctly shaped" do
         expect(json.keys).to contain_exactly(:data)
         expect(json[:data]).to be_a(Hash)
         expect(json[:data].keys).to contain_exactly(:type, :id, :attributes)
@@ -61,7 +61,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
         expect(json[:data][:attributes].keys).to contain_exactly(:status)
       end
 
-      it("has the correct values") do
+      it "has the correct values" do
         expect(json[:data][:type]).to eq(decision_review.class.name)
         expect(json[:data][:id]).to eq(decision_review.uuid)
         expect(json[:data][:attributes][:status]).to eq(asyncable_status)
@@ -71,11 +71,11 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
     context "when the intake doesn't have a decision review" do
       let(:decision_review) { nil }
 
-      it("returns json") do
+      it "returns json" do
         expect(subject.to_json).to be_a(Hash)
       end
 
-      it("is correctly shaped") do
+      it "is correctly shaped" do
         expect(subject.to_json.keys).to contain_exactly(:errors)
         expect(subject.to_json[:errors]).to be_a(Array)
         expect(subject.to_json[:errors].length).to eq(1)
@@ -83,7 +83,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
         expect(subject.to_json[:errors][0].keys).to contain_exactly(:status, :code, :title)
       end
 
-      it("has an error http status") do
+      it "has an error http status" do
         expect(subject.to_json[:errors][0][:status]).to be > 399
       end
     end
@@ -93,7 +93,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
     context "when asyncable status is processed" do
       let(:asyncable_status) { :processed }
 
-      it("returns PROCESSED_HTTP_STATUS") do
+      it "returns PROCESSED_HTTP_STATUS" do
         expect(subject.http_status).to eq(
           Api::V3::DecisionReview::IntakeStatus::PROCESSED_HTTP_STATUS
         )
@@ -103,7 +103,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
     context "when asyncable status isn't :processed" do
       let(:asyncable_status) { "zebra" }
 
-      it("returns NOT_PROCESSED_HTTP_STATUS") do
+      it "returns NOT_PROCESSED_HTTP_STATUS" do
         expect(subject.http_status).to eq(
           Api::V3::DecisionReview::IntakeStatus::NOT_PROCESSED_HTTP_STATUS
         )
@@ -113,7 +113,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
     context "when the intake doesn't have a decision review" do
       let(:decision_review) { nil }
 
-      it("returns NO_DECISION_REVIEW_HTTP_STATUS") do
+      it "returns NO_DECISION_REVIEW_HTTP_STATUS" do
         expect(subject.http_status).to eq(
           Api::V3::DecisionReview::IntakeStatus::NO_DECISION_REVIEW_HTTP_STATUS
         )
@@ -125,7 +125,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
     context "when asyncable status is processed" do
       let(:asyncable_status) { :processed }
 
-      it("returns PROCESSED_HTTP_STATUS") do
+      it "returns PROCESSED_HTTP_STATUS" do
         expect(subject.http_status_for_new_intake).to eq(
           Api::V3::DecisionReview::IntakeStatus::PROCESSED_HTTP_STATUS
         )
@@ -135,7 +135,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
     context "when asyncable status isn't :processed" do
       let(:asyncable_status) { "zebra" }
 
-      it("returns NOT_PROCESSED_HTTP_STATUS_FOR_NEW_INTAKE") do
+      it "returns NOT_PROCESSED_HTTP_STATUS_FOR_NEW_INTAKE" do
         expect(subject.http_status_for_new_intake).to eq(
           Api::V3::DecisionReview::IntakeStatus::NOT_PROCESSED_HTTP_STATUS_FOR_NEW_INTAKE
         )
@@ -145,7 +145,7 @@ context Api::V3::DecisionReview::IntakeStatus, :postgres do
     context "when the intake doesn't have a decision review" do
       let(:decision_review) { nil }
 
-      it("returns NO_DECISION_REVIEW_HTTP_STATUS") do
+      it "returns NO_DECISION_REVIEW_HTTP_STATUS" do
         expect(subject.http_status_for_new_intake).to eq(
           Api::V3::DecisionReview::IntakeStatus::NO_DECISION_REVIEW_HTTP_STATUS
         )
