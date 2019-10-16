@@ -62,6 +62,24 @@ RSpec.describe JudgeAssignTasksController, :all_dbs do
       end
     end
 
+    context "when cases will be assigned to an acting judge" do
+      let!(:second_judge_staff) { create(:staff, :attorney_judge_role, sdomainid: second_judge.css_id) }
+      let!(:assignee) { second_judge }
+
+      it "returns the newly created tasks" do
+        subject
+
+        expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)["tasks"]["data"]
+
+        attorney_tasks = response_body.select { |task| task["attributes"]["type"].eql? AttorneyTask.name }
+        expect(attorney_tasks.count).to eq 3
+        attorney_tasks.each do |attorney_task|
+          expect(attorney_task["attributes"]["assigned_to"]["id"]).to eq second_judge.id
+        end
+      end
+    end
+
     context "when attempting to assign cases to a judge" do
       let!(:assignee) { second_judge }
 

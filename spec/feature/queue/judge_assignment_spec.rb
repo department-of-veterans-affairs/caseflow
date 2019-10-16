@@ -25,26 +25,6 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
     User.authenticate!(user: judge_one.user)
   end
 
-  context "Cannot assign ama appeal to another judge from the assign page" do
-    let!(:judge_task_one) { create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one) }
-    let!(:judge_task_two) { create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_two) }
-
-    scenario "attempts to reassign to judge from Assign cases page" do
-      visit("/queue/#{judge_one.user.id}/assign")
-
-      check judge_task_one.id.to_s, allow_label_click: true
-
-      safe_click ".Select"
-      click_dropdown(text: "Other")
-      safe_click ".dropdown-Other"
-      click_dropdown({ text: judge_two.user.full_name }, page.find(".dropdown-Other"))
-
-      click_on "Assign 1 case"
-      expect(page).to have_content(COPY::ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE)
-      expect(page).to have_content(COPY::ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL)
-    end
-  end
-
   context "Acting judge can see team and other users load" do
     let!(:vacols_user_one) { create(:staff, :attorney_judge_role, user: judge_one.user) }
 
@@ -239,6 +219,26 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       visit("/queue/#{judge_two.user.id}/assign")
       expect(page).to have_content("Cases to Assign (1)")
       expect(page).to have_content("#{appeal_one.veteran_first_name} #{appeal_one.veteran_last_name}")
+    end
+  end
+
+  describe "Assigning an ama appeal to an acting judge from the case details page" do
+    let!(:vacols_user_two) { create(:staff, :attorney_judge_role, user: judge_two.user) }
+
+    before do
+      create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
+    end
+
+    it "should disallow us from assign an ama appeal to a judge from the 'Assign to attorney' action'" do
+      visit("/queue/appeals/#{appeal_one.external_id}")
+
+      click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label)
+      click_dropdown(prompt: "Select a user", text: "Other")
+      safe_click ".dropdown-Other"
+      click_dropdown({ text: judge_two.user.full_name }, page.find(".dropdown-Other"))
+
+      click_on("Submit")
+      expect(page).to have_content("Assigned 1 case")
     end
   end
 
