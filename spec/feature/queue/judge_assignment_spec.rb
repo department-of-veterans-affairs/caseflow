@@ -222,14 +222,14 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
     end
   end
 
-  describe "Assigning an ama appeal to an acting judge from the case details page" do
+  describe "Assigning an AttorneyTask to an acting judge from the case details page" do
     let!(:vacols_user_two) { create(:staff, :attorney_judge_role, user: judge_two.user) }
 
     before do
       create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
     end
 
-    it "should disallow us from assign an ama appeal to a judge from the 'Assign to attorney' action'" do
+    it "should allow us to assign an ama appeal to an acting judge from the 'Assign to attorney' action'" do
       visit("/queue/appeals/#{appeal_one.external_id}")
 
       click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label)
