@@ -8,7 +8,15 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
   let!(:lit_support_team) { LitigationSupport.singleton }
   let(:receipt_date) { Time.zone.today - 20 }
-  let!(:appeal) { create(:appeal, receipt_date: receipt_date) }
+  let!(:appeal) do
+    create(:appeal,
+           receipt_date: receipt_date,
+           request_issues: build_list(
+             :request_issue, 1,
+             contested_issue_description: "Tinnitus"
+           ))
+  end
+  let!(:decision_issue) { create(:decision_issue, decision_review: appeal, request_issues: appeal.request_issues) }
   let!(:root_task) { create(:root_task, appeal: appeal) }
   let!(:motions_attorney) { create(:user, full_name: "Motions attorney") }
   let!(:judge) { create(:user, full_name: "Judge the First", css_id: "JUDGE_1") }
@@ -114,6 +122,20 @@ RSpec.feature "Motion to vacate", :all_dbs do
         judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
         expect(judge_task).to_not be_nil
       end
+
+      it "motions attorney triggers Pulac-Cerullo" do
+        User.authenticate!(user: motions_attorney)
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label).click
+        expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_1)
+        expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_2)
+        find("button", class: "usa-button", text: "Notify").click
+
+        expect(page).to have_content(COPY::PULAC_CERULLO_SUCCESS_TITLE)
+        expect(page).to have_content(COPY::PULAC_CERULLO_SUCCESS_DETAIL.gsub("%s", appeal.veteran_full_name))
+      end
     end
   end
 
@@ -129,9 +151,11 @@ RSpec.feature "Motion to vacate", :all_dbs do
       create(:ama_judge_decision_review_task, :completed,
              assigned_to: judge, appeal: appeal, created_at: receipt_date + 3.days, parent: root_task)
     end
-    let!(:mtv_mail_task) { create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney) }
+    let!(:vacate_motion_mail_task) do
+      create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney, parent: root_task)
+    end
     let!(:judge_address_motion_to_vacate_task) do
-      create(:judge_address_motion_to_vacate_task, appeal: appeal, parent: mtv_mail_task, assigned_to: judge)
+      create(:judge_address_motion_to_vacate_task, appeal: appeal, assigned_to: judge, parent: vacate_motion_mail_task)
     end
     let!(:atty_option_txt) { "#{drafting_attorney.full_name} (Orig. Attorney)" }
     let!(:judge_notes) { "Here's why I made my decision..." }
@@ -285,9 +309,79 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
   end
 
+  describe "JudgeSignMotionToVacateTask" do
+    let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
+    let!(:drafting_attorney) { create(:user, full_name: "Drafty McDrafter") }
+
+    let!(:orig_atty_task) do
+      create(:ama_attorney_task, :completed,
+             assigned_to: drafting_attorney, appeal: appeal, created_at: receipt_date + 1.day, parent: root_task)
+    end
+    let!(:judge_review_task) do
+      create(:ama_judge_decision_review_task, :completed,
+             assigned_to: judge, appeal: appeal, created_at: receipt_date + 3.days, parent: root_task)
+    end
+    let!(:vacate_motion_mail_task) do
+      create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney, parent: root_task)
+    end
+    let!(:judge_address_motion_to_vacate_task) do
+      create(:judge_address_motion_to_vacate_task, appeal: appeal, assigned_to: judge, parent: vacate_motion_mail_task)
+    end
+    let!(:abstract_motion_to_vacate_task) do
+      create(:abstract_motion_to_vacate_task, appeal: appeal, parent: vacate_motion_mail_task)
+    end
+    let!(:judge_sign_motion_to_vacate_task) do
+      create(
+        :judge_sign_motion_to_vacate_task,
+        appeal: appeal,
+        assigned_to: judge,
+        parent: abstract_motion_to_vacate_task
+      )
+    end
+
+    before do
+      create(:staff, :judge_role, sdomainid: judge.css_id)
+      OrganizationsUser.add_user_to_organization(motions_attorney, lit_support_team)
+      OrganizationsUser.add_user_to_organization(drafting_attorney, judge_team)
+      ["John Doe", "Jane Doe"].map do |name|
+        OrganizationsUser.add_user_to_organization(create(:user, full_name: name), judge_team)
+      end
+      FeatureToggle.enable!(:review_motion_to_vacate)
+
+      vacate_motion_mail_task.update(status: Constants.TASK_STATUSES.completed)
+      judge_address_motion_to_vacate_task.update(status: Constants.TASK_STATUSES.completed)
+    end
+
+    after { FeatureToggle.disable!(:review_motion_to_vacate) }
+
+    context "triggers PulacCerulloReminderModal" do
+      it "judge sends to dispatch" do
+        judge_send_to_dispatch(user: judge, appeal: appeal)
+
+        find("label[for=hasCavc_no]").click
+        click_button(text: "Submit")
+
+        expect(page).to have_content("Add decisions")
+      end
+
+      it "judge sends to Lit Support for Pulac Cerullo" do
+        judge_send_to_dispatch(user: judge, appeal: appeal)
+
+        find("label[for=hasCavc_yes]").click
+        click_button(text: "Submit")
+
+        expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_TITLE)
+      end
+    end
+  end
+
   def send_to_judge(user:, appeal:, motions_attorney_task:)
     User.authenticate!(user: user)
     visit "/queue/appeals/#{appeal.uuid}"
+
+    check_cavc_alert
+    verify_cavc_conflict_action
+
     find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
     find("div", class: "Select-option", text: "Send to judge").click
     expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{motions_attorney_task.id}/send_to_judge")
@@ -296,8 +390,37 @@ RSpec.feature "Motion to vacate", :all_dbs do
   def address_motion_to_vacate(user:, appeal:, judge_task:)
     User.authenticate!(user: user)
     visit "/queue/appeals/#{appeal.uuid}"
+
+    check_cavc_alert
+    verify_cavc_conflict_action
+
     find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
     find("div", class: "Select-option", text: "Address Motion to Vacate").click
     expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{judge_task.id}/address_motion_to_vacate")
+  end
+
+  def judge_send_to_dispatch(user:, appeal:)
+    User.authenticate!(user: user)
+    visit "/queue/appeals/#{appeal.uuid}"
+
+    check_cavc_alert
+    verify_cavc_conflict_action
+
+    find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    find("div", class: "Select-option", text: "Ready for Dispatch").click
+  end
+
+  def check_cavc_alert
+    expect(page).to have_css(".usa-alert-warning")
+    alert = find(".usa-alert-warning")
+    expect(alert).to have_content("Check CAVC for conflict of jurisdiction")
+  end
+
+  def verify_cavc_conflict_action
+    # Open dropdown
+    action_dropdown = find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    expect(page).to have_content(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label)
+    # Close dropdown
+    action_dropdown.click
   end
 end
