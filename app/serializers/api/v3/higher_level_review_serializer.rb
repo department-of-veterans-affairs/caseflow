@@ -15,6 +15,7 @@ class Api::V3::HigherLevelReviewSerializer
   attribute :events
 
   has_one :veteran, if: Proc.new { |record| record.veteran } do |object|
-    { id: object.veteran.id, type: 'veteran' }
+    # { id: object.veteran.id, type: 'veteran' }
+    object.veteran
   end
 end
