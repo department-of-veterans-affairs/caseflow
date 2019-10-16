@@ -124,7 +124,17 @@ RSpec.feature "Motion to vacate", :all_dbs do
       end
 
       it "motions attorney triggers Pulac-Cerullo" do
-        notify_of_pulac_cerullo(user: motions_attorney, appeal: appeal)
+        User.authenticate!(user: motions_attorney)
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label).click
+        expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_1)
+        expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_2)
+        find("button", class: "usa-button", text: "Notify").click
+
+        expect(page).to have_content(COPY::PULAC_CERULLO_SUCCESS_TITLE)
+        expect(page).to have_content(COPY::PULAC_CERULLO_SUCCESS_DETAIL.gsub("%s", appeal.veteran_full_name))
       end
     end
   end
@@ -363,20 +373,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
         expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_TITLE)
       end
     end
-  end
-
-  def notify_of_pulac_cerullo(user:, appeal:)
-    User.authenticate!(user: user)
-    visit "/queue/appeals/#{appeal.uuid}"
-
-    find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-    find("div", class: "Select-option", text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label).click
-    expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_1)
-    expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_2)
-    find("button", class: "usa-button", text: "Notify").click
-
-    expect(page).to have_content(COPY::PULAC_CERULLO_SUCCESS_TITLE)
-    expect(page).to have_content(COPY::PULAC_CERULLO_SUCCESS_DETAIL.gsub("%s", appeal.veteran_full_name))
   end
 
   def send_to_judge(user:, appeal:, motions_attorney_task:)
