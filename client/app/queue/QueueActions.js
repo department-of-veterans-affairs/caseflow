@@ -517,6 +517,33 @@ export const reassignTasksToUser = ({
     });
 }));
 
+export const legacyReassignToJudge = ({
+  tasks, assigneeId
+}) => (dispatch) => Promise.all(tasks.map((oldTask) => {
+  const params = {
+    data: {
+      tasks: {
+        assigned_to_id: assigneeId,
+        type: 'JudgeCaseAssignmentToAttorney',
+        appeal_id: oldTask.appealId
+      }
+    }
+  };
+  const url = `/legacy_tasks/${oldTask.taskId}/assign_to_judge`;
+
+  return ApiUtil.patch(url, params).
+    then((resp) => resp.body).
+    then((resp) => {
+      const task = resp.task.data;
+      const allTasks = prepareAllTasksForStore([task]);
+
+      dispatch(onReceiveTasks({
+        tasks: allTasks.tasks,
+        amaTasks: allTasks.amaTasks
+      }));
+    });
+}));
+
 const refreshTasks = (dispatch, userId, userRole) => {
   return Promise.all([
     ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`),

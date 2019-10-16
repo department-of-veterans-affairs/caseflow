@@ -12,7 +12,7 @@ import {
   appealWithDetailSelector
 } from './selectors';
 
-import { onReceiveAmaTasks } from './QueueActions';
+import { onReceiveAmaTasks, legacyReassignToJudge } from './QueueActions';
 
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
@@ -66,10 +66,12 @@ class AssignToView extends React.Component {
       isTeamAssign
     } = this.props;
 
+    const taskType = taskActionData(this.props).type ? taskActionData(this.props).type : 'GenericTask';
+
     const payload = {
       data: {
         tasks: [{
-          type: taskActionData(this.props).type ? taskActionData(this.props).type : 'GenericTask',
+          type: taskType,
           external_id: appeal.externalId,
           parent_id: task.taskId,
           assigned_to_id: this.state.selectedValue,
@@ -85,6 +87,13 @@ class AssignToView extends React.Component {
     };
 
     if (isReassignAction) {
+      if (taskType === 'JudgeLegacyAssignTask') {
+        return this.props.legacyReassignToJudge({
+          tasks: [task],
+          assigneeId: this.state.selectedValue
+        });
+      }
+
       return this.reassignTask();
     }
 
@@ -108,6 +117,28 @@ class AssignToView extends React.Component {
   }
 
   reassignTask = () => {
+    const task = this.props.task;
+    const payload = {
+      data: {
+        task: {
+          reassign: {
+            assigned_to_id: this.state.selectedValue,
+            assigned_to_type: 'User',
+            instructions: this.state.instructions
+          }
+        }
+      }
+    };
+
+    const successMsg = { title: sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) };
+
+    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
+      then((resp) => {
+        this.props.onReceiveAmaTasks(resp.body.tasks.data);
+      });
+  }
+
+  legacyReassignToJudge = () => {
     const task = this.props.task;
     const payload = {
       data: {
@@ -214,6 +245,7 @@ AssignToView.propTypes = {
   isReassignAction: PropTypes.bool,
   isTeamAssign: PropTypes.bool,
   onReceiveAmaTasks: PropTypes.func,
+  legacyReassignToJudge: PropTypes.func,
   requestPatch: PropTypes.func,
   requestSave: PropTypes.func,
   task: PropTypes.shape({
@@ -238,7 +270,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
   requestSave,
-  onReceiveAmaTasks
+  onReceiveAmaTasks,
+  legacyReassignToJudge
 }, dispatch);
 
 export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(AssignToView)));
