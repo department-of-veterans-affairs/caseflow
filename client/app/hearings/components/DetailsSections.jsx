@@ -40,7 +40,7 @@ class DetailsSections extends React.Component {
   render () {
     const {
       transcription, hearing, disabled, updateHearing, updateTranscription, updateVirtualHearing,
-      isLegacy, virtualHearing, submit, user
+      isLegacy, virtualHearing, submit, user, initialHearingState
     } = this.props;
     const { modalOpen } = this.state;
 
@@ -58,7 +58,7 @@ class DetailsSections extends React.Component {
           openVirtualHearingModal={this.openModal} />
         <div className="cf-help-divider" />
         {modalOpen && <VirtualHearingModal
-          hearing={hearing}
+          hearing={initialHearingState}
           virtualHearing={virtualHearing}
           update={updateVirtualHearing}
           submit={() => submit().then(this.closeModal)}
