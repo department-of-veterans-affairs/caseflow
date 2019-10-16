@@ -535,10 +535,7 @@ export const legacyReassignToJudge = ({
       const task = resp.task.data;
       const allTasks = prepareAllTasksForStore([task]);
 
-      dispatch(onReceiveTasks({
-        tasks: allTasks.tasks,
-        amaTasks: allTasks.amaTasks
-      }));
+      dispatch(onReceiveTasks(_.pick(allTasks, ['tasks', 'amaTasks'])));
     });
 }));
 
