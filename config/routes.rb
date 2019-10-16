@@ -235,11 +235,8 @@ Rails.application.routes.draw do
 
   get '/search', to: 'appeals#show_case_list'
 
-  resources :legacy_tasks, only: [:create, :update] do
-    member do
-      patch :assign_to_judge, to: 'legacy_tasks#assign_to_judge'
-    end
-  end
+  resources :legacy_tasks, only: [:create, :update]
+  post '/legacy_tasks/assign_to_judge', to: 'legacy_tasks#assign_to_judge'
   resources :tasks, only: [:index, :create, :update] do
     member do
       post :reschedule

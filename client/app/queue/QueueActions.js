@@ -524,14 +524,12 @@ export const legacyReassignToJudge = ({
     data: {
       tasks: {
         assigned_to_id: assigneeId,
-        type: 'JudgeCaseAssignmentToAttorney',
         appeal_id: oldTask.appealId
       }
     }
   };
-  const url = `/legacy_tasks/${oldTask.taskId}/assign_to_judge`;
 
-  return ApiUtil.patch(url, params).
+  return ApiUtil.post('/legacy_tasks/assign_to_judge', params).
     then((resp) => resp.body).
     then((resp) => {
       const task = resp.task.data;
