@@ -38,5 +38,17 @@ describe CachedUser, :all_dbs do
         expect(cached_user.reload.stafkey).to eq("foobar")
       end
     end
+
+    context "Staff missing sdomainid value" do
+      before do
+        create(:staff, sdomainid: nil)
+      end
+
+      it "skips staff record" do
+        described_class.sync_from_vacols
+
+        expect(CachedUser.count).to eq(0)
+      end
+    end
   end
 end
