@@ -34,7 +34,7 @@ const DetailsInputs = ({
         ]}
         value={virtualHearing ? virtualHearing.active || false : false}
         onChange={(option) => {
-          if (virtualHearing.active || option.value) {
+          if ((virtualHearing && virtualHearing.active) || option.value) {
             openModal();
           }
           updateVirtualHearing({ active: option.value });
@@ -103,8 +103,6 @@ DetailsInputs.propTypes = {
   openModal: PropTypes.func,
   updateVirtualHearing: PropTypes.func,
   virtualHearing: PropTypes.shape({
-    veteranEmail: PropTypes.string,
-    representativeEmail: PropTypes.string,
     active: PropTypes.bool
   }),
   enableVirtualHearings: PropTypes.bool
