@@ -138,28 +138,6 @@ class AssignToView extends React.Component {
       });
   }
 
-  legacyReassignToJudge = () => {
-    const task = this.props.task;
-    const payload = {
-      data: {
-        task: {
-          reassign: {
-            assigned_to_id: this.state.selectedValue,
-            assigned_to_type: 'User',
-            instructions: this.state.instructions
-          }
-        }
-      }
-    };
-
-    const successMsg = { title: sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) };
-
-    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
-      then((resp) => {
-        this.props.onReceiveAmaTasks(resp.body.tasks.data);
-      });
-  }
-
   determineTitle = (props, action, isPulacCerullo, actionData) => {
     if (actionData.modal_title) {
       return actionData.modal_title;
