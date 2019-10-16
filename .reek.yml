@@ -51,6 +51,7 @@ detectors:
       - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
       - VeteranAttributeCacher
       - WarmBgsCachesJob
+      - ExternalApi::PexipService
   InstanceVariableAssumption:
     exclude:
       - Appeal
@@ -81,6 +82,7 @@ detectors:
       - AmaAppealDispatch
       - LegacyAppealDispatch
       - Address
+      - ExternalApi::PexipService
   TooManyMethods:
     enabled: false
   TooManyStatements:

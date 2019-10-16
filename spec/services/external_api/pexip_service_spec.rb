@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe ExternalApi::PexipService, focus: true do
+describe ExternalApi::PexipService do
   let(:pexip_service) do
     ExternalApi::PexipService.new(
       host: "vapnnevnpmn.care.va.gov",
@@ -9,6 +9,8 @@ describe ExternalApi::PexipService, focus: true do
       client_host: "care.va.gov"
     )
   end
+
+  let(:endpoint) { "api/admin/configuration/v1/conference/" }
 
   describe "#create_conference" do
     let(:body) do
@@ -28,12 +30,12 @@ describe ExternalApi::PexipService, focus: true do
 
     it "calls #send_pexip_request" do
       expect(pexip_service).to receive(:send_pexip_request)
-      pexip_service.create_conference(1234, 5678, 1111111)
+      pexip_service.create_conference(1234, 5678, "1111111")
     end
 
     it "passed correct arguments to send_pexip_request" do
-      expect(pexip_service).to receive(:send_pexip_request).with("api/admin/configuration/v1/conference/", :post, body: body)
-      pexip_service.create_conference(1234, 5678, 1111111)
+      expect(pexip_service).to receive(:send_pexip_request).with(endpoint, :post, body: body)
+      pexip_service.create_conference(1234, 5678, "1111111")
     end
   end
 
@@ -44,7 +46,7 @@ describe ExternalApi::PexipService, focus: true do
     end
 
     it "passed correct arguments to send_pexip_request" do
-      expect(pexip_service).to receive(:send_pexip_request).with("api/admin/configuration/v1/conference/123/", :delete)
+      expect(pexip_service).to receive(:send_pexip_request).with("#{endpoint}123/", :delete)
       pexip_service.delete_conference(123)
     end
   end

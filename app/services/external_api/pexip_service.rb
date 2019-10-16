@@ -26,20 +26,19 @@ class ExternalApi::PexipService
       "pin": host_pin.to_s,
       "tag": "CASEFLOW"
     }
-    # send_pexip_request(CONFERENCES_ENDPOINT, :post, body: body)
+
     resp = send_pexip_request(CONFERENCES_ENDPOINT, :post, body: body)
     return if resp.nil?
 
     check_for_error(resp)
 
     {
-      "conference_id": resp.headers["Location"].split('/')[-1] || nil
+      "conference_id": resp.headers["Location"].split("/")[-1]
     }
   end
 
   def delete_conference(conference_id)
     delete_endpoint = "#{CONFERENCES_ENDPOINT}#{conference_id}/"
-    # send_pexip_request(delete_endpoint, :delete)
     resp = send_pexip_request(delete_endpoint, :delete)
     return if resp.nil?
 
@@ -61,16 +60,18 @@ class ExternalApi::PexipService
 
     request.headers["Content-Type"] = "application/json" if method == :post
 
-    MetricsService.record("#{host} #{method.to_s.upcase} request to #{url}",
-                            service: :pexip,
-                            name: endpoint) do
+    MetricsService.record(
+      "#{host} #{method.to_s.upcase} request to #{url}",
+      service: :pexip,
+      name: endpoint
+    ) do
       case method
-        when :delete
-          HTTPI.delete(request)
-        when :post
-          HTTPI.post(request)
-        end
+      when :delete
+        HTTPI.delete(request)
+      when :post
+        HTTPI.post(request)
       end
+    end
   end
 
   def check_for_error(resp)
@@ -96,7 +97,7 @@ class ExternalApi::PexipService
     if !resp.raw_body.nil? && resp.headers["Content-Type"] == "application/json"
       JSON.parse(resp.raw_body)["conference"]["name"]
     else
-      ""
+      "No error message"
     end
   end
 end
