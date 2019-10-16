@@ -272,4 +272,9 @@ module Caseflow::Error
 
   class IdtApiError < StandardError; end
   class InvalidOneTimeKey < IdtApiError; end
+
+  class PexipAPIError < SerializableError; end
+  class PexipNotFoundError < PexipAPIError; end
+  class PexipBadRequestError < PexipAPIError; end
+  class PexipMethodNotAllowedError < PexipAPIError; end
 end
