@@ -46,7 +46,9 @@ export const PulacCerulloReminderModal = ({ onSubmit, onCancel }) => {
       <p>
         Before sending this case to Dispatch, be sure there is no Notice of Appeal (NOA) on file at the CAVC website.
       </p>
-      <CavcLinkInfo />
+      <div style={{ marginBottom: '1em' }}>
+        <CavcLinkInfo />
+      </div>
 
       <RadioField
         name="hasCavc"
