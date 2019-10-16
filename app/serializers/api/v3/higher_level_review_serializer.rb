@@ -18,4 +18,12 @@ class Api::V3::HigherLevelReviewSerializer
     # { id: object.veteran.id, type: 'veteran' }
     object.veteran
   end
+
+  has_many :claimants
+  has_many :decision_issues do |object|
+    object.fetch_all_decision_issues
+  end
+  has_many :request_issues do |object|
+    object.request_issues_ui_hash
+  end
 end

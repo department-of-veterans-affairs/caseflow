@@ -215,7 +215,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       it 'should have relationships' do
         expect(subject['relationships']).to_not be_empty
       end
-      context 'relationships' do
+      fcontext 'relationships' do
         subject do
           get_higher_level_review
           JSON.parse(response.body)['data']['relationships']
@@ -224,12 +224,21 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           # TODO include a veteran that will put results here
           expect(subject['veteran']['id']).to eq higher_level_review.veteran.id
         end
-        it 'should include the claimant'
-        it 'should include request issues'
-        it 'should include decision issues'
+        xit 'should include the claimant' do
+          # claimaints is currently a "has_many"
+          # claimaint = subject.find{|relationship| relationship['data']['type'] == 'Claimant'}
+        end
+        it 'should include request issues' do
+          expect(subject['requestIssues'].count).to eq higher_level_review.request_issues_ui_hash.count
+          # TODO test some values
+        end
+        it 'should include decision issues' do
+          expect(subject['decisionIssues'].count).to eq higher_level_review.fetch_all_decision_issues.count
+          # TODO test some values
+        end
       end
     end
-    fcontext 'included' do
+    context 'included' do
       subject do
         get_higher_level_review
         JSON.parse(response.body)['included']
