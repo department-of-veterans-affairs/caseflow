@@ -60,6 +60,8 @@ Dropdown.propTypes = {
     value: PropTypes.any,
     displayText: PropTypes.string
   })).isRequired,
+  defaultText: PropTypes.string,
+  hideLabel: PropTypes.bool,
   readOnly: PropTypes.bool,
   required: PropTypes.bool,
   value: PropTypes.string

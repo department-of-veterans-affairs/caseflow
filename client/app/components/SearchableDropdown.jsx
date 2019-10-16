@@ -19,6 +19,7 @@ class SearchableDropdown extends React.Component {
     };
   }
 
+  // eslint-disable-next-line camelcase
   UNSAFE_componentWillReceiveProps = (nextProps) => {
     this.setState({ value: nextProps.value });
   };
@@ -183,6 +184,11 @@ SearchableDropdown.propTypes = {
     value: PropTypes.any,
     label: PropTypes.string
   })),
+  value: PropTypes.any,
+  noResultsText: PropTypes.string,
+  multi: PropTypes.bool,
+  selfManageValueState: PropTypes.bool,
+  searchable: PropTypes.bool,
   readOnly: PropTypes.bool,
   required: PropTypes.bool,
   placeholder: PropTypes.oneOfType([
