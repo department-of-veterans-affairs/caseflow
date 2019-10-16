@@ -84,12 +84,17 @@ class DeathDismissalModal extends React.PureComponent {
         submit={this.submit}
         validateForm={this.validateForm}
         title="FNOD Death Dismissal"
-        button="Submit"
+        button="Submit Death Dismissal"
       >
         <div {...fullWidth}>
           <p>
-            KAT WAS HERE
-            {appeal.veteranFullName}
+            Marking this appeal as Death Dismissal will:
+            <ul>
+              <li> Cancel all active tasks in Caseflow. </li>
+              <li> Assign the case in VACOLS to the OVLJ Sr. Council DVC.</li>
+            </ul>
+            <br/>
+            Continue with the Death Dismissal for <b>{appeal.veteranFullName}</b>?
           </p>
         </div>
       </QueueFlowModal>

@@ -554,7 +554,7 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.DEATH_DISMISSAL.value}`}
-              title="Assign Hearing | Caseflow"
+              title="Death Dismissal | Caseflow"
               render={this.routedDeathDismissalModal}
             />
             <PageRoute
