@@ -94,13 +94,11 @@ class AddIssuesPage extends React.Component {
   willRedirect(intakeData, hasClearedEp) {
     const { formType, featureToggles } = this.props;
     const { correctClaimReviews } = featureToggles;
-    const editableDta = correctClaimReviews && hasClearedEp;
 
     return (
       !formType ||
       intakeData.isOutcoded ||
-      (hasClearedEp && !correctClaimReviews) ||
-      (intakeData.isDtaError && !editableDta)
+      (hasClearedEp && !correctClaimReviews)
     );
   }
 
@@ -109,8 +107,6 @@ class AddIssuesPage extends React.Component {
 
     if (!formType) {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
-    } else if (intakeData.isDtaError) {
-      return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
     } else if (hasClearedEp) {
       return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
     } else if (intakeData.isOutcoded) {
@@ -271,10 +267,12 @@ class AddIssuesPage extends React.Component {
 
     const hideAddIssueButton = intakeData.isDtaError && _.isEmpty(intakeData.contestableIssues);
 
-    rowObjects = rowObjects.concat({
-      field: ' ',
-      content: !hideAddIssueButton && addIssueButton()
-    });
+    if (!hideAddIssueButton) {
+      rowObjects = rowObjects.concat({
+        field: ' ',
+        content: addIssueButton()
+      });
+    }
 
     return (
       <div className="cf-intake-edit">

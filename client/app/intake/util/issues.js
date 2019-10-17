@@ -334,7 +334,10 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         endProductCleared: issue.endProductCleared,
         editedDescription: issue.editedDescription,
         correctionType: issue.correctionType,
-        editable: issue.editable
+        editable: issue.editable,
+        decisionIssueId: issue.decisionIssueId,
+        ratingIssueReferenceId: issue.ratingIssueReferenceId,
+        ratingDecisionReferenceId: issue.ratingDecisionReferenceId
       };
     }
 
@@ -363,7 +366,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       category: issue.category,
       editedDescription: issue.editedDescription,
       correctionType: issue.correctionType,
-      editable: issue.editable
+      editable: issue.editable,
+      decisionIssueId: issue.decisionIssueId
     };
   });
 };

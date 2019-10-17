@@ -108,79 +108,6 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     end
   end
 
-  context "when there is a non-rating end product" do
-    let!(:nonrating_request_issue) do
-      RequestIssue.create!(
-        decision_review: supplemental_claim,
-        nonrating_issue_category: "Military Retired Pay",
-        nonrating_issue_description: "nonrating description",
-        benefit_type: benefit_type,
-        decision_date: 1.month.ago,
-        contested_decision_issue: contested_decision_issue
-      )
-    end
-
-    before do
-      supplemental_claim.create_issues!([nonrating_request_issue])
-      supplemental_claim.establish!
-    end
-
-    context "when it is created due to a DTA error" do
-      let(:decision_review_remanded) { create(:higher_level_review) }
-      let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
-
-      it "cannot be edited" do
-        nonrating_dta_claim_id = EndProductEstablishment.find_by(
-          source: supplemental_claim,
-          code: "040HDENR"
-        ).reference_id
-
-        visit "supplemental_claims/#{nonrating_dta_claim_id}/edit"
-        expect(page).to have_content("Issues Not Editable")
-      end
-
-      context "when benefit type is pension" do
-        let(:benefit_type) { "pension" }
-        it "cannot be edited" do
-          nonrating_dta_claim_id = EndProductEstablishment.find_by(
-            source: supplemental_claim,
-            code: "040HDENRPMC"
-          ).reference_id
-
-          visit "supplemental_claims/#{nonrating_dta_claim_id}/edit"
-          expect(page).to have_content("Issues Not Editable")
-        end
-      end
-    end
-
-    it "shows the Supplemental Claim Edit page with a nonrating claim id" do
-      nonrating_ep_claim_id = EndProductEstablishment.find_by(
-        source: supplemental_claim,
-        code: "040SCNR"
-      ).reference_id
-      visit "supplemental_claims/#{nonrating_ep_claim_id}/edit"
-
-      expect(page).to have_content("Military Retired Pay")
-
-      click_intake_add_issue
-      click_intake_no_matching_issues
-      add_intake_nonrating_issue(
-        category: "Active Duty Adjustments",
-        description: "A description!",
-        date: profile_date.mdY
-      )
-
-      safe_click("#button-submit-update")
-
-      expect(page).to have_content("The review originally had 1 issue but now has 2.")
-      safe_click ".confirm"
-
-      expect(page).to have_current_path(
-        "/supplemental_claims/#{nonrating_ep_claim_id}/edit/confirmation"
-      )
-    end
-  end
-
   context "when the rating issue is locked" do
     let(:url_path) { "supplemental_claims" }
     let(:decision_review) { supplemental_claim }
@@ -210,6 +137,83 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     end
   end
 
+  context "when there is a non-rating end product" do
+    let!(:nonrating_request_issue) do
+      RequestIssue.create!(
+        decision_review: supplemental_claim,
+        nonrating_issue_category: "Military Retired Pay",
+        nonrating_issue_description: "nonrating description",
+        benefit_type: benefit_type,
+        decision_date: 1.month.ago,
+        contested_decision_issue: contested_decision_issue
+      )
+    end
+
+    before do
+      supplemental_claim.create_issues!([nonrating_request_issue])
+      supplemental_claim.establish!
+    end
+
+    it "shows the Supplemental Claim Edit page with a nonrating claim id" do
+      nonrating_ep_claim_id = EndProductEstablishment.find_by(
+        source: supplemental_claim,
+        code: "040SCNR"
+      ).reference_id
+      visit "supplemental_claims/#{nonrating_ep_claim_id}/edit"
+
+      expect(page).to have_content("Military Retired Pay")
+
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      add_intake_nonrating_issue(
+        category: "Active Duty Adjustments",
+        description: "A description!",
+        date: profile_date.mdY
+      )
+
+      safe_click("#button-submit-update")
+
+      expect(page).to have_content("The review originally had 1 issue but now has 2.")
+      safe_click ".confirm"
+
+      expect(page).to have_current_path(
+        "/supplemental_claims/#{nonrating_ep_claim_id}/edit/confirmation"
+      )
+    end
+
+    context "when it is created due to a DTA error" do
+      before { FeatureToggle.enable!(:edit_contention_text) }
+      after { FeatureToggle.disable!(:edit_contention_text) }
+
+      let(:decision_review_remanded) { create(:higher_level_review) }
+      let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
+
+      it "only allows users to edit contention text" do
+        nonrating_dta_claim_id = EndProductEstablishment.find_by(
+          source: supplemental_claim,
+          code: "040HDENR"
+        ).reference_id
+
+        visit "supplemental_claims/#{nonrating_dta_claim_id}/edit"
+
+        expect(page).to have_content("Edit Issues")
+
+        # User cannot add issues
+        expect(page).to_not have_css("#button-add-issue")
+
+        # User cannot remove issues
+        expect(page).to_not have_css(".remove-issue")
+
+        # User can edit contention text
+        edit_contention_text("Military Retired Pay", "New description")
+        expect(page).to have_content("New description")
+        click_edit_submit
+
+        expect(RequestIssue.where(edited_description: "New description")).to_not be_nil
+      end
+    end
+  end
+
   context "when there is a rating end product" do
     before { FeatureToggle.enable!(:contestable_rating_decisions) }
     after { FeatureToggle.disable!(:contestable_rating_decisions) }
@@ -234,30 +238,34 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     end
 
     context "when it is created due to a DTA error" do
+      before { FeatureToggle.enable!(:edit_contention_text) }
+      after { FeatureToggle.disable!(:edit_contention_text) }
+
       let(:decision_review_remanded) { create(:higher_level_review) }
       let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
 
-      it "cannot be edited" do
+      it "only allows users to edit contention text" do
         rating_dta_claim_id = EndProductEstablishment.find_by(
           source: supplemental_claim,
           code: "040HDER"
         ).reference_id
 
         visit "supplemental_claims/#{rating_dta_claim_id}/edit"
-        expect(page).to have_content("Issues Not Editable")
-      end
 
-      context "when benefit type is pension" do
-        let(:benefit_type) { "pension" }
-        it "cannot be edited" do
-          rating_dta_claim_id = EndProductEstablishment.find_by(
-            source: supplemental_claim,
-            code: "040HDERPMC"
-          ).reference_id
+        expect(page).to have_content("Edit Issues")
 
-          visit "supplemental_claims/#{rating_dta_claim_id}/edit"
-          expect(page).to have_content("Issues Not Editable")
-        end
+        # User cannot add issues
+        expect(page).to_not have_css("#button-add-issue")
+
+        # User cannot remove issues
+        expect(page).to_not have_css(".remove-issue")
+
+        # User can edit contention text
+        edit_contention_text("PTSD denied", "New description")
+        expect(page).to have_content("New description")
+        click_edit_submit
+
+        expect(RequestIssue.where(edited_description: "New description")).to_not be_nil
       end
     end
 

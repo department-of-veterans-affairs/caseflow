@@ -76,10 +76,10 @@ RSpec.feature "List Schedule for Hearing Prep", :all_dbs do
       scenario "Can switch to tab to see all hearing days" do
         visit "hearings/schedule"
 
-        page.should have_css(".section-hearings-list tbody tr", count: 5)
+        expect(page).to have_css(".section-hearings-list tbody tr", count: 5)
         find(".cf-dropdown-trigger", text: "Switch View").click
         find("li", text: "Complete Hearing Schedule").click
-        page.should have_css(".section-hearings-list tbody tr", count: 10)
+        expect(page).to have_css(".section-hearings-list tbody tr", count: 10)
       end
     end
   end
