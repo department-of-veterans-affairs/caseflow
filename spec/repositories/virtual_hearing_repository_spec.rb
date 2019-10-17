@@ -40,18 +40,10 @@ describe VirtualHearingRepository, :all_dbs do
     context "for a Legacy hearing" do
       let(:hearing_date) { Time.zone.now }
       let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_date) }
-      let!(:case_hearing) do
-        create(
-          :case_hearing,
-          hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date),
-          vdkey: hearing_day.id
-        )
-      end
       let!(:legacy_hearing) do
         create(
           :legacy_hearing,
-          case_hearing: case_hearing,
-          hearing_day: hearing_day,
+          hearing_day_id: hearing_day.id,
           virtual_hearing: virtual_hearing
         )
       end
