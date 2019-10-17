@@ -13,6 +13,7 @@ class Hearing < ApplicationRecord
           -> { includes(:hearing_task).where(tasks: { status: Task.open_statuses }) },
           as: :hearing
   has_many :hearing_issue_notes
+  has_one :virtual_hearing, -> { order(id: :desc) }, as: :hearing
 
   class HearingDayFull < StandardError; end
 

@@ -35,6 +35,8 @@ class LegacyHearing < ApplicationRecord
   # when fetched intially.
   has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
 
+  has_one :virtual_hearing, -> { order(id: :desc) }, as: :hearing
+
   delegate :central_office_time_string, :scheduled_time, :scheduled_time_string,
            to: :time
 
