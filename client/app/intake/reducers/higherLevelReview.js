@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers } from './common';
-import { formatDateStr } from '../../util/DateUtil';
 import { formatRequestIssues, formatContestableIssues } from '../util/issues';
 import {
   convertStringToBoolean,
@@ -32,7 +31,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.same_office
     },
     receiptDate: {
-      $set: serverIntake.receipt_date && formatDateStr(serverIntake.receipt_date)
+      $set: serverIntake.receipt_date
     },
     benefitType: {
       $set: serverIntake.benefit_type
