@@ -472,6 +472,7 @@ describe GenericTask, :postgres do
 
           new_task = task.parent.children.open.first
           expect(new_task.children.length).to eq(incomplete_children_cnt)
+          expect(new_task.children.all?(&:assigned?)).to eq(true)
           expect(new_task.status).to eq(Constants.TASK_STATUSES.on_hold)
 
           task.reload
