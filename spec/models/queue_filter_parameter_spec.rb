@@ -49,6 +49,5 @@ describe QueueFilterParameter do
         expect(subject.values).to match_array([non_null_value, nil])
       end
     end
-
   end
 end
