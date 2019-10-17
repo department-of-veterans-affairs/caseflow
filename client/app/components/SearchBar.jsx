@@ -42,6 +42,7 @@ export default class SearchBar extends React.Component {
     }
   }
 
+  /* eslint-disable camelcase */
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.value !== nextProps.value) {
       this.clearSearchCallback();
@@ -52,6 +53,7 @@ export default class SearchBar extends React.Component {
       }, 500);
     }
   }
+  /* eslint-enable camelcase */
 
   onBlur = () => {
     if (this.clearSearchCallback()) {
@@ -125,7 +127,7 @@ export default class SearchBar extends React.Component {
 
     return <span className={searchTypeClasses} role="search">
       <label className={title ? label : 'usa-sr-only'} htmlFor={id}>
-        {title || 'Search small'}
+        {title || 'Search'}
       </label>
       <input
         ref={this.setInputRef}
@@ -171,6 +173,7 @@ SearchBar.propTypes = {
   onClick: PropTypes.func,
   onClearSearch: PropTypes.func,
   recordSearch: PropTypes.func,
+  isSearchAhead: PropTypes.bool,
   loading: PropTypes.bool,
   value: PropTypes.string,
   analyticsCategory: PropTypes.string,

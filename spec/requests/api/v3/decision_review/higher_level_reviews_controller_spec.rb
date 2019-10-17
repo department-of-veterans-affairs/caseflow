@@ -36,6 +36,11 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     User.authenticate!(roles: ["Admin Intake"])
   end
 
+  let(:mock_api_user) do
+    val = "ABC"
+    create(:user, station_id: val, css_id: val, full_name: val)
+  end
+
   let(:profile_date) { (receipt_date - 8.days).to_datetime }
   let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
   let(:receipt_date) { Time.zone.today - 5.days }
@@ -109,43 +114,36 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     }
   end
 
-  def post_params
-    post(
+  let(:post_params) do
+    [
       "/api/v3/decision_review/higher_level_reviews",
-      params: params,
-      headers: { "Authorization" => "Token #{api_key}" }
-    )
+      { params: params, headers: { "Authorization" => "Token #{api_key}" } }
+    ]
   end
 
   describe "#create" do
-    describe "general cases" do
-      it "should return a 202 on success" do
-        allow(User).to receive(:api_user) { build(:user) }
-        post_params
-        expect(response).to have_http_status(202)
+    context do
+      before do
+        allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
+        allow(User).to receive(:api_user).and_return(mock_api_user)
+        post(*post_params)
       end
 
-      context "params are missing" do
-        let(:params) { {} }
-
-        it "should return an error status on failure" do
-          post_params
-          error = Api::V3::DecisionReview::IntakeError.new(:malformed_request)
-
-          expect(response).to have_http_status(error.status)
-          expect(JSON.parse(response.body)).to eq(
-            Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json
-          )
-        end
+      it "should return a 202 on success" do
+        expect(response).to have_http_status(202)
       end
     end
 
-    describe "test error case: unknown_category_for_benefit_type" do
-      let(:category) { "Words ending in urple" }
-      it "should return a 422 on this failure" do
-        post_params
-        error = Api::V3::DecisionReview::IntakeError.new(:request_issue_category_invalid_for_benefit_type)
+    context "params are missing" do
+      let(:params) { {} }
 
+      before do
+        allow(User).to receive(:api_user).and_return(mock_api_user)
+        post(*post_params)
+      end
+
+      it "should return an error" do
+        error = Api::V3::DecisionReview::IntakeError.new(:malformed_request)
         expect(response).to have_http_status(error.status)
         expect(JSON.parse(response.body)).to eq(
           Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json
@@ -153,40 +151,63 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       end
     end
 
-    describe "error cases" do
-      describe "unknown_error" do
-        let(:attributes) do
-          {
-            receiptDate: "wrench",
-            informalConference: informal_conference,
-            sameOffice: same_office,
-            legacyOptInApproved: legacy_opt_in_approved,
-            benefitType: benefit_type
-          }
-        end
-        it "should return 500/unknown_error" do
-          post_params
-          error = Api::V3::DecisionReview::IntakeError.new
+    context "when unknown_category_for_benefit_type" do
+      let(:category) { "Words ending in urple" }
 
-          expect(response).to have_http_status(error.status)
-          expect(JSON.parse(response.body)).to eq(
-            Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json
-          )
-        end
+      before do
+        allow(User).to receive(:api_user).and_return(mock_api_user)
+        post(*post_params)
       end
 
-      describe "reserved_veteran_file_number" do
-        let(:veteran_file_number) { "123456789" }
-        it "should return 500/reserved_veteran_file_number" do
-          allow(Rails).to receive(:deploy_env?).and_return(true)
-          post_params
-          error = Api::V3::DecisionReview::IntakeError.new(:reserved_veteran_file_number)
+      it "should return :request_issue_category_invalid_for_benefit_type error" do
+        error = Api::V3::DecisionReview::IntakeError.new(:request_issue_category_invalid_for_benefit_type)
+        expect(response).to have_http_status(error.status)
+        expect(JSON.parse(response.body)).to eq(
+          Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json
+        )
+      end
+    end
 
-          expect(response).to have_http_status(error.status)
-          expect(JSON.parse(response.body)).to eq(
-            Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json
-          )
-        end
+    context "when there's an invalid receipt_date" do
+      let(:attributes) do
+        {
+          receiptDate: "wrench",
+          informalConference: informal_conference,
+          sameOffice: same_office,
+          legacyOptInApproved: legacy_opt_in_approved,
+          benefitType: benefit_type
+        }
+      end
+
+      before do
+        allow(User).to receive(:api_user).and_return(mock_api_user)
+        post(*post_params)
+      end
+
+      it "should return :intake_review_failed error" do
+        error = Api::V3::DecisionReview::IntakeError.new(:intake_review_failed)
+        expect(response).to have_http_status(error.status)
+        expect(JSON.parse(response.body)).to eq(
+          Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json
+        )
+      end
+    end
+
+    context "reserved_veteran_file_number" do
+      let(:veteran_file_number) { "123456789" }
+
+      before do
+        allow(User).to receive(:api_user).and_return(mock_api_user)
+        allow(Rails).to receive(:deploy_env?).with(:prod).and_return(true)
+        post(*post_params)
+      end
+
+      it "should return :reserved_veteran_file_number error" do
+        error = Api::V3::DecisionReview::IntakeError.new(:reserved_veteran_file_number)
+        expect(response).to have_http_status(error.status)
+        expect(JSON.parse(response.body)).to eq(
+          Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json
+        )
       end
     end
   end
