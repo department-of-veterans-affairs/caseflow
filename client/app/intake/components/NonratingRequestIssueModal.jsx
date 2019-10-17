@@ -311,7 +311,7 @@ NonratingRequestIssueModal.propTypes = {
   skipText: PropTypes.string,
   intakeData: PropTypes.object,
   formType: PropTypes.string,
-  activeNonratingRequestIssues: PropTypes.bool,
+  activeNonratingRequestIssues: PropTypes.object,
   receiptDate: PropTypes.string,
   addedIssues: PropTypes.string
 };

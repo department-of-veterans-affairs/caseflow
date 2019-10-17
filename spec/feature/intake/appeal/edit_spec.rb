@@ -568,11 +568,6 @@ feature "Appeal Edit issues", :all_dbs do
 
       expect(page).to have_content("We cannot process your request. Please select a date prior to today's date.")
       expect(page).to have_button("Save", disabled: true)
-
-      fill_in "withdraw-date", with: "14/20/2019"
-
-      expect(page).to have_content("We cannot process your request")
-      expect(page).to have_button("Save", disabled: true)
     end
   end
 
