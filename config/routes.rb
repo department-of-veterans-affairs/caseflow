@@ -32,7 +32,9 @@ Rails.application.routes.draw do
     end
     namespace :v3 do
       namespace :decision_review do
-        resources :higher_level_reviews, only: :create
+        resources :higher_level_reviews, only: [:create, :show]
+        resources :supplemental_claims, only: [:create, :show]
+        resources :appeals, only: [:create, :show]
         resources :intake_statuses, only: :show
       end
     end
