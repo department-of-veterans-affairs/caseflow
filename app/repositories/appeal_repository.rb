@@ -358,6 +358,11 @@ class AppealRepository
     appeal.case_record.update_vacols_location!(location)
   end
 
+  def self.update_location_for_death_dismissal!(appeal:)
+    location = "66"
+    appeal.case_record.update_vacols_location!(location)
+  end
+
   def self.update_location!(appeal, location)
     appeal.case_record.update_vacols_location!(location)
   end

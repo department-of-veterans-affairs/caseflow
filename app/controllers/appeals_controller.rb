@@ -47,6 +47,15 @@ class AppealsController < ApplicationController
     end
   end
 
+  def death_dismissal
+    # check its a legacy appeal, that this is the judge, and that we have a SFNOD
+    # appeal.type == LegacyAppeal.name
+    #
+    #invoke the legacy appeal model to cancel its stuff and update the location in vacols
+    #
+    # redirect to queue
+  end
+
   def document_count
     render json: { document_count: EFolderService.document_count(appeal.veteran_file_number, current_user) }
   rescue Caseflow::Error::EfolderAccessForbidden => error
