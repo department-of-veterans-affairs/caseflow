@@ -274,7 +274,7 @@ describe TaskFilter, :all_dbs do
         end
       end
 
-      let(:aod_cases) do
+      let(:aod_case_ids) do
         [
           type_1_tasks.first.id,
           type_2_tasks.first.id,
@@ -324,7 +324,7 @@ describe TaskFilter, :all_dbs do
         end
 
         it "returns tasks with Original or Supplemental case types or AOD cases" do
-          expect(subject.map(&:id)).to match_array((type_1_tasks.map(&:id) + type_2_tasks.map(&:id)) | aod_cases)
+          expect(subject.map(&:id)).to match_array((type_1_tasks.map(&:id) + type_2_tasks.map(&:id)) | aod_case_ids)
         end
       end
 
@@ -332,7 +332,7 @@ describe TaskFilter, :all_dbs do
         let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=is_aod"] }
 
         it "returns tasks that are AOD" do
-          expect(subject.map(&:id)).to match_array(aod_cases)
+          expect(subject.map(&:id)).to match_array(aod_case_ids)
         end
       end
     end

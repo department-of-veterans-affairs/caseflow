@@ -49,12 +49,10 @@ class TaskFilter
 
   def self.create_where_clause(filter)
     clause = "#{table_column_from_name(filter.column)} IN (?)"
-    case filter.column
-    when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
-      filter_selections = filter.values
-      if filter_selections.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
-        clause = extract_aod_clause(filter, clause)
-      end
+    filter_selections = filter.values
+    if filter.column == Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name &&
+       filter_selections.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
+      clause = extract_aod_clause(filter, clause)
     end
     clause
   end
