@@ -38,7 +38,7 @@ class Api::V3::DecisionReview::IntakeStatusesController < Api::V3::BaseControlle
     render_error(
       status: 404,
       code: :decision_review_not_found,
-      title: "Unable to find a DecisionReview with uuid: #{uuid}"
+      title: "Unable to find a Decision Review using specified UUID"
     )
   end
 
