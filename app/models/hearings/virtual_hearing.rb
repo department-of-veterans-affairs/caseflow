@@ -21,9 +21,6 @@ class VirtualHearing < ApplicationRecord
     cancelled: "cancelled"
   }
 
-  scope :with_pending_pexip_conference,
-        -> { where(status: :pending) }
-
   scope :eligible_for_deletion,
         -> { where(conference_deleted: false, status: [:active, :cancelled]) }
 
