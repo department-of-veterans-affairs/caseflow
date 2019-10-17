@@ -4,6 +4,7 @@ class LegacyHearing < ApplicationRecord
   include CachedAttributes
   include AssociatedVacolsModel
   include AppealConcern
+  include HasVirtualHearing
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
@@ -34,8 +35,6 @@ class LegacyHearing < ApplicationRecord
   # this is used to cache appeal stream for hearings
   # when fetched intially.
   has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
-
-  has_one :virtual_hearing, -> { order(id: :desc) }, as: :hearing
 
   delegate :central_office_time_string, :scheduled_time, :scheduled_time_string,
            to: :time
