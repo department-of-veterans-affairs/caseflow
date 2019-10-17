@@ -194,6 +194,8 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       fill_in("taskInstructions", with: "Test")
       click_on("Submit")
 
+      expect(page).to have_content("Task reassigned to #{judge_two.user.full_name}")
+
       click_on("Switch views")
       click_on("Assign team cases")
 

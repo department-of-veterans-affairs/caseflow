@@ -97,14 +97,7 @@ class AssignToView extends React.Component {
     };
 
     if (isReassignAction) {
-      if (taskType === 'JudgeLegacyAssignTask') {
-        return this.props.legacyReassignToJudge({
-          tasks: [task],
-          assigneeId: this.state.selectedValue
-        });
-      }
-
-      return this.reassignTask();
+      return this.reassignTask(taskType === 'JudgeLegacyAssignTask');
     }
 
     return this.props.
@@ -127,7 +120,7 @@ class AssignToView extends React.Component {
     return assignee;
   };
 
-  reassignTask = () => {
+  reassignTask = (isLegacyReassignToJudge = false) => {
     const task = this.props.task;
     const payload = {
       data: {
@@ -142,6 +135,13 @@ class AssignToView extends React.Component {
     };
 
     const successMsg = { title: sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) };
+
+    if (isLegacyReassignToJudge) {
+      return this.props.legacyReassignToJudge({
+        tasks: [task],
+        assigneeId: this.state.selectedValue
+      }, successMsg);
+    }
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).then((resp) => {
       this.props.onReceiveAmaTasks(resp.body.tasks.data);

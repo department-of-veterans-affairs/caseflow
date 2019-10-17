@@ -519,7 +519,7 @@ export const reassignTasksToUser = ({
 
 export const legacyReassignToJudge = ({
   tasks, assigneeId
-}) => (dispatch) => Promise.all(tasks.map((oldTask) => {
+}, successMessage) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   const params = {
     data: {
       tasks: {
@@ -536,6 +536,8 @@ export const legacyReassignToJudge = ({
       const allTasks = prepareAllTasksForStore([task]);
 
       dispatch(onReceiveTasks(_.pick(allTasks, ['tasks', 'amaTasks'])));
+
+      dispatch(showSuccessMessage(successMessage));
     });
 }));
 
