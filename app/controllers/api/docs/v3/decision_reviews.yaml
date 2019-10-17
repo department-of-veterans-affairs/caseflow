@@ -760,7 +760,7 @@ paths:
                   errors:
                     $ref: "#/components/schemas/errors"
               examples:
-                bad UUID:
+                unknown error:
                   value:
                     errors:
                       status: 500,
