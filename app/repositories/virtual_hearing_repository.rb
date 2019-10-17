@@ -17,5 +17,15 @@ class VirtualHearingRepository
 
       virtual_hearings_for_ama_hearings + virtual_hearings_for_legacy_hearings
     end
+
+    def create_virtual_hearing_for_legacy_hearing(legacy_hearing)
+      ActiveRecord::Base.multi_transaction do
+        created_hearing = VirtualHearing.create!(hearing: legacy_hearing)
+
+        HearingRepository.update_vacols_hearing!(legacy_hearing.vacols_record, { request_type: :R })
+
+        created_hearing
+      end
+    end
   end
 end
