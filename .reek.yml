@@ -57,6 +57,7 @@ detectors:
       - Appeal
       - Task
       - CaseflowJob
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor
   IrresponsibleModule:
     enabled: false
   ManualDispatch:

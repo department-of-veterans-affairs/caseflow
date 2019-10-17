@@ -266,4 +266,27 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       end
     end
   end
+
+  describe "POST legacy_tasks/assign_to_judge" do
+    let(:assigning_judge) { create(:user) }
+    let(:assignee_judge) { create(:user) }
+    let(:assigning_judge_staff) { create(:staff, :judge_role, sdomainid: assigning_judge.css_id) }
+    let!(:assignee_judge_staff) { create(:staff, :judge_role, sdomainid: assignee_judge.css_id) }
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, staff: assigning_judge_staff)) }
+    let(:params) { { "appeal_id": appeal.id, "assigned_to_id": assignee_judge.id } }
+
+    before do
+      User.stub = assigning_judge
+    end
+
+    it "should be successful" do
+      allow(QueueRepository).to receive(:update_location_to_judge).with(
+        appeal.vacols_id,
+        assignee_judge
+      ).and_return(true)
+
+      patch :assign_to_judge, params: { tasks: params }
+      expect(response.status).to eq 200
+    end
+  end
 end
