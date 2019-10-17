@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { REVIEW_OPTIONS } from '../constants';
 import DATES from '../../../constants/DATES.json';
-import { formatDateStringForApi, formatDateStr } from '../../util/DateUtil';
+import { formatDateStr } from '../../util/DateUtil';
 
 export const getBlankOptionError = (responseErrorCodes, field) => (
   (_.get(responseErrorCodes[field], 0) === 'blank') && 'Please select an option.'

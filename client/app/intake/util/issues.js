@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { formatDateStr, formatDateStringForApi, formatDateStrUtc } from '../../util/DateUtil';
+import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES.json';
 import { FORM_TYPES } from '../constants';
 
@@ -313,7 +313,6 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         index,
         referenceId: issue.id,
         text: issue.description,
-        // formatDatStr converts to local time instead of UTC
         date: issue.decisionDate || issue.approxDecisionDate,
         notes: issue.notes,
         titleOfActiveReview: issue.titleOfActiveReview,

@@ -12,6 +12,7 @@ import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
 import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES.json';
 import { validateDateNotInFuture } from '../util/issues';
+import { formatDateStr } from '../../util/DateUtil';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -195,7 +196,7 @@ class NonratingRequestIssueModal extends React.Component {
       }).
       map((issue) => {
         return {
-          displayText: `${issue.category}: ${issue.description}, decided ${issue.decisionDate}`,
+          displayText: `${issue.category}: ${issue.description}, decided ${formatDateStr(issue.decisionDate)}`,
           value: issue.id,
           disabled: false
         };
@@ -313,7 +314,7 @@ NonratingRequestIssueModal.propTypes = {
   formType: PropTypes.string,
   activeNonratingRequestIssues: PropTypes.object,
   receiptDate: PropTypes.string,
-  addedIssues: PropTypes.string
+  addedIssues: PropTypes.array
 };
 
 NonratingRequestIssueModal.defaultProps = {
