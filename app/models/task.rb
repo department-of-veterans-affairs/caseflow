@@ -474,8 +474,11 @@ class Task < ApplicationRecord
       task.save!
     end
 
-    sibling.on_hold! if children.open.any?
-    children.open.update_all(parent_id: sibling.id)
+    # Preserve the open children and on hold status of the old task
+    if children.open.any?
+      children.open.update_all(parent_id: sibling.id)
+      sibling.on_hold!
+    end
 
     update!(status: Constants.TASK_STATUSES.cancelled)
 
