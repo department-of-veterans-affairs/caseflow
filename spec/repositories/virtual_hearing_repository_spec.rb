@@ -71,4 +71,18 @@ describe VirtualHearingRepository, :all_dbs do
       end
     end
   end
+
+  context ".create_virtual_hearing_for_legacy_hearing", focus: true do
+    let(:legacy_hearing) { create(:legacy_hearing) }
+
+    subject { VirtualHearingRepository.create_virtual_hearing_for_legacy_hearing(legacy_hearing) }
+
+    before do
+      RequestStore[:current_user] = create(:user)
+    end
+
+    it "updates the hearing type on the VACOLS record to VIDEO" do
+      expect(subject.reload.hearing.request_type).to eq "R"
+    end
+  end
 end
