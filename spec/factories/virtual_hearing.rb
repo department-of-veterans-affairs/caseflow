@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :virtual_hearing do
     hearing
     alias_name { nil }
     conference_id { nil }
-    status { VirtualHearing::statuses[:pending] }
+    status { VirtualHearing.statuses[:pending] }
     conference_deleted { false }
     guest_pin { nil }
     host_pin { nil }
@@ -23,15 +25,15 @@ FactoryBot.define do
     end
 
     trait :pending do
-      status { VirtualHearing::statuses[:pending] }
+      status { VirtualHearing.statuses[:pending] }
     end
 
     trait :active do
-      status { VirtualHearing::statuses[:active] }
+      status { VirtualHearing.statuses[:active] }
     end
 
     trait :cancelled do
-      status { VirtualHearing::statuses[:cancelled] }
+      status { VirtualHearing.statuses[:cancelled] }
     end
   end
 end

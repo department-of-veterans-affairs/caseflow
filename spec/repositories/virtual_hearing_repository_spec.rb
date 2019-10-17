@@ -2,7 +2,7 @@
 
 require "support/vacols_database_cleaner"
 
-describe VirtualHearingRepository,:all_dbs do
+describe VirtualHearingRepository, :all_dbs do
   context ".ready_for_deletion" do
     let(:virtual_hearing) { create(:virtual_hearing, :initialized, :active) }
 
@@ -55,7 +55,7 @@ describe VirtualHearingRepository,:all_dbs do
           virtual_hearing: virtual_hearing
         )
       end
-      
+
       context "that was held" do
         let(:hearing_date) { Time.zone.now - 1.day }
 
