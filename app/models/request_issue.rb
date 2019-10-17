@@ -416,7 +416,7 @@ class RequestIssue < ApplicationRecord
     )
   end
 
-  def vacols_issue
+  def vacols_issue(vacols_id, vacols_sequence_id)
     return unless vacols_id && vacols_sequence_id
 
     @vacols_issue ||= AppealRepository.issues(vacols_id).find do |issue|
@@ -566,6 +566,10 @@ class RequestIssue < ApplicationRecord
   end
 
   def remanded?
+    # if this request issue is a correction for a decision issue from a remand supplemental claim,
+    # consider it a remanded request issue regardless of the decision issue disposition
+    return contested_decision_issue&.decision_review.try(:decision_review_remanded?) if decision_correction?
+
     contested_decision_issue&.remanded?
   end
 
