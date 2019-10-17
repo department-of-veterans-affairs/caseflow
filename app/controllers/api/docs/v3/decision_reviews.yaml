@@ -1012,7 +1012,7 @@ paths:
           description: (yyyy-mm-dd) In order to determine contestability of issues, the receipt date of a hypothetical Decision Review must be supplied.
           schema:
             type: string
-            pattern: '^\d{4}-\d{2}-\d{2}$'
+            format: date
       summary: Returns all contestable issues for a specific veteran.
       responses:
         '200':
@@ -1041,7 +1041,7 @@ paths:
                             ratingIssueProfileDate:
                               type: string
                               nullable: true
-                              pattern: '^\d{4}-\d{2}-\d{2}$'
+                              format: date
                               description: "(yyyy-mm-dd) RatingIssue profile date"
                             ratingIssueDiagnosticCode:
                               type: string
@@ -1058,7 +1058,7 @@ paths:
                             approxDecisionDate:
                               type: string
                               nullable: true
-                              pattern: '^\d{4}-\d{2}-\d{2}$'
+                              format: date
                               description: "(yyyy-mm-dd) Approximate decision date"
                             description:
                               type: string
@@ -1090,11 +1090,59 @@ paths:
                                   approxDecisionDate:
                                     type: string
                                     nullable: true
-                                    pattern: '^\d{4}-\d{2}-\d{2}$'
+                                    format: date
                               description: "Shows the chain of decision and rating issues that preceded this issue. Only the most recent issue can be contested (the object itself that contains the latestIssuesInChain attribute)."
                             isRating:
                               type: boolean
                               description: "Whether or not this is a RatingIssue"
+        '404':
+          description: Veteran not found
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                bad file number or SSN:
+                  value:
+                    errors:
+                      status: 404,
+                      code: veteran_not_found
+                      title: "Veteran not found"
+        '422':
+          description: Bad receipt date
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                bad receipt date:
+                  value:
+                    errors:
+                      status: 422,
+                      code: bad_receipt_date
+                      title: "Bad receipt date"
+        '500':
+          description: Unknown error
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                unknown error:
+                  value:
+                    errors:
+                      status: 500,
+                      code: unknown_error
+                      title: "Unknown error"
 components:
   schemas:
     benefit_type:
