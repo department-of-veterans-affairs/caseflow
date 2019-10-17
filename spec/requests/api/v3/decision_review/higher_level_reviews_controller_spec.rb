@@ -10,10 +10,6 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     FeatureToggle.enable!(:api_v3)
 
     Timecop.freeze(post_ama_start_date)
-
-    [:establish_claim!, :create_contentions!, :associate_rating_request_issues!].each do |method|
-      allow(Fakes::VBMSService).to receive(method).and_call_original
-    end
   end
 
   after do
@@ -117,7 +113,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     )
   end
 
-  describe "#show" do
+  fdescribe "#show" do
     let(:higher_level_review) { create(:higher_level_review) }
     def get_higher_level_review
       get(
@@ -127,7 +123,6 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     end
     it 'should return ok' do
       get_higher_level_review
-      # byebug
       expect(response).to have_http_status(:ok)
     end
     it 'should be json with a data key and included key' do
@@ -215,7 +210,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       it 'should have relationships' do
         expect(subject['relationships']).to_not be_empty
       end
-      fcontext 'relationships' do
+      context 'relationships' do
         subject do
           get_higher_level_review
           JSON.parse(response.body)['data']['relationships']
@@ -229,11 +224,11 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           # claimaint = subject.find{|relationship| relationship['data']['type'] == 'Claimant'}
         end
         it 'should include request issues' do
-          expect(subject['requestIssues'].count).to eq higher_level_review.request_issues_ui_hash.count
+          expect(subject['requestIssues']['data'].count).to eq higher_level_review.request_issues_ui_hash.count
           # TODO test some values
         end
         it 'should include decision issues' do
-          expect(subject['decisionIssues'].count).to eq higher_level_review.fetch_all_decision_issues.count
+          expect(subject['decisionIssues']['data'].count).to eq higher_level_review.fetch_all_decision_issues.count
           # TODO test some values
         end
       end
