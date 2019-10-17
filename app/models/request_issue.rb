@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+##
+# When a veteran submits their form for an Appeal, Supplemental Claim, or Higher Level Review, they list the prior
+# decisions that they want to contest. These are intaken into Caseflow as request issues.  Request issues can also
+# be generated when a decision gets remanded or vacated.
+
 class RequestIssue < ApplicationRecord
   include Asyncable
   include HasBusinessLine
@@ -416,7 +421,7 @@ class RequestIssue < ApplicationRecord
     )
   end
 
-  def vacols_issue(vacols_id, vacols_sequence_id)
+  def vacols_issue
     return unless vacols_id && vacols_sequence_id
 
     @vacols_issue ||= AppealRepository.issues(vacols_id).find do |issue|
