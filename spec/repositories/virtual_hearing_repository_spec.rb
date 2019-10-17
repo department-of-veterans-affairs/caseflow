@@ -37,7 +37,7 @@ describe VirtualHearingRepository, :all_dbs do
       end
     end
 
-    context "for a Legacy hearing", focus: true do
+    context "for a Legacy hearing" do
       let(:hearing_date) { Time.zone.now }
       let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_date) }
       let!(:case_hearing) do
