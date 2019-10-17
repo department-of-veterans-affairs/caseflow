@@ -61,9 +61,9 @@ describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :re
 
       it "is correctly shaped" do
         expect(JSON.parse(response.body).keys).to contain_exactly("data")
-        expect(JSON.parse(response.body)["data"]).to be_a(Hash)
-        expect(JSON.parse(response.body)["data"].keys).to contain_exactly("type", "id", "attributes")
-        expect(JSON.parse(response.body)["data"]["attributes"]).to be_a(Hash)
+        expect(JSON.parse(response.body)["data"]).to be_a Hash
+        expect(JSON.parse(response.body)["data"].keys).to contain_exactly("id", "type", "attributes")
+        expect(JSON.parse(response.body)["data"]["attributes"]).to be_a Hash
         expect(JSON.parse(response.body)["data"]["attributes"].keys).to contain_exactly("status")
       end
 
