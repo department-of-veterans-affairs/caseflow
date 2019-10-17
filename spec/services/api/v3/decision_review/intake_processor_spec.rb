@@ -114,7 +114,6 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
 
     it "the intake should not have a \"detail\" yet" do
       expect(subject.intake.detail).to be_nil
-      expect(subject.detail).to be_nil
     end
 
     it "should have no errors" do
@@ -125,7 +124,7 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
   context "#run!" do
     let(:form_type) { "higher_level_review" }
     it "given form_type \"higher_level_review\", should create a HigherLevelReview" do
-      expect(subject.run!.detail).to be_a(HigherLevelReview)
+      expect(subject.run!.intake.detail).to be_a(HigherLevelReview)
     end
 
     it "the HigherLevelReview should have a uuid" do

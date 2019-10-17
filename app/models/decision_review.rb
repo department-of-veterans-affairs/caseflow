@@ -57,6 +57,20 @@ class DecisionReview < ApplicationRecord
     def review_title
       to_s.underscore.titleize
     end
+
+    # Find the DecisionReview that has the given uuid, whether it's an Appeal, HigherLevelReview,
+    # etc. --any non-abstract descendant of DecisionReview.
+    # Purposely trying to not clobber find_by_uuid
+    def by_uuid(uuid)
+      concrete_descendants.find do |klass|
+        decision_review = klass.find_by_uuid(uuid)
+        break decision_review if decision_review
+      end
+    end
+
+    def concrete_descendants
+      @concrete_descendants ||= descendants.reject(&:abstract_class)
+    end
   end
 
   def asyncable_user
