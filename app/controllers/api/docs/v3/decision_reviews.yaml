@@ -670,38 +670,72 @@ paths:
         - name: uuid
           in: path
           required: true
-          description: UUID of an Accepted Decision Review
+          description: Decision Review UUID
           schema:
-            type : string
-            format: uuid
-            pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
-      summary: After submitting a Decision Review, you can check to see its current status
-      description: This endpoint returns whether the Decision Review that was sent has been processed into the Caseflow system. While the submission is processing, this endpoint will return a 200 response.  Once the asynchronous process is complete, and the Decision Review is submitted into Caseflow, this endpoint will return a 303 response including the Decision Review ID for the submitted Decision Review, which will allow you to retrieve the full details via the Show endpoint.
+            $ref: "#/components/schemas/uuid"
+      summary: Check a Decision Review's (Higher-Level Review, Supplemental Claim, Board Appeal) intake status.
+      description: "After creating a Decision Review, you can use this endpoint to check its _intake status_—whether or not a Decision Review has been processed in the Caseflow system. Intake involves communicating with several systems / databases asynchronously. Consequently, a new Decision Review isn't available for API interaction immediately after creation. Until the Decision Review is successfully processed, this endpoint will return `200 OK` and a JSON payload describing the status in more detail.  Once processing is complete, this endpoint will return a `303 see other` and a _Location_ header containing the URL of the processed, *and now accessible*, Decision Review. Using that URL, you can now _get_ the Decision Review, retrieving its full details. To reiterate, **a Decision Review is not immediately accessible after creation. Checking its intake status will let you know when it has become accessible, and also its location (and UUID) for further actions.**"
       responses:
         '200':
-          description: Status found
+          description: Processing incomplete
           content:
             application/vnd.api+json:
               schema:
                 $ref: "#/components/schemas/intake_status"
               examples:
-                submitted_status:
+                not_yet_submitted:
+                  value:
+                    data:
+                      id: 123e4567-e89b-12d3-a456-426655440000
+                      type: IntakeStatus
+                      attributes:
+                        status: not_yet_submitted
+                submitted:
                   value:
                     data:
                       id: 123e4567-e89b-12d3-a456-426655440000
                       type: IntakeStatus
                       attributes:
                         status: submitted
+                attempted:
+                  value:
+                    data:
+                      id: 123e4567-e89b-12d3-a456-426655440000
+                      type: IntakeStatus
+                      attributes:
+                        status: attempted
+                canceled:
+                  value:
+                    data:
+                      id: 123e4567-e89b-12d3-a456-426655440000
+                      type: IntakeStatus
+                      attributes:
+                        status: canceled
         '303':
-          description: See other, processing finished
+          description: Processing complete; See other
           headers:
             Location:
               schema:
                 type: string
                 format: url
               description: Link to DecisionReview
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      Location:
+                        $ref: "#/components/schemas/uuid"
+              examples:
+                processed:
+                  value:
+                    meta:
+                      Location: 123e4567-e89b-12d3-a456-426655440000
         '404':
-          description: id not found
+          description: Decision Review not found
           content:
             application/vnd.api+json:
               schema:
@@ -709,8 +743,15 @@ paths:
                 properties:
                   errors:
                     $ref: "#/components/schemas/errors"
-        '4XX':
-          description: Invalid Request
+              examples:
+                bad UUID:
+                  value:
+                    errors:
+                      status: 404,
+                      code: decision_review_not_found
+                      title: "Unable to find a Decision Review using specified UUID"
+        '500':
+          description: Unknown error
           content:
             application/vnd.api+json:
               schema:
@@ -718,15 +759,14 @@ paths:
                 properties:
                   errors:
                     $ref: "#/components/schemas/errors"
-        '5XX':
-          description: Failed
-          content:
-            application/vnd.api+json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    $ref: "#/components/schemas/errors"
+              examples:
+                bad UUID:
+                  value:
+                    errors:
+                      status: 500,
+                      code: unknown_error
+                      title: "Unknown error"
+
   /higher_level_reviews/{uuid}:
     get:
       parameters:
@@ -999,6 +1039,10 @@ paths:
                     $ref: "#/components/schemas/errors"
 components:
   schemas:
+    uuid:
+      type: string
+      format: uuid
+      pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
     benefit_type:
       type: string
       enum:
@@ -1308,4 +1352,10 @@ components:
                     - canceled
                     - attempted
                     - submitted
-                    - not_submitted_yet
+                    - not_yet_submitted
+                  description: >
+                    * `not_yet_submitted` - The DecisionReview has not been submitted yet.
+                    * `submitted` - The DecisionReview is in the queue to be attempted.
+                    * `attempted` - Processing of the DecisionReview is being attempted.
+                    * `canceled` - The DecisionReview has been successfully canceled.
+                    * `processed` - The DecisionReview has been processed and transmitted to the appropriate government agency.
