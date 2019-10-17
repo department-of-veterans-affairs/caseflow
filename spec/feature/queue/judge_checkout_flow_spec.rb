@@ -204,7 +204,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
         case_quality_opts[2].click
         # areas of improvement
         areas_of_improvement = page.find_all(
-          :xpath, "//fieldset[@class='checkbox-wrapper-Identify areas for improvement cf-form-checkboxes']//label"
+          :xpath, "//fieldset[contains(@class, 'checkbox-wrapper-Identify areas for improvement')]//label"
         )
         areas_of_improvement[0].double_click
         areas_of_improvement[5].double_click
