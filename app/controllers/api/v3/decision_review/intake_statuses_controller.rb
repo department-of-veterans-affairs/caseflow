@@ -50,7 +50,15 @@ class Api::V3::DecisionReview::IntakeStatusesController < Api::V3::BaseControlle
   end
 
   def render_intake_status_for_decision_review
-    response.set_header("Location", decision_review_url) if intake_status.processed?
+    intake_status.processed? ? render_processed_intake_status : render_unprocessed_intake_status
+  end
+
+  def render_processed_intake_status
+    response.set_header("Location", decision_review_url)
+    render json: { meta: { Location: decision_review_url } }, status: intake_status.http_status
+  end
+
+  def render_unprocessed_intake_status
     render json: intake_status.to_json, status: intake_status.http_status
   end
 

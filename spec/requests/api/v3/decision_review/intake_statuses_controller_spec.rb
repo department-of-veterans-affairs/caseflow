@@ -92,17 +92,14 @@ describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :re
       end
 
       it "is correctly shaped" do
-        expect(JSON.parse(response.body).keys).to contain_exactly("data")
-        expect(JSON.parse(response.body)["data"]).to be_a(Hash)
-        expect(JSON.parse(response.body)["data"].keys).to contain_exactly("type", "id", "attributes")
-        expect(JSON.parse(response.body)["data"]["attributes"]).to be_a(Hash)
-        expect(JSON.parse(response.body)["data"]["attributes"].keys).to contain_exactly("status")
+        expect(JSON.parse(response.body).keys).to contain_exactly("meta")
+        expect(JSON.parse(response.body)["meta"]).to be_a Hash
+        expect(JSON.parse(response.body)["meta"].keys).to contain_exactly("Location")
+        expect(JSON.parse(response.body)["meta"]["Location"]).to be_a String
       end
 
-      it "returns the class" do
-        expect(JSON.parse(response.body)["data"]["type"]).to eq(decision_review.class.name)
-        expect(JSON.parse(response.body)["data"]["id"]).to eq(uuid)
-        expect(JSON.parse(response.body)["data"]["attributes"]["status"]).to eq("processed")
+      it "returns the correct UUID" do
+        expect(JSON.parse(response.body)["meta"]["Location"].split("/").last).to eq(decision_review.uuid)
       end
 
       it "has the Location header" do
