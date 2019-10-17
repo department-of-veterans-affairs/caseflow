@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
 
+import { MTVDispositionSelection } from './MTVDispositionSelection';
+import TextareaField from '../../components/TextareaField';
+import RadioField from '../../components/RadioField';
 import {
   JUDGE_ADDRESS_MTV_TITLE,
   JUDGE_ADDRESS_MTV_DESCRIPTION,
@@ -11,15 +14,15 @@ import {
   JUDGE_ADDRESS_MTV_HYPERLINK_LABEL,
   JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL
 } from '../../../COPY.json';
-import { MTVDispositionSelection } from './MTVDispositionSelection';
-import TextareaField from '../../components/TextareaField';
-import RadioField from '../../components/RadioField';
 import { DISPOSITION_TEXT, VACATE_TYPE_OPTIONS } from '../../../constants/MOTION_TO_VACATE.json';
+import { JUDGE_RETURN_TO_LIT_SUPPORT } from '../../../constants/TASK_ACTIONS.json';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import { css } from 'glamor';
 import { MTVTaskHeader } from './MTVTaskHeader';
 import TextField from '../../components/TextField';
+import StringUtil from '../../util/StringUtil';
+import { MissingDenialDraftAlert } from './MissingDenialDraftAlert';
 
 const vacateTypeText = (val) => {
   const opt = VACATE_TYPE_OPTIONS.find((i) => i.value === val);
@@ -89,9 +92,12 @@ export const MTVJudgeDisposition = ({ selectedAttorney, task, appeal, onSubmit =
       <AppSegment filledBackground>
         <MTVTaskHeader title={JUDGE_ADDRESS_MTV_TITLE} task={task} appeal={appeal} />
 
-        <p>{JUDGE_ADDRESS_MTV_DESCRIPTION}</p>
+        <p>{StringUtil.nl2br(JUDGE_ADDRESS_MTV_DESCRIPTION)}</p>
 
+        <h3>Motion Attorney's Notes</h3>
         <p className="mtv-task-instructions">{task.instructions}</p>
+
+        <div className="cf-help-divider" />
 
         <MTVDispositionSelection
           label={JUDGE_ADDRESS_MTV_DISPOSITION_SELECT_LABEL}
@@ -101,6 +107,8 @@ export const MTVJudgeDisposition = ({ selectedAttorney, task, appeal, onSubmit =
           }}
           value={disposition}
         />
+
+        {disposition && disposition === 'denied' && <MissingDenialDraftAlert to={JUDGE_RETURN_TO_LIT_SUPPORT.value} />}
 
         {disposition && disposition === 'granted' && (
           <RadioField
