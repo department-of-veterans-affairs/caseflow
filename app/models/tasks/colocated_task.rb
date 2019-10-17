@@ -81,9 +81,9 @@ class ColocatedTask < Task
   end
 
   def available_actions(user)
-    if assigned_to == user ||
-       (task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.user_is_admin?(user))
+    actions = []
 
+    if assigned_to == user || colocated_admin_for_task?(user)
       actions = [
         return_to_assigner_action,
         Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
@@ -91,13 +91,18 @@ class ColocatedTask < Task
         Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
         Constants.TASK_ACTIONS.CANCEL_TASK.to_h
       ]
-
-      actions.unshift(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h) if Colocated.singleton.user_is_admin?(user)
-
-      return actions
     end
 
-    []
+    if colocated_admin_for_task?(user)
+      actions.unshift(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h)
+    end
+
+    # Possible TODO - does the Judge need this power here? How to determine the judge?
+    if colocated_admin_for_task?(user) && appeal.notice_of_death_date
+      actions.push(Constants.TASK_ACTIONS.DEATH_DISMISSAL.to_h)
+    end
+
+    return actions
   end
 
   def return_to_assigner_action
@@ -152,6 +157,10 @@ class ColocatedTask < Task
 
   def all_tasks_closed_for_appeal?
     appeal.tasks.open.select { |task| task.is_a?(ColocatedTask) }.none?
+  end
+
+  def colocated_admin_for_task?(user)
+    (task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.user_is_admin?(user))
   end
 
   # GenericTask.verify_org_task_unique already performs this check
