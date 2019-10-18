@@ -16,6 +16,12 @@ FactoryBot.define do
       end
     end
 
+    trait :with_colocated_tasks do
+      after(:create) do |appeal, _evaluator|
+        create(:colocated_task, :poa_clarification)
+      end
+    end
+
     trait :with_veteran do
       after(:create) do |legacy_appeal, evaluator|
         veteran = create(

@@ -2356,6 +2356,51 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
+  context "#cancel_open_caseflow_tasks!" do
+    let!(:colocated_users) do
+      2.times { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
+    end
+    let(:vacols_case) { create(:case, bfcurloc: "CASEFLOW") }
+    let(:vacols_case2) { create(:case, bfcurloc: "CASEFLOW") }
+    let(:appeal2) { create(:legacy_appeal, :with_colocated_tasks, vacols_case: vacols_case2) }
+    let(:vacols_case3) { create(:case, bfcurloc: "CASEFLOW") }
+    let(:appeal3) { create(:legacy_appeal, :with_colocated_tasks, :with_schedule_hearing_tasks, vacols_case: vacols_case3) }
+
+    context "if there are no Caseflow tasks on the legacy appeal" do
+      it "throws no errors" do
+        byebug
+        appeal2.cancel_open_caseflow_tasks!
+        byebug
+
+        expect(appeal2.tasks.count).to eq(0)
+        expect(appeal3.tasks.open.count).to eq(4)
+      end
+    end
+
+    context "if there are Caseflow tasks on the legacy appeal" do
+      context "multiple open caseflow tasks" do
+        it "cancels all the open tasks" do
+          appeal2.cancel_open_caseflow_tasks!
+
+          expect(appeal2.tasks.open.count).to eq(0)
+          expect(appeal2.tasks.closed.count).to eq(2)
+          expect(appeal3.tasks.open.count).to eq(4)
+        end
+      end
+
+      context "open and closed caseflow tasks" do
+        it "doesn't affect the already closed tasks" do
+          appeal3.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
+          original_closed_at = appeal3.closed_at
+
+          appeal3.cancel_open_caseflow_tasks!
+
+          expect(appeal3.root_task.closed_at).to eq(original_closed_at)
+        end
+      end
+    end
+  end
+
   context "#assigned_to_location" do
     context "if the case is complete" do
       let!(:vacols_case) { create(:case, :status_complete) }
