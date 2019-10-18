@@ -30,10 +30,17 @@ describe ExternalApi::PexipService do
 
     subject { pexip_service.create_conference(host_pin: 1234, guest_pin: 5678, name: "1111111") }
 
-    let(:success_create_resp) { HTTPI::Response.new(201, { "Location" => "api/admin/configuration/v1/conference/1234" }, {}) }
-    let(:error_create_resp) { HTTPI::Response.new(400, {}, { "conference" => { "name" => ["Virtual room for this name already exist."] } }.to_json) }
+    let(:success_create_resp) do
+      HTTPI::Response.new(201, { "Location" => "api/admin/configuration/v1/conference/1234" }, {})
+    end
 
-    # let(:error_create_resp) { HTTPI::Response.new(400, {}, { "conference" => { "name" => ["Virtual room for this name already exist."] } }.to_json) }
+    let(:error_create_resp) do
+      HTTPI::Response.new(
+        400,
+        {},
+        { "conference" => { "name" => ["Virtual room for this name already exist."] } }.to_json
+      )
+    end
 
     it "calls #send_pexip_request" do
       expect(pexip_service).to receive(:send_pexip_request)
@@ -58,7 +65,7 @@ describe ExternalApi::PexipService do
 
       expect(subject.code).to eq(201)
       expect(subject.success?).to eq(true)
-      expect(subject.data).to eq({ "conference_id": "1234" })
+      expect(subject.data).to eq("conference_id": "1234")
     end
 
     it "error response" do
@@ -67,11 +74,13 @@ describe ExternalApi::PexipService do
 
       expect(subject.code).to eq(400)
       expect(subject.success?).to eq(false)
-      expect(subject.error).to eq(Caseflow::Error::PexipBadRequestError.new(code: 400, message: "Virtual room for this name already exist."))
+      expect(subject.error).to eq(
+        Caseflow::Error::PexipBadRequestError.new(code: 400, message: "Virtual room for this name already exist.")
+      )
     end
   end
 
-  describe "#delete_conference", focus: true do
+  describe "#delete_conference" do
     subject { pexip_service.delete_conference(conference_id: "123") }
 
     let(:success_del_resp) { HTTPI::Response.new(204, {}, {}) }
@@ -104,6 +113,5 @@ describe ExternalApi::PexipService do
       expect(subject.success?).to eq(false)
       expect(subject.error).to eq(Caseflow::Error::PexipNotFoundError.new(code: 404, message: "No error message"))
     end
-
   end
 end

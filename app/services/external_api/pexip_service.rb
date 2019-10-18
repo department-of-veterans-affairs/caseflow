@@ -35,6 +35,7 @@ class ExternalApi::PexipService
 
   def delete_conference(conference_id:)
     return if conference_id.nil?
+
     delete_endpoint = "#{CONFERENCES_ENDPOINT}#{conference_id}/"
     resp = send_pexip_request(delete_endpoint, :delete)
     return if resp.nil?
@@ -46,6 +47,7 @@ class ExternalApi::PexipService
 
   attr_reader :host, :port, :user_name, :password, :client_host
 
+  # :nocov:
   def send_pexip_request(endpoint, method, body: nil)
     url = "https://#{host}:#{port}/#{endpoint}"
     request = HTTPI::Request.new(url)
@@ -70,4 +72,5 @@ class ExternalApi::PexipService
       end
     end
   end
+  # :nocov:
 end
