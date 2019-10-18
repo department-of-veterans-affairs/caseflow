@@ -89,16 +89,13 @@ export const MTVJudgeDisposition = ({
   };
 
   const isValid = () => {
-    if (
+    // Ensure that all mandatory fields are set
+    return !(
       !disposition ||
       !instructions ||
       (disposition === 'granted' && !vacateType) ||
       (disposition !== 'granted' && !hyperlink)
-    ) {
-      return false;
-    }
-
-    return true;
+    );
   };
 
   return (
