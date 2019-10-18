@@ -979,8 +979,7 @@ class LegacyAppeal < ApplicationRecord
       repository.nonpriority_decisions_per_year
     end
 
-    def death_dismissal!(case_id)
-      appeal = LegacyAppeal.find_or_create_by_vacols_id(case_id)
+    def death_dismissal!(appeal)
       multi_transaction do
         cancel_open_caseflow_tasks!(appeal)
         LegacyAppeal.repository.update_location_for_death_dismissal!(appeal)
