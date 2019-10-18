@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import StringUtil from '../../../app/util/StringUtil';
+import React from 'react';
 
 describe('StringUtil', () => {
   context('.leftPad', () => {
@@ -31,6 +32,25 @@ describe('StringUtil', () => {
 
     it('handles single words', () => {
       expect(StringUtil.titleCase('title')).to.eq('Title');
+    });
+  });
+
+  context('.nl2br', () => {
+    it('converts \\n to <br> element', () => {
+      const input = 'lorem ipsum \n dolor sit amet';
+      const output = StringUtil.nl2br(input);
+
+      expect(output.length).to.eq(2);
+
+      const [el1, el2] = output;
+
+      expect(el1.key).to.eq('0');
+      expect(el1.props.children.length).to.eq(2);
+      expect(el1.props.children[1].type).to.eq('br');
+
+      expect(el2.key).to.eq('1');
+      expect(el2.props.children.length).to.eq(2);
+      expect(el2.props.children[1]).to.eq(null);
     });
   });
 });

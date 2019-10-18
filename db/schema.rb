@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191010195542) do
+ActiveRecord::Schema.define(version: 20191015204516) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1199,6 +1199,29 @@ ActiveRecord::Schema.define(version: 20191010195542) do
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
     t.index ["participant_id"], name: "index_veterans_on_participant_id"
     t.index ["ssn"], name: "index_veterans_on_ssn"
+  end
+
+  create_table "virtual_hearings", force: :cascade do |t|
+    t.string "alias", comment: "Alias for conference in Pexip"
+    t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
+    t.integer "conference_id", comment: "ID of conference from Pexip"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", null: false, comment: "User who created the virtual hearing"
+    t.integer "guest_pin", comment: "PIN number for guests of Pexip conference"
+    t.bigint "hearing_id", comment: "Associated hearing"
+    t.string "hearing_type"
+    t.integer "host_pin", comment: "PIN number for host of Pexip conference"
+    t.string "judge_email", comment: "Judge's email address"
+    t.boolean "judge_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the judge"
+    t.string "representative_email", comment: "Veteran's representative's email address"
+    t.boolean "representative_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran's representative"
+    t.string "status", default: "pending", null: false, comment: "The status of the Pexip conference"
+    t.datetime "updated_at", null: false
+    t.string "veteran_email", comment: "Veteran's email address"
+    t.boolean "veteran_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran"
+    t.index ["conference_id"], name: "index_virtual_hearings_on_conference_id"
+    t.index ["created_by_id"], name: "index_virtual_hearings_on_created_by_id"
+    t.index ["hearing_type", "hearing_id"], name: "index_virtual_hearings_on_hearing_type_and_hearing_id"
   end
 
   create_table "vso_configs", force: :cascade do |t|
