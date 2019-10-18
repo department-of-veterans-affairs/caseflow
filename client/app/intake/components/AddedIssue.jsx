@@ -7,6 +7,7 @@ import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISS
 import COPY from '../../../COPY.json';
 
 import { legacyIssue } from '../util/issues';
+import { formatDateStr } from '../../util/DateUtil';
 
 class AddedIssue extends React.PureComponent {
   needsEligibilityCheck() {
@@ -110,7 +111,7 @@ class AddedIssue extends React.PureComponent {
     return <div className={eligibleState.cssKlasses.join(' ')}>
       <span className="issue-num">{issueIdx + 1}.&nbsp;</span>
       { issue.editedDescription ? issue.editedDescription : issue.text } {eligibleState.errorMsg}
-      { issue.date && <span className="issue-date">Decision date: { issue.date }</span> }
+      { issue.date && <span className="issue-date">Decision date: {formatDateStr(issue.date)}</span> }
       { issue.notes && <span className="issue-notes">Notes:&nbsp;{ issue.notes }</span> }
       { issue.untimelyExemptionNotes &&
         <span className="issue-notes">Untimely Exemption Notes:&nbsp;{issue.untimelyExemptionNotes}</span>
@@ -124,7 +125,7 @@ class AddedIssue extends React.PureComponent {
         </div>
       }
       { issue.withdrawalPending && <p>Withdrawal pending</p> }
-      { issue.withdrawalDate && <p>Withdrawn on {issue.withdrawalDate}</p> }
+      { issue.withdrawalDate && <p>Withdrawn on {formatDateStr(issue.withdrawalDate)}</p> }
       { issue.endProductCleared && <p>Status: Cleared, waiting for decision</p> }
       { issue.correctionType && <p className="correction-pending">
           This issue will be added to a 930 EP for correction

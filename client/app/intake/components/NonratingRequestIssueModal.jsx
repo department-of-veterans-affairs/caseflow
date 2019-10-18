@@ -11,7 +11,8 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
 import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES.json';
-import { validateDate, validateDateNotInFuture } from '../util/issues';
+import { validateDateNotInFuture } from '../util/issues';
+import { formatDateStr } from '../../util/DateUtil';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -80,11 +81,7 @@ class NonratingRequestIssueModal extends React.Component {
 
   errorOnDecisionDate = (value) => {
     if (value.length === 10) {
-      let error = validateDate(value) ? null : 'Please enter a valid decision date.';
-
-      if (!error) {
-        error = validateDateNotInFuture(value) ? null : 'Decision date cannot be in the future.';
-      }
+      const error = validateDateNotInFuture(value) ? null : 'Decision date cannot be in the future.';
 
       return error;
     }
@@ -199,7 +196,7 @@ class NonratingRequestIssueModal extends React.Component {
       }).
       map((issue) => {
         return {
-          displayText: `${issue.category}: ${issue.description}, decided ${issue.decisionDate}`,
+          displayText: `${issue.category}: ${issue.description}, decided ${formatDateStr(issue.decisionDate)}`,
           value: issue.id,
           disabled: false
         };
@@ -248,6 +245,7 @@ class NonratingRequestIssueModal extends React.Component {
             value={decisionDate}
             errorMessage={this.state.dateError}
             onChange={this.decisionDateOnChange}
+            type="date"
           />
         </div>
 
@@ -311,7 +309,12 @@ NonratingRequestIssueModal.propTypes = {
   onCancel: PropTypes.func,
   cancelText: PropTypes.string,
   onSkip: PropTypes.func,
-  skipText: PropTypes.string
+  skipText: PropTypes.string,
+  intakeData: PropTypes.object,
+  formType: PropTypes.string,
+  activeNonratingRequestIssues: PropTypes.object,
+  receiptDate: PropTypes.string,
+  addedIssues: PropTypes.array
 };
 
 NonratingRequestIssueModal.defaultProps = {

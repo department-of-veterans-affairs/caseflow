@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { formatDateStr, formatDateStringForApi, formatDateStrUtc } from '../../util/DateUtil';
+import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES.json';
 import { FORM_TYPES } from '../constants';
 
@@ -38,16 +38,6 @@ export const legacyIssue = (issue, legacyAppeals) => {
   return _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })[0];
 };
 
-export const validateDate = (date) => {
-  const datePattern = /^(0[1-9]|1[0-2])[/](0[1-9]|[12][0-9]|3[01])[/](19|20)\d\d$/;
-
-  if (datePattern.test(date)) {
-    return date;
-  }
-
-  return null;
-};
-
 export const validateDateNotInFuture = (date) => {
   const currentDate = new Date();
   const enteredDate = new Date(date);
@@ -60,9 +50,6 @@ export const validateDateNotInFuture = (date) => {
 };
 
 export const validNonratingRequestIssue = (issue) => {
-  const unvalidatedDate = issue.decisionDate;
-  const decisionDate = validateDate(unvalidatedDate);
-
   if (!issue.description) {
     return false;
   }
@@ -75,7 +62,7 @@ export const validNonratingRequestIssue = (issue) => {
     return true;
   }
   // If category isn't unknown or there's no valid decisionDate, return 0
-  if (!decisionDate) {
+  if (!issue.decisionDate) {
     return false;
   }
   if (!issue.benefitType) {
@@ -111,7 +98,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       benefitType: issue.benefit_type,
       decisionIssueId: issue.contested_decision_issue_id,
       description: issue.description,
-      decisionDate: formatDateStr(issue.approx_decision_date),
+      decisionDate: issue.approx_decision_date,
       ineligibleReason: issue.ineligible_reason,
       ineligibleDueToId: issue.ineligible_due_to_id,
       decisionReviewTitle: issue.decision_review_title,
@@ -123,7 +110,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       vacolsIssue: issue.vacols_issue,
       endProductCleared: issue.end_product_cleared,
       endProductCode: issue.end_product_code,
-      withdrawalDate: formatDateStrUtc(issue.withdrawal_date),
+      withdrawalDate: issue.withdrawal_date,
       editable: issue.editable,
       isUnidentified: issue.is_unidentified,
       notes: issue.notes,
@@ -176,7 +163,7 @@ const formatUnidentifiedIssues = (state) => {
         decision_text: issue.description,
         notes: issue.notes,
         is_unidentified: true,
-        withdrawal_date: issue.withdrawalPending ? formatDateStringForApi(state.withdrawalDate) : issue.withdrawalDate,
+        withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : issue.withdrawalDate,
         correction_type: issue.correctionType
       };
     });
@@ -203,7 +190,7 @@ const formatRatingRequestIssues = (state) => {
         contested_decision_issue_id: issue.decisionIssueId,
         ineligible_reason: issue.ineligibleReason,
         ineligible_due_to_id: issue.ineligibleDueToId,
-        withdrawal_date: issue.withdrawalPending ? formatDateStringForApi(state.withdrawalDate) : null,
+        withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : null,
         edited_description: issue.editedDescription,
         correction_type: issue.correctionType
       };
@@ -218,7 +205,7 @@ const formatNonratingRequestIssues = (state) => {
       benefit_type: issue.benefitType,
       nonrating_issue_category: issue.category,
       decision_text: issue.description,
-      decision_date: formatDateStringForApi(issue.decisionDate),
+      decision_date: issue.decisionDate,
       untimely_exemption: issue.untimelyExemption,
       untimely_exemption_notes: issue.untimelyExemptionNotes,
       vacols_id: issue.vacolsId,
@@ -226,7 +213,7 @@ const formatNonratingRequestIssues = (state) => {
       ineligible_due_to_id: issue.ineligibleDueToId,
       ineligible_reason: issue.ineligibleReason,
       edited_description: issue.editedDescription,
-      withdrawal_date: issue.withdrawalPending ? formatDateStringForApi(state.withdrawalDate) : null,
+      withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : null,
       correction_type: issue.correctionType
     };
   });
@@ -326,8 +313,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         index,
         referenceId: issue.id,
         text: issue.description,
-        // formatDatStr converts to local time instead of UTC
-        date: formatDateStr(issue.decisionDate || issue.approxDecisionDate),
+        date: issue.decisionDate || issue.approxDecisionDate,
         notes: issue.notes,
         titleOfActiveReview: issue.titleOfActiveReview,
         sourceReviewType: issue.sourceReviewType,
@@ -362,7 +348,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       referenceId: issue.id,
       text: issue.decisionIssueId ? issue.description : `${issue.category} - ${issue.description}`,
       benefitType: issue.benefitType,
-      date: formatDateStr(issue.decisionDate),
+      date: issue.decisionDate,
       timely: issue.timely,
       beforeAma: decisionDate < amaActivationDate,
       untimelyExemption: issue.untimelyExemption,
