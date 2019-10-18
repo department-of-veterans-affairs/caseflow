@@ -6,7 +6,8 @@ class JudgeLegacyAssignTask < JudgeLegacyTask
 
     actions = [
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+      Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
+      Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
     ]
 
     if appeal.notice_of_death_date
