@@ -13,7 +13,7 @@ class ExternalApi::PexipService
     @client_host = client_host
   end
 
-  def create_conference(host_pin, guest_pin, name)
+  def create_conference(host_pin:, guest_pin:, name:)
     body = {
       "aliases": [{ "alias": name.to_s }, { "alias": "BVA#{name}" }, { "alias": "BVA#{name}.#{client_host}" }],
       "allow_guests": true,
@@ -30,19 +30,16 @@ class ExternalApi::PexipService
     resp = send_pexip_request(CONFERENCES_ENDPOINT, :post, body: body)
     return if resp.nil?
 
-    check_for_error(resp)
-
-    {
-      "conference_id": resp.headers["Location"].split("/")[-1]
-    }
+    ExternalApi::PexipService::CreateResponse.new(resp)
   end
 
-  def delete_conference(conference_id)
+  def delete_conference(conference_id:)
+    return if conference_id.nil?
     delete_endpoint = "#{CONFERENCES_ENDPOINT}#{conference_id}/"
     resp = send_pexip_request(delete_endpoint, :delete)
     return if resp.nil?
 
-    check_for_error(resp)
+    ExternalApi::PexipService::DeleteResponse.new(resp)
   end
 
   private
@@ -71,33 +68,6 @@ class ExternalApi::PexipService
       when :post
         HTTPI.post(request)
       end
-    end
-  end
-
-  def check_for_error(resp)
-    return if !resp.error?
-
-    msg = error_message(resp)
-
-    case resp.code
-    when 400
-      fail Caseflow::Error::PexipBadRequestError, code: resp.code, message: msg
-    when 501
-      fail Caseflow::Error::PexipAPIError, code: resp.code, message: msg
-    when 404
-      fail Caseflow::Error::PexipNotFoundError, code: resp.code, message: msg
-    when 405
-      fail Caseflow::Error::PexipMethodNotAllowedError, code: resp.code, message: msg
-    else
-      fail Caseflow::Error::PexipAPIError, code: resp.code, message: msg
-    end
-  end
-
-  def error_message(resp)
-    if !resp.raw_body.nil? && resp.headers["Content-Type"] == "application/json"
-      JSON.parse(resp.raw_body)["conference"]["name"]
-    else
-      "No error message"
     end
   end
 end
