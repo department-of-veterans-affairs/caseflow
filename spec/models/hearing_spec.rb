@@ -2,6 +2,7 @@
 
 require "support/database_cleaner"
 require "rails_helper"
+require "models/concerns/has_virtual_hearing_spec"
 
 describe Hearing, :postgres do
   it_should_behave_like "a model that can have a virtual hearing" do
