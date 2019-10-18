@@ -72,7 +72,7 @@ describe VirtualHearingRepository, :all_dbs do
     end
   end
 
-  context ".create_virtual_hearing_for_legacy_hearing", focus: true do
+  context ".create_virtual_hearing_for_legacy_hearing" do
     let(:legacy_hearing) { create(:legacy_hearing) }
 
     subject { VirtualHearingRepository.create_virtual_hearing_for_legacy_hearing(legacy_hearing) }
