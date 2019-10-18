@@ -19,7 +19,7 @@ class ExternalApi::PexipService::Response
   end
 
   private
-  
+
   # :nocov:
   def check_for_error
     return if success?
