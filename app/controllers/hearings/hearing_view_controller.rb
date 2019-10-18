@@ -7,6 +7,8 @@ class Hearings::HearingViewController < ApplicationController
 
   def create
     HearingView.find_or_create_by(hearing: hearing, user_id: current_user.id).touch
+
+    render nothing: true, status: :created
   end
 
   private

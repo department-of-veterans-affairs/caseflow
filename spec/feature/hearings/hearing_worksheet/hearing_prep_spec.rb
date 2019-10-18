@@ -10,7 +10,6 @@ RSpec.feature "Hearing worksheet for Hearing Prep", :all_dbs do
   scenario "Hearing worksheet page displays worksheet information" do
     visit "/hearings/" + legacy_hearing.external_id.to_s + "/worksheet"
 
-    expect(HearingView.find_by(hearing: legacy_hearing).count).to eq(1)
     expect(page).to have_content("HEARING TYPE\nVideo")
     expect(page).to have_content("Docket #" + legacy_hearing.docket_number)
     expect(page.title).to eq legacy_hearing.veteran_fi_last_formatted + "'s Hearing Worksheet"
@@ -84,6 +83,7 @@ RSpec.feature "Hearing worksheet for Hearing Prep", :all_dbs do
     expect(page).to have_content("This is a note")
     expect(page).to have_content("This is a disposition")
     expect(page).to_not have_content("Service Connection")
+    expect(HearingView.where(hearing: legacy_hearing).count).to eq(1)
   end
 
   context "Multiple appeal streams" do
