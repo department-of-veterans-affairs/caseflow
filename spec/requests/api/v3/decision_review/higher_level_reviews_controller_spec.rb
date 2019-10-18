@@ -256,7 +256,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         expect(subject.any?{|obj| obj['type'] == 'claimant'}).to eq true
       end
       fit 'should include RequestIssues' do
-        byebug # request_isse is having issue with "active"
+        byebug # request_isse is having issue with "rating_issue_id"
         expect(subject.count{|obj| obj['type'] == 'request_issues'}).to eq request_issues.count
       end
       it 'should include DecisionIssues'
