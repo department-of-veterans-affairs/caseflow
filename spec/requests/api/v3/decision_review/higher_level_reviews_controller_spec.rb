@@ -121,7 +121,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     let!(:higher_level_review) do
       processor = Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(ActionController::Parameters.new({ data: data, included: included }), User.api_user)
       processor.run!
-      processor.detail
+      processor.higher_level_review
     end
     after do
       User.instance_variable_set(:@api_user, nil)
