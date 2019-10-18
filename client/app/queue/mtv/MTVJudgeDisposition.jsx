@@ -22,6 +22,7 @@ import Button from '../../components/Button';
 import { css } from 'glamor';
 import { MTVTaskHeader } from './MTVTaskHeader';
 import TextField from '../../components/TextField';
+import { MTVIssueSelection } from './MTVIssueSelection.jsx';
 
 const vacateTypeText = (val) => {
   const opt = VACATE_TYPE_OPTIONS.find((i) => i.value === val);
@@ -47,6 +48,8 @@ const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }
   return parts.join('\n');
 };
 
+const grantTypes = ['granted', 'partial'];
+
 export const MTVJudgeDisposition = ({
   attorneys,
   selectedAttorney,
@@ -58,6 +61,7 @@ export const MTVJudgeDisposition = ({
   const cancelLink = `/queue/appeals/${task.externalAppealId}`;
 
   const [disposition, setDisposition] = useState(null);
+  const [issueIds, setIssueIds] = useState([]);
   const [vacateType, setVacateType] = useState(null);
   const [instructions, setInstructions] = useState('');
   const [hyperlink, setHyperlink] = useState(null);
@@ -79,7 +83,15 @@ export const MTVJudgeDisposition = ({
       vacate_type: vacateType
     };
 
+    if (issueIds.length) {
+      result.issueIds = issueIds;
+    }
+
     onSubmit(result);
+  };
+
+  const isGrantType = () => {
+    return disposition && grantTypes.includes(disposition);
   };
 
   const isValid = () => {
@@ -87,8 +99,9 @@ export const MTVJudgeDisposition = ({
       !disposition ||
       !instructions ||
       !attorneyId ||
-      (disposition === 'granted' && !vacateType) ||
-      (disposition !== 'granted' && !hyperlink)
+      (isGrantType() && !vacateType) ||
+      (isGrantType() && !issueIds.length) ||
+      (!isGrantType() && !hyperlink)
     ) {
       return false;
     }
@@ -115,7 +128,11 @@ export const MTVJudgeDisposition = ({
           value={disposition}
         />
 
-        {disposition && disposition === 'granted' && (
+        {disposition && disposition === 'partial' && (
+          <MTVIssueSelection issues={appeal.issues} onChange={({ newIssueIds }) => setIssueIds(newIssueIds)} />
+        )}
+
+        {disposition && isGrantType() && (
           <RadioField
             name="vacate_type"
             label={JUDGE_ADDRESS_MTV_VACATE_TYPE_LABEL}
@@ -127,7 +144,7 @@ export const MTVJudgeDisposition = ({
           />
         )}
 
-        {disposition && disposition !== 'granted' && (
+        {disposition && !isGrantType() && (
           <TextField
             name="hyperlink"
             label={JUDGE_ADDRESS_MTV_HYPERLINK_LABEL}
