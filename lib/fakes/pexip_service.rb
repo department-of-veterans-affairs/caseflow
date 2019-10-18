@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Fakes::PexipService < ExternalApi::PexipService
+class Fakes::PexipService
   def initialize(*); end
 
   def create_conference(**args)

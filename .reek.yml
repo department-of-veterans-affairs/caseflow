@@ -51,7 +51,7 @@ detectors:
       - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
       - VeteranAttributeCacher
       - WarmBgsCachesJob
-      - ExternalApi::PexipService
+      - ExternalApi::PexipService#send_pexip_request
   InstanceVariableAssumption:
     exclude:
       - Appeal
@@ -96,6 +96,7 @@ detectors:
       - Helpers::AppealHearingHelper#hearings
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
       - OnHoldTasksTab#name
+      - Fakes::PexipService
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.
