@@ -366,6 +366,8 @@ bundle exec rake local:build
 ```
 The above shortcut runs a set of commands in sequence that should build your local environment. If you need to troubleshoot the process, you can copy each individual step out of the task and run them independently.
 
+**Note:** You must have AWS access prior to setting up your local environment as the database is not publicly accessible due to Oracle licensing.
+
 ## Running dev Caseflow & Accessing dev DBs ##################
 
 We use [docker](https://docs.docker.com/) and [docker-compose](https://docs.docker.com/compose/) to mock a production environment locally.  Prior knowledge of docker is not required and slowly learning how docker works is encouraged. Please ask a team member for an overview, and/or slowly review the docs linked.

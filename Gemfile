@@ -13,7 +13,7 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "ffb77dd0395cbd5b7c1a5729f7f8275b5ec681fa"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "5c2ce310db01efb9180dca88780422e4865151af"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "6c0c2908a9e4a61f5bcf2a768061909e3c763fe8"
 gem "dogstatsd-ruby"
 gem "fast_jsonapi"
 gem "holidays", "~> 6.4"
@@ -105,6 +105,7 @@ group :test, :development, :demo do
 end
 
 group :development do
+  gem "anbt-sql-formatter"
   gem "bummr", require: false
   gem "derailed_benchmarks"
   gem "dotenv-rails"

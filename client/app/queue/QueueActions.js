@@ -306,6 +306,20 @@ export const saveEditedAppealIssue = (appealId, attributes) => (dispatch) => {
   }
 };
 
+export const incrementTaskCountForAttorney = (attorney) => ({
+  type: ACTIONS.INCREMENT_TASK_COUNT_FOR_ATTORNEY,
+  payload: {
+    attorney
+  }
+});
+
+export const decrementTaskCountForAttorney = (attorney) => ({
+  type: ACTIONS.DECREMENT_TASK_COUNT_FOR_ATTORNEY,
+  payload: {
+    attorney
+  }
+});
+
 export const setAttorneysOfJudge = (attorneys) => ({
   type: ACTIONS.SET_ATTORNEYS_OF_JUDGE,
   payload: {
@@ -418,20 +432,19 @@ export const initialAssignTasksToUser = ({
     then((resp) => resp.body).
     then((resp) => {
       if (oldTask.appealType === 'Appeal') {
-        const amaTasks = resp.tasks.data;
-
-        dispatch(onReceiveAmaTasks(
-          amaTasks
-        ));
+        dispatch(onReceiveAmaTasks(resp.tasks.data));
       } else {
-        const task = resp.task.data;
-        const allTasks = prepareAllTasksForStore([task]);
+        const allTasks = prepareAllTasksForStore([resp.task.data]);
 
         dispatch(onReceiveTasks({
           tasks: allTasks.tasks,
           amaTasks: allTasks.amaTasks
         }));
       }
+
+      dispatch(incrementTaskCountForAttorney({
+        id: assigneeId
+      }));
 
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
@@ -493,6 +506,38 @@ export const reassignTasksToUser = ({
         taskId: oldTask.uniqueId,
         selected: false
       }));
+
+      dispatch(incrementTaskCountForAttorney({
+        id: assigneeId
+      }));
+
+      dispatch(decrementTaskCountForAttorney({
+        id: previousAssigneeId
+      }));
+    });
+}));
+
+export const legacyReassignToJudge = ({
+  tasks, assigneeId
+}, successMessage) => (dispatch) => Promise.all(tasks.map((oldTask) => {
+  const params = {
+    data: {
+      tasks: {
+        assigned_to_id: assigneeId,
+        appeal_id: oldTask.appealId
+      }
+    }
+  };
+
+  return ApiUtil.post('/legacy_tasks/assign_to_judge', params).
+    then((resp) => resp.body).
+    then((resp) => {
+      const task = resp.task.data;
+      const allTasks = prepareAllTasksForStore([task]);
+
+      dispatch(onReceiveTasks(_.pick(allTasks, ['tasks', 'amaTasks'])));
+
+      dispatch(showSuccessMessage(successMessage));
     });
 }));
 

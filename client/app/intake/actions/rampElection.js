@@ -1,7 +1,6 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { submitIntakeCompleteRequest, submitIntakeReviewRequest } from './intake';
-import { formatDateStringForApi } from '../../util/DateUtil';
 import _ from 'lodash';
 
 const analytics = true;
@@ -14,7 +13,7 @@ export const submitReview = (intakeId, rampElection) => (dispatch) => {
 
   const data = {
     option_selected: rampElection.optionSelected,
-    receipt_date: formatDateStringForApi(rampElection.receiptDate)
+    receipt_date: rampElection.receiptDate
   };
 
   return submitIntakeReviewRequest(intakeId, { data })(dispatch);
