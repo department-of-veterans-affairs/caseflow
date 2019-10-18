@@ -117,7 +117,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     ]
   end
 
-  describe "#show" do
+  fdescribe "#show" do
     let!(:higher_level_review) do
       processor = Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(ActionController::Parameters.new({ data: data, included: included }), create(:user))
       processor.run!
@@ -255,9 +255,8 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       it 'should include a claimaint when present' do
         expect(subject.any?{|obj| obj['type'] == 'claimant'}).to eq true
       end
-      fit 'should include RequestIssues' do
-        byebug # request_isse is having issue with "rating_issue_id"
-        expect(subject.count{|obj| obj['type'] == 'request_issues'}).to eq request_issues.count
+      it 'should include RequestIssues' do
+        expect(subject.count{|obj| obj['type'] == 'requestIssue'}).to eq request_issues.count
       end
       it 'should include DecisionIssues'
     end
