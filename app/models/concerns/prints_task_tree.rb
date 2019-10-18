@@ -9,7 +9,6 @@ module PrintsTaskTree
 
   def structure(*atts)
     leaf_name = "#{self.class.name} #{task_tree_attributes(*atts)}"
-    leaf_name += " [#{atts.join(', ')}]" unless is_a? Task
     { "#{leaf_name}": task_tree_children.map { |child| child.structure(*atts) } }
   end
 
@@ -24,7 +23,7 @@ module PrintsTaskTree
   def task_tree_attributes(*atts)
     return attributes_to_s(*atts) if is_a? Task
 
-    id.to_s
+    "#{id} [#{atts.join(', ')}]"
   end
 
   def attributes_to_s(*atts)
