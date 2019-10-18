@@ -85,7 +85,9 @@ CorrectionTypeModal.propTypes = {
   onSubmit: PropTypes.func,
   cancelText: PropTypes.string,
   submitText: PropTypes.string,
-  issueIndex: PropTypes.number
+  issueIndex: PropTypes.number,
+  onSkip: PropTypes.number,
+  skipText: PropTypes.string
 };
 
 CorrectionTypeModal.defaultProps = {
