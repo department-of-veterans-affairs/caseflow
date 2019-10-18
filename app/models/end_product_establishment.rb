@@ -208,7 +208,6 @@ class EndProductEstablishment < ApplicationRecord
     end
 
     save_updated_end_product_code!
-
   rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => error
     raise error
   rescue StandardError => error
