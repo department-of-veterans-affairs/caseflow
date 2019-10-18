@@ -117,7 +117,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     ]
   end
 
-  fdescribe "#show" do
+  describe "#show" do
     let!(:higher_level_review) do
       processor = Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(ActionController::Parameters.new({ data: data, included: included }), create(:user))
       processor.run!
@@ -138,6 +138,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       json = JSON.parse(response.body)
       expect(json.keys).to include('data', 'included')
     end
+    let(:request_issues){ higher_level_review.request_issues.includes(:decision_review, :contested_decision_issue).active_or_ineligible_or_withdrawn }
     context 'data' do
       subject do
         get_higher_level_review
@@ -230,7 +231,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           expect(subject.dig('claimant','data','id')).to eq higher_level_review.claimants.first.id.to_s
         end
         it 'should include request issues' do
-          expect(subject['requestIssues']['data'].count).to eq higher_level_review.request_issues.includes(:decision_review, :contested_decision_issue).active_or_ineligible_or_withdrawn.count
+          expect(subject['requestIssues']['data'].count).to eq request_issues.count
           # TODO test some values
         end
         it 'should include decision issues' do
@@ -240,6 +241,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       end
     end
     context 'included' do
+      # REVIEW types are lower cased
       subject do
         get_higher_level_review
         JSON.parse(response.body)['included']
@@ -248,12 +250,16 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         expect(subject).to be_a Array
       end
       it 'should include one veteran' do
-        # REVIEW types are lower cased
         expect(subject.any?{|obj| obj['type'] == 'veteran'}).to eq true
       end
-      it 'should include a claimaint when present'
+      it 'should include a claimaint when present' do
+        expect(subject.any?{|obj| obj['type'] == 'claimant'}).to eq true
+      end
+      fit 'should include RequestIssues' do
+        byebug # request_isse is having issue with "active"
+        expect(subject.count{|obj| obj['type'] == 'request_issues'}).to eq request_issues.count
+      end
       it 'should include DecisionIssues'
-      it 'should include RequestIssues'
     end
   end
 

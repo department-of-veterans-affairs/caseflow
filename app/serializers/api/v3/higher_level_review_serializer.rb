@@ -19,7 +19,6 @@ class Api::V3::HigherLevelReviewSerializer
   end
 
   has_one :claimant do |object|
-    # DecisionReview has multiple claimants, but intakes only support one
     object.claimants.first
   end
 
