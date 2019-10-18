@@ -243,7 +243,9 @@ class QueueApp extends React.PureComponent {
       <ReturnToLitSupportModal
         {...props.match.params}
         onCancel={() => props.history.goBack()}
-        onSubmit={({ instructions }) => console.log('ReturnToLitSupportModal submit', instructions)}
+        onSubmit={({ instructions }) => {
+          // no-op — will add in future PR
+        }}
       />
     );
   };
