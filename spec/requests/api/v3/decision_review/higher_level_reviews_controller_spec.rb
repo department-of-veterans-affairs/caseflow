@@ -227,12 +227,10 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           JSON.parse(response.body)['data']['relationships']
         end
         it 'should include the veteran' do
-          # TODO include a veteran that will put results here
-          expect(subject['veteran']['id']).to eq higher_level_review.veteran.id
+          expect(subject.dig('veteran','data','id')).to eq higher_level_review.veteran.id.to_s
         end
         it 'should include the claimant' do
-          claimaint = subject['claimant']
-          expect(claimaint.dig('data','id')).to eq higher_level_review.claimants.first.id.to_s
+          expect(subject.dig('claimant','data','id')).to eq higher_level_review.claimants.first.id.to_s
         end
         it 'should include request issues' do
           expect(subject['requestIssues']['data'].count).to eq higher_level_review.request_issues.includes(:decision_review, :contested_decision_issue).active_or_ineligible_or_withdrawn.count
@@ -253,8 +251,8 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         expect(subject).to be_a Array
       end
       it 'should include one veteran' do
-        # TODO this only appears when there is a veteran present
-        expect(subject.any?{|obj| obj['type'] == 'Veteran'}).to eq true
+        # REVIEW types are lower cased
+        expect(subject.any?{|obj| obj['type'] == 'veteran'}).to eq true
       end
       it 'should include a claimaint when present'
       it 'should include DecisionIssues'
