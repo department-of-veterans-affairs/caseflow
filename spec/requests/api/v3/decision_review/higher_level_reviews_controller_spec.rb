@@ -114,7 +114,14 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
   end
 
   fdescribe "#show" do
-    let(:higher_level_review) { create(:higher_level_review) }
+    let!(:higher_level_review) do
+      processor = Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(ActionController::Parameters.new({ data: data, included: included }), User.api_user)
+      processor.run!
+      processor.detail
+    end
+    after do
+      User.instance_variable_set(:@api_user, nil)
+    end
     def get_higher_level_review
       get(
         "/api/v3/decision_review/higher_level_reviews/#{higher_level_review.uuid}",
@@ -219,9 +226,9 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           # TODO include a veteran that will put results here
           expect(subject['veteran']['id']).to eq higher_level_review.veteran.id
         end
-        xit 'should include the claimant' do
-          # claimaints is currently a "has_many"
-          # claimaint = subject.find{|relationship| relationship['data']['type'] == 'Claimant'}
+        it 'should include the claimant' do
+          claimaint = subject['claimant']
+          expect(claimaint.dig('data','id')).to eq higher_level_review.claimants.first.id
         end
         it 'should include request issues' do
           expect(subject['requestIssues']['data'].count).to eq higher_level_review.request_issues_ui_hash.count
