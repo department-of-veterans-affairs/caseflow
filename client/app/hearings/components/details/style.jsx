@@ -1,9 +1,7 @@
-import React from 'react';
-
 import { css } from 'glamor';
-import { COLORS } from '../../constants/AppConstants';
+import { COLORS } from '../../../constants/AppConstants';
 
-const listStyling = css({
+export const listStyling = css({
   verticalAlign: 'super',
   '::after': {
     content: ' ',
@@ -12,7 +10,7 @@ const listStyling = css({
   }
 });
 
-const listItemStyling = css({
+export const listItemStyling = css({
   display: 'block',
   float: 'left',
   padding: '0.5rem 1.5rem 0.5rem 0',
@@ -28,17 +26,17 @@ const listItemStyling = css({
   '& > h4': { textTransform: 'uppercase' }
 });
 
-const DetailsOverview = ({ columns }) => (
-  <div {...listStyling}>
-    {columns.map((col, i) => (
-      <div key={i} {...listItemStyling}>
-        <h4>{col.label}</h4>
-        <div>
-          {col.value}
-        </div>
-      </div>
-    ))}
-  </div>
-);
-
-export default DetailsOverview;
+export const rowThirds = css({
+  marginTop: '30px',
+  marginBottom: '30px',
+  marginLeft: '-15px',
+  marginRight: '-15px',
+  '& > *': {
+    display: 'inline-block',
+    paddingLeft: '15',
+    paddingRight: '15px',
+    verticalAlign: 'top',
+    margin: 0,
+    width: '33.333333333333%'
+  }
+});
