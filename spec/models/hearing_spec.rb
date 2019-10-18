@@ -4,6 +4,10 @@ require "support/database_cleaner"
 require "rails_helper"
 
 describe Hearing, :postgres do
+  it_should_behave_like "a model that can have a virtual hearing" do
+    let(:instance_of_class) { create(:hearing) }
+  end
+
   context "create" do
     let!(:hearing_day) { create(:hearing_day) }
 
