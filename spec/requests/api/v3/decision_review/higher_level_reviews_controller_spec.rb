@@ -119,12 +119,9 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
   fdescribe "#show" do
     let!(:higher_level_review) do
-      processor = Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(ActionController::Parameters.new({ data: data, included: included }), User.api_user)
+      processor = Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(ActionController::Parameters.new({ data: data, included: included }), create(:user))
       processor.run!
       processor.higher_level_review
-    end
-    after do
-      User.instance_variable_set(:@api_user, nil)
     end
     def get_higher_level_review
       get(
