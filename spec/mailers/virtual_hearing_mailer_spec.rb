@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe VirtualHearingMailer, focus: true do
+describe VirtualHearingMailer do
   let(:title) { VirtualHearingMailer::RECIPIENT_TITLES[:judge] }
   let(:recipient) { MailerRecipient.new(full_name: "FirstName LastName", email: "email@test.com", title: title) }
 
