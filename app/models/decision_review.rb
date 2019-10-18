@@ -343,12 +343,6 @@ class DecisionReview < ApplicationRecord
     fail Caseflow::Error::MustImplementInSubclass
   end
 
-  def request_issues_ui_hash
-    request_issues.includes(
-      :decision_review, :contested_decision_issue
-    ).active_or_ineligible_or_withdrawn.map(&:ui_hash)
-  end
-
   private
 
   def contestable_issue_generator
@@ -360,6 +354,12 @@ class DecisionReview < ApplicationRecord
 
     intake.veteran.valid?(:bgs)
     intake.veteran_invalid_fields
+  end
+
+  def request_issues_ui_hash
+    request_issues.includes(
+      :decision_review, :contested_decision_issue
+    ).active_or_ineligible_or_withdrawn.map(&:ui_hash)
   end
 
   def can_contest_rating_issues?
