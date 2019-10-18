@@ -11,11 +11,11 @@
   ],
   "DISPOSITION_OPTIONS": [
     {
-      "displayText": "Grant or partial vacature",
+      "displayText": "Grant all issues for vacatur",
       "value": "granted"
     },
     {
-      "displayText": "Deny all issues for vacature",
+      "displayText": "Deny all issues for vacatur",
       "value": "denied"
     },
     {
@@ -23,6 +23,10 @@
       "value": "dismissed"
     }
   ],
+  "PARTIAL_GRANT_OPTION": {
+    "displayText": "Grant partial vacatur",
+    "value": "partial"
+  },
   "DISPOSITION_TEXT": {
     "granted": "grant or partial vacature",
     "denied": "denial of all issues for vacature",
