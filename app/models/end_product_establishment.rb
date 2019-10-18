@@ -11,6 +11,7 @@
 class EndProductEstablishment < ApplicationRecord
   belongs_to :source, polymorphic: true
   belongs_to :user
+  has_many :end_product_code_updates
 
   # allow @veteran to be assigned to save upstream calls
   attr_writer :veteran
@@ -205,6 +206,9 @@ class EndProductEstablishment < ApplicationRecord
       handle_canceled_ep!
       close_request_issues_with_no_decision!
     end
+
+    save_updated_end_product_code!
+
   rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => error
     raise error
   rescue StandardError => error
@@ -476,6 +480,12 @@ class EndProductEstablishment < ApplicationRecord
     return unless source&.respond_to?(:on_sync)
 
     source.on_sync(self)
+  end
+
+  def save_updated_end_product_code!
+    if code != result.claim_type_code
+      end_product_code_updates.create(code: result.claim_type_code)
+    end
   end
 
   def create_contentions_in_vbms(contentions)
