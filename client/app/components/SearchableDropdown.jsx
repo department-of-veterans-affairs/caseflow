@@ -72,9 +72,9 @@ class SearchableDropdown extends React.Component {
       return Select.Creatable;
     } else if (this.props.async) {
       return Select.Async;
-    } else {
-      return Select;
     }
+
+    return Select;
   };
 
   render() {
@@ -188,33 +188,33 @@ class SearchableDropdown extends React.Component {
 SearchableDropdown.propTypes = {
   async: PropTypes.func,
   creatable: PropTypes.bool,
-  errorMessage: PropTypes.string,
-  label: PropTypes.string,
-  strongLabel: PropTypes.bool,
-  hideLabel: PropTypes.bool,
-  name: PropTypes.string.isRequired,
-  onChange: PropTypes.func,
-  options: PropTypes.arrayOf(PropTypes.shape({
-    value: PropTypes.any,
-    label: PropTypes.string
-  })),
-  value: PropTypes.any,
-  noResultsText: PropTypes.string,
-  multi: PropTypes.bool,
-  selfManageValueState: PropTypes.bool,
-  searchable: PropTypes.bool,
-  readOnly: PropTypes.bool,
-  required: PropTypes.bool,
-  placeholder: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object
-  ]),
   creatableOptions: PropTypes.shape({
     tagAlreadyExistsMsg: PropTypes.string,
     promptTextCreator: PropTypes.func
   }),
   dropdownStyling: PropTypes.object,
-  styling: PropTypes.object
+  errorMessage: PropTypes.string,
+  label: PropTypes.string,
+  strongLabel: PropTypes.bool,
+  hideLabel: PropTypes.bool,
+  multi: PropTypes.bool,
+  name: PropTypes.string.isRequired,
+  noResultsText: PropTypes.string,
+  onChange: PropTypes.func,
+  options: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.any,
+    label: PropTypes.string
+  })),
+  placeholder: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
+  readOnly: PropTypes.bool,
+  required: PropTypes.bool,
+  searchable: PropTypes.bool,
+  selfManageValueState: PropTypes.bool,
+  styling: PropTypes.object,
+  value: PropTypes.object
 };
 
 export default SearchableDropdown;

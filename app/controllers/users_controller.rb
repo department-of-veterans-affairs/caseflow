@@ -57,7 +57,7 @@ class UsersController < ApplicationController
     users = finder.users
     if params[:exclude_org]
       org = Organization.find_by_name_or_url(params[:exclude_org])
-      users = users - org.users
+      users -= org.users
     end
     render json: { users: json_users(users) }
   end
