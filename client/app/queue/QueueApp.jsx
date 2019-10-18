@@ -244,7 +244,8 @@ class QueueApp extends React.PureComponent {
         {...props.match.params}
         onCancel={() => props.history.goBack()}
         onSubmit={({ instructions }) => {
-          // no-op — will add in future PR
+          // we'll flesh this out in future PR
+          return instructions;
         }}
       />
     );
