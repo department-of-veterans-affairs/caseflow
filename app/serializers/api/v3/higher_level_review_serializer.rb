@@ -22,9 +22,9 @@ class Api::V3::HigherLevelReviewSerializer
     # DecisionReview has multiple claimants, but intakes only support one
     object.claimants.first
   end
-  # has_many :decision_issues do |object|
-  #   object.fetch_all_decision_issues
-  # end
+  has_many :decision_issues do |object|
+    object.fetch_all_decision_issues
+  end
   # has_many :request_issues do |object|
   #   object.request_issues_ui_hash
   # end
