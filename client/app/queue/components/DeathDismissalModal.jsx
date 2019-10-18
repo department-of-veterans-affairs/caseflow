@@ -46,15 +46,7 @@ class DeathDismissalModal extends React.PureComponent {
       data: {}
     };
 
-    return this.props.requestSave(`/appeals/${appeal.id}/death_dismissal`, payload, this.getSuccessMsg()).
-      then(() => {
-        history.goBack();
-      }, () => {
-        this.props.showErrorMessage({
-          title: 'Could not mark Appeal for Death Dismissal',
-          detail: 'Contact Support'
-        });
-      });
+    return this.props.requestSave(`/appeals/${appeal.externalId}/death_dismissal`, payload, this.getSuccessMsg())
   }
 
   getSuccessMsg = () => {

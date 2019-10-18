@@ -765,12 +765,16 @@ class LegacyAppeal < ApplicationRecord
     VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
   end
 
+  def death_dismissal!
+    multi_transaction do
+      cancel_open_caseflow_tasks!
+      LegacyAppeal.repository.update_location_for_death_dismissal!(appeal: self)
+    end
+  end
+
+
   def cancel_open_caseflow_tasks!
-    task_ids = tasks.pluck(:id)
-    Task.open.where(id: task_ids).update_all(
-      status: Constants.TASK_STATUSES.cancelled,
-      closed_at: Time.zone.now
-    )
+    tasks.open.update_all(status: Constants.TASK_STATUSES.cancelled)
   end
 
   private
@@ -977,13 +981,6 @@ class LegacyAppeal < ApplicationRecord
 
     def nonpriority_decisions_per_year
       repository.nonpriority_decisions_per_year
-    end
-
-    def death_dismissal!(appeal)
-      multi_transaction do
-        cancel_open_caseflow_tasks!(appeal)
-        LegacyAppeal.repository.update_location_for_death_dismissal!(appeal)
-      end
     end
 
     private

@@ -3,6 +3,7 @@
 class AppealsController < ApplicationController
   before_action :react_routed
   before_action :set_application, only: [:document_count, :power_of_attorney]
+  before_action :valid_death_dismissal_user, only: [:death_dismissal]
   # Only whitelist endpoints VSOs should have access to.
   skip_before_action :deny_vso_access, only: [
     :index,
@@ -48,12 +49,22 @@ class AppealsController < ApplicationController
   end
 
   def death_dismissal
-    # check its a legacy appeal, that this is the judge, and that we have a SFNOD
-    # appeal.type == LegacyAppeal.name
-    #
-    #invoke the legacy appeal model to cancel its stuff and update the location in vacols
-    #
-    # redirect to queue
+    respond_to do |format|
+      format.html { render template: "queue/index" }
+      format.json do
+ #       fail Caseflow::Error::ActionForbiddenError, message: COPY::INVALID_DEATH_DISMISSAL_USER
+        fooasdfasd
+        appeal.death_dismissal!
+
+        render json: {}
+      end
+    end
+  end
+
+  def valid_death_dismissal_user
+    if !( current_user.judge_in_vacols? || Colocated.singleton.user_is_admin?(current_user) )
+      fail Caseflow::Error::ActionForbiddenError, message: COPY::INVALID_DEATH_DISMISSAL_USER
+    end
   end
 
   def document_count
