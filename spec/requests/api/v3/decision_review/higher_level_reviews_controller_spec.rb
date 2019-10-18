@@ -228,7 +228,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         end
         it 'should include the claimant' do
           claimaint = subject['claimant']
-          expect(claimaint.dig('data','id')).to eq higher_level_review.claimants.first.id
+          expect(claimaint.dig('data','id')).to eq higher_level_review.claimants.first.id.to_s
         end
         it 'should include request issues' do
           expect(subject['requestIssues']['data'].count).to eq higher_level_review.request_issues_ui_hash.count

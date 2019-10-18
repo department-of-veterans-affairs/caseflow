@@ -14,16 +14,18 @@ class Api::V3::HigherLevelReviewSerializer
   attribute :alerts
   attribute :events
 
-  has_one :veteran, if: Proc.new { |record| record.veteran } do |object|
-    # { id: object.veteran.id, type: 'veteran' }
+  has_one :veteran do |object|
     object.veteran
   end
 
-  has_many :claimants
-  has_many :decision_issues do |object|
-    object.fetch_all_decision_issues
+  has_one :claimant do |object|
+    # DecisionReview has multiple claimants, but intakes only support one
+    object.claimants.first
   end
-  has_many :request_issues do |object|
-    object.request_issues_ui_hash
-  end
+  # has_many :decision_issues do |object|
+  #   object.fetch_all_decision_issues
+  # end
+  # has_many :request_issues do |object|
+  #   object.request_issues_ui_hash
+  # end
 end
