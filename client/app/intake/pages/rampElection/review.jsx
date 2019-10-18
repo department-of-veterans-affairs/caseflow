@@ -9,6 +9,7 @@ import { setReceiptDate, setOptionSelected } from '../../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
+import PropTypes from 'prop-types';
 
 class Review extends React.PureComponent {
   render() {
@@ -47,6 +48,7 @@ class Review extends React.PureComponent {
         value={receiptDate}
         onChange={this.props.setReceiptDate}
         errorMessage={receiptDateError}
+        type="date"
         strongLabel
       />
 
@@ -62,6 +64,18 @@ class Review extends React.PureComponent {
     </div>;
   }
 }
+
+Review.propTypes = {
+  veteranName: PropTypes.string,
+  receiptDate: PropTypes.string,
+  receiptDateError: PropTypes.string,
+  optionSelected: PropTypes.string,
+  optionSelectedError: PropTypes.string,
+  setReceiptDate: PropTypes.func,
+  setOptionSelected: PropTypes.func,
+  rampElectionStatus: PropTypes.string,
+  reviewIntakeError: PropTypes.string
+};
 
 export default connect(
   (state) => ({
