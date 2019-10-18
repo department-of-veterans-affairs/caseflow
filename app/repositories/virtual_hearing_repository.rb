@@ -22,7 +22,7 @@ class VirtualHearingRepository
       ActiveRecord::Base.multi_transaction do
         created_hearing = VirtualHearing.create!(hearing: legacy_hearing)
 
-        HearingRepository.update_vacols_hearing!(legacy_hearing.vacols_record, { request_type: :R })
+        HearingRepository.update_vacols_hearing!(legacy_hearing.vacols_record, request_type: :R)
 
         created_hearing
       end
