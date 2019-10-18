@@ -529,7 +529,7 @@ class LegacyAppeal < ApplicationRecord
 
   def activated?
     # An appeal is currently at the board, and it has passed some data checks
-    status == "Active"
+    %w[Active Motion].include?(status)
   end
 
   def active?

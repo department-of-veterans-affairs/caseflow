@@ -24,6 +24,7 @@ import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
 export default class HearingsApp extends React.PureComponent {
   userPermissionProps = () => {
     const {
+      userCanScheduleVirtualHearings,
       userCanAssignHearingSchedule,
       userCanBuildHearingSchedule,
       userCanViewHearingSchedule,
@@ -35,6 +36,7 @@ export default class HearingsApp extends React.PureComponent {
     } = this.props;
 
     return {
+      userCanScheduleVirtualHearings,
       userCanAssignHearingSchedule,
       userCanBuildHearingSchedule,
       userCanViewHearingSchedule,
@@ -62,7 +64,7 @@ export default class HearingsApp extends React.PureComponent {
   routeForAssignHearingsContainer = () => <AssignHearingsContainer {...this.propsForAssignHearingsContainer()} />
   routeForDailyDocket = (print) => () => <DailyDocketContainer user={this.userPermissionProps()} print={print} />;
   routeForHearingDetails = ({ match: { params }, history }) =>
-    <HearingDetailsContainer hearingId={params.hearingId} history={history} {...this.userPermissionProps()} />;
+    <HearingDetailsContainer hearingId={params.hearingId} history={history} user={this.userPermissionProps()} />;
   routeForHearingWorksheet = () => ({ match: { params } }) =>
     <HearingWorksheetContainer hearingId={params.hearingId} />;
   routeForPrintedHearingWorksheets = (props) => {
@@ -172,6 +174,7 @@ HearingsApp.propTypes = {
   applicationUrls: PropTypes.array,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
+  userCanScheduleVirtualHearings: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
   userCanBuildHearingSchedule: PropTypes.bool,
   userCanViewHearingSchedule: PropTypes.bool,
