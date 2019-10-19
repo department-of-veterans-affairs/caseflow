@@ -343,7 +343,7 @@ class AddIssuesPage extends React.Component {
 }
 
 AddIssuesPage.propTypes = {
-  activeIssue: PropTypes.object,
+  activeIssue: PropTypes.number,
   addingIssue: PropTypes.bool,
   correctIssue: PropTypes.func,
   editPage: PropTypes.bool,
