@@ -4,21 +4,10 @@ class UsersController < ApplicationController
   before_action :deny_non_bva_admins, only: [:represented_organizations, :update, :search_by_css_id]
 
   def index
-    case params[:role]
-    when Constants::USER_ROLE_TYPES["judge"]
-      return render json: { judges: Judge.list_all }
-    when Constants::USER_ROLE_TYPES["attorney"]
-      return render json: { attorneys: json_attorneys(Judge.new(judge).attorneys) } if params[:judge_id]
+    return filter_by_role if params[:role]
+    return filter_by_css_id if params[:css_id]
 
-      return render json: { attorneys: Attorney.list_all }
-    when Constants::USER_ROLE_TYPES["hearing_coordinator"]
-      return render json: { coordinators: User.list_hearing_coordinators }
-    when "non_judges"
-      return render json: {
-        non_judges: json_users(User.where.not(id: JudgeTeam.all.map(&:judge).reject(&:nil?).map(&:id)))
-      }
-    end
-    render json: {}
+    render json: {}, status: 200
   end
 
   def search_by_css_id
@@ -47,6 +36,34 @@ class UsersController < ApplicationController
 
   private
 
+  def filter_by_role
+    finder = UserFinder.new(role: params[:role])
+    users = finder.users
+
+    case params[:role]
+    when Constants::USER_ROLE_TYPES["judge"]
+      render json: { judges: users }
+    when Constants::USER_ROLE_TYPES["attorney"]
+      return render json: { attorneys: json_attorneys(Judge.new(judge).attorneys) } if params[:judge_id]
+
+      render json: { attorneys: users }
+    when Constants::USER_ROLE_TYPES["hearing_coordinator"]
+      render json: { coordinators: users }
+    when "non_judges"
+      render json: { non_judges: json_users(users) }
+    end
+  end
+
+  def filter_by_css_id
+    finder = UserFinder.new(css_id: css_id)
+    users = finder.users
+    if params[:exclude_org]
+      org = Organization.find_by_name_or_url(params[:exclude_org])
+      users -= org.users
+    end
+    render json: { users: json_users(users) }
+  end
+
   def css_id
     unless params[:css_id]
       fail(
@@ -64,6 +81,8 @@ class UsersController < ApplicationController
   end
 
   def json_users(users)
+    return [] if users.blank?
+
     ::WorkQueue::UserSerializer.new(users, is_collection: true)
   end
 
