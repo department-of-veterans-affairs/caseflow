@@ -43,6 +43,31 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
+  describe "#activated?" do
+    let(:vacols_case) { create(:case, case_status) }
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+
+    subject { legacy_appeal.activated? }
+
+    context "status is Active" do
+      let(:case_status) { :status_active }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "status is Motion" do
+      let(:case_status) { :status_motion }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "status is Complete" do
+      let(:case_status) { :status_complete }
+
+      it { is_expected.to eq(false) }
+    end
+  end
+
   describe "#veteran_file_number" do
     context "VACOLS has SSN as filenumber" do
       let(:ssn) { "123456789" }

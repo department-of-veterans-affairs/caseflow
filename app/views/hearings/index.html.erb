@@ -14,6 +14,7 @@
   applicationUrls: application_urls,
   feedbackUrl: feedback_url,
   buildDate: build_date,
+  userCanScheduleVirtualHearings: FeatureToggle.enabled?(:schedule_virtual_hearings, user: current_user),
   userCanAssignHearingSchedule: current_user.can_assign_hearing_schedule?,
   userCanBuildHearingSchedule: current_user.can?('Build HearSched'),
   userCanViewHearingSchedule: current_user.can_view_hearing_schedule?,

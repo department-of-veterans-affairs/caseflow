@@ -57,6 +57,15 @@ export const BOOLEAN_RADIO_OPTIONS = [
     displayText: 'Yes' }
 ];
 
+export const CORRECTION_TYPE_OPTIONS = [
+  { value: 'control',
+    displayText: 'Control' },
+  { value: 'local_quality_error',
+    displayText: 'Local Quality Error' },
+  { value: 'national_quality_error',
+    displayText: 'National Quality Error' }
+]
+
 export const BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE = [
   { value: 'false',
     displayText: 'No',

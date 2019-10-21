@@ -155,6 +155,8 @@ Rails.application.routes.draw do
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
   get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
 
+  post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
+
   resources :hearings, only: [:update, :show]
 
   patch "certifications" => "certifications#create"
