@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import HearingWorksheetStream from './HearingWorksheetStream';
@@ -16,6 +17,7 @@ import CFRichTextEditor from '../../../components/CFRichTextEditor';
 import Button from '../../../components/Button';
 import ContentSection from '../../../components/ContentSection';
 import HearingWorksheetDocs from './HearingWorksheetDocs';
+import ApiUtil from '../../../util/ApiUtil';
 
 import {
   onSummaryChange,
@@ -80,9 +82,18 @@ class WorksheetFormEntry extends React.PureComponent {
   }
 }
 
+WorksheetFormEntry.propTypes = {
+  value: PropTypes.any
+};
+
 export class HearingWorksheet extends React.PureComponent {
   componentDidMount() {
     document.title = getWorksheetTitle(this.props.worksheet);
+    this.postHearingView();
+  }
+
+  postHearingView = () => {
+    ApiUtil.post(`/hearings/hearing_view/${this.props.worksheet.external_id}`);
   }
 
   save = (worksheet, worksheetIssues) => () => {
@@ -183,6 +194,21 @@ export class HearingWorksheet extends React.PureComponent {
     );
   }
 }
+
+HearingWorksheet.propTypes = {
+  worksheet: PropTypes.shape({
+    summary: PropTypes.string,
+    docket_name: PropTypes.string,
+    external_id: PropTypes.string
+  }),
+  worksheetIssues: PropTypes.array,
+  saveWorksheetFailed: PropTypes.bool,
+  worksheetTimeSaved: PropTypes.bool,
+  worksheetIsSaving: PropTypes.bool,
+  onSummaryChange: PropTypes.func,
+  saveWorksheet: PropTypes.func,
+  saveIssue: PropTypes.func
+};
 
 const mapStateToProps = (state) => ({
   worksheet: state.hearingWorksheet.worksheet,
