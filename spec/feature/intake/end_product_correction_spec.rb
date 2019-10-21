@@ -118,6 +118,14 @@ feature "End Product Correction (EP 930)", :postgres do
           click_on "correct the issues"
           expect(page).to have_content("Edit Issues")
         end
+
+        it "creates a correction issue and shows type selected" do
+          visit edit_path
+          click_correct_intake_issue_dropdown(request_issue_to_correct.description)
+          select_correction_type_from_modal("local_quality_error")
+          click_correction_type_modal_submit
+          expect(page).to have_content("This issue will be added to a 930 Local Quality Error EP for correction")
+        end
       end
 
       context "when a user adds an unidentified issue" do
@@ -409,14 +417,6 @@ feature "End Product Correction (EP 930)", :postgres do
 
     let(:edit_path) { "#{claim_review_type.pluralize}/#{reference_id}/edit" }
     let(:ep_code) { "040SCR" }
-
-    context "when the end product is not yet cleared" do
-      let(:synced_status) { "PEND" }
-      it "prevents edit" do
-        visit edit_path
-        expect(page).to have_content("Issues Not Editable")
-      end
-    end
 
     context "when the end product is cleared" do
       context "when the review has no decision issues" do

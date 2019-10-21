@@ -32,7 +32,9 @@ Rails.application.routes.draw do
     end
     namespace :v3 do
       namespace :decision_review do
-        resources :higher_level_reviews, only: :create
+        resources :higher_level_reviews, only: [:create, :show]
+        resources :supplemental_claims, only: [:create, :show]
+        resources :appeals, only: [:create, :show]
         resources :intake_statuses, only: :show
       end
     end
@@ -236,6 +238,7 @@ Rails.application.routes.draw do
   get '/search', to: 'appeals#show_case_list'
 
   resources :legacy_tasks, only: [:create, :update]
+  post '/legacy_tasks/assign_to_judge', to: 'legacy_tasks#assign_to_judge'
   resources :tasks, only: [:index, :create, :update] do
     member do
       post :reschedule

@@ -12,7 +12,7 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
     let!(:attorneys) { create_list(:staff, 2, :attorney_role) }
 
     context "when role is passed" do
-      it "should return a list of only judges", skip: "flake" do
+      it "should return a list of only judges" do
         get :index, params: { role: "Judge" }
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
@@ -57,14 +57,14 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
         subject
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
-        expect(response_body["attorneys"].size).to eq(team_member_count)
+        expect(response_body["attorneys"]["data"].size).to eq(team_member_count)
       end
     end
 
     context "when judge ID is not passed" do
       subject { get :index, params: { role: "Attorney" } }
 
-      it "should return a list of all attorneys and judges", skip: "flake" do
+      it "should return a list of all attorneys and judges" do
         subject
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
@@ -95,7 +95,7 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
     let!(:judges) { create_list(:staff, 2, :judge_role) }
 
     context "when role is passed" do
-      it "should return a list of judges", skip: "flake" do
+      it "should return a list of judges" do
         get :index, params: { role: "Judge" }
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)

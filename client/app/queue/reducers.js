@@ -415,7 +415,43 @@ const deleteEditingAppealIssue = (state, action) => {
 const setAttorneysOfJudge = (state, action) => {
   return update(state, {
     attorneysOfJudge: {
-      $set: action.payload.attorneys
+      $set: action.payload.attorneys.data.map((attorney) => attorney.attributes)
+    }
+  });
+};
+
+const incrementTaskCountForAttorney = (state, action) => {
+  const {
+    attorneysOfJudge
+  } = state;
+
+  attorneysOfJudge.forEach((attorney) => {
+    if (action.payload.attorney.id === attorney.id.toString()) {
+      attorney.active_task_count += 1;
+    }
+  });
+
+  return update(state, {
+    attorneysOfJudge: {
+      $set: attorneysOfJudge
+    }
+  });
+};
+
+const decrementTaskCountForAttorney = (state, action) => {
+  const {
+    attorneysOfJudge
+  } = state;
+
+  attorneysOfJudge.forEach((attorney) => {
+    if (action.payload.attorney.id === attorney.id.toString()) {
+      attorney.active_task_count -= 1;
+    }
+  });
+
+  return update(state, {
+    attorneysOfJudge: {
+      $set: attorneysOfJudge
     }
   });
 };
@@ -658,6 +694,8 @@ export const workQueueReducer = createReducer({
   [ACTIONS.SAVE_EDITED_APPEAL_ISSUE]: saveEditedAppealIssue,
   [ACTIONS.DELETE_EDITING_APPEAL_ISSUE]: deleteEditingAppealIssue,
   [ACTIONS.SET_ATTORNEYS_OF_JUDGE]: setAttorneysOfJudge,
+  [ACTIONS.INCREMENT_TASK_COUNT_FOR_ATTORNEY]: incrementTaskCountForAttorney,
+  [ACTIONS.DECREMENT_TASK_COUNT_FOR_ATTORNEY]: decrementTaskCountForAttorney,
   [ACTIONS.REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY]: requestTasksAndAppealsOfAttorney,
   [ACTIONS.SET_TASKS_AND_APPEALS_OF_ATTORNEY]: setTasksAndAppealsOfAttorney,
   [ACTIONS.ERROR_TASKS_AND_APPEALS_OF_ATTORNEY]: errorTasksAndAppealsOfAttorney,
