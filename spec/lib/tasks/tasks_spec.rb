@@ -315,4 +315,241 @@ describe "task rake tasks", :postgres do
       end
     end
   end
+
+  describe "tasks:reassign_from_user" do
+    let(:user) { create(:user) }
+    let(:user_id) { user.id }
+
+    let(:dry_run) { true }
+    let(:args) { [user_id, dry_run] }
+
+    subject do
+      Rake::Task["tasks:reassign_from_user"].reenable
+      Rake::Task["tasks:reassign_from_user"].invoke(*args)
+    end
+
+    context "the user id does not relate to a user" do
+      let(:user_id) { 444 }
+
+      it "fails to find the user" do
+        expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "there are no tasks to reassign" do
+      it "tells the caller that there are no tasks to reassign" do
+        expected_output = "There aren't any open tasks assigned to this user."
+        expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+        expect { subject }.to raise_error(NoTasksToReassign).with_message(expected_output)
+      end
+    end
+
+    context "there are tasks to reassign" do
+      let(:task_count) { 4 }
+      let(:parent_assignee) { create(:organization) }
+      let(:parent_task_type) { :generic_task }
+      let(:parent_tasks) { create_list(:generic_task, task_count, assigned_to: parent_assignee) }
+
+      let(:task_type) { :generic_task }
+      let!(:tasks) do
+        parent_tasks.map { |parent| create(task_type, assigned_to: user, parent: parent) }
+      end
+
+      context "the tasks have no parents" do
+        before { tasks.each { |task| task.update!(parent_id: nil) } }
+
+        it "fails and warns the caller of tasks without open parents" do
+          orphaned_ids_output = tasks.map(&:id).reverse.join(", ")
+          expected_output = "Open tasks (#{orphaned_ids_output}) assigned to User #{user_id} have no parent task"
+          expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+          expect { subject }.to raise_error(InvalidTaskParent).with_message(expected_output)
+        end
+      end
+
+      context "the tasks have parents assigned to an organization with a different task type" do
+        before do
+          tasks.each { |task| task.update!(type: FoiaTask.name) }
+          parent_tasks.map do |parent|
+            create(:ama_judge_task, assigned_to: user, parent: parent)
+            create(:ama_judge_decision_review_task, assigned_to: user, parent: parent)
+          end
+        end
+
+        it "fails and warns the caller of tasks that are not judge tasks" do
+          bad_type_ids_output = tasks.map(&:id).reverse.join(", ")
+          expected_output = "Open tasks (#{bad_type_ids_output}) assigned to User #{user.id} have parent task " \
+                            "assigned to an organization but has a different task type"
+          expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+          expect { subject }.to raise_error(InvalidTaskParent).with_message(expected_output)
+        end
+      end
+
+      context "the tasks have parents assigned to a user with the same task type" do
+        before { parent_tasks.each { |parent| parent.update!(assigned_to_type: User.name) } }
+
+        it "fails and warns the caller of parents assigned to a user with the same task type" do
+          bad_type_ids_output = tasks.map(&:id).reverse.join(", ")
+          expected_output = "Open tasks (#{bad_type_ids_output}) assigned to User #{user.id} have parent task " \
+                            "assigned to a user but has the same type"
+          expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+          expect { subject }.to raise_error(InvalidTaskParent).with_message(expected_output)
+        end
+      end
+
+      context "the tasks are JudgeAssignTasks" do
+        let(:task_type) { :ama_judge_task }
+
+        context "with open children" do
+          let(:child_tasks) { tasks.map { |task| create(:task, parent_id: task.id) } }
+
+          it "fails and warns the caller of open children of JudgeAssignTasks" do
+            bad_parent_output = child_tasks.map(&:id).join(", ")
+            expected_output = "JudgeAssignTasks have open children (#{bad_parent_output})"
+            expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+            expect { subject }.to raise_error(InvalidTaskParent).with_message(expected_output)
+          end
+        end
+
+        context "with no children" do
+          context "when on a dry run" do
+            it "only describes what changes will be made" do
+              count = task_count
+              ids = tasks.pluck(:id).reverse
+              expected_output = <<~OUTPUT
+                *** DRY RUN
+                *** pass 'false' as the third argument to execute
+                Would cancel #{count} JudgeAssignTasks with ids #{ids.join(', ')} and create #{count} DistributionTasks
+              OUTPUT
+              expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+              # TODO: fix
+              # expect { subject }.to output(expected_output).to_stdout
+              subject
+              tasks.each { |task| expect(task.reload.assigned?).to eq true }
+              expect(DistributionTask.any?).to be_falsey
+            end
+          end
+
+          context "when executing" do
+            let(:dry_run) { false }
+
+            it "describes what changes will be made and makes them" do
+              count = task_count
+              ids = tasks.pluck(:id).reverse
+              expected_output = <<~OUTPUT
+                Cancelling #{count} JudgeAssignTasks with ids #{ids.join(', ')} and creating #{count} DistributionTasks
+              OUTPUT
+              # TODO: fix
+              # expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+              # expect(Rails.logger).to receive(:info).with(expected_output)
+              # expect { subject }.to output(expected_output).to_stdout
+              subject
+              tasks.each { |task| expect(task.reload.cancelled?).to eq true }
+              expect(DistributionTask.all.count).to eq count
+            end
+          end
+        end
+      end
+
+      context "the tasks are JudgeDecisionReviewTasks" do
+        let(:task_type) { :ama_judge_decision_review_task }
+
+        context "with no open children" do
+          let(:child_tasks) { tasks.first(2).map { |task| create(:task, parent_id: task.id) } }
+          let!(:child_atty_tasks) { tasks.last(2).map { |task| create(:ama_attorney_task, parent_id: task.id) } }
+
+          it "fails and warns the caller of open children of JudgeAssignTasks" do
+            bad_parent_output = child_tasks.reverse.map(&:parent_id).join(", ")
+            expected_output = "JudgeDecisionReviewTasks (#{bad_parent_output}) have no open child attorney tasks"
+            expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+            expect { subject }.to raise_error(InvalidTaskParent).with_message(expected_output)
+          end
+        end
+
+        context "with open children attorney tasks" do
+          let(:attorney) { create(:user) }
+          let!(:child_tasks) do
+            tasks.map { |task| create(:ama_attorney_task, parent_id: task.id, assigned_to: attorney) }
+          end
+
+          context "but no judge team for the attorney" do
+            it "fails and notifies user of attorney tasks with no new judge team" do
+              bad_parent_output = child_tasks.map(&:id).join(", ")
+              expected_output = "AttorneyTasks (#{bad_parent_output}) assignee does not belong to a judge team with " \
+                                "an active judge"
+              expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+              expect { subject }.to raise_error(InvalidTaskAssignee).with_message(expected_output)
+            end
+          end
+
+          context "but no different judge team for the attorney" do
+            let!(:judge_team) { JudgeTeam.create_for_judge(user) }
+
+            before { OrganizationsUser.add_user_to_organization(attorney, judge_team) }
+
+            it "fails and notifies user of attorney tasks where the assignee is only in the inactive judge's team" do
+              bad_parent_output = child_tasks.map(&:id).join(", ")
+              expected_output = "AttorneyTasks (#{bad_parent_output}) assignee does not belong to a judge team with " \
+                                "an active judge"
+              expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+              expect { subject }.to raise_error(InvalidTaskAssignee).with_message(expected_output)
+            end
+          end
+
+          context "with a new judge assignee" do
+            let!(:judge_team) { JudgeTeam.create_for_judge(create(:user)) }
+
+            before { OrganizationsUser.add_user_to_organization(attorney, judge_team) }
+
+            context "when on a dry run" do
+              it "only describes what changes will be made" do
+                count = task_count
+                ids = tasks.pluck(:id).reverse
+                expected_output = <<~OUTPUT
+                  *** DRY RUN
+                  *** pass 'false' as the third argument to execute
+                  Would cancel #{count} JudgeDecisionReviewTasks with ids #{ids.join(', ')} and and move
+                  #{count} AttorneyTasks to new JudgeDecisionReviewTasks assigned to the attorney's new judge
+                OUTPUT
+                expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+                # TODO: fix
+                # expect { subject }.to output(expected_output).to_stdout
+                subject
+                tasks.each { |task| expect(task.reload.on_hold?).to eq true }
+                expect(child_tasks.map(&:parent_id)).to eq tasks.map(&:id)
+                expect(JudgeDecisionReviewTask.count).to eq count
+              end
+            end
+
+            context "when executing" do
+              let(:dry_run) { false }
+
+              it "describes what changes will be made and makes them" do
+                count = task_count
+                ids = tasks.pluck(:id).reverse
+                expected_output = <<~OUTPUT
+                  *** DRY RUN
+                  *** pass 'false' as the third argument to execute
+                  Would cancel #{count} JudgeDecisionReviewTasks with ids #{ids.join(', ')} and and move
+                  #{count} AttorneyTasks to new JudgeDecisionReviewTasks assigned to the attorney's new judge
+                OUTPUT
+                # TODO: fix
+                # expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+                # expect(Rails.logger).to receive(:info).with(expected_output)
+                # expect { subject }.to output(expected_output).to_stdout
+                subject
+                tasks.each { |task| expect(task.reload.cancelled?).to eq true }
+                expect(JudgeDecisionReviewTask.count).to eq count * 2
+                expect(JudgeDecisionReviewTask.open.count).to eq count
+                new_tasks = JudgeDecisionReviewTask.where(id: AttorneyTask.all.map(&:parent_id))
+                expect(new_tasks.all? { |task| task.assigned_to == judge_team.judge }).to eq true
+                expect(new_tasks.all? { |task| task.status == "on_hold" }).to eq true
+                expect(new_tasks.all? { |task| task.children.length == 1 }).to eq true
+              end
+            end
+          end
+        end
+      end
+    end
+  end
 end
