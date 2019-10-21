@@ -446,6 +446,8 @@ describe GenericTask, :postgres do
       let(:incomplete_children_cnt) { 5 }
       let!(:incomplete_children) { create_list(:generic_task, incomplete_children_cnt, parent_id: task.id) }
 
+      before { task.on_hold! }
+
       it "reassign method should return list with old and new tasks and incomplete child tasks" do
         expect(subject.length).to eq(2 + incomplete_children_cnt)
       end
