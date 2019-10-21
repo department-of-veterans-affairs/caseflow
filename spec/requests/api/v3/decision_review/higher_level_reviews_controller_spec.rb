@@ -117,7 +117,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     ]
   end
 
-  fdescribe "#show" do
+  describe "#show" do
     let!(:higher_level_review) do
       processor = Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(ActionController::Parameters.new({ data: data, included: included }), create(:user))
       processor.run!
@@ -216,7 +216,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       it 'should have relationships' do
         expect(subject['relationships']).to_not be_empty
       end
-      context 'relationships' do
+      fcontext 'relationships' do
         subject do
           get_higher_level_review
           JSON.parse(response.body)['data']['relationships']
@@ -228,11 +228,15 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           expect(subject.dig('claimant','data','id')).to eq higher_level_review.claimants.first.id.to_s
         end
         it 'should include request issues' do
-          expect(subject['requestIssues']['data'].count).to eq request_issues.count
-          # TODO test some values
+          ri_relationships = subject['requestIssues']['data']
+          expect(ri_relationships.count).to eq request_issues.count
+          expect(ri_relationships.collect{ |ri| ri['id'].to_i }).to include(*request_issues.collect{ |ri| ri.id })
         end
         it 'should include decision issues' do
           expect(subject['decisionIssues']['data'].count).to eq decision_issues.count
+          di_relationships = subject['decisionIssues']['data']
+          expect(di_relationships.count).to eq decision_issues.count
+          expect(di_relationships.collect{ |di| di['id'].to_i }).to include(*decision_issues.collect{ |di| di.id })
           # TODO have a non-zero decision_issues collection
         end
       end
