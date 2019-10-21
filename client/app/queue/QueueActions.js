@@ -393,20 +393,12 @@ const dispatchOldTasks = (dispatch, oldTask, resp, isInitial=false) => {
     dispatch(onReceiveAmaTasks(
       amaTasks
     ));
-  } else if (isInitial && (oldTask.appealType === 'LegacyAppeal' && !oldTask.isLegacy)) {
-    //For das depractaion, legacy_task_controller #create returns tasks not a task
-    const tasks = resp.tasks.data;
-    const allTasks = prepareAllTasksForStore(tasks);
-
-    dispatch(onReceiveTasks({
-      tasks: allTasks.tasks,
-      amaTasks: allTasks.amaTasks
-    }));
-
   } else {
-    const task = resp.task.data;
-    const allTasks = prepareAllTasksForStore([task]);
+    //For das deprecation, legacy_task_controller#create returns tasks, not a task
+    const tasks = isInitial && (oldTask.appealType === 'LegacyAppeal' && !oldTask.isLegacy) ? resp.tasks.data : [resp.task.data];
 
+    const allTasks = prepareAllTasksForStore(tasks);
+    
     dispatch(onReceiveTasks({
       tasks: allTasks.tasks,
       amaTasks: allTasks.amaTasks
