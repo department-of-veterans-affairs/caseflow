@@ -50,7 +50,8 @@ class HearingDetailsContainer extends React.Component {
         title: 'Unable to load the details.'
       }}>
       <HearingDetails
-        disabled={!this.props.userInHearingOrTranscriptionOrganization}
+        user={this.props.user}
+        disabled={!this.props.user.userInHearingOrTranscriptionOrganization}
         hearing={this.state.hearing}
         goBack={this.goBack}
       />
@@ -60,7 +61,10 @@ class HearingDetailsContainer extends React.Component {
 
 HearingDetailsContainer.propTypes = {
   hearingId: PropTypes.string.isRequired,
-  userInHearingOrTranscriptionOrganization: PropTypes.bool,
+  user: PropTypes.shape({
+    userInHearingOrTranscriptionOrganization: PropTypes.bool,
+    userCanScheduleVirtualHearings: PropTypes.bool
+  }),
   history: PropTypes.object
 };
 

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe TaskFilter, :postgres do
+describe TaskFilter, :all_dbs do
   describe ".new"  do
     let(:args) { { filter_params: filter_params } }
 
@@ -274,6 +274,16 @@ describe TaskFilter, :postgres do
         end
       end
 
+      let(:aod_case_ids) do
+        [
+          type_1_tasks.first.id,
+          type_2_tasks.first.id,
+          type_3_tasks.first.id,
+          type_4_tasks.first.id,
+          type_5_tasks.first.id
+        ]
+      end
+
       context "when filter_params is an empty array" do
         let(:filter_params) { [] }
 
@@ -313,22 +323,16 @@ describe TaskFilter, :postgres do
           ["col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=#{case_types['1']},#{case_types['2']},is_aod"]
         end
 
-        it "returns tasks with Original or Supplemental case types that are also AOD" do
-          expect(subject.map(&:id)).to match_array([type_1_tasks.first.id, type_2_tasks.first.id])
+        it "returns tasks with Original or Supplemental case types or AOD cases" do
+          expect(subject.map(&:id)).to match_array((type_1_tasks.map(&:id) + type_2_tasks.map(&:id)) | aod_case_ids)
         end
       end
 
       context "when filter includes only AOD" do
         let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=is_aod"] }
 
-        it "returns tasks with all case types that are also AOD" do
-          expect(subject.map(&:id)).to contain_exactly(
-            type_1_tasks.first.id,
-            type_2_tasks.first.id,
-            type_3_tasks.first.id,
-            type_4_tasks.first.id,
-            type_5_tasks.first.id
-          )
+        it "returns tasks that are AOD" do
+          expect(subject.map(&:id)).to match_array(aod_case_ids)
         end
       end
     end

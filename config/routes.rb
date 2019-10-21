@@ -32,7 +32,9 @@ Rails.application.routes.draw do
     end
     namespace :v3 do
       namespace :decision_review do
-        resources :higher_level_reviews, only: :create
+        resources :higher_level_reviews, only: [:create, :show]
+        resources :supplemental_claims, only: [:create, :show]
+        resources :appeals, only: [:create, :show]
         resources :intake_statuses, only: :show
       end
     end
@@ -152,6 +154,8 @@ Rails.application.routes.draw do
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
   get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
 
+  post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
+
   resources :hearings, only: [:update, :show]
 
   patch "certifications" => "certifications#create"
@@ -236,6 +240,7 @@ Rails.application.routes.draw do
   get '/search', to: 'appeals#show_case_list'
 
   resources :legacy_tasks, only: [:create, :update]
+  post '/legacy_tasks/assign_to_judge', to: 'legacy_tasks#assign_to_judge'
   resources :tasks, only: [:index, :create, :update] do
     member do
       post :reschedule

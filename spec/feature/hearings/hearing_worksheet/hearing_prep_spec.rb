@@ -83,6 +83,7 @@ RSpec.feature "Hearing worksheet for Hearing Prep", :all_dbs do
     expect(page).to have_content("This is a note")
     expect(page).to have_content("This is a disposition")
     expect(page).to_not have_content("Service Connection")
+    expect(HearingView.where(hearing: legacy_hearing).count).to eq(1)
   end
 
   context "Multiple appeal streams" do
