@@ -172,22 +172,18 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           expect(subject['benefitType']).to eq higher_level_review.benefit_type
         end
         it 'should include description' do
-          # TODO make this non-null?
           expect(subject['description']).to eq higher_level_review.description
         end
         it 'should include receiptDate' do
           expect(subject['receiptDate']).to eq higher_level_review.receipt_date.strftime('%F')
         end
         it 'should include informalConference' do
-          # TODO make this non-null?
           expect(subject['informalConference']).to eq higher_level_review.informal_conference
         end
         it 'should include sameOffice' do
-          # TODO make this non-null?
           expect(subject['sameOffice']).to eq higher_level_review.same_office
         end
         it 'should include legacyOptInApproved' do
-          # TODO make this non-null?
           expect(subject['legacyOptInApproved']).to eq higher_level_review.legacy_opt_in_approved
         end
         it 'should include alerts' do
@@ -237,12 +233,11 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         end
         it 'should include decision issues' do
           expect(subject['decisionIssues']['data'].count).to eq decision_issues.count
-          # TODO test some values
+          # TODO have a non-zero decision_issues collection
         end
       end
     end
     context 'included' do
-      # REVIEW types are lower cased
       subject do
         get_higher_level_review
         JSON.parse(response.body)['included']
@@ -259,7 +254,9 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       it 'should include RequestIssues' do
         expect(subject.count{|obj| obj['type'] == 'RequestIssue'}).to eq request_issues.count
       end
-      it 'should include DecisionIssues'
+      it 'should include DecisionIssues' do
+        expect(subject.count{|obj| obj['type'] == 'DecisionIssue'}).to eq decision_issues.count
+      end
     end
   end
 
