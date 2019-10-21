@@ -216,7 +216,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       it 'should have relationships' do
         expect(subject['relationships']).to_not be_empty
       end
-      fcontext 'relationships' do
+      context 'relationships' do
         subject do
           get_higher_level_review
           JSON.parse(response.body)['data']['relationships']
@@ -250,10 +250,14 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         expect(subject).to be_a Array
       end
       it 'should include one veteran' do
-        expect(subject.any?{|obj| obj['type'] == 'Veteran'}).to eq true
+        veteran = subject.find{|obj| obj['type'] == 'Veteran'}
+        expect(veteran).to_not be_nil
+        expect(veteran['attributes'].keys).to include('firstName', 'middleName', 'lastName', 'nameSuffix', 'fileNumber', 'ssn', 'participantId')
       end
       it 'should include a claimaint when present' do
-        expect(subject.any?{|obj| obj['type'] == 'Claimant'}).to eq true
+        claimaint = subject.find{|obj| obj['type'] == 'Claimant'}
+        expect(claimaint).to_not be_nil
+        expect(claimaint['attributes'].keys).to include('firstName', 'middleName', 'lastName', 'payeeCode','relationshipType')
       end
       it 'should include RequestIssues' do
         expect(subject.count{|obj| obj['type'] == 'RequestIssue'}).to eq request_issues.count
