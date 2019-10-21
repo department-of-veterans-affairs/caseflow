@@ -7,7 +7,7 @@ import { formatRequestIssues, formatContestableIssues } from '../../intake/util/
 import { formatRelationships } from '../../intake/util';
 
 export const mapDataToInitialState = function(props = {}) {
-  const { serverIntake, claimId, featureToggles } = props;
+  const { serverIntake, claimId, featureToggles, userCanWithdrawIssues} = props;
 
   serverIntake.relationships = formatRelationships(serverIntake.relationships);
   serverIntake.contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
@@ -23,6 +23,7 @@ export const mapDataToInitialState = function(props = {}) {
     ...serverIntake,
     claimId,
     featureToggles,
+    userCanWithdrawIssues,
     addIssuesModalVisible: false,
     nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,

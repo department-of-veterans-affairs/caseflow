@@ -26,6 +26,16 @@ class AsyncableJobsController < ApplicationController
     render json: job.asyncable_ui_hash
   end
 
+  def add_note
+    job_note = JobNote.create!(
+      job: job,
+      user: current_user,
+      note: allowed_params[:note],
+      send_to_intake_user: allowed_params[:send_to_intake_user]
+    )
+    render json: job_note.ui_hash
+  end
+
   private
 
   helper_method :jobs, :job, :allowed_params, :pagination
@@ -66,6 +76,7 @@ class AsyncableJobsController < ApplicationController
   end
 
   def verify_access
+    return true if current_user.admin?
     return true if current_user.can?("Admin Intake")
 
     Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
@@ -82,6 +93,6 @@ class AsyncableJobsController < ApplicationController
   end
 
   def allowed_params
-    params.permit(:asyncable_job_klass, :id, :page)
+    params.permit(:asyncable_job_klass, :id, :page, :note, :send_to_intake_user)
   end
 end

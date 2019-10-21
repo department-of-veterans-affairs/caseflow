@@ -198,6 +198,7 @@ Rails.application.routes.draw do
 
   resources :asyncable_jobs, param: :klass, only: [] do
     resources :jobs, controller: :asyncable_jobs, param: :id, only: [:index, :show, :update]
+    post "jobs/:id/note", to: "asyncable_jobs#add_note"
   end
   match '/jobs' => 'asyncable_jobs#index', via: [:get]
 
@@ -206,10 +207,11 @@ Rails.application.routes.draw do
     patch "/messages/:id", to: "inbox#update"
   end
 
-  resources :users, only: [:index]
+  resources :users, only: [:index, :update]
   resources :users, only: [:index] do
     get 'represented_organizations', on: :member
   end
+  get 'user', to: 'users#search_by_css_id'
   get 'user_info/represented_organizations'
 
   get 'cases/:veteran_ids', to: 'appeals#show_case_list'
@@ -228,6 +230,8 @@ Rails.application.routes.draw do
   post '/team_management/private_bar', to: 'team_management#create_private_bar'
   post '/team_management/national_vso', to: 'team_management#create_national_vso'
   post '/team_management/field_vso', to: 'team_management#create_field_vso'
+
+  resources :user_management, only: [:index]
 
   get '/search', to: 'appeals#show_case_list'
 

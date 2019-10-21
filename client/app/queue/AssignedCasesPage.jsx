@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
+
 import StatusMessage from '../components/StatusMessage';
 import TaskTable from './components/TaskTable';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { reassignTasksToUser } from './QueueActions';
+import { reassignTasksToUser, fetchTasksAndAppealsOfAttorney, fetchAmaTasksOfUser } from './QueueActions';
 import { selectedTasksSelector, getAssignedTasks } from './selectors';
 import AssignWidget from './components/AssignWidget';
 import {
@@ -18,6 +20,7 @@ class AssignedCasesPage extends React.Component {
   componentDidMount = () => {
     this.props.resetSuccessMessages();
     this.props.resetErrorMessages();
+    this.fetchAttorneyTasks();
   }
 
   componentDidUpdate = (prevProps) => {
@@ -27,6 +30,17 @@ class AssignedCasesPage extends React.Component {
     if (attorneyId !== prevAttorneyId) {
       this.props.resetSuccessMessages();
       this.props.resetErrorMessages();
+      this.fetchAttorneyTasks();
+    }
+  }
+
+  fetchAttorneyTasks = () => {
+    const { match, attorneyAppealsLoadingState } = this.props;
+    const { attorneyId } = match.params;
+
+    if (!attorneyAppealsLoadingState || !(attorneyId in attorneyAppealsLoadingState)) {
+      this.props.fetchTasksAndAppealsOfAttorney(attorneyId, { role: 'judge' });
+      this.props.fetchAmaTasksOfUser(attorneyId, 'attorney');
     }
   }
 
@@ -77,6 +91,21 @@ class AssignedCasesPage extends React.Component {
   }
 }
 
+AssignedCasesPage.propTypes = {
+  resetSuccessMessages: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
+  match: PropTypes.object,
+  attorneyAppealsLoadingState: PropTypes.object,
+  fetchTasksAndAppealsOfAttorney: PropTypes.func,
+  fetchAmaTasksOfUser: PropTypes.func,
+  attorneysOfJudge: PropTypes.array,
+  reassignTasksToUser: PropTypes.func,
+  tasksOfAttorney: PropTypes.array,
+  selectedTasks: PropTypes.array,
+  success: PropTypes.object,
+  error: PropTypes.object
+};
+
 const mapStateToProps = (state, ownProps) => {
   const { attorneyAppealsLoadingState, attorneysOfJudge } = state.queue;
   const {
@@ -102,5 +131,7 @@ export default (connect(
   (dispatch) => (bindActionCreators({
     reassignTasksToUser,
     resetErrorMessages,
-    resetSuccessMessages
+    resetSuccessMessages,
+    fetchTasksAndAppealsOfAttorney,
+    fetchAmaTasksOfUser
   }, dispatch)))(AssignedCasesPage));

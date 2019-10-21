@@ -44,6 +44,18 @@ class ApplicationController < ApplicationBaseController
     end
   end
 
+  def admin_menu_items
+    [
+      {
+        title: COPY::TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK,
+        link: url_for(controller: "/team_management", action: "index")
+      }, {
+        title: COPY::USER_MANAGEMENT_PAGE_DROPDOWN_LINK,
+        link: url_for(controller: "/user_management", action: "index")
+      }
+    ]
+  end
+
   def handle_non_critical_error(endpoint, err)
     error_type = err.class.name
     if !err.class.method_defined? :serialize_response
@@ -126,16 +138,8 @@ class ApplicationController < ApplicationBaseController
       { title: "Release History", link: release_history_url, target: "_blank" }
     ]
 
-    if current_user&.administered_teams&.any?
-      urls.concat(manage_teams_menu_items)
-    end
-
-    if Bva.singleton.user_has_access?(current_user)
-      urls.append(
-        title: COPY::TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK,
-        link: url_for(controller: "/team_management", action: "index")
-      )
-    end
+    urls.concat(manage_teams_menu_items) if current_user&.administered_teams&.any?
+    urls.concat(admin_menu_items) if Bva.singleton.user_has_access?(current_user)
 
     if ApplicationController.dependencies_faked?
       urls.append(title: "Switch User", link: url_for(controller: "/test/users", action: "index"))

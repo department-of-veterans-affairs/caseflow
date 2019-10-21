@@ -29,8 +29,8 @@ describe UnassignedTasksTab, :postgres do
       end
 
       it "does not include optional columns" do
-        expect(subject).to_not include(Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN)
-        expect(subject).to_not include(Constants.QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN)
+        expect(subject).to_not include(Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name)
+        expect(subject).to_not include(Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name)
       end
     end
 
@@ -38,7 +38,7 @@ describe UnassignedTasksTab, :postgres do
       let(:show_regional_office_column) { true }
 
       it "includes the regional office column" do
-        expect(subject).to include(Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN)
+        expect(subject).to include(Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name)
       end
     end
 
@@ -46,7 +46,7 @@ describe UnassignedTasksTab, :postgres do
       let(:show_reader_link_column) { true }
 
       it "includes the reader link column" do
-        expect(subject).to include(Constants.QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN)
+        expect(subject).to include(Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name)
       end
     end
   end

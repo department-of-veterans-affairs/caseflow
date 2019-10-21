@@ -17,7 +17,7 @@ RSpec.feature "Remove a Hearing Day", :postgres do
   context "When removing an existing hearing day" do
     scenario "select and remove a hearing day" do
       visit "hearings/schedule"
-      find_link(hearing_day.scheduled_for.strftime("%a%_m/%d/%Y")).click
+      find_link(hearing_day.scheduled_for.strftime("%a %-m/%d/%Y")).click
       expect(page).to have_content("Remove Hearing Day")
       expect(page).to have_content("No Veterans are scheduled for this hearing day.")
       find("button", text: "Remove Hearing Day").click
