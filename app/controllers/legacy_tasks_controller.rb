@@ -95,6 +95,10 @@ class LegacyTasksController < ApplicationController
   end
   helper_method :user
 
+  def appeal
+    @appeal ||= LegacyAppeal.find(legacy_task_params[:appeal_id])
+  end
+
   def legacy_task_params
     params.require("tasks")
       .permit(:appeal_id)
@@ -119,7 +123,6 @@ class LegacyTasksController < ApplicationController
   end
 
   def create_with_das
-    appeal = LegacyAppeal.find(legacy_task_params[:appeal_id])
     tasks = DasDeprecation::AssignTaskToAttorney.create_attorney_task(appeal.vacols_id, current_user, assigned_to)
     params = { user: current_user, role: current_role }
 
@@ -129,7 +132,6 @@ class LegacyTasksController < ApplicationController
   end
 
   def reassign_with_das
-    appeal = LegacyAppeal.find(legacy_task_params[:appeal_id])
     task = DasDeprecation::AssignTaskToAttorney.reassign_attorney_task(appeal.vacols_id, current_user, assigned_to)
 
     render json: {
