@@ -2382,23 +2382,15 @@ describe LegacyAppeal, :all_dbs do
   end
 
   context "#cancel_open_caseflow_tasks!" do
-    let!(:colocated_users) do
-      2.times { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
-    end
     let(:vacols_case) { create(:case, bfcurloc: "CASEFLOW") }
     let(:vacols_case2) { create(:case, bfcurloc: "CASEFLOW") }
-    let(:appeal2) { create(:legacy_appeal, :with_colocated_tasks, vacols_case: vacols_case2) }
+    let(:appeal2) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case2) }
     let(:vacols_case3) { create(:case, bfcurloc: "CASEFLOW") }
-    let(:appeal3) { create(:legacy_appeal, :with_colocated_tasks, :with_schedule_hearing_tasks, vacols_case: vacols_case3) }
+    let(:appeal3) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case3) }
 
     context "if there are no Caseflow tasks on the legacy appeal" do
       it "throws no errors" do
-        byebug
-        appeal2.cancel_open_caseflow_tasks!
-        byebug
-
-        expect(appeal2.tasks.count).to eq(0)
-        expect(appeal3.tasks.open.count).to eq(4)
+        expect { appeal.cancel_open_caseflow_tasks! }.not_to raise_error
       end
     end
 
@@ -2408,15 +2400,15 @@ describe LegacyAppeal, :all_dbs do
           appeal2.cancel_open_caseflow_tasks!
 
           expect(appeal2.tasks.open.count).to eq(0)
-          expect(appeal2.tasks.closed.count).to eq(2)
-          expect(appeal3.tasks.open.count).to eq(4)
+          expect(appeal2.tasks.closed.count).to eq(3)
+          expect(appeal3.tasks.open.count).to eq(3)
         end
       end
 
       context "open and closed caseflow tasks" do
         it "doesn't affect the already closed tasks" do
           appeal3.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
-          original_closed_at = appeal3.closed_at
+          original_closed_at = appeal3.root_task.closed_at
 
           appeal3.cancel_open_caseflow_tasks!
 
@@ -2522,4 +2514,5 @@ describe LegacyAppeal, :all_dbs do
       end
     end
   end
+
 end
