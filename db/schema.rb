@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191015204516) do
+ActiveRecord::Schema.define(version: 20191017235707) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -416,6 +416,14 @@ ActiveRecord::Schema.define(version: 20191015204516) do
     t.integer "tag_id", null: false
     t.datetime "updated_at"
     t.index ["document_id", "tag_id"], name: "index_documents_tags_on_document_id_and_tag_id", unique: true
+  end
+
+  create_table "end_product_code_updates", force: :cascade, comment: "Caseflow establishes end products in VBMS with specific end product codes. If that code is changed outside of Caseflow, that is tracked here." do |t|
+    t.string "code", null: false, comment: "The new end product code, if it has changed since last checked."
+    t.datetime "created_at", null: false
+    t.bigint "end_product_establishment_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["end_product_establishment_id"], name: "index_end_product_code_updates_on_end_product_establishment_id"
   end
 
   create_table "end_product_establishments", force: :cascade, comment: "Represents end products that have been, or need to be established by Caseflow. Used to track the status of those end products as they are processed in VBMS and/or SHARE." do |t|
