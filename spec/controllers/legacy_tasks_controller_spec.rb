@@ -339,6 +339,8 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
         response_body = JSON.parse(response.body)["task"]["data"]
         expect(response_body["attributes"]["assigned_to"]["id"]).to eq attorney2.id
       end
+    end
+  end
 
   describe "POST legacy_tasks/assign_to_judge" do
     let(:assigning_judge) { create(:user) }
