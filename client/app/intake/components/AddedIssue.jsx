@@ -8,6 +8,7 @@ import COPY from '../../../COPY.json';
 
 import { legacyIssue } from '../util/issues';
 import { formatDateStr } from '../../util/DateUtil';
+import { CORRECTION_TYPE_OPTIONS } from '../constants';
 
 class AddedIssue extends React.PureComponent {
   needsEligibilityCheck() {
@@ -89,6 +90,12 @@ class AddedIssue extends React.PureComponent {
     }
   }
 
+  getCorrectionType = (issue) => {
+    const correction = _.find(CORRECTION_TYPE_OPTIONS, (opt) => opt.value === issue.correctionType);
+
+    return correction ? `This issue will be added to a 930 ${correction.displayText} EP for correction` : '';
+  }
+
   render() {
     let { issue, issueIdx } = this.props;
     let eligibleState = {
@@ -128,7 +135,7 @@ class AddedIssue extends React.PureComponent {
       { issue.withdrawalDate && <p>Withdrawn on {formatDateStr(issue.withdrawalDate)}</p> }
       { issue.endProductCleared && <p>Status: Cleared, waiting for decision</p> }
       { issue.correctionType && <p className="correction-pending">
-          This issue will be added to a 930 EP for correction
+        {this.getCorrectionType(issue)}
       </p> }
     </div>;
   }
