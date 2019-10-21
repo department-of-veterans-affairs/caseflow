@@ -139,6 +139,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       expect(json.keys).to include('data', 'included')
     end
     let(:request_issues){ higher_level_review.request_issues.includes(:decision_review, :contested_decision_issue).active_or_ineligible_or_withdrawn }
+    let(:decision_issues){ higher_level_review.fetch_all_decision_issues }
     context 'data' do
       subject do
         get_higher_level_review
@@ -235,7 +236,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           # TODO test some values
         end
         it 'should include decision issues' do
-          expect(subject['decisionIssues']['data'].count).to eq higher_level_review.fetch_all_decision_issues.count
+          expect(subject['decisionIssues']['data'].count).to eq decision_issues.count
           # TODO test some values
         end
       end
@@ -250,13 +251,13 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         expect(subject).to be_a Array
       end
       it 'should include one veteran' do
-        expect(subject.any?{|obj| obj['type'] == 'veteran'}).to eq true
+        expect(subject.any?{|obj| obj['type'] == 'Veteran'}).to eq true
       end
       it 'should include a claimaint when present' do
-        expect(subject.any?{|obj| obj['type'] == 'claimant'}).to eq true
+        expect(subject.any?{|obj| obj['type'] == 'Claimant'}).to eq true
       end
       it 'should include RequestIssues' do
-        expect(subject.count{|obj| obj['type'] == 'requestIssue'}).to eq request_issues.count
+        expect(subject.count{|obj| obj['type'] == 'RequestIssue'}).to eq request_issues.count
       end
       it 'should include DecisionIssues'
     end

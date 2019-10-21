@@ -3,7 +3,7 @@ class Api::V3::HigherLevelReviewSerializer
   set_key_transform :camel_lower
 
   set_id :uuid
-  set_type 'HigherLevelReview' # FIXME fasjonapi is making first letter lower
+  self.record_type = 'HigherLevelReview'
 
   attribute :status do |object|
     object.fetch_status
