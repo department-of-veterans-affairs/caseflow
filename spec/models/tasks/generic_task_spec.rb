@@ -446,6 +446,8 @@ describe GenericTask, :postgres do
       let(:incomplete_children_cnt) { 5 }
       let!(:incomplete_children) { create_list(:generic_task, incomplete_children_cnt, parent_id: task.id) }
 
+      before { task.on_hold! }
+
       it "reassign method should return list with old and new tasks and incomplete child tasks" do
         expect(subject.length).to eq(2 + incomplete_children_cnt)
       end
@@ -456,9 +458,28 @@ describe GenericTask, :postgres do
 
         new_task = task.parent.children.open.first
         expect(new_task.children.length).to eq(incomplete_children_cnt)
+        expect(new_task.status).to eq(Constants.TASK_STATUSES.on_hold)
 
         task.reload
         expect(task.children.length).to eq(completed_children_cnt)
+      end
+
+      context "when the children are task timers" do
+        let(:incomplete_children_cnt) { 1 }
+        let!(:incomplete_children) { create_list(:timed_hold_task, incomplete_children_cnt, parent_id: task.id) }
+
+        it "children timer tasks are adopted by new task and not cancelled" do
+          expect { subject }.to_not raise_error
+          expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
+
+          new_task = task.parent.children.open.first
+          expect(new_task.children.length).to eq(incomplete_children_cnt)
+          expect(new_task.children.all?(&:assigned?)).to eq(true)
+          expect(new_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+
+          task.reload
+          expect(task.children.length).to eq(completed_children_cnt)
+        end
       end
     end
   end
