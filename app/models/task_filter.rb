@@ -36,17 +36,31 @@ class TaskFilter
     where_string = TaskFilter.where_string_from_filters(filters)
     where_arguments = filters.map(&:values).reject(&:empty?)
 
-    if filter_params.any? { |filter_string| filter_string[/typeColumn&val=.*is_aod/] }
-      where_string << "#{where_string.present? ? ' AND ' : ''}cached_appeal_attributes.is_aod = true"
-    end
-
     [where_string] + where_arguments
   end
 
   def self.where_string_from_filters(filters)
     filters.map do |filter|
-      filter.values.present? ? "#{table_column_from_name(filter.column)} IN (?)" : nil
+      if filter.values.present?
+        create_where_clause(filter)
+      end
     end.compact.join(" AND ")
+  end
+
+  def self.create_where_clause(filter)
+    clause = "#{table_column_from_name(filter.column)} IN (?)"
+    filter_selections = filter.values
+    if filter.column == Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name &&
+       filter_selections.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
+      clause = extract_aod_clause(filter, clause)
+    end
+    clause
+  end
+
+  def self.extract_aod_clause(filter, orig_clause)
+    filter.values.delete(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
+    is_aod_clause = "cached_appeal_attributes.is_aod = true"
+    filter.values.empty? ? is_aod_clause : "(#{orig_clause} OR #{is_aod_clause})"
   end
 
   def self.table_column_from_name(column_name)

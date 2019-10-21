@@ -21,10 +21,6 @@ class QueueFilterParameter
     filter_hash = Rack::Utils.parse_query(filter_string)
     values = filter_hash["val"]&.split(",")&.map { |value| escaped_value(value) }
 
-    if filter_hash["col"].eql?(Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name)
-      values.reject! { |value| value.eql?("is_aod") }
-    end
-
     new(column: filter_hash["col"], values: values)
   end
 
