@@ -250,20 +250,25 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         expect(subject).to be_a Array
       end
       it 'should include one veteran' do
-        veteran = subject.find{|obj| obj['type'] == 'Veteran'}
+        veteran = subject.find { |obj| obj['type'] == 'Veteran' }
         expect(veteran).to_not be_nil
         expect(veteran['attributes'].keys).to include('firstName', 'middleName', 'lastName', 'nameSuffix', 'fileNumber', 'ssn', 'participantId')
       end
       it 'should include a claimaint when present' do
-        claimaint = subject.find{|obj| obj['type'] == 'Claimant'}
+        claimaint = subject.find { |obj| obj['type'] == 'Claimant' }
         expect(claimaint).to_not be_nil
         expect(claimaint['attributes'].keys).to include('firstName', 'middleName', 'lastName', 'payeeCode','relationshipType')
       end
       it 'should include RequestIssues' do
-        expect(subject.count{|obj| obj['type'] == 'RequestIssue'}).to eq request_issues.count
+        included_request_issues = subject.select { |obj| obj['type'] == 'RequestIssue'}
+        expect(included_request_issues.count).to eq request_issues.count
+        expect(included_request_issues.first['attributes'].keys).to include('active', 'statusDescription', 'diagnosticCode', 'ratingIssueId', 'ratingIssueProfileDate', 'ratingDecisionReferenceId', 'description', 'contentionText', 'approxDecisionDate', 'category', 'notes', 'isUnidentified', 'rampClaimId', 'legacyAppealId', 'legacyAppealIssueId', 'ineligibleReason', 'ineligibleDueToId', 'decisionReviewTitle', 'titleOfActiveReview', 'decisionIssueId', 'withdrawalDate', 'contestedIssueDescription', 'endProductCleared', 'endProductCode')
       end
       it 'should include DecisionIssues' do
-        expect(subject.count{|obj| obj['type'] == 'DecisionIssue'}).to eq decision_issues.count
+        included_decision_issues = subject.select { |obj| obj['type'] == 'DecisionIssue'}
+        expect(included_decision_issues.count).to eq decision_issues.count
+        # TODO enable this when there's an included DecisionISsue
+        # expect(included_decision_issues.first['attributes'].keys).to include('approxDecisionDate', 'decisionText', 'description', 'disposition', 'finalized')
       end
     end
   end
