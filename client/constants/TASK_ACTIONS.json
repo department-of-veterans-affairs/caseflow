@@ -115,6 +115,10 @@
     "label": "Ready for Dispatch",
     "value": "modal/check_cavc"
   },
+  "JUDGE_RETURN_TO_LIT_SUPPORT": {
+    "value": "modal/return_to_lit_support",
+    "func": "return_to_lit_support_data"
+  },
   "JUDGE_RETURN_TO_ATTORNEY": {
     "label": "Return to attorney",
     "value": "modal/return_to_attorney",

@@ -66,6 +66,8 @@ Rails.application.configure do
     config.log_level = :error
   end
 
+  config.action_mailer.delivery_method = :test
+
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 

@@ -74,8 +74,9 @@ describe RequestIssue, :all_dbs do
     ]
   end
 
-  let(:rating_request_issue_attrs) do
-    {
+  let!(:rating_request_issue) do
+    create(
+      :request_issue,
       decision_review: review,
       contested_rating_issue_reference_id: contested_rating_issue_reference_id,
       contested_rating_decision_reference_id: contested_rating_decision_reference_id,
@@ -93,18 +94,12 @@ describe RequestIssue, :all_dbs do
       closed_status: closed_status,
       ineligible_reason: ineligible_reason,
       edited_description: edited_description
-    }
-  end
-
-  let!(:rating_request_issue) do
-    create(
-      :request_issue,
-      rating_request_issue_attrs
     )
   end
 
-  let(:nonrating_request_issue_attrs) do
-    {
+  let!(:nonrating_request_issue) do
+    create(
+      :request_issue,
       decision_review: review,
       nonrating_issue_description: "a nonrating request issue description",
       contested_issue_description: nonrating_contested_issue_description,
@@ -114,13 +109,6 @@ describe RequestIssue, :all_dbs do
       end_product_establishment: end_product_establishment,
       contention_reference_id: nonrating_contention_reference_id,
       benefit_type: benefit_type
-    }
-  end
-
-  let!(:nonrating_request_issue) do
-    create(
-      :request_issue,
-      nonrating_request_issue_attrs
     )
   end
 
@@ -150,6 +138,45 @@ describe RequestIssue, :all_dbs do
           closed_at: Time.zone.now,
           closed_status: "ineligible"
         )
+      end
+    end
+  end
+
+  context "#remanded?" do
+    subject { rating_request_issue.remanded? }
+
+    context "when not contesting a decision issue" do
+      it { is_expected.to be_falsey }
+    end
+
+    context "when contesting a decision issue" do
+      let!(:decision_issue) { create(:decision_issue, decision_review: another_review, disposition: disposition) }
+      let(:another_review) { create(:higher_level_review) }
+      let(:disposition) { nil }
+      let(:contested_decision_issue_id) { decision_issue.id }
+
+      context "when the decision issue has a remanded disposition" do
+        let(:disposition) { "remanded" }
+
+        it { is_expected.to eq true }
+      end
+
+      context "when the decision issue does not have a remand disposition" do
+        let(:disposition) { "granted" }
+
+        it { is_expected.to be_falsey }
+
+        context "when the decision issue is from a remand supplemental claim" do
+          let(:another_review) { create(:supplemental_claim, decision_review_remanded: create(:appeal)) }
+
+          it { is_expected.to be_falsey }
+
+          context "when the decision issue from the same review (it is a correction)" do
+            let(:review) { another_review }
+
+            it { is_expected.to eq true }
+          end
+        end
       end
     end
   end

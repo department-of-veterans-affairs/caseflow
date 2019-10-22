@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
@@ -41,7 +42,7 @@ class CaseHearingsDetail extends React.PureComponent {
       </React.Fragment>
     }];
 
-    if (hearing.viewedByJudge && !userIsVsoEmployee) {
+    if (!userIsVsoEmployee) {
       hearingAttrs.push(
         {
           label: '',
@@ -167,6 +168,16 @@ class CaseHearingsDetail extends React.PureComponent {
     </React.Fragment>;
   };
 }
+
+CaseHearingsDetail.propTypes = {
+  appeal: PropTypes.shape({
+    hearings: PropTypes.array,
+    caseType: PropTypes.string,
+    completedHearingOnPreviousAppeal: PropTypes.bool
+  }),
+  showVeteranCaseList: PropTypes.func,
+  userIsVsoEmployee: PropTypes.bool
+};
 
 const mapStateToProps = (state) => {
   return { userIsVsoEmployee: state.ui.userIsVsoEmployee };

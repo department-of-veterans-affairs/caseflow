@@ -6,14 +6,10 @@ class Organizations::UsersController < OrganizationsController
       format.html { render template: "queue/index" }
       format.json do
         organization_users = organization.users
-        remaining_users = User.where.not(id: organization_users.pluck(:id))
-
-        remaining_users = remaining_users.select { |user| user.roles.include?(organization.role) } if organization.role
 
         render json: {
           organization_name: organization.name,
-          organization_users: json_administered_users(organization_users),
-          remaining_users: json_users(remaining_users)
+          organization_users: json_administered_users(organization_users)
         }
       end
     end

@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+##
+# When a veteran submits their form for an Appeal, Supplemental Claim, or Higher Level Review, they list the prior
+# decisions that they want to contest. These are intaken into Caseflow as request issues.  Request issues can also
+# be generated when a decision gets remanded or vacated.
+
 class RequestIssue < ApplicationRecord
   include Asyncable
   include HasBusinessLine
@@ -566,6 +571,10 @@ class RequestIssue < ApplicationRecord
   end
 
   def remanded?
+    # if this request issue is a correction for a decision issue from a remand supplemental claim,
+    # consider it a remanded request issue regardless of the decision issue disposition
+    return contested_decision_issue&.decision_review.try(:decision_review_remanded?) if decision_correction?
+
     contested_decision_issue&.remanded?
   end
 
