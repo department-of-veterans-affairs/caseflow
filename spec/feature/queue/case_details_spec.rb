@@ -91,7 +91,7 @@ RSpec.feature "Case details", :all_dbs do
           .click_link
 
         expect(page).to have_content("Select an action")
-
+        expect(page).to have_content(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
         expect(page).to have_content("Type: #{hearing.readable_request_type}")
         expect(page).to have_content("Date: #{hearing.scheduled_for.strftime('%-m/%-d/%y')}")
         expect(page).to have_content("Judge: #{hearing.user.full_name}")

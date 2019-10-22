@@ -61,6 +61,10 @@ clean:  ## Clean logs, compiled webpack assets, and temporary files
 	rm -rf public/assets
 	rm -rf tmp/capybara
 
+realclean: clean
+	rm -rf client/node_modules
+	rm -f client/package-lock.json
+
 facols-bash:  ## Connect to the docker FACOLS instance
 	docker exec --tty -i VACOLS_DB bash
 

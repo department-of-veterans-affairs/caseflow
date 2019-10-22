@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Hearing < ApplicationRecord
+  include HasVirtualHearing
+
   belongs_to :hearing_day
   belongs_to :appeal
   belongs_to :judge, class_name: "User"

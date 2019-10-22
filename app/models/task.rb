@@ -474,9 +474,11 @@ class Task < ApplicationRecord
       task.save!
     end
 
-    update!(status: Constants.TASK_STATUSES.cancelled)
+    # Preserve the open children and status of the old task
+    children.open.update_all(parent_id: sibling.id)
+    sibling.update!(status: status)
 
-    children.open.each { |task| task.update!(parent_id: sibling.id) }
+    update!(status: Constants.TASK_STATUSES.cancelled)
 
     [sibling, self, sibling.children].flatten
   end
