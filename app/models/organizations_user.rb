@@ -4,7 +4,7 @@ class OrganizationsUser < ApplicationRecord
   belongs_to :organization
   belongs_to :user
 
-  has_one :judge_team_roles, dependent: :destroy
+  has_one :judge_team_role, class_name: "::JudgeTeamRole", dependent: :destroy
 
   scope :non_admin, -> { where(admin: false) }
 
