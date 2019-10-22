@@ -11,6 +11,7 @@ import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, actionNameOfTask, regionalOfficeCity,
   renderAppealType } from '../utils';
+  import { DateString } from '../../util/DateUtil';
 
 import COPY from '../../../COPY.json';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
@@ -172,6 +173,8 @@ export const assignedToColumn = (tasks, filterOptions) => {
   };
 };
 
+export const readerLinkColumnWithNewDocsIcon = (requireDasRecord) => readerLinkColumn(requireDasRecord, true);
+
 export const readerLinkColumn = (requireDasRecord, includeNewDocsIcon) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
@@ -241,5 +244,15 @@ export const completedToNameColumn = () => {
     valueFunction: (task) =>
       task.assignedBy ? `${task.assignedBy.firstName} ${task.assignedBy.lastName}` : null,
     getSortValue: (task) => task.assignedBy ? task.assignedBy.lastName : null
+  };
+};
+
+export const taskCompletedDateColumn = () => {
+  return {
+    header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name,
+    valueFunction: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null,
+    backendCanSort: true,
+    getSortValue: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null
   };
 };

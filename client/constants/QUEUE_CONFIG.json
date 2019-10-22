@@ -42,6 +42,9 @@
       "sorting_table": "cached_appeal_attributes",
       "sorting_columns": ["issue_count"]
     },
+    "READER_LINK_WITH_NEW_DOCS_ICON": {
+      "name": "readerLinkWithNewDocIconColumn"
+    },
     "REGIONAL_OFFICE": {
       "filterable": true,
       "name": "regionalOfficeColumn",

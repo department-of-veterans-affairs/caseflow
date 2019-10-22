@@ -305,15 +305,15 @@ class User < ApplicationRecord
   end
 
   def assigned_tasks_tab
-    ::AssignedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+    ::IndividuallyAssignedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def on_hold_tasks_tab
-    ::OnHoldTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+    ::IndividuallyOnHoldTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def completed_tasks_tab
-    ::CompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+    ::IndividuallyCompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def can_bulk_assign_tasks?
@@ -321,7 +321,7 @@ class User < ApplicationRecord
   end
 
   def show_regional_office_in_queue?
-    false
+    HearingsManagement.singleton.user_has_access?(self)
   end
 
   def show_reader_link_column?
