@@ -2,7 +2,6 @@
 
 class JudgeTeam < Organization
   def self.for_judge(user)
-    # JudgeTeamLead.all.detect { |role| role.user == user }&.organization
     user.administered_teams.detect { |team| team.is_a?(JudgeTeam) }
   end
 
