@@ -4,11 +4,10 @@ class Api::V3::RequestIssueSerializer
 
   self.record_type = 'RequestIssue'
 
-  attributes :diagnostic_code, :description,
-    :contention_text, :notes, :is_unidentified,
-    :ramp_claim_id, :ineligible_reason,
+  attributes :diagnostic_code, :description, :contention_text, :notes,
+    :is_unidentified, :ramp_claim_id, :ineligible_reason,
     :ineligible_due_to_id, :withdrawal_date, :contested_issue_description,
-    :end_product_code
+    :end_product_code, :title_of_active_review
 
   attribute :active do |object|
     object.closed_at.nil? && object.ineligible_reason.nil?
@@ -23,8 +22,7 @@ class Api::V3::RequestIssueSerializer
   attribute :legacy_appeal_id, &:vacols_id
   attribute :legacy_appeal_issue_id, &:vacols_sequence_id
   attribute :decision_review_title, &:review_title # REVIEW do we want to rename this?
-  # attribute :title_of_active_review # REVIEW what is this?
-  # attribute :decision_issue_id # REVIEW this is a has_many
+  attribute :decision_issue_id, &:contested_decision_issue_id
   attribute :end_product_cleared do |object|
     object.end_product_establishment&.status_cleared?
   end
