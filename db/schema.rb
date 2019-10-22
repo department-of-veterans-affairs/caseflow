@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191017235707) do
+ActiveRecord::Schema.define(version: 20191021215017) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -713,6 +713,14 @@ ActiveRecord::Schema.define(version: 20191017235707) do
     t.string "quality"
     t.string "task_id"
     t.datetime "updated_at", null: false
+  end
+
+  create_table "judge_team_roles", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "organizations_user_id"
+    t.string "type"
+    t.datetime "updated_at", null: false
+    t.index ["organizations_user_id"], name: "index_judge_team_roles_on_organizations_user_id", unique: true
   end
 
   create_table "legacy_appeals", force: :cascade do |t|

@@ -1,0 +1,1 @@
+class DecisionDraftingAttorney < JudgeTeamRole; end
