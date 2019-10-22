@@ -244,7 +244,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         end
       end
     end
-    context 'included' do
+    fcontext 'included' do
       subject do
         get_higher_level_review
         JSON.parse(response.body)['included']
@@ -257,10 +257,15 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         expect(veteran).to_not be_nil
         expect(veteran['attributes'].keys).to include('firstName', 'middleName', 'lastName', 'nameSuffix', 'fileNumber', 'ssn', 'participantId')
       end
-      it 'should include a claimaint when present' do
-        claimaint = subject.find { |obj| obj['type'] == 'Claimant' }
-        expect(claimaint).to_not be_nil
-        expect(claimaint['attributes'].keys).to include('firstName', 'middleName', 'lastName', 'payeeCode','relationshipType')
+      it 'should include a claimant' do
+        claimant = subject.find { |obj| obj['type'] == 'Claimant' }
+        expect(claimant).to_not be_nil
+        expect(claimant['attributes'].keys).to include('firstName', 'middleName', 'lastName', 'payeeCode','relationshipType')
+      end
+      it 'should not have a claimant when one is not present' do
+        higher_level_review.claimants.delete_all
+        claimant = subject.find { |obj| obj['type'] == 'Claimant' }
+        expect(claimant).to be_nil
       end
       it 'should include RequestIssues' do
         included_request_issues = subject.select { |obj| obj['type'] == 'RequestIssue'}
