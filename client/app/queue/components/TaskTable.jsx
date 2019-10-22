@@ -16,12 +16,12 @@ import PropTypes from 'prop-types';
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
 import { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn, regionalOfficeColumn, daysWaitingColumn,
-  issueCountColumn, typeColumn, assignedToColumn, readerLinkColumn, daysOnHoldColumn, completedToNameColumn, taskCompletedDateColumn } from
+  issueCountColumn, typeColumn, assignedToColumn, readerLinkColumn, daysOnHoldColumn, completedToNameColumn,
+  taskCompletedDateColumn } from
   './TaskTableColumns';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { hasDASRecord } from '../utils';
-import { DateString } from '../../util/DateUtil';
 import COPY from '../../../COPY.json';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
 

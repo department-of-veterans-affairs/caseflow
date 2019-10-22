@@ -3,13 +3,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 
-import TaskTable from './components/TaskTable';
 import QueueTable from './QueueTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
-import { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn, regionalOfficeColumn, issueCountColumn,
-  typeColumn, assignedToColumn, daysWaitingColumn, daysOnHoldColumn, readerLinkColumn, completedToNameColumn,
-  taskCompletedDateColumn, readerLinkColumnWithNewDocsIcon } from
+import { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn, regionalOfficeColumn, typeColumn,
+  daysWaitingColumn, daysOnHoldColumn, readerLinkColumn, completedToNameColumn, taskCompletedDateColumn,
+  readerLinkColumnWithNewDocsIcon } from
   './components/TaskTableColumns';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -20,7 +20,6 @@ import {
 } from './selectors';
 import { hideSuccessMessage } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
-import COPY from '../../COPY.json';
 import {
   fullWidth,
   marginBottom
@@ -74,22 +73,22 @@ class ColocatedTaskListView extends React.PureComponent {
     tabConfig.columns.map((column) => this.createColumnObject(column, config, tasks));
 
   taskTableTabFactory = (tabConfig, config) => {
-      const tasks = this.tasksForTab(tabConfig.name);
+    const tasks = this.tasksForTab(tabConfig.name);
 
-      return {
-        label: sprintf(tabConfig.label, tasks.length),
-        page: <React.Fragment>
-          <p className="cf-margin-top-0">{tabConfig.description}</p>
-          <QueueTable
-            key={tabConfig.name}
-            columns={this.columnsFromConfig(config, tabConfig, tasks)}
-            rowObjects={tasks}
-            getKeyForRow={(_rowNumber, task) => task.uniqueId}
-            enablePagination
-          />
-        </React.Fragment>
-      };
-    }
+    return {
+      label: sprintf(tabConfig.label, tasks.length),
+      page: <React.Fragment>
+        <p className="cf-margin-top-0">{tabConfig.description}</p>
+        <QueueTable
+          key={tabConfig.name}
+          columns={this.columnsFromConfig(config, tabConfig, tasks)}
+          rowObjects={tasks}
+          getKeyForRow={(_rowNumber, task) => task.uniqueId}
+          enablePagination
+        />
+      </React.Fragment>
+    };
+  }
 
   tabsFromConfig = (config) => config.tabs.map((tabConfig) => this.taskTableTabFactory(tabConfig, config));
 
@@ -128,3 +127,14 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListView));
+
+ColocatedTaskListView.propTypes = {
+  assignedTasks: PropTypes.array,
+  clearCaseSelectSearch: PropTypes.func,
+  completedTasks: PropTypes.array,
+  hideSuccessMessage: PropTypes.func,
+  onHoldTasks: PropTypes.array,
+  organizations: PropTypes.array,
+  queueConfig: PropTypes.object,
+  success: PropTypes.object
+};

@@ -11,7 +11,7 @@ import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, actionNameOfTask, regionalOfficeCity,
   renderAppealType } from '../utils';
-  import { DateString } from '../../util/DateUtil';
+import { DateString } from '../../util/DateUtil';
 
 import COPY from '../../../COPY.json';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
@@ -173,8 +173,6 @@ export const assignedToColumn = (tasks, filterOptions) => {
   };
 };
 
-export const readerLinkColumnWithNewDocsIcon = (requireDasRecord) => readerLinkColumn(requireDasRecord, true);
-
 export const readerLinkColumn = (requireDasRecord, includeNewDocsIcon) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
@@ -195,6 +193,8 @@ export const readerLinkColumn = (requireDasRecord, includeNewDocsIcon) => {
     }
   };
 };
+
+export const readerLinkColumnWithNewDocsIcon = (requireDasRecord) => readerLinkColumn(requireDasRecord, true);
 
 export const daysWaitingColumn = (requireDasRecord) => {
   return {
