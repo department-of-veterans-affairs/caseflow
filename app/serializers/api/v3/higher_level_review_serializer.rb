@@ -9,10 +9,9 @@ class Api::V3::HigherLevelReviewSerializer
     object.fetch_status
   end
 
-  attributes :aoj, :description, :benefit_type, :receipt_date, :informal_conference, :same_office, :legacy_opt_in_approved
+  attributes :aoj, :description, :benefit_type, :receipt_date, :informal_conference,
+    :same_office, :legacy_opt_in_approved, :alerts, :events
   attribute :program_area, &:program
-  attribute :alerts
-  attribute :events
 
   has_one :veteran do |object|
     object.veteran
