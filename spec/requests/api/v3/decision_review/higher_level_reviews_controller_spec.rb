@@ -270,7 +270,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       it 'should include RequestIssues' do
         included_request_issues = subject.select { |obj| obj['type'] == 'RequestIssue'}
         expect(included_request_issues.count).to eq request_issues.count
-        expect(included_request_issues.first['attributes'].keys).to include('active', 'statusDescription', 'diagnosticCode', 'ratingIssueId', 'ratingIssueProfileDate', 'ratingDecisionReferenceId', 'description', 'contentionText', 'approxDecisionDate', 'category', 'notes', 'isUnidentified', 'rampClaimId', 'legacyAppealId', 'legacyAppealIssueId', 'ineligibleReason', 'ineligibleDueToId', 'decisionReviewTitle', 'titleOfActiveReview', 'decisionIssueId', 'withdrawalDate', 'contestedIssueDescription', 'endProductCleared', 'endProductCode')
+        expect(included_request_issues.first['attributes'].keys).to include('active', 'statusDescription', 'diagnosticCode', 'ratingIssueId', 'ratingIssueProfileDate', 'ratingDecisionId', 'description', 'contentionText', 'approxDecisionDate', 'category', 'notes', 'isUnidentified', 'rampClaimId', 'legacyAppealId', 'legacyAppealIssueId', 'ineligibleReason', 'ineligibleDueToId', 'decisionReviewTitle', 'titleOfActiveReview', 'decisionIssueId', 'withdrawalDate', 'contestedIssueDescription', 'endProductCleared', 'endProductCode')
       end
       it 'should include DecisionIssues' do
         included_decision_issues = subject.select { |obj| obj['type'] == 'DecisionIssue'}

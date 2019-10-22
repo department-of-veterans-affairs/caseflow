@@ -962,7 +962,7 @@ paths:
                                   type: string
                                   format: date
                                   nullable: true
-                                ratingDecisionReferenceId:
+                                ratingDecisionId:
                                   type: string
                                   nullable: true
                                 description:
