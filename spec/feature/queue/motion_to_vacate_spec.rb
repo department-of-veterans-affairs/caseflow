@@ -240,6 +240,42 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(new_task.instructions.join("")).to eq(instructions)
     end
 
+    it "judge grants partial vacatur (straight vacate)" do
+      address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
+      find("label[for=disposition_partial]").click
+      find("label[for=vacate-type_straight_vacate_and_readjudication]").click
+      fill_in("instructions", with: judge_notes)
+
+      # Ensure it has pre-selected attorney previously assigned to case
+      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
+
+      select_issue_for_vacature(1)
+
+      click_button(text: "Submit")
+
+      # Return back to user's queue
+      expect(page).to have_current_path("/queue")
+
+      # Verify PostDecisionMotion is created
+      motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
+      expect(motion).to_not be_nil
+      expect(motion.disposition).to eq("partial")
+
+      # Verify new task creation
+      instructions = format_judge_instructions(
+        notes: judge_notes,
+        disposition: "partial",
+        vacate_type: "straight_vacate_and_readjudication"
+      )
+      new_task = StraightVacateAndReadjudicationTask.find_by(assigned_to: drafting_attorney)
+      expect(new_task).to_not be_nil
+      expect(new_task.label).to eq COPY::STRAIGHT_VACATE_AND_READJUDICATION_TASK_LABEL
+      expect(new_task.available_actions(motions_attorney)).to include(
+        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
+      )
+      expect(new_task.instructions.join("")).to eq(instructions)
+    end
+
     it "judge denies motion to vacate" do
       address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
       find("label[for=disposition_denied]").click
@@ -422,5 +458,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
     expect(page).to have_content(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label)
     # Close dropdown
     action_dropdown.click
+  end
+
+  def select_issue_for_vacature(issue_id)
+    find(".checkbox-wrapper-issues").find("label[for=\"#{issue_id}\"]").click
   end
 end
