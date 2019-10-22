@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require_dependency Rails.root.join('app', 'serializers', 'api', 'v3', 'higher_level_review_serializer')
 
 class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseController
   SUCCESSFUL_CREATION_HTTP_STATUS = 202
