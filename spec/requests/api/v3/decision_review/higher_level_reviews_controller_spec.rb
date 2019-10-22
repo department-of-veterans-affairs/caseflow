@@ -195,10 +195,14 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
             JSON.parse(response.body)['data']['attributes']['alerts']
           end
           it 'should have the same alerts' do
+            higher_level_review.decision_issues << create(:decision_issue)
+            higher_level_review.end_product_establishments.first.update(synced_status: 'CLR')
             expect(subject.count).to eq higher_level_review.alerts.count
-            #TODO include an alert
+
+            higher_level_review.alerts.collect { |alert| JSON.parse(alert.to_json) }.each do |alert_data|
+              expect(subject).to include(alert_data)
+            end
           end
-          fit 'should ensure the value matches'
         end
         it 'should include events' do
           expect(subject['events']).to be_a Array
