@@ -103,19 +103,6 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       }
     ]
   end
-  let(:params) do
-    {
-      data: data,
-      included: included
-    }
-  end
-
-  let(:post_params) do
-    [
-      "/api/v3/decision_review/higher_level_reviews",
-      { params: params, headers: { "Authorization" => "Token #{api_key}" } }
-    ]
-  end
 
   describe "#show" do
     let!(:higher_level_review) do
@@ -286,6 +273,20 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
   end
 
   describe "#create" do
+    let(:params) do
+      {
+        data: data,
+        included: included
+      }
+    end
+
+    let(:post_params) do
+      [
+        "/api/v3/decision_review/higher_level_reviews",
+        { params: params, headers: { "Authorization" => "Token #{api_key}" } }
+      ]
+    end
+
     context do
       before do
         allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
