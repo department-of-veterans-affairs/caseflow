@@ -15,8 +15,9 @@ class HearingDispositionChangeJob < CaseflowJob
 
   def complete_hearing_disposition_tasks
     start_time = Time.zone.now
-    hearing_ids = []
     error_count = 0
+    hearing_ids = []
+
     # Set user to system_user to avoid sensitivity errors
     RequestStore.store[:current_user] = User.system_user
 
