@@ -349,7 +349,7 @@ describe "task rake tasks", :postgres do
       let(:task_count) { 4 }
       let(:parent_assignee) { create(:organization) }
       let(:parent_task_type) { :generic_task }
-      let(:parent_tasks) { create_list(:generic_task, task_count, assigned_to: parent_assignee) }
+      let(:parent_tasks) { create_list(:generic_task, task_count, :on_hold, assigned_to: parent_assignee) }
 
       let(:task_type) { :generic_task }
       let!(:tasks) do
@@ -545,6 +545,138 @@ describe "task rake tasks", :postgres do
                 expect(new_tasks.all? { |task| task.assigned_to == judge_team.judge }).to eq true
                 expect(new_tasks.all? { |task| task.status == "on_hold" }).to eq true
                 expect(new_tasks.all? { |task| task.children.length == 1 }).to eq true
+              end
+            end
+          end
+        end
+      end
+
+      context "the tasks have parent tasks assigned to an organization" do
+        context "when the organization does not use automatic assignment of tasks" do
+          context "when on a dry run" do
+            it "only describes what changes will be made" do
+              count = task_count
+              ids = tasks.pluck(:id).reverse
+              expected_output = <<~OUTPUT
+                *** DRY RUN
+                *** pass 'false' as the third argument to execute
+                Would cancel #{count} tasks with ids #{ids.join(', ')} and move #{count} parent tasks back to the
+                organization's unassigned queue tab
+              OUTPUT
+              expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+              # TODO: fix
+              # expect { subject }.to output(expected_output).to_stdout
+              subject
+              tasks.each { |task| expect(task.reload.assigned?).to eq true }
+              expect(GenericTask.open.count).to eq count * 2
+              expect(tasks.map(&:parent_id)).to eq parent_tasks.map(&:id)
+            end
+          end
+
+          context "when executing" do
+            let(:dry_run) { false }
+
+            it "describes what changes will be made and makes them" do
+              count = task_count
+              ids = tasks.pluck(:id).reverse
+              expected_output = <<~OUTPUT
+                *** DRY RUN
+                *** pass 'false' as the third argument to execute
+                Cancelling #{count} tasks with ids #{ids.join(', ')} and moving #{count} parent tasks back to the
+                organization's unassigned queue tab
+              OUTPUT
+              # TODO: fix
+              # expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+              # expect(Rails.logger).to receive(:info).with(expected_output)
+              # expect { subject }.to output(expected_output).to_stdout
+              subject
+              tasks.each { |task| expect(task.reload.cancelled?).to eq true }
+              parent_tasks.each { |task| expect(task.reload.assigned?).to eq true }
+              expect(GenericTask.open.count).to eq count
+            end
+          end
+        end
+
+        fcontext "when the organization uses automatic assignment of tasks" do
+          let(:team_member_count) { task_count * 2 }
+          let(:parent_assignee) { Colocated.singleton }
+
+          before do
+            team_member_count.times { |_| OrganizationsUser.add_user_to_organization(create(:user), parent_assignee) }
+          end
+
+          context "when on a dry run" do
+            it "only describes what changes will be made" do
+              count = task_count
+              ids = tasks.pluck(:id).reverse
+              expected_output = <<~OUTPUT
+                *** DRY RUN
+                *** pass 'false' as the third argument to execute
+                Would reassign #{count} tasks with ids #{ids.join(', ')} to #{team_member_count} members of the
+                #{parent_assignee.name} organization
+              OUTPUT
+              expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+              # TODO: fix
+              # expect { subject }.to output(expected_output).to_stdout
+              subject
+              tasks.each { |task| expect(task.reload.assigned?).to eq true }
+              expect(GenericTask.open.count).to eq count * 2
+              expect(tasks.map(&:parent_id)).to eq parent_tasks.map(&:id)
+            end
+          end
+
+          context "when executing" do
+            let(:dry_run) { false }
+
+            context "when there are more organization members than tasks to reassign" do
+              it "describes what changes will be made and makes them" do
+                count = task_count
+                ids = tasks.pluck(:id).reverse
+                expected_output = <<~OUTPUT
+                  *** DRY RUN
+                  *** pass 'false' as the third argument to execute
+                  Reassigning #{count} tasks with ids #{ids.join(', ')} to #{team_member_count} members of the
+                  #{parent_assignee.name} organization
+                OUTPUT
+                # TODO: fix
+                # expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+                # expect(Rails.logger).to receive(:info).with(expected_output)
+                # expect { subject }.to output(expected_output).to_stdout
+                subject
+                tasks.each { |task| expect(task.reload.cancelled?).to eq true }
+                parent_tasks.each { |task| expect(task.reload.on_hold?).to eq true }
+                new_tasks = GenericTask.open.where(assigned_to_type: User.name)
+                new_tasks.each { |task| expect(task.reload.assigned?).to eq true }
+                expect(parent_task.map(&:id)).to new_tasks.map(&:parent_id)
+                expect(new_tasks.distinct.pluck(:assigned_to_id).count).to eq count
+              end
+            end
+
+            context "when there are fewer organization members than tasks to reassign" do
+              let(:task_count) { 12 }
+              let(:team_member_count) { task_count / 4 }
+
+              it "describes what changes will be made and makes them" do
+                count = task_count
+                ids = tasks.pluck(:id).reverse
+                expected_output = <<~OUTPUT
+                  *** DRY RUN
+                  *** pass 'false' as the third argument to execute
+                  Reassigning #{count} tasks with ids #{ids.join(', ')} to #{team_member_count} members of the
+                  #{parent_assignee.name} organization
+                OUTPUT
+                # TODO: fix
+                # expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+                # expect(Rails.logger).to receive(:info).with(expected_output)
+                # expect { subject }.to output(expected_output).to_stdout
+                subject
+                tasks.each { |task| expect(task.reload.cancelled?).to eq true }
+                parent_tasks.each { |task| expect(task.reload.on_hold?).to eq true }
+                new_tasks = GenericTask.open.where(assigned_to_type: User.name)
+                new_tasks.each { |task| expect(task.reload.assigned?).to eq true }
+                expect(parent_task.map(&:id)).to new_tasks.map(&:parent_id)
+                expect(new_tasks.distinct.pluck(:assigned_to_id).count).to eq team_member_count
+                expect(new_tasks.group(:assigned_to_id).count.values.all?(task_count / team_member_count)).to eq true
               end
             end
           end

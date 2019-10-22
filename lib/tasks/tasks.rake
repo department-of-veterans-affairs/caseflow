@@ -163,15 +163,18 @@ namespace :tasks do
     ActiveRecord::Base.multi_transaction do
       reassign_judge_assign_tasks(target_tasks.where(type: JudgeAssignTask.name), dry_run)
       reassign_judge_review_tasks(target_tasks.where(type: JudgeDecisionReviewTask.name), user.css_id, dry_run)
-      tasks_with_org_parents = target_tasks
-        .where.not(type: [JudgeAssignTask.name, JudgeDecisionReviewTask.name])
-        .where("parents_tasks.assigned_to_type = ?", Organization.name)
-        .pluck("tasks.id, parents_tasks.assigned_to_type")
-      reassign_tasks_with_parent_org_tasks(tasks_with_org_parents.map(&:first), dry_run)
-      tasks_with_user_parents = target_tasks
-        .where("parents_tasks.assigned_to_type = ?", User.name)
-        .pluck("tasks.id, parents_tasks.assigned_to_type")
-      reassign_tasks_with_parent_user_tasks(tasks_with_user_parents.map(&:first), dry_run)
+
+      all_other_tasks = target_tasks.where.not(type: [JudgeAssignTask.name, JudgeDecisionReviewTask.name])
+
+      parents_assigned_to_orgs = Task.where(id: all_other_tasks.pluck(:parent_id), assigned_to_type: Organization.name)
+      reassign_tasks_with_parent_org_tasks(
+        all_other_tasks.where(parent_id: parents_assigned_to_orgs.pluck(:id)), dry_run
+      )
+
+      parents_assigned_to_users = Task.where(id: all_other_tasks.pluck(:parent_id), assigned_to_type: User.name)
+      reassign_tasks_with_parent_user_tasks(
+        all_other_tasks.where(parent_id: parents_assigned_to_users.pluck(:id)), dry_run
+      )
     end
   end
 
@@ -281,12 +284,53 @@ namespace :tasks do
     end
   end
 
-  def reassign_tasks_with_parent_org_tasks(task_ids, dry_run)
+  def reassign_tasks_with_parent_org_tasks(tasks, dry_run)
+    parent_tasks = Task.where(id: tasks.pluck(:parent_id))
+    parent_tasks.distinct.pluck(:assigned_to_id).each do |org_id|
+      child_tasks_of_org = tasks.where(parent_id: parent_tasks.where(assigned_to_id: org_id))
+      if Organization.find(org_id).automatically_assign_to_member?
+        reassign_automatically_assigned_org_tasks(child_tasks_of_org, dry_run)
+      else
+        reassign_manually_assigned_org_tasks(child_tasks_of_org, dry_run)
+      end
+    end
   end
 
-  def reassign_tasks_with_parent_user_tasks(task_ids, dry_run)
+  def reassign_manually_assigned_org_tasks(tasks, dry_run)
+    task_ids = tasks.pluck(:id)
+    cancel = dry_run ? "Would cancel" : "Cancelling"
+    move = dry_run ? "move" : "moving"
+    message = "#{cancel} #{task_ids.count} tasks with ids #{task_ids.join(', ')} and #{move} #{task_ids.count} parent" \
+              "tasks back to the organization's unassigned queue tab"
+    puts message
+
+    if !dry_run
+      Rails.logger.tagged("rake tasks:reassign_from_user") { Rails.logger.info(message) }
+      Task.where(id: tasks.pluck(:parent_id)).update_all(status: Constants.TASK_STATUSES.assigned)
+      tasks.update_all(status: Constants.TASK_STATUSES.cancelled)
+    end
   end
 
-  def reassign_automatically_assign_org_tasks(tasks, org)
+  def reassign_automatically_assigned_org_tasks(tasks, dry_run)
+    assigned_to_organization = tasks.first.assigned_to
+    active_org_user_count = assigned_to_organization.users.active.count
+    task_ids = tasks.pluck(:id)
+    reassign = dry_run ? "Would reassign" : "Reassigning"
+    message = "#{reassign} #{task_ids.count} tasks with ids #{task_ids.join(', ')} to #{team_member_count} members of" \
+              " the #{assigned_to_organization.name} organization"
+    puts message
+
+    if !dry_run
+      Rails.logger.tagged("rake tasks:reassign_from_user") { Rails.logger.info(message) }
+      tasks.in_groups(active_org_user_count, false).each do |task_group|
+        next_assignee_id = assigned_to_organization.next_assignee.id
+        task_group.each do |task|
+          task.reassign({ assigned_to_type: User.name, assigned_to_id: next_assignee_id }, task.assigned_by)
+        end
+      end
+    end
+  end
+
+  def reassign_tasks_with_parent_user_tasks(tasks, dry_run)
   end
 end
