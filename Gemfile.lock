@@ -160,6 +160,8 @@ GEM
     capybara-screenshot (1.0.23)
       capybara (>= 1.0, < 4)
       launchy
+    capybara-slow_finder_errors (0.1.5)
+      capybara (~> 3.0)
     childprocess (1.0.1)
       rake (< 13.0)
     claide (1.0.2)
@@ -517,6 +519,7 @@ GEM
       activerecord (>= 5)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
+    test-prof (0.10.1)
     therubyracer (0.12.3)
       libv8 (~> 3.16.14.15)
       ref
@@ -576,6 +579,7 @@ DEPENDENCIES
   byebug
   capybara
   capybara-screenshot
+  capybara-slow_finder_errors
   caseflow!
   connect_vbms!
   danger (~> 5.10)
@@ -630,6 +634,7 @@ DEPENDENCIES
   sniffybara!
   stringex
   strong_migrations
+  test-prof
   therubyracer
   timecop
   tty-tree
