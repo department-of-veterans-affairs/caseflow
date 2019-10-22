@@ -5,4 +5,6 @@ class JudgeTeamRole < ApplicationRecord
 
   has_one :user, through: :organizations_user
   has_one :organization, through: :organizations_user
+
+  validates :organizations_user, presence: true
 end
