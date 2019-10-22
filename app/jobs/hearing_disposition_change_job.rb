@@ -9,10 +9,14 @@ class HearingDispositionChangeJob < CaseflowJob
   application_attr :hearing_schedule
 
   def perform
-    start_time = Time.zone.now
-    error_count = 0
-    hearing_ids = []
+    complete_hearing_disposition_tasks
+    lock_hearing_days
+  end
 
+  def complete_hearing_disposition_tasks
+    start_time = Time.zone.now
+    hearing_ids = []
+    error_count = 0
     # Set user to system_user to avoid sensitivity errors
     RequestStore.store[:current_user] = User.system_user
 
@@ -83,6 +87,10 @@ class HearingDispositionChangeJob < CaseflowJob
       # we should never reach this, but will investigate if we do
       :unknown_disposition
     end
+  end
+
+  def lock_hearing_days
+    HearingDay.where("scheduled_for <= ?", 24.hours.ago).where(lock: [false, nil]).update_all(lock: true)
   end
 
   def log_info(start_time, task_count_for, error_count, hearing_ids, err = nil)
