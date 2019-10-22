@@ -259,8 +259,20 @@ DocumentsTable.propTypes = {
   onJumpToComment: PropTypes.func,
   sortBy: PropTypes.string,
   pdfList: PropTypes.shape({
-    lastReadDocId: PropTypes.number
-  })
+    lastReadDocId: PropTypes.number,
+    scrollTop: PropTypes.number
+  }),
+  changeSortState: PropTypes.func.isRequired,
+  clearCategoryFilters: PropTypes.func,
+  clearTagFilters: PropTypes.func,
+  documentPathBase: PropTypes.string,
+  annotationsPerDocument: PropTypes.object,
+  docFilterCriteria: PropTypes.object,
+  setCategoryFilter: PropTypes.func.isRequired,
+  setTagFilter: PropTypes.func.isRequired,
+  setDocListScrollPosition: PropTypes.func.isRequired,
+  toggleDropdownFilterVisibility: PropTypes.func.isRequired,
+  tagOptions: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
