@@ -524,4 +524,69 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       it { expect(JSON.parse(subject.body)["veteran"]["full_name"]).to eq "Test User" }
     end
   end
+
+  fdescribe "POST /appeals/:appeal_id/death_dismissal" do
+    let(:attorney) { create(:user) }
+    let(:user) { create(:user) }
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+    before do
+      #User.stub = user
+      #@staff_user = create(:staff, role, sdomainid: user.css_id)
+      #create(:staff, :attorney_role, sdomainid: attorney.css_id)
+    end
+
+    subject { post "/appeals/#{appeal.vacols_id}/death_dismissal" }
+
+    context "with invalid user (non-judge, non-vlj-support admin)" do
+      before { User.authenticate!(user: user) }
+      it "fails because user is not a judge or colocated admin" do
+        subject
+        expect(response.status).to eq(400)
+      end
+    end
+
+    context "when current user is a judge" do #todo for colocated as well
+     # let(:role) { :judge_role }
+     # let(:params) do
+     #   {
+     #     "appeal_id": appeal.id,
+     #     "assigned_to_id": attorney.id
+     #   }
+     # end
+     # before do
+     #   @appeal = create(:legacy_appeal, vacols_case: create(:case, staff: @staff_user))
+     # end
+
+      it "should be successful" #do
+      #  params = {
+      #    "appeal_id": @appeal.id,
+      #    "assigned_to_id": attorney.id
+      #  }
+      #  allow(QueueRepository).to receive(:assign_case_to_attorney!).with(
+      #    judge: user,
+      #    attorney: attorney,
+      #    vacols_id: @appeal.vacols_id
+      #  ).and_return(true)
+
+      #  post :create, params: { tasks: params }
+      #  expect(response.status).to eq 200
+      #  body = JSON.parse(response.body)
+      #  expect(body["task"]["data"]["attributes"]["appeal_id"]).to eq @appeal.id
+      #end
+
+      context "when appeal is not found" do
+        #let(:params) do
+        #  {
+        #    "appeal_id": 4_646_464,
+        #    "assigned_to_id": attorney.id
+        #  }
+        #end
+
+        it "should not be successful" #do
+        #  post :create, params: { tasks: params }
+        #  expect(response.status).to eq 404
+        #end
+      end
+    end
+  end
 end
