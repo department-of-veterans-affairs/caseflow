@@ -21,7 +21,7 @@ class Api::V3::RequestIssueSerializer
   attribute :category, &:nonrating_issue_category
   attribute :legacy_appeal_id, &:vacols_id
   attribute :legacy_appeal_issue_id, &:vacols_sequence_id
-  attribute :decision_review_title, &:review_title # REVIEW do we want to rename this?
+  attribute :decision_review_title, &:review_title
   attribute :decision_issue_id, &:contested_decision_issue_id
   attribute :end_product_cleared do |object|
     object.end_product_establishment&.status_cleared?

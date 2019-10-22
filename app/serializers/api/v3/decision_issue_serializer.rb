@@ -4,5 +4,6 @@ class Api::V3::DecisionIssueSerializer
 
   self.record_type = 'DecisionIssue'
 
-  attributes :approx_decision_date, :decision_text, :description, :disposition, :finalized
+  attributes :approx_decision_date, :decision_text, :description, :disposition
+  attribute :finalized, &:finalized?
 end

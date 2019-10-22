@@ -27,7 +27,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
 
   def show
     higher_level_review = HigherLevelReview.find_by_uuid(params[:id])
-    options = {include: [:veteran, :claimant, :request_issues]}
+    options = {include: [:veteran, :claimant, :request_issues, :decision_issues]}
     render json: Api::V3::HigherLevelReviewSerializer.new(higher_level_review, options)
   end
 

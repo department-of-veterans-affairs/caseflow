@@ -236,15 +236,15 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           expect(ri_relationships.collect{ |ri| ri['id'].to_i }).to include(*request_issues.collect{ |ri| ri.id })
         end
         it 'should include decision issues' do
+          higher_level_review.decision_issues << create(:decision_issue)
           expect(subject['decisionIssues']['data'].count).to eq decision_issues.count
           di_relationships = subject['decisionIssues']['data']
           expect(di_relationships.count).to eq decision_issues.count
           expect(di_relationships.collect{ |di| di['id'].to_i }).to include(*decision_issues.collect{ |di| di.id })
-          # TODO have a non-zero decision_issues collection
         end
       end
     end
-    fcontext 'included' do
+    context 'included' do
       subject do
         get_higher_level_review
         JSON.parse(response.body)['included']
@@ -273,10 +273,10 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         expect(included_request_issues.first['attributes'].keys).to include('active', 'statusDescription', 'diagnosticCode', 'ratingIssueId', 'ratingIssueProfileDate', 'ratingDecisionId', 'description', 'contentionText', 'approxDecisionDate', 'category', 'notes', 'isUnidentified', 'rampClaimId', 'legacyAppealId', 'legacyAppealIssueId', 'ineligibleReason', 'ineligibleDueToId', 'decisionReviewTitle', 'titleOfActiveReview', 'decisionIssueId', 'withdrawalDate', 'contestedIssueDescription', 'endProductCleared', 'endProductCode')
       end
       it 'should include DecisionIssues' do
+        higher_level_review.decision_issues << create(:decision_issue)
         included_decision_issues = subject.select { |obj| obj['type'] == 'DecisionIssue'}
         expect(included_decision_issues.count).to eq decision_issues.count
-        # TODO enable this when there's an included DecisionISsue
-        # expect(included_decision_issues.first['attributes'].keys).to include('approxDecisionDate', 'decisionText', 'description', 'disposition', 'finalized')
+        expect(included_decision_issues.first['attributes'].keys).to include('approxDecisionDate', 'decisionText', 'description', 'disposition', 'finalized')
       end
     end
   end
