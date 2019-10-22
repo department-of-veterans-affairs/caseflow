@@ -196,8 +196,9 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           end
           it 'should have the same alerts' do
             expect(subject.count).to eq higher_level_review.alerts.count
+            #TODO include an alert
           end
-          it 'should ensure the value matches'
+          fit 'should ensure the value matches'
         end
         it 'should include events' do
           expect(subject['events']).to be_a Array
@@ -209,8 +210,10 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           end
           it 'should have the same events' do
             expect(subject.count).to eq higher_level_review.events.count
+            subject.each do |event_data|
+              expect(higher_level_review.events.find { |e| e.type.to_s == event_data['type'] && e.date.strftime('%Y-%m-%d') == event_data['date']}).to_not be_nil
+            end
           end
-          it 'should ensure the value matches'
         end
       end
       it 'should have relationships' do
