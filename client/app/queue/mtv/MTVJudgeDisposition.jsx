@@ -96,18 +96,14 @@ export const MTVJudgeDisposition = ({
   };
 
   const isValid = () => {
-    if (
+    return !(
       !disposition ||
       !instructions ||
       !attorneyId ||
       (isGrantType() && !vacateType) ||
-      (isGrantType() && !issueIds.length) ||
+      (disposition === 'partial' && !issueIds.length) ||
       (!isGrantType() && !hyperlink)
-    ) {
-      return false;
-    }
-
-    return true;
+    );
   };
 
   return (
