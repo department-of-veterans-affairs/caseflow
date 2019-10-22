@@ -346,15 +346,17 @@ describe "task rake tasks", :postgres do
     end
 
     context "there are tasks to reassign" do
+      before { allow_any_instance_of(Task).to receive(:automatically_assign_org_task?).and_return(false) }
+
       let(:task_count) { 4 }
       let(:parent_assignee) { create(:organization) }
-      let(:parent_task_type) { :generic_task }
       let(:parent_tasks) { create_list(:generic_task, task_count, :on_hold, assigned_to: parent_assignee) }
 
       let(:task_type) { :generic_task }
       let!(:tasks) do
         parent_tasks.map { |parent| create(task_type, assigned_to: user, parent: parent) }
       end
+
 
       context "the tasks have no parents" do
         before { tasks.each { |task| task.update!(parent_id: nil) } }
@@ -597,7 +599,7 @@ describe "task rake tasks", :postgres do
           end
         end
 
-        fcontext "when the organization uses automatic assignment of tasks" do
+        context "when the organization uses automatic assignment of tasks" do
           let(:team_member_count) { task_count * 2 }
           let(:parent_assignee) { Colocated.singleton }
 
@@ -647,7 +649,7 @@ describe "task rake tasks", :postgres do
                 parent_tasks.each { |task| expect(task.reload.on_hold?).to eq true }
                 new_tasks = GenericTask.open.where(assigned_to_type: User.name)
                 new_tasks.each { |task| expect(task.reload.assigned?).to eq true }
-                expect(parent_task.map(&:id)).to new_tasks.map(&:parent_id)
+                expect(new_tasks.map(&:parent_id)).to match_array parent_tasks.map(&:id)
                 expect(new_tasks.distinct.pluck(:assigned_to_id).count).to eq count
               end
             end
@@ -674,11 +676,59 @@ describe "task rake tasks", :postgres do
                 parent_tasks.each { |task| expect(task.reload.on_hold?).to eq true }
                 new_tasks = GenericTask.open.where(assigned_to_type: User.name)
                 new_tasks.each { |task| expect(task.reload.assigned?).to eq true }
-                expect(parent_task.map(&:id)).to new_tasks.map(&:parent_id)
+                expect(new_tasks.map(&:parent_id)).to match_array parent_tasks.map(&:id)
                 expect(new_tasks.distinct.pluck(:assigned_to_id).count).to eq team_member_count
                 expect(new_tasks.group(:assigned_to_id).count.values.all?(task_count / team_member_count)).to eq true
               end
             end
+          end
+        end
+      end
+
+      context "the tasks have parent tasks assigned to a user" do
+        let(:parent_assignee) { create(:user) }
+        let(:task_type) { :task }
+
+        context "when on a dry run" do
+          it "only describes what changes will be made" do
+            count = task_count
+            ids = tasks.pluck(:id).reverse
+            expected_output = <<~OUTPUT
+              *** DRY RUN
+              *** pass 'false' as the third argument to execute
+              Would cancel #{count} tasks with ids #{ids.join(', ')} and move #{count} parent tasks back to the
+              parent's assigned user's assigned tab
+            OUTPUT
+            expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+            # TODO: fix
+            # expect { subject }.to output(expected_output).to_stdout
+            subject
+            tasks.each { |task| expect(task.reload.assigned?).to eq true }
+            expect(Task.open.count).to eq count * 2
+            expect(tasks.map(&:parent_id)).to eq parent_tasks.map(&:id)
+          end
+        end
+
+        context "when executing" do
+          let(:dry_run) { false }
+
+          it "describes what changes will be made and makes them" do
+            count = task_count
+            ids = tasks.pluck(:id).reverse
+            expected_output = <<~OUTPUT
+              *** DRY RUN
+              *** pass 'false' as the third argument to execute
+              Would cancel #{count} tasks with ids #{ids.join(', ')} and move #{count} parent tasks back to the
+              parent's assigned user's assigned tab
+            OUTPUT
+            # TODO: fix
+            # expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+            # expect(Rails.logger).to receive(:info).with(expected_output)
+            # expect { subject }.to output(expected_output).to_stdout
+            subject
+            tasks.each { |task| expect(task.reload.cancelled?).to eq true }
+            parent_tasks.each { |task| expect(task.reload.assigned?).to eq true }
+            expect(Task.open.count).to eq count
           end
         end
       end

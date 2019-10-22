@@ -312,12 +312,12 @@ namespace :tasks do
   end
 
   def reassign_automatically_assigned_org_tasks(tasks, dry_run)
-    assigned_to_organization = tasks.first.assigned_to
+    assigned_to_organization = tasks.first.parent.assigned_to
     active_org_user_count = assigned_to_organization.users.active.count
     task_ids = tasks.pluck(:id)
     reassign = dry_run ? "Would reassign" : "Reassigning"
-    message = "#{reassign} #{task_ids.count} tasks with ids #{task_ids.join(', ')} to #{team_member_count} members of" \
-              " the #{assigned_to_organization.name} organization"
+    message = "#{reassign} #{task_ids.count} tasks with ids #{task_ids.join(', ')} to #{active_org_user_count} " \
+              "members of the #{assigned_to_organization.name} organization"
     puts message
 
     if !dry_run
@@ -332,5 +332,17 @@ namespace :tasks do
   end
 
   def reassign_tasks_with_parent_user_tasks(tasks, dry_run)
+    task_ids = tasks.pluck(:id)
+    cancel = dry_run ? "Would cancel" : "Cancelling"
+    move = dry_run ? "move" : "moving"
+    message = "#{cancel} #{task_ids.count} tasks with ids #{task_ids.join(', ')} and #{move} #{task_ids.count} parent" \
+              "tasks back to the parent's assigned user's assigned tab"
+    puts message
+
+    if !dry_run
+      Rails.logger.tagged("rake tasks:reassign_from_user") { Rails.logger.info(message) }
+      Task.where(id: tasks.pluck(:parent_id)).update_all(status: Constants.TASK_STATUSES.assigned)
+      tasks.update_all(status: Constants.TASK_STATUSES.cancelled)
+    end
   end
 end
