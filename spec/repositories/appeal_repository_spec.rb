@@ -215,6 +215,22 @@ describe AppealRepository, :all_dbs do
     end
   end
 
+  context "#update_location_for_death_dismissal!" do
+    let(:appeal) do
+      create(:legacy_appeal, vacols_case: create(:case))
+    end
+
+    it "should end up in location 66" do
+      LegacyAppeal.repository.update_location_for_death_dismissal!(appeal: appeal)
+      appeal.case_record.reload
+      refreshed_appeal = LegacyAppeal.find(appeal.id)
+
+      expect(appeal.case_record.bfcurloc).to eq("66")
+      expect(refreshed_appeal.location_code).to eq("66")
+    end
+
+  end
+
   context "#location_after_dispatch" do
     let(:appeal) do
       create(:legacy_appeal, vacols_case: create(:case))
