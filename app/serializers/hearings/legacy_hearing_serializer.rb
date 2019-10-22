@@ -67,5 +67,6 @@ class LegacyHearingSerializer
       hearing_view.user_id == params[:current_user_id]
     end
   end
+  attribute :virtual, &:virtual?
   attribute :witness
 end
