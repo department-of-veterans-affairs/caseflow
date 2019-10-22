@@ -6,7 +6,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 export const MissingDenialDraftAlert = ({ to }) => (
   <div style={{ maxWidth: '46rem',
     marginBottom: '1.5em' }}>
-    <Alert type="warning">
+    <Alert type="warning" title="Please Note">
       If you weren't provided the denial draft ruling letter, please <Link to={to}>return to the motions attorney</Link>
       .
     </Alert>
