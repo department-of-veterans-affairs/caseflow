@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
 
+import { MTVDispositionSelection } from './MTVDispositionSelection';
 import {
   JUDGE_ADDRESS_MTV_TITLE,
   JUDGE_ADDRESS_MTV_DESCRIPTION,
@@ -12,7 +13,6 @@ import {
   JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL,
   JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL
 } from '../../../COPY.json';
-import { MTVDispositionSelection } from './MTVDispositionSelection';
 import TextareaField from '../../components/TextareaField';
 import RadioField from '../../components/RadioField';
 import { DISPOSITION_TEXT, VACATE_TYPE_OPTIONS } from '../../../constants/MOTION_TO_VACATE.json';
@@ -22,7 +22,7 @@ import Button from '../../components/Button';
 import { css } from 'glamor';
 import { MTVTaskHeader } from './MTVTaskHeader';
 import TextField from '../../components/TextField';
-import { MTVIssueSelection } from './MTVIssueSelection.jsx';
+import { MTVIssueSelection } from './MTVIssueSelection';
 
 const vacateTypeText = (val) => {
   const opt = VACATE_TYPE_OPTIONS.find((i) => i.value === val);
@@ -35,6 +35,7 @@ const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }
 
   switch (disposition) {
   case 'granted':
+  case 'partial':
     parts.push(`This will be a ${vacateTypeText(vacateType)}`);
     parts.push(instructions);
     break;
@@ -129,7 +130,10 @@ export const MTVJudgeDisposition = ({
         />
 
         {disposition && disposition === 'partial' && (
-          <MTVIssueSelection issues={appeal.issues} onChange={({ newIssueIds }) => setIssueIds(newIssueIds)} />
+          <MTVIssueSelection
+            issues={appeal.issues}
+            onChange={({ issueIds: newIssueIds }) => setIssueIds(newIssueIds)}
+          />
         )}
 
         {disposition && isGrantType() && (
