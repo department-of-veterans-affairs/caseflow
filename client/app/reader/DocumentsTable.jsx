@@ -168,6 +168,7 @@ class DocumentsTable extends React.Component {
           name="Receipt Date"
           id="receipt-date-header"
           classNames={['cf-document-list-button-header']}
+          ariaLabel="Sort by Receipt Date"
           onClick={() => this.props.changeSortState('receivedAt')}>
           Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortArrowIcon : notSortedIcon }
         </Button>,
@@ -182,6 +183,7 @@ class DocumentsTable extends React.Component {
         header: <Button id="type-header"
           name="Document Type"
           classNames={['cf-document-list-button-header']}
+          ariaLabel="Sort by Document Type"
           onClick={() => this.props.changeSortState('type')}>
           Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : notSortedIcon }
         </Button>,
