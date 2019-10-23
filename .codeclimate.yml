@@ -95,7 +95,7 @@ plugins:
           content: >
             Avoid using Capybara's `have_content` finder with RSpec's negative matcher. Capybara's
             `have_content` selector is a waiting selector, that will block until Capybara finds
-            the element. Prefer using a non-blocking matcher if possible`expect like
+            the element. Prefer using a non-blocking matcher if possible like
             `expect(page.has_no_content?('...')).to eq(true)`.
           path_patterns:
             - "spec/feature/**/*.rb"
