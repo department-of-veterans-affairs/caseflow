@@ -80,7 +80,7 @@ plugins:
         tests-sleep:
           pattern: sleep
           annotation: "Avoid using sleep in tests"
-          severity: minor
+          severity: info
           categories: Performance
           content: >
             Avoid using sleep in tests because it affects the performance of the
@@ -90,7 +90,7 @@ plugins:
         tests-capybara-non-waiting-finder:
           pattern: not_to have_content
           annotation: "Avoid using capybara's `have_content` with an RSpec negative matcher"
-          severity: minor
+          severity: info
           categories: Performance
           content: >
             Avoid using Capybara's `have_content` finder with RSpec's negative matcher. Capybara's
