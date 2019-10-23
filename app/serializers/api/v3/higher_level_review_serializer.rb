@@ -33,5 +33,4 @@ class Api::V3::HigherLevelReviewSerializer
     ).active_or_ineligible_or_withdrawn
   end
   # rubocop:enable Style/SymbolProc
-
 end
