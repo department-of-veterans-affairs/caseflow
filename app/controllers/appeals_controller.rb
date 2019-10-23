@@ -52,8 +52,6 @@ class AppealsController < ApplicationController
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
- #       fail Caseflow::Error::ActionForbiddenError, message: COPY::INVALID_DEATH_DISMISSAL_USER
-        fooasdfasd
         appeal.death_dismissal!
 
         render json: {}
