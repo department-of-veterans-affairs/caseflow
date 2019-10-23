@@ -88,7 +88,7 @@ plugins:
           path_patterns:
             - "spec/**/*.rb"
         tests-capybara-non-waiting-finder:
-          pattern: not_to have_content
+          pattern: not_to have_content\(?[^,]+\)?$
           annotation: "Avoid using capybara's `have_content` with an RSpec negative matcher"
           severity: info
           categories: Performance
