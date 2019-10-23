@@ -1053,11 +1053,42 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     end
 
     context "when organization id is passed" do
-      let(:org_assignee) { create(:organization) }
+      let(:task_count) { 2 }
+      let(:task_type) { GenericTask.name }
 
-      context "when there are no tasks" do
+      let(:org_assignee) { create(:organization) }
+      let(:parent_tasks) do
+        create_list(
+          :task,
+          task_count,
+          assigned_to: org_assignee,
+          type: task_type,
+          assigned_at: 5.days.ago,
+          started_at: 4.days.ago,
+          placed_on_hold_at: 3.days.ago,
+          closed_at: 2.days.ago
+        )
+      end
+
+      let(:assignee) { create(:user) }
+      let!(:tasks) do
+        parent_tasks.each do |parent_task|
+          create(
+            :task,
+            assigned_to: assignee,
+            type: task_type,
+            assigned_at: 5.days.ago,
+            started_at: 4.days.ago,
+            placed_on_hold_at: 3.days.ago,
+            closed_at: 2.days.ago,
+            parent: parent_task
+          )
+        end
+      end
+
+      context "when there are no tasks assigned to the organization" do
         it "should not return any tasks" do
-          get :visualization, params: { organization_id: org_assignee.id }
+          get :visualization, params: { organization_id: create(:organization).id }
           expect(response.status).to eq 200
           response_body = JSON.parse(response.body)["tasks"]
 
@@ -1066,22 +1097,6 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       end
 
       context "when there are tasks" do
-        let(:task_count) { 2 }
-        let(:assignee) { create(:user) }
-        let(:task_type) { GenericTask.name }
-        let!(:tasks) do
-          create_list(
-            :generic_task,
-            task_count,
-            assigned_to: assignee,
-            type: task_type,
-            assigned_at: 5.days.ago,
-            started_at: 4.days.ago,
-            placed_on_hold_at: 3.days.ago,
-            closed_at: 2.days.ago
-          )
-        end
-
         it "should process the request successfully" do
           get :visualization, params: { organization_id: org_assignee.id }
           expect(response.status).to eq 200
