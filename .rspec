@@ -3,4 +3,3 @@
 --require rails_helper
 --format documentation
 --profile 20
---pattern "spec/models/*.rb"
