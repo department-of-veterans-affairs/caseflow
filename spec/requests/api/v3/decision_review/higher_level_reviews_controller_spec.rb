@@ -106,11 +106,14 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
   describe "#show" do
     let!(:higher_level_review) do
-      processor = Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(ActionController::Parameters.new(data: data, included: included), create(:user))
+      processor = Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(
+        ActionController::Parameters.new(data: data, included: included),
+        create(:user)
+      )
       processor.run!
       processor.higher_level_review
     end
-    def get_higher_level_review
+    def get_higher_level_review # rubocop:disable Naming/AccessorMethodName
       get(
         "/api/v3/decision_review/higher_level_reviews/#{higher_level_review.uuid}",
         headers: { "Authorization" => "Token #{api_key}" }
@@ -125,7 +128,10 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       json = JSON.parse(response.body)
       expect(json.keys).to include("data", "included")
     end
-    let(:request_issues) { higher_level_review.request_issues.includes(:decision_review, :contested_decision_issue).active_or_ineligible_or_withdrawn }
+    let(:request_issues) do
+      higher_level_review.request_issues
+        .includes(:decision_review, :contested_decision_issue).active_or_ineligible_or_withdrawn
+    end
     let(:decision_issues) { higher_level_review.fetch_all_decision_issues }
     context "data" do
       subject do
@@ -202,7 +208,10 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           it "should have the same events" do
             expect(subject.count).to eq higher_level_review.events.count
             subject.each do |event_data|
-              expect(higher_level_review.events.find { |e| e.type.to_s == event_data["type"] && e.date.strftime("%Y-%m-%d") == event_data["date"] }).to_not be_nil
+              event = higher_level_review.events.find do |e|
+                e.type.to_s == event_data["type"] && e.date.strftime("%Y-%m-%d") == event_data["date"]
+              end
+              expect(event).to_not be_nil
             end
           end
         end
@@ -246,12 +255,16 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       it "should include one veteran" do
         veteran = subject.find { |obj| obj["type"] == "Veteran" }
         expect(veteran).to_not be_nil
-        expect(veteran["attributes"].keys).to include("firstName", "middleName", "lastName", "nameSuffix", "fileNumber", "ssn", "participantId")
+        expect(veteran["attributes"].keys).to include(
+          "firstName", "middleName", "lastName", "nameSuffix", "fileNumber", "ssn", "participantId"
+        )
       end
       it "should include a claimant" do
         claimant = subject.find { |obj| obj["type"] == "Claimant" }
         expect(claimant).to_not be_nil
-        expect(claimant["attributes"].keys).to include("firstName", "middleName", "lastName", "payeeCode", "relationshipType")
+        expect(claimant["attributes"].keys).to include(
+          "firstName", "middleName", "lastName", "payeeCode", "relationshipType"
+        )
       end
       it "should not have a claimant when one is not present" do
         higher_level_review.claimants.delete_all
@@ -261,13 +274,22 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       it "should include RequestIssues" do
         included_request_issues = subject.select { |obj| obj["type"] == "RequestIssue" }
         expect(included_request_issues.count).to eq request_issues.count
-        expect(included_request_issues.first["attributes"].keys).to include("active", "statusDescription", "diagnosticCode", "ratingIssueId", "ratingIssueProfileDate", "ratingDecisionId", "description", "contentionText", "approxDecisionDate", "category", "notes", "isUnidentified", "rampClaimId", "legacyAppealId", "legacyAppealIssueId", "ineligibleReason", "ineligibleDueToId", "decisionReviewTitle", "titleOfActiveReview", "decisionIssueId", "withdrawalDate", "contestedIssueDescription", "endProductCleared", "endProductCode")
+        expect(included_request_issues.first["attributes"].keys).to include(
+          "active", "statusDescription", "diagnosticCode", "ratingIssueId", "ratingIssueProfileDate",
+          "ratingDecisionId", "description", "contentionText", "approxDecisionDate", "category",
+          "notes", "isUnidentified", "rampClaimId", "legacyAppealId", "legacyAppealIssueId",
+          "ineligibleReason", "ineligibleDueToId", "decisionReviewTitle", "titleOfActiveReview",
+          "decisionIssueId", "withdrawalDate", "contestedIssueDescription", "endProductCleared",
+          "endProductCode"
+        )
       end
       it "should include DecisionIssues" do
         higher_level_review.decision_issues << create(:decision_issue)
         included_decision_issues = subject.select { |obj| obj["type"] == "DecisionIssue" }
         expect(included_decision_issues.count).to eq decision_issues.count
-        expect(included_decision_issues.first["attributes"].keys).to include("approxDecisionDate", "decisionText", "description", "disposition", "finalized")
+        expect(included_decision_issues.first["attributes"].keys).to include(
+          "approxDecisionDate", "decisionText", "description", "disposition", "finalized"
+        )
       end
     end
   end
