@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-fdescribe VisualizationTasksSelector, :postgres do
+describe VisualizationTasksSelector, :postgres do
   describe ".new"  do
     let(:args) { { organization_id: organization_id } }
 
@@ -31,14 +31,12 @@ fdescribe VisualizationTasksSelector, :postgres do
     let(:task_count) { 2 }
     let(:task_type) { GenericTask.name }
 
-    let(:organization_id) { create(:organization).id }
-
-    let(:assignee) { create(:user) }
-    let!(:tasks) do
+    let(:org_assignee) { create(:organization) }
+    let(:parent_tasks) do
       create_list(
         :task,
         task_count,
-        assigned_to: assignee,
+        assigned_to: org_assignee,
         type: task_type,
         assigned_at: 5.days.ago,
         started_at: 4.days.ago,
@@ -50,10 +48,34 @@ fdescribe VisualizationTasksSelector, :postgres do
     subject { VisualizationTasksSelector.new(args).tasks }
 
     context "when only the organization is passed" do
-      let(:args) { { organization_id: organization_id } }
+      let(:args) { { organization_id: org_assignee.id } }
 
-      it "returns all tasks" do
-        expect(subject.length).to eq task_count
+      context "when there are no child tasks assigned to the organization users" do
+        it "doesn't return any tasks" do
+          expect(subject.length).to eq 0
+        end
+      end
+
+      context "when there are child tasks assigned to the organization users" do
+        let(:assignee) { create(:user) }
+        let!(:tasks) do
+          parent_tasks.each do |parent_task|
+            create(
+              :task,
+              assigned_to: assignee,
+              type: task_type,
+              assigned_at: 5.days.ago,
+              started_at: 4.days.ago,
+              placed_on_hold_at: 3.days.ago,
+              closed_at: 2.days.ago,
+              parent: parent_task
+            )
+          end
+        end
+
+        it "only returns tasks where the parent is assigned to the organization" do
+          expect(subject.length).to eq task_count
+        end
       end
     end
 

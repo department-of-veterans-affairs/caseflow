@@ -1038,7 +1038,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     end
   end
 
-  fdescribe "GET tasks/visualization" do
+  describe "GET tasks/visualization" do
     let(:user) { create(:default_user) }
 
     before do

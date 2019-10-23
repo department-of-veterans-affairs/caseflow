@@ -14,6 +14,10 @@ class VisualizationTasksSelector
   end
 
   def tasks
-    Task.where(assigned_to_type: User.name)
+    Task.where(assigned_to_type: User.name, parent_id: parent_tasks.pluck(:id))
+  end
+
+  def parent_tasks
+    Task.where(assigned_to_type: Organization.name, assigned_to_id: organization_id)
   end
 end
