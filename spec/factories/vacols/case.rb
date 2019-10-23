@@ -199,6 +199,10 @@ FactoryBot.define do
       bfmpro { "ADV" }
     end
 
+    trait :status_motion do
+      bfmpro { "MOT" }
+    end
+
     trait :disposition_allowed do
       bfdc { "1" }
     end
