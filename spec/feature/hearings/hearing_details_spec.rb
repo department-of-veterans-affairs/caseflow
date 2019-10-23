@@ -31,9 +31,9 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
     scenario "User can update fields", skip: "Test is flakey" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
-      click_dropdown(name: "judgeDropdown", index: 0, wait: 30)
-      click_dropdown(name: "hearingCoordinatorDropdown", index: 0, wait: 30)
-      click_dropdown(name: "hearingRoomDropdown", index: 0, wait: 30)
+      click_dropdown(name: "judgeDropdown", index: 0, wait: 10)
+      click_dropdown(name: "hearingCoordinatorDropdown", index: 0, wait: 10)
+      click_dropdown(name: "hearingRoomDropdown", index: 0, wait: 10)
       find("label", text: "Yes, Waive 90 Day Evidence Hold").click
 
       fill_in "Notes", with: generate_words(10)
@@ -86,9 +86,9 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
     scenario "User can select judge, hearing room, hearing coordinator, and add notes" do
       visit "hearings/" + legacy_hearing.external_id.to_s + "/details"
 
-      click_dropdown(name: "judgeDropdown", index: 0, wait: 30)
-      click_dropdown(name: "hearingCoordinatorDropdown", index: 0, wait: 30)
-      click_dropdown(name: "hearingRoomDropdown", index: 0, wait: 30)
+      click_dropdown(name: "judgeDropdown", index: 0, wait: 10)
+      click_dropdown(name: "hearingCoordinatorDropdown", index: 0, wait: 10)
+      click_dropdown(name: "hearingRoomDropdown", index: 0, wait: 10)
 
       fill_in "Notes", with: generate_words(10)
 

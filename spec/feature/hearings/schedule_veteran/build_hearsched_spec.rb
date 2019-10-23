@@ -42,8 +42,8 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       click_dropdown(text: "Central")
       click_button("Legacy Veterans Waiting")
       click_link appellant_appeal_link_text
-      expect(page).not_to have_content("loading to VACOLS.", wait: 30)
-      expect(page).to have_content("Currently active tasks", wait: 30)
+      expect(page).not_to have_content("loading to VACOLS.", wait: 10)
+      expect(page).to have_content("Currently active tasks", wait: 10)
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       expect(page).to have_content("Time")
     end
@@ -116,12 +116,12 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       click_button("Legacy Veterans Waiting")
       appeal_link = page.find(:xpath, "//tbody/tr/td[2]/a")
       appeal_link.click
-      expect(page).not_to have_content("loading to VACOLS.", wait: 30)
-      expect(page).to have_content("Currently active tasks", wait: 30)
+      expect(page).not_to have_content("loading to VACOLS.", wait: 10)
+      expect(page).to have_content("Currently active tasks", wait: 10)
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       expect(page).to have_content("Time")
       find("label", text: "8:30 am").click
-      expect(page).not_to have_content("Could not find hearing locations for this veteran", wait: 30)
+      expect(page).not_to have_content("Could not find hearing locations for this veteran", wait: 10)
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       click_button("Schedule")
       click_on "Back to Schedule Veterans"
@@ -310,7 +310,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       click_dropdown({ index: 1 }, find(".dropdown-hearingDate"))
 
       find("label", text: "8:30 am").click
-      expect(page).to_not have_content("Finding hearing locations", wait: 30)
+      expect(page).to_not have_content("Finding hearing locations", wait: 10)
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       click_on "Schedule"
 
@@ -463,7 +463,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       click_dropdown(text: "Central")
       click_button("Legacy Veterans Waiting")
       table_row = page.find("tr", id: "table-row-0")
-      expect(table_row).to have_content("1545678", wait: 30)
+      expect(table_row).to have_content("1545678", wait: 10)
       table_row = page.find("tr", id: "table-row-1")
       expect(table_row).to have_content("1645621")
       table_row = page.find("tr", id: "table-row-2")

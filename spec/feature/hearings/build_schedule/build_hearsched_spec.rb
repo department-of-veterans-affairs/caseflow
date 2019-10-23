@@ -17,7 +17,7 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
       fill_in "startDate", with: "01012018"
       fill_in "endDate", with: "05312018"
       click_on "Continue"
-      expect(page).to have_content("We have assigned your video hearings", wait: 30)
+      expect(page).to have_content("We have assigned your video hearings", wait: 10)
       expect(SchedulePeriod.count).to eq(1)
       expect(RoNonAvailability.count).to eq(223)
       expect(CoNonAvailability.count).to eq(4)
@@ -26,7 +26,7 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
       expect(allocation_count).to eq(350)
       click_on "Confirm assignments"
       click_on "Confirm upload"
-      expect(page).not_to have_content("We are uploading to VACOLS.", wait: 30)
+      expect(page).not_to have_content("We are uploading to VACOLS.", wait: 10)
       expect(page).to have_content("You have successfully assigned hearings between 01/01/2018 and 05/31/2018")
       video_hearing_days = HearingDay.where(request_type: "V")
       expect(video_hearing_days.count).to eq(allocation_count)
@@ -55,13 +55,13 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
       fill_in "startDate", with: "04012018"
       fill_in "endDate", with: "04302018"
       click_on "Continue"
-      expect(page).to have_content("We have assigned your judges", wait: 30)
+      expect(page).to have_content("We have assigned your judges", wait: 10)
       expect(SchedulePeriod.count).to eq(1)
       expect(JudgeNonAvailability.count).to eq(3)
       click_on "Confirm assignments"
       click_on "Confirm upload"
-      expect(page).not_to have_content("We are uploading to VACOLS.", wait: 15)
-      expect(page).to have_content("You have successfully assigned judges to hearings", wait: 30)
+      expect(page).not_to have_content("We are uploading to VACOLS.", wait: 10)
+      expect(page).to have_content("You have successfully assigned judges to hearings", wait: 10)
       hearing_days = HearingDayRange.new(Date.new(2018, 4, 1), Date.new(2018, 4, 30)).load_days
       vlj_ids_count = hearing_days.pluck(:judge_id).compact.count
       expect(vlj_ids_count).to eq(2)

@@ -53,7 +53,7 @@ RSpec.feature "Postpone hearing", :all_dbs do
       click_dropdown(text: Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h[:label])
       find("label", text: "Reschedule immediately").click
       click_dropdown(name: "regionalOffice", text: "Denver, CO")
-      expect(page).to_not have_content("Finding hearing locations", wait: 30)
+      expect(page).to_not have_content("Finding hearing locations", wait: 10)
       click_dropdown(name: "appealHearingLocation", index: 0)
       click_dropdown(name: "hearingDate", index: 1)
       find(".cf-form-radio-option", text: "8:30 am").click
@@ -108,7 +108,7 @@ RSpec.feature "Postpone hearing", :all_dbs do
       click_dropdown(text: Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h[:label])
       find("label", text: "Reschedule immediately").click
       click_dropdown(name: "regionalOffice", text: "Denver, CO")
-      expect(page).to_not have_content("Finding hearing locations", wait: 30)
+      expect(page).to_not have_content("Finding hearing locations", wait: 10)
       click_dropdown(name: "appealHearingLocation", index: 0)
       click_dropdown(name: "hearingDate", index: 1)
       find(".cf-form-radio-option", text: "8:30 am").click
