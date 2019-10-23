@@ -34,11 +34,11 @@ context Api::V3::DecisionReview::IntakeError do
   context "::KNOWN_ERRORS_BY_CODE" do
     subject { Api::V3::DecisionReview::IntakeError::KNOWN_ERRORS_BY_CODE }
 
-    it("should be a hash") { expect(subject).to be_kind_of(Hash) }
-
-    it("should be non-empty") { expect(subject).not_to be_empty }
-
-    it("should have symbol keys") { expect(subject.keys).to all be_a Symbol }
+    it "has expected structure", :aggregate_failures do
+      expect(subject).to be_kind_of(Hash)
+      expect(subject).not_to be_empty
+      expect(subject.keys).to all be_a Symbol
+    end
 
     it "should have values that are arrays, 3 elements long: Integer >=400, Symbol, and String" do
       expect(subject.values.all? { |error_array| valid_error_array_shape?(error_array) }).to be true

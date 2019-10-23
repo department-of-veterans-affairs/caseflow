@@ -44,9 +44,11 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
           response
         end
 
-        it { expect(subject.status).to eq 200 }
-        it { expect(JSON.parse(subject.body)).to have_key("hearings") }
-        it { expect(JSON.parse(subject.body)["hearings"]).to eq [] }
+        it "returns expected response", :aggregate_failures do
+          expect(subject.status).to eq 200
+          expect(JSON.parse(subject.body)).to have_key("hearings")
+          expect(JSON.parse(subject.body)["hearings"]).to eq []
+        end
       end
 
       context "response for hearing day with hearings" do
@@ -75,9 +77,11 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
             response
           end
 
-          it { expect(subject.status).to eq 200 }
-          it { expect(JSON.parse(subject.body)).to have_key("hearings") }
-          it { expect(JSON.parse(subject.body)["hearings"].size).to eq 2 }
+          it "returns expected response", :aggregate_failures do
+            expect(subject.status).to eq 200
+            expect(JSON.parse(subject.body)).to have_key("hearings")
+            expect(JSON.parse(subject.body)["hearings"].size).to eq 2
+          end
           it do
             expect(JSON.parse(subject.body)["hearings"][0]["timezone"]).to eq("America/New_York")
           end
@@ -111,9 +115,11 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
             response
           end
 
-          it { expect(subject.status).to eq 200 }
-          it { expect(JSON.parse(subject.body)).to have_key("hearings") }
-          it { expect(JSON.parse(subject.body)["hearings"].size).to eq 1 }
+          it "returns expected response", :aggregate_failures do
+            expect(subject.status).to eq 200
+            expect(JSON.parse(subject.body)).to have_key("hearings")
+            expect(JSON.parse(subject.body)["hearings"].size).to eq 1
+          end
         end
       end
 
@@ -138,9 +144,11 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
           response
         end
 
-        it { expect(subject.status).to eq 200 }
-        it { expect(JSON.parse(subject.body)).to have_key("hearings") }
-        it { expect(JSON.parse(subject.body)["hearings"].size).to eq 2 }
+        it "returns expected response", :aggregate_failures do
+          expect(subject.status).to eq 200
+          expect(JSON.parse(subject.body)).to have_key("hearings")
+          expect(JSON.parse(subject.body)["hearings"].size).to eq 2
+        end
         it do
           json_hearings = JSON.parse(subject.body)["hearings"]
           expect(json_hearings.map { |hearing| hearing["scheduled_for"] }).to all(start_with("2019-08-08"))
