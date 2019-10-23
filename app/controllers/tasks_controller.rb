@@ -152,8 +152,9 @@ class TasksController < ApplicationController
   end
 
   def visualization
+    tasks = VisualizationTasksSelector.new(visualization_params).tasks
     render json: {
-      tasks: json_visualization_tasks(Task.all)
+      tasks: json_visualization_tasks(tasks)
     }
   end
 
@@ -239,6 +240,13 @@ class TasksController < ApplicationController
       reassign: [:assigned_to_id, :assigned_to_type, :instructions],
       business_payloads: [:description, values: {}]
     )
+  end
+
+  def visualization_params
+    {
+      organization_id: params.require(:organization_id),
+      filter_params: params["filter_params"] ? params.require(:filter_params) : {}
+    }
   end
 
   def json_tasks(tasks, ama_serializer: WorkQueue::TaskSerializer)

@@ -1046,25 +1046,22 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       Timecop.freeze(Time.zone.now)
     end
 
-    context "when there are no tasks" do
-      it "should not return any tasks" do
-        get :visualization
-        expect(response.status).to eq 200
-        response_body = JSON.parse(response.body)["tasks"]
-
-        expect(response_body.length).to eq 0
+    context "when id of the organization is not included" do
+      it "returns an error" do
+        expect { get :visualization }.to raise_error(ActionController::ParameterMissing)
       end
     end
 
-    context "when there are tasks" do
+    context "when organization id is passed" do
       let(:task_count) { 2 }
-      let(:assignee) { create(:user) }
       let(:task_type) { GenericTask.name }
-      let!(:tasks) do
+
+      let(:org_assignee) { create(:organization) }
+      let(:parent_tasks) do
         create_list(
-          :generic_task,
+          :task,
           task_count,
-          assigned_to: assignee,
+          assigned_to: org_assignee,
           type: task_type,
           assigned_at: 5.days.ago,
           started_at: 4.days.ago,
@@ -1073,18 +1070,46 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         )
       end
 
-      it "should process the request successfully" do
-        get :visualization
-        expect(response.status).to eq 200
-        response_body = JSON.parse(response.body)["tasks"]
+      let(:assignee) { create(:user) }
+      let!(:tasks) do
+        parent_tasks.each do |parent_task|
+          create(
+            :task,
+            assigned_to: assignee,
+            type: task_type,
+            assigned_at: 5.days.ago,
+            started_at: 4.days.ago,
+            placed_on_hold_at: 3.days.ago,
+            closed_at: 2.days.ago,
+            parent: parent_task
+          )
+        end
+      end
 
-        expect(response_body.length).to eq task_count
-        expect(response_body.all? { |task| task["assigned_to_css_id"] == assignee.css_id })
-        expect(response_body.all? { |task| task["type"] == task_type })
-        expect(response_body.all? { |task| task["assigned_at"] == 5.days.ago.iso8601(3) })
-        expect(response_body.all? { |task| task["started_at"] == 4.days.ago.iso8601(3) })
-        expect(response_body.all? { |task| task["placed_on_hold_at"] == 3.days.ago.iso8601(3) })
-        expect(response_body.all? { |task| task["closed_at"] == 2.days.ago.iso8601(3) })
+      context "when there are no tasks assigned to the organization" do
+        it "should not return any tasks" do
+          get :visualization, params: { organization_id: create(:organization).id }
+          expect(response.status).to eq 200
+          response_body = JSON.parse(response.body)["tasks"]
+
+          expect(response_body.length).to eq 0
+        end
+      end
+
+      context "when there are tasks" do
+        it "should process the request successfully" do
+          get :visualization, params: { organization_id: org_assignee.id }
+          expect(response.status).to eq 200
+          response_body = JSON.parse(response.body)["tasks"]
+
+          expect(response_body.length).to eq task_count
+          expect(response_body.all? { |task| task["assigned_to_css_id"] == assignee.css_id })
+          expect(response_body.all? { |task| task["type"] == task_type })
+          expect(response_body.all? { |task| task["assigned_at"] == 5.days.ago.iso8601(3) })
+          expect(response_body.all? { |task| task["started_at"] == 4.days.ago.iso8601(3) })
+          expect(response_body.all? { |task| task["placed_on_hold_at"] == 3.days.ago.iso8601(3) })
+          expect(response_body.all? { |task| task["closed_at"] == 2.days.ago.iso8601(3) })
+        end
       end
     end
   end
