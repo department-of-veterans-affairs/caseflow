@@ -68,7 +68,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
     scenario "submits draft decision" do
       visit "/queue"
-      click_on "(#{appeal.veteran_file_number})"
+      click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
       # Ensure the issue is on the case details screen
       expect(page).to have_content(issue_description)
@@ -248,7 +248,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       User.authenticate!(user: judge_user)
       visit "/queue"
 
-      click_on "(#{appeal.veteran_file_number})"
+      click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
       # ensure decision issues show up on case details page
       expect(page).to have_content "Correct issues"

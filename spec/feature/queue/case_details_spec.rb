@@ -683,7 +683,7 @@ RSpec.feature "Case details", :all_dbs do
         assigner_name = on_hold_task.assigned_by_display_name
 
         click_on "On hold (1)"
-        click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
+        click_on "#{vet_name} (#{on_hold_task.appeal.veteran_file_number})"
 
         expect(page).to have_content("TASK\n#{on_hold_task.label}")
         find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click

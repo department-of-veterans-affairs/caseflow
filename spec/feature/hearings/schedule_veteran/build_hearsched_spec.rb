@@ -173,13 +173,15 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     end
     let(:incarcerated_veteran_task_instructions) { "Incarcerated veteran task instructions" }
     let(:contested_claimant_task_instructions) { "Contested claimant task instructions" }
+    let(:veteran_link_text) { "#{appeal.veteran_full_name} | #{appeal.veteran_file_number}" }
+    let(:veteran_queue_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
 
     scenario "Can create multiple admin actions and reassign them" do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Denver")
       click_button("AMA Veterans Waiting")
-      click_on "Bob Smith"
+      click_on veteran_link_text
 
       # Case details screen
       click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label])
@@ -231,7 +233,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
 
       # Your queue
       visit "/queue"
-      click_on "Bob Smith"
+      click_on veteran_queue_link_text
 
       # Reassign
       within find("tr", text: "BVATWARNER") do
@@ -246,7 +248,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       User.authenticate!(user: other_user)
       visit "/queue"
 
-      expect(page).to have_content("Bob Smith")
+      expect(page).to have_content(appeal.veteran_full_name)
     end
 
     scenario "Schedule Veteran for a video hearing with admin actions that can be put on hold and completed" do
@@ -256,7 +258,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         expect(page).to have_content("Regional Office")
         click_dropdown(text: "Denver")
         click_button("AMA Veterans Waiting")
-        click_on "Bob Smith"
+        click_on veteran_link_text
 
         # Case details screen
         click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label])
@@ -276,7 +278,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
 
         # Your queue
         visit "/queue"
-        click_on "Bob Smith"
+        click_on veteran_queue_link_text
         click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
 
         # On hold
@@ -290,7 +292,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
 
       # Refresh the page in the present, and the hold should be completed.
       visit "/queue"
-      click_on "Bob Smith"
+      click_on veteran_queue_link_text
 
       # Complete the admin action
       click_dropdown(text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label])
@@ -304,7 +306,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       click_dropdown(text: "Denver")
       click_button("AMA Veterans Waiting")
 
-      click_on "Bob Smith"
+      click_on veteran_link_text
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       click_dropdown({ text: "Denver" }, find(".dropdown-regionalOffice"))
       click_dropdown({ index: 1 }, find(".dropdown-hearingDate"))
@@ -333,7 +335,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Denver")
       click_button("AMA Veterans Waiting")
-      click_on "Bob Smith"
+      click_on veteran_link_text
 
       click_dropdown(text: Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h[:label])
 
