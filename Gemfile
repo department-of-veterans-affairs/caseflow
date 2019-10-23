@@ -84,7 +84,6 @@ group :test, :development, :demo do
   gem "capybara"
   gem "capybara-screenshot"
   gem "capybara-slow_finder_errors"
-  gem "test-prof"
   gem "danger", "~> 5.10"
   gem "database_cleaner"
   gem "factory_bot_rails", "~> 4.8"
@@ -104,6 +103,7 @@ group :test, :development, :demo do
   gem "scss_lint", require: false
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git", branch: "mb-update-capybara-click"
+  gem "test-prof"
   gem "timecop"
   gem "webdrivers"
 end
