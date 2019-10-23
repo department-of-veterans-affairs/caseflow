@@ -82,4 +82,4 @@ Capybara.default_max_wait_time = 5
 Capybara.server = :webrick
 
 # use exact matching
-Capybara.exact = :exact
+Capybara.exact = true
