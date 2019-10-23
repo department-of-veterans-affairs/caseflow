@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class OnHoldTasksTab < QueueTab
+  validate :assignee_is_organization
+
   def label
     COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE
   end

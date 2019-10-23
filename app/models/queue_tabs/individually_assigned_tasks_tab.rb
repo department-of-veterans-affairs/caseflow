@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class IndividuallyAssignedTasksTab < AssignedTasksTab
+  validate :assignee_is_user
+
   def self.tab_name
     Constants.QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME
   end

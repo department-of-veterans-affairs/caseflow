@@ -76,10 +76,21 @@ class QueueTab
       errors.add(:assignee, COPY::TASK_PAGE_INVALID_ASSIGNEE_MESSAGE)
     end
   end
+
+  def assignee_is_user
+    errors.add(:assignee, COPY::QUEUE_TAB_NON_USER_ASSIGNEE_MESSAGE) unless assignee.is_a?(User)
+  end
+
+  def assignee_is_organization
+    errors.add(:assignee, COPY::QUEUE_TAB_NON_ORGANIZATION_ASSIGNEE_MESSAGE) unless assignee.is_a?(Organization)
+  end
 end
 
 require_dependency "assigned_tasks_tab"
 require_dependency "completed_tasks_tab"
 require_dependency "on_hold_tasks_tab"
+require_dependency "individually_assigned_tasks_tab"
+require_dependency "individually_completed_tasks_tab"
+require_dependency "individually_on_hold_tasks_tab"
 require_dependency "tracking_tasks_tab"
 require_dependency "unassigned_tasks_tab"

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class CompletedTasksTab < QueueTab
+  validate :assignee_is_organization
+
   def label
     COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE
   end

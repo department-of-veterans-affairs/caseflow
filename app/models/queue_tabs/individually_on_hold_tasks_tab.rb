@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class IndividuallyOnHoldTasksTab < OnHoldTasksTab
+  validate :assignee_is_user
+
   def self.tab_name
     Constants.QUEUE_CONFIG.INDIVIDUALLY_ON_HOLD_TASKS_TAB_NAME
   end
