@@ -627,7 +627,11 @@ export const fetchAllAttorneys = () => (dispatch) =>
 
 export const fetchAmaTasksOfUser = (userId, userRole) => (dispatch) =>
   ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
-    then((resp) => dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data))));
+    then((resp) => {
+      dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data)));
+      // Make the queue config sent from the back-end available on the front-end.
+      dispatch(setQueueConfig(resp.body.queue_config));
+    });
 
 export const setAppealAttrs = (appealId, attributes) => ({
   type: ACTIONS.SET_APPEAL_ATTRS,
