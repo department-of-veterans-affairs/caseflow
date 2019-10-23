@@ -243,9 +243,11 @@ class TasksController < ApplicationController
   end
 
   def visualization_params
+    organization_id = params.require(:organization_id)
+    params.delete(:organization_id)
     {
-      organization_id: params.require(:organization_id),
-      filter_params: params["filter_params"] ? params.require(:filter_params) : {}
+      organization_id: organization_id,
+      filter_params: params.permit(:type, :assigned_to_id)
     }
   end
 

@@ -3,6 +3,7 @@
 class VisualizationTaskSerializer
   include FastJsonapi::ObjectSerializer
 
+  attribute :id
   attribute :assigned_at
   attribute :started_at
   attribute :placed_on_hold_at
@@ -10,8 +11,8 @@ class VisualizationTaskSerializer
 
   attribute :type
 
-  attribute :assigned_to_css_id do |object|
-    object.assigned_to.css_id
+  attribute :assigned_to_id do |object|
+    object.assigned_to.id
   end
 
   attribute :appeal_receipt_date do |object|
