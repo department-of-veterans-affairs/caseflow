@@ -11,8 +11,11 @@ info:
     ## Technical Summary
 
     The Decision Reviews API interacts with VA's internal system, called Caseflow, that manages all benefit appeals. Caseflow is the authoritative source for all Decision Review information.
+
     * The Decision Reviews API accepts a JSON payload and the participant identification is supplied as a header.
+
     * The Decision Review request will be validated to ensure the Veteran information matches VA records and that the appeal information sent is valid.
+
     * Detailed error messages will be returned to help your application provide meaningful information to the Veteran attempting to make the Decision Review request.
 
     ### Authorization
