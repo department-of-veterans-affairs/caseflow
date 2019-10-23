@@ -1061,6 +1061,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         create_list(
           :task,
           task_count,
+          appeal: create(:appeal, receipt_date: 10.days.ago),
           assigned_to: org_assignee,
           type: task_type,
           assigned_at: 5.days.ago,
@@ -1075,6 +1076,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         parent_tasks.each do |parent_task|
           create(
             :task,
+            appeal: create(:appeal, receipt_date: 10.days.ago),
             assigned_to: assignee,
             type: task_type,
             assigned_at: 5.days.ago,
@@ -1103,6 +1105,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           response_body = JSON.parse(response.body)["tasks"]
 
           expect(response_body.length).to eq task_count
+          expect(response_body.all? { |task| task["appeal_receipt_date"] == 10.days.ago.iso8601(3) })
           expect(response_body.all? { |task| task["assigned_to_css_id"] == assignee.css_id })
           expect(response_body.all? { |task| task["type"] == task_type })
           expect(response_body.all? { |task| task["assigned_at"] == 5.days.ago.iso8601(3) })
