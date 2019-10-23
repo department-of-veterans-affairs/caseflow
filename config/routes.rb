@@ -267,6 +267,7 @@ Rails.application.routes.draw do
     resources :task_summary, only: [:index], controller: 'organizations/task_summary'
   end
   get '/organizations/:url/modal(*rest)', to: 'organizations#show'
+  get '/organizations/:url/dashboard(*rest)', to: 'organizations#show'
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
   patch '/case_reviews/:id', to: 'case_reviews#update'

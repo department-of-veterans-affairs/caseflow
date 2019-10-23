@@ -79,6 +79,7 @@ import AddressMotionToVacateView from './mtv/AddressMotionToVacateView';
 import ReviewMotionToVacateView from './mtv/ReviewMotionToVacateView';
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
 import { ReturnToLitSupportModal } from './mtv/ReturnToLitSupportModal';
+import { OrganizationDashboardView } from './dashboard/OrganizationDashboardView';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -286,6 +287,8 @@ class QueueApp extends React.PureComponent {
   );
 
   routedOrganizationUsers = (props) => <OrganizationUsers {...props.match.params} />;
+
+  routedOrganizationDashboard = (props) => <OrganizationDashboardView {...props.match.params} />;
 
   routedTeamManagement = (props) => <TeamManagement {...props.match.params} />;
 
@@ -627,6 +630,12 @@ class QueueApp extends React.PureComponent {
               path="/organizations/:organization/users"
               title="Organization Users | Caseflow"
               render={this.routedOrganizationUsers}
+            />
+            <PageRoute
+              exact
+              path="/organizations/:organization/dashboard"
+              title="Organization Dashboard | Caseflow"
+              render={this.routedOrganizationDashboard}
             />
             <Route path="/team_management/add_judge_team" render={this.routedAddJudgeTeam} />
             <Route path="/team_management/add_vso" render={this.routedAddVsoModal} />
