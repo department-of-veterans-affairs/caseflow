@@ -86,7 +86,7 @@ plugins:
             Avoid using sleep in tests because it affects the performance of the
             test suite.
           path_patterns:
-            - "spec/**/*.rb"
+            - "spec/**/*_spec.rb"
         tests-capybara-non-waiting-finder:
           pattern: not_to have_content\(?[^,]+\)?$
           annotation: "Avoid using capybara's `have_content` with an RSpec negative matcher"
