@@ -239,7 +239,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         visit("/queue/appeals/#{appeal.uuid}")
         click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label)
         click_dropdown(text: user.full_name)
-        fill_in("instructions", with: "assigning to QR team member")
+        fill_in("taskInstructions", with: "assigning to QR team member")
         click_on(COPY::MODAL_SUBMIT_BUTTON)
         expect(page).to have_content(format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, user.full_name))
       end
@@ -248,7 +248,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         visit("/queue/appeals/#{appeal.uuid}")
         click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
         click_dropdown(prompt: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL, text: hold_length)
-        fill_in("instructions", with: "placing task on hold")
+        fill_in("taskInstructions", with: "placing task on hold")
         click_on(COPY::MODAL_SUBMIT_BUTTON)
         expect(page).to have_content(format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, veteran_name, hold_length))
       end
@@ -262,7 +262,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
       step "return the case to the judge" do
         visit("/queue/appeals/#{appeal.uuid}")
         click_dropdown(text: Constants.TASK_ACTIONS.QR_RETURN_TO_JUDGE.label)
-        fill_in("instructions", with: "returning to judge")
+        fill_in("taskInstructions", with: "returning to judge")
         click_on(COPY::MODAL_SUBMIT_BUTTON)
       end
 
