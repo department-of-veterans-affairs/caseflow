@@ -80,3 +80,6 @@ Capybara.default_max_wait_time = 5
 # Capybara uses puma by default, but for some reason, some of our tests don't
 # pass with puma. See: https://github.com/teamcapybara/capybara/issues/2170
 Capybara.server = :webrick
+
+# use exact matching
+Capybara.exact = :exact
