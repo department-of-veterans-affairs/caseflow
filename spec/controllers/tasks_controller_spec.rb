@@ -1043,75 +1043,49 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
     before do
       User.stub = user
+      Timecop.freeze(Time.zone.now)
     end
 
-    it "should process the request successfully" do
-      get :visualization
-      expect(response.status).to eq 200
-      response_body = JSON.parse(response.body)["tasks"]
+    context "when there are no tasks" do
+      it "should not return any tasks" do
+        get :visualization
+        expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)["tasks"]
 
-      test_data = [
-        {
-          assignee: "CSS_ID1",
-          type: "IhpColocatedTask",
-          assigned_at: 4.days.ago,
-          started_at: 3.days.ago,
-          placed_on_hold_at: 2.days.ago,
-          closed_at: 1.day.ago
-        }, {
-          assignee: "CSS_ID1",
-          type: "AojColocatedTask",
-          assigned_at: 6.days.ago,
-          started_at: 3.days.ago,
-          placed_on_hold_at: 2.days.ago,
-          closed_at: 1.day.ago
-        }, {
-          assignee: "CSS_ID2",
-          type: "IhpColocatedTask",
-          assigned_at: 7.days.ago,
-          started_at: 3.days.ago,
-          placed_on_hold_at: 2.days.ago,
-          closed_at: 1.day.ago
-        }, {
-          assignee: "CSS_ID1",
-          type: "IhpColocatedTask",
-          assigned_at: 9.days.ago,
-          started_at: 3.days.ago,
-          placed_on_hold_at: 2.days.ago,
-          closed_at: 1.day.ago
-        }, {
-          assignee: "CSS_ID1",
-          type: "IhpColocatedTask",
-          assigned_at: 14.days.ago,
-          started_at: 3.days.ago,
-          placed_on_hold_at: 2.days.ago,
-          closed_at: 1.day.ago
-        }, {
-          assignee: "CSS_ID1",
-          type: "IhpColocatedTask",
-          assigned_at: 14.days.ago,
-          started_at: 3.days.ago,
-          placed_on_hold_at: 2.days.ago,
-          closed_at: 1.day.ago
-        }, {
-          assignee: "CSS_ID1",
-          type: "IhpColocatedTask",
-          assigned_at: 4.days.ago,
-          started_at: 3.days.ago,
-          placed_on_hold_at: 2.days.ago,
-          closed_at: 1.day.ago
-        }, {
-          assignee: "CSS_ID1",
-          type: "IhpColocatedTask",
-          assigned_at: 4.days.ago,
-          started_at: 3.days.ago,
-          placed_on_hold_at: 2.days.ago,
-          closed_at: 1.day.ago
-        }
-      ]
+        expect(response_body.length).to eq 0
+      end
+    end
 
-      expect(response_body.length).to eq test_data.length
-      expect(response_body.first["assignee"]).to eq test_data.first[:assignee]
+    context "when there are tasks" do
+      let(:task_count) { 2 }
+      let(:assignee) { create(:user) }
+      let(:task_type) { GenericTask.name }
+      let!(:tasks) do
+        create_list(
+          :generic_task,
+          task_count,
+          assigned_to: assignee,
+          type: task_type,
+          assigned_at: 5.days.ago,
+          started_at: 4.days.ago,
+          placed_on_hold_at: 3.days.ago,
+          closed_at: 2.days.ago
+        )
+      end
+
+      it "should process the request successfully" do
+        get :visualization
+        expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)["tasks"]
+
+        expect(response_body.length).to eq task_count
+        expect(response_body.all? { |task| task["assigned_to_css_id"] == assignee.css_id })
+        expect(response_body.all? { |task| task["type"] == task_type })
+        expect(response_body.all? { |task| task["assigned_at"] == 5.days.ago.iso8601(3) })
+        expect(response_body.all? { |task| task["started_at"] == 4.days.ago.iso8601(3) })
+        expect(response_body.all? { |task| task["placed_on_hold_at"] == 3.days.ago.iso8601(3) })
+        expect(response_body.all? { |task| task["closed_at"] == 2.days.ago.iso8601(3) })
+      end
     end
   end
 end
