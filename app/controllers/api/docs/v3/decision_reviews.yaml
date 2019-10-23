@@ -17,7 +17,7 @@ info:
 
     ### Authorization
 
-    API requests are authorized through a symmetric API token, provided in an HTTP header with name "apikey"
+    API requests are authorized through a symmetric API token, provided in an HTTP header with name "apikey."
   version: 3.0.0
 servers:
   - url: https://dev-api.va.gov/services/appeals/{version}/decision_review
