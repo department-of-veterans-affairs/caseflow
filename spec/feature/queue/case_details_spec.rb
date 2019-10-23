@@ -616,9 +616,9 @@ RSpec.feature "Case details", :all_dbs do
         visit "/queue/appeals/#{appeal.external_id}"
 
         case_timeline = page.find("table#case-timeline-table")
-        expect(case_timeline).not_to have_content(transcript_task.class.name)
-        expect(case_timeline).not_to have_content(translation_task.class.name)
-        expect(case_timeline).not_to have_content(foia_task.class.name)
+        expect(case_timeline.has_no_content?(transcript_task.class.name)).to eq(true)
+        expect(case_timeline.has_no_content?(translation_task.class.name)).to eq(true)
+        expect(case_timeline.has_no_content?(foia_task.class.name)).to eq(true)
         expect(case_timeline).to have_content(transcript_task.children.first.class.name)
         expect(case_timeline).to have_content(translation_task.children.first.class.name)
         expect(case_timeline).to have_content(foia_task.children.first.class.name)
