@@ -20,7 +20,7 @@ class VisualizationTasksSelector
       filtered_tasks = filtered_tasks.where("#{filter_key} = ?", filter_params[filter_key])
     end
 
-    all_tasks
+    filtered_tasks
   end
 
   def all_tasks
