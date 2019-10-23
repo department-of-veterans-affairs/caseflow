@@ -80,7 +80,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
       step "QR user visits the quality review organization page and assigns the task to themself" do
         visit quality_review_organization.path
-        click_on veteran_full_name
+        click_on "#{veteran_full_name} (#{veteran.file_number})"
 
         find(".Select-control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
@@ -96,7 +96,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
       step "QR user returns the case to a judge" do
         click_on "Caseflow"
 
-        click_on veteran_full_name
+        click_on "#{veteran_full_name} (#{veteran.file_number})"
 
         find(".Select-control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.QR_RETURN_TO_JUDGE.to_h[:label]).click
@@ -135,7 +135,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
         visit "/queue"
 
-        click_on veteran_full_name
+        click_on "#{veteran_full_name} (#{veteran.file_number})"
 
         find(".Select-control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label]).click
@@ -195,7 +195,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
         visit "/queue"
 
-        click_on veteran_full_name
+        click_on "#{veteran_full_name} (#{veteran.file_number})"
 
         expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
         find(".Select-control", text: "Select an action").click
@@ -248,7 +248,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         visit("/queue/appeals/#{appeal.uuid}")
         click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
         click_dropdown(prompt: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL, text: hold_length)
-        fill_in("taskInstructions", with: "placing task on hold")
+        fill_in("instructions", with: "placing task on hold")
         click_on(COPY::MODAL_SUBMIT_BUTTON)
         expect(page).to have_content(format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, veteran_name, hold_length))
       end
