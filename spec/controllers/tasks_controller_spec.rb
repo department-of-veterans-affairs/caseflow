@@ -1110,6 +1110,36 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           expect(response_body.all? { |task| task["placed_on_hold_at"] == 3.days.ago.iso8601(3) })
           expect(response_body.all? { |task| task["closed_at"] == 2.days.ago.iso8601(3) })
         end
+
+        context "when filtering tasks" do
+          context "by type" do
+            let(:filter_type) { IhpColocatedTask.name }
+
+            before do
+              parent_tasks.each do |parent_task|
+                create(
+                  :task,
+                  assigned_to: assignee,
+                  type: filter_type,
+                  assigned_at: 5.days.ago,
+                  started_at: 4.days.ago,
+                  placed_on_hold_at: 3.days.ago,
+                  closed_at: 2.days.ago,
+                  parent: parent_task
+                )
+              end
+            end
+
+            it "should only return tasks of that type" do
+              get :visualization, params: { organization_id: org_assignee.id, filter_params: { type: filter_type } }
+              expect(response.status).to eq 200
+              response_body = JSON.parse(response.body)["tasks"]
+
+              expect(response_body.length).to eq task_count
+              expect(response_body.all? { |task| task["type"] == filter_type })
+            end
+          end
+        end
       end
     end
   end
