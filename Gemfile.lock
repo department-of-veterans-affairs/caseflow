@@ -160,8 +160,6 @@ GEM
     capybara-screenshot (1.0.23)
       capybara (>= 1.0, < 4)
       launchy
-    capybara-slow_finder_errors (0.1.5)
-      capybara (~> 3.0)
     childprocess (1.0.1)
       rake (< 13.0)
     claide (1.0.2)
@@ -579,7 +577,6 @@ DEPENDENCIES
   byebug
   capybara
   capybara-screenshot
-  capybara-slow_finder_errors
   caseflow!
   connect_vbms!
   danger (~> 5.10)

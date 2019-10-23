@@ -83,7 +83,6 @@ group :test, :development, :demo do
   # Testing tools
   gem "capybara"
   gem "capybara-screenshot"
-  gem "capybara-slow_finder_errors"
   gem "danger", "~> 5.10"
   gem "database_cleaner"
   gem "factory_bot_rails", "~> 4.8"
