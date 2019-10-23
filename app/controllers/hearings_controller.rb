@@ -24,6 +24,10 @@ class HearingsController < HearingsApplicationController
     update_hearing
     update_advance_on_docket_motion unless advance_on_docket_motion_params.empty?
 
+    if params.has_key?(:virtual_hearing)
+      #hearing.class.find_or_create_by()
+    end
+
     render json: hearing.to_hash(current_user.id)
   end
 
@@ -74,65 +78,79 @@ class HearingsController < HearingsApplicationController
     params[:id]
   end
 
-  # rubocop:disable Metrics/MethodLength
+  COMMON_HEARING_ATTRIBUTES = [
+    :representative_name,
+    :witness,
+    :military_service,
+    :summary,
+    :notes,
+    :disposition,
+    :hold_open,
+    :transcript_requested,
+    :prepped,
+    :scheduled_time_string,
+    :judge_id,
+    :room,
+    :bva_poc
+  ]
+
+  HEARING_LOCATION_ATTRIBUTES = [
+    :city, :state, :address,
+    :facility_id, :facility_type,
+    :classification, :name, :distance,
+    :zip_code
+  ]
+
+  TRANSCRIPTION_ATTRIBUTES = [
+    :expected_return_date, :problem_notice_sent_date,
+    :problem_type, :requested_remedy,
+    :sent_to_transcriber_date, :task_number,
+    :transcriber, :uploaded_to_vbms_date
+  ]
+
+  HEARING_ISSUES_NOTES_ATTRIBUTES = [
+    :id, :allow, :deny, :remand,
+    :dismiss, :reopen, :worksheet_notes
+  ]
+
+  VIRTUAL_HEARING_ATTRIBUTES = [
+    :veteran_email, :judge_email, :representative_email, :status
+  ]
+
   def update_params_legacy
-    params.require("hearing").permit(:representative_name,
-                                     :witness,
-                                     :military_service,
-                                     :summary,
-                                     :notes,
-                                     :disposition,
-                                     :hold_open,
-                                     :aod,
-                                     :transcript_requested,
-                                     :prepped,
-                                     :scheduled_time_string,
-                                     :scheduled_for,
-                                     :judge_id,
-                                     :room,
-                                     :bva_poc,
-                                     hearing_location_attributes: [
-                                       :city, :state, :address,
-                                       :facility_id, :facility_type,
-                                       :classification, :name, :distance,
-                                       :zip_code
-                                     ])
+    params
+      .require(:hearing)
+      .permit(
+        *COMMON_HEARING_ATTRIBUTES,
+        :aod,
+        :scheduled_for,
+        hearing_location_attributes: HEARING_LOCATION_ATTRIBUTES
+      )
   end
 
   def update_params
-    params.require("hearing").permit(:representative_name,
-                                     :witness,
-                                     :military_service,
-                                     :summary,
-                                     :notes,
-                                     :disposition,
-                                     :hold_open,
-                                     :transcript_requested,
-                                     :transcript_sent_date,
-                                     :prepped,
-                                     :scheduled_time_string,
-                                     :judge_id,
-                                     :room,
-                                     :bva_poc,
-                                     :evidence_window_waived,
-                                     hearing_location_attributes: [
-                                       :city, :state, :address,
-                                       :facility_id, :facility_type,
-                                       :classification, :name, :distance,
-                                       :zip_code
-                                     ],
-                                     transcription_attributes: [
-                                       :expected_return_date, :problem_notice_sent_date,
-                                       :problem_type, :requested_remedy,
-                                       :sent_to_transcriber_date, :task_number,
-                                       :transcriber, :uploaded_to_vbms_date
-                                     ],
-                                     hearing_issue_notes_attributes: [:id, :allow, :deny, :remand,
-                                                                      :dismiss, :reopen, :worksheet_notes])
+    params
+      .require(:hearing)
+      .permit(
+        *COMMON_HEARING_ATTRIBUTES,
+        :transcript_sent_date,
+        :prepped,
+        :evidence_window_waived,
+        hearing_location_attributes: HEARING_LOCATION_ATTRIBUTES,
+        transcription_attributes: TRANSCRIPTION_ATTRIBUTES,
+        hearing_issue_notes_attributes: HEARING_ISSUES_NOTES_ATTRIBUTES
+      )
   end
-  # rubocop:enable Metrics/MethodLength
+
+  def virtual_hearing_params
+    params
+      .require(:virtual_hearing)
+      .require(*VIRTUAL_HEARING_ATTRIBUTES)
+  end
 
   def advance_on_docket_motion_params
-    params.fetch(:advance_on_docket_motion, {}).permit(:user_id, :person_id, :reason, :granted)
+    params
+      .fetch(:advance_on_docket_motion, {})
+      .permit(:user_id, :person_id, :reason, :granted)
   end
 end
