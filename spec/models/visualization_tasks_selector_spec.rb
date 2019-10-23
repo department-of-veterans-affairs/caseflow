@@ -44,6 +44,23 @@ describe VisualizationTasksSelector, :postgres do
         closed_at: 2.days.ago
       )
     end
+    let(:all_parent_tasks) { parent_tasks }
+
+    let(:assignee) { create(:user) }
+    let!(:tasks) do
+      all_parent_tasks.map do |parent_task|
+        create(
+          :task,
+          assigned_to: assignee,
+          type: parent_task.type,
+          assigned_at: 5.days.ago,
+          started_at: 4.days.ago,
+          placed_on_hold_at: 3.days.ago,
+          closed_at: 2.days.ago,
+          parent: parent_task
+        )
+      end
+    end
 
     subject { VisualizationTasksSelector.new(args).tasks }
 
@@ -51,70 +68,56 @@ describe VisualizationTasksSelector, :postgres do
       let(:args) { { organization_id: org_assignee.id } }
 
       context "when there are no child tasks assigned to the organization users" do
+        let(:tasks) { nil }
+
         it "doesn't return any tasks" do
           expect(subject.length).to eq 0
         end
       end
 
       context "when there are child tasks assigned to the organization users" do
-        let(:assignee) { create(:user) }
-        let!(:tasks) do
-          parent_tasks.each do |parent_task|
-            create(
-              :task,
-              assigned_to: assignee,
-              type: task_type,
-              assigned_at: 5.days.ago,
-              started_at: 4.days.ago,
-              placed_on_hold_at: 3.days.ago,
-              closed_at: 2.days.ago,
-              parent: parent_task
-            )
-          end
-        end
-
         it "only returns tasks where the parent is assigned to the organization" do
           expect(subject.length).to eq task_count
         end
       end
     end
 
-    # context "when filtering by task type" do
-    #   let(:foia_tasks) { create_list(:foia_task, 5) }
-    #   let(:translation_tasks) { create_list(:translation_task, 6) }
-    #   let(:generic_tasks) { create_list(:generic_task, 7) }
-    #   let(:all_tasks) do
-    #     Task.where(id: foia_tasks.pluck(:id) + translation_tasks.pluck(:id) + generic_tasks.pluck(:id))
-    #   end
+    context "when filter params are passed" do
+      let(:filter_task_type) { IhpColocatedTask.name }
+      let(:extra_parent_tasks) do
+        create_list(
+          :task,
+          task_count,
+          assigned_to: org_assignee,
+          type: filter_task_type,
+          assigned_at: 5.days.ago,
+          started_at: 4.days.ago,
+          placed_on_hold_at: 3.days.ago,
+          closed_at: 2.days.ago
+        )
+      end
 
-    #   context "when filter_params is an empty array" do
-    #     let(:filter_params) { [] }
+      let(:all_parent_tasks) { parent_tasks + extra_parent_tasks }
 
-    #     it "returns the same set of tasks for the filtered and unfiltered set" do
-    #       expect(subject.map(&:id)).to match_array(all_tasks.map(&:id))
-    #     end
-    #   end
+      let(:args) { { organization_id: org_assignee.id, filter_params: filter_params } }
 
-    #   context "when filter includes TranslationTasks" do
-    #     let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name}"] }
+      context "when filter_params is empty" do
+        let(:filter_params) { {} }
 
-    #     it "returns only translation tasks assigned to the current organization" do
-    #       expect(subject.map(&:id)).to_not match_array(all_tasks.map(&:id))
-    #       expect(subject.map(&:type).uniq).to eq([TranslationTask.name])
-    #       expect(subject.map(&:id)).to match_array(translation_tasks.map(&:id))
-    #     end
-    #   end
+        it "returns all tasks" do
+          expect(subject.length).to eq all_parent_tasks.length
+        end
+      end
 
-    #   context "when filter includes TranslationTasks and FoiaTasks" do
-    #     let(:filter_params) do
-    #       ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name},#{FoiaTask.name}"]
-    #     end
+      context "when filter includes IhpColocatedTasks" do
+        let(:filter_params) { { type: filter_task_type } }
 
-    #     it "returns all translation and FOIA tasks assigned to the current organization" do
-    #       expect(subject.map(&:type).uniq).to match_array([TranslationTask.name, FoiaTask.name])
-    #       expect(subject.map(&:id)).to match_array(translation_tasks.map(&:id) + foia_tasks.map(&:id))
-    #     end
-    #   end
-    # end
+        it "returns only ihp tasks assigned to the current organization" do
+          expect(subject.length).to eq extra_parent_tasks.length
+          expect(subject.map(&:type).uniq).to eq([filter_task_type])
+          expect(subject.map(&:id)).to match_array(tasks.select { |task| task.type == filter_task_type }.map(&:id))
+        end
+      end
+    end
   end
 end
