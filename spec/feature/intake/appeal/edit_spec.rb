@@ -83,7 +83,7 @@ feature "Appeal Edit issues", :all_dbs do
 
     # remove an issue
     click_remove_intake_issue_dropdown(nonrating_request_issue.description)
-    expect(page).not_to have_content(nonrating_request_issue.description)
+    expect(page.has_no_content?(nonrating_request_issue.description)).to eq(true)
     expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
     # add a different issue
@@ -102,7 +102,7 @@ feature "Appeal Edit issues", :all_dbs do
     # going back to edit page should show those issues
     visit "appeals/#{appeal.uuid}/edit/"
     expect(page).to have_content("Left knee granted")
-    expect(page).not_to have_content("nonrating description")
+    expect(page.has_no_content?("nonrating description")).to eq(true)
 
     # canceling should redirect to queue
     click_on "Cancel"
@@ -118,7 +118,7 @@ feature "Appeal Edit issues", :all_dbs do
     expect(page).to have_button("Save", disabled: true)
     # remove
     click_remove_intake_issue_dropdown(issue_description)
-    expect(page).not_to have_content(issue_description)
+    expect(page.has_no_content?(issue_description)).to eq(true)
     expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
     # re-add
@@ -624,8 +624,8 @@ feature "Appeal Edit issues", :all_dbs do
                )).to_not be_nil
 
         visit "appeals/#{appeal.uuid}/edit"
-        expect(page).not_to have_content(existing_request_issues.first.description)
-        expect(page).not_to have_content(existing_request_issues.second.description)
+        expect(page.has_no_content?(existing_request_issues.first.description)).to eq(true)
+        expect(page.has_no_content?(existing_request_issues.second.description)).to eq(true)
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
       end
@@ -675,8 +675,8 @@ feature "Appeal Edit issues", :all_dbs do
           expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
           visit "appeals/#{appeal.uuid}/edit"
-          expect(page).not_to have_content(existing_request_issues.first.description)
-          expect(page).not_to have_content(existing_request_issues.second.description)
+          expect(page.has_no_content?(existing_request_issues.first.description)).to eq(true)
+          expect(page.has_no_content?(existing_request_issues.second.description)).to eq(true)
           expect(cancelled_task.status).to eq(Constants.TASK_STATUSES.cancelled)
           expect(cancelled_task.closed_at).to eq(Time.zone.now)
         end

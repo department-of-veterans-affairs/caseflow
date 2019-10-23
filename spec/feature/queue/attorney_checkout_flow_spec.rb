@@ -518,7 +518,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         expect(page).to have_content(COPY::FORM_ERROR_FIELD_INVALID)
         fill_in "document_id", with: "V1234567.1234"
         click_on "Continue"
-        expect(page).not_to have_content(COPY::FORM_ERROR_FIELD_INVALID)
+        expect(page.has_no_content?(COPY::FORM_ERROR_FIELD_INVALID)).to eq(true)
 
         dummy_note = generate_words 100
         fill_in "notes", with: dummy_note

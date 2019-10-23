@@ -918,7 +918,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       # remove existing issue
       click_remove_intake_issue_dropdown(1)
-      expect(page).not_to have_content("PTSD denied")
+      expect(page.has_no_content?("PTSD denied")).to eq(true)
 
       # re-add to proceed
       click_intake_add_issue
@@ -1351,8 +1351,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
         # going back to the edit page does not show any requested issues
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
-        expect(page).not_to have_content(existing_request_issues.first.description)
-        expect(page).not_to have_content(existing_request_issues.second.description)
+        expect(page.has_no_content?(existing_request_issues.first.description)).to eq(true)
+        expect(page.has_no_content?(existing_request_issues.second.description)).to eq(true)
       end
 
       scenario "no active tasks cancelled when request issues remain" do

@@ -301,7 +301,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       click_remove_intake_issue_dropdown("PTSD denied")
 
       # expect a pop up
-      expect(page).not_to have_content("PTSD denied")
+      expect(page.has_no_content?("PTSD denied")).to eq(true)
 
       # re-add to proceed
       click_intake_add_issue
@@ -773,8 +773,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
         # going back to the edit page does not show any requested issues
         visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
-        expect(page).not_to have_content(existing_request_issues.first.description)
-        expect(page).not_to have_content(existing_request_issues.second.description)
+        expect(page.has_no_content?(existing_request_issues.first.description)).to eq(true)
+        expect(page.has_no_content?(existing_request_issues.second.description)).to eq(true)
       end
 
       scenario "no active tasks cancelled when request issues remain" do
