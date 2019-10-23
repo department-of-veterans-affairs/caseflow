@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class IndividuallyOnHoldTasksTab < OnHoldTasksTab
+  def self.tab_name
+    Constants.QUEUE_CONFIG.INDIVIDUALLY_ON_HOLD_TASKS_TAB_NAME
+  end
+
   def description
     COPY::COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION
   end

@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class IndividuallyCompletedTasksTab < CompletedTasksTab
+  def self.tab_name
+    Constants.QUEUE_CONFIG.INDIVIDUALLY_COMPLETED_TASKS_TAB_NAME
+  end
+
   # rubocop:disable Metrics/AbcSize
   def column_names
     [

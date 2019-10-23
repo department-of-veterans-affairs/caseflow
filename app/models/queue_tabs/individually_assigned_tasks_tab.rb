@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class IndividuallyAssignedTasksTab < AssignedTasksTab
+  def self.tab_name
+    Constants.QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME
+  end
+
   def description
     COPY::COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION
   end

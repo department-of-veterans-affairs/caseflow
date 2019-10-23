@@ -1,7 +1,10 @@
 {
   "ASSIGNED_TASKS_TAB_NAME": "assigned",
+  "INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME": "assigned_person",
   "COMPLETED_TASKS_TAB_NAME": "completed",
+  "INDIVIDUALLY_COMPLETED_TASKS_TAB_NAME": "completed_person",
   "ON_HOLD_TASKS_TAB_NAME": "on_hold",
+  "INDIVIDUALLY_ON_HOLD_TASKS_TAB_NAME": "on_hold_person",
   "TRACKING_TASKS_TAB_NAME": "tracking",
   "UNASSIGNED_TASKS_TAB_NAME": "unassigned",
 
