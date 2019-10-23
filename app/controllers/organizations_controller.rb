@@ -10,7 +10,17 @@ class OrganizationsController < ApplicationController
   skip_before_action :deny_vso_access
 
   def show
-    render "queue/index"
+    respond_to do |format|
+      format.html { render template: "queue/index" }
+      format.json do
+        render json: {
+          id: organization.id,
+          name: organization.name,
+          admins: organization.admins,
+          non_admins: organization.non_admins
+        }
+      end
+    end
   end
 
   private
