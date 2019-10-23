@@ -152,9 +152,12 @@ class TasksController < ApplicationController
   end
 
   def visualization
-    tasks = VisualizationTasksSelector.new(visualization_params).tasks
+    task_selector = VisualizationTasksSelector.new(visualization_params)
+    all_tasks = task_selector.all_tasks
+    tasks = task_selector.tasks
     render json: {
-      tasks: json_visualization_tasks(tasks)
+      tasks: json_visualization_tasks(tasks),
+      statistics: all_tasks.group(:status).count
     }
   end
 
