@@ -28,7 +28,7 @@ servers:
 paths:
   /higher_level_reviews:
     post:
-      summary: Creates a Higher-Level Review.
+      summary: Creates a Higher-Level Review
       description: >+
         This endpoint will submit a Decision Review request of type Higher Level Review.  This endpoint is analogous to submitting VA For 20-0996 via mail or fax.
 
