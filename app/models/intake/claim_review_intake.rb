@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+##
+# ClaimReviewIntake contains shared logic for intakes for Supplemental Claim, and Higher Level Review intakes.
+
 class ClaimReviewIntake < DecisionReviewIntake
   attr_reader :request_params
 

@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+##
+# DecisionReviewIntake contains shared logic for AMA intakes, including for
+# Appeal, Supplemental Claim, and Higher Level Review intakes.
+
 class DecisionReviewIntake < Intake
   include RunAsyncable
 

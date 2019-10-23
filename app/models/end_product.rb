@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+##
+# An end product represents a claim or a task to be completed for a veteran. The type of end product
+# indicated by the claim_type_code, determines who the task will be routed to for the next steps.
+# End products are handled outside of Caseflow.  Caseflow reads end product data or cancels end products
+# in BGS, and establishes some types of end products in VBMS.
+
 class EndProduct
   include ActiveModel::Model
   include ActiveModel::Validations

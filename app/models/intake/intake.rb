@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+##
+# The parent class for shared logic between all types of intakes.
+# When an intake is completed, it results in a detail, which could be an AMA Decision Review, or a RAMP Review.
+
 class Intake < ApplicationRecord
   class FormTypeNotSupported < StandardError; end
 

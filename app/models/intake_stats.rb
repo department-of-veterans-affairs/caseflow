@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+##
+# This file supports calculations for the intake/stats page which was created to support
+# reporting requirement for RAMP intake stats
+
 class IntakeStats < Caseflow::Stats
   INTERVALS = [:daily, :weekly, :monthly, :fiscal_yearly].freeze
 
