@@ -1037,4 +1037,81 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       end
     end
   end
+
+  describe "GET tasks/visualization" do
+    let(:user) { create(:default_user) }
+
+    before do
+      User.stub = user
+    end
+
+    it "should process the request successfully" do
+      get :visualization
+      expect(response.status).to eq 200
+      response_body = JSON.parse(response.body)["tasks"]
+
+      test_data = [
+        {
+          assignee: "CSS_ID1",
+          type: "IhpColocatedTask",
+          assigned_at: 4.days.ago,
+          started_at: 3.days.ago,
+          placed_on_hold_at: 2.days.ago,
+          closed_at: 1.day.ago
+        }, {
+          assignee: "CSS_ID1",
+          type: "AojColocatedTask",
+          assigned_at: 6.days.ago,
+          started_at: 3.days.ago,
+          placed_on_hold_at: 2.days.ago,
+          closed_at: 1.day.ago
+        }, {
+          assignee: "CSS_ID2",
+          type: "IhpColocatedTask",
+          assigned_at: 7.days.ago,
+          started_at: 3.days.ago,
+          placed_on_hold_at: 2.days.ago,
+          closed_at: 1.day.ago
+        }, {
+          assignee: "CSS_ID1",
+          type: "IhpColocatedTask",
+          assigned_at: 9.days.ago,
+          started_at: 3.days.ago,
+          placed_on_hold_at: 2.days.ago,
+          closed_at: 1.day.ago
+        }, {
+          assignee: "CSS_ID1",
+          type: "IhpColocatedTask",
+          assigned_at: 14.days.ago,
+          started_at: 3.days.ago,
+          placed_on_hold_at: 2.days.ago,
+          closed_at: 1.day.ago
+        }, {
+          assignee: "CSS_ID1",
+          type: "IhpColocatedTask",
+          assigned_at: 14.days.ago,
+          started_at: 3.days.ago,
+          placed_on_hold_at: 2.days.ago,
+          closed_at: 1.day.ago
+        }, {
+          assignee: "CSS_ID1",
+          type: "IhpColocatedTask",
+          assigned_at: 4.days.ago,
+          started_at: 3.days.ago,
+          placed_on_hold_at: 2.days.ago,
+          closed_at: 1.day.ago
+        }, {
+          assignee: "CSS_ID1",
+          type: "IhpColocatedTask",
+          assigned_at: 4.days.ago,
+          started_at: 3.days.ago,
+          placed_on_hold_at: 2.days.ago,
+          closed_at: 1.day.ago
+        }
+      ]
+
+      expect(response_body.length).to eq test_data.length
+      expect(response_body.first["assignee"]).to eq test_data.first[:assignee]
+    end
+  end
 end

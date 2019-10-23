@@ -151,6 +151,70 @@ class TasksController < ApplicationController
     }
   end
 
+  def visualization
+    render json: {
+      tasks: [
+        {
+          assignee: "CSS_ID1",
+          type: "IhpColocatedTask",
+          assigned_at: 4.days.ago,
+          started_at: 3.days.ago,
+          placed_on_hold_at: 2.days.ago,
+          closed_at: 1.day.ago
+        }, {
+          assignee: "CSS_ID1",
+          type: "AojColocatedTask",
+          assigned_at: 6.days.ago,
+          started_at: 3.days.ago,
+          placed_on_hold_at: 2.days.ago,
+          closed_at: 1.day.ago
+        }, {
+          assignee: "CSS_ID2",
+          type: "IhpColocatedTask",
+          assigned_at: 7.days.ago,
+          started_at: 3.days.ago,
+          placed_on_hold_at: 2.days.ago,
+          closed_at: 1.day.ago
+        }, {
+          assignee: "CSS_ID1",
+          type: "IhpColocatedTask",
+          assigned_at: 9.days.ago,
+          started_at: 3.days.ago,
+          placed_on_hold_at: 2.days.ago,
+          closed_at: 1.day.ago
+        }, {
+          assignee: "CSS_ID1",
+          type: "IhpColocatedTask",
+          assigned_at: 14.days.ago,
+          started_at: 3.days.ago,
+          placed_on_hold_at: 2.days.ago,
+          closed_at: 1.day.ago
+        }, {
+          assignee: "CSS_ID1",
+          type: "IhpColocatedTask",
+          assigned_at: 14.days.ago,
+          started_at: 3.days.ago,
+          placed_on_hold_at: 2.days.ago,
+          closed_at: 1.day.ago
+        }, {
+          assignee: "CSS_ID1",
+          type: "IhpColocatedTask",
+          assigned_at: 4.days.ago,
+          started_at: 3.days.ago,
+          placed_on_hold_at: 2.days.ago,
+          closed_at: 1.day.ago
+        }, {
+          assignee: "CSS_ID1",
+          type: "IhpColocatedTask",
+          assigned_at: 4.days.ago,
+          started_at: 3.days.ago,
+          placed_on_hold_at: 2.days.ago,
+          closed_at: 1.day.ago
+        }
+      ]
+    }
+  end
+
   private
 
   def queue_config
