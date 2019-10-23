@@ -535,7 +535,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       #create(:staff, :attorney_role, sdomainid: attorney.css_id)
     end
 
-    subject { post "/appeals/#{appeal.vacols_id}/death_dismissal" }
+    subject { post :death_dismissal, params: { id: appeal.vacols_id } }
 
     context "with invalid user (non-judge, non-vlj-support admin)" do
       before { User.authenticate!(user: user) }

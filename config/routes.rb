@@ -122,7 +122,7 @@ Rails.application.routes.draw do
       resources :special_issues, only: [:create, :index]
       resources :advance_on_docket_motions, only: [:create]
       get 'tasks', to: "tasks#for_appeal"
-      post 'death_dismissal', to: "appeals#death_dismissal"
+      post :death_dismissal
       patch 'update'
     end
   end
