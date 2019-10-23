@@ -110,8 +110,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         ActionController::Parameters.new(data: data, included: included),
         create(:user)
       )
-      processor.run!
-      processor.higher_level_review
+      processor.run!.higher_level_review
     end
     def get_higher_level_review # rubocop:disable Naming/AccessorMethodName
       get(
