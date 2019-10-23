@@ -658,7 +658,6 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         expect(withdrawn_issue).to_not be_nil
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
 
-        sleep 1
         # reload to verify that the new issues populate the form
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
 
@@ -767,7 +766,6 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         click_edit_submit_and_confirm
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
 
-        sleep 1
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
 

@@ -1285,7 +1285,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
         expect(withdrawn_issue).to_not be_nil
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
 
-        sleep 1
         # reload to verify that the new issues populate the form
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
@@ -1345,7 +1344,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         click_remove_intake_issue_dropdown("Apportionment")
         click_edit_submit_and_confirm
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
-        sleep 1
+
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
 
@@ -1362,7 +1361,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         click_edit_submit_and_confirm
 
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
-        sleep 1
+
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.in_progress)
       end
@@ -1377,7 +1376,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         click_intake_confirm
         expect(page).to have_content("Review Removed")
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
-        sleep 1
+
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
       end
     end
