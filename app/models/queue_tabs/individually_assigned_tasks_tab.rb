@@ -1,24 +1,18 @@
 # frozen_string_literal: true
 
-class UnassignedTasksTab < QueueTab
-  validate :assignee_is_organization
-
-  attr_accessor :show_reader_link_column, :allow_bulk_assign
-
-  def label
-    COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE
-  end
+class IndividuallyAssignedTasksTab < AssignedTasksTab
+  validate :assignee_is_user
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME
   end
 
   def description
-    format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, assignee.name)
+    COPY::COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION
   end
 
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
+    Task.includes(*task_includes).visible_in_queue_table_view.active.where(assigned_to: assignee)
   end
 
   # rubocop:disable Metrics/AbcSize
@@ -31,12 +25,8 @@ class UnassignedTasksTab < QueueTab
       Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
       Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name,
       Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
-      show_reader_link_column ? Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name : nil
+      Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name
     ].compact
   end
   # rubocop:enable Metrics/AbcSize
-
-  def allow_bulk_assign?
-    !!allow_bulk_assign
-  end
 end

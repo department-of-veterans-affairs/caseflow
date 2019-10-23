@@ -1,22 +1,10 @@
 # frozen_string_literal: true
 
-class CompletedTasksTab < QueueTab
-  validate :assignee_is_organization
-
-  def label
-    COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE
-  end
+class IndividuallyCompletedTasksTab < CompletedTasksTab
+  validate :assignee_is_user
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME
-  end
-
-  def description
-    COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION
-  end
-
-  def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).recently_closed
+    Constants.QUEUE_CONFIG.INDIVIDUALLY_COMPLETED_TASKS_TAB_NAME
   end
 
   # rubocop:disable Metrics/AbcSize
@@ -27,9 +15,10 @@ class CompletedTasksTab < QueueTab
       Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
       show_regional_office_column ? Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name : nil,
       Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
-      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name,
       Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name,
-      Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name
     ].compact
   end
   # rubocop:enable Metrics/AbcSize
