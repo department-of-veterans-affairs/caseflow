@@ -108,6 +108,7 @@ jobs:
           environment:
             RDOC: 1
             RD_PROF: 1
+            FPROF: 1
 
       - store_test_results:
           name: Store test results as summary
