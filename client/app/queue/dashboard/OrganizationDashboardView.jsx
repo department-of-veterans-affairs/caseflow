@@ -20,7 +20,7 @@ export const OrganizationDashboardView = ({ organization: orgUrl }) => {
   const [taskData, setTaskData] = useState([]);
 
   useEffect(() => {
-    async function fetchData() {
+    const fetchData = async () => {
       const organization = await fetchOrganization(orgUrl);
 
       setOrg(organization);
@@ -28,7 +28,8 @@ export const OrganizationDashboardView = ({ organization: orgUrl }) => {
       const res = await fetchTaskDataForOrg(organization.id);
 
       setTaskData(res);
-    }
+    };
+
     fetchData();
   }, [orgUrl]);
 
