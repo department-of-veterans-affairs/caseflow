@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import CompletedTaskChart from './CompletedTaskChart'
 import ApiUtil from '../../util/ApiUtil';
+import { OrganizationStatistics } from './OrganizationStatistics';
 
 const fetchOrganization = async (orgUrl) => {
   const { body: org } = await ApiUtil.get(`/organizations/${orgUrl}`);
@@ -15,12 +16,13 @@ const fetchOrganization = async (orgUrl) => {
 const fetchTaskDataForOrg = async (orgId) => {
   const { body } = await ApiUtil.get('/tasks/visualization', { query: { organization_id: orgId } });
 
-  return body.tasks;
+  return body;
 };
 
 export const OrganizationDashboardView = ({ organization: orgUrl }) => {
   const [org, setOrg] = useState({});
   const [taskData, setTaskData] = useState([]);
+  const [stats, setStats] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,9 +30,10 @@ export const OrganizationDashboardView = ({ organization: orgUrl }) => {
 
       setOrg(organization);
 
-      const res = await fetchTaskDataForOrg(organization.id);
+      const { tasks, statistics } = await fetchTaskDataForOrg(organization.id);
 
-      setTaskData(res);
+      setTaskData(tasks);
+      setStats(statistics);
     };
 
     fetchData();
@@ -51,7 +54,14 @@ export const OrganizationDashboardView = ({ organization: orgUrl }) => {
     "id": "Caseflow",
     "data": data
   }
-  return <AppSegment filledBackground>{org && <h1>{org.name} Dashboard</h1>} <CompletedTaskChart data={[chartData]}/></AppSegment>;
+
+  return (
+    <AppSegment filledBackground>
+      {org && <h1>{org.name} Dashboard</h1>}
+      {stats && <OrganizationStatistics statistics={stats} />}
+      {chartData && <CompletedTaskChart data={[chartData]}/>}
+    </AppSegment>
+  );
 };
 OrganizationDashboardView.propTypes = {
   organization: PropTypes.string

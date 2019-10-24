@@ -152,9 +152,12 @@ class TasksController < ApplicationController
   end
 
   def visualization
-    tasks = VisualizationTasksSelector.new(visualization_params).tasks
+    task_selector = VisualizationTasksSelector.new(visualization_params)
+    all_tasks = task_selector.all_tasks
+    tasks = task_selector.tasks
     render json: {
-      tasks: json_visualization_tasks(tasks)
+      tasks: json_visualization_tasks(tasks),
+      statistics: all_tasks.group(:status).count
     }
   end
 
@@ -243,9 +246,11 @@ class TasksController < ApplicationController
   end
 
   def visualization_params
+    organization_id = params.require(:organization_id)
+    params.delete(:organization_id)
     {
-      organization_id: params.require(:organization_id),
-      filter_params: params["filter_params"] ? params.require(:filter_params) : {}
+      organization_id: organization_id,
+      filter_params: params.permit(:type, :assigned_to_id)
     }
   end
 

@@ -83,22 +83,6 @@ describe VisualizationTasksSelector, :postgres do
     end
 
     context "when filter params are passed" do
-      let(:filter_task_type) { IhpColocatedTask.name }
-      let(:extra_parent_tasks) do
-        create_list(
-          :task,
-          task_count,
-          assigned_to: org_assignee,
-          type: filter_task_type,
-          assigned_at: 5.days.ago,
-          started_at: 4.days.ago,
-          placed_on_hold_at: 3.days.ago,
-          closed_at: 2.days.ago
-        )
-      end
-
-      let(:all_parent_tasks) { parent_tasks + extra_parent_tasks }
-
       let(:args) { { organization_id: org_assignee.id, filter_params: filter_params } }
 
       context "when filter_params is empty" do
@@ -109,13 +93,56 @@ describe VisualizationTasksSelector, :postgres do
         end
       end
 
-      context "when filter includes IhpColocatedTasks" do
+      context "when filter includes type" do
         let(:filter_params) { { type: filter_task_type } }
+
+        let(:filter_task_type) { IhpColocatedTask.name }
+        let(:extra_parent_tasks) do
+          create_list(
+            :task,
+            task_count,
+            assigned_to: org_assignee,
+            type: filter_task_type,
+            assigned_at: 5.days.ago,
+            started_at: 4.days.ago,
+            placed_on_hold_at: 3.days.ago,
+            closed_at: 2.days.ago
+          )
+        end
+
+        let(:all_parent_tasks) { parent_tasks + extra_parent_tasks }
 
         it "returns only ihp tasks assigned to the current organization" do
           expect(subject.length).to eq extra_parent_tasks.length
           expect(subject.map(&:type).uniq).to eq([filter_task_type])
           expect(subject.map(&:id)).to match_array(tasks.select { |task| task.type == filter_task_type }.map(&:id))
+        end
+      end
+
+      fcontext "when filter includes user" do
+        let(:filter_params) { { assigned_to_id: second_user.id } }
+
+        let(:second_user) { create(:user) }
+
+        let!(:extra_tasks) do
+          all_parent_tasks.map do |parent_task|
+            create(
+              :task,
+              assigned_to: second_user,
+              type: parent_task.type,
+              assigned_at: 5.days.ago,
+              started_at: 4.days.ago,
+              placed_on_hold_at: 3.days.ago,
+              closed_at: 2.days.ago,
+              parent: parent_task
+            )
+          end
+        end
+
+        it "returns only tasks assigned to the selected user" do
+          expect(subject.length).to eq extra_tasks.length
+          expect(subject.map(&:assigned_to_id).uniq).to eq([second_user.id])
+          expect(subject.map(&:id)).to match_array(extra_tasks.map(&:id))
         end
       end
     end
