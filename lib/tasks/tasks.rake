@@ -161,20 +161,23 @@ namespace :tasks do
     ensure_all_judge_review_tasks_have_new_judge(target_tasks, user.css_id)
 
     ActiveRecord::Base.multi_transaction do
-      reassign_judge_assign_tasks(target_tasks.where(type: JudgeAssignTask.name), dry_run)
-      reassign_judge_review_tasks(target_tasks.where(type: JudgeDecisionReviewTask.name), user.css_id, dry_run)
+      judge_assign_tasks = target_tasks.where(type: JudgeAssignTask.name)
+      reassign_judge_assign_tasks(judge_assign_tasks, dry_run) if judge_assign_tasks.present?
+
+      judge_review_tasks = target_tasks.where(type: JudgeDecisionReviewTask.name)
+      reassign_judge_review_tasks(judge_review_tasks, user.css_id, dry_run) if judge_review_tasks.present?
 
       all_other_tasks = target_tasks.where.not(type: [JudgeAssignTask.name, JudgeDecisionReviewTask.name])
 
       parents_assigned_to_orgs = Task.where(id: all_other_tasks.pluck(:parent_id), assigned_to_type: Organization.name)
-      reassign_tasks_with_parent_org_tasks(
-        all_other_tasks.where(parent_id: parents_assigned_to_orgs.pluck(:id)), dry_run
-      )
+      tasks_with_parent_org_tasks = all_other_tasks.where(parent_id: parents_assigned_to_orgs.pluck(:id))
+      reassign_tasks_with_parent_org_tasks(tasks_with_parent_org_tasks, dry_run) if tasks_with_parent_org_tasks.present?
 
       parents_assigned_to_users = Task.where(id: all_other_tasks.pluck(:parent_id), assigned_to_type: User.name)
-      reassign_tasks_with_parent_user_tasks(
-        all_other_tasks.where(parent_id: parents_assigned_to_users.pluck(:id)), dry_run
-      )
+      tasks_with_parent_user_tasks = all_other_tasks.where(parent_id: parents_assigned_to_users.pluck(:id))
+      if tasks_with_parent_user_tasks.present?
+        reassign_tasks_with_parent_user_tasks(tasks_with_parent_user_tasks, dry_run)
+      end
     end
   end
 
@@ -187,7 +190,7 @@ namespace :tasks do
 
     if tasks_with_no_parent_ids.count > 0
       fail InvalidTaskParent, "Open tasks (#{tasks_with_no_parent_ids.join(', ')}) " \
-                              "assigned to User #{user.id} have no parent task"
+                              "assigned to the user have no parent task"
     end
   end
 
@@ -199,7 +202,7 @@ namespace :tasks do
 
     if tasks_with_org_parents_of_mismatched_type.count > 0
       fail InvalidTaskParent, "Open tasks (#{tasks_with_org_parents_of_mismatched_type.map(&:first).join(', ')}) " \
-                              "assigned to User #{user.id} have parent task assigned to an organization but has a " \
+                              "assigned to the user have parent task assigned to an organization but has a " \
                               "different task type"
     end
   end
@@ -211,7 +214,7 @@ namespace :tasks do
 
     if tasks_with_user_parents_of_same_type.count > 0
       fail InvalidTaskParent, "Open tasks (#{tasks_with_user_parents_of_same_type.map(&:first).join(', ')}) " \
-                              "assigned to User #{user.id} have parent task assigned to a user but has the same type"
+                              "assigned to the user have parent task assigned to a user but has the same type"
     end
   end
 
@@ -268,7 +271,8 @@ namespace :tasks do
   def reassign_judge_review_tasks(tasks, old_judge_team_name, dry_run)
     task_ids = tasks.pluck(:id)
     cancel = dry_run ? "Would cancel" : "Cancelling"
-    message = "#{cancel} #{task_ids.count} JudgeDecisionReviewTasks with ids #{task_ids.join(', ')} and move " \
+    move = dry_run ? "move" : "moving"
+    message = "#{cancel} #{task_ids.count} JudgeDecisionReviewTasks with ids #{task_ids.join(', ')} and #{move} " \
               "#{task_ids.count} AttorneyTasks to new JudgeDecisionReviewTasks assigned to the attorney's new judge"
     puts message
 
@@ -301,7 +305,7 @@ namespace :tasks do
     cancel = dry_run ? "Would cancel" : "Cancelling"
     move = dry_run ? "move" : "moving"
     message = "#{cancel} #{task_ids.count} tasks with ids #{task_ids.join(', ')} and #{move} #{task_ids.count} parent" \
-              "tasks back to the organization's unassigned queue tab"
+              " tasks back to the organization's unassigned queue tab"
     puts message
 
     if !dry_run
@@ -336,7 +340,7 @@ namespace :tasks do
     cancel = dry_run ? "Would cancel" : "Cancelling"
     move = dry_run ? "move" : "moving"
     message = "#{cancel} #{task_ids.count} tasks with ids #{task_ids.join(', ')} and #{move} #{task_ids.count} parent" \
-              "tasks back to the parent's assigned user's assigned tab"
+              " tasks back to the parent's assigned user's assigned tab"
     puts message
 
     if !dry_run
