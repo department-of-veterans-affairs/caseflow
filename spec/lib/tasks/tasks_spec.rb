@@ -4,7 +4,7 @@ require "support/database_cleaner"
 require "rails_helper"
 require "rake"
 
-describe "task rake tasks", :postgres do
+fdescribe "task rake tasks", :postgres do
   before :all do
     Rake.application = Rake::Application.new
     Rake.application.rake_require "tasks/tasks"
@@ -35,7 +35,7 @@ describe "task rake tasks", :postgres do
           ids = from_task.all.pluck(:id)
           expected_output = <<~OUTPUT
             *** DRY RUN
-            *** pass 'false' as the second argument to execute
+            *** pass 'false' as the third argument to execute
             Would change #{count} #{from_task_name}s with ids #{ids.join(', ')} into #{to_task_name}s
             Would revert with: bundle exec rake tasks:change_type[#{to_task_name},#{from_task_name},#{ids.join(',')}]
           OUTPUT
@@ -114,7 +114,7 @@ describe "task rake tasks", :postgres do
             joined = change_ids.join(",")
             expected_output = <<~OUTPUT
               *** DRY RUN
-              *** pass 'false' as the second argument to execute
+              *** pass 'false' as the third argument to execute
               Would change #{count} #{from_task_name}s with ids #{change_ids.join(', ')} into #{to_task_name}s
               Would revert with: bundle exec rake tasks:change_type[#{to_task_name},#{from_task_name},#{joined}]
             OUTPUT
@@ -361,7 +361,7 @@ describe "task rake tasks", :postgres do
         before { tasks.each { |task| task.update!(parent_id: nil) } }
 
         it "fails and warns the caller of tasks without open parents" do
-          orphaned_ids_output = tasks.map(&:id).reverse.join(", ")
+          orphaned_ids_output = tasks.pluck(:id).reverse.join(", ")
           expected_output = "Open tasks (#{orphaned_ids_output}) assigned to the user have no parent task"
           expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
           expect { subject }.to raise_error(InvalidTaskParent).with_message(expected_output)

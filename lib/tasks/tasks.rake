@@ -53,11 +53,10 @@ namespace :tasks do
     change = dry_run ? "Would change" : "Changing"
     revert = dry_run ? "Would revert" : "Revert"
     message = "#{change} #{target_tasks.count} #{from_class.name}s with ids #{ids.join(', ')} into #{to_class.name}s"
-    puts message
+    log_message("rake tasks:change_type", message, dry_run)
     puts "#{revert} with: bundle exec rake tasks:change_type[#{to_class.name},#{from_class.name},#{ids.join(',')}]"
 
     if !dry_run
-      Rails.logger.tagged("rake tasks:change_type") { Rails.logger.info(message) }
       target_tasks.each do |task|
         task.update!(type: to_class.name)
       end
@@ -122,12 +121,11 @@ namespace :tasks do
     revert = dry_run ? "Would revert" : "Revert"
     message = "#{change} assignee of #{target_tasks.count} #{task_class.name}s with ids #{ids.join(', ')} " \
               "from #{from_organization.name} to #{to_organization.name}"
-    puts message
+    log_message(logger_tag, message, dry_run)
     puts "#{revert} with: bundle exec rake tasks:change_organization_assigned_to" \
          "[#{task_class.name},#{to_id},#{from_id},false,#{ids.join(',')}]"
 
     if !dry_run
-      Rails.logger.tagged(logger_tag) { Rails.logger.info(message) }
       target_tasks.update_all(assigned_to_id: to_id)
     end
   end
@@ -148,7 +146,7 @@ namespace :tasks do
     end
 
     user = User.find(args.user_id)
-    target_tasks = Task.open.includes(:parent).where(assigned_to_type: User.name, assigned_to_id: user.id)
+    target_tasks = Task.open.includes(:parent).where(assigned_to: user)
 
     # Check for tasks in a bad state as outlined in
     # department-of-veterans-affairs/caseflow/blob/4fd949f3fb77c0aa0ec2854a3e5310a320aecd03/docs/11811_tech_spec.md
@@ -180,14 +178,14 @@ namespace :tasks do
   end
 
   def ensure_user_has_tasks(target_tasks)
-    fail NoTasksToReassign, "There aren't any open tasks assigned to this user." if target_tasks.count == 0
+    fail NoTasksToReassign, "There aren't any open tasks assigned to this user." if target_tasks.empty?
   end
 
   def ensure_all_tasks_have_parents(target_tasks)
-    tasks_with_no_parent_ids = target_tasks.where(parent_id: nil).pluck(:id)
+    tasks_with_no_parent = target_tasks.where(parent_id: nil)
 
-    if tasks_with_no_parent_ids.count > 0
-      fail InvalidTaskParent, "Open tasks (#{tasks_with_no_parent_ids.join(', ')}) " \
+    if tasks_with_no_parent.any?
+      fail InvalidTaskParent, "Open tasks (#{tasks_with_no_parent.pluck(:id).join(', ')}) " \
                               "assigned to the user have no parent task"
     end
   end
@@ -198,7 +196,7 @@ namespace :tasks do
       .where("parents_tasks.assigned_to_type = ? AND parents_tasks.type != tasks.type", Organization.name)
       .pluck("tasks.id, parents_tasks.assigned_to_type, parents_tasks.type")
 
-    if tasks_with_org_parents_of_mismatched_type.count > 0
+    if tasks_with_org_parents_of_mismatched_type.any?
       fail InvalidTaskParent, "Open tasks (#{tasks_with_org_parents_of_mismatched_type.map(&:first).join(', ')}) " \
                               "assigned to the user have parent task assigned to an organization but has a " \
                               "different task type"
@@ -210,7 +208,7 @@ namespace :tasks do
       .where("parents_tasks.assigned_to_type = ? AND parents_tasks.type = tasks.type", User.name)
       .pluck("tasks.id, parents_tasks.assigned_to_type, parents_tasks.type")
 
-    if tasks_with_user_parents_of_same_type.count > 0
+    if tasks_with_user_parents_of_same_type.any?
       fail InvalidTaskParent, "Open tasks (#{tasks_with_user_parents_of_same_type.map(&:first).join(', ')}) " \
                               "assigned to the user have parent task assigned to a user but has the same type"
     end
@@ -218,7 +216,8 @@ namespace :tasks do
 
   def ensure_all_judge_assign_tasks_are_child_free(target_tasks)
     open_children_of_tasks = Task.open.where(parent_id: target_tasks.where(type: JudgeAssignTask.name).pluck(:id))
-    if open_children_of_tasks.count > 0
+
+    if open_children_of_tasks.any?
       fail InvalidTaskParent, "JudgeAssignTasks have open children (#{open_children_of_tasks.pluck(:id).join(', ')})"
     end
   end
@@ -226,9 +225,11 @@ namespace :tasks do
   def ensure_all_judge_review_tasks_have_child_attorney_tasks(target_tasks)
     judge_review_task_ids = target_tasks.where(type: JudgeDecisionReviewTask.name).pluck(:id)
     open_children_of_tasks = AttorneyTask.open.where(parent_id: judge_review_task_ids)
-    if judge_review_task_ids.sort != open_children_of_tasks.pluck(:parent_id).sort
+    judge_review_tasks_without_children = (judge_review_task_ids - open_children_of_tasks.pluck(:parent_id))
+
+    if judge_review_tasks_without_children.any?
       fail InvalidTaskParent, "JudgeDecisionReviewTasks " \
-                              "(#{(judge_review_task_ids - open_children_of_tasks.pluck(:parent_id)).join(', ')}) " \
+                              "(#{judge_review_tasks_without_children.join(', ')}) " \
                               "have no open child attorney tasks"
     end
   end
@@ -243,7 +244,8 @@ namespace :tasks do
       ]
     end
     tasks_without_judges = new_judges_for_task.select { |task| task.second.nil? }
-    if tasks_without_judges.count > 0
+
+    if tasks_without_judges.any?
       fail InvalidTaskAssignee, "AttorneyTasks (#{tasks_without_judges.map(&:first).join(', ')}) assignee does " \
                                 "not belong to a judge team with an active judge"
     end
@@ -255,10 +257,9 @@ namespace :tasks do
     create = dry_run ? "create" : "creating"
     message = "#{cancel} #{task_ids.count} JudgeAssignTasks with ids #{task_ids.join(', ')} and #{create} " \
               "#{task_ids.count} DistributionTasks"
-    puts message
+    log_message("rake tasks:reassign_from_user", message, dry_run)
 
     if !dry_run
-      Rails.logger.tagged("rake tasks:reassign_from_user") { Rails.logger.info(message) }
       tasks.each do |task|
         DistributionTask.create!(appeal: task.appeal, parent: task.appeal.root_task)
         task.update!(status: Constants.TASK_STATUSES.cancelled)
@@ -272,10 +273,9 @@ namespace :tasks do
     move = dry_run ? "move" : "moving"
     message = "#{cancel} #{task_ids.count} JudgeDecisionReviewTasks with ids #{task_ids.join(', ')} and #{move} " \
               "#{task_ids.count} AttorneyTasks to new JudgeDecisionReviewTasks assigned to the attorney's new judge"
-    puts message
+    log_message("rake tasks:reassign_from_user", message, dry_run)
 
     if !dry_run
-      Rails.logger.tagged("rake tasks:reassign_from_user") { Rails.logger.info(message) }
       tasks.each do |task|
         atty_task = task.children_attorney_tasks.not_cancelled.order(:assigned_at).last
         new_supervising_judge = atty_task.assigned_to.organizations
@@ -304,10 +304,9 @@ namespace :tasks do
     move = dry_run ? "move" : "moving"
     message = "#{cancel} #{task_ids.count} tasks with ids #{task_ids.join(', ')} and #{move} #{task_ids.count} parent" \
               " tasks back to the organization's unassigned queue tab"
-    puts message
+    log_message("rake tasks:reassign_from_user", message, dry_run)
 
     if !dry_run
-      Rails.logger.tagged("rake tasks:reassign_from_user") { Rails.logger.info(message) }
       Task.where(id: tasks.pluck(:parent_id)).update_all(status: Constants.TASK_STATUSES.assigned)
       tasks.update_all(status: Constants.TASK_STATUSES.cancelled)
     end
@@ -320,10 +319,9 @@ namespace :tasks do
     reassign = dry_run ? "Would reassign" : "Reassigning"
     message = "#{reassign} #{task_ids.count} tasks with ids #{task_ids.join(', ')} to #{active_org_user_count} " \
               "members of the #{assigned_to_organization.name} organization"
-    puts message
+    log_message("rake tasks:reassign_from_user", message, dry_run)
 
     if !dry_run
-      Rails.logger.tagged("rake tasks:reassign_from_user") { Rails.logger.info(message) }
       tasks.in_groups(active_org_user_count, false).each do |task_group|
         next_assignee_id = assigned_to_organization.next_assignee.id
         task_group.each do |task|
@@ -339,12 +337,16 @@ namespace :tasks do
     move = dry_run ? "move" : "moving"
     message = "#{cancel} #{task_ids.count} tasks with ids #{task_ids.join(', ')} and #{move} #{task_ids.count} parent" \
               " tasks back to the parent's assigned user's assigned tab"
-    puts message
+    log_message("rake tasks:reassign_from_user", message, dry_run)
 
     if !dry_run
-      Rails.logger.tagged("rake tasks:reassign_from_user") { Rails.logger.info(message) }
       Task.where(id: tasks.pluck(:parent_id)).update_all(status: Constants.TASK_STATUSES.assigned)
       tasks.update_all(status: Constants.TASK_STATUSES.cancelled)
     end
+  end
+
+  def log_message(tag, message, dry_run)
+    puts message
+    Rails.logger.tagged(tag) { Rails.logger.info(message) } if !dry_run
   end
 end
