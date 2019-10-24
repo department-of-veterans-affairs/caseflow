@@ -4,7 +4,7 @@ const _ = require('lodash');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const env = process.env.NODE_ENV; // eslint-disable-line no-process-env
-const devBuild = env !== 'test' && env !== 'production'; 
+const devBuild = env !== 'test' && env !== 'production';
 const generateSourceMap = env !== 'test';
 
 const config = {
@@ -17,7 +17,10 @@ const config = {
   plugins: _.compact([
     devBuild ? null : new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.EnvironmentPlugin({ NODE_ENV: 'development' }),
-    devBuild ? null : new UglifyJsPlugin({ sourceMap: generateSourceMap, parallel: true })
+    devBuild ? null : new UglifyJsPlugin({
+      sourceMap: generateSourceMap,
+      parallel: true
+    })
   ]),
   resolve: {
     extensions: ['.js', '.jsx'],
