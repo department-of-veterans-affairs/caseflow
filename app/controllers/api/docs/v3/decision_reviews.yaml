@@ -1192,7 +1192,7 @@ components:
       type: string
       format: uuid
       pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
-    benefit_type:
+    BenefitType:
       type: string
       enum:
         - compensation
@@ -1204,10 +1204,10 @@ components:
         - loan_guaranty
         - vha
         - nca
-    higher_level_review_alerts:
+    HigherLevelReviewAlerts:
       type: string
       enum: ["AmaPostDecision"]
-    higher_level_review_events:
+    HigherLevelReviewEvents:
       type: string
       enum:
         - hlr_request_event
@@ -1215,14 +1215,14 @@ components:
         - hlr_dta_error_event
         - dta_decision_event
         - hlr_other_close_event
-    higher_level_review_status_types:
+    HigherLevelReviewStatusTypes:
       type: string
       enum:
         - hlr_received
         - hlr_dta_error
         - hlr_decision
         - hlr_closed
-    nonrating_issue_category:
+    NonratingIssueCategory:
       type: string
       enum:
         # for benefit type:  compensation
@@ -1396,7 +1396,7 @@ components:
         - Family Member Services | Spina Bifida Medical Charges
         - Family Member Services | Camp Lejeune Family Member Eligibility
         - Other
-    payee_code:
+    PayeeCode:
       type: string
       enum:
         - "00"
@@ -1470,7 +1470,7 @@ components:
         - "88"
         - "89"
         - "99"
-    errors:
+    Errors:
       type: array
       items:
         type: object
@@ -1479,7 +1479,7 @@ components:
             type: string
           detail:
             type: string
-    intake_status:
+    IntakeStatus:
       description: An accepted Decision Review still needs to be processed before the Decision Review can be accessed
       type: object
       properties:
