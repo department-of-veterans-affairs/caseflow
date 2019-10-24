@@ -776,6 +776,8 @@ paths:
 
   /higher_level_reviews/{uuid}:
     get:
+      tags:
+        - Higher Level Reviews
       parameters:
         - name: uuid
           in: path
@@ -1046,6 +1048,8 @@ paths:
                     $ref: "#/components/schemas/errors"
   /issues:
     get:
+      tags:
+        - Issues
       parameters:
         - name: veteranId
           in: header
