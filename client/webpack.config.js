@@ -3,7 +3,9 @@ const path = require('path');
 const _ = require('lodash');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-const devBuild = process.env.NODE_ENV !== 'production'; // eslint-disable-line no-process-env
+const env = process.env.NODE_ENV; // eslint-disable-line no-process-env
+const devBuild = env !== 'test' && env !== 'production'; 
+const generateSourceMap = env !== 'test';
 
 const config = {
   entry: ['es5-shim/es5-shim', 'es5-shim/es5-sham', 'babel-polyfill', './app/index'],
@@ -15,7 +17,7 @@ const config = {
   plugins: _.compact([
     devBuild ? null : new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.EnvironmentPlugin({ NODE_ENV: 'development' }),
-    devBuild ? null : new UglifyJsPlugin({ sourceMap: true })
+    devBuild ? null : new UglifyJsPlugin({ sourceMap: generateSourceMap, parallel: true })
   ]),
   resolve: {
     extensions: ['.js', '.jsx'],
@@ -50,13 +52,13 @@ const config = {
             loader: 'css-loader',
             options: {
               modules: true,
-              sourceMap: true
+              sourceMap: generateSourceMap
             }
           },
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: true
+              sourceMap: generateSourceMap
             }
           }
         ]
@@ -71,13 +73,13 @@ const config = {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true
+              sourceMap: generateSourceMap
             }
           },
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: true
+              sourceMap: generateSourceMap
             }
           }
         ]
@@ -91,7 +93,7 @@ const config = {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true,
+              sourceMap: generatedSourceMap,
               url: false
             }
           }
@@ -105,13 +107,16 @@ const config = {
   }
 };
 
-if (devBuild) {
-  console.log('Webpack dev build for Rails'); // eslint-disable-line no-console
-  config.devtool = 'eval-source-map';
-} else {
+if (env === 'production') {
   console.log('Webpack production build for Rails'); // eslint-disable-line no-console
   console.log('Generating source maps...'); // eslint-disable-line no-console
   config.devtool = 'source-map';
+} else if (env === 'test') {
+  console.log('Webpack test build for Rails'); // eslint-disable-line no-console
+  config.devtool = 'source-map';
+} else {
+  console.log('Webpack dev build for Rails'); // eslint-disable-line no-console
+  config.devtool = 'eval-source-map';
 }
 
 module.exports = config;
