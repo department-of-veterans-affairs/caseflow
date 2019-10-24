@@ -30,6 +30,7 @@
   "dependencies": {
     "@department-of-veterans-affairs/caseflow-frontend-toolkit": "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#3ef2bfb",
     "@fortawesome/fontawesome-free": "^5.3.1",
+    "@nivo/line": "^0.59.3",
     "@nivo/scatterplot": "^0.59.3",
     "babel-core": "^6.18.2",
     "babel-loader": "^7.1.2",

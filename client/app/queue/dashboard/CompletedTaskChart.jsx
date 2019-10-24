@@ -3,6 +3,7 @@ import { ResponsiveLine } from '@nivo/line';
 import PropTypes from 'prop-types';
 
 const CompletedTaskChart = ({ data/* Data to be passed into the graph goes here */ }) => (
+  <div style={{height: 200}}>
   <ResponsiveLine
     data={data}
     xScale= {{ type: 'point' }}
@@ -34,6 +35,7 @@ const CompletedTaskChart = ({ data/* Data to be passed into the graph goes here 
     useMesh
     animate
   />
+  </div>
 );
 
 export default CompletedTaskChart;
@@ -41,6 +43,6 @@ export default CompletedTaskChart;
 CompletedTaskChart.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape({
     date: PropTypes.date,
-    taskComplete: PropTypes.bool
+    taskComplete: PropTypes.number
   }))
 };

@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { countBy } from 'lodash';
+import moment from 'moment'
 import PropTypes from 'prop-types';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import CompletedTaskChart from './CompletedTaskChart'
 import ApiUtil from '../../util/ApiUtil';
 
 const fetchOrganization = async (orgUrl) => {
@@ -33,7 +36,22 @@ export const OrganizationDashboardView = ({ organization: orgUrl }) => {
     fetchData();
   }, [orgUrl]);
 
-  return <AppSegment filledBackground>{org && <h1>{org.name} Dashboard</h1>}</AppSegment>;
+  const tasks = taskData.filter(task => task["closed_at"])
+
+  let data = {}
+
+  tasks.forEach((task) => {
+    const date = moment(task.closed_at).format('YYYY-MM-DD')
+    if (!data[date]) data[date] = {x: (new Date(date)).toString(), y: 0}
+    data[date].y++;
+  })
+
+  data = Object.values(data)
+  let chartData = {
+    "id": "Caseflow",
+    "data": data
+  }
+  return <AppSegment filledBackground>{org && <h1>{org.name} Dashboard</h1>} <CompletedTaskChart data={[chartData]}/></AppSegment>;
 };
 OrganizationDashboardView.propTypes = {
   organization: PropTypes.string
