@@ -63,7 +63,7 @@ export const OrganizationDashboardView = ({ organization: orgUrl }) => {
     <AppSegment filledBackground>
       {org && <h1>{org.name} Dashboard</h1>}
       {stats && <OrganizationStatistics statistics={stats} />}
-      {chartData && <CompletedTaskChart data={[chartData]} />}
+      <div style={{ marginTop: '4rem' }}>{chartData && <CompletedTaskChart data={[chartData]} />}</div>
     </AppSegment>
   );
 };
