@@ -47,13 +47,13 @@ export const OrganizationDashboardView = ({ organization: orgUrl }) => {
     const date = moment(task.closed_at).format('YYYY-MM-DD');
 
     if (!data[date]) {
-      data[date] = { x: new Date(date).toString(),
+      data[date] = { x: new Date(date),
         y: 0 };
     }
     data[date].y += 1;
   });
 
-  data = Object.values(data);
+  data = Object.values(data).sort((a, b) => (a.x > b.x ? 1 : -1));
   const chartData = {
     id: 'Caseflow',
     data
