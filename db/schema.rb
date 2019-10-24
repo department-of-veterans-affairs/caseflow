@@ -715,7 +715,7 @@ ActiveRecord::Schema.define(version: 20191021215017) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "judge_team_roles", force: :cascade do |t|
+  create_table "judge_team_roles", force: :cascade, comment: "Defines roles for individual members of judge teams" do |t|
     t.datetime "created_at", null: false
     t.integer "organizations_user_id"
     t.string "type"
