@@ -162,22 +162,20 @@ namespace :tasks do
 
     ActiveRecord::Base.multi_transaction do
       judge_assign_tasks = target_tasks.where(type: JudgeAssignTask.name)
-      reassign_judge_assign_tasks(judge_assign_tasks, dry_run) if judge_assign_tasks.present?
+      reassign_judge_assign_tasks(judge_assign_tasks, dry_run) if judge_assign_tasks.any?
 
       judge_review_tasks = target_tasks.where(type: JudgeDecisionReviewTask.name)
-      reassign_judge_review_tasks(judge_review_tasks, user.css_id, dry_run) if judge_review_tasks.present?
+      reassign_judge_review_tasks(judge_review_tasks, user.css_id, dry_run) if judge_review_tasks.any?
 
       all_other_tasks = target_tasks.where.not(type: [JudgeAssignTask.name, JudgeDecisionReviewTask.name])
 
       parents_assigned_to_orgs = Task.where(id: all_other_tasks.pluck(:parent_id), assigned_to_type: Organization.name)
       tasks_with_parent_org_tasks = all_other_tasks.where(parent_id: parents_assigned_to_orgs.pluck(:id))
-      reassign_tasks_with_parent_org_tasks(tasks_with_parent_org_tasks, dry_run) if tasks_with_parent_org_tasks.present?
+      reassign_tasks_with_parent_org_tasks(tasks_with_parent_org_tasks, dry_run) if tasks_with_parent_org_tasks.any?
 
       parents_assigned_to_users = Task.where(id: all_other_tasks.pluck(:parent_id), assigned_to_type: User.name)
       tasks_with_parent_user_tasks = all_other_tasks.where(parent_id: parents_assigned_to_users.pluck(:id))
-      if tasks_with_parent_user_tasks.present?
-        reassign_tasks_with_parent_user_tasks(tasks_with_parent_user_tasks, dry_run)
-      end
+      reassign_tasks_with_parent_user_tasks(tasks_with_parent_user_tasks, dry_run) if tasks_with_parent_user_tasks.any?
     end
   end
 
