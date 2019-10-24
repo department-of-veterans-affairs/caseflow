@@ -22,6 +22,9 @@ info:
 
     API requests are authorized through a symmetric API token, provided in an HTTP header with name "apikey."
   version: 3.0.0
+tags:
+  - name: Higher Level Reviews
+    description: Create and View Higher Level Review Appeals
 servers:
   - url: https://dev-api.va.gov/services/appeals/{version}/decision_review
     description: "VA.gov API development environment"
