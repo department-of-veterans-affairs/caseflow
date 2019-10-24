@@ -47,7 +47,7 @@ export const OrganizationDashboardView = ({ organization: orgUrl }) => {
     const date = moment(task.closed_at).format('YYYY-MM-DD');
 
     if (!data[date]) {
-      data[date] = { x: new Date(date),
+      data[date] = { x: date,
         y: 0 };
     }
     data[date].y += 1;
