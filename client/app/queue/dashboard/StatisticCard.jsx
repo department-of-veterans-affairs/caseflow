@@ -18,7 +18,7 @@ export const StatisticCard = ({ title, value, icon, color, ...rest }) => (
       <h3 {...titleStyles}>{title}</h3>
 
       <div className="statistic-value" {...valueStyles} style={{ color }}>
-        {icon && <i className="fa fa-check-circle-o" />}
+        {icon && <i style={{ marginRight: '1rem' }} className="fa fa-check-circle-o" />}
         {value}
       </div>
     </React.Fragment>
