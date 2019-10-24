@@ -32,10 +32,10 @@ paths:
   /higher_level_reviews:
     post:
       tags:
-        - Higher Level Reviews
+        - Higher-Level Reviews
       summary: Creates a Higher-Level Review
       description: >+
-        This endpoint will submit a Decision Review request of type Higher Level Review.  This endpoint is analogous to submitting VA For 20-0996 via mail or fax.
+        This endpoint will submit a Decision Review request of type Higher-Level Review.  This endpoint is analogous to submitting VA For 20-0996 via mail or fax.
 
         ### Asynchronous processing
 
@@ -672,7 +672,7 @@ paths:
   /intake_statuses/{uuid}:
     get:
       tags:
-        - Higher Level Reviews
+        - Higher-Level Reviews
       parameters:
         - name: uuid
           in: path
@@ -777,7 +777,7 @@ paths:
   /higher_level_reviews/{uuid}:
     get:
       tags:
-        - Higher Level Reviews
+        - Higher-Level Reviews
       parameters:
         - name: uuid
           in: path
@@ -788,7 +788,7 @@ paths:
             format: uuid
             pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
       summary: Details of the Higher-Level Review
-      description: This endpoint returns the details of a specific Higher Level Review. This endpoint is also referred to as the Show endpoint.
+      description: This endpoint returns the details of a specific Higher-Level Review. This endpoint is also referred to as the Show endpoint.
       responses:
         '200':
           description: JSONAPI response detailing the specific Higher-Level Review
