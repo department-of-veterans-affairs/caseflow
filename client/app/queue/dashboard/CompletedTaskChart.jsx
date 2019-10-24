@@ -6,6 +6,10 @@ const CompletedTaskChart = ({ data /* Data to be passed into the graph goes here
   <div style={{ height: 400 }}>
     <ResponsiveLine
       data={data}
+      margin={{ top: 50,
+        right: 110,
+        bottom: 50,
+        left: 60 }}
       xScale={{ type: 'point' }}
       yScale={{ type: 'linear',
         min: 'auto',
@@ -16,7 +20,9 @@ const CompletedTaskChart = ({ data /* Data to be passed into the graph goes here
         tickPadding: 5,
         tickRotation: 0,
         legend: 'Date',
-        legendOffset: 36,
+
+        legendOffset: -10,
+
         legendPosition: 'middle'
       }}
       axisLeft={{
@@ -25,7 +31,7 @@ const CompletedTaskChart = ({ data /* Data to be passed into the graph goes here
         tickPadding: 5,
         tickRotation: 0,
         legend: 'Completed Tasks',
-        legendOffset: -40,
+        legendOffset: 40,
         legendPosition: 'middle'
       }}
       pointSize={10}
