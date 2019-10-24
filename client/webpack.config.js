@@ -4,7 +4,7 @@ const _ = require('lodash');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const env = process.env.NODE_ENV; // eslint-disable-line no-process-env
-const devBuild = env !== 'test' && env !== 'production';
+const devBuild = env !== 'production';
 const generateSourceMap = env !== 'test';
 
 const config = {
