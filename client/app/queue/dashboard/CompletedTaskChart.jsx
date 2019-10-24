@@ -1,6 +1,7 @@
 import React from 'react';
 import { ResponsiveLine } from '@nivo/line';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 
 const CompletedTaskChart = ({ data /* Data to be passed into the graph goes here */ }) => (
   <div style={{ height: 400 }}>
@@ -20,10 +21,9 @@ const CompletedTaskChart = ({ data /* Data to be passed into the graph goes here
         tickPadding: 5,
         tickRotation: 0,
         legend: 'Date',
-
-        legendOffset: -10,
-
-        legendPosition: 'middle'
+        legendOffset: 40,
+        legendPosition: 'middle',
+        format: (v) => moment(v).format('YYYY-MM-DD')
       }}
       axisLeft={{
         orient: 'left',
@@ -31,7 +31,7 @@ const CompletedTaskChart = ({ data /* Data to be passed into the graph goes here
         tickPadding: 5,
         tickRotation: 0,
         legend: 'Completed Tasks',
-        legendOffset: 40,
+        legendOffset: -50,
         legendPosition: 'middle'
       }}
       pointSize={10}
