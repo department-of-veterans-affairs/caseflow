@@ -113,7 +113,6 @@ if (env === 'production') {
   config.devtool = 'source-map';
 } else if (env === 'test') {
   console.log('Webpack test build for Rails'); // eslint-disable-line no-console
-  config.devtool = 'source-map';
 } else {
   console.log('Webpack dev build for Rails'); // eslint-disable-line no-console
   config.devtool = 'eval-source-map';

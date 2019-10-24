@@ -266,7 +266,7 @@ jobs:
           command: |
             mkdir -p ~/test-results/karma
             pushd client
-            ~/project/ci-bin/capture-log "node_modules/.bin/karma start --reporters junit"
+            ~/project/ci-bin/capture-log "node_modules/.bin/karma start --reporters junit --log-level info"
 
       - store_test_results:
           name: Store test results as summary
