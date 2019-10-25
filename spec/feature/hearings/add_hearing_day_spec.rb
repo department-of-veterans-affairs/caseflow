@@ -44,7 +44,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       find("button", text: "Add Hearing Date").click
       expect(page).to have_content("Add Hearing Day")
       click_dropdown(index: "C", text: "Central")
-      expect(page).to have_content("Select VLJ (Optional)", wait: 10)
+      expect(page).to have_content("Select VLJ (Optional)", wait: 30)
       expect(page.has_no_content?("Select Regional Office (RO)")).to eq(true)
       expect(page).to have_content("Select Hearing Coordinator (Optional)")
     end
@@ -56,12 +56,12 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       expect(page).to have_content("Add Hearing Day")
       fill_in "hearingDate", with: "01152019"
       click_dropdown(index: "C", text: "Central")
-      expect(page).to have_content("Select VLJ (Optional)", wait: 10)
+      expect(page).to have_content("Select VLJ (Optional)", wait: 30)
       fill_in "vlj", with: "Sallie L Anderson"
       fill_in "coordinator", with: "Casimir R Funk"
       fill_in "Notes (Optional)", with: "Test notes."
       find("button", text: "Confirm").click
-      expect(page).to have_content("You have successfully added Hearing Day 01/15/2019", wait: 10)
+      expect(page).to have_content("You have successfully added Hearing Day 01/15/2019", wait: 30)
     end
   end
 
@@ -90,7 +90,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       find("button", text: "Add Hearing Date").click
       expect(page).to have_content("Add Hearing Day")
       click_dropdown(index: "V", text: "Video")
-      expect(page).to have_content("Select Regional Office (RO)", wait: 10)
+      expect(page).to have_content("Select Regional Office (RO)", wait: 30)
       expect(page).to have_content("Select VLJ (Optional)")
       expect(page).to have_content("Select Hearing Coordinator (Optional)")
     end
@@ -102,7 +102,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       expect(page).to have_content("Add Hearing Day")
       fill_in "hearingDate", with: "04152019"
       click_dropdown(index: "V", text: "Video")
-      expect(page).to have_content("Select Regional Office (RO)", wait: 10)
+      expect(page).to have_content("Select Regional Office (RO)", wait: 30)
       dropdowns = page.all(".Select-control")
       dropdowns[1].click
       dropdowns[1].sibling(".Select-menu-outer").find("div .Select-option", text: "Atlanta, GA").click
@@ -110,7 +110,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       fill_in "coordinator", with: "Casimir R Funk"
       fill_in "Notes (Optional)", with: "Test notes."
       find("button", text: "Confirm").click
-      expect(page).to have_content("You have successfully added Hearing Day 04/15/2019", wait: 10)
+      expect(page).to have_content("You have successfully added Hearing Day 04/15/2019", wait: 30)
     end
 
     scenario "Leave Regional Office without a selection, expect error" do
@@ -120,7 +120,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       expect(page).to have_content("Add Hearing Day")
       fill_in "hearingDate", with: "04152019"
       click_dropdown(index: "V", text: "Video")
-      expect(page).to have_content("Select Regional Office (RO)", wait: 10)
+      expect(page).to have_content("Select Regional Office (RO)", wait: 30)
       fill_in "vlj", with: "Sallie L Anderson"
       fill_in "coordinator", with: "Casimir R Funk"
       fill_in "Notes (Optional)", with: "Test notes."
@@ -149,12 +149,12 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
     end
 
     scenario "select a vlj from the dropdown works" do
-      click_dropdown(name: "vlj", text: judge.full_name, wait: 10)
+      click_dropdown(name: "vlj", text: judge.full_name, wait: 30)
       expect(page).to have_content(judge.full_name)
     end
 
     scenario "select a coordinator from the dropdown works" do
-      click_dropdown(name: "coordinator", text: coordinator.full_name, wait: 10)
+      click_dropdown(name: "coordinator", text: coordinator.full_name, wait: 30)
       expect(page).to have_content(coordinator.full_name)
     end
   end
