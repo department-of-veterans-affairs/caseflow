@@ -55,7 +55,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       end
     end
 
-    context "when updating to a virtual hearing", focus: true do
+    context "when updating an existing hearing to a virtual hearing", focus: true do
       let(:hearing) { create(:hearing) }
       let(:virtual_hearing_params) { {} }
 
@@ -86,6 +86,33 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         end
 
         it { expect { subject }.to raise_error(ActionController::ParameterMissing) }
+      end
+
+      context "with valid params" do
+        let(:virtual_hearing_params) do
+          {
+            veteran_email: "veteran@caseflow.gov",
+            judge_email: "judge@caseflow.gov",
+            representative_email: "representative@caseflow.gov"
+          }
+        end
+
+        it "returns expected status and has expected side effects", :aggregate_failures do
+          expect(subject.status).to eq(200)
+          expect(VirtualHearing.first).to_not eq(nil)
+          expect(VirtualHearing.first.hearing_id).to eq(hearing.id)
+          expect(VirtualHearing.first.veteran_email).to eq("veteran@caseflow.gov")
+          expect(VirtualHearing.first.judge_email).to eq("judge@caseflow.gov")
+          expect(VirtualHearing.first.representative_email).to eq("representative@caseflow.gov")
+        end
+
+        context "with hearing that already has a virtual hearing" do
+          let(:hearing) { create(:hearing, virtual_hearing: create(:virtual_hearing)) }
+
+          it "returns expected status" do
+            expect(subject.status).to eq(409)
+          end
+        end
       end
     end
 
