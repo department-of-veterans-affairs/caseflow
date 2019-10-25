@@ -4,7 +4,7 @@ require "support/database_cleaner"
 require "rails_helper"
 require "rake"
 
-fdescribe "task rake tasks", :postgres do
+describe "task rake tasks", :postgres do
   before :all do
     Rake.application = Rake::Application.new
     Rake.application.rake_require "tasks/tasks"
@@ -328,11 +328,12 @@ fdescribe "task rake tasks", :postgres do
       Rake::Task["tasks:reassign_from_user"].invoke(*args)
     end
 
+    before { expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}") }
+
     context "the user id does not relate to a user" do
       let(:user_id) { 444 }
 
       it "fails to find the user" do
-        expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
         expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -340,7 +341,6 @@ fdescribe "task rake tasks", :postgres do
     context "there are no tasks to reassign" do
       it "tells the caller that there are no tasks to reassign" do
         expected_output = "There aren't any open tasks assigned to this user."
-        expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
         expect { subject }.to raise_error(NoTasksToReassign).with_message(expected_output)
       end
     end
@@ -357,13 +357,14 @@ fdescribe "task rake tasks", :postgres do
         parent_tasks.map { |parent| create(task_type, assigned_to: user, parent: parent) }
       end
 
+      let(:ids_output) { tasks.pluck(:id).reverse.join(", ") }
+
       context "the tasks have no parents" do
         before { tasks.each { |task| task.update!(parent_id: nil) } }
 
         it "fails and warns the caller of tasks without open parents" do
           orphaned_ids_output = tasks.pluck(:id).reverse.join(", ")
           expected_output = "Open tasks (#{orphaned_ids_output}) assigned to the user have no parent task"
-          expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
           expect { subject }.to raise_error(InvalidTaskParent).with_message(expected_output)
         end
       end
@@ -381,7 +382,6 @@ fdescribe "task rake tasks", :postgres do
           bad_type_ids_output = tasks.map(&:id).reverse.join(", ")
           expected_output = "Open tasks (#{bad_type_ids_output}) assigned to the user have parent task " \
                             "assigned to an organization but has a different task type"
-          expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
           expect { subject }.to raise_error(InvalidTaskParent).with_message(expected_output)
         end
       end
@@ -393,7 +393,6 @@ fdescribe "task rake tasks", :postgres do
           bad_type_ids_output = tasks.map(&:id).reverse.join(", ")
           expected_output = "Open tasks (#{bad_type_ids_output}) assigned to the user have parent task " \
                             "assigned to a user but has the same type"
-          expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
           expect { subject }.to raise_error(InvalidTaskParent).with_message(expected_output)
         end
       end
@@ -407,7 +406,6 @@ fdescribe "task rake tasks", :postgres do
           it "fails and warns the caller of open children of JudgeAssignTasks" do
             bad_parent_output = child_tasks.map(&:id).join(", ")
             expected_output = "JudgeAssignTasks have open children (#{bad_parent_output})"
-            expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
             expect { subject }.to raise_error(InvalidTaskParent).with_message(expected_output)
           end
         end
@@ -415,15 +413,13 @@ fdescribe "task rake tasks", :postgres do
         context "with no children" do
           context "when on a dry run" do
             it "only describes what changes will be made" do
-              count = task_count
-              ids = tasks.pluck(:id).reverse
               expected_output = <<~OUTPUT
                 *** DRY RUN
                 *** pass 'false' as the second argument to execute
-                Would cancel #{count} JudgeAssignTasks with ids #{ids.join(', ')} and create #{count} DistributionTasks
+                Would cancel #{task_count} JudgeAssignTasks with ids #{ids_output} and create #{task_count} DistributionTasks
               OUTPUT
-              expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
               expect { subject }.to output(expected_output).to_stdout
+
               tasks.each { |task| expect(task.reload.assigned?).to eq true }
               expect(DistributionTask.any?).to be_falsey
             end
@@ -433,18 +429,16 @@ fdescribe "task rake tasks", :postgres do
             let(:dry_run) { false }
 
             it "describes what changes will be made and makes them" do
-              count = task_count
-              ids = tasks.pluck(:id).reverse
-              judge_assign_message = "Cancelling #{count} JudgeAssignTasks with ids #{ids.join(', ')} and creating " \
-                                     "#{count} DistributionTasks"
+              judge_assign_message = "Cancelling #{task_count} JudgeAssignTasks with ids #{ids_output} and creating " \
+                                     "#{task_count} DistributionTasks"
               expected_output = <<~OUTPUT
                 #{judge_assign_message}
               OUTPUT
-              expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
               expect(Rails.logger).to receive(:info).with(judge_assign_message)
               expect { subject }.to output(expected_output).to_stdout
+
               tasks.each { |task| expect(task.reload.cancelled?).to eq true }
-              expect(DistributionTask.all.count).to eq count
+              expect(DistributionTask.all.count).to eq task_count
             end
           end
         end
@@ -460,7 +454,6 @@ fdescribe "task rake tasks", :postgres do
           it "fails and warns the caller of open children of JudgeAssignTasks" do
             bad_parent_output = child_tasks.reverse.map(&:parent_id).join(", ")
             expected_output = "JudgeDecisionReviewTasks (#{bad_parent_output}) have no open child attorney tasks"
-            expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
             expect { subject }.to raise_error(InvalidTaskParent).with_message(expected_output)
           end
         end
@@ -476,7 +469,6 @@ fdescribe "task rake tasks", :postgres do
               bad_parent_output = child_tasks.map(&:id).join(", ")
               expected_output = "AttorneyTasks (#{bad_parent_output}) assignee does not belong to a judge team with " \
                                 "an active judge"
-              expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
               expect { subject }.to raise_error(InvalidTaskAssignee).with_message(expected_output)
             end
           end
@@ -490,7 +482,6 @@ fdescribe "task rake tasks", :postgres do
               bad_parent_output = child_tasks.map(&:id).join(", ")
               expected_output = "AttorneyTasks (#{bad_parent_output}) assignee does not belong to a judge team with " \
                                 "an active judge"
-              expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
               expect { subject }.to raise_error(InvalidTaskAssignee).with_message(expected_output)
             end
           end
@@ -502,21 +493,19 @@ fdescribe "task rake tasks", :postgres do
 
             context "when on a dry run" do
               it "only describes what changes will be made" do
-                count = task_count
-                ids = tasks.pluck(:id).reverse
-                judge_review_message = "Would cancel #{count} JudgeDecisionReviewTasks with ids #{ids.join(', ')} and" \
-                                       " move #{count} AttorneyTasks to new JudgeDecisionReviewTasks assigned to the " \
-                                       "attorney's new judge"
+                judge_review_message = "Would cancel #{task_count} JudgeDecisionReviewTasks with ids #{ids_output} " \
+                                       "and move #{task_count} AttorneyTasks to new JudgeDecisionReviewTasks assigned" \
+                                       " to the attorney's new judge"
                 expected_output = <<~OUTPUT
                   *** DRY RUN
                   *** pass 'false' as the second argument to execute
                   #{judge_review_message}
                 OUTPUT
-                expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
                 expect { subject }.to output(expected_output).to_stdout
+
                 tasks.each { |task| expect(task.reload.on_hold?).to eq true }
                 expect(child_tasks.map(&:parent_id)).to eq tasks.map(&:id)
-                expect(JudgeDecisionReviewTask.count).to eq count
+                expect(JudgeDecisionReviewTask.count).to eq task_count
               end
             end
 
@@ -524,20 +513,19 @@ fdescribe "task rake tasks", :postgres do
               let(:dry_run) { false }
 
               it "describes what changes will be made and makes them" do
-                count = task_count
-                ids = tasks.pluck(:id).reverse
-                judge_review_message = "Cancelling #{count} JudgeDecisionReviewTasks with ids #{ids.join(', ')} and " \
-                                       "moving #{count} AttorneyTasks to new JudgeDecisionReviewTasks assigned to " \
-                                       "the attorney's new judge"
+                judge_review_message = "Cancelling #{task_count} JudgeDecisionReviewTasks with ids #{ids_output} and " \
+                                       "moving #{task_count} AttorneyTasks to new JudgeDecisionReviewTasks assigned " \
+                                       "to the attorney's new judge"
                 expected_output = <<~OUTPUT
                   #{judge_review_message}
                 OUTPUT
-                expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
                 expect(Rails.logger).to receive(:info).with(judge_review_message)
                 expect { subject }.to output(expected_output).to_stdout
+
                 tasks.each { |task| expect(task.reload.cancelled?).to eq true }
-                expect(JudgeDecisionReviewTask.count).to eq count * 2
-                expect(JudgeDecisionReviewTask.open.count).to eq count
+                expect(JudgeDecisionReviewTask.count).to eq task_count * 2
+                expect(JudgeDecisionReviewTask.open.count).to eq task_count
+
                 new_tasks = JudgeDecisionReviewTask.where(id: AttorneyTask.all.map(&:parent_id))
                 expect(new_tasks.all? { |task| task.assigned_to == judge_team.judge }).to eq true
                 expect(new_tasks.all? { |task| task.status == "on_hold" }).to eq true
@@ -552,19 +540,17 @@ fdescribe "task rake tasks", :postgres do
         context "when the organization does not use automatic assignment of tasks" do
           context "when on a dry run" do
             it "only describes what changes will be made" do
-              count = task_count
-              ids = tasks.pluck(:id).reverse
-              manual_org_message = "Would cancel #{count} tasks with ids #{ids.join(', ')} and move #{count} parent " \
-                                   "tasks back to the organization's unassigned queue tab"
+              manual_org_message = "Would cancel #{task_count} tasks with ids #{ids_output} and move #{task_count} " \
+                                   "parent tasks back to the organization's unassigned queue tab"
               expected_output = <<~OUTPUT
                 *** DRY RUN
                 *** pass 'false' as the second argument to execute
                 #{manual_org_message}
               OUTPUT
-              expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
               expect { subject }.to output(expected_output).to_stdout
+
               tasks.each { |task| expect(task.reload.assigned?).to eq true }
-              expect(GenericTask.open.count).to eq count * 2
+              expect(GenericTask.open.count).to eq task_count * 2
               expect(tasks.map(&:parent_id)).to eq parent_tasks.map(&:id)
             end
           end
@@ -573,19 +559,17 @@ fdescribe "task rake tasks", :postgres do
             let(:dry_run) { false }
 
             it "describes what changes will be made and makes them" do
-              count = task_count
-              ids = tasks.pluck(:id).reverse
-              manual_org_message = "Cancelling #{count} tasks with ids #{ids.join(', ')} and moving #{count} parent " \
-                                   "tasks back to the organization's unassigned queue tab"
+              manual_org_message = "Cancelling #{task_count} tasks with ids #{ids_output} and moving #{task_count} " \
+                                   "parent tasks back to the organization's unassigned queue tab"
               expected_output = <<~OUTPUT
                 #{manual_org_message}
               OUTPUT
-              expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
               expect(Rails.logger).to receive(:info).with(manual_org_message)
               expect { subject }.to output(expected_output).to_stdout
+
               tasks.each { |task| expect(task.reload.cancelled?).to eq true }
               parent_tasks.each { |task| expect(task.reload.assigned?).to eq true }
-              expect(GenericTask.open.count).to eq count
+              expect(GenericTask.open.count).to eq task_count
             end
           end
         end
@@ -600,20 +584,17 @@ fdescribe "task rake tasks", :postgres do
 
           context "when on a dry run" do
             it "only describes what changes will be made" do
-              count = task_count
-              ids = tasks.pluck(:id).reverse
-              automatic_org_message = "Would reassign #{count} tasks with ids #{ids.join(', ')} to " \
+              automatic_org_message = "Would reassign #{task_count} tasks with ids #{ids_output} to " \
                                         "#{team_member_count} members of the #{parent_assignee.name} organization"
               expected_output = <<~OUTPUT
                 *** DRY RUN
                 *** pass 'false' as the second argument to execute
                 #{automatic_org_message}
               OUTPUT
-              expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
               expect { subject }.to output(expected_output).to_stdout
-              subject
+
               tasks.each { |task| expect(task.reload.assigned?).to eq true }
-              expect(GenericTask.open.count).to eq count * 2
+              expect(GenericTask.open.count).to eq task_count * 2
               expect(tasks.map(&:parent_id)).to eq parent_tasks.map(&:id)
             end
           end
@@ -623,22 +604,21 @@ fdescribe "task rake tasks", :postgres do
 
             context "when there are more organization members than tasks to reassign" do
               it "describes what changes will be made and makes them" do
-                count = task_count
-                ids = tasks.pluck(:id).reverse
-                automatic_org_message = "Reassigning #{count} tasks with ids #{ids.join(', ')} to " \
+                automatic_org_message = "Reassigning #{task_count} tasks with ids #{ids_output} to " \
                                         "#{team_member_count} members of the #{parent_assignee.name} organization"
                 expected_output = <<~OUTPUT
                   #{automatic_org_message}
                 OUTPUT
-                expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
                 expect(Rails.logger).to receive(:info).with(automatic_org_message)
                 expect { subject }.to output(expected_output).to_stdout
+
                 tasks.each { |task| expect(task.reload.cancelled?).to eq true }
                 parent_tasks.each { |task| expect(task.reload.on_hold?).to eq true }
+
                 new_tasks = GenericTask.open.where(assigned_to_type: User.name)
                 new_tasks.each { |task| expect(task.reload.assigned?).to eq true }
                 expect(new_tasks.map(&:parent_id)).to match_array parent_tasks.map(&:id)
-                expect(new_tasks.distinct.pluck(:assigned_to_id).count).to eq count
+                expect(new_tasks.distinct.pluck(:assigned_to_id).count).to eq task_count
               end
             end
 
@@ -647,18 +627,17 @@ fdescribe "task rake tasks", :postgres do
               let(:team_member_count) { task_count / 4 }
 
               it "describes what changes will be made and makes them" do
-                count = task_count
-                ids = tasks.pluck(:id).reverse
-                automatic_org_message = "Reassigning #{count} tasks with ids #{ids.join(', ')} to " \
+                automatic_org_message = "Reassigning #{task_count} tasks with ids #{ids_output} to " \
                                         "#{team_member_count} members of the #{parent_assignee.name} organization"
                 expected_output = <<~OUTPUT
                   #{automatic_org_message}
                 OUTPUT
-                expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
                 expect(Rails.logger).to receive(:info).with(automatic_org_message)
                 expect { subject }.to output(expected_output).to_stdout
+
                 tasks.each { |task| expect(task.reload.cancelled?).to eq true }
                 parent_tasks.each { |task| expect(task.reload.on_hold?).to eq true }
+
                 new_tasks = GenericTask.open.where(assigned_to_type: User.name)
                 new_tasks.each { |task| expect(task.reload.assigned?).to eq true }
                 expect(new_tasks.map(&:parent_id)).to match_array parent_tasks.map(&:id)
@@ -676,19 +655,17 @@ fdescribe "task rake tasks", :postgres do
 
         context "when on a dry run" do
           it "only describes what changes will be made" do
-            count = task_count
-            ids = tasks.pluck(:id).reverse
-            user_message = "Would cancel #{count} tasks with ids #{ids.join(', ')} and move #{count} parent tasks " \
-                           "back to the parent's assigned user's assigned tab"
+            user_message = "Would cancel #{task_count} tasks with ids #{ids_output} and move #{task_count} parent " \
+                           "tasks back to the parent's assigned user's assigned tab"
             expected_output = <<~OUTPUT
               *** DRY RUN
               *** pass 'false' as the second argument to execute
               #{user_message}
             OUTPUT
-            expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
             expect { subject }.to output(expected_output).to_stdout
+
             tasks.each { |task| expect(task.reload.assigned?).to eq true }
-            expect(Task.open.count).to eq count * 2
+            expect(Task.open.count).to eq task_count * 2
             expect(tasks.map(&:parent_id)).to eq parent_tasks.map(&:id)
           end
         end
@@ -697,19 +674,17 @@ fdescribe "task rake tasks", :postgres do
           let(:dry_run) { false }
 
           it "describes what changes will be made and makes them" do
-            count = task_count
-            ids = tasks.pluck(:id).reverse
-            user_message = "Cancelling #{count} tasks with ids #{ids.join(', ')} and moving #{count} parent tasks " \
-                           "back to the parent's assigned user's assigned tab"
+            user_message = "Cancelling #{task_count} tasks with ids #{ids_output} and moving #{task_count} parent " \
+                           "tasks back to the parent's assigned user's assigned tab"
             expected_output = <<~OUTPUT
               #{user_message}
             OUTPUT
-            expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
             expect(Rails.logger).to receive(:info).with(user_message)
             expect { subject }.to output(expected_output).to_stdout
+
             tasks.each { |task| expect(task.reload.cancelled?).to eq true }
             parent_tasks.each { |task| expect(task.reload.assigned?).to eq true }
-            expect(Task.open.count).to eq count
+            expect(Task.open.count).to eq task_count
           end
         end
       end
