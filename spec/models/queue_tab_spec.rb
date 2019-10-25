@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "support/database_cleaner"
+require "support/vacols_database_cleaner"
 
-describe QueueTab, :postgres do
+describe QueueTab, :all_dbs do
   # Use OrganizationAssignedTasksTab as our example since we don't expect QueueTab to ever be instantiated directly.
   let(:tab) { OrganizationAssignedTasksTab.new(params) }
   let(:params) do
@@ -36,14 +36,6 @@ describe QueueTab, :postgres do
 
     it "interpolates assignee name in description element of hash" do
       expect(subject[:description]).to eq(format(tab.description, assignee.name))
-    end
-
-    context "when the assignee is a user" do
-      let(:assignee) { create(:user) }
-
-      it "interpolates assignee name in description element of hash" do
-        expect(subject[:description]).to eq(tab.description)
-      end
     end
   end
 
@@ -78,9 +70,8 @@ describe QueueTab, :postgres do
     context "when the assignee is a user" do
       let(:assignee) { create(:user) }
 
-      it "is created successfully" do
-        expect { subject }.to_not raise_error
-        expect(subject).to be_a(OrganizationAssignedTasksTab)
+      it "raises an error" do
+        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
       end
     end
   end

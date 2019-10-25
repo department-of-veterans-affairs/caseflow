@@ -60,8 +60,8 @@ describe OrganizationAssignedTasksTab, :postgres do
       context "when the assignee is a user" do
         let(:assignee) { create(:user) }
 
-        it "only returns the active tasks that are children of the assignee's on hold tasks" do
-          expect(subject).to match_array(assignee_active_tasks)
+        it "raises an error" do
+          expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
         end
       end
     end
