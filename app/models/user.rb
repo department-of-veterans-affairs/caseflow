@@ -305,15 +305,15 @@ class User < ApplicationRecord
   end
 
   def assigned_tasks_tab
-    ::IndividuallyAssignedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+    ::AssignedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def on_hold_tasks_tab
-    ::IndividuallyOnHoldTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+    ::OnHoldTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def completed_tasks_tab
-    ::IndividuallyCompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+    ::CompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def can_bulk_assign_tasks?
