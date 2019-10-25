@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class IndividuallyCompletedTasksTab < CompletedTasksTab
+class IndividuallyCompletedTasksTab < OrganizationCompletedTasksTab
   validate :assignee_is_user
 
   def self.tab_name

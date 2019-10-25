@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AssignedTasksTab < QueueTab
+class OrganizationAssignedTasksTab < QueueTab
   validate :assignee_is_organization
 
   def label

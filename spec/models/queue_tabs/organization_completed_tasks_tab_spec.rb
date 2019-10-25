@@ -3,8 +3,8 @@
 require "rails_helper"
 require "support/database_cleaner"
 
-describe CompletedTasksTab, :postgres do
-  let(:tab) { CompletedTasksTab.new(params) }
+describe OrganizationCompletedTasksTab, :postgres do
+  let(:tab) { OrganizationCompletedTasksTab.new(params) }
   let(:params) do
     {
       assignee: assignee,
@@ -17,7 +17,7 @@ describe CompletedTasksTab, :postgres do
   describe ".column_names" do
     subject { tab.column_names }
 
-    context "when only the assignee argument is passed when instantiating a CompletedTasksTab" do
+    context "when only the assignee argument is passed when instantiating a OrganizationCompletedTasksTab" do
       let(:params) { { assignee: create(:organization) } }
 
       it "returns the correct number of columns" do

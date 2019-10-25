@@ -4,8 +4,8 @@ require "rails_helper"
 require "support/database_cleaner"
 
 describe QueueTab, :postgres do
-  # Use AssignedTasksTab as our example since we don't expect QueueTab to ever be instantiated directly.
-  let(:tab) { AssignedTasksTab.new(params) }
+  # Use OrganizationAssignedTasksTab as our example since we don't expect QueueTab to ever be instantiated directly.
+  let(:tab) { OrganizationAssignedTasksTab.new(params) }
   let(:params) do
     {
       assignee: assignee,
@@ -71,7 +71,7 @@ describe QueueTab, :postgres do
 
       it "is created successfully" do
         expect { subject }.to_not raise_error
-        expect(subject).to be_a(AssignedTasksTab)
+        expect(subject).to be_a(OrganizationAssignedTasksTab)
       end
     end
 
@@ -80,7 +80,7 @@ describe QueueTab, :postgres do
 
       it "is created successfully" do
         expect { subject }.to_not raise_error
-        expect(subject).to be_a(AssignedTasksTab)
+        expect(subject).to be_a(OrganizationAssignedTasksTab)
       end
     end
   end
@@ -101,7 +101,7 @@ describe QueueTab, :postgres do
 
       it "returns the class" do
         expect { subject }.to_not raise_error
-        expect(subject).to eq(CompletedTasksTab)
+        expect(subject).to eq(OrganizationCompletedTasksTab)
       end
     end
   end
