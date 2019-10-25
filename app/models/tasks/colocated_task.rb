@@ -97,9 +97,8 @@ class ColocatedTask < Task
       actions.unshift(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h)
     end
 
-    # Possible TODO - does the Judge need this power here? How to determine the judge?
     if colocated_admin_for_task?(user) && appeal.notice_of_death_date
-      actions.push(Constants.TASK_ACTIONS.DEATH_DISMISSAL.to_h)
+      actions.unshift(Constants.TASK_ACTIONS.DEATH_DISMISSAL.to_h)
     end
 
     return actions
