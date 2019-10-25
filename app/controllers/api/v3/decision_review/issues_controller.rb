@@ -2,6 +2,6 @@
 
 class Api::V3::DecisionReview::IssuesController < Api::V3::BaseController
   def index
-    render text: 'so many issues'
+    render plain: 'so many issues'
   end
 end
