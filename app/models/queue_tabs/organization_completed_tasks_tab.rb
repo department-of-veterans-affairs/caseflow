@@ -16,7 +16,7 @@ class OrganizationCompletedTasksTab < QueueTab
   end
 
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).recently_closed
+    recently_closed_tasks
   end
 
   # rubocop:disable Metrics/AbcSize
