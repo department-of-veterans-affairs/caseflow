@@ -24,8 +24,11 @@ class HearingsController < HearingsApplicationController
     update_hearing
     update_advance_on_docket_motion unless advance_on_docket_motion_params.empty?
 
-    if params.has_key?(:virtual_hearing)
-      virtual_hearing_params
+    if params.has_key?(:virtual_hearing) && !create_virtual_hearing
+      return render(
+        json: { "errors": ["message": "Virtual hearing already exists", code: 1002] },
+        status: :conflict
+      ) 
     end
 
     render json: hearing.to_hash(current_user.id)
@@ -113,10 +116,6 @@ class HearingsController < HearingsApplicationController
     :dismiss, :reopen, :worksheet_notes
   ]
 
-  VIRTUAL_HEARING_ATTRIBUTES = [
-    :veteran_email, :judge_email, :representative_email
-  ]
-
   def update_params_legacy
     params
       .require(:hearing)
@@ -142,13 +141,30 @@ class HearingsController < HearingsApplicationController
       )
   end
 
-  def virtual_hearing_params
-    params.require(virtual_hearing: VIRTUAL_HEARING_ATTRIBUTES)
+  def create_virtual_hearing_params
+    params.require(:virtual_hearing).tap do |virtual_hearing_params|
+      virtual_hearing_params.require([:veteran_email, :judge_email, :representative_email])
+      virtual_hearing_params.permit!
+    end
   end
 
   def advance_on_docket_motion_params
     params
       .fetch(:advance_on_docket_motion, {})
       .permit(:user_id, :person_id, :reason, :granted)
+  end
+
+  def create_virtual_hearing
+    created = false
+    virtual_hearing_params = create_virtual_hearing_params
+
+    VirtualHearing.where.not(status: :cancelled).find_or_create_by(hearing: hearing) do |virtual_hearing|
+      virtual_hearing.veteran_email = virtual_hearing_params[:veteran_email]
+      virtual_hearing.judge_email = virtual_hearing_params[:judge_email]
+      virtual_hearing.representative_email = virtual_hearing_params[:representative_email]
+      created = true
+    end
+
+    created
   end
 end
