@@ -25,7 +25,7 @@ class HearingsController < HearingsApplicationController
     update_advance_on_docket_motion unless advance_on_docket_motion_params.empty?
 
     if params.has_key?(:virtual_hearing)
-      #hearing.class.find_or_create_by()
+      virtual_hearing_params
     end
 
     render json: hearing.to_hash(current_user.id)
@@ -114,7 +114,7 @@ class HearingsController < HearingsApplicationController
   ]
 
   VIRTUAL_HEARING_ATTRIBUTES = [
-    :veteran_email, :judge_email, :representative_email, :status
+    :veteran_email, :judge_email, :representative_email
   ]
 
   def update_params_legacy
