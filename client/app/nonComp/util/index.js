@@ -49,7 +49,7 @@ export const buildDispositionSubmission = (decisionIssues, decisionDate) => {
   return { data:
     {
       decision_issues: decisionIssues,
-      decision_date: formatDateStringForApi(decisionDate)
+      decision_date: decisionDate
     }
   };
 };

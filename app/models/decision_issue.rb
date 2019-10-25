@@ -105,15 +105,9 @@ class DecisionIssue < ApplicationRecord
     REMAND_DISPOSITIONS.include?(disposition)
   end
 
-  # def ui_hash
-  #   {
-  #     id: id,
-  #     requestIssueId: request_issues&.first&.id,
-  #     description: description,
-  #     disposition: disposition,
-  #     approxDecisionDate: approx_decision_date
-  #   }
-  # end
+  def decision_issue_serializer
+   DecisionIssueSerializer.new(self).serializable_hash[:data][:attributes]
+  end
 
   def find_or_create_remand_supplemental_claim!
     find_remand_supplemental_claim || create_remand_supplemental_claim!

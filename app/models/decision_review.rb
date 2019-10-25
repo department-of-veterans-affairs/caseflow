@@ -135,7 +135,7 @@ class DecisionReview < ApplicationRecord
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
       requestIssues: request_issues_ui_hash,
-      decisionIssues: decision_issues.map(&:ui_hash),
+      decisionIssues: decision_issues.map(&:decision_issue_serializer),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
       veteranValid: veteran&.valid?(:bgs),

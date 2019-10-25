@@ -1,0 +1,12 @@
+class DecisionIssueSerializer
+  include FastJsonapi::ObjectSerializer
+  set_key_transform :camel_lower
+
+  attribute :id
+  attribute :description
+  attribute :disposition
+  attribute :approx_decision_date
+  attribute :request_issue_id do |object|
+    object.request_issues&.first&.id
+  end
+end
