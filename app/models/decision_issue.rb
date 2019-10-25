@@ -106,7 +106,7 @@ class DecisionIssue < ApplicationRecord
   end
 
   def decision_issue_serializer
-   DecisionIssueSerializer.new(self).serializable_hash[:data][:attributes]
+    DecisionIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def find_or_create_remand_supplemental_claim!

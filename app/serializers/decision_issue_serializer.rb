@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DecisionIssueSerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :camel_lower
