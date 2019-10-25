@@ -1,7 +1,6 @@
 import _ from 'lodash';
 
 import { FORM_TYPES } from '../../intake/constants';
-import { formatDateStringForApi } from '../../util/DateUtil';
 
 export const formatTasks = (serverTasks) => {
   return (serverTasks || []).map((task) => {
