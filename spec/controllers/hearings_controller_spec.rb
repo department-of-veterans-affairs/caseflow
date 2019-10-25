@@ -55,6 +55,40 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       end
     end
 
+    context "when updating to a virtual hearing", focus: true do
+      let(:hearing) { create(:hearing) }
+      let(:virtual_hearing_params) { {} }
+
+      subject do
+        hearing_params = {
+          notes: "Notes"
+        }
+        patch_params = {
+          id: hearing.external_id,
+          hearing: hearing_params,
+          virtual_hearing: virtual_hearing_params
+        }
+
+        patch :update, as: :json, params: patch_params
+        response
+      end
+
+      context "without any params" do
+        it { expect { subject }.to raise_error(ActionController::ParameterMissing) }
+      end
+
+      context "without any veteran email" do
+        let(:virtual_hearing_params) do
+          {
+            judge_email: "judge@caseflow.gov",
+            representative_email: "representative@caseflow.gov"
+          }
+        end
+
+        it { expect { subject }.to raise_error(ActionController::ParameterMissing) }
+      end
+    end
+
     it "should return not found" do
       patch :update, params: { id: "78484", hearing: { notes: "Test", hold_open: 30, transcript_requested: false } }
       expect(response.status).to eq 404

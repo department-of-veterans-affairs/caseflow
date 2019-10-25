@@ -143,9 +143,7 @@ class HearingsController < HearingsApplicationController
   end
 
   def virtual_hearing_params
-    params
-      .require(:virtual_hearing)
-      .require(*VIRTUAL_HEARING_ATTRIBUTES)
+    params.require(virtual_hearing: VIRTUAL_HEARING_ATTRIBUTES)
   end
 
   def advance_on_docket_motion_params
