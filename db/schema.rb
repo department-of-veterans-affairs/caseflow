@@ -715,6 +715,14 @@ ActiveRecord::Schema.define(version: 20191023204446) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "judge_team_roles", force: :cascade, comment: "Defines roles for individual members of judge teams" do |t|
+    t.datetime "created_at", null: false
+    t.integer "organizations_user_id"
+    t.string "type"
+    t.datetime "updated_at", null: false
+    t.index ["organizations_user_id"], name: "index_judge_team_roles_on_organizations_user_id", unique: true
+  end
+
   create_table "legacy_appeals", force: :cascade do |t|
     t.bigint "appeal_series_id"
     t.string "closest_regional_office"
