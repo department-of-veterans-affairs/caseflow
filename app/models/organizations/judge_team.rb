@@ -6,6 +6,8 @@ class JudgeTeam < Organization
   end
 
   def self.create_for_judge(user)
+    fail(Caseflow::Error::DuplicateJudgeTeam, user_id: user.id) if JudgeTeam.for_judge(user)
+
     create!(name: user.css_id, url: user.css_id.downcase).tap do |org|
       org_user = OrganizationsUser.make_user_admin(user, org)
       JudgeTeamLead.create!(organizations_user: org_user)
