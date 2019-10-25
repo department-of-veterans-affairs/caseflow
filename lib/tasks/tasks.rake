@@ -224,7 +224,7 @@ namespace :tasks do
 
   def ensure_all_judge_review_tasks_have_child_attorney_tasks(target_tasks)
     judge_review_task_ids = target_tasks.where(type: JudgeDecisionReviewTask.name).pluck(:id)
-    open_children_of_tasks = AttorneyTask.open.where(parent_id: judge_review_task_ids)
+    open_children_of_tasks = AttorneyTask.where(parent_id: judge_review_task_ids)
     judge_review_tasks_without_children = (judge_review_task_ids - open_children_of_tasks.pluck(:parent_id))
 
     if judge_review_tasks_without_children.any?
