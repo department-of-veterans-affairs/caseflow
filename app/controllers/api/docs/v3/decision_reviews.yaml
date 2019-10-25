@@ -11,13 +11,16 @@ info:
     ## Technical Summary
 
     The Decision Reviews API interacts with VA's internal system, called Caseflow, that manages all benefit appeals. Caseflow is the authoritative source for all Decision Review information.
+
     * The Decision Reviews API accepts a JSON payload and the participant identification is supplied as a header.
+
     * The Decision Review request will be validated to ensure the Veteran information matches VA records and that the appeal information sent is valid.
+
     * Detailed error messages will be returned to help your application provide meaningful information to the Veteran attempting to make the Decision Review request.
 
     ### Authorization
 
-    API requests are authorized through a symmetric API token, provided in an HTTP header with name "apikey"
+    API requests are authorized through a symmetric API token, provided in an HTTP header with name "apikey."
   version: 3.0.0
 servers:
   - url: https://dev-api.va.gov/services/appeals/{version}/decision_review
@@ -28,9 +31,11 @@ servers:
 paths:
   /higher_level_reviews:
     post:
-      summary: Creates a Higher-Level Review.
+      tags:
+        - Higher-Level Reviews
+      summary: Creates a Higher-Level Review
       description: >+
-        This endpoint will submit a Decision Review request of type Higher Level Review.  This endpoint is analogous to submitting VA For 20-0996 via mail or fax.
+        This endpoint will submit a Decision Review request of type Higher-Level Review.  This endpoint is analogous to submitting VA For 20-0996 via mail or fax.
 
         ### Asynchronous processing
 
@@ -666,6 +671,8 @@ paths:
                   }
   /intake_statuses/{uuid}:
     get:
+      tags:
+        - Higher-Level Reviews
       parameters:
         - name: uuid
           in: path
@@ -769,6 +776,8 @@ paths:
 
   /higher_level_reviews/{uuid}:
     get:
+      tags:
+        - Higher-Level Reviews
       parameters:
         - name: uuid
           in: path
@@ -779,7 +788,7 @@ paths:
             format: uuid
             pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
       summary: Details of the Higher-Level Review
-      description: This endpoint returns the details of a specific Higher Level Review. This endpoint is also referred to as the Show endpoint.
+      description: This endpoint returns the details of a specific Higher-Level Review. This endpoint is also referred to as the Show endpoint.
       responses:
         '200':
           description: JSONAPI response detailing the specific Higher-Level Review
@@ -1039,6 +1048,8 @@ paths:
                     $ref: "#/components/schemas/errors"
   /issues:
     get:
+      tags:
+        - Issues
       parameters:
         - name: veteranId
           in: header
@@ -1185,11 +1196,11 @@ paths:
                       title: "Unknown error"
 components:
   schemas:
-    uuid:
+    Uuid:
       type: string
       format: uuid
       pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
-    benefit_type:
+    BenefitType:
       type: string
       enum:
         - compensation
@@ -1201,10 +1212,10 @@ components:
         - loan_guaranty
         - vha
         - nca
-    higher_level_review_alerts:
+    HigherLevelReviewAlerts:
       type: string
       enum: ["AmaPostDecision"]
-    higher_level_review_events:
+    HigherLevelReviewEvents:
       type: string
       enum:
         - hlr_request_event
@@ -1212,14 +1223,14 @@ components:
         - hlr_dta_error_event
         - dta_decision_event
         - hlr_other_close_event
-    higher_level_review_status_types:
+    HigherLevelReviewStatusTypes:
       type: string
       enum:
         - hlr_received
         - hlr_dta_error
         - hlr_decision
         - hlr_closed
-    nonrating_issue_category:
+    NonratingIssueCategory:
       type: string
       enum:
         # for benefit type:  compensation
@@ -1393,7 +1404,7 @@ components:
         - Family Member Services | Spina Bifida Medical Charges
         - Family Member Services | Camp Lejeune Family Member Eligibility
         - Other
-    payee_code:
+    PayeeCode:
       type: string
       enum:
         - "00"
@@ -1467,7 +1478,7 @@ components:
         - "88"
         - "89"
         - "99"
-    errors:
+    Errors:
       type: array
       items:
         type: object
@@ -1476,7 +1487,7 @@ components:
             type: string
           detail:
             type: string
-    intake_status:
+    IntakeStatus:
       description: An accepted Decision Review still needs to be processed before the Decision Review can be accessed
       type: object
       properties:
