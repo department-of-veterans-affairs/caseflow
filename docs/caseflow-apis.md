@@ -380,40 +380,9 @@ The second easiest would be pasting the text of `decision_review.yaml` into: htt
 
 `decision_review.yaml` uses the [OpenAPI specification](https://swagger.io/specification/) (Swagger).
 
-#### Differences Between Using the API Through Lighthouse vs. Using it Directly
-
-Firstly, what is meant by "Through Lighthouse" and "Using it Directly":
-
-Caseflow is only accessible inside VA networks, which non-VA employees / contractors have no access to. The developer portal (Lighthouse) provides access to the Decision Review API (and other APIs) via API key which an individual has to [apply for](https://developer.va.gov/apply). This API key is unrelated to a [Caseflow API key](#api-keys). There are plans to provide access to the endpoints via OAuth as well. For MVP (serving va.gov), only API key access will be available.
-
-The _path_ of a route **isn't** translated at the Lighthouse layer (for the most part). Example:
-
-```
-                                       ⬇ identical starting here
-https://dev-api.va.gov/services/appeals/v3/decision_review/$1
-              http://localhost:3000/api/v3/decision_review/$1
-```
-The routes as defined in `config/routes.rb` should be mostly identical to those defined in the [developer portal](https://dev-developer.va.gov/explore/appeals/docs/decision_reviews).
-
-##### Example Curl Through Lighthouse
-```
-curl -v POST https://dev-api.va.gov/services/appeals/v3/decision_review/$1 -H "apikey: LIGHTHOUSE-ISSUED-API-KEY" -d @test.json -i -H "Content-Type: application/json"```
-```
-##### Example Curl to Caseflow Directly
-```
-curl -v POST http://localhost:3000/api/v3/decision_review/$1 -H "Authorization: Token token=CASEFLOW-API-KEY" -d @test.json -i -H "Content-Type: application/json"
-```
-
-
-**Note:** The curl examples above expect completely different API keys. Watch out for this.
-
 #### Implementation Notes
 
 The Decision Review API depends heavily on the existing controllers/models/classes that support Caseflow Intake, but diverges where necessary to support the different audience of the API. The Decision Review API is actively being developed with an MVP of supporting a va.gov front end for veterans to submit their own decision reviews.
-
-##### JSON:API
-
-In keeping with other APIs associated with the Lighthouse project, the Decision Review API returns JSON conforming to the [JSON:API ](https://jsonapi.org/format/) specification (v1.0).
 
 ##### Renaming of Fields
 
@@ -422,15 +391,6 @@ Some model attributes are renamed to shield a consumer of the Decision Review AP
   * `vacols_id` to `legacyAppealId`
   * `vacols_sequence_id` to `legacyAppealIssueId`
   * `rating_issue_reference_id` to `ratingIssueId`
-
-
-#### The Lighthouse Project
-
-https://developer.va.gov/
-
->OIT’s Lighthouse program is VA’s open API platform that creates a single, secure front door to VA’s data for both VA and our partners.
-
-(quote from [press release](https://www.blogs.va.gov/VAntage/58726/lighthouse-veteran-centered-api-program-va/))
 
 
 # _other APIs / endpoints_
