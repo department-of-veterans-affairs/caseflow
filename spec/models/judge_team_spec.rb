@@ -70,6 +70,7 @@ describe JudgeTeam, :postgres do
       let!(:judge_team) { JudgeTeam.create_for_judge(user) }
 
       it "should return judge team" do
+        user.reload
         expect(JudgeTeam.for_judge(user)).to eq(judge_team)
       end
     end
@@ -84,6 +85,7 @@ describe JudgeTeam, :postgres do
       end
 
       it "should return first judge team even when they admin two judge teams" do
+        user.reload
         expect(JudgeTeam.for_judge(user)).to eq(first_judge_team)
         expect(user.administered_teams.length).to eq(2)
       end
