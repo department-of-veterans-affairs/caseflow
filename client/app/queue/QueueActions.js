@@ -402,11 +402,7 @@ export const bulkAssignTasks =
 // isInitial is only used for das deprecation 
 const dispatchOldTasks = (dispatch, oldTask, resp, isInitial=false) => {
   if (oldTask.appealType === 'Appeal') {
-    const amaTasks = resp.tasks.data;
-
-    dispatch(onReceiveAmaTasks(
-      amaTasks
-    ));
+    dispatch(onReceiveAmaTasks(resp.tasks.data)); 
   } else {
     //For das deprecation, legacy_task_controller#create returns tasks, not a task
     const tasks = isInitial && (oldTask.appealType === 'LegacyAppeal' && !oldTask.isLegacy) ? resp.tasks.data : [resp.task.data];
@@ -458,6 +454,10 @@ export const initialAssignTasksToUser = ({
         userId: previousAssigneeId,
         taskId: oldTask.uniqueId,
         selected: false
+      }));
+
+      dispatch(incrementTaskCountForAttorney({
+        id: assigneeId
       }));
     });
 }));
@@ -526,8 +526,7 @@ export const legacyReassignToJudge = ({
   return ApiUtil.post('/legacy_tasks/assign_to_judge', params).
     then((resp) => resp.body).
     then((resp) => {
-      const task = resp.task.data;
-      const allTasks = prepareAllTasksForStore([task]);
+      const allTasks = prepareAllTasksForStore([resp.task.data]);
 
       dispatch(onReceiveTasks(_.pick(allTasks, ['tasks', 'amaTasks'])));
 
