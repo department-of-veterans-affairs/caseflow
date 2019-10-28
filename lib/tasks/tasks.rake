@@ -281,7 +281,10 @@ namespace :tasks do
         new_supervising_judge = atty_task.assigned_to.organizations
           .where.not(name: old_judge_team_name)
           .find_by(type: JudgeTeam.name).judge
-        task.reassign({ assigned_to_type: User.name, assigned_to_id: new_supervising_judge.id }, new_supervising_judge)
+        reassigned_tasks = task.reassign(
+          { assigned_to_type: User.name, assigned_to_id: new_supervising_judge.id }, new_supervising_judge
+        )
+        atty_task.update!(parent_id: reassigned_tasks.first.id)
       end
     end
   end

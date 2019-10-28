@@ -458,10 +458,10 @@ describe "task rake tasks", :postgres do
           end
         end
 
-        context "with open children attorney tasks" do
+        context "with children attorney tasks" do
           let(:attorney) { create(:user) }
           let!(:child_tasks) do
-            tasks.map { |task| create(:ama_attorney_task, parent_id: task.id, assigned_to: attorney) }
+            tasks.map { |task| create(:ama_attorney_task, :completed, parent_id: task.id, assigned_to: attorney) }
           end
 
           context "but no judge team for the attorney" do
