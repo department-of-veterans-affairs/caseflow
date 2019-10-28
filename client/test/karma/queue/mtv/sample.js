@@ -147,7 +147,7 @@ export const tasks = [
               value: 5
             }
           ],
-          type: 'GenericTask'
+          type: 'Task'
         }
       },
       {

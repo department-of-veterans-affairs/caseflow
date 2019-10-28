@@ -154,7 +154,7 @@ class ColocatedTask < Task
     appeal.tasks.open.select { |task| task.is_a?(ColocatedTask) }.none?
   end
 
-  # GenericTask.verify_org_task_unique already performs this check
+  # Task.verify_org_task_unique already performs this check
   def verify_org_task_unique; end
 
   def task_is_unique
