@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191021215017) do
+ActiveRecord::Schema.define(version: 20191023204446) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,9 +18,9 @@ ActiveRecord::Schema.define(version: 20191021215017) do
 
   create_table "advance_on_docket_motions", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.boolean "granted"
-    t.bigint "person_id"
-    t.string "reason"
+    t.boolean "granted", comment: "Whether VLJ has determined that there is sufficient cause to fast-track an appeal, i.e. grant or deny the motion to AOD."
+    t.bigint "person_id", comment: "Appellant ID"
+    t.string "reason", comment: "VLJ's rationale for their decision on motion to AOD."
     t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.index ["person_id"], name: "index_advance_on_docket_motions_on_person_id"
