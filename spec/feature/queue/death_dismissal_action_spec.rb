@@ -19,7 +19,7 @@ RSpec.feature "DeathDismissalAction", :all_dbs do
     User.authenticate!(user: colocated_admin)
   end
 
-  fdescribe "Death dismissal" do
+  describe "Death dismissal" do
     context "when a legacyAppeal is assigned to VLJ Support" do
       context "and the case has a Notice of Death Date set" do
         context "and the user is a VLJ Support Admin" do
