@@ -518,7 +518,7 @@ RSpec.feature "Task queue", :all_dbs do
 
         it "shows the correct filters" do
           page.find_all("path.unselected-filter-icon-inner").first.click
-          expect(page).to have_content("#{GenericTask.label.humanize} (#{unassigned_count / 2})")
+          expect(page).to have_content("#{Task.label.humanize} (#{unassigned_count / 2})")
           expect(page).to have_content("#{TranslationTask.label.humanize} (#{translation_task_count})")
         end
 
@@ -583,7 +583,7 @@ RSpec.feature "Task queue", :all_dbs do
               expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
             end
             (foia_task_count + 1..unassigned_count).each do |index|
-              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(GenericTask.label)
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(Task.label)
             end
           end
         end
@@ -597,7 +597,7 @@ RSpec.feature "Task queue", :all_dbs do
 
           it "sorts the correct column descending" do
             (1..foia_task_count).each do |index|
-              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(GenericTask.label)
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(Task.label)
             end
             (foia_task_count + 1..unassigned_count).each do |index|
               expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
@@ -643,7 +643,7 @@ RSpec.feature "Task queue", :all_dbs do
             end
             expect(page).to have_content("Viewing 1-#{foia_task_count} of #{foia_task_count} total")
             expect(find("tbody").find_all("tr").length).to eq(foia_task_count)
-            expect(find("tbody")).not_to have_content(GenericTask.label)
+            expect(find("tbody")).not_to have_content(Task.label)
           end
         end
       end
@@ -697,7 +697,7 @@ RSpec.feature "Task queue", :all_dbs do
           visit(organization.path)
           page.find_all("svg.table-icon")[1].click
           (1..foia_task_count).each do |index|
-            expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(GenericTask.label)
+            expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(Task.label)
           end
           (foia_task_count + 1..unassigned_count).each do |index|
             expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
@@ -708,7 +708,7 @@ RSpec.feature "Task queue", :all_dbs do
             expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
           end
           (foia_task_count + 1..unassigned_count).each do |index|
-            expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(GenericTask.label)
+            expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(Task.label)
           end
           expect(URI.parse(current_url).query).to eq "#{default_query_string}&#{query_string_asc}"
         end
@@ -749,7 +749,7 @@ RSpec.feature "Task queue", :all_dbs do
             format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
           )
           page.find_all("path.unselected-filter-icon-inner").first.click
-          expect(page).to have_content("#{GenericTask.label} (#{unassigned_count / 2})")
+          expect(page).to have_content("#{Task.label} (#{unassigned_count / 2})")
           expect(page).to have_content("#{FoiaTask.label} (#{foia_task_count})")
         end
 
@@ -1134,7 +1134,7 @@ RSpec.feature "Task queue", :all_dbs do
     end
   end
 
-  describe "GenericTask" do
+  describe "Task" do
     context "when it is assigned to the current user" do
       let(:user) { create(:user) }
       let(:root_task) { create(:root_task) }

@@ -14,6 +14,7 @@ class TasksController < ApplicationController
     AttorneyTask: AttorneyTask,
     AttorneyQualityReviewTask: AttorneyQualityReviewTask,
     GenericTask: GenericTask,
+    Task: Task,
     QualityReviewTask: QualityReviewTask,
     JudgeAssignTask: JudgeAssignTask,
     JudgeQualityReviewTask: JudgeQualityReviewTask,

@@ -94,8 +94,8 @@ FactoryBot.define do
       end
     end
 
-    factory :generic_task, class: GenericTask do
-      type { GenericTask.name }
+    factory :generic_task, class: Task do
+      type { Task.name }
       appeal { create(:appeal) }
     end
 
@@ -425,8 +425,8 @@ FactoryBot.define do
       assigned_to { TranscriptionTeam.singleton }
     end
 
-    factory :ama_vso_task, class: GenericTask do
-      type { GenericTask.name }
+    factory :ama_vso_task, class: Task do
+      type { Task.name }
       appeal { create(:appeal) }
       parent { create(:root_task) }
     end
