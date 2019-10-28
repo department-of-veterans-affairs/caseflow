@@ -396,7 +396,8 @@ describe ColocatedTask, :all_dbs do
       context "when current user is Colocated admin" do
         before { OrganizationsUser.make_user_admin(colocated_user, colocated_org) }
         it "should show the Death Dismissal option" do
-          expect(colocated_task.available_actions_unwrapper(colocated_user)).to include(Constants.TASK_ACTIONS.DEATH_DISMISSAL.label)
+          expect(colocated_task.available_actions_unwrapper(colocated_user)
+            .include?(Constants.TASK_ACTIONS.DEATH_DISMISSAL.label))
         end
       end
     end
