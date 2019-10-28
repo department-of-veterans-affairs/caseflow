@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class StraightVacateAndReadjudicationTask < GenericTask
+class StraightVacateAndReadjudicationTask < Task
   def available_actions(user)
     actions = super(user)
 

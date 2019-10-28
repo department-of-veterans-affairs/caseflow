@@ -42,7 +42,7 @@ class QueueConfig
 
     return queue_tabs unless !use_task_pages_api?(user) && assignee_is_org?
 
-    queue_tabs.reject { |tab| tab.is_a?(::OnHoldTasksTab) }
+    queue_tabs.reject { |tab| tab.is_a?(::OrganizationOnHoldTasksTab) }
   end
 
   def attach_tasks_to_tab(tab, user)
