@@ -922,7 +922,7 @@ RSpec.feature "Case details", :all_dbs do
              appeal: appeal,
              assigned_by: judge_user,
              assigned_to: attorney_user,
-             type: GenericTask,
+             type: Task,
              parent_id: root_task.id,
              started_at: rand(1..10).days.ago,
              instructions: [instructions_text])
@@ -991,7 +991,7 @@ RSpec.feature "Case details", :all_dbs do
       end
       let!(:legacy_task) do
         create(:task, :in_progress, appeal: legacy_appeal,
-                                    assigned_by: judge_user, assigned_to: attorney_user, type: GenericTask,
+                                    assigned_by: judge_user, assigned_to: attorney_user, type: Task,
                                     parent_id: root_task.id, started_at: rand(1..10).days.ago)
       end
 

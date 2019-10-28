@@ -186,7 +186,7 @@ describe Task, :all_dbs do
       end
 
       context "when child task has a different type than parent" do
-        let!(:child) { create(:generic_task, :completed, parent_id: task.id) }
+        let!(:child) { create(:quality_review_task, :completed, parent_id: task.id) }
         it "sets the status of the parent to assigned" do
           subject
           expect(task.reload.status).to eq(Constants.TASK_STATUSES.assigned)
@@ -300,7 +300,7 @@ describe Task, :all_dbs do
       let(:task) do
         t = create(:generic_task, parent_id: root_task.id)
         5.times { t = create(:generic_task, parent_id: t.id) }
-        GenericTask.last
+        Task.last
       end
 
       it "should return the root_task" do
@@ -312,7 +312,7 @@ describe Task, :all_dbs do
       let(:task) do
         t = create(:generic_task)
         5.times { t = create(:generic_task, parent_id: t.id) }
-        GenericTask.last
+        Task.last
       end
 
       it "should throw an error" do
