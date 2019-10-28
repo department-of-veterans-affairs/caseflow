@@ -42,6 +42,7 @@ describe Judge, :postgres do
     subject { judge.attorneys }
 
     it "returns a list of the judge's attorneys" do
+      judge.user.reload
       expect(subject).to match_array attorneys
     end
   end
