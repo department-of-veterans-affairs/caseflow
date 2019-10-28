@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe PostDecisionMotionUpdater, :postgres do
+describe PostDecisionMotionUpdater, :all_dbs do
   let!(:lit_support_team) { LitigationSupport.singleton }
   let(:judge) { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
   let!(:motions_atty) { create(:user, full_name: "Motions attorney") }

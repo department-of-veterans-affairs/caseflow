@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DismissedMotionToVacateTask < GenericTask
+class DismissedMotionToVacateTask < Task
   def available_actions(user)
     actions = super(user)
 

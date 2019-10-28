@@ -549,6 +549,8 @@
   "INVALID_TASKS_ARGUMENT": "must be an ActiveRecord::Relation object",
   "INVALID_SORT_COLUMN": "must be a QueueColumn",
   "TASK_PAGE_INVALID_ASSIGNEE_MESSAGE": "must be either a User or an Organization",
+  "QUEUE_TAB_NON_USER_ASSIGNEE_MESSAGE": "must be a User",
+  "QUEUE_TAB_NON_ORGANIZATION_ASSIGNEE_MESSAGE": "must be an Organization",
   "TASK_PAGE_INVALID_SORT_ORDER": "must be either asc or desc",
   "TASK_DISTRIBUTOR_ASSIGNEE_POOL_USERS_ONLY_MESSAGE": "must contain only Users",
   "APPEAL_RECORD_SAVED_MESSAGE": "You can now begin intake for the next opt-in election.",

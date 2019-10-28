@@ -13,7 +13,7 @@ class QueueTab
   end
 
   def self.from_name(tab_name)
-    tab = subclasses.find { |subclass| subclass.tab_name == tab_name }
+    tab = descendants.find { |subclass| subclass.tab_name == tab_name }
     fail(Caseflow::Error::InvalidTaskTableTab, tab_name: tab_name) unless tab
 
     tab
@@ -61,6 +61,10 @@ class QueueTab
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).on_hold
   end
 
+  def recently_closed_tasks
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).recently_closed
+  end
+
   def task_includes
     [
       { appeal: [:available_hearing_locations, :claimants] },
@@ -76,10 +80,21 @@ class QueueTab
       errors.add(:assignee, COPY::TASK_PAGE_INVALID_ASSIGNEE_MESSAGE)
     end
   end
+
+  def assignee_is_user
+    errors.add(:assignee, COPY::QUEUE_TAB_NON_USER_ASSIGNEE_MESSAGE) unless assignee.is_a?(User)
+  end
+
+  def assignee_is_organization
+    errors.add(:assignee, COPY::QUEUE_TAB_NON_ORGANIZATION_ASSIGNEE_MESSAGE) unless assignee.is_a?(Organization)
+  end
 end
 
 require_dependency "assigned_tasks_tab"
 require_dependency "completed_tasks_tab"
 require_dependency "on_hold_tasks_tab"
-require_dependency "tracking_tasks_tab"
-require_dependency "unassigned_tasks_tab"
+require_dependency "organization_assigned_tasks_tab"
+require_dependency "organization_completed_tasks_tab"
+require_dependency "organization_on_hold_tasks_tab"
+require_dependency "organization_tracking_tasks_tab"
+require_dependency "organization_unassigned_tasks_tab"
