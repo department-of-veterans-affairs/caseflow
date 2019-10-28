@@ -16,10 +16,12 @@ gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "6c0c2908a9e4a61f5bcf2a768061909e3c763fe8"
 gem "dogstatsd-ruby"
 gem "fast_jsonapi"
+gem "govdelivery-tms", "2.8.4", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "kaminari"
-# active_model_serializers has a default dependency on loofah 2.2.2 which has a security vuln (CVE-2018-16468)
-gem "loofah", ">= 2.2.3"
+# active_model_serializers has a default dependency on loofah 2.2.2 which security vulnerabilities
+# (CVE-2018-16468 and CVE-2019-15587)
+gem "loofah", ">= 2.3.1"
 gem "moment_timezone-rails"
 gem "newrelic_rpm"
 # nokogiri versions before 1.10.4 are vulnerable to CVE-2019-5477.

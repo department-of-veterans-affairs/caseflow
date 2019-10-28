@@ -52,6 +52,7 @@ detectors:
       - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
       - VeteranAttributeCacher
       - WarmBgsCachesJob
+      - ExternalApi::PexipService#send_pexip_request
   InstanceVariableAssumption:
     exclude:
       - Appeal
@@ -83,6 +84,7 @@ detectors:
       - AmaAppealDispatch
       - LegacyAppealDispatch
       - Address
+      - ExternalApi::PexipService
   TooManyMethods:
     enabled: false
   TooManyStatements:
@@ -95,7 +97,9 @@ detectors:
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
-      - OnHoldTasksTab#name
+      - OrganizationOnHoldTasksTab#name
+      - OrganizationTrackingTasksTab#column_names
+      - Fakes::PexipService
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.

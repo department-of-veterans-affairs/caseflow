@@ -53,6 +53,7 @@ RSpec.feature "User organization", :postgres do
       expect(page).to have_content(format(COPY::USER_MANAGEMENT_PAGE_TITLE, organization.name))
 
       find(".Select-control", text: COPY::USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT).click
+      fill_in("Add user", with: user_with_role.css_id)
       expect(page).to have_content(user_with_role.full_name)
       expect(page).to_not have_content(user_without_role.full_name)
 

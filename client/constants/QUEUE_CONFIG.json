@@ -1,7 +1,10 @@
 {
   "ASSIGNED_TASKS_TAB_NAME": "assigned",
+  "INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME": "assigned_person",
   "COMPLETED_TASKS_TAB_NAME": "completed",
+  "INDIVIDUALLY_COMPLETED_TASKS_TAB_NAME": "completed_person",
   "ON_HOLD_TASKS_TAB_NAME": "on_hold",
+  "INDIVIDUALLY_ON_HOLD_TASKS_TAB_NAME": "on_hold_person",
   "TRACKING_TASKS_TAB_NAME": "tracking",
   "UNASSIGNED_TASKS_TAB_NAME": "unassigned",
 
@@ -41,6 +44,9 @@
       "name": "issueCountColumn",
       "sorting_table": "cached_appeal_attributes",
       "sorting_columns": ["issue_count"]
+    },
+    "READER_LINK_WITH_NEW_DOCS_ICON": {
+      "name": "readerLinkWithNewDocIconColumn"
     },
     "REGIONAL_OFFICE": {
       "filterable": true,
@@ -92,5 +98,11 @@
   "FILTER_COLUMN_REQUEST_PARAM": "filter",
   
   "COLUMN_SORT_ORDER_ASC": "asc",
-  "COLUMN_SORT_ORDER_DESC": "desc"
+  "COLUMN_SORT_ORDER_DESC": "desc",
+
+  "FILTER_OPTIONS": {
+    "IS_AOD": {
+      "key": "is_aod"
+    }
+  }
 }

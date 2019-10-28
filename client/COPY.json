@@ -141,12 +141,16 @@
   "JUDGE_REVIEW_DROPDOWN_LINK_LABEL": "Your cases",
 
   "JUDGE_ADDRESS_MTV_TITLE": "Address %s's Motion to Vacate",
-  "JUDGE_ADDRESS_MTV_DESCRIPTION": "Determine how you would like to address this motion to vacate and then assign it back to the appropriate attorney.",
+  "JUDGE_ADDRESS_MTV_DESCRIPTION": "Determine how you would like to address this motion to vacate.\n\nIf you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.\n\nIf you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case. If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.",
   "JUDGE_ADDRESS_MTV_DISPOSITION_SELECT_LABEL": "How will you address this motion to vacate?",
   "JUDGE_ADDRESS_MTV_VACATE_TYPE_LABEL": "What type of vacate?",
   "JUDGE_ADDRESS_MTV_HYPERLINK_LABEL": "Insert hyperlink to signed denial document",
   "JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL": "Provide context and instructions on which issues you will be granting",
   "JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL": "Assign to decisions attorney",
+
+  "RETURN_TO_LIT_SUPPORT_MODAL_TITLE": "Return to Litigation Support",
+  "RETURN_TO_LIT_SUPPORT_MODAL_CONTENT": "Use this action to return the Motion to Vacate task to the previous Motions Attorney in case of a missing ruling letter draft.\n\nIf the previous attorney is inactive, this will return to the Litigation Support team queue for reassignment.",
+  "RETURN_TO_LIT_SUPPORT_MODAL_INSTRUCTIONS_LABEL": "Provide context and instructions for this action",
 
   "MOTIONS_ATTORNEY_ADDRESS_MTV_TITLE": "Review %s's Motion to Vacate",
   "MOTIONS_ATTORNEY_REVIEW_MTV_DESCRIPTION": "Create your review for this motion to vacate, then send it back to the Veteran's Law Judge who originally signed the case if they are available.",
@@ -456,7 +460,7 @@
   "USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT": "Remove user",
   "USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME": "Add user",
   "USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_LABEL": "Add a user to the team:",
-  "USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT": "Select user to add",
+  "USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT": "User CSS ID to add",
 
   "ACCESS_DENIED_TITLE": "Additional access needed",
   "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet.",
@@ -544,6 +548,8 @@
   "INVALID_TASKS_ARGUMENT": "must be an ActiveRecord::Relation object",
   "INVALID_SORT_COLUMN": "must be a QueueColumn",
   "TASK_PAGE_INVALID_ASSIGNEE_MESSAGE": "must be either a User or an Organization",
+  "QUEUE_TAB_NON_USER_ASSIGNEE_MESSAGE": "must be a User",
+  "QUEUE_TAB_NON_ORGANIZATION_ASSIGNEE_MESSAGE": "must be an Organization",
   "TASK_PAGE_INVALID_SORT_ORDER": "must be either asc or desc",
   "TASK_DISTRIBUTOR_ASSIGNEE_POOL_USERS_ONLY_MESSAGE": "must contain only Users",
   "APPEAL_RECORD_SAVED_MESSAGE": "You can now begin intake for the next opt-in election.",
@@ -603,6 +609,9 @@
   "ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_DETAIL": "To manually add a CO hearing, please unselect, \"Assign Board Hearing Room,\" and then edit hearing day to change room number.",
 
   "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_TITLE": "No rooms available for %s",
-  "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_DETAIL": "All hearing rooms are taken for the date you selected."
+  "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_DETAIL": "All hearing rooms are taken for the date you selected.",
+
+  "VIRTUAL_HEARING_MODAL_INTRO": "Calendar invites will be emailed to the Veteran, POA/Representative, and VLJ.",
+  "VIRTUAL_HEARING_MODAL_CONFIRMATION": "Changes to the Veteran and POA/Representative emails will be used to send calendar invites and reminders <strong>for this hearing only</strong>."
 
 }
