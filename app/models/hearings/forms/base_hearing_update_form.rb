@@ -3,23 +3,12 @@
 class BaseHearingUpdateForm
   include ActiveModel::Model
 
-  attr_accessor :advance_on_docket_motion_attributes,
-    :bva_poc,
-    :disposition,
-    :hearing,
-    :hearing_location_attributes,
-    :hold_open,
-    :judge_id,
-    :military_service,
-    :notes,
-    :prepped,
-    :representative_name,
-    :room,
-    :scheduled_time_string,
-    :summary,
-    :transcript_requested,
-    :virtual_hearing_attributes,
-    :witness
+  attr_accessor :advance_on_docket_motion_attributes, :bva_poc, :disposition,
+                :hearing, :hearing_location_attributes, :hold_open,
+                :judge_id, :military_service, :notes, :prepped,
+                :representative_name, :room, :scheduled_time_string,
+                :summary, :transcript_requested, :virtual_hearing_attributes,
+                :witness
 
   def update
     update_hearing

@@ -17,7 +17,7 @@ class HearingsController < HearingsApplicationController
   end
 
   rescue_from ActiveRecord::RecordNotUnique do |_error|
-    render json: { "errors": ["message": "Virtual hearing already exists", code: 1002] }, status: :conflict 
+    render json: { "errors": ["message": "Virtual hearing already exists", code: 1002] }, status: :conflict
   end
 
   def show
@@ -25,10 +25,10 @@ class HearingsController < HearingsApplicationController
   end
 
   def update
-    if hearing.is_a?(LegacyHearing)
-      form = LegacyHearingUpdateForm.new(update_params_legacy)
+    form = if hearing.is_a?(LegacyHearing)
+      LegacyHearingUpdateForm.new(update_params_legacy)
     else
-      form = HearingUpdateForm.new(update_params)
+      HearingUpdateForm.new(update_params)
     end
     form.update
 

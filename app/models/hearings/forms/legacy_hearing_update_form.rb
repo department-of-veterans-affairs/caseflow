@@ -1,12 +1,20 @@
 # frozen_string_literal: true
 
 class LegacyHearingUpdateForm < BaseHearingUpdateForm
-
   attr_accessor :aod, :scheduled_for
 
   protected
 
   def update_hearing
+    hearing.update_caseflow_and_vacols(hearing_updates)
+
+    # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
+    HearingRepository.load_vacols_data(hearing)
+  end
+
+  private
+
+  def hearing_updates
     updates = {
       aod: aod,
       bva_poc: bva_poc,
@@ -26,11 +34,6 @@ class LegacyHearingUpdateForm < BaseHearingUpdateForm
       witness: witness
     }.compact
 
-    params = HearingTimeService.build_legacy_params_with_time(hearing, updates)
-
-    hearing.update_caseflow_and_vacols(params)
-
-    # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
-    HearingRepository.load_vacols_data(hearing)
+    HearingTimeService.build_legacy_params_with_time(hearing, updates)
   end
 end

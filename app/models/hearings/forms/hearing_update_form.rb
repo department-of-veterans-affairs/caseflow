@@ -1,16 +1,22 @@
 # frozen_string_literal: true
 
 class HearingUpdateForm < BaseHearingUpdateForm
-
-  attr_accessor :evidence_window_waived,
-    :hearing_issue_notes_attributes,
-    :transcript_sent_date,
-    :transcription_attributes
+  attr_accessor :evidence_window_waived, :hearing_issue_notes_attributes,
+                :transcript_sent_date, :transcription_attributes
 
   protected
 
   def update_hearing
-    updates = {
+    ActiveRecord::Base.transaction do
+      Transcription.find_or_create_by(hearing: hearing)
+      hearing.update!(hearing_updates)
+    end
+  end
+
+  private
+
+  def hearing_updates
+    {
       bva_poc: bva_poc, 
       disposition: disposition,
       evidence_window_waived: evidence_window_waived,
@@ -30,10 +36,5 @@ class HearingUpdateForm < BaseHearingUpdateForm
       transcription_attributes: transcription_attributes,
       witness: witness
     }.compact
-
-    ActiveRecord::Base.transaction do
-      Transcription.find_or_create_by(hearing: hearing)
-      hearing.update!(updates)
-    end
   end
 end
