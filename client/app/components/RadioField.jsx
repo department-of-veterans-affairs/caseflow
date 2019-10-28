@@ -109,7 +109,8 @@ RadioField.propTypes = {
   options: PropTypes.arrayOf(
     PropTypes.shape({
       displayText: PropTypes.node,
-      value: PropTypes.string
+      value: PropTypes.string,
+      help: PropTypes.string
     })
   ),
   value: PropTypes.string,
