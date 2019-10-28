@@ -29,6 +29,8 @@ class IntakeStartValidator
       intake.error_code = :veteran_not_modifiable
     elsif veteran.incident_flash?
       intake.error_code = :incident_flash
+    elsif duplicate_veteran_records_in_corpdb
+      intake.error_code = :veteran_has_duplicate_records_in_corpdb
     end
   end
 
@@ -53,6 +55,15 @@ class IntakeStartValidator
     return unless !veteran.accessible?
 
     intake.error_code = veteran.multiple_phone_numbers? ? :veteran_has_multiple_phone_numbers : :veteran_not_accessible
+  end
+
+  def duplicate_veteran_records_in_corpdb
+    pids = veteran.participant_ids
+    if pids.count > 1
+      intake.store_error_data(pids: pids)
+      true
+    end
+    false
   end
 
   def duplicate_intake_in_progress

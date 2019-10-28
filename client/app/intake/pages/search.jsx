@@ -11,6 +11,7 @@ import { doFileNumberSearch, setFileNumberSearch } from '../actions/intake';
 import { invalidVeteranInstructions } from '../components/ErrorAlert';
 import { PAGE_PATHS, INTAKE_STATES, REQUEST_STATE } from '../constants';
 import { getIntakeStatus } from '../selectors';
+import { sprintf } from 'sprintf-js';
 import _ from 'lodash';
 import COPY from '../../../COPY.json';
 
@@ -88,6 +89,10 @@ class Search extends React.PureComponent {
       veteran_has_multiple_phone_numbers: {
         title: 'The Veteran has multiple active phone numbers',
         body: COPY.DUPLICATE_PHONE_NUMBER_MESSAGE
+      },
+      veteran_has_duplicate_records_in_corpdb: {
+        title: 'The Veteran has duplicate records in CorpDB',
+        body: sprintf(COPY.DUPLICATE_CORPDB_RECORD_MESSAGE, searchErrorData.pids)
       },
       veteran_not_accessible: {
         title: "You don't have permission to view this Veteran's information",
