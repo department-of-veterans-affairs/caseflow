@@ -1,8 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import classNames from 'classnames';
+
 import RequiredIndicator from './RequiredIndicator';
 import StringUtil from '../util/StringUtil';
+
+import { helpText } from './RadioField.module.scss';
+
+const RadioFieldHelpText = ({ help, className }) => {
+  const helpClasses = classNames('cf-form-radio-help', helpText, className);
+
+  return <div className={helpClasses}>{help}</div>;
+};
+
+RadioFieldHelpText.propTypes = {
+  help: PropTypes.string.isRequired,
+  className: PropTypes.string
+};
 
 /**
  * Radio button component.
@@ -29,7 +44,6 @@ export default class RadioField extends React.Component {
       errorMessage,
       strongLabel,
       hideLabel,
-      help,
       styling
     } = this.props;
 
@@ -71,6 +85,7 @@ export default class RadioField extends React.Component {
               <label className={option.disabled ? 'disabled' : ''} htmlFor={`${idPart}_${option.value}`}>
                 {option.displayText || option.displayElem}
               </label>
+              {option.help && <RadioFieldHelpText help={option.help} />}
             </div>
           ))}
         </div>
@@ -102,6 +117,5 @@ RadioField.propTypes = {
   errorMessage: PropTypes.string,
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
-  help: PropTypes.string,
   styling: PropTypes.object
 };
