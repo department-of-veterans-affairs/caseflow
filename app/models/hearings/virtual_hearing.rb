@@ -8,6 +8,10 @@ class VirtualHearing < ApplicationRecord
 
   before_create :assign_created_by_user
 
+  validates_email_format_of :judge_email
+  validates_email_format_of :representative_email
+  validates_email_format_of :veteran_email
+
   enum status: {
     # Initial status for a virtual hearing. Indicates the Pexip conference
     # does not exist yet
