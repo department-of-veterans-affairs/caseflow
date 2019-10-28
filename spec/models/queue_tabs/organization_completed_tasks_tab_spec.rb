@@ -3,8 +3,8 @@
 require "rails_helper"
 require "support/database_cleaner"
 
-describe OnHoldTasksTab, :postgres do
-  let(:tab) { OnHoldTasksTab.new(params) }
+describe OrganizationCompletedTasksTab, :postgres do
+  let(:tab) { OrganizationCompletedTasksTab.new(params) }
   let(:params) do
     {
       assignee: assignee,
@@ -17,7 +17,7 @@ describe OnHoldTasksTab, :postgres do
   describe ".column_names" do
     subject { tab.column_names }
 
-    context "when only the assignee argument is passed when instantiating an OnHoldTasksTab" do
+    context "when only the assignee argument is passed when instantiating a OrganizationCompletedTasksTab" do
       let(:params) { { assignee: create(:organization) } }
 
       it "returns the correct number of columns" do
@@ -44,29 +44,14 @@ describe OnHoldTasksTab, :postgres do
     context "when there are tasks assigned to the assignee and other folks" do
       let!(:other_folks_tasks) { create_list(:generic_task, 11) }
       let!(:assignee_active_tasks) { create_list(:generic_task, 4, :assigned, assigned_to: assignee) }
-      let!(:assignee_on_hold_tasks) { create_list(:generic_task, 3, :assigned, assigned_to: assignee) }
-      let!(:on_hold_tasks_children) do
-        assignee_on_hold_tasks.map do |task|
-          create_list(:generic_task, 2, parent_id: task.id)
-          task.update!(status: Constants.TASK_STATUSES.on_hold)
-          task.children
-        end.flatten
-      end
+      let!(:assignee_closed_tasks) { create_list(:generic_task, 3, :assigned, assigned_to: assignee) }
 
       before do
-        on_hold_tasks_children.each { |task| task.update!(status: Constants.TASK_STATUSES.on_hold) }
+        assignee_closed_tasks.each { |task| task.update!(status: Constants.TASK_STATUSES.completed) }
       end
 
-      it "only returns the on hold tasks that are children of the assignee's on hold tasks" do
-        expect(subject).to match_array(on_hold_tasks_children)
-      end
-
-      context "when the assignee is a user" do
-        let(:assignee) { create(:user) }
-
-        it "only returns the assignee's on hold tasks" do
-          expect(subject).to match_array(assignee_on_hold_tasks)
-        end
+      it "only returns the assignee's completed tasks" do
+        expect(subject).to match_array(assignee_closed_tasks)
       end
     end
   end

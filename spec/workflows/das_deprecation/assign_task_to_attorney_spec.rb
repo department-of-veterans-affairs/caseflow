@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe DasDeprecation::AssignTaskToAttorney do
+describe DasDeprecation::AssignTaskToAttorney, :all_dbs do
   before do
     FeatureToggle.enable!(:legacy_das_deprecation)
     User.authenticate!(user: judge)
