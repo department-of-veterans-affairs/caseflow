@@ -312,6 +312,7 @@ describe User, :all_dbs do
       before { JudgeTeam.create_for_judge(user) }
 
       it "assign cases is returned" do
+        user.reload
         is_expected.to include(
           name: "Assign",
           url: format("queue/%<id>s/assign", id: user.id)
