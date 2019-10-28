@@ -407,7 +407,7 @@ describe User, :all_dbs do
 
     context "when appeal has task assigned to user" do
       let(:appeal) { create(:appeal) }
-      let!(:task) { create(:task, type: "GenericTask", appeal: appeal, assigned_to: user) }
+      let!(:task) { create(:task, appeal: appeal, assigned_to: user) }
 
       it "should return true" do
         expect(user.appeal_has_task_assigned_to_user?(appeal)).to eq(true)
