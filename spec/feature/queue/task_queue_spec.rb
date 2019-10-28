@@ -440,8 +440,8 @@ RSpec.feature "Task queue", :all_dbs do
     before do
       OrganizationsUser.add_user_to_organization(organization_user, organization)
       User.authenticate!(user: organization_user)
-      create_list(:generic_task, unassigned_count, :in_progress, assigned_to: organization)
-      create_list(:generic_task, assigned_count, :on_hold, assigned_to: organization)
+      create_list(:privacy_act_task, unassigned_count, :in_progress, assigned_to: organization)
+      create_list(:privacy_act_task, assigned_count, :on_hold, assigned_to: organization)
     end
 
     context "when not using pagination" do
@@ -583,7 +583,7 @@ RSpec.feature "Task queue", :all_dbs do
               expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
             end
             (foia_task_count + 1..unassigned_count).each do |index|
-              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(Task.label)
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(PrivacyActTask.label)
             end
           end
         end
@@ -597,7 +597,7 @@ RSpec.feature "Task queue", :all_dbs do
 
           it "sorts the correct column descending" do
             (1..foia_task_count).each do |index|
-              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(Task.label)
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(PrivacyActTask.label)
             end
             (foia_task_count + 1..unassigned_count).each do |index|
               expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
@@ -643,7 +643,7 @@ RSpec.feature "Task queue", :all_dbs do
             end
             expect(page).to have_content("Viewing 1-#{foia_task_count} of #{foia_task_count} total")
             expect(find("tbody").find_all("tr").length).to eq(foia_task_count)
-            expect(find("tbody")).not_to have_content(Task.label)
+            expect(find("tbody")).not_to have_content(PrivacyActTask.label)
           end
         end
       end
@@ -697,7 +697,7 @@ RSpec.feature "Task queue", :all_dbs do
           visit(organization.path)
           page.find_all("svg.table-icon")[1].click
           (1..foia_task_count).each do |index|
-            expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(Task.label)
+            expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(PrivacyActTask.label)
           end
           (foia_task_count + 1..unassigned_count).each do |index|
             expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
@@ -708,7 +708,7 @@ RSpec.feature "Task queue", :all_dbs do
             expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
           end
           (foia_task_count + 1..unassigned_count).each do |index|
-            expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(Task.label)
+            expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(PrivacyActTask.label)
           end
           expect(URI.parse(current_url).query).to eq "#{default_query_string}&#{query_string_asc}"
         end
