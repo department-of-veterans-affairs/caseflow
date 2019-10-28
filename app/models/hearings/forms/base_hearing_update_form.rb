@@ -39,6 +39,6 @@ class BaseHearingUpdateForm
       created = true
     end
 
-    raise ActiveRecord::RecordNotUnique if !created
+    fail ActiveRecord::RecordNotUnique if !created
   end
 end

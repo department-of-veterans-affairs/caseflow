@@ -17,7 +17,7 @@ class HearingUpdateForm < BaseHearingUpdateForm
 
   def hearing_updates
     {
-      bva_poc: bva_poc, 
+      bva_poc: bva_poc,
       disposition: disposition,
       evidence_window_waived: evidence_window_waived,
       hearing_issue_notes_attributes: hearing_issue_notes_attributes,

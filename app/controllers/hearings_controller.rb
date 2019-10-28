@@ -26,10 +26,10 @@ class HearingsController < HearingsApplicationController
 
   def update
     form = if hearing.is_a?(LegacyHearing)
-      LegacyHearingUpdateForm.new(update_params_legacy)
-    else
-      HearingUpdateForm.new(update_params)
-    end
+             LegacyHearingUpdateForm.new(update_params_legacy)
+           else
+             HearingUpdateForm.new(update_params)
+           end
     form.update
 
     render json: form.hearing.to_hash(current_user.id)
