@@ -7,7 +7,9 @@ describe Api::V3::DecisionReview::IssuesController, :postgres, type: :request do
   after { FeatureToggle.disable!(:api_v3) }
 
   describe "#index" do
-    let(:veteran_file_number) { "64205050" }
+    let(:veteran_file_number) do
+      create(:veteran).file_number
+    end
     let!(:api_key) do
       ApiKey.create!(consumer_name: "ApiV3 Test Consumer").key_string
     end
@@ -16,7 +18,7 @@ describe Api::V3::DecisionReview::IssuesController, :postgres, type: :request do
         "/api/v3/decision_review/issues?",
         headers: {
           "Authorization" => "Token #{api_key}",
-          "veteranId" => veteran_file_number,
+          "veteranId" => veteran_id,
           "receiptDate" => receipt_date.strftime("%Y-%m-%d")
         }
       )
