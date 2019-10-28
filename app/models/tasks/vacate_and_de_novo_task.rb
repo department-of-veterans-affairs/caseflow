@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class VacateAndDeNovoTask < GenericTask
+class VacateAndDeNovoTask < Task
   def available_actions(user)
     actions = super(user)
 
