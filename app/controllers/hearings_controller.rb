@@ -16,44 +16,23 @@ class HearingsController < HearingsApplicationController
     render json: { "errors": ["message": error.message, code: 1001] }, status: :not_found
   end
 
+  rescue_from ActiveRecord::RecordNotUnique do |_error|
+    render json: { "errors": ["message": "Virtual hearing already exists", code: 1002] }, status: :conflict 
+  end
+
   def show
     render json: hearing.to_hash_for_worksheet(current_user.id)
   end
 
   def update
-    update_hearing
-    update_advance_on_docket_motion unless advance_on_docket_motion_params.empty?
-
-    if params.has_key?(:virtual_hearing) && !create_virtual_hearing
-      return render(
-        json: { "errors": ["message": "Virtual hearing already exists", code: 1002] },
-        status: :conflict
-      ) 
-    end
-
-    render json: hearing.to_hash(current_user.id)
-  end
-
-  def update_hearing
     if hearing.is_a?(LegacyHearing)
-      params = HearingTimeService.build_legacy_params_with_time(hearing, update_params_legacy)
-      hearing.update_caseflow_and_vacols(params)
-      # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
-      HearingRepository.load_vacols_data(hearing)
+      form = LegacyHearingUpdateForm.new(update_params_legacy)
     else
-      params = HearingTimeService.build_params_with_time(hearing, update_params)
-      Transcription.find_or_create_by(hearing: hearing)
-      hearing.update!(params)
+      form = HearingUpdateForm.new(update_params)
     end
-  end
+    form.update
 
-  def update_advance_on_docket_motion
-    advance_on_docket_motion_params.require(:reason)
-
-    motion = hearing.advance_on_docket_motion || AdvanceOnDocketMotion.find_or_create_by!(
-      person_id: advance_on_docket_motion_params[:person_id]
-    )
-    motion.update(advance_on_docket_motion_params)
+    render json: form.hearing.to_hash(current_user.id)
   end
 
   def find_closest_hearing_locations
