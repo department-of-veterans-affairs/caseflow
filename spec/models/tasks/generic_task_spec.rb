@@ -3,14 +3,14 @@
 require "support/database_cleaner"
 require "rails_helper"
 
-describe GenericTask, :postgres do
+describe Task, :postgres do
   describe ".available_actions" do
     let(:task) { nil }
     let(:user) { nil }
     subject { task.available_actions(user) }
 
     context "when task is assigned to user" do
-      let(:task) { GenericTask.find(create(:generic_task).id) }
+      let(:task) { create(:generic_task) }
       let(:user) { task.assigned_to }
       let(:expected_actions) do
         [
@@ -27,7 +27,7 @@ describe GenericTask, :postgres do
     end
 
     context "when task is assigned to somebody else" do
-      let(:task) { GenericTask.find(create(:generic_task).id) }
+      let(:task) { create(:generic_task) }
       let(:user) { create(:user) }
       let(:expected_actions) { [] }
       it "should return an empty array" do
@@ -37,7 +37,7 @@ describe GenericTask, :postgres do
 
     context "when task is assigned to an organization the user is a member of" do
       let(:org) { Organization.find(create(:organization).id) }
-      let(:task) { GenericTask.find(create(:generic_task, assigned_to: org).id) }
+      let(:task) { create(:generic_task, assigned_to: org) }
       let(:user) { create(:user) }
       let(:expected_actions) do
         [
@@ -173,7 +173,7 @@ describe GenericTask, :postgres do
 
   describe ".available_actions_unwrapper" do
     let(:user) { create(:user) }
-    let(:task) { GenericTask.find(create(:generic_task, trait, assigned_to: assignee).id) }
+    let(:task) { create(:generic_task, trait, assigned_to: assignee) }
     subject { task.available_actions_unwrapper(user) }
 
     context "when task assigned to the user is has been completed" do
@@ -201,7 +201,7 @@ describe GenericTask, :postgres do
     let(:other_user) { create(:user) }
     let(:org) { create(:organization) }
     let(:other_org) { create(:organization) }
-    let(:task) { GenericTask.find(create(:generic_task, :in_progress, assigned_to: assignee).id) }
+    let(:task) { create(:generic_task, :in_progress, assigned_to: assignee) }
 
     before do
       OrganizationsUser.add_user_to_organization(user, org)
@@ -239,7 +239,7 @@ describe GenericTask, :postgres do
   describe ".update_from_params" do
     let(:user) { create(:user) }
     let(:org) { create(:organization) }
-    let(:task) { GenericTask.find(create(:generic_task, :in_progress, assigned_to: assignee).id) }
+    let(:task) { create(:generic_task, :in_progress, assigned_to: assignee) }
 
     context "task is assigned to an organization" do
       let(:assignee) { org }
@@ -258,7 +258,7 @@ describe GenericTask, :postgres do
         end
 
         it "should update the task's status" do
-          expect_any_instance_of(GenericTask).to receive(:update!)
+          expect_any_instance_of(Task).to receive(:update!)
           task.update_from_params({ status: Constants.TASK_STATUSES.completed }, user)
         end
       end
@@ -276,7 +276,7 @@ describe GenericTask, :postgres do
 
       context "who is the current user" do
         it "should receive the update" do
-          expect_any_instance_of(GenericTask).to receive(:update!)
+          expect_any_instance_of(Task).to receive(:update!)
           task.update_from_params({ status: Constants.TASK_STATUSES.completed }, user)
         end
 
@@ -288,9 +288,9 @@ describe GenericTask, :postgres do
       end
 
       context "and the parameters include a reassign parameter" do
-        it "should call GenericTask.reassign" do
-          allow_any_instance_of(GenericTask).to receive(:reassign).and_return(true)
-          expect_any_instance_of(GenericTask).to receive(:reassign)
+        it "should call Task.reassign" do
+          allow_any_instance_of(Task).to receive(:reassign).and_return(true)
+          expect_any_instance_of(Task).to receive(:reassign)
           task.update_from_params({ status: Constants.TASK_STATUSES.completed, reassign: { instructions: nil } }, user)
         end
       end
@@ -301,10 +301,7 @@ describe GenericTask, :postgres do
     let(:parent_assignee) { create(:user) }
     let(:current_user) { create(:user) }
     let(:assignee) { create(:user) }
-    let(:parent) do
-      t = create(:generic_task, :in_progress, assigned_to: parent_assignee)
-      GenericTask.find(t.id)
-    end
+    let(:parent) { create(:generic_task, :in_progress, assigned_to: parent_assignee) }
 
     let(:good_params) do
       {
@@ -325,7 +322,7 @@ describe GenericTask, :postgres do
         }]
       end
       it "should raise error before not creating child task nor update status" do
-        expect { GenericTask.create_many_from_params(params, parent_assignee).first }.to raise_error(TypeError)
+        expect { Task.create_many_from_params(params, parent_assignee).first }.to raise_error(TypeError)
       end
     end
 
@@ -338,7 +335,7 @@ describe GenericTask, :postgres do
         }]
       end
       it "should raise error before not creating child task nor update status" do
-        expect { GenericTask.create_many_from_params(params, parent_assignee).first }
+        expect { Task.create_many_from_params(params, parent_assignee).first }
           .to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -353,8 +350,8 @@ describe GenericTask, :postgres do
       end
       it "should create child task and not update parent task's status" do
         status_before = parent.status
-        GenericTask.create_many_from_params(params, parent_assignee)
-        expect(GenericTask.where(params.first).count).to eq(1)
+        Task.create_many_from_params(params, parent_assignee)
+        expect(Task.where(params.first).count).to eq(1)
         expect(parent.status).to eq(status_before)
       end
     end
@@ -362,7 +359,7 @@ describe GenericTask, :postgres do
     context "when parent task is assigned to a user" do
       context "when there is no current user" do
         it "should raise error and not create the child task nor update status" do
-          expect { GenericTask.create_many_from_params(good_params_array, nil).first }.to(
+          expect { Task.create_many_from_params(good_params_array, nil).first }.to(
             raise_error(Caseflow::Error::ActionForbiddenError)
           )
         end
@@ -371,7 +368,7 @@ describe GenericTask, :postgres do
       context "when the currently logged-in user owns the parent task" do
         let(:parent_assignee) { current_user }
         it "should create child task assigned by currently logged-in user" do
-          child = GenericTask.create_many_from_params(good_params_array, current_user).first
+          child = Task.create_many_from_params(good_params_array, current_user).first
           expect(child.assigned_by_id).to eq(current_user.id)
         end
       end
@@ -379,11 +376,11 @@ describe GenericTask, :postgres do
 
     context "when parent task is assigned to an organization" do
       let(:org) { create(:organization) }
-      let(:parent) { GenericTask.find(create(:generic_task, :in_progress, assigned_to: org).id) }
+      let(:parent) { create(:generic_task, :in_progress, assigned_to: org) }
 
       context "when there is no current user" do
         it "should raise error and not create the child task nor update status" do
-          expect { GenericTask.create_many_from_params(good_params_array, nil).first }.to(
+          expect { Task.create_many_from_params(good_params_array, nil).first }.to(
             raise_error(Caseflow::Error::ActionForbiddenError)
           )
         end
@@ -394,7 +391,7 @@ describe GenericTask, :postgres do
           OrganizationsUser.add_user_to_organization(current_user, org)
         end
         it "should create child task assigned by currently logged-in user" do
-          child = GenericTask.create_many_from_params(good_params_array, current_user).first
+          child = Task.create_many_from_params(good_params_array, current_user).first
           expect(child.assigned_by_id).to eq(current_user.id)
         end
       end
@@ -404,8 +401,8 @@ describe GenericTask, :postgres do
   describe ".reassign" do
     let(:org) { Organization.find(create(:organization).id) }
     let(:root_task) { RootTask.find(create(:root_task).id) }
-    let(:org_task) { GenericTask.find(create(:generic_task, parent_id: root_task.id, assigned_to: org).id) }
-    let(:task) { GenericTask.find(create(:generic_task, parent_id: org_task.id).id) }
+    let(:org_task) { create(:generic_task, parent_id: root_task.id, assigned_to: org) }
+    let(:task) { create(:generic_task, parent_id: org_task.id) }
     let(:old_assignee) { task.assigned_to }
     let(:new_assignee) { create(:user) }
     let(:params) do
@@ -502,9 +499,10 @@ describe GenericTask, :postgres do
         expect do
           appeals.each do |a|
             root_task = RootTask.create(appeal: a)
-            GenericTask.create!(
+            Task.create!(
               assigned_to: organization,
               parent_id: root_task.id,
+              type: Task.name,
               appeal: a
             )
           end
