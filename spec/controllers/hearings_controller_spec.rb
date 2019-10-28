@@ -9,16 +9,18 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
   let!(:legacy_hearing) { create(:legacy_hearing) }
 
   describe "PATCH update" do
-    it "should be successful" do
-      params = { notes: "Test",
-                 hold_open: 30,
-                 transcript_requested: false,
-                 aod: :granted,
-                 disposition: :held,
-                 hearing_location_attributes: {
-                   facility_id: "vba_301"
-                 },
-                 prepped: true }
+    it "should be successful", :aggregate_failures do
+      params = {
+        notes: "Test",
+        hold_open: 30,
+        transcript_requested: false,
+        aod: :granted,
+        disposition: :held,
+        hearing_location_attributes: {
+         facility_id: "vba_301"
+        },
+        prepped: true
+      }
       patch :update, as: :json, params: { id: legacy_hearing.external_id, hearing: params }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
@@ -34,15 +36,17 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
     context "when updating an ama hearing" do
       let!(:hearing) { create(:hearing, :with_tasks) }
 
-      it "should update an ama hearing" do
-        params = { notes: "Test",
-                   transcript_requested: false,
-                   disposition: :held,
-                   hearing_location_attributes: {
-                     facility_id: "vba_301"
-                   },
-                   prepped: true,
-                   evidence_window_waived: true }
+      it "should update an ama hearing", :aggregate_failures do
+        params = {
+          notes: "Test",
+          transcript_requested: false,
+          disposition: :held,
+          hearing_location_attributes: {
+           facility_id: "vba_301"
+          },
+          prepped: true,
+          evidence_window_waived: true 
+        }
         patch :update, as: :json, params: { id: hearing.external_id, hearing: params }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
@@ -174,7 +178,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         allow(VADotGovService).to receive(:get_distance).and_return(facilities_response)
       end
 
-      it "returns an error response" do
+      it "returns an error response", :aggregate_failures do
         get :find_closest_hearing_locations,
             as: :json,
             params: { appeal_id: appeal.external_id, regional_office: "RO13" }
@@ -198,7 +202,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           .and_return(valid_address_response)
       end
 
-      it "returns an error response" do
+      it "returns an error response", :aggregate_failures do
         get :find_closest_hearing_locations,
             as: :json,
             params: { appeal_id: appeal.external_id, regional_office: "RO13" }
