@@ -159,6 +159,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
     let!(:atty_option_txt) { "#{drafting_attorney.full_name} (Orig. Attorney)" }
     let!(:judge_notes) { "Here's why I made my decision..." }
+    let!(:return_to_lit_support_instructions) { "You forgot the denial draft" }
 
     before do
       create(:staff, :judge_role, sdomainid: judge.css_id)
@@ -246,8 +247,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
       fill_in("instructions", with: judge_notes)
       fill_in("hyperlink", with: hyperlink)
 
-      # Ensure it has pre-selected attorney previously assigned to case
-      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
+      # Ensure we don't show attorney selection for this disposition
+      expect(page).not_to have_selector("input#attorney")
 
       click_button(text: "Submit")
 
@@ -265,7 +266,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         disposition: "denied",
         hyperlink: hyperlink
       )
-      new_task = DeniedMotionToVacateTask.find_by(assigned_to: drafting_attorney)
+      new_task = DeniedMotionToVacateTask.find_by(assigned_to: motions_attorney)
       expect(new_task).to_not be_nil
       expect(new_task.label).to eq COPY::DENIED_MOTION_TO_VACATE_TASK_LABEL
       expect(new_task.available_actions(motions_attorney)).to include(
@@ -274,14 +275,31 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(new_task.instructions.join("")).to eq(instructions)
     end
 
+    it "judge returns to lit support due to missing denial draft" do
+      address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
+      find("label[for=disposition_denied]").click
+
+      find("a", text: "return to the motions attorney").click
+
+      expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_MODAL_TITLE)
+      fill_in("instructions", with: return_to_lit_support_instructions)
+
+      click_button(text: "Submit")
+
+      # Fill in additional test logic once submit handler is complete
+
+      # Return back to user's queue
+      # expect(page).to have_current_path("/queue")
+    end
+
     it "judge dismisses motion to vacate" do
       address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
       find("label[for=disposition_dismissed]").click
       fill_in("instructions", with: judge_notes)
       fill_in("hyperlink", with: hyperlink)
 
-      # Ensure it has pre-selected attorney previously assigned to case
-      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
+      # Ensure we don't show attorney selection for this disposition
+      expect(page).not_to have_selector("input#attorney")
 
       click_button(text: "Submit")
 
@@ -299,7 +317,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         disposition: "dismissed",
         hyperlink: hyperlink
       )
-      new_task = DismissedMotionToVacateTask.find_by(assigned_to: drafting_attorney)
+      new_task = DismissedMotionToVacateTask.find_by(assigned_to: motions_attorney)
       expect(new_task).to_not be_nil
       expect(new_task.label).to eq COPY::DISMISSED_MOTION_TO_VACATE_TASK_LABEL
       expect(new_task.available_actions(motions_attorney)).to include(
