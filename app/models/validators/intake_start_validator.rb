@@ -52,7 +52,7 @@ class IntakeStartValidator
   end
 
   def set_veteran_accessible_error
-    return unless !veteran.accessible?
+    return if veteran.accessible?
 
     intake.error_code = veteran.multiple_phone_numbers? ? :veteran_has_multiple_phone_numbers : :veteran_not_accessible
   end
