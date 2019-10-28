@@ -290,7 +290,7 @@ export const judgeDecisionReviewTasksSelector = createSelector(
 export const judgeAssignTasksSelector = createSelector(
   [workTasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task) => {
-    if (task.appealType === 'Appeal') {
+    if (task.appealType === 'Appeal' || !task.isLegacy) {
       return task.label === COPY.JUDGE_ASSIGN_TASK_LABEL &&
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned);
     }

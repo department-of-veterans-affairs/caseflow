@@ -79,6 +79,7 @@ import { FlashAlerts } from '../nonComp/components/Alerts';
 import AddressMotionToVacateView from './mtv/AddressMotionToVacateView';
 import ReviewMotionToVacateView from './mtv/ReviewMotionToVacateView';
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
+import { ReturnToLitSupportModal } from './mtv/ReturnToLitSupportModal';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -239,6 +240,19 @@ class QueueApp extends React.PureComponent {
   };
 
   routedAssignToPulacCerullo = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
+
+  routedReturnToLitSupport = (props) => {
+    return (
+      <ReturnToLitSupportModal
+        {...props.match.params}
+        onCancel={() => props.history.goBack()}
+        onSubmit={({ instructions }) => {
+          // we'll flesh this out in future PR
+          return instructions;
+        }}
+      />
+    );
+  };
 
   routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
 
@@ -549,6 +563,12 @@ class QueueApp extends React.PureComponent {
               }`}
               title="Assign to Pulac-Cerullo | Caseflow"
               render={this.routedPulacCerulloReminder}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.JUDGE_RETURN_TO_LIT_SUPPORT.value}`}
+              title="Return to Litigation Support | Caseflow"
+              render={this.routedReturnToLitSupport}
             />
             <PageRoute
               path={`/queue/appeals/:appealId/tasks/:taskId/${
