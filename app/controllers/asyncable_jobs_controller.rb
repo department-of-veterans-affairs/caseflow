@@ -6,6 +6,7 @@ class AsyncableJobsController < ApplicationController
   before_action :react_routed, :set_application
   before_action :verify_access, only: [:index]
   before_action :verify_job_access, only: [:show]
+  skip_before_action :deny_vso_access
 
   def index
     if allowed_params[:asyncable_job_klass]
@@ -23,6 +24,16 @@ class AsyncableJobsController < ApplicationController
   def update
     job.restart!
     render json: job.asyncable_ui_hash
+  end
+
+  def add_note
+    job_note = JobNote.create!(
+      job: job,
+      user: current_user,
+      note: allowed_params[:note],
+      send_to_intake_user: allowed_params[:send_to_intake_user]
+    )
+    render json: job_note.ui_hash
   end
 
   private
@@ -65,6 +76,7 @@ class AsyncableJobsController < ApplicationController
   end
 
   def verify_access
+    return true if current_user.admin?
     return true if current_user.can?("Admin Intake")
 
     Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
@@ -81,6 +93,6 @@ class AsyncableJobsController < ApplicationController
   end
 
   def allowed_params
-    params.permit(:asyncable_job_klass, :id, :page)
+    params.permit(:asyncable_job_klass, :id, :page, :note, :send_to_intake_user)
   end
 end

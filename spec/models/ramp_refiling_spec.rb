@@ -185,7 +185,8 @@ describe RampRefiling, :postgres do
               { description: "Leg" },
               { description: "#{('Long Description' * 20).slice(0, 252)}..." }
             ],
-            user: user
+            user: user,
+            claim_date: ramp_refiling.receipt_date.to_date
           )
         end
       end
@@ -205,7 +206,8 @@ describe RampRefiling, :postgres do
             { description: "Leg" },
             { description: "#{('Long Description' * 20).slice(0, 252)}..." }
           ],
-          user: user
+          user: user,
+          claim_date: ramp_refiling.receipt_date.to_date
         )
 
         expect(issues.first.reload.contention_reference_id).to_not be_nil

@@ -27,13 +27,11 @@ class QueueColumn
     {
       name: name,
       filterable: filterable,
-      filter_options: filter_options(tasks)
+      filter_options: filterable ? filter_options(tasks) : []
     }
   end
 
   def filter_options(tasks)
-    return [] unless filterable
-
     case name
     when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
       case_type_options(tasks)
@@ -43,6 +41,8 @@ class QueueColumn
       regional_office_options(tasks)
     when Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name
       task_type_options(tasks)
+    when Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
+      assignee_options(tasks)
     else
       fail(
         Caseflow::Error::MustImplementInSubclass,
@@ -77,8 +77,9 @@ class QueueColumn
     # Add the AOD option as the first option in the list.
     aod_counts = tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:is_aod).count[true]
     if aod_counts
+      aod_option_key = Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key
       aod_option_label = self.class.format_option_label("AOD", aod_counts)
-      options = [self.class.filter_option_hash("is_aod", aod_option_label)] + options
+      options = [self.class.filter_option_hash(aod_option_key, aod_option_label)] + options
     end
 
     options
@@ -102,6 +103,14 @@ class QueueColumn
   def task_type_options(tasks)
     tasks.group(:type).count.each_pair.map do |option, count|
       label = self.class.format_option_label(Object.const_get(option).label, count)
+      self.class.filter_option_hash(option, label)
+    end
+  end
+
+  def assignee_options(tasks)
+    tasks.joins(CachedAppeal.left_join_from_tasks_clause)
+      .group(:assignee_label).count.each_pair.map do |option, count|
+      label = self.class.format_option_label(option, count)
       self.class.filter_option_hash(option, label)
     end
   end

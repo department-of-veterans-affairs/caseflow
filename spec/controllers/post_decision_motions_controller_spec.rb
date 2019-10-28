@@ -16,7 +16,7 @@ describe PostDecisionMotionsController do
       it "returns an error" do
         allow(controller).to receive(:verify_authentication).and_return(true)
 
-        post :create, params: { post_decision_motion: { disposition: "granted" } }
+        post :create, params: { disposition: "granted" }
         expect(response.status).to eq 404
       end
 
@@ -24,7 +24,7 @@ describe PostDecisionMotionsController do
         allow(controller).to receive(:verify_authentication).and_return(true)
 
         task = create_task_without_unnecessary_models
-        post :create, params: { post_decision_motion: { disposition: "granted", task_id: task.id } }
+        post :create, params: { disposition: "granted", task_id: task.id }
 
         body = JSON.parse(response.body)
 
@@ -43,8 +43,9 @@ describe PostDecisionMotionsController do
           { disposition: "granted",
             task_id: task.id,
             vacate_type: "straight_vacate_and_readjudication",
+            instructions: "formatted instructions",
             assigned_to_id: assigned_to.id }
-        post :create, params: { post_decision_motion: params }
+        post :create, params: params
 
         expect(response).to be_success
         expect(flash[:success]).to be_present
@@ -55,8 +56,7 @@ describe PostDecisionMotionsController do
   def create_task_without_unnecessary_models
     appeal = create(:appeal)
     assigned_by = create(:user)
-    parent = build_stubbed(:root_task)
-    allow(parent).to receive(:when_child_task_created).and_return(true)
+    parent = create(:root_task, appeal: appeal)
     create(
       :judge_address_motion_to_vacate_task,
       appeal: appeal,

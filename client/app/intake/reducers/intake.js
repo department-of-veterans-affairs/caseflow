@@ -17,6 +17,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     detailEditUrl: {
       $set: serverIntake.detail_edit_url
     },
+    unreadMessages: {
+      $set: serverIntake.unread_messages
+    },
     veteran: {
       name: {
         $set: serverIntake.veteran_name
@@ -49,6 +52,7 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
       veteranAddressTooLong: null
     },
     cancelModalVisible: false,
+    unreadMessages: false,
     veteran: {
       name: '',
       formName: '',

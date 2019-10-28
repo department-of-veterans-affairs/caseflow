@@ -508,6 +508,13 @@ FactoryBot.define do
       assigned_by { nil }
     end
 
+    factory :vacate_motion_mail_task, class: VacateMotionMailTask do
+      type { VacateMotionMailTask.name }
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+      assigned_to { LitigationSupport.singleton }
+    end
+
     factory :congressional_interest_mail_task, class: CongressionalInterestMailTask do
       type { CongressionalInterestMailTask.name }
       appeal { create(:appeal) }
@@ -516,16 +523,22 @@ FactoryBot.define do
       assigned_by { nil }
     end
 
-    factory :vacate_motion_mail_task, class: VacateMotionMailTask do
-      type { VacateMotionMailTask.name }
-      appeal
-      association :parent, factory: :root_task
-    end
-
     factory :judge_address_motion_to_vacate_task, class: JudgeAddressMotionToVacateTask do
       type { JudgeAddressMotionToVacateTask.name }
       appeal
       association :parent, factory: :vacate_motion_mail_task
+    end
+
+    factory :abstract_motion_to_vacate_task, class: AbstractMotionToVacateTask do
+      type { AbstractMotionToVacateTask.name }
+      appeal
+      association :parent, factory: :vacate_motion_mail_task
+    end
+
+    factory :judge_sign_motion_to_vacate_task, class: JudgeSignMotionToVacateTask do
+      type { JudgeSignMotionToVacateTask.name }
+      appeal
+      association :parent, factory: :abstract_motion_to_vacate_task
     end
   end
 end

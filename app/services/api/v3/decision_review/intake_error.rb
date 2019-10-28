@@ -39,6 +39,11 @@ class Api::V3::DecisionReview::IntakeError
     [404, :veteran_not_found, "Veteran not found"], # i
     [409, :duplicate_intake_in_progress, "Intake in progress"], # i
     [422, :incident_flash, "The veteran has an incident flash"], # i
+    [
+      422,
+      :invalid_benefit_type,
+      "That Line of Business (benefit type) is either invalid or not currently supported"
+    ],
     [422, :invalid_file_number, "Veteran ID not found"], # i
     [422, :request_issue_cannot_be_empty, "A request issue cannot be empty"],
     [

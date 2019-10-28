@@ -4,8 +4,8 @@ require "support/vacols_database_cleaner"
 require "rails_helper"
 
 RSpec.describe UsersController, :all_dbs, type: :controller do
-  let!(:user) { User.authenticate!(roles: ["System Admin"]) }
-  let!(:staff) { create(:staff, :attorney_judge_role, user: user) }
+  let!(:authenticated_user) { User.authenticate!(roles: ["System Admin"]) }
+  let!(:staff) { create(:staff, :attorney_judge_role, user: authenticated_user) }
 
   describe "GET /users?role=Judge" do
     let!(:judges) { create_list(:staff, 2, :judge_role) }
@@ -14,16 +14,16 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
     context "when role is passed" do
       it "should return a list of only judges" do
         get :index, params: { role: "Judge" }
-        expect(response.status).to eq 200
+        expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
-        expect(response_body["judges"].size).to eq 3
+        expect(response_body["judges"].size).to eq(3)
       end
     end
 
     context "when role is not passed" do
       it "should return an empty hash" do
         get :index
-        expect(response.status).to eq 200
+        expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
         expect(response_body).to eq({})
       end
@@ -55,9 +55,9 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
 
       it "should return a list of attorneys on the judge's team" do
         subject
-        expect(response.status).to eq 200
+        expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
-        expect(response_body["attorneys"].size).to eq team_member_count
+        expect(response_body["attorneys"]["data"].size).to eq(team_member_count)
       end
     end
 
@@ -66,22 +66,27 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
 
       it "should return a list of all attorneys and judges" do
         subject
-        expect(response.status).to eq 200
+        expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
-        expect(response_body["attorneys"].size).to eq team_member_count + solo_count + 2
+        expect(response_body["attorneys"].size).to eq(team_member_count + solo_count + 2)
       end
     end
   end
 
   describe "GET /users?role=HearingCoordinator" do
-    let!(:coordinators) { create_list(:staff, 3, :hearing_coordinator) }
+    let!(:users) { create_list(:user, 3) }
+    before do
+      users.each do |user|
+        OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+      end
+    end
 
     context "when role is passed" do
       it "should return a list of hearing coordinators" do
         get :index, params: { role: "HearingCoordinator" }
-        expect(response.status).to eq 200
+        expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
-        expect(response_body["coordinators"].size).to eq 3
+        expect(response_body["coordinators"].size).to eq(3)
       end
     end
   end
@@ -92,9 +97,9 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
     context "when role is passed" do
       it "should return a list of judges" do
         get :index, params: { role: "Judge" }
-        expect(response.status).to eq 200
+        expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
-        expect(response_body["judges"].size).to eq 3
+        expect(response_body["judges"].size).to eq(3)
       end
     end
   end
@@ -115,6 +120,110 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
         expect(response_body["non_judges"]["data"].size).to eq(user_count)
+      end
+    end
+  end
+
+  describe "GET /user?css_id=<css_id>" do
+    let(:user) { create(:user) }
+    let(:params) { {} }
+
+    subject { get(:search_by_css_id, params: params) }
+
+    before { User.authenticate!(user: user) }
+
+    context "when the user is not a BVA admin" do
+      before { allow_any_instance_of(Bva).to receive(:user_has_access?).and_return(false) }
+
+      it "redirects to /unauthorized" do
+        subject
+
+        expect(response.status).to eq(302)
+        expect(response.body).to match(/unauthorized/)
+      end
+    end
+
+    context "when the user is a BVA admin" do
+      before { allow_any_instance_of(Bva).to receive(:user_has_access?).and_return(true) }
+
+      context "when no css_id parameter is provided" do
+        it "returns an error" do
+          subject
+
+          expect(response.status).to eq(400)
+          response_body = JSON.parse(response.body)
+          expect(response_body["errors"].first["detail"]).to eq("Must provide a css id")
+        end
+      end
+
+      context "when an incorrect css_id parameter is provided" do
+        let(:css_id) { "0" }
+        let(:params) { { css_id: css_id } }
+
+        it "returns an error" do
+          subject
+
+          expect(response.status).to eq(404)
+        end
+      end
+
+      context "when a valid css_id parameter is provided" do
+        let(:params) { { css_id: user.css_id } }
+
+        it "returns a valid response with the expected user" do
+          subject
+
+          expect(response.status).to eq(200)
+          response_body = JSON.parse(response.body)
+          expect(response_body["user"]["id"]).to eq(user.id)
+          expect(response_body["user"]["css_id"]).to eq(user.css_id)
+        end
+      end
+    end
+  end
+
+  describe "PATCH /users/:user_id" do
+    let(:params) { { id: user.id, status: new_status } }
+    let(:user) { create(:user, status: old_status) }
+    let(:new_status) { Constants.USER_STATUSES.inactive }
+    let(:old_status) { Constants.USER_STATUSES.active }
+
+    context "when current user is not a BVA admin" do
+      it "returns unauthorized" do
+        patch :update, params: params
+
+        expect(response.status).to eq(302)
+        expect(response).to redirect_to("/unauthorized")
+      end
+    end
+
+    context "when current user is a BVA admin" do
+      before { OrganizationsUser.add_user_to_organization(authenticated_user, Bva.singleton) }
+
+      context "when marking the user inactive" do
+        context "and the user is active" do
+          it "marks the user as inactive" do
+            patch :update, params: params
+
+            expect(response.status).to eq(200)
+            response_body = JSON.parse(response.body)
+            expect(response_body.length).to eq(1)
+            expect(response_body["user"]["status"]).to eq(new_status)
+          end
+        end
+
+        context "and the user is already inactive" do
+          let(:old_status) { Constants.USER_STATUSES.inactive }
+
+          it "does not change the user status" do
+            patch :update, params: params
+
+            expect(response.status).to eq(200)
+            response_body = JSON.parse(response.body)
+            expect(response_body.length).to eq(1)
+            expect(response_body["user"]["status"]).to eq(old_status)
+          end
+        end
       end
     end
   end

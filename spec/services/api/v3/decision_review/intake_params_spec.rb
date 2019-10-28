@@ -170,7 +170,15 @@ context Api::V3::DecisionReview::IntakeParams do
     end
 
     context "valid minimum required shape" do
-      let(:params) { { data: { type: "HigherLevelReview", attributes: {}, relationships: relationships } } }
+      let(:params) do
+        {
+          data: {
+            type: "HigherLevelReview",
+            attributes: { benefitType: "compensation" },
+            relationships: relationships
+          }
+        }
+      end
       it "should have no errors" do
         expect(subject.errors.length).to eq(0)
       end
@@ -204,7 +212,7 @@ context Api::V3::DecisionReview::IntakeParams do
         {
           data: {
             type: "HigherLevelReview",
-            attributes: {},
+            attributes: { benefitType: "compensation" },
             relationships: {
               veteran: {
                 data: {
@@ -256,6 +264,14 @@ context Api::V3::DecisionReview::IntakeParams do
       it "should have code :request_issue_cannot_be_empty" do
         expect(subject.errors.length).to eq(1)
         expect(subject.errors[0].code).to eq(:request_issue_cannot_be_empty)
+      end
+    end
+
+    context "invalid benefit type" do
+      let(:benefit_type) { "super powers" }
+      it "should have code :invalid_benefit_type" do
+        expect(subject.errors.length).to eq(1)
+        expect(subject.errors[0].code).to eq(:invalid_benefit_type)
       end
     end
   end

@@ -1,7 +1,26 @@
 openapi: 3.0.0
 info:
   title: Decision Reviews
-  description: API version 3 for Decision Reviews provided by the Lighthouse Project
+  description: >+
+    The Decision Reviews API allows you to interact with a Veteran’s Decision Review requests, also known as benefit appeals. This API provides a secure and efficient alternative to paper or fax document submissions. Veterans Benefits Administration or Board of Veterans Appeals can begin processing Decision Review requests submitted through this API immediately, which ultimately allows VA to provide Veterans with appeal decisions more quickly.
+
+    > * For more information on the Decision Review process, including the different types of Decision Reviews, please see [this informative page on VA.gov](https://www.va.gov/decision-reviews/). 
+
+    > * The Decision Reviews API supports the Appeals Modernization Act (AMA) process only. Appeals going through the legacy Appeal process cannot be managed through this API. Learn more about the AMA [here](https://benefits.va.gov/benefits/appeals.asp).
+
+    ## Technical Summary
+
+    The Decision Reviews API interacts with VA's internal system, called Caseflow, that manages all benefit appeals. Caseflow is the authoritative source for all Decision Review information.
+
+    * The Decision Reviews API accepts a JSON payload and the participant identification is supplied as a header.
+
+    * The Decision Review request will be validated to ensure the Veteran information matches VA records and that the appeal information sent is valid.
+
+    * Detailed error messages will be returned to help your application provide meaningful information to the Veteran attempting to make the Decision Review request.
+
+    ### Authorization
+
+    API requests are authorized through a symmetric API token, provided in an HTTP header with name "apikey."
   version: 3.0.0
 servers:
   - url: https://dev-api.va.gov/services/appeals/{version}/decision_review
@@ -12,7 +31,15 @@ servers:
 paths:
   /higher_level_reviews:
     post:
-      summary: Creates a Higher-Level Review.
+      tags:
+        - Higher-Level Reviews
+      summary: Creates a Higher-Level Review
+      description: >+
+        This endpoint will submit a Decision Review request of type Higher-Level Review.  This endpoint is analogous to submitting VA For 20-0996 via mail or fax.
+
+        ### Asynchronous processing
+
+        The Decision Reviews API leverages a pattern recommended by JSON API for asynchronous processing (more information [here](https://jsonapi.org/recommendations/#asynchronous-processing)).  Submitting a Decision Review is an asynchronous process due to the multiple systems that are involved.  Because of this, when a new Decision Review is submitted, the POST endpoint will return a 202 `accepted` response including an Intake UUID.  That Intake UUID is associated with the submission and can be used as an identifier for the Intake Status endpoint.  While the submission is processing the Intake Status endpoint will return a 200 response.  Once the asynchronous process is complete and the Decision Review is submitted into Caseflow, the Intake Status endpoint will return a 303 response including the Decision Review ID for the submitted Decision Review, which will allow you to retrieve the full details including the processing status. 
       requestBody:
         required: true
         content:
@@ -52,17 +79,7 @@ paths:
                         legacyOptInApproved:
                           type: boolean
                         benefitType:
-                          type: string
-                          enum:
-                            - compensation
-                            - pension
-                            - fiduciary
-                            - insurance
-                            - education
-                            - voc_rehab
-                            - loan_guaranty
-                            - vha
-                            - nca
+                          $ref: "#/components/schemas/benefit_type"
                     relationships:
                       type: object
                       required:
@@ -417,7 +434,7 @@ paths:
 #                   "errors": [
 #                     {
 #                       "status": "422",
-#                       "title":  "Issue is ineligible because it has a prior decision date that’s older than 1 year",
+#                       "title":  "Issue is ineligible because it has a prior decision date that’s older than 372 days",
 #                       "code":  "untimely"
 #                     }
 #                   ]
@@ -479,6 +496,16 @@ paths:
                         "status": "422",
                         "title": "The veteran has an incident flash",
                         "code": "incident_flash"
+                      }
+                    ]
+                  }
+                invalid_benefit_type:
+                  value: {
+                    "errors": [
+                      {
+                        "status": "422",
+                        "title": "That Line of Business (benefit type) is either invalid or not currently supported",
+                        "code": "invalid_benefit_type"
                       }
                     ]
                   }
@@ -642,43 +669,80 @@ paths:
                       }
                     ]
                   }
-  /higher_level_reviews/intake_status/{uuid}:
+  /intake_statuses/{uuid}:
     get:
+      tags:
+        - Higher-Level Reviews
       parameters:
         - name: uuid
           in: path
           required: true
-          description: UUID of an Accepted Higher-Level Review
+          description: Decision Review UUID
           schema:
-            type : string
-            format: uuid
-            pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
-      summary: After submitting a Higher-Level Review, you can check to see its current status
+            $ref: "#/components/schemas/uuid"
+      summary: Check a Decision Review's (Higher-Level Review, Supplemental Claim, Board Appeal) intake status.
+      description: "After creating a Decision Review, you can use this endpoint to check its _intake status_—whether or not a Decision Review has been processed in the Caseflow system. Intake involves communicating with several systems / databases asynchronously. Consequently, a new Decision Review isn't available for API interaction immediately after creation. Until the Decision Review is successfully processed, this endpoint will return `200 OK` and a JSON payload describing the status in more detail.  Once processing is complete, this endpoint will return a `303 see other` and a _Location_ header containing the URL of the processed, *and now accessible*, Decision Review. Using that URL, you can now _get_ the Decision Review, retrieving its full details. To reiterate, **a Decision Review is not immediately accessible after creation. Checking its intake status will let you know when it has become accessible, and also its location (and UUID) for further actions.**"
       responses:
         '200':
-          description: Status found
+          description: Processing incomplete
           content:
             application/vnd.api+json:
               schema:
                 $ref: "#/components/schemas/intake_status"
               examples:
-                submitted_status:
+                not_yet_submitted:
+                  value:
+                    data:
+                      id: 123e4567-e89b-12d3-a456-426655440000
+                      type: IntakeStatus
+                      attributes:
+                        status: not_yet_submitted
+                submitted:
                   value:
                     data:
                       id: 123e4567-e89b-12d3-a456-426655440000
                       type: IntakeStatus
                       attributes:
                         status: submitted
+                attempted:
+                  value:
+                    data:
+                      id: 123e4567-e89b-12d3-a456-426655440000
+                      type: IntakeStatus
+                      attributes:
+                        status: attempted
+                canceled:
+                  value:
+                    data:
+                      id: 123e4567-e89b-12d3-a456-426655440000
+                      type: IntakeStatus
+                      attributes:
+                        status: canceled
         '303':
-          description: See other, processing finished
+          description: Processing complete; See other
           headers:
             Location:
               schema:
                 type: string
                 format: url
-              description: Link to HigherLevelReview
+              description: Link to DecisionReview
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      Location:
+                        $ref: "#/components/schemas/uuid"
+              examples:
+                processed:
+                  value:
+                    meta:
+                      Location: 123e4567-e89b-12d3-a456-426655440000
         '404':
-          description: id not found
+          description: Decision Review not found
           content:
             application/vnd.api+json:
               schema:
@@ -686,8 +750,15 @@ paths:
                 properties:
                   errors:
                     $ref: "#/components/schemas/errors"
-        '4XX':
-          description: Invalid Request
+              examples:
+                bad UUID:
+                  value:
+                    errors:
+                      status: 404,
+                      code: decision_review_not_found
+                      title: "Unable to find a Decision Review using specified UUID"
+        '500':
+          description: Unknown error
           content:
             application/vnd.api+json:
               schema:
@@ -695,17 +766,18 @@ paths:
                 properties:
                   errors:
                     $ref: "#/components/schemas/errors"
-        '5XX':
-          description: Failed
-          content:
-            application/vnd.api+json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    $ref: "#/components/schemas/errors"
+              examples:
+                unknown error:
+                  value:
+                    errors:
+                      status: 500,
+                      code: unknown_error
+                      title: "Unknown error"
+
   /higher_level_reviews/{uuid}:
     get:
+      tags:
+        - Higher-Level Reviews
       parameters:
         - name: uuid
           in: path
@@ -716,6 +788,7 @@ paths:
             format: uuid
             pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
       summary: Details of the Higher-Level Review
+      description: This endpoint returns the details of a specific Higher-Level Review. This endpoint is also referred to as the Show endpoint.
       responses:
         '200':
           description: JSONAPI response detailing the specific Higher-Level Review
@@ -733,87 +806,228 @@ paths:
                         pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
                       type:
                         type: string
+                        enum: ["HigherLevelReview"]
                         description: Will be "HigherLevelReview"
                       attributes:
                         type: object
                         properties:
-                          benefitType:
-                            type: string
-                          veteranFileNumber:
-                            type: string
                           status:
-                            type: object
-                            properties:
-                              type:
-                                type: string
-                              details:
-                                type: object
-                                properties:
-                                  issues:
-                                    type: array
-                                    items:
-                                      type: object
-                                      properties:
-                                        description:
-                                          type: string
-                                        disposition:
-                                          type: string
+                            type: string
+                          aoj:
+                            type: string
+                            nullable: true
+                          programArea:
+                            type: string
+                          benefitType:
+                            $ref: "#/components/schemas/benefit_type"
+                          description:
+                            type: string
+                            nullable: true
+                          receiptDate:
+                            type: string
+                            format: date
+                            nullable: true
+                          informalConference:
+                            type: boolean
+                            nullable: true
+                          sameOffice:
+                            type: boolean
+                            nullable: true
+                          legacyOptInApproved:
+                            type: boolean
+                            nullable: true
+                          alerts:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                type:
+                                  $ref: "#/components/schemas/higher_level_review_alerts"
+                                details:
+                                  type: object
+                                  properties:
+                                    decisionDate:
+                                      type: string
+                                      format: date
+                                      nullable: true
+                                    availableOptions:
+                                      type: array
+                                      items:
+                                        type: string
+                                    dueDate:
+                                      type: string
+                                      format: date
+                                      nullable: true
                           events:
                             type: array
                             items:
                               type: object
                               properties:
                                 type:
-                                  type: string
+                                  $ref: "#/components/schemas/higher_level_review_events"
                                 date:
                                   type: string
                                   format: date
                       relationships:
                         type: object
                         properties:
-                          issues:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                data:
-                                  type: array
-                                  items:
-                                    type: object
-                                    properties:
-                                      type:
-                                        type: string
-                                        description: Will be "RequestIssue"
-                                      id:
-                                        type: string
-                                        description: will match the included data
+                          veteran:
+                            type: object
+                            properties:
+                              data:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                    enum: ["Veteran"]
+                                  id:
+                                    type: string # file_number
+                          claimant:
+                            type: object
+                            properties:
+                              data:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                    enum: ["Claimant"]
+                                  id:
+                                    type: string # participant id
+                          requestIssues:
+                            type: object
+                            properties:
+                              data:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    type:
+                                      type: string
+                                      enum: ["RequestIssue"]
+                                    id:
+                                      type: integer
+                          decisionIssues:
+                            type: object
+                            properties:
+                              data:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    type:
+                                      type: string
+                                      enum: ["DecisionIssue"]
+                                    id:
+                                      type: integer
                   included:
-                    description: Minimal details on the related issues.
                     type: array
                     items:
-                      type: object
-                      properties:
-                        type:
-                          type: string
-                          description: Will be "RequestIssue"
-                        id:
-                          type: string
-                        attributes:
-                          type: object
+                      anyOf:
+                        - type: object
                           properties:
-                            benefitType:
+                            type:
                               type: string
-                            active:
-                              type: boolean
-                            lastAction:
+                              enum: ["DecisionIssue"]
+                            id:
+                              type: integer
+                            attributes:
+                              type: object
+                              properties:
+                                approxDecisionDate:
+                                  type: string
+                                  format: date
+                                  nullable: true
+                                decisionText:
+                                  type: string
+                                  nullable: true
+                                description:
+                                  type: string
+                                disposition:
+                                  type: string
+                                  nullable: true
+                                finalized:
+                                  type: boolean
+                        - type: object
+                          properties:
+                            type:
                               type: string
-                            date:
-                              type: string
-                              format: date
-                            description:
-                              type: string
-                            diagnosticCode:
-                              type: string
+                              enum: ["RequestIssue"]
+                            id:
+                              type: integer
+                            attributes:
+                              type: object
+                              properties:
+                                active:
+                                  type: boolean
+                                statusDescription:
+                                  type: string
+                                diagnosticCode:
+                                  type: string
+                                  nullable: true
+                                ratingIssueId: # rating_issue_reference_id
+                                  type: string
+                                  nullable: true
+                                ratingIssueProfileDate:
+                                  type: string
+                                  format: date
+                                  nullable: true
+                                ratingDecisionReferenceId:
+                                  type: string
+                                  nullable: true
+                                description:
+                                  type: string
+                                  nullable: true
+                                contentionText:
+                                  type: string
+                                approxDecisionDate:
+                                  type: string
+                                  format: date
+                                category:
+                                  type: string
+                                  nullable: true
+                                notes:
+                                  type: string
+                                  nullable: true
+                                isUnidentified:
+                                  type: boolean
+                                  nullable: true
+                                rampClaimId:
+                                  type: string
+                                  nullable: true
+                                legacyAppealId: # vacols_id
+                                  type: string
+                                  nullable: true
+                                legacyAppealIssueId: # vacols_sequence_id
+                                  type: integer
+                                  nullable: true
+                                ineligibleReason:
+                                  type: string
+                                  nullable: true
+                                ineligibleDueToId:
+                                  type: integer
+                                  nullable: true
+                                decisionReviewTitle:
+                                  type: string
+                                  nullable: true
+                                titleOfActiveReview:
+                                  type: string
+                                  nullable: true
+                                decisionIssueId: # contested_decision_issue_id
+                                  type: integer
+                                  nullable: true
+                                withdrawalDate:
+                                  type: string
+                                  format: date
+                                  nullable: true
+                                contestedIssueDescription:
+                                  type: string
+                                  nullable: true
+                                endProductCleared:
+                                  type: boolean
+                                  nullable: true
+                                endProductCode:
+                                  type: string
+
         '404':
           description: ID not found
           content:
@@ -832,9 +1046,191 @@ paths:
                 properties:
                   errors:
                     $ref: "#/components/schemas/errors"
+  /issues:
+    get:
+      tags:
+        - Issues
+      parameters:
+        - name: veteranId
+          in: header
+          required: true
+          description: The file number or SSN of the veteran.
+          schema:
+            type : string
+        - name: receiptDate
+          in: header
+          required: true
+          description: (yyyy-mm-dd) In order to determine contestability of issues, the receipt date of a hypothetical Decision Review must be supplied.
+          schema:
+            type: string
+            format: date
+      summary: Returns all contestable issues for a specific veteran.
+      responses:
+        '200':
+          description: JSON:API response returning all contestable issues for a specific veteran.
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      description: "A contestable issue (to contest this, you include it as a RequestIssue when creating a HigherLevelReview, SupplementalClaim, or Appeal)"
+                      properties:
+                        type:
+                          type: string
+                          enum: ["ContestableIssue"]
+                        attributes:
+                          type: object
+                          properties:
+                            ratingIssueId:
+                              type: string
+                              nullable: true
+                              description: "RatingIssue ID"
+                            ratingIssueProfileDate:
+                              type: string
+                              nullable: true
+                              format: date
+                              description: "(yyyy-mm-dd) RatingIssue profile date"
+                            ratingIssueDiagnosticCode:
+                              type: string
+                              nullable: true
+                              description: "RatingIssue diagnostic code"
+                            ratingDecisionId:
+                              type: string
+                              nullable: true
+                              description: "The BGS ID for the contested rating decision. This may be populated while ratingIssueId is nil"
+                            decisionIssueId:
+                              type: integer
+                              nullable: true
+                              description: "DecisionIssue ID"
+                            approxDecisionDate:
+                              type: string
+                              nullable: true
+                              format: date
+                              description: "(yyyy-mm-dd) Approximate decision date"
+                            description:
+                              type: string
+                              nullable: true
+                              description: "Description"
+                            rampClaimId:
+                              type: string
+                              nullable: true
+                              description: "RampClaim ID"
+                            titleOfActiveReview:
+                              type: string
+                              nullable: true
+                              description: "Title of DecisionReview that this issue is still active on"
+                            sourceReviewType:
+                              type: string
+                              nullable: true
+                              description: "The type of DecisionReview (HigherLevelReview, SupplementalClaim, Appeal) the issue was last decided on (if any)"
+                            timely:
+                              type: boolean
+                              description: "An issue is timely if the receipt date is within 372 dates of the decision date."
+                            latestIssuesInChain:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: string
+                                    nullable: true
+                                  approxDecisionDate:
+                                    type: string
+                                    nullable: true
+                                    format: date
+                              description: "Shows the chain of decision and rating issues that preceded this issue. Only the most recent issue can be contested (the object itself that contains the latestIssuesInChain attribute)."
+                            isRating:
+                              type: boolean
+                              description: "Whether or not this is a RatingIssue"
+        '404':
+          description: Veteran not found
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                bad file number or SSN:
+                  value:
+                    errors:
+                      status: 404,
+                      code: veteran_not_found
+                      title: "Veteran not found"
+        '422':
+          description: Bad receipt date
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                bad receipt date:
+                  value:
+                    errors:
+                      status: 422,
+                      code: bad_receipt_date
+                      title: "Bad receipt date"
+        '500':
+          description: Unknown error
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+              examples:
+                unknown error:
+                  value:
+                    errors:
+                      status: 500,
+                      code: unknown_error
+                      title: "Unknown error"
 components:
   schemas:
-    nonrating_issue_category:
+    Uuid:
+      type: string
+      format: uuid
+      pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+    BenefitType:
+      type: string
+      enum:
+        - compensation
+        - pension
+        - fiduciary
+        - insurance
+        - education
+        - voc_rehab
+        - loan_guaranty
+        - vha
+        - nca
+    HigherLevelReviewAlerts:
+      type: string
+      enum: ["AmaPostDecision"]
+    HigherLevelReviewEvents:
+      type: string
+      enum:
+        - hlr_request_event
+        - hlr_decision_event
+        - hlr_dta_error_event
+        - dta_decision_event
+        - hlr_other_close_event
+    HigherLevelReviewStatusTypes:
+      type: string
+      enum:
+        - hlr_received
+        - hlr_dta_error
+        - hlr_decision
+        - hlr_closed
+    NonratingIssueCategory:
       type: string
       enum:
         # for benefit type:  compensation
@@ -1008,7 +1404,7 @@ components:
         - Family Member Services | Spina Bifida Medical Charges
         - Family Member Services | Camp Lejeune Family Member Eligibility
         - Other
-    payee_code:
+    PayeeCode:
       type: string
       enum:
         - "00"
@@ -1082,7 +1478,7 @@ components:
         - "88"
         - "89"
         - "99"
-    errors:
+    Errors:
       type: array
       items:
         type: object
@@ -1091,7 +1487,7 @@ components:
             type: string
           detail:
             type: string
-    intake_status:
+    IntakeStatus:
       description: An accepted Decision Review still needs to be processed before the Decision Review can be accessed
       type: object
       properties:
@@ -1110,6 +1506,13 @@ components:
                   type: string
                   enum:
                     - processed
+                    - canceled
                     - attempted
                     - submitted
-                    - canceled
+                    - not_yet_submitted
+                  description: >
+                    * `not_yet_submitted` - The DecisionReview has not been submitted yet.
+                    * `submitted` - The DecisionReview is in the queue to be attempted.
+                    * `attempted` - Processing of the DecisionReview is being attempted.
+                    * `canceled` - The DecisionReview has been successfully canceled.
+                    * `processed` - The DecisionReview has been processed and transmitted to the appropriate government agency.

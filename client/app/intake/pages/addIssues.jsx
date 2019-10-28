@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment';
 import { connect } from 'react-redux';
@@ -17,8 +17,7 @@ import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../constants';
-import { formatAddedIssues, getAddIssuesFields, validateDate } from '../util/issues';
-import { formatDateStr } from '../../util/DateUtil';
+import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
 import IssueList from '../components/IssueList';
 
@@ -39,7 +38,7 @@ import {
 } from '../actions/addIssues';
 import COPY from '../../../COPY.json';
 
-export class AddIssuesPage extends React.Component {
+class AddIssuesPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -92,29 +91,23 @@ export class AddIssuesPage extends React.Component {
     this.props.setIssueWithdrawalDate(value);
   };
 
-  willRedirect() {
-    const { intakeForms, formType, featureToggles } = this.props;
-    const intakeData = intakeForms[formType];
+  willRedirect(intakeData, hasClearedEp) {
+    const { formType, featureToggles } = this.props;
     const { correctClaimReviews } = featureToggles;
 
     return (
       !formType ||
-      intakeData.isDtaError ||
-      ((intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp) && !correctClaimReviews) ||
-      intakeData.isOutcoded
+      intakeData.isOutcoded ||
+      (hasClearedEp && !correctClaimReviews)
     );
   }
 
-  redirect() {
-    const { intakeForms, formType, featureToggles } = this.props;
-    const intakeData = intakeForms[formType];
-    const { correctClaimReviews } = featureToggles;
+  redirect(intakeData, hasClearedEp) {
+    const { formType } = this.props;
 
     if (!formType) {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
-    } else if (intakeData.isDtaError) {
-      return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
-    } else if ((intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp) && !correctClaimReviews) {
+    } else if (hasClearedEp) {
       return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
     } else if (intakeData.isOutcoded) {
       return <Redirect to={PAGE_PATHS.OUTCODED} />;
@@ -139,13 +132,13 @@ export class AddIssuesPage extends React.Component {
   }
 
   render() {
-    const { intakeForms, formType, veteran, featureToggles, editPage, addingIssue } = this.props;
-
+    const { intakeForms, formType, veteran, featureToggles, editPage, addingIssue, userCanWithdrawIssues } = this.props;
     const intakeData = intakeForms[formType];
     const { useAmaActivationDate } = featureToggles;
+    const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
-    if (this.willRedirect()) {
-      return this.redirect();
+    if (this.willRedirect(intakeData, hasClearedEp)) {
+      return this.redirect(intakeData, hasClearedEp);
     }
 
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
@@ -162,7 +155,6 @@ export class AddIssuesPage extends React.Component {
     const previouslywithdrawnIssues = issues.filter((issue) => issue.withdrawalDate);
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
     const withdrawnIssues = previouslywithdrawnIssues.concat(issuesPendingWithdrawal);
-    const withdrawDatePlaceholder = formatDateStr(new Date());
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
 
@@ -208,17 +200,15 @@ export class AddIssuesPage extends React.Component {
       const formName = _.find(FORM_TYPES, { key: formType }).shortName;
       let msg;
 
-      if (validateDate(intakeData.withdrawalDate)) {
+      if (intakeData.withdrawalDate) {
         if (withdrawalDate < receiptDate) {
           msg = `We cannot process your request. Please select a date after the ${formName}'s receipt date.`;
         } else if (withdrawalDate > currentDate) {
           msg = "We cannot process your request. Please select a date prior to today's date.";
         }
-      } else if (intakeData.withdrawalDate && intakeData.withdrawalDate.length >= 10) {
-        msg = 'We cannot process your request. Please enter a valid date.';
-      }
 
-      return msg;
+        return msg;
+      }
     };
 
     const columns = [{ valueName: 'field' }, { valueName: 'content' }];
@@ -251,6 +241,8 @@ export class AddIssuesPage extends React.Component {
             intakeData={intakeData}
             formType={formType}
             featureToggles={featureToggles}
+            userCanWithdrawIssues={userCanWithdrawIssues}
+            editPage={editPage}
           />
         )
       });
@@ -266,15 +258,21 @@ export class AddIssuesPage extends React.Component {
             intakeData={intakeData}
             formType={formType}
             featureToggles={featureToggles}
+            userCanWithdrawIssues={userCanWithdrawIssues}
+            editPage={editPage}
           />
         )
       });
     }
 
-    rowObjects = rowObjects.concat({
-      field: ' ',
-      content: addIssueButton()
-    });
+    const hideAddIssueButton = intakeData.isDtaError && _.isEmpty(intakeData.contestableIssues);
+
+    if (!hideAddIssueButton) {
+      rowObjects = rowObjects.concat({
+        field: ' ',
+        content: addIssueButton()
+      });
+    }
 
     return (
       <div className="cf-intake-edit">
@@ -333,8 +331,8 @@ export class AddIssuesPage extends React.Component {
                 name="withdraw-date"
                 value={intakeData.withdrawalDate}
                 onChange={this.withdrawalDateOnChange}
-                placeholder={withdrawDatePlaceholder}
                 dateErrorMessage={withdrawError()}
+                type="date"
               />
             </InlineForm>
           </div>
@@ -343,6 +341,30 @@ export class AddIssuesPage extends React.Component {
     );
   }
 }
+
+AddIssuesPage.propTypes = {
+  activeIssue: PropTypes.number,
+  addingIssue: PropTypes.bool,
+  correctIssue: PropTypes.func,
+  editPage: PropTypes.bool,
+  featureToggles: PropTypes.object,
+  formType: PropTypes.oneOf(_.map(FORM_TYPES, 'key')),
+  intakeForms: PropTypes.object,
+  removeIssue: PropTypes.func,
+  setIssueWithdrawalDate: PropTypes.func,
+  toggleAddingIssue: PropTypes.func,
+  toggleAddIssuesModal: PropTypes.func,
+  toggleCorrectionTypeModal: PropTypes.func,
+  toggleIssueRemoveModal: PropTypes.func,
+  toggleLegacyOptInModal: PropTypes.func,
+  toggleNonratingRequestIssueModal: PropTypes.func,
+  toggleUnidentifiedIssuesModal: PropTypes.func,
+  toggleUntimelyExemptionModal: PropTypes.func,
+  undoCorrection: PropTypes.func,
+  veteran: PropTypes.object,
+  withdrawIssue: PropTypes.func,
+  userCanWithdrawIssues: PropTypes.bool
+};
 
 export const IntakeAddIssuesPage = connect(
   ({ intake, higherLevelReview, supplementalClaim, appeal, featureToggles, activeIssue, addingIssue }) => ({
@@ -388,7 +410,8 @@ export const EditAddIssuesPage = connect(
     featureToggles: state.featureToggles,
     editPage: true,
     activeIssue: state.activeIssue,
-    addingIssue: state.addingIssue
+    addingIssue: state.addingIssue,
+    userCanWithdrawIssues: state.userCanWithdrawIssues
   }),
   (dispatch) =>
     bindActionCreators(

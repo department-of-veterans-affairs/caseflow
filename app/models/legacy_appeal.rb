@@ -14,6 +14,7 @@ class LegacyAppeal < ApplicationRecord
   include AddressMapper
   include Taskable
   include PrintsTaskTree
+  include HasTaskHistory
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -528,7 +529,7 @@ class LegacyAppeal < ApplicationRecord
 
   def activated?
     # An appeal is currently at the board, and it has passed some data checks
-    status == "Active"
+    %w[Active Motion].include?(status)
   end
 
   def active?
@@ -840,6 +841,8 @@ class LegacyAppeal < ApplicationRecord
     end
 
     def veteran_file_number_from_bfcorlid(bfcorlid)
+      return bfcorlid unless bfcorlid =~ /\d/
+
       numeric = bfcorlid.gsub(/[^0-9]/, "")
 
       # ensure 8 digits if "C"-type id

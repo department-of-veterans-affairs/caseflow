@@ -22,14 +22,12 @@ class TaskActionRepository
     end
 
     def cancel_task_data(task, _user = nil)
+      assigner_name = task.assigned_by&.full_name || "the assigner"
       {
         modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
-        modal_body: COPY::CANCEL_TASK_MODAL_DETAIL,
+        modal_body: format(COPY::CANCEL_TASK_MODAL_DETAIL, assigner_name),
         message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
-        message_detail: format(
-          COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL,
-          task.assigned_by&.full_name || "the assigner"
-        )
+        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assigner_name)
       }
     end
 
@@ -103,7 +101,7 @@ class TaskActionRepository
       {
         selected: nil,
         options: users_to_options(Judge.list_all),
-        type: task.type
+        type: task.appeal_type.eql?(Appeal.name) ? task.type : "JudgeLegacyAssignTask"
       }
     end
 
@@ -149,6 +147,27 @@ class TaskActionRepository
         options: [{ label: org.name, value: org.id }],
         type: PrivacyActTask.name
       }
+    end
+
+    def send_motion_to_vacate_to_judge_data(task, _user = nil)
+      {
+        selected: task.root_task.children.find { |child| child.is_a?(JudgeTask) }&.assigned_to,
+        options: users_to_options(Judge.list_all),
+        type: JudgeAddressMotionToVacateTask.name
+      }
+    end
+
+    def address_motion_to_vacate_data(task, _user = nil)
+      attorney = task.appeal.assigned_attorney
+      {
+        selected: attorney,
+        options: users_to_options([JudgeTeam.for_judge(task.assigned_to)&.attorneys, attorney].flatten.compact.uniq),
+        type: PostDecisionMotion.name
+      }
+    end
+
+    def sign_motion_to_vacate_data(_task, _user = nil)
+      {}
     end
 
     def assign_to_translation_team_data(_task, _user = nil)

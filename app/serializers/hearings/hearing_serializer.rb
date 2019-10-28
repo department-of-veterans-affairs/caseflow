@@ -70,6 +70,7 @@ class HearingSerializer
   attribute :veteran_first_name
   attribute :veteran_gender, if: for_full
   attribute :veteran_last_name
+  attribute :virtual, &:virtual?
   attribute :witness
   attribute :worksheet_issues
 end

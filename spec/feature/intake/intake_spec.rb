@@ -66,6 +66,19 @@ feature "Intake", :all_dbs do
       User.authenticate!(roles: ["Mail Intake"])
     end
 
+    context "user has unread Inbox messages" do
+      before { FeatureToggle.enable!(:inbox, users: [current_user.css_id]) }
+      after { FeatureToggle.disable!(:inbox) }
+
+      scenario "user sees Alert on Intake start page" do
+        create(:message, user: current_user)
+
+        visit "/intake"
+
+        expect(page).to have_content("You have unread messages")
+      end
+    end
+
     scenario "User visits help page" do
       visit "/intake/help"
       expect(page).to have_content("Welcome to the Intake Help page!")

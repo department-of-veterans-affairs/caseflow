@@ -126,12 +126,10 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
     end
 
     it "the job still runs to completion but sends the errors to DataDog" do
-      expect(DataDogService).to receive(:emit_gauge).with(
-        app_name: "caseflow_job",
-        metric_group: UpdateAppellantRepresentationJob.name.underscore,
-        metric_name: "runtime",
-        metric_value: anything
-      )
+      args = {}
+      allow(DataDogService).to receive(:emit_gauge) do |function_args|
+        args = function_args
+      end
 
       expect_any_instance_of(UpdateAppellantRepresentationJob).to_not receive(:log_error).with(anything, anything)
 
@@ -143,6 +141,10 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
       UpdateAppellantRepresentationJob.perform_now
 
       expect(observed_error_count).to eq(error_count)
+      expect(args[:app_name]).to eq(CaseflowJob.name.underscore)
+      expect(args[:metric_group]).to eq(UpdateAppellantRepresentationJob.name.underscore)
+      expect(args[:metric_name]).to eq("runtime")
+      expect(args[:metric_value]).to_not be_nil
     end
   end
 

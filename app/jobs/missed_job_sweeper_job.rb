@@ -7,7 +7,7 @@ class MissedJobSweeperJob < CaseflowJob
   queue_with_priority :high_priority
   application_attr :queue
 
-  def perform(_args)
+  def perform
     check_distribution_jobs
   end
 

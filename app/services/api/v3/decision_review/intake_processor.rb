@@ -26,15 +26,12 @@ class Api::V3::DecisionReview::IntakeProcessor
     end
 
     add_intake_error_if_intake_error_code
+    intake.detail.reload
     self
   end
 
-  def detail
-    intake&.detail&.reload
-  end
-
   def uuid
-    detail&.uuid
+    intake&.detail&.uuid
   end
 
   private

@@ -71,8 +71,16 @@ describe QueueConfig, :postgres do
     end
 
     describe "active_tab" do
-      it "is always the unassigned tab" do
+      it "is the unassigned tab" do
         expect(subject[:active_tab]).to eq(Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME)
+      end
+
+      context "when assigned to a user" do
+        let(:assignee) { user }
+
+        it "is the assigned tab" do
+          expect(subject[:active_tab]).to eq(Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME)
+        end
       end
     end
 
@@ -110,7 +118,8 @@ describe QueueConfig, :postgres do
 
         it "does not include the regional column in the list of columns for any tab" do
           subject.each do |tab|
-            expect(tab[:columns].map { |col| col[:name] }).to_not include(Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN)
+            expect(tab[:columns].map { |col| col[:name] })
+              .to_not include(Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name)
           end
         end
 
@@ -155,7 +164,8 @@ describe QueueConfig, :postgres do
 
         it "includes the regional column in the list of columns for all tabs" do
           subject.each do |tab|
-            expect(tab[:columns].map { |col| col[:name] }).to include(Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN)
+            expect(tab[:columns].map { |col| col[:name] })
+              .to include(Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name)
           end
         end
       end
@@ -227,7 +237,7 @@ describe QueueConfig, :postgres do
 
         it "does not include the regional column in the list of columns for any tab" do
           subject.each do |tab|
-            expect(tab[:columns]).to_not include(Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN)
+            expect(tab[:columns]).to_not include(Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name)
           end
         end
 

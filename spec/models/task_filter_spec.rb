@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe TaskFilter, :postgres do
+describe TaskFilter, :all_dbs do
   describe ".new"  do
     let(:args) { { filter_params: filter_params } }
 
@@ -35,7 +35,7 @@ describe TaskFilter, :postgres do
     end
 
     context "when input filter_params argument an array formatted as expected" do
-      let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{RootTask.name}"] }
+      let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{RootTask.name}"] }
 
       it "instantiates without error" do
         expect { subject }.to_not raise_error
@@ -52,7 +52,7 @@ describe TaskFilter, :postgres do
     end
 
     context "when all input arguments are valid" do
-      let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{RootTask.name}"] }
+      let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{RootTask.name}"] }
       let(:tasks) { Task.where(id: create_list(:generic_task, 6).pluck(:id)) }
 
       let(:args) { { filter_params: filter_params, tasks: tasks } }
@@ -78,7 +78,7 @@ describe TaskFilter, :postgres do
     end
 
     context "when filtering on task type" do
-      let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{RootTask.name}"] }
+      let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{RootTask.name}"] }
 
       it "returns the expected where_clause" do
         expect(subject).to eq([
@@ -109,7 +109,7 @@ describe TaskFilter, :postgres do
       end
 
       context "when filter includes TranslationTasks" do
-        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{TranslationTask.name}"] }
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name}"] }
 
         it "returns only translation tasks assigned to the current organization" do
           expect(subject.map(&:id)).to_not match_array(all_tasks.map(&:id))
@@ -120,7 +120,7 @@ describe TaskFilter, :postgres do
 
       context "when filter includes TranslationTasks and FoiaTasks" do
         let(:filter_params) do
-          ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{TranslationTask.name},#{FoiaTask.name}"]
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name},#{FoiaTask.name}"]
         end
 
         it "returns all translation and FOIA tasks assigned to the current organization" do
@@ -165,7 +165,7 @@ describe TaskFilter, :postgres do
       end
 
       context "when filter_params includes a non existent city" do
-        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN}&val=Minas Tirith"] }
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name}&val=Minas Tirith"] }
 
         it "returns no tasks" do
           expect(subject).to match_array([])
@@ -173,7 +173,7 @@ describe TaskFilter, :postgres do
       end
 
       context "when filter includes Boston" do
-        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN}&val=Boston"] }
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name}&val=Boston"] }
 
         it "returns only tasks where the closest regional office is Boston" do
           expect(subject.map(&:id)).to match_array(boston_tasks.map(&:id))
@@ -182,7 +182,7 @@ describe TaskFilter, :postgres do
 
       context "when filter includes Boston and Washington" do
         let(:filter_params) do
-          ["col=#{Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN}&val=Boston,Washington"]
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name}&val=Boston,Washington"]
         end
 
         it "returns tasks where the closest regional office is Boston or Washington" do
@@ -199,7 +199,9 @@ describe TaskFilter, :postgres do
       let(:hearing_tasks) { create_list(:task, tasks_per_type) }
       let(:legacy_tasks) { create_list(:task, tasks_per_type) }
       let(:all_tasks) do
-        Task.where(id: (review_tasks + evidence_tasks + hearing_tasks + legacy_tasks).pluck(:id).sort)
+        Task
+          .where(id: (review_tasks + evidence_tasks + hearing_tasks + legacy_tasks).pluck(:id).sort)
+          .order(id: :asc)
       end
 
       before do
@@ -222,7 +224,7 @@ describe TaskFilter, :postgres do
       end
 
       context "when filter_params includes a non existent docket type" do
-        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN}&val=trial_by_combat"] }
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name}&val=trial_by_combat"] }
 
         it "returns no tasks" do
           expect(subject).to match_array([])
@@ -230,7 +232,7 @@ describe TaskFilter, :postgres do
       end
 
       context "when filter includes direct review" do
-        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN}&val=#{docket_types[0]}"] }
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name}&val=#{docket_types[0]}"] }
 
         it "returns only tasks with direct review dockets" do
           expect(subject.map(&:id)).to match_array(review_tasks.map(&:id))
@@ -239,7 +241,7 @@ describe TaskFilter, :postgres do
 
       context "when filter includes direct review and hearing" do
         let(:filter_params) do
-          ["col=#{Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN}&val=#{docket_types[0]},#{docket_types[2]}"]
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name}&val=#{docket_types[0]},#{docket_types[2]}"]
         end
 
         it "returns tasks with direct review dockets or hearing dockets" do
@@ -272,6 +274,16 @@ describe TaskFilter, :postgres do
         end
       end
 
+      let(:aod_case_ids) do
+        [
+          type_1_tasks.first.id,
+          type_2_tasks.first.id,
+          type_3_tasks.first.id,
+          type_4_tasks.first.id,
+          type_5_tasks.first.id
+        ]
+      end
+
       context "when filter_params is an empty array" do
         let(:filter_params) { [] }
 
@@ -281,7 +293,7 @@ describe TaskFilter, :postgres do
       end
 
       context "when filter_params includes a non existent case type" do
-        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN}&val=Invalid"] }
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=Invalid"] }
 
         it "returns no tasks" do
           expect(subject).to match_array([])
@@ -289,7 +301,7 @@ describe TaskFilter, :postgres do
       end
 
       context "when filter includes Original" do
-        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN}&val=#{case_types['1']}"] }
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=#{case_types['1']}"] }
 
         it "returns only tasks with Original case types" do
           expect(subject.map(&:id)).to match_array(type_1_tasks.map(&:id))
@@ -298,7 +310,7 @@ describe TaskFilter, :postgres do
 
       context "when filter includes Original and Supplemental" do
         let(:filter_params) do
-          ["col=#{Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN}&val=#{case_types['1']},#{case_types['2']}"]
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=#{case_types['1']},#{case_types['2']}"]
         end
 
         it "returns tasks with Original or Supplemental case types" do
@@ -308,25 +320,73 @@ describe TaskFilter, :postgres do
 
       context "when filter includes Original and Supplemental and AOD" do
         let(:filter_params) do
-          ["col=#{Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN}&val=#{case_types['1']},#{case_types['2']},is_aod"]
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=#{case_types['1']},#{case_types['2']},is_aod"]
         end
 
-        it "returns tasks with Original or Supplemental case types that are also AOD" do
-          expect(subject.map(&:id)).to match_array([type_1_tasks.first.id, type_2_tasks.first.id])
+        it "returns tasks with Original or Supplemental case types or AOD cases" do
+          expect(subject.map(&:id)).to match_array((type_1_tasks.map(&:id) + type_2_tasks.map(&:id)) | aod_case_ids)
         end
       end
 
       context "when filter includes only AOD" do
-        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN}&val=is_aod"] }
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=is_aod"] }
 
-        it "returns tasks with all case types that are also AOD" do
-          expect(subject.map(&:id)).to contain_exactly(
-            type_1_tasks.first.id,
-            type_2_tasks.first.id,
-            type_3_tasks.first.id,
-            type_4_tasks.first.id,
-            type_5_tasks.first.id
+        it "returns tasks that are AOD" do
+          expect(subject.map(&:id)).to match_array(aod_case_ids)
+        end
+      end
+    end
+
+    context "when filtering by assignee" do
+      let(:tasks_per_user) { 3 }
+      let(:users) { create_list(:user, 3) }
+      let(:first_user_tasks) { create_list(:generic_task, tasks_per_user, assigned_to: users.first) }
+      let(:second_user_tasks) { create_list(:generic_task, tasks_per_user, assigned_to: users.second) }
+      let(:third_user_tasks) { create_list(:generic_task, tasks_per_user, assigned_to: users.third) }
+      let(:all_tasks) { Task.where(id: (first_user_tasks + second_user_tasks + third_user_tasks).pluck(:id)) }
+
+      before do
+        all_tasks.each do |task|
+          create(
+            :cached_appeal,
+            appeal_type: task.appeal_type,
+            appeal_id: task.appeal.id,
+            assignee_label: task.appeal.assigned_to_location
           )
+        end
+      end
+
+      context "when filter_params is an empty array" do
+        let(:filter_params) { [] }
+
+        it "returns the same set of tasks for the filtered and unfiltered set" do
+          expect(subject.map(&:id)).to match_array(all_tasks.map(&:id))
+        end
+      end
+
+      context "when filter_params includes a non existent user" do
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name}&val=NON_EXISTANT_USER"] }
+
+        it "returns no tasks" do
+          expect(subject).to match_array([])
+        end
+      end
+
+      context "when filter includes the first user's css_id" do
+        let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name}&val=#{users.first.css_id}"] }
+
+        it "returns only tasks where the closest regional office is Boston" do
+          expect(subject.map(&:id)).to match_array(first_user_tasks.map(&:id))
+        end
+      end
+
+      context "when filter includes Boston and Washington" do
+        let(:filter_params) do
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name}&val=#{users.first.css_id},#{users.second.css_id}"]
+        end
+
+        it "returns tasks where the closest regional office is Boston or Washington" do
+          expect(subject.map(&:id)).to match_array((first_user_tasks + second_user_tasks).map(&:id))
         end
       end
     end

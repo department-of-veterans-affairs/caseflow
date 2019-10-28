@@ -20,7 +20,7 @@ describe Appeal, :all_dbs do
 
       it "returns the task structure" do
         expect_any_instance_of(RootTask).to receive(:structure).with(:id)
-        expect(subject.key?(:"Appeal #{appeal.id}")).to be_truthy
+        expect(subject.key?(:"Appeal #{appeal.id} [id]")).to be_truthy
       end
     end
   end
@@ -33,6 +33,40 @@ describe Appeal, :all_dbs do
     it "returns only active appeals" do
       expect(subject).to include active_appeal
       expect(subject).to_not include inactive_appeal
+    end
+  end
+
+  context "#create_business_line_tasks!" do
+    let(:request_issues) do
+      [
+        create(:request_issue, benefit_type: "education"),
+        create(:request_issue, benefit_type: "education"),
+        create(:request_issue, benefit_type: "nca")
+      ]
+    end
+    let(:appeal) { create(:appeal, request_issues: request_issues) }
+
+    subject { appeal.create_business_line_tasks! }
+
+    it "creates one VeteranRecordRequest task per business line" do
+      expect(VeteranRecordRequest).to receive(:create!).twice
+
+      subject
+    end
+
+    context "when the appeal has no active issues" do
+      let(:request_issues) do
+        [
+          create(:request_issue, :ineligible, benefit_type: "education"),
+          create(:request_issue, :ineligible, benefit_type: "nca")
+        ]
+      end
+
+      it "does not create business line tasks" do
+        expect(VeteranRecordRequest).to_not receive(:create!)
+
+        subject
+      end
     end
   end
 
@@ -1141,6 +1175,20 @@ describe Appeal, :all_dbs do
         expect(subject[0][:type]).to eq("scheduled_hearing")
         expect(subject[0][:details][:date]).to eq(hearing_scheduled_for.to_date)
         expect(subject[0][:details][:type]).to eq("video")
+      end
+    end
+  end
+
+  describe "#stuck?" do
+    context "Appeal has BvaDispatchTask completed but still on hold" do
+      let(:appeal) do
+        appeal = create(:appeal, :with_post_intake_tasks)
+        create(:bva_dispatch_task, :completed, appeal: appeal)
+        appeal
+      end
+
+      it "returns true" do
+        expect(appeal.stuck?).to eq(true)
       end
     end
   end

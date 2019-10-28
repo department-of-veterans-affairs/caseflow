@@ -12,6 +12,20 @@ class Organization < ApplicationRecord
 
   before_save :clean_url
 
+  class << self
+    def assignable(task)
+      select { |org| org.can_receive_task?(task) }
+    end
+
+    def find_by_name_or_url(string)
+      find_by(name: string) || find_by(url: string)
+    end
+
+    def default_active_tab
+      Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
+    end
+  end
+
   def admins
     organizations_users.includes(:user).select(&:admin?).map(&:user)
   end
@@ -34,10 +48,6 @@ class Organization < ApplicationRecord
 
   def non_admins
     organizations_users.includes(:user).non_admin.map(&:user)
-  end
-
-  def self.assignable(task)
-    select { |org| org.can_receive_task?(task) }
   end
 
   def can_receive_task?(task)
