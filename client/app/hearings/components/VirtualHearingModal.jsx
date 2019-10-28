@@ -7,19 +7,30 @@ import TextField from '../../components/TextField';
 import moment from 'moment';
 import COPY from '../../../COPY.json';
 
-const formatTimeString = (hearing) => {
-  let timeString = `${moment(hearing.centralOfficeTimeString, 'hh:mm').format('h:mm a')} ET`;
+const getCentralOfficeTime = (hearing) => {
+  const newTime = `${moment(hearing.scheduledFor).format('YYYY-MM-DD')}T${hearing.scheduledTimeString}`;
 
-  if (hearing.regionalOfficeTimezone !== 'America/New_York') {
-    timeString += ` / ${moment(hearing.scheduledTimeString, 'hh:mm').format('h:mm a')} `;
-    timeString += moment().tz(hearing.regionalOfficeTimezone).
-      format('z');
+  return moment.tz(newTime, hearing.regionalOfficeTimezone).tz('America/New_York').
+    format('hh:mm');
+};
+
+const formatTimeString = (hearing, timeWasEdited) => {
+  if (hearing.regionalOfficeTimezone === 'America/New_York') {
+    return `${moment(hearing.scheduledTimeString, 'hh:mm').format('h:mm a')} ET`;
   }
+
+  const centralOfficeTime = timeWasEdited ? getCentralOfficeTime(hearing) : hearing.centralOfficeTimeString;
+
+  let timeString = `${moment(centralOfficeTime, 'hh:mm').format('h:mm a')} ET`;
+
+  timeString += ` / ${moment(hearing.scheduledTimeString, 'hh:mm').format('h:mm a')} `;
+  timeString += moment().tz(hearing.regionalOfficeTimezone).
+    format('z');
 
   return timeString;
 };
 
-const VirtualHearingModal = ({ virtualHearing, hearing, update, submit, reset }) => (
+const VirtualHearingModal = ({ virtualHearing, hearing, timeWasEdited, update, submit, reset }) => (
   <div>
     <Modal
       title="Change to Virtual Hearing"
@@ -38,7 +49,7 @@ const VirtualHearingModal = ({ virtualHearing, hearing, update, submit, reset })
       </p>
       <div>
         <strong>{'Date:'}&nbsp;</strong>{moment(hearing.scheduledFor).format('MM/DD/YYYY')}<br />
-        <strong>{'Time:'}&nbsp;</strong>{formatTimeString(hearing)}
+        <strong>{'Time:'}&nbsp;</strong>{formatTimeString(hearing, timeWasEdited)}
       </div>
       <TextField
         strongLabel
@@ -69,6 +80,7 @@ VirtualHearingModal.propTypes = {
     regionalOfficeTimezone: PropTypes.string,
     centralOfficeTimeString: PropTypes.string
   }).isRequired,
+  timeWasEdited: PropTypes.bool,
   update: PropTypes.func,
   submit: PropTypes.func,
   reset: PropTypes.func
