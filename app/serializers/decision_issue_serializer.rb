@@ -4,6 +4,7 @@ class DecisionIssueSerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :camel_lower
 
+  # converts ui_hash into a serializer
   attribute :id
   attribute :description
   attribute :disposition

@@ -105,7 +105,7 @@ class DecisionIssue < ApplicationRecord
     REMAND_DISPOSITIONS.include?(disposition)
   end
 
-  def decision_issue_serializer
+  def ui_hash
     DecisionIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
