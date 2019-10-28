@@ -26,6 +26,8 @@ class Organization < ApplicationRecord
     end
   end
 
+  def user_added_to_organization(_org_user); end
+
   def admins
     organizations_users.includes(:user).select(&:admin?).map(&:user)
   end
