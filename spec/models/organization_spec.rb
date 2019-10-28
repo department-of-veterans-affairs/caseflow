@@ -213,7 +213,12 @@ describe Organization, :postgres do
 
     it "returns the expected 4 tabs" do
       expect(org.queue_tabs.map(&:class)).to eq(
-        [UnassignedTasksTab, AssignedTasksTab, OnHoldTasksTab, CompletedTasksTab]
+        [
+          OrganizationUnassignedTasksTab,
+          OrganizationAssignedTasksTab,
+          OrganizationOnHoldTasksTab,
+          OrganizationCompletedTasksTab
+        ]
       )
     end
   end

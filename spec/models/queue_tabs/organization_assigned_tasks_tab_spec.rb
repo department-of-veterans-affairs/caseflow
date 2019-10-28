@@ -3,8 +3,8 @@
 require "rails_helper"
 require "support/database_cleaner"
 
-describe AssignedTasksTab, :postgres do
-  let(:tab) { AssignedTasksTab.new(params) }
+describe OrganizationAssignedTasksTab, :postgres do
+  let(:tab) { OrganizationAssignedTasksTab.new(params) }
   let(:params) do
     {
       assignee: assignee,
@@ -17,7 +17,7 @@ describe AssignedTasksTab, :postgres do
   describe ".column_names" do
     subject { tab.column_names }
 
-    context "when only the assignee argument is passed when instantiating an AssignedTasksTab" do
+    context "when only the assignee argument is passed when instantiating an OrganizationAssignedTasksTab" do
       let(:params) { { assignee: create(:organization) } }
 
       it "returns the correct number of columns" do
@@ -60,8 +60,8 @@ describe AssignedTasksTab, :postgres do
       context "when the assignee is a user" do
         let(:assignee) { create(:user) }
 
-        it "only returns the active tasks that are children of the assignee's on hold tasks" do
-          expect(subject).to match_array(assignee_active_tasks)
+        it "raises an error" do
+          expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
         end
       end
     end

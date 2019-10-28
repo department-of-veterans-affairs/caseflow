@@ -399,6 +399,23 @@ export const bulkAssignTasks =
     }
   });
 
+// isInitial is only used for das deprecation 
+const dispatchOldTasks = (dispatch, oldTask, resp, isInitial=false) => {
+  if (oldTask.appealType === 'Appeal') {
+    dispatch(onReceiveAmaTasks(resp.tasks.data)); 
+  } else {
+    //For das deprecation, legacy_task_controller#create returns tasks, not a task
+    const tasks = isInitial && (oldTask.appealType === 'LegacyAppeal' && !oldTask.isLegacy) ? resp.tasks.data : [resp.task.data];
+
+    const allTasks = prepareAllTasksForStore(tasks);
+    
+    dispatch(onReceiveTasks({
+      tasks: allTasks.tasks,
+      amaTasks: allTasks.amaTasks
+    }));
+  }
+};
+
 export const initialAssignTasksToUser = ({
   tasks, assigneeId, previousAssigneeId
 }) => (dispatch) => Promise.all(tasks.map((oldTask) => {
@@ -431,25 +448,16 @@ export const initialAssignTasksToUser = ({
   return ApiUtil.post(url, params).
     then((resp) => resp.body).
     then((resp) => {
-      if (oldTask.appealType === 'Appeal') {
-        dispatch(onReceiveAmaTasks(resp.tasks.data));
-      } else {
-        const allTasks = prepareAllTasksForStore([resp.task.data]);
-
-        dispatch(onReceiveTasks({
-          tasks: allTasks.tasks,
-          amaTasks: allTasks.amaTasks
-        }));
-      }
-
-      dispatch(incrementTaskCountForAttorney({
-        id: assigneeId
-      }));
-
+      dispatchOldTasks(dispatch, oldTask, resp, true);
+      
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
         taskId: oldTask.uniqueId,
         selected: false
+      }));
+
+      dispatch(incrementTaskCountForAttorney({
+        id: assigneeId
       }));
     });
 }));
@@ -485,21 +493,7 @@ export const reassignTasksToUser = ({
   return ApiUtil.patch(url, params).
     then((resp) => resp.body).
     then((resp) => {
-      if (oldTask.appealType === 'Appeal') {
-        const amaTasks = resp.tasks.data;
-
-        dispatch(onReceiveAmaTasks(
-          amaTasks
-        ));
-      } else {
-        const task = resp.task.data;
-        const allTasks = prepareAllTasksForStore([task]);
-
-        dispatch(onReceiveTasks({
-          tasks: allTasks.tasks,
-          amaTasks: allTasks.amaTasks
-        }));
-      }
+      dispatchOldTasks(dispatch, oldTask, resp);
 
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
@@ -532,8 +526,7 @@ export const legacyReassignToJudge = ({
   return ApiUtil.post('/legacy_tasks/assign_to_judge', params).
     then((resp) => resp.body).
     then((resp) => {
-      const task = resp.task.data;
-      const allTasks = prepareAllTasksForStore([task]);
+      const allTasks = prepareAllTasksForStore([resp.task.data]);
 
       dispatch(onReceiveTasks(_.pick(allTasks, ['tasks', 'amaTasks'])));
 
@@ -627,7 +620,10 @@ export const fetchAllAttorneys = () => (dispatch) =>
 
 export const fetchAmaTasksOfUser = (userId, userRole) => (dispatch) =>
   ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
-    then((resp) => dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data))));
+    then((resp) => {
+      dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data)));
+      dispatch(setQueueConfig(resp.body.queue_config));
+    });
 
 export const setAppealAttrs = (appealId, attributes) => ({
   type: ACTIONS.SET_APPEAL_ATTRS,
