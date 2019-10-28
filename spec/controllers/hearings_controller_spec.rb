@@ -55,18 +55,18 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       end
     end
 
-    context "when updating an existing hearing to a virtual hearing", focus: true do
+    context "when updating an existing hearing to a virtual hearing" do
       let(:hearing) { create(:hearing) }
       let(:virtual_hearing_params) { {} }
 
       subject do
         hearing_params = {
-          notes: "Notes"
+          notes: "Notes",
+          virtual_hearing_attributes: virtual_hearing_params
         }
         patch_params = {
           id: hearing.external_id,
-          hearing: hearing_params,
-          virtual_hearing: virtual_hearing_params
+          hearing: hearing_params
         }
 
         patch :update, as: :json, params: patch_params

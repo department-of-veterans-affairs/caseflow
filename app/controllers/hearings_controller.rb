@@ -106,6 +106,11 @@ class HearingsController < HearingsApplicationController
     :veteran_email, :judge_email, :representative_email
   ].freeze
 
+  def validate_required_virtual_hearing_params(hearing_params)
+    if hearing_params.key?(:virtual_hearing_attributes)
+      hearing_params[:virtual_hearing_attributes].require([:veteran_email, :judge_email])
+    end
+  end
 
   def update_params_legacy
     params
@@ -114,7 +119,12 @@ class HearingsController < HearingsApplicationController
         *COMMON_HEARING_ATTRIBUTES,
         :aod,
         :scheduled_for,
-        hearing_location_attributes: HEARING_LOCATION_ATTRIBUTES
+        hearing_location_attributes: HEARING_LOCATION_ATTRIBUTES,
+        virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES
+      )
+      .tap { |hearing_params| validate_required_virtual_hearing_params(hearing_params) }
+      .merge(
+        hearing: hearing, advance_on_docket_motion_attributes: advance_on_docket_motion_params
       )
   end
 
@@ -124,38 +134,23 @@ class HearingsController < HearingsApplicationController
       .permit(
         *COMMON_HEARING_ATTRIBUTES,
         :transcript_sent_date,
-        :prepped,
         :evidence_window_waived,
         hearing_location_attributes: HEARING_LOCATION_ATTRIBUTES,
         transcription_attributes: TRANSCRIPTION_ATTRIBUTES,
-        hearing_issue_notes_attributes: HEARING_ISSUES_NOTES_ATTRIBUTES
+        hearing_issue_notes_attributes: HEARING_ISSUES_NOTES_ATTRIBUTES,
+        virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES
+      )
+      .tap { |hearing_params| validate_required_virtual_hearing_params(hearing_params) }
+      .merge(
+        hearing: hearing, advance_on_docket_motion_attributes: advance_on_docket_motion_params
       )
   end
 
-  def create_virtual_hearing_params
-    params.require(:virtual_hearing).tap do |virtual_hearing_params|
-      virtual_hearing_params.require([:veteran_email, :judge_email, :representative_email])
-      virtual_hearing_params.permit!
-    end
-  end
-
   def advance_on_docket_motion_params
-    params
-      .fetch(:advance_on_docket_motion, {})
-      .permit(:user_id, :person_id, :reason, :granted)
-  end
-
-  def create_virtual_hearing
-    created = false
-    virtual_hearing_params = create_virtual_hearing_params
-
-    VirtualHearing.where.not(status: :cancelled).find_or_create_by(hearing: hearing) do |virtual_hearing|
-      virtual_hearing.veteran_email = virtual_hearing_params[:veteran_email]
-      virtual_hearing.judge_email = virtual_hearing_params[:judge_email]
-      virtual_hearing.representative_email = virtual_hearing_params[:representative_email]
-      created = true
+    if params.key?(:advance_on_docket_motion)
+      params[:advance_on_docket_motion]
+        .permit(:user_id, :person_id, :reason, :granted)
+        .tap { |aod_params| aod_params.require([:person_id, :reason]) }
     end
-
-    created
   end
 end
