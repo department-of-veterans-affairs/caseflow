@@ -82,39 +82,30 @@ class HearingsController < HearingsApplicationController
   end
 
   COMMON_HEARING_ATTRIBUTES = [
-    :representative_name,
-    :witness,
-    :military_service,
-    :summary,
-    :notes,
-    :disposition,
-    :hold_open,
-    :transcript_requested,
-    :prepped,
-    :scheduled_time_string,
-    :judge_id,
-    :room,
-    :bva_poc
-  ]
+    :representative_name, :witness, :military_service, :summary,
+    :notes, :disposition, :hold_open, :transcript_requested, :prepped,
+    :scheduled_time_string, :judge_id, :room, :bva_poc
+  ].freeze
 
   HEARING_LOCATION_ATTRIBUTES = [
-    :city, :state, :address,
-    :facility_id, :facility_type,
-    :classification, :name, :distance,
-    :zip_code
-  ]
+    :city, :state, :address, :facility_id, :facility_type,
+    :classification, :name, :distance, :zip_code
+  ].freeze
 
   TRANSCRIPTION_ATTRIBUTES = [
-    :expected_return_date, :problem_notice_sent_date,
-    :problem_type, :requested_remedy,
-    :sent_to_transcriber_date, :task_number,
+    :expected_return_date, :problem_notice_sent_date, :problem_type,
+    :requested_remedy, :sent_to_transcriber_date, :task_number,
     :transcriber, :uploaded_to_vbms_date
-  ]
+  ].freeze
 
   HEARING_ISSUES_NOTES_ATTRIBUTES = [
-    :id, :allow, :deny, :remand,
-    :dismiss, :reopen, :worksheet_notes
-  ]
+    :id, :allow, :deny, :remand, :dismiss, :reopen, :worksheet_notes
+  ].freeze
+
+  VIRTUAL_HEARING_ATTRIBUTES = [
+    :veteran_email, :judge_email, :representative_email
+  ].freeze
+
 
   def update_params_legacy
     params
