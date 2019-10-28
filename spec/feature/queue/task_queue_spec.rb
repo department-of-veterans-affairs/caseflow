@@ -518,7 +518,7 @@ RSpec.feature "Task queue", :all_dbs do
 
         it "shows the correct filters" do
           page.find_all("path.unselected-filter-icon-inner").first.click
-          expect(page).to have_content("#{Task.label.humanize} (#{unassigned_count / 2})")
+          expect(page).to have_content("#{PrivacyActTask.label.humanize} (#{unassigned_count / 2})")
           expect(page).to have_content("#{TranslationTask.label.humanize} (#{translation_task_count})")
         end
 
