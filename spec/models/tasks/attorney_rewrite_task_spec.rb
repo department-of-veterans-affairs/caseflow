@@ -4,29 +4,15 @@ require "rails_helper"
 require "support/database_cleaner"
 require "support/vacols_database_cleaner"
 
-describe AttorneyQualityReviewTask, :all_dbs do
-  context ".create" do
-    it "returns the correct label" do
-      expect(AttorneyQualityReviewTask.new.label).to eq(
-        COPY::ATTORNEY_QUALITY_REVIEW_TASK_LABEL
-      )
-    end
-
-    it "returns the correct timeline title" do
-      expect(AttorneyQualityReviewTask.new.timeline_title).to eq(
-        COPY::CASE_TIMELINE_ATTORNEY_QUALITY_REVIEW_TASK
-      )
-    end
-  end
-
+describe AttorneyRewriteTask, :all_dbs do
   context "when cancelling the task" do
     let(:atty) { create(:user) }
     let(:judge) { create(:user) }
     let!(:atty_staff) { create(:staff, :attorney_role, sdomainid: atty.css_id) }
     let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge.css_id) }
-    let(:parent) { create(:ama_judge_dispatch_return_task) }
+    let(:parent) { create(:ama_judge_decision_review_task) }
     let!(:task) do
-      create(:ama_judge_dispatch_return_to_attorney_task, assigned_by: judge, assigned_to: atty, parent: parent)
+      create(:ama_attorney_rewrite_task, assigned_by: judge, assigned_to: atty, parent: parent)
     end
 
     subject { task.update!(status: Constants.TASK_STATUSES.cancelled) }
