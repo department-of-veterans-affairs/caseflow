@@ -3,8 +3,8 @@
 require "rails_helper"
 require "support/database_cleaner"
 
-describe TrackingTasksTab, :postgres do
-  let(:tab) { TrackingTasksTab.new(params) }
+describe OrganizationTrackingTasksTab, :postgres do
+  let(:tab) { OrganizationTrackingTasksTab.new(params) }
   let(:params) { { assignee: assignee } }
   let(:assignee) { create(:organization) }
 
