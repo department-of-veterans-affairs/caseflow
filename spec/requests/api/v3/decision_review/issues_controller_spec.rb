@@ -27,7 +27,13 @@ describe Api::V3::DecisionReview::IssuesController, :postgres, type: :request do
       expect(response).to have_http_status(:ok)
     end
     it 'should return a list of issues'
-    it 'should return a 404 when the veteran is not found'
-    it 'should return a 422 when the receipt date is bad'
+    it 'should return a 404 when the veteran is not found' do
+      get_issues(veteran_id: 'abcdefg')
+      expect(response).to have_http_status(:not_found)
+    end
+    it 'should return a 422 when the receipt date is bad' do
+      get_issues(receipt_date: Date.today - 1000.years)
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
   end
 end
