@@ -165,7 +165,12 @@ namespace :tasks do
       judge_review_tasks = target_tasks.where(type: JudgeDecisionReviewTask.name)
       reassign_judge_review_tasks(judge_review_tasks, user.css_id, dry_run) if judge_review_tasks.any?
 
-      all_other_tasks = target_tasks.where.not(type: [JudgeAssignTask.name, JudgeDecisionReviewTask.name])
+      attorney_tasks = target_tasks.where(type: AttorneyTask.name)
+      reassign_attorney_tasks(attorney_tasks, dry_run) if attorney_tasks.any?
+
+      all_other_tasks = target_tasks.where.not(
+        type: [JudgeAssignTask.name, JudgeDecisionReviewTask.name, AttorneyTask.name]
+      )
 
       parents_assigned_to_orgs = Task.where(id: all_other_tasks.pluck(:parent_id), assigned_to_type: Organization.name)
       tasks_with_parent_org_tasks = all_other_tasks.where(parent_id: parents_assigned_to_orgs.pluck(:id))
@@ -285,6 +290,22 @@ namespace :tasks do
           { assigned_to_type: User.name, assigned_to_id: new_supervising_judge.id }, new_supervising_judge
         )
         atty_task.update!(parent_id: reassigned_tasks.first.id)
+      end
+    end
+  end
+
+  def reassign_attorney_tasks(tasks, dry_run)
+    task_ids = tasks.pluck(:id)
+    parent_task_ids = tasks.pluck(:parent_id)
+    cancel = dry_run ? "Would cancel" : "Cancelling"
+    create = dry_run ? "create" : "creating"
+    message = "#{cancel} #{task_ids.count} AttorneyTasks with ids #{task_ids.join(', ')}, JudgeDecisionReviewTasks " \
+              "with ids #{parent_task_ids.join(', ')}, and #{create} #{task_ids.count} JudgeAssignTasks"
+    log_message("rake tasks:reassign_from_user", message, dry_run)
+
+    if !dry_run
+      tasks.each do |task|
+        task.update!(status: Constants.TASK_STATUSES.cancelled)
       end
     end
   end

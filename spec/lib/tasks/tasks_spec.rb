@@ -350,7 +350,8 @@ describe "task rake tasks", :postgres do
 
       let(:task_count) { 4 }
       let(:parent_assignee) { create(:organization) }
-      let(:parent_tasks) { create_list(:generic_task, task_count, :on_hold, assigned_to: parent_assignee) }
+      let(:parent_task_type) { :generic_task }
+      let(:parent_tasks) { create_list(parent_task_type, task_count, :on_hold, assigned_to: parent_assignee) }
 
       let(:task_type) { :generic_task }
       let!(:tasks) do
@@ -532,6 +533,50 @@ describe "task rake tasks", :postgres do
                 expect(new_tasks.all? { |task| task.children.length == 1 }).to eq true
               end
             end
+          end
+        end
+      end
+
+      context "the tasks are AttorneyTasks" do
+        let(:task_type) { :ama_attorney_task }
+        let(:parent_task_type) { :ama_judge_decision_review_task }
+        let(:parent_assignee) { create(:user) }
+        context "when on a dry run" do
+          it "only describes what changes will be made" do
+            parent_ids_output = parent_tasks.pluck(:id).reverse.join(", ")
+            judge_review_message = "Would cancel #{task_count} AttorneyTasks with ids #{ids_output}, " \
+                                   "JudgeDecisionReviewTasks with ids #{parent_ids_output}, and create #{task_count} " \
+                                   "JudgeAssignTasks"
+            expected_output = <<~OUTPUT
+              *** DRY RUN
+              *** pass 'false' as the second argument to execute
+              #{judge_review_message}
+            OUTPUT
+            expect { subject }.to output(expected_output).to_stdout
+
+            tasks.each { |task| expect(task.reload.assigned?).to eq true }
+            parent_tasks.each { |task| expect(task.reload.on_hold?).to eq true }
+            expect(JudgeAssignTask.count).to eq 0
+          end
+        end
+
+        context "when executing" do
+          let(:dry_run) { false }
+
+          it "describes what changes will be made and makes them" do
+            parent_ids_output = parent_tasks.pluck(:id).reverse.join(", ")
+            judge_review_message = "Cancelling #{task_count} AttorneyTasks with ids #{ids_output}, " \
+                                   "JudgeDecisionReviewTasks with ids #{parent_ids_output}, and creating " \
+                                   "#{task_count} JudgeAssignTasks"
+            expected_output = <<~OUTPUT
+              #{judge_review_message}
+            OUTPUT
+            expect(Rails.logger).to receive(:info).with(judge_review_message)
+            expect { subject }.to output(expected_output).to_stdout
+
+            tasks.each { |task| expect(task.reload.cancelled?).to eq true }
+            parent_tasks.each { |task| expect(task.reload.cancelled?).to eq true }
+            expect(JudgeAssignTask.count).to eq task_count
           end
         end
       end
