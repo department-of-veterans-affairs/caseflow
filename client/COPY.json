@@ -461,7 +461,12 @@
   "ACCESS_DENIED_TITLE": "Additional access needed",
   "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet.",
   "CASE_DETAILS_LOADING_FAILURE_TITLE": "Unable to load this case",
+
+  "DEATH_DISMISSAL_MODAL_TITLE": "FNOD Death Dismissal",
+  "DEATH_DISMISSAL_MODAL_SUBMIT": "Submit Death Dismissal",
   "INVALID_DEATH_DISMISSAL_USER": "User does not have permission to perform Death Dismissal. Must be a Judge or VLJ Support Admin",
+  "DEATH_DISMISSAL_SUCCESS_TITLE": "Veteran %s marked as Death Dismissal",
+  "DEATH_DISMISSAL_SUCCESS_DETAIL": "Veteran marked as Death Dismissal and sent to OVLJ Sr Council DVC in VACOLs",
 
   "JUDGE_ASSIGN_TASK_LABEL": "Assign",
   "JUDGE_DECISION_REVIEW_TASK_LABEL": "Review",

@@ -30,14 +30,14 @@ RSpec.feature "DeathDismissalAction", :all_dbs do
           it "can perform a death dismissal" do
             visit("queue/appeals/#{appeal.external_id}")
 
-            sleep 2
             prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
             text = Constants.TASK_ACTIONS.DEATH_DISMISSAL.label
             click_dropdown(prompt: prompt, text: text)
-            sleep 2
 
-            #"should present a confirmation modal"
-            #"should submit the action and end on the queue"
+            expect(page).to have_content(COPY::DEATH_DISMISSAL_MODAL_TITLE)
+            click_button(COPY::DEATH_DISMISSAL_MODAL_SUBMIT)
+
+            expect(page).to have_content(COPY::DEATH_DISMISSAL_SUCCESS_DETAIL)
           end
 
         end

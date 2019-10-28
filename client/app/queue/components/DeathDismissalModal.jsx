@@ -37,7 +37,6 @@ class DeathDismissalModal extends React.PureComponent {
 
   submit = () => {
     return this.submitDeathDismissal();
-    // TODO redirect to users Queue
   };
 
   submitDeathDismissal = () => {
@@ -52,15 +51,13 @@ class DeathDismissalModal extends React.PureComponent {
   getSuccessMsg = () => {
     const { appeal } = this.props;
 
-    // TODO move to copy
     const title = sprintf(
-      "Veteran %s marked as Death Dismissal",
+      COPY.DEATH_DISMISSAL_SUCCESS_TITLE,
       appeal.veteranFullName
     );
-    // TODO move to copy
     const detail = (
       <p>
-        "Veteran marked as Death Dismissal and sent to OVLJ Sr Council DVC in VACOLs",
+      COPY.DEATH_DISMISSAL_SUCCESS_DETAIL,
       </p>
     )
 
@@ -77,8 +74,8 @@ class DeathDismissalModal extends React.PureComponent {
       <QueueFlowModal
         submit={this.submit}
         validateForm={this.validateForm}
-        title="FNOD Death Dismissal"
-        button="Submit Death Dismissal"
+        title={COPY.DEATH_DISMISSAL_MODAL_TITLE}
+        button={COPY.DEATH_DISMISSAL_MODAL_SUBMIT}
       >
         <div {...fullWidth}>
           <p>
