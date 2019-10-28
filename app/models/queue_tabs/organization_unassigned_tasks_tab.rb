@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-class UnassignedTasksTab < QueueTab
+class OrganizationUnassignedTasksTab < QueueTab
+  validate :assignee_is_organization
+
   attr_accessor :show_reader_link_column, :allow_bulk_assign
 
   def label
