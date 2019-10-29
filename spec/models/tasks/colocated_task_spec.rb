@@ -390,7 +390,8 @@ describe ColocatedTask, :all_dbs do
       context "when current user is not a Colocated admin" do
         before { OrganizationsUser.add_user_to_organization(colocated_user, colocated_org) }
         it "should not show the Death Dismissal option" do
-          expect(colocated_task.available_actions_unwrapper(colocated_user)).not_to include(Constants.TASK_ACTIONS.DEATH_DISMISSAL.label)
+          expect(colocated_task.available_actions_unwrapper(colocated_user)
+            .exclude?(Constants.TASK_ACTIONS.DEATH_DISMISSAL.label))
         end
       end
       context "when current user is Colocated admin" do

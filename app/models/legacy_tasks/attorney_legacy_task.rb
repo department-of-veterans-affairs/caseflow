@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 class AttorneyLegacyTask < LegacyTask
-  def available_actions(current_user, role)
-    # Assigning judge can invoke death dismissal
-    if role == "judge" && current_user.id == assigned_by.pg_id && appeal.notice_of_death_date
+  def available_actions(_current_user, _role)
+    if assigning_judge && appeal.notice_of_death_date
       return [Constants.TASK_ACTIONS.DEATH_DISMISSAL.to_h]
     end
 
-    return [] if role != "attorney" || current_user != assigned_to
+    return [] if not_assigned_attorney
 
     # AttorneyLegacyTasks are drawn from the VACOLS.BRIEFF table but should not be actionable unless there is a case
     # assignment in the VACOLS.DECASS table. task_id is created using the created_at field from the VACOLS.DECASS table
@@ -27,5 +26,15 @@ class AttorneyLegacyTask < LegacyTask
 
   def self.from_vacols(case_assignment, appeal, user_id)
     super
+  end
+
+  private
+
+  def assigning_judge
+    role == "judge" && current_user.id == assigned_by.pg_id
+  end
+
+  def not_assigned_attorney
+    role != "attorney" || current_user != assigned_to
   end
 end

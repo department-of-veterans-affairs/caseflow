@@ -23,7 +23,7 @@ RSpec.feature "DeathDismissalAction", :all_dbs do
       context "and the case has a Notice of Death Date set" do
         context "and the user is a VLJ Support Admin" do
           let!(:colocated_task) do
-            org_task = create(:colocated_task, assigned_by: attorney, appeal: appeal)
+            create(:colocated_task, assigned_by: attorney, appeal: appeal)
           end
 
           it "can perform a death dismissal" do
