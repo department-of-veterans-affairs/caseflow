@@ -185,8 +185,6 @@ feature "NonComp Dispositions Task Page", :postgres do
       scenario "Shows an error when something goes wrong" do
         visit dispositions_url
 
-        expect_any_instance_of(DecisionReviewTask).to receive(:complete_with_payload!).and_throw("Error!")
-
         fill_in_disposition(0, "Granted")
         fill_in_disposition(1, "Granted", "test description")
         fill_in_disposition(2, "Denied", "denied")
