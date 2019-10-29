@@ -31,10 +31,10 @@ class AttorneyLegacyTask < LegacyTask
   private
 
   def assigning_judge(current_user, role)
-    role == "judge" && current_user.id == assigned_by.pg_id
+    current_user.id == assigned_by.pg_id && role == "judge"
   end
 
   def not_assigned_attorney(current_user, role)
-    role != "attorney" || current_user != assigned_to
+    current_user != assigned_to || role != "attorney"
   end
 end

@@ -50,7 +50,7 @@ class DeathDismissalModal extends React.PureComponent {
     );
     const detail = (
       <p>
-      {COPY.DEATH_DISMISSAL_SUCCESS_DETAIL}
+        {COPY.DEATH_DISMISSAL_SUCCESS_DETAIL}
       </p>
     );
 
