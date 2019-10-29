@@ -47,7 +47,13 @@ RSpec.configure do |config|
   # subsequent test runs
   if !File.exist?("#{::Rails.root}/app/assets/javascripts/webpack-bundle.js") &&
      ENV["REACT_ON_RAILS_ENV"] != "HOT"
-    ReactOnRails::TestHelper.ensure_assets_compiled
+
+    # Only compile webpack-bundle.js for feature tests.
+    # https://github.com/shakacode/react_on_rails/blob/master/docs/basics/rspec-configuration.md#rspec-configuration
+    ReactOnRails::TestHelper.configure_rspec_to_compile_assets(config, :requires_webpack_assets)
+    config.define_derived_metadata(file_path: %r{spec/feature}) do |metadata|
+      metadata[:requires_webpack_assets] = true
+    end
   end
 
   config.before(:each) do
