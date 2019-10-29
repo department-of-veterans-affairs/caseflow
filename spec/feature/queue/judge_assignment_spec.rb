@@ -178,6 +178,26 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
     end
   end
 
+  describe "Judge Legacy task with an SFNOD" do
+    let(:correspondent) { create(:correspondent, sfnod: 4.days.ago) }
+    let(:vacols_case) { create(:case, staff: vacols_user_one, correspondent: correspondent) }
+    let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    #let!(:decass) { create(:decass, defolder: vacols_case.bfkey) }
+
+    it "should allow us to do a death dismissal" do
+      visit("queue/appeals/#{appeal.external_id}")
+
+      prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
+      text = Constants.TASK_ACTIONS.DEATH_DISMISSAL.label
+      click_dropdown(prompt: prompt, text: text)
+
+      expect(page).to have_content(COPY::DEATH_DISMISSAL_MODAL_TITLE)
+      click_button(COPY::DEATH_DISMISSAL_MODAL_SUBMIT)
+
+      expect(page).to have_content(COPY::DEATH_DISMISSAL_SUCCESS_DETAIL)
+    end
+  end
+
   describe "Reassigning a legacy appeal to another judge from the case details page" do
     let!(:vacols_case) { create(:case, staff: vacols_user_one) }
     let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
