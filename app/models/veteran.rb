@@ -271,7 +271,8 @@ class Veteran < ApplicationRecord
 
     def find_or_create_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
       if file_number_or_ssn.to_s.length == 9
-        find_by_file_number_and_sync(file_number_or_ssn, sync_name: sync_name) ||
+        find_by_ssn_and_sync(file_number_or_ssn, sync_name: sync_name) ||
+          find_by_file_number_and_sync(file_number_or_ssn, sync_name: sync_name) ||
           find_or_create_by_ssn(file_number_or_ssn, sync_name: sync_name) ||
           find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name)
       else
@@ -282,7 +283,7 @@ class Veteran < ApplicationRecord
     private
 
     def find_or_create_by_ssn(ssn, sync_name: false)
-      found_locally = find_by(ssn: ssn)
+      found_locally = where(ssn: ssn).where.not(file_number: ssn).first
       if found_locally && sync_name && found_locally.stale_attributes?
         found_locally.update_cached_attributes!
       end
@@ -292,6 +293,19 @@ class Veteran < ApplicationRecord
       return unless file_number
 
       find_or_create_by_file_number(file_number, sync_name: sync_name)
+    end
+
+    def find_by_ssn_and_sync(ssn, sync_name: false)
+      veteran = where(ssn: ssn).where.not(file_number: ssn).first
+      return nil unless veteran
+
+      if sync_name
+        if veteran.cached_attributes_updatable?
+          veteran.update_cached_attributes!
+        end
+      end
+
+      veteran
     end
 
     def find_by_file_number_and_sync(file_number, sync_name: false)
