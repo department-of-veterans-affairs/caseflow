@@ -1072,6 +1072,25 @@ class SeedDB
       :with_post_intake_tasks,
       docket_type: Constants.AMA_DOCKETS.direct_review
     )
+
+    create_tasks_at_acting_judge
+  end
+
+  def create_tasks_at_acting_judge
+    attorney = User.find_by(css_id: "BVASCASPER1")
+    judge = User.find_by(css_id: "BVAAABSHIRE")
+
+    acting_judge = FactoryBot.create(:user, css_id: "BVAACTING", station_id: 101, full_name: "AVLJ - Acting judge")
+    FactoryBot.create(:staff, :attorney_judge_role, user: acting_judge)
+
+    JudgeTeam.create_for_judge(acting_judge)
+    OrganizationsUser.add_user_to_organization(acting_judge, JudgeTeam.for_judge(judge))
+
+    create_appeal_at_judge_assignment(judge: acting_judge)
+    create_task_at_attorney_review(FactoryBot.create(:appeal), judge, acting_judge)
+    create_task_at_attorney_review(FactoryBot.create(:appeal), acting_judge, attorney)
+    create_task_at_judge_review(FactoryBot.create(:appeal), judge, acting_judge)
+    create_task_at_judge_review(FactoryBot.create(:appeal), acting_judge, attorney)
   end
 
   def create_board_grant_tasks
