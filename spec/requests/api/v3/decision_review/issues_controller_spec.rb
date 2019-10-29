@@ -24,7 +24,7 @@ describe Api::V3::DecisionReview::IssuesController, :postgres, type: :request do
       )
     end
 
-    fit 'should return a 200 OK' do
+    it 'should return a 200 OK' do
       get_issues
       expect(response).to have_http_status(:ok)
     end
