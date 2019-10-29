@@ -599,7 +599,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       before do
         task_count.times do
           org_task = BvaDispatchTask.create_from_root_task(root_task)
-          # Set status of org-level task to completed to avoid getting caught by GenericTask.verify_org_task_unique.
+          # Set status of org-level task to completed to avoid getting caught by Task.verify_org_task_unique.
           org_task.update!(status: Constants.TASK_STATUSES.completed)
         end
       end
