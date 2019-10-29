@@ -672,7 +672,8 @@ class LegacyAppeal < ApplicationRecord
         }
       )
     end
-    caseflow_file_number # prefer for now
+    return caseflow_file_number unless caseflow_file_number.length == 9 # SSN-like
+    bgs.fetch_file_number_by_ssn(caseflow_file_number) || caseflow_file_number
   end
 
   def pending_eps

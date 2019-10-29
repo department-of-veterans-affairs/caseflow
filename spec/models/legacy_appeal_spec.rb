@@ -86,6 +86,17 @@ describe LegacyAppeal, :all_dbs do
         expect(legacy_appeal.veteran_file_number).to eq(legacy_appeal.veteran.file_number)
         expect(@datadog_called).to eq(true)
       end
+
+      context "Veteran record has SSN value in file_number column" do
+        before do
+          veteran.update!(file_number: veteran.ssn)
+        end
+
+        it "returns the file_number value from BGS" do
+          expect(legacy_appeal.veteran_file_number).to eq(file_number)
+          expect(legacy_appeal.veteran_file_number).to_not eq(legacy_appeal.veteran.file_number)
+        end
+      end
     end
   end
 
