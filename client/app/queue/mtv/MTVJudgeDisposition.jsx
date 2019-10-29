@@ -172,7 +172,7 @@ export const MTVJudgeDisposition = ({
           className={['mtv-decision-instructions']}
         />
 
-        {disposition && disposition === 'granted' && (
+        {disposition && isGrantType() && (
           <SearchableDropdown
             name="attorney"
             label={JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL}
