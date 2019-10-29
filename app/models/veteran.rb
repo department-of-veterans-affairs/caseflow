@@ -282,8 +282,12 @@ class Veteran < ApplicationRecord
 
     private
 
+    def find_by_ssn_not_file_number(ssn)
+      where(ssn: ssn).where.not(file_number: ssn).first || find_by(ssn: ssn)
+    end
+
     def find_or_create_by_ssn(ssn, sync_name: false)
-      found_locally = where(ssn: ssn).where.not(file_number: ssn).first
+      found_locally = find_by_ssn_not_file_number(ssn)
       if found_locally && sync_name && found_locally.stale_attributes?
         found_locally.update_cached_attributes!
       end
@@ -296,7 +300,7 @@ class Veteran < ApplicationRecord
     end
 
     def find_by_ssn_and_sync(ssn, sync_name: false)
-      veteran = where(ssn: ssn).where.not(file_number: ssn).first
+      veteran = find_by_ssn_not_file_number(ssn)
       return nil unless veteran
 
       if sync_name
