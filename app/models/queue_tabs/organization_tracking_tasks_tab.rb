@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-class TrackingTasksTab < QueueTab
+class OrganizationTrackingTasksTab < QueueTab
+  validate :assignee_is_organization
+
   def label
     COPY::TRACKING_TASKS_TAB_TITLE
   end
