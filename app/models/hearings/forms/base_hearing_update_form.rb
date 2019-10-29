@@ -32,7 +32,7 @@ class BaseHearingUpdateForm
   def create_virtual_hearing
     created = false
 
-    VirtualHearing .where.not(status: :cancelled).find_or_create_by(hearing: hearing) do |virtual_hearing|
+    VirtualHearing.where.not(status: :cancelled).find_or_create_by!(hearing: hearing) do |virtual_hearing|
       virtual_hearing.veteran_email = virtual_hearing_attributes[:veteran_email]
       virtual_hearing.judge_email = virtual_hearing_attributes[:judge_email]
       virtual_hearing.representative_email = virtual_hearing_attributes[:representative_email]
