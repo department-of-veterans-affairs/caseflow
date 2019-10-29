@@ -42,7 +42,4 @@ RSpec.feature "DeathDismissalAction", :all_dbs do
       end
     end
   end
-
-  # Colocated User can see, and select, Death Dismissal, confirm via modal, and be
-  # returned to their work queue.
 end
