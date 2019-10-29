@@ -11,6 +11,7 @@ class VirtualHearing < ApplicationRecord
   validates_email_format_of :judge_email
   validates_email_format_of :representative_email
   validates_email_format_of :veteran_email
+  validate :associated_hearing_is_video, on: :create
 
   enum status: {
     # Initial status for a virtual hearing. Indicates the Pexip conference
@@ -32,5 +33,11 @@ class VirtualHearing < ApplicationRecord
 
   def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]
+  end
+
+  def associated_hearing_is_video
+    if hearing.request_type != HearingDay::REQUEST_TYPES[:video]
+      errors.add(:hearing, "must be a video hearing")
+    end
   end
 end
