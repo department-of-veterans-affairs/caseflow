@@ -14,8 +14,10 @@ class AttorneyQueue
       .order(:created_at).group_by(&:appeal_id)
     colocated_tasks_for_attorney_tasks = colocated_tasks_grouped.each_with_object([]) do |(_k, value), result|
       result << value.first.tap do |record|
-        record.placed_on_hold_at = record.assigned_at
-        record.status = Constants.TASK_STATUSES.on_hold
+        record.update!(
+          placed_on_hold_at: record.assigned_at,
+          status: Constants.TASK_STATUSES.on_hold
+        )
       end
     end
 
