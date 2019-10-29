@@ -182,7 +182,6 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
     let(:correspondent) { create(:correspondent, sfnod: 4.days.ago) }
     let(:vacols_case) { create(:case, staff: vacols_user_one, correspondent: correspondent) }
     let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
-    #let!(:decass) { create(:decass, defolder: vacols_case.bfkey) }
 
     it "should allow us to do a death dismissal" do
       visit("queue/appeals/#{appeal.external_id}")
