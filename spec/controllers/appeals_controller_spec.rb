@@ -560,13 +560,6 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         post :death_dismissal, params: { appeal_id: appeal.vacols_id }
         expect(response.status).to eq(200)
       end
-
-      context "when appeal is not found" do
-        it "should not be successful" do
-          post :death_dismissal, params: { appeal_id: "123123123123" }
-          expect(response.status).to eq(200)
-        end
-      end
     end
   end
 end
