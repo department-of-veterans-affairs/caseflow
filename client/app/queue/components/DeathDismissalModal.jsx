@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
@@ -11,26 +12,18 @@ import {
 } from '../uiReducer/uiActions';
 import COPY from '../../../COPY.json';
 import { fullWidth } from '../constants';
-import { formatDateStr } from '../../util/DateUtil';
-import ApiUtil from '../../util/ApiUtil';
 import { withRouter } from 'react-router-dom';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import {
-  appealWithDetailSelector,
-  scheduleHearingTasksForAppeal
+  appealWithDetailSelector
 } from '../selectors';
 import { onReceiveAmaTasks, onReceiveAppealDetails } from '../QueueActions';
-import { prepareAppealForStore } from '../utils';
-import _ from 'lodash';
 import QueueFlowModal from './QueueFlowModal';
-import Alert from '../../components/Alert';
 
 class DeathDismissalModal extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
-      showErrorMessages: false,
       showFullHearingDayWarning: false
     };
   }
@@ -45,7 +38,7 @@ class DeathDismissalModal extends React.PureComponent {
       data: {}
     };
 
-    return this.props.requestSave(`/appeals/${appeal.externalId}/death_dismissal`, payload, this.getSuccessMsg())
+    return this.props.requestSave(`/appeals/${appeal.externalId}/death_dismissal`, payload, this.getSuccessMsg());
   }
 
   getSuccessMsg = () => {
@@ -59,7 +52,7 @@ class DeathDismissalModal extends React.PureComponent {
       <p>
       COPY.DEATH_DISMISSAL_SUCCESS_DETAIL,
       </p>
-    )
+    );
 
     return { title,
       detail };
@@ -67,7 +60,6 @@ class DeathDismissalModal extends React.PureComponent {
 
   render = () => {
     const { appeal } = this.props;
-    const { showErrorMessages } = this.state;
 
     /* eslint-disable camelcase */
     return (
@@ -84,7 +76,7 @@ class DeathDismissalModal extends React.PureComponent {
               <li> Cancel all active tasks in Caseflow. </li>
               <li> Assign the case in VACOLS to the OVLJ Sr. Council DVC.</li>
             </ul>
-            <br/>
+            <br />
             Continue with the Death Dismissal for <b>{appeal.veteranFullName}</b>?
           </p>
         </div>
@@ -93,9 +85,14 @@ class DeathDismissalModal extends React.PureComponent {
   }
 }
 
+DeathDismissalModal.propTypes = {
+  appeal: PropTypes.object,
+  requestSave: PropTypes.func
+};
+
 const mapStateToProps = (state, ownProps) => ({
   appeal: appealWithDetailSelector(state, ownProps),
-  saveState: state.ui.saveState.savePending,
+  saveState: state.ui.saveState.savePending
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -107,6 +104,5 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveAmaTasks,
   onReceiveAppealDetails
 }, dispatch);
-
 
 export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(DeathDismissalModal)));
