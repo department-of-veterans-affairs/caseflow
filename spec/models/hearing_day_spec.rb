@@ -32,10 +32,10 @@ describe HearingDay, :all_dbs do
       end
 
       it "creates hearing with required attributes" do
-        expect(hearing["readable_request_type"]).to eq Hearing::HEARING_TYPES[:C]
-        expect(hearing["scheduled_for"].strftime("%Y-%m-%d"))
+        expect(hearing[:readable_request_type]).to eq Hearing::HEARING_TYPES[:C]
+        expect(hearing[:scheduled_for].strftime("%Y-%m-%d"))
           .to eq test_hearing_date_vacols.strftime("%Y-%m-%d")
-        expect(hearing["room"]).to eq "1"
+        expect(hearing[:room]).to eq "1"
       end
     end
 
@@ -49,10 +49,10 @@ describe HearingDay, :all_dbs do
       end
 
       it "creates hearing with required attributes" do
-        expect(hearing["readable_request_type"]).to eq Hearing::HEARING_TYPES[:C]
-        expect(hearing["scheduled_for"].strftime("%Y-%m-%d"))
+        expect(hearing[:readable_request_type]).to eq Hearing::HEARING_TYPES[:C]
+        expect(hearing[:scheduled_for].strftime("%Y-%m-%d"))
           .to eq test_hearing_date_caseflow.strftime("%Y-%m-%d")
-        expect(hearing["room"]).to eq "1"
+        expect(hearing[:room]).to eq "1"
       end
     end
 
@@ -67,11 +67,11 @@ describe HearingDay, :all_dbs do
       end
 
       it "creates a video hearing" do
-        expect(hearing["readable_request_type"]).to eq Hearing::HEARING_TYPES[:C]
-        expect(hearing["scheduled_for"].strftime("%Y-%m-%d %H:%M:%S"))
+        expect(hearing[:readable_request_type]).to eq Hearing::HEARING_TYPES[:C]
+        expect(hearing[:scheduled_for].strftime("%Y-%m-%d %H:%M:%S"))
           .to eq test_hearing_date_caseflow.strftime("%Y-%m-%d %H:%M:%S")
-        expect(hearing["regional_office"]).to eq "RO89"
-        expect(hearing["room"]).to eq "5"
+        expect(hearing[:regional_office]).to eq "RO89"
+        expect(hearing[:room]).to eq "5"
       end
     end
   end

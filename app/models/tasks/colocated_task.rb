@@ -162,7 +162,7 @@ class ColocatedTask < Task
     (task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.user_is_admin?(user))
   end
 
-  # GenericTask.verify_org_task_unique already performs this check
+  # Task.verify_org_task_unique already performs this check
   def verify_org_task_unique; end
 
   def task_is_unique
