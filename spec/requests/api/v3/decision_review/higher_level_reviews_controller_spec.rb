@@ -112,80 +112,102 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       )
       processor.run!.higher_level_review
     end
+
     def get_higher_level_review # rubocop:disable Naming/AccessorMethodName
       get(
         "/api/v3/decision_review/higher_level_reviews/#{higher_level_review.uuid}",
         headers: { "Authorization" => "Token #{api_key}" }
       )
     end
+
     it "should return ok" do
       get_higher_level_review
       expect(response).to have_http_status(:ok)
     end
+
     it "should be json with a data key and included key" do
       get_higher_level_review
       json = JSON.parse(response.body)
       expect(json.keys).to include("data", "included")
     end
+
     let(:request_issues) do
       higher_level_review.request_issues
         .includes(:decision_review, :contested_decision_issue).active_or_ineligible_or_withdrawn
     end
+
     let(:decision_issues) { higher_level_review.fetch_all_decision_issues }
+
     context "data" do
       subject do
         get_higher_level_review
         JSON.parse(response.body)["data"]
       end
+
       it "should have HigherLevelReview as the type" do
         expect(subject["type"]).to eq "HigherLevelReview"
       end
+
       it "should have an id" do
         expect(subject["id"]).to eq higher_level_review.uuid
       end
+
       it "should have attributes" do
         expect(subject["attributes"]).to_not be_empty
       end
+
       context "attributes" do
         subject do
           get_higher_level_review
           JSON.parse(response.body)["data"]["attributes"]
         end
+
         it "should include status" do
           expect(subject["status"]).to eq higher_level_review.fetch_status.to_s
         end
+
         it "should include aoj" do
           expect(subject["aoj"]).to eq higher_level_review.aoj
         end
+
         it "should include programArea" do
           expect(subject["programArea"]).to eq higher_level_review.program
         end
+
         it "should include benefitType" do
           expect(subject["benefitType"]).to eq higher_level_review.benefit_type
         end
+
         it "should include description" do
           expect(subject["description"]).to eq higher_level_review.description
         end
+
         it "should include receiptDate" do
           expect(subject["receiptDate"]).to eq higher_level_review.receipt_date.strftime("%F")
         end
+
         it "should include informalConference" do
           expect(subject["informalConference"]).to eq higher_level_review.informal_conference
         end
+
         it "should include sameOffice" do
           expect(subject["sameOffice"]).to eq higher_level_review.same_office
         end
+
         it "should include legacyOptInApproved" do
           expect(subject["legacyOptInApproved"]).to eq higher_level_review.legacy_opt_in_approved
         end
+
         it "should include alerts" do
           expect(subject["alerts"]).to be_a Array
         end
+
         context "alerts" do
           subject do
             get_higher_level_review
             JSON.parse(response.body)["data"]["attributes"]["alerts"]
           end
+
           it "should have the same alerts" do
             higher_level_review.decision_issues << create(:decision_issue)
             higher_level_review.end_product_establishments.first.update(synced_status: "CLR")
@@ -196,14 +218,17 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
             end
           end
         end
+
         it "should include events" do
           expect(subject["events"]).to be_a Array
         end
+
         context "events" do
           subject do
             get_higher_level_review
             JSON.parse(response.body)["data"]["attributes"]["events"]
           end
+
           it "should have the same events" do
             expect(subject.count).to eq higher_level_review.events.count
             subject.each do |event_data|
@@ -215,25 +240,31 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           end
         end
       end
+
       it "should have relationships" do
         expect(subject["relationships"]).to_not be_empty
       end
+
       context "relationships" do
         subject do
           get_higher_level_review
           JSON.parse(response.body)["data"]["relationships"]
         end
+
         it "should include the veteran" do
           expect(subject.dig("veteran", "data", "id")).to eq higher_level_review.veteran.id.to_s
         end
+
         it "should include the claimant" do
           expect(subject.dig("claimant", "data", "id")).to eq higher_level_review.claimants.first.id.to_s
         end
+
         it "should include request issues" do
           ri_relationships = subject["requestIssues"]["data"]
           expect(ri_relationships.count).to eq request_issues.count
           expect(ri_relationships.collect { |ri| ri["id"].to_i }).to include(*request_issues.collect(&:id))
         end
+
         it "should include decision issues" do
           higher_level_review.decision_issues << create(:decision_issue)
           expect(subject["decisionIssues"]["data"].count).to eq decision_issues.count
@@ -243,14 +274,17 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         end
       end
     end
+
     context "included" do
       subject do
         get_higher_level_review
         JSON.parse(response.body)["included"]
       end
+
       it "should be an array" do
         expect(subject).to be_a Array
       end
+
       it "should include one veteran" do
         veteran = subject.find { |obj| obj["type"] == "Veteran" }
         expect(veteran).to_not be_nil
@@ -258,6 +292,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           "firstName", "middleName", "lastName", "nameSuffix", "fileNumber", "ssn", "participantId"
         )
       end
+
       it "should include a claimant" do
         claimant = subject.find { |obj| obj["type"] == "Claimant" }
         expect(claimant).to_not be_nil
@@ -265,11 +300,13 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           "firstName", "middleName", "lastName", "payeeCode", "relationshipType"
         )
       end
+
       it "should not have a claimant when one is not present" do
         higher_level_review.claimants.delete_all
         claimant = subject.find { |obj| obj["type"] == "Claimant" }
         expect(claimant).to be_nil
       end
+
       it "should include RequestIssues" do
         included_request_issues = subject.select { |obj| obj["type"] == "RequestIssue" }
         expect(included_request_issues.count).to eq request_issues.count
@@ -282,6 +319,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           "endProductCode"
         )
       end
+
       it "should include DecisionIssues" do
         higher_level_review.decision_issues << create(:decision_issue)
         included_decision_issues = subject.select { |obj| obj["type"] == "DecisionIssue" }
