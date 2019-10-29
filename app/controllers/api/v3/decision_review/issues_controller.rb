@@ -23,7 +23,12 @@ class Api::V3::DecisionReview::IssuesController < Api::V3::BaseController
       return
     end
 
+    # going to have to do this for each type
+    standin_claim_review = HigherLevelReview.new(veteran_file_number: veteran.file_number, receipt_date: receipt_date)
+    byebug
+    issues = ContestableIssueGenerator.new(standin_claim_review).contestable_issues
+
     # successfully render issues
-    render plain: 'so many issues'
+    render plain: "Found #{issues.count} Issues"
   end
 end
