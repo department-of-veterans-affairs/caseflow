@@ -11,13 +11,17 @@ class HearingsController < HearingsApplicationController
     render json: { "errors": ["message": error.message, code: 1000] }, status: :not_found
   end
 
-  rescue_from ActiveRecord::RecordInvalid, Caseflow::Error::VacolsRepositoryError do |error|
-    Rails.logger.debug "Unable to find hearing in VACOLS: #{error.message}"
-    render json: { "errors": ["message": error.message, code: 1001] }, status: :not_found
+  rescue_from ActiveRecord::RecordNotUnique do |_error|
+    render json: { "errors": ["message": "Virtual hearing already exists", code: 1003] }, status: :conflict
   end
 
-  rescue_from ActiveRecord::RecordNotUnique do |_error|
-    render json: { "errors": ["message": "Virtual hearing already exists", code: 1002] }, status: :conflict
+  rescue_from ActiveRecord::RecordInvalid do |error|
+    render json: { "errors": ["message": error.message, code: 1002] }, status: :bad_request
+  end
+
+  rescue_from Caseflow::Error::VacolsRepositoryError do |error|
+    Rails.logger.debug "Unable to find hearing in VACOLS: #{error.message}"
+    render json: { "errors": ["message": error.message, code: 1001] }, status: :not_found
   end
 
   def show

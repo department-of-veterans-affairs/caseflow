@@ -92,6 +92,20 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         it { expect { subject }.to raise_error(ActionController::ParameterMissing) }
       end
 
+      context "with invalid emails" do
+        let(:virtual_hearing_params) do
+          {
+            veteran_email: "veteran",
+            judge_email: "!@#$%",
+            representative_email: "representative_email"
+          }
+        end
+
+        it "returns 400 status code" do
+          expect(subject.status).to eq(400)
+        end
+      end
+
       context "with valid params" do
         let(:virtual_hearing_params) do
           {
