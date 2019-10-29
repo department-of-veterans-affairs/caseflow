@@ -17,7 +17,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         aod: :granted,
         disposition: :held,
         hearing_location_attributes: {
-         facility_id: "vba_301"
+          facility_id: "vba_301"
         },
         prepped: true
       }
@@ -42,10 +42,10 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           transcript_requested: false,
           disposition: :held,
           hearing_location_attributes: {
-           facility_id: "vba_301"
+            facility_id: "vba_301"
           },
           prepped: true,
-          evidence_window_waived: true 
+          evidence_window_waived: true
         }
         patch :update, as: :json, params: { id: hearing.external_id, hearing: params }
         expect(response.status).to eq 200
