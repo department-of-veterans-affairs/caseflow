@@ -60,7 +60,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
     end
 
     context "when updating an existing hearing to a virtual hearing" do
-      let(:hearing) { create(:hearing) }
+      let(:hearing) { create(:hearing, regional_office: "RO42") }
       let(:virtual_hearing_params) { {} }
 
       subject do
@@ -125,7 +125,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         end
 
         context "with hearing that already has a virtual hearing" do
-          let(:hearing) { create(:hearing, virtual_hearing: create(:virtual_hearing)) }
+          let!(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
 
           it "returns expected status" do
             expect(subject.status).to eq(409)
