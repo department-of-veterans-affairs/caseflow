@@ -326,7 +326,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         let(:params) do
           [{
             "external_id": appeal.external_id,
-            "type": GenericTask.name,
+            "type": Task.name,
             "assigned_to_id": user.id,
             "parent_id": root_task.id
           }]
