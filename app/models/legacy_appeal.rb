@@ -772,7 +772,6 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-
   def cancel_open_caseflow_tasks!
     tasks.open.update_all(status: Constants.TASK_STATUSES.cancelled)
   end

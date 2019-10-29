@@ -101,7 +101,7 @@ class ColocatedTask < Task
       actions.unshift(Constants.TASK_ACTIONS.DEATH_DISMISSAL.to_h)
     end
 
-    return actions
+    actions
   end
 
   def return_to_assigner_action

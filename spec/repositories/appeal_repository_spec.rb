@@ -228,7 +228,6 @@ describe AppealRepository, :all_dbs do
       expect(appeal.case_record.bfcurloc).to eq("66")
       expect(refreshed_appeal.location_code).to eq("66")
     end
-
   end
 
   context "#location_after_dispatch" do

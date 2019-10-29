@@ -5,7 +5,6 @@ require "support/database_cleaner"
 require "rails_helper"
 
 RSpec.feature "DeathDismissalAction", :all_dbs do
-
   let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
   let(:colocated_admin) { create(:user) }
   let(:colocated_user) { create(:user) }
@@ -39,7 +38,6 @@ RSpec.feature "DeathDismissalAction", :all_dbs do
 
             expect(page).to have_content(COPY::DEATH_DISMISSAL_SUCCESS_DETAIL)
           end
-
         end
       end
     end
@@ -47,5 +45,4 @@ RSpec.feature "DeathDismissalAction", :all_dbs do
 
   # Colocated User can see, and select, Death Dismissal, confirm via modal, and be
   # returned to their work queue.
- 
 end

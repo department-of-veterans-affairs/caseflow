@@ -2514,5 +2514,4 @@ describe LegacyAppeal, :all_dbs do
       end
     end
   end
-
 end

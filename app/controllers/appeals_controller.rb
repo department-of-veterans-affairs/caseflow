@@ -60,7 +60,7 @@ class AppealsController < ApplicationController
   end
 
   def valid_death_dismissal_user
-    if !( current_user.judge_in_vacols? || Colocated.singleton.user_is_admin?(current_user) )
+    if !(current_user.judge_in_vacols? || Colocated.singleton.user_is_admin?(current_user))
       fail Caseflow::Error::ActionForbiddenError, message: COPY::INVALID_DEATH_DISMISSAL_USER
     end
   end
