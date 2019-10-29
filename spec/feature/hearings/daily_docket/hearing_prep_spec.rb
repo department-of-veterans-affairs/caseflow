@@ -6,6 +6,7 @@ require "rails_helper"
 RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
   let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Hearing Prep"]) }
+  # let!(:vh_user) { User.authenticate!(css_id: "BVAYELLOW", roles: ["Edit HearSched", "Build HearSched"]) }
   let!(:hearing_day) { create(:hearing_day, judge: current_user) }
 
   context "with a legacy hearing" do
@@ -83,6 +84,41 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
         click_button("Confirm")
 
         expect(page).to have_content("You have successfully updated")
+      end
+    end
+
+    context "A virtual hearing has been scheduled", focus: true do
+      let!(:current_user) { User.authenticate!(css_id: "BVAYELLOW", roles: ["Edit HearSched", "Build HearSched"]) }
+      let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, user: current_user, hearing_day: hearing_day) }
+      FeatureToggle.enable!(:schedule_virtual_hearings)
+
+      scenario "User can update Virtual Hearing time" do
+        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+        choose("hearingTime1_other", allow_label_click: true)
+        find(".dropdown-optionalHearingTime1").click
+        # go to the page
+        # select the first radio
+        # press "confirm and send"
+        # expect(page).to have_content("You have successfully updated")
+      end
+      scenario "Virtual Hearing time has been reassigned" do
+        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+        choose("hearingTime1_13:00", allow_label_click: true)
+        # go to page
+        # select the "other radio"
+        # pick the first option
+        # press "confirm and send"
+        click_button("Save")
+        expect(page).to have_content("You have successfully updated")
+      end
+
+      scenario "Changes to Virtual Hearing have been cancelled" do
+        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+        choose("hearingTime1_09:00", allow_label_click: true)
+        # go to page
+        # select the first radio
+        # press cancel
+        click_button("Cancel")
       end
     end
 
