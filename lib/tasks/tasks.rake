@@ -5,6 +5,7 @@ namespace :tasks do
   class InvalidOrganization < StandardError; end
   class NoTasksToChange < StandardError; end
   class NoTasksToReassign < StandardError; end
+  class MoreTasksToReassign < StandardError; end
   class InvalidTaskParent < StandardError; end
   class InvalidTaskAssignee < StandardError; end
 
@@ -180,6 +181,8 @@ namespace :tasks do
       tasks_with_parent_user_tasks = all_other_tasks.where(parent_id: parents_assigned_to_users.pluck(:id))
       reassign_tasks_with_parent_user_tasks(tasks_with_parent_user_tasks, dry_run) if tasks_with_parent_user_tasks.any?
     end
+
+    ensure_user_has_no_leftover_tasks(Task.open.where(assigned_to: user))
   end
 
   def ensure_user_has_tasks(target_tasks)
@@ -253,6 +256,12 @@ namespace :tasks do
     if tasks_without_judges.any?
       fail InvalidTaskAssignee, "AttorneyTasks (#{tasks_without_judges.map(&:first).join(', ')}) assignee does " \
                                 "not belong to a judge team with an active judge"
+    end
+  end
+
+  def ensure_user_has_no_leftover_tasks(target_tasks)
+    if target_tasks.any?
+      fail MoreTasksToReassign, "Open tasks (#{target_tasks.pluck(:id).join(', ')}) still open after reassign"
     end
   end
 
