@@ -16,7 +16,16 @@ RSpec.feature "Motion to vacate", :all_dbs do
              contested_issue_description: "Tinnitus"
            ))
   end
-  let!(:decision_issue) { create(:decision_issue, decision_review: appeal, request_issues: appeal.request_issues) }
+  let!(:decision_issue) do
+    create(
+      :decision_issue,
+      decision_review: appeal,
+      request_issues: appeal.request_issues,
+      disposition: "denied",
+      description: "Decision issue description",
+      decision_text: "decision issue"
+    )
+  end
   let!(:root_task) { create(:root_task, appeal: appeal) }
   let!(:motions_attorney) { create(:user, full_name: "Motions attorney") }
   let!(:judge) { create(:user, full_name: "Judge the First", css_id: "JUDGE_1") }

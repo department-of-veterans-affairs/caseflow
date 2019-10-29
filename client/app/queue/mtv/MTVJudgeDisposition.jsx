@@ -134,7 +134,7 @@ export const MTVJudgeDisposition = ({
 
         {disposition && disposition === 'partial' && (
           <MTVIssueSelection
-            issues={appeal.issues}
+            issues={appeal.decisionIssues}
             onChange={({ issueIds: newIssueIds }) => setIssueIds(newIssueIds)}
           />
         )}
