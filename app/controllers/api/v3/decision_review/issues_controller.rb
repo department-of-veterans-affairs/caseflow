@@ -26,8 +26,7 @@ class Api::V3::DecisionReview::IssuesController < Api::V3::BaseController
     # going to have to do this for each type
     standin_claim_review = HigherLevelReview.new(veteran_file_number: veteran.file_number, receipt_date: receipt_date)
     issues = ContestableIssueGenerator.new(standin_claim_review).contestable_issues
-    # TODO render issues as JSONAPI elements
-    # successfully render issues
-    render plain: "Found #{issues.count} Issues"
+    # TODO render issues as JSONAPI objects
+    render json: issues
   end
 end
