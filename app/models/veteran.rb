@@ -254,7 +254,7 @@ class Veteran < ApplicationRecord
       end
       return found_locally if found_locally
 
-      file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
+      file_number = bgs.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
       find_by_file_number_and_sync(file_number, sync_name: sync_name)
@@ -288,7 +288,7 @@ class Veteran < ApplicationRecord
       end
       return found_locally if found_locally
 
-      file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
+      file_number = bgs.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
       find_or_create_by_file_number(file_number, sync_name: sync_name)
