@@ -37,15 +37,6 @@ class BaseHearingUpdateForm
     created = false
 
     ActiveRecord::Base.transaction do
-      if hearing.request_type == HearingDay::REQUEST_TYPES[:central]
-        # Converting from a central hearing to a virtual hearing
-        # How to update the request type?
-        #   * Get the hearing day,
-        #   * Duplicate the hearing day
-        #   * Check if a duplicate already exists
-        #   * Update the request type
-      end
-
       # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
       virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
         new_virtual_hearing.veteran_email = virtual_hearing_attributes[:veteran_email]
