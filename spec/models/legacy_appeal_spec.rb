@@ -90,11 +90,12 @@ describe LegacyAppeal, :all_dbs do
       context "Veteran record has SSN value in file_number column" do
         before do
           veteran.update!(file_number: veteran.ssn)
+          create(:veteran, ssn: ssn, file_number: file_number, participant_id: veteran.participant_id)
         end
 
         it "returns the file_number value from BGS" do
           expect(legacy_appeal.veteran_file_number).to eq(file_number)
-          expect(legacy_appeal.veteran_file_number).to_not eq(legacy_appeal.veteran.file_number)
+          expect(legacy_appeal.veteran).to_not eq(veteran)
         end
       end
     end
