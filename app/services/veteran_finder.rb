@@ -12,15 +12,23 @@ class VeteranFinder
 
         return found_by_ssn if found_by_ssn
 
-        vets = find_or_create_by_file_number_or_ssn(file_number_or_ssn)
-        vets.find { |vet| vet.ssn.to_s == file_number_or_ssn.to_s } || vets.first
+        find_best_match_by_ssn(file_number_or_ssn)
       else
-        vets = find_or_create_by_file_number_or_ssn(file_number_or_ssn)
-        vets.find { |vet| vet.file_number.to_s == file_number_or_ssn.to_s } || vets.first
+        find_best_match_by_file_number(file_number_or_ssn)
       end
     end
 
     private
+
+    def find_best_match_by_ssn(ssn)
+      vets = find_or_create_by_file_number_or_ssn(ssn)
+      vets.find { |vet| vet.ssn.to_s == ssn.to_s } || vets.first
+    end
+
+    def find_best_match_by_file_number(file_number)
+      vets = find_or_create_by_file_number_or_ssn(file_number)
+      vets.find { |vet| vet.file_number.to_s == file_number.to_s } || vets.first
+    end
 
     def find_preferred_by_ssn(ssn)
       Veteran.where(ssn: ssn).where.not(file_number: ssn).first || Veteran.find_by(ssn: ssn)
