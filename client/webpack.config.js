@@ -96,7 +96,7 @@ const config = {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: generatedSourceMap,
+              sourceMap: generateSourceMap,
               url: false
             }
           }
