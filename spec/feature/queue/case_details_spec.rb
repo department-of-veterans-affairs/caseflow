@@ -1240,6 +1240,7 @@ RSpec.feature "Case details", :all_dbs do
 
       context "when the appeal is a legacy appeal" do
         let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+        let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
 
         # Assign a task to the current user so that a row appears on the queue page.
         let!(:task) { create(:ama_attorney_task, appeal: appeal, assigned_to: attorney_user) }

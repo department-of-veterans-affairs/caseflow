@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe Veteran, :postgres do
+describe Veteran, :all_dbs do
   let(:veteran) { Veteran.new(file_number: "44556677", first_name: "June", last_name: "Juniper") }
 
   before do
