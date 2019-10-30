@@ -218,13 +218,14 @@ class AddIssueManager extends React.Component {
   };
 
   setupUnidentifiedIssuesModal = () => {
-    const { intakeData, formType } = this.props;
+    const { intakeData, formType, featureToggles } = this.props;
 
     return {
       component: UnidentifiedIssuesModal,
       props: {
         intakeData,
         formType,
+        featureToggles,
         onCancel: () => this.cancel(),
         onSubmit: ({ currentIssue }) => {
           if (isCorrection(true, this.props.intakeData)) {
