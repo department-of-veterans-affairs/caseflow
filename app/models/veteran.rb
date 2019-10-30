@@ -323,7 +323,7 @@ class Veteran < ApplicationRecord
       return veteran unless veteran.accessible?
 
       before_create_veteran_by_file_number # Used to simulate race conditions
-      veteran.tap { |v| v.update_cached_attributes! }
+      veteran.tap(&:update_cached_attributes!)
     rescue ActiveRecord::RecordNotUnique
       find_by(file_number: file_number)
     end
