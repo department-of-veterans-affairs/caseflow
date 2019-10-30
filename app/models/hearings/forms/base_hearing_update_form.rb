@@ -46,12 +46,15 @@ class BaseHearingUpdateForm
       end
 
       if !created
+        status_changed = virtual_hearing_attributes.key?(:status)
+
         # Don't update these fields if the corresponding email address was not
         # included in the updates.
+        # TODO: Refactor the conditionals here
         emails_sent_updates = {
-          veteran_email_sent: !virtual_hearing_attributes.key?(:veteran_email),
-          judge_email_sent: !virtual_hearing_attributes.key?(:judge_email),
-          representative_email_sent: !virtual_hearing_attributes.key?(:representative_email)
+          veteran_email_sent: !(status_changed || virtual_hearing_attributes.key?(:veteran_email)),
+          judge_email_sent: !(status_changed || virtual_hearing_attributes.key?(:judge_email)),
+          representative_email_sent: !(status_changed || virtual_hearing_attributes.key?(:representative_email))
         }.reject { |_k, email_sent| email_sent == true }
 
         updates = virtual_hearing_attributes.compact.merge(emails_sent_updates)

@@ -86,7 +86,7 @@ class HearingsController < HearingsApplicationController
   ].freeze
 
   VIRTUAL_HEARING_ATTRIBUTES = [
-    :veteran_email, :judge_email, :representative_email
+    :veteran_email, :judge_email, :representative_email, :status
   ].freeze
 
   def update_params_legacy
