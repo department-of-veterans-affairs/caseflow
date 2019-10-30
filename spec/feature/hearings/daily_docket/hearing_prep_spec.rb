@@ -86,7 +86,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
       end
     end
 
-    context "A virtual hearing has been scheduled", focus: true do
+    context "A virtual hearing has been scheduled" do
       before do
         FeatureToggle.enable!(:schedule_virtual_hearings)
       end
