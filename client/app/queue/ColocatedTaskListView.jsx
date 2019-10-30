@@ -70,12 +70,10 @@ class ColocatedTaskListView extends React.PureComponent {
   }
 
   columnsFromConfig = (config, tabConfig, tasks) =>
-    tabConfig.columns.map((column) => this.createColumnObject(column, config, tasks));
+    (tabConfig.columns || []).map((column) => this.createColumnObject(column, config, tasks));
 
   taskTableTabFactory = (tabConfig, config) => {
     const tasks = this.tasksForTab(tabConfig.name);
-
-    // debugger;
 
     return {
       label: sprintf(tabConfig.label, tasks.length),
@@ -92,7 +90,7 @@ class ColocatedTaskListView extends React.PureComponent {
     };
   }
 
-  tabsFromConfig = (config) => config.tabs.map((tabConfig) => this.taskTableTabFactory(tabConfig, config));
+  tabsFromConfig = (config) => (config.tabs || []).map((tabConfig) => this.taskTableTabFactory(tabConfig, config));
 
   makeQueueComponents = (config) => <React.Fragment>
     <h1 {...fullWidth}>{config.table_title}</h1>
