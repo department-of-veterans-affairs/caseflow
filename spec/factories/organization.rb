@@ -26,6 +26,15 @@ FactoryBot.define do
           JudgeTeamLead.create!(organizations_user: org_user)
         end
       end
+
+      trait :has_two_judge_team_lead do
+        after(:create) do |judge_team|
+          2.times do
+            org_user = OrganizationsUser.add_user_to_organization(create(:user), judge_team)
+            JudgeTeamLead.create!(organizations_user: org_user)
+          end
+        end
+      end
     end
 
     factory :bva do
