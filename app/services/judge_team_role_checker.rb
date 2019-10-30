@@ -16,7 +16,7 @@ class JudgeTeamRoleChecker < DataIntegrityChecker
   # private
 
   def judge_teams_with_incorrect_number_of_leads
-    JudgeTeam.reject { |jt| jt.judge_team_roles.select { |role| role.is_a?(JudgeTeamLead) }.count == 1 }
+    JudgeTeam.all.reject { |jt| jt.judge_team_roles.select { |role| role.is_a?(JudgeTeamLead) }.count == 1 }
   end
 
   def judge_teams_with_incorrect_number_of_leads_messages
@@ -27,7 +27,7 @@ class JudgeTeamRoleChecker < DataIntegrityChecker
   end
 
   def non_admin_judge_team_leads
-    JudgeTeamLead.reject { |lead| lead.organizations_user.admin? }
+    JudgeTeamLead.all.reject { |lead| lead.organizations_user.admin? }
   end
 
   def non_admin_judge_team_leads_messages
