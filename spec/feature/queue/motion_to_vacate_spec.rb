@@ -269,7 +269,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       # Verify PostDecisionMotion is created
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
       expect(motion).to_not be_nil
-      expect(motion.disposition).to eq("partial")
+      expect(motion.disposition).to eq("partially_granted")
       expect(motion.vacated_issues.length).to eq(issues_to_select.length)
 
       # Verify new task creation

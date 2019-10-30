@@ -11,7 +11,7 @@ class PostDecisionMotion < ApplicationRecord
 
   enum disposition: {
     granted: "granted",
-    partial: "partial",
+    partially_granted: "partially_granted",
     denied: "denied",
     withdrawn: "withdrawn",
     dismissed: "dismissed"
@@ -37,8 +37,8 @@ class PostDecisionMotion < ApplicationRecord
   end
 
   def vacated_issues_present_if_partial
-    return unless partial?
+    return unless partially_granted?
 
-    errors.add(:vacated_issue_ids, "is required for partial disposition") unless vacated_issue_ids
+    errors.add(:vacated_issue_ids, "is required for partially_granted disposition") unless vacated_issue_ids
   end
 end

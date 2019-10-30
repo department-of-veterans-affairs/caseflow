@@ -24,7 +24,7 @@ class PostDecisionMotionUpdater
   def create_motion
     motion = PostDecisionMotion.new(
       task: task,
-      disposition: params[:disposition],
+      disposition: disposition,
       vacate_type: params[:vacate_type]
     )
 
@@ -110,5 +110,14 @@ class PostDecisionMotionUpdater
 
   def mtv_mail_task
     task.parent
+  end
+
+  def disposition
+    case params[:disposition]
+    when "partial"
+      "partially_granted"
+    else
+      params[:disposition]
+    end
   end
 end
