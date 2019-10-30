@@ -232,7 +232,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number_or_ssn(sanitized_vbms_id)
+    @veteran ||= VeteranFinder.find_best_match(sanitized_vbms_id)
   end
 
   def veteran_ssn
@@ -672,7 +672,7 @@ class LegacyAppeal < ApplicationRecord
         }
       )
     end
-    caseflow_file_number # prefer for now
+    caseflow_file_number
   end
 
   def pending_eps

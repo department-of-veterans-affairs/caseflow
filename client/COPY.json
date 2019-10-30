@@ -147,6 +147,7 @@
   "JUDGE_ADDRESS_MTV_HYPERLINK_LABEL": "Insert hyperlink to signed denial document",
   "JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL": "Provide context and instructions on which issues you will be granting",
   "JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL": "Assign to decisions attorney",
+  "JUDGE_ADDRESS_MTV_ISSUE_SELECTION_LABEL": "Which issues would you like to vacate?",
 
   "RETURN_TO_LIT_SUPPORT_MODAL_TITLE": "Return to Litigation Support",
   "RETURN_TO_LIT_SUPPORT_MODAL_CONTENT": "Use this action to return the Motion to Vacate task to the previous Motions Attorney in case of a missing ruling letter draft.\n\nIf the previous attorney is inactive, this will return to the Litigation Support team queue for reassignment.",
