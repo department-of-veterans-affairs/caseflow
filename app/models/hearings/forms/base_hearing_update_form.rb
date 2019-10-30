@@ -51,8 +51,6 @@ class BaseHearingUpdateForm
         new_virtual_hearing.veteran_email = virtual_hearing_attributes[:veteran_email]
         new_virtual_hearing.judge_email = virtual_hearing_attributes[:judge_email]
         new_virtual_hearing.representative_email = virtual_hearing_attributes[:representative_email]
-        virtual_hearing.judge_email = virtual_hearing_attributes[:judge_email]
-        virtual_hearing.representative_email = virtual_hearing_attributes[:representative_email]
         created = true
       end
 
