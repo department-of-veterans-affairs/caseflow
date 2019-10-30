@@ -27,10 +27,16 @@ class PostDecisionMotionUpdater
       disposition: params[:disposition],
       vacate_type: params[:vacate_type]
     )
+
+    if params.key?(:vacated_issue_ids)
+      motion.vacated_issue_ids = params[:vacated_issue_ids].map(&:to_i)
+    end
+
     unless motion.valid?
       errors.messages.merge!(motion.errors.messages)
       return
     end
+
     motion.save
   end
 
