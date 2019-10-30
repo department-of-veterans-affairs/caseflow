@@ -25,34 +25,46 @@ describe JudgeTeamRoleChecker, :postgres do
         end
       end
 
-
       context "when team has 1 JudgeTeamLead" do
-        before do
-          user = create(:user)
-          org_user = OrganizationsUser.add_user_to_organization(user, judge_team)
-          JudgeTeamLead.create!(organizations_user: org_user)
+        # 24 is insignificant, just a moderately large number. 2 because always want at least 2 non leads.
+        many_non_leads_count = rand(24) + 2
+        non_lead_member_counts = [0, 1, many_non_leads_count]
+
+        non_lead_member_counts.each do |non_lead_member_count|
+          context "when team has #{non_lead_member_count} other non-JudgeTeamLead members" do
+            before do
+              # Add JudgeTeamLead to team
+              org_user = OrganizationsUser.add_user_to_organization(create(:user), judge_team)
+              JudgeTeamLead.create!(organizations_user: org_user)
+
+              # Add non-leads to team
+              create_list(:user, non_lead_member_count) do |user|
+                OrganizationsUser.add_user_to_organization(user, judge_team)
+              end
+            end
+
+            it "should not report any records/errors" do
+              expect(subject.empty?).to eq(true)
+            end
+          end
         end
 
-        # All sub-cases should not report any records/errors
-        context "when team has no other non-JudgeTeamLead members" do
-        it "should not report any records/errors" do
-            expect(subject.empty?).to eq(true)
-          end
-        end
-        context "when team has 1 other non-JudgeTeamLead members" do
-          before do
-            user = create(:user)
-            org_user = OrganizationsUser.add_user_to_organization(user, judge_team)
-          end
-          it "should not report any records/errors" do
-            expect(subject.empty?).to eq(true)
-          end
-        end
-        context "when team has 2 other non-JudgeTeamLead members" do
-          it "should not report any records/errors" do
-            expect(subject.empty?).to eq(true)
-          end
-        end
+        # # All sub-cases should not report any records/errors
+        
+        # context "when team has 1 other non-JudgeTeamLead members" do
+        #   before do
+        #     user = create(:user)
+        #     org_user = OrganizationsUser.add_user_to_organization(user, judge_team)
+        #   end
+        #   it "should not report any records/errors" do
+        #     expect(subject.empty?).to eq(true)
+        #   end
+        # end
+        # context "when team has 2 other non-JudgeTeamLead members" do
+        #   it "should not report any records/errors" do
+        #     expect(subject.empty?).to eq(true)
+        #   end
+        # end
       end
     end
 
