@@ -178,6 +178,33 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           end
         end
       end
+
+      context "with the status param and existing virtual hearing" do
+        let(:hearing) { create(:hearing, regional_office: "RO42") }
+        let!(:virtual_hearing) do
+          create(
+            :virtual_hearing,
+            hearing: hearing,
+            veteran_email_sent: true,
+            judge_email_sent: true,
+            representative_email_sent: true
+          )
+        end
+        let(:virtual_hearing_params) do
+          {
+            status: "cancelled"
+          }
+        end
+
+        it "returns the expected status and updates the virtual hearing", :aggregate_failures do
+          expect(subject.status).to eq(200)
+          virtual_hearing.reload
+          expect(virtual_hearing.cancelled?).to eq(true)
+          expect(virtual_hearing.veteran_email_sent).to eq(false)
+          expect(virtual_hearing.judge_email_sent).to eq(false)
+          expect(virtual_hearing.representative_email_sent).to eq(false)
+        end
+      end
     end
 
     it "should return not found" do
