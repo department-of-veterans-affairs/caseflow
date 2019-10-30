@@ -46,11 +46,11 @@ class BaseHearingUpdateForm
         #   * Update the request type
       end
 
-      scope = VirtualHearing.where.not(status: :cancelled)
-
-      # TODO All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
-      virtual_hearing = scope.find_or_create_by!(hearing: hearing) do |virtual_hearing|
-        virtual_hearing.veteran_email = virtual_hearing_attributes[:veteran_email]
+      # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
+      virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
+        new_virtual_hearing.veteran_email = virtual_hearing_attributes[:veteran_email]
+        new_virtual_hearing.judge_email = virtual_hearing_attributes[:judge_email]
+        new_virtual_hearing.representative_email = virtual_hearing_attributes[:representative_email]
         virtual_hearing.judge_email = virtual_hearing_attributes[:judge_email]
         virtual_hearing.representative_email = virtual_hearing_attributes[:representative_email]
         created = true

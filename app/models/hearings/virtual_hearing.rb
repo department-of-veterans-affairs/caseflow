@@ -28,6 +28,9 @@ class VirtualHearing < ApplicationRecord
     cancelled: "cancelled"
   }
 
+  scope :not_cancelled,
+        -> { where.not(status: :cancelled) }
+
   scope :eligible_for_deletion,
         -> { where(conference_deleted: false, status: [:active, :cancelled]) }
 
