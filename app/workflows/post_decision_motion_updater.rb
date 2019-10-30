@@ -77,7 +77,12 @@ class PostDecisionMotionUpdater
   end
 
   def disposition
-    params[:disposition]
+    case params[:disposition]
+    when "partial"
+      "partially_granted"
+    else
+      params[:disposition]
+    end
   end
 
   def task_class
@@ -112,12 +117,5 @@ class PostDecisionMotionUpdater
     task.parent
   end
 
-  def disposition
-    case params[:disposition]
-    when "partial"
-      "partially_granted"
-    else
-      params[:disposition]
-    end
-  end
+  
 end
