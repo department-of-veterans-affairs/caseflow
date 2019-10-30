@@ -16,7 +16,7 @@ class BaseHearingUpdateForm
 
     if !virtual_hearing_attributes.nil?
       create_or_update_virtual_hearing
-      # TODO Start the job to create the Pexip conference here?
+      # TODO: Start the job to create the Pexip conference here?
     end
   end
 
