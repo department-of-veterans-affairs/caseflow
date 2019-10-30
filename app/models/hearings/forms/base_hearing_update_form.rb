@@ -52,8 +52,6 @@ class BaseHearingUpdateForm
       end
 
       if !created
-        status_changed = virtual_hearing_attributes.key?(:status)
-
         # The email sent flag should always be set to false from the API.
         emails_sent_updates = {
           veteran_email_sent: email_sent_flag(:veteran_email),
