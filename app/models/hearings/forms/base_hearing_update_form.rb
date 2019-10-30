@@ -13,8 +13,8 @@ class BaseHearingUpdateForm
   def update
     update_hearing
     update_advance_on_docket_motion unless advance_on_docket_motion_attributes.nil?
-    
-    if not virtual_hearing_attributes.nil?
+
+    if !virtual_hearing_attributes.nil?
       create_or_update_virtual_hearing
       # TODO Start the job to create the Pexip conference here?
     end
@@ -56,14 +56,14 @@ class BaseHearingUpdateForm
         created = true
       end
 
-      if not created
+      if !created
         # Don't update these fields if the corresponding email address was not
         # included in the updates.
         emails_sent_updates = {
           veteran_email_sent: !virtual_hearing_attributes.key?(:veteran_email),
           judge_email_sent: !virtual_hearing_attributes.key?(:judge_email),
           representative_email_sent: !virtual_hearing_attributes.key?(:representative_email)
-        }.reject { |_k, v| v == true }
+        }.reject { |_k, email_sent| email_sent == true }
 
         updates = virtual_hearing_attributes.compact.merge(emails_sent_updates)
 
