@@ -89,12 +89,6 @@ class HearingsController < HearingsApplicationController
     :veteran_email, :judge_email, :representative_email
   ].freeze
 
-  def validate_required_virtual_hearing_params(hearing_params)
-    if hearing_params.key?(:virtual_hearing_attributes)
-      hearing_params[:virtual_hearing_attributes].require([:veteran_email, :judge_email])
-    end
-  end
-
   def update_params_legacy
     params
       .require(:hearing)
@@ -105,7 +99,6 @@ class HearingsController < HearingsApplicationController
         hearing_location_attributes: HEARING_LOCATION_ATTRIBUTES,
         virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES
       )
-      .tap { |hearing_params| validate_required_virtual_hearing_params(hearing_params) }
       .merge(
         hearing: hearing, advance_on_docket_motion_attributes: advance_on_docket_motion_params
       )
@@ -123,7 +116,6 @@ class HearingsController < HearingsApplicationController
         hearing_issue_notes_attributes: HEARING_ISSUES_NOTES_ATTRIBUTES,
         virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES
       )
-      .tap { |hearing_params| validate_required_virtual_hearing_params(hearing_params) }
       .merge(
         hearing: hearing, advance_on_docket_motion_attributes: advance_on_docket_motion_params
       )
