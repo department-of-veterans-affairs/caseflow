@@ -828,7 +828,7 @@ describe EndProductEstablishment, :postgres do
             end_product_establishment.end_product_code_updates.create(code: "040SCNR", created_at: 1.hour.ago)
 
             subject
-            
+
             epcus = end_product_establishment.end_product_code_updates
             expect(epcus.count).to eq 1
             expect(epcus.first.created_at).to eq 1.hour.ago
