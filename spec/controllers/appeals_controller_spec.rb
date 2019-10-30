@@ -445,6 +445,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
   describe "GET appeals/:id" do
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
+    let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
     let(:request_params) { { appeal_id: appeal.vacols_id } }
 
     subject { get(:show, params: request_params, format: :json) }
