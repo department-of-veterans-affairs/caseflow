@@ -3207,6 +3207,14 @@
     "staff_description": "Maxilla, malunion or nonunion of",
     "status_description": "malunion or nonunion of upper jaw"
   },
+  "9917": {
+    "staff_description": "Neoplasm, hard and soft tissue, benign",
+    "status_description": "benign tissue neoplasm"
+  },
+  "9918": {
+    "staff_description": "Neoplasm, hard and soft tissue, malignant",
+    "status_description": "malignant tissue neoplasm"
+  },
   "9999": {
     "staff_description": "Other dental or oral condition",
     "status_description": "dental or oral condition"
