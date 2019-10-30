@@ -47,6 +47,28 @@ class WarmBgsCachesJob < CaseflowJob
     end
   end
 
+  def warm_veteran_file_number_caches(limit)
+    # look for Veteran records where we only have a 9 digit file_number
+    # and look for a *real* 8 digit file number.
+    bgs = BGSService.new
+    vets_with_one_record_looks_like_ssn = Veteran
+      .where("char_length(file_number) = 9")
+      .where(participant_id: Veteran.group(:participant_id).having("count(*) = 1").select(:participant_id))
+      .order(id: :asc)
+    vets_with_one_record_looks_like_ssn.limit(limit).each do |veteran|
+      cache_key = "bgs-pid-lookup-#{veteran.participant_id}"
+      file_number = Rails.cache.fetch(cache_key, expires_in: 90.days) do
+        bgs_vet = bgs.client.veteran.find_by_participant_id veteran.participant_id
+        return unless bgs_vet
+
+        bgs_vet[:file_number]
+      end
+      next unless file_number && file_number != veteran.file_number
+
+      Veteran.find_or_create_by_file_number(file_number, sync_name: true)
+    end
+  end
+
   def warm_veteran_attribute_caches
     # look for hearings for each day up to 3 weeks out and make sure
     # veteran attributes have been cached locally. This optimizes the VETText API.
