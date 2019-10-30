@@ -60,12 +60,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
     end
 
     context "when updating an existing hearing to a virtual hearing" do
-      let(:hearing) do
-        create(
-          :hearing,
-          hearing_day: create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
-        )
-      end
+      let(:hearing) { create(:hearing, regional_office: "RO42") }
       let(:virtual_hearing_params) { {} }
 
       subject do
@@ -139,7 +134,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         end
       end
 
-      context "with all params" do
+      context "with all email params" do
         let(:virtual_hearing_params) do
           {
             veteran_email: "new_veteran_email@caseflow.gov",
