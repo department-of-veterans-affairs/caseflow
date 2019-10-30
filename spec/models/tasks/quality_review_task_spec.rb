@@ -67,9 +67,9 @@ describe QualityReviewTask, :all_dbs do
     end
   end
 
-  describe "completing a child GenericTask" do
+  describe "completing a child Task" do
     let!(:generic_task_child) do
-      GenericTask.create!(appeal: qr_task.appeal, parent: qr_task, assigned_to: create(:user))
+      Task.create!(type: Task.name, appeal: qr_task.appeal, parent: qr_task, assigned_to: create(:user))
     end
     it "sets the status of the parent QualityReviewTask to assigned" do
       expect(qr_task.status).to eq(Constants.TASK_STATUSES.on_hold)
