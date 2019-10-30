@@ -8,6 +8,8 @@ class VirtualHearing < ApplicationRecord
 
   before_create :assign_created_by_user
 
+  validates :judge_email, presence: true, on: :create
+  validates :veteran_email, presence: true, on: :create
   validates_email_format_of :judge_email
   validates_email_format_of :representative_email
   validates_email_format_of :veteran_email
