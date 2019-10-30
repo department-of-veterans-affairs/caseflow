@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191023204446) do
+ActiveRecord::Schema.define(version: 20191028200741) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -854,6 +854,7 @@ ActiveRecord::Schema.define(version: 20191023204446) do
     t.bigint "task_id"
     t.datetime "updated_at", null: false
     t.string "vacate_type", comment: "Granted motion to vacate can be either Straight Vacate and Readjudication or Vacate and De Novo."
+    t.integer "vacated_issue_ids", comment: "An array of the request issue IDs that were chosen for partial vactur in this post-decision motion.", array: true
     t.index ["task_id"], name: "index_post_decision_motions_on_task_id"
   end
 
