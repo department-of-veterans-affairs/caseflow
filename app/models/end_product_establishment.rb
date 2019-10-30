@@ -483,8 +483,8 @@ class EndProductEstablishment < ApplicationRecord
 
   def save_updated_end_product_code!
     if code != result.claim_type_code
-      return if code == end_product_code_updates.last&.code
-      
+      return if result.claim_type_code == end_product_code_updates.last&.code
+
       end_product_code_updates.create(code: result.claim_type_code)
     end
   end
