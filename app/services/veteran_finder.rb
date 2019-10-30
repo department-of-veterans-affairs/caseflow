@@ -7,7 +7,7 @@ class VeteranFinder
     end
 
     def find_best_match(file_number_or_ssn)
-      if file_number_or_ssn.length == 9
+      if file_number_or_ssn.to_s.length == 9
         found_by_ssn = find_preferred_by_ssn(file_number_or_ssn)
 
         return found_by_ssn if found_by_ssn
