@@ -383,6 +383,26 @@ describe ColocatedTask, :all_dbs do
       expect(colocated_task.available_actions_unwrapper(colocated_user).count).to eq(0)
     end
 
+    context "when the legacy appeal has an SFNOD date in VACOLS" do
+      let(:colocated_user) { create(:user) }
+      before { appeal_1.notice_of_death_date = 4.days.ago }
+
+      context "when current user is not a Colocated admin" do
+        before { OrganizationsUser.add_user_to_organization(colocated_user, colocated_org) }
+        it "should not show the Death Dismissal option" do
+          expect(colocated_task.available_actions_unwrapper(colocated_user)
+            .exclude?(Constants.TASK_ACTIONS.DEATH_DISMISSAL.label))
+        end
+      end
+      context "when current user is Colocated admin" do
+        before { OrganizationsUser.make_user_admin(colocated_user, colocated_org) }
+        it "should show the Death Dismissal option" do
+          expect(colocated_task.available_actions_unwrapper(colocated_user)
+            .include?(Constants.TASK_ACTIONS.DEATH_DISMISSAL.label))
+        end
+      end
+    end
+
     context "when current user is Colocated admin but not task assignee" do
       let(:colocated_admin) { create(:user) }
       before { OrganizationsUser.make_user_admin(colocated_admin, colocated_org) }
