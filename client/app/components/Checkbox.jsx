@@ -64,6 +64,9 @@ Checkbox.propTypes = {
   onChange: PropTypes.func.isRequired,
   required: PropTypes.bool.isRequired,
   disabled: PropTypes.bool,
+  id: PropTypes.string,
+  errorMessage: PropTypes.object,
+  unpadded: PropTypes.bool,
   hideLabel: PropTypes.bool,
   value: PropTypes.bool,
   styling: PropTypes.object
