@@ -2428,7 +2428,7 @@ describe LegacyAppeal, :all_dbs do
       end
 
       context "it has no open colocated tasks" do
-        let!(:colocated_task) { }
+        let!(:colocated_task) {}
         it "returns not eligible" do
           expect(subject).to eq(false)
         end
@@ -2443,7 +2443,6 @@ describe LegacyAppeal, :all_dbs do
         expect(subject).to eq(false)
       end
     end
-
   end
 
   context "#assigned_to_location" do
