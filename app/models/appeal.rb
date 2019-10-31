@@ -678,7 +678,7 @@ class Appeal < DecisionReview
     AppealsWithNoTasksOrAllTasksOnHoldQuery.new.ama_appeal_stuck?(self)
   end
 
-  def eligible_for_death_dismissal?(user)
+  def eligible_for_death_dismissal?(_user)
     # Death dismissal processing is only for VACOLs/Legacy appeals
     false
   end
