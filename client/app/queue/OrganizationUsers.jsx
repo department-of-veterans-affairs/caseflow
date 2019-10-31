@@ -37,7 +37,7 @@ export default class OrganizationUsers extends React.PureComponent {
       this.setState({
         organizationName: response.body.organization_name,
         organizationUsers: response.body.organization_users.data,
-        remainingUsers: response.body.remaining_users.data,
+        remainingUsers: [],
         loading: false
       });
     }, (error) => {
@@ -146,6 +146,23 @@ export default class OrganizationUsers extends React.PureComponent {
     });
   }
 
+  asyncLoadUser = (inputValue) => {
+    // don't search till we have min length input
+    if (inputValue.length < 2) {
+      return Promise.reject();
+    }
+
+    return ApiUtil.get(`/users?exclude_org=${this.props.organization}&css_id=${inputValue}`).then((response) => {
+      const users = response.body.users.data;
+
+      this.setState({
+        remainingUsers: users
+      });
+
+      return { options: this.dropdownOptions() };
+    });
+  }
+
   mainContent = () => {
     const listOfUsers = this.state.organizationUsers.map((user) => {
       return <li key={user.id}>{this.formatName(user)} &nbsp;
@@ -187,7 +204,7 @@ export default class OrganizationUsers extends React.PureComponent {
         }
         value={null}
         onChange={this.addUser}
-        options={this.dropdownOptions()} />
+        async={this.asyncLoadUser} />
     </React.Fragment>;
   }
 

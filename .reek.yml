@@ -7,6 +7,7 @@ detectors:
       - BulkTaskAssignment
       - Hearing#override_full_hearing_day_validation
       - QueueConfig
+      - RatingDecision
   BooleanParameter:
     exclude:
       - HearingRepository#slot_new_hearing
@@ -14,6 +15,7 @@ detectors:
   ControlParameter:
     exclude:
       - HearingRepository#slot_new_hearing
+      - Task#actions_allowable?
       - TaskSorter#sort_requires_case_norm?
       - Veteran
   UncommunicativeVariableName:
@@ -34,6 +36,7 @@ detectors:
     exclude:
       - Api::ApplicationController#on_external_error
       - Api::ApplicationController#upstream_known_error
+      - AppealTaskHistory#build_events
       - ApplicationRecord#as_hash
       - AsyncableJobsReporter
       - ClaimReviewAsyncStatsReporter#as_csv
@@ -43,16 +46,19 @@ detectors:
       - Fakes::BGSServiceRecordMaker
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - HearingSerializerBase
+      - MonthlyMetricsReportJob#build_report
       - SyncReviewsJob
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
       - VeteranAttributeCacher
       - WarmBgsCachesJob
+      - ExternalApi::PexipService#send_pexip_request
   InstanceVariableAssumption:
     exclude:
       - Appeal
       - Task
       - CaseflowJob
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor
   IrresponsibleModule:
     enabled: false
   ManualDispatch:
@@ -70,6 +76,7 @@ detectors:
     enabled: false
   RepeatedConditional:
     exclude:
+      - HearingLocation
       - QueueConfig
       - RequestIssue
   TooManyInstanceVariables:
@@ -77,6 +84,7 @@ detectors:
       - AmaAppealDispatch
       - LegacyAppealDispatch
       - Address
+      - ExternalApi::PexipService
   TooManyMethods:
     enabled: false
   TooManyStatements:
@@ -89,7 +97,9 @@ detectors:
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
-      - OnHoldTasksTab#name
+      - OrganizationOnHoldTasksTab#name
+      - OrganizationTrackingTasksTab#column_names
+      - Fakes::PexipService
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.

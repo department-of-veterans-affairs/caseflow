@@ -39,7 +39,7 @@ class Organizations::TaskPagesController < OrganizationsController
   end
 
   def task_pager
-    TaskPager.new(
+    @task_pager ||= TaskPager.new(
       assignee: organization,
       tab_name: params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM.to_sym],
       page: params[Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM.to_sym],

@@ -20,7 +20,7 @@ class QueueConfig
     table_title = COPY::COLOCATED_QUEUE_PAGE_TABLE_TITLE
     {
       table_title: assignee_is_org? ? format(COPY::ORGANIZATION_QUEUE_TABLE_TITLE, assignee.name) : table_title,
-      active_tab: Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME,
+      active_tab: assignee.class.default_active_tab,
       tasks_per_page: TaskPager::TASKS_PER_PAGE,
       use_task_pages_api: use_task_pages_api?(user),
       tabs: tabs(user).map { |tab| attach_tasks_to_tab(tab, user) }
@@ -42,7 +42,7 @@ class QueueConfig
 
     return queue_tabs unless !use_task_pages_api?(user) && assignee_is_org?
 
-    queue_tabs.reject { |tab| tab.is_a?(::OnHoldTasksTab) }
+    queue_tabs.reject { |tab| tab.is_a?(::OrganizationOnHoldTasksTab) }
   end
 
   def attach_tasks_to_tab(tab, user)

@@ -56,15 +56,20 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   class << self
     def hearings_for_hearing_days(hearing_day_ids)
-      select_hearings.where(vdkey: hearing_day_ids).where("hearing_date > ?", Date.new(2019, 1, 1))
+      select_hearings
+        .where(vdkey: hearing_day_ids)
+        .where("hearing_date > ?", Date.new(2019, 1, 1))
+        .where.not(folder_nr: nil)
     end
 
     def hearings_for_hearing_days_assigned_to_judge(hearing_day_ids, judge)
       id = connection.quote(judge.css_id.upcase)
 
-      select_hearings.where(vdkey: hearing_day_ids)
+      select_hearings
+        .where(vdkey: hearing_day_ids)
         .where("hearing_date > ?", Date.new(2019, 1, 1))
         .where("staff.sdomainid = #{id}")
+        .where.not(folder_nr: nil)
     end
 
     def for_appeal(appeal_vacols_id)

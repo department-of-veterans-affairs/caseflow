@@ -1072,6 +1072,25 @@ class SeedDB
       :with_post_intake_tasks,
       docket_type: Constants.AMA_DOCKETS.direct_review
     )
+
+    create_tasks_at_acting_judge
+  end
+
+  def create_tasks_at_acting_judge
+    attorney = User.find_by(css_id: "BVASCASPER1")
+    judge = User.find_by(css_id: "BVAAABSHIRE")
+
+    acting_judge = FactoryBot.create(:user, css_id: "BVAACTING", station_id: 101, full_name: "AVLJ - Acting judge")
+    FactoryBot.create(:staff, :attorney_judge_role, user: acting_judge)
+
+    JudgeTeam.create_for_judge(acting_judge)
+    OrganizationsUser.add_user_to_organization(acting_judge, JudgeTeam.for_judge(judge))
+
+    create_appeal_at_judge_assignment(judge: acting_judge)
+    create_task_at_attorney_review(FactoryBot.create(:appeal), judge, acting_judge)
+    create_task_at_attorney_review(FactoryBot.create(:appeal), acting_judge, attorney)
+    create_task_at_judge_review(FactoryBot.create(:appeal), judge, acting_judge)
+    create_task_at_judge_review(FactoryBot.create(:appeal), acting_judge, attorney)
   end
 
   def create_board_grant_tasks
@@ -1223,34 +1242,72 @@ class SeedDB
     end
   end
 
-  def seed
-    clean_db
-    # Annotations and tags don't come from VACOLS, so our seeding should
-    # create them in all envs
-    create_annotations
-    create_tags
-    create_users
-    create_ama_appeals
-    create_hearing_days
-    create_veterans_ready_for_hearing
-    create_tasks
-    create_higher_level_review_tasks
+  def create_inbox_messages
+    user = User.find_by_css_id "BVAYELLOW"
 
-    setup_dispatch
-    create_previously_held_hearing_data
-    create_legacy_issues_eligible_for_opt_in
+    veteran1 = Veteran.find_or_create_by_file_number "994806951"
+    veteran2 = Veteran.find_or_create_by_file_number "520353651"
 
-    create_higher_level_reviews_and_supplemental_claims
+    appeal1 = FactoryBot.create(:appeal, veteran_file_number: veteran1.file_number)
+    appeal2 = FactoryBot.create(
+      :legacy_appeal,
+      vacols_case: FactoryBot.create(:case),
+      vbms_id: "#{veteran2.file_number}S"
+    )
 
-    create_ama_hearing_appeals
-    create_board_grant_tasks
-    create_veteran_record_request_tasks
+    message1 = <<~MSG
+      <a href="/queue/appeals/#{appeal1.uuid}">Veteran ID #{veteran1.file_number}</a> - Virtual hearing not scheduled
+      Caseflow is having trouble contacting the virtual hearing scheduler.
+      For help, submit a support ticket using <a href="https://yourit.va.gov/">YourIT</a>.
+    MSG
 
-    create_intake_users
+    message2 = <<~MSG
+      <a href="/queue/appeals/#{appeal2.vacols_id}">Veteran ID #{veteran2.file_number}</a> - Hearing time not updated
+      Caseflow is having trouble contacting the virtual hearing scheduler.
+      For help, submit a support ticket using <a href="https://yourit.va.gov/">YourIT</a>.
+    MSG
 
+    Message.create(text: message1, detail: appeal1, user: user)
+    Message.create(text: message2, detail: appeal2, user: user)
+  end
+
+  def perform_seeding_jobs
     # Active Jobs which populate tables based on seed data
     FetchHearingLocationsForVeteransJob.perform_now
     UpdateCachedAppealsAttributesJob.perform_now
+    NightlySyncsJob.perform_now
+  end
+
+  def call_and_log_seed_step(step)
+    Rails.logger.debug("Starting seed step #{step}")
+    send(step)
+    Rails.logger.debug("Finished seed step #{step}")
+  end
+
+  def seed
+    call_and_log_seed_step :clean_db
+
+    # Annotations and tags don't come from VACOLS, so our seeding should
+    # create them in all envs
+    call_and_log_seed_step :create_annotations
+    call_and_log_seed_step :create_tags
+
+    call_and_log_seed_step :create_users
+    call_and_log_seed_step :create_ama_appeals
+    call_and_log_seed_step :create_hearing_days
+    call_and_log_seed_step :create_veterans_ready_for_hearing
+    call_and_log_seed_step :create_tasks
+    call_and_log_seed_step :create_higher_level_review_tasks
+    call_and_log_seed_step :setup_dispatch
+    call_and_log_seed_step :create_previously_held_hearing_data
+    call_and_log_seed_step :create_legacy_issues_eligible_for_opt_in
+    call_and_log_seed_step :create_higher_level_reviews_and_supplemental_claims
+    call_and_log_seed_step :create_ama_hearing_appeals
+    call_and_log_seed_step :create_board_grant_tasks
+    call_and_log_seed_step :create_veteran_record_request_tasks
+    call_and_log_seed_step :create_intake_users
+    call_and_log_seed_step :create_inbox_messages
+    call_and_log_seed_step :perform_seeding_jobs
 
     return if Rails.env.development?
 

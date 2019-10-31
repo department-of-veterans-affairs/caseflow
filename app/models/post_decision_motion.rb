@@ -8,6 +8,7 @@ class PostDecisionMotion < ApplicationRecord
 
   enum disposition: {
     granted: "granted",
+    partial: "partial",
     denied: "denied",
     withdrawn: "withdrawn",
     dismissed: "dismissed"

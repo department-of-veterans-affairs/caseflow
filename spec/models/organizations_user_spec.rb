@@ -36,4 +36,12 @@ describe OrganizationsUser, :postgres do
       end
     end
   end
+
+  describe ".make_user_admin" do
+    subject { OrganizationsUser.make_user_admin(user, organization) }
+
+    it "returns an instance of OrganizationsUser" do
+      expect(subject).to be_a(OrganizationsUser)
+    end
+  end
 end

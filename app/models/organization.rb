@@ -12,6 +12,20 @@ class Organization < ApplicationRecord
 
   before_save :clean_url
 
+  class << self
+    def assignable(task)
+      select { |org| org.can_receive_task?(task) }
+    end
+
+    def find_by_name_or_url(string)
+      find_by(name: string) || find_by(url: string)
+    end
+
+    def default_active_tab
+      Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
+    end
+  end
+
   def admins
     organizations_users.includes(:user).select(&:admin?).map(&:user)
   end
@@ -34,10 +48,6 @@ class Organization < ApplicationRecord
 
   def non_admins
     organizations_users.includes(:user).non_admin.map(&:user)
-  end
-
-  def self.assignable(task)
-    select { |org| org.can_receive_task?(task) }
   end
 
   def can_receive_task?(task)
@@ -85,7 +95,7 @@ class Organization < ApplicationRecord
   end
 
   def unassigned_tasks_tab
-    ::UnassignedTasksTab.new(
+    ::OrganizationUnassignedTasksTab.new(
       assignee: self,
       show_regional_office_column: show_regional_office_in_queue?,
       show_reader_link_column: show_reader_link_column?,
@@ -94,15 +104,15 @@ class Organization < ApplicationRecord
   end
 
   def assigned_tasks_tab
-    ::AssignedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+    ::OrganizationAssignedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def on_hold_tasks_tab
-    ::OnHoldTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+    ::OrganizationOnHoldTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def completed_tasks_tab
-    ::CompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+    ::OrganizationCompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def ama_task_serializer

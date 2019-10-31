@@ -19,6 +19,7 @@ class SearchableDropdown extends React.Component {
     };
   }
 
+  // eslint-disable-next-line camelcase
   UNSAFE_componentWillReceiveProps = (nextProps) => {
     this.setState({ value: nextProps.value });
   };
@@ -66,8 +67,19 @@ class SearchableDropdown extends React.Component {
     }
   };
 
+  getSelectComponent = () => {
+    if (this.props.creatable) {
+      return Select.Creatable;
+    } else if (this.props.async) {
+      return Select.Async;
+    }
+
+    return Select;
+  };
+
   render() {
     const {
+      async,
       options,
       placeholder,
       errorMessage,
@@ -89,7 +101,7 @@ class SearchableDropdown extends React.Component {
       '& .Select-menu-outer': this.props.dropdownStyling
     });
 
-    const SelectComponent = creatable ? Select.Creatable : Select;
+    const SelectComponent = this.getSelectComponent();
     let addCreatableOptions = {};
     const dropdownClasses = classNames('cf-form-dropdown', `dropdown-${name}`);
     const labelClasses = classNames('question-label', {
@@ -154,6 +166,7 @@ class SearchableDropdown extends React.Component {
             autoComplete: 'off'
           }}
           options={options}
+          loadOptions={async}
           onChange={this.onChange}
           value={this.state.value}
           placeholder={placeholder === null ? DEFAULT_PLACEHOLDER : placeholder}
@@ -162,6 +175,7 @@ class SearchableDropdown extends React.Component {
           searchable={searchable}
           disabled={readOnly}
           multi={multi}
+          cache={false}
           onBlurResetsInput={false}
           shouldKeyDownEventCreateNewOption={this.shouldKeyDownEventCreateNewOption}
           {...addCreatableOptions}
@@ -172,26 +186,35 @@ class SearchableDropdown extends React.Component {
 }
 
 SearchableDropdown.propTypes = {
+  async: PropTypes.func,
   creatable: PropTypes.bool,
-  errorMessage: PropTypes.string,
-  label: PropTypes.string,
-  strongLabel: PropTypes.bool,
-  hideLabel: PropTypes.bool,
-  name: PropTypes.string.isRequired,
-  onChange: PropTypes.func,
-  options: PropTypes.array,
-  readOnly: PropTypes.bool,
-  required: PropTypes.bool,
-  placeholder: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object
-  ]),
   creatableOptions: PropTypes.shape({
     tagAlreadyExistsMsg: PropTypes.string,
     promptTextCreator: PropTypes.func
   }),
   dropdownStyling: PropTypes.object,
-  styling: PropTypes.object
+  errorMessage: PropTypes.string,
+  label: PropTypes.string,
+  strongLabel: PropTypes.bool,
+  hideLabel: PropTypes.bool,
+  multi: PropTypes.bool,
+  name: PropTypes.string.isRequired,
+  noResultsText: PropTypes.string,
+  onChange: PropTypes.func,
+  options: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.any,
+    label: PropTypes.string
+  })),
+  placeholder: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
+  readOnly: PropTypes.bool,
+  required: PropTypes.bool,
+  searchable: PropTypes.bool,
+  selfManageValueState: PropTypes.bool,
+  styling: PropTypes.object,
+  value: PropTypes.object
 };
 
 export default SearchableDropdown;

@@ -65,6 +65,7 @@ import OrganizationQueue from './OrganizationQueue';
 import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 import TeamManagement from './TeamManagement';
+import UserManagement from './UserManagement';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -76,6 +77,8 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import { FlashAlerts } from '../nonComp/components/Alerts';
 import AddressMotionToVacateView from './mtv/AddressMotionToVacateView';
 import ReviewMotionToVacateView from './mtv/ReviewMotionToVacateView';
+import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
+import { ReturnToLitSupportModal } from './mtv/ReturnToLitSupportModal';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -219,7 +222,34 @@ class QueueApp extends React.PureComponent {
 
   routedAddressMotionToVacate = (props) => <AddressMotionToVacateView {...props.match.params} />;
 
+  routedPulacCerulloReminder = (props) => {
+    const { appealId, taskId } = props.match.params;
+    const pulacRoute = `/queue/appeals/${appealId}/tasks/${taskId}/${TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.value}`;
+    const dispatchRoute = `/queue/appeals/${appealId}/tasks/${taskId}/dispatch_decision/dispositions`;
+
+    return (
+      <PulacCerulloReminderModal
+        {...props.match.params}
+        onCancel={() => props.history.goBack()}
+        onSubmit={({ hasCavc }) => props.history.push(hasCavc ? pulacRoute : dispatchRoute)}
+      />
+    );
+  };
+
   routedAssignToPulacCerullo = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
+
+  routedReturnToLitSupport = (props) => {
+    return (
+      <ReturnToLitSupportModal
+        {...props.match.params}
+        onCancel={() => props.history.goBack()}
+        onSubmit={({ instructions }) => {
+          // we'll flesh this out in future PR
+          return instructions;
+        }}
+      />
+    );
+  };
 
   routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
 
@@ -251,16 +281,15 @@ class QueueApp extends React.PureComponent {
 
   routedOrganization = (props) => (
     <OrganizationQueueLoadingScreen urlToLoad={`${props.location.pathname}/tasks`}>
-      <OrganizationQueue
-        {...this.props}
-        paginationOptions={querystring.parse(window.location.search.slice(1))}
-      />
+      <OrganizationQueue {...this.props} paginationOptions={querystring.parse(window.location.search.slice(1))} />
     </OrganizationQueueLoadingScreen>
   );
 
   routedOrganizationUsers = (props) => <OrganizationUsers {...props.match.params} />;
 
   routedTeamManagement = (props) => <TeamManagement {...props.match.params} />;
+
+  routedUserManagement = (props) => <UserManagement {...props.match.params} />;
 
   routedAddJudgeTeam = (props) => <AddJudgeTeamModal {...props.match.params} />;
 
@@ -525,6 +554,20 @@ class QueueApp extends React.PureComponent {
               render={this.routedAddressMotionToVacate}
             />
             <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                TASK_ACTIONS.JUDGE_CHECKOUT_PULAC_CERULLO_REMINDER.value
+              }`}
+              title="Assign to Pulac-Cerullo | Caseflow"
+              render={this.routedPulacCerulloReminder}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.JUDGE_RETURN_TO_LIT_SUPPORT.value}`}
+              title="Return to Litigation Support | Caseflow"
+              render={this.routedReturnToLitSupport}
+            />
+            <PageRoute
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                 TASK_ACTIONS.CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.value
               }`}
@@ -590,6 +633,7 @@ class QueueApp extends React.PureComponent {
             <Route path="/team_management/add_private_bar" render={this.routedAddPrivateBarModal} />
             <Route path="/team_management/lookup_participant_id" render={this.routedLookupParticipantIdModal} />
             <PageRoute path="/team_management" title="Team Management | Caseflow" render={this.routedTeamManagement} />
+            <PageRoute path="/user_management" title="User Management | Caseflow" render={this.routedUserManagement} />
           </div>
         </AppFrame>
         <Footer wideApp appName="" feedbackUrl={this.props.feedbackUrl} buildDate={this.props.buildDate} />

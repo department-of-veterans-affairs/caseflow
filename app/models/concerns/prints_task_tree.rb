@@ -23,7 +23,7 @@ module PrintsTaskTree
   def task_tree_attributes(*atts)
     return attributes_to_s(*atts) if is_a? Task
 
-    id.to_s
+    "#{id} [#{atts.join(', ')}]"
   end
 
   def attributes_to_s(*atts)

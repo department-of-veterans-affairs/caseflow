@@ -25,7 +25,7 @@ describe LegacyAppeal, :all_dbs do
 
       it "returns the task structure" do
         expect_any_instance_of(RootTask).to receive(:structure).with(:id)
-        expect(subject.key?(:"LegacyAppeal #{appeal.id}")).to be_truthy
+        expect(subject.key?(:"LegacyAppeal #{appeal.id} [id]")).to be_truthy
       end
 
       context "the appeal has more than one parentless task" do
@@ -36,10 +36,35 @@ describe LegacyAppeal, :all_dbs do
         it "returns all parentless tasks" do
           expect_any_instance_of(RootTask).to receive(:structure).with(:id)
           expect_any_instance_of(ColocatedTask).to receive(:structure).with(:id)
-          expect(subject.key?(:"LegacyAppeal #{appeal.id}")).to be_truthy
-          expect(subject[:"LegacyAppeal #{appeal.id}"].count).to eq 2
+          expect(subject.key?(:"LegacyAppeal #{appeal.id} [id]")).to be_truthy
+          expect(subject[:"LegacyAppeal #{appeal.id} [id]"].count).to eq 2
         end
       end
+    end
+  end
+
+  describe "#activated?" do
+    let(:vacols_case) { create(:case, case_status) }
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+
+    subject { legacy_appeal.activated? }
+
+    context "status is Active" do
+      let(:case_status) { :status_active }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "status is Motion" do
+      let(:case_status) { :status_motion }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "status is Complete" do
+      let(:case_status) { :status_complete }
+
+      it { is_expected.to eq(false) }
     end
   end
 
@@ -60,6 +85,18 @@ describe LegacyAppeal, :all_dbs do
         expect(legacy_appeal.sanitized_vbms_id).to eq(ssn)
         expect(legacy_appeal.veteran_file_number).to eq(legacy_appeal.veteran.file_number)
         expect(@datadog_called).to eq(true)
+      end
+
+      context "Veteran record has SSN value in file_number column" do
+        before do
+          veteran.update!(file_number: veteran.ssn)
+          create(:veteran, ssn: ssn, file_number: file_number, participant_id: veteran.participant_id)
+        end
+
+        it "returns the file_number value from BGS" do
+          expect(legacy_appeal.veteran_file_number).to eq(file_number)
+          expect(legacy_appeal.veteran).to_not eq(veteran)
+        end
       end
     end
   end

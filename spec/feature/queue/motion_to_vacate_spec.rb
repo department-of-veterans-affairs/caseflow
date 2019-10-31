@@ -4,9 +4,28 @@ require "support/vacols_database_cleaner"
 require "rails_helper"
 
 RSpec.feature "Motion to vacate", :all_dbs do
+  include QueueHelpers
+
   let!(:lit_support_team) { LitigationSupport.singleton }
   let(:receipt_date) { Time.zone.today - 20 }
-  let!(:appeal) { create(:appeal, receipt_date: receipt_date) }
+  let!(:appeal) do
+    create(:appeal,
+           receipt_date: receipt_date,
+           request_issues: build_list(
+             :request_issue, 1,
+             contested_issue_description: "Tinnitus"
+           ))
+  end
+  let!(:decision_issue) do
+    create(
+      :decision_issue,
+      decision_review: appeal,
+      request_issues: appeal.request_issues,
+      disposition: "denied",
+      description: "Decision issue description",
+      decision_text: "decision issue"
+    )
+  end
   let!(:root_task) { create(:root_task, appeal: appeal) }
   let!(:motions_attorney) { create(:user, full_name: "Motions attorney") }
   let!(:judge) { create(:user, full_name: "Judge the First", css_id: "JUDGE_1") }
@@ -112,6 +131,20 @@ RSpec.feature "Motion to vacate", :all_dbs do
         judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
         expect(judge_task).to_not be_nil
       end
+
+      it "motions attorney triggers Pulac-Cerullo" do
+        User.authenticate!(user: motions_attorney)
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label).click
+        expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_1)
+        expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_2)
+        find("button", class: "usa-button", text: "Notify").click
+
+        expect(page).to have_content(COPY::PULAC_CERULLO_SUCCESS_TITLE)
+        expect(page).to have_content(COPY::PULAC_CERULLO_SUCCESS_DETAIL.gsub("%s", appeal.veteran_full_name))
+      end
     end
   end
 
@@ -127,11 +160,15 @@ RSpec.feature "Motion to vacate", :all_dbs do
       create(:ama_judge_decision_review_task, :completed,
              assigned_to: judge, appeal: appeal, created_at: receipt_date + 3.days, parent: root_task)
     end
+    let!(:vacate_motion_mail_task) do
+      create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney, parent: root_task)
+    end
     let!(:judge_address_motion_to_vacate_task) do
-      create(:judge_address_motion_to_vacate_task, appeal: appeal, assigned_to: judge)
+      create(:judge_address_motion_to_vacate_task, appeal: appeal, assigned_to: judge, parent: vacate_motion_mail_task)
     end
     let!(:atty_option_txt) { "#{drafting_attorney.full_name} (Orig. Attorney)" }
     let!(:judge_notes) { "Here's why I made my decision..." }
+    let!(:return_to_lit_support_instructions) { "You forgot the denial draft" }
 
     before do
       create(:staff, :judge_role, sdomainid: judge.css_id)
@@ -172,6 +209,10 @@ RSpec.feature "Motion to vacate", :all_dbs do
       )
       new_task = StraightVacateAndReadjudicationTask.find_by(assigned_to: drafting_attorney)
       expect(new_task).to_not be_nil
+      expect(new_task.label).to eq COPY::STRAIGHT_VACATE_AND_READJUDICATION_TASK_LABEL
+      expect(new_task.available_actions(motions_attorney)).to include(
+        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
+      )
       expect(new_task.instructions.join("")).to eq(instructions)
     end
 
@@ -202,6 +243,46 @@ RSpec.feature "Motion to vacate", :all_dbs do
       )
       new_task = VacateAndDeNovoTask.find_by(assigned_to: drafting_attorney)
       expect(new_task).to_not be_nil
+      expect(new_task.label).to eq COPY::VACATE_AND_DE_NOVO_TASK_LABEL
+      expect(new_task.available_actions(motions_attorney)).to include(
+        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
+      )
+      expect(new_task.instructions.join("")).to eq(instructions)
+    end
+
+    it "judge grants partial vacatur (straight vacate)" do
+      address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
+      find("label[for=disposition_partial]").click
+      find("label[for=vacate-type_straight_vacate_and_readjudication]").click
+      fill_in("instructions", with: judge_notes)
+
+      # Ensure it has pre-selected attorney previously assigned to case
+      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
+
+      select_issue_for_vacature(1)
+
+      click_button(text: "Submit")
+
+      # Return back to user's queue
+      expect(page).to have_current_path("/queue")
+
+      # Verify PostDecisionMotion is created
+      motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
+      expect(motion).to_not be_nil
+      expect(motion.disposition).to eq("partial")
+
+      # Verify new task creation
+      instructions = format_judge_instructions(
+        notes: judge_notes,
+        disposition: "partial",
+        vacate_type: "straight_vacate_and_readjudication"
+      )
+      new_task = StraightVacateAndReadjudicationTask.find_by(assigned_to: drafting_attorney)
+      expect(new_task).to_not be_nil
+      expect(new_task.label).to eq COPY::STRAIGHT_VACATE_AND_READJUDICATION_TASK_LABEL
+      expect(new_task.available_actions(motions_attorney)).to include(
+        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
+      )
       expect(new_task.instructions.join("")).to eq(instructions)
     end
 
@@ -211,8 +292,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
       fill_in("instructions", with: judge_notes)
       fill_in("hyperlink", with: hyperlink)
 
-      # Ensure it has pre-selected attorney previously assigned to case
-      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
+      # Ensure we don't show attorney selection for this disposition
+      expect(page).not_to have_selector("input#attorney")
 
       click_button(text: "Submit")
 
@@ -223,6 +304,37 @@ RSpec.feature "Motion to vacate", :all_dbs do
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
       expect(motion).to_not be_nil
       expect(motion.disposition).to eq("denied")
+
+      # Verify new task creation
+      instructions = format_judge_instructions(
+        notes: judge_notes,
+        disposition: "denied",
+        hyperlink: hyperlink
+      )
+      new_task = DeniedMotionToVacateTask.find_by(assigned_to: motions_attorney)
+      expect(new_task).to_not be_nil
+      expect(new_task.label).to eq COPY::DENIED_MOTION_TO_VACATE_TASK_LABEL
+      expect(new_task.available_actions(motions_attorney)).to include(
+        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
+      )
+      expect(new_task.instructions.join("")).to eq(instructions)
+    end
+
+    it "judge returns to lit support due to missing denial draft" do
+      address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
+      find("label[for=disposition_denied]").click
+
+      find("a", text: "return to the motions attorney").click
+
+      expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_MODAL_TITLE)
+      fill_in("instructions", with: return_to_lit_support_instructions)
+
+      click_button(text: "Submit")
+
+      # Fill in additional test logic once submit handler is complete
+
+      # Return back to user's queue
+      # expect(page).to have_current_path("/queue")
     end
 
     it "judge dismisses motion to vacate" do
@@ -231,8 +343,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
       fill_in("instructions", with: judge_notes)
       fill_in("hyperlink", with: hyperlink)
 
-      # Ensure it has pre-selected attorney previously assigned to case
-      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
+      # Ensure we don't show attorney selection for this disposition
+      expect(page).not_to have_selector("input#attorney")
 
       click_button(text: "Submit")
 
@@ -243,12 +355,96 @@ RSpec.feature "Motion to vacate", :all_dbs do
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
       expect(motion).to_not be_nil
       expect(motion.disposition).to eq("dismissed")
+
+      # Verify new task creation
+      instructions = format_judge_instructions(
+        notes: judge_notes,
+        disposition: "dismissed",
+        hyperlink: hyperlink
+      )
+      new_task = DismissedMotionToVacateTask.find_by(assigned_to: motions_attorney)
+      expect(new_task).to_not be_nil
+      expect(new_task.label).to eq COPY::DISMISSED_MOTION_TO_VACATE_TASK_LABEL
+      expect(new_task.available_actions(motions_attorney)).to include(
+        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
+      )
+      expect(new_task.instructions.join("")).to eq(instructions)
+    end
+  end
+
+  describe "JudgeSignMotionToVacateTask" do
+    let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
+    let!(:drafting_attorney) { create(:user, full_name: "Drafty McDrafter") }
+
+    let!(:orig_atty_task) do
+      create(:ama_attorney_task, :completed,
+             assigned_to: drafting_attorney, appeal: appeal, created_at: receipt_date + 1.day, parent: root_task)
+    end
+    let!(:judge_review_task) do
+      create(:ama_judge_decision_review_task, :completed,
+             assigned_to: judge, appeal: appeal, created_at: receipt_date + 3.days, parent: root_task)
+    end
+    let!(:vacate_motion_mail_task) do
+      create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney, parent: root_task)
+    end
+    let!(:judge_address_motion_to_vacate_task) do
+      create(:judge_address_motion_to_vacate_task, appeal: appeal, assigned_to: judge, parent: vacate_motion_mail_task)
+    end
+    let!(:abstract_motion_to_vacate_task) do
+      create(:abstract_motion_to_vacate_task, appeal: appeal, parent: vacate_motion_mail_task)
+    end
+    let!(:judge_sign_motion_to_vacate_task) do
+      create(
+        :judge_sign_motion_to_vacate_task,
+        appeal: appeal,
+        assigned_to: judge,
+        parent: abstract_motion_to_vacate_task
+      )
+    end
+
+    before do
+      create(:staff, :judge_role, sdomainid: judge.css_id)
+      OrganizationsUser.add_user_to_organization(motions_attorney, lit_support_team)
+      OrganizationsUser.add_user_to_organization(drafting_attorney, judge_team)
+      ["John Doe", "Jane Doe"].map do |name|
+        OrganizationsUser.add_user_to_organization(create(:user, full_name: name), judge_team)
+      end
+      FeatureToggle.enable!(:review_motion_to_vacate)
+
+      vacate_motion_mail_task.update(status: Constants.TASK_STATUSES.completed)
+      judge_address_motion_to_vacate_task.update(status: Constants.TASK_STATUSES.completed)
+    end
+
+    after { FeatureToggle.disable!(:review_motion_to_vacate) }
+
+    context "triggers PulacCerulloReminderModal" do
+      it "judge sends to dispatch" do
+        judge_send_to_dispatch(user: judge, appeal: appeal)
+
+        find("label[for=hasCavc_no]").click
+        click_button(text: "Submit")
+
+        expect(page).to have_content("Add decisions")
+      end
+
+      it "judge sends to Lit Support for Pulac Cerullo" do
+        judge_send_to_dispatch(user: judge, appeal: appeal)
+
+        find("label[for=hasCavc_yes]").click
+        click_button(text: "Submit")
+
+        expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_TITLE)
+      end
     end
   end
 
   def send_to_judge(user:, appeal:, motions_attorney_task:)
     User.authenticate!(user: user)
     visit "/queue/appeals/#{appeal.uuid}"
+
+    check_cavc_alert
+    verify_cavc_conflict_action
+
     find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
     find("div", class: "Select-option", text: "Send to judge").click
     expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{motions_attorney_task.id}/send_to_judge")
@@ -257,34 +453,41 @@ RSpec.feature "Motion to vacate", :all_dbs do
   def address_motion_to_vacate(user:, appeal:, judge_task:)
     User.authenticate!(user: user)
     visit "/queue/appeals/#{appeal.uuid}"
+
+    check_cavc_alert
+    verify_cavc_conflict_action
+
     find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
     find("div", class: "Select-option", text: "Address Motion to Vacate").click
     expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{judge_task.id}/address_motion_to_vacate")
   end
-end
 
-def format_judge_instructions(notes:, disposition:, vacate_type:, hyperlink: nil)
-  binding.pry
-  parts = ["I am proceeding with a #{disposition_text[disposition.to_sym]}."]
+  def judge_send_to_dispatch(user:, appeal:)
+    User.authenticate!(user: user)
+    visit "/queue/appeals/#{appeal.uuid}"
 
-  parts += case disposition
-           when "granted"
-             ["This will be a #{vacate_types[vacate_type.to_sym]}", notes]
-           else
-             [notes, "\nHere is the hyperlink to the signed denial document", hyperlink]
-           end
+    check_cavc_alert
+    verify_cavc_conflict_action
 
-  parts.join("\n")
-end
+    find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    find("div", class: "Select-option", text: "Ready for Dispatch").click
+  end
 
-def mtv_const
-  Constants.MOTION_TO_VACATE
-end
+  def check_cavc_alert
+    expect(page).to have_css(".usa-alert-warning")
+    alert = find(".usa-alert-warning")
+    expect(alert).to have_content("Check CAVC for conflict of jurisdiction")
+  end
 
-def disposition_text
-  mtv_const.DISPOSITION_TEXT.to_h
-end
+  def verify_cavc_conflict_action
+    # Open dropdown
+    action_dropdown = find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    expect(page).to have_content(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label)
+    # Close dropdown
+    action_dropdown.click
+  end
 
-def vacate_types
-  mtv_const.VACATE_TYPE_OPTIONS.map { |opt| [opt["value"].to_sym, opt["displayText"]] }.to_h
+  def select_issue_for_vacature(issue_id)
+    find(".checkbox-wrapper-issues").find("label[for=\"#{issue_id}\"]").click
+  end
 end

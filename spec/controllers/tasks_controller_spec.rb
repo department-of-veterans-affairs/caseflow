@@ -152,6 +152,14 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(response.status).to eq 200
       end
 
+      it "should return queue config" do
+        get :index, params: { user_id: user.id, role: "unknown" }
+        expect(response.status).to eq 200
+        queue_config = JSON.parse(response.body)["queue_config"]
+
+        expect(queue_config.keys).to match_array(%w[table_title active_tab tasks_per_page use_task_pages_api tabs])
+      end
+
       context "and theres a task to return" do
         let!(:vacols_case) do
           create(
@@ -318,7 +326,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         let(:params) do
           [{
             "external_id": appeal.external_id,
-            "type": GenericTask.name,
+            "type": Task.name,
             "assigned_to_id": user.id,
             "parent_id": root_task.id
           }]

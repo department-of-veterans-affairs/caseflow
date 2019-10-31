@@ -12,9 +12,7 @@ class Generators::Document
         received_at: 3.days.ago,
         upload_date: 2.days.ago,
         type: ["Form 8", "Form 9", "NOD", "SOC", "SSOC"].sample,
-        file_number: Random.rand(999_999_999).to_s,
-        created_at: rand(3).days.ago,
-        updated_at: rand(3).days.ago
+        file_number: Random.rand(999_999_999).to_s
       }
     end
 

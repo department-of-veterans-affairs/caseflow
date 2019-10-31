@@ -40,11 +40,15 @@ describe RequestIssuesUpdate, :all_dbs do
     [
       Generators::Contention.build(
         claim_id: rating_end_product_establishment.reference_id,
-        text: "Service connection for PTSD was granted at 10 percent"
+        text: "Service connection for PTSD was granted at 10 percent",
+        start_date: Time.zone.now,
+        submit_date: 8.days.ago
       ),
       Generators::Contention.build(
         claim_id: rating_end_product_establishment.reference_id,
-        text: "Service connection for left knee immobility was denied"
+        text: "Service connection for left knee immobility was denied",
+        start_date: Time.zone.now,
+        submit_date: 8.days.ago
       )
     ]
   end
@@ -271,9 +275,10 @@ describe RequestIssuesUpdate, :all_dbs do
           expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
             hash_including(
               veteran_file_number: review.veteran_file_number,
-              contentions: [{
-                description: "Service connection for cancer was denied"
-              }]
+              contentions: array_including(
+                description: "Service connection for cancer was denied",
+                contention_type: Constants.CONTENTION_TYPES.higher_level_review
+              )
             )
           )
 
@@ -323,9 +328,12 @@ describe RequestIssuesUpdate, :all_dbs do
             expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
               hash_including(
                 veteran_file_number: review.veteran_file_number,
-                contentions: [{
-                  description: request_issue_to_correct.description
-                }]
+                contentions: array_including(
+                  hash_including(
+                    description: request_issue_to_correct.description,
+                    contention_type: Constants.CONTENTION_TYPES.higher_level_review
+                  )
+                )
               )
             )
             ep = EndProductEstablishment.find_by(code: "930AMAHRC", source: review)
@@ -720,7 +728,9 @@ describe RequestIssuesUpdate, :all_dbs do
       Generators::Contention.build(
         claim_id: edited_issue.end_product_establishment.reference_id,
         text: "old request issue description",
-        id: "3"
+        id: "3",
+        start_date: Time.zone.now,
+        submit_date: 5.days.ago
       )
     end
 

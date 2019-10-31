@@ -316,13 +316,14 @@ RSpec.feature "Task queue", :all_dbs do
       visit "/queue/appeals/#{appeal.uuid}"
 
       click_dropdown(text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label)
-      click_button(text: "Submit")
+      click_button(text: "Notify")
 
       mail_task = root_task.reload.children[0]
       expect(mail_task.class).to eq(task_class)
       expect(mail_task.assigned_to).to eq(MailTeam.singleton)
       expect(mail_task.children.length).to eq(1)
       sleep 1
+
       child_task = mail_task.children[0]
 
       pulac_cerullo_task = child_task.children[0]
@@ -439,8 +440,8 @@ RSpec.feature "Task queue", :all_dbs do
     before do
       OrganizationsUser.add_user_to_organization(organization_user, organization)
       User.authenticate!(user: organization_user)
-      create_list(:generic_task, unassigned_count, :in_progress, assigned_to: organization)
-      create_list(:generic_task, assigned_count, :on_hold, assigned_to: organization)
+      create_list(:privacy_act_task, unassigned_count, :in_progress, assigned_to: organization)
+      create_list(:privacy_act_task, assigned_count, :on_hold, assigned_to: organization)
     end
 
     context "when not using pagination" do
@@ -517,7 +518,7 @@ RSpec.feature "Task queue", :all_dbs do
 
         it "shows the correct filters" do
           page.find_all("path.unselected-filter-icon-inner").first.click
-          expect(page).to have_content("#{GenericTask.label.humanize} (#{unassigned_count / 2})")
+          expect(page).to have_content("#{PrivacyActTask.label.humanize} (#{unassigned_count / 2})")
           expect(page).to have_content("#{TranslationTask.label.humanize} (#{translation_task_count})")
         end
 
@@ -582,7 +583,7 @@ RSpec.feature "Task queue", :all_dbs do
               expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
             end
             (foia_task_count + 1..unassigned_count).each do |index|
-              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(GenericTask.label)
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(PrivacyActTask.label)
             end
           end
         end
@@ -596,7 +597,7 @@ RSpec.feature "Task queue", :all_dbs do
 
           it "sorts the correct column descending" do
             (1..foia_task_count).each do |index|
-              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(GenericTask.label)
+              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(PrivacyActTask.label)
             end
             (foia_task_count + 1..unassigned_count).each do |index|
               expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
@@ -640,29 +641,127 @@ RSpec.feature "Task queue", :all_dbs do
             (1..foia_task_count).each do |index|
               expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
             end
+            expect(page).to have_content("Viewing 1-#{foia_task_count} of #{foia_task_count} total")
             expect(find("tbody").find_all("tr").length).to eq(foia_task_count)
-            expect(find("tbody")).not_to have_content(GenericTask.label)
+            expect(find("tbody")).not_to have_content(PrivacyActTask.label)
           end
         end
       end
 
+      let(:default_tab_query_string) do
+        "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"
+      end
+      let(:default_page_query_string) do
+        "#{Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM}=1"
+      end
+      let(:default_query_string) do
+        "#{default_tab_query_string}&#{default_page_query_string}"
+      end
+
+      context "when visiting the org queue" do
+        it "updates the url" do
+          visit(organization.path)
+          expect(page.find(".cf-tab.cf-active")).to have_content(
+            format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_count)
+          )
+          expect(URI.parse(current_url).query).to eq "#{default_tab_query_string}&#{default_page_query_string}"
+        end
+      end
+
+      context "when changing tabs" do
+        let(:query_string) do
+          "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME}"
+        end
+
+        it "switches to the corrct tab and updates the url" do
+          visit(organization.path)
+          click_on format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count / 2)
+          expect(page.find(".cf-tab.cf-active")).to have_content(
+            format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count / 2)
+          )
+          expect(URI.parse(current_url).query).to eq "#{query_string}&#{default_page_query_string}"
+        end
+      end
+
+      context "sorting by column" do
+        let(:query_string_desc) do
+          "#{Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}"\
+          "&#{Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC}"
+        end
+        let(:query_string_asc) do
+          "#{Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}"\
+          "&#{Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC}"
+        end
+
+        it "sorts the correct column and updates the url" do
+          visit(organization.path)
+          page.find_all("svg.table-icon")[1].click
+          (1..foia_task_count).each do |index|
+            expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(PrivacyActTask.label)
+          end
+          (foia_task_count + 1..unassigned_count).each do |index|
+            expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
+          end
+          expect(URI.parse(current_url).query).to eq "#{default_query_string}&#{query_string_desc}"
+          page.find_all("svg.table-icon")[1].click
+          (1..foia_task_count).each do |index|
+            expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
+          end
+          (foia_task_count + 1..unassigned_count).each do |index|
+            expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(PrivacyActTask.label)
+          end
+          expect(URI.parse(current_url).query).to eq "#{default_query_string}&#{query_string_asc}"
+        end
+      end
+
+      context "navigating to another page" do
+        let(:unassigned_count) { 20 }
+        let(:default_cases_for_page) { 15 }
+        let(:page_no) { 2 }
+
+        let(:query_string) do
+          "#{Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM}=#{page_no}"
+        end
+
+        it "shows the correct tasks and updates the url" do
+          visit(organization.path)
+          page.find_all("button", text: "Next").first.click
+          expect(page).to have_content(
+            "Viewing #{default_cases_for_page + 1}-#{unassigned_count} of #{unassigned_count} total"
+          )
+          page.find_all(".cf-current-page").each { |btn| expect(btn).to have_content(page_no) }
+          expect(find("tbody").find_all("tr").length).to eq(unassigned_count - default_cases_for_page)
+          expect(URI.parse(current_url).query).to eq "#{default_tab_query_string}&#{query_string}"
+        end
+      end
+
       context "when filtering tasks" do
+        let(:query_string) do
+          {
+            Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM =>
+            ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{FoiaTask.name}"]
+          }.to_query
+        end
+
         it "shows the correct filters" do
           visit(organization.path)
           expect(page).to have_content(
             format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
           )
           page.find_all("path.unselected-filter-icon-inner").first.click
-          expect(page).to have_content("#{GenericTask.label} (#{unassigned_count / 2})")
+          expect(page).to have_content("#{Task.label} (#{unassigned_count / 2})")
           expect(page).to have_content("#{FoiaTask.label} (#{foia_task_count})")
         end
 
-        it "filters tasks correctly" do
+        it "filters tasks correctly and updates the url" do
           visit(organization.path)
           expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
           page.find_all("path.unselected-filter-icon-inner").first.click
           page.find("label", text: "#{FoiaTask.label} (#{foia_task_count})").click
           expect(find("tbody").find_all("tr").length).to eq(foia_task_count)
+          expect(URI.parse(current_url).query).to eq "#{default_query_string}&#{query_string}"
+          click_on "Clear all filters"
+          expect(URI.parse(current_url).query).to eq default_query_string
         end
       end
     end
@@ -1035,7 +1134,7 @@ RSpec.feature "Task queue", :all_dbs do
     end
   end
 
-  describe "GenericTask" do
+  describe "Task" do
     context "when it is assigned to the current user" do
       let(:user) { create(:user) }
       let(:root_task) { create(:root_task) }

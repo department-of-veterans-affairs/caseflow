@@ -91,7 +91,7 @@ RSpec.feature "Case details", :all_dbs do
           .click_link
 
         expect(page).to have_content("Select an action")
-
+        expect(page).to have_content(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
         expect(page).to have_content("Type: #{hearing.readable_request_type}")
         expect(page).to have_content("Date: #{hearing.scheduled_for.strftime('%-m/%-d/%y')}")
         expect(page).to have_content("Judge: #{hearing.user.full_name}")
@@ -922,7 +922,7 @@ RSpec.feature "Case details", :all_dbs do
              appeal: appeal,
              assigned_by: judge_user,
              assigned_to: attorney_user,
-             type: GenericTask,
+             type: Task,
              parent_id: root_task.id,
              started_at: rand(1..10).days.ago,
              instructions: [instructions_text])
@@ -991,7 +991,7 @@ RSpec.feature "Case details", :all_dbs do
       end
       let!(:legacy_task) do
         create(:task, :in_progress, appeal: legacy_appeal,
-                                    assigned_by: judge_user, assigned_to: attorney_user, type: GenericTask,
+                                    assigned_by: judge_user, assigned_to: attorney_user, type: Task,
                                     parent_id: root_task.id, started_at: rand(1..10).days.ago)
       end
 
@@ -1240,6 +1240,7 @@ RSpec.feature "Case details", :all_dbs do
 
       context "when the appeal is a legacy appeal" do
         let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+        let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
 
         # Assign a task to the current user so that a row appears on the queue page.
         let!(:task) { create(:ama_attorney_task, appeal: appeal, assigned_to: attorney_user) }

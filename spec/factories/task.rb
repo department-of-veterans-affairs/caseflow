@@ -94,8 +94,8 @@ FactoryBot.define do
       end
     end
 
-    factory :generic_task, class: GenericTask do
-      type { GenericTask.name }
+    factory :generic_task, class: Task do
+      type { Task.name }
       appeal { create(:appeal) }
     end
 
@@ -412,6 +412,12 @@ FactoryBot.define do
       end
     end
 
+    factory :ama_attorney_rewrite_task, class: AttorneyRewriteTask do
+      type { AttorneyRewriteTask.name }
+      appeal { create(:appeal) }
+      parent { create(:ama_judge_decision_review_task) }
+    end
+
     factory :ama_judge_dispatch_return_to_attorney_task, class: AttorneyDispatchReturnTask do
       type { AttorneyDispatchReturnTask.name }
       appeal { create(:appeal) }
@@ -425,8 +431,8 @@ FactoryBot.define do
       assigned_to { TranscriptionTeam.singleton }
     end
 
-    factory :ama_vso_task, class: GenericTask do
-      type { GenericTask.name }
+    factory :ama_vso_task, class: Task do
+      type { Task.name }
       appeal { create(:appeal) }
       parent { create(:root_task) }
     end
@@ -527,6 +533,18 @@ FactoryBot.define do
       type { JudgeAddressMotionToVacateTask.name }
       appeal
       association :parent, factory: :vacate_motion_mail_task
+    end
+
+    factory :abstract_motion_to_vacate_task, class: AbstractMotionToVacateTask do
+      type { AbstractMotionToVacateTask.name }
+      appeal
+      association :parent, factory: :vacate_motion_mail_task
+    end
+
+    factory :judge_sign_motion_to_vacate_task, class: JudgeSignMotionToVacateTask do
+      type { JudgeSignMotionToVacateTask.name }
+      appeal
+      association :parent, factory: :abstract_motion_to_vacate_task
     end
   end
 end

@@ -101,13 +101,19 @@ describe BvaDispatchTask, :all_dbs do
           p
         end
 
-        it "should not complete the BvaDispatchTask and the task assigned to the BvaDispatch org" do
+        before { create(:root_task, appeal: legacy_appeal) }
+
+        it "should not complete the BvaDispatchTask but should close the root task" do
           allow(ProcessDecisionDocumentJob).to receive(:perform_later)
 
           BvaDispatchTask.outcode(legacy_appeal, params_legacy, user)
 
           tasks = BvaDispatchTask.where(appeal: legacy_appeal, assigned_to: user)
           expect(tasks.length).to eq(0)
+
+          root_tasks = RootTask.where(appeal: legacy_appeal)
+          expect(root_tasks.length).to eq(1)
+          expect(root_tasks.first.status).to eq("completed")
 
           decision_document = DecisionDocument.find_by(appeal_id: legacy_appeal.id)
 
@@ -137,6 +143,54 @@ describe BvaDispatchTask, :all_dbs do
             DecisionDocument::PROCESS_DELAY_VBMS_OFFSET_HOURS.hours -
             DecisionDocument.processing_retry_interval_hours.hours + 1.minute
           )
+        end
+      end
+    end
+
+    context "when multiple BvaDispatchTask exist for user and appeal combination" do
+      let!(:old_task) do
+        task = BvaDispatchTask.create_from_root_task(root_task)
+        task.children.first.update!(status: Constants.TASK_STATUSES.completed)
+        task
+      end
+      let!(:new_task) { BvaDispatchTask.create_from_root_task(root_task) }
+
+      it "should throw an error" do
+        expect { BvaDispatchTask.outcode(root_task.appeal.reload, params, user) }.to(raise_error) do |e|
+          expect(e.class).to eq(Caseflow::Error::BvaDispatchTaskCountMismatch)
+          expect(e.tasks.count).to eq(2)
+          expect(e.user_id).to eq(user.id)
+          expect(e.appeal_id).to eq(root_task.appeal.id)
+        end
+      end
+
+      context "but one was cancelled" do
+        before do
+          old_task.children.first.update!(status: Constants.TASK_STATUSES.cancelled)
+        end
+
+        it "should not throw an error" do
+          allow(ProcessDecisionDocumentJob).to receive(:perform_later)
+
+          BvaDispatchTask.outcode(root_task.appeal.reload, params, user)
+
+          tasks = BvaDispatchTask.not_cancelled.where(appeal: root_task.appeal, assigned_to: user)
+          expect(tasks.length).to eq(1)
+          task = tasks[0]
+          expect(task.status).to eq("completed")
+          expect(task.parent.status).to eq("completed")
+          expect(task.root_task.status).to eq("completed")
+          expect(request_issue.reload.closed_at).to eq(Time.zone.now)
+          expect(request_issue.closed_status).to eq("decided")
+
+          decision_document = DecisionDocument.find_by(appeal_id: root_task.appeal.id)
+
+          expect(ProcessDecisionDocumentJob).to have_received(:perform_later)
+            .with(decision_document.id).exactly(:once)
+          expect(decision_document).to_not eq nil
+          expect(decision_document.document_type).to eq "BVA Decision"
+          expect(decision_document.source).to eq "BVA"
+          expect(decision_document.submitted_at).to eq(Time.zone.now)
         end
       end
     end
