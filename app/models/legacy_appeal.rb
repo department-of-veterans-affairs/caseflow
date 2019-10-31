@@ -767,9 +767,8 @@ class LegacyAppeal < ApplicationRecord
   def eligible_for_death_dismissal?(user)
     return false if notice_of_death_date.nil?
 
-    user_has_actionable_open_tasks = tasks.open.where(type: ColocatedTask.subclasses.map(&:name)).any?
-
-    user_has_actionable_open_tasks && Colocated.singleton.user_is_admin?(user)
+    user_has_relevent_open_tasks = tasks.open.where(type: ColocatedTask.subclasses.map(&:name)).any?
+    user_has_relevent_open_tasks && Colocated.singleton.user_is_admin?(user)
   end
 
   private
