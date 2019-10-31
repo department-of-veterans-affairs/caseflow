@@ -305,8 +305,8 @@ class Fakes::BGSService
   end
 
   def build_ratings_in_range(all_ratings, start_date, end_date)
-    ratings = all_ratings.select do |r|
-      start_date <= r[:prmlgn_dt] && end_date >= r[:prmlgn_dt]
+    ratings = all_ratings.select do |rating|
+      start_date <= rating[:prmlgn_dt] && end_date >= rating[:prmlgn_dt]
     end
 
     # BGS returns the data not as an array if there is only one rating
@@ -316,7 +316,7 @@ class Fakes::BGSService
   end
 
   def fetch_rating_profile(participant_id:, profile_date:)
-    normed_date_key = self.class.rating_store.normed_profile_date_key(profile_date).to_sym
+    normed_date_key = Fakes::RatingStore.normed_profile_date_key(profile_date).to_sym
     rating_profile = (get_rating_record(participant_id)[:profiles] || {})[normed_date_key]
 
     # Simulate the error bgs throws if rating profile doesn't exist

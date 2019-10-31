@@ -5,6 +5,10 @@ class Fakes::RatingStore < Fakes::PersistentStore
     def redis_ns
       "ratings_#{Rails.env}"
     end
+
+    def normed_profile_date_key(profile_date)
+      (profile_date.try(:to_datetime) ? profile_date.to_datetime.utc : profile_date).iso8601
+    end
   end
 
   def init_store(participant_id)
@@ -21,14 +25,10 @@ class Fakes::RatingStore < Fakes::PersistentStore
     deflate_and_store(participant_id, ratings)
   end
 
-  def normed_profile_date_key(profile_date)
-    (profile_date.try(:to_datetime) ? profile_date.to_datetime.utc : profile_date).iso8601
-  end
-
   def store_rating_profile_record(participant_id, profile_date, record)
     ratings = fetch_and_inflate(participant_id) || {}
     ratings[:profiles] ||= {}
-    ratings[:profiles][normed_profile_date_key(profile_date)] = record
+    ratings[:profiles][self.class.normed_profile_date_key(profile_date)] = record
     deflate_and_store(participant_id, ratings)
   end
 end

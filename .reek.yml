@@ -14,6 +14,7 @@ detectors:
       - Veteran
   ControlParameter:
     exclude:
+      - Fakes::BGSService
       - HearingRepository#slot_new_hearing
       - Task#actions_allowable?
       - TaskSorter#sort_requires_case_norm?
@@ -43,6 +44,7 @@ detectors:
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
       - Fakes::EndProductStore
+      - Fakes::BGSService#get_participant_id_for_user
       - Fakes::BGSServiceRecordMaker
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - HearingSerializerBase
@@ -99,6 +101,7 @@ detectors:
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
       - OrganizationOnHoldTasksTab#name
       - OrganizationTrackingTasksTab#column_names
+      - Fakes::BGSService
       - Fakes::PexipService
 
 ### Directory specific configuration
