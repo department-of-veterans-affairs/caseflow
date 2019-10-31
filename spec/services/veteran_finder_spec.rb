@@ -70,4 +70,19 @@ describe VeteranFinder, :postgres do
       end
     end
   end
+
+  describe "#find_best_match" do
+    context "2 Veteran records with same SSN and participant id" do
+      let(:ssn) { "123456789" }
+      let(:participant_id) { "999000" }
+      let!(:veteran1) { create(:veteran, ssn: ssn, file_number: ssn, participant_id: participant_id) }
+      let!(:veteran2) { create(:veteran, ssn: ssn, file_number: "1234", participant_id: participant_id) }
+
+      subject { described_class.find_best_match(ssn) }
+
+      it "prefers the record with SSN != file number" do
+        expect(subject).to eq(veteran2)
+      end
+    end
+  end
 end
