@@ -3,7 +3,7 @@
 class BaseHearingUpdateForm
   include ActiveModel::Model
 
-  attr_accessor :advance_on_docket_motion_attributes, :bva_poc, :disposition,
+  attr_accessor :bva_poc, :disposition,
                 :hearing, :hearing_location_attributes, :hold_open,
                 :judge_id, :military_service, :notes, :prepped,
                 :representative_name, :room, :scheduled_time_string,
@@ -12,7 +12,6 @@ class BaseHearingUpdateForm
 
   def update
     update_hearing
-    update_advance_on_docket_motion unless advance_on_docket_motion_attributes.nil?
 
     if !virtual_hearing_attributes.nil?
       create_or_update_virtual_hearing
@@ -25,13 +24,6 @@ class BaseHearingUpdateForm
   def update_hearing; end
 
   private
-
-  def update_advance_on_docket_motion
-    motion = hearing.advance_on_docket_motion || AdvanceOnDocketMotion.find_or_create_by!(
-      person_id: advance_on_docket_motion_attributes[:person_id]
-    )
-    motion.update(advance_on_docket_motion_attributes)
-  end
 
   def email_sent_flag(attr_key)
     status_changed = virtual_hearing_attributes.key?(:status)

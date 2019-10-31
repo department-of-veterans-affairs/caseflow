@@ -99,9 +99,7 @@ class HearingsController < HearingsApplicationController
         hearing_location_attributes: HEARING_LOCATION_ATTRIBUTES,
         virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES
       )
-      .merge(
-        hearing: hearing, advance_on_docket_motion_attributes: advance_on_docket_motion_params
-      )
+      .merge(hearing: hearing)
   end
 
   def update_params
