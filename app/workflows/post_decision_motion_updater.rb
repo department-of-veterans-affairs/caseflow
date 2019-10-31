@@ -116,6 +116,4 @@ class PostDecisionMotionUpdater
   def mtv_mail_task
     task.parent
   end
-
-  
 end
