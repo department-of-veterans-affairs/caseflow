@@ -314,10 +314,14 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           "active", "statusDescription", "diagnosticCode", "ratingIssueId", "ratingIssueProfileDate",
           "ratingDecisionId", "description", "contentionText", "approxDecisionDate", "category",
           "notes", "isUnidentified", "rampClaimId", "legacyAppealId", "legacyAppealIssueId",
-          "ineligibleReason", "ineligibleDueToId", "decisionReviewTitle", "titleOfActiveReview",
-          "decisionIssueId", "withdrawalDate", "contestedIssueDescription", "endProductCleared",
-          "endProductCode"
+          "decisionReviewTitle", "decisionIssueId", "withdrawalDate", "contestedIssueDescription",
+          "endProductCleared", "endProductCode", "ineligble"
         )
+      end
+
+      context "included RequestIssues" do
+        it 'should have a null ineligble'
+        it 'should have an ineligble object'
       end
 
       it "should include DecisionIssues" do
