@@ -66,6 +66,7 @@ gem "therubyracer", platforms: :ruby
 gem "tty-tree"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
+gem "validates_email_format_of"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
