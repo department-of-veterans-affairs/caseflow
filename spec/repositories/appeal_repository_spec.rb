@@ -224,7 +224,7 @@ describe AppealRepository, :all_dbs do
       LegacyAppeal.repository.update_location_for_death_dismissal!(appeal: appeal)
       appeal.case_record.reload
       refreshed_appeal = LegacyAppeal.find(appeal.id)
-      final_location = LegacyAppeal::LOCATION_CODES[:sr_council_dvc])
+      final_location = LegacyAppeal::LOCATION_CODES[:sr_council_dvc]
 
       expect(appeal.case_record.bfcurloc).to eq(final_location)
       expect(refreshed_appeal.location_code).to eq(final_location)

@@ -359,7 +359,7 @@ class AppealRepository
   end
 
   def self.update_location_for_death_dismissal!(appeal:)
-    location = LegacyAppeal::LOCATION_CODES[:sr_council_dvc])
+    location = LegacyAppeal::LOCATION_CODES[:sr_council_dvc]
     appeal.case_record.update_vacols_location!(location)
   end
 
