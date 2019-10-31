@@ -30,7 +30,10 @@ describe Api::V3::DecisionReview::IssuesController, :postgres, type: :request do
     end
 
     it 'should return a list of issues' do
-      Generators::Rating.build(participant_id: veteran.ptcpnt_id)
+      Generators::Rating.build(
+        participant_id: veteran.ptcpnt_id,
+        profile_date: Date.today - 10.days # must be before receipt_date
+      ) # this is a contestable_rating_issues
       get_issues
       issues = JSON.parse(response.body)
       expect(issues).to be_an Array
