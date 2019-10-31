@@ -38,13 +38,12 @@ class Generators::Rating
 
       attrs[:decisions] = populate_decision_ids(attrs)
 
-      existing_rating = Fakes::BGSService.rating_profile_records[attrs[:participant_id]][attrs[:profile_date]]
+      existing_rating = rating_store.fetch_and_inflate(attrs[:participant_id])[:profiles].try(attrs[:profile_date].to_s)
       fail "You may not override an existing rating for #{attrs[:profile_date]}" if existing_rating
 
-      Fakes::BGSService.rating_records[attrs[:participant_id]] << bgs_rating_data(attrs)
+      Fakes::BGSService.store_rating_record(attrs[:participant_id], bgs_rating_data(attrs))
 
-      Fakes::BGSService.rating_profile_records[attrs[:participant_id]][attrs[:profile_date]] =
-        bgs_rating_profile_data(attrs)
+      Fakes::BGSService.store_rating_profile_record(attrs[:participant_id], bgs_rating_profile_data(attrs))
 
       Rating.new(attrs.except(:issues, :decisions, :associated_claims, :disabilities))
     end
@@ -117,17 +116,17 @@ class Generators::Rating
       }
     end
 
+    def rating_store
+      @rating_store ||= Fakes::RatingStore.new
+    end
+
     def init_fakes(participant_id)
-      Fakes::BGSService.rating_profile_records ||= {}
-      Fakes::BGSService.rating_profile_records[participant_id] ||= {}
-      Fakes::BGSService.rating_records ||= {}
-      Fakes::BGSService.rating_records[participant_id] ||= []
+      rating_store.init_store(participant_id)
     end
 
     def generate_profile_datetime(participant_id)
-      DATE_LIST.find do |date|
-        !Fakes::BGSService.rating_profile_records[participant_id][date]
-      end
+      ratings = rating_store.fetch_and_inflate(participant_id) || {}
+      DATE_LIST.find { |date| !ratings[:profiles].try(date.to_s) }
     end
 
     def populate_issue_ids(attrs)

@@ -40,10 +40,18 @@ class Fakes::PersistentStore
     json_str = self.class.cache_store.get(key)
     return if json_str.nil? || json_str == "null"
 
-    json_str ? JSON.parse(json_str, symbolize_names: true) : nil
+    json_str ? decode_json(json_str) : nil
   end
 
   def deflate_and_store(key, payload)
     self.class.cache_store.set(key, payload.to_json)
+  end
+
+  private
+
+  # we abuse the ActiveSupport::JSON date parsing private method, since we also want to symbolize keys,
+  # which ActiveSupport::JSON.decode does not do.
+  def decode_json(json_str)
+    ActiveSupport::JSON.send(:convert_dates_from, JSON.parse(json_str, symbolize_names: true))
   end
 end

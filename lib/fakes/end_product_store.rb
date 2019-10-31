@@ -10,8 +10,8 @@ class Fakes::EndProductStore < Fakes::PersistentStore
   class Contention < OpenStruct
     def initialize(hash)
       super
-      self.start_date = Time.zone.parse(start_date)
-      self.submit_date = Time.zone.parse(submit_date)
+#      self.start_date = Time.zone.parse(start_date)
+#      self.submit_date = Time.zone.parse(submit_date)
     end
   end
 
