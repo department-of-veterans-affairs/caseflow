@@ -525,4 +525,29 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       it { expect(JSON.parse(subject.body)["veteran"]["full_name"]).to eq "Test User" }
     end
   end
+
+  describe "POST /appeals/:appeal_id/death_dismissal" do
+    let(:user) { create(:user) }
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+
+    context "with invalid user" do
+      before { User.authenticate!(user: user) }
+      it "fails because user is not a colocated admin" do
+        post :death_dismissal, params: { appeal_id: appeal.vacols_id }
+        expect(response.status).to eq(403)
+      end
+    end
+
+    context "when current user is a colocated admin" do
+      before do
+        OrganizationsUser.make_user_admin(user, Colocated.singleton)
+        User.authenticate!(user: user)
+      end
+
+      it "should be successful" do
+        post :death_dismissal, params: { appeal_id: appeal.vacols_id }
+        expect(response.status).to eq(200)
+      end
+    end
+  end
 end

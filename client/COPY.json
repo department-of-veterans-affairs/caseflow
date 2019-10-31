@@ -467,6 +467,8 @@
   "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet.",
   "CASE_DETAILS_LOADING_FAILURE_TITLE": "Unable to load this case",
 
+  "INVALID_DEATH_DISMISSAL": "Cannot perform death dismissal for this appeal.",
+
   "JUDGE_ASSIGN_TASK_LABEL": "Assign",
   "JUDGE_DECISION_REVIEW_TASK_LABEL": "Review",
   "JUDGE_QUALITY_REVIEW_TASK_LABEL": "Quality review",

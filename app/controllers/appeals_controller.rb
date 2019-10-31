@@ -3,6 +3,7 @@
 class AppealsController < ApplicationController
   before_action :react_routed
   before_action :set_application, only: [:document_count, :power_of_attorney]
+  before_action :valid_death_dismissal, only: [:death_dismissal]
   # Only whitelist endpoints VSOs should have access to.
   skip_before_action :deny_vso_access, only: [
     :index,
@@ -44,6 +45,23 @@ class AppealsController < ApplicationController
 
         render_search_results_as_json(result)
       end
+    end
+  end
+
+  def death_dismissal
+    respond_to do |format|
+      format.html { render template: "queue/index" }
+      format.json do
+        appeal.death_dismissal!
+
+        render json: {}
+      end
+    end
+  end
+
+  def valid_death_dismissal
+    if !(appeal.eligible_for_death_dismissal?(current_user))
+      fail Caseflow::Error::ActionForbiddenError, message: COPY::INVALID_DEATH_DISMISSAL
     end
   end
 
