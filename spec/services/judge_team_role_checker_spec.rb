@@ -4,8 +4,8 @@ require "support/database_cleaner"
 require "rails_helper"
 
 describe JudgeTeamRoleChecker, :postgres do
-  get_teams_with_wrong_lead_count = JudgeTeamRoleChecker.new.method(:judge_teams_with_incorrect_number_of_leads)
-  get_teams_with_nonadmin_leads = JudgeTeamRoleChecker.new.method(:non_admin_judge_team_leads)
+  get_teams_with_wrong_lead_count = JudgeTeamRoleChecker.method(:judge_teams_with_incorrect_number_of_leads)
+  get_teams_with_nonadmin_leads = JudgeTeamRoleChecker.method(:non_admin_judge_team_leads)
 
   # Variables in cases to check:
   # - number of JudgeTeams: 0, 1, many
