@@ -49,9 +49,37 @@ class Fakes::PersistentStore
 
   private
 
-  # we abuse the ActiveSupport::JSON date parsing private method, since we also want to symbolize keys,
-  # which ActiveSupport::JSON.decode does not do.
+  # we copied the ActiveSupport::JSON date parsing private method, since we want:
+  # * to symbolize keys,
+  # * all Times cast to UTC as DateTime objects.
   def decode_json(json_str)
-    ActiveSupport::JSON.send(:convert_dates_from, JSON.parse(json_str, symbolize_names: true))
+    convert_dates_from(JSON.parse(json_str, symbolize_names: true))
+  end
+
+  def convert_dates_from(data)
+    case data
+    when nil
+      nil
+    when ActiveSupport::JSON::DATE_REGEX
+      begin
+        Date.parse(data)
+      rescue ArgumentError
+        data
+      end
+    when ActiveSupport::JSON::DATETIME_REGEX
+      begin
+        Time.zone.parse(data).utc.to_datetime
+      rescue ArgumentError
+        data
+      end
+    when Array
+      data.map! { |d| convert_dates_from(d) }
+    when Hash
+      data.each do |key, value|
+        data[key] = convert_dates_from(value)
+      end
+    else
+      data
+    end
   end
 end
