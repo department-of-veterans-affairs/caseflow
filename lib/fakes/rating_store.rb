@@ -21,10 +21,10 @@ class Fakes::RatingStore < Fakes::PersistentStore
     deflate_and_store(participant_id, ratings)
   end
 
-  def store_rating_profile_record(participant_id, record)
+  def store_rating_profile_record(participant_id, profile_date, record)
     ratings = fetch_and_inflate(participant_id) || {}
     ratings[:profiles] ||= {}
-    ratings[:profiles][record[:profile_date]] = record
+    ratings[:profiles][profile_date] = record
     deflate_and_store(participant_id, ratings)
   end
 end

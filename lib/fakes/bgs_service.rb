@@ -316,7 +316,7 @@ class Fakes::BGSService
   end
 
   def fetch_rating_profile(participant_id:, profile_date:)
-    rating_profile = (get_rating_record(participant_id)[:profiles] || {})[profile_date]
+    rating_profile = (get_rating_record(participant_id)[:profiles] || {})[profile_date.to_s.to_sym]
 
     # Simulate the error bgs throws if rating profile doesn't exist
     unless rating_profile
