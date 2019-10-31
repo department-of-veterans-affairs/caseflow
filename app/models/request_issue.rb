@@ -325,7 +325,8 @@ class RequestIssue < ApplicationRecord
       contested_issue_description: contested_issue_description,
       end_product_cleared: end_product_establishment&.status_cleared?,
       end_product_code: end_product_code,
-      editable: editable?
+      editable: editable?,
+      decisionDate: decision_date
     }
   end
 
