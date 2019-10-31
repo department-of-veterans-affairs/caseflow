@@ -697,6 +697,16 @@ feature "Higher-Level Review", :all_dbs do
 
       expect(page).to have_content("Past decisions from #{rating_date}")
     end
+    
+    # scenario "Add Issues modal uses promulgation date" do
+    #   start_higher_level_review(veteran)
+    #   visit "/intake/add_issues"
+    #   click_intake_add_issue
+    #   rating_date = promulgation_date.mdY
+
+    #   expect(page).to have_content("Past decisions from #{rating_date}")
+    # end
+
 
     scenario "compensation claim" do
       allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(

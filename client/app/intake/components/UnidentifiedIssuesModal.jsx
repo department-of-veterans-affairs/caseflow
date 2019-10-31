@@ -111,7 +111,6 @@ class UnidentifiedIssuesModal extends React.Component {
     );
   }
 
-
   render() {
     const { intakeData, onCancel, featureToggles } = this.props;
     const { unidentifiedIssueDecisionDate } = featureToggles;
@@ -142,7 +141,9 @@ UnidentifiedIssuesModal.propTypes = {
   onCancel: PropTypes.func,
   cancelText: PropTypes.string,
   onSkip: PropTypes.func,
-  skipText: PropTypes.string
+  skipText: PropTypes.string,
+  featureToggles: PropTypes.object,
+  intakeData: PropTypes.object
 };
 
 UnidentifiedIssuesModal.defaultProps = {

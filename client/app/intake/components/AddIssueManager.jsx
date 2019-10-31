@@ -291,7 +291,11 @@ class AddIssueManager extends React.Component {
 
 AddIssueManager.propTypes = {
   currentModal: PropTypes.string,
-  onComplete: PropTypes.func
+  onComplete: PropTypes.func,
+  featureToggles: PropTypes.object,
+  intakeData: PropTypes.object,
+  formType: PropTypes.string,
+  addIssue: PropTypes.func
 };
 
 AddIssueManager.defaultProps = {
