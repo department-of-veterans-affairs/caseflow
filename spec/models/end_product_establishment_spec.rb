@@ -822,6 +822,18 @@ describe EndProductEstablishment, :postgres do
           expect(epcu.code).to eq "040SCNR"
           expect(epcu.created_at).to eq(Time.zone.now)
         end
+
+        context "when the new claim_type_code has already been saved" do
+          it "does not create a new record" do
+            end_product_establishment.end_product_code_updates.create(code: "040SCNR", created_at: 1.hour.ago)
+
+            subject
+
+            epcus = end_product_establishment.end_product_code_updates
+            expect(epcus.count).to eq 1
+            expect(epcus.first.created_at).to eq 1.hour.ago
+          end
+        end
       end
 
       context "when source exists" do
