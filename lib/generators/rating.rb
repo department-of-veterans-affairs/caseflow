@@ -43,7 +43,11 @@ class Generators::Rating
 
       Fakes::BGSService.store_rating_record(attrs[:participant_id], bgs_rating_data(attrs))
 
-      Fakes::BGSService.store_rating_profile_record(attrs[:participant_id], attrs[:profile_date], bgs_rating_profile_data(attrs))
+      Fakes::BGSService.store_rating_profile_record(
+        attrs[:participant_id],
+        attrs[:profile_date],
+        bgs_rating_profile_data(attrs)
+      )
 
       Rating.new(attrs.except(:issues, :decisions, :associated_claims, :disabilities))
     end
