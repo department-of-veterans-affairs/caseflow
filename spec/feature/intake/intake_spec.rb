@@ -273,9 +273,7 @@ feature "Intake", :all_dbs do
       participant_id1 = "12345"
       participant_id2 = "67890"
 
-      allow(Veteran).to receive(:find_or_create_by_file_number).and_return(veteran)
-      allow(veteran).to receive(:participant_ids).and_return([participant_id1, participant_id2])
-      allow(veteran).to receive(:find_latest_end_product_by_claimant).and_call_original
+      allow_any_instance_of(Veteran).to receive(:participant_ids).and_return([participant_id1, participant_id2])
 
       visit "/intake"
       select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)

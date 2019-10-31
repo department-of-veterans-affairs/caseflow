@@ -61,7 +61,7 @@ class IntakeStartValidator
     pids = veteran.participant_ids
     if pids.count > 1
       intake.store_error_data(pids: pids)
-      true
+      return true
     end
     false
   end
