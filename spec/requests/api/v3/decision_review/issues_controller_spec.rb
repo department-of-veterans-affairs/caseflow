@@ -40,6 +40,10 @@ describe Api::V3::DecisionReview::IssuesController, :postgres, type: :request do
       expect(issues.count > 0).to be true
     end
 
+    context 'returned issues' do
+      it 'should have meaningful attributes'
+    end
+
     it 'should return a 404 when the veteran is not found' do
       get_issues(veteran_id: 'abcdefg')
       expect(response).to have_http_status(:not_found)
