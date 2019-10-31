@@ -142,13 +142,14 @@ namespace :tasks do
   task :reassign_from_user, [:user_id, :dry_run] => :environment do |_, args|
     Rails.logger.tagged("rake tasks:reassign_from_user") { Rails.logger.info("Invoked with: #{args.to_a.join(', ')}") }
     dry_run = args.dry_run&.to_s&.strip&.upcase != "FALSE"
+    user = User.find(args.user_id)
 
     if dry_run
       puts "*** DRY RUN"
       puts "*** pass 'false' as the second argument to execute"
+      BulkTaskReassignment.new(user).perform_dry_run
+    else
+      BulkTaskReassignment.new(user).process
     end
-
-    user = User.find(args.user_id)
-    BulkTaskReassignment.new(user, dry_run).process
   end
 end

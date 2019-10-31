@@ -341,7 +341,7 @@ describe "task rake tasks", :postgres do
           *** DRY RUN
           *** pass 'false' as the second argument to execute
         OUTPUT
-        allow_any_instance_of(BulkTaskReassignment).to receive(:process).and_return(nil)
+        allow_any_instance_of(BulkTaskReassignment).to receive(:perform_dry_run).and_return(nil)
         expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
         expect { subject }.to output(expected_output).to_stdout
       end

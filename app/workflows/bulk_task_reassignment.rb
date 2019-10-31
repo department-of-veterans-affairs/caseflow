@@ -6,18 +6,18 @@ class BulkTaskReassignment
   class InvalidTaskParent < StandardError; end
   class InvalidTaskAssignee < StandardError; end
 
-  def initialize(user, dry_run = true)
+  def initialize(user)
     if user.nil?
       fail ArgumentError, "expected valid user"
     end
 
     @user = user
-    @dry_run = dry_run
+  end
 
-    @cancel = dry_run ? "Would cancel" : "Cancelling"
-    @reassign = dry_run ? "Would reassign" : "Reassigning"
-    @create = dry_run ? "create" : "creating"
-    @move = dry_run ? "move" : "moving"
+  def perform_dry_run
+    @dry_run = true
+
+    process
   end
 
   def process
@@ -40,7 +40,23 @@ class BulkTaskReassignment
 
   private
 
-  attr_reader :user, :dry_run, :cancel, :reassign, :create, :move
+  attr_reader :user, :dry_run
+
+  def cancel
+    dry_run ? "Would cancel" : "Cancelling"
+  end
+
+  def reassign
+    dry_run ? "Would reassign" : "Reassigning"
+  end
+
+  def create
+    dry_run ? "create" : "creating"
+  end
+
+  def move
+    dry_run ? "move" : "moving"
+  end
 
   def open_tasks
     @open_tasks ||= fetch_open_tasks_for_user
@@ -197,7 +213,7 @@ class BulkTaskReassignment
 
     if attorney_tasks.any?
       task_ids = attorney_tasks.pluck(:id).sort
-      parent_task_ids = attorney_tasks.pluck(:parent_id)
+      parent_task_ids = attorney_tasks.pluck(:parent_id).sort
       message = "#{cancel} #{task_ids.count} AttorneyTasks with ids #{task_ids.join(', ')}, JudgeDecisionReviewTasks " \
                 "with ids #{parent_task_ids.join(', ')}, and #{create} #{task_ids.count} JudgeAssignTasks"
       Rails.logger.info(message)
@@ -233,7 +249,7 @@ class BulkTaskReassignment
 
     task_ids = tasks.pluck(:id).sort
     message = "#{reassign} #{task_ids.count} tasks with ids #{task_ids.join(', ')} to #{active_org_user_count} " \
-              "members of the #{organization.name} organization"
+              "members of the parent tasks' organization"
     Rails.logger.info(message)
 
     if !dry_run
