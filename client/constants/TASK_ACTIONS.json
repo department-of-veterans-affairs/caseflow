@@ -103,6 +103,10 @@
     "value": "modal/create_mail_task",
     "func": "mail_assign_to_organization_data"
   },
+  "DEATH_DISMISSAL": {
+    "label": "Death Dismissal",
+    "value": "modal/death_dismissal"
+  },
   "JUDGE_LEGACY_CHECKOUT": {
     "label": "Ready for Dispatch",
     "value": "dispatch_decision/special_issues"

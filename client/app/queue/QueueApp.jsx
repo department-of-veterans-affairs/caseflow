@@ -36,6 +36,7 @@ import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
+import DeathDismissalModal from './components/DeathDismissalModal';
 import PostponeHearingModal from './components/PostponeHearingModal';
 import ChangeHearingDispositionModal from './ChangeHearingDispositionModal';
 import CreateChangeHearingDispositionTaskModal from './CreateChangeHearingDispositionTaskModal';
@@ -219,6 +220,8 @@ class QueueApp extends React.PureComponent {
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
   routedSendMotionToVacateToJudge = () => <ReviewMotionToVacateView />;
+
+  routedDeathDismissalModal = (props) => <DeathDismissalModal {...props.match.params} />;
 
   routedAddressMotionToVacate = (props) => <AddressMotionToVacateView {...props.match.params} />;
 
@@ -587,6 +590,12 @@ class QueueApp extends React.PureComponent {
               }
               title="Cancel Task | Caseflow"
               render={this.routedCancelTaskModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.DEATH_DISMISSAL.value}`}
+              title="Death Dismissal | Caseflow"
+              render={this.routedDeathDismissalModal}
             />
             <PageRoute
               exact
