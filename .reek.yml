@@ -22,6 +22,7 @@ detectors:
   UncommunicativeVariableName:
     exclude:
       - Address
+      - Fakes::PersistentStore#convert_dates_from
   LongParameterList:
     exclude:
       - Address
@@ -46,6 +47,7 @@ detectors:
       - Fakes::EndProductStore
       - Fakes::BGSService#get_participant_id_for_user
       - Fakes::BGSServiceRecordMaker
+      - Fakes::PersistentStore#convert_dates_from
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - HearingSerializerBase
       - MonthlyMetricsReportJob#build_report

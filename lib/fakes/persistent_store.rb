@@ -56,6 +56,8 @@ class Fakes::PersistentStore
     convert_dates_from(JSON.parse(json_str, symbolize_names: true))
   end
 
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/CyclomaticComplexity
   def convert_dates_from(data)
     case data
     when nil
@@ -82,4 +84,6 @@ class Fakes::PersistentStore
       data
     end
   end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/CyclomaticComplexity
 end
