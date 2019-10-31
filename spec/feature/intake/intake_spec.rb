@@ -269,23 +269,28 @@ feature "Intake", :all_dbs do
       expect(page).to have_content("David Schwimmer already started processing this form")
     end
 
-    scenario "Search for a veteran who has duplicate records in CorpDB" do
-      participant_id1 = "12345"
-      participant_id2 = "67890"
+    context "" do
+      before { FeatureToggle.enable!(:alert_duplicate_veterans, users: [current_user.css_id]) }
+      after { FeatureToggle.disable!(:alert_duplicate_veterans) }
 
-      allow_any_instance_of(Veteran).to receive(:participant_ids).and_return([participant_id1, participant_id2])
+      scenario "Search for a veteran who has duplicate records in CorpDB" do
+        participant_id1 = "12345"
+        participant_id2 = "67890"
 
-      visit "/intake"
-      select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
-      safe_click ".cf-submit.usa-button"
+        allow_any_instance_of(Veteran).to receive(:participant_ids).and_return([participant_id1, participant_id2])
 
-      fill_in search_bar_title, with: "12341234"
-      click_on "Search"
-      # binding.pry
+        visit "/intake"
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        safe_click ".cf-submit.usa-button"
 
-      expect(page).to have_current_path("/intake/search")
-      expect(page).to have_content("This Veteran has a duplicate record in CorpDB")
-      expect(page).to have_content("[#{participant_id1}, #{participant_id2}]")
+        fill_in search_bar_title, with: "12341234"
+        click_on "Search"
+        binding.pry
+
+        expect(page).to have_current_path("/intake/search")
+        expect(page).to have_content("This Veteran has a duplicate record in CorpDB")
+        expect(page).to have_content("[#{participant_id1}, #{participant_id2}]")
+      end
     end
 
     scenario "Cancel an intake" do

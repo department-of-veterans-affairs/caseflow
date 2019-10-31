@@ -91,7 +91,7 @@ class Search extends React.PureComponent {
         body: COPY.DUPLICATE_PHONE_NUMBER_MESSAGE
       },
       veteran_has_duplicate_records_in_corpdb: {
-        title: 'The Veteran has duplicate records in CorpDB',
+        title: 'This Veteran has duplicate records in CorpDB',
         body: sprintf(COPY.DUPLICATE_CORPDB_RECORD_MESSAGE, searchErrorData.pids)
       },
       veteran_not_accessible: {

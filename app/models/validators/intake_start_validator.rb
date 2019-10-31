@@ -58,6 +58,8 @@ class IntakeStartValidator
   end
 
   def duplicate_veteran_records_in_corpdb
+    return false unless FeatureToggle.enabled?(:alert_duplicate_veterans, user: RequestStore[:current_user])
+
     pids = veteran.participant_ids
     if pids.count > 1
       intake.store_error_data(pids: pids)
