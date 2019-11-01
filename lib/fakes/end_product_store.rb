@@ -7,13 +7,7 @@ class Fakes::EndProductStore < Fakes::PersistentStore
     end
   end
 
-  class Contention < OpenStruct
-    def initialize(hash)
-      super
-      self.start_date = Time.zone.parse(start_date)
-      self.submit_date = Time.zone.parse(submit_date)
-    end
-  end
+  class Contention < OpenStruct; end
 
   # we call it a "child" because even though Redis has only key:value pairs,
   # logically the object is a child of an EndProduct
