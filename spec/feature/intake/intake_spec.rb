@@ -277,7 +277,9 @@ feature "Intake", :all_dbs do
         participant_id1 = "123456"
         participant_id2 = "789012"
 
-        allow_any_instance_of(Veteran).to receive(:participant_ids).and_return([participant_id1, participant_id2])
+        allow_any_instance_of(DuplicateVeteranParticipantIDFinder).to receive(:call).and_return(
+          [participant_id1, participant_id2]
+        )
 
         visit "/intake"
         select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)

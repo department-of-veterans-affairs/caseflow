@@ -56,12 +56,6 @@ class Veteran < ApplicationRecord
     participant_id: :ptcpnt_id
   }.freeze
 
-  BGS_SSN_FIELD_NAMES = [
-    :ssn,
-    :soc_sec_number,
-    :ssn_nbr
-  ].freeze
-
   # TODO: get middle initial from BGS
   def name
     FullName.new(first_name, "", last_name)
@@ -207,11 +201,6 @@ class Veteran < ApplicationRecord
 
   def participant_id
     super || ptcpnt_id
-  end
-
-  def participant_ids
-    ssns = ([ssn] + BGS_SSN_FIELD_NAMES.map { |field_name| bgs_record[field_name] }).compact.uniq
-    ([participant_id] + ssns.map { |ssn| BGSService.new.client.people.find_by_ssn(ssn)[:ptcpnt_id] }).compact.uniq
   end
 
   def ssn
