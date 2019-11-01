@@ -165,12 +165,12 @@ class Search extends React.PureComponent {
          'Please contact your management team if you need additional assistance.'
       },
       default: {
-        title: `Something went wrong (${searchErrorCode})`,
+        title: `Something went wrong`,
         body: <React.Fragment key="alert-error-body">
           {'Please try again. If the problem persists, please contact the Caseflow team ' +
               'via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via '}
           { YourITLink }
-          {'.'}
+          {`. Error code ${searchErrorCode}.`}
         </React.Fragment>
       }
     };
