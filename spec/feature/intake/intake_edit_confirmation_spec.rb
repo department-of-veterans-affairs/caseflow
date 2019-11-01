@@ -22,7 +22,7 @@ feature "Intake Edit Confirmation", :postgres do
         issues: [
           { decision_text: "Left knee granted" },
           { reference_id: rating_reference_id, decision_text: "PTSD denied" },
-          { reference_id: "issue_on_another_review", decision_text: "Issue on another review"}
+          { reference_id: "issue_on_another_review", decision_text: "Issue on another review" }
         ]
       )
     end
