@@ -319,7 +319,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         )
       end
 
-      context "included RequestIssues" do
+      context "RequestIssues" do
         subject do
           get_higher_level_review
           JSON.parse(response.body)["included"].select { |obj| obj["type"] == "RequestIssue" }
@@ -355,10 +355,10 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
         it 'should have an ineligible object' do
           higher_level_review.request_issues = [request_issue_in_active_review, ineligible_request_issue]
-          req_issue = subject.first
-          expect(req_issue['ineligible']["reason"])
-          expect(req_issue['ineligible']["dueToId"])
-          expect(req_issue['ineligible']["titleOfActiveReview"])
+          ineligble_data = subject.find { |req_issue| req_issue['attributes']['ineligible'] }['attributes']['ineligible']
+          expect(ineligble_data["reason"]).to eq ineligible_request_issue.ineligible_reason
+          expect(ineligble_data["dueToId"]).to eq ineligible_request_issue.ineligible_due_to_id
+          expect(ineligble_data["titleOfActiveReview"]).to eq ineligible_request_issue.title_of_active_review
         end
       end
 

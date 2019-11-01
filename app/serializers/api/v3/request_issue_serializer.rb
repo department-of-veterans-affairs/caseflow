@@ -7,12 +7,21 @@ class Api::V3::RequestIssueSerializer
   self.record_type = "RequestIssue"
 
   attributes :diagnostic_code, :description, :contention_text, :notes,
-             :is_unidentified, :ramp_claim_id, :ineligible_reason,
-             :ineligible_due_to_id, :withdrawal_date, :contested_issue_description,
-             :end_product_code, :title_of_active_review
+             :is_unidentified, :ramp_claim_id, :withdrawal_date,
+             :contested_issue_description, :end_product_code
 
   attribute :active do |request_issue|
     request_issue.closed_at.nil? && request_issue.ineligible_reason.nil?
+  end
+
+  attribute :ineligible do |request_issue|
+    unless request_issue.ineligible_due_to_id.nil?
+      {
+        dueToId: request_issue.ineligible_due_to_id,
+        reason: request_issue.ineligible_reason,
+        titleOfActiveReview: request_issue.title_of_active_review
+      }
+    end
   end
 
   attribute :status_description, &:api_status_description
