@@ -79,7 +79,11 @@ class PostDecisionMotionUpdater
   end
 
   def task_type
-    (params[:disposition] == "granted") ? params[:vacate_type] : "#{params[:disposition]}_motion_to_vacate"
+    grant_type? ? params[:vacate_type] : "#{params[:disposition]}_motion_to_vacate"
+  end
+
+  def grant_type?
+    %w[granted partial].include? params[:disposition]
   end
 
   def denied_or_dismissed?
