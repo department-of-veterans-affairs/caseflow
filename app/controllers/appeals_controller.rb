@@ -55,7 +55,7 @@ class AppealsController < ApplicationController
   end
 
   def valid_death_dismissal
-    if !(appeal.eligible_for_death_dismissal?(current_user))
+    unless appeal.eligible_for_death_dismissal?(current_user)
       fail Caseflow::Error::ActionForbiddenError, message: COPY::INVALID_DEATH_DISMISSAL
     end
   end
