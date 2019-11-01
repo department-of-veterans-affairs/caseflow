@@ -2415,6 +2415,16 @@ describe LegacyAppeal, :all_dbs do
           expect(appeal2.tasks.closed.count).to eq(3)
           expect(appeal3.tasks.open.count).to eq(3)
         end
+
+        context "when a note has instructions" do
+          it "should append a note to the canceled tasks" do
+            task = appeal2.tasks.first
+            task.update(instructions: ["Existing instructions"])
+            appeal2.cancel_open_caseflow_tasks!
+            expect(task.reload.instructions)
+              .to eq(["Existing instructions", "Task cancelled due to death dismissal"])
+          end
+        end
       end
 
       context "open and closed caseflow tasks" do
