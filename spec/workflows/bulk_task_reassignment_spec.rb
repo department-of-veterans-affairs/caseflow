@@ -10,10 +10,10 @@ describe BulkTaskAssignment, :postgres do
 
   let(:task_count) { 4 }
   let(:parent_assignee) { create(:organization) }
-  let(:parent_task_type) { :generic_task }
+  let(:parent_task_type) { :task }
   let(:parent_tasks) { create_list(parent_task_type, task_count, :on_hold, assigned_to: parent_assignee) }
 
-  let(:task_type) { :generic_task }
+  let(:task_type) { :task }
   let!(:tasks) do
     parent_tasks.map { |parent| create(task_type, assigned_to: user, parent: parent) }
   end
@@ -206,7 +206,7 @@ describe BulkTaskAssignment, :postgres do
             subject
             tasks.each { |task| expect(task.reload.cancelled?).to eq true }
             parent_tasks.each { |task| expect(task.reload.assigned?).to eq true }
-            expect(GenericTask.open.count).to eq task_count
+            expect(Task.open.count).to eq task_count
           end
         end
 
@@ -228,7 +228,7 @@ describe BulkTaskAssignment, :postgres do
               tasks.each { |task| expect(task.reload.cancelled?).to eq true }
               parent_tasks.each { |task| expect(task.reload.on_hold?).to eq true }
 
-              new_tasks = GenericTask.open.where(assigned_to_type: User.name)
+              new_tasks = Task.open.where(assigned_to_type: User.name)
               new_tasks.each { |task| expect(task.reload.assigned?).to eq true }
               expect(new_tasks.map(&:parent_id)).to match_array parent_tasks.map(&:id)
               expect(new_tasks.distinct.pluck(:assigned_to_id).count).to eq task_count
@@ -248,7 +248,7 @@ describe BulkTaskAssignment, :postgres do
               tasks.each { |task| expect(task.reload.cancelled?).to eq true }
               parent_tasks.each { |task| expect(task.reload.on_hold?).to eq true }
 
-              new_tasks = GenericTask.open.where(assigned_to_type: User.name)
+              new_tasks = Task.open.where(assigned_to_type: User.name)
               new_tasks.each { |task| expect(task.reload.assigned?).to eq true }
               expect(new_tasks.map(&:parent_id)).to match_array parent_tasks.map(&:id)
               expect(new_tasks.distinct.pluck(:assigned_to_id).count).to eq team_member_count
@@ -260,7 +260,7 @@ describe BulkTaskAssignment, :postgres do
 
       context "the tasks have parent tasks assigned to a user" do
         let(:parent_assignee) { create(:user) }
-        let(:task_type) { :task }
+        let(:task_type) { :foia_task }
 
         it "describes what changes will be made and makes them" do
           user_message = "Cancelling #{task_count} tasks with ids #{ids_output} and moving #{task_count} parent " \
@@ -347,7 +347,7 @@ describe BulkTaskAssignment, :postgres do
 
           subject
           tasks.each { |task| expect(task.reload.assigned?).to eq true }
-          expect(GenericTask.open.count).to eq task_count * 2
+          expect(Task.open.count).to eq task_count * 2
           expect(tasks.map(&:parent_id)).to eq parent_tasks.map(&:id)
         end
       end
@@ -367,7 +367,7 @@ describe BulkTaskAssignment, :postgres do
 
           subject
           tasks.each { |task| expect(task.reload.assigned?).to eq true }
-          expect(GenericTask.open.count).to eq task_count * 2
+          expect(Task.open.count).to eq task_count * 2
           expect(tasks.map(&:parent_id)).to eq parent_tasks.map(&:id)
         end
       end
@@ -375,7 +375,7 @@ describe BulkTaskAssignment, :postgres do
 
     context "the tasks have parent tasks assigned to a user" do
       let(:parent_assignee) { create(:user) }
-      let(:task_type) { :task }
+      let(:task_type) { :foia_task }
 
       it "only describes what changes will be made" do
         user_message = "Would cancel #{task_count} tasks with ids #{ids_output} and move #{task_count} parent " \
