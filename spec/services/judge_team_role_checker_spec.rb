@@ -339,7 +339,6 @@ describe JudgeTeamRoleChecker, :postgres do
 
           describe ".non_admin_judge_team_leads" do
             it "identifies JudgeTeamLeads who are not admins" do
-              byebug
               expect(get_teams_with_nonadmin_leads.call).to match_array(judge_team_leads1)
             end
           end
