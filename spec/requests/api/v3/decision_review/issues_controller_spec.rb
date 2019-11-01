@@ -13,7 +13,7 @@ describe Api::V3::DecisionReview::IssuesController, :postgres, type: :request do
       ApiKey.create!(consumer_name: "ApiV3 Test Consumer").key_string
     end
 
-    def get_issues(veteran_id:veteran.file_number,receipt_date:Date.today)
+    def get_issues(veteran_id: veteran.file_number, receipt_date: Time.zone.today)
       get(
         "/api/v3/decision_review/issues?",
         headers: {
@@ -24,15 +24,15 @@ describe Api::V3::DecisionReview::IssuesController, :postgres, type: :request do
       )
     end
 
-    it 'should return a 200 OK' do
+    it "should return a 200 OK" do
       get_issues
       expect(response).to have_http_status(:ok)
     end
 
-    it 'should return a list of issues' do
+    it "should return a list of issues" do
       Generators::Rating.build(
         participant_id: veteran.ptcpnt_id,
-        profile_date: Date.today - 10.days # must be before receipt_date
+        profile_date: Time.zone.today - 10.days # must be before receipt_date
       ) # this is a contestable_rating_issues
       get_issues
       issues = JSON.parse(response.body)
@@ -40,17 +40,17 @@ describe Api::V3::DecisionReview::IssuesController, :postgres, type: :request do
       expect(issues.count > 0).to be true
     end
 
-    context 'returned issues' do
-      it 'should have meaningful attributes'
+    context "returned issues" do
+      it "should have meaningful attributes"
     end
 
-    it 'should return a 404 when the veteran is not found' do
-      get_issues(veteran_id: 'abcdefg')
+    it "should return a 404 when the veteran is not found" do
+      get_issues(veteran_id: "abcdefg")
       expect(response).to have_http_status(:not_found)
     end
 
-    it 'should return a 422 when the receipt date is bad' do
-      get_issues(receipt_date: Date.today - 1000.years)
+    it "should return a 422 when the receipt date is bad" do
+      get_issues(receipt_date: Time.zone.today - 1000.years)
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end
