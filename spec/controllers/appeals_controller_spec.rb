@@ -530,21 +530,30 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     let(:user) { create(:user) }
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 
-    before do
-      allow_any_instance_of(LegacyAppeal).to receive(:eligible_for_death_dismissal?) do
-        true
-      end
-    end
-
     context "with invalid user" do
+      before do
+        allow_any_instance_of(LegacyAppeal).to receive(:eligible_for_death_dismissal?) do
+          false
+        end
+      end
+
       before { User.authenticate!(user: user) }
-      it "fails because user is not a colocated admin" do
+
+      it "fails with error" do
         post :death_dismissal, params: { appeal_id: appeal.vacols_id }
         expect(response.status).to eq(403)
+        response_body = JSON.parse(response.body)
+        expect(response_body["errors"][0]["detail"]).to eq(COPY::INVALID_DEATH_DISMISSAL)
       end
     end
 
-    context "when current user is a colocated admin" do
+    context "with valid user" do
+      before do
+        allow_any_instance_of(LegacyAppeal).to receive(:eligible_for_death_dismissal?) do
+          true
+        end
+      end
+
       before do
         OrganizationsUser.make_user_admin(user, Colocated.singleton)
         User.authenticate!(user: user)
