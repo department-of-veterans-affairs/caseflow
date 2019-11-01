@@ -86,6 +86,35 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
       end
     end
 
+    context "A virtual hearing has been scheduled" do
+      before do
+        FeatureToggle.enable!(:schedule_virtual_hearings)
+      end
+
+      let!(:current_user) { User.authenticate!(css_id: "BVAYELLOW", roles: ["Edit HearSched", "Build HearSched"]) }
+      let!(:hearing) { create(:hearing, :with_tasks, hearing_day: hearing_day) }
+      let!(:hearing_day) { create(:hearing_day, judge: current_user) }
+
+      scenario "User can select Virtual Hearing time" do
+        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+        choose("hearingTime1_other", allow_label_click: true)
+        click_dropdown(name: "optionalHearingTime1", index: 3)
+        click_button("Change and Send Email")
+        expect(page).to have_content("You have successfully updated")
+      end
+      scenario "Virtual Hearing time has been updated" do
+        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+        choose("hearingTime1_13:00", allow_label_click: true)
+        click_button("Change and Send Email")
+        expect(page).to have_content("You have successfully updated")
+      end
+      scenario "Changes to Virtual Hearing have been cancelled" do
+        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+        choose("hearingTime1_09:00", allow_label_click: true)
+        click_button("Change-to-Virtual-Hearing-button-id-close")
+      end
+    end
+
     context "with an existing AOD motion made by same judge" do
       before do
         AdvanceOnDocketMotion.create!(

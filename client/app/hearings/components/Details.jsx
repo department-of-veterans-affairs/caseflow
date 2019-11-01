@@ -130,7 +130,7 @@ class HearingDetails extends React.Component {
 
     return ApiUtil.patch(`/hearings/${externalId}`, {
       data: ApiUtil.convertToSnakeCase(data)
-    }).then(() => {
+    }).then((resp) => {
       this.setState({
         updated: false,
         loading: false,
@@ -138,7 +138,7 @@ class HearingDetails extends React.Component {
         error: false
       });
 
-      this.setInitialFormData();
+      this.props.setHearing(ApiUtil.convertToCamelCase(resp.body));
     }).
       catch((error) => {
         this.setState({
@@ -223,6 +223,7 @@ HearingDetails.propTypes = {
     userCanScheduleVirtualHearings: PropTypes.bool
   }),
   hearing: PropTypes.object.isRequired,
+  setHearing: PropTypes.func,
   goBack: PropTypes.func,
   disabled: PropTypes.bool,
   onChangeFormData: PropTypes.func,
