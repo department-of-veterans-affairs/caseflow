@@ -49,14 +49,9 @@ class AppealsController < ApplicationController
   end
 
   def death_dismissal
-    respond_to do |format|
-      format.html { render template: "queue/index" }
-      format.json do
-        appeal.death_dismissal!
+    appeal.death_dismissal!
 
-        render json: {}
-      end
-    end
+    render json: {}
   end
 
   def valid_death_dismissal

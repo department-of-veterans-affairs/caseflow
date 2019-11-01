@@ -530,6 +530,12 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     let(:user) { create(:user) }
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 
+    before do
+      allow_any_instance_of(LegacyAppeal).to receive(:eligible_for_death_dismissal?) do
+        true
+      end
+    end
+
     context "with invalid user" do
       before { User.authenticate!(user: user) }
       it "fails because user is not a colocated admin" do
