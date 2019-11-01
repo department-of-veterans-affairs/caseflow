@@ -30,7 +30,7 @@ export class EstablishClaimDecision extends React.Component {
     };
   }
 
-  onTabSelected = tabNumber => {
+  onTabSelected = (tabNumber) => {
     this.setState({
       endProductButtonText: `Route claim for Decision ${tabNumber + 1}`
     });
@@ -62,7 +62,7 @@ export class EstablishClaimDecision extends React.Component {
         header: 'VACOLS Issue(s)',
         valueFunction: (issue, index) => {
           return issue.description.map(
-            descriptor => (
+            (descriptor) => (
               <div key={`${descriptor}-${index}`}>{descriptor}</div>
             ),
             null
@@ -71,17 +71,17 @@ export class EstablishClaimDecision extends React.Component {
       },
       {
         header: 'Disposition',
-        valueFunction: issue => StringUtil.titleCase(issue.disposition)
+        valueFunction: (issue) => StringUtil.titleCase(issue.disposition)
       }
     ];
 
-    let decisionDateStart = moment(task.appeal.serialized_decision_date)
-      .add(-3, 'days')
-      .format(dateFormatString);
+    let decisionDateStart = moment(task.appeal.serialized_decision_date).
+      add(-3, 'days').
+      format(dateFormatString);
 
-    let decisionDateEnd = moment(task.appeal.serialized_decision_date)
-      .add(3, 'days')
-      .format(dateFormatString);
+    let decisionDateEnd = moment(task.appeal.serialized_decision_date).
+      add(3, 'days').
+      format(dateFormatString);
 
     // Sort in reverse chronological order
     let decisions = task.appeal.decisions.sort(
@@ -108,18 +108,18 @@ export class EstablishClaimDecision extends React.Component {
       tab.page = (
         <div>
           <a
-            className='usa-sr-only'
-            id='sr-download-link'
+            className="usa-sr-only"
+            id="sr-download-link"
             href={`${pdfLink}&decision_number=${index}`}
             download
-            target='_blank'
-            rel='noopener noreferrer'
+            target="_blank"
+            rel="noopener noreferrer"
           >
             The PDF viewer in your browser may not be accessible. Click to
             download the Decision PDF so you can preview it in a reader with
             accessibility features such as Adobe Acrobat.
           </a>
-          <a className='usa-sr-only' href='#establish-claim-buttons'>
+          <a className="usa-sr-only" href="#establish-claim-buttons">
             If you are using a screen reader and have downloaded and verified
             the Decision PDF, click this link to skip past the browser PDF
             viewer to the establish-claim buttons.
@@ -127,12 +127,12 @@ export class EstablishClaimDecision extends React.Component {
           <div>
             <LoadingContainer color={LOGO_COLORS.DISPATCH.ACCENT}>
               <iframe
-                aria-label='The PDF embedded here is not accessible. Please use the above
+                aria-label="The PDF embedded here is not accessible. Please use the above
                  link to download the PDF and view it in a PDF reader. Then use the
                  buttons below to go back and make edits or upload and certify
-                 the document.'
-                className='cf-iframe-with-loading'
-                title='Form8 PDF'
+                 the document."
+                className="cf-iframe-with-loading"
+                title="Form8 PDF"
                 src={`${pdfjsLink}&decision_number=${index}`}
               />
             </LoadingContainer>
@@ -146,13 +146,13 @@ export class EstablishClaimDecision extends React.Component {
     return (
       <div>
         <div
-          id='review-decision-heading'
-          className='cf-app-segment cf-app-segment--alt'
+          id="review-decision-heading"
+          className="cf-app-segment cf-app-segment--alt"
         >
           <h1>Review Decision</h1>
           Review the final decision from VBMS below to determine the next step.
           {this.hasMultipleDecisions() && (
-            <Alert title='Multiple Decision Documents' type='warning'>
+            <Alert title="Multiple Decision Documents" type="warning">
               We found more than one decision document for the dispatch date
               range {decisionDateStart} - {decisionDateEnd}. Please review the
               decisions in the tabs below and select the document that best fits
@@ -161,12 +161,12 @@ export class EstablishClaimDecision extends React.Component {
           )}
         </div>
         {this.hasMultipleDecisions() && (
-          <div className='cf-app-segment cf-app-segment--alt'>
+          <div className="cf-app-segment cf-app-segment--alt">
             <h3>VACOLS Decision Criteria</h3>
             <Table
               columns={issueColumns}
               rowObjects={task.appeal.issues}
-              summary='VACOLS decision criteria issues'
+              summary="VACOLS decision criteria issues"
             />
           </div>
         )}
@@ -176,7 +176,7 @@ export class EstablishClaimDecision extends React.Component {
          for now. The usa-sr-only class will place an element off screen without
          affecting its placement in tab order, thus making it invisible onscreen
          but read out by screen readers. */}
-        <div className='cf-app-segment cf-app-segment--alt'>
+        <div className="cf-app-segment cf-app-segment--alt">
           {this.hasMultipleDecisions() && (
             <div>
               <h2>Select a Decision Document</h2>
@@ -189,10 +189,10 @@ export class EstablishClaimDecision extends React.Component {
           )}
           {!this.hasMultipleDecisions() && tabs.length > 0 && tabs[0].page}
 
-          <div className='usa-width-one-half'>
+          <div className="usa-width-one-half">
             <TextField
-              label='Decision type'
-              name='decisionType'
+              label="Decision type"
+              name="decisionType"
               readOnly
               value={decisionType}
             />
@@ -204,7 +204,7 @@ export class EstablishClaimDecision extends React.Component {
                 <b>Select Special Issues</b>
               </label>
             </legend>
-            <div className='cf-multiple-columns'>
+            <div className="cf-multiple-columns">
               {SPECIAL_ISSUES.map((issue, index) => {
                 return (
                   <Checkbox
@@ -220,15 +220,15 @@ export class EstablishClaimDecision extends React.Component {
             </div>
           </fieldset>
         </div>
-        <div className='cf-app-segment' id='establish-claim-buttons'>
-          <div className='cf-push-right'>
+        <div className="cf-app-segment" id="establish-claim-buttons">
+          <div className="cf-push-right">
             <Button
-              name='Cancel'
+              name="Cancel"
               onClick={handleToggleCancelTaskModal}
               classNames={['cf-btn-link']}
             />
             <Button
-              app='dispatch'
+              app="dispatch"
               name={this.state.endProductButtonText}
               onClick={handleSubmit}
               loading={loading}
@@ -252,15 +252,15 @@ EstablishClaimDecision.propTypes = {
   loading: PropTypes.bool
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   specialIssues: state.specialIssues
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   handleToggleCancelTaskModal: () => {
     dispatch({ type: Constants.TOGGLE_CANCEL_TASK_MODAL });
   },
-  handleSpecialIssueFieldChange: specialIssue => value => {
+  handleSpecialIssueFieldChange: (specialIssue) => (value) => {
     dispatch({
       type: Constants.CHANGE_SPECIAL_ISSUE,
       payload: {
