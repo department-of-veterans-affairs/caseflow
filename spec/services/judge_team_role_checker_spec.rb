@@ -73,7 +73,7 @@ describe JudgeTeamRoleChecker, :postgres do
     context "when team has 1 JudgeTeamLead and not an admin" do
       # All sub-cases should not report any error
       let!(:judge_team) { create(:judge_team, :has_judge_team_lead) }
-      let(:judge_team_leads) { judge_team.judge_team_roles.where(type: :JudgeTeamLead) }
+      let(:judge_team_leads) { judge_team.judge_team_roles.where(type: :JudgeTeamLead).to_a }
 
       non_lead_member_counts.each do |non_lead_member_count|
         context "when team has #{non_lead_member_count} other non-JudgeTeamLead members" do
@@ -108,7 +108,6 @@ describe JudgeTeamRoleChecker, :postgres do
     context "when team has 1 JudgeTeamLead and is an admin" do
       # All sub-cases should not report any error
       let!(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
-      let(:judge_team_leads) { judge_team.judge_team_roles.where(type: :JudgeTeamLead) }
 
       non_lead_member_counts.each do |non_lead_member_count|
         context "when team has #{non_lead_member_count} other non-JudgeTeamLead members" do
@@ -142,7 +141,7 @@ describe JudgeTeamRoleChecker, :postgres do
     context "when there are 2 JudgeTeamLeads and not an admin" do
       # All sub-cases should identify the team with missing JudgeTeamLead
       let!(:judge_team) { create(:judge_team, :has_two_judge_team_lead) }
-      let(:judge_team_leads) { judge_team.judge_team_roles.where(type: :JudgeTeamLead) }
+      let(:judge_team_leads) { judge_team.judge_team_roles.where(type: :JudgeTeamLead).to_a }
 
       non_lead_member_counts.each do |non_lead_member_count|
         context "when team has #{non_lead_member_count} other non-JudgeTeamLead members" do
@@ -178,7 +177,6 @@ describe JudgeTeamRoleChecker, :postgres do
     context "when there are 2 JudgeTeamLeads and is an admin" do
       # All sub-cases should identify the team with missing JudgeTeamLead
       let!(:judge_team) { create(:judge_team, :has_two_judge_team_lead_as_admins) }
-      let(:judge_team_leads) { judge_team.judge_team_roles.where(type: :JudgeTeamLead) }
 
       non_lead_member_counts.each do |non_lead_member_count|
         context "when team has #{non_lead_member_count} other non-JudgeTeamLead members" do
@@ -251,7 +249,7 @@ describe JudgeTeamRoleChecker, :postgres do
 
     context "when only team1 has 1 JudgeTeamLead and not an admin" do
       let!(:judge_team1) { create(:judge_team, :has_judge_team_lead) }
-      let(:judge_team_leads1) { judge_team1.judge_team_roles.where(type: :JudgeTeamLead) }
+      let(:judge_team_leads1) { judge_team1.judge_team_roles.where(type: :JudgeTeamLead).to_a }
       let!(:judge_team2) { create(:judge_team) }
 
       non_lead_member_counts.each do |non_lead_member_count|
@@ -287,7 +285,6 @@ describe JudgeTeamRoleChecker, :postgres do
 
     context "when only team1 has 1 JudgeTeamLead and is an admin" do
       let!(:judge_team1) { create(:judge_team, :has_judge_team_lead_as_admin) }
-      let(:judge_team_leads1) { judge_team1.judge_team_roles.where(type: :JudgeTeamLead) }
       let!(:judge_team2) { create(:judge_team) }
 
       non_lead_member_counts.each do |non_lead_member_count|
@@ -322,7 +319,7 @@ describe JudgeTeamRoleChecker, :postgres do
 
     context "when one team has 2 non-admin JudgeTeamLeads and other team has none" do
       let!(:judge_team1) { create(:judge_team, :has_two_judge_team_lead) }
-      let(:judge_team_leads1) { judge_team1.judge_team_roles.where(type: :JudgeTeamLead) }
+      let(:judge_team_leads1) { judge_team1.judge_team_roles.where(type: :JudgeTeamLead).to_a }
       let!(:judge_team2) { create(:judge_team) }
 
       non_lead_member_counts.each do |non_lead_member_count|
@@ -358,7 +355,6 @@ describe JudgeTeamRoleChecker, :postgres do
 
     context "when one team has 2 admin JudgeTeamLeads and other team has none" do
       let!(:judge_team1) { create(:judge_team, :has_two_judge_team_lead_as_admins) }
-      let(:judge_team_leads1) { judge_team1.judge_team_roles.where(type: :JudgeTeamLead) }
       let!(:judge_team2) { create(:judge_team) }
 
       non_lead_member_counts.each do |non_lead_member_count|
@@ -391,5 +387,4 @@ describe JudgeTeamRoleChecker, :postgres do
       end
     end
   end
-
 end
