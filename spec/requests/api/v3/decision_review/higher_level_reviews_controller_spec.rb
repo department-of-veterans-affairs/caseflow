@@ -315,13 +315,52 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           "ratingDecisionId", "description", "contentionText", "approxDecisionDate", "category",
           "notes", "isUnidentified", "rampClaimId", "legacyAppealId", "legacyAppealIssueId",
           "decisionReviewTitle", "decisionIssueId", "withdrawalDate", "contestedIssueDescription",
-          "endProductCleared", "endProductCode", "ineligble"
+          "endProductCleared", "endProductCode", "ineligible"
         )
       end
 
       context "included RequestIssues" do
-        it 'should have a null ineligble'
-        it 'should have an ineligble object'
+        subject do
+          get_higher_level_review
+          byebug
+          JSON.parse(response.body)["included"].select { |obj| obj["type"] == "RequestIssue" }
+        end
+        it 'should have a null ineligible' do
+          expect(subject.first['ineligible']).to be_nil
+        end
+
+        let(:request_issue_in_active_review) do
+          create(
+            :request_issue,
+            decision_date: Date.today - 5.days,
+            decision_review: create(:higher_level_review, id: 10, veteran_file_number: veteran.file_number),
+            contested_rating_issue_reference_id: "hlr123",
+            contention_reference_id: "2222",
+            end_product_establishment: create(:end_product_establishment, :active),
+            contention_removed_at: nil,
+            ineligible_reason: nil
+          )
+        end
+
+        let(:ineligible_request_issue) do
+          create(
+            :request_issue,
+            decision_date: Date.today - 3.days,
+            decision_review: create(:higher_level_review, id: 11, veteran_file_number: veteran.file_number),
+            contested_rating_issue_reference_id: "hlr123",
+            contention_reference_id: "3333",
+            ineligible_reason: :duplicate_of_rating_issue_in_active_review,
+            ineligible_due_to: request_issue_in_active_review
+          )
+        end
+
+        it 'should have an ineligible object' do
+          higher_level_review.request_issues = [request_issue_in_active_review, ineligible_request_issue]
+          req_issue = subject.first
+          expect(req_issue['ineligible']["reason"])
+          expect(req_issue['ineligible']["dueToId"])
+          expect(req_issue['ineligible']["titleOfActiveReview"])
+        end
       end
 
       it "should include DecisionIssues" do
