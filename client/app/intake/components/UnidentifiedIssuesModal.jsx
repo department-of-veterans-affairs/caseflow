@@ -18,7 +18,6 @@ class UnidentifiedIssuesModal extends React.Component {
   }
 
   onAddIssue = () => {
-    // this.props.addUnidentifiedIssue(this.state.description, this.state.notes, decisionDate, correctionType);
     const { description, notes, decisionDate } = this.state;
     const currentIssue = {
       isUnidentified: true,
