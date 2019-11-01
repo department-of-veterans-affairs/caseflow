@@ -28,8 +28,8 @@ class PostDecisionMotionUpdater
       vacate_type: params[:vacate_type]
     )
 
-    if params.key?(:vacated_issue_ids)
-      motion.vacated_issue_ids = params[:vacated_issue_ids]
+    if params.key?(:vacated_decision_issue_ids)
+      motion.vacated_decision_issue_ids = params[:vacated_decision_issue_ids]
     end
 
     unless motion.valid?

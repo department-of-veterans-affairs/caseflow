@@ -23,9 +23,9 @@ class PostDecisionMotion < ApplicationRecord
   }
 
   def vacated_issues
-    return [] unless vacated_issue_ids
+    return [] unless vacated_decision_issue_ids
 
-    DecisionIssue.find(vacated_issue_ids)
+    DecisionIssue.find(vacated_decision_issue_ids)
   end
 
   private
@@ -39,6 +39,6 @@ class PostDecisionMotion < ApplicationRecord
   def vacated_issues_present_if_partial
     return unless partially_granted?
 
-    errors.add(:vacated_issue_ids, "is required for partially_granted disposition") unless vacated_issue_ids
+    errors.add(:vacated_decision_issue_ids, "is required for partially_granted disposition") unless vacated_decision_issue_ids
   end
 end
