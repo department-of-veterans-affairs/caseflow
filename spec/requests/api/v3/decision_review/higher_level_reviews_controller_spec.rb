@@ -324,14 +324,15 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           get_higher_level_review
           JSON.parse(response.body)["included"].select { |obj| obj["type"] == "RequestIssue" }
         end
-        it 'should have a null ineligible' do
-          expect(subject.first['ineligible']).to be_nil
+
+        it "should have a null ineligible" do
+          expect(subject.first["ineligible"]).to be_nil
         end
 
-        let(:request_issue_in_active_review) do
-          create(
+        it "should have an ineligible object" do
+          request_issue_in_active_review = create(
             :request_issue,
-            decision_date: Date.today - 5.days,
+            decision_date: Time.zone.today - 5.days,
             decision_review: create(:higher_level_review, id: 10, veteran_file_number: veteran.file_number),
             contested_rating_issue_reference_id: "hlr123",
             contention_reference_id: "2222",
@@ -339,23 +340,18 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
             contention_removed_at: nil,
             ineligible_reason: nil
           )
-        end
-
-        let(:ineligible_request_issue) do
-          create(
+          ineligible_request_issue = create(
             :request_issue,
-            decision_date: Date.today - 3.days,
+            decision_date: Time.zone.today - 3.days,
             decision_review: create(:higher_level_review, id: 11, veteran_file_number: veteran.file_number),
             contested_rating_issue_reference_id: "hlr123",
             contention_reference_id: "3333",
             ineligible_reason: :duplicate_of_rating_issue_in_active_review,
             ineligible_due_to: request_issue_in_active_review
           )
-        end
-
-        it 'should have an ineligible object' do
           higher_level_review.request_issues = [request_issue_in_active_review, ineligible_request_issue]
-          ineligble_data = subject.find { |req_issue| req_issue['attributes']['ineligible'] }['attributes']['ineligible']
+          ineligble_data = subject.find { |ri| ri["attributes"]["ineligible"] }["attributes"]["ineligible"]
+
           expect(ineligble_data["reason"]).to eq ineligible_request_issue.ineligible_reason
           expect(ineligble_data["dueToId"]).to eq ineligible_request_issue.ineligible_due_to_id
           expect(ineligble_data["titleOfActiveReview"]).to eq ineligible_request_issue.title_of_active_review
