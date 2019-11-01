@@ -45,13 +45,9 @@ class PostDecisionMotionUpdater
       return
     end
 
-    new_task = task_class.new(
-      appeal: task.appeal,
-      parent: abstract_task,
-      assigned_by: task.assigned_to,
-      assigned_to: assigned_to,
-      instructions: [params[:instructions]]
-    )
+    # We want to create an organization task to serve as parent 
+
+    @new_task = create_new_task(assigned_to_type = "User")
 
     unless new_task.valid?
       errors.messages.merge!(new_task.errors.messages)
@@ -67,6 +63,18 @@ class PostDecisionMotionUpdater
       appeal: task.appeal,
       parent: task.parent,
       assigned_to: task.assigned_to
+    )
+  end
+
+
+  def create_new_task(assigned_to_type = "User")
+    task_class.new(
+      appeal: task.appeal,
+      parent: abstract_task,
+      assigned_by: task.assigned_to,
+      assigned_to: assigned_to_type == "Organization" ? org : assigned_to,
+      assigned_to_type: assigned_to_type,
+      instructions: [params[:instructions]]
     )
   end
 
@@ -88,6 +96,18 @@ class PostDecisionMotionUpdater
 
   def denied_or_dismissed?
     %w[denied dismissed].include? disposition
+  end
+
+  def org
+    denied_or_dismissed? ? LitigationSupport.singleton : judge_team
+  end
+
+  def judge
+    judge = task.assigned_to
+  end 
+
+  def judge_team
+    JudgeTeam.for_judge(judge)
   end
 
   def assigned_to

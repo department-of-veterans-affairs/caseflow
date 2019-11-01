@@ -6,6 +6,7 @@ require "rails_helper"
 describe PostDecisionMotionUpdater, :all_dbs do
   let!(:lit_support_team) { LitigationSupport.singleton }
   let(:judge) { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
+  let(:judge_team) { JudgeTeam.create_for_judge(judge) }
   let!(:motions_atty) { create(:user, full_name: "Motions attorney") }
   let!(:mtv_mail_task) { create(:vacate_motion_mail_task, assigned_to: motions_atty) }
   let(:task) { create(:judge_address_motion_to_vacate_task, :in_progress, parent: mtv_mail_task, assigned_to: judge) }
@@ -47,6 +48,11 @@ describe PostDecisionMotionUpdater, :all_dbs do
           expect(attorney_task.parent).to eq abstract_task
           expect(attorney_task.assigned_by).to eq task.assigned_to
           expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
+        end
+
+        it "should create straight vacate and readjudication organization task" do
+          subject.process
+          org_task = StraightVacateAndReadjudicationTask.find_by(assigned_to_id: assigned_to_id)
         end
       end
 
