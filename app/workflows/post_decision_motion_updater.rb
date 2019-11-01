@@ -39,21 +39,30 @@ class PostDecisionMotionUpdater
     # to serve as parent for all successive tasks. It is created when associated with
     # the new task in order to pass responsibility for validation to child task
 
-    abstract_task = create_abstract_task
-    unless abstract_task.valid?
+    @abstract_task = create_abstract_task
+    unless @abstract_task.valid?
       errors.messages.merge!(abstract_task.errors.messages)
       return
     end
 
-    # We want to create an organization task to serve as parent 
+    # We want to create an organization task to serve as parent
+    @org_task = create_new_task("Organization")
 
-    @new_task = create_new_task(assigned_to_type = "User")
-
-    unless new_task.valid?
-      errors.messages.merge!(new_task.errors.messages)
+    unless @org_task.valid?
+      errors.messages.merge!(@org_task.errors.messages)
       return
     end
-    new_task.save
+    @org_task.save
+
+    unless assigned_to.inactive?
+      @new_task = create_new_task("User", @org_task)
+
+      unless @new_task.valid?
+        errors.messages.merge!(@new_task.errors.messages)
+        return
+      end
+      @new_task.save
+    end
 
     task.update(status: Constants.TASK_STATUSES.completed)
   end
@@ -66,13 +75,12 @@ class PostDecisionMotionUpdater
     )
   end
 
-
-  def create_new_task(assigned_to_type = "User")
+  def create_new_task(assigned_to_type = "User", parent = @abstract_task)
     task_class.new(
       appeal: task.appeal,
-      parent: abstract_task,
+      parent: parent,
       assigned_by: task.assigned_to,
-      assigned_to: assigned_to_type == "Organization" ? org : assigned_to,
+      assigned_to: ((assigned_to_type == "Organization") ? org : assigned_to),
       assigned_to_type: assigned_to_type,
       instructions: [params[:instructions]]
     )
@@ -103,15 +111,15 @@ class PostDecisionMotionUpdater
   end
 
   def judge
-    judge = task.assigned_to
-  end 
+    task.assigned_to
+  end
 
   def judge_team
     JudgeTeam.for_judge(judge)
   end
 
   def assigned_to
-    @assigned_to ||= (denied_or_dismissed? ? prev_motions_attorney_or_org : User.find_by(id: params[:assigned_to_id]))
+    @assigned_to ||= (denied_or_dismissed? ? prev_motions_attorney : User.find_by(id: params[:assigned_to_id]))
   end
 
   def prev_motions_attorney
