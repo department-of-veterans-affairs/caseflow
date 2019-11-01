@@ -79,6 +79,7 @@ detectors:
       - HearingLocation
       - QueueConfig
       - RequestIssue
+      - BulkTaskReassignment
   TooManyInstanceVariables:
     exclude:
       - AmaAppealDispatch
