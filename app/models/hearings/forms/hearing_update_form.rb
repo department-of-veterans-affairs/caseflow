@@ -8,11 +8,9 @@ class HearingUpdateForm < BaseHearingUpdateForm
   protected
 
   def update_hearing
-    ActiveRecord::Base.transaction do
-      Transcription.find_or_create_by(hearing: hearing)
-      hearing.update!(hearing_updates)
-      update_advance_on_docket_motion unless advance_on_docket_motion_attributes.nil?
-    end
+    Transcription.find_or_create_by(hearing: hearing)
+    hearing.update!(hearing_updates)
+    update_advance_on_docket_motion unless advance_on_docket_motion_attributes.nil?
   end
 
   private

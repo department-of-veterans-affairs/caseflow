@@ -2,7 +2,7 @@
 
 require "support/vacols_database_cleaner"
 
-describe VirtualHearing do
+describe VirtualHearing, :all_dbs do
   context "validation tests" do
     let(:virtual_hearing) { build(:virtual_hearing) }
 
