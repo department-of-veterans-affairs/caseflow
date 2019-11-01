@@ -1140,6 +1140,8 @@ class SeedDB
     cm = CacheManager.new
     CacheManager::BUCKETS.keys.each { |bucket| cm.clear(bucket) }
     Fakes::EndProductStore.new.clear!
+    Fakes::RatingStore.new.clear!
+    Fakes::VeteranStore.new.clear!
   end
 
   def setup_dispatch
