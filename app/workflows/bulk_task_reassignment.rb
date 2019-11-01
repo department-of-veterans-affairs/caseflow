@@ -88,10 +88,10 @@ class BulkTaskReassignment
   end
 
   def ensure_all_tasks_have_parents
-    tasks_with_no_parent = open_tasks.where(parent_id: nil)
+    tasks_with_no_parent = open_tasks.where(parent_id: nil).pluck(:id)
 
     if tasks_with_no_parent.any?
-      fail InvalidTaskParent, "Open tasks (#{tasks_with_no_parent.pluck(:id).sort.join(', ')}) " \
+      fail InvalidTaskParent, "Open tasks (#{tasks_with_no_parent.sort.join(', ')}) " \
                               "assigned to the user have no parent task"
     end
   end
@@ -100,10 +100,10 @@ class BulkTaskReassignment
     tasks_with_org_parents_of_mismatched_type = open_tasks
       .where.not(type: [JudgeAssignTask.name, JudgeDecisionReviewTask.name])
       .where("parents_tasks.assigned_to_type = ? AND parents_tasks.type != tasks.type", Organization.name)
-      .pluck("tasks.id, parents_tasks.assigned_to_type, parents_tasks.type")
+      .pluck(:id)
 
     if tasks_with_org_parents_of_mismatched_type.any?
-      fail InvalidTaskParent, "Open tasks (#{tasks_with_org_parents_of_mismatched_type.map(&:first).sort.join(', ')})" \
+      fail InvalidTaskParent, "Open tasks (#{tasks_with_org_parents_of_mismatched_type.sort.join(', ')})" \
                               " assigned to the user have parent task assigned to an organization but has a " \
                               "different task type"
     end
@@ -112,20 +112,22 @@ class BulkTaskReassignment
   def ensure_all_user_parent_tasks_have_different_type
     tasks_with_user_parents_of_same_type = open_tasks
       .where("parents_tasks.assigned_to_type = ? AND parents_tasks.type = tasks.type", User.name)
-      .pluck("tasks.id, parents_tasks.assigned_to_type, parents_tasks.type")
+      .pluck(:id)
 
     if tasks_with_user_parents_of_same_type.any?
-      fail InvalidTaskParent, "Open tasks (#{tasks_with_user_parents_of_same_type.map(&:first).sort.join(', ')}) " \
+      fail InvalidTaskParent, "Open tasks (#{tasks_with_user_parents_of_same_type.sort.join(', ')}) " \
                               "assigned to the user have parent task assigned to a user but has the same type"
     end
   end
 
   def ensure_all_judge_assign_tasks_are_child_free
-    open_children_of_judge_assign_tasks = Task.open.where(parent: open_tasks.where(type: JudgeAssignTask.name))
+    open_children_of_judge_assign_tasks = Task.open
+      .where(parent: open_tasks.where(type: JudgeAssignTask.name))
+      .pluck(:id)
 
     if open_children_of_judge_assign_tasks.any?
       fail InvalidTaskParent, "JudgeAssignTasks have open children " \
-                              "(#{open_children_of_judge_assign_tasks.pluck(:id).sort.join(', ')})"
+                              "(#{open_children_of_judge_assign_tasks.sort.join(', ')})"
     end
   end
 
@@ -154,9 +156,9 @@ class BulkTaskReassignment
 
   def ensure_user_has_no_open_tasks
     if !dry_run
-      tasks = fetch_open_tasks_for_user
+      tasks = fetch_open_tasks_for_user.pluck(:id)
       if tasks.any?
-        fail MoreTasksToReassign, "Open tasks (#{tasks.pluck(:id).sort.join(', ')}) still open after reassign"
+        fail MoreTasksToReassign, "Open tasks (#{tasks.sort.join(', ')}) still open after reassign"
       end
     end
   end
