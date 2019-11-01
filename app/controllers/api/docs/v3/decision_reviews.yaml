@@ -1034,6 +1034,7 @@ paths:
                                 ineligible:
                                   type: object
                                   nullable: true
+                                  description: This is null when the issue is eligible.  When it's ineligible, this object is populated with ineligibility information.
                                   properties:
                                     dueToId:
                                       type: integer
