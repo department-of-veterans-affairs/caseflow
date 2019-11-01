@@ -12,4 +12,12 @@ class StraightVacateAndReadjudicationTask < Task
   def self.label
     COPY::STRAIGHT_VACATE_AND_READJUDICATION_TASK_LABEL
   end
+
+  def update_status_if_children_tasks_are_closed(_child_task)
+    if assigned_to.is_a?(Organization)
+      return update!(status: :completed)
+    end
+
+    super
+  end
 end

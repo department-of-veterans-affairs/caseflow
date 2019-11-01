@@ -12,4 +12,12 @@ class DeniedMotionToVacateTask < Task
   def self.label
     COPY::DENIED_MOTION_TO_VACATE_TASK_LABEL
   end
+
+  def update_status_if_children_tasks_are_closed(_child_task)
+    if assigned_to.is_a?(Organization)
+      return update!(status: :completed)
+    end
+
+    super
+  end
 end

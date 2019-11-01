@@ -57,6 +57,19 @@ describe PostDecisionMotionUpdater, :all_dbs do
           expect(attorney_task.assigned_by).to eq task.assigned_to
           expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
         end
+
+        it "should close org task if user task is completed" do
+          subject.process
+
+          org_task = StraightVacateAndReadjudicationTask.find_by(assigned_to_id: judge_team.id)
+          attorney_task = StraightVacateAndReadjudicationTask.find_by(parent: org_task)
+
+          attorney_task.update!(status: Constants.TASK_STATUSES.completed)
+
+          org_task.reload
+
+          expect(org_task.status).to eq Constants.TASK_STATUSES.completed
+        end
       end
 
       context "when vacate type is vacate and de novo" do
@@ -76,6 +89,19 @@ describe PostDecisionMotionUpdater, :all_dbs do
           expect(attorney_task.parent).to eq org_task
           expect(attorney_task.assigned_by).to eq task.assigned_to
           expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
+        end
+
+        it "should close org task if user task is completed" do
+          subject.process
+
+          org_task = VacateAndDeNovoTask.find_by(assigned_to_id: judge_team.id)
+          attorney_task = VacateAndDeNovoTask.find_by(parent: org_task)
+
+          attorney_task.update!(status: Constants.TASK_STATUSES.completed)
+
+          org_task.reload
+
+          expect(org_task.status).to eq Constants.TASK_STATUSES.completed
         end
       end
 
@@ -140,6 +166,19 @@ describe PostDecisionMotionUpdater, :all_dbs do
         attorney_task = DeniedMotionToVacateTask.find_by(parent: org_task)
         expect(attorney_task).to be nil
       end
+
+      it "should close org task if user task is completed" do
+        subject.process
+
+        org_task = DeniedMotionToVacateTask.find_by(assigned_to_id: lit_support_team)
+        attorney_task = DeniedMotionToVacateTask.find_by(parent: org_task)
+
+        attorney_task.update!(status: Constants.TASK_STATUSES.completed)
+
+        org_task.reload
+
+        expect(org_task.status).to eq Constants.TASK_STATUSES.completed
+      end
     end
 
     context "when disposition is dismissed" do
@@ -175,6 +214,19 @@ describe PostDecisionMotionUpdater, :all_dbs do
 
         attorney_task = DismissedMotionToVacateTask.find_by(parent: org_task)
         expect(attorney_task).to be nil
+      end
+
+      it "should close org task if user task is completed" do
+        subject.process
+
+        org_task = DismissedMotionToVacateTask.find_by(assigned_to_id: lit_support_team)
+        attorney_task = DismissedMotionToVacateTask.find_by(parent: org_task)
+
+        attorney_task.update!(status: Constants.TASK_STATUSES.completed)
+
+        org_task.reload
+
+        expect(org_task.status).to eq Constants.TASK_STATUSES.completed
       end
     end
   end
