@@ -322,7 +322,6 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       context "included RequestIssues" do
         subject do
           get_higher_level_review
-          byebug
           JSON.parse(response.body)["included"].select { |obj| obj["type"] == "RequestIssue" }
         end
         it 'should have a null ineligible' do
