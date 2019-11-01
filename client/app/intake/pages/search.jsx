@@ -98,7 +98,8 @@ class Search extends React.PureComponent {
           { YourITLink }
           {' requesting that the duplicate record be removed. Include the veteran\'s first ' +
               'initial, last name, the last 4 digits of their file number or SSN, and the ' +
-              `following participant IDs: [${searchErrorData.pids}].`}
+              `following participant IDs: [${searchErrorData.pids}]. The ticket should be ` +
+              'routed to the PHI SME Compensation Corporate Records Group'}
         </React.Fragment>
       },
       veteran_not_accessible: {
