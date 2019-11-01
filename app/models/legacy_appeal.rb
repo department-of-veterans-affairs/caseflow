@@ -232,7 +232,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number_or_ssn(sanitized_vbms_id)
+    @veteran ||= VeteranFinder.find_best_match(sanitized_vbms_id)
   end
 
   def veteran_ssn
@@ -672,7 +672,7 @@ class LegacyAppeal < ApplicationRecord
         }
       )
     end
-    caseflow_file_number # prefer for now
+    caseflow_file_number
   end
 
   def pending_eps
@@ -762,6 +762,13 @@ class LegacyAppeal < ApplicationRecord
 
   def vacols_case_review
     VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
+  end
+
+  def eligible_for_death_dismissal?(user)
+    return false if notice_of_death_date.nil?
+
+    user_has_relevent_open_tasks = tasks.open.where(type: ColocatedTask.subclasses.map(&:name)).any?
+    user_has_relevent_open_tasks && Colocated.singleton.user_is_admin?(user)
   end
 
   private

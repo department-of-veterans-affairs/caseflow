@@ -69,7 +69,7 @@ class AssignToView extends React.Component {
     const action = getAction(this.props);
     const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
 
-    const taskType = taskActionData(this.props).type ? taskActionData(this.props).type : 'GenericTask';
+    const taskType = taskActionData(this.props).type ? taskActionData(this.props).type : 'Task';
 
     const payload = {
       data: {

@@ -13,7 +13,7 @@ class TaskActionRepository
       {
         selected: nil,
         options: organizations,
-        type: GenericTask.name
+        type: Task.name
       }
     end
 
