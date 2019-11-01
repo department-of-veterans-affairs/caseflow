@@ -182,6 +182,10 @@ feature "NonComp Dispositions Task Page", :postgres do
     end
 
     context "when there is an error saving" do
+      before do
+        expect_any_instance_of(DecisionReviewTask).to receive(:complete_with_payload!).and_throw("Error!")
+      end
+
       scenario "Shows an error when something goes wrong" do
         visit dispositions_url
 
