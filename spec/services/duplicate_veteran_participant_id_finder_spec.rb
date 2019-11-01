@@ -14,7 +14,8 @@ describe DuplicateVeteranParticipantIDFinder, :postgres do
     second_participant_id = "765432"
     veteran = create(:veteran, ssn: ssn, participant_id: participant_id, file_number: file_number)
 
-    allow_any_instance_of(Veteran).to receive(:fetch_bgs_record).and_return({})
+    allow(Veteran).to receive(:find_or_create_by_file_number).and_return(veteran)
+    allow(veteran).to receive(:fetch_bgs_record).and_return({})
     allow_any_instance_of(BGS::PersonWebService).to receive(:find_by_ssn).and_return(ptcpnt_id: second_participant_id)
 
     pids = DuplicateVeteranParticipantIDFinder.new(veteran: veteran).call
