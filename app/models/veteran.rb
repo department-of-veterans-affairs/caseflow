@@ -56,7 +56,6 @@ class Veteran < ApplicationRecord
     participant_id: :ptcpnt_id
   }.freeze
 
-  # TODO: cache :soc_sec_number & :ssn_nbr?
   BGS_SSN_FIELD_NAMES = [
     :ssn,
     :soc_sec_number,

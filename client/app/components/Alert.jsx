@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import DOMPurify from 'dompurify';
 
 export default class Alert extends React.Component {
   componentDidMount() {
@@ -20,11 +21,18 @@ export default class Alert extends React.Component {
     return attrs;
   }
 
+  messageDiv() {
+    let messageText = this.props.children || this.props.message;
+
+    return <div
+      className="usa-alert-text"
+      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(messageText) }}
+    />;
+  }
+
   render() {
     let {
       fixed,
-      children,
-      message,
       title,
       type,
       styling,
@@ -42,8 +50,7 @@ export default class Alert extends React.Component {
     return <div className={className} {...this.getRole()} {...styling}>
       <div className="usa-alert-body">
         <h2 className="usa-alert-heading">{title}</h2>
-        { children ? <div className="usa-alert-text">{children}</div> :
-          <div className="usa-alert-text">{message}</div>}
+        { this.messageDiv() }
       </div>
     </div>;
   }
@@ -55,6 +62,8 @@ Alert.defaultProps = {
 
 Alert.propTypes = {
   children: PropTypes.node,
+  fixed: PropTypes.string,
+  lowerMargin: PropTypes.bool,
   message: PropTypes.node,
   title: PropTypes.string,
   type: PropTypes.oneOf(['success', 'error', 'warning', 'info']).isRequired,

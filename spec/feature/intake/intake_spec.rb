@@ -274,8 +274,8 @@ feature "Intake", :all_dbs do
       after { FeatureToggle.disable!(:alert_duplicate_veterans) }
 
       scenario "Search for a veteran who has duplicate records in CorpDB" do
-        participant_id1 = "12345"
-        participant_id2 = "67890"
+        participant_id1 = "123456"
+        participant_id2 = "789012"
 
         allow_any_instance_of(Veteran).to receive(:participant_ids).and_return([participant_id1, participant_id2])
 
@@ -285,7 +285,6 @@ feature "Intake", :all_dbs do
 
         fill_in search_bar_title, with: "12341234"
         click_on "Search"
-        binding.pry
 
         expect(page).to have_current_path("/intake/search")
         expect(page).to have_content("This Veteran has a duplicate record in CorpDB")
