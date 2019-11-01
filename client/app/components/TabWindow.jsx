@@ -86,14 +86,18 @@ export default class TabWindow extends React.Component {
             )}
           </div>
       }
-      <div className="cf-tab-window-body-full-screen" {...bodyStyling}>
+      { tabs && tabs.length && <div className="cf-tab-window-body-full-screen" {...bodyStyling}>
         {tabs[this.state.currentPage].page}
       </div>
+      }
     </div>;
   }
 }
 
 TabWindow.propTypes = {
+  bodyStyling: PropTypes.object,
+  fullPage: PropTypes.bool,
+  name: PropTypes.string,
   onChange: PropTypes.func,
   tabs: PropTypes.arrayOf(PropTypes.shape({
     disable: PropTypes.bool,

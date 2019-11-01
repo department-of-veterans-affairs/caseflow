@@ -2,30 +2,37 @@
   "VACATE_TYPE_OPTIONS": [
     {
       "value": "straight_vacate_and_readjudication",
-      "displayText": "Straight Vacate and Readjudication"
+      "displayText": "Straight Vacate and Readjudication (1 document)"
     },
     {
       "value": "vacate_and_de_novo",
-      "displayText": "Vacate and De Novo"
+      "displayText": "Vacate and De Novo (2 documents)"
     }
   ],
   "DISPOSITION_OPTIONS": [
     {
-      "displayText": "Grant or partial vacature",
+      "displayText": "Grant all issues for vacatur",
       "value": "granted"
     },
     {
-      "displayText": "Deny all issues for vacature",
+      "displayText": "Deny all issues for vacatur",
       "value": "denied"
     },
     {
-      "displayText": "Withdraw/Dismiss",
-      "value": "dismissed"
+      "displayText": "Dismiss",
+      "value": "dismissed",
+      "help": "e.g. if the veteran has passed away or has withdrawn their motion"
     }
   ],
+  "PARTIAL_GRANT_OPTION": {
+    "displayText": "Grant partial vacatur",
+    "value": "partial",
+    "help": "e.g. if you do not want to vacate all the issues the veteran is requesting"
+  },
   "DISPOSITION_TEXT": {
-    "granted": "grant or partial vacature",
-    "denied": "denial of all issues for vacature",
+    "granted": "grant or partial vacatur",
+    "partial": "partial vacatur",
+    "denied": "denial of all issues for vacatur",
     "dismissed": "dismissal"
   }
 }
