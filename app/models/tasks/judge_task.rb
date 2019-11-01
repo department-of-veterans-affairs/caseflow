@@ -2,8 +2,12 @@
 
 ##
 # Parent class for all tasks to be completed by judges, including
-# JudgeQualityReviewTasks, JudgeDecisionReviewTasks,
-# JudgeDispatchReturnTasks, and JudgeAssignTasks.
+# - JudgeQualityReviewTasks
+# - JudgeDecisionReviewTasks
+# - JudgeDispatchReturnTasks
+# - JudgeAssignTasks
+# - JudgeAddressMotionToVacateTasks
+# - JudgeSignMotionToVacateTasks
 
 class JudgeTask < Task
   def available_actions(user)
@@ -13,10 +17,6 @@ class JudgeTask < Task
       Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
       additional_available_actions(user)
     ].flatten
-  end
-
-  def actions_available?(user)
-    assigned_to == user
   end
 
   def additional_available_actions(_user)
