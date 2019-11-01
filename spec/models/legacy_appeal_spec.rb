@@ -86,6 +86,18 @@ describe LegacyAppeal, :all_dbs do
         expect(legacy_appeal.veteran_file_number).to eq(legacy_appeal.veteran.file_number)
         expect(@datadog_called).to eq(true)
       end
+
+      context "Veteran record has SSN value in file_number column" do
+        before do
+          veteran.update!(file_number: veteran.ssn)
+          create(:veteran, ssn: ssn, file_number: file_number, participant_id: veteran.participant_id)
+        end
+
+        it "returns the file_number value from BGS" do
+          expect(legacy_appeal.veteran_file_number).to eq(file_number)
+          expect(legacy_appeal.veteran).to_not eq(veteran)
+        end
+      end
     end
   end
 
@@ -2377,6 +2389,58 @@ describe LegacyAppeal, :all_dbs do
                                                            representative: { code: nil, name: nil }
                                                          }
                                                        ])
+      end
+    end
+  end
+
+  context "#eligible_for_death_dismissal?" do
+    let(:correspondent) { create(:correspondent, sfnod: 4.days.ago) }
+    let(:vacols_case) { create(:case, correspondent: correspondent) }
+    let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let(:colocated_user) { create(:user) }
+    let(:attorney) { create(:user) }
+    let(:colocated_admin) { create(:user) }
+    let(:user) { colocated_admin }
+
+    before do
+      OrganizationsUser.make_user_admin(colocated_admin, Colocated.singleton)
+      OrganizationsUser.add_user_to_organization(colocated_user, Colocated.singleton)
+      User.authenticate!(user: colocated_admin)
+    end
+
+    subject { appeal.eligible_for_death_dismissal?(user) }
+
+    context "an appeal has a notice of death" do
+      context "it has open colocated tasks" do
+        let!(:colocated_task) { create(:colocated_task, appeal: appeal, assigned_by: attorney) }
+        context "user is colocated admin" do
+          it "returns eligible" do
+            expect(subject).to eq(true)
+          end
+        end
+
+        context "user is not colocated admin" do
+          let(:user) { colocated_user }
+          it "returns not eligible" do
+            expect(subject).to eq(false)
+          end
+        end
+      end
+
+      context "it has no open colocated tasks" do
+        let!(:colocated_task) {}
+        it "returns not eligible" do
+          expect(subject).to eq(false)
+        end
+      end
+    end
+
+    context "an appeal has no final notice of death" do
+      let!(:colocated_task) { create(:colocated_task, appeal: appeal, assigned_by: attorney) }
+      let(:correspondent) { create(:correspondent) }
+
+      it "returns not eligible" do
+        expect(subject).to eq(false)
       end
     end
   end

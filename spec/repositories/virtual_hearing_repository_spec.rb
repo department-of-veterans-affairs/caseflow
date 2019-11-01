@@ -4,16 +4,24 @@ require "support/vacols_database_cleaner"
 
 describe VirtualHearingRepository, :all_dbs do
   context ".ready_for_deletion" do
-    let(:virtual_hearing) { create(:virtual_hearing, :initialized, :active) }
+    let(:regional_office) { "RO42" }
+    let(:hearing_date) { Time.zone.now }
+    let(:hearing_day) do
+      create(
+        :hearing_day,
+        regional_office: regional_office,
+        scheduled_for: hearing_date,
+        request_type: HearingDay::REQUEST_TYPES[:video]
+      )
+    end
+    let(:hearing) { create(:hearing, regional_office: regional_office, hearing_day: hearing_day) }
+    let!(:virtual_hearing) { create(:virtual_hearing, :initialized, :active, hearing: hearing) }
 
     subject { VirtualHearingRepository.ready_for_deletion }
 
     context "for an AMA hearing" do
-      let(:hearing_day) { create(:hearing_day) }
-      let!(:hearing) { create(:hearing, hearing_day: hearing_day, virtual_hearing: virtual_hearing) }
-
       context "that was held" do
-        let(:hearing_day) { create(:hearing_day, scheduled_for: Time.zone.now - 1.day) }
+        let(:hearing_date) { Time.zone.now - 1.day }
 
         it "returns the virtual hearing" do
           expect(subject).to eq [virtual_hearing]
@@ -21,7 +29,7 @@ describe VirtualHearingRepository, :all_dbs do
       end
 
       context "for pending hearing" do
-        let(:virtual_hearing) { create(:virtual_hearing, :pending) }
+        let(:virtual_hearing) { create(:virtual_hearing, :pending, hearing: hearing) }
 
         it "does not return the virtual hearing" do
           expect(subject).to eq []
@@ -29,8 +37,6 @@ describe VirtualHearingRepository, :all_dbs do
       end
 
       context "on the day of" do
-        let(:hearing_day) { create(:hearing_day, scheduled_for: Time.zone.now) }
-
         it "does not return the virtual hearing" do
           expect(subject).to eq []
         end
@@ -38,14 +44,8 @@ describe VirtualHearingRepository, :all_dbs do
     end
 
     context "for a Legacy hearing" do
-      let(:hearing_date) { Time.zone.now }
-      let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_date) }
-      let!(:legacy_hearing) do
-        create(
-          :legacy_hearing,
-          hearing_day_id: hearing_day.id,
-          virtual_hearing: virtual_hearing
-        )
+      let(:hearing) do
+        create(:legacy_hearing, regional_office: regional_office, hearing_day_id: hearing_day.id)
       end
 
       context "that was held" do
@@ -57,7 +57,7 @@ describe VirtualHearingRepository, :all_dbs do
       end
 
       context "for pending hearing" do
-        let(:virtual_hearing) { create(:virtual_hearing, :pending) }
+        let(:virtual_hearing) { create(:virtual_hearing, :pending, hearing: hearing) }
 
         it "does not return the virtual hearing" do
           expect(subject).to eq []
