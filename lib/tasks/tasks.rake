@@ -4,6 +4,10 @@ namespace :tasks do
   class InvalidTaskType < StandardError; end
   class InvalidOrganization < StandardError; end
   class NoTasksToChange < StandardError; end
+  class NoTasksToReassign < StandardError; end
+  class MoreTasksToReassign < StandardError; end
+  class InvalidTaskParent < StandardError; end
+  class InvalidTaskAssignee < StandardError; end
 
   # usage:
   # Change all HoldHearingTasks to AssignHearingDispositionTask (dry run)
@@ -126,6 +130,26 @@ namespace :tasks do
     if !dry_run
       Rails.logger.tagged(logger_tag) { Rails.logger.info(message) }
       target_tasks.update_all(assigned_to_id: to_id)
+    end
+  end
+
+  # usage:
+  # Reassign all tasks assigned to a user with an id of 1 (dry run)
+  #   $ bundle exec rake tasks:reassign_from_user[1]"
+  # Reassign all tasks assigned to a user with an id of 1 (execute)
+  #   $ bundle exec rake tasks:reassign_from_user[1,false]"
+  desc "reassign all tasks assigned to a user"
+  task :reassign_from_user, [:user_id, :dry_run] => :environment do |_, args|
+    Rails.logger.tagged("rake tasks:reassign_from_user") { Rails.logger.info("Invoked with: #{args.to_a.join(', ')}") }
+    dry_run = args.dry_run&.to_s&.strip&.upcase != "FALSE"
+    user = User.find(args.user_id)
+
+    if dry_run
+      puts "*** DRY RUN"
+      puts "*** pass 'false' as the second argument to execute"
+      BulkTaskReassignment.new(user).perform_dry_run
+    else
+      BulkTaskReassignment.new(user).process
     end
   end
 end
