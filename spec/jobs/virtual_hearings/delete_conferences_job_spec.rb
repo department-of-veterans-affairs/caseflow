@@ -9,11 +9,13 @@ describe VirtualHearings::DeleteConferencesJob, :postgres, focus: true do
 
     subject { job.perform_now }
 
-    let(:hearing_day) { create(:hearing_day, scheduled_for: Time.zone.now - 1.day) }
-    let(:hearing) { create(:hearing, hearing_day: hearing_day) }
+    let(:hearing_day) do
+      create(:hearing_day, regional_office: "RO42", request_type: "V", scheduled_for: Time.zone.now - 1.day)
+    end
+    let(:hearing) { create(:hearing, regional_office: "RO42", hearing_day: hearing_day) }
 
     context "for virtual hearing that has already been cleaned up" do
-      let(:virtual_hearing) do
+      let!(:virtual_hearing) do
         create(
           :virtual_hearing,
           hearing: hearing,
@@ -27,6 +29,21 @@ describe VirtualHearings::DeleteConferencesJob, :postgres, focus: true do
       it "runs but does nothing" do
         expect(job).not_to receive(:delete_conference)
         subject
+      end
+    end
+
+    context "for virtual hearing that was cancelled" do
+      let!(:virtual_hearing) do
+        create(:virtual_hearing, :cancelled, hearing: hearing, conference_deleted: false)
+      end
+
+      it "updates the appropriate fields", :aggregate_failures do
+        subject
+        virtual_hearing.reload
+        expect(virtual_hearing.conference_deleted).to eq(true)
+        expect(virtual_hearing.veteran_email_sent).to eq(true)
+        expect(virtual_hearing.representative_email_sent).to eq(true)
+        expect(virtual_hearing.judge_email_sent).to eq(true)
       end
     end
   end
