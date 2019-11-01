@@ -3,10 +3,10 @@
 class JudgeTeamRoleChecker < DataIntegrityChecker
   def call
     # Ensure JudgeTeams have only one User with the JudgeTeamLead role
-    judge_teams_with_incorrect_number_of_leads_messages.each { |msg| add_to_report(msg) }
+    self.class.judge_teams_with_incorrect_number_of_leads_messages.each { |msg| add_to_report(msg) }
 
     # Ensure JudgeTeamLeads are always identified as admins in the associated OrganizationsUser model
-    non_admin_judge_team_leads_messages.each { |msg| add_to_report(msg) }
+    self.class.non_admin_judge_team_leads_messages.each { |msg| add_to_report(msg) }
   end
 
   def self.judge_teams_with_incorrect_number_of_leads

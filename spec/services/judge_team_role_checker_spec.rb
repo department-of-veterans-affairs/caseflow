@@ -23,6 +23,10 @@ describe JudgeTeamRoleChecker, :postgres do
         expect(get_teams_with_nonadmin_leads.call).to be_empty
       end
     end
+    it "reports no error" do
+      subject.call
+      expect(subject.report?).to eq(false)
+    end
   end
 
   # 24 is insignificant, just a moderately large number. 2 because always want at least 2 non-leads.
@@ -56,6 +60,12 @@ describe JudgeTeamRoleChecker, :postgres do
               expect(get_teams_with_nonadmin_leads.call).to be_empty
             end
           end
+
+          it "reports JudgeTeamLeads count error" do
+            subject.call
+            expect(subject.report?).to eq(true)
+            expect(subject.report).to match(/has the incorrect number of associated JudgeTeamLeads/)
+          end
         end
       end
     end
@@ -81,9 +91,15 @@ describe JudgeTeamRoleChecker, :postgres do
           end
 
           describe ".non_admin_judge_team_leads" do
-            it "identifies JudgeTeamLeads that are not admins" do
+            it "identifies JudgeTeamLeads who are not admins" do
               expect(get_teams_with_nonadmin_leads.call).to eq(judge_team_leads)
             end
+          end
+
+          it "reports 'not an admin' error" do
+            subject.call
+            expect(subject.report?).to eq(true)
+            expect(subject.report).to match(/is not an admin/)
           end
         end
       end
@@ -114,6 +130,11 @@ describe JudgeTeamRoleChecker, :postgres do
               expect(get_teams_with_nonadmin_leads.call).to be_empty
             end
           end
+
+          it "reports no error" do
+            subject.call
+            expect(subject.report?).to eq(false)
+          end
         end
       end
     end
@@ -143,6 +164,13 @@ describe JudgeTeamRoleChecker, :postgres do
               expect(get_teams_with_nonadmin_leads.call).to eq(judge_team_leads)
             end
           end
+
+          it "reports both errors" do
+            subject.call
+            expect(subject.report?).to eq(true)
+            expect(subject.report).to match(/has the incorrect number of associated JudgeTeamLeads/)
+            expect(subject.report).to match(/is not an admin/)
+          end
         end
       end
     end
@@ -168,9 +196,15 @@ describe JudgeTeamRoleChecker, :postgres do
           end
 
           describe ".non_admin_judge_team_leads" do
-            it "identifies teams with 2 JudgeTeamLead but no admin" do
+            it "identifies 2 JudgeTeamLeads who are not admins" do
               expect(get_teams_with_nonadmin_leads.call).to be_empty
             end
+          end
+
+          it "reports JudgeTeamLeads count error" do
+            subject.call
+            expect(subject.report?).to eq(true)
+            expect(subject.report).to match(/has the incorrect number of associated JudgeTeamLeads/)
           end
         end
       end
@@ -205,6 +239,12 @@ describe JudgeTeamRoleChecker, :postgres do
               expect(get_teams_with_nonadmin_leads.call).to be_empty
             end
           end
+
+          it "reports JudgeTeamLeads count error" do
+            subject.call
+            expect(subject.report?).to eq(true)
+            expect(subject.report).to match(/has the incorrect number of associated JudgeTeamLeads/)
+          end
         end
       end
     end
@@ -230,9 +270,16 @@ describe JudgeTeamRoleChecker, :postgres do
           end
 
           describe ".non_admin_judge_team_leads" do
-            it "identifies JudgeTeamLeads that are not admins" do
+            it "identifies JudgeTeamLeads who are not admins" do
               expect(get_teams_with_nonadmin_leads.call).to eq(judge_team_leads1)
             end
+          end
+
+          it "reports both errors" do
+            subject.call
+            expect(subject.report?).to eq(true)
+            expect(subject.report).to match(/has the incorrect number of associated JudgeTeamLeads/)
+            expect(subject.report).to match(/is not an admin/)
           end
         end
       end
@@ -263,6 +310,12 @@ describe JudgeTeamRoleChecker, :postgres do
               expect(get_teams_with_nonadmin_leads.call).to be_empty
             end
           end
+
+          it "reports JudgeTeamLeads count error" do
+            subject.call
+            expect(subject.report?).to eq(true)
+            expect(subject.report).to match(/has the incorrect number of associated JudgeTeamLeads/)
+          end
         end
       end
     end
@@ -288,9 +341,16 @@ describe JudgeTeamRoleChecker, :postgres do
           end
 
           describe ".non_admin_judge_team_leads" do
-            it "identifies JudgeTeamLeads that are not admins" do
+            it "identifies JudgeTeamLeads who are not admins" do
               expect(get_teams_with_nonadmin_leads.call).to eq(judge_team_leads1)
             end
+          end
+
+          it "reports both errors" do
+            subject.call
+            expect(subject.report?).to eq(true)
+            expect(subject.report).to match(/has the incorrect number of associated JudgeTeamLeads/)
+            expect(subject.report).to match(/is not an admin/)
           end
         end
       end
@@ -321,8 +381,15 @@ describe JudgeTeamRoleChecker, :postgres do
               expect(get_teams_with_nonadmin_leads.call).to be_empty
             end
           end
+
+          it "reports JudgeTeamLeads count error" do
+            subject.call
+            expect(subject.report?).to eq(true)
+            expect(subject.report).to match(/has the incorrect number of associated JudgeTeamLeads/)
+          end
         end
       end
     end
   end
+
 end
