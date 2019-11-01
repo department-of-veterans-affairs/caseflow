@@ -29,7 +29,7 @@ class PostDecisionMotionUpdater
     )
 
     if params.key?(:vacated_issue_ids)
-      motion.vacated_issue_ids = params[:vacated_issue_ids].map(&:to_i)
+      motion.vacated_issue_ids = params[:vacated_issue_ids]
     end
 
     unless motion.valid?

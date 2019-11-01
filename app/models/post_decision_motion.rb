@@ -31,7 +31,7 @@ class PostDecisionMotion < ApplicationRecord
   private
 
   def vacate_type_is_present_if_granted
-    return unless granted?
+    return unless granted? || partially_granted?
 
     errors.add(:vacate_type, "is required for granted disposition") unless vacate_type
   end
