@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import DOMPurify from 'dompurify';
 
 export default class Alert extends React.Component {
   componentDidMount() {
@@ -22,12 +21,9 @@ export default class Alert extends React.Component {
   }
 
   messageDiv() {
-    let messageText = this.props.children || this.props.message;
+    let message = this.props.children || this.props.message;
 
-    return <div
-      className="usa-alert-text"
-      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(messageText) }}
-    />;
+    return <div className="usa-alert-text">{message}</div>;
   }
 
   render() {

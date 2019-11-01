@@ -4,6 +4,7 @@ import React from 'react';
 import SearchBar from '../../components/SearchBar';
 import Alert from '../../components/Alert';
 import BareList from '../../components/BareList';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
@@ -73,6 +74,7 @@ class Search extends React.PureComponent {
   getSearchErrorAlert = (searchErrorCode, searchErrorData) => {
     // The values in this switch statement need to be snake_case
     // because they're being matched to server response values.
+    const YourITLink = <Link href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</Link>
     const searchErrors = {
       invalid_file_number: {
         title: 'Veteran ID not found',
@@ -91,8 +93,14 @@ class Search extends React.PureComponent {
         body: COPY.DUPLICATE_PHONE_NUMBER_MESSAGE
       },
       veteran_has_duplicate_records_in_corpdb: {
-        title: 'This Veteran has duplicate records in CorpDB',
-        body: sprintf(COPY.DUPLICATE_CORPDB_RECORD_MESSAGE, searchErrorData.pids)
+        title: 'Duplicate veteran records',
+        body: <React.Fragment key="alert-error-body">
+          {'This Veteran has a duplicate record in CorpDB. Please submit an incident in '}
+          { YourITLink }
+          {' requesting that the duplicate record be removed. Include the veteran\'s first ' +
+              'initial, last name, the last 4 digits of their file number or SSN, and the ' +
+              `following participant IDs: [${searchErrorData.pids}].`}
+        </React.Fragment>
       },
       veteran_not_accessible: {
         title: "You don't have permission to view this Veteran's information",
@@ -158,10 +166,13 @@ class Search extends React.PureComponent {
          'Please contact your management team if you need additional assistance.'
       },
       default: {
-        title: `Error code ${searchErrorCode}`,
-        body: 'Please try again. If the problem persists, please contact the Caseflow team ' +
-         'via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via ' +
-         '<a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a>.'
+        title: `Something went wrong (${searchErrorCode})`,
+        body: <React.Fragment key="alert-error-body">
+          {'Please try again. If the problem persists, please contact the Caseflow team ' +
+              'via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via '}
+          { YourITLink }
+          {'.'}
+        </React.Fragment>
       }
     };
 
