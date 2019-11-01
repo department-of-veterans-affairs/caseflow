@@ -12,7 +12,6 @@ import { doFileNumberSearch, setFileNumberSearch } from '../actions/intake';
 import { invalidVeteranInstructions } from '../components/ErrorAlert';
 import { PAGE_PATHS, INTAKE_STATES, REQUEST_STATE } from '../constants';
 import { getIntakeStatus } from '../selectors';
-import { sprintf } from 'sprintf-js';
 import _ from 'lodash';
 import COPY from '../../../COPY.json';
 
@@ -74,7 +73,7 @@ class Search extends React.PureComponent {
   getSearchErrorAlert = (searchErrorCode, searchErrorData) => {
     // The values in this switch statement need to be snake_case
     // because they're being matched to server response values.
-    const YourITLink = <Link href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</Link>
+    const YourITLink = <Link href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</Link>;
     const searchErrors = {
       invalid_file_number: {
         title: 'Veteran ID not found',
