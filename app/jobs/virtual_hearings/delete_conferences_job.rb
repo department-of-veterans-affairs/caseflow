@@ -6,18 +6,14 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
 
   def perform
     VirtualHearingRepository.ready_for_deletion.map do |virtual_hearing|
-      delete_conference(virtual_hearing)
-
-      send_cancellation_emails(virtual_hearing) if virtual_hearing.cancelled?
-
-      virtual_hearing.save!
+      process_virtual_hearing(virtual_hearing)
     end
   end
 
   private
 
   def pexip_service
-    @service ||= PexipService.new(
+    @pexip_service ||= PexipService.new(
       host: ENV["PEXIP_MANAGEMENT_NODE_HOST"],
       port: ENV["PEXIP_MANAGEMENT_NODE_PORT"],
       user_name: ENV["PEXIP_USERNAME"],
@@ -26,13 +22,24 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
     )
   end
 
+  def process_virtual_hearing(virtual_hearing)
+    return unless delete_conference(virtual_hearing)
+
+    virtual_hearing.conference_deleted = true
+
+    send_cancellation_emails(virtual_hearing) if virtual_hearing.cancelled?
+
+    virtual_hearing.save!
+  end
+
+  # Returns whether or not the conference was deleted from Pexip
   def delete_conference(virtual_hearing)
     pexip_service.delete_conference(conference_id: virtual_hearing.conference_id)
 
-    virtual_hearing.conference_deleted = true
+    true
   rescue Caseflow::Error::PexipNotFoundError
     # Assume the conference was already deleted if it's no longer in Pexip.
-    virtual_hearing.conference_deleted = true
+    true
   rescue Caseflow::Error::PexipApiError => error
     Rails.logger.error(
       "Failed to delete conference from Pexip with error: (#{error.code}) #{error.message}"
@@ -46,6 +53,8 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
         pexip_conference_Id: virtual_hearing.conference_id
       }
     )
+
+    false
   end
 
   def send_cancellation_emails(virtual_hearing)
