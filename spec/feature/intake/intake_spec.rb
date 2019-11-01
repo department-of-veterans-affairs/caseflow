@@ -269,7 +269,7 @@ feature "Intake", :all_dbs do
       expect(page).to have_content("David Schwimmer already started processing this form")
     end
 
-    context "" do
+    context "the alert_duplicate_veterans feature toggle is enabled" do
       before { FeatureToggle.enable!(:alert_duplicate_veterans, users: [current_user.css_id]) }
       after { FeatureToggle.disable!(:alert_duplicate_veterans) }
 
