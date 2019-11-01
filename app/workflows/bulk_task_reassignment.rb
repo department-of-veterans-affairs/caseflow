@@ -131,6 +131,7 @@ class BulkTaskReassignment
     end
   end
 
+  # We rely on the child attorney task's assigned attorney to determine what judge to reassign the decision review to
   def ensure_all_judge_review_tasks_have_child_attorney_tasks
     judge_review_task_ids = open_tasks.where(type: JudgeDecisionReviewTask.name).pluck(:id)
     child_attorney_tasks = AttorneyTask.not_cancelled.where(parent_id: judge_review_task_ids)
@@ -139,7 +140,7 @@ class BulkTaskReassignment
     if judge_review_tasks_without_children.any?
       fail InvalidTaskParent, "JudgeDecisionReviewTasks " \
                               "(#{judge_review_tasks_without_children.sort.join(', ')}) " \
-                              "have no open child attorney tasks"
+                              "have no valid child attorney tasks"
     end
   end
 

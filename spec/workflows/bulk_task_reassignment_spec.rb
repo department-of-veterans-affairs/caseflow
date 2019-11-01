@@ -119,7 +119,7 @@ describe BulkTaskAssignment, :postgres do
 
           it "fails and warns the caller of open children of JudgeAssignTasks" do
             bad_parent_output = child_tasks.map(&:parent_id).sort.join(", ")
-            expected_output = "JudgeDecisionReviewTasks (#{bad_parent_output}) have no open child attorney tasks"
+            expected_output = "JudgeDecisionReviewTasks (#{bad_parent_output}) have no valid child attorney tasks"
             expect { subject }.to raise_error(BulkTaskReassignment::InvalidTaskParent).with_message(expected_output)
           end
         end
