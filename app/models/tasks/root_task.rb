@@ -15,6 +15,11 @@ class RootTask < Task
 
   def when_child_task_completed(_child_task); end
 
+  # Do not change the status of closed or on_hold RootTasks when child tasks are created for them.
+  def when_child_task_created(_child_task)
+    update!(status: :on_hold) if active?
+  end
+
   def update_children_status_after_closed
     children.open.where(type: TrackVeteranTask.name).update_all(status: Constants.TASK_STATUSES.completed)
   end
