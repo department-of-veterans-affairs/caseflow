@@ -33,7 +33,7 @@ RSpec.feature "MailTasks", :postgres do
       end
 
       before do
-        OrganizationsUser.add_user_to_organization(user, aod_team)
+        aod_team.add_user(user)
       end
 
       it "successfully assigns the task to team member" do
@@ -83,7 +83,7 @@ RSpec.feature "MailTasks", :postgres do
     let(:task) { parent_task.children.first }
 
     before do
-      OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
+      Colocated.singleton.add_user(user)
     end
 
     it "should update the task type" do

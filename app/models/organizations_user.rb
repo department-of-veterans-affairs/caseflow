@@ -13,7 +13,7 @@ class OrganizationsUser < ApplicationRecord
   end
 
   def self.make_user_admin(user, organization)
-    add_user_to_organization(user, organization).tap do |org_user|
+    organization.add_user(user).tap do |org_user|
       org_user.update!(admin: true)
     end
   end

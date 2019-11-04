@@ -18,7 +18,7 @@ describe BvaDispatchTask, :all_dbs do
     context "when valid root_task passed as argument" do
       let(:root_task) { create(:root_task) }
       before do
-        OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
+        BvaDispatch.singleton.add_user(create(:user))
       end
 
       it "should create a BvaDispatchTask assigned to a User with a parent task assigned to the BvaDispatch org" do
@@ -35,7 +35,7 @@ describe BvaDispatchTask, :all_dbs do
     context "when organization-level BvaDispatchTask already exists" do
       let(:root_task) { create(:root_task) }
       before do
-        OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
+        BvaDispatch.singleton.add_user(create(:user))
         BvaDispatchTask.create_from_root_task(root_task)
       end
 
@@ -64,7 +64,7 @@ describe BvaDispatchTask, :all_dbs do
     let!(:di) { create(:decision_issue, decision_review: root_task.appeal, request_issues: [request_issue]) }
 
     before do
-      OrganizationsUser.add_user_to_organization(user, BvaDispatch.singleton)
+      BvaDispatch.singleton.add_user(user)
     end
 
     context "when single BvaDispatchTask exists for user and appeal combination" do

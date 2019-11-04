@@ -23,7 +23,7 @@ RSpec.shared_examples "Address Verify Task Frontend Workflow" do
 
     context "with a hearing admin member" do
       before do
-        OrganizationsUser.add_user_to_organization(user, HearingAdmin.singleton)
+        HearingAdmin.singleton.add_user(user)
 
         User.authenticate!(user: user)
 

@@ -52,7 +52,7 @@ describe OrganizationsController, :postgres, type: :controller do
 
     context "when the user is a member of the VSO in bgs and also in caseflow" do
       before do
-        OrganizationsUser.add_user_to_organization(user, vso)
+        vso.add_user(user)
         expect(OrganizationsUser).not_to receive(:add_user_to_organization)
       end
 

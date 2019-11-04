@@ -12,7 +12,7 @@ RSpec.feature "User organization", :postgres do
   let!(:user_without_role) { create(:user, full_name: "without role") }
 
   context "When user is in the organization but not an admin" do
-    before { OrganizationsUser.add_user_to_organization(user, organization) }
+    before { organization.add_user(user) }
 
     scenario "Adds and removes users from the organization" do
       visit organization.user_admin_path
@@ -71,7 +71,7 @@ RSpec.feature "User organization", :postgres do
     context "when there are many users in the organization" do
       let(:other_org_user) { create(:user) }
       before do
-        OrganizationsUser.add_user_to_organization(other_org_user, organization)
+        organization.add_user(other_org_user)
       end
 
       it "allows us to change admin rights for users in the organization" do
@@ -97,7 +97,7 @@ RSpec.feature "User organization", :postgres do
       let!(:judgeteam) { JudgeTeam.create_for_judge(judge) }
 
       before do
-        OrganizationsUser.add_user_to_organization(user, judgeteam)
+        judgeteam.add_user(user)
       end
 
       it "Organization task list view shows queue switcher dropdown" do
@@ -134,7 +134,7 @@ RSpec.feature "User organization", :postgres do
   context "When organization is a BusinessLine" do
     let!(:organization) { create(:business_line, url: "lob", name: "LOB") }
 
-    before { OrganizationsUser.add_user_to_organization(user, organization) }
+    before { organization.add_user(user) }
 
     scenario "Redirects to /decision_reviews equivalent" do
       visit organization.path

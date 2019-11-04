@@ -592,7 +592,7 @@ describe Task, :all_dbs do
       let!(:task) { create(:generic_task, assigned_to: user, parent: parent_task) }
 
       it "returns false" do
-        OrganizationsUser.add_user_to_organization(user, organization)
+        organization.add_user(user)
         expect(parent_task.actions_allowable?(user)).to eq(false)
       end
     end
@@ -868,7 +868,7 @@ describe Task, :all_dbs do
   describe ".assigned_to_same_org?" do
     subject { task.assigned_to_same_org?(other_task) }
 
-    before { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
+    before { Colocated.singleton.add_user(create(:user)) }
 
     context "when other task is assigned to a user" do
       let(:task) { create(:task, assigned_to: Colocated.singleton) }

@@ -11,7 +11,7 @@ RSpec.feature "Attorney queue", :all_dbs do
   let!(:vacols_attorney) { create(:staff, :attorney_role, user: attorney) }
 
   let!(:judge_team) do
-    JudgeTeam.create_for_judge(judge).tap { |jt| OrganizationsUser.add_user_to_organization(attorney, jt) }
+    JudgeTeam.create_for_judge(judge).tap { |jt| jt.add_user(attorney) }
   end
 
   before do
@@ -20,7 +20,7 @@ RSpec.feature "Attorney queue", :all_dbs do
 
   describe "assigning admin actions to VLJ support staff" do
     let!(:colocated_team) do
-      Colocated.singleton.tap { |org| OrganizationsUser.add_user_to_organization(create(:user), org) }
+      Colocated.singleton.tap { |org| org.add_user(create(:user)) }
     end
 
     context "for AMA appeals" do
@@ -93,7 +93,7 @@ RSpec.feature "Attorney queue", :all_dbs do
         )
       end
       let!(:colocated_users) do
-        3.times { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
+        3.times { Colocated.singleton.add_user(create(:user)) }
       end
       let!(:colocated_org_task) do
         create(
@@ -117,7 +117,7 @@ RSpec.feature "Attorney queue", :all_dbs do
     context "when a LegacyAppeal has a ColocatedTask" do
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
       let!(:colocated_users) do
-        3.times { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
+        3.times { Colocated.singleton.add_user(create(:user)) }
       end
       let!(:colocated_org_task) do
         create(
@@ -140,7 +140,7 @@ RSpec.feature "Attorney queue", :all_dbs do
     context "when a LegacyAppeal's ColocatedTask is re-assigned from one member of the VLJ support staff to another" do
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
       let!(:colocated_users) do
-        3.times { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
+        3.times { Colocated.singleton.add_user(create(:user)) }
       end
       let(:colocated_org_task) do
         create(
