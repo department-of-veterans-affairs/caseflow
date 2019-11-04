@@ -151,16 +151,14 @@ jobs:
       - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.5.3-node-browsers
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
-          - RAILS_ENV: test
-          - NODE_ENV: test
+          - RAILS_ENV: development
           - BUNDLE_PATH: vendor/bundle
-          - COVERAGE_DIR: /home/circleci/coverage
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
       - image: circleci/postgres:9.5
         environment:
           - POSTGRES_USER: root
-            POSTGRES_DB: caseflow_certification_test
+            POSTGRES_DB: caseflow_certification_development
       - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
       - image: circleci/redis:4.0.10
     steps:
@@ -199,19 +197,21 @@ jobs:
 
       - run:
           name: Database setup
-          command: ~/project/ci-bin/capture-log "RAILS_ENV=development bundle exec rake db:create db:schema:load"
+          command: |
+            ~/project/ci-bin/capture-log "bundle exec rake db:create"
+            ~/project/ci-bin/capture-log "bundle exec rake db:schema:load"
 
       - run:
           name: Wait for FACOLS to be ready
-          command: ~/project/ci-bin/capture-log "RAILS_ENV=development bundle exec rake local:vacols:wait_for_connection"
+          command: ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
 
       - run:
           name: FACOLS test setup
-          command: ~/project/ci-bin/capture-log "RAILS_ENV=development bundle exec rake spec:setup_vacols"
+          command: ~/project/ci-bin/capture-log "bundle exec rake spec:setup_vacols"
 
       - run:
           name: Seed database with test data
-          command: ~/project/ci-bin/capture-log "RAILS_ENV=development bundle exec rake db:setup"
+          command: ~/project/ci-bin/capture-log "bundle exec rake db:setup"
 
       - deploy:
           name: Concatenate all logs
@@ -351,7 +351,8 @@ workflows:
   version: 2
   build:
     jobs:
-      - rspec
+      # TODO: Re-enable these after we've troubleshot db_seed_dev
+      # - rspec
       - db_seed_dev
-      - js_tests
-      - lint
+      # - js_tests
+      # - lint
