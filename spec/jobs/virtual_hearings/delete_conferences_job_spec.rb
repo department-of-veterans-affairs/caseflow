@@ -34,7 +34,7 @@ describe VirtualHearings::DeleteConferencesJob, :postgres, focus: true do
     end
 
     context "for virtual hearing that was cancelled" do
-      let(:scheduled_for) { Time.zone.now + 7.day }
+      let(:scheduled_for) { Time.zone.now + 7.days }
       let!(:virtual_hearing) do
         create(:virtual_hearing, :cancelled, hearing: hearing, conference_deleted: false)
       end
@@ -50,7 +50,7 @@ describe VirtualHearings::DeleteConferencesJob, :postgres, focus: true do
     end
 
     context "for virtual hearing that already occurred" do
-      let(:scheduled_for) { Time.zone.now - 7.day }
+      let(:scheduled_for) { Time.zone.now - 7.days }
       let!(:virtual_hearing) do
         create(:virtual_hearing, :active, hearing: hearing, conference_deleted: false)
       end
