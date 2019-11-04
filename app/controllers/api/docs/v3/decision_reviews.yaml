@@ -984,7 +984,7 @@ paths:
                                   type: string
                                   format: date
                                   nullable: true
-                                ratingDecisionReferenceId:
+                                ratingDecisionId:
                                   type: string
                                   nullable: true
                                 description:
@@ -1013,16 +1013,7 @@ paths:
                                 legacyAppealIssueId: # vacols_sequence_id
                                   type: integer
                                   nullable: true
-                                ineligibleReason:
-                                  type: string
-                                  nullable: true
-                                ineligibleDueToId:
-                                  type: integer
-                                  nullable: true
                                 decisionReviewTitle:
-                                  type: string
-                                  nullable: true
-                                titleOfActiveReview:
                                   type: string
                                   nullable: true
                                 decisionIssueId: # contested_decision_issue_id
@@ -1040,6 +1031,17 @@ paths:
                                   nullable: true
                                 endProductCode:
                                   type: string
+                                ineligible:
+                                  type: object
+                                  nullable: true
+                                  description: This is null when the issue is eligible.  When it's ineligible, this object is populated with ineligibility information.
+                                  properties:
+                                    dueToId:
+                                      type: integer
+                                    reason:
+                                      type: string
+                                    titleOfActiveReview:
+                                      type: string
 
         '404':
           description: ID not found
