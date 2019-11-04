@@ -22,7 +22,7 @@ class VeteranFinder
 
     def find_best_match_by_ssn(ssn)
       vets = find_or_create_by_file_number_or_ssn(ssn)
-      vets.find { |vet| vet.ssn.to_s == ssn.to_s } || vets.first
+      vets.select { |vet| vet[:ssn].present? }.find { |vet| vet.ssn.to_s == ssn.to_s } || vets.first
     end
 
     def find_best_match_by_file_number(file_number)

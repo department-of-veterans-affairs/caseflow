@@ -28,6 +28,6 @@ class PostDecisionMotionsController < ApplicationController
   end
 
   def motion_params
-    params.permit(:disposition, :task_id, :vacate_type, :instructions, :assigned_to_id)
+    params.permit(:disposition, :task_id, :vacate_type, :instructions, :assigned_to_id, vacated_decision_issue_ids: [])
   end
 end
