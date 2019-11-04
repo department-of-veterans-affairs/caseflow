@@ -13,6 +13,7 @@ feature "Intake Edit Confirmation", :postgres do
   let(:rating_reference_id) { "def456" }
 
   describe "when editing a decision review" do
+    let(:veteran) { create(:veteran) }
     let!(:rating) do
       Generators::Rating.build(
         participant_id: decision_review.veteran.participant_id,
@@ -20,7 +21,8 @@ feature "Intake Edit Confirmation", :postgres do
         promulgation_date: decision_review.receipt_date - 2.months,
         issues: [
           { decision_text: "Left knee granted" },
-          { reference_id: rating_reference_id, decision_text: "PTSD denied" }
+          { reference_id: rating_reference_id, decision_text: "PTSD denied" },
+          { reference_id: "issue_on_another_review", decision_text: "Issue on another review" }
         ]
       )
     end
@@ -94,6 +96,30 @@ feature "Intake Edit Confirmation", :postgres do
             click_number_of_issues_changed_confirmation
             expect(page).to have_current_path("/#{edit_path}/confirmation")
             expect(page).to have_content(COPY::UNIDENTIFIED_ALERT)
+          end
+
+          context "when user cancels an ep and adds an ineligible issue" do
+            let!(:request_issue_on_another_review) do
+              create(
+                :request_issue,
+                contested_rating_issue_reference_id: "issue_on_another_review",
+                contested_rating_issue_profile_date: rating.profile_date,
+                decision_review: create(:supplemental_claim, veteran_file_number: decision_review.veteran.file_number),
+                contested_issue_description: "Issue on another review"
+              )
+            end
+
+            it "does not include ineligible issues as having an EP (shows EP as canceled)" do
+              visit edit_path
+              click_intake_add_issue
+              add_intake_rating_issue("Issue on another review")
+              click_remove_intake_issue_dropdown("PTSD denied")
+              click_edit_submit
+
+              expect(page).to have_current_path("/#{edit_path}/confirmation")
+              expect(page).to have_content("A #{decision_review.class.review_title} Rating EP is being canceled")
+              expect(page).to have_content("Issue on another review is ineligible")
+            end
           end
         end
       end

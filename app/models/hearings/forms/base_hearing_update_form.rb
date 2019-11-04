@@ -11,11 +11,13 @@ class BaseHearingUpdateForm
                 :witness
 
   def update
-    update_hearing
+    ActiveRecord::Base.transaction do
+      update_hearing
 
-    if !virtual_hearing_attributes.nil?
-      create_or_update_virtual_hearing
-      # TODO: Start the job to create the Pexip conference here?
+      if !virtual_hearing_attributes.nil?
+        create_or_update_virtual_hearing
+        # TODO: Start the job to create the Pexip conference here?
+      end
     end
   end
 
@@ -34,27 +36,25 @@ class BaseHearingUpdateForm
   def create_or_update_virtual_hearing
     created = false
 
-    ActiveRecord::Base.transaction do
-      # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
-      virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
-        new_virtual_hearing.veteran_email = virtual_hearing_attributes[:veteran_email]
-        new_virtual_hearing.judge_email = virtual_hearing_attributes[:judge_email]
-        new_virtual_hearing.representative_email = virtual_hearing_attributes[:representative_email]
-        created = true
-      end
+    # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
+    virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
+      new_virtual_hearing.veteran_email = virtual_hearing_attributes[:veteran_email]
+      new_virtual_hearing.judge_email = virtual_hearing_attributes[:judge_email]
+      new_virtual_hearing.representative_email = virtual_hearing_attributes[:representative_email]
+      created = true
+    end
 
-      if !created
-        # The email sent flag should always be set to false from the API.
-        emails_sent_updates = {
-          veteran_email_sent: email_sent_flag(:veteran_email),
-          judge_email_sent: email_sent_flag(:judge_email),
-          representative_email_sent: email_sent_flag(:representative_email)
-        }.reject { |_k, email_sent| email_sent == true }
+    if !created
+      # The email sent flag should always be set to false from the API.
+      emails_sent_updates = {
+        veteran_email_sent: email_sent_flag(:veteran_email),
+        judge_email_sent: email_sent_flag(:judge_email),
+        representative_email_sent: email_sent_flag(:representative_email)
+      }.reject { |_k, email_sent| email_sent == true }
 
-        updates = virtual_hearing_attributes.compact.merge(emails_sent_updates)
+      updates = virtual_hearing_attributes.compact.merge(emails_sent_updates)
 
-        virtual_hearing.update(updates)
-      end
+      virtual_hearing.update(updates)
     end
   end
 end
