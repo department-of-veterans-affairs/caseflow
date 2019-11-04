@@ -19,9 +19,11 @@ class JudgeTask < Task
     ].flatten
   end
 
+  # :nocov:
   def additional_available_actions(_user)
     fail Caseflow::Error::MustImplementInSubclass
   end
+  # :nocov:
 
   def timeline_title
     COPY::CASE_TIMELINE_JUDGE_TASK
