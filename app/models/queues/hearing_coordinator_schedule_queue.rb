@@ -4,7 +4,7 @@
 # for Hearing Coordinators
 
 # Hearing coordinators do not work ScheduleHearingTasks
-# from organization or peronsal queues
+# from organization or personal queues
 # Instead, they work a the assign/hearings page which retrieves
 # queries tasks in the same way as Queues
 
