@@ -35,6 +35,12 @@ class DecidedMotionToVacateTask < Task
   end
 
   def org
-    fail Caseflow::Error::MustImplementInSubclass
+    self.class.org
+  end
+
+  class << self
+    def org
+      fail Caseflow::Error::MustImplementInSubclass
+    end
   end
 end
