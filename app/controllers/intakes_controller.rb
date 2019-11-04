@@ -150,7 +150,7 @@ class IntakesController < ApplicationController
   def success_message
     detail = intake.detail
     claimant_name = detail.veteran_full_name
-    claimant_name = detail.claimants.first.try(:name) if detail.veteran_is_not_claimant
+    claimant_name = detail.claimants.last.try(:name) if detail.veteran_is_not_claimant
     "#{claimant_name} (Veteran SSN: #{detail.veteran.ssn}) #{detail.class.review_title} has been processed."
   end
 end

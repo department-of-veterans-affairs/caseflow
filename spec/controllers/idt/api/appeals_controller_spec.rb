@@ -105,9 +105,9 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           response_body = JSON.parse(response.body)["data"]
 
           expect(response_body["attributes"]["appellants"][0]["address"]["address_line_1"])
-            .to eq appeal.claimants.first.address_line_1
+            .to eq appeal.claimants.last.address_line_1
           expect(response_body["attributes"]["appellants"][0]["address"]["city"])
-            .to eq appeal.claimants.first.city
+            .to eq appeal.claimants.last.city
           expect(response_body["attributes"]["appellants"][0]["representative"]["address"])
             .to eq appeal.representative_address.stringify_keys
           expect(response_body["attributes"]["appellants"][1]["address"]["address_line_1"])
@@ -259,7 +259,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         context "and AMA appeal id URL parameter is passed" do
           before do
             allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
-              ama_appeals.first.claimants.first.participant_id => {
+              ama_appeals.first.claimants.last.participant_id => {
                 representative_name: "POA Name",
                 representative_type: "POA Attorney",
                 participant_id: "600153863"
@@ -343,9 +343,9 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               response_body = JSON.parse(response.body)["data"]
 
               expect(response_body["attributes"]["appellants"][0]["address"]["address_line_1"])
-                .to eq ama_appeals.first.reload.claimants.first.address_line_1
+                .to eq ama_appeals.first.reload.claimants.last.address_line_1
               expect(response_body["attributes"]["appellants"][0]["address"]["city"])
-                .to eq ama_appeals.first.claimants.first.city
+                .to eq ama_appeals.first.claimants.last.city
               expect(response_body["attributes"]["appellants"][0]["representative"]["address"])
                 .to eq ama_appeals.first.representative_address.stringify_keys
               expect(response_body["attributes"]["appellants"][1]["address"]["address_line_1"])

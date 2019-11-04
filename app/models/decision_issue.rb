@@ -196,13 +196,13 @@ class DecisionIssue < ApplicationRecord
 
   def prior_payee_code
     latest_ep = decision_review.veteran
-      .find_latest_end_product_by_claimant(decision_review.claimants.first)
+      .find_latest_end_product_by_claimant(decision_review.claimants.last)
 
     latest_ep&.payee_code
   end
 
   def dta_payee_code
-    decision_review.payee_code || prior_payee_code || decision_review.claimants.first.bgs_payee_code
+    decision_review.payee_code || prior_payee_code || decision_review.claimants.last.bgs_payee_code
   end
 
   def find_remand_supplemental_claim

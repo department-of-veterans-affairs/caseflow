@@ -10,7 +10,7 @@ class WorkQueue::VeteranRecordRequestSerializer
   def self.claimant_name(object)
     if decision_review(object).veteran_is_not_claimant
       # TODO: support multiple?
-      decision_review(object).claimants.first.try(:name)
+      decision_review(object).claimants.last.try(:name)
     else
       decision_review(object).veteran_full_name
     end
@@ -19,7 +19,7 @@ class WorkQueue::VeteranRecordRequestSerializer
   def self.claimant_relationship(object)
     return "self" unless decision_review(object).veteran_is_not_claimant
 
-    decision_review(object).claimants.first.try(:relationship)
+    decision_review(object).claimants.last.try(:relationship)
   end
 
   attribute :claimant do |object|

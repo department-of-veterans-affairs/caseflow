@@ -396,7 +396,7 @@ describe Appeal, :all_dbs do
 
       it "returns claimant's name" do
         expect(subject).to_not eq nil
-        expect(subject).to eq appeal.claimants.first.first_name
+        expect(subject).to eq appeal.claimants.last.first_name
       end
     end
 

@@ -174,7 +174,7 @@ class DecisionReview < ApplicationRecord
   def claimant_participant_id
     return nil if claimants.empty?
 
-    claimants.first.participant_id
+    claimants.last.participant_id
   end
 
   def claimant_not_veteran
@@ -190,7 +190,7 @@ class DecisionReview < ApplicationRecord
   def payee_code
     return nil if claimants.empty?
 
-    claimants.first.payee_code
+    claimants.last.payee_code
   end
 
   def veteran

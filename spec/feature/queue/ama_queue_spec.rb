@@ -65,7 +65,7 @@ RSpec.feature "AmaQueue", :all_dbs do
       Fakes::Initializer.load!
 
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
-        appeals.first.claimants.first.participant_id => {
+        appeals.first.claimants.last.participant_id => {
           representative_name: poa_name,
           representative_type: "POA Attorney",
           participant_id: participant_id
@@ -201,7 +201,7 @@ RSpec.feature "AmaQueue", :all_dbs do
 
         expect(page).to have_content("AOD status updated")
         expect(page).to have_content("AOD")
-        motion = appeals.first.claimants.first.person.advance_on_docket_motions.first
+        motion = appeals.first.claimants.last.person.advance_on_docket_motions.first
 
         expect(motion.granted).to eq(true)
         expect(motion.reason).to eq("serious_illness")

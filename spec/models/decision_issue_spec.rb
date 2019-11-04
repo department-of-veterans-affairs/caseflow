@@ -383,7 +383,7 @@ describe DecisionIssue, :postgres do
               benefit_type: "compensation"
             )
             expect(subject.claimants.count).to eq(1)
-            expect(subject.claimants.first).to have_attributes(
+            expect(subject.claimants.last).to have_attributes(
               participant_id: decision_review.claimant_participant_id,
               payee_code: prior_payee_code,
               decision_review: subject
@@ -402,7 +402,7 @@ describe DecisionIssue, :postgres do
                 benefit_type: "compensation"
               )
               expect(subject.claimants.count).to eq(1)
-              expect(subject.claimants.first).to have_attributes(
+              expect(subject.claimants.last).to have_attributes(
                 participant_id: decision_review.claimant_participant_id,
                 payee_code: "12",
                 decision_review: subject

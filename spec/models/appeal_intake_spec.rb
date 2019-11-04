@@ -115,7 +115,7 @@ describe AppealIntake, :all_dbs do
       expect(subject).to be_truthy
 
       expect(intake.detail.claimants.count).to eq 1
-      expect(intake.detail.claimants.first).to have_attributes(
+      expect(intake.detail.claimants.last).to have_attributes(
         participant_id: intake.veteran.participant_id,
         payee_code: nil,
         decision_review: intake.detail
@@ -143,7 +143,7 @@ describe AppealIntake, :all_dbs do
         subject
 
         expect(intake.detail.claimants.count).to eq 1
-        expect(intake.detail.claimants.first).to have_attributes(
+        expect(intake.detail.claimants.last).to have_attributes(
           participant_id: "1234",
           payee_code: nil,
           decision_review: intake.detail
@@ -158,7 +158,7 @@ describe AppealIntake, :all_dbs do
         it "does not require the address" do
           expect(subject).to be_truthy
           expect(intake.detail.claimants.count).to eq 1
-          expect(intake.detail.claimants.first).to have_attributes(
+          expect(intake.detail.claimants.last).to have_attributes(
             participant_id: "1234",
             payee_code: nil,
             decision_review: intake.detail

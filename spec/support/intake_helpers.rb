@@ -462,7 +462,7 @@ module IntakeHelpers
   end
 
   def setup_prior_claim_with_payee_code(decision_review, veteran, prior_payee_code = "10")
-    same_claimant = decision_review.claimants.first
+    same_claimant = decision_review.claimants.last
 
     Generators::EndProduct.build(
       veteran_file_number: veteran.file_number,

@@ -197,7 +197,7 @@ feature "Higher-Level Review", :all_dbs do
     expect(higher_level_review.informal_conference).to eq(true)
     expect(higher_level_review.same_office).to eq(false)
     expect(higher_level_review.legacy_opt_in_approved).to eq(false)
-    expect(higher_level_review.claimants.first).to have_attributes(
+    expect(higher_level_review.claimants.last).to have_attributes(
       participant_id: "5382910292",
       payee_code: "10"
     )
