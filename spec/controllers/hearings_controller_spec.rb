@@ -7,6 +7,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
   let!(:legacy_hearing) { create(:legacy_hearing) }
+  let(:ama_hearing) { create(:hearing) }
 
   describe "PATCH update" do
     it "should be successful", :aggregate_failures do
@@ -199,6 +200,37 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           expect(virtual_hearing.judge_email_sent).to eq(false)
           expect(virtual_hearing.representative_email_sent).to eq(false)
         end
+      end
+    end
+
+    context "when updating the AOD" do
+      it "should return a 200 if empty aod" do
+        params = {
+          id: ama_hearing.external_id,
+          advance_on_docket_motion: {},
+          hearing: { notes: "Test" }
+        }
+        patch :update, as: :json, params: params
+        expect(response.status).to eq 200
+      end
+
+      it "should return a 200 and update aod if provided", :aggregate_failures do
+        params = {
+          id: ama_hearing.external_id,
+          advance_on_docket_motion: {
+            user_id: user.id,
+            person_id: ama_hearing.appeal.appellant.id,
+            reason: AdvanceOnDocketMotion.reasons[:age],
+            granted: true
+          },
+          hearing: { notes: "Test" }
+        }
+        patch :update, as: :json, params: params
+        expect(response.status).to eq 200
+        expect(ama_hearing.advance_on_docket_motion.user).to eq user
+        expect(ama_hearing.advance_on_docket_motion.person.id).to eq ama_hearing.appeal.appellant.id
+        expect(ama_hearing.advance_on_docket_motion.reason).to eq AdvanceOnDocketMotion.reasons[:age]
+        expect(ama_hearing.advance_on_docket_motion.granted).to eq true
       end
     end
 
