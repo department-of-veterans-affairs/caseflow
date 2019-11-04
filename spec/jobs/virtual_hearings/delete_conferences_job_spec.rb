@@ -3,7 +3,7 @@
 require "support/database_cleaner"
 require "rails_helper"
 
-describe VirtualHearings::DeleteConferencesJob, :postgres, focus: true do
+describe VirtualHearings::DeleteConferencesJob, :postgres do
   context "#perform" do
     let(:job) { VirtualHearings::DeleteConferencesJob.new }
 
