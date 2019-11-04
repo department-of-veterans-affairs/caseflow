@@ -208,7 +208,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         params = {
           id: ama_hearing.external_id,
           advance_on_docket_motion: {},
-          hearing: { notes: "Test"}
+          hearing: { notes: "Test" }
         }
         patch :update, as: :json, params: params
         expect(response.status).to eq 200
@@ -223,7 +223,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
             reason: AdvanceOnDocketMotion.reasons[:age],
             granted: true
           },
-          hearing: { notes: "Test"}
+          hearing: { notes: "Test" }
         }
         patch :update, as: :json, params: params
         expect(response.status).to eq 200
