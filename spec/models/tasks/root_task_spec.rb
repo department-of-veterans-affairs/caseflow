@@ -102,8 +102,9 @@ describe RootTask, :postgres do
 
   context "when child tasks are added" do
     let(:root_task) { create(:root_task, appeal: create(:appeal)) }
+    let(:task_factory) { :task }
 
-    subject { create(:task, parent: root_task, appeal: root_task.appeal) }
+    subject { create(task_factory, parent: root_task, appeal: root_task.appeal) }
 
     context "when the RootTask is active" do
       it "changes that status to on_hold" do
@@ -118,7 +119,10 @@ describe RootTask, :postgres do
     end
 
     context "when the RootTask is closed" do
-      before { root_task.update!(status: Constants.TASK_STATUSES.completed) }
+      before do
+        root_task.update!(status: Constants.TASK_STATUSES.completed)
+        allow(Raven).to receive(:capture_message)
+      end
 
       it "does not change the status of the RootTask" do
         expect(root_task.status).to eq(Constants.TASK_STATUSES.completed)
@@ -128,6 +132,22 @@ describe RootTask, :postgres do
 
         expect(root_task.status).to eq(Constants.TASK_STATUSES.completed)
         expect(root_task.children.count).to eq(1)
+      end
+
+      context "when the child task is a generic 'ol task" do
+        it "sends a message to Sentry" do
+          subject
+          expect(Raven).to have_received(:capture_message).exactly(1).times
+        end
+      end
+
+      context "when the child task is a TrackVeteranTask" do
+        let(:task_factory) { :track_veteran_task }
+
+        it "does not send a message to Sentry" do
+          subject
+          expect(Raven).to have_received(:capture_message).exactly(0).times
+        end
       end
     end
   end
