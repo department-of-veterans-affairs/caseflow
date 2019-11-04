@@ -39,29 +39,32 @@ class PostDecisionMotionUpdater
     # to serve as parent for all successive tasks. It is created when associated with
     # the new task in order to pass responsibility for validation to child task
 
-    @abstract_task = create_abstract_task
-    unless @abstract_task.valid?
+    abstract_task = create_abstract_task
+    unless abstract_task.valid?
       errors.messages.merge!(abstract_task.errors.messages)
       return
     end
 
     # We want to create an organization task to serve as parent
-    @org_task = create_new_task("Organization")
-
-    unless @org_task.valid?
-      errors.messages.merge!(@org_task.errors.messages)
+    org_task = create_new_task("Organization", abstract_task)
+    unless org_task.valid?
+      errors.messages.merge!(org_task.errors.messages)
       return
     end
-    @org_task.save
 
-    unless assigned_to.inactive?
-      @new_task = create_new_task("User", @org_task)
+    # Still save org task if assigned user is inactive
+    if assigned_to&.inactive?
+      org_task.save
+    end
 
-      unless @new_task.valid?
-        errors.messages.merge!(@new_task.errors.messages)
+    unless assigned_to&.inactive?
+      new_task = create_new_task("User", org_task)
+
+      unless new_task.valid?
+        errors.messages.merge!(new_task.errors.messages)
         return
       end
-      @new_task.save
+      new_task.save
     end
 
     task.update(status: Constants.TASK_STATUSES.completed)
@@ -75,7 +78,7 @@ class PostDecisionMotionUpdater
     )
   end
 
-  def create_new_task(assigned_to_type = "User", parent = @abstract_task)
+  def create_new_task(assigned_to_type = "User", parent)
     task_class.new(
       appeal: task.appeal,
       parent: parent,
