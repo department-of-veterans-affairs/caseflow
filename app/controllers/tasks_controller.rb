@@ -159,7 +159,7 @@ class TasksController < ApplicationController
   end
 
   def verify_task_access
-    if current_user.vso_employee? && task_classes.exclude?(InformalHearingPresentationTask.name.to_sym)
+    if current_user.vso_employee? && !task_classes.all?(InformalHearingPresentationTask.name.to_sym)
       fail Caseflow::Error::ActionForbiddenError, message: "VSOs cannot create that task."
     end
   end
