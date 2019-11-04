@@ -179,7 +179,7 @@ class TasksController < ApplicationController
   end
 
   def task_classes
-    create_params.map { |param| param[:type]&.to_sym }.uniq.compact
+    [create_params].flatten.map { |param| param[:type]&.to_sym }.uniq.compact
   end
 
   def valid_task_classes
