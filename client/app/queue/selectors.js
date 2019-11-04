@@ -235,7 +235,7 @@ export const workableTasksByAssigneeCssIdSelector = createSelector(
   [workTasksByAssigneeCssIdSelector],
   (tasks) => tasks.filter(
     (task) => {
-      return (task.appeal.isLegacyAppeal ||
+      return ((task.appeal.isLegacyAppeal && task.type === 'AttorneyTask') ||
           task.status === TASK_STATUSES.assigned ||
           task.status === TASK_STATUSES.in_progress);
     }
