@@ -98,14 +98,6 @@ jobs:
           command: |
             ~/project/ci-bin/capture-log "bundle exec rake spec:setup_vacols"
 
-      - run:
-          name: RSpec
-          command: |
-            mkdir -p ~/test-results/rspec
-            testfiles=$(circleci tests glob "spec/**/*spec.rb" | circleci tests split --split-by=timings)
-            echo $testfiles > ~/project/tmp/testfiles/rspec_testfiles.txt
-            ~/project/ci-bin/capture-log "bundle exec rspec --no-color --format documentation --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}"
-
       - store_test_results:
           name: Store test results as summary
           path: ~/test-results
@@ -131,10 +123,6 @@ jobs:
           path: ~/project/log/bullet.log
 
       - store_artifacts:
-          name: Store testfile ordering
-          path: ~/project/tmp/testfiles
-
-      - store_artifacts:
           name: Store run logs
           path: ~/logs
 
@@ -156,6 +144,84 @@ jobs:
       - store_artifacts:
           name: Store final coverage
           path: ~/coverage/combined
+
+  # Mirrors rspec setup.
+  db_seed_dev:
+    docker:
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.5.3-node-browsers
+        environment:
+          - DBUS_SESSION_BUS_ADDRESS: /dev/null
+          - RAILS_ENV: test
+          - NODE_ENV: test
+          - BUNDLE_PATH: vendor/bundle
+          - COVERAGE_DIR: /home/circleci/coverage
+          - POSTGRES_HOST: localhost
+          - POSTGRES_USER: root
+      - image: circleci/postgres:9.5
+        environment:
+          - POSTGRES_USER: root
+            POSTGRES_DB: caseflow_certification_test
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
+      - image: circleci/redis:4.0.10
+    steps:
+      - checkout
+
+      - run:
+          name: Ruby version
+          command: ruby -v
+
+      - restore_cache:
+          keys:
+            - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+
+      - run:
+          name: Bundle install
+          command: bundle install --path vendor/bundle
+
+      - save_cache:
+          key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/project/vendor/bundle
+
+      - restore_cache:
+          name: Restore yarn cache
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.6.1
+
+      - run:
+          name: Wait for database
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+      - run:
+          name: Database setup
+          command: ~/project/ci-bin/capture-log "RAILS_ENV=development bundle exec rake db:create db:schema:load"
+
+      - run:
+          name: Wait for FACOLS to be ready
+          command: ~/project/ci-bin/capture-log "RAILS_ENV=development bundle exec rake local:vacols:wait_for_connection"
+
+      - run:
+          name: FACOLS test setup
+          command: ~/project/ci-bin/capture-log "RAILS_ENV=development bundle exec rake spec:setup_vacols"
+
+      - run:
+          name: Seed database with test data
+          command: ~/project/ci-bin/capture-log "RAILS_ENV=development bundle exec rake db:setup"
+
+      - deploy:
+          name: Concatenate all logs
+          command: |
+            ~/project/ci-bin/concatenate-log.rb >> ~/all_logs.log
+          when: always
+
+      - store_artifacts:
+          name: Store concatenated logs
+          path: ~/all_logs.log
 
   lint:
     docker:
