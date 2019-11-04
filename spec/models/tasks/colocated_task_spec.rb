@@ -405,7 +405,7 @@ describe ColocatedTask, :all_dbs do
       before do
         colocated_org.users.delete_all
         colocated_org.add_user(non_admin)
-        colocated_org).update!(admin: true.add_user(admin)
+        colocated_org.add_user(admin).update!(admin: true)
       end
 
       it "should assign all tasks to the non-admin user" do

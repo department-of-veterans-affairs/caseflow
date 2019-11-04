@@ -174,7 +174,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       lit_support_team.add_user(motions_attorney)
       judge_team.add_user(drafting_attorney)
       ["John Doe", "Jane Doe"].map do |name|
-        full_name: name.add_user(create(:user), judge_team)
+        judge_team.add_user(create(:user, full_name: name))
       end
       FeatureToggle.enable!(:review_motion_to_vacate)
     end
@@ -408,7 +408,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       lit_support_team.add_user(motions_attorney)
       judge_team.add_user(drafting_attorney)
       ["John Doe", "Jane Doe"].map do |name|
-        full_name: name.add_user(create(:user), judge_team)
+        judge_team.add_user(create(:user, full_name: name))
       end
       FeatureToggle.enable!(:review_motion_to_vacate)
 
