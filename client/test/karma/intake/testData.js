@@ -870,7 +870,8 @@ export const sample1 = {
     featureToggles: {
       useAmaActivationDate: true,
       editContentionText: true,
-      correctClaimReviews: true
+      correctClaimReviews: true,
+      unidentifiedIssueDecisionDate: true
     },
     addIssuesModalVisible: false,
     nonRatingRequestIssueModalVisible: false,
