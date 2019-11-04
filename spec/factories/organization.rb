@@ -20,6 +20,7 @@ FactoryBot.define do
     factory :judge_team, class: JudgeTeam do
       type { JudgeTeam.name }
 
+      # for creating error state; error b/c lead should also be admin
       trait :has_judge_team_lead do
         after(:create) do |judge_team|
           org_user = OrganizationsUser.add_user_to_organization(create(:user), judge_team)
@@ -36,6 +37,7 @@ FactoryBot.define do
         end
       end
 
+      # for creating error state; error b/c should only have 1 lead per team
       trait :has_two_judge_team_lead do
         after(:create) do |judge_team|
           2.times do
@@ -45,6 +47,7 @@ FactoryBot.define do
         end
       end
 
+      # for creating error state; error b/c should only have 1 lead per team regardless of admin status
       trait :has_two_judge_team_lead_as_admins do
         after(:create) do |judge_team|
           2.times do
