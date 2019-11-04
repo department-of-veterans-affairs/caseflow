@@ -22,13 +22,6 @@ describe JudgeTask, :all_dbs do
 
     subject { subject_task.available_actions_unwrapper(user) }
 
-    context "the task is not assigned to the current user" do
-      let(:user) { judge2 }
-      it "should return an empty array" do
-        expect(subject).to eq([])
-      end
-    end
-
     context "the task is assigned to the current user" do
       context "in the assign phase" do
         it "should return the assignment action" do
