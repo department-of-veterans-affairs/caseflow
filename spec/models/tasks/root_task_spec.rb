@@ -99,4 +99,36 @@ describe RootTask, :postgres do
       end
     end
   end
+
+  context "when child tasks are added" do
+    let(:root_task) { create(:root_task, appeal: create(:appeal)) }
+
+    subject { create(:task, parent: root_task, appeal: root_task.appeal) }
+
+    context "when the RootTask is active" do
+      it "changes that status to on_hold" do
+        expect(root_task.status).to eq(Constants.TASK_STATUSES.assigned)
+        expect(root_task.children.count).to eq(0)
+
+        subject
+
+        expect(root_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+        expect(root_task.children.count).to eq(1)
+      end
+    end
+
+    context "when the RootTask is closed" do
+      before { root_task.update!(status: Constants.TASK_STATUSES.completed) }
+
+      it "does not change the status of the RootTask" do
+        expect(root_task.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(root_task.children.count).to eq(0)
+
+        subject
+
+        expect(root_task.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(root_task.children.count).to eq(1)
+      end
+    end
+  end
 end
