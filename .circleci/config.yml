@@ -352,5 +352,6 @@ workflows:
   build:
     jobs:
       - rspec
+      - db_seed_dev
       - js_tests
       - lint
