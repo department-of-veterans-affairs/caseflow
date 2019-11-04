@@ -336,8 +336,6 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           subject
 
           expect(response.status).to eq 403
-          response_body = JSON.parse(response.body)["errors"].first["detail"]
-          expect(response_body).to eq "VSOs cannot create that task."
         end
       end
 
