@@ -330,13 +330,13 @@ class RequestIssue < ApplicationRecord
   end
 
   def approx_decision_date_of_issue_being_contested
-    return if is_unidentified
-
     if contested_issue
       contested_issue.approx_decision_date
     elsif decision_date
       decision_date
     else
+      return if is_unidentified
+
       # in theory we should never get here
       fail MissingDecisionDate, id
     end

@@ -280,6 +280,7 @@ class AddIssuesPage extends React.Component {
           <AddIssueManager
             intakeData={intakeData}
             formType={formType}
+            featureToggles={featureToggles}
             onComplete={() => {
               this.setState({ addingIssue: false });
             }}
