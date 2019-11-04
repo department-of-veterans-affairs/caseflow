@@ -9,7 +9,7 @@ class OrganizationsUser < ApplicationRecord
   scope :non_admin, -> { where(admin: false) }
 
   def self.add_user_to_organization(user, organization)
-    existing_record(user, organization) || create(organization_id: organization.id, user_id: user.id)
+    organization.add_user(user)
   end
 
   def self.make_user_admin(user, organization)
