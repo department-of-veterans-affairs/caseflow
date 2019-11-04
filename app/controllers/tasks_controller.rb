@@ -114,7 +114,7 @@ class TasksController < ApplicationController
 
   def ready_for_hearing_schedule
     ro = HearingDayMapper.validate_regional_office(params[:ro])
-    tasks = ScheduleHearingTask.tasks_for_ro(ro)
+    tasks = HearingCoordinatorScheduleQueue.new(user, regional_office: ro).tasks
 
     render json: json_tasks(tasks, ama_serializer: WorkQueue::RegionalOfficeTaskSerializer)
   end
