@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class DecidedMotionToVacateTask < Task
+  self.abstract_class = true
+
   before_create :automatically_create_org_task
 
   def available_actions(user)
