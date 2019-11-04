@@ -1,8 +1,13 @@
+<!-- The goal of this template is to be a tool to help write good design, research, and writing tasks that stem off of a user story and/or epic. It is not intended as a mandate, adapt as needed. -->
+
 ## User story
 <!-- Include a user story, if it exists. Be specific about which users you're talking about, please. -->
 
 ## Problem statement
 <!-- Describe the problem the design, writing, or research is intended to solve. -->
+
+## What is out of scope? 
+<!-- Optional, but include if relevant. This can be particularly helpful for research tickets. -->
 
 ## Background/context 
 <!-- Why are we designing/writing this? Who is it for? What research has been done that tells us this needs to be designed, written, or researched? -->
@@ -17,9 +22,6 @@
 
 ## Existing design and content 
 <!--If we're replacing something, please include a screenshot(s) or link to the existing solution, even if it's not in Caseflow. -->
-
-## What is out of scope? 
-<!-- Optional, but include if relevant. This can be particularly helpful for research tickets. -->
 
 ## Success criteria
 <!-- Include as needed, especially for issues that aren't part of epics. if no measurable success criteria, what does success look like? -->
