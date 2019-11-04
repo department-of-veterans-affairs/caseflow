@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
-# Hearing coordinators do not work schedule hearing tasks in the same way
-# that attorneys work their tasks
-# Instead, they work a the assigng/hearings page which retrieves
-# tasks in a similar way to queues
+# This class is intended to mimic the behavior of queues
+# for Hearing Cooprdinators
+
+# Hearing coordinators do not work ScheduleHearingTasks
+# from organization or peronsal queues
+# Instead, they work a the assign/hearings page which retrieves
+# queries tasks in the same way as Queues
 
 class HearingCoordinatorScheduleQueue < GenericQueue
   attr_accessor :user, :regional_office
