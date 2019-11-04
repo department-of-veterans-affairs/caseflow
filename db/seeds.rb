@@ -1308,7 +1308,8 @@ class SeedDB
     call_and_log_seed_step :create_board_grant_tasks
     call_and_log_seed_step :create_veteran_record_request_tasks
     call_and_log_seed_step :create_intake_users
-    call_and_log_seed_step :create_inbox_messages
+    # To be fixed by Peter: https://dsva.slack.com/archives/CJL810329/p1572876599165300
+    # call_and_log_seed_step :create_inbox_messages
     call_and_log_seed_step :perform_seeding_jobs
 
     return if Rails.env.development?
