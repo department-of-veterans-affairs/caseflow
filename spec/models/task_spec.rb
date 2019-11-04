@@ -976,7 +976,7 @@ describe Task, :all_dbs do
       allow(Raven).to receive(:capture_message)
     end
 
-    context "when the RootTask is active" do
+    context "when the task is active" do
       it "does not send a message to Sentry" do
         expect(parent_task.status).to eq(Constants.TASK_STATUSES.assigned)
         expect(parent_task.children.count).to eq(0)
@@ -989,7 +989,7 @@ describe Task, :all_dbs do
       end
     end
 
-    context "when the RootTask is closed" do
+    context "when the task is closed" do
       before { parent_task.update!(status: Constants.TASK_STATUSES.completed) }
 
       it "sends a message to Sentry" do
