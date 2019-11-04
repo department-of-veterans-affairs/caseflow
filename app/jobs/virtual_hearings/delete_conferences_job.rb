@@ -34,7 +34,9 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
 
   # Returns whether or not the conference was deleted from Pexip
   def delete_conference(virtual_hearing)
-    pexip_service.delete_conference(conference_id: virtual_hearing.conference_id)
+    response = pexip_service.delete_conference(conference_id: virtual_hearing.conference_id)
+
+    raise response.error unless response.success?
 
     true
   rescue Caseflow::Error::PexipNotFoundError

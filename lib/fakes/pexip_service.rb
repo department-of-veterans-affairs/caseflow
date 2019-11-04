@@ -15,6 +15,8 @@ class Fakes::PexipService
 
   def delete_conference(*)
     ExternalApi::PexipService::DeleteResponse.new(HTTPI::Response.new(@status_code, {}, {})) if error?
+
+    ExternalApi::PexipService::DeleteResponse.new(HTTPI::Response.new(204, {}, {}))
   end
 
   private
