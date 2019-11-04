@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # This class is intended to mimic the behavior of queues
-# for Hearing Cooprdinators
+# for Hearing Coordinators
 
 # Hearing coordinators do not work ScheduleHearingTasks
 # from organization or peronsal queues
