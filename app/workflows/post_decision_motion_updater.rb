@@ -45,27 +45,13 @@ class PostDecisionMotionUpdater
       return
     end
 
-    # We want to create an organization task to serve as parent
-    org_task = create_new_task("Organization", abstract_task)
-    unless org_task.valid?
-      errors.messages.merge!(org_task.errors.messages)
+    new_task = create_new_task(abstract_task)
+
+    unless new_task.valid?
+      errors.messages.merge!(new_task.errors.messages)
       return
     end
-
-    # Still save org task if assigned user is inactive
-    if assigned_to&.inactive?
-      org_task.save
-    end
-
-    unless assigned_to&.inactive?
-      new_task = create_new_task("User", org_task)
-
-      unless new_task.valid?
-        errors.messages.merge!(new_task.errors.messages)
-        return
-      end
-      new_task.save
-    end
+    new_task.save
 
     task.update(status: Constants.TASK_STATUSES.completed)
   end
@@ -78,13 +64,12 @@ class PostDecisionMotionUpdater
     )
   end
 
-  def create_new_task(assigned_to_type = "User", parent)
+  def create_new_task(parent)
     task_class.new(
       appeal: task.appeal,
       parent: parent,
       assigned_by: task.assigned_to,
-      assigned_to: ((assigned_to_type == "Organization") ? org : assigned_to),
-      assigned_to_type: assigned_to_type,
+      assigned_to: assigned_to,
       instructions: [params[:instructions]]
     )
   end
@@ -107,18 +92,6 @@ class PostDecisionMotionUpdater
 
   def denied_or_dismissed?
     %w[denied dismissed].include? disposition
-  end
-
-  def org
-    denied_or_dismissed? ? LitigationSupport.singleton : judge_team
-  end
-
-  def judge
-    task.assigned_to
-  end
-
-  def judge_team
-    JudgeTeam.for_judge(judge)
   end
 
   def assigned_to
