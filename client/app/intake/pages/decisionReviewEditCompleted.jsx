@@ -94,7 +94,9 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
     };
 
     const beforeEps = _.uniq(_.map(beforeIssues, 'endProductCode'));
-    const afterEps = _.uniq(_.map(afterIssues.filter((ri) => !ri.withdrawalDate), 'endProductCode'));
+    const afterEps = _.uniq(_.map(afterIssues.filter(
+      (ri) => !ri.withdrawalDate && !ri.ineligibleReason), 'endProductCode')
+    );
     const allChangedEps = _.uniq(_.map(updatedIssues, 'endProductCode'));
     const removedEps = _.difference(beforeEps, afterEps);
     const establishedEps = _.difference(allChangedEps, beforeEps);

@@ -20,6 +20,7 @@ class Intake < ApplicationRecord
     invalid_file_number: "invalid_file_number",
     veteran_not_found: "veteran_not_found",
     veteran_has_multiple_phone_numbers: "veteran_has_multiple_phone_numbers",
+    veteran_has_duplicate_records_in_corpdb: "veteran_has_duplicate_records_in_corpdb",
     veteran_not_accessible: "veteran_not_accessible",
     veteran_not_modifiable: "veteran_not_modifiable",
     veteran_not_valid: "veteran_not_valid",

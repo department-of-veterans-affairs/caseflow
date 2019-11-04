@@ -9,22 +9,19 @@ RSpec.feature "Motion to vacate", :all_dbs do
   let!(:lit_support_team) { LitigationSupport.singleton }
   let(:receipt_date) { Time.zone.today - 20 }
   let!(:appeal) do
-    create(:appeal,
-           receipt_date: receipt_date,
-           request_issues: build_list(
-             :request_issue, 1,
-             contested_issue_description: "Tinnitus"
-           ))
+    create(:appeal, receipt_date: receipt_date)
   end
-  let!(:decision_issue) do
-    create(
-      :decision_issue,
-      decision_review: appeal,
-      request_issues: appeal.request_issues,
-      disposition: "denied",
-      description: "Decision issue description",
-      decision_text: "decision issue"
-    )
+  let!(:decision_issues) do
+    3.times do |idx|
+      create(
+        :decision_issue,
+        :rating,
+        decision_review: appeal,
+        disposition: "denied",
+        description: "Decision issue description #{idx}",
+        decision_text: "decision issue"
+      )
+    end
   end
   let!(:root_task) { create(:root_task, appeal: appeal) }
   let!(:motions_attorney) { create(:user, full_name: "Motions attorney") }
@@ -34,6 +31,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
   before do
     create(:staff, :judge_role, sdomainid: judge.css_id)
     OrganizationsUser.add_user_to_organization(motions_attorney, lit_support_team)
+
+    appeal.reload
   end
 
   describe "Motion to vacate mail task" do
@@ -259,7 +258,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
       # Ensure it has pre-selected attorney previously assigned to case
       expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
 
-      select_issue_for_vacature(1)
+      issues_to_select = [1, 3]
+      issues_to_select.each { |idx| select_issue_for_vacature(idx) }
 
       click_button(text: "Submit")
 
@@ -269,7 +269,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
       # Verify PostDecisionMotion is created
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
       expect(motion).to_not be_nil
-      expect(motion.disposition).to eq("partial")
+      expect(motion.disposition).to eq("partially_granted")
+      expect(motion.vacated_issues.length).to eq(issues_to_select.length)
 
       # Verify new task creation
       instructions = format_judge_instructions(
