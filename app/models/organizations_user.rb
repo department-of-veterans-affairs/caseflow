@@ -8,9 +8,8 @@ class OrganizationsUser < ApplicationRecord
 
   scope :non_admin, -> { where(admin: false) }
 
-  def self.add_user_to_organization(user, organization)
-    organization.add_user(user)
-  end
+  # Deprecated: add_user_to_organization(user, organization)
+  # Use instead: organization.add_user(user)
 
   def self.make_user_admin(user, organization)
     organization.add_user(user).tap do |org_user|
