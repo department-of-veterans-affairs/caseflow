@@ -22,21 +22,6 @@ describe JudgeTask, :all_dbs do
 
     subject { subject_task.available_actions_unwrapper(user) }
 
-    context "when the task is on hold" do
-      let(:user) { judge }
-      let(:subject_task) do
-        create(:judge_address_motion_to_vacate_task, assigned_to: judge, appeal: create(:appeal))
-      end
-      let(:child_task) do
-        create(:pulac_cerullo_task, assigned_by: judge, parent: subject_task, assigned_to: create(:user))
-      end
-
-      it "should return an empty array" do
-        child_task
-        expect(subject).to eq([])
-      end
-    end
-
     context "the task is assigned to the current user" do
       context "in the assign phase" do
         it "should return the assignment action" do
