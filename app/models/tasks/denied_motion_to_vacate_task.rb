@@ -5,7 +5,7 @@ class DeniedMotionToVacateTask < DecidedMotionToVacateTask
     COPY::DENIED_MOTION_TO_VACATE_TASK_LABEL
   end
 
-  def org
+  def self.org
     LitigationSupport.singleton
   end
 end
