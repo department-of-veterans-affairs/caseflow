@@ -198,7 +198,7 @@ export class EstablishClaimDecision extends React.Component {
             />
           </div>
 
-          <fieldset style={{ width: '100%' }}>
+          <fieldset className="fieldset">
             <legend>
               <label>
                 <b>Select Special Issues</b>
