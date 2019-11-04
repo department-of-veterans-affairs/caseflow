@@ -45,7 +45,11 @@ class PostDecisionMotionUpdater
       return
     end
 
-    new_task = create_new_task(abstract_task)
+    if grant_type?
+      judge_sign_task = create_judge_sign_task(abstract_task)
+    end
+
+    new_task = create_new_task((judge_sign_task || abstract_task))
 
     unless new_task.valid?
       errors.messages.merge!(new_task.errors.messages)
@@ -71,6 +75,14 @@ class PostDecisionMotionUpdater
       assigned_by: task.assigned_to,
       assigned_to: assigned_to,
       instructions: [params[:instructions]]
+    )
+  end
+
+  def create_judge_sign_task(parent)
+    JudgeSignMotionToVacateTask.new(
+      appeal: task.appeal,
+      parent: parent,
+      assigned_to: task.assigned_to
     )
   end
 
