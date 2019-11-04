@@ -4,8 +4,8 @@ class AdvanceOnDocketMotionsController < ApplicationController
   before_action :verify_aod_access
 
   def create
-    AdvanceOnDocketMotion.upsert(
-      person_id: appeal.claimants.first.person.id,
+    AdvanceOnDocketMotion.upsert_by_person_id(
+      appeal.claimants.first.person.id,
       reason: aod_params[:reason],
       granted: aod_params[:granted],
       user_id: current_user.id

@@ -16,7 +16,10 @@ class HearingUpdateForm < BaseHearingUpdateForm
   private
 
   def update_advance_on_docket_motion
-    AdvanceOnDocketMotion.upsert(advance_on_docket_motion_attributes)
+    AdvanceOnDocketMotion.upsert_by_person_id(
+      advance_on_docket_motion_attributes[:person_id],
+      advance_on_docket_motion_attributes
+    )
   end
 
   def hearing_updates
