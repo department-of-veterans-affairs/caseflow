@@ -24,9 +24,10 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
     render_errors([intake_error_code_from_exception_or_processor(error)])
   end
 
-  # stub
   def show
-    render json: {}, status: :ok
+    higher_level_review = HigherLevelReview.find_by_uuid(params[:id])
+    options = { include: [:veteran, :claimant, :request_issues, :decision_issues] }
+    render json: Api::V3::HigherLevelReviewSerializer.new(higher_level_review, options)
   end
 
   private
