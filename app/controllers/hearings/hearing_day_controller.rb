@@ -16,9 +16,6 @@ class Hearings::HearingDayController < HearingsApplicationController
       end
 
       format.json do
-        start_date = validate_start_date(params[:start_date])
-        end_date = validate_end_date(params[:end_date])
-        regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
         user = list_all_upcoming_hearing_days? ? nil : current_user
         hearing_days = HearingDayRange.new(start_date, end_date, regional_office).list_upcoming_hearing_days(user)
 
@@ -109,14 +106,6 @@ class Hearings::HearingDayController < HearingsApplicationController
                   :notes,
                   :bva_poc)
       .merge(created_by: current_user, updated_by: current_user)
-  end
-
-  def validate_start_date(start_date)
-    start_date.nil? ? (Time.zone.today.beginning_of_day - 30.days) : Date.parse(start_date)
-  end
-
-  def validate_end_date(end_date)
-    end_date.nil? ? (Time.zone.today.beginning_of_day + 365.days) : Date.parse(end_date)
   end
 
   def invalid_record_error(hearing)

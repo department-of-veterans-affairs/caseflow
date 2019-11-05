@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 class HearingDayRange
+  include ActiveModel::Validations
+  validate :regional_office_key_is_valid
+
   def initialize(start_date, end_date, regional_office = nil)
-    @start_date = start_date
-    @end_date = end_date
+    @start_date = validate_start_date(start_date)
+    @end_date = validate_end_date(end_date)
     @regional_office = regional_office
   end
 
@@ -149,6 +152,22 @@ class HearingDayRange
   attr_reader :start_date
   attr_reader :end_date
   attr_reader :regional_office
+
+  def validate_start_date(date)
+    date.nil? ? (Time.zone.today.beginning_of_day - 30.days) : Date.parse(date)
+  end
+
+  def validate_end_date(date)
+    date.nil? ? (Time.zone.today.beginning_of_day + 365.days) : Date.parse(date)
+  end
+
+  def regional_office_key_is_valid
+    begin
+      HearingDayMapper.validate_regional_office(regional_office)
+    rescue HearingDayMapper::InvalidRegionalOfficeError
+      errors.add(:regional_office, "regional office key is invalid")
+    end
+  end
 
   def hearing_days_in_range
     HearingDay.includes(:judge, hearings: [appeal: [tasks: :assigned_to]])
