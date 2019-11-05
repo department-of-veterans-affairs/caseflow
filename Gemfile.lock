@@ -47,10 +47,9 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/sniffybara.git
-  revision: 3a3422c68f4ff1b430bd297ad3ced8a781936caf
-  branch: update-axe-1
+  revision: 351560b5789ca638ba7c9b093c2bb1a9a6fda4b3
   specs:
-    sniffybara (1.0.0)
+    sniffybara (1.1.0)
       rainbow
       selenium-webdriver
 
