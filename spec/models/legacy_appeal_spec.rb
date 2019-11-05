@@ -29,7 +29,7 @@ describe LegacyAppeal, :all_dbs do
       end
 
       context "the appeal has more than one parentless task" do
-        before { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
+        before { Colocated.singleton.add_user(create(:user)) }
 
         let!(:colocated_task) { create(:colocated_task, appeal: appeal, parent: nil) }
 
@@ -2393,6 +2393,53 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
+  context "#cancel_open_caseflow_tasks!" do
+    let(:vacols_case) { create(:case, bfcurloc: "CASEFLOW") }
+    let(:vacols_case2) { create(:case, bfcurloc: "CASEFLOW") }
+    let(:appeal2) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case2) }
+    let(:vacols_case3) { create(:case, bfcurloc: "CASEFLOW") }
+    let(:appeal3) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case3) }
+
+    context "if there are no Caseflow tasks on the legacy appeal" do
+      it "throws no errors" do
+        expect { appeal.cancel_open_caseflow_tasks! }.not_to raise_error
+      end
+    end
+
+    context "if there are Caseflow tasks on the legacy appeal" do
+      context "multiple open caseflow tasks" do
+        it "cancels all the open tasks" do
+          appeal2.cancel_open_caseflow_tasks!
+
+          expect(appeal2.tasks.open.count).to eq(0)
+          expect(appeal2.tasks.closed.count).to eq(3)
+          expect(appeal3.tasks.open.count).to eq(3)
+        end
+
+        context "when a note has instructions" do
+          it "should append a note to the canceled tasks" do
+            task = appeal2.tasks.first
+            task.update(instructions: ["Existing instructions"])
+            appeal2.cancel_open_caseflow_tasks!
+            expect(task.reload.instructions)
+              .to eq(["Existing instructions", "Task cancelled due to death dismissal"])
+          end
+        end
+      end
+
+      context "open and closed caseflow tasks" do
+        it "doesn't affect the already closed tasks" do
+          appeal3.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
+          original_closed_at = appeal3.root_task.closed_at
+
+          appeal3.cancel_open_caseflow_tasks!
+
+          expect(appeal3.root_task.closed_at).to eq(original_closed_at)
+        end
+      end
+    end
+  end
+
   context "#eligible_for_death_dismissal?" do
     let(:correspondent) { create(:correspondent, sfnod: 4.days.ago) }
     let(:vacols_case) { create(:case, correspondent: correspondent) }
@@ -2404,7 +2451,7 @@ describe LegacyAppeal, :all_dbs do
 
     before do
       OrganizationsUser.make_user_admin(colocated_admin, Colocated.singleton)
-      OrganizationsUser.add_user_to_organization(colocated_user, Colocated.singleton)
+      Colocated.singleton.add_user(colocated_user)
       User.authenticate!(user: colocated_admin)
     end
 
