@@ -73,10 +73,8 @@ class HearingDayRange
     ama_days + vacols_days
   end
 
-  def list_upcoming_hearing_days(user, list_all: false)
-    if list_all
-      load_days
-    elsif user&.vso_employee?
+  def load_days_for_user(user)
+    if user&.vso_employee?
       upcoming_days_for_vso_user(user)
     elsif user&.roles&.include?("Hearing Prep")
       upcoming_days_for_judge(user)
@@ -167,7 +165,7 @@ class HearingDayRange
     begin
       HearingDayMapper.validate_regional_office(regional_office)
     rescue HearingDayMapper::InvalidRegionalOfficeError
-      errors.add(:regional_office, "regional office key is invalid")
+      errors.add(:regional_office, "Selected regional office is invalid.")
     end
   end
 

@@ -12,7 +12,7 @@ class HearingDayRoomService
   def rooms_are_available?
     return true if !assign_room
 
-    !available_room.nil?
+    available_room.present?
   end
 
   def available_room
