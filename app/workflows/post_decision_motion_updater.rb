@@ -24,13 +24,19 @@ class PostDecisionMotionUpdater
   def create_motion
     motion = PostDecisionMotion.new(
       task: task,
-      disposition: params[:disposition],
+      disposition: disposition,
       vacate_type: params[:vacate_type]
     )
+
+    if params.key?(:vacated_decision_issue_ids)
+      motion.vacated_decision_issue_ids = params[:vacated_decision_issue_ids]
+    end
+
     unless motion.valid?
       errors.messages.merge!(motion.errors.messages)
       return
     end
+
     motion.save
   end
 
@@ -65,9 +71,18 @@ class PostDecisionMotionUpdater
   def create_abstract_task
     AbstractMotionToVacateTask.new(
       appeal: task.appeal,
-      parent: task,
+      parent: task.parent,
       assigned_to: task.assigned_to
     )
+  end
+
+  def disposition
+    case params[:disposition]
+    when "partial"
+      "partially_granted"
+    else
+      params[:disposition]
+    end
   end
 
   def task_class
@@ -75,10 +90,30 @@ class PostDecisionMotionUpdater
   end
 
   def task_type
-    (params[:disposition] == "granted") ? params[:vacate_type] : "#{params[:disposition]}_motion_to_vacate"
+    grant_type? ? params[:vacate_type] : "#{params[:disposition]}_motion_to_vacate"
+  end
+
+  def grant_type?
+    %w[granted partial].include? params[:disposition]
+  end
+
+  def denied_or_dismissed?
+    %w[denied dismissed].include? disposition
   end
 
   def assigned_to
-    @assigned_to ||= User.find_by(id: params[:assigned_to_id])
+    @assigned_to ||= (denied_or_dismissed? ? prev_motions_attorney_or_org : User.find_by(id: params[:assigned_to_id]))
+  end
+
+  def prev_motions_attorney
+    mtv_mail_task.assigned_to
+  end
+
+  def prev_motions_attorney_or_org
+    prev_motions_attorney.inactive? ? LitigationSupport.singleton : prev_motions_attorney
+  end
+
+  def mtv_mail_task
+    task.parent
   end
 end

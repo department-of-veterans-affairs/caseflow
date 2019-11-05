@@ -321,7 +321,7 @@ class User < ApplicationRecord
   end
 
   def show_regional_office_in_queue?
-    false
+    HearingsManagement.singleton.user_has_access?(self)
   end
 
   def show_reader_link_column?

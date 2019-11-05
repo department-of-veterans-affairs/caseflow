@@ -106,13 +106,7 @@ class DecisionIssue < ApplicationRecord
   end
 
   def ui_hash
-    {
-      id: id,
-      requestIssueId: request_issues&.first&.id,
-      description: description,
-      disposition: disposition,
-      approxDecisionDate: approx_decision_date
-    }
+    DecisionIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def find_or_create_remand_supplemental_claim!

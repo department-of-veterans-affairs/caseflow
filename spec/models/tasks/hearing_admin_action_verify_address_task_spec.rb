@@ -20,7 +20,7 @@ RSpec.shared_examples "Address Verify Task for Appeal" do
 
   context "as a hearing admin user" do
     before do
-      OrganizationsUser.add_user_to_organization(user, HearingAdmin.singleton)
+      HearingAdmin.singleton.add_user(user)
 
       RequestStore[:current_user] = user
     end
@@ -36,7 +36,7 @@ RSpec.shared_examples "Address Verify Task for Appeal" do
 
   context "as hearings management user" do
     before do
-      OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+      HearingsManagement.singleton.add_user(user)
 
       RequestStore[:current_user] = user
     end
@@ -66,7 +66,7 @@ RSpec.shared_examples "Address Verify Task for Appeal" do
     end
 
     it "updates ro and ahls when cancelled" do
-      OrganizationsUser.add_user_to_organization(user, HearingAdmin.singleton)
+      HearingAdmin.singleton.add_user(user)
 
       RequestStore[:current_user] = user
 
