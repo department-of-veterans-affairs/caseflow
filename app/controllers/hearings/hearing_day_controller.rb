@@ -41,7 +41,7 @@ class Hearings::HearingDayController < HearingsApplicationController
     range = HearingDayRange.new(
       Time.zone.today.beginning_of_day,
       Time.zone.today.beginning_of_day + 182.days,
-      regional_office
+      params[:regional_office]
     )
 
     if range.valid?
