@@ -316,7 +316,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             let(:user) { create(:user) }
 
             before do
-              OrganizationsUser.add_user_to_organization(user, BvaDispatch.singleton)
+              BvaDispatch.singleton.add_user(user)
               allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id).and_return(
                 address_line_1: "1234 K St.",
                 address_line_2: "APT 3",
@@ -525,7 +525,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
     before do
       allow(controller).to receive(:verify_access).and_return(true)
-      OrganizationsUser.add_user_to_organization(user, BvaDispatch.singleton)
+      BvaDispatch.singleton.add_user(user)
 
       key, t = Idt::Token.generate_one_time_key_and_proposed_token
       Idt::Token.activate_proposed_token(key, user.css_id)

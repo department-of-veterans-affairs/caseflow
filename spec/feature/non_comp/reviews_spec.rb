@@ -66,7 +66,7 @@ feature "NonComp Reviews Queue", :postgres do
 
     before do
       User.stub = user
-      OrganizationsUser.add_user_to_organization(user, non_comp_org)
+      non_comp_org.add_user(user)
     end
 
     scenario "displays tasks page" do

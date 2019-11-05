@@ -142,7 +142,7 @@ describe BulkTaskAssignment, :postgres do
           context "but no different judge team for the attorney" do
             let!(:judge_team) { JudgeTeam.create_for_judge(user) }
 
-            before { OrganizationsUser.add_user_to_organization(attorney, judge_team) }
+            before { judge_team.add_user(attorney) }
 
             it "fails and notifies user of attorney tasks where the assignee is only in the inactive judge's team" do
               bad_parent_output = child_tasks.map(&:id).join(", ")
@@ -155,7 +155,7 @@ describe BulkTaskAssignment, :postgres do
           context "with a new judge assignee" do
             let!(:judge_team) { JudgeTeam.create_for_judge(create(:user)) }
 
-            before { OrganizationsUser.add_user_to_organization(attorney, judge_team) }
+            before { judge_team.add_user(attorney) }
 
             it "describes what changes will be made and makes them" do
               judge_review_message = "Cancelling #{task_count} JudgeDecisionReviewTasks with ids #{ids_output} and " \
@@ -215,7 +215,7 @@ describe BulkTaskAssignment, :postgres do
           let(:parent_assignee) { Colocated.singleton }
 
           before do
-            team_member_count.times { |_| OrganizationsUser.add_user_to_organization(create(:user), parent_assignee) }
+            team_member_count.times { |_| parent_assignee.add_user(create(:user)) }
           end
 
           context "when there are more organization members than tasks to reassign" do
@@ -303,7 +303,7 @@ describe BulkTaskAssignment, :postgres do
         end
         let!(:judge_team) { JudgeTeam.create_for_judge(create(:user)) }
 
-        before { OrganizationsUser.add_user_to_organization(attorney, judge_team) }
+        before { judge_team.add_user(attorney) }
 
         it "only describes what changes will be made" do
           judge_review_message = "Would cancel #{task_count} JudgeDecisionReviewTasks with ids #{ids_output} " \
@@ -357,7 +357,7 @@ describe BulkTaskAssignment, :postgres do
         let(:parent_assignee) { Colocated.singleton }
 
         before do
-          team_member_count.times { |_| OrganizationsUser.add_user_to_organization(create(:user), parent_assignee) }
+          team_member_count.times { |_| parent_assignee.add_user(create(:user)) }
         end
 
         it "only describes what changes will be made" do

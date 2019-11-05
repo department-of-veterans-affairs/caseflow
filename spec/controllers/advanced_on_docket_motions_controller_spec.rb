@@ -11,7 +11,7 @@ RSpec.describe AdvanceOnDocketMotionsController, :postgres, type: :controller do
       let(:appeal) { create(:appeal, veteran: create(:veteran)) }
 
       before do
-        OrganizationsUser.add_user_to_organization(aod_user, aod)
+        aod.add_user(aod_user)
         User.authenticate!(user: aod_user)
       end
 
