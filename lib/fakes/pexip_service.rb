@@ -2,7 +2,7 @@
 
 class Fakes::PexipService
   def initialize(**args)
-    status_code ||= args[:status_code]
+    @status_code = args[:status_code]
   end
 
   def create_conference(*)

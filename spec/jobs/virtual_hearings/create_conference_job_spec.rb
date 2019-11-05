@@ -5,7 +5,8 @@ require "rails_helper"
 
 describe VirtualHearings::CreateConferenceJob, :all_dbs do
   context ".perform" do
-    let(:virtual_hearing) { create(:virtual_hearing) }
+    let(:hearing) { create(:hearing, regional_office: "RO06") }
+    let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
     let(:create_job) { VirtualHearings::CreateConferenceJob.new(hearing_id: virtual_hearing.hearing_id) }
     let(:fake_pexip) { Fakes::PexipService.new(status_code: 400) }
 
