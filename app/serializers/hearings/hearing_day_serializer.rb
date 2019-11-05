@@ -15,8 +15,17 @@ class HearingDaySerializer
   attribute :notes
   attribute :readable_request_type
   attribute :regional_office
+  ## in preparation for remove json_hearing_day from hearing_day_controller
+  attribute :regional_office_key, &:regional_office
+  attribute :regional_office_city do |object|
+    HearingDayMapper.city_for_regional_office(object.regional_office) unless object.regional_office.nil?
+  end
   attribute :request_type
   attribute :room
+  ## in preparation for remove json_hearing_day from hearing_day_controller
+  attribute :room_label do |object|
+    HearingDayMapper.label_for_room(object.room)
+  end
   attribute :scheduled_for
   attribute :total_slots
   attribute :updated_by_id

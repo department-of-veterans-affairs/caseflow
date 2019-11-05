@@ -16,14 +16,17 @@ class Hearings::HearingDayController < HearingsApplicationController
       end
 
       format.json do
-        user = list_all_upcoming_hearing_days? ? nil : current_user
-        hearing_days = HearingDayRange.new(start_date, end_date, regional_office).list_upcoming_hearing_days(user)
+        if hearing_day_range.valid?
+          hearing_day_range.list_upcoming_hearing_days(user, list_all: list_all_upcoming_hearing_days?)
 
-        render json: {
-          hearings: json_hearing_days(hearing_days.map(&:to_hash)),
-          startDate: start_date,
-          endDate: end_date
-        }
+          render json: {
+            hearings: json_hearing_days(hearing_days.map(&:to_hash)),
+            startDate: hearing_day_range.start_date,
+            endDate: hearing_day_range.end_date
+          }
+        else
+          hearing_day_range_invalid
+        end
       end
     end
   end
@@ -37,20 +40,24 @@ class Hearings::HearingDayController < HearingsApplicationController
   end
 
   def index_with_hearings
-    regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
-
-    hearing_days_with_hearings = HearingDayRange.new(
+    range = HearingDayRange.new(
       Time.zone.today.beginning_of_day,
       Time.zone.today.beginning_of_day + 182.days,
       regional_office
-    ).open_hearing_days_with_hearings_hash(current_user.id)
+    )
 
-    render json: { hearing_days: json_hearing_days(hearing_days_with_hearings) }
+    if range.valid?
+      range.open_hearing_days_with_hearings_hash(current_user.id)
+
+      render json: { hearing_days: json_hearing_days(hearing_days_with_hearings) }
+    else
+      hearing_day_range_invalid
+    end
   end
 
   # Create a hearing schedule day
   def create
-    return no_available_rooms unless rooms_are_available
+    return no_available_rooms unless hearing_day_rooms.rooms_are_available?
 
     hearing = HearingDay.create_hearing_day(create_params)
     return invalid_record_error(hearing) if hearing.nil?
@@ -81,6 +88,16 @@ class Hearings::HearingDayController < HearingsApplicationController
     params[:id]
   end
 
+  def hearing_day_range
+    @hearing_day_range ||= HearingDayRange.new(
+      params[:start_date], params[:end_date], params[:regional_office]
+    )
+  end
+
+  def hearing_day_rooms
+    @hearing_day_rooms ||= HearingDayRoomService.new(params)
+  end
+
   def list_all_upcoming_hearing_days?
     ActiveRecord::Type::Boolean.new.deserialize(params[:show_all]) && current_user&.roles&.include?("Hearing Prep")
   end
@@ -108,9 +125,9 @@ class Hearings::HearingDayController < HearingsApplicationController
       .merge(created_by: current_user, updated_by: current_user)
   end
 
-  def invalid_record_error(hearing)
+  def invalid_record_error(hearing_day)
     render json: {
-      "errors": ["title": COPY::INVALID_RECORD_ERROR_TITLE, "detail": hearing.errors.full_messages.join(" ,")]
+      "errors": ["title": COPY::INVALID_RECORD_ERROR_TITLE, "detail": hearing_day.errors.full_messages.join(" ,")]
     }, status: :bad_request
   end
 
@@ -123,14 +140,23 @@ class Hearings::HearingDayController < HearingsApplicationController
     }, status: :not_found
   end
 
-  def json_hearing_days(hearings)
-    hearings.each_with_object([]) do |hearing, result|
+  def hearing_day_range_invalid
+    render json: {
+      "errors": [
+        "title": "Hearing Range is Invalid",
+        "detail": "Record with that ID is not found"
+      ]
+    }, status: :bad_request
+  end
+
+  def json_hearing_days(hearing_days)
+    hearing_days.each_with_object([]) do |hearing, result|
       result << json_hearing_day(hearing)
     end
   end
 
-  def json_hearing_day(hearing)
-    hearing.as_json.each_with_object({}) do |(key, value), converted|
+  def json_hearing_day(hearing_day)
+    hearing_day.as_json.each_with_object({}) do |(key, value), converted|
       converted[key] = if key == "room"
                          HearingDayMapper.label_for_room(value)
                        elsif key == "regional_office" && !value.nil?

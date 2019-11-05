@@ -4,6 +4,10 @@ class HearingDayRange
   include ActiveModel::Validations
   validate :regional_office_key_is_valid
 
+  attr_reader :start_date
+  attr_reader :end_date
+  attr_reader :regional_office
+
   def initialize(start_date, end_date, regional_office = nil)
     @start_date = validate_start_date(start_date)
     @end_date = validate_end_date(end_date)
@@ -69,8 +73,10 @@ class HearingDayRange
     ama_days + vacols_days
   end
 
-  def list_upcoming_hearing_days(user)
-    if user&.vso_employee?
+  def list_upcoming_hearing_days(user, list_all: false)
+    if list_all
+      load_days
+    elsif user&.vso_employee?
       upcoming_days_for_vso_user(user)
     elsif user&.roles&.include?("Hearing Prep")
       upcoming_days_for_judge(user)
@@ -84,7 +90,7 @@ class HearingDayRange
     vacols_hearings_for_days = HearingRepository.fetch_hearings_for_parents(total_video_and_co.pluck(:id))
 
     total_video_and_co
-      .select { |hearing_day| !hearing_day.lock }
+      .reject(&:lock)
       .map do |hearing_day|
         all_hearings = (hearing_day.hearings || []) + (vacols_hearings_for_days[hearing_day.id.to_s] || [])
         scheduled_hearings = self.class.filter_non_scheduled_hearings(all_hearings || [])
@@ -148,10 +154,6 @@ class HearingDayRange
   end
 
   private
-
-  attr_reader :start_date
-  attr_reader :end_date
-  attr_reader :regional_office
 
   def validate_start_date(date)
     date.nil? ? (Time.zone.today.beginning_of_day - 30.days) : Date.parse(date)
