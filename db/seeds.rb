@@ -1264,8 +1264,8 @@ class SeedDB
   def create_inbox_messages
     user = User.find_by_css_id "BVAYELLOW"
 
-    veteran1 = Veteran.find_or_create_by_file_number "994806951"
-    veteran2 = Veteran.find_or_create_by_file_number "520353651"
+    veteran1 = FactoryBot.create(:veteran)
+    veteran2 = FactoryBot.create(:veteran)
 
     appeal1 = FactoryBot.create(:appeal, veteran_file_number: veteran1.file_number)
     appeal2 = FactoryBot.create(
@@ -1325,8 +1325,7 @@ class SeedDB
     call_and_log_seed_step :create_board_grant_tasks
     call_and_log_seed_step :create_veteran_record_request_tasks
     call_and_log_seed_step :create_intake_users
-    # To be fixed by Peter: https://dsva.slack.com/archives/CJL810329/p1572876599165300
-    # call_and_log_seed_step :create_inbox_messages
+    call_and_log_seed_step :create_inbox_messages
     call_and_log_seed_step :perform_seeding_jobs
 
     return if Rails.env.development?
