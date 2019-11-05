@@ -6,7 +6,7 @@ require "rails_helper"
 RSpec.feature "ColocatedTask", :all_dbs do
   let(:vlj_support_staff) { create(:user) }
 
-  before { OrganizationsUser.add_user_to_organization(vlj_support_staff, Colocated.singleton) }
+  before { Colocated.singleton.add_user(vlj_support_staff) }
 
   describe "attorney assigns task to vlj support staff, vlj returns it to attorney after completion" do
     let(:judge_user) { create(:user) }

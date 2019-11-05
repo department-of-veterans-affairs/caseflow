@@ -6,7 +6,7 @@ require "rails_helper"
 RSpec.feature "Task queue", :all_dbs do
   let!(:vlj_support_staffer) { create(:user) }
 
-  before { OrganizationsUser.add_user_to_organization(vlj_support_staffer, Colocated.singleton) }
+  before { Colocated.singleton.add_user(vlj_support_staffer) }
 
   context "attorney user with assigned tasks" do
     let(:attorney_user) { create(:user) }
@@ -173,7 +173,7 @@ RSpec.feature "Task queue", :all_dbs do
       let(:organization) { create(:organization) }
 
       before do
-        OrganizationsUser.add_user_to_organization(attorney_user, organization)
+        organization.add_user(attorney_user)
         attorney_user.reload
         visit "/queue"
       end
@@ -294,9 +294,9 @@ RSpec.feature "Task queue", :all_dbs do
     end
 
     before do
-      OrganizationsUser.add_user_to_organization(mail_user, mail_team)
-      OrganizationsUser.add_user_to_organization(mail_user, lit_support_team)
-      OrganizationsUser.add_user_to_organization(pulac_user, PulacCerullo.singleton)
+      mail_team.add_user(mail_user)
+      lit_support_team.add_user(mail_user)
+      PulacCerullo.singleton.add_user(pulac_user)
       User.authenticate!(user: mail_user)
     end
 
@@ -438,7 +438,7 @@ RSpec.feature "Task queue", :all_dbs do
     let(:assigned_count) { 12 }
 
     before do
-      OrganizationsUser.add_user_to_organization(organization_user, organization)
+      organization.add_user(organization_user)
       User.authenticate!(user: organization_user)
       create_list(:privacy_act_task, unassigned_count, :in_progress, assigned_to: organization)
       create_list(:privacy_act_task, assigned_count, :on_hold, assigned_to: organization)
@@ -816,7 +816,7 @@ RSpec.feature "Task queue", :all_dbs do
     let!(:hearings_management_user) { create(:user) }
 
     before do
-      OrganizationsUser.add_user_to_organization(hearings_management_user, HearingsManagement.singleton)
+      HearingsManagement.singleton.add_user(hearings_management_user)
       User.authenticate!(user: hearings_management_user)
     end
 
@@ -894,7 +894,7 @@ RSpec.feature "Task queue", :all_dbs do
     context "when it was created from a QualityReviewTask" do
       let!(:qr_team) { QualityReview.singleton }
       let!(:qr_user) { create(:user) }
-      let!(:qr_relationship) { OrganizationsUser.add_user_to_organization(qr_user, qr_team) }
+      let!(:qr_relationship) { qr_team.add_user(qr_user) }
       let!(:qr_org_task) { QualityReviewTask.create_from_root_task(root_task) }
       let!(:qr_task_params) do
         [{
@@ -922,7 +922,7 @@ RSpec.feature "Task queue", :all_dbs do
         visit("/queue/appeals/#{appeal.external_id}")
 
         # Add a user to the Colocated team so the task assignment will suceed.
-        OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
+        Colocated.singleton.add_user(create(:user))
       end
 
       it "should display an option to mark task complete" do
@@ -958,13 +958,13 @@ RSpec.feature "Task queue", :all_dbs do
     context "when it was created from a BvaDispatchTask" do
       let!(:bva_dispatch_user) { create(:user) }
       let!(:bva_dispatch_relationship) do
-        OrganizationsUser.add_user_to_organization(bva_dispatch_user, BvaDispatch.singleton)
+        BvaDispatch.singleton.add_user(bva_dispatch_user)
       end
       let!(:attorney_user) { create(:user) }
       let!(:attorney_staff) { create(:staff, :attorney_role, user: attorney_user) }
 
       let!(:attorney_judge_relationship) do
-        OrganizationsUser.add_user_to_organization(attorney_user, judge_team)
+        judge_team.add_user(attorney_user)
       end
       let!(:orig_judge_task) do
         create(
@@ -1022,7 +1022,7 @@ RSpec.feature "Task queue", :all_dbs do
         visit("/queue/appeals/#{appeal.external_id}")
 
         # Add a user to the Colocated team so the task assignment will suceed.
-        OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
+        Colocated.singleton.add_user(create(:user))
       end
 
       it "should display an option of Ready for Dispatch" do
@@ -1115,7 +1115,7 @@ RSpec.feature "Task queue", :all_dbs do
       end
 
       it "should be able to add admin actions from case details" do
-        OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
+        Colocated.singleton.add_user(create(:user))
         visit("/queue")
         click_on "#{legacy_review_task.veteran_full_name} (#{legacy_review_task.sanitized_vbms_id})"
         # On case details page select the "Add admin action" option
@@ -1192,7 +1192,7 @@ RSpec.feature "Task queue", :all_dbs do
     end
 
     before do
-      OrganizationsUser.add_user_to_organization(user, TranscriptionTeam.singleton)
+      TranscriptionTeam.singleton.add_user(user)
       User.authenticate!(user: user)
     end
 
