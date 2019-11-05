@@ -24,7 +24,7 @@ class AdvanceOnDocketMotion < ApplicationRecord
       ).any?
     end
 
-    def upsert_by_person_id(person_id, attrs)
+    def create_or_update_by_person_id(person_id, attrs)
       motion = find_or_create_by(person_id: person_id)
 
       motion.update(attrs)
