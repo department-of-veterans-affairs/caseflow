@@ -14,7 +14,7 @@ context "api/docs/v3/decision_reviews.yaml" do
     benefit_types_in_spec = spec.dig(
       "components",
       "schemas",
-      "benefit_type",
+      "BenefitType",
       "enum"
     )
     expect(benefit_types_in_spec).to match_array(benefit_types)
@@ -25,7 +25,7 @@ context "api/docs/v3/decision_reviews.yaml" do
     categories_in_spec = spec.dig(
       "components",
       "schemas",
-      "nonrating_issue_category",
+      "NonratingIssueCategory",
       "enum"
     )
     expect(categories_in_spec).to match_array(categories)

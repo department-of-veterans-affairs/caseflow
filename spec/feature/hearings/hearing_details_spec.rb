@@ -23,7 +23,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
 
   context "Hearing details for AMA hearing" do
     let!(:current_user) do
-      OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+      HearingsManagement.singleton.add_user(user)
       User.authenticate!(user: user)
     end
     let!(:hearing) { create(:hearing, :with_tasks) }
@@ -58,7 +58,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
 
   context "Hearing details for Legacy hearing" do
     let!(:current_user) do
-      OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+      HearingsManagement.singleton.add_user(user)
       User.authenticate!(user: user)
       FeatureToggle.enable!(:schedule_virtual_hearings)
     end

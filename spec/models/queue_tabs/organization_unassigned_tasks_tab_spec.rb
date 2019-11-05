@@ -3,8 +3,8 @@
 require "rails_helper"
 require "support/database_cleaner"
 
-describe UnassignedTasksTab, :postgres do
-  let(:tab) { UnassignedTasksTab.new(params) }
+describe OrganizationUnassignedTasksTab, :postgres do
+  let(:tab) { OrganizationUnassignedTasksTab.new(params) }
   let(:params) do
     {
       assignee: assignee,
