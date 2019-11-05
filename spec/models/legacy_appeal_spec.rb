@@ -29,7 +29,7 @@ describe LegacyAppeal, :all_dbs do
       end
 
       context "the appeal has more than one parentless task" do
-        before { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
+        before { Colocated.singleton.add_user(create(:user)) }
 
         let!(:colocated_task) { create(:colocated_task, appeal: appeal, parent: nil) }
 
@@ -2451,7 +2451,7 @@ describe LegacyAppeal, :all_dbs do
 
     before do
       OrganizationsUser.make_user_admin(colocated_admin, Colocated.singleton)
-      OrganizationsUser.add_user_to_organization(colocated_user, Colocated.singleton)
+      Colocated.singleton.add_user(colocated_user)
       User.authenticate!(user: colocated_admin)
     end
 

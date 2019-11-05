@@ -68,10 +68,10 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         )
       end
 
-      OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
+      BvaDispatch.singleton.add_user(create(:user))
 
       create(:staff, user: qr_user)
-      OrganizationsUser.add_user_to_organization(qr_user, quality_review_organization)
+      quality_review_organization.add_user(qr_user)
       User.authenticate!(user: qr_user)
     end
 
@@ -228,7 +228,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
     let(:user) do
       create(:user).tap do |user|
-        OrganizationsUser.add_user_to_organization(user, QualityReview.singleton)
+        QualityReview.singleton.add_user(user)
       end
     end
 
