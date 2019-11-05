@@ -6,8 +6,6 @@ class OrganizationsUser < ApplicationRecord
 
   has_one :judge_team_role, class_name: "::JudgeTeamRole", dependent: :destroy
 
-  after_create :inform_organization_user_added
-
   scope :non_admin, -> { where(admin: false) }
 
   # Deprecated: add_user_to_organization(user, organization)
@@ -31,7 +29,4 @@ class OrganizationsUser < ApplicationRecord
     find_by(organization_id: organization.id, user_id: user.id)
   end
 
-  def inform_organization_user_added
-    organization.user_added_to_organization(self)
-  end
 end

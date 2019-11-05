@@ -18,7 +18,8 @@ class JudgeTeam < Organization
   # Use the size of the organization to determine if we have just created a JudgeTeam for a judge,
   # or just added a user to an existing JudgeTeam. We assume the first user will always be a judge. All subsequent
   # members of the team will be attorneys.
-  def user_added_to_organization(org_user)
+  def add_user(user)
+    org_user = super
     class_name = (users.count == 1) ? JudgeTeamLead : DecisionDraftingAttorney
     class_name.create!(organizations_user: org_user)
   end

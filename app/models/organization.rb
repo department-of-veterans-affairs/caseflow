@@ -46,8 +46,6 @@ class Organization < ApplicationRecord
     OrganizationsUser.existing_record(user, self) || OrganizationsUser.create(organization_id: id, user_id: user.id)
   end
 
-  def user_added_to_organization(_org_user); end
-
   def admins
     organizations_users.includes(:user).select(&:admin?).map(&:user)
   end
