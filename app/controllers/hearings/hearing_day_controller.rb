@@ -146,7 +146,7 @@ class Hearings::HearingDayController < HearingsApplicationController
     }, status: :not_found
   end
 
-  def hearing_day_range_invalid(range: hearing_day_range)
+  def hearing_day_range_invalid(range = hearing_day_range)
     render json: {
       "errors": range.errors.messages.map do |_key, message|
         {
