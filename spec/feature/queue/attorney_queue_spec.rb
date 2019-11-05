@@ -165,7 +165,7 @@ RSpec.feature "Attorney queue", :all_dbs do
 
     context "when the attorney has an on hold legacy ColocatedTask assigned to them" do
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
-      let!(:colocated_user) { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
+      let!(:colocated_user) { Colocated.singleton.add_user(create(:user)) }
       let!(:colocated_org_task) do
         create(
           :colocated_task,
