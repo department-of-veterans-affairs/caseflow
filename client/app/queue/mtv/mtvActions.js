@@ -103,7 +103,12 @@ export const returnToLitSupport = (data, ownProps) => {
     const url = '/post_decision_motions/return';
 
     try {
-      await ApiUtil.post(url, { data });
+      const res = await ApiUtil.post(url, { data });
+      const {
+        tasks: { data: tasks }
+      } = res.body;
+
+      dispatch(onReceiveAmaTasks(tasks));
 
       dispatch(returnMTVToLitSupportSuccess());
 

@@ -22,7 +22,8 @@ class PostDecisionMotionsController < ApplicationController
 
     task.update(status: Constants.TASK_STATUSES.cancelled)
     flash[:success] = "Case returned to Litigation Support"
-    render json: { task: mail_task }
+    appeal_tasks = mail_task.appeal.reload.tasks
+    render json: { tasks: ::WorkQueue::TaskSerializer.new(appeal_tasks, is_collection: true) }
   end
 
   private

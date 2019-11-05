@@ -340,8 +340,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
 
-      binding.pry
-
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
       expect(motion).to be_nil
 
