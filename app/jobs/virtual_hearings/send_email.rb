@@ -1,56 +1,44 @@
 # frozen_string_literal: true
 
-module VirtualHearings::SendEmail
-  def send_confirmation_emails
+class VirtualHearings::SendEmail
+  attr_reader :virtual_hearing, :type
+
+  def initialize(virtual_hearing:, type:)
+    @virtual_hearing = virtual_hearing
+    @type = type
+  end
+
+  def call
     if !virtual_hearing.veteran_email_sent
-      send_confirmation_email(:veteran)
+      send_email(:veteran)
       virtual_hearing.veteran_email_sent = true
     end
 
     if !virtual_hearing.judge_email_sent
-      send_confirmation_email(:judge)
+      send_email(:judge)
       virtual_hearing.judge_email_sent = true
     end
 
     if !virtual_hearing.representative_email_sent
-      send_confirmation_email(:representative)
+      send_email(:representative)
       virtual_hearing.representative_email_sent = true
     end
 
     virtual_hearing.save
   end
 
-  def send_confirmation_email(recipient)
-    VirtualHearingMailer.confirmation(
-      mail_recipient: mail_recipients[recipient],
-      virtual_hearing: virtual_hearing
-    ).deliver_now
-  end
-
-  def send_cancellation_emails
-    if !virtual_hearing.veteran_email_sent
-      send_confirmation_email(:veteran)
-      virtual_hearing.veteran_email_sent = true
+  def send_email(recipient)
+    if type == :confirmation
+      VirtualHearingMailer.confirmation(
+        mail_recipient: mail_recipients[recipient],
+        virtual_hearing: virtual_hearing
+      ).deliver_now
+    elsif type == :cancellation
+      VirtualHearingMailer.cancellation(
+        mail_recipient: mail_recipients[recipient],
+        virtual_hearing: virtual_hearing
+      ).deliver_now
     end
-
-    if !virtual_hearing.judge_email_sent
-      send_confirmation_email(:judge)
-      virtual_hearing.judge_email_sent = true
-    end
-
-    if !virtual_hearing.representative_email_sent
-      send_confirmation_email(:representative)
-      virtual_hearing.representative_email_sent = true
-    end
-
-    virtual_hearing.save
-  end
-
-  def send_cancellation_email(recipient)
-    VirtualHearingMailer.cancellation(
-      mail_recipient: mail_recipients[recipient],
-      virtual_hearing: virtual_hearing
-    ).deliver_now
   end
 
   def mail_recipients

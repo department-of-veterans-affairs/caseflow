@@ -3,7 +3,6 @@
 # This job will create a conference for a hearing
 # that is switched to virtual hearing.
 class VirtualHearings::CreateConferenceJob < ApplicationJob
-  include VirtualHearings::SendEmail
   include VirtualHearings::PexipClient
 
   queue_with_priority :high_priority
@@ -34,7 +33,7 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
       virtual_hearing.update(conference_id: resp.data[:conference_id], status: "active")
     end
 
-    send_confirmation_emails
+    VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :confirmation).call
   end
 
   private
