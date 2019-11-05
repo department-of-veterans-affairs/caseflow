@@ -34,7 +34,7 @@ class VirtualHearingRepository
         .where("legacy_hearings.hearing_day_id = :hearing_day_id", hearing_day_id: hearing_day.id)
         .exists?
 
-      return virtual_hearing_for_legacy_hearing_exists
+      virtual_hearing_for_legacy_hearing_exists
     end
   end
 end
