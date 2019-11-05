@@ -2,7 +2,7 @@
 
 describe ExternalApi::PexipService do
   let(:pexip_service) do
-    ExternalApi::PexipService.new(
+    PexipService.new(
       host: "vapnnevnpmn.care.va.gov",
       user_name: "pexip",
       password: "1234",
