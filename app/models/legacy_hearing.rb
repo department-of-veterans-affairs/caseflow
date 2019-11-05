@@ -216,6 +216,7 @@ class LegacyHearing < ApplicationRecord
 
   def readable_request_type
     return "Virtual" if virtual?
+
     Hearing::HEARING_TYPES[request_type.to_sym]
   end
 
