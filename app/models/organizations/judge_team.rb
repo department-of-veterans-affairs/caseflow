@@ -19,9 +19,10 @@ class JudgeTeam < Organization
   # or just added a user to an existing JudgeTeam. We assume the first user will always be a judge. All subsequent
   # members of the team will be attorneys.
   def add_user(user)
-    org_user = super
-    class_name = (users.count == 1) ? JudgeTeamLead : DecisionDraftingAttorney
-    class_name.create!(organizations_user: org_user)
+    super.tap do |org_user|
+      class_name = (users.count == 1) ? JudgeTeamLead : DecisionDraftingAttorney
+      class_name.create!(organizations_user: org_user)
+    end
   end
 
   def judge
