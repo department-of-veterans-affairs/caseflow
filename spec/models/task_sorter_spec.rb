@@ -158,7 +158,7 @@ describe TaskSorter, :all_dbs do
         end
 
         before do
-          OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
+          Colocated.singleton.add_user(create(:user))
           tasks.each_with_index { |task, index| task.update!(type: task_types[index].name) }
         end
 
@@ -289,7 +289,7 @@ describe TaskSorter, :all_dbs do
         let(:org) { create(:organization) }
 
         before do
-          OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
+          Colocated.singleton.add_user(create(:user))
 
           vacols_case_types = [:type_original, :type_post_remand, :type_cavc_remand]
           vacols_case_types.each do |case_type|

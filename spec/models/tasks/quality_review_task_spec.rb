@@ -8,7 +8,7 @@ describe QualityReviewTask, :all_dbs do
   let(:qr_task) { QualityReviewTask.create_from_root_task(root_task) }
 
   before do
-    OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
+    BvaDispatch.singleton.add_user(create(:user))
   end
 
   describe ".update!(status: Constants.TASK_STATUSES.completed)" do
@@ -35,7 +35,7 @@ describe QualityReviewTask, :all_dbs do
       let!(:atty_task) { AttorneyTask.create_many_from_params(atty_task_params, judge).first }
 
       let!(:qr_user) { create(:user) }
-      let!(:qr_relationship) { OrganizationsUser.add_user_to_organization(qr_user, QualityReview.singleton) }
+      let!(:qr_relationship) { QualityReview.singleton.add_user(qr_user) }
       let!(:qr_org_task) { QualityReviewTask.create_from_root_task(root_task) }
       let!(:qr_task_params) do
         [{

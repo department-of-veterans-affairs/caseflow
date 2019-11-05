@@ -52,8 +52,8 @@ describe OrganizationsController, :postgres, type: :controller do
 
     context "when the user is a member of the VSO in bgs and also in caseflow" do
       before do
-        OrganizationsUser.add_user_to_organization(user, vso)
-        expect(OrganizationsUser).not_to receive(:add_user_to_organization)
+        vso.add_user(user)
+        expect_any_instance_of(Organization).not_to receive(:add_user)
       end
 
       it "allows the user access but does not add them to the organization" do
@@ -69,7 +69,7 @@ describe OrganizationsController, :postgres, type: :controller do
 
     context "when the user is not a member of the VSO" do
       before do
-        expect(OrganizationsUser).not_to receive(:add_user_to_organization)
+        expect_any_instance_of(Organization).not_to receive(:add_user)
         allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_id)
           .with(participant_id).and_return(vso_participant_ids.last)
       end

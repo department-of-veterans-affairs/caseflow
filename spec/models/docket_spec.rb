@@ -119,7 +119,7 @@ describe Docket, :all_dbs do
         let(:user) { create(:user) }
 
         before do
-          OrganizationsUser.add_user_to_organization(user, MailTeam.singleton)
+          MailTeam.singleton.add_user(user)
         end
 
         context "nonblocking mail tasks" do
