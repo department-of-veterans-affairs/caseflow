@@ -5,7 +5,7 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
   application_attr :hearing_schedule
 
   def perform
-    VirtualHearingRepository.ready_for_deletion.map do |virtual_hearing|
+    VirtualHearingRepository.ready_for_deletion.each do |virtual_hearing|
       process_virtual_hearing(virtual_hearing)
     end
   end
