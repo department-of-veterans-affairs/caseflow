@@ -154,11 +154,21 @@ class HearingDayRange
   private
 
   def validate_start_date(date)
-    (Time.zone.today.beginning_of_day - 30.days) if date.nil?
+    return Time.zone.today.beginning_of_day - 30.days if date.nil?
+
+    coerce_date(date)
   end
 
   def validate_end_date(date)
-    (Time.zone.today.beginning_of_day + 365.days) if date.nil?
+    return Time.zone.today.beginning_of_day + 365.days if date.nil?
+
+    coerce_date(date)
+  end
+
+  def coerce_date(date)
+    return Date.parse(date) if date.is_a? String
+
+    date
   end
 
   def regional_office_key_is_valid
