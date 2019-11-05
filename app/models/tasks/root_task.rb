@@ -19,7 +19,7 @@ class RootTask < Task
   def when_child_task_created(child_task)
     if active?
       update!(status: :on_hold)
-    elsif !child_task.is_a?(TrackVeteranTask)
+    elsif !child_task.is_a?(TrackVeteranTask) && !on_hold?
       # Expect TrackVeteranTasks to occasionally be created for closed RootTasks because of timing complications
       # described in https://github.com/department-of-veterans-affairs/caseflow/issues/12574#issuecomment-549463832
       Raven.capture_message("Created child task for RootTask #{id} but did not update RootTask status")
