@@ -23,7 +23,7 @@ FactoryBot.define do
       # for creating error state; error b/c lead should also be admin
       trait :has_judge_team_lead do
         after(:create) do |judge_team|
-          org_user = OrganizationsUser.add_user_to_organization(create(:user), judge_team)
+          org_user = judge_team.add_user(create(:user))
           JudgeTeamLead.create!(organizations_user: org_user)
         end
       end
@@ -31,7 +31,7 @@ FactoryBot.define do
       trait :has_judge_team_lead_as_admin do
         after(:create) do |judge_team|
           user = create(:user)
-          org_user = OrganizationsUser.add_user_to_organization(user, judge_team)
+          org_user = judge_team.add_user(user)
           OrganizationsUser.make_user_admin(user, judge_team)
           JudgeTeamLead.create!(organizations_user: org_user)
         end
@@ -41,7 +41,7 @@ FactoryBot.define do
       trait :has_two_judge_team_lead do
         after(:create) do |judge_team|
           2.times do
-            org_user = OrganizationsUser.add_user_to_organization(create(:user), judge_team)
+            org_user = judge_team.add_user(create(:user))
             JudgeTeamLead.create!(organizations_user: org_user)
           end
         end
@@ -52,7 +52,7 @@ FactoryBot.define do
         after(:create) do |judge_team|
           2.times do
             user = create(:user)
-            org_user = OrganizationsUser.add_user_to_organization(user, judge_team)
+            org_user = judge_team.add_user(user)
             OrganizationsUser.make_user_admin(user, judge_team)
             JudgeTeamLead.create!(organizations_user: org_user)
           end

@@ -48,7 +48,7 @@ describe JudgeTeamRoleChecker, :postgres do
           before do
             # Add non-leads to team
             create_list(:user, non_lead_member_count) do |user|
-              OrganizationsUser.add_user_to_organization(user, judge_team2)
+              judge_team2.add_user(user)
             end
           end
 
@@ -85,7 +85,7 @@ describe JudgeTeamRoleChecker, :postgres do
           before do
             # Add non-leads to team
             create_list(:user, non_lead_member_count) do |user|
-              OrganizationsUser.add_user_to_organization(user, judge_team2)
+              judge_team2.add_user(user)
             end
           end
 
@@ -120,7 +120,7 @@ describe JudgeTeamRoleChecker, :postgres do
           before do
             # Add non-leads to team
             create_list(:user, non_lead_member_count) do |user|
-              OrganizationsUser.add_user_to_organization(user, judge_team2)
+              judge_team2.add_user(user)
             end
           end
 
@@ -155,7 +155,7 @@ describe JudgeTeamRoleChecker, :postgres do
           before do
             # Add non-leads to team
             create_list(:user, non_lead_member_count) do |user|
-              OrganizationsUser.add_user_to_organization(user, judge_team2)
+              judge_team2.add_user(user)
             end
           end
 
@@ -190,7 +190,7 @@ describe JudgeTeamRoleChecker, :postgres do
           before do
             # Add non-leads to team
             create_list(:user, non_lead_member_count) do |user|
-              OrganizationsUser.add_user_to_organization(user, judge_team2)
+              judge_team2.add_user(user)
             end
           end
 
