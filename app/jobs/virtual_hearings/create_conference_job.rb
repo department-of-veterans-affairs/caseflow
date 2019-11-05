@@ -8,8 +8,8 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
 
   queue_with_priority :high_priority
 
-  retry_on Caseflow::Error::PexipApiError, attempts: 5 do |_job, e|
-    capture_exception(e, extra: { hearing_id: virtual_hearing.hearing_id, alias: virtual_hearing.alias })
+  retry_on Caseflow::Error::PexipApiError, attempts: 5 do |_job, exception|
+    capture_exception(exception, extra: { hearing_id: virtual_hearing.hearing_id })
   end
 
   def perform(hearing_id:)

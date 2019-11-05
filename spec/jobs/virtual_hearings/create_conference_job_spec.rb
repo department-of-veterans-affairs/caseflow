@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-describe VirtualHearings::CreateConferenceJob, :all_dbs, focus: true do
+describe VirtualHearings::CreateConferenceJob, :all_dbs do
   context ".perform" do
     let(:virtual_hearing) { create(:virtual_hearing) }
     let(:create_job) { VirtualHearings::CreateConferenceJob.new(hearing_id: virtual_hearing.hearing_id) }

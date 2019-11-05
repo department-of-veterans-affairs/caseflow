@@ -25,14 +25,16 @@ module VirtualHearings::SendEmail
   end
 
   def send_email(type, recipient)
-    if (type == :confirmation)
+    if type == :confirmation
       VirtualHearingMailer.confirmation(
         mail_recipient: mail_recipient(recipient),
-        virtual_hearing: virtual_hearing).deliver_now
-    elsif (type == :cancellation)
+        virtual_hearing: virtual_hearing
+      ).deliver_now
+    elsif type == :cancellation
       VirtualHearingMailer.cancellation(
         mail_recipient: mail_recipient(recipient),
-        virtual_hearing: virtual_hearing).deliver_now
+        virtual_hearing: virtual_hearing
+      ).deliver_now
     end
   end
 
@@ -54,7 +56,7 @@ module VirtualHearings::SendEmail
     when :representative
       MailRecipient.new(
         full_name: virtual_hearing.hearing.appeal.representative_name,
-        email:virtual_hearing.representative_email,
+        email: virtual_hearing.representative_email,
         title: VirtualHearingMailer::RECIPIENT_TITLES[:representative]
       )
     end
