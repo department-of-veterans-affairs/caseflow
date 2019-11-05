@@ -109,7 +109,7 @@ describe JudgeTask, :all_dbs do
       subject { JudgeQualityReviewTask.create_from_params(params, qr_user) }
 
       before do
-        OrganizationsUser.add_user_to_organization(qr_user, QualityReview.singleton)
+        QualityReview.singleton.add_user(qr_user)
       end
 
       it "the parent task should change to an 'on hold' status" do

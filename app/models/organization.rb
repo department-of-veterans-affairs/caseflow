@@ -26,10 +26,6 @@ class Organization < ApplicationRecord
     end
   end
 
-  def admins
-    organizations_users.includes(:user).select(&:admin?).map(&:user)
-  end
-
   def can_bulk_assign_tasks?
     false
   end
@@ -44,6 +40,14 @@ class Organization < ApplicationRecord
 
   def use_task_pages_api?
     false
+  end
+
+  def add_user(user)
+    OrganizationsUser.existing_record(user, self) || OrganizationsUser.create(organization_id: id, user_id: user.id)
+  end
+
+  def admins
+    organizations_users.includes(:user).select(&:admin?).map(&:user)
   end
 
   def non_admins
