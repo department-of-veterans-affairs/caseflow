@@ -19,7 +19,7 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
 
     before do
       User.authenticate!(user: user)
-      OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
+      Colocated.singleton.add_user(user)
     end
 
     context "with the correct parameters" do
@@ -173,7 +173,7 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
           let(:new_task_type) { CongressionalInterestMailTask }
 
           before do
-            OrganizationsUser.add_user_to_organization(create(:user), LitigationSupport.singleton)
+            LitigationSupport.singleton.add_user(create(:user))
           end
 
           it "should reassign the task when changing the type" do

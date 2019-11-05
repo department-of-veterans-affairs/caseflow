@@ -10,7 +10,7 @@ describe ColocatedTaskDistributor, :all_dbs do
 
   before do
     create_list(:user, assignee_pool_size).each do |u|
-      OrganizationsUser.add_user_to_organization(u, colocated_org)
+      colocated_org.add_user(u)
     end
   end
 

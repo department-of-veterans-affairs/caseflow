@@ -23,7 +23,7 @@ RSpec.feature HearingAdminActionForeignVeteranCaseTask, :postgres do
 
   context "UI tests" do
     before do
-      OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+      HearingsManagement.singleton.add_user(user)
 
       User.authenticate!(user: user)
     end
