@@ -158,6 +158,7 @@ class LegacyAppeal < ApplicationRecord
     transcription: "33",
     translation: "14",
     schedule_hearing: "57",
+    sr_council_dvc: "66",
     case_storage: "81",
     service_organization: "55",
     closed: "99"
@@ -762,6 +763,21 @@ class LegacyAppeal < ApplicationRecord
 
   def vacols_case_review
     VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
+  end
+
+  def death_dismissal!
+    multi_transaction do
+      cancel_open_caseflow_tasks!
+      LegacyAppeal.repository.update_location_for_death_dismissal!(appeal: self)
+    end
+  end
+
+  def cancel_open_caseflow_tasks!
+    tasks.open.each do |task|
+      task.update!(status: Constants.TASK_STATUSES.cancelled)
+      task.instructions << "Task cancelled due to death dismissal"
+      task.save
+    end
   end
 
   def eligible_for_death_dismissal?(user)

@@ -19,7 +19,7 @@ describe AssignHearingDispositionTask, :all_dbs do
     subject { disposition_task.update_from_params(params, user) }
 
     before do
-      OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+      HearingsManagement.singleton.add_user(user)
     end
 
     describe "hearing disposition of cancelled" do

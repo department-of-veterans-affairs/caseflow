@@ -6,7 +6,7 @@ require "rails_helper"
 RSpec.feature "Edit a Hearing Day", :all_dbs do
   let!(:current_user) do
     user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
-    OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+    HearingsManagement.singleton.add_user(user)
     User.authenticate!(user: user)
   end
 
@@ -27,7 +27,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
   end
 
   before do
-    OrganizationsUser.add_user_to_organization(caseflow_coordinator, HearingsManagement.singleton)
+    HearingsManagement.singleton.add_user(caseflow_coordinator)
   end
 
   context "When editing a Hearing Day" do

@@ -16,10 +16,10 @@ class HearingUpdateForm < BaseHearingUpdateForm
   private
 
   def update_advance_on_docket_motion
-    motion = hearing.advance_on_docket_motion || AdvanceOnDocketMotion.find_or_create_by!(
-      person_id: advance_on_docket_motion_attributes[:person_id]
+    AdvanceOnDocketMotion.create_or_update_by_person_id(
+      advance_on_docket_motion_attributes[:person_id],
+      advance_on_docket_motion_attributes
     )
-    motion.update(advance_on_docket_motion_attributes)
   end
 
   def hearing_updates

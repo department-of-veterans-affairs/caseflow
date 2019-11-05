@@ -17,7 +17,7 @@ describe ColocatedTask, :all_dbs do
 
   before do
     colocated_members.each do |u|
-      OrganizationsUser.add_user_to_organization(u, colocated_org)
+      colocated_org.add_user(u)
     end
 
     RequestStore.store[:current_user] = attorney
@@ -404,8 +404,8 @@ describe ColocatedTask, :all_dbs do
 
       before do
         colocated_org.users.delete_all
-        OrganizationsUser.add_user_to_organization(non_admin, colocated_org)
-        OrganizationsUser.add_user_to_organization(admin, colocated_org).update!(admin: true)
+        colocated_org.add_user(non_admin)
+        colocated_org.add_user(admin).update!(admin: true)
       end
 
       it "should assign all tasks to the non-admin user" do
@@ -429,7 +429,7 @@ describe ColocatedTask, :all_dbs do
     let(:colocated_user) { create(:user) }
 
     before do
-      OrganizationsUser.add_user_to_organization(colocated_user, org)
+      org.add_user(colocated_user)
     end
 
     let(:org_task) { create(:colocated_task, assigned_by: attorney, assigned_to: org) }
