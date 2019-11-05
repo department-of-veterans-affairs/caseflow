@@ -70,6 +70,8 @@ class RatingDecision
   def contestable?
     return true if rating_issue?
 
+    return false unless disability_date
+
     date_near_promulgation_date?(disability_date.to_date) || date_near_profile_date?(disability_date.to_date)
   end
 
