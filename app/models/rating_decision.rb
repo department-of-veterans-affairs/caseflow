@@ -8,9 +8,6 @@ class RatingDecision
   include ActiveModel::Model
   include LatestRatingDisabilityEvaluation
 
-  # arbitrary but observed date before which rating data is sparsely populated.
-  MODERN_RECORDKEEPING_CUTOFF_DATE = "2006-01-01"
-
   # the flexible window for calculating the contestable decision date.
   # this is the number of days +/- the effective date.
   GRACE_PERIOD = 10
@@ -67,17 +64,13 @@ class RatingDecision
   end
 
   def decision_date
-    return promulgation_date if rating_issue? || effective_date_near_promulgation_date?
-
-    effective_date
+    promulgation_date
   end
 
   def contestable?
     return true if rating_issue?
 
-    return false unless decision_date
-
-    effective_date_near_promulgation_date? || effective_date_near_profile_date?
+    date_near_promulgation_date?(disability_date.to_date) || date_near_profile_date?(disability_date.to_date)
   end
 
   def rating_issue?
@@ -100,6 +93,10 @@ class RatingDecision
     type_name == "Service Connected"
   end
 
+  def effective_date
+    effective_start_date_of_original_decision || disability_date
+  end
+
   private
 
   # the "effective date" is the name we give the original decision date.
@@ -110,32 +107,20 @@ class RatingDecision
     [original_denial_date, converted_begin_date, begin_date].compact.min
   end
 
-  def effective_date
-    return disability_date if effective_start_date_prior_to_modern_recordkeeping?
-
-    effective_start_date_of_original_decision || disability_date
+  def date_near_promulgation_date?(the_date)
+    the_date.between?((the_promulgation - GRACE_PERIOD.days), (the_promulgation + GRACE_PERIOD.days))
   end
 
-  def effective_start_date_prior_to_modern_recordkeeping?
-    return false unless effective_start_date_of_original_decision
-
-    effective_start_date_of_original_decision.to_date < MODERN_RECORDKEEPING_CUTOFF_DATE.to_date
+  def the_promulgation
+    @the_promulgation ||= promulgation_date.to_date
   end
 
-  def effective_date_near_promulgation_date?
-    return false unless effective_date
-
-    the_decision = effective_date.to_date
-    the_promulgation = promulgation_date.to_date
-    the_decision.between?((the_promulgation - GRACE_PERIOD.days), (the_promulgation + GRACE_PERIOD.days))
+  def date_near_profile_date?(the_date)
+    the_date.between?((the_profile - GRACE_PERIOD.days), (the_profile + GRACE_PERIOD.days))
   end
 
-  def effective_date_near_profile_date?
-    return false unless effective_date
-
-    the_decision = effective_date.to_date
-    the_profile = profile_date.to_date
-    the_decision.between?((the_profile - GRACE_PERIOD.days), (the_profile + GRACE_PERIOD.days))
+  def the_profile
+    @the_profile ||= profile_date.to_date
   end
 
   def service_connected_decision_text
