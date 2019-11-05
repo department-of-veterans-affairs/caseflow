@@ -45,5 +45,27 @@ RSpec.describe Tasks::PlaceHoldController, :postgres, type: :controller do
         expect(response.status).to eq(404)
       end
     end
+
+    context "when the user is a VSO" do
+      let!(:user) { User.authenticate!(roles: ["VSO"]) }
+
+      it "fails" do
+        subject
+
+        expect(response.status).to eq(403)
+      end
+
+      context "when the task is an IHP task" do
+        let(:parent) { create(:informal_hearing_presentation_task) }
+
+        it "allows the task to be placed on hold" do
+          subject
+
+          expect(response.status).to eq(200)
+          response_body = JSON.parse(response.body)["tasks"]["data"]
+          expect(response_body.length).to eq(2)
+        end
+      end
+    end
   end
 end
