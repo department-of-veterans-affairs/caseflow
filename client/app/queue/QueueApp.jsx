@@ -79,6 +79,7 @@ import AddressMotionToVacateView from './mtv/AddressMotionToVacateView';
 import ReviewMotionToVacateView from './mtv/ReviewMotionToVacateView';
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
 import { ReturnToLitSupportModal } from './mtv/ReturnToLitSupportModal';
+import { returnToLitSupport } from './mtv/mtvActions';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -239,13 +240,19 @@ class QueueApp extends React.PureComponent {
   routedAssignToPulacCerullo = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
 
   routedReturnToLitSupport = (props) => {
+    const { taskId } = props.match.params;
+
     return (
       <ReturnToLitSupportModal
         {...props.match.params}
         onCancel={() => props.history.goBack()}
         onSubmit={({ instructions }) => {
           // we'll flesh this out in future PR
-          return instructions;
+
+          this.props.returnToLitSupport({ instructions,
+            task_id: taskId }, props);
+
+          
         }}
       />
     );
@@ -666,7 +673,8 @@ QueueApp.propTypes = {
   applicationUrls: PropTypes.array,
   flash: PropTypes.array,
   reviewActionType: PropTypes.string,
-  userCanViewHearingSchedule: PropTypes.bool
+  userCanViewHearingSchedule: PropTypes.bool,
+  returnToLitSupport: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -682,7 +690,8 @@ const mapDispatchToProps = (dispatch) =>
       setUserCssId,
       setUserIsVsoEmployee,
       setFeedbackUrl,
-      setOrganizations
+      setOrganizations,
+      returnToLitSupport
     },
     dispatch
   );
