@@ -9,7 +9,8 @@ class RoundRobinTaskDistributor
   attr_accessor :assignee_pool, :task_class
 
   def latest_task
-    task_class.where(assigned_to: assignee_pool).max_by(&:created_at)
+    # Use id as a proxy for created_at since the id field is already indexed.
+    task_class.where(assigned_to: assignee_pool).order(id: :desc).first
   end
 
   def last_assignee

@@ -592,7 +592,7 @@ describe Task, :all_dbs do
       let!(:task) { create(:generic_task, assigned_to: user, parent: parent_task) }
 
       it "returns false" do
-        OrganizationsUser.add_user_to_organization(user, organization)
+        organization.add_user(user)
         expect(parent_task.actions_allowable?(user)).to eq(false)
       end
     end
@@ -868,7 +868,7 @@ describe Task, :all_dbs do
   describe ".assigned_to_same_org?" do
     subject { task.assigned_to_same_org?(other_task) }
 
-    before { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
+    before { Colocated.singleton.add_user(create(:user)) }
 
     context "when other task is assigned to a user" do
       let(:task) { create(:task, assigned_to: Colocated.singleton) }
@@ -963,6 +963,44 @@ describe Task, :all_dbs do
 
       it "should should return the grandchild" do
         expect(subject.id).to eq(grandchild_task.id)
+      end
+    end
+  end
+
+  describe ".when_child_task_created" do
+    let(:parent_task) { create(:task, appeal: create(:appeal)) }
+
+    subject { create(:task, parent: parent_task, appeal: parent_task.appeal) }
+
+    before do
+      allow(Raven).to receive(:capture_message)
+    end
+
+    context "when the task is active" do
+      it "does not send a message to Sentry" do
+        expect(parent_task.status).to eq(Constants.TASK_STATUSES.assigned)
+        expect(parent_task.children.count).to eq(0)
+
+        subject
+
+        expect(Raven).to have_received(:capture_message).exactly(0).times
+        expect(parent_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+        expect(parent_task.children.count).to eq(1)
+      end
+    end
+
+    context "when the task is closed" do
+      before { parent_task.update!(status: Constants.TASK_STATUSES.completed) }
+
+      it "sends a message to Sentry" do
+        expect(parent_task.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(parent_task.children.count).to eq(0)
+
+        subject
+
+        expect(Raven).to have_received(:capture_message).exactly(1).times
+        expect(parent_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+        expect(parent_task.children.count).to eq(1)
       end
     end
   end

@@ -7,7 +7,7 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
   let(:user) { create(:user) }
 
   before do
-    OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+    HearingsManagement.singleton.add_user(user)
     User.authenticate!(user: user)
   end
 
@@ -60,7 +60,7 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
       let(:instructions_text) { "This is why I want a hearing disposition change!" }
 
       before do
-        OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
+        HearingAdmin.singleton.add_user(hearing_admin_user)
       end
 
       describe "requesting a hearing disposition change" do

@@ -315,4 +315,36 @@ describe "task rake tasks", :postgres do
       end
     end
   end
+
+  describe "tasks:reassign_from_user" do
+    let(:user) { create(:user) }
+    let(:user_id) { user.id }
+
+    let(:args) { [user_id] }
+
+    subject do
+      Rake::Task["tasks:reassign_from_user"].reenable
+      Rake::Task["tasks:reassign_from_user"].invoke(*args)
+    end
+
+    context "the user id does not relate to a user" do
+      let(:user_id) { 444 }
+
+      it "fails to find the user" do
+        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "when on a dry run" do
+      it "tells the user how to execute" do
+        expected_output = <<~OUTPUT
+          *** DRY RUN
+          *** pass 'false' as the second argument to execute
+        OUTPUT
+        allow_any_instance_of(BulkTaskReassignment).to receive(:perform_dry_run).and_return(nil)
+        expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+        expect { subject }.to output(expected_output).to_stdout
+      end
+    end
+  end
 end

@@ -61,7 +61,7 @@ class SeedDB
     special_case_movement_user = User.create(css_id: "BVAGGREEN",
                                              station_id: 101,
                                              full_name: "Rosalie SpecialCaseMovement Dunkle")
-    OrganizationsUser.add_user_to_organization(special_case_movement_user, SpecialCaseMovementTeam.singleton)
+    SpecialCaseMovementTeam.singleton.add_user(special_case_movement_user)
     special_case_movement_admin = User.create(css_id: "BVAGAQUA",
                                               station_id: 101,
                                               full_name: "Bryan SpecialCaseMovementAdmin Beekman")
@@ -110,7 +110,7 @@ class SeedDB
     u = User.create(css_id: "TEAM_ADMIN", station_id: 101, full_name: "Team admin")
     existing_sysadmins = Functions.details_for("System Admin")[:granted] || []
     Functions.grant!("System Admin", users: existing_sysadmins + [u.css_id])
-    OrganizationsUser.add_user_to_organization(u, Bva.singleton)
+    Bva.singleton.add_user(u)
   end
 
   def create_judge_teams
@@ -118,20 +118,20 @@ class SeedDB
       judge = User.find_or_create_by(css_id: judge_css_id, station_id: 101)
       judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
       h[:attorneys].each do |css_id|
-        OrganizationsUser.add_user_to_organization(User.find_or_create_by(css_id: css_id, station_id: 101), judge_team)
+        judge_team.add_user(User.find_or_create_by(css_id: css_id, station_id: 101))
       end
     end
   end
 
   def create_transcription_team
     transcription_member = User.find_or_create_by(css_id: "TRANSCRIPTION_USER", station_id: 101)
-    OrganizationsUser.add_user_to_organization(transcription_member, TranscriptionTeam.singleton)
+    TranscriptionTeam.singleton.add_user(transcription_member)
   end
 
   def create_hearings_user_and_tasks
     hearings_member = User.find_or_create_by(css_id: "BVATWARNER", station_id: 101)
-    OrganizationsUser.add_user_to_organization(hearings_member, HearingsManagement.singleton)
-    OrganizationsUser.add_user_to_organization(hearings_member, HearingAdmin.singleton)
+    HearingsManagement.singleton.add_user(hearings_member)
+    HearingAdmin.singleton.add_user(hearings_member)
 
     create_different_hearings_tasks
     create_change_hearing_disposition_task
@@ -139,7 +139,7 @@ class SeedDB
 
   def create_edit_hearings_user
     hearings_user = User.create(css_id: "BVAYELLOW", station_id: 101, full_name: "Build and Edit Hearing Schedule", roles: ["Edit HearSched", "Build HearSched"])
-    OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
+    HearingsManagement.singleton.add_user(hearings_user)
   end
 
   def create_different_hearings_tasks
@@ -201,11 +201,11 @@ class SeedDB
   def create_colocated_users
     secondary_user = FactoryBot.create(:user, full_name: "Secondary VLJ support staff", roles: %w[Reader])
     FactoryBot.create(:staff, :colocated_role, user: secondary_user, sdept: "DSP")
-    OrganizationsUser.add_user_to_organization(secondary_user, Colocated.singleton)
+    Colocated.singleton.add_user(secondary_user)
 
     user = User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases", roles: %w[Reader])
     FactoryBot.create(:staff, :colocated_role, user: user, sdept: "DSP")
-    OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
+    Colocated.singleton.add_user(user)
 
     admin = User.create(css_id: "VLJ_SUPPORT_ADMIN", station_id: 101, full_name: "VLJ Support admin", roles: %w[Reader])
     FactoryBot.create(:staff, :colocated_role, user: admin, sdept: "DSP")
@@ -226,7 +226,7 @@ class SeedDB
         full_name: "#{name} - VSO user",
         roles: %w[VSO]
       )
-      OrganizationsUser.add_user_to_organization(u, vso)
+      vso.add_user(u)
 
       # Assign one IHP task to each member of the VSO team and leave some IHP tasks assigned to the organization.
       [true, false].each do |assign_to_user|
@@ -266,7 +266,7 @@ class SeedDB
         full_name: "#{name} - VSO user",
         roles: %w[VSO]
       )
-      OrganizationsUser.add_user_to_organization(u, vso)
+      vso.add_user(u)
 
       a = FactoryBot.create(:appeal)
       root_task = FactoryBot.create(:root_task, appeal: a)
@@ -283,18 +283,18 @@ class SeedDB
     nca = BusinessLine.create!(name: "National Cemetery Administration", url: "nca")
     (0..5).each do |n|
       u = User.create!(station_id: 101, css_id: "NCA_QUEUE_USER_#{n}", full_name: "NCA team member #{n}")
-      OrganizationsUser.add_user_to_organization(u, nca)
+      nca.add_user(u)
     end
 
     (0..5).each do |n|
       u = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER_#{n}", full_name: "Translation team member #{n}")
-      OrganizationsUser.add_user_to_organization(u, Translation.singleton)
+      Translation.singleton.add_user(u)
     end
   end
 
   def create_qr_user
     qr_user = User.create!(station_id: 101, css_id: "QR_USER", full_name: "Quality Reviewer")
-    OrganizationsUser.add_user_to_organization(qr_user, QualityReview.singleton)
+    QualityReview.singleton.add_user(qr_user)
 
     # Create QR tasks; one assigned just to the QR org and three assigned both to the org and a QR user.
     create_task_at_quality_review
@@ -305,7 +305,7 @@ class SeedDB
 
   def create_aod_user_and_tasks
     u = User.create!(station_id: 101, css_id: "AOD_USER", full_name: "AOD team member")
-    OrganizationsUser.add_user_to_organization(u, AodTeam.singleton)
+    AodTeam.singleton.add_user(u)
 
     root_task = FactoryBot.create(:root_task)
     mail_task = ::AodMotionMailTask.create!(
@@ -322,27 +322,27 @@ class SeedDB
 
   def create_privacy_user
     u = User.create!(station_id: 101, css_id: "PRIVACY_TEAM_USER", full_name: "Privacy and FOIA team member")
-    OrganizationsUser.add_user_to_organization(u, PrivacyTeam.singleton)
+    PrivacyTeam.singleton.add_user(u)
   end
 
   def create_lit_support_user
     u = User.create!(station_id: 101, css_id: "LIT_SUPPORT_USER", full_name: "Litigation Support team member")
-    OrganizationsUser.add_user_to_organization(u, LitigationSupport.singleton)
+    LitigationSupport.singleton.add_user(u)
   end
 
   def create_pulac_cerullo_user
     u = User.create!(station_id: 101, css_id: "BVAKSOSNA", full_name: "KATHLEEN SOSNA")
-    OrganizationsUser.add_user_to_organization(u, PulacCerullo.singleton)
+    PulacCerullo.singleton.add_user(u)
   end
 
   def create_mail_team_user
     u = User.create!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Mail team member")
-    OrganizationsUser.add_user_to_organization(u, MailTeam.singleton)
+    MailTeam.singleton.add_user(u)
   end
 
   def create_bva_dispatch_user_with_tasks
     u = User.find_by(css_id: "BVAGWHITE")
-    OrganizationsUser.add_user_to_organization(u, BvaDispatch.singleton)
+    BvaDispatch.singleton.add_user(u)
 
     [42, 66, 13].each do |rand_seed|
       create_task_at_bva_dispatch(rand_seed)
@@ -1005,7 +1005,7 @@ class SeedDB
     )
 
     judge_team = JudgeTeam.create_for_judge(judge)
-    OrganizationsUser.add_user_to_organization(atty, judge_team)
+    judge_team.add_user(atty)
 
     appeal.request_issues.each do |request_issue|
       FactoryBot.create(
@@ -1084,7 +1084,7 @@ class SeedDB
     FactoryBot.create(:staff, :attorney_judge_role, user: acting_judge)
 
     JudgeTeam.create_for_judge(acting_judge)
-    OrganizationsUser.add_user_to_organization(acting_judge, JudgeTeam.for_judge(judge))
+    JudgeTeam.for_judge(judge).add_user(acting_judge)
 
     create_appeal_at_judge_assignment(judge: acting_judge)
     create_task_at_attorney_review(FactoryBot.create(:appeal), judge, acting_judge)
@@ -1247,8 +1247,8 @@ class SeedDB
   def create_inbox_messages
     user = User.find_by_css_id "BVAYELLOW"
 
-    veteran1 = Veteran.find_or_create_by_file_number "994806951"
-    veteran2 = Veteran.find_or_create_by_file_number "520353651"
+    veteran1 = FactoryBot.create(:veteran)
+    veteran2 = FactoryBot.create(:veteran)
 
     appeal1 = FactoryBot.create(:appeal, veteran_file_number: veteran1.file_number)
     appeal2 = FactoryBot.create(
