@@ -93,6 +93,17 @@ RSpec.feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
     end
   end
 
+  context "Daily Docket with a Virtual AMA Hearing" do
+    let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO42") }
+    let!(:virtual_hearing) { create(:virtual_hearing, :active, hearing: hearing) }
+
+    scenario "Daily docket shows 'Video, Virtual' as the request type" do
+      visit("hearings/schedule/docket/#{hearing.hearing_day.id}")
+
+      expect(page).to have_content("Video, Virtual")
+    end
+  end
+
   context "Daily Docket with an uneditable disposition" do
     let!(:hearing) { create(:hearing) }
     let!(:hearing_task_association) do

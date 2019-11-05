@@ -18,4 +18,15 @@ RSpec.feature "List Schedule for Build HearSched", :all_dbs do
       expect(page).to have_content("Add Hearing Date")
     end
   end
+
+  context "Schedule with a Virtual Hearing" do
+    let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO42") }
+    let!(:virtual_hearing) { create(:virtual_hearing, :active, hearing: hearing) }
+
+    scenario "Shows the 'Video, Virtual' request type" do
+      visit("hearings/schedule")
+
+      expect(page).to have_content("Video, Virtual")
+    end
+  end
 end
