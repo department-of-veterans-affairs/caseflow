@@ -247,12 +247,8 @@ class QueueApp extends React.PureComponent {
         {...props.match.params}
         onCancel={() => props.history.goBack()}
         onSubmit={({ instructions }) => {
-          // we'll flesh this out in future PR
-
           this.props.returnToLitSupport({ instructions,
             task_id: taskId }, props);
-
-          
         }}
       />
     );
