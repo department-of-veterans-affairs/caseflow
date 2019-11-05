@@ -34,7 +34,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
     context "user is in org" do
       before do
-        OrganizationsUser.add_user_to_organization(user, non_comp_org)
+        non_comp_org.add_user(user)
       end
 
       it "displays org queue page" do
@@ -71,7 +71,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
     context "user is in org" do
       before do
-        OrganizationsUser.add_user_to_organization(user, non_comp_org)
+        non_comp_org.add_user(user)
       end
 
       it "displays task details page" do
@@ -117,7 +117,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
     let(:decision_date) { "2018-10-1" }
 
     before do
-      OrganizationsUser.add_user_to_organization(user, non_comp_org)
+      non_comp_org.add_user(user)
       task.appeal.update!(veteran_file_number: veteran.file_number)
     end
 

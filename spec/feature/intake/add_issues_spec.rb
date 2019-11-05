@@ -201,4 +201,52 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Notes")
     end
   end
+
+  context "show decision date on unidentified issues" do
+    let(:veteran_no_ratings) do
+      Generators::Veteran.build(file_number: "55555555",
+                                first_name: "Nora",
+                                last_name: "Attings",
+                                participant_id: "44444444")
+    end
+    let(:decision_date) { 50.days.ago.to_date.mdY }
+
+    before { FeatureToggle.enable!(:unidentified_issue_decision_date) }
+    after { FeatureToggle.disable!(:unidentified_issue_decision_date) }
+
+    scenario "unidentified issue decision date on add issue page" do
+      start_higher_level_review(veteran_no_ratings)
+      visit "/intake"
+      click_intake_continue
+      expect(page).to have_current_path("/intake/add_issues")
+
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      expect(page).to have_content("Decision date")
+      fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
+      fill_in "Decision date", with: decision_date
+      safe_click ".add-issue"
+      expect(page).to have_content("Decision date")
+      click_on "Establish EP"
+      expect(page).to have_content("Intake completed")
+    end
+
+    scenario "show undentified decision date on edit page" do
+      start_higher_level_review(veteran_no_ratings)
+      visit "/intake"
+      click_intake_continue
+      expect(page).to have_current_path("/intake/add_issues")
+
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      expect(page).to have_content("Decision date")
+      fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
+      fill_in "Decision date", with: decision_date
+      safe_click ".add-issue"
+      expect(page).to have_content("Decision date")
+      click_on "Establish EP"
+      click_on "correct the issues"
+      expect(page).to have_content("Decision date")
+    end
+  end
 end

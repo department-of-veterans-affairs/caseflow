@@ -36,7 +36,7 @@ describe Organizations::UsersController, :postgres, type: :controller do
       let(:user) { create(:user) }
 
       before do
-        OrganizationsUser.add_user_to_organization(user, non_comp_org)
+        non_comp_org.add_user(user)
       end
 
       it "returns 200 and users in org" do
@@ -75,7 +75,7 @@ describe Organizations::UsersController, :postgres, type: :controller do
     context "when the admin field is not included as a request parameter" do
       let(:params) { { organization_url: org.url, id: user.id } }
 
-      before { OrganizationsUser.add_user_to_organization(user, org) }
+      before { org.add_user(user) }
 
       it "returns the user but does not alter the user in any way" do
         subject
@@ -114,7 +114,7 @@ describe Organizations::UsersController, :postgres, type: :controller do
         end
 
         context "when the target user is a non-admin in the organization" do
-          before { OrganizationsUser.add_user_to_organization(user, org) }
+          before { org.add_user(user) }
 
           it "makes the target user an admin of the team" do
             expect(org.admins.count).to eq(1)
@@ -173,7 +173,7 @@ describe Organizations::UsersController, :postgres, type: :controller do
         end
 
         context "when the target user is a non-admin in the organization" do
-          before { OrganizationsUser.add_user_to_organization(user, org) }
+          before { org.add_user(user) }
 
           it "does not change the target user admin rights" do
             expect(org.admins.count).to eq(1)

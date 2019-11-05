@@ -14,7 +14,7 @@ RSpec.shared_examples "Change hearing disposition" do
   let(:instructions_text) { "This is why I'm changing this hearing's disposition." }
 
   before do
-    OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
+    HearingAdmin.singleton.add_user(hearing_admin_user)
     User.authenticate!(user: hearing_admin_user)
   end
 
@@ -25,8 +25,8 @@ RSpec.shared_examples "Change hearing disposition" do
     let(:hearing_day) { create(:hearing_day, judge: hearing_user, scheduled_for: 1.month.from_now) }
 
     before do
-      OrganizationsUser.add_user_to_organization(mail_user, MailTeam.singleton)
-      OrganizationsUser.add_user_to_organization(transcription_user, TranscriptionTeam.singleton)
+      MailTeam.singleton.add_user(mail_user)
+      TranscriptionTeam.singleton.add_user(transcription_user)
     end
 
     scenario "change hearing disposition to held" do
@@ -127,7 +127,7 @@ RSpec.shared_examples "Change hearing disposition" do
     let(:veteran_hearing_link_text) { "#{appeal.veteran_full_name} | #{appeal.veteran_file_number}" }
 
     before do
-      OrganizationsUser.add_user_to_organization(hearing_mgmt_user, HearingsManagement.singleton)
+      HearingsManagement.singleton.add_user(hearing_mgmt_user)
     end
 
     context "changing hearing disposition" do
@@ -270,16 +270,16 @@ RSpec.shared_examples "Change hearing disposition" do
     let(:assign_instructions_text) { "This is why I'm assigning this to you." }
 
     before do
-      OrganizationsUser.add_user_to_organization(other_admin_user, HearingAdmin.singleton)
+      HearingAdmin.singleton.add_user(other_admin_user)
 
       admin_full_names.each do |name|
         user = create(:user, full_name: name, station_id: 101)
-        OrganizationsUser.add_user_to_organization(user, HearingAdmin.singleton)
+        HearingAdmin.singleton.add_user(user)
       end
 
       mgmt_full_names.each do |name|
         user = create(:user, full_name: name, station_id: 101)
-        OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+        HearingsManagement.singleton.add_user(user)
       end
     end
 
