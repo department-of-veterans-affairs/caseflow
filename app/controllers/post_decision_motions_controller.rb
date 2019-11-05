@@ -15,6 +15,16 @@ class PostDecisionMotionsController < ApplicationController
     render json: {}
   end
 
+  def return_to_lit_support
+    mail_task = task.parent
+    mail_task.instructions << params[:instructions]
+    mail_task.save
+
+    task.update(status: Constants.TASK_STATUSES.cancelled)
+    flash[:success] = "Case returned to Litigation Support"
+    render json: { task: mail_task }
+  end
+
   private
 
   def verify_task_access
