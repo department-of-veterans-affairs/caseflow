@@ -28,5 +28,4 @@ class OrganizationsUser < ApplicationRecord
   def self.existing_record(user, organization)
     find_by(organization_id: organization.id, user_id: user.id)
   end
-
 end
