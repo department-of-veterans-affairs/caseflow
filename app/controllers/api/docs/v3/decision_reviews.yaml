@@ -79,7 +79,7 @@ paths:
                         legacyOptInApproved:
                           type: boolean
                         benefitType:
-                          $ref: "#/components/schemas/benefit_type"
+                          $ref: "#/components/schemas/BenefitType"
                     relationships:
                       type: object
                       required:
@@ -125,7 +125,7 @@ paths:
                                     - payeeCode
                                   properties:
                                     payeeCode:
-                                      $ref: "#/components/schemas/payee_code"
+                                      $ref: "#/components/schemas/PayeeCode"
                 included:
                   type: array
                   items:
@@ -151,7 +151,7 @@ paths:
                           legacyAppealIssueId:
                             type: integer
                           category:
-                            $ref: "#/components/schemas/nonrating_issue_category"
+                            $ref: "#/components/schemas/NonratingIssueCategory"
                           decisionDate:
                             type: string
                           decisionText:
@@ -223,7 +223,7 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: "#/components/schemas/intake_status"
+                $ref: "#/components/schemas/IntakeStatus"
         '4XX':
           description: Invalid Request
           content:
@@ -232,7 +232,7 @@ paths:
                 type: object
                 properties:
                   errors:
-                    $ref: "#/components/schemas/errors"
+                    $ref: "#/components/schemas/Errors"
         '400':
           description: |-
             400 response
@@ -242,7 +242,7 @@ paths:
                 type: object
                 properties:
                   errors:
-                    $ref: "#/components/schemas/errors"
+                    $ref: "#/components/schemas/Errors"
               examples:
                 malformed_request:
                   value: {
@@ -263,7 +263,7 @@ paths:
 #               type: object
 #               properties:
 #                 errors:
-#                   $ref: "#/components/schemas/errors"
+#                   $ref: "#/components/schemas/Errors"
 #             examples:
 #               unauthenticated:
 #                 value: {
@@ -284,7 +284,7 @@ paths:
                 type: object
                 properties:
                   errors:
-                    $ref: "#/components/schemas/errors"
+                    $ref: "#/components/schemas/Errors"
               examples:
                 veteran_not_accessible:
                   value: {
@@ -305,7 +305,7 @@ paths:
                 type: object
                 properties:
                   errors:
-                    $ref: "#/components/schemas/errors"
+                    $ref: "#/components/schemas/Errors"
               examples:
                 veteran_not_found:
                   value: {
@@ -346,7 +346,7 @@ paths:
                 type: object
                 properties:
                   errors:
-                    $ref: "#/components/schemas/errors"
+                    $ref: "#/components/schemas/Errors"
               examples:
                 duplicate_intake_in_progress:
                   value: {
@@ -367,7 +367,7 @@ paths:
                 type: object
                 properties:
                   errors:
-                    $ref: "#/components/schemas/errors"
+                    $ref: "#/components/schemas/Errors"
               examples:
 #               payee_code_required:
 #                 value: {
@@ -627,7 +627,7 @@ paths:
                 type: object
                 properties:
                   errors:
-                    $ref: "#/components/schemas/errors"
+                    $ref: "#/components/schemas/Errors"
               examples:
                 intake_review_failed:
                   value: {
@@ -679,16 +679,29 @@ paths:
           required: true
           description: Decision Review UUID
           schema:
-            $ref: "#/components/schemas/uuid"
+            $ref: "#/components/schemas/Uuid"
       summary: Check a Decision Review's (Higher-Level Review, Supplemental Claim, Board Appeal) intake status.
-      description: "After creating a Decision Review, you can use this endpoint to check its _intake status_—whether or not a Decision Review has been processed in the Caseflow system. Intake involves communicating with several systems / databases asynchronously. Consequently, a new Decision Review isn't available for API interaction immediately after creation. Until the Decision Review is successfully processed, this endpoint will return `200 OK` and a JSON payload describing the status in more detail.  Once processing is complete, this endpoint will return a `303 see other` and a _Location_ header containing the URL of the processed, *and now accessible*, Decision Review. Using that URL, you can now _get_ the Decision Review, retrieving its full details. To reiterate, **a Decision Review is not immediately accessible after creation. Checking its intake status will let you know when it has become accessible, and also its location (and UUID) for further actions.**"
+      description: >+
+        After creating a Decision Review, you can use this endpoint to check its _intake status_—whether or not a Decision Review has been processed in the Caseflow system.
+
+
+        **A Decision Review is not immediately accessible after creation.** Intake involves communicating with several systems/databases asynchronously. Consequently, a new Decision Review isn't available for API interaction immediately after creation. 
+
+
+        _Check a Decision Review's intake status to know when it has become accessible, and also its location for further actions._
+
+
+        * **Before a Decision Review is successfully processed:** This endpoint will return `200 OK` and a JSON payload describing the status in more detail.
+
+
+        * **Once processing is complete:** this endpoint will return a `303 see other` and a Location header containing the URL of the processed, and now accessible, Decision Review. You can use that URL to get the Decision Review and retrieve its full details. 
       responses:
         '200':
           description: Processing incomplete
           content:
             application/vnd.api+json:
               schema:
-                $ref: "#/components/schemas/intake_status"
+                $ref: "#/components/schemas/IntakeStatus"
               examples:
                 not_yet_submitted:
                   value:
@@ -735,7 +748,7 @@ paths:
                     type: object
                     properties:
                       Location:
-                        $ref: "#/components/schemas/uuid"
+                        $ref: "#/components/schemas/Uuid"
               examples:
                 processed:
                   value:
@@ -749,7 +762,7 @@ paths:
                 type: object
                 properties:
                   errors:
-                    $ref: "#/components/schemas/errors"
+                    $ref: "#/components/schemas/Errors"
               examples:
                 bad UUID:
                   value:
@@ -765,7 +778,7 @@ paths:
                 type: object
                 properties:
                   errors:
-                    $ref: "#/components/schemas/errors"
+                    $ref: "#/components/schemas/Errors"
               examples:
                 unknown error:
                   value:
@@ -819,7 +832,7 @@ paths:
                           programArea:
                             type: string
                           benefitType:
-                            $ref: "#/components/schemas/benefit_type"
+                            $ref: "#/components/schemas/BenefitType"
                           description:
                             type: string
                             nullable: true
@@ -842,7 +855,7 @@ paths:
                               type: object
                               properties:
                                 type:
-                                  $ref: "#/components/schemas/higher_level_review_alerts"
+                                  $ref: "#/components/schemas/HigherLevelReviewAlerts"
                                 details:
                                   type: object
                                   properties:
@@ -864,7 +877,7 @@ paths:
                               type: object
                               properties:
                                 type:
-                                  $ref: "#/components/schemas/higher_level_review_events"
+                                  $ref: "#/components/schemas/HigherLevelReviewEvents"
                                 date:
                                   type: string
                                   format: date
@@ -971,7 +984,7 @@ paths:
                                   type: string
                                   format: date
                                   nullable: true
-                                ratingDecisionReferenceId:
+                                ratingDecisionId:
                                   type: string
                                   nullable: true
                                 description:
@@ -1000,16 +1013,7 @@ paths:
                                 legacyAppealIssueId: # vacols_sequence_id
                                   type: integer
                                   nullable: true
-                                ineligibleReason:
-                                  type: string
-                                  nullable: true
-                                ineligibleDueToId:
-                                  type: integer
-                                  nullable: true
                                 decisionReviewTitle:
-                                  type: string
-                                  nullable: true
-                                titleOfActiveReview:
                                   type: string
                                   nullable: true
                                 decisionIssueId: # contested_decision_issue_id
@@ -1027,6 +1031,17 @@ paths:
                                   nullable: true
                                 endProductCode:
                                   type: string
+                                ineligible:
+                                  type: object
+                                  nullable: true
+                                  description: This is null when the issue is eligible.  When it's ineligible, this object is populated with ineligibility information.
+                                  properties:
+                                    dueToId:
+                                      type: integer
+                                    reason:
+                                      type: string
+                                    titleOfActiveReview:
+                                      type: string
 
         '404':
           description: ID not found
@@ -1036,7 +1051,7 @@ paths:
                 type: object
                 properties:
                   errors:
-                    $ref: "#/components/schemas/errors"
+                    $ref: "#/components/schemas/Errors"
         '5XX':
           description: Failed
           content:
@@ -1045,7 +1060,7 @@ paths:
                 type: object
                 properties:
                   errors:
-                    $ref: "#/components/schemas/errors"
+                    $ref: "#/components/schemas/Errors"
   /issues:
     get:
       tags:
@@ -1154,7 +1169,7 @@ paths:
                 type: object
                 properties:
                   errors:
-                    $ref: "#/components/schemas/errors"
+                    $ref: "#/components/schemas/Errors"
               examples:
                 bad file number or SSN:
                   value:
@@ -1170,7 +1185,7 @@ paths:
                 type: object
                 properties:
                   errors:
-                    $ref: "#/components/schemas/errors"
+                    $ref: "#/components/schemas/Errors"
               examples:
                 bad receipt date:
                   value:
@@ -1186,7 +1201,7 @@ paths:
                 type: object
                 properties:
                   errors:
-                    $ref: "#/components/schemas/errors"
+                    $ref: "#/components/schemas/Errors"
               examples:
                 unknown error:
                   value:

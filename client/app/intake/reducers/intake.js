@@ -49,7 +49,8 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
       duplicateReceiptDate: null,
       duplicateProcessedBy: null,
       veteranMissingFields: null,
-      veteranAddressTooLong: null
+      veteranAddressTooLong: null,
+      pids: null
     },
     cancelModalVisible: false,
     unreadMessages: false,
@@ -117,6 +118,9 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
         },
         veteranAddressTooLong: {
           $set: action.payload.errorData.veteran_address_too_long
+        },
+        pids: {
+          $set: _.join(action.payload.errorData.pids, ', ')
         }
       },
       requestStatus: {
@@ -141,6 +145,9 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
           $set: null
         },
         veteranAddressTooLong: {
+          $set: null
+        },
+        pids: {
           $set: null
         }
       }

@@ -6,12 +6,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const devBuild = process.env.NODE_ENV !== 'production'; // eslint-disable-line no-process-env
 
 const config = {
-  entry: [
-    'es5-shim/es5-shim',
-    'es5-shim/es5-sham',
-    'babel-polyfill',
-    './app/index'
-  ],
+  entry: ['es5-shim/es5-shim', 'es5-shim/es5-sham', 'babel-polyfill', './app/index'],
   output: {
     filename: 'webpack-bundle.js',
     sourceMapFilename: 'sourcemap-[file].map',
@@ -46,41 +41,65 @@ const config = {
         loader: 'url-loader?limit=1024&name=fonts/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'
       },
       {
+        test: /\.module\.s(a|c)ss$/,
+        use: [
+          {
+            loader: 'style-loader'
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true
+            }
+          }
+        ]
+      },
+      {
         test: /\.scss?$/,
-        use: [{
-          loader: 'style-loader'
-        },
-        {
-          loader: 'css-loader',
-          options: {
-            sourceMap: true
+        exclude: /\.module.(s(a|c)ss)$/,
+        use: [
+          {
+            loader: 'style-loader'
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true
+            }
           }
-        },
-        {
-          loader: 'sass-loader',
-          options: {
-            sourceMap: true
-          }
-        }]
+        ]
       },
       {
         test: /\.css?$/,
-        use: [{
-          loader: 'style-loader'
-        },
-        {
-          loader: 'css-loader',
-          options: {
-            sourceMap: true,
-            url: false
+        use: [
+          {
+            loader: 'style-loader'
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+              url: false
+            }
           }
-        }]
+        ]
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        use: [
-          'url-loader?limit=1024&name=images/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'
-        ]
+        use: ['url-loader?limit=1024&name=images/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/']
       }
     ]
   }

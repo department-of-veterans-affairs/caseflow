@@ -24,6 +24,7 @@ FactoryBot.define do
         create(
           :case_hearing,
           user: user,
+          hearing_type: hearing_day.request_type,
           hearing_date: VacolsHelper.format_datetime_with_utc_timezone(scheduled_for),
           vdkey: hearing_day.id
         )

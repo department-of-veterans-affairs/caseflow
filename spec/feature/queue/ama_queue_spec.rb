@@ -245,8 +245,8 @@ RSpec.feature "AmaQueue", :all_dbs do
       let(:instructions) { "Test instructions" }
 
       before do
-        OrganizationsUser.add_user_to_organization(user, translation_organization)
-        OrganizationsUser.add_user_to_organization(other_user, translation_organization)
+        translation_organization.add_user(user)
+        translation_organization.add_user(other_user)
       end
 
       scenario "assign case to self" do
@@ -450,10 +450,10 @@ RSpec.feature "AmaQueue", :all_dbs do
           :user, station_id: User::BOARD_STATION_ID, full_name: attorney_name
         )
         create(:staff, :attorney_role, user: another_attorney_on_the_team)
-        OrganizationsUser.add_user_to_organization(another_attorney_on_the_team, judgeteam)
+        judgeteam.add_user(another_attorney_on_the_team)
       end
 
-      OrganizationsUser.add_user_to_organization(attorney_user, judgeteam)
+      judgeteam.add_user(attorney_user)
 
       User.authenticate!(user: judge_user)
     end

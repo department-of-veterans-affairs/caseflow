@@ -59,7 +59,7 @@ describe JudgeTeam, :postgres do
 
     context "when user is member of JudgeTeam" do
       let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
-      before { OrganizationsUser.add_user_to_organization(user, judge_team) }
+      before { judge_team.add_user(user) }
 
       it "should return nil" do
         expect(JudgeTeam.for_judge(user)).to eq(nil)
@@ -100,7 +100,7 @@ describe JudgeTeam, :postgres do
 
     before do
       attorneys.each do |u|
-        OrganizationsUser.add_user_to_organization(u, judge_team)
+        judge_team.add_user(u)
       end
     end
 
@@ -127,7 +127,7 @@ describe JudgeTeam, :postgres do
     let(:judge_team) { JudgeTeam.create_for_judge(judge) }
     let(:attorney) { create(:user) }
 
-    subject { OrganizationsUser.add_user_to_organization(attorney, judge_team) }
+    subject { judge_team.add_user(attorney) }
 
     it "adds an associated DecisionDraftingAttorney record for the newly added user" do
       # Before we add the user to the judge team, the only member of the judge team should be the judge.
