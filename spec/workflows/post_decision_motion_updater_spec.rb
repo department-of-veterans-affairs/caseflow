@@ -170,11 +170,6 @@ describe PostDecisionMotionUpdater, :all_dbs do
         org_task = DeniedMotionToVacateTask.find_by(assigned_to_id: lit_support_team)
         expect(org_task).to_not be nil
         expect(org_task.parent).to eq abstract_task
-
-        # The following check should be added back in once logic is in place to prevent assignment to inactive users
-
-        # attorney_task = DeniedMotionToVacateTask.find_by(parent: org_task)
-        # expect(attorney_task).to be nil
       end
 
       it "should close org task if user task is completed" do
@@ -221,11 +216,6 @@ describe PostDecisionMotionUpdater, :all_dbs do
         org_task = DismissedMotionToVacateTask.find_by(assigned_to_id: lit_support_team)
         expect(org_task).to_not be nil
         expect(org_task.parent).to eq abstract_task
-
-        # The following check should be added back in once logic is in place to prevent assignment to inactive users
-
-        # attorney_task = DismissedMotionToVacateTask.find_by(parent: org_task)
-        # expect(attorney_task).to be nil
       end
 
       it "should close org task if user task is completed" do
