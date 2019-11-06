@@ -21,16 +21,9 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 class QueueLoadingScreen extends React.PureComponent {
   maybeLoadAmaQueue = () => {
-    const {
-      userId,
-      appeals,
-      amaTasks,
-      userRole,
-      loadedUserId
-    } = this.props;
+    this.props.setUserId(this.props.userId);
 
-    this.props.setUserId(userId);
-    return this.props.fetchAmaTasksOfUser(userId, userRole);
+    return this.props.fetchAmaTasksOfUser(this.props.userId, this.props.userRole);
   }
 
   maybeLoadLegacyQueue = () => {
