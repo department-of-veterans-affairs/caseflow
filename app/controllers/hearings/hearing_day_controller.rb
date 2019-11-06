@@ -38,18 +38,12 @@ class Hearings::HearingDayController < HearingsApplicationController
   end
 
   def index_with_hearings
-    range = HearingDayRange.new(
-      Time.zone.today.beginning_of_day,
-      Time.zone.today.beginning_of_day + 182.days,
-      params[:regional_office]
-    )
-
-    if range.valid?
-      hearing_days_with_hearings = range.open_hearing_days_with_hearings_hash(current_user.id)
+    if hearing_day_range.valid?
+      hearing_days_with_hearings = hearing_day_range.open_hearing_days_with_hearings_hash(current_user.id)
 
       render json: { hearing_days: json_hearing_days(hearing_days_with_hearings) }
     else
-      hearing_day_range_invalid(range)
+      hearing_day_range_invalid
     end
   end
 
@@ -91,12 +85,19 @@ class Hearings::HearingDayController < HearingsApplicationController
     end
   end
 
+  ## action is either index or index_with_hearings
   def range_start_date
-    params[:start_date].nil? ? (Time.zone.today.beginning_of_day - 30.days) : Date.parse(params[:start_date])
+    default = Time.zone.today.beginning_of_day
+    default -= 30.days if params[:action] == "index"
+
+    params[:start_date].nil? ? default : Date.parse(params[:start_date])
   end
 
   def range_end_date
-    params[:end_date].nil? ? (Time.zone.today.beginning_of_day + 365.days) : Date.parse(params[:end_date])
+    default = Time.zone.today.beginning_of_day
+    default += ((params[:action] == "index") ? 365.days : 182.days)
+
+    params[:end_date].nil? ? default : Date.parse(params[:end_date])
   end
 
   def hearing_days_in_range_for_user
@@ -158,9 +159,9 @@ class Hearings::HearingDayController < HearingsApplicationController
     }, status: :not_found
   end
 
-  def hearing_day_range_invalid(range = hearing_day_range)
+  def hearing_day_range_invalid
     render json: {
-      "errors": range.errors.messages.map do |_key, message|
+      "errors": hearing_day_range.errors.messages.map do |_key, message|
         {
           title: "Hearing Day Range Request is Invalid",
           details: message
