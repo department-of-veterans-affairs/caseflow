@@ -232,6 +232,10 @@ class SeedDB
       [true, false].each do |assign_to_user|
         a = FactoryBot.create(:appeal)
         root_task = FactoryBot.create(:root_task, appeal: a)
+        FactoryBot.create(
+          :hearing,
+          appeal: a
+        )
         ihp_task = FactoryBot.create(
           :informal_hearing_presentation_task,
           parent: root_task,
