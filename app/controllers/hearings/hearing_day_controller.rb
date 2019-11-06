@@ -57,7 +57,9 @@ class Hearings::HearingDayController < HearingsApplicationController
   def create
     return no_available_rooms unless hearing_day_rooms.rooms_are_available?
 
-    hearing = HearingDay.create_hearing_day(create_params)
+    hearing = HearingDay.create_hearing_day(
+      create_params.merge(room: hearing_day_rooms.available_room)
+    )
     return invalid_record_error(hearing) if hearing.nil?
 
     render json: {
@@ -105,7 +107,11 @@ class Hearings::HearingDayController < HearingsApplicationController
   end
 
   def hearing_day_rooms
-    @hearing_day_rooms ||= HearingDayRoomService.new(params)
+    @hearing_day_rooms ||= HearingDayRoomService.new(
+      request_type: params[:request_type],
+      assign_room: params[:assign_room],
+      scheduled_for: params[:scheduled_for]
+    )
   end
 
   def update_params
@@ -123,7 +129,6 @@ class Hearings::HearingDayController < HearingsApplicationController
   def create_params
     params.permit(:request_type,
                   :scheduled_for,
-                  :room,
                   :judge_id,
                   :regional_office,
                   :notes,

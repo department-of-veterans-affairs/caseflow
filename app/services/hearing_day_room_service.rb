@@ -1,27 +1,30 @@
 # frozen_string_literal: true
 
 class HearingDayRoomService
-  def initialize(request_type:, assign_room: nil, scheduled_for:, room:)
+  def initialize(request_type:, assign_room: nil, scheduled_for:)
     @request_type = request_type
     # if assign_room is nil, then this was invoked by judge algorithm
     @assign_room = assign_room.nil? ? false : ActiveRecord::Type::Boolean.new.deserialize(assign_room)
     @scheduled_for = scheduled_for
-    @room = room
   end
 
   def rooms_are_available?
-    return true if !assign_room
-
-    available_room.present?
+    !available_room.nil?
   end
 
   def available_room
-    @available_room ||= if request_type == HearingDay::REQUEST_TYPES[:central]
+    @available_room ||= if !assign_room # assigning a room is not required, so set to blank string
+                          ""
+                        elsif request_type == HearingDay::REQUEST_TYPES[:central]
                           first_available_central_room
                         else
                           first_available_video_room
                         end
   end
+
+  private
+
+  attr_reader :room, :assign_room, :scheduled_for, :request_type
 
   def first_available_central_room
     room_count = hearing_count_by_room["2"] || 0
@@ -36,11 +39,7 @@ class HearingDayRoomService
   end
 
   def hearing_count_by_room
-    HearingDay.where(scheduled_for: scheduled_for, request_type: request_type)
+    @hearing_count_by_room ||= HearingDay.where(scheduled_for: scheduled_for, request_type: request_type)
       .group(:room).count
   end
-
-  private
-
-  attr_reader :room, :assign_room, :scheduled_for, :request_type
 end
