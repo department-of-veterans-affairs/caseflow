@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class HearingDayRoomService
+class HearingDayRoomAssignment
   def initialize(request_type:, assign_room: nil, scheduled_for:, room:)
     @request_type = request_type
     # if assign_room is nil, then this was invoked by judge algorithm

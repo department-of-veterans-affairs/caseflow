@@ -113,7 +113,7 @@ class Hearings::HearingDayController < HearingsApplicationController
   end
 
   def hearing_day_rooms
-    @hearing_day_rooms ||= HearingDayRoomService.new(
+    @hearing_day_rooms ||= HearingDayRoomAssignment.new(
       request_type: params[:request_type],
       assign_room: params[:assign_room],
       scheduled_for: params[:scheduled_for],
