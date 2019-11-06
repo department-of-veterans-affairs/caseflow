@@ -9,7 +9,8 @@ describe JudgeTeamRoleChecker, :postgres do
 
   # Variables in cases to check:
   # - number of JudgeTeams: 0, many (where 1 team varies in problematic scenarios)
-  # - if team has a JudgeTeamLead: 0, 1, many
+  # - if team has a JudgeTeamLead: 0, 1
+  #   (cannot have more than 1 lead per organizations_user due to uniqueness constraint in schema)
   # - if team has other members: 0, 1, many
 
   context "when there is no JudgeTeam" do
@@ -48,7 +49,8 @@ describe JudgeTeamRoleChecker, :postgres do
           before do
             # Add non-leads to team
             create_list(:user, non_lead_member_count) do |user|
-              judge_team2.add_user(user)
+              # Do not call judge_team.add_user b/c that sets first team member as lead
+              judge_team2.users << user
             end
           end
 
@@ -76,7 +78,7 @@ describe JudgeTeamRoleChecker, :postgres do
     end
 
     context "when only team1 has 1 JudgeTeamLead and not an admin" do
-      let!(:judge_team1) { create(:judge_team, :has_judge_team_lead) }
+      let!(:judge_team1) { create(:judge_team, :incorrectly_has_nonadmin_judge_team_lead) }
       let(:judge_team_leads1) { judge_team1.judge_team_roles.where(type: :JudgeTeamLead) }
       let!(:judge_team2) { create(:judge_team) }
 
@@ -85,7 +87,8 @@ describe JudgeTeamRoleChecker, :postgres do
           before do
             # Add non-leads to team
             create_list(:user, non_lead_member_count) do |user|
-              judge_team2.add_user(user)
+              # Do not call judge_team.add_user b/c that sets first team member as lead
+              judge_team2.users << user
             end
           end
 
@@ -120,7 +123,8 @@ describe JudgeTeamRoleChecker, :postgres do
           before do
             # Add non-leads to team
             create_list(:user, non_lead_member_count) do |user|
-              judge_team2.add_user(user)
+              # Do not call judge_team.add_user b/c that sets first team member as lead
+              judge_team2.users << user
             end
           end
 
@@ -132,76 +136,6 @@ describe JudgeTeamRoleChecker, :postgres do
 
           describe ".non_admin_judge_team_leads" do
             it "does not report any records/errors" do
-              expect(get_teams_with_nonadmin_leads.call).to be_empty
-            end
-          end
-
-          it "reports JudgeTeamLeads count error" do
-            subject.call
-            expect(subject.report?).to eq(true)
-            expect(subject.report).to match(/has the incorrect number of associated JudgeTeamLeads/)
-          end
-        end
-      end
-    end
-
-    context "when one team has 2 non-admin JudgeTeamLeads and other team has none" do
-      let!(:judge_team1) { create(:judge_team, :has_two_judge_team_lead) }
-      let(:judge_team_leads1) { judge_team1.judge_team_roles.where(type: :JudgeTeamLead) }
-      let!(:judge_team2) { create(:judge_team) }
-
-      non_lead_member_counts.each do |non_lead_member_count|
-        context "when team2 has #{non_lead_member_count} other non-JudgeTeamLead members" do
-          before do
-            # Add non-leads to team
-            create_list(:user, non_lead_member_count) do |user|
-              judge_team2.add_user(user)
-            end
-          end
-
-          describe ".judge_teams_with_incorrect_number_of_leads" do
-            it "identifies both teams as problematic" do
-              expect(get_teams_with_wrong_lead_count.call).to eq(judge_teams)
-            end
-          end
-
-          describe ".non_admin_judge_team_leads" do
-            it "identifies JudgeTeamLeads who are not admins" do
-              expect(get_teams_with_nonadmin_leads.call).to match_array(judge_team_leads1)
-            end
-          end
-
-          it "reports both errors" do
-            subject.call
-            expect(subject.report?).to eq(true)
-            expect(subject.report).to match(/has the incorrect number of associated JudgeTeamLeads/)
-            expect(subject.report).to match(/is not an admin/)
-          end
-        end
-      end
-    end
-
-    context "when one team has 2 admin JudgeTeamLeads and other team has none" do
-      let!(:judge_team1) { create(:judge_team, :has_two_judge_team_lead_as_admins) }
-      let!(:judge_team2) { create(:judge_team) }
-
-      non_lead_member_counts.each do |non_lead_member_count|
-        context "when team2 has #{non_lead_member_count} other non-JudgeTeamLead members" do
-          before do
-            # Add non-leads to team
-            create_list(:user, non_lead_member_count) do |user|
-              judge_team2.add_user(user)
-            end
-          end
-
-          describe ".judge_teams_with_incorrect_number_of_leads" do
-            it "identifies both teams as problematic" do
-              expect(get_teams_with_wrong_lead_count.call).to eq(judge_teams)
-            end
-          end
-
-          describe ".non_admin_judge_team_leads" do
-            it "returns no records/errors" do
               expect(get_teams_with_nonadmin_leads.call).to be_empty
             end
           end

@@ -20,42 +20,26 @@ FactoryBot.define do
     factory :judge_team, class: JudgeTeam do
       type { JudgeTeam.name }
 
+      # Designed behavior:
+      # The first user added to a JudgeTeam will be a JudgeTeamLead role.
+      # Subsequent added users will be the DecisionDraftingAttorney role.
+      # As a result, on non-zero-size JudgeTeams, there will always be only one JudgeTeamLead.
+
+      # Note:
+      # OrganizationsUser.make_user_admin(user, org) will call
+      # org.add_user(user) and since org is a JudgeTeam,
+      # this triggers the first user to be a JudgeTeamLead.
+
       # for creating error state; error b/c lead should also be admin
-      trait :has_judge_team_lead do
+      trait :incorrectly_has_nonadmin_judge_team_lead do
         after(:create) do |judge_team|
-          org_user = judge_team.add_user(create(:user))
-          JudgeTeamLead.create!(organizations_user: org_user)
+          judge_team.add_user(create(:user))
         end
       end
 
       trait :has_judge_team_lead_as_admin do
         after(:create) do |judge_team|
-          user = create(:user)
-          org_user = judge_team.add_user(user)
-          OrganizationsUser.make_user_admin(user, judge_team)
-          JudgeTeamLead.create!(organizations_user: org_user)
-        end
-      end
-
-      # for creating error state; error b/c should only have 1 lead per team
-      trait :has_two_judge_team_lead do
-        after(:create) do |judge_team|
-          2.times do
-            org_user = judge_team.add_user(create(:user))
-            JudgeTeamLead.create!(organizations_user: org_user)
-          end
-        end
-      end
-
-      # for creating error state; error b/c should only have 1 lead per team regardless of admin status
-      trait :has_two_judge_team_lead_as_admins do
-        after(:create) do |judge_team|
-          2.times do
-            user = create(:user)
-            org_user = judge_team.add_user(user)
-            OrganizationsUser.make_user_admin(user, judge_team)
-            JudgeTeamLead.create!(organizations_user: org_user)
-          end
+          OrganizationsUser.make_user_admin(create(:user), judge_team)
         end
       end
     end
