@@ -34,8 +34,8 @@ class DecidedMotionToVacateTask < Task
     self.parent = org_task
   end
 
-  def org(_user)
-    self.class.org(_user)
+  def org(user)
+    self.class.org(user)
   end
 
   class << self
