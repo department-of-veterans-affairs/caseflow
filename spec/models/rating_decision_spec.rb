@@ -176,7 +176,7 @@ describe RatingDecision do
       subject { described_class.from_bgs_disability(rating, bgs_record).contestable? }
 
       context "rating_issue? is true" do
-        it { is_expected.to eq(true) }
+        it { is_expected.to eq(false) }
       end
 
       context "rating_issue? is false" do
@@ -189,7 +189,7 @@ describe RatingDecision do
         context "promulgation date, profile date and disability_date are not close" do
           let(:disability_date) { promulgation_date + 6.months }
 
-          it { is_expected.to eq(false) }
+          it { is_expected.to eq(true) }
         end
 
         context "profile date and disability date are close, promulgation date is not close" do

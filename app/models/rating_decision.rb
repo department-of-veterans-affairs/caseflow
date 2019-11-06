@@ -63,16 +63,20 @@ class RatingDecision
     service_connected? ? service_connected_decision_text : not_service_connected_decision_text
   end
 
+  # the decision date is the formal date under which this decision will be grouped in the UI.
+  # We currently use promulgation_date to be consistent with RatingIssue, even though that might
+  # not be the actual decision date. See effective_date for why.
   def decision_date
     promulgation_date
   end
 
   def contestable?
-    return true if rating_issue?
+    return false if rating_issue?
 
-    return false unless disability_date
+    # TODO
+    #return false unless disability_date
 
-    date_near_promulgation_date?(disability_date.to_date) || date_near_profile_date?(disability_date.to_date)
+    true
   end
 
   def rating_issue?
@@ -95,6 +99,11 @@ class RatingDecision
     type_name == "Service Connected"
   end
 
+  # The effective date is what we call the date when the rating decision appears to have been made,
+  # even if the official legal date is the promulgation date. Because of the way disability evaluations
+  # are presented in the API response from BGS, it's not clear if each evaluation represents a new
+  # decision or not. We err on the side of always including each evaluation listed, in order to make sure
+  # all issues can be Intaken.
   def effective_date
     effective_start_date_of_original_decision || disability_date
   end
@@ -104,25 +113,8 @@ class RatingDecision
   # the "effective date" is the name we give the original decision date.
   # we have to make educated guesses because there are a variety of "date" attributes
   # on a rating decision and they are not populated consistently.
-
   def effective_start_date_of_original_decision
     [original_denial_date, converted_begin_date, begin_date].compact.min
-  end
-
-  def date_near_promulgation_date?(the_date)
-    the_date.between?((the_promulgation - GRACE_PERIOD.days), (the_promulgation + GRACE_PERIOD.days))
-  end
-
-  def the_promulgation
-    @the_promulgation ||= promulgation_date.to_date
-  end
-
-  def date_near_profile_date?(the_date)
-    the_date.between?((the_profile - GRACE_PERIOD.days), (the_profile + GRACE_PERIOD.days))
-  end
-
-  def the_profile
-    @the_profile ||= profile_date.to_date
   end
 
   def service_connected_decision_text
