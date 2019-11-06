@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 class HearingDayRoomService
-  def initialize(request_type:, assign_room: nil, scheduled_for:)
+  def initialize(request_type:, assign_room: nil, scheduled_for:, room:)
     @request_type = request_type
     # if assign_room is nil, then this was invoked by judge algorithm
     @assign_room = assign_room.nil? ? false : ActiveRecord::Type::Boolean.new.deserialize(assign_room)
     @scheduled_for = scheduled_for
+    @room = room
   end
 
   def rooms_are_available?
@@ -14,7 +15,7 @@ class HearingDayRoomService
 
   def available_room
     @available_room ||= if !assign_room # assigning a room is not required, so set to blank string
-                          ""
+                          room || ""
                         elsif request_type == HearingDay::REQUEST_TYPES[:central]
                           first_available_central_room
                         else

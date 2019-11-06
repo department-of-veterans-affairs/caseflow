@@ -45,7 +45,7 @@ class Hearings::HearingDayController < HearingsApplicationController
     )
 
     if range.valid?
-      range.open_hearing_days_with_hearings_hash(current_user.id)
+      hearing_days_with_hearings = range.open_hearing_days_with_hearings_hash(current_user.id)
 
       render json: { hearing_days: json_hearing_days(hearing_days_with_hearings) }
     else
@@ -115,7 +115,8 @@ class Hearings::HearingDayController < HearingsApplicationController
     @hearing_day_rooms ||= HearingDayRoomService.new(
       request_type: params[:request_type],
       assign_room: params[:assign_room],
-      scheduled_for: params[:scheduled_for]
+      scheduled_for: params[:scheduled_for],
+      room: params[:room]
     )
   end
 
@@ -134,6 +135,7 @@ class Hearings::HearingDayController < HearingsApplicationController
   def create_params
     params.permit(:request_type,
                   :scheduled_for,
+                  :room,
                   :judge_id,
                   :regional_office,
                   :notes,
@@ -168,8 +170,8 @@ class Hearings::HearingDayController < HearingsApplicationController
   end
 
   def json_hearing_days(hearing_days)
-    hearing_days.each_with_object([]) do |hearing, result|
-      result << json_hearing_day(hearing)
+    hearing_days.each_with_object([]) do |hearing_day, result|
+      result << json_hearing_day(hearing_day)
     end
   end
 
