@@ -29,7 +29,7 @@ describe Api::V3::DecisionReview::IssuesController, :postgres, type: :request do
       expect(response).to have_http_status(:ok)
     end
 
-    it "should return a list of issues" do
+    fit "should return a list of issues" do
       Generators::Rating.build(
         participant_id: veteran.ptcpnt_id,
         profile_date: Time.zone.today - 10.days # must be before receipt_date

@@ -30,7 +30,7 @@ class Api::V3::DecisionReview::IssuesController < Api::V3::BaseController
       benefit_type: 'compensation' #must be in ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE for can_contest_rating_issues?
     )
     issues = ContestableIssueGenerator.new(standin_claim_review).contestable_issues
-    # TODO render issues as JSONAPI objects
-    render json: issues
+    byebug
+    render json: Api::V3::IssueSerializer.new(issues)
   end
 end
