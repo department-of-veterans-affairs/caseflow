@@ -22,11 +22,12 @@ class AMOMetricsReportJob < CaseflowJob
   def setup_dates
     # if today is the first of the month, do the previous entire month.
     # otherwise, just the month-to-date.
-    @end_date = Time.zone.now.end_of_day
     if Time.zone.today == Time.zone.today.at_beginning_of_month
       @start_date = Time.zone.today.prev_month.at_beginning_of_month
+      @end_date = Time.zone.yesterday.end_of_day
     else
       @start_date = Time.zone.today.at_beginning_of_month
+      @end_date = Time.zone.now.end_of_day
     end
   end
 
