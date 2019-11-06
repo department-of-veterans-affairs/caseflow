@@ -22,12 +22,11 @@ class AMOMetricsReportJob < CaseflowJob
   def setup_dates
     # if we're mid-month, do month-to-date
     # otherwise, the full previous month.
+    @end_date = Time.zone.now.end_of_day
     if Time.zone.today < Time.zone.today.at_end_of_month
       @start_date = Time.zone.today.at_beginning_of_month
-      @end_date = Time.zone.tomorrow # tomorrow so we get all of today
     else
       @start_date = Time.zone.today.prev_month.at_beginning_of_month
-      @end_date = Time.zone.today.at_end_of_month # so we get full month
     end
   end
 
@@ -44,7 +43,7 @@ class AMOMetricsReportJob < CaseflowJob
     sc_med = async_stats.seconds_to_hms(sc_stats[:median].to_i)
     hlr_med = async_stats.seconds_to_hms(hlr_stats[:median].to_i)
     report = []
-    report << "AMO metrics report #{start_date} to #{end_date - 1.day}"
+    report << "AMO metrics report #{start_date} to #{end_date.to_date}"
     report << "Supplemental Claims #{sc_stats[:total]} established, median #{sc_med} average #{sc_avg}"
     report << "Higher Level Reviews #{hlr_stats[:total]} established, median #{hlr_med} average #{hlr_avg}"
     report << async_stats.as_csv
