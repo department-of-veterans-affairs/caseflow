@@ -53,7 +53,6 @@ class Hearings::HearingDayController < HearingsApplicationController
     end
   end
 
-  # Create a hearing schedule day
   def create
     return no_available_rooms unless hearing_day_rooms.rooms_are_available?
 
@@ -81,17 +80,23 @@ class Hearings::HearingDayController < HearingsApplicationController
   private
 
   def hearing_day
-    @hearing_day ||= HearingDay.find(hearing_day_id)
-  end
-
-  def hearing_day_id
-    params[:id]
+    @hearing_day ||= HearingDay.find(params[:id])
   end
 
   def hearing_day_range
-    @hearing_day_range ||= HearingDayRange.new(
-      params[:start_date], params[:end_date], params[:regional_office]
-    )
+    @hearing_day_range ||= begin
+      HearingDayRange.new(
+        range_start_date, range_end_date, params[:regional_office]
+      )
+    end
+  end
+
+  def range_start_date
+    params[:start_date].nil? ? (Time.zone.today.beginning_of_day - 30.days) : Date.parse(params[:start_date])
+  end
+
+  def range_end_date
+    params[:end_date].nil? ? (Time.zone.today.beginning_of_day + 365.days) : Date.parse(params[:end_date])
   end
 
   def hearing_days_in_range_for_user
@@ -181,27 +186,16 @@ class Hearings::HearingDayController < HearingsApplicationController
     end
   end
 
-  def no_available_rooms_error
-    if params[:request_type] == HearingDay::REQUEST_TYPES[:central]
-      {
-        "title": COPY::ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_TITLE %
-          Date.parse(params[:scheduled_for]).strftime("%m/%d/%Y"),
-        "detail": COPY::ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_DETAIL,
-        "status": 400
-      }
-    else
-      {
-        "title": COPY::ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_TITLE %
-          Date.parse(params[:scheduled_for]).strftime("%m/%d/%Y"),
-        "detail": COPY::ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_DETAIL,
-        "status": 400
-      }
-    end
-  end
-
   def no_available_rooms
+    key = (params[:request_type] == HearingDay::REQUEST_TYPES[:central]) ? "CO" : "VIDEO"
+
     render json: {
-      "errors": [no_available_rooms_error]
+      "errors": [
+        "title": COPY.const_get("ADD_HEARING_DAY_MODAL_#{key}_HEARING_ERROR_MESSAGE_TITLE") %
+                 Date.parse(params[:scheduled_for]).strftime("%m/%d/%Y"),
+        "detail": COPY.const_get("ADD_HEARING_DAY_MODAL_#{key}_HEARING_ERROR_MESSAGE_DETAIL"),
+        "status": 400
+      ]
     }, status: :not_found
   end
 end

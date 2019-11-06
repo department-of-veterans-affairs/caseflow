@@ -2,15 +2,12 @@
 
 class HearingDayRange
   include ActiveModel::Validations
-  validate :regional_office_key_is_valid
-
-  attr_reader :start_date
-  attr_reader :end_date
-  attr_reader :regional_office
+  validate :valid_regional_office_key, :valid_start_date, :valid_end_date
+  attr_reader :start_date, :end_date, :regional_office
 
   def initialize(start_date, end_date, regional_office = nil)
-    @start_date = validate_start_date(start_date)
-    @end_date = validate_end_date(end_date)
+    @start_date = start_date
+    @end_date = end_date
     @regional_office = regional_office
   end
 
@@ -153,25 +150,19 @@ class HearingDayRange
 
   private
 
-  def validate_start_date(date)
-    return Time.zone.today.beginning_of_day - 30.days if date.nil?
-
-    coerce_date(date)
+  def valid_start_date
+    if start_date.nil? || start_date.is_a?(String)
+      errors.add(:start_date, "Start date is not valid.")
+    end
   end
 
-  def validate_end_date(date)
-    return Time.zone.today.beginning_of_day + 365.days if date.nil?
-
-    coerce_date(date)
+  def valid_end_date
+    if end_date.nil? || end_date.is_a?(String)
+      errors.add(:end_date, "End date is not valid.")
+    end
   end
 
-  def coerce_date(date)
-    return Date.parse(date) if date.is_a? String
-
-    date
-  end
-
-  def regional_office_key_is_valid
+  def valid_regional_office_key
     begin
       HearingDayMapper.validate_regional_office(regional_office)
     rescue HearingDayMapper::InvalidRegionalOfficeError
