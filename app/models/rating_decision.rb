@@ -71,12 +71,7 @@ class RatingDecision
   end
 
   def contestable?
-    return false if rating_issue?
-
-    # TODO
-    #return false unless disability_date
-
-    true
+    !rating_issue?
   end
 
   def rating_issue?
