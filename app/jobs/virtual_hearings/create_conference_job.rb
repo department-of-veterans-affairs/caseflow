@@ -30,7 +30,7 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
         fail resp.error
       end
 
-      virtual_hearing.update(conference_id: resp.data[:conference_id], status: "active")
+      virtual_hearing.update(conference_id: resp.data[:conference_id], status: :active)
     end
 
     VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :confirmation).call
@@ -45,7 +45,7 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
       max_alias = VirtualHearing.maximum(:alias)
       conference_alias = max_alias ? (max_alias.to_i + 1).rjust(7, "0") : "0000001"
       virtual_hearing.alias = conference_alias.to_s
-      virtual_hearing.save
+      virtual_hearing.save!
     end
   end
 end

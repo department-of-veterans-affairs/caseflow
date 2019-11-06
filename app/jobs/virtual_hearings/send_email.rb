@@ -24,7 +24,7 @@ class VirtualHearings::SendEmail
       virtual_hearing.representative_email_sent = true
     end
 
-    virtual_hearing.save
+    virtual_hearing.save!
   end
 
   def send_email(recipient)
