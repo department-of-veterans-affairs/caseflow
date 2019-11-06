@@ -176,7 +176,7 @@ describe RatingDecision do
       subject { described_class.from_bgs_disability(rating, bgs_record).contestable? }
 
       context "rating_issue? is true" do
-        it { is_expected.to eq(true) }
+        it { is_expected.to eq(false) }
       end
 
       context "rating_issue? is false" do
@@ -186,10 +186,16 @@ describe RatingDecision do
           it { is_expected.to eq(true) }
         end
 
-        context "promulgation date and original_denial_date are not close" do
-          let(:original_denial_date) { promulgation_date + 6.months }
+        context "promulgation date, profile date and disability_date are not close" do
+          let(:disability_date) { promulgation_date + 6.months }
 
-          it { is_expected.to eq(false) }
+          it { is_expected.to eq(true) }
+        end
+
+        context "profile date and disability date are close, promulgation date is not close" do
+          let(:promulgation_date) { disability_date + 6.months }
+
+          it { is_expected.to eq(true) }
         end
 
         context "profile date is near original_denial_date but not promulgation date" do
@@ -208,6 +214,26 @@ describe RatingDecision do
       end
     end
 
+    describe "#effective_date" do
+      context "decision is not a rating issue" do
+        let(:rating_issue_reference_id) { nil }
+        let(:original_denial_date) { Time.zone.today }
+        let(:begin_date) { Time.zone.tomorrow }
+
+        it "prefers the original_denial_date as the oldest date" do
+          expect(subject.effective_date).to eq(original_denial_date)
+        end
+
+        context "original_denial_date is nil" do
+          let(:original_denial_date) { nil }
+
+          it "defaults to begin_date" do
+            expect(subject.effective_date).to eq(begin_date)
+          end
+        end
+      end
+    end
+
     describe "#decision_date" do
       context "decision is a rating issue" do
         let(:rating_issue_reference_id) { "123" }
@@ -222,16 +248,8 @@ describe RatingDecision do
         let(:original_denial_date) { Time.zone.today }
         let(:begin_date) { Time.zone.tomorrow }
 
-        it "prefers the original_denial_date as the oldest date" do
-          expect(subject.decision_date).to eq(original_denial_date)
-        end
-
-        context "original_denial_date is nil" do
-          let(:original_denial_date) { nil }
-
-          it "defaults to begin_date" do
-            expect(subject.decision_date).to eq(begin_date)
-          end
+        it "uses the promulgation_date" do
+          expect(subject.decision_date).to eq(promulgation_date)
         end
       end
     end
