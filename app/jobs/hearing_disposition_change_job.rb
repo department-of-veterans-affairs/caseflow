@@ -91,7 +91,10 @@ class HearingDispositionChangeJob < CaseflowJob
   end
 
   def lock_hearing_days
-    HearingDay.where("scheduled_for < ?", 1.day.ago).where(lock: [false, nil]).update_all(lock: true)
+    HearingDay
+      .where("scheduled_for < ?", 1.day.ago.to_date)
+      .where(lock: [false, nil])
+      .update_all(lock: true)
   end
 
   def log_info(start_time, task_count_for, error_count, hearing_ids, err = nil)
