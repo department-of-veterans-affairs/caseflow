@@ -20,13 +20,13 @@ class AMOMetricsReportJob < CaseflowJob
   attr_reader :start_date, :end_date
 
   def setup_dates
-    # if we're mid-month, do month-to-date
-    # otherwise, the full previous month.
+    # if today is the first of the month, do the previous entire month.
+    # otherwise, just the month-to-date.
     @end_date = Time.zone.now.end_of_day
-    if Time.zone.today < Time.zone.today.at_end_of_month
-      @start_date = Time.zone.today.at_beginning_of_month
-    else
+    if Time.zone.today == Time.zone.today.at_beginning_of_month
       @start_date = Time.zone.today.prev_month.at_beginning_of_month
+    else
+      @start_date = Time.zone.today.at_beginning_of_month
     end
   end
 
