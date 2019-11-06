@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+###
+# Monthly stats sent to jobs slack channel. These are manually sent on to OIT.
+
 class MonthlyMetricsReportJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :intake
