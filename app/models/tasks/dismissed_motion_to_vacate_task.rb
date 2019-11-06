@@ -1,15 +1,11 @@
 # frozen_string_literal: true
 
-class DismissedMotionToVacateTask < Task
-  def available_actions(user)
-    actions = super(user)
-
-    actions.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
-
-    actions
-  end
-
+class DismissedMotionToVacateTask < DecidedMotionToVacateTask
   def self.label
     COPY::DISMISSED_MOTION_TO_VACATE_TASK_LABEL
+  end
+
+  def self.org(_user)
+    LitigationSupport.singleton
   end
 end
