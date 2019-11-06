@@ -62,13 +62,6 @@ describe PostDecisionMotionUpdater, :all_dbs do
           expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
         end
 
-        it "should create JudgeSignMotionToVacateTask" do
-          subject.process
-
-          judge_sign_task = JudgeSignMotionToVacateTask.find_by(assigned_to: judge)
-          expect(judge_sign_task).to_not be nil
-        end
-
         it "should close org task if user task is completed" do
           subject.process
 
