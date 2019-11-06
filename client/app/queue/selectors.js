@@ -231,11 +231,18 @@ export const newTasksByAssigneeCssIdSelector = createSelector(
   (tasks) => tasks.filter((task) => !taskIsOnHold(task))
 );
 
+const taskIsLegacyAttorneyJudgeTask = (task) => {
+  const legacyAttorneyJudgeTaskTypes =
+    ['AttorneyLegacyTask', 'JudgeLegacyTask', 'JudgeLegacyAssignTask', 'JudgeLegacyDecisionReviewTask'];
+
+  return legacyAttorneyJudgeTaskTypes.includes(task.type);
+};
+
 export const workableTasksByAssigneeCssIdSelector = createSelector(
   [workTasksByAssigneeCssIdSelector],
   (tasks) => tasks.filter(
     (task) => {
-      return (task.appeal.isLegacyAppeal ||
+      return (taskIsLegacyAttorneyJudgeTask(task) ||
           task.status === TASK_STATUSES.assigned ||
           task.status === TASK_STATUSES.in_progress);
     }

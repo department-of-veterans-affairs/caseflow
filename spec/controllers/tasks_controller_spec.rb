@@ -339,6 +339,38 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         end
       end
 
+      context "when creating a mix of tasks" do
+        let(:ihp_org_task) do
+          create(
+            :informal_hearing_presentation_task,
+            appeal: appeal,
+            assigned_to: vso
+          )
+        end
+
+        let(:params) do
+          [{
+            "external_id": appeal.external_id,
+            "type": InformalHearingPresentationTask.name,
+            "assigned_to_id": user.id,
+            "parent_id": ihp_org_task.id
+          }, {
+            "external_id": appeal.external_id,
+            "type": Task.name,
+            "assigned_to_id": user.id,
+            "parent_id": root_task.id
+          }]
+        end
+
+        it "should not be successful" do
+          subject
+
+          expect(response.status).to eq 403
+          response_body = JSON.parse(response.body)["errors"].first["detail"]
+          expect(response_body).to eq "VSOs cannot create that task."
+        end
+      end
+
       context "when creating a ihp task" do
         let(:ihp_org_task) do
           create(
