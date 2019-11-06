@@ -29,12 +29,7 @@ class QueueLoadingScreen extends React.PureComponent {
       loadedUserId
     } = this.props;
 
-    if (!_.isEmpty(amaTasks) && !_.isEmpty(appeals) && loadedUserId === userId) {
-      return Promise.resolve();
-    }
-
     this.props.setUserId(userId);
-
     return this.props.fetchAmaTasksOfUser(userId, userRole);
   }
 
