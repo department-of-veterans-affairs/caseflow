@@ -439,6 +439,56 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
   end
 
+  describe "Attorney Completes Denied Motion to Vacate Task" do
+    let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
+    let!(:drafting_attorney) { create(:user, full_name: "Drafty McDrafter") }
+
+    let!(:orig_atty_task) do
+      create(:ama_attorney_task, :completed,
+             assigned_to: drafting_attorney, appeal: appeal, created_at: receipt_date + 1.day, parent: root_task)
+    end
+    let!(:judge_review_task) do
+      create(:ama_judge_decision_review_task, :completed,
+             assigned_to: judge, appeal: appeal, created_at: receipt_date + 3.days, parent: root_task)
+    end
+    let!(:vacate_motion_mail_task) do
+      create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney, parent: root_task)
+    end
+    let!(:judge_address_motion_to_vacate_task) do
+      create(:judge_address_motion_to_vacate_task, appeal: appeal, assigned_to: judge, parent: vacate_motion_mail_task)
+    end
+    let!(:abstract_motion_to_vacate_task) do
+      create(:abstract_motion_to_vacate_task, appeal: appeal, parent: vacate_motion_mail_task)
+    end
+    let!(:denied_motion_to_vacate_task) do
+      create(
+        :denied_motion_to_vacate_task,
+        appeal: appeal,
+        assigned_by: judge,
+        assigned_to: motions_attorney
+      )
+    end
+
+    before do
+      # create(:staff, :judge_role, sdomainid: judge.css_id)
+      lit_support_team.add_user(motions_attorney)
+      # judge_team.add_user(drafting_attorney)
+      # ["John Doe", "Jane Doe"].map do |name|
+      #   judge_team.add_user(create(:user, full_name: name))
+      # end
+      FeatureToggle.enable!(:review_motion_to_vacate)
+
+      vacate_motion_mail_task.update(status: Constants.TASK_STATUSES.completed)
+      judge_address_motion_to_vacate_task.update(status: Constants.TASK_STATUSES.completed)
+    end
+
+    after { FeatureToggle.disable!(:review_motion_to_vacate) }
+
+    it "shows modal" do
+      complete_motion_to_vacate(user: motions_attorney, appeal: appeal, task: denied_motion_to_vacate_task)
+    end
+  end
+
   def send_to_judge(user:, appeal:, motions_attorney_task:)
     User.authenticate!(user: user)
     visit "/queue/appeals/#{appeal.uuid}"
@@ -472,6 +522,16 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
     find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
     find("div", class: "Select-option", text: "Ready for Dispatch").click
+  end
+
+  def complete_motion_to_vacate(user:, appeal:, task:)
+    User.authenticate!(user: user)
+    visit "/queue/appeals/#{appeal.uuid}"
+
+    find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_MOTION_TO_VACATE_TASK_COMPLETE.label).click
+
+    expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{task.id}/complete_motion_to_vacate")
   end
 
   def check_cavc_alert
