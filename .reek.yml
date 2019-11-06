@@ -37,6 +37,7 @@ detectors:
     enabled: false
   FeatureEnvy:
     exclude:
+      - AMOMetricsReportJob#build_report
       - Api::ApplicationController#on_external_error
       - Api::ApplicationController#upstream_known_error
       - AppealTaskHistory#build_events
@@ -44,6 +45,7 @@ detectors:
       - AssignJudgeteamRoles#process
       - AsyncableJobsReporter
       - ClaimReviewAsyncStatsReporter#as_csv
+      - ClaimReviewAsyncStatsReporter#seconds_to_hms
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
       - VirtualHearings::DeleteConferencesJob#delete_conference
