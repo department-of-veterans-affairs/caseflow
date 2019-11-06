@@ -105,10 +105,6 @@ class HearingDay < ApplicationRecord
     judge ? judge.full_name.split(" ").last : nil
   end
 
-  def readable_request_type
-    Hearing::HEARING_TYPES[request_type.to_sym]
-  end
-
   private
 
   def assign_created_and_updated_by_user

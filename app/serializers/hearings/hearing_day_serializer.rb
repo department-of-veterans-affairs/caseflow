@@ -13,7 +13,9 @@ class HearingDaySerializer
   attribute :judge_last_name
   attribute :lock
   attribute :notes
-  attribute :readable_request_type
+  attribute :readable_request_type do |hearing_day|
+    Hearing::HEARING_TYPES[hearing_day.request_type.to_sym]
+  end
   attribute :regional_office
   attribute :request_type
   attribute :room

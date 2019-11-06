@@ -12,7 +12,7 @@ feature "Appeal Edit issues", :all_dbs do
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
     allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
-    OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
+    non_comp_org.add_user(current_user)
   end
 
   let(:veteran) do

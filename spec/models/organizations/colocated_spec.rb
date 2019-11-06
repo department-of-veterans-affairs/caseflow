@@ -9,7 +9,7 @@ describe Colocated, :postgres do
 
   before do
     create_list(:user, 6).each do |u|
-      OrganizationsUser.add_user_to_organization(u, colocated_org)
+      colocated_org.add_user(u)
     end
   end
 
