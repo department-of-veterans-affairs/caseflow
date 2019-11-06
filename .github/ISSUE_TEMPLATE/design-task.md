@@ -1,3 +1,12 @@
+---
+name: Design task
+about: Template for a new Caseflow design task
+title: ''
+labels: design
+assignees: ''
+
+---
+
 <!-- The goal of this template is to be a tool to help write good design, research, and writing tasks that stem off of a user story and/or epic. It is not intended as a mandate, adapt as needed. -->
 
 ## User story
@@ -6,21 +15,21 @@
 ## Problem statement
 <!-- Describe the problem the design, writing, or research is intended to solve. -->
 
-## What is out of scope? 
+## What is out of scope?
 <!-- This can be particularly helpful for research tickets. Does not need to be an exhaustive list, but should clearly define the boundaries of the work -->
 
-## Background/context 
+## Background/context
 <!-- Why are we designing/writing this? Who is it for? What research has been done that tells us this needs to be designed, written, or researched? -->
 
-## What are the unknowns? 
+## What are the unknowns?
 <!-- If there are key unknowns or assumptions, add them here. If we're accepting the risks associated with the unknowns or assumptions, let us know that too. -->
 
-## For research tickets only: What questions do we hope to answer? What are our learning goals? 
+## For research tickets only: What questions do we hope to answer? What are our learning goals?
 <!-- It can be useful to also include questions we're not trying to answer. -->
 
-## For writing tickets only: Writing guidance, if possible, such as voice and tone desired, relevant styleguides, and who the approvers should be. 
+## For writing tickets only: Writing guidance, if possible, such as voice and tone desired, relevant styleguides, and who the approvers should be.
 
-## Existing design and content 
+## Existing design and content
 <!--If we're replacing something, please include a screenshot(s) or link to the existing solution, even if it's not in Caseflow. -->
 
 ## Success criteria
