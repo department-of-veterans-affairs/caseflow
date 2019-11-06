@@ -8,7 +8,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
   let(:judge) { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
   let(:attorney) { create(:user) }
   let!(:judge_team) do
-    JudgeTeam.create_for_judge(judge).tap { |jt| OrganizationsUser.add_user_to_organization(attorney, jt) }
+    JudgeTeam.create_for_judge(judge).tap { |jt| jt.add_user(attorney) }
   end
   let!(:motions_atty) { create(:user, full_name: "Motions attorney") }
   let!(:mtv_mail_task) { create(:vacate_motion_mail_task, assigned_to: motions_atty) }

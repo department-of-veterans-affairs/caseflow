@@ -5,7 +5,7 @@ class VacateAndDeNovoTask < DecidedMotionToVacateTask
     COPY::VACATE_AND_DE_NOVO_TASK_LABEL
   end
 
-  def org
-    JudgeTeam.for_judge(assigned_by)
+  def org(_user)
+    JudgeTeam.for_judge(_user.reload)
   end
 end

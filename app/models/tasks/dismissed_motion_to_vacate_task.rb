@@ -5,7 +5,7 @@ class DismissedMotionToVacateTask < DecidedMotionToVacateTask
     COPY::DISMISSED_MOTION_TO_VACATE_TASK_LABEL
   end
 
-  def self.org
+  def self.org(_user)
     LitigationSupport.singleton
   end
 end
