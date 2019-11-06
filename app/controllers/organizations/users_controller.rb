@@ -16,7 +16,7 @@ class Organizations::UsersController < OrganizationsController
   end
 
   def create
-    OrganizationsUser.add_user_to_organization(user_to_modify, organization)
+    organization.add_user(user_to_modify)
 
     render json: { users: json_administered_users([user_to_modify]) }, status: :ok
   end

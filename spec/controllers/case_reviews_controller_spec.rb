@@ -162,7 +162,7 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
 
         before do
           # Add somebody to the BVA dispatch team so automatic task assignment for AMA cases succeeds.
-          OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
+          BvaDispatch.singleton.add_user(create(:user))
         end
 
         context "when all parameters are present to send to sign a decision" do

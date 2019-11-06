@@ -28,8 +28,8 @@ describe PostDecisionMotionUpdater, :all_dbs do
   end
 
   before do
-    create(:staff, :judge_role, sdomainid: judge.reload.css_id)
-    OrganizationsUser.add_user_to_organization(motions_atty, lit_support_team)
+    create(:staff, :judge_role, sdomainid: judge.css_id)
+    lit_support_team.add_user(motions_atty)
   end
 
   subject { PostDecisionMotionUpdater.new(task, params) }

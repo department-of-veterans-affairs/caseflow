@@ -50,6 +50,7 @@ detectors:
       - Fakes::PersistentStore#convert_dates_from
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - HearingSerializerBase
+      - LegacyAppeal#cancel_open_caseflow_tasks!
       - MonthlyMetricsReportJob#build_report
       - SyncReviewsJob
       - TaskTimerJob
@@ -83,6 +84,8 @@ detectors:
       - HearingLocation
       - QueueConfig
       - RequestIssue
+      - BulkTaskReassignment
+      - Task
   TooManyInstanceVariables:
     exclude:
       - AmaAppealDispatch

@@ -163,6 +163,7 @@ const formatUnidentifiedIssues = (state) => {
         decision_text: issue.description,
         notes: issue.notes,
         is_unidentified: true,
+        decision_date: issue.decisionDate,
         withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : issue.withdrawalDate,
         correction_type: issue.correctionType
       };
@@ -287,7 +288,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
 export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
   let issues = intakeData.addedIssues || [];
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
-
+  
   return issues.map((issue, index) => {
     if (issue.isUnidentified) {
       return {
@@ -296,6 +297,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         text: `Unidentified issue: no issue matched for "${issue.description}"`,
         notes: issue.notes,
         isUnidentified: true,
+        date: issue.decisionDate,
         withdrawalPending: issue.withdrawalPending,
         withdrawalDate: issue.withdrawalDate,
         endProductCleared: issue.endProductCleared,
@@ -307,6 +309,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         console.warn(issue);
         throw new Error('no decision date');
       }
+
       const decisionDate = new Date(issue.decisionDate || issue.approxDecisionDate);
 
       return {
