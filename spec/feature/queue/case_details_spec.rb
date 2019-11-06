@@ -153,7 +153,7 @@ RSpec.feature "Case details", :all_dbs do
         let!(:vso_task) { create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: appeal) }
 
         before do
-          OrganizationsUser.add_user_to_organization(vso_user, vso)
+          vso.add_user(vso_user)
           allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
           User.authenticate!(user: vso_user)
         end
@@ -725,7 +725,7 @@ RSpec.feature "Case details", :all_dbs do
 
     context "when the current user is a member of the AOD team" do
       before do
-        OrganizationsUser.add_user_to_organization(user, AodTeam.singleton)
+        AodTeam.singleton.add_user(user)
         User.authenticate!(user: user)
       end
 
@@ -769,8 +769,8 @@ RSpec.feature "Case details", :all_dbs do
       before do
         # Marking this task complete creates a BvaDispatchTask. Make sure there are members of that organization so
         # that the creation of that BvaDispatchTask succeeds.
-        OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
-        OrganizationsUser.add_user_to_organization(user, qr)
+        BvaDispatch.singleton.add_user(create(:user))
+        qr.add_user(user)
         User.authenticate!(user: user)
       end
 
@@ -1126,7 +1126,7 @@ RSpec.feature "Case details", :all_dbs do
         judge_task.update!(status: Constants.TASK_STATUSES.completed)
 
         bva_dispatcher = create(:user)
-        OrganizationsUser.add_user_to_organization(bva_dispatcher, BvaDispatch.singleton)
+        BvaDispatch.singleton.add_user(bva_dispatcher)
         BvaDispatchTask.create_from_root_task(root_task)
 
         params = {
@@ -1198,7 +1198,7 @@ RSpec.feature "Case details", :all_dbs do
       let(:user) { create(:user) }
 
       before do
-        OrganizationsUser.add_user_to_organization(user, BvaIntake.singleton)
+        BvaIntake.singleton.add_user(user)
         User.authenticate!(user: user)
       end
 

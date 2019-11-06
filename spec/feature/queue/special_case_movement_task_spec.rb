@@ -19,8 +19,7 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
   end
 
   before do
-    OrganizationsUser.add_user_to_organization(scm_user,
-                                               SpecialCaseMovementTeam.singleton)
+    SpecialCaseMovementTeam.singleton.add_user(scm_user)
     User.authenticate!(user: scm_user)
   end
   describe "Special Case Movement Team Member" do

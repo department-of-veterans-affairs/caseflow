@@ -10,7 +10,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
   end
 
   let!(:vlj_support_staff) do
-    OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
+    Colocated.singleton.add_user(create(:user))
     Colocated.singleton.users.first
   end
 
@@ -207,7 +207,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         end
 
         before do
-          org_1_members.each { |u| OrganizationsUser.add_user_to_organization(u, org_1) }
+          org_1_members.each { |u| org_1.add_user(u) }
         end
 
         context "when user is assigned an individual task" do
@@ -318,7 +318,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
       before do
         User.authenticate!(user: user)
-        OrganizationsUser.add_user_to_organization(user, vso)
+        vso.add_user(user)
         allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
       end
 
@@ -336,6 +336,38 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           subject
 
           expect(response.status).to eq 403
+        end
+      end
+
+      context "when creating a mix of tasks" do
+        let(:ihp_org_task) do
+          create(
+            :informal_hearing_presentation_task,
+            appeal: appeal,
+            assigned_to: vso
+          )
+        end
+
+        let(:params) do
+          [{
+            "external_id": appeal.external_id,
+            "type": InformalHearingPresentationTask.name,
+            "assigned_to_id": user.id,
+            "parent_id": ihp_org_task.id
+          }, {
+            "external_id": appeal.external_id,
+            "type": Task.name,
+            "assigned_to_id": user.id,
+            "parent_id": root_task.id
+          }]
+        end
+
+        it "should not be successful" do
+          subject
+
+          expect(response.status).to eq 403
+          response_body = JSON.parse(response.body)["errors"].first["detail"]
+          expect(response_body).to eq "VSOs cannot create that task."
         end
       end
 
@@ -368,7 +400,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     context "Co-located admin action" do
       before do
         u = create(:user)
-        OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
+        Colocated.singleton.add_user(u)
       end
 
       context "when current user is an attorney" do
@@ -392,7 +424,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
           before do
             u = create(:user)
-            OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
+            Colocated.singleton.add_user(u)
           end
 
           it "should be successful" do
@@ -441,7 +473,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
           before do
             u = create(:user)
-            OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
+            Colocated.singleton.add_user(u)
           end
 
           it "should be successful" do
@@ -568,7 +600,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       end
 
       before do
-        OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+        HearingsManagement.singleton.add_user(user)
       end
 
       it "creates tasks with the correct types" do
@@ -593,7 +625,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     context "When the current user is a member of the Mail team" do
       before do
         mail_team_user = create(:user)
-        OrganizationsUser.add_user_to_organization(mail_team_user, MailTeam.singleton)
+        MailTeam.singleton.add_user(mail_team_user)
         User.authenticate!(user: mail_team_user)
       end
 
@@ -929,7 +961,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     let(:instructions) { "these are my detailed instructions." }
 
     before do
-      OrganizationsUser.add_user_to_organization(hearing_mgmt_user, HearingsManagement.singleton)
+      HearingsManagement.singleton.add_user(hearing_mgmt_user)
       User.authenticate!(user: hearing_mgmt_user)
     end
 
