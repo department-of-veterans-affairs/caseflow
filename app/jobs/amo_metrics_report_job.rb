@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+###
+# Bi-weekly metrics sent to the AMO slack channel for Claim Reviews
+
 class AMOMetricsReportJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :intake
