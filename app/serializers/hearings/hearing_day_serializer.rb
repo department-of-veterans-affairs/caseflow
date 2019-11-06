@@ -13,8 +13,9 @@ class HearingDaySerializer
   attribute :judge_last_name
   attribute :lock
   attribute :notes
-  attribute :readable_request_type do |hearing_day|
-    Hearing::HEARING_TYPES[hearing_day.request_type.to_sym]
+  attribute :readable_request_type do |hearing_day, params|
+    get_readable_request_type(hearing_day, params)
+  end
   end
   attribute :regional_office
   ## in preparation for removing json_hearing_day from hearing_day_controller
@@ -32,4 +33,16 @@ class HearingDaySerializer
   attribute :total_slots
   attribute :updated_by_id
   attribute :updated_at
+
+  def self.get_readable_request_type(hearing_day, params)
+    if params.key?(:hearing_days_with_virtual_hearings) && !params[:hearing_days_with_virtual_hearings].nil?
+      # An optimization when serializing a collection of hearing days.
+      # See HearingDaysWithVirtualHearingsQuery for how to fetch these ids.
+      return "Video, Virtual" if params[:hearing_days_with_virtual_hearings].include?(hearing_day.id)
+    else
+      return "Video, Virtual" if VirtualHearingRepository.hearing_day_has_virtual_hearing?(hearing_day)
+    end
+
+    Hearing::HEARING_TYPES[hearing_day.request_type.to_sym]
+  end
 end
