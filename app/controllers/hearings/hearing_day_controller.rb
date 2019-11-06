@@ -50,13 +50,13 @@ class Hearings::HearingDayController < HearingsApplicationController
   def create
     return no_available_rooms unless hearing_day_rooms.rooms_are_available?
 
-    hearing = HearingDay.create_hearing_day(
+    hearing_day = HearingDay.create_hearing_day(
       create_params.merge(room: hearing_day_rooms.available_room)
     )
-    return invalid_record_error(hearing) if hearing.nil?
+    return invalid_record_error(hearing_day) if hearing.nil?
 
     render json: {
-      hearing: json_hearing_day(hearing)
+      hearing: json_hearing_day(hearing_day)
     }, status: :created
   end
 
@@ -78,11 +78,9 @@ class Hearings::HearingDayController < HearingsApplicationController
   end
 
   def hearing_day_range
-    @hearing_day_range ||= begin
-      HearingDayRange.new(
-        range_start_date, range_end_date, params[:regional_office]
-      )
-    end
+    @hearing_day_range ||= HearingDayRange.new(
+      range_start_date, range_end_date, params[:regional_office]
+    )
   end
 
   ## action is either index or index_with_hearings
