@@ -27,7 +27,7 @@ class AMOMetricsReportJob < CaseflowJob
       @end_date = Time.zone.tomorrow # tomorrow so we get all of today
     else
       @start_date = Time.zone.today.prev_month.at_beginning_of_month
-      @end_date = Time.zone.today.prev_month.at_end_of_month
+      @end_date = Time.zone.today.at_end_of_month # so we get full month
     end
   end
 
