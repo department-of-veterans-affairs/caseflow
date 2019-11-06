@@ -37,6 +37,7 @@ export default class AsyncModelNav extends React.PureComponent {
       <div>
         {this.modelNameLinks()}
         <a style={{ float: 'right' }} href="/jobs" className="cf-link-btn">All jobs</a>
+        <a style={{ float: 'right' }} href="/jobs.csv" className="cf-link-btn">Download as CSV</a>
       </div>
     </div>;
   }

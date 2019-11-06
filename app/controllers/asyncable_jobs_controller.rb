@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "date"
+
 class AsyncableJobsController < ApplicationController
   include PaginationConcern
 
@@ -11,6 +13,14 @@ class AsyncableJobsController < ApplicationController
   def index
     if allowed_params[:asyncable_job_klass]
       @jobs = asyncable_job_klass.potentially_stuck.limit(page_size).offset(page_start)
+    end
+    respond_to do |format|
+      format.html
+      format.csv do
+        jobs_as_csv = AsyncableJobsReporter.new(jobs: jobs).as_csv
+        filename = Date.today.strftime("async-jobs-%Y%m%d.csv")
+        send_data jobs_as_csv, filename: filename
+      end
     end
   end
 
