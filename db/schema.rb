@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191017235707) do
+ActiveRecord::Schema.define(version: 20191106153923) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,9 +18,9 @@ ActiveRecord::Schema.define(version: 20191017235707) do
 
   create_table "advance_on_docket_motions", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.boolean "granted"
-    t.bigint "person_id"
-    t.string "reason"
+    t.boolean "granted", comment: "Whether VLJ has determined that there is sufficient cause to fast-track an appeal, i.e. grant or deny the motion to AOD."
+    t.bigint "person_id", comment: "Appellant ID"
+    t.string "reason", comment: "VLJ's rationale for their decision on motion to AOD."
     t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.index ["person_id"], name: "index_advance_on_docket_motions_on_person_id"
@@ -715,6 +715,14 @@ ActiveRecord::Schema.define(version: 20191017235707) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "judge_team_roles", force: :cascade, comment: "Defines roles for individual members of judge teams" do |t|
+    t.datetime "created_at", null: false
+    t.integer "organizations_user_id"
+    t.string "type"
+    t.datetime "updated_at", null: false
+    t.index ["organizations_user_id"], name: "index_judge_team_roles_on_organizations_user_id", unique: true
+  end
+
   create_table "legacy_appeals", force: :cascade do |t|
     t.bigint "appeal_series_id"
     t.string "closest_regional_office"
@@ -846,6 +854,7 @@ ActiveRecord::Schema.define(version: 20191017235707) do
     t.bigint "task_id"
     t.datetime "updated_at", null: false
     t.string "vacate_type", comment: "Granted motion to vacate can be either Straight Vacate and Readjudication or Vacate and De Novo."
+    t.integer "vacated_decision_issue_ids", comment: "When a motion to vacate is partially granted, this includes an array of the appeal's decision issue IDs that were chosen for vacatur in this post-decision motion", array: true
     t.index ["task_id"], name: "index_post_decision_motions_on_task_id"
   end
 
@@ -951,7 +960,7 @@ ActiveRecord::Schema.define(version: 20191017235707) do
     t.integer "corrected_by_request_issue_id", comment: "If this request issue has been corrected, the ID of the new correction request issue. This is needed for EP 930."
     t.string "correction_type", comment: "EP 930 correction type. Allowed values: control, local_quality_error, national_quality_error where 'control' is a regular correction, 'local_quality_error' was found after the fact by a local quality review team, and 'national_quality_error' was similarly found by a national quality review team. This is needed for EP 930."
     t.datetime "created_at", comment: "Automatic timestamp when row was created"
-    t.date "decision_date", comment: "Either the rating issue's promulgation date or the decision issue's approx decision date"
+    t.date "decision_date", comment: "Either the rating issue's promulgation date, the decision issue's approx decision date or the decision date entered by the user (for nonrating and unidentified issues)"
     t.bigint "decision_review_id", comment: "ID of the decision review that this request issue belongs to"
     t.string "decision_review_type", comment: "Class name of the decision review that this request issue belongs to"
     t.datetime "decision_sync_attempted_at", comment: "Async job processing last attempted timestamp"
@@ -1189,8 +1198,10 @@ ActiveRecord::Schema.define(version: 20191017235707) do
     t.string "item_type", null: false
     t.text "object"
     t.text "object_changes"
+    t.uuid "request_id", comment: "The unique id of the request that caused this change"
     t.string "whodunnit"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+    t.index ["request_id"], name: "index_versions_on_request_id"
   end
 
   create_table "veterans", force: :cascade do |t|
@@ -1227,6 +1238,7 @@ ActiveRecord::Schema.define(version: 20191017235707) do
     t.datetime "updated_at", null: false
     t.string "veteran_email", comment: "Veteran's email address"
     t.boolean "veteran_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran"
+    t.index ["alias"], name: "index_virtual_hearings_on_alias"
     t.index ["conference_id"], name: "index_virtual_hearings_on_conference_id"
     t.index ["created_by_id"], name: "index_virtual_hearings_on_created_by_id"
     t.index ["hearing_type", "hearing_id"], name: "index_virtual_hearings_on_hearing_type_and_hearing_id"

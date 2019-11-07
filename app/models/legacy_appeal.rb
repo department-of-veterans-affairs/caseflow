@@ -158,6 +158,7 @@ class LegacyAppeal < ApplicationRecord
     transcription: "33",
     translation: "14",
     schedule_hearing: "57",
+    sr_council_dvc: "66",
     case_storage: "81",
     service_organization: "55",
     closed: "99"
@@ -232,7 +233,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number_or_ssn(sanitized_vbms_id)
+    @veteran ||= VeteranFinder.find_best_match(sanitized_vbms_id)
   end
 
   def veteran_ssn
@@ -672,7 +673,7 @@ class LegacyAppeal < ApplicationRecord
         }
       )
     end
-    caseflow_file_number # prefer for now
+    caseflow_file_number
   end
 
   def pending_eps
@@ -762,6 +763,28 @@ class LegacyAppeal < ApplicationRecord
 
   def vacols_case_review
     VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
+  end
+
+  def death_dismissal!
+    multi_transaction do
+      cancel_open_caseflow_tasks!
+      LegacyAppeal.repository.update_location_for_death_dismissal!(appeal: self)
+    end
+  end
+
+  def cancel_open_caseflow_tasks!
+    tasks.open.each do |task|
+      task.update!(status: Constants.TASK_STATUSES.cancelled)
+      task.instructions << "Task cancelled due to death dismissal"
+      task.save
+    end
+  end
+
+  def eligible_for_death_dismissal?(user)
+    return false if notice_of_death_date.nil?
+
+    user_has_relevent_open_tasks = tasks.open.where(type: ColocatedTask.subclasses.map(&:name)).any?
+    user_has_relevent_open_tasks && Colocated.singleton.user_is_admin?(user)
   end
 
   private

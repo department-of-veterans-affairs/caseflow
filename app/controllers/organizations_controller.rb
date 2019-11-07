@@ -27,11 +27,14 @@ class OrganizationsController < ApplicationController
     verify_authorized_roles(organization.role) if organization.role
   end
 
+  # VSO staff often visit Caseflow for the first time by visiting a link to their organization's team queue provided
+  # by somebody else in the organization or a member of the Caseflow team. Before they visit Caseflow they do not have
+  # a User record so they cannot be added as a member of the organization. This function exists to automatically add
+  # them to the organization when they visit the organization's team queue.
   def add_user_to_vso
-    # Users may belong to VSOs in BGS, but not Caseflow. This automatically adds them to the Caseflow VSO team.
     return if current_user.roles.exclude?("VSO") || organization.users.include?(current_user)
 
-    OrganizationsUser.add_user_to_organization(current_user, organization)
+    organization.add_user(current_user)
   end
 
   def set_application

@@ -56,8 +56,8 @@ describe DistributionTask, :postgres do
     end
 
     before do
-      OrganizationsUser.add_user_to_organization(user, MailTeam.singleton)
-      OrganizationsUser.add_user_to_organization(scm_user, scm_org)
+      MailTeam.singleton.add_user(user)
+      scm_org.add_user(scm_user)
     end
 
     it "with regular user has no actions" do

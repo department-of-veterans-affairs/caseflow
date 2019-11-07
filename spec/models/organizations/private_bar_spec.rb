@@ -23,7 +23,7 @@ describe PrivateBar, :postgres do
     it "only returns a single tab with tracking tasks" do
       tabs = private_bar.queue_tabs
       expect(tabs.length).to eq(1)
-      expect(tabs.first).to be_a(TrackingTasksTab)
+      expect(tabs.first).to be_a(OrganizationTrackingTasksTab)
     end
   end
 end
