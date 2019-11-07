@@ -10,6 +10,10 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
     VirtualHearingRepository.ready_for_deletion.each do |virtual_hearing|
       process_virtual_hearing(virtual_hearing)
     end
+
+    VirtualHearingRepository.cancelled_hearings_with_pending_emails.each do |virtual_hearing|
+      VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
+    end
   end
 
   private
