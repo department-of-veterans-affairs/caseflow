@@ -16,7 +16,6 @@ class HearingDaySerializer
   attribute :readable_request_type do |hearing_day, params|
     get_readable_request_type(hearing_day, params)
   end
-  end
   attribute :regional_office
   ## in preparation for removing json_hearing_day from hearing_day_controller
   attribute :regional_office_key, &:regional_office
