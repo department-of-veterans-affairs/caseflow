@@ -232,6 +232,10 @@ class SeedDB
       [true, false].each do |assign_to_user|
         a = FactoryBot.create(:appeal)
         root_task = FactoryBot.create(:root_task, appeal: a)
+        FactoryBot.create(
+          :hearing,
+          appeal: a
+        )
         ihp_task = FactoryBot.create(
           :informal_hearing_presentation_task,
           parent: root_task,
@@ -663,6 +667,23 @@ class SeedDB
         closest_regional_office: "RO17",
         request_issues: FactoryBot.create_list(
           :request_issue, params[:request_issue_count], :nonrating, notes: notes
+        )
+      )
+    end
+
+    # Create AMA tasks ready for distribution
+    (1..30).each do |num|
+      vet_file_number = "3213213%02d" % num
+      FactoryBot.create(
+        :appeal,
+        :ready_for_distribution,
+        number_of_claimants: 1,
+        active_task_assigned_at: Time.zone.now,
+        veteran_file_number: vet_file_number,
+        docket_type: Constants.AMA_DOCKETS.direct_review,
+        closest_regional_office: "RO17",
+        request_issues: FactoryBot.create_list(
+          :request_issue, 2, :nonrating, notes: notes
         )
       )
     end

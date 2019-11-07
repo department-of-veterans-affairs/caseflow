@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
+require "support/database_cleaner"
 require "rails_helper"
 
-RSpec.describe DecidedMotionToVacateTask, :all_dbs, type: :model do
+RSpec.describe DecidedMotionToVacateTask, :postgres, type: :model do
   let(:lit_support_team) { LitigationSupport.singleton }
 
   describe ".automatically_create_org_task" do
@@ -23,8 +23,7 @@ RSpec.describe DecidedMotionToVacateTask, :all_dbs, type: :model do
     let(:task) { create(:denied_motion_to_vacate_task) }
 
     it "should include Pulac Cerullo action in available actions" do
-      actions = subject
-      expect(actions).to include(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+      expect(subject).to include(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
     end
   end
 end

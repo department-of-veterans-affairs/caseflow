@@ -78,6 +78,7 @@ export default class TabWindow extends React.Component {
                 onClick={this.onTabClick(i)}
                 aria-label={this.getTabHeader(tab)}
                 disabled={Boolean(tab.disable)}
+                role="tab"
               >
                 <span>
                   {this.getTabHeaderWithSVG(tab)}

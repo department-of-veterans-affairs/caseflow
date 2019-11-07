@@ -5,7 +5,7 @@ class StraightVacateAndReadjudicationTask < DecidedMotionToVacateTask
     COPY::STRAIGHT_VACATE_AND_READJUDICATION_TASK_LABEL
   end
 
-  def org
-    JudgeTeam.for_judge(assigned_by)
+  def self.org(user)
+    JudgeTeam.for_judge(user.reload)
   end
 end

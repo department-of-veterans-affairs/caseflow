@@ -15,7 +15,7 @@ class DecidedMotionToVacateTask < Task
 
   def update_status_if_children_tasks_are_closed(_child_task)
     if assigned_to.is_a?(Organization)
-      return update!(status: :completed)
+      return update!(status: :completed) unless all_children_cancelled?
     end
 
     super
@@ -28,18 +28,18 @@ class DecidedMotionToVacateTask < Task
 
     org_task = dup.tap do |new_task|
       new_task.assigned_to_type = "Organization"
-      new_task.assigned_to = org
+      new_task.assigned_to = org(assigned_by)
       new_task.save!
     end
     self.parent = org_task
   end
 
-  def org
-    self.class.org
+  def org(user)
+    self.class.org(user)
   end
 
   class << self
-    def org
+    def org(_user)
       fail Caseflow::Error::MustImplementInSubclass
     end
   end

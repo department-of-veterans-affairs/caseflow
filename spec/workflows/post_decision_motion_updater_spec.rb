@@ -8,7 +8,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
   let(:judge) { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
   let(:attorney) { create(:user) }
   let!(:judge_team) do
-    JudgeTeam.create_for_judge(judge).tap { |jt| OrganizationsUser.add_user_to_organization(attorney, jt) }
+    JudgeTeam.create_for_judge(judge).tap { |jt| jt.add_user(attorney) }
   end
   let!(:motions_atty) { create(:user, full_name: "Motions attorney") }
   let!(:mtv_mail_task) { create(:vacate_motion_mail_task, assigned_to: motions_atty) }
@@ -60,13 +60,6 @@ describe PostDecisionMotionUpdater, :all_dbs do
           expect(attorney_task.parent).to eq org_task
           expect(attorney_task.assigned_by).to eq task.assigned_to
           expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
-        end
-
-        it "should create JudgeSignMotionToVacateTask" do
-          subject.process
-
-          judge_sign_task = JudgeSignMotionToVacateTask.find_by(assigned_to: judge)
-          expect(judge_sign_task).to_not be nil
         end
 
         it "should close org task if user task is completed" do
@@ -167,20 +160,27 @@ describe PostDecisionMotionUpdater, :all_dbs do
         expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
       end
 
-      # it "should only assign new task to org if prev atty is inactive" do
-      #   motions_atty.update_status!(Constants.USER_STATUSES.inactive)
+      it "should still assign org task if prev atty is inactive" do
+        motions_atty.update_status!(Constants.USER_STATUSES.inactive)
 
-      #   subject.process
-      #   expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
-      #   abstract_task = AbstractMotionToVacateTask.find_by(parent: task.parent)
+        subject.process
+        expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
+        abstract_task = AbstractMotionToVacateTask.find_by(parent: task.parent)
 
-      #   org_task = DeniedMotionToVacateTask.find_by(assigned_to_id: lit_support_team)
-      #   expect(org_task).to_not be nil
-      #   expect(org_task.parent).to eq abstract_task
+        org_task = DeniedMotionToVacateTask.find_by(assigned_to_id: lit_support_team)
+        expect(org_task).to_not be nil
+        expect(org_task.parent).to eq abstract_task  
+      end
 
-      #   attorney_task = DeniedMotionToVacateTask.find_by(parent: org_task)
-      #   expect(attorney_task).to be nil
-      # end
+      it "should close org task if user task is completed" do
+        subject.process
+        expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
+        abstract_task = AbstractMotionToVacateTask.find_by(parent: task.parent)
+
+        org_task = DeniedMotionToVacateTask.find_by(assigned_to_id: lit_support_team)
+        expect(org_task).to_not be nil
+        expect(org_task.parent).to eq abstract_task
+      end
 
       it "should close org task if user task is completed" do
         subject.process
@@ -216,20 +216,28 @@ describe PostDecisionMotionUpdater, :all_dbs do
         expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
       end
 
-      # it "should only assign new task to org if prev atty is inactive" do
-      #   motions_atty.update_status!(Constants.USER_STATUSES.inactive)
+      it "should still assign org task if prev atty is inactive" do
+        motions_atty.update_status!(Constants.USER_STATUSES.inactive)
 
-      #   subject.process
-      #   expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
-      #   abstract_task = AbstractMotionToVacateTask.find_by(parent: task.parent)
+        subject.process
+        expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
+        abstract_task = AbstractMotionToVacateTask.find_by(parent: task.parent)
 
-      #   org_task = DismissedMotionToVacateTask.find_by(assigned_to_id: lit_support_team)
-      #   expect(org_task).to_not be nil
-      #   expect(org_task.parent).to eq abstract_task
+        org_task = DismissedMotionToVacateTask.find_by(assigned_to_id: lit_support_team)
+        expect(org_task).to_not be nil
+        expect(org_task.parent).to eq abstract_task
 
-      #   attorney_task = DismissedMotionToVacateTask.find_by(parent: org_task)
-      #   expect(attorney_task).to be nil
-      # end
+      end
+
+      it "should close org task if user task is completed" do
+        subject.process
+        expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
+        abstract_task = AbstractMotionToVacateTask.find_by(parent: task.parent)
+
+        org_task = DismissedMotionToVacateTask.find_by(assigned_to_id: lit_support_team)
+        expect(org_task).to_not be nil
+        expect(org_task.parent).to eq abstract_task
+      end
 
       it "should close org task if user task is completed" do
         subject.process
