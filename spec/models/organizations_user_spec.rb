@@ -18,7 +18,7 @@ describe OrganizationsUser, :postgres do
     end
 
     context "when user a member of the organization" do
-      before { OrganizationsUser.add_user_to_organization(user, organization) }
+      before { organization.add_user(user) }
 
       it "does nothing" do
         expect(subject).to eq(true)

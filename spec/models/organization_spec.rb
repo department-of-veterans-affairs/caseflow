@@ -27,7 +27,7 @@ describe Organization, :postgres do
     end
 
     context "when user is a member of organization" do
-      before { OrganizationsUser.add_user_to_organization(user, org) }
+      before { org.add_user(user) }
       it "should return true" do
         expect(org.user_has_access?(user)).to be_truthy
       end
@@ -46,7 +46,7 @@ describe Organization, :postgres do
       let(:org) { create(:organization) }
       let(:member_cnt) { 5 }
       let(:users) { create_list(:user, member_cnt) }
-      before { users.each { |u| OrganizationsUser.add_user_to_organization(u, org) } }
+      before { users.each { |u| org.add_user(u) } }
 
       it "should return a non-empty list of members" do
         expect(org.users.length).to eq(member_cnt)
@@ -108,7 +108,7 @@ describe Organization, :postgres do
     let(:user) { create(:user) }
 
     context "when user is not an admin for the organization" do
-      before { OrganizationsUser.add_user_to_organization(user, org) }
+      before { org.add_user(user) }
       it "should return false" do
         expect(org.user_is_admin?(user)).to eq(false)
       end

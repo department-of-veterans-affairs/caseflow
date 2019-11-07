@@ -13,7 +13,7 @@ describe AttorneyQueue, :all_dbs do
 
     context "when colocated admin actions are on hold" do
       let!(:vlj_support_staff) do
-        OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
+        Colocated.singleton.add_user(create(:user))
         Colocated.singleton.users.first
       end
 
@@ -63,7 +63,7 @@ describe AttorneyQueue, :all_dbs do
 
     context "when complete and incomplete colocated admin actions exist for an appeal" do
       let!(:vlj_support_staff) do
-        OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
+        Colocated.singleton.add_user(create(:user))
         Colocated.singleton.users.first
       end
 

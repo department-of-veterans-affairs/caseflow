@@ -8,7 +8,7 @@ RSpec.feature "Bulk task assignment", :postgres do
   let(:user) { create(:user) }
 
   before do
-    OrganizationsUser.add_user_to_organization(user, org)
+    org.add_user(user)
     User.authenticate!(user: user)
   end
 

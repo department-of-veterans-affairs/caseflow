@@ -30,7 +30,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
   before do
     create(:staff, :judge_role, sdomainid: judge.css_id)
-    OrganizationsUser.add_user_to_organization(motions_attorney, lit_support_team)
+    lit_support_team.add_user(motions_attorney)
 
     appeal.reload
   end
@@ -51,8 +51,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
     before do
       create(:staff, :judge_role, sdomainid: judge2.css_id)
       create(:staff, :judge_role, sdomainid: judge3.css_id)
-      OrganizationsUser.add_user_to_organization(mail_user, mail_team)
-      OrganizationsUser.add_user_to_organization(lit_support_user, lit_support_team)
+      mail_team.add_user(mail_user)
+      lit_support_team.add_user(lit_support_user)
       FeatureToggle.enable!(:review_motion_to_vacate)
     end
 
@@ -175,10 +175,10 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
     before do
       create(:staff, :judge_role, sdomainid: judge.css_id)
-      OrganizationsUser.add_user_to_organization(motions_attorney, lit_support_team)
-      OrganizationsUser.add_user_to_organization(drafting_attorney, judge_team)
+      lit_support_team.add_user(motions_attorney)
+      judge_team.add_user(drafting_attorney)
       ["John Doe", "Jane Doe"].map do |name|
-        OrganizationsUser.add_user_to_organization(create(:user, full_name: name), judge_team)
+        judge_team.add_user(create(:user, full_name: name))
       end
       FeatureToggle.enable!(:review_motion_to_vacate)
     end
@@ -420,10 +420,10 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
     before do
       create(:staff, :judge_role, sdomainid: judge.css_id)
-      OrganizationsUser.add_user_to_organization(motions_attorney, lit_support_team)
-      OrganizationsUser.add_user_to_organization(drafting_attorney, judge_team)
+      lit_support_team.add_user(motions_attorney)
+      judge_team.add_user(drafting_attorney)
       ["John Doe", "Jane Doe"].map do |name|
-        OrganizationsUser.add_user_to_organization(create(:user, full_name: name), judge_team)
+        judge_team.add_user(create(:user, full_name: name))
       end
       FeatureToggle.enable!(:review_motion_to_vacate)
 

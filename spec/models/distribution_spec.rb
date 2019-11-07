@@ -15,14 +15,14 @@ describe Distribution, :all_dbs do
     FeatureToggle.enable!(:test_facols)
     Timecop.freeze(today)
     attorneys.each do |u|
-      OrganizationsUser.add_user_to_organization(u, judge_team)
+      judge_team.add_user(u)
     end
 
     # set up a couple of extra judge teams
     2.times do
       team = JudgeTeam.create_for_judge(create(:user))
       create_list(:user, 5).each do |attorney|
-        OrganizationsUser.add_user_to_organization(attorney, team)
+        team.add_user(attorney)
       end
     end
   end

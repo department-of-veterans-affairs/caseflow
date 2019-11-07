@@ -16,8 +16,7 @@ describe SpecialCaseMovementTask, :postgres do
       end
 
       before do
-        OrganizationsUser.add_user_to_organization(scm_user,
-                                                   SpecialCaseMovementTeam.singleton)
+        SpecialCaseMovementTeam.singleton.add_user(scm_user)
       end
 
       context "appeal ready for distribution" do
