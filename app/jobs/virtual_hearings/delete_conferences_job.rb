@@ -14,23 +14,13 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
 
   private
 
-  def pexip_service
-    @pexip_service ||= PexipService.new(
-      host: ENV["PEXIP_MANAGEMENT_NODE_HOST"],
-      port: ENV["PEXIP_MANAGEMENT_NODE_PORT"],
-      user_name: ENV["PEXIP_USERNAME"],
-      password: ENV["PEXIP_PASSWORD"],
-      client_host: ENV["PEXIP_CLIENT_HOST"]
-    )
-  end
-
   def process_virtual_hearing(virtual_hearing)
     return unless delete_conference(virtual_hearing)
 
-    virtual_hearing.conference_deleted = true
+    virtual_hearing.update(conference_deleted: true)
 
     if virtual_hearing.cancelled?
-      VirtualHearings::SendEmail(virtual_hearing: virtual_hearing, type: :cancellation).call
+      VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
     end
   end
 

@@ -11,7 +11,13 @@ describe VirtualHearings::DeleteConferencesJob, :postgres do
 
     let(:scheduled_for) { Time.zone.now - 1.day }
     let(:hearing_day) do
-      create(:hearing_day, regional_office: "RO42", request_type: "V", scheduled_for: Time.zone.now - 1.day)
+      create(
+        :hearing_day,
+        regional_office: "RO42",
+        request_type: "V",
+        judge: create(:user, :judge),
+        scheduled_for: Time.zone.now - 1.day
+      )
     end
     let(:hearing) { create(:hearing, regional_office: "RO42", hearing_day: hearing_day) }
 
@@ -86,30 +92,16 @@ describe VirtualHearings::DeleteConferencesJob, :postgres do
       end
 
       it "does not mark the virtual hearings as deleted" do
-        fake_service = PexipService.new
-        expect(fake_service).to(
-          receive(:delete_conference)
-            .twice
-            .and_return(ExternalApi::PexipService::DeleteResponse.new(HTTPI::Response.new(400, {}, {})))
-        )
-        expect(job).to(
-          receive(:pexip_service).twice.and_return(fake_service)
-        )
+        fake_service = PexipService.new(status_code: 400)
+        expect(job).to(receive(:client).twice.and_return(fake_service))
         subject
         virtual_hearings.each(&:reload)
         expect(virtual_hearings.map(&:conference_deleted)).to all(be == false)
       end
 
-      it "assumes a 404 means the virtual hearing confernece was already deleted" do
-        fake_service = PexipService.new
-        expect(fake_service).to(
-          receive(:delete_conference)
-            .twice
-            .and_return(ExternalApi::PexipService::DeleteResponse.new(HTTPI::Response.new(404, {}, {})))
-        )
-        expect(job).to(
-          receive(:pexip_service).twice.and_return(fake_service)
-        )
+      it "assumes a 404 means the virtual hearing conference was already deleted" do
+        fake_service = PexipService.new(status_code: 404)
+        expect(job).to(receive(:client).twice.and_return(fake_service))
         subject
         virtual_hearings.each(&:reload)
         expect(virtual_hearings.map(&:conference_deleted)).to all(be == true)
