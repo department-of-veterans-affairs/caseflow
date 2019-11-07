@@ -40,7 +40,10 @@ class AsyncableJobsPage extends React.PureComponent {
     if (rowObjects.length === 0) {
       return <div>
         <h1>{`Success! There are no pending ${this.props.asyncableJobKlass} jobs.`}</h1>
-        <AsyncModelNav models={this.props.models} fetchedAt={this.props.fetchedAt} />
+        <AsyncModelNav
+          models={this.props.models}
+          fetchedAt={this.props.fetchedAt}
+          asyncableJobKlass={this.props.asyncableJobKlass} />
       </div>;
     }
 
@@ -112,7 +115,10 @@ class AsyncableJobsPage extends React.PureComponent {
 
     return <div className="cf-asyncable-jobs-table">
       <h1>{this.props.asyncableJobKlass} Jobs</h1>
-      <AsyncModelNav models={this.props.models} fetchedAt={this.props.fetchedAt} />
+      <AsyncModelNav
+        models={this.props.models}
+        fetchedAt={this.props.fetchedAt}
+        asyncableJobKlass={this.props.asyncableJobKlass} />
       <hr />
       <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} slowReRendersAreOk />
       <EasyPagination currentCases={rowObjects.length} pagination={this.props.pagination} />
