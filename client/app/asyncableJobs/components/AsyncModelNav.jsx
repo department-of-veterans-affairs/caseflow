@@ -32,8 +32,8 @@ export default class AsyncModelNav extends React.PureComponent {
 
   render = () => {
     const currentPath = this.props.asyncableJobKlass ?
-        `/asyncable_jobs/${this.props.asyncableJobKlass}/jobs` :
-        '/jobs';
+      `/asyncable_jobs/${this.props.asyncableJobKlass}/jobs` :
+      '/jobs';
 
     return <div>
       <strong>Last updated:</strong> {moment(this.props.fetchedAt).format(DATE_TIME_FORMAT)}
