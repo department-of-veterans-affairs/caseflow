@@ -14,7 +14,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
   before do
     # When a judge completes judge checkout we create either a QR or dispatch task. Make sure we have somebody in
     # the BVA dispatch team so that the creation of that task (which round robin assigns org tasks) does not fail.
-    OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
+    BvaDispatch.singleton.add_user(create(:user))
   end
 
   context "given a valid ama appeal with single issue" do

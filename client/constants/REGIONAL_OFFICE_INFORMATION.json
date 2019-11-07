@@ -156,7 +156,7 @@
     "timezone": "America/New_York",
     "hold_hearings": true,
     "facility_locator_id": "vba_317",
-    "alternate_locations": ["vba_317a"]
+    "alternate_locations": ["vba_317a", "vc_0742V"]
   },
   "RO18": {
     "label": "Winston-Salem regional office",
@@ -192,7 +192,7 @@
     "timezone": "America/Chicago",
     "hold_hearings": true,
     "facility_locator_id": "vba_321",
-    "alternate_locations": ["vba_321b"]
+    "alternate_locations": ["vba_321b", "vha_502GA", "vha_502GB", "vha_502GE"]
   },
   "RO22": {
     "label": "Montgomery regional office",

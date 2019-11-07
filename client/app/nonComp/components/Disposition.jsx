@@ -201,6 +201,7 @@ class NonCompDispositions extends React.PureComponent {
               value={decisionDate}
               onChange={this.handleDecisionDate}
               readOnly={Boolean(task.closed_at)}
+              type="date"
             />
           </InlineForm>
         </div>

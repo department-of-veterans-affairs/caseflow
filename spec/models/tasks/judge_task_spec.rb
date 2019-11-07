@@ -22,13 +22,6 @@ describe JudgeTask, :all_dbs do
 
     subject { subject_task.available_actions_unwrapper(user) }
 
-    context "the task is not assigned to the current user" do
-      let(:user) { judge2 }
-      it "should return an empty array" do
-        expect(subject).to eq([])
-      end
-    end
-
     context "the task is assigned to the current user" do
       context "in the assign phase" do
         it "should return the assignment action" do
@@ -116,7 +109,7 @@ describe JudgeTask, :all_dbs do
       subject { JudgeQualityReviewTask.create_from_params(params, qr_user) }
 
       before do
-        OrganizationsUser.add_user_to_organization(qr_user, QualityReview.singleton)
+        QualityReview.singleton.add_user(qr_user)
       end
 
       it "the parent task should change to an 'on hold' status" do

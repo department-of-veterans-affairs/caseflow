@@ -46,7 +46,7 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
       end
 
       team_attorneys.each do |attorney|
-        OrganizationsUser.add_user_to_organization(attorney, judge_team)
+        judge_team.add_user(attorney)
       end
     end
 
@@ -77,7 +77,7 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
     let!(:users) { create_list(:user, 3) }
     before do
       users.each do |user|
-        OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+        HearingsManagement.singleton.add_user(user)
       end
     end
 
@@ -198,7 +198,7 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
     end
 
     context "when current user is a BVA admin" do
-      before { OrganizationsUser.add_user_to_organization(authenticated_user, Bva.singleton) }
+      before { Bva.singleton.add_user(authenticated_user) }
 
       context "when marking the user inactive" do
         context "and the user is active" do

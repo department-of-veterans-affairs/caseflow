@@ -16,12 +16,12 @@ import PropTypes from 'prop-types';
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
 import { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn, regionalOfficeColumn, daysWaitingColumn,
-  issueCountColumn, typeColumn, assignedToColumn, readerLinkColumn, daysOnHoldColumn, completedToNameColumn } from
+  issueCountColumn, typeColumn, assignedToColumn, readerLinkColumn, daysOnHoldColumn, completedToNameColumn,
+  taskCompletedDateColumn } from
   './TaskTableColumns';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { hasDASRecord } from '../utils';
-import { DateString } from '../../util/DateUtil';
 import COPY from '../../../COPY.json';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
 
@@ -143,13 +143,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   completedDateColumn = () => {
-    return this.props.includeCompletedDate ? {
-      header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
-      name: QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name,
-      valueFunction: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null,
-      backendCanSort: true,
-      getSortValue: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null
-    } : null;
+    return this.props.includeCompletedDate ? taskCompletedDateColumn() : null;
   }
 
   caseCompletedToNameColumn = () => {

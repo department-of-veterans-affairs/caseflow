@@ -12,10 +12,10 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
   let(:other_user) { create(:user) }
 
   before do
-    OrganizationsUser.add_user_to_organization(current_user, HearingsManagement.singleton)
-    OrganizationsUser.add_user_to_organization(current_user, HearingAdmin.singleton)
-    OrganizationsUser.add_user_to_organization(other_user, HearingsManagement.singleton)
-    OrganizationsUser.add_user_to_organization(other_user, HearingAdmin.singleton)
+    HearingsManagement.singleton.add_user(current_user)
+    HearingAdmin.singleton.add_user(current_user)
+    HearingsManagement.singleton.add_user(other_user)
+    HearingAdmin.singleton.add_user(other_user)
   end
 
   context "When creating Caseflow Central hearings" do

@@ -301,7 +301,7 @@ describe ClaimReview, :postgres do
       let(:benefit_type) { "education" }
 
       context "when the user is already on the organization" do
-        let!(:existing_record) { OrganizationsUser.add_user_to_organization(user, claim_review.business_line) }
+        let!(:existing_record) { claim_review.business_line.add_user(user) }
 
         it "returns the existing record" do
           expect(subject).to eq(existing_record)

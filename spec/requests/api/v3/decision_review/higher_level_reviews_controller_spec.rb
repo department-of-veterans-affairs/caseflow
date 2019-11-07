@@ -10,10 +10,6 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     FeatureToggle.enable!(:api_v3)
 
     Timecop.freeze(post_ama_start_date)
-
-    [:establish_claim!, :create_contentions!, :associate_rating_request_issues!].each do |method|
-      allow(Fakes::VBMSService).to receive(method).and_call_original
-    end
   end
 
   after do
@@ -107,21 +103,287 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       }
     ]
   end
-  let(:params) do
-    {
-      data: data,
-      included: included
-    }
-  end
 
-  let(:post_params) do
-    [
-      "/api/v3/decision_review/higher_level_reviews",
-      { params: params, headers: { "Authorization" => "Token #{api_key}" } }
-    ]
+  describe "#show" do
+    let!(:higher_level_review) do
+      processor = Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(
+        ActionController::Parameters.new(data: data, included: included),
+        create(:user)
+      )
+      processor.run!.higher_level_review
+    end
+
+    def get_higher_level_review # rubocop:disable Naming/AccessorMethodName
+      get(
+        "/api/v3/decision_review/higher_level_reviews/#{higher_level_review.uuid}",
+        headers: { "Authorization" => "Token #{api_key}" }
+      )
+    end
+
+    it "should return ok" do
+      get_higher_level_review
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "should be json with a data key and included key" do
+      get_higher_level_review
+      json = JSON.parse(response.body)
+      expect(json.keys).to include("data", "included")
+    end
+
+    let(:request_issues) do
+      higher_level_review.request_issues
+        .includes(:decision_review, :contested_decision_issue).active_or_ineligible_or_withdrawn
+    end
+
+    let(:decision_issues) { higher_level_review.fetch_all_decision_issues }
+
+    context "data" do
+      subject do
+        get_higher_level_review
+        JSON.parse(response.body)["data"]
+      end
+
+      it "should have HigherLevelReview as the type" do
+        expect(subject["type"]).to eq "HigherLevelReview"
+      end
+
+      it "should have an id" do
+        expect(subject["id"]).to eq higher_level_review.uuid
+      end
+
+      it "should have attributes" do
+        expect(subject["attributes"]).to_not be_empty
+      end
+
+      context "attributes" do
+        subject do
+          get_higher_level_review
+          JSON.parse(response.body)["data"]["attributes"]
+        end
+
+        it "should include status" do
+          expect(subject["status"]).to eq higher_level_review.fetch_status.to_s
+        end
+
+        it "should include aoj" do
+          expect(subject["aoj"]).to eq higher_level_review.aoj
+        end
+
+        it "should include programArea" do
+          expect(subject["programArea"]).to eq higher_level_review.program
+        end
+
+        it "should include benefitType" do
+          expect(subject["benefitType"]).to eq higher_level_review.benefit_type
+        end
+
+        it "should include description" do
+          expect(subject["description"]).to eq higher_level_review.description
+        end
+
+        it "should include receiptDate" do
+          expect(subject["receiptDate"]).to eq higher_level_review.receipt_date.strftime("%F")
+        end
+
+        it "should include informalConference" do
+          expect(subject["informalConference"]).to eq higher_level_review.informal_conference
+        end
+
+        it "should include sameOffice" do
+          expect(subject["sameOffice"]).to eq higher_level_review.same_office
+        end
+
+        it "should include legacyOptInApproved" do
+          expect(subject["legacyOptInApproved"]).to eq higher_level_review.legacy_opt_in_approved
+        end
+
+        it "should include alerts" do
+          expect(subject["alerts"]).to be_a Array
+        end
+
+        context "alerts" do
+          subject do
+            get_higher_level_review
+            JSON.parse(response.body)["data"]["attributes"]["alerts"]
+          end
+
+          it "should have the same alerts" do
+            higher_level_review.decision_issues << create(:decision_issue)
+            higher_level_review.end_product_establishments.first.update(synced_status: "CLR")
+            expect(subject.count).to eq higher_level_review.alerts.count
+
+            higher_level_review.alerts.collect { |alert| JSON.parse(alert.to_json) }.each do |alert_data|
+              expect(subject).to include(alert_data)
+            end
+          end
+        end
+
+        it "should include events" do
+          expect(subject["events"]).to be_a Array
+        end
+
+        context "events" do
+          subject do
+            get_higher_level_review
+            JSON.parse(response.body)["data"]["attributes"]["events"]
+          end
+
+          it "should have the same events" do
+            expect(subject.count).to eq higher_level_review.events.count
+            subject.each do |event_data|
+              event = higher_level_review.events.find do |e|
+                e.type.to_s == event_data["type"] && e.date.strftime("%Y-%m-%d") == event_data["date"]
+              end
+              expect(event).to_not be_nil
+            end
+          end
+        end
+      end
+
+      it "should have relationships" do
+        expect(subject["relationships"]).to_not be_empty
+      end
+
+      context "relationships" do
+        subject do
+          get_higher_level_review
+          JSON.parse(response.body)["data"]["relationships"]
+        end
+
+        it "should include the veteran" do
+          expect(subject.dig("veteran", "data", "id")).to eq higher_level_review.veteran.id.to_s
+        end
+
+        it "should include the claimant" do
+          expect(subject.dig("claimant", "data", "id")).to eq higher_level_review.claimants.first.id.to_s
+        end
+
+        it "should include request issues" do
+          ri_relationships = subject["requestIssues"]["data"]
+          expect(ri_relationships.count).to eq request_issues.count
+          expect(ri_relationships.collect { |ri| ri["id"].to_i }).to include(*request_issues.collect(&:id))
+        end
+
+        it "should include decision issues" do
+          higher_level_review.decision_issues << create(:decision_issue)
+          expect(subject["decisionIssues"]["data"].count).to eq decision_issues.count
+          di_relationships = subject["decisionIssues"]["data"]
+          expect(di_relationships.count).to eq decision_issues.count
+          expect(di_relationships.collect { |di| di["id"].to_i }).to include(*decision_issues.collect(&:id))
+        end
+      end
+    end
+
+    context "included" do
+      subject do
+        get_higher_level_review
+        JSON.parse(response.body)["included"]
+      end
+
+      it "should be an array" do
+        expect(subject).to be_a Array
+      end
+
+      it "should include one veteran" do
+        veteran = subject.find { |obj| obj["type"] == "Veteran" }
+        expect(veteran).to_not be_nil
+        expect(veteran["attributes"].keys).to include(
+          "firstName", "middleName", "lastName", "nameSuffix", "fileNumber", "ssn", "participantId"
+        )
+      end
+
+      it "should include a claimant" do
+        claimant = subject.find { |obj| obj["type"] == "Claimant" }
+        expect(claimant).to_not be_nil
+        expect(claimant["attributes"].keys).to include(
+          "firstName", "middleName", "lastName", "payeeCode", "relationshipType"
+        )
+      end
+
+      it "should not have a claimant when one is not present" do
+        higher_level_review.claimants.delete_all
+        claimant = subject.find { |obj| obj["type"] == "Claimant" }
+        expect(claimant).to be_nil
+      end
+
+      it "should include RequestIssues" do
+        included_request_issues = subject.select { |obj| obj["type"] == "RequestIssue" }
+        expect(included_request_issues.count).to eq request_issues.count
+        expect(included_request_issues.first["attributes"].keys).to include(
+          "active", "statusDescription", "diagnosticCode", "ratingIssueId", "ratingIssueProfileDate",
+          "ratingDecisionId", "description", "contentionText", "approxDecisionDate", "category",
+          "notes", "isUnidentified", "rampClaimId", "legacyAppealId", "legacyAppealIssueId",
+          "decisionReviewTitle", "decisionIssueId", "withdrawalDate", "contestedIssueDescription",
+          "endProductCleared", "endProductCode", "ineligible"
+        )
+      end
+
+      context "RequestIssues" do
+        subject do
+          get_higher_level_review
+          JSON.parse(response.body)["included"].select { |obj| obj["type"] == "RequestIssue" }
+        end
+
+        it "should have a null ineligible" do
+          expect(subject.first["ineligible"]).to be_nil
+        end
+
+        it "should have an ineligible object" do
+          request_issue_in_active_review = create(
+            :request_issue,
+            decision_date: Time.zone.today - 5.days,
+            decision_review: create(:higher_level_review, id: 10, veteran_file_number: veteran.file_number),
+            contested_rating_issue_reference_id: "hlr123",
+            contention_reference_id: "2222",
+            end_product_establishment: create(:end_product_establishment, :active),
+            contention_removed_at: nil,
+            ineligible_reason: nil
+          )
+          ineligible_request_issue = create(
+            :request_issue,
+            decision_date: Time.zone.today - 3.days,
+            decision_review: create(:higher_level_review, id: 11, veteran_file_number: veteran.file_number),
+            contested_rating_issue_reference_id: "hlr123",
+            contention_reference_id: "3333",
+            ineligible_reason: :duplicate_of_rating_issue_in_active_review,
+            ineligible_due_to: request_issue_in_active_review
+          )
+          higher_level_review.request_issues = [request_issue_in_active_review, ineligible_request_issue]
+          ineligble_data = subject.find { |ri| ri["attributes"]["ineligible"] }["attributes"]["ineligible"]
+
+          expect(ineligble_data["reason"]).to eq ineligible_request_issue.ineligible_reason
+          expect(ineligble_data["dueToId"]).to eq ineligible_request_issue.ineligible_due_to_id
+          expect(ineligble_data["titleOfActiveReview"]).to eq ineligible_request_issue.title_of_active_review
+        end
+      end
+
+      it "should include DecisionIssues" do
+        higher_level_review.decision_issues << create(:decision_issue)
+        included_decision_issues = subject.select { |obj| obj["type"] == "DecisionIssue" }
+        expect(included_decision_issues.count).to eq decision_issues.count
+        expect(included_decision_issues.first["attributes"].keys).to include(
+          "approxDecisionDate", "decisionText", "description", "disposition", "finalized"
+        )
+      end
+    end
   end
 
   describe "#create" do
+    let(:params) do
+      {
+        data: data,
+        included: included
+      }
+    end
+
+    let(:post_params) do
+      [
+        "/api/v3/decision_review/higher_level_reviews",
+        { params: params, headers: { "Authorization" => "Token #{api_key}" } }
+      ]
+    end
+
     context do
       before do
         allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
