@@ -57,13 +57,13 @@ RSpec.describe Organizations::TasksController, :all_dbs, type: :controller do
           :task,
           appeal: appeal,
           appeal_type: "LegacyAppeal",
-          type: :GenericTask,
+          type: :Task,
           assigned_to: vso
         ),
         create(
           :task,
           appeal: create(:appeal),
-          type: :GenericTask,
+          type: :Task,
           assigned_to: vso
         )
       ]

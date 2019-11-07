@@ -330,13 +330,13 @@ class RequestIssue < ApplicationRecord
   end
 
   def approx_decision_date_of_issue_being_contested
-    return if is_unidentified
-
     if contested_issue
       contested_issue.approx_decision_date
     elsif decision_date
       decision_date
     else
+      return if is_unidentified
+
       # in theory we should never get here
       fail MissingDecisionDate, id
     end
@@ -578,6 +578,10 @@ class RequestIssue < ApplicationRecord
     contested_decision_issue&.remanded?
   end
 
+  def title_of_active_review
+    duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+  end
+
   private
 
   # When a request issue already has a rating in VBMS, prevent user from editing it.
@@ -638,10 +642,6 @@ class RequestIssue < ApplicationRecord
 
   def contested_issue
     @contested_issue ||= build_contested_issue
-  end
-
-  def title_of_active_review
-    duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
   end
 
   def duplicate_of_issue_in_active_review?

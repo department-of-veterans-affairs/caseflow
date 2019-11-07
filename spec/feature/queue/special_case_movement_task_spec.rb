@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "support/vacols_database_cleaner"
+require "support/database_cleaner"
 require "rails_helper"
 
 RSpec.feature "SpecialCaseMovementTask", :all_dbs do
@@ -18,11 +19,10 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
   end
 
   before do
-    OrganizationsUser.add_user_to_organization(scm_user,
-                                               SpecialCaseMovementTeam.singleton)
+    SpecialCaseMovementTeam.singleton.add_user(scm_user)
     User.authenticate!(user: scm_user)
   end
-  describe "Special Case Movement Team Memeber" do
+  describe "Special Case Movement Team Member" do
     context "With the Appeal in the right state" do
       it "successfully assigns the task to judge" do
         visit("queue/appeals/#{appeal.external_id}")

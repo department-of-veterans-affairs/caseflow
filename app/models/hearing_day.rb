@@ -82,14 +82,7 @@ class HearingDay < ApplicationRecord
   end
 
   def to_hash
-    serializable_hash(
-      methods: [
-        :judge_first_name,
-        :judge_last_name,
-        :readable_request_type,
-        :total_slots
-      ]
-    )
+    ::HearingDaySerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def hearing_day_full?
@@ -110,10 +103,6 @@ class HearingDay < ApplicationRecord
 
   def judge_last_name
     judge ? judge.full_name.split(" ").last : nil
-  end
-
-  def readable_request_type
-    Hearing::HEARING_TYPES[request_type.to_sym]
   end
 
   private
