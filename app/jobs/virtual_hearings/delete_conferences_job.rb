@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class VirtualHearings::DeleteConferencesJob < ApplicationJob
+  include VirtualHearings::PexipClient
+
   queue_with_priority :low_priority
   application_attr :hearing_schedule
 
@@ -27,14 +29,14 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
 
     virtual_hearing.conference_deleted = true
 
-    send_cancellation_emails(virtual_hearing) if virtual_hearing.cancelled?
-
-    virtual_hearing.save!
+    if virtual_hearing.cancelled?
+      VirtualHearings::SendEmail(virtual_hearing: virtual_hearing, type: :cancellation).call
+    end
   end
 
   # Returns whether or not the conference was deleted from Pexip
   def delete_conference(virtual_hearing)
-    response = pexip_service.delete_conference(conference_id: virtual_hearing.conference_id)
+    response = client.delete_conference(conference_id: virtual_hearing.conference_id)
 
     fail response.error unless response.success?
 
@@ -57,22 +59,5 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
     )
 
     false
-  end
-
-  def send_cancellation_emails(virtual_hearing)
-    if !virtual_hearing.veteran_email_sent
-      # TODO: Send the email
-      virtual_hearing.veteran_email_sent = true
-    end
-
-    if !virtual_hearing.judge_email_sent
-      # TODO: Send the email
-      virtual_hearing.judge_email_sent = true
-    end
-
-    if !virtual_hearing.representative_email.nil? && !virtual_hearing.representative_email_sent
-      # TODO: Send the email
-      virtual_hearing.representative_email_sent = true
-    end
   end
 end
