@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
+import COPY from '../../COPY.json';
 import { getMinutesToMilliseconds } from '../util/DateUtil';
 import { associateTasksWithAppeals } from './utils';
 
@@ -29,13 +30,26 @@ class QueueLoadingScreen extends React.PureComponent {
       loadedUserId
     } = this.props;
 
-    if (!_.isEmpty(amaTasks) && !_.isEmpty(appeals) && loadedUserId === userId) {
+    if (!_.isEmpty(amaTasks) && !_.isEmpty(appeals) && loadedUserId === userId && !this.queueConfigIsStale()) {
       return Promise.resolve();
     }
 
     this.props.setUserId(userId);
 
     return this.props.fetchAmaTasksOfUser(userId, userRole);
+  }
+
+  // When navigating between team and individual queues the configs we get from the back-end could be stale and return
+  // the team queue config. In such situations we want to refetch the queue config from the back-end.
+  queueConfigIsStale = () => {
+    const config = this.props.queueConfig;
+
+    // If no queue config is in state (may be using attorney or judge queue) then it is not stale.
+    if (config && config.table_title && config.table_title !== COPY.COLOCATED_QUEUE_PAGE_TABLE_TITLE) {
+      return true;
+    }
+
+    return false;
   }
 
   maybeLoadLegacyQueue = () => {
@@ -124,6 +138,7 @@ QueueLoadingScreen.propTypes = {
   loadedUserId: PropTypes.number,
   loadAttorneys: PropTypes.bool,
   onReceiveQueue: PropTypes.func,
+  queueConfig: PropTypes.object,
   setAttorneysOfJudge: PropTypes.func,
   setUserId: PropTypes.func,
   tasks: PropTypes.object,
@@ -139,7 +154,8 @@ const mapStateToProps = (state) => {
     tasks,
     appeals,
     amaTasks,
-    loadedUserId: state.ui.loadedUserId
+    loadedUserId: state.ui.loadedUserId,
+    queueConfig: state.queue.queueConfig
   };
 };
 
