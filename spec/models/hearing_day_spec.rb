@@ -31,11 +31,11 @@ describe HearingDay, :all_dbs do
         }
       end
 
-      it "creates hearing with required attributes" do
+      it "creates hearing with required attributes", :aggregate_failures do
         expect(hearing[:readable_request_type]).to eq Hearing::HEARING_TYPES[:C]
         expect(hearing[:scheduled_for].strftime("%Y-%m-%d"))
           .to eq test_hearing_date_vacols.strftime("%Y-%m-%d")
-        expect(hearing[:room]).to eq "1"
+        expect(hearing[:room]).to eq "1 (1W200A)"
       end
     end
 
@@ -48,11 +48,11 @@ describe HearingDay, :all_dbs do
         }
       end
 
-      it "creates hearing with required attributes" do
+      it "creates hearing with required attributes", :aggregate_failures do
         expect(hearing[:readable_request_type]).to eq Hearing::HEARING_TYPES[:C]
         expect(hearing[:scheduled_for].strftime("%Y-%m-%d"))
           .to eq test_hearing_date_caseflow.strftime("%Y-%m-%d")
-        expect(hearing[:room]).to eq "1"
+        expect(hearing[:room]).to eq "1 (1W200A)"
       end
     end
 
@@ -66,12 +66,12 @@ describe HearingDay, :all_dbs do
         }
       end
 
-      it "creates a video hearing" do
+      it "creates a video hearing", :aggregate_failures do
         expect(hearing[:readable_request_type]).to eq Hearing::HEARING_TYPES[:C]
         expect(hearing[:scheduled_for].strftime("%Y-%m-%d %H:%M:%S"))
           .to eq test_hearing_date_caseflow.strftime("%Y-%m-%d %H:%M:%S")
-        expect(hearing[:regional_office]).to eq "RO89"
-        expect(hearing[:room]).to eq "5"
+        expect(hearing[:regional_office]).to eq "General Counsel, DC"
+        expect(hearing[:room]).to eq "5 (1W428)"
       end
     end
   end
@@ -92,7 +92,7 @@ describe HearingDay, :all_dbs do
 
     subject { hearing_day.update!(hearing_hash) }
 
-    it "updates attributes" do
+    it "updates attributes", :aggregate_failures do
       subject
 
       updated_hearing_day = HearingDay.find(hearing_day.id).reload
@@ -143,7 +143,7 @@ describe HearingDay, :all_dbs do
           }
         end
 
-        it "updates children hearings with a new room and judge" do
+        it "updates children hearings with a new room and judge", :aggregate_failures do
           subject
 
           updated_vacols_child_hearing = vacols_child_hearing.reload
