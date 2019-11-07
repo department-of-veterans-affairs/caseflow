@@ -87,7 +87,7 @@ export const addIssue = (currentIssue) => (dispatch) => {
   });
 };
 
-export const addUnidentifiedIssue = (description, notes, correctionType) => (dispatch) => {
+export const addUnidentifiedIssue = (description, notes, correctionType, decisionDate) => (dispatch) => {
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {
@@ -95,7 +95,8 @@ export const addUnidentifiedIssue = (description, notes, correctionType) => (dis
       description,
       notes,
       correctionType,
-      editable: true
+      editable: true,
+      decisionDate
     }
   });
 };
@@ -109,6 +110,7 @@ export const addContestableIssue = (args) => (dispatch) => {
       index: args.contestableIssueIndex,
       isRating: args.isRating,
       ratingIssueReferenceId: currentIssue.ratingIssueReferenceId,
+      ratingDecisionReferenceId: currentIssue.ratingDecisionReferenceId,
       ratingIssueProfileDate: currentIssue.ratingIssueProfileDate,
       ratingIssueDiagnosticCode: currentIssue.ratingIssueDiagnosticCode,
       decisionIssueId: currentIssue.decisionIssueId,

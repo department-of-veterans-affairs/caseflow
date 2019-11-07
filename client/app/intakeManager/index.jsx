@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
-import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/ReduxBase';
+import ReduxBase from '../components/ReduxBase';
 
 import { BrowserRouter, Route } from 'react-router-dom';
 
@@ -12,6 +13,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 const IntakeManager = ({
   userDisplayName,
   dropdownUrls,
+  selectedUser,
   feedbackUrl,
   buildDate
 }) => {
@@ -34,7 +36,7 @@ const IntakeManager = ({
             <div className="cf-wide-app">
               <div className="usa-grid">
                 <Route exact path="/"
-                  component={() => <FlaggedForReviewContainer />}
+                  component={() => <FlaggedForReviewContainer selectedUser={selectedUser} />}
                 />
 
               </div>

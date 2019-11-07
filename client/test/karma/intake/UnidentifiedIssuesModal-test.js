@@ -12,7 +12,11 @@ describe('UnidentifiedIssuesModal', () => {
   context('renders', () => {
     it('renders button text', () => {
       const wrapper = mount(
-        <UnidentifiedIssuesModal formType={formType} intakeData={intakeData} onSkip={() => null} />
+        <UnidentifiedIssuesModal 
+        formType={formType} 
+        intakeData={intakeData} 
+        featureToggles={{ unidentifiedIssueDecisionDate: true }} 
+        onSkip={() => null} />
       );
 
       const cancelBtn = wrapper.find('.cf-modal-controls .close-modal');
@@ -35,7 +39,10 @@ describe('UnidentifiedIssuesModal', () => {
     });
 
     it('skip button only with onSkip prop', () => {
-      const wrapper = mount(<UnidentifiedIssuesModal formType={formType} intakeData={intakeData} />);
+      const wrapper = mount(<UnidentifiedIssuesModal 
+        formType={formType} 
+        intakeData={intakeData} 
+        featureToggles={{ unidentifiedIssueDecisionDate: true }} />);
 
       expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).to.equal(false);
 
@@ -44,7 +51,9 @@ describe('UnidentifiedIssuesModal', () => {
     });
 
     it('disables button when nothing selected', () => {
-      const wrapper = mount(<UnidentifiedIssuesModal formType={formType} intakeData={intakeData} />);
+      const wrapper = mount(<UnidentifiedIssuesModal formType={formType} 
+        intakeData={intakeData} 
+        featureToggles={{ unidentifiedIssueDecisionDate: true }} />);
 
       const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
 

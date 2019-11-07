@@ -23,6 +23,7 @@ class ClaimReview < DecisionReview
   self.abstract_class = true
 
   class NoEndProductsRequired < StandardError; end
+  class NotYetProcessed < StandardError; end
 
   class << self
     def find_by_uuid_or_reference_id!(claim_id)
@@ -41,6 +42,7 @@ class ClaimReview < DecisionReview
 
   def ui_hash
     super.merge(
+      asyncJobUrl: async_job_url,
       benefitType: benefit_type,
       payeeCode: payee_code,
       hasClearedRatingEp: cleared_rating_ep?,
@@ -49,6 +51,8 @@ class ClaimReview < DecisionReview
   end
 
   def validate_prior_to_edit
+    fail NotYetProcessed unless processed?
+
     # force sync on initial edit call so that we have latest EP status.
     # This helps prevent us editing something that recently closed upstream.
     sync_end_product_establishments!
@@ -59,8 +63,8 @@ class ClaimReview < DecisionReview
     ui_hash
   end
 
-  def caseflow_only_edit_issues_url
-    "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
+  def async_job_url
+    "/asyncable_jobs/#{self.class}/jobs/#{id}"
   end
 
   def finalized_decision_issues_before_receipt_date
@@ -76,29 +80,18 @@ class ClaimReview < DecisionReview
   # Save issues and assign it the appropriate end product establishment.
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
-    new_issues.each do |issue|
-      if processed_in_caseflow? || !issue.eligible?
-        issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
-      else
-        issue.update!(
-          end_product_establishment: end_product_establishment_for_issue(issue),
-          benefit_type: benefit_type,
-          veteran_participant_id: veteran.participant_id
-        )
-      end
-      issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
-    end
+    new_issues.each(&:create_for_claim_review!)
     request_issues.reload
-  end
-
-  def create_decision_review_task_if_required!
-    create_decision_review_task! if processed_in_caseflow?
   end
 
   def add_user_to_business_line!
     return unless processed_in_caseflow?
 
-    OrganizationsUser.add_user_to_organization(RequestStore.store[:current_user], business_line)
+    business_line.add_user(RequestStore.store[:current_user])
+  end
+
+  def create_business_line_tasks!
+    create_decision_review_task! if processed_in_caseflow?
   end
 
   # Idempotent method to create all the artifacts for this claim.
@@ -161,6 +154,7 @@ class ClaimReview < DecisionReview
       end_product_status: search_table_statuses,
       establishment_error: establishment_error,
       review_type: self.class.to_s.underscore,
+      receipt_date: receipt_date,
       veteran_file_number: veteran_file_number,
       veteran_full_name: claim_veteran&.name&.formatted(:readable_full),
       caseflow_only_edit_issues_url: caseflow_only_edit_issues_url
@@ -202,12 +196,8 @@ class ClaimReview < DecisionReview
     request_issues.first.api_aoj_from_benefit_type
   end
 
-  def issues_hash
-    issue_list = active_status? ? request_issues.active.all : fetch_all_decision_issues
-
-    return [] if issue_list.empty?
-
-    fetch_issues_status(issue_list)
+  def active_request_issues_or_decision_issues
+    active_status? ? request_issues.active.all : fetch_all_decision_issues
   end
 
   def contention_records(epe)
@@ -223,6 +213,8 @@ class ClaimReview < DecisionReview
   end
 
   def end_product_establishment_for_issue(issue)
+    return unless issue.eligible? && processed_in_vbms?
+
     end_product_establishments.find_by(
       "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
       issue.end_product_code,
@@ -238,7 +230,7 @@ class ClaimReview < DecisionReview
   end
 
   def can_contest_rating_issues?
-    processed_in_vbms?
+    processed_in_vbms? && !try(:decision_review_remanded?)
   end
 
   private
@@ -266,6 +258,7 @@ class ClaimReview < DecisionReview
 
   def create_decision_review_task!
     return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
+    return if request_issues.active.blank?
 
     DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
   end

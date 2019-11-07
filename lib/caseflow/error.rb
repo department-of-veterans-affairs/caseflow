@@ -29,6 +29,7 @@ module Caseflow::Error
   class VaDotGovServerError < VaDotGovAPIError; end
   class VaDotGovLimitError < VaDotGovAPIError; end
   class VaDotGovAddressCouldNotBeFoundError < VaDotGovAPIError; end
+  class VaDotGovMissingFacilityError < VaDotGovAPIError; end
   class VaDotGovInvalidInputError < VaDotGovAPIError; end
   class VaDotGovMultipleAddressError < VaDotGovAPIError; end
   class VaDotGovNullAddressError < StandardError; end
@@ -40,6 +41,14 @@ module Caseflow::Error
     def initialize(args = {})
       @code = args[:code] || 403
       @message = args[:message] || "Action forbidden"
+    end
+  end
+
+  class InvalidParameter < SerializableError
+    def initialize(args = {})
+      @code = args[:code] || 400
+      @parameter = args[:parameter] || ""
+      @message = args[:message] || "Invalid parameter '#{@parameter}'"
     end
   end
 
@@ -208,6 +217,7 @@ module Caseflow::Error
       @error_code = error_code
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity
     def self.from_vbms_error(error)
       case error.body
       when /PIF is already in use/
@@ -227,6 +237,7 @@ module Caseflow::Error
         error
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
   end
 
   class MissingTimerMethod < StandardError; end
@@ -261,4 +272,9 @@ module Caseflow::Error
 
   class IdtApiError < StandardError; end
   class InvalidOneTimeKey < IdtApiError; end
+
+  class PexipApiError < SerializableError; end
+  class PexipNotFoundError < PexipApiError; end
+  class PexipBadRequestError < PexipApiError; end
+  class PexipMethodNotAllowedError < PexipApiError; end
 end

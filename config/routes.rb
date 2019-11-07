@@ -32,7 +32,10 @@ Rails.application.routes.draw do
     end
     namespace :v3 do
       namespace :decision_review do
-        resources :higher_level_reviews, only: :create
+        resources :higher_level_reviews, only: [:create, :show]
+        resources :supplemental_claims, only: [:create, :show]
+        resources :appeals, only: [:create, :show]
+        resources :intake_statuses, only: :show
       end
     end
     namespace :docs do
@@ -58,7 +61,6 @@ Rails.application.routes.draw do
       end
     end
   end
-
 
   namespace :metrics do
     namespace :v1 do
@@ -103,7 +105,7 @@ Rails.application.routes.draw do
 
   namespace :reader do
     get 'appeal/veteran-id', to: "appeal#find_appeals_by_veteran_id",
-      constraints: lambda{ |req| req.env["HTTP_VETERAN_ID"] =~ /[a-zA-Z0-9]{2,12}/ }
+      constraints: lambda{ |req| req.env["HTTP_CASE_SEARCH"] =~ /[a-zA-Z0-9]{2,12}/ }
     resources :appeal, only: [:show, :index] do
       resources :documents, only: [:show, :index]
       resources :claims_folder_searches, only: :create
@@ -115,7 +117,7 @@ Rails.application.routes.draw do
       get :document_count
       get :veteran
       get :power_of_attorney
-      get :hearings
+      get 'hearings', to: "appeals#most_recent_hearing"
       resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
       resources :special_issues, only: [:create, :index]
       resources :advance_on_docket_motions, only: [:create]
@@ -124,8 +126,6 @@ Rails.application.routes.draw do
     end
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
-
-  resources :beaam_appeals, only: [:index]
 
   resources :regional_offices, only: [:index]
   get '/regional_offices/:regional_office/hearing_dates', to: "regional_offices#hearing_dates"
@@ -164,6 +164,7 @@ Rails.application.routes.draw do
     get "/postpone_and_reschedule", to: "hearing_tasks#postpone_and_reschedule"
     get "/postpone_and_reschedule_later_with_admin_action", to: "hearing_tasks#postpone_and_reschedule_later_with_admin_action"
   end
+  post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
 
   resources :hearings, only: [:update, :show]
 
@@ -211,17 +212,27 @@ Rails.application.routes.draw do
 
   resources :asyncable_jobs, param: :klass, only: [] do
     resources :jobs, controller: :asyncable_jobs, param: :id, only: [:index, :show, :update]
+    post "jobs/:id/note", to: "asyncable_jobs#add_note"
   end
   match '/jobs' => 'asyncable_jobs#index', via: [:get]
 
-  resources :users, only: [:index]
+  scope path: "/inbox" do
+    get "/", to: "inbox#index"
+    patch "/messages/:id", to: "inbox#update"
+  end
+
+  resources :users, only: [:index, :update]
+  resources :users, only: [:index] do
+    get 'represented_organizations', on: :member
+  end
+  get 'user', to: 'users#search_by_css_id'
+  get 'user_info/represented_organizations'
 
   get 'cases/:veteran_ids', to: 'appeals#show_case_list'
   get 'cases_to_schedule/:ro', to: 'tasks#ready_for_hearing_schedule'
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
-    get '/beaam', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
@@ -234,9 +245,12 @@ Rails.application.routes.draw do
   post '/team_management/national_vso', to: 'team_management#create_national_vso'
   post '/team_management/field_vso', to: 'team_management#create_field_vso'
 
+  resources :user_management, only: [:index]
+
   get '/search', to: 'appeals#show_case_list'
 
   resources :legacy_tasks, only: [:create, :update]
+  post '/legacy_tasks/assign_to_judge', to: 'legacy_tasks#assign_to_judge'
   resources :tasks, only: [:index, :create, :update] do
     member do
       post :reschedule
@@ -293,6 +307,8 @@ Rails.application.routes.draw do
   %w( 404 500 ).each do |code|
     get code, :to => "errors#show", :status_code => code
   end
+
+  post "post_decision_motions", to: "post_decision_motions#create"
 
   # :nocov:
   namespace :test do

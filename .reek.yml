@@ -7,12 +7,28 @@ detectors:
       - BulkTaskAssignment
       - Hearing#override_full_hearing_day_validation
       - QueueConfig
+      - RatingDecision
   BooleanParameter:
     exclude:
       - HearingRepository#slot_new_hearing
+      - Veteran
   ControlParameter:
     exclude:
+      - Fakes::BGSService
       - HearingRepository#slot_new_hearing
+      - Task#actions_allowable?
+      - TaskSorter#sort_requires_case_norm?
+      - Veteran
+  UncommunicativeVariableName:
+    exclude:
+      - Address
+      - Fakes::PersistentStore#convert_dates_from
+  LongParameterList:
+    exclude:
+      - Address
+  UncommunicativeParameterName:
+    exclude:
+      - Address
   DataClump:
     exclude:
       - HearingSerializerBase
@@ -22,36 +38,60 @@ detectors:
     exclude:
       - Api::ApplicationController#on_external_error
       - Api::ApplicationController#upstream_known_error
+      - AppealTaskHistory#build_events
+      - ApplicationRecord#as_hash
       - AsyncableJobsReporter
+      - ClaimReviewAsyncStatsReporter#as_csv
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
       - Fakes::EndProductStore
+      - Fakes::BGSService#get_participant_id_for_user
+      - Fakes::BGSServiceRecordMaker
+      - Fakes::PersistentStore#convert_dates_from
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - HearingSerializerBase
-      - VeteranAttributeCacher
+      - LegacyAppeal#cancel_open_caseflow_tasks!
+      - MonthlyMetricsReportJob#build_report
       - SyncReviewsJob
       - TaskTimerJob
+      - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
+      - VeteranAttributeCacher
       - WarmBgsCachesJob
+      - ExternalApi::PexipService#send_pexip_request
   InstanceVariableAssumption:
     exclude:
       - Appeal
       - Task
+      - CaseflowJob
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor
   IrresponsibleModule:
     enabled: false
+  ManualDispatch:
+    exclude:
+      - Api::V3::DecisionReview::IntakeParams
+      - Api::V3::DecisionReview::RequestIssueParams#shape_valid?
+      - Api::V3::DecisionReview::IntakeError#potential_error_code
   MissingSafeMethod:
     enabled: false
   NestedIterators:
+    max_allowed_nesting: 2
     exclude:
       - AsyncableJobsReporter
   NilCheck:
     enabled: false
   RepeatedConditional:
     exclude:
+      - HearingLocation
       - QueueConfig
+      - RequestIssue
+      - BulkTaskReassignment
+      - Task
   TooManyInstanceVariables:
     exclude:
       - AmaAppealDispatch
       - LegacyAppealDispatch
+      - Address
+      - ExternalApi::PexipService
   TooManyMethods:
     enabled: false
   TooManyStatements:
@@ -63,7 +103,11 @@ detectors:
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
-      - OnHoldTasksTab#name
+      - LatestRatingDisabilityEvaluation#latest_disability_evaluation
+      - OrganizationOnHoldTasksTab#name
+      - OrganizationTrackingTasksTab#column_names
+      - Fakes::BGSService
+      - Fakes::PexipService
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.

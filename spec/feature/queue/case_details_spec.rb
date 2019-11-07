@@ -91,7 +91,7 @@ RSpec.feature "Case details", :all_dbs do
           .click_link
 
         expect(page).to have_content("Select an action")
-
+        expect(page).to have_content(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
         expect(page).to have_content("Type: #{hearing.readable_request_type}")
         expect(page).to have_content("Date: #{hearing.scheduled_for.strftime('%-m/%-d/%y')}")
         expect(page).to have_content("Judge: #{hearing.user.full_name}")
@@ -153,7 +153,7 @@ RSpec.feature "Case details", :all_dbs do
         let!(:vso_task) { create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: appeal) }
 
         before do
-          OrganizationsUser.add_user_to_organization(vso_user, vso)
+          vso.add_user(vso_user)
           allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
           User.authenticate!(user: vso_user)
         end
@@ -205,12 +205,15 @@ RSpec.feature "Case details", :all_dbs do
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("About the Veteran")
+        expect(page).not_to have_content("About the Appellant")
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to have_content("1/10/1935")
         expect(page).to have_content(appeal.veteran_address_line_1)
         expect(page).to_not have_content("Regional Office")
       end
+
       scenario "when there is no POA" do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
         expect(page).to have_content("Power of Attorney")
@@ -241,6 +244,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("About the Veteran")
+        expect(page).not_to have_content("About the Appellant")
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to_not have_content("1/10/1935")
         expect(page).to_not have_content("5/25/2016")
@@ -364,17 +368,53 @@ RSpec.feature "Case details", :all_dbs do
       )
     end
 
-    before { attorney_user.update!(roles: attorney_user.roles + ["Reader"]) }
-    after { attorney_user.update!(roles: attorney_user.roles - ["Reader"]) }
+    context "with reader role" do
+      before { attorney_user.update!(roles: attorney_user.roles + ["Reader"]) }
+      after { attorney_user.update!(roles: attorney_user.roles - ["Reader"]) }
 
-    scenario "reader link appears on page and sends us to reader" do
-      visit "/queue"
-      click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-      click_on "View #{appeal.documents.count} docs"
+      scenario "reader link appears on page and sends us to reader" do
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        click_on "View #{appeal.documents.count} docs"
 
-      # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
-      expect(page).to have_content("CaseflowQueue")
-      expect(page).to have_content("Back to Your Queue\n#{appeal.veteran_full_name}")
+        expect(page).to have_content("CaseflowQueue")
+        expect(page).to have_content("Back to your cases\n#{appeal.veteran_full_name}")
+      end
+    end
+
+    context "with ro view hearing schedule role" do
+      let(:roles) { ["RO ViewHearSched"] }
+      let!(:attorney_user) { create(:user, roles: roles) }
+
+      scenario "reader link does not appear on page" do
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        expect(page).to have_content COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL
+        expect(page).to_not have_content COPY::CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE.upcase
+        expect(page).to_not have_content "View #{appeal.documents.count} docs"
+      end
+
+      context "also with build hearing schedule role" do
+        let(:roles) { ["RO ViewHearSched", "Build HearSched"] }
+
+        scenario "reader link appears on page" do
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+          expect(page).to have_content COPY::CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE.upcase
+          expect(page).to have_content "View #{appeal.documents.count} docs"
+        end
+      end
+
+      context "also with edit hearing schedule role" do
+        let(:roles) { ["RO ViewHearSched", "Edit HearSched"] }
+
+        scenario "reader link appears on page" do
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+          expect(page).to have_content COPY::CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE.upcase
+          expect(page).to have_content "View #{appeal.documents.count} docs"
+        end
+      end
     end
   end
 
@@ -645,7 +685,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on "On hold (1)"
         click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
 
-        expect(page).to have_content("TASK\n#{Constants::CO_LOCATED_ADMIN_ACTIONS[on_hold_task.action]}")
+        expect(page).to have_content("TASK\n#{on_hold_task.label}")
         find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
         expect(page).to have_content("TASK INSTRUCTIONS\n#{on_hold_task.instructions[0].squeeze(' ').strip}")
         expect(page).to have_content("#{assigner_name.first[0]}. #{assigner_name.last}")
@@ -685,7 +725,7 @@ RSpec.feature "Case details", :all_dbs do
 
     context "when the current user is a member of the AOD team" do
       before do
-        OrganizationsUser.add_user_to_organization(user, AodTeam.singleton)
+        AodTeam.singleton.add_user(user)
         User.authenticate!(user: user)
       end
 
@@ -729,8 +769,8 @@ RSpec.feature "Case details", :all_dbs do
       before do
         # Marking this task complete creates a BvaDispatchTask. Make sure there are members of that organization so
         # that the creation of that BvaDispatchTask succeeds.
-        OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
-        OrganizationsUser.add_user_to_organization(user, qr)
+        BvaDispatch.singleton.add_user(create(:user))
+        qr.add_user(user)
         User.authenticate!(user: user)
       end
 
@@ -846,9 +886,6 @@ RSpec.feature "Case details", :all_dbs do
   end
 
   describe "AMA decision issue notes" do
-    before { FeatureToggle.enable!(:ama_decision_issues) }
-    after { FeatureToggle.disable!(:ama_decision_issues) }
-
     let(:request_issue) { create(:request_issue, contested_issue_description: "knee pain", notes: notes) }
     let(:appeal) { create(:appeal, number_of_claimants: 1, request_issues: [request_issue]) }
 
@@ -885,7 +922,7 @@ RSpec.feature "Case details", :all_dbs do
              appeal: appeal,
              assigned_by: judge_user,
              assigned_to: attorney_user,
-             type: GenericTask,
+             type: Task,
              parent_id: root_task.id,
              started_at: rand(1..10).days.ago,
              instructions: [instructions_text])
@@ -954,7 +991,7 @@ RSpec.feature "Case details", :all_dbs do
       end
       let!(:legacy_task) do
         create(:task, :in_progress, appeal: legacy_appeal,
-                                    assigned_by: judge_user, assigned_to: attorney_user, type: GenericTask,
+                                    assigned_by: judge_user, assigned_to: attorney_user, type: Task,
                                     parent_id: root_task.id, started_at: rand(1..10).days.ago)
       end
 
@@ -1089,7 +1126,7 @@ RSpec.feature "Case details", :all_dbs do
         judge_task.update!(status: Constants.TASK_STATUSES.completed)
 
         bva_dispatcher = create(:user)
-        OrganizationsUser.add_user_to_organization(bva_dispatcher, BvaDispatch.singleton)
+        BvaDispatch.singleton.add_user(bva_dispatcher)
         BvaDispatchTask.create_from_root_task(root_task)
 
         params = {
@@ -1161,7 +1198,7 @@ RSpec.feature "Case details", :all_dbs do
       let(:user) { create(:user) }
 
       before do
-        OrganizationsUser.add_user_to_organization(user, BvaIntake.singleton)
+        BvaIntake.singleton.add_user(user)
         User.authenticate!(user: user)
       end
 
@@ -1181,7 +1218,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on "Search"
         click_on appeal.docket_number
 
-        new_tasks = appeal_withdrawal_mail_task.children
+        new_tasks = appeal_withdrawal_mail_task.reload.children
         expect(new_tasks.length).to eq(1)
 
         new_task = new_tasks.first
@@ -1203,6 +1240,7 @@ RSpec.feature "Case details", :all_dbs do
 
       context "when the appeal is a legacy appeal" do
         let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+        let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
 
         # Assign a task to the current user so that a row appears on the queue page.
         let!(:task) { create(:ama_attorney_task, appeal: appeal, assigned_to: attorney_user) }

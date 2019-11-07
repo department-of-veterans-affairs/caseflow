@@ -3,14 +3,18 @@
 class OrganizationsUser < ApplicationRecord
   belongs_to :organization
   belongs_to :user
+
+  has_one :judge_team_role, class_name: "::JudgeTeamRole", dependent: :destroy
+
   scope :non_admin, -> { where(admin: false) }
 
-  def self.add_user_to_organization(user, organization)
-    existing_record(user, organization) || create(organization_id: organization.id, user_id: user.id)
-  end
+  # Deprecated: add_user_to_organization(user, organization)
+  # Use instead: organization.add_user(user)
 
   def self.make_user_admin(user, organization)
-    add_user_to_organization(user, organization).update!(admin: true)
+    organization.add_user(user).tap do |org_user|
+      org_user.update!(admin: true)
+    end
   end
 
   def self.remove_admin_rights_from_user(user, organization)

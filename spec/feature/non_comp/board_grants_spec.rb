@@ -5,12 +5,7 @@ require "rails_helper"
 
 feature "NonComp Board Grant Task Page", :postgres do
   before do
-    FeatureToggle.enable!(:decision_reviews)
     Timecop.freeze(post_ama_start_date)
-  end
-
-  after do
-    FeatureToggle.disable!(:decision_reviews)
   end
 
   def submit_form
@@ -55,7 +50,7 @@ feature "NonComp Board Grant Task Page", :postgres do
 
   before do
     User.stub = user
-    OrganizationsUser.add_user_to_organization(user, nca_org)
+    nca_org.add_user(user)
   end
 
   scenario "cancel returns back to business line" do
@@ -111,7 +106,7 @@ feature "NonComp Board Grant Task Page", :postgres do
 
   context "appeal with issues for multiple organizations" do
     before do
-      OrganizationsUser.add_user_to_organization(user, vha_org)
+      vha_org.add_user(user)
     end
 
     let!(:vha_org) { create(:business_line, name: "veterans health admin", url: "vha") }

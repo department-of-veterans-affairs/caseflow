@@ -7,7 +7,7 @@ describe TeamManagementController, :postgres, type: :controller do
   let(:user) { create(:user) }
 
   before do
-    OrganizationsUser.add_user_to_organization(user, Bva.singleton)
+    Bva.singleton.add_user(user)
     User.authenticate!(user: user)
   end
 

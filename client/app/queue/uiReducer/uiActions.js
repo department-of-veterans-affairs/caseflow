@@ -65,7 +65,7 @@ const saveFailure = (err) => (dispatch) => {
   let uiErrorMessage;
 
   try {
-    uiErrorMessage = JSON.parse(response.text);
+    uiErrorMessage = response.body;
   } catch (ex) {
     // the default case if there is no `text` node in the response (ie the backend did not return sufficient info)
     uiErrorMessage = {
@@ -101,6 +101,8 @@ export const requestSave = (
     catch((err) => dispatch(saveFailure(err)));
 };
 
+export const requestGet = (url, params, successMessage) =>
+  requestSave(url, params, successMessage, 'get');
 export const requestPatch = (url, params, successMessage) =>
   requestSave(url, params, successMessage, 'patch');
 export const requestUpdate = (url, params, successMessage) =>

@@ -8,7 +8,7 @@ describe MailTask, :postgres do
   let(:mail_team) { MailTeam.singleton }
   let(:root_task) { create(:root_task) }
   before do
-    OrganizationsUser.add_user_to_organization(user, mail_team)
+    mail_team.add_user(user)
   end
 
   describe ".create_from_params" do
@@ -60,6 +60,28 @@ describe MailTask, :postgres do
         expect { task_class.create_from_params(params, non_mail_user) }.to raise_error(
           Caseflow::Error::ActionForbiddenError
         )
+      end
+    end
+
+    context "when the task is a blocking mail task" do
+      let(:task_class) { FoiaRequestMailTask }
+      let!(:distribution_task) { create(:distribution_task, parent: root_task, appeal: root_task.appeal) }
+
+      it "creates FoiaRequestMailTask as a child of the distribution task" do
+        expect { task_class.create_from_params(params, user) }.to_not raise_error
+        expect(distribution_task.children.length).to eq(1)
+
+        mail_task = distribution_task.children[0]
+        expect(mail_task.class).to eq(task_class)
+        expect(mail_task.assigned_to).to eq(mail_team)
+        expect(mail_task.children.length).to eq(1)
+
+        child_task = mail_task.children[0]
+        expect(child_task.class).to eq(task_class)
+        expect(child_task.assigned_to).to eq(PrivacyTeam.singleton)
+        expect(child_task.children.length).to eq(0)
+
+        expect(root_task.appeal.ready_for_distribution?).to eq false
       end
     end
   end
@@ -467,21 +489,21 @@ describe MailTask, :postgres do
 
       context "for a ClearAndUnmistakeableErrorMailTask" do
         let(:task_class) { ClearAndUnmistakeableErrorMailTask }
-        it "returns the available_actions as defined by GenericTask" do
+        it "returns the available_actions as defined by Task" do
           expect(subject).to eq(generic_task_actions)
         end
       end
 
       context "for a ReconsiderationMotionMailTask" do
         let(:task_class) { ReconsiderationMotionMailTask }
-        it "returns the available_actions as defined by GenericTask" do
+        it "returns the available_actions as defined by Task" do
           expect(subject).to eq(generic_task_actions)
         end
       end
 
       context "for a VacateMotionMailTask" do
         let(:task_class) { VacateMotionMailTask }
-        it "returns the available_actions as defined by GenericTask" do
+        it "returns the available_actions as defined by Task" do
           expect(subject).to eq(generic_task_actions)
         end
       end

@@ -14,9 +14,16 @@ describe DecisionReview, :postgres do
   let(:higher_level_review) do
     create(:higher_level_review, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
   end
-
+  let(:decision_review_remanded) { nil }
+  let(:benefit_type) { "compensation" }
   let(:supplemental_claim) do
-    create(:supplemental_claim, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
+    create(
+      :supplemental_claim,
+      veteran_file_number: veteran.file_number,
+      receipt_date: receipt_date,
+      decision_review_remanded: decision_review_remanded,
+      benefit_type: benefit_type
+    )
   end
 
   let(:receipt_date) { Time.zone.today }
@@ -79,6 +86,36 @@ describe DecisionReview, :postgres do
     ]
   end
 
+  context "#can_contest_rating_issues?" do
+    subject { decision_review.can_contest_rating_issues? }
+
+    context "for an appeal" do
+      let(:decision_review) { appeal }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "for a claim review" do
+      let(:decision_review) { supplemental_claim }
+
+      context "when processed in vbms" do
+        it { is_expected.to eq(true) }
+
+        context "when the decision review is a remand supplemental claim" do
+          let(:decision_review_remanded) { create(:higher_level_review) }
+
+          it { is_expected.to eq(false) }
+        end
+      end
+
+      context "when processed in caseflow" do
+        let(:benefit_type) { "education" }
+
+        it { is_expected.to eq(false) }
+      end
+    end
+  end
+
   context "#removed?" do
     subject { higher_level_review.removed? }
 
@@ -103,7 +140,7 @@ describe DecisionReview, :postgres do
   end
 
   context "#contestable_issues" do
-    subject { higher_level_review.contestable_issues }
+    subject { supplemental_claim.contestable_issues }
 
     def find_serialized_issue(serialized_contestable_issues, ref_id_or_description)
       serialized_contestable_issues.find do |i|
@@ -119,6 +156,7 @@ describe DecisionReview, :postgres do
         ratingIssueReferenceId: "123",
         ratingIssueProfileDate: profile_date,
         ratingIssueDiagnosticCode: nil,
+        ratingDecisionReferenceId: nil,
         decisionIssueId: decision_issues.first.id,
         approxDecisionDate: promulgation_date,
         description: "decision issue 1",
@@ -134,6 +172,7 @@ describe DecisionReview, :postgres do
         ratingIssueReferenceId: "456",
         ratingIssueProfileDate: profile_date,
         ratingIssueDiagnosticCode: nil,
+        ratingDecisionReferenceId: nil,
         decisionIssueId: nil,
         approxDecisionDate: promulgation_date,
         description: "rating issue 2",
@@ -149,6 +188,7 @@ describe DecisionReview, :postgres do
         ratingIssueReferenceId: "789",
         ratingIssueProfileDate: profile_date + 1.day,
         ratingIssueDiagnosticCode: nil,
+        ratingDecisionReferenceId: nil,
         decisionIssueId: decision_issues.second.id,
         approxDecisionDate: promulgation_date + 1.day,
         description: "decision issue 2",
@@ -164,6 +204,7 @@ describe DecisionReview, :postgres do
         ratingIssueReferenceId: nil,
         ratingIssueProfileDate: nil,
         ratingIssueDiagnosticCode: nil,
+        ratingDecisionReferenceId: nil,
         decisionIssueId: decision_issues.third.id,
         approxDecisionDate: promulgation_date,
         description: "decision issue 3",
@@ -183,8 +224,19 @@ describe DecisionReview, :postgres do
                rating_profile_date: receipt_date + 1.day,
                end_product_last_action_date: receipt_date + 1.day,
                benefit_type: supplemental_claim.benefit_type,
-               decision_text: "something was decided in the future",
-               description: "future decision issue",
+               decision_text: "something was decided in the future 1",
+               description: "future decision issue from same review",
+               participant_id: veteran.participant_id)
+      end
+
+      let!(:future_decision_issue2) do
+        create(:decision_issue,
+               decision_review: higher_level_review,
+               rating_profile_date: receipt_date + 1.day,
+               end_product_last_action_date: receipt_date + 1.day,
+               benefit_type: higher_level_review.benefit_type,
+               decision_text: "something was decided in the future 2",
+               description: "future decision issue from a different review",
                participant_id: veteran.participant_id)
       end
 
@@ -201,47 +253,34 @@ describe DecisionReview, :postgres do
         )
       end
 
-      it "does not return decision issues in the future" do
-        expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
-        expect(subject.map(&:serialize)).to_not include(hash_including(description: "future decision issue"))
-        expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
-        expect(subject.map(&:serialize)).to_not include(hash_including(description: "future rating issue 2"))
-      end
-    end
-
-    context "when a decision issue is voided" do
-      let(:request_issue) { create(:request_issue, corrected_by_request_issue_id: create(:request_issue).id) }
-      let!(:voided_decision_issue) do
-        create(:decision_issue,
-               :rating,
-               request_issues: [request_issue],
-               participant_id: participant_id,
-               rating_issue_reference_id: "321",
-               decision_text: "voided decision issue 1",
-               benefit_type: higher_level_review.benefit_type,
-               rating_profile_date: profile_date,
-               rating_promulgation_date: promulgation_date,
-               decision_review: higher_level_review)
+      context "without correct_claim_reviews feature toggle" do
+        it "does include decision issues in the future that correspond to same review" do
+          expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
+          expect(subject.map(&:serialize)).to_not include(
+            hash_including(description: "future decision issue from same review")
+          )
+          expect(subject.map(&:serialize)).to_not include(
+            hash_including(description: "future decision issue from a different review")
+          )
+          expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
+          expect(subject.map(&:serialize)).to_not include(hash_including(description: "future rating issue 2"))
+        end
       end
 
-      let!(:rating) do
-        Generators::Rating.build(
-          issues: [
-            { reference_id: "321", decision_text: "rating issue 1" },
-            { reference_id: "654", decision_text: "rating issue 2" }
-          ],
-          promulgation_date: promulgation_date,
-          profile_date: profile_date,
-          participant_id: participant_id,
-          associated_claims: associated_claims
-        )
-      end
+      context "with correct_claim_reviews feature toggle" do
+        before { FeatureToggle.enable!(:correct_claim_reviews) }
 
-      it "does not return voided decision issues and voided ratings" do
-        expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
-        expect(subject.map(&:serialize)).to_not include(hash_including(description: "voided decision issue"))
-        expect(subject.map(&:serialize)).to_not include(hash_including(description: "rating issue 1"))
-        expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
+        it "does include decision issues in the future that correspond to same review" do
+          expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
+          expect(subject.map(&:serialize)).to include(
+            hash_including(description: "future decision issue from same review")
+          )
+          expect(subject.map(&:serialize)).to_not include(
+            hash_including(description: "future decision issue from a different review")
+          )
+          expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
+          expect(subject.map(&:serialize)).to_not include(hash_including(description: "future rating issue 2"))
+        end
       end
     end
 
@@ -321,6 +360,14 @@ describe DecisionReview, :postgres do
       )
 
       expect(review.withdrawn_request_issues).to match_array([withdrawn_request_issue])
+    end
+  end
+
+  describe "#asyncable_user" do
+    it "returns CSS id of the Intake user" do
+      intake = create(:intake)
+      review = intake.detail
+      expect(review.asyncable_user).to eq(review.intake.user.css_id)
     end
   end
 end

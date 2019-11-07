@@ -10,7 +10,11 @@ describe HigherLevelReviewsController, :postgres, type: :controller do
 
   let(:veteran) { create(:veteran) }
   let(:hlr) do
-    create(:higher_level_review, :with_end_product_establishment, veteran_file_number: veteran.file_number).reload
+    create(:higher_level_review,
+           :with_end_product_establishment,
+           :processed,
+           intake: create(:intake),
+           veteran_file_number: veteran.file_number).reload
   end
   let(:user) { User.authenticate!(roles: ["Mail Intake"]) }
 

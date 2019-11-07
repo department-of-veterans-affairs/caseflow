@@ -28,7 +28,7 @@ RSpec.feature "Case Assignment flows", :all_dbs do
 
     before do
       u = create(:user)
-      OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
+      Colocated.singleton.add_user(u)
 
       User.authenticate!(user: attorney_user)
     end

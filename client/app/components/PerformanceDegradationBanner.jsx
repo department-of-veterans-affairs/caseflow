@@ -43,7 +43,7 @@ export default class PerformanceDegradationBanner extends React.Component {
     this.setState({ isRequesting: true });
     ApiUtil.get('/dependencies-check').
       then((data) => {
-        let report = JSON.parse(data.text).dependencies_report;
+        let report = data.body.dependencies_report;
         // Each app has a relevant report
         let outageAffectingCurrentApp = report.filter((key) => {
           return this.dependencies[this.appName].includes(key);

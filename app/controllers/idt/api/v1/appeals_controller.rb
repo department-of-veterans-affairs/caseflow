@@ -20,11 +20,10 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def outcode
     result = BvaDispatchTask.outcode(appeal, outcode_params, user)
-    if result.success?
-      render json: { message: "Success!" }
-    else
-      render json: { message: result.errors[0] }, status: :bad_request
-    end
+
+    return render json: { message: "Success!" } if result.success?
+
+    render json: { message: result.errors[0] }, status: :bad_request
   end
 
   private
@@ -37,7 +36,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
             end
     tasks += Task.active.where(assigned_to: user)
     tasks.reject do |task|
-      (task.is_a?(JudgeLegacyTask) && task.action == COPY::JUDGE_ASSIGN_TASK_LABEL) || task.is_a?(JudgeAssignTask)
+      task.is_a?(JudgeLegacyAssignTask) || task.is_a?(JudgeAssignTask)
     end
   end
 

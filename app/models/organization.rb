@@ -5,6 +5,7 @@ class Organization < ApplicationRecord
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
   has_many :users, through: :organizations_users
+  has_many :judge_team_roles, through: :organizations_users
   has_many :non_admin_users, -> { non_admin }, class_name: "OrganizationsUser"
 
   validates :name, presence: true
@@ -12,8 +13,18 @@ class Organization < ApplicationRecord
 
   before_save :clean_url
 
-  def admins
-    organizations_users.includes(:user).select(&:admin?).map(&:user)
+  class << self
+    def assignable(task)
+      select { |org| org.can_receive_task?(task) }
+    end
+
+    def find_by_name_or_url(string)
+      find_by(name: string) || find_by(url: string)
+    end
+
+    def default_active_tab
+      Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
+    end
   end
 
   def can_bulk_assign_tasks?
@@ -32,12 +43,16 @@ class Organization < ApplicationRecord
     false
   end
 
-  def non_admins
-    organizations_users.includes(:user).non_admin.map(&:user)
+  def add_user(user)
+    OrganizationsUser.existing_record(user, self) || OrganizationsUser.create(organization_id: id, user_id: user.id)
   end
 
-  def self.assignable(task)
-    select { |org| org.can_receive_task?(task) }
+  def admins
+    organizations_users.includes(:user).select(&:admin?).map(&:user)
+  end
+
+  def non_admins
+    organizations_users.includes(:user).non_admin.map(&:user)
   end
 
   def can_receive_task?(task)
@@ -85,8 +100,8 @@ class Organization < ApplicationRecord
   end
 
   def unassigned_tasks_tab
-    ::UnassignedTasksTab.new(
-      assignee_name: name,
+    ::OrganizationUnassignedTasksTab.new(
+      assignee: self,
       show_regional_office_column: show_regional_office_in_queue?,
       show_reader_link_column: show_reader_link_column?,
       allow_bulk_assign: can_bulk_assign_tasks?
@@ -94,15 +109,15 @@ class Organization < ApplicationRecord
   end
 
   def assigned_tasks_tab
-    ::AssignedTasksTab.new(assignee_name: name, show_regional_office_column: show_regional_office_in_queue?)
+    ::OrganizationAssignedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def on_hold_tasks_tab
-    ::OnHoldTasksTab.new(assignee_name: name, show_regional_office_column: show_regional_office_in_queue?)
+    ::OrganizationOnHoldTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def completed_tasks_tab
-    ::CompletedTasksTab.new(assignee_name: name, show_regional_office_column: show_regional_office_in_queue?)
+    ::OrganizationCompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def ama_task_serializer

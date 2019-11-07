@@ -15,9 +15,15 @@ FactoryBot.define do
              judge: judge,
              request_type: regional_office.nil? ? "C" : "V")
     end
+    hearing_location do
+      if regional_office.present?
+        create(:hearing_location, regional_office: regional_office)
+      end
+    end
     scheduled_time { "8:30AM" }
     created_by { create(:user) }
     updated_by { create(:user) }
+    virtual_hearing { nil }
 
     trait :with_tasks do
       after(:create) do |hearing, _evaluator|

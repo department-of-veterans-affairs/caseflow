@@ -5,12 +5,7 @@ require "rails_helper"
 
 feature "NonComp Record Request Page", :postgres do
   before do
-    FeatureToggle.enable!(:decision_reviews)
     Timecop.freeze(post_ama_start_date)
-  end
-
-  after do
-    FeatureToggle.disable!(:decision_reviews)
   end
 
   def submit_form
@@ -37,7 +32,7 @@ feature "NonComp Record Request Page", :postgres do
 
   before do
     User.stub = user
-    OrganizationsUser.add_user_to_organization(user, non_comp_org)
+    non_comp_org.add_user(user)
   end
 
   scenario "cancel returns back to business line" do

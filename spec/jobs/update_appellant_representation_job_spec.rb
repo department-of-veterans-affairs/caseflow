@@ -126,7 +126,11 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
     end
 
     it "the job still runs to completion but sends the errors to DataDog" do
-      expect_any_instance_of(UpdateAppellantRepresentationJob).to receive(:record_runtime).exactly(1).times
+      args = {}
+      allow(DataDogService).to receive(:emit_gauge) do |function_args|
+        args = function_args
+      end
+
       expect_any_instance_of(UpdateAppellantRepresentationJob).to_not receive(:log_error).with(anything, anything)
 
       observed_error_count = 0
@@ -137,6 +141,10 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
       UpdateAppellantRepresentationJob.perform_now
 
       expect(observed_error_count).to eq(error_count)
+      expect(args[:app_name]).to eq(CaseflowJob.name.underscore)
+      expect(args[:metric_group]).to eq(UpdateAppellantRepresentationJob.name.underscore)
+      expect(args[:metric_name]).to eq("runtime")
+      expect(args[:metric_value]).to_not be_nil
     end
   end
 
@@ -148,7 +156,12 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
     end
 
     it "sends a message to Slack that includes the error" do
-      expect_any_instance_of(UpdateAppellantRepresentationJob).to receive(:record_runtime).exactly(1).times
+      expect(DataDogService).to receive(:emit_gauge).with(
+        app_name: "caseflow_job",
+        metric_group: UpdateAppellantRepresentationJob.name.underscore,
+        metric_name: "runtime",
+        metric_value: anything
+      )
 
       slack_msg = ""
       allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }

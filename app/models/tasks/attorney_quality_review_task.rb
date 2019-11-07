@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AttorneyQualityReviewTask < AttorneyTask
-  def label
+  def self.label
     COPY::ATTORNEY_QUALITY_REVIEW_TASK_LABEL
   end
 

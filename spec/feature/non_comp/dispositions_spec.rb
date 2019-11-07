@@ -6,14 +6,6 @@ require "rails_helper"
 feature "NonComp Dispositions Task Page", :postgres do
   include IntakeHelpers
 
-  before do
-    FeatureToggle.enable!(:decision_reviews)
-  end
-
-  after do
-    FeatureToggle.disable!(:decision_reviews)
-  end
-
   def fill_in_disposition(num, disposition, description = nil)
     if description
       fill_in "description-issue-#{num}", with: description
@@ -75,6 +67,17 @@ feature "NonComp Dispositions Task Page", :postgres do
       end
     end
 
+    let!(:ineligible_request_issue) do
+      create(:request_issue,
+             :nonrating,
+             :ineligible,
+             nonrating_issue_description: "ineligible issue",
+             end_product_establishment: epe,
+             veteran_participant_id: veteran.participant_id,
+             decision_review: decision_review,
+             benefit_type: decision_review.benefit_type)
+    end
+
     let!(:in_progress_task) do
       create(:higher_level_review_task, :in_progress, appeal: decision_review, assigned_to: non_comp_org)
     end
@@ -84,7 +87,7 @@ feature "NonComp Dispositions Task Page", :postgres do
     let(:arbitrary_decision_date) { "01/01/2019" }
     before do
       User.stub = user
-      OrganizationsUser.add_user_to_organization(user, non_comp_org)
+      non_comp_org.add_user(user)
       setup_prior_claim_with_payee_code(decision_review, veteran, "00")
     end
 
@@ -134,12 +137,13 @@ feature "NonComp Dispositions Task Page", :postgres do
       expect(page).to have_current_path("/#{business_line_url}")
     end
 
-    scenario "saves decision issues" do
+    scenario "saves decision issues for eligible request issues" do
       visit dispositions_url
       expect(page).to have_button("Complete", disabled: true)
       expect(page).to have_link("Edit Issues")
+      expect(page).to_not have_content("ineligible issue")
 
-      # set description & disposition for each request issue
+      # set description & disposition for each active request issue
       fill_in_disposition(0, "Granted")
       fill_in_disposition(1, "DTA Error", "test description")
       fill_in_disposition(2, "Denied", "denied")
@@ -178,10 +182,12 @@ feature "NonComp Dispositions Task Page", :postgres do
     end
 
     context "when there is an error saving" do
+      before do
+        expect_any_instance_of(DecisionReviewTask).to receive(:complete_with_payload!).and_throw("Error!")
+      end
+
       scenario "Shows an error when something goes wrong" do
         visit dispositions_url
-
-        expect_any_instance_of(DecisionReviewTask).to receive(:complete_with_payload!).and_throw("Error!")
 
         fill_in_disposition(0, "Granted")
         fill_in_disposition(1, "Granted", "test description")

@@ -22,7 +22,7 @@ export class DailyDocketPrinted extends React.Component {
     openPrintDialogue();
   }
 
-  isUserJudge = () => this.props.user.userRoleHearingPrep;
+  isUserJudge = () => this.props.user.userHasHearingPrepRole;
 
   getTableColumns = () => [
     {
@@ -62,6 +62,11 @@ export class DailyDocketPrinted extends React.Component {
             <strong>Veteran:</strong> {veteranName}<br />
             <strong>Representative:</strong> {representativeName}<br />
             <strong>Location:</strong> {hearing.readableLocation}<br />
+            {hearing.readableRequestType !== 'Central' &&
+              <span>
+                <strong>Type:</strong> {hearing.readableRequestType}<br />
+              </span>
+            }
             {hearing.notes &&
               <span><strong>Notes:</strong> {hearing.notes}</span>
             }

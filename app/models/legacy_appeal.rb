@@ -14,6 +14,7 @@ class LegacyAppeal < ApplicationRecord
   include AddressMapper
   include Taskable
   include PrintsTaskTree
+  include HasTaskHistory
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -85,14 +86,16 @@ class LegacyAppeal < ApplicationRecord
            prefix: :appellant,
            allow_nil: true
 
-  delegate :vacols_representatives,
-           to: :case_record
-
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
   end
 
-  def advanced_on_docket
+  # To match Appeals AOD behavior
+  def aod?
+    aod
+  end
+
+  def advanced_on_docket?
     aod
   end
 
@@ -155,8 +158,10 @@ class LegacyAppeal < ApplicationRecord
     transcription: "33",
     translation: "14",
     schedule_hearing: "57",
+    sr_council_dvc: "66",
     case_storage: "81",
-    service_organization: "55"
+    service_organization: "55",
+    closed: "99"
   }.freeze
 
   def document_fetcher
@@ -228,7 +233,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number_or_ssn(veteran_file_number)
+    @veteran ||= VeteranFinder.find_best_match(sanitized_vbms_id)
   end
 
   def veteran_ssn
@@ -243,6 +248,18 @@ class LegacyAppeal < ApplicationRecord
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
   def disposition_remand_priority
     (disposition == "Allowed" && issues.select(&:remanded?).any?) ? "Remanded" : disposition
+  end
+
+  delegate :representative_name, :representative_type,
+           :representative_address, :representatives,
+           :representative_to_hash, :representative_participant_id,
+           :vacols_representatives, to: :legacy_appeal_representative
+
+  def legacy_appeal_representative
+    @legacy_appeal_representative ||= LegacyAppealRepresentative.new(
+      power_of_attorney: power_of_attorney,
+      case_record: case_record
+    )
   end
 
   def power_of_attorney
@@ -308,40 +325,6 @@ class LegacyAppeal < ApplicationRecord
   # checks for data accuracy and uploads the decision to VBMS
   def outcoded_by_name
     [outcoder_last_name, outcoder_first_name, outcoder_middle_initial].select(&:present?).join(", ").titleize
-  end
-
-  # Delete this method when use_representative_info_from_bgs is enabled for all users
-  def representative_code
-    power_of_attorney.vacols_representative_code
-  end
-
-  def representative_participant_id
-    power_of_attorney.bgs_participant_id
-  end
-
-  REPRESENTATIVE_METHOD_NAMES = [
-    :representative_name,
-    :representative_type,
-    :representative_address
-  ].freeze
-
-  REPRESENTATIVE_METHOD_NAMES.each do |method_name|
-    define_method(method_name) do
-      if use_representative_info_from_bgs?
-        power_of_attorney.send("bgs_#{method_name}".to_sym)
-      else
-        power_of_attorney.send("vacols_#{method_name}".to_sym)
-      end
-    end
-  end
-
-  #  LegacyHearing delegates representative here, which is equivalent to representative_name
-  def representative
-    representative_name
-  end
-
-  def representatives
-    Representative.where(participant_id: [power_of_attorney.bgs_participant_id] - [nil])
   end
 
   def contested_claim
@@ -547,7 +530,7 @@ class LegacyAppeal < ApplicationRecord
 
   def activated?
     # An appeal is currently at the board, and it has passed some data checks
-    status == "Active"
+    %w[Active Motion].include?(status)
   end
 
   def active?
@@ -670,9 +653,27 @@ class LegacyAppeal < ApplicationRecord
     LegacyAppeal.veteran_file_number_from_bfcorlid vbms_id
   end
 
-  # Alias sanitized_vbms_id becauase file_number is the term used VBA wide for this veteran identifier
+  # The sanitized_vbms_id may be a SSN value, which may or may not be a
+  # valid file number as recognized by VBMS.
+  # Prefer what we have in the Veteran record since that originates from VBMS
+  # and therefore should be valid for external use.
   def veteran_file_number
-    sanitized_vbms_id
+    vacols_file_number = sanitized_vbms_id
+
+    return vacols_file_number unless veteran
+
+    caseflow_file_number = veteran.file_number
+    if vacols_file_number != caseflow_file_number
+      DataDogService.increment_counter(
+        metric_group: "database_disagreement",
+        metric_name: "file_number",
+        app_name: RequestStore[:application],
+        attrs: {
+          appeal_id: external_id
+        }
+      )
+    end
+    caseflow_file_number
   end
 
   def pending_eps
@@ -745,6 +746,47 @@ class LegacyAppeal < ApplicationRecord
     location_code
   end
 
+  def address
+    @address ||= Address.new(appellant[:address]) if appellant[:address].present?
+  end
+
+  def paper_case?
+    file_type.eql? "Paper"
+  end
+
+  def attorney_case_review
+    # # Created at date will be nil if there is no decass record created for this appeal yet
+    return unless vacols_case_review&.created_at
+
+    AttorneyCaseReview.find_by(task_id: "#{vacols_id}-#{VacolsHelper.day_only_str(vacols_case_review.created_at)}")
+  end
+
+  def vacols_case_review
+    VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
+  end
+
+  def death_dismissal!
+    multi_transaction do
+      cancel_open_caseflow_tasks!
+      LegacyAppeal.repository.update_location_for_death_dismissal!(appeal: self)
+    end
+  end
+
+  def cancel_open_caseflow_tasks!
+    tasks.open.each do |task|
+      task.update!(status: Constants.TASK_STATUSES.cancelled)
+      task.instructions << "Task cancelled due to death dismissal"
+      task.save
+    end
+  end
+
+  def eligible_for_death_dismissal?(user)
+    return false if notice_of_death_date.nil?
+
+    user_has_relevent_open_tasks = tasks.open.where(type: ColocatedTask.subclasses.map(&:name)).any?
+    user_has_relevent_open_tasks && Colocated.singleton.user_is_admin?(user)
+  end
+
   private
 
   def soc_date_eligible_for_opt_in?(receipt_date)
@@ -777,23 +819,6 @@ class LegacyAppeal < ApplicationRecord
 
   def location_code_is_caseflow?
     location_code == LOCATION_CODES[:caseflow]
-  end
-
-  def use_representative_info_from_bgs?
-    FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&
-      (RequestStore.store[:application] == "queue" ||
-       RequestStore.store[:application] == "hearings" ||
-       RequestStore.store[:application] == "idt")
-  end
-
-  def representative_to_hash
-    {
-      name: representative_name,
-      type: representative_type,
-      code: representative_code,
-      participant_id: representative_participant_id,
-      address: representative_address
-    }
   end
 
   def matched_document(type, vacols_datetime)
@@ -839,6 +864,8 @@ class LegacyAppeal < ApplicationRecord
     end
 
     def veteran_file_number_from_bfcorlid(bfcorlid)
+      return bfcorlid unless bfcorlid =~ /\d/
+
       numeric = bfcorlid.gsub(/[^0-9]/, "")
 
       # ensure 8 digits if "C"-type id

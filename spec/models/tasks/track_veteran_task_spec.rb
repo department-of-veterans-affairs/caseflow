@@ -162,7 +162,7 @@ describe TrackVeteranTask, :postgres do
       end
 
       before do
-        OrganizationsUser.add_user_to_organization(vso_staff, vso)
+        vso.add_user(vso_staff)
       end
 
       context "when the individual's VSO is still the representative" do

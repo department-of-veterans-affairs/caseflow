@@ -2,7 +2,7 @@
 
 # This job will sync end products & contentions that we created for decision reviews
 class SyncReviewsJob < CaseflowJob
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :intake
 
   DEFAULT_EP_LIMIT = 100

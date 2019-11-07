@@ -6,7 +6,7 @@ require "rails_helper"
 describe TranscriptionTask, :postgres do
   before do
     Time.zone = "Eastern Time (US & Canada)"
-    OrganizationsUser.add_user_to_organization(transcription_user, TranscriptionTeam.singleton)
+    TranscriptionTeam.singleton.add_user(transcription_user)
     RequestStore[:current_user] = transcription_user
   end
 
@@ -23,7 +23,7 @@ describe TranscriptionTask, :postgres do
       let!(:root_task) { create(:root_task, appeal: appeal) }
       let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
       let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task, appeal: appeal) }
-      let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
+      let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task.reload, appeal: appeal) }
       let!(:transcription_task) { create(:transcription_task, parent: disposition_task, appeal: appeal) }
 
       it "cancels all tasks in the hierarchy and creates a new schedule_hearing_task" do

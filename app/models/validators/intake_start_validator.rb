@@ -29,6 +29,8 @@ class IntakeStartValidator
       intake.error_code = :veteran_not_modifiable
     elsif veteran.incident_flash?
       intake.error_code = :incident_flash
+    elsif duplicate_veteran_records_in_corpdb
+      intake.error_code = :veteran_has_duplicate_records_in_corpdb
     end
   end
 
@@ -50,9 +52,20 @@ class IntakeStartValidator
   end
 
   def set_veteran_accessible_error
-    return unless !veteran.accessible?
+    return if veteran.accessible?
 
     intake.error_code = veteran.multiple_phone_numbers? ? :veteran_has_multiple_phone_numbers : :veteran_not_accessible
+  end
+
+  def duplicate_veteran_records_in_corpdb
+    return false unless FeatureToggle.enabled?(:alert_duplicate_veterans, user: RequestStore[:current_user])
+
+    pids = DuplicateVeteranParticipantIDFinder.new(veteran: veteran).call
+    if pids.count > 1
+      intake.store_error_data(pids: pids)
+      return true
+    end
+    false
   end
 
   def duplicate_intake_in_progress
@@ -67,11 +80,12 @@ class IntakeStartValidator
   end
 
   def file_number_reserved?
-    FeatureToggle.enabled?(:intake_reserved_file_number,
-                           user: RequestStore[:current_user]) && veteran_file_number == "123456789"
+    Rails.deploy_env?(:prod) && veteran_file_number == "123456789"
   end
 
   def user_may_modify_veteran_file?
-    BGSService.new.may_modify?(veteran_file_number)
+    return true if intake.user == User.api_user
+
+    BGSService.new.may_modify?(veteran_file_number, veteran.participant_id)
   end
 end

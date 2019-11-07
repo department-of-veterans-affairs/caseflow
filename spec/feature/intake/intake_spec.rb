@@ -66,6 +66,19 @@ feature "Intake", :all_dbs do
       User.authenticate!(roles: ["Mail Intake"])
     end
 
+    context "user has unread Inbox messages" do
+      before { FeatureToggle.enable!(:inbox, users: [current_user.css_id]) }
+      after { FeatureToggle.disable!(:inbox) }
+
+      scenario "user sees Alert on Intake start page" do
+        create(:message, user: current_user)
+
+        visit "/intake"
+
+        expect(page).to have_content("You have unread messages")
+      end
+    end
+
     scenario "User visits help page" do
       visit "/intake/help"
       expect(page).to have_content("Welcome to the Intake Help page!")
@@ -140,7 +153,7 @@ feature "Intake", :all_dbs do
 
     context "Veteran has too high of a sensitivity level for user" do
       before do
-        Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
+        Fakes::BGSService.mark_veteran_not_accessible(appeal.veteran_file_number)
       end
 
       scenario "Search for a veteran with a sensitivity error" do
@@ -157,7 +170,7 @@ feature "Intake", :all_dbs do
 
     context "Veteran records have been merged and Veteran has multiple active phone numbers in SHARE" do
       before do
-        Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
+        Fakes::BGSService.mark_veteran_not_accessible(appeal.veteran_file_number)
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
           .and_raise(BGS::ShareError.new("NonUniqueResultException"))
       end
@@ -174,6 +187,8 @@ feature "Intake", :all_dbs do
 
         cache_key = Fakes::BGSService.new.can_access_cache_key(current_user, "12341234")
         expect(Rails.cache.exist?(cache_key)).to eq(false)
+
+        # retry after SHARE is fixed
 
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
         Fakes::BGSService.inaccessible_appeal_vbms_ids = []
@@ -254,6 +269,31 @@ feature "Intake", :all_dbs do
       expect(page).to have_content("David Schwimmer already started processing this form")
     end
 
+    context "the alert_duplicate_veterans feature toggle is enabled" do
+      before { FeatureToggle.enable!(:alert_duplicate_veterans, users: [current_user.css_id]) }
+      after { FeatureToggle.disable!(:alert_duplicate_veterans) }
+
+      scenario "Search for a veteran who has duplicate records in CorpDB" do
+        participant_id1 = "123456"
+        participant_id2 = "789012"
+
+        duplicate_veteran_participant_id_finder = instance_double(DuplicateVeteranParticipantIDFinder)
+        allow(DuplicateVeteranParticipantIDFinder).to receive(:new).and_return(duplicate_veteran_participant_id_finder)
+        allow(duplicate_veteran_participant_id_finder).to receive(:call).and_return([participant_id1, participant_id2])
+
+        visit "/intake"
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        safe_click ".cf-submit.usa-button"
+
+        fill_in search_bar_title, with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/search")
+        expect(page).to have_content("This Veteran has a duplicate record in CorpDB")
+        expect(page).to have_content("[#{participant_id1}, #{participant_id2}]")
+      end
+    end
+
     scenario "Cancel an intake" do
       create(:higher_level_review, veteran_file_number: "12341234")
 
@@ -321,13 +361,7 @@ feature "Intake", :all_dbs do
         User.authenticate!(roles: ["Admin Intake"])
       end
 
-      before do
-        FeatureToggle.enable!(:intake_reserved_file_number, users: [current_user.css_id])
-      end
-
-      after do
-        FeatureToggle.disable!(:intake_reserved_file_number, users: [current_user.css_id])
-      end
+      before { allow(Rails).to receive(:deploy_env?).and_return(true) }
 
       let(:veteran) do
         Generators::Veteran.build(
@@ -339,7 +373,7 @@ feature "Intake", :all_dbs do
       end
 
       scenario "Search for a veteran with reserved file_number" do
-        visit "/intake"
+        visit "intake"
         select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
         safe_click ".cf-submit.usa-button"
 

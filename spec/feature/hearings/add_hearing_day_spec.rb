@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
+require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Add a Hearing Day", :postgres do
+RSpec.feature "Add a Hearing Day", :all_dbs do
   let!(:current_user) do
     user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
-    OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+    HearingsManagement.singleton.add_user(user)
     User.authenticate!(user: user)
   end
 
@@ -65,6 +65,24 @@ RSpec.feature "Add a Hearing Day", :postgres do
     end
   end
 
+  context "When adding a Central Office Hearing" do
+    let!(:hearing_day) do
+      create(:hearing_day, scheduled_for: Date.new(2019, 8, 14))
+    end
+
+    scenario "Hearing room 2 is already booked" do
+      visit "hearings/schedule"
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
+      find("button", text: "Add Hearing Date").click
+      expect(page).to have_content("Add Hearing Day")
+      fill_in "hearingDate", with: "08142019"
+      click_dropdown(index: "C", text: "Central")
+      find("button", text: "Confirm").click
+      expect(page).to have_content(COPY::ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_TITLE % "08/14/2019")
+      expect(page).to have_content(COPY::ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_DETAIL)
+    end
+  end
+
   context "Add a Video Hearing Day" do
     scenario "When opening modal and selecting Central Office verify correct fields present" do
       visit "hearings/schedule"
@@ -109,6 +127,35 @@ RSpec.feature "Add a Hearing Day", :postgres do
       find("button", text: "Confirm").click
       expect(page).to have_content("Hearing type is a Video hearing")
       expect(page).to have_content("Please make sure you select a Regional Office")
+    end
+  end
+
+  context "has a judge and coordinator to select from the dropdown" do
+    let!(:judge) do
+      judge = create(:user)
+      create(:staff, :judge_role, sdomainid: judge.css_id)
+      judge
+    end
+    let!(:coordinator) do
+      coordinator = create(:user)
+      create(:staff, :hearing_coordinator, sdomainid: coordinator.css_id)
+      coordinator
+    end
+
+    before do
+      visit "hearings/schedule"
+      find("button", text: "Add Hearing Date").click
+      click_dropdown(index: "V", text: "Video")
+    end
+
+    scenario "select a vlj from the dropdown works" do
+      click_dropdown(name: "vlj", text: judge.full_name, wait: 30)
+      expect(page).to have_content(judge.full_name)
+    end
+
+    scenario "select a coordinator from the dropdown works" do
+      click_dropdown(name: "coordinator", text: coordinator.full_name, wait: 30)
+      expect(page).to have_content(coordinator.full_name)
     end
   end
 end

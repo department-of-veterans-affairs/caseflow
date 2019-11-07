@@ -290,7 +290,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               expect(response_body["attributes"]["file_number"]).to eq ama_appeals.first.veteran_file_number
 
               expect(response_body["attributes"]["representative_address"]).to eq(nil)
-              expect(response_body["attributes"]["aod"]).to eq ama_appeals.first.advanced_on_docket
+              expect(response_body["attributes"]["aod"]).to eq ama_appeals.first.advanced_on_docket?
               expect(response_body["attributes"]["cavc"]).to eq "not implemented for AMA"
               expect(response_body["attributes"]["issues"].first["program"]).to eq "Compensation"
               expect(response_body["attributes"]["issues"].second["program"]).to eq "Compensation"
@@ -316,7 +316,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             let(:user) { create(:user) }
 
             before do
-              OrganizationsUser.add_user_to_organization(user, BvaDispatch.singleton)
+              BvaDispatch.singleton.add_user(user)
               allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id).and_return(
                 address_line_1: "1234 K St.",
                 address_line_2: "APT 3",
@@ -380,16 +380,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               appellant_last_name: "Gump"
             )
           end
-          let!(:representative) do
-            create(
-              :representative,
-              repkey: vacols_case.bfkey,
-              reptype: "A",
-              repfirst: "Attorney",
-              replast: "McAttorney"
-            )
-          end
-
           let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
           it "succeeds and passes appeal info" do
@@ -403,7 +393,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             expect(response_body["attributes"]["veteran_name_suffix"]).to eq "PhD"
             expect(response_body["attributes"]["veteran_ssn"]).to eq appeal.veteran_ssn
             expect(response_body["attributes"]["file_number"]).to eq appeal.veteran_file_number
-            expect(response_body["attributes"]["appellants"][0]["representative"]["name"]).to eq("Attorney McAttorney")
+            # BGS service default attorney: Clarence Darrow
+            expect(response_body["attributes"]["appellants"][0]["representative"]["name"]).to eq("Clarence Darrow")
             expect(response_body["attributes"]["appellants"][0]["first_name"]).to eq("Forrest")
             expect(response_body["attributes"]["aod"]).to eq appeal.aod
             expect(response_body["attributes"]["cavc"]).to eq appeal.cavc
@@ -534,7 +525,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
     before do
       allow(controller).to receive(:verify_access).and_return(true)
-      OrganizationsUser.add_user_to_organization(user, BvaDispatch.singleton)
+      BvaDispatch.singleton.add_user(user)
 
       key, t = Idt::Token.generate_one_time_key_and_proposed_token
       Idt::Token.activate_proposed_token(key, user.css_id)
@@ -608,7 +599,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       before do
         task_count.times do
           org_task = BvaDispatchTask.create_from_root_task(root_task)
-          # Set status of org-level task to completed to avoid getting caught by GenericTask.verify_org_task_unique.
+          # Set status of org-level task to completed to avoid getting caught by Task.verify_org_task_unique.
           org_task.update!(status: Constants.TASK_STATUSES.completed)
         end
       end

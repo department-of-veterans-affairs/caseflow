@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ReassignOldTasksJob < ApplicationJob
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :dispatch
 
   def perform

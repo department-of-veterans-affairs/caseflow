@@ -3,7 +3,7 @@
 ##
 # Task to track when an appeal has been assigned to Privacy Team
 
-class PrivacyActTask < GenericTask
+class PrivacyActTask < Task
   def available_actions(user)
     return [] unless user
 

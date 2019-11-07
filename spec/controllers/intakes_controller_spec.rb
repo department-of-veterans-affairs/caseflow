@@ -7,15 +7,10 @@ RSpec.describe IntakesController, :postgres do
   before do
     Fakes::Initializer.load!
     User.authenticate!(roles: ["Mail Intake"])
-    FeatureToggle.enable!(:intake_reserved_file_number)
 
     allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
     allow_any_instance_of(Veteran).to receive(:bgs).and_return(bgs)
     allow(bgs).to receive(:fetch_veteran_info).and_call_original
-  end
-
-  after do
-    FeatureToggle.disable!(:intake_reserved_file_number)
   end
 
   let(:bgs) { BGSService.new }
@@ -72,7 +67,10 @@ RSpec.describe IntakesController, :postgres do
     context "veteran in BGS with reserved file number" do
       let(:file_number) { "123456789" }
       let!(:veteran) {} # no-op
-      before { Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica") }
+      before do
+        Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica")
+        allow(Rails).to receive(:deploy_env?).and_return(true)
+      end
 
       it "should search by reserved Veteran file number" do
         expect(Veteran.find_by_file_number_or_ssn(file_number)).to be_nil
@@ -121,11 +119,10 @@ RSpec.describe IntakesController, :postgres do
   end
 
   describe "#complete" do
-    # TODO: this is just testing the current implementation; should make this more behavioral
     it "should call complete! and return a 200" do
-      intake = Intake.new(user_id: current_user.id, started_at: Time.zone.now)
-      intake.save!
-      allow_any_instance_of(Intake).to receive(:complete!)
+      intake = create(:intake, user_id: current_user.id, started_at: Time.zone.now)
+      allow(controller).to receive(:intake) { intake }
+      allow(intake).to receive(:complete!) { true }
       post :complete, params: { id: intake.id }
       expect(response.status).to eq(200)
     end

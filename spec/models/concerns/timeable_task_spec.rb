@@ -12,7 +12,7 @@ describe TimeableTask, :postgres do
     end
   end
 
-  class SomeTimedTask < GenericTask
+  class SomeTimedTask < Task
     include TimeableTask
     include CurrentDate
 
@@ -23,13 +23,13 @@ describe TimeableTask, :postgres do
     end
   end
 
-  class AnotherTimedTask < GenericTask
+  class AnotherTimedTask < Task
     include TimeableTask
 
     def timer_ends_at; end
   end
 
-  class OldTimedTask < GenericTask
+  class OldTimedTask < Task
     include TimeableTask
     include CurrentDate
 

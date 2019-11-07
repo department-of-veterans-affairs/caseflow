@@ -45,6 +45,9 @@ class HearingSerializer
   attribute :location
   attribute :military_service, if: for_full
   attribute :notes
+  attribute :paper_case do
+    false
+  end
   attribute :prepped
   attribute :readable_location
   attribute :readable_request_type
@@ -67,6 +70,7 @@ class HearingSerializer
   attribute :veteran_first_name
   attribute :veteran_gender, if: for_full
   attribute :veteran_last_name
+  attribute :virtual, &:virtual?
   attribute :witness
   attribute :worksheet_issues
 end

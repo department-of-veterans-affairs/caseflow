@@ -36,7 +36,7 @@ export default class CheckboxGroup extends React.Component {
       styling
     } = this.props;
 
-    let fieldClasses = `checkbox-wrapper-${name} cf-form-checkboxes`;
+    let fieldClasses = `checkbox-wrapper-${name} cf-form-checkboxes cf-checkbox-group`;
 
     if (options.length <= this.MAX && !vertical) {
       fieldClasses += '-inline';

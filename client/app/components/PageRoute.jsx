@@ -1,60 +1,48 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
+import { isFunction } from 'lodash';
+import { withRouter, matchPath } from 'react-router';
 
-// Route augmented with application specific callbacks to change
-// the page title and call google analytics
-class PageRoute extends React.Component {
-  static contextTypes = {
-    router: PropTypes.shape({
-      route: PropTypes.shape({
-        location: PropTypes.object.isRequired
-      })
-    })
+// Wrapper around Route that adds dynamic page title and Analytics call
+const PageRoute = (props) => {
+  // eslint-disable-next-line no-unused-vars
+  const { title, location, match, history, ...routeProps } = props;
+
+  if (!matchPath(location.pathname, routeProps)) {
+    return null;
   }
 
-  constructor(props) {
-    super(props);
-
-    if (!props.title) {
-      throw new Error('PageRoute must implement `title`');
-    }
-
-    if (!props.render && !props.component) {
-      throw new Error('PageRoute currently only works with `render` and `component`' +
-                      '\n...feel free to add support for `children` :)');
-    }
-
-    this.locationChanging = true;
+  if (!title) {
+    throw new Error('PageRoute must implement `title`');
   }
 
-  // Only run callback if the location is changing. See if location has changed by
-  // looking at the router here.
-  componentWillReceiveProps(nextProps, nextContext) {
-    const currentLocation = this.context.router.route.location.pathname;
-    const nextLocation = nextContext.router.route.location.pathname;
-
-    this.locationChanging = currentLocation !== nextLocation;
+  if (!props.render && !props.component) {
+    throw new Error(
+      [
+        'PageRoute currently only works with `render` and `component`',
+        '...feel free to add support for `children` :)'
+      ].join('\n')
+    );
   }
 
-  renderWithCallback = (params) => {
-    const { title, render, component } = this.props;
+  // Update title and analytics (only) when location changes
+  useEffect(() => {
+    document.title = isFunction(title) ? title(props) : title;
 
-    document.title = _.isFunction(title) ? title(params) : title;
-    if (this.locationChanging) {
-      window.analyticsPageView(window.location.pathname);
-    }
+    window.analyticsPageView(window.location.pathname);
+  }, [history.location]);
 
-    return component ? React.createElement(component, params) : render(params);
-  }
+  return <Route {...routeProps} />;
+};
 
-  render() {
-    // eslint-disable-next-line no-unused-vars
-    let { title, render, component, ...routeProps } = this.props;
+PageRoute.propTypes = {
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+  render: PropTypes.func,
+  component: PropTypes.elementType,
+  match: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired
+};
 
-    return <Route {...routeProps} render={this.renderWithCallback} />;
-  }
-}
-
-export default PageRoute;
+export default withRouter(PageRoute);

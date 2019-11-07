@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -9,7 +10,8 @@ import UserStats from './UserStats';
 
 export class FlaggedForReviewContainer extends Component {
   componentDidMount() {
-    this.props.fetchFlaggedForReview();
+    // deprecated - may remove
+    // this.props.fetchFlaggedForReview();
   }
 
   render() {
@@ -26,7 +28,7 @@ export class FlaggedForReviewContainer extends Component {
     }
 
     return <div>
-      <UserStats />
+      <UserStats selectedUser={this.props.selectedUser} />
       <FlaggedForReview {...this.props} />
     </div>;
   }
@@ -34,7 +36,8 @@ export class FlaggedForReviewContainer extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    loading: state.loading,
+    loading: false,
+    // loading: state.loading,
     intakes: state.flaggedForReview
   };
 };

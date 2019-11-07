@@ -11,6 +11,10 @@ FactoryBot.define do
       user { nil }
     end
 
+    trait :disposition_nil do
+      hearing_disp { nil }
+    end
+
     trait :disposition_held do
       hearing_disp { "H" }
     end

@@ -57,6 +57,14 @@
     <% unless @react_routed %>
       analyticsPageView('<%= current_ga_path %>');
     <% end %>
+
+    // do not send events from local dev environment.
+    // if necessary to debug GA events, temporarily comment this out, and
+    // consider using the analytics_debug.js lib per
+    // https://developers.google.com/analytics/devguides/collection/analyticsjs/debugging
+    if (location.hostname == 'localhost') {
+      ga('set', 'sendHitTask', null);
+    }
   </script>
 
   <% if ENV["PUBLIC_SENTRY_DSN"] %>

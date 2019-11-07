@@ -37,6 +37,7 @@ describe EndProductEstablishment, :postgres do
   let(:development_item_reference_id) { nil }
   let(:limited_poa_code) { "ABC" }
   let(:limited_poa_access) { true }
+  let(:rating_profile_date) { Date.new(2018, 4, 30) }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -106,7 +107,7 @@ describe EndProductEstablishment, :postgres do
       it "uses the new address for establishing a claim" do
         # first fetch Veteran's info
         expect(veteran.to_vbms_hash).to include(address_line1: "1234 FAKE ST")
-        Fakes::BGSService.veteran_records[veteran.file_number][:address_line1] = "Changed"
+        Fakes::BGSService.edit_veteran_record(veteran.file_number, :address_line1, "Changed")
 
         subject
 
@@ -236,7 +237,7 @@ describe EndProductEstablishment, :postgres do
         %w[030 031 032].each do |modifier|
           Generators::EndProduct.build(
             veteran_file_number: veteran_file_number,
-            bgs_attrs: { end_product_type_code: modifier, status_type_code: "CAN" }
+            bgs_attrs: { end_product_type_code: modifier, status_type_code: "PEND" }
           )
         end
       end
@@ -247,11 +248,23 @@ describe EndProductEstablishment, :postgres do
     end
 
     context "when existing EP has status CLR" do
+      let(:setups) do
+        [
+          { modifier: "030", last_action_date: 2.weeks.ago.mdY },
+          { modifier: "031", last_action_date: 2.weeks.ago.mdY },
+          { modifier: "032", last_action_date: 2.weeks.ago.mdY }
+        ]
+      end
+
       before do
-        %w[030 031 032].each do |modifier|
+        setups.each do |setup|
           Generators::EndProduct.build(
             veteran_file_number: veteran_file_number,
-            bgs_attrs: { end_product_type_code: modifier, status_type_code: "CLR" }
+            bgs_attrs: {
+              end_product_type_code: setup[:modifier],
+              last_action_date: setup[:last_action_date],
+              status_type_code: "CLR"
+            }
           )
         end
       end
@@ -262,20 +275,19 @@ describe EndProductEstablishment, :postgres do
           hash_including(veteran_hash: veteran.reload.to_vbms_hash)
         )
       end
-    end
 
-    context "when existing EP has status CAN" do
-      before do
-        %w[030 031 032].each do |modifier|
-          Generators::EndProduct.build(
-            veteran_file_number: veteran_file_number,
-            bgs_attrs: { end_product_type_code: modifier, status_type_code: "CAN" }
-          )
+      context "when last action date is within the last two days" do
+        let(:setups) do
+          [
+            { modifier: "030", last_action_date: 1.day.ago.mdY },
+            { modifier: "031", last_action_date: 1.day.ago.mdY },
+            { modifier: "032", last_action_date: Time.zone.today.mdY }
+          ]
         end
-      end
 
-      it "considers those EP modifiers as closed" do
-        expect { subject }.to raise_error(EndProductModifierFinder::NoAvailableModifiers)
+        it "considers those EP modifiers as taken and returns a NoAvailableModifiers error" do
+          expect { subject }.to raise_error(EndProductModifierFinder::NoAvailableModifiers)
+        end
       end
     end
 
@@ -343,15 +355,23 @@ describe EndProductEstablishment, :postgres do
           end_product_establishment: end_product_establishment,
           decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
-          contested_rating_issue_profile_date: Date.new(2018, 4, 30),
+          contested_rating_issue_profile_date: rating_profile_date,
           contested_issue_description: "this is a big decision"
         ),
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
           decision_review: source,
+          contested_rating_decision_reference_id: "rating-decision-diagnostic-id",
+          contested_rating_issue_profile_date: rating_profile_date,
+          contested_issue_description: "foobar was denied."
+        ),
+        create(
+          :request_issue,
+          end_product_establishment: end_product_establishment,
+          decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
-          contested_rating_issue_profile_date: Date.new(2018, 4, 30),
+          contested_rating_issue_profile_date: rating_profile_date,
           vacols_id: vacols_id,
           vacols_sequence_id: vacols_sequence_id,
           contested_issue_description: "more decisionz"
@@ -361,7 +381,7 @@ describe EndProductEstablishment, :postgres do
           end_product_establishment: end_product_establishment,
           decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
-          contested_rating_issue_profile_date: Date.new(2018, 4, 30),
+          contested_rating_issue_profile_date: rating_profile_date,
           contested_issue_description: "description too long for bgs" * 20
         ),
         create(
@@ -371,14 +391,14 @@ describe EndProductEstablishment, :postgres do
           unidentified_issue_text: "identity unknown",
           decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
-          contested_rating_issue_profile_date: Date.new(2018, 4, 30)
+          contested_rating_issue_profile_date: rating_profile_date
         )
       ]
     end
 
     let(:contentions) do
       request_issues.map do |issue|
-        contention = { description: issue.contention_text }
+        contention = { description: issue.contention_text, contention_type: issue.contention_type }
         issue.special_issues && contention[:special_issues] = issue.special_issues
         contention
       end.reverse
@@ -392,10 +412,11 @@ describe EndProductEstablishment, :postgres do
         veteran_file_number: veteran_file_number,
         claim_id: end_product_establishment.reference_id,
         contentions: array_including(contentions),
-        user: current_user
+        user: current_user,
+        claim_date: 2.days.ago.to_date
       )
 
-      expect(end_product_establishment.contentions.count).to eq(4)
+      expect(end_product_establishment.contentions.count).to eq(request_issues.count)
       expect(end_product_establishment.contentions.map(&:id)).to contain_exactly(
         *request_issues.map(&:reload).map(&:contention_reference_id).map(&:to_s)
       )
@@ -414,14 +435,17 @@ describe EndProductEstablishment, :postgres do
           claim_id: end_product_establishment.reference_id,
           contentions: array_including(
             { description: "this is a big decision",
-              special_issues: [{ code: "SSR", narrative: "Same Station Review" }] },
+              special_issues: [{ code: "SSR", narrative: "Same Station Review" }],
+              contention_type: Constants.CONTENTION_TYPES.higher_level_review },
             description: "more decisionz",
+            contention_type: Constants.CONTENTION_TYPES.higher_level_review,
             special_issues: array_including(
               { code: "SSR", narrative: "Same Station Review" },
               code: "ASSOI", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O
             )
           ),
-          user: current_user
+          user: current_user,
+          claim_date: 2.days.ago.to_date
         )
       end
     end
@@ -461,9 +485,11 @@ describe EndProductEstablishment, :postgres do
             claim_id: end_product_establishment.reference_id,
             contentions: array_including(
               description: "I am contesting a dta decision",
-              original_contention_ids: [101, 121]
+              original_contention_ids: [101, 121],
+              contention_type: Constants.CONTENTION_TYPES.higher_level_review
             ),
-            user: current_user
+            user: current_user,
+            claim_date: 2.days.ago.to_date
           )
         end
       end
@@ -521,6 +547,27 @@ describe EndProductEstablishment, :postgres do
           claim_id: reference_id,
           rating_issue_contention_map: { request_issues[0].contested_rating_issue_reference_id => contention_ref_id }
         )
+      end
+    end
+
+    context "request issue is rating via rating decision" do
+      let!(:request_issues) do
+        [
+          create(
+            :request_issue,
+            end_product_establishment: end_product_establishment,
+            decision_review: source,
+            contested_rating_decision_reference_id: "rating-decision-diagnostic-id",
+            contested_rating_issue_profile_date: rating_profile_date,
+            contested_issue_description: "foobar was denied."
+          )
+        ]
+      end
+
+      it "skips mapping since there is no associated rating issue" do
+        subject
+        expect(request_issues.first.rating?).to be true
+        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
       end
     end
 
@@ -760,6 +807,32 @@ describe EndProductEstablishment, :postgres do
 
         it "re-raises error" do
           expect { subject }.to raise_error(BGS::ShareError)
+        end
+      end
+
+      context "when the claim_type_code has changed outside of Caseflow" do
+        let(:claim_type_code) { "040SCNR" }
+
+        it "creates a record of the change in end product code updates" do
+          subject
+
+          epcu = end_product_establishment.end_product_code_updates.first
+
+          expect(end_product_establishment.code).to eq "030HLRR"
+          expect(epcu.code).to eq "040SCNR"
+          expect(epcu.created_at).to eq(Time.zone.now)
+        end
+
+        context "when the new claim_type_code has already been saved" do
+          it "does not create a new record" do
+            end_product_establishment.end_product_code_updates.create(code: "040SCNR", created_at: 1.hour.ago)
+
+            subject
+
+            epcus = end_product_establishment.end_product_code_updates
+            expect(epcus.count).to eq 1
+            expect(epcus.first.created_at).to eq 1.hour.ago
+          end
         end
       end
 

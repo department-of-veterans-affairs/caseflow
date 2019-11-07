@@ -2,6 +2,8 @@
 
 class V2::LegacyAppealStatusSerializer
   include FastJsonapi::ObjectSerializer
+  include StatusFieldSerializer
+
   set_key_transform :camel_lower
   set_type :legacy_appeal
   set_id :vacols_id
@@ -20,7 +22,10 @@ class V2::LegacyAppealStatusSerializer
   attribute :location
   attribute :aoj
   attribute :program_area, &:program
-  attribute :status, &:status_hash
+  attribute :status do |object|
+    status(object)
+  end
+
   attribute :alerts
   attribute :docket, &:docket_hash
   attribute :issues

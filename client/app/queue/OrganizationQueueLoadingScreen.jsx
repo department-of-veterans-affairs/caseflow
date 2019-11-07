@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -34,7 +35,7 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
             organization_name: organizationName,
             is_vso: isVso,
             queue_config: queueConfig
-          } = JSON.parse(response.text);
+          } = response.body;
 
           this.props.setActiveOrganization(id, organizationName, isVso);
           this.props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
@@ -70,6 +71,14 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
     </div>;
   };
 }
+
+OrganizationQueueLoadingScreen.propTypes = {
+  children: PropTypes.node,
+  onReceiveQueue: PropTypes.func,
+  setActiveOrganization: PropTypes.func,
+  setQueueConfig: PropTypes.func,
+  urlToLoad: PropTypes.string
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue,

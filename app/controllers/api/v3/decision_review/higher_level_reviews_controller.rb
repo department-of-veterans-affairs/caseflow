@@ -1,30 +1,52 @@
 # frozen_string_literal: true
 
-class Api::V3::DecisionReview::HigherLevelReviewsController < Api::ExternalProxyController
+class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseController
+  SUCCESSFUL_CREATION_HTTP_STATUS = 202
+
   def create
-    mock_hlr = HigherLevelReview.new(
-      uuid: "FAKEuuid-mock-test-fake-mocktestdata",
-      establishment_submitted_at: Time.zone.now # having this timestamp marks it as submitted
-    )
+    if processor.run!.errors?
+      render_errors(processor.errors)
+      return
+    end
+
     response.set_header(
       "Content-Location",
-      # id returned is static, if a mock intake_status is created, this should match
-      "#{request.base_url}/api/v3/decision_review/higher_level_reviews/intake_status/999"
+      url_for(
+        controller: :intake_statuses,
+        action: :show,
+        id: processor.uuid
+      )
     )
-    render json: intake_status(mock_hlr), status: 202
+
+    render json: intake_status.to_json, status: intake_status.http_status_for_new_intake
+  rescue StandardError => error
+    # do we want something like intakes_controller's log_error here?
+    render_errors([intake_error_code_from_exception_or_processor(error)])
+  end
+
+  def show
+    higher_level_review = HigherLevelReview.find_by_uuid(params[:id])
+    options = { include: [:veteran, :claimant, :request_issues, :decision_issues] }
+    render json: Api::V3::HigherLevelReviewSerializer.new(higher_level_review, options)
   end
 
   private
 
-  def intake_status(higher_level_review)
-    {
-      data: {
-        type: "IntakeStatus",
-        id: higher_level_review.uuid,
-        attributes: {
-          status: higher_level_review.asyncable_status
-        }
-      }
-    }
+  def processor
+    @processor ||= Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(params, User.api_user)
+  end
+
+  def intake_status
+    @intake_status ||= Api::V3::DecisionReview::IntakeStatus.new(processor.intake)
+  end
+
+  # Try to create an IntakeError from the exception, otherwise the processor's intake object.
+  # If neither has an error_code, the IntakeError will be IntakeError::UNKNOWN_ERROR
+  def intake_error_code_from_exception_or_processor(exception)
+    Api::V3::DecisionReview::IntakeError.from_first_potential_error_code_found([exception, processor&.intake])
+  end
+
+  def render_errors(errors)
+    render Api::V3::DecisionReview::IntakeErrors.new(errors).render_hash
   end
 end

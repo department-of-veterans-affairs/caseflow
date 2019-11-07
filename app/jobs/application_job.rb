@@ -3,7 +3,17 @@
 require_relative "../exceptions/standard_error"
 
 class ApplicationJob < ActiveJob::Base
+  class InvalidJobPriority < StandardError; end
+
   class << self
+    def queue_with_priority(priority)
+      unless [:low_priority, :high_priority].include? priority
+        fail InvalidJobPriority, "#{priority} is not a valid job priority!"
+      end
+
+      queue_as priority
+    end
+
     def application_attr(app_name)
       @app_name = app_name
     end

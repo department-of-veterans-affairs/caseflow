@@ -8,11 +8,6 @@ describe DecisionDocument, :postgres do
 
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
-    FeatureToggle.enable!(:create_board_grant_effectuations)
-  end
-
-  after do
-    FeatureToggle.disable!(:create_board_grant_effectuations)
   end
 
   let(:veteran) { create(:veteran) }
@@ -262,10 +257,13 @@ describe DecisionDocument, :postgres do
             veteran_file_number: decision_document.appeal.veteran_file_number,
             claim_id: decision_document.end_product_establishments.last.reference_id,
             contentions: array_including(
-              { description: granted_issue.contention_text },
-              description: another_granted_issue.contention_text
+              { description: granted_issue.contention_text,
+                contention_type: Constants.CONTENTION_TYPES.default },
+              description: another_granted_issue.contention_text,
+              contention_type: Constants.CONTENTION_TYPES.default
             ),
-            user: User.system_user
+            user: User.system_user,
+            claim_date: decision_document.decision_date.to_date
           )
 
           expect(granted_issue.effectuation.contention_reference_id).to_not be_nil

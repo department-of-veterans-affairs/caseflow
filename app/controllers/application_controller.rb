@@ -31,6 +31,10 @@ class ApplicationController < ApplicationBaseController
 
   private
 
+  def deny_non_bva_admins
+    redirect_to "/unauthorized" unless Bva.singleton.user_has_access?(current_user)
+  end
+
   def manage_teams_menu_items
     current_user.administered_teams.map do |team|
       {
@@ -38,6 +42,18 @@ class ApplicationController < ApplicationBaseController
         link: team.user_admin_path
       }
     end
+  end
+
+  def admin_menu_items
+    [
+      {
+        title: COPY::TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK,
+        link: url_for(controller: "/team_management", action: "index")
+      }, {
+        title: COPY::USER_MANAGEMENT_PAGE_DROPDOWN_LINK,
+        link: url_for(controller: "/user_management", action: "index")
+      }
+    ]
   end
 
   def handle_non_critical_error(endpoint, err)
@@ -92,17 +108,6 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :application
 
-  def help_url
-    {
-      "certification" => certification_help_path,
-      "dispatch-arc" => dispatch_help_path,
-      "reader" => reader_help_path,
-      "hearings" => hearing_prep_help_path,
-      "intake" => intake_help_path
-    }[application] || help_path
-  end
-  helper_method :help_url
-
   # Link used when clicking logo
   def logo_path
     root_path
@@ -129,19 +134,12 @@ class ApplicationController < ApplicationBaseController
   def dropdown_urls
     urls = [
       { title: "Help", link: help_url },
-      { title: "Send Feedback", link: feedback_url, target: "_blank" }
+      { title: "Send Feedback", link: feedback_url, target: "_blank" },
+      { title: "Release History", link: release_history_url, target: "_blank" }
     ]
 
-    if current_user&.administered_teams&.any?
-      urls.concat(manage_teams_menu_items)
-    end
-
-    if Bva.singleton.user_has_access?(current_user)
-      urls.append(
-        title: COPY::TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK,
-        link: url_for(controller: "/team_management", action: "index")
-      )
-    end
+    urls.concat(manage_teams_menu_items) if current_user&.administered_teams&.any?
+    urls.concat(admin_menu_items) if Bva.singleton.user_has_access?(current_user)
 
     if ApplicationController.dependencies_faked?
       urls.append(title: "Switch User", link: url_for(controller: "/test/users", action: "index"))
@@ -168,15 +166,12 @@ class ApplicationController < ApplicationBaseController
   end
 
   def case_search_home_page
-    if feature_enabled?(:case_search_home_page)
-      return false if current_user.admin?
-      return false if current_user.organization_queue_user? || current_user.vso_employee?
-      return false if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
-      return false if current_user.colocated_in_vacols?
+    return false if current_user.admin?
+    return false if current_user.organization_queue_user? || current_user.vso_employee?
+    return false if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
+    return false if current_user.colocated_in_vacols?
 
-      return true
-    end
-    false
+    true
   end
   helper_method :case_search_home_page
 
@@ -312,6 +307,22 @@ class ApplicationController < ApplicationBaseController
     "/feedback"
   end
   helper_method :feedback_url
+
+  def help_url
+    {
+      "certification" => certification_help_path,
+      "dispatch-arc" => dispatch_help_path,
+      "reader" => reader_help_path,
+      "hearings" => hearing_prep_help_path,
+      "intake" => intake_help_path
+    }[application] || help_path
+  end
+  helper_method :help_url
+
+  def release_history_url
+    "https://headwayapp.co/va-caseflow-updates"
+  end
+  helper_method :release_history_url
 
   def build_date
     return Rails.application.config.build_version[:date] if Rails.application.config.build_version

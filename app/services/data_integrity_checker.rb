@@ -25,7 +25,7 @@ class DataIntegrityChecker
   end
 
   def slack_channel
-    "#appeals-app-alerts"
+    "#appeals-job-alerts"
     # override this to specify a different channel
   end
 end

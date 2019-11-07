@@ -15,7 +15,7 @@ RSpec.feature "Intake Manager Page", :postgres do
 
     let(:date_mdY) { Time.zone.yesterday.mdY }
 
-    scenario "Has access to intake manager page" do
+    scenario "Has access to intake manager page", skip: "deprecated" do
       visit "/intake/manager"
       expect(page).to have_content("Claims for manager review")
       expect(page).to have_content("Veteran File Number")
@@ -25,7 +25,7 @@ RSpec.feature "Intake Manager Page", :postgres do
       expect(page).to have_content("Explanation")
     end
 
-    scenario "Only included errors and cancellations appear" do
+    scenario "Only included errors and cancellations appear", skip: "deprecated" do
       RampElectionIntake.create!(
         veteran_file_number: "1100",
         completed_at: 5.minutes.ago,
@@ -138,6 +138,10 @@ RSpec.feature "Intake Manager Page", :postgres do
 
       select_user_stats("nosuchuser")
       expect(page).to have_content("Not found: nosuchuser")
+
+      visit "/intake/manager?user_css_id=#{user1.css_id}"
+
+      expect(page).to have_content("#{busy_day_ymd} 5")
     end
   end
 

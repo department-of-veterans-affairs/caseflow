@@ -5,13 +5,8 @@ require "rails_helper"
 
 describe DecisionReviewsController, :postgres, type: :controller do
   before do
-    FeatureToggle.enable!(:decision_reviews)
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
     User.stub = user
-  end
-
-  after do
-    FeatureToggle.disable!(:decision_reviews)
   end
 
   let(:non_comp_org) { create(:business_line, name: "National Cemetery Administration", url: "nca") }
@@ -39,7 +34,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
     context "user is in org" do
       before do
-        OrganizationsUser.add_user_to_organization(user, non_comp_org)
+        non_comp_org.add_user(user)
       end
 
       it "displays org queue page" do
@@ -76,7 +71,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
     context "user is in org" do
       before do
-        OrganizationsUser.add_user_to_organization(user, non_comp_org)
+        non_comp_org.add_user(user)
       end
 
       it "displays task details page" do
@@ -90,6 +85,19 @@ describe DecisionReviewsController, :postgres, type: :controller do
           get :show, params: { decision_review_business_line_slug: non_comp_org.url, task_id: 0 }
 
           expect(response.status).to eq 404
+        end
+      end
+
+      context "when it is a veteran record request and veteran is not accessible by user" do
+        let(:task) { create(:veteran_record_request_task) }
+        before do
+          allow_any_instance_of(Veteran).to receive(:accessible?).and_return(false)
+        end
+
+        it "returns 403" do
+          get :show, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id }
+
+          expect(response.status).to eq 403
         end
       end
     end
@@ -109,11 +117,16 @@ describe DecisionReviewsController, :postgres, type: :controller do
     let(:decision_date) { "2018-10-1" }
 
     before do
-      OrganizationsUser.add_user_to_organization(user, non_comp_org)
+      non_comp_org.add_user(user)
       task.appeal.update!(veteran_file_number: veteran.file_number)
     end
 
     context "with board grant effectuation task" do
+      before do
+        @raven_called = false
+        allow(Raven).to receive(:capture_exception) { @raven_called = true }
+      end
+
       let(:task) do
         create(:board_grant_effectuation_task, :in_progress, assigned_to: non_comp_org)
       end
@@ -135,6 +148,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
         put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id }
         expect(response.status).to eq(400)
+        expect(@raven_called).to eq(true)
       end
     end
 

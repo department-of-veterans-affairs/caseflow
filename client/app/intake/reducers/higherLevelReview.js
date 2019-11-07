@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers } from './common';
-import { formatDateStr } from '../../util/DateUtil';
 import { formatRequestIssues, formatContestableIssues } from '../util/issues';
 import {
   convertStringToBoolean,
@@ -32,7 +31,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.same_office
     },
     receiptDate: {
-      $set: serverIntake.receipt_date && formatDateStr(serverIntake.receipt_date)
+      $set: serverIntake.receipt_date
     },
     benefitType: {
       $set: serverIntake.benefit_type
@@ -72,6 +71,15 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     relationships: {
       $set: formatRelationships(serverIntake.relationships)
+    },
+    intakeUser: {
+      $set: serverIntake.intakeUser
+    },
+    asyncJobUrl: {
+      $set: serverIntake.asyncJobUrl
+    },
+    processedAt: {
+      $set: serverIntake.processedAt
     },
     veteranValid: {
       $set: serverIntake.veteranValid
@@ -116,6 +124,9 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     isReviewed: false,
     isComplete: false,
     issueCount: 0,
+    intakeUser: null,
+    processedAt: null,
+    asyncJobUrl: null,
     nonRatingRequestIssues: { },
     contestableIssues: { },
     reviewIntakeError: null,
