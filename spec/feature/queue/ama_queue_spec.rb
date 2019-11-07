@@ -859,4 +859,54 @@ RSpec.feature "AmaQueue", :all_dbs do
       end
     end
   end
+
+  describe "Navigating between team and individual queues" do
+    let(:user) { create(:user) }
+    let(:org) { create(:organization) }
+
+    let(:task_count) { 2 }
+    let!(:tasks) do
+      Array.new(task_count) do
+        root_task = create(:root_task, appeal: create(:appeal))
+        create(:generic_task, parent: root_task, appeal: root_task.appeal, assigned_to: org)
+      end
+    end
+
+    before do
+      org.add_user(user)
+      User.authenticate!(user: user)
+    end
+
+    it "successfully loads the individual queue " do
+      step "Assign the first organization task to a member of the team" do
+        visit("#{org.path}?tab=unassigned&page=1")
+        click_on(tasks.first.appeal.veteran.file_number)
+        click_dropdown(
+          prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+          text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label
+        )
+        fill_in("taskInstructions", with: "instructions here")
+        click_on(COPY::MODAL_SUBMIT_BUTTON)
+        expect(page).to have_content(COPY::COLOCATED_QUEUE_PAGE_TABLE_TITLE)
+      end
+
+      step "Use the back button to return to the team queue to retain data stored in front-end state" do
+        page.go_back # Case details page
+        page.go_back # Team queue
+        expect(page).to have_content(format(COPY::ORGANIZATION_QUEUE_TABLE_TITLE, org.name))
+      end
+
+      step "Assign the second organization task to a member of the team" do
+        visit(org.path)
+        click_on(tasks.second.appeal.veteran.file_number)
+        click_dropdown(
+          prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+          text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label
+        )
+        fill_in("taskInstructions", with: "instructions here")
+        click_on(COPY::MODAL_SUBMIT_BUTTON)
+        expect(page).to have_content(COPY::COLOCATED_QUEUE_PAGE_TABLE_TITLE)
+      end
+    end
+  end
 end
