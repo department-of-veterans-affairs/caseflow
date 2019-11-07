@@ -169,7 +169,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
 
         org_task = DeniedMotionToVacateTask.find_by(assigned_to_id: lit_support_team)
         expect(org_task).to_not be nil
-        expect(org_task.parent).to eq abstract_task  
+        expect(org_task.parent).to eq abstract_task
       end
 
       it "should close org task if user task is completed" do
@@ -226,7 +226,6 @@ describe PostDecisionMotionUpdater, :all_dbs do
         org_task = DismissedMotionToVacateTask.find_by(assigned_to_id: lit_support_team)
         expect(org_task).to_not be nil
         expect(org_task.parent).to eq abstract_task
-
       end
 
       it "should close org task if user task is completed" do
