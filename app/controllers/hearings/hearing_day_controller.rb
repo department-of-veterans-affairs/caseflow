@@ -53,7 +53,7 @@ class Hearings::HearingDayController < HearingsApplicationController
     hearing_day = HearingDay.create_hearing_day(
       create_params.merge(room: hearing_day_rooms.available_room)
     )
-    return invalid_record_error(hearing_day) if hearing.nil?
+    return invalid_record_error(hearing_day) if hearing_day.nil?
 
     render json: {
       hearing: json_hearing_day(hearing_day)
