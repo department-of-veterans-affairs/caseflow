@@ -55,6 +55,21 @@ describe VirtualHearings::DeleteConferencesJob, :postgres do
       end
     end
 
+    context "for a virtual hearing that was cancelled, but the emails failed to send" do
+      let!(:virtual_hearing) do
+        create(:virtual_hearing, :cancelled, hearing: hearing, conference_deleted: true)
+      end
+
+      it "doesn't call `delete_conference` and sends each email" do
+        subject
+        virtual_hearing.reload
+        expect(job).to_not receive(:delete_conference)
+        expect(virtual_hearing.veteran_email_sent).to eq(true)
+        expect(virtual_hearing.representative_email_sent).to eq(true)
+        expect(virtual_hearing.judge_email_sent).to eq(true)
+      end
+    end
+
     context "for virtual hearing that already occurred" do
       let(:scheduled_for) { Time.zone.now - 7.days }
       let!(:virtual_hearing) do
