@@ -52,11 +52,6 @@
     "value": "address_motion_to_vacate",
     "func": "address_motion_to_vacate_data"
   },
-  "MARK_MOTION_TO_VACATE_TASK_COMPLETE": {
-    "label": "Mark task as complete",
-    "value": "complete_motion_to_vacate",
-    "func": "complete_motion_to_vacate_data"
-  },
   "SIGN_MOTION_TO_VACATE": {
     "label": "Sign Motion to Vacate",
     "value": "sign_motion_to_vacate",

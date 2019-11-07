@@ -529,9 +529,13 @@ RSpec.feature "Motion to vacate", :all_dbs do
     visit "/queue/appeals/#{appeal.uuid}"
 
     find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-    find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_MOTION_TO_VACATE_TASK_COMPLETE.label).click
+    find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
 
-    expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{task.id}/complete_motion_to_vacate")
+    expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{task.id}/modal/mark_task_complete")
+
+    click_on "Mark complete"
+
+    expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, task.completion_contact))
   end
 
   def check_cavc_alert
