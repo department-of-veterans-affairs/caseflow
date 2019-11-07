@@ -269,6 +269,31 @@ feature "Intake", :all_dbs do
       expect(page).to have_content("David Schwimmer already started processing this form")
     end
 
+    context "the alert_duplicate_veterans feature toggle is enabled" do
+      before { FeatureToggle.enable!(:alert_duplicate_veterans, users: [current_user.css_id]) }
+      after { FeatureToggle.disable!(:alert_duplicate_veterans) }
+
+      scenario "Search for a veteran who has duplicate records in CorpDB" do
+        participant_id1 = "123456"
+        participant_id2 = "789012"
+
+        duplicate_veteran_participant_id_finder = instance_double(DuplicateVeteranParticipantIDFinder)
+        allow(DuplicateVeteranParticipantIDFinder).to receive(:new).and_return(duplicate_veteran_participant_id_finder)
+        allow(duplicate_veteran_participant_id_finder).to receive(:call).and_return([participant_id1, participant_id2])
+
+        visit "/intake"
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        safe_click ".cf-submit.usa-button"
+
+        fill_in search_bar_title, with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/search")
+        expect(page).to have_content("This Veteran has a duplicate record in CorpDB")
+        expect(page).to have_content("[#{participant_id1}, #{participant_id2}]")
+      end
+    end
+
     scenario "Cancel an intake" do
       create(:higher_level_review, veteran_file_number: "12341234")
 

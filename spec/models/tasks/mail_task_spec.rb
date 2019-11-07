@@ -8,7 +8,7 @@ describe MailTask, :postgres do
   let(:mail_team) { MailTeam.singleton }
   let(:root_task) { create(:root_task) }
   before do
-    OrganizationsUser.add_user_to_organization(user, mail_team)
+    mail_team.add_user(user)
   end
 
   describe ".create_from_params" do
@@ -489,21 +489,21 @@ describe MailTask, :postgres do
 
       context "for a ClearAndUnmistakeableErrorMailTask" do
         let(:task_class) { ClearAndUnmistakeableErrorMailTask }
-        it "returns the available_actions as defined by GenericTask" do
+        it "returns the available_actions as defined by Task" do
           expect(subject).to eq(generic_task_actions)
         end
       end
 
       context "for a ReconsiderationMotionMailTask" do
         let(:task_class) { ReconsiderationMotionMailTask }
-        it "returns the available_actions as defined by GenericTask" do
+        it "returns the available_actions as defined by Task" do
           expect(subject).to eq(generic_task_actions)
         end
       end
 
       context "for a VacateMotionMailTask" do
         let(:task_class) { VacateMotionMailTask }
-        it "returns the available_actions as defined by GenericTask" do
+        it "returns the available_actions as defined by Task" do
           expect(subject).to eq(generic_task_actions)
         end
       end

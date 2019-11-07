@@ -572,7 +572,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
     context "when a user can withdraw issues" do
       before do
-        OrganizationsUser.add_user_to_organization(current_user, BvaIntake.singleton)
+        BvaIntake.singleton.add_user(current_user)
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
       end
 
@@ -719,7 +719,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
   context "when remove decision reviews is enabled for supplemental_claim" do
     before do
-      OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
+      non_comp_org.add_user(current_user)
 
       # skip the sync call since all edit requests require resyncing
       # currently, we're not mocking out vbms and bgs
@@ -799,7 +799,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
         before do
           education_org = create(:business_line, name: "Education", url: "education")
-          OrganizationsUser.add_user_to_organization(current_user, education_org)
+          education_org.add_user(current_user)
         end
 
         let(:withdraw_date) { 1.day.ago.to_date.mdY }

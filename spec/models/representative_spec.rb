@@ -277,7 +277,12 @@ describe Representative, :postgres do
   describe ".queue_tabs" do
     it "returns the expected 4 tabs" do
       expect(vso.queue_tabs.map(&:class)).to eq(
-        [TrackingTasksTab, UnassignedTasksTab, AssignedTasksTab, CompletedTasksTab]
+        [
+          OrganizationTrackingTasksTab,
+          OrganizationUnassignedTasksTab,
+          OrganizationAssignedTasksTab,
+          OrganizationCompletedTasksTab
+        ]
       )
     end
   end
