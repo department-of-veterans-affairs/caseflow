@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "date"
-
 class AsyncableJobsController < ApplicationController
   include PaginationConcern
 
@@ -18,7 +16,7 @@ class AsyncableJobsController < ApplicationController
       format.html
       format.csv do
         jobs_as_csv = AsyncableJobsReporter.new(jobs: jobs).as_csv
-        filename = Time.now.utc.strftime("async-jobs-%Y%m%d.csv")
+        filename = Time.zone.now.strftime("async-jobs-%Y%m%d.csv")
         send_data jobs_as_csv, filename: filename
       end
     end
