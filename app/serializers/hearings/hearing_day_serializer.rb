@@ -16,16 +16,12 @@ class HearingDaySerializer
   attribute :readable_request_type do |hearing_day, params|
     get_readable_request_type(hearing_day, params)
   end
-  attribute :regional_office
-  ## in preparation for removing json_hearing_day from hearing_day_controller
-  attribute :regional_office_key, &:regional_office
-  attribute :regional_office_city do |object|
+  attribute :regional_office do |object|
     HearingDayMapper.city_for_regional_office(object.regional_office) unless object.regional_office.nil?
   end
+  attribute :regional_office_key, &:regional_office
   attribute :request_type
-  attribute :room
-  ## in preparation for removing json_hearing_day from hearing_day_controller
-  attribute :room_label do |object|
+  attribute :room do |object|
     HearingDayMapper.label_for_room(object.room)
   end
   attribute :scheduled_for
@@ -43,5 +39,18 @@ class HearingDaySerializer
     end
 
     Hearing::HEARING_TYPES[hearing_day.request_type.to_sym]
+  end
+
+  def self.serialize_collection(hearing_days)
+    hearing_days_with_virtual_hearings = HearingDaysWithVirtualHearingsQuery.new.call
+      .select(:id)
+      .map(&:id)
+      .to_set
+
+    ::HearingDaySerializer.new(
+      hearing_days,
+      collection: true,
+      params: { hearing_days_with_virtual_hearings: hearing_days_with_virtual_hearings }
+    ).serializable_hash[:data].map { |hearing_day| hearing_day[:attributes] }
   end
 end
