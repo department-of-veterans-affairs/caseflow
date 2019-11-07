@@ -347,4 +347,35 @@ describe "task rake tasks", :postgres do
       end
     end
   end
+
+  describe "tasks:assign_judgeteamroles_to_judgeteam_members" do
+    let(:args) { [] }
+
+    subject do
+      Rake::Task["tasks:assign_judgeteamroles_to_judgeteam_members"].reenable
+      Rake::Task["tasks:assign_judgeteamroles_to_judgeteam_members"].invoke(*args)
+    end
+
+    context "when on a dry run" do
+      it "tells the user how to execute" do
+        expected_output = <<~OUTPUT
+         *** DRY RUN
+         *** pass 'false' as the first argument to execute
+        OUTPUT
+        #allow_any_instance_of(BulkTaskReassignment).to receive(:perform_dry_run).and_return(nil)
+        #expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+        expect { subject }.to output(expected_output).to_stdout
+      end
+    end
+
+    context "when not on a dry run" do
+      let(:args) { [false] }
+      it "runs" do
+        expected_output = "Updating JudgeTeams with JudgeTeamRoles\n"
+        #allow_any_instance_of(BulkTaskReassignment).to receive(:perform_dry_run).and_return(nil)
+        #expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+        expect { subject }.to output(expected_output).to_stdout
+      end
+    end
+  end
 end

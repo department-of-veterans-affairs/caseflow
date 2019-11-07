@@ -152,4 +152,20 @@ namespace :tasks do
       BulkTaskReassignment.new(user).process
     end
   end
+
+  #
+  desc "assigning all current JudgeTeam admin members to be JudgeTeamLead"
+  task :assign_judgeteamroles_to_judgeteam_members, [:dry_run] => :environment do |_, args|
+    # where does this go? do we even look at our logs?
+    Rails.logger.tagged("rake tasks:assign_judgeteamroles_to_judgeteam_members") { Rails.logger.info("Invoked with: #{args.to_a.join(', ')}") }
+    dry_run = args.dry_run&.to_s&.strip&.upcase != "FALSE"
+
+    if dry_run
+      puts "*** DRY RUN"
+      puts "*** pass 'false' as the first argument to execute"
+    else
+      puts "Updating JudgeTeams with JudgeTeamRoles"
+    end
+
+  end
 end
