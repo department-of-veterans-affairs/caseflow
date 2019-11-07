@@ -108,7 +108,7 @@ describe VirtualHearings::DeleteConferencesJob, :postgres do
 
       it "does not mark the virtual hearings as deleted" do
         fake_service = PexipService.new(status_code: 400)
-        expect(job).to(receive(:client).twice.and_return(fake_service))
+        expect(job).to receive(:client).twice.and_return(fake_service)
         subject
         virtual_hearings.each(&:reload)
         expect(virtual_hearings.map(&:conference_deleted)).to all(be == false)
@@ -116,7 +116,7 @@ describe VirtualHearings::DeleteConferencesJob, :postgres do
 
       it "assumes a 404 means the virtual hearing conference was already deleted" do
         fake_service = PexipService.new(status_code: 404)
-        expect(job).to(receive(:client).twice.and_return(fake_service))
+        expect(job).to receive(:client).twice.and_return(fake_service)
         subject
         virtual_hearings.each(&:reload)
         expect(virtual_hearings.map(&:conference_deleted)).to all(be == true)
