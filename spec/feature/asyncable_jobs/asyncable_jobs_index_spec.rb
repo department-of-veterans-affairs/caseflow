@@ -168,6 +168,12 @@ feature "Asyncable Jobs index", :postgres do
       expect(page).to have_current_path(manager_path(user_css_id: hlr_intake.user.css_id))
     end
 
+    it "links to CSV export" do
+      visit "/jobs"
+
+      expect(page).to have_content "Download as CSV"
+    end
+
     context "zero unprocessed jobs" do
       before do
         AsyncableJobs.new(page_size: 100).jobs.each(&:clear_error!).each(&:processed!)
