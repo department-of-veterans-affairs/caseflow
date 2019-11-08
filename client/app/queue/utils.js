@@ -530,16 +530,16 @@ export const taskHasCompletedHold = (task) => {
 
 export const taskIsActive = (task) => ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);
 
-export const taskActionData = (props) => {
-  if (!props.task) {
+export const taskActionData = ({ task, match }) => {
+  if (!task) {
     return {};
   }
 
-  const relevantAction = props.task.availableActions.
-    find((action) => props.history.location.pathname.endsWith(action.value));
+  const { path } = match;
+  const relevantAction = task.availableActions.find((action) => path.endsWith(action.value));
 
   if (relevantAction && relevantAction.data) {
-    return (relevantAction.data);
+    return relevantAction.data;
   }
 
   return null;
