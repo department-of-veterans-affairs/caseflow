@@ -376,6 +376,13 @@ FactoryBot.define do
       parent { create(:appeal_withdrawal_mail_task, appeal: appeal) }
     end
 
+    factory :returned_undeliverable_correspondence_mail_task, class: ReturnedUndeliverableCorrespondenceMailTask do
+      type { ReturnedUndeliverableCorrespondenceMailTask.name }
+      appeal { create(:appeal) }
+      assigned_to { BvaDispatch.singleton }
+      parent { create(:root_task, appeal: appeal) }
+    end
+
     factory :no_show_hearing_task, class: NoShowHearingTask do
       type { NoShowHearingTask.name }
       appeal { create(:appeal) }
