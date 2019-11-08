@@ -162,7 +162,7 @@ Rails.application.routes.draw do
     post "/change_hearing_disposition/cancel", to: "hearing_tasks#cancel"
     post "/change_hearing_disposition/no_show", to: "hearing_tasks#now_show"
     post "/change_hearing_disposition/postpone_and_reschedule", to: "hearing_tasks#postpone_and_reschedule"
-    post "/change_hearing_disposition/postpone_reschedule_later", to: "hearing_tasks#postpone_and_reschedule_later"
+    post "/change_hearing_disposition/postpone_and_reschedule_later", to: "hearing_tasks#postpone_and_reschedule_later"
   end
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
 
