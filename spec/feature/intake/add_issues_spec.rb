@@ -33,6 +33,7 @@ feature "Intake Add Issues Page", :all_dbs do
           diagnostic_text: "Broken arm",
           diagnostic_type: "Bone",
           disability_id: "123",
+          disability_date: promulgation_date - 3.days,
           type_name: "Not Service Connected"
         }
       ]

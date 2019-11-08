@@ -51,13 +51,11 @@ class PostDecisionMotionUpdater
       return
     end
 
-    new_task = task_class.new(
-      appeal: task.appeal,
-      parent: abstract_task,
-      assigned_by: task.assigned_to,
-      assigned_to: assigned_to,
-      instructions: [params[:instructions]]
-    )
+    if grant_type?
+      judge_sign_task = create_judge_sign_task(abstract_task)
+    end
+
+    new_task = create_new_task((judge_sign_task || abstract_task))
 
     unless new_task.valid?
       errors.messages.merge!(new_task.errors.messages)
@@ -72,6 +70,24 @@ class PostDecisionMotionUpdater
     AbstractMotionToVacateTask.new(
       appeal: task.appeal,
       parent: task.parent,
+      assigned_to: task.assigned_to
+    )
+  end
+
+  def create_new_task(parent)
+    task_class.new(
+      appeal: task.appeal,
+      parent: parent,
+      assigned_by: task.assigned_to,
+      assigned_to: assigned_to,
+      instructions: [params[:instructions]]
+    )
+  end
+
+  def create_judge_sign_task(parent)
+    JudgeSignMotionToVacateTask.new(
+      appeal: task.appeal,
+      parent: parent,
       assigned_to: task.assigned_to
     )
   end
@@ -102,7 +118,7 @@ class PostDecisionMotionUpdater
   end
 
   def assigned_to
-    @assigned_to ||= (denied_or_dismissed? ? prev_motions_attorney_or_org : User.find_by(id: params[:assigned_to_id]))
+    @assigned_to ||= (denied_or_dismissed? ? prev_motions_attorney : User.find_by(id: params[:assigned_to_id]))
   end
 
   def prev_motions_attorney
