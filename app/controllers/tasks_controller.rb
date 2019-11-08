@@ -114,7 +114,7 @@ class TasksController < ApplicationController
 
   def ready_for_hearing_schedule
     ro = HearingDayMapper.validate_regional_office(params[:ro])
-    tasks = ScheduleHearingTask.tasks_for_ro(ro)
+    tasks = HearingCoordinatorScheduleQueue.new(current_user, regional_office: ro).tasks
 
     render json: json_tasks(tasks, ama_serializer: WorkQueue::RegionalOfficeTaskSerializer)
   end
@@ -159,7 +159,7 @@ class TasksController < ApplicationController
   end
 
   def verify_task_access
-    if current_user.vso_employee? && task_classes.exclude?(InformalHearingPresentationTask.name.to_sym)
+    if current_user.vso_employee? && !task_classes.all?(InformalHearingPresentationTask.name.to_sym)
       fail Caseflow::Error::ActionForbiddenError, message: "VSOs cannot create that task."
     end
   end
@@ -179,7 +179,7 @@ class TasksController < ApplicationController
   end
 
   def task_classes
-    create_params.map { |param| param[:type]&.to_sym }.uniq.compact
+    [create_params].flatten.map { |param| param[:type]&.to_sym }.uniq.compact
   end
 
   def valid_task_classes

@@ -87,7 +87,7 @@ feature "NonComp Dispositions Task Page", :postgres do
     let(:arbitrary_decision_date) { "01/01/2019" }
     before do
       User.stub = user
-      OrganizationsUser.add_user_to_organization(user, non_comp_org)
+      non_comp_org.add_user(user)
       setup_prior_claim_with_payee_code(decision_review, veteran, "00")
     end
 

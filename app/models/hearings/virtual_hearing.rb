@@ -11,8 +11,8 @@ class VirtualHearing < ApplicationRecord
   validates :judge_email, presence: true, on: :create
   validates :veteran_email, presence: true, on: :create
   validates_email_format_of :judge_email
-  validates_email_format_of :representative_email
   validates_email_format_of :veteran_email
+  validates_email_format_of :representative_email, allow_nil: true
   validate :associated_hearing_is_video, on: :create
 
   enum status: {
