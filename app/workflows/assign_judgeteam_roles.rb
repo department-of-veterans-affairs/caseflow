@@ -10,22 +10,21 @@ class AssignJudgeteamRoles
   end
 
   def process
-    judge_teams = JudgeTeam.all
-    judge_teams.each do |judge_team|
+    JudgeTeam.all.each do |judge_team|
       if judge_team.users.empty?
         warn "Judge Team ID #{judge_team.id} has no members. Probably requires manual cleanup"
         next
       end
 
-      admins = judge_team.admins
-      if process_admins(admins, judge_team)
-        nonadmins = judge_team.attorneys
-        process_nonadmins(nonadmins, judge_team)
+      if process_admins(judge_team.admins, judge_team)
+        process_nonadmins(judge_team.attorneys, judge_team)
       end
     end
   end
 
   private
+
+  attr_reader :dry_run
 
   def process_admins(admins, judge_team)
     if incorrect_admin_count?(admins)
@@ -34,7 +33,7 @@ class AssignJudgeteamRoles
 
     admins.each do |admin|
       message = "#{admin.css_id} JudgeTeamLead of #{judge_team.name}"
-      if @dry_run
+      if dry_run
         warn "Would make #{message}"
       else
         org_user = OrganizationsUser.existing_record(admin, judge_team)
@@ -65,7 +64,7 @@ class AssignJudgeteamRoles
   def process_nonadmins(nonadmins, judge_team)
     nonadmins.each do |atty|
       message = "#{atty.css_id} DecisionDraftingAttorney of #{judge_team.name}"
-      if @dry_run
+      if dry_run
         warn "Would make #{message}"
       else
         org_user = OrganizationsUser.existing_record(atty, judge_team)
