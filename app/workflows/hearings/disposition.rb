@@ -8,7 +8,7 @@ class Hearings::Disposition
     @hearing_task = hearing_task
     @appeal = hearing_task&.appeal
     @hearing = hearing_task&.hearing
-    @scheduler = scheduler || Hearings::Scheduler.new(appeal, hearing_task: hearing_task)
+    @scheduler = scheduler || Hearings::Schedule.new(appeal, hearing_task: hearing_task)
   end
 
   def hold!
