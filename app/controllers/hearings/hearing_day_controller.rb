@@ -17,8 +17,10 @@ class Hearings::HearingDayController < HearingsApplicationController
 
       format.json do
         if hearing_day_range.valid?
+          serialized_hearing_days = ::HearingDaySerializer.serialize_collection(hearing_days_in_range_for_user)
+
           render json: {
-            hearings: json_hearing_days(hearing_days_in_range_for_user.map(&:to_hash)),
+            hearings: json_hearing_days(serialized_hearing_days),
             startDate: hearing_day_range.start_date,
             endDate: hearing_day_range.end_date
           }
