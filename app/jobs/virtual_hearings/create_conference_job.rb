@@ -22,7 +22,7 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
       resp = client.create_conference(
         host_pin: rand(1000..9999),
         guest_pin: rand(1000..9999),
-        name: "BVA#{virtual_hearing.alias}"
+        name: virtual_hearing.alias
       )
 
       if resp.error

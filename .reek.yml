@@ -40,6 +40,7 @@ detectors:
       - Api::ApplicationController#upstream_known_error
       - AppealTaskHistory#build_events
       - ApplicationRecord#as_hash
+      - AssignJudgeteamRoles#process
       - AsyncableJobsReporter
       - ClaimReviewAsyncStatsReporter#as_csv
       - DataIntegrityChecksJob

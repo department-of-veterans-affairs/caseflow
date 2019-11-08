@@ -7,6 +7,7 @@ import { withRouter } from 'react-router-dom';
 
 import { taskById, appealWithDetailSelector } from '../selectors';
 import { MTVJudgeDisposition } from './MTVJudgeDisposition';
+import { JUDGE_RETURN_TO_LIT_SUPPORT } from '../../../constants/TASK_ACTIONS.json';
 import { submitMTVJudgeDecision } from './mtvActions';
 import { taskActionData } from '../utils';
 
@@ -31,6 +32,7 @@ export const AddressMotionToVacateView = (props) => {
       selectedAttorney={selected}
       appeal={appeal}
       onSubmit={handleSubmit}
+      returnToLitSupportLink={`${props.match.url}/${JUDGE_RETURN_TO_LIT_SUPPORT.value}`}
     />
   );
 };
@@ -38,7 +40,10 @@ export const AddressMotionToVacateView = (props) => {
 AddressMotionToVacateView.propTypes = {
   task: PropTypes.object,
   appeal: PropTypes.object,
-  submitMTVJudgeDecision: PropTypes.func
+  submitMTVJudgeDecision: PropTypes.func,
+  match: PropTypes.shape({
+    url: PropTypes.string
+  })
 };
 
 const mapStateToProps = (state, { match }) => {
