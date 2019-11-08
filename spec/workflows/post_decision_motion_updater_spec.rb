@@ -206,6 +206,8 @@ describe PostDecisionMotionUpdater, :all_dbs do
 
         org_task = DismissedMotionToVacateTask.find_by(assigned_to_id: lit_support_team)
         expect(org_task).to_not be nil
+        expect(org_task.assigned_to).to be LitigationSupport.singleton
+        expect(org_task.completion_contact).to eql "the Litigation Support team"
         expect(org_task.parent).to eq abstract_task
 
         attorney_task = DismissedMotionToVacateTask.find_by(parent: org_task)
