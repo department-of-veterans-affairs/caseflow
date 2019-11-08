@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Migrates our old admin-judge based JudgeTeams to use the JudgeTeamRole, invoked via Rake
+
 class AssignJudgeteamRoles
   def perform_dry_run
     @dry_run = true
