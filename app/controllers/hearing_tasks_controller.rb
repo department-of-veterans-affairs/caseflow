@@ -4,7 +4,7 @@ class HearingTasksController < TasksController
   def schedule_veteran
     # TASK_ACTIONS.SCHEDULE_VETERAN
     hearing_task.multi_transaction do
-      workflow.scheduler.schedule(hearing_params)
+      workflow.scheduler.schedule(hearing_params.to_h.symbolize_keys)
       update
     end
   end
@@ -62,7 +62,7 @@ class HearingTasksController < TasksController
     # TASK_ACTIONS.CHANGE_HEARING_DISPOSITION
     # TASK_ACTIONS.POSTPONE_HEARING
     hearing_task.multi_transaction do
-      workflow.disposition.postpone_and_reschedule!(hearing_params)
+      workflow.disposition.postpone_and_reschedule!(hearing_params.to_h.symbolize_keys)
       update
     end
   end
@@ -71,7 +71,10 @@ class HearingTasksController < TasksController
     # TASK_ACTIONS.CHANGE_HEARING_DISPOSITION
     # TASK_ACTIONS.POSTPONE_HEARING
     hearing_task.multi_transaction do
-      workflow.disposition.postpone_and_reschedule_later!(admin_action_attributes: admin_action_params)
+      workflow.disposition.postpone_and_reschedule_later!(
+        instructions: params[:instructions],
+        admin_action_attributes: admin_action_params.to_h.symbolize_keys
+      )
       update
     end
   end
@@ -90,6 +93,11 @@ class HearingTasksController < TasksController
     Hearings::WorkflowManager.new(hearing_task)
   end
 
+  def update_params
+    # for testing, flag to circumvent update from params method
+    super.merge(disable_update_from_params: true)
+  end
+
   def hearing_params
     params.require(:hearing).permit(
       :hearing_day_id, :hearing_location_attrs, :scheduled_time_string,
@@ -100,7 +108,7 @@ class HearingTasksController < TasksController
   def admin_action_params
     if params.key?(:admin_action_attributes)
       params[:admin_action_attributes]
-        .permit(:instructions, :admin_action_klass, :admin_action_instructions)
+        .permit(:admin_action_klass, :admin_action_instructions)
     end
   end
 end

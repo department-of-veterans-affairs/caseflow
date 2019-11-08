@@ -24,6 +24,11 @@ class ScheduleHearingTask < Task
   end
 
   def update_from_params(params, current_user)
+    if params[:disable_update_from_params]
+      params.delete(:disable_update_from_params)
+      return super(params, current_user)
+    end
+
     multi_transaction do
       verify_user_can_update!(current_user)
 

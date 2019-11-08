@@ -8,18 +8,18 @@ class Hearings::Schedule
     @hearing_task = hearing_task
   end
 
-  def schedule(*args)
-    hearing = slot_new_hearing(*args)
+  def schedule(**args)
+    hearing = slot_new_hearing(**args)
 
-    AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
+    AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, hearing_task, hearing)
   end
 
-  def reschedule(*args)
+  def reschedule(**args)
     fail_if_hearing_task_is_nil
 
     new_hearing_task = hearing_task.cancel_and_recreate
 
-    new_hearing = slot_new_hearing(*args)
+    new_hearing = slot_new_hearing(**args)
 
     AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
 
