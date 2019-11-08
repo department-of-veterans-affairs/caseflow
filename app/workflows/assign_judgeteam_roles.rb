@@ -18,9 +18,9 @@ class AssignJudgeteamRoles
       end
 
       admins = judge_team.admins
-      if process_admins(admins: admins, judge_team: judge_team)
+      if process_admins(admins, judge_team)
         nonadmins = judge_team.attorneys
-        process_nonadmins(nonadmins: nonadmins, judge_team: judge_team)
+        process_nonadmins(nonadmins, judge_team)
       end
     end
   end
@@ -28,7 +28,7 @@ class AssignJudgeteamRoles
   private
 
   def process_admins(admins, judge_team)
-    if incorrect_admin_count?(admins.count)
+    if incorrect_admin_count?(admins)
       return false
     end
 
@@ -46,7 +46,7 @@ class AssignJudgeteamRoles
     true
   end
 
-  def incorrect_admin_count?(_admin_count)
+  def incorrect_admin_count?(admins)
     if admins.empty?
       warn "Judge Team ID #{judge_team.id} has no admin members. Requires manual cleanup. \
         Not assigning roles to team."

@@ -160,7 +160,9 @@ namespace :tasks do
   #   $ bundle exec rake tasks:assign_judgeteamroles_to_judgeteam_members[false]"
   desc "assigning all current JudgeTeam admin members to be JudgeTeamLead"
   task :assign_judgeteamroles_to_judgeteam_members, [:dry_run] => :environment do |_, args|
-    Rails.logger.tagged("rake tasks:assign_judgeteamroles_to_judgeteam_members") { Rails.logger.info("Invoked with: #{args.to_a.join(', ')}") }
+    Rails.logger.tagged("rake tasks:assign_judgeteamroles_to_judgeteam_members") do
+      Rails.logger.info("Invoked with: #{args.to_a.join(', ')}")
+    end
     dry_run = args.dry_run&.to_s&.strip&.upcase != "FALSE"
 
     if dry_run
@@ -171,6 +173,5 @@ namespace :tasks do
       puts "Updating JudgeTeams with JudgeTeamRoles"
       AssignJudgeteamRoles.new.process
     end
-
   end
 end
