@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.describe HearingTasksController, :all_dbs, type: :controller do
+RSpec.describe HearingTasksController, :all_dbs, type: :controller, focus: true do
   before do
     user = create(:user, full_name: "Hearings User", station_id: 101, roles: ["System Admin"])
     HearingsManagement.singleton.add_user(user)
@@ -31,6 +31,27 @@ RSpec.describe HearingTasksController, :all_dbs, type: :controller do
       end
 
       subject { post :schedule_veteran, params: params }
+
+      it do
+        subject
+        expect(response.status).to eq 200
+      end
+    end
+  end
+
+  describe "POST /reschedule_no_show_hearing", focus: true do
+    context "for cases with an open NoShowHearingTask" do
+      let(:no_show_task) { create(:no_show_hearing_task) }
+      let(:params) do
+        {
+          id: no_show_task.id,
+          task: {
+            status: Constants.TASK_STATUSES.completed
+          }
+        }
+      end
+
+      subject { post :reschedule_no_show_hearing, params: params }
 
       it do
         subject

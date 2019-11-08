@@ -52,6 +52,11 @@ class AssignHearingDispositionTask < Task
   end
 
   def update_from_params(params, user)
+    if params[:disable_update_from_params]
+      params.delete(:disable_update_from_params)
+      return super(params, current_user)
+    end
+
     payload_values = params.delete(:business_payloads)&.dig(:values)
 
     if params[:status] == Constants.TASK_STATUSES.cancelled && payload_values[:disposition].present?

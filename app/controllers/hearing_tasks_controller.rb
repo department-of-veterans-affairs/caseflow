@@ -12,7 +12,7 @@ class HearingTasksController < TasksController
   def reschedule_no_show_hearing
     # TASK_ACTIONS.RESCHEDULE_NO_SHOW_HEARING
     hearing_task.multi_transaction do
-      workflow.scheduler.rechedule_later(instructions: params[:instructions])
+      workflow.scheduler.reschedule_later(instructions: params[:instructions])
       update
     end
   end
@@ -84,8 +84,10 @@ class HearingTasksController < TasksController
   def hearing_task
     @hearing_task ||= if task.is_a? HearingTask
                         task
-                      else
+                      elsif task.parent.is_a? HearingTask
                         task.parent
+                      else
+                        task.parent.parent
                       end
   end
 
