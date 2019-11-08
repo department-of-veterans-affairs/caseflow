@@ -31,7 +31,7 @@ class Hearings::HearingDayController < HearingsApplicationController
 
   def show
     render json: {
-      hearing_day: hearing_day.to_hash.merge(
+      hearing_day: json_hearing_day(hearing_day.to_hash).merge(
         hearings: hearing_day.hearings_for_user(current_user).map { |hearing| hearing.quick_to_hash(current_user.id) }
       )
     }
@@ -41,7 +41,7 @@ class Hearings::HearingDayController < HearingsApplicationController
     if hearing_day_range.valid?
       hearing_days_with_hearings = hearing_day_range.open_hearing_days_with_hearings_hash(current_user.id)
 
-      render json: { hearing_days: hearing_days_with_hearings }
+      render json: { hearing_days: json_hearing_days(hearing_days_with_hearings) }
     else
       hearing_day_range_invalid
     end
@@ -55,7 +55,9 @@ class Hearings::HearingDayController < HearingsApplicationController
     )
     return invalid_record_error(hearing_day) if hearing_day.nil?
 
-    render json: { hearing: hearing_day.to_hash }, status: :created
+    render json: {
+      hearing: json_hearing_day(hearing_day)
+    }, status: :created
   end
 
   def update
@@ -164,6 +166,25 @@ class Hearings::HearingDayController < HearingsApplicationController
         }
       end
     }, status: :bad_request
+  end
+
+  def json_hearing_days(hearing_days)
+    hearing_days.each_with_object([]) do |hearing_day, result|
+      result << json_hearing_day(hearing_day)
+    end
+  end
+
+  def json_hearing_day(hearing_day)
+    hearing_day.as_json.each_with_object({}) do |(key, value), converted|
+      converted[key] = if key == "room"
+                         HearingDayMapper.label_for_room(value)
+                       elsif key == "regional_office" && !value.nil?
+                         converted["regional_office_key"] = value
+                         HearingDayMapper.city_for_regional_office(value)
+                       else
+                         value
+                       end
+    end
   end
 
   def no_available_rooms
