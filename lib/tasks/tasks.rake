@@ -169,7 +169,7 @@ namespace :tasks do
       AssignJudgeteamRoles.new.perform_dry_run
     else
       puts "Updating JudgeTeams with JudgeTeamRoles"
-      AssignJudgeteamRoles.new.perform
+      AssignJudgeteamRoles.new.process
     end
 
   end
