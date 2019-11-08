@@ -9,7 +9,7 @@ class AsyncableJobsController < ApplicationController
   skip_before_action :deny_vso_access
 
   def index
-    if allowed_params[:asyncable_job_klass]
+    if asyncable_job_klass
       @jobs = asyncable_job_klass.potentially_stuck.limit(page_size).offset(page_start)
     end
     respond_to do |format|
@@ -49,10 +49,14 @@ class AsyncableJobsController < ApplicationController
   helper_method :jobs, :job, :allowed_params, :pagination
 
   def asyncable_job_klass
-    klass = allowed_params[:asyncable_job_klass].constantize
-    fail ActiveRecord::RecordNotFound unless AsyncableJobs.models.include?(klass)
+    @asyncable_job_klass ||= begin
+      if allowed_params[:asyncable_job_klass]
+        klass = allowed_params[:asyncable_job_klass].constantize
+        fail ActiveRecord::RecordNotFound unless AsyncableJobs.models.include?(klass)
 
-    klass
+        klass
+      end
+    end
   end
 
   def asyncable_jobs
@@ -61,7 +65,7 @@ class AsyncableJobsController < ApplicationController
 
   def total_jobs
     @total_jobs ||= begin
-      if allowed_params[:asyncable_job_klass]
+      if asyncable_job_klass
         asyncable_job_klass.potentially_stuck.count
       else
         asyncable_jobs.total_jobs
@@ -73,7 +77,7 @@ class AsyncableJobsController < ApplicationController
 
   def all_jobs
     @all_jobs ||= begin
-      if allowed_params[:asyncable_job_klass]
+      if asyncable_job_klass
         asyncable_job_klass.potentially_stuck
       else
         AsyncableJobs.new(page_size: 0).jobs
@@ -86,7 +90,7 @@ class AsyncableJobsController < ApplicationController
   end
 
   def job
-    @job ||= allowed_params[:asyncable_job_klass].constantize.find(allowed_params[:id])
+    @job ||= asyncable_job_klass.find(allowed_params[:id])
   end
 
   def set_application

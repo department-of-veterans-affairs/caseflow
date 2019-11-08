@@ -54,9 +54,15 @@ describe AsyncableJobsController, :postgres, type: :controller do
       let(:page_size) { 50 }
       let(:review) { create(:higher_level_review) }
       let(:many_jobs) do
-        (1..page_size+1).map do
-          create(:request_issues_update, :requires_processing, user: user, review: review,
-            before_request_issue_ids: [], after_request_issue_ids: [])
+        (1..page_size + 1).map do
+          create(
+            :request_issues_update,
+            :requires_processing,
+            user: user,
+            review: review,
+            before_request_issue_ids: [],
+            after_request_issue_ids: []
+          )
         end
       end
 
