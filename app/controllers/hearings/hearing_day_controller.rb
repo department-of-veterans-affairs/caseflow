@@ -86,20 +86,26 @@ class Hearings::HearingDayController < HearingsApplicationController
   end
 
   ## action is either index or index_with_hearings
-  def range_start_date
+  def default_range_start_date
     default = Time.zone.today.beginning_of_day
     default -= 30.days if params[:action] == "index"
+    default
+  end
 
-    params[:start_date].nil? ? default : Date.parse(params[:start_date])
+  def range_start_date
+    params[:start_date].nil? ? default_range_start_date : Date.parse(params[:start_date])
   rescue ArgumentError
     nil
   end
 
-  def range_end_date
+  def default_range_end_date
     default = Time.zone.today.beginning_of_day
     default += ((params[:action] == "index") ? 365.days : 182.days)
+    default
+  end
 
-    params[:end_date].nil? ? default : Date.parse(params[:end_date])
+  def range_end_date
+    params[:end_date].nil? ? default_range_end_date : Date.parse(params[:end_date])
   rescue ArgumentError
     nil
   end
