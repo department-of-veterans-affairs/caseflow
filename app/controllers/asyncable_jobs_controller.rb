@@ -15,7 +15,7 @@ class AsyncableJobsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        jobs_as_csv = AsyncableJobsReporter.new(jobs: jobs).as_csv
+        jobs_as_csv = AsyncableJobsReporter.new(jobs: all_jobs).as_csv
         filename = Time.zone.now.strftime("async-jobs-%Y%m%d.csv")
         send_data jobs_as_csv, filename: filename
       end
@@ -70,6 +70,16 @@ class AsyncableJobsController < ApplicationController
   end
 
   alias total_items total_jobs
+
+  def all_jobs
+    @all_jobs ||= begin
+      if allowed_params[:asyncable_job_klass]
+        asyncable_job_klass.potentially_stuck
+      else
+        AsyncableJobs.new(page_size: 0).jobs
+      end
+    end
+  end
 
   def jobs
     @jobs ||= asyncable_jobs.jobs
