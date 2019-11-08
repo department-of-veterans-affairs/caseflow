@@ -108,13 +108,14 @@ export const returnToLitSupport = (data, ownProps) => {
         tasks: { data: tasks }
       } = res.body;
 
-      dispatch(onReceiveAmaTasks(tasks));
-
       dispatch(returnMTVToLitSupportSuccess());
 
       if (history) {
         history.push('/queue');
       }
+
+      // Order is important here — this must come after the redirect
+      dispatch(onReceiveAmaTasks(tasks));
     } catch (error) {
       dispatch(returnMTVToLitSupportError());
     }

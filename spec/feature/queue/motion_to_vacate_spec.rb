@@ -333,7 +333,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_MODAL_TITLE)
       expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS)
-      fill_in("instructions", with: return_to_lit_support_instructions, fill_options: { clear: :none })
+      find("div.cf-modal-body").fill_in("instructions",
+                                        with: return_to_lit_support_instructions,
+                                        fill_options: { clear: :none })
 
       click_button(text: "Submit")
 
