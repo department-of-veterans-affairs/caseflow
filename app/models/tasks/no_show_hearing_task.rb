@@ -5,7 +5,7 @@
 class NoShowHearingTask < Task
   before_validation :set_assignee
 
-  def self.create_with_hold(parent:)
+  def self.create_with_hold(parent)
     multi_transaction do
       create!(parent: parent, appeal: parent.appeal).tap do |no_show_hearing_task|
         TimedHoldTask.create_from_parent(

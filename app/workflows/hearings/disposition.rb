@@ -42,7 +42,7 @@ class Hearings::Disposition
   def no_show!
     update_disposition(Constants.HEARING_DISPOSITION_TYPES.no_show)
 
-    NoShowHearingTask.create_with_hold(parent: hearing_task.disposition_task)
+    NoShowHearingTask.create_with_hold(hearing_task.disposition_task)
   end
 
   def admin_changes_needed_after_hearing_date(instructions: nil)
