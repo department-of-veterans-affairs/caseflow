@@ -57,5 +57,27 @@ describe Hearings::HearingDayController, :all_dbs do
         expect(hearing_days["hearings"].size).to eq 0
       end
     end
+
+    context "with a virtual hearing returns the right request type" do
+      let!(:hearing_day) do
+        create(
+          :hearing_day,
+          scheduled_for: Time.zone.now.to_date,
+          regional_office: "RO42",
+          request_type: HearingDay::REQUEST_TYPES[:video]
+        )
+      end
+      let(:hearing) { create(:hearing, hearing_day: hearing_day) }
+      let!(:virtual_hearing) { create(:virtual_hearing, :initialized, hearing: hearing) }
+      let(:params) { { start_time: Time.zone.now.to_date - 2.days } }
+
+      it "returns 200 and the hearing day has the request type 'Video, Virtual'", :aggregate_failures do
+        expect(subject.status).to eq 200
+        hearing_days = JSON.parse(subject.body)
+        expect(hearing_days["hearings"].size).to eq 1
+        expect(hearing_days["hearings"][0]["id"]).to eq hearing_day.id
+        expect(hearing_days["hearings"][0]["readable_request_type"]).to eq "Video, Virtual"
+      end
+    end
   end
 end
