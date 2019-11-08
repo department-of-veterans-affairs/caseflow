@@ -551,10 +551,19 @@ class QueueApp extends React.PureComponent {
               render={this.routedAssignToPulacCerullo}
             />
             <PageRoute
-              exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`}
               title="Address Motion to Vacate | Caseflow"
               render={this.routedAddressMotionToVacate}
+            />
+            <PageRoute
+              exact
+              path={[
+                '/queue/appeals/:appealId/tasks/:taskId',
+                TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value,
+                TASK_ACTIONS.JUDGE_RETURN_TO_LIT_SUPPORT.value
+              ].join('/')}
+              title="Return to Litigation Support | Caseflow"
+              render={this.routedReturnToLitSupport}
             />
             <PageRoute
               exact
@@ -563,12 +572,6 @@ class QueueApp extends React.PureComponent {
               }`}
               title="Assign to Pulac-Cerullo | Caseflow"
               render={this.routedPulacCerulloReminder}
-            />
-            <PageRoute
-              exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.JUDGE_RETURN_TO_LIT_SUPPORT.value}`}
-              title="Return to Litigation Support | Caseflow"
-              render={this.routedReturnToLitSupport}
             />
             <PageRoute
               path={`/queue/appeals/:appealId/tasks/:taskId/${
