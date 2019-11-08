@@ -14,7 +14,6 @@ import { taskActionData } from '../utils';
 export const AddressMotionToVacateView = (props) => {
   const { task, appeal } = props;
 
-  console.log('AddressMotionToVacateView', props.match)
   const { selected, options } = taskActionData(props);
 
   const attyOptions = options.map(({ value, label }) => ({
