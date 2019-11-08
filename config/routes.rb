@@ -155,14 +155,14 @@ Rails.application.routes.draw do
   get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
 
   scope path: "hearings/tasks/:id" do
-    get "/schedule", to: "hearing_tasks#schedule"
-    get "/withdraw", to: "hearing_tasks#withdraw"
-    get "/hold", to: "hearing_tasks#hold"
-    get "/cancel", to: "hearing_tasks#cancel"
-    get "/no_show", to: "hearing_tasks#now_show"
-    get "/postpone", to: "hearing_tasks#postpone"
-    get "/postpone_and_reschedule", to: "hearing_tasks#postpone_and_reschedule"
-    get "/postpone_and_reschedule_later_with_admin_action", to: "hearing_tasks#postpone_and_reschedule_later_with_admin_action"
+    post "/schedule_veteran", to: "hearing_tasks#schedule_veteran"
+    post "/reschedule_no_show_hearing", to: "hearing_tasks#reschedule_no_show_hearing"
+    post "/withdraw_hearing", to: "hearing_tasks#withdraw_hearing"
+    post "/change_hearing_disposition/hold", to: "hearing_tasks#hold"
+    post "/change_hearing_disposition/cancel", to: "hearing_tasks#cancel"
+    post "/change_hearing_disposition/no_show", to: "hearing_tasks#now_show"
+    post "/change_hearing_disposition/postpone_and_reschedule", to: "hearing_tasks#postpone_and_reschedule"
+    post "/change_hearing_disposition/postpone_reschedule_later", to: "hearing_tasks#postpone_and_reschedule_later"
   end
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
 

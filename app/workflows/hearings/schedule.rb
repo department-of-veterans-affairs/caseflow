@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Hearings::Scheduler
+class Hearings::Schedule
   attr_reader :appeal, :hearing_task
 
   def initialize(appeal, hearing_task: nil)
@@ -14,24 +14,23 @@ class Hearings::Scheduler
     AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
   end
 
+  def reschedule(*args)
+    fail_if_hearing_task_is_nil
+
+    new_hearing_task = hearing_task.cancel_and_recreate
+
+    new_hearing = slot_new_hearing(*args)
+
+    AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
+
+    new_hearing
+  end
+
   def slot_new_hearing(hearing_day_id:, scheduled_time_string:, hearing_location_attrs: nil)
     HearingRepository.slot_new_hearing(hearing_day_id,
                                        appeal: appeal,
                                        hearing_location_attrs: hearing_location_attrs&.to_hash,
                                        scheduled_time_string: scheduled_time_string)
-  end
-
-  def reschedule(hearing_day_id:, scheduled_time_string:, hearing_location_attrs: nil)
-    fail_if_hearing_task_is_nil
-
-    new_hearing_task = hearing_task.cancel_and_recreate
-
-    new_hearing = schedule(hearing_day_id,
-                           hearing_location_attrs: hearing_location_attrs&.to_hash,
-                           scheduled_time_string: scheduled_time_string)
-    HearingTask.create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
-
-    new_hearing
   end
 
   def reschedule_later(instructions: nil)
@@ -47,6 +46,8 @@ class Hearings::Scheduler
   end
 
   def reschedule_later_with_admin_action(instructions: nil, admin_action_klass: nil, admin_action_instructions: nil)
+    fail_if_hearing_task_is_nil
+
     schedule_task = reschedule_later(instruction: instructions)
 
     admin_action_klass.constantize.create!(

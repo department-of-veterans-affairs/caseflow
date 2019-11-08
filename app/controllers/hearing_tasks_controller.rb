@@ -1,70 +1,93 @@
 # frozen_string_literal: true
 
 class HearingTasksController < TasksController
-  def schedule
-    scheduler.schedule(hearing_params)
-
-    update
+  def schedule_veteran
+    # TASK_ACTIONS.SCHEDULE_VETERAN
+    hearing_task.multi_transaction do
+      workflow.scheduler.schedule(hearing_params)
+      update
+    end
   end
 
-  def withdraw
-    workflow.withdraw!
+  def reschedule_no_show_hearing
+    # TASK_ACTIONS.RESCHEDULE_NO_SHOW_HEARING
+    hearing_task.multi_transaction do
+      workflow.scheduler.rechedule_later(instructions: params[:instructions])
+      update
+    end
+  end
 
-    update
+  def create_change_hearing_disposition_task
+    # TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK
+    # TASK_ACTIONS.CREATE_CHANGE_PREVIOUS_HEARING_DISPOSITION_TASK
+    hearing_task.multi_transaction do
+      workflow.disposition.admin_changes_needed_after_hearing_date(instructions: params[:instructions])
+      update
+    end
+  end
+
+  def withdraw_hearing
+    # TASK_ACTIONS.WITHDRAW_HEARING
+    hearing_task.multi_transaction do
+      workflow.withdraw!
+      update
+    end
   end
 
   def hold
-    workflow.hold!
-
-    update
+    # TASK_ACTIONS.CHANGE_HEARING_DISPOSITION
+    hearing_task.multi_transaction do
+      workflow.dispostion.hold!
+      update
+    end
   end
 
   def cancel
-    workflow.cancel!
-
-    update
+    # TASK_ACTIONS.CHANGE_HEARING_DISPOSITION
+    hearing_task.multi_transaction do
+      workflow.disposition.cancel!
+      update
+    end
   end
 
   def no_show
-    workflow.no_show!
-
-    update
-  end
-
-  def postpone
-    workflow.postpone!
-
-    update
+    # TASK_ACTIONS.CHANGE_HEARING_DISPOSITION
+    hearing_task.multi_transaction do
+      workflow.disposition.no_show!
+      update
+    end
   end
 
   def postpone_and_reschedule
-    workflow.postpone!(should_reschedule_later: false)
-
-    scheduler.reschedule(hearing_params)
-
-    update
+    # TASK_ACTIONS.CHANGE_HEARING_DISPOSITION
+    # TASK_ACTIONS.POSTPONE_HEARING
+    hearing_task.multi_transaction do
+      workflow.disposition.postpone_and_reschedule!(hearing_params)
+      update
+    end
   end
 
-  def postpone_and_reschedule_later_with_admin_action
-    workflow.postpone!(should_reschedule_later: false)
-
-    scheduler.reschedule_later_with_admin_action(reschedule_later_params)
-
-    update
+  def postpone_and_reschedule_later
+    # TASK_ACTIONS.CHANGE_HEARING_DISPOSITION
+    # TASK_ACTIONS.POSTPONE_HEARING
+    hearing_task.multi_transaction do
+      workflow.disposition.postpone_and_reschedule_later!(admin_action_attributes: admin_action_params)
+      update
+    end
   end
+
+  private
 
   def hearing_task
-    return task if task.is_a? HearingTask
-
-    task.parent
+    @hearing_task ||= if task.is_a? HearingTask
+                        task
+                      else
+                        task.parent
+                      end
   end
 
   def workflow
     Hearings::WorkflowManager.new(hearing_task)
-  end
-
-  def scheduler
-    Hearings::Scheduler.new(appeal, hearing_task: hearing_task)
   end
 
   def hearing_params
@@ -74,9 +97,10 @@ class HearingTasksController < TasksController
     )
   end
 
-  def reschedule_later_params
-    params.require(:reschedule_later).permit(
-      :instructions, :admin_action_klas, :admin_action_instructions
-    )
+  def admin_action_params
+    if params.key?(:admin_action_attributes)
+      params[:admin_action_attributes]
+        .permit(:instructions, :admin_action_klass, :admin_action_instructions)
+    end
   end
 end
