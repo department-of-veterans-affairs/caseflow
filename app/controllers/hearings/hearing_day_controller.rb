@@ -91,6 +91,8 @@ class Hearings::HearingDayController < HearingsApplicationController
     default -= 30.days if params[:action] == "index"
 
     params[:start_date].nil? ? default : Date.parse(params[:start_date])
+  rescue ArgumentError
+    nil
   end
 
   def range_end_date
@@ -98,6 +100,8 @@ class Hearings::HearingDayController < HearingsApplicationController
     default += ((params[:action] == "index") ? 365.days : 182.days)
 
     params[:end_date].nil? ? default : Date.parse(params[:end_date])
+  rescue ArgumentError
+    nil
   end
 
   def hearing_days_in_range_for_user
