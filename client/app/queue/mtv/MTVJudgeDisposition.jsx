@@ -60,7 +60,8 @@ export const MTVJudgeDisposition = ({
   task,
   appeal,
   onSubmit = () => null,
-  submitting = false
+  submitting = false,
+  returnToLitSupportLink = JUDGE_RETURN_TO_LIT_SUPPORT.value
 }) => {
   const cancelLink = `/queue/appeals/${task.externalAppealId}`;
 
@@ -139,7 +140,7 @@ export const MTVJudgeDisposition = ({
           />
         )}
 
-        {disposition && disposition === 'denied' && <MissingDenialDraftAlert to={JUDGE_RETURN_TO_LIT_SUPPORT.value} />}
+        {disposition && disposition === 'denied' && <MissingDenialDraftAlert to={returnToLitSupportLink} />}
 
         {disposition && isGrantType() && (
           <RadioField
@@ -212,5 +213,6 @@ MTVJudgeDisposition.propTypes = {
   task: PropTypes.object.isRequired,
   appeal: PropTypes.object.isRequired,
   attorneys: PropTypes.array.isRequired,
-  selectedAttorney: PropTypes.object
+  selectedAttorney: PropTypes.object,
+  returnToLitSupportLink: PropTypes.string
 };
