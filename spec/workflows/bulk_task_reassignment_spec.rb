@@ -3,7 +3,7 @@
 require "support/database_cleaner"
 require "rails_helper"
 
-describe BulkTaskAssignment, :postgres do
+describe BulkTaskReassignment, :postgres do
   before { allow_any_instance_of(Task).to receive(:automatically_assign_org_task?).and_return(false) }
 
   let(:user) { create(:user) }
