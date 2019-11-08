@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 class AssignJudgeteamRoles
-
-  # add any errors
-
   def perform_dry_run
     @dry_run = true
 
@@ -12,27 +9,45 @@ class AssignJudgeteamRoles
 
   def process
     judge_teams = JudgeTeam.all
-    # TODO: only one admin should be made JTL
     judge_teams.each do |judge_team|
-      admins = judge_team.admins
-      admins.each do |admin|
-        JudgeTeamRole.create(organizations_user: OrganizationsUser.existing_record(admin, judge_team))
+      if judge_team.users.empty?
+        warn "Judge Team ID #{judge_team.id} has no members. Probably requires manual cleanup"
+        next
       end
-    # no members?
-    #   warn
-    #   if none? error
-    #   if one, set that user with a JudgeTeamLead
-    #   if multiple, and one has JTL continue to non-admins
-    #   if multiple and no JTL, error
-    # find all the non-admin members
-    #   set each user with a DecisionDraftingAttorney
-    #   None? that's okay. Note it?
+
+      admins = judge_team.admins
+
+      if admins.empty?
+        warn "Judge Team ID #{judge_team.id} has no admin members. Requires manual cleanup. Not assigning roles to team."
+        next
+      end
+
+      if admins.count > 1
+        warn "Judge Team ID #{judge_team.id} has multiple admin members. Requires manual cleanup. Not assigning roles to team."
+        next
+      end
+
+      admins.each do |admin|
+        message =  "#{admin.css_id} JudgeTeamLead of #{judge_team.name}"
+        if @dry_run
+          puts "Would make #{message}"
+        else
+          org_user = OrganizationsUser.existing_record(admin, judge_team)
+          JudgeTeamLead.find_or_create_by(organizations_user: org_user)
+          Rails.logger.info("Setting #{message}")
+        end
+      end
+      nonadmins = judge_team.attorneys
+      nonadmins.each do |atty|
+        message = "#{atty.css_id} DecisionDraftingAttorney of #{judge_team.name}"
+        if @dry_run
+          puts "Would make #{message}"
+        else
+          org_user = OrganizationsUser.existing_record(atty, judge_team)
+          DecisionDraftingAttorney.find_or_create_by(organizations_user: org_user)
+          Rails.logger.info("Setting #{message}")
+        end
+      end
     end
-    #
-    #
-    # THINGS TO THINK ABOUT
-    # If the user already has this new role?
-    #   That is fine, no error, no attempt to duplicate
-    # If there are no judge teams, warn about that? but don't blow up
   end
 end
