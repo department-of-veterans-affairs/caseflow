@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 import React from 'react';
-import _ from 'lodash';
+import _, { escapeRegExp } from 'lodash';
 import moment from 'moment';
 import StringUtil from '../util/StringUtil';
 import {
@@ -536,7 +536,15 @@ export const taskActionData = ({ task, match }) => {
   }
 
   const { path } = match;
-  const relevantAction = task.availableActions.find((action) => path.endsWith(action.value));
+  const endsWith = (search, str) => {
+    const esc = escapeRegExp(search);
+
+    const pattern = new RegExp(`${esc}\\)?$`, 'gi');
+
+    return pattern.test(str);
+  };
+
+  const relevantAction = task.availableActions.find((action) => endsWith(action.value, path));
 
   if (relevantAction && relevantAction.data) {
     return relevantAction.data;
