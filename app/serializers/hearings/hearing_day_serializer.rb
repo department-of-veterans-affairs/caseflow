@@ -46,15 +46,15 @@ class HearingDaySerializer
   end
 
   def self.serialize_collection(hearing_days)
-     hearing_days_with_virtual_hearings = HearingDaysWithVirtualHearingsQuery.new.call
-       .select(:id)
-       .map(&:id)
-       .to_set
+    hearing_days_with_virtual_hearings = HearingDaysWithVirtualHearingsQuery.new.call
+      .select(:id)
+      .map(&:id)
+      .to_set
 
-     ::HearingDaySerializer.new(
-       hearing_days,
-       collection: true,
-       params: { hearing_days_with_virtual_hearings: hearing_days_with_virtual_hearings }
-     ).serializable_hash[:data].map { |hearing_day| hearing_day[:attributes] }
-   end
+    ::HearingDaySerializer.new(
+      hearing_days,
+      collection: true,
+      params: { hearing_days_with_virtual_hearings: hearing_days_with_virtual_hearings }
+    ).serializable_hash[:data].map { |hearing_day| hearing_day[:attributes] }
+  end
 end
