@@ -19,9 +19,16 @@ class HearingTasksController < TasksController
 
   def create_change_hearing_disposition_task
     # TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK
-    # TASK_ACTIONS.CREATE_CHANGE_PREVIOUS_HEARING_DISPOSITION_TASK
     hearing_task.multi_transaction do
       workflow.disposition.admin_changes_needed_after_hearing_date(instructions: params[:instructions])
+      update
+    end
+  end
+
+  def create_change_previous_hearing_disposition_task
+    # TASK_ACTIONS.CREATE_CHANGE_PREVIOUS_HEARING_DISPOSITION_TASK
+    hearing_task.multi_transaction do
+      workflow.disposition.admin_changes_needed_on_previous_hearing(instructions: params[:instructions])
       update
     end
   end

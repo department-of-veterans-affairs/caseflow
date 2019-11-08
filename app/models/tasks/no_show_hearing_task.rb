@@ -19,7 +19,6 @@ class NoShowHearingTask < Task
 
   def update_from_params(params, current_user)
     params.delete(:disable_update_from_params) if params[:disable_update_from_params]
-
     super(params, current_user)
   end
 

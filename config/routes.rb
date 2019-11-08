@@ -158,6 +158,8 @@ Rails.application.routes.draw do
     post "/schedule_veteran", to: "hearing_tasks#schedule_veteran"
     post "/reschedule_no_show_hearing", to: "hearing_tasks#reschedule_no_show_hearing"
     post "/withdraw_hearing", to: "hearing_tasks#withdraw_hearing"
+    post "/create_change_hearing_disposition_task", to: "hearing_tasks#create_change_hearing_disposition_task"
+    post "/create_change_previous_hearing_disposition_task", to: "hearing_tasks#create_change_previous_hearing_disposition_task"
     post "/change_hearing_disposition/hold", to: "hearing_tasks#hold"
     post "/change_hearing_disposition/cancel", to: "hearing_tasks#cancel"
     post "/change_hearing_disposition/no_show", to: "hearing_tasks#now_show"

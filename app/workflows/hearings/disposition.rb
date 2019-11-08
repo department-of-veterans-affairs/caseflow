@@ -53,6 +53,25 @@ class Hearings::Disposition
     create_change_hearing_disposition_task(instructions)
   end
 
+  def admin_changes_needed_on_previous_hearing(instructions: nil)
+    previous_hearing_task = hearing_task.most_recent_closed_hearing_task_on_appeal
+
+    if previous_hearing_task&.hearing&.disposition.blank?
+      fail Caseflow::Error::ActionForbiddenError, message: COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR
+    end
+
+    # cancel the old HearingTask and create a new one associated with the same hearing
+    new_hearing_task = hearing_task.cancel_and_recreate
+    HearingTaskAssociation.create!(hearing: previous_hearing_task.hearing, hearing_task: new_hearing_task)
+
+    # create a ChangeHearingDispositionTask on the new HearingTask
+    ChangeHearingDispositionTask.create!(
+      appeal: new_hearing_task.appeal,
+      parent: new_hearing_task,
+      instructions: instructions.present? ? [instructions] : nil
+    )
+  end
+
   private
 
   def postpone!
@@ -88,7 +107,7 @@ class Hearings::Disposition
 
     ChangeHearingDispositionTask.create!(
       appeal: appeal,
-      parent: self,
+      parent: hearing_task,
       instructions: instructions.present? ? [instructions] : nil
     )
     active_disposition_tasks.each { |task| task.update!(status: Constants.TASK_STATUSES.completed) }

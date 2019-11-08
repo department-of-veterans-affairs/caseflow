@@ -14,6 +14,11 @@ class EvidenceSubmissionWindowTask < Task
     update!(status: :completed)
   end
 
+  def update_from_params(params, current_user)
+    params.delete(:disable_update_from_params) if params[:disable_update_from_params]
+    super(params, current_user)
+  end
+
   def timer_ends_at
     from_date = hearing.hearing_day&.scheduled_for if hearing.present?
     from_date ||= appeal.receipt_date
