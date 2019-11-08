@@ -23,13 +23,17 @@ class Hearings::Disposition
     reschedule(hearing_params)
   end
 
-  def postpone_and_reschedule_later!(admin_action_attributes: nil)
+  def postpone_and_reschedule_later!(instructions: nil, admin_action_attributes: nil)
     postpone!
 
     if admin_action_attributes.nil?
-      reschedule_later
+      reschedule_later(instructions: instructions)
     else
-      reschedule_later_with_admin_action(admin_action_attributes)
+      reschedule_later_with_admin_action(
+        instructions: instructions,
+        admin_action_klass: admin_action_attributes[:admin_action_klass],
+        admin_action_instructions: admin_action_attributes[:admin_action_instructions]
+      )
     end
   end
 

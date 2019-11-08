@@ -45,7 +45,7 @@ class Hearings::Schedule
     )
   end
 
-  def reschedule_later_with_admin_action(instructions: nil, admin_action_klass: nil, admin_action_instructions: nil)
+  def reschedule_later_with_admin_action(instructions: nil, admin_action_klass:, admin_action_instructions: nil)
     fail_if_hearing_task_is_nil
 
     schedule_task = reschedule_later(instruction: instructions)
