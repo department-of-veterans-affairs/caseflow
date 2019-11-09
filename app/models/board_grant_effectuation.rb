@@ -130,17 +130,40 @@ class BoardGrantEffectuation < ApplicationRecord
     )
   end
 
+  # the end product establishment for board grant effectuations is created here
+  # decision_document.appeal.claimaints
+  # decision_document.appeal.veteran_is_not_claimant
   def build_end_product_establishment
     EndProductEstablishment.create!(
-      source: decision_document,
+      source: decision_document, # the decision document is connected to an appeal, and the appeal has the claimant
       veteran_file_number: veteran.file_number,
       claim_date: decision_document.decision_date,
-      payee_code: EndProduct::DEFAULT_PAYEE_CODE,
+      claimant_participant_id: claimaint_participant_id,
+      payee_code: claimant_payee_code,
       code: end_product_code,
       station: end_product_station,
       benefit_type_code: veteran.benefit_type_code,
       user: User.system_user
     )
+  end
+
+  def claimaint_participant_id
+    decision_document&.appeal&.claimants&.first&.participant_id
+  end
+
+  def claimant_payee_code
+    claimant = decision_document&.appeal&.claimants&.first
+    veteran = decision_document&.appeal&.veteran
+
+    if claimant&.payee_code.present?
+      claimant.payee_code
+    elsif decision_document&.appeal&.veteran_is_not_claimant
+      veteran&.fetch_relationships&.find do |relationship|
+        relationship.participant_id == claimant.participant_id
+      end&.default_payee_code
+    else
+      "00"
+    end
   end
 
   def end_product_code

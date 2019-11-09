@@ -8,8 +8,12 @@ describe BoardGrantEffectuation, :postgres do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
   end
 
+  let(:claimant_participant_id) { "2019110801" }
+  let(:claimant_payee_code) { "50" }
+  let(:claimant) { create(:claimant, participant_id: claimant_participant_id, payee_code: claimant_payee_code) }
+  let(:appeal) { create(:appeal, claimants: [claimant]) }
+  let(:decision_document) { create(:decision_document, appeal: appeal) }
   let!(:veteran) { decision_document.appeal.veteran }
-  let(:decision_document) { create(:decision_document) }
   let(:contention_reference_id) { nil }
   let(:board_grant_effectuation) do
     BoardGrantEffectuation.create(
@@ -126,6 +130,13 @@ describe BoardGrantEffectuation, :postgres do
       is_expected.to have_attributes(
         appeal_id: decision_document.appeal.id,
         decision_document_id: decision_document.id
+      )
+    end
+
+    it "has the correct claimant participant id and payee code" do
+      expect(subject.end_product_establishment). to have_attributes(
+        claimant_participant_id: claimant_participant_id,
+        payee_code: claimant_payee_code
       )
     end
 

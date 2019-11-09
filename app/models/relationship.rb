@@ -29,11 +29,14 @@ class Relationship
     }
   end
 
-  private
-
+  # this method chooses the default payee code for a specific veteran relationship;
+  # it's currently used to choose a default payee code for the front-end payee_code
+  # selector
   def default_payee_code
     previous_claim_payee_code || payee_code_by_relationship_type
   end
+
+  private
 
   def previous_claim_payee_code
     @previous_claim_payee_code ||= latest_end_product.try(:payee_code)
