@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191106153923) do
+ActiveRecord::Schema.define(version: 20191111192428) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1160,6 +1160,7 @@ ActiveRecord::Schema.define(version: 20191106153923) do
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
+    t.string "broken_column", comment: "This line works unless a typo somehow sneaks in."
     t.datetime "created_at"
     t.string "css_id", null: false
     t.datetime "efolder_documents_fetched_at", comment: "Date when efolder documents were cached in s3 for this user"
