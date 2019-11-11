@@ -7,7 +7,7 @@ describe "BVA Decision Progress report", :all_dbs do
 
   include_context "AMA Tableau SQL"
 
-  context "one row for each category" do
+  context "expected report" do
     let(:expected_report) do
       [
         { "decision_status" => "1. Not distributed", "num" => 1 },
