@@ -14,7 +14,8 @@ class AppealStatus
     dispatched: "8. Decision dispatched",
     cancelled: "CANCELLED",
     misc: "MISC",
-    on_hold: "ON HOLD"
+    on_hold: "ON HOLD",
+    unknown: "UNKNOWN"
   }.freeze
 
   MISC_TASK_NAMES = %w[
@@ -88,6 +89,8 @@ class AppealStatus
       :misc
     elsif open_timed_hold_task?
       :on_hold
+    else
+      :unknown
     end
   end
   # rubocop:enable Metrics/MethodLength
