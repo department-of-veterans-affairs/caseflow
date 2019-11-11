@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Determine the status of an Appeal (symbol and string) based on its Tasks.
+
 class AppealStatus
   attr_reader :status
 
