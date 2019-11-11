@@ -42,26 +42,26 @@ production:
 # and this configuration should change to nest "primary" and "etl" and "vacols"
 # under each env name, per
 # https://guides.rubyonrails.org/active_record_multiple_databases.html
-default_etl: &default_etl
+etl_default: &etl_default
   <<: *default
-  <% if ENV["ETL_HOST"] %>
-  host: <%= ENV["ETL_HOST"] %>
+  <% if ENV["ETL_HOST"] || ENV["POSTGRES_HOST"] %>
+  host: <%= ENV["ETL_HOST"] || ENV["POSTGRES_HOST"] %>
   <% end %>
-  username: <%= ENV["ETL_USER"] || `whoami` %>
-  <% if ENV["ETL_PASSWORD"] %>
-  password: <%= ENV["ETL_PASSWORD"] %>
+  username: <%= ENV["ETL_USER"] || ENV["POSTGRES_USER"] || `whoami` %>
+  <% if ENV["ETL_PASSWORD"] || ENV["POSTGRES_PASSWORD"] %>
+  password: <%= ENV["ETL_PASSWORD"] || ENV["POSTGRES_PASSWORD"] %>
   <% end %>
 
-development_etl:
-  <<: *default_etl
+etl_development:
+  <<: *etl_default
   database: caseflow_etl_development
 
-test_etl:
-  <<: *default_etl
+etl_test:
+  <<: *etl_default
   database: caseflow_etl_test<%= ENV["TEST_SUBCATEGORY"] %>
 
-production_etl:
-  <<: *default_etl
+etl_production:
+  <<: *etl_default
   url: <%= ENV["ETL_URL"] %>
 
 development_vacols:

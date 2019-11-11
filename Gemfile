@@ -23,6 +23,9 @@ gem "kaminari"
 # (CVE-2018-16468 and CVE-2019-15587)
 gem "loofah", ">= 2.3.1"
 gem "moment_timezone-rails"
+# Rails 6 has native support for multiple dbs, so prefer that over multiverse after upgrade.
+# https://github.com/ankane/multiverse#upgrading-to-rails-6
+gem "multiverse"
 gem "newrelic_rpm"
 # nokogiri versions before 1.10.4 are vulnerable to CVE-2019-5477.
 # https://github.com/sparklemotion/nokogiri/issues/1915
