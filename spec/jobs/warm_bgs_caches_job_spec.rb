@@ -54,7 +54,7 @@ describe WarmBgsCachesJob, :all_dbs do
       expect(Rails.cache.exist?(poa_cache_key)).to eq(true)
       expect(Rails.cache.exist?(address_cache_key)).to eq(true)
       expect(appeal.veteran.reload[:ssn]).to_not be_nil
-      expect(@slack_msg).to eq("Updated cached attributes for 1 Veteran records")
+      expect(@slack_msg).to be_nil
     end
   end
 end

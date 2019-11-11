@@ -65,7 +65,6 @@ class WarmBgsCachesJob < CaseflowJob
         Raven.capture_exception(error)
       end
     end
-    notify_slack("Updated cached attributes for #{veterans_updated} Veteran records")
   end
 
   def warm_veterans_for_hearings_on_day(date_to_cache)
