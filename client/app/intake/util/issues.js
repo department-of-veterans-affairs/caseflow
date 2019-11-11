@@ -165,7 +165,9 @@ const formatUnidentifiedIssues = (state) => {
         is_unidentified: true,
         decision_date: issue.decisionDate,
         withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : issue.withdrawalDate,
-        correction_type: issue.correctionType
+        correction_type: issue.correctionType,
+        untimely_exemption: issue.untimelyExemption,
+        untimely_exemption_notes: issue.untimelyExemptionNotes
       };
     });
 };
@@ -302,7 +304,10 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         withdrawalDate: issue.withdrawalDate,
         endProductCleared: issue.endProductCleared,
         correctionType: issue.correctionType,
-        editable: issue.editable
+        editable: issue.editable,
+        timely: issue.timely,
+        untimelyExemption: issue.untimelyExemption,
+        untimelyExemptionNotes: issue.untimelyExemptionNotes
       };
     } else if (issue.isRating) {
       if (!issue.decisionDate && !issue.approxDecisionDate) {

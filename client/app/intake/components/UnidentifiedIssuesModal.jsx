@@ -17,13 +17,30 @@ class UnidentifiedIssuesModal extends React.Component {
     };
   }
 
+  isTimely = () => {
+    if (this.props.formType === 'supplemental_claim') {
+      return true;
+    }
+
+    const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
+
+    // we must do our own date math for nonrating request issues.
+    // we assume the timezone of the browser for all these.
+    const decisionDate = new Date(this.state.decisionDate);
+    const receiptDate = new Date(this.props.intakeData.receiptDate);
+    const lessThanOneYear = receiptDate - decisionDate <= ONE_YEAR_PLUS_MS;
+
+    return lessThanOneYear;
+  };
+
   onAddIssue = () => {
     const { description, notes, decisionDate } = this.state;
     const currentIssue = {
       isUnidentified: true,
       description,
       notes,
-      decisionDate
+      decisionDate,
+      timely: this.isTimely()
     };
 
     this.props.onSubmit({ currentIssue });
@@ -142,7 +159,8 @@ UnidentifiedIssuesModal.propTypes = {
   onSkip: PropTypes.func,
   skipText: PropTypes.string,
   featureToggles: PropTypes.object,
-  intakeData: PropTypes.object
+  intakeData: PropTypes.object,
+  formType: PropTypes.string
 };
 
 UnidentifiedIssuesModal.defaultProps = {
