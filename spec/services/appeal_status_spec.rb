@@ -10,7 +10,7 @@ describe AppealStatus, :all_dbs do
   context "one row for each category" do
     let(:sql_status) do
       result = execute_sql("ama-cases")
-      appeals_by_status = result.map do |r|
+      result.map do |r|
         [r["id"], r["appeal_task_status.decision_status"]]
       end.to_h
     end
