@@ -59,6 +59,10 @@ class AppealStatus
     DEFINITIONS[status]
   end
 
+  def as_json(_args)
+    to_sym
+  end
+
   private
 
   attr_reader :appeal
