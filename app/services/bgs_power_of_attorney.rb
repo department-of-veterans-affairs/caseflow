@@ -3,6 +3,7 @@
 class BgsPowerOfAttorney
   include ActiveModel::Model
   include AssociatedBgsRecord
+  include BgsService
 
   attr_accessor :file_number
   attr_accessor :claimant_participant_id
@@ -14,10 +15,6 @@ class BgsPowerOfAttorney
   end
 
   private
-
-  def bgs
-    BGSService.new
-  end
 
   def fetch_bgs_record
     if claimant_participant_id
