@@ -13,7 +13,9 @@ describe BoardGrantEffectuation, :postgres do
   let(:veteran_is_not_claimant) { nil }
   let(:claimant) { create(:claimant, participant_id: claimant_participant_id, payee_code: claimant_payee_code) }
   let(:veteran) { create(:veteran) }
-  let(:appeal) { create(:appeal, veteran: veteran, claimants: [claimant], veteran_is_not_claimant: veteran_is_not_claimant) }
+  let(:appeal) do
+    create(:appeal, veteran: veteran, claimants: [claimant], veteran_is_not_claimant: veteran_is_not_claimant)
+  end
   let(:decision_document) { create(:decision_document, appeal: appeal) }
   let(:contention_reference_id) { nil }
   let(:board_grant_effectuation) do
