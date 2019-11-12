@@ -24,6 +24,7 @@ describe WarmBgsCachesJob, :all_dbs do
         vdkey: hearing_day.id
       )
     end
+    let!(:people) { create_list(:person, 5) }
 
     let(:bgs_poa) { BgsPowerOfAttorney.new }
     let(:bgs_address_service) { BgsAddressService.new }
@@ -36,7 +37,10 @@ describe WarmBgsCachesJob, :all_dbs do
 
       appeal.veteran.update!(ssn: nil)
 
+      @people_sync = 0
+      @slack_msg = nil
       allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
+      allow_any_instance_of(Person).to receive(:update_cached_attributes!) { @people_sync += 1 }
     end
 
     it "fetches all hearings and warms the Rails cache" do
@@ -55,6 +59,7 @@ describe WarmBgsCachesJob, :all_dbs do
       expect(Rails.cache.exist?(address_cache_key)).to eq(true)
       expect(appeal.veteran.reload[:ssn]).to_not be_nil
       expect(@slack_msg).to be_nil
+      expect(@people_sync).to eq(5)
     end
   end
 end
