@@ -36,6 +36,14 @@ describe VirtualHearingRepository, :all_dbs do
         end
       end
 
+      context "for cancelled hearing" do
+        let(:virtual_hearing) { create(:virtual_hearing, :cancelled, hearing: hearing) }
+
+        it "returns the virtual hearing" do
+          expect(subject).to eq [virtual_hearing]
+        end
+      end
+
       context "on the day of" do
         it "does not return the virtual hearing" do
           expect(subject).to eq []
@@ -50,6 +58,14 @@ describe VirtualHearingRepository, :all_dbs do
 
       context "that was held" do
         let(:hearing_date) { Time.zone.now - 1.day }
+
+        it "returns the virtual hearing" do
+          expect(subject).to eq [virtual_hearing]
+        end
+      end
+
+      context "for cancelled hearing" do
+        let(:virtual_hearing) { create(:virtual_hearing, :cancelled, hearing: hearing) }
 
         it "returns the virtual hearing" do
           expect(subject).to eq [virtual_hearing]

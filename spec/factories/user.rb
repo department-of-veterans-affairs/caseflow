@@ -36,6 +36,10 @@ FactoryBot.define do
       roles { ["VSO"] }
     end
 
+    trait :judge do
+      roles { ["Hearing Prep"] }
+    end
+
     after(:create) do |user, evaluator|
       if evaluator.vacols_uniq_id
         create(:staff, slogid: evaluator.vacols_uniq_id, user: user)
