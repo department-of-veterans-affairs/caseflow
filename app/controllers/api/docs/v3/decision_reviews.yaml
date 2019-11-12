@@ -68,6 +68,7 @@ paths:
                         - sameOffice
                         - legacyOptInApproved
                         - benefitType
+                        - veteran
                       properties:
                         receiptDate:
                           type: string
@@ -80,6 +81,68 @@ paths:
                           type: boolean
                         benefitType:
                           $ref: "#/components/schemas/BenefitType"
+                        veteran:
+                          type: object
+                          required:
+                            - fileNumberOrSsn
+                          properties:
+                            fileNumberOrSsn:
+                              type: string
+                            currentMailingAddress:
+                              type: object
+                              properties:
+                                addressLine1:
+                                  type: string
+                                addressLine2:
+                                  type: string
+                                addressLine3:
+                                  type: string
+                                addressPOU:
+                                  type: string
+                                  enum: ["RESIDENCE/CHOICE","CORRESPONDENCE"]
+                                city:
+                                  type: string
+                                internationalPostalCode:
+                                  type: string
+                                country:
+                                  type: object
+                                  properties:
+                                    code:
+                                      type: string
+                                    name:
+                                      type: string
+                                stateProvince:
+                                  type: object
+                                  properties:
+                                    code:
+                                      type: string
+                                    name:
+                                      type: string
+                                zipCode5:
+                                  type: string
+                                zipCode4:
+                                  type: string
+                            primaryPhoneNumber:
+                              type: object
+                              properties:
+                                number:
+                                  type: string
+                                extension:
+                                  type: string
+                                countryCode:
+                                  type: string
+                            email:
+                              type: string
+                        claimant:
+                          type: object
+                          required:
+                            - participantId
+                            - payeeCode
+                          properties:
+                            participantId:
+                              type: string
+                            payeeCode:
+                              $ref: "#/components/schemas/PayeeCode"
                     relationships:
                       type: object
                       required:
@@ -161,27 +224,34 @@ paths:
                 value: {
                   "data": {
                     "type": "HigherLevelReview",
-                      "attributes": {
-                        "receiptDate": "2019-07-10",
-                        "informalConference": true,
-                        "sameOffice": false,
-                        "legacyOptInApproved": true,
-                        "benefitType": "pension"
-                      },
-                      "relationships": {
-                        "veteran": {
-                          "data": {
-                            "type": "Veteran",
-                            "id": "55555555"
-                          }
+                    "attributes": {
+                      "receiptDate": "2019-07-10",
+                      "informalConference": true,
+                      "sameOffice": false,
+                      "legacyOptInApproved": true,
+                      "benefitType": "pension",
+                      "veteran": {
+                        "fileNumberOrSsn": "123456789",
+                        "currentMailingAddress": {
+                          "addressLine1": "123 Street St",
+                          "addressLine2": "Apt 4",
+                          "city": "Cityville",
+                          "stateProvince": {
+                            "code": "OR"
+                          },
+                          "zipCode5": "39383"
                         },
-                        "claimant": {
-                          "data": {
-                            "type": "Claimant",
-                            "id": "44444444",
-                            "meta": {
-                              "payeeCode": "10"
-                            }
+                        "primaryPhoneNumber": {
+                          "number": "8005551870"
+                        },
+                        "email": "myemail@example.com"
+                      },
+                      "claimant": {
+                        "data": {
+                          "type": "Claimant",
+                          "id": "44444444",
+                          "meta": {
+                            "payeeCode": "10"
                           }
                         }
                       }
@@ -211,6 +281,7 @@ paths:
                       },
                     ]
                   }
+                }
       responses:
         '202':
           description: Accepted
