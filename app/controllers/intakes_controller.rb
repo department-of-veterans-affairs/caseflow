@@ -142,7 +142,7 @@ class IntakesController < ApplicationController
   end
 
   def detail
-    @detail || = intake&.detail
+    @detail ||= intake&.detail
   end
 
   def veteran_file_number

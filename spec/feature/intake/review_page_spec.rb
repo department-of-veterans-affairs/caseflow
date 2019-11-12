@@ -72,6 +72,40 @@ feature "Intake Review Page", :postgres do
       )
     end
 
+    context "when the user goes back and edits the claimant" do
+      scenario "the first claimant is deleted before adding a new claimant" do
+        start_higher_level_review(veteran)
+        visit "/intake"
+
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "No", match: :prefer_exact).click
+        end
+
+        # click on payee code dropdown
+        find(".Select-control").click
+        fill_in "What is the payee code for this claimant?", with: "00 - Veteran"
+        find("#cf-payee-code").send_keys :enter
+
+        click_intake_continue
+
+        expect(page).to have_current_path("/intake/add_issues")
+
+        page.go_back
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
+        click_intake_continue
+
+        expect(page).to have_current_path("/intake/add_issues")
+
+        hlr=HigherLevelReview.find_by(veteran_file_number: veteran.file_number)
+        expect(hlr.veteran_is_not_claimant).to be true
+        expect(hlr.claimants.count).to eq 1
+        expect(hlr.claimant.participant_id).to eq("5382910292")
+      end
+    end
+
     context "when veteran is deceased" do
       let(:veteran) do
         Generators::Veteran.build(file_number: "123121234", date_of_death: 2.years.ago)
