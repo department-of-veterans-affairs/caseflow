@@ -227,9 +227,7 @@ class Appeal < DecisionReview
            :last_name,
            :name_suffix, to: :veteran, prefix: true, allow_nil: true
 
-  def appellant
-    claimants.last
-  end
+  alias appellant claimant
 
   delegate :first_name,
            :last_name,
@@ -274,7 +272,7 @@ class Appeal < DecisionReview
 
   # For now power_of_attorney returns the first claimant's power of attorney
   def power_of_attorney
-    claimants.last&.power_of_attorney
+    appellant&.power_of_attorney
   end
   delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney, allow_nil: true
 

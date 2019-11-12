@@ -854,7 +854,7 @@ ActiveRecord::Schema.define(version: 20191101145935) do
     t.bigint "task_id"
     t.datetime "updated_at", null: false
     t.string "vacate_type", comment: "Granted motion to vacate can be either Straight Vacate and Readjudication or Vacate and De Novo."
-    t.integer "vacated_decision_issue_ids", comment: "An array of the request issue IDs that were chosen for partial vactur in this post-decision motion.", array: true
+    t.integer "vacated_decision_issue_ids", comment: "When a motion to vacate is partially granted, this includes an array of the appeal's decision issue IDs that were chosen for vacatur in this post-decision motion", array: true
     t.index ["task_id"], name: "index_post_decision_motions_on_task_id"
   end
 
