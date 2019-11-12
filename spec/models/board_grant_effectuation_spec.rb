@@ -214,6 +214,16 @@ describe BoardGrantEffectuation, :postgres do
             end
           end
         end
+
+        context "no relationship matches the claimant's participant_id" do
+          let(:claimant_participant_id) { "2019111101" }
+
+          it "is created with a payee code of 00" do
+            expect(subject.end_product_establishment).to have_attributes(
+              payee_code: "00"
+            )
+          end
+        end
       end
     end
 
