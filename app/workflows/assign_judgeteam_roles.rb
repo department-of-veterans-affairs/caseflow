@@ -27,7 +27,7 @@ class AssignJudgeteamRoles
   attr_reader :dry_run
 
   def process_admins(admins, judge_team)
-    if incorrect_admin_count?(admins)
+    if incorrect_admin_count?(admins, judge_team)
       return false
     end
 
