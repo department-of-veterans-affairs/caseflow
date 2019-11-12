@@ -163,11 +163,15 @@ describe BoardGrantEffectuation, :postgres do
 
         before do
           allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
-            first_name: "Josephine",
-            gender: gender,
-            last_name: "Clark",
-            ptcpnt_id: claimant_participant_id,
-            relationship_type: relationship_type
+            [
+              {
+                first_name: "Josephine",
+                gender: gender,
+                last_name: "Clark",
+                ptcpnt_id: claimant_participant_id,
+                relationship_type: relationship_type
+              }
+            ]
           )
         end
 
