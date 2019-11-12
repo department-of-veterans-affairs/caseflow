@@ -719,6 +719,7 @@ module IntakeHelpers
           diagnostic_text: "Right arm broken",
           diagnostic_type: "Bone",
           disability_id: "123",
+          disability_date: receipt_date - 5.years - 2.days,
           type_name: "Not Service Connected"
         }
       ]

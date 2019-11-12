@@ -376,6 +376,13 @@ FactoryBot.define do
       parent { create(:appeal_withdrawal_mail_task, appeal: appeal) }
     end
 
+    factory :returned_undeliverable_correspondence_mail_task, class: ReturnedUndeliverableCorrespondenceMailTask do
+      type { ReturnedUndeliverableCorrespondenceMailTask.name }
+      appeal { create(:appeal) }
+      assigned_to { BvaDispatch.singleton }
+      parent { create(:root_task, appeal: appeal) }
+    end
+
     factory :no_show_hearing_task, class: NoShowHearingTask do
       type { NoShowHearingTask.name }
       appeal { create(:appeal) }
@@ -539,6 +546,14 @@ FactoryBot.define do
       type { AbstractMotionToVacateTask.name }
       appeal
       association :parent, factory: :vacate_motion_mail_task
+    end
+
+    factory :denied_motion_to_vacate_task, class: DeniedMotionToVacateTask do
+      type { DeniedMotionToVacateTask.name }
+      appeal
+      association :parent, factory: :abstract_motion_to_vacate_task
+      assigned_by { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
+      assigned_to { create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1") }
     end
 
     factory :judge_sign_motion_to_vacate_task, class: JudgeSignMotionToVacateTask do

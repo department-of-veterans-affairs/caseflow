@@ -34,7 +34,7 @@ class OrganizationsController < ApplicationController
   def add_user_to_vso
     return if current_user.roles.exclude?("VSO") || organization.users.include?(current_user)
 
-    OrganizationsUser.add_user_to_organization(current_user, organization)
+    organization.add_user(current_user)
   end
 
   def set_application

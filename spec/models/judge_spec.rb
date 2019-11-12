@@ -35,7 +35,7 @@ describe Judge, :postgres do
 
     before do
       attorneys.each do |u|
-        OrganizationsUser.add_user_to_organization(u, judge_team)
+        judge_team.add_user(u)
       end
     end
 

@@ -736,7 +736,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       context "no contestable issues present" do
         before do
           education_org = create(:business_line, name: "Education", url: "education")
-          OrganizationsUser.add_user_to_organization(current_user, education_org)
+          education_org.add_user(current_user)
         end
 
         scenario "no rating issues show on first Add Issues modal" do
