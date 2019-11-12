@@ -45,7 +45,7 @@ class AssignJudgeteamRoles
     true
   end
 
-  def incorrect_admin_count?(admins)
+  def incorrect_admin_count?(admins, judge_team)
     if admins.empty?
       warn "Judge Team ID #{judge_team.id} has no admin members. Requires manual cleanup. \
         Not assigning roles to team."
