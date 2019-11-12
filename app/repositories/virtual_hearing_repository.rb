@@ -44,7 +44,7 @@ class VirtualHearingRepository
 
       virtual_hearing_for_legacy_hearing_exists
     end
-      
+
     def cancelled_hearings_with_pending_emails
       VirtualHearing
         .cancelled
