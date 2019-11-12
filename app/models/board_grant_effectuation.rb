@@ -130,12 +130,9 @@ class BoardGrantEffectuation < ApplicationRecord
     )
   end
 
-  # the end product establishment for board grant effectuations is created here
-  # decision_document.appeal.claimaints
-  # decision_document.appeal.veteran_is_not_claimant
   def build_end_product_establishment
     EndProductEstablishment.create!(
-      source: decision_document, # the decision document is connected to an appeal, and the appeal has the claimant
+      source: decision_document,
       veteran_file_number: veteran.file_number,
       claim_date: decision_document.decision_date,
       claimant_participant_id: claimaint_participant_id,
