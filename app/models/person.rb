@@ -37,7 +37,6 @@ class Person < ApplicationRecord
     FullName.new(first_name, "", last_name).formatted(:readable_short)
   end
 
-  # TODO: Should this be cached?
   def email_address
     bgs_person[:email_address]
   end
