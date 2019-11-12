@@ -25,7 +25,7 @@ require "timeout"
 # require only the support files necessary.
 #
 Dir[Rails.root.join("spec/support/**/*.rb")].each do |file|
-  excluded_files = %w[database_cleaner.rb vacols_database_cleaner.rb]
+  excluded_files = %w[vacols_database_cleaner.rb]
   require file unless excluded_files.include?(file.split("/").last)
 end
 
