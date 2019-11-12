@@ -167,7 +167,8 @@ const formatUnidentifiedIssues = (state) => {
         withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : issue.withdrawalDate,
         correction_type: issue.correctionType,
         untimely_exemption: issue.untimelyExemption,
-        untimely_exemption_notes: issue.untimelyExemptionNotes
+        untimely_exemption_notes: issue.untimelyExemptionNotes,
+        description: issue.description
       };
     });
 };
