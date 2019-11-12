@@ -151,15 +151,11 @@ class BoardGrantEffectuation < ApplicationRecord
   def claimant_payee_code
     claimant = appeal&.claimants&.first
 
-    payee_code = if claimant&.payee_code.present?
-                   claimant.payee_code
-                 elsif appeal&.veteran_is_not_claimant
-                   veteran&.relationships&.find do |relationship|
-                     relationship.participant_id == claimant.participant_id
-                   end&.default_payee_code
-                 end
-
-    payee_code || EndProduct::DEFAULT_PAYEE_CODE
+    if claimant&.payee_code.present?
+      claimant.payee_code
+    elsif appeal&.veteran_is_not_claimant
+      veteran&.relationship_with_participant_id(claimant.participant_id)&.default_payee_code
+    end || EndProduct::DEFAULT_PAYEE_CODE
   end
 
   def end_product_code
