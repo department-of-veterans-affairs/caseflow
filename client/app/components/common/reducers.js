@@ -50,6 +50,14 @@ const formsReducer = (state = {}, action = {}) => {
 
   switch (action.type) {
   case ACTIONS.CHANGE_FORM_DATA:
+    if (action.payload.formData === null) {
+      const { ...newState } = state;
+
+      delete newState[action.payload.formName];
+
+      return newState;
+    }
+
     return update(state, {
       [action.payload.formName]: {
         $set: {

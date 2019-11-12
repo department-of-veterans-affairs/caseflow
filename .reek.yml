@@ -7,6 +7,7 @@ detectors:
       - BulkTaskAssignment
       - Hearing#override_full_hearing_day_validation
       - QueueConfig
+      - RatingDecision
   BooleanParameter:
     exclude:
       - HearingRepository#slot_new_hearing
@@ -14,13 +15,16 @@ detectors:
       - Veteran
   ControlParameter:
     exclude:
+      - Fakes::BGSService
       - HearingRepository#slot_new_hearing
       - LegacyDocket#distribute_appeals
+      - Task#actions_allowable?
       - TaskSorter#sort_requires_case_norm?
       - Veteran
   UncommunicativeVariableName:
     exclude:
       - Address
+      - Fakes::PersistentStore#convert_dates_from
   LongParameterList:
     exclude:
       - Address
@@ -37,27 +41,37 @@ detectors:
     exclude:
       - Api::ApplicationController#on_external_error
       - Api::ApplicationController#upstream_known_error
+      - AppealTaskHistory#build_events
       - ApplicationRecord#as_hash
+      - AssignJudgeteamRoles#process
       - AsyncableJobsReporter
       - ClaimReviewAsyncStatsReporter#as_csv
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
+      - VirtualHearings::DeleteConferencesJob#delete_conference
+      - VirtualHearings::DeleteConferencesJob#process_virtual_hearing
       - Fakes::EndProductStore
+      - Fakes::BGSService#get_participant_id_for_user
       - Fakes::BGSServiceRecordMaker
+      - Fakes::PersistentStore#convert_dates_from
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - HearingSerializerBase
       - LegacyDocket#count
       - RedistributedCase#legacy_appeal_relevant_tasks
+      - LegacyAppeal#cancel_open_caseflow_tasks!
+      - MonthlyMetricsReportJob#build_report
       - SyncReviewsJob
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
       - VeteranAttributeCacher
       - WarmBgsCachesJob
+      - ExternalApi::PexipService#send_pexip_request
   InstanceVariableAssumption:
     exclude:
       - Appeal
       - Task
       - CaseflowJob
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor
   IrresponsibleModule:
     enabled: false
   LongParameterList:
@@ -78,13 +92,17 @@ detectors:
     enabled: false
   RepeatedConditional:
     exclude:
+      - HearingLocation
       - QueueConfig
       - RequestIssue
+      - BulkTaskReassignment
+      - Task
   TooManyInstanceVariables:
     exclude:
       - AmaAppealDispatch
       - LegacyAppealDispatch
       - Address
+      - ExternalApi::PexipService
   TooManyMethods:
     enabled: false
   TooManyStatements:
@@ -98,7 +116,10 @@ detectors:
       - Helpers::AppealHearingHelper#hearings
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
       - LegacyDocket#age_of_n_oldest_priority_appeals
-      - OnHoldTasksTab#name
+      - OrganizationOnHoldTasksTab#name
+      - OrganizationTrackingTasksTab#column_names
+      - Fakes::BGSService
+      - Fakes::PexipService
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.

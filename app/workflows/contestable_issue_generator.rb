@@ -37,7 +37,8 @@ class ContestableIssueGenerator
   end
 
   def contestable_decision_issues
-    issues = finalized_decision_issues_before_receipt_date
+    issues = []
+    issues += finalized_decision_issues_before_receipt_date unless review.try(:decision_review_remanded?)
 
     # If correction support enabled, we include all decision issues for the issue
     if FeatureToggle.enabled?(:correct_claim_reviews, user: RequestStore[:current_user])
@@ -56,7 +57,6 @@ class ContestableIssueGenerator
     # so filter out any that are duplicates of a rating issue or that are not related to their parent rating.
     rating_decisions
       .select(&:contestable?)
-      .reject(&:rating_issue?)
       .select { |rating_decision| rating_decision.profile_date && rating_decision.profile_date.to_date < receipt_date }
       .map { |rating_decision| ContestableIssue.from_rating_decision(rating_decision, review) }
   end

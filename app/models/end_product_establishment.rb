@@ -11,6 +11,7 @@
 class EndProductEstablishment < ApplicationRecord
   belongs_to :source, polymorphic: true
   belongs_to :user
+  has_many :end_product_code_updates
 
   # allow @veteran to be assigned to save upstream calls
   attr_writer :veteran
@@ -112,7 +113,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def build_contentions(records_ready_for_contentions)
     records_ready_for_contentions.map do |issue|
-      contention = { description: issue.contention_text }
+      contention = { description: issue.contention_text, contention_type: issue.contention_type }
       issue.try(:special_issues) && contention[:special_issues] = issue.special_issues
 
       if FeatureToggle.enabled?(:send_original_dta_contentions, user: RequestStore.store[:current_user])
@@ -205,6 +206,8 @@ class EndProductEstablishment < ApplicationRecord
       handle_canceled_ep!
       close_request_issues_with_no_decision!
     end
+
+    save_updated_end_product_code!
   rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => error
     raise error
   rescue StandardError => error
@@ -476,6 +479,14 @@ class EndProductEstablishment < ApplicationRecord
     return unless source&.respond_to?(:on_sync)
 
     source.on_sync(self)
+  end
+
+  def save_updated_end_product_code!
+    if code != result.claim_type_code
+      return if result.claim_type_code == end_product_code_updates.last&.code
+
+      end_product_code_updates.create(code: result.claim_type_code)
+    end
   end
 
   def create_contentions_in_vbms(contentions)

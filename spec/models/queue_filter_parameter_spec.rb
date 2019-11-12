@@ -23,7 +23,7 @@ describe QueueFilterParameter do
     end
 
     context "when input string does not include the value field" do
-      let(:filter_string) { "col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}" }
+      let(:filter_string) { "col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}" }
 
       it "raises an MissingRequiredProperty error" do
         expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
@@ -31,7 +31,7 @@ describe QueueFilterParameter do
     end
 
     context "when input string contains valid column and value fields" do
-      let(:filter_string) { "col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{RootTask.name}" }
+      let(:filter_string) { "col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{RootTask.name}" }
 
       it "instantiates without error" do
         expect { subject }.to_not raise_error
@@ -47,15 +47,6 @@ describe QueueFilterParameter do
 
       it "converts the blank value to a null value" do
         expect(subject.values).to match_array([non_null_value, nil])
-      end
-    end
-
-    context "when typeColumn has 'is_aod' filter" do
-      let(:good_value) { "good_value" }
-      let(:filter_string) { "col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=is_aod,#{good_value}" }
-
-      it "rejects the is_aod value" do
-        expect(subject.values).to match_array([good_value])
       end
     end
   end

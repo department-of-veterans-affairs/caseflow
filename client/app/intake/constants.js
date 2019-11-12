@@ -46,7 +46,6 @@ export const PAGE_PATHS = {
   COMPLETED: '/completed',
   CANCEL_ISSUES: '/cancel',
   CONFIRMATION: '/confirmation',
-  DTA_CLAIM: '/dta',
   CLEARED_EPS: '/cleared_eps',
   OUTCODED: '/outcoded'
 };
@@ -57,6 +56,15 @@ export const BOOLEAN_RADIO_OPTIONS = [
   { value: 'true',
     displayText: 'Yes' }
 ];
+
+export const CORRECTION_TYPE_OPTIONS = [
+  { value: 'control',
+    displayText: 'Control' },
+  { value: 'local_quality_error',
+    displayText: 'Local Quality Error' },
+  { value: 'national_quality_error',
+    displayText: 'National Quality Error' }
+]
 
 export const BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE = [
   { value: 'false',

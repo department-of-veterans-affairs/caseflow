@@ -12,7 +12,8 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import * as DateUtil from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 
-import DetailsSections, { Overview } from './DetailsSections';
+import DetailsSections from './DetailsSections';
+import DetailsOverview from './details/DetailsOverview';
 import { onChangeFormData } from '../../components/common/actions';
 
 const row = css({
@@ -35,6 +36,7 @@ const inputFix = css({
 
 const HEARING_DETAILS_FORM_NAME = 'hearingDetails';
 const TRANSCRIPTION_DETAILS_FORM_NAME = 'transcriptionDetails';
+const VIRTUAL_HEARING_FORM_NAME = 'virtualHearing';
 
 class HearingDetails extends React.Component {
   constructor(props) {
@@ -51,8 +53,13 @@ class HearingDetails extends React.Component {
   }
 
   componentDidMount() {
+    this.setInitialFormData();
+  }
+
+  setInitialFormData = () => {
     const { hearing } = this.props;
     const transcription = hearing.transcription || {};
+    const virtualHearing = hearing.virtualHearing;
 
     this.props.onChangeFormData(HEARING_DETAILS_FORM_NAME, {
       bvaPoc: hearing.bvaPoc,
@@ -77,15 +84,28 @@ class HearingDetails extends React.Component {
       problemNoticeSentDate: DateUtil.formatDateStr(transcription.problemNoticeSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
       requestedRemedy: transcription.requestedRemedy
     });
+
+    if (virtualHearing) {
+      this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, {
+        veteranEmail: virtualHearing.veteranEmail,
+        representativeEmail: virtualHearing.representativeEmail,
+        active: virtualHearing.active
+      });
+    }
   }
 
-  setHearing = (key, value) => {
-    this.props.onChangeFormData(HEARING_DETAILS_FORM_NAME, { [key]: value });
+  updateHearing = (values) => {
+    this.props.onChangeFormData(HEARING_DETAILS_FORM_NAME, values);
     this.setState({ updated: true });
   }
 
-  setTranscription = (key, value) => {
-    this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, { [key]: value });
+  updateVirtualHearing = (values) => {
+    this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, values);
+    this.setState({ updated: true });
+  }
+
+  updateTranscription = (values) => {
+    this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, values);
     this.setState({ updated: true });
   }
 
@@ -108,15 +128,17 @@ class HearingDetails extends React.Component {
 
     this.setState({ loading: true });
 
-    ApiUtil.patch(`/hearings/${externalId}`, {
+    return ApiUtil.patch(`/hearings/${externalId}`, {
       data: ApiUtil.convertToSnakeCase(data)
-    }).then(() => {
+    }).then((resp) => {
       this.setState({
         updated: false,
         loading: false,
         success: true,
         error: false
       });
+
+      this.props.setHearing(ApiUtil.convertToCamelCase(resp.body));
     }).
       catch((error) => {
         this.setState({
@@ -134,7 +156,7 @@ class HearingDetails extends React.Component {
       veteranFileNumber
     } = this.props.hearing;
 
-    const { hearingDetailsForm, transcriptionDetailsForm } = this.props;
+    const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = this.props;
 
     const { disabled, success, error } = this.state;
 
@@ -158,14 +180,19 @@ class HearingDetails extends React.Component {
 
           <div className="cf-help-divider" />
           <h2>Hearing Details</h2>
-          <Overview hearing={this.props.hearing} />
+          <DetailsOverview hearing={this.props.hearing} />
           <div className="cf-help-divider" />
 
           <DetailsSections
-            setTranscription={this.setTranscription}
-            setHearing={this.setHearing}
-            transcription={transcriptionDetailsForm || {}}
-            hearing={hearingDetailsForm || {}}
+            user={this.props.user}
+            submit={this.submit}
+            initialHearingState={this.props.hearing}
+            updateTranscription={this.updateTranscription}
+            updateHearing={this.updateHearing}
+            updateVirtualHearing={this.updateVirtualHearing}
+            transcription={transcriptionDetailsForm}
+            hearing={hearingDetailsForm}
+            virtualHearing={virtualHearingForm}
             isLegacy={this.state.isLegacy}
             disabled={disabled} />
           <div>
@@ -192,17 +219,23 @@ class HearingDetails extends React.Component {
 }
 
 HearingDetails.propTypes = {
+  user: PropTypes.shape({
+    userCanScheduleVirtualHearings: PropTypes.bool
+  }),
   hearing: PropTypes.object.isRequired,
+  setHearing: PropTypes.func,
   goBack: PropTypes.func,
   disabled: PropTypes.bool,
   onChangeFormData: PropTypes.func,
   hearingDetailsForm: PropTypes.object,
-  transcriptionDetailsForm: PropTypes.object
+  transcriptionDetailsForm: PropTypes.object,
+  virtualHearingForm: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
   hearingDetailsForm: state.components.forms[HEARING_DETAILS_FORM_NAME],
-  transcriptionDetailsForm: state.components.forms[TRANSCRIPTION_DETAILS_FORM_NAME]
+  transcriptionDetailsForm: state.components.forms[TRANSCRIPTION_DETAILS_FORM_NAME],
+  virtualHearingForm: state.components.forms[VIRTUAL_HEARING_FORM_NAME]
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

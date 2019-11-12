@@ -87,7 +87,7 @@ class ClaimReview < DecisionReview
   def add_user_to_business_line!
     return unless processed_in_caseflow?
 
-    OrganizationsUser.add_user_to_organization(RequestStore.store[:current_user], business_line)
+    business_line.add_user(RequestStore.store[:current_user])
   end
 
   def create_business_line_tasks!
@@ -230,7 +230,7 @@ class ClaimReview < DecisionReview
   end
 
   def can_contest_rating_issues?
-    processed_in_vbms?
+    processed_in_vbms? && !try(:decision_review_remanded?)
   end
 
   private

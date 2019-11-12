@@ -84,12 +84,14 @@ describe "Request Issue Correction Cleaner", :postgres do
   let(:decision_review) { nil }
   let(:drr) { nil }
   let(:contested_rating_issue_reference_id) { nil }
+  let(:contested_decision_issue) { nil }
   let(:nonrating_issue_category) { nil }
   let(:is_unidentified) { nil }
   let(:request_issue) do
     create(:request_issue,
            nonrating_issue_category: nonrating_issue_category,
            contested_rating_issue_reference_id: contested_rating_issue_reference_id,
+           contested_decision_issue: contested_decision_issue,
            decision_review: decision_review,
            benefit_type: benefit_type,
            correction_type: correction_type,
@@ -120,6 +122,7 @@ describe "Request Issue Correction Cleaner", :postgres do
         if ep_code[3] == "dta"
           let(:decision_review) { supplemental_claim }
           let(:drr) { send(ep_code[6]) }
+          let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
         else
           let(:decision_review) { send(ep_code[6]) }
         end

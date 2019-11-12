@@ -13,11 +13,11 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def perform
     ama_appeals_start = Time.zone.now
     cache_ama_appeals
-    time_segment(segment: "cache_ama_appeals", start_time: ama_appeals_start)
+    datadog_report_time_segment(segment: "cache_ama_appeals", start_time: ama_appeals_start)
 
     legacy_appeals_start = Time.zone.now
     cache_legacy_appeals
-    time_segment(segment: "cache_legacy_appeals", start_time: legacy_appeals_start)
+    datadog_report_time_segment(segment: "cache_legacy_appeals", start_time: legacy_appeals_start)
 
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   rescue StandardError => error
@@ -27,7 +27,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def cache_ama_appeals
-    appeals = Appeal.find(open_appeals_from_tasks)
+    appeals = Appeal.where(id: open_appeals_from_tasks)
     request_issues_to_cache = request_issue_counts_for_appeal_ids(appeals.pluck(:id))
     veteran_names_to_cache = veteran_names_for_file_numbers(appeals.pluck(:veteran_file_number))
     appeal_assignees_to_cache = assignees_for_caseflow_appeal_ids(appeals.pluck(:id), Appeal.name)
@@ -75,16 +75,16 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def cache_legacy_appeals
     # Avoid lazy evaluation bugs by immediately plucking all VACOLS IDs. Lazy evaluation of the LegacyAppeal.find(...)
     # was previously causing this code to insert legacy appeal attributes that corresponded to NULL ID fields.
-    legacy_appeals = LegacyAppeal.find(Task.open.where(appeal_type: LegacyAppeal.name).pluck(:appeal_id).uniq)
+    legacy_appeals = LegacyAppeal.where(id: Task.open.where(appeal_type: LegacyAppeal.name).pluck(:appeal_id).uniq)
     all_vacols_ids = legacy_appeals.pluck(:vacols_id).flatten
 
     cache_postgres_data_start = Time.zone.now
     cache_legacy_appeal_postgres_data(legacy_appeals)
-    time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
+    datadog_report_time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
 
     cache_vacols_data_start = Time.zone.now
     cache_legacy_appeal_vacols_data(all_vacols_ids)
-    time_segment(segment: "cache_legacy_appeal_vacols_data", start_time: cache_vacols_data_start)
+    datadog_report_time_segment(segment: "cache_legacy_appeal_vacols_data", start_time: cache_vacols_data_start)
 
     increment_appeal_count(legacy_appeals.length, LegacyAppeal.name)
   end
@@ -195,17 +195,6 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   private
-
-  def time_segment(segment:, start_time:)
-    job_duration_seconds = Time.zone.now - start_time
-
-    DataDogService.emit_gauge(
-      app_name: "caseflow_job_segment",
-      metric_group: segment,
-      metric_name: "runtime",
-      metric_value: job_duration_seconds
-    )
-  end
 
   def aod_status_for_appeals(appeals)
     Appeal.where(id: appeals).joins(

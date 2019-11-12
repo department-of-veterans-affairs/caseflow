@@ -9,6 +9,7 @@ class Appeal < DecisionReview
   include BgsService
   include Taskable
   include PrintsTaskTree
+  include HasTaskHistory
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -629,7 +630,17 @@ class Appeal < DecisionReview
   end
 
   def address
-    @address ||= Address.new(appellant.address) if appellant.address.present?
+    if appellant.address.present?
+      @address ||= Address.new(
+        address_line_1: appellant.address_line_1,
+        address_line_2: appellant.address_line_2,
+        address_line_3: appellant.address_line_3,
+        city: appellant.city,
+        country: appellant.country,
+        state: appellant.state,
+        zip: appellant.zip
+      )
+    end
   end
 
   # we always want to show ratings on intake
@@ -661,6 +672,15 @@ class Appeal < DecisionReview
         assigned_to: business_line
       )
     end
+  end
+
+  def stuck?
+    AppealsWithNoTasksOrAllTasksOnHoldQuery.new.ama_appeal_stuck?(self)
+  end
+
+  def eligible_for_death_dismissal?(_user)
+    # Death dismissal processing is only for VACOLs/Legacy appeals
+    false
   end
 
   private

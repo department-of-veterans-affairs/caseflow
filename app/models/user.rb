@@ -93,6 +93,10 @@ class User < ApplicationRecord
     HearingsManagement.singleton.users.include?(self) || TranscriptionTeam.singleton.users.include?(self)
   end
 
+  def can_withdraw_issues?
+    BvaIntake.singleton.users.include?(self) || %w[NWQ VACO].exclude?(regional_office)
+  end
+
   def administer_org_users?
     admin? || granted?("Admin Intake") || roles.include?("Admin Intake")
   end
@@ -278,7 +282,10 @@ class User < ApplicationRecord
   end
 
   def update_status!(new_status)
-    update!(status: new_status, status_updated_at: Time.zone.now)
+    transaction do
+      remove_user_from_auto_assign_orgs if new_status.eql?(Constants.USER_STATUSES.inactive)
+      update!(status: new_status, status_updated_at: Time.zone.now)
+    end
   end
 
   def use_task_pages_api?
@@ -291,6 +298,10 @@ class User < ApplicationRecord
       on_hold_tasks_tab,
       completed_tasks_tab
     ]
+  end
+
+  def self.default_active_tab
+    Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
   end
 
   def assigned_tasks_tab
@@ -310,7 +321,7 @@ class User < ApplicationRecord
   end
 
   def show_regional_office_in_queue?
-    false
+    HearingsManagement.singleton.user_has_access?(self)
   end
 
   def show_reader_link_column?
@@ -319,8 +330,11 @@ class User < ApplicationRecord
 
   private
 
-  def maybe_update_status_timestamp
-    update!(status_updated_at: Time.zone.now) if saved_change_to_attribute?(:status)
+  def remove_user_from_auto_assign_orgs
+    auto_assign_orgs = organizations.select(&:automatically_assign_to_member?)
+    auto_assign_orgs.each do |organization|
+      OrganizationsUser.remove_user_from_organization(self, organization)
+    end
   end
 
   def normalize_css_id
@@ -410,6 +424,13 @@ class User < ApplicationRecord
 
     def find_by_css_id_or_create_with_default_station_id(css_id)
       find_by_css_id(css_id) || User.create(css_id: css_id.upcase, station_id: BOARD_STATION_ID)
+    end
+
+    def batch_find_by_css_id_or_create_with_default_station_id(css_ids)
+      normalized_css_ids = css_ids.map(&:upcase)
+      new_user_css_ids = normalized_css_ids - User.where(css_id: normalized_css_ids).pluck(:css_id)
+      User.create(new_user_css_ids.map { |css_id| { css_id: css_id, station_id: User::BOARD_STATION_ID } })
+      User.where(css_id: normalized_css_ids)
     end
 
     def list_hearing_coordinators

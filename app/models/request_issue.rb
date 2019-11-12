@@ -1,12 +1,17 @@
 # frozen_string_literal: true
 
+##
+# When a veteran submits their form for an Appeal, Supplemental Claim, or Higher Level Review, they list the prior
+# decisions that they want to contest. These are intaken into Caseflow as request issues.  Request issues can also
+# be generated when a decision gets remanded or vacated.
+
 class RequestIssue < ApplicationRecord
   include Asyncable
   include HasBusinessLine
   include DecisionSyncable
 
   # how many days before we give up trying to sync decisions
-  REQUIRES_PROCESSING_WINDOW_DAYS = 14
+  REQUIRES_PROCESSING_WINDOW_DAYS = 30
 
   # don't need to try as frequently as default 3 hours
   DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
@@ -18,6 +23,7 @@ class RequestIssue < ApplicationRecord
   has_many :remand_reasons, through: :decision_issues
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   has_many :hearing_issue_notes
+  has_many :job_notes, as: :job
   has_one :legacy_issue_optin
   belongs_to :correction_request_issue, class_name: "RequestIssue", foreign_key: "corrected_by_request_issue_id"
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
@@ -146,7 +152,6 @@ class RequestIssue < ApplicationRecord
 
     private
 
-    # rubocop:disable Metrics/MethodLength
     def attributes_from_intake_data(data)
       contested_issue_present = attributes_look_like_contested_issue?(data)
 
@@ -174,7 +179,6 @@ class RequestIssue < ApplicationRecord
         correction_type: data[:correction_type]
       }
     end
-    # rubocop:enable Metrics/MethodLength
 
     def attributes_look_like_contested_issue?(data)
       data[:rating_issue_reference_id] ||
@@ -278,6 +282,13 @@ class RequestIssue < ApplicationRecord
     return specials unless specials.empty?
   end
 
+  def contention_type
+    return Constants.CONTENTION_TYPES.higher_level_review if decision_review.is_a?(HigherLevelReview)
+    return Constants.CONTENTION_TYPES.supplemental_claim if decision_review.is_a?(SupplementalClaim)
+
+    Constants.CONTENTION_TYPES.default
+  end
+
   # If contentions get a DTA disposition, send their IDs when creating the new DTA contentions
   def original_contention_ids
     return unless contested_decision_issue&.remanded?
@@ -319,13 +330,13 @@ class RequestIssue < ApplicationRecord
   end
 
   def approx_decision_date_of_issue_being_contested
-    return if is_unidentified
-
     if contested_issue
       contested_issue.approx_decision_date
     elsif decision_date
       decision_date
     else
+      return if is_unidentified
+
       # in theory we should never get here
       fail MissingDecisionDate, id
     end
@@ -560,7 +571,15 @@ class RequestIssue < ApplicationRecord
   end
 
   def remanded?
-    decision_review.try(:decision_review_remanded?)
+    # if this request issue is a correction for a decision issue from a remand supplemental claim,
+    # consider it a remanded request issue regardless of the decision issue disposition
+    return contested_decision_issue&.decision_review.try(:decision_review_remanded?) if decision_correction?
+
+    contested_decision_issue&.remanded?
+  end
+
+  def title_of_active_review
+    duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
   end
 
   private
@@ -623,10 +642,6 @@ class RequestIssue < ApplicationRecord
 
   def contested_issue
     @contested_issue ||= build_contested_issue
-  end
-
-  def title_of_active_review
-    duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
   end
 
   def duplicate_of_issue_in_active_review?

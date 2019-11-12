@@ -1,26 +1,12 @@
 {
   "ASSIGNED_TASKS_TAB_NAME": "assigned",
+  "INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME": "assigned_person",
   "COMPLETED_TASKS_TAB_NAME": "completed",
+  "INDIVIDUALLY_COMPLETED_TASKS_TAB_NAME": "completed_person",
   "ON_HOLD_TASKS_TAB_NAME": "on_hold",
+  "INDIVIDUALLY_ON_HOLD_TASKS_TAB_NAME": "on_hold_person",
   "TRACKING_TASKS_TAB_NAME": "tracking",
   "UNASSIGNED_TASKS_TAB_NAME": "unassigned",
-
-  "APPEAL_TYPE_COLUMN": "typeColumn",
-  "CASE_DETAILS_LINK_COLUMN": "detailsColumn",
-  "DAYS_ON_HOLD_COLUMN": "daysOnHoldColumn",
-  "DAYS_WAITING_COLUMN": "daysWaitingColumn",
-  "DOCKET_NUMBER_COLUMN": "docketNumberColumn",
-  "DOCUMENT_COUNT_READER_LINK_COLUMN": "readerLinkColumn",
-  "HEARING_BADGE_COLUMN": "hearingBadgeColumn",
-  "ISSUE_COUNT_COLUMN": "issueCountColumn",
-  "REGIONAL_OFFICE_COLUMN": "regionalOfficeColumn",
-  "TASK_ASSIGNEE_COLUMN": "assignedToColumn",
-  "TASK_ASSIGNER_COLUMN": "completedToNameColumn",
-  "TASK_CLOSED_DATE_COLUMN": "completedDateColumn",
-  "TASK_CREATED_AT_COLUMN": "createdDateColumn",
-  "TASK_DUE_DATE_COLUMN": "caseDueDateColumn",
-  "TASK_HOLD_LENGTH_COLUMN": "caseDaysOnHoldColumn",
-  "TASK_TYPE_COLUMN": "taskColumn",
 
   "COLUMNS": {
     "APPEAL_TYPE": {
@@ -58,6 +44,9 @@
       "name": "issueCountColumn",
       "sorting_table": "cached_appeal_attributes",
       "sorting_columns": ["issue_count"]
+    },
+    "READER_LINK_WITH_NEW_DOCS_ICON": {
+      "name": "readerLinkWithNewDocIconColumn"
     },
     "REGIONAL_OFFICE": {
       "filterable": true,
@@ -109,5 +98,11 @@
   "FILTER_COLUMN_REQUEST_PARAM": "filter",
   
   "COLUMN_SORT_ORDER_ASC": "asc",
-  "COLUMN_SORT_ORDER_DESC": "desc"
+  "COLUMN_SORT_ORDER_DESC": "desc",
+
+  "FILTER_OPTIONS": {
+    "IS_AOD": {
+      "key": "is_aod"
+    }
+  }
 }

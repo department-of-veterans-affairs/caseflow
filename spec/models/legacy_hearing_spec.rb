@@ -2,8 +2,18 @@
 
 require "support/vacols_database_cleaner"
 require "rails_helper"
+require "models/concerns/has_virtual_hearing_examples"
 
 describe LegacyHearing, :all_dbs do
+  it_should_behave_like "a model that can have a virtual hearing" do
+    let(:instance_of_class) do
+      create(
+        :legacy_hearing,
+        hearing_day: create(:hearing_day, regional_office: "RO42", request_type: HearingDay::REQUEST_TYPES[:video])
+      )
+    end
+  end
+
   before do
     RequestStore[:current_user] = create(:user, css_id: "Test user", station_id: "101")
   end

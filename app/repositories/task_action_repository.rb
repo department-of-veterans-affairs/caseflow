@@ -13,7 +13,7 @@ class TaskActionRepository
       {
         selected: nil,
         options: organizations,
-        type: GenericTask.name
+        type: Task.name
       }
     end
 
@@ -22,14 +22,12 @@ class TaskActionRepository
     end
 
     def cancel_task_data(task, _user = nil)
+      assigner_name = task.assigned_by&.full_name || "the assigner"
       {
         modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
-        modal_body: COPY::CANCEL_TASK_MODAL_DETAIL,
+        modal_body: format(COPY::CANCEL_TASK_MODAL_DETAIL, assigner_name),
         message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
-        message_detail: format(
-          COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL,
-          task.assigned_by&.full_name || "the assigner"
-        )
+        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assigner_name)
       }
     end
 
@@ -103,7 +101,7 @@ class TaskActionRepository
       {
         selected: nil,
         options: users_to_options(Judge.list_all),
-        type: task.type
+        type: task.appeal_type.eql?(Appeal.name) ? task.type : "JudgeLegacyAssignTask"
       }
     end
 

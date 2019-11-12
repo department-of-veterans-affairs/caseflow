@@ -5,5 +5,7 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor < Api::V3::Decis
     super(params: params, user: user, form_type: "higher_level_review")
   end
 
-  alias higher_level_review detail
+  def higher_level_review
+    intake&.detail
+  end
 end

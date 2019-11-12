@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Hearing < ApplicationRecord
+  include HasVirtualHearing
+
   belongs_to :hearing_day
   belongs_to :appeal
   belongs_to :judge, class_name: "User"
@@ -83,6 +85,8 @@ class Hearing < ApplicationRecord
   end
 
   def readable_request_type
+    return "Virtual" if virtual?
+
     HEARING_TYPES[request_type.to_sym]
   end
 

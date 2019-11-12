@@ -266,6 +266,10 @@ class EndProduct
     status_type_code == "CAN"
   end
 
+  def recent?
+    [Time.zone.today, 1.day.ago.to_date].include? last_action_date
+  end
+
   def contentions
     @contentions ||= claim_id ? VBMSService.fetch_contentions(claim_id: claim_id) : nil
   end
