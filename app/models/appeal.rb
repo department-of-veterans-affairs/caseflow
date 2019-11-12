@@ -276,7 +276,12 @@ class Appeal < DecisionReview
   def power_of_attorney
     claimants.first&.power_of_attorney
   end
-  delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney, allow_nil: true
+
+  delegate :representative_name,
+           :representative_type,
+           :representative_address,
+           :representative_email_address,
+           to: :power_of_attorney, allow_nil: true
 
   def power_of_attorneys
     claimants.map(&:power_of_attorney)

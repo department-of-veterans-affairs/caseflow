@@ -14,7 +14,14 @@ class BgsPowerOfAttorney
     @representative_address ||= load_bgs_address!
   end
 
+  delegate :email_address,
+           to: :person, prefix: :representative
+
   private
+
+  def person
+    @person ||= Person.find_or_create_by(participant_id: participant_id)
+  end
 
   def fetch_bgs_record
     if claimant_participant_id
