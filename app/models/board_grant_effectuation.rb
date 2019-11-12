@@ -158,7 +158,7 @@ class BoardGrantEffectuation < ApplicationRecord
     if claimant&.payee_code.present?
       claimant.payee_code
     elsif decision_document&.appeal&.veteran_is_not_claimant
-      veteran&.fetch_relationships&.find do |relationship|
+      veteran&.relationships&.find do |relationship|
         relationship.participant_id == claimant.participant_id
       end&.default_payee_code
     else
