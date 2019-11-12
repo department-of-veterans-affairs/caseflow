@@ -10,6 +10,6 @@ class DismissedMotionToVacateTask < DecidedMotionToVacateTask
   end
 
   def completion_contact
-    "the Litigation Support team"
+    COPY::CANCEL_TASK_CONTACT_MTV_DISMISSED
   end
 end
