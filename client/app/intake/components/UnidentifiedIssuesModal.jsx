@@ -24,7 +24,7 @@ class UnidentifiedIssuesModal extends React.Component {
 
     const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
 
-    // we must do our own date math for nonrating request issues.
+    // we must do our own date math for unidentified request issues.
     // we assume the timezone of the browser for all these.
     const decisionDate = new Date(this.state.decisionDate);
     const receiptDate = new Date(this.props.intakeData.receiptDate);
