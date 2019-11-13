@@ -496,6 +496,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def decision_or_promulgation_date
+    # binding.pry
     return decision_date if nonrating?
 
     return contested_rating_issue&.promulgation_date if associated_rating_issue?
