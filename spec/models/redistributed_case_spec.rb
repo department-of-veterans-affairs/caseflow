@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "support/vacols_database_cleaner"
+require "support/database_cleaner"
 require "rails_helper"
 
 describe RedistributedCase, :all_dbs do
@@ -32,7 +33,9 @@ describe RedistributedCase, :all_dbs do
       context "when there is an open ScheduleHearingTask and a cancelled parent HearingTask" do
         let(:legacy_appeal) {         create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case) }
         before do
-          legacy_appeal.tasks.where(type: :HearingTask).each { |t| t.update!(status: Constants.TASK_STATUSES.cancelled) }
+          legacy_appeal.tasks.where(type: :HearingTask).each do |t|
+            t.update!(status: Constants.TASK_STATUSES.cancelled)
+          end
         end
         it "returns false" do
           expect(subject.ok_to_redistribute?).to eq false
@@ -41,7 +44,9 @@ describe RedistributedCase, :all_dbs do
       context "when there is a cancelled ScheduleHearingTask, which causes a cancelled parent HearingTask" do
         let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case) }
         before do
-          legacy_appeal.tasks.where(type: :ScheduleHearingTask).each { |t| t.update!(status: Constants.TASK_STATUSES.cancelled) }
+          legacy_appeal.tasks.where(type: :ScheduleHearingTask).each do |t|
+            t.update!(status: Constants.TASK_STATUSES.cancelled)
+          end
         end
         it "returns true" do
           expect(subject.ok_to_redistribute?).to eq true
@@ -50,7 +55,9 @@ describe RedistributedCase, :all_dbs do
       context "when there is a completed ScheduleHearingTask, which causes a completed parent HearingTask" do
         let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case) }
         before do
-          legacy_appeal.tasks.where(type: :ScheduleHearingTask).each { |t| t.update!(status: Constants.TASK_STATUSES.completed) }
+          legacy_appeal.tasks.where(type: :ScheduleHearingTask).each do |t|
+            t.update!(status: Constants.TASK_STATUSES.completed)
+          end
         end
         it "returns true" do
           expect(subject.ok_to_redistribute?).to eq false
