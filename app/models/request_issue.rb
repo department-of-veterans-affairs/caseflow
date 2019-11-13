@@ -496,8 +496,9 @@ class RequestIssue < ApplicationRecord
   end
 
   def decision_or_promulgation_date
-    # binding.pry
     return decision_date if nonrating?
+
+    return decision_date if is_unidentified?
 
     return contested_rating_issue&.promulgation_date if associated_rating_issue?
 
@@ -792,6 +793,8 @@ class RequestIssue < ApplicationRecord
 
   def check_for_before_ama!
     return unless eligible? && should_check_for_before_ama?
+
+    binding.pry
 
     if decision_or_promulgation_date && decision_or_promulgation_date < decision_review.ama_activation_date
       self.ineligible_reason = :before_ama

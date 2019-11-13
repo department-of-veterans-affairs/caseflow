@@ -185,7 +185,6 @@ const formatUnidentifiedIssues = (state) => {
         correction_type: issue.correctionType,
         untimely_exemption: issue.untimelyExemption,
         untimely_exemption_notes: issue.untimelyExemptionNotes,
-        description: issue.description
       };
     });
 };
