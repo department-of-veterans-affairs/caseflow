@@ -245,7 +245,7 @@ class Appeal < DecisionReview
   end
 
   def status
-    nil
+    BVAAppealStatus.new(appeal: self)
   end
 
   def previously_selected_for_quality_review
