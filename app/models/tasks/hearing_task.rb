@@ -94,10 +94,6 @@ class HearingTask < Task
     true
   end
 
-  def send_alert_of_attempted_location_move
-    capture_exception(HearingTaskNotCompletable.new, extra: { task_id: id, location_code: appeal.location_code })
-  end
-
   def set_assignee
     self.assigned_to = Bva.singleton
   end
