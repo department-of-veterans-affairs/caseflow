@@ -10,6 +10,8 @@ class HearingTask < Task
   delegate :hearing, to: :hearing_task_association, allow_nil: true
   before_validation :set_assignee
 
+  class HearingTaskNotCompletable < StandardError; end
+
   def self.label
     "All hearing-related tasks"
   end
@@ -34,10 +36,20 @@ class HearingTask < Task
     true
   end
 
+  def hearing_task_ready_for_completion?
+    return false if !appeal.tasks.open.where(type: HearingTask.name).empty?
+
+    if appeal.in_caseflow_location?
+      true
+    else
+      fail HearingTaskNotCompletable
+    end
+  end
+
   def when_child_task_completed(child_task)
     super
 
-    return unless appeal.tasks.open.where(type: HearingTask.name).empty?
+    return unless hearing_task_ready_for_completion?
 
     if appeal.is_a?(LegacyAppeal)
       update_legacy_appeal_location
@@ -80,6 +92,10 @@ class HearingTask < Task
 
   def cascade_closure_from_child_task?(_child_task)
     true
+  end
+
+  def send_alert_of_attempted_location_move
+    capture_exception(HearingTaskNotCompletable.new, extra: { task_id: id, location_code: appeal.location_code })
   end
 
   def set_assignee
