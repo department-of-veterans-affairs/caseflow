@@ -29,11 +29,11 @@ class Relationship
     }
   end
 
-  private
-
   def default_payee_code
     previous_claim_payee_code || payee_code_by_relationship_type
   end
+
+  private
 
   def previous_claim_payee_code
     @previous_claim_payee_code ||= latest_end_product.try(:payee_code)
