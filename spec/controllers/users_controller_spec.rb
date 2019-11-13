@@ -124,6 +124,55 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
     end
   end
 
+  describe "GET /users?css_id=<css_id>" do
+    let!(:users) { create_list(:user, 8) }
+    let(:org) { create(:organization) }
+    let(:body) { JSON.parse(response.body) }
+
+    subject { get(:index, params: { css_id: css_id, exclude_org: org.name }) }
+
+    context "when there are zero matches" do
+      let(:css_id) { users.first.css_id + "foobar" }
+
+      it "returns empty array" do
+        subject
+
+        expect(response.status).to eq(200)
+        expect(body["users"]).to eq([])
+      end
+    end
+
+    context "when the only match is already in the Org" do
+      before do
+        org.users << users.first
+      end
+
+      let(:css_id) { users.first.css_id }
+
+      it "returns empty array" do
+        subject
+
+        expect(response.status).to eq(200)
+        expect(body["users"]).to eq([])
+      end
+    end
+
+    context "when the css_id is really a full_name" do
+      let!(:users) { [create(:user, full_name: "Foo Bar"), create(:user, full_name: "Jill Smith")] }
+      let(:css_id) { users.first.full_name }
+
+      it "matches by name" do
+        subject
+
+        expect(response.status).to eq(200)
+
+        found_users = body["users"]["data"]
+        expect(found_users.count).to eq(1)
+        expect(found_users.first["id"]).to eq(users.first.id.to_s)
+      end
+    end
+  end
+
   describe "GET /user?css_id=<css_id>" do
     let(:user) { create(:user) }
     let(:params) { {} }
