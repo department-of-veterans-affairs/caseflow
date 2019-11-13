@@ -1,22 +1,24 @@
 const webpack = require('webpack');
 const path = require('path');
 const _ = require('lodash');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const devBuild = process.env.NODE_ENV !== 'production'; // eslint-disable-line no-process-env
 
 const config = {
   mode: devBuild ? 'development' : 'production',
-  entry: ['es5-shim/es5-shim', 'es5-shim/es5-sham', 'babel-polyfill', './app/index'],
+  entry: [
+    'es5-shim/es5-shim',
+    'es5-shim/es5-sham',
+    'babel-polyfill',
+    './app/index'
+  ],
   output: {
     filename: 'webpack-bundle.js',
     sourceMapFilename: 'sourcemap-[file].map',
     path: path.join(__dirname, '../app/assets/javascripts')
   },
   plugins: _.compact([
-    devBuild ? null : new webpack.optimize.ModuleConcatenationPlugin(),
-    new webpack.EnvironmentPlugin({ NODE_ENV: 'development' }),
-    devBuild ? null : new UglifyJsPlugin({ sourceMap: true })
+    new webpack.EnvironmentPlugin({ NODE_ENV: 'development' })
   ]),
   resolve: {
     extensions: ['.js', '.jsx'],
@@ -35,11 +37,14 @@ const config = {
       {
         test: /\.jsx?$/,
         loader: 'babel-loader',
-        exclude: new RegExp('node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)')
+        exclude: new RegExp(
+          'node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)'
+        )
       },
       {
         test: /\.(ttf|eot|woff|woff2)$/,
-        loader: 'url-loader?limit=1024&name=fonts/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'
+        loader:
+          'url-loader?limit=1024&name=fonts/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'
       },
       {
         test: /\.module\.s(a|c)ss$/,
@@ -100,7 +105,9 @@ const config = {
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        use: ['url-loader?limit=1024&name=images/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/']
+        use: [
+          'url-loader?limit=1024&name=images/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'
+        ]
       }
     ]
   }
