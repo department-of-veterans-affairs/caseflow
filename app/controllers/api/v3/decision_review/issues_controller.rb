@@ -35,4 +35,21 @@ class Api::V3::DecisionReview::IssuesController < Api::V3::BaseController
     byebug
     render json: Api::V3::IssueSerializer.new(issues)
   end
+
+private
+
+  def contestable_issue_data(contestable_issue)
+    {
+      "decisionText": "veteran status verified",
+      "decisionDate": "2019-07-11",
+      "category": "Eligibility | Veteran Status",
+
+      "decisionIssueId": contestable_issue.decision_issue&.id
+
+      # these are related to legacy??
+      # "ratingIssueId": "12345678",
+      # "legacyAppealId": "9876543210",
+      # "legacyAppealIssueId": 1
+    }.reject{ |_, value| value.nil? }
+  end
 end
