@@ -67,7 +67,7 @@ class LegacyHearingSerializer
       hearing_view.user_id == params[:current_user_id]
     end
   end
-  attribute :virtual, &:virtual?
+  attribute :is_virtual, &:virtual?
   attribute :virtual_hearing do |object|
     if object.virtual?
       VirtualHearingSerializer.new(object.virtual_hearing).serializable_hash[:data][:attributes]
