@@ -62,7 +62,8 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       User.authenticate!(user: user)
       FeatureToggle.enable!(:schedule_virtual_hearings)
     end
-    let!(:legacy_hearing) { create(:legacy_hearing) }
+    let!(:legacy_hearing) { create(:legacy_hearing, regional_office: "RO06") }
+    let!(:virtual_hearing) { create( :virtual_hearing, hearing: legacy_hearing) }
 
     scenario "User can edit Judge and change virtual hearings" do
       visit "hearings/" + legacy_hearing.external_id.to_s + "/details"
@@ -81,6 +82,12 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       click_button("Change and Send Email")
 
       expect(page).to have_content("Hearing Successfully Updated")
+
+      virtual_hearing.reload
+      expect(VirtualHearing.count).to eq(1)
+      expect(virtual_hearing.hearing).to eq(legacy_hearing)
+      expect(virtual_hearing.veteran_email).to eq("email@testingEmail.com")
+      expect(virtual_hearing.representative_email).to eq("email@testingEmail.com")
     end
 
     scenario "User can select judge, hearing room, hearing coordinator, and add notes" do
