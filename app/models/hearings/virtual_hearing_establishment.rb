@@ -9,6 +9,7 @@ class VirtualHearingEstablishment < ApplicationRecord
   belongs_to :virtual_hearing
   has_many :job_notes, as: :job
 
+  # :nocov:
   # Implements Asyncable
   def veteran
     virtual_hearing.hearing.appeal&.veteran
@@ -18,4 +19,5 @@ class VirtualHearingEstablishment < ApplicationRecord
   def asyncable_user
     virtual_hearing.created_by.css_id
   end
+  # :nocov:
 end
