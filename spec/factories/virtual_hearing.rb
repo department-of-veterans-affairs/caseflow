@@ -16,6 +16,7 @@ FactoryBot.define do
     representative_email { "caseflow-representative@test.com" }
     representative_email_sent { false }
     association :created_by, factory: :user
+    establishment { nil }
 
     trait :initialized do
       alias_name { rand(1..9).to_s[0..6] }
@@ -34,6 +35,13 @@ FactoryBot.define do
 
     trait :cancelled do
       status { VirtualHearing.statuses[:cancelled] }
+    end
+
+    after(:create) do |virtual_hearing, _evaluator|
+      virtual_hearing.establishment = create(
+        :virtual_hearing_establishment,
+        virtual_hearing: virtual_hearing
+      )
     end
   end
 end
