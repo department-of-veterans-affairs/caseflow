@@ -3,6 +3,7 @@
 class RedistributedCase
   class CannotRedistribute < StandardError; end
 
+  # case_id is synonymous with vacols_id
   def initialize(case_id:, new_distribution:)
     @case_id = case_id
     @new_distribution = new_distribution

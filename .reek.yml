@@ -74,7 +74,7 @@ detectors:
   LongParameterList:
     exclude:
       - Address#initialize
-      - LegacyDocket
+      - LegacyDocket#new_distributed_case
   ManualDispatch:
     exclude:
       - Api::V3::DecisionReview::IntakeParams
