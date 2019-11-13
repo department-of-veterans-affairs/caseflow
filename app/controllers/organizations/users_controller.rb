@@ -36,6 +36,10 @@ class Organizations::UsersController < OrganizationsController
   end
 
   def destroy
+    if organization.is_a?(JudgeTeam) && organization.judge.eql?(user_to_modify)
+      fail Caseflow::Error::ActionForbiddenError, message: COPY::JUDGE_TEAM_REMOVE_JUDGE_ERROR
+    end
+
     OrganizationsUser.remove_user_from_organization(user_to_modify, organization)
 
     render json: { users: json_users([user_to_modify]) }, status: :ok
