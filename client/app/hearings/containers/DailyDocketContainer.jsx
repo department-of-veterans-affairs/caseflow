@@ -98,6 +98,18 @@ export class DailyDocketContainer extends React.Component {
     });
   };
 
+  formatVirtualHearing = (hearing) => {
+    if (!virtualHearing.isVirtual){
+      return {};
+    }
+
+    return _.omitBy({
+      veteran_email: hearing.virtualHearing.veteranEmail,
+      representative_email: hearing.virtualHearing.representativeEmail,
+      status: hearing.virtualHearing.status
+    }, _.isNil);
+  }
+  
   formatHearing = (hearing) => {
     const amaHearingValues = hearing.docketName === 'hearing' ? {
       evidence_window_waived: hearing.evidenceWindowWaived
@@ -108,11 +120,14 @@ export class DailyDocketContainer extends React.Component {
       hold_open: hearing.holdOpen
     } : {};
 
+    const virtualHearing = formatVirtualHearing(hearing.virtualHearing)
+
     return _.omitBy({
       disposition: hearing.disposition,
       transcript_requested: hearing.transcriptRequested,
       notes: hearing.notes,
       hearing_location_attributes: hearing.location ? ApiUtil.convertToSnakeCase(hearing.location) : null,
+      virtual_hearing_attributes: virtualHearing ? ApiUtil.convertToSnakeCase(virtualHearing) : null,
       scheduled_time_string: hearing.scheduledTimeString,
       prepped: hearing.prepped,
       ...legacyValues,
