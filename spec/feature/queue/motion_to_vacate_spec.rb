@@ -160,14 +160,18 @@ RSpec.feature "Motion to vacate", :all_dbs do
              assigned_to: judge, appeal: appeal, created_at: receipt_date + 3.days, parent: root_task)
     end
     let!(:vacate_motion_mail_task) do
-      create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney, parent: root_task)
+      create(:vacate_motion_mail_task,
+             appeal: appeal,
+             assigned_to: motions_attorney,
+             parent: root_task,
+             instructions: ["Initial instructions"])
     end
     let!(:judge_address_motion_to_vacate_task) do
       create(:judge_address_motion_to_vacate_task, appeal: appeal, assigned_to: judge, parent: vacate_motion_mail_task)
     end
     let!(:atty_option_txt) { "#{drafting_attorney.full_name} (Orig. Attorney)" }
     let!(:judge_notes) { "Here's why I made my decision..." }
-    let!(:return_to_lit_support_instructions) { "You forgot the denial draft" }
+    let!(:return_to_lit_support_instructions) { "\n\nYou forgot the denial draft" }
 
     before do
       create(:staff, :judge_role, sdomainid: judge.css_id)
@@ -328,14 +332,27 @@ RSpec.feature "Motion to vacate", :all_dbs do
       find("a", text: "return to the motions attorney").click
 
       expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_MODAL_TITLE)
-      fill_in("instructions", with: return_to_lit_support_instructions)
+      expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS)
+      find("div.cf-modal-body").fill_in("instructions",
+                                        with: return_to_lit_support_instructions,
+                                        fill_options: { clear: :none })
 
       click_button(text: "Submit")
 
-      # Fill in additional test logic once submit handler is complete
-
       # Return back to user's queue
-      # expect(page).to have_current_path("/queue")
+      expect(page).to have_current_path("/queue")
+
+      motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
+      expect(motion).to be_nil
+
+      expect(judge_address_motion_to_vacate_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+
+      expect(vacate_motion_mail_task.reload.status).to eq Constants.TASK_STATUSES.assigned
+      expect(vacate_motion_mail_task.instructions.length).to eq 2
+
+      expected_instructions = COPY::RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS +
+                              return_to_lit_support_instructions
+      expect(vacate_motion_mail_task.instructions).to include(expected_instructions)
     end
 
     it "judge dismisses motion to vacate" do

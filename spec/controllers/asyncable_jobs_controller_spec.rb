@@ -51,11 +51,41 @@ describe AsyncableJobsController, :postgres, type: :controller do
       end
 
       let(:user) { create(:default_user) }
+      let(:page_size) { 50 }
+      let(:review) { create(:higher_level_review) }
+      let(:many_jobs) do
+        (1..page_size + 1).map do
+          create(
+            :request_issues_update,
+            :requires_processing,
+            user: user,
+            review: review,
+            before_request_issue_ids: [],
+            after_request_issue_ids: []
+          )
+        end
+      end
 
       it "allows access" do
         get :index
 
         expect(response.status).to eq 200
+      end
+
+      it "handles requests for CSV format" do
+        get(:index, format: :csv)
+
+        expect(response.status).to eq 200
+        expect(response.headers["Content-Type"]).to include "text/csv"
+        expect(response.body).to start_with("type,id,submitted,last_submitted,attempted_at,error,participant_id\n")
+      end
+
+      it "includes unpaginated jobs in CSV format" do
+        many_jobs
+        get(:index, format: :csv)
+
+        records = response.body.strip.split("\n")[1..-1]
+        expect(records.length).to be > page_size
       end
     end
 

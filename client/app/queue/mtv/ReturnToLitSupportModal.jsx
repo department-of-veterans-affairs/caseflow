@@ -6,16 +6,23 @@ import {
   RETURN_TO_LIT_SUPPORT_MODAL_TITLE,
   RETURN_TO_LIT_SUPPORT_MODAL_CONTENT,
   RETURN_TO_LIT_SUPPORT_MODAL_INSTRUCTIONS_LABEL,
+  RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS,
   MODAL_CANCEL_BUTTON
 } from '../../../COPY.json';
 import TextareaField from '../../components/TextareaField';
 import StringUtil from '../../util/StringUtil';
 
-export const ReturnToLitSupportModal = ({ onSubmit, onCancel }) => {
-  const [instructions, setInstructions] = useState(null);
+export const ReturnToLitSupportModal = ({
+  onSubmit,
+  onCancel,
+  instructions: defaultInstructions = RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS
+}) => {
+  const [instructions, setInstructions] = useState(defaultInstructions);
 
   const cancelHandler = () => onCancel();
   const submitHandler = () => onSubmit({ instructions });
+
+  const isValid = () => Boolean(instructions.trim());
 
   return (
     <Modal
@@ -31,7 +38,7 @@ export const ReturnToLitSupportModal = ({ onSubmit, onCancel }) => {
           classNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
           name: 'Submit',
           onClick: submitHandler,
-          disabled: instructions === null
+          disabled: !isValid()
         }
       ]}
       closeHandler={cancelHandler}
@@ -51,5 +58,6 @@ export const ReturnToLitSupportModal = ({ onSubmit, onCancel }) => {
 
 ReturnToLitSupportModal.propTypes = {
   onSubmit: PropTypes.func,
-  onCancel: PropTypes.func
+  onCancel: PropTypes.func,
+  instructions: PropTypes.string
 };

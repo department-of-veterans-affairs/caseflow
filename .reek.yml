@@ -40,10 +40,13 @@ detectors:
       - Api::ApplicationController#upstream_known_error
       - AppealTaskHistory#build_events
       - ApplicationRecord#as_hash
+      - AssignJudgeteamRoles#process
       - AsyncableJobsReporter
       - ClaimReviewAsyncStatsReporter#as_csv
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
+      - VirtualHearings::DeleteConferencesJob#delete_conference
+      - VirtualHearings::DeleteConferencesJob#process_virtual_hearing
       - Fakes::EndProductStore
       - Fakes::BGSService#get_participant_id_for_user
       - Fakes::BGSServiceRecordMaker
