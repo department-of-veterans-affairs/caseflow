@@ -4,7 +4,7 @@ require "support/vacols_database_cleaner"
 require "rails_helper"
 
 describe WarmBgsCachesJob, :all_dbs do
-  context "default" do
+  context "#perform" do
     # cache keys are using default POA so no specific ids.
     let(:poa_cache_key) { "bgs-participant-poa-" }
     let(:address_cache_key) { "bgs-participant-address-" }
@@ -60,6 +60,34 @@ describe WarmBgsCachesJob, :all_dbs do
       expect(appeal.veteran.reload[:ssn]).to_not be_nil
       expect(@slack_msg).to be_nil
       expect(@people_sync).to eq(5)
+    end
+
+    context "errors" do
+      before do
+        allow(Raven).to receive(:capture_exception) { @raven_called = true }
+      end
+
+      context "bgs address error" do
+        before do
+          allow(bgs_address_service).to receive(:fetch_bgs_record) { raise "error!" }
+        end
+
+        it "captures exceptions" do
+          expect { described_class.perform_now }.to_not raise_error
+          expect(@raven_called).to eq true
+        end
+      end
+
+      context "bgs POA error" do
+        before do
+          allow(bgs_poa).to receive(:fetch_bgs_record) { raise "error!" }
+        end
+
+        it "captures exceptions" do
+          expect { described_class.perform_now }.to_not raise_error
+          expect(@raven_called).to eq true
+        end
+      end
     end
   end
 end
