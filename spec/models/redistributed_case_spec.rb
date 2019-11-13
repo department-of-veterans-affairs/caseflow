@@ -34,9 +34,7 @@ describe RedistributedCase, :all_dbs do
       context "when there is an open ScheduleHearingTask and a cancelled parent HearingTask" do
         let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case) }
         before do
-          legacy_appeal.tasks.where(type: :HearingTask).each do |t|
-            t.update!(status: Constants.TASK_STATUSES.cancelled)
-          end
+          legacy_appeal.tasks.where(type: :HearingTask).each(&:cancelled!)
         end
         it "returns false" do
           expect(subject.ok_to_redistribute?).to eq false
@@ -45,9 +43,7 @@ describe RedistributedCase, :all_dbs do
       context "when there is a cancelled ScheduleHearingTask, which causes a cancelled parent HearingTask" do
         let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case) }
         before do
-          legacy_appeal.tasks.where(type: :ScheduleHearingTask).each do |t|
-            t.update!(status: Constants.TASK_STATUSES.cancelled)
-          end
+          legacy_appeal.tasks.where(type: :ScheduleHearingTask).each(&:cancelled!)
         end
         it "returns true" do
           expect(subject.ok_to_redistribute?).to eq true
@@ -56,9 +52,7 @@ describe RedistributedCase, :all_dbs do
       context "when there is a completed ScheduleHearingTask, which causes a completed parent HearingTask" do
         let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case) }
         before do
-          legacy_appeal.tasks.where(type: :ScheduleHearingTask).each do |t|
-            t.update!(status: Constants.TASK_STATUSES.completed)
-          end
+          legacy_appeal.tasks.where(type: :ScheduleHearingTask).each(&:completed!)
         end
         it "returns true" do
           expect(subject.ok_to_redistribute?).to eq false

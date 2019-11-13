@@ -26,8 +26,7 @@ class RedistributedCase
     return false if legacy_appeal_relevant_tasks.any?(&:open?)
 
     # redistribute if all HearingTasks are cancelled
-    return true if legacy_appeal_relevant_tasks.select { |task| task.type == "HearingTask" }
-      .all? { |htask| htask.status == Constants.TASK_STATUSES.cancelled }
+    return true if legacy_appeal_hearing_tasks.all?(&:cancelled?)
 
     # be conservative; return false so that appeal is manually addressed
     false
@@ -57,6 +56,10 @@ class RedistributedCase
   end
 
   def legacy_appeal_relevant_tasks
-    legacy_appeal.tasks.reject { |task| task.type == "TrackVeteranTask" || task.type == "RootTask" }
+    legacy_appeal.tasks.reject { |task| task.is_a?(TrackVeteranTask) || task.is_a?(RootTask) }
+  end
+
+  def legacy_appeal_hearing_tasks
+    @legacy_appeal_hearing_tasks ||= legacy_appeal_relevant_tasks.select { |task| task.is_a?(HearingTask) }
   end
 end
