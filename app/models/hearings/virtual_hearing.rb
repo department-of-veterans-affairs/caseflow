@@ -37,6 +37,10 @@ class VirtualHearing < ApplicationRecord
   scope :eligible_for_deletion,
         -> { where(conference_deleted: false, status: [:active, :cancelled]) }
 
+  def all_emails_sent?
+    veteran_email_sent && judge_email_sent && (representative_email.nil? || representative_email_sent)
+  end
+
   private
 
   def assign_created_by_user
