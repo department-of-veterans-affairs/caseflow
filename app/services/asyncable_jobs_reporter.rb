@@ -5,13 +5,14 @@ require "csv"
 class AsyncableJobsReporter
   attr_reader :jobs
 
-  def initialize(jobs:)
+  def initialize(jobs:, verbose: false)
     @jobs = jobs
+    @verbose = verbose
   end
 
   def as_csv
     CSV.generate do |csv|
-      csv << %w[type id submitted last_submitted attempted_at error participant_id]
+      csv << %w[type id submitted last_submitted attempted error participant_id]
       jobs.each do |job|
         klass = job.class
         csv << [
@@ -41,7 +42,7 @@ class AsyncableJobsReporter
           count = summary[cls][age][err]
           total += count
           err_output = err.gsub(/^[#<]+|[,:]+$/, "")
-          output << "#{cls} has #{count} jobs #{age} days old with error #{err_output}"
+          output << "#{cls} has #{count} jobs #{age} days old with error #{err_output}" if verbose
         end
       end
       output << "#{cls} has #{total} total jobs in queue"
@@ -50,6 +51,8 @@ class AsyncableJobsReporter
   end
 
   private
+
+  attr_reader :verbose
 
   def sanitize_error(job)
     # keep PII out of output
