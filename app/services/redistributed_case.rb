@@ -9,22 +9,27 @@ class RedistributedCase
   end
 
   def allow!
-    unless ok_to_redistribute?
+    if ok_to_redistribute?
+      rename_existing_distributed_case!
+    else
       alert_existing_distributed_case_not_unique
-      return
+      false
     end
-
-    rename_existing_distributed_case!
   end
 
   def ok_to_redistribute?
-    # must have previous history being worked in Caseflow
-    return false unless legacy_appeal_relevant_tasks.any?
+    # redistribute if there are no relevant tasks
+    return true if legacy_appeal_relevant_tasks.blank?
 
-    # but all previous tasks must be closed (completed/cancelled)
+    # do not redistribute if any relevant task is open (not completed or cancelled)
     return false if legacy_appeal_relevant_tasks.any?(&:open?)
 
-    true
+    # redistribute if all HearingTasks are cancelled
+    return true if legacy_appeal_relevant_tasks.select { |task| task.type == "HearingTask" }
+      .all? { |htask| htask.status == Constants.TASK_STATUSES.cancelled }
+
+    # be conservative; return false so that appeal is manually addressed
+    false
   end
 
   private

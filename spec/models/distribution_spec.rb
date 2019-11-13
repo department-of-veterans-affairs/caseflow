@@ -220,7 +220,8 @@ describe Distribution, :all_dbs do
       before do
         @raven_called = false
         distribution = create(:distribution, judge: judge)
-        create(:legacy_appeal, vacols_case: legacy_case)
+        # illegit because appeal has open tasks
+        create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case)
         create_nonpriority_distributed_case(distribution, case_id, legacy_case.bfdloout)
         distribution.update!(status: "completed", completed_at: today)
         allow(Raven).to receive(:capture_exception) { @raven_called = true }
@@ -279,7 +280,8 @@ describe Distribution, :all_dbs do
       before do
         @raven_called = false
         distribution = create(:distribution, judge: judge)
-        create(:legacy_appeal, vacols_case: legacy_case)
+        # illegit because appeal has open tasks
+        create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case)
         create_priority_distributed_case(distribution, case_id, legacy_case.bfdloout)
         distribution.update!(status: "completed", completed_at: today)
         allow(Raven).to receive(:capture_exception) { @raven_called = true }
