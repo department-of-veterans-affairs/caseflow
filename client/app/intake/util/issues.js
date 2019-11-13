@@ -33,8 +33,8 @@ export const isTimely = (formType, decisionDate, receiptDate) => {
 
 
     // we assume the timezone of the browser for all these.
-    const decisionDates = new Date(decisionDate)
-    const receiptDates = new Date(receiptDate);
+    const decisionDate = new Date(decisionDate)
+    const receiptDate = new Date(receiptDate);
     const lessThanOneYear = receiptDates - decisionDates <= ONE_YEAR_PLUS_MS;
     
     return lessThanOneYear;
