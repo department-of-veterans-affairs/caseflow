@@ -251,7 +251,7 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Decision date")
     end
 
-    fscenario "show unidentified untimely exemption issue" do
+    scenario "show unidentified untimely exemption issue" do
       start_higher_level_review(veteran_no_ratings)
       visit "/intake"
       click_intake_continue
@@ -274,8 +274,7 @@ feature "Intake Add Issues Page", :all_dbs do
       untimely_issue = RequestIssue.find_by(
         unidentified_issue_text: "Unidentified issue",
         untimely_exemption: true,
-        untimely_exemption_notes: "I am an exemption note",
-        ineligible_reason: nil
+        untimely_exemption_notes: "I am an exemption note"
       )
       expect(untimely_issue).to_not be_nil
     end
@@ -299,11 +298,11 @@ feature "Intake Add Issues Page", :all_dbs do
       add_untimely_exemption_response("No")
       expect(page).to have_content("Unidentified issue")
       click_on "Establish EP"
-       
+
       unidentified_issue = RequestIssue.find_by(
         unidentified_issue_text: "Unidentified issue",
         untimely_exemption: false,
-        ineligible_reason: untimely
+        ineligible_reason: "untimely"
       )
 
       expect(unidentified_issue).to_not be_nil
