@@ -24,14 +24,14 @@ describe RedistributedCase, :all_dbs do
         TrackVeteranTask.create!(appeal: legacy_appeal, assigned_to: create(:vso))
       end
       context "when there is an open ScheduleHearingTask and an open parent HearingTask" do
-        let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case) }
+        let!(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case) }
 
         it "returns false" do
           expect(subject.ok_to_redistribute?).to eq false
         end
       end
       context "when there is an open ScheduleHearingTask and a cancelled parent HearingTask" do
-        let(:legacy_appeal) {         create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case) }
+        let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case) }
         before do
           legacy_appeal.tasks.where(type: :HearingTask).each do |t|
             t.update!(status: Constants.TASK_STATUSES.cancelled)

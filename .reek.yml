@@ -27,7 +27,7 @@ detectors:
       - Fakes::PersistentStore#convert_dates_from
   LongParameterList:
     exclude:
-      - Address
+      - Address#initialize
   UncommunicativeParameterName:
     exclude:
       - Address

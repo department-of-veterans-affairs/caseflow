@@ -35,13 +35,7 @@ class LegacyDocket
       next unless existing_distribution_case_may_be_redistributed(record["bfkey"], distribution)
 
       dist_case = new_distributed_case(distribution, record, docket_type, genpop, true)
-
-      if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
-        DasDeprecation::CaseDistribution.create_judge_assign_task(record, distribution.judge) { dist_case.save! }
-      else
-        dist_case.save!
-      end
-
+      save_dist_case(dist_case, record, distribution.judge)
       dist_case
     end.compact
   end
@@ -51,13 +45,7 @@ class LegacyDocket
       next unless existing_distribution_case_may_be_redistributed(record["bfkey"], distribution)
 
       dist_case = new_distributed_case(distribution, record, docket_type, genpop, false)
-
-      if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
-        DasDeprecation::CaseDistribution.create_judge_assign_task(record, distribution.judge) { dist_case.save! }
-      else
-        dist_case.save!
-      end
-
+      save_dist_case(dist_case, record, distribution.judge)
       dist_case
     end.compact
   end
@@ -71,6 +59,14 @@ class LegacyDocket
   end
 
   private
+
+  def save_dist_case(dist_case, record, judge)
+    if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
+      DasDeprecation::CaseDistribution.create_judge_assign_task(record, judge) { dist_case.save! }
+    else
+      dist_case.save!
+    end
+  end
 
   def existing_distribution_case_may_be_redistributed(case_id, distribution)
     return true unless existing_distributed_case(case_id)

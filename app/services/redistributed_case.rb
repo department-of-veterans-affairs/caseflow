@@ -4,8 +4,6 @@ class RedistributedCase
   class CannotRedistribute < StandardError; end
 
   def initialize(case_id:, new_distribution:)
-    puts "====="+case_id.to_s
-    puts LegacyAppeal.find_by(vacols_id: case_id)
     @case_id = case_id
     @new_distribution = new_distribution
   end
