@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Modal from '../../components/Modal';
 import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
-import { validateDateNotInFuture } from '../util/issues';
+import { validateDateNotInFuture, isTimely } from '../util/issues';
 
 class UnidentifiedIssuesModal extends React.Component {
   constructor(props) {
@@ -17,30 +17,15 @@ class UnidentifiedIssuesModal extends React.Component {
     };
   }
 
-  isTimely = () => {
-    if (this.props.formType === 'supplemental_claim') {
-      return true;
-    }
-
-    const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
-
-    // we must do our own date math for unidentified request issues.
-    // we assume the timezone of the browser for all these.
-    const decisionDate = new Date(this.state.decisionDate);
-    const receiptDate = new Date(this.props.intakeData.receiptDate);
-    const lessThanOneYear = receiptDate - decisionDate <= ONE_YEAR_PLUS_MS;
-
-    return lessThanOneYear;
-  };
-
   onAddIssue = () => {
     const { description, notes, decisionDate } = this.state;
+    const { formType, intakeData } = this.props;
     const currentIssue = {
       isUnidentified: true,
       description,
       notes,
       decisionDate,
-      timely: this.isTimely()
+      timely: isTimely(formType, decisionDate, intakeData.receiptDate)
     };
 
     this.props.onSubmit({ currentIssue });

@@ -269,6 +269,43 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Issue 1 is an Untimely Issue")
       add_untimely_exemption_response("Yes")
       expect(page).to have_content("I am an exemption note")
+      click_on "Establish EP"
+
+      untimely_issue = RequestIssue.find_by(
+        unidentified_issue_text: "Unidentified issue",
+        untimely_exemption: true,
+        untimely_exemption_notes: "I am an exemption note",
+        ineligible_reason: nil
+      )
+      check_confirmation_page(untimely_issue)
+    end
+
+    scenario "show unidentified issue when user selects no on untimely exemption modal " do
+      start_higher_level_review(veteran_no_ratings)
+      visit "/intake"
+      click_intake_continue
+      expect(page).to have_current_path("/intake/add_issues")
+
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      expect(page).to have_content("Decision date")
+      fill_in "Transcribe the issue as it's written on the form", with: "Unidentified issue"
+      fill_in "Decision date", with: untimely_days
+      fill_in "Notes", with: "PTSD issue"
+      safe_click ".add-issue"
+
+      # show untimely modal
+      expect(page).to have_content("Issue 1 is an Untimely Issue")
+      add_untimely_exemption_response("No")
+      expect(page).to have_content("Unidentified issue")
+      click_on "Establish EP"
+
+      unidentified_issue = RequestIssue.find_by(
+        unidentified_issue_text: "Unidentified issue",
+        untimely_exemption: false,
+        ineligible_reason: nil
+      )
+      check_confirmation_page(unidentified_issue)
     end
   end
 end

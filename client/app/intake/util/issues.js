@@ -24,6 +24,24 @@ const getClaimantField = (formType, veteran, intakeData) => {
     }];
 };
 
+export const isTimely = (formType, decisionDate, receiptDate) => {
+    if (formType === 'supplemental_claim') {
+      return true;
+    }
+
+    const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
+
+
+    // we must do our own date math for unidentified request issues.
+    // we assume the timezone of the browser for all these.
+    let decisionDates = new Date(decisionDate)
+    let receiptDates = new Date(receiptDate);
+    const lessThanOneYear = receiptDates - decisionDates <= ONE_YEAR_PLUS_MS;
+    
+    return lessThanOneYear;
+};
+
+
 export const legacyIssue = (issue, legacyAppeals) => {
   if (issue.vacolsIssue) {
     return issue.vacolsIssue;
