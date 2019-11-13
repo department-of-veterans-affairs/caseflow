@@ -29,22 +29,28 @@ const config = {
     }
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: require.resolve('react'),
-        loader: 'imports-loader?shim=es5-shim/es5-shim&sham=es5-shim/es5-sham'
+        use: {
+          loader: 'imports-loader?shim=es5-shim/es5-shim&sham=es5-shim/es5-sham'
+        }
       },
       {
         test: /\.jsx?$/,
-        loader: 'babel-loader',
         exclude: new RegExp(
           'node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)'
-        )
+        ),
+        use: {
+          loader: 'babel-loader'
+        }
       },
       {
         test: /\.(ttf|eot|woff|woff2)$/,
-        loader:
-          'url-loader?limit=1024&name=fonts/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'
+        use: {
+          loader:
+            'url-loader?limit=1024&name=fonts/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'
+        }
       },
       {
         test: /\.module\.s(a|c)ss$/,
