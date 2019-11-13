@@ -20,7 +20,7 @@ namespace :local do
     puts ""
 
     puts "Creating local caseflow dbs"
-    system("bundle exec rake db:create db:schema:load") || abort
+    system("bundle exec rake db:create db:structure:load") || abort
 
     puts "Seeding FACOLS"
     system("RAILS_ENV=development bundle exec rake local:vacols:seed") || abort

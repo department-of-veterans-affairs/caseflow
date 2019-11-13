@@ -1,6 +1,6 @@
 class CreateEtlAppeals < ActiveRecord::Migration[5.1]
   def change
-    create_table :appeals do |t|
+    create_table "ama.appeals" do |t|
       t.timestamps null: false, comment: "Default created_at/updated_at for the ETL record"
       t.integer "appeal_id", null: false, comment: "ID of the Appeal"
       t.string "docket_number", null: false, comment: "Docket number"
