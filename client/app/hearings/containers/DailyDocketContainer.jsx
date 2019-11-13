@@ -97,18 +97,6 @@ export class DailyDocketContainer extends React.Component {
       this.loadHearingDetails(resp.hearingDay.hearings);
     });
   };
-
-  formatVirtualHearing = (hearing) => {
-    if (!virtualHearing.isVirtual){
-      return {};
-    }
-
-    return _.omitBy({
-      veteran_email: hearing.virtualHearing.veteranEmail,
-      representative_email: hearing.virtualHearing.representativeEmail,
-      status: hearing.virtualHearing.status
-    }, _.isNil);
-  }
   
   formatHearing = (hearing) => {
     const amaHearingValues = hearing.docketName === 'hearing' ? {
@@ -120,7 +108,7 @@ export class DailyDocketContainer extends React.Component {
       hold_open: hearing.holdOpen
     } : {};
 
-    const virtualHearing = formatVirtualHearing(hearing.virtualHearing)
+    const virtualHearing = this.formatVirtualHearing(hearing);
 
     return _.omitBy({
       disposition: hearing.disposition,
@@ -145,6 +133,18 @@ export class DailyDocketContainer extends React.Component {
       granted: hearing.advanceOnDocketMotion.granted,
       person_id: hearing.claimantId || hearing.advanceOnDocketMotion.personId,
       user_id: hearing.advanceOnDocketMotion.userId
+    }, _.isNil);
+  }
+
+  formatVirtualHearing = (hearing) => {
+    if (!hearing.isVirtual){
+      return {};
+    }
+
+    return _.omitBy({
+      veteran_email: hearing.virtualHearing.veteranEmail,
+      representative_email: hearing.virtualHearing.representativeEmail,
+      status: hearing.virtualHearing.status
     }, _.isNil);
   }
 

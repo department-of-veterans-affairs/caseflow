@@ -14,7 +14,7 @@ class BaseHearingUpdateForm
     ActiveRecord::Base.transaction do
       update_hearing
 
-      if !virtual_hearing_attributes.nil?
+      if !virtual_hearing_attributes.blank?
         create_or_update_virtual_hearing
         # TODO: Start the job to create the Pexip conference here?
       end
