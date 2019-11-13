@@ -74,7 +74,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def asyncable_user
-    intake&.user&.css_id
+    intake&.user
   end
 
   def ama_activation_date
@@ -124,7 +124,7 @@ class DecisionReview < ApplicationRecord
         formName: veteran&.name&.formatted(:form),
         ssn: veteran&.ssn
       },
-      intakeUser: asyncable_user,
+      intakeUser: asyncable_user&.css_id,
       editIssuesUrl: caseflow_only_edit_issues_url,
       processedAt: establishment_processed_at,
       relationships: veteran&.relationships&.map(&:ui_hash),
