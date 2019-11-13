@@ -270,8 +270,9 @@ feature "Intake Add Issues Page", :all_dbs do
       add_untimely_exemption_response("Yes")
       expect(page).to have_content("I am an exemption note")
       click_on "Establish EP"
+      expect(page).to have_content("Unidentified issue")
 
-      untimely_issue = RequestIssue.find_by(
+      untimely_issue = RequestIssue.where(
         unidentified_issue_text: "Unidentified issue",
         untimely_exemption: true,
         untimely_exemption_notes: "I am an exemption note"
@@ -298,8 +299,9 @@ feature "Intake Add Issues Page", :all_dbs do
       add_untimely_exemption_response("No")
       expect(page).to have_content("Unidentified issue")
       click_on "Establish EP"
+      expect(page).to have_content("Unidentified issue")
 
-      unidentified_issue = RequestIssue.find_by(
+      unidentified_issue = RequestIssue.where(
         unidentified_issue_text: "Unidentified issue",
         untimely_exemption: false,
         ineligible_reason: "untimely"
