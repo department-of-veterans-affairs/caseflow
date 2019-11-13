@@ -10,6 +10,6 @@ class DeniedMotionToVacateTask < DecidedMotionToVacateTask
   end
 
   def completion_contact
-    COPY::CANCEL_TASK_CONTACT_MTV_DENIED
+    COPY::CANCEL_TASK_CONTACT_LIT_SUPPORT
   end
 end

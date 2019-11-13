@@ -166,10 +166,6 @@ class TaskActionRepository
       }
     end
 
-    def complete_motion_to_vacate_data(_task, _user = nil)
-      {}
-    end
-
     def sign_motion_to_vacate_data(_task, _user = nil)
       {}
     end
