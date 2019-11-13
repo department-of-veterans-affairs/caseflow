@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-# Determine the status of an Appeal (symbol and string) based on its Tasks.
+# Determine the BVA workflow status of an Appeal (symbol and string) based on its Tasks.
 
-class AppealStatus
+class BVAAppealStatus
   attr_reader :status
 
   DEFINITIONS = {

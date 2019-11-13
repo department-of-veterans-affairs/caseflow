@@ -2,7 +2,7 @@
 
 require "support/vacols_database_cleaner"
 
-describe AppealStatus, :all_dbs do
+describe BVAAppealStatus, :all_dbs do
   include SQLHelpers
 
   include_context "AMA Tableau SQL"
