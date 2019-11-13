@@ -45,10 +45,6 @@ module AppealConcern
     end
   end
 
-  def in_caseflow_location?
-    is_a?(Appeal) || location_code == LegacyAppeal::LOCATION_CODES[:caseflow]
-  end
-
   private
 
   # TODO: this is named "veteran_name_object" to avoid name collision, refactor

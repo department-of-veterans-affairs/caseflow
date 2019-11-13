@@ -36,20 +36,10 @@ class HearingTask < Task
     true
   end
 
-  def hearing_task_ready_for_completion?
-    return false if !appeal.tasks.open.where(type: HearingTask.name).empty?
-
-    if appeal.in_caseflow_location?
-      true
-    else
-      fail HearingTaskNotCompletable
-    end
-  end
-
   def when_child_task_completed(child_task)
     super
 
-    return unless hearing_task_ready_for_completion?
+    return unless ready_for_completion?
 
     if appeal.is_a?(LegacyAppeal)
       update_legacy_appeal_location
@@ -92,6 +82,20 @@ class HearingTask < Task
 
   def cascade_closure_from_child_task?(_child_task)
     true
+  end
+
+  def ready_for_completion?
+    return false if !appeal.tasks.open.where(type: HearingTask.name).exists?
+
+    if appeal_in_caseflow_location?
+      true
+    else
+      fail HearingTaskNotCompletable
+    end
+  end
+
+  def appeal_in_caseflow_location?
+    appeal.is_a?(Appeal) || appeal.location_code == LegacyAppeal::LOCATION_CODES[:caseflow]
   end
 
   def set_assignee
