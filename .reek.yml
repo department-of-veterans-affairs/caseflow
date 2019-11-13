@@ -25,9 +25,6 @@ detectors:
     exclude:
       - Address
       - Fakes::PersistentStore#convert_dates_from
-  LongParameterList:
-    exclude:
-      - Address#initialize
   UncommunicativeParameterName:
     exclude:
       - Address
@@ -76,6 +73,7 @@ detectors:
     enabled: false
   LongParameterList:
     exclude:
+      - Address#initialize
       - LegacyDocket
   ManualDispatch:
     exclude:

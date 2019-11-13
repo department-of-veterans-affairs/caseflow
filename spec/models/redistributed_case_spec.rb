@@ -5,11 +5,12 @@ require "support/database_cleaner"
 require "rails_helper"
 
 describe RedistributedCase, :all_dbs do
-  let(:vacols_case) { create(:case, bfcurloc: "CASEFLOW") }
+  let!(:vacols_case) { create(:case, bfcurloc: "CASEFLOW") }
   let(:judge) { create(:user) }
   let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge.css_id) }
   let(:distribution) { Distribution.create!(judge: judge) }
-  subject { RedistributedCase.new(case_id: legacy_appeal.id, new_distribution: distribution) }
+  # legacy_appeal.vacols_id is set to legacy_appeal.case_record["bfkey"]
+  subject { RedistributedCase.new(case_id: legacy_appeal.vacols_id, new_distribution: distribution) }
 
   context ".ok_to_redistribute?" do
     context "when there are no relevant tasks" do
@@ -24,7 +25,7 @@ describe RedistributedCase, :all_dbs do
         TrackVeteranTask.create!(appeal: legacy_appeal, assigned_to: create(:vso))
       end
       context "when there is an open ScheduleHearingTask and an open parent HearingTask" do
-        let!(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case) }
+        let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case) }
 
         it "returns false" do
           expect(subject.ok_to_redistribute?).to eq false
