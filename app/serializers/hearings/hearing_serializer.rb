@@ -71,6 +71,11 @@ class HearingSerializer
   attribute :veteran_gender, if: for_full
   attribute :veteran_last_name
   attribute :virtual, &:virtual?
+  attribute :virtual_hearing do |object|
+    if object.virtual?
+      VirtualHearingSerializer.new(object.virtual_hearing).serializable_hash[:data][:attributes]
+    end
+  end
   attribute :witness
   attribute :worksheet_issues
 end

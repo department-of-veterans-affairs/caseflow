@@ -68,5 +68,10 @@ class LegacyHearingSerializer
     end
   end
   attribute :virtual, &:virtual?
+  attribute :virtual_hearing do |object|
+    if object.virtual?
+      VirtualHearingSerializer.new(object.virtual_hearing).serializable_hash[:data][:attributes]
+    end
+  end
   attribute :witness
 end
