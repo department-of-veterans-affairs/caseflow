@@ -59,7 +59,8 @@ class AppealsController < ApplicationController
     render json: {
       representative_type: appeal.representative_type,
       representative_name: appeal.representative_name,
-      representative_address: appeal.representative_address
+      representative_address: appeal.representative_address,
+      representative_email_address: appeal.representative_email_address
     }
   end
 
