@@ -56,9 +56,9 @@ class RedistributedCase
   end
 
   def legacy_appeal_relevant_tasks
-    @legacy_appeal_relevant_tasks ||= legacy_appeal.tasks.reject { |task|
+    @legacy_appeal_relevant_tasks ||= legacy_appeal.tasks.reject do |task|
       task.is_a?(TrackVeteranTask) || task.is_a?(RootTask)
-    }
+    end
   end
 
   def legacy_appeal_hearing_tasks
