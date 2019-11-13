@@ -87,7 +87,7 @@ feature "NonComp Dispositions Task Page", :postgres do
     let(:arbitrary_decision_date) { "01/01/2019" }
     before do
       User.stub = user
-      OrganizationsUser.add_user_to_organization(user, non_comp_org)
+      non_comp_org.add_user(user)
       setup_prior_claim_with_payee_code(decision_review, veteran, "00")
     end
 
@@ -182,10 +182,12 @@ feature "NonComp Dispositions Task Page", :postgres do
     end
 
     context "when there is an error saving" do
+      before do
+        allow_any_instance_of(DecisionReviewTask).to receive(:complete_with_payload!).and_throw("Error!")
+      end
+
       scenario "Shows an error when something goes wrong" do
         visit dispositions_url
-
-        expect_any_instance_of(DecisionReviewTask).to receive(:complete_with_payload!).and_throw("Error!")
 
         fill_in_disposition(0, "Granted")
         fill_in_disposition(1, "Granted", "test description")

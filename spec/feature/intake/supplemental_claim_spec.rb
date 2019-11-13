@@ -267,14 +267,22 @@ feature "Supplemental Claim Intake", :all_dbs do
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: veteran_file_number,
       claim_id: ratings_end_product_establishment.reference_id,
-      contentions: [{ description: "PTSD denied" }],
-      user: current_user
+      contentions: [{
+        description: "PTSD denied",
+        contention_type: Constants.CONTENTION_TYPES.supplemental_claim
+      }],
+      user: current_user,
+      claim_date: supplemental_claim.receipt_date.to_date
     )
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: veteran_file_number,
       claim_id: nonratings_end_product_establishment.reference_id,
-      contentions: [{ description: "Active Duty Adjustments - Description for Active Duty Adjustments" }],
-      user: current_user
+      contentions: [{
+        description: "Active Duty Adjustments - Description for Active Duty Adjustments",
+        contention_type: Constants.CONTENTION_TYPES.supplemental_claim
+      }],
+      user: current_user,
+      claim_date: supplemental_claim.receipt_date.to_date
     )
 
     rating_request_issue = supplemental_claim.request_issues.find_by(contested_issue_description: "PTSD denied")
@@ -664,19 +672,27 @@ feature "Supplemental Claim Intake", :all_dbs do
 
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
         hash_including(
-          contentions: array_including(description: "Old injury")
+          contentions: array_including(
+            description: "Old injury",
+            contention_type: Constants.CONTENTION_TYPES.supplemental_claim
+          )
         )
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
-        hash_including(contentions: array_including(description: old_rating_decision_text))
+        hash_including(contentions: array_including(
+          description: old_rating_decision_text,
+          contention_type: Constants.CONTENTION_TYPES.supplemental_claim
+        ))
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         hash_including(
           contentions: array_including(
-            { description: "Left knee granted 2" },
-            description: "Really old injury"
+            { description: "Left knee granted 2",
+              contention_type: Constants.CONTENTION_TYPES.supplemental_claim },
+            description: "Really old injury",
+            contention_type: Constants.CONTENTION_TYPES.supplemental_claim
           )
         )
       )
@@ -720,7 +736,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       context "no contestable issues present" do
         before do
           education_org = create(:business_line, name: "Education", url: "education")
-          OrganizationsUser.add_user_to_organization(current_user, education_org)
+          education_org.add_user(current_user)
         end
 
         scenario "no rating issues show on first Add Issues modal" do

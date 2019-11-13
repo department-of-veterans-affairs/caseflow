@@ -719,6 +719,7 @@ module IntakeHelpers
           diagnostic_text: "Right arm broken",
           diagnostic_type: "Bone",
           disability_id: "123",
+          disability_date: receipt_date - 5.years - 2.days,
           type_name: "Not Service Connected"
         }
       ]
@@ -781,8 +782,7 @@ module IntakeHelpers
     safe_click ".close-modal"
 
     # remove original decision issue
-    click_remove_intake_issue_by_text("currently contesting decision issue")
-    click_remove_issue_confirmation
+    click_remove_intake_issue_dropdown("currently contesting decision issue")
 
     # add new decision issue
     click_intake_add_issue
@@ -845,8 +845,7 @@ module IntakeHelpers
     expect(page).to have_content(contested_decision_issues.second.description)
     expect(page).to have_content("PTSD denied")
 
-    click_remove_intake_issue_by_text("PTSD denied")
-    click_remove_issue_confirmation
+    click_remove_intake_issue_dropdown("PTSD denied")
 
     click_intake_add_issue
     add_intake_rating_issue("Issue with legacy issue not withdrawn")

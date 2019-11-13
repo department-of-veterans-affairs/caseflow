@@ -33,11 +33,15 @@ class HearingRequestCaseDistributor
   end
 
   def assign_judge_tasks_for_not_genpop_appeals
-    CreateJudgeAssignTasksForAppeals.new(appeals: not_genpop_appeals, genpop: false, judge: distribution.judge).call
+    CreateJudgeAssignTasksForAppeals.new(appeals: not_genpop_appeals, judge: distribution.judge).call.map do |task|
+      [task, false]
+    end
   end
 
   def assign_judge_tasks_for_only_genpop_appeals
-    CreateJudgeAssignTasksForAppeals.new(appeals: only_genpop_appeals, genpop: true, judge: distribution.judge).call
+    CreateJudgeAssignTasksForAppeals.new(appeals: only_genpop_appeals, judge: distribution.judge).call.map do |task|
+      [task, true]
+    end
   end
 
   def not_genpop_appeals

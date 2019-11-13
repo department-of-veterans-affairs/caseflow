@@ -15,6 +15,25 @@ class RootTask < Task
 
   def when_child_task_completed(_child_task); end
 
+  def self.creatable_tasks_types_when_on_hold
+    [
+      # Expect mail to be received for dispatched or cancelled appeals.
+      ReturnedUndeliverableCorrespondenceMailTask.name,
+      # Expect TrackVeteranTasks to occasionally be created for closed RootTasks because of timing complications
+      # described in https://github.com/department-of-veterans-affairs/caseflow/issues/12574#issuecomment-549463832
+      TrackVeteranTask.name
+    ]
+  end
+
+  # Do not change the status of closed or on_hold RootTasks when child tasks are created for them.
+  def when_child_task_created(child_task)
+    if active?
+      update!(status: :on_hold)
+    elsif !self.class.creatable_tasks_types_when_on_hold.include?(child_task.type) && !on_hold?
+      Raven.capture_message("Created child task for RootTask #{id} but did not update RootTask status")
+    end
+  end
+
   def update_children_status_after_closed
     children.open.where(type: TrackVeteranTask.name).update_all(status: Constants.TASK_STATUSES.completed)
   end

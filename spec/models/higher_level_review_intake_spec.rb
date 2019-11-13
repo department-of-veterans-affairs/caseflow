@@ -323,8 +323,10 @@ describe HigherLevelReviewIntake, :all_dbs do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
         claim_id: ratings_end_product_establishment.reference_id,
-        contentions: [{ description: "decision text" }],
-        user: user
+        contentions: array_including(description: "decision text",
+                                     contention_type: Constants.CONTENTION_TYPES.higher_level_review),
+        user: user,
+        claim_date: detail.receipt_date.to_date
       )
 
       expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(

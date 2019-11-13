@@ -6,10 +6,19 @@ class AsyncableJobsController < ApplicationController
   before_action :react_routed, :set_application
   before_action :verify_access, only: [:index]
   before_action :verify_job_access, only: [:show]
+  skip_before_action :deny_vso_access
 
   def index
-    if allowed_params[:asyncable_job_klass]
+    if asyncable_job_klass
       @jobs = asyncable_job_klass.potentially_stuck.limit(page_size).offset(page_start)
+    end
+    respond_to do |format|
+      format.html
+      format.csv do
+        jobs_as_csv = AsyncableJobsReporter.new(jobs: all_jobs).as_csv
+        filename = Time.zone.now.strftime("async-jobs-%Y%m%d.csv")
+        send_data jobs_as_csv, filename: filename
+      end
     end
   end
 
@@ -25,15 +34,29 @@ class AsyncableJobsController < ApplicationController
     render json: job.asyncable_ui_hash
   end
 
+  def add_note
+    job_note = JobNote.create!(
+      job: job,
+      user: current_user,
+      note: allowed_params[:note],
+      send_to_intake_user: allowed_params[:send_to_intake_user]
+    )
+    render json: job_note.ui_hash
+  end
+
   private
 
   helper_method :jobs, :job, :allowed_params, :pagination
 
   def asyncable_job_klass
-    klass = allowed_params[:asyncable_job_klass].constantize
-    fail ActiveRecord::RecordNotFound unless AsyncableJobs.models.include?(klass)
+    @asyncable_job_klass ||= begin
+      if allowed_params[:asyncable_job_klass]
+        klass = allowed_params[:asyncable_job_klass].constantize
+        fail ActiveRecord::RecordNotFound unless AsyncableJobs.models.include?(klass)
 
-    klass
+        klass
+      end
+    end
   end
 
   def asyncable_jobs
@@ -42,7 +65,7 @@ class AsyncableJobsController < ApplicationController
 
   def total_jobs
     @total_jobs ||= begin
-      if allowed_params[:asyncable_job_klass]
+      if asyncable_job_klass
         asyncable_job_klass.potentially_stuck.count
       else
         asyncable_jobs.total_jobs
@@ -52,12 +75,22 @@ class AsyncableJobsController < ApplicationController
 
   alias total_items total_jobs
 
+  def all_jobs
+    @all_jobs ||= begin
+      if asyncable_job_klass
+        asyncable_job_klass.potentially_stuck
+      else
+        AsyncableJobs.new(page_size: 0).jobs
+      end
+    end
+  end
+
   def jobs
     @jobs ||= asyncable_jobs.jobs
   end
 
   def job
-    @job ||= allowed_params[:asyncable_job_klass].constantize.find(allowed_params[:id])
+    @job ||= asyncable_job_klass.find(allowed_params[:id])
   end
 
   def set_application
@@ -65,6 +98,7 @@ class AsyncableJobsController < ApplicationController
   end
 
   def verify_access
+    return true if current_user.admin?
     return true if current_user.can?("Admin Intake")
 
     Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
@@ -81,6 +115,6 @@ class AsyncableJobsController < ApplicationController
   end
 
   def allowed_params
-    params.permit(:asyncable_job_klass, :id, :page)
+    params.permit(:asyncable_job_klass, :id, :page, :note, :send_to_intake_user)
   end
 end

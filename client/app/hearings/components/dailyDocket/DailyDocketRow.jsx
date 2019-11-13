@@ -16,10 +16,11 @@ import {
   NotesField, HearingLocationDropdown, StaticHearingDay, TimeRadioButtons,
   Waive90DayHoldCheckbox, HoldOpenDropdown
 } from './DailyDocketRowInputs';
+import VirtualHearingModal from '../VirtualHearingModal';
 
 const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
   return <div {...css({
-    content: ' ',
+    content: ' ',
     clear: 'both',
     display: 'block'
   })}>
@@ -45,13 +46,13 @@ SaveButton.propTypes = {
 };
 
 const inputSpacing = css({
-  '& > div:not(:first-child)': {
+  '& > div:not(:first-child)': {
     marginTop: '25px'
   }
 });
 
 class HearingActions extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -62,7 +63,8 @@ class HearingActions extends React.Component {
         advanceOnDocketMotionReason: false
       },
       aodModalActive: false,
-      edited: false
+      edited: false,
+      virtualHearingModalActive: false
     };
   }
 
@@ -86,6 +88,12 @@ class HearingActions extends React.Component {
         ...values
       }
     });
+  }
+  openVirtualHearingModal = () => {
+    this.setState({ virtualHearingModalActive: true });
+  }
+  closeVirtualHearingModal = () => {
+    this.setState({ virtualHearingModalActive: false });
   }
 
   cancelUpdate = () => {
@@ -171,7 +179,12 @@ class HearingActions extends React.Component {
       <StaticRegionalOffice hearing={hearing} />
       <HearingLocationDropdown {...inputProps} regionalOffice={regionalOffice} />
       <StaticHearingDay hearing={hearing} />
-      <TimeRadioButtons {...inputProps} regionalOffice={regionalOffice} />
+      <TimeRadioButtons {...inputProps} regionalOffice={regionalOffice} update={(values) => {
+        this.update(values);
+        if (values.scheduledTimeString !== null) {
+          this.openVirtualHearingModal();
+        }
+      }} />
     </React.Fragment>;
   }
 
@@ -242,6 +255,20 @@ class HearingActions extends React.Component {
         {this.getLeftColumn()}
         {this.getRightColumn()}
       </div>
+      {/* This is where the modal for the edit virtual hearing modal is supposed to appear*/}
+      {(user.userCanScheduleVirtualHearings && this.state.virtualHearingModalActive) &&
+        <VirtualHearingModal hearing={hearing}
+          timeWasEdited={this.state.initialState.scheduledTimeString !== _.get(hearing, 'scheduledTimeString')}
+          virtualHearing={hearing.virtualHearing || {}} reset={() => {
+            this.update({ scheduledTimeString: this.state.initialState.scheduledTimeString });
+            this.closeVirtualHearingModal()
+            ;
+          }} user={user}
+          submit={() => {
+            this.saveHearing();
+            this.closeVirtualHearingModal();
+          }}
+        />}
       {this.state.aodModalActive && <AodModal
         advanceOnDocketMotion={hearing.advanceOnDocketMotion || {}}
         onConfirm={() => {
@@ -267,7 +294,8 @@ HearingActions.propTypes = {
   readOnly: PropTypes.bool,
   hearing: PropTypes.shape({
     docketName: PropTypes.string,
-    advanceOnDocketMotion: PropTypes.object
+    advanceOnDocketMotion: PropTypes.object,
+    virtualHearing: PropTypes.object
   }),
   user: PropTypes.shape({
     userCanAssignHearingSchedule: PropTypes.bool,
@@ -276,6 +304,7 @@ HearingActions.propTypes = {
     userCanVsoHearingSchedule: PropTypes.bool,
     userHasHearingPrepRole: PropTypes.bool,
     userInHearingOrTranscriptionOrganization: PropTypes.bool,
+    userCanScheduleVirtualHearings: PropTypes.bool,
     userId: PropTypes.number,
     userCssId: PropTypes.string
   })
@@ -290,3 +319,4 @@ const mapDispatchToProps = (dispatch, props) => bindActionCreators({
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(HearingActions);
+

@@ -148,6 +148,12 @@ class Veteran < ApplicationRecord
     @relationships ||= fetch_relationships
   end
 
+  def relationship_with_participant_id(match_id = nil)
+    relationships&.find do |relationship|
+      relationship.participant_id == match_id
+    end
+  end
+
   def incident_flash?
     bgs_record.is_a?(Hash) && bgs_record[:block_cadd_ind] == "S"
   end
@@ -254,7 +260,7 @@ class Veteran < ApplicationRecord
       end
       return found_locally if found_locally
 
-      file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
+      file_number = bgs.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
       find_by_file_number_and_sync(file_number, sync_name: sync_name)
@@ -288,7 +294,7 @@ class Veteran < ApplicationRecord
       end
       return found_locally if found_locally
 
-      file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
+      file_number = bgs.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
       find_or_create_by_file_number(file_number, sync_name: sync_name)
@@ -312,6 +318,8 @@ class Veteran < ApplicationRecord
     end
 
     def create_by_file_number(file_number)
+      fail "file_number must not be nil" if file_number.blank?
+
       veteran = Veteran.new(file_number: file_number)
 
       unless veteran.found?
@@ -321,15 +329,7 @@ class Veteran < ApplicationRecord
       return veteran unless veteran.accessible?
 
       before_create_veteran_by_file_number # Used to simulate race conditions
-      veteran.tap do |v|
-        v.update!(
-          participant_id: v.ptcpnt_id || v.bgs_record[:participant_id],
-          first_name: v.bgs_record[:first_name],
-          last_name: v.bgs_record[:last_name],
-          middle_name: v.bgs_record[:middle_name],
-          name_suffix: v.bgs_record[:name_suffix]
-        )
-      end
+      veteran.tap(&:update_cached_attributes!)
     rescue ActiveRecord::RecordNotUnique
       find_by(file_number: file_number)
     end
@@ -383,11 +383,10 @@ class Veteran < ApplicationRecord
   end
 
   def fetch_relationships
-    relationships = bgs.find_all_relationships(
-      participant_id: participant_id
-    )
-    relationships_array = Array.wrap(relationships)
-    relationships_array.map { |relationship_hash| Relationship.from_bgs_hash(self, relationship_hash) }
+    relationship_hashes = Array.wrap(bgs.find_all_relationships(participant_id: participant_id))
+    relationship_hashes.map do |relationship_hash|
+      Relationship.from_bgs_hash(self, relationship_hash)
+    end
   end
 
   def period_of_service(service_attributes)
@@ -424,7 +423,7 @@ class Veteran < ApplicationRecord
   end
 
   def military_address?
-    !military_postal_type_code.blank?
+    military_postal_type_code.present?
   end
 
   def base_vbms_hash

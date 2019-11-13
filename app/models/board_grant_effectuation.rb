@@ -12,6 +12,7 @@ class BoardGrantEffectuation < ApplicationRecord
   belongs_to :granted_decision_issue, class_name: "DecisionIssue"
   belongs_to :decision_document
   belongs_to :end_product_establishment
+  has_many :job_notes, as: :job
 
   validates :granted_decision_issue, presence: true
   before_save :hydrate_from_granted_decision_issue, on: :create
@@ -45,6 +46,10 @@ class BoardGrantEffectuation < ApplicationRecord
     update_from_matching_rating_issue!
     clear_error!
     processed!
+  end
+
+  def contention_type
+    Constants.CONTENTION_TYPES.default
   end
 
   private
@@ -130,12 +135,27 @@ class BoardGrantEffectuation < ApplicationRecord
       source: decision_document,
       veteran_file_number: veteran.file_number,
       claim_date: decision_document.decision_date,
-      payee_code: EndProduct::DEFAULT_PAYEE_CODE,
+      claimant_participant_id: claimaint_participant_id,
+      payee_code: claimant_payee_code,
       code: end_product_code,
       station: end_product_station,
       benefit_type_code: veteran.benefit_type_code,
       user: User.system_user
     )
+  end
+
+  def claimaint_participant_id
+    appeal&.claimants&.first&.participant_id
+  end
+
+  def claimant_payee_code
+    claimant = appeal&.claimants&.first
+
+    if claimant&.payee_code.present?
+      claimant.payee_code
+    elsif appeal&.veteran_is_not_claimant
+      veteran&.relationship_with_participant_id(claimant.participant_id)&.default_payee_code
+    end || EndProduct::DEFAULT_PAYEE_CODE
   end
 
   def end_product_code

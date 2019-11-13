@@ -4,6 +4,7 @@ class LegacyHearing < ApplicationRecord
   include CachedAttributes
   include AssociatedVacolsModel
   include AppealConcern
+  include HasVirtualHearing
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
@@ -214,6 +215,8 @@ class LegacyHearing < ApplicationRecord
   end
 
   def readable_request_type
+    return "Virtual" if virtual?
+
     Hearing::HEARING_TYPES[request_type.to_sym]
   end
 
