@@ -69,7 +69,7 @@ describe WarmBgsCachesJob, :all_dbs do
 
       context "bgs address error" do
         before do
-          allow(bgs_address_service).to receive(:fetch_bgs_record) { raise "error!" }
+          allow(bgs_address_service).to receive(:fetch_bgs_record) { fail "error!" }
         end
 
         it "captures exceptions" do
@@ -80,7 +80,7 @@ describe WarmBgsCachesJob, :all_dbs do
 
       context "bgs POA error" do
         before do
-          allow(bgs_poa).to receive(:fetch_bgs_record) { raise "error!" }
+          allow(bgs_poa).to receive(:fetch_bgs_record) { fail "error!" }
         end
 
         it "captures exceptions" do
