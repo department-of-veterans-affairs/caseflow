@@ -183,8 +183,11 @@ Available for Ubuntu in the software manager.
 
 _Postgres_
 **Mac & Linux**
-Install postgres client and developer libraries.
-The postgres server is not needed. If you install it, configure it to run on a different port or you will block the docker container.
+Install postgres client and developer libraries. *NOTE* that they should match the Docker `appeals-postgres` version
+in `docker-compose.yml` (currently version 9.5). This is so that `pg_dump` creates compatible `db/structure.sql` files.
+
+The postgres server is not needed since it is available via Docker. If you install it, configure it to run on a different port or you will block the Docker container.
+
 Add these postgres variables to your env:
 
 ```
