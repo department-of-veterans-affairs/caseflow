@@ -116,7 +116,7 @@ class AsyncableJobsController < ApplicationController
   end
 
   def verify_job_access
-    return true if current_user.css_id == job&.asyncable_user&.css_id
+    return true if current_user == job&.asyncable_user
 
     verify_access
   end
