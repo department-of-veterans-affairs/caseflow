@@ -187,6 +187,7 @@ const formatUnidentifiedIssues = (state) => {
         correction_type: issue.correctionType,
         untimely_exemption: issue.untimelyExemption,
         untimely_exemption_notes: issue.untimelyExemptionNotes,
+        ineligibleReason: issue.ineligible_reason
       };
     });
 };
@@ -326,7 +327,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         editable: issue.editable,
         timely: issue.timely,
         untimelyExemption: issue.untimelyExemption,
-        untimelyExemptionNotes: issue.untimelyExemptionNotes
+        untimelyExemptionNotes: issue.untimelyExemptionNotes,
+        ineligibleReason: issue.ineligibleReason,
       };
     } else if (issue.isRating) {
       if (!issue.decisionDate && !issue.approxDecisionDate) {
