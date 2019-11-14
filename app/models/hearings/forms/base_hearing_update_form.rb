@@ -16,7 +16,14 @@ class BaseHearingUpdateForm
 
       if !virtual_hearing_attributes.blank?
         create_or_update_virtual_hearing
-        # TODO: Start the job to create the Pexip conference here?
+
+        if hearing.virtual_hearing.status == "pending"
+          VirtualHearings::CreateConferenceJob.perform_now(hearing_id: hearing.id)
+        end
+        
+        if virtual_hearing_attributes[:status] == "cancelled"
+          VirtualHearings::DeleteConferencesJob.perform_now
+        end
       end
     end
   end
