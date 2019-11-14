@@ -6,6 +6,7 @@ import DetailsInputs from './details/DetailsInputs';
 import TranscriptionDetailsInputs from './details/TranscriptionDetailsInputs';
 import TranscriptionProblemInputs from './details/TranscriptionProblemInputs';
 import TranscriptionRequestInputs from './details/TranscriptionRequestInputs';
+// import VirtualHearingLink from './VirtualHearingLink';
 
 class DetailsSections extends React.Component {
 
@@ -46,6 +47,10 @@ class DetailsSections extends React.Component {
 
     return (
       <React.Fragment>
+        {/* {user.userCanScheduleVirtualHearings && <VirtualHearingLink
+          hearing={hearing}
+          virtualHearing={virtualHearing}
+        />} */}
         <DetailsInputs
           openModal={this.openModal}
           hearing={hearing}

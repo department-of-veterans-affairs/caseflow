@@ -17,6 +17,7 @@ import {
   Waive90DayHoldCheckbox, HoldOpenDropdown
 } from './DailyDocketRowInputs';
 import VirtualHearingModal from '../VirtualHearingModal';
+import VirtualHearingLink from '../VirtualHearingLink';
 
 const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
   return <div {...css({
@@ -238,6 +239,7 @@ class DailyDocketRow extends React.Component {
     const inputProps = this.getInputProps();
 
     return <div {...inputSpacing}>
+      <VirtualHearingLink hearing={hearing} />
       <DispositionDropdown {...inputProps}
         cancelUpdate={this.cancelUpdate}
         saveHearing={this.saveHearing}

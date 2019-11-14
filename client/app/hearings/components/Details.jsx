@@ -15,6 +15,7 @@ import ApiUtil from '../../util/ApiUtil';
 import DetailsSections from './DetailsSections';
 import DetailsOverview from './details/DetailsOverview';
 import { onChangeFormData } from '../../components/common/actions';
+import VirtualHearingLink from './VirtualHearingLink';
 
 const row = css({
   marginLeft: '-15px',
@@ -185,7 +186,10 @@ class HearingDetails extends React.Component {
           <h2>Hearing Details</h2>
           <DetailsOverview hearing={this.props.hearing} />
           <div className="cf-help-divider" />
-
+          <VirtualHearingLink
+            hearing={this.props.hearing}
+            virtualHearing={virtualHearingForm}
+          />
           <DetailsSections
             user={this.props.user}
             submit={this.submit}
