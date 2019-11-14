@@ -31,7 +31,6 @@ export const isTimely = (formType, decisionDateStr, receiptDateStr) => {
 
     const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
 
-
     // we assume the timezone of the browser for all these.
     const decisionDate = new Date(decisionDateStr)
     const receiptDate = new Date(receiptDateStr);
@@ -39,7 +38,6 @@ export const isTimely = (formType, decisionDateStr, receiptDateStr) => {
     
     return lessThanOneYear;
 };
-
 
 export const legacyIssue = (issue, legacyAppeals) => {
   if (issue.vacolsIssue) {
