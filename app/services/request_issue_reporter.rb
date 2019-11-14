@@ -50,15 +50,9 @@ class RequestIssueReporter
     start_week = week_of
     end_week = week_of.next_week
     {
-      rating: rating_request_issues.where("created_at >= ? AND created_at < ?", start_week, end_week).count,
+      rating: RequestIssue.rating.where("created_at >= ? AND created_at < ?", start_week, end_week).count,
       nonrating: RequestIssue.nonrating.where("created_at >= ? AND created_at < ?", start_week, end_week).count,
       unidentified: RequestIssue.unidentified.where("created_at >= ? AND created_at < ?", start_week, end_week).count
     }
-  end
-
-  def rating_request_issues
-    RequestIssue.where.not(
-      contested_rating_issue_reference_id: nil
-    ).or(RequestIssue.where.not(contested_rating_decision_reference_id: nil))
   end
 end
