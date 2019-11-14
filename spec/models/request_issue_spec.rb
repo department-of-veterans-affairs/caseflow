@@ -119,7 +119,8 @@ describe RequestIssue, :all_dbs do
       :request_issue,
       decision_review: review,
       unidentified_issue_text: "an unidentified issue",
-      is_unidentified: true
+      is_unidentified: true,
+      decision_date: 5.days.ago
     )
   end
 
@@ -1033,6 +1034,13 @@ describe RequestIssue, :all_dbs do
       nonrating_request_issue.validate_eligibility!
 
       expect(nonrating_request_issue.untimely?).to eq(true)
+    end
+
+    it "flags unidentified request issue as untimely when decision date is older than receipt_date" do
+      unidentified_issue.decision_date = receipt_date - 450
+      unidentified_issue.validate_eligibility!
+
+      expect(unidentified_issue.untimely?).to eq(true)
     end
 
     it "flags rating request issue as untimely when promulgation_date is year+ older than receipt_date" do
