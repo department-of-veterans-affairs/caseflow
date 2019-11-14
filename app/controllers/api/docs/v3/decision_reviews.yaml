@@ -162,16 +162,25 @@ paths:
                               type: string
                               pattern: '^[0-9]+$'
                               description: >-
-                                Update a veteran's phone number.
-                                Example: "18446982311".
-                                Format: Include only digit characters. Include both country code and area code.
+                                Update a veteran's phone number (include area code).
+                                Example: "8446982311".
+                                Format: Include only digit characters. Include area code.
                                 Max length: 14 characters.
                                 Corresponds to "10. TELEPHONE NUMBER" on form 20-0996.
+
+                            phoneNumberCountryCode:
+                              type: string
+                              pattern: '^[0-9]+$'
+                              description: >-
+                                Update a veteran's phone number country code.
+                                Note: If not specified, will assume "1".
+                                Example: "20".
+                                Format: Include only digit characters.
 
                             phoneNumberExt:
                               type: string
                               description: >-
-                                Update a veteran's phone number extension.
+                                Update a veteran's phone number extension (if needed).
                                 Example: "123".
                                 Max length: 10 characters.
 
@@ -243,7 +252,7 @@ paths:
                         city: Chicago
                         stateProvinceCode: IL
                         zipPostalCode: "60652"
-                        phoneNumber: "14432924565"
+                        phoneNumber: "4432924565"
                         emailAddress: someone@example.com
                       claimant:
                         participantId: "44444444"
