@@ -240,7 +240,7 @@ describe Organizations::UsersController, :postgres, type: :controller do
     let!(:params) { { organization_url: org.url, id: user.id } }
 
     let(:user) { create(:user) }
-    let(:org) { JudgeTeam.create_for_judge(user) }
+    let!(:org) { JudgeTeam.create_for_judge(user) }
     let(:admin) do
       create(:user).tap do |u|
         OrganizationsUser.make_user_admin(u, org)
