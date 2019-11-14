@@ -97,7 +97,7 @@ export class DailyDocketContainer extends React.Component {
       this.loadHearingDetails(resp.hearingDay.hearings);
     });
   };
-  
+
   formatHearing = (hearing) => {
     const amaHearingValues = hearing.docketName === 'hearing' ? {
       evidence_window_waived: hearing.evidenceWindowWaived
@@ -137,7 +137,7 @@ export class DailyDocketContainer extends React.Component {
   }
 
   formatVirtualHearing = (hearing) => {
-    if (!hearing.isVirtual){
+    if (!hearing.isVirtual) {
       return {};
     }
 

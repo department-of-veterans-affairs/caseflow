@@ -108,7 +108,7 @@ class DailyDocketRow extends React.Component {
 
   cancelUpdate = () => {
     this.props.update(this.state.initialState);
-    this.prop.updateAodMotion(this.state.initialState.aodMotion)
+    this.prop.updateAodMotion(this.state.initialState.aodMotion);
     this.setState({
       edited: false,
       invalid: {
@@ -307,7 +307,8 @@ DailyDocketRow.propTypes = {
   hearing: PropTypes.shape({
     docketName: PropTypes.string,
     advanceOnDocketMotion: PropTypes.object,
-    virtualHearing: PropTypes.object
+    virtualHearing: PropTypes.object,
+    isVirtual: PropTypes.bool
   }),
   user: PropTypes.shape({
     userCanAssignHearingSchedule: PropTypes.bool,

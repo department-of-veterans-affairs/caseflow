@@ -110,7 +110,7 @@ class HearingDetails extends React.Component {
   }
 
   submit = () => {
-    const { hearing: { externalId }, hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm} = this.props;
+    const { hearing: { externalId }, hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = this.props;
     const { updated } = this.state;
 
     if (!updated) {

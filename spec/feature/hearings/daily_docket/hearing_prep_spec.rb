@@ -93,7 +93,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
 
       let!(:current_user) { User.authenticate!(css_id: "BVAYELLOW", roles: ["Edit HearSched", "Build HearSched"]) }
       let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO06") }
-      let!(:virtual_hearing) { create( :virtual_hearing, hearing: hearing) }
+      let!(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
 
       scenario "User can select Virtual Hearing time" do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s

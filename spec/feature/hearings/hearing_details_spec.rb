@@ -81,7 +81,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       fill_in "vet-email", with: "email@testingEmail.com"
       fill_in "rep-email", with: "email@testingEmail.com"
       click_button("Change and Send Email")
-      
+
       expect(page).to have_content("Hearing Successfully Updated")
 
       legacy_hearing.reload
