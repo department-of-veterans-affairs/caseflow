@@ -270,9 +270,9 @@ class Appeal < DecisionReview
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 
-  # For now power_of_attorney returns the first claimant's power of attorney
+  # Currently AMA only supports one claimant per decision review
   def power_of_attorney
-    appellant&.power_of_attorney
+    claimant&.power_of_attorney
   end
   delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney, allow_nil: true
 

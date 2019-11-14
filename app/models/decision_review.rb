@@ -172,7 +172,7 @@ class DecisionReview < ApplicationRecord
     claimants.destroy_all unless claimants.empty?
   end
 
-  # Currently, we only support one claimant per AMA decision review
+  # Currently AMA only supports one claimant per decision review
   def claimant
     claimants.last
   end

@@ -13,7 +13,6 @@ class Claimant < ApplicationRecord
             uniqueness: { scope: [:decision_review_id, :decision_review_type],
                           on: :create }
 
-
   def self.create_without_intake!(participant_id:, payee_code:)
     create!(
       participant_id: participant_id,
