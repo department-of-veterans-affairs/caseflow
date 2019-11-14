@@ -990,6 +990,37 @@ paths:
                           properties:
                             type:
                               type: string
+                              enum: ["Veteran"]
+                            id:
+                              type: string
+                              description: matches fileNumber
+                            attributes:
+                              type: object
+                              properties:
+                                firstName:
+                                  type: string
+                                  nullable: true
+                                middleName:
+                                  type: string
+                                  nullable: true
+                                lastName:
+                                  type: string
+                                  nullable: true
+                                nameSuffix:
+                                  type: string
+                                  nullable: true
+                                fileNumber:
+                                  type: string
+                                ssn:
+                                  type: string
+                                  nullable: true
+                                participantId:
+                                  type: string
+                                  nullable: true
+                        - type: object
+                          properties:
+                            type:
+                              type: string
                               enum: ["DecisionIssue"]
                             id:
                               type: string
