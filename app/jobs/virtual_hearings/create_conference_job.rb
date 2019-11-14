@@ -16,27 +16,39 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
   def perform(hearing_id:)
     @virtual_hearing = VirtualHearing.find_by(hearing_id: hearing_id)
 
-    if !virtual_hearing.conference_id && !virtual_hearing.alias
-      assign_virtual_hearing_alias
+    virtual_hearing.establishment.attempted!
 
-      resp = client.create_conference(
-        host_pin: rand(1000..9999),
-        guest_pin: rand(1000..9999),
-        name: virtual_hearing.alias
-      )
-
-      if resp.error
-        Rails.logger.info "CreateConferenceJob failed: #{resp.error.message}"
-        fail resp.error
-      end
-
-      virtual_hearing.update(conference_id: resp.data[:conference_id], status: :active)
-    end
+    create_conference if !virtual_hearing.conference_id && !virtual_hearing.alias
 
     VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :confirmation).call
+
+    if virtual_hearing.active? && virtual_hearing.all_emails_sent?
+      virtual_hearing.establishment.clear_error!
+      virtual_hearing.establishment.processed!
+    end
   end
 
   private
+
+  def create_conference
+    assign_virtual_hearing_alias
+
+    resp = client.create_conference(
+      host_pin: rand(1000..9999),
+      guest_pin: rand(1000..9999),
+      name: virtual_hearing.alias
+    )
+
+    if resp.error
+      Rails.logger.warn "CreateConferenceJob failed: #{resp.error.message}"
+
+      virtual_hearing.establishment.update_error!(resp.error.message)
+
+      fail resp.error
+    end
+
+    virtual_hearing.update(conference_id: resp.data[:conference_id], status: :active)
+  end
 
   def assign_virtual_hearing_alias
     # Using pessimistic locking here because no other processes should be reading

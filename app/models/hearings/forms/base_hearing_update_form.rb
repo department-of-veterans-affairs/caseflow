@@ -62,6 +62,9 @@ class BaseHearingUpdateForm
       updates = virtual_hearing_attributes.compact.merge(emails_sent_updates)
 
       virtual_hearing.update(updates)
+      virtual_hearing.establishment.restart!
+    else
+      VirtualHearingEstablishment.create!(virtual_hearing: virtual_hearing)
     end
   end
 end
