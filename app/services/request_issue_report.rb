@@ -10,7 +10,6 @@ class RequestIssueReport
     @stats = build
   end
 
-    # rubocop:disable Metrics/MethodLength
   def as_csv
     CSV.generate do |csv|
       csv << %w[
@@ -31,18 +30,15 @@ class RequestIssueReport
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
   private
 
   attr_reader :start_date, :end_date
 
-  # rubocop:disable Metrics/AbcSize
-  # rubocop:disable Metrics/MethodLength
   def build
     stats = {}
     week_of = start_date.next_week # start the first Monday after the start_date
-    while week_of < end_date do
+    while week_of < end_date
       stats[week_of] = summary_of_request_issues_for_week(week_of)
       week_of = week_of.next_week
     end
