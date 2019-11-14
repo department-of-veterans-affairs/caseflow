@@ -92,25 +92,35 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
       end
 
       let!(:current_user) { User.authenticate!(css_id: "BVAYELLOW", roles: ["Edit HearSched", "Build HearSched"]) }
-      let!(:hearing) { create(:hearing, :with_tasks, hearing_day: hearing_day) }
-      let!(:hearing_day) { create(:hearing_day, judge: current_user) }
+      let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO06") }
+      let!(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
 
       scenario "User can select Virtual Hearing time" do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+        hearing.reload
         choose("hearingTime1_other", allow_label_click: true)
-        click_dropdown(name: "optionalHearingTime1", index: 3)
-        click_button("Change and Send Email")
-        expect(page).to have_content("You have successfully updated")
+        click_dropdown(name: "optionalHearingTime1", index: 1)
+        expect(page).to have_content("Change to Virtual Hearing")
+        expect(page).to have_content("Change and Send Email")
       end
+
       scenario "Virtual Hearing time has been updated" do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-        choose("hearingTime1_13:00", allow_label_click: true)
+        hearing.reload
+        choose("hearingTime1_other", allow_label_click: true)
+        click_dropdown(name: "optionalHearingTime1", index: 2)
+        fill_in "vet-email", with: "newEmail@testingEmail.com"
         click_button("Change and Send Email")
         expect(page).to have_content("You have successfully updated")
+
+        virtual_hearing.reload
+        expect(virtual_hearing.veteran_email).to eq("newEmail@testingEmail.com")
       end
+
       scenario "Changes to Virtual Hearing have been cancelled" do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-        choose("hearingTime1_09:00", allow_label_click: true)
+        choose("hearingTime1_other", allow_label_click: true)
+        click_dropdown(name: "optionalHearingTime1", index: 3)
         click_button("Change-to-Virtual-Hearing-button-id-close")
       end
     end
