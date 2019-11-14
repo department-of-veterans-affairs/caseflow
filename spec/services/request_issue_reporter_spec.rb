@@ -2,7 +2,7 @@
 
 require "support/database_cleaner"
 
-describe RequestIssueReporter do
+describe RequestIssueReporter, :postgres do
   before do
     seven_am_random_date = Time.new(2019, 3, 29, 7, 0, 0).in_time_zone
     Timecop.freeze(seven_am_random_date)

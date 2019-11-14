@@ -38,7 +38,7 @@ class RequestIssueReporter
 
   def build
     stats = {}
-    week_of = start_date.next_week # start the first Monday after the start_date
+    week_of = start_date.monday? ? start_date : start_date.next_week # start the first Monday after the start_date
     while week_of < end_date
       stats[week_of] = summary_of_request_issues_for_week(week_of)
       week_of = week_of.next_week
