@@ -24,10 +24,26 @@ describe RedistributedCase, :all_dbs do
         # TrackVeteranTask should be ignored by ok_to_redistribute?
         TrackVeteranTask.create!(appeal: legacy_appeal, assigned_to: create(:vso))
       end
+      context "when there is an open JudgeAssignTask (non-HearingTask)" do
+        let(:legacy_appeal) { create(:legacy_appeal, :with_judge_assign_task, vacols_case: vacols_case) }
+
+        it "returns false because of open task" do
+          expect(subject.ok_to_redistribute?).to eq false
+        end
+      end
+      context "when there is an completed JudgeAssignTask (non-HearingTask)" do
+        let(:legacy_appeal) { create(:legacy_appeal, :with_judge_assign_task, vacols_case: vacols_case) }
+        before do
+          legacy_appeal.tasks.where(type: :JudgeAssignTask).each(&:completed!)
+        end
+        it "returns false so that appeal is manually addressed" do
+          expect(subject.ok_to_redistribute?).to eq false
+        end
+      end
       context "when there is an open ScheduleHearingTask and an open parent HearingTask" do
         let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case) }
 
-        it "returns false" do
+        it "returns false so that appeal is manually addressed" do
           expect(subject.ok_to_redistribute?).to eq false
         end
       end
@@ -36,7 +52,7 @@ describe RedistributedCase, :all_dbs do
         before do
           legacy_appeal.tasks.where(type: :HearingTask).each(&:cancelled!)
         end
-        it "returns false" do
+        it "returns false because of open task" do
           expect(subject.ok_to_redistribute?).to eq false
         end
       end

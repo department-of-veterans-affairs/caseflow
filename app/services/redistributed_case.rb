@@ -26,7 +26,7 @@ class RedistributedCase
     return false if legacy_appeal_relevant_tasks.any?(&:open?)
 
     # redistribute if all HearingTasks are cancelled
-    return true if legacy_appeal_hearing_tasks.all?(&:cancelled?)
+    return true if !legacy_appeal_hearing_tasks.empty? && legacy_appeal_hearing_tasks.all?(&:cancelled?)
 
     # be conservative; return false so that appeal is manually addressed
     false
