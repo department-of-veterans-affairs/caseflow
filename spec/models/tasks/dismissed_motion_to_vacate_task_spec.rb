@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-describe DismissedMotionToVacateTask do
+require "support/database_cleaner"
+
+describe DismissedMotionToVacateTask, :postgres do
   let(:task) { create(:dismissed_motion_to_vacate_task) }
 
   describe ".org" do
