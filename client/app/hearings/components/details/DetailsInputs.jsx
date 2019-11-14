@@ -32,12 +32,15 @@ const DetailsInputs = ({
             label: 'Virtual'
           }
         ]}
-        value={(virtualHearing && virtualHearing.active) || false}
+        value={(virtualHearing && virtualHearing.status !== 'cancelled') || false}
         onChange={(option) => {
-          if ((virtualHearing && virtualHearing.active) || option.value) {
+          if ((virtualHearing && virtualHearing.status !== 'cancelled') || option.value) {
             openModal();
           }
-          updateVirtualHearing({ active: option.value });
+
+          let status = option.value ? 'cancelled' : null;
+
+          updateVirtualHearing({ status });
         }}
       />}
     </div>
@@ -103,7 +106,7 @@ DetailsInputs.propTypes = {
   openModal: PropTypes.func,
   updateVirtualHearing: PropTypes.func,
   virtualHearing: PropTypes.shape({
-    active: PropTypes.bool
+    status: PropTypes.string
   }),
   enableVirtualHearings: PropTypes.bool
 };

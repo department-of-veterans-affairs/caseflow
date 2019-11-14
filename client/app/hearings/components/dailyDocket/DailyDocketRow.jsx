@@ -51,7 +51,7 @@ const inputSpacing = css({
   }
 });
 
-class HearingActions extends React.Component {
+class DailyDocketRow extends React.Component {
   constructor(props) {
     super(props);
 
@@ -89,6 +89,16 @@ class HearingActions extends React.Component {
       }
     });
   }
+
+  updateVirtualHearing = (values) => {
+    this.update({
+      virtualHearing: {
+        ...(this.props.hearing.virtualHearing || {}),
+        ...values
+      }
+    });
+  }
+
   openVirtualHearingModal = () => {
     this.setState({ virtualHearingModalActive: true });
   }
@@ -98,6 +108,7 @@ class HearingActions extends React.Component {
 
   cancelUpdate = () => {
     this.props.update(this.state.initialState);
+    this.prop.updateAodMotion(this.state.initialState.aodMotion);
     this.setState({
       edited: false,
       invalid: {
@@ -256,7 +267,7 @@ class HearingActions extends React.Component {
         {this.getRightColumn()}
       </div>
       {/* This is where the modal for the edit virtual hearing modal is supposed to appear*/}
-      {(user.userCanScheduleVirtualHearings && this.state.virtualHearingModalActive) &&
+      {(user.userCanScheduleVirtualHearings && this.state.virtualHearingModalActive && hearing.isVirtual) &&
         <VirtualHearingModal hearing={hearing}
           timeWasEdited={this.state.initialState.scheduledTimeString !== _.get(hearing, 'scheduledTimeString')}
           virtualHearing={hearing.virtualHearing || {}} reset={() => {
@@ -264,6 +275,7 @@ class HearingActions extends React.Component {
             this.closeVirtualHearingModal()
             ;
           }} user={user}
+          update={this.updateVirtualHearing}
           submit={() => {
             this.saveHearing();
             this.closeVirtualHearingModal();
@@ -284,7 +296,7 @@ class HearingActions extends React.Component {
   }
 }
 
-HearingActions.propTypes = {
+DailyDocketRow.propTypes = {
   index: PropTypes.number,
   hearingId: PropTypes.string,
   update: PropTypes.func,
@@ -295,7 +307,8 @@ HearingActions.propTypes = {
   hearing: PropTypes.shape({
     docketName: PropTypes.string,
     advanceOnDocketMotion: PropTypes.object,
-    virtualHearing: PropTypes.object
+    virtualHearing: PropTypes.object,
+    isVirtual: PropTypes.bool
   }),
   user: PropTypes.shape({
     userCanAssignHearingSchedule: PropTypes.bool,
@@ -318,5 +331,5 @@ const mapDispatchToProps = (dispatch, props) => bindActionCreators({
   update: (values) => onUpdateDocketHearing(props.hearingId, values)
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(HearingActions);
+export default connect(mapStateToProps, mapDispatchToProps)(DailyDocketRow);
 

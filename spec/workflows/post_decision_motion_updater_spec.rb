@@ -28,7 +28,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
   end
 
   before do
-    create(:staff, :judge_role, sdomainid: judge.css_id)
+    create(:staff, :judge_role, sdomainid: judge.reload.css_id)
     lit_support_team.add_user(motions_atty)
   end
 
