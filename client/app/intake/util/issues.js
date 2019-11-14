@@ -29,6 +29,10 @@ export const isTimely = (formType, decisionDateStr, receiptDateStr) => {
       return true;
     }
 
+    if(!decisionDateStr) {
+      return true
+    }
+
     const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
 
     // we assume the timezone of the browser for all these.
