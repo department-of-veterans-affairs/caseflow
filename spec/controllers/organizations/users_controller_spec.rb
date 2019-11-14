@@ -234,11 +234,13 @@ describe Organizations::UsersController, :postgres, type: :controller do
     end
   end
 
-  describe "DELETE /organizations/:org_url/users/:user_id" do
+  fdescribe "DELETE /organizations/:org_url/users/:user_id" do
     subject { post(:destroy, params: params, as: :json) }
 
-    let(:judge) { create(:user) }
-    let(:org) { JudgeTeam.create_for_judge(judge) }
+    let!(:params) { { organization_url: org.url, id: user.id } }
+
+    let(:user) { create(:user) }
+    let(:org) { JudgeTeam.create_for_judge(user) }
     let(:admin) do
       create(:user).tap do |u|
         OrganizationsUser.make_user_admin(u, org)
@@ -246,12 +248,10 @@ describe Organizations::UsersController, :postgres, type: :controller do
     end
 
     before do
-      User.authenticate!(user: admin)
+      User.stub = admin
     end
 
     context "when user is the judge in the organization" do
-      let(:params) { { organization_url: org.url, id: judge.id } }
-
       it "returns an error" do
         subject
 

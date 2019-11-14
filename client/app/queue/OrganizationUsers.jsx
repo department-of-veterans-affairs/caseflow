@@ -107,7 +107,7 @@ export default class OrganizationUsers extends React.PureComponent {
       if (error.response.text) {
         const errors = JSON.parse(error.response.text).errors;
 
-        if (errors[0].detail) {
+        if (errors[0] && errors[0].detail) {
           errorDetail = errors[0].detail;
         }
       }
