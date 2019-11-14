@@ -75,6 +75,52 @@ paths:
                           format: date
                         informalConference:
                           type: boolean
+                          description: Corresponds to "14. ...REQUEST AN INFORMAL CONFERENCE..." on form 20-0996.
+
+                        informalConferenceTimes:
+                          type: array
+                          description: >-
+                            OPTIONAL. Time slot preference for informal conference (if being requested). EASTERN TIME. Pick up to two time slots (or none if no preference).
+                            Corresponds to "14. ...REQUEST AN INFORMAL CONFERENCE..." on form 20-0996.
+
+                          items:
+                            type: string
+                            enum: ["800-1000", "1000-1230", "1230-200", "200-430"]
+
+                        informalConferenceRep:
+                          type: object
+                          description: >-
+                            OPTIONAL. The veteran's preferred representative for informal conference (if being requested).
+                            Corresponds to "14. ...REQUEST AN INFORMAL CONFERENCE..." on form 20-0996.
+
+                          properties:
+                            name:
+                              type: string
+                              description: Representative's name.
+
+                            phoneNumber:
+                              type: string
+                              pattern: '^[0-9]+$'
+                              description: >-
+                                Representative's phone number.
+                                Example: "8446982311".
+                                Format: Include only digit characters. Include area code.
+
+                            phoneNumberCountryCode:
+                              type: string
+                              pattern: '^[0-9]+$'
+                              description: >-
+                                Representative's phone number country code.
+                                If not specified, will assume "1".
+                                Example: "20".
+                                Format: Include only digit characters.
+
+                            phoneNumberExt:
+                              type: string
+                              description: >-
+                                Representative's phone number extension (if needed).
+                                Example: "123".
+
                         sameOffice:
                           type: boolean
                         legacyOptInApproved:
@@ -102,7 +148,6 @@ paths:
                                 Example: "123456789"
                                 Format: 8 or 9 digit characters.
                                 Max length: 9 characters.
-                                Regex: /^[0-9]{8,9}$/
                                 Corresponds to both "1. VETERAN'S SOCIAL SECURITY NUMBER" and "2. VA FILE NUMBER" on form 20-0996.
 
                             addressLine1:
@@ -136,7 +181,6 @@ paths:
                                 Update a veteran's state or province.
                                 Example: "CA".
                                 Max length: 2 characters.
-                                Regex: /^[a-z]{2}$/i
                                 Corresponds to "9. CURRENT MAILING ADDRESS: State/Province" on form 20-0996.
 
                             countryCode:
@@ -147,7 +191,6 @@ paths:
                                 Example: "US".
                                 NOTE: If not specified, will assume "US".
                                 Max length: 2 characters.
-                                Regex: /^[a-z]{2}$/i
                                 Corresponds to "9. CURRENT MAILING ADDRESS: Country" on form 20-0996.
 
                             zipPostalCode:
@@ -162,7 +205,7 @@ paths:
                               type: string
                               pattern: '^[0-9]+$'
                               description: >-
-                                Update a veteran's phone number (include area code).
+                                Update a veteran's phone number.
                                 Example: "8446982311".
                                 Format: Include only digit characters. Include area code.
                                 Max length: 14 characters.
@@ -191,7 +234,6 @@ paths:
                                 Update a veteran's email address.
                                 Example: "linda@example.com".
                                 Max length: 255 characters.
-                                Regex: /^.+@.+\..+$/i
                                 Corresponds to "11. E-MAIL ADDRESS" on form 20-0996.
 
                         claimant:
