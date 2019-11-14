@@ -4,7 +4,6 @@ AllCops:
   Exclude:
     - 'db/migrate/*'
     - 'db/schema.rb'
-    - 'db/etl/migrate/*'
     - 'config/**/*'
     - 'script/**/*'
     - 'vendor/**/*'
