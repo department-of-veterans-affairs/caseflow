@@ -211,6 +211,7 @@ feature "Intake Add Issues Page", :all_dbs do
                                 participant_id: "44444444")
     end
     let(:decision_date) { 50.days.ago.to_date.mdY }
+    let(:untimely_days) { 2.years.ago.to_date.mdY }
 
     before { FeatureToggle.enable!(:unidentified_issue_decision_date) }
     after { FeatureToggle.disable!(:unidentified_issue_decision_date) }
@@ -248,6 +249,65 @@ feature "Intake Add Issues Page", :all_dbs do
       click_on "Establish EP"
       click_on "correct the issues"
       expect(page).to have_content("Decision date")
+    end
+
+    scenario "show unidentified untimely exemption issue" do
+      start_higher_level_review(veteran_no_ratings)
+      visit "/intake"
+      click_intake_continue
+      expect(page).to have_current_path("/intake/add_issues")
+
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      expect(page).to have_content("Decision date")
+      fill_in "Transcribe the issue as it's written on the form", with: "Unidentified issue"
+      fill_in "Decision date", with: untimely_days
+      fill_in "Notes", with: "PTSD issue"
+      safe_click ".add-issue"
+
+      # show untimely modal
+      expect(page).to have_content("Issue 1 is an Untimely Issue")
+      add_untimely_exemption_response("Yes")
+      expect(page).to have_content("I am an exemption note")
+      click_on "Establish EP"
+      expect(page).to have_content("Unidentified issue")
+
+      untimely_issue = RequestIssue.where(
+        unidentified_issue_text: "Unidentified issue",
+        untimely_exemption: true,
+        untimely_exemption_notes: "I am an exemption note"
+      )
+      expect(untimely_issue).to_not be_nil
+    end
+
+    scenario "show unidentified issue when user selects no on untimely exemption modal " do
+      start_higher_level_review(veteran_no_ratings)
+      visit "/intake"
+      click_intake_continue
+      expect(page).to have_current_path("/intake/add_issues")
+
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      expect(page).to have_content("Decision date")
+      fill_in "Transcribe the issue as it's written on the form", with: "Unidentified issue"
+      fill_in "Decision date", with: untimely_days
+      fill_in "Notes", with: "PTSD issue"
+      safe_click ".add-issue"
+
+      # show untimely modal
+      expect(page).to have_content("Issue 1 is an Untimely Issue")
+      add_untimely_exemption_response("No")
+      expect(page).to have_content("Unidentified issue")
+      click_on "Establish EP"
+      expect(page).to have_content("Unidentified issue")
+
+      unidentified_issue = RequestIssue.where(
+        unidentified_issue_text: "Unidentified issue",
+        untimely_exemption: false,
+        ineligible_reason: "untimely"
+      )
+
+      expect(unidentified_issue).to_not be_nil
     end
   end
 end

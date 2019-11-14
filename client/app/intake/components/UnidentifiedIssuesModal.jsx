@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Modal from '../../components/Modal';
 import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
-import { validateDateNotInFuture } from '../util/issues';
+import { validateDateNotInFuture, isTimely } from '../util/issues';
 
 class UnidentifiedIssuesModal extends React.Component {
   constructor(props) {
@@ -19,11 +19,13 @@ class UnidentifiedIssuesModal extends React.Component {
 
   onAddIssue = () => {
     const { description, notes, decisionDate } = this.state;
+    const { formType, intakeData } = this.props;
     const currentIssue = {
       isUnidentified: true,
       description,
       notes,
-      decisionDate
+      decisionDate,
+      timely: isTimely(formType, decisionDate, intakeData.receiptDate)
     };
 
     this.props.onSubmit({ currentIssue });
@@ -142,7 +144,8 @@ UnidentifiedIssuesModal.propTypes = {
   onSkip: PropTypes.func,
   skipText: PropTypes.string,
   featureToggles: PropTypes.object,
-  intakeData: PropTypes.object
+  intakeData: PropTypes.object,
+  formType: PropTypes.string
 };
 
 UnidentifiedIssuesModal.defaultProps = {

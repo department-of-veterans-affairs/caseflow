@@ -496,11 +496,11 @@ class RequestIssue < ApplicationRecord
   end
 
   def decision_or_promulgation_date
-    return decision_date if nonrating?
-
     return contested_rating_issue&.promulgation_date if associated_rating_issue?
 
     return contested_rating_decision&.decision_date&.to_date if associated_rating_decision?
+
+    decision_date
   end
 
   def diagnostic_code
