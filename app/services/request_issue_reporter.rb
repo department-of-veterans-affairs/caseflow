@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# rr = RequestIssueReporter.new(start_date: 4.weeks.ago)
+# Reports the number of Request Issues by origin type week-over-week
+
 class RequestIssueReporter
   attr_reader :stats
 
@@ -10,27 +11,37 @@ class RequestIssueReporter
     @stats = build
   end
 
+  # rubocop:disable Metrics/MethodLength
   def as_csv
     CSV.generate do |csv|
       csv << %w[
         week_of
-        rating
+        rating_issue
+        rating_decision
         nonrating
+        decision_issue
         unidentified
         unidentified_percent
       ]
       stats.each do |week, stat|
-        total = stat[:rating] + stat[:nonrating] + stat[:unidentified]
+        total = stat[:rating_issue] +
+                stat[:rating_decision] +
+                stat[:decision_issue] +
+                stat[:nonrating] +
+                stat[:unidentified]
         csv << [
           week.to_date,
-          stat[:rating],
+          stat[:rating_issue],
+          stat[:rating_decision],
           stat[:nonrating],
+          stat[:decision_issue],
           stat[:unidentified],
           ((total == 0) ? 0 : (stat[:unidentified].fdiv(total) * 100).round(2))
         ]
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 
@@ -50,8 +61,12 @@ class RequestIssueReporter
     start_week = week_of
     end_week = week_of.next_week
     {
-      rating: RequestIssue.rating.where("created_at >= ? AND created_at < ?", start_week, end_week).count,
+      rating_issue: RequestIssue.rating_issue.where("created_at >= ? AND created_at < ?", start_week, end_week).count,
+      rating_decision: RequestIssue.rating_decision
+        .where("created_at >= ? AND created_at < ?", start_week, end_week).count,
       nonrating: RequestIssue.nonrating.where("created_at >= ? AND created_at < ?", start_week, end_week).count,
+      decision_issue: RequestIssue.decision_issue
+        .where("created_at >= ? AND created_at < ?", start_week, end_week).count,
       unidentified: RequestIssue.unidentified.where("created_at >= ? AND created_at < ?", start_week, end_week).count
     }
   end

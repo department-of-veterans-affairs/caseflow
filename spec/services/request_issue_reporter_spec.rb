@@ -11,7 +11,12 @@ describe RequestIssueReporter, :postgres do
   let!(:issues) do
     [
       create(:request_issue, :rating),
+      create(:request_issue, :rating_decision),
       create(:request_issue, :nonrating),
+      create(:request_issue,
+             :with_rating_decision_issue,
+             veteran_participant_id: "123",
+             contested_rating_issue_profile_date: Time.zone.today),
       create(:request_issue, :unidentified)
     ]
   end
@@ -21,7 +26,7 @@ describe RequestIssueReporter, :postgres do
 
     it "returns CSV" do
       csv = subject
-      expect(csv).to match(/2019-03-18,0,0,0,0\n2019-03-25,1,1,1,33.33/)
+      expect(csv).to match(/2019-03-18,0,0,0,0,0,0\n2019-03-25,1,1,1,1,1,20.0/)
     end
   end
 end

@@ -97,12 +97,24 @@ class RequestIssue < ApplicationRecord
       ).or(where.not(contested_rating_decision_reference_id: nil))
     end
 
+    def rating_issue
+      where.not(contested_rating_issue_reference_id: nil)
+    end
+
+    def rating_decision
+      where.not(contested_rating_decision_reference_id: nil)
+    end
+
     def nonrating
       where(
         contested_rating_issue_reference_id: nil,
         contested_rating_decision_reference_id: nil,
         is_unidentified: [nil, false]
       ).where.not(nonrating_issue_category: nil)
+    end
+
+    def decision_issue
+      where.not(contested_decision_issue_id: nil)
     end
 
     def eligible
