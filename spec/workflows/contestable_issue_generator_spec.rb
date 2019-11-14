@@ -29,6 +29,17 @@ describe "Contestable Issue Generator", :postgres do
     )
   end
 
+  let!(:today_rating) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: review.receipt_date,
+      profile_date: review.receipt_date,
+      issues: [
+        { reference_id: "def456", decision_text: "Rating issue" }
+      ]
+    )
+  end
+
   let!(:review_decision_issue) do
     create(
       :decision_issue,
@@ -70,7 +81,7 @@ describe "Contestable Issue Generator", :postgres do
       after { FeatureToggle.disable!(:correct_claim_reviews) }
 
       it "returns decision issues from the same review" do
-        expect(subject.count).to eq(3)
+        expect(subject.count).to eq(4)
         expect(subject.select { |issue| issue.description == "review decision issue" }.empty?).to be false
       end
     end

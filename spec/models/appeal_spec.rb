@@ -848,6 +848,13 @@ describe Appeal, :all_dbs do
     end
   end
 
+  describe "#status" do
+    it "returns BVAAppealStatus object" do
+      expect(appeal.status).to be_a(BVAAppealStatus)
+      expect(appeal.status.to_s).to eq("UNKNOWN") # zero tasks
+    end
+  end
+
   context "#location" do
     subject { appeal.location }
 

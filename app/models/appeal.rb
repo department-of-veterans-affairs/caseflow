@@ -243,7 +243,7 @@ class Appeal < DecisionReview
   end
 
   def status
-    nil
+    BVAAppealStatus.new(appeal: self)
   end
 
   def previously_selected_for_quality_review
@@ -274,7 +274,12 @@ class Appeal < DecisionReview
   def power_of_attorney
     claimant&.power_of_attorney
   end
-  delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney, allow_nil: true
+
+  delegate :representative_name,
+           :representative_type,
+           :representative_address,
+           :representative_email_address,
+           to: :power_of_attorney, allow_nil: true
 
   def power_of_attorneys
     claimants.map(&:power_of_attorney)
