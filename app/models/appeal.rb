@@ -691,7 +691,7 @@ class Appeal < DecisionReview
   private
 
   def most_recently_assigned_to_label(tasks)
-    tasks.order(:created_at).last&.assigned_to_label
+    tasks.most_recently_assigned&.assigned_to_label
   end
 
   def maybe_create_translation_task
