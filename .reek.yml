@@ -10,6 +10,7 @@ detectors:
       - RatingDecision
   BooleanParameter:
     exclude:
+      - AsyncableJobsReporter#initialize
       - HearingRepository#slot_new_hearing
       - Veteran
   ControlParameter:

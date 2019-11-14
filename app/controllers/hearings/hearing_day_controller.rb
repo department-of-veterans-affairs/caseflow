@@ -17,8 +17,10 @@ class Hearings::HearingDayController < HearingsApplicationController
 
       format.json do
         if hearing_day_range.valid?
+          serialized_hearing_days = ::HearingDaySerializer.serialize_collection(hearing_days_in_range_for_user)
+
           render json: {
-            hearings: json_hearing_days(hearing_days_in_range_for_user.map(&:to_hash)),
+            hearings: json_hearing_days(serialized_hearing_days),
             startDate: hearing_day_range.start_date,
             endDate: hearing_day_range.end_date
           }
@@ -84,18 +86,28 @@ class Hearings::HearingDayController < HearingsApplicationController
   end
 
   ## action is either index or index_with_hearings
-  def range_start_date
+  def default_range_start_date
     default = Time.zone.today.beginning_of_day
     default -= 30.days if params[:action] == "index"
+    default
+  end
 
-    params[:start_date].nil? ? default : Date.parse(params[:start_date])
+  def range_start_date
+    params[:start_date].nil? ? default_range_start_date : Date.parse(params[:start_date])
+  rescue ArgumentError
+    nil
+  end
+
+  def default_range_end_date
+    default = Time.zone.today.beginning_of_day
+    default += ((params[:action] == "index") ? 365.days : 182.days)
+    default
   end
 
   def range_end_date
-    default = Time.zone.today.beginning_of_day
-    default += ((params[:action] == "index") ? 365.days : 182.days)
-
-    params[:end_date].nil? ? default : Date.parse(params[:end_date])
+    params[:end_date].nil? ? default_range_end_date : Date.parse(params[:end_date])
+  rescue ArgumentError
+    nil
   end
 
   def hearing_days_in_range_for_user
