@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-# rr = RequestIssueReport.new(start_date: 4.weeks.ago)
-class RequestIssueReport
+# rr = RequestIssueReporter.new(start_date: 4.weeks.ago)
+class RequestIssueReporter
   attr_reader :stats
 
   def initialize(start_date: Constants::DATES["AMA_ACTIVATION"].to_date, end_date: Time.zone.today)
@@ -20,12 +20,13 @@ class RequestIssueReport
         unidentified_percent
       ]
       stats.each do |week, stat|
+        total = stat[:rating] + stat[:nonrating] + stat[:unidentified]
         csv << [
           week.to_date,
           stat[:rating],
           stat[:nonrating],
           stat[:unidentified],
-          (stat[:unidentified].fdiv(stat[:rating] + stat[:nonrating] + stat[:unidentified]) * 100).round(2)
+          ((total == 0) ? 0 : (stat[:unidentified].fdiv(total) * 100).round(2))
         ]
       end
     end
@@ -49,9 +50,15 @@ class RequestIssueReport
     start_week = week_of
     end_week = week_of.next_week
     {
-      rating: RequestIssue.rating.where("created_at >= ? AND created_at < ?", start_week, end_week).count,
+      rating: rating_request_issues.where("created_at >= ? AND created_at < ?", start_week, end_week).count,
       nonrating: RequestIssue.nonrating.where("created_at >= ? AND created_at < ?", start_week, end_week).count,
       unidentified: RequestIssue.unidentified.where("created_at >= ? AND created_at < ?", start_week, end_week).count
     }
+  end
+
+  def rating_request_issues
+    RequestIssue.where.not(
+      contested_rating_issue_reference_id: nil
+    ).or(RequestIssue.where.not(contested_rating_decision_reference_id: nil))
   end
 end
