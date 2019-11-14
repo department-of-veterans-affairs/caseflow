@@ -5,7 +5,7 @@ class AdvanceOnDocketMotionsController < ApplicationController
 
   def create
     AdvanceOnDocketMotion.create_or_update_by_person_id(
-      appeal.appellant.person.id,
+      appeal.claimant.person.id,
       reason: aod_params[:reason],
       granted: aod_params[:granted],
       user_id: current_user.id

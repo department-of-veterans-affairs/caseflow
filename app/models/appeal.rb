@@ -216,7 +216,7 @@ class Appeal < DecisionReview
   end
 
   def advanced_on_docket?
-    claimants.any? { |claimant| claimant.advanced_on_docket?(receipt_date) }
+    claimant&.advanced_on_docket?(receipt_date)
   end
 
   # Prefer aod? over aod going forward, as this function returns a boolean

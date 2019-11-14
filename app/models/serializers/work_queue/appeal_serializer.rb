@@ -51,20 +51,18 @@ class WorkQueue::AppealSerializer
     false
   end
 
-  attribute :appellant_is_not_veteran, &:veteran_is_not_claimant
+  attribute(:appellant_is_not_veteran) { |object| !!object.veteran_is_not_claimant }
 
   attribute :appellant_full_name do |object|
-    object.claimants[0].name if object.claimants&.any?
+    object.claimant&.name
   end
 
   attribute :appellant_address do |object|
-    if object.claimants&.any?
-      object.claimants[0].address
-    end
+    object.claimant&.address
   end
 
   attribute :appellant_relationship do |object|
-    object.claimants[0].relationship if object.claimants&.any?
+    object.claimant&.relationship
   end
 
   attribute :veteran_file_number
