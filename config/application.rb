@@ -33,9 +33,6 @@ module CaseflowCertification
     config.eager_load_paths += Dir[Rails.root.join('app', 'models', '{**}', '{**}')]
     config.eager_load_paths += Dir[Rails.root.join('app', 'serializers', '{**}')]
 
-    # dump db as structure.sql instead of schema.rb
-    config.active_record.schema_format = :sql
-
     config.exceptions_app = self.routes
 
     config.cache_store = :redis_store, Rails.application.secrets.redis_url_cache, { expires_in: 24.hours }
