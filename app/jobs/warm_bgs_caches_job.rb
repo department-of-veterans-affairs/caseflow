@@ -65,7 +65,6 @@ class WarmBgsCachesJob < CaseflowJob
         Raven.capture_exception(error)
       end
     end
-    notify_slack("Updated cached attributes for #{veterans_updated} Veteran records")
   end
 
   def warm_veterans_for_hearings_on_day(date_to_cache)
@@ -80,10 +79,5 @@ class WarmBgsCachesJob < CaseflowJob
       end
     end
     veterans_updated
-  end
-
-  def notify_slack(msg)
-    slack = SlackService.new(url: ENV["SLACK_DISPATCH_ALERT_URL"])
-    slack.send_notification(msg, "WarmBgsCachesJob")
   end
 end

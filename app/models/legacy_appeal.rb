@@ -250,10 +250,18 @@ class LegacyAppeal < ApplicationRecord
     (disposition == "Allowed" && issues.select(&:remanded?).any?) ? "Remanded" : disposition
   end
 
-  delegate :representative_name, :representative_type,
-           :representative_address, :representatives,
-           :representative_to_hash, :representative_participant_id,
-           :vacols_representatives, to: :legacy_appeal_representative
+  delegate :representative_name,
+           :representative_type,
+           :representative_address,
+           :representatives,
+           :representative_to_hash,
+           :representative_participant_id,
+           :vacols_representatives,
+           to: :legacy_appeal_representative
+
+  def representative_email_address
+    power_of_attorney.bgs_representative_email_address
+  end
 
   def legacy_appeal_representative
     @legacy_appeal_representative ||= LegacyAppealRepresentative.new(

@@ -370,6 +370,35 @@ describe Veteran, :all_dbs do
     end
   end
 
+  context "#relationship_with_participant_id" do
+    let(:relationship_participant_id) { "2019111201" }
+    let(:other_participant_id) { "2019111202" }
+
+    before do
+      allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
+        [
+          {
+            first_name: "Ilse",
+            last_name: "Cerveny",
+            ptcpnt_id: other_participant_id
+          },
+          {
+            first_name: "Josephine",
+            last_name: "Clark",
+            ptcpnt_id: relationship_participant_id
+          }
+        ]
+      )
+    end
+
+    subject { veteran.relationship_with_participant_id(relationship_participant_id) }
+
+    it "returns the matching relationship" do
+      expect(subject).to_not be_nil
+      expect(subject.participant_id).to eq relationship_participant_id
+    end
+  end
+
   context "#periods_of_service" do
     subject { veteran.periods_of_service }
 

@@ -77,7 +77,7 @@ describe AsyncableJobsController, :postgres, type: :controller do
 
         expect(response.status).to eq 200
         expect(response.headers["Content-Type"]).to include "text/csv"
-        expect(response.body).to start_with("type,id,submitted,last_submitted,attempted_at,error,participant_id\n")
+        expect(response.body).to start_with("type,id,submitted,last_submitted,attempted,error,participant_id\n")
       end
 
       it "includes unpaginated jobs in CSV format" do
