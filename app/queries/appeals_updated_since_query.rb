@@ -18,12 +18,14 @@ class AppealsUpdatedSinceQuery
   end
 
   def build_query
-    number_of_placeholders = Array.new(association_names.size, since_date)
-    appeals_updated_since.distinct.where(associated_clauses.join(" OR "), *number_of_placeholders)
+    clauses = associated_clauses
+    clauses << "appeals.updated_at >= ?"
+    number_of_placeholders = Array.new(clauses.size, since_date)
+    appeals_joined_distinct.where(clauses.join(" OR "), *number_of_placeholders)
   end
 
-  def appeals_updated_since
-    Appeal.left_joins(association_names.map(&:to_sym)).where("appeals.updated_at >= ?", since_date)
+  def appeals_joined_distinct
+    Appeal.left_joins(association_names.map(&:to_sym)).distinct
   end
 
   def associated_clauses
