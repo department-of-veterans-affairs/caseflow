@@ -17,7 +17,7 @@ FactoryBot.define do
     end
 
     trait :with_judge_assign_task do
-      after(:create) do |appeal, evaluator|
+      after(:create) do |appeal, _evaluator|
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         judge = User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101)
         JudgeAssignTask.create!(appeal: appeal,
