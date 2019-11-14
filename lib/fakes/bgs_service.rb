@@ -156,7 +156,8 @@ class Fakes::BGSService
         birth_date: "Sun, 05 Sep 1943 00:00:00 -0500",
         first_name: "Bob",
         middle_name: "Billy",
-        last_name: "Vance"
+        last_name: "Vance",
+        email_address: "bob.vance@caseflow.gov"
       }
     elsif participant_id == "1129318238"
       {
@@ -164,14 +165,24 @@ class Fakes::BGSService
         first_name: "Cathy",
         middle_name: "",
         last_name: "Smith",
-        name_suffix: "Jr."
+        name_suffix: "Jr.",
+        email_address: "cathy.smith@caseflow.gov"
+      }
+    elsif participant_id == "600153863"
+      {
+        birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
+        fist_name: "Clarence",
+        middle_name: "",
+        last_name: "Darrow",
+        email_address: "clarence.darrow@caseflow.gov"
       }
     else
       {
         birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
         first_name: "Tom",
         middle_name: "Edward",
-        last_name: "Brady"
+        last_name: "Brady",
+        email_address: "tom.brady@caseflow.gov"
       }
     end
   end
