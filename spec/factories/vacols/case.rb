@@ -10,6 +10,7 @@ FactoryBot.define do
     association :folder, factory: :folder, ticknum: :bfkey
 
     bfregoff { "RO18" }
+    bfcurloc { "CASEFLOW" }
 
     trait :assigned do
       transient do
