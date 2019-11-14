@@ -227,7 +227,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         }
         patch :update, as: :json, params: params
         expect(response.status).to eq 200
-        expect(ama_hearing.advance_on_docket_motion.user).to eq user
+        ama_hearing.reload
         expect(ama_hearing.advance_on_docket_motion.person.id).to eq ama_hearing.appeal.appellant.id
         expect(ama_hearing.advance_on_docket_motion.reason).to eq AdvanceOnDocketMotion.reasons[:age]
         expect(ama_hearing.advance_on_docket_motion.granted).to eq true

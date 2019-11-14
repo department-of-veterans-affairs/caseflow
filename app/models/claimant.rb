@@ -24,7 +24,12 @@ class Claimant < ApplicationRecord
   def power_of_attorney
     @power_of_attorney ||= BgsPowerOfAttorney.new(claimant_participant_id: participant_id)
   end
-  delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
+
+  delegate :representative_name,
+           :representative_type,
+           :representative_address,
+           :representative_email_address,
+           to: :power_of_attorney
 
   def representative_participant_id
     power_of_attorney.participant_id
@@ -34,8 +39,22 @@ class Claimant < ApplicationRecord
     @person ||= Person.find_or_create_by(participant_id: participant_id)
   end
 
-  delegate :date_of_birth, :advanced_on_docket?, :name, :first_name, :last_name, :middle_name, to: :person
-  delegate :address, :address_line_1, :address_line_2, :address_line_3, :city, :country, :state, :zip,
+  delegate :date_of_birth,
+           :advanced_on_docket?,
+           :name,
+           :first_name,
+           :last_name,
+           :middle_name,
+           :email_address,
+           to: :person
+  delegate :address,
+           :address_line_1,
+           :address_line_2,
+           :address_line_3,
+           :city,
+           :country,
+           :state,
+           :zip,
            to: :bgs_address_service
 
   def fetch_bgs_record

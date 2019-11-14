@@ -37,6 +37,10 @@ class Person < ApplicationRecord
     FullName.new(first_name, "", last_name).formatted(:readable_short)
   end
 
+  def email_address
+    bgs_person[:email_address]
+  end
+
   def stale_attributes?
     return false unless bgs_person
 

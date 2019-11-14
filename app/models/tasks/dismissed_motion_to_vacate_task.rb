@@ -8,4 +8,8 @@ class DismissedMotionToVacateTask < DecidedMotionToVacateTask
   def self.org(_user)
     LitigationSupport.singleton
   end
+
+  def completion_contact
+    COPY::CANCEL_TASK_CONTACT_LIT_SUPPORT
+  end
 end

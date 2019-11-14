@@ -44,7 +44,7 @@ class Organization < ApplicationRecord
   end
 
   def add_user(user)
-    OrganizationsUser.existing_record(user, self) || OrganizationsUser.create(organization_id: id, user_id: user.id)
+    OrganizationsUser.find_or_create_by!(organization: self, user: user)
   end
 
   def admins

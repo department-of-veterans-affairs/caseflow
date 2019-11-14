@@ -1,22 +1,28 @@
 # frozen_string_literal: true
 
 class UserFinder
-  def initialize(css_id: nil, role: nil, organization: nil)
+  def initialize(name: nil, css_id: nil, role: nil, organization: nil)
     @css_id = css_id
     @role = role
     @organization = organization
+    @name = name
 
-    fail "Must pass css_id, role or organization" unless css_id || role || organization
+    fail "Must pass css_id, name, role or organization" unless css_id || name || role || organization
   end
 
   def users
     # filter out the empty arrays, then find the intersection
-    [users_matching_role, users_matching_css_id, users_matching_organization].reject(&:none?).inject(&:&)
+    [
+      users_matching_name,
+      users_matching_role,
+      users_matching_css_id,
+      users_matching_organization
+    ].reject(&:none?).inject(&:&)
   end
 
   private
 
-  attr_reader :css_id, :role, :organization
+  attr_reader :css_id, :name, :role, :organization
 
   def users_matching_role
     return [] if role.blank?
@@ -39,6 +45,18 @@ class UserFinder
     return [] if css_id.blank?
 
     User.where("css_id LIKE (?)", "%#{css_id.upcase}%")
+  end
+
+  def users_matching_name
+    return [] if name.blank?
+
+    name_segments = name.split(/\W/)
+
+    User.where(
+      "full_name ILIKE (?) OR full_name ILIKE (?)",
+      "%#{name_segments.join('%')}%",
+      "%#{name_segments.reverse.join('%')}%"
+    )
   end
 
   def users_matching_organization
