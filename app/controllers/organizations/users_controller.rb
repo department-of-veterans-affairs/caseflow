@@ -36,6 +36,11 @@ class Organizations::UsersController < OrganizationsController
   end
 
   def destroy
+    pp organization
+    pp organization.judge
+    pp user_to_modify
+    pp organization.is_a?(JudgeTeam)
+    pp organization.judge.eql?(user_to_modify)
     if organization.is_a?(JudgeTeam) && organization.judge.eql?(user_to_modify)
       fail Caseflow::Error::ActionForbiddenError, message: COPY::JUDGE_TEAM_REMOVE_JUDGE_ERROR
     end

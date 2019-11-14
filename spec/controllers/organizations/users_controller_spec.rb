@@ -234,7 +234,7 @@ describe Organizations::UsersController, :postgres, type: :controller do
     end
   end
 
-  describe "DELETE /organizations/:org_url/users/:user_id" do
+  fdescribe "DELETE /organizations/:org_url/users/:user_id" do
     subject { post(:destroy, params: params, as: :json) }
 
     let!(:params) { { organization_url: org.url, id: user.id } }
