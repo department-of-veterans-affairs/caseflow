@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Match any Appeal or its associations that have been updated since a baseline date.
+#
+
 class AppealsUpdatedSinceQuery
   def initialize(since_date:)
     @since_date = since_date
