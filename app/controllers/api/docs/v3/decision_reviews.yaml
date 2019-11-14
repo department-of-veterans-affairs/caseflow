@@ -984,6 +984,7 @@ paths:
                                       type: string
                   included:
                     type: array
+                    description: Includes data for the Veteran, RequestIssues, and DecisionIssues.  When applicable, it will include the Claimant as well.
                     items:
                       anyOf:
                         - type: object
