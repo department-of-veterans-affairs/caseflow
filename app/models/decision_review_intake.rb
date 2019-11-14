@@ -23,11 +23,6 @@ class DecisionReviewIntake < Intake
     raise
   end
 
-  def cancel_detail!
-    detail&.remove_claimants!
-    super
-  end
-
   def review_errors
     detail.errors.messages
   end

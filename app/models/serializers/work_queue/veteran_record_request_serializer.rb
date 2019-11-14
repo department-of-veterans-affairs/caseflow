@@ -8,7 +8,7 @@ class WorkQueue::VeteranRecordRequestSerializer
   end
 
   def self.claimant_name(object)
-    decision_review(object).claimants.try(:name)
+    decision_review(object).claimant.try(:name)
   end
 
   def self.claimant_relationship(object)

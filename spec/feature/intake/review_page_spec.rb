@@ -73,36 +73,28 @@ feature "Intake Review Page", :postgres do
     end
 
     context "when the user goes back and edits the claimant" do
-      scenario "the first claimant is deleted before adding a new claimant" do
-        start_higher_level_review(veteran)
-        visit "/intake"
+      let(:veteran_is_not_claimant) { false }
 
-        within_fieldset("Is the claimant someone other than the Veteran?") do
-          find("label", text: "No", match: :prefer_exact).click
+      describe "given an appeal" do
+        it "only saves one claimant" do
+          review = start_appeal(veteran, veteran_is_not_claimant: veteran_is_not_claimant).first
+
+          check_edited_claimant(review)
         end
+      end
 
-        # click on payee code dropdown
-        find(".Select-control").click
-        fill_in "What is the payee code for this claimant?", with: "00 - Veteran"
-        find("#cf-payee-code").send_keys :enter
+      [:higher_level_review, :supplemental_claim].each do |claim_review_type|
+        describe "given a #{claim_review_type}" do
+          it "only saves one claimant" do
+            review = start_claim_review(
+              claim_review_type,
+              veteran: veteran,
+              veteran_is_not_claimant: veteran_is_not_claimant
+            ).first
 
-        click_intake_continue
-
-        expect(page).to have_current_path("/intake/add_issues")
-
-        page.go_back
-        within_fieldset("Is the claimant someone other than the Veteran?") do
-          find("label", text: "Yes", match: :prefer_exact).click
+            check_edited_claimant(review)
+          end
         end
-        fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
-        click_intake_continue
-
-        expect(page).to have_current_path("/intake/add_issues")
-
-        hlr=HigherLevelReview.find_by(veteran_file_number: veteran.file_number)
-        expect(hlr.veteran_is_not_claimant).to be true
-        expect(hlr.claimants.count).to eq 1
-        expect(hlr.claimant.participant_id).to eq("5382910292")
       end
     end
 
@@ -339,6 +331,27 @@ def check_claimant_address_error(review, benefit_type)
   else
     expect(page).to have_content("Please update the claimant's address")
   end
+end
+
+def check_edited_claimant(review)
+  visit "/intake"
+  click_intake_continue
+
+  expect(page).to have_current_path("/intake/add_issues")
+  expect(review.claimant.participant_id).to eq(veteran.participant_id)
+
+  page.go_back
+  within_fieldset("Is the claimant someone other than the Veteran?") do
+    find("label", text: "Yes", match: :prefer_exact).click
+  end
+  find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
+  fill_in "What is the payee code for this claimant?", with: "10 - Spouse" unless review.is_a?(Appeal)
+  click_intake_continue
+
+  expect(page).to have_current_path("/intake/add_issues")
+  expect(review.reload.veteran_is_not_claimant).to be true
+  expect(review.claimants.count).to eq 1
+  expect(review.claimant.participant_id).to eq("5382910292")
 end
 
 def check_invalid_veteran_alert_on_review_page(form_type)

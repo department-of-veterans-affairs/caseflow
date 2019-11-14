@@ -162,9 +162,14 @@ class DecisionReview < ApplicationRecord
     @saving_review = true
   end
 
+  # Creates claimants for automatically generated decision reviews
   def create_claimants!(participant_id:, payee_code:)
-    claimants.delete_all
-    claimants.create_from_intake_data!(participant_id: participant_id, payee_code: payee_code)
+    remove_claimants!
+    claimants.create_without_intake!(participant_id: participant_id, payee_code: payee_code)
+  end
+
+  def remove_claimants!
+    claimants.destroy_all unless claimants.empty?
   end
 
   # Currently, we only support one claimant per AMA decision review
