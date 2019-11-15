@@ -1010,7 +1010,7 @@ paths:
                                       type: string
                                       enum: ["RequestIssue"]
                                     id:
-                                      type: integer
+                                      type: string
                           decisionIssues:
                             type: object
                             properties:
@@ -1023,18 +1023,76 @@ paths:
                                       type: string
                                       enum: ["DecisionIssue"]
                                     id:
-                                      type: integer
+                                      type: string
                   included:
                     type: array
+                    description: Includes data for the Veteran, RequestIssues, and DecisionIssues.  When applicable, it will include the Claimant as well.
                     items:
                       anyOf:
                         - type: object
                           properties:
                             type:
                               type: string
+                              enum: ["Veteran"]
+                            id:
+                              type: string
+                              description: matches fileNumber
+                            attributes:
+                              type: object
+                              properties:
+                                firstName:
+                                  type: string
+                                  nullable: true
+                                middleName:
+                                  type: string
+                                  nullable: true
+                                lastName:
+                                  type: string
+                                  nullable: true
+                                nameSuffix:
+                                  type: string
+                                  nullable: true
+                                fileNumber:
+                                  type: string
+                                ssn:
+                                  type: string
+                                  nullable: true
+                                participantId:
+                                  type: string
+                                  nullable: true
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                              enum: ["Claimant"]
+                            id:
+                              type: string
+                            attributes:
+                              type: object
+                              properties:
+                                firstName:
+                                  type: string
+                                  nullable: true
+                                middleName:
+                                  type: string
+                                  nullable: true
+                                lastName:
+                                  type: string
+                                  nullable: true
+                                payeeCode:
+                                  allOf:
+                                    - $ref: "#/components/schemas/PayeeCode"
+                                    - nullable: true
+                                relationshipType:
+                                  type: string
+                                  nullable: true
+                        - type: object
+                          properties:
+                            type:
+                              type: string
                               enum: ["DecisionIssue"]
                             id:
-                              type: integer
+                              type: string
                             attributes:
                               type: object
                               properties:
@@ -1058,7 +1116,7 @@ paths:
                               type: string
                               enum: ["RequestIssue"]
                             id:
-                              type: integer
+                              type: string
                             attributes:
                               type: object
                               properties:
