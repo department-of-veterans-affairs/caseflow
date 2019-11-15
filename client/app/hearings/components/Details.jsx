@@ -186,10 +186,12 @@ class HearingDetails extends React.Component {
           <h2>Hearing Details</h2>
           <DetailsOverview hearing={this.props.hearing} />
           <div className="cf-help-divider" />
-          <VirtualHearingLink
-            hearing={this.props.hearing}
-            virtualHearing={virtualHearingForm}
-          />
+          { success &&
+            <VirtualHearingLink
+              hearing={this.props.hearing}
+              virtualHearing={virtualHearingForm}
+            />
+          }
           <DetailsSections
             user={this.props.user}
             submit={this.submit}
