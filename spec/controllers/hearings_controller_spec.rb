@@ -155,8 +155,9 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           expect(VirtualHearing.first.representative_email).to eq("new_representative_email@caseflow.gov")
         end
 
-        it "kicks off CreateConferenceJob and updates virtual_hearing table" do
+        it "kicks off CreateConferenceJob and updates virtual_hearing table", :aggregate_failures do
           subject
+          expect(VirtualHearing.first.establishment.submitted?).to eq(true)
           expect(VirtualHearing.first.status).to eq("active")
           expect(VirtualHearing.first.conference_id).to_not eq(nil)
           expect(VirtualHearing.first.veteran_email_sent).to eq(true)
@@ -192,7 +193,9 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           create(
             :virtual_hearing,
             hearing: hearing,
-            representative_email_sent: true
+            representative_email_sent: true,
+            veteran_email_sent: true, 
+            judge_email_sent: true,
           )
         end
         let(:virtual_hearing_params) do
@@ -205,14 +208,9 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           expect(subject.status).to eq(200)
           virtual_hearing.reload
           expect(virtual_hearing.cancelled?).to eq(true)
-          expect(virtual_hearing.veteran_email_sent).to eq(true)
-          expect(virtual_hearing.judge_email_sent).to eq(true)
-        end
-
-        it "kicks off DeleteConferencesJob and updates virtual hearing table" do
-          subject
-          virtual_hearing.reload
-          expect(virtual_hearing.conference_deleted).to eq(true)
+          expect(virtual_hearing.veteran_email_sent).to eq(false)
+          expect(virtual_hearing.judge_email_sent).to eq(false)
+          expect(virtual_hearing.representative_email_sent).to eq(false)
         end
       end
     end

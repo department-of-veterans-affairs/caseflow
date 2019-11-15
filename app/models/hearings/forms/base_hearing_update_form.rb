@@ -29,10 +29,8 @@ class BaseHearingUpdateForm
 
   def start_async_job
     if hearing.virtual_hearing.status == "pending"
+      hearing.virtual_hearing.establishment.submit_for_processing!
       VirtualHearings::CreateConferenceJob.perform_now(hearing_id: hearing.id)
-    elsif hearing.virtual_hearing.status == "cancelled"
-      # DeleteConferencesJob should be kicked off in a scheduled time in the future
-      VirtualHearings::DeleteConferencesJob.perform_now
     end
   end
 
