@@ -92,9 +92,7 @@ class RequestIssue < ApplicationRecord
 
   class << self
     def rating
-      where.not(
-        contested_rating_issue_reference_id: nil
-      ).or(where.not(contested_rating_decision_reference_id: nil))
+      rating_issue.or(rating_decision).or(unidentified)
     end
 
     def rating_issue
