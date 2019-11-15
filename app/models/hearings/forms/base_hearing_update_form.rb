@@ -16,14 +16,7 @@ class BaseHearingUpdateForm
 
       if !virtual_hearing_attributes.blank?
         create_or_update_virtual_hearing
-
-        if hearing.virtual_hearing.status == "pending"
-          VirtualHearings::CreateConferenceJob.perform_now(hearing_id: hearing.id)
-        end
-        
-        if virtual_hearing_attributes[:status] == "cancelled"
-          VirtualHearings::DeleteConferencesJob.perform_now
-        end
+        start_async_job
       end
     end
   end
@@ -33,6 +26,15 @@ class BaseHearingUpdateForm
   def update_hearing; end
 
   private
+
+  def start_async_job
+    if hearing.virtual_hearing.status == "pending"
+      VirtualHearings::CreateConferenceJob.perform_now(hearing_id: hearing.id)
+    elsif hearing.virtual_hearing.status == "cancelled"
+      # DeleteConferencesJob should be kicked off in a scheduled time in the future
+      VirtualHearings::DeleteConferencesJob.perform_now
+    end
+  end
 
   def email_sent_flag(attr_key)
     status_changed = virtual_hearing_attributes.key?(:status)
