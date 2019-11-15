@@ -101,13 +101,13 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   def judge_already_assigned_on_date?(judge_id, date)
     @assigned_hearing_days.any? do |day|
-      day.judge_id == judge_id && (day.scheduled_for_as_date - date).abs <= DAYS_OF_SEPARATION
+      day.judge_id.to_s == judge_id.to_s && (day.scheduled_for_as_date - date).abs <= DAYS_OF_SEPARATION
     end
   end
 
   def judge_already_assigned_to_co?(judge_id)
     @assigned_hearing_days.any? do |day|
-      day.request_type == HearingDay::REQUEST_TYPES[:central] && day.judge_id == judge_id
+      day.request_type == HearingDay::REQUEST_TYPES[:central] && day.judge_id.to_s == judge_id.to_s
     end
   end
 
@@ -206,7 +206,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
     if assigned
       @judges.each do |css_id, judge|
-        if judge[:staff_info].sattyid == hearing_day.judge_id
+        if judge[:staff_info].sattyid == hearing_day.judge_id.to_s
           @judges[css_id][:non_availabilities] << hearing_day.scheduled_for_as_date
         end
       end
