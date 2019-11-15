@@ -156,6 +156,12 @@ FactoryBot.define do
           decision_review: appeal,
           payee_code: "00"
         )]
+
+        # create(:person,
+        #   participant_id: appeal.veteran.participant_id,
+        #   first_name: appeal.veteran.first_name,
+        #   last_name: appeal.veteran.last_name
+        # )
       end
     end
   end

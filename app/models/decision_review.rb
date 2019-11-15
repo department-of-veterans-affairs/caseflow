@@ -169,7 +169,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def remove_claimants!
-    claimants.destroy_all unless claimants.empty?
+    claimants.delete_all
   end
 
   # Currently AMA only supports one claimant per decision review

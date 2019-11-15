@@ -16,6 +16,11 @@ FactoryBot.define do
       # ensure that an associated person record is created in our DB
       # & date_of_birth is populated
       claimant.person&.date_of_birth
+      
+      if claimant.decision_review&.veteran&.participant_id == claimant.participant_id
+        veteran = claimant.decision_review.veteran
+        claimant.person.update!(first_name: veteran.first_name, last_name: veteran.last_name)
+      end
     end
   end
 end

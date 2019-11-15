@@ -448,7 +448,7 @@ describe Appeal, :all_dbs do
 
     context "#power_of_attorney" do
       it "returns the first claimant's power of attorney" do
-        expect(appeal.power_of_attorney.representative_name).to eq("PARALYZED VETERANS OF AMERICA, INC.")
+        expect(appeal.power_of_attorney.representative_name).to eq("AMERICAN LEGION")
       end
     end
 
