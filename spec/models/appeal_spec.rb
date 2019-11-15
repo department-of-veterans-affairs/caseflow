@@ -651,8 +651,8 @@ describe Appeal, :all_dbs do
 
       before do
         create(:root_task, :in_progress, appeal: appeal)
-        create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 20)
-        create(:timed_hold_task, :in_progress, appeal: appeal, updated_at: today + 20)
+        create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 21)
+        create(:timed_hold_task, :in_progress, appeal: appeal, updated_at: today + 21)
       end
 
       describe "when there are no other tasks" do
@@ -662,11 +662,11 @@ describe Appeal, :all_dbs do
       end
 
       describe "when there is an actionable task" do
-        let(:user) { create(:user) }
-        let!(:task) { create(:ama_attorney_task, :in_progress, assigned_to: user, appeal: appeal) }
+        let(:assignee) { create(:user) }
+        let!(:task) { create(:ama_attorney_task, :in_progress, assigned_to: assignee, appeal: appeal) }
 
         it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
-          expect(appeal.assigned_to_location).to eq(user.css_id)
+          expect(appeal.assigned_to_location).to eq(assignee.css_id)
         end
       end
     end
@@ -689,7 +689,7 @@ describe Appeal, :all_dbs do
         on_hold_root = create(:root_task, appeal: appeal_on_hold, updated_at: today - 1)
         create(:generic_task, :on_hold, appeal: appeal_on_hold, parent: on_hold_root, updated_at: today + 1)
 
-        # TrackVeteranTask and TimedHoldTask are the most recently updated but should be ignored in the determination
+        # These tasks are the most recently updated but should be ignored in the determination
         create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 20)
         create(:timed_hold_task, :in_progress, appeal: appeal, updated_at: today + 20)
       end
