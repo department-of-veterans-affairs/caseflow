@@ -239,8 +239,8 @@ describe Organizations::UsersController, :postgres, type: :controller do
 
     let!(:params) { { organization_url: org.url, id: user.id } }
 
-    let(:user) { create(:user) }
-    let!(:org) { JudgeTeam.create_for_judge(user) }
+    let(:org) { create(:judge_team, :has_judge_team_lead_as_admin) }
+    let(:user) { org.judge }
     let(:admin) do
       create(:user).tap do |u|
         OrganizationsUser.make_user_admin(u, org)
@@ -253,8 +253,6 @@ describe Organizations::UsersController, :postgres, type: :controller do
 
     context "when user is the judge in the organization" do
       it "returns an error" do
-        expect(org.judge).to eq user
-
         subject
 
         expect(response.status).to eq 403
