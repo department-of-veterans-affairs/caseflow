@@ -80,9 +80,10 @@ class Appeal < DecisionReview
   def assigned_to_location
     return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
-    recently_assigned=self.class.recently_assigned(
+    recently_assigned = Appeal.recently_assigned(
       tasks.active.visible_in_queue_table_view,
-      tasks.on_hold.visible_in_queue_table_view)
+      tasks.on_hold.visible_in_queue_table_view
+    )
     return recently_assigned.assigned_to_label if recently_assigned
 
     # this condition is no longer needed since we only want active or on hold tasks
@@ -91,8 +92,8 @@ class Appeal < DecisionReview
     fetch_status.to_s.titleize
   end
 
-  def self.recently_assigned(*tasksArr)
-    tasksArr.find(&:any?)&.most_recently_assigned
+  def self.recently_assigned(*tasks_arrays)
+    tasks_arrays.find(&:any?)&.most_recently_assigned
   end
 
   def attorney_case_reviews
