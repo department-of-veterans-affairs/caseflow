@@ -116,7 +116,7 @@ Review.propTypes = {
   informalConferenceError: PropTypes.string,
   sameOffice: PropTypes.string,
   sameOfficeError: PropTypes.string,
-  legacyOptInApproved: PropTypes.bool,
+  legacyOptInApproved: PropTypes.string,
   legacyOptInApprovedError: PropTypes.string,
   reviewIntakeError: PropTypes.string,
   veteranValid: PropTypes.bool,
