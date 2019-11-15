@@ -617,5 +617,5 @@
   "VIRTUAL_HEARING_MODAL_INTRO": "Calendar invites will be emailed to the Veteran, POA/Representative, and VLJ.",
   "VIRTUAL_HEARING_MODAL_CONFIRMATION": "Changes to the Veteran and POA/Representative emails will be used to send calendar invites and reminders <strong>for this hearing only</strong>.",
 
-  "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team"
+  "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team."
 }
