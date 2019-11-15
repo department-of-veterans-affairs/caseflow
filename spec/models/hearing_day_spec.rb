@@ -73,11 +73,15 @@ describe HearingDay, :all_dbs do
     end
   end
 
-  context "update hearing" do
+  context "update hearing day" do
     let!(:hearing_day) do
-      create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video], regional_office: "RO18")
+      create(
+        :hearing_day,
+        request_type: HearingDay::REQUEST_TYPES[:video],
+        regional_office: "RO18"
+      )
     end
-    let(:hearing_hash) do
+    let(:hearing_day_hash) do
       {
         request_type: HearingDay::REQUEST_TYPES[:video],
         scheduled_for: Date.new(2019, 12, 7),
@@ -87,9 +91,9 @@ describe HearingDay, :all_dbs do
       }
     end
 
-    subject { hearing_day.update!(hearing_hash) }
+    subject { hearing_day.update!(hearing_day_hash) }
 
-    it "updates attributes" do
+    it "updates attributes", :aggregate_failures do
       subject
 
       updated_hearing_day = HearingDay.find(hearing_day.id).reload
@@ -110,7 +114,7 @@ describe HearingDay, :all_dbs do
         RequestStore.store[:current_user] = create(:user, vacols_uniq_id: create(:staff).slogid)
       end
 
-      it "updates children hearings with a new room" do
+      it "updates children hearings with a new room", :aggregate_failures do
         subject
 
         updated_vacols_child_hearing = vacols_child_hearing.reload
@@ -129,7 +133,7 @@ describe HearingDay, :all_dbs do
       context "both room and judge are changed" do
         let!(:judge) { create(:user) }
         let!(:judge_role) { create(:staff, :judge_role, sdomainid: judge.css_id) }
-        let!(:hearing_hash) do
+        let!(:hearing_day_hash) do
           {
             judge_id: judge.id,
             request_type: HearingDay::REQUEST_TYPES[:video],
@@ -140,7 +144,7 @@ describe HearingDay, :all_dbs do
           }
         end
 
-        it "updates children hearings with a new room and judge" do
+        it "updates children hearings with a new room and judge", :aggregate_failures do
           subject
 
           updated_vacols_child_hearing = vacols_child_hearing.reload
