@@ -140,13 +140,9 @@ class HearingDay < ApplicationRecord
   end
 
   class << self
-    def create_hearing_day(hearing_hash)
-      create(hearing_hash).to_hash
-    end
-
     def create_schedule(scheduled_hearings)
       scheduled_hearings.each do |hearing_hash|
-        HearingDay.create_hearing_day(hearing_hash)
+        HearingDay.create(hearing_hash)
       end
     end
 
