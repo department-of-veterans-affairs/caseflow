@@ -102,12 +102,22 @@ export default class OrganizationUsers extends React.PureComponent {
           [user.id]: false }
       });
     }, (error) => {
+      let errorDetail = error.message;
+
+      if (error.response.text) {
+        const errors = JSON.parse(error.response.text).errors;
+
+        if (errors[0] && errors[0].detail) {
+          errorDetail = errors[0].detail;
+        }
+      }
+
       this.setState({
         removingUser: { ...this.state.removingUser,
           [user.id]: false },
         error: {
           title: COPY.USER_MANAGEMENT_REMOVE_USER_ERROR_TITLE,
-          body: error.message
+          body: errorDetail
         }
       });
     });
