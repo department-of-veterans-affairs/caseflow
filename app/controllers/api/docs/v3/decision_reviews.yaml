@@ -250,32 +250,78 @@ paths:
                   type: array
                   items:
                     type: object
+                    description: >-
+                      A HigherLevelReview's ContestableIssues enumerate what is
+                      being contested by the HigherLevelReview.
+                      Use the /contestable_issues endpoint to pull a list of
+                      a veteran's contestable issues to choose from.
+                      Additionally, one can add a LegacyAppealIssues array to a
+                      ContestableIssue object to associate a LegacyAppealIssue
+                      to a ContestableIssue --pulling the LegacyAppealIssue out
+                      of the legacy appeal system and into AMA. See the
+                      legacyAppealIssues array below for more details.
+                      Note: Not all legacy issues are eligible for opt-in; see
+                      https://www.benefits.va.gov/benefits/docs/apppeals_SOC-SSOC_Opt-in.pdf
+                      for details.
+                      When using a ContestableIssue obtained from the
+                      /contestable_issues endpoint in a HigherLevelReview, only
+                      the ID fields need to be included. Optionally, include
+                      the notes field to add aditional information.
+
                     required:
                       - type
                       - attributes
                     properties:
                       type:
                         type: string
-                        enum: [RequestIssue]
+                        enum: [ContestableIssue]
                       attributes:
                         type: object
-                        properties: # none are required
+                        properties:
                           notes:
                             type: string
+                            nullable: true
                           decisionIssueId:
                             type: integer
+                            nullable: true
                           ratingIssueId:
                             type: string
-                          legacyAppealId:
+                            nullable: true
+                          ratingDecisionIssueId:
                             type: string
-                          legacyAppealIssueId:
-                            type: integer
-                          category:
-                            $ref: "#/components/schemas/NonratingIssueCategory"
-                          decisionDate:
-                            type: string
-                          decisionText:
-                            type: string
+                            nullable: true
+                          # category: # commented out for MVP
+                          #   allOf:
+                          #     - $ref: "#/components/schemas/NonratingIssueCategory"
+                          #     - nullable: true
+                          # decisionDate: # disable for MVP
+                          #   type: string
+                          #   nullable: true
+                          # decisionText:
+                          #   type: string
+                          #   nullable: true
+                          legacyAppealIssues:
+                            nullable: true
+                            type: array
+                            description: >-
+                              OPTIONAL.
+                              LegacyAppealIssues that you are associating with this contestable
+                              issue. To associate LegacyAppealIssues, legacyOptInApproved must
+                              be true. At this time, only one LegacyAppealIssue can be associated
+                              with a contestable issue (i.e., this array can have 0 or 1 members
+                              (if you include this field at all)), also, a LegacyAppealIssue
+                              should only be included once in a decisionReview.
+
+                            items:
+                              type: object
+                              required:
+                                - legacyAppealId
+                                - legacyAppealIssueId
+                              properties:
+                                legacyAppealId:
+                                  type: string
+                                legacyAppealIssueId:
+                                  type: string
             examples:
               compensation:
                 value:
