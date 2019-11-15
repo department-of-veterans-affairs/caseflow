@@ -108,11 +108,14 @@ export class DailyDocketContainer extends React.Component {
       hold_open: hearing.holdOpen
     } : {};
 
+    const virtualHearing = this.formatVirtualHearing(hearing);
+
     return _.omitBy({
       disposition: hearing.disposition,
       transcript_requested: hearing.transcriptRequested,
       notes: hearing.notes,
       hearing_location_attributes: hearing.location ? ApiUtil.convertToSnakeCase(hearing.location) : null,
+      virtual_hearing_attributes: virtualHearing ? ApiUtil.convertToSnakeCase(virtualHearing) : null,
       scheduled_time_string: hearing.scheduledTimeString,
       prepped: hearing.prepped,
       ...legacyValues,
@@ -130,6 +133,18 @@ export class DailyDocketContainer extends React.Component {
       granted: hearing.advanceOnDocketMotion.granted,
       person_id: hearing.claimantId || hearing.advanceOnDocketMotion.personId,
       user_id: hearing.advanceOnDocketMotion.userId
+    }, _.isNil);
+  }
+
+  formatVirtualHearing = (hearing) => {
+    if (!hearing.isVirtual) {
+      return {};
+    }
+
+    return _.omitBy({
+      veteran_email: hearing.virtualHearing.veteranEmail,
+      representative_email: hearing.virtualHearing.representativeEmail,
+      status: hearing.virtualHearing.status
     }, _.isNil);
   }
 

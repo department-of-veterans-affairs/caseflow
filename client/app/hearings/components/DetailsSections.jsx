@@ -100,7 +100,7 @@ DetailsSections.propTypes = {
     virtualHearing: PropTypes.shape({
       veteranEmail: PropTypes.string,
       representativeEmail: PropTypes.string,
-      active: PropTypes.bool
+      status: PropTypes.string
     })
   }),
   disabled: PropTypes.bool,
