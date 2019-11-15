@@ -253,6 +253,8 @@ describe Organizations::UsersController, :postgres, type: :controller do
 
     context "when user is the judge in the organization" do
       it "returns an error" do
+        expect(org.judge).to eq user
+
         subject
 
         expect(response.status).to eq 403
