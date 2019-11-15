@@ -226,7 +226,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         expect(response.status).to eq 200
       end
 
-      it "should return a 200 and update aod if provided", :aggregate_failures do
+      it "should return a 200 and update aod if provided", :aggregate_failures, skip: "flake AOD present" do
         params = {
           id: ama_hearing.external_id,
           advance_on_docket_motion: {
