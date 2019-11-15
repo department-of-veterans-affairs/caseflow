@@ -137,7 +137,7 @@ class Task < ApplicationRecord
       return parent.assigned_to_id if parent && parent.assigned_to_type == User.name
     end
 
-    def most_recently_assigned
+    def most_recently_updated
       order(:updated_at).last
     end
 
