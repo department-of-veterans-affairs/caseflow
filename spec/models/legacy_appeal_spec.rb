@@ -2546,7 +2546,7 @@ describe LegacyAppeal, :all_dbs do
           let!(:task) { create(:ama_attorney_task, :in_progress, assigned_to: task_assignee, appeal: appeal) }
 
           it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
-            expect(appeal.assigned_to_location).to eq(assignee.css_id)
+            expect(appeal.assigned_to_location).to eq(task_assignee.css_id)
           end
         end
       end
