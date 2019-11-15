@@ -58,6 +58,9 @@ detectors:
       - RedistributedCase#legacy_appeal_relevant_tasks
       - LegacyAppeal#cancel_open_caseflow_tasks!
       - MonthlyMetricsReportJob#build_report
+      - RequestIssue#find_or_create_decision_issue_from_rating_issue
+      - RequestIssue#special_issues
+      - RequestIssueReporter#as_csv
       - SyncReviewsJob
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
