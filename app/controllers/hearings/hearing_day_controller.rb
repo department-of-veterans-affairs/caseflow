@@ -52,14 +52,13 @@ class Hearings::HearingDayController < HearingsApplicationController
   def create
     return no_available_rooms unless hearing_day_rooms.rooms_are_available?
 
-    hearing_day = HearingDay.create_hearing_day(
+    hearing_day = HearingDay.create(
       create_params.merge(room: hearing_day_rooms.available_room)
     )
-    return invalid_record_error(hearing_day) if hearing_day.nil?
 
-    render json: {
-      hearing: hearing_day
-    }, status: :created
+    render json: { hearing: hearing_day.to_hash }, status: :created
+  rescue ActiveRecord::RecordInvalid => error
+    invalid_record_error(error)
   end
 
   def update
@@ -154,9 +153,12 @@ class Hearings::HearingDayController < HearingsApplicationController
       .merge(created_by: current_user, updated_by: current_user)
   end
 
-  def invalid_record_error(hearing_day)
+  def invalid_record_error(error)
     render json: {
-      "errors": ["title": COPY::INVALID_RECORD_ERROR_TITLE, "detail": hearing_day.errors.full_messages.join(" ,")]
+      "errors": [
+        "title": error.class.to_s,
+        "detail": error.message
+      ]
     }, status: :bad_request
   end
 
