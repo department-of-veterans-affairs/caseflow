@@ -7,6 +7,7 @@ class IhpTasksFactory
 
   def create_ihp_tasks!
     appeal = @parent.appeal
+
     appeal.representatives.select { |org| org.should_write_ihp?(appeal) }.map do |vso_organization|
       # For some RAMP appeals, this method may run twice.
       existing_task = InformalHearingPresentationTask.find_by(

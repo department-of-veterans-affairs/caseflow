@@ -85,7 +85,7 @@ class HearingTask < Task
   end
 
   def ready_for_completion?
-    return false if !appeal.tasks.open.where(type: HearingTask.name).exists?
+    return false if appeal.tasks.open.where(type: HearingTask.name).any?
 
     if appeal_in_caseflow_location?
       true

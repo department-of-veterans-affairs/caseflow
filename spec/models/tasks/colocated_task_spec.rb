@@ -36,7 +36,7 @@ describe ColocatedTask, :all_dbs do
         let(:params_list) { [task_params_1] }
 
         it "creates co-located tasks and updates the VACOLS location" do
-          expect(vacols_case.bfcurloc).to be_nil
+          expect(vacols_case.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
           expect(ColocatedTask.count).to eq(0)
           expect(AojColocatedTask.count).to eq(0)
 
