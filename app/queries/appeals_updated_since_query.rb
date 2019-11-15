@@ -37,5 +37,4 @@ class AppealsUpdatedSinceQuery
       "#{association.table_name}.updated_at >= ?"
     end
   end
-
 end
