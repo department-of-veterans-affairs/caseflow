@@ -194,7 +194,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
             :virtual_hearing,
             hearing: hearing,
             representative_email_sent: true,
-            veteran_email_sent: true, 
+            veteran_email_sent: true
             judge_email_sent: true,
           )
         end
