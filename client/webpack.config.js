@@ -7,9 +7,10 @@ const devBuild = process.env.NODE_ENV !== 'production'; // eslint-disable-line n
 const config = {
   mode: devBuild ? 'development' : 'production',
   entry: [
-    'es5-shim/es5-shim',
-    'es5-shim/es5-sham',
-    'babel-polyfill',
+    // 'es5-shim/es5-shim',
+    // 'es5-shim/es5-sham',
+    // 'babel-polyfill',
+    '@babel/polyfill',
     './app/index'
   ],
   output: {
@@ -38,9 +39,10 @@ const config = {
       },
       {
         test: /\.jsx?$/,
-        exclude: new RegExp(
-          'node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)'
-        ),
+        exclude: /node_modules/,
+        // exclude: new RegExp(
+        //   'node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)'
+        // ),
         use: {
           loader: 'babel-loader'
         }
