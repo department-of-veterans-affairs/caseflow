@@ -741,7 +741,7 @@ class LegacyAppeal < ApplicationRecord
   def assigned_to_location
     return location_code unless location_code_is_caseflow?
 
-    recently_updated_task = Appeal.any_recently_updated(active_tasks, on_hold_tasks)
+    recently_updated_task = Appeal.any_recently_updated(tasks.active, tasks.on_hold)
     return recently_updated_task.assigned_to_label if recently_updated_task
 
     # shouldn't happen because if all tasks are closed the task returns to the assigning attorney
@@ -816,14 +816,6 @@ class LegacyAppeal < ApplicationRecord
 
   def bgs_address_service
     @bgs_address_service ||= BgsAddressService.new(participant_id: representative_participant_id)
-  end
-
-  def active_tasks
-    tasks.active
-  end
-
-  def on_hold_tasks
-    tasks.on_hold
   end
 
   def location_code_is_caseflow?
