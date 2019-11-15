@@ -2541,9 +2541,9 @@ describe LegacyAppeal, :all_dbs do
           end
         end
 
-        describe "when there is an actionable task" do
-          let(:assignee) { create(:user) }
-          let!(:task) { create(:ama_attorney_task, :in_progress, assigned_to: assignee, appeal: appeal) }
+        describe "when there is an assigned actionable task" do
+          let(:task_assignee) { create(:user) }
+          let!(:task) { create(:ama_attorney_task, :in_progress, assigned_to: task_assignee, appeal: appeal) }
 
           it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
             expect(appeal.assigned_to_location).to eq(assignee.css_id)
