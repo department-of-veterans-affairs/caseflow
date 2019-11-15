@@ -229,7 +229,7 @@ class HearingSchedule::AssignJudgesToHearingDays
         @judges[css_id][:non_availabilities] ||= Set.new
         @judges[css_id][:non_availabilities] +=
           (TB_ADDITIONAL_NA_DAYS.business_days.before(tb_record[:start_date])..TB_ADDITIONAL_NA_DAYS.business_days
-            .after(tb_record[:end_date])).reject { |date| weekend?(date) }
+            .after(tb_record[:end_date])).reject { |date| date.on_weekend? }
       end
     end
   end
