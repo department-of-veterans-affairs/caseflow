@@ -740,8 +740,9 @@ class LegacyAppeal < ApplicationRecord
 
   def assigned_to_location
     return location_code unless location_code_is_caseflow?
-    return active_tasks.most_recently_assigned.assigned_to_label if active_tasks.any?
-    return on_hold_tasks.most_recently_assigned.assigned_to_label if on_hold_tasks.any?
+
+    recently_assigned=Appeal.recently_assigned(active_tasks, on_hold_tasks)
+    return recently_assigned.assigned_to_label if recently_assigned
 
     # shouldn't happen because if all tasks are closed the task returns to the assigning attorney
     if tasks.any?
@@ -818,11 +819,11 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def active_tasks
-    tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
+    tasks.active
   end
 
   def on_hold_tasks
-    tasks.where(status: Constants.TASK_STATUSES.on_hold)
+    tasks.on_hold
   end
 
   def location_code_is_caseflow?
