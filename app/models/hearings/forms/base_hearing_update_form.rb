@@ -16,7 +16,7 @@ class BaseHearingUpdateForm
 
       if !virtual_hearing_attributes.blank?
         create_or_update_virtual_hearing
-        # TODO: Start the job to create the Pexip conference here?
+        start_async_job
       end
     end
   end
@@ -26,6 +26,13 @@ class BaseHearingUpdateForm
   def update_hearing; end
 
   private
+
+  def start_async_job
+    if hearing.virtual_hearing.status == "pending"
+      hearing.virtual_hearing.establishment.submit_for_processing!
+      VirtualHearings::CreateConferenceJob.perform_now(hearing_id: hearing.id)
+    end
+  end
 
   def email_sent_flag(attr_key)
     status_changed = virtual_hearing_attributes.key?(:status)
