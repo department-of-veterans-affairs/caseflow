@@ -741,7 +741,10 @@ class LegacyAppeal < ApplicationRecord
   def assigned_to_location
     return location_code unless location_code_is_caseflow?
 
-    recently_updated_task = Appeal.any_recently_updated(tasks.active.actionable, tasks.on_hold.actionable)
+    recently_updated_task = Appeal.any_recently_updated(
+      tasks.active.actionable.visible_in_queue_table_view,
+      tasks.on_hold.actionable.visible_in_queue_table_view
+    )
     return recently_updated_task.assigned_to_label if recently_updated_task
 
     # shouldn't happen because if all tasks are closed the task returns to the assigning attorney
