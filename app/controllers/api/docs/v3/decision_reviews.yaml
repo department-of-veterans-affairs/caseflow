@@ -1211,7 +1211,7 @@ paths:
                 properties:
                   errors:
                     $ref: "#/components/schemas/Errors"
-  /issues:
+  /contestable_issues:
     get:
       tags:
         - Issues
