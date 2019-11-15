@@ -81,13 +81,14 @@ class Appeal < DecisionReview
     return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
     recently_updated_task = Appeal.any_recently_updated(
-      tasks.active.visible_in_queue_table_view,
-      tasks.on_hold.visible_in_queue_table_view
+      tasks.active.actionable.visible_in_queue_table_view,
+      tasks.on_hold.actionable.visible_in_queue_table_view
     )
     return recently_updated_task.assigned_to_label if recently_updated_task
 
+    # Should following 2 lines be removed?
     # this condition is no longer needed since we only want active or on hold tasks
-    return tasks.most_recently_updated&.assigned_to_label if tasks.any?
+    return tasks.actionable.most_recently_updated&.assigned_to_label if tasks.any?
 
     fetch_status.to_s.titleize
   end
