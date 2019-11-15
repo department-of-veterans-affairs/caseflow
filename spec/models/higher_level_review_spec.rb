@@ -141,6 +141,7 @@ describe HigherLevelReview, :postgres do
       higher_level_review.save!
       higher_level_review.create_claimants!(participant_id: "12345", payee_code: "00")
       higher_level_review.save!
+      higher_level_review.reload
       expect(subject).to eql("12345")
     end
 
@@ -164,6 +165,7 @@ describe HigherLevelReview, :postgres do
       higher_level_review.save!
       higher_level_review.create_claimants!(participant_id: "12345", payee_code: "10")
       higher_level_review.save!
+      higher_level_review.reload
       expect(subject).to eql("10")
     end
 
