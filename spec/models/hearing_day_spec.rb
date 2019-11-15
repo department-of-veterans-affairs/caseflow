@@ -5,12 +5,6 @@ require "rails_helper"
 
 describe HearingDay, :all_dbs do
   context "#create" do
-    let(:hearing) do
-      RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
-      Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
-      HearingDay.create_hearing_day(hearing_hash)
-    end
-
     let(:test_hearing_date_vacols) do
       current_date = Time.zone.today
       Time.use_zone("Eastern Time (US & Canada)") do
@@ -22,56 +16,59 @@ describe HearingDay, :all_dbs do
       Time.zone.local(2019, 5, 15).to_date
     end
 
-    context "add a hearing with only required attributes - VACOLS" do
-      let(:hearing_hash) do
-        {
+    context "add a hearing_day with only required attributes - VACOLS" do
+      let(:hearing_day) do
+        build(
+          :hearing_day,
           request_type: HearingDay::REQUEST_TYPES[:central],
           scheduled_for: test_hearing_date_vacols,
           room: "1"
-        }
+        )
       end
 
-      it "creates hearing with required attributes" do
-        expect(hearing[:readable_request_type]).to eq Hearing::HEARING_TYPES[:C]
-        expect(hearing[:scheduled_for].strftime("%Y-%m-%d"))
+      it "creates hearing_day with required attributes", :aggregate_failures do
+        expect(hearing_day.request_type).to eq "C"
+        expect(hearing_day.scheduled_for.strftime("%Y-%m-%d"))
           .to eq test_hearing_date_vacols.strftime("%Y-%m-%d")
-        expect(hearing[:room]).to eq "1"
+        expect(hearing_day.room).to eq "1"
       end
     end
 
-    context "add a hearing with only required attributes - Caseflow" do
-      let(:hearing_hash) do
-        {
+    context "add a hearing_day with only required attributes - Caseflow" do
+      let(:hearing_day) do
+        build(
+          :hearing_day,
           request_type: HearingDay::REQUEST_TYPES[:central],
           scheduled_for: test_hearing_date_caseflow,
           room: "1"
-        }
+        )
       end
 
-      it "creates hearing with required attributes" do
-        expect(hearing[:readable_request_type]).to eq Hearing::HEARING_TYPES[:C]
-        expect(hearing[:scheduled_for].strftime("%Y-%m-%d"))
+      it "creates hearing_day with required attributes", :aggregate_failures do
+        expect(hearing_day.request_type).to eq "C"
+        expect(hearing_day.scheduled_for.strftime("%Y-%m-%d"))
           .to eq test_hearing_date_caseflow.strftime("%Y-%m-%d")
-        expect(hearing[:room]).to eq "1"
+        expect(hearing_day.room).to eq "1"
       end
     end
 
-    context "add a video hearing - Caseflow" do
-      let(:hearing_hash) do
-        {
-          request_type: HearingDay::REQUEST_TYPES[:central],
+    context "add a video hearing day - Caseflow" do
+      let(:hearing_day) do
+        build(
+          :hearing_day,
+          request_type: HearingDay::REQUEST_TYPES[:video],
           scheduled_for: test_hearing_date_caseflow,
           regional_office: "RO89",
           room: "5"
-        }
+        )
       end
 
-      it "creates a video hearing" do
-        expect(hearing[:readable_request_type]).to eq Hearing::HEARING_TYPES[:C]
-        expect(hearing[:scheduled_for].strftime("%Y-%m-%d %H:%M:%S"))
+      it "creates a video hearing day", :aggregate_failures do
+        expect(hearing_day.request_type).to eq "V"
+        expect(hearing_day.scheduled_for.strftime("%Y-%m-%d %H:%M:%S"))
           .to eq test_hearing_date_caseflow.strftime("%Y-%m-%d %H:%M:%S")
-        expect(hearing[:regional_office]).to eq "RO89"
-        expect(hearing[:room]).to eq "5"
+        expect(hearing_day.regional_office).to eq "RO89"
+        expect(hearing_day.room).to eq "5"
       end
     end
   end
