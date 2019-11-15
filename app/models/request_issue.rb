@@ -91,6 +91,7 @@ class RequestIssue < ApplicationRecord
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click *Edit in Caseflow* button to fix"
 
   class << self
+    # the umbrella term "rating" here is generalized to the type of EP it refers to.
     def rating
       rating_issue.or(rating_decision).or(unidentified)
     end
