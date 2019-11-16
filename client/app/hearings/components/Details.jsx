@@ -89,7 +89,7 @@ class HearingDetails extends React.Component {
       this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, {
         veteranEmail: virtualHearing.veteranEmail,
         representativeEmail: virtualHearing.representativeEmail,
-        active: virtualHearing.active
+        status: virtualHearing.status
       });
     }
   }
@@ -110,7 +110,7 @@ class HearingDetails extends React.Component {
   }
 
   submit = () => {
-    const { hearing: { externalId }, hearingDetailsForm, transcriptionDetailsForm } = this.props;
+    const { hearing: { externalId }, hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = this.props;
     const { updated } = this.state;
 
     if (!updated) {
@@ -122,6 +122,9 @@ class HearingDetails extends React.Component {
         ...hearingDetailsForm,
         transcription_attributes: {
           ...transcriptionDetailsForm
+        },
+        virtual_hearing_attributes: {
+          ...virtualHearingForm
         }
       }
     };
