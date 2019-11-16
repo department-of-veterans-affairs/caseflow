@@ -1230,6 +1230,10 @@ paths:
             type: string
             format: date
       summary: Returns all contestable issues for a specific veteran.
+      description: >-
+        Returns all issues a Veteran could contest in a Decision Review
+        as of the `receiptDate`.  Associate these resutls when creating
+        new Decision Reviews.
       responses:
         '200':
           description: JSON:API response returning all contestable issues for a specific veteran.
@@ -1378,6 +1382,11 @@ paths:
             type: string
             format: date
       summary: Returns all legacy appeal issues for a specific veteran.
+      description: >-
+        Returns all the legacy appeals for a veteran that could be added to
+        a Decision Review as of the `receiptDate`.  The `LegacyAppealIssue`
+        would be added to the `legacyAppealIssues` attribute of the
+        `contestableIssue` to which this legacy appeal will be associated.
       responses:
         '200':
           description: JSON:API response returning all legacy appeal issues for a specific veteran.
