@@ -5,6 +5,7 @@
 # decisions that they want to contest. These are intaken into Caseflow as request issues.  Request issues can also
 # be generated when a decision gets remanded or vacated.
 
+# rubocop:disable Metrics/ClassLength
 class RequestIssue < ApplicationRecord
   include Asyncable
   include HasBusinessLine
@@ -90,10 +91,17 @@ class RequestIssue < ApplicationRecord
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click *Edit in Caseflow* button to fix"
 
   class << self
+    # the umbrella term "rating" here is generalized to the type of EP it refers to.
     def rating
-      where.not(
-        contested_rating_issue_reference_id: nil
-      ).or(where(is_unidentified: true)).or(where.not(contested_rating_decision_reference_id: nil))
+      rating_issue.or(rating_decision).or(unidentified)
+    end
+
+    def rating_issue
+      where.not(contested_rating_issue_reference_id: nil)
+    end
+
+    def rating_decision
+      where.not(contested_rating_decision_reference_id: nil)
     end
 
     def nonrating
@@ -102,6 +110,10 @@ class RequestIssue < ApplicationRecord
         contested_rating_decision_reference_id: nil,
         is_unidentified: [nil, false]
       ).where.not(nonrating_issue_category: nil)
+    end
+
+    def decision_issue
+      where.not(contested_decision_issue_id: nil)
     end
 
     def eligible
@@ -152,6 +164,7 @@ class RequestIssue < ApplicationRecord
 
     private
 
+    # rubocop:disable Metrics/MethodLength
     def attributes_from_intake_data(data)
       contested_issue_present = attributes_look_like_contested_issue?(data)
 
@@ -179,6 +192,7 @@ class RequestIssue < ApplicationRecord
         correction_type: data[:correction_type]
       }
     end
+    # rubocop:enable Metrics/MethodLength
 
     def attributes_look_like_contested_issue?(data)
       data[:rating_issue_reference_id] ||
@@ -300,6 +314,7 @@ class RequestIssue < ApplicationRecord
     closed_at if withdrawn?
   end
 
+  # rubocop:disable Metrics/MethodLength
   def ui_hash
     {
       id: id,
@@ -328,6 +343,7 @@ class RequestIssue < ApplicationRecord
       editable: editable?
     }
   end
+  # rubocop:enable Metrics/MethodLength
 
   def approx_decision_date_of_issue_being_contested
     if contested_issue
@@ -767,6 +783,8 @@ class RequestIssue < ApplicationRecord
     )
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   def check_for_eligible_previous_review!
     return unless eligible?
     return unless contested_issue
@@ -788,6 +806,8 @@ class RequestIssue < ApplicationRecord
 
     self.ineligible_due_to_id = contested_issue.source_request_issues.first&.id if ineligible_reason
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 
   def check_for_before_ama!
     return unless eligible? && should_check_for_before_ama?
@@ -875,3 +895,4 @@ class RequestIssue < ApplicationRecord
     decision_review.tasks.open.any?
   end
 end
+# rubocop:enable Metrics/ClassLength

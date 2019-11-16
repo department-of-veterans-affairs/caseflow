@@ -112,6 +112,15 @@ describe RequestIssue, :all_dbs do
     )
   end
 
+  let!(:rating_decision_request_issue) do
+    create(
+      :request_issue,
+      :rating_decision,
+      contested_rating_issue_profile_date: profile_date,
+      decision_review: review
+    )
+  end
+
   let(:nonrating_contested_issue_description) { nil }
 
   let!(:unidentified_issue) do
@@ -329,10 +338,27 @@ describe RequestIssue, :all_dbs do
     subject { RequestIssue.rating }
 
     it "filters by rating issues" do
-      expect(subject.length).to eq(2)
+      expect(subject.length).to eq(3)
 
       expect(subject.find_by(id: rating_request_issue.id)).to_not be_nil
+      expect(subject.find_by(id: rating_decision_request_issue.id)).to_not be_nil
       expect(subject.find_by(id: unidentified_issue.id)).to_not be_nil
+    end
+  end
+
+  context ".rating_issue" do
+    subject { RequestIssue.rating_issue }
+
+    it "filters by rating_issue issues" do
+      expect(subject.length).to eq(1)
+    end
+  end
+
+  context ".rating_decision" do
+    subject { RequestIssue.rating_decision }
+
+    it "filters by rating_decision issues" do
+      expect(subject.length).to eq(1)
     end
   end
 
