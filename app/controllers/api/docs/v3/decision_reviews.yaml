@@ -248,25 +248,32 @@ paths:
                               $ref: "#/components/schemas/PayeeCode"
                 included:
                   type: array
+                  description: ContestableIssues Array
                   items:
                     type: object
                     description: >-
-                      A HigherLevelReview's ContestableIssues enumerate what is
-                      being contested by the HigherLevelReview.
-                      Use the /contestable_issues endpoint to pull a list of
-                      a veteran's contestable issues to choose from.
-                      Additionally, one can add a LegacyAppealIssues array to a
-                      ContestableIssue object to associate a LegacyAppealIssue
-                      to a ContestableIssue --pulling the LegacyAppealIssue out
-                      of the legacy appeal system and into AMA. See the
-                      legacyAppealIssues array below for more details.
-                      Note: Not all legacy issues are eligible for opt-in; see
-                      https://www.benefits.va.gov/benefits/docs/apppeals_SOC-SSOC_Opt-in.pdf
+                      A Higher-Level Review, in large part, can be thought of as a
+                      collection of issues being contested.
+                      Use the `/contestable_issues` endpoint to pull a list of
+                      a veteran's contestable issues to select from, and include
+                      the _ContestableIssue_ objects that you want to contest in this
+                      array.
+                      When including a _ContestableIssue_ obtained from the
+                      `/contestable_issues` endpoint, only the ID fields of the
+                      _ContestableIssue_ need to be included. The other fields of a
+                      _ContestableIssue_ will be ignored --modifying a
+                      _ContestableIssue_ cannot be done using this endpoint.
+                      An exception: one can include a `notes` field to provide
+                      additional information.
+                      **Additionally**, a `legacyAppealIssues` array can be added to a
+                      _ContestableIssue_ object to associate a _LegacyAppealIssue_
+                      to a _ContestableIssue_. Associating a _LegacyAppealIssue_ to a
+                      _ContestableIssue_ pulls the _LegacyAppealIssue_ out of the legacy
+                      appeal system and into AMA. See the `legacyAppealIssues` array
+                      below for more info on opting-in legacy issues.
+                      _Note:_ Not all legacy issues are eligible for opt-in; see
+                      [benefits.va.gov/benefits/docs/apppeals_SOC-SSOC_Opt-in.pdf](https://www.benefits.va.gov/benefits/docs/apppeals_SOC-SSOC_Opt-in.pdf)
                       for details.
-                      When using a ContestableIssue obtained from the
-                      /contestable_issues endpoint in a HigherLevelReview, only
-                      the ID fields need to be included. Optionally, include
-                      the notes field to add aditional information.
 
                     required:
                       - type
@@ -303,17 +310,20 @@ paths:
                           legacyAppealIssues:
                             nullable: true
                             type: array
-                            description: >-
-                              OPTIONAL.
-                              LegacyAppealIssues that you are associating with this contestable
-                              issue. To associate LegacyAppealIssues, legacyOptInApproved must
-                              be true. At this time, only one LegacyAppealIssue can be associated
-                              with a contestable issue (i.e., this array can have 0 or 1 members
-                              (if you include this field at all)), also, a LegacyAppealIssue
-                              should only be included once in a decisionReview.
+                            description: LegacyAppealIssues Array
 
                             items:
                               type: object
+                              description: >-
+                                OPTIONAL. _LegacyAppealIssues_ that you are associating with
+                                this _ContestableIssue_. To associate _LegacyAppealIssues_,
+                                `legacyOptInApproved` must be `true`. At this time, only one
+                                _LegacyAppealIssue_ can be associated with a _ContestableIssue_
+                                (i.e., if the `legacyAppealIssues` array is included, it can have
+                                0 or 1 members). Lastly, a _LegacyAppealIssue_ can only be
+                                included once in a Higher-Level Review (it cannot be associated
+                                with more than one _ContestableIssue_).
+
                               required:
                                 - legacyAppealId
                                 - legacyAppealIssueId
