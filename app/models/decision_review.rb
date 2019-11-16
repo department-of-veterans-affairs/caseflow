@@ -162,25 +162,23 @@ class DecisionReview < ApplicationRecord
     @saving_review = true
   end
 
+  # Creates claimants for automatically generated decision reviews
   def create_claimants!(participant_id:, payee_code:)
     remove_claimants!
-    claimants.create_from_intake_data!(participant_id: participant_id, payee_code: payee_code)
+    claimants.create_without_intake!(participant_id: participant_id, payee_code: payee_code)
   end
 
   def remove_claimants!
-    claimants.destroy_all unless claimants.empty?
+    claimants.delete_all
+  end
+
+  # Currently AMA only supports one claimant per decision review
+  def claimant
+    claimants.last
   end
 
   def claimant_participant_id
-    return nil if claimants.empty?
-
-    claimants.first.participant_id
-  end
-
-  def claimant_not_veteran
-    # This is being replaced by veteran_is_not_claimant, but keeping it temporarily
-    # until data is backfilled
-    claimant_participant_id && claimant_participant_id != veteran.participant_id
+    claimant&.participant_id
   end
 
   def finalized_decision_issues_before_receipt_date
@@ -188,9 +186,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def payee_code
-    return nil if claimants.empty?
-
-    claimants.first.payee_code
+    claimant&.payee_code
   end
 
   def veteran
