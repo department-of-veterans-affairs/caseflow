@@ -3,14 +3,14 @@
 require "support/database_cleaner"
 
 describe AsyncableJobMessaging, :postgres do
-
   describe "#add_job_note" do
     let(:owner) { create(:default_user) }
     let(:job) { create(:higher_level_review, intake: create(:intake, user: owner)) }
     let(:user) { User.authenticate!(roles: ["Admin Intake"]) }
     let(:text) { "contents of a new job note" }
+    let(:messaging) { AsyncableJobMessaging.new(job: job, current_user: user) }
 
-    subject { AsyncableJobMessaging.new(job: job, current_user: user).add_job_note(text: text, send_to_intake_user: send_to_intake_user) }
+    subject { messaging.add_job_note(text: text, send_to_intake_user: send_to_intake_user) }
 
     context "when send_to_intake_user is set" do
       let(:send_to_intake_user) { true }
