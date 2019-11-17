@@ -315,14 +315,14 @@ paths:
                             items:
                               type: object
                               description: >-
-                                OPTIONAL. _LegacyAppealIssues_ that you are associating with
-                                this _ContestableIssue_. To associate _LegacyAppealIssues_,
-                                `legacyOptInApproved` must be `true`. At this time, only one
-                                _LegacyAppealIssue_ can be associated with a _ContestableIssue_
-                                (i.e., if the `legacyAppealIssues` array is included, it can have
-                                0 or 1 members). Lastly, a _LegacyAppealIssue_ can only be
-                                included once in a Higher-Level Review (it cannot be associated
-                                with more than one _ContestableIssue_).
+                                OPTIONAL. _LegacyAppealIssues_ that you are associating
+                                with this _ContestableIssue_. At this time, at most, one
+                                _LegacyAppealIssue_ can be associated with a
+                                _ContestableIssue_. Also, a _LegacyAppealIssue_ can only
+                                be included once in a Higher-Level Review (it cannot be
+                                associated with more than one _ContestableIssue_). To
+                                associate _LegacyAppealIssues_, `legacyOptInApproved`
+                                must be `true`.
 
                               required:
                                 - legacyAppealId
