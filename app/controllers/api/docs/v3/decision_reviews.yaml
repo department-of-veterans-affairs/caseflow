@@ -252,8 +252,6 @@ paths:
                   items:
                     type: object
                     description: >-
-                      A Higher-Level Review, in large part, can be thought of as a
-                      collection of issues being contested.
                       Use the `/contestable_issues` endpoint to pull a list of
                       a veteran's contestable issues to select from, and include
                       the _ContestableIssue_ objects that you want to contest in this
