@@ -171,29 +171,4 @@ describe AsyncableJobsController, :postgres, type: :controller do
       end
     end
   end
-
-  describe "#add_note" do
-    context "when user is Admin Intake" do
-      let(:owner) { create(:default_user) }
-      let(:job) { create(:higher_level_review, intake: create(:intake, user: owner)) }
-      let(:user) { User.authenticate!(roles: ["Admin Intake"]) }
-      let(:text) { "contents of a new job note" }
-      let(:params) { { asyncable_job_klass: "HigherLevelReview", id: job.id, note: text } }
-
-      it "sends the note to job owner" do
-        message_count = owner.messages.count
-        params[:send_to_intake_user] = true
-        post :add_note, params: params
-        expect(owner.messages.count).to eq message_count + 1
-        expect(owner.messages.last.text).to eq text
-      end
-
-      it "doesn't send the note to job owner unless specified" do
-        message_count = owner.messages.count
-        params[:send_to_intake_user] = false
-        post :add_note, params: params
-        expect(owner.messages.count).to eq message_count
-      end
-    end
-  end
 end
