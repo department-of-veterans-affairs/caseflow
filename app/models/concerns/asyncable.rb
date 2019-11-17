@@ -243,5 +243,9 @@ module Asyncable
       user: asyncable_user&.css_id
     }
   end
+
+  def path
+    "/asyncable_jobs/#{self.class}/jobs/#{id}"
+  end
 end
 # rubocop:enable Metrics/ModuleLength

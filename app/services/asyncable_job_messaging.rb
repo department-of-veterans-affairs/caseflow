@@ -10,7 +10,7 @@ class AsyncableJobMessaging
     @current_user = current_user
   end
 
-  def add_job_note(text:, send_to_intake_user: true)
+  def add_job_note(text:, send_to_intake_user:)
     ApplicationRecord.transaction do
       job_note = JobNote.create!(
         job: job,
@@ -19,9 +19,13 @@ class AsyncableJobMessaging
         send_to_intake_user: send_to_intake_user
       )
       if send_to_intake_user && job.asyncable_user
+        message_text = <<-EOS.strip_heredoc
+          A new note has been added to your #{job.class} job.
+          <a href="#{job.path}#job-note-#{job.id}">Click here</a> to view the note.
+        EOS
         Message.create!(
           detail: job_note,
-          text: text,
+          text: message_text,
           user: job.asyncable_user
         )
       end
