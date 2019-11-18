@@ -38,7 +38,7 @@ const DetailsInputs = ({
             openModal();
           }
 
-          let status = option.value ? 'cancelled' : null;
+          let status = (virtualHearing && virtualHearing.status !== 'cancelled') && option.value ? 'cancelled' : null;
 
           updateVirtualHearing({ status });
         }}
