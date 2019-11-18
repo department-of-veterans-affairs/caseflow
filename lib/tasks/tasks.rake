@@ -121,7 +121,7 @@ namespace :tasks do
     ids = target_tasks.map(&:id).sort
     change = dry_run ? "Would change" : "Changing"
     revert = dry_run ? "Would revert" : "Revert"
-    message = "#{change} assignee of #{target_tasks.count} #{task_class.name}s with ids #{ids.sort.join(', ')} " \
+    message = "#{change} assignee of #{target_tasks.count} #{task_class.name}s with ids #{ids.join(', ')} " \
               "from #{from_organization.name} to #{to_organization.name}"
     puts message
     puts "#{revert} with: bundle exec rake tasks:change_organization_assigned_to" \
