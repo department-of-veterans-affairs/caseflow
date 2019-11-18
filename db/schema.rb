@@ -809,6 +809,7 @@ ActiveRecord::Schema.define(version: 20191118195627) do
     t.datetime "created_at", null: false
     t.integer "detail_id", comment: "ID of the related object"
     t.string "detail_type", comment: "Model name of the related object"
+    t.string "message_type", comment: "The type of event that caused this message to be created"
     t.datetime "read_at", comment: "When the message was read"
     t.string "text", comment: "The message"
     t.datetime "updated_at", null: false
