@@ -1,5 +1,3 @@
-require('babel-polyfill');
-
 // @department-of-veterans-affairs/caseflow-frontend-toolkit has ES6 that we need to compile.
 // These tests do not use our normal webpack setup, and instead
 // use Mocha's compilation functionality. Normally, mocha does
