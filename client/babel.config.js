@@ -1,4 +1,5 @@
 module.exports = function(api) {
+  // eslint-disable-next-line no-process-env
   api.cache(() => process.env.NODE_ENV);
 
   const presets = [
