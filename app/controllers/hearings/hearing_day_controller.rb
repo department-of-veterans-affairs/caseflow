@@ -20,7 +20,7 @@ class Hearings::HearingDayController < HearingsApplicationController
           serialized_hearing_days = ::HearingDaySerializer.serialize_collection(hearing_days_in_range_for_user)
 
           render json: {
-            hearings: json_hearing_days(serialized_hearing_days),
+            hearings: serialized_hearing_days,
             startDate: hearing_day_range.start_date,
             endDate: hearing_day_range.end_date
           }
@@ -33,7 +33,7 @@ class Hearings::HearingDayController < HearingsApplicationController
 
   def show
     render json: {
-      hearing_day: json_hearing_day(hearing_day.to_hash).merge(
+      hearing_day: hearing_day.to_hash.merge(
         hearings: hearing_day.hearings_for_user(current_user).map { |hearing| hearing.quick_to_hash(current_user.id) }
       )
     }
@@ -43,7 +43,7 @@ class Hearings::HearingDayController < HearingsApplicationController
     if hearing_day_range.valid?
       hearing_days_with_hearings = hearing_day_range.open_hearing_days_with_hearings_hash(current_user.id)
 
-      render json: { hearing_days: json_hearing_days(hearing_days_with_hearings) }
+      render json: { hearing_days: hearing_days_with_hearings }
     else
       hearing_day_range_invalid
     end
@@ -52,14 +52,18 @@ class Hearings::HearingDayController < HearingsApplicationController
   def create
     return no_available_rooms unless hearing_day_rooms.rooms_are_available?
 
-    hearing_day = HearingDay.create_hearing_day(
+    hearing_day = HearingDay.create(
       create_params.merge(room: hearing_day_rooms.available_room)
     )
-    return invalid_record_error(hearing_day) if hearing_day.nil?
 
+    render json: { hearing: hearing_day.to_hash }, status: :created
+  rescue ActiveRecord::RecordInvalid => error
     render json: {
-      hearing: json_hearing_day(hearing_day)
-    }, status: :created
+      "errors": [
+        "title": error.class.to_s,
+        "detail": error.message
+      ]
+    }, status: :bad_request
   end
 
   def update
@@ -154,12 +158,6 @@ class Hearings::HearingDayController < HearingsApplicationController
       .merge(created_by: current_user, updated_by: current_user)
   end
 
-  def invalid_record_error(hearing_day)
-    render json: {
-      "errors": ["title": COPY::INVALID_RECORD_ERROR_TITLE, "detail": hearing_day.errors.full_messages.join(" ,")]
-    }, status: :bad_request
-  end
-
   def record_not_found
     render json: {
       "errors": [
@@ -178,25 +176,6 @@ class Hearings::HearingDayController < HearingsApplicationController
         }
       end
     }, status: :bad_request
-  end
-
-  def json_hearing_days(hearing_days)
-    hearing_days.each_with_object([]) do |hearing_day, result|
-      result << json_hearing_day(hearing_day)
-    end
-  end
-
-  def json_hearing_day(hearing_day)
-    hearing_day.as_json.each_with_object({}) do |(key, value), converted|
-      converted[key] = if key == "room"
-                         HearingDayMapper.label_for_room(value)
-                       elsif key == "regional_office" && !value.nil?
-                         converted["regional_office_key"] = value
-                         HearingDayMapper.city_for_regional_office(value)
-                       else
-                         value
-                       end
-    end
   end
 
   def no_available_rooms
