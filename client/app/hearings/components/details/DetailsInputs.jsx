@@ -38,8 +38,10 @@ const DetailsInputs = ({
             openModal();
           }
 
-          let status = (virtualHearing && virtualHearing.status !== 'cancelled') && option.value ? 'cancelled' : null;
-
+          let status;
+          if (virtualHearing && virtualHearing.status !== 'cancelled' &&  !option.value) {
+            status = 'cancelled'
+          }
           updateVirtualHearing({ status });
         }}
       />}
