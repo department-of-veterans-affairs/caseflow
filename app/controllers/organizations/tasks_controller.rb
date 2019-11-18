@@ -32,7 +32,7 @@ class Organizations::TasksController < OrganizationsController
   end
 
   def queue_config
-    QueueConfig.new(assignee: organization).to_hash_for_user(current_user)
+    QueueConfig.new(assignee: organization).to_hash
   end
 
   def organization_url
