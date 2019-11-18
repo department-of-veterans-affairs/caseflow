@@ -46,7 +46,6 @@ const DetailsInputs = ({
       />}
       <VirtualHearingLink
         hearing={hearing}
-        virtualHearing={virtualHearing}
       />
     </div>
     <div {...rowThirds}>

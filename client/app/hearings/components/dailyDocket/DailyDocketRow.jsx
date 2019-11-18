@@ -239,7 +239,8 @@ class DailyDocketRow extends React.Component {
     const inputProps = this.getInputProps();
 
     return <div {...inputSpacing}>
-      <VirtualHearingLink hearing={hearing} />
+      <VirtualHearingLink
+        hearing={hearing} />
       <DispositionDropdown {...inputProps}
         cancelUpdate={this.cancelUpdate}
         saveHearing={this.saveHearing}
