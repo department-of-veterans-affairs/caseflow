@@ -50,7 +50,7 @@ namespace :tasks do
       fail NoTasksToChange, "There aren't any #{from_class.name}s available to change."
     end
 
-    id_string = target_tasks.map(&:id).sort.join(",")
+    id_string = target_tasks.map(&:id).sort.join(", ")
     change = dry_run ? "Would change" : "Changing"
     revert = dry_run ? "Would revert" : "Revert"
     message = "#{change} #{target_tasks.count} #{from_class.name}s with ids #{id_string} into #{to_class.name}s"
