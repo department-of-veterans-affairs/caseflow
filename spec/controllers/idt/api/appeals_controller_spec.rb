@@ -36,7 +36,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         let!(:ama_appeals) do
           [
-            create(:appeal, veteran: veteran1, number_of_claimants: 2),
+            create(:appeal, veteran: veteran1, number_of_claimants: 1),
             create(:appeal, veteran: veteran2, number_of_claimants: 1)
           ]
         end
@@ -82,7 +82,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
       context "and the user is intake" do
         let(:user) { User.find_by(css_id: "ID1234") }
-        let(:appeal) { create(:appeal, number_of_claimants: 2) }
+        let(:appeal) { create(:appeal, number_of_claimants: 1) }
         let(:params) { { appeal_id: appeal.uuid } }
 
         before do
@@ -105,15 +105,11 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           response_body = JSON.parse(response.body)["data"]
 
           expect(response_body["attributes"]["appellants"][0]["address"]["address_line_1"])
-            .to eq appeal.claimants.first.address_line_1
+            .to eq appeal.claimant.address_line_1
           expect(response_body["attributes"]["appellants"][0]["address"]["city"])
-            .to eq appeal.claimants.first.city
+            .to eq appeal.claimant.city
           expect(response_body["attributes"]["appellants"][0]["representative"]["address"])
             .to eq appeal.representative_address.stringify_keys
-          expect(response_body["attributes"]["appellants"][1]["address"]["address_line_1"])
-            .to eq appeal.claimants.second.address_line_1
-          expect(response_body["attributes"]["appellants"][1]["address"]["city"])
-            .to eq appeal.claimants.second.city
         end
       end
 
@@ -160,7 +156,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         let!(:ama_appeals) do
           [
-            create(:appeal, veteran: veteran1, number_of_claimants: 2),
+            create(:appeal, veteran: veteran1, number_of_claimants: 1, veteran_is_not_claimant: true),
             create(:appeal, veteran: veteran2, number_of_claimants: 1)
           ]
         end
@@ -259,7 +255,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         context "and AMA appeal id URL parameter is passed" do
           before do
             allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
-              ama_appeals.first.claimants.first.participant_id => {
+              ama_appeals.first.claimant.participant_id => {
                 representative_name: "POA Name",
                 representative_type: "POA Attorney",
                 participant_id: "600153863"
@@ -305,10 +301,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
                 .to eq ama_appeals.first.appellant_last_name
               expect(response_body["attributes"]["appellants"][0]["representative"]["type"])
                 .to eq ama_appeals.first.representative_type
-              expect(response_body["attributes"]["appellants"][1]["first_name"])
-                .to eq ama_appeals.first.claimants.second.first_name
-              expect(response_body["attributes"]["appellants"][1]["last_name"])
-                .to eq ama_appeals.first.claimants.second.last_name
             end
           end
 
@@ -328,8 +320,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               )
 
               allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
-                .with([ama_appeals.first.claimants.last.participant_id]).and_return(
-                  ama_appeals.first.claimants.last.participant_id => {
+                .with([ama_appeals.first.claimant.participant_id]).and_return(
+                  ama_appeals.first.claimant.participant_id => {
                     representative_name: "POA Name",
                     representative_type: "POA Attorney",
                     participant_id: "600153863"
@@ -343,15 +335,11 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               response_body = JSON.parse(response.body)["data"]
 
               expect(response_body["attributes"]["appellants"][0]["address"]["address_line_1"])
-                .to eq ama_appeals.first.reload.claimants.first.address_line_1
+                .to eq ama_appeals.first.reload.claimant.address_line_1
               expect(response_body["attributes"]["appellants"][0]["address"]["city"])
-                .to eq ama_appeals.first.claimants.first.city
+                .to eq ama_appeals.first.claimant.city
               expect(response_body["attributes"]["appellants"][0]["representative"]["address"])
                 .to eq ama_appeals.first.representative_address.stringify_keys
-              expect(response_body["attributes"]["appellants"][1]["address"]["address_line_1"])
-                .to eq ama_appeals.first.claimants.second.address_line_1
-              expect(response_body["attributes"]["appellants"][1]["address"]["city"])
-                .to eq ama_appeals.first.claimants.second.city
               expect(response_body["attributes"]["assigned_by"]).to_not eq nil
               expect(response_body["attributes"]["assigned_by"]).to eq tasks.first.parent.assigned_to.full_name
               expect(response_body["attributes"]["documents"].size).to eq 2

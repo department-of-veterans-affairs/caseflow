@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Task queue", :all_dbs do
+feature "Task queue", :all_dbs do
   let!(:vlj_support_staffer) { create(:user) }
 
   before { Colocated.singleton.add_user(vlj_support_staffer) }

@@ -86,7 +86,6 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       legacy_hearing.reload
       expect(VirtualHearing.count).to eq(1)
       expect(legacy_hearing.virtual?).to eq(true)
-      expect(legacy_hearing.virtual_hearing.status).to eq("pending")
       expect(legacy_hearing.virtual_hearing.veteran_email).to eq("email@testingEmail.com")
       expect(legacy_hearing.virtual_hearing.representative_email).to eq("email@testingEmail.com")
       expect(legacy_hearing.virtual_hearing.judge_email).to eq(nil)

@@ -22,6 +22,10 @@ class OrganizationsUser < ApplicationRecord
   end
 
   def self.remove_user_from_organization(user, organization)
+    if organization.is_a?(JudgeTeam) && organization.judge.eql?(user)
+      fail Caseflow::Error::ActionForbiddenError, message: COPY::JUDGE_TEAM_REMOVE_JUDGE_ERROR
+    end
+
     existing_record(user, organization).destroy
   end
 

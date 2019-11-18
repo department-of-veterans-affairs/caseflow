@@ -20,7 +20,7 @@ class Api::V3::HigherLevelReviewSerializer
   end
 
   has_one :claimant, record_type: "Claimant" do |higher_level_review|
-    higher_level_review.claimants.first
+    higher_level_review.claimant
   end
 
   has_many :decision_issues, record_type: "DecisionIssue" do |higher_level_review|
