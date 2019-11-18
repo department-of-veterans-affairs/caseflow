@@ -150,10 +150,11 @@ class HearingDay < ApplicationRecord
       end
     end
 
-    def update_schedule(updated_hearings)
-      updated_hearings.each do |hearing_hash|
-        hearing_to_update = HearingDay.find(hearing_hash[:id])
-        hearing_to_update.update!(judge: User.find_by_css_id_or_create_with_default_station_id(hearing_hash[:css_id]))
+    def update_schedule(updated_hearing_days)
+      updated_hearing_days.each do |hearing_day|
+        HearingDay.find(hearing_day.id).update!(
+          judge: User.find_by_css_id_or_create_with_default_station_id(hearing_day.judge.css_id)
+        )
       end
     end
 
