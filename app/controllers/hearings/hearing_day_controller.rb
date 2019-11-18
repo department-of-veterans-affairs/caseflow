@@ -58,7 +58,12 @@ class Hearings::HearingDayController < HearingsApplicationController
 
     render json: { hearing: hearing_day.to_hash }, status: :created
   rescue ActiveRecord::RecordInvalid => error
-    invalid_record_error(error)
+    render json: {
+      "errors": [
+        "title": error.class.to_s,
+        "detail": error.message
+      ]
+    }, status: :bad_request
   end
 
   def update
@@ -151,15 +156,6 @@ class Hearings::HearingDayController < HearingsApplicationController
                   :notes,
                   :bva_poc)
       .merge(created_by: current_user, updated_by: current_user)
-  end
-
-  def invalid_record_error(error)
-    render json: {
-      "errors": [
-        "title": error.class.to_s,
-        "detail": error.message
-      ]
-    }, status: :bad_request
   end
 
   def record_not_found

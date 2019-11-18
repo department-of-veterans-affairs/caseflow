@@ -30,7 +30,7 @@ class HearingSchedule::AssignJudgesToHearingDays
     evenly_assign_judges_to_hearing_days
     assign_remaining_hearing_days
     verify_assignments
-    @assigned_hearing_days.sort_by { |day| day.scheduled_for_as_date }
+    @assigned_hearing_days.sort_by(&:scheduled_for_as_date)
   end
 
   private
@@ -141,9 +141,9 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def co_hearing_days_by_date(date)
-    @video_co_hearing_days.select do |day|
-      day.scheduled_for_as_date == date && day.central_office?
-    end
+    @video_co_hearing_days
+      .select(&:central_office?)
+      .select { |day| day.scheduled_for_as_date == date }
   end
 
   def assign_judge_to_hearing_day(day, css_id)
@@ -228,8 +228,11 @@ class HearingSchedule::AssignJudgesToHearingDays
 
         @judges[css_id][:non_availabilities] ||= Set.new
         @judges[css_id][:non_availabilities] +=
-          (TB_ADDITIONAL_NA_DAYS.business_days.before(tb_record[:start_date])..TB_ADDITIONAL_NA_DAYS.business_days
-            .after(tb_record[:end_date])).reject { |date| date.on_weekend? }
+          (
+            TB_ADDITIONAL_NA_DAYS.business_days
+              .before(tb_record[:start_date])..TB_ADDITIONAL_NA_DAYS.business_days
+              .after(tb_record[:end_date])
+          ).reject(&:on_weekend?)
       end
     end
   end
