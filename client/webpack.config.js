@@ -6,13 +6,7 @@ const devBuild = process.env.NODE_ENV !== 'production'; // eslint-disable-line n
 
 const config = {
   mode: devBuild ? 'development' : 'production',
-  entry: [
-    // 'es5-shim/es5-shim',
-    // 'es5-shim/es5-sham',
-    // 'babel-polyfill',
-    '@babel/polyfill',
-    './app/index'
-  ],
+  entry: ['./app/index'],
   output: {
     filename: 'webpack-bundle.js',
     sourceMapFilename: 'sourcemap-[file].map',
@@ -32,20 +26,15 @@ const config = {
   module: {
     rules: [
       {
-        test: require.resolve('react'),
-        use: {
-          loader: 'imports-loader?shim=es5-shim/es5-shim&sham=es5-shim/es5-sham'
-        }
-      },
-      {
         test: /\.jsx?$/,
-        exclude: /node_modules/,
-        // exclude: new RegExp(
-        //   'node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)'
-        // ),
-        use: {
-          loader: 'babel-loader'
-        }
+        exclude: new RegExp(
+          'node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)'
+        ),
+        use: [
+          {
+            loader: 'babel-loader'
+          }
+        ]
       },
       {
         test: /\.(ttf|eot|woff|woff2)$/,
