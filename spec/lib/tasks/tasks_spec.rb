@@ -52,7 +52,7 @@ describe "task rake tasks", :postgres do
 
         it "makes the requested changes" do
           count = from_task.count
-          ids = from_task.all.pluck(:id)
+          ids = from_task.all.pluck(:id).sort
           expected_output = <<~OUTPUT
             Changing #{count} #{from_task_name}s with ids #{ids.join(',')} into #{to_task_name}s
             Revert with: bundle exec rake tasks:change_type[#{to_task_name},#{from_task_name},#{ids.join(',')}]
