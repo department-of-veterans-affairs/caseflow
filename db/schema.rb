@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191113160247) do
+ActiveRecord::Schema.define(version: 20191118195627) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -794,6 +794,17 @@ ActiveRecord::Schema.define(version: 20191113160247) do
     t.index ["request_issue_id"], name: "index_legacy_issue_optins_on_request_issue_id"
   end
 
+  create_table "legacy_issues", force: :cascade, comment: "On an AMA decision review, when a veteran requests to review an issue that is already being contested on a legacy appeal, the legacy issue is connected to the request issue. If the veteran also chooses to opt their legacy issues into AMA and the issue is eligible to be transferred to AMA, the issues are closed in VACOLS through a legacy issue opt-in. This table stores the legacy issues connected to each request issue, and the record for opting them into AMA (if applicable)." do |t|
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at"
+    t.bigint "legacy_issue_optin_id", comment: "If the veteran selected to opt their legacy issues into AMA, and the legacy issue was eligible for opt-in, a legacy issue-optin is created."
+    t.bigint "request_issue_id", null: false, comment: "The request issue the legacy issue is being connected to."
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at"
+    t.string "vacols_id", null: false, comment: "The VACOLS ID of the legacy appeal that the legacy issue is part of."
+    t.integer "vacols_sequence_id", null: false, comment: "The sequence ID of the legacy issue on the legacy appeal. The vacols_id and vacols_sequence_id form a composite key to identify a specific legacy issue."
+    t.index ["legacy_issue_optin_id"], name: "index_legacy_issues_on_legacy_issue_optin_id"
+    t.index ["request_issue_id"], name: "index_legacy_issues_on_request_issue_id"
+  end
+
   create_table "messages", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "detail_id", comment: "ID of the related object"
@@ -1305,6 +1316,7 @@ ActiveRecord::Schema.define(version: 20191113160247) do
   add_foreign_key "legacy_hearings", "users"
   add_foreign_key "legacy_hearings", "users", column: "created_by_id"
   add_foreign_key "legacy_hearings", "users", column: "updated_by_id"
+  add_foreign_key "legacy_issues", "legacy_issue_optins"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "tasks"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
