@@ -8,7 +8,7 @@ describe AppealsUpdatedSinceQuery, :postgres do
   end
 
   let(:since_date) { Time.zone.now }
-  let(:old_appeal) { create(:appeal, number_of_claimants: 0, updated_at: since_date - 1.hour) }
+  let!(:old_appeal) { create(:appeal, number_of_claimants: 0, updated_at: since_date - 1.hour) }
 
   describe "#call" do
     subject { described_class.new(since_date: since_date).call }
