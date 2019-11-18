@@ -14,7 +14,7 @@ class VirtualHearings::SendEmail
       virtual_hearing.veteran_email_sent = true
     end
 
-    if !virtual_hearing.judge_email_sent
+    if !virtual_hearing.judge_email.nil? && !virtual_hearing.judge_email_sent
       send_email(:judge)
       virtual_hearing.judge_email_sent = true
     end
