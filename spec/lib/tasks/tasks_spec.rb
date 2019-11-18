@@ -32,12 +32,12 @@ describe "task rake tasks", :postgres do
 
         it "only describes what changes will be made" do
           count = from_task.count
-          ids = from_task.all.pluck(:id)
+          ids = from_task.all.pluck(:id).sort
           expected_output = <<~OUTPUT
             *** DRY RUN
             *** pass 'false' as the third argument to execute
             Would change #{count} #{from_task_name}s with ids #{ids.join(',')} into #{to_task_name}s
-            Would revert with: bundle exec rake tasks:change_type[#{to_task_name},#{from_task_name},#{ids.sort.join(',')}]
+            Would revert with: bundle exec rake tasks:change_type[#{to_task_name},#{from_task_name},#{ids.join(',')}]
           OUTPUT
           expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
           expect { subject }.to output(expected_output).to_stdout
