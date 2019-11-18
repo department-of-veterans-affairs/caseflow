@@ -17,7 +17,7 @@ class VirtualHearingEstablishment < ApplicationRecord
 
   # Implements Asyncable
   def asyncable_user
-    virtual_hearing.created_by.css_id
+    virtual_hearing.created_by
   end
   # :nocov:
 end
