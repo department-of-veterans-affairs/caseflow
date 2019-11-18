@@ -50,12 +50,12 @@ namespace :tasks do
       fail NoTasksToChange, "There aren't any #{from_class.name}s available to change."
     end
 
-    ids = target_tasks.map(&:id)
+    id_string = target_tasks.map(&:id).sort.join(",")
     change = dry_run ? "Would change" : "Changing"
     revert = dry_run ? "Would revert" : "Revert"
-    message = "#{change} #{target_tasks.count} #{from_class.name}s with ids #{ids.join(', ')} into #{to_class.name}s"
+    message = "#{change} #{target_tasks.count} #{from_class.name}s with ids #{id_string} into #{to_class.name}s"
     puts message
-    puts "#{revert} with: bundle exec rake tasks:change_type[#{to_class.name},#{from_class.name},#{ids.join(',')}]"
+    puts "#{revert} with: bundle exec rake tasks:change_type[#{to_class.name},#{from_class.name},#{id_string}]"
 
     if !dry_run
       Rails.logger.tagged("rake tasks:change_type") { Rails.logger.info(message) }
@@ -121,7 +121,7 @@ namespace :tasks do
     ids = target_tasks.map(&:id).sort
     change = dry_run ? "Would change" : "Changing"
     revert = dry_run ? "Would revert" : "Revert"
-    message = "#{change} assignee of #{target_tasks.count} #{task_class.name}s with ids #{ids.join(', ')} " \
+    message = "#{change} assignee of #{target_tasks.count} #{task_class.name}s with ids #{ids.join(',')} " \
               "from #{from_organization.name} to #{to_organization.name}"
     puts message
     puts "#{revert} with: bundle exec rake tasks:change_organization_assigned_to" \
