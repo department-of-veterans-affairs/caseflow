@@ -47,6 +47,9 @@ module.exports = function(api) {
     env: {
       development: {
         plugins: ['react-hot-loader/babel']
+      },
+      test: {
+        presets: ['@babel/preset-env']
       }
     }
   };
