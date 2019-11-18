@@ -46,6 +46,10 @@ class HearingDay < ApplicationRecord
     request_type == REQUEST_TYPES[:central]
   end
 
+  def scheduled_for_as_date
+    scheduled_for.to_date
+  end
+
   def confirm_no_children_records
     fail HearingDayHasChildrenRecords if !vacols_hearings.empty? || !hearings.empty?
   end
@@ -140,20 +144,17 @@ class HearingDay < ApplicationRecord
   end
 
   class << self
-    def create_hearing_day(hearing_hash)
-      create(hearing_hash).to_hash
-    end
-
     def create_schedule(scheduled_hearings)
       scheduled_hearings.each do |hearing_hash|
-        HearingDay.create_hearing_day(hearing_hash)
+        HearingDay.create(hearing_hash)
       end
     end
 
-    def update_schedule(updated_hearings)
-      updated_hearings.each do |hearing_hash|
-        hearing_to_update = HearingDay.find(hearing_hash[:id])
-        hearing_to_update.update!(judge: User.find_by_css_id_or_create_with_default_station_id(hearing_hash[:css_id]))
+    def update_schedule(updated_hearing_days)
+      updated_hearing_days.each do |hearing_day|
+        HearingDay.find(hearing_day.id).update!(
+          judge: User.find_by_css_id_or_create_with_default_station_id(hearing_day.judge.css_id)
+        )
       end
     end
 
