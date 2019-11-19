@@ -9,15 +9,15 @@ RSpec.configure do |config|
     DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].clean_with(:truncation)
   end
 
-  config.before(:each, :postgres) do
+  config.before(:each) do
     DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].strategy = :transaction
   end
 
-  config.before(:each, :postgres, db_clean: :truncation) do
+  config.before(:each, db_clean: :truncation) do
     DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].strategy = :truncation
   end
 
-  config.before(:each, :postgres, type: :feature) do
+  config.before(:each, type: :feature) do
     # :rack_test driver's Rack app under test shares database connection
     # with the specs, so continue to use transaction strategy for speed.
     driver_shares_db_connection_with_specs = Capybara.current_driver == :rack_test
@@ -31,11 +31,11 @@ RSpec.configure do |config|
     end
   end
 
-  config.before(:each, :postgres) do
+  config.before(:each) do
     DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].start
   end
 
-  config.append_after(:each, :postgres) do
+  config.append_after(:each) do
     DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].clean
     clean_application!
   end
