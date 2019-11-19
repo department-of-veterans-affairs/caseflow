@@ -4,11 +4,8 @@ class AddUpdatedAtIndices < ActiveRecord::Migration[5.1]
   def change
     add_index :advance_on_docket_motions, :updated_at, algorithm: :concurrently
     add_index :allocations, :updated_at, algorithm: :concurrently
-    add_index :annotations, :updated_at, algorithm: :concurrently
     add_index :api_keys, :updated_at, algorithm: :concurrently
-    add_index :api_views, :updated_at, algorithm: :concurrently
     add_index :appeal_series, :updated_at, algorithm: :concurrently
-    add_index :appeal_views, :updated_at, algorithm: :concurrently
     add_index :appeals, :updated_at, algorithm: :concurrently
     add_index :attorney_case_reviews, :updated_at, algorithm: :concurrently
     add_index :available_hearing_locations, :updated_at, algorithm: :concurrently
@@ -27,7 +24,6 @@ class AddUpdatedAtIndices < ActiveRecord::Migration[5.1]
     add_index :distributions, :updated_at, algorithm: :concurrently
     add_index :docket_snapshots, :updated_at, algorithm: :concurrently
     add_index :docket_tracers, :updated_at, algorithm: :concurrently
-    add_index :document_views, :updated_at, algorithm: :concurrently
     add_index :documents, :updated_at, algorithm: :concurrently
     add_index :documents_tags, :updated_at, algorithm: :concurrently
     add_index :end_product_code_updates, :updated_at, algorithm: :concurrently
@@ -38,7 +34,6 @@ class AddUpdatedAtIndices < ActiveRecord::Migration[5.1]
     add_index :hearing_issue_notes, :updated_at, algorithm: :concurrently
     add_index :hearing_locations, :updated_at, algorithm: :concurrently
     add_index :hearing_task_associations, :updated_at, algorithm: :concurrently
-    add_index :hearing_views, :updated_at, algorithm: :concurrently
     add_index :hearings, :updated_at, algorithm: :concurrently
     add_index :higher_level_reviews, :updated_at, algorithm: :concurrently
     add_index :intakes, :updated_at, algorithm: :concurrently
