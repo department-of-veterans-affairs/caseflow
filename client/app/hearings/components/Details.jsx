@@ -64,7 +64,7 @@ class HearingDetails extends React.Component {
     const virtualHearing = hearing.virtualHearing;
 
     return {
-      [HEARING_DETAILS_FORM_NAME]: {
+      hearingDetailsForm: {
         bvaPoc: hearing.bvaPoc,
         judgeId: hearing.judgeId ? hearing.judgeId.toString() : null,
         evidenceWindowWaived: hearing.evidenceWindowWaived || false,
@@ -74,7 +74,7 @@ class HearingDetails extends React.Component {
         transcriptRequested: hearing.transcriptRequested,
         transcriptSentDate: DateUtil.formatDateStr(hearing.transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD')
       },
-      [TRANSCRIPTION_DETAILS_FORM_NAME]: {
+      transcriptionDetailsForm: {
         // Transcription Details
         taskNumber: transcription.taskNumber,
         transcriber: transcription.transcriber,
@@ -86,7 +86,7 @@ class HearingDetails extends React.Component {
         problemNoticeSentDate: DateUtil.formatDateStr(transcription.problemNoticeSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
         requestedRemedy: transcription.requestedRemedy
       },
-      [VIRTUAL_HEARING_FORM_NAME]: virtualHearing ? {
+      virtualHearingForm: virtualHearing ? {
         veteranEmail: virtualHearing.veteranEmail,
         representativeEmail: virtualHearing.representativeEmail,
         status: virtualHearing.status
@@ -94,23 +94,12 @@ class HearingDetails extends React.Component {
     };
   }
 
-  getNewFormData = () => {
-    // from from redux store
-    const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = this.props;
+  updateAllFormData = ({ hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm }) => {
+    this.props.onChangeFormData(HEARING_DETAILS_FORM_NAME, hearingDetailsForm);
+    this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, transcriptionDetailsForm);
 
-    return {
-      [HEARING_DETAILS_FORM_NAME]: hearingDetailsForm,
-      [TRANSCRIPTION_DETAILS_FORM_NAME]: transcriptionDetailsForm,
-      [VIRTUAL_HEARING_FORM_NAME]: virtualHearingForm
-    };
-  }
-
-  updateAllFormData = (formData) => {
-    this.props.onChangeFormData(HEARING_DETAILS_FORM_NAME, formData[HEARING_DETAILS_FORM_NAME]);
-    this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, formData[TRANSCRIPTION_DETAILS_FORM_NAME]);
-
-    if (formData[VIRTUAL_HEARING_FORM_NAME]) {
-      this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, formData[VIRTUAL_HEARING_FORM_NAME]);
+    if (virtualHearingForm) {
+      this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, virtualHearingForm);
     }
   }
 
@@ -139,10 +128,8 @@ class HearingDetails extends React.Component {
 
     // only send updated properties
     const {
-      [HEARING_DETAILS_FORM_NAME]: hearingDetailsForm,
-      [TRANSCRIPTION_DETAILS_FORM_NAME]: transcriptionDetailsForm,
-      [VIRTUAL_HEARING_FORM_NAME]: virtualHearingForm
-    } = deepDiff(this.state.initialFormData, this.getNewFormData());
+      hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm
+    } = deepDiff(this.state.initialFormData, this.props.formData);
 
     const data = {
       hearing: {
@@ -191,7 +178,7 @@ class HearingDetails extends React.Component {
       veteranFileNumber
     } = this.props.hearing;
 
-    const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = this.props;
+    const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = this.props.formData;
 
     const { disabled, success, error } = this.state;
 
@@ -262,15 +249,19 @@ HearingDetails.propTypes = {
   goBack: PropTypes.func,
   disabled: PropTypes.bool,
   onChangeFormData: PropTypes.func,
-  hearingDetailsForm: PropTypes.object,
-  transcriptionDetailsForm: PropTypes.object,
-  virtualHearingForm: PropTypes.object
+  formData: PropTypes.shape({
+    hearingDetailsForm: PropTypes.object,
+    transcriptionDetailsForm: PropTypes.object,
+    virtualHearingForm: PropTypes.object
+  })
 };
 
 const mapStateToProps = (state) => ({
-  hearingDetailsForm: state.components.forms[HEARING_DETAILS_FORM_NAME],
-  transcriptionDetailsForm: state.components.forms[TRANSCRIPTION_DETAILS_FORM_NAME],
-  virtualHearingForm: state.components.forms[VIRTUAL_HEARING_FORM_NAME]
+  formData: {
+    hearingDetailsForm: state.components.forms[HEARING_DETAILS_FORM_NAME],
+    transcriptionDetailsForm: state.components.forms[TRANSCRIPTION_DETAILS_FORM_NAME],
+    virtualHearingForm: state.components.forms[VIRTUAL_HEARING_FORM_NAME]
+  }
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
