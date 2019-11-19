@@ -45,17 +45,14 @@ export const filterIssuesOnAppeal = (issues, appealId) => (
 export const deepDiff = (firstObj, secondObj) => {
   const changedObject = _.reduce(firstObj, (result, firstVal, key) => {
     const secondVal = secondObj[key];
-    let changedVal;
 
     if (_.isEqual(firstVal, secondVal)) {
-      changedVal = null;
+      result[key] = null;
     } else if (_.isObject(firstVal) && _.isObject(secondVal)) {
-      changedVal = deepDiff(firstVal, secondVal);
+      result[key] = deepDiff(firstVal, secondVal);
     } else {
-      changedVal = secondVal;
+      result[key] = secondVal;
     }
-
-    result[key] = changedVal;
 
     return result;
   }, {});
