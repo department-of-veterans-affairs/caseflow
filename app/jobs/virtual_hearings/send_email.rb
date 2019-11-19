@@ -49,7 +49,7 @@ class VirtualHearings::SendEmail
         title: VirtualHearingMailer::RECIPIENT_TITLES[:veteran]
       ),
       judge: MailRecipient.new(
-        full_name: virtual_hearing.hearing.judge.full_name,
+        full_name: virtual_hearing.hearing.judge&.full_name,
         email: virtual_hearing.judge_email,
         title: VirtualHearingMailer::RECIPIENT_TITLES[:judge]
       ),
