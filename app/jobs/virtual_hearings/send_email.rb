@@ -44,7 +44,7 @@ class VirtualHearings::SendEmail
   def mail_recipients
     {
       veteran: MailRecipient.new(
-        full_name: virtual_hearing.hearing.appeal.veteran.name.to_s,
+        full_name: virtual_hearing.hearing.appeal.veteran&.name.to_s,
         email: virtual_hearing.veteran_email,
         title: VirtualHearingMailer::RECIPIENT_TITLES[:veteran]
       ),
