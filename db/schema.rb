@@ -429,7 +429,6 @@ ActiveRecord::Schema.define(version: 20191118163855) do
     t.string "vbms_document_id", null: false
     t.index ["file_number"], name: "index_documents_on_file_number"
     t.index ["series_id"], name: "index_documents_on_series_id"
-    t.index ["updated_at"], name: "index_documents_on_updated_at"
     t.index ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true
   end
 
@@ -439,7 +438,6 @@ ActiveRecord::Schema.define(version: 20191118163855) do
     t.integer "tag_id", null: false
     t.datetime "updated_at"
     t.index ["document_id", "tag_id"], name: "index_documents_tags_on_document_id_and_tag_id", unique: true
-    t.index ["updated_at"], name: "index_documents_tags_on_updated_at"
   end
 
   create_table "end_product_code_updates", force: :cascade, comment: "Caseflow establishes end products in VBMS with specific end product codes. If that code is changed outside of Caseflow, that is tracked here." do |t|
