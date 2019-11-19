@@ -11,6 +11,7 @@ import Button from '../../components/Button';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import * as DateUtil from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
+import { deepDiff } from '../utils';
 
 import DetailsSections from './DetailsSections';
 import DetailsOverview from './details/DetailsOverview';
@@ -42,55 +43,74 @@ class HearingDetails extends React.Component {
   constructor(props) {
     super(props);
 
+    const initialFormData = this.getInitialFormData();
+
     this.state = {
       disabled: this.props.disabled,
       isLegacy: this.props.hearing.docketName !== 'hearing',
       updated: false,
       loading: false,
       success: false,
-      error: false
+      error: false,
+      initialFormData
     };
+
+    this.updateAllFormData(initialFormData);
   }
 
-  componentDidMount() {
-    this.setInitialFormData();
-  }
-
-  setInitialFormData = () => {
+  getInitialFormData = () => {
     const { hearing } = this.props;
     const transcription = hearing.transcription || {};
     const virtualHearing = hearing.virtualHearing;
 
-    this.props.onChangeFormData(HEARING_DETAILS_FORM_NAME, {
-      bvaPoc: hearing.bvaPoc,
-      judgeId: hearing.judgeId ? hearing.judgeId.toString() : null,
-      evidenceWindowWaived: hearing.evidenceWindowWaived || false,
-      room: hearing.room,
-      notes: hearing.notes,
-      // Transcription Request
-      transcriptRequested: hearing.transcriptRequested,
-      transcriptSentDate: DateUtil.formatDateStr(hearing.transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD')
-    });
-
-    this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, {
-      // Transcription Details
-      taskNumber: transcription.taskNumber,
-      transcriber: transcription.transcriber,
-      sentToTranscriberDate: DateUtil.formatDateStr(transcription.sentToTranscriberDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
-      expectedReturnDate: DateUtil.formatDateStr(transcription.expectedReturnDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
-      uploadedToVbmsDate: DateUtil.formatDateStr(transcription.uploadedToVbmsDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
-      // Transcription Problem
-      problemType: transcription.problemType,
-      problemNoticeSentDate: DateUtil.formatDateStr(transcription.problemNoticeSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
-      requestedRemedy: transcription.requestedRemedy
-    });
-
-    if (virtualHearing) {
-      this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, {
+    return {
+      [HEARING_DETAILS_FORM_NAME]: {
+        bvaPoc: hearing.bvaPoc,
+        judgeId: hearing.judgeId ? hearing.judgeId.toString() : null,
+        evidenceWindowWaived: hearing.evidenceWindowWaived || false,
+        room: hearing.room,
+        notes: hearing.notes,
+        // Transcription Request
+        transcriptRequested: hearing.transcriptRequested,
+        transcriptSentDate: DateUtil.formatDateStr(hearing.transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD')
+      },
+      [TRANSCRIPTION_DETAILS_FORM_NAME]: {
+        // Transcription Details
+        taskNumber: transcription.taskNumber,
+        transcriber: transcription.transcriber,
+        sentToTranscriberDate: DateUtil.formatDateStr(transcription.sentToTranscriberDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
+        expectedReturnDate: DateUtil.formatDateStr(transcription.expectedReturnDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
+        uploadedToVbmsDate: DateUtil.formatDateStr(transcription.uploadedToVbmsDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
+        // Transcription Problem
+        problemType: transcription.problemType,
+        problemNoticeSentDate: DateUtil.formatDateStr(transcription.problemNoticeSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
+        requestedRemedy: transcription.requestedRemedy
+      },
+      [VIRTUAL_HEARING_FORM_NAME]: virtualHearing ? {
         veteranEmail: virtualHearing.veteranEmail,
         representativeEmail: virtualHearing.representativeEmail,
         status: virtualHearing.status
-      });
+      } : {}
+    };
+  }
+
+  getNewFormData = () => {
+    // from from redux store
+    const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = this.props;
+
+    return {
+      [HEARING_DETAILS_FORM_NAME]: hearingDetailsForm,
+      [TRANSCRIPTION_DETAILS_FORM_NAME]: transcriptionDetailsForm,
+      [VIRTUAL_HEARING_FORM_NAME]: virtualHearingForm
+    };
+  }
+
+  updateAllFormData = (formData) => {
+    this.props.onChangeFormData(HEARING_DETAILS_FORM_NAME, formData[HEARING_DETAILS_FORM_NAME]);
+    this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, formData[TRANSCRIPTION_DETAILS_FORM_NAME]);
+
+    if (formData[VIRTUAL_HEARING_FORM_NAME]) {
+      this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, formData[VIRTUAL_HEARING_FORM_NAME]);
     }
   }
 
@@ -110,21 +130,28 @@ class HearingDetails extends React.Component {
   }
 
   submit = () => {
-    const { hearing: { externalId }, hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = this.props;
+    const { hearing: { externalId } } = this.props;
     const { updated } = this.state;
 
     if (!updated) {
       return;
     }
 
+    // only send updated properties
+    const {
+      [HEARING_DETAILS_FORM_NAME]: hearingDetailsForm,
+      [TRANSCRIPTION_DETAILS_FORM_NAME]: transcriptionDetailsForm,
+      [VIRTUAL_HEARING_FORM_NAME]: virtualHearingForm
+    } = deepDiff(this.state.initialFormData, this.getNewFormData());
+
     const data = {
       hearing: {
-        ...hearingDetailsForm,
+        ...(hearingDetailsForm || {}),
         transcription_attributes: {
-          ...transcriptionDetailsForm
+          ...(transcriptionDetailsForm || {})
         },
         virtual_hearing_attributes: {
-          ...virtualHearingForm
+          ...(virtualHearingForm || {})
         }
       }
     };
@@ -141,7 +168,12 @@ class HearingDetails extends React.Component {
         error: false
       });
 
-      this.props.setHearing(ApiUtil.convertToCamelCase(resp.body));
+      // set hearing on DetailsContainer then reset intialFormData
+      this.props.setHearing(ApiUtil.convertToCamelCase(resp.body), () => {
+        this.setState({
+          initialFormData: this.getInitialFormData()
+        });
+      });
     }).
       catch((error) => {
         this.setState({

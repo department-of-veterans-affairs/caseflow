@@ -41,6 +41,26 @@ export const filterIssuesOnAppeal = (issues, appealId) => (
     value()
 );
 
+// assumes objects have identical properties
+export const deepDiff = (firstObj, secondObj) => {
+
+  const changedObject = _.mapObject(firstObj, (firstVal, key) => {
+    const secondVal = secondObj[key];
+
+    if (_.isEqual(firstVal, secondVal)) {
+      return null;
+    }
+
+    if (_.isObject(firstVal) && _.isObject(secondVal)) {
+      return deepDiff(firstVal, secondVal);
+    }
+
+    return secondVal;
+  });
+
+  return _.pick(changedObject, (val) => val !== null);
+};
+
 export const filterCurrentIssues = (issues) => (
   _.omitBy(issues, (issue) => (
     // Omit if destroyed, or HAS NON-REMAND DISPOSITION FROM VACOLS
