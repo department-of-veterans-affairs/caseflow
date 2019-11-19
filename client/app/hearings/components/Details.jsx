@@ -185,7 +185,6 @@ class HearingDetails extends React.Component {
           <h2>Hearing Details</h2>
           <DetailsOverview hearing={this.props.hearing} />
           <div className="cf-help-divider" />
-
           <DetailsSections
             user={this.props.user}
             submit={this.submit}
