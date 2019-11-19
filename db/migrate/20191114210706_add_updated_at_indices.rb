@@ -24,8 +24,6 @@ class AddUpdatedAtIndices < ActiveRecord::Migration[5.1]
     add_index :distributions, :updated_at, algorithm: :concurrently
     add_index :docket_snapshots, :updated_at, algorithm: :concurrently
     add_index :docket_tracers, :updated_at, algorithm: :concurrently
-    add_index :documents, :updated_at, algorithm: :concurrently
-    add_index :documents_tags, :updated_at, algorithm: :concurrently
     add_index :end_product_code_updates, :updated_at, algorithm: :concurrently
     add_index :end_product_establishments, :updated_at, algorithm: :concurrently
     add_index :global_admin_logins, :updated_at, algorithm: :concurrently
