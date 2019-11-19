@@ -29,6 +29,23 @@ const DetailsInputs = ({
         hearing={hearing}
       />
     </div>
+    {virtualHearing && <div {...rowThirds}>
+      <TextField
+        name="Veteran Email"
+        value={virtualHearing.veteranEmail}
+        strongLabel
+        required
+        readOnly={!virtualHearing.jobCompleted}
+        onChange={(veteranEmail) => updateVirtualHearing({veteranEmail})}
+      />
+      <TextField
+        name="POA/Representive Email"
+        value={virtualHearing.representativeEmail}
+        strongLabel
+        readOnly={!virtualHearing.jobCompleted}
+        onChange={(representativeEmail) => updateVirtualHearing({representativeEmail})}
+      />
+    </div> }
     <div {...rowThirds}>
       <JudgeDropdown
         name="judgeDropdown"

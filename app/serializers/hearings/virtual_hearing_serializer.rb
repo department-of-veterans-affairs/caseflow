@@ -6,4 +6,7 @@ class VirtualHearingSerializer
   attribute :veteran_email
   attribute :representative_email
   attribute :status
+  attribute :job_completed do |virtual_hearing|
+    virtual_hearing.active? && virtual_hearing.all_emails_sent?
+  end
 end

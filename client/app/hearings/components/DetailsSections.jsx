@@ -24,12 +24,7 @@ class DetailsSections extends React.Component {
     const { initialHearingState: { virtualHearing } } = this.props;
 
     if (virtualHearing) {
-      const { veteranEmail, representativeEmail } = virtualHearing;
-
-      this.props.updateVirtualHearing({
-        veteranEmail,
-        representativeEmail
-      });
+      this.props.updateVirtualHearing(virtualHearing);
     } else {
       this.props.updateVirtualHearing(null);
     }
