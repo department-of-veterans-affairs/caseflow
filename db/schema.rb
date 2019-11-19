@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191118163855) do
+ActiveRecord::Schema.define(version: 20191119192631) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -293,6 +293,7 @@ ActiveRecord::Schema.define(version: 20191118163855) do
     t.string "query"
     t.datetime "updated_at"
     t.integer "user_id"
+    t.index ["appeal_id", "appeal_type"], name: "index_claims_folder_searches_on_appeal_id_and_appeal_type"
     t.index ["updated_at"], name: "index_claims_folder_searches_on_updated_at"
     t.index ["user_id"], name: "index_claims_folder_searches_on_user_id"
   end
