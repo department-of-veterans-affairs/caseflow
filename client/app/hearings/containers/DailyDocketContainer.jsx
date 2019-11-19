@@ -8,7 +8,6 @@ import _ from 'lodash';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ApiUtil from '../../util/ApiUtil';
-import { deepDiff } from '../utils';
 import {
   onReceiveDailyDocket,
   onReceiveHearing,
@@ -42,8 +41,7 @@ export class DailyDocketContainer extends React.Component {
     this.state = {
       modalOpen: false,
       showModalAlert: false,
-      serverError: false,
-      initialHearingsState: this.props.hearings
+      serverError: false
     };
   }
 
@@ -150,30 +148,19 @@ export class DailyDocketContainer extends React.Component {
     }, _.isNil);
   }
 
-  saveHearing = (hearingId) => {
-    const hearing = deepDiff(this.state.initialHearingsState[hearingId], this.props.hearings[hearingId]);
+  saveHearing = (hearingId, hearing) => {
     const aodMotion = hearing.advanceOnDocketMotion ? {
       advance_on_docket_motion: this.formatAod(hearing)
     } : {};
-    const virtualHearing = hearing.virtualHearing ? {
-      virtual_hearing_attributes: this.formatVirtualHearing(hearing)
-    } : {};
 
-    return ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: {
+    return ApiUtil.patch(`/hearings/${hearingId}`, { data: {
       hearing: this.formatHearing(hearing),
-      ...aodMotion,
-      ...virtualHearing
+      ...aodMotion
     } }).
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(response.body);
 
         this.props.onReceiveSavedHearing(resp);
-        this.setState({
-          initialHearingsState: {
-            ...this.state.initialHearingsState,
-            [hearingId]: resp
-          }
-        });
 
         return true;
       }, (err) => {

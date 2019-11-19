@@ -43,22 +43,24 @@ export const filterIssuesOnAppeal = (issues, appealId) => (
 
 // assumes objects have identical properties
 export const deepDiff = (firstObj, secondObj) => {
-
-  const changedObject = _.mapObject(firstObj, (firstVal, key) => {
+  const changedObject = _.reduce(firstObj, (result, firstVal, key) => {
     const secondVal = secondObj[key];
+    let changedVal;
 
     if (_.isEqual(firstVal, secondVal)) {
-      return null;
+      changedVal = null;
+    } else if (_.isObject(firstVal) && _.isObject(secondVal)) {
+      changedVal = deepDiff(firstVal, secondVal);
+    } else {
+      changedVal = secondVal;
     }
 
-    if (_.isObject(firstVal) && _.isObject(secondVal)) {
-      return deepDiff(firstVal, secondVal);
-    }
+    result[key] = changedVal;
 
-    return secondVal;
-  });
+    return result;
+  }, {});
 
-  return _.pick(changedObject, (val) => val !== null);
+  return _.pickBy(changedObject, (val) => val !== null);
 };
 
 export const filterCurrentIssues = (issues) => (
