@@ -217,6 +217,7 @@ module Asyncable
 
   def update_error!(err)
     update!(self.class.error_column => err)
+    AsyncableJobMessaging.new(job: self).handle_job_failure(err: err)
   end
 
   def restart!
