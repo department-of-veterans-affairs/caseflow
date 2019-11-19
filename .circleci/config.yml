@@ -99,6 +99,14 @@ jobs:
           command: |
             ~/project/ci-bin/capture-log "bundle exec rake spec:setup_vacols"
 
+      - run:
+          name: RSpec 
+          command: |
+            mkdir -p ~/test-results/rspec 
+            testfiles=$(circleci tests glob "spec/**/*spec.rb" | circleci tests split --split-by=timings) 
+            echo $testfiles > ~/project/tmp/testfiles/rspec_testfiles.txt 
+            ~/project/ci-bin/capture-log "bundle exec rspec --no-color --format documentation --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}"
+
       - store_test_results:
           name: Store test results as summary
           path: ~/test-results
@@ -122,6 +130,10 @@ jobs:
       - store_artifacts:
           name: Store bullet log
           path: ~/project/log/bullet.log
+
+      - store_artifacts:
+          name: Store testfile ordering 
+          path: ~/project/tmp/testfiles
 
       - store_artifacts:
           name: Store run logs
