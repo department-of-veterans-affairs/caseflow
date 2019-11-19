@@ -12,6 +12,7 @@ import TextareaField from '../../../components/TextareaField';
 import Checkbox from '../../../components/Checkbox';
 import VirtualHearingLink from '../VirtualHearingLink';
 import HearingTypeDropdown from './HearingTypeDropdown';
+import TextField from '../../../components/TextField'; 
 
 const DetailsInputs = ({
   hearing, update, readOnly, isLegacy, openModal, updateVirtualHearing, virtualHearing,
