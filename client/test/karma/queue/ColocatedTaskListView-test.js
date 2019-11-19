@@ -71,7 +71,7 @@ describe('ColocatedTaskListView', () => {
       pgId: 1
     },
     taskId: '8',
-    label: 'new_rep_arguments',
+    label: 'New rep arguments',
     documentId: null,
     workProduct: null,
     previousTaskAssignedOn: null,
@@ -371,7 +371,7 @@ describe('ColocatedTaskListView', () => {
       expect(caseDetails.text()).to.include(appeal.veteranFullName);
       expect(caseDetails.text()).to.include(appeal.veteranFullName);
       expect(caseDetails.text()).to.include(appeal.veteranFileNumber);
-      expect(columnTasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.label]);
+      expect(columnTasks.text()).to.include(task.label);
       expect(types.text()).to.include(appeal.caseType);
       expect(docketNumber.text()).to.include(appeal.docketNumber);
       expect(daysWaiting.text()).to.equal('1');
@@ -465,7 +465,7 @@ describe('ColocatedTaskListView', () => {
       expect(hearings.text()).to.include('');
       expect(caseDetails.text()).to.include(appeal.veteranFullName);
       expect(caseDetails.text()).to.include(appeal.veteranFileNumber);
-      expect(columnTasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.label]);
+      expect(columnTasks.text()).to.include(task.label);
       expect(types.text()).to.include(appeal.caseType);
       expect(docketNumber.text()).to.include(appeal.docketNumber);
       expect(daysOnHold.text()).to.equal('1 of 30');
