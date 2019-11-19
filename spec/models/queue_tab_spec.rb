@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "support/vacols_database_cleaner"
 
-describe QueueTab, :all_dbs do
+describe QueueTab do
   # Use OrganizationAssignedTasksTab as our example since we don't expect QueueTab to ever be instantiated directly.
   let(:tab) { OrganizationAssignedTasksTab.new(params) }
   let(:params) do
