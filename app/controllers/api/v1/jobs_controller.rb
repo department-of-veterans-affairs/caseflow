@@ -6,6 +6,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "calculate_dispatch_stats" => CalculateDispatchStatsJob,
     "create_establish_claim" => CreateEstablishClaimTasksJob,
     "data_integrity_checks" => DataIntegrityChecksJob,
+    "delete_conferences_job" => VirtualHearings::DeleteConferencesJob,
     "dependencies_check" => DependenciesCheckJob,
     "dependencies_report_service_log" => DependenciesReportServiceLogJob,
     "heartbeat" => HeartbeatTasksJob,

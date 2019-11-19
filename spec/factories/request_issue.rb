@@ -16,6 +16,12 @@ FactoryBot.define do
       decision_date { Time.zone.today }
     end
 
+    trait :rating_decision do
+      sequence(:contested_rating_decision_reference_id) { |n| "rating_decision#{n}" }
+      contested_rating_issue_profile_date { Time.zone.today }
+      decision_date { Time.zone.today }
+    end
+
     trait :nonrating do
       nonrating_issue_category { "Apportionment" }
       decision_date { 2.months.ago }
@@ -67,7 +73,7 @@ FactoryBot.define do
           participant_id: evaluator.veteran_participant_id,
           rating_profile_date: request_issue.contested_rating_issue_profile_date.to_date,
           end_product_last_action_date: request_issue.contested_rating_issue_profile_date.to_date,
-          benefit_type: request_issue.decision_review.benefit_type,
+          benefit_type: request_issue.benefit_type || request_issue.decision_review.benefit_type,
           decision_text: "a rating decision issue"
         )
 

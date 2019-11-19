@@ -413,7 +413,6 @@ feature "Appeal Intake", :all_dbs do
     expect(page).to have_content("3 issues")
     expect(page).to have_content("This is an unidentified issue")
     expect(find_intake_issue_by_number(3)).to have_css(".issue-unidentified")
-    expect_ineligible_issue(3)
 
     # add ineligible issue
     click_intake_add_issue

@@ -50,12 +50,12 @@ namespace :tasks do
       fail NoTasksToChange, "There aren't any #{from_class.name}s available to change."
     end
 
-    ids = target_tasks.map(&:id)
+    id_string = target_tasks.map(&:id).sort.join(",")
     change = dry_run ? "Would change" : "Changing"
     revert = dry_run ? "Would revert" : "Revert"
-    message = "#{change} #{target_tasks.count} #{from_class.name}s with ids #{ids.join(', ')} into #{to_class.name}s"
+    message = "#{change} #{target_tasks.count} #{from_class.name}s with ids #{id_string} into #{to_class.name}s"
     puts message
-    puts "#{revert} with: bundle exec rake tasks:change_type[#{to_class.name},#{from_class.name},#{ids.join(',')}]"
+    puts "#{revert} with: bundle exec rake tasks:change_type[#{to_class.name},#{from_class.name},#{id_string}]"
 
     if !dry_run
       Rails.logger.tagged("rake tasks:change_type") { Rails.logger.info(message) }
@@ -121,7 +121,7 @@ namespace :tasks do
     ids = target_tasks.map(&:id).sort
     change = dry_run ? "Would change" : "Changing"
     revert = dry_run ? "Would revert" : "Revert"
-    message = "#{change} assignee of #{target_tasks.count} #{task_class.name}s with ids #{ids.join(', ')} " \
+    message = "#{change} assignee of #{target_tasks.count} #{task_class.name}s with ids #{ids.join(',')} " \
               "from #{from_organization.name} to #{to_organization.name}"
     puts message
     puts "#{revert} with: bundle exec rake tasks:change_organization_assigned_to" \
@@ -150,6 +150,28 @@ namespace :tasks do
       BulkTaskReassignment.new(user).perform_dry_run
     else
       BulkTaskReassignment.new(user).process
+    end
+  end
+
+  # Usage:
+  # Migrates our old admin-judge based JudgeTeams to use the JudgeTeamRole (dry run)
+  #   $ bundle exec rake tasks:assign_judgeteamroles_to_judgeteam_members"
+  # Reassign all tasks assigned to a user with an id of 1 (execute)
+  #   $ bundle exec rake tasks:assign_judgeteamroles_to_judgeteam_members[false]"
+  desc "assigning all current JudgeTeam admin members to be JudgeTeamLead"
+  task :assign_judgeteamroles_to_judgeteam_members, [:dry_run] => :environment do |_, args|
+    Rails.logger.tagged("rake tasks:assign_judgeteamroles_to_judgeteam_members") do
+      Rails.logger.info("Invoked with: #{args.to_a.join(', ')}")
+    end
+    dry_run = args.dry_run&.to_s&.strip&.upcase != "FALSE"
+
+    if dry_run
+      puts "*** DRY RUN"
+      puts "*** pass 'false' as the first argument to execute"
+      AssignJudgeteamRoles.new.perform_dry_run
+    else
+      puts "Updating JudgeTeams with JudgeTeamRoles"
+      AssignJudgeteamRoles.new.process
     end
   end
 end

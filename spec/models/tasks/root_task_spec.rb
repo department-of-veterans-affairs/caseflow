@@ -148,6 +148,18 @@ describe RootTask, :postgres do
           expect(Raven).to have_received(:capture_message).exactly(0).times
         end
       end
+
+      context "when the child task is a ReturnedUndeliverableCorrespondenceMailTask" do
+        let(:task_factory) { :returned_undeliverable_correspondence_mail_task }
+
+        # Automatic task assignment requires there to be members of the BVA dispatch team.
+        before { BvaDispatch.singleton.add_user(create(:user)) }
+
+        it "does not send a message to Sentry" do
+          subject
+          expect(Raven).to have_received(:capture_message).exactly(0).times
+        end
+      end
     end
 
     context "when the RootTask is on_hold" do

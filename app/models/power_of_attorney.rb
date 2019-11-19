@@ -16,6 +16,7 @@
 class PowerOfAttorney
   include ActiveModel::Model
   include AssociatedVacolsModel
+  include BgsService
 
   vacols_attr_accessor  :vacols_representative_type,
                         :vacols_representative_name,
@@ -29,7 +30,9 @@ class PowerOfAttorney
   delegate :representative_name,
            :representative_type,
            :representative_address,
-           :participant_id, to: :bgs_power_of_attorney, prefix: :bgs
+           :representative_email_address,
+           :participant_id,
+           to: :bgs_power_of_attorney, prefix: :bgs
 
   def update_vacols_rep_info!(appeal:, representative_type:, representative_name:, address:)
     repo = self.class.repository
