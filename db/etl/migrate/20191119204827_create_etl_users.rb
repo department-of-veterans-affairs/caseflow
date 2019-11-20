@@ -4,6 +4,7 @@ class CreateEtlUsers < ActiveRecord::Migration[5.1]
       t.timestamps null: false, comment: "Default created_at/updated_at for the ETL record"
 
       # caseflow attributes
+      t.integer "user_id", null: false, comment: "ID of the User"
       t.string "css_id", null: false, limit: 20, comment: "CSEM (Active Directory) username"
       t.string "email", limit: 255, comment: "CSEM email"
       t.string "full_name", limit: 255, comment: "CSEM full name"

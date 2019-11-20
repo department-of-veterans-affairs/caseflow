@@ -57,6 +57,7 @@ ActiveRecord::Schema.define(version: 20191119204827) do
     t.datetime "status_updated_at", comment: "When the user's status was last updated"
     t.string "svlj", limit: 1
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.integer "user_id", null: false, comment: "ID of the User"
     t.index "upper((css_id)::text)", name: "index_users_on_upper_css_id_text", unique: true
     t.index ["status"], name: "index_users_on_status"
   end
