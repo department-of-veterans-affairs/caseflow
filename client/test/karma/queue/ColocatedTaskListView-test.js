@@ -6,7 +6,6 @@ import ColocatedTaskListView from '../../../app/queue/ColocatedTaskListView';
 import { createStore, applyMiddleware } from 'redux';
 import moment from 'moment';
 import thunk from 'redux-thunk';
-import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import rootReducer from '../../../app/queue/reducers';
 import { onReceiveQueue, receiveNewDocumentsForTask, errorFetchingDocumentCount, setAppealDocCount, setQueueConfig }
   from '../../../app/queue/QueueActions';
