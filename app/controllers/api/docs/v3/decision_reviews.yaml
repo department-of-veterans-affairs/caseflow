@@ -1414,6 +1414,15 @@ paths:
                             nodDate:
                               type: string
                               format: date
+                            description:
+                              type: string
+                            disposition:
+                              type: string
+                            close_date:
+                              type: string
+                              format: date
+                            note:
+                              type: string
         '404':
           description: Veteran not found
           content:
