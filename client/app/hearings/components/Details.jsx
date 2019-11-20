@@ -154,9 +154,13 @@ class HearingDetails extends React.Component {
 
       // set hearing on DetailsContainer then reset initialFormData
       this.props.setHearing(ApiUtil.convertToCamelCase(resp.body), () => {
+        const initialFormData = this.getInitialFormData();
+
         this.setState({
-          initialFormData: this.getInitialFormData()
+          initialFormData
         });
+
+        this.updateAllFormData(initialFormData);
       });
     }).
       catch((error) => {

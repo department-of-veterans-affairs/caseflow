@@ -19,7 +19,7 @@ const DetailsInputs = ({
 }) => (
   <React.Fragment>
     <div {...rowThirds}>
-      {true && <HearingTypeDropdown
+      {enableVirtualHearings && <HearingTypeDropdown
         virtualHearing={virtualHearing}
         requestType={requestType}
         updateVirtualHearing={updateVirtualHearing}

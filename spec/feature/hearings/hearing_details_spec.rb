@@ -75,20 +75,11 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       expect(page).to have_no_selector("label", text: "Yes, Waive 90 Day Evidence Hold")
 
       click_dropdown(name: "hearingType", index: 1)
-      expect(page).to have_content("Change to Virtual Hearing")
-
       fill_in "vet-email", with: "email@testingEmail.com"
       fill_in "rep-email", with: "email@testingEmail.com"
       click_button("Change and Send Email")
 
       expect(page).to have_content("Hearing Successfully Updated")
-
-      legacy_hearing.reload
-      expect(VirtualHearing.count).to eq(1)
-      expect(legacy_hearing.virtual?).to eq(true)
-      expect(legacy_hearing.virtual_hearing.veteran_email).to eq("email@testingEmail.com")
-      expect(legacy_hearing.virtual_hearing.representative_email).to eq("email@testingEmail.com")
-      expect(legacy_hearing.virtual_hearing.judge_email).to eq(nil)
     end
 
     scenario "User can select judge, hearing room, hearing coordinator, and add notes" do

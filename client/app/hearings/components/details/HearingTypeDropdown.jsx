@@ -9,29 +9,26 @@ class HearingTypeDropdown extends React.Component {
 
     const { requestType } = props;
 
-    this.state = {
-      HEARING_TYPE_OPTIONS: [
-        {
-          value: false,
-          label: requestType
-        },
-        {
-          value: true,
-          label: 'Virtual'
-        }
-      ]
-    };
+    this.HEARING_TYPE_OPTIONS = [
+      {
+        value: false,
+        label: requestType
+      },
+      {
+        value: true,
+        label: 'Virtual'
+      }
+    ];
   }
 
   getValue = () => {
     const { virtualHearing } = this.props;
-    const { HEARING_TYPE_OPTIONS } = this.state;
 
     if (!virtualHearing || !virtualHearing.status || virtualHearing.status === 'cancelled') {
-      return HEARING_TYPE_OPTIONS[0];
+      return this.HEARING_TYPE_OPTIONS[0];
     }
 
-    return HEARING_TYPE_OPTIONS[1];
+    return this.HEARING_TYPE_OPTIONS[1];
   }
 
   onChange = (option) => {
@@ -55,7 +52,7 @@ class HearingTypeDropdown extends React.Component {
         label="Hearing Type"
         name="hearingType"
         strongLabel
-        options={this.state.HEARING_TYPE_OPTIONS}
+        options={this.HEARING_TYPE_OPTIONS}
         value={this.getValue()}
         onChange={this.onChange}
       />
