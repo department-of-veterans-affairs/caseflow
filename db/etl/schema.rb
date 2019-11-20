@@ -16,8 +16,10 @@ ActiveRecord::Schema.define(version: 20191120184256) do
   enable_extension "plpgsql"
 
   create_table "appeals", force: :cascade, comment: "Denormalized BVA NODs" do |t|
+    t.boolean "aod_granted", default: false, null: false, comment: "advance_on_docket_motions.granted"
+    t.string "aod_reason", limit: 50, comment: "advance_on_docket_motions.reason"
+    t.bigint "aod_user_id", comment: "advance_on_docket_motions.user_id"
     t.bigint "appeal_id", null: false, comment: "ID of the Appeal"
-    t.date "claimant_dob", comment: "people.date_of_birth"
     t.string "claimant_first_name", comment: "people.first_name"
     t.bigint "claimant_id", comment: "claimants.id"
     t.string "claimant_last_name", comment: "people.last_name"
@@ -39,6 +41,7 @@ ActiveRecord::Schema.define(version: 20191120184256) do
     t.date "target_decision_date", comment: "If the appeal docket is direct review, this sets the target decision date for the appeal, which is one year after the receipt date."
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
     t.uuid "uuid", null: false, comment: "The universally unique identifier for the appeal"
+    t.date "veteran_dob", comment: "people.date_of_birth"
     t.string "veteran_file_number", limit: 20, null: false, comment: "Veteran file number"
     t.string "veteran_first_name", comment: "veterans.first_name"
     t.bigint "veteran_id", null: false, comment: "veterans.id"
@@ -47,6 +50,8 @@ ActiveRecord::Schema.define(version: 20191120184256) do
     t.string "veteran_middle_name", comment: "veterans.middle_name"
     t.string "veteran_name_suffix", comment: "veterans.name_suffix"
     t.string "veteran_participant_id", limit: 20, comment: "veterans.participant_id"
+    t.index ["aod_granted"], name: "index_appeals_on_aod_granted"
+    t.index ["aod_user_id"], name: "index_appeals_on_aod_user_id"
     t.index ["appeal_id"], name: "index_appeals_on_appeal_id"
     t.index ["claimant_id"], name: "index_appeals_on_claimant_id"
     t.index ["claimant_participant_id"], name: "index_appeals_on_claimant_participant_id"
