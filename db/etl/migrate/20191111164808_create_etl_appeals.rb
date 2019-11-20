@@ -50,14 +50,17 @@ class CreateEtlAppeals < ActiveRecord::Migration[5.1]
       t.string "claimant_last_name", comment: "people.last_name"
       t.string "claimant_name_suffix", comment: "people.name_suffix"
 
+      t.index ["claimant_id"]
+      t.index ["claimant_participant_id"]
+      t.index ["claimant_person_id"]
+
       # AOD is 1:1 with claimant via people, most recent preferred.
       t.boolean "aod_granted", null: false, default: false, comment: "advance_on_docket_motions.granted"
       t.string "aod_reason", limit: 50, comment: "advance_on_docket_motions.reason"
       t.bigint "aod_user_id", comment: "advance_on_docket_motions.user_id"
 
-      t.index ["claimant_id"]
-      t.index ["claimant_participant_id"]
-      t.index ["claimant_person_id"]
+      t.index ["aod_user_id"]
+      t.index ["aod_granted"]
     end
   end
 end
