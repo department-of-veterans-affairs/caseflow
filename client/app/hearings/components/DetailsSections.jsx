@@ -40,21 +40,22 @@ class DetailsSections extends React.Component {
   render () {
     const {
       transcription, hearing, disabled, updateHearing, updateTranscription, updateVirtualHearing,
-      isLegacy, virtualHearing, submit, user, initialHearingState
+      isLegacy, virtualHearing, submit, user, initialHearingState, requestType
     } = this.props;
     const { modalOpen } = this.state;
 
     return (
       <React.Fragment>
         <DetailsInputs
-          openModal={this.openModal}
+          readOnly={disabled}
+          requestType={requestType}
+          isLegacy={isLegacy}
           hearing={hearing}
           update={updateHearing}
           enableVirtualHearings={user.userCanScheduleVirtualHearings}
           virtualHearing={virtualHearing}
           updateVirtualHearing={updateVirtualHearing}
-          readOnly={disabled}
-          isLegacy={isLegacy}
+          openModal={this.openModal}
           openVirtualHearingModal={this.openModal} />
         <div className="cf-help-divider" />
         {modalOpen && <VirtualHearingModal
@@ -108,6 +109,7 @@ DetailsSections.propTypes = {
   updateTranscription: PropTypes.func,
   updateVirtualHearing: PropTypes.func,
   isLegacy: PropTypes.bool,
+  requestType: PropTypes.string,
   submit: PropTypes.func,
   user: PropTypes.shape({
     userCanScheduleVirtualHearings: PropTypes.bool

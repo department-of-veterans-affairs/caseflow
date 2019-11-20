@@ -61,7 +61,7 @@ class HearingDetails extends React.Component {
   getInitialFormData = () => {
     const { hearing } = this.props;
     const transcription = hearing.transcription || {};
-    const virtualHearing = hearing.virtualHearing;
+    const virtualHearing = hearing.virtualHearing || {};
 
     return {
       hearingDetailsForm: {
@@ -86,11 +86,11 @@ class HearingDetails extends React.Component {
         problemNoticeSentDate: DateUtil.formatDateStr(transcription.problemNoticeSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
         requestedRemedy: transcription.requestedRemedy
       },
-      virtualHearingForm: virtualHearing ? {
+      virtualHearingForm: {
         veteranEmail: virtualHearing.veteranEmail,
         representativeEmail: virtualHearing.representativeEmail,
         status: virtualHearing.status
-      } : {}
+      }
     };
   }
 
@@ -215,6 +215,7 @@ class HearingDetails extends React.Component {
             hearing={hearingDetailsForm}
             virtualHearing={virtualHearingForm}
             isLegacy={this.state.isLegacy}
+            requestType={this.props.hearing.readableRequestType}
             disabled={disabled} />
           <div>
             <a

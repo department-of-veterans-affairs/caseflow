@@ -49,6 +49,7 @@ ActiveRecord::Schema.define(version: 20191119192631) do
     t.integer "x"
     t.integer "y"
     t.index ["document_id"], name: "index_annotations_on_document_id"
+    t.index ["updated_at"], name: "index_annotations_on_updated_at"
     t.index ["user_id"], name: "index_annotations_on_user_id"
   end
 
@@ -68,6 +69,7 @@ ActiveRecord::Schema.define(version: 20191119192631) do
     t.string "source"
     t.datetime "updated_at"
     t.string "vbms_id"
+    t.index ["updated_at"], name: "index_api_views_on_updated_at"
   end
 
   create_table "appeal_series", id: :serial, force: :cascade do |t|
@@ -86,6 +88,7 @@ ActiveRecord::Schema.define(version: 20191119192631) do
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["appeal_type", "appeal_id", "user_id"], name: "index_appeal_views_on_appeal_type_and_appeal_id_and_user_id", unique: true
+    t.index ["updated_at"], name: "index_appeal_views_on_updated_at"
   end
 
   create_table "appeals", force: :cascade, comment: "Decision reviews intaken for AMA appeals to the board (also known as a notice of disagreement)." do |t|
@@ -412,6 +415,7 @@ ActiveRecord::Schema.define(version: 20191119192631) do
     t.datetime "updated_at"
     t.integer "user_id", null: false
     t.index ["document_id", "user_id"], name: "index_document_views_on_document_id_and_user_id", unique: true
+    t.index ["updated_at"], name: "index_document_views_on_updated_at"
   end
 
   create_table "documents", id: :serial, force: :cascade do |t|
@@ -430,6 +434,7 @@ ActiveRecord::Schema.define(version: 20191119192631) do
     t.string "vbms_document_id", null: false
     t.index ["file_number"], name: "index_documents_on_file_number"
     t.index ["series_id"], name: "index_documents_on_series_id"
+    t.index ["updated_at"], name: "index_documents_on_updated_at"
     t.index ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true
   end
 
@@ -439,6 +444,7 @@ ActiveRecord::Schema.define(version: 20191119192631) do
     t.integer "tag_id", null: false
     t.datetime "updated_at"
     t.index ["document_id", "tag_id"], name: "index_documents_tags_on_document_id_and_tag_id", unique: true
+    t.index ["updated_at"], name: "index_documents_tags_on_updated_at"
   end
 
   create_table "end_product_code_updates", force: :cascade, comment: "Caseflow establishes end products in VBMS with specific end product codes. If that code is changed outside of Caseflow, that is tracked here." do |t|
@@ -646,6 +652,7 @@ ActiveRecord::Schema.define(version: 20191119192631) do
     t.datetime "updated_at"
     t.integer "user_id", null: false
     t.index ["hearing_id", "user_id", "hearing_type"], name: "index_hearing_views_on_hearing_id_and_user_id_and_hearing_type", unique: true
+    t.index ["updated_at"], name: "index_hearing_views_on_updated_at"
   end
 
   create_table "hearings", force: :cascade do |t|
