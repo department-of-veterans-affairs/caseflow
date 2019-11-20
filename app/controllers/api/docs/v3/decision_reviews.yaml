@@ -1232,7 +1232,7 @@ paths:
       summary: Returns all contestable issues for a specific veteran.
       description: >-
         Returns all issues a Veteran could contest in a Decision Review
-        as of the `receiptDate`.  Associate these resutls when creating
+        as of the `receiptDate`.  Associate these results when creating
         new Decision Reviews.
       responses:
         '200':
