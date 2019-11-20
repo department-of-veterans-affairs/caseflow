@@ -52,6 +52,21 @@ class AsyncableJobMessaging
     )
   end
 
+  def handle_job_success
+    return unless messaging_enabled_for_job_attempt?
+    return if job.messages.failing_job_succeeded.any?
+
+    message_text = <<-EOS.strip_heredoc
+      <a href="#{job.path}">#{job.class} #{job.id}</a> has successfully been processed. No further action is necessary. If you have opened a support ticket for this issue, you may inform them that it may be closed.
+    EOS
+    Message.create!(
+      detail: job,
+      text: message_text,
+      user: job.asyncable_user,
+      message_type: "failing_job_succeeded"
+    )
+  end
+
   private
 
   def messaging_enabled_for_job_attempt?
