@@ -97,10 +97,7 @@ class HearingDetails extends React.Component {
   updateAllFormData = ({ hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm }) => {
     this.props.onChangeFormData(HEARING_DETAILS_FORM_NAME, hearingDetailsForm);
     this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, transcriptionDetailsForm);
-
-    if (virtualHearingForm) {
-      this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, virtualHearingForm);
-    }
+    this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, virtualHearingForm);
   }
 
   updateHearing = (values) => {
@@ -155,7 +152,7 @@ class HearingDetails extends React.Component {
         error: false
       });
 
-      // set hearing on DetailsContainer then reset intialFormData
+      // set hearing on DetailsContainer then reset initialFormData
       this.props.setHearing(ApiUtil.convertToCamelCase(resp.body), () => {
         this.setState({
           initialFormData: this.getInitialFormData()
