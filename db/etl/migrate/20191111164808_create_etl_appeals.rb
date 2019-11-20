@@ -4,7 +4,7 @@ class CreateEtlAppeals < ActiveRecord::Migration[5.1]
       t.timestamps null: false, comment: "Default created_at/updated_at for the ETL record"
 
       # Appeals attributes
-      t.integer "appeal_id", null: false, comment: "ID of the Appeal"
+      t.bigint "appeal_id", null: false, comment: "ID of the Appeal"
       t.string "docket_number", null: false, limit: 50, comment: "Docket number"
       t.string "docket_type", null: false, limit: 50, comment: "Docket type"
       t.string "veteran_file_number", null: false, limit: 20, comment: "Veteran file number"
@@ -25,9 +25,10 @@ class CreateEtlAppeals < ActiveRecord::Migration[5.1]
       t.index ["docket_type"]
       t.index ["receipt_date"]
       t.index ["poa_participant_id"]
+      t.index ["appeal_id"]
 
       # denormalized attributes (one Veteran and one Claimant per Appeal)
-      t.integer "veteran_id", null: false, comment: "veterans.id"
+      t.bigint "veteran_id", null: false, comment: "veterans.id"
       t.string "veteran_first_name", comment: "veterans.first_name"
       t.string "veteran_middle_name", comment: "veterans.middle_name"
       t.string "veteran_last_name", comment: "veterans.last_name"
@@ -37,10 +38,10 @@ class CreateEtlAppeals < ActiveRecord::Migration[5.1]
       t.index ["veteran_participant_id"]
       t.index ["veteran_id"]
 
-      t.integer "claimant_id", comment: "claimants.id"
+      t.bigint "claimant_id", comment: "claimants.id"
       t.string "claimant_payee_code", limit: 20, comment: "claimants.payee_code"
       t.string "claimant_participant_id", limit: 20, comment: "claimants.participant_id"
-      t.integer "claimant_person_id", comment: "people.id"
+      t.bigint "claimant_person_id", comment: "people.id"
       t.string "claimant_first_name", comment: "people.first_name"
       t.string "claimant_middle_name", comment: "people.middle_name"
       t.string "claimant_last_name", comment: "people.last_name"
