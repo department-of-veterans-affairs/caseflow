@@ -123,11 +123,12 @@ export class DailyDocketContainer extends React.Component {
 
   saveHearing = (hearingId, hearingFormData) => {
     const hearing = this.props.hearings[hearingId];
-
-    return ApiUtil.patch(`/hearings/${hearingId}`, { data: {
-      hearing: this.formatHearingFormData(hearingFormData, hearing),
+    const data = {
+      hearing: this.formatHearingFormData(hearingFormData),
       advance_on_docket_motion: this.formatAodMotionForm(hearingFormData.advanceOnDocketMotion, hearing)
-    } }).
+    };
+
+    return ApiUtil.patch(`/hearings/${hearingId}`, { data }).
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(response.body);
 
