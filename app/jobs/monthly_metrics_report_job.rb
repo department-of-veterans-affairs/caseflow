@@ -11,7 +11,7 @@ class MonthlyMetricsReportJob < CaseflowJob
   # ClaimReviewAsyncStatsReporter established within 7 days (count + %), plus total,cancelled,processed
   def perform
     @start_date = Time.zone.today.prev_month.at_beginning_of_month
-    @end_date = Time.zone.now.end_of_day
+    @end_date = Time.zone.today.prev_month.at_end_of_month.end_of_day
 
     appeals_this_month = count_appeals_this_month
     async_stats = ClaimReviewAsyncStatsReporter.new(start_date: start_date, end_date: end_date)
