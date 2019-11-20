@@ -1399,7 +1399,7 @@ paths:
                     type: array
                     items:
                       type: object
-                      description: "A legacy appeal issue (to Opt-In these issues to AMA, you include it as a LegacyIssue when submitting ContestableIssues to a new DecisionReview)"
+                      description: "A legacy appeal issue. To opt-in these issues to AMA, you associate them with ContestableIssues when creating a DecisionReview (see the documentation for POST /higher_level_reviews for more details)."
                       properties:
                         type:
                           type: string
