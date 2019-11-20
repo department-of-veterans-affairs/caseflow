@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191120184256) do
+ActiveRecord::Schema.define(version: 20191120213941) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,6 +66,45 @@ ActiveRecord::Schema.define(version: 20191120184256) do
     t.index ["veteran_id"], name: "index_appeals_on_veteran_id"
     t.index ["veteran_is_not_claimant"], name: "index_appeals_on_veteran_is_not_claimant"
     t.index ["veteran_participant_id"], name: "index_appeals_on_veteran_participant_id"
+  end
+
+  create_table "organizations", force: :cascade, comment: "Copy of Organizations table" do |t|
+    t.datetime "created_at"
+    t.string "name"
+    t.string "participant_id", comment: "Organizations BGS partipant id"
+    t.string "role", comment: "Role users in organization must have, if present"
+    t.string "type", comment: "Single table inheritance"
+    t.datetime "updated_at"
+    t.string "url", comment: "Unique portion of the organization queue url"
+    t.index ["created_at"], name: "index_organizations_on_created_at"
+    t.index ["updated_at"], name: "index_organizations_on_updated_at"
+    t.index ["url"], name: "index_organizations_on_url", unique: true
+  end
+
+  create_table "organizations_users", force: :cascade, comment: "Copy of OrganizationUsers table" do |t|
+    t.boolean "admin", default: false
+    t.datetime "created_at"
+    t.integer "organization_id"
+    t.datetime "updated_at"
+    t.integer "user_id"
+    t.index ["created_at"], name: "index_organizations_users_on_created_at"
+    t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
+    t.index ["updated_at"], name: "index_organizations_users_on_updated_at"
+    t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
+  end
+
+  create_table "people", force: :cascade, comment: "Copy of People table" do |t|
+    t.datetime "created_at", null: false
+    t.date "date_of_birth"
+    t.string "first_name", limit: 50, comment: "Person first name, cached from BGS"
+    t.string "last_name", limit: 50, comment: "Person last name, cached from BGS"
+    t.string "middle_name", limit: 50, comment: "Person middle name, cached from BGS"
+    t.string "name_suffix", limit: 20, comment: "Person name suffix, cached from BGS"
+    t.string "participant_id", limit: 20, null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_people_on_created_at"
+    t.index ["participant_id"], name: "index_people_on_participant_id"
+    t.index ["updated_at"], name: "index_people_on_updated_at"
   end
 
   create_table "tasks", force: :cascade, comment: "Denormalized Tasks with User/Organization" do |t|
