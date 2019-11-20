@@ -9,43 +9,21 @@ import {
   HearingRoomDropdown
 } from '../../../components/DataDropdowns/index';
 import TextareaField from '../../../components/TextareaField';
-import SearchableDropdown from '../../../components/SearchableDropdown';
 import Checkbox from '../../../components/Checkbox';
 import VirtualHearingLink from '../VirtualHearingLink';
+import HearingTypeDropdown from './HearingTypeDropdown';
 
 const DetailsInputs = ({
   hearing, update, readOnly, isLegacy, openModal, updateVirtualHearing, virtualHearing,
-  enableVirtualHearings
+  enableVirtualHearings, requestType
 }) => (
   <React.Fragment>
     <div {...rowThirds}>
-      {enableVirtualHearings && <SearchableDropdown
-        label="Hearing Type"
-        name="hearingType"
-        strongLabel
-        options={[
-          {
-            value: false,
-            label: 'Video'
-          },
-          {
-            value: true,
-            label: 'Virtual'
-          }
-        ]}
-        value={(virtualHearing && virtualHearing.status !== 'cancelled') || false}
-        onChange={(option) => {
-          if ((virtualHearing && virtualHearing.status !== 'cancelled') || option.value) {
-            openModal();
-          }
-
-          let status;
-
-          if (virtualHearing && virtualHearing.status !== 'cancelled' && !option.value) {
-            status = 'cancelled';
-          }
-          updateVirtualHearing({ status });
-        }}
+      {enableVirtualHearings && <HearingTypeDropdown
+        virtualHearing={virtualHearing}
+        requestType={requestType}
+        updateVirtualHearing={updateVirtualHearing}
+        openModal={openModal}
       />}
       <VirtualHearingLink
         hearing={hearing}
@@ -109,6 +87,7 @@ DetailsInputs.propTypes = {
   }),
   update: PropTypes.func,
   readOnly: PropTypes.bool,
+  requestType: PropTypes.string,
   isLegacy: PropTypes.bool,
   openModal: PropTypes.func,
   updateVirtualHearing: PropTypes.func,
