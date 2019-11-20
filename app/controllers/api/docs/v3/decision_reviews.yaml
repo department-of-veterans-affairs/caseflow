@@ -1411,6 +1411,9 @@ paths:
                               type: string
                             legacyAppealIssueId:
                               type: string
+                            nodDate:
+                              type: string
+                              format: date
         '404':
           description: Veteran not found
           content:
