@@ -17,7 +17,7 @@ class DetailsSections extends React.Component {
     };
   }
 
-  openModal = () => this.setState({ modalOpen: true })
+  openModal = ({modalTitle}) => this.setState({ modalOpen: true, modalTitle: modalTitle})
   closeModal = () => this.setState({ modalOpen: false })
 
   resetVirtualHearing = () => {
@@ -37,7 +37,7 @@ class DetailsSections extends React.Component {
       transcription, hearing, disabled, updateHearing, updateTranscription, updateVirtualHearing,
       isLegacy, virtualHearing, submit, user, initialHearingState, requestType
     } = this.props;
-    const { modalOpen } = this.state;
+    const { modalOpen, modalTitle} = this.state;
 
     return (
       <React.Fragment>
@@ -58,7 +58,8 @@ class DetailsSections extends React.Component {
           virtualHearing={virtualHearing}
           update={updateVirtualHearing}
           submit={() => submit().then(this.closeModal)}
-          reset={this.resetVirtualHearing} />}
+          reset={this.resetVirtualHearing}
+          modalTitle={modalTitle}/>}
         {!isLegacy &&
           <div>
             <h2>Transcription Details</h2>
