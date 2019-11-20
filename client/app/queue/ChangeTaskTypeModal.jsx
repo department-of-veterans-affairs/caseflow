@@ -19,7 +19,7 @@ import {
 import { marginTop } from './constants';
 import COPY from '../../COPY.json';
 
-import { taskActionData, actionNameOfTask } from './utils';
+import { taskActionData } from './utils';
 import QueueFlowModal from './components/QueueFlowModal';
 
 class ChangeTaskTypeModal extends React.PureComponent {
@@ -54,10 +54,8 @@ class ChangeTaskTypeModal extends React.PureComponent {
 
     const payload = this.buildPayload();
 
-    const msgTitle = COPY.CHANGE_TASK_TYPE_CONFIRMATION_TITLE;
-    const oldTaskType = actionNameOfTask(task);
     const successMsg = {
-      title: sprintf(msgTitle, oldTaskType, actionOption.label),
+      title: sprintf(COPY.CHANGE_TASK_TYPE_CONFIRMATION_TITLE, task.label, actionOption.label),
       detail: COPY.CHANGE_TASK_TYPE_CONFIRMATION_DETAIL
     };
 
@@ -126,7 +124,8 @@ ChangeTaskTypeModal.propTypes = {
   requestPatch: PropTypes.func,
   setAppealAttrs: PropTypes.func,
   task: PropTypes.shape({
-    taskId: PropTypes.string
+    taskId: PropTypes.string,
+    label: PropTypes.string
   })
 };
 
