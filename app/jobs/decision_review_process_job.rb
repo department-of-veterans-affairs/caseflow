@@ -10,7 +10,7 @@ class DecisionReviewProcessJob < CaseflowJob
     @decision_review = thing_to_establish
 
     # If establishment is for a RequestIssuesUpdate, use the user on the update
-    establishment_user = decision_review.try(:user) || User.system_user
+    @establishment_user = decision_review.try(:user) || User.system_user
 
     # restore whatever the user was when we finish, in case we are not running async (as during tests)
     current_user = RequestStore.store[:current_user]
@@ -37,7 +37,7 @@ class DecisionReviewProcessJob < CaseflowJob
 
   private
 
-  attr_reader :decision_review
+  attr_reader :decision_review, :establishment_user
 
   def ok_to_ping_sentry?
     decision_review.sort_by_last_submitted_at > (Time.zone.now - 4.hours)
