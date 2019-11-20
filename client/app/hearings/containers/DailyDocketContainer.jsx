@@ -98,24 +98,13 @@ export class DailyDocketContainer extends React.Component {
     });
   };
 
-  formatHearingFormData = (hearingFormData, hearing) => {
-    const {
-      virtualHearing, evidenceWindowWaived,
-      aod, holdOpen, location
-    } = hearingFormData;
-
-    const amaHearingValues = hearing.docketName === 'hearing' ? { evidenceWindowWaived } : {};
-    const legacyValues = hearing.docketName === 'legacy' ? {
-      aod,
-      holdOpen
-    } : {};
+  formatHearingFormData = (hearingFormData) => {
+    const { virtualHearing, location, ...rest } = hearingFormData;
 
     return ApiUtil.convertToSnakeCase(_.omitBy({
-      ...hearingFormData,
+      ...rest,
       hearing_location_attributes: location,
-      virtual_hearing_attributes: virtualHearing,
-      ...legacyValues,
-      ...amaHearingValues
+      virtual_hearing_attributes: virtualHearing
     }, _.isUndefined));
   };
 
