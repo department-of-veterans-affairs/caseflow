@@ -4,7 +4,7 @@ require "support/database_cleaner"
 require "rails_helper"
 
 describe TaskTimerJob, :postgres do
-  class TimedTask < GenericTask
+  class TimedTask < Task
     include TimeableTask
 
     def when_timer_ends; end
@@ -14,7 +14,7 @@ describe TaskTimerJob, :postgres do
     end
   end
 
-  class TimedTaskThatErrors < GenericTask
+  class TimedTaskThatErrors < Task
     include TimeableTask
 
     def when_timer_ends

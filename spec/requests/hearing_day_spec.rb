@@ -77,8 +77,10 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
       post "/hearings/hearing_day", params: { request_type: HearingDay::REQUEST_TYPES[:video],
                                               scheduled_for: "14-May-2019", assign_room: true }
       expect(response).to have_http_status(404)
-      expect(JSON.parse(response.body)["errors"][0]["title"]).to eq("No rooms available")
-      expect(JSON.parse(response.body)["errors"][0]["detail"]).to eq("All rooms are taken for the date selected.")
+      expect(JSON.parse(response.body)["errors"][0]["title"])
+        .to eq(COPY::ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_TITLE % "05/14/2019")
+      expect(JSON.parse(response.body)["errors"][0]["detail"])
+        .to eq(COPY::ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_DETAIL)
     end
 
     let(:mar_hearing_days) do

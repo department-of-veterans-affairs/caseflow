@@ -16,7 +16,10 @@ class LegacyAppealDispatch
   def call
     @success = valid?
 
-    create_decision_document_and_submit_for_processing!(params) if success
+    if success
+      create_decision_document_and_submit_for_processing!(params)
+      complete_root_task!
+    end
 
     FormResponse.new(success: success, errors: [errors.full_messages.join(", ")])
   end
@@ -28,5 +31,9 @@ class LegacyAppealDispatch
 
   def create_decision_document_and_submit_for_processing!(params)
     DecisionDocument.create!(params).tap(&:submit_for_processing!)
+  end
+
+  def complete_root_task!
+    @appeal.root_task.update!(status: Constants.TASK_STATUSES.completed)
   end
 end

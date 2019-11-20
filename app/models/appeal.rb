@@ -9,6 +9,7 @@ class Appeal < DecisionReview
   include BgsService
   include Taskable
   include PrintsTaskTree
+  include HasTaskHistory
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -23,9 +24,9 @@ class Appeal < DecisionReview
   has_one :special_issue_list
   has_many :record_synced_by_job, as: :record
 
-  validate :validate_receipt_date
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
+    validate :validate_receipt_date
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
     validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }
     validates_associated :claimants
@@ -70,10 +71,6 @@ class Appeal < DecisionReview
     )
   end
 
-  def caseflow_only_edit_issues_url
-    "/appeals/#{uuid}/edit"
-  end
-
   def type
     "Original"
   end
@@ -92,7 +89,7 @@ class Appeal < DecisionReview
     # this condition is no longer needed since we only want active or on hold tasks
     return most_recently_assigned_to_label(tasks) if tasks.any?
 
-    status_hash[:type].to_s.titleize
+    fetch_status.to_s.titleize
   end
 
   def attorney_case_reviews
@@ -218,19 +215,19 @@ class Appeal < DecisionReview
     nil
   end
 
-  def advanced_on_docket
-    claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
+  def advanced_on_docket?
+    claimant&.advanced_on_docket?(receipt_date)
   end
 
-  alias aod advanced_on_docket
+  # Prefer aod? over aod going forward, as this function returns a boolean
+  alias aod? advanced_on_docket?
+  alias aod advanced_on_docket?
 
   delegate :first_name,
            :last_name,
            :name_suffix, to: :veteran, prefix: true, allow_nil: true
 
-  def appellant
-    claimants.first
-  end
+  alias appellant claimant
 
   delegate :first_name,
            :last_name,
@@ -246,7 +243,7 @@ class Appeal < DecisionReview
   end
 
   def status
-    nil
+    BVAAppealStatus.new(appeal: self)
   end
 
   def previously_selected_for_quality_review
@@ -273,11 +270,16 @@ class Appeal < DecisionReview
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 
-  # For now power_of_attorney returns the first claimant's power of attorney
+  # Currently AMA only supports one claimant per decision review
   def power_of_attorney
-    claimants.first&.power_of_attorney
+    claimant&.power_of_attorney
   end
-  delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney, allow_nil: true
+
+  delegate :representative_name,
+           :representative_type,
+           :representative_address,
+           :representative_email_address,
+           to: :power_of_attorney, allow_nil: true
 
   def power_of_attorneys
     claimants.map(&:power_of_attorney)
@@ -294,7 +296,7 @@ class Appeal < DecisionReview
 
   def create_tasks_on_intake_success!
     InitialTasksFactory.new(self).create_root_and_sub_tasks!
-    create_business_line_tasks if request_issues.any?(&:requires_record_request_task?)
+    create_business_line_tasks!
     maybe_create_translation_task
   end
 
@@ -347,10 +349,6 @@ class Appeal < DecisionReview
     else
       "bva"
     end
-  end
-
-  def status_hash
-    { type: fetch_status, details: fetch_details_for_status }
   end
 
   def fetch_status
@@ -608,12 +606,8 @@ class Appeal < DecisionReview
     @events ||= AppealEvents.new(appeal: self).all
   end
 
-  def issues_hash
-    issue_list = decision_issues.empty? ? request_issues.active.all : fetch_all_decision_issues
-
-    return [] if issue_list.empty?
-
-    fetch_issues_status(issue_list)
+  def active_request_issues_or_decision_issues
+    decision_issues.empty? ? request_issues.active.all : fetch_all_decision_issues
   end
 
   def fetch_all_decision_issues
@@ -639,7 +633,17 @@ class Appeal < DecisionReview
   end
 
   def address
-    @address ||= Address.new(appellant.address)
+    if appellant.address.present?
+      @address ||= Address.new(
+        address_line_1: appellant.address_line_1,
+        address_line_2: appellant.address_line_2,
+        address_line_3: appellant.address_line_3,
+        city: appellant.city,
+        country: appellant.country,
+        state: appellant.state,
+        zip: appellant.zip
+      )
+    end
   end
 
   # we always want to show ratings on intake
@@ -657,6 +661,31 @@ class Appeal < DecisionReview
       end
   end
 
+  def create_business_line_tasks!
+    issues_needing_tasks = request_issues.select(&:requires_record_request_task?)
+    business_lines = issues_needing_tasks.map(&:business_line).uniq
+
+    business_lines.each do |business_line|
+      next if tasks.any? { |task| task.is_a?(VeteranRecordRequest) && task.assigned_to == business_line }
+
+      VeteranRecordRequest.create!(
+        parent: root_task,
+        appeal: self,
+        assigned_at: Time.zone.now,
+        assigned_to: business_line
+      )
+    end
+  end
+
+  def stuck?
+    AppealsWithNoTasksOrAllTasksOnHoldQuery.new.ama_appeal_stuck?(self)
+  end
+
+  def eligible_for_death_dismissal?(_user)
+    # Death dismissal processing is only for VACOLs/Legacy appeals
+    false
+  end
+
   private
 
   def most_recently_assigned_to_label(tasks)
@@ -672,17 +701,5 @@ class Appeal < DecisionReview
   ensure
     distribution_task = tasks.open.find_by(type: DistributionTask.name)
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
-  end
-
-  def create_business_line_tasks
-    request_issues.select(&:requires_record_request_task?).each do |req_issue|
-      business_line = req_issue.business_line
-      VeteranRecordRequest.create!(
-        parent: root_task,
-        appeal: self,
-        assigned_at: Time.zone.now,
-        assigned_to: business_line
-      )
-    end
   end
 end

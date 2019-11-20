@@ -19,6 +19,7 @@ import { setReceiptDate } from '../../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS, FORM_TYPES, VBMS_BENEFIT_TYPES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
+import PropTypes from 'prop-types';
 
 class Review extends React.PureComponent {
   render() {
@@ -68,6 +69,7 @@ class Review extends React.PureComponent {
         value={receiptDate}
         onChange={this.props.setReceiptDate}
         errorMessage={receiptDateError}
+        type="date"
         strongLabel
       />
 
@@ -103,6 +105,29 @@ class Review extends React.PureComponent {
     </div>;
   }
 }
+
+Review.propTypes = {
+  veteranName: PropTypes.string,
+  receiptDate: PropTypes.string,
+  receiptDateError: PropTypes.string,
+  benefitType: PropTypes.string,
+  benefitTypeError: PropTypes.string,
+  informalConference: PropTypes.string,
+  informalConferenceError: PropTypes.string,
+  sameOffice: PropTypes.string,
+  sameOfficeError: PropTypes.string,
+  legacyOptInApproved: PropTypes.string,
+  legacyOptInApprovedError: PropTypes.string,
+  reviewIntakeError: PropTypes.string,
+  veteranValid: PropTypes.bool,
+  veteranInvalidFields: PropTypes.object,
+  setBenefitType: PropTypes.func,
+  setReceiptDate: PropTypes.func,
+  setInformalConference: PropTypes.func,
+  setSameOffice: PropTypes.func,
+  setLegacyOptInApproved: PropTypes.func,
+  higherLevelReviewStatus: PropTypes.string
+};
 
 const SelectClaimantConnected = connect(
   ({ higherLevelReview, intake }) => ({

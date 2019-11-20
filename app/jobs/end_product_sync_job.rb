@@ -2,7 +2,7 @@
 
 # This job syncs an EndProductEstablishment (end product manager) with up to date BGS and VBMS data
 class EndProductSyncJob < CaseflowJob
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :intake
 
   def perform(end_product_establishment_id)

@@ -5,7 +5,7 @@ require "rails_helper"
 
 describe VeteranFinder, :postgres do
   before do
-    Fakes::BGSService.veteran_records = { file_number => veteran_record }
+    Fakes::BGSService.store_veteran_record(file_number, veteran_record)
     RequestStore[:current_user] = create(:user)
   end
 
@@ -53,6 +53,49 @@ describe VeteranFinder, :postgres do
       it "returns array of Veterans matching file_number" do
         expect(Veteran.find_by_file_number(file_number)).to be_nil
         expect(subject).to eq([Veteran.find_by_file_number(file_number)])
+      end
+
+      context "BGS returns false for can_access?" do
+        before do
+          Fakes::BGSService.inaccessible_appeal_vbms_ids = []
+          Fakes::BGSService.inaccessible_appeal_vbms_ids << file_number
+          create(:veteran, participant_id: nil)
+        end
+
+        it "returns empty array" do
+          expect(Fakes::BGSService.new.can_access?(file_number)).to eq(false)
+          expect(Veteran.find_by_file_number(file_number)).to be_nil
+          expect(subject).to eq([])
+        end
+      end
+    end
+  end
+
+  describe "#find_best_match" do
+    subject { described_class.find_best_match(ssn) }
+
+    context "2 Veteran records with same SSN and participant id" do
+      let(:ssn) { "123456789" }
+      let(:participant_id) { "999000" }
+      let!(:veteran1) { create(:veteran, ssn: ssn, file_number: ssn, participant_id: participant_id) }
+      let!(:veteran2) { create(:veteran, ssn: ssn, file_number: "1234", participant_id: participant_id) }
+
+      it "prefers the record with SSN != file number" do
+        expect(subject).to eq(veteran2)
+      end
+    end
+
+    context "SSN attribute nil" do
+      let(:ssn) { "123456789" }
+      let!(:veteran1) { create(:veteran, ssn: nil, file_number: ssn) }
+
+      before do
+        allow(VeteranFinder).to receive(:find_or_create_by_file_number_or_ssn) { [veteran1] }
+      end
+
+      it "does not query BGS" do
+        expect(veteran1).to_not receive(:bgs_record)
+        expect(subject).to eq(veteran1)
       end
     end
   end

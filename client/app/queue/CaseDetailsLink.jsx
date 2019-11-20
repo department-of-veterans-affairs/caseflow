@@ -76,7 +76,7 @@ CaseDetailsLink.propTypes = {
   task: PropTypes.object,
   appeal: PropTypes.object.isRequired,
   disabled: PropTypes.bool,
-  userRole: PropTypes.string.isRequired,
+  userRole: PropTypes.string,
   getLinkText: PropTypes.func,
   onClick: PropTypes.func
 };

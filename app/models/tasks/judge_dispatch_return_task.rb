@@ -12,7 +12,7 @@ class JudgeDispatchReturnTask < JudgeTask
     ]
   end
 
-  def label
+  def self.label
     COPY::JUDGE_DISPATCH_RETURN_TASK_LABEL
   end
 end

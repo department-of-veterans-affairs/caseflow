@@ -12,14 +12,12 @@ class User < ApplicationRecord
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
   has_many :organizations, through: :organizations_users
+  has_many :messages
 
   BOARD_STATION_ID = "101"
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_writer :regional_office
-
-  FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
-               "Reader", "Hearing Prep", "Mail Intake", "Admin Intake", "Case Details"].freeze
 
   # Because of the function character limit, we need to also alias some functions
   FUNCTION_ALIASES = {
@@ -28,6 +26,11 @@ class User < ApplicationRecord
   }.freeze
 
   before_create :normalize_css_id
+
+  enum status: {
+    Constants.USER_STATUSES.active.to_sym => Constants.USER_STATUSES.active,
+    Constants.USER_STATUSES.inactive.to_sym => Constants.USER_STATUSES.inactive
+  }
 
   def username
     css_id
@@ -72,6 +75,26 @@ class User < ApplicationRecord
 
   def hearings_user?
     can_any_of_these_roles?(["Build HearSched", "Edit HearSched", "RO ViewHearSched", "VSO", "Hearing Prep"])
+  end
+
+  def can_assign_hearing_schedule?
+    can_any_of_these_roles?(["Edit HearSched", "Build HearSched"])
+  end
+
+  def can_view_hearing_schedule?
+    can?("RO ViewHearSched") && !can?("Build HearSched") && !can?("Edit HearSched")
+  end
+
+  def can_vso_hearing_schedule?
+    can?("VSO") && !can?("RO ViewHearSched") && !can?("Build HearSched") && !can?("Edit HearSched")
+  end
+
+  def in_hearing_or_transcription_organization?
+    HearingsManagement.singleton.users.include?(self) || TranscriptionTeam.singleton.users.include?(self)
+  end
+
+  def can_withdraw_issues?
+    BvaIntake.singleton.users.include?(self) || %w[NWQ VACO].exclude?(regional_office)
   end
 
   def administer_org_users?
@@ -258,7 +281,61 @@ class User < ApplicationRecord
     orgs
   end
 
+  def update_status!(new_status)
+    transaction do
+      remove_user_from_auto_assign_orgs if new_status.eql?(Constants.USER_STATUSES.inactive)
+      update!(status: new_status, status_updated_at: Time.zone.now)
+    end
+  end
+
+  def use_task_pages_api?
+    false
+  end
+
+  def queue_tabs
+    [
+      assigned_tasks_tab,
+      on_hold_tasks_tab,
+      completed_tasks_tab
+    ]
+  end
+
+  def self.default_active_tab
+    Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
+  end
+
+  def assigned_tasks_tab
+    ::AssignedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def on_hold_tasks_tab
+    ::OnHoldTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def completed_tasks_tab
+    ::CompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def can_bulk_assign_tasks?
+    false
+  end
+
+  def show_regional_office_in_queue?
+    HearingsManagement.singleton.user_has_access?(self)
+  end
+
+  def show_reader_link_column?
+    false
+  end
+
   private
+
+  def remove_user_from_auto_assign_orgs
+    auto_assign_orgs = organizations.select(&:automatically_assign_to_member?)
+    auto_assign_orgs.each do |organization|
+      OrganizationsUser.remove_user_from_organization(self, organization)
+    end
+  end
 
   def normalize_css_id
     self.css_id = css_id.upcase
@@ -349,10 +426,15 @@ class User < ApplicationRecord
       find_by_css_id(css_id) || User.create(css_id: css_id.upcase, station_id: BOARD_STATION_ID)
     end
 
+    def batch_find_by_css_id_or_create_with_default_station_id(css_ids)
+      normalized_css_ids = css_ids.map(&:upcase)
+      new_user_css_ids = normalized_css_ids - User.where(css_id: normalized_css_ids).pluck(:css_id)
+      User.create(new_user_css_ids.map { |css_id| { css_id: css_id, station_id: User::BOARD_STATION_ID } })
+      User.where(css_id: normalized_css_ids)
+    end
+
     def list_hearing_coordinators
-      Rails.cache.fetch("#{Rails.env}_list_of_hearing_coordinators_from_vacols") do
-        user_repository.find_all_hearing_coordinators
-      end
+      HearingsManagement.singleton.users
     end
 
     # case-insensitive search

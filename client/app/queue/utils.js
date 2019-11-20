@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 import React from 'react';
-import _ from 'lodash';
+import _, { escapeRegExp } from 'lodash';
 import moment from 'moment';
 import StringUtil from '../util/StringUtil';
 import {
@@ -295,6 +295,7 @@ export const prepareAppealForStore =
         issues: prepareAppealIssuesForStore(appeal),
         decisionIssues: appeal.attributes.decision_issues,
         canEditRequestIssues: appeal.attributes.can_edit_request_issues,
+        appellantIsNotVeteran: appeal.attributes.appellant_is_not_veteran,
         appellantFullName: appeal.attributes.appellant_full_name,
         appellantAddress: appeal.attributes.appellant_address,
         appellantRelationship: appeal.attributes.appellant_relationship,
@@ -340,6 +341,7 @@ export const prepareClaimReviewForStore = (claimReviews) => {
       endProductStatuses: claimReview.end_product_status,
       establishmentError: claimReview.establishment_error,
       reviewType: claimReview.review_type,
+      receiptDate: claimReview.receipt_date,
       veteranFileNumber: claimReview.veteran_file_number,
       veteranFullName: claimReview.veteran_full_name,
       editIssuesUrl: claimReview.caseflow_only_edit_issues_url
@@ -436,6 +438,7 @@ export const buildCaseReviewPayload = (
   } else {
     args.factors_not_considered = _.keys(args.factors_not_considered);
     args.areas_for_improvement = _.keys(args.areas_for_improvement);
+    args.positive_feedback = _.keys(args.positive_feedback);
 
     _.extend(payload.data.tasks, args);
   }
@@ -527,16 +530,24 @@ export const taskHasCompletedHold = (task) => {
 
 export const taskIsActive = (task) => ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);
 
-export const taskActionData = (props) => {
-  if (!props.task) {
+export const taskActionData = ({ task, match }) => {
+  if (!task) {
     return {};
   }
 
-  const relevantAction = props.task.availableActions.
-    find((action) => props.history.location.pathname.endsWith(action.value));
+  const { path } = match;
+  const endsWith = (search, str) => {
+    const esc = escapeRegExp(search);
+
+    const pattern = new RegExp(`${esc}\\)?$`, 'gi');
+
+    return pattern.test(str);
+  };
+
+  const relevantAction = task.availableActions.find((action) => endsWith(action.value, path));
 
   if (relevantAction && relevantAction.data) {
-    return (relevantAction.data);
+    return relevantAction.data;
   }
 
   return null;
@@ -569,3 +580,9 @@ export const cityForRegionalOfficeCode = (code) => {
 
   return regionalOffice ? regionalOffice.city : COPY.UNKNOWN_REGIONAL_OFFICE;
 };
+
+export const hasDASRecord = (task, requireDasRecord) => {
+  return (task.appeal.isLegacyAppeal && requireDasRecord) ? Boolean(task.taskId) : true;
+};
+
+export const collapseColumn = (requireDasRecord) => (task) => hasDASRecord(task, requireDasRecord) ? 1 : 0;

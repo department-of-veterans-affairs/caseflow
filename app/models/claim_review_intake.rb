@@ -5,6 +5,8 @@ class ClaimReviewIntake < DecisionReviewIntake
 
   def ui_hash
     super.merge(
+      detail_edit_url: detail&.reload&.caseflow_only_edit_issues_url, # reload for uuid
+      async_job_url: detail&.async_job_url,
       benefit_type: detail.benefit_type,
       processed_in_caseflow: detail.processed_in_caseflow?
     )
@@ -28,7 +30,7 @@ class ClaimReviewIntake < DecisionReviewIntake
     super(request_params) do
       detail.submit_for_processing!
       detail.add_user_to_business_line!
-      detail.create_decision_review_task_if_required!
+      detail.create_business_line_tasks!
       if run_async?
         DecisionReviewProcessJob.perform_later(detail)
       else
@@ -49,9 +51,9 @@ class ClaimReviewIntake < DecisionReviewIntake
     end
 
     Claimant.find_or_initialize_by(
-      participant_id: participant_id,
       decision_review: detail
     ).tap do |claimant|
+      claimant.participant_id = participant_id
       claimant.payee_code = payee_code
       claimant.save!
     end

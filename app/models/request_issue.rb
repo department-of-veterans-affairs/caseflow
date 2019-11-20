@@ -1,12 +1,18 @@
 # frozen_string_literal: true
 
+##
+# When a veteran submits their form for an Appeal, Supplemental Claim, or Higher Level Review, they list the prior
+# decisions that they want to contest. These are intaken into Caseflow as request issues.  Request issues can also
+# be generated when a decision gets remanded or vacated.
+
+# rubocop:disable Metrics/ClassLength
 class RequestIssue < ApplicationRecord
   include Asyncable
   include HasBusinessLine
   include DecisionSyncable
 
   # how many days before we give up trying to sync decisions
-  REQUIRES_PROCESSING_WINDOW_DAYS = 14
+  REQUIRES_PROCESSING_WINDOW_DAYS = 30
 
   # don't need to try as frequently as default 3 hours
   DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
@@ -18,6 +24,7 @@ class RequestIssue < ApplicationRecord
   has_many :remand_reasons, through: :decision_issues
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   has_many :hearing_issue_notes
+  has_many :job_notes, as: :job
   has_one :legacy_issue_optin
   belongs_to :correction_request_issue, class_name: "RequestIssue", foreign_key: "corrected_by_request_issue_id"
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
@@ -83,133 +90,30 @@ class RequestIssue < ApplicationRecord
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click *Edit in Caseflow* button to fix"
 
-  END_PRODUCT_CODES = {
-    original: {
-      compensation: {
-        supplemental_claim: {
-          rating: "040SCR",
-          nonrating: "040SCNR"
-        },
-        higher_level_review: {
-          rating: "030HLRR",
-          nonrating: "030HLRNR"
-        }
-      },
-      pension: {
-        supplemental_claim: {
-          rating: "040SCRPMC",
-          nonrating: "040SCNRPMC"
-        },
-        higher_level_review: {
-          rating: "030HLRRPMC",
-          nonrating: "030HLRNRPMC"
-        }
-      }
-    },
-    dta: {
-      compensation: {
-        appeal: {
-          rating: "040BDER",
-          nonrating: "040BDENR"
-        },
-        claim_review: {
-          rating: "040HDER",
-          nonrating: "040HDENR"
-        }
-      },
-      pension: {
-        appeal: {
-          rating: "040BDERPMC",
-          nonrating: "040BDENRPMC"
-        },
-        claim_review: {
-          rating: "040HDERPMC",
-          nonrating: "040HDENRPMC"
-        }
-      }
-    },
-    correction: {
-      control: {
-        compensation: {
-          supplemental_claim: {
-            rating: "930AMASRC",
-            nonrating: "930AMASNRC"
-          },
-          higher_level_review: {
-            rating: "930AMAHRC",
-            nonrating: "930AMAHNRC"
-          }
-        },
-        pension: {
-          supplemental_claim: {
-            rating: "930AMASRCPMC",
-            nonrating: "930ASNRCPMC"
-          },
-          higher_level_review: {
-            rating: "930AMAHRCPMC",
-            nonrating: "930AHNRCPMC"
-          }
-        }
-      },
-      local_quality_error: {
-        compensation: {
-          supplemental_claim: {
-            rating: "930AMASCRLQE",
-            nonrating: "930ASCNRLQE"
-          },
-          higher_level_review: {
-            rating: "930AMAHCRLQE",
-            nonrating: "930AHCNRLQE"
-          }
-        },
-        pension: {
-          supplemental_claim: {
-            rating: "930ASCRLQPMC",
-            nonrating: "930ASCNRLPMC"
-          },
-          higher_level_review: {
-            rating: "930AHCRLQPMC",
-            nonrating: "930AHCNRLPMC"
-          }
-        }
-      },
-      national_quality_error: {
-        compensation: {
-          supplemental_claim: {
-            rating: "930AMASCRNQE",
-            nonrating: "930ASCNRNQE"
-          },
-          higher_level_review: {
-            rating: "930AMAHCRNQE",
-            nonrating: "930AHCNRNQE"
-          }
-        },
-        pension: {
-          supplemental_claim: {
-            rating: "930ASCRNQPMC",
-            nonrating: "930ASCNRNPMC"
-          },
-          higher_level_review: {
-            rating: "930AHCRNQPMC",
-            nonrating: "930AHCNRNPMC"
-          }
-        }
-      }
-    }
-  }.freeze
-
   class << self
+    # the umbrella term "rating" here is generalized to the type of EP it refers to.
     def rating
-      where.not(
-        contested_rating_issue_reference_id: nil
-      ).or(where(is_unidentified: true))
+      rating_issue.or(rating_decision).or(unidentified)
+    end
+
+    def rating_issue
+      where.not(contested_rating_issue_reference_id: nil)
+    end
+
+    def rating_decision
+      where.not(contested_rating_decision_reference_id: nil)
     end
 
     def nonrating
       where(
         contested_rating_issue_reference_id: nil,
+        contested_rating_decision_reference_id: nil,
         is_unidentified: [nil, false]
       ).where.not(nonrating_issue_category: nil)
+    end
+
+    def decision_issue
+      where.not(contested_decision_issue_id: nil)
     end
 
     def eligible
@@ -245,6 +149,7 @@ class RequestIssue < ApplicationRecord
     def unidentified
       where(
         contested_rating_issue_reference_id: nil,
+        contested_rating_decision_reference_id: nil,
         is_unidentified: true
       )
     end
@@ -261,11 +166,12 @@ class RequestIssue < ApplicationRecord
 
     # rubocop:disable Metrics/MethodLength
     def attributes_from_intake_data(data)
-      contested_issue_present = data[:rating_issue_reference_id] || data[:contested_decision_issue_id]
+      contested_issue_present = attributes_look_like_contested_issue?(data)
 
       {
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
         contested_rating_issue_diagnostic_code: data[:rating_issue_diagnostic_code],
+        contested_rating_decision_reference_id: data[:rating_decision_reference_id],
         contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
         nonrating_issue_description: data[:nonrating_issue_category] ? data[:decision_text] : nil,
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
@@ -287,16 +193,32 @@ class RequestIssue < ApplicationRecord
       }
     end
     # rubocop:enable Metrics/MethodLength
+
+    def attributes_look_like_contested_issue?(data)
+      data[:rating_issue_reference_id] ||
+        data[:contested_decision_issue_id] ||
+        data[:rating_decision_reference_id]
+    end
   end
 
   delegate :veteran, to: :decision_review
 
+  def create_for_claim_review!
+    return unless decision_review.is_a?(ClaimReview)
+
+    update!(benefit_type: decision_review.benefit_type, veteran_participant_id: veteran.participant_id)
+
+    epe = decision_review.end_product_establishment_for_issue(self)
+    update!(end_product_establishment: epe) if epe
+
+    RequestIssueCorrectionCleaner.new(self).remove_dta_request_issue! if correction?
+    create_legacy_issue_optin if legacy_issue_opted_in?
+  end
+
   def end_product_code
     return if decision_review.processed_in_caseflow?
-    return dta_end_product_code if remanded?
-    return correction_end_product_code if correction?
 
-    original_end_product_code
+    EndProductCodeSelector.new(self).call
   end
 
   def status_active?
@@ -307,7 +229,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def rating?
-    !!associated_rating_issue? || previous_rating_issue?
+    !!associated_rating_issue? || previous_rating_issue? || !!associated_rating_decision?
   end
 
   def nonrating?
@@ -324,8 +246,16 @@ class RequestIssue < ApplicationRecord
     !!correction_type
   end
 
+  def decision_correction?
+    contested_decision_issue&.decision_review == decision_review
+  end
+
   def associated_rating_issue?
     contested_rating_issue_reference_id
+  end
+
+  def associated_rating_decision?
+    contested_rating_decision_reference_id
   end
 
   def open?
@@ -366,6 +296,13 @@ class RequestIssue < ApplicationRecord
     return specials unless specials.empty?
   end
 
+  def contention_type
+    return Constants.CONTENTION_TYPES.higher_level_review if decision_review.is_a?(HigherLevelReview)
+    return Constants.CONTENTION_TYPES.supplemental_claim if decision_review.is_a?(SupplementalClaim)
+
+    Constants.CONTENTION_TYPES.default
+  end
+
   # If contentions get a DTA disposition, send their IDs when creating the new DTA contentions
   def original_contention_ids
     return unless contested_decision_issue&.remanded?
@@ -377,11 +314,13 @@ class RequestIssue < ApplicationRecord
     closed_at if withdrawn?
   end
 
+  # rubocop:disable Metrics/MethodLength
   def ui_hash
     {
       id: id,
       rating_issue_reference_id: contested_rating_issue_reference_id,
       rating_issue_profile_date: contested_rating_issue_profile_date,
+      rating_decision_reference_id: contested_rating_decision_reference_id,
       description: description,
       contention_text: contention_text,
       approx_decision_date: approx_decision_date_of_issue_being_contested,
@@ -404,15 +343,16 @@ class RequestIssue < ApplicationRecord
       editable: editable?
     }
   end
+  # rubocop:enable Metrics/MethodLength
 
   def approx_decision_date_of_issue_being_contested
-    return if is_unidentified
-
     if contested_issue
       contested_issue.approx_decision_date
     elsif decision_date
       decision_date
     else
+      return if is_unidentified
+
       # in theory we should never get here
       fail MissingDecisionDate, id
     end
@@ -429,7 +369,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def contested_rating_issue
-    return unless decision_review
     return unless contested_rating_issue_reference_id
 
     @contested_rating_issue ||= begin
@@ -438,8 +377,20 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  def contested_rating_decision
+    return unless contested_rating_decision_reference_id
+
+    @contested_rating_decision ||= begin
+      contested_rating_decision_ui_hash = fetch_contested_rating_decision_ui_hash
+      contested_rating_decision_ui_hash ? RatingDecision.deserialize(contested_rating_decision_ui_hash) : nil
+    end
+  end
+
   def contested_benefit_type
-    contested_rating_issue&.benefit_type
+    return contested_rating_issue&.benefit_type if associated_rating_issue?
+    return :compensation if associated_rating_decision?
+
+    guess_benefit_type
   end
 
   def guess_benefit_type
@@ -561,8 +512,11 @@ class RequestIssue < ApplicationRecord
   end
 
   def decision_or_promulgation_date
-    return decision_date if nonrating?
-    return contested_rating_issue.try(:promulgation_date) if rating?
+    return contested_rating_issue&.promulgation_date if associated_rating_issue?
+
+    return contested_rating_decision&.decision_date&.to_date if associated_rating_decision?
+
+    decision_date
   end
 
   def diagnostic_code
@@ -632,6 +586,18 @@ class RequestIssue < ApplicationRecord
     !contention_connected_to_rating?
   end
 
+  def remanded?
+    # if this request issue is a correction for a decision issue from a remand supplemental claim,
+    # consider it a remanded request issue regardless of the decision issue disposition
+    return contested_decision_issue&.decision_review.try(:decision_review_remanded?) if decision_correction?
+
+    contested_decision_issue&.remanded?
+  end
+
+  def title_of_active_review
+    duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+  end
+
   private
 
   # When a request issue already has a rating in VBMS, prevent user from editing it.
@@ -692,10 +658,6 @@ class RequestIssue < ApplicationRecord
 
   def contested_issue
     @contested_issue ||= build_contested_issue
-  end
-
-  def title_of_active_review
-    duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
   end
 
   def duplicate_of_issue_in_active_review?
@@ -790,23 +752,43 @@ class RequestIssue < ApplicationRecord
     )
   end
 
-  # RatingIssue is not in db so we pull hash from the serialized_ratings.
-  # TODO: performance could be improved by using the profile date by loading the specific rating
-  def fetch_contested_rating_issue_ui_hash
-    return unless decision_review.serialized_ratings
+  # RatingIssue and RatingDecision are not in db so we pull hash from the serialized_ratings.
+  # We must unwind the nested hash tree to find the child.
+  def fetch_contested_rating_child_ui_hash(haystack:, needle:, needle_value:)
+    return unless decision_review&.serialized_ratings
 
-    rating_with_issue = decision_review.serialized_ratings.find do |rating|
-      rating[:issues].find { |issue| issue[:reference_id] == contested_rating_issue_reference_id }
+    rating_child = nil
+
+    decision_review.serialized_ratings.each do |rating|
+      rating_child = rating[haystack].find { |child| child[needle] == needle_value }
+      break if rating_child
     end
 
-    rating_with_issue ||= { issues: [] }
-
-    rating_with_issue[:issues].find { |issue| issue[:reference_id] == contested_rating_issue_reference_id }
+    rating_child
   end
 
+  def fetch_contested_rating_issue_ui_hash
+    fetch_contested_rating_child_ui_hash(
+      haystack: :issues,
+      needle: :reference_id,
+      needle_value: contested_rating_issue_reference_id
+    )
+  end
+
+  def fetch_contested_rating_decision_ui_hash
+    fetch_contested_rating_child_ui_hash(
+      haystack: :decisions,
+      needle: :disability_id,
+      needle_value: contested_rating_decision_reference_id
+    )
+  end
+
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   def check_for_eligible_previous_review!
     return unless eligible?
     return unless contested_issue
+    return if decision_correction?
 
     if decision_review.is_a?(HigherLevelReview)
       if contested_issue.source_review_type == "HigherLevelReview"
@@ -824,6 +806,8 @@ class RequestIssue < ApplicationRecord
 
     self.ineligible_due_to_id = contested_issue.source_request_issues.first&.id if ineligible_reason
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 
   def check_for_before_ama!
     return unless eligible? && should_check_for_before_ama?
@@ -864,49 +848,22 @@ class RequestIssue < ApplicationRecord
     return unless associated_rating_issue?
 
     add_duplicate_issue_error(
-      RequestIssue.active.find_by(contested_rating_issue_reference_id: contested_rating_issue_reference_id)
+      RequestIssue.active.find_by(
+        contested_rating_issue_reference_id: contested_rating_issue_reference_id,
+        correction_type: correction_type
+      )
     )
   end
 
+  # A decision can be corrected via a 930 simultaneously with being contested by a veteran
   def check_for_active_request_issue_by_decision_issue!
     return unless contested_decision_issue_id
+    return if decision_correction?
 
     add_duplicate_issue_error(
-      RequestIssue.active.find_by(contested_decision_issue_id: contested_decision_issue_id)
+      RequestIssue.active.find_by(contested_decision_issue_id: contested_decision_issue_id,
+                                  correction_type: correction_type)
     )
-  end
-
-  def original_end_product_code
-    choose_end_product_code(END_PRODUCT_CODES[:original][temp_find_benefit_type.to_sym])
-  end
-
-  # TODO: use request issue benefit type once it's populated for request issues on build
-  def temp_find_benefit_type
-    decision_review.benefit_type || benefit_type || contested_benefit_type
-  end
-
-  def choose_end_product_code(end_product_codes)
-    end_product_codes[decision_review_type.underscore.to_sym][(rating? || is_unidentified?) ? :rating : :nonrating]
-  end
-
-  def dta_end_product_code
-    choose_dta_end_product_code(END_PRODUCT_CODES[:dta][temp_find_benefit_type.to_sym])
-  end
-
-  def correction_end_product_code
-    choose_end_product_code(END_PRODUCT_CODES[:correction][correction_type.to_sym][temp_find_benefit_type.to_sym])
-  end
-
-  def choose_dta_end_product_code(end_product_codes)
-    if decision_review.decision_review_remanded.is_a?(Appeal)
-      end_product_codes[:appeal][rating? ? :rating : :nonrating]
-    else
-      end_product_codes[:claim_review][rating? ? :rating : :nonrating]
-    end
-  end
-
-  def remanded?
-    decision_review.try(:decision_review_remanded?)
   end
 
   def add_duplicate_issue_error(existing_request_issue)
@@ -917,8 +874,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_active_request_issue!
-    # skip checking if nonrating ineligiblity is already set
-    return if ineligible_reason == :duplicate_of_nonrating_issue_in_active_review
     return unless eligible?
 
     check_for_active_request_issue_by_rating!
@@ -940,3 +895,4 @@ class RequestIssue < ApplicationRecord
     decision_review.tasks.open.any?
   end
 end
+# rubocop:enable Metrics/ClassLength

@@ -66,6 +66,7 @@ class CaseReviewsController < ApplicationController
                                    :one_touch_initiative,
                                    factors_not_considered: [],
                                    areas_for_improvement: [],
+                                   positive_feedback: [],
                                    issues: issues_params)
       .merge(judge: current_user, task_id: params[:task_id])
   end

@@ -68,14 +68,14 @@ describe TaskActionRepository, :all_dbs do
       let(:attorney_names) { ["Jesse Abrecht", "Brenda Akery", "Crystal Andregg"] }
 
       before do
-        OrganizationsUser.add_user_to_organization(attorney, judge_team)
+        judge_team.add_user(attorney)
 
         attorney_names.each do |attorney_name|
           another_attorney_on_the_team = create(
             :user, station_id: User::BOARD_STATION_ID, full_name: attorney_name
           )
           create(:staff, :attorney_role, user: another_attorney_on_the_team)
-          OrganizationsUser.add_user_to_organization(another_attorney_on_the_team, judge_team)
+          judge_team.add_user(another_attorney_on_the_team)
         end
       end
 
@@ -97,7 +97,7 @@ describe TaskActionRepository, :all_dbs do
           other_teams_attorneys.each do |atty_user|
             create(:staff, :attorney_role, user: atty_user)
             other_judge_team = JudgeTeam.create_for_judge(create(:user))
-            OrganizationsUser.add_user_to_organization(atty_user, other_judge_team)
+            other_judge_team.add_user(atty_user)
           end
         end
 

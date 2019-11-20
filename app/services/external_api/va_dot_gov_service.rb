@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "json"
+require "digest"
 
 class ExternalApi::VADotGovService
   BASE_URL = ENV["VA_DOT_GOV_API_URL"] || ""
@@ -32,10 +33,13 @@ class ExternalApi::VADotGovService
     private
 
     def send_facilities_request(query:)
-      response = send_va_dot_gov_request(
-        query: query,
-        endpoint: FACILITIES_ENDPOINT
-      )
+      cache_key = Digest::SHA1.hexdigest query.to_json
+      response = Rails.cache.fetch(cache_key, expires_in: 2.hours) do
+        send_va_dot_gov_request(
+          query: query,
+          endpoint: FACILITIES_ENDPOINT
+        )
+      end
 
       ExternalApi::VADotGovService::FacilitiesResponse.new(response)
     end
@@ -46,12 +50,11 @@ class ExternalApi::VADotGovService
       response = nil
 
       until remaining_ids.empty? || response.try(:next?) == false || response.try(:success?) == false
-        response = send_facilities_request(query: query.merge(page: page, per_page: 100)).merge(response)
+        response = send_facilities_request(query: query.merge(page: page, per_page: 200)).merge(response)
 
         remaining_ids -= response.data.pluck(:facility_id)
 
         page += 1
-        sleep 1
       end
 
       if !remaining_ids.empty? && response.success?

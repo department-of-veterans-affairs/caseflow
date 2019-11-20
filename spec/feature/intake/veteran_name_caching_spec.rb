@@ -38,7 +38,7 @@ feature "Higher-Level Review", :postgres do
       )
 
       step "name changes upstream" do
-        Fakes::BGSService.veteran_records[veteran.file_number][:last_name] = "Changed"
+        Fakes::BGSService.edit_veteran_record(veteran.file_number, :last_name, "Changed")
       end
 
       click_intake_finish
@@ -47,8 +47,6 @@ feature "Higher-Level Review", :postgres do
     end
 
     step "EPs use the updated Veteran name" do
-      expect(bgs).to have_received(:fetch_veteran_info).exactly(6).times
-
       veteran.reload
 
       expect(veteran.last_name).to eq("Changed")

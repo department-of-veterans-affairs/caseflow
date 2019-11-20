@@ -2,10 +2,14 @@
 
 ##
 # Parent class for all tasks to be completed by judges, including
-# JudgeQualityReviewTasks, JudgeDecisionReviewTasks,
-# JudgeDispatchReturnTasks, and JudgeAssignTasks.
+# - JudgeQualityReviewTasks
+# - JudgeDecisionReviewTasks
+# - JudgeDispatchReturnTasks
+# - JudgeAssignTasks
+# - JudgeAddressMotionToVacateTasks
+# - JudgeSignMotionToVacateTasks
 
-class JudgeTask < GenericTask
+class JudgeTask < Task
   def available_actions(user)
     [
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
@@ -15,13 +19,11 @@ class JudgeTask < GenericTask
     ].flatten
   end
 
-  def actions_available?(user)
-    assigned_to == user
-  end
-
+  # :nocov:
   def additional_available_actions(_user)
     fail Caseflow::Error::MustImplementInSubclass
   end
+  # :nocov:
 
   def timeline_title
     COPY::CASE_TIMELINE_JUDGE_TASK

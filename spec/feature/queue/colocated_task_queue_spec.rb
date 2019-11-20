@@ -6,7 +6,7 @@ require "rails_helper"
 RSpec.feature "ColocatedTask", :all_dbs do
   let(:vlj_support_staff) { create(:user) }
 
-  before { OrganizationsUser.add_user_to_organization(vlj_support_staff, Colocated.singleton) }
+  before { Colocated.singleton.add_user(vlj_support_staff) }
 
   describe "attorney assigns task to vlj support staff, vlj returns it to attorney after completion" do
     let(:judge_user) { create(:user) }
@@ -71,9 +71,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
       scroll_to("#case_timeline-section")
       view_text = COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
       page.find_all("table#case-timeline-table button", text: view_text).each(&:click)
-      expect(page).to have_content(
-        "INSTRUCTIONS FROM VLJ"
-      )
+      expect(page).to have_content("INSTRUCTIONS FROM VLJ", wait: 10)
       find(".Select-control", text: "Select an action…").click
       expect(page).to have_content(Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label])
 

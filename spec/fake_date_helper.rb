@@ -10,7 +10,7 @@ module FakeDateHelper
     holidays = Holidays.between(start_date, end_date, :federal_reserve)
 
     while dates.size < num_of_dates
-      date = Faker::Date.between(start_date, end_date)
+      date = Faker::Date.between(from: start_date, to: end_date)
       dates.add(date) unless (exclude_weekends && (date.saturday? || date.sunday?)) ||
                              holidays.find { |holiday| holiday[:date] == date }.present?
     end
@@ -24,7 +24,7 @@ module FakeDateHelper
     holidays = Holidays.between(start_date, end_date, :federal_reserve)
 
     while dates.size < num_of_dates
-      date = Faker::Date.between(start_date, end_date)
+      date = Faker::Date.between(from: start_date, to: end_date)
       dates.push(date) unless (exclude_weekends && (date.saturday? || date.sunday?)) ||
                               holidays.find { |holiday| holiday[:date] == date }.present? ||
                               dates.count { |v| v == date } > max_same_date

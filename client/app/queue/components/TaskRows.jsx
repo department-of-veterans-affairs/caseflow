@@ -1,6 +1,7 @@
 import { css } from 'glamor';
 import React from 'react';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 import Button from '../../components/Button';
 import COPY from '../../../COPY.json';
 import { GrayDot, GreenCheckmark, CancelIcon } from '../../components/RenderFunctions';
@@ -186,7 +187,7 @@ class TaskRows extends React.PureComponent {
 
     return <React.Fragment key={`${task.uniqueId} fragment`}>
       {task.instructions.map((text) => <React.Fragment key={`${task.uniqueId} span`}>
-        <span key={`${task.uniqueId} instructions`}>{text}</span><br /></React.Fragment>)}
+        <span key={`${task.uniqueId} instructions`}>{StringUtil.nl2br(text)}</span><br /></React.Fragment>)}
     </React.Fragment>;
   }
 
@@ -223,8 +224,8 @@ class TaskRows extends React.PureComponent {
   showActionsSection = (task) => (task && !this.props.hideDropdown);
 
   mapDecisionDateToSortableObject = (appeal) => {
-    // if there's no decision date, then this object should be at the top 
-    // of the case timeline, thus the negative infinity default 
+    // if there's no decision date, then this object should be at the top
+    // of the case timeline, thus the negative infinity default
     return {
       isDecisionDate: true,
       createdAt: appeal.decisionDate || Number.NEGATIVE_INFINITY
@@ -318,5 +319,12 @@ class TaskRows extends React.PureComponent {
     </React.Fragment>;
   }
 }
+
+TaskRows.propTypes = {
+  appeal: PropTypes.object,
+  hideDropdown: PropTypes.bool,
+  taskList: PropTypes.array,
+  timeline: PropTypes.bool
+};
 
 export default TaskRows;

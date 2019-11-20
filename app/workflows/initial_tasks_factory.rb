@@ -16,8 +16,10 @@ class InitialTasksFactory
   private
 
   def create_vso_tracking_tasks
-    @appeal.representatives.map do |vso_organization|
-      TrackVeteranTask.create!(appeal: @appeal, parent: @root_task, assigned_to: vso_organization)
+    @appeal.representatives.map do |rep|
+      if TrackVeteranTask.where(appeal: @appeal, assigned_to: rep).empty?
+        TrackVeteranTask.create!(appeal: @appeal, parent: @root_task, assigned_to: rep)
+      end
     end
   end
 

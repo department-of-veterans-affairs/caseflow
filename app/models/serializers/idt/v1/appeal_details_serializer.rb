@@ -20,7 +20,7 @@ class Idt::V1::AppealDetailsSerializer
   attribute :veteran_death_date
 
   attribute :appellant_is_not_veteran do |object|
-    object.is_a?(LegacyAppeal) ? object.appellant_is_not_veteran : object.claimant_not_veteran
+    object.is_a?(LegacyAppeal) ? object.appellant_is_not_veteran : !!object.veteran_is_not_claimant
   end
 
   attribute :appellants do |object, params|
@@ -92,7 +92,7 @@ class Idt::V1::AppealDetailsSerializer
     end
   end
 
-  attribute :aod, &:advanced_on_docket
+  attribute :aod, &:advanced_on_docket?
   attribute :cavc
   attribute :status
   attribute :previously_selected_for_quality_review

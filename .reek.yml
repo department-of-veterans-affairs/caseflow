@@ -7,61 +7,105 @@ detectors:
       - BulkTaskAssignment
       - Hearing#override_full_hearing_day_validation
       - QueueConfig
+      - RatingDecision
   BooleanParameter:
     exclude:
+      - AsyncableJobsReporter#initialize
       - HearingRepository#slot_new_hearing
+      - LegacyDocket#distribute_appeals
+      - Veteran
   ControlParameter:
     exclude:
+      - Fakes::BGSService
       - HearingRepository#slot_new_hearing
+      - LegacyDocket#distribute_appeals
+      - Task#actions_allowable?
+      - TaskSorter#sort_requires_case_norm?
+      - Veteran
   UncommunicativeVariableName:
     exclude:
       - Address
-  LongParameterList:
-    exclude:
-      - Address
+      - Fakes::PersistentStore#convert_dates_from
   UncommunicativeParameterName:
     exclude:
       - Address
   DataClump:
     exclude:
       - HearingSerializerBase
+      - LegacyDocket
   DuplicateMethodCall:
     enabled: false
   FeatureEnvy:
     exclude:
+      - AMOMetricsReportJob#build_report
       - Api::ApplicationController#on_external_error
       - Api::ApplicationController#upstream_known_error
+      - AppealTaskHistory#build_events
+      - ApplicationRecord#as_hash
+      - AssignJudgeteamRoles#process
       - AsyncableJobsReporter
+      - ClaimReviewAsyncStatsReporter#as_csv
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
+      - VirtualHearings::DeleteConferencesJob#delete_conference
+      - VirtualHearings::DeleteConferencesJob#process_virtual_hearing
       - Fakes::EndProductStore
+      - Fakes::BGSService#get_participant_id_for_user
+      - Fakes::BGSServiceRecordMaker
+      - Fakes::PersistentStore#convert_dates_from
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - HearingSerializerBase
-      - VeteranAttributeCacher
+      - LegacyDocket#count
+      - RedistributedCase#legacy_appeal_relevant_tasks
+      - LegacyAppeal#cancel_open_caseflow_tasks!
+      - MonthlyMetricsReportJob#build_report
+      - RequestIssue#find_or_create_decision_issue_from_rating_issue
+      - RequestIssue#special_issues
+      - RequestIssueReporter#as_csv
       - SyncReviewsJob
       - TaskTimerJob
+      - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
+      - VeteranAttributeCacher
       - WarmBgsCachesJob
+      - ExternalApi::PexipService#send_pexip_request
   InstanceVariableAssumption:
     exclude:
       - Appeal
       - Task
+      - CaseflowJob
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor
   IrresponsibleModule:
     enabled: false
+  LongParameterList:
+    exclude:
+      - Address#initialize
+      - LegacyDocket#new_distributed_case
+  ManualDispatch:
+    exclude:
+      - Api::V3::DecisionReview::IntakeParams
+      - Api::V3::DecisionReview::RequestIssueParams#shape_valid?
+      - Api::V3::DecisionReview::IntakeError#potential_error_code
   MissingSafeMethod:
     enabled: false
   NestedIterators:
+    max_allowed_nesting: 2
     exclude:
       - AsyncableJobsReporter
   NilCheck:
     enabled: false
   RepeatedConditional:
     exclude:
+      - HearingLocation
       - QueueConfig
+      - RequestIssue
+      - BulkTaskReassignment
+      - Task
   TooManyInstanceVariables:
     exclude:
       - AmaAppealDispatch
       - LegacyAppealDispatch
       - Address
+      - ExternalApi::PexipService
   TooManyMethods:
     enabled: false
   TooManyStatements:
@@ -69,11 +113,17 @@ detectors:
   UtilityFunction:
     public_methods_only: true
     exclude:
+      - ClaimReviewAsyncStatsReporter#seconds_to_hms
       - HearingAdminActionVerifyAddressTask#available_hearing_admin_actions
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
-      - OnHoldTasksTab#name
+      - LatestRatingDisabilityEvaluation#latest_disability_evaluation
+      - LegacyDocket#age_of_n_oldest_priority_appeals
+      - OrganizationOnHoldTasksTab#name
+      - OrganizationTrackingTasksTab#column_names
+      - Fakes::BGSService
+      - Fakes::PexipService
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.

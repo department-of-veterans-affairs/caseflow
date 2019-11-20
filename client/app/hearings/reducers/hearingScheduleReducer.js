@@ -202,10 +202,22 @@ export const hearingScheduleReducer = (state = {}, action = {}) => {
     return update(state, {
       $toggle: ['filterVljIsOpen']
     });
+  case ACTIONS.SELECT_COORDINATOR:
+    return update(state, {
+      coordinator: {
+        $set: action.payload.coordinator
+      }
+    });
   case ACTIONS.SELECT_REQUEST_TYPE:
     return update(state, {
       requestType: {
         $set: action.payload.requestType
+      }
+    });
+  case ACTIONS.SELECT_VLJ:
+    return update(state, {
+      vlj: {
+        $set: action.payload.vlj
       }
     });
   case ACTIONS.ASSIGN_HEARING_ROOM:

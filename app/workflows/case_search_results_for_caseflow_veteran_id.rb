@@ -10,14 +10,6 @@ class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
 
   protected
 
-  def appeals
-    AppealFinder.new(user: user).find_appeals_for_veterans(veterans_user_can_access)
-  end
-
-  def claim_reviews
-    ClaimReview.find_all_visible_by_file_number(veterans_user_can_access.map(&:file_number))
-  end
-
   def veterans
     @veterans ||= Veteran.where(id: caseflow_veteran_ids)
   end
@@ -25,13 +17,6 @@ class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
   private
 
   attr_reader :caseflow_veteran_ids
-
-  def veterans_exist
-    return unless veterans_user_can_access.empty?
-
-    errors.add(:workflow, not_found_error)
-    @status = :not_found
-  end
 
   def not_found_error
     {

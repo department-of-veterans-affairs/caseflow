@@ -13,18 +13,22 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "ffb77dd0395cbd5b7c1a5729f7f8275b5ec681fa"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "0e39b66ff1224f27419f8f2838e4c5a72e6c7233"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "6c0c2908a9e4a61f5bcf2a768061909e3c763fe8"
 gem "dogstatsd-ruby"
 gem "fast_jsonapi"
+gem "govdelivery-tms", "2.8.4", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "kaminari"
-# active_model_serializers has a default dependency on loofah 2.2.2 which has a security vuln (CVE-2018-16468)
-gem "loofah", ">= 2.2.3"
+# active_model_serializers has a default dependency on loofah 2.2.2 which security vulnerabilities
+# (CVE-2018-16468 and CVE-2019-15587)
+gem "loofah", ">= 2.3.1"
 gem "moment_timezone-rails"
 gem "newrelic_rpm"
-# nokogiri versions before 1.10.3 are affected by CVE-2019-11068. Explicitly define nokogiri version here to avoid that.
-# https://github.com/sparklemotion/nokogiri/issues/1892
-gem "nokogiri", "1.10.3"
+# nokogiri versions before 1.10.4 are vulnerable to CVE-2019-5477.
+# https://github.com/sparklemotion/nokogiri/issues/1915
+# nokogiri 1.10.4 is vulnerable to CVE-2019-13117, CVE-2019-13118, CVE-2019-18197.
+# https://github.com/sparklemotion/nokogiri/issues/1943
+gem "nokogiri", "~> 1.10.5"
 gem "paper_trail", "8.1.2"
 # Used to speed up reporting
 gem "parallel"
@@ -34,7 +38,6 @@ gem "paranoia", "~> 2.2"
 gem "pdf-forms"
 gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git", ref: "a4249eacbf70175db63b57e9f364d0a9a79e2b43"
 gem "pg", platforms: :ruby
-gem "prometheus-client", "~> 0.7.1"
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
@@ -65,6 +68,7 @@ gem "therubyracer", platforms: :ruby
 gem "tty-tree"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
+gem "validates_email_format_of"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
@@ -106,6 +110,7 @@ group :test, :development, :demo do
 end
 
 group :development do
+  gem "anbt-sql-formatter"
   gem "bummr", require: false
   gem "derailed_benchmarks"
   gem "dotenv-rails"
@@ -117,5 +122,9 @@ group :development do
   # Include the IANA Time Zone Database on Windows, where Windows doesn't ship with a timezone database.
   # POSIX systems should have this already, so we're not going to bring it in on other platforms
   gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+end
+
+group :test do
+  gem "webmock"
 end
 # rubocop:enable Metrics/LineLength

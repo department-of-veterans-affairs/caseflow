@@ -3,10 +3,9 @@
 FactoryBot.define do
   factory :task do
     assigned_at { rand(30..35).days.ago }
-    assigned_by { create(:user) }
-    assigned_to { create(:user) }
+    association :assigned_by, factory: :user
+    association :assigned_to, factory: :user
     appeal { create(:legacy_appeal, vacols_case: create(:case)) }
-    action { nil }
     type { Task.name }
 
     trait :assigned do
@@ -17,7 +16,7 @@ FactoryBot.define do
       started_at { rand(1..10).days.ago }
 
       after(:create) do |task|
-        task.update(status: Constants.TASK_STATUSES.in_progress)
+        task.update_columns(status: Constants.TASK_STATUSES.in_progress)
         task.children.update_all(status: Constants.TASK_STATUSES.in_progress)
       end
     end
@@ -28,7 +27,7 @@ FactoryBot.define do
       on_hold_duration { [30, 60, 90].sample }
 
       after(:create) do |task|
-        task.update(status: Constants.TASK_STATUSES.on_hold)
+        task.update_columns(status: Constants.TASK_STATUSES.on_hold)
         task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
       end
     end
@@ -39,7 +38,7 @@ FactoryBot.define do
       on_hold_duration { 10 }
 
       after(:create) do |task|
-        task.update(status: Constants.TASK_STATUSES.on_hold)
+        task.update_columns(status: Constants.TASK_STATUSES.on_hold)
         task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
       end
     end
@@ -51,7 +50,7 @@ FactoryBot.define do
       closed_at { Time.zone.now }
 
       after(:create) do |task|
-        task.update(status: Constants.TASK_STATUSES.completed)
+        task.update_columns(status: Constants.TASK_STATUSES.completed)
         task.children.update_all(status: Constants.TASK_STATUSES.completed)
       end
     end
@@ -62,7 +61,7 @@ FactoryBot.define do
       on_hold_duration { [30, 60, 90].sample }
 
       after(:create) do |task|
-        task.update(status: Constants.TASK_STATUSES.completed, closed_at: 3.weeks.ago)
+        task.update_columns(status: Constants.TASK_STATUSES.completed, closed_at: 3.weeks.ago)
         task.children.update_all(status: Constants.TASK_STATUSES.completed, closed_at: 3.weeks.ago)
       end
     end
@@ -71,14 +70,14 @@ FactoryBot.define do
       closed_at { Time.zone.now }
 
       after(:create) do |task|
-        task.update(status: Constants.TASK_STATUSES.cancelled)
+        task.update_columns(status: Constants.TASK_STATUSES.cancelled)
         task.children.update_all(status: Constants.TASK_STATUSES.cancelled)
       end
     end
 
     factory :root_task, class: RootTask do
       type { RootTask.name }
-      appeal { create(:appeal) }
+      appeal
       assigned_by { nil }
       assigned_to { Bva.singleton }
     end
@@ -95,8 +94,8 @@ FactoryBot.define do
       end
     end
 
-    factory :generic_task, class: GenericTask do
-      type { GenericTask.name }
+    factory :generic_task, class: Task do
+      type { Task.name }
       appeal { create(:appeal) }
     end
 
@@ -377,6 +376,13 @@ FactoryBot.define do
       parent { create(:appeal_withdrawal_mail_task, appeal: appeal) }
     end
 
+    factory :returned_undeliverable_correspondence_mail_task, class: ReturnedUndeliverableCorrespondenceMailTask do
+      type { ReturnedUndeliverableCorrespondenceMailTask.name }
+      appeal { create(:appeal) }
+      assigned_to { BvaDispatch.singleton }
+      parent { create(:root_task, appeal: appeal) }
+    end
+
     factory :no_show_hearing_task, class: NoShowHearingTask do
       type { NoShowHearingTask.name }
       appeal { create(:appeal) }
@@ -387,7 +393,7 @@ FactoryBot.define do
     factory :evidence_submission_window_task, class: EvidenceSubmissionWindowTask do
       type { EvidenceSubmissionWindowTask.name }
       appeal { create(:appeal) }
-      assigned_to { HearingsManagement.singleton }
+      assigned_to { MailTeam.singleton }
       parent { create(:assign_hearing_disposition_task, appeal: appeal) }
     end
 
@@ -413,6 +419,12 @@ FactoryBot.define do
       end
     end
 
+    factory :ama_attorney_rewrite_task, class: AttorneyRewriteTask do
+      type { AttorneyRewriteTask.name }
+      appeal { create(:appeal) }
+      parent { create(:ama_judge_decision_review_task) }
+    end
+
     factory :ama_judge_dispatch_return_to_attorney_task, class: AttorneyDispatchReturnTask do
       type { AttorneyDispatchReturnTask.name }
       appeal { create(:appeal) }
@@ -426,8 +438,8 @@ FactoryBot.define do
       assigned_to { TranscriptionTeam.singleton }
     end
 
-    factory :ama_vso_task, class: GenericTask do
-      type { GenericTask.name }
+    factory :ama_vso_task, class: Task do
+      type { Task.name }
       appeal { create(:appeal) }
       parent { create(:root_task) }
     end
@@ -509,12 +521,53 @@ FactoryBot.define do
       assigned_by { nil }
     end
 
+    factory :vacate_motion_mail_task, class: VacateMotionMailTask do
+      type { VacateMotionMailTask.name }
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+      assigned_to { LitigationSupport.singleton }
+    end
+
     factory :congressional_interest_mail_task, class: CongressionalInterestMailTask do
       type { CongressionalInterestMailTask.name }
       appeal { create(:appeal) }
       parent { create(:root_task) }
       assigned_to { MailTeam.singleton }
       assigned_by { nil }
+    end
+
+    factory :judge_address_motion_to_vacate_task, class: JudgeAddressMotionToVacateTask do
+      type { JudgeAddressMotionToVacateTask.name }
+      appeal
+      association :parent, factory: :vacate_motion_mail_task
+    end
+
+    factory :abstract_motion_to_vacate_task, class: AbstractMotionToVacateTask do
+      type { AbstractMotionToVacateTask.name }
+      appeal
+      association :parent, factory: :vacate_motion_mail_task
+    end
+
+    factory :denied_motion_to_vacate_task, class: DeniedMotionToVacateTask do
+      type { DeniedMotionToVacateTask.name }
+      appeal
+      association :parent, factory: :abstract_motion_to_vacate_task
+      assigned_by { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
+      assigned_to { create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1") }
+    end
+
+    factory :dismissed_motion_to_vacate_task, class: DismissedMotionToVacateTask do
+      type { DismissedMotionToVacateTask.name }
+      appeal
+      association :parent, factory: :abstract_motion_to_vacate_task
+      assigned_by { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
+      assigned_to { create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1") }
+    end
+
+    factory :judge_sign_motion_to_vacate_task, class: JudgeSignMotionToVacateTask do
+      type { JudgeSignMotionToVacateTask.name }
+      appeal
+      association :parent, factory: :abstract_motion_to_vacate_task
     end
   end
 end

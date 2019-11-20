@@ -3,7 +3,7 @@
 # job that sets appeals that are in docket range for the upcoming month
 
 class DocketRangeJob < ApplicationJob
-  queue_as :low_priority
+  queue_with_priority :low_priority
 
   def perform
     DocketCoordinator.new

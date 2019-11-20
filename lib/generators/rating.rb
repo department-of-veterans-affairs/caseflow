@@ -4,7 +4,7 @@ class Generators::Rating
   extend Generators::Base
 
   class << self
-    DATE_LIST = (0..100).map { |offset_days| Time.zone.now - offset_days.days }
+    DATE_LIST = (0..100).map { |offset_days| (Time.zone.now - offset_days.days).to_date }
 
     def default_attrs
       {
@@ -22,6 +22,7 @@ class Generators::Rating
               " is established from October 1, 2017."
           }
         ],
+        decisions: [],
         associated_claims: []
       }
     end
@@ -35,15 +36,20 @@ class Generators::Rating
 
       attrs[:issues] = populate_issue_ids(attrs)
 
-      existing_rating = Fakes::BGSService.rating_profile_records[attrs[:participant_id]][attrs[:profile_date]]
+      attrs[:decisions] = populate_decision_ids(attrs)
+
+      existing_rating = rating_store.fetch_and_inflate(attrs[:participant_id])[:profiles].try(attrs[:profile_date].to_s)
       fail "You may not override an existing rating for #{attrs[:profile_date]}" if existing_rating
 
-      Fakes::BGSService.rating_records[attrs[:participant_id]] << bgs_rating_data(attrs)
+      Fakes::BGSService.store_rating_record(attrs[:participant_id], bgs_rating_data(attrs))
 
-      Fakes::BGSService.rating_profile_records[attrs[:participant_id]][attrs[:profile_date]] =
+      Fakes::BGSService.store_rating_profile_record(
+        attrs[:participant_id],
+        attrs[:profile_date],
         bgs_rating_profile_data(attrs)
+      )
 
-      Rating.new(attrs.except(:issues, :associated_claims, :disabilities))
+      Rating.new(attrs.except(:issues, :decisions, :associated_claims, :disabilities))
     end
 
     private
@@ -77,6 +83,29 @@ class Generators::Rating
       (issue_data.length == 1) ? issue_data.first : issue_data
     end
 
+    def bgs_rating_decisions_data(attrs)
+      return nil unless attrs[:decisions]
+
+      decisions_data = attrs[:decisions].map do |decision|
+        {
+          disability_evaluations: {
+            rba_issue_id: decision[:rating_issue_reference_id],
+            dgnstc_txt: decision[:diagnostic_text],
+            dgnstc_tn: decision[:diagnostic_type],
+            dgnstc_tc: decision[:diagnostic_code],
+            prfl_dt: decision[:profile_date],
+            rating_sn: decision[:rating_sequence_number] || generate_external_id
+          },
+          decn_tn: decision[:type_name],
+          dis_sn: decision[:disability_id],
+          dis_dt: decision[:disability_date],
+          orig_denial_dt: decision[:original_denial_date]
+        }
+      end
+
+      (decisions_data.length == 1) ? decisions_data.first : decisions_data
+    end
+
     def bgs_associated_claims_data(attrs)
       return nil unless attrs[:associated_claims]
 
@@ -87,21 +116,21 @@ class Generators::Rating
       {
         rating_issues: bgs_rating_issues_data(attrs),
         associated_claims: bgs_associated_claims_data(attrs),
-        disabilities: attrs[:disabilities]
+        disabilities: [attrs[:disabilities], bgs_rating_decisions_data(attrs)].compact.flatten
       }
     end
 
+    def rating_store
+      @rating_store ||= Fakes::RatingStore.new
+    end
+
     def init_fakes(participant_id)
-      Fakes::BGSService.rating_profile_records ||= {}
-      Fakes::BGSService.rating_profile_records[participant_id] ||= {}
-      Fakes::BGSService.rating_records ||= {}
-      Fakes::BGSService.rating_records[participant_id] ||= []
+      rating_store.init_store(participant_id)
     end
 
     def generate_profile_datetime(participant_id)
-      DATE_LIST.find do |date|
-        !Fakes::BGSService.rating_profile_records[participant_id][date]
-      end
+      ratings = rating_store.fetch_and_inflate(participant_id) || {}
+      DATE_LIST.find { |date| !ratings[:profiles].try(date.to_s) }
     end
 
     def populate_issue_ids(attrs)
@@ -111,6 +140,15 @@ class Generators::Rating
       attrs[:issues].map do |issue|
         issue[:reference_id] ||= "#{attrs[:participant_id]}#{generate_external_id}"
         issue
+      end
+    end
+
+    def populate_decision_ids(attrs)
+      return unless attrs[:decisions]
+
+      attrs[:decisions].map do |decision|
+        decision[:rating_sequence_number] ||= "#{attrs[:participant_id]}#{generate_external_id}"
+        decision
       end
     end
   end

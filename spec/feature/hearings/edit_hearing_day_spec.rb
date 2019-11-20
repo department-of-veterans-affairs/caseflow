@@ -6,7 +6,7 @@ require "rails_helper"
 RSpec.feature "Edit a Hearing Day", :all_dbs do
   let!(:current_user) do
     user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
-    OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+    HearingsManagement.singleton.add_user(user)
     User.authenticate!(user: user)
   end
 
@@ -22,11 +22,18 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
   let!(:coordinator) do
     create(:staff, :hearing_coordinator)
   end
+  let!(:caseflow_coordinator) do
+    User.find_by_css_id_or_create_with_default_station_id(coordinator.sdomainid)
+  end
+
+  before do
+    HearingsManagement.singleton.add_user(caseflow_coordinator)
+  end
 
   context "When editing a Hearing Day" do
     scenario "Verify initial fields present when modal opened" do
       visit "hearings/schedule"
-      find_link(hearing_day.scheduled_for.strftime("%a%_m/%d/%Y")).click
+      find_link(hearing_day.scheduled_for.strftime("%a %-m/%d/%Y")).click
       expect(page).to have_content("Edit Hearing Day")
       expect(page).to have_content("No Veterans are scheduled for this hearing day.")
       find("button", text: "Edit Hearing Day").click
@@ -43,7 +50,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
 
   scenario "Verify room dropdown enabled when checkbox clicked" do
     visit "hearings/schedule"
-    find_link(hearing_day.scheduled_for.strftime("%a%_m/%d/%Y")).click
+    find_link(hearing_day.scheduled_for.strftime("%a %-m/%d/%Y")).click
     expect(page).to have_content("Edit Hearing Day")
     expect(page).to have_content("No Veterans are scheduled for this hearing day.")
     find("button", text: "Edit Hearing Day").click
@@ -62,7 +69,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
 
   scenario "Verify VLJ dropdown enabled when checkbox clicked" do
     visit "hearings/schedule"
-    find_link(hearing_day.scheduled_for.strftime("%a%_m/%d/%Y")).click
+    find_link(hearing_day.scheduled_for.strftime("%a %-m/%d/%Y")).click
     expect(page).to have_content("Edit Hearing Day")
     expect(page).to have_content("No Veterans are scheduled for this hearing day.")
     find("button", text: "Edit Hearing Day").click
@@ -81,7 +88,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
 
   scenario "Verify Coordinator dropdown enabled when checkbox clicked" do
     visit "hearings/schedule"
-    find_link(hearing_day.scheduled_for.strftime("%a%_m/%d/%Y")).click
+    find_link(hearing_day.scheduled_for.strftime("%a %-m/%d/%Y")).click
     expect(page).to have_content("Edit Hearing Day")
     expect(page).to have_content("No Veterans are scheduled for this hearing day.")
     find("button", text: "Edit Hearing Day").click
@@ -102,7 +109,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
 
   scenario "first option is 'None'" do
     visit "hearings/schedule"
-    find_link(hearing_day.scheduled_for.strftime("%a%_m/%d/%Y")).click
+    find_link(hearing_day.scheduled_for.strftime("%a %-m/%d/%Y")).click
     find("button", text: "Edit Hearing Day").click
     find("label[for=roomEdit]").click
     click_dropdown(name: "room", index: 0)

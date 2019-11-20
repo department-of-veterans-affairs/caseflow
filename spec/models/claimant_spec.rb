@@ -77,7 +77,7 @@ describe Claimant, :postgres do
     end
   end
 
-  context ".create_from_intake_data!" do
+  context ".create_without_intake!" do
     let(:appeal) { create(:appeal) }
     let(:date_of_birth) { "Sun, 05 Sep 1943 00:00:00 -0500" }
     let(:participant_id) { "1234" }
@@ -91,7 +91,7 @@ describe Claimant, :postgres do
     end
 
     it "saves date of birth" do
-      claimant = appeal.claimants.create_from_intake_data!(participant_id: participant_id, payee_code: "1")
+      claimant = appeal.claimants.create_without_intake!(participant_id: participant_id, payee_code: "1")
       expect(claimant.date_of_birth).to eq(date_of_birth.to_date)
       person = Person.find_by(participant_id: participant_id)
       expect(person).to_not eq nil
@@ -99,11 +99,11 @@ describe Claimant, :postgres do
     end
   end
 
-  context "#advanced_on_docket" do
+  context "#advanced_on_docket?" do
     context "when claimant is over 75 years old" do
       it "returns true" do
         claimant = create(:claimant, :advanced_on_docket_due_to_age)
-        expect(claimant.advanced_on_docket(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(true)
       end
     end
 
@@ -112,14 +112,14 @@ describe Claimant, :postgres do
         claimant = create(:claimant)
         create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true)
 
-        expect(claimant.advanced_on_docket(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(true)
       end
     end
 
     context "when claimant is younger than 75 years old and has no motion granted" do
       it "returns false" do
         claimant = create(:claimant)
-        expect(claimant.advanced_on_docket(1.year.ago)).to eq(false)
+        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(false)
       end
     end
   end

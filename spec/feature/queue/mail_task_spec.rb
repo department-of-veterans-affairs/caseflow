@@ -33,7 +33,7 @@ RSpec.feature "MailTasks", :postgres do
       end
 
       before do
-        OrganizationsUser.add_user_to_organization(user, aod_team)
+        aod_team.add_user(user)
       end
 
       it "successfully assigns the task to team member" do
@@ -83,12 +83,16 @@ RSpec.feature "MailTasks", :postgres do
     let(:task) { parent_task.children.first }
 
     before do
-      OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
+      Colocated.singleton.add_user(user)
     end
 
     it "should update the task type" do
       # Visit case details page
       visit "/queue/appeals/#{task.appeal.uuid}"
+
+      # Make sure mail team tasks do not show in task snapshot
+      expect(find("#currently-active-tasks")).not_to have_content("ASSIGNED TO\nMail")
+      expect(find_all("#currently-active-tasks tr").length).to eq 1
 
       # Navigate to the change task type modal
       find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click

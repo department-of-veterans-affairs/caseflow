@@ -84,14 +84,16 @@ describe TaskPager, :all_dbs do
   describe ".paged_tasks" do
     let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
-    let(:page) { 1 }
+    let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, page: page } }
 
-    before { create_list(:generic_task, TaskPager::TASKS_PER_PAGE + 1, assigned_to: assignee) }
+    before { create_list(:generic_task, task_count, assigned_to: assignee) }
 
     subject { TaskPager.new(arguments).paged_tasks }
 
     context "when the first page of tasks is requested" do
+      let(:page) { 1 }
+
       it "returns a full page of tasks" do
         expect(subject.count).to eq(TaskPager::TASKS_PER_PAGE)
       end
@@ -114,10 +116,46 @@ describe TaskPager, :all_dbs do
     end
   end
 
+  describe ".total_task_count" do
+    let(:assignee) { create(:organization) }
+    let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
+    let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }
+    let(:arguments) { { assignee: assignee, tab_name: tab_name, page: page } }
+
+    before { create_list(:generic_task, task_count, assigned_to: assignee) }
+
+    subject { TaskPager.new(arguments).total_task_count }
+
+    context "when the first page of tasks is requested" do
+      let(:page) { 1 }
+
+      it "returns the total task count" do
+        expect(subject).to eq(task_count)
+      end
+    end
+
+    context "when the page argument is nil" do
+      let(:page) { nil }
+
+      it "returns the total task count" do
+        expect(subject).to eq(task_count)
+      end
+    end
+
+    context "when the second page of tasks is requested" do
+      let(:page) { 2 }
+
+      it "returns the total task count" do
+        expect(subject).to eq(task_count)
+      end
+    end
+  end
+
   describe ".sorted_tasks" do
     let(:task_pager) { TaskPager.new(arguments) }
-    let(:arguments) { { assignee: assignee, tab_name: tab_name, sort_by: sort_by } }
+    let(:arguments) { { assignee: assignee, tab_name: tab_name, sort_by: sort_by, sort_order: sort_order } }
     let(:sort_by) { nil }
+    let(:sort_order) { nil }
     let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:tasks) { task_pager.tasks_for_tab }
@@ -126,28 +164,8 @@ describe TaskPager, :all_dbs do
 
     subject { task_pager.sorted_tasks(tasks) }
 
-    context "when no sorting arguments are provided to TaskPager" do
-      let(:arguments) { { assignee: assignee, tab_name: tab_name } }
-
-      it "sorts tasks by created_at asc" do
-        expected_order = created_tasks.sort_by(&:created_at)
-        expect(subject.map(&:id)).to eq(expected_order.map(&:id))
-      end
-    end
-
-    context "when desc sort_order argument is provided to TaskPager" do
-      let(:arguments) do
-        { assignee: assignee, tab_name: tab_name, sort_order: Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC }
-      end
-
-      it "sorts tasks by created_at desc" do
-        expected_order = created_tasks.sort_by(&:created_at).reverse
-        expect(subject.map(&:id)).to eq(expected_order.map(&:id))
-      end
-    end
-
     context "when sorting by closed_at date" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.TASK_CLOSED_DATE_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name }
       let(:tab_name) { Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME }
 
       before do
@@ -161,10 +179,19 @@ describe TaskPager, :all_dbs do
         expected_order = created_tasks.sort_by(&:closed_at)
         expect(subject.map(&:id)).to eq(expected_order.map(&:id))
       end
+
+      context "with desc sort_order" do
+        let(:sort_order) { Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC }
+
+        it "sorts tasks in reserve by closed_at value" do
+          expected_order = created_tasks.sort_by(&:closed_at).reverse
+          expect(subject.map(&:id)).to eq(expected_order.map(&:id))
+        end
+      end
     end
 
     context "when sorting by days waiting" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name }
 
       before do
         created_tasks.each do |task|
@@ -180,7 +207,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by due date" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.TASK_DUE_DATE.name }
 
       before do
         created_tasks.each do |task|
@@ -196,17 +223,38 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by task type" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN }
-      let!(:created_tasks) { create_list(:colocated_task, 14, assigned_to: assignee) }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name }
+      let!(:created_tasks) do
+        Task.where(id: create_list(:colocated_task, task_types.length, assigned_to: assignee).pluck(:id))
+      end
 
-      it "sorts ColocatedTasks by action and created_at" do
-        expected_order = created_tasks.sort_by { |task| [task.action, task.created_at] }
+      let(:task_types) do
+        [
+          AssignHearingDispositionTask,
+          AttorneyTask,
+          InformalHearingPresentationTask,
+          HearingTask,
+          ScheduleHearingColocatedTask,
+          PreRoutingMissingHearingTranscriptsColocatedTask,
+          AttorneyRewriteTask,
+          AttorneyDispatchReturnTask,
+          AttorneyQualityReviewTask,
+          JudgeAssignTask
+        ].shuffle
+      end
+
+      before do
+        created_tasks.each_with_index { |task, index| task.update!(type: task_types[index].name) }
+      end
+
+      it "sorts ColocatedTasks by label" do
+        expected_order = created_tasks.reload.sort_by(&:label)
         expect(subject.map(&:id)).to eq(expected_order.map(&:id))
       end
     end
 
     context "when sorting by days on hold" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.TASK_HOLD_LENGTH.name }
 
       before do
         created_tasks.each do |task|
@@ -222,7 +270,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by docket number column" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name }
 
       before do
         created_tasks.each do |task|
@@ -237,7 +285,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by closest regional office column" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name }
 
       before do
         regional_offices = RegionalOffice::ROS
@@ -253,14 +301,14 @@ describe TaskPager, :all_dbs do
 
       it "sorts by regional office city" do
         expected_order = created_tasks.sort_by do |task|
-          RegionalOffice::CITIES[task.appeal.closest_regional_office][:city]
+          RegionalOffice::CITIES[task.appeal.closest_regional_office][:city].upcase.tr(" ", "_")
         end
         expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
       end
     end
 
     context "when sorting by issue count column" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.ISSUE_COUNT_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name }
 
       before do
         issue_counts = (0..created_tasks.length).to_a.shuffle
@@ -278,24 +326,66 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by case details link column" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name }
 
       before do
         created_tasks.each do |task|
-          first_name = Faker::Name.first_name
-          last_name = "#{Faker::Name.middle_name} #{Faker::Name.last_name}"
+          first_name = Faker::Name.unique.first_name
+          last_name = "#{Faker::Name.unique.first_name} #{Faker::Name.unique.first_name}"
           task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
           create(
             :cached_appeal,
             appeal_id: task.appeal_id,
-            veteran_name: "#{last_name.split(' ').last}, #{first_name.split(' ').first}"
+            veteran_name: "#{last_name.split(' ').last}, #{first_name}"
           )
         end
       end
 
       it "sorts by veteran last and first name" do
         expected_order = created_tasks.sort_by do |task|
-          "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name.split(' ').first}"
+          "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name}"
+        end
+        expect(subject.map do |task|
+          "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name}"
+        end).to eq(expected_order.map do |task|
+          "#{task.appeal.veteran_last_name.split(' ').last}, #{task.appeal.veteran_first_name}"
+        end)
+      end
+    end
+
+    context "when sorting by Appeal Type column" do
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name }
+      let!(:created_tasks) { [] }
+
+      let(:legacy_appeal_1) { create(:legacy_appeal, vacols_case: create(:case, :type_original)) }
+      let(:legacy_appeal_2) { create(:legacy_appeal, vacols_case: create(:case, :type_post_remand)) }
+      let(:legacy_appeal_3) { create(:legacy_appeal, vacols_case: create(:case, :type_cavc_remand)) }
+      let(:appeal_1) { create(:appeal, :advanced_on_docket_due_to_motion) }
+      let(:appeal_2) { create(:appeal) }
+
+      before do
+        legacy_appeals = [legacy_appeal_1, legacy_appeal_2, legacy_appeal_3]
+        legacy_appeals.map do |appeal|
+          create(:colocated_task, assigned_to: assignee, appeal: appeal)
+          create(:cached_appeal,
+                 appeal_id: appeal.id,
+                 appeal_type: LegacyAppeal.name,
+                 case_type: appeal.type)
+        end
+        appeals = [appeal_1, appeal_2]
+        appeals.map do |appeal|
+          create(:colocated_task, assigned_to: assignee, appeal: appeal)
+          create(:cached_appeal,
+                 appeal_id: appeal.id,
+                 appeal_type: Appeal.name,
+                 case_type: appeal.type,
+                 is_aod: appeal.aod)
+        end
+      end
+
+      it "sorts by AOD status, case type, and docket number" do
+        expected_order = CachedAppeal.all.sort_by do |cached_appeal|
+          [cached_appeal.is_aod ? 1 : 0, cached_appeal.case_type, cached_appeal.docket_number]
         end
         expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
       end
@@ -325,7 +415,7 @@ describe TaskPager, :all_dbs do
       end
 
       context "when filter includes TranslationTasks" do
-        let(:filters) { ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{TranslationTask.name}"] }
+        let(:filters) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name}"] }
 
         it "returns only translation tasks assigned to the current organization" do
           expect(subject.map(&:id)).to_not match_array(task_pager.tasks_for_tab.map(&:id))
@@ -336,7 +426,7 @@ describe TaskPager, :all_dbs do
 
       context "when filter includes TranslationTasks and FoiaTasks" do
         let(:filters) do
-          ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{TranslationTask.name},#{FoiaTask.name}"]
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name},#{FoiaTask.name}"]
         end
 
         it "returns all translation and FOIA tasks assigned to the current organization" do

@@ -92,7 +92,7 @@ export class ListScheduleContainer extends React.Component {
     };
 
     return ApiUtil.get(requestUrl, requestOptions).then((response) => {
-      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+      const resp = ApiUtil.convertToCamelCase(response.body);
 
       this.props.onReceiveHearingSchedule(resp.hearings);
       this.props.onViewStartDateChange(formatDateStr(resp.startDate, dateFormatString, dateFormatString));
@@ -165,9 +165,9 @@ export class ListScheduleContainer extends React.Component {
   getHeader = () => {
     const { user } = this.props;
 
-    if (user.userRoleView || user.userRoleVso) {
+    if (user.userCanViewHearingSchedule || user.userCanVsoHearingSchedule) {
       return COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER;
-    } else if (user.userRoleHearingPrep) {
+    } else if (user.userHasHearingPrepRole) {
       return this.state.view === LIST_SCHEDULE_VIEWS.DEFAULT_VIEW ?
         COPY.HEARING_SCHEDULE_JUDGE_DEFAULT_VIEW_PAGE_HEADER :
         COPY.HEARING_SCHEDULE_JUDGE_SHOW_ALL_VIEW_PAGE_HEADER;
@@ -192,15 +192,18 @@ export class ListScheduleContainer extends React.Component {
           <h1 className="cf-push-left">
             {this.getHeader()}
           </h1>
-          {user.userRoleBuild &&
-            <span className="cf-push-right">
-              <Link button="secondary" to="/schedule/build">Build Schedule</Link>
-            </span>
-          }{user.userRoleAssign &&
-            <span className="cf-push-right"{...actionButtonsStyling} >
+          <div className="cf-push-right">
+            {user.userCanAssignHearingSchedule &&
+            <span className="cf-push-left" {...actionButtonsStyling}>
               <Link button="primary" to="/schedule/assign">Schedule Veterans</Link>
             </span>
-          }
+            }
+            {user.userCanBuildHearingSchedule &&
+            <span className="cf-push-left">
+              <Link button="secondary" to="/schedule/build">Build Schedule</Link>
+            </span>
+            }
+          </div>
           <div className="cf-help-divider" {...hearingSchedStyling} ></div>
           <ListSchedule
             hearingSchedule={this.props.hearingSchedule}
@@ -252,6 +255,25 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 ListScheduleContainer.propTypes = {
+  endDate: PropTypes.string,
+  hearingSchedule: PropTypes.object,
+  invalidDates: PropTypes.bool,
+  onAssignHearingRoom: PropTypes.func,
+  onInputInvalidDates: PropTypes.func,
+  onReceiveHearingSchedule: PropTypes.func,
+  onRegionalOfficeChange: PropTypes.func,
+  onResetDeleteSuccessful: PropTypes.func,
+  onResetInvalidDates: PropTypes.func,
+  onSelectedHearingDayChange: PropTypes.func,
+  onViewEndDateChange: PropTypes.func,
+  onViewStartDateChange: PropTypes.func,
+  selectedHearingDay: PropTypes.string,
+  selectHearingCoordinator: PropTypes.func,
+  selectRequestType: PropTypes.func,
+  selectVlj: PropTypes.func,
+  setNotes: PropTypes.func,
+  startDate: PropTypes.string,
+  successfulHearingDayDelete: PropTypes.string,
   user: PropTypes.object
 };
 

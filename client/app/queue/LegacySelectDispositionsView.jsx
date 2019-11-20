@@ -50,6 +50,8 @@ const tbodyStyling = css({
 const smallTopMargin = css({ marginTop: '1rem' });
 
 class LegacySelectDispositionsView extends React.PureComponent {
+  decisionReviewCheckoutFlow = () => this.props.checkoutFlow === 'dispatch_decision';
+
   getPageName = () => PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()];
 
   getNextStepUrl = () => {
@@ -57,7 +59,6 @@ class LegacySelectDispositionsView extends React.PureComponent {
       appealId,
       taskId,
       checkoutFlow,
-      userRole,
       appeal: { issues }
     } = this.props;
     let nextStep;
@@ -68,7 +69,7 @@ class LegacySelectDispositionsView extends React.PureComponent {
 
     if (remandedIssues) {
       nextStep = 'remands';
-    } else if (userRole === USER_ROLE_TYPES.judge) {
+    } else if (this.decisionReviewCheckoutFlow()) {
       nextStep = 'evaluate';
     } else {
       nextStep = 'submit';
@@ -200,9 +201,23 @@ class LegacySelectDispositionsView extends React.PureComponent {
 }
 
 LegacySelectDispositionsView.propTypes = {
+  appeal: PropTypes.shape({
+    issues: PropTypes.array,
+    isLegacyAppeal: PropTypes.bool
+  }),
+  success: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
+  }),
   appealId: PropTypes.string.isRequired,
+  taskId: PropTypes.string.isRequired,
   checkoutFlow: PropTypes.string.isRequired,
-  userRole: PropTypes.string.isRequired
+  userRole: PropTypes.string.isRequired,
+  updateEditingAppealIssue: PropTypes.func,
+  setDecisionOptions: PropTypes.func,
+  startEditingAppealIssue: PropTypes.func,
+  saveEditedAppealIssue: PropTypes.func,
+  hideSuccessMessage: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => ({

@@ -12,7 +12,7 @@ feature "Appeal Edit issues", :all_dbs do
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
     allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
-    OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
+    non_comp_org.add_user(current_user)
   end
 
   let(:veteran) do
@@ -30,53 +30,11 @@ feature "Appeal Edit issues", :all_dbs do
   let(:receipt_date) { Time.zone.today - 20.days }
   let(:profile_date) { (receipt_date - 30.days).to_datetime }
 
-  let!(:rating) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date,
-      profile_date: profile_date,
-      issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: 55 },
-        { reference_id: "def456", decision_text: "PTSD denied" },
-        { reference_id: "abcdef", decision_text: "Back pain" }
-      ]
-    )
-  end
-
-  let!(:rating_before_ama) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
-      issues: [
-        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
-      ]
-    )
-  end
-
-  let!(:rating_before_ama_from_ramp) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
-      issues: [
-        { decision_text: "Issue before AMA Activation from RAMP",
-          reference_id: "ramp_ref_id" }
-      ],
-      associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
-    )
-  end
-
+  let!(:rating) { generate_rating_with_defined_contention(veteran, receipt_date, profile_date) }
+  let!(:rating_before_ama) { generate_pre_ama_rating(veteran) }
+  let!(:rating_before_ama_from_ramp) { generate_rating_before_ama_from_ramp(veteran) }
   let!(:ratings_with_legacy_issues) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 4.days,
-      profile_date: receipt_date - 4.days,
-      issues: [
-        { reference_id: "has_legacy_issue", decision_text: "Issue with legacy issue not withdrawn" },
-        { reference_id: "has_ineligible_legacy_appeal", decision_text: "Issue connected to ineligible legacy appeal" }
-      ]
-    )
+    generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
   end
 
   let(:legacy_opt_in_approved) { false }
@@ -124,9 +82,7 @@ feature "Appeal Edit issues", :all_dbs do
     expect(page).to have_content(nonrating_request_issue.description)
 
     # remove an issue
-    nonrating_intake_num = find_intake_issue_number_by_text(nonrating_request_issue.nonrating_issue_category)
-    click_remove_intake_issue(nonrating_intake_num)
-    click_remove_issue_confirmation
+    click_remove_intake_issue_dropdown(nonrating_request_issue.description)
     expect(page).not_to have_content(nonrating_request_issue.description)
     expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
@@ -160,11 +116,8 @@ feature "Appeal Edit issues", :all_dbs do
 
     expect(page).to have_content(issue_description)
     expect(page).to have_button("Save", disabled: true)
-
     # remove
-    issue_num = find_intake_issue_number_by_text(issue_description)
-    click_remove_intake_issue(issue_num)
-    click_remove_issue_confirmation
+    click_remove_intake_issue_dropdown(issue_description)
     expect(page).not_to have_content(issue_description)
     expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
@@ -185,10 +138,8 @@ feature "Appeal Edit issues", :all_dbs do
     scenario "allows all request issues to be removed and saved" do
       visit "appeals/#{appeal.uuid}/edit/"
       # remove all issues
-      click_remove_intake_issue(1)
-      click_remove_issue_confirmation
-      click_remove_intake_issue(1)
-      click_remove_issue_confirmation
+      click_remove_intake_issue_dropdown("PTSD denied")
+      click_remove_intake_issue_dropdown("Military Retired Pay")
       expect(page).to have_button("Save", disabled: false)
     end
   end
@@ -304,8 +255,7 @@ feature "Appeal Edit issues", :all_dbs do
 
         # Check rollback
         visit "appeals/#{appeal.uuid}/edit/"
-        click_remove_intake_issue_by_text("Back pain")
-        click_remove_issue_confirmation
+        click_remove_intake_issue_dropdown("Back pain")
         click_edit_submit_and_confirm
 
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
@@ -390,9 +340,7 @@ feature "Appeal Edit issues", :all_dbs do
       )
       expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
       expect(page).to have_button("Save", disabled: true)
-
-      click_remove_intake_issue_by_text("Left knee granted")
-      click_remove_issue_confirmation
+      click_remove_intake_issue_dropdown("Left knee granted")
       expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
       expect(page).to have_button("Save", disabled: false)
 
@@ -452,14 +400,6 @@ feature "Appeal Edit issues", :all_dbs do
   end
 
   context "when withdraw decision reviews is enabled" do
-    before do
-      FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
-    end
-
-    after do
-      FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id])
-    end
-
     scenario "remove an issue with dropdown and show alert message" do
       visit "appeals/#{appeal.uuid}/edit/"
       expect(page).to have_content("PTSD denied")
@@ -519,10 +459,6 @@ feature "Appeal Edit issues", :all_dbs do
         /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdrawal pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
-
-      expect(page).to have_button("Save", disabled: true)
-
-      fill_in "withdraw-date", with: "13/01/24"
 
       expect(page).to have_button("Save", disabled: true)
 
@@ -598,7 +534,7 @@ feature "Appeal Edit issues", :all_dbs do
       click_intake_add_issue
       add_intake_rating_issue("Back pain")
 
-      click_remove_intake_issue_dropdown(1)
+      click_remove_intake_issue_dropdown("Military Retired Pay")
 
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
@@ -606,10 +542,6 @@ feature "Appeal Edit issues", :all_dbs do
         /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdrawal pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
-
-      expect(page).to have_button("Save", disabled: true)
-
-      fill_in "withdraw-date", with: "13/01/24"
 
       expect(page).to have_button("Save", disabled: true)
 
@@ -636,15 +568,6 @@ feature "Appeal Edit issues", :all_dbs do
 
       expect(page).to have_content("We cannot process your request. Please select a date prior to today's date.")
       expect(page).to have_button("Save", disabled: true)
-
-      fill_in "withdraw-date", with: "14/20/2019"
-
-      expect(page).to have_content("We cannot process your request. Please enter a valid date.")
-      expect(page).to have_button("Save", disabled: true)
-
-      fill_in "withdraw-date", with: withdraw_date
-      expect(page).to_not have_content("We cannot process your request.")
-      expect(page).to have_button("Save", disabled: false)
     end
   end
 
@@ -687,10 +610,10 @@ feature "Appeal Edit issues", :all_dbs do
       scenario "cancel all active tasks when all request issues are removed" do
         visit "appeals/#{appeal.uuid}/edit"
         # remove all request issues
-        appeal.request_issues.length.times do
-          click_remove_intake_issue(1)
-          click_remove_issue_confirmation
-        end
+        click_remove_intake_issue_dropdown("Apportionment")
+        click_remove_intake_issue_dropdown("Apportionment")
+        click_remove_intake_issue_dropdown("PTSD denied")
+        click_remove_intake_issue_dropdown("Military Retired Pay")
 
         click_edit_submit_and_confirm
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
@@ -712,16 +635,13 @@ feature "Appeal Edit issues", :all_dbs do
 
         scenario "remove all non-comp decision reviews" do
           visit "appeals/#{appeal.uuid}/edit"
-          # remove all request issues
-          appeal.request_issues.length.times do
-            click_remove_intake_issue(1)
-            click_remove_issue_confirmation
-          end
 
-          click_edit_submit
-          expect(page).to have_content("Remove review?")
-          expect(page).to have_content("This review and all tasks associated with it will be removed.")
-          click_intake_confirm
+          # remove all request issues
+          click_remove_intake_issue_dropdown("Apportionment")
+          click_remove_intake_issue_dropdown("Apportionment")
+          click_remove_intake_issue_dropdown("PTSD denied")
+          click_remove_intake_issue_dropdown("Military Retired Pay")
+          click_edit_submit_and_confirm
 
           expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
           expect(page).to have_content("Edit Completed")
@@ -731,8 +651,11 @@ feature "Appeal Edit issues", :all_dbs do
       context "when review has no active tasks" do
         scenario "no tasks are cancelled when all request issues are removed" do
           visit "appeals/#{appeal.uuid}/edit"
-          click_remove_intake_issue(1)
-          click_remove_issue_confirmation
+
+          click_remove_intake_issue_dropdown("Apportionment")
+          click_remove_intake_issue_dropdown("Apportionment")
+          click_remove_intake_issue_dropdown("PTSD denied")
+          click_remove_intake_issue_dropdown("Military Retired Pay")
           click_edit_submit_and_confirm
           expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         end
@@ -742,10 +665,11 @@ feature "Appeal Edit issues", :all_dbs do
         scenario "show timestamp when all request issues are cancelled" do
           visit "appeals/#{appeal.uuid}/edit"
           # remove all request issues
-          appeal.request_issues.length.times do
-            click_remove_intake_issue(1)
-            click_remove_issue_confirmation
-          end
+
+          click_remove_intake_issue_dropdown("Apportionment")
+          click_remove_intake_issue_dropdown("Apportionment")
+          click_remove_intake_issue_dropdown("PTSD denied")
+          click_remove_intake_issue_dropdown("Military Retired Pay")
 
           click_edit_submit_and_confirm
           expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")

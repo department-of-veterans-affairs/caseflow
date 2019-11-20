@@ -5,7 +5,7 @@
 # A hearing coordinator must resolve these before scheduling a Veteran.
 # Subclasses of various admin actions are defined below.
 
-class HearingAdminActionTask < GenericTask
+class HearingAdminActionTask < Task
   validates :parent, presence: true
   validate :on_hold_duration_is_set, on: :update
 
@@ -17,8 +17,8 @@ class HearingAdminActionTask < GenericTask
     end
   end
 
-  def label
-    self.class.label || "Hearing admin action"
+  def self.label
+    "Hearing admin action"
   end
 
   # We need to allow multiple tasks to be assigned to the organization since all tasks will start there and be

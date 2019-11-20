@@ -57,7 +57,7 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
     let!(:legacy_appeal) { create(:legacy_appeal, vbms_id: "123456789S", vacols_case: vacols_case) }
 
     before(:each) do
-      Fakes::BGSService.veteran_records = { "123456789" => veteran_record(file_number: "123456789S", state: "MA") }
+      Fakes::BGSService.store_veteran_record("123456789", veteran_record(file_number: "123456789S", state: "MA"))
     end
 
     describe "#appeals" do
@@ -69,54 +69,13 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
         end
         let!(:legacy_appeal_2) { create(:legacy_appeal, vbms_id: "999999999S", vacols_case: vacols_case_2) }
         let!(:task_1) { create(:schedule_hearing_task, appeal: legacy_appeal_2) }
-        # AMA appeal with schedule taks
+        # AMA appeal with schedule task
         let!(:veteran_3) { create(:veteran, file_number: "000000000") }
         let!(:appeal) { create(:appeal, veteran_file_number: "000000000") }
         let!(:task_2) { create(:schedule_hearing_task, appeal: appeal) }
-        # AMA appeal with completed address admin action
-        let!(:veteran_4) { create(:veteran, file_number: "222222222") }
-        let!(:appeal_2) { create(:appeal, veteran_file_number: "222222222") }
-        let!(:task_3) { create(:schedule_hearing_task, appeal: appeal_2) }
-        let!(:completed_admin_action) do
-          create(
-            :hearing_admin_action_verify_address_task,
-            :completed,
-            appeal: appeal_2,
-            assigned_to: HearingsManagement.singleton,
-            parent: task_3
-          )
-        end
+
         # should not be returned
         before do
-          # tasks marked completed
-          (0..2).each do |number|
-            create(:veteran, file_number: "23456781#{number}")
-            app = create(:appeal, veteran_file_number: "23456781#{number}")
-            create(:schedule_hearing_task, :completed, appeal: app)
-          end
-
-          # task with Address admin action
-          create(:veteran, file_number: "234567815")
-          app_2 = create(:appeal, veteran_file_number: "234567815")
-          tsk = create(:schedule_hearing_task, appeal: app_2)
-          create(
-            :hearing_admin_action_verify_address_task,
-            appeal: app_2,
-            assigned_to: HearingsManagement.singleton,
-            parent: tsk
-          )
-
-          # task with Foreign Case admin action
-          create(:veteran, file_number: "234567816")
-          app_3 = create(:appeal, veteran_file_number: "234567816")
-          tsk_2 = create(:schedule_hearing_task, appeal: app_3)
-          create(
-            :hearing_admin_action_verify_address_task,
-            appeal: app_3,
-            assigned_to: HearingsManagement.singleton,
-            parent: tsk_2
-          )
-
           # legacy not in location 57
           create(:veteran, file_number: "111111111")
           vac_case = create(:case, bfcurloc: "39", bfregoff: "RO01", bfcorlid: "111111111S", bfhr: "2", bfdocind: "V")
@@ -149,6 +108,43 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
         expect(legacy_appeal.tasks.count).to eq(3)
         expect(legacy_appeal.tasks.open.where(type: "ScheduleHearingTask").count).to eq(1)
         expect(legacy_appeal.tasks.open.where(type: "HearingTask").count).to eq(1)
+      end
+
+      context "when appeal has open admin action" do
+        before do
+          HearingAdminActionVerifyAddressTask.create!(
+            appeal: legacy_appeal,
+            assigned_to: HearingsManagement.singleton,
+            parent: ScheduleHearingTask.create(
+              appeal: legacy_appeal,
+              parent: RootTask.find_or_create_by(appeal: legacy_appeal)
+            )
+          )
+        end
+
+        it "closes admin action" do
+          subject.perform
+
+          expect(HearingAdminActionVerifyAddressTask.first.status).to eq(Constants.TASK_STATUSES.cancelled)
+        end
+      end
+
+      context "when appeal can't be matched" do
+        let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
+
+        before do
+          allow_any_instance_of(VaDotGovAddressValidator).to receive(:update_closest_ro_and_ahls)
+            .and_return(status: :created_verify_address_admin_action)
+          AvailableHearingLocations.create(appeal: appeal, facility_id: "fake_152", updated_at: Time.zone.now - 15.days)
+        end
+
+        it "pushes appeal to the bottom of job query by creating a blank
+            available_hearing_locations or touching an existing record" do
+          subject.perform
+
+          expect(legacy_appeal.available_hearing_locations.first.facility_id).to eq(nil)
+          expect(appeal.available_hearing_locations.first.updated_at.strftime("%F")).to eq(Time.zone.now.strftime("%F"))
+        end
       end
 
       context "when API limit is reached" do

@@ -40,6 +40,25 @@ class AppealFinder
         appeals
       end
     end
+
+    def find_appeal_by_docket_number(docket_number)
+      return [] unless docket_number
+
+      # Take the first six digits as date, remaining as ID
+      parsed = docket_number.split("-")
+
+      # If we can't parse a valid date from search, return no results
+      begin
+        receipt_date = Date.strptime(parsed[0], "%y%m%d")
+
+        id = parsed[1]
+        appeal = Appeal.find_by(id: id, receipt_date: receipt_date)
+
+        appeal
+      rescue ArgumentError
+        return nil
+      end
+    end
   end
 
   private
@@ -53,6 +72,14 @@ class AppealFinder
       vso_participant_ids = user.vsos_user_represents.map { |poa| poa[:participant_id] }
 
       veterans.flat_map { |vet| vet.accessible_appeals_for_poa(vso_participant_ids) }
+    end
+  end
+
+  def filter_appeals_for_vso_user(appeals:, veterans:)
+    allowed_appeal_ids = find_appeals_for_vso_user(veterans: veterans).map(&:id)
+
+    appeals.select do |appeal|
+      allowed_appeal_ids.include?(appeal.id)
     end
   end
 end

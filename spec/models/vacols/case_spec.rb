@@ -36,13 +36,19 @@ describe VACOLS::Case, :all_dbs do
     end
 
     before do
-      VACOLS::Case.batch_update_vacols_location("99", bfkeys)
+      VACOLS::Case.batch_update_vacols_location(LegacyAppeal::LOCATION_CODES[:closed], bfkeys)
     end
 
     context "brieff table" do
       subject { VACOLS::Case.find(bfkeys) }
       it "multiple cases moved" do
-        expect(subject.all? { |c| c.bfcurloc == "99" && c.bfdlocin == Time.zone.now && c.bfdloout == Time.zone.now })
+        expect(
+          subject.all? do |c|
+            c.bfcurloc == LegacyAppeal::LOCATION_CODES[:closed] \
+              && c.bfdlocin == Time.zone.now \
+              && c.bfdloout == Time.zone.now
+          end
+        )
       end
     end
 
@@ -54,7 +60,7 @@ describe VACOLS::Case, :all_dbs do
     end
 
     context "new priorloc record" do
-      subject { VACOLS::Priorloc.where(lockey: bfkeys, locstto: "99") }
+      subject { VACOLS::Priorloc.where(lockey: bfkeys, locstto: LegacyAppeal::LOCATION_CODES[:closed]) }
       it "multiple cases checked out" do
         expect(subject.count).to eq(5)
         expect(subject.all? { |l| l.locdout == Time.zone.now })

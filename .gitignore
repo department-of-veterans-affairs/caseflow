@@ -29,6 +29,7 @@ tags
 
 # Ignore hidden files
 .*
+!/.github
 !.codeclimate.yml
 !.dockerignore
 !.fasterer.yml

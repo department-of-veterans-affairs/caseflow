@@ -20,6 +20,8 @@ class WorkQueue::LegacyAppealSerializer
 
   attribute :completed_hearing_on_previous_appeal?
 
+  attribute :appellant_is_not_veteran, &:appellant_is_not_veteran
+
   attribute :appellant_full_name, &:appellant_name
 
   attribute :appellant_address, &:appellant_address
@@ -40,10 +42,7 @@ class WorkQueue::LegacyAppealSerializer
   attribute :form9_date
   attribute :nod_date
   attribute :certification_date
-  attribute :paper_case do |object|
-    object.file_type.eql? "Paper"
-  end
-
+  attribute :paper_case, &:paper_case?
   attribute :caseflow_veteran_id do |object|
     object.veteran ? object.veteran.id : nil
   end

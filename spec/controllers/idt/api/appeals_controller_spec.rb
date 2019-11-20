@@ -36,7 +36,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         let!(:ama_appeals) do
           [
-            create(:appeal, veteran: veteran1, number_of_claimants: 2),
+            create(:appeal, veteran: veteran1, number_of_claimants: 1),
             create(:appeal, veteran: veteran2, number_of_claimants: 1)
           ]
         end
@@ -82,7 +82,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
       context "and the user is intake" do
         let(:user) { User.find_by(css_id: "ID1234") }
-        let(:appeal) { create(:appeal, number_of_claimants: 2) }
+        let(:appeal) { create(:appeal, number_of_claimants: 1) }
         let(:params) { { appeal_id: appeal.uuid } }
 
         before do
@@ -105,15 +105,11 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           response_body = JSON.parse(response.body)["data"]
 
           expect(response_body["attributes"]["appellants"][0]["address"]["address_line_1"])
-            .to eq appeal.claimants.first.address_line_1
+            .to eq appeal.claimant.address_line_1
           expect(response_body["attributes"]["appellants"][0]["address"]["city"])
-            .to eq appeal.claimants.first.city
+            .to eq appeal.claimant.city
           expect(response_body["attributes"]["appellants"][0]["representative"]["address"])
             .to eq appeal.representative_address.stringify_keys
-          expect(response_body["attributes"]["appellants"][1]["address"]["address_line_1"])
-            .to eq appeal.claimants.second.address_line_1
-          expect(response_body["attributes"]["appellants"][1]["address"]["city"])
-            .to eq appeal.claimants.second.city
         end
       end
 
@@ -160,7 +156,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         let!(:ama_appeals) do
           [
-            create(:appeal, veteran: veteran1, number_of_claimants: 2),
+            create(:appeal, veteran: veteran1, number_of_claimants: 1, veteran_is_not_claimant: true),
             create(:appeal, veteran: veteran2, number_of_claimants: 1)
           ]
         end
@@ -259,7 +255,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         context "and AMA appeal id URL parameter is passed" do
           before do
             allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
-              ama_appeals.first.claimants.first.participant_id => {
+              ama_appeals.first.claimant.participant_id => {
                 representative_name: "POA Name",
                 representative_type: "POA Attorney",
                 participant_id: "600153863"
@@ -290,11 +286,11 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               expect(response_body["attributes"]["file_number"]).to eq ama_appeals.first.veteran_file_number
 
               expect(response_body["attributes"]["representative_address"]).to eq(nil)
-              expect(response_body["attributes"]["aod"]).to eq ama_appeals.first.advanced_on_docket
+              expect(response_body["attributes"]["aod"]).to eq ama_appeals.first.advanced_on_docket?
               expect(response_body["attributes"]["cavc"]).to eq "not implemented for AMA"
               expect(response_body["attributes"]["issues"].first["program"]).to eq "Compensation"
               expect(response_body["attributes"]["issues"].second["program"]).to eq "Compensation"
-              expect(response_body["attributes"]["status"]).to eq nil
+              expect(response_body["attributes"]["status"]).to eq "assigned_to_attorney"
               expect(response_body["attributes"]["veteran_is_deceased"]).to eq false
               expect(response_body["attributes"]["veteran_ssn"]).to eq ama_appeals.first.veteran_ssn
               expect(response_body["attributes"]["veteran_death_date"]).to eq nil
@@ -305,10 +301,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
                 .to eq ama_appeals.first.appellant_last_name
               expect(response_body["attributes"]["appellants"][0]["representative"]["type"])
                 .to eq ama_appeals.first.representative_type
-              expect(response_body["attributes"]["appellants"][1]["first_name"])
-                .to eq ama_appeals.first.claimants.second.first_name
-              expect(response_body["attributes"]["appellants"][1]["last_name"])
-                .to eq ama_appeals.first.claimants.second.last_name
             end
           end
 
@@ -316,7 +308,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             let(:user) { create(:user) }
 
             before do
-              OrganizationsUser.add_user_to_organization(user, BvaDispatch.singleton)
+              BvaDispatch.singleton.add_user(user)
               allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id).and_return(
                 address_line_1: "1234 K St.",
                 address_line_2: "APT 3",
@@ -328,8 +320,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               )
 
               allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
-                .with([ama_appeals.first.claimants.last.participant_id]).and_return(
-                  ama_appeals.first.claimants.last.participant_id => {
+                .with([ama_appeals.first.claimant.participant_id]).and_return(
+                  ama_appeals.first.claimant.participant_id => {
                     representative_name: "POA Name",
                     representative_type: "POA Attorney",
                     participant_id: "600153863"
@@ -343,15 +335,11 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               response_body = JSON.parse(response.body)["data"]
 
               expect(response_body["attributes"]["appellants"][0]["address"]["address_line_1"])
-                .to eq ama_appeals.first.reload.claimants.first.address_line_1
+                .to eq ama_appeals.first.reload.claimant.address_line_1
               expect(response_body["attributes"]["appellants"][0]["address"]["city"])
-                .to eq ama_appeals.first.claimants.first.city
+                .to eq ama_appeals.first.claimant.city
               expect(response_body["attributes"]["appellants"][0]["representative"]["address"])
                 .to eq ama_appeals.first.representative_address.stringify_keys
-              expect(response_body["attributes"]["appellants"][1]["address"]["address_line_1"])
-                .to eq ama_appeals.first.claimants.second.address_line_1
-              expect(response_body["attributes"]["appellants"][1]["address"]["city"])
-                .to eq ama_appeals.first.claimants.second.city
               expect(response_body["attributes"]["assigned_by"]).to_not eq nil
               expect(response_body["attributes"]["assigned_by"]).to eq tasks.first.parent.assigned_to.full_name
               expect(response_body["attributes"]["documents"].size).to eq 2
@@ -380,16 +368,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               appellant_last_name: "Gump"
             )
           end
-          let!(:representative) do
-            create(
-              :representative,
-              repkey: vacols_case.bfkey,
-              reptype: "A",
-              repfirst: "Attorney",
-              replast: "McAttorney"
-            )
-          end
-
           let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
           it "succeeds and passes appeal info" do
@@ -403,7 +381,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             expect(response_body["attributes"]["veteran_name_suffix"]).to eq "PhD"
             expect(response_body["attributes"]["veteran_ssn"]).to eq appeal.veteran_ssn
             expect(response_body["attributes"]["file_number"]).to eq appeal.veteran_file_number
-            expect(response_body["attributes"]["appellants"][0]["representative"]["name"]).to eq("Attorney McAttorney")
+            # BGS service default attorney: Clarence Darrow
+            expect(response_body["attributes"]["appellants"][0]["representative"]["name"]).to eq("Clarence Darrow")
             expect(response_body["attributes"]["appellants"][0]["first_name"]).to eq("Forrest")
             expect(response_body["attributes"]["aod"]).to eq appeal.aod
             expect(response_body["attributes"]["cavc"]).to eq appeal.cavc
@@ -534,7 +513,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
     before do
       allow(controller).to receive(:verify_access).and_return(true)
-      OrganizationsUser.add_user_to_organization(user, BvaDispatch.singleton)
+      BvaDispatch.singleton.add_user(user)
 
       key, t = Idt::Token.generate_one_time_key_and_proposed_token
       Idt::Token.activate_proposed_token(key, user.css_id)
@@ -608,7 +587,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       before do
         task_count.times do
           org_task = BvaDispatchTask.create_from_root_task(root_task)
-          # Set status of org-level task to completed to avoid getting caught by GenericTask.verify_org_task_unique.
+          # Set status of org-level task to completed to avoid getting caught by Task.verify_org_task_unique.
           org_task.update!(status: Constants.TASK_STATUSES.completed)
         end
       end

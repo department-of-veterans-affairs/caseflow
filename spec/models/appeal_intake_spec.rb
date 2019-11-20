@@ -39,12 +39,7 @@ describe AppealIntake, :all_dbs do
   context "#cancel!" do
     subject { intake.cancel!(reason: "system_error", other: nil) }
 
-    let(:detail) do
-      Appeal.create!(
-        veteran_file_number: veteran_file_number,
-        receipt_date: 3.days.ago
-      )
-    end
+    let(:detail) { create(:appeal, veteran_file_number: veteran_file_number, receipt_date: 3.days.ago) }
 
     let!(:claimant) do
       Claimant.create!(
@@ -115,7 +110,7 @@ describe AppealIntake, :all_dbs do
       expect(subject).to be_truthy
 
       expect(intake.detail.claimants.count).to eq 1
-      expect(intake.detail.claimants.first).to have_attributes(
+      expect(intake.detail.claimant).to have_attributes(
         participant_id: intake.veteran.participant_id,
         payee_code: nil,
         decision_review: intake.detail
@@ -143,7 +138,7 @@ describe AppealIntake, :all_dbs do
         subject
 
         expect(intake.detail.claimants.count).to eq 1
-        expect(intake.detail.claimants.first).to have_attributes(
+        expect(intake.detail.claimant).to have_attributes(
           participant_id: "1234",
           payee_code: nil,
           decision_review: intake.detail
@@ -158,7 +153,7 @@ describe AppealIntake, :all_dbs do
         it "does not require the address" do
           expect(subject).to be_truthy
           expect(intake.detail.claimants.count).to eq 1
-          expect(intake.detail.claimants.first).to have_attributes(
+          expect(intake.detail.claimant).to have_attributes(
             participant_id: "1234",
             payee_code: nil,
             decision_review: intake.detail
@@ -168,14 +163,21 @@ describe AppealIntake, :all_dbs do
 
       context "claimant is nil" do
         let(:claimant) { nil }
-        let(:receipt_date) { 3.days.from_now }
 
         it "is expected to add an error that claimant cannot be blank" do
           expect(subject).to be_falsey
           expect(detail.errors[:claimant]).to include("blank")
-          expect(detail.errors[:receipt_date]).to include("in_future")
           expect(detail.claimants).to be_empty
         end
+      end
+    end
+
+    context "receipt date is in the future" do
+      let(:receipt_date) { 3.days.from_now }
+
+      it "is invalid" do
+        expect(subject).to be_falsey
+        expect(detail.errors[:receipt_date]).to include("in_future")
       end
     end
   end

@@ -3,7 +3,7 @@
 # We must do this async because an EndProductEstablishment may be cleared
 # some indefinite period of time before the Rating Issue(s) are posted.
 class DecisionIssueSyncJob < CaseflowJob
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :intake
 
   def perform(request_issue_or_effectuation)

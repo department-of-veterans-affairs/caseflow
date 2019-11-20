@@ -10,7 +10,7 @@ describe DirectReviewDocket, :postgres do
     before do
       Timecop.freeze(Date.new(2021, 2, 19))
 
-      (300..309).each do |i|
+      (269..279).each do |i|
         appeal = create(:appeal,
                         :with_post_intake_tasks,
                         docket_type: Constants.AMA_DOCKETS.direct_review,
@@ -41,7 +41,7 @@ describe DirectReviewDocket, :postgres do
       end
 
       it "returns the time until due" do
-        expect(subject).to eq(200)
+        expect(subject).to eq(170)
       end
     end
 

@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 ##
-# Task for a judge to assign tasks to attorneys.
+# Task assigned to judge from which they will assign the associated appeal to one of their attorneys by creating a
+# task (an AttorneyTask but not any of its subclasses) to draft a decision on the appeal.
+# Task is created as a result of case distribution.
+# Task should always have a RootTask as its parent.
+# Task can one or more AttorneyTask children, one or more ColocatedTask children, or no child tasks at all.
 
 class JudgeAssignTask < JudgeTask
   def additional_available_actions(_user)
@@ -17,7 +21,7 @@ class JudgeAssignTask < JudgeTask
     Raven.capture_message(msg, extra: { application: "tasks" }) if Time.zone.now > Time.zone.local(2019, 9, 1)
   end
 
-  def label
+  def self.label
     COPY::JUDGE_ASSIGN_TASK_LABEL
   end
 

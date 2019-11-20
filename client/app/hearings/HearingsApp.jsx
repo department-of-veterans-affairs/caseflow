@@ -24,23 +24,25 @@ import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
 export default class HearingsApp extends React.PureComponent {
   userPermissionProps = () => {
     const {
-      userRoleAssign,
-      userRoleBuild,
-      userRoleView,
-      userRoleVso,
-      userRoleHearingPrep,
-      userInHearingsOrganization,
+      userCanScheduleVirtualHearings,
+      userCanAssignHearingSchedule,
+      userCanBuildHearingSchedule,
+      userCanViewHearingSchedule,
+      userCanVsoHearingSchedule,
+      userHasHearingPrepRole,
+      userInHearingOrTranscriptionOrganization,
       userId,
       userCssId
     } = this.props;
 
     return {
-      userRoleAssign,
-      userRoleBuild,
-      userRoleView,
-      userRoleVso,
-      userRoleHearingPrep,
-      userInHearingsOrganization,
+      userCanScheduleVirtualHearings,
+      userCanAssignHearingSchedule,
+      userCanBuildHearingSchedule,
+      userCanViewHearingSchedule,
+      userCanVsoHearingSchedule,
+      userHasHearingPrepRole,
+      userInHearingOrTranscriptionOrganization,
       userId,
       userCssId
     };
@@ -62,7 +64,7 @@ export default class HearingsApp extends React.PureComponent {
   routeForAssignHearingsContainer = () => <AssignHearingsContainer {...this.propsForAssignHearingsContainer()} />
   routeForDailyDocket = (print) => () => <DailyDocketContainer user={this.userPermissionProps()} print={print} />;
   routeForHearingDetails = ({ match: { params }, history }) =>
-    <HearingDetailsContainer hearingId={params.hearingId} history={history} {...this.userPermissionProps()} />;
+    <HearingDetailsContainer hearingId={params.hearingId} history={history} user={this.userPermissionProps()} />;
   routeForHearingWorksheet = () => ({ match: { params } }) =>
     <HearingWorksheetContainer hearingId={params.hearingId} />;
   routeForPrintedHearingWorksheets = (props) => {
@@ -172,12 +174,13 @@ HearingsApp.propTypes = {
   applicationUrls: PropTypes.array,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
-  userRoleAssign: PropTypes.bool,
-  userRoleBuild: PropTypes.bool,
-  userRoleView: PropTypes.bool,
-  userRoleVso: PropTypes.bool,
-  userRoleHearingPrep: PropTypes.bool,
-  userInHearingsOrganization: PropTypes.bool,
+  userCanScheduleVirtualHearings: PropTypes.bool,
+  userCanAssignHearingSchedule: PropTypes.bool,
+  userCanBuildHearingSchedule: PropTypes.bool,
+  userCanViewHearingSchedule: PropTypes.bool,
+  userCanVsoHearingSchedule: PropTypes.bool,
+  userHasHearingPrepRole: PropTypes.bool,
+  userInHearingOrTranscriptionOrganization: PropTypes.bool,
   userRole: PropTypes.string,
   userId: PropTypes.number,
   userCssId: PropTypes.string

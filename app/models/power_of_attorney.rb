@@ -5,7 +5,7 @@
 #
 # Power of attorney (also referred to as "representative")
 # is tied to the appeal in VACOLS, but it's tied to the veteran
-# in BGS - so the two are ofen out of sync.
+# in BGS - so the two are often out of sync.
 # This class exposes information from both systems
 # and lets the user modify VACOLS with BGS information
 # (but not the other way around).
@@ -16,6 +16,7 @@
 class PowerOfAttorney
   include ActiveModel::Model
   include AssociatedVacolsModel
+  include BgsService
 
   vacols_attr_accessor  :vacols_representative_type,
                         :vacols_representative_name,
@@ -29,7 +30,9 @@ class PowerOfAttorney
   delegate :representative_name,
            :representative_type,
            :representative_address,
-           :participant_id, to: :bgs_power_of_attorney, prefix: :bgs
+           :representative_email_address,
+           :participant_id,
+           to: :bgs_power_of_attorney, prefix: :bgs
 
   def update_vacols_rep_info!(appeal:, representative_type:, representative_name:, address:)
     repo = self.class.repository

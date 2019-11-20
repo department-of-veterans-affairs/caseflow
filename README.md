@@ -87,11 +87,10 @@ Providing Veterans transparent information about the status of their appeal
 Facilitates the transfer of cases from the Agency of Original Jurisdiction (AOJ) to the Board of Veterans' Appeals (the Board).
 
 ## Other Caseflow Products
-| Product | GitHub Repository | CI |
+| Product | GitHub Repository | Contiuous Integration Tests |
 | --- | --- | ---|
 | Caseflow | [caseflow](https://github.com/department-of-veterans-affairs/caseflow) | [CircleCI - Caseflow](https://circleci.com/gh/department-of-veterans-affairs/caseflow) |
-| eFolder Express | [caseflow-efolder](https://github.com/department-of-veterans-affairs/caseflow-efolder) | [Travis CI - eFolder](https://travis-ci.org/department-of-veterans-affairs/caseflow-efolder) |
-| Caseflow Feedback | [caseflow-feedback](https://github.com/department-of-veterans-affairs/caseflow-feedback) | [Travis CI - Caseflow Feedback](https://travis-ci.org/department-of-veterans-affairs/caseflow-feedback) |
+| eFolder Express | [caseflow-efolder](https://github.com/department-of-veterans-affairs/caseflow-efolder) | [Circle CI - eFolder](https://circleci.com/gh/department-of-veterans-affairs/caseflow-efolder) |
 | Commons | [caseflow-commons](https://github.com/department-of-veterans-affairs/caseflow-commons) | [Travis CI - Commons](https://travis-ci.org/department-of-veterans-affairs/caseflow-commons) |
 
 ## Developer Setup ####################################
@@ -108,6 +107,15 @@ We are using 2-factor authentication with Github so, for example, when you acces
 
 
 ### Machine setup #######################################################
+
+You can manually go through the following steps.
+Alternatively, if you have a Mac, you can download and run the following scripts:
+
+  - [dev_env_setup_step1.sh](docs/dev_env_setup_step1.sh)
+  - [dev_env_setup_step2.sh](docs/dev_env_setup_step2.sh)
+
+Remember to follow the instructions printed at the end of the scripts.
+If an error occurs, it is okay to run the scripts multiple times after the error is corrected.
 
 #### Basic Dependencies #######################################################
 
@@ -302,8 +310,8 @@ Navigate to the directory you'd like to clone this repo into and run:
 cd caseflow
 rbenv install $(cat .ruby-version)
 rbenv rehash
-BUNDLED_WITH= #[Gemfile.lock bundled-with]
-gem install bundler -v $BUNDLED_WITH
+# BUNDLED_WITH<VERSION> is at the bottom Gemfile.lock
+gem install bundler -v BUNDLED_WITH
 # If when running gem install bundler above you get a permissions error,
 # this means you have not propertly configured your rbenv.
 # Debug.
@@ -357,6 +365,8 @@ To rapidly set up your local development (and testing) environment, run:
 bundle exec rake local:build
 ```
 The above shortcut runs a set of commands in sequence that should build your local environment. If you need to troubleshoot the process, you can copy each individual step out of the task and run them independently.
+
+**Note:** You must have AWS access prior to setting up your local environment as the database is not publicly accessible due to Oracle licensing.
 
 ## Running dev Caseflow & Accessing dev DBs ##################
 

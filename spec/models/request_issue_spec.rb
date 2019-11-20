@@ -9,6 +9,7 @@ describe RequestIssue, :all_dbs do
   end
 
   let(:contested_rating_issue_reference_id) { "abc123" }
+  let(:contested_rating_decision_reference_id) { nil }
   let(:profile_date) { Time.zone.now.to_s }
   let(:contention_reference_id) { "1234" }
   let(:nonrating_contention_reference_id) { "5678" }
@@ -30,7 +31,8 @@ describe RequestIssue, :all_dbs do
       :higher_level_review,
       veteran_file_number: veteran.file_number,
       legacy_opt_in_approved: legacy_opt_in_approved,
-      same_office: same_office
+      same_office: same_office,
+      benefit_type: benefit_type
     )
   end
 
@@ -42,6 +44,7 @@ describe RequestIssue, :all_dbs do
       promulgation_date: rating_promulgation_date,
       profile_date: (review.receipt_date - 50.days).in_time_zone,
       issues: issues,
+      decisions: decisions,
       associated_claims: associated_claims
     )
   end
@@ -49,6 +52,7 @@ describe RequestIssue, :all_dbs do
   let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
   let!(:decision_sync_processed_at) { nil }
   let!(:end_product_establishment) { nil }
+
   let(:issues) do
     [
       {
@@ -60,10 +64,22 @@ describe RequestIssue, :all_dbs do
     ]
   end
 
-  let(:rating_request_issue_attrs) do
-    {
+  let(:decisions) do
+    [
+      {
+        diagnostic_text: "right knee",
+        disability_id: contested_rating_decision_reference_id,
+        original_denial_date: rating_promulgation_date - 7.days
+      }
+    ]
+  end
+
+  let!(:rating_request_issue) do
+    create(
+      :request_issue,
       decision_review: review,
       contested_rating_issue_reference_id: contested_rating_issue_reference_id,
+      contested_rating_decision_reference_id: contested_rating_decision_reference_id,
       contested_rating_issue_profile_date: profile_date,
       contested_issue_description: "a rating request issue",
       ramp_claim_id: ramp_claim_id,
@@ -78,18 +94,12 @@ describe RequestIssue, :all_dbs do
       closed_status: closed_status,
       ineligible_reason: ineligible_reason,
       edited_description: edited_description
-    }
-  end
-
-  let!(:rating_request_issue) do
-    create(
-      :request_issue,
-      rating_request_issue_attrs
     )
   end
 
-  let(:nonrating_request_issue_attrs) do
-    {
+  let!(:nonrating_request_issue) do
+    create(
+      :request_issue,
       decision_review: review,
       nonrating_issue_description: "a nonrating request issue description",
       contested_issue_description: nonrating_contested_issue_description,
@@ -99,13 +109,15 @@ describe RequestIssue, :all_dbs do
       end_product_establishment: end_product_establishment,
       contention_reference_id: nonrating_contention_reference_id,
       benefit_type: benefit_type
-    }
+    )
   end
 
-  let!(:nonrating_request_issue) do
+  let!(:rating_decision_request_issue) do
     create(
       :request_issue,
-      nonrating_request_issue_attrs
+      :rating_decision,
+      contested_rating_issue_profile_date: profile_date,
+      decision_review: review
     )
   end
 
@@ -116,7 +128,8 @@ describe RequestIssue, :all_dbs do
       :request_issue,
       decision_review: review,
       unidentified_issue_text: "an unidentified issue",
-      is_unidentified: true
+      is_unidentified: true,
+      decision_date: 5.days.ago
     )
   end
 
@@ -135,6 +148,45 @@ describe RequestIssue, :all_dbs do
           closed_at: Time.zone.now,
           closed_status: "ineligible"
         )
+      end
+    end
+  end
+
+  context "#remanded?" do
+    subject { rating_request_issue.remanded? }
+
+    context "when not contesting a decision issue" do
+      it { is_expected.to be_falsey }
+    end
+
+    context "when contesting a decision issue" do
+      let!(:decision_issue) { create(:decision_issue, decision_review: another_review, disposition: disposition) }
+      let(:another_review) { create(:higher_level_review) }
+      let(:disposition) { nil }
+      let(:contested_decision_issue_id) { decision_issue.id }
+
+      context "when the decision issue has a remanded disposition" do
+        let(:disposition) { "remanded" }
+
+        it { is_expected.to eq true }
+      end
+
+      context "when the decision issue does not have a remand disposition" do
+        let(:disposition) { "granted" }
+
+        it { is_expected.to be_falsey }
+
+        context "when the decision issue is from a remand supplemental claim" do
+          let(:another_review) { create(:supplemental_claim, decision_review_remanded: create(:appeal)) }
+
+          it { is_expected.to be_falsey }
+
+          context "when the decision issue from the same review (it is a correction)" do
+            let(:review) { another_review }
+
+            it { is_expected.to eq true }
+          end
+        end
       end
     end
   end
@@ -286,10 +338,27 @@ describe RequestIssue, :all_dbs do
     subject { RequestIssue.rating }
 
     it "filters by rating issues" do
-      expect(subject.length).to eq(2)
+      expect(subject.length).to eq(3)
 
       expect(subject.find_by(id: rating_request_issue.id)).to_not be_nil
+      expect(subject.find_by(id: rating_decision_request_issue.id)).to_not be_nil
       expect(subject.find_by(id: unidentified_issue.id)).to_not be_nil
+    end
+  end
+
+  context ".rating_issue" do
+    subject { RequestIssue.rating_issue }
+
+    it "filters by rating_issue issues" do
+      expect(subject.length).to eq(1)
+    end
+  end
+
+  context ".rating_decision" do
+    subject { RequestIssue.rating_decision }
+
+    it "filters by rating_decision issues" do
+      expect(subject.length).to eq(1)
     end
   end
 
@@ -483,350 +552,20 @@ describe RequestIssue, :all_dbs do
   end
 
   context "#end_product_code" do
-    let!(:rating_correction_request_issue) do
-      create(
-        :request_issue,
-        rating_request_issue_attrs.merge(
-          correction_type: correction_type, contention_reference_id: "9876"
-        )
-      )
-    end
+    subject { rating_request_issue.end_product_code }
 
-    let!(:nonrating_correction_request_issue) do
-      create(
-        :request_issue,
-        nonrating_request_issue_attrs.merge(
-          correction_type: correction_type, contention_reference_id: "4321"
-        )
-      )
-    end
-
-    let(:correction_type) { nil }
-
-    subject { request_issue.end_product_code }
-
-    context "when on original decision review" do
-      context "when benefit type is pension" do
-        let(:benefit_type) { "pension" }
-
-        context "when decision review is a higher level review" do
-          let(:review) { create(:higher_level_review, benefit_type: benefit_type) }
-
-          context "when rating" do
-            let(:request_issue) { rating_request_issue }
-            it { is_expected.to eq "030HLRRPMC" }
-
-            context "when correction" do
-              let(:request_issue) { rating_correction_request_issue }
-
-              context "when control" do
-                let(:correction_type) { :control }
-                it { is_expected.to eq "930AMAHRCPMC" }
-              end
-
-              context "when local quality error" do
-                let(:correction_type) { :local_quality_error }
-                it { is_expected.to eq "930AHCRLQPMC" }
-              end
-
-              context "when national quality error" do
-                let(:correction_type) { :national_quality_error }
-                it { is_expected.to eq "930AHCRNQPMC" }
-              end
-            end
-          end
-
-          context "when nonrating" do
-            let(:request_issue) { nonrating_request_issue }
-            it { is_expected.to eq "030HLRNRPMC" }
-
-            context "when correction" do
-              let(:request_issue) { nonrating_correction_request_issue }
-
-              context "when control" do
-                let(:correction_type) { :control }
-                it { is_expected.to eq "930AHNRCPMC" }
-              end
-
-              context "when local quality error" do
-                let(:correction_type) { :local_quality_error }
-                it { is_expected.to eq "930AHCNRLPMC" }
-              end
-
-              context "when national quality error" do
-                let(:correction_type) { :national_quality_error }
-                it { is_expected.to eq "930AHCNRNPMC" }
-              end
-            end
-          end
-        end
-
-        context "when decision review is a supplemental claim" do
-          let(:review) do
-            create(:supplemental_claim, benefit_type: benefit_type, decision_review_remanded: nil)
-          end
-
-          context "when rating" do
-            let(:request_issue) { rating_request_issue }
-            it { is_expected.to eq "040SCRPMC" }
-
-            context "when correction" do
-              let(:request_issue) { rating_correction_request_issue }
-
-              context "when control" do
-                let(:correction_type) { :control }
-                it { is_expected.to eq "930AMASRCPMC" }
-              end
-
-              context "when local quality error" do
-                let(:correction_type) { :local_quality_error }
-                it { is_expected.to eq "930ASCRLQPMC" }
-              end
-
-              context "when national quality error" do
-                let(:correction_type) { :national_quality_error }
-                it { is_expected.to eq "930ASCRNQPMC" }
-              end
-            end
-          end
-
-          context "when nonrating" do
-            let(:request_issue) { nonrating_request_issue }
-            it { is_expected.to eq "040SCNRPMC" }
-
-            context "when correction" do
-              let(:request_issue) { nonrating_correction_request_issue }
-
-              context "when control" do
-                let(:correction_type) { :control }
-                it { is_expected.to eq "930ASNRCPMC" }
-              end
-
-              context "when local quality error" do
-                let(:correction_type) { :local_quality_error }
-                it { is_expected.to eq "930ASCNRLPMC" }
-              end
-
-              context "when national quality error" do
-                let(:correction_type) { :national_quality_error }
-                it { is_expected.to eq "930ASCNRNPMC" }
-              end
-            end
-          end
-        end
-      end
-
-      context "when benefit type is compensation" do
-        let(:benefit_type) { "compensation" }
-
-        context "when decision review is a higher level review" do
-          let(:review) { create(:higher_level_review, benefit_type: benefit_type) }
-
-          context "when rating" do
-            let(:request_issue) { rating_request_issue }
-            it { is_expected.to eq "030HLRR" }
-
-            context "when correction" do
-              let(:request_issue) { rating_correction_request_issue }
-
-              context "when control" do
-                let(:correction_type) { :control }
-                it { is_expected.to eq "930AMAHRC" }
-              end
-
-              context "when local quality error" do
-                let(:correction_type) { :local_quality_error }
-                it { is_expected.to eq "930AMAHCRLQE" }
-              end
-
-              context "when national quality error" do
-                let(:correction_type) { :national_quality_error }
-                it { is_expected.to eq "930AMAHCRNQE" }
-              end
-            end
-          end
-
-          context "when nonrating" do
-            let(:request_issue) { nonrating_request_issue }
-            it { is_expected.to eq "030HLRNR" }
-
-            context "when correction" do
-              let(:request_issue) { nonrating_correction_request_issue }
-
-              context "when control" do
-                let(:correction_type) { :control }
-                it { is_expected.to eq "930AMAHNRC" }
-              end
-
-              context "when local quality error" do
-                let(:correction_type) { :local_quality_error }
-                it { is_expected.to eq "930AHCNRLQE" }
-              end
-
-              context "when national quality error" do
-                let(:correction_type) { :national_quality_error }
-                it { is_expected.to eq "930AHCNRNQE" }
-              end
-            end
-          end
-        end
-
-        context "when decision review is a supplemental claim" do
-          let(:review) do
-            create(:supplemental_claim, benefit_type: benefit_type, decision_review_remanded: nil)
-          end
-
-          context "when rating" do
-            let(:request_issue) { rating_request_issue }
-            it { is_expected.to eq "040SCR" }
-
-            context "when correction" do
-              let(:request_issue) { rating_correction_request_issue }
-
-              context "when control" do
-                let(:correction_type) { :control }
-                it { is_expected.to eq "930AMASRC" }
-              end
-
-              context "when local quality error" do
-                let(:correction_type) { :local_quality_error }
-                it { is_expected.to eq "930AMASCRLQE" }
-              end
-
-              context "when national quality error" do
-                let(:correction_type) { :national_quality_error }
-                it { is_expected.to eq "930AMASCRNQE" }
-              end
-            end
-          end
-
-          context "when nonrating" do
-            let(:request_issue) { nonrating_request_issue }
-            it { is_expected.to eq "040SCNR" }
-
-            context "when correction" do
-              let(:request_issue) { nonrating_correction_request_issue }
-
-              context "when control" do
-                let(:correction_type) { :control }
-                it { is_expected.to eq "930AMASNRC" }
-              end
-
-              context "when local quality error" do
-                let(:correction_type) { :local_quality_error }
-                it { is_expected.to eq "930ASCNRLQE" }
-              end
-
-              context "when national quality error" do
-                let(:correction_type) { :national_quality_error }
-                it { is_expected.to eq "930ASCNRNQE" }
-              end
-            end
-          end
-        end
+    context "when decision review is not processed in caseflow" do
+      let(:benefit_type) { "education" }
+      it "returns nil" do
+        expect(subject).to be_nil
       end
     end
 
-    context "when on remand (dta) decision review" do
-      let(:decision_review_remanded) { nil }
-      let(:review) do
-        create(:supplemental_claim, benefit_type: benefit_type, decision_review_remanded: decision_review_remanded)
-      end
+    context "when decision review is processed in caseflow" do
+      it "calls EndProductCodeSelector" do
+        expect_any_instance_of(EndProductCodeSelector).to receive(:call).once
 
-      context "when benefit type is pension" do
-        let(:benefit_type) { "pension" }
-
-        context "when decision review remanded is an Appeal" do
-          let(:decision_review_remanded) { create(:appeal) }
-
-          context "when rating" do
-            let(:request_issue) { rating_request_issue }
-            let(:contested_decision_issue_id) do
-              create(:decision_issue, :imo, decision_review: decision_review_remanded).id
-            end
-            it { is_expected.to eq "040BDERPMC" }
-          end
-
-          context "when not nonrating" do
-            let(:contested_decision_issue_id) { create(:decision_issue, decision_review: decision_review_remanded).id }
-            let(:request_issue) { nonrating_request_issue }
-            it { is_expected.to eq "040BDENRPMC" }
-          end
-        end
-
-        context "when decision review remanded is a claim review" do
-          let(:decision_review_remanded) { create(:higher_level_review) }
-
-          context "when rating" do
-            let(:request_issue) { rating_request_issue }
-            it { is_expected.to eq "040HDERPMC" }
-
-            context "when dta issues comes from a previous rating issue" do
-              let(:contested_decision_issue_id) { decision_issue.id }
-              let(:contested_rating_issue_reference_id) { nil }
-
-              let(:original_request_issue) do
-                create(
-                  :request_issue,
-                  decision_review: decision_review_remanded,
-                  contested_rating_issue_reference_id: "123"
-                )
-              end
-              let(:decision_issue) do
-                create(:decision_issue,
-                       decision_review: decision_review_remanded,
-                       request_issues: [original_request_issue])
-              end
-
-              it "is assigned a rating ep code" do
-                expect(request_issue.associated_rating_issue?).to be_falsey
-                expect(request_issue.rating?).to be true
-                expect(subject).to eq("040HDERPMC")
-              end
-            end
-          end
-
-          context "when nonrating" do
-            let(:request_issue) { nonrating_request_issue }
-            it { is_expected.to eq "040HDENRPMC" }
-          end
-        end
-      end
-
-      context "when benefit type is compensation" do
-        let(:benefit_type) { "compensation" }
-
-        context "when decision review remanded is an Appeal" do
-          let(:decision_review_remanded) { create(:appeal) }
-
-          context "when rating" do
-            let(:request_issue) { rating_request_issue }
-            let(:contested_decision_issue_id) do
-              create(:decision_issue, :imo, decision_review: decision_review_remanded).id
-            end
-            it { is_expected.to eq "040BDER" }
-          end
-
-          context "when nonrating" do
-            let(:request_issue) { nonrating_request_issue }
-            let(:contested_decision_issue_id) { create(:decision_issue, decision_review: decision_review_remanded).id }
-            it { is_expected.to eq "040BDENR" }
-          end
-        end
-
-        context "when decision review remanded is a claim review" do
-          let(:decision_review_remanded) { create(:higher_level_review) }
-
-          context "when rating" do
-            let(:request_issue) { rating_request_issue }
-            it { is_expected.to eq "040HDER" }
-          end
-
-          context "when nonrating" do
-            let(:request_issue) { nonrating_request_issue }
-            it { is_expected.to eq "040HDENR" }
-          end
-        end
+        subject
       end
     end
   end
@@ -1053,15 +792,50 @@ describe RequestIssue, :all_dbs do
   end
 
   context "#contested_rating_issue" do
-    it "returns the rating issue hash that prompted the RequestIssue" do
+    it "returns the RatingIssue that prompted the RequestIssue" do
       expect(rating_request_issue.contested_rating_issue.reference_id).to eq contested_rating_issue_reference_id
       expect(rating_request_issue.contested_rating_issue.decision_text).to eq "Left knee granted"
     end
   end
 
+  context "#contested_rating_decision" do
+    before { FeatureToggle.enable!(:contestable_rating_decisions) }
+    after { FeatureToggle.disable!(:contestable_rating_decisions) }
+
+    let(:contested_rating_issue_reference_id) { nil }
+    let(:contested_rating_decision_reference_id) { "some-disability-id" }
+
+    it "returns the RatingDecision that prompted the RequestIssue" do
+      expect(rating_request_issue.contested_rating_decision.reference_id).to eq contested_rating_decision_reference_id
+      expect(rating_request_issue.contested_rating_issue).to be_nil
+      expect(rating_request_issue.contested_rating_decision.decision_text).to match(/right knee/)
+    end
+  end
+
   context "#contested_benefit_type" do
+    subject { rating_request_issue.contested_benefit_type }
     it "returns the benefit_type of the contested_rating_issue" do
-      expect(rating_request_issue.contested_benefit_type).to eq :compensation
+      expect(subject).to eq :compensation
+    end
+
+    context "when the contested issue is a rating decision issue" do
+      let(:contested_rating_issue_reference_id) { nil }
+      let(:contested_rating_decision_reference_id) { "rating_decision_ref_id" }
+
+      it "returns compensation" do
+        expect(subject).to eq :compensation
+      end
+    end
+
+    context "when the contested issue is neither a rating issue nor a rating decision" do
+      let(:contested_rating_issue_reference_id) { nil }
+      let(:contested_rating_decision_reference_id) { nil }
+
+      it "calls guess_benefit_type" do
+        expect(rating_request_issue).to receive(:guess_benefit_type)
+
+        subject
+      end
     end
   end
 
@@ -1143,6 +917,16 @@ describe RequestIssue, :all_dbs do
       end
     end
 
+    context "where there is an associated rating decision" do
+      let(:contested_rating_decision_reference_id) { "123" }
+
+      it { is_expected.to be true }
+
+      it "nonrating? is false" do
+        expect(nonrating).to be(false)
+      end
+    end
+
     context "when the request issue is from a dta on a previous rating issue" do
       let(:contested_rating_issue_reference_id) { nil }
       let(:contested_decision_issue_id) { decision_issue.id }
@@ -1197,6 +981,7 @@ describe RequestIssue, :all_dbs do
     let(:closed_at) { nil }
     let(:receipt_date) { review.receipt_date }
     let(:previous_contention_reference_id) { "8888" }
+    let(:correction_type) { nil }
 
     let(:previous_review) { create(:higher_level_review) }
     let!(:previous_request_issue) do
@@ -1262,9 +1047,11 @@ describe RequestIssue, :all_dbs do
     let!(:request_issue_in_progress) do
       create(
         :request_issue,
+        correction_type: correction_type,
         contested_rating_issue_reference_id: duplicate_reference_id,
         contested_issue_description: "Old injury",
-        closed_at: closed_at
+        closed_at: closed_at,
+        contested_decision_issue_id: contested_decision_issue_id
       )
     end
 
@@ -1273,6 +1060,13 @@ describe RequestIssue, :all_dbs do
       nonrating_request_issue.validate_eligibility!
 
       expect(nonrating_request_issue.untimely?).to eq(true)
+    end
+
+    it "flags unidentified request issue as untimely when decision date is older than receipt_date" do
+      unidentified_issue.decision_date = receipt_date - 450
+      unidentified_issue.validate_eligibility!
+
+      expect(unidentified_issue.untimely?).to eq(true)
     end
 
     it "flags rating request issue as untimely when promulgation_date is year+ older than receipt_date" do
@@ -1291,6 +1085,16 @@ describe RequestIssue, :all_dbs do
 
       rating_request_issue.save!
       expect(request_issue_in_progress.duplicate_but_ineligible).to eq([rating_request_issue])
+    end
+
+    context "when duplicate request issue is a correction" do
+      let(:correction_type) { "control" }
+      let(:contested_decision_issue_id) { 12 }
+
+      it "does not flag the correction issue as a duplicate" do
+        rating_request_issue.validate_eligibility!
+        expect(rating_request_issue.ineligible_reason).to be_nil
+      end
     end
 
     context "when rating issue is missing associated_rating" do

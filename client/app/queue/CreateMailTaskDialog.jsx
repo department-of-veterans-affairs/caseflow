@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -46,14 +47,10 @@ class CreateMailTaskDialog extends React.Component {
 
     const label = this.taskActionData().options.find((option) => option.value === this.state.selectedValue).label;
 
-    const successMsg = { title: sprintf(COPY.MAIL_TASK_CREATION_SUCCESS_MESSAGE, label) };
+    const createMailTaskSuccessMessage = { title: sprintf(COPY.MAIL_TASK_CREATION_SUCCESS_MESSAGE, label) };
 
-    return this.props.requestSave('/tasks', payload, successMsg).
-      then((resp) => {
-        const response = JSON.parse(resp.text);
-
-        this.props.onReceiveAmaTasks(response.tasks.data);
-      }).
+    return this.props.requestSave('/tasks', payload, createMailTaskSuccessMessage).
+      then((resp) => this.props.onReceiveAmaTasks(resp.body.tasks.data)).
       catch(() => {
         // handle the error from the frontend
       });
@@ -106,6 +103,25 @@ class CreateMailTaskDialog extends React.Component {
     </QueueFlowModal>;
   }
 }
+
+CreateMailTaskDialog.propTypes = {
+  appeal: PropTypes.shape({
+    externalId: PropTypes.string
+  }),
+  appealId: PropTypes.string,
+  highlightFormItems: PropTypes.bool,
+  history: PropTypes.shape({
+    location: PropTypes.shape({
+      pathname: PropTypes.string
+    })
+  }),
+  onReceiveAmaTasks: PropTypes.func,
+  requestSave: PropTypes.func,
+  task: PropTypes.shape({
+    taskId: PropTypes.string,
+    availableActions: PropTypes.array
+  })
+};
 
 const mapStateToProps = (state, ownProps) => {
   const { highlightFormItems } = state.ui;

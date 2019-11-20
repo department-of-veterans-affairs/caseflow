@@ -15,6 +15,7 @@ class DecisionReview < ApplicationRecord
   has_many :tasks, as: :appeal, dependent: :destroy
   has_many :request_issues_updates, as: :review, dependent: :destroy
   has_one :intake, as: :detail
+  has_many :job_notes, as: :job
 
   cache_attribute :cached_serialized_ratings, cache_key: :ratings_cache_key, expires_in: 1.day do
     ratings_with_issues.map(&:serialize)
@@ -56,6 +57,24 @@ class DecisionReview < ApplicationRecord
     def review_title
       to_s.underscore.titleize
     end
+
+    # Find the DecisionReview that has the given uuid, whether it's an Appeal, HigherLevelReview,
+    # etc. --any non-abstract descendant of DecisionReview.
+    # Purposely trying to not clobber find_by_uuid
+    def by_uuid(uuid)
+      concrete_descendants.find do |klass|
+        decision_review = klass.find_by_uuid(uuid)
+        break decision_review if decision_review
+      end
+    end
+
+    def concrete_descendants
+      @concrete_descendants ||= descendants.reject(&:abstract_class)
+    end
+  end
+
+  def asyncable_user
+    intake&.user
   end
 
   def ama_activation_date
@@ -105,6 +124,9 @@ class DecisionReview < ApplicationRecord
         formName: veteran&.name&.formatted(:form),
         ssn: veteran&.ssn
       },
+      intakeUser: asyncable_user&.css_id,
+      editIssuesUrl: caseflow_only_edit_issues_url,
+      processedAt: establishment_processed_at,
       relationships: veteran&.relationships&.map(&:ui_hash),
       claimant: claimant_participant_id,
       veteranIsNotClaimant: veteran_is_not_claimant,
@@ -116,11 +138,18 @@ class DecisionReview < ApplicationRecord
       decisionIssues: decision_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
-      editIssuesUrl: caseflow_only_edit_issues_url,
       veteranValid: veteran&.valid?(:bgs),
       veteranInvalidFields: veteran_invalid_fields,
       processedInCaseflow: processed_in_caseflow?
     }
+  end
+
+  def caseflow_only_edit_issues_url
+    "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
+  end
+
+  def async_job_url
+    nil # must override in subclass
   end
 
   def timely_issue?(decision_date)
@@ -133,25 +162,23 @@ class DecisionReview < ApplicationRecord
     @saving_review = true
   end
 
+  # Creates claimants for automatically generated decision reviews
   def create_claimants!(participant_id:, payee_code:)
     remove_claimants!
-    claimants.create_from_intake_data!(participant_id: participant_id, payee_code: payee_code)
+    claimants.create_without_intake!(participant_id: participant_id, payee_code: payee_code)
   end
 
   def remove_claimants!
-    claimants.destroy_all unless claimants.empty?
+    claimants.delete_all
+  end
+
+  # Currently AMA only supports one claimant per decision review
+  def claimant
+    claimants.last
   end
 
   def claimant_participant_id
-    return nil if claimants.empty?
-
-    claimants.first.participant_id
-  end
-
-  def claimant_not_veteran
-    # This is being replaced by veteran_is_not_claimant, but keeping it temporarily
-    # until data is backfilled
-    claimant_participant_id && claimant_participant_id != veteran.participant_id
+    claimant&.participant_id
   end
 
   def finalized_decision_issues_before_receipt_date
@@ -159,9 +186,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def payee_code
-    return nil if claimants.empty?
-
-    claimants.first.payee_code
+    claimant&.payee_code
   end
 
   def veteran
@@ -225,7 +250,7 @@ class DecisionReview < ApplicationRecord
 
     remand_supplemental_claims.each do |rsc|
       rsc.create_remand_issues!
-      rsc.create_decision_review_task_if_required!
+      rsc.create_business_line_tasks!
 
       delay = rsc.receipt_date.future? ? (rsc.receipt_date + PROCESS_DELAY_VBMS_OFFSET_HOURS.hours).utc : 0
       rsc.submit_for_processing!(delay: delay)
@@ -322,6 +347,10 @@ class DecisionReview < ApplicationRecord
 
   def withdrawn_request_issues
     request_issues.withdrawn
+  end
+
+  def create_business_line_tasks!
+    fail Caseflow::Error::MustImplementInSubclass
   end
 
   private
@@ -422,19 +451,5 @@ class DecisionReview < ApplicationRecord
     return "1 #{program} issue" if request_issues.count == 1
 
     "#{request_issues.count} #{program} issues"
-  end
-
-  def fetch_issues_status(issues_list)
-    return {} if issues_list.empty?
-
-    issues_list.map do |issue|
-      {
-        active: issue.api_status_active?,
-        lastAction: issue.api_status_last_action,
-        date: issue.api_status_last_action_date,
-        description: issue.api_status_description,
-        diagnosticCode: issue.diagnostic_code
-      }
-    end
   end
 end

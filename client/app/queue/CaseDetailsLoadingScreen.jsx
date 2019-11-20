@@ -8,6 +8,7 @@ import ApiUtil from '../util/ApiUtil';
 import { prepareAppealForStore, prepareAllTasksForStore } from './utils';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import COPY from '../../COPY.json';
+import PropTypes from 'prop-types';
 
 import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
 
@@ -77,6 +78,7 @@ class CaseDetailLoadingScreen extends React.PureComponent {
 
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
+      key={this.props.appealId}
       loadingComponentProps={{
         spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
         message: 'Loading this case...'
@@ -111,5 +113,17 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAttorneysOfJudge,
   fetchAllAttorneys
 }, dispatch);
+
+CaseDetailLoadingScreen.propTypes = {
+  children: PropTypes.array,
+  appealId: PropTypes.string,
+  userId: PropTypes.number,
+  onReceiveTasks: PropTypes.func,
+  userRole: PropTypes.string,
+  appealDetails: PropTypes.object,
+  onReceiveAppealDetails: PropTypes.func,
+  setAttorneysOfJudge: PropTypes.func,
+  fetchAllAttorneys: PropTypes.func
+};
 
 export default (connect(mapStateToProps, mapDispatchToProps)(CaseDetailLoadingScreen));

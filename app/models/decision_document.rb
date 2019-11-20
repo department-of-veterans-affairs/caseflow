@@ -10,6 +10,7 @@ class DecisionDocument < ApplicationRecord
   belongs_to :appeal, polymorphic: true
   has_many :end_product_establishments, as: :source
   has_many :effectuations, class_name: "BoardGrantEffectuation"
+  has_many :job_notes, as: :job
 
   validates :citation_number, format: { with: /\AA?\d{8}\Z/i }
 
@@ -53,7 +54,7 @@ class DecisionDocument < ApplicationRecord
     attempted!
     upload_to_vbms!
 
-    if FeatureToggle.enabled?(:create_board_grant_effectuations) && appeal.is_a?(Appeal)
+    if appeal.is_a?(Appeal)
       create_board_grant_effectuations!
       process_board_grant_effectuations!
       appeal.create_remand_supplemental_claims!

@@ -23,7 +23,7 @@ describe ChangeHearingDispositionTask, :postgres do
       let!(:hearing_admin_user) { create(:hearings_coordinator) }
 
       before do
-        OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
+        HearingAdmin.singleton.add_user(hearing_admin_user)
       end
 
       it "has actions available to the hearings admin org member" do
@@ -35,7 +35,7 @@ describe ChangeHearingDispositionTask, :postgres do
       let(:hearings_management_user) { create(:user, station_id: 101) }
 
       before do
-        OrganizationsUser.add_user_to_organization(hearings_management_user, HearingsManagement.singleton)
+        HearingsManagement.singleton.add_user(hearings_management_user)
       end
 
       it "has no actions available" do

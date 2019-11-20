@@ -37,6 +37,9 @@ class LegacyHearingSerializer
   attribute :location
   attribute :military_service, if: for_worksheet
   attribute :notes
+  attribute :paper_case do |object|
+    object.appeal.paper_case?
+  end
   attribute :prepped
   attribute :readable_location
   attribute :readable_request_type
@@ -62,6 +65,12 @@ class LegacyHearingSerializer
   attribute :viewed_by_current_user do |hearing, params|
     hearing.hearing_views.all.any? do |hearing_view|
       hearing_view.user_id == params[:current_user_id]
+    end
+  end
+  attribute :is_virtual, &:virtual?
+  attribute :virtual_hearing do |object|
+    if object.virtual?
+      VirtualHearingSerializer.new(object.virtual_hearing).serializable_hash[:data][:attributes]
     end
   end
   attribute :witness

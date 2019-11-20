@@ -54,13 +54,11 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
             end
 
             it "should not be successful" do
-              FeatureToggle.enable!(:ama_decision_issues)
               post :complete, params: { task_id: task.id, tasks: params }
               expect(response.status).to eq 400
               response_body = JSON.parse(response.body)
               msg = "Validation failed: Disposition can't be blank, Disposition is not included in the list"
               expect(response_body["errors"].first["detail"]).to eq msg
-              FeatureToggle.disable!(:ama_decision_issues)
             end
           end
 
@@ -87,12 +85,10 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
             end
 
             it "should not be successful" do
-              FeatureToggle.enable!(:ama_decision_issues)
               post :complete, params: { task_id: task.id, tasks: params }
               expect(response.status).to eq 400
               response_body = JSON.parse(response.body)
               expect(response_body["errors"].first["detail"]).to eq "Not every request issue has a decision issue"
-              FeatureToggle.disable!(:ama_decision_issues)
             end
           end
 
@@ -166,7 +162,7 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
 
         before do
           # Add somebody to the BVA dispatch team so automatic task assignment for AMA cases succeeds.
-          OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
+          BvaDispatch.singleton.add_user(create(:user))
         end
 
         context "when all parameters are present to send to sign a decision" do

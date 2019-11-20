@@ -165,9 +165,8 @@ export const handleErrorWithSafeNavigation = (response) => {
   if (!isJson) {
     return null;
   }
-  const jsonResponseText = _.get(response, 'response.text');
-  const parsedResponseText = JSON.parse(jsonResponseText);
-  const error = _.get(parsedResponseText, 'errors[0].detail', null);
+  const jsonResponse = _.get(response, 'response.body');
+  const error = _.get(jsonResponse, 'errors[0].detail', null);
 
   return error;
 };

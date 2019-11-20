@@ -1,6 +1,6 @@
 <% content_for :page_title do task.appeal.task_header end %>
 <% content_for :full_page_content do %>
-<%= react_component("EstablishClaimContainer", props: {
+<%= react_component("EstablishClaimPage", props: {
     availableTasks: tasks.any_assignable_to?(current_user),
     buttonText: start_text,
     checklist: task.actions_taken,

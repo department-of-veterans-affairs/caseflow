@@ -4,14 +4,6 @@ require "support/database_cleaner"
 require "rails_helper"
 
 feature "NonComp Reviews Queue", :postgres do
-  before do
-    FeatureToggle.enable!(:decision_reviews)
-  end
-
-  after do
-    FeatureToggle.disable!(:decision_reviews)
-  end
-
   context "with an existing organization" do
     let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
     let(:user) { create(:default_user) }
@@ -21,7 +13,13 @@ feature "NonComp Reviews Queue", :postgres do
     let(:veteran_c) { create(:veteran, first_name: "Ccc") }
     let(:hlr_a) { create(:higher_level_review, veteran_file_number: veteran_a.file_number) }
     let(:hlr_b) { create(:higher_level_review, veteran_file_number: veteran_b.file_number) }
+    let(:hlr_c) { create(:higher_level_review, veteran_file_number: veteran_c.file_number) }
     let(:appeal) { create(:appeal, veteran: veteran_c) }
+
+    let!(:request_issue_a) { create(:request_issue, :rating, decision_review: hlr_a) }
+    let!(:request_issue_b) { create(:request_issue, :rating, decision_review: hlr_b) }
+    let!(:request_issue_c) { create(:request_issue, :rating, :removed, decision_review: hlr_c) }
+    let!(:request_issue_d) { create(:request_issue, :rating, decision_review: appeal) }
 
     let(:today) { Time.zone.now }
     let(:last_week) { Time.zone.now - 7.days }
@@ -53,6 +51,11 @@ feature "NonComp Reviews Queue", :postgres do
                appeal: hlr_b,
                assigned_to: non_comp_org,
                assigned_at: today),
+        create(:higher_level_review_task,
+               :in_progress,
+               appeal: hlr_c,
+               assigned_to: non_comp_org,
+               assigned_at: today),
         create(:board_grant_effectuation_task,
                :in_progress,
                appeal: appeal,
@@ -63,7 +66,7 @@ feature "NonComp Reviews Queue", :postgres do
 
     before do
       User.stub = user
-      OrganizationsUser.add_user_to_organization(user, non_comp_org)
+      non_comp_org.add_user(user)
     end
 
     scenario "displays tasks page" do
@@ -90,12 +93,12 @@ feature "NonComp Reviews Queue", :postgres do
       )
 
       click_on "Completed tasks"
-      expect(page).to have_content("Higher-Level Review", count: 2)
+      expect(page).to have_content("Higher-Level Review", count: 1)
       expect(page).to have_content("Date Completed")
 
       # ordered by closed_at descending
       expect(page).to have_content(
-        /#{veteran_b.name} 5\d+ 0 [\d\/]+ Higher-Level Review\s#{veteran_a.name} 5\d+ 0 [\d\/]+/
+        /#{veteran_b.name} 5\d+ 1 [\d\/]+ Higher-Level Review/
       )
     end
 

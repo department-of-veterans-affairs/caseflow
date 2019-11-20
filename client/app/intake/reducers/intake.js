@@ -11,6 +11,15 @@ const updateFromServerIntake = (state, serverIntake) => {
     formType: {
       $set: serverIntake.form_type
     },
+    asyncJobUrl: {
+      $set: serverIntake.async_job_url
+    },
+    detailEditUrl: {
+      $set: serverIntake.detail_edit_url
+    },
+    unreadMessages: {
+      $set: serverIntake.unread_messages
+    },
     veteran: {
       name: {
         $set: serverIntake.veteran_name
@@ -31,6 +40,8 @@ const updateFromServerIntake = (state, serverIntake) => {
 export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
     id: null,
+    asyncJobUrl: null,
+    detailEditUrl: null,
     formType: null,
     fileNumberSearch: '',
     searchErrorCode: null,
@@ -38,9 +49,11 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
       duplicateReceiptDate: null,
       duplicateProcessedBy: null,
       veteranMissingFields: null,
-      veteranAddressTooLong: null
+      veteranAddressTooLong: null,
+      pids: null
     },
     cancelModalVisible: false,
+    unreadMessages: false,
     veteran: {
       name: '',
       formName: '',
@@ -105,6 +118,9 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
         },
         veteranAddressTooLong: {
           $set: action.payload.errorData.veteran_address_too_long
+        },
+        pids: {
+          $set: _.join(action.payload.errorData.pids, ', ')
         }
       },
       requestStatus: {
@@ -129,6 +145,9 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
           $set: null
         },
         veteranAddressTooLong: {
+          $set: null
+        },
+        pids: {
           $set: null
         }
       }

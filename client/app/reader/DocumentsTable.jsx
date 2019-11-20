@@ -168,6 +168,7 @@ class DocumentsTable extends React.Component {
           name="Receipt Date"
           id="receipt-date-header"
           classNames={['cf-document-list-button-header']}
+          ariaLabel="Sort by Receipt Date"
           onClick={() => this.props.changeSortState('receivedAt')}>
           Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortArrowIcon : notSortedIcon }
         </Button>,
@@ -182,6 +183,7 @@ class DocumentsTable extends React.Component {
         header: <Button id="type-header"
           name="Document Type"
           classNames={['cf-document-list-button-header']}
+          ariaLabel="Sort by Document Type"
           onClick={() => this.props.changeSortState('type')}>
           Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : notSortedIcon }
         </Button>,
@@ -257,8 +259,20 @@ DocumentsTable.propTypes = {
   onJumpToComment: PropTypes.func,
   sortBy: PropTypes.string,
   pdfList: PropTypes.shape({
-    lastReadDocId: PropTypes.number
-  })
+    lastReadDocId: PropTypes.number,
+    scrollTop: PropTypes.number
+  }),
+  changeSortState: PropTypes.func.isRequired,
+  clearCategoryFilters: PropTypes.func,
+  clearTagFilters: PropTypes.func,
+  documentPathBase: PropTypes.string,
+  annotationsPerDocument: PropTypes.object,
+  docFilterCriteria: PropTypes.object,
+  setCategoryFilter: PropTypes.func.isRequired,
+  setTagFilter: PropTypes.func.isRequired,
+  setDocListScrollPosition: PropTypes.func.isRequired,
+  toggleDropdownFilterVisibility: PropTypes.func.isRequired,
+  tagOptions: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

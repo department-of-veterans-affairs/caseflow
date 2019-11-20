@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AttorneyRewriteTask < AttorneyTask
-  def label
+  def self.label
     COPY::ATTORNEY_REWRITE_TASK_LABEL
   end
 

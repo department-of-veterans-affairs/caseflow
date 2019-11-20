@@ -6,6 +6,7 @@ FactoryBot.define do
     detail { create(:higher_level_review) }
     type { detail.class.name << "Intake" }
     started_at { Time.zone.now }
+    association :user
 
     trait :completed do
       completed_at { Time.zone.now }

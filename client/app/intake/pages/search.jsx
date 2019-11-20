@@ -1,7 +1,10 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react';
 import SearchBar from '../../components/SearchBar';
 import Alert from '../../components/Alert';
 import BareList from '../../components/BareList';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
@@ -70,10 +73,11 @@ class Search extends React.PureComponent {
   getSearchErrorAlert = (searchErrorCode, searchErrorData) => {
     // The values in this switch statement need to be snake_case
     // because they're being matched to server response values.
+    const YourITLink = <Link href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</Link>;
     const searchErrors = {
       invalid_file_number: {
         title: 'Veteran ID not found',
-        body: 'Please enter a valid Veteran ID and try again.'
+        body: COPY.INTAKE_SEARCH_ERROR_INVALID_FILE_NUMBER
       },
       veteran_not_found: {
         title: 'Veteran not found',
@@ -81,22 +85,30 @@ class Search extends React.PureComponent {
       },
       reserved_veteran_file_number: {
         title: 'Invalid file number',
-        body: 'Please enter a valid Veteran ID and try again.'
+        body: COPY.INTAKE_SEARCH_ERROR_INVALID_FILE_NUMBER
       },
       veteran_has_multiple_phone_numbers: {
         title: 'The Veteran has multiple active phone numbers',
         body: COPY.DUPLICATE_PHONE_NUMBER_MESSAGE
       },
+      veteran_has_duplicate_records_in_corpdb: {
+        title: 'Duplicate veteran records',
+        body: <React.Fragment key="alert-error-body">
+          {'This Veteran has a duplicate record in CorpDB. Please submit an incident in '}
+          { YourITLink }
+          {' requesting that the duplicate record be removed. Include the veteran\'s first ' +
+              'initial, last name, the last 4 digits of their file number or SSN, and the ' +
+              `following participant IDs: [${searchErrorData.pids}]. The ticket should be ` +
+              'routed to the PHI SME Compensation Corporate Records Group'}
+        </React.Fragment>
+      },
       veteran_not_accessible: {
         title: "You don't have permission to view this Veteran's information",
-        body: 'It looks like you do not have the necessary level of access to view this information.' +
-          ' Please alert your manager so they can assign the form to someone else.'
+        body: COPY.INTAKE_SEARCH_ERROR_NOT_ACCESSIBLE
       },
       veteran_not_modifiable: {
         title: "You don't have permission to intake this Veteran",
-        body: 'You do not appear to have permission to establish a claim for this Veteran.' +
-          ' Often this is because they are an employee at the same station as you.' +
-          ' Please alert your manager so they can assign the form to someone else.'
+        body: COPY.INTAKE_SEARCH_ERROR_NOT_MODIFIABLE
       },
       veteran_not_valid: {
         title: 'The Veteran\'s profile has missing or invalid information required to create an EP.',
@@ -154,18 +166,15 @@ class Search extends React.PureComponent {
          'Please contact your management team if you need additional assistance.'
       },
       default: {
-        title: 'Something went wrong'
+        title: 'Something went wrong',
+        body: <React.Fragment key="alert-error-body">
+          {'Please try again. If the problem persists, please contact the Caseflow team ' +
+              'via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via '}
+          { YourITLink }
+          {`. Error code ${searchErrorCode}.`}
+        </React.Fragment>
       }
     };
-
-    searchErrors.default.body = <div>
-      <div>{`Error code ${searchErrorCode}.`}</div>
-      <div>
-        Please try again. If the problem persists, please contact the Caseflow team
-        via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket
-        via <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a>.
-      </div>
-    </div>;
 
     const error = searchErrors[searchErrorCode] || searchErrors.default;
 

@@ -49,16 +49,16 @@ class IntakesController < ApplicationController
 
   def complete
     intake.complete!(params)
-    if !intake.detail.is_a?(Appeal) && intake.detail.try(:processed_in_caseflow?)
+    if !detail.is_a?(Appeal) && detail.try(:processed_in_caseflow?)
       flash[:success] = success_message
-      render json: { serverIntake: { redirect_to: intake.detail.business_line.tasks_url } }
+      render json: { serverIntake: { redirect_to: detail.business_line.tasks_url } }
     else
       render json: intake.ui_hash
     end
   rescue Caseflow::Error::DuplicateEp => error
     render json: {
       error_code: error.error_code,
-      error_data: intake.detail.end_product_base_modifier
+      error_data: detail.end_product_base_modifier
     }, status: :bad_request
   end
 
@@ -71,7 +71,7 @@ class IntakesController < ApplicationController
 
   def log_error(error)
     Raven.capture_exception(error, extra: { error_uuid: error_uuid })
-    Rails.logger.error("Error UUID #{error_uuid} : #{error}")
+    Rails.logger.error("Error UUID #{error_uuid} : #{error}\n" + error.backtrace.join("\n"))
   end
 
   helper_method :index_props
@@ -84,12 +84,15 @@ class IntakesController < ApplicationController
       feedbackUrl: feedback_url,
       buildDate: build_date,
       featureToggles: {
+        inbox: FeatureToggle.enabled?(:inbox, user: current_user),
         useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
         rampIntake: FeatureToggle.enabled?(:ramp_intake, user: current_user),
-        editContentionText: FeatureToggle.enabled?(:edit_contention_text, user: current_user)
+        editContentionText: FeatureToggle.enabled?(:edit_contention_text, user: current_user),
+        unidentifiedIssueDecisionDate: FeatureToggle.enabled?(:unidentified_issue_decision_date, user: current_user)
       }
     }
   rescue StandardError => error
+    Rails.logger.error "#{error.message}\n#{error.backtrace.join("\n")}"
     Raven.capture_exception(error)
     # cancel intake so user doesn't get stuck
     intake_in_progress&.cancel!(reason: "system_error")
@@ -109,15 +112,21 @@ class IntakesController < ApplicationController
     render "out_of_service", layout: "application" if Rails.cache.read("intake_out_of_service")
   end
 
+  def unread_messages?
+    current_user.messages.unread.count > 0
+  end
+
   def intake_ui_hash
-    intake_in_progress ? intake_in_progress.ui_hash : {}
+    return intake_in_progress.ui_hash.merge(unread_messages: unread_messages?) if intake_in_progress
+
+    { unread_messages: unread_messages? }
   end
 
   # TODO: This could be moved to the model.
   def intake_in_progress
     return @intake_in_progress unless @intake_in_progress.nil?
 
-    @intake_in_progress = Intake.in_progress.find_by(user: current_user) || false
+    @intake_in_progress = Intake.in_progress.find_by(user: current_user)
   end
 
   def new_intake
@@ -132,6 +141,10 @@ class IntakesController < ApplicationController
     @intake ||= Intake.where(user: current_user).find(params[:id])
   end
 
+  def detail
+    @detail ||= intake&.detail
+  end
+
   def veteran_file_number
     # param could be file number or SSN. Make sure we return file number.
     veteran = Veteran.find_by_file_number_or_ssn(params[:file_number], sync_name: true)
@@ -139,9 +152,8 @@ class IntakesController < ApplicationController
   end
 
   def success_message
-    detail = intake.detail
     claimant_name = detail.veteran_full_name
-    claimant_name = detail.claimants.first.try(:name) if detail.veteran_is_not_claimant
+    claimant_name = detail.claimant.try(:name) if detail.veteran_is_not_claimant
     "#{claimant_name} (Veteran SSN: #{detail.veteran.ssn}) #{detail.class.review_title} has been processed."
   end
 end

@@ -54,10 +54,6 @@ class AppealSeries < ApplicationRecord
     @status ||= fetch_status
   end
 
-  def status_hash
-    { type: status, details: details_for_status }
-  end
-
   def docket
     @docket ||= fetch_docket
   end
@@ -103,6 +99,67 @@ class AppealSeries < ApplicationRecord
     "#{marquee_issue_description}#{comma} and #{issue_count} #{'other'.pluralize(issue_count)}"
   end
 
+  def fetch_status
+    case latest_appeal.status
+    when "Advance"
+      disambiguate_status_advance
+    when "Active"
+      disambiguate_status_active
+    when "Complete"
+      disambiguate_status_complete
+    when "Remand"
+      disambiguate_status_remand
+    when "Motion"
+      :motion
+    when "CAVC"
+      :cavc
+    end
+  end
+
+  # rubocop:disable Metrics/CyclomaticComplexity
+  def fetch_details_for_status
+    case status
+    when :scheduled_hearing
+      hearing = latest_appeal.scheduled_hearings.min_by(&:scheduled_for)
+
+      {
+        date: hearing.scheduled_for.to_date,
+        type: hearing.readable_request_type.downcase,
+        location: hearing.request_type_location
+      }
+    when :pending_hearing_scheduling
+      { type: latest_appeal.sanitized_hearing_request_type }
+    when :pending_form9, :pending_certification, :pending_certification_ssoc
+      {
+        last_soc_date: last_soc_date,
+        certification_timeliness: CERTIFICATION_TIMELINESS.dup,
+        ssoc_timeliness: SSOC_TIMELINESS.dup
+      }
+    when :pending_soc
+      { soc_timeliness: SOC_TIMELINESS.dup }
+    when :at_vso
+      { vso_name: representative_name }
+    when :decision_in_progress
+      { decisionTimeliness: DECISION_TIMELINESS.dup }
+    when :remand
+      {
+        issues: issues_for_last_decision,
+        remand_timeliness: REMAND_TIMELINESS.dup
+      }
+    when :remand_ssoc
+      {
+        last_soc_date: last_soc_date,
+        return_timeliness: RETURN_TIMELINESS.dup,
+        remand_ssoc_timeliness: REMAND_SSOC_TIMELINESS.dup
+      }
+    when :bva_decision
+      { issues: issues_for_last_decision }
+    else
+      {}
+    end
+  end
+  # rubocop:enable Metrics/CyclomaticComplexity
+
   private
 
   def fetch_latest_appeal
@@ -133,23 +190,6 @@ class AppealSeries < ApplicationRecord
         description: issue.friendly_description,
         disposition: issue.disposition
       }
-    end
-  end
-
-  def fetch_status
-    case latest_appeal.status
-    when "Advance"
-      disambiguate_status_advance
-    when "Active"
-      disambiguate_status_active
-    when "Complete"
-      disambiguate_status_complete
-    when "Remand"
-      disambiguate_status_remand
-    when "Motion"
-      :motion
-    when "CAVC"
-      :cavc
     end
   end
 
@@ -220,47 +260,5 @@ class AppealSeries < ApplicationRecord
     return :remand_ssoc if !post_decision_ssocs.empty?
 
     :remand
-  end
-
-  def details_for_status
-    case status
-    when :scheduled_hearing
-      hearing = latest_appeal.scheduled_hearings.min_by(&:scheduled_for)
-
-      {
-        date: hearing.scheduled_for.to_date,
-        type: hearing.readable_request_type.downcase,
-        location: hearing.request_type_location
-      }
-    when :pending_hearing_scheduling
-      { type: latest_appeal.sanitized_hearing_request_type }
-    when :pending_form9, :pending_certification, :pending_certification_ssoc
-      {
-        last_soc_date: last_soc_date,
-        certification_timeliness: CERTIFICATION_TIMELINESS.dup,
-        ssoc_timeliness: SSOC_TIMELINESS.dup
-      }
-    when :pending_soc
-      { soc_timeliness: SOC_TIMELINESS.dup }
-    when :at_vso
-      { vso_name: representative_name }
-    when :decision_in_progress
-      { decisionTimeliness: DECISION_TIMELINESS.dup }
-    when :remand
-      {
-        issues: issues_for_last_decision,
-        remand_timeliness: REMAND_TIMELINESS.dup
-      }
-    when :remand_ssoc
-      {
-        last_soc_date: last_soc_date,
-        return_timeliness: RETURN_TIMELINESS.dup,
-        remand_ssoc_timeliness: REMAND_SSOC_TIMELINESS.dup
-      }
-    when :bva_decision
-      { issues: issues_for_last_decision }
-    else
-      {}
-    end
   end
 end

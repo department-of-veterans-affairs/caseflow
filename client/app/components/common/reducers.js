@@ -52,10 +52,11 @@ const formsReducer = (state = {}, action = {}) => {
   case ACTIONS.CHANGE_FORM_DATA:
     return update(state, {
       [action.payload.formName]: {
-        $set: {
-          ...formState,
-          ...action.payload.formData
-        }
+        $set: action.payload.formData === null ?
+          {} : {
+            ...formState,
+            ...action.payload.formData
+          }
       }
     });
   default:

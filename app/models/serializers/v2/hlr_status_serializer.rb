@@ -2,6 +2,9 @@
 
 class V2::HLRStatusSerializer
   include FastJsonapi::ObjectSerializer
+  include StatusFieldSerializer
+  include IssuesFieldSerializer
+
   set_key_transform :camel_lower
   set_type :higher_level_review
   set_id :review_status_id
@@ -25,9 +28,14 @@ class V2::HLRStatusSerializer
 
   attribute :aoj
   attribute :program_area, &:program
-  attribute :status, &:status_hash
+  attribute :status do |object|
+    status(object)
+  end
   attribute :alerts
-  attribute :issues, &:issues_hash
+  attribute :issues do |object|
+    issues(object)
+  end
+
   attribute :events
 
   # Stubbed attributes

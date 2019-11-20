@@ -6,8 +6,26 @@ FactoryBot.define do
       vacols_case { nil }
     end
 
-    vacols_id { vacols_case&.bfkey }
+    vacols_id { vacols_case&.bfkey || "123456" }
     vbms_id { vacols_case&.bfcorlid }
+
+    trait :with_schedule_hearing_tasks do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
+      end
+    end
+
+    trait :with_judge_assign_task do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        judge = User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101)
+        JudgeAssignTask.create!(appeal: appeal,
+                                parent: root_task,
+                                assigned_at: Time.zone.now,
+                                assigned_to: judge)
+      end
+    end
 
     trait :with_veteran do
       after(:create) do |legacy_appeal, evaluator|

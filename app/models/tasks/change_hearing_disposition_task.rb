@@ -6,7 +6,7 @@
 class ChangeHearingDispositionTask < AssignHearingDispositionTask
   before_validation :set_assignee
 
-  def label
+  def self.label
     "Change hearing disposition"
   end
 

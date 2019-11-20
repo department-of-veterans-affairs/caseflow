@@ -3,7 +3,7 @@
 ##
 # Task that places parent task on hold for specified length of time. Holds expire through the TaskTimerJob.
 
-class TimedHoldTask < GenericTask
+class TimedHoldTask < Task
   include TimeableTask
 
   before_create :verify_parent_task_presence
