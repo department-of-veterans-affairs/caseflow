@@ -91,7 +91,7 @@ describe DecisionReviewProcessJob do
       let(:establishment_subject) { create(:request_issues_update) }
 
       before do
-        allow(establishment_subject).to receive(:establish!).and_wrap_original { @current_user = RequestStore[:current_user] }
+        allow(establishment_subject).to receive(:establish!) { @current_user = RequestStore[:current_user] }
       end
 
       it "sets the user to the request issue update's user for establishment" do
