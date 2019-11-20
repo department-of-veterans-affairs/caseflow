@@ -2,6 +2,8 @@ class CreateEtlAppeals < ActiveRecord::Migration[5.1]
   def change
     create_table :appeals, comment: "Denormalized BVA NODs" do |t|
       t.timestamps null: false, comment: "Default created_at/updated_at for the ETL record"
+      t.index ["created_at"]
+      t.index ["updated_at"]
 
       # Appeals attributes
       t.bigint "appeal_id", null: false, comment: "ID of the Appeal"
@@ -51,9 +53,6 @@ class CreateEtlAppeals < ActiveRecord::Migration[5.1]
       t.index ["claimant_id"]
       t.index ["claimant_participant_id"]
       t.index ["claimant_person_id"]
-
-      t.index ["created_at"]
-      t.index ["updated_at"]
     end
   end
 end

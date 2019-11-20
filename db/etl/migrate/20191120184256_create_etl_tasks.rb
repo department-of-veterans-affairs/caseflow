@@ -2,6 +2,8 @@ class CreateEtlTasks < ActiveRecord::Migration[5.1]
   def change
     create_table :tasks, comment: "Denormalized Tasks with User/Organization" do |t|
       t.timestamps null: false, comment: "Default created_at/updated_at for the ETL record"
+      t.index ["created_at"]
+      t.index ["updated_at"]
 
       # Task attributes
       t.bigint "task_id", null: false, comment: "tasks.id"
@@ -36,9 +38,6 @@ class CreateEtlTasks < ActiveRecord::Migration[5.1]
       t.string "assigned_to_user_sattyid", limit: 20, comment: "users.sattyid"
       t.string "assigned_to_org_name", limit: 255, comment: "organizations.name"
       t.string "assigned_to_org_type", limit: 50, comment: "organizations.type"
-
-      t.index ["created_at"]
-      t.index ["updated_at"]
     end
   end
 end
