@@ -78,7 +78,7 @@ describe DecisionReviewProcessJob do
   end
 
   context ".establishment_user" do
-    subject { DecisionReviewProcessJob.new() }
+    subject { DecisionReviewProcessJob.new }
 
     it "sets the user to the system user for establishment" do
       subject.perform(establishment_subject)
