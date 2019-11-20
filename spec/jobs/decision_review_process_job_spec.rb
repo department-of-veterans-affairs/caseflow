@@ -3,7 +3,7 @@
 require "rails_helper"
 
 class AClaimReview
-  attr_reader :error
+  attr_reader :error, :current_user
 
   def update_error!(err)
     @error = err
@@ -13,7 +13,9 @@ class AClaimReview
     123
   end
 
-  def establish!; end
+  def establish!
+    @current_user = RequestStore[:current_user]
+  end
 
   def sort_by_last_submitted_at; end
 end
@@ -78,19 +80,23 @@ describe DecisionReviewProcessJob do
   end
 
   context ".establishment_user" do
-    subject { DecisionReviewProcessJob.new }
+    subject { described_class.new }
 
     it "sets the user to the system user for establishment" do
       subject.perform(establishment_subject)
-      expect(subject.send(:establishment_user)).to eq(User.system_user)
+      expect(establishment_subject.current_user).to eq(User.system_user)
     end
 
     context "when the establishment subject is a request issues update" do
       let(:establishment_subject) { create(:request_issues_update) }
 
+      before do
+        allow(establishment_subject).to receive(:establish!).and_wrap_original { @current_user = RequestStore[:current_user] }
+      end
+
       it "sets the user to the request issue update's user for establishment" do
         subject.perform(establishment_subject)
-        expect(subject.send(:establishment_user)).to eq(establishment_subject.user)
+        expect(@current_user).to eq(establishment_subject.user)
       end
     end
   end
