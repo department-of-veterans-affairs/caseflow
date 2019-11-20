@@ -3,8 +3,7 @@
 # AsyncableJobMessaging handles the decision-making around how and whether events in the
 # lifecycle of an async job triggers sending a message to the user's inbox.
 class AsyncableJobMessaging
-
-  FAILING_TIME_BEFORE_MESSAGING = 1.days.freeze
+  FAILING_TIME_BEFORE_MESSAGING = 1.day.freeze
 
   attr_reader :job, :current_user
 
