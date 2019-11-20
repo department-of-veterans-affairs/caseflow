@@ -240,8 +240,12 @@ module Asyncable
       canceled_at: self[self.class.canceled_at_column],
       error: self[self.class.error_column],
       veteran_file_number: try(:veteran).try(:file_number),
-      user: asyncable_user
+      user: asyncable_user&.css_id
     }
+  end
+
+  def path
+    "/asyncable_jobs/#{self.class}/jobs/#{id}"
   end
 end
 # rubocop:enable Metrics/ModuleLength

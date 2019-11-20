@@ -11,6 +11,7 @@ import {
 import TextareaField from '../../../components/TextareaField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 import Checkbox from '../../../components/Checkbox';
+import VirtualHearingLink from '../VirtualHearingLink';
 
 const DetailsInputs = ({
   hearing, update, readOnly, isLegacy, openModal, updateVirtualHearing, virtualHearing,
@@ -38,11 +39,17 @@ const DetailsInputs = ({
             openModal();
           }
 
-          let status = option.value ? 'cancelled' : null;
+          let status;
 
+          if (virtualHearing && virtualHearing.status !== 'cancelled' && !option.value) {
+            status = 'cancelled';
+          }
           updateVirtualHearing({ status });
         }}
       />}
+      <VirtualHearingLink
+        hearing={hearing}
+      />
     </div>
     <div {...rowThirds}>
       <JudgeDropdown
