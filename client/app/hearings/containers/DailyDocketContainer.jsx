@@ -98,64 +98,46 @@ export class DailyDocketContainer extends React.Component {
     });
   };
 
-  formatHearing = (hearing) => {
-    const amaHearingValues = hearing.docketName === 'hearing' ? {
-      evidence_window_waived: hearing.evidenceWindowWaived
-    } : {};
+  formatHearingFormData = (hearingFormData, hearing) => {
+    const {
+      virtualHearing, evidenceWindowWaived,
+      aod, holdOpen, location
+    } = hearingFormData;
 
+    const amaHearingValues = hearing.docketName === 'hearing' ? { evidenceWindowWaived } : {};
     const legacyValues = hearing.docketName === 'legacy' ? {
-      aod: hearing.aod,
-      hold_open: hearing.holdOpen
+      aod,
+      holdOpen
     } : {};
 
-    const virtualHearing = this.formatVirtualHearing(hearing);
-
-    return _.omitBy({
-      disposition: hearing.disposition,
-      transcript_requested: hearing.transcriptRequested,
-      notes: hearing.notes,
-      hearing_location_attributes: hearing.location ? ApiUtil.convertToSnakeCase(hearing.location) : null,
-      virtual_hearing_attributes: virtualHearing ? ApiUtil.convertToSnakeCase(virtualHearing) : null,
-      scheduled_time_string: hearing.scheduledTimeString,
-      prepped: hearing.prepped,
+    return ApiUtil.convertToSnakeCase(_.omitBy({
+      ...hearingFormData,
+      hearing_location_attributes: location,
+      virtual_hearing_attributes: virtualHearing,
       ...legacyValues,
       ...amaHearingValues
-    }, _.isNil);
+    }, _.isUndefined));
   };
 
-  formatAod = (hearing) => {
-    if (hearing.advanceOnDocketMotion.userId !== this.props.user.userId) {
+  formatAodMotionForm = (aodMotionForm, hearing) => {
+    if (!aodMotionForm) {
       return {};
     }
 
-    return _.omitBy({
-      reason: hearing.advanceOnDocketMotion.reason,
-      granted: hearing.advanceOnDocketMotion.granted,
+    // always send reason and person_id
+    return ApiUtil.convertToSnakeCase({
+      ...aodMotionForm,
       person_id: hearing.claimantId || hearing.advanceOnDocketMotion.personId,
-      user_id: hearing.advanceOnDocketMotion.userId
-    }, _.isNil);
+      reason: aodMotionForm.reason || hearing.advanceOnDocketMotion.reason
+    });
   }
 
-  formatVirtualHearing = (hearing) => {
-    if (!hearing.isVirtual) {
-      return {};
-    }
-
-    return _.omitBy({
-      veteran_email: hearing.virtualHearing.veteranEmail,
-      representative_email: hearing.virtualHearing.representativeEmail,
-      status: hearing.virtualHearing.status
-    }, _.isNil);
-  }
-
-  saveHearing = (hearingId, hearing) => {
-    const aodMotion = hearing.advanceOnDocketMotion ? {
-      advance_on_docket_motion: this.formatAod(hearing)
-    } : {};
+  saveHearing = (hearingId, hearingFormData) => {
+    const hearing = this.props.hearings[hearingId];
 
     return ApiUtil.patch(`/hearings/${hearingId}`, { data: {
-      hearing: this.formatHearing(hearing),
-      ...aodMotion
+      hearing: this.formatHearingFormData(hearingFormData, hearing),
+      advance_on_docket_motion: this.formatAodMotionForm(hearingFormData.advanceOnDocketMotion, hearing)
     } }).
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(response.body);

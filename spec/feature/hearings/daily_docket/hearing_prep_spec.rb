@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
+RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", focus: true, :all_dbs do
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
   let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Hearing Prep"]) }
   let!(:hearing_day) { create(:hearing_day, judge: current_user) }
