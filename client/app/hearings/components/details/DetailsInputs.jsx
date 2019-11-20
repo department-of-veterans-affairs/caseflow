@@ -11,6 +11,7 @@ import {
 import TextareaField from '../../../components/TextareaField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 import Checkbox from '../../../components/Checkbox';
+import VirtualHearingLink from '../VirtualHearingLink';
 
 const DetailsInputs = ({
   hearing, update, readOnly, isLegacy, openModal, updateVirtualHearing, virtualHearing,
@@ -46,6 +47,9 @@ const DetailsInputs = ({
           updateVirtualHearing({ status });
         }}
       />}
+      <VirtualHearingLink
+        hearing={hearing}
+      />
     </div>
     <div {...rowThirds}>
       <JudgeDropdown
