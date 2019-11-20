@@ -51,6 +51,9 @@ class CreateEtlAppeals < ActiveRecord::Migration[5.1]
       t.index ["claimant_id"]
       t.index ["claimant_participant_id"]
       t.index ["claimant_person_id"]
+
+      t.index ["created_at"]
+      t.index ["updated_at"]
     end
   end
 end

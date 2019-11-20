@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191119204827) do
+ActiveRecord::Schema.define(version: 20191120184256) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,14 +51,52 @@ ActiveRecord::Schema.define(version: 20191119204827) do
     t.index ["claimant_id"], name: "index_appeals_on_claimant_id"
     t.index ["claimant_participant_id"], name: "index_appeals_on_claimant_participant_id"
     t.index ["claimant_person_id"], name: "index_appeals_on_claimant_person_id"
+    t.index ["created_at"], name: "index_appeals_on_created_at"
     t.index ["docket_type"], name: "index_appeals_on_docket_type"
     t.index ["poa_participant_id"], name: "index_appeals_on_poa_participant_id"
     t.index ["receipt_date"], name: "index_appeals_on_receipt_date"
+    t.index ["updated_at"], name: "index_appeals_on_updated_at"
     t.index ["uuid"], name: "index_appeals_on_uuid"
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
     t.index ["veteran_id"], name: "index_appeals_on_veteran_id"
     t.index ["veteran_is_not_claimant"], name: "index_appeals_on_veteran_is_not_claimant"
     t.index ["veteran_participant_id"], name: "index_appeals_on_veteran_participant_id"
+  end
+
+  create_table "tasks", force: :cascade, comment: "Denormalized Tasks with User/Organization" do |t|
+    t.bigint "appeal_id", null: false, comment: "tasks.appeal_id"
+    t.string "appeal_type", null: false, comment: "tasks.appeal_type"
+    t.datetime "assigned_at", comment: "tasks.assigned_at"
+    t.bigint "assigned_by_id", comment: "tasks.assigned_by_id"
+    t.string "assigned_by_user_css_id", limit: 20, comment: "users.css_id"
+    t.string "assigned_by_user_full_name", limit: 255, comment: "users.full_name"
+    t.string "assigned_by_user_sattyid", limit: 20, comment: "users.sattyid"
+    t.bigint "assigned_to_id", null: false, comment: "tasks.assigned_to_id"
+    t.string "assigned_to_org_name", limit: 255, comment: "organizations.name"
+    t.string "assigned_to_org_type", limit: 50, comment: "organizations.type"
+    t.string "assigned_to_type", null: false, comment: "tasks.assigned_to_type"
+    t.string "assigned_to_user_css_id", limit: 20, comment: "users.css_id"
+    t.string "assigned_to_user_full_name", limit: 255, comment: "users.full_name"
+    t.string "assigned_to_user_sattyid", limit: 20, comment: "users.sattyid"
+    t.datetime "closed_at", comment: "tasks.closed_at"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.text "instructions", default: [], comment: "tasks.instructions", array: true
+    t.bigint "parent_id", comment: "tasks.parent_id"
+    t.datetime "placed_on_hold_at", comment: "tasks.placed_on_hold_at"
+    t.datetime "started_at", comment: "tasks.started_at"
+    t.datetime "task_created_at", comment: "tasks.created_at"
+    t.bigint "task_id", null: false, comment: "tasks.id"
+    t.string "task_status", limit: 20, null: false, comment: "tasks.status"
+    t.string "task_type", limit: 50, null: false, comment: "tasks.type"
+    t.datetime "task_updated_at", comment: "tasks.updated_at"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.index ["appeal_type", "appeal_id"], name: "index_tasks_on_appeal_type_and_appeal_id"
+    t.index ["assigned_to_type", "assigned_to_id"], name: "index_tasks_on_assigned_to_type_and_assigned_to_id"
+    t.index ["created_at"], name: "index_tasks_on_created_at"
+    t.index ["parent_id"], name: "index_tasks_on_parent_id"
+    t.index ["task_status"], name: "index_tasks_on_task_status"
+    t.index ["task_type"], name: "index_tasks_on_task_type"
+    t.index ["updated_at"], name: "index_tasks_on_updated_at"
   end
 
   create_table "users", force: :cascade, comment: "Combined Caseflow/VACOLS user lookups" do |t|
@@ -80,7 +118,9 @@ ActiveRecord::Schema.define(version: 20191119204827) do
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
     t.integer "user_id", null: false, comment: "ID of the User"
     t.index "upper((css_id)::text)", name: "index_users_on_upper_css_id_text", unique: true
+    t.index ["created_at"], name: "index_users_on_created_at"
     t.index ["status"], name: "index_users_on_status"
+    t.index ["updated_at"], name: "index_users_on_updated_at"
   end
 
 end

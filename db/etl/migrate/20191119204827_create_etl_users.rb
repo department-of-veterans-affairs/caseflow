@@ -24,6 +24,8 @@ class CreateEtlUsers < ActiveRecord::Migration[5.1]
 
       t.index "upper((css_id)::text)", unique: true
       t.index ["status"]
+      t.index ["created_at"]
+      t.index ["updated_at"]
     end
   end
 end
