@@ -71,6 +71,5 @@ describe AsyncableJobMessaging, :postgres do
         expect(owner.messages.count).to eq message_count + 1
       end
     end
-
   end
 end
