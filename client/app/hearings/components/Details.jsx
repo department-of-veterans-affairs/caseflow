@@ -76,7 +76,9 @@ class HearingDetails extends React.Component {
         notes: hearing.notes,
         // Transcription Request
         transcriptRequested: hearing.transcriptRequested,
-        transcriptSentDate: DateUtil.formatDateStr(hearing.transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD')
+        transcriptSentDate: DateUtil.formatDateStr(hearing.transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
+        isVirtual: hearing.isVirtual,
+        virtualHearing: hearing.virtualHearing
       },
       transcriptionDetailsForm: {
         // Transcription Details
