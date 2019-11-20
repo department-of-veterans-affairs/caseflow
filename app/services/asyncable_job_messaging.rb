@@ -37,9 +37,7 @@ class AsyncableJobMessaging
   end
 
   def handle_job_failure(err:)
-    return unless job.asyncable_user
-    return unless job.submitted?
-    return unless Time.zone.now - job[job.class.submitted_at_column] >= FAILING_TIME_BEFORE_MESSAGING
+    return unless messaging_enabled_for_job_attempt?
     return if Message.where(detail: job, message_type: "job_failing").any?
 
     if err.length > 80
@@ -54,5 +52,13 @@ class AsyncableJobMessaging
       user: job.asyncable_user,
       message_type: "job_failing"
     )
+  end
+
+  private
+
+  def messaging_enabled_for_job_attempt?
+    return false unless job.submitted? && job.asyncable_user
+
+    Time.zone.now - job[job.class.submitted_at_column] >= FAILING_TIME_BEFORE_MESSAGING
   end
 end
