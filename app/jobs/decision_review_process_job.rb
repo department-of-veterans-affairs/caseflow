@@ -9,9 +9,12 @@ class DecisionReviewProcessJob < CaseflowJob
   def perform(thing_to_establish)
     @decision_review = thing_to_establish
 
+    # If establishment is for a RequestIssuesUpdate, use the user on the update
+    establishment_user = decision_review.try(:user) || User.system_user
+
     # restore whatever the user was when we finish, in case we are not running async (as during tests)
     current_user = RequestStore.store[:current_user]
-    RequestStore.store[:current_user] = User.system_user
+    RequestStore.store[:current_user] = establishment_user
 
     return_value = nil
 
