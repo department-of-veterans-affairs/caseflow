@@ -221,7 +221,7 @@ class Appeal < DecisionReview
   end
 
   def advanced_on_docket?
-    claimants.any? { |claimant| claimant.advanced_on_docket?(receipt_date) }
+    claimant&.advanced_on_docket?(receipt_date)
   end
 
   # Prefer aod? over aod going forward, as this function returns a boolean
@@ -232,9 +232,7 @@ class Appeal < DecisionReview
            :last_name,
            :name_suffix, to: :veteran, prefix: true, allow_nil: true
 
-  def appellant
-    claimants.first
-  end
+  alias appellant claimant
 
   delegate :first_name,
            :last_name,
@@ -277,9 +275,9 @@ class Appeal < DecisionReview
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 
-  # For now power_of_attorney returns the first claimant's power of attorney
+  # Currently AMA only supports one claimant per decision review
   def power_of_attorney
-    claimants.first&.power_of_attorney
+    claimant&.power_of_attorney
   end
 
   delegate :representative_name,

@@ -10,6 +10,7 @@ import { onUpdateDocketHearing } from '../../actions/dailyDocketActions';
 import { AodModal } from './DailyDocketModals';
 import HearingText from './DailyDocketRowDisplayText';
 import PropTypes from 'prop-types';
+import { deepDiff } from '../../utils';
 import {
   DispositionDropdown, TranscriptRequestedCheckbox, HearingDetailsLink,
   AmaAodDropdown, LegacyAodDropdown, AodReasonDropdown, HearingPrepWorkSheetLink, StaticRegionalOffice,
@@ -17,6 +18,7 @@ import {
   Waive90DayHoldCheckbox, HoldOpenDropdown
 } from './DailyDocketRowInputs';
 import VirtualHearingModal from '../VirtualHearingModal';
+import VirtualHearingLink from '../VirtualHearingLink';
 
 const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
   return <div {...css({
@@ -157,7 +159,9 @@ class DailyDocketRow extends React.Component {
       return;
     }
 
-    this.props.saveHearing(this.props.hearingId).
+    const hearing = deepDiff(this.state.initialState, this.props.hearing);
+
+    this.props.saveHearing(this.props.hearing.externalId, hearing).
       then((success) => {
         if (success) {
           this.setState({
@@ -238,6 +242,8 @@ class DailyDocketRow extends React.Component {
     const inputProps = this.getInputProps();
 
     return <div {...inputSpacing}>
+      <VirtualHearingLink
+        hearing={hearing} />
       <DispositionDropdown {...inputProps}
         cancelUpdate={this.cancelUpdate}
         saveHearing={this.saveHearing}
@@ -308,7 +314,8 @@ DailyDocketRow.propTypes = {
     docketName: PropTypes.string,
     advanceOnDocketMotion: PropTypes.object,
     virtualHearing: PropTypes.object,
-    isVirtual: PropTypes.bool
+    isVirtual: PropTypes.bool,
+    externalId: PropTypes.string
   }),
   user: PropTypes.shape({
     userCanAssignHearingSchedule: PropTypes.bool,
@@ -332,4 +339,3 @@ const mapDispatchToProps = (dispatch, props) => bindActionCreators({
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(DailyDocketRow);
-
