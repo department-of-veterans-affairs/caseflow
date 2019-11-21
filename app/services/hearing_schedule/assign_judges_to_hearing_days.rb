@@ -30,7 +30,7 @@ class HearingSchedule::AssignJudgesToHearingDays
     evenly_assign_judges_to_hearing_days
     assign_remaining_hearing_days
     verify_assignments
-    @assigned_hearing_days.sort_by { |day| day[:scheduled_for] }
+    @assigned_hearing_days.sort_by(&:scheduled_for_as_date)
   end
 
   private
@@ -75,8 +75,8 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   def judges_sorted_by_assigned_days
     days_by_judge = @assigned_hearing_days.reduce({}) do |acc, hearing_day|
-      acc[hearing_day[:css_id]] ||= 0
-      acc[hearing_day[:css_id]] += 1
+      acc[hearing_day.judge.css_id] ||= 0
+      acc[hearing_day.judge.css_id] += 1
       acc
     end
 
@@ -84,37 +84,37 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def day_can_be_assigned?(current_hearing_day, css_id)
-    scheduled_for = current_hearing_day.scheduled_for
+    scheduled_for = current_hearing_day.scheduled_for_as_date
     judge_id = @judges[css_id][:staff_info].sattyid
 
     problems = @judges[css_id][:non_availabilities].include?(scheduled_for) ||
                hearing_day_already_assigned?(current_hearing_day.id) ||
                judge_already_assigned_on_date?(judge_id, scheduled_for) ||
-               (co_hearing_day?(current_hearing_day) && judge_already_assigned_to_co?(judge_id))
+               (current_hearing_day.central_office? && judge_already_assigned_to_co?(judge_id))
 
     !problems
   end
 
   def hearing_day_already_assigned?(id)
-    @assigned_hearing_days.any? { |day| day[:id] == id }
+    @assigned_hearing_days.any? { |day| day.id == id }
   end
 
   def judge_already_assigned_on_date?(judge_id, date)
     @assigned_hearing_days.any? do |day|
-      day[:judge_id] == judge_id && (day[:scheduled_for] - date).abs <= DAYS_OF_SEPARATION
+      day.judge_id.to_s == judge_id.to_s && (day.scheduled_for_as_date - date).abs <= DAYS_OF_SEPARATION
     end
   end
 
   def judge_already_assigned_to_co?(judge_id)
     @assigned_hearing_days.any? do |day|
-      day[:request_type] == HearingDay::REQUEST_TYPES[:central] && day[:judge_id] == judge_id
+      day.request_type == HearingDay::REQUEST_TYPES[:central] && day.judge_id.to_s == judge_id.to_s
     end
   end
 
   def verify_assignments
     if @assigned_hearing_days.length != @video_co_hearing_days.length
       if @algo_counter >= 20
-        dates = @unassigned_hearing_days.map(&:scheduled_for)
+        dates = @unassigned_hearing_days.map(&:scheduled_for_as_date)
         fail HearingSchedule::Errors::CannotAssignJudges.new(
           "Hearing days on these dates couldn't be assigned #{dates}.",
           dates: dates
@@ -141,39 +141,29 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def co_hearing_days_by_date(date)
-    @video_co_hearing_days.select do |day|
-      day.scheduled_for == date && co_hearing_day?(day)
-    end
+    @video_co_hearing_days
+      .select(&:central_office?)
+      .select { |day| day.scheduled_for_as_date == date }
   end
 
   def assign_judge_to_hearing_day(day, css_id)
-    is_central_hearing = co_hearing_day?(day)
-    date = day.scheduled_for
-
-    hearing_days = is_central_hearing ? co_hearing_days_by_date(date) : [day]
+    hearing_days = day.central_office? ? co_hearing_days_by_date(day.scheduled_for_as_date) : [day]
 
     hearing_days.map do |hearing_day|
-      hearing_day.judge_id = @judges[css_id][:staff_info].sattyid
-      hearing_day.judge_name = get_judge_name(css_id)
-      hearing_day.to_h.merge(css_id: css_id)
-    end
-  end
-
-  def get_request_type(is_central_hearing)
-    if is_central_hearing
-      HearingDay::REQUEST_TYPES[:central]
-    else
-      HearingDay::REQUEST_TYPES[:video]
+      # Doing `.new` here instead of `.create` (or similar) to mimic
+      # old behavior, and ensure backwards compatibility.
+      hearing_day.judge = User.new(
+        id: @judges[css_id][:staff_info].sattyid,
+        full_name: get_judge_name(css_id),
+        css_id: css_id
+      )
+      hearing_day
     end
   end
 
   def get_judge_name(css_id)
     staff_info = @judges[css_id][:staff_info]
     "#{staff_info.snamel}, #{staff_info.snamemi} #{staff_info.snamef}"
-  end
-
-  def weekend?(day)
-    day.saturday? || day.sunday?
   end
 
   def fetch_judge_non_availabilities
@@ -201,25 +191,14 @@ class HearingSchedule::AssignJudgesToHearingDays
     filter_travel_board_hearing_days(travel_board_hearing_days)
   end
 
-  def co_hearing_day?(hearing_day)
-    hearing_day.request_type == HearingDay::REQUEST_TYPES[:central]
-  end
-
   def valid_co_day?(day)
-    co_hearing_day?(day) && day.room == CO_ROOM_NUM
-  end
-
-  def valid_ro_hearing_day?(day)
-    !day.regional_office.nil?
+    day.central_office? && day.room == CO_ROOM_NUM
   end
 
   def filter_co_hearings(video_co_hearing_days)
-    video_co_hearing_days.map do |hearing_day|
-      day = OpenStruct.new(hearing_day.to_hash)
-      day.scheduled_for = day.scheduled_for.to_date
-
-      day if (valid_co_day?(day) || valid_ro_hearing_day?(day)) && !hearing_day_already_assigned(day)
-    end.compact
+    video_co_hearing_days.select do |hearing_day|
+      (valid_co_day?(hearing_day) || !hearing_day.regional_office.nil?) && !hearing_day_already_assigned(hearing_day)
+    end
   end
 
   def hearing_day_already_assigned(hearing_day)
@@ -227,8 +206,8 @@ class HearingSchedule::AssignJudgesToHearingDays
 
     if assigned
       @judges.each do |css_id, judge|
-        if judge[:staff_info].sattyid == hearing_day.judge_id
-          @judges[css_id][:non_availabilities] << hearing_day.scheduled_for
+        if judge[:staff_info].sattyid == hearing_day.judge_id.to_s
+          @judges[css_id][:non_availabilities] << hearing_day.scheduled_for_as_date
         end
       end
     end
@@ -249,8 +228,11 @@ class HearingSchedule::AssignJudgesToHearingDays
 
         @judges[css_id][:non_availabilities] ||= Set.new
         @judges[css_id][:non_availabilities] +=
-          (TB_ADDITIONAL_NA_DAYS.business_days.before(tb_record[:start_date])..TB_ADDITIONAL_NA_DAYS.business_days
-            .after(tb_record[:end_date])).reject { |date| weekend?(date) }
+          (
+            TB_ADDITIONAL_NA_DAYS.business_days
+              .before(tb_record[:start_date])..TB_ADDITIONAL_NA_DAYS.business_days
+              .after(tb_record[:end_date])
+          ).reject(&:on_weekend?)
       end
     end
   end

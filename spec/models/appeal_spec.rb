@@ -396,7 +396,7 @@ describe Appeal, :all_dbs do
 
       it "returns claimant's name" do
         expect(subject).to_not eq nil
-        expect(subject).to eq appeal.claimants.first.first_name
+        expect(subject).to eq appeal.claimant.first_name
       end
     end
 
@@ -448,7 +448,7 @@ describe Appeal, :all_dbs do
 
     context "#power_of_attorney" do
       it "returns the first claimant's power of attorney" do
-        expect(appeal.power_of_attorney.representative_name).to eq("PARALYZED VETERANS OF AMERICA, INC.")
+        expect(appeal.power_of_attorney.representative_name).to eq("AMERICAN LEGION")
       end
     end
 
@@ -645,16 +645,29 @@ describe Appeal, :all_dbs do
       end
     end
 
-    context "if there are TrackVeteranTasks" do
-      let!(:appeal) { create(:appeal) }
-      let!(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
+    context "if there are active TrackVeteranTask, TimedHoldTask, and RootTask" do
+      let(:appeal) { create(:appeal) }
+      let(:today) { Time.zone.today }
 
       before do
-        create(:track_veteran_task, :in_progress, appeal: appeal)
+        create(:root_task, :in_progress, appeal: appeal)
+        create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 21)
+        create(:timed_hold_task, :in_progress, appeal: appeal, updated_at: today + 21)
       end
 
-      it "does not include TrackVeteranTasks in its determinations" do
-        expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+      describe "when there are no other tasks" do
+        it "returns Case storage because it does not include nonactionable tasks in its determinations" do
+          expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+        end
+      end
+
+      describe "when there is an actionable task with an assignee" do
+        let(:assignee) { create(:user) }
+        let!(:task) { create(:ama_attorney_task, :in_progress, assigned_to: assignee, appeal: appeal) }
+
+        it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
+          expect(appeal.assigned_to_location).to eq(assignee.css_id)
+        end
       end
     end
 
@@ -675,6 +688,10 @@ describe Appeal, :all_dbs do
 
         on_hold_root = create(:root_task, appeal: appeal_on_hold, updated_at: today - 1)
         create(:generic_task, :on_hold, appeal: appeal_on_hold, parent: on_hold_root, updated_at: today + 1)
+
+        # These tasks are the most recently updated but should be ignored in the determination
+        create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 20)
+        create(:timed_hold_task, :in_progress, appeal: appeal, updated_at: today + 20)
       end
 
       it "if the most recent assignee is an organization it returns the organization name" do

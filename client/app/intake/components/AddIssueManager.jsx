@@ -231,6 +231,10 @@ class AddIssueManager extends React.Component {
           if (isCorrection(true, this.props.intakeData)) {
             this.setState({ currentIssue,
               currentModal: 'CorrectionTypeModal' });
+          } else if (currentIssue.timely === false) {
+            this.setState({ currentIssue,
+              currentModal: 'UntimelyExemptionModal',
+              addtlProps: { currentIssue } });
           } else {
             // Just add
             this.props.addIssue(currentIssue);

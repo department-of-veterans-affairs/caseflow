@@ -80,14 +80,14 @@ class Appeal < DecisionReview
   def assigned_to_location
     return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
-    active_tasks = tasks.active.visible_in_queue_table_view
-    return most_recently_assigned_to_label(active_tasks) if active_tasks.any?
-
-    on_hold_tasks = tasks.on_hold.visible_in_queue_table_view
-    return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
+    recently_updated_task = Task.any_recently_updated(
+      tasks.active.visible_in_queue_table_view,
+      tasks.on_hold.visible_in_queue_table_view
+    )
+    return recently_updated_task.assigned_to_label if recently_updated_task
 
     # this condition is no longer needed since we only want active or on hold tasks
-    return most_recently_assigned_to_label(tasks) if tasks.any?
+    return tasks.most_recently_updated&.assigned_to_label if tasks.any?
 
     fetch_status.to_s.titleize
   end
@@ -216,7 +216,7 @@ class Appeal < DecisionReview
   end
 
   def advanced_on_docket?
-    claimants.any? { |claimant| claimant.advanced_on_docket?(receipt_date) }
+    claimant&.advanced_on_docket?(receipt_date)
   end
 
   # Prefer aod? over aod going forward, as this function returns a boolean
@@ -227,9 +227,7 @@ class Appeal < DecisionReview
            :last_name,
            :name_suffix, to: :veteran, prefix: true, allow_nil: true
 
-  def appellant
-    claimants.first
-  end
+  alias appellant claimant
 
   delegate :first_name,
            :last_name,
@@ -272,9 +270,9 @@ class Appeal < DecisionReview
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 
-  # For now power_of_attorney returns the first claimant's power of attorney
+  # Currently AMA only supports one claimant per decision review
   def power_of_attorney
-    claimants.first&.power_of_attorney
+    claimant&.power_of_attorney
   end
 
   delegate :representative_name,
@@ -689,10 +687,6 @@ class Appeal < DecisionReview
   end
 
   private
-
-  def most_recently_assigned_to_label(tasks)
-    tasks.order(:created_at).last&.assigned_to_label
-  end
 
   def maybe_create_translation_task
     veteran_state_code = veteran&.state

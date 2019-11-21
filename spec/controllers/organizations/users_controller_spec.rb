@@ -233,4 +233,32 @@ describe Organizations::UsersController, :postgres, type: :controller do
       end
     end
   end
+
+  describe "DELETE /organizations/:org_url/users/:user_id", skip: "Flake" do
+    subject { post(:destroy, params: params, as: :json) }
+
+    let!(:params) { { organization_url: org.url, id: user.id } }
+
+    let(:org) { create(:judge_team, :has_judge_team_lead_as_admin) }
+    let(:user) { org.judge }
+    let(:admin) do
+      create(:user).tap do |u|
+        OrganizationsUser.make_user_admin(u, org)
+      end
+    end
+
+    before do
+      User.stub = admin
+    end
+
+    context "when user is the judge in the organization" do
+      it "returns an error" do
+        subject
+
+        expect(response.status).to eq 403
+        resp = JSON.parse(response.body)
+        expect(resp["errors"].first["detail"]).to eq COPY::JUDGE_TEAM_REMOVE_JUDGE_ERROR
+      end
+    end
+  end
 end
