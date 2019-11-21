@@ -64,7 +64,7 @@ class HearingDetails extends React.Component {
     const virtualHearing = hearing.virtualHearing || {
       veteranEmail: null,
       representativeEmail: null,
-      status: null,
+      status: null
     };
 
     return {

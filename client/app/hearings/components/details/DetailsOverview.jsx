@@ -60,7 +60,7 @@ const DetailsOverview = ({
     },
     {
       label: 'Type',
-      value: isVirtual ? 'Virtual': readableRequestType
+      value: isVirtual ? 'Virtual' : readableRequestType
     },
     {
       label: 'AOD Status',

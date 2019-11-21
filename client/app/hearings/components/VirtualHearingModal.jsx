@@ -30,7 +30,8 @@ const formatTimeString = (hearing, timeWasEdited) => {
   return timeString;
 };
 
-const VirtualHearingModal = ({ virtualHearing, hearing, timeWasEdited, update, submit, reset, modalTitle, modalIntro, modalButton }) => (
+const VirtualHearingModal = ({ virtualHearing, hearing, timeWasEdited, update,
+  submit, reset, modalTitle, modalIntro, modalButton }) => (
   <div>
     <Modal
       title={modalTitle}
@@ -44,7 +45,7 @@ const VirtualHearingModal = ({ virtualHearing, hearing, timeWasEdited, update, s
       cancelButton={
         <Button linkStyling onClick={reset}>Cancel</Button>
       }>
-      <p dangerouslySetInnerHTML={{ __html: modalIntro}}/>
+      <p dangerouslySetInnerHTML={{ __html: modalIntro }} />
       <div>
         <strong>{'Date:'}&nbsp;</strong>{moment(hearing.scheduledFor).format('MM/DD/YYYY')}<br />
         <strong>{'Time:'}&nbsp;</strong>{formatTimeString(hearing, timeWasEdited)}

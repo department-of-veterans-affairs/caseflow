@@ -12,7 +12,7 @@ import TextareaField from '../../../components/TextareaField';
 import Checkbox from '../../../components/Checkbox';
 import VirtualHearingLink from '../VirtualHearingLink';
 import HearingTypeDropdown from './HearingTypeDropdown';
-import TextField from '../../../components/TextField'; 
+import TextField from '../../../components/TextField';
 
 const DetailsInputs = ({
   hearing, update, readOnly, isLegacy, openModal, updateVirtualHearing, virtualHearing,
@@ -37,14 +37,14 @@ const DetailsInputs = ({
         strongLabel
         required
         readOnly={!virtualHearing.jobCompleted}
-        onChange={(veteranEmail) => updateVirtualHearing({veteranEmail})}
+        onChange={(veteranEmail) => updateVirtualHearing({ veteranEmail })}
       />
       <TextField
         name="POA/Representive Email"
         value={virtualHearing.representativeEmail}
         strongLabel
         readOnly={!virtualHearing.jobCompleted}
-        onChange={(representativeEmail) => updateVirtualHearing({representativeEmail})}
+        onChange={(representativeEmail) => updateVirtualHearing({ representativeEmail })}
       />
     </div> }
     <div {...rowThirds}>
@@ -110,6 +110,8 @@ DetailsInputs.propTypes = {
   openModal: PropTypes.func,
   updateVirtualHearing: PropTypes.func,
   virtualHearing: PropTypes.shape({
+    veteranEmail: PropTypes.string,
+    representativeEmail: PropTypes.string,
     status: PropTypes.string,
     jobCompleted: PropTypes.bool
   }),

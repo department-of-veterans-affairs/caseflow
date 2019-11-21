@@ -36,20 +36,21 @@ class HearingTypeDropdown extends React.Component {
     if (option.value) {
       return {
         modalTitle: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE,
-        modalIntro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO 
+        modalIntro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO
       };
     }
     if (option.label === 'Video') {
       return {
         modalTitle: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_TITLE,
-        modalIntro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_INTRO 
-      };
-    } else {
-      return {
-        modalTitle: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_CENTRAL_TITLE,
-        modalIntro: ''
+        modalIntro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_INTRO
       };
     }
+
+    return {
+      modalTitle: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_CENTRAL_TITLE,
+      modalIntro: ''
+    };
+
   }
 
   onChange = (option) => {
@@ -60,9 +61,10 @@ class HearingTypeDropdown extends React.Component {
     // if new value is true, then we will be sending confirmation emails
     if (currentValue.value || option.value) {
       const { modalTitle, modalIntro } = this.getModalTitleAndIntro(option);
+
       openModal({
-        modalTitle: modalTitle,
-        modalIntro: modalIntro,
+        modalTitle,
+        modalIntro,
         modalButton: COPY.VIRTUAL_HEARING_CHANGE_HEARING_BUTTON
       });
     }
