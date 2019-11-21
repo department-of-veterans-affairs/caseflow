@@ -14,6 +14,7 @@ class CreateEtlAppeals < ActiveRecord::Migration[5.1]
       t.datetime "established_at", null: false, comment: "Timestamp for when the appeal was intaken successfully"
       t.uuid "uuid", null: false, comment: "The universally unique identifier for the appeal"
       t.string "status", null: false, limit: 32, comment: "Calculated BVA status based on Tasks"
+      t.boolean "active_appeal", null: false, comment: "Calculated based on BVA status"
       t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review."
       t.boolean "veteran_is_not_claimant", comment: "Selected by the user during intake, indicates whether the Veteran is the claimant, or if the claimant is someone else such as a dependent. Must be TRUE if Veteran is deceased."
       t.string "poa_participant_id", limit: 20, comment: "Used to identify the power of attorney (POA)"
@@ -28,6 +29,8 @@ class CreateEtlAppeals < ActiveRecord::Migration[5.1]
       t.index ["receipt_date"]
       t.index ["poa_participant_id"]
       t.index ["appeal_id"]
+      t.index ["status"]
+      t.index ["active_appeal"]
 
       # denormalized attributes (one Veteran and one Claimant per Appeal)
       t.bigint "veteran_id", null: false, comment: "veterans.id"

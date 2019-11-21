@@ -16,6 +16,7 @@ ActiveRecord::Schema.define(version: 20191120213941) do
   enable_extension "plpgsql"
 
   create_table "appeals", force: :cascade, comment: "Denormalized BVA NODs" do |t|
+    t.boolean "active_appeal", null: false, comment: "Calculated based on BVA status"
     t.boolean "aod_granted", default: false, null: false, comment: "advance_on_docket_motions.granted"
     t.string "aod_reason", limit: 50, comment: "advance_on_docket_motions.reason"
     t.bigint "aod_user_id", comment: "advance_on_docket_motions.user_id"
@@ -50,6 +51,7 @@ ActiveRecord::Schema.define(version: 20191120213941) do
     t.string "veteran_middle_name", comment: "veterans.middle_name"
     t.string "veteran_name_suffix", comment: "veterans.name_suffix"
     t.string "veteran_participant_id", limit: 20, comment: "veterans.participant_id"
+    t.index ["active_appeal"], name: "index_appeals_on_active_appeal"
     t.index ["aod_granted"], name: "index_appeals_on_aod_granted"
     t.index ["aod_user_id"], name: "index_appeals_on_aod_user_id"
     t.index ["appeal_id"], name: "index_appeals_on_appeal_id"
@@ -60,6 +62,7 @@ ActiveRecord::Schema.define(version: 20191120213941) do
     t.index ["docket_type"], name: "index_appeals_on_docket_type"
     t.index ["poa_participant_id"], name: "index_appeals_on_poa_participant_id"
     t.index ["receipt_date"], name: "index_appeals_on_receipt_date"
+    t.index ["status"], name: "index_appeals_on_status"
     t.index ["updated_at"], name: "index_appeals_on_updated_at"
     t.index ["uuid"], name: "index_appeals_on_uuid"
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
