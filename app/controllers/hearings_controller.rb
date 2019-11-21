@@ -25,7 +25,7 @@ class HearingsController < HearingsApplicationController
   end
 
   def show
-    render json: hearing.to_hash_for_worksheet(current_user.id)
+    render json: { data: hearing.to_hash_for_worksheet(current_user.id) }
   end
 
   def update
@@ -36,7 +36,10 @@ class HearingsController < HearingsApplicationController
            end
     form.update
 
-    render json: form.hearing.to_hash(current_user.id)
+    render json: {
+      data: form.hearing.to_hash(current_user.id),
+      alerts: form.alerts
+    }
   end
 
   def find_closest_hearing_locations

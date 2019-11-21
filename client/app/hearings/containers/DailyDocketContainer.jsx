@@ -75,7 +75,7 @@ export class DailyDocketContainer extends React.Component {
       ApiUtil.get(`/hearings/${hearing.externalId}`).then((response) => {
         const resp = ApiUtil.convertToCamelCase(response.body);
 
-        this.props.onReceiveHearing(resp);
+        this.props.onReceiveHearing(resp.data);
       }).
         catch((error) => {
           console.log(`Hearing endpoint failed with: ${error}`); // eslint-disable-line no-console
@@ -132,7 +132,7 @@ export class DailyDocketContainer extends React.Component {
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(response.body);
 
-        this.props.onReceiveSavedHearing(resp);
+        this.props.onReceiveSavedHearing(resp.data);
 
         return true;
       }, (err) => {
