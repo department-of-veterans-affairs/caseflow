@@ -2527,13 +2527,42 @@ describe LegacyAppeal, :all_dbs do
         end
       end
 
+      context "if there are active TrackVeteranTask, TimedHoldTask, and RootTask" do
+        let(:today) { Time.zone.today }
+        before do
+          create(:root_task, :in_progress, appeal: appeal)
+          create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 11)
+          create(:timed_hold_task, :in_progress, appeal: appeal, updated_at: today + 11)
+        end
+
+        describe "when there are no other tasks" do
+          it "returns Case storage because it does not include nonactionable tasks in its determinations" do
+            expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+          end
+        end
+
+        describe "when there is an assigned actionable task" do
+          let(:task_assignee) { create(:user) }
+          let!(:task) { create(:colocated_task, :in_progress, assigned_to: task_assignee, appeal: appeal) }
+
+          it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
+            expect(appeal.assigned_to_location).to eq(task_assignee.css_id)
+          end
+        end
+      end
+
       context "if there is an assignee" do
         context "if the most recent assignee is an organization" do
           let(:organization) { create(:organization) }
+          let(:today) { Time.zone.today }
 
           before do
             organization_root_task = create(:root_task, appeal: appeal)
             create(:generic_task, assigned_to: organization, appeal: appeal, parent: organization_root_task)
+
+            # These tasks are the most recently updated but should be ignored in the determination
+            create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 10)
+            create(:timed_hold_task, :in_progress, appeal: appeal, updated_at: today + 10)
           end
 
           it "it returns the organization name" do

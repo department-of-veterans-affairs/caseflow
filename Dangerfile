@@ -61,3 +61,30 @@ if !new_specs.empty?
     "https://github.com/department-of-veterans-affairs/caseflow/wiki/Testing-Best-Practices#tests-that-write-to-the-db"
   )
 end
+
+# If we're performing a migration against a table that is known to be large, make sure
+# we've set connection timeouts appropriately.
+KNOWN_LARGE_TABLES = %w[
+  annotations
+  api_views
+  appeal_views
+  claims_folder_searches
+  documents
+  documents_tags
+  document_views
+  hearing_views
+  versions
+].freeze
+
+large_table_migration_pattern = /(add_index|add_column) :(#{KNOWN_LARGE_TABLES.join('|')})/
+migrations_on_large_tables = git.diff.flat_map do |chunk|
+  chunk.patch.lines.grep(/^\+\s*\w/).select do |added_line|
+    added_line.match?(large_table_migration_pattern)
+  end
+end
+
+if migrations_on_large_tables.any?
+  warn(
+    "This PR contains DB migrations on large tables. Be sure to set connection statement_timeout accordingly."
+  )
+end
