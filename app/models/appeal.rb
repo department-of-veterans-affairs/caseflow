@@ -80,14 +80,14 @@ class Appeal < DecisionReview
   def assigned_to_location
     return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
-    active_tasks = tasks.active.visible_in_queue_table_view
-    return most_recently_assigned_to_label(active_tasks) if active_tasks.any?
-
-    on_hold_tasks = tasks.on_hold.visible_in_queue_table_view
-    return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
+    recently_updated_task = Task.any_recently_updated(
+      tasks.active.visible_in_queue_table_view,
+      tasks.on_hold.visible_in_queue_table_view
+    )
+    return recently_updated_task.assigned_to_label if recently_updated_task
 
     # this condition is no longer needed since we only want active or on hold tasks
-    return most_recently_assigned_to_label(tasks) if tasks.any?
+    return tasks.most_recently_updated&.assigned_to_label if tasks.any?
 
     fetch_status.to_s.titleize
   end
@@ -687,10 +687,6 @@ class Appeal < DecisionReview
   end
 
   private
-
-  def most_recently_assigned_to_label(tasks)
-    tasks.order(:created_at).last&.assigned_to_label
-  end
 
   def maybe_create_translation_task
     veteran_state_code = veteran&.state
