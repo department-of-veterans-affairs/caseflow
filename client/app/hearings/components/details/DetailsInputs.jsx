@@ -19,17 +19,17 @@ const DetailsInputs = ({
   enableVirtualHearings, requestType
 }) => (
   <React.Fragment>
-    <div {...rowThirds}>
-      {enableVirtualHearings && <HearingTypeDropdown
+    {enableVirtualHearings && <div {...rowThirds}>
+      <HearingTypeDropdown
         virtualHearing={virtualHearing}
         requestType={requestType}
         updateVirtualHearing={updateVirtualHearing}
         openModal={openModal}
-      />}
+      />
       <VirtualHearingLink
         hearing={hearing}
       />
-    </div>
+    </div>}
     {virtualHearing && <div {...rowThirds}>
       <TextField
         name="Veteran Email"
@@ -110,9 +110,11 @@ DetailsInputs.propTypes = {
   openModal: PropTypes.func,
   updateVirtualHearing: PropTypes.func,
   virtualHearing: PropTypes.shape({
-    status: PropTypes.string
+    status: PropTypes.string,
+    jobCompleted: PropTypes.bool
   }),
-  enableVirtualHearings: PropTypes.bool
+  enableVirtualHearings: PropTypes.bool,
+  isVirtual: PropTypes.bool
 };
 
 export default DetailsInputs;
