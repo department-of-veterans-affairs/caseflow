@@ -1383,7 +1383,7 @@ paths:
             format: date
       summary: Returns all legacy appeal issues for a specific veteran.
       description: >-
-        Returns all the legacy appeals for a veteran that could be added to
+        Returns all the legacy appeal issues for a veteran that could be added to
         a Decision Review as of the `receiptDate`.  The `LegacyAppealIssue`
         would be added to the `legacyAppealIssues` attribute of the
         `contestableIssue` to which this legacy appeal will be associated.
