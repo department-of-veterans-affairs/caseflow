@@ -32,14 +32,23 @@ class HearingTypeDropdown extends React.Component {
     return this.HEARING_TYPE_OPTIONS[1];
   }
 
-  getModalTitle = (option) => {
+  getModalTitleAndIntro = (option) => {
     if (option.value) {
-      return COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE;
+      return {
+        modalTitle: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE,
+        modalIntro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO 
+      };
     }
-    if (option.label === 'Video'){
-      return COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_TITLE;
-    } else{
-      return COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_CENTRAL_TITLE;
+    if (option.label === 'Video') {
+      return {
+        modalTitle: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_TITLE,
+        modalIntro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_INTRO 
+      };
+    } else {
+      return {
+        modalTitle: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_CENTRAL_TITLE,
+        modalIntro: " "
+      };
     }
   }
 
@@ -50,7 +59,12 @@ class HearingTypeDropdown extends React.Component {
     // if current value is true (a virtual hearing), then we will be sending cancellation emails,
     // if new value is true, then we will be sending confirmation emails
     if (currentValue.value || option.value) {
-      openModal({ modalTitle: this.getModalTitle(option) });
+      const { modalTitle, modalIntro } = this.getModalTitleAndIntro(option);
+      openModal({
+        modalTitle: modalTitle,
+        modalIntro: modalIntro,
+        modalButton: COPY.VIRTUAL_HEARING_CHANGE_HEARING_BUTTON
+      });
     }
 
     if (currentValue.value && !option.value) {
