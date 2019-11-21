@@ -82,7 +82,7 @@ class BaseHearingUpdateForm
     alerts << VirtualHearingUserAlertGenerator.new(
       created: created,
       email_sent_update: email_sent_update,
-      status: hearing.virtual_hearing.status,
+      status: virtual_hearing_attributes[:status] || hearing.virtual_hearing.status,
       veteran_full_name: veteran_full_name
     ).call.to_hash
   end
