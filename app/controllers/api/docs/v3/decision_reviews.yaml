@@ -1249,7 +1249,7 @@ paths:
                 properties:
                   errors:
                     $ref: "#/components/schemas/Errors"
-  /issues:
+  /contestable_issues:
     get:
       tags:
         - Issues
@@ -1268,6 +1268,10 @@ paths:
             type: string
             format: date
       summary: Returns all contestable issues for a specific veteran.
+      description: >-
+        Returns all issues a Veteran could contest in a Decision Review
+        as of the `receiptDate`.  Associate these results when creating
+        new Decision Reviews.
       responses:
         '200':
           description: JSON:API response returning all contestable issues for a specific veteran.
@@ -1349,6 +1353,114 @@ paths:
                             isRating:
                               type: boolean
                               description: "Whether or not this is a RatingIssue"
+        '404':
+          description: Veteran not found
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/Errors"
+              examples:
+                bad file number or SSN:
+                  value:
+                    errors:
+                      status: 404,
+                      code: veteran_not_found
+                      title: "Veteran not found"
+        '422':
+          description: Bad receipt date
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/Errors"
+              examples:
+                bad receipt date:
+                  value:
+                    errors:
+                      status: 422,
+                      code: bad_receipt_date
+                      title: "Bad receipt date"
+        '500':
+          description: Unknown error
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/Errors"
+              examples:
+                unknown error:
+                  value:
+                    errors:
+                      status: 500,
+                      code: unknown_error
+                      title: "Unknown error"
+  /legacy_appeal_issues:
+    get:
+      tags:
+        - Issues
+      parameters:
+        - name: veteranId
+          in: header
+          required: true
+          description: The file number or SSN of the veteran.
+          schema:
+            type : string
+        - name: receiptDate
+          in: header
+          required: true
+          description: (yyyy-mm-dd) In order to determine contestability of issues, the receipt date of a hypothetical Decision Review must be supplied.
+          schema:
+            type: string
+            format: date
+      summary: Returns all legacy appeal issues for a specific veteran.
+      description: >-
+        Returns all the legacy appeal issues for a veteran that could be added to
+        a Decision Review as of the `receiptDate`.  The `LegacyAppealIssue`
+        would be added to the `legacyAppealIssues` attribute of the
+        `contestableIssue` to which this legacy appeal will be associated.
+      responses:
+        '200':
+          description: JSON:API response returning all legacy appeal issues for a specific veteran.
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      description: "A legacy appeal issue. To opt-in these issues to AMA, you associate them with ContestableIssues when creating a DecisionReview (see the documentation for POST /higher_level_reviews for more details)."
+                      properties:
+                        type:
+                          type: string
+                          enum: ["LegacyAppealIssue"]
+                        attributes:
+                          type: object
+                          properties:
+                            legacyAppealId:
+                              type: string
+                            legacyAppealIssueId:
+                              type: string
+                            nodDate:
+                              type: string
+                              format: date
+                            description:
+                              type: string
+                            disposition:
+                              type: string
+                            close_date:
+                              type: string
+                              format: date
+                            note:
+                              type: string
         '404':
           description: Veteran not found
           content:
