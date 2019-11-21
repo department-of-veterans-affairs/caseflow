@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 
 const VirtualHearingLink = (props) =>
   <div >
-    {props.hearing.isVirtual && props.hearing.virtualHearing.status == 'active' &&
-    <a href={`https://care.evn.va.gov/webapp/?conference=${props.hearing.virtualHearing.alias || 'null'}
-    &pin=${props.hearing.virtualHearing.pin}&join=1&role=${props.hearing.virtualHearing.role || 'null'}`}
+    {props.hearing.isVirtual &&
+    <a href={`https://care.evn.va.gov/webapp/?conference=${props.hearing.virtualHearing.alias}
+    &pin=${props.hearing.virtualHearing.pin}&join=1&role=${props.hearing.virtualHearing.role}`}
     target={props.newWindow ? '_blank' : '_self'}>
       <strong>Virtual Hearing Link</strong>
     </a>

@@ -66,8 +66,7 @@ class DetailsSections extends React.Component {
           reset={this.resetVirtualHearing}
           modalTitle={modalTitle}
           modalIntro={modalIntro}
-          modalButton={modalButton}
-          showTimeAndLocation={true}/>}
+          modalButton={modalButton}/>}
         {!isLegacy &&
           <div>
             <h2>Transcription Details</h2>
