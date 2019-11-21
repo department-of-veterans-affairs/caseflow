@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 # Tech Spec Title
-**Drafter**: <!-- Your name -->
+**Drafter**: <!-- Your name -->  
 **Discussion Meeting**: <!-- Date to discussion the spec as a team; send calendar invite! -->  
 
 <!-- Tech specs are a lightweight format for documenting technical research and decision making. The headings below are guidelines, not rules, so modify your copy as you see fit. Especially large tech specs may require more headings and subheadings for example. Be rigorous in your research and planning, but balance that with forward progress - if something is uncertain, document that appropriately and move on if you can. Getting feedback early from team mates during tech spec writing can be helpful too.
