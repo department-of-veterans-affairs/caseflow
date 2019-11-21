@@ -72,6 +72,32 @@ feature "Intake Review Page", :postgres do
       )
     end
 
+    context "when the user goes back and edits the claimant" do
+      let(:veteran_is_not_claimant) { false }
+
+      describe "given an appeal" do
+        it "only saves one claimant" do
+          review = start_appeal(veteran, veteran_is_not_claimant: veteran_is_not_claimant).first
+
+          check_edited_claimant(review)
+        end
+      end
+
+      [:higher_level_review, :supplemental_claim].each do |claim_review_type|
+        describe "given a #{claim_review_type}" do
+          it "only saves one claimant" do
+            review = start_claim_review(
+              claim_review_type,
+              veteran: veteran,
+              veteran_is_not_claimant: veteran_is_not_claimant
+            ).first
+
+            check_edited_claimant(review)
+          end
+        end
+      end
+    end
+
     context "when veteran is deceased" do
       let(:veteran) do
         Generators::Veteran.build(file_number: "123121234", date_of_death: 2.years.ago)
@@ -305,6 +331,27 @@ def check_claimant_address_error(review, benefit_type)
   else
     expect(page).to have_content("Please update the claimant's address")
   end
+end
+
+def check_edited_claimant(review)
+  visit "/intake"
+  click_intake_continue
+
+  expect(page).to have_current_path("/intake/add_issues")
+  expect(review.claimant.participant_id).to eq(veteran.participant_id)
+
+  page.go_back
+  within_fieldset("Is the claimant someone other than the Veteran?") do
+    find("label", text: "Yes", match: :prefer_exact).click
+  end
+  find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
+  fill_in "What is the payee code for this claimant?", with: "10 - Spouse" unless review.is_a?(Appeal)
+  click_intake_continue
+
+  expect(page).to have_current_path("/intake/add_issues")
+  expect(review.reload.veteran_is_not_claimant).to be true
+  expect(review.claimants.count).to eq 1
+  expect(review.claimant.participant_id).to eq("5382910292")
 end
 
 def check_invalid_veteran_alert_on_review_page(form_type)

@@ -22,11 +22,11 @@ class HearingDetailsContainer extends React.Component {
     this.props.history.goBack();
   };
 
-  setHearing = (hearing) => {
+  setHearing = (hearing, callback) => {
     this.setState({
       hearing,
       loading: false
-    });
+    }, callback);
   }
 
   getHearing = () => {

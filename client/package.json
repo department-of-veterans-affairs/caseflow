@@ -28,7 +28,7 @@
     "client/node_modules"
   ],
   "dependencies": {
-    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#a363730",
+    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#8071c37",
     "@fortawesome/fontawesome-free": "^5.3.1",
     "classnames": "^2.2.5",
     "core-js": "^3.4.1",

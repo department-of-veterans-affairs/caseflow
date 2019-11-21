@@ -328,7 +328,7 @@ GEM
     newrelic_rpm (6.5.0.357)
     nio4r (2.3.1)
     no_proxy_fix (0.1.2)
-    nokogiri (1.10.4)
+    nokogiri (1.10.5)
       mini_portile2 (~> 2.4.0)
     nori (2.6.0)
     notiffany (0.1.1)
@@ -599,7 +599,7 @@ DEPENDENCIES
   meta_request
   moment_timezone-rails
   newrelic_rpm
-  nokogiri (~> 1.10.4)
+  nokogiri (~> 1.10.5)
   paper_trail (= 8.1.2)
   parallel
   paranoia (~> 2.2)
