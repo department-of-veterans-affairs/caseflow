@@ -146,4 +146,48 @@ describe JudgeTeam, :postgres do
       expect(attorney.organizations_users.first.organization).to eq(judge_team)
     end
   end
+
+  describe "feature use_judge_team_roles activated" do
+    before { FeatureToggle.enable!(:use_judge_team_role) }
+    after { FeatureToggle.disable!(:use_judge_team_role) }
+
+    context "a judge team with attorneys on it" do
+      let(:user) { create(:user) }
+      let(:judge) { Judge.new(user) }
+      let(:judge_team) { create(:judge_team) }
+      let(:attorneys) { create_list(:user, 5) }
+
+      #create judge team empty. add an admin user attorney. add the judge
+      # add the rest of the attorneys
+
+      # Attorneys are added to JudgeTeam first, in a way that avoids the automatic Role assignment, with one of them
+      # being given admin
+      # Then judge is added to the JudgeTeam, again avoiding automatic role assignment, and given admin
+      before do
+        attorneys.each do |u|
+          judge_team.users << u
+          attorney_orgsuser = OrganizationsUser.existing_record(u, judge_team)
+          DecisionDraftingAttorney.create!(organizations_user: attorney_orgsuser)
+        end
+        judge_team.users << user
+        attorney_orgsuser = OrganizationsUser.existing_record(attorneys.first, judge_team)
+        attorney_orgsuser.update!(admin:true)
+        judge_orguser = OrganizationsUser.existing_record(user, judge_team)
+        judge_orguser.update!(admin:true)
+        JudgeTeamLead.create!(organizations_user: judge_orguser)
+      end
+
+      describe ".judge" do
+        it "returns the team judge" do
+          expect(judge_team.judge).to eq judge.user
+        end
+      end
+
+      describe ".attorneys" do
+        it "returns the team attorneys" do
+          expect(judge_team.attorneys).to match_array attorneys
+        end
+      end
+    end
+  end
 end
