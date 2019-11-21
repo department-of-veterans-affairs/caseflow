@@ -62,19 +62,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       fill_in "vet-email", with: "email@testingEmail.com"
       click_button("Change and Send Email")
 
-      expect(page).to have_field("Veteran Email", disabled: false)
-      expect(page).to have_field("POA/Representive Email", disabled: false)
-
-      # fill_in "Veteran Email", with: "newVeteran@gmail.com"
-      # fill_in "POA/Representive Email", with: "newRepresentative@gmail.com"
-
-      # click_button("Save")
-
-      # expect(page).to have_content("newVeteran@gmail.com")
-      # expect(page).to have_content("newRepresentative@gmail.com")
-
-      hearing.reload
-      expect(hearing.virtual_hearing.active?).to eq(true)
-      expect(hearing.virtual_hearing.all_emails_sent?).to eq(true)
+      expect(page).to have_field("Veteran Email")
+      expect(page).to have_field("POA/Representive Email")
     end
 end
