@@ -556,6 +556,14 @@ FactoryBot.define do
       assigned_to { create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1") }
     end
 
+    factory :dismissed_motion_to_vacate_task, class: DismissedMotionToVacateTask do
+      type { DismissedMotionToVacateTask.name }
+      appeal
+      association :parent, factory: :abstract_motion_to_vacate_task
+      assigned_by { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
+      assigned_to { create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1") }
+    end
+
     factory :judge_sign_motion_to_vacate_task, class: JudgeSignMotionToVacateTask do
       type { JudgeSignMotionToVacateTask.name }
       appeal
