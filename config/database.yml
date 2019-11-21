@@ -44,12 +44,12 @@ production:
 # https://guides.rubyonrails.org/active_record_multiple_databases.html
 etl_default: &etl_default
   <<: *default
-  <% if ENV["ETL_HOST"] || ENV["POSTGRES_HOST"] %>
-  host: <%= ENV["ETL_HOST"] || ENV["POSTGRES_HOST"] %>
+  <% if ENV["ETL_DB_HOST"] || ENV["POSTGRES_HOST"] %>
+  host: <%= ENV["ETL_DB_HOST"] || ENV["POSTGRES_HOST"] %>
   <% end %>
-  username: <%= ENV["ETL_USER"] || ENV["POSTGRES_USER"] || `whoami` %>
-  <% if ENV["ETL_PASSWORD"] || ENV["POSTGRES_PASSWORD"] %>
-  password: <%= ENV["ETL_PASSWORD"] || ENV["POSTGRES_PASSWORD"] %>
+  username: <%= ENV["ETL_DB_USER"] || ENV["POSTGRES_USER"] || `whoami` %>
+  <% if ENV["ETL_DB_PASSWORD"] || ENV["POSTGRES_PASSWORD"] %>
+  password: <%= ENV["ETL_DB_PASSWORD"] || ENV["POSTGRES_PASSWORD"] %>
   <% end %>
 
 etl_development:
@@ -62,7 +62,7 @@ etl_test:
 
 etl_production:
   <<: *etl_default
-  url: <%= ENV["ETL_URL"] %>
+  url: <%= ENV["ETL_DB_URL"] %>
 
 development_vacols:
   adapter: oracle_enhanced

@@ -62,7 +62,8 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       User.authenticate!(user: user)
       FeatureToggle.enable!(:schedule_virtual_hearings)
     end
-    let!(:legacy_hearing) { create(:legacy_hearing) }
+
+    let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, regional_office: "RO06") }
 
     scenario "User can edit Judge and change virtual hearings" do
       visit "hearings/" + legacy_hearing.external_id.to_s + "/details"
@@ -74,8 +75,6 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       expect(page).to have_no_selector("label", text: "Yes, Waive 90 Day Evidence Hold")
 
       click_dropdown(name: "hearingType", index: 1)
-      expect(page).to have_content("Change to Virtual Hearing")
-
       fill_in "vet-email", with: "email@testingEmail.com"
       fill_in "rep-email", with: "email@testingEmail.com"
       click_button("Change and Send Email")
@@ -93,7 +92,6 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       fill_in "Notes", with: generate_words(10)
 
       click_button("Save")
-
       expect(page).to have_content("Hearing Successfully Updated")
     end
 

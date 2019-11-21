@@ -3,7 +3,7 @@
 require "support/vacols_database_cleaner"
 require "rails_helper"
 
-RSpec.feature "Task queue", :all_dbs do
+feature "Task queue", :all_dbs do
   let!(:vlj_support_staffer) { create(:user) }
 
   before { Colocated.singleton.add_user(vlj_support_staffer) }
@@ -942,7 +942,7 @@ RSpec.feature "Task queue", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
 
         # On case details page fill in the admin action
-        action = Constants::CO_LOCATED_ADMIN_ACTIONS["ihp"]
+        action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
         click_dropdown(text: action)
         fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
         find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
@@ -1070,7 +1070,7 @@ RSpec.feature "Task queue", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
 
         # On case details page fill in the admin action
-        action = Constants::CO_LOCATED_ADMIN_ACTIONS["ihp"]
+        action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
         click_dropdown(text: action)
         fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
         find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
@@ -1122,7 +1122,7 @@ RSpec.feature "Task queue", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
 
         # On case details page fill in the admin action
-        action = Constants::CO_LOCATED_ADMIN_ACTIONS["ihp"]
+        action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
         click_dropdown(text: action)
         fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
         find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click

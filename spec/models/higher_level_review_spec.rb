@@ -141,6 +141,7 @@ describe HigherLevelReview, :postgres do
       higher_level_review.save!
       higher_level_review.create_claimants!(participant_id: "12345", payee_code: "00")
       higher_level_review.save!
+      higher_level_review.reload
       expect(subject).to eql("12345")
     end
 
@@ -164,6 +165,7 @@ describe HigherLevelReview, :postgres do
       higher_level_review.save!
       higher_level_review.create_claimants!(participant_id: "12345", payee_code: "10")
       higher_level_review.save!
+      higher_level_review.reload
       expect(subject).to eql("10")
     end
 
@@ -176,26 +178,6 @@ describe HigherLevelReview, :postgres do
     end
 
     it "returns nil when there are no claimants" do
-      expect(subject).to be_nil
-    end
-  end
-
-  context "#claimant_not_veteran" do
-    subject { higher_level_review.claimant_not_veteran }
-
-    it "returns true if claimant is not veteran" do
-      higher_level_review.save!
-      higher_level_review.create_claimants!(participant_id: "12345", payee_code: "10")
-      expect(subject).to be true
-    end
-
-    it "returns false if claimant is veteran" do
-      higher_level_review.save!
-      higher_level_review.create_claimants!(participant_id: veteran.participant_id, payee_code: "00")
-      expect(subject).to be false
-    end
-
-    it "returns nil if there are no claimants" do
       expect(subject).to be_nil
     end
   end

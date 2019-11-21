@@ -32,11 +32,11 @@ describe "task rake tasks", :postgres do
 
         it "only describes what changes will be made" do
           count = from_task.count
-          ids = from_task.all.pluck(:id)
+          ids = from_task.all.pluck(:id).sort
           expected_output = <<~OUTPUT
             *** DRY RUN
             *** pass 'false' as the third argument to execute
-            Would change #{count} #{from_task_name}s with ids #{ids.join(', ')} into #{to_task_name}s
+            Would change #{count} #{from_task_name}s with ids #{ids.join(',')} into #{to_task_name}s
             Would revert with: bundle exec rake tasks:change_type[#{to_task_name},#{from_task_name},#{ids.join(',')}]
           OUTPUT
           expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
@@ -52,14 +52,14 @@ describe "task rake tasks", :postgres do
 
         it "makes the requested changes" do
           count = from_task.count
-          ids = from_task.all.pluck(:id)
+          ids = from_task.all.pluck(:id).sort
           expected_output = <<~OUTPUT
-            Changing #{count} #{from_task_name}s with ids #{ids.join(', ')} into #{to_task_name}s
+            Changing #{count} #{from_task_name}s with ids #{ids.join(',')} into #{to_task_name}s
             Revert with: bundle exec rake tasks:change_type[#{to_task_name},#{from_task_name},#{ids.join(',')}]
           OUTPUT
           expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
           expect(Rails.logger).to receive(:info).with(
-            "Changing #{task_count} #{from_task_name}s with ids #{ids.join(', ')} into #{to_task_name}s"
+            "Changing #{task_count} #{from_task_name}s with ids #{ids.join(',')} into #{to_task_name}s"
           )
           expect { subject }.to output(expected_output).to_stdout
           expect(to_task.count).to eq task_count
@@ -79,12 +79,12 @@ describe "task rake tasks", :postgres do
             it "makes the requested changes" do
               count = change_ids.count
               expected_output = <<~OUTPUT
-                Changing #{count} #{from_task_name}s with ids #{change_ids.join(', ')} into #{to_task_name}s
+                Changing #{count} #{from_task_name}s with ids #{change_ids.join(',')} into #{to_task_name}s
                 Revert with: bundle exec rake tasks:change_type[#{to_task_name},#{from_task_name},#{change_ids.join(',')}]
               OUTPUT
               expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
               expect(Rails.logger).to receive(:info).with(
-                "Changing #{subset_count} #{from_task_name}s with ids #{change_ids.join(', ')} into #{to_task_name}s"
+                "Changing #{subset_count} #{from_task_name}s with ids #{change_ids.join(',')} into #{to_task_name}s"
               )
               expect { subject }.to output(expected_output).to_stdout
               expect(to_task.count).to eq count
@@ -115,7 +115,7 @@ describe "task rake tasks", :postgres do
             expected_output = <<~OUTPUT
               *** DRY RUN
               *** pass 'false' as the third argument to execute
-              Would change #{count} #{from_task_name}s with ids #{change_ids.join(', ')} into #{to_task_name}s
+              Would change #{count} #{from_task_name}s with ids #{change_ids.sort.join(',')} into #{to_task_name}s
               Would revert with: bundle exec rake tasks:change_type[#{to_task_name},#{from_task_name},#{joined}]
             OUTPUT
             expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
@@ -176,7 +176,7 @@ describe "task rake tasks", :postgres do
           expected_output = <<~OUTPUT
             *** DRY RUN
             *** pass 'false' as the fourth argument to execute
-            Would change assignee of #{count} #{target_task_name}s with ids #{ids.join(', ')} from #{from_org.name} to #{to_org.name}
+            Would change assignee of #{count} #{target_task_name}s with ids #{ids.join(',')} from #{from_org.name} to #{to_org.name}
             Would revert with: bundle exec rake tasks:change_organization_assigned_to[#{target_task_name},#{to_org.id},#{from_org.id},false,#{ids.join(',')}]
           OUTPUT
           expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
@@ -192,12 +192,12 @@ describe "task rake tasks", :postgres do
           count = target_task.count
           ids = target_task.all.pluck(:id).sort
           expected_output = <<~OUTPUT
-            Changing assignee of #{count} #{target_task_name}s with ids #{ids.join(', ')} from #{from_org.name} to #{to_org.name}
+            Changing assignee of #{count} #{target_task_name}s with ids #{ids.join(',')} from #{from_org.name} to #{to_org.name}
             Revert with: bundle exec rake tasks:change_organization_assigned_to[#{target_task_name},#{to_org.id},#{from_org.id},false,#{ids.join(',')}]
           OUTPUT
           expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
           expect(Rails.logger).to receive(:info).with(
-            "Changing assignee of #{count} #{target_task_name}s with ids #{ids.join(', ')} " \
+            "Changing assignee of #{count} #{target_task_name}s with ids #{ids.join(',')} " \
             "from #{from_org.name} to #{to_org.name}"
           )
           expect { subject }.to output(expected_output).to_stdout
@@ -216,12 +216,12 @@ describe "task rake tasks", :postgres do
             it "makes the requested changes" do
               count = change_ids.count
               expected_output = <<~OUTPUT
-                Changing assignee of #{count} #{target_task_name}s with ids #{change_ids.join(', ')} from #{from_org.name} to #{to_org.name}
+                Changing assignee of #{count} #{target_task_name}s with ids #{change_ids.sort.join(',')} from #{from_org.name} to #{to_org.name}
                 Revert with: bundle exec rake tasks:change_organization_assigned_to[#{target_task_name},#{to_org.id},#{from_org.id},false,#{change_ids.join(',')}]
               OUTPUT
               expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
               expect(Rails.logger).to receive(:info).with(
-                "Changing assignee of #{count} #{target_task_name}s with ids #{change_ids.join(', ')} " \
+                "Changing assignee of #{count} #{target_task_name}s with ids #{change_ids.join(',')} " \
                 "from #{from_org.name} to #{to_org.name}"
               )
 
@@ -244,12 +244,12 @@ describe "task rake tasks", :postgres do
             it "only changes the appropriate tasks" do
               count = matching_ids.count
               expected_output = <<~OUTPUT
-                Changing assignee of #{count} #{target_task_name}s with ids #{matching_ids.join(', ')} from #{from_org.name} to #{to_org.name}
+                Changing assignee of #{count} #{target_task_name}s with ids #{matching_ids.sort.join(',')} from #{from_org.name} to #{to_org.name}
                 Revert with: bundle exec rake tasks:change_organization_assigned_to[#{target_task_name},#{to_org.id},#{from_org.id},false,#{matching_ids.join(',')}]
               OUTPUT
               expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
               expect(Rails.logger).to receive(:info).with(
-                "Changing assignee of #{count} #{target_task_name}s with ids #{matching_ids.join(', ')} " \
+                "Changing assignee of #{count} #{target_task_name}s with ids #{matching_ids.join(',')} " \
                 "from #{from_org.name} to #{to_org.name}"
               )
 
@@ -267,7 +267,7 @@ describe "task rake tasks", :postgres do
             expected_output = <<~OUTPUT
               *** DRY RUN
               *** pass 'false' as the fourth argument to execute
-              Would change assignee of #{count} #{target_task_name}s with ids #{change_ids.join(', ')} from #{from_org.name} to #{to_org.name}
+              Would change assignee of #{count} #{target_task_name}s with ids #{change_ids.sort.join(',')} from #{from_org.name} to #{to_org.name}
               Would revert with: bundle exec rake tasks:change_organization_assigned_to[#{target_task_name},#{to_org.id},#{from_org.id},false,#{change_ids.join(',')}]
             OUTPUT
             expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
