@@ -741,7 +741,7 @@ class LegacyAppeal < ApplicationRecord
   def assigned_to_location
     return location_code unless location_code_is_caseflow?
 
-    recently_updated_task = Appeal.any_recently_updated(
+    recently_updated_task = Task.any_recently_updated(
       tasks.active.actionable.visible_in_queue_table_view,
       tasks.on_hold.actionable.visible_in_queue_table_view
     )

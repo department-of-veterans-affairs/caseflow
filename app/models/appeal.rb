@@ -80,7 +80,7 @@ class Appeal < DecisionReview
   def assigned_to_location
     return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
-    recently_updated_task = Appeal.any_recently_updated(
+    recently_updated_task = Task.any_recently_updated(
       tasks.active.actionable.visible_in_queue_table_view,
       tasks.on_hold.actionable.visible_in_queue_table_view
     )
@@ -91,10 +91,6 @@ class Appeal < DecisionReview
     return tasks.actionable.most_recently_updated&.assigned_to_label if tasks.any?
 
     fetch_status.to_s.titleize
-  end
-
-  def self.any_recently_updated(*tasks_arrays)
-    tasks_arrays.find(&:any?)&.most_recently_updated
   end
 
   def attorney_case_reviews

@@ -147,6 +147,10 @@ class Task < ApplicationRecord
       order(:updated_at).last
     end
 
+    def any_recently_updated(*tasks_arrays)
+      tasks_arrays.find(&:any?)&.most_recently_updated
+    end
+
     def create_from_params(params, user)
       parent_task = Task.find(params[:parent_id])
       fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_task.assigned_to_id == params[:assigned_to_id] &&
