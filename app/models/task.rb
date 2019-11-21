@@ -62,12 +62,6 @@ class Task < ApplicationRecord
     )
   }
 
-  scope :not_timed_hold_task, -> { where.not(type: :TimedHoldTask) }
-
-  scope :not_track_veteran_task, -> { where.not(type: :TrackVeteranTask) }
-
-  scope :actionable, -> { not_timed_hold_task.not_track_veteran_task }
-
   scope :not_decisions_review, lambda {
                                  where.not(
                                    type: DecisionReviewTask.descendants.map(&:name) + ["DecisionReviewTask"]
