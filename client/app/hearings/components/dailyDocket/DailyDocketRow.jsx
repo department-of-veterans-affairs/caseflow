@@ -11,6 +11,8 @@ import { AodModal } from './DailyDocketModals';
 import HearingText from './DailyDocketRowDisplayText';
 import PropTypes from 'prop-types';
 import { deepDiff } from '../../utils';
+import COPY from '../../../../COPY.json';
+
 import {
   DispositionDropdown, TranscriptRequestedCheckbox, HearingDetailsLink,
   AmaAodDropdown, LegacyAodDropdown, AodReasonDropdown, HearingPrepWorkSheetLink, StaticRegionalOffice,
@@ -286,6 +288,9 @@ class DailyDocketRow extends React.Component {
             this.saveHearing();
             this.closeVirtualHearingModal();
           }}
+          modalTitle={COPY.VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE}
+          modalIntro={COPY.VIRTUAL_HEARING_CHANGE_HEARING_TIME_MODAL_INTRO}
+          modalButton={COPY.VIRTUAL_HEARING_CHANGE_HEARING_BUTTON}
         />}
       {this.state.aodModalActive && <AodModal
         advanceOnDocketMotion={hearing.advanceOnDocketMotion || {}}
