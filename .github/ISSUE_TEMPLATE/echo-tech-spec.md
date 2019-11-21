@@ -28,8 +28,10 @@ Tech specs are considered 'done' when key stakeholders have reviewed and approve
 <!-- Sometimes we're missing information needed to fully spec work. 
 What is missing? Who can answer these questions, and how might it affect the recommendation? -->
 
-## Implementation
-<!-- Recommended action items. 
+## Implementation Options
+<!-- 
+Consider multiple implementation paths.
+What are their recommended action items?
 These may change as feedback is given, but after the tech spec is approved these should be written as fully defined/pointed github issues.
 Is the work sufficiently defined such that someone else could pick it up?
 Is the work parallelizable?
