@@ -52,7 +52,7 @@
     "moment-timezone": "^0.5.13",
     "node-sass": "^4.9.2",
     "pdf-annotate.js": "^1.0.0",
-    "pdfjs-dist": "1.10.97",
+    "pdfjs-dist": "^2.2.228",
     "pluralize": "^7.0.0",
     "prop-types": "^15.7.2",
     "rc-collapse": "^1.7.6",

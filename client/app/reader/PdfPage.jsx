@@ -12,7 +12,7 @@ import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN
 } from './constants';
 import { pageNumberOfPageIndex } from './utils';
-import { PDFJS } from 'pdfjs-dist';
+import PDFJS from 'pdfjs-dist';
 import { collectHistogram } from '../util/Metrics';
 
 import { css } from 'glamor';
