@@ -129,7 +129,7 @@ RSpec.feature "Attorney queue", :all_dbs do
         click_on(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
 
         expect(page).to have_content(appeal.veteran_full_name)
-        expect(page).to have_content(Constants::CO_LOCATED_ADMIN_ACTIONS[colocated_org_task.label])
+        expect(page).to have_content(colocated_org_task.label)
       end
     end
 
@@ -159,7 +159,7 @@ RSpec.feature "Attorney queue", :all_dbs do
         click_on(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
 
         expect(page).to have_content(appeal.veteran_full_name)
-        expect(page).to have_content(Constants::CO_LOCATED_ADMIN_ACTIONS[colocated_org_task.label])
+        expect(page).to have_content(colocated_org_task.label)
       end
     end
 
@@ -184,7 +184,7 @@ RSpec.feature "Attorney queue", :all_dbs do
 
         expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 0))
         expect(page).to have_content(appeal.veteran_full_name)
-        expect(page).to have_content(Constants::CO_LOCATED_ADMIN_ACTIONS[colocated_org_task.label])
+        expect(page).to have_content(colocated_org_task.label)
       end
     end
   end
