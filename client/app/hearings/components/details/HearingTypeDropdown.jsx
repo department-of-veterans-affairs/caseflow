@@ -47,7 +47,7 @@ class HearingTypeDropdown extends React.Component {
     } else {
       return {
         modalTitle: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_CENTRAL_TITLE,
-        modalIntro: " "
+        modalIntro: ''
       };
     }
   }

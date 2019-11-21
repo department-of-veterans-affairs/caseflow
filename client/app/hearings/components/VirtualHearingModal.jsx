@@ -44,9 +44,7 @@ const VirtualHearingModal = ({ virtualHearing, hearing, timeWasEdited, update, s
       cancelButton={
         <Button linkStyling onClick={reset}>Cancel</Button>
       }>
-      <p>
-        {modalIntro}
-      </p>
+      <p dangerouslySetInnerHTML={{ __html: modalIntro}}/>
       <div>
         <strong>{'Date:'}&nbsp;</strong>{moment(hearing.scheduledFor).format('MM/DD/YYYY')}<br />
         <strong>{'Time:'}&nbsp;</strong>{formatTimeString(hearing, timeWasEdited)}
