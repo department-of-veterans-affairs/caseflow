@@ -115,7 +115,7 @@
     "@babel/register": "^7.7.0",
     "@babel/runtime-corejs2": "^7.0.0",
     "@department-of-veterans-affairs/eslint-config-appeals": "https://github.com/department-of-veterans-affairs/eslint-config-appeals#f50522e",
-    "babel-eslint": "^9.0.0",
+    "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.0",
     "chai": "^3.5.0",
     "enzyme": "^3.10.0",
