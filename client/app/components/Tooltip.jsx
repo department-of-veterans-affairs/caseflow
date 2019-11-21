@@ -1,6 +1,7 @@
 import { css } from 'glamor';
 import * as React from 'react';
 import ReactTooltip from 'react-tooltip';
+import PropTypes from 'prop-types';
 
 import { COLORS } from '../constants/AppConstants';
 
@@ -31,6 +32,14 @@ const Tooltip = (props) => {
       <ReactTooltip effect="solid" id={id} offset={offset} place={position} multiline>{text}</ReactTooltip>
     </span>
   </React.Fragment>;
+};
+
+Tooltip.propTypes = {
+  text: PropTypes.string,
+  id: PropTypes.string,
+  position: PropTypes.string,
+  offset: PropTypes.object,
+  children: PropTypes.object
 };
 
 export default Tooltip;
