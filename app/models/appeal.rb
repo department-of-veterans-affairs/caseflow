@@ -86,7 +86,6 @@ class Appeal < DecisionReview
     )
     return recently_updated_task.assigned_to_label if recently_updated_task
 
-    # Should following 2 lines be removed?
     # this condition is no longer needed since we only want active or on hold tasks
     return tasks.most_recently_updated&.assigned_to_label if tasks.any?
 
