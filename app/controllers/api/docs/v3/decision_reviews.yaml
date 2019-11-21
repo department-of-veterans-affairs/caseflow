@@ -248,34 +248,72 @@ paths:
                               $ref: "#/components/schemas/PayeeCode"
                 included:
                   type: array
+                  description: ContestableIssues Array
                   items:
                     type: object
+                    description: >-
+                      Use the `/contestable_issues` endpoint to pull a list of
+                      a veteran's contestable issues to select from, and include
+                      the _ContestableIssue_ objects that you want to contest in this
+                      array.
+                      When including a _ContestableIssue_ obtained from the
+                      `/contestable_issues` endpoint, use the `notes` field to provide
+                      additional information about contesting this issue.
+                      **Additionally**, a `legacyAppealIssues` array can be added to a
+                      _ContestableIssue_ object to associate a _LegacyAppealIssue_
+                      to a _ContestableIssue_. Associating a _LegacyAppealIssue_ to a
+                      _ContestableIssue_ pulls the _LegacyAppealIssue_ out of the legacy
+                      appeal system and into AMA. See the `legacyAppealIssues` array
+                      below for more info on opting-in legacy issues.
+                      _Note:_ Not all legacy issues are eligible for opt-in; see
+                      [benefits.va.gov/benefits/docs/apppeals_SOC-SSOC_Opt-in.pdf](https://www.benefits.va.gov/benefits/docs/apppeals_SOC-SSOC_Opt-in.pdf)
+                      for details.
+
                     required:
                       - type
                       - attributes
                     properties:
                       type:
                         type: string
-                        enum: [RequestIssue]
+                        enum: [ContestableIssue]
                       attributes:
                         type: object
-                        properties: # none are required
+                        properties:
                           notes:
                             type: string
+                            nullable: true
                           decisionIssueId:
                             type: integer
+                            nullable: true
                           ratingIssueId:
                             type: string
-                          legacyAppealId:
+                            nullable: true
+                          ratingDecisionIssueId:
                             type: string
-                          legacyAppealIssueId:
-                            type: integer
-                          category:
-                            $ref: "#/components/schemas/NonratingIssueCategory"
-                          decisionDate:
-                            type: string
-                          decisionText:
-                            type: string
+                            nullable: true
+                          legacyAppealIssues:
+                            nullable: true
+                            type: array
+                            description: LegacyAppealIssues Array
+
+                            items:
+                              type: object
+                              description: >-
+                                OPTIONAL. _LegacyAppealIssues_ that you are associating
+                                with this _ContestableIssue_. At this time, 0 or 1
+                                _LegacyAppealIssues_ can be associated with a
+                                _ContestableIssue_. A _LegacyAppealIssue_  can only be
+                                associated once in a Higher-Level Review. To associate
+                                _LegacyAppealIssues_, `legacyOptInApproved` must be `true`.
+
+                              required:
+                                - legacyAppealId
+                                - legacyAppealIssueId
+                              properties:
+                                legacyAppealId:
+                                  type: string
+                                legacyAppealIssueId:
+                                  type: string
             examples:
               compensation:
                 value:
