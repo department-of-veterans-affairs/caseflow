@@ -30,22 +30,22 @@ const formatTimeString = (hearing, timeWasEdited) => {
   return timeString;
 };
 
-const VirtualHearingModal = ({ virtualHearing, hearing, timeWasEdited, update, submit, reset }) => (
+const VirtualHearingModal = ({ virtualHearing, hearing, timeWasEdited, update, submit, reset, modalTitle, modalIntro, modalButton }) => (
   <div>
     <Modal
-      title="Change to Virtual Hearing"
+      title={modalTitle}
       closeHandler={reset}
       confirmButton={
         <Button classNames={['usa-button-secondary']}
           onClick={submit} >
-          Change and Send Email
+          {modalButton}
         </Button>
       }
       cancelButton={
         <Button linkStyling onClick={reset}>Cancel</Button>
       }>
       <p>
-        {COPY.VIRTUAL_HEARING_MODAL_INTRO}
+        {modalIntro}
       </p>
       <div>
         <strong>{'Date:'}&nbsp;</strong>{moment(hearing.scheduledFor).format('MM/DD/YYYY')}<br />
@@ -83,7 +83,10 @@ VirtualHearingModal.propTypes = {
   timeWasEdited: PropTypes.bool,
   update: PropTypes.func,
   submit: PropTypes.func,
-  reset: PropTypes.func
+  reset: PropTypes.func,
+  modalTitle: PropTypes.string,
+  modalIntro: PropTypes.string,
+  modalButton: PropTypes.string
 };
 
 export default VirtualHearingModal;
