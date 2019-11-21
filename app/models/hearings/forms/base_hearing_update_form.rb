@@ -46,9 +46,9 @@ class BaseHearingUpdateForm
     !(status_changed || virtual_hearing_attributes.key?(attr_key))
   end
 
-  def email_sent_update
+  def emails_sent_updates
     # The email sent flag should always be set to false from the API.
-    @email_sent_update ||= {
+    @emails_sent_updates ||= {
       veteran_email_sent: email_sent_flag(:veteran_email),
       judge_email_sent: email_sent_flag(:judge_email),
       representative_email_sent: email_sent_flag(:representative_email)
@@ -80,8 +80,8 @@ class BaseHearingUpdateForm
 
   def add_virtual_hearing_alert
     alerts << VirtualHearingUserAlertGenerator.new(
-      created: created,
-      email_sent_update: email_sent_update,
+      created: created?,
+      emails_sent_updates: emails_sent_updates,
       status: virtual_hearing_attributes[:status] || hearing.virtual_hearing.status,
       veteran_full_name: veteran_full_name
     ).call.to_hash
@@ -95,6 +95,6 @@ class BaseHearingUpdateForm
   end
 
   def veteran_full_name
-    @veteran_full_name ||= hearing.appeal&.veteran&.full_name || "the veteran"
+    @veteran_full_name ||= hearing.appeal&.veteran&.name || "the veteran"
   end
 end

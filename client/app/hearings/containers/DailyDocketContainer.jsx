@@ -73,9 +73,9 @@ export class DailyDocketContainer extends React.Component {
   loadHearingDetails = (hearings) => {
     _.each(hearings, (hearing) => {
       ApiUtil.get(`/hearings/${hearing.externalId}`).then((response) => {
-        const resp = ApiUtil.convertToCamelCase(response.body);
+        const hearingResp = ApiUtil.convertToCamelCase(response.body.data);
 
-        this.props.onReceiveHearing(resp.data);
+        this.props.onReceiveHearing(hearingResp);
       }).
         catch((error) => {
           console.log(`Hearing endpoint failed with: ${error}`); // eslint-disable-line no-console
@@ -130,9 +130,9 @@ export class DailyDocketContainer extends React.Component {
 
     return ApiUtil.patch(`/hearings/${hearingId}`, { data }).
       then((response) => {
-        const resp = ApiUtil.convertToCamelCase(response.body);
+        const hearingResp = ApiUtil.convertToCamelCase(response.body.data);
 
-        this.props.onReceiveSavedHearing(resp.data);
+        this.props.onReceiveSavedHearing(hearingResp);
 
         return true;
       }, (err) => {
