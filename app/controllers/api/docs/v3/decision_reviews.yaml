@@ -291,16 +291,6 @@ paths:
                           ratingDecisionIssueId:
                             type: string
                             nullable: true
-                          # category: # commented out for MVP
-                          #   allOf:
-                          #     - $ref: "#/components/schemas/NonratingIssueCategory"
-                          #     - nullable: true
-                          # decisionDate: # disable for MVP
-                          #   type: string
-                          #   nullable: true
-                          # decisionText:
-                          #   type: string
-                          #   nullable: true
                           legacyAppealIssues:
                             nullable: true
                             type: array
