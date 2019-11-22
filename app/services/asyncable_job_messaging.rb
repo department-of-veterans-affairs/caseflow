@@ -29,28 +29,25 @@ class AsyncableJobMessaging
           detail: job_note,
           text: message_text,
           user: job.asyncable_user,
-          message_type: "job_note_added"
+          message_type: :job_note_added
         )
       end
       job_note
     end
   end
 
-  def handle_job_failure(err:)
+  def handle_job_failure
     return unless messaging_enabled_for_job_attempt?
-    return if Message.where(detail: job, message_type: "job_failing").any?
+    return if job.messages.job_failing.any?
 
-    if err.length > 80
-      err = err[0..80] + "..."
-    end
     message_text = <<-EOS.strip_heredoc
-      The Intake processing job for <a href="#{job.path}">#{job.class} #{job.id}</a> was unable to complete because of an error: #{err}
+      The job for <a href="#{job.path}">#{job.class} #{job.id}</a> was unable to complete because of an error: #{job.sanitized_error}
     EOS
     Message.create!(
       detail: job,
       text: message_text,
       user: job.asyncable_user,
-      message_type: "job_failing"
+      message_type: :job_failing
     )
   end
 
