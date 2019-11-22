@@ -30,7 +30,7 @@ const formatTimeString = (hearing, timeWasEdited) => {
 
   return timeString;
 };
-// alsia look in COPY
+
 const INVALID_EMAIL_FORMAT = 'Please enter a valid email address';
 
 class VirtualHearingModal extends React.Component {
