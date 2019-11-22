@@ -287,7 +287,7 @@
   "SPECIAL_CASE_MOVEMENT_MODAL_TITLE": "Special Case Movement",
   "SPECIAL_CASE_MOVEMENT_MODAL_DETAIL": "This action overrides the normal case distribution process and immediately assigns the appeal to the judge selected.",
   "SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER": "Select a judge",
-  
+
   "MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE": "Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930. Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding of clear and unmistakable error, which would result in a brand new docket number being assigned. An updated docket number format will need to be in place for legacy appeals by 2030 in order to ensure that docket numbers are sorted correctly.",
 
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
@@ -635,7 +635,7 @@
     "EMAILS_UPDATED": {
       "TITLE": "We're emailing the invite to %s's hearing",
       "MESSAGES": {
-        "TO_VETERAN_AND_POA": "Emails to the Veteran, POA / Representative are in progress",
+        "TO_VETERAN_AND_POA": "Emails to the Veteran and POA / Representative are in progress",
         "TO_VETERAN": "Email to Veteran in progress.",
         "TO_POA": "Email to POA / Representative in progress."
       }

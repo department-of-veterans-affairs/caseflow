@@ -34,7 +34,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     expect(hearing.virtual_hearing.veteran_email).to eq("email@testingEmail.com")
     expect(hearing.virtual_hearing.representative_email).to eq("email@testingEmail.com")
     expect(hearing.virtual_hearing.judge_email).to eq(nil)
-    expect(page).to have_content("Virtual")
+    expect(page).to have_content(COPY::VIRTUAL_HEARING_ALERTS["HEARING_CHANGED_TO_VIRTUAL"]["MESSAGE"])
   end
 
   context "for an existing Virtual Hearing" do
@@ -52,6 +52,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       hearing.reload
       expect(hearing.virtual?).to eq(false)
       expect(page).to have_content(hearing.readable_request_type)
+      expect(page).to have_content(COPY::VIRTUAL_HEARING_ALERTS["HEARING_CHANGED_FROM_VIRTUAL"]["MESSAGE"])
     end
   end
 end

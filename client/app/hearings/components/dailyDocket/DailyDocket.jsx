@@ -9,27 +9,23 @@ import Alert from '../../../components/Alert';
 import { LockModal, RemoveHearingModal, DispositionModal } from './DailyDocketModals';
 import Button from '../../../components/Button';
 import StatusMessage from '../../../components/StatusMessage';
-import { getHearingAppellantName } from './DailyDocketRowDisplayText';
 import DailyDocketRows from './DailyDocketRows';
 import DailyDocketEditLinks from './DailyDocketEditLinks';
 import { isPreviouslyScheduledHearing } from '../../utils';
 import { navigateToPrintPage } from '../../../util/PrintUtil';
 import { encodeQueryParams } from '../../../util/QueryParamsUtil';
 import COPY from '../../../../COPY.json';
+import UserAlerts from '../../../components/UserAlerts';
 
 const alertStyling = css({
   marginBottom: '30px'
 });
 
 const Alerts = ({
-  saveSuccessful, displayLockSuccessMessage, onErrorHearingDayLock, dailyDocket, dailyDocketServerError
+  displayLockSuccessMessage, onErrorHearingDayLock, dailyDocket, dailyDocketServerError
 }) => (
   <React.Fragment>
-    {saveSuccessful &&
-      <Alert type="success"
-        styling={alertStyling}
-        title={`You have successfully updated ${getHearingAppellantName(saveSuccessful)}'s hearing.`} />}
-
+    <UserAlerts />
     {displayLockSuccessMessage &&
       <Alert type="success"
         styling={alertStyling}

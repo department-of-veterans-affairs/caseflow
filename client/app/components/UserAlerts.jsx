@@ -6,7 +6,7 @@ import Alert from './Alert';
 import _ from 'underscore';
 import { removeAlertsWithTimestamps } from './common/actions';
 
-const ALERT_EXPIRATION = 15000;
+const ALERT_EXPIRATION = 30000;
 
 class UserAlerts extends React.Component {
 
@@ -38,7 +38,11 @@ class UserAlerts extends React.Component {
       <div className="cf-alerts-container cf-margin-bottom-2rem">
         {alerts.map(({ type, message, title, timestamp }, index) => (
           <Alert type={type}
-            message={<span dangerouslySetInnerHTML={{ __html: message }} />}
+            message={
+              message ? <div
+                className="cf-margin-top-1rem cf-margin-bottom-1rem"
+                dangerouslySetInnerHTML={{ __html: message }} /> : null
+            }
             title={title}
             key={`alert-${timestamp}-${index}`} />
         ))}
