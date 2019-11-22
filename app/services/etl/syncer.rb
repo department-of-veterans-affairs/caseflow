@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+# Abstract service class for ETL synchronization.
+# Subclasses should define a origin_class and a target_class
+# and the target_class is expected to inherit from ETL::Record.
+# The `call` method default behavior is to find all origin_class
+# instances that have been updated "since" a Time,
+# then sync and save the corresponding target_class instance.
+
 class ETL::Syncer
   def initialize(since: Time.zone.yesterday)
     @since = since
