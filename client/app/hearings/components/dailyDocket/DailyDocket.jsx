@@ -202,14 +202,14 @@ export default class DailyDocket extends React.Component {
         </div>
       </div>
 
-      {hasDocketHearings &&
-        <DailyDocketRows
-          hearings={docketHearings}
-          readOnly={user.userCanViewHearingSchedule || user.userCanVsoHearingSchedule}
-          saveHearing={this.props.saveHearing}
-          openDispositionModal={this.openDispositionModal}
-          regionalOffice={regionalOffice}
-          user={user} />}
+      <DailyDocketRows
+        hearings={this.props.hearings}
+        hidePreviouslyScheduled
+        readOnly={user.userCanViewHearingSchedule || user.userCanVsoHearingSchedule}
+        saveHearing={this.props.saveHearing}
+        openDispositionModal={this.openDispositionModal}
+        regionalOffice={regionalOffice}
+        user={user} />
 
       {!hasDocketHearings &&
         <div {...css({ marginTop: '75px' })}>
@@ -223,7 +223,8 @@ export default class DailyDocket extends React.Component {
         <div {...css({ marginTop: '75px' })}>
           <h1>Previously Scheduled</h1>
           <DailyDocketRows
-            hearings={prevHearings}
+            hidePreviouslyScheduled={false}
+            hearings={this.props.hearings}
             regionalOffice={regionalOffice}
             user={user}
             readOnly />
