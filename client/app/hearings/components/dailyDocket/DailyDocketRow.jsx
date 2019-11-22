@@ -272,7 +272,7 @@ class DailyDocketRow extends React.Component {
         {this.getLeftColumn()}
         {this.getRightColumn()}
       </div>
-      {(user.userCanScheduleVirtualHearing && this.state.virtualHearingModalActive && hearing.isVirtual) &&
+      {(user.userCanScheduleVirtualHearings && this.state.virtualHearingModalActive && hearing.isVirtual) &&
         <VirtualHearingModal hearing={hearing}
           timeWasEdited={this.state.initialState.scheduledTimeString !== _.get(hearing, 'scheduledTimeString')}
           virtualHearing={hearing.virtualHearing || {}} reset={() => {
@@ -321,7 +321,6 @@ DailyDocketRow.propTypes = {
     userCanBuildHearingSchedule: PropTypes.bool,
     userCanViewHearingSchedule: PropTypes.bool,
     userCanVsoHearingSchedule: PropTypes.bool,
-    userCanScheduleVirtualHearing: PropTypes.bool,
     userHasHearingPrepRole: PropTypes.bool,
     userInHearingOrTranscriptionOrganization: PropTypes.bool,
     userCanScheduleVirtualHearings: PropTypes.bool,
