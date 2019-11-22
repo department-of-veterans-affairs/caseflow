@@ -15,7 +15,6 @@ class TasksController < ApplicationController
     ColocatedTask: ColocatedTask,
     EvidenceSubmissionWindowTask: EvidenceSubmissionWindowTask,
     FoiaTask: FoiaTask,
-    GenericTask: GenericTask,
     HearingAdminActionTask: HearingAdminActionTask,
     InformalHearingPresentationTask: InformalHearingPresentationTask,
     JudgeAddressMotionToVacateTask: JudgeAddressMotionToVacateTask,

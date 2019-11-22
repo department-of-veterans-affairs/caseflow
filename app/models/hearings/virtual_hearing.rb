@@ -11,9 +11,8 @@ class VirtualHearing < ApplicationRecord
 
   before_create :assign_created_by_user
 
-  validates :judge_email, presence: true, on: :create
   validates :veteran_email, presence: true, on: :create
-  validates_email_format_of :judge_email
+  validates_email_format_of :judge_email, allow_nil: true
   validates_email_format_of :veteran_email
   validates_email_format_of :representative_email, allow_nil: true
   validate :associated_hearing_is_video, on: :create
@@ -38,7 +37,9 @@ class VirtualHearing < ApplicationRecord
         -> { where(conference_deleted: false, status: [:active, :cancelled]) }
 
   def all_emails_sent?
-    veteran_email_sent && judge_email_sent && (representative_email.nil? || representative_email_sent)
+    veteran_email_sent &&
+      (judge_email.nil? || judge_email_sent) &&
+      (representative_email.nil? || representative_email_sent)
   end
 
   private
