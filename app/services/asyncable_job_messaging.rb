@@ -40,8 +40,9 @@ class AsyncableJobMessaging
     return unless messaging_enabled_for_job_attempt?
     return if job.messages.job_failing.any?
 
+    err = ERB::Util.html_escape(job.sanitized_error)
     message_text = <<-EOS.strip_heredoc
-      The job for <a href="#{job.path}">#{job.class} #{job.id}</a> was unable to complete because of an error: #{job.sanitized_error}
+      The job for <a href="#{job.path}">#{job.class} #{job.id}</a> was unable to complete because of an error: #{err}
     EOS
     Message.create!(
       detail: job,
