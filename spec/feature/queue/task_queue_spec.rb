@@ -224,8 +224,10 @@ feature "Task queue", :all_dbs do
     let(:tracking_task_count) { 14 }
 
     before do
-      create_list(:informal_hearing_presentation_task, unassigned_count, :in_progress, assigned_to: vso)
-      create_list(:informal_hearing_presentation_task, assigned_count, :on_hold, assigned_to: vso)
+      create_list(:informal_hearing_presentation_task, unassigned_count, assigned_to: vso)
+      create_list(:informal_hearing_presentation_task, assigned_count, assigned_to: vso).each do |parent|
+        create(:informal_hearing_presentation_task, assigned_to: vso_employee, parent: parent)
+      end
       create_list(:track_veteran_task, tracking_task_count, assigned_to: vso)
 
       allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
