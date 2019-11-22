@@ -8,7 +8,7 @@
 # then sync and save the corresponding target_class instance.
 
 class ETL::Syncer
-  def initialize(since: false)
+  def initialize(since: nil)
     @since = since
   end
 
