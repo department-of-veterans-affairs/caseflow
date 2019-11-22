@@ -5,7 +5,7 @@ feature "Inbox", :postgres do
   after { FeatureToggle.disable!(:inbox) }
 
   let!(:user) { User.authenticate!(roles: ["Mail Intake"]) }
-  let(:hlr) { create(:higher_level_review, :requires_processing, intake: create(:intake, user: user)) }
+  let!(:hlr) { create(:higher_level_review, :requires_processing, intake: create(:intake, user: user)) }
 
   describe "index" do
     context "multiple messages" do
@@ -53,6 +53,17 @@ feature "Inbox", :postgres do
 
         expect(page).to have_content("unable to complete")
         expect(page).not_to have_content("some PII")
+      end
+    end
+
+    context "when a job succeeds after 24 hours" do
+      it "displays the success message" do
+        Timecop.travel(Time.zone.now.tomorrow) do
+          hlr.processed!
+        end
+        visit "/inbox"
+
+        expect(page).to have_content("successfully been processed")
       end
     end
   end
