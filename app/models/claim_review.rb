@@ -116,11 +116,6 @@ class ClaimReview < DecisionReview
     AsyncableJobMessaging.new(job: self).handle_job_failure
   end
 
-  def sanitized_error
-    # keep PII out of output
-    (self[self.class.error_column] || "none").gsub(/\s.+/s, "")
-  end
-
   def invalid_modifiers
     end_product_establishments.map(&:modifier).reject(&:nil?)
   end
