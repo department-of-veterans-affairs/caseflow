@@ -21,7 +21,7 @@ describe UsersUpdatedSinceQuery, :all_dbs do
 
     context "CachedUser updated_at since" do
       let(:vacols_user) { create(:staff) }
-      let!(:user) { create(:user, css_id: vacols_user.sdomainid, updated_at: since_date - 1.hour) }      
+      let!(:user) { create(:user, css_id: vacols_user.sdomainid, updated_at: since_date - 1.hour) }
 
       before do
         CachedUser.sync_from_vacols
