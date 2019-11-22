@@ -224,7 +224,7 @@ export default class DailyDocket extends React.Component {
           <h1>Previously Scheduled</h1>
           <DailyDocketRows
             hidePreviouslyScheduled={false}
-            hearings={this.props.hearings}
+            hearings={prevHearings}
             regionalOffice={regionalOffice}
             user={user}
             readOnly />
