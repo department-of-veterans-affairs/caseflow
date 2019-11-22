@@ -38,13 +38,28 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
 private
 
   def contestable_issue_data(contestable_issue)
-    byebug
+    # TODO add these fields
+    # ratingDecisionId:
+    # decisionIssueId:
+    # approxDecisionDate:
+    # description:
+    # rampClaimId:
+    # titleOfActiveReview:
+    # sourceReviewType:
+    # timely:
+    # latestIssuesInChain:
+    #   id:
+    #   approxDecisionDate:
+    # isRating
     attributes = {
-      "decisionText": "veteran status verified",
-      "decisionDate": "2019-07-11",
-      "category": "Eligibility | Veteran Status",
+      # "decisionText": "veteran status verified",
+      # "decisionDate": "2019-07-11",
+      # "category": "Eligibility | Veteran Status",
+      ratingIssueId: contestable_issue.rating_issue_reference_id,
+      ratingIssueProfileDate: contestable_issue.rating_issue_profile_date,
+      ratingIssueDiagnosticCode: contestable_issue.rating_issue_diagnostic_code,
 
-      "decisionIssueId": contestable_issue.decision_issue&.id
+      decisionIssueId: contestable_issue.decision_issue&.id
     }.reject{ |_, value| value.nil? }
 
     {
