@@ -56,7 +56,8 @@ class DetailsSections extends React.Component {
           virtualHearing={virtualHearing}
           updateVirtualHearing={updateVirtualHearing}
           openModal={this.openModal}
-          openVirtualHearingModal={this.openModal} />
+          openVirtualHearingModal={this.openModal}
+          isVirtual={this.props.isVirtual} />
         <div className="cf-help-divider" />
         {modalOpen && <VirtualHearingModal
           hearing={initialHearingState}
@@ -116,7 +117,8 @@ DetailsSections.propTypes = {
   submit: PropTypes.func,
   user: PropTypes.shape({
     userCanScheduleVirtualHearings: PropTypes.bool
-  })
+  }),
+  isVirtual: PropTypes.bool
 };
 
 // These props are set through Redux

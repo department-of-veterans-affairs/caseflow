@@ -16,7 +16,7 @@ import TextField from '../../../components/TextField';
 
 const DetailsInputs = ({
   hearing, update, readOnly, isLegacy, openModal, updateVirtualHearing, virtualHearing,
-  enableVirtualHearings, requestType
+  enableVirtualHearings, requestType, isVirtual
 }) => (
   <React.Fragment>
     {enableVirtualHearings && <div {...rowThirds}>
@@ -30,7 +30,7 @@ const DetailsInputs = ({
         hearing={hearing}
       />
     </div>}
-    {virtualHearing && <div {...rowThirds}>
+    {isVirtual && virtualHearing && <div {...rowThirds}>
       <TextField
         name="Veteran Email"
         value={virtualHearing.veteranEmail}

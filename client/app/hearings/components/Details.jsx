@@ -217,7 +217,8 @@ class HearingDetails extends React.Component {
             virtualHearing={virtualHearingForm}
             isLegacy={this.state.isLegacy}
             requestType={this.props.hearing.readableRequestType}
-            disabled={disabled} />
+            disabled={disabled}
+            isVirtual={this.props.hearing.isVirtual} />
           <div>
             <a
               className="button-link"
