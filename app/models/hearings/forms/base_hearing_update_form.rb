@@ -59,14 +59,14 @@ class BaseHearingUpdateForm
       @created = true
     end
 
-    # The email sent flag should always be set to false from the API.
-    emails_sent_updates = {
-      veteran_email_sent: email_sent_flag(:veteran_email),
-      judge_email_sent: email_sent_flag(:judge_email),
-      representative_email_sent: email_sent_flag(:representative_email)
-    }.reject { |_k, email_sent| email_sent == true }
-
     if !created?
+      # The email sent flag should always be set to false from the API.
+      emails_sent_updates = {
+        veteran_email_sent: email_sent_flag(:veteran_email),
+        judge_email_sent: email_sent_flag(:judge_email),
+        representative_email_sent: email_sent_flag(:representative_email)
+      }.reject { |_k, email_sent| email_sent == true }
+
       updates = virtual_hearing_attributes.compact.merge(emails_sent_updates)
 
       virtual_hearing.update(updates)
