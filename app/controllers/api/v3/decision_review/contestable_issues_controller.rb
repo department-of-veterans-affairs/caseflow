@@ -38,28 +38,22 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
 private
 
   def contestable_issue_data(contestable_issue)
-    # TODO add these fields
-    # ratingDecisionId:
-    # decisionIssueId:
-    # approxDecisionDate:
-    # description:
-    # rampClaimId:
-    # titleOfActiveReview:
-    # sourceReviewType:
-    # timely:
-    # latestIssuesInChain:
-    #   id:
-    #   approxDecisionDate:
-    # isRating
     attributes = {
-      # "decisionText": "veteran status verified",
-      # "decisionDate": "2019-07-11",
-      # "category": "Eligibility | Veteran Status",
       ratingIssueId: contestable_issue.rating_issue_reference_id,
       ratingIssueProfileDate: contestable_issue.rating_issue_profile_date,
       ratingIssueDiagnosticCode: contestable_issue.rating_issue_diagnostic_code,
-
-      decisionIssueId: contestable_issue.decision_issue&.id
+      description: contestable_issue.description,
+      isRating: contestable_issue.is_rating,
+      latestIssuesInChain: contestable_issue.latest_contestable_issues.collect { |latest| { id: latest.decision_issue&.id, approxDecisionDate: latest.approx_decision_date } },
+      decisionIssueId: contestable_issue.decision_issue&.id,
+      ratingDecisionId: contestable_issue.rating_decision_reference_id,
+      approxDecisionDate: contestable_issue.approx_decision_date,
+      description: contestable_issue.description,
+      rampClaimId: contestable_issue.ramp_claim_id,
+      titleOfActiveReview: contestable_issue.title_of_active_review,
+      sourceReviewType: contestable_issue.source_review_type
+      # based on private
+      # timely: contestable_issue.timely?
     }.reject{ |_, value| value.nil? }
 
     {

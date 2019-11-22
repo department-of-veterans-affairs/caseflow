@@ -6,7 +6,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
   before { FeatureToggle.enable!(:api_v3) }
   after { FeatureToggle.disable!(:api_v3) }
 
-  describe "#index" do
+  fdescribe "#index" do
     let(:veteran) { create(:veteran) }
 
     let!(:api_key) do
@@ -29,7 +29,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
       expect(response).to have_http_status(:ok)
     end
 
-    fit "should return a list of issues" do
+    it "should return a list of issues" do
       Generators::Rating.build(
         participant_id: veteran.ptcpnt_id,
         profile_date: Time.zone.today - 10.days # must be before receipt_date
