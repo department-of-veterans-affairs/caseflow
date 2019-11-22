@@ -190,6 +190,10 @@ module Asyncable
     nil # abstract method intended to be overridden
   end
 
+  def sanitized_error
+    nil # abstract method intended to be overridden
+  end
+
   def expired_without_processing?
     return false if processed?
 
@@ -217,7 +221,6 @@ module Asyncable
 
   def update_error!(err)
     update!(self.class.error_column => err)
-    AsyncableJobMessaging.new(job: self).handle_job_failure(err: err)
   end
 
   def restart!

@@ -21,6 +21,7 @@ describe AsyncableJobMessaging, :postgres do
         expect(owner.messages.count).to eq message_count + 1
         expect(owner.messages.last.text).to match("A new note has been added to your HigherLevelReview job")
         expect(owner.messages.last.text).to match(job.path)
+        expect(owner.messages.last.message_type).to eq "job_note_added"
       end
     end
 
@@ -37,10 +38,15 @@ describe AsyncableJobMessaging, :postgres do
 
   describe "#handle_job_failure" do
     let(:owner) { create(:default_user) }
-    let(:job) { create(:higher_level_review, :requires_processing, intake: create(:intake, user: owner)) }
+    let!(:job) do
+      create(:higher_level_review,
+             :requires_processing,
+             intake: create(:intake, user: owner),
+             establishment_error: "ErrorName followed by more details")
+    end
     let(:messaging) { AsyncableJobMessaging.new(job: job) }
 
-    subject { messaging.handle_job_failure(err: "sample error text") }
+    subject { messaging.handle_job_failure }
 
     context "when a failure happens within 24 hours" do
       it "doesn't send a message to the job owner" do
@@ -52,22 +58,24 @@ describe AsyncableJobMessaging, :postgres do
 
     context "when a failure first happens after 24 hours" do
       it "sends a message to the job owner" do
-        job
-        Timecop.travel(Time.zone.now.tomorrow)
         message_count = owner.messages.count
-        subject
+        Timecop.travel(Time.zone.now.tomorrow) do
+          subject
+        end
         expect(owner.messages.count).to eq message_count + 1
         expect(owner.messages.last.text).to match("unable to complete because of an error")
         expect(owner.messages.last.text).to match(job.path)
+        expect(owner.messages.last.text).not_to match("more details")
+        expect(owner.messages.last.message_type).to eq "job_failing"
       end
     end
 
     context "when multiple failures happen after 24 hours" do
       it "sends only one message to the job owner" do
-        job
-        Timecop.travel(Time.zone.now.tomorrow)
         message_count = owner.messages.count
-        3.times { messaging.handle_job_failure(err: "sample error text") }
+        Timecop.travel(Time.zone.now.tomorrow) do
+          3.times { messaging.handle_job_failure }
+        end
         expect(owner.messages.count).to eq message_count + 1
       end
     end
