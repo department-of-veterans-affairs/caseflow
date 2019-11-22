@@ -8,7 +8,7 @@
 # then sync and save the corresponding target_class instance.
 
 class ETL::Syncer
-  def initialize(since: Time.zone.yesterday)
+  def initialize(since: false)
     @since = since
   end
 
@@ -32,7 +32,13 @@ class ETL::Syncer
 
   attr_reader :since
 
+  def incremental?
+    !!since
+  end
+
   def instances_needing_update
-    origin_class.where("updated_at >= ?", since)
+    return origin_class.where("updated_at >= ?", since) if incremental?
+
+    origin_class
   end
 end
