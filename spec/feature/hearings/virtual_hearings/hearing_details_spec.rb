@@ -55,14 +55,14 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     end
   end
 
-  scenario "User can edit veteran and poa emails", focus: true do
-      visit "hearings/" + hearing.external_id.to_s + "/details"
+  scenario "User can see and edit veteran and poa emails" do
+    visit "hearings/" + hearing.external_id.to_s + "/details"
 
-      click_dropdown(name: "hearingType", index: 1)
-      fill_in "vet-email", with: "email@testingEmail.com"
-      click_button("Change and Send Email")
+    click_dropdown(name: "hearingType", index: 1)
+    fill_in "vet-email", with: "email@testingEmail.com"
+    click_button("Change and Send Email")
 
-      expect(page).to have_field("Veteran Email")
-      expect(page).to have_field("POA/Representive Email")
-    end
+    expect(page).to have_field("Veteran Email")
+    expect(page).to have_field("POA/Representive Email")
+  end
 end
