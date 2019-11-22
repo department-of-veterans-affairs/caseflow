@@ -26,7 +26,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     fill_in "rep-email", with: "email@testingEmail.com"
     click_button("Change and Send Email")
 
-    expect(page).to have_content("Hearing Successfully Updated")
+    expect(page).to have_content(COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_TO_VIRTUAL"]["MESSAGE"])
 
     hearing.reload
     expect(VirtualHearing.count).to eq(1)
@@ -34,7 +34,6 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     expect(hearing.virtual_hearing.veteran_email).to eq("email@testingEmail.com")
     expect(hearing.virtual_hearing.representative_email).to eq("email@testingEmail.com")
     expect(hearing.virtual_hearing.judge_email).to eq(nil)
-    expect(page).to have_content(COPY::VIRTUAL_HEARING_ALERTS["HEARING_CHANGED_TO_VIRTUAL"]["MESSAGE"])
   end
 
   context "for an existing Virtual Hearing" do
@@ -47,12 +46,11 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
 
       click_button("Change and Send Email")
 
-      expect(page).to have_content("Hearing Successfully Updated")
+      expect(page).to have_content(COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_TO_VIRTUAL"]["MESSAGE"])
 
       hearing.reload
       expect(hearing.virtual?).to eq(false)
       expect(page).to have_content(hearing.readable_request_type)
-      expect(page).to have_content(COPY::VIRTUAL_HEARING_ALERTS["HEARING_CHANGED_FROM_VIRTUAL"]["MESSAGE"])
     end
   end
 end
