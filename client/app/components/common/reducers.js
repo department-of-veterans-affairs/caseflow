@@ -79,7 +79,7 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
   case ACTIONS.REMOVE_ALERTS_WITH_TIMESTAMP:
     return update(state, {
       alerts: {
-        $set: state.alerts.filter((alert) => alert.timestamp === action.payload.timestamp)
+        $set: state.alerts.filter((alert) => action.payload.timestamps.indexOf(alert.timestamp) === -1)
       }
     });
   case ACTIONS.RECEIVE_REGIONAL_OFFICES:

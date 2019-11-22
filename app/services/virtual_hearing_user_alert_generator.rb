@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-class VirtualHearingUserAlertGenerator
-  attr_accessor :created, :virtual_hearing_attributes, :veteran_full_name
+class VirtualHearingUserAlertBuilder
+  attr_accessor :changed_to_virtual, :virtual_hearing_attributes, :veteran_full_name
 
-  def initialize(created:, virtual_hearing_attributes:, veteran_full_name:)
-    @created = created
+  def initialize(changed_to_virtual:, virtual_hearing_attributes:, veteran_full_name:)
+    @changed_to_virtual = changed_to_virtual
     @virtual_hearing_attributes = virtual_hearing_attributes
     @veteran_full_name = veteran_full_name
   end
@@ -30,7 +30,7 @@ class VirtualHearingUserAlertGenerator
       COPY::VIRTUAL_HEARING_USER_ALERTS["EMAILS_UPDATED"]
     elsif cancelled?
       COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_FROM_VIRTUAL"]
-    elsif created
+    elsif changed_to_virtual
       COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_TO_VIRTUAL"]
     end
   end
@@ -51,6 +51,6 @@ class VirtualHearingUserAlertGenerator
 
   def only_emails_updated?
     (virtual_hearing_attributes.key?(:veteran_email) || virtual_hearing_attributes.key?(:representative_email)) &&
-      !cancelled? && !created
+      !cancelled? && !changed_to_virtual
   end
 end
