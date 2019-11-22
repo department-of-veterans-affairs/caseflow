@@ -15,6 +15,9 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   end
 
   let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO13") }
+  let!(:expected_alert) do
+    COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_TO_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
+  end
 
   scenario "user switches hearing type to 'Virtual'" do
     visit "hearings/" + hearing.external_id.to_s + "/details"
@@ -26,7 +29,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     fill_in "rep-email", with: "email@testingEmail.com"
     click_button("Change and Send Email")
 
-    expect(page).to have_content(COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_TO_VIRTUAL"]["MESSAGE"])
+    expect(page).to have_content(expected_alert)
 
     hearing.reload
     expect(VirtualHearing.count).to eq(1)
@@ -38,6 +41,9 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
 
   context "for an existing Virtual Hearing" do
     let!(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
+    let!(:expected_alert) do
+      COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_FROM_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
+    end
 
     scenario "user switches hearing type back to original request type" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
@@ -46,7 +52,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
 
       click_button("Change and Send Email")
 
-      expect(page).to have_content(COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_TO_VIRTUAL"]["MESSAGE"])
+      expect(page).to have_content(expected_alert)
 
       hearing.reload
       expect(hearing.virtual?).to eq(false)
