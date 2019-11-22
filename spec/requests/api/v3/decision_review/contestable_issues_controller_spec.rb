@@ -2,7 +2,7 @@
 
 require "support/database_cleaner"
 
-describe Api::V3::DecisionReview::IssuesController, :postgres, type: :request do
+describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: :request do
   before { FeatureToggle.enable!(:api_v3) }
   after { FeatureToggle.disable!(:api_v3) }
 
@@ -15,7 +15,7 @@ describe Api::V3::DecisionReview::IssuesController, :postgres, type: :request do
 
     def get_issues(veteran_id: veteran.file_number, receipt_date: Time.zone.today)
       get(
-        "/api/v3/decision_review/issues?",
+        "/api/v3/decision_review/contestable_issues",
         headers: {
           "Authorization" => "Token #{api_key}",
           "veteranId" => veteran_id,

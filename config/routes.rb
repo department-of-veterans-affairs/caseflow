@@ -36,7 +36,7 @@ Rails.application.routes.draw do
         resources :supplemental_claims, only: [:create, :show]
         resources :appeals, only: [:create, :show]
         resources :intake_statuses, only: :show
-        resources :issues, only: [:index]
+        resources :contestable_issues, only: [:index]
       end
     end
     namespace :docs do

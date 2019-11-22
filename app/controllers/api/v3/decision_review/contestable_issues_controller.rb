@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::V3::DecisionReview::IssuesController < Api::V3::BaseController
+class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseController
   def index
     # REVIEW move these before filters?
     veteran = Veteran.find_by_file_number(request.headers['veteranId'])
