@@ -148,6 +148,12 @@ class Veteran < ApplicationRecord
     @relationships ||= fetch_relationships
   end
 
+  def relationship_with_participant_id(match_id = nil)
+    relationships&.find do |relationship|
+      relationship.participant_id == match_id
+    end
+  end
+
   def incident_flash?
     bgs_record.is_a?(Hash) && bgs_record[:block_cadd_ind] == "S"
   end
@@ -377,11 +383,10 @@ class Veteran < ApplicationRecord
   end
 
   def fetch_relationships
-    relationships = bgs.find_all_relationships(
-      participant_id: participant_id
-    )
-    relationships_array = Array.wrap(relationships)
-    relationships_array.map { |relationship_hash| Relationship.from_bgs_hash(self, relationship_hash) }
+    relationship_hashes = Array.wrap(bgs.find_all_relationships(participant_id: participant_id))
+    relationship_hashes.map do |relationship_hash|
+      Relationship.from_bgs_hash(self, relationship_hash)
+    end
   end
 
   def period_of_service(service_attributes)
@@ -418,7 +423,7 @@ class Veteran < ApplicationRecord
   end
 
   def military_address?
-    !military_postal_type_code.blank?
+    military_postal_type_code.present?
   end
 
   def base_vbms_hash

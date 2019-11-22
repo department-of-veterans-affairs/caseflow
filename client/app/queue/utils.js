@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 import React from 'react';
-import _ from 'lodash';
+import _, { escapeRegExp } from 'lodash';
 import moment from 'moment';
 import StringUtil from '../util/StringUtil';
 import {
@@ -16,7 +16,6 @@ import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../constants/UNDECIDED_VACOL
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION.json';
-import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import COPY from '../../COPY.json';
 import { formatDateStrUtc } from '../util/DateUtil';
 
@@ -530,22 +529,28 @@ export const taskHasCompletedHold = (task) => {
 
 export const taskIsActive = (task) => ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);
 
-export const taskActionData = (props) => {
-  if (!props.task) {
+export const taskActionData = ({ task, match }) => {
+  if (!task) {
     return {};
   }
 
-  const relevantAction = props.task.availableActions.
-    find((action) => props.history.location.pathname.endsWith(action.value));
+  const { path } = match;
+  const endsWith = (search, str) => {
+    const esc = escapeRegExp(search);
+
+    const pattern = new RegExp(`${esc}\\)?$`, 'gi');
+
+    return pattern.test(str);
+  };
+
+  const relevantAction = task.availableActions.find((action) => endsWith(action.value, path));
 
   if (relevantAction && relevantAction.data) {
-    return (relevantAction.data);
+    return relevantAction.data;
   }
 
   return null;
 };
-
-export const actionNameOfTask = (task) => CO_LOCATED_ADMIN_ACTIONS[task.label] || task.label;
 
 export const nullToFalse = (key, obj) => {
   if (obj[key] === null) {

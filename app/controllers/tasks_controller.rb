@@ -7,28 +7,28 @@ class TasksController < ApplicationController
   skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
   TASK_CLASSES_LOOKUP = {
+    AttorneyDispatchReturnTask: AttorneyDispatchReturnTask,
+    AttorneyQualityReviewTask: AttorneyQualityReviewTask,
+    AttorneyRewriteTask: AttorneyRewriteTask,
+    AttorneyTask: AttorneyTask,
     ChangeHearingDispositionTask: ChangeHearingDispositionTask,
     ColocatedTask: ColocatedTask,
-    AttorneyRewriteTask: AttorneyRewriteTask,
-    AttorneyDispatchReturnTask: AttorneyDispatchReturnTask,
-    AttorneyTask: AttorneyTask,
-    AttorneyQualityReviewTask: AttorneyQualityReviewTask,
-    GenericTask: GenericTask,
-    Task: Task,
-    QualityReviewTask: QualityReviewTask,
-    JudgeAssignTask: JudgeAssignTask,
-    JudgeQualityReviewTask: JudgeQualityReviewTask,
-    JudgeDispatchReturnTask: JudgeDispatchReturnTask,
-    ScheduleHearingTask: ScheduleHearingTask,
-    TranslationTask: TranslationTask,
-    HearingAdminActionTask: HearingAdminActionTask,
-    MailTask: MailTask,
-    InformalHearingPresentationTask: InformalHearingPresentationTask,
-    PrivacyActTask: PrivacyActTask,
+    EvidenceSubmissionWindowTask: EvidenceSubmissionWindowTask,
     FoiaTask: FoiaTask,
+    HearingAdminActionTask: HearingAdminActionTask,
+    InformalHearingPresentationTask: InformalHearingPresentationTask,
+    JudgeAddressMotionToVacateTask: JudgeAddressMotionToVacateTask,
+    JudgeAssignTask: JudgeAssignTask,
+    JudgeDispatchReturnTask: JudgeDispatchReturnTask,
+    JudgeQualityReviewTask: JudgeQualityReviewTask,
+    MailTask: MailTask,
+    PrivacyActTask: PrivacyActTask,
     PulacCerulloTask: PulacCerulloTask,
+    QualityReviewTask: QualityReviewTask,
+    ScheduleHearingTask: ScheduleHearingTask,
     SpecialCaseMovementTask: SpecialCaseMovementTask,
-    JudgeAddressMotionToVacateTask: JudgeAddressMotionToVacateTask
+    Task: Task,
+    TranslationTask: TranslationTask
   }.freeze
 
   def set_application

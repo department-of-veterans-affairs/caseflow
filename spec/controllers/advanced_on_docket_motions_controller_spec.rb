@@ -29,7 +29,7 @@ RSpec.describe AdvanceOnDocketMotionsController, :postgres, type: :controller do
       context "where case has an existing aod motion" do
         let!(:aod_motion) do
           AdvanceOnDocketMotion.create(
-            person: appeal.claimants.first.person,
+            person: appeal.claimant.person,
             granted: false,
             user: aod_user,
             reason: "age"
@@ -38,7 +38,7 @@ RSpec.describe AdvanceOnDocketMotionsController, :postgres, type: :controller do
 
         it "overrwrites existing motion" do
           subject
-          motions = appeal.claimants.first.person.advance_on_docket_motions
+          motions = appeal.claimant.person.advance_on_docket_motions
           expect(motions.count).to eq 1
           expect(motions.first.granted).to be(true)
           expect(motions.first.reason).to eq("financial_distress")

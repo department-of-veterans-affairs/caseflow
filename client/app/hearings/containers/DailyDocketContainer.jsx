@@ -98,51 +98,37 @@ export class DailyDocketContainer extends React.Component {
     });
   };
 
-  formatHearing = (hearing) => {
-    const amaHearingValues = hearing.docketName === 'hearing' ? {
-      evidence_window_waived: hearing.evidenceWindowWaived
-    } : {};
+  formatHearingFormData = (hearingFormData) => {
+    const { virtualHearing, location, ...rest } = hearingFormData;
 
-    const legacyValues = hearing.docketName === 'legacy' ? {
-      aod: hearing.aod,
-      hold_open: hearing.holdOpen
-    } : {};
-
-    return _.omitBy({
-      disposition: hearing.disposition,
-      transcript_requested: hearing.transcriptRequested,
-      notes: hearing.notes,
-      hearing_location_attributes: hearing.location ? ApiUtil.convertToSnakeCase(hearing.location) : null,
-      scheduled_time_string: hearing.scheduledTimeString,
-      prepped: hearing.prepped,
-      ...legacyValues,
-      ...amaHearingValues
-    }, _.isNil);
+    return ApiUtil.convertToSnakeCase(_.omitBy({
+      ...rest,
+      hearing_location_attributes: location,
+      virtual_hearing_attributes: virtualHearing
+    }, _.isUndefined));
   };
 
-  formatAod = (hearing) => {
-    if (hearing.advanceOnDocketMotion.userId !== this.props.user.userId) {
+  formatAodMotionForm = (aodMotionForm, hearing) => {
+    if (!aodMotionForm) {
       return {};
     }
 
-    return _.omitBy({
-      reason: hearing.advanceOnDocketMotion.reason,
-      granted: hearing.advanceOnDocketMotion.granted,
+    // always send reason and person_id
+    return ApiUtil.convertToSnakeCase({
+      ...aodMotionForm,
       person_id: hearing.claimantId || hearing.advanceOnDocketMotion.personId,
-      user_id: hearing.advanceOnDocketMotion.userId
-    }, _.isNil);
+      reason: aodMotionForm.reason || hearing.advanceOnDocketMotion.reason
+    });
   }
 
-  saveHearing = (hearingId) => {
+  saveHearing = (hearingId, hearingFormData) => {
     const hearing = this.props.hearings[hearingId];
-    const aodMotion = hearing.advanceOnDocketMotion ? {
-      advance_on_docket_motion: this.formatAod(hearing)
-    } : {};
+    const data = {
+      hearing: this.formatHearingFormData(hearingFormData),
+      advance_on_docket_motion: this.formatAodMotionForm(hearingFormData.advanceOnDocketMotion, hearing)
+    };
 
-    return ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: {
-      hearing: this.formatHearing(hearing),
-      ...aodMotion
-    } }).
+    return ApiUtil.patch(`/hearings/${hearingId}`, { data }).
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(response.body);
 
