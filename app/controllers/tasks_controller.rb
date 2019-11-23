@@ -155,7 +155,7 @@ class TasksController < ApplicationController
   private
 
   def queue_config
-    QueueConfig.new(assignee: user).to_hash_for_user(current_user)
+    QueueConfig.new(assignee: user).to_hash
   end
 
   def verify_task_access
