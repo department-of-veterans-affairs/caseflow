@@ -81,7 +81,7 @@ describe AsyncableJobMessaging, :postgres do
 
   describe "#handle_job_success" do
     let(:owner) { create(:default_user) }
-    let(:job) { create(:higher_level_review, :requires_processing, intake: create(:intake, user: owner)) }
+    let!(:job) { create(:higher_level_review, :requires_processing, intake: create(:intake, user: owner)) }
     let(:messaging) { AsyncableJobMessaging.new(job: job) }
 
     subject { messaging.handle_job_success }
@@ -96,13 +96,11 @@ describe AsyncableJobMessaging, :postgres do
 
     context "when a success happens after 24 hours of failure" do
       it "sends a message to the job owner" do
-        job
         messaging.handle_job_failure
-        Timecop.travel(Time.zone.now.tomorrow)
-        messaging.handle_job_failure
-        message_count = owner.messages.count
-        subject
-        expect(owner.messages.count).to eq message_count + 1
+        Timecop.travel(Time.zone.now.tomorrow) do
+          messaging.handle_job_failure
+          expect { subject }.to change { owner.messages.count }.by(1)
+        end
         expect(owner.messages.last.text).to match("has successfully been processed")
         expect(owner.messages.last.text).to match(job.path)
       end
