@@ -14,7 +14,7 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
   end
 
   def perform(hearing_id:)
-    @virtual_hearing = VirtualHearing.find_by(hearing_id: hearing_id)
+    @virtual_hearing = VirtualHearing.where(hearing_id: hearing_id).order(created_at: :desc).first
 
     virtual_hearing.establishment.attempted!
 

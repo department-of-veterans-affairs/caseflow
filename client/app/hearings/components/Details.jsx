@@ -17,6 +17,7 @@ import _ from 'lodash';
 import DetailsSections from './DetailsSections';
 import DetailsOverview from './details/DetailsOverview';
 import { onChangeFormData } from '../../components/common/actions';
+import VirtualHearingModal from './VirtualHearingModal';
 
 const row = css({
   marginLeft: '-15px',
@@ -53,11 +54,19 @@ class HearingDetails extends React.Component {
       loading: false,
       success: false,
       error: false,
+      virtualHearingModalOpen: false,
+      virtualHearingModalType: null,
       initialFormData
     };
 
     this.updateAllFormData(initialFormData);
   }
+
+  openVirtualHearingModal = ({ type }) => this.setState({
+    virtualHearingModalOpen: true,
+    virtualHearingModalType: type
+  })
+  closeVirtualHearingModal = () => this.setState({ virtualHearingModalOpen: false })
 
   getInitialFormData = () => {
     const { hearing } = this.props;
@@ -109,6 +118,18 @@ class HearingDetails extends React.Component {
   updateVirtualHearing = (values) => {
     this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, values);
     this.setState({ updated: true });
+  }
+
+  resetVirtualHearing = () => {
+    const { hearing: { virtualHearing } } = this.props;
+
+    if (virtualHearing) {
+      this.updateVirtualHearing(virtualHearing);
+    } else {
+      this.updateVirtualHearing(null);
+    }
+
+    this.closeVirtualHearingModal();
   }
 
   updateTranscription = (values) => {
@@ -212,10 +233,16 @@ class HearingDetails extends React.Component {
           <h2>Hearing Details</h2>
           <DetailsOverview hearing={this.props.hearing} />
           <div className="cf-help-divider" />
+          {this.state.virtualHearingModalOpen && <VirtualHearingModal
+            hearing={this.props.hearing}
+            virtualHearing={virtualHearingForm}
+            update={this.updateVirtualHearing}
+            submit={() => this.submit().then(this.closeVirtualHearingModal)}
+            closeModal={this.closeVirtualHearingModal}
+            reset={this.resetVirtualHearing}
+            type={this.state.virtualHearingModalType} />}
           <DetailsSections
             user={this.props.user}
-            submit={this.submit}
-            initialHearingState={this.props.hearing}
             updateTranscription={this.updateTranscription}
             updateHearing={this.updateHearing}
             updateVirtualHearing={this.updateVirtualHearing}
@@ -223,6 +250,7 @@ class HearingDetails extends React.Component {
             hearing={hearingDetailsForm}
             virtualHearing={virtualHearingForm}
             isLegacy={this.state.isLegacy}
+            openVirtualHearingModal={this.openVirtualHearingModal}
             requestType={this.props.hearing.readableRequestType}
             disabled={disabled}
             isVirtual={this.props.hearing.isVirtual} />

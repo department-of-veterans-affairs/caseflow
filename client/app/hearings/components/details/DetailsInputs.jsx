@@ -15,7 +15,7 @@ import HearingTypeDropdown from './HearingTypeDropdown';
 import TextField from '../../../components/TextField';
 
 const DetailsInputs = ({
-  hearing, update, readOnly, isLegacy, openModal, updateVirtualHearing, virtualHearing,
+  hearing, update, readOnly, isLegacy, openVirtualHearingModal, updateVirtualHearing, virtualHearing,
   enableVirtualHearings, requestType, isVirtual
 }) => (
   <React.Fragment>
@@ -24,7 +24,7 @@ const DetailsInputs = ({
         virtualHearing={virtualHearing}
         requestType={requestType}
         updateVirtualHearing={updateVirtualHearing}
-        openModal={openModal}
+        openModal={openVirtualHearingModal}
       />
       <VirtualHearingLink
         hearing={hearing}
@@ -107,7 +107,7 @@ DetailsInputs.propTypes = {
   readOnly: PropTypes.bool,
   requestType: PropTypes.string,
   isLegacy: PropTypes.bool,
-  openModal: PropTypes.func,
+  openVirtualHearingModal: PropTypes.func,
   updateVirtualHearing: PropTypes.func,
   virtualHearing: PropTypes.shape({
     veteranEmail: PropTypes.string,

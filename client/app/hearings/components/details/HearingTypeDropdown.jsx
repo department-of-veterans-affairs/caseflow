@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../../../components/SearchableDropdown';
-import COPY from '../../../../COPY.json';
 
 class HearingTypeDropdown extends React.Component {
 
@@ -32,27 +31,6 @@ class HearingTypeDropdown extends React.Component {
     return this.HEARING_TYPE_OPTIONS[1];
   }
 
-  getModalTitleAndIntro = (option) => {
-    if (option.value) {
-      return {
-        modalTitle: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE,
-        modalIntro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO
-      };
-    }
-    if (option.label === 'Video') {
-      return {
-        modalTitle: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_TITLE,
-        modalIntro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_INTRO
-      };
-    }
-
-    return {
-      modalTitle: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_CENTRAL_TITLE,
-      modalIntro: ''
-    };
-
-  }
-
   onChange = (option) => {
     const { updateVirtualHearing, openModal } = this.props;
     const currentValue = this.getValue();
@@ -60,13 +38,7 @@ class HearingTypeDropdown extends React.Component {
     // if current value is true (a virtual hearing), then we will be sending cancellation emails,
     // if new value is true, then we will be sending confirmation emails
     if (currentValue.value || option.value) {
-      const { modalTitle, modalIntro } = this.getModalTitleAndIntro(option);
-
-      openModal({
-        modalTitle,
-        modalIntro,
-        modalButton: COPY.VIRTUAL_HEARING_CHANGE_HEARING_BUTTON
-      });
+      openModal({ type: 'change_to_virtual' });
     }
 
     if (currentValue.value && !option.value) {
