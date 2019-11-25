@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe QueueColumn, :all_dbs do
   describe ".from_name" do
     subject { QueueColumn.from_name(column_name) }

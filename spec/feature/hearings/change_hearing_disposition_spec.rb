@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.shared_examples "Change hearing disposition" do
   let(:current_full_name) { "Leonela Harbold" }
   let(:hearing_admin_user) { create(:user, full_name: current_full_name, station_id: 101) }
@@ -191,14 +188,15 @@ RSpec.shared_examples "Change hearing disposition" do
           expect(page).to have_content("Unassigned (0)")
         end
 
-        step "verify that there's a NoShowHearingTask with a hold in the HearingsManagement org assigned queue" do
-          User.authenticate!(user: hearing_mgmt_user)
-          visit "/organizations/#{HearingsManagement.singleton.url}"
-          click_on "Assigned (1)"
-          find("td", text: "No Show Hearing Task").find(:xpath, "ancestor::tr").click_on veteran_link_text
-          no_show_active_row = find("dd", text: "No Show Hearing Task").find(:xpath, "ancestor::tr")
-          expect(no_show_active_row).to have_content("DAYS ON HOLD 0 of 25", normalize_ws: true)
-        end
+        # Add test back in https://github.com/department-of-veterans-affairs/caseflow/issues/12782
+        # step "verify that there's a NoShowHearingTask with a hold in the HearingsManagement org assigned queue" do
+        #   User.authenticate!(user: hearing_mgmt_user)
+        #   visit "/organizations/#{HearingsManagement.singleton.url}"
+        #   click_on "Assigned (1)"
+        #   find("td", text: "No Show Hearing Task").find(:xpath, "ancestor::tr").click_on veteran_link_text
+        #   no_show_active_row = find("dd", text: "No Show Hearing Task").find(:xpath, "ancestor::tr")
+        #   expect(no_show_active_row).to have_content("DAYS ON HOLD 0 of 25", normalize_ws: true)
+        # end
       end
     end
 

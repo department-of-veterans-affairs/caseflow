@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.describe JudgeAssignTasksController, :all_dbs do
   describe "POST /judge_assign_tasks" do
     let!(:attorney) { create(:user) }

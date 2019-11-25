@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe ClaimReviewIntake, :postgres do
   let(:veteran_file_number) { "64205555" }
   let(:user) { Generators::User.build }

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.describe "Hearing Day", :all_dbs, type: :request do
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 0, 0, 0))

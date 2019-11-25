@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
 require "rake"
 
 describe "task rake fixes", :all_dbs do
