@@ -154,10 +154,10 @@ class VirtualHearingModal extends React.Component {
   }
 
   onSubmit = () => {
-    let { closeModal, submit } = this.props;
+    let { submit } = this.props;
 
     if (this.validateForm()) {
-      submit().then(closeModal).
+      submit().
         catch((error) => {
         // Details.jsx re-throws email invalid error that we catch here.
           const msg = error.response.body.errors[0].message;
@@ -221,10 +221,7 @@ VirtualHearingModal.propTypes = {
   update: PropTypes.func,
   submit: PropTypes.func,
   reset: PropTypes.func,
-  closeModal: PropTypes.func,
-  modalTitle: PropTypes.string,
-  modalIntro: PropTypes.string,
-  modalButton: PropTypes.string
+  closeModal: PropTypes.func
 };
 
 export default VirtualHearingModal;

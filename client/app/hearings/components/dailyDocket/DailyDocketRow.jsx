@@ -163,7 +163,7 @@ class DailyDocketRow extends React.Component {
 
     const hearing = deepDiff(this.state.initialState, this.props.hearing);
 
-    this.props.saveHearing(this.props.hearing.externalId, hearing).
+    return this.props.saveHearing(this.props.hearing.externalId, hearing).
       then((success) => {
         if (success) {
           this.setState({
@@ -288,13 +288,8 @@ class DailyDocketRow extends React.Component {
             ;
           }} user={user}
           update={this.updateVirtualHearing}
-          submit={() => {
-            this.saveHearing();
-            this.closeVirtualHearingModal();
-          }}
-          modalTitle={COPY.VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE}
-          modalIntro={COPY.VIRTUAL_HEARING_CHANGE_HEARING_TIME_MODAL_INTRO}
-          modalButton={COPY.VIRTUAL_HEARING_CHANGE_HEARING_BUTTON}
+          submit={() => this.saveHearing().then(this.closeVirtualHearingModal)}
+          type={'change_hearing_time'}
         />}
       {this.state.aodModalActive && <AodModal
         advanceOnDocketMotion={hearing.advanceOnDocketMotion || {}}
