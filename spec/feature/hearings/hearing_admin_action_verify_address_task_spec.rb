@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.shared_examples "Address Verify Task Frontend Workflow" do
   let!(:user) { create(:hearings_coordinator) }

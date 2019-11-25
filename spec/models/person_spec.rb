@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe Person, :postgres do
   let(:known_fake_participant_id) { "1129318238" }

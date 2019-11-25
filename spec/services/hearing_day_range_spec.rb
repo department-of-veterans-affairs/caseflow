@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe HearingDayRange, :all_dbs do
   describe ".load_days" do

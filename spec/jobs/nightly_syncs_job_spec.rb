@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe NightlySyncsJob, :all_dbs do
   context "when the job runs successfully" do

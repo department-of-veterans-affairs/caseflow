@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe TimeableTask, :postgres do
   let(:now) { Time.utc(2018, 4, 24, 12, 0, 0) }

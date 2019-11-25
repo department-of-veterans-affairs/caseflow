@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe TranslationTask, :postgres do
   describe ".create_from_root_task" do

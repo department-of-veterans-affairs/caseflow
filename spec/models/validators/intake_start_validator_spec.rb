@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe IntakeStartValidator, :postgres do
   context "#validate" do

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 feature "Appeal Edit issues", :all_dbs do
   include IntakeHelpers

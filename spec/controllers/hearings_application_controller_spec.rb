@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.describe HearingsApplicationController, :postgres, type: :controller do
   context "when user is not authenticated" do

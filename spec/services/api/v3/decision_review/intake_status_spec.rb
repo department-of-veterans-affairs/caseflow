@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 context Api::V3::DecisionReview::IntakeStatus, :postgres do
   let(:veteran_file_number) { "123456789" }

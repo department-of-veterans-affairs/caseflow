@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe DecisionDocument, :postgres do
   include IntakeHelpers

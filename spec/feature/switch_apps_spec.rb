@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.feature "SwitchApps", :postgres do
   context "A user with just Queue access" do

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe Colocated, :postgres do
   let(:colocated_org) { Colocated.singleton }

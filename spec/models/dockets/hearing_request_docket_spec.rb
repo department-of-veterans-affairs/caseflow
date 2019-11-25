@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe HearingRequestDocket, :all_dbs do
   describe "#age_of_n_oldest_priority_appeals" do

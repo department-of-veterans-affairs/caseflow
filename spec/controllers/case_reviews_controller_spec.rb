@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
   before do

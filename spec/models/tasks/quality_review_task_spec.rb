@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe QualityReviewTask, :all_dbs do
   let(:root_task) { create(:root_task) }

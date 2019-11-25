@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe WorksheetIssue, :postgres do
   context ".create_from_issue" do

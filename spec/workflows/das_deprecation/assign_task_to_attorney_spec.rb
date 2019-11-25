@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe DasDeprecation::AssignTaskToAttorney, :all_dbs do
   before do

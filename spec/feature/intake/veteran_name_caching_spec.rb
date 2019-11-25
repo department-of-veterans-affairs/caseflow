@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 feature "Higher-Level Review", :postgres do
   include IntakeHelpers

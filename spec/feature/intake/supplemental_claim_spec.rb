@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 feature "Supplemental Claim Intake", :all_dbs do
   include IntakeHelpers

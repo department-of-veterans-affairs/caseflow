@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe HearingTaskAssociation, :all_dbs do
   describe "uniqueness validation" do

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe JudgeSchedulePeriod, :all_dbs do
   let(:judge_schedule_period) { create(:judge_schedule_period) }

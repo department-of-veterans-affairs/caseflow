@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe HearingDispositionChangeJob, :all_dbs do
   def create_disposition_task_ancestry(disposition: nil, scheduled_for: nil, associated_hearing: true)

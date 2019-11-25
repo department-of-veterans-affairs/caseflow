@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe AppealRepository, :all_dbs do
   let(:correspondent_record) do

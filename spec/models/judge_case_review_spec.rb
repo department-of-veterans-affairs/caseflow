@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 def complete_params(judge:, attorney:, location:, vacols_issue1:, vacols_issue2:)
   {

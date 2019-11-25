@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe HearingCoordinatorScheduleQueue, :all_dbs do
   describe "#tasks" do

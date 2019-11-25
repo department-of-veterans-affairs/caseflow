@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe DirectReviewDocket, :postgres do
   context "#due_count" do

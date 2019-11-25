@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe OpenHearingTasksWithoutActiveDescendantsChecker, :all_dbs do
   let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }

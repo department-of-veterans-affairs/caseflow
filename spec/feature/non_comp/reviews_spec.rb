@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 feature "NonComp Reviews Queue", :postgres do
   context "with an existing organization" do

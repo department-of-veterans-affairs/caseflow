@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe VirtualHearings::CreateConferenceJob, :all_dbs do
   context ".perform" do

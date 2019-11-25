@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe UserFinder, :all_dbs do
   let!(:judge) do

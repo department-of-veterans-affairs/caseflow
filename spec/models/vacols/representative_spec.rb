@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe VACOLS::Representative, :all_dbs do
   let(:vacols_case) { create(:case_with_rep_table_record) }

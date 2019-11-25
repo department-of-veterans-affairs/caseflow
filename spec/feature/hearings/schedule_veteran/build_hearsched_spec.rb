@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
   let!(:current_user) do

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe AppealHistory, :all_dbs do
   let(:original) do

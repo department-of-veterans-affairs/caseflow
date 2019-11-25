@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe User, :all_dbs do
   let(:css_id) { "TomBrady" }

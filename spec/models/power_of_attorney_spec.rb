@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe PowerOfAttorney, :all_dbs do
   let!(:vacols_case) { create(:case, :representative_american_legion) }

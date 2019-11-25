@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.feature "Intake Stats Dashboard", :postgres, skip: "deprecated" do
   before do

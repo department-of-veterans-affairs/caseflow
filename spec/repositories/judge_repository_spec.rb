@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe JudgeRepository, :all_dbs do
   let(:judge_name) { "Sojudgey" }

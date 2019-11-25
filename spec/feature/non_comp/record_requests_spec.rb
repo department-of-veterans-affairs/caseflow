@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 feature "NonComp Record Request Page", :postgres do
   before do

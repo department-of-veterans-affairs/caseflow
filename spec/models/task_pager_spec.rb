@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 require "faker"
 
 describe TaskPager, :all_dbs do

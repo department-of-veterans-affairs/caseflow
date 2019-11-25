@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.shared_examples "Change hearing disposition" do
   let(:current_full_name) { "Leonela Harbold" }

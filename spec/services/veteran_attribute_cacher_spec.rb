@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe VeteranAttributeCacher, :postgres do
   context "local Veteran records exist with nil SSN or first_name" do

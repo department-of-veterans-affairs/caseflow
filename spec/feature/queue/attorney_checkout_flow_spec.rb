@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.feature "Attorney checkout flow", :all_dbs do
   let(:attorney_user) { create(:default_user) }

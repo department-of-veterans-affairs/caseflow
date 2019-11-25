@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe Tag, :postgres do
   let(:document) { Generators::Document.create(vbms_document_id: 123) }

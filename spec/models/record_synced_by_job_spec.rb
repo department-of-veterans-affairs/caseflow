@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe RecordSyncedByJob, :postgres do
   context ".next_records_to_process" do

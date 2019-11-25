@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe RequestIssueClosure, :postgres do
   let(:decision_review) { create(:higher_level_review) }

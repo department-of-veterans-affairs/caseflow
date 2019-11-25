@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.feature "TranscriptionTeam", :postgres do
   let(:transcription_team_member) { create(:user) }

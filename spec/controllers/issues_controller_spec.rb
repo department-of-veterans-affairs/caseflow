@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.describe IssuesController, :all_dbs, type: :controller do
   let!(:user) { User.authenticate!(roles: ["System Admin"]) }

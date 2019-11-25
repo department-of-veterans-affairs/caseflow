@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 require_relative "../../app/models/tasks/mail_task"
 
 describe Docket, :all_dbs do

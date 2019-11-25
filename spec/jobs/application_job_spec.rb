@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 class JobThatIsGood < ApplicationJob
   queue_with_priority :high_priority

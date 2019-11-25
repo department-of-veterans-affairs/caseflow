@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe HearingSchedule::ValidateJudgeSpreadsheet, :all_dbs do
   before do

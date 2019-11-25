@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.describe Organizations::TasksController, :all_dbs, type: :controller do
   include PowerOfAttorneyMapper

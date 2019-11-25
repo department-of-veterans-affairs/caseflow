@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.feature "AmaQueue", :all_dbs do
   def valid_document_id

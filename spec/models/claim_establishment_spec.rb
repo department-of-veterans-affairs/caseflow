@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe ClaimEstablishment, :all_dbs do
   let(:vacols_remand_case) do

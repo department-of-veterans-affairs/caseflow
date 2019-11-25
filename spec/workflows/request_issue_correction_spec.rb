@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe "Request Issue Correction", :postgres do
   let(:veteran) do

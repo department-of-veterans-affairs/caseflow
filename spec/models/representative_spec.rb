@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe Representative, :postgres do
   let(:participant_id) { "123456" }

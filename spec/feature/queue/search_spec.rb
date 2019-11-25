@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.feature "Search", :all_dbs do
   let(:attorney_user) { create(:user) }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe PostDecisionMotionUpdater, :all_dbs do
   let!(:lit_support_team) { LitigationSupport.singleton }

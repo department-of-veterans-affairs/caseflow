@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
   let(:judge_one) { Judge.new(create(:user, full_name: "Billie Daniel")) }

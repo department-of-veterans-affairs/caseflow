@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.feature "Attorney queue", :all_dbs do
   let(:judge) { create(:user) }

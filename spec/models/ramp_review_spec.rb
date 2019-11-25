@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe RampReview, :postgres do
   let(:ramp_election) { create(:ramp_election, option_selected: "higher_level_review", established_at: Time.zone.now) }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe HearingSchedule::AssignJudgesToHearingDays, :all_dbs do
   let(:schedule_period) do

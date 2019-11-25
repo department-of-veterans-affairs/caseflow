@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe OrganizationsUser, :postgres do
   let(:organization) { create(:organization) }

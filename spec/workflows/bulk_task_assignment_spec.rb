@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe BulkTaskAssignment, :postgres do
   describe "#process" do

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.feature "Remove a Hearing Day", :postgres do
   let!(:current_user) do

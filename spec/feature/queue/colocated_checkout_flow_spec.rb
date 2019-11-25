@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.feature "Colocated checkout flows", :all_dbs do
   let(:attorney_user) { create(:default_user) }

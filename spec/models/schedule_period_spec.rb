@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe SchedulePeriod, :postgres do
   let!(:schedule_period) { create(:ro_schedule_period) }

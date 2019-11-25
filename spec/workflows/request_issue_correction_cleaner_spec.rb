@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe "Request Issue Correction Cleaner", :postgres do
   before { allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe RegionalOffice do
   let(:regional_office) { RegionalOffice.new(regional_office_key) }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe Task, :all_dbs do
   context "includes PrintsTaskTree concern" do

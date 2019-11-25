@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe BatchUsersForReaderQuery, :postgres do
   describe "#process" do

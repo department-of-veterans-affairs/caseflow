@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe ReassignOldTasksJob, :postgres do
   let!(:appeal1) { LegacyAppeal.create(vacols_id: "1") }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe TaskTimerJob, :postgres do
   class TimedTask < Task

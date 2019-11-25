@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe Organizations::TaskPagesController, :postgres, type: :controller do
   let(:organization) { create(:organization) }

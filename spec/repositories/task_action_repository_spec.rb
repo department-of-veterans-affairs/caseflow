@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe TaskActionRepository, :all_dbs do
   describe "#assign_to_user_data" do

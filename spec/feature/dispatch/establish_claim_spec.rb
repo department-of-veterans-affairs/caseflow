@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
   before do

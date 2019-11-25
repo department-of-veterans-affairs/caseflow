@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe OrganizationCompletedTasksTab, :postgres do
   let(:tab) { OrganizationCompletedTasksTab.new(params) }

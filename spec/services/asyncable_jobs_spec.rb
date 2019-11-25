@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe AsyncableJobs, :postgres do
   let(:veteran) { create(:veteran) }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.feature "Hearing worksheet for Hearing Prep", :all_dbs do
   let!(:current_user) { User.authenticate!(roles: ["Hearing Prep"]) }

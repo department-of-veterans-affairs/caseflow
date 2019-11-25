@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe DasDeprecation::CaseDistribution, :all_dbs do
   let(:judge) { create(:user, css_id: "BVATWARNER", roles: ["Hearing Prep"]) }

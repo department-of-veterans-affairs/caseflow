@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 RSpec.feature "Team management page", :postgres do
   let(:user) { create(:user) }

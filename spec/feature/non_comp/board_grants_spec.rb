@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 feature "NonComp Board Grant Task Page", :postgres do
   before do

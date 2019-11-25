@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe OrganizationsController, :postgres, type: :controller do
   describe "GET /organizations/:organization" do

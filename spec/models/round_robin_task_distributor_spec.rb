@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe RoundRobinTaskDistributor, :all_dbs do
   let(:assignee_pool_size) { 6 }

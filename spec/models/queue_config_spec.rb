@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe QueueConfig, :postgres do
   describe ".new" do

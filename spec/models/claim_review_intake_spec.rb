@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe ClaimReviewIntake, :postgres do
   let(:veteran_file_number) { "64205555" }

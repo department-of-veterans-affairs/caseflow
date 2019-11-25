@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 feature "NonComp Dispositions Task Page", :postgres do
   include IntakeHelpers

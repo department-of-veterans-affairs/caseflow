@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 require "rake"
 
 describe "task rake tasks", :postgres do

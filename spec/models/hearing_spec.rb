@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 require "models/concerns/has_virtual_hearing_examples"
 
 describe Hearing, :postgres do

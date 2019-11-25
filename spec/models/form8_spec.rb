@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe Form8, :all_dbs do
   initial_fields = [:_initial_appellant_name,

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe ChangeHearingDispositionTask, :postgres do
   let(:appeal) { create(:appeal, :hearing_docket) }

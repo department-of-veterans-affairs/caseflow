@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe DistributionTask, :postgres do
   describe "ready_for_distribution" do

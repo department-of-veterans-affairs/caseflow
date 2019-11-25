@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe PowerOfAttorneyRepository, :all_dbs do
   context ".first_last_name?" do

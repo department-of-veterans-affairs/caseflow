@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe AttorneyRewriteTask, :all_dbs do
   context "when cancelling the task" do

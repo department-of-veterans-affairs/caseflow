@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe EndProductSyncJob, :postgres do
   let!(:ramp_election) { create(:ramp_election, :established) }

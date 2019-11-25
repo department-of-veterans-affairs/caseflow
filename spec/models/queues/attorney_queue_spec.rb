@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe AttorneyQueue, :all_dbs do
   context "#tasks" do

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe JudgeTask, :all_dbs do
   let(:judge) { create(:user) }

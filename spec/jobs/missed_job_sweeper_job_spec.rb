@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe MissedJobSweeperJob, :postgres do
   let(:slack_service) { SlackService.new(url: "http://www.example.com") }

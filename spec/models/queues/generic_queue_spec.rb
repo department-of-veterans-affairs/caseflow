@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe GenericQueue, :all_dbs do
   describe "#tasks" do

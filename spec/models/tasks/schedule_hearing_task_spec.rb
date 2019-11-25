@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe ScheduleHearingTask, :all_dbs do
   let(:vacols_case) { create(:case, bfcurloc: "57") }

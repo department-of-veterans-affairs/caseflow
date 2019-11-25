@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe TaskTimer, :postgres do
   describe "processing" do

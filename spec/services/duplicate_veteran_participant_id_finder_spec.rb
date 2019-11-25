@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe DuplicateVeteranParticipantIDFinder, :postgres do
   it "returns duplicate participant IDs" do

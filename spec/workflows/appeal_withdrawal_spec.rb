@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 
 describe "Withdrawing an appeal", :postgres do
   context "appeal has one request issue and it is withdrawn" do
