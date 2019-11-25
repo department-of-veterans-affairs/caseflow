@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
 
 describe VirtualHearingRepository, :all_dbs do
   context ".ready_for_deletion" do

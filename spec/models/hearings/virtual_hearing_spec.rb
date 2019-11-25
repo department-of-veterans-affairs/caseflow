@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
 
 describe VirtualHearing, :all_dbs do
   context "validation tests" do

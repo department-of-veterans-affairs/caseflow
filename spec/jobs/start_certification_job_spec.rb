@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
 require "rails_helper"
 
 describe StartCertificationJob, :all_dbs do

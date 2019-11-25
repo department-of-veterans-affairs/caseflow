@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
 
 describe StatusSerializer, :all_dbs do
   def status_hash(object)

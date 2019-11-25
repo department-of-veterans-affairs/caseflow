@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
 require "rails_helper"
 require "models/concerns/has_virtual_hearing_examples"
 

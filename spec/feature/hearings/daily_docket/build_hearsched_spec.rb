@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
 require "rails_helper"
 
 feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do

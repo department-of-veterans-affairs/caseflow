@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
 
 describe BVAAppealStatus, :all_dbs do
   include SQLHelpers

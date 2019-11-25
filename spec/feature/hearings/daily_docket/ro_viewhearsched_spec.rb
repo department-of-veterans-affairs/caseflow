@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
 require "rails_helper"
 
 RSpec.feature "Hearing Schedule Daily Docket for RO ViewHearSched", :all_dbs do

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
 
 describe "BVA Decision Progress report", :all_dbs do
   include SQLHelpers
