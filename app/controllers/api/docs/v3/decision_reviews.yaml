@@ -337,10 +337,10 @@ paths:
                       claimant:
                         participantId: "44444444"
                         payeeCode: "10"
-                    included:
-                      - type: ContestableIssue
-                        attributes:
-                          decisionIssueId: 205
+                  included:
+                    - type: ContestableIssue
+                      attributes:
+                        decisionIssueId: 205
               pension:
                 value:
                   data:
@@ -363,16 +363,16 @@ paths:
                       claimant:
                         participantId: "33333333"
                         payeeCode: "11"
-                    included:
-                      - type: ContestableIssue
-                        attributes:
-                          decisionIssueId: 206
-                      - type: ContestableIssue
-                        attributes:
-                          ratingIssueId: 80
-                          legacyAppealIssues:
-                            - legacyAppealId: 12345678
-                              legacyAppealIssueId: 1
+                  included:
+                    - type: ContestableIssue
+                      attributes:
+                        decisionIssueId: 206
+                    - type: ContestableIssue
+                      attributes:
+                        ratingIssueId: 80
+                        legacyAppealIssues:
+                          - legacyAppealId: 12345678
+                            legacyAppealIssueId: 1
       responses:
         '202':
           description: Accepted

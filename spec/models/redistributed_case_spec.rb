@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "support/database_cleaner"
-require "rails_helper"
-
 describe RedistributedCase, :all_dbs do
   let!(:vacols_case) { create(:case, bfcurloc: "CASEFLOW") }
   let(:judge) { create(:user) }

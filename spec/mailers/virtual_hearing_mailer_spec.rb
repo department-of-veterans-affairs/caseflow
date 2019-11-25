@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe VirtualHearingMailer do
   let(:title) { VirtualHearingMailer::RECIPIENT_TITLES[:judge] }
   let(:recipient) { MailRecipient.new(full_name: "FirstName LastName", email: "email@test.com", title: title) }

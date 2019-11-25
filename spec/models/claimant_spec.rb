@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe Claimant, :postgres do
   let(:name) { nil }
   let(:relationship_to_veteran) { nil }
