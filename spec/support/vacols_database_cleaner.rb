@@ -26,7 +26,9 @@ RSpec.configure do |config|
   end
 
   config.before(:each, db_clean: :truncation) do
-    clean_vacols_with_deletion_and_pg_with_truncation
+    DatabaseCleaner[:active_record, { connection: vacols }].strategy =
+      :deletion, { except: vacols_tables_to_preserve }
+    DatabaseCleaner[:active_record, { connection: caseflow }].strategy = :truncation
   end
 
   config.before(:each, type: :feature) do
