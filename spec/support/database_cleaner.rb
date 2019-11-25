@@ -5,16 +5,30 @@ require_relative "stubbable_user"
 RSpec.configure do |config|
   config.use_transactional_fixtures = false
 
+  etl = "etl_#{Rails.env}".to_sym
+  vacols = "#{Rails.env}_vacols".to_sym
+  caseflow = Rails.env.to_s.to_sym
+
+  vacols_tables_to_preserve = %w[vftypes issref]
+
+  # IMPORTANT that in all these hook defs, the "caseflow" connection comes last.
+
   config.before(:suite) do
-    DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].clean_with(:truncation)
+    DatabaseCleaner[:active_record, { connection: etl }].clean_with(:truncation)
+    DatabaseCleaner[:active_record, { connection: vacols }]
+      .clean_with(:deletion, except: vacols_tables_to_preserve)
+    DatabaseCleaner[:active_record, { connection: caseflow }].clean_with(:truncation)
   end
 
   config.before(:each) do
-    DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].strategy = :transaction
+    DatabaseCleaner[:active_record, { connection: vacols }].strategy = :transaction
+    DatabaseCleaner[:active_record, { connection: caseflow }].strategy = :transaction
   end
 
   config.before(:each, db_clean: :truncation) do
-    DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].strategy = :truncation
+    DatabaseCleaner[:active_record, { connection: vacols }].strategy =
+      :deletion, { except: vacols_tables_to_preserve }
+    DatabaseCleaner[:active_record, { connection: caseflow }].strategy = :truncation
   end
 
   config.before(:each, type: :feature) do
@@ -26,17 +40,38 @@ RSpec.configure do |config|
       # Driver is probably for an external browser with an app
       # under test that does *not* share a database connection with the
       # specs, so use truncation strategy.
-
-      DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].strategy = :truncation
+      DatabaseCleaner[:active_record, { connection: vacols }].strategy =
+        :deletion, { except: vacols_tables_to_preserve }
+      DatabaseCleaner[:active_record, { connection: caseflow }].strategy = :truncation
     end
   end
 
   config.before(:each) do
-    DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].start
+    DatabaseCleaner[:active_record, { connection: vacols }].start
+    DatabaseCleaner[:active_record, { connection: caseflow }].start
   end
 
   config.append_after(:each) do
-    DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].clean
+    DatabaseCleaner[:active_record, { connection: vacols }].clean
+    DatabaseCleaner[:active_record, { connection: caseflow }].clean
     clean_application!
+  end
+
+  # ETL is never used in feature tests and there are only a few, so we tag those with :etl
+  # ETL db uses truncation strategy everywhere because syncing runs in a transaction.
+  config.before(:each, :etl) do
+    DatabaseCleaner[:active_record, { connection: etl }].strategy = :truncation
+  end
+
+  config.before(:each, :etl, db_clean: :truncation) do
+    DatabaseCleaner[:active_record, { connection: etl }].strategy = :truncation
+  end
+
+  config.before(:each, :etl) do
+    DatabaseCleaner[:active_record, { connection: etl }].start
+  end
+
+  config.append_after(:each, :etl) do
+    DatabaseCleaner[:active_record, { connection: etl }].clean
   end
 end
