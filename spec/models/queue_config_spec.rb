@@ -128,13 +128,13 @@ describe QueueConfig, :postgres do
           let!(:completed_tasks) { create_list(:generic_task, 7, :completed, assigned_to: assignee) }
 
           before do
-            LocalCounter.enable
+            DatabaseRequestCounter.enable
             FeatureToggle.enable!(:use_task_pages_api)
             allow(assignee).to receive(:use_task_pages_api?).and_return(true)
           end
 
           after do
-            LocalCounter.disable
+            DatabaseRequestCounter.disable
             FeatureToggle.disable!(:use_task_pages_api)
           end
 
@@ -148,7 +148,7 @@ describe QueueConfig, :postgres do
             expect(tabs[3][:tasks].pluck(:id)).to match_array(completed_tasks.map { |t| t.id.to_s })
 
             # We make 1 request to VACOLS in order to eager load data for Legacy Appeals.
-            expect(LocalCounter.get_counter(:vacols)).to eq(tabs.count)
+            expect(DatabaseRequestCounter.get_counter(:vacols)).to eq(tabs.count)
           end
 
           it "displays the correct labels for the tabs" do

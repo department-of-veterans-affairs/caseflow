@@ -39,7 +39,7 @@ class MetricsService
   ensure
     if service
       increment_datadog_counter("request_attempt", service, name, app)
-      LocalCounter.increment_counter(service)
+      DatabaseRequestCounter.increment_counter(service)
     end
   end
 
