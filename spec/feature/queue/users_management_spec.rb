@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
 require "rails_helper"
 
 RSpec.feature "Users management page", :postgres do

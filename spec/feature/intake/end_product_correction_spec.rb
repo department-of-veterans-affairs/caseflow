@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
 require "rails_helper"
 
 feature "End Product Correction (EP 930)", :postgres do

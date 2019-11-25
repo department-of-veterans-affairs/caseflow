@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "support/database_cleaner"
 
 RSpec.describe Idt::AuthenticationsController, :postgres, type: :controller do
   describe "GET /idt/auth" do

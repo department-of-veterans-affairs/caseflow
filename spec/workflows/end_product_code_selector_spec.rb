@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
 require "rails_helper"
 
 # The EP code table below contains the combination of issue characteristics for each code

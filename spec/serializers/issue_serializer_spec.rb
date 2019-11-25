@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
 
 describe IssueSerializer, :all_dbs do
   def issues_hash(object)

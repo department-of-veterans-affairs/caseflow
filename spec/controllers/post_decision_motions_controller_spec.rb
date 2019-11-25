@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "support/database_cleaner"
 
 describe PostDecisionMotionsController do
   let(:user) { create(:default_user) }
