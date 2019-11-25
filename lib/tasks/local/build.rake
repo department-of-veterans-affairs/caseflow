@@ -4,16 +4,13 @@ namespace :local do
   desc "build local development environment"
   task :build do
     puts ">>> BEGIN local:build"
-    puts ">>> 01/08 Creating development and test caseflow databases"
-    system("RAILS_ENV=development bundle exec rake db:create") || abort
-
-    puts ">>> 02/08 Downloading FACOLS image from ECR"
+    puts ">>> 01/08 Downloading FACOLS image from ECR"
     system("./local/vacols/build_push.sh rake") || abort
 
-    puts ">>> 03/08 Starting docker containers in the background"
+    puts ">>> 02/08 Starting docker containers in the background"
     system("docker-compose up -d") || abort
 
-    puts ">>> 04/08 Waiting for our FACOLS containers to be ready"
+    puts ">>> 03/08 Waiting for our FACOLS containers to be ready"
     180.times do
       break if `docker-compose ps | grep 'health: starting'`.strip.chomp.empty?
 
@@ -22,6 +19,9 @@ namespace :local do
     end
     # Add a new line so that this script's output is more readable.
     puts ""
+
+    puts ">>> 04/08 Creating development and test caseflow databases"
+    system("RAILS_ENV=development bundle exec rake db:create") || abort
 
     puts ">>> 05/08 Seeding FACOLS"
     system("RAILS_ENV=development bundle exec rake local:vacols:seed") || abort
