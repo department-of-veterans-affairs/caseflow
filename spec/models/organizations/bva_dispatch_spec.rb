@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe BvaDispatch, :postgres do
   let(:bva_dispatch_org) { BvaDispatch.singleton }
 

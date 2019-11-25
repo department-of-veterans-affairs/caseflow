@@ -7,6 +7,7 @@ class ClaimReview < DecisionReview
   include HasBusinessLine
 
   has_many :end_product_establishments, as: :source
+  has_many :messages, as: :detail
 
   with_options if: :saving_review do
     validate :validate_receipt_date
@@ -108,6 +109,16 @@ class ClaimReview < DecisionReview
     process_legacy_issues!
     clear_error!
     processed!
+  end
+
+  def processed!
+    super
+    AsyncableJobMessaging.new(job: self).handle_job_success
+  end
+
+  def update_error!(err)
+    super
+    AsyncableJobMessaging.new(job: self).handle_job_failure
   end
 
   def invalid_modifiers

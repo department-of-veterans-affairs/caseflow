@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Hearing worksheet for Hearing Prep", :all_dbs do
   let!(:current_user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let!(:legacy_hearing) do

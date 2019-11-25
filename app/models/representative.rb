@@ -35,10 +35,6 @@ class Representative < Organization
     ::OrganizationTrackingTasksTab.new(assignee: self)
   end
 
-  def ama_task_serializer
-    WorkQueue::OrganizationTaskSerializer
-  end
-
   private
 
   def set_role

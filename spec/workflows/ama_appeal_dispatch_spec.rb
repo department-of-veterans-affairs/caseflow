@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe AmaAppealDispatch, :postgres do
   describe "#call" do
     it "stores current POA participant ID in the Appeals table" do

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe Veteran, :all_dbs do
   let(:veteran) { Veteran.new(file_number: "44556677", first_name: "June", last_name: "Juniper") }
 
