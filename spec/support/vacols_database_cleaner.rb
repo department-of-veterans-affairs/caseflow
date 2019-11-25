@@ -73,6 +73,5 @@ RSpec.configure do |config|
 
   config.append_after(:each, :etl) do
     DatabaseCleaner[:active_record, { connection: etl }].clean
-    clean_application!
   end
 end
