@@ -81,7 +81,7 @@ const ChangeHearingTime = (props) => (
 
 const ChangeEmail = (props) => (
   <React.Fragment>
-    <ReadOnlyEmails {...props}/>
+    <ReadOnlyEmails {...props} />
   </React.Fragment>
 );
 
@@ -189,7 +189,7 @@ class VirtualHearingModal extends React.Component {
         cancelButton={
           <Button linkStyling onClick={reset}>Cancel</Button>
         }>
-        <p dangerouslySetInnerHTML={{ __html: typeSettings.intro}}>
+        <p dangerouslySetInnerHTML={{ __html: typeSettings.intro }}>
         </p>
         <typeSettings.element
           {...this.props}
@@ -209,12 +209,15 @@ VirtualHearingModal.propTypes = {
     scheduledFor: PropTypes.string,
     scheduledTimeString: PropTypes.string,
     regionalOfficeTimezone: PropTypes.string,
-    centralOfficeTimeString: PropTypes.string
+    centralOfficeTimeString: PropTypes.string,
+    location: PropTypes.shape({
+      name: PropTypes.string
+    })
   }).isRequired,
   type: PropTypes.oneOf([
     'change_to_virtual', 'change_from_virtual',
     'change_email', 'change_hearing_time'
-  ]),
+  ]).isRequired,
   timeWasEdited: PropTypes.bool,
   repEmailEdited: PropTypes.bool,
   vetEmailEdited: PropTypes.bool,

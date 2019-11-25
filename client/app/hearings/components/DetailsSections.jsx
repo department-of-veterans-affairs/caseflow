@@ -77,6 +77,7 @@ DetailsSections.propTypes = {
   isLegacy: PropTypes.bool,
   requestType: PropTypes.string,
   submit: PropTypes.func,
+  openVirtualHearingModal: PropTypes.func,
   user: PropTypes.shape({
     userCanScheduleVirtualHearings: PropTypes.bool
   }),
