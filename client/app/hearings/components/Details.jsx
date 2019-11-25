@@ -132,6 +132,17 @@ class HearingDetails extends React.Component {
     this.closeVirtualHearingModal();
   }
 
+  getEditedEmails = () => {
+    const { hearing: { virtualHearing }, formData: { virtualHearingForm } } = this.props;
+
+    const changes = deepDiff(virtualHearing, virtualHearingForm || {});
+
+    return {
+      repEmailEdited: !_.isUndefined(changes.representativeEmail),
+      vetEmailEdited: !_.isUndefined(changes.veteranEmail)
+    };
+  }
+
   updateTranscription = (values) => {
     this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, values);
     this.setState({ updated: true });
@@ -211,6 +222,8 @@ class HearingDetails extends React.Component {
 
     const { disabled, success, error } = this.state;
 
+    const editedEmails = this.getEditedEmails();
+
     return (
       <AppSegment filledBackground>
 
@@ -240,7 +253,8 @@ class HearingDetails extends React.Component {
             submit={() => this.submit().then(this.closeVirtualHearingModal)}
             closeModal={this.closeVirtualHearingModal}
             reset={this.resetVirtualHearing}
-            type={this.state.virtualHearingModalType} />}
+            type={this.state.virtualHearingModalType}
+            {...editedEmails} />}
           <DetailsSections
             user={this.props.user}
             updateTranscription={this.updateTranscription}
@@ -266,7 +280,13 @@ class HearingDetails extends React.Component {
                 disabled={!this.state.updated || this.state.disabled}
                 loading={this.state.loading}
                 className="usa-button"
-                onClick={this.submit}
+                onClick={() => {
+                  if (editedEmails.repEmailEdited || editedEmails.vetEmailEdited) {
+                    this.openVirtualHearingModal({ type: 'change_email' });
+                  } else {
+                    this.submit();
+                  }
+                }}
                 styling={css({ float: 'right' })}
               >Save</Button>
             </span>

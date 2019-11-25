@@ -7,7 +7,6 @@ import TextField from '../../components/TextField';
 import moment from 'moment';
 import COPY from '../../../COPY.json';
 import _ from 'lodash';
-import { deepDiff } from '../utils';
 
 const getCentralOfficeTime = (hearing) => {
   const newTime = `${moment(hearing.scheduledFor).format('YYYY-MM-DD')}T${hearing.scheduledTimeString}`;
@@ -40,14 +39,14 @@ const DateTime = ({ hearing, timeWasEdited }) => (
 );
 
 const ReadOnlyEmails = ({
-  virtualHearing, repEmailChanged, vetEmailChanged, showOnlyChanged = false
+  virtualHearing, repEmailEdited, vetEmailEdited, showOnlyChanged = false
 }) => (
   <React.Fragment>
-    {(vetEmailChanged && showOnlyChanged) && <div>
+    {(vetEmailEdited && showOnlyChanged) && <div>
       <div><strong>Veteran Email</strong></div>
       <p>{virtualHearing.veteranEmail}</p>
     </div>}
-    {(repEmailChanged && showOnlyChanged) && <div>
+    {(repEmailEdited && showOnlyChanged) && <div>
       <div><strong>Representative Email</strong></div>
       <p>{virtualHearing.representativeEmail}</p>
     </div>}
@@ -123,7 +122,7 @@ const TYPES = {
   change_email: {
     title: COPY.VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE,
     intro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO,
-    button: COPY.VIRTUAL_HEARING_UPDATE_EMAIL_MODAL_INTRO,
+    button: COPY.VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON,
     element: ChangeEmail
   }
 };
@@ -135,17 +134,6 @@ class VirtualHearingModal extends React.Component {
     this.state = {
       vetEmailError: null,
       repEmailError: null
-    };
-  }
-
-  getChangedEmails = () => {
-    const { hearing: initialHearing, virtualHearing } = this.props;
-
-    const changes = deepDiff(initialHearing.virtualHearing, virtualHearing);
-
-    return {
-      repEmailChanged: !_.isUndefined(changes.representativeEmail),
-      vetEmailChanged: !_.isUndefined(changes.veteranEmail)
     };
   }
 
@@ -206,7 +194,6 @@ class VirtualHearingModal extends React.Component {
         </p>
         <typeSettings.element
           {...this.props}
-          {...this.getChangedEmails()}
           vetEmailError={vetEmailError}
           repEmailError={repEmailError} />
       </Modal>
@@ -230,6 +217,8 @@ VirtualHearingModal.propTypes = {
     'change_email', 'change_hearing_time'
   ]),
   timeWasEdited: PropTypes.bool,
+  repEmailEdited: PropTypes.bool,
+  vetEmailEdited: PropTypes.bool,
   update: PropTypes.func,
   submit: PropTypes.func,
   reset: PropTypes.func,
