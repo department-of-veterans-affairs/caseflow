@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 feature "Inbox", :postgres do
   before { FeatureToggle.enable!(:inbox) }
   after { FeatureToggle.disable!(:inbox) }

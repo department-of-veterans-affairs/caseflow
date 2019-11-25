@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-require "support/database_cleaner"
-
 describe OrganizationTrackingTasksTab, :postgres do
   let(:tab) { OrganizationTrackingTasksTab.new(params) }
   let(:params) { { assignee: assignee } }

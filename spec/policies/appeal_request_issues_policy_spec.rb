@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-
 describe AppealRequestIssuesPolicy, :postgres do
   describe "#editable?" do
     let(:appeal) { build_stubbed(:appeal) }

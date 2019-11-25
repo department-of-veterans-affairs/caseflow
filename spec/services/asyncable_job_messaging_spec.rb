@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-
 describe AsyncableJobMessaging, :postgres do
   describe "#add_job_note" do
     let(:owner) { create(:default_user) }
