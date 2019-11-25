@@ -39,14 +39,14 @@ const DateTime = ({ hearing, timeWasEdited }) => (
 );
 
 const ReadOnlyEmails = ({
-  virtualHearing, repEmailEdited, vetEmailEdited, showOnlyChanged = false
+  virtualHearing, repEmailEdited, vetEmailEdited, showAllEmails = false
 }) => (
   <React.Fragment>
-    {(vetEmailEdited && showOnlyChanged) && <div>
+    {(vetEmailEdited || showAllEmails) && <div>
       <div><strong>Veteran Email</strong></div>
       <p>{virtualHearing.veteranEmail}</p>
     </div>}
-    {(repEmailEdited && showOnlyChanged) && <div>
+    {(repEmailEdited || showAllEmails) && <div>
       <div><strong>Representative Email</strong></div>
       <p>{virtualHearing.representativeEmail}</p>
     </div>}
@@ -75,21 +75,21 @@ const Emails = ({ virtualHearing, update, vetEmailError, repEmailError }) => (
 const ChangeHearingTime = (props) => (
   <React.Fragment>
     <DateTime {...props} />
-    <ReadOnlyEmails {...props} />
+    <ReadOnlyEmails {...props} showAllEmails />
   </React.Fragment>
 );
 
 const ChangeEmail = (props) => (
   <React.Fragment>
-    <ReadOnlyEmails {...props} showOnlyChanged />
+    <ReadOnlyEmails {...props}/>
   </React.Fragment>
 );
 
 const ChangeFromVirtual = (props) => (
   <React.Fragment>
     <DateTime {...props} />
-    <strong>{'Location:'}&nbsp;</strong>{props.hearing.location.name}
-    <ReadOnlyEmails {...props} />
+    {props.hearing.location && <div><strong>{'Location:'}&nbsp;</strong>{props.hearing.location.name}</div>}
+    <ReadOnlyEmails {...props} showAllEmails />
   </React.Fragment>
 );
 
@@ -189,8 +189,7 @@ class VirtualHearingModal extends React.Component {
         cancelButton={
           <Button linkStyling onClick={reset}>Cancel</Button>
         }>
-        <p>
-          {typeSettings.intro}
+        <p dangerouslySetInnerHTML={{ __html: typeSettings.intro}}>
         </p>
         <typeSettings.element
           {...this.props}
