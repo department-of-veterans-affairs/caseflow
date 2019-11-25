@@ -14,7 +14,7 @@ describe ETL::OrganizationSyncer, :etl do
         subject
 
         expect(ETL::Organization.all.count).to eq(1)
-        expect(ETL::Organization.first.attributes).to eq(org2.attributes)
+        expect(ETL::Organization.first.name).to eq(org2.name)
       end
     end
 

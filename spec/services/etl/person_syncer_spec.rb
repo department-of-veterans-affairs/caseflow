@@ -14,7 +14,7 @@ describe ETL::PersonSyncer, :etl do
         subject
 
         expect(ETL::Person.all.count).to eq(1)
-        expect(ETL::Person.first.attributes).to eq(person2.attributes)
+        expect(ETL::Person.first.id).to eq(person2.id)
       end
     end
 
