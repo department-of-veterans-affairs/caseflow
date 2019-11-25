@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe Representative, :postgres do
   let(:participant_id) { "123456" }
   let(:vso_participant_id) { "789" }

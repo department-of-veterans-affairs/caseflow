@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe EvidenceSubmissionWindowTask, :postgres do
   let(:participant_id_with_pva) { "000000" }
   let(:participant_id_with_no_vso) { "11111" }

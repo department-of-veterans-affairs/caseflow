@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 RSpec.feature "TranscriptionTeam", :postgres do
   let(:transcription_team_member) { create(:user) }
   let(:veteran) { create(:veteran, first_name: "Maisie", last_name: "Varesko", file_number: 201_905_061) }

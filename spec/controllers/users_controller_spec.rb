@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.describe UsersController, :all_dbs, type: :controller do
   let!(:authenticated_user) { User.authenticate!(roles: ["System Admin"]) }
   let!(:staff) { create(:staff, :attorney_judge_role, user: authenticated_user) }

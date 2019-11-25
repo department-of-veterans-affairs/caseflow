@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 feature "Intake Confirmation Page", :postgres do
   include IntakeHelpers
 

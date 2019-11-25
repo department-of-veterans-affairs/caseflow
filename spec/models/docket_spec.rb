@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
 require_relative "../../app/models/tasks/mail_task"
 
 describe Docket, :all_dbs do

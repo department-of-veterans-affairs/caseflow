@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe DependenciesCheckJob do
   context "when Monitor env is set" do
     it "writes report in cache" do

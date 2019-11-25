@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe CachedUser, :all_dbs do
   describe ".sync_from_vacols" do
     context "5 VACOLS staff exist" do

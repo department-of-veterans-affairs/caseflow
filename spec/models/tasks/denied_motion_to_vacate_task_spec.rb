@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-
 describe DeniedMotionToVacateTask, :postgres do
   let(:task) { create(:denied_motion_to_vacate_task) }
 

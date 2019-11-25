@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe DuplicateVeteranParticipantIDFinder, :postgres do
   it "returns duplicate participant IDs" do
     stub_const("BGSService", ExternalApi::BGSService)
