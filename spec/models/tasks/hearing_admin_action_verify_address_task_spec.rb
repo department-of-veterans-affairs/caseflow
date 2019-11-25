@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.shared_examples "Address Verify Task for Appeal" do
   let!(:user) { create(:hearings_coordinator) }
   let(:distribution_task) { create(:distribution_task, appeal: appeal) }

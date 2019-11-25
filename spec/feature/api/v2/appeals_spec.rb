@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
 require "support/api_helpers"
-require "rails_helper"
 
 describe "Appeals API v2", :all_dbs, type: :request do
   include ApiHelpers

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "support/intake_helpers"
-require "support/vacols_database_cleaner"
 
 describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
   include IntakeHelpers

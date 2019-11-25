@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe PrepareEstablishClaimTasksJob, :all_dbs do
   before do
     allow(VBMSService).to receive(:fetch_document_file) do |document|

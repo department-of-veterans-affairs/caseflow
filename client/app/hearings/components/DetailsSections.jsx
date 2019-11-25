@@ -62,7 +62,8 @@ class DetailsSections extends React.Component {
           hearing={initialHearingState}
           virtualHearing={virtualHearing}
           update={updateVirtualHearing}
-          submit={() => submit().then(this.closeModal)}
+          submit={submit}
+          closeModal={this.closeModal}
           reset={this.resetVirtualHearing} />}
         {!isLegacy &&
           <div>
