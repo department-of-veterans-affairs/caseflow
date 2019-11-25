@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.shared_examples "Change hearing disposition" do
   let(:current_full_name) { "Leonela Harbold" }
   let(:hearing_admin_user) { create(:user, full_name: current_full_name, station_id: 101) }

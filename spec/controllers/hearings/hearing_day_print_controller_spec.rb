@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 RSpec.describe Hearings::HearingDayPrintController, :postgres, type: :controller do
   describe "GET print view of daily docket" do
     let(:hearing_day) { create(:hearing_day) }

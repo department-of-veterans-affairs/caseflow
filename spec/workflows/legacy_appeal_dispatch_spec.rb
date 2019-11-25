@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe LegacyAppealDispatch do
   describe "#call" do
     context "invalid citation number" do

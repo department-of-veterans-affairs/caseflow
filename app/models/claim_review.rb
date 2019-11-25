@@ -111,6 +111,11 @@ class ClaimReview < DecisionReview
     processed!
   end
 
+  def processed!
+    super
+    AsyncableJobMessaging.new(job: self).handle_job_success
+  end
+
   def update_error!(err)
     super
     AsyncableJobMessaging.new(job: self).handle_job_failure
