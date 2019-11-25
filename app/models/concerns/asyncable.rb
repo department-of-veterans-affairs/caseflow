@@ -190,6 +190,11 @@ module Asyncable
     nil # abstract method intended to be overridden
   end
 
+  def sanitized_error
+    # keep PII out of output
+    (self[self.class.error_column] || "none").gsub(/\s.+/s, "")
+  end
+
   def expired_without_processing?
     return false if processed?
 

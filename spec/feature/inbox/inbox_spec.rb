@@ -8,6 +8,7 @@ feature "Inbox", :postgres do
   after { FeatureToggle.disable!(:inbox) }
 
   let!(:user) { User.authenticate!(roles: ["Mail Intake"]) }
+  let(:hlr) { create(:higher_level_review, :requires_processing, intake: create(:intake, user: user)) }
 
   describe "index" do
     context "multiple messages" do
@@ -42,6 +43,19 @@ feature "Inbox", :postgres do
         expect(message.reload.read_at).to_not be_nil
 
         expect(page).to have_content("Read #{message.read_at.friendly_full_format}")
+      end
+    end
+
+    context "when a job fails after 24 hours" do
+      it "displays the failure message" do
+        allow(hlr).to receive(:establish!).and_raise(StandardError.new("error with some PII"))
+        Timecop.travel(Time.zone.now.tomorrow) do
+          DecisionReviewProcessJob.perform_now(hlr)
+        end
+        visit "/inbox"
+
+        expect(page).to have_content("unable to complete")
+        expect(page).not_to have_content("some PII")
       end
     end
   end

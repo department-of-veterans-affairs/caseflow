@@ -10,7 +10,7 @@ import { onUpdateDocketHearing } from '../../actions/dailyDocketActions';
 import { AodModal } from './DailyDocketModals';
 import HearingText from './DailyDocketRowDisplayText';
 import PropTypes from 'prop-types';
-import { deepDiff } from '../../utils';
+import { deepDiff, isPreviouslyScheduledHearing } from '../../utils';
 import {
   DispositionDropdown, TranscriptRequestedCheckbox, HearingDetailsLink,
   AmaAodDropdown, LegacyAodDropdown, AodReasonDropdown, HearingPrepWorkSheetLink, StaticRegionalOffice,
@@ -19,6 +19,7 @@ import {
 } from './DailyDocketRowInputs';
 import VirtualHearingModal from '../VirtualHearingModal';
 import VirtualHearingLink from '../VirtualHearingLink';
+import { docketRowStyle } from './style';
 
 const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
   return <div {...css({
@@ -257,9 +258,13 @@ class DailyDocketRow extends React.Component {
   }
 
   render () {
-    const { hearing, user, index, readOnly } = this.props;
+    const { hearing, user, index, readOnly, hidePreviouslyScheduled } = this.props;
 
-    return <React.Fragment>
+    const hide = (isPreviouslyScheduledHearing(hearing) && hidePreviouslyScheduled) ? 'hide ' : '';
+    const judgeView = user.userHasHearingPrepRole ? 'judge-view' : '';
+    const className = `${hide}${judgeView}`;
+
+    return <div {...docketRowStyle} key={hearing.externalId} className={className}>
       <div>
         <HearingText
           readOnly={readOnly}
@@ -298,7 +303,7 @@ class DailyDocketRow extends React.Component {
           this.closeAodModal();
         }}
       />}
-    </React.Fragment>;
+    </div>;
   }
 }
 
@@ -310,12 +315,14 @@ DailyDocketRow.propTypes = {
   openDispositionModal: PropTypes.func,
   regionalOffice: PropTypes.string,
   readOnly: PropTypes.bool,
+  hidePreviouslyScheduled: PropTypes.bool,
   hearing: PropTypes.shape({
     docketName: PropTypes.string,
     advanceOnDocketMotion: PropTypes.object,
     virtualHearing: PropTypes.object,
     isVirtual: PropTypes.bool,
-    externalId: PropTypes.string
+    externalId: PropTypes.string,
+    disposition: PropTypes.string
   }),
   user: PropTypes.shape({
     userCanAssignHearingSchedule: PropTypes.bool,
