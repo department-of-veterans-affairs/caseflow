@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe "Reader Appeal Requests", :all_dbs, type: :request do
   let!(:user) { User.authenticate!(roles: ["Reader"]) }
   let(:appeal) do

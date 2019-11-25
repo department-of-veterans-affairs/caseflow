@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe VeteranAttributeCacher, :postgres do
   context "local Veteran records exist with nil SSN or first_name" do
     let(:veteran_file_number_one) { "11111111" }

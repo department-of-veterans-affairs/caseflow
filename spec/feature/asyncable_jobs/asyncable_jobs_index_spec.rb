@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "Asyncable Jobs index", :postgres do
   before do
     Timecop.freeze(Time.zone.now)

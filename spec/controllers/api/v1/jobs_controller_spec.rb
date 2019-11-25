@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe Api::V1::JobsController, :postgres, type: :controller do
   let!(:current_user) { User.authenticate! }
   let(:api_key) { ApiKey.create!(consumer_name: "Jobs Tester") }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 class AClaimReview
   attr_reader :error, :current_user
 

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe TaskTimerJob, :postgres do
   class TimedTask < Task
     include TimeableTask

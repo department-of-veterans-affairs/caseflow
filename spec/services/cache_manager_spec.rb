@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe CacheManager do
   before do
     redis_store = ActiveSupport::Cache.lookup_store(:redis_store,

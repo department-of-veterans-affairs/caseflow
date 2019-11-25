@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe UntrackedLegacyAppealsChecker, :all_dbs do
   context "when there are LegacyAppeals charged to CASEFLOW in VACOLS without active Caseflow tasks" do
     let(:untracked_legacy_appeals) do

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe HearingCoordinatorScheduleQueue, :all_dbs do
   describe "#tasks" do
     let(:user) { create(:user) }

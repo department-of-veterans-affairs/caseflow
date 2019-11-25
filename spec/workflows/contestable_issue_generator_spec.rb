@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe "Contestable Issue Generator", :postgres do
   let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
   let(:review) { hlr }

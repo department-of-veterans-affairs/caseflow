@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Dropdown", :postgres do
   scenario "Dropdown works on both erb and react pages" do
     User.authenticate!

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe CreateEstablishClaimTasksJob, :postgres do
   before do
     Timecop.freeze(Time.zone.local(2015, 2, 1, 12, 8, 0))

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe ClaimEstablishment, :all_dbs do
   let(:vacols_remand_case) do
     create(:case_with_decision, :status_remand)

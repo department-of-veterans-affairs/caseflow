@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Search", :all_dbs do
   let(:attorney_user) { create(:user) }
   let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }

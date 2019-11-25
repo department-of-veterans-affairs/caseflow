@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe DasDeprecation::AssignTaskToAttorney, :all_dbs do
   before do
     FeatureToggle.enable!(:legacy_das_deprecation)

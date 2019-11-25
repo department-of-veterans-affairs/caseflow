@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature HearingAdminActionForeignVeteranCaseTask, :postgres do
   let!(:veteran) { create(:veteran) }
   let!(:appeal) { create(:appeal, veteran: veteran) }

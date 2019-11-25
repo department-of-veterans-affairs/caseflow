@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe UpdateAttorneyCaseReview, :postgres do
   describe "#call" do
     context "when the current user is not associated with the case" do

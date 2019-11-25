@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Send feedback", :all_dbs do
   let!(:current_user) { User.authenticate! }
   let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }

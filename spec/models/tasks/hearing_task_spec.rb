@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe HearingTask, :postgres do
   describe ".create_change_hearing_disposition_task" do
     let(:appeal) { create(:appeal) }

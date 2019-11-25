@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "MailTasks", :postgres do
   let(:user) { create(:user) }
 

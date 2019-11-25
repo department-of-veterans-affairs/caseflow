@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Test Users for Demo", :postgres do
   before do
     # Switch user only works in demo

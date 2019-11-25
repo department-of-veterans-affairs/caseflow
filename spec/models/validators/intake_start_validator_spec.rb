@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe IntakeStartValidator, :postgres do
   context "#validate" do
     let(:user) { create(:user) }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe Appeal, :all_dbs do
   include IntakeHelpers
 

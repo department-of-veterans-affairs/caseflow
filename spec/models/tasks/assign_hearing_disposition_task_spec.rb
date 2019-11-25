@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe AssignHearingDispositionTask, :all_dbs do
   describe "#update_from_params for ama appeal" do
     let(:appeal) { create(:appeal) }

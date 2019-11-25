@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe Colocated, :postgres do
   let(:colocated_org) { Colocated.singleton }
   let(:appeal) { nil }

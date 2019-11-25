@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe VaDotGovAddressValidator do
   include HearingHelpers
 

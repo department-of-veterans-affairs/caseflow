@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "NonComp Dispositions Task Page", :postgres do
   include IntakeHelpers
 

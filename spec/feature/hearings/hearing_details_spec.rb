@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
   let(:user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"]) }
 

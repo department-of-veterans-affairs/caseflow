@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe PrepareEstablishClaimTasksJob, :all_dbs do
   before do
     allow(VBMSService).to receive(:fetch_document_file) do |document|

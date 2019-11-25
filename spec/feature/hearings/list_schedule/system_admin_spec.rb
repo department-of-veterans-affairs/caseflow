@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "List Schedule for System Admin", :all_dbs do
   let!(:current_user) { User.authenticate!(roles: ["System Admin"]) }
 

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 class JobThatIsGood < ApplicationJob
   queue_with_priority :high_priority
   application_attr :fake

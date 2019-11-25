@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe OrganizationsUser, :postgres do
   let(:organization) { create(:organization) }
   let(:user) { create(:user) }

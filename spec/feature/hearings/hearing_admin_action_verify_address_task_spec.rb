@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.shared_examples "Address Verify Task Frontend Workflow" do
   let!(:user) { create(:hearings_coordinator) }
   let(:distribution_task) { create(:distribution_task, appeal: appeal) }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 # The EP code table below contains the combination of issue characteristics for each code
 
 # Description of fields, as they are indexed in the array

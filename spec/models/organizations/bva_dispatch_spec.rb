@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe BvaDispatch, :postgres do
   let(:bva_dispatch_org) { BvaDispatch.singleton }
 

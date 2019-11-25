@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe "AMA Tasks Tableau data source", :all_dbs do
   include SQLHelpers
 

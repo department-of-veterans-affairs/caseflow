@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe DependenciesReportServiceLogJob do
   DEPENDENCIES_REPORT_WITH_OUTAGES = <<-'EOF'.strip_heredoc.freeze
     {

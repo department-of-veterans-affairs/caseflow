@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe Task, :postgres do
   describe ".available_actions" do
     let(:task) { nil }

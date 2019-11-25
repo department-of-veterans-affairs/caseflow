@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
   let!(:current_user) do
     user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])

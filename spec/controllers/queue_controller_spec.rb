@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe QueueController, :all_dbs, type: :controller do
   describe "GET /queue" do
     context "when user has access to queue" do

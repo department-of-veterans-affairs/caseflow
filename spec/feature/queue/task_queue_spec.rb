@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "Task queue", :all_dbs do
   let!(:vlj_support_staffer) { create(:user) }
 

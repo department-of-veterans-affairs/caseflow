@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Save Certification", :all_dbs do
   before do
     Form8.pdf_service = FakePdfService

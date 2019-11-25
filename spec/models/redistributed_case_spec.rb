@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe RedistributedCase, :all_dbs do
   let!(:vacols_case) { create(:case, bfcurloc: "CASEFLOW") }
   let(:judge) { create(:user) }

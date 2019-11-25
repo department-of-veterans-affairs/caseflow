@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe LegacyAppealDispatch do
   describe "#call" do
     context "invalid citation number" do

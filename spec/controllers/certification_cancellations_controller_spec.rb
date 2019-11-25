@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe CertificationCancellationsController, :postgres, type: :controller do
   let!(:current_user) { User.authenticate! }
 

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe HomeController, :postgres, type: :controller do
   describe "GET /" do
     context "when visitor is not logged in" do

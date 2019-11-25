@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe InformalHearingPresentationTask, :postgres do
   let(:user) { create(:user, roles: ["VSO"]) }
 

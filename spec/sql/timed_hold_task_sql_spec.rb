@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe "Timed Hold Task example", :postgres do
   include SQLHelpers
 

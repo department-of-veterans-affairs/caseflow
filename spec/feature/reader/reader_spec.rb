@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 def scroll_position(id: nil, class_name: nil)
   page.evaluate_script <<-EOS
     function() {

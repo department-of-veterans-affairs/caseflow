@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe Task, :all_dbs do
   context "includes PrintsTaskTree concern" do
     describe ".structure" do

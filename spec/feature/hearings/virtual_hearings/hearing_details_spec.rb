@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   let(:current_user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"]) }
 

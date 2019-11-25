@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
   let(:api_key) { ApiKey.create!(consumer_name: "API Consumer").key_string }
 

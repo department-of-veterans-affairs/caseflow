@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe IntakesController, :postgres do
   before do
     Fakes::Initializer.load!

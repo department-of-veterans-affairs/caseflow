@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe DistributionTask, :postgres do
   describe "ready_for_distribution" do
     before do

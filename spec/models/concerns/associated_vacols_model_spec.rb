@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe AssociatedVacolsModel do
   class TestVacolsModelRepository
     class << self

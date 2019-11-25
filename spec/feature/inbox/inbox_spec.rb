@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "Inbox", :postgres do
   before { FeatureToggle.enable!(:inbox) }
   after { FeatureToggle.disable!(:inbox) }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe HigherLevelReviewsController, :postgres, type: :controller do
   before do
     User.stub = user

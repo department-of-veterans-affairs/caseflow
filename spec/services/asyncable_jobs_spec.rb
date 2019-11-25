@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe AsyncableJobs, :postgres do
   let(:veteran) { create(:veteran) }
   let!(:hlr) do

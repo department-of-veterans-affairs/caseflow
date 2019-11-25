@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe JudgeQualityReviewTask do
   let(:judge) { create(:user) }
   let(:judge_task) do

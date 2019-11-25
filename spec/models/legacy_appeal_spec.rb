@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe LegacyAppeal, :all_dbs do
   before do
     Timecop.freeze(post_ama_start_date)

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe HearingLocation do
   describe "#street_address" do
     it "pulls from constants file" do

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe Tag, :postgres do
   let(:document) { Generators::Document.create(vbms_document_id: 123) }
   let(:tag1) { Generators::Tag.create(text: "Service Connected") }

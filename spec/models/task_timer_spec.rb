@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe TaskTimer, :postgres do
   describe "processing" do
     before do

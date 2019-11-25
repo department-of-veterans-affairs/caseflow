@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe TranslationTask, :postgres do
   describe ".create_from_root_task" do
     let(:appeal) { create(:appeal) }

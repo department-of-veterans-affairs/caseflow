@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe AttorneyRewriteTask, :all_dbs do
   context "when cancelling the task" do
     let(:atty) { create(:user) }

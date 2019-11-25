@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe PostDecisionMotionsController do
   let(:user) { create(:default_user) }
 

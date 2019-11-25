@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe VirtualHearings::DeleteConferencesJob, :postgres do
   context "#perform" do
     let(:job) { VirtualHearings::DeleteConferencesJob.new }

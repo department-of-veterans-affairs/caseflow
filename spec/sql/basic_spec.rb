@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe "Basic SQL Snippet Library Test", :postgres do
   include SQLHelpers
 

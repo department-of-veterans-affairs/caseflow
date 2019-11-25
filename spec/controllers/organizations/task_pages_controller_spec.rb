@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe Organizations::TaskPagesController, :postgres, type: :controller do
   let(:organization) { create(:organization) }
   let(:url) { organization.url }

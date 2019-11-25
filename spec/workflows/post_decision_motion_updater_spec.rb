@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe PostDecisionMotionUpdater, :all_dbs do
   let!(:lit_support_team) { LitigationSupport.singleton }
   let(:judge) { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe RatingDecision do
   before do
     Time.zone = "UTC"

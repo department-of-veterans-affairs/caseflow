@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe ApiKey, :postgres do
   context ".create!" do
     subject { ApiKey.create!(consumer_name: "CaseSlow") }

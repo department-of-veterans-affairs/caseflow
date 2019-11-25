@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe OutOfServiceReminderJob do
   context "when single apps are disabled" do
     before do

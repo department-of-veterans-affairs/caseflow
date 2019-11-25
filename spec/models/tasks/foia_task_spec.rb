@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe FoiaTask do
   describe ".available_actions" do
     subject { task.available_actions(user) }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe VirtualHearings::CreateConferenceJob, :all_dbs do
   context ".perform" do
     let(:hearing) { create(:hearing, regional_office: "RO06") }

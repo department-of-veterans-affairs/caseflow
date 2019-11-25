@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe Representative, :postgres do
   let(:participant_id) { "123456" }
   let(:vso_participant_id) { "789" }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe BatchUsersForReaderQuery, :postgres do
   describe "#process" do
     let!(:active_user1) do

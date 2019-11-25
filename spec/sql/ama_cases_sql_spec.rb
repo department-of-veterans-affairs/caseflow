@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe "AMA Cases Tableau data source", :all_dbs do
   include SQLHelpers
 

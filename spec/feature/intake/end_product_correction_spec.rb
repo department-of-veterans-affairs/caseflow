@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "End Product Correction (EP 930)", :postgres do
   include IntakeHelpers
 

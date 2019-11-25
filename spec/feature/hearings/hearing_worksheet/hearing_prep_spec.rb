@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Hearing worksheet for Hearing Prep", :all_dbs do
   let!(:current_user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let!(:legacy_hearing) do

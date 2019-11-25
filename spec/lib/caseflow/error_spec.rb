@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe "Caseflow::Error" do
   describe "ActionForbiddenError" do
     let(:error_type) { Caseflow::Error::ActionForbiddenError }

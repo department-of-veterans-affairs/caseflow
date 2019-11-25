@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe AttorneyTask, :all_dbs do
   let!(:attorney) { create(:user) }
   let!(:assigning_judge) { create(:user) }

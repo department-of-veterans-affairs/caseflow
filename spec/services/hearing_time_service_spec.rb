@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe HearingTimeService, :all_dbs do
   context "with a legacy hearing and a hearing scheduled for 12:00pm PT" do
     let!(:hearing) { create(:hearing, regional_office: "RO43", scheduled_time: "12:00") }

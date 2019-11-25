@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe Organizations::TasksController, :all_dbs, type: :controller do
   include PowerOfAttorneyMapper
   include TaskHelpers

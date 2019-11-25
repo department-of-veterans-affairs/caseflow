@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "SpecialCaseMovementTask", :all_dbs do
   let(:scm_user) { create(:user) }
 

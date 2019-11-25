@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe VeteranFinder, :postgres do
   before do
     Fakes::BGSService.store_veteran_record(file_number, veteran_record)

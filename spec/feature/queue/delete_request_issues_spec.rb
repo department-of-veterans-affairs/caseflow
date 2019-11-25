@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "correcting issues", :postgres do
   include IntakeHelpers
 

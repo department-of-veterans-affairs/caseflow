@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe AttorneyCaseReview, :all_dbs do
   let(:attorney) { create(:user) }
   let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }

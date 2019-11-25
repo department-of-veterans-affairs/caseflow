@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe AppealsController, :all_dbs, type: :controller do
   include TaskHelpers
 

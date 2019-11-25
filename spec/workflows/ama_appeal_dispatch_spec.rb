@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe AmaAppealDispatch, :postgres do
   describe "#call" do
     it "stores current POA participant ID in the Appeals table" do

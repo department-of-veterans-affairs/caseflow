@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe WarmBgsCachesJob, :all_dbs do
   context "#perform" do
     # cache keys are using default POA so no specific ids.

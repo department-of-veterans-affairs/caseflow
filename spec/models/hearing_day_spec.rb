@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe HearingDay, :all_dbs do
   context "#create" do
     let(:test_hearing_date_vacols) do

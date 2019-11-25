@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Cancel certification", :all_dbs do
   let!(:current_user) { User.authenticate! }
 

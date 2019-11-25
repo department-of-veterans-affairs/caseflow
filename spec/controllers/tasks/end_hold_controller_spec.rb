@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe Tasks::EndHoldController, :postgres, type: :controller do
   describe "POST tasks/:id/end_hold" do
     let(:user) { create(:user) }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "Updating Document ID", :all_dbs do
   context "AMA case review" do
     it "only allows assigner and assignee to edit document ID and validates ID format" do

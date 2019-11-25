@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe DataIntegrityChecksJob do
   let(:expired_async_jobs_checker) { ExpiredAsyncJobsChecker.new }
   let(:open_hearing_tasks_without_active_descendants_checker) { OpenHearingTasksWithoutActiveDescendantsChecker.new }

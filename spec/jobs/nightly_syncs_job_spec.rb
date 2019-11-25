@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe NightlySyncsJob, :all_dbs do
   context "when the job runs successfully" do
     before do

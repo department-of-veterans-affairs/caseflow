@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe PowerOfAttorney, :all_dbs do
   let!(:vacols_case) { create(:case, :representative_american_legion) }
   let(:power_of_attorney) { PowerOfAttorney.new(vacols_id: vacols_case.bfkey, file_number: "VBMS-ID") }

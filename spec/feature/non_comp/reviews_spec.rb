@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "NonComp Reviews Queue", :postgres do
   context "with an existing organization" do
     let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }

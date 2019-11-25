@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe UpdateAppellantRepresentationJob, :all_dbs do
   context "when the job runs successfully" do
     let(:new_task_count) { 3 }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "Higher-Level Review", :all_dbs do
   include IntakeHelpers
 

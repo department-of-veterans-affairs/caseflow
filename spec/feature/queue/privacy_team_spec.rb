@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Privacy team tasks and queue", :all_dbs do
   describe "Assigning ColocatedTask to Privacy team" do
     let(:attorney) { create(:user) }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe JudgeTask, :all_dbs do
   let(:judge) { create(:user) }
   let(:judge2) { create(:user) }

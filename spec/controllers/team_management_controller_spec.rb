@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe TeamManagementController, :postgres, type: :controller do
   let(:user) { create(:user) }
 

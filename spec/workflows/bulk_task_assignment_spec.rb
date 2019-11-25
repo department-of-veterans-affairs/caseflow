@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe BulkTaskAssignment, :postgres do
   describe "#process" do
     let(:organization) { HearingsManagement.singleton }

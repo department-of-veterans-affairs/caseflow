@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe Organization, :postgres do
   describe ".create" do
     context "when the input URL has uppercase letters and spaces" do

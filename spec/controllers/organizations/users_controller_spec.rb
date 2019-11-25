@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe Organizations::UsersController, :postgres, type: :controller do
   describe "GET /organizations/:business_line/users" do
     subject { get :index, params: { organization_url: non_comp_org.url }, format: :json }

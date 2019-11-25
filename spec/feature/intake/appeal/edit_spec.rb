@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "Appeal Edit issues", :all_dbs do
   include IntakeHelpers
 

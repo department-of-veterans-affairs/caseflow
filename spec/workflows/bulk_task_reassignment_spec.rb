@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe BulkTaskReassignment, :all_dbs do
   before { allow_any_instance_of(Task).to receive(:automatically_assign_org_task?).and_return(false) }
 

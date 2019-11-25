@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "Intake Confirmation Page", :postgres do
   include IntakeHelpers
 

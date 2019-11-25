@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe HearingSchedule::AssignJudgesToHearingDays, :all_dbs do
   let(:schedule_period) do
     create(:blank_judge_schedule_period, start_date: Date.parse("2018-04-01"),

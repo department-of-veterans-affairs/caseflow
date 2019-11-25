@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe Relationship, :postgres do
   let(:veteran) { create(:veteran) }
   let(:relationship_type) { "Spouse" }

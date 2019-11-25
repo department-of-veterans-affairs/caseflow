@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe DocumentFetcher, :postgres do
   let(:appeal) { Generators::LegacyAppeal.build }
   let(:document_service) { DocumentFetcher.new(appeal: appeal, use_efolder: true) }

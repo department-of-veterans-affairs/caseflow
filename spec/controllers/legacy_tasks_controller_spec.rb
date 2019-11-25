@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
   before do
     Fakes::Initializer.load!

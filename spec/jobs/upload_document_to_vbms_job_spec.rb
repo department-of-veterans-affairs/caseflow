@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe UploadDocumentToVbmsJob, :postgres do
   describe ".perform" do
     it "calls #call on UploadDocumentToVbms instance" do

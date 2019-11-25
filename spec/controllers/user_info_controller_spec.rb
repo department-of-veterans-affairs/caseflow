@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe UserInfoController, :postgres, type: :controller do
   describe ".represented_organizations" do
     let(:user) { create(:user) }

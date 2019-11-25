@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe QueueConfig, :postgres do
   describe ".new" do
     let(:arguments) { { assignee: assignee } }

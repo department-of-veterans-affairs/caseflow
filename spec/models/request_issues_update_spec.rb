@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe RequestIssuesUpdate, :all_dbs do
   before do
     Time.zone = "America/New_York"

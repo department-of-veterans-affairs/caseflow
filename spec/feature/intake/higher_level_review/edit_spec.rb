@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "Higher Level Review Edit issues", :all_dbs do
   include IntakeHelpers
 

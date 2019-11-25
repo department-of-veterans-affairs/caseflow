@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe AppealRequestIssuesPolicy, :postgres do
   describe "#editable?" do
     let(:appeal) { build_stubbed(:appeal) }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe ReviewsWithDuplicateEpErrorChecker, :postgres do
   # create a test ep
   def new_ep(veteran_file_number, status_type_code, last_action_date, claim_type_code)

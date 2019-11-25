@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Intake Manager Page", :postgres do
   before do
     Timecop.freeze(post_ramp_start_date)

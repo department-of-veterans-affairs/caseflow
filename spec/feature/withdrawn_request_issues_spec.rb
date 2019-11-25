@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "attorney checkout flow when appeal has withdrawn request issues", :all_dbs do
   it "displays withdrawn status on case details page" do
     create_ama_attorney_task

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "Appeal Intake", :all_dbs do
   include IntakeHelpers
 

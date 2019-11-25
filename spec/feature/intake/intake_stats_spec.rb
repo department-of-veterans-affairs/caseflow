@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Intake Stats Dashboard", :postgres, skip: "deprecated" do
   before do
     Timecop.freeze(Time.utc(2020, 1, 7, 17, 55, 0, rand(1000)))

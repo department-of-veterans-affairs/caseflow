@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe CachedAttributes do
   class TestThing
     include CachedAttributes

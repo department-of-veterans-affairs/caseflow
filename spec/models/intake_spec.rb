@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe Intake, :postgres do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))

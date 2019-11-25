@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe ReassignOldTasksJob, :postgres do
   let!(:appeal1) { LegacyAppeal.create(vacols_id: "1") }
   let!(:appeal2) { LegacyAppeal.create(vacols_id: "2") }

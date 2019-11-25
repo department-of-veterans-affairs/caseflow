@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe VirtualHearingRepository, :all_dbs do
   context ".ready_for_deletion" do
     let(:regional_office) { "RO42" }

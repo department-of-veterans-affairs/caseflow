@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe VaDotGovAddressValidator::ClosestRegionalOfficeFinder do
   include HearingHelpers
 

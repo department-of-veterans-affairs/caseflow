@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Attorney queue", :all_dbs do
   let(:judge) { create(:user) }
   let!(:vacols_judge) { create(:staff, :judge_role, user: judge) }

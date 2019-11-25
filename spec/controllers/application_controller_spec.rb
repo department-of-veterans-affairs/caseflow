@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe ApplicationController, type: :controller do
   let(:user) { build(:user) }
 

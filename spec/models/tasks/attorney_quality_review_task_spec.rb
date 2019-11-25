@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe AttorneyQualityReviewTask, :all_dbs do
   context ".create" do
     it "returns the correct label" do

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Login", :all_dbs do
   let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
   let(:station_id) { "405" }

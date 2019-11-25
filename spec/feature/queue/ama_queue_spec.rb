@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "AmaQueue", :all_dbs do
   def valid_document_id
     "12345-12345678"

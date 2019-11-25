@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "Supplemental Claim Edit issues", :all_dbs do
   include IntakeHelpers
 

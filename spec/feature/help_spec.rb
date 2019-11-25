@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Help" do
   before do
     User.authenticate!

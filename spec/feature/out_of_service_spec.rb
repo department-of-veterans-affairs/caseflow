@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Out of Service", :all_dbs do
   context "Across all apps" do
     before do

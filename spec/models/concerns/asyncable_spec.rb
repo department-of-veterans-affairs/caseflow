@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe Asyncable do
   class TestAsyncable
     include ActiveModel::Model

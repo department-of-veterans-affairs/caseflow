@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe Hearings::AppealsController, :all_dbs, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let(:appeal) do

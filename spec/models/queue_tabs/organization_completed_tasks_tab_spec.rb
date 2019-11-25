@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe OrganizationCompletedTasksTab, :postgres do
   let(:tab) { OrganizationCompletedTasksTab.new(params) }
   let(:params) do

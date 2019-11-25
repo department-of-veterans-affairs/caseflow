@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe DecisionReview, :postgres do
   before do
     Time.zone = "UTC"

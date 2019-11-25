@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe GenericQueue, :all_dbs do
   describe "#tasks" do
     let(:atty) { create(:user) }

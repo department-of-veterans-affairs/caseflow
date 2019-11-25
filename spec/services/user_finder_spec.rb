@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe UserFinder, :all_dbs do
   let!(:judge) do
     create(:user).tap do |judge|

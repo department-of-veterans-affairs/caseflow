@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe DocketCoordinator, :all_dbs do
   before do
     FeatureToggle.enable!(:test_facols)

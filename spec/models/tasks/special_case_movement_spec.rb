@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe SpecialCaseMovementTask, :postgres do
   describe ".create" do
     context "with Special Case Movement Team user" do

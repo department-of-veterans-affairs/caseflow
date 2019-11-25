@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Hearings tasks workflows", :all_dbs do
   let(:user) { create(:user) }
 

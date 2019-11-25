@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe DependenciesCheckJob do
   context "when Monitor env is set" do
     it "writes report in cache" do

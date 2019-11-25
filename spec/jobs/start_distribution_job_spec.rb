@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe StartDistributionJob do
   let(:judge) { build_stubbed(:user, css_id: "MYNAMEISJUDGE") }
   let!(:vacols_judge) { build_stubbed(:staff, :judge_role, sdomainid: "MYNAMEISJUDGE") }

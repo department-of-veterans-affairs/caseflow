@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe AppealHistory, :all_dbs do
   let(:original) do
     create(:legacy_appeal, vacols_case:

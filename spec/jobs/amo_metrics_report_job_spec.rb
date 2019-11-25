@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe AMOMetricsReportJob, :postgres do
   include_context "Metrics Reports"
 

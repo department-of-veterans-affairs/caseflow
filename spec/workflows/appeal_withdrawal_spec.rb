@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe "Withdrawing an appeal", :postgres do
   context "appeal has one request issue and it is withdrawn" do
     it "allows it to be distributed" do

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe RoundRobinTaskDistributor, :all_dbs do
   let(:assignee_pool_size) { 6 }
   let!(:assignee_pool) { create_list(:user, assignee_pool_size) }

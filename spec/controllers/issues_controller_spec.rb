@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe IssuesController, :all_dbs, type: :controller do
   let!(:user) { User.authenticate!(roles: ["System Admin"]) }
   let(:case_issue) { nil }

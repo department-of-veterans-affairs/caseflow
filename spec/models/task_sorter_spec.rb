@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe TaskSorter, :all_dbs do
   describe ".new" do
     subject { TaskSorter.new(args) }

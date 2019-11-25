@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "List Schedule for Hearing Prep", :all_dbs do
   let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Hearing Prep"]) }
 

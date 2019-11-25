@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe StartCertificationJob, :all_dbs do
   let(:appeal) do
     create(:legacy_appeal, vacols_case: vacols_case)

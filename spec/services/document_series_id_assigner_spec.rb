@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe DocumentSeriesIdAssigner, :postgres do
   describe "#call" do
     let(:appeal) do

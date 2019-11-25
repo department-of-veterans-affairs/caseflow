@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Dispatch Stats Dashboard", :postgres do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 17, 55, 0, rand(1000)))

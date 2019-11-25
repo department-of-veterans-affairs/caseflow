@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe JudgeTeamRoleChecker, :postgres do
   get_teams_with_wrong_lead_count = JudgeTeamRoleChecker.method(:judge_teams_with_incorrect_number_of_leads)
   get_teams_with_nonadmin_leads = JudgeTeamRoleChecker.method(:non_admin_judge_team_leads)

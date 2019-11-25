@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Colocated checkout flows", :all_dbs do
   let(:attorney_user) { create(:default_user) }
   let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }

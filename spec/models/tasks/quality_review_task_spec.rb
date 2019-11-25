@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe QualityReviewTask, :all_dbs do
   let(:root_task) { create(:root_task) }
   let(:qr_task) { QualityReviewTask.create_from_root_task(root_task) }

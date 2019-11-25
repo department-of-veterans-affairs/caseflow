@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe MailTask, :postgres do
   let(:user) { create(:user) }
   let(:mail_team) { MailTeam.singleton }

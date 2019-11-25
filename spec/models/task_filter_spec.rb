@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe TaskFilter, :all_dbs do
   describe ".new"  do
     let(:args) { { filter_params: filter_params } }

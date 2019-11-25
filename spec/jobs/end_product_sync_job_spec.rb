@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe EndProductSyncJob, :postgres do
   let!(:ramp_election) { create(:ramp_election, :established) }
 

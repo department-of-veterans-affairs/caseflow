@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe TrackVeteranTask, :postgres do
   let(:vso) { create(:vso) }
   let(:root_task) { create(:root_task) }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe TranscriptionTask, :postgres do
   before do
     Time.zone = "Eastern Time (US & Canada)"

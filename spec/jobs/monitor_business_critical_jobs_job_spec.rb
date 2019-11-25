@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe MonitorBusinessCriticalJobsJob do
   before do
     Timecop.freeze(Time.utc(2017, 2, 2, 20))

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe Hearings::HearingDayController, :all_dbs do
   let(:user) { create(:user, roles: ["Build HearSched"]) }
 

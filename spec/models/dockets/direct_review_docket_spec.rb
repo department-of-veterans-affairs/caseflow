@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe DirectReviewDocket, :postgres do
   context "#due_count" do
     subject { DirectReviewDocket.new.due_count }

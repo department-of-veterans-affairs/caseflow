@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe Issue, :all_dbs do
   let(:vacols_id) { "12345678" }
   let(:disposition) { :allowed }

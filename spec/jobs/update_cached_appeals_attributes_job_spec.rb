@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe UpdateCachedAppealsAttributesJob, :all_dbs do
   let(:vacols_case1) { create(:case) }
   let(:vacols_case2) { create(:case) }

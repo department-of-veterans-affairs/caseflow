@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "RAMP Refiling Intake", :postgres do
   include IntakeHelpers
 

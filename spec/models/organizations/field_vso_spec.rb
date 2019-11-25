@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe FieldVso, :postgres do
   let(:vso) { FieldVso.create!(name: "VSO name here", url: "vso-name-here") }
 

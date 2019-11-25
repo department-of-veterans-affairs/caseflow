@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe PrivateBar, :postgres do
   let(:private_bar) { PrivateBar.create!(name: "Caseflow Law Group", url: "caseflow-law") }
 

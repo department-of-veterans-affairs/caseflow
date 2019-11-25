@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "RAMP Election Intake", :all_dbs do
   include IntakeHelpers
 

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe RootTask, :postgres do
   describe ".available_actions_unwrapper" do
     let(:user) { create(:user) }

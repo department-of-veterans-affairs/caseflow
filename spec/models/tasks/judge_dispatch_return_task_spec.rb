@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe JudgeDispatchReturnTask, :postgres do
   let(:judge) { create(:user) }
   let(:dispatch_user) { create(:user) }

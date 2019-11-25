@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe RequestIssueClosure, :postgres do
   let(:decision_review) { create(:higher_level_review) }
   let(:end_product_establishment) { nil }

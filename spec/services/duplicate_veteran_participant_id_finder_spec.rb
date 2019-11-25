@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe DuplicateVeteranParticipantIDFinder, :postgres do
   it "returns duplicate participant IDs" do
     stub_const("BGSService", ExternalApi::BGSService)

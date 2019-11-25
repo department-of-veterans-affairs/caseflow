@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe StuckAppealsChecker, :postgres do
   let!(:appeal_with_zero_tasks) { create(:appeal) }
   let!(:appeal_with_tasks) { create(:appeal, :with_post_intake_tasks) }

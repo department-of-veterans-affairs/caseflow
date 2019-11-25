@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe AppealTaskHistory, :postgres do
   let(:appeal) { create(:appeal, :with_post_intake_tasks) }
   let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks) }

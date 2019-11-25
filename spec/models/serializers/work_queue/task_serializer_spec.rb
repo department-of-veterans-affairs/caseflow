@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe WorkQueue::TaskSerializer, :postgres do
   let(:now) { Time.utc(2018, 4, 24, 12, 0, 0) }
   let(:user) { create(:user) }

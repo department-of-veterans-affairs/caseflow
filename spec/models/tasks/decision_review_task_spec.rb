@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe DecisionReviewTask, :postgres do
   include IntakeHelpers
 

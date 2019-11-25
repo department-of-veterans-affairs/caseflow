@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe AttorneyQueue, :all_dbs do
   context "#tasks" do
     let(:user) { create(:user) }

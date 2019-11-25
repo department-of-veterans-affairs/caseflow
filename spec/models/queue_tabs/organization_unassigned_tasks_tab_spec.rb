@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe OrganizationUnassignedTasksTab, :postgres do
   let(:tab) { OrganizationUnassignedTasksTab.new(params) }
   let(:params) do

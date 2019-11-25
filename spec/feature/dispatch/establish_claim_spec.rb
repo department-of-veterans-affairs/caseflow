@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
   before do
     Timecop.freeze(pre_ramp_start_date)

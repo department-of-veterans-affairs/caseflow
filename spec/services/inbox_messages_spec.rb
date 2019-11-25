@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe InboxMessages, :postgres do
   let(:user) { create(:user) }
 

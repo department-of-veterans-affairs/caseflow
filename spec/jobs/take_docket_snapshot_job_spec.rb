@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe TakeDocketSnapshotJob, :all_dbs do
   before do
     allow(AppealRepository).to receive(:latest_docket_month) { 11.months.ago.to_date.beginning_of_month }

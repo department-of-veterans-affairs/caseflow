@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe DecidedMotionToVacateTask, :postgres, type: :model do
   let(:lit_support_team) { LitigationSupport.singleton }
 

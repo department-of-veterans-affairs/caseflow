@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe LegacyWorkQueue, :all_dbs do
   context ".tasks_for_user" do
     let!(:user) { create(:user) }

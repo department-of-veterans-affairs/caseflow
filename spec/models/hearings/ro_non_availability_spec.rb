@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe RoNonAvailability, :postgres do
   let(:ro_schedule_period) { create(:ro_schedule_period) }
 

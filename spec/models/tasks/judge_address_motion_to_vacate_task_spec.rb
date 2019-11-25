@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe JudgeAddressMotionToVacateTask, :postgres do
   it "returns the correct label" do
     expect(JudgeAddressMotionToVacateTask.new.label).to eq(

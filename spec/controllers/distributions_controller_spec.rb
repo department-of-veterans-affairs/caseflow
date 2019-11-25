@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe DistributionsController, :all_dbs do
   describe "#new" do
     context "current user is not a judge" do

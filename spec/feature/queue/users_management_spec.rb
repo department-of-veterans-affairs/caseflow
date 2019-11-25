@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Users management page", :postgres do
   let(:user) { create(:user) }
 

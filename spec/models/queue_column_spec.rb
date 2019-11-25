@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe QueueColumn, :all_dbs do
   describe ".from_name" do
     subject { QueueColumn.from_name(column_name) }

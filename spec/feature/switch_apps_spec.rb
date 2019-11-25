@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "SwitchApps", :postgres do
   context "A user with just Queue access" do
     let!(:user) do

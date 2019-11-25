@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "Intake Add Issues Page", :all_dbs do
   include IntakeHelpers
 

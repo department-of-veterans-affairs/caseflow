@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe Message, :postgres do
   describe ".unread" do
     let!(:message) { create(:message) }

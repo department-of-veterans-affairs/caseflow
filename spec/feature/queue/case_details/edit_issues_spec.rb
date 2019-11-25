@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Edit Issues", :all_dbs do
   before do
     FeatureToggle.enable!(:allow_judge_edit_issues)

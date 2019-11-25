@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe JudgeTeam, :postgres do
   let(:judge) { create(:user) }
 

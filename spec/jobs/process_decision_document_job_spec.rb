@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe ProcessDecisionDocumentJob do
   context ".perform" do
     subject { ProcessDecisionDocumentJob.perform_now(decision_document.id) }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe OrganizationsController, :postgres, type: :controller do
   describe "GET /organizations/:organization" do
     let(:participant_id) { "123456" }

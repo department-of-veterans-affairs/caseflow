@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe Hearings::WorksheetsPrintController, :postgres, type: :controller do
   describe "GET print view of worksheet" do
     context "user with invalid roles" do

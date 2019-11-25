@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Bulk task assignment", :postgres do
   let(:org) { HearingsManagement.singleton }
   let(:user) { create(:user) }

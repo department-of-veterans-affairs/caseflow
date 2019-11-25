@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe JudgeAssignTasksController, :all_dbs do
   describe "POST /judge_assign_tasks" do
     let!(:attorney) { create(:user) }

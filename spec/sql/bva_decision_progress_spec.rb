@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe "BVA Decision Progress report", :all_dbs do
   include SQLHelpers
 

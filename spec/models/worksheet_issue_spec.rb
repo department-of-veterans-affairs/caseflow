@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe WorksheetIssue, :postgres do
   context ".create_from_issue" do
     let(:appeal) { Generators::LegacyAppeal.create }

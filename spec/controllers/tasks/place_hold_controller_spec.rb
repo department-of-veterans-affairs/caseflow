@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe Tasks::PlaceHoldController, :postgres, type: :controller do
   describe "POST tasks/:id/place_hold" do
     let(:user) { create(:user) }

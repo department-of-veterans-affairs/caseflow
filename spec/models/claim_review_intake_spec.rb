@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe ClaimReviewIntake, :postgres do
   let(:veteran_file_number) { "64205555" }
   let(:user) { Generators::User.build }

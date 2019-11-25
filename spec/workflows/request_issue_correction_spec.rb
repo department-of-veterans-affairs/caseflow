@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe "Request Issue Correction", :postgres do
   let(:veteran) do
     create(:veteran,

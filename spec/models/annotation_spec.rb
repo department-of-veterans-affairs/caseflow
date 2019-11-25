@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe Annotation, :postgres do
   let(:annotation) do
     Annotation.new(document_id: document.id, comment: comment)

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe AppealsUpdatedSinceQuery, :postgres do
   before do
     Timecop.freeze(post_ama_start_date)

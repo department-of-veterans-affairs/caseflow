@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "Nonrating Request Issue Modal", :postgres do
   include IntakeHelpers
 

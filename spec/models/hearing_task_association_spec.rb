@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe HearingTaskAssociation, :all_dbs do
   describe "uniqueness validation" do
     let(:hearing) { nil }

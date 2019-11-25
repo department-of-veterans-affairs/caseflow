@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe BVAAppealStatus, :all_dbs do
   include SQLHelpers
 

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe JudgeRepository, :all_dbs do
   let(:judge_name) { "Sojudgey" }
   let(:staff_count) { 3 }

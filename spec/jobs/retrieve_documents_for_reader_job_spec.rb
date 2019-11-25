@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe RetrieveDocumentsForReaderJob, :postgres do
   context ".perform" do
     context "a user exists who have been recently active" do

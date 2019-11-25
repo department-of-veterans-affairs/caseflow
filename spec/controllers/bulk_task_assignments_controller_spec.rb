@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe BulkTaskAssignmentsController, :postgres, type: :controller do
   describe "#create" do
     let(:organization) { HearingsManagement.singleton }

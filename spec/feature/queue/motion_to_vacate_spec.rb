@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "Motion to vacate", :all_dbs do
   include QueueHelpers
 

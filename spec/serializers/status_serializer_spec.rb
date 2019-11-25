@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe StatusSerializer, :all_dbs do
   def status_hash(object)
     StatusSerializer.new(object).serializable_hash[:data][:attributes]

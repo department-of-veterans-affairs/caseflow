@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "NonComp Board Grant Task Page", :postgres do
   before do
     Timecop.freeze(post_ama_start_date)

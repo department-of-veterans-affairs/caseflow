@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.describe ApplicationHelper, type: :helper do
   describe "#current_ga_path" do
     it "returns route's path without resource ids" do

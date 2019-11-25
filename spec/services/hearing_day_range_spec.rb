@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe HearingDayRange, :all_dbs do
   describe ".load_days" do
     context "load Video days for a range date" do

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "ColocatedTask", :all_dbs do
   let(:vlj_support_staff) { create(:user) }
 

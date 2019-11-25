@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "Intake", :all_dbs do
   include IntakeHelpers
 

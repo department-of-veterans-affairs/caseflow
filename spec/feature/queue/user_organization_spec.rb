@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.feature "User organization", :postgres do
   let(:role) { "org_role" }
   let!(:user) { User.authenticate!(user: create(:user, roles: [role])) }

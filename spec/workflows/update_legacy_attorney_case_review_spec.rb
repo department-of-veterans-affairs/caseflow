@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe UpdateLegacyAttorneyCaseReview, :all_dbs do
   describe "#call" do
     let(:judge) { build(:user, css_id: "JUDGE") }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 feature "Appeal time zone", :all_dbs do
   include IntakeHelpers
 

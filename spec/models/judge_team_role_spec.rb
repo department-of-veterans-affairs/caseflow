@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe JudgeTeamRole, :postgres do
   describe ".create" do
     subject { JudgeTeamRole.create!(params) }
