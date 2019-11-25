@@ -19,6 +19,10 @@ class JudgeTask < Task
     ].flatten
   end
 
+  def actions_allowable?(user)
+    super && assigned_to == user
+  end
+
   # :nocov:
   def additional_available_actions(_user)
     fail Caseflow::Error::MustImplementInSubclass
