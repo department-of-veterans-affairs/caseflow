@@ -55,8 +55,8 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
     # the record while maximum is being calculated.
     virtual_hearing.with_lock do
       max_alias = VirtualHearing.maximum(:alias)
-      conference_alias = max_alias ? (max_alias.to_i + 1).rjust(7, "0") : "0000001"
-      virtual_hearing.alias = conference_alias.to_s
+      conference_alias = max_alias ? (max_alias.to_i + 1).to_s.rjust(7, "0") : "0000001"
+      virtual_hearing.alias = conference_alias
       virtual_hearing.save!
     end
   end

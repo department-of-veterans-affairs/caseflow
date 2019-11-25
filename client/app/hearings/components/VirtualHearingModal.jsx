@@ -75,16 +75,18 @@ class VirtualHearingModal extends React.Component {
   }
 
   render () {
-    let { virtualHearing, hearing, timeWasEdited, update, reset } = this.props;
+    let {
+      virtualHearing, hearing, timeWasEdited, update, reset, modalTitle, modalIntro, modalButton
+    } = this.props;
 
     return <div>
       <Modal
-        title="Change to Virtual Hearing"
+        title={modalTitle}
         closeHandler={reset}
         confirmButton={
           <Button classNames={['usa-button-secondary']}
             onClick={this.onSubmit}>
-            Change and Send Email
+            {modalButton}
           </Button>
         }
         cancelButton={
@@ -92,6 +94,7 @@ class VirtualHearingModal extends React.Component {
         }>
         <p>
           {COPY.VIRTUAL_HEARING_MODAL_INTRO}
+          {modalIntro}
         </p>
         <div>
           <strong>{'Date:'}&nbsp;</strong>{moment(hearing.scheduledFor).format('MM/DD/YYYY')}<br />
@@ -133,7 +136,10 @@ VirtualHearingModal.propTypes = {
   update: PropTypes.func,
   submit: PropTypes.func,
   reset: PropTypes.func,
-  closeModal: PropTypes.func
+  closeModal: PropTypes.func,
+  modalTitle: PropTypes.string,
+  modalIntro: PropTypes.string,
+  modalButton: PropTypes.string
 };
 
 export default VirtualHearingModal;

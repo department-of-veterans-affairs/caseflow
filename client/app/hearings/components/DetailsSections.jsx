@@ -17,19 +17,19 @@ class DetailsSections extends React.Component {
     };
   }
 
-  openModal = () => this.setState({ modalOpen: true })
+  openModal = ({ modalTitle, modalIntro, modalButton }) => this.setState({
+    modalOpen: true,
+    modalTitle,
+    modalIntro,
+    modalButton
+  })
   closeModal = () => this.setState({ modalOpen: false })
 
   resetVirtualHearing = () => {
     const { initialHearingState: { virtualHearing } } = this.props;
 
     if (virtualHearing) {
-      const { veteranEmail, representativeEmail } = virtualHearing;
-
-      this.props.updateVirtualHearing({
-        veteranEmail,
-        representativeEmail
-      });
+      this.props.updateVirtualHearing(virtualHearing);
     } else {
       this.props.updateVirtualHearing(null);
     }
@@ -42,7 +42,7 @@ class DetailsSections extends React.Component {
       transcription, hearing, disabled, updateHearing, updateTranscription, updateVirtualHearing,
       isLegacy, virtualHearing, submit, user, initialHearingState, requestType
     } = this.props;
-    const { modalOpen } = this.state;
+    const { modalOpen, modalTitle, modalIntro, modalButton } = this.state;
 
     return (
       <React.Fragment>
@@ -56,7 +56,8 @@ class DetailsSections extends React.Component {
           virtualHearing={virtualHearing}
           updateVirtualHearing={updateVirtualHearing}
           openModal={this.openModal}
-          openVirtualHearingModal={this.openModal} />
+          openVirtualHearingModal={this.openModal}
+          isVirtual={this.props.isVirtual} />
         <div className="cf-help-divider" />
         {modalOpen && <VirtualHearingModal
           hearing={initialHearingState}
@@ -64,7 +65,11 @@ class DetailsSections extends React.Component {
           update={updateVirtualHearing}
           submit={submit}
           closeModal={this.closeModal}
-          reset={this.resetVirtualHearing} />}
+          reset={this.resetVirtualHearing}
+          modalTitle={modalTitle}
+          modalIntro={modalIntro}
+          modalButton={modalButton}
+          />}
         {!isLegacy &&
           <div>
             <h2>Transcription Details</h2>
@@ -114,7 +119,8 @@ DetailsSections.propTypes = {
   submit: PropTypes.func,
   user: PropTypes.shape({
     userCanScheduleVirtualHearings: PropTypes.bool
-  })
+  }),
+  isVirtual: PropTypes.bool
 };
 
 // These props are set through Redux

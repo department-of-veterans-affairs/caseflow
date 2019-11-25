@@ -100,7 +100,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
         hearing.reload
         choose("hearingTime1_other", allow_label_click: true)
         click_dropdown(name: "optionalHearingTime1", index: 1)
-        expect(page).to have_content("Change to Virtual Hearing")
+        expect(page).to have_content("Change Hearing Time")
         expect(page).to have_content("Change and Send Email")
       end
 
@@ -121,7 +121,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
         choose("hearingTime1_other", allow_label_click: true)
         click_dropdown(name: "optionalHearingTime1", index: 3)
-        click_button("Change-to-Virtual-Hearing-button-id-close")
+        click_button("Change-Hearing-Time-button-id-close")
       end
     end
 
