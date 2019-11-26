@@ -74,7 +74,6 @@ class HearingDetails extends React.Component {
     const transcription = hearing.transcription || {};
     const virtualHearing = hearing.virtualHearing || {};
       status: null
-    };
 
     return {
       hearingDetailsForm: {
