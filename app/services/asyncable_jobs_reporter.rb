@@ -21,7 +21,7 @@ class AsyncableJobsReporter
           job[klass.submitted_at_column],
           job[klass.last_submitted_at_column],
           job[klass.attempted_at_column],
-          sanitize_error(job),
+          job.sanitized_error,
           job.try(:veteran).try(:participant_id)
         ]
       end
@@ -54,17 +54,12 @@ class AsyncableJobsReporter
 
   attr_reader :verbose
 
-  def sanitize_error(job)
-    # keep PII out of output
-    (job[job.class.error_column] || "none").gsub(/\s.+/s, "")
-  end
-
   def build_summary
     report = {}
     jobs.each do |job|
       cls = job.class.to_s
       age = ((Time.zone.now - job.sort_by_last_submitted_at) / 3600 / 24).ceil.to_s
-      err = sanitize_error(job)
+      err = job.sanitized_error
       report[cls] ||= {}
       report[cls][age] ||= { err => 0 }
       report[cls][age][err] ||= 0

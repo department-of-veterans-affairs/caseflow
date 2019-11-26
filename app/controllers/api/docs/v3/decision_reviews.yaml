@@ -337,10 +337,42 @@ paths:
                       claimant:
                         participantId: "44444444"
                         payeeCode: "10"
-                    included:
-                      - type: RequestIssue
-                        attributes:
-                          decisionIssueId: 205
+                  included:
+                    - type: ContestableIssue
+                      attributes:
+                        decisionIssueId: 205
+              pension:
+                value:
+                  data:
+                    type: HigherLevelReview
+                    attributes:
+                      receiptDate: "2019-11-01"
+                      informalConference: false
+                      sameOffice: false
+                      legacyOptInApproved: true
+                      benefitType: pension
+                      veteran:
+                        fileNumberOrSsn: "123456789"
+                        addressLine1: 456 Street St
+                        addressLine2: Apt 7
+                        city: Kansas City
+                        stateProvinceCode: KS
+                        zipPostalCode: "66160"
+                        phoneNumber: "9133677100"
+                        emailAddress: someoneelse@example.com
+                      claimant:
+                        participantId: "33333333"
+                        payeeCode: "11"
+                  included:
+                    - type: ContestableIssue
+                      attributes:
+                        decisionIssueId: 206
+                    - type: ContestableIssue
+                      attributes:
+                        ratingIssueId: 80
+                        legacyAppealIssues:
+                          - legacyAppealId: 12345678
+                            legacyAppealIssueId: 1
       responses:
         '202':
           description: Accepted

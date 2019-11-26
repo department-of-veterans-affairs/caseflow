@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe Hearings::HearingDayController, :all_dbs do
   let(:user) { create(:user, roles: ["Build HearSched"]) }
 

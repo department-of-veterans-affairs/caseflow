@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe OpenHearingTasksWithoutActiveDescendantsChecker, :all_dbs do
   let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
   let(:root_task) { create(:root_task, appeal: legacy_appeal) }

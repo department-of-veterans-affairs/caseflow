@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
   let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Hearing Prep"]) }
@@ -83,45 +80,6 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
         click_button("Confirm")
 
         expect(page).to have_content("You have successfully updated")
-      end
-    end
-
-    context "A virtual hearing has been scheduled" do
-      before do
-        FeatureToggle.enable!(:schedule_virtual_hearings)
-      end
-
-      let!(:current_user) { User.authenticate!(css_id: "BVAYELLOW", roles: ["Edit HearSched", "Build HearSched"]) }
-      let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO06") }
-      let!(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
-
-      scenario "User can select Virtual Hearing time" do
-        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-        hearing.reload
-        choose("hearingTime1_other", allow_label_click: true)
-        click_dropdown(name: "optionalHearingTime1", index: 1)
-        expect(page).to have_content("Change to Virtual Hearing")
-        expect(page).to have_content("Change and Send Email")
-      end
-
-      scenario "Virtual Hearing time has been updated" do
-        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-        hearing.reload
-        choose("hearingTime1_other", allow_label_click: true)
-        click_dropdown(name: "optionalHearingTime1", index: 2)
-        fill_in "vet-email", with: "newEmail@testingEmail.com"
-        click_button("Change and Send Email")
-        expect(page).to have_content("You have successfully updated")
-
-        virtual_hearing.reload
-        expect(virtual_hearing.veteran_email).to eq("newEmail@testingEmail.com")
-      end
-
-      scenario "Changes to Virtual Hearing have been cancelled" do
-        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-        choose("hearingTime1_other", allow_label_click: true)
-        click_dropdown(name: "optionalHearingTime1", index: 3)
-        click_button("Change-to-Virtual-Hearing-button-id-close")
       end
     end
 

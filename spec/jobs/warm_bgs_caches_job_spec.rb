@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe WarmBgsCachesJob, :all_dbs do
   context "#perform" do
     # cache keys are using default POA so no specific ids.

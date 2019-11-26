@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe HearingCoordinatorScheduleQueue, :all_dbs do
   describe "#tasks" do
     let(:user) { create(:user) }

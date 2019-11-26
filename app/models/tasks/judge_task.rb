@@ -11,12 +11,17 @@
 
 class JudgeTask < Task
   def available_actions(user)
-    [
-      Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
-      Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
-      additional_available_actions(user)
-    ].flatten
+    # Only the current assignee of a judge task should have actions available to them on the judge task.
+    if assigned_to == user
+      [
+        Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+        Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+        Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
+        additional_available_actions(user)
+      ].flatten
+    else
+      []
+    end
   end
 
   # :nocov:
