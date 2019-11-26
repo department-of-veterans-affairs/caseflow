@@ -1485,10 +1485,20 @@ paths:
                               type: string
                               format: date
                             description:
-                              type: string
+                              type: array
+                              items:
+                                type: string
+                            codes:
+                              type: array
+                              items:
+                                type: string
+                            labels:
+                              type: array
+                              items:
+                                type: string
                             disposition:
                               type: string
-                            close_date:
+                            closeDate:
                               type: string
                               format: date
                             note:
