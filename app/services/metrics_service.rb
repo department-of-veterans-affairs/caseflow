@@ -37,10 +37,7 @@ class MetricsService
     # This is just to capture the metric.
     raise
   ensure
-    if service
-      increment_datadog_counter("request_attempt", service, name, app)
-      DatabaseRequestCounter.increment_counter(service)
-    end
+    increment_datadog_counter("request_attempt", service, name, app) if service
   end
 
   private_class_method def self.increment_datadog_counter(metric_name, service, endpoint_name, app_name)

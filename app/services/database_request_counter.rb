@@ -4,50 +4,48 @@ class DatabaseRequestCounter
   ON_BUTTON = "db_request_counter_enabled"
   KEY_SUFFIX = "_db_request_attempt_count"
 
-  def self.enable
-    return unless valid_env?
+  class DatabaseRequestCounterNotEnabledError < StandardError; end
 
-    Rails.cache.write(ON_BUTTON, true)
-  end
+  class << self
+    def enable
+      return unless valid_env?
 
-  def self.disable
-    Rails.cache.delete_matched(".*#{KEY_SUFFIX}")
-    Rails.cache.delete(ON_BUTTON)
-  end
+      Rails.cache.write(ON_BUTTON, true)
+    end
 
-  def self.increment_counter(category)
-    return unless enabled?
+    def disable
+      Rails.cache.delete_matched(".*#{KEY_SUFFIX}")
+      Rails.cache.delete(ON_BUTTON)
+    end
 
-    initialize_counter(category)
-    current_val = get_counter(category)
-    set_counter(category, current_val + 1)
-  end
+    def increment_counter(category)
+      return unless enabled?
 
-  def self.get_counter(category)
-    key = get_key_name(category)
-    Rails.cache.fetch(key)
-  end
+      current_val = get_counter(category) || 0
 
-  private_class_method def self.enabled?
-    valid_env? && Rails.cache.fetch(ON_BUTTON)
-  end
+      key = get_key_name(category)
+      Rails.cache.write(key, current_val + 1)
+    end
 
-  private_class_method def self.valid_env?
-    Rails.env.development? || Rails.env.test?
-  end
+    def get_counter(category)
+      fail(DatabaseRequestCounterNotEnabledError) unless enabled?
 
-  private_class_method def self.initialize_counter(category)
-    return if get_counter(category)
+      key = get_key_name(category)
+      Rails.cache.fetch(key)
+    end
 
-    set_counter(category, 0)
-  end
+    def valid_env?
+      Rails.env.development? || Rails.env.test?
+    end
 
-  private_class_method def self.set_counter(category, val)
-    key = get_key_name(category)
-    Rails.cache.write(key, val)
-  end
+    private
 
-  private_class_method def self.get_key_name(category)
-    "#{category}#{KEY_SUFFIX}"
+    def enabled?
+      valid_env? && Rails.cache.fetch(ON_BUTTON)
+    end
+
+    def get_key_name(category)
+      "#{category}#{KEY_SUFFIX}"
+    end
   end
 end
