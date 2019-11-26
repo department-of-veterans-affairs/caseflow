@@ -25,7 +25,7 @@ class ETL::User < ETL::Record
       target.status_updated_at = original.status_updated_at
 
       # not all users are in VACOLS.
-      return target unless original.vacols_user.present?
+      return target if original.vacols_user.blank?
 
       target.sactive = original.vacols_user.sactive
       target.slogid = original.vacols_user.slogid

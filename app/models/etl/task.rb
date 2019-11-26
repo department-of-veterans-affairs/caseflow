@@ -10,6 +10,8 @@ class ETL::Task < ETL::Record
 
     private
 
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
     def merge_original_attributes_to_target(original, target)
       # memoize to save SQL calls
       appeal = original.appeal
@@ -43,5 +45,7 @@ class ETL::Task < ETL::Record
 
       target
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
   end
 end
