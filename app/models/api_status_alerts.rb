@@ -9,6 +9,8 @@ class ApiStatusAlerts
     case decision_review
     when Appeal
       appeal_alerts
+    when AppealStatusDecorator
+      appeal_alerts
     else
       claim_review_alerts
     end
@@ -35,6 +37,8 @@ class ApiStatusAlerts
     return unless Time.zone.today <= decision_review.due_date_to_appeal_decision
     return if decision_review.is_a?(Appeal) && Time.zone.today > decision_review.cavc_due_date
 
+    is_appeal = decision_review.is_a?(AppealStatusDecorator) || decision_review.is_a?(Appeal)
+
     {
       type: "ama_post_decision",
       details:
@@ -42,7 +46,7 @@ class ApiStatusAlerts
         decisionDate: decision_review.decision_date_for_api_alert,
         availableOptions: decision_review.available_review_options,
         dueDate: decision_review.due_date_to_appeal_decision,
-        cavcDueDate: decision_review.is_a?(Appeal) ? decision_review.decision_date_for_api_alert + 120.days : nil
+        cavcDueDate: is_appeal ? decision_review.decision_date_for_api_alert + 120.days : nil
       }
     }
   end

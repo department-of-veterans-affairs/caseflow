@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe AppealStatusDecorator, :all_dbs do
+  before do
+    Timecop.freeze(pre_ama_start_date)
+  end
+
   context "#program" do
     subject { described_class.new(appeal).program }
 

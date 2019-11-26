@@ -235,6 +235,10 @@ class AppealStatusDecorator < ApplicationDecorator
   end
 
   def docket_switch_deadline
+    @docket_switch_deadline ||= build_docket_switch_deadline
+  end
+
+  def build_docket_switch_deadline
     return unless receipt_date
     return unless request_issues.active_or_ineligible.any?
     return if request_issues.active_or_ineligible.any? { |ri| ri.decision_or_promulgation_date.nil? }
