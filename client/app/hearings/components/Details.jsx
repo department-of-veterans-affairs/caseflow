@@ -12,10 +12,12 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import * as DateUtil from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import { deepDiff } from '../utils';
+import _ from 'lodash';
 
 import DetailsSections from './DetailsSections';
 import DetailsOverview from './details/DetailsOverview';
-import { onChangeFormData } from '../../components/common/actions';
+import { onChangeFormData, onReceiveAlerts } from '../../components/common/actions';
+import UserAlerts from '../../components/UserAlerts';
 
 const row = css({
   marginLeft: '-15px',
@@ -144,7 +146,11 @@ class HearingDetails extends React.Component {
 
     return ApiUtil.patch(`/hearings/${externalId}`, {
       data: ApiUtil.convertToSnakeCase(data)
-    }).then((resp) => {
+    }).then((response) => {
+
+      const hearing = ApiUtil.convertToCamelCase(response.body.data);
+      const alerts = response.body.alerts;
+
       this.setState({
         updated: false,
         loading: false,
@@ -153,7 +159,7 @@ class HearingDetails extends React.Component {
       });
 
       // set hearing on DetailsContainer then reset initialFormData
-      this.props.setHearing(ApiUtil.convertToCamelCase(resp.body), () => {
+      this.props.setHearing(hearing, () => {
         const initialFormData = this.getInitialFormData();
 
         this.setState({
@@ -161,9 +167,16 @@ class HearingDetails extends React.Component {
         });
 
         this.updateAllFormData(initialFormData);
+        this.props.onReceiveAlerts(alerts);
       });
     }).
       catch((error) => {
+        const code = _.get(error, 'response.body.errors[0].code') || '';
+
+        if (code === 1002) {
+          // 1002 is returned with an invalid email. rethrow error, then re-catch it in VirtualHearingModal
+          throw error;
+        }
         this.setState({
           loading: false,
           error: error.message,
@@ -181,16 +194,12 @@ class HearingDetails extends React.Component {
 
     const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = this.props.formData;
 
-    const { disabled, success, error } = this.state;
+    const { disabled, error } = this.state;
 
     return (
       <AppSegment filledBackground>
-
-        {success &&
-          <div {...css({ marginBottom: '4rem' })}>
-            <Alert type="success" title="Hearing Successfully Updated" />
-          </div>
-        }{error &&
+        <UserAlerts />
+        {error &&
           <div {...css({ marginBottom: '4rem' })}>
             <Alert type="error" title="There was an error updating hearing" />
           </div>
@@ -249,6 +258,7 @@ HearingDetails.propTypes = {
   setHearing: PropTypes.func,
   goBack: PropTypes.func,
   disabled: PropTypes.bool,
+  onReceiveAlerts: PropTypes.func,
   onChangeFormData: PropTypes.func,
   formData: PropTypes.shape({
     hearingDetailsForm: PropTypes.object,
@@ -266,7 +276,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onChangeFormData
+  onChangeFormData,
+  onReceiveAlerts
 }, dispatch);
 
 export default connect(

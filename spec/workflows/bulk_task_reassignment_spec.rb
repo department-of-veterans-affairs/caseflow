@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe BulkTaskReassignment, :all_dbs do
   before { allow_any_instance_of(Task).to receive(:automatically_assign_org_task?).and_return(false) }
 
