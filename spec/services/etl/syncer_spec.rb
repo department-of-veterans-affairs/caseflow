@@ -14,6 +14,18 @@ describe ETL::Syncer, :etl do
     end
   end
 
+  describe "#origin_class" do
+    it "raises error when called on abstract class" do
+      expect { subject.origin_class }.to raise_error(RuntimeError)
+    end
+  end
+
+  describe "#target_class" do
+    it "raises error when called on abstract class" do
+      expect { subject.target_class }.to raise_error(RuntimeError)
+    end
+  end
+
   describe "#call" do
     before do
       dummy_target = double("dummy")
