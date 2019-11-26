@@ -101,7 +101,13 @@ class HearingDetails extends React.Component {
         problemNoticeSentDate: DateUtil.formatDateStr(transcription.problemNoticeSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
         requestedRemedy: transcription.requestedRemedy
       },
-      virtualHearingForm: virtualHearing
+      virtualHearingForm: {
+        veteranEmail: virtualHearing.veteranEmail,
+        representativeEmail: virtualHearing.representativeEmail,
+        status: virtualHearing.status,
+        // not used in form
+        jobCompleted: virtualHearing.jobCompleted
+      }
     };
   }
 
