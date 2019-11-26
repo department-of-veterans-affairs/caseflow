@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe RootTask, :postgres do
   describe ".available_actions_unwrapper" do
     let(:user) { create(:user) }

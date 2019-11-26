@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe LegacyIssueOptin, :all_dbs do
   let(:remand_issue) { create(:case_issue, :disposition_remanded, issseq: 1) }
   let(:remand_case) do

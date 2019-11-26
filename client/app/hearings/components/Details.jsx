@@ -12,6 +12,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import * as DateUtil from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import { deepDiff } from '../utils';
+import _ from 'lodash';
 
 import DetailsSections from './DetailsSections';
 import DetailsOverview from './details/DetailsOverview';
@@ -170,6 +171,12 @@ class HearingDetails extends React.Component {
       });
     }).
       catch((error) => {
+        const code = _.get(error, 'response.body.errors[0].code') || '';
+
+        if (code === 1002) {
+          // 1002 is returned with an invalid email. rethrow error, then re-catch it in VirtualHearingModal
+          throw error;
+        }
         this.setState({
           loading: false,
           error: error.message,

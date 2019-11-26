@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe DasDeprecation::AssignTaskToAttorney, :all_dbs do
   before do
     FeatureToggle.enable!(:legacy_das_deprecation)

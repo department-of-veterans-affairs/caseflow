@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "ColocatedTask", :all_dbs do
   let(:vlj_support_staff) { create(:user) }
 
