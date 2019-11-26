@@ -95,7 +95,7 @@ c:  ## Start rails console
 	bundle exec rails console
 
 etl-migrate:	## Migrate ETL database
-	DB=etl bundle exec rake db:migrate
+	DB=etl bundle exec rake db:migrate db:test:prepare
 
 etl-rollback:	## Rollback ETL database
 	DB=etl bundle exec rake db:rollback
