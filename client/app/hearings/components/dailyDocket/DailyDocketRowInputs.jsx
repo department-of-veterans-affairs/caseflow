@@ -53,7 +53,7 @@ DispositionDropdown.propTypes = {
   hearing: PropTypes.object,
   update: PropTypes.func,
   readOnly: PropTypes.bool,
-  openDispositionModal: PropTypes.shape,
+  openDispositionModal: PropTypes.func,
   saveHearing: PropTypes.func
 };
 
