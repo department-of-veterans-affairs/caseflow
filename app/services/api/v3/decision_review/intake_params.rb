@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Api::V3::DecisionReview::IntakeParams
+  DATA_TYPE = "HigherLevelReview"
+
   attr_reader :errors
 
   # expects ActionController::Parameters
@@ -67,7 +69,8 @@ class Api::V3::DecisionReview::IntakeParams
   end
 
   def data_shape_valid?
-    data.respond_to?(:has_key?) && data[:type] == "HigherLevelReview"
+    data.respond_to?(:has_key?) &&
+      data[:type] == "HigherLevelReview"
   end
 
   def attributes
@@ -185,5 +188,41 @@ class Api::V3::DecisionReview::IntakeParams
     attributes[:benefitType].in?(
       Api::V3::DecisionReview::RequestIssueParams::CATEGORIES_BY_BENEFIT_TYPE.keys
     )
+  end
+
+  def shape_error
+    params_shape_error || data_shape_error || included_shape_error || nil
+  end
+
+  def params_shape_error
+    @params.respond_to?(:has_key?) ? nil : "Request must be an object."
+  end
+
+  def data_shape_error
+    case
+    when !data.respond_to?(:has_key?)
+      '["data"] must be an object'
+    when data[:type] != DATA_TYPE
+      "[\"data\"][\"type\"] must be #{DATA_TYPE}"
+    when !attributes.respond_to?(:has_key?)
+      '["data"]["attributes"] must be an object'
+    when data.keys.length > 2
+      "unknown field(s): #{data.keys.except(:type, :attributes)}"
+    else
+      attribute_shape_error
+    end
+  end
+
+  def attributes_shape_error
+    case
+        when receiptDate
+    informalConference
+    informalConferenceTimes
+    informalConferenceRep
+    sameOffice
+    legacyOptInApproved
+    benefitType
+    veteran
+    claimant
   end
 end
