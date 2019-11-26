@@ -50,9 +50,8 @@ private
       approxDecisionDate: contestable_issue.approx_decision_date,
       rampClaimId: contestable_issue.ramp_claim_id,
       titleOfActiveReview: contestable_issue.title_of_active_review,
-      sourceReviewType: contestable_issue.source_review_type
-      # TODO fix based on private attributes
-      # timely: contestable_issue.timely?
+      sourceReviewType: contestable_issue.source_review_type,
+      timely: contestable_issue.timely?
     }.reject{ |_, value| value.nil? } # REVIEW should i drop nils?
 
     {
