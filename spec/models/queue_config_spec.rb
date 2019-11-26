@@ -127,16 +127,7 @@ describe QueueConfig, :postgres do
           end
           let!(:completed_tasks) { create_list(:generic_task, 7, :completed, assigned_to: assignee) }
 
-          before do
-            DatabaseRequestCounter.enable
-            FeatureToggle.enable!(:use_task_pages_api)
-            allow(assignee).to receive(:use_task_pages_api?).and_return(true)
-          end
-
-          after do
-            DatabaseRequestCounter.disable
-            FeatureToggle.disable!(:use_task_pages_api)
-          end
+          before { allow(assignee).to receive(:use_task_pages_api?).and_return(true) }
 
           it "returns the tasks in the correct tabs" do
             tabs = subject
@@ -146,9 +137,6 @@ describe QueueConfig, :postgres do
             expect(tabs[1][:tasks].pluck(:id)).to match_array(assigned_tasks.map { |t| t.id.to_s })
             expect(tabs[2][:tasks].pluck(:id)).to match_array(on_hold_tasks.map { |t| t.id.to_s })
             expect(tabs[3][:tasks].pluck(:id)).to match_array(completed_tasks.map { |t| t.id.to_s })
-
-            # We make 1 request to VACOLS in order to eager load data for Legacy Appeals.
-            expect(DatabaseRequestCounter.get_counter(:vacols)).to eq(tabs.count)
           end
 
           it "displays the correct labels for the tabs" do
