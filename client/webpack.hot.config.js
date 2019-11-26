@@ -23,9 +23,6 @@ config.output = {
   publicPath: `http://localhost:${hotRailsPort}/`
 };
 
-config.plugins.push(
-  new webpack.HotModuleReplacementPlugin()
-  // new webpack.NoEmitOnErrorsPlugin(),
-);
+config.plugins.push(new webpack.HotModuleReplacementPlugin());
 
 module.exports = config;
