@@ -18,7 +18,7 @@ class ETL::Appeal < ETL::Record
 
       target.appeal_id = original.id
       target.active_appeal = original.active?
-      target.aod_granted = aod ? aod.granted? : false
+      target.aod_granted = aod&.granted? || false
       target.aod_reason = aod&.reason
       target.aod_user_id = aod&.user_id
       target.claimant_first_name = claimant.person.first_name
