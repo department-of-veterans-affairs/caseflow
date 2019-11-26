@@ -14,7 +14,7 @@ const ContinueButton = ({ disabled, loading, onClick, text, link }) => {
       type="button"
       name="Continue"
       classNames={['cf-push-right']}
-      onClick={link ? push(link) : onClick}
+      onClick={link ? () => push(link) : onClick}
       loading={loading}
       disabled={disabled}
     >
