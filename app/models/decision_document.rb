@@ -10,7 +10,6 @@ class DecisionDocument < ApplicationRecord
   belongs_to :appeal, polymorphic: true
   has_many :end_product_establishments, as: :source
   has_many :effectuations, class_name: "BoardGrantEffectuation"
-  has_many :job_notes, as: :job
 
   validates :citation_number, format: { with: /\AA?\d{8}\Z/i }
 

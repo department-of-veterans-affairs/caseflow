@@ -14,6 +14,10 @@ module Asyncable
 
   include RunAsyncable
 
+  included do
+    has_many :job_notes, as: :job
+  end
+
   # class methods to scope queries based on class-defined columns
   # we expect 5 column types:
   #  * last_submitted_at : when the job is eligible to run (can be reset to restart the job)
