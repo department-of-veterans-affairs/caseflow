@@ -82,10 +82,30 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
       #     expect(issue["attributes"]["ratingIssueDiagnosticCode"]).to match(/^\d+$/)
       #   end
       # end
-      fit 'should have description attribute' do
+      it 'should have description attribute' do
         issues.each do |issue|
           expect(issue["attributes"].keys).to include("description")
           expect(issue["attributes"]["description"]).to match(/\b.*\b.*\b/) # has some text
+        end
+      end
+      it 'should have isRating attribute' do
+        issues.each do |issue|
+          expect(issue["attributes"].keys).to include("isRating")
+          expect(issue["attributes"]["isRating"]).to be_in([true, false])
+        end
+      end
+      it 'should have latestIssuesInChain attribute' do
+        issues.each do |issue|
+          expect(issue["attributes"].keys).to include("latestIssuesInChain")
+          expect(issue["attributes"]["latestIssuesInChain"]).to be_a Array
+          expect(issue["attributes"]["latestIssuesInChain"].first.keys).to include("id", "approxDecisionDate")
+        end
+      end
+      xit 'should have decisionIssueId attribute' do
+        issues.each do |issue|
+          expect(issue["attributes"].keys).to include("decisionIssueId")
+          # This can be nil, setup rating to include a decision issue id?
+          expect(issue["attributes"]["decisionIssueId"]).to match(/^\d+$/)
         end
       end
       it "should have meaningful attributes"

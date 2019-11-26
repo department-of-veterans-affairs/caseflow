@@ -54,7 +54,7 @@ private
       sourceReviewType: contestable_issue.source_review_type
       # TODO fix based on private attributes
       # timely: contestable_issue.timely?
-    }.reject{ |_, value| value.nil? }
+    }.reject{ |_, value| value.nil? } # REVIEW should i drop nils?
 
     {
       type: 'ContestableIssue',
