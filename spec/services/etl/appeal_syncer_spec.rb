@@ -27,5 +27,15 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
         expect(ETL::Appeal.count).to eq(13)
       end
     end
+
+    context "sync tomorrow" do
+      subject { described_class.new(since: Time.zone.tomorrow).call }
+
+      it "does not sync" do
+        subject
+
+        expect(ETL::Appeal.count).to eq(0)
+      end
+    end
   end
 end
