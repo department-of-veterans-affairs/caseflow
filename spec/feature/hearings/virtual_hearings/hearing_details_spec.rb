@@ -68,7 +68,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     scenario "conference has not been created yet" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
       expect(page).to have_field("Veteran Email", readonly: true)
-      expect(page).to have_field("POA/Representive Email", readonly: true )
+      expect(page).to have_field("POA/Representive Email", readonly: true)
     end
 
     scenario "conference was created" do
@@ -103,6 +103,6 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     visit "hearings/" + hearing.external_id.to_s + "/details"
 
     expect(page).to have_field("Veteran Email", with: "new@email.com")
-    expect(page).to have_field("POA/Representive Email", with:"rep@testingEmail.com")
+    expect(page).to have_field("POA/Representive Email", with: "rep@testingEmail.com")
   end
 end
