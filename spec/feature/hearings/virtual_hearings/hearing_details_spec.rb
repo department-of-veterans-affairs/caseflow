@@ -34,7 +34,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     expect(page).to have_content("Virtual")
   end
 
-  context "for an existing Virtual Hearing", focus: true do
+  context "for an existing Virtual Hearing" do
     let!(:virtual_hearing) { create(:virtual_hearing, conference_id: "0", hearing: hearing) }
 
     scenario "user switches hearing type back to original request type" do
