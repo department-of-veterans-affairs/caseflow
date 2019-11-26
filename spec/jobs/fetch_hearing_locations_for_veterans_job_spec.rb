@@ -168,7 +168,6 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
         it "records a geomatch error" do
           expect(subject).to receive(:record_geomatched_appeal)
             .with(legacy_appeal.external_id, "error")
-          expect(Raven).to receive(:capture_exception)
 
           subject.perform
         end
