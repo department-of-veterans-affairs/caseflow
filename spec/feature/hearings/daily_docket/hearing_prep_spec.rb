@@ -83,41 +83,6 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
       end
     end
 
-    context "A virtual hearing has been scheduled" do
-      before do
-        FeatureToggle.enable!(:schedule_virtual_hearings)
-      end
-
-      let!(:current_user) { User.authenticate!(css_id: "BVAYELLOW", roles: ["Edit HearSched", "Build HearSched"]) }
-      let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO06") }
-      let!(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
-
-      scenario "User can select Virtual Hearing time" do
-        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-        hearing.reload
-        choose("hearingTime1_other", allow_label_click: true)
-        click_dropdown(name: "optionalHearingTime1", index: 1)
-        expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE)
-        expect(page).to have_content(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
-      end
-
-      scenario "Virtual Hearing time has been updated" do
-        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-        hearing.reload
-        choose("hearingTime1_other", allow_label_click: true)
-        click_dropdown(name: "optionalHearingTime1", index: 2)
-        click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
-        expect(page).to have_content("You have successfully updated")
-      end
-
-      scenario "Changes to Virtual Hearing have been cancelled" do
-        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-        choose("hearingTime1_other", allow_label_click: true)
-        click_dropdown(name: "optionalHearingTime1", index: 3)
-        click_button("Change-Hearing-Time-button-id-close")
-      end
-    end
-
     context "with an existing AOD motion made by same judge" do
       before do
         AdvanceOnDocketMotion.create!(

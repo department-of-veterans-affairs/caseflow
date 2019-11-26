@@ -278,7 +278,6 @@ class DailyDocketRow extends React.Component {
         {this.getLeftColumn()}
         {this.getRightColumn()}
       </div>
-      {/* This is where the modal for the edit virtual hearing modal is supposed to appear*/}
       {(user.userCanScheduleVirtualHearings && this.state.virtualHearingModalActive && hearing.isVirtual) &&
         <VirtualHearingModal hearing={hearing}
           timeWasEdited={this.state.initialState.scheduledTimeString !== _.get(hearing, 'scheduledTimeString')}

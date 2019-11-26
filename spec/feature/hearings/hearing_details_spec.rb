@@ -24,6 +24,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       User.authenticate!(user: user)
     end
     let!(:hearing) { create(:hearing, :with_tasks) }
+    let(:expected_alert) { COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name }
 
     scenario "User can update fields", skip: "Test is flakey" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
@@ -49,7 +50,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
 
       click_button("Save")
 
-      expect(page).to have_content("Hearing Successfully Updated")
+      expect(page).to have_content(expected_alert)
     end
   end
 
@@ -61,6 +62,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
     end
 
     let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, regional_office: "RO06") }
+    let(:expected_alert) { COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % legacy_hearing.appeal.veteran.name }
 
     scenario "User can edit Judge and change virtual hearings" do
       visit "hearings/" + legacy_hearing.external_id.to_s + "/details"
@@ -76,7 +78,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       fill_in "rep-email", with: "email@testingEmail.com"
       click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
 
-      expect(page).to have_content("Hearing Successfully Updated")
+      expect(page).to have_content(expected_alert)
     end
 
     scenario "User can select judge, hearing room, hearing coordinator, and add notes" do
@@ -89,7 +91,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       fill_in "Notes", with: generate_words(10)
 
       click_button("Save")
-      expect(page).to have_content("Hearing Successfully Updated")
+      expect(page).to have_content(expected_alert)
     end
 
     scenario "User can not edit transcription" do

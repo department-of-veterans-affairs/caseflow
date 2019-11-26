@@ -21,7 +21,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       }
       patch :update, as: :json, params: { id: legacy_hearing.external_id, hearing: params }
       expect(response.status).to eq 200
-      response_body = JSON.parse(response.body)
+      response_body = JSON.parse(response.body)["data"]
       expect(response_body["notes"]).to eq "Test"
       expect(response_body["hold_open"]).to eq 30
       expect(response_body["transcript_requested"]).to eq false
@@ -47,7 +47,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         }
         patch :update, as: :json, params: { id: hearing.external_id, hearing: params }
         expect(response.status).to eq 200
-        response_body = JSON.parse(response.body)
+        response_body = JSON.parse(response.body)["data"]
         expect(response_body["notes"]).to eq "Test"
         expect(response_body["transcript_requested"]).to eq false
         expect(response_body["disposition"]).to eq "held"

@@ -13,12 +13,18 @@ class BaseHearingUpdateForm
   def update
     ActiveRecord::Base.transaction do
       update_hearing
+      add_update_hearing_alert
 
       if !virtual_hearing_attributes.blank?
-        create_or_update_virtual_hearing
+        was_created = create_or_update_virtual_hearing
         start_async_job
+        add_virtual_hearing_alert(changed_to_virtual: was_created)
       end
     end
+  end
+
+  def alerts
+    @alerts ||= []
   end
 
   protected
@@ -42,7 +48,6 @@ class BaseHearingUpdateForm
 
   def create_or_update_virtual_hearing
     created = false
-
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
     virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
       new_virtual_hearing.veteran_email = virtual_hearing_attributes[:veteran_email]
@@ -66,5 +71,26 @@ class BaseHearingUpdateForm
     else
       VirtualHearingEstablishment.create!(virtual_hearing: virtual_hearing)
     end
+
+    created
+  end
+
+  def add_virtual_hearing_alert(changed_to_virtual:)
+    alerts << VirtualHearingUserAlertBuilder.new(
+      changed_to_virtual: changed_to_virtual,
+      virtual_hearing_attributes: virtual_hearing_attributes,
+      veteran_full_name: veteran_full_name
+    ).call.to_hash
+  end
+
+  def add_update_hearing_alert
+    alerts << UserAlert.new(
+      title: COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % veteran_full_name,
+      type: UserAlert::TYPES[:success]
+    ).to_hash
+  end
+
+  def veteran_full_name
+    @veteran_full_name ||= hearing.appeal&.veteran&.name&.to_s || "the veteran"
   end
 end
