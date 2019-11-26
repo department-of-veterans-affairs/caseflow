@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191120213941) do
+ActiveRecord::Schema.define(version: 20191126164353) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -153,11 +153,11 @@ ActiveRecord::Schema.define(version: 20191120213941) do
     t.string "full_name", limit: 255, comment: "CSEM full name"
     t.datetime "last_login_at"
     t.string "roles", array: true
-    t.string "sactive", limit: 1, null: false
+    t.string "sactive", limit: 1
     t.string "sattyid", limit: 20
     t.string "selected_regional_office", limit: 255, comment: "CSEM regional office"
-    t.string "slogid", limit: 20, null: false
-    t.string "stafkey", limit: 20, null: false
+    t.string "slogid", limit: 20
+    t.string "stafkey", limit: 20
     t.string "station_id", limit: 20, null: false, comment: "CSEM station"
     t.string "status", limit: 20, default: "active", comment: "Whether or not the user is an active user of caseflow"
     t.datetime "status_updated_at", comment: "When the user's status was last updated"
