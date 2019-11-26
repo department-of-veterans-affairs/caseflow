@@ -41,7 +41,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
         break
       rescue StandardError => error
         # capture_exception(error: error, extra: { appeal_external_id: appeal.external_id })
-        record_geomatched_appeal(appeal.external_id, "error", error.message)
+        record_geomatched_appeal(appeal.external_id, "error", error.class.name)
       end
     end
   end
@@ -82,7 +82,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     end
   end
 
-  def record_geomatched_appeal(appeal_external_id, status, message = nil)
+  def record_geomatched_appeal(appeal_external_id, status, error_name = nil)
     DataDogService.increment_counter(
       app_name: RequestStore[:application],
       metric_group: "job",
@@ -90,7 +90,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       attrs: {
         status: status,
         appeal_external_id: appeal_external_id,
-        message: message
+        error_name: error_name
       }
     )
   end
