@@ -47,7 +47,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
           participant_id: veteran.ptcpnt_id,
           decisions: [
             {
-              rating_issue_reference_id: nil,
+              rating_issue_reference_id: "99999",
               original_denial_date: date - 7.days,
               diagnostic_text: "Broken arm",
               diagnostic_type: "Bone",
@@ -125,7 +125,46 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
           expect(issue["attributes"]["decisionIssueId"]).to match(/^\d+$/)
         end
       end
-      it "should have meaningful attributes"
+      xit 'should have ratingratingDecisionIdIssueId attribute' do
+        issues.each do |issue|
+          expect(issue["attributes"].keys).to include("ratingDecisionId")
+          # This can be nil, setup rating to include a decision issue id?
+          expect(issue["attributes"]["ratingDecisionId"]).to match(/^\d+$/)
+        end
+      end
+      it 'should have approxDecisionDate attribute' do
+        issues.each do |issue|
+          expect(issue["attributes"].keys).to include("approxDecisionDate")
+          expect(issue["attributes"]["approxDecisionDate"]).to match(/^\d{4}-\d{2}-\d{2}$/)
+        end
+      end
+      xit 'should have rampClaimId attribute' do
+        issues.each do |issue|
+          expect(issue["attributes"].keys).to include("rampClaimId")
+          # This can be nil, setup rating to include a decision issue id?
+          expect(issue["attributes"]["rampClaimId"]).to match(/^\d+$/)
+        end
+      end
+      xit 'should have titleOfActiveReview attribute' do
+        issues.each do |issue|
+          expect(issue["attributes"].keys).to include("titleOfActiveReview")
+          # This can be nil, setup rating to include a decision issue id?
+          expect(issue["attributes"]["titleOfActiveReview"]).to match(/^\d+$/)
+        end
+      end
+      xit 'should have sourceReviewType attribute' do
+        issues.each do |issue|
+          expect(issue["attributes"].keys).to include("sourceReviewType")
+          # This can be nil, setup rating to include a decision issue id?
+          expect(issue["attributes"]["sourceReviewType"]).to match(/^\d+$/)
+        end
+      end
+      it 'should have timely attribute' do
+        issues.each do |issue|
+          expect(issue["attributes"].keys).to include("timely")
+          expect(issue["attributes"]["timely"]).to be_in([true, false])
+        end
+      end
     end
 
     it "should return a 404 when the veteran is not found" do

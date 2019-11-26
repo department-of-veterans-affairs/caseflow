@@ -48,7 +48,6 @@ private
       decisionIssueId: contestable_issue.decision_issue&.id,
       ratingDecisionId: contestable_issue.rating_decision_reference_id,
       approxDecisionDate: contestable_issue.approx_decision_date,
-      description: contestable_issue.description,
       rampClaimId: contestable_issue.ramp_claim_id,
       titleOfActiveReview: contestable_issue.title_of_active_review,
       sourceReviewType: contestable_issue.source_review_type
