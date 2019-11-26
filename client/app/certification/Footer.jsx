@@ -98,13 +98,13 @@ Footer.propTypes = {
   toggleCancellationModal: PropTypes.func
 };
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   toggleCancellationModal: () => {
     dispatch(certificationActions.toggleCancellationModal());
   }
 });
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   certificationId: state.certificationId,
   showCancellationModal: state.showCancellationModal
 });
