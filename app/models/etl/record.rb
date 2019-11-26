@@ -11,7 +11,7 @@
 #    * the "created_at" and "updated_at" are the same on original and target
 #  * if the table is transformed in any way:
 #    * the "id" of the original is mapped to ":original_id" (e.g. appeal_id)
-#    * the "created_at" should be the same on original and target
+#    * the "created_at" may be the same on original and target, if not, there is a ":original_created_at"
 #    * the "updated_at" should be modified every time target (ETL) is modified
 
 class ETL::Record < ApplicationRecord
