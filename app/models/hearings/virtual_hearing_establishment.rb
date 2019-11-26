@@ -7,7 +7,6 @@ class VirtualHearingEstablishment < ApplicationRecord
   include Asyncable
 
   belongs_to :virtual_hearing
-  has_many :job_notes, as: :job
 
   # :nocov:
   # Implements Asyncable
