@@ -38,20 +38,37 @@ const DateTime = ({ hearing, timeWasEdited }) => (
   </div>
 );
 
+DateTime.propTypes = {
+  hearing: PropTypes.shape({
+    scheduledFor: PropTypes.string
+  }),
+  timeWasEdited: PropTypes.bool
+};
+
 const ReadOnlyEmails = ({
   virtualHearing, repEmailEdited, vetEmailEdited, showAllEmails = false
 }) => (
   <React.Fragment>
-    {(vetEmailEdited || showAllEmails) && <div>
-      <div><strong>Veteran Email</strong></div>
-      <p>{virtualHearing.veteranEmail}</p>
-    </div>}
-    {(repEmailEdited || showAllEmails) && <div>
-      <div><strong>Representative Email</strong></div>
-      <p>{virtualHearing.representativeEmail}</p>
-    </div>}
+    {(vetEmailEdited || showAllEmails) && <p>
+      <strong>Veteran Email</strong><br />
+      {virtualHearing.veteranEmail}
+    </p>}
+    {(repEmailEdited || showAllEmails) && <p>
+      <strong>Representative Email</strong><br />
+      {virtualHearing.representativeEmail}
+    </p>}
   </React.Fragment>
 );
+
+ReadOnlyEmails.propTypes = {
+  virtualHearing: PropTypes.shape({
+    veteranEmail: PropTypes.string,
+    representativeEmail: PropTypes.string
+  }),
+  vetEmailEdited: PropTypes.bool,
+  repEmailEdited: PropTypes.bool,
+  showAllEmails: PropTypes.bool
+};
 
 const Emails = ({ virtualHearing, update, vetEmailError, repEmailError }) => (
   <React.Fragment>
@@ -72,6 +89,16 @@ const Emails = ({ virtualHearing, update, vetEmailError, repEmailError }) => (
   </React.Fragment>
 );
 
+Emails.propTypes = {
+  virtualHearing: PropTypes.shape({
+    veteranEmail: PropTypes.string,
+    representativeEmail: PropTypes.string
+  }),
+  vetEmailError: PropTypes.bool,
+  repEmailError: PropTypes.bool,
+  update: PropTypes.func
+};
+
 const ChangeHearingTime = (props) => (
   <React.Fragment>
     <DateTime {...props} />
@@ -85,13 +112,21 @@ const ChangeEmail = (props) => (
   </React.Fragment>
 );
 
-const ChangeFromVirtual = (props) => (
+const ChangeFromVirtual = ({ hearing, ...props }) => (
   <React.Fragment>
-    <DateTime {...props} />
-    {props.hearing.location && <div><strong>{'Location:'}&nbsp;</strong>{props.hearing.location.name}</div>}
+    <DateTime {...props} hearing={hearing} />
+    {hearing.location && <div><strong>{'Location:'}&nbsp;</strong>{hearing.location.name}</div>}
     <ReadOnlyEmails {...props} showAllEmails />
   </React.Fragment>
 );
+
+ChangeFromVirtual.propTypes = {
+  hearing: PropTypes.shape({
+    location: PropTypes.shape({
+      name: PropTypes.string
+    })
+  })
+};
 
 const ChangeToVirtual = (props) => (
   <React.Fragment>
