@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191120213941) do
+ActiveRecord::Schema.define(version: 20191126203511) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,7 +20,9 @@ ActiveRecord::Schema.define(version: 20191120213941) do
     t.boolean "aod_granted", default: false, null: false, comment: "advance_on_docket_motions.granted"
     t.string "aod_reason", limit: 50, comment: "advance_on_docket_motions.reason"
     t.bigint "aod_user_id", comment: "advance_on_docket_motions.user_id"
+    t.datetime "appeal_created_at", null: false, comment: "appeals.created_at"
     t.bigint "appeal_id", null: false, comment: "ID of the Appeal"
+    t.datetime "appeal_updated_at", null: false, comment: "appeals.updated_at"
     t.string "claimant_first_name", comment: "people.first_name"
     t.bigint "claimant_id", comment: "claimants.id"
     t.string "claimant_last_name", comment: "people.last_name"
@@ -30,7 +32,7 @@ ActiveRecord::Schema.define(version: 20191120213941) do
     t.string "claimant_payee_code", limit: 20, comment: "claimants.payee_code"
     t.bigint "claimant_person_id", comment: "people.id"
     t.string "closest_regional_office", limit: 20, comment: "The code for the regional office closest to the Veteran on the appeal."
-    t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.datetime "created_at", null: false, comment: "Creation timestamp for the ETL record"
     t.string "docket_number", limit: 50, null: false, comment: "Docket number"
     t.date "docket_range_date", comment: "Date that appeal was added to hearing docket range."
     t.string "docket_type", limit: 50, null: false, comment: "Docket type"
@@ -40,7 +42,7 @@ ActiveRecord::Schema.define(version: 20191120213941) do
     t.date "receipt_date", null: false, comment: "Receipt date of the NOD form"
     t.string "status", limit: 32, null: false, comment: "Calculated BVA status based on Tasks"
     t.date "target_decision_date", comment: "If the appeal docket is direct review, this sets the target decision date for the appeal, which is one year after the receipt date."
-    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.datetime "updated_at", null: false, comment: "Updated timestamp for the ETL record"
     t.uuid "uuid", null: false, comment: "The universally unique identifier for the appeal"
     t.date "veteran_dob", comment: "people.date_of_birth"
     t.string "veteran_file_number", limit: 20, null: false, comment: "Veteran file number"
@@ -54,7 +56,9 @@ ActiveRecord::Schema.define(version: 20191120213941) do
     t.index ["active_appeal"], name: "index_appeals_on_active_appeal"
     t.index ["aod_granted"], name: "index_appeals_on_aod_granted"
     t.index ["aod_user_id"], name: "index_appeals_on_aod_user_id"
+    t.index ["appeal_created_at"], name: "index_appeals_on_appeal_created_at"
     t.index ["appeal_id"], name: "index_appeals_on_appeal_id"
+    t.index ["appeal_updated_at"], name: "index_appeals_on_appeal_updated_at"
     t.index ["claimant_id"], name: "index_appeals_on_claimant_id"
     t.index ["claimant_participant_id"], name: "index_appeals_on_claimant_participant_id"
     t.index ["claimant_person_id"], name: "index_appeals_on_claimant_person_id"
@@ -153,11 +157,11 @@ ActiveRecord::Schema.define(version: 20191120213941) do
     t.string "full_name", limit: 255, comment: "CSEM full name"
     t.datetime "last_login_at"
     t.string "roles", array: true
-    t.string "sactive", limit: 1, null: false
+    t.string "sactive", limit: 1
     t.string "sattyid", limit: 20
     t.string "selected_regional_office", limit: 255, comment: "CSEM regional office"
-    t.string "slogid", limit: 20, null: false
-    t.string "stafkey", limit: 20, null: false
+    t.string "slogid", limit: 20
+    t.string "stafkey", limit: 20
     t.string "station_id", limit: 20, null: false, comment: "CSEM station"
     t.string "status", limit: 20, default: "active", comment: "Whether or not the user is an active user of caseflow"
     t.datetime "status_updated_at", comment: "When the user's status was last updated"

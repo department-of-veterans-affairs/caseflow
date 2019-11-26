@@ -7,13 +7,13 @@ shared_context "AMA Tableau SQL", shared_context: :metadata do
 
   let(:judge) do
     staff = create(:staff)
-    user = create(:user, css_id: staff.sdomainid)
+    user = create(:user, full_name: "A Judge", css_id: staff.sdomainid)
     allow(user).to receive(:judge_in_vacols?) { true }
     user
   end
   let(:attorney) do
     staff = create(:staff)
-    user = create(:user, css_id: staff.sdomainid)
+    user = create(:user, full_name: "Anne Attorney", css_id: staff.sdomainid)
     allow(user).to receive(:attorney_in_vacols?) { true }
     user
   end
