@@ -49,8 +49,8 @@ class ETL::Appeal < ETL::Record
       target.veteran_name_suffix = veteran.name_suffix
       target.veteran_participant_id = veteran.participant_id
 
-      target.created_at = original.created_at
-      # let Rails set updated_at to now
+      target.appeal_created_at = original.created_at
+      target.appeal_updated_at = original.updated_at
 
       target
     end

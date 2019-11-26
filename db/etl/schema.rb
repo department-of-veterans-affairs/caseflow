@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191126164353) do
+ActiveRecord::Schema.define(version: 20191126203511) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,7 +20,9 @@ ActiveRecord::Schema.define(version: 20191126164353) do
     t.boolean "aod_granted", default: false, null: false, comment: "advance_on_docket_motions.granted"
     t.string "aod_reason", limit: 50, comment: "advance_on_docket_motions.reason"
     t.bigint "aod_user_id", comment: "advance_on_docket_motions.user_id"
+    t.datetime "appeal_created_at", null: false
     t.bigint "appeal_id", null: false, comment: "ID of the Appeal"
+    t.datetime "appeal_updated_at", null: false
     t.string "claimant_first_name", comment: "people.first_name"
     t.bigint "claimant_id", comment: "claimants.id"
     t.string "claimant_last_name", comment: "people.last_name"
@@ -54,7 +56,9 @@ ActiveRecord::Schema.define(version: 20191126164353) do
     t.index ["active_appeal"], name: "index_appeals_on_active_appeal"
     t.index ["aod_granted"], name: "index_appeals_on_aod_granted"
     t.index ["aod_user_id"], name: "index_appeals_on_aod_user_id"
+    t.index ["appeal_created_at"], name: "index_appeals_on_appeal_created_at"
     t.index ["appeal_id"], name: "index_appeals_on_appeal_id"
+    t.index ["appeal_updated_at"], name: "index_appeals_on_appeal_updated_at"
     t.index ["claimant_id"], name: "index_appeals_on_claimant_id"
     t.index ["claimant_participant_id"], name: "index_appeals_on_claimant_participant_id"
     t.index ["claimant_person_id"], name: "index_appeals_on_claimant_person_id"
