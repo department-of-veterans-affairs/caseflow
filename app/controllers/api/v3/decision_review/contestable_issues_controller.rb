@@ -52,7 +52,7 @@ private
       rampClaimId: contestable_issue.ramp_claim_id,
       titleOfActiveReview: contestable_issue.title_of_active_review,
       sourceReviewType: contestable_issue.source_review_type
-      # based on private
+      # TODO fix based on private attributes
       # timely: contestable_issue.timely?
     }.reject{ |_, value| value.nil? }
 

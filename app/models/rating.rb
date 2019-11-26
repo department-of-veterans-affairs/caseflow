@@ -58,6 +58,7 @@ class Rating
   end
 
   def issues
+    # byebug
     return [] if rating_profile[:rating_issues].nil?
 
     [rating_profile[:rating_issues]].flatten.map do |issue_data|

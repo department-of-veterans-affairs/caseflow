@@ -6,7 +6,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
   before { FeatureToggle.enable!(:api_v3) }
   after { FeatureToggle.disable!(:api_v3) }
 
-  fdescribe "#index" do
+  describe "#index" do
     let(:veteran) { create(:veteran) }
 
     let!(:api_key) do
@@ -41,6 +41,53 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
     end
 
     context "returned issues" do
+      let(:issues) do
+        Generators::Rating.build(
+          participant_id: veteran.ptcpnt_id,
+          decisions: [
+            {
+              rating_issue_reference_id: nil,
+              original_denial_date: Time.zone.today - 7.days,
+              diagnostic_text: "Broken arm",
+              diagnostic_type: "Bone",
+              diagnostic_code: "CD123",
+              disability_id: "123",
+              disability_date: Time.zone.today - 3.days,
+              type_name: "Not Service Connected"
+            }
+          ],
+          profile_date: Time.zone.today - 10.days # must be before receipt_date
+        ) # this is a contestable_rating_issues
+        # byebug # need a dis_sn in rating issue part
+        get_issues
+        issues = JSON.parse(response.body)
+        expect(issues.count > 0).to be true
+        issues
+      end
+      it 'should have ratingIssueId attribute' do
+        issues.each do |issue|
+          expect(issue["attributes"].keys).to include("ratingIssueId")
+          expect(issue["attributes"]["ratingIssueId"]).to match(/^\d+$/)
+        end
+      end
+      it 'should have ratingIssueProfileDate attribute' do
+        issues.each do |issue|
+          expect(issue["attributes"].keys).to include("ratingIssueProfileDate")
+          expect(issue["attributes"]["ratingIssueProfileDate"]).to match(/^\d{4}-\d{2}-\d{2}$/)
+        end
+      end
+      # fit 'should have ratingIssueDiagnosticCode attribute' do
+      #   issues.each do |issue|
+      #     expect(issue["attributes"].keys).to include("ratingIssueDiagnosticCode")
+      #     expect(issue["attributes"]["ratingIssueDiagnosticCode"]).to match(/^\d+$/)
+      #   end
+      # end
+      fit 'should have description attribute' do
+        issues.each do |issue|
+          expect(issue["attributes"].keys).to include("description")
+          expect(issue["attributes"]["description"]).to match(/\b.*\b.*\b/) # has some text
+        end
+      end
       it "should have meaningful attributes"
     end
 

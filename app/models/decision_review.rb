@@ -394,6 +394,8 @@ class DecisionReview < ApplicationRecord
   def ratings_with_issues
     return [] unless veteran
 
+    # byebug
+    # these need to turn into rating issues with diagnostic codes
     veteran.ratings.reject { |rating| rating.issues.empty? }
 
     # return empty list when there are no ratings

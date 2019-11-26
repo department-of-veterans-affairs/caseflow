@@ -12,6 +12,7 @@ class RatingIssue
 
   class << self
     def from_bgs_hash(rating, bgs_data)
+      # byebug
       new(
         reference_id: bgs_data[:rba_issue_id],
         rba_contentions_data: ensure_array_of_hashes(bgs_data.dig(:rba_issue_contentions)),
