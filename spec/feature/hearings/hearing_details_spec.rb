@@ -74,7 +74,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       click_dropdown(name: "hearingType", index: 1)
       fill_in "vet-email", with: "email@testingEmail.com"
       fill_in "rep-email", with: "email@testingEmail.com"
-      click_button("Change and Send Email")
+      click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
 
       expect(page).to have_content("Hearing Successfully Updated")
     end

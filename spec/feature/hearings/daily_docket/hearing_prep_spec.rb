@@ -97,8 +97,8 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
         hearing.reload
         choose("hearingTime1_other", allow_label_click: true)
         click_dropdown(name: "optionalHearingTime1", index: 1)
-        expect(page).to have_content("Change Hearing Time")
-        expect(page).to have_content("Change and Send Email")
+        expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE)
+        expect(page).to have_content(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
       end
 
       scenario "Virtual Hearing time has been updated" do
@@ -106,12 +106,8 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
         hearing.reload
         choose("hearingTime1_other", allow_label_click: true)
         click_dropdown(name: "optionalHearingTime1", index: 2)
-        fill_in "vet-email", with: "newEmail@testingEmail.com"
-        click_button("Change and Send Email")
+        click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
         expect(page).to have_content("You have successfully updated")
-
-        virtual_hearing.reload
-        expect(virtual_hearing.veteran_email).to eq("newEmail@testingEmail.com")
       end
 
       scenario "Changes to Virtual Hearing have been cancelled" do

@@ -17,11 +17,11 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     visit "hearings/" + hearing.external_id.to_s + "/details"
 
     click_dropdown(name: "hearingType", index: 1)
-    expect(page).to have_content("Change to Virtual Hearing")
+    expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
 
     fill_in "vet-email", with: "email@testingEmail.com"
     fill_in "rep-email", with: "email@testingEmail.com"
-    click_button("Change and Send Email")
+    click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
 
     expect(page).to have_content("Hearing Successfully Updated")
 
@@ -34,20 +34,21 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     expect(page).to have_content("Virtual")
   end
 
-  context "for an existing Virtual Hearing" do
-    let!(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
+  context "for an existing Virtual Hearing", focus: true do
+    let!(:virtual_hearing) { create(:virtual_hearing, conference_id: "0", hearing: hearing) }
 
     scenario "user switches hearing type back to original request type" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
+
       click_dropdown(name: "hearingType", index: 0)
       expect(page).to have_content("Change to")
 
-      click_button("Change and Send Email")
+      click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
 
       expect(page).to have_content("Hearing Successfully Updated")
 
-      hearing.reload
-      expect(hearing.virtual?).to eq(false)
+      virtual_hearing.reload
+      expect(virtual_hearing.cancelled?).to eq(true)
       expect(page).to have_content(hearing.readable_request_type)
     end
   end
