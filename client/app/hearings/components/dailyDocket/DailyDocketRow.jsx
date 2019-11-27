@@ -50,7 +50,7 @@ SaveButton.propTypes = {
 };
 
 const inputSpacing = css({
-  '& > div:not(:first-child)': {
+  '&>div:not(:first-child)': {
     marginTop: '25px'
   }
 });
@@ -112,7 +112,6 @@ class DailyDocketRow extends React.Component {
 
   cancelUpdate = () => {
     this.props.update(this.state.initialState);
-    this.prop.updateAodMotion(this.state.initialState.aodMotion);
     this.setState({
       edited: false,
       invalid: {
