@@ -140,7 +140,7 @@ export class ConfirmCaseDetails extends React.Component {
   getValidationErrors() {
     // TODO: consider breaking this and all validation out into separate
     // modules.
-    let {
+    const {
       poaMatches,
       poaCorrectLocation,
       representativeType,
@@ -245,7 +245,7 @@ export class ConfirmCaseDetails extends React.Component {
 
   /* eslint max-statements: ["error", 14]*/
   render() {
-    let {
+    const {
       poaMatches,
       changePoaMatches,
       poaCorrectLocation,
@@ -444,7 +444,21 @@ ConfirmCaseDetails.propTypes = {
   erroredFields: PropTypes.array,
   scrollToError: PropTypes.bool,
   match: PropTypes.object.isRequired,
-  certificationStatus: PropTypes.string
+  certificationStatus: PropTypes.string,
+  updateProgressBar: PropTypes.func,
+  showValidationErrors: PropTypes.func,
+  resetState: PropTypes.func,
+  changeOrganizationName: PropTypes.func,
+  certificationUpdateStart: PropTypes.func,
+  organizationName: PropTypes.string,
+  bgsRepresentativeType: PropTypes.string,
+  bgsRepresentativeName: PropTypes.string,
+  bgsPoaAddressFound: PropTypes.bool,
+  vacolsRepresentativeType: PropTypes.string,
+  vacolsRepresentativeName: PropTypes.string,
+  loading: PropTypes.bool,
+  serverError: PropTypes.bool,
+  updateSucceeded: PropTypes.bool
 };
 
 const mapDispatchToProps = (dispatch) => ({
@@ -494,7 +508,7 @@ const mapStateToProps = (state) => ({
   erroredFields: state.erroredFields,
   scrollToError: state.scrollToError,
   loading: state.loading,
-  certificationStatus: state.certificationStatus
+  certificationStatus: state.certificationStatus,
 });
 
 export default connect(
