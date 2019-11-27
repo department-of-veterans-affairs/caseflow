@@ -11,7 +11,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
   let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO06") }
   let!(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
 
-  scenario "Virtual Hearing time has been updated" do
+  scenario "Virtual hearing time is updated" do
     visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
     hearing.reload
     choose("hearingTime1_other", allow_label_click: true)
@@ -20,15 +20,12 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     expect(page).to have_content(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
     click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
     expect(page).to have_content(COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name)
-
-    virtual_hearing.reload
-    expect(virtual_hearing.veteran_email).to eq("newEmail@testingEmail.com")
   end
 
-  scenario "Changes to Virtual Hearing have been cancelled" do
+  scenario "Virtual hearing time update is cancelled" do
     visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
     choose("hearingTime1_other", allow_label_click: true)
     click_dropdown(name: "optionalHearingTime1", index: 3)
-    click_button("Change-to-Virtual-Hearing-button-id-close")
+    click_button("Change-Hearing-Time-button-id-close")
   end
 end
