@@ -11,6 +11,7 @@ import { AodModal } from './DailyDocketModals';
 import HearingText from './DailyDocketRowDisplayText';
 import PropTypes from 'prop-types';
 import { deepDiff, isPreviouslyScheduledHearing } from '../../utils';
+
 import {
   DispositionDropdown, TranscriptRequestedCheckbox, HearingDetailsLink,
   AmaAodDropdown, LegacyAodDropdown, AodReasonDropdown, HearingPrepWorkSheetLink, StaticRegionalOffice,
@@ -49,7 +50,7 @@ SaveButton.propTypes = {
 };
 
 const inputSpacing = css({
-  '& > div:not(:first-child)': {
+  '&>div:not(:first-child)': {
     marginTop: '25px'
   }
 });
@@ -111,7 +112,6 @@ class DailyDocketRow extends React.Component {
 
   cancelUpdate = () => {
     this.props.update(this.state.initialState);
-    this.prop.updateAodMotion(this.state.initialState.aodMotion);
     this.setState({
       edited: false,
       invalid: {
@@ -162,7 +162,7 @@ class DailyDocketRow extends React.Component {
 
     const hearing = deepDiff(this.state.initialState, this.props.hearing);
 
-    this.props.saveHearing(this.props.hearing.externalId, hearing).
+    return this.props.saveHearing(this.props.hearing.externalId, hearing).
       then((success) => {
         if (success) {
           this.setState({
@@ -286,10 +286,8 @@ class DailyDocketRow extends React.Component {
             ;
           }} user={user}
           update={this.updateVirtualHearing}
-          submit={() => {
-            this.saveHearing();
-            this.closeVirtualHearingModal();
-          }}
+          submit={() => this.saveHearing().then(this.closeVirtualHearingModal)}
+          type="change_hearing_time"
         />}
       {this.state.aodModalActive && <AodModal
         advanceOnDocketMotion={hearing.advanceOnDocketMotion || {}}
