@@ -38,7 +38,7 @@ class HearingDetailsContainer extends React.Component {
       this.setHearing(hearing);
     } else {
       return ApiUtil.get(`/hearings/${hearingId}`).then((resp) => {
-        this.setHearing(ApiUtil.convertToCamelCase(resp.body));
+        this.setHearing(ApiUtil.convertToCamelCase(resp.body.data));
       });
     }
   };
