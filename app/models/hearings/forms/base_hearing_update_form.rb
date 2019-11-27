@@ -16,6 +16,7 @@ class BaseHearingUpdateForm
       add_update_hearing_alert
       if virtual_hearing_form_or_hearing_time_was_updated?
         was_created = create_or_update_virtual_hearing
+        hearing.reload
         start_async_job
         add_virtual_hearing_alert(changed_to_virtual: was_created)
       end
@@ -70,7 +71,6 @@ class BaseHearingUpdateForm
       updates = virtual_hearing_attributes.compact.merge(emails_sent_updates)
 
       virtual_hearing.update(updates)
-      hearing.reload
       virtual_hearing.establishment.restart!
     else
       VirtualHearingEstablishment.create!(virtual_hearing: virtual_hearing)
