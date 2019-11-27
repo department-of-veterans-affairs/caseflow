@@ -18,6 +18,7 @@ import DetailsSections from './DetailsSections';
 import DetailsOverview from './details/DetailsOverview';
 import { onChangeFormData, onReceiveAlerts } from '../../components/common/actions';
 import UserAlerts from '../../components/UserAlerts';
+import VirtualHearingModal from './VirtualHearingModal';
 
 const row = css({
   marginLeft: '-15px',
@@ -54,11 +55,19 @@ class HearingDetails extends React.Component {
       loading: false,
       success: false,
       error: false,
+      virtualHearingModalOpen: false,
+      virtualHearingModalType: null,
       initialFormData
     };
 
     this.updateAllFormData(initialFormData);
   }
+
+  openVirtualHearingModal = ({ type }) => this.setState({
+    virtualHearingModalOpen: true,
+    virtualHearingModalType: type
+  })
+  closeVirtualHearingModal = () => this.setState({ virtualHearingModalOpen: false })
 
   getInitialFormData = () => {
     const { hearing } = this.props;
@@ -91,7 +100,9 @@ class HearingDetails extends React.Component {
       virtualHearingForm: {
         veteranEmail: virtualHearing.veteranEmail,
         representativeEmail: virtualHearing.representativeEmail,
-        status: virtualHearing.status
+        status: virtualHearing.status,
+        // not used in form
+        jobCompleted: virtualHearing.jobCompleted
       }
     };
   }
@@ -110,6 +121,29 @@ class HearingDetails extends React.Component {
   updateVirtualHearing = (values) => {
     this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, values);
     this.setState({ updated: true });
+  }
+
+  resetVirtualHearing = () => {
+    const { hearing: { virtualHearing } } = this.props;
+
+    if (virtualHearing) {
+      this.updateVirtualHearing(virtualHearing);
+    } else {
+      this.updateVirtualHearing(null);
+    }
+
+    this.closeVirtualHearingModal();
+  }
+
+  getEditedEmails = () => {
+    const { hearing: { virtualHearing }, formData: { virtualHearingForm } } = this.props;
+
+    const changes = deepDiff(virtualHearing, virtualHearingForm || {});
+
+    return {
+      repEmailEdited: !_.isUndefined(changes.representativeEmail),
+      vetEmailEdited: !_.isUndefined(changes.veteranEmail)
+    };
   }
 
   updateTranscription = (values) => {
@@ -196,6 +230,8 @@ class HearingDetails extends React.Component {
 
     const { disabled, error } = this.state;
 
+    const editedEmails = this.getEditedEmails();
+
     return (
       <AppSegment filledBackground>
         <UserAlerts />
@@ -214,10 +250,17 @@ class HearingDetails extends React.Component {
           <h2>Hearing Details</h2>
           <DetailsOverview hearing={this.props.hearing} />
           <div className="cf-help-divider" />
+          {this.state.virtualHearingModalOpen && <VirtualHearingModal
+            hearing={this.props.hearing}
+            virtualHearing={virtualHearingForm}
+            update={this.updateVirtualHearing}
+            submit={() => this.submit().then(this.closeVirtualHearingModal)}
+            closeModal={this.closeVirtualHearingModal}
+            reset={this.resetVirtualHearing}
+            type={this.state.virtualHearingModalType}
+            {...editedEmails} />}
           <DetailsSections
             user={this.props.user}
-            submit={this.submit}
-            initialHearingState={this.props.hearing}
             updateTranscription={this.updateTranscription}
             updateHearing={this.updateHearing}
             updateVirtualHearing={this.updateVirtualHearing}
@@ -225,8 +268,10 @@ class HearingDetails extends React.Component {
             hearing={hearingDetailsForm}
             virtualHearing={virtualHearingForm}
             isLegacy={this.state.isLegacy}
+            openVirtualHearingModal={this.openVirtualHearingModal}
             requestType={this.props.hearing.readableRequestType}
-            disabled={disabled} />
+            disabled={disabled}
+            isVirtual={this.props.hearing.isVirtual} />
           <div>
             <a
               className="button-link"
@@ -239,7 +284,13 @@ class HearingDetails extends React.Component {
                 disabled={!this.state.updated || this.state.disabled}
                 loading={this.state.loading}
                 className="usa-button"
-                onClick={this.submit}
+                onClick={() => {
+                  if (editedEmails.repEmailEdited || editedEmails.vetEmailEdited) {
+                    this.openVirtualHearingModal({ type: 'change_email' });
+                  } else {
+                    this.submit();
+                  }
+                }}
                 styling={css({ float: 'right' })}
               >Save</Button>
             </span>
