@@ -105,7 +105,7 @@ export class DailyDocketContainer extends React.Component {
     return ApiUtil.convertToSnakeCase(_.omitBy({
       ...rest,
       hearing_location_attributes: location,
-      virtual_hearing_attributes: virtualHearing
+      virtual_hearing_attributes: virtualHearing || {}
     }, _.isUndefined));
   };
 

@@ -19,7 +19,11 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE)
     expect(page).to have_content(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
     click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
+
+    hearing.reload
     expect(page).to have_content(COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name)
+    expect(page).to have_content(COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_TIME_CHANGED"]["MESSAGE"])
+    expect(hearing.virtual_hearing.all_emails_sent?).to eq(true)
   end
 
   scenario "Virtual hearing time update is cancelled" do

@@ -14,9 +14,7 @@ class BaseHearingUpdateForm
     ActiveRecord::Base.transaction do
       update_hearing
       add_update_hearing_alert
-
-      if !virtual_hearing_attributes.blank? || (hearing.virtual? && scheduled_time_string.present?)
-        @virtual_hearing_attributes = {} if virtual_hearing_attributes.nil?
+      if virtual_hearing_form_or_hearing_time_was_updated?
         was_created = create_or_update_virtual_hearing
         start_async_job
         add_virtual_hearing_alert(changed_to_virtual: was_created)
@@ -33,6 +31,10 @@ class BaseHearingUpdateForm
   def update_hearing; end
 
   private
+
+  def virtual_hearing_form_or_hearing_time_was_updated?
+    !virtual_hearing_attributes.blank? || (hearing.virtual? && scheduled_time_string.present?)
+  end
 
   def start_async_job
     if hearing.virtual_hearing.status == "pending" || !hearing.virtual_hearing.all_emails_sent?
@@ -68,6 +70,7 @@ class BaseHearingUpdateForm
       updates = virtual_hearing_attributes.compact.merge(emails_sent_updates)
 
       virtual_hearing.update(updates)
+      hearing.reload
       virtual_hearing.establishment.restart!
     else
       VirtualHearingEstablishment.create!(virtual_hearing: virtual_hearing)
