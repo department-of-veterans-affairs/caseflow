@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-class Api::V3::DecisionReview::IntakeParams
-  DATA_TYPE = "HigherLevelReview"
 
-  attr_reader :errors
+# top level validation
+# make sure there's a data field and an included field
 
+class Api::V3::DecisionReview::HigherLevelReviewIntakeParams < Api::V3::DecisionReview::Params
   # expects ActionController::Parameters
   def initialize(params)
-    @params = params
+    @hash = params
     @errors = []
     validate
   end
@@ -42,56 +42,6 @@ class Api::V3::DecisionReview::IntakeParams
   end
 
   private
-
-  #  minimum required shape:
-  #
-  #  {
-  #    data: {
-  #      type: "HigherLevelReview",
-  #      attributes: {...},
-  #      relationships: {
-  #        veteran: {
-  #          data: {
-  #            type: "Veteran",
-  #            id: ...
-  #          }
-  #        }
-  #      }
-  #    }
-  #  }
-
-  def params_shape_valid?
-    @params.respond_to?(:has_key?)
-  end
-
-  def data
-    @params[:data]
-  end
-
-  def data_shape_valid?
-    data.respond_to?(:has_key?) &&
-      data[:type] == "HigherLevelReview"
-  end
-
-  def attributes
-    data[:attributes]
-  end
-
-  def attributes_shape_valid?
-    attributes.respond_to?(:has_key?)
-  end
-
-  def relationships
-    data[:relationships]
-  end
-
-  def relationships_shape_valid?
-    relationships.respond_to?(:has_key?)
-  end
-
-  def veteran
-    relationships[:veteran]
-  end
 
   def veteran_shape_valid?
     veteran.respond_to?(:has_key?) &&
@@ -130,6 +80,7 @@ class Api::V3::DecisionReview::IntakeParams
       (@params[:included].is_a?(Array) && included.all? { |obj| obj.respond_to? :has_key? })
   end
 
+  # remove?
   def legacy_opt_in?
     # tweaked for happy path: legacy_opt_in_approved always true (regardless of input) for happy path
     # attributes[:legacyOptInApproved]
