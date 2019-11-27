@@ -16,7 +16,9 @@ import _ from 'lodash';
 
 import DetailsSections from './DetailsSections';
 import DetailsOverview from './details/DetailsOverview';
-import { onChangeFormData } from '../../components/common/actions';
+import { onChangeFormData, onReceiveAlerts } from '../../components/common/actions';
+import UserAlerts from '../../components/UserAlerts';
+import VirtualHearingModal from './VirtualHearingModal';
 
 const row = css({
   marginLeft: '-15px',
@@ -53,11 +55,19 @@ class HearingDetails extends React.Component {
       loading: false,
       success: false,
       error: false,
+      virtualHearingModalOpen: false,
+      virtualHearingModalType: null,
       initialFormData
     };
 
     this.updateAllFormData(initialFormData);
   }
+
+  openVirtualHearingModal = ({ type }) => this.setState({
+    virtualHearingModalOpen: true,
+    virtualHearingModalType: type
+  })
+  closeVirtualHearingModal = () => this.setState({ virtualHearingModalOpen: false })
 
   getInitialFormData = () => {
     const { hearing } = this.props;
@@ -90,7 +100,9 @@ class HearingDetails extends React.Component {
       virtualHearingForm: {
         veteranEmail: virtualHearing.veteranEmail,
         representativeEmail: virtualHearing.representativeEmail,
-        status: virtualHearing.status
+        status: virtualHearing.status,
+        // not used in form
+        jobCompleted: virtualHearing.jobCompleted
       }
     };
   }
@@ -109,6 +121,29 @@ class HearingDetails extends React.Component {
   updateVirtualHearing = (values) => {
     this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, values);
     this.setState({ updated: true });
+  }
+
+  resetVirtualHearing = () => {
+    const { hearing: { virtualHearing } } = this.props;
+
+    if (virtualHearing) {
+      this.updateVirtualHearing(virtualHearing);
+    } else {
+      this.updateVirtualHearing(null);
+    }
+
+    this.closeVirtualHearingModal();
+  }
+
+  getEditedEmails = () => {
+    const { hearing: { virtualHearing }, formData: { virtualHearingForm } } = this.props;
+
+    const changes = deepDiff(virtualHearing, virtualHearingForm || {});
+
+    return {
+      repEmailEdited: !_.isUndefined(changes.representativeEmail),
+      vetEmailEdited: !_.isUndefined(changes.veteranEmail)
+    };
   }
 
   updateTranscription = (values) => {
@@ -145,7 +180,11 @@ class HearingDetails extends React.Component {
 
     return ApiUtil.patch(`/hearings/${externalId}`, {
       data: ApiUtil.convertToSnakeCase(data)
-    }).then((resp) => {
+    }).then((response) => {
+
+      const hearing = ApiUtil.convertToCamelCase(response.body.data);
+      const alerts = response.body.alerts;
+
       this.setState({
         updated: false,
         loading: false,
@@ -154,7 +193,7 @@ class HearingDetails extends React.Component {
       });
 
       // set hearing on DetailsContainer then reset initialFormData
-      this.props.setHearing(ApiUtil.convertToCamelCase(resp.body), () => {
+      this.props.setHearing(hearing, () => {
         const initialFormData = this.getInitialFormData();
 
         this.setState({
@@ -162,6 +201,7 @@ class HearingDetails extends React.Component {
         });
 
         this.updateAllFormData(initialFormData);
+        this.props.onReceiveAlerts(alerts);
       });
     }).
       catch((error) => {
@@ -188,16 +228,14 @@ class HearingDetails extends React.Component {
 
     const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = this.props.formData;
 
-    const { disabled, success, error } = this.state;
+    const { disabled, error } = this.state;
+
+    const editedEmails = this.getEditedEmails();
 
     return (
       <AppSegment filledBackground>
-
-        {success &&
-          <div {...css({ marginBottom: '4rem' })}>
-            <Alert type="success" title="Hearing Successfully Updated" />
-          </div>
-        }{error &&
+        <UserAlerts />
+        {error &&
           <div {...css({ marginBottom: '4rem' })}>
             <Alert type="error" title="There was an error updating hearing" />
           </div>
@@ -212,10 +250,17 @@ class HearingDetails extends React.Component {
           <h2>Hearing Details</h2>
           <DetailsOverview hearing={this.props.hearing} />
           <div className="cf-help-divider" />
+          {this.state.virtualHearingModalOpen && <VirtualHearingModal
+            hearing={this.props.hearing}
+            virtualHearing={virtualHearingForm}
+            update={this.updateVirtualHearing}
+            submit={() => this.submit().then(this.closeVirtualHearingModal)}
+            closeModal={this.closeVirtualHearingModal}
+            reset={this.resetVirtualHearing}
+            type={this.state.virtualHearingModalType}
+            {...editedEmails} />}
           <DetailsSections
             user={this.props.user}
-            submit={this.submit}
-            initialHearingState={this.props.hearing}
             updateTranscription={this.updateTranscription}
             updateHearing={this.updateHearing}
             updateVirtualHearing={this.updateVirtualHearing}
@@ -223,8 +268,10 @@ class HearingDetails extends React.Component {
             hearing={hearingDetailsForm}
             virtualHearing={virtualHearingForm}
             isLegacy={this.state.isLegacy}
+            openVirtualHearingModal={this.openVirtualHearingModal}
             requestType={this.props.hearing.readableRequestType}
-            disabled={disabled} />
+            disabled={disabled}
+            isVirtual={this.props.hearing.isVirtual} />
           <div>
             <a
               className="button-link"
@@ -237,7 +284,13 @@ class HearingDetails extends React.Component {
                 disabled={!this.state.updated || this.state.disabled}
                 loading={this.state.loading}
                 className="usa-button"
-                onClick={this.submit}
+                onClick={() => {
+                  if (editedEmails.repEmailEdited || editedEmails.vetEmailEdited) {
+                    this.openVirtualHearingModal({ type: 'change_email' });
+                  } else {
+                    this.submit();
+                  }
+                }}
                 styling={css({ float: 'right' })}
               >Save</Button>
             </span>
@@ -256,6 +309,7 @@ HearingDetails.propTypes = {
   setHearing: PropTypes.func,
   goBack: PropTypes.func,
   disabled: PropTypes.bool,
+  onReceiveAlerts: PropTypes.func,
   onChangeFormData: PropTypes.func,
   formData: PropTypes.shape({
     hearingDetailsForm: PropTypes.object,
@@ -273,7 +327,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onChangeFormData
+  onChangeFormData,
+  onReceiveAlerts
 }, dispatch);
 
 export default connect(
