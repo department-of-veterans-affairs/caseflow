@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Alert from './Alert';
-import _ from 'underscore';
+import { uniq } from 'lodash';
 import { removeAlertsWithTimestamps } from './common/actions';
 
 const ALERT_EXPIRATION = 30000;
@@ -27,7 +27,7 @@ class UserAlerts extends React.Component {
     )).map((alert) => alert.timestamp);
 
     if (expiredAlertTimestamps.length > 0) {
-      this.props.removeAlertsWithTimestamps(_.uniq(expiredAlertTimestamps));
+      this.props.removeAlertsWithTimestamps(uniq(expiredAlertTimestamps));
     }
   }
 

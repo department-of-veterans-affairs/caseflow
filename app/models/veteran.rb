@@ -61,6 +61,10 @@ class Veteran < ApplicationRecord
     FullName.new(first_name, "", last_name)
   end
 
+  def person
+    @person ||= Person.find_or_create_by(participant_id: participant_id)
+  end
+
   def country_requires_zip?
     COUNTRIES_REQUIRING_ZIP.include?(country&.upcase)
   end
