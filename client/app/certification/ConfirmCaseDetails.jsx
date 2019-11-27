@@ -275,7 +275,7 @@ export class ConfirmCaseDetails extends React.Component {
 
     if (updateSucceeded) {
       return <Redirect
-        to={`/certifications/${match.params.vacols_id}/confirm_hearing`} />;
+        to={`/certifications/${match.params.vacols_id}/confirm_hearing`} push />;
     }
 
     if (serverError) {
