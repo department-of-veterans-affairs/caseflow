@@ -3,10 +3,11 @@
 class VirtualHearingUserAlertBuilder
   attr_accessor :changed_to_virtual, :virtual_hearing_attributes, :veteran_full_name
 
-  def initialize(changed_to_virtual:, virtual_hearing_attributes:, veteran_full_name:)
+  def initialize(changed_to_virtual:, virtual_hearing_attributes:, veteran_full_name:, hearing_time_changed: nil)
     @changed_to_virtual = changed_to_virtual
     @virtual_hearing_attributes = virtual_hearing_attributes
     @veteran_full_name = veteran_full_name
+    @hearing_time_changed = hearing_time_changed
   end
 
   def call
@@ -32,6 +33,8 @@ class VirtualHearingUserAlertBuilder
       COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_FROM_VIRTUAL"]
     elsif changed_to_virtual
       COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_TO_VIRTUAL"]
+    elsif hearing_time_changed
+      COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_TIME_CHANGED"]
     end
   end
 

@@ -15,7 +15,8 @@ class BaseHearingUpdateForm
       update_hearing
       add_update_hearing_alert
 
-      if !virtual_hearing_attributes.blank?
+      if !virtual_hearing_attributes.blank? || (hearing.virtual? && scheduled_time_string.present?)
+        @virtual_hearing_attributes = {} if virtual_hearing_attributes.nil?
         was_created = create_or_update_virtual_hearing
         start_async_job
         add_virtual_hearing_alert(changed_to_virtual: was_created)
@@ -43,7 +44,7 @@ class BaseHearingUpdateForm
   def email_sent_flag(attr_key)
     status_changed = virtual_hearing_attributes.key?(:status)
 
-    !(status_changed || virtual_hearing_attributes.key?(attr_key))
+    !(status_changed || virtual_hearing_attributes.key?(attr_key) || scheduled_time_string.present?)
   end
 
   def create_or_update_virtual_hearing
@@ -79,7 +80,8 @@ class BaseHearingUpdateForm
     alerts << VirtualHearingUserAlertBuilder.new(
       changed_to_virtual: changed_to_virtual,
       virtual_hearing_attributes: virtual_hearing_attributes,
-      veteran_full_name: veteran_full_name
+      veteran_full_name: veteran_full_name,
+      hearing_time_changed: scheduled_time_string.present?
     ).call.to_hash
   end
 
