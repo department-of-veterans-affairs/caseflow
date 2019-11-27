@@ -39,7 +39,7 @@ describe PostDecisionMotionsController do
         params =
           { disposition: "granted",
             task_id: task.id,
-            vacate_type: "straight_vacate_and_readjudication",
+            vacate_type: "vacate_and_readjudication",
             instructions: "formatted instructions",
             assigned_to_id: assigned_to.id }
         post :create, params: params
