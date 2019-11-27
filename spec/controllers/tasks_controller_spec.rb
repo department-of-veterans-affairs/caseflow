@@ -779,9 +779,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
         expect(task["attributes"]["available_actions"].size).to eq 2
 
-        # TODO: Adding this assertion as a proof of concept for DatabaseRequestCounter. We should understand
-        # why we are making 30 requests to VACOLS for this endpoint in a properly written test.
-        expect(DatabaseRequestCounter.get_counter(:vacols)).to eq(30)
+        expect(DatabaseRequestCounter.get_counter(:vacols)).to eq(18)
       end
 
       context "when appeal is not assigned to current user" do

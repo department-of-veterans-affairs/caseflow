@@ -1,9 +1,30 @@
 # frozen_string_literal: true
 
 if DatabaseRequestCounter.valid_env?
-  def vacols_request_spy
-    simulate_vacols_latency
-    DatabaseRequestCounter.increment_counter(:vacols)
+
+  EXCLUDED_PATTERNS = [
+    # Ignore the following request to describe the database since they will only happen once in the lifetime of the
+    # Rails app and may happen at different times based on the order the tests run.
+    #
+    # Table columns:
+    # https://github.com/rsim/oracle-enhanced/blob/1272b3c58d082930514e625182a14a729e1e693e/lib/active_record/...
+    # connection_adapters/oracle_enhanced_adapter.rb#L559
+    "FROM all_tab_cols cols",
+    # Table sequences:
+    # https://github.com/rsim/oracle-enhanced/blob/1272b3c58d082930514e625182a14a729e1e693e/lib/active_record/...
+    # connection_adapters/oracle_enhanced_adapter.rb#L591
+    "from all_sequences",
+    # Table primary keys:
+    # https://github.com/rsim/oracle-enhanced/blob/1272b3c58d082930514e625182a14a729e1e693e/lib/active_record/...
+    # connection_adapters/oracle_enhanced_adapter.rb#L591
+    "FROM all_constraints"
+  ].freeze
+
+  def vacols_request_spy(statement)
+    unless statement.match?(Regexp.union(EXCLUDED_PATTERNS))
+      simulate_vacols_latency
+      DatabaseRequestCounter.increment_counter(:vacols)
+    end
   end
 
   def simulate_vacols_latency
@@ -19,12 +40,12 @@ if DatabaseRequestCounter.valid_env?
 
   class ActiveRecord::ConnectionAdapters::OracleEnhancedAdapter
     def execute(*args)
-      vacols_request_spy
+      vacols_request_spy(args.first)
       super
     end
 
     def exec_query(*args)
-      vacols_request_spy
+      vacols_request_spy(args.first)
       super
     end
   end
