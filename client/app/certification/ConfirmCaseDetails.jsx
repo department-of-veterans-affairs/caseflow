@@ -1,5 +1,5 @@
 // TODO refactor into smaller files
-/* eslint max-lines: ["error", 510]*/
+/* eslint max-lines: ["error", 520]*/
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -125,6 +125,7 @@ export class ConfirmCaseDetails extends React.Component {
   // TODO: updating state in UNSAFE_componentWillMount is
   // sometimes thought of as an anti-pattern.
   // is there a better way to do this?
+  // eslint-disable-next-line camelcase
   UNSAFE_componentWillMount() {
     this.props.updateProgressBar();
   }
@@ -508,7 +509,7 @@ const mapStateToProps = (state) => ({
   erroredFields: state.erroredFields,
   scrollToError: state.scrollToError,
   loading: state.loading,
-  certificationStatus: state.certificationStatus,
+  certificationStatus: state.certificationStatus
 });
 
 export default connect(
