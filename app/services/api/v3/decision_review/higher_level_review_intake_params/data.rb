@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+#benefit type error
 class Api::V3::DecisionReview::HigherLevelReviewIntakeParams::Data < Api::V3::DecisionReview::Params
   def initialize(params)
     @hash = params

@@ -16,4 +16,8 @@ class Api::V3::DecisionReview::Params
   def hash_path_str
     hash_path.map { |str| "[\"#{str.camelize(:lower)}\"]" }.join
   end
+
+  def errors?
+    !errors.empty?
+  end
 end

@@ -8,12 +8,18 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams < Api::V3::Decision
   # expects ActionController::Parameters
   def initialize(params)
     @hash = params
-    @errors = []
-    validate
+    @errors = Array.wrap(
+      type_error_for_key(["data", OBJECT], ["included", OBJECT]) ||
+      data_errors ||
+      included_errors
+    )
   end
 
-  def errors?
-    !errors.empty?
+  # move to data.rb
+  def benefit_type_error
+    return nil if benefit_type_valid?
+
+    Api::V3::DecisionReview::IntakeError.new(:invalid_benefit_type)
   end
 
   def veteran_file_number
@@ -37,143 +43,34 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams < Api::V3::Decision
   # params for IntakesController#complete
   def complete_params
     ActionController::Parameters.new(
-      request_issues: request_issues.map(&:intakes_controller_params)
+      request_issues: contestable_issues.map(&:intakes_controller_params)
     )
   end
 
   private
 
-  def veteran_shape_valid?
-    veteran.respond_to?(:has_key?) &&
-      veteran[:data].respond_to?(:has_key?) &&
-      veteran[:data][:type] == "Veteran" &&
-      veteran[:data][:id].present?
-  end
-
-  def claimant
-    relationships[:claimant]
-  end
-
-  def claimant_shape_valid?
-    claimant.respond_to?(:has_key?) &&
-      claimant[:data].respond_to?(:has_key?) &&
-      claimant[:data][:type] == "Claimant" &&
-      claimant[:data][:id].present? &&
-      claimant[:data][:meta].respond_to?(:has_key?) &&
-      claimant[:data][:meta][:payeeCode].present?
-  end
-
-  def claimant_participant_id
-    claimant && claimant[:data][:id]
-  end
-
-  def claimant_payee_code
-    claimant && claimant[:data][:meta][:payeeCode]
-  end
-
-  def included
-    @params[:included] || []
-  end
-
-  def included_shape_valid?
-    @params[:included].nil? ||
-      (@params[:included].is_a?(Array) && included.all? { |obj| obj.respond_to? :has_key? })
-  end
-
-  # remove?
-  def legacy_opt_in?
-    # tweaked for happy path: legacy_opt_in_approved always true (regardless of input) for happy path
-    # attributes[:legacyOptInApproved]
-    true
-  end
-
-  def request_issues
-    @request_issues ||= included
-      .select { |obj| obj[:type] == "RequestIssue" }
-      .map do |obj|
-        Api::V3::DecisionReview::RequestIssueParams.new(
-          request_issue: obj,
-          benefit_type: attributes[:benefitType],
-          legacy_opt_in_approved: legacy_opt_in?
-        )
-      end
-  end
-
-  def minimum_required_shape?
-    params_shape_valid? &&
-      data_shape_valid? &&
-      attributes_shape_valid? &&
-      relationships_shape_valid? &&
-      veteran_shape_valid?
-  end
-
-  def shape_valid?
-    minimum_required_shape? &&
-      (!claimant || claimant_shape_valid?) &&
-      included_shape_valid?
-  end
-
-  def validate
-    unless shape_valid?
-      @errors << Api::V3::DecisionReview::IntakeError.new(:malformed_request)
-      return
+  def contestable_issues
+    @contestable_issues ||= included.map do |obj|
+      Api::V3::DecisionReview::HigherLevelReviewIntakeParams::Included::ContestableIssue.new(
+        params: obj,
+        benefit_type: hash[:data][:benefitType],
+        legacy_opt_in_approved: hash[:data][:legacyOptInApproved],
+      )
     end
-
-    unless benefit_type_valid?
-      @errors << Api::V3::DecisionReview::IntakeError.new(:invalid_benefit_type)
-      return
-    end
-
-    @errors += request_issue_errors
   end
 
-  def request_issue_errors
-    request_issues.select(&:error_code).map do |request_issue|
-      Api::V3::DecisionReview::IntakeError.new(request_issue)
+  def contestable_issue_errors
+    contestable_issues.select(&:error_code).map do |ci|
+      Api::V3::DecisionReview::IntakeError.new(ci)
     end
   rescue StandardError
     [Api::V3::DecisionReview::IntakeError.new(:malformed_request)]
   end
 
+  #move to data.rb
   def benefit_type_valid?
     attributes[:benefitType].in?(
       Api::V3::DecisionReview::RequestIssueParams::CATEGORIES_BY_BENEFIT_TYPE.keys
     )
-  end
-
-  def shape_error
-    params_shape_error || data_shape_error || included_shape_error || nil
-  end
-
-  def params_shape_error
-    @params.respond_to?(:has_key?) ? nil : "Request must be an object."
-  end
-
-  def data_shape_error
-    case
-    when !data.respond_to?(:has_key?)
-      '["data"] must be an object'
-    when data[:type] != DATA_TYPE
-      "[\"data\"][\"type\"] must be #{DATA_TYPE}"
-    when !attributes.respond_to?(:has_key?)
-      '["data"]["attributes"] must be an object'
-    when data.keys.length > 2
-      "unknown field(s): #{data.keys.except(:type, :attributes)}"
-    else
-      attribute_shape_error
-    end
-  end
-
-  def attributes_shape_error
-    case
-        when receiptDate
-    informalConference
-    informalConferenceTimes
-    informalConferenceRep
-    sameOffice
-    legacyOptInApproved
-    benefitType
-    veteran
-    claimant
   end
 end
