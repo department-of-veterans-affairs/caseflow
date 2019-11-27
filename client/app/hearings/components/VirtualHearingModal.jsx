@@ -31,7 +31,136 @@ const formatTimeString = (hearing, timeWasEdited) => {
   return timeString;
 };
 
+const DateTime = ({ hearing, timeWasEdited }) => (
+  <div>
+    <strong>{'Date:'}&nbsp;</strong>{moment(hearing.scheduledFor).format('MM/DD/YYYY')}<br />
+    <strong>{'Time:'}&nbsp;</strong>{formatTimeString(hearing, timeWasEdited)}
+  </div>
+);
+
+DateTime.propTypes = {
+  hearing: PropTypes.shape({
+    scheduledFor: PropTypes.string
+  }),
+  timeWasEdited: PropTypes.bool
+};
+
+const ReadOnlyEmails = ({
+  virtualHearing, repEmailEdited, vetEmailEdited, showAllEmails = false
+}) => (
+  <React.Fragment>
+    {(vetEmailEdited || showAllEmails) && <p>
+      <strong>Veteran Email</strong><br />
+      {virtualHearing.veteranEmail}
+    </p>}
+    {(repEmailEdited || showAllEmails) && <p>
+      <strong>Representative Email</strong><br />
+      {virtualHearing.representativeEmail}
+    </p>}
+  </React.Fragment>
+);
+
+ReadOnlyEmails.propTypes = {
+  virtualHearing: PropTypes.shape({
+    veteranEmail: PropTypes.string,
+    representativeEmail: PropTypes.string
+  }),
+  vetEmailEdited: PropTypes.bool,
+  repEmailEdited: PropTypes.bool,
+  showAllEmails: PropTypes.bool
+};
+
+const Emails = ({ virtualHearing, update, vetEmailError, repEmailError }) => (
+  <React.Fragment>
+    <TextField
+      strongLabel
+      value={virtualHearing.veteranEmail}
+      name="vet-email"
+      label="Veteran Email"
+      errorMessage={vetEmailError}
+      onChange={(veteranEmail) => update({ veteranEmail })} />
+    <TextField
+      strongLabel
+      value={virtualHearing.representativeEmail}
+      name="rep-email"
+      label="POA/Representative Email"
+      errorMessage={repEmailError}
+      onChange={(representativeEmail) => update({ representativeEmail })} />
+  </React.Fragment>
+);
+
+Emails.propTypes = {
+  virtualHearing: PropTypes.shape({
+    veteranEmail: PropTypes.string,
+    representativeEmail: PropTypes.string
+  }),
+  vetEmailError: PropTypes.bool,
+  repEmailError: PropTypes.bool,
+  update: PropTypes.func
+};
+
+const ChangeHearingTime = (props) => (
+  <React.Fragment>
+    <DateTime {...props} />
+    <ReadOnlyEmails {...props} showAllEmails />
+  </React.Fragment>
+);
+
+const ChangeEmail = (props) => (
+  <React.Fragment>
+    <ReadOnlyEmails {...props} />
+  </React.Fragment>
+);
+
+const ChangeFromVirtual = ({ hearing, ...props }) => (
+  <React.Fragment>
+    <DateTime {...props} hearing={hearing} />
+    {hearing.location && <div><strong>{'Location:'}&nbsp;</strong>{hearing.location.name}</div>}
+    <ReadOnlyEmails {...props} showAllEmails />
+  </React.Fragment>
+);
+
+ChangeFromVirtual.propTypes = {
+  hearing: PropTypes.shape({
+    location: PropTypes.shape({
+      name: PropTypes.string
+    })
+  })
+};
+
+const ChangeToVirtual = (props) => (
+  <React.Fragment>
+    <DateTime {...props} />
+    <Emails {...props} />
+    <p dangerouslySetInnerHTML={{ __html: COPY.VIRTUAL_HEARING_MODAL_CONFIRMATION }} />
+  </React.Fragment>
+);
+
 const INVALID_EMAIL_FORMAT = 'Please enter a valid email address';
+
+const TYPES = {
+  change_to_virtual: {
+    title: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE,
+    intro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO,
+    element: ChangeToVirtual
+  },
+  change_from_virtual: {
+    title: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_TITLE,
+    intro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_INTRO,
+    element: ChangeFromVirtual
+  },
+  change_hearing_time: {
+    title: COPY.VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE,
+    intro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_INTRO,
+    element: ChangeHearingTime
+  },
+  change_email: {
+    title: COPY.VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE,
+    intro: COPY.VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_INTRO,
+    button: COPY.VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON,
+    element: ChangeEmail
+  }
+};
 
 class VirtualHearingModal extends React.Component {
   constructor(props) {
@@ -42,6 +171,7 @@ class VirtualHearingModal extends React.Component {
       repEmailError: null
     };
   }
+
   validateForm = () => {
     let { virtualHearing } = this.props;
     let isValid = true;
@@ -57,11 +187,12 @@ class VirtualHearingModal extends React.Component {
 
     return isValid;
   }
+
   onSubmit = () => {
-    let { closeModal, submit } = this.props;
+    let { submit } = this.props;
 
     if (this.validateForm()) {
-      submit().then(closeModal).
+      submit().
         catch((error) => {
         // Details.jsx re-throws email invalid error that we catch here.
           const msg = error.response.body.errors[0].message;
@@ -75,44 +206,30 @@ class VirtualHearingModal extends React.Component {
   }
 
   render () {
-    let { virtualHearing, hearing, timeWasEdited, update, reset } = this.props;
+    const { type, reset } = this.props;
+    const { vetEmailError, repEmailError } = this.state;
+
+    const typeSettings = TYPES[type];
 
     return <div>
       <Modal
-        title="Change to Virtual Hearing"
+        title={typeSettings.title}
         closeHandler={reset}
         confirmButton={
           <Button classNames={['usa-button-secondary']}
             onClick={this.onSubmit}>
-            Change and Send Email
+            {typeSettings.button || COPY.VIRTUAL_HEARING_CHANGE_HEARING_BUTTON}
           </Button>
         }
         cancelButton={
           <Button linkStyling onClick={reset}>Cancel</Button>
         }>
-        <p>
-          {COPY.VIRTUAL_HEARING_MODAL_INTRO}
+        <p dangerouslySetInnerHTML={{ __html: typeSettings.intro }}>
         </p>
-        <div>
-          <strong>{'Date:'}&nbsp;</strong>{moment(hearing.scheduledFor).format('MM/DD/YYYY')}<br />
-          <strong>{'Time:'}&nbsp;</strong>{formatTimeString(hearing, timeWasEdited)}
-        </div>
-        <TextField
-          strongLabel
-          value={virtualHearing.veteranEmail}
-          name="vet-email"
-          label="Veteran Email"
-          errorMessage={this.state.vetEmailError}
-          onChange={(veteranEmail) => update({ veteranEmail })} />
-        <TextField
-          strongLabel
-          value={virtualHearing.representativeEmail}
-          name="rep-email"
-          label="POA/Representative Email"
-          errorMessage={this.state.repEmailError}
-          onChange={(representativeEmail) => update({ representativeEmail })} />
-
-        <p dangerouslySetInnerHTML={{ __html: COPY.VIRTUAL_HEARING_MODAL_CONFIRMATION }} />
+        <typeSettings.element
+          {...this.props}
+          vetEmailError={vetEmailError}
+          repEmailError={repEmailError} />
       </Modal>
     </div>;
   }
@@ -127,9 +244,18 @@ VirtualHearingModal.propTypes = {
     scheduledFor: PropTypes.string,
     scheduledTimeString: PropTypes.string,
     regionalOfficeTimezone: PropTypes.string,
-    centralOfficeTimeString: PropTypes.string
+    centralOfficeTimeString: PropTypes.string,
+    location: PropTypes.shape({
+      name: PropTypes.string
+    })
   }).isRequired,
+  type: PropTypes.oneOf([
+    'change_to_virtual', 'change_from_virtual',
+    'change_email', 'change_hearing_time'
+  ]).isRequired,
   timeWasEdited: PropTypes.bool,
+  repEmailEdited: PropTypes.bool,
+  vetEmailEdited: PropTypes.bool,
   update: PropTypes.func,
   submit: PropTypes.func,
   reset: PropTypes.func,
