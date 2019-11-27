@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class VirtualHearingUserAlertBuilder
-  attr_accessor :changed_to_virtual, :virtual_hearing_attributes, :veteran_full_name
+  attr_accessor :changed_to_virtual, :virtual_hearing_attributes, :veteran_full_name, :hearing_time_changed
 
   def initialize(changed_to_virtual:, virtual_hearing_attributes:, veteran_full_name:, hearing_time_changed: nil)
     @changed_to_virtual = changed_to_virtual
