@@ -18,6 +18,7 @@ class PostDecisionMotion < ApplicationRecord
   }
 
   enum vacate_type: {
+    straight_vacate: "straight_vacate",
     vacate_and_readjudication: "vacate_and_readjudication",
     vacate_and_de_novo: "vacate_and_de_novo"
   }

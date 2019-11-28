@@ -163,6 +163,7 @@
 
   "VACATE_AND_DE_NOVO_TASK_LABEL": "Vacate and De Novo",
   "VACATE_AND_READJUDICATION_TASK_LABEL": "Vacate and Readjudication",
+  "STRAIGHT_VACATE_TASK_LABEL": "Straight Vacate",
   "DENIED_MOTION_TO_VACATE_TASK_LABEL": "Denied Motion to Vacate",
   "DISMISSED_MOTION_TO_VACATE_TASK_LABEL": "Dismissed Motion to Vacate",
 

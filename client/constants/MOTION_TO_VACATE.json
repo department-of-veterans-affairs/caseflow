@@ -5,6 +5,10 @@
       "displayText": "Vacate and Readjudication (1 document)"
     },
     {
+      "value": "straight_vacate",
+      "displayText": "Straight Vacate (1 document)"
+    },
+    {
       "value": "vacate_and_de_novo",
       "displayText": "Vacate and De Novo (2 documents)"
     }
