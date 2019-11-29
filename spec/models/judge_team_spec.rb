@@ -143,4 +143,11 @@ describe JudgeTeam, :postgres do
       expect(attorney.organizations_users.first.organization).to eq(judge_team)
     end
   end
+
+  describe "when there are inactive JudgeTeams" do
+    # create 5 judge JudgeTeams
+    # 
+    it "returns only the active JudgeTeams" do
+    end
+  end
 end

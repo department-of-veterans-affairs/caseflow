@@ -13,6 +13,11 @@ class Organization < ApplicationRecord
 
   before_save :clean_url
 
+  enum status: {
+    Constants.ORGANIZATION_STATUSES.active.to_sym => Constants.ORGANIZATION_STATUSES.active,
+    Constants.ORGANIZATION_STATUSES.inactive.to_sym => Constants.ORGANIZATION_STATUSES.inactive
+  }
+
   class << self
     def assignable(task)
       select { |org| org.can_receive_task?(task) }
