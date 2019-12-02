@@ -8,9 +8,17 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
   end
 
   let!(:current_user) { User.authenticate!(css_id: "BVAYELLOW", roles: ["Edit HearSched", "Build HearSched"]) }
-  let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO06") }
-  let!(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
-
+  let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO06", scheduled_time: "9:00AM") }
+  let!(:virtual_hearing) do
+    create(
+      :virtual_hearing,
+      hearing: hearing,
+      representative_email_sent: true,
+      veteran_email_sent: true,
+      judge_email_sent: true,
+      status: :active
+    )
+  end
   scenario "Virtual hearing time is updated" do
     visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
     hearing.reload
@@ -29,6 +37,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
 
   scenario "Virtual hearing time update is cancelled" do
     visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+    hearing.reload
     expect(page).to have_content("Daily Docket")
     choose("hearingTime1_other", allow_label_click: true)
     click_dropdown(name: "optionalHearingTime1", index: 3)
