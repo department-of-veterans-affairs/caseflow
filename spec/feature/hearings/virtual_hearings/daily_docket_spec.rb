@@ -29,6 +29,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
 
   scenario "Virtual hearing time update is cancelled" do
     visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+    expect(page).to have_content("Daily Docket")
     choose("hearingTime1_other", allow_label_click: true)
     click_dropdown(name: "optionalHearingTime1", index: 3)
     click_button("Change-Hearing-Time-button-id-close")
