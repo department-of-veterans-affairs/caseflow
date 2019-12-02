@@ -196,7 +196,7 @@ class DailyDocketRow extends React.Component {
       <HearingLocationDropdown {...inputProps} regionalOffice={regionalOffice} />
       <StaticHearingDay hearing={hearing} />
       <TimeRadioButtons {...inputProps} regionalOffice={regionalOffice}
-        readOnly={!hearing.virtualHearing.jobCompleted}
+        readOnly={hearing.virtualHearing && !hearing.virtualHearing.jobCompleted}
         update={(values) => {
           this.update(values);
           if (values.scheduledTimeString !== null) {
