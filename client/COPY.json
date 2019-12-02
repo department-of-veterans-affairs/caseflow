@@ -650,5 +650,7 @@
         "TO_POA": "Email to POA / Representative is in progress."
       }
     }
-  }
+  },
+
+  "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s."
 }
