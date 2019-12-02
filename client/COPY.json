@@ -287,7 +287,7 @@
   "SPECIAL_CASE_MOVEMENT_MODAL_TITLE": "Special Case Movement",
   "SPECIAL_CASE_MOVEMENT_MODAL_DETAIL": "This action overrides the normal case distribution process and immediately assigns the appeal to the judge selected.",
   "SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER": "Select a judge",
-  
+
   "MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE": "Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930. Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding of clear and unmistakable error, which would result in a brand new docket number being assigned. An updated docket number format will need to be in place for legacy appeals by 2030 in order to ensure that docket numbers are sorted correctly.",
 
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
@@ -616,8 +616,39 @@
   "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_TITLE": "No rooms available for %s",
   "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_DETAIL": "All hearing rooms are taken for the date you selected.",
 
-  "VIRTUAL_HEARING_MODAL_INTRO": "Calendar invites will be emailed to the Veteran, POA/Representative, and VLJ.",
+  "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE": "Change to Virtual Hearing",
+  "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_TITLE": "Change to Video Hearing",
+  "VIRTUAL_HEARING_MODAL_CHANGE_TO_CENTRAL_TITLE": "Change to Central Hearing",
+  "VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE": "Change Hearing Time",
+  "VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE": "Update Email Address",
+  "VIRTUAL_HEARING_CHANGE_HEARING_BUTTON": "Change and Send Email",
+  "VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON": "Update and Send Email",
+  "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO": "Calendar invites will be emailed to the Veteran, POA/Representative, and VLJ",
+  "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_INTRO": "Emails will be sent to the Veteran and POA/Representative to notify them that:<ul><li>The hearing format has been changed to Video, and their Virtual hearing URL is no longer valid</li><li>They must appear in-person at thier designated Regional Office or alternate hearing location</li></ul>",
+  "VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_INTRO": "Updated calendar invites will be emailed to the Veteran, POA/Representative, and VLJ",
+  "VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_INTRO": "A calendar invite for the virtual hearing will be emailed to:",
   "VIRTUAL_HEARING_MODAL_CONFIRMATION": "Changes to the Veteran and POA/Representative emails will be used to send calendar invites and reminders <strong>for this hearing only</strong>.",
 
-  "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team."
+  "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team.",
+
+  "HEARING_UPDATE_SUCCESSFUL_TITLE": "You have successfully updated %s's hearing.",
+
+  "VIRTUAL_HEARING_USER_ALERTS": {
+    "HEARING_CHANGED_TO_VIRTUAL": {
+      "TITLE": "We're scheduling %s's virtual hearing",
+      "MESSAGE": "<ul><li>Link to the virtual hearing is in progress.</li><li>Emails to the Veteran, POA / Representative, and VLJ are in progress.</li></ul>"
+    },
+    "HEARING_CHANGED_FROM_VIRTUAL": {
+      "TITLE": "We're updating %s's hearing type",
+      "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
+    },
+    "EMAILS_UPDATED": {
+      "TITLE": "We're emailing the invite to %s's hearing",
+      "MESSAGES": {
+        "TO_VETERAN_AND_POA": "Emails to the Veteran and POA / Representative are in progress.",
+        "TO_VETERAN": "Email to Veteran is in progress.",
+        "TO_POA": "Email to POA / Representative is in progress."
+      }
+    }
+  }
 }

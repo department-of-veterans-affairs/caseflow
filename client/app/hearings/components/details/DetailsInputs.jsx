@@ -12,23 +12,41 @@ import TextareaField from '../../../components/TextareaField';
 import Checkbox from '../../../components/Checkbox';
 import VirtualHearingLink from '../VirtualHearingLink';
 import HearingTypeDropdown from './HearingTypeDropdown';
+import TextField from '../../../components/TextField';
 
 const DetailsInputs = ({
-  hearing, update, readOnly, isLegacy, openModal, updateVirtualHearing, virtualHearing,
-  enableVirtualHearings, requestType
+  hearing, update, readOnly, isLegacy, openVirtualHearingModal, updateVirtualHearing, virtualHearing,
+  enableVirtualHearings, requestType, isVirtual
 }) => (
   <React.Fragment>
-    <div {...rowThirds}>
-      {enableVirtualHearings && <HearingTypeDropdown
+    {enableVirtualHearings && <div {...rowThirds}>
+      <HearingTypeDropdown
         virtualHearing={virtualHearing}
         requestType={requestType}
         updateVirtualHearing={updateVirtualHearing}
-        openModal={openModal}
-      />}
+        openModal={openVirtualHearingModal}
+      />
       <VirtualHearingLink
         hearing={hearing}
       />
-    </div>
+    </div>}
+    {isVirtual && virtualHearing && <div {...rowThirds}>
+      <TextField
+        name="Veteran Email"
+        value={virtualHearing.veteranEmail}
+        strongLabel
+        required
+        readOnly={!virtualHearing.jobCompleted}
+        onChange={(veteranEmail) => updateVirtualHearing({ veteranEmail })}
+      />
+      <TextField
+        name="POA/Representive Email"
+        value={virtualHearing.representativeEmail}
+        strongLabel
+        readOnly={!virtualHearing.jobCompleted}
+        onChange={(representativeEmail) => updateVirtualHearing({ representativeEmail })}
+      />
+    </div> }
     <div {...rowThirds}>
       <JudgeDropdown
         name="judgeDropdown"
@@ -89,12 +107,16 @@ DetailsInputs.propTypes = {
   readOnly: PropTypes.bool,
   requestType: PropTypes.string,
   isLegacy: PropTypes.bool,
-  openModal: PropTypes.func,
+  openVirtualHearingModal: PropTypes.func,
   updateVirtualHearing: PropTypes.func,
   virtualHearing: PropTypes.shape({
-    status: PropTypes.string
+    veteranEmail: PropTypes.string,
+    representativeEmail: PropTypes.string,
+    status: PropTypes.string,
+    jobCompleted: PropTypes.bool
   }),
-  enableVirtualHearings: PropTypes.bool
+  enableVirtualHearings: PropTypes.bool,
+  isVirtual: PropTypes.bool
 };
 
 export default DetailsInputs;
