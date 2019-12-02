@@ -43,7 +43,6 @@ class HearingDaySerializer
 
   def self.serialize_collection(hearing_days)
     hearing_days_with_virtual_hearings = HearingDaysWithVirtualHearingsQuery.new.call
-      .select(:id)
       .map(&:id)
       .to_set
 
