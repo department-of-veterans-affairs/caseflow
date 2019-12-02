@@ -14,6 +14,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
   scenario "Virtual hearing time is updated" do
     visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
     hearing.reload
+    expect(page).to have_content("Daily Docket")
     choose("hearingTime1_other", allow_label_click: true)
     click_dropdown(name: "optionalHearingTime1", index: 2)
     expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE)
