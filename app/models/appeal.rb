@@ -89,7 +89,27 @@ class Appeal < DecisionReview
     # this condition is no longer needed since we only want active or on hold tasks
     return tasks.most_recently_updated&.assigned_to_label if tasks.any?
 
-    AppealStatusDecorator.new(self).fetch_status.to_s.titleize
+    decorated_with_status.fetch_status.to_s.titleize
+  end
+
+  def distributed_to_a_judge?
+    decorated_with_status.distributed_to_a_judge?
+  end
+
+  def decorated_with_status
+    AppealStatusDecorator.new(self)
+  end
+
+  def active_request_issues_or_decision_issues
+    decision_issues.empty? ? request_issues.active.all : fetch_all_decision_issues
+  end
+
+  def fetch_all_decision_issues
+    return decision_issues unless decision_issues.remanded.any?
+    # only include the remanded issues if they are still being worked on
+    return decision_issues if active_remanded_claims?
+
+    super
   end
 
   def attorney_case_reviews
