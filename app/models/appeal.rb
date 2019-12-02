@@ -92,6 +92,10 @@ class Appeal < DecisionReview
     decorated_with_status.fetch_status.to_s.titleize
   end
 
+  def program
+    decorated_with_status.program
+  end
+
   def distributed_to_a_judge?
     decorated_with_status.distributed_to_a_judge?
   end
