@@ -1486,14 +1486,17 @@ paths:
                               format: date
                             description:
                               type: array
+                              description: Derived from `codes` and `labels`.
                               items:
                                 type: string
                             codes:
                               type: array
+                              description: Non-rating issue codes.
                               items:
                                 type: string
                             labels:
                               type: array
+                              description: Titles corresponding to each code in `codes`.
                               items:
                                 type: string
                             disposition:
