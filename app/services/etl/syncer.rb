@@ -30,7 +30,7 @@ class ETL::Syncer
     fail "Must override abstract method target_class"
   end
 
-  def filter?(original)
+  def filter?(_original)
     false
   end
 
