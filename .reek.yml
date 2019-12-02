@@ -115,6 +115,7 @@ detectors:
     exclude:
       - ClaimReviewAsyncStatsReporter#seconds_to_hms
       - ETL::Syncer#filter?
+      - ETL::TaskSyncer#filter?
       - HearingAdminActionVerifyAddressTask#available_hearing_admin_actions
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
