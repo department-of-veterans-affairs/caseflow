@@ -41,5 +41,8 @@
     "color-contrast": {
       "enabled": false,
     },
+    "duplicate-id-active": {
+      "enabled": false,
+    }
   },
 }
