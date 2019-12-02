@@ -1485,10 +1485,23 @@ paths:
                               type: string
                               format: date
                             description:
-                              type: string
+                              type: array
+                              description: Derived from `codes` and `labels`.
+                              items:
+                                type: string
+                            codes:
+                              type: array
+                              description: Non-rating issue codes. [client/constants/ISSUE_INFO.json](https://github.com/department-of-veterans-affairs/caseflow/blob/master/client/constants/ISSUE_INFO.json)
+                              items:
+                                type: string
+                            labels:
+                              type: array
+                              description: Titles corresponding to each code in `codes`.
+                              items:
+                                type: string
                             disposition:
                               type: string
-                            close_date:
+                            closeDate:
                               type: string
                               format: date
                             note:
