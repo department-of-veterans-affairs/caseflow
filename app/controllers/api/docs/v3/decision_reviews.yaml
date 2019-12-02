@@ -1491,7 +1491,7 @@ paths:
                                 type: string
                             codes:
                               type: array
-                              description: Non-rating issue codes.
+                              description: Non-rating issue codes. [client/constants/ISSUE_INFO.json](https://github.com/department-of-veterans-affairs/caseflow/blob/master/client/constants/ISSUE_INFO.json)
                               items:
                                 type: string
                             labels:
