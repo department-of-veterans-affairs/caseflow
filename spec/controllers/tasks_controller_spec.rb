@@ -403,18 +403,16 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       context "when current user is an attorney" do
         let(:role) { :attorney_role }
 
-        context "when multiple admin actions with task action field" do
+        context "when multiple admin actions with task type field" do
           let(:params) do
             [{
               "external_id": appeal.vacols_id,
-              "type": ColocatedTask.name,
-              "action": "address_verification",
+              "type": AddressVerificationColocatedTask.name,
               "instructions": "do this"
             },
              {
                "external_id": appeal.vacols_id,
-               "type": ColocatedTask.name,
-               "action": "missing_records",
+               "type": MissingRecordsColocatedTask.name,
                "instructions": "another one"
              }]
           end
@@ -425,7 +423,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           end
 
           it "should be successful" do
-            expect(AppealRepository).to receive(:update_location!).exactly(1).times
+            expect(AppealRepository).to receive(:update_location!).exactly(2).times
 
             subject
 
@@ -452,61 +450,12 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           end
         end
 
-        context "when multiple admin actions with task label field" do
-          let(:params) do
-            [{
-              "external_id": appeal.vacols_id,
-              "type": ColocatedTask.name,
-              "label": "address_verification",
-              "instructions": "do this"
-            },
-             {
-               "external_id": appeal.vacols_id,
-               "type": ColocatedTask.name,
-               "label": "missing_records",
-               "instructions": "another one"
-             }]
-          end
 
-          before do
-            u = create(:user)
-            Colocated.singleton.add_user(u)
-          end
-
-          it "should be successful" do
-            expect(AppealRepository).to receive(:update_location!).exactly(1).times
-
-            subject
-
-            expect(response.status).to eq 200
-            response_body = JSON.parse(response.body)["tasks"]["data"]
-            expect(response_body.size).to eq(4)
-            expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
-            expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.first["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.first["attributes"]["label"]).to eq "Address verification"
-
-            expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
-            expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.second["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.second["attributes"]["label"]).to eq "Address verification"
-            # assignee should be the same person
-            id = response_body.second["attributes"]["assigned_to"]["id"]
-            expect(response_body.last["attributes"]["assigned_to"]["id"]).to eq id
-
-            expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
-            expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.last["attributes"]["instructions"][0]).to eq "another one"
-            expect(response_body.last["attributes"]["label"]).to eq "Missing records"
-          end
-        end
-
-        context "when one admin action with task action field" do
+        context "when one admin action with task type field" do
           let(:params) do
             {
               "external_id": appeal.vacols_id,
-              "type": ColocatedTask.name,
-              "action": "address_verification",
+              "type": AddressVerificationColocatedTask.name,
               "instructions": "do this"
             }
           end
@@ -528,8 +477,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           let(:params) do
             {
               "external_id": appeal.vacols_id,
-              "type": ColocatedTask.name,
-              "label": "address_verification",
+              "type": AddressVerificationColocatedTask.name,
               "instructions": "do this"
             }
           end
@@ -551,8 +499,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           let(:params) do
             [{
               "external_id": 4_646_464,
-              "type": ColocatedTask.name,
-              "action": "address_verification"
+              "type": AddressVerificationColocatedTask.name,
             }]
           end
 

@@ -101,11 +101,10 @@ class Task < ApplicationRecord
       end
     end
 
-    def modify_params(params)
+    def modify_params_for_create(params)
       if params.key?(:instructions) && !params[:instructions].is_a?(Array)
         params[:instructions] = [params[:instructions]]
       end
-      params.delete(:action)
       params
     end
 
@@ -152,7 +151,7 @@ class Task < ApplicationRecord
 
       verify_user_can_create!(user, parent_task)
 
-      params = modify_params(params)
+      params = modify_params_for_create(params)
       child = create_child_task(parent_task, user, params)
       parent_task.update!(status: params[:status]) if params[:status]
       child
