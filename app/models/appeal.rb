@@ -101,7 +101,7 @@ class Appeal < DecisionReview
   end
 
   def decorated_with_status
-    AppealStatusDecorator.new(self)
+    AppealStatusApiDecorator.new(self)
   end
 
   def active_request_issues_or_decision_issues

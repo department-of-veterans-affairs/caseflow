@@ -2,7 +2,7 @@
 
 # Extends the Appeal model with methods for the Appeals Status API
 
-class AppealStatusDecorator < ApplicationDecorator
+class AppealStatusApiDecorator < ApplicationDecorator
   def appeal_status_id
     "A#{id}"
   end

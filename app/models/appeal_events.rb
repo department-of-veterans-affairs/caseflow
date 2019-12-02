@@ -16,7 +16,7 @@ class AppealEvents
       hlr_events
     when Appeal
       appeal_events
-    when AppealStatusDecorator
+    when AppealStatusApiDecorator
       appeal_events
     end
   end

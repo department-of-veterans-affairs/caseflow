@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppealStatusDecorator, :all_dbs do
+describe AppealStatusApiDecorator, :all_dbs do
   before do
     Timecop.freeze(pre_ama_start_date)
   end

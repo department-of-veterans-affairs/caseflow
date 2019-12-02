@@ -9,7 +9,7 @@ class ApiStatusAlerts
     case decision_review
     when Appeal
       appeal_alerts
-    when AppealStatusDecorator
+    when AppealStatusApiDecorator
       appeal_alerts
     else
       claim_review_alerts
@@ -37,7 +37,7 @@ class ApiStatusAlerts
     return unless Time.zone.today <= decision_review.due_date_to_appeal_decision
     return if decision_review.is_a?(Appeal) && Time.zone.today > decision_review.cavc_due_date
 
-    is_appeal = decision_review.is_a?(AppealStatusDecorator) || decision_review.is_a?(Appeal)
+    is_appeal = decision_review.is_a?(AppealStatusApiDecorator) || decision_review.is_a?(Appeal)
 
     {
       type: "ama_post_decision",
