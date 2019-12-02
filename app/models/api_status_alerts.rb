@@ -32,13 +32,14 @@ class ApiStatusAlerts
     ].flatten.compact.uniq
   end
 
+  def appeal?
+    decision_review.is_a?(AppealStatusApiDecorator) || decision_review.is_a?(Appeal)
+  end
+
   def post_decision
     return unless decision_review.api_alerts_show_decision_alert?
     return unless Time.zone.today <= decision_review.due_date_to_appeal_decision
-
-    is_appeal = decision_review.is_a?(AppealStatusApiDecorator) || decision_review.is_a?(Appeal)
-
-    return if is_appeal && Time.zone.today > decision_review.cavc_due_date
+    return if appeal? && Time.zone.today > decision_review.cavc_due_date
 
     {
       type: "ama_post_decision",
@@ -47,7 +48,7 @@ class ApiStatusAlerts
         decisionDate: decision_review.decision_date_for_api_alert,
         availableOptions: decision_review.available_review_options,
         dueDate: decision_review.due_date_to_appeal_decision,
-        cavcDueDate: is_appeal ? decision_review.decision_date_for_api_alert + 120.days : nil
+        cavcDueDate: appeal? ? (decision_review.decision_date_for_api_alert + 120.days) : nil
       }
     }
   end
