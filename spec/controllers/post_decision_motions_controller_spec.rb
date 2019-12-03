@@ -2,10 +2,12 @@
 
 describe PostDecisionMotionsController do
   let(:user) { create(:default_user) }
+  let(:judge) { create(:user) }
+  let(:judge_team) { JudgeTeam.create_for_judge(judge) }
 
   before do
     User.authenticate!(roles: ["System Admin"])
-    User.stub = user
+    User.stub = judge
   end
 
   describe "#create", :postgres do
@@ -34,7 +36,8 @@ describe PostDecisionMotionsController do
         allow(controller).to receive(:verify_authentication).and_return(true)
 
         task = create_task_without_unnecessary_models
-        assigned_to = create(:user)
+        assigned_to = user
+        judge_team.add_user(user)
 
         params =
           { disposition: "granted",
@@ -43,6 +46,7 @@ describe PostDecisionMotionsController do
             instructions: "formatted instructions",
             assigned_to_id: assigned_to.id }
         post :create, params: params
+
 
         expect(response).to be_success
         expect(flash[:success]).to be_present
@@ -58,7 +62,7 @@ describe PostDecisionMotionsController do
       :judge_address_motion_to_vacate_task,
       appeal: appeal,
       parent: parent,
-      assigned_to: user,
+      assigned_to: judge,
       assigned_by: assigned_by
     )
   end
