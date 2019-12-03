@@ -19,15 +19,19 @@ class ETL::Appeal < ETL::Record
       person = claimant&.person
       aod = person&.advance_on_docket_motions&.last
 
+      # avoid BGS call on sync for nil values
+      person_attributes = person&.attributes || {}
+      veteran_person_attributes = veteran&.person&.attributes || {}
+
       target.appeal_id = original.id
       target.active_appeal = original.active?
       target.aod_granted = aod&.granted? || false
       target.aod_reason = aod&.reason
       target.aod_user_id = aod&.user_id
-      target.claimant_first_name = person&.first_name
+      target.claimant_first_name = person_attributes[:first_name]
       target.claimant_id = claimant&.id
-      target.claimant_last_name = person&.last_name
-      target.claimant_name_suffix = person&.name_suffix
+      target.claimant_last_name = person_attributes[:last_name]
+      target.claimant_name_suffix = person_attributes[:name_suffix]
       target.claimant_participant_id = claimant&.participant_id
       target.claimant_payee_code = claimant&.payee_code
       target.claimant_person_id = person&.id
@@ -42,7 +46,7 @@ class ETL::Appeal < ETL::Record
       target.status = original.status.to_s
       target.target_decision_date = original.target_decision_date
       target.uuid = original.uuid
-      target.veteran_dob = veteran&.person&.date_of_birth
+      target.veteran_dob = veteran_person_attributes[:date_of_birth]
       target.veteran_file_number = original.veteran_file_number
       target.veteran_first_name = veteran&.first_name
       target.veteran_id = veteran&.id
@@ -52,8 +56,8 @@ class ETL::Appeal < ETL::Record
       target.veteran_name_suffix = veteran&.name_suffix
       target.veteran_participant_id = veteran&.participant_id
 
-      target.appeal_created_at = original.created_at
-      target.appeal_updated_at = original.updated_at
+      target.appeal_created_at = original.created_at || Time.zone.now
+      target.appeal_updated_at = original.updated_at || Time.zone.now
 
       target
     end
