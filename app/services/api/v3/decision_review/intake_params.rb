@@ -3,7 +3,6 @@
 class Api::V3::DecisionReview::IntakeParams
   attr_reader :errors
 
-  # expects ActionController::Parameters
   def initialize(params)
     @params = params
     @errors = []
@@ -14,9 +13,9 @@ class Api::V3::DecisionReview::IntakeParams
     !errors.empty?
   end
 
-  def veteran_file_number
-    veteran[:data][:id].to_s
-  end
+  # def veteran_file_number
+  #   @params.dig("data", "attributes", "veteran", "fileNumberOrSsn").to_s
+  # end
 
   # params for IntakesController#review
   def review_params
@@ -41,127 +40,9 @@ class Api::V3::DecisionReview::IntakeParams
 
   private
 
-  #  minimum required shape:
-  #
-  #  {
-  #    data: {
-  #      type: "HigherLevelReview",
-  #      attributes: {...},
-  #      relationships: {
-  #        veteran: {
-  #          data: {
-  #            type: "Veteran",
-  #            id: ...
-  #          }
-  #        }
-  #      }
-  #    }
-  #  }
-
-  def params_shape_valid?
-    @params.respond_to?(:has_key?)
-  end
-
-  def data
-    @params[:data]
-  end
-
-  def data_shape_valid?
-    data.respond_to?(:has_key?) && data[:type] == "HigherLevelReview"
-  end
-
-  def attributes
-    data[:attributes]
-  end
-
-  def attributes_shape_valid?
-    attributes.respond_to?(:has_key?)
-  end
-
-  def relationships
-    data[:relationships]
-  end
-
-  def relationships_shape_valid?
-    relationships.respond_to?(:has_key?)
-  end
-
-  def veteran
-    relationships[:veteran]
-  end
-
-  def veteran_shape_valid?
-    veteran.respond_to?(:has_key?) &&
-      veteran[:data].respond_to?(:has_key?) &&
-      veteran[:data][:type] == "Veteran" &&
-      veteran[:data][:id].present?
-  end
-
-  def claimant
-    relationships[:claimant]
-  end
-
-  def claimant_shape_valid?
-    claimant.respond_to?(:has_key?) &&
-      claimant[:data].respond_to?(:has_key?) &&
-      claimant[:data][:type] == "Claimant" &&
-      claimant[:data][:id].present? &&
-      claimant[:data][:meta].respond_to?(:has_key?) &&
-      claimant[:data][:meta][:payeeCode].present?
-  end
-
-  def claimant_participant_id
-    claimant && claimant[:data][:id]
-  end
-
-  def claimant_payee_code
-    claimant && claimant[:data][:meta][:payeeCode]
-  end
-
-  def included
-    @params[:included] || []
-  end
-
-  def included_shape_valid?
-    @params[:included].nil? ||
-      (@params[:included].is_a?(Array) && included.all? { |obj| obj.respond_to? :has_key? })
-  end
-
-  def legacy_opt_in?
-    # tweaked for happy path: legacy_opt_in_approved always true (regardless of input) for happy path
-    # attributes[:legacyOptInApproved]
-    true
-  end
-
-  def request_issues
-    @request_issues ||= included
-      .select { |obj| obj[:type] == "RequestIssue" }
-      .map do |obj|
-        Api::V3::DecisionReview::RequestIssueParams.new(
-          request_issue: obj,
-          benefit_type: attributes[:benefitType],
-          legacy_opt_in_approved: legacy_opt_in?
-        )
-      end
-  end
-
-  def minimum_required_shape?
-    params_shape_valid? &&
-      data_shape_valid? &&
-      attributes_shape_valid? &&
-      relationships_shape_valid? &&
-      veteran_shape_valid?
-  end
-
-  def shape_valid?
-    minimum_required_shape? &&
-      (!claimant || claimant_shape_valid?) &&
-      included_shape_valid?
-  end
-
   def validate
     unless shape_valid?
-      @errors << Api::V3::DecisionReview::IntakeError.new(:malformed_request)
+      @errors << Api::V3::DecisionReview::IntakeError.new(:malformed_request, shape_error_message)
       return
     end
 
@@ -170,20 +51,187 @@ class Api::V3::DecisionReview::IntakeParams
       return
     end
 
-    @errors += request_issue_errors
+    @errors += contestable_issue_errors
   end
 
-  def request_issue_errors
-    request_issues.select(&:error_code).map do |request_issue|
-      Api::V3::DecisionReview::IntakeError.new(request_issue)
+  def shape_valid?
+    shape_error_message.present?
+  end
+
+  def shape_error_message
+    @shape_error_message ||= describe_shape_error
+  end
+
+  def describe_shape_error
+    "payload must be an object" unless @params.respond_to?(:dig)
+  
+    types_and_paths.find do |(types, path)|
+      error_msg = DigError.new(hash: @params, path: path, values: types).to_s
+      break error_msg if error_msg
+      false
+    end
+  end
+
+  def included
+    @params["included"] || []
+  end
+
+  def contestable_issues
+    @contestable_issues ||= included
+      .select { |obj| obj["type"] == "ContestableIssue" }
+      .map do |obj|
+        Api::V3::DecisionReview::ContestableIssueParams.new(
+          contestable_issue: obj,
+          benefit_type: attributes["benefitType"],
+          legacy_opt_in_approved: legacy_opt_in?
+        )
+      end
+  end
+
+  def contestable_issue_errors
+    contestable_issues.select(&:error_code).map do |contestable_issue|
+      Api::V3::DecisionReview::IntakeError.new(contestable_issue)
     end
   rescue StandardError
-    [Api::V3::DecisionReview::IntakeError.new(:malformed_request)]
+    [Api::V3::DecisionReview::IntakeError.new(:malformed_contestable_issues)]
   end
 
   def benefit_type_valid?
-    attributes[:benefitType].in?(
+    attributes["benefitType"].in?(
       Api::V3::DecisionReview::RequestIssueParams::CATEGORIES_BY_BENEFIT_TYPE.keys
     )
+  end
+
+  # array of allowed types (values) for params path
+  def types_and_paths
+    [
+      [OBJECT,         ["data"]], # REQUIRED
+      [["HigherLevelReview"], ["data", "type"]],
+      [OBJECT,         ["data", "attributes"]], # REQUIRED
+      [[String],       ["data", "attributes", "receiptDate"]], # REQUIRED
+      [BOOL,           ["data", "attributes", "informalConference"]], # REQUIRED
+      [[Array, nil],   ["data", "attributes", "informalConferenceTimes"]],
+      [[String, nil],  ["data", "attributes", "informalConferenceTimes", 0]],
+      [[String, nil],  ["data", "attributes", "informalConferenceTimes", 1]],
+      [[nil],          ["data", "attributes", "informalConferenceTimes", 2]],
+      [[*OBJECT, nil], ["data", "attributes", "informalConferenceRep"]],
+      [[String],       ["data", "attributes", "informalConferenceRep name"]],
+      [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumber"]],
+      [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumberCountryCode"]],
+      [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumberCountryCode"]],
+      [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumberExt"]],
+      [BOOL,           ["data", "attributes", "sameOffice"]], # REQUIRED
+      [BOOL,           ["data", "attributes", "legacyOptInApproved"]], # REQUIRED
+      [[String],       ["data", "attributes", "benefitType"]], # REQUIRED
+      [OBJECT,         ["data", "attributes", "veteran"]], # REQUIRED
+      [[String],       ["data", "attributes", "veteran", "fileNumberOrSsn"]], # REQUIRED
+      [[String, nil],  ["data", "attributes", "veteran", "addressLine1"]],
+      [[String, nil],  ["data", "attributes", "veteran", "addressLine2"]],
+      [[String, nil],  ["data", "attributes", "veteran", "city"]],
+      [[String, nil],  ["data", "attributes", "veteran", "stateProvinceCode"]],
+      [[String, nil],  ["data", "attributes", "veteran", "countryCode"]],
+      [[String, nil],  ["data", "attributes", "veteran", "zipPostalCode"]],
+      [[String, nil],  ["data", "attributes", "veteran", "phoneNumber"]],
+      [[String, nil],  ["data", "attributes", "veteran", "phoneNumberCountryCode"]],
+      [[String, nil],  ["data", "attributes", "veteran", "phoneNumberExt"]],
+      [[String, nil],  ["data", "attributes", "veteran", "emailAddress"]],
+      [[*OBJECT, nil], ["data", "attributes", "claimant"]],
+      *(
+        if claimant # ... participantId and payeeCode must also be present
+          [
+            [[String], ["data", "attributes", "claimant", "participantId"]],
+            [[String], ["data", "attributes", "claimant", "payeeCode"]],
+          ]
+        else
+          []
+        end
+      ),
+      [[String, nil],  ["data", "attributes", "claimant", "addressLine1"]],
+      [[String, nil],  ["data", "attributes", "claimant", "addressLine2"]],
+      [[String, nil],  ["data", "attributes", "claimant", "city"]],
+      [[String, nil],  ["data", "attributes", "claimant", "stateProvinceCode"]],
+      [[String, nil],  ["data", "attributes", "claimant", "countryCode"]],
+      [[String, nil],  ["data", "attributes", "claimant", "zipPostalCode"]],
+      [[String, nil],  ["data", "attributes", "claimant", "phoneNumber"]],
+      [[String, nil],  ["data", "attributes", "claimant", "phoneNumberCountryCode"]],
+      [[String, nil],  ["data", "attributes", "claimant", "phoneNumberExt"]],
+      [[String, nil],  ["data", "attributes", "claimant", "emailAddress"]],
+      [[Array],        ["included"]], # REQUIRED
+    # [OBJECT,               ["included", 0]],
+    # [["ContestableIssue"], ["included", 0, "type"]],
+    # [[Integer, nil],       ["included", 0, "attributes", "decisionIssueId"]],
+    # [[String, nil],        ["included", 0, "attributes", "ratingIssueId"]],
+    # [[String, nil],        ["included", 0, "attributes", "ratingDecisionIssueId"]],
+    # [[Array, nil],         ["included", 0, "attributes", "legacyAppealIssues"]]
+    # [OBJECT,               ["included", 1]],
+    # [["ContestableIssue"], ["included", 1, "type"]],
+    # [[Integer, nil],       ["included", 1, "attributes", "decisionIssueId"]],
+    # [[String, nil],        ["included", 1, "attributes", "ratingIssueId"]],
+    # [[String, nil],        ["included", 1, "attributes", "ratingDecisionIssueId"]],
+    # [[Array, nil],         ["included", 1, "attributes", "legacyAppealIssues"]]
+    # ...
+      *for_array_at_path_enumerate_types_and_paths(
+        path: ["included"],
+        types_and_paths: [
+          [OBJECT,               []],
+          [["ContestableIssue"], ["type"]],
+          [[Integer, nil],       ["attributes", "decisionIssueId"]],
+          [[String, nil],        ["attributes", "ratingIssueId"]],
+          [[String, nil],        ["attributes", "ratingDecisionIssueId"]],
+          [[Array, nil],         ["attributes", "legacyAppealIssues"]]
+        ]
+      ),
+    # [OBJECT,   ["included", 2, "attributes", "legacyAppealIssues", 0]]
+    # [[String], ["included", 2, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
+    # [[String], ["included", 2, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]],
+    # [OBJECT,   ["included", 2, "attributes", "legacyAppealIssues", 1]]
+    # [[String], ["included", 2, "attributes", "legacyAppealIssues", 1, "legacyAppealId"]],
+    # [[String], ["included", 2, "attributes", "legacyAppealIssues", 1, "legacyAppealIssueId"]],
+    # [OBJECT,   ["included", 5, "attributes", "legacyAppealIssues", 0]]
+    # [[String], ["included", 5, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
+    # [[String], ["included", 5, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]],
+    # ...
+      *legacy_appeal_issue_array_paths.reduce([]) do |acc, path|
+        [
+          *acc,
+          *for_array_at_path_enumerate_types_and_paths(
+            path: path,
+            types_and_paths: [
+              [OBJECT,    []],
+              [[String],  ["legacyAppealId"]],
+              [[String],  ["legacyAppealIssueId"]],
+            ]
+          )
+        ]
+      end
+    ]
+  end
+
+  def for_array_at_path_enumerate_types_and_paths(array_path, types_and_paths)
+    @params.dig(*array_path).each.with_index.reduce([]) do |acc, (_, index)|
+      [
+        *acc,
+        *types_and_paths.map { |(types, path)| [types, [index, *path]] }
+      ]
+    end
+  rescue
+    []
+  end
+  
+  def legacy_appeal_issue_array_paths
+    included.each.with_index.reduce([]) do |acc, (contestable_issue, ci_index)|
+      legacy_appeal_issues = contestable_issue["legacyAppealIssues"]
+  
+      return acc unless legacy_appeal_issues.is_a? Array
+  
+      [
+        *acc,
+        *legacy_appeal_issues.map.with_index do |_, lai_index|
+          ["included", ci_index, "legacyAppealIssues", lai_index]
+        end
+      ]
+    end
+  rescue
+    []
   end
 end

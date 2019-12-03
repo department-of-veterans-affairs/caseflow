@@ -118,11 +118,18 @@ class Api::V3::DecisionReview::IntakeError
 
   attr_reader :status, :code, :title
 
-  def initialize(obj = nil)
+  def initialize(obj = nil, detail = nil)
     @status, @code, @title = (KNOWN_ERRORS_BY_CODE[self.class.potential_error_code(obj)] || UNKNOWN_ERROR)
+    @detail = detail
   end
 
   def to_h
-    { status: status, code: code, title: title }
+    { status: status, code: code, title: title }.merge(detail_hash)
+  end
+
+  private
+
+  def detail_hash
+    @detail ? {detail: @detail} : {}
   end
 end
