@@ -61,7 +61,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   context "Hearing type dropdown and vet and poa fields are disabled until async job completes" do
     let!(:virtual_hearing) { create(:virtual_hearing, :pending, :all_emails_sent, hearing: hearing) }
 
-    scenario "async job is not completed", focus: true do
+    scenario "async job is not completed" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
       expect(find(".dropdown-hearingType")).to have_css(".is-disabled")
       expect(page).to have_field("Veteran Email", readonly: true)
