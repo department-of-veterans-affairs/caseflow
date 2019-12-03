@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class JudgeSignMotionToVacateTask < JudgeTask
+  prepend StrictActionsAllowable
+
   def additional_available_actions(user)
     actions = [Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h]
 
