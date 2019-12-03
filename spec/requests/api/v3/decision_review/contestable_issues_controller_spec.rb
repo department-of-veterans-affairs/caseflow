@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-
 describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: :request do
   before { FeatureToggle.enable!(:api_v3) }
   after { FeatureToggle.disable!(:api_v3) }
@@ -41,10 +39,48 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
     end
 
     context "returned issues" do
+      let(:source) { create(:higher_level_review, veteran_file_number: veteran.file_number, same_office: false) }
+      let(:end_product_establishment) do
+        EndProductEstablishment.new(
+          source: source,
+          veteran_file_number: veteran.file_number,
+          code: "030HLRR",
+          payee_code: "00",
+          claim_date: 14.days.ago,
+          station: "397",
+          reference_id: nil,
+          claimant_participant_id: veteran.ptcpnt_id,
+          synced_status: nil,
+          committed_at: nil,
+          benefit_type_code: "2",
+          doc_reference_id: nil,
+          development_item_reference_id: nil,
+          established_at: 30.days.ago,
+          user: current_user,
+          limited_poa_code: "ABC",
+          limited_poa_access: true
+        )
+      end
+
+      let(:another_decision_issue) do
+        create(
+          :decision_issue,
+          decision_review: source,
+          rating_profile_date: source.receipt_date - 1.day,
+          end_product_last_action_date: source.receipt_date - 1.day,
+          benefit_type: source.benefit_type,
+          participant_id: veteran.ptcpnt_id,
+          decision_text: "a past decision issue from another review"
+        )
+      end
+
       let(:issues) do
         date = Time.zone.today
         Generators::Rating.build(
           participant_id: veteran.ptcpnt_id,
+          associated_claims: [
+            { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code, ramp: true }
+          ],
           decisions: [
             {
               rating_issue_reference_id: "99999",
@@ -76,6 +112,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
           ],
           profile_date: date - 10.days # must be before receipt_date
         ) # this is a contestable_rating_issues
+        another_decision_issue # instantiate this
         get_issues
         issues = JSON.parse(response.body)
         expect(issues.count > 0).to be true
@@ -118,12 +155,10 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
           expect(issue["attributes"]["latestIssuesInChain"].first.keys).to include("id", "approxDecisionDate")
         end
       end
-      xit 'should have decisionIssueId attribute' do
-        issues.each do |issue|
-          expect(issue["attributes"].keys).to include("decisionIssueId")
-          # This can be nil, setup rating to include a decision issue id?
-          expect(issue["attributes"]["decisionIssueId"]).to match(/^\d+$/)
-        end
+      it 'should have decisionIssueId attribute' do
+        issue_with_decision_issue = issues.find { |i| i["attributes"].keys.include?("decisionIssueId") }
+        expect(issue_with_decision_issue).to be_present
+        expect(issue_with_decision_issue["attributes"]["decisionIssueId"]).to be_a Integer
       end
       xit 'should have ratingratingDecisionIdIssueId attribute' do
         issues.each do |issue|
