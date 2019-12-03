@@ -40,15 +40,16 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
 
     context "returned issues" do
       let(:source) { create(:higher_level_review, veteran_file_number: veteran.file_number, same_office: false) }
+      let(:claim_id) { 12345 }
       let(:end_product_establishment) do
         EndProductEstablishment.new(
           source: source,
           veteran_file_number: veteran.file_number,
-          code: "030HLRR",
+          code: "682HLRRRAMP",#"030HLRR",
           payee_code: "00",
           claim_date: 14.days.ago,
           station: "397",
-          reference_id: nil,
+          reference_id: claim_id,
           claimant_participant_id: veteran.ptcpnt_id,
           synced_status: nil,
           committed_at: nil,
@@ -79,7 +80,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
         Generators::Rating.build(
           participant_id: veteran.ptcpnt_id,
           associated_claims: [
-            { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code, ramp: true }
+            { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code }
           ],
           decisions: [
             {
@@ -122,7 +123,6 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
         issue_with_rating_issue = issues.find { |i| i["attributes"].keys.include?("ratingIssueId") }
         expect(issue_with_rating_issue).to be_present
         expect(issue_with_rating_issue["attributes"]["ratingIssueId"]).to match(/^\d+$/)
-        # end
       end
       it 'should have ratingIssueProfileDate attribute' do
         issues.each do |issue|
@@ -160,11 +160,9 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
         expect(issue_with_decision_issue["attributes"]["decisionIssueId"]).to be_a Integer
       end
       xit 'should have ratingDecisionId attribute' do
-        issues.each do |issue|
-          expect(issue["attributes"].keys).to include("ratingDecisionId")
-          # This can be nil, setup rating to include a decision issue id?
-          expect(issue["attributes"]["ratingDecisionId"]).to match(/^\d+$/)
-        end
+        issue_with_rating_decision = issues.find { |i| i["attributes"].keys.include?("ratingDecisionId") }
+        expect(issue_with_rating_decision).to be_present
+        expect(issue_with_rating_decision["attributes"]["ratingDecisionId"]).to match(/^\d+$/)
       end
       it 'should have approxDecisionDate attribute' do
         issues.each do |issue|
@@ -172,12 +170,10 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
           expect(issue["attributes"]["approxDecisionDate"]).to match(/^\d{4}-\d{2}-\d{2}$/)
         end
       end
-      xit 'should have rampClaimId attribute' do
-        issues.each do |issue|
-          expect(issue["attributes"].keys).to include("rampClaimId")
-          # This can be nil, setup rating to include a decision issue id?
-          expect(issue["attributes"]["rampClaimId"]).to match(/^\d+$/)
-        end
+      it 'should have rampClaimId attribute' do
+        issue_with_rating_issue = issues.find { |i| i["attributes"].keys.include?("rampClaimId") }
+        expect(issue_with_rating_issue).to be_present
+        expect(issue_with_rating_issue["attributes"]["rampClaimId"]).to eq claim_id.to_s
       end
       xit 'should have titleOfActiveReview attribute' do
         issues.each do |issue|
