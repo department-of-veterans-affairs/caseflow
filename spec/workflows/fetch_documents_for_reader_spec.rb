@@ -88,45 +88,45 @@ describe FetchDocumentsForReaderJob, :all_dbs do
           msg = "<faultstring>Womp Womp.</faultstring>"
           expect(EFolderService).to receive(:fetch_documents_for).with(appeal, anything)
             .and_raise(Caseflow::Error::DocumentRetrievalError.new(code: 502, message: msg)).once
-  
+
           expect { subject }.not_to raise_error
         end
       end
-  
+
       context "when efolder returns 403" do
         it "job does not raise an error" do
           allow(EFolderService).to receive(:fetch_documents_for).with(appeal, anything)
             .and_raise(Caseflow::Error::EfolderAccessForbidden.new(code: 401, message: "error"))
-  
+
           expect { subject }.not_to raise_error
         end
       end
-  
+
       context "when efolder returns 400" do
         it "job does not raise an error" do
           allow(EFolderService).to receive(:fetch_documents_for).with(appeal, anything)
             .and_raise(Caseflow::Error::ClientRequestError.new(code: 400, message: "error"))
-  
+
           expect { subject }.not_to raise_error
         end
       end
-  
+
       context "when efolder does not recognize the veteran file number" do
         before do
           allow(EFolderService).to receive(:fetch_documents_for).with(appeal, anything)
             .and_raise(VBMS::FilenumberDoesNotExist.new(500, "error"))
         end
-  
+
         it "does not raise error" do
           expect { subject }.not_to raise_error
         end
       end
-  
+
       context "when HTTP Timeout occurs" do
         it "job raises an error" do
           allow(EFolderService).to receive(:fetch_documents_for).with(appeal, anything)
             .and_raise(HTTPClient::KeepAliveDisconnected.new("You lose."))
-  
+
           expect { subject }.to raise_error(HTTPClient::KeepAliveDisconnected)
         end
       end
