@@ -47,7 +47,6 @@ describe PostDecisionMotionsController do
             assigned_to_id: assigned_to.id }
         post :create, params: params
 
-
         expect(response).to be_success
         expect(flash[:success]).to be_present
       end
