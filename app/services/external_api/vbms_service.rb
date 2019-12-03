@@ -85,7 +85,7 @@ class ExternalApi::VBMSService
     request = VBMS::Requests::EstablishClaim.new(
       veteran_hash,
       claim_hash,
-      v5: true
+      v5: true,
       send_userid: true
     )
 
@@ -125,7 +125,7 @@ class ExternalApi::VBMSService
 
     request = VBMS::Requests::RemoveContention.new(
       contention: contention,
-      v5: true
+      v5: true,
       send_userid: true
     )
 
@@ -137,7 +137,7 @@ class ExternalApi::VBMSService
 
     request = VBMS::Requests::UpdateContention.new(
       contention: contention,
-      v5: true
+      v5: true,
       send_userid: true
     )
 
