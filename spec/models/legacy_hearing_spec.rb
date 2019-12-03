@@ -378,7 +378,7 @@ describe LegacyHearing, :all_dbs do
       let(:legacy_hearing) do
         # hearing_day_id is set to nil because the tests are testing if it
         # gets populated correctly. hearing_day is used by the factory to initialize
-        # a case hearing in vacols. 
+        # a case hearing in vacols.
         create(:legacy_hearing, hearing_day: hearing_day, hearing_day_id: nil)
       end
 
