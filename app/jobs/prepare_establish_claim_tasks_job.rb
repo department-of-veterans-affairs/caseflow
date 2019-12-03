@@ -4,11 +4,13 @@ class PrepareEstablishClaimTasksJob < ApplicationJob
   queue_with_priority :low_priority
   application_attr :dispatch
 
+  # :nocov:
   def perform
     RequestStore.store[:current_user] = User.system_user
 
     prepare_establish_claims
   end
+  # :nocov:
 
   def prepare_establish_claims
     count = { success: 0, fail: 0 }
