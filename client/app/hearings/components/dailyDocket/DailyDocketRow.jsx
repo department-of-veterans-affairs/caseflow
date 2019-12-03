@@ -242,9 +242,6 @@ class DailyDocketRow extends React.Component {
     const { hearing, user, openDispositionModal } = this.props;
     const inputProps = this.getInputProps();
 
-    return <div {...inputSpacing}>
-      <VirtualHearingLink
-
     return (
       <div {...inputSpacing}>
         {hearing.isVirtual &&
