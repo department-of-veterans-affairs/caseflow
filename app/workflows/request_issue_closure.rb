@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class RequestIssueClosure < SimpleDelegator
-  alias_method :request_issue, :__getobj__
+  alias request_issue __getobj__
 
   def with_no_decision!
     return unless end_product_establishment&.status_cleared?
