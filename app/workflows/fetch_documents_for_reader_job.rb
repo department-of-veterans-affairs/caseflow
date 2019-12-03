@@ -10,6 +10,11 @@ class FetchDocumentsForReaderJob
   def process
     setup_debug_context
     appeals.each { |appeal| fetch_for_appeal(appeal) }
+  rescue VBMS::FilenumberDoesNotExist => error
+    # there is nothing actionable here, since it reflects data changes on the VBMS side.
+    # we do not want to retry since it will never work.
+    log_error
+    return
   rescue StandardError => error
     log_error
     # raising an exception here triggers a retry through shoryuken
