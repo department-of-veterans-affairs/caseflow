@@ -35,4 +35,18 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     click_dropdown(name: "optionalHearingTime1", index: 3)
     click_button("Change-Hearing-Time-button-id-close")
   end
+
+  context "Dropdowns and radio buttons are disabled while async job is running" do
+    scenario "async job is not completed" do
+      virtual_hearing.update(veteran_email_sent: false)
+      visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      expect(find(".dropdown-#{hearing.uuid}-disposition")).to have_css(".is-disabled")
+    end
+
+    scenario "async job is completed" do
+      virtual_hearing.update(veteran_email_sent: true)
+      visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      expect(find(".dropdown-#{hearing.uuid}-disposition")).to have_no_css(".is-disabled")
+    end
+  end
 end
