@@ -37,6 +37,12 @@ FactoryBot.define do
       status { VirtualHearing.statuses[:cancelled] }
     end
 
+    trait :all_emails_sent do
+      veteran_email_sent { true }
+      representative_email_sent { true }
+      judge_email_sent { true }
+    end
+
     after(:create) do |virtual_hearing, _evaluator|
       virtual_hearing.establishment = create(
         :virtual_hearing_establishment,

@@ -30,6 +30,7 @@ import {
   handleLockHearingServerError,
   onResetLockHearingAfterError
 } from '../actions/dailyDocketActions';
+import { onReceiveAlerts } from '../../components/common/actions';
 import DailyDocket from '../components/dailyDocket/DailyDocket';
 import DailyDocketPrinted from '../components/dailyDocket/DailyDocketPrinted';
 import HearingDayEditModal from '../components/HearingDayEditModal';
@@ -73,9 +74,9 @@ export class DailyDocketContainer extends React.Component {
   loadHearingDetails = (hearings) => {
     _.each(hearings, (hearing) => {
       ApiUtil.get(`/hearings/${hearing.externalId}`).then((response) => {
-        const resp = ApiUtil.convertToCamelCase(response.body);
+        const hearingResp = ApiUtil.convertToCamelCase(response.body.data);
 
-        this.props.onReceiveHearing(resp);
+        this.props.onReceiveHearing(hearingResp);
       }).
         catch((error) => {
           console.log(`Hearing endpoint failed with: ${error}`); // eslint-disable-line no-console
@@ -104,7 +105,7 @@ export class DailyDocketContainer extends React.Component {
     return ApiUtil.convertToSnakeCase(_.omitBy({
       ...rest,
       hearing_location_attributes: location,
-      virtual_hearing_attributes: virtualHearing
+      virtual_hearing_attributes: virtualHearing || {}
     }, _.isUndefined));
   };
 
@@ -130,9 +131,10 @@ export class DailyDocketContainer extends React.Component {
 
     return ApiUtil.patch(`/hearings/${hearingId}`, { data }).
       then((response) => {
-        const resp = ApiUtil.convertToCamelCase(response.body);
+        const hearingResp = ApiUtil.convertToCamelCase(response.body.data);
 
-        this.props.onReceiveSavedHearing(resp);
+        this.props.onReceiveSavedHearing(hearingResp);
+        this.props.onReceiveAlerts(response.body.alerts);
 
         return true;
       }, (err) => {
@@ -323,6 +325,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onDisplayLockModal,
   onCancelDisplayLockModal,
   onUpdateLock,
+  onReceiveAlerts,
   onResetLockSuccessMessage,
   handleDailyDocketServerError,
   onResetDailyDocketAfterError,
@@ -379,6 +382,7 @@ DailyDocketContainer.propTypes = {
   onReceiveDailyDocket: PropTypes.func,
   onReceiveSavedHearing: PropTypes.func,
   onReceiveHearing: PropTypes.func,
+  onReceiveAlerts: PropTypes.func,
   onResetSaveSuccessful: PropTypes.func,
   onResetLockHearingAfterError: PropTypes.func,
   onResetLockSuccessMessage: PropTypes.func,

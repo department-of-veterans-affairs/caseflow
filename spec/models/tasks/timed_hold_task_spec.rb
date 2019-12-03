@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe TimedHoldTask, :postgres do
   let(:task) { create(:timed_hold_task) }
 

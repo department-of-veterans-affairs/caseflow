@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe SyncReviewsJob, :postgres do
   context ".perform" do
     let!(:end_product_establishment_more_recently_synced) do

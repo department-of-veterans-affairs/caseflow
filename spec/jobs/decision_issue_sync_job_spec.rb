@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe DecisionIssueSyncJob, :postgres do
   let(:epe) { create(:end_product_establishment, :cleared, established_at: Time.zone.today) }
   let(:request_issue) { create(:request_issue, end_product_establishment: epe) }

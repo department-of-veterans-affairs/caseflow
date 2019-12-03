@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe Asyncable do
   class TestAsyncable
     include ActiveModel::Model
+
+    # make Asyncable's has_many association(s) a no-op for these tests
+    def self.has_many(*); end
     include Asyncable
 
     attr_accessor :submitted_at, :attempted_at, :processed_at, :canceled_at

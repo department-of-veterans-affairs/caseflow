@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Edit Issues", :all_dbs do
   before do
     FeatureToggle.enable!(:allow_judge_edit_issues)
