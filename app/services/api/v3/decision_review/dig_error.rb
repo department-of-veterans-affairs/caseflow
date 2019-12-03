@@ -18,22 +18,19 @@ class Api::V3::DecisionReview::DigError
     "#{this_path} should be #{one_of_these}. #{got_this_instead}."
   end
 
-  private
+  class Quoted
+    attr_reader :to_s
 
-  def value_at_path
-    @hash.dig *@path
-  end
-
-  def value_at_path_sentence
-    "Got: #{Quoted.new value_at_path}"
-  rescue
-    "Invalid path"
-  end
-
-  def path_is_valid_for_hash?
-    @values.any? { |value| value === value_at_path }
-  rescue
-    false
+    def initialize(value)
+      @to_s = case value
+       when String
+         "\"#{value}\""
+       when nil
+         "nil"
+       else
+         value.to_s
+       end
+    end
   end
 
   class PathString
@@ -64,15 +61,26 @@ class Api::V3::DecisionReview::DigError
     def first_to_s
       return "a(n) #{first.name.downcase}" if first.class == Class
 
-      Quoted.new first
+      "#{Quoted.new first}"
     end
   end
 
-  class Quoted
-    attr_reader :to_s
+  private
 
-    def initialize(value)
-      @to_s = value.is_a?(String) ? "\"#{value}\"" : value.to_s
-    end
+  def value_at_path
+    @hash.dig *@path
   end
+
+  def value_at_path_sentence
+    "Got: #{Quoted.new value_at_path}"
+  rescue
+    "Invalid path"
+  end
+
+  def path_is_valid_for_hash?
+    @values.any? { |value| value === value_at_path }
+  rescue
+    false
+  end
+
 end

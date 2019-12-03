@@ -130,6 +130,6 @@ class Api::V3::DecisionReview::IntakeError
   private
 
   def detail_hash
-    @detail ? {detail: @detail} : {}
+    @detail.nil? ? {} : {detail: @detail}
   end
 end
