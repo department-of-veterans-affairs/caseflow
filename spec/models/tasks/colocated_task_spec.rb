@@ -511,7 +511,7 @@ describe ColocatedTask, :all_dbs do
         assigned_by: initial_assigner
       )
     end
-    let(:colocated_task) { org_task.children.first }
+    let!(:colocated_task) { org_task.children.first }
 
     before do
       reassign_params = {
