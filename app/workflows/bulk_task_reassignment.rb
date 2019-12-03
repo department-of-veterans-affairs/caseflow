@@ -76,7 +76,7 @@ class BulkTaskReassignment
   end
 
   def update_task_status_with_instructions(task, status)
-    task.update!(status: status, instructions: task.instructions << reassignment_instructions(status))
+    task.update_with_instuctions(status: status, instructions: reassignment_instructions(status))
   end
 
   def check_error_states_of_tasks
@@ -205,19 +205,19 @@ class BulkTaskReassignment
 
       if !dry_run
         judge_review_tasks.each do |task|
-          reassign_judge_review_task(task)
+          atty_task = task.children_attorney_tasks.not_cancelled.order(:assigned_at).last
+          reassign_judge_review_task(task, atty_task)
         end
       end
     end
   end
 
-  def reassign_judge_review_task(task)
-    atty_task = task.children_attorney_tasks.not_cancelled.order(:assigned_at).last
+  def reassign_judge_review_task(task, atty_task)
     reassigned_tasks = task.reassign(
       {
         assigned_to_type: User.name,
         assigned_to_id: new_supervising_judge_from_task(atty_task).id,
-        instructions: task.instructions << reassignment_instructions("reassigned")
+        instructions: reassignment_instructions("reassigned")
       },
       task.assigned_by
     )
@@ -311,7 +311,7 @@ class BulkTaskReassignment
   # Cancels all user tasks and makes the parent tasks available for manual reassignment
   def reassign_tasks_with_parent_user_tasks(tasks)
     parents_assigned_to_users = Task.where(id: tasks.pluck(:parent_id), assigned_to_type: User.name)
-    tasks = tasks.where(parent: parents_assigned_to_users)
+    tasks_with_parent_user_tasks = tasks.where(parent: parents_assigned_to_users)
 
     if tasks.any?
       task_ids = tasks.pluck(:id).sort
@@ -321,7 +321,9 @@ class BulkTaskReassignment
 
       if !dry_run
         parents_assigned_to_users.update_all(status: Constants.TASK_STATUSES.assigned)
-        tasks.each { |task| update_task_status_with_instructions(task, Constants.TASK_STATUSES.cancelled) }
+        tasks_with_parent_user_tasks.each do |task|
+          update_task_status_with_instructions(task, Constants.TASK_STATUSES.cancelled)
+        end
       end
     end
   end

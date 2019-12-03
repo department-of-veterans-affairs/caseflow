@@ -309,7 +309,8 @@ describe BulkTaskReassignment, :all_dbs do
           tasks.each do |task|
             expect(task.reload.cancelled?).to eq true
             expect(task.instructions).to include format(
-              COPY::BULK_REASSIGN_INSTRUCTIONS, Constants.TASK_STATUSES.cancelled, user.css_id)
+              COPY::BULK_REASSIGN_INSTRUCTIONS, Constants.TASK_STATUSES.cancelled, user.css_id
+            )
           end
           parent_tasks.each { |task| expect(task.reload.assigned?).to eq true }
           expect(Task.open.count).to eq task_count
