@@ -649,6 +649,10 @@
         "TO_VETERAN": "Email to Veteran is in progress.",
         "TO_POA": "Email to POA / Representative is in progress."
       }
+    },
+    "HEARING_TIME_CHANGED": {
+      "TITLE": "We're updating the hearing time of %s's hearing",
+      "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
     }
   },
 
