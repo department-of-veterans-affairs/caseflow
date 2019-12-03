@@ -160,7 +160,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
         expect(issue_with_decision_issue).to be_present
         expect(issue_with_decision_issue["attributes"]["decisionIssueId"]).to be_a Integer
       end
-      xit 'should have ratingratingDecisionIdIssueId attribute' do
+      xit 'should have ratingDecisionId attribute' do
         issues.each do |issue|
           expect(issue["attributes"].keys).to include("ratingDecisionId")
           # This can be nil, setup rating to include a decision issue id?
@@ -187,12 +187,10 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
           expect(issue["attributes"]["titleOfActiveReview"]).to match(/^\d+$/)
         end
       end
-      xit 'should have sourceReviewType attribute' do
-        issues.each do |issue|
-          expect(issue["attributes"].keys).to include("sourceReviewType")
-          # This can be nil, setup rating to include a decision issue id?
-          expect(issue["attributes"]["sourceReviewType"]).to match(/^\d+$/)
-        end
+      it 'should have sourceReviewType attribute' do
+        issue_with_source_decision_review = issues.find { |i| i["attributes"].keys.include?("sourceReviewType") }
+        expect(issue_with_source_decision_review).to be_present
+        expect(issue_with_source_decision_review["attributes"]["sourceReviewType"]).to eq source.class.to_s
       end
       it 'should have timely attribute' do
         issues.each do |issue|
