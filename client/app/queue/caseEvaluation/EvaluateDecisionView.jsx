@@ -56,6 +56,7 @@ class EvaluateDecisionView extends React.PureComponent {
       comment: ''
     };
 
+    this.complexityLabel = React.createRef();
     this.deficientQualityAlert = React.createRef();
     this.qualityLabel = React.createRef();
   }
@@ -79,20 +80,20 @@ class EvaluateDecisionView extends React.PureComponent {
     const { areas_for_improvement, factors_not_considered, complexity, quality } = this.state;
 
     if (!complexity) {
-      this.scrollTo(this.complexityLabel);
+      this.scrollTo(this.complexityLabel.current);
 
       return false;
     }
 
     if (!quality) {
-      this.scrollTo(this.qualityLabel);
+      this.scrollTo(this.qualityLabel.current);
 
       return false;
     }
 
     // eslint-disable-next-line camelcase
     if (qualityIsDeficient(this.state.quality) && _.every([areas_for_improvement, factors_not_considered], _.isEmpty)) {
-      this.scrollTo(this.deficientQualityAlert);
+      this.scrollTo(this.deficientQualityAlert.current);
 
       return false;
     }
@@ -223,6 +224,7 @@ class EvaluateDecisionView extends React.PureComponent {
         <hr {...hrStyling} />
         <JudgeCaseQuality
           highlight={highlight}
+          complexityLabelRef={this.complexityLabel}
           qualityAlertRef={this.deficientQualityAlert}
           qualityLabelRef={this.qualityLabel}
           onChange={(values) => this.handleCaseQualityChange(values)}
