@@ -313,8 +313,8 @@ class BulkTaskReassignment
     parents_assigned_to_users = Task.where(id: tasks.pluck(:parent_id), assigned_to_type: User.name)
     tasks_with_parent_user_tasks = tasks.where(parent: parents_assigned_to_users)
 
-    if tasks.any?
-      task_ids = tasks.pluck(:id).sort
+    if tasks_with_parent_user_tasks.any?
+      task_ids = tasks_with_parent_user_tasks.pluck(:id).sort
       message = "#{cancel} #{task_ids.count} tasks with ids #{task_ids.join(', ')} and #{move} #{task_ids.count} "\
                 "parent tasks back to the parent's assigned user's assigned tab"
       Rails.logger.info(message)
