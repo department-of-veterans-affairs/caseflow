@@ -189,10 +189,8 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         let!(:virtual_hearing) do
           create(
             :virtual_hearing,
+            :all_emails_sent,
             hearing: hearing,
-            representative_email_sent: true,
-            veteran_email_sent: true,
-            judge_email_sent: true,
             conference_id: "000000"
           )
         end
