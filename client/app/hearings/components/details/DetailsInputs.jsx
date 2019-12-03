@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
-
+import classnames from 'classnames';
 import { rowThirds } from './style';
 import {
   JudgeDropdown,
@@ -15,8 +15,8 @@ import HearingTypeDropdown from './HearingTypeDropdown';
 import TextField from '../../../components/TextField';
 
 const DetailsInputs = ({
-  hearing, update, readOnly, isLegacy, openVirtualHearingModal, updateVirtualHearing, virtualHearing,
-  enableVirtualHearings, requestType, isVirtual
+  hearing, update, readOnly, isLegacy, openVirtualHearingModal, updateVirtualHearing,
+  virtualHearing, enableVirtualHearings, requestType, isVirtual
 }) => (
   <React.Fragment>
     {enableVirtualHearings && <div {...rowThirds}>
@@ -36,6 +36,7 @@ const DetailsInputs = ({
         value={virtualHearing.veteranEmail}
         strongLabel
         required
+        className={[classnames("cf-form-textinput", "cf-inline-field")]}
         readOnly={!virtualHearing.jobCompleted}
         onChange={(veteranEmail) => updateVirtualHearing({ veteranEmail })}
       />
@@ -43,6 +44,7 @@ const DetailsInputs = ({
         name="POA/Representive Email"
         value={virtualHearing.representativeEmail}
         strongLabel
+        className={[classnames("cf-form-textinput", "cf-inline-field")]}
         readOnly={!virtualHearing.jobCompleted}
         onChange={(representativeEmail) => updateVirtualHearing({ representativeEmail })}
       />
