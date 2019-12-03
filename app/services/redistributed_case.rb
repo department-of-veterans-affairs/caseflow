@@ -47,7 +47,7 @@ class RedistributedCase
 
   # send to Sentry but do not raise exception.
   def alert_existing_distributed_case_not_unique
-    error = CannotRedistribute.new("DistributedCase #{case_id} already exists")
+    error = CannotRedistribute.new("DistributedCase already exists")
     Raven.capture_exception(error, extra: { vacols_id: case_id, judge: new_distribution.judge.css_id })
   end
 

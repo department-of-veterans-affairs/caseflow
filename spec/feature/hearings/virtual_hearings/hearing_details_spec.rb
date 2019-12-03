@@ -59,16 +59,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   end
 
   context "Veteran and POA email field are disabled until conference is created" do
-    let!(:virtual_hearing) do
-      create(
-        :virtual_hearing,
-        hearing: hearing,
-        representative_email_sent: true,
-        veteran_email_sent: true,
-        judge_email_sent: true,
-        status: :pending
-      )
-    end
+    let!(:virtual_hearing) { create(:virtual_hearing, :pending, :all_emails_sent, hearing: hearing) }
 
     scenario "conference has not been created yet" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
