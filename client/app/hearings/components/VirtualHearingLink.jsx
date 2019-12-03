@@ -5,18 +5,19 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import { COLORS } from '../../constants/AppConstants';
 import { ExternalLink } from '../../components/RenderFunctions';
 
-const ICON_POSITION_FIX = css({ position: 'relative', top: 1 });
+const ICON_POSITION_FIX = css({ position: 'relative',
+  top: 1 });
 
 class VirtualHearingLink extends React.PureComponent {
 
   getPin() {
-    const { role } = this.props;
+    const { role, virtualHearing } = this.props;
 
-    return role === 'host') ? virtualHearing.hostPin : virtualHearing.guestPin;
+    return role === 'host' ? virtualHearing.hostPin : virtualHearing.guestPin;
   }
 
   render() {
-    const { isVirtual, newWindow, showFullLink, virtualHearing } = this.props;
+    const { isVirtual, newWindow, role, showFullLink, virtualHearing } = this.props;
 
     if (!isVirtual) {
       return null;
@@ -24,7 +25,7 @@ class VirtualHearingLink extends React.PureComponent {
 
     const href = `https://${virtualHearing.clientHost}/webapp/\
       ?conference=${virtualHearing.alias}\
-      &pin=${getPin()}\
+      &pin=${this.getPin()}\
       &join=1\
       &role=${role}`;
 
@@ -40,7 +41,7 @@ class VirtualHearingLink extends React.PureComponent {
         </span>
       </Link>
     );
-  };
+  }
 }
 
 VirtualHearingLink.propTypes = {
