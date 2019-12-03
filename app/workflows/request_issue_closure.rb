@@ -1,12 +1,7 @@
 # frozen_string_literal: true
 
-class RequestIssueClosure
-  def initialize(request_issue)
-    @request_issue = request_issue
-  end
-
-  delegate :closed_at, :end_product_establishment, :contention_reference_id,
-           :legacy_issue_optin, :contention_disposition, :canceled!, :close!, to: :request_issue
+class RequestIssueClosure < SimpleDelegator
+  alias request_issue __getobj__
 
   def with_no_decision!
     return unless end_product_establishment&.status_cleared?
@@ -25,8 +20,4 @@ class RequestIssueClosure
       request_issue.end_product_establishment&.cancel_unused_end_product!
     end
   end
-
-  private
-
-  attr_reader :request_issue
 end
