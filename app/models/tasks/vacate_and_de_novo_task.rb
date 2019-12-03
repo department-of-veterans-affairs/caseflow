@@ -7,7 +7,11 @@ class VacateAndDeNovoTask < DecidedMotionToVacateTask
     end
 
     def org(user)
-      JudgeTeam.for_judge(user.reload)
+      team = JudgeTeam.for_judge(user.reload)
+
+      fail(Caseflow::Error::NonexistantJudgeTeam, user_id: user.id) if team.nil?
+
+      team
     end
   end
 end
