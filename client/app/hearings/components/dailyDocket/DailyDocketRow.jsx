@@ -254,7 +254,9 @@ class DailyDocketRow extends React.Component {
         {(user.userHasHearingPrepRole && this.isAmaHearing()) &&
           <Waive90DayHoldCheckbox {...inputProps} />}
         <TranscriptRequestedCheckbox {...inputProps} />
-        {(user.userCanAssignHearingSchedule && !user.userHasHearingPrepRole) && <HearingDetailsLink hearing={hearing} />}
+        {(user.userCanAssignHearingSchedule && !user.userHasHearingPrepRole) &&
+          <HearingDetailsLink hearing={hearing} />
+        }
         <NotesField {...inputProps} readOnly={user.userCanVsoHearingSchedule} />
       </div>
     );

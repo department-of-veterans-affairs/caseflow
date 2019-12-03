@@ -3,21 +3,26 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { COLORS } from '../../constants/AppConstants';
-import { ExternalLink, LinkSymbol } from '../../components/RenderFunctions';
+import { ExternalLink } from '../../components/RenderFunctions';
 
 const VirtualHearingLink = ({ isVirtual, newWindow, showFullLink, role, virtualHearing }) => {
   if (!isVirtual) {
     return null;
   }
 
-  var pin;
-  if (role == 'host') {
+  let pin;
+
+  if (role === 'host') {
     pin = virtualHearing.hostPin;
   } else {
     pin = virtualHearing.guestPin;
   }
 
-  const href = `https://${virtualHearing.clientHost}/webapp/?conference=${virtualHearing.alias}&pin=${pin}&join=1&role=${role}`;
+  const href = `https://${virtualHearing.clientHost}/webapp/\
+    ?conference=${virtualHearing.alias}\
+    &pin=${pin}\
+    &join=1\
+    &role=${role}`;
 
   return (
     <Link
@@ -25,8 +30,9 @@ const VirtualHearingLink = ({ isVirtual, newWindow, showFullLink, role, virtualH
       target={newWindow ? '_blank' : '_self'}
       disabled={!virtualHearing.jobCompleted}
     >
-      <strong>{showFullLink ? href : "Virtual Hearing Link"}</strong>
-      <span {...css({ position: 'relative', top: 1 })}>
+      <strong>{showFullLink ? href : 'Virtual Hearing Link'}</strong>
+      <span {...css({ position: 'relative',
+        top: 1 })}>
         &nbsp;<ExternalLink fill={virtualHearing.jobCompleted ? COLORS.PRIMARY : COLORS.GREY_MEDIUM} />
       </span>
     </Link>

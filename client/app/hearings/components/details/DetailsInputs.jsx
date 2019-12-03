@@ -25,11 +25,11 @@ class DetailsInputs extends React.Component {
       return (
         <div>
           <strong>Virtual Hearing Link</strong>
-          <div {...css({ marginTop: "1.5rem" })}>
+          <div {...css({ marginTop: '1.5rem' })}>
             {virtualHearing.jobCompleted &&
               <VirtualHearingLink
-                role={user.userId.toString() === hearing.judgeId ? "host" : "guest"}
-                showFullLink={true}
+                role={user.userId.toString() === hearing.judgeId ? 'host' : 'guest'}
+                showFullLink
                 isVirtual={isVirtual}
                 virtualHearing={virtualHearing}
               />
@@ -52,7 +52,7 @@ class DetailsInputs extends React.Component {
       hearing, update, readOnly, isLegacy, openVirtualHearingModal, updateVirtualHearing,
       virtualHearing, enableVirtualHearings, requestType, isVirtual
     } = this.props;
-  
+
     return (
       <React.Fragment>
         {enableVirtualHearings &&
@@ -73,7 +73,7 @@ class DetailsInputs extends React.Component {
               value={virtualHearing.veteranEmail}
               strongLabel
               required
-              className={[classnames("cf-form-textinput", "cf-inline-field")]}
+              className={[classnames('cf-form-textinput', 'cf-inline-field')]}
               readOnly={!virtualHearing.jobCompleted}
               onChange={(veteranEmail) => updateVirtualHearing({ veteranEmail })}
             />
@@ -81,7 +81,7 @@ class DetailsInputs extends React.Component {
               name="POA/Representive Email"
               value={virtualHearing.representativeEmail}
               strongLabel
-              className={[classnames("cf-form-textinput", "cf-inline-field")]}
+              className={[classnames('cf-form-textinput', 'cf-inline-field')]}
               readOnly={!virtualHearing.jobCompleted}
               onChange={(representativeEmail) => updateVirtualHearing({ representativeEmail })}
             />
