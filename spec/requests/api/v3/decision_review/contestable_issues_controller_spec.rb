@@ -119,10 +119,10 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
         issues
       end
       it 'should have ratingIssueId attribute' do
-        issues.each do |issue|
-          expect(issue["attributes"].keys).to include("ratingIssueId")
-          expect(issue["attributes"]["ratingIssueId"]).to match(/^\d+$/)
-        end
+        issue_with_rating_issue = issues.find { |i| i["attributes"].keys.include?("ratingIssueId") }
+        expect(issue_with_rating_issue).to be_present
+        expect(issue_with_rating_issue["attributes"]["ratingIssueId"]).to match(/^\d+$/)
+        # end
       end
       it 'should have ratingIssueProfileDate attribute' do
         issues.each do |issue|
@@ -131,10 +131,9 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
         end
       end
       it 'should have ratingIssueDiagnosticCode attribute' do
-        issues.each do |issue|
-          expect(issue["attributes"].keys).to include("ratingIssueDiagnosticCode")
-          expect(issue["attributes"]["ratingIssueDiagnosticCode"]).to match(/^\d+$/)
-        end
+        issue_with_rating_issue = issues.find { |i| i["attributes"].keys.include?("ratingIssueDiagnosticCode") }
+        expect(issue_with_rating_issue).to be_present
+        expect(issue_with_rating_issue["attributes"]["ratingIssueDiagnosticCode"]).to match(/^\d+$/)
       end
       it 'should have description attribute' do
         issues.each do |issue|
