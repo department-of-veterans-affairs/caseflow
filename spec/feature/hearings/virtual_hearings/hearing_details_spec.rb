@@ -58,7 +58,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     end
   end
 
-  context "Hearing type dropdown and vet and poa fields are disabled until async job completes" do
+  context "Hearing type dropdown and vet and poa fields are disabled while async job is running" do
     let!(:virtual_hearing) { create(:virtual_hearing, :pending, :all_emails_sent, hearing: hearing) }
 
     scenario "async job is not completed" do
