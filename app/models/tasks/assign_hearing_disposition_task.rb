@@ -132,7 +132,7 @@ class AssignHearingDispositionTask < Task
       )
     end
 
-    update!(instructions: flattened_instructions(params)) if params[:instructions].present?
+    update_with_instructions(instructions: params[:instructions]) if params[:instructions].present?
   end
 
   def update_hearing_disposition(disposition:)
