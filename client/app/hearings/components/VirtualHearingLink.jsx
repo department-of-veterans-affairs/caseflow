@@ -5,39 +5,43 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import { COLORS } from '../../constants/AppConstants';
 import { ExternalLink } from '../../components/RenderFunctions';
 
-const VirtualHearingLink = ({ isVirtual, newWindow, showFullLink, role, virtualHearing }) => {
-  if (!isVirtual) {
-    return null;
+const ICON_POSITION_FIX = css({ position: 'relative', top: 1 });
+
+class VirtualHearingLink extends React.PureComponent {
+
+  getPin() {
+    const { role } = this.props;
+
+    return role === 'host') ? virtualHearing.hostPin : virtualHearing.guestPin;
   }
 
-  let pin;
+  render() {
+    const { isVirtual, newWindow, showFullLink, virtualHearing } = this.props;
 
-  if (role === 'host') {
-    pin = virtualHearing.hostPin;
-  } else {
-    pin = virtualHearing.guestPin;
-  }
+    if (!isVirtual) {
+      return null;
+    }
 
-  const href = `https://${virtualHearing.clientHost}/webapp/\
-    ?conference=${virtualHearing.alias}\
-    &pin=${pin}\
-    &join=1\
-    &role=${role}`;
+    const href = `https://${virtualHearing.clientHost}/webapp/\
+      ?conference=${virtualHearing.alias}\
+      &pin=${getPin()}\
+      &join=1\
+      &role=${role}`;
 
-  return (
-    <Link
-      href={href}
-      target={newWindow ? '_blank' : '_self'}
-      disabled={!virtualHearing.jobCompleted}
-    >
-      <strong>{showFullLink ? href : 'Virtual Hearing Link'}</strong>
-      <span {...css({ position: 'relative',
-        top: 1 })}>
-        &nbsp;<ExternalLink fill={virtualHearing.jobCompleted ? COLORS.PRIMARY : COLORS.GREY_MEDIUM} />
-      </span>
-    </Link>
-  );
-};
+    return (
+      <Link
+        href={href}
+        target={newWindow ? '_blank' : '_self'}
+        disabled={!virtualHearing.jobCompleted}
+      >
+        <strong>{showFullLink ? href : 'Virtual Hearing Link'}</strong>
+        <span {...ICON_POSITION_FIX}>
+          &nbsp;<ExternalLink fill={virtualHearing.jobCompleted ? COLORS.PRIMARY : COLORS.GREY_MEDIUM} />
+        </span>
+      </Link>
+    );
+  };
+}
 
 VirtualHearingLink.propTypes = {
   isVirtual: PropTypes.bool,
