@@ -3,8 +3,21 @@
 class JudgeTeam < Organization
 
   def self.for_judge(user)
-    user.administered_teams.detect { |team| team.is_a?(JudgeTeam) }
-    # TODO Becomes: user is a JudgeTeamLead for JudgeTeam
+    if self.use_judge_team_roles?
+      # this is horrifying, TODO fix
+      admined_judge_teams = user.administered_teams.select { |team| team.is_a?(JudgeTeam) }
+      judge_team_admined = admined_judge_teams.first
+      return unless judge_team_admined
+      judge_team_judge_user = judge_team_admined.judge_team_roles.detect do |role|
+        role.is_a?(JudgeTeamLead)
+      end.organizations_user.user
+
+      if (user == judge_team_judge_user)
+        admined_judge_teams.first
+      end
+    else
+      user.administered_teams.detect { |team| team.is_a?(JudgeTeam) }
+    end
   end
 
   def self.create_for_judge(user)
@@ -56,7 +69,12 @@ class JudgeTeam < Organization
   end
 
   private
+  # TODO fix this nonsense
     def use_judge_team_roles?
+      JudgeTeam.use_judge_team_roles?
+    end
+
+    def self.use_judge_team_roles?
       FeatureToggle.enabled?(:use_judge_team_role)
     end
 end
