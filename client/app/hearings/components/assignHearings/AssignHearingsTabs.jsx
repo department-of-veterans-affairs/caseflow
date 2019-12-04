@@ -30,8 +30,6 @@ const NoUpcomingHearingDayMessage = () => (
 );
 
 const AvailableVeteransTable = ({ rows, columns, selectedHearingDay, style = {} }) => {
-  let removeTimeColumn = _.slice(columns, 0, -1);
-
   if (_.isNil(selectedHearingDay)) {
     return <div><NoUpcomingHearingDayMessage /></div>;
   }
@@ -48,7 +46,7 @@ const AvailableVeteransTable = ({ rows, columns, selectedHearingDay, style = {} 
   }
 
   return <span {...style}>
-    <AssignHearingsTable columns={removeTimeColumn} rowObjects={rows} />
+    <AssignHearingsTable columns={columns} rowObjects={rows} />
   </span>;
 };
 
@@ -145,7 +143,8 @@ export default class AssignHearingsTabs extends React.Component {
       docketNumber: <AppealDocketTag appeal={appeal} />,
       suggestedLocation: this.getSuggestedHearingLocation(appeal.attributes.availableHearingLocations),
       time: null,
-      externalId: appeal.attributes.externalAppealId
+      externalId: appeal.attributes.externalAppealId,
+      powerOfAttorney: appeal.attributes.powerOfAttorney && appeal.attributes.powerOfAttorney.name
     }));
   };
 
@@ -171,72 +170,85 @@ export default class AssignHearingsTabs extends React.Component {
       return [];
     }
 
-    let locationColumn;
+    const columns = [
+      {
+        header: '',
+        align: 'left',
+        valueName: 'number'
+      },
+      {
+        header: 'Case details',
+        align: 'left',
+        valueName: 'caseDetails',
+        valueFunction: (row) => <Link
+          name={row.externalId}
+          href={(() => {
+            const date = moment(selectedHearingDay.scheduledFor).format('YYYY-MM-DD');
+            const qry = `?hearingDate=${date}&regionalOffice=${selectedRegionalOffice}`;
+
+            return `/queue/appeals/${row.externalId}/${qry}`;
+          })()}>
+          {row.caseDetails}
+        </Link>
+      },
+      {
+        header: 'Type(s)',
+        align: 'left',
+        valueName: 'type'
+      },
+      {
+        header: 'Docket number',
+        align: 'left',
+        valueName: 'docketNumber'
+      }
+    ];
 
     if (tab === UPCOMING_HEARINGS_TAB_NAME) {
-      locationColumn = {
-        name: 'Hearing Location',
-        header: 'Hearing Location',
-        align: 'left',
-        columnName: 'hearingLocation',
-        valueName: 'hearingLocation',
-        label: 'Filter by location',
-        anyFiltersAreSet: true,
-        enableFilter: true,
-        enableFilterTextTransform: false
-      };
+      columns.push(
+        {
+          name: 'Hearing Location',
+          header: 'Hearing Location',
+          align: 'left',
+          columnName: 'hearingLocation',
+          valueName: 'hearingLocation',
+          label: 'Filter by location',
+          anyFiltersAreSet: true,
+          enableFilter: true,
+          enableFilterTextTransform: false
+        },
+        {
+          header: 'Time',
+          align: 'left',
+          valueName: 'time'
+        }
+      );
     } else {
-      locationColumn = {
-        name: 'Suggested Location',
-        header: 'Suggested Location',
-        align: 'left',
-        columnName: 'suggestedLocation',
-        valueFunction: (row) => <SuggestedHearingLocation
-          suggestedLocation={row.suggestedLocation} format={this.formatSuggestedHearingLocation} />,
-        label: 'Filter by location',
-        filterValueTransform: this.formatSuggestedHearingLocation,
-        anyFiltersAreSet: true,
-        enableFilter: true,
-        enableFilterTextTransform: false
-      };
+      columns.push(
+        {
+          name: 'Suggested Location',
+          header: 'Suggested Location',
+          align: 'left',
+          columnName: 'suggestedLocation',
+          valueFunction: (row) => <SuggestedHearingLocation
+            suggestedLocation={row.suggestedLocation} format={this.formatSuggestedHearingLocation} />,
+          label: 'Filter by location',
+          filterValueTransform: this.formatSuggestedHearingLocation,
+          anyFiltersAreSet: true,
+          enableFilter: true,
+          enableFilterTextTransform: false
+        },
+        {
+          name: 'Power of Attorney',
+          header: 'Power of Attorney (POA)',
+          columnName: 'powerOfAttorney',
+          valueName: 'powerOfAttorney',
+          valueFunction: (row) => row.powerOfAttorney,
+          enableFilter: true
+        }
+      );
     }
 
-    return [{
-      header: '',
-      align: 'left',
-      valueName: 'number'
-    },
-    {
-      header: 'Case details',
-      align: 'left',
-      valueName: 'caseDetails',
-      valueFunction: (row) => <Link
-        name={row.externalId}
-        href={(() => {
-          const date = moment(selectedHearingDay.scheduledFor).format('YYYY-MM-DD');
-          const qry = `?hearingDate=${date}&regionalOffice=${selectedRegionalOffice}`;
-
-          return `/queue/appeals/${row.externalId}/${qry}`;
-        })()}>
-        {row.caseDetails}
-      </Link>
-    },
-    {
-      header: 'Type(s)',
-      align: 'left',
-      valueName: 'type'
-    },
-    {
-      header: 'Docket number',
-      align: 'left',
-      valueName: 'docketNumber'
-    },
-    locationColumn,
-    {
-      header: 'Time',
-      align: 'left',
-      valueName: 'time'
-    }];
+    return columns;
   }
 
   amaDocketCutoffLineStyle = (appeals) => {
