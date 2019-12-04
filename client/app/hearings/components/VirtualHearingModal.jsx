@@ -180,7 +180,7 @@ class VirtualHearingModal extends React.Component {
       this.setState({ vetEmailError: INVALID_EMAIL_FORMAT });
       isValid = false;
     }
-    
+
     return isValid;
   }
 
