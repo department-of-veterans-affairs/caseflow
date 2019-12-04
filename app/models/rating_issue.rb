@@ -54,7 +54,7 @@ class RatingIssue
     end
   end
 
-  def ui_hash
+  def serialize
     ::RatingIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
