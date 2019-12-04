@@ -66,8 +66,8 @@ class Api::V3::DecisionReview::IntakeParams
     "payload must be an object" unless @params.respond_to?(:dig)
   
     types_and_paths.find do |(types, path)|
-      error_msg = DigError.new(hash: @params, path: path, values: types).to_s
-      break error_msg if error_msg
+      validator = HashPathValidator.new(hash: @params, path: path, allowed_values: types)
+      break validator.error_msg if !validator.path_is_valid? 
       false
     end
   end

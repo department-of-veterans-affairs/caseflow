@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
-# given a hash, path, and an array of values
-# you can ask if the value at path is valid (is one of the allowed values)
-# and you can print an error message describing the failed expectation
+# HashPathValidator is for dead simple validation of a Hash.
+# It allows you to test whether or not a *single* path in a hash is within
+# a set of allowed values, and provides an error description for when it's not.
+#
+# To see an example of how it can be used to validate an entire params object,
+# see #types_and_paths and #describe_shape_error in Api::V3::DecisionReview::IntakeParams
 #
 # examples:
 #
@@ -19,7 +22,7 @@
 #     v = Api::V3::DecisionReview::HashPathValidator.new(
 #       hash: {"a"=>[{"b"=>{"c"=>"pasta"}}]},
 #       path: ["a", 0, "b", "c"],
-#       allowed_values: ["salad", "wine"]  # PASTA ISN'T AN ALLOWED VALUE
+#       allowed_values: ["salad", "wine"]  #### pasta left out
 #     )
 #
 #     v.path_is_valid? # false
@@ -29,13 +32,12 @@
 #
 #
 # NOTE:
-# path_is_valid? uses ===
-# therefore you can test the /type/ of what's at path
+# path_is_valid? uses ===, therefore you can test the /type/ of the value at path
 #
 # examples:
 #
 #     v = Api::V3::DecisionReview::HashPathValidator.new(
-#       hash: {a: {b: 44.4}},
+#       hash: {a: {b: 44.78}},
 #       path: [:a, :b],
 #       allowed_values: [String, Integer]
 #     )
@@ -44,24 +46,12 @@
 #
 #     puts v.error_msg
 #     # [:a][:b] should be one of [String, Integer]. Got: 44.4.
-#
-#     v = Api::V3::DecisionReview::HashPathValidator.new(
-#       hash: {a: {b: 44}},
-#       path: [:a, :b],
-#       allowed_values: [String, Integer]
-#     )
-#
-#     v.path_is_valid? # true
-#
-#     v.error_msg # nil
 
 class Api::V3::DecisionReview::HashPathValidator
   def initialize(hash:, path:, allowed_values:)
     @hash = hash
     @path = path
     @allowed_values = allowed_values
-
-    throw_exception_for_bad_input
   end
 
   # may throw exception --use path_is_valid? first
@@ -83,16 +73,6 @@ class Api::V3::DecisionReview::HashPathValidator
     "#{path_string} should be #{allowed_values_string}. #{dig_string}."
   end
 
-  private
-
-  attr_reader :hash, :path, :allowed_values
-
-  def throw_exception_for_bad_input
-    fail "hash must respond to :dig" unless hash.respond_to? :dig
-    fail "path must be an array" unless path.is_a? Array
-    fail "allowed_values must be an array" unless allowed_values.is_a? Array
-  end
-
   def dig_string
     "Got: #{dig.inspect}"
   rescue StandardError
@@ -110,6 +90,10 @@ class Api::V3::DecisionReview::HashPathValidator
 
     allowed_value.inspect
   end
+
+  private
+
+  attr_reader :hash, :path, :allowed_values
 
   def only_one_allowed_value?
     allowed_values.length == 1
