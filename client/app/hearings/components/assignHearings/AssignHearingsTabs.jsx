@@ -177,7 +177,7 @@ export default class AssignHearingsTabs extends React.Component {
         valueName: 'number'
       },
       {
-        header: 'Case details',
+        header: 'Case Details',
         align: 'left',
         valueName: 'caseDetails',
         valueFunction: (row) => <Link
@@ -197,7 +197,7 @@ export default class AssignHearingsTabs extends React.Component {
         valueName: 'type'
       },
       {
-        header: 'Docket number',
+        header: 'Docket Number',
         align: 'left',
         valueName: 'docketNumber'
       }
