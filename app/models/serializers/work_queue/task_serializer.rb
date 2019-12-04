@@ -45,6 +45,20 @@ class WorkQueue::TaskSerializer
     object.assigned_to.is_a?(Organization) ? object.assigned_to.name : object.assigned_to.css_id
   end
 
+  attribute :power_of_attorney do |object|
+    if object.appeal.power_of_attorney.nil?
+      nil
+    elsif object.appeal.power_of_attorney.is_a?(BgsPowerOfAttorney)
+      {
+        name: object.appeal.power_of_attorney&.representative_name
+      }
+    else
+      {
+        name: object.appeal.power_of_attorney&.bgs_representative_name
+      }
+    end
+  end
+
   attribute :placed_on_hold_at, &:calculated_placed_on_hold_at
 
   attribute :on_hold_duration, &:calculated_on_hold_duration
