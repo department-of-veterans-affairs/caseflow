@@ -17,7 +17,7 @@ class Tasks::ChangeTypeController < TasksController
 
   def update_params
     change_type_params = params.require(:task).permit(:action, :instructions)
-    change_type_params[:instructions] = task.flattened_instructions(change_type_params)
+    change_type_params[:instructions] = [change_type_params[:instructions], task.instructions].flatten
     change_type_params
   end
 end

@@ -24,7 +24,9 @@ class HearingAdminActionForeignVeteranCaseTask < HearingAdminActionTask
 
     super(params.except(:instructions), current_user) # verifies access
 
-    parent.update_with_instructions(instructions: params[:instructions])
+    params[:instructions] = flattened_instructions(params)
+
+    parent.update!(instructions: params[:instructions])
 
     case params[:status]
     when Constants.TASK_STATUSES.completed

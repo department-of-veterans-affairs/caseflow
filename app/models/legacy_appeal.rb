@@ -786,10 +786,9 @@ class LegacyAppeal < ApplicationRecord
 
   def cancel_open_caseflow_tasks!
     tasks.open.each do |task|
-      task.update_with_instructions(
-        status: Constants.TASK_STATUSES.cancelled,
-        instructions: "Task cancelled due to death dismissal"
-      )
+      task.update!(status: Constants.TASK_STATUSES.cancelled)
+      task.instructions << "Task cancelled due to death dismissal"
+      task.save
     end
   end
 

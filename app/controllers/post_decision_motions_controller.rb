@@ -17,7 +17,8 @@ class PostDecisionMotionsController < ApplicationController
 
   def return_to_lit_support
     mail_task = task.parent
-    mail_task.update_with_instructions(instructions: params[:instructions]) if params[:instructions].present?
+    mail_task.instructions << params[:instructions]
+    mail_task.save unless params[:instructions].blank?
 
     task.update!(status: Constants.TASK_STATUSES.cancelled)
     flash[:success] = "Case returned to Litigation Support"
