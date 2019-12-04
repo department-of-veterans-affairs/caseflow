@@ -130,8 +130,7 @@ export const JudgeCaseQuality = ({
           styling={qualityOfWorkAlertStyling}
         >
           Please provide more details about <b>quality of work</b>. If none of
-          these apply to this case, please share <b>additional comments</b>{' '}
-          below.
+          these apply to this case, please share <b>additional comments</b> below.
         </Alert>
       )}
       <div {...css(setWidth('100%'), marginTop(4))}>
