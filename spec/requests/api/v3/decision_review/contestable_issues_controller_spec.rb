@@ -41,6 +41,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
     context "returned issues" do
       let(:source) { create(:higher_level_review, veteran_file_number: veteran.file_number, same_office: false) }
       let(:claim_id) { 12345 }
+      let(:rating_issue_reference_id) { "99999" }
       let(:end_product_establishment) do
         EndProductEstablishment.new(
           source: source,
@@ -84,7 +85,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
           ],
           decisions: [
             {
-              rating_issue_reference_id: "99999",
+              rating_issue_reference_id: rating_issue_reference_id,
               original_denial_date: date - 7.days,
               diagnostic_text: "Broken arm",
               diagnostic_type: "Bone",
@@ -175,12 +176,12 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
         expect(issue_with_rating_issue).to be_present
         expect(issue_with_rating_issue["attributes"]["rampClaimId"]).to eq claim_id.to_s
       end
-      xit 'should have titleOfActiveReview attribute' do
-        issues.each do |issue|
-          expect(issue["attributes"].keys).to include("titleOfActiveReview")
-          # This can be nil, setup rating to include a decision issue id?
-          expect(issue["attributes"]["titleOfActiveReview"]).to match(/^\d+$/)
-        end
+      it 'should have titleOfActiveReview attribute' do
+        decision_review = create(:supplemental_claim, veteran_file_number: veteran.file_number)
+        conflicting_request_issue = create(:request_issue, decision_review: decision_review, contested_rating_issue_reference_id: rating_issue_reference_id)
+        issue_with_rating_issue = issues.find { |i| i["attributes"].keys.include?("titleOfActiveReview") }
+        expect(issue_with_rating_issue).to be_present
+        expect(issue_with_rating_issue["attributes"]["titleOfActiveReview"]).to eq decision_review.class.review_title
       end
       it 'should have sourceReviewType attribute' do
         issue_with_source_decision_review = issues.find { |i| i["attributes"].keys.include?("sourceReviewType") }
