@@ -443,7 +443,7 @@ describe ColocatedTask, :all_dbs do
       let(:org_colocated_task) do
         create(
           :colocated_task,
-          action,
+          task_type_trait,
           appeal: appeal_1,
           assigned_by: attorney
         )
@@ -458,7 +458,7 @@ describe ColocatedTask, :all_dbs do
         let(:location_code) { LegacyAppeal::LOCATION_CODES[:caseflow] }
 
         context "for AOJ ColocatedTask" do
-          let(:action) { :aoj }
+          let(:task_type_trait) { :aoj }
 
           it "assigns back to the assigner" do
             legacy_colocated_task.update!(status: Constants.TASK_STATUSES.cancelled)
@@ -467,7 +467,7 @@ describe ColocatedTask, :all_dbs do
         end
 
         context "for schedule hearing colocated task" do
-          let(:action) { :schedule_hearing }
+          let(:task_type_trait) { :schedule_hearing }
 
           it "should not create a schedule hearing task" do
             expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
@@ -480,7 +480,7 @@ describe ColocatedTask, :all_dbs do
       end
 
       context "when the location code is not CASEFLOW" do
-        let(:action) { ColocatedTask.actions_assigned_to_colocated.sample.to_sym }
+        let(:task_type_trait) { ColocatedTask.actions_assigned_to_colocated.sample.to_sym }
         let(:location_code) { "FAKELOC" }
 
         it "does not change the case's location_code" do
