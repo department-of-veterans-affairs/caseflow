@@ -3,38 +3,38 @@
 namespace :local do
   desc "build local development environment"
   task :build do
-    puts "Downloading facols image from ECR"
+    puts ">>> BEGIN local:build"
+    puts ">>> 01/08 Downloading FACOLS image from ECR"
     system("./local/vacols/build_push.sh rake") || abort
 
-    puts "Starting docker containers in the background"
+    puts ">>> 02/08 Starting docker containers in the background"
     system("docker-compose up -d") || abort
 
-    puts "Waiting for our FACOLS containers to be ready"
+    puts ">>> 03/08 Waiting for our FACOLS containers to be ready"
     180.times do
       break if `docker-compose ps | grep 'health: starting'`.strip.chomp.empty?
 
       print "."
       sleep 1
     end
-    # Add a new line so that this scipt's output is more readable.
+    # Add a new line so that this script's output is more readable.
     puts ""
 
-    puts "Creating local caseflow dbs"
-    system("bundle exec rake db:create db:schema:load") || abort
+    puts ">>> 04/08 Creating development and test caseflow databases"
+    system("RAILS_ENV=development bundle exec rake db:create") || abort
 
-    puts "Seeding FACOLS"
+    puts ">>> 05/08 Seeding FACOLS"
     system("RAILS_ENV=development bundle exec rake local:vacols:seed") || abort
 
-    puts "Seeding FACOLS TEST"
+    puts ">>> 06/08 Seeding FACOLS TEST"
     system("RAILS_ENV=test bundle exec rake spec:setup_vacols") || abort
 
-    puts "Enabling feature flags"
+    puts ">>> 07/08 Loading schema and seeding local caseflow database"
+    system("RAILS_ENV=development bundle exec rake db:schema:load db:seed") || abort
+
+    puts ">>> 08/08 Enabling feature flags"
     system("bundle exec rails runner scripts/enable_features_dev.rb") || abort
 
-    puts "Setting up local caseflow database"
-    system("RAILS_ENV=development bundle exec rake db:setup") || abort
-
-    puts "Seeding local caseflow database"
-    system("RAILS_ENV=development bundle exec rake db:seed") || abort
+    puts ">>> END local:build"
   end
 end

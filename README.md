@@ -1,5 +1,5 @@
 # Caseflow
-[![CircleCI](https://circleci.com/gh/department-of-veterans-affairs/caseflow.svg?style=svg)](https://circleci.com/gh/department-of-veterans-affairs/caseflow)
+[![CircleCI](https://circleci.com/gh/department-of-veterans-affairs/caseflow/tree/master.svg?style=svg)](https://circleci.com/gh/department-of-veterans-affairs/caseflow/tree/master)
 
 Caseflow is a suite of web-based tools to manage VA appeals. It's currently in development by the Appeals Modernization team (est. 2016). It will replace the current system of record for appeals, the Veterans Appeals Control and Location System (VACOLS), which was created in 1979 on now-outdated infrastructure. Additionally, Caseflow will allow the Board of Veterans' Appeals to process appeals under the new guidelines created by the Veterans Appeals Improvement and Modernization Act of 2017, which goes into effect February 14th, 2019.
 
@@ -87,10 +87,10 @@ Providing Veterans transparent information about the status of their appeal
 Facilitates the transfer of cases from the Agency of Original Jurisdiction (AOJ) to the Board of Veterans' Appeals (the Board).
 
 ## Other Caseflow Products
-| Product | GitHub Repository | CI |
+| Product | GitHub Repository | Contiuous Integration Tests |
 | --- | --- | ---|
 | Caseflow | [caseflow](https://github.com/department-of-veterans-affairs/caseflow) | [CircleCI - Caseflow](https://circleci.com/gh/department-of-veterans-affairs/caseflow) |
-| eFolder Express | [caseflow-efolder](https://github.com/department-of-veterans-affairs/caseflow-efolder) | [Travis CI - eFolder](https://travis-ci.org/department-of-veterans-affairs/caseflow-efolder) |
+| eFolder Express | [caseflow-efolder](https://github.com/department-of-veterans-affairs/caseflow-efolder) | [Circle CI - eFolder](https://circleci.com/gh/department-of-veterans-affairs/caseflow-efolder) |
 | Commons | [caseflow-commons](https://github.com/department-of-veterans-affairs/caseflow-commons) | [Travis CI - Commons](https://travis-ci.org/department-of-veterans-affairs/caseflow-commons) |
 
 ## Developer Setup ####################################

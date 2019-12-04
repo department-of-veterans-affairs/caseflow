@@ -37,6 +37,7 @@ FactoryBot.define do
         [create(:case_issue), create(:case_issue)], bfregoff: regional_office, case_hearings: [case_hearing]))
     end
 
+    hearing_day_id { case_hearing.vdkey }
     vacols_id { case_hearing.hearing_pkseq }
     created_by { create(:user) }
     updated_by { create(:user) }

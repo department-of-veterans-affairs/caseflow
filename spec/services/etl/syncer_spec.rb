@@ -1,0 +1,48 @@
+# frozen_string_literal: true
+
+describe ETL::Syncer, :etl do
+  class DummyEtlClass < ETL::Record
+  end
+
+  class MySyncer < ETL::Syncer
+    def origin_class
+      ::User
+    end
+
+    def target_class
+      DummyEtlClass
+    end
+  end
+
+  describe "#origin_class" do
+    it "raises error when called on abstract class" do
+      expect { subject.origin_class }.to raise_error(RuntimeError)
+    end
+  end
+
+  describe "#target_class" do
+    it "raises error when called on abstract class" do
+      expect { subject.target_class }.to raise_error(RuntimeError)
+    end
+  end
+
+  describe "#call" do
+    before do
+      dummy_target = double("dummy")
+      allow(dummy_target).to receive(:save!) { @dummy_saved = true }
+      allow(DummyEtlClass).to receive(:sync_with_original) { dummy_target }
+    end
+
+    context "one stale origin class instance needing sync" do
+      let!(:user) { create(:user) }
+
+      subject { MySyncer.new.call }
+
+      it "saves a new target class instance" do
+        subject
+        expect(DummyEtlClass).to have_received(:sync_with_original).once
+        expect(@dummy_saved).to eq(true)
+      end
+    end
+  end
+end

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-require "support/database_cleaner"
-
 describe UserInfoController, :postgres, type: :controller do
   describe ".represented_organizations" do
     let(:user) { create(:user) }

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe JudgeTask, :all_dbs do
   let(:judge) { create(:user) }
   let(:judge2) { create(:user) }
@@ -21,6 +18,13 @@ describe JudgeTask, :all_dbs do
     end
 
     subject { subject_task.available_actions_unwrapper(user) }
+
+    context "the task is not assigned to the current user" do
+      let(:user) { judge2 }
+      it "should return an empty array" do
+        expect(subject).to eq([])
+      end
+    end
 
     context "the task is assigned to the current user" do
       context "in the assign phase" do

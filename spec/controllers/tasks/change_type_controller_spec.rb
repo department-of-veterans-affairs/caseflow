@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
 require "mail_task"
 
 RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do

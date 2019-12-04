@@ -14,10 +14,17 @@ class AppealsUpdatedSinceQuery
 
   private
 
+  SKIP_ASSOCIATIONS = %w[
+    appeal_views
+    claims_folder_searches
+    request_decision_issues
+    request_issues_updates
+  ].freeze
+
   attr_reader :since_date
 
   def association_names
-    @association_names ||= Appeal.reflections.keys
+    @association_names ||= Appeal.reflections.keys.reject { |key| SKIP_ASSOCIATIONS.include?(key) }
   end
 
   def build_query
@@ -28,7 +35,7 @@ class AppealsUpdatedSinceQuery
   end
 
   def appeals_joined_distinct
-    Appeal.left_joins(association_names.map(&:to_sym)).distinct
+    Appeal.established.left_joins(association_names.map(&:to_sym)).distinct
   end
 
   def associated_clauses

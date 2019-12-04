@@ -9,44 +9,44 @@ import {
   HearingRoomDropdown
 } from '../../../components/DataDropdowns/index';
 import TextareaField from '../../../components/TextareaField';
-import SearchableDropdown from '../../../components/SearchableDropdown';
 import Checkbox from '../../../components/Checkbox';
+import VirtualHearingLink from '../VirtualHearingLink';
+import HearingTypeDropdown from './HearingTypeDropdown';
+import TextField from '../../../components/TextField';
 
 const DetailsInputs = ({
-  hearing, update, readOnly, isLegacy, openModal, updateVirtualHearing, virtualHearing,
-  enableVirtualHearings
+  hearing, update, readOnly, isLegacy, openVirtualHearingModal, updateVirtualHearing, virtualHearing,
+  enableVirtualHearings, requestType, isVirtual
 }) => (
   <React.Fragment>
-    <div {...rowThirds}>
-      {enableVirtualHearings && <SearchableDropdown
-        label="Hearing Type"
-        name="hearingType"
+    {enableVirtualHearings && <div {...rowThirds}>
+      <HearingTypeDropdown
+        virtualHearing={virtualHearing}
+        requestType={requestType}
+        updateVirtualHearing={updateVirtualHearing}
+        openModal={openVirtualHearingModal}
+      />
+      <VirtualHearingLink
+        hearing={hearing}
+      />
+    </div>}
+    {isVirtual && virtualHearing && <div {...rowThirds}>
+      <TextField
+        name="Veteran Email"
+        value={virtualHearing.veteranEmail}
         strongLabel
-        options={[
-          {
-            value: false,
-            label: 'Video'
-          },
-          {
-            value: true,
-            label: 'Virtual'
-          }
-        ]}
-        value={(virtualHearing && virtualHearing.status !== 'cancelled') || false}
-        onChange={(option) => {
-          if ((virtualHearing && virtualHearing.status !== 'cancelled') || option.value) {
-            openModal();
-          }
-
-          let status;
-
-          if (virtualHearing && virtualHearing.status !== 'cancelled' && !option.value) {
-            status = 'cancelled';
-          }
-          updateVirtualHearing({ status });
-        }}
-      />}
-    </div>
+        required
+        readOnly={!virtualHearing.jobCompleted}
+        onChange={(veteranEmail) => updateVirtualHearing({ veteranEmail })}
+      />
+      <TextField
+        name="POA/Representive Email"
+        value={virtualHearing.representativeEmail}
+        strongLabel
+        readOnly={!virtualHearing.jobCompleted}
+        onChange={(representativeEmail) => updateVirtualHearing({ representativeEmail })}
+      />
+    </div> }
     <div {...rowThirds}>
       <JudgeDropdown
         name="judgeDropdown"
@@ -105,13 +105,18 @@ DetailsInputs.propTypes = {
   }),
   update: PropTypes.func,
   readOnly: PropTypes.bool,
+  requestType: PropTypes.string,
   isLegacy: PropTypes.bool,
-  openModal: PropTypes.func,
+  openVirtualHearingModal: PropTypes.func,
   updateVirtualHearing: PropTypes.func,
   virtualHearing: PropTypes.shape({
-    status: PropTypes.string
+    veteranEmail: PropTypes.string,
+    representativeEmail: PropTypes.string,
+    status: PropTypes.string,
+    jobCompleted: PropTypes.bool
   }),
-  enableVirtualHearings: PropTypes.bool
+  enableVirtualHearings: PropTypes.bool,
+  isVirtual: PropTypes.bool
 };
 
 export default DetailsInputs;
