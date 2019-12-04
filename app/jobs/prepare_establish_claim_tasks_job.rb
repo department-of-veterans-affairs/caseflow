@@ -21,7 +21,7 @@ class PrepareEstablishClaimTasksJob < ApplicationJob
       count[:success] += ((status == :success) ? 1 : 0)
       count[:fail] += ((status == :failed) ? 1 : 0)
     end
-    log_info(count)
+    log_info(count) if count[:fail] > 0
   end
 
   def log_info(count)
