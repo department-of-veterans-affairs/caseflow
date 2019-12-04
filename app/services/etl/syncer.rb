@@ -14,7 +14,7 @@ class ETL::Syncer
 
   def call
     instances_needing_update.find_in_batches.with_index do |originals, batch|
-      Rails.logger.debug("Starting batch #{batch} for #{target_class.to_s}")
+      Rails.logger.debug("Starting batch #{batch} for #{target_class}")
       target_class.transaction do
         originals.each do |original|
           next if filter?(original)
