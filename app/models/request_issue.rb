@@ -313,7 +313,7 @@ class RequestIssue < ApplicationRecord
     closed_at if withdrawn?
   end
 
-  def ui_hash
+  def serialize
     ::RequestIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
