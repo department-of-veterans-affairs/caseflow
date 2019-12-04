@@ -86,7 +86,7 @@ class Api::V3::DecisionReview::HashPathValidator
   def allowed_values_string
     return "one of #{allowed_values}" unless only_one_allowed_value?
 
-    return "a(n) #{allowed_value.name.downcase}" if allowed_value_is_a_class?
+    return "a(n) #{allowed_value.name.camelize(:lower)}" if allowed_value_is_a_class?
 
     allowed_value.inspect
   end
