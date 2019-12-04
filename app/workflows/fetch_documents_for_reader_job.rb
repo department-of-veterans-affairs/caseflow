@@ -14,7 +14,6 @@ class FetchDocumentsForReaderJob
     # there is nothing actionable here, since it reflects data changes on the VBMS side.
     # we do not want to retry since it will never work.
     Rails.logger.error error
-    log_error
   rescue StandardError => error
     log_error
     # raising an exception here triggers a retry through shoryuken
