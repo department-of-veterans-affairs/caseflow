@@ -195,12 +195,14 @@ class DailyDocketRow extends React.Component {
       <StaticRegionalOffice hearing={hearing} />
       <HearingLocationDropdown {...inputProps} regionalOffice={regionalOffice} />
       <StaticHearingDay hearing={hearing} />
-      <TimeRadioButtons {...inputProps} regionalOffice={regionalOffice} update={(values) => {
-        this.update(values);
-        if (values.scheduledTimeString !== null) {
-          this.openVirtualHearingModal();
-        }
-      }} />
+      <TimeRadioButtons {...inputProps} regionalOffice={regionalOffice}
+        readOnly={hearing.virtualHearing && !hearing.virtualHearing.jobCompleted}
+        update={(values) => {
+          this.update(values);
+          if (values.scheduledTimeString !== null) {
+            this.openVirtualHearingModal();
+          }
+        }} />
     </React.Fragment>;
   }
 

@@ -95,7 +95,10 @@ c:  ## Start rails console
 	bundle exec rails console
 
 etl-migrate:	## Migrate ETL database
-	DB=etl bundle exec rake db:migrate db:test:prepare
+	DB=etl bundle exec rake db:migrate
+
+etl-test-prepare:
+	DB=etl bundle exec db:test:prepare
 
 etl-rollback:	## Rollback ETL database
 	DB=etl bundle exec rake db:rollback
@@ -106,7 +109,7 @@ db-migrate:	## Migrate main Caseflow db
 db-rollback:	## Rollback main Caseflow db
 	bundle exec rake db:rollback
 
-migrate: etl-migrate db-migrate ## Migrate all Rails databases
+migrate: etl-migrate etl-test-prepare db-migrate ## Migrate all Rails databases
 
 rollback: etl-rollback db-rollback	## Rollback all Rails databases
 
