@@ -19,6 +19,6 @@ class RampIssue < ApplicationRecord
   end
 
   def ui_hash
-    { id: id, description: description }
+    ::RampIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
 end
