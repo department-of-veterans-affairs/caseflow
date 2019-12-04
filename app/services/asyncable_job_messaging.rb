@@ -18,9 +18,24 @@ class AsyncableJobMessaging
       if send_to_intake_user && job.asyncable_user
         message_text = <<-EOS.strip_heredoc
           A new note has been added to your #{job.class} job.
-          <a href="#{job.path}#job-note-#{job.id}">Click here</a> to view the note.
+          <a href="#{job_note.path}">Click here</a> to view the note.
         EOS
         Message.create!(detail: job_note, text: message_text, user: job.asyncable_user, message_type: :job_note_added)
+      end
+      job_note
+    end
+  end
+
+  def add_job_cancellation_note(text:)
+    send_to_intake_user = !!job.asyncable_user
+    ApplicationRecord.transaction do
+      text = "This job has been cancelled with the following note:\n#{text}"
+      job_note = JobNote.create!(job: job, user: current_user, note: text, send_to_intake_user: send_to_intake_user)
+      if send_to_intake_user
+        message_text = <<-EOS.strip_heredoc
+          The job for processing <a href="#{job_note.path}">#{job.class} #{job.id}</a> has been cancelled.
+        EOS
+        Message.create!(detail: job_note, text: message_text, user: job.asyncable_user, message_type: :job_cancelled)
       end
       job_note
     end

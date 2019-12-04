@@ -106,4 +106,23 @@ describe AsyncableJobMessaging, :postgres do
       end
     end
   end
+
+  describe "#add_job_cancellation_note" do
+    let(:owner) { create(:default_user) }
+    let(:job) { create(:higher_level_review, intake: create(:intake, user: owner)) }
+    let(:user) { User.authenticate!(roles: ["Admin Intake"]) }
+    let(:messaging) { AsyncableJobMessaging.new(job: job, current_user: user) }
+
+    subject { messaging.add_job_cancellation_note(text: "some reason") }
+
+    it "adds a job note and an inbox message" do
+      message_count = owner.messages.count
+      subject
+      expect(job.job_notes.last.note).to match("some reason")
+      expect(owner.messages.count).to eq message_count + 1
+      expect(owner.messages.last.text).to match("cancelled")
+      expect(owner.messages.last.text).to match(job.path)
+      expect(owner.messages.last.message_type).to eq "job_cancelled"
+    end
+  end
 end
