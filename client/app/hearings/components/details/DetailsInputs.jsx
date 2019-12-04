@@ -25,6 +25,7 @@ const DetailsInputs = ({
         requestType={requestType}
         updateVirtualHearing={updateVirtualHearing}
         openModal={openVirtualHearingModal}
+        readOnly={isVirtual && virtualHearing && !virtualHearing.jobCompleted}
       />
       <VirtualHearingLink
         hearing={hearing}
