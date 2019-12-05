@@ -130,10 +130,10 @@ describe ColocatedTask, :all_dbs do
     context "when action is :schedule_hearing, :missing_hearing_transcripts, :foia, or :translation" do
       let(:params_list) do
         [ScheduleHearingColocatedTask, MissingHearingTranscriptsColocatedTask, FoiaColocatedTask,
-         TranslationColocatedTask].map do |colocatedSubclass|
+         TranslationColocatedTask].map do |colocated_subclass|
           {
             assigned_by: attorney,
-            type: colocatedSubclass.name,
+            type: colocated_subclass.name,
             parent: create(:ama_attorney_task),
             appeal: create(:legacy_appeal, vacols_case: create(:case))
           }
@@ -244,13 +244,13 @@ describe ColocatedTask, :all_dbs do
                                                 appeal_type: "LegacyAppeal",
                                                 assigned_by: attorney,
                                                 assigned_to: create(:user),
-                                                type: colocatedSubclass.name,
+                                                type: colocated_subclass.name,
                                                 instructions: ["second"]
                                               }], attorney).last
       end
 
       context "when more than one task per appeal and not all colocated tasks are completed" do
-        let(:colocatedSubclass) { PoaClarificationColocatedTask }
+        let(:colocated_subclass) { PoaClarificationColocatedTask }
         let!(:colocated_admin_action_2) do
           ColocatedTask.create_many_from_params([{
                                                   appeal: appeal_1,
@@ -268,7 +268,7 @@ describe ColocatedTask, :all_dbs do
       end
 
       context "when completing a translation task" do
-        let(:colocatedSubclass) { TranslationColocatedTask }
+        let(:colocated_subclass) { TranslationColocatedTask }
         it "should update location to the assigner in vacols" do
           expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
           colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
@@ -277,7 +277,7 @@ describe ColocatedTask, :all_dbs do
       end
 
       context "when completing a schedule hearing task" do
-        let(:colocatedSubclass) { ScheduleHearingColocatedTask }
+        let(:colocated_subclass) { ScheduleHearingColocatedTask }
         it "should create a schedule hearing task" do
           expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
           expect(appeal_1.root_task.children.empty?)
@@ -289,7 +289,7 @@ describe ColocatedTask, :all_dbs do
       context "when all colocated tasks are completed for this appeal" do
         let(:judge) { create(:user) }
         let!(:staff2) { create(:staff, :judge_role, sdomainid: judge.css_id) }
-        let(:colocatedSubclass) { PoaClarificationColocatedTask }
+        let(:colocated_subclass) { PoaClarificationColocatedTask }
 
         let!(:task2) do
           AttorneyTask.create!(

@@ -450,7 +450,6 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           end
         end
 
-
         context "when one admin action with task type field" do
           let(:params) do
             {
@@ -499,7 +498,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           let(:params) do
             [{
               "external_id": 4_646_464,
-              "type": AddressVerificationColocatedTask.name,
+              "type": AddressVerificationColocatedTask.name
             }]
           end
 

@@ -208,7 +208,7 @@ class TaskActionRepository
             label: subclass.label,
             value: subclass.name
           }
-        end,
+        end
       }
     end
 
