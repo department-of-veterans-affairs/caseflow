@@ -15,7 +15,7 @@ class FetchDocumentsForReaderJob
     # we do not want to retry since it will never work.
     Rails.logger.error error
   rescue StandardError => error
-    log_error
+    Rails.logger.error error
     # raising an exception here triggers a retry through shoryuken
     raise error
   end
@@ -41,18 +41,5 @@ class FetchDocumentsForReaderJob
       station_id: user.station_id,
       regional_office: user.regional_office
     )
-  end
-
-  def log_info
-    Rails.logger.info log_message
-  end
-
-  def log_error
-    Rails.logger.error log_message("ERROR")
-  end
-
-  def log_message(status = "SUCCESS")
-    "FetchDocumentsForReaderUserJob (user_id: #{user.id}) #{status}. " \
-      "Retrieved #{@appeals_successful} / #{appeals.count} appeals"
   end
 end
