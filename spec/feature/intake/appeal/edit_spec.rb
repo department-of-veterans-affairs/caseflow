@@ -73,7 +73,7 @@ feature "Appeal Edit issues", :all_dbs do
 
   let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
 
-  fscenario "allows adding/removing issues" do
+  scenario "allows adding/removing issues" do
     visit "appeals/#{appeal.uuid}/edit/"
 
     expect(page).to have_content(nonrating_request_issue.description)
@@ -88,7 +88,6 @@ feature "Appeal Edit issues", :all_dbs do
     add_intake_rating_issue("Left knee granted")
     # save flash should still occur because issues are different
     expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
-    binding.pry
 
     # save
     expect(page).to have_content("Left knee granted")

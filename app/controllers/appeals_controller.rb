@@ -121,9 +121,9 @@ class AppealsController < ApplicationController
       set_flash_success_message
 
       render json: {
-        beforeIssues: request_issues_update.before_issues.map(&:ui_hash),
-        afterIssues: request_issues_update.after_issues.map(&:ui_hash),
-        withdrawnIssues: request_issues_update.withdrawn_issues.map(&:ui_hash)
+        beforeIssues: request_issues_update.before_issues.map(&:serialize),
+        afterIssues: request_issues_update.after_issues.map(&:serialize),
+        withdrawnIssues: request_issues_update.withdrawn_issues.map(&:serialize)
       }
     else
       render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
