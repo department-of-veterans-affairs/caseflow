@@ -64,16 +64,32 @@ describe Hearings::HearingDayController, :all_dbs do
           request_type: HearingDay::REQUEST_TYPES[:video]
         )
       end
-      let(:hearing) { create(:hearing, hearing_day: hearing_day) }
-      let!(:virtual_hearing) { create(:virtual_hearing, :initialized, hearing: hearing) }
       let(:params) { { start_time: Time.zone.now.to_date - 2.days } }
 
-      it "returns 200 and the hearing day has the request type 'Video, Virtual'", :aggregate_failures do
+      def virtual_request_type_test
         expect(subject.status).to eq 200
         hearing_days = JSON.parse(subject.body)
         expect(hearing_days["hearings"].size).to eq 1
         expect(hearing_days["hearings"][0]["id"]).to eq hearing_day.id
         expect(hearing_days["hearings"][0]["readable_request_type"]).to eq "Video, Virtual"
+      end
+
+      context "associated with an AMA hearing" do
+        let(:hearing) { create(:hearing, hearing_day: hearing_day) }
+        let!(:virtual_hearing) { create(:virtual_hearing, :initialized, hearing: hearing) }
+
+        it "returns 200 and the hearing day has the request type 'Video, Virtual'", :aggregate_failures do
+          virtual_request_type_test
+        end
+      end
+
+      context "associated with a Legacy hearing" do
+        let(:legacy_hearing) { create(:legacy_hearing, hearing_day: hearing_day) }
+        let!(:virtual_hearing) { create(:virtual_hearing, :initialized, hearing: legacy_hearing).reload }
+
+        it "returns 200 and the hearing day has the request type 'Video, Virtual'", :aggregate_failures do
+          virtual_request_type_test
+        end
       end
     end
   end

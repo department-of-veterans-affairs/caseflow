@@ -37,7 +37,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   end
 
   context "for an existing Virtual Hearing" do
-    let!(:virtual_hearing) { create(:virtual_hearing, conference_id: "0", hearing: hearing) }
+    let!(:virtual_hearing) { create(:virtual_hearing, :active, :all_emails_sent, conference_id: "0", hearing: hearing) }
     let!(:expected_alert) do
       COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_FROM_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
     end
@@ -58,19 +58,21 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     end
   end
 
-  context "Veteran and POA email field are disabled until conference is created" do
+  context "Hearing type dropdown and vet and poa fields are disabled while async job is running" do
     let!(:virtual_hearing) { create(:virtual_hearing, :pending, :all_emails_sent, hearing: hearing) }
 
-    scenario "conference has not been created yet" do
+    scenario "async job is not completed" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
+      expect(find(".dropdown-hearingType")).to have_css(".is-disabled")
       expect(page).to have_field("Veteran Email", readonly: true)
       expect(page).to have_field("POA/Representive Email", readonly: true)
     end
 
-    scenario "conference was created" do
+    scenario "async job is completed" do
       virtual_hearing.update(status: :active)
       visit "hearings/" + hearing.external_id.to_s + "/details"
       hearing.reload
+      expect(find(".dropdown-hearingType")).to have_no_css(".is-disabled")
       expect(page).to have_field("Veteran Email", readonly: false)
       expect(page).to have_field("POA/Representive Email", readonly: false)
     end
