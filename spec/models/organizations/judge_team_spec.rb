@@ -73,7 +73,8 @@ describe JudgeTeam, :postgres do
         end
       end
 
-      # Limitation of the current approach is that users are effectively limited to being the admin of a single JudgeTeam.
+      # Limitation of the current approach is that users are effectively limited to being the admin of
+      # a single JudgeTeam.
       context "when user is admin of multiple JudgeTeams" do
         let!(:first_judge_team) { JudgeTeam.create_for_judge(user) }
         let!(:second_judge_team) do
@@ -151,15 +152,14 @@ describe JudgeTeam, :postgres do
     after { FeatureToggle.disable!(:use_judge_team_role) }
 
     describe ".for_judge" do
-
       context "when user is admin of a non-JudgeTeam organization" do
         let(:judge) { create(:user) }
         let(:user) { create(:user) }
         before { OrganizationsUser.make_user_admin(user, create(:organization)) }
 
-         it "should return nil, indicating user is not the Judge of this team" do
-           expect(JudgeTeam.for_judge(user)).to eq(nil)
-         end
+        it "should return nil, indicating user is not the Judge of this team" do
+          expect(JudgeTeam.for_judge(user)).to eq(nil)
+        end
       end
 
       context "when user is an admin member of JudgeTeam, but not JudgeTeamLead" do
@@ -190,15 +190,28 @@ describe JudgeTeam, :postgres do
         let!(:judge_team) { create(:judge_team) }
         before { populate_judgeteam_for_testing(judge_team, judge, [create(:user), user]) }
 
-         it "should return judge team" do
-           judge.reload
-           expect(JudgeTeam.for_judge(judge)).to eq(judge_team)
-         end
+        it "should return judge team" do
+          judge.reload
+          expect(JudgeTeam.for_judge(judge)).to eq(judge_team)
+        end
       end
 
       context "when user is admin of two JudgeTeams and JudgeTeamLead of one" do
-        it "should return the JudgeTeamLead team, not the admin'd team"
-        # add judge to admin a team first, then make them a JudgeTeam for themselves (can do normal way).
+        let(:dvc_judge) { create(:user) }
+        let(:judge) { create(:user) }
+        let(:user) { create(:user) }
+        let(:judge_team_reg) { create(:judge_team) }
+        let(:judge_team_dvc) { create(:judge_team) }
+        before do
+          populate_judgeteam_for_testing(judge_team_reg, judge, [dvc_judge, user])
+          populate_judgeteam_for_testing(judge_team_dvc, dvc_judge, [user]) # create_for_judge?
+        end
+
+        it "should return the JudgeTeamLead team, not the admin'd team" do
+          dvc_judge.reload
+          expect(JudgeTeam.for_judge(dvc_judge)).to eq(judge_team_dvc)
+          expect(JudgeTeam.for_judge(judge)).to eq(judge_team_reg)
+        end
       end
     end
 
@@ -208,7 +221,7 @@ describe JudgeTeam, :postgres do
       let(:judge_team) { create(:judge_team) }
       let(:attorneys) { create_list(:user, 5) }
 
-      #create judge team empty. add an admin user attorney. add the judge
+      # create judge team empty. add an admin user attorney. add the judge
       # add the rest of the attorneys
 
       # Attorneys are added to JudgeTeam first, in a way that avoids the automatic Role assignment, with one of them
@@ -236,10 +249,13 @@ describe JudgeTeam, :postgres do
 
   # Create a JudgeTeam with a JudgeTeamLead admin, a DecisionDraftingAttorney admin, and several
   # other DecisionDrafting Attorneys
-  # Sneakily make the first admin not the JudgeTeamLead, which forces the old code expectations to fail
+  #
+  # Sneakily make the `first` admin not the JudgeTeamLead, which forces the old code expectations to fail
   # Otherwise, if the first admin is also JudgeTeamLead, old code expectations don't validly test
-  # document expected args better
-  # ie empty judge team, Judge object, and list of users for attorneys, first of whom will be admin
+  #
+  # Expects an empty judge team, the user you want to be JudgeTeamLead,
+  # and an array of users to make DecisionDraftingAttorneys
+  # The first user in that array will also be an admin on the JudgeTeam
   def populate_judgeteam_for_testing(judge_team, judge_user, attorneys)
     attorneys.each do |u|
       judge_team.users << u
@@ -248,9 +264,9 @@ describe JudgeTeam, :postgres do
     end
     judge_team.users << judge_user
     attorney_orgsuser = OrganizationsUser.existing_record(attorneys.first, judge_team)
-    attorney_orgsuser.update!(admin:true)
+    attorney_orgsuser.update!(admin: true)
     judge_orguser = OrganizationsUser.existing_record(judge_user, judge_team)
-    judge_orguser.update!(admin:true)
+    judge_orguser.update!(admin: true)
     JudgeTeamLead.create!(organizations_user: judge_orguser)
   end
 end

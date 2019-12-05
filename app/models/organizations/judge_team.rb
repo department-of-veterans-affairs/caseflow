@@ -1,34 +1,44 @@
 # frozen_string_literal: true
 
 class JudgeTeam < Organization
+  class << self
+    def for_judge(user)
+      if use_judge_team_roles?
+        # Collect all JudgeTeams this user administers
+        judge_teams_administered = user.administered_teams.select { |team| team.is_a?(JudgeTeam) }
+        return unless judge_teams_administered.any?
 
-  def self.for_judge(user)
-    if self.use_judge_team_roles?
-      # this is horrifying, TODO fix
-      admined_judge_teams = user.administered_teams.select { |team| team.is_a?(JudgeTeam) }
-      judge_team_admined = admined_judge_teams.first
-      return unless judge_team_admined
-      judge_team_judge_user = judge_team_admined.judge_team_roles.detect do |role|
-        role.is_a?(JudgeTeamLead)
-      end.organizations_user.user
+        # Find the one, if any, we're the JudgeTeamLead for
+        judge_teams_administered.each do |judge_team|
+          judge_team_lead = judge_team.judge_team_roles.detect do |role|
+            role.is_a?(JudgeTeamLead)
+          end
 
-      if (user == judge_team_judge_user)
-        admined_judge_teams.first
+          if user == judge_team_lead.organizations_user.user
+            return judge_team
+          end
+        end
+        nil
+      else
+        user.administered_teams.detect { |team| team.is_a?(JudgeTeam) }
       end
-    else
-      user.administered_teams.detect { |team| team.is_a?(JudgeTeam) }
     end
-  end
 
-  def self.create_for_judge(user)
-    fail(Caseflow::Error::DuplicateJudgeTeam, user_id: user.id) if JudgeTeam.for_judge(user)
-    # TODO Becomes: fail if already a JudgeTeamLead on a judge team
+    def create_for_judge(user)
+      fail(Caseflow::Error::DuplicateJudgeTeam, user_id: user.id) if JudgeTeam.for_judge(user)
 
-    # TODO Might be already correct?
-    create!(name: user.css_id, url: user.css_id.downcase).tap do |org|
-      # TODO clarify this note? v
-      # Add the JudgeTeamLead record in org.add_user which gets triggered by OrganizationsUser.make_user_admin
-      OrganizationsUser.make_user_admin(user, org)
+      # TODO: Becomes: fail if already a JudgeTeamLead on a judge team
+
+      # TODO: Might be already correct?
+      create!(name: user.css_id, url: user.css_id.downcase).tap do |org|
+        # TODO: clarify this note? v
+        # Add the JudgeTeamLead record in org.add_user which gets triggered by OrganizationsUser.make_user_admin
+        OrganizationsUser.make_user_admin(user, org)
+      end
+    end
+
+    def use_judge_team_roles?
+      FeatureToggle.enabled?(:use_judge_team_role)
     end
   end
 
@@ -69,12 +79,7 @@ class JudgeTeam < Organization
   end
 
   private
-  # TODO fix this nonsense
     def use_judge_team_roles?
       JudgeTeam.use_judge_team_roles?
-    end
-
-    def self.use_judge_team_roles?
-      FeatureToggle.enabled?(:use_judge_team_role)
     end
 end
