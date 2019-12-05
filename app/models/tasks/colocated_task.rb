@@ -31,7 +31,7 @@ class ColocatedTask < Task
         params_array = params_array.map do |params|
           # Find the task type for a given action.
           create_params = params.clone
-          new_task_type = find_subclass_by_type(create_params[:type])
+          new_task_type = Object.const_get(params[:type])
           create_params.merge!(type: new_task_type&.name, assigned_to: new_task_type&.default_assignee)
         end
 
@@ -67,10 +67,6 @@ class ColocatedTask < Task
     # out their days with their old colocated task workflow
     def find_subclass_by_action(action)
       subclasses.find { |task_class| task_class.label == Constants::CO_LOCATED_ADMIN_ACTIONS[action] }
-    end
-
-    def find_subclass_by_type(type)
-      ColocatedTask.subclasses.find { |task_class| task_class.name == type }
     end
 
     # Is this method still relevant given ticket #12279 and related tickets?
@@ -119,14 +115,14 @@ class ColocatedTask < Task
   end
 
   def create_twin_of_type(params)
-    task_type = ColocatedTask.find_subclass_by_type(params[:type])
+    task_type = Object.const_get(params[:type])
     ColocatedTask.create!(
       appeal: appeal,
       parent: parent,
       assigned_by: assigned_by,
       instructions: params[:instructions],
       assigned_to: task_type&.default_assignee,
-      type: task_type
+      type: params[:type]
     )
   end
 

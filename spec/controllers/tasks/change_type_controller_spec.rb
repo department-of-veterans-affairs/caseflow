@@ -68,7 +68,6 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
 
         context "that needs reassigning" do
           let(:new_task_type) { FoiaColocatedTask }
-          let(:new_task_class) { FoiaColocatedTask }
 
           it "should update successfully" do
             subject
