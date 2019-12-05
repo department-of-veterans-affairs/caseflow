@@ -78,7 +78,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
           <SearchableDropdown
             errorMessage={highlightFormItems && !typeOption ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
             name={COPY.CHANGE_TASK_TYPE_ACTION_LABEL}
-            placeholder="Select an task type"
+            placeholder="Select an action type"
             options={taskActionData(this.props).options}
             onChange={(option) => option && this.setState({ typeOption: option })}
             value={typeOption && typeOption.value} />
