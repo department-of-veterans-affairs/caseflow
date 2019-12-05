@@ -10,11 +10,7 @@ class JudgeTeam < Organization
 
         # Find the one, if any, we're the JudgeTeamLead for
         judge_teams_administered.each do |judge_team|
-          judge_team_lead = judge_team.judge_team_roles.detect do |role|
-            role.is_a?(JudgeTeamLead)
-          end
-
-          if user == judge_team_lead.organizations_user.user
+          if user == judge_team.judge
             return judge_team
           end
         end
@@ -54,8 +50,8 @@ class JudgeTeam < Organization
 
   def judge
     if use_judge_team_roles?
-      judge_team_roles.select { |role| role.is_a?(JudgeTeamLead) }.first.organizations_user.user
-      # doublcheck this is a DB constraint
+      judge_team_roles.detect { |role| role.is_a?(JudgeTeamLead) }.organizations_user.user
+      # TODO: doublcheck this is a DB constraint
     else
       admins.first
     end
@@ -79,7 +75,8 @@ class JudgeTeam < Organization
   end
 
   private
-    def use_judge_team_roles?
-      JudgeTeam.use_judge_team_roles?
-    end
+
+  def use_judge_team_roles?
+    JudgeTeam.use_judge_team_roles?
+  end
 end
