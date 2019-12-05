@@ -25,7 +25,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
     end
 
     let!(:case_hearing) { create(:case_hearing, vdkey: hearing_day.id, folder_nr: legacy_appeal.vacols_id) }
-    let!(:legacy_hearing) { create(:legacy_hearing, vacols_id: case_hearing.hearing_pkseq, appeal: legacy_appeal) }
+    let!(:legacy_hearing) { create(:legacy_hearing, case_hearing: case_hearing, appeal: legacy_appeal) }
     let!(:staff) { create(:staff, stafkey: "RO18", stc2: 2, stc3: 3, stc4: 4) }
 
     scenario "address and poa info from BGS is displayed on docket page" do
