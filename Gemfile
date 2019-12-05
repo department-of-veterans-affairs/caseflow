@@ -107,8 +107,8 @@ group :test, :development, :demo do
   gem "rubocop-performance"
   gem "scss_lint", require: false
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
-  gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
   gem "single_cov"
+  gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
   gem "timecop"
   gem "webdrivers"
 end
