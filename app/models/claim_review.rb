@@ -128,7 +128,7 @@ class ClaimReview < DecisionReview
     fail Caseflow::Error::ActionForbiddenError, message: "Acting user must be specified" unless current_user
     fail Caseflow::Error::ActionForbiddenError, message: "Processed job cannot be cancelled" if processed?
 
-    canceled!
+    cancel_establishment!
     AsyncableJobMessaging.new(job: self, current_user: current_user).add_job_cancellation_note(text: note)
   end
 
