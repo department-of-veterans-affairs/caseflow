@@ -4,12 +4,11 @@ class JudgeTeam < Organization
   class << self
     def for_judge(user)
       if use_judge_team_roles?
-        # Collect all JudgeTeams this user administers
-        judge_teams_administered = user.administered_teams.select { |team| team.is_a?(JudgeTeam) }
-        return unless judge_teams_administered.any?
+        administered_judge_teams = user.administered_judge_teams
+        return unless administered_judge_teams.any?
 
         # Find the one, if any, we're the JudgeTeamLead for
-        judge_teams_administered.each do |judge_team|
+        administered_judge_teams.each do |judge_team|
           if user == judge_team.judge
             return judge_team
           end

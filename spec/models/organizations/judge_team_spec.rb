@@ -159,7 +159,6 @@ describe JudgeTeam, :postgres do
         let(:other_judge_team) { create(:judge_team) }
         before { populate_judgeteam_for_testing(other_judge_team, other_judge, [judge]) }
 
-
         it "should create a new organization and make the user an admin of that group" do
           expect(JudgeTeam.for_judge(judge)).to eq(nil)
           expect { subject }.to_not raise_error
@@ -319,7 +318,6 @@ describe JudgeTeam, :postgres do
       expect(attorney.organizations_users.first.organization).to eq(judge_team)
     end
   end
-
 
   private
 
