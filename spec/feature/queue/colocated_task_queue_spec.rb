@@ -65,9 +65,10 @@ RSpec.feature "ColocatedTask", :all_dbs do
       # Click into case details page. Expect to see draft decision option.
       click_on(appeal.veteran.name.formatted(:readable_full))
       # verify that the instructions from the VLJ appear on the case timeline
+      expect(page).to have_content("Case Timeline")
       scroll_to("#case_timeline-section")
-      view_text = COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
-      page.find_all("table#case-timeline-table button", text: view_text).each(&:click)
+      poa_task = PoaClarificationColocatedTask.find_by(assigned_to_type: User.name)
+      click_button(COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, id: poa_task.id)
       expect(page).to have_content("INSTRUCTIONS FROM VLJ", wait: 15)
       find(".Select-control", text: "Select an action…").click
       expect(page).to have_content(Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label])
