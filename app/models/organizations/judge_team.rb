@@ -23,12 +23,8 @@ class JudgeTeam < Organization
     def create_for_judge(user)
       fail(Caseflow::Error::DuplicateJudgeTeam, user_id: user.id) if JudgeTeam.for_judge(user)
 
-      # TODO: Becomes: fail if already a JudgeTeamLead on a judge team
-
-      # TODO: Might be already correct?
       create!(name: user.css_id, url: user.css_id.downcase).tap do |org|
-        # TODO: clarify this note? v
-        # Add the JudgeTeamLead record in org.add_user which gets triggered by OrganizationsUser.make_user_admin
+        # make_user_admin invokes add_user, which handles adding the JudgeTeamLead JudgeTeamRole
         OrganizationsUser.make_user_admin(user, org)
       end
     end
@@ -51,7 +47,6 @@ class JudgeTeam < Organization
   def judge
     if use_judge_team_roles?
       judge_team_roles.detect { |role| role.is_a?(JudgeTeamLead) }.organizations_user.user
-      # TODO: doublcheck this is a DB constraint
     else
       admins.first
     end
