@@ -115,41 +115,86 @@ describe JudgeTeam, :postgres do
         end
       end
     end
-
-    describe ".can_receive_task?" do
-      it "should return false because judge teams should not have tasks assigned to them in the web UI" do
-        expect(JudgeTeam.create_for_judge(judge).can_receive_task?(nil)).to eq(false)
-      end
-    end
-
-    describe "when a user is added to the JudgeTeam" do
-      let(:judge_team) { JudgeTeam.create_for_judge(judge) }
-      let(:attorney) { create(:user) }
-
-      subject { judge_team.add_user(attorney) }
-
-      it "adds an associated DecisionDraftingAttorney record for the newly added user" do
-        # Before we add the user to the judge team, the only member of the judge team should be the judge.
-        expect(judge_team.users.count).to eq(1)
-        expect(judge_team.users.first).to eq(judge)
-
-        expect { subject }.to_not raise_error
-
-        expect(judge_team.users.count).to eq(2)
-        expect(judge_team.users.first).to eq(judge)
-        expect(judge_team.users.second).to eq(attorney)
-
-        # Make sure that the user we just added has the JudgeTeamRole of DecisionDraftingAttorney for the judge team.
-        expect(attorney.organizations_users.length).to eq(1)
-        expect(attorney.organizations_users.first.judge_team_role).to be_a(DecisionDraftingAttorney)
-        expect(attorney.organizations_users.first.organization).to eq(judge_team)
-      end
-    end
   end
 
   describe "feature use_judge_team_roles activated" do
     before { FeatureToggle.enable!(:use_judge_team_role) }
     after { FeatureToggle.disable!(:use_judge_team_role) }
+
+    describe ".create_for_judge" do
+      subject { JudgeTeam.create_for_judge(judge) }
+
+      context "when user is neither admin nor JudgeTeamLead of an existing JudgeTeam" do
+        it "should create a new organization and make the user an admin of that group" do
+          expect(judge.organizations.length).to eq(0)
+          expect(JudgeTeam.for_judge(judge)).to eq(nil)
+
+          expect { subject }.to_not raise_error
+          judge.reload
+
+          expect(judge.organizations.length).to eq(1)
+          expect(judge.administered_teams.length).to eq(1)
+          expect(judge.administered_teams.first.class).to eq(JudgeTeam)
+          expect(judge.administered_teams.first.url).to eq(judge.css_id.downcase.parameterize.dasherize)
+          expect(JudgeTeam.for_judge(judge)).not_to eq(nil)
+        end
+
+        it "creates association with a JudgeTeamLead role with the judge" do
+          # Confirm there are no JudgeTeamLead entities associated with this judge.
+          expect(JudgeTeamLead.count).to eq(0)
+
+          judge_team = subject
+
+          # Find the association we should have created.
+          org_user = OrganizationsUser.find_by(organization: judge_team, user: judge)
+
+          # Make sure there is a JudgeTeamLead connected to it.
+          expect(org_user.judge_team_role).to be_a(JudgeTeamLead)
+        end
+      end
+
+      context "when user is already an admin of an existing JudgeTeam, but not JudgeTeamLead" do
+        let(:other_judge) { create(:user) }
+        let(:judge) { create(:user) }
+        let(:other_judge_team) { create(:judge_team) }
+        before { populate_judgeteam_for_testing(other_judge_team, other_judge, [judge]) }
+
+
+        it "should create a new organization and make the user an admin of that group" do
+          expect(JudgeTeam.for_judge(judge)).to eq(nil)
+          expect { subject }.to_not raise_error
+
+          judge.reload
+
+          expect(JudgeTeam.for_judge(judge)).not_to eq(nil)
+          expect(JudgeTeam.for_judge(judge)).not_to eq(other_judge_team)
+        end
+
+        it "creates association with a JudgeTeamLead role with the judge" do
+          # Confirm there are no JudgeTeamLead entities associated with this judge.
+          expect(JudgeTeamLead.count).to eq(1)
+
+          judge_team = subject
+
+          expect(JudgeTeamLead.count).to eq(2)
+
+          # Find the association we should have created.
+          org_user = OrganizationsUser.find_by(organization: judge_team, user: judge)
+
+          # Make sure there is a JudgeTeamLead connected to it.
+          expect(org_user.judge_team_role).to be_a(JudgeTeamLead)
+        end
+      end
+
+      context "when user is already a JudgeTeamLead for a JudgeTeam" do
+        before { JudgeTeam.create_for_judge(judge) }
+
+        it "raises an error and fails to create the new JudgeTeam" do
+          judge.reload
+          expect { subject }.to raise_error(Caseflow::Error::DuplicateJudgeTeam)
+        end
+      end
+    end
 
     describe ".for_judge" do
       context "when user is admin of a non-JudgeTeam organization" do
@@ -244,6 +289,37 @@ describe JudgeTeam, :postgres do
       end
     end
   end
+
+  describe ".can_receive_task?" do
+    it "should return false because judge teams should not have tasks assigned to them in the web UI" do
+      expect(JudgeTeam.create_for_judge(judge).can_receive_task?(nil)).to eq(false)
+    end
+  end
+
+  describe "when a user is added to the JudgeTeam" do
+    let(:judge_team) { JudgeTeam.create_for_judge(judge) }
+    let(:attorney) { create(:user) }
+
+    subject { judge_team.add_user(attorney) }
+
+    it "adds an associated DecisionDraftingAttorney record for the newly added user" do
+      # Before we add the user to the judge team, the only member of the judge team should be the judge.
+      expect(judge_team.users.count).to eq(1)
+      expect(judge_team.users.first).to eq(judge)
+
+      expect { subject }.to_not raise_error
+
+      expect(judge_team.users.count).to eq(2)
+      expect(judge_team.users.first).to eq(judge)
+      expect(judge_team.users.second).to eq(attorney)
+
+      # Make sure that the user we just added has the JudgeTeamRole of DecisionDraftingAttorney for the judge team.
+      expect(attorney.organizations_users.length).to eq(1)
+      expect(attorney.organizations_users.first.judge_team_role).to be_a(DecisionDraftingAttorney)
+      expect(attorney.organizations_users.first.organization).to eq(judge_team)
+    end
+  end
+
 
   private
 
