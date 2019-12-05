@@ -205,25 +205,25 @@ class BulkTaskReassignment
 
       if !dry_run
         judge_review_tasks.each do |task|
-          atty_task = task.children_attorney_tasks.not_cancelled.order(:assigned_at).last
-          reassign_judge_review_task(task, atty_task)
+          attorney_task = task.children_attorney_tasks.not_cancelled.order(:assigned_at).last
+          reassign_judge_review_task(task, attorney_task)
         end
       end
     end
   end
 
-  def reassign_judge_review_task(task, atty_task)
+  def reassign_judge_review_task(task, attorney_task)
     reassigned_tasks = task.reassign(
       {
         assigned_to_type: User.name,
-        assigned_to_id: new_supervising_judge_from_task(atty_task).id,
+        assigned_to_id: new_supervising_judge_from_task(attorney_task).id,
         instructions: reassignment_instructions("reassigned")
       },
       task.assigned_by
     )
 
     # Move the attorney task under the new JudgeDecisionReviewTask assigned to the new judge
-    atty_task.update!(parent: reassigned_tasks.first)
+    attorney_task.update!(parent: reassigned_tasks.first)
   end
 
   # Cancels all AttorneyTasks and their parent JudgeDecisionReviewTask and opens a new JudgeAssignTask for each
