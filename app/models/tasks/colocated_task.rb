@@ -70,8 +70,7 @@ class ColocatedTask < Task
     end
 
     def find_subclass_by_type(type)
-      # why do I need ColocatedTask?
-      ColocatedTask.subclasses.find { |task_class| task_class.name == type }
+      subclasses.find { |task_class| task_class.name == type }
     end
 
     # Is this method still relevant given ticket #12279 and related tickets?
