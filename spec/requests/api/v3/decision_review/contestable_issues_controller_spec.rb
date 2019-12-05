@@ -72,10 +72,14 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
           end_product_last_action_date: source.receipt_date - 1.day,
           benefit_type: source.benefit_type,
           participant_id: veteran.ptcpnt_id,
-          decision_text: "a past decision issue from another review"
+          decision_text: "a past decision issue from another review",
+          rating_issue_reference_id: "1800"
         )
       end
 
+      let(:disability_dis_sn) { "98765" }
+      let(:diagnostic_code) { "777" }
+      let(:disability_id) { "123" }
       let(:issues) do
         date = Time.zone.today
         Generators::Rating.build(
@@ -89,8 +93,8 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
               original_denial_date: date - 7.days,
               diagnostic_text: "Broken arm",
               diagnostic_type: "Bone",
-              diagnostic_code: "CD123",
-              disability_id: "123",
+              diagnostic_code: diagnostic_code,
+              disability_id: disability_id,
               disability_date: date - 3.days,
               type_name: "Not Service Connected"
             },
@@ -99,13 +103,13 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
             {
               reference_id: "99999",
               decision_text: "Decision1",
-              dis_sn: "rating1"
+              dis_sn: disability_id
             }
           ],
           disabilities: [
             {
               dis_dt: date - 2.days,
-              dis_sn: "rating1",
+              dis_sn: disability_dis_sn,
               disability_evaluations: {
                 dis_dt: date - 2.days,
                 dgnstc_tc: "123456"
@@ -134,7 +138,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
       it 'should have ratingIssueDiagnosticCode attribute' do
         issue_with_rating_issue = issues.find { |i| i["attributes"].keys.include?("ratingIssueDiagnosticCode") }
         expect(issue_with_rating_issue).to be_present
-        expect(issue_with_rating_issue["attributes"]["ratingIssueDiagnosticCode"]).to match(/^\d+$/)
+        expect(issue_with_rating_issue["attributes"]["ratingIssueDiagnosticCode"]).to eq diagnostic_code
       end
       it 'should have description attribute' do
         issues.each do |issue|
@@ -160,10 +164,14 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
         expect(issue_with_decision_issue).to be_present
         expect(issue_with_decision_issue["attributes"]["decisionIssueId"]).to be_a Integer
       end
-      xit 'should have ratingDecisionId attribute' do
-        issue_with_rating_decision = issues.find { |i| i["attributes"].keys.include?("ratingDecisionId") }
-        expect(issue_with_rating_decision).to be_present
-        expect(issue_with_rating_decision["attributes"]["ratingDecisionId"]).to match(/^\d+$/)
+      context 'with contestable rating decisions enabled' do
+        before { FeatureToggle.enable!(:contestable_rating_decisions) }
+        after { FeatureToggle.disable!(:contestable_rating_decisions) }
+        it 'should have ratingDecisionId attribute' do
+          issue_with_rating_decision = issues.find { |i| i["attributes"].keys.include?("ratingDecisionId") }
+          expect(issue_with_rating_decision).to be_present
+          expect(issue_with_rating_decision["attributes"]["ratingDecisionId"]).to eq disability_dis_sn
+        end
       end
       it 'should have approxDecisionDate attribute' do
         issues.each do |issue|
