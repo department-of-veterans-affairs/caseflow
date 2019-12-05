@@ -51,6 +51,26 @@ describe PostDecisionMotionsController do
         expect(flash[:success]).to be_present
       end
     end
+
+    context "when there is no judge team" do
+      it "raises NonexistentJudgeTeam error" do
+        allow(controller).to receive(:verify_authentication).and_return(true)
+
+        task = create_task_without_unnecessary_models
+        assigned_to = user
+
+        params =
+          { disposition: "granted",
+            task_id: task.id,
+            vacate_type: "vacate_and_readjudication",
+            instructions: "formatted instructions",
+            assigned_to_id: assigned_to.id }
+
+        expect do
+          post :create, params: params
+        end.to raise_error(Caseflow::Error::NonexistentJudgeTeam)
+      end
+    end
   end
 
   def create_task_without_unnecessary_models
