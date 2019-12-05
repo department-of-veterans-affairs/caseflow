@@ -71,8 +71,8 @@ class BulkTaskReassignment
     assignee_judge_teams.where.not(name: user.css_id).first&.judge
   end
 
-  def reassignment_instructions(status)
-    format(COPY::BULK_REASSIGN_INSTRUCTIONS, status, user.css_id)
+  def reassignment_instructions(status_change_verb = "reassigned")
+    format(COPY::BULK_REASSIGN_INSTRUCTIONS, status_change_verb, user.css_id)
   end
 
   def update_task_status_with_instructions(task, status)
@@ -217,7 +217,7 @@ class BulkTaskReassignment
       {
         assigned_to_type: User.name,
         assigned_to_id: new_supervising_judge_from_task(attorney_task).id,
-        instructions: reassignment_instructions("reassigned")
+        instructions: reassignment_instructions
       },
       task.assigned_by
     )
@@ -287,7 +287,7 @@ class BulkTaskReassignment
             {
               assigned_to_type: User.name,
               assigned_to_id: next_assignee_id,
-              instructions: reassignment_instructions("reassigned")
+              instructions: reassignment_instructions
             }, task.assigned_by
           )
         end
