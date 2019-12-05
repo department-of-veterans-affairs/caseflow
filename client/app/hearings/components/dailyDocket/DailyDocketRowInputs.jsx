@@ -1,4 +1,3 @@
-
 import React from 'react';
 import _ from 'lodash';
 import { css } from 'glamor';
@@ -12,8 +11,11 @@ import { AppealHearingLocationsDropdown } from '../../../components/DataDropdown
 import HearingTime from '../modalForms/HearingTime';
 import { pencilSymbol } from '../../../components/RenderFunctions';
 import PropTypes from 'prop-types';
+import VirtualHearingLink from '../VirtualHearingLink';
 
 import { DISPOSITION_OPTIONS } from '../../constants';
+import { COLORS } from '../../../constants/AppConstants';
+import COPY from '../../../../COPY.json';
 
 const staticSpacing = css({ marginTop: '5px' });
 
@@ -340,4 +342,34 @@ PreppedCheckbox.propTypes = {
   hearing: PropTypes.object,
   readOnly: PropTypes.bool,
   update: PropTypes.func
+};
+
+export const StaticVirtualHearing = ({ hearing, user }) => (
+  <div>
+    <VirtualHearingLink
+      role={user.userId === hearing.judgeId ? 'host' : 'guest'}
+      isVirtual={hearing.isVirtual}
+      virtualHearing={hearing.virtualHearing}
+    />
+    {!hearing.virtualHearing.jobCompleted &&
+      <div {...staticSpacing}>
+        <span {...css({ color: COLORS.GREY_MEDIUM })}>
+          {COPY.VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS}
+        </span>
+      </div>
+    }
+  </div>
+);
+
+StaticVirtualHearing.propTypes = {
+  user: PropTypes.shape({
+    userId: PropTypes.number
+  }),
+  hearing: PropTypes.shape({
+    isVirtual: PropTypes.bool,
+    judgeId: PropTypes.number,
+    virtualHearing: PropTypes.shape({
+      jobCompleted: PropTypes.bool
+    })
+  })
 };

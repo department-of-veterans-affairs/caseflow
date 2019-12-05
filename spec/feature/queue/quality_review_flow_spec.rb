@@ -235,7 +235,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
       step "assign task to current user" do
         visit("/queue/appeals/#{appeal.uuid}")
         click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label)
-        click_dropdown(text: user.full_name)
+        click_dropdown({ text: user.full_name }, find(".cf-modal-body"))
         fill_in("instructions", with: "assigning to QR team member")
         click_on(COPY::MODAL_SUBMIT_BUTTON)
         expect(page).to have_content(format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, user.full_name))

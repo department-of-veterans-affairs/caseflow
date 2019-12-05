@@ -14,9 +14,9 @@ class BaseHearingUpdateForm
     ActiveRecord::Base.transaction do
       update_hearing
       add_update_hearing_alert
-
-      if !virtual_hearing_attributes.blank?
+      if virtual_hearing_form_or_hearing_time_was_updated?
         was_created = create_or_update_virtual_hearing
+        hearing.reload
         start_async_job
         add_virtual_hearing_alert(changed_to_virtual: was_created)
       end
@@ -33,8 +33,12 @@ class BaseHearingUpdateForm
 
   private
 
+  def virtual_hearing_form_or_hearing_time_was_updated?
+    !virtual_hearing_attributes.blank? || (hearing.virtual? && scheduled_time_string.present?)
+  end
+
   def start_async_job
-    if hearing.virtual_hearing.status == "pending"
+    if hearing.virtual_hearing.status == "pending" || !hearing.virtual_hearing.all_emails_sent?
       hearing.virtual_hearing.establishment.submit_for_processing!
       VirtualHearings::CreateConferenceJob.perform_now(hearing_id: hearing.id)
     end
@@ -43,7 +47,7 @@ class BaseHearingUpdateForm
   def email_sent_flag(attr_key)
     status_changed = virtual_hearing_attributes.key?(:status)
 
-    !(status_changed || virtual_hearing_attributes.key?(attr_key))
+    !(status_changed || virtual_hearing_attributes.key?(attr_key) || scheduled_time_string.present?)
   end
 
   def create_or_update_virtual_hearing
@@ -79,7 +83,8 @@ class BaseHearingUpdateForm
     alerts << VirtualHearingUserAlertBuilder.new(
       changed_to_virtual: changed_to_virtual,
       virtual_hearing_attributes: virtual_hearing_attributes,
-      veteran_full_name: veteran_full_name
+      veteran_full_name: veteran_full_name,
+      hearing_time_changed: scheduled_time_string.present?
     ).call.to_hash
   end
 

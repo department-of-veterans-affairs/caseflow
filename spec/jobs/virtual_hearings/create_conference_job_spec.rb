@@ -15,6 +15,8 @@ describe VirtualHearings::CreateConferenceJob, :all_dbs do
       expect(virtual_hearing.conference_id).to eq(9001)
       expect(virtual_hearing.status).to eq("active")
       expect(virtual_hearing.alias).to eq("0000001")
+      expect(virtual_hearing.host_pin.nil?).to eq(false)
+      expect(virtual_hearing.guest_pin.nil?).to eq(false)
     end
 
     it "sends confirmation emails if success and is processed", :aggregate_failures do

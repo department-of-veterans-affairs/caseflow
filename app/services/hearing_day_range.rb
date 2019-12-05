@@ -96,7 +96,6 @@ class HearingDayRange
 
   def open_hearing_days_with_hearings_hash(current_user_id = nil)
     hearing_days_with_virtual_hearings = HearingDaysWithVirtualHearingsQuery.new.call
-      .select(:id)
       .map(&:id)
       .to_set
 

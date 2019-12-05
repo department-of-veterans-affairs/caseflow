@@ -189,10 +189,9 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         let!(:virtual_hearing) do
           create(
             :virtual_hearing,
+            :all_emails_sent,
             hearing: hearing,
-            representative_email_sent: true,
-            veteran_email_sent: true,
-            judge_email_sent: true
+            conference_id: "000000"
           )
         end
         let(:virtual_hearing_params) do
@@ -205,9 +204,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           expect(subject.status).to eq(200)
           virtual_hearing.reload
           expect(virtual_hearing.cancelled?).to eq(true)
-          expect(virtual_hearing.veteran_email_sent).to eq(false)
-          expect(virtual_hearing.judge_email_sent).to eq(false)
-          expect(virtual_hearing.representative_email_sent).to eq(false)
+          expect(virtual_hearing.all_emails_sent?).to eq(true)
         end
       end
     end

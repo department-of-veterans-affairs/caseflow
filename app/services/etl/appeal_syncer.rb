@@ -12,7 +12,7 @@ class ETL::AppealSyncer < ETL::Syncer
   private
 
   def instances_needing_update
-    return origin_class unless incremental?
+    return origin_class.established unless incremental?
 
     AppealsUpdatedSinceQuery.new(since_date: since).call
   end
