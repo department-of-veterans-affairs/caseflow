@@ -217,6 +217,8 @@ class TasksController < ApplicationController
 
       task.delete(:external_id)
       task = task.merge(assigned_to_type: User.name) if !task[:assigned_to_type]
+
+      task.delete(:label) if task[:label]
       task
     end
   end
