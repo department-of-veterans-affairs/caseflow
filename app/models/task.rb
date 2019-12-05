@@ -378,13 +378,8 @@ class Task < ApplicationRecord
     return reassign(params[:reassign], current_user) if params[:reassign]
 
     update_with_instructions(params)
-    
-    [self]
-  end
 
-  def update_with_instructions(params)
-    params[:instructions] = flattened_instructions(params)
-    update!(params)
+    [self]
   end
 
   def update_with_instructions(params)
