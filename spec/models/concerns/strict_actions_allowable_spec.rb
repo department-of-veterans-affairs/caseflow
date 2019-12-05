@@ -15,6 +15,18 @@ describe StrictActionsAllowable do
     prepend StrictActionsAllowable
   end
 
+  def expect_allows_actions(task, user)
+    expect_any_instance_of(AlwaysAllowableTask).to receive(:actions_allowable?).twice.and_return(true)
+    expect(task.actions_allowable?(user)).to eq true
+    expect(task.available_actions_unwrapper(user)).to eq [Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h]
+  end
+
+  def expect_does_not_allow_actions(task, user)
+    expect_any_instance_of(AlwaysAllowableTask).to_not receive(:actions_allowable?)
+    expect(task.actions_allowable?(user)).to eq false
+    expect(task.available_actions_unwrapper(user)).to eq []
+  end
+
   let!(:user) { create(:user) }
   let(:task_status) { Constants.TASK_STATUSES.assigned }
 
@@ -26,9 +38,7 @@ describe StrictActionsAllowable do
       before { organization.add_user(user) }
 
       it "does not allow actions" do
-        expect_any_instance_of(AlwaysAllowableTask).to_not receive(:actions_allowable?)
-        expect(task.actions_allowable?(user)).to eq false
-        expect(task.available_actions_unwrapper(user)).to eq []
+        expect_does_not_allow_actions(task, user)
       end
     end
 
@@ -36,9 +46,7 @@ describe StrictActionsAllowable do
       before { OrganizationsUser.make_user_admin(user, organization) }
 
       it "allows actions" do
-        expect_any_instance_of(AlwaysAllowableTask).to receive(:actions_allowable?).twice.and_return(true)
-        expect(task.actions_allowable?(user)).to eq true
-        expect(task.available_actions_unwrapper(user)).to eq [Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h]
+        expect_allows_actions(task, user)
       end
     end
   end
@@ -47,9 +55,7 @@ describe StrictActionsAllowable do
     let!(:task) { TestTask.new(assigned_to: user, status: task_status) }
 
     it "allows actions" do
-      expect_any_instance_of(AlwaysAllowableTask).to receive(:actions_allowable?).twice.and_return(true)
-      expect(task.actions_allowable?(user)).to eq true
-      expect(task.available_actions_unwrapper(user)).to eq [Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h]
+      expect_allows_actions(task, user)
     end
   end
 
@@ -58,9 +64,7 @@ describe StrictActionsAllowable do
     let!(:task) { TestTask.new(assigned_to: other_user, status: task_status) }
 
     it "does not allow actions" do
-      expect_any_instance_of(AlwaysAllowableTask).to_not receive(:actions_allowable?)
-      expect(task.actions_allowable?(user)).to eq false
-      expect(task.available_actions_unwrapper(user)).to eq []
+      expect_does_not_allow_actions(task, user)
     end
   end
 end
