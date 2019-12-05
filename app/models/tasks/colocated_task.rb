@@ -68,7 +68,7 @@ class ColocatedTask < Task
     def find_subclass_by_action(action)
       subclasses.find { |task_class| task_class.label == Constants::CO_LOCATED_ADMIN_ACTIONS[action] }
     end
-    
+
     def find_subclass_by_type(type)
       # why do I need ColocatedTask?
       ColocatedTask.subclasses.find { |task_class| task_class.name == type }
