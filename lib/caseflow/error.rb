@@ -203,7 +203,7 @@ module Caseflow::Error
     end
   end
 
-  class NonexistantJudgeTeam < StandardError
+  class NonexistentJudgeTeam < StandardError
     def initialize(args)
       @user_id = args[:user_id]
     end

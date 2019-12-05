@@ -9,7 +9,7 @@ class StraightVacateTask < DecidedMotionToVacateTask
     def org(user)
       team = JudgeTeam.for_judge(user.reload)
 
-      fail(Caseflow::Error::NonexistantJudgeTeam, user_id: user.id) if team.nil?
+      fail(Caseflow::Error::NonexistentJudgeTeam, user_id: user.id) if team.nil?
 
       team
     end
