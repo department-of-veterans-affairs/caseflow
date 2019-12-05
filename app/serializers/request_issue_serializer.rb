@@ -3,7 +3,6 @@
 class RequestIssueSerializer
   include FastJsonapi::ObjectSerializer
 
-  # converts ui_hash into a serializer
   attribute :id
   attribute :rating_issue_reference_id, &:contested_rating_issue_reference_id
   attribute :rating_issue_profile_date, &:contested_rating_issue_profile_date

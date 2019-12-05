@@ -2,7 +2,7 @@
 
 class RatingSerializer
   include FastJsonapi::ObjectSerializer
-  set_id(&:participant_id)
+  set_id(&:profile_date)
 
   attribute :participant_id
   attribute :profile_date
