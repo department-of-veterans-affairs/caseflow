@@ -10,12 +10,15 @@ class FetchDocumentsForReaderJob
   def process
     setup_debug_context
     appeals.each { |appeal| fetch_for_appeal(appeal) }
+    log_info
   rescue VBMS::FilenumberDoesNotExist => error
     # there is nothing actionable here, since it reflects data changes on the VBMS side.
     # we do not want to retry since it will never work.
     Rails.logger.error error
+    log_error
   rescue StandardError => error
     Rails.logger.error error
+    log_error
     # raising an exception here triggers a retry through shoryuken
     raise error
   end
@@ -41,5 +44,18 @@ class FetchDocumentsForReaderJob
       station_id: user.station_id,
       regional_office: user.regional_office
     )
+  end
+
+  def log_info
+    Rails.logger.info log_message
+  end
+
+  def log_error
+    Rails.logger.error log_message("ERROR")
+  end
+
+  def log_message(status = "SUCCESS")
+    "FetchDocumentsForReaderUserJob (user_id: #{user.id}) #{status}. " \
+      "Retrieved #{@appeals_successful} / #{appeals.count} appeals"
   end
 end
