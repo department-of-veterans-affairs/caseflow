@@ -102,7 +102,11 @@ class HearingDetails extends React.Component {
         representativeEmail: virtualHearing.representativeEmail,
         status: virtualHearing.status,
         // not used in form
-        jobCompleted: virtualHearing.jobCompleted
+        jobCompleted: virtualHearing.jobCompleted,
+        clientHost: virtualHearing.clientHost,
+        alias: virtualHearing.alias,
+        hostPin: virtualHearing.hostPin,
+        guestPin: virtualHearing.guestPin
       }
     };
   }

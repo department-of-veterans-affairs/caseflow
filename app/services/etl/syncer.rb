@@ -15,6 +15,8 @@ class ETL::Syncer
   def call
     target_class.transaction do
       instances_needing_update.find_each do |original|
+        next if filter?(original)
+
         target_class.sync_with_original(original).save!
       end
     end
@@ -26,6 +28,10 @@ class ETL::Syncer
 
   def target_class
     fail "Must override abstract method target_class"
+  end
+
+  def filter?(_original)
+    false
   end
 
   private
