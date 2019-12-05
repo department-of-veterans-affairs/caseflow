@@ -71,6 +71,14 @@ class BulkTaskReassignment
     assignee_judge_teams.where.not(name: user.css_id).first&.judge
   end
 
+  def reassignment_instructions(status_change_verb = "reassigned")
+    format(COPY::BULK_REASSIGN_INSTRUCTIONS, status_change_verb, user.css_id)
+  end
+
+  def update_task_status_with_instructions(task, status)
+    task.update_with_instructions(status: status, instructions: reassignment_instructions(status))
+  end
+
   def check_error_states_of_tasks
     # Check for tasks in a bad state as outlined in
     # department-of-veterans-affairs/caseflow/blob/4fd949f3fb77c0aa0ec2854a3e5310a320aecd03/docs/11811_tech_spec.md
@@ -177,7 +185,7 @@ class BulkTaskReassignment
       if !dry_run
         judge_assign_tasks.each do |task|
           DistributionTask.create!(appeal: task.appeal, parent: task.appeal.root_task)
-          task.update!(status: Constants.TASK_STATUSES.cancelled)
+          update_task_status_with_instructions(task, Constants.TASK_STATUSES.cancelled)
         end
       end
     end
@@ -197,17 +205,25 @@ class BulkTaskReassignment
 
       if !dry_run
         judge_review_tasks.each do |task|
-          atty_task = task.children_attorney_tasks.not_cancelled.order(:assigned_at).last
-          reassigned_tasks = task.reassign(
-            { assigned_to_type: User.name, assigned_to_id: new_supervising_judge_from_task(atty_task).id },
-            task.assigned_by
-          )
-
-          # Move the attorney task under the new JudgeDecisionReviewTask assigned to the new judge
-          atty_task.update!(parent: reassigned_tasks.first)
+          attorney_task = task.children_attorney_tasks.not_cancelled.order(:assigned_at).last
+          reassign_judge_review_task(task, attorney_task)
         end
       end
     end
+  end
+
+  def reassign_judge_review_task(task, attorney_task)
+    reassigned_tasks = task.reassign(
+      {
+        assigned_to_type: User.name,
+        assigned_to_id: new_supervising_judge_from_task(attorney_task).id,
+        instructions: reassignment_instructions
+      },
+      task.assigned_by
+    )
+
+    # Move the attorney task under the new JudgeDecisionReviewTask assigned to the new judge
+    attorney_task.update!(parent: reassigned_tasks.first)
   end
 
   # Cancels all AttorneyTasks and their parent JudgeDecisionReviewTask and opens a new JudgeAssignTask for each
@@ -223,10 +239,18 @@ class BulkTaskReassignment
 
       if !dry_run
         attorney_tasks.each do |task|
-          task.update!(status: Constants.TASK_STATUSES.cancelled)
+          reassign_attorney_task(task)
         end
       end
     end
+  end
+
+  def reassign_attorney_task(task)
+    update_task_status_with_instructions(task, Constants.TASK_STATUSES.cancelled)
+    task.parent.update_with_instructions(instructions: reassignment_instructions(Constants.TASK_STATUSES.cancelled))
+    task.appeal.tasks.open.find_by(type: JudgeAssignTask.name).update_with_instructions(
+      instructions: reassignment_instructions(Constants.TASK_STATUSES.assigned)
+    )
   end
 
   def reassign_tasks_with_parent_org_tasks(tasks)
@@ -246,7 +270,7 @@ class BulkTaskReassignment
   end
 
   # Reassigns all tasks under organizations that use a RoundRobinTaskDistributor to other members of that organization
-  # Assumes the user has been removed from this organization, which will automatically happen is they are made inactive
+  # Assumes the user has been removed from this organization, which will automatically happen if they are made inactive
   def reassign_automatically_assigned_org_tasks(tasks, organization)
     active_org_user_count = organization.users.active.count
 
@@ -259,7 +283,13 @@ class BulkTaskReassignment
       tasks.in_groups(active_org_user_count, false).each do |task_group|
         next_assignee_id = organization.next_assignee.id
         task_group.each do |task|
-          task.reassign({ assigned_to_type: User.name, assigned_to_id: next_assignee_id }, task.assigned_by)
+          task.reassign(
+            {
+              assigned_to_type: User.name,
+              assigned_to_id: next_assignee_id,
+              instructions: reassignment_instructions
+            }, task.assigned_by
+          )
         end
       end
     end
@@ -274,11 +304,11 @@ class BulkTaskReassignment
 
     if !dry_run
       parent_tasks.update_all(status: Constants.TASK_STATUSES.assigned)
-      tasks.update_all(status: Constants.TASK_STATUSES.cancelled)
+      tasks.each { |task| update_task_status_with_instructions(task, Constants.TASK_STATUSES.cancelled) }
     end
   end
 
-  # Cancels all user tasks and makes thie parent tasks available for manual reassignment
+  # Cancels all user tasks and makes the parent tasks available for manual reassignment
   def reassign_tasks_with_parent_user_tasks(tasks)
     parents_assigned_to_users = Task.where(id: tasks.pluck(:parent_id), assigned_to_type: User.name)
     tasks_with_parent_user_tasks = tasks.where(parent: parents_assigned_to_users)
@@ -291,7 +321,9 @@ class BulkTaskReassignment
 
       if !dry_run
         parents_assigned_to_users.update_all(status: Constants.TASK_STATUSES.assigned)
-        tasks_with_parent_user_tasks.update_all(status: Constants.TASK_STATUSES.cancelled)
+        tasks_with_parent_user_tasks.each do |task|
+          update_task_status_with_instructions(task, Constants.TASK_STATUSES.cancelled)
+        end
       end
     end
   end
