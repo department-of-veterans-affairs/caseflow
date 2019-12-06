@@ -14,7 +14,7 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
     end
 
     receipt_date = Date.parse(request.headers["receiptDate"])
-    if receipt_date < Constants::DATES["AMA_ACTIVATION"].to_date || Date.today < receipt_date
+    if receipt_date < Constants::DATES["AMA_ACTIVATION"].to_date || Time.zone.today < receipt_date
       render_error(
         status: 422,
         code: :bad_receipt_date,
@@ -27,11 +27,13 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
     standin_claim_review = HigherLevelReview.new(
       veteran_file_number: veteran.file_number,
       receipt_date: receipt_date,
-      benefit_type: "compensation" # must be in ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE for can_contest_rating_issues?
+      # must be in ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE for can_contest_rating_issues?
+      benefit_type: "compensation"
     )
     issues = ContestableIssueGenerator.new(standin_claim_review).contestable_issues
     # this generates this error in UAT:
-    #  BGS::PublicError (Logon ID APIUSER Not Found in the Benefits Gateway Service (BGS). Contact your ISO if you need assistance gaining access to BGS.)
+    #  BGS::PublicError (Logon ID APIUSER Not Found in the Benefits Gateway Service (BGS). Contact your
+    #     ISO if you need assistance gaining access to BGS.)
     render json: issues.collect { |issue| contestable_issue_data(issue) }
   end
 
@@ -52,7 +54,7 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
       titleOfActiveReview: contestable_issue.title_of_active_review,
       sourceReviewType: contestable_issue.source_review_type,
       timely: contestable_issue.timely?
-    }.reject { |_, value| value.nil? } # REVIEW: should i drop nils?
+    }.reject { |_, value| value.nil? }
 
     {
       type: "ContestableIssue",

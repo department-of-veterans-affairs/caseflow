@@ -186,7 +186,11 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
       end
       it "should have titleOfActiveReview attribute" do
         decision_review = create(:supplemental_claim, veteran_file_number: veteran.file_number)
-        conflicting_request_issue = create(:request_issue, decision_review: decision_review, contested_rating_issue_reference_id: rating_issue_reference_id)
+        create(
+          :request_issue,
+          decision_review: decision_review,
+          contested_rating_issue_reference_id: rating_issue_reference_id
+        )
         issue_with_rating_issue = issues.find { |i| i["attributes"].key?("titleOfActiveReview") }
         expect(issue_with_rating_issue).to be_present
         expect(issue_with_rating_issue["attributes"]["titleOfActiveReview"]).to eq decision_review.class.review_title
