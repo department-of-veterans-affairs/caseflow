@@ -24,7 +24,7 @@ class VeteranProfile
       summary[klass.to_s] = klass.where(veteran_file_number: veteran_file_number).count
     end
     summary["Hearing"] = Hearing.joins(:appeal).where(appeals: { veteran_file_number: veteran_file_number }).count
-    summary["ratings"] = BGSService.new.get_rating_record(veteran.participant_id) if veteran
+    summary["ratings"] = veteran ? BGSService.new.get_rating_record(veteran.participant_id) : {}
     summary
   end
 
@@ -33,7 +33,7 @@ class VeteranProfile
   attr_reader :veteran_file_number, :summary
 
   def summary
-    @summary ||= {}
+    @summary ||= { file_number: veteran_file_number }
   end
 
   def veteran
