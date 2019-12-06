@@ -4,6 +4,9 @@ class Api::V3::DecisionReview::IntakeParams
   OBJECT = [Hash, ActionController::Parameters, ActiveSupport::HashWithIndifferentAccess]
   BOOL = [true, false]
 
+  INCLUDED_PATH = ["included"]
+  LEGACY_APPEAL_ISSUES_PATH = ["attributes", "legacyAppealIssues"]
+
   def initialize(params)
     @params = params
   end
@@ -196,7 +199,7 @@ class Api::V3::DecisionReview::IntakeParams
     # [[String], ["included", 5, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
     # [[String], ["included", 5, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]],
     # ...
-      *all_legacy_appeal_issue_paths.reduce([]) do |acc, path| # ^^^
+      *legacy_appeal_issues_arrays.reduce([]) do |acc, path| # ^^^
         [
           *acc,
           *for_array_at_path_enumerate_types_and_paths(
@@ -217,26 +220,16 @@ class Api::V3::DecisionReview::IntakeParams
   # example return:
   #
   # [
-  #   ["included", 0, "legacyAppealIssues", 0]
-  #   ["included", 0, "legacyAppealIssues", 1]
-  #   ["included", 3, "legacyAppealIssues", 0]
-  #   ["included", 4, "legacyAppealIssues", 0]
-  #   ["included", 4, "legacyAppealIssues", 1]
-  #   ["included", 4, "legacyAppealIssues", 2]
+  #   ["included", 0, "legacyAppealIssues"]
+  #   ["included", 3, "legacyAppealIssues"]
+  #   ["included", 4, "legacyAppealIssues"]
   # ]
   #
-  def all_legacy_appeal_issue_paths
-    @params["included"].each.with_index.reduce([]) do |acc, (contestable_issue, ci_index)|
-      legacy_appeal_issues = contestable_issue["attributes"]["legacyAppealIssues"]
+  def legacy_appeal_issues_arrays
+    @params.dig(*INCLUDED_PATH).each.with_index.reduce([]) do |acc, (contestable_issue, ci_index)|
+      next acc unless contestable_issue.dig(*LEGACY_APPEAL_ISSUES_PATH).is_a? Array
   
-      next acc unless legacy_appeal_issues.is_a? Array
-  
-      [
-        *acc,
-        *legacy_appeal_issues.map.with_index do |_, lai_index|
-          ["included", ci_index, "legacyAppealIssues", lai_index]
-        end
-      ]
+      [ *acc, [*INCLUDED_PATH, ci_index, *LEGACY_APPEAL_ISSUES_PATH] ]
     end
   rescue
     []

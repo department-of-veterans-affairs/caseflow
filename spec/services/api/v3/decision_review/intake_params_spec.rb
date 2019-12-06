@@ -311,13 +311,14 @@ context Api::V3::DecisionReview::IntakeParams do
     end
   end
 
+=begin
   describe "#all_legacy_appeal_issue_paths" do
     subject { intake_params.send(:all_legacy_appeal_issue_paths) }
 
     it do
       is_expected.to eq(
         [
-          ["included", 0, "legacyAppealIssues", 0]
+          ["included", 0, "attributes", "legacyAppealIssues", 0]
         ]
       )
     end
@@ -361,17 +362,87 @@ context Api::V3::DecisionReview::IntakeParams do
       it do
         is_expected.to eq(
           [
-            ["included", 2, "legacyAppealIssues", 0],
-            ["included", 6, "legacyAppealIssues", 0],
-            ["included", 6, "legacyAppealIssues", 1],
-            ["included", 6, "legacyAppealIssues", 2],
-            ["included", 7, "legacyAppealIssues", 0],
+            ["included", 2, "attributes", "legacyAppealIssues", 0],
+            ["included", 6, "attributes", "legacyAppealIssues", 0],
+            ["included", 6, "attributes", "legacyAppealIssues", 1],
+            ["included", 6, "attributes", "legacyAppealIssues", 2],
+            ["included", 7, "attributes", "legacyAppealIssues", 0],
             # no 8 (empty array)
-            ["included", 9, "legacyAppealIssues", 0],
-            ["included", 9, "legacyAppealIssues", 1],
-            ["included", 9, "legacyAppealIssues", 2]
+            ["included", 9, "attributes", "legacyAppealIssues", 0],
+            ["included", 9, "attributes", "legacyAppealIssues", 1],
+            ["included", 9, "attributes", "legacyAppealIssues", 2]
           ]
         )
+      end
+    end
+  end
+=end
+
+  describe "#types_and_paths" do
+    let(:object) { Api::V3::DecisionReview::IntakeParams::OBJECT }
+    let(:bool) { Api::V3::DecisionReview::IntakeParams::BOOL }
+    subject { intake_params.send(:types_and_paths) }
+
+    let(:expected_array) do
+      [
+        [object, ["data"]],
+        [["HigherLevelReview"], %w[data type]],
+        [object,         %w[data attributes]],
+        [[String, nil],  %w[data attributes receiptDate]],
+        [bool,           %w[data attributes informalConference]],
+        [[Array, nil],   %w[data attributes informalConferenceTimes]],
+        [[String, nil],  ["data", "attributes", "informalConferenceTimes", 0]],
+        [[String, nil],  ["data", "attributes", "informalConferenceTimes", 1]],
+        [[nil],          ["data", "attributes", "informalConferenceTimes", 2]],
+        [[*object, nil], %w[data attributes informalConferenceRep]],
+        [[String],       ["data", "attributes", "informalConferenceRep name"]],
+        [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumber"]],
+        [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumberCountryCode"]],
+        [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumberExt"]],
+        [bool,           %w[data attributes sameOffice]],
+        [bool,           %w[data attributes legacyOptInApproved]],
+        [[String],       %w[data attributes benefitType]],
+        [object,         %w[data attributes veteran]],
+        [[String],       %w[data attributes veteran fileNumberOrSsn]],
+        [[String, nil],  %w[data attributes veteran addressLine1]],
+        [[String, nil],  %w[data attributes veteran addressLine2]],
+        [[String, nil],  %w[data attributes veteran city]],
+        [[String, nil],  %w[data attributes veteran stateProvinceCode]],
+        [[String, nil],  %w[data attributes veteran countryCode]],
+        [[String, nil],  %w[data attributes veteran zipPostalCode]],
+        [[String, nil],  %w[data attributes veteran phoneNumber]],
+        [[String, nil],  %w[data attributes veteran phoneNumberCountryCode]],
+        [[String, nil],  %w[data attributes veteran phoneNumberExt]],
+        [[String, nil],  %w[data attributes veteran emailAddress]],
+        [[*object, nil], %w[data attributes claimant]],
+        [[String],       %w[data attributes claimant participantId]],
+        [[String],       %w[data attributes claimant payeeCode]],
+        [[String, nil],  %w[data attributes claimant addressLine1]],
+        [[String, nil],  %w[data attributes claimant addressLine2]],
+        [[String, nil],  %w[data attributes claimant city]],
+        [[String, nil],  %w[data attributes claimant stateProvinceCode]],
+        [[String, nil],  %w[data attributes claimant countryCode]],
+        [[String, nil],  %w[data attributes claimant zipPostalCode]],
+        [[String, nil],  %w[data attributes claimant phoneNumber]],
+        [[String, nil],  %w[data attributes claimant phoneNumberCountryCode]],
+        [[String, nil],  %w[data attributes claimant phoneNumberExt]],
+        [[String, nil],  %w[data attributes claimant emailAddress]],
+        [[Array],        ["included"]],
+        [object,               ["included", 0]],
+        [["ContestableIssue"], ["included", 0, "type"]],
+        [[Integer, nil],       ["included", 0, "attributes", "decisionIssueId"]],
+        [[String, nil],        ["included", 0, "attributes", "ratingIssueId"]],
+        [[String, nil],        ["included", 0, "attributes", "ratingDecisionIssueId"]],
+        [[Array, nil],         ["included", 0, "attributes", "legacyAppealIssues"]],
+        [object,   ["included", 0, "attributes", "legacyAppealIssues", 0]],
+        [[String], ["included", 0, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
+        [[String], ["included", 0, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]]
+      ]
+    end
+
+    it do
+      expected_array.each.with_index do |expected, index|
+        expect(subject[index]).to eq(expected)
       end
     end
   end
