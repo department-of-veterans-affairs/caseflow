@@ -9,8 +9,7 @@ import ReaderLink from '../ReaderLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 
-import { taskHasCompletedHold, hasDASRecord, collapseColumn, actionNameOfTask, regionalOfficeCity,
-  renderAppealType } from '../utils';
+import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
 import { DateString } from '../../util/DateUtil';
 
 import COPY from '../../../COPY.json';
@@ -96,9 +95,9 @@ export const taskColumn = (tasks, filterOptions) => {
     filterOptions,
     label: 'Filter by task',
     valueName: 'label',
-    valueFunction: (task) => actionNameOfTask(task),
+    valueFunction: (task) => task.label,
     backendCanSort: true,
-    getSortValue: (task) => actionNameOfTask(task)
+    getSortValue: (task) => task.label
   };
 };
 

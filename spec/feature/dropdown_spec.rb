@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Dropdown", :postgres do
   scenario "Dropdown works on both erb and react pages" do
     User.authenticate!

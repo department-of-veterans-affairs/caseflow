@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe Distribution, :all_dbs do
   let(:judge) { create(:user) }
   let!(:judge_team) { JudgeTeam.create_for_judge(judge) }

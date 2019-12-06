@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
   let(:judge_one) { Judge.new(create(:user, full_name: "Billie Daniel")) }
   let(:judge_two) { Judge.new(create(:user, full_name: "Joe Shmoe")) }

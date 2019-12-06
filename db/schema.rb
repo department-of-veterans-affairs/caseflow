@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.index ["person_id"], name: "index_advance_on_docket_motions_on_person_id"
+    t.index ["updated_at"], name: "index_advance_on_docket_motions_on_updated_at"
     t.index ["user_id"], name: "index_advance_on_docket_motions_on_user_id"
   end
 
@@ -34,6 +35,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.bigint "schedule_period_id", null: false
     t.datetime "updated_at", null: false
     t.index ["schedule_period_id"], name: "index_allocations_on_schedule_period_id"
+    t.index ["updated_at"], name: "index_allocations_on_updated_at"
   end
 
   create_table "annotations", id: :serial, force: :cascade do |t|
@@ -57,6 +59,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "updated_at"
     t.index ["consumer_name"], name: "index_api_keys_on_consumer_name", unique: true
     t.index ["key_digest"], name: "index_api_keys_on_key_digest", unique: true
+    t.index ["updated_at"], name: "index_api_keys_on_updated_at"
   end
 
   create_table "api_views", id: :serial, force: :cascade do |t|
@@ -72,6 +75,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.boolean "incomplete", default: false
     t.integer "merged_appeal_count"
     t.datetime "updated_at"
+    t.index ["updated_at"], name: "index_appeal_series_on_updated_at"
   end
 
   create_table "appeal_views", id: :serial, force: :cascade do |t|
@@ -104,6 +108,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the appeal, which can be used to navigate to appeals/appeal_uuid. This allows a single ID to determine an appeal whether it is a legacy appeal or an AMA appeal."
     t.string "veteran_file_number", null: false, comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
     t.boolean "veteran_is_not_claimant", comment: "Selected by the user during intake, indicates whether the Veteran is the claimant, or if the claimant is someone else such as a dependent. Must be TRUE if Veteran is deceased."
+    t.index ["updated_at"], name: "index_appeals_on_updated_at"
     t.index ["uuid"], name: "index_appeals_on_uuid"
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
@@ -121,6 +126,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "updated_at", null: false
     t.string "work_product"
     t.index ["task_id"], name: "index_attorney_case_reviews_on_task_id"
+    t.index ["updated_at"], name: "index_attorney_case_reviews_on_updated_at"
   end
 
   create_table "available_hearing_locations", force: :cascade do |t|
@@ -139,6 +145,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "veteran_file_number"
     t.string "zip_code"
     t.index ["appeal_id", "appeal_type"], name: "index_available_hearing_locations_on_appeal_id_and_appeal_type"
+    t.index ["updated_at"], name: "index_available_hearing_locations_on_updated_at"
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
@@ -162,6 +169,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.index ["decision_document_id"], name: "index_board_grant_effectuations_on_decision_document_id"
     t.index ["end_product_establishment_id"], name: "index_board_grant_effectuations_on_end_product_establishment_id"
     t.index ["granted_decision_issue_id"], name: "index_board_grant_effectuations_on_granted_decision_issue_id"
+    t.index ["updated_at"], name: "index_board_grant_effectuations_on_updated_at"
   end
 
   create_table "cached_appeal_attributes", id: false, force: :cascade do |t|
@@ -180,6 +188,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "vacols_id"
     t.string "veteran_name", comment: "'LastName, FirstName' of the veteran"
     t.index ["appeal_id", "appeal_type"], name: "index_cached_appeal_attributes_on_appeal_id_and_appeal_type", unique: true
+    t.index ["updated_at"], name: "index_cached_appeal_attributes_on_updated_at"
     t.index ["vacols_id"], name: "index_cached_appeal_attributes_on_vacols_id", unique: true
   end
 
@@ -193,6 +202,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "svlj"
     t.datetime "updated_at", null: false
     t.index ["sdomainid"], name: "index_cached_user_attributes_on_sdomainid", unique: true
+    t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
   end
 
   create_table "certification_cancellations", id: :serial, force: :cascade do |t|
@@ -203,6 +213,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "other_reason"
     t.datetime "updated_at"
     t.index ["certification_id"], name: "index_certification_cancellations_on_certification_id", unique: true
+    t.index ["updated_at"], name: "index_certification_cancellations_on_updated_at"
   end
 
   create_table "certifications", id: :serial, force: :cascade do |t|
@@ -247,6 +258,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "vacols_id"
     t.string "vacols_representative_name"
     t.string "vacols_representative_type"
+    t.index ["updated_at"], name: "index_certifications_on_updated_at"
     t.index ["user_id"], name: "index_certifications_on_user_id"
   end
 
@@ -259,6 +271,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "outcoding_date"
     t.integer "task_id"
     t.datetime "updated_at", null: false
+    t.index ["updated_at"], name: "index_claim_establishments_on_updated_at"
   end
 
   create_table "claimants", force: :cascade, comment: "This table bridges decision reviews to participants when the participant is listed as a claimant on the decision review. A participant can be a claimant on multiple decision reviews." do |t|
@@ -270,6 +283,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "updated_at"
     t.index ["decision_review_type", "decision_review_id"], name: "index_claimants_on_decision_review_type_and_decision_review_id"
     t.index ["participant_id"], name: "index_claimants_on_participant_id"
+    t.index ["updated_at"], name: "index_claimants_on_updated_at"
   end
 
   create_table "claims_folder_searches", id: :serial, force: :cascade do |t|
@@ -279,6 +293,8 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "query"
     t.datetime "updated_at"
     t.integer "user_id"
+    t.index ["appeal_id", "appeal_type"], name: "index_claims_folder_searches_on_appeal_id_and_appeal_type"
+    t.index ["updated_at"], name: "index_claims_folder_searches_on_updated_at"
     t.index ["user_id"], name: "index_claims_folder_searches_on_user_id"
   end
 
@@ -299,6 +315,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "uploaded_to_vbms_at"
     t.index ["appeal_id"], name: "index_decision_documents_on_appeal_id"
     t.index ["citation_number"], name: "index_decision_documents_on_citation_number", unique: true
+    t.index ["updated_at"], name: "index_decision_documents_on_updated_at"
   end
 
   create_table "decision_issues", force: :cascade, comment: "Issues that represent a decision made on a decision review." do |t|
@@ -319,6 +336,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "rating_promulgation_date", comment: "The promulgation date of the rating that a decision issue resulted in (if applicable). It is used for calculating whether a decision issue is within the timeliness window to be appealed or get a higher level review."
     t.datetime "updated_at"
     t.index ["rating_issue_reference_id", "disposition", "participant_id"], name: "decision_issues_uniq_by_disposition_and_ref_id", unique: true
+    t.index ["updated_at"], name: "index_decision_issues_on_updated_at"
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
@@ -336,6 +354,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "type", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
+    t.index ["updated_at"], name: "index_dispatch_tasks_on_updated_at"
     t.index ["user_id"], name: "index_dispatch_tasks_on_user_id"
   end
 
@@ -352,6 +371,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.integer "task_id"
     t.datetime "updated_at"
     t.index ["case_id"], name: "index_distributed_cases_on_case_id", unique: true
+    t.index ["updated_at"], name: "index_distributed_cases_on_updated_at"
   end
 
   create_table "distributions", force: :cascade do |t|
@@ -363,6 +383,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.json "statistics"
     t.string "status"
     t.datetime "updated_at", null: false
+    t.index ["updated_at"], name: "index_distributions_on_updated_at"
   end
 
   create_table "docket_snapshots", id: :serial, force: :cascade do |t|
@@ -370,6 +391,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.integer "docket_count"
     t.date "latest_docket_month"
     t.datetime "updated_at"
+    t.index ["updated_at"], name: "index_docket_snapshots_on_updated_at"
   end
 
   create_table "docket_tracers", id: :serial, force: :cascade do |t|
@@ -380,6 +402,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.date "month"
     t.datetime "updated_at"
     t.index ["docket_snapshot_id", "month"], name: "index_docket_tracers_on_docket_snapshot_id_and_month", unique: true
+    t.index ["updated_at"], name: "index_docket_tracers_on_updated_at"
   end
 
   create_table "document_views", id: :serial, force: :cascade do |t|
@@ -424,6 +447,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.bigint "end_product_establishment_id", null: false
     t.datetime "updated_at", null: false
     t.index ["end_product_establishment_id"], name: "index_end_product_code_updates_on_end_product_establishment_id"
+    t.index ["updated_at"], name: "index_end_product_code_updates_on_updated_at"
   end
 
   create_table "end_product_establishments", force: :cascade, comment: "Represents end products that have been, or need to be established by Caseflow. Used to track the status of those end products as they are processed in VBMS and/or SHARE." do |t|
@@ -450,6 +474,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.integer "user_id", comment: "The ID of the user who performed the decision review intake."
     t.string "veteran_file_number", null: false, comment: "The file number of the Veteran submitted when establishing the end product."
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
+    t.index ["updated_at"], name: "index_end_product_establishments_on_updated_at"
     t.index ["user_id"], name: "index_end_product_establishments_on_user_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
   end
@@ -536,6 +561,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "target_css_id"
     t.string "target_station_id"
     t.datetime "updated_at"
+    t.index ["updated_at"], name: "index_global_admin_logins_on_updated_at"
   end
 
   create_table "hearing_appeal_stream_snapshots", id: false, force: :cascade do |t|
@@ -544,6 +570,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.integer "hearing_id"
     t.datetime "updated_at"
     t.index ["hearing_id", "appeal_id"], name: "index_hearing_appeal_stream_snapshots_hearing_and_appeal_ids", unique: true
+    t.index ["updated_at"], name: "index_hearing_appeal_stream_snapshots_on_updated_at"
   end
 
   create_table "hearing_days", force: :cascade do |t|
@@ -562,6 +589,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.bigint "updated_by_id", null: false, comment: "The ID of the user who most recently updated the Hearing Day"
     t.index ["created_by_id"], name: "index_hearing_days_on_created_by_id"
     t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
+    t.index ["updated_at"], name: "index_hearing_days_on_updated_at"
     t.index ["updated_by_id"], name: "index_hearing_days_on_updated_by_id"
   end
 
@@ -578,6 +606,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "worksheet_notes"
     t.index ["hearing_id"], name: "index_hearing_issue_notes_on_hearing_id"
     t.index ["request_issue_id"], name: "index_hearing_issue_notes_on_request_issue_id"
+    t.index ["updated_at"], name: "index_hearing_issue_notes_on_updated_at"
   end
 
   create_table "hearing_locations", force: :cascade do |t|
@@ -596,6 +625,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "zip_code"
     t.index ["hearing_id"], name: "index_hearing_locations_on_hearing_id"
     t.index ["hearing_type"], name: "index_hearing_locations_on_hearing_type"
+    t.index ["updated_at"], name: "index_hearing_locations_on_updated_at"
   end
 
   create_table "hearing_task_associations", force: :cascade do |t|
@@ -606,6 +636,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "updated_at"
     t.index ["hearing_task_id"], name: "index_hearing_task_associations_on_hearing_task_id"
     t.index ["hearing_type", "hearing_id"], name: "index_hearing_task_associations_on_hearing_type_and_hearing_id"
+    t.index ["updated_at"], name: "index_hearing_task_associations_on_updated_at"
   end
 
   create_table "hearing_views", id: :serial, force: :cascade do |t|
@@ -640,6 +671,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.string "witness"
     t.index ["created_by_id"], name: "index_hearings_on_created_by_id"
+    t.index ["updated_at"], name: "index_hearings_on_updated_at"
     t.index ["updated_by_id"], name: "index_hearings_on_updated_by_id"
     t.index ["uuid"], name: "index_hearings_on_uuid"
   end
@@ -661,6 +693,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the Higher Level Review. Can be used to link to the claim after it is completed."
     t.string "veteran_file_number", null: false, comment: "The file number of the Veteran that the Higher Level Review is for."
     t.boolean "veteran_is_not_claimant", comment: "Indicates whether the Veteran is the claimant on the Higher Level Review form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
+    t.index ["updated_at"], name: "index_higher_level_reviews_on_updated_at"
     t.index ["uuid"], name: "index_higher_level_reviews_on_uuid"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
@@ -682,6 +715,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "veteran_file_number", comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
     t.index ["type", "veteran_file_number"], name: "unique_index_to_avoid_duplicate_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["type"], name: "index_intakes_on_type"
+    t.index ["updated_at"], name: "index_intakes_on_updated_at"
     t.index ["user_id"], name: "index_intakes_on_user_id"
     t.index ["user_id"], name: "unique_index_to_avoid_multiple_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number"
@@ -696,6 +730,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at"
     t.bigint "user_id", null: false, comment: "The user who created the note"
     t.index ["job_type", "job_id"], name: "index_job_notes_on_job_type_and_job_id"
+    t.index ["updated_at"], name: "index_job_notes_on_updated_at"
     t.index ["user_id"], name: "index_job_notes_on_user_id"
   end
 
@@ -713,6 +748,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "quality"
     t.string "task_id"
     t.datetime "updated_at", null: false
+    t.index ["updated_at"], name: "index_judge_case_reviews_on_updated_at"
   end
 
   create_table "judge_team_roles", force: :cascade, comment: "Defines roles for individual members of judge teams" do |t|
@@ -721,6 +757,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "type"
     t.datetime "updated_at", null: false
     t.index ["organizations_user_id"], name: "index_judge_team_roles_on_organizations_user_id", unique: true
+    t.index ["updated_at"], name: "index_judge_team_roles_on_updated_at"
   end
 
   create_table "legacy_appeals", force: :cascade do |t|
@@ -758,6 +795,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.boolean "vocational_rehab", default: false
     t.boolean "waiver_of_overpayment", default: false
     t.index ["appeal_series_id"], name: "index_legacy_appeals_on_appeal_series_id"
+    t.index ["updated_at"], name: "index_legacy_appeals_on_updated_at"
     t.index ["vacols_id"], name: "index_legacy_appeals_on_vacols_id", unique: true
   end
 
@@ -776,6 +814,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "witness"
     t.index ["created_by_id"], name: "index_legacy_hearings_on_created_by_id"
     t.index ["hearing_day_id"], name: "index_legacy_hearings_on_hearing_day_id"
+    t.index ["updated_at"], name: "index_legacy_hearings_on_updated_at"
     t.index ["updated_by_id"], name: "index_legacy_hearings_on_updated_by_id"
     t.index ["user_id"], name: "index_legacy_hearings_on_user_id"
     t.index ["vacols_id"], name: "index_legacy_hearings_on_vacols_id", unique: true
@@ -794,6 +833,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "updated_at", null: false, comment: "Automatically populated when the record is updated."
     t.index ["legacy_issue_id"], name: "index_legacy_issue_optins_on_legacy_issue_id"
     t.index ["request_issue_id"], name: "index_legacy_issue_optins_on_request_issue_id"
+    t.index ["updated_at"], name: "index_legacy_issue_optins_on_updated_at"
   end
 
   create_table "legacy_issues", force: :cascade, comment: "On an AMA decision review, when a veteran requests to review an issue that is already being contested on a legacy appeal, the legacy issue is connected to the request issue. If the veteran also chooses to opt their legacy issues into AMA and the issue is eligible to be transferred to AMA, the issues are closed in VACOLS through a legacy issue opt-in. This table stores the legacy issues connected to each request issue, and the record for opting them into AMA (if applicable)." do |t|
@@ -815,6 +855,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false, comment: "The user for whom the message is intended"
     t.index ["detail_type", "detail_id"], name: "index_messages_on_detail_type_and_detail_id"
+    t.index ["updated_at"], name: "index_messages_on_updated_at"
   end
 
   create_table "non_availabilities", force: :cascade do |t|
@@ -825,6 +866,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "type", null: false
     t.datetime "updated_at", null: false
     t.index ["schedule_period_id"], name: "index_non_availabilities_on_schedule_period_id"
+    t.index ["updated_at"], name: "index_non_availabilities_on_updated_at"
   end
 
   create_table "organizations", force: :cascade do |t|
@@ -835,6 +877,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "type", comment: "Single table inheritance"
     t.datetime "updated_at"
     t.string "url", comment: "Unique portion of the organization queue url"
+    t.index ["updated_at"], name: "index_organizations_on_updated_at"
     t.index ["url"], name: "index_organizations_on_url", unique: true
   end
 
@@ -845,6 +888,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "updated_at"
     t.integer "user_id"
     t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
+    t.index ["updated_at"], name: "index_organizations_users_on_updated_at"
     t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
   end
 
@@ -858,6 +902,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "participant_id", null: false
     t.datetime "updated_at", null: false
     t.index ["participant_id"], name: "index_people_on_participant_id", unique: true
+    t.index ["updated_at"], name: "index_people_on_updated_at"
   end
 
   create_table "post_decision_motions", force: :cascade, comment: "Stores the disposition and associated task of post-decisional motions handled by the Litigation Support Team: Motion for Reconsideration, Motion to Vacate, and Clear and Unmistakeable Error." do |t|
@@ -865,9 +910,10 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "disposition", comment: "Possible options are Grant, Deny, Withdraw, and Dismiss"
     t.bigint "task_id"
     t.datetime "updated_at", null: false
-    t.string "vacate_type", comment: "Granted motion to vacate can be either Straight Vacate and Readjudication or Vacate and De Novo."
+    t.string "vacate_type", comment: "Granted motion to vacate can be Straight Vacate, Vacate and Readjudication, or Vacate and De Novo."
     t.integer "vacated_decision_issue_ids", comment: "When a motion to vacate is partially granted, this includes an array of the appeal's decision issue IDs that were chosen for vacatur in this post-decision motion", array: true
     t.index ["task_id"], name: "index_post_decision_motions_on_task_id"
+    t.index ["updated_at"], name: "index_post_decision_motions_on_updated_at"
   end
 
   create_table "ramp_closed_appeals", id: :serial, force: :cascade, comment: "Keeps track of legacy appeals that are closed or partially closed in VACOLS due to being transitioned to a RAMP election.  This data can be used to rollback the RAMP Election if needed." do |t|
@@ -878,6 +924,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.integer "ramp_election_id", comment: "The ID of the RAMP election that closed the legacy appeal."
     t.datetime "updated_at"
     t.string "vacols_id", null: false, comment: "The VACOLS BFKEY of the legacy appeal that has been closed and opted into RAMP."
+    t.index ["updated_at"], name: "index_ramp_closed_appeals_on_updated_at"
   end
 
   create_table "ramp_election_rollbacks", force: :cascade, comment: "If a RAMP election needs to get rolled back, for example if the EP is canceled, it is tracked here. Also any VACOLS issues that were closed in the legacy system and opted into RAMP are re-opened in the legacy system." do |t|
@@ -888,6 +935,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "updated_at", null: false, comment: "Timestamp for when the rollback was last updated."
     t.bigint "user_id", comment: "The user who created the RAMP Election rollback, typically a system user."
     t.index ["ramp_election_id"], name: "index_ramp_election_rollbacks_on_ramp_election_id"
+    t.index ["updated_at"], name: "index_ramp_election_rollbacks_on_updated_at"
     t.index ["user_id"], name: "index_ramp_election_rollbacks_on_user_id"
   end
 
@@ -899,6 +947,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.date "receipt_date", comment: "The date that the RAMP form was received by central mail."
     t.datetime "updated_at"
     t.string "veteran_file_number", null: false, comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
+    t.index ["updated_at"], name: "index_ramp_elections_on_updated_at"
     t.index ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number"
   end
 
@@ -911,6 +960,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.integer "source_issue_id", comment: "If a RAMP election issue added to a RAMP refiling, it is the source issue for the corresponding RAMP refiling issue."
     t.datetime "updated_at"
     t.index ["review_type", "review_id"], name: "index_ramp_issues_on_review_type_and_review_id"
+    t.index ["updated_at"], name: "index_ramp_issues_on_updated_at"
   end
 
   create_table "ramp_refilings", id: :serial, force: :cascade, comment: "Intake data for RAMP refilings, also known as RAMP selection." do |t|
@@ -924,6 +974,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.date "receipt_date", comment: "Receipt date of the RAMP form."
     t.datetime "updated_at"
     t.string "veteran_file_number", null: false, comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
+    t.index ["updated_at"], name: "index_ramp_refilings_on_updated_at"
     t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number"
   end
 
@@ -936,6 +987,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "sync_job_name"
     t.datetime "updated_at"
     t.index ["record_type", "record_id"], name: "index_record_synced_by_jobs_on_record_type_and_record_id"
+    t.index ["updated_at"], name: "index_record_synced_by_jobs_on_updated_at"
   end
 
   create_table "remand_reasons", force: :cascade do |t|
@@ -945,6 +997,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.boolean "post_aoj"
     t.datetime "updated_at", null: false
     t.index ["decision_issue_id"], name: "index_remand_reasons_on_decision_issue_id"
+    t.index ["updated_at"], name: "index_remand_reasons_on_updated_at"
   end
 
   create_table "request_decision_issues", force: :cascade, comment: "Join table for the has and belongs to many to many relationship between request issues and decision issues." do |t|
@@ -954,6 +1007,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.integer "request_issue_id", comment: "The ID of the request issue."
     t.datetime "updated_at", null: false, comment: "Automatically populated when the record is updated."
     t.index ["request_issue_id", "decision_issue_id"], name: "index_on_request_issue_id_and_decision_issue_id", unique: true
+    t.index ["updated_at"], name: "index_request_decision_issues_on_updated_at"
   end
 
   create_table "request_issues", force: :cascade, comment: "Each Request Issue represents the Veteran's response to a Rating Issue. Request Issues come in three flavors: rating, nonrating, and unidentified. They are attached to a Decision Review and (for those that track contentions) an End Product Establishment. A Request Issue can contest a rating issue, a decision issue, or a nonrating issue without a decision issue." do |t|
@@ -1004,6 +1058,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.index ["decision_review_type", "decision_review_id"], name: "index_request_issues_on_decision_review_columns"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
+    t.index ["updated_at"], name: "index_request_issues_on_updated_at"
   end
 
   create_table "request_issues_updates", force: :cascade, comment: "Keeps track of edits to request issues on a decision review that happen after the initial intake, such as removing and adding issues.  When the decision review is processed in VBMS, this also tracks whether adding or removing contentions in VBMS for the update has succeeded." do |t|
@@ -1024,6 +1079,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.bigint "user_id", null: false, comment: "The ID of the user who edited the decision review."
     t.integer "withdrawn_request_issue_ids", comment: "An array of the request issue IDs that were withdrawn during this request issues update.", array: true
     t.index ["review_type", "review_id"], name: "index_request_issues_updates_on_review_type_and_review_id"
+    t.index ["updated_at"], name: "index_request_issues_updates_on_updated_at"
     t.index ["user_id"], name: "index_request_issues_updates_on_user_id"
   end
 
@@ -1036,6 +1092,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "type", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.index ["updated_at"], name: "index_schedule_periods_on_updated_at"
     t.index ["user_id"], name: "index_schedule_periods_on_user_id"
   end
 
@@ -1070,6 +1127,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.boolean "vocational_rehab", default: false
     t.boolean "waiver_of_overpayment", default: false
     t.index ["appeal_type", "appeal_id"], name: "index_special_issue_lists_on_appeal_type_and_appeal_id"
+    t.index ["updated_at"], name: "index_special_issue_lists_on_updated_at"
   end
 
   create_table "supplemental_claims", force: :cascade, comment: "Intake data for Supplemental Claims." do |t|
@@ -1090,6 +1148,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "veteran_file_number", null: false, comment: "The file number of the Veteran that the Supplemental Claim is for."
     t.boolean "veteran_is_not_claimant", comment: "Indicates whether the Veteran is the claimant on the Supplemental Claim form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
     t.index ["decision_review_remanded_type", "decision_review_remanded_id"], name: "index_decision_issues_on_decision_review_remanded"
+    t.index ["updated_at"], name: "index_supplemental_claims_on_updated_at"
     t.index ["uuid"], name: "index_supplemental_claims_on_uuid"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
@@ -1099,6 +1158,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "text"
     t.datetime "updated_at", null: false
     t.index ["text"], name: "index_tags_on_text", unique: true
+    t.index ["updated_at"], name: "index_tags_on_updated_at"
   end
 
   create_table "task_timers", force: :cascade, comment: "Task timers allow tasks to be run asynchronously after some future date, like EvidenceSubmissionWindowTask." do |t|
@@ -1112,6 +1172,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.bigint "task_id", null: false, comment: "ID of the Task to be run."
     t.datetime "updated_at", null: false, comment: "Automatic timestmap for record update."
     t.index ["task_id"], name: "index_task_timers_on_task_id"
+    t.index ["updated_at"], name: "index_task_timers_on_updated_at"
   end
 
   create_table "tasks", force: :cascade do |t|
@@ -1136,6 +1197,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.index ["parent_id"], name: "index_tasks_on_parent_id"
     t.index ["status"], name: "index_tasks_on_status"
     t.index ["type"], name: "index_tasks_on_type"
+    t.index ["updated_at"], name: "index_tasks_on_updated_at"
   end
 
   create_table "team_quotas", id: :serial, force: :cascade do |t|
@@ -1145,6 +1207,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "updated_at", null: false
     t.integer "user_count"
     t.index ["date", "task_type"], name: "index_team_quotas_on_date_and_task_type", unique: true
+    t.index ["updated_at"], name: "index_team_quotas_on_updated_at"
   end
 
   create_table "transcriptions", force: :cascade do |t|
@@ -1160,6 +1223,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "updated_at"
     t.date "uploaded_to_vbms_date"
     t.index ["hearing_id"], name: "index_transcriptions_on_hearing_id"
+    t.index ["updated_at"], name: "index_transcriptions_on_updated_at"
   end
 
   create_table "user_quotas", id: :serial, force: :cascade do |t|
@@ -1169,6 +1233,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["team_quota_id", "user_id"], name: "index_user_quotas_on_team_quota_id_and_user_id", unique: true
+    t.index ["updated_at"], name: "index_user_quotas_on_updated_at"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
@@ -1186,6 +1251,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "updated_at"
     t.index "upper((css_id)::text)", name: "index_users_unique_css_id", unique: true
     t.index ["status"], name: "index_users_on_status"
+    t.index ["updated_at"], name: "index_users_on_updated_at"
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
@@ -1201,6 +1267,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "updated_at", null: false
     t.datetime "uploaded_to_vbms_at"
     t.index ["appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_id"
+    t.index ["updated_at"], name: "index_vbms_uploaded_documents_on_updated_at"
   end
 
   create_table "versions", id: :serial, force: :cascade do |t|
@@ -1230,6 +1297,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
     t.index ["participant_id"], name: "index_veterans_on_participant_id"
     t.index ["ssn"], name: "index_veterans_on_ssn"
+    t.index ["updated_at"], name: "index_veterans_on_updated_at"
   end
 
   create_table "virtual_hearing_establishments", force: :cascade do |t|
@@ -1267,6 +1335,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.index ["conference_id"], name: "index_virtual_hearings_on_conference_id"
     t.index ["created_by_id"], name: "index_virtual_hearings_on_created_by_id"
     t.index ["hearing_type", "hearing_id"], name: "index_virtual_hearings_on_hearing_type_and_hearing_id"
+    t.index ["updated_at"], name: "index_virtual_hearings_on_updated_at"
   end
 
   create_table "vso_configs", force: :cascade do |t|
@@ -1275,6 +1344,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.integer "organization_id"
     t.datetime "updated_at", null: false
     t.index ["organization_id"], name: "index_vso_configs_on_organization_id"
+    t.index ["updated_at"], name: "index_vso_configs_on_updated_at"
   end
 
   create_table "worksheet_issues", id: :serial, force: :cascade do |t|
@@ -1295,6 +1365,7 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.string "vacols_sequence_id"
     t.index ["appeal_id"], name: "index_worksheet_issues_on_appeal_id"
     t.index ["deleted_at"], name: "index_worksheet_issues_on_deleted_at"
+    t.index ["updated_at"], name: "index_worksheet_issues_on_updated_at"
   end
 
   add_foreign_key "advance_on_docket_motions", "users"

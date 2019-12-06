@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Colocated checkout flows", :all_dbs do
   let(:attorney_user) { create(:default_user) }
   let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
@@ -116,7 +113,7 @@ RSpec.feature "Colocated checkout flows", :all_dbs do
 
       expect(page).to have_content(Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
 
-      click_dropdown(index: 6)
+      click_dropdown({ index: 6 }, find(".cf-modal-body"))
       expect(page).to have_content(COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY)
 
       hold_duration = [rand(100), 1].max

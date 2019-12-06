@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
   let(:user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"]) }
 
@@ -27,6 +24,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       User.authenticate!(user: user)
     end
     let!(:hearing) { create(:hearing, :with_tasks) }
+    let(:expected_alert) { COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name }
 
     scenario "User can update fields", skip: "Test is flakey" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
@@ -52,7 +50,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
 
       click_button("Save")
 
-      expect(page).to have_content("Hearing Successfully Updated")
+      expect(page).to have_content(expected_alert)
     end
   end
 
@@ -63,8 +61,8 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       FeatureToggle.enable!(:schedule_virtual_hearings)
     end
 
-    let!(:judge) { create(:user, station_id: User::BOARD_STATION_ID, email: "judge@testingEmail.com") }
-    let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, user: judge, regional_office: "RO06") }
+    let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, regional_office: "RO06") }
+    let(:expected_alert) { COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % legacy_hearing.appeal.veteran.name }
 
     scenario "User can edit Judge and change virtual hearings" do
       visit "hearings/" + legacy_hearing.external_id.to_s + "/details"
@@ -76,19 +74,11 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       expect(page).to have_no_selector("label", text: "Yes, Waive 90 Day Evidence Hold")
 
       click_dropdown(name: "hearingType", index: 1)
-      expect(page).to have_content("Change to Virtual Hearing")
-
       fill_in "vet-email", with: "email@testingEmail.com"
       fill_in "rep-email", with: "email@testingEmail.com"
-      click_button("Change and Send Email")
+      click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
 
-      expect(page).to have_content("Hearing Successfully Updated")
-
-      legacy_hearing.reload
-      expect(VirtualHearing.count).to eq(1)
-      expect(legacy_hearing.virtual?).to eq(true)
-      expect(legacy_hearing.virtual_hearing.veteran_email).to eq("email@testingEmail.com")
-      expect(legacy_hearing.virtual_hearing.representative_email).to eq("email@testingEmail.com")
+      expect(page).to have_content(expected_alert)
     end
 
     scenario "User can select judge, hearing room, hearing coordinator, and add notes" do
@@ -101,7 +91,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       fill_in "Notes", with: generate_words(10)
 
       click_button("Save")
-      expect(page).to have_content("Hearing Successfully Updated")
+      expect(page).to have_content(expected_alert)
     end
 
     scenario "User can not edit transcription" do

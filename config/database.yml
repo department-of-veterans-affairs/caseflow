@@ -1,8 +1,7 @@
-# SQLite version 3.x
-#   gem install sqlite3
-#
-#   Ensure the SQLite 3 gem is defined in your Gemfile
-#   gem 'sqlite3'
+# Caseflow dbs are:
+#  PostgreSQL for Caseflow AMA data
+#  Oracle for VACOLS legacy data
+#  PostgreSQL for Caseflow ETL (reporting) data
 #
 default: &default
   adapter: postgresql
@@ -35,10 +34,35 @@ staging:
   <<: *default
   database: caseflow_certification_staging
 
-
 production:
   <<: *default
   url: <%= ENV["POSTGRES_URL"] %>
+
+# NOTE Rails 6 has native support for multiple databases,
+# and this configuration should change to nest "primary" and "etl" and "vacols"
+# under each env name, per
+# https://guides.rubyonrails.org/active_record_multiple_databases.html
+etl_default: &etl_default
+  <<: *default
+  <% if ENV["ETL_DB_HOST"] || ENV["POSTGRES_HOST"] %>
+  host: <%= ENV["ETL_DB_HOST"] || ENV["POSTGRES_HOST"] %>
+  <% end %>
+  username: <%= ENV["ETL_DB_USER"] || ENV["POSTGRES_USER"] || `whoami` %>
+  <% if ENV["ETL_DB_PASSWORD"] || ENV["POSTGRES_PASSWORD"] %>
+  password: <%= ENV["ETL_DB_PASSWORD"] || ENV["POSTGRES_PASSWORD"] %>
+  <% end %>
+
+etl_development:
+  <<: *etl_default
+  database: caseflow_etl_development
+
+etl_test:
+  <<: *etl_default
+  database: caseflow_etl_test<%= ENV["TEST_SUBCATEGORY"] %>
+
+etl_production:
+  <<: *etl_default
+  url: <%= ENV["ETL_DB_URL"] %>
 
 development_vacols:
   adapter: oracle_enhanced

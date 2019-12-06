@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe HearingDay, :all_dbs do
   context "#create" do
     let(:test_hearing_date_vacols) do
