@@ -41,7 +41,7 @@ class Fakes::BGSService
     end
 
     def veteran_records_created?
-      veteran_store.all_keys.any?
+      veteran_store.all_veteran_file_numbers.include?("872958715") # known file_number from local/vacols//bgs_setup.csv
     end
 
     def all_grants
