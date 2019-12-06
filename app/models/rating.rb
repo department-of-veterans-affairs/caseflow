@@ -30,10 +30,6 @@ class Rating
   ONE_YEAR_PLUS_DAYS = 372.days
   TWO_LIFETIMES_DAYS = 250.years
 
-  # If you change this method, you will need
-  # to clear cache in prod for your changes to
-  # take effect immediately.
-  # See DecisionReview#cached_serialized_timely_ratings.
   def serialize
     ::RatingSerializer.new(self).serializable_hash[:data][:attributes]
   end
