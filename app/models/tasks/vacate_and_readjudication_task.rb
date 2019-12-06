@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class VacateAndDeNovoTask < DecidedMotionToVacateTask
+class VacateAndReadjudicationTask < DecidedMotionToVacateTask
   class << self
     def label
-      COPY::VACATE_AND_DE_NOVO_TASK_LABEL
+      COPY::VACATE_AND_READJUDICATION_TASK_LABEL
     end
 
     def org(user)
