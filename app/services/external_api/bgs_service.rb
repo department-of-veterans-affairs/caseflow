@@ -88,6 +88,19 @@ class ExternalApi::BGSService
     }
   end
 
+  def fetch_person_info_by_ssn(ssn)
+    DBService.release_db_connections
+
+    @people_by_ssn[ssn] ||=
+      MetricsService.record("BGS: fetch person by ssn: #{ssn}",
+                            service: :bgs,
+                            name: "people.find_by_ssn") do
+        client.people.find_by_ssn(ssn)
+      end
+
+    @people_by_ssn[ssn]
+  end
+
   def fetch_file_number_by_ssn(ssn)
     DBService.release_db_connections
 

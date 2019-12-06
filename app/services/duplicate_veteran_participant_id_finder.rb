@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class DuplicateVeteranParticipantIDFinder
+  include BgsService
+
   BGS_SSN_FIELD_NAMES = [
     :ssn,
     :soc_sec_number,
@@ -16,7 +18,7 @@ class DuplicateVeteranParticipantIDFinder
   # find and return duplicate participant IDs
   def call
     ssns = ([ssn] + BGS_SSN_FIELD_NAMES.map { |field_name| bgs_record[field_name] }).compact.uniq
-    ([participant_id] + ssns.map { |ssn| BGSService.new.client.people.find_by_ssn(ssn)[:ptcpnt_id] }).compact.uniq
+    ([participant_id] + ssns.map { |ssn| bgs.fetch_person_info_by_ssn(ssn)[:ptcpnt_id] }).compact.uniq
   end
 
   private

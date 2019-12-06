@@ -285,6 +285,18 @@ class Fakes::BGSService
     default_claimant_info
   end
 
+  def fetch_person_info_by_ssn(ssn)
+    return if ssn_not_found
+
+    self.class.veteran_store.all_veteran_file_numbers.each do |file_number|
+      record = get_veteran_record(file_number)
+      if record[:ssn].to_s == ssn.to_s
+        return record
+      end
+    end
+    nil # i.e. not found
+  end
+
   def fetch_file_number_by_ssn(ssn)
     return if ssn_not_found
 
