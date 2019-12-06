@@ -376,13 +376,13 @@ describe ContestableIssue, :postgres do
   context "#timely?" do
     subject { ContestableIssue.from_rating_issue(rating_issue, decision_review) }
 
-    it 'should equal true' do
+    it "should equal true" do
       expect(subject.timely?).to eq true
     end
 
     context "when untimely" do
       let(:promulgation_date) { Time.zone.today - 373.days }
-      it 'should equal false' do
+      it "should equal false" do
         expect(subject.timely?).to eq false
       end
     end
