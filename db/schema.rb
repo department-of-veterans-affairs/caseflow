@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191118195627) do
+ActiveRecord::Schema.define(version: 20191206024319) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -784,6 +784,7 @@ ActiveRecord::Schema.define(version: 20191118195627) do
   create_table "legacy_issue_optins", force: :cascade, comment: "When a VACOLS issue from a legacy appeal is opted-in to AMA, this table keeps track of the related request_issue, and the status of processing the opt-in, or rollback if the request issue is removed from a Decision Review." do |t|
     t.datetime "created_at", null: false, comment: "When a Request Issue is connected to a VACOLS issue on a legacy appeal, and the Veteran has agreed to withdraw their legacy appeals, a legacy_issue_optin is created at the time the Decision Review is successfully intaken. This is used to indicate that the legacy issue should subsequently be opted into AMA in VACOLS. "
     t.string "error"
+    t.bigint "legacy_issue_id", comment: "The legacy issue being opted in, which connects to the request issue"
     t.datetime "optin_processed_at", comment: "The timestamp for when the opt-in was successfully processed, meaning it was updated in VACOLS as opted into AMA."
     t.string "original_disposition_code", comment: "The original disposition code of the VACOLS issue being opted in. Stored in case the opt-in is rolled back."
     t.date "original_disposition_date", comment: "The original disposition date of the VACOLS issue being opted in. Stored in case the opt-in is rolled back."
@@ -791,6 +792,7 @@ ActiveRecord::Schema.define(version: 20191118195627) do
     t.datetime "rollback_created_at", comment: "Timestamp for when the connected request issue is removed from a Decision Review during edit, indicating that the opt-in needs to be rolled back."
     t.datetime "rollback_processed_at", comment: "Timestamp for when a rolled back opt-in has successfully finished being rolled back."
     t.datetime "updated_at", null: false, comment: "Automatically populated when the record is updated."
+    t.index ["legacy_issue_id"], name: "index_legacy_issue_optins_on_legacy_issue_id"
     t.index ["request_issue_id"], name: "index_legacy_issue_optins_on_request_issue_id"
   end
 
@@ -1317,6 +1319,7 @@ ActiveRecord::Schema.define(version: 20191118195627) do
   add_foreign_key "legacy_hearings", "users"
   add_foreign_key "legacy_hearings", "users", column: "created_by_id"
   add_foreign_key "legacy_hearings", "users", column: "updated_by_id"
+  add_foreign_key "legacy_issue_optins", "legacy_issues"
   add_foreign_key "legacy_issues", "legacy_issue_optins"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "tasks"

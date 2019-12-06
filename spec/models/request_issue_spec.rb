@@ -152,6 +152,42 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "#create_legacy_issue" do
+    subject { rating_request_issue.create_legacy_issue! }
+
+    let(:vacols_id) { vacols_issue.id }
+    let(:vacols_sequence_id) { vacols_issue.isskey }
+    let(:vacols_issue) { create(:case_issue, :disposition_remanded, isskey: 1) }
+    let(:vacols_case) do
+      create(:case, case_issues: [vacols_issue])
+    end
+
+    context "when there is not a legacy issue optin" do
+      it "creates a legacy issue" do
+        subject
+        legacy_issue=LegacyIssue.find_by(
+          request_issue_id: rating_request_issue.id, vacols_id: vacols_id, vacols_sequence_id: vacols_sequence_id
+        )
+        expect(legacy_issue).to_not be_nil
+        expect(legacy_issue.legacy_issue_optin).to be_nil
+      end
+    end
+
+    context "when there is a legacy issue optin" do
+      let!(:legacy_issue_optin) { create(:legacy_issue_optin, request_issue: rating_request_issue) }
+      
+      it "creates a legacy issue and connects it to the opt in" do
+        subject
+        legacy_issue=LegacyIssue.find_by(
+          request_issue_id: rating_request_issue.id, vacols_id: vacols_id, vacols_sequence_id: vacols_sequence_id
+        )
+        expect(legacy_issue).to_not be_nil
+        expect(legacy_issue.legacy_issue_optin).to_not be_nil
+      end
+    end
+
+  end
+
   context "#remanded?" do
     subject { rating_request_issue.remanded? }
 
