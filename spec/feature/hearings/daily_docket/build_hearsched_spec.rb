@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
   let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"]) }
@@ -28,7 +25,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
     end
 
     let!(:case_hearing) { create(:case_hearing, vdkey: hearing_day.id, folder_nr: legacy_appeal.vacols_id) }
-    let!(:legacy_hearing) { create(:legacy_hearing, vacols_id: case_hearing.hearing_pkseq, appeal: legacy_appeal) }
+    let!(:legacy_hearing) { create(:legacy_hearing, case_hearing: case_hearing, appeal: legacy_appeal) }
     let!(:staff) { create(:staff, stafkey: "RO18", stc2: 2, stc3: 3, stc4: 4) }
 
     scenario "address and poa info from BGS is displayed on docket page" do
@@ -87,7 +84,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
 
       expect(page).to have_content("You have successfully updated")
       expect(page).to have_content("No Show")
-      expect(page).to have_content("This is a note about the hearing!")
+      expect(page).to have_content("This is a note about the hearing!", wait: 10)
       expect(find_field("Transcript Requested", visible: false)).to be_checked
       expect(find_field("9:00 am", visible: false)).to be_checked
     end

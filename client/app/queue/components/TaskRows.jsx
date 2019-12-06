@@ -9,7 +9,6 @@ import { COLORS } from '../../constants/AppConstants';
 import { taskIsOnHold, sortTaskList } from '../utils';
 import StringUtil from '../../util/StringUtil';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
-import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import ActionsDropdown from '../components/ActionsDropdown';
 import OnHoldLabel from '../components/OnHoldLabel';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
@@ -158,26 +157,13 @@ class TaskRows extends React.PureComponent {
       <dd>{assignor}</dd></div> : null;
   }
 
-  getActionName = (task) => {
-    const {
-      label
-    } = task;
-
-    // First see if there is a constant to convert the label, otherwise sentence-ify it
-    if (CO_LOCATED_ADMIN_ACTIONS[label]) {
-      return CO_LOCATED_ADMIN_ACTIONS[label];
-    }
-
-    return StringUtil.snakeCaseToSentence(label);
-  }
-
   taskLabelListItem = (task) => {
     if (task.closedAt) {
       return null;
     }
 
     return task.label ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_TYPE_LABEL}</dt>
-      <dd>{this.getActionName(task)}</dd></div> : null;
+      <dd>{task.label}</dd></div> : null;
   }
 
   taskInstructionsWithLineBreaks = (task) => {

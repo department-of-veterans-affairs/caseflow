@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import VirtualHearingModal from './VirtualHearingModal';
 import DetailsInputs from './details/DetailsInputs';
 import TranscriptionDetailsInputs from './details/TranscriptionDetailsInputs';
 import TranscriptionProblemInputs from './details/TranscriptionProblemInputs';
@@ -13,56 +12,32 @@ class DetailsSections extends React.Component {
     super(props);
 
     this.state = {
-      modalOpen: false
+      modalOpen: false,
+      virtualModalType: null
     };
-  }
-
-  openModal = () => this.setState({ modalOpen: true })
-  closeModal = () => this.setState({ modalOpen: false })
-
-  resetVirtualHearing = () => {
-    const { initialHearingState: { virtualHearing } } = this.props;
-
-    if (virtualHearing) {
-      const { veteranEmail, representativeEmail } = virtualHearing;
-
-      this.props.updateVirtualHearing({
-        veteranEmail,
-        representativeEmail
-      });
-    } else {
-      this.props.updateVirtualHearing(null);
-    }
-
-    this.closeModal();
   }
 
   render () {
     const {
       transcription, hearing, disabled, updateHearing, updateTranscription, updateVirtualHearing,
-      isLegacy, virtualHearing, submit, user, initialHearingState
+      isLegacy, virtualHearing, user, requestType, openVirtualHearingModal
     } = this.props;
-    const { modalOpen } = this.state;
 
     return (
       <React.Fragment>
         <DetailsInputs
-          openModal={this.openModal}
+          user={user}
+          readOnly={disabled}
+          requestType={requestType}
+          isLegacy={isLegacy}
           hearing={hearing}
           update={updateHearing}
-          enableVirtualHearings={user.userCanScheduleVirtualHearings}
+          enableVirtualHearings={user.userCanScheduleVirtualHearings && requestType !== 'Central'}
           virtualHearing={virtualHearing}
           updateVirtualHearing={updateVirtualHearing}
-          readOnly={disabled}
-          isLegacy={isLegacy}
-          openVirtualHearingModal={this.openModal} />
+          openVirtualHearingModal={openVirtualHearingModal}
+          isVirtual={this.props.isVirtual} />
         <div className="cf-help-divider" />
-        {modalOpen && <VirtualHearingModal
-          hearing={initialHearingState}
-          virtualHearing={virtualHearing}
-          update={updateVirtualHearing}
-          submit={() => submit().then(this.closeModal)}
-          reset={this.resetVirtualHearing} />}
         {!isLegacy &&
           <div>
             <h2>Transcription Details</h2>
@@ -96,22 +71,19 @@ DetailsSections.propTypes = {
   transcription: PropTypes.object,
   hearing: PropTypes.object,
   virtualHearing: PropTypes.object,
-  initialHearingState: PropTypes.shape({
-    virtualHearing: PropTypes.shape({
-      veteranEmail: PropTypes.string,
-      representativeEmail: PropTypes.string,
-      status: PropTypes.string
-    })
-  }),
   disabled: PropTypes.bool,
   updateHearing: PropTypes.func,
   updateTranscription: PropTypes.func,
   updateVirtualHearing: PropTypes.func,
   isLegacy: PropTypes.bool,
+  requestType: PropTypes.string,
   submit: PropTypes.func,
+  openVirtualHearingModal: PropTypes.func,
   user: PropTypes.shape({
+    userId: PropTypes.number,
     userCanScheduleVirtualHearings: PropTypes.bool
-  })
+  }),
+  isVirtual: PropTypes.bool
 };
 
 // These props are set through Redux

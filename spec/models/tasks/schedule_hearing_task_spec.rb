@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe ScheduleHearingTask, :all_dbs do
   let(:vacols_case) { create(:case, bfcurloc: "57") }
   let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-require "support/database_cleaner"
-
 describe JudgeTeamRole, :postgres do
   describe ".create" do
     subject { JudgeTeamRole.create!(params) }

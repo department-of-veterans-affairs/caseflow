@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-
 describe "Basic SQL Snippet Library Test", :postgres do
   include SQLHelpers
 
