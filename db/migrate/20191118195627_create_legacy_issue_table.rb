@@ -6,7 +6,5 @@ class CreateLegacyIssueTable < ActiveRecord::Migration[5.1]
       t.integer :vacols_sequence_id, null: false, comment: "The sequence ID of the legacy issue on the legacy appeal. The vacols_id and vacols_sequence_id form a composite key to identify a specific legacy issue."
       t.timestamps null: false, comment: "Default created_at/updated_at"
     end
-
-    # add_reference :legacy_issue_optins, :legacy_issues, foreign_key: true, comment: "The legacy issue being opted in, which connects to the request issue"
   end
 end

@@ -598,7 +598,7 @@ class RequestIssue < ApplicationRecord
     duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
   end
 
-  # Temporary method until we switch to new request_legacy_issue table
+  # Temporary method for populating legacy_issue table until we fully switch over
   def create_legacy_issue!
     return unless vacols_id
 
