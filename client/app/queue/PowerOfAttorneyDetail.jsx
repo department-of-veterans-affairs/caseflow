@@ -36,34 +36,32 @@ export class PowerOfAttorneyDetail extends React.PureComponent {
 
   }
 
-  getPowerOfAttorneyName() {
-    const { loading, error, powerOfAttorney } = this.props;
+  renderLoadingOrError() {
+    const { loading, error } = this.props;
 
-    if (loading || error || !powerOfAttorney) {
-      return null;
+    if (loading) {
+      return <React.Fragment>{COPY.CASE_DETAILS_LOADING}</React.Fragment>;
     }
 
-    return powerOfAttorney.representative_name;
+    if (error) {
+      return <React.Fragment>{COPY.CASE_DETAILS_UNABLE_TO_LOAD}</React.Fragment>;
+    }
+
+    return null;
   }
 
   render = () => {
-    const { loading, error, displayNameOnly, powerOfAttorney } = this.props;
+    const { displayNameOnly, powerOfAttorney } = this.props;
 
     if (!powerOfAttorney) {
-      if (loading) {
-        return <React.Fragment>{COPY.CASE_DETAILS_LOADING}</React.Fragment>;
-      }
-
-      if (error) {
-        return <React.Fragment>{COPY.CASE_DETAILS_UNABLE_TO_LOAD}</React.Fragment>;
-      }
-
-      return null;
+      return this.renderLoadingOrError();
     }
 
     if (displayNameOnly) {
       return this.renderNameOnly();
-    } else if (!this.hasPowerOfAttorneyDetails()) {
+    }
+
+    if (!this.hasPowerOfAttorneyDetails()) {
       return <p><em>{COPY.CASE_DETAILS_NO_POA}</em></p>;
     }
 
