@@ -169,7 +169,8 @@ export class AssignHearingsTabs extends React.Component {
   };
 
   tabWindowColumns = (tab) => {
-    const { selectedRegionalOffice, selectedHearingDay } = this.props;
+    // TODO: Remove `displayPowerOfAttorneyColumn` when pagination lands (#11757)
+    const { selectedRegionalOffice, selectedHearingDay, displayPowerOfAttorneyColumn } = this.props;
 
     if (_.isNil(selectedHearingDay)) {
       return [];
@@ -245,27 +246,33 @@ export class AssignHearingsTabs extends React.Component {
           anyFiltersAreSet: true,
           enableFilter: true,
           enableFilterTextTransform: false
-        },
-        {
-          name: 'Power of Attorney',
-          header: 'Power of Attorney (POA)',
-          columnName: 'powerOfAttorney',
-          valueName: 'powerOfAttorney',
-          valueFunction: (row) => (
-            <PowerOfAttorneyDetail
-              key={`poa-for-${row.externalId}`}
-              appealId={row.externalId}
-              displayNameOnly
-            />
-          ),
-          enableFilter: true,
-          filterValueTransform: (appealExternalId) => {
-            const { powerOfAttorneyNamesForAppeals } = this.props;
-
-            return powerOfAttorneyNamesForAppeals[appealExternalId];
-          }
         }
       );
+
+      // TODO: Put this in the `push` above when pagination lands (#11757)
+      if (displayPowerOfAttorneyColumn) {
+        columns.push(
+          {
+            name: 'Power of Attorney',
+            header: 'Power of Attorney (POA)',
+            columnName: 'powerOfAttorney',
+            valueName: 'powerOfAttorney',
+            valueFunction: (row) => (
+              <PowerOfAttorneyDetail
+                key={`poa-for-${row.externalId}`}
+                appealId={row.externalId}
+                displayNameOnly
+              />
+            ),
+            enableFilter: true,
+            filterValueTransform: (appealExternalId) => {
+              const { powerOfAttorneyNamesForAppeals } = this.props;
+
+              return powerOfAttorneyNamesForAppeals[appealExternalId];
+            }
+          }
+        );
+      }
     }
 
     return columns;
@@ -359,7 +366,9 @@ AssignHearingsTabs.propTypes = {
   selectedRegionalOffice: PropTypes.string,
   room: PropTypes.string,
   // Appeal ID => Attorney Name Array
-  powerOfAttorneyNamesForAppeals: PropTypes.objectOf(PropTypes.string)
+  powerOfAttorneyNamesForAppeals: PropTypes.objectOf(PropTypes.string),
+  // TODO: Remove when pagination lands (#11757)
+  displayPowerOfAttorneyColumn: PropTypes.bool
 };
 
 AssignHearingsTabs.defaultProps = {
