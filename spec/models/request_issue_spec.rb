@@ -634,7 +634,7 @@ describe RequestIssue, :all_dbs do
       end
 
       it "returns the review title of the request issue in active review" do
-        expect(ineligible_request_issue.ui_hash).to include(
+        expect(ineligible_request_issue.serialize).to include(
           title_of_active_review: request_issue_in_active_review.review_title
         )
       end
