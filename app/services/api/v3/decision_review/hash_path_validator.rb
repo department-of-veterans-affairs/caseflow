@@ -4,6 +4,9 @@
 # It allows you to test whether or not a *single* path in a hash is within
 # a set of allowed values, and provides an error description for when it's not.
 #
+# The validation it performs boils down to one line:
+#   allowed_values.any? { |av| av === hash.dig(*path) }
+#
 # To see an example of how it can be used to validate an entire params object,
 # see #types_and_paths and #describe_shape_error in Api::V3::DecisionReview::IntakeParams
 #
