@@ -150,195 +150,229 @@ context Api::V3::DecisionReview::IntakeParams do
   let(:first_legacy_appeal_id) { nil }
   let(:first_legacy_appeal_issue_id) { nil }
 
-  context ".errors" do
-    subject { intake_params.errors }
-    it { is_expected.to eq [] }
+  describe ".prepend_path_to_paths" do
+    let(:prepend_path) { [:data, :attributes] }
+    let(:types_and_paths) do
+      [
+        [[Hash], []],
+        [[String], [:name]],
+        [[Hash], [:coord]],
+        [[Float], [:coord, :x]],
+        [[Float], [:coord, :y]]
+      ]
+    end
+    subject do
+      Api::V3::DecisionReview::IntakeParams.prepend_path_to_paths(
+        prepend_path: prepend_path,
+        types_and_paths: types_and_paths
+      )
+    end
+
+    it do
+      is_expected.to eq(
+        [
+          [[Hash], [:data, :attributes]],
+          [[String], [:data, :attributes, :name]],
+          [[Hash], [:data, :attributes, :coord]],
+          [[Float], [:data, :attributes, :coord, :x]],
+          [[Float], [:data, :attributes, :coord, :y]]
+        ]
+      )
+    end
+
+    context "empty prepend path" do
+      let(:prepend_path) { [] }
+      it { is_expected.to eq types_and_paths }
+    end
+
+    context "empty types_and_paths" do
+      let(:types_and_paths) { [] }
+      it { is_expected.to eq [] }
+    end
   end
 
-  #     context "invalid minimum required shape: type" do
-  #       let(:params) { { data: { type: "Possum", attributes: {}, relationships: relationships } } }
-  #       it "should have code :malformed_request" do
-  #         expect(subject.errors.length).to eq(1)
-  #         expect(subject.errors[0].code).to eq(:malformed_request)
-  #       end
-  #     end
-  #
-  #     context "valid minimum required shape" do
-  #       let(:params) do
-  #         {
-  #           data: {
-  #             type: "HigherLevelReview",
-  #             attributes: { benefitType: "compensation" },
-  #             relationships: relationships
-  #           }
-  #         }
-  #       end
-  #       it "should have no errors" do
-  #         expect(subject.errors.length).to eq(0)
-  #       end
-  #     end
-  #
-  #     context "invalid minimum required shape: veteran type" do
-  #       let(:params) do
-  #         {
-  #           data: {
-  #             type: "HigherLevelReview",
-  #             attributes: {},
-  #             relationships: {
-  #               veteran: {
-  #                 data: {
-  #                   type: "Veretan",
-  #                   id: "something"
-  #                 }
-  #               }
-  #             }
-  #           }
-  #         }
-  #       end
-  #       it "should have code :malformed_request" do
-  #         expect(subject.errors.length).to eq(1)
-  #         expect(subject.errors[0].code).to eq(:malformed_request)
-  #       end
-  #     end
-  #
-  #     context "valid minimum required shape" do
-  #       let(:params) do
-  #         {
-  #           data: {
-  #             type: "HigherLevelReview",
-  #             attributes: { benefitType: "compensation" },
-  #             relationships: {
-  #               veteran: {
-  #                 data: {
-  #                   type: "Veteran",
-  #                   id: "something"
-  #                 }
-  #               }
-  #             }
-  #           }
-  #         }
-  #       end
-  #       it "should have no errors" do
-  #         expect(subject.errors.length).to eq(0)
-  #       end
-  #     end
-  #
-  #     context "invalid minimum required shape: no veteran id" do
-  #       let(:params) do
-  #         {
-  #           data: {
-  #             type: "HigherLevelReview",
-  #             attributes: {},
-  #             relationships: {
-  #               veteran: {
-  #                 data: {
-  #                   type: "Veretan",
-  #                   id: " "
-  #                 }
-  #               }
-  #             }
-  #           }
-  #         }
-  #       end
-  #       it "should have code :malformed_request" do
-  #         expect(subject.errors.length).to eq(1)
-  #         expect(subject.errors[0].code).to eq(:malformed_request)
-  #       end
-  #     end
-  #
-  #     context "bad request issue" do
-  #       let(:included) do
-  #         [
-  #           {
-  #             type: "RequestIssue",
-  #             attributes: {}
-  #           }
-  #         ]
-  #       end
-  #       it "should have code :request_issue_cannot_be_empty" do
-  #         expect(subject.errors.length).to eq(1)
-  #         expect(subject.errors[0].code).to eq(:request_issue_cannot_be_empty)
-  #       end
-  #     end
-  #
-  #     context "invalid benefit type" do
-  #       let(:benefit_type) { "super powers" }
-  #       it "should have code :invalid_benefit_type" do
-  #         expect(subject.errors.length).to eq(1)
-  #         expect(subject.errors[0].code).to eq(:invalid_benefit_type)
-  #       end
-  #     end
-  #   end
+  describe "#for_array_at_path_enumerate_types_and_paths" do
+    subject do
+      intake_params.send(
+        :for_array_at_path_enumerate_types_and_paths,
+        array_path: array_path,
+        types_and_paths: types_and_paths
+      )
+    end
+    let(:array_path) { ["included"] }
+    let(:types_and_paths) do
+      [
+        [[Hash], []],
+        [["ContestableIssue"], ["type"]],
+        [[Integer, nil],       %w[attributes decisionIssueId]],
+        [[String, nil],        %w[attributes ratingIssueId]],
+        [[String, nil],        %w[attributes ratingDecisionIssueId]],
+        [[Array, nil],         %w[attributes legacyAppealIssues]]
+      ]
+    end
 
-  # context ".veteran_file_number" do
-  #   it "should return the veteran_file_number given" do
-  #     expect(subject.veteran_file_number).to eq(veteran_file_number)
-  #   end
-  # end
+    it do
+      is_expected.to eq(
+        [
+          [[Hash], ["included", 0]],
+          [["ContestableIssue"], ["included", 0, "type"]],
+          [[Integer, nil],       ["included", 0, "attributes", "decisionIssueId"]],
+          [[String, nil],        ["included", 0, "attributes", "ratingIssueId"]],
+          [[String, nil],        ["included", 0, "attributes", "ratingDecisionIssueId"]],
+          [[Array, nil],         ["included", 0, "attributes", "legacyAppealIssues"]]
+        ]
+      )
+    end
 
-  # context ".review_params" do
-  #   it "should return a properly shape IntakesController-style params object" do
-  #     expect(subject.review_params).to be_a(ActionController::Parameters)
-  #     expect(subject.review_params.as_json).to eq(
-  #       {
-  #         receipt_date: attributes[:receiptDate],
-  #         informal_conference: attributes[:informalConference],
-  #         same_office: attributes[:sameOffice],
-  #         benefit_type: attributes[:benefitType],
-  #         claimant: claimant[:data][:id],
-  #         payee_code: claimant[:data][:meta][:payeeCode],
-  #         veteran_is_not_claimant: true,
-  #         legacy_opt_in_approved: legacy_opt_in_approved
-  #       }.as_json
-  #     )
-  #   end
+    context "types shouldn't matter" do
+      let(:types_and_paths) do
+        [
+          [[], []],
+          [{}, ["type"]],
+          ["a",       %w[attributes decisionIssueId]],
+          [12,        %w[attributes ratingIssueId]],
+          [String, %w[attributes ratingDecisionIssueId]],
+          [nil, %w[attributes legacyAppealIssues]]
+        ]
+      end
 
-  #   context do
-  #     let(:receipt_date) { nil }
-  #     it "should return today's date if no receiptDate was provided" do
-  #       expect(subject.review_params[:receipt_date]).to eq(Time.now.in_time_zone.strftime("%F"))
-  #     end
-  #   end
+      it do
+        is_expected.to eq(
+          [
+            [[], ["included", 0]],
+            [{}, ["included", 0, "type"]],
+            ["a",       ["included", 0, "attributes", "decisionIssueId"]],
+            [12,        ["included", 0, "attributes", "ratingIssueId"]],
+            [String, ["included", 0, "attributes", "ratingDecisionIssueId"]],
+            [nil, ["included", 0, "attributes", "legacyAppealIssues"]]
+          ]
+        )
+      end
+    end
 
-  #   context do
-  #     let(:claimant) { nil }
-  #     it "should return a properly shape IntakesController-style params object" do
-  #       expect(subject.errors).to eq([])
-  #       expect(subject.review_params[:claimant]).to eq(nil)
-  #       expect(subject.review_params[:payee_code]).to eq(nil)
-  #       expect(subject.review_params[:veteran_is_not_claimant]).to eq(false)
-  #     end
-  #   end
+    context "more interesting path" do
+      let(:params) do
+        { a: [{ b: [{ c: [1, 2, 3, 4, 5, 6, 7] }] }] }
+      end
+      let(:array_path) { [:a, 0, :b, 0, :c] }
+      let(:types_and_paths) do
+        [
+          [[Integer], []]
+        ]
+      end
 
-  #   # tweaked for happy path (always returns true)
-  #   context do
-  #     let(:legacy_opt_in_approved) { false }
-  #     it "should return a properly shape IntakesController-style params object" do
-  #       expect(subject.errors).to eq([])
-  #       expect(subject.review_params[:legacy_opt_in_approved]).to eq(true)
-  #     end
-  #   end
-  # end
+      it do
+        is_expected.to eq(
+          [
+            [[Integer], [:a, 0, :b, 0, :c, 0]],
+            [[Integer], [:a, 0, :b, 0, :c, 1]],
+            [[Integer], [:a, 0, :b, 0, :c, 2]],
+            [[Integer], [:a, 0, :b, 0, :c, 3]],
+            [[Integer], [:a, 0, :b, 0, :c, 4]],
+            [[Integer], [:a, 0, :b, 0, :c, 5]],
+            [[Integer], [:a, 0, :b, 0, :c, 6]]
+          ]
+        )
+      end
+    end
 
-  # context ".complete_params" do
-  #   it "should return a properly shape IntakesController-style params object" do
-  #     expect(subject.complete_params.as_json).to eq(
-  #       {
-  #         request_issues: [
-  #           {
-  #             is_unidentified: false,
-  #             benefit_type: benefit_type,
-  #             nonrating_issue_category: category,
-  #             contested_decision_issue_id: decision_issue_id,
-  #             decision_date: decision_date,
-  #             decision_text: decision_text,
-  #             vacols_id: legacy_appeal_id,
-  #             vacols_sequence_id: legacy_appeal_issue_id,
-  #             notes: notes
-  #           }
-  #         ]
-  #       }.as_json
-  #     )
-  #   end
-  # end
+    context "another interesting path" do
+      let(:params) do
+        { a: [{ b: [{ c: [{ x: 8.8, y: 1.2 }, { x: 9, y: 22.9 }, {}] }] }] }
+      end
+      let(:array_path) { [:a, 0, :b, 0, :c] }
+      let(:types_and_paths) do
+        [
+          [[Hash], []],
+          [[Float], [:x]],
+          [[Float], [:y]]
+        ]
+      end
+
+      it do
+        is_expected.to eq(
+          [
+            [[Hash],    [:a, 0, :b, 0, :c, 0]],
+            [[Float],   [:a, 0, :b, 0, :c, 0, :x]],
+            [[Float],   [:a, 0, :b, 0, :c, 0, :y]],
+            [[Hash],    [:a, 0, :b, 0, :c, 1]],
+            [[Float],   [:a, 0, :b, 0, :c, 1, :x]],
+            [[Float],   [:a, 0, :b, 0, :c, 1, :y]],
+            [[Hash],    [:a, 0, :b, 0, :c, 2]],
+            [[Float],   [:a, 0, :b, 0, :c, 2, :x]],
+            [[Float],   [:a, 0, :b, 0, :c, 2, :y]]
+          ]
+          # in a real scenario, you could use the
+          # resulting array ^^^ and HashPathValidator
+          # to catch that the third element is empty
+          # (see params)
+        )
+      end
+    end
+  end
+
+  describe "#all_legacy_appeal_issue_paths" do
+    subject { intake_params.send(:all_legacy_appeal_issue_paths) }
+
+    it do
+      is_expected.to eq(
+        [
+          ["included", 0, "legacyAppealIssues", 0]
+        ]
+      )
+    end
+
+    context "lots of contestable issues, some with legacyAppealIssues some without" do
+      let(:included) do
+        [
+          { attributes: {} },
+          { attributes: {} },
+          {
+            attributes: {
+              legacyAppealIssues: ["a"]
+            }
+          },
+          { attributes: {} },
+          { attributes: {} },
+          { attributes: {} },
+          {
+            attributes: {
+              legacyAppealIssues: %w[b c d]
+            }
+          },
+          {
+            attributes: {
+              legacyAppealIssues: ["e"]
+            }
+          },
+          {
+            attributes: {
+              legacyAppealIssues: []
+            }
+          },
+          {
+            attributes: {
+              legacyAppealIssues: %w[f g h]
+            }
+          }
+        ]
+      end
+
+      it do
+        is_expected.to eq(
+          [
+            ["included", 2, "legacyAppealIssues", 0],
+            ["included", 6, "legacyAppealIssues", 0],
+            ["included", 6, "legacyAppealIssues", 1],
+            ["included", 6, "legacyAppealIssues", 2],
+            ["included", 7, "legacyAppealIssues", 0],
+            # no 8 (empty array)
+            ["included", 9, "legacyAppealIssues", 0],
+            ["included", 9, "legacyAppealIssues", 1],
+            ["included", 9, "legacyAppealIssues", 2]
+          ]
+        )
+      end
+    end
+  end
 end

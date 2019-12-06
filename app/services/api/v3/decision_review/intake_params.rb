@@ -4,16 +4,8 @@ class Api::V3::DecisionReview::IntakeParams
   OBJECT = [Hash, ActionController::Parameters, ActiveSupport::HashWithIndifferentAccess]
   BOOL = [true, false]
 
-  attr_reader :errors
-
   def initialize(params)
     @params = params
-    @errors = []
-    validate
-  end
-
-  def errors?
-    !errors.empty?
   end
 
   # params for IntakesController#review
@@ -37,21 +29,22 @@ class Api::V3::DecisionReview::IntakeParams
     )
   end
 
-  private
-
-  def validate
-    unless shape_valid?
-      @errors << Api::V3::DecisionReview::IntakeError.new(:malformed_request, shape_error_message)
-      return
-    end
-
-    unless benefit_type_valid?
-      @errors << Api::V3::DecisionReview::IntakeError.new(:invalid_benefit_type)
-      return
-    end
-
-    @errors += contestable_issue_errors
+  def errors?
+    !errors.empty?
   end
+
+  def errors
+    @errors ||= case
+                when !shape_valid?
+                  [Api::V3::DecisionReview::IntakeError.new(:malformed_request, shape_error_message)]
+                when !benefit_type_valid?
+                  [Api::V3::DecisionReview::IntakeError.new(:invalid_benefit_type)]
+                else
+                  contestable_issue_errors
+                end
+  end
+
+  private
 
   def shape_valid?
     shape_error_message.present?
@@ -75,7 +68,7 @@ class Api::V3::DecisionReview::IntakeParams
     @params.dig("data", "attributes")
   end
 
-  # most methods are run after validate --this one isn't (hence the paranoia)
+  # most methods are run after `errors` method --this one isn't (hence the paranoia)
   def veteran_is_not_the_claimant?
     @params.respond_to?(:has_key?) &&
       @params["data"].respond_to?(:has_key?) &&
@@ -84,7 +77,7 @@ class Api::V3::DecisionReview::IntakeParams
   end
 
   def claimant_who_is_not_the_veteran
-    attributes["claimant"] || { participantId: nil, payeeCode: nil }
+    attributes["claimant"] || {}
   end
 
   def receipt_date
@@ -92,15 +85,13 @@ class Api::V3::DecisionReview::IntakeParams
   end
 
   def contestable_issues
-    @contestable_issues ||= @params["included"]
-      .select { |obj| obj["type"] == "ContestableIssue" }
-      .map do |obj|
-        Api::V3::DecisionReview::ContestableIssueParams.new(
-          contestable_issue: obj,
-          benefit_type: attributes["benefitType"],
-          legacy_opt_in_approved: legacy_opt_in?
-        )
-      end
+    @contestable_issues ||= @params["included"].map do |contestable_issue_params|
+      Api::V3::DecisionReview::ContestableIssueParams.new(
+        params: contestable_issue_params,
+        benefit_type: attributes["benefitType"],
+        legacy_opt_in_approved: attributes["legacyOptInApproved"]
+      )
+    end
   end
 
   def contestable_issue_errors
@@ -108,23 +99,23 @@ class Api::V3::DecisionReview::IntakeParams
       Api::V3::DecisionReview::IntakeError.new(contestable_issue)
     end
   rescue StandardError
-    [Api::V3::DecisionReview::IntakeError.new(:malformed_contestable_issues)]
+    [Api::V3::DecisionReview::IntakeError.new(:malformed_contestable_issues)] # error_code
   end
 
   def benefit_type_valid?
     attributes["benefitType"].in?(
-      Api::V3::DecisionReview::RequestIssueParams::CATEGORIES_BY_BENEFIT_TYPE.keys
+      Api::V3::DecisionReview::ContestableIssueParams::CATEGORIES_BY_BENEFIT_TYPE.keys
     )
   end
 
-  # array of allowed types (values) for params path
+  # array of allowed types (values) for params paths
   def types_and_paths
     [
-      [OBJECT,         ["data"]], # REQUIRED
+      [OBJECT,         ["data"]],
       [["HigherLevelReview"], ["data", "type"]],
-      [OBJECT,         ["data", "attributes"]], # REQUIRED
-      [[String, nil],  ["data", "attributes", "receiptDate"]], # REQUIRED
-      [BOOL,           ["data", "attributes", "informalConference"]], # REQUIRED
+      [OBJECT,         ["data", "attributes"]],
+      [[String, nil],  ["data", "attributes", "receiptDate"]],
+      [BOOL,           ["data", "attributes", "informalConference"]],
       [[Array, nil],   ["data", "attributes", "informalConferenceTimes"]],
       [[String, nil],  ["data", "attributes", "informalConferenceTimes", 0]],
       [[String, nil],  ["data", "attributes", "informalConferenceTimes", 1]],
@@ -134,11 +125,11 @@ class Api::V3::DecisionReview::IntakeParams
       [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumber"]],
       [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumberCountryCode"]],
       [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumberExt"]],
-      [BOOL,           ["data", "attributes", "sameOffice"]], # REQUIRED
-      [BOOL,           ["data", "attributes", "legacyOptInApproved"]], # REQUIRED
-      [[String],       ["data", "attributes", "benefitType"]], # REQUIRED
-      [OBJECT,         ["data", "attributes", "veteran"]], # REQUIRED
-      [[String],       ["data", "attributes", "veteran", "fileNumberOrSsn"]], # REQUIRED
+      [BOOL,           ["data", "attributes", "sameOffice"]],
+      [BOOL,           ["data", "attributes", "legacyOptInApproved"]],
+      [[String],       ["data", "attributes", "benefitType"]],
+      [OBJECT,         ["data", "attributes", "veteran"]],
+      [[String],       ["data", "attributes", "veteran", "fileNumberOrSsn"]],
       [[String, nil],  ["data", "attributes", "veteran", "addressLine1"]],
       [[String, nil],  ["data", "attributes", "veteran", "addressLine2"]],
       [[String, nil],  ["data", "attributes", "veteran", "city"]],
@@ -170,7 +161,7 @@ class Api::V3::DecisionReview::IntakeParams
       [[String, nil],  ["data", "attributes", "claimant", "phoneNumberCountryCode"]],
       [[String, nil],  ["data", "attributes", "claimant", "phoneNumberExt"]],
       [[String, nil],  ["data", "attributes", "claimant", "emailAddress"]],
-      [[Array],        ["included"]], # REQUIRED
+      [[Array],        ["included"]],
     # [OBJECT,               ["included", 0]],
     # [["ContestableIssue"], ["included", 0, "type"]],
     # [[Integer, nil],       ["included", 0, "attributes", "decisionIssueId"]],
@@ -184,7 +175,7 @@ class Api::V3::DecisionReview::IntakeParams
     # [[String, nil],        ["included", 1, "attributes", "ratingDecisionIssueId"]],
     # [[Array, nil],         ["included", 1, "attributes", "legacyAppealIssues"]]
     # ...
-      *for_array_at_path_enumerate_types_and_paths(
+      *for_array_at_path_enumerate_types_and_paths( # ^^^
         array_path: ["included"],
         types_and_paths: [
           [OBJECT,               []],
@@ -205,7 +196,7 @@ class Api::V3::DecisionReview::IntakeParams
     # [[String], ["included", 5, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
     # [[String], ["included", 5, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]],
     # ...
-      *legacy_appeal_issue_array_paths.reduce([]) do |acc, path|
+      *all_legacy_appeal_issue_paths.reduce([]) do |acc, path| # ^^^
         [
           *acc,
           *for_array_at_path_enumerate_types_and_paths(
@@ -221,22 +212,24 @@ class Api::V3::DecisionReview::IntakeParams
     ]
   end
 
-  def for_array_at_path_enumerate_types_and_paths(array_path:, types_and_paths:)
-    @params.dig(*array_path).each.with_index.reduce([]) do |acc, (_, index)|
-      [
-        *acc,
-        *types_and_paths.map { |(types, path)| [types, [index, *path]] }
-      ]
-    end
-  rescue
-    []
-  end
-  
-  def legacy_appeal_issue_array_paths
+  # returns the paths of all legacyAppealIssues arrays nested in params
+  #
+  # example return:
+  #
+  # [
+  #   ["included", 0, "legacyAppealIssues", 0]
+  #   ["included", 0, "legacyAppealIssues", 1]
+  #   ["included", 3, "legacyAppealIssues", 0]
+  #   ["included", 4, "legacyAppealIssues", 0]
+  #   ["included", 4, "legacyAppealIssues", 1]
+  #   ["included", 4, "legacyAppealIssues", 2]
+  # ]
+  #
+  def all_legacy_appeal_issue_paths
     @params["included"].each.with_index.reduce([]) do |acc, (contestable_issue, ci_index)|
-      legacy_appeal_issues = contestable_issue["legacyAppealIssues"]
+      legacy_appeal_issues = contestable_issue["attributes"]["legacyAppealIssues"]
   
-      return acc unless legacy_appeal_issues.is_a? Array
+      next acc unless legacy_appeal_issues.is_a? Array
   
       [
         *acc,
@@ -247,5 +240,81 @@ class Api::V3::DecisionReview::IntakeParams
     end
   rescue
     []
+  end
+
+  # given the path to an array, prepends the path of each element of that array
+  # to types_and_paths
+  #
+  # given:
+  #
+  #   array_path: [:class, :students],
+  #
+  #   types_and_paths: [
+  #     [   [Hash], []            ],
+  #     [ [String], [:first_name] ],
+  #     [ [String], [:last_name]  ],
+  #     [  [Float], [:grade]      ],
+  #   ]
+  #
+  # returns:
+  #   [
+  #     [   [Hash], [:class, :students, 0]              ],
+  #     [ [String], [:class, :students, 0, :first_name] ],
+  #     [ [String], [:class, :students, 0, :last_name]  ],
+  #     [  [Float], [:class, :students, 0, :grade]      ],
+  #     [   [Hash], [:class, :students, 1]              ],
+  #     [ [String], [:class, :students, 1, :first_name] ],
+  #     [ [String], [:class, :students, 1, :last_name]  ],
+  #     [  [Float], [:class, :students, 1, :grade]      ],
+  #     [   [Hash], [:class, :students, 2]              ],
+  #     [ [String], [:class, :students, 2, :first_name] ],
+  #     [ [String], [:class, :students, 2, :last_name]  ],
+  #     [  [Float], [:class, :students, 2, :grade]      ],
+  #     ...
+  #   ]
+  def for_array_at_path_enumerate_types_and_paths(array_path:, types_and_paths:)
+    array = @params.dig(*array_path)
+
+    array.each.with_index.reduce([]) do |acc, (_, index)|
+      [
+        *acc,
+        *self.class.prepend_path_to_paths(
+          prepend_path: [*array_path, index],
+          types_and_paths: types_and_paths
+        )
+      ]
+    end
+  rescue
+    []
+  end
+ 
+  # (helper for `for_array_at_path_enumerate_types_and_paths`)
+  #
+  # given an array (prepend_path), prepends it to each path array in types_and_paths
+  #
+  # given:
+  #
+  #   prepend_path: [:data, :attributes],
+  #
+  #   types_and_paths: [
+  #     [   [Hash], []           ],
+  #     [ [String], [:name]      ],
+  #     [   [Hash], [:coord]     ],
+  #     [  [Float], [:coord, :x] ],
+  #     [  [Float], [:coord, :y] ],
+  #   ]
+  #
+  # returns:
+  #   [
+  #     [   [Hash], [:data, :attributes]             ],
+  #     [ [String], [:data, :attributes, :name]      ],
+  #     [   [Hash], [:data, :attributes, :coord]     ],
+  #     [  [Float], [:data, :attributes, :coord, :x] ],
+  #     [  [Float], [:data, :attributes, :coord, :y] ],
+  #   ]
+  def self.prepend_path_to_paths(types_and_paths:, prepend_path:)
+    types_and_paths.map do |(types, path)|
+      [types, [*prepend_path, *path]]
+    end
   end
 end
