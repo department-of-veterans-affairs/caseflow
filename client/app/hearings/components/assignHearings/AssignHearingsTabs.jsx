@@ -20,7 +20,6 @@ import { HearingTime, HearingDocketTag, AppealDocketTag,
 
 import PowerOfAttorneyDetail from '../../../queue/PowerOfAttorneyDetail';
 import { getAppealValue } from '../../../queue/QueueActions';
-import { appealWithDetailSelector } from '../../../queue/selectors';
 
 const UPCOMING_HEARINGS_TAB_NAME = 'upcomingHearings';
 const AMA_APPEALS_TAB_NAME = 'amaAppeals';
@@ -123,6 +122,7 @@ export class AssignHearingsTabs extends React.Component {
   }
 
   availableVeteransRows = (appeals) => {
+
     /*
       Sorting by docket number within each category of appeal:
       CAVC, AOD and normal. Prepended * and + to docket number for
@@ -375,7 +375,7 @@ AssignHearingsTabs.defaultProps = {
   powerOfAttorneyNamesForAppeals: {}
 };
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   const powerOfAttorneyNamesForAppeals = _.mapValues(
     _.get(state, 'queue.appealDetails', {}),
     (val) => _.get(val, 'powerOfAttorney.representative_name')

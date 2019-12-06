@@ -65,7 +65,7 @@ export default class HearingsApp extends React.PureComponent {
     // TODO: Remove `displayPowerOfAttorneyColumn` prop when pagination lands. (#11757)
     // TODO: Also remove where this gets set in the view. (#11757)
     <AssignHearingsContainer
-      {...this.propsForAssignHearingsContainer()} 
+      {...this.propsForAssignHearingsContainer()}
       displayPowerOfAttorneyColumn={this.props.displayPowerOfAttorneyColumnOnAssignHearings}
     />
   );
@@ -190,5 +190,7 @@ HearingsApp.propTypes = {
   userInHearingOrTranscriptionOrganization: PropTypes.bool,
   userRole: PropTypes.string,
   userId: PropTypes.number,
-  userCssId: PropTypes.string
+  userCssId: PropTypes.string,
+  // TODO: Remove when pagination lands. (#11757)
+  displayPowerOfAttorneyColumnOnAssignHearings: PropTypes.bool
 };
