@@ -489,7 +489,7 @@ class Task < ApplicationRecord
     children.open.update_all(parent_id: sibling.id)
     sibling.update!(status: status)
 
-    update!(status: Constants.TASK_STATUSES.cancelled)
+    update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: reassign_params[:instructions])
 
     [sibling, self, sibling.children].flatten
   end
