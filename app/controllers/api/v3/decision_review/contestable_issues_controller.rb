@@ -40,13 +40,17 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
   private
 
   def contestable_issue_data(contestable_issue)
+    latest_issues_in_chain =
+      contestable_issue.latest_contestable_issues.collect do |latest|
+        { id: latest.decision_issue&.id, approxDecisionDate: latest.approx_decision_date }
+      end
     attributes = {
       ratingIssueId: contestable_issue.rating_issue_reference_id,
       ratingIssueProfileDate: contestable_issue.rating_issue_profile_date,
       ratingIssueDiagnosticCode: contestable_issue.rating_issue_diagnostic_code,
       description: contestable_issue.description,
       isRating: contestable_issue.is_rating,
-      latestIssuesInChain: contestable_issue.latest_contestable_issues.collect { |latest| { id: latest.decision_issue&.id, approxDecisionDate: latest.approx_decision_date } },
+      latestIssuesInChain: latest_issues_in_chain,
       decisionIssueId: contestable_issue.decision_issue&.id,
       ratingDecisionId: contestable_issue.rating_decision_reference_id,
       approxDecisionDate: contestable_issue.approx_decision_date,
@@ -56,9 +60,6 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
       timely: contestable_issue.timely?
     }.reject { |_, value| value.nil? }
 
-    {
-      type: "ContestableIssue",
-      attributes: attributes
-    }
+    { type: "ContestableIssue", attributes: attributes }
   end
 end
