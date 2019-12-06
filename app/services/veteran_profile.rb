@@ -30,7 +30,7 @@ class VeteranProfile
 
   private
 
-  attr_reader :veteran_file_number, :summary
+  attr_reader :veteran_file_number
 
   def summary
     @summary ||= { file_number: veteran_file_number }
