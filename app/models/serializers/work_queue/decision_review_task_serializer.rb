@@ -39,7 +39,7 @@ class WorkQueue::DecisionReviewTaskSerializer
       id: decision_review(object).external_id,
       isLegacyAppeal: false,
       issueCount: decision_review(object).request_issues.active_or_ineligible.count,
-      activeRequestIssues: decision_review(object).request_issues.active.map(&:ui_hash)
+      activeRequestIssues: decision_review(object).request_issues.active.map(&:serialize)
     }
   end
 
