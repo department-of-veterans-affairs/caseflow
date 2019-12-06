@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class Api::V3::DecisionReview::IntakeParams
+  OBJECT = [Hash, ActionController::Parameters, ActiveSupport::HashWithIndifferentAccess]
+  BOOL = [true, false]
+
   attr_reader :errors
 
   def initialize(params)
@@ -13,28 +16,24 @@ class Api::V3::DecisionReview::IntakeParams
     !errors.empty?
   end
 
-  # def veteran_file_number
-  #   @params.dig("data", "attributes", "veteran", "fileNumberOrSsn").to_s
-  # end
-
   # params for IntakesController#review
   def review_params
     ActionController::Parameters.new(
-      receipt_date: attributes[:receiptDate] || Time.zone.now.strftime("%F"),
-      informal_conference: attributes[:informalConference],
-      same_office: attributes[:sameOffice],
-      benefit_type: attributes[:benefitType],
-      claimant: claimant_participant_id,
-      payee_code: claimant_payee_code,
-      veteran_is_not_claimant: claimant_participant_id.present? || claimant_payee_code.present?,
-      legacy_opt_in_approved: legacy_opt_in?
+      receipt_date: receipt_date,
+      informal_conference: attributes["informalConference"],
+      same_office: attributes["sameOffice"],
+      benefit_type: attributes["benefitType"],
+      claimant: claimant_who_is_not_the_veteran["participantId"],
+      payee_code: claimant_who_is_not_the_veteran["payeeCode"], 
+      veteran_is_not_claimant: veteran_is_not_the_claimant?,
+      legacy_opt_in_approved: attributes["legacyOptInApproved"]
     )
   end
 
   # params for IntakesController#complete
   def complete_params
     ActionController::Parameters.new(
-      request_issues: request_issues.map(&:intakes_controller_params)
+      request_issues: contestable_issues.map(&:intakes_controller_params)
     )
   end
 
@@ -66,18 +65,34 @@ class Api::V3::DecisionReview::IntakeParams
     "payload must be an object" unless @params.respond_to?(:dig)
   
     types_and_paths.find do |(types, path)|
-      validator = HashPathValidator.new(hash: @params, path: path, allowed_values: types)
+      validator = Api::V3::DecisionReview::HashPathValidator.new(hash: @params, path: path, allowed_values: types)
       break validator.error_msg if !validator.path_is_valid? 
       false
     end
   end
 
-  def included
-    @params["included"] || []
+  def attributes
+    @params.dig("data", "attributes")
+  end
+
+  # most methods are run after validate --this one isn't (hence the paranoia)
+  def veteran_is_not_the_claimant?
+    @params.respond_to?(:has_key?) &&
+      @params["data"].respond_to?(:has_key?) &&
+      @params["data"]["attributes"].respond_to?(:has_key?) &&
+      !!attributes["claimant"]
+  end
+
+  def claimant_who_is_not_the_veteran
+    attributes["claimant"] || { participantId: nil, payeeCode: nil }
+  end
+
+  def receipt_date
+    attributes["receiptDate"] || Time.zone.now.strftime("%F")
   end
 
   def contestable_issues
-    @contestable_issues ||= included
+    @contestable_issues ||= @params["included"]
       .select { |obj| obj["type"] == "ContestableIssue" }
       .map do |obj|
         Api::V3::DecisionReview::ContestableIssueParams.new(
@@ -108,7 +123,7 @@ class Api::V3::DecisionReview::IntakeParams
       [OBJECT,         ["data"]], # REQUIRED
       [["HigherLevelReview"], ["data", "type"]],
       [OBJECT,         ["data", "attributes"]], # REQUIRED
-      [[String],       ["data", "attributes", "receiptDate"]], # REQUIRED
+      [[String, nil],  ["data", "attributes", "receiptDate"]], # REQUIRED
       [BOOL,           ["data", "attributes", "informalConference"]], # REQUIRED
       [[Array, nil],   ["data", "attributes", "informalConferenceTimes"]],
       [[String, nil],  ["data", "attributes", "informalConferenceTimes", 0]],
@@ -117,7 +132,6 @@ class Api::V3::DecisionReview::IntakeParams
       [[*OBJECT, nil], ["data", "attributes", "informalConferenceRep"]],
       [[String],       ["data", "attributes", "informalConferenceRep name"]],
       [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumber"]],
-      [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumberCountryCode"]],
       [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumberCountryCode"]],
       [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumberExt"]],
       [BOOL,           ["data", "attributes", "sameOffice"]], # REQUIRED
@@ -137,7 +151,7 @@ class Api::V3::DecisionReview::IntakeParams
       [[String, nil],  ["data", "attributes", "veteran", "emailAddress"]],
       [[*OBJECT, nil], ["data", "attributes", "claimant"]],
       *(
-        if claimant # ... participantId and payeeCode must also be present
+        if veteran_is_not_the_claimant? # ... participantId and payeeCode must be present
           [
             [[String], ["data", "attributes", "claimant", "participantId"]],
             [[String], ["data", "attributes", "claimant", "payeeCode"]],
@@ -171,7 +185,7 @@ class Api::V3::DecisionReview::IntakeParams
     # [[Array, nil],         ["included", 1, "attributes", "legacyAppealIssues"]]
     # ...
       *for_array_at_path_enumerate_types_and_paths(
-        path: ["included"],
+        array_path: ["included"],
         types_and_paths: [
           [OBJECT,               []],
           [["ContestableIssue"], ["type"]],
@@ -195,7 +209,7 @@ class Api::V3::DecisionReview::IntakeParams
         [
           *acc,
           *for_array_at_path_enumerate_types_and_paths(
-            path: path,
+            array_path: path,
             types_and_paths: [
               [OBJECT,    []],
               [[String],  ["legacyAppealId"]],
@@ -207,7 +221,7 @@ class Api::V3::DecisionReview::IntakeParams
     ]
   end
 
-  def for_array_at_path_enumerate_types_and_paths(array_path, types_and_paths)
+  def for_array_at_path_enumerate_types_and_paths(array_path:, types_and_paths:)
     @params.dig(*array_path).each.with_index.reduce([]) do |acc, (_, index)|
       [
         *acc,
@@ -219,7 +233,7 @@ class Api::V3::DecisionReview::IntakeParams
   end
   
   def legacy_appeal_issue_array_paths
-    included.each.with_index.reduce([]) do |acc, (contestable_issue, ci_index)|
+    @params["included"].each.with_index.reduce([]) do |acc, (contestable_issue, ci_index)|
       legacy_appeal_issues = contestable_issue["legacyAppealIssues"]
   
       return acc unless legacy_appeal_issues.is_a? Array
