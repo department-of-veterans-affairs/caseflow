@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import moment from 'moment';
 import _ from 'lodash';
@@ -15,6 +17,10 @@ import { getFacilityType } from '../../../components/DataDropdowns/AppealHearing
 import { getIndexOfDocketLine, docketCutoffLineStyle } from './AssignHearingsDocketLine';
 import { HearingTime, HearingDocketTag, AppealDocketTag,
   SuggestedHearingLocation, HearingAppellantName, CaseDetailsInformation } from './AssignHearingsFields';
+
+import PowerOfAttorneyDetail from '../../../queue/PowerOfAttorneyDetail';
+import { getAppealValue } from '../../../queue/QueueActions';
+import { appealWithDetailSelector } from '../../../queue/selectors';
 
 const UPCOMING_HEARINGS_TAB_NAME = 'upcomingHearings';
 const AMA_APPEALS_TAB_NAME = 'amaAppeals';
@@ -142,9 +148,9 @@ export default class AssignHearingsTabs extends React.Component {
       }),
       docketNumber: <AppealDocketTag appeal={appeal} />,
       suggestedLocation: this.getSuggestedHearingLocation(appeal.attributes.availableHearingLocations),
-      time: null,
       externalId: appeal.attributes.externalAppealId,
-      powerOfAttorney: appeal.attributes.powerOfAttorney && appeal.attributes.powerOfAttorney.name
+      // The powerOfAttorney field is populated using the appeal's external id.
+      powerOfAttorney: appeal.attributes.externalAppealId
     }));
   };
 
@@ -242,8 +248,19 @@ export default class AssignHearingsTabs extends React.Component {
           header: 'Power of Attorney (POA)',
           columnName: 'powerOfAttorney',
           valueName: 'powerOfAttorney',
-          valueFunction: (row) => row.powerOfAttorney,
-          enableFilter: true
+          valueFunction: (row) => (
+            <PowerOfAttorneyDetail
+              key={`poa-for-${row.externalId}`}
+              appealId={row.externalId}
+              displayNameOnly
+            />
+          ),
+          enableFilter: true,
+          filterValueTransform: (appealExternalId) => {
+            const { powerOfAttorneyNamesForAppeals } = this.props;
+
+            return powerOfAttorneyNamesForAppeals[appealExternalId];
+          }
         }
       );
     }
@@ -334,5 +351,26 @@ AssignHearingsTabs.propTypes = {
     totalSlots: PropTypes.number
   }),
   selectedRegionalOffice: PropTypes.string,
-  room: PropTypes.string
+  room: PropTypes.string,
+  // Appeal ID => Attorney Name Array
+  powerOfAttorneyNamesForAppeals: PropTypes.objectOf(PropTypes.string)
 };
+
+AssignHearingsTabs.defaultProps = {
+  powerOfAttorneyNamesForAppeals: {}
+};
+
+const mapStateToProps = (state, ownProps) => {
+  const powerOfAttorneyNamesForAppeals = _.mapValues(
+    _.get(state, 'queue.appealDetails', {}),
+    (val) => _.get(val, 'powerOfAttorney.representative_name')
+  );
+
+  return { powerOfAttorneyNamesForAppeals };
+};
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  getAppealValue
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(AssignHearingsTabs);

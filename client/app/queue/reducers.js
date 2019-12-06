@@ -609,6 +609,11 @@ const startedLoadingAppealValue = (state, action) => {
           }
         }
       }
+    },
+    appealDetails: {
+      $merge: {
+        [action.payload.appealId]: {}
+      }
     }
   });
 };
