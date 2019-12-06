@@ -540,6 +540,27 @@ automatically rerun some command when a watched set of files change - you can do
 running `bundle exec guard`, then editing a file (see Guardfile for details). In conjunction with
 the `focus` flag, you can get a short development loop.
 
+### Test coverage
+
+We use the [simplecov](https://github.com/colszowka/simplecov) gem to evaluate test coverage as part of the CircleCI process.
+
+If you see a test coverage failure at CircleCI, you can evaluate test coverage locally for the affected files using
+the [single_cov](https://github.com/grosser/single_cov) gem.
+
+Add the line to any rspec file locally:
+
+```
+SingleCov.covered!
+```
+
+and run that file under rspec.
+
+```
+SINGLE_COV=true bundle exec rspec spec/path/to/file_spec.rb
+```
+
+Missing test coverage will be reported automatically at the end of the test run.
+
 ## Debugging FACOLS setup
 See debugging steps as well as more information about FACOLS in our [wiki](https://github.com/department-of-veterans-affairs/caseflow/wiki/FACOLS#debugging-facols) or join the DSVA slack channel #appeals-facols-issues.
 
