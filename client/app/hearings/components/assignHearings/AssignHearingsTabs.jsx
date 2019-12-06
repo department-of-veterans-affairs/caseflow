@@ -88,7 +88,7 @@ UpcomingHearingsTable.propTypes = {
   })
 };
 
-export default class AssignHearingsTabs extends React.Component {
+export class AssignHearingsTabs extends React.Component {
 
   isAmaAppeal = (appeal) => {
     return appeal.attributes.appealType === 'Appeal';
@@ -123,7 +123,6 @@ export default class AssignHearingsTabs extends React.Component {
   }
 
   availableVeteransRows = (appeals) => {
-
     /*
       Sorting by docket number within each category of appeal:
       CAVC, AOD and normal. Prepended * and + to docket number for
@@ -235,8 +234,12 @@ export default class AssignHearingsTabs extends React.Component {
           header: 'Suggested Location',
           align: 'left',
           columnName: 'suggestedLocation',
-          valueFunction: (row) => <SuggestedHearingLocation
-            suggestedLocation={row.suggestedLocation} format={this.formatSuggestedHearingLocation} />,
+          valueFunction: (row) => (
+            <SuggestedHearingLocation
+              suggestedLocation={row.suggestedLocation}
+              format={this.formatSuggestedHearingLocation}
+            />
+          ),
           label: 'Filter by location',
           filterValueTransform: this.formatSuggestedHearingLocation,
           anyFiltersAreSet: true,
@@ -339,7 +342,10 @@ const appealPropTypes = PropTypes.shape({
 });
 
 AssignHearingsTabs.propTypes = {
-  appealsReadyForHearing: PropTypes.arrayOf(appealPropTypes),
+  appealsReadyForHearing: PropTypes.oneOfType([
+    PropTypes.arrayOf(appealPropTypes),
+    PropTypes.object
+  ]),
   selectedHearingDay: PropTypes.shape({
     hearings: PropTypes.object,
     id: PropTypes.number,
