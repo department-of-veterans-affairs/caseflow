@@ -98,8 +98,14 @@ export default class TestUsers extends React.PureComponent {
     }));
 
     const veteranColumns = [
-      { header: 'File Number', valueFunction: (rec) => (rec['file_number']) },
-      { header: 'Description', valueFunction: (rec) => (rec['description']) }
+      {
+        header: 'File Number',
+        valueFunction: (rec) => (rec.file_number)
+      },
+      {
+        header: 'Description',
+        valueFunction: (rec) => (rec.description)
+      }
     ];
 
     const veteranRecords = this.props.veteranRecords;
@@ -212,11 +218,11 @@ export default class TestUsers extends React.PureComponent {
                   creatableOptions={{ promptTextCreator: (tagName) => `Enable feature toggle "${_.trim(tagName)}"` }}
                 />
                 <div>
-                 <h3>Local Veteran Records</h3>
-                 <p>
-                 These fake Veteran records are available locally.
-                 </p>
-                 <Table columns={veteranColumns} rowObjects={veteranRecords} />
+                  <h3>Local Veteran Records</h3>
+                  <p>
+                  These fake Veteran records are available locally.
+                  </p>
+                  <Table columns={veteranColumns} rowObjects={veteranRecords} />
                 </div>
               </div> }
             { this.props.isGlobalAdmin &&
@@ -248,5 +254,9 @@ TestUsers.propTypes = {
   featuresList: PropTypes.array.isRequired,
   veteranRecords: PropTypes.array.isRequired,
   appSelectList: PropTypes.array.isRequired,
-  epTypes: PropTypes.array.isRequired
+  epTypes: PropTypes.array.isRequired,
+  userDisplayName: PropTypes.string,
+  dropdownUrls: PropTypes.array,
+  userSession: PropTypes.object.isRequired,
+  dependenciesFaked: PropTypes.bool
 };
