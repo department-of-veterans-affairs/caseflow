@@ -135,7 +135,7 @@ class DecisionReview < ApplicationRecord
       ratings: serialized_ratings,
       requestIssues: request_issues_ui_hash,
       decisionIssues: decision_issues.map(&:ui_hash),
-      activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
+      activeNonratingRequestIssues: active_nonrating_request_issues.map(&:serialize),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
       veteranValid: veteran&.valid?(:bgs),
       veteranInvalidFields: veteran_invalid_fields,
@@ -368,7 +368,7 @@ class DecisionReview < ApplicationRecord
   def request_issues_ui_hash
     request_issues.includes(
       :decision_review, :contested_decision_issue
-    ).active_or_ineligible_or_withdrawn.map(&:ui_hash)
+    ).active_or_ineligible_or_withdrawn.map(&:serialize)
   end
 
   def can_contest_rating_issues?
