@@ -702,7 +702,15 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
                vacols_case:
                create(:case, :assigned, bfcorlid: "0000000000S", user: judge_user))
       end
-      before { User.authenticate!(user: judge_user) }
+
+      before do
+        DatabaseRequestCounter.enable
+        User.authenticate!(user: judge_user)
+      end
+
+      after do
+        DatabaseRequestCounter.disable
+      end
 
       it "should return JudgeLegacyTasks" do
         get :for_appeal, params: { appeal_id: legacy_appeal.vacols_id, role: "judge" }
@@ -716,6 +724,8 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(task["attributes"]["user_id"]).to eq(judge_user.css_id)
         expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
         expect(task["attributes"]["available_actions"].size).to eq 2
+
+        expect(DatabaseRequestCounter.get_counter(:vacols)).to eq(18)
       end
 
       context "when appeal is not assigned to current user" do
