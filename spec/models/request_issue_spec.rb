@@ -165,7 +165,7 @@ describe RequestIssue, :all_dbs do
     context "when there is not a legacy issue optin" do
       it "creates a legacy issue" do
         subject
-        legacy_issue=LegacyIssue.find_by(
+        legacy_issue = LegacyIssue.find_by(
           request_issue_id: rating_request_issue.id, vacols_id: vacols_id, vacols_sequence_id: vacols_sequence_id
         )
         expect(legacy_issue).to_not be_nil
@@ -175,17 +175,16 @@ describe RequestIssue, :all_dbs do
 
     context "when there is a legacy issue optin" do
       let!(:legacy_issue_optin) { create(:legacy_issue_optin, request_issue: rating_request_issue) }
-      
+
       it "creates a legacy issue and connects it to the opt in" do
         subject
-        legacy_issue=LegacyIssue.find_by(
+        legacy_issue = LegacyIssue.find_by(
           request_issue_id: rating_request_issue.id, vacols_id: vacols_id, vacols_sequence_id: vacols_sequence_id
         )
         expect(legacy_issue).to_not be_nil
         expect(legacy_issue.legacy_issue_optin).to_not be_nil
       end
     end
-
   end
 
   context "#remanded?" do
