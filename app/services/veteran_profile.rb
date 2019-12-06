@@ -20,7 +20,6 @@ class VeteranProfile
   end
 
   def call
-    summary = {}
     KLASSES.each do |klass|
       summary[klass.to_s] = klass.where(veteran_file_number: veteran_file_number).count
     end
@@ -31,7 +30,11 @@ class VeteranProfile
 
   private
 
-  attr_reader :veteran_file_number
+  attr_reader :veteran_file_number, :summary
+
+  def summary
+    @summary ||= {}
+  end
 
   def veteran
     @veteran ||= VeteranFinder.find_best_match(veteran_file_number)
