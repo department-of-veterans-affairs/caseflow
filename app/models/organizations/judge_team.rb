@@ -8,12 +8,7 @@ class JudgeTeam < Organization
         return unless administered_judge_teams.any?
 
         # Find the one, if any, we're the JudgeTeamLead for
-        administered_judge_teams.each do |judge_team|
-          if user == judge_team.judge
-            return judge_team
-          end
-        end
-        nil
+        administered_judge_teams.detect { |jt| user == jt.judge }
       else
         user.administered_teams.detect { |team| team.is_a?(JudgeTeam) }
       end
