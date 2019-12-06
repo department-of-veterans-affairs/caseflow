@@ -32,7 +32,8 @@ class ColocatedTask < Task
           # Find the task type for a given action.
           create_params = params.clone
           new_task_type = Object.const_get(params[:type])
-          create_params.merge!(type: new_task_type&.name, assigned_to: new_task_type&.default_assignee)
+          # new_task_type should be one of the valid_task_classes in tasks_controller; otherwise fail here
+          create_params.merge!(type: new_task_type.name, assigned_to: new_task_type.default_assignee)
         end
 
         team_tasks = super(params_array, user)
@@ -122,7 +123,7 @@ class ColocatedTask < Task
       assigned_by: assigned_by,
       instructions: params[:instructions],
       assigned_to: task_type&.default_assignee,
-      type: params[:type]
+      type: task_type
     )
   end
 

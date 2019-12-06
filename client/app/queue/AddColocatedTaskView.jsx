@@ -79,7 +79,6 @@ class AddColocatedTaskView extends React.PureComponent {
     return this.state.adminActions.map(
       (action) => {
         return {
-          label: action.actionLabel,
           instructions: action.instructions,
           type: action.actionLabel,
           external_id: appeal.externalId,
