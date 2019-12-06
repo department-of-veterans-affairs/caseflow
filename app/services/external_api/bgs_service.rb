@@ -97,8 +97,6 @@ class ExternalApi::BGSService
                             name: "people.find_by_ssn") do
         client.people.find_by_ssn(ssn)
       end
-
-    @people_by_ssn[ssn]
   end
 
   def fetch_file_number_by_ssn(ssn)
