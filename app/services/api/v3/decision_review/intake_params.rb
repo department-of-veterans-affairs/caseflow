@@ -199,7 +199,7 @@ class Api::V3::DecisionReview::IntakeParams
     # [[String], ["included", 5, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
     # [[String], ["included", 5, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]],
     # ...
-      *legacy_appeal_issues_arrays.reduce([]) do |acc, path| # ^^^
+      *legacy_appeal_issues_paths.reduce([]) do |acc, path| # ^^^
         [
           *acc,
           *for_array_at_path_enumerate_types_and_paths(
@@ -225,9 +225,11 @@ class Api::V3::DecisionReview::IntakeParams
   #   ["included", 4, "legacyAppealIssues"]
   # ]
   #
-  def legacy_appeal_issues_arrays
+  def legacy_appeal_issues_paths
     @params.dig(*INCLUDED_PATH).each.with_index.reduce([]) do |acc, (contestable_issue, ci_index)|
-      next acc unless contestable_issue.dig(*LEGACY_APPEAL_ISSUES_PATH).is_a? Array
+      legacy_appeal_issues = contestable_issue.dig(*LEGACY_APPEAL_ISSUES_PATH)
+
+      next acc unless legacy_appeal_issues.is_a?(Array) && legacy_appeal_issues.present?
   
       [ *acc, [*INCLUDED_PATH, ci_index, *LEGACY_APPEAL_ISSUES_PATH] ]
     end

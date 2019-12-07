@@ -311,17 +311,10 @@ context Api::V3::DecisionReview::IntakeParams do
     end
   end
 
-=begin
-  describe "#all_legacy_appeal_issue_paths" do
-    subject { intake_params.send(:all_legacy_appeal_issue_paths) }
+  describe "#legacy_appeal_issues_paths" do
+    subject { intake_params.send(:legacy_appeal_issues_paths) }
 
-    it do
-      is_expected.to eq(
-        [
-          ["included", 0, "attributes", "legacyAppealIssues", 0]
-        ]
-      )
-    end
+    it { is_expected.to eq([["included", 0, "attributes", "legacyAppealIssues"]]) }
 
     context "lots of contestable issues, some with legacyAppealIssues some without" do
       let(:included) do
@@ -362,21 +355,15 @@ context Api::V3::DecisionReview::IntakeParams do
       it do
         is_expected.to eq(
           [
-            ["included", 2, "attributes", "legacyAppealIssues", 0],
-            ["included", 6, "attributes", "legacyAppealIssues", 0],
-            ["included", 6, "attributes", "legacyAppealIssues", 1],
-            ["included", 6, "attributes", "legacyAppealIssues", 2],
-            ["included", 7, "attributes", "legacyAppealIssues", 0],
-            # no 8 (empty array)
-            ["included", 9, "attributes", "legacyAppealIssues", 0],
-            ["included", 9, "attributes", "legacyAppealIssues", 1],
-            ["included", 9, "attributes", "legacyAppealIssues", 2]
+            ["included", 2, "attributes", "legacyAppealIssues"],
+            ["included", 6, "attributes", "legacyAppealIssues"],
+            ["included", 7, "attributes", "legacyAppealIssues"],
+            ["included", 9, "attributes", "legacyAppealIssues"]
           ]
         )
       end
     end
   end
-=end
 
   describe "#types_and_paths" do
     let(:object) { Api::V3::DecisionReview::IntakeParams::OBJECT }
@@ -427,22 +414,237 @@ context Api::V3::DecisionReview::IntakeParams do
         [[String, nil],  %w[data attributes claimant phoneNumberCountryCode]],
         [[String, nil],  %w[data attributes claimant phoneNumberExt]],
         [[String, nil],  %w[data attributes claimant emailAddress]],
-        [[Array],        ["included"]],
+        [[Array],              ["included"]],
         [object,               ["included", 0]],
         [["ContestableIssue"], ["included", 0, "type"]],
         [[Integer, nil],       ["included", 0, "attributes", "decisionIssueId"]],
         [[String, nil],        ["included", 0, "attributes", "ratingIssueId"]],
         [[String, nil],        ["included", 0, "attributes", "ratingDecisionIssueId"]],
         [[Array, nil],         ["included", 0, "attributes", "legacyAppealIssues"]],
-        [object,   ["included", 0, "attributes", "legacyAppealIssues", 0]],
-        [[String], ["included", 0, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
-        [[String], ["included", 0, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]]
+        [object,               ["included", 0, "attributes", "legacyAppealIssues", 0]],
+        [[String],             ["included", 0, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
+        [[String],             ["included", 0, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]]
       ]
     end
 
     it do
+      expect(subject.length).to eq(expected_array.length)
       expected_array.each.with_index do |expected, index|
         expect(subject[index]).to eq(expected)
+      end
+    end
+
+    context "an empty legacyAppealIssues array is ignored" do
+      let(:first_contestable_issue_legacy_appeal_issues) { [] }
+      let(:expected_array_without_legacy_appeal_issues) { expected_array[0...-3] }
+
+      it do
+        expect(subject.length).to eq(expected_array_without_legacy_appeal_issues.length)
+        expected_array_without_legacy_appeal_issues.each.with_index do |expected, index|
+          expect(subject[index]).to eq(expected)
+        end
+      end
+
+      context do
+        let(:first_contestable_issue_legacy_appeal_issues) { nil }
+
+        it do
+          expect(subject.length).to eq(expected_array_without_legacy_appeal_issues.length)
+          expected_array_without_legacy_appeal_issues.each.with_index do |expected, index|
+            expect(subject[index]).to eq(expected)
+          end
+        end
+      end
+    end
+
+    context "an empty included array is ignored" do
+      let(:included) { [] }
+      let(:expected_array_without_included) { expected_array[0...-9] }
+
+      it do
+        expect(subject.length).to eq(expected_array_without_included.length)
+        expected_array_without_included.each.with_index do |expected, index|
+          expect(subject[index]).to eq(expected)
+        end
+      end
+
+      context do
+        let(:included) { nil }
+
+        it do
+          expect(subject.length).to eq(expected_array_without_included.length)
+          expected_array_without_included.each.with_index do |expected, index|
+            expect(subject[index]).to eq(expected)
+          end
+        end
+      end
+    end
+
+    context "a more interesting included array" do
+      let(:included) do
+        [
+          {
+            type: "ContestableIssue",
+            attributes: {
+              decisionIssueId: 1,
+              ratingIssueId: "1",
+              ratingDecisionIssueId: "1",
+              legacyAppealIssues: nil
+            }
+          },
+          {
+            type: "ContestableIssue",
+            attributes: {
+              decisionIssueId: 2,
+              ratingIssueId: "2",
+              ratingDecisionIssueId: "2",
+              legacyAppealIssues: []
+            }
+          },
+          {
+            type: "ContestableIssue",
+            attributes: {
+              decisionIssueId: 3,
+              ratingIssueId: "3",
+              ratingDecisionIssueId: "3",
+              legacyAppealIssues: [
+                {
+                  legacyAppealId: "123456",
+                  legacyAppealIssueId: "1"
+                },
+                {
+                  legacyAppealId: "123456",
+                  legacyAppealIssueId: "2"
+                }
+              ]
+            }
+          },
+          {
+            type: "ContestableIssue",
+            attributes: {
+              decisionIssueId: 4,
+              ratingIssueId: "4",
+              ratingDecisionIssueId: "4"
+            }
+          },
+          {
+            type: "ContestableIssue",
+            attributes: {
+              decisionIssueId: 5,
+              ratingIssueId: "5",
+              ratingDecisionIssueId: "5",
+              legacyAppealIssues: [
+                {
+                  legacyAppealId: "789123",
+                  legacyAppealIssueId: "3"
+                },
+                {
+                  legacyAppealId: "8765",
+                  legacyAppealIssueId: "9"
+                },
+                {
+                  legacyAppealId: "8233",
+                  legacyAppealIssueId: "1"
+                },
+                {
+                  legacyAppealId: "8233",
+                  legacyAppealIssueId: "2"
+                },
+                {
+                  legacyAppealId: "1112",
+                  legacyAppealIssueId: "1"
+                }
+              ]
+            }
+          },
+          {
+            type: "ContestableIssue",
+            attributes: {
+              decisionIssueId: 6,
+              ratingIssueId: "6",
+              ratingDecisionIssueId: "6",
+              legacyAppealIssues: [
+                {
+                  legacyAppealId: "34343",
+                  legacyAppealIssueId: "56"
+                }
+              ]
+            }
+          }
+        ]
+      end
+
+      let(:expected_array_with_interesting_included) do
+        expected_array[0...-9] +
+          [
+            [object,               ["included", 0]],
+            [["ContestableIssue"], ["included", 0, "type"]],
+            [[Integer, nil],       ["included", 0, "attributes", "decisionIssueId"]],
+            [[String, nil],        ["included", 0, "attributes", "ratingIssueId"]],
+            [[String, nil],        ["included", 0, "attributes", "ratingDecisionIssueId"]],
+            [[Array, nil],         ["included", 0, "attributes", "legacyAppealIssues"]],
+            [object,               ["included", 1]],
+            [["ContestableIssue"], ["included", 1, "type"]],
+            [[Integer, nil],       ["included", 1, "attributes", "decisionIssueId"]],
+            [[String, nil],        ["included", 1, "attributes", "ratingIssueId"]],
+            [[String, nil],        ["included", 1, "attributes", "ratingDecisionIssueId"]],
+            [[Array, nil],         ["included", 1, "attributes", "legacyAppealIssues"]],
+            [object,               ["included", 2]],
+            [["ContestableIssue"], ["included", 2, "type"]],
+            [[Integer, nil],       ["included", 2, "attributes", "decisionIssueId"]],
+            [[String, nil],        ["included", 2, "attributes", "ratingIssueId"]],
+            [[String, nil],        ["included", 2, "attributes", "ratingDecisionIssueId"]],
+            [[Array, nil],         ["included", 2, "attributes", "legacyAppealIssues"]],
+            [object,               ["included", 3]],
+            [["ContestableIssue"], ["included", 3, "type"]],
+            [[Integer, nil],       ["included", 3, "attributes", "decisionIssueId"]],
+            [[String, nil],        ["included", 3, "attributes", "ratingIssueId"]],
+            [[String, nil],        ["included", 3, "attributes", "ratingDecisionIssueId"]],
+            [[Array, nil],         ["included", 3, "attributes", "legacyAppealIssues"]],
+            [object,               ["included", 4]],
+            [["ContestableIssue"], ["included", 4, "type"]],
+            [[Integer, nil],       ["included", 4, "attributes", "decisionIssueId"]],
+            [[String, nil],        ["included", 4, "attributes", "ratingIssueId"]],
+            [[String, nil],        ["included", 4, "attributes", "ratingDecisionIssueId"]],
+            [[Array, nil],         ["included", 4, "attributes", "legacyAppealIssues"]],
+            [object,               ["included", 5]],
+            [["ContestableIssue"], ["included", 5, "type"]],
+            [[Integer, nil],       ["included", 5, "attributes", "decisionIssueId"]],
+            [[String, nil],        ["included", 5, "attributes", "ratingIssueId"]],
+            [[String, nil],        ["included", 5, "attributes", "ratingDecisionIssueId"]],
+            [[Array, nil],         ["included", 5, "attributes", "legacyAppealIssues"]],
+            [object,               ["included", 2, "attributes", "legacyAppealIssues", 0]],
+            [[String],             ["included", 2, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
+            [[String],             ["included", 2, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]],
+            [object,               ["included", 2, "attributes", "legacyAppealIssues", 1]],
+            [[String],             ["included", 2, "attributes", "legacyAppealIssues", 1, "legacyAppealId"]],
+            [[String],             ["included", 2, "attributes", "legacyAppealIssues", 1, "legacyAppealIssueId"]],
+            [object,               ["included", 4, "attributes", "legacyAppealIssues", 0]],
+            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
+            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]],
+            [object,               ["included", 4, "attributes", "legacyAppealIssues", 1]],
+            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 1, "legacyAppealId"]],
+            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 1, "legacyAppealIssueId"]],
+            [object,               ["included", 4, "attributes", "legacyAppealIssues", 2]],
+            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 2, "legacyAppealId"]],
+            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 2, "legacyAppealIssueId"]],
+            [object,               ["included", 4, "attributes", "legacyAppealIssues", 3]],
+            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 3, "legacyAppealId"]],
+            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 3, "legacyAppealIssueId"]],
+            [object,               ["included", 4, "attributes", "legacyAppealIssues", 4]],
+            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 4, "legacyAppealId"]],
+            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 4, "legacyAppealIssueId"]],
+            [object,               ["included", 5, "attributes", "legacyAppealIssues", 0]],
+            [[String],             ["included", 5, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
+            [[String],             ["included", 5, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]],
+          ]
+      end
+
+      it do
+        expect(subject.length).to eq(expected_array_with_interesting_included.length)
+        expected_array_with_interesting_included.each.with_index do |expected, index|
+          expect(subject[index]).to eq(expected)
+        end
       end
     end
   end
