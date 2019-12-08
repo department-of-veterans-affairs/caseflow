@@ -13,6 +13,8 @@ class Organization < ApplicationRecord
 
   before_save :clean_url
 
+  default_scope { where(:status => "active") }
+
   class << self
     def assignable(task)
       select { |org| org.can_receive_task?(task) }

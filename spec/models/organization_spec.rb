@@ -31,6 +31,30 @@ describe Organization, :postgres do
     end
   end
 
+  fdescribe ".status" do
+    context "upon creation" do
+      let(:org) { create(:organization) }
+
+      it "has a default value of 'active'" do
+        expect(org.status).to eq("active")
+      end
+    end
+
+    pending "when inactive"
+
+    context "default scope" do
+      it "returns only active organizations unless explicitly descoped" do
+        create_list(:organization, 3)
+        create_list(:organization, 3, status: "inactive")
+
+        expect(Organization.all.size).to eq(3)
+        expect(Organization.unscoped.all.size).to eq(6)
+      end
+
+    end
+    pending "raises exception with inactive status "
+  end
+
   describe ".users" do
     context "when organization has no members" do
       let(:org) { create(:organization) }
