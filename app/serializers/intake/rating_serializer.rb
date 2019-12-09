@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Intake::RatingSerializer
+class RatingSerializer
   include FastJsonapi::ObjectSerializer
   set_id(&:profile_date)
 

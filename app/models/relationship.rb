@@ -20,13 +20,7 @@ class Relationship
   end
 
   def ui_hash
-    {
-      participant_id: participant_id,
-      first_name: first_name,
-      last_name: last_name,
-      relationship_type: relationship_type,
-      default_payee_code: default_payee_code
-    }
+    Intake::RelationshipSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def default_payee_code
