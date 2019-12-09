@@ -31,7 +31,7 @@ describe Organization, :postgres do
     end
   end
 
-  fdescribe ".status" do
+  describe ".status" do
     context "upon creation" do
       let(:org) { create(:organization) }
 
