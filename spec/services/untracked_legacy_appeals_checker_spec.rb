@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe UntrackedLegacyAppealsChecker, :all_dbs do
   context "when there are LegacyAppeals charged to CASEFLOW in VACOLS without active Caseflow tasks" do
     let(:untracked_legacy_appeals) do

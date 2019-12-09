@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Hearing Schedule Daily Docket for VSO", :all_dbs do
   let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["VSO"]) }
   let!(:hearing) { create(:hearing, :with_tasks) }

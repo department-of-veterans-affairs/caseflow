@@ -24,7 +24,6 @@ class RequestIssue < ApplicationRecord
   has_many :remand_reasons, through: :decision_issues
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   has_many :hearing_issue_notes
-  has_many :job_notes, as: :job
   has_one :legacy_issue_optin
   belongs_to :correction_request_issue, class_name: "RequestIssue", foreign_key: "corrected_by_request_issue_id"
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
@@ -314,36 +313,9 @@ class RequestIssue < ApplicationRecord
     closed_at if withdrawn?
   end
 
-  # rubocop:disable Metrics/MethodLength
-  def ui_hash
-    {
-      id: id,
-      rating_issue_reference_id: contested_rating_issue_reference_id,
-      rating_issue_profile_date: contested_rating_issue_profile_date,
-      rating_decision_reference_id: contested_rating_decision_reference_id,
-      description: description,
-      contention_text: contention_text,
-      approx_decision_date: approx_decision_date_of_issue_being_contested,
-      category: nonrating_issue_category,
-      notes: notes,
-      is_unidentified: is_unidentified,
-      ramp_claim_id: ramp_claim_id,
-      vacols_id: vacols_id,
-      vacols_sequence_id: vacols_sequence_id,
-      vacols_issue: vacols_issue.try(:intake_attributes),
-      ineligible_reason: ineligible_reason,
-      ineligible_due_to_id: ineligible_due_to_id,
-      decision_review_title: review_title,
-      title_of_active_review: title_of_active_review,
-      contested_decision_issue_id: contested_decision_issue_id,
-      withdrawal_date: withdrawal_date,
-      contested_issue_description: contested_issue_description,
-      end_product_cleared: end_product_establishment&.status_cleared?,
-      end_product_code: end_product_code,
-      editable: editable?
-    }
+  def serialize
+    ::RequestIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
-  # rubocop:enable Metrics/MethodLength
 
   def approx_decision_date_of_issue_being_contested
     if contested_issue

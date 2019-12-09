@@ -15,7 +15,6 @@ class DecisionReview < ApplicationRecord
   has_many :tasks, as: :appeal, dependent: :destroy
   has_many :request_issues_updates, as: :review, dependent: :destroy
   has_one :intake, as: :detail
-  has_many :job_notes, as: :job
 
   cache_attribute :cached_serialized_ratings, cache_key: :ratings_cache_key, expires_in: 1.day do
     ratings_with_issues.map(&:serialize)
@@ -136,7 +135,7 @@ class DecisionReview < ApplicationRecord
       ratings: serialized_ratings,
       requestIssues: request_issues_ui_hash,
       decisionIssues: decision_issues.map(&:ui_hash),
-      activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
+      activeNonratingRequestIssues: active_nonrating_request_issues.map(&:serialize),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
       veteranValid: veteran&.valid?(:bgs),
       veteranInvalidFields: veteran_invalid_fields,
@@ -369,7 +368,7 @@ class DecisionReview < ApplicationRecord
   def request_issues_ui_hash
     request_issues.includes(
       :decision_review, :contested_decision_issue
-    ).active_or_ineligible_or_withdrawn.map(&:ui_hash)
+    ).active_or_ineligible_or_withdrawn.map(&:serialize)
   end
 
   def can_contest_rating_issues?

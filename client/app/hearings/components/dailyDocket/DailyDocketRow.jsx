@@ -10,15 +10,16 @@ import { onUpdateDocketHearing } from '../../actions/dailyDocketActions';
 import { AodModal } from './DailyDocketModals';
 import HearingText from './DailyDocketRowDisplayText';
 import PropTypes from 'prop-types';
-import { deepDiff } from '../../utils';
+import { deepDiff, isPreviouslyScheduledHearing } from '../../utils';
+
 import {
   DispositionDropdown, TranscriptRequestedCheckbox, HearingDetailsLink,
   AmaAodDropdown, LegacyAodDropdown, AodReasonDropdown, HearingPrepWorkSheetLink, StaticRegionalOffice,
-  NotesField, HearingLocationDropdown, StaticHearingDay, TimeRadioButtons,
+  NotesField, HearingLocationDropdown, StaticHearingDay, StaticVirtualHearing, TimeRadioButtons,
   Waive90DayHoldCheckbox, HoldOpenDropdown
 } from './DailyDocketRowInputs';
 import VirtualHearingModal from '../VirtualHearingModal';
-import VirtualHearingLink from '../VirtualHearingLink';
+import { docketRowStyle } from './style';
 
 const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
   return <div {...css({
@@ -48,7 +49,7 @@ SaveButton.propTypes = {
 };
 
 const inputSpacing = css({
-  '& > div:not(:first-child)': {
+  '&>div:not(:first-child)': {
     marginTop: '25px'
   }
 });
@@ -110,7 +111,6 @@ class DailyDocketRow extends React.Component {
 
   cancelUpdate = () => {
     this.props.update(this.state.initialState);
-    this.prop.updateAodMotion(this.state.initialState.aodMotion);
     this.setState({
       edited: false,
       invalid: {
@@ -161,7 +161,7 @@ class DailyDocketRow extends React.Component {
 
     const hearing = deepDiff(this.state.initialState, this.props.hearing);
 
-    this.props.saveHearing(this.props.hearing.externalId, hearing).
+    return this.props.saveHearing(this.props.hearing.externalId, hearing).
       then((success) => {
         if (success) {
           this.setState({
@@ -187,19 +187,21 @@ class DailyDocketRow extends React.Component {
   }
 
   defaultRightInputs = () => {
-    const { hearing, regionalOffice } = this.props;
+    const { hearing, regionalOffice, readOnly } = this.props;
     const inputProps = this.getInputProps();
 
     return <React.Fragment>
       <StaticRegionalOffice hearing={hearing} />
       <HearingLocationDropdown {...inputProps} regionalOffice={regionalOffice} />
       <StaticHearingDay hearing={hearing} />
-      <TimeRadioButtons {...inputProps} regionalOffice={regionalOffice} update={(values) => {
-        this.update(values);
-        if (values.scheduledTimeString !== null) {
-          this.openVirtualHearingModal();
-        }
-      }} />
+      <TimeRadioButtons {...inputProps} regionalOffice={regionalOffice}
+        readOnly={readOnly || (hearing.virtualHearing && !hearing.virtualHearing.jobCompleted)}
+        update={(values) => {
+          this.update(values);
+          if (values.scheduledTimeString !== null) {
+            this.openVirtualHearingModal();
+          }
+        }} />
     </React.Fragment>;
   }
 
@@ -237,29 +239,38 @@ class DailyDocketRow extends React.Component {
   }
 
   getLeftColumn = () => {
-    const { hearing, user, openDispositionModal } = this.props;
-
+    const { hearing, user, openDispositionModal, readOnly } = this.props;
     const inputProps = this.getInputProps();
 
-    return <div {...inputSpacing}>
-      <VirtualHearingLink
-        hearing={hearing} />
-      <DispositionDropdown {...inputProps}
-        cancelUpdate={this.cancelUpdate}
-        saveHearing={this.saveHearing}
-        openDispositionModal={openDispositionModal} />
-      {(user.userHasHearingPrepRole && this.isAmaHearing()) &&
-        <Waive90DayHoldCheckbox {...inputProps} />}
-      <TranscriptRequestedCheckbox {...inputProps} />
-      {(user.userCanAssignHearingSchedule && !user.userHasHearingPrepRole) && <HearingDetailsLink hearing={hearing} />}
-      <NotesField {...inputProps} readOnly={user.userCanVsoHearingSchedule} />
-    </div>;
+    return (
+      <div {...inputSpacing}>
+        {hearing.isVirtual &&
+          <StaticVirtualHearing hearing={hearing} user={user} />
+        }
+        <DispositionDropdown {...inputProps}
+          cancelUpdate={this.cancelUpdate}
+          saveHearing={this.saveHearing}
+          openDispositionModal={openDispositionModal}
+          readOnly={readOnly || (hearing.virtualHearing && !hearing.virtualHearing.jobCompleted)} />
+        {(user.userHasHearingPrepRole && this.isAmaHearing()) &&
+          <Waive90DayHoldCheckbox {...inputProps} />}
+        <TranscriptRequestedCheckbox {...inputProps} />
+        {(user.userCanAssignHearingSchedule && !user.userHasHearingPrepRole) &&
+          <HearingDetailsLink hearing={hearing} />
+        }
+        <NotesField {...inputProps} readOnly={user.userCanVsoHearingSchedule} />
+      </div>
+    );
   }
 
   render () {
-    const { hearing, user, index, readOnly } = this.props;
+    const { hearing, user, index, readOnly, hidePreviouslyScheduled } = this.props;
 
-    return <React.Fragment>
+    const hide = (isPreviouslyScheduledHearing(hearing) && hidePreviouslyScheduled) ? 'hide ' : '';
+    const judgeView = user.userHasHearingPrepRole ? 'judge-view' : '';
+    const className = `${hide}${judgeView}`;
+
+    return <div {...docketRowStyle} key={hearing.externalId} className={className}>
       <div>
         <HearingText
           readOnly={readOnly}
@@ -272,7 +283,6 @@ class DailyDocketRow extends React.Component {
         {this.getLeftColumn()}
         {this.getRightColumn()}
       </div>
-      {/* This is where the modal for the edit virtual hearing modal is supposed to appear*/}
       {(user.userCanScheduleVirtualHearings && this.state.virtualHearingModalActive && hearing.isVirtual) &&
         <VirtualHearingModal hearing={hearing}
           timeWasEdited={this.state.initialState.scheduledTimeString !== _.get(hearing, 'scheduledTimeString')}
@@ -282,10 +292,8 @@ class DailyDocketRow extends React.Component {
             ;
           }} user={user}
           update={this.updateVirtualHearing}
-          submit={() => {
-            this.saveHearing();
-            this.closeVirtualHearingModal();
-          }}
+          submit={() => this.saveHearing().then(this.closeVirtualHearingModal)}
+          type="change_hearing_time"
         />}
       {this.state.aodModalActive && <AodModal
         advanceOnDocketMotion={hearing.advanceOnDocketMotion || {}}
@@ -298,7 +306,7 @@ class DailyDocketRow extends React.Component {
           this.closeAodModal();
         }}
       />}
-    </React.Fragment>;
+    </div>;
   }
 }
 
@@ -310,12 +318,14 @@ DailyDocketRow.propTypes = {
   openDispositionModal: PropTypes.func,
   regionalOffice: PropTypes.string,
   readOnly: PropTypes.bool,
+  hidePreviouslyScheduled: PropTypes.bool,
   hearing: PropTypes.shape({
     docketName: PropTypes.string,
     advanceOnDocketMotion: PropTypes.object,
     virtualHearing: PropTypes.object,
     isVirtual: PropTypes.bool,
-    externalId: PropTypes.string
+    externalId: PropTypes.string,
+    disposition: PropTypes.string
   }),
   user: PropTypes.shape({
     userCanAssignHearingSchedule: PropTypes.bool,

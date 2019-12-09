@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe RequestIssue, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -637,7 +634,7 @@ describe RequestIssue, :all_dbs do
       end
 
       it "returns the review title of the request issue in active review" do
-        expect(ineligible_request_issue.ui_hash).to include(
+        expect(ineligible_request_issue.serialize).to include(
           title_of_active_review: request_issue_in_active_review.review_title
         )
       end
