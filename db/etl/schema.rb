@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191126203511) do
+ActiveRecord::Schema.define(version: 20191209162326) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 20191126203511) do
     t.bigint "claimant_person_id", comment: "people.id"
     t.string "closest_regional_office", limit: 20, comment: "The code for the regional office closest to the Veteran on the appeal."
     t.datetime "created_at", null: false, comment: "Creation timestamp for the ETL record"
+    t.integer "decision_status_sort_key", null: false
     t.string "docket_number", limit: 50, null: false, comment: "Docket number"
     t.date "docket_range_date", comment: "Date that appeal was added to hearing docket range."
     t.string "docket_type", limit: 50, null: false, comment: "Docket type"
@@ -63,6 +64,7 @@ ActiveRecord::Schema.define(version: 20191126203511) do
     t.index ["claimant_participant_id"], name: "index_appeals_on_claimant_participant_id"
     t.index ["claimant_person_id"], name: "index_appeals_on_claimant_person_id"
     t.index ["created_at"], name: "index_appeals_on_created_at"
+    t.index ["decision_status_sort_key"], name: "index_appeals_on_decision_status_sort_key"
     t.index ["docket_type"], name: "index_appeals_on_docket_type"
     t.index ["poa_participant_id"], name: "index_appeals_on_poa_participant_id"
     t.index ["receipt_date"], name: "index_appeals_on_receipt_date"
