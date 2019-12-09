@@ -115,13 +115,13 @@ context Api::V3::DecisionReview::IntakeParams do
   let(:claimant_phone_number_ext) { nil }
   let(:claimant_email_address) { nil }
 
-  let(:included) do
-    [
-      {
-        type: first_contestable_issue_type,
-        attributes: first_contestable_issue_attributes
-      }
-    ]
+  let(:included) { [first_contestable_issue] }
+
+  let(:first_contestable_issue) do
+    {
+      type: first_contestable_issue_type,
+      attributes: first_contestable_issue_attributes
+    }
   end
 
   let(:first_contestable_issue_type) { "ContestableIssue" }
@@ -152,6 +152,99 @@ context Api::V3::DecisionReview::IntakeParams do
 
   let(:object) { Api::V3::DecisionReview::IntakeParams::OBJECT }
   let(:bool) { Api::V3::DecisionReview::IntakeParams::BOOL }
+
+  let(:included_with_lots_of_contestable_issues) do
+    [
+      {
+        type: "ContestableIssue",
+        attributes: {
+          decisionIssueId: 1,
+          ratingIssueId: "1",
+          ratingDecisionIssueId: "1",
+          legacyAppealIssues: nil
+        }
+      },
+      {
+        type: "ContestableIssue",
+        attributes: {
+          decisionIssueId: 2,
+          ratingIssueId: "2",
+          ratingDecisionIssueId: "2",
+          legacyAppealIssues: []
+        }
+      },
+      {
+        type: "ContestableIssue",
+        attributes: {
+          decisionIssueId: 3,
+          ratingIssueId: "3",
+          ratingDecisionIssueId: "3",
+          legacyAppealIssues: [
+            {
+              legacyAppealId: "123456",
+              legacyAppealIssueId: "1"
+            },
+            {
+              legacyAppealId: "123456",
+              legacyAppealIssueId: "2"
+            }
+          ]
+        }
+      },
+      {
+        type: "ContestableIssue",
+        attributes: {
+          decisionIssueId: 4,
+          ratingIssueId: "4",
+          ratingDecisionIssueId: "4"
+        }
+      },
+      {
+        type: "ContestableIssue",
+        attributes: {
+          decisionIssueId: 5,
+          ratingIssueId: "5",
+          ratingDecisionIssueId: "5",
+          legacyAppealIssues: [
+            {
+              legacyAppealId: "789123",
+              legacyAppealIssueId: "3"
+            },
+            {
+              legacyAppealId: "8765",
+              legacyAppealIssueId: "9"
+            },
+            {
+              legacyAppealId: "8233",
+              legacyAppealIssueId: "1"
+            },
+            {
+              legacyAppealId: "8233",
+              legacyAppealIssueId: "2"
+            },
+            {
+              legacyAppealId: "1112",
+              legacyAppealIssueId: "1"
+            }
+          ]
+        }
+      },
+      {
+        type: "ContestableIssue",
+        attributes: {
+          decisionIssueId: 6,
+          ratingIssueId: "6",
+          ratingDecisionIssueId: "6",
+          legacyAppealIssues: [
+            {
+              legacyAppealId: "34343",
+              legacyAppealIssueId: "56"
+            }
+          ]
+        }
+      }
+    ]
+  end
 
   describe ".prepend_path_to_paths" do
     let(:prepend_path) { [:data, :attributes] }
@@ -482,98 +575,7 @@ context Api::V3::DecisionReview::IntakeParams do
     end
 
     context "a more interesting included array" do
-      let(:included) do
-        [
-          {
-            type: "ContestableIssue",
-            attributes: {
-              decisionIssueId: 1,
-              ratingIssueId: "1",
-              ratingDecisionIssueId: "1",
-              legacyAppealIssues: nil
-            }
-          },
-          {
-            type: "ContestableIssue",
-            attributes: {
-              decisionIssueId: 2,
-              ratingIssueId: "2",
-              ratingDecisionIssueId: "2",
-              legacyAppealIssues: []
-            }
-          },
-          {
-            type: "ContestableIssue",
-            attributes: {
-              decisionIssueId: 3,
-              ratingIssueId: "3",
-              ratingDecisionIssueId: "3",
-              legacyAppealIssues: [
-                {
-                  legacyAppealId: "123456",
-                  legacyAppealIssueId: "1"
-                },
-                {
-                  legacyAppealId: "123456",
-                  legacyAppealIssueId: "2"
-                }
-              ]
-            }
-          },
-          {
-            type: "ContestableIssue",
-            attributes: {
-              decisionIssueId: 4,
-              ratingIssueId: "4",
-              ratingDecisionIssueId: "4"
-            }
-          },
-          {
-            type: "ContestableIssue",
-            attributes: {
-              decisionIssueId: 5,
-              ratingIssueId: "5",
-              ratingDecisionIssueId: "5",
-              legacyAppealIssues: [
-                {
-                  legacyAppealId: "789123",
-                  legacyAppealIssueId: "3"
-                },
-                {
-                  legacyAppealId: "8765",
-                  legacyAppealIssueId: "9"
-                },
-                {
-                  legacyAppealId: "8233",
-                  legacyAppealIssueId: "1"
-                },
-                {
-                  legacyAppealId: "8233",
-                  legacyAppealIssueId: "2"
-                },
-                {
-                  legacyAppealId: "1112",
-                  legacyAppealIssueId: "1"
-                }
-              ]
-            }
-          },
-          {
-            type: "ContestableIssue",
-            attributes: {
-              decisionIssueId: 6,
-              ratingIssueId: "6",
-              ratingDecisionIssueId: "6",
-              legacyAppealIssues: [
-                {
-                  legacyAppealId: "34343",
-                  legacyAppealIssueId: "56"
-                }
-              ]
-            }
-          }
-        ]
-      end
+      let(:included) { included_with_lots_of_contestable_issues }
 
       let(:expected_array_with_interesting_included) do
         expected_array[0...-9] +
@@ -1063,6 +1065,44 @@ context Api::V3::DecisionReview::IntakeParams do
     context do
       let(:params) { nil }
       it { expect(subject.as_json).to be true }
+    end
+  end
+
+  describe "#complete_params" do
+    subject { intake_params.complete_params }
+
+    it do
+      expect(subject.as_json).to eq(
+        {
+          request_issues: [
+            Api::V3::DecisionReview::ContestableIssueParams.new(
+              params: first_contestable_issue,
+              benefit_type: benefit_type,
+              legacy_opt_in_approved: legacy_opt_in_approved
+            ).intakes_controller_params
+          ]
+        }.as_json
+      )
+    end
+
+    context do
+      let(:included) { included_with_lots_of_contestable_issues }
+
+      it do
+        expect(subject.as_json).to eq(
+          {
+            request_issues: (
+              included_with_lots_of_contestable_issues.map do |contestable_issue|
+                Api::V3::DecisionReview::ContestableIssueParams.new(
+                  params: contestable_issue,
+                  benefit_type: benefit_type,
+                  legacy_opt_in_approved: legacy_opt_in_approved
+                ).intakes_controller_params
+              end
+            )
+          }.as_json
+        )
+      end
     end
   end
 end
