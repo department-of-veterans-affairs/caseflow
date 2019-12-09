@@ -36,6 +36,7 @@ class ETL::Appeal < ETL::Record
       target.claimant_payee_code = claimant&.payee_code
       target.claimant_person_id = person&.id
       target.closest_regional_office = original.closest_regional_office
+      target.decision_status_sort_key = original.status.to_i
       target.docket_number = original.docket_number
       target.docket_range_date = original.docket_range_date
       target.docket_type = original.docket_type
