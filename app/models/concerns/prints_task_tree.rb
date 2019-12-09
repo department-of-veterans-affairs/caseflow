@@ -43,10 +43,6 @@ module PrintsTaskTree
   end
 
   def attributes_to_s(*atts)
-    atts_list = atts.map do |att|
-      value = attributes[att.to_s]
-      "(#{att})" if value.blank?
-    end
-    atts_list.flatten.compact.join(", ")
+    atts.map { |att| value.blank? ? "(#{att})" : self[att] }.flatten.compact.join(", ")
   end
 end
