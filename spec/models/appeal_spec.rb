@@ -26,7 +26,7 @@ describe Appeal, :all_dbs do
 
       subject { appeal.structure_as_json(:id) }
 
-      it "returns the task tree has a hash" do
+      it "returns the task tree as a hash" do
         expect(subject).to eq(Appeal: { id: appeal.id, tasks: [ { RootTask: { id: root_task.id, tasks: [] } } ] })
       end
     end
