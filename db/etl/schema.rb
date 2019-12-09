@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(version: 20191209162326) do
     t.bigint "claimant_person_id", comment: "people.id"
     t.string "closest_regional_office", limit: 20, comment: "The code for the regional office closest to the Veteran on the appeal."
     t.datetime "created_at", null: false, comment: "Creation timestamp for the ETL record"
-    t.integer "decision_status_sort_key", null: false
+    t.integer "decision_status_sort_key", null: false, comment: "Integer for sorting status in display order"
     t.string "docket_number", limit: 50, null: false, comment: "Docket number"
     t.date "docket_range_date", comment: "Date that appeal was added to hearing docket range."
     t.string "docket_type", limit: 50, null: false, comment: "Docket type"
