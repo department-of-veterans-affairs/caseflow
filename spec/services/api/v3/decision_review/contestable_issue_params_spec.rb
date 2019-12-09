@@ -80,7 +80,7 @@ context Api::V3::DecisionReview::ContestableIssueParams do
           is_unidentified: false,
           contested_decision_issue_id: attributes[:decisionIssueId],
           rating_issue_reference_id: attributes[:ratingIssueId],
-          rating_decision_reference_id: attributes[:ratingDecisionIssueId],
+          rating_decision_reference_id: attributes[:ratingDecisionIssueId]
         }.as_json
       )
     end

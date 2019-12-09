@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class Api::V3::DecisionReview::IntakeParams
-  OBJECT = [Hash, ActionController::Parameters, ActiveSupport::HashWithIndifferentAccess]
-  BOOL = [true, false]
+  OBJECT = [Hash, ActionController::Parameters, ActiveSupport::HashWithIndifferentAccess].freeze
+  BOOL = [true, false].freeze
 
-  INCLUDED_PATH = ["included"]
-  LEGACY_APPEAL_ISSUES_PATH = ["attributes", "legacyAppealIssues"]
+  INCLUDED_PATH = ["included"].freeze
+  LEGACY_APPEAL_ISSUES_PATH = %w[attributes legacyAppealIssues].freeze
 
   def initialize(params)
     @params = params
@@ -19,7 +19,7 @@ class Api::V3::DecisionReview::IntakeParams
       same_office: attributes["sameOffice"],
       benefit_type: attributes["benefitType"],
       claimant: claimant_who_is_not_the_veteran["participantId"],
-      payee_code: claimant_who_is_not_the_veteran["payeeCode"], 
+      payee_code: claimant_who_is_not_the_veteran["payeeCode"],
       veteran_is_not_claimant: veteran_is_not_the_claimant?,
       legacy_opt_in_approved: attributes["legacyOptInApproved"]
     )
@@ -37,10 +37,9 @@ class Api::V3::DecisionReview::IntakeParams
   end
 
   def errors
-    @errors ||= case
-                when !shape_valid?
+    @errors ||= if !shape_valid?
                   [Api::V3::DecisionReview::IntakeError.new(:malformed_request, shape_error_message)]
-                when !benefit_type_valid?
+                elsif !benefit_type_valid?
                   [Api::V3::DecisionReview::IntakeError.new(:invalid_benefit_type)]
                 else
                   contestable_issue_errors
@@ -54,7 +53,7 @@ class Api::V3::DecisionReview::IntakeParams
   private
 
   def shape_valid?
-    shape_error_message.present?
+    shape_error_message.nil?
   end
 
   def shape_error_message
@@ -63,10 +62,11 @@ class Api::V3::DecisionReview::IntakeParams
 
   def describe_shape_error
     return "payload must be an object" unless @params.respond_to?(:dig)
-  
+
     types_and_paths.find do |(types, path)|
       validator = Api::V3::DecisionReview::HashPathValidator.new(hash: @params, path: path, allowed_values: types)
-      break validator.error_msg if !validator.path_is_valid? 
+      break validator.error_msg if !validator.path_is_valid?
+
       false
     end
   end
@@ -87,7 +87,7 @@ class Api::V3::DecisionReview::IntakeParams
   end
 
   def has_informal_conference_rep?
-      has_attributes? && !!attributes["informalConferenceRep"]
+    has_attributes? && !!attributes["informalConferenceRep"]
   end
 
   def claimant_who_is_not_the_veteran
@@ -125,99 +125,99 @@ class Api::V3::DecisionReview::IntakeParams
   # array of allowed types (values) for params paths
   def types_and_paths
     [
-      [OBJECT,         ["data"]],
-      [["HigherLevelReview"], ["data", "type"]],
-      [OBJECT,         ["data", "attributes"]],
-      [[String, nil],  ["data", "attributes", "receiptDate"]],
-      [BOOL,           ["data", "attributes", "informalConference"]],
-      [[Array, nil],   ["data", "attributes", "informalConferenceTimes"]],
+      [OBJECT, ["data"]],
+      [["HigherLevelReview"], %w[data type]],
+      [OBJECT,         %w[data attributes]],
+      [[String, nil],  %w[data attributes receiptDate]],
+      [BOOL,           %w[data attributes informalConference]],
+      [[Array, nil],   %w[data attributes informalConferenceTimes]],
       [[String, nil],  ["data", "attributes", "informalConferenceTimes", 0]],
       [[String, nil],  ["data", "attributes", "informalConferenceTimes", 1]],
       [[nil],          ["data", "attributes", "informalConferenceTimes", 2]],
-      [[*OBJECT, nil], ["data", "attributes", "informalConferenceRep"]],
+      [[*OBJECT, nil], %w[data attributes informalConferenceRep]],
       *(
         if has_informal_conference_rep? # ... name and phoneNumber must be present
           [
-            [[String],          ["data", "attributes", "informalConferenceRep", "name"]],
-            [[String, Integer], ["data", "attributes", "informalConferenceRep", "phoneNumber"]],
+            [[String],          %w[data attributes informalConferenceRep name]],
+            [[String, Integer], %w[data attributes informalConferenceRep phoneNumber]]
           ]
         else
           []
         end
       ),
-      [[String, Integer, nil], ["data", "attributes", "informalConferenceRep", "phoneNumberCountryCode"]],
-      [[String, Integer, nil], ["data", "attributes", "informalConferenceRep", "phoneNumberExt"]],
-      [BOOL,           ["data", "attributes", "sameOffice"]],
-      [BOOL,           ["data", "attributes", "legacyOptInApproved"]],
-      [[String],       ["data", "attributes", "benefitType"]],
-      [OBJECT,         ["data", "attributes", "veteran"]],
-      [[String],       ["data", "attributes", "veteran", "fileNumberOrSsn"]],
-      [[String, nil],  ["data", "attributes", "veteran", "addressLine1"]],
-      [[String, nil],  ["data", "attributes", "veteran", "addressLine2"]],
-      [[String, nil],  ["data", "attributes", "veteran", "city"]],
-      [[String, nil],  ["data", "attributes", "veteran", "stateProvinceCode"]],
-      [[String, nil],  ["data", "attributes", "veteran", "countryCode"]],
-      [[String, nil],  ["data", "attributes", "veteran", "zipPostalCode"]],
-      [[String, nil],  ["data", "attributes", "veteran", "phoneNumber"]],
-      [[String, nil],  ["data", "attributes", "veteran", "phoneNumberCountryCode"]],
-      [[String, nil],  ["data", "attributes", "veteran", "phoneNumberExt"]],
-      [[String, nil],  ["data", "attributes", "veteran", "emailAddress"]],
-      [[*OBJECT, nil], ["data", "attributes", "claimant"]],
+      [[String, Integer, nil], %w[data attributes informalConferenceRep phoneNumberCountryCode]],
+      [[String, Integer, nil], %w[data attributes informalConferenceRep phoneNumberExt]],
+      [BOOL,           %w[data attributes sameOffice]],
+      [BOOL,           %w[data attributes legacyOptInApproved]],
+      [[String],       %w[data attributes benefitType]],
+      [OBJECT,         %w[data attributes veteran]],
+      [[String],       %w[data attributes veteran fileNumberOrSsn]],
+      [[String, nil],  %w[data attributes veteran addressLine1]],
+      [[String, nil],  %w[data attributes veteran addressLine2]],
+      [[String, nil],  %w[data attributes veteran city]],
+      [[String, nil],  %w[data attributes veteran stateProvinceCode]],
+      [[String, nil],  %w[data attributes veteran countryCode]],
+      [[String, nil],  %w[data attributes veteran zipPostalCode]],
+      [[String, nil],  %w[data attributes veteran phoneNumber]],
+      [[String, nil],  %w[data attributes veteran phoneNumberCountryCode]],
+      [[String, nil],  %w[data attributes veteran phoneNumberExt]],
+      [[String, nil],  %w[data attributes veteran emailAddress]],
+      [[*OBJECT, nil], %w[data attributes claimant]],
       *(
         if veteran_is_not_the_claimant? # ... participantId and payeeCode must be present
           [
-            [[String], ["data", "attributes", "claimant", "participantId"]],
-            [[String], ["data", "attributes", "claimant", "payeeCode"]],
+            [[String], %w[data attributes claimant participantId]],
+            [[String], %w[data attributes claimant payeeCode]]
           ]
         else
           []
         end
       ),
-      [[String, nil],  ["data", "attributes", "claimant", "addressLine1"]],
-      [[String, nil],  ["data", "attributes", "claimant", "addressLine2"]],
-      [[String, nil],  ["data", "attributes", "claimant", "city"]],
-      [[String, nil],  ["data", "attributes", "claimant", "stateProvinceCode"]],
-      [[String, nil],  ["data", "attributes", "claimant", "countryCode"]],
-      [[String, nil],  ["data", "attributes", "claimant", "zipPostalCode"]],
-      [[String, nil],  ["data", "attributes", "claimant", "phoneNumber"]],
-      [[String, nil],  ["data", "attributes", "claimant", "phoneNumberCountryCode"]],
-      [[String, nil],  ["data", "attributes", "claimant", "phoneNumberExt"]],
-      [[String, nil],  ["data", "attributes", "claimant", "emailAddress"]],
+      [[String, nil],  %w[data attributes claimant addressLine1]],
+      [[String, nil],  %w[data attributes claimant addressLine2]],
+      [[String, nil],  %w[data attributes claimant city]],
+      [[String, nil],  %w[data attributes claimant stateProvinceCode]],
+      [[String, nil],  %w[data attributes claimant countryCode]],
+      [[String, nil],  %w[data attributes claimant zipPostalCode]],
+      [[String, nil],  %w[data attributes claimant phoneNumber]],
+      [[String, nil],  %w[data attributes claimant phoneNumberCountryCode]],
+      [[String, nil],  %w[data attributes claimant phoneNumberExt]],
+      [[String, nil],  %w[data attributes claimant emailAddress]],
       [[Array],        ["included"]],
-    # [OBJECT,               ["included", 0]],
-    # [["ContestableIssue"], ["included", 0, "type"]],
-    # [[Integer, nil],       ["included", 0, "attributes", "decisionIssueId"]],
-    # [[String, nil],        ["included", 0, "attributes", "ratingIssueId"]],
-    # [[String, nil],        ["included", 0, "attributes", "ratingDecisionIssueId"]],
-    # [[Array, nil],         ["included", 0, "attributes", "legacyAppealIssues"]]
-    # [OBJECT,               ["included", 1]],
-    # [["ContestableIssue"], ["included", 1, "type"]],
-    # [[Integer, nil],       ["included", 1, "attributes", "decisionIssueId"]],
-    # [[String, nil],        ["included", 1, "attributes", "ratingIssueId"]],
-    # [[String, nil],        ["included", 1, "attributes", "ratingDecisionIssueId"]],
-    # [[Array, nil],         ["included", 1, "attributes", "legacyAppealIssues"]]
-    # ...
+      # [OBJECT,               ["included", 0]],
+      # [["ContestableIssue"], ["included", 0, "type"]],
+      # [[Integer, nil],       ["included", 0, "attributes", "decisionIssueId"]],
+      # [[String, nil],        ["included", 0, "attributes", "ratingIssueId"]],
+      # [[String, nil],        ["included", 0, "attributes", "ratingDecisionIssueId"]],
+      # [[Array, nil],         ["included", 0, "attributes", "legacyAppealIssues"]]
+      # [OBJECT,               ["included", 1]],
+      # [["ContestableIssue"], ["included", 1, "type"]],
+      # [[Integer, nil],       ["included", 1, "attributes", "decisionIssueId"]],
+      # [[String, nil],        ["included", 1, "attributes", "ratingIssueId"]],
+      # [[String, nil],        ["included", 1, "attributes", "ratingDecisionIssueId"]],
+      # [[Array, nil],         ["included", 1, "attributes", "legacyAppealIssues"]]
+      # ...
       *for_array_at_path_enumerate_types_and_paths( # ^^^
         array_path: ["included"],
         types_and_paths: [
           [OBJECT,               []],
           [["ContestableIssue"], ["type"]],
-          [[Integer, nil],       ["attributes", "decisionIssueId"]],
-          [[String, nil],        ["attributes", "ratingIssueId"]],
-          [[String, nil],        ["attributes", "ratingDecisionIssueId"]],
-          [[Array, nil],         ["attributes", "legacyAppealIssues"]]
+          [[Integer, nil],       %w[attributes decisionIssueId]],
+          [[String, nil],        %w[attributes ratingIssueId]],
+          [[String, nil],        %w[attributes ratingDecisionIssueId]],
+          [[Array, nil],         %w[attributes legacyAppealIssues]]
         ]
       ),
-    # [OBJECT,   ["included", 2, "attributes", "legacyAppealIssues", 0]]
-    # [[String], ["included", 2, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
-    # [[String], ["included", 2, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]],
-    # [OBJECT,   ["included", 2, "attributes", "legacyAppealIssues", 1]]
-    # [[String], ["included", 2, "attributes", "legacyAppealIssues", 1, "legacyAppealId"]],
-    # [[String], ["included", 2, "attributes", "legacyAppealIssues", 1, "legacyAppealIssueId"]],
-    # [OBJECT,   ["included", 5, "attributes", "legacyAppealIssues", 0]]
-    # [[String], ["included", 5, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
-    # [[String], ["included", 5, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]],
-    # ...
+      # [OBJECT,   ["included", 2, "attributes", "legacyAppealIssues", 0]]
+      # [[String], ["included", 2, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
+      # [[String], ["included", 2, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]],
+      # [OBJECT,   ["included", 2, "attributes", "legacyAppealIssues", 1]]
+      # [[String], ["included", 2, "attributes", "legacyAppealIssues", 1, "legacyAppealId"]],
+      # [[String], ["included", 2, "attributes", "legacyAppealIssues", 1, "legacyAppealIssueId"]],
+      # [OBJECT,   ["included", 5, "attributes", "legacyAppealIssues", 0]]
+      # [[String], ["included", 5, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
+      # [[String], ["included", 5, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]],
+      # ...
       *legacy_appeal_issues_paths.reduce([]) do |acc, path| # ^^^
         [
           *acc,
@@ -226,7 +226,7 @@ class Api::V3::DecisionReview::IntakeParams
             types_and_paths: [
               [OBJECT,    []],
               [[String],  ["legacyAppealId"]],
-              [[String],  ["legacyAppealIssueId"]],
+              [[String],  ["legacyAppealIssueId"]]
             ]
           )
         ]
@@ -249,10 +249,10 @@ class Api::V3::DecisionReview::IntakeParams
       legacy_appeal_issues = contestable_issue.dig(*LEGACY_APPEAL_ISSUES_PATH)
 
       next acc unless legacy_appeal_issues.is_a?(Array) && legacy_appeal_issues.present?
-  
-      [ *acc, [*INCLUDED_PATH, ci_index, *LEGACY_APPEAL_ISSUES_PATH] ]
+
+      [*acc, [*INCLUDED_PATH, ci_index, *LEGACY_APPEAL_ISSUES_PATH]]
     end
-  rescue
+  rescue StandardError
     []
   end
 
@@ -298,10 +298,10 @@ class Api::V3::DecisionReview::IntakeParams
         )
       ]
     end
-  rescue
+  rescue StandardError
     []
   end
- 
+
   # (helper for `for_array_at_path_enumerate_types_and_paths`)
   #
   # given an array (prepend_path), prepends it to each path array in types_and_paths
