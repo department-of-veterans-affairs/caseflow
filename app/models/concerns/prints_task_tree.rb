@@ -33,13 +33,13 @@ module PrintsTaskTree
   end
 
   def task_tree_attributes_as_json(*atts)
-    return { id: id } unless is_a? Task
+    return attributes_to_h(*atts) if is_a? Task
 
-    attribute_hash = {}
-    atts.each do |att|
-      attribute_hash[att] = self[att]
-    end
-    attribute_hash
+    { id: id }
+  end
+
+  def attributes_to_h(*atts)
+    atts.map { |att| [att, self[att]] }.to_h
   end
 
   def attributes_to_s(*atts)
