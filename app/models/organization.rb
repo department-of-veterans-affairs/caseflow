@@ -13,7 +13,12 @@ class Organization < ApplicationRecord
 
   before_save :clean_url
 
-  default_scope { where(:status => "active") }
+  enum status: {
+    Constants.USER_STATUSES.active.to_sym => Constants.ORGANIZATION_STATUSES.active,
+    Constants.USER_STATUSES.inactive.to_sym => Constants.ORGANIZATION_STATUSES.inactive
+  }
+
+  default_scope { where(:status => Constants.ORGANIZATION_STATUSES.active) }
 
   class << self
     def assignable(task)
@@ -124,6 +129,10 @@ class Organization < ApplicationRecord
 
   def ama_task_serializer
     WorkQueue::TaskSerializer
+  end
+
+  def update_status!(new_status)
+    update!(status: new_status, status_updated_at: Time.zone.now)
   end
 
   private
