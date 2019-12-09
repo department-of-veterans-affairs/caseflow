@@ -10,7 +10,7 @@ class JudgeTeamRole < ApplicationRecord
 
   class << self
     def users
-      users = all.map { |role| role.organizations_user.user}
+      all.map { |role| role.organizations_user.user }
     end
   end
 end
