@@ -13,9 +13,9 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
     end
   end
 
-  let(:veteran_file_number) { "55555555" }
+  let(:file_number_or_ssn) { "55555555" }
   let!(:veteran) do
-    Generators::Veteran.build(file_number: veteran_file_number,
+    Generators::Veteran.build(file_number: file_number_or_ssn,
                               first_name: "Boo",
                               last_name: "Radley")
   end
@@ -39,54 +39,27 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
       informalConference: informal_conference,
       sameOffice: same_office,
       legacyOptInApproved: legacy_opt_in_approved,
-      benefitType: benefit_type
-    }
-  end
-
-  let(:veteran_obj) do
-    {
-      data: {
-        type: "Veteran",
-        id: veteran_file_number
+      benefitType: benefit_type,
+      veteran: {
+        fileNumberOrSsn: file_number_or_ssn,
       }
     }
   end
-  let(:claimant_obj) do
-    {
-      data: {
-        type: "Claimant",
-        id: 0 / 0.0,
-        meta: {
-          payeeCode: "x"
-        }
-      }
-    }
-  end
-  let(:relationships) { { veteran: veteran_obj, claimant: claimant_obj } }
 
   let(:data) do
     {
       type: "HigherLevelReview",
       attributes: attributes,
-      relationships: relationships
     }
   end
 
-  let(:category) { "Apportionment" }
   let(:rating_issue_id) { 1 / 0.0 }
-  let(:decision_date) { Time.zone.today - 10.days }
-  let(:decision_text) { "Text." }
-  let(:notes) { "not sure if this is on file" }
   let(:included) do
     [
       {
-        type: "RequestIssue",
+        type: "ContestableIssue",
         attributes: {
-          category: category,
           ratingIssueId: rating_issue_id,
-          decisionDate: decision_date.strftime("%F"),
-          decisionText: decision_text,
-          notes: notes
         }
       }
     ]

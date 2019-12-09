@@ -52,8 +52,8 @@ context Api::V3::DecisionReview::IntakeParams do
     }
   end
 
-  let(:rep_name) { nil }
-  let(:rep_phone_number) { nil }
+  let(:rep_name) { "Jane Doe" }
+  let(:rep_phone_number) { "8001234567" }
   let(:rep_phone_number_country_code) { nil }
   let(:rep_phone_number_ext) { nil }
 
@@ -102,7 +102,7 @@ context Api::V3::DecisionReview::IntakeParams do
     }
   end
 
-  let(:participant_id) { 44 }
+  let(:participant_id) { "44" }
   let(:payee_code) { "10" }
   let(:claimant_address_line_1) { nil }
   let(:claimant_address_line_2) { nil }
@@ -147,8 +147,11 @@ context Api::V3::DecisionReview::IntakeParams do
     ]
   end
 
-  let(:first_legacy_appeal_id) { nil }
-  let(:first_legacy_appeal_issue_id) { nil }
+  let(:first_legacy_appeal_id) { "123" }
+  let(:first_legacy_appeal_issue_id) { "1" }
+
+  let(:object) { Api::V3::DecisionReview::IntakeParams::OBJECT }
+  let(:bool) { Api::V3::DecisionReview::IntakeParams::BOOL }
 
   describe ".prepend_path_to_paths" do
     let(:prepend_path) { [:data, :attributes] }
@@ -366,8 +369,6 @@ context Api::V3::DecisionReview::IntakeParams do
   end
 
   describe "#types_and_paths" do
-    let(:object) { Api::V3::DecisionReview::IntakeParams::OBJECT }
-    let(:bool) { Api::V3::DecisionReview::IntakeParams::BOOL }
     subject { intake_params.send(:types_and_paths) }
 
     let(:expected_array) do
@@ -382,10 +383,10 @@ context Api::V3::DecisionReview::IntakeParams do
         [[String, nil],  ["data", "attributes", "informalConferenceTimes", 1]],
         [[nil],          ["data", "attributes", "informalConferenceTimes", 2]],
         [[*object, nil], %w[data attributes informalConferenceRep]],
-        [[String],       ["data", "attributes", "informalConferenceRep name"]],
-        [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumber"]],
-        [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumberCountryCode"]],
-        [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumberExt"]],
+        [[String],       ["data", "attributes", "informalConferenceRep", "name"]],
+        [[String, Integer],  ["data", "attributes", "informalConferenceRep", "phoneNumber"]],
+        [[String, Integer, nil],  ["data", "attributes", "informalConferenceRep", "phoneNumberCountryCode"]],
+        [[String, Integer, nil],  ["data", "attributes", "informalConferenceRep", "phoneNumberExt"]],
         [bool,           %w[data attributes sameOffice]],
         [bool,           %w[data attributes legacyOptInApproved]],
         [[String],       %w[data attributes benefitType]],
@@ -645,6 +646,358 @@ context Api::V3::DecisionReview::IntakeParams do
         expected_array_with_interesting_included.each.with_index do |expected, index|
           expect(subject[index]).to eq(expected)
         end
+      end
+    end
+
+    describe "#benefit_type_valid?" do
+      subject { intake_params.send(:benefit_type_valid?) }
+
+      it { is_expected.to be true }
+
+      context do
+        let(:benefit_type) { "qwerty" }
+
+        it { is_expected.to be false }
+      end
+
+      context do
+        let(:benefit_type) { "pension" }
+
+        it { is_expected.to be false }
+      end
+    end
+
+    describe "#contestable_issue_errors" do
+      subject { intake_params.send(:contestable_issue_errors) }
+
+      it { is_expected.to eq [] }
+
+      context do
+        let(:first_contestable_issue_decision_issue_id) { nil }
+        let(:first_contestable_issue_rating_issue_id) { nil }
+        let(:first_contestable_issue_rating_decision_issue_id) { nil }
+
+        it { is_expected.not_to be_empty }
+      end
+    end
+
+    describe "#contestable_issues" do
+      subject { intake_params.send(:contestable_issues) }
+
+      it { is_expected.not_to be_empty }
+      it { expect(subject.first).to be_a Api::V3::DecisionReview::ContestableIssueParams }
+
+      context do
+        let(:included) { [] }
+
+        it { is_expected.to be_empty }
+      end
+    end
+
+    describe "#receipt_date" do
+      subject { intake_params.send(:receipt_date) }
+
+      it { is_expected.to eq receipt_date }
+
+      context do
+        let(:receipt_date) { nil }
+
+        it { is_expected.to eq Time.zone.now.strftime("%F") }
+      end
+    end
+
+    describe "#veteran_is_not_the_claimant?" do
+      subject { intake_params.send(:veteran_is_not_the_claimant?) }
+
+      it { is_expected.to be true }
+
+      context do
+        let(:claimant) { nil }
+
+        it { is_expected.to be false }
+      end
+
+      context do
+        let(:params) { 1 }
+
+        it { is_expected.to be false }
+      end
+    end
+
+    describe "#attributes" do
+      subject { intake_params.send(:attributes) }
+
+      it { expect(subject.as_json).to eq attributes.as_json }
+    end
+
+    describe "#describe_shape_error" do
+      subject { intake_params.send(:describe_shape_error) }
+
+      it { is_expected.to be nil }
+
+      context do
+        let(:params) { nil }
+        it { is_expected.to eq "payload must be an object" }
+      end
+
+      context do
+        let(:data) { nil }
+        it { is_expected.to eq "[\"data\"] should be one of #{object.inspect}. Got: #{data.inspect}." }
+      end
+
+      context do
+        let(:type) { nil }
+        it { is_expected.to eq "[\"data\"][\"type\"] should be \"HigherLevelReview\". Got: #{type.inspect}." }
+      end
+
+      context do
+        let(:attributes) { nil }
+        it { is_expected.to eq "[\"data\"][\"attributes\"] should be one of #{object.inspect}. Got: #{attributes.inspect}." }
+      end
+
+      context do
+        let(:receipt_date) { 12 }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"receiptDate\"] should be one of [String, nil]. Got: #{receipt_date.inspect}." }
+      end
+
+      context do
+        let(:informal_conference) { nil }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"informalConference\"] should be one of [true, false]. Got: #{informal_conference.inspect}." }
+      end
+
+      context do
+        let(:informal_conference_times) { "dog" }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"informalConferenceTimes\"] should be one of [Array, nil]. Got: #{informal_conference_times.inspect}." }
+      end
+
+      context do
+        let(:informal_conference_times) { [13] }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"informalConferenceTimes\"][0] should be one of [String, nil]. Got: #{informal_conference_times[0].inspect}." }
+      end
+
+      context do
+        let(:informal_conference_times) { [nil, 24] }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"informalConferenceTimes\"][1] should be one of [String, nil]. Got: #{informal_conference_times[1].inspect}." }
+      end
+
+      context do
+        let(:informal_conference_times) { [nil, nil, 87] }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"informalConferenceTimes\"][2] should be nil. Got: #{informal_conference_times[2].inspect}." }
+      end
+
+      context do
+        let(:informal_conference_rep) { 33 }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"informalConferenceRep\"] should be one of #{object.inspect[0...-1] + ", nil]"}. Got: #{informal_conference_rep.inspect}." }
+      end
+
+      context do
+        let(:rep_name) { nil }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"informalConferenceRep\"][\"name\"] should be a(n) string. Got: #{rep_name.inspect}." }
+      end
+
+      context do
+        let(:rep_phone_number) { nil }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"informalConferenceRep\"][\"phoneNumber\"] should be one of [String, Integer]. Got: #{rep_phone_number.inspect}." }
+      end
+
+      context do
+        let(:rep_phone_number_country_code) { [] }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"informalConferenceRep\"][\"phoneNumberCountryCode\"] should be one of [String, Integer, nil]. Got: #{rep_phone_number_country_code.inspect}." }
+      end
+
+      context do
+        let(:rep_phone_number_ext) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"informalConferenceRep\"][\"phoneNumberExt\"] should be one of [String, Integer, nil]. Got: #{rep_phone_number_ext.inspect}." }
+      end
+
+      context do
+        let(:same_office) { nil }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"sameOffice\"] should be one of [true, false]. Got: #{same_office.inspect}." }
+      end
+
+      context do
+        let(:legacy_opt_in_approved) { nil }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"legacyOptInApproved\"] should be one of [true, false]. Got: #{legacy_opt_in_approved.inspect}." }
+      end
+
+      context do
+        let(:benefit_type) { nil }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"benefitType\"] should be a(n) string. Got: #{benefit_type.inspect}." }
+      end
+
+      context do
+        let(:veteran) { nil }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"veteran\"] should be one of #{object.inspect}. Got: #{veteran.inspect}." }
+      end
+
+      context do
+        let(:file_number_or_ssn) { nil }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"veteran\"][\"fileNumberOrSsn\"] should be a(n) string. Got: #{file_number_or_ssn.inspect}." }
+      end
+
+      context do
+        let(:vet_address_line_1) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"veteran\"][\"addressLine1\"] should be one of [String, nil]. Got: #{vet_address_line_1.inspect}." }
+      end
+
+      context do
+        let(:vet_address_line_2) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"veteran\"][\"addressLine2\"] should be one of [String, nil]. Got: #{vet_address_line_2.inspect}." }
+      end
+
+      context do
+        let(:vet_city) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"veteran\"][\"city\"] should be one of [String, nil]. Got: #{vet_city.inspect}." }
+      end
+
+      context do
+        let(:vet_state_province_code) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"veteran\"][\"stateProvinceCode\"] should be one of [String, nil]. Got: #{vet_state_province_code.inspect}." }
+      end
+
+      context do
+        let(:vet_country_code) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"veteran\"][\"countryCode\"] should be one of [String, nil]. Got: #{vet_country_code.inspect}." }
+      end
+
+      context do
+        let(:vet_zip_postal_code) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"veteran\"][\"zipPostalCode\"] should be one of [String, nil]. Got: #{vet_zip_postal_code.inspect}." }
+      end
+
+      context do
+        let(:vet_phone_number) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"veteran\"][\"phoneNumber\"] should be one of [String, nil]. Got: #{vet_phone_number.inspect}." }
+      end
+
+      context do
+        let(:vet_phone_number_country_code) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"veteran\"][\"phoneNumberCountryCode\"] should be one of [String, nil]. Got: #{vet_phone_number_country_code.inspect}." }
+      end
+
+      context do
+        let(:vet_phone_number_ext) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"veteran\"][\"phoneNumberExt\"] should be one of [String, nil]. Got: #{vet_phone_number_ext.inspect}." }
+      end
+
+      context do
+        let(:vet_email_address) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"veteran\"][\"emailAddress\"] should be one of [String, nil]. Got: #{vet_email_address.inspect}." }
+      end
+
+      context do
+        let(:claimant) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"claimant\"] should be one of #{object.inspect[0...-1] + ", nil]"}. Got: #{claimant.inspect}." }
+      end
+
+      context do
+        let(:participant_id) { nil }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"claimant\"][\"participantId\"] should be a(n) string. Got: #{participant_id.inspect}." }
+      end
+
+      context do
+        let(:payee_code) { nil }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"claimant\"][\"payeeCode\"] should be a(n) string. Got: #{payee_code.inspect}." }
+      end
+
+      context do
+        let(:claimant_address_line_1) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"claimant\"][\"addressLine1\"] should be one of [String, nil]. Got: #{claimant_address_line_1.inspect}." }
+      end
+
+      context do
+        let(:claimant_address_line_2) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"claimant\"][\"addressLine2\"] should be one of [String, nil]. Got: #{claimant_address_line_2.inspect}." }
+      end
+
+      context do
+        let(:claimant_city) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"claimant\"][\"city\"] should be one of [String, nil]. Got: #{claimant_city.inspect}." }
+      end
+
+      context do
+        let(:claimant_state_province_code) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"claimant\"][\"stateProvinceCode\"] should be one of [String, nil]. Got: #{claimant_state_province_code.inspect}." }
+      end
+
+      context do
+        let(:claimant_country_code) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"claimant\"][\"countryCode\"] should be one of [String, nil]. Got: #{claimant_country_code.inspect}." }
+      end
+
+      context do
+        let(:claimant_zip_postal_code) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"claimant\"][\"zipPostalCode\"] should be one of [String, nil]. Got: #{claimant_zip_postal_code.inspect}." }
+      end
+
+      context do
+        let(:claimant_phone_number) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"claimant\"][\"phoneNumber\"] should be one of [String, nil]. Got: #{claimant_phone_number.inspect}." }
+      end
+
+      context do
+        let(:claimant_phone_number_country_code) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"claimant\"][\"phoneNumberCountryCode\"] should be one of [String, nil]. Got: #{claimant_phone_number_country_code.inspect}." }
+      end
+
+      context do
+        let(:claimant_phone_number_ext) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"claimant\"][\"phoneNumberExt\"] should be one of [String, nil]. Got: #{claimant_phone_number_ext.inspect}." }
+      end
+
+      context do
+        let(:claimant_email_address) { true }
+        it { is_expected.to eq "[\"data\"][\"attributes\"][\"claimant\"][\"emailAddress\"] should be one of [String, nil]. Got: #{claimant_email_address.inspect}." }
+      end
+
+      context do
+        let(:included) { nil }
+        it { is_expected.to eq "[\"included\"] should be a(n) array. Got: #{included.inspect}." }
+      end
+
+      context do
+        let(:included) { [nil] }
+        it { is_expected.to eq "[\"included\"][0] should be one of #{object.inspect}. Got: #{included[0].inspect}." }
+      end
+
+      context do
+        let(:first_contestable_issue_type) { nil }
+        it { is_expected.to eq "[\"included\"][0][\"type\"] should be \"ContestableIssue\". Got: #{first_contestable_issue_type.inspect}." }
+      end
+
+      context do
+        let(:first_contestable_issue_decision_issue_id) { true }
+        it { is_expected.to eq "[\"included\"][0][\"attributes\"][\"decisionIssueId\"] should be one of [Integer, nil]. Got: #{first_contestable_issue_decision_issue_id.inspect}." }
+      end
+
+      context do
+        let(:first_contestable_issue_rating_issue_id) { true }
+        it { is_expected.to eq "[\"included\"][0][\"attributes\"][\"ratingIssueId\"] should be one of [String, nil]. Got: #{first_contestable_issue_rating_issue_id.inspect}." }
+      end
+
+      context do
+        let(:first_contestable_issue_rating_decision_issue_id) { true }
+        it { is_expected.to eq "[\"included\"][0][\"attributes\"][\"ratingDecisionIssueId\"] should be one of [String, nil]. Got: #{first_contestable_issue_rating_decision_issue_id.inspect}." }
+      end
+
+      context do
+        let(:first_contestable_issue_legacy_appeal_issues) { "dog" }
+        it { is_expected.to eq "[\"included\"][0][\"attributes\"][\"legacyAppealIssues\"] should be one of [Array, nil]. Got: #{first_contestable_issue_legacy_appeal_issues.inspect}." }
+      end
+
+      context do
+        let(:first_contestable_issue_legacy_appeal_issues) { [nil] }
+        it { is_expected.to eq "[\"included\"][0][\"attributes\"][\"legacyAppealIssues\"][0] should be one of #{object.inspect}. Got: #{first_contestable_issue_legacy_appeal_issues[0].inspect}." }
+      end
+
+      context do
+        let(:first_legacy_appeal_id) { nil }
+        it { is_expected.to eq "[\"included\"][0][\"attributes\"][\"legacyAppealIssues\"][0][\"legacyAppealId\"] should be a(n) string. Got: #{first_legacy_appeal_id.inspect}." }
+      end
+
+      context do
+        let(:first_legacy_appeal_issue_id) { nil }
+        it { is_expected.to eq "[\"included\"][0][\"attributes\"][\"legacyAppealIssues\"][0][\"legacyAppealIssueId\"] should be a(n) string. Got: #{first_legacy_appeal_issue_id.inspect}." }
       end
     end
   end

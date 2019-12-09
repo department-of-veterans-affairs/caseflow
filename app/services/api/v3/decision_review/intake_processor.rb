@@ -37,7 +37,7 @@ class Api::V3::DecisionReview::IntakeProcessor
   private
 
   def build_intake(user, form_type)
-    @intake = Intake.build(user: user, veteran_file_number: @params.veteran_file_number, form_type: form_type)
+    @intake = Intake.build(user: user, veteran_file_number: @params.file_number_or_ssn, form_type: form_type)
     add_intake_error_if_intake_error_code
   end
 

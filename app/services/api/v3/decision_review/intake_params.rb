@@ -47,6 +47,10 @@ class Api::V3::DecisionReview::IntakeParams
                 end
   end
 
+  def file_number_or_ssn
+    attributes["veteran"]["fileNumberOrSsn"].to_s.strip
+  end
+
   private
 
   def shape_valid?
@@ -58,7 +62,7 @@ class Api::V3::DecisionReview::IntakeParams
   end
 
   def describe_shape_error
-    "payload must be an object" unless @params.respond_to?(:dig)
+    return "payload must be an object" unless @params.respond_to?(:dig)
   
     types_and_paths.find do |(types, path)|
       validator = Api::V3::DecisionReview::HashPathValidator.new(hash: @params, path: path, allowed_values: types)
@@ -72,11 +76,18 @@ class Api::V3::DecisionReview::IntakeParams
   end
 
   # most methods are run after `errors` method --this one isn't (hence the paranoia)
-  def veteran_is_not_the_claimant?
+  def has_attributes?
     @params.respond_to?(:has_key?) &&
       @params["data"].respond_to?(:has_key?) &&
-      @params["data"]["attributes"].respond_to?(:has_key?) &&
-      !!attributes["claimant"]
+      @params["data"]["attributes"].respond_to?(:has_key?)
+  end
+
+  def veteran_is_not_the_claimant?
+    has_attributes? && !!attributes["claimant"]
+  end
+
+  def has_informal_conference_rep?
+      has_attributes? && !!attributes["informalConferenceRep"]
   end
 
   def claimant_who_is_not_the_veteran
@@ -124,10 +135,18 @@ class Api::V3::DecisionReview::IntakeParams
       [[String, nil],  ["data", "attributes", "informalConferenceTimes", 1]],
       [[nil],          ["data", "attributes", "informalConferenceTimes", 2]],
       [[*OBJECT, nil], ["data", "attributes", "informalConferenceRep"]],
-      [[String],       ["data", "attributes", "informalConferenceRep name"]],
-      [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumber"]],
-      [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumberCountryCode"]],
-      [[String, nil],  ["data", "attributes", "informalConferenceRep phoneNumberExt"]],
+      *(
+        if has_informal_conference_rep? # ... name and phoneNumber must be present
+          [
+            [[String],          ["data", "attributes", "informalConferenceRep", "name"]],
+            [[String, Integer], ["data", "attributes", "informalConferenceRep", "phoneNumber"]],
+          ]
+        else
+          []
+        end
+      ),
+      [[String, Integer, nil], ["data", "attributes", "informalConferenceRep", "phoneNumberCountryCode"]],
+      [[String, Integer, nil], ["data", "attributes", "informalConferenceRep", "phoneNumberExt"]],
       [BOOL,           ["data", "attributes", "sameOffice"]],
       [BOOL,           ["data", "attributes", "legacyOptInApproved"]],
       [[String],       ["data", "attributes", "benefitType"]],
