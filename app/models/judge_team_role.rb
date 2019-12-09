@@ -7,4 +7,10 @@ class JudgeTeamRole < ApplicationRecord
   has_one :organization, through: :organizations_user
 
   validates :organizations_user, presence: true
+
+  class << self
+    def users
+      users = all.map { |role| role.organizations_user.user}
+    end
+  end
 end
