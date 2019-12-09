@@ -12,6 +12,12 @@ module PrintsTaskTree
     { "#{leaf_name}": task_tree_children.map { |child| child.structure(*atts) } }
   end
 
+  def structure_as_json(*atts)
+    leaf_name = self.class.name
+    child_tree = task_tree_children.map { |child| child.structure_as_json(*atts) }
+    { "#{leaf_name}": task_tree_attributes_as_json(*atts).merge(tasks: child_tree) }
+  end
+
   private
 
   def task_tree_children
@@ -26,12 +32,20 @@ module PrintsTaskTree
     "#{id} [#{atts.join(', ')}]"
   end
 
-  def attributes_to_s(*atts)
-    atts_list = []
+  def task_tree_attributes_as_json(*atts)
+    return { id: id } unless is_a? Task
+
+    attribute_hash = {}
     atts.each do |att|
+      attribute_hash[att] = self[att]
+    end
+    attribute_hash
+  end
+
+  def attributes_to_s(*atts)
+    atts_list = atts.map do |att|
       value = attributes[att.to_s]
-      value = "(#{att})" if value.blank?
-      atts_list << value
+      "(#{att})" if value.blank?
     end
     atts_list.flatten.compact.join(", ")
   end
