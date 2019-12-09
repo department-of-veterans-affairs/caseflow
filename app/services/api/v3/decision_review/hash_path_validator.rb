@@ -63,11 +63,13 @@ class Api::V3::DecisionReview::HashPathValidator
   end
 
   def path_is_valid?
-    @path_is_valid ||= begin
-                       allowed_values.any? { |av| av === dig }
-                       rescue StandardError
-                         false
-                     end
+    @path_is_valid ||= (
+      begin
+        allowed_values.any? { |av| av === dig }
+      rescue StandardError
+        false
+      end
+    )
   end
 
   def error_msg
