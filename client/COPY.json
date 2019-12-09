@@ -162,7 +162,8 @@
   "MOTIONS_ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL": "Assign to judge",
 
   "VACATE_AND_DE_NOVO_TASK_LABEL": "Vacate and De Novo",
-  "STRAIGHT_VACATE_AND_READJUDICATION_TASK_LABEL": "Straight Vacate and Readjudication",
+  "VACATE_AND_READJUDICATION_TASK_LABEL": "Vacate and Readjudication",
+  "STRAIGHT_VACATE_TASK_LABEL": "Straight Vacate",
   "DENIED_MOTION_TO_VACATE_TASK_LABEL": "Denied Motion to Vacate",
   "DISMISSED_MOTION_TO_VACATE_TASK_LABEL": "Dismissed Motion to Vacate",
 
@@ -656,5 +657,7 @@
       "TITLE": "We're updating the hearing time of %s's hearing",
       "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
     }
-  }
+  },
+
+  "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s."
 }
