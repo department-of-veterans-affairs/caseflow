@@ -10,15 +10,36 @@ class ETL::Task < ETL::Record
 
     private
 
+    def org_cache(org_id)
+      return if org_id.blank?
+
+      @org_cache ||= {}
+      @org_cache[org_id] ||= Organization.find(org_id)
+    end
+
+    def user_cache(user_id)
+      return if user_id.blank?
+
+      @user_cache ||= {}
+      @user_cache[user_id] ||= User.find(user_id)
+    end
+
+    def fetch_assigned_to(original)
+      return org_cache(original.assigned_to_id) if original.assigned_to_type == "Organization"
+
+      return user_cache(original.assigned_to_id) if original.assigned_to_type == "User"
+
+      fail "Unknown assigned_to_type #{original.assigned_to_type}"
+    end
+
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def merge_original_attributes_to_target(original, target)
       # memoize to save SQL calls
-      appeal = original.appeal
-      assigned_to = original.assigned_to
-      assigned_by = original.assigned_by
+      assigned_to = fetch_assigned_to(original)
+      assigned_by = user_cache(original.assigned_by_id)
 
-      target.appeal_id = appeal.id
+      target.appeal_id = original.appeal_id
       target.appeal_type = original.appeal_type
       target.assigned_at = original.assigned_at
       target.assigned_by_id = assigned_by&.id
