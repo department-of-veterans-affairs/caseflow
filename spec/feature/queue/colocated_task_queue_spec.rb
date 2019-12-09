@@ -13,7 +13,13 @@ RSpec.feature "ColocatedTask", :all_dbs do
     let(:root_task) { create(:root_task) }
     let(:appeal) { root_task.appeal }
     let!(:atty_task) do
-      create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_by: judge_user, assigned_to: attorney_user)
+      create(
+        :ama_attorney_task,
+        appeal: appeal,
+        parent: root_task,
+        assigned_by: judge_user,
+        assigned_to: attorney_user
+      )
     end
     let(:return_instructions) { "These are the instructions from the VLJ" }
 
