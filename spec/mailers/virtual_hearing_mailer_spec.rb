@@ -2,7 +2,7 @@
 
 describe VirtualHearingMailer do
   let(:title) { VirtualHearingMailer::RECIPIENT_TITLES[:judge] }
-  let(:recipient) { MailRecipient.new(full_name: "FirstName LastName", email: "email@test.com", title: title) }
+  let(:recipient) { MailRecipient.new(name: "LastName", email: "email@test.com", title: title) }
 
   describe "#cancellation" do
     it "sends a cancellation email" do
