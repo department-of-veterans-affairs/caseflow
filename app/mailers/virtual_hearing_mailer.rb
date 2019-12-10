@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class VirtualHearingMailer < ActionMailer::Base
-  default from: "do-not-reply@va.gov"
   layout "mailer"
   attr_reader :recipient
 
