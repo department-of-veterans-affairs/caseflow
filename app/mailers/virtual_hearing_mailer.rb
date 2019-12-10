@@ -14,7 +14,7 @@ class VirtualHearingMailer < ActionMailer::Base
   def cancellation(mail_recipient:, virtual_hearing: nil)
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
-    mail(to: recipient.email, subject: "Cancellation Subject")
+    mail(to: recipient.email, subject: "Updated location: Your hearing with the Board of Veterans' Appeals")
   end
 
   def confirmation(mail_recipient:, virtual_hearing: nil, time_changed: false)
