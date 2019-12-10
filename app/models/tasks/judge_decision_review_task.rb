@@ -23,7 +23,7 @@ class JudgeDecisionReviewTask < JudgeTask
   # ever be one open JudgeDecisionReviewTask at a time for an appeal.
   def verify_user_task_unique
     return if !open?
-puts "Attempting to create #{type} #{appeal.tasks.open.where( type: type, parent: parent ).to_a} #{assigned_to.is_a?(User)}"
+    
     if appeal.tasks.open.where(
       type: type,
       parent: parent
