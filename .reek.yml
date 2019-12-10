@@ -83,6 +83,9 @@ detectors:
   ManualDispatch:
     exclude:
       - Api::V3::DecisionReview::IntakeError#potential_error_code
+      - Api::V3::DecisionReview::IntakeParams#attributes?
+      - Api::V3::DecisionReview::IntakeParams#claimant_object_present?
+      - Api::V3::DecisionReview::IntakeParams#describe_shape_error
   MissingSafeMethod:
     enabled: false
   NestedIterators:

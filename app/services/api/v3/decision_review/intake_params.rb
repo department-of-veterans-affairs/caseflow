@@ -108,8 +108,14 @@ class Api::V3::DecisionReview::IntakeParams
     attributes["receiptDate"] || Time.zone.now.strftime("%F")
   end
 
+  def included
+    @params.dig(*INCLUDED_PATH)
+  rescue
+    []
+  end
+
   def contestable_issues
-    @contestable_issues ||= @params["included"].map do |contestable_issue_params|
+    @contestable_issues ||= included.map do |contestable_issue_params|
       Api::V3::DecisionReview::ContestableIssueParams.new(
         params: contestable_issue_params,
         benefit_type: attributes["benefitType"],
@@ -257,7 +263,7 @@ class Api::V3::DecisionReview::IntakeParams
   # ]
   #
   def legacy_appeal_issues_paths
-    @params.dig(*INCLUDED_PATH).each.with_index.reduce([]) do |acc, (contestable_issue, ci_index)|
+    included.each.with_index.reduce([]) do |acc, (contestable_issue, ci_index)|
       if legacy_appeal_issues(contestable_issue).is_a?(Array) && !legacy_appeal_issues(contestable_issue).empty?
         [*acc, [*INCLUDED_PATH, ci_index, *LEGACY_APPEAL_ISSUES_PATH]]
       else
