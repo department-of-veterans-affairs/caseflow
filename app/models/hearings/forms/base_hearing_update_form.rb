@@ -15,10 +15,10 @@ class BaseHearingUpdateForm
       update_hearing
       add_update_hearing_alert
       if virtual_hearing_form_or_hearing_time_was_updated?
-        was_created = create_or_update_virtual_hearing
+        create_or_update_virtual_hearing
         hearing.reload
         start_async_job
-        add_virtual_hearing_alert(changed_to_virtual: was_created)
+        add_virtual_hearing_alert
       end
     end
   end
@@ -42,7 +42,7 @@ class BaseHearingUpdateForm
       hearing.virtual_hearing.establishment.submit_for_processing!
       VirtualHearings::CreateConferenceJob.perform_now(
         hearing_id: hearing.id,
-        time_changed: scheduled_time_string.present?
+        time_changed: scheduled_time_string.present? && !created?
       )
     end
   end
@@ -53,17 +53,20 @@ class BaseHearingUpdateForm
     !(status_changed || virtual_hearing_attributes.key?(attr_key) || scheduled_time_string.present?)
   end
 
+  def created?
+    @created ||= false
+  end
+
   def create_or_update_virtual_hearing
-    created = false
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
     virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
       new_virtual_hearing.veteran_email = virtual_hearing_attributes[:veteran_email]
       new_virtual_hearing.judge_email = hearing.judge&.email
       new_virtual_hearing.representative_email = virtual_hearing_attributes[:representative_email]
-      created = true
+      @created = true
     end
 
-    if !created
+    if !created?
       # The email sent flag should always be set to false from the API.
       emails_sent_updates = {
         veteran_email_sent: email_sent_flag(:veteran_email),
@@ -78,13 +81,11 @@ class BaseHearingUpdateForm
     else
       VirtualHearingEstablishment.create!(virtual_hearing: virtual_hearing)
     end
-
-    created
   end
 
-  def add_virtual_hearing_alert(changed_to_virtual:)
+  def add_virtual_hearing_alert
     alerts << VirtualHearingUserAlertBuilder.new(
-      changed_to_virtual: changed_to_virtual,
+      changed_to_virtual: created?,
       virtual_hearing_attributes: virtual_hearing_attributes,
       veteran_full_name: veteran_full_name,
       hearing_time_changed: scheduled_time_string.present?
