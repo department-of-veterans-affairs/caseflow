@@ -110,7 +110,7 @@ class Api::V3::DecisionReview::IntakeParams
 
   def included
     @params.dig(*INCLUDED_PATH)
-  rescue
+  rescue StandardError
     []
   end
 
@@ -264,7 +264,7 @@ class Api::V3::DecisionReview::IntakeParams
   #
   def legacy_appeal_issues_paths
     included.each.with_index.reduce([]) do |acc, (contestable_issue, ci_index)|
-      if legacy_appeal_issues(contestable_issue).is_a?(Array) && !legacy_appeal_issues(contestable_issue).empty?
+      if legacy_appeal_issues_present?(contestable_issue)
         [*acc, [*INCLUDED_PATH, ci_index, *LEGACY_APPEAL_ISSUES_PATH]]
       else
         acc
@@ -274,8 +274,12 @@ class Api::V3::DecisionReview::IntakeParams
     []
   end
 
-  def legacy_appeal_issues(contestable_issue)
-    contestable_issue.dig(*LEGACY_APPEAL_ISSUES_PATH)
+  def legacy_appeal_issues_present?(contestable_issue)
+    legacy_appeal_issues = contestable_issue.dig(*LEGACY_APPEAL_ISSUES_PATH)
+
+    legacy_appeal_issues.is_a?(Array) && !legacy_appeal_issues.empty?
+  rescue StandardError
+    false
   end
 
   # given the path to an array, prepends the path of each element of that array
