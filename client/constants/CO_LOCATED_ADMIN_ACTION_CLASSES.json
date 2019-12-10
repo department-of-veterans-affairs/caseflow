@@ -1,0 +1,20 @@
+{
+    "ihp": "IhpColocatedTask",
+    "poa_clarification": "PoaClarificationColocatedTask",
+    "hearing_clarification": "HearingClarificationColocatedTask",
+    "aoj": "AojColocatedTask",
+    "extension": "ExtensionColocatedTask",
+    "missing_hearing_transcripts": "MissingHearingTranscriptsColocatedTask",
+    "unaccredited_rep": "UnaccreditedRepColocatedTask",
+    "foia": "FoiaColocatedTask",
+    "retired_vlj": "RetiredVljColocatedTask",
+    "arneson": "ArnesonColocatedTask",
+    "new_rep_arguments": "NewRepArgumentsColocatedTask",
+    "pending_scanning_vbms": "PendingScanningVbmsColocatedTask",
+    "address_verification": "AddressVerificationColocatedTask",
+    "schedule_hearing": "ScheduleHearingColocatedTask",
+    "missing_records": "MissingRecordsColocatedTask",
+    "translation": "TranslationColocatedTask",
+    "stayed_appeal": "StayedAppealColocatedTask",
+    "other": "OtherColocatedTask"
+}
