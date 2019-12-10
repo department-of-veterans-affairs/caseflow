@@ -124,7 +124,52 @@ describe JudgeTask, :all_dbs do
     end
   end
 
-  describe ".udpate_from_params" do
+  describe ".create" do
+    context "creating a second JudgeDecisionReviewTask" do
+      let(:root_task) { create(:root_task) }
+      let(:status) { Constants.TASK_STATUSES.assigned }
+      #let!(:jdrt) { JudgeDecisionReviewTask.create!(appeal: root_task.appeal, parent: root_task, assigned_to: judge) }
+      let!(:jdrt) {
+        create(:ama_judge_decision_review_task, appeal: root_task.appeal, parent: root_task, assigned_to: judge)
+      }
+
+      subject { JudgeDecisionReviewTask.create!(appeal: root_task.appeal, parent: root_task, assigned_to: judge) }
+
+      context "when an open (assigned) JudgeDecisionReviewTask already exists" do
+        it "should fail creation of second JudgeDecisionReviewTask" do
+          expect{subject}.to raise_error(Caseflow::Error::DuplicateUserTask)
+          expect(root_task.appeal.tasks.count).to eq(2), "#{root_task.appeal.tasks.to_a}"
+        end
+      end
+
+      context "when an open (in_progress) JudgeDecisionReviewTask already exists" do
+        it "should fail creation of second JudgeDecisionReviewTask" do
+          jdrt.update(status: Constants.TASK_STATUSES.in_progress)
+          expect{subject}.to raise_error(Caseflow::Error::DuplicateUserTask)
+          expect(root_task.appeal.tasks.count).to eq(2), "#{root_task.appeal.tasks.to_a}"
+        end
+      end
+
+      context "when an open (on_hold) JudgeDecisionReviewTask already exists" do
+        it "should fail creation of second JudgeDecisionReviewTask" do
+          jdrt.update(status: Constants.TASK_STATUSES.on_hold)
+          expect{subject}.to raise_error(Caseflow::Error::DuplicateUserTask)
+          expect(root_task.appeal.tasks.count).to eq(2), "#{root_task.appeal.tasks.to_a}"
+        end
+      end
+
+      context "when a closed JudgeDecisionReviewTask exists" do
+        it "should create new active JudgeDecisionReviewTask" do
+          jdrt.update(status: Task.closed_statuses.sample)
+          expect{subject}.to_not raise_error
+          expect(root_task.appeal.tasks.count).to eq(3), "#{root_task.appeal.tasks.to_a}"
+          expect(root_task.appeal.tasks.map(&:type).select{ |t| t==JudgeDecisionReviewTask.name}.count).to eq(2)
+        end
+      end
+    end
+  end
+
+  describe ".update_from_params" do
     context "updating a JudgeQualityReviewTask" do
       let(:existing_instructions) { "existing instructions" }
       let(:existing_status) { :assigned }
