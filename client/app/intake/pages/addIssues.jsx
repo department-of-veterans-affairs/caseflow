@@ -92,10 +92,11 @@ class AddIssuesPage extends React.Component {
   };
 
   willRedirect(intakeData, hasClearedEp) {
-    const { formType, featureToggles } = this.props;
+    const { formType, editPage, processedAt, featureToggles } = this.props;
     const { correctClaimReviews } = featureToggles;
 
     return (
+      (editPage && !processedAt) ||
       !formType ||
       intakeData.isOutcoded ||
       (hasClearedEp && !correctClaimReviews)
@@ -103,9 +104,11 @@ class AddIssuesPage extends React.Component {
   }
 
   redirect(intakeData, hasClearedEp) {
-    const { formType } = this.props;
+    const { formType, editPage, processedAt } = this.props;
 
-    if (!formType) {
+    if (editPage && !processedAt) {
+      return <Redirect to={PAGE_PATHS.NOT_EDITABLE} />;
+    } else if (!formType) {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     } else if (hasClearedEp) {
       return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;

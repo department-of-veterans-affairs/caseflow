@@ -52,13 +52,13 @@ class ClaimReview < DecisionReview
   end
 
   def validate_prior_to_edit
-    fail NotYetProcessed unless processed?
+    if processed?
+      # force sync on initial edit call so that we have latest EP status.
+      # This helps prevent us editing something that recently closed upstream.
+      sync_end_product_establishments!
 
-    # force sync on initial edit call so that we have latest EP status.
-    # This helps prevent us editing something that recently closed upstream.
-    sync_end_product_establishments!
-
-    verify_contentions
+      verify_contentions
+    end
 
     # this will raise any errors for missing data
     ui_hash

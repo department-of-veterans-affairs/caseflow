@@ -1,10 +1,11 @@
 import React from 'react';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
 import AppFrame from '../components/AppFrame';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_PATHS } from '../intake/constants';
 import { EditAddIssuesPage } from '../intake/pages/addIssues';
@@ -27,6 +28,16 @@ export default class IntakeEditFrame extends React.PureComponent {
 
   displayConfirmationMessage = (details) => {
     return `${details.veteran.name}'s claim review has been successfully edited. You can close this window.`;
+  }
+
+  displayNotEditableMessage = (details) => {
+    const { asyncJobUrl } = this.props.serverIntake;
+
+    return <React.Fragment>
+      The review has not yet been established in VBMS.
+      Check the <Link href={asyncJobUrl}>job page</Link> for details.
+      You may try to edit the review again once it has been established.
+    </React.Fragment>;
   }
 
   displayCanceledMessage = (details) => {
@@ -81,6 +92,13 @@ export default class IntakeEditFrame extends React.PureComponent {
                   path={PAGE_PATHS.BEGIN}
                   title="Edit Claim Issues | Caseflow Intake"
                   component={EditAddIssuesPage} />
+                <PageRoute
+                  exact
+                  path={PAGE_PATHS.NOT_EDITABLE}
+                  title="Edit Claim Issues | Caseflow Intake"
+                  component={() => {
+                    return <Message title="Review not editable" displayMessage={this.displayNotEditableMessage} />;
+                  }} />
                 <PageRoute
                   exact
                   path={PAGE_PATHS.CANCEL_ISSUES}
