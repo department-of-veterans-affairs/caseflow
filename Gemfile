@@ -32,7 +32,7 @@ gem "newrelic_rpm"
 # nokogiri 1.10.4 is vulnerable to CVE-2019-13117, CVE-2019-13118, CVE-2019-18197.
 # https://github.com/sparklemotion/nokogiri/issues/1943
 gem "nokogiri", "~> 1.10.5"
-gem "paper_trail", "8.1.2"
+gem "paper_trail", "~> 9.1.0"
 # Used to speed up reporting
 gem "parallel"
 # soft delete gem
