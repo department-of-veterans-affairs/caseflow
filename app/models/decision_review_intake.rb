@@ -12,8 +12,8 @@ class DecisionReviewIntake < Intake
       legacy_opt_in_approved: detail.legacy_opt_in_approved,
       legacyAppeals: detail.serialized_legacy_appeals,
       ratings: detail.serialized_ratings,
-      requestIssues: detail.request_issues.active_or_ineligible.map(&:ui_hash),
-      activeNonratingRequestIssues: detail.active_nonrating_request_issues.map(&:ui_hash),
+      requestIssues: detail.request_issues.active_or_ineligible.map(&:serialize),
+      activeNonratingRequestIssues: detail.active_nonrating_request_issues.map(&:serialize),
       contestableIssuesByDate: detail.contestable_issues.map(&:serialize),
       veteranValid: veteran&.valid?(:bgs),
       veteranInvalidFields: veteran_invalid_fields

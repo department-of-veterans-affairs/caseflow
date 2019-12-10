@@ -57,6 +57,7 @@ class HearingTypeDropdown extends React.Component {
         options={this.HEARING_TYPE_OPTIONS}
         value={this.getValue()}
         onChange={this.onChange}
+        readOnly={this.props.readOnly}
       />
     );
   }
@@ -66,7 +67,8 @@ HearingTypeDropdown.propTypes = {
   virtualHearing: PropTypes.object,
   updateVirtualHearing: PropTypes.func,
   openModal: PropTypes.func,
-  requestType: PropTypes.string
+  requestType: PropTypes.string,
+  readOnly: PropTypes.bool
 };
 
 export default HearingTypeDropdown;

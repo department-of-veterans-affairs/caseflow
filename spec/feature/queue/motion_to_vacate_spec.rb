@@ -182,10 +182,10 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
     after { FeatureToggle.disable!(:review_motion_to_vacate) }
 
-    it "judge grants motion to vacate (straight vacate)" do
+    it "judge grants motion to vacate (vacate & readjudication)" do
       address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
       find("label[for=disposition_granted]").click
-      find("label[for=vacate-type_straight_vacate_and_readjudication]").click
+      find("label[for=vacate-type_vacate_and_readjudication]").click
       fill_in("instructions", with: judge_notes)
 
       # Ensure it has pre-selected attorney previously assigned to case
@@ -205,11 +205,45 @@ RSpec.feature "Motion to vacate", :all_dbs do
       instructions = format_judge_instructions(
         notes: judge_notes,
         disposition: "granted",
-        vacate_type: "straight_vacate_and_readjudication"
+        vacate_type: "vacate_and_readjudication"
       )
-      new_task = StraightVacateAndReadjudicationTask.find_by(assigned_to: drafting_attorney)
+      new_task = VacateAndReadjudicationTask.find_by(assigned_to: drafting_attorney)
       expect(new_task).to_not be_nil
-      expect(new_task.label).to eq COPY::STRAIGHT_VACATE_AND_READJUDICATION_TASK_LABEL
+      expect(new_task.label).to eq COPY::VACATE_AND_READJUDICATION_TASK_LABEL
+      expect(new_task.available_actions(motions_attorney)).to include(
+        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
+      )
+      expect(new_task.instructions.join("")).to eq(instructions)
+    end
+
+    it "judge grants motion to vacate (straight vacate)" do
+      address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
+      find("label[for=disposition_granted]").click
+      find("label[for=vacate-type_straight_vacate]").click
+      fill_in("instructions", with: judge_notes)
+
+      # Ensure it has pre-selected attorney previously assigned to case
+      expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
+
+      click_button(text: "Submit")
+
+      # Return back to user's queue
+      expect(page).to have_current_path("/queue")
+
+      # Verify PostDecisionMotion is created
+      motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
+      expect(motion).to_not be_nil
+      expect(motion.disposition).to eq("granted")
+
+      # Verify new task creation
+      instructions = format_judge_instructions(
+        notes: judge_notes,
+        disposition: "granted",
+        vacate_type: "straight_vacate"
+      )
+      new_task = StraightVacateTask.find_by(assigned_to: drafting_attorney)
+      expect(new_task).to_not be_nil
+      expect(new_task.label).to eq COPY::STRAIGHT_VACATE_TASK_LABEL
       expect(new_task.available_actions(motions_attorney)).to include(
         Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
       )
@@ -250,10 +284,10 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(new_task.instructions.join("")).to eq(instructions)
     end
 
-    it "judge grants partial vacatur (straight vacate)" do
+    it "judge grants partial vacatur (vacate & readjudication)" do
       address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
       find("label[for=disposition_partial]").click
-      find("label[for=vacate-type_straight_vacate_and_readjudication]").click
+      find("label[for=vacate-type_vacate_and_readjudication]").click
       fill_in("instructions", with: judge_notes)
 
       # Ensure it has pre-selected attorney previously assigned to case
@@ -277,11 +311,11 @@ RSpec.feature "Motion to vacate", :all_dbs do
       instructions = format_judge_instructions(
         notes: judge_notes,
         disposition: "partial",
-        vacate_type: "straight_vacate_and_readjudication"
+        vacate_type: "vacate_and_readjudication"
       )
-      new_task = StraightVacateAndReadjudicationTask.find_by(assigned_to: drafting_attorney)
+      new_task = VacateAndReadjudicationTask.find_by(assigned_to: drafting_attorney)
       expect(new_task).to_not be_nil
-      expect(new_task.label).to eq COPY::STRAIGHT_VACATE_AND_READJUDICATION_TASK_LABEL
+      expect(new_task.label).to eq COPY::VACATE_AND_READJUDICATION_TASK_LABEL
       expect(new_task.available_actions(motions_attorney)).to include(
         Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
       )

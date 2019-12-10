@@ -8,4 +8,8 @@ class ETL::TaskSyncer < ETL::Syncer
   def target_class
     ETL::Task
   end
+
+  def filter?(original)
+    original.appeal.blank?
+  end
 end

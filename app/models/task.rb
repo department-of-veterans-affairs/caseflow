@@ -101,11 +101,10 @@ class Task < ApplicationRecord
       end
     end
 
-    def modify_params(params)
+    def modify_params_for_create(params)
       if params.key?(:instructions) && !params[:instructions].is_a?(Array)
         params[:instructions] = [params[:instructions]]
       end
-      params.delete(:action)
       params
     end
 
@@ -152,7 +151,7 @@ class Task < ApplicationRecord
 
       verify_user_can_create!(user, parent_task)
 
-      params = modify_params(params)
+      params = modify_params_for_create(params)
       child = create_child_task(parent_task, user, params)
       parent_task.update!(status: params[:status]) if params[:status]
       child
@@ -377,10 +376,14 @@ class Task < ApplicationRecord
 
     return reassign(params[:reassign], current_user) if params[:reassign]
 
-    params["instructions"] = flattened_instructions(params)
-    update!(params)
+    update_with_instructions(params)
 
     [self]
+  end
+
+  def update_with_instructions(params)
+    params[:instructions] = flattened_instructions(params)
+    update!(params)
   end
 
   def flattened_instructions(params)
@@ -477,7 +480,7 @@ class Task < ApplicationRecord
     sibling = dup.tap do |task|
       task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
       task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
-      task.instructions = [instructions, reassign_params[:instructions]].flatten
+      task.instructions = flattened_instructions(reassign_params)
       task.status = Constants.TASK_STATUSES.assigned
       task.save!
     end
@@ -486,7 +489,7 @@ class Task < ApplicationRecord
     children.open.update_all(parent_id: sibling.id)
     sibling.update!(status: status)
 
-    update!(status: Constants.TASK_STATUSES.cancelled)
+    update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: reassign_params[:instructions])
 
     [sibling, self, sibling.children].flatten
   end

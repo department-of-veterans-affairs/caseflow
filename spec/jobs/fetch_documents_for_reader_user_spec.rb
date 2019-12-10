@@ -113,6 +113,17 @@ describe FetchDocumentsForReaderUserJob, :all_dbs do
       end
     end
 
+    context "when efolder does not recognize the veteran file number" do
+      before do
+        allow(EFolderService).to receive(:fetch_documents_for).with(appeal, anything)
+          .and_raise(VBMS::FilenumberDoesNotExist.new(500, "error"))
+      end
+
+      it "does not raise error" do
+        expect { FetchDocumentsForReaderUserJob.perform_now(user) }.not_to raise_error
+      end
+    end
+
     context "when HTTP Timeout occurs" do
       it "job raises an error" do
         allow(EFolderService).to receive(:fetch_documents_for).with(appeal, anything)

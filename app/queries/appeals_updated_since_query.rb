@@ -35,7 +35,7 @@ class AppealsUpdatedSinceQuery
   end
 
   def appeals_joined_distinct
-    Appeal.left_joins(association_names.map(&:to_sym)).distinct
+    Appeal.established.left_joins(association_names.map(&:to_sym)).distinct
   end
 
   def associated_clauses

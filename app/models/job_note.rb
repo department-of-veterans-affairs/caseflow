@@ -15,4 +15,8 @@ class JobNote < ApplicationRecord
       sent_to_intake_user: send_to_intake_user
     }
   end
+
+  def path
+    "#{job.path}#job-note-#{id}"
+  end
 end
