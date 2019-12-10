@@ -44,17 +44,17 @@ class VirtualHearings::SendEmail
   def mail_recipients
     {
       veteran: MailRecipient.new(
-        full_name: virtual_hearing.hearing.appeal.veteran&.name.to_s,
+        name: virtual_hearing.hearing.appeal.veteran&.first_name,
         email: virtual_hearing.veteran_email,
         title: VirtualHearingMailer::RECIPIENT_TITLES[:veteran]
       ),
       judge: MailRecipient.new(
-        full_name: virtual_hearing.hearing.judge&.full_name,
+        name: virtual_hearing.hearing.judge&.full_name,
         email: virtual_hearing.judge_email,
         title: VirtualHearingMailer::RECIPIENT_TITLES[:judge]
       ),
       representative: MailRecipient.new(
-        full_name: virtual_hearing.hearing.appeal.representative_name,
+        name: virtual_hearing.hearing.appeal.representative_name,
         email: virtual_hearing.representative_email,
         title: VirtualHearingMailer::RECIPIENT_TITLES[:representative]
       )

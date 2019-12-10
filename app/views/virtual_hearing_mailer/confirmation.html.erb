@@ -1,42 +1,89 @@
-<% if recipient.title == VirtualHearingMailer.RECIPIENT_TITLES[:judge] %>
-  <p>Dear Judge <% recipient.last_name</p>
-<% else %>
-  <p>Dear <%= recipient.first_name %>,</p>
-<% end %>
-<% if recipient.title == VirtualHearingMailer.RECIPIENT_TITLES[:representative] %>
-  <p>You have a Veteran scheduled for a virtual hearing with a Veterans Law Judge of the Board of Veterans' Appeals:</p>
-  <h3><%= virtual_hearing.hearing.veteran.name %></h3>
-  <p><a href="<%= virtual_hearing.hearing.external_id%>/worksheet">View the case details</a></p>
-<% elsif recipient.title == VirtualHearingMailer.RECIPIENT_TITLES[:veteran] %>
-  <p>You're scheduled for a virtual hearing with a Veterans Law Judge of the Board of Veterans' Appeals.</p>
-<% else %>
-  <p>You're scheduled for a virtual hearing with <%= virtual_hearing.hearing.veteran.name %>:
-  <p><a href="<%= virtual_hearing.hearing.external_id %>">View the Hearing Worksheet</a></p>
-<% end %>
-
-<h3>Date and Time<h3>
 <p>
-<%= virtual_hearing.hearing.scheduled_for.strftime("%A, %d %B %Y at %I:%M%P %Z") %>
-</p>
-<h3>How to Join</h3>
-<p>We recommend joining 15 minutes before your hearing start time. Click on the link below, or copy and paste the link into the address field of your web browser:
-<%= virtual_hearing.link %>
+  Dear<% if @recipient.title == VirtualHearingMailer::RECIPIENT_TITLES[:judge] %>Judge<% end %> <%= @recipient.name %>,
 </p>
 
-<% if recipient.title != VirtualHearingMailer.RECIPIENT_TITLES[:judge] %>
-  <h3>Test Your Connection</h3>
-  <p>At least 1 week before your hearing day, test your audio and video connection by visiting the [VA Video Connect] test site with the device you plan to use for your hearing: <%= virtual_hearing.link %>
+<% if @recipient.title == VirtualHearingMailer::RECIPIENT_TITLES[:representative] %>
+
+  <p>
+    You have a Veteran scheduled for a virtual hearing with a Veterans Law Judge of the Board of Veterans' Appeals:
+  </p>
+  <h3>
+    <%= @virtual_hearing.hearing.appeal.veteran.name.to_s %>
+  </h3>
+  <p>
+    <a href="https://appeals.cf.ds.va.gov/queue/<%= @virtual_hearing.hearing.appeal.external_id %>">
+      View the case details
+    </a>
+  </p>
+
+<% elsif @recipient.title == VirtualHearingMailer::RECIPIENT_TITLES[:veteran] %>
+
+  <p>
+    You're scheduled for a virtual hearing with a Veterans Law Judge of the Board of Veterans' Appeals.
+  </p>
+
+<% else %>
+
+  <p>
+    You're scheduled for a virtual hearing with <%= @virtual_hearing.hearing.appeal.veteran.name.to_s %>:
+    <a href="https://appeals.cf.ds.va.gov/<%= @virtual_hearing.hearing.external_id %>/worksheet">
+      View the Hearing Worksheet
+    </a>
+  </p>
+
+<% end %>
+
+<h3>
+  Date and Time
+</h3>
+<p>
+  <%= @virtual_hearing.hearing.scheduled_for.strftime("%A, %d %B %Y at %I:%M%P %Z") %>
+</p>
+
+<h3>
+  How to Join
+</h3>
+<p>
+  We recommend joining 15 minutes before your hearing start time.
+  Click on the link below, or copy and paste the link into the address
+  field of your web browser: <%= @link %>
+</p>
+
+<% if @recipient.title != VirtualHearingMailer::RECIPIENT_TITLES[:judge] %>
+
+  <h3>
+    Test Your Connection
+  </h3>
+  <p>
+    At least 1 week before your hearing day, test your audio and video
+    connection by visiting the [VA Video Connect] test site with the device
+    you plan to use for your hearing: <%= @link %>
+  </p>
   <ul>
-    <li>If you are using an Apple mobile device, such as an iPhone or iPad, you will need to download the free VA Video Connect app from the App Store: https://itunes.apple.com/us/app/va-video-connect/id1224250949?mt=8</li>
-    <li>If you are using an Apple computer, such as a Mac, or any Windows or Android device, no application download is required. The hearing will launch automatically in your web browser after you click the link.</li>
+    <li>
+      If you are using an Apple mobile device, such as an iPhone or iPad, you
+      will need to download the free VA Video Connect app from the App Store: https://itunes.apple.com/us/app/va-video-connect/id1224250949?mt=8
+    </li>
+    <li>
+      If you are using an Apple computer, such as a Mac, or any Windows or Android device,
+      no application download is required. The hearing will launch automatically in your web browser after you click the link.
+    </li>
   </ul>
 <% end %>
 
-<h3>Help Desk</h3>
-<p>If you are experiencing technical difficulties, contact the National Telehealth Technology HelpDesk (NTTHD) at 855-519-7116 to get support.</p>
+<h3>
+  Help Desk
+</h3>
+<p>
+  If you are experiencing technical difficulties, contact the National Telehealth Technology HelpDesk (NTTHD) at 855-519-7116 to get support.
+</p>
 
-<% if recipient.title != VirtualHearingMailer.RECIPIENT_TITLES[:judge] %>
-  <p>Sincerely,<br/>The Board of Veterans' Appeals</p>
+<% if @recipient.title != VirtualHearingMailer::RECIPIENT_TITLES[:judge] %>
+  <p>
+    Sincerely,<br/>The Board of Veterans' Appeals
+  </p>
 <% else %>
-  <p>Hearing Management Branch<br />Board of Veterans' Appeals</p>
+  <p>
+    Hearing Management Branch<br />Board of Veterans' Appeals
+  </p>
 <% end %>
