@@ -63,12 +63,13 @@ class Api::V3::DecisionReview::IntakeParams
   def describe_shape_error
     return "payload must be an object" unless @params.respond_to?(:dig)
 
-    types_and_paths.find do |(types, path)|
-      validator = Api::V3::DecisionReview::HashPathValidator.new(hash: @params, path: path, allowed_values: types)
-      break validator.error_msg if !validator.path_is_valid?
-
-      false
-    end
+    types_and_paths.map do |(types, path)|
+      Api::V3::DecisionReview::HashPathValidator.new(
+        hash: @params,
+        path: path,
+        allowed_values: types
+      )
+    end.find { |validator| !validator.path_is_valid? }&.error_msg
   end
 
   def attributes

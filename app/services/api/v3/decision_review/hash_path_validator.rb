@@ -63,13 +63,7 @@ class Api::V3::DecisionReview::HashPathValidator
   end
 
   def path_is_valid?
-    @path_is_valid ||= (
-      begin
-        allowed_values.any? { |av| av === dig }
-      rescue StandardError
-        false
-      end
-    )
+    @path_is_valid ||= determine_if_path_is_valid
   end
 
   def error_msg
@@ -99,6 +93,12 @@ class Api::V3::DecisionReview::HashPathValidator
   private
 
   attr_reader :hash, :path, :allowed_values
+
+  def determine_if_path_is_valid
+    allowed_values.any? { |av| av === dig }
+  rescue StandardError
+    false
+  end
 
   def only_one_allowed_value?
     allowed_values.length == 1

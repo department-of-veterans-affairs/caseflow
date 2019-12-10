@@ -53,7 +53,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor, :all_dbs do
     }
   end
 
-  let(:rating_issue_id) { 1 / 0.0 }
+  let(:rating_issue_id) { "123" }
   let(:included) do
     [
       {
