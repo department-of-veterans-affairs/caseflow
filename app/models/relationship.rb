@@ -19,7 +19,7 @@ class Relationship
     end
   end
 
-  def ui_hash
+  def serialize
     Intake::RelationshipSerializer.new(self).serializable_hash[:data][:attributes]
   end
 

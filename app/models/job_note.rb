@@ -6,7 +6,7 @@ class JobNote < ApplicationRecord
 
   scope :newest_first, -> { order(created_at: :desc) }
 
-  def ui_hash
+  def serialize
     Intake::JobNoteSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
