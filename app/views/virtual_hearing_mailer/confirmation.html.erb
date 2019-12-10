@@ -3,10 +3,20 @@
 </p>
 
 <% if @recipient.title == VirtualHearingMailer::RECIPIENT_TITLES[:representative] %>
+  <% if @time_changed %>
 
-  <p>
-    You have a Veteran scheduled for a virtual hearing with a Veterans Law Judge of the Board of Veterans' Appeals:
-  </p>
+    <p>
+      The time has been updated for your Veteran's virtual hearing with a Veterans Law Judge of the Board of Veterans' Appeals:
+    </p>
+
+  <% else %>
+
+    <p>
+      You have a Veteran scheduled for a virtual hearing with a Veterans Law Judge of the Board of Veterans' Appeals:
+    </p>
+
+  <% end %>
+
   <h3>
     <%= @virtual_hearing.hearing.appeal.veteran.name.to_s %>
   </h3>
@@ -17,11 +27,19 @@
   </p>
 
 <% elsif @recipient.title == VirtualHearingMailer::RECIPIENT_TITLES[:veteran] %>
+  <% if @time_changed %>
 
-  <p>
-    You're scheduled for a virtual hearing with a Veterans Law Judge of the Board of Veterans' Appeals.
-  </p>
+    <p>
+      The time has been updated for your Veteran's virtual hearing with a Veterans Law Judge of the Board of Veterans' Appeals.
+    </p>
 
+  <% else %>
+
+    <p>
+      You're scheduled for a virtual hearing with a Veterans Law Judge of the Board of Veterans' Appeals.
+    </p>
+
+  <% end %>
 <% else %>
 
   <p>

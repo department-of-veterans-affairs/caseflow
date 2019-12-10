@@ -17,14 +17,17 @@ class VirtualHearingMailer < ActionMailer::Base
     mail(to: recipient.email, subject: "Cancellation Subject")
   end
 
-  def confirmation(mail_recipient:, virtual_hearing: nil)
+  def confirmation(mail_recipient:, virtual_hearing: nil, time_changed: false)
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
     @link = link
+    @time_changed = time_changed
     mail(to: recipient.email, subject: confirmation_subject)
   end
 
   def confirmation_subject
+    return "Updated time: Your virtual hearing with the Board of Veterans' Appeals" if @time_changed
+
     case recipient.title
     when RECIPIENT_TITLES[:veteran], RECIPIENT_TITLES[:veteran]
       "Confirmation: Your virtual hearing with the Board of Veterans' Appeals"

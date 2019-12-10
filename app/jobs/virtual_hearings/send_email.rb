@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 class VirtualHearings::SendEmail
-  attr_reader :virtual_hearing, :type
+  attr_reader :virtual_hearing, :type, :time_changed
 
-  def initialize(virtual_hearing:, type:)
+  def initialize(virtual_hearing:, type:, time_changed: false)
     @virtual_hearing = virtual_hearing
     @type = type
+    @time_changed = time_changed
   end
 
   def call
@@ -31,7 +32,8 @@ class VirtualHearings::SendEmail
     if type == :confirmation
       VirtualHearingMailer.confirmation(
         mail_recipient: mail_recipients[recipient],
-        virtual_hearing: virtual_hearing
+        virtual_hearing: virtual_hearing,
+        time_changed: time_changed
       ).deliver_now
     elsif type == :cancellation
       VirtualHearingMailer.cancellation(
