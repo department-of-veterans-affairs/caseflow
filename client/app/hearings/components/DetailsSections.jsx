@@ -26,6 +26,7 @@ class DetailsSections extends React.Component {
     return (
       <React.Fragment>
         <DetailsInputs
+          user={user}
           readOnly={disabled}
           requestType={requestType}
           isLegacy={isLegacy}
@@ -79,6 +80,7 @@ DetailsSections.propTypes = {
   submit: PropTypes.func,
   openVirtualHearingModal: PropTypes.func,
   user: PropTypes.shape({
+    userId: PropTypes.number,
     userCanScheduleVirtualHearings: PropTypes.bool
   }),
   isVirtual: PropTypes.bool

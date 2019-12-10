@@ -8,13 +8,10 @@ RSpec.feature "ColocatedTask", :all_dbs do
   describe "attorney assigns task to vlj support staff, vlj returns it to attorney after completion" do
     let(:judge_user) { create(:user) }
     let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
-
     let(:attorney_user) { create(:user) }
     let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
-
     let(:root_task) { create(:root_task) }
     let(:appeal) { root_task.appeal }
-
     let!(:atty_task) do
       create(
         :ama_attorney_task,
@@ -24,6 +21,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
         assigned_to: attorney_user
       )
     end
+    let(:return_instructions) { "These are the instructions from the VLJ" }
 
     it "should return attorney task to active state" do
       # Attorney assigns task to VLJ support staff.
@@ -50,7 +48,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
       # Return case to attorney.
       find(".Select-control", text: "Select an action…").click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label]).click
-      fill_in("instructions", with: "INSTRUCTIONS FROM VLJ")
+      fill_in("instructions", with: return_instructions)
       find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
       # Redirected to personal queue page. Return to attorney succeeds.
@@ -62,13 +60,15 @@ RSpec.feature "ColocatedTask", :all_dbs do
       User.authenticate!(user: attorney_user)
       visit("/queue")
 
-      # Click into case details page. Expect to see draft decision option.
+      # Click into case details page.
       click_on(appeal.veteran.name.formatted(:readable_full))
       # verify that the instructions from the VLJ appear on the case timeline
-      scroll_to("#case_timeline-section")
-      view_text = COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
-      page.find_all("table#case-timeline-table button", text: view_text).each(&:click)
-      expect(page).to have_content("INSTRUCTIONS FROM VLJ", wait: 15)
+      expect(page).to have_css("h2", text: "Case Timeline")
+      scroll_to(find("h2", text: "Case Timeline"))
+      poa_task = PoaClarificationColocatedTask.find_by(assigned_to_type: User.name)
+      click_button(COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, id: poa_task.id)
+      expect(page).to have_content(return_instructions)
+      # Expect to see draft decision option.
       find(".Select-control", text: "Select an action…").click
       expect(page).to have_content(Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label])
 

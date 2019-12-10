@@ -20,7 +20,7 @@ class ColocatedTask < Task
     def create_from_params(params, user)
       parent_task = params[:parent_id] ? Task.find(params[:parent_id]) : nil
       verify_user_can_create!(user, parent_task)
-      params = modify_params(params)
+      params = modify_params_for_create(params)
       create!(params)
     end
 
@@ -31,8 +31,9 @@ class ColocatedTask < Task
         params_array = params_array.map do |params|
           # Find the task type for a given action.
           create_params = params.clone
-          new_task_type = find_subclass_by_action(create_params.delete(:action).to_s)
-          create_params.merge!(type: new_task_type&.name, assigned_to: new_task_type&.default_assignee)
+          new_task_type = Object.const_get(params[:type])
+          # new_task_type should be one of the valid_task_classes in tasks_controller; otherwise fail here
+          create_params.merge!(type: new_task_type.name, assigned_to: new_task_type.default_assignee)
         end
 
         team_tasks = super(params_array, user)
@@ -69,6 +70,7 @@ class ColocatedTask < Task
       subclasses.find { |task_class| task_class.label == Constants::CO_LOCATED_ADMIN_ACTIONS[action] }
     end
 
+    # Is this method still relevant given ticket #12279 and related tickets?
     def actions_assigned_to_colocated
       Constants::CO_LOCATED_ADMIN_ACTIONS.keys.select do |action|
         find_subclass_by_action(action).methods(false).exclude?(:default_assignee)
@@ -114,7 +116,7 @@ class ColocatedTask < Task
   end
 
   def create_twin_of_type(params)
-    task_type = ColocatedTask.find_subclass_by_action(params[:action])
+    task_type = Object.const_get(params[:type])
     ColocatedTask.create!(
       appeal: appeal,
       parent: parent,

@@ -777,7 +777,7 @@ feature "Task queue", :all_dbs do
       before do
         ColocatedTask.create_many_from_params([{
                                                 assigned_by: attorney,
-                                                action: :aoj,
+                                                type: AojColocatedTask.name,
                                                 appeal: appeal
                                               }], attorney)
       end
@@ -820,7 +820,7 @@ feature "Task queue", :all_dbs do
       before do
         ColocatedTask.create_many_from_params([{
                                                 assigned_by: attorney,
-                                                action: :schedule_hearing,
+                                                type: ScheduleHearingColocatedTask.name,
                                                 appeal: appeal,
                                                 parent: RootTask.find_or_create_by!(appeal: appeal)
                                               }], attorney)

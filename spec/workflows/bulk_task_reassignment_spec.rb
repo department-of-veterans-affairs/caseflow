@@ -101,7 +101,12 @@ describe BulkTaskReassignment, :all_dbs do
             expect(Rails.logger).to receive(:info).with(judge_assign_message)
 
             subject
-            tasks.each { |task| expect(task.reload.cancelled?).to eq true }
+            tasks.each do |task|
+              expect(task.reload.cancelled?).to eq true
+              expect(task.instructions).to include format(
+                COPY::BULK_REASSIGN_INSTRUCTIONS, Constants.TASK_STATUSES.cancelled, user.css_id
+              )
+            end
             expect(DistributionTask.all.count).to eq task_count
           end
         end
@@ -161,7 +166,12 @@ describe BulkTaskReassignment, :all_dbs do
               expect(Rails.logger).to receive(:info).with(judge_review_message)
 
               subject
-              tasks.each { |task| expect(task.reload.cancelled?).to eq true }
+              tasks.each do |task|
+                expect(task.reload.cancelled?).to eq true
+                expect(task.instructions).to include format(
+                  COPY::BULK_REASSIGN_INSTRUCTIONS, "reassigned", user.css_id
+                )
+              end
               expect(JudgeDecisionReviewTask.count).to eq task_count * 2
               expect(JudgeDecisionReviewTask.open.count).to eq task_count
 
@@ -187,9 +197,25 @@ describe BulkTaskReassignment, :all_dbs do
           expect(Rails.logger).to receive(:info).with(judge_review_message)
 
           subject
-          tasks.each { |task| expect(task.reload.cancelled?).to eq true }
-          parent_tasks.each { |task| expect(task.reload.cancelled?).to eq true }
-          expect(JudgeAssignTask.count).to eq task_count
+          tasks.each do |task|
+            expect(task.reload.cancelled?).to eq true
+            expect(task.instructions).to include format(
+              COPY::BULK_REASSIGN_INSTRUCTIONS, Constants.TASK_STATUSES.cancelled, user.css_id
+            )
+          end
+          parent_tasks.each do |task|
+            expect(task.reload.cancelled?).to eq true
+            expect(task.instructions).to include format(
+              COPY::BULK_REASSIGN_INSTRUCTIONS, Constants.TASK_STATUSES.cancelled, user.css_id
+            )
+          end
+          new_tasks = JudgeAssignTask.all
+          new_tasks.each do |task|
+            expect(task.instructions).to include format(
+              COPY::BULK_REASSIGN_INSTRUCTIONS, Constants.TASK_STATUSES.assigned, user.css_id
+            )
+          end
+          expect(new_tasks.count).to eq task_count
         end
       end
 
@@ -201,7 +227,12 @@ describe BulkTaskReassignment, :all_dbs do
             expect(Rails.logger).to receive(:info).with(manual_org_message)
 
             subject
-            tasks.each { |task| expect(task.reload.cancelled?).to eq true }
+            tasks.each do |task|
+              expect(task.reload.cancelled?).to eq true
+              expect(task.instructions).to include format(
+                COPY::BULK_REASSIGN_INSTRUCTIONS, Constants.TASK_STATUSES.cancelled, user.css_id
+              )
+            end
             parent_tasks.each { |task| expect(task.reload.assigned?).to eq true }
             expect(Task.open.count).to eq task_count
           end
@@ -222,11 +253,16 @@ describe BulkTaskReassignment, :all_dbs do
               expect(Rails.logger).to receive(:info).with(automatic_org_message)
 
               subject
-              tasks.each { |task| expect(task.reload.cancelled?).to eq true }
+              tasks.each do |task|
+                expect(task.reload.cancelled?).to eq true
+                expect(task.instructions).to include format(COPY::BULK_REASSIGN_INSTRUCTIONS, "reassigned", user.css_id)
+              end
               parent_tasks.each { |task| expect(task.reload.on_hold?).to eq true }
 
               new_tasks = Task.open.where(assigned_to_type: User.name)
-              new_tasks.each { |task| expect(task.reload.assigned?).to eq true }
+              new_tasks.each do |task|
+                expect(task.instructions).to include format(COPY::BULK_REASSIGN_INSTRUCTIONS, "reassigned", user.css_id)
+              end
               expect(new_tasks.map(&:parent_id)).to match_array parent_tasks.map(&:id)
               expect(new_tasks.distinct.pluck(:assigned_to_id).count).to eq task_count
             end
@@ -242,11 +278,16 @@ describe BulkTaskReassignment, :all_dbs do
               expect(Rails.logger).to receive(:info).with(automatic_org_message)
 
               subject
-              tasks.each { |task| expect(task.reload.cancelled?).to eq true }
+              tasks.each do |task|
+                expect(task.reload.cancelled?).to eq true
+                expect(task.instructions).to include format(COPY::BULK_REASSIGN_INSTRUCTIONS, "reassigned", user.css_id)
+              end
               parent_tasks.each { |task| expect(task.reload.on_hold?).to eq true }
 
               new_tasks = Task.open.where(assigned_to_type: User.name)
-              new_tasks.each { |task| expect(task.reload.assigned?).to eq true }
+              new_tasks.each do |task|
+                expect(task.instructions).to include format(COPY::BULK_REASSIGN_INSTRUCTIONS, "reassigned", user.css_id)
+              end
               expect(new_tasks.map(&:parent_id)).to match_array parent_tasks.map(&:id)
               expect(new_tasks.distinct.pluck(:assigned_to_id).count).to eq team_member_count
               expect(new_tasks.group(:assigned_to_id).count.values.all?(task_count / team_member_count)).to eq true
@@ -265,7 +306,12 @@ describe BulkTaskReassignment, :all_dbs do
           expect(Rails.logger).to receive(:info).with(user_message)
 
           subject
-          tasks.each { |task| expect(task.reload.cancelled?).to eq true }
+          tasks.each do |task|
+            expect(task.reload.cancelled?).to eq true
+            expect(task.instructions).to include format(
+              COPY::BULK_REASSIGN_INSTRUCTIONS, Constants.TASK_STATUSES.cancelled, user.css_id
+            )
+          end
           parent_tasks.each { |task| expect(task.reload.assigned?).to eq true }
           expect(Task.open.count).to eq task_count
         end

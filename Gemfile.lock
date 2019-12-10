@@ -37,20 +37,19 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: dfe3035db0ebe957066f24ac93706d14fd0e7a8b
-  ref: dfe3035db0ebe957066f24ac93706d14fd0e7a8b
+  revision: abffaad34aa9c62afca70756277011d73bcee711
+  ref: abffaad34aa9c62afca70756277011d73bcee711
   specs:
     bgs (0.2)
       httpclient
-      nokogiri (~> 1.10)
+      nokogiri (~> 1.10.4)
       savon (~> 2.12)
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/sniffybara.git
-  revision: 45a537252d60c12f76dc58924f12e47bac260fc8
-  branch: mb-update-capybara-click
+  revision: 351560b5789ca638ba7c9b093c2bb1a9a6fda4b3
   specs:
-    sniffybara (0.0.1)
+    sniffybara (1.1.0)
       rainbow
       selenium-webdriver
 
@@ -361,7 +360,7 @@ GEM
       pry (~> 0.10)
     psych (3.1.0)
     public_suffix (3.1.1)
-    puma (3.12.1)
+    puma (3.12.2)
     rack (2.0.7)
     rack-contrib (2.1.0)
       rack (~> 2.0)
@@ -508,6 +507,7 @@ GEM
       concurrent-ruby
       thor
     simplecov-html (0.10.2)
+    single_cov (1.3.2)
     socksify (1.7.1)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
@@ -634,6 +634,7 @@ DEPENDENCIES
   sentry-raven
   shoryuken (= 3.1.11)
   simplecov!
+  single_cov
   sniffybara!
   stringex
   strong_migrations

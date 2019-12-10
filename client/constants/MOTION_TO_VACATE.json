@@ -1,8 +1,12 @@
 {
   "VACATE_TYPE_OPTIONS": [
     {
-      "value": "straight_vacate_and_readjudication",
-      "displayText": "Straight Vacate and Readjudication (1 document)"
+      "value": "vacate_and_readjudication",
+      "displayText": "Vacate and Readjudication (1 document)"
+    },
+    {
+      "value": "straight_vacate",
+      "displayText": "Straight Vacate (1 document)"
     },
     {
       "value": "vacate_and_de_novo",

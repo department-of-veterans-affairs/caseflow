@@ -15,5 +15,18 @@ describe ETL::TaskSyncer, :etl, :all_dbs do
         expect(ETL::Task.count).to eq(31)
       end
     end
+
+    context "orphaned Task" do
+      let!(:orphaned_task) { create(:task) }
+      before do
+        orphaned_task.appeal.delete # not destroy, to avoid callbacks
+      end
+
+      it "skips orphans" do
+        subject
+
+        expect(ETL::Task.count).to eq(31)
+      end
+    end
   end
 end
