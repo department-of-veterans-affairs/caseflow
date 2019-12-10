@@ -34,8 +34,8 @@ export default class IntakeEditFrame extends React.PureComponent {
     const { asyncJobUrl } = this.props.serverIntake;
 
     return <React.Fragment>
-      The review has not yet been established in VBMS.
-      Check the <Link href={asyncJobUrl}>job page</Link> for details.
+      Review not yet established in VBMS.
+      Check <Link href={asyncJobUrl}>the job page</Link> for details.
       You may try to edit the review again once it has been established.
     </React.Fragment>;
   }

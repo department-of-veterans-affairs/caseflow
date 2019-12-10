@@ -45,10 +45,15 @@ class ClaimReview < DecisionReview
     super.merge(
       asyncJobUrl: async_job_url,
       benefitType: benefit_type,
-      payeeCode: payee_code,
-      hasClearedRatingEp: cleared_rating_ep?,
-      hasClearedNonratingEp: cleared_nonrating_ep?
-    )
+      payeeCode: payee_code
+    ).tap do |hash|
+      if processed?
+        hash.update(
+          hasClearedRatingEp: cleared_rating_ep?,
+          hasClearedNonratingEp: cleared_nonrating_ep?
+        )
+      end
+    end
   end
 
   def validate_prior_to_edit

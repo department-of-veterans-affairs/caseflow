@@ -690,6 +690,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         visit "#{url_path}/#{decision_review.uuid}/edit"
 
         expect(page).to have_content("Review not yet established in VBMS. Check the job page for details.")
+        expect(page).not_to have_content("Something went wrong")
+        expect(page).not_to have_content("There was an error")
         expect(page).to have_link("the job page")
 
         click_link "the job page"
