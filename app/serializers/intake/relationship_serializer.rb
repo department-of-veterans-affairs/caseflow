@@ -9,5 +9,4 @@ class Intake::RelationshipSerializer
   attribute :last_name
   attribute :relationship_type
   attribute :default_payee_code
-
 end
