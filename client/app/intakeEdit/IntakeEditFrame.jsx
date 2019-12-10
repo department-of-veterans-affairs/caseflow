@@ -1,7 +1,7 @@
 import React from 'react';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
-import { BrowserRouter, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
 import AppFrame from '../components/AppFrame';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -30,7 +30,7 @@ export default class IntakeEditFrame extends React.PureComponent {
     return `${details.veteran.name}'s claim review has been successfully edited. You can close this window.`;
   }
 
-  displayNotEditableMessage = (details) => {
+  displayNotEditableMessage = () => {
     const { asyncJobUrl } = this.props.serverIntake;
 
     return <React.Fragment>
@@ -154,6 +154,7 @@ IntakeEditFrame.propTypes = {
     veteran: PropTypes.object,
     formType: PropTypes.string,
     editIssuesUrl: PropTypes.string,
+    asyncJobUrl: PropTypes.string,
     hasClearedNonratingEp: PropTypes.bool,
     hasClearedRatingEp: PropTypes.bool
   }),
