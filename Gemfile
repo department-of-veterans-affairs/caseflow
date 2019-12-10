@@ -16,7 +16,7 @@ gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "6c0c2908a9e4a61f5bcf2a768061909e3c763fe8"
 gem "dogstatsd-ruby"
 gem "fast_jsonapi"
-gem "govdelivery-tms", "2.8.4", require: "govdelivery/tms/mail/delivery_method"
+gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "kaminari"
 # active_model_serializers has a default dependency on loofah 2.2.2 which security vulnerabilities
