@@ -4,6 +4,8 @@
 # Task to track when an appeal has been randomly selected to be quality reviewed by the Quality Review team.
 
 class QualityReviewTask < Task
+  scope :created_this_month, -> { where(created_at: Time.zone.now.beginning_of_month..Time.zone.now.end_of_month) }
+
   def available_actions(user)
     return super if assigned_to != user
 

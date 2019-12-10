@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 feature "Higher Level Review Edit issues", :all_dbs do
   include IntakeHelpers
 
@@ -961,7 +958,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
       expect(page).to have_content("5 issues")
       expect(page).to have_content("This is an unidentified issue")
       expect(find_intake_issue_by_number(5)).to have_css(".issue-unidentified")
-      expect_ineligible_issue(5)
 
       # add issue before AMA
       click_intake_add_issue

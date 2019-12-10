@@ -68,149 +68,311 @@ paths:
                         - sameOffice
                         - legacyOptInApproved
                         - benefitType
+                        - veteran
                       properties:
                         receiptDate:
                           type: string
                           format: date
                         informalConference:
                           type: boolean
+                          description: Corresponds to "14. ...REQUEST AN INFORMAL CONFERENCE..." on form 20-0996.
+
+                        informalConferenceTimes:
+                          type: array
+                          description: >-
+                            OPTIONAL. Time slot preference for informal conference (if being requested). EASTERN TIME. Pick up to two time slots (or none if no preference).
+                            Corresponds to "14. ...REQUEST AN INFORMAL CONFERENCE..." on form 20-0996.
+
+                          items:
+                            type: string
+                            enum: ["800-1000", "1000-1230", "1230-200", "200-430"]
+
+                        informalConferenceRep:
+                          type: object
+                          description: >-
+                            OPTIONAL. The veteran's preferred representative for informal conference (if being requested).
+                            Corresponds to "14. ...REQUEST AN INFORMAL CONFERENCE..." on form 20-0996.
+
+                          properties:
+                            name:
+                              type: string
+                              description: Representative's name.
+
+                            phoneNumber:
+                              type: string
+                              pattern: '^[0-9]+$'
+                              description: >-
+                                Representative's phone number.
+                                Example: "8446982311".
+                                Format: Include only digit characters. Include area code.
+
+                            phoneNumberCountryCode:
+                              type: string
+                              pattern: '^[0-9]+$'
+                              description: >-
+                                Representative's phone number country code.
+                                If not specified, will assume "1".
+                                Example: "20".
+                                Format: Include only digit characters.
+
+                            phoneNumberExt:
+                              type: string
+                              description: >-
+                                Representative's phone number extension (if needed).
+                                Example: "123".
+
                         sameOffice:
                           type: boolean
                         legacyOptInApproved:
                           type: boolean
                         benefitType:
                           $ref: "#/components/schemas/BenefitType"
-                    relationships:
-                      type: object
-                      required:
-                        - veteran
-                        # claimant (NOT required)
-                      properties:
                         veteran:
                           type: object
+                          description: >-
+                            The veteran whom this Higher-Level Review concerns.
+                            Use the field fileNumberOrSsn to identify the veteran.
+                            Optionally, you can update the veteran's current contact info using the other fields.
+                            If any of these fields are present: [addressLine1, addressLine2, city, stateProvinceCode, zipPostalCode, countryCode],
+                            all of these fields must be present: [addressLine1, addressLine2, city, stateProvinceCode, zipPostalCode].
+                            NOTE: countryCode can be left out, and it will be assumed to be "US".
+
                           required:
-                            - data
+                            - fileNumberOrSsn
                           properties:
-                            data:
-                              type: object
-                              required:
-                                - type
-                                - id
-                              properties:
-                                type:
-                                  type: string
-                                  enum: [Veteran]
-                                id: # veteran_file_number
-                                  type: string
-                        claimant: # if claimant is not included, the veteran is the claimant (and their participantID is looked up)
+                            fileNumberOrSsn:
+                              type: string
+                              pattern: '^[0-9]{8,9}$'
+                              description: >-
+                                The veteran's file number or SSN.
+                                Example: "123456789"
+                                Format: 8 or 9 digit characters.
+                                Max length: 9 characters.
+                                Corresponds to both "1. VETERAN'S SOCIAL SECURITY NUMBER" and "2. VA FILE NUMBER" on form 20-0996.
+
+                            addressLine1:
+                              type: string
+                              description: >-
+                                Update a veteran's house number/name and street.
+                                Example: "123 Main St".
+                                Max length: 100 characters.
+                                Corresponds to "9. CURRENT MAILING ADDRESS: No. & Street" on form 20-0996.
+
+                            addressLine2:
+                              type: string
+                              description: >-
+                                Update a veteran's apartment or unit number.
+                                Example: "Apt. 4".
+                                Max length: 100 characters.
+                                Corresponds to "9. CURRENT MAILING ADDRESS: Apt./Unit Number" on form 20-0996.
+
+                            city:
+                              type: string
+                              description: >-
+                                Update a veteran's city.
+                                Example: "Kansas City".
+                                Max length: 100 characters.
+                                Corresponds to "9. CURRENT MAILING ADDRESS: City" on form 20-0996.
+
+                            stateProvinceCode:
+                              type: string
+                              pattern: '^[a-z]{2}$'
+                              description: >-
+                                Update a veteran's state or province.
+                                Example: "CA".
+                                Max length: 2 characters.
+                                Corresponds to "9. CURRENT MAILING ADDRESS: State/Province" on form 20-0996.
+
+                            countryCode:
+                              type: string
+                              pattern: '^[a-z]{2}$'
+                              description: >-
+                                Update a veteran's country.
+                                Example: "US".
+                                NOTE: If not specified, will assume "US".
+                                Max length: 2 characters.
+                                Corresponds to "9. CURRENT MAILING ADDRESS: Country" on form 20-0996.
+
+                            zipPostalCode:
+                              type: string
+                              description: >-
+                                Update a veteran's zip or postal code.
+                                Example: "90210".
+                                NOTE: If countryCode is "US" or not specified, this field, if present, must be a 5 character string of digits.
+                                Corresponds to "9. CURRENT MAILING ADDRESS: Zip Code/Postal Code" on form 20-0996.
+
+                            phoneNumber:
+                              type: string
+                              pattern: '^[0-9]+$'
+                              description: >-
+                                Update a veteran's phone number.
+                                Example: "8446982311".
+                                Format: Include only digit characters. Include area code.
+                                Max length: 14 characters.
+                                Corresponds to "10. TELEPHONE NUMBER" on form 20-0996.
+
+                            phoneNumberCountryCode:
+                              type: string
+                              pattern: '^[0-9]+$'
+                              description: >-
+                                Update a veteran's phone number country code.
+                                Note: If not specified, will assume "1".
+                                Example: "20".
+                                Format: Include only digit characters.
+
+                            phoneNumberExt:
+                              type: string
+                              description: >-
+                                Update a veteran's phone number extension (if needed).
+                                Example: "123".
+                                Max length: 10 characters.
+
+                            emailAddress:
+                              type: string
+                              pattern: '^.+@.+\..+$'
+                              description: >-
+                                Update a veteran's email address.
+                                Example: "linda@example.com".
+                                Max length: 255 characters.
+                                Corresponds to "11. E-MAIL ADDRESS" on form 20-0996.
+
+                        claimant:
                           type: object
                           required:
-                            - data
+                            - participantId
+                            - payeeCode
                           properties:
-                            data:
-                              type: object
-                              required:
-                                - type
-                                - id
-                                - meta
-                              properties:
-                                type:
-                                  type: string
-                                  enum: [Claimant]
-                                id: # participantID
-                                  type: string
-                                meta:
-                                  type: object
-                                  required:
-                                    - payeeCode
-                                  properties:
-                                    payeeCode:
-                                      $ref: "#/components/schemas/PayeeCode"
+                            participantId:
+                              type: string
+                            payeeCode:
+                              $ref: "#/components/schemas/PayeeCode"
                 included:
                   type: array
+                  description: ContestableIssues Array
                   items:
                     type: object
+                    description: >-
+                      Use the `/contestable_issues` endpoint to pull a list of
+                      a veteran's contestable issues to select from, and include
+                      the _ContestableIssue_ objects that you want to contest in this
+                      array.
+                      When including a _ContestableIssue_ obtained from the
+                      `/contestable_issues` endpoint, use the `notes` field to provide
+                      additional information about contesting this issue.
+                      **Additionally**, a `legacyAppealIssues` array can be added to a
+                      _ContestableIssue_ object to associate a _LegacyAppealIssue_
+                      to a _ContestableIssue_. Associating a _LegacyAppealIssue_ to a
+                      _ContestableIssue_ pulls the _LegacyAppealIssue_ out of the legacy
+                      appeal system and into AMA. See the `legacyAppealIssues` array
+                      below for more info on opting-in legacy issues.
+                      _Note:_ Not all legacy issues are eligible for opt-in; see
+                      [benefits.va.gov/benefits/docs/apppeals_SOC-SSOC_Opt-in.pdf](https://www.benefits.va.gov/benefits/docs/apppeals_SOC-SSOC_Opt-in.pdf)
+                      for details.
+
                     required:
                       - type
                       - attributes
                     properties:
                       type:
                         type: string
-                        enum: [RequestIssue]
+                        enum: [ContestableIssue]
                       attributes:
                         type: object
-                        properties: # none are required
+                        properties:
                           notes:
                             type: string
+                            nullable: true
                           decisionIssueId:
                             type: integer
+                            nullable: true
                           ratingIssueId:
                             type: string
-                          legacyAppealId:
+                            nullable: true
+                          ratingDecisionIssueId:
                             type: string
-                          legacyAppealIssueId:
-                            type: integer
-                          category:
-                            $ref: "#/components/schemas/NonratingIssueCategory"
-                          decisionDate:
-                            type: string
-                          decisionText:
-                            type: string
+                            nullable: true
+                          legacyAppealIssues:
+                            nullable: true
+                            type: array
+                            description: LegacyAppealIssues Array
+
+                            items:
+                              type: object
+                              description: >-
+                                OPTIONAL. _LegacyAppealIssues_ that you are associating
+                                with this _ContestableIssue_. At this time, 0 or 1
+                                _LegacyAppealIssues_ can be associated with a
+                                _ContestableIssue_. A _LegacyAppealIssue_  can only be
+                                associated once in a Higher-Level Review. To associate
+                                _LegacyAppealIssues_, `legacyOptInApproved` must be `true`.
+
+                              required:
+                                - legacyAppealId
+                                - legacyAppealIssueId
+                              properties:
+                                legacyAppealId:
+                                  type: string
+                                legacyAppealIssueId:
+                                  type: string
             examples:
+              compensation:
+                value:
+                  data:
+                    type: HigherLevelReview
+                    attributes:
+                      receiptDate: "2019-07-10"
+                      informalConference: true
+                      sameOffice: false
+                      legacyOptInApproved: true
+                      benefitType: compensation
+                      veteran:
+                        fileNumberOrSsn: "123456789"
+                        addressLine1: 123 Street St
+                        addressLine2: Apt 4
+                        city: Chicago
+                        stateProvinceCode: IL
+                        zipPostalCode: "60652"
+                        phoneNumber: "4432924565"
+                        emailAddress: someone@example.com
+                      claimant:
+                        participantId: "44444444"
+                        payeeCode: "10"
+                  included:
+                    - type: ContestableIssue
+                      attributes:
+                        decisionIssueId: 205
               pension:
-                value: {
-                  "data": {
-                    "type": "HigherLevelReview",
-                      "attributes": {
-                        "receiptDate": "2019-07-10",
-                        "informalConference": true,
-                        "sameOffice": false,
-                        "legacyOptInApproved": true,
-                        "benefitType": "pension"
-                      },
-                      "relationships": {
-                        "veteran": {
-                          "data": {
-                            "type": "Veteran",
-                            "id": "55555555"
-                          }
-                        },
-                        "claimant": {
-                          "data": {
-                            "type": "Claimant",
-                            "id": "44444444",
-                            "meta": {
-                              "payeeCode": "10"
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "included": [
-                      {
-                        "type": "RequestIssue",
-                        "attributes": {
-                          "decisionText": "veteran status verified",
-                          "decisionDate": "2019-07-11",
-                          "category": "Eligibility | Veteran Status"
-                        }
-                      },
-                      {
-                        "type": "RequestIssue",
-                        "attributes": {
-                          "decisionIssueId": 22
-                        }
-                      },
-                      {
-                        "type": "RequestIssue",
-                        "attributes": {
-                          "ratingIssueId": "12345678",
-                          "legacyAppealId": "9876543210",
-                          "legacyAppealIssueId": 1
-                        }
-                      },
-                    ]
-                  }
+                value:
+                  data:
+                    type: HigherLevelReview
+                    attributes:
+                      receiptDate: "2019-11-01"
+                      informalConference: false
+                      sameOffice: false
+                      legacyOptInApproved: true
+                      benefitType: pension
+                      veteran:
+                        fileNumberOrSsn: "123456789"
+                        addressLine1: 456 Street St
+                        addressLine2: Apt 7
+                        city: Kansas City
+                        stateProvinceCode: KS
+                        zipPostalCode: "66160"
+                        phoneNumber: "9133677100"
+                        emailAddress: someoneelse@example.com
+                      claimant:
+                        participantId: "33333333"
+                        payeeCode: "11"
+                  included:
+                    - type: ContestableIssue
+                      attributes:
+                        decisionIssueId: 206
+                    - type: ContestableIssue
+                      attributes:
+                        ratingIssueId: 80
+                        legacyAppealIssues:
+                          - legacyAppealId: 12345678
+                            legacyAppealIssueId: 1
       responses:
         '202':
           description: Accepted
@@ -918,7 +1080,7 @@ paths:
                                       type: string
                                       enum: ["RequestIssue"]
                                     id:
-                                      type: integer
+                                      type: string
                           decisionIssues:
                             type: object
                             properties:
@@ -931,18 +1093,76 @@ paths:
                                       type: string
                                       enum: ["DecisionIssue"]
                                     id:
-                                      type: integer
+                                      type: string
                   included:
                     type: array
+                    description: Includes data for the Veteran, RequestIssues, and DecisionIssues.  When applicable, it will include the Claimant as well.
                     items:
                       anyOf:
                         - type: object
                           properties:
                             type:
                               type: string
+                              enum: ["Veteran"]
+                            id:
+                              type: string
+                              description: matches fileNumber
+                            attributes:
+                              type: object
+                              properties:
+                                firstName:
+                                  type: string
+                                  nullable: true
+                                middleName:
+                                  type: string
+                                  nullable: true
+                                lastName:
+                                  type: string
+                                  nullable: true
+                                nameSuffix:
+                                  type: string
+                                  nullable: true
+                                fileNumber:
+                                  type: string
+                                ssn:
+                                  type: string
+                                  nullable: true
+                                participantId:
+                                  type: string
+                                  nullable: true
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                              enum: ["Claimant"]
+                            id:
+                              type: string
+                            attributes:
+                              type: object
+                              properties:
+                                firstName:
+                                  type: string
+                                  nullable: true
+                                middleName:
+                                  type: string
+                                  nullable: true
+                                lastName:
+                                  type: string
+                                  nullable: true
+                                payeeCode:
+                                  allOf:
+                                    - $ref: "#/components/schemas/PayeeCode"
+                                    - nullable: true
+                                relationshipType:
+                                  type: string
+                                  nullable: true
+                        - type: object
+                          properties:
+                            type:
+                              type: string
                               enum: ["DecisionIssue"]
                             id:
-                              type: integer
+                              type: string
                             attributes:
                               type: object
                               properties:
@@ -966,7 +1186,7 @@ paths:
                               type: string
                               enum: ["RequestIssue"]
                             id:
-                              type: integer
+                              type: string
                             attributes:
                               type: object
                               properties:
@@ -1061,7 +1281,7 @@ paths:
                 properties:
                   errors:
                     $ref: "#/components/schemas/Errors"
-  /issues:
+  /contestable_issues:
     get:
       tags:
         - Issues
@@ -1080,6 +1300,10 @@ paths:
             type: string
             format: date
       summary: Returns all contestable issues for a specific veteran.
+      description: >-
+        Returns all issues a Veteran could contest in a Decision Review
+        as of the `receiptDate`.  Associate these results when creating
+        new Decision Reviews.
       responses:
         '200':
           description: JSON:API response returning all contestable issues for a specific veteran.
@@ -1161,6 +1385,127 @@ paths:
                             isRating:
                               type: boolean
                               description: "Whether or not this is a RatingIssue"
+        '404':
+          description: Veteran not found
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/Errors"
+              examples:
+                bad file number or SSN:
+                  value:
+                    errors:
+                      status: 404,
+                      code: veteran_not_found
+                      title: "Veteran not found"
+        '422':
+          description: Bad receipt date
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/Errors"
+              examples:
+                bad receipt date:
+                  value:
+                    errors:
+                      status: 422,
+                      code: bad_receipt_date
+                      title: "Bad receipt date"
+        '500':
+          description: Unknown error
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/Errors"
+              examples:
+                unknown error:
+                  value:
+                    errors:
+                      status: 500,
+                      code: unknown_error
+                      title: "Unknown error"
+  /legacy_appeal_issues:
+    get:
+      tags:
+        - Issues
+      parameters:
+        - name: veteranId
+          in: header
+          required: true
+          description: The file number or SSN of the veteran.
+          schema:
+            type : string
+        - name: receiptDate
+          in: header
+          required: true
+          description: (yyyy-mm-dd) In order to determine contestability of issues, the receipt date of a hypothetical Decision Review must be supplied.
+          schema:
+            type: string
+            format: date
+      summary: Returns all legacy appeal issues for a specific veteran.
+      description: >-
+        Returns all the legacy appeal issues for a veteran that could be added to
+        a Decision Review as of the `receiptDate`.  The `LegacyAppealIssue`
+        would be added to the `legacyAppealIssues` attribute of the
+        `contestableIssue` to which this legacy appeal will be associated.
+      responses:
+        '200':
+          description: JSON:API response returning all legacy appeal issues for a specific veteran.
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      description: "A legacy appeal issue. To opt-in these issues to AMA, you associate them with ContestableIssues when creating a DecisionReview (see the documentation for POST /higher_level_reviews for more details)."
+                      properties:
+                        type:
+                          type: string
+                          enum: ["LegacyAppealIssue"]
+                        attributes:
+                          type: object
+                          properties:
+                            legacyAppealId:
+                              type: string
+                            legacyAppealIssueId:
+                              type: string
+                            nodDate:
+                              type: string
+                              format: date
+                            description:
+                              type: array
+                              description: Derived from `codes` and `labels`.
+                              items:
+                                type: string
+                            codes:
+                              type: array
+                              description: Non-rating issue codes. [client/constants/ISSUE_INFO.json](https://github.com/department-of-veterans-affairs/caseflow/blob/master/client/constants/ISSUE_INFO.json)
+                              items:
+                                type: string
+                            labels:
+                              type: array
+                              description: Titles corresponding to each code in `codes`.
+                              items:
+                                type: string
+                            disposition:
+                              type: string
+                            closeDate:
+                              type: string
+                              format: date
+                            note:
+                              type: string
         '404':
           description: Veteran not found
           content:

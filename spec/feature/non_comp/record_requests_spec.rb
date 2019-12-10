@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 feature "NonComp Record Request Page", :postgres do
   before do
     Timecop.freeze(post_ama_start_date)
@@ -57,7 +54,7 @@ feature "NonComp Record Request Page", :postgres do
 
     # should redirect to business line's completed tab
     expect(page.current_path).to eq "/#{business_line_url}"
-    expect(page).to have_content(appeal.claimants.first.participant_id)
+    expect(page).to have_content(appeal.claimant.participant_id)
 
     in_progress_task.reload
     expect(in_progress_task.status).to eq("completed")

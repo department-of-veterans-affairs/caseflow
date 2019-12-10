@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
-RSpec.feature "Task queue", :all_dbs do
+feature "Task queue", :all_dbs do
   let!(:vlj_support_staffer) { create(:user) }
 
   before { Colocated.singleton.add_user(vlj_support_staffer) }
@@ -224,8 +221,10 @@ RSpec.feature "Task queue", :all_dbs do
     let(:tracking_task_count) { 14 }
 
     before do
-      create_list(:informal_hearing_presentation_task, unassigned_count, :in_progress, assigned_to: vso)
-      create_list(:informal_hearing_presentation_task, assigned_count, :on_hold, assigned_to: vso)
+      create_list(:informal_hearing_presentation_task, unassigned_count, assigned_to: vso)
+      create_list(:informal_hearing_presentation_task, assigned_count, assigned_to: vso).each do |parent|
+        create(:informal_hearing_presentation_task, assigned_to: vso_employee, parent: parent)
+      end
       create_list(:track_veteran_task, tracking_task_count, assigned_to: vso)
 
       allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
@@ -536,8 +535,7 @@ RSpec.feature "Task queue", :all_dbs do
       let(:on_hold_count) { assigned_count / 2 }
 
       before do
-        allow_any_instance_of(QueueConfig).to receive(:use_task_pages_api?).with(organization_user).and_return(true)
-        FeatureToggle.enable!(:use_task_pages_api)
+        allow_any_instance_of(Organization).to receive(:use_task_pages_api?).and_return(true)
         Task.on_hold.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
           .each_with_index do |task, idx|
             child_task = create(:generic_task, parent_id: task.id)
@@ -546,8 +544,6 @@ RSpec.feature "Task queue", :all_dbs do
         Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
           .take(foia_task_count).each { |task| task.update!(type: FoiaTask.name) }
       end
-
-      after { FeatureToggle.disable!(:use_task_pages_api) }
 
       it "shows the on hold tab" do
         visit(organization.path)
@@ -781,7 +777,7 @@ RSpec.feature "Task queue", :all_dbs do
       before do
         ColocatedTask.create_many_from_params([{
                                                 assigned_by: attorney,
-                                                action: :aoj,
+                                                type: AojColocatedTask.name,
                                                 appeal: appeal
                                               }], attorney)
       end
@@ -824,7 +820,7 @@ RSpec.feature "Task queue", :all_dbs do
       before do
         ColocatedTask.create_many_from_params([{
                                                 assigned_by: attorney,
-                                                action: :schedule_hearing,
+                                                type: ScheduleHearingColocatedTask.name,
                                                 appeal: appeal,
                                                 parent: RootTask.find_or_create_by!(appeal: appeal)
                                               }], attorney)
@@ -942,7 +938,7 @@ RSpec.feature "Task queue", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
 
         # On case details page fill in the admin action
-        action = Constants::CO_LOCATED_ADMIN_ACTIONS["ihp"]
+        action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
         click_dropdown(text: action)
         fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
         find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
@@ -1070,7 +1066,7 @@ RSpec.feature "Task queue", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
 
         # On case details page fill in the admin action
-        action = Constants::CO_LOCATED_ADMIN_ACTIONS["ihp"]
+        action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
         click_dropdown(text: action)
         fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
         find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
@@ -1122,7 +1118,7 @@ RSpec.feature "Task queue", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
 
         # On case details page fill in the admin action
-        action = Constants::CO_LOCATED_ADMIN_ACTIONS["ihp"]
+        action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
         click_dropdown(text: action)
         fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
         find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click

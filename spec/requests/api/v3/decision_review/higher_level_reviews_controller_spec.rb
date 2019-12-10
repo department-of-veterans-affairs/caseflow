@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "support/intake_helpers"
-require "support/vacols_database_cleaner"
 
 describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: :request do
   include IntakeHelpers
@@ -253,16 +252,19 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
         it "should include the veteran" do
           expect(subject.dig("veteran", "data", "id")).to eq higher_level_review.veteran.id.to_s
+          expect(subject.dig("veteran", "data", "type")).to eq "Veteran"
         end
 
         it "should include the claimant" do
-          expect(subject.dig("claimant", "data", "id")).to eq higher_level_review.claimants.first.id.to_s
+          expect(subject.dig("claimant", "data", "id")).to eq higher_level_review.claimant.id.to_s
+          expect(subject.dig("claimant", "data", "type")).to eq "Claimant"
         end
 
         it "should include request issues" do
           ri_relationships = subject["requestIssues"]["data"]
           expect(ri_relationships.count).to eq request_issues.count
           expect(ri_relationships.collect { |ri| ri["id"].to_i }).to include(*request_issues.collect(&:id))
+          expect(ri_relationships.collect { |ri| ri["type"] }.uniq).to eq ["RequestIssue"]
         end
 
         it "should include decision issues" do
@@ -271,6 +273,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           di_relationships = subject["decisionIssues"]["data"]
           expect(di_relationships.count).to eq decision_issues.count
           expect(di_relationships.collect { |di| di["id"].to_i }).to include(*decision_issues.collect(&:id))
+          expect(di_relationships.collect { |di| di["type"] }.uniq).to eq ["DecisionIssue"]
         end
       end
     end

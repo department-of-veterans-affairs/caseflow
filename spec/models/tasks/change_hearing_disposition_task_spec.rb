@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe ChangeHearingDispositionTask, :postgres do
   let(:appeal) { create(:appeal, :hearing_docket) }
   let(:root_task) { create(:root_task, appeal: appeal) }

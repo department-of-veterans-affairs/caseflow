@@ -95,10 +95,21 @@ class HearingDayRange
   end
 
   def open_hearing_days_with_hearings_hash(current_user_id = nil)
+    hearing_days_with_virtual_hearings = HearingDaysWithVirtualHearingsQuery.new.call
+      .map(&:id)
+      .to_set
+
     all_hearing_days
       .select { |hearing_day, scheduled_hearings| self.class.open_hearing_day?(hearing_day, scheduled_hearings) }
       .map do |hearing_day, scheduled_hearings|
-        self.class.hearing_day_hash_with_hearings(hearing_day, scheduled_hearings, current_user_id)
+        hearing_day_serialized = ::HearingDaySerializer.new(
+          hearing_day,
+          params: { hearing_days_with_virtual_hearings: hearing_days_with_virtual_hearings }
+        ).serializable_hash[:data][:attributes]
+
+        hearing_day_serialized.merge(
+          hearings: scheduled_hearings.map { |hearing| hearing.quick_to_hash(current_user_id) }
+        )
       end
   end
 
@@ -139,12 +150,6 @@ class HearingDayRange
           hearing.vacols_record.hearing_disp != "P" && hearing.vacols_record.hearing_disp != "C"
         end
       end
-    end
-
-    def hearing_day_hash_with_hearings(hearing_day, scheduled_hearings, current_user_id)
-      hearing_day.to_hash.merge(
-        hearings: scheduled_hearings.map { |hearing| hearing.quick_to_hash(current_user_id) }
-      )
     end
   end
 

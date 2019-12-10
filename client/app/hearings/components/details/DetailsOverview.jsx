@@ -29,7 +29,7 @@ Overview.propTypes = {
 const DetailsOverview = ({
   hearing: {
     scheduledFor, docketName, docketNumber, regionalOfficeName,
-    readableLocation, disposition, readableRequestType, hearingDayId, aod
+    readableLocation, disposition, readableRequestType, hearingDayId, aod, isVirtual
   }
 }) => (
   <Overview columns={[
@@ -60,7 +60,7 @@ const DetailsOverview = ({
     },
     {
       label: 'Type',
-      value: readableRequestType
+      value: isVirtual ? 'Virtual' : readableRequestType
     },
     {
       label: 'AOD Status',
@@ -79,7 +79,8 @@ DetailsOverview.propTypes = {
     disposition: PropTypes.string,
     readableRequestType: PropTypes.string,
     hearingDayId: PropTypes.number,
-    aod: PropTypes.bool
+    aod: PropTypes.bool,
+    isVirtual: PropTypes.bool
   })
 };
 

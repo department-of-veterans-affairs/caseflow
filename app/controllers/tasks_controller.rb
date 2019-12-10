@@ -7,28 +7,28 @@ class TasksController < ApplicationController
   skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
   TASK_CLASSES_LOOKUP = {
+    AttorneyDispatchReturnTask: AttorneyDispatchReturnTask,
+    AttorneyQualityReviewTask: AttorneyQualityReviewTask,
+    AttorneyRewriteTask: AttorneyRewriteTask,
+    AttorneyTask: AttorneyTask,
     ChangeHearingDispositionTask: ChangeHearingDispositionTask,
     ColocatedTask: ColocatedTask,
-    AttorneyRewriteTask: AttorneyRewriteTask,
-    AttorneyDispatchReturnTask: AttorneyDispatchReturnTask,
-    AttorneyTask: AttorneyTask,
-    AttorneyQualityReviewTask: AttorneyQualityReviewTask,
-    GenericTask: GenericTask,
-    Task: Task,
-    QualityReviewTask: QualityReviewTask,
-    JudgeAssignTask: JudgeAssignTask,
-    JudgeQualityReviewTask: JudgeQualityReviewTask,
-    JudgeDispatchReturnTask: JudgeDispatchReturnTask,
-    ScheduleHearingTask: ScheduleHearingTask,
-    TranslationTask: TranslationTask,
-    HearingAdminActionTask: HearingAdminActionTask,
-    MailTask: MailTask,
-    InformalHearingPresentationTask: InformalHearingPresentationTask,
-    PrivacyActTask: PrivacyActTask,
+    EvidenceSubmissionWindowTask: EvidenceSubmissionWindowTask,
     FoiaTask: FoiaTask,
+    HearingAdminActionTask: HearingAdminActionTask,
+    InformalHearingPresentationTask: InformalHearingPresentationTask,
+    JudgeAddressMotionToVacateTask: JudgeAddressMotionToVacateTask,
+    JudgeAssignTask: JudgeAssignTask,
+    JudgeDispatchReturnTask: JudgeDispatchReturnTask,
+    JudgeQualityReviewTask: JudgeQualityReviewTask,
+    MailTask: MailTask,
+    PrivacyActTask: PrivacyActTask,
     PulacCerulloTask: PulacCerulloTask,
+    QualityReviewTask: QualityReviewTask,
+    ScheduleHearingTask: ScheduleHearingTask,
     SpecialCaseMovementTask: SpecialCaseMovementTask,
-    JudgeAddressMotionToVacateTask: JudgeAddressMotionToVacateTask
+    Task: Task,
+    TranslationTask: TranslationTask
   }.freeze
 
   def set_application
@@ -155,7 +155,7 @@ class TasksController < ApplicationController
   private
 
   def queue_config
-    QueueConfig.new(assignee: user).to_hash_for_user(current_user)
+    QueueConfig.new(assignee: user).to_hash
   end
 
   def verify_task_access
@@ -185,7 +185,8 @@ class TasksController < ApplicationController
   def valid_task_classes
     additional_task_classes = Hash[
       *MailTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten,
-      *HearingAdminActionTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten
+      *HearingAdminActionTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten,
+      *ColocatedTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten
     ]
     TASK_CLASSES_LOOKUP.merge(additional_task_classes)
   end
@@ -209,18 +210,13 @@ class TasksController < ApplicationController
 
   def create_params
     @create_params ||= [params.require("tasks")].flatten.map do |task|
-      task = task.permit(:type, :instructions, :action, :label, :assigned_to_id,
-                         :assigned_to_type, :external_id, :parent_id, business_payloads: [:description, values: {}])
+      appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id])
+      task = task.permit(:type, :instructions, :assigned_to_id,
+                         :assigned_to_type, :parent_id, business_payloads: [:description, values: {}])
         .merge(assigned_by: current_user)
-        .merge(appeal: Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id]))
+        .merge(appeal: appeal)
 
-      task.delete(:external_id)
       task = task.merge(assigned_to_type: User.name) if !task[:assigned_to_type]
-
-      # Allow actions to be passed with either the key "action" or "label" while we transition to using "label" in place
-      # of "action" so requests coming from browsers that have older versions of the javascript bundle succeed.
-      task = task.merge(action: task.delete(:label)) if task[:label]
-
       task
     end
   end

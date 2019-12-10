@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
   let!(:current_user) do
     user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
@@ -238,7 +235,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label])
       end
 
-      click_dropdown(text: other_user.full_name)
+      click_dropdown({ text: other_user.full_name }, find(".cf-modal-body"))
       fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Reassign"
       click_on "Submit"
 
@@ -280,7 +277,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
 
         # On hold
-        click_dropdown(text: "15 days")
+        click_dropdown({ text: "15 days" }, find(".cf-modal-body"))
         fill_in "Notes:", with: "Waiting for response"
 
         click_on(COPY::MODAL_SUBMIT_BUTTON)
@@ -499,7 +496,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     scenario "can still schedule veteran successfully" do
       visit "/queue/appeals/#{appeal.external_id}"
       click_dropdown(text: "Schedule Veteran")
-      click_dropdown(text: RegionalOffice.find!("RO17").city)
+      click_dropdown({ text: RegionalOffice.find!("RO17").city }, find(".cf-modal-body"))
       click_dropdown(
         text: "#{hearing_day.scheduled_for.to_formatted_s(:short_date)} (12/12)",
         name: "hearingDate"

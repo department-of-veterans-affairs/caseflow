@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-require "support/database_cleaner"
-
 describe OrganizationAssignedTasksTab, :postgres do
   let(:tab) { OrganizationAssignedTasksTab.new(params) }
   let(:params) do

@@ -5,9 +5,9 @@ class UsersController < ApplicationController
 
   def index
     return filter_by_role if params[:role]
-    return filter_by_css_id if params[:css_id]
+    return filter_by_css_id_or_name if params[:css_id]
 
-    render json: {}, status: 200
+    render json: {}, status: :ok
   end
 
   def search_by_css_id
@@ -54,9 +54,10 @@ class UsersController < ApplicationController
     end
   end
 
-  def filter_by_css_id
-    finder = UserFinder.new(css_id: css_id)
-    users = finder.users
+  def filter_by_css_id_or_name
+    # the param name is css_id for convenience but we are more generous in what we search.
+    finder = UserFinder.new(css_id: css_id, name: css_id)
+    users = finder.users || []
     if params[:exclude_org]
       org = Organization.find_by_name_or_url(params[:exclude_org])
       users -= org.users

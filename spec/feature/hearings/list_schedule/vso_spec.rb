@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "List Schedule for VSO", :all_dbs do
   let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["VSO"]) }
 

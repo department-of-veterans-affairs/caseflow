@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Attorney queue", :all_dbs do
   let(:judge) { create(:user) }
   let!(:vacols_judge) { create(:staff, :judge_role, user: judge) }
@@ -129,7 +126,7 @@ RSpec.feature "Attorney queue", :all_dbs do
         click_on(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
 
         expect(page).to have_content(appeal.veteran_full_name)
-        expect(page).to have_content(Constants::CO_LOCATED_ADMIN_ACTIONS[colocated_org_task.label])
+        expect(page).to have_content(colocated_org_task.label)
       end
     end
 
@@ -143,12 +140,13 @@ RSpec.feature "Attorney queue", :all_dbs do
           assigned_by: attorney
         )
       end
-      let(:colocated_person_task) { colocated_org_task.children.first }
+      let!(:colocated_person_task) { colocated_org_task.children.first }
 
       before do
+        Colocated.singleton.add_user(create(:user))
         reassign_params = {
           assigned_to_type: User.name,
-          assigned_to_id: ColocatedTaskDistributor.new.next_assignee.id
+          assigned_to_id: Colocated.singleton.next_assignee.id
         }
         colocated_person_task.reassign(reassign_params, colocated_person_task.assigned_to)
       end
@@ -159,7 +157,7 @@ RSpec.feature "Attorney queue", :all_dbs do
         click_on(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
 
         expect(page).to have_content(appeal.veteran_full_name)
-        expect(page).to have_content(Constants::CO_LOCATED_ADMIN_ACTIONS[colocated_org_task.label])
+        expect(page).to have_content(colocated_org_task.label)
       end
     end
 
@@ -184,7 +182,7 @@ RSpec.feature "Attorney queue", :all_dbs do
 
         expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 0))
         expect(page).to have_content(appeal.veteran_full_name)
-        expect(page).to have_content(Constants::CO_LOCATED_ADMIN_ACTIONS[colocated_org_task.label])
+        expect(page).to have_content(colocated_org_task.label)
       end
     end
   end
