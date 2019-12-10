@@ -10,6 +10,7 @@ context Api::V3::DecisionReview::ContestableIssueParams do
   end
 
   let(:benefit_type) { "compensation" }
+
   let(:legacy_opt_in_approved) { true }
 
   let(:params) do
@@ -29,7 +30,9 @@ context Api::V3::DecisionReview::ContestableIssueParams do
   end
 
   let(:decision_issue_id) { 123 }
+
   let(:rating_issue_id) { "456" }
+
   let(:rating_decision_issue_id) { "789" }
 
   let(:legacy_appeal_issues) do
@@ -42,6 +45,7 @@ context Api::V3::DecisionReview::ContestableIssueParams do
   end
 
   let(:vacols_id) { "135" }
+
   let(:vacols_sequence_id) { "246" }
 
   describe "#error_code" do
@@ -49,26 +53,26 @@ context Api::V3::DecisionReview::ContestableIssueParams do
 
     it { is_expected.to be nil }
 
-    describe "constestable issue without IDs" do
+    context "constestable issue without IDs" do
       let(:decision_issue_id) { nil }
       let(:rating_issue_id) { nil }
       let(:rating_decision_issue_id) { nil }
 
       it { is_expected.to eq :contestable_issue_cannot_be_empty }
 
-      context do
+      context "1 ID present" do
         let(:rating_issue_id) { "something" }
         it { is_expected.to eq nil }
       end
     end
 
-    describe "legacy appeals not opted in" do
+    context "legacy appeals not opted in" do
       let(:legacy_opt_in_approved) { false }
       it { is_expected.to eq :must_opt_in_to_associate_legacy_issues }
     end
   end
 
-  context "#intakes_controller_params" do
+  describe "#intakes_controller_params" do
     subject { contestable_issue_params.intakes_controller_params.as_json }
 
     it do

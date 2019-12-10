@@ -83,16 +83,23 @@ class Api::V3::DecisionReview::IntakeParams
       @params["data"]["attributes"].respond_to?(:has_key?)
   end
 
+  def claimant_object_present?
+    has_attributes? && attributes["claimant"].respond_to?(:has_key?)
+  end
+
   def veteran_is_not_the_claimant?
-    has_attributes? && !!attributes["claimant"]
+    claimant_object_present? && !!attributes["claimant"]["participantId"]
+  end
+
+  # allows safely calling `claimant_who_is_not_the_veteran["participantId|payeeCode"]`
+  # --is not a way to test whether or not the veteran is the claimant.
+  # use `veteran_is_not_the_claimant?` for that
+  def claimant_who_is_not_the_veteran
+    attributes["claimant"] || {}
   end
 
   def has_informal_conference_rep?
     has_attributes? && !!attributes["informalConferenceRep"]
-  end
-
-  def claimant_who_is_not_the_veteran
-    attributes["claimant"] || {}
   end
 
   def receipt_date
@@ -165,7 +172,7 @@ class Api::V3::DecisionReview::IntakeParams
       [[String, nil],  %w[data attributes veteran emailAddress]],
       [[*OBJECT, nil], %w[data attributes claimant]],
       *(
-        if veteran_is_not_the_claimant? # ... participantId and payeeCode must be present
+        if claimant_object_present? # ... participantId and payeeCode must be present
           [
             [[String], %w[data attributes claimant participantId]],
             [[String], %w[data attributes claimant payeeCode]]
