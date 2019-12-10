@@ -63,13 +63,15 @@ class Api::V3::DecisionReview::IntakeParams
   def describe_shape_error
     return "payload must be an object" unless @params.respond_to?(:dig)
 
-    types_and_paths.map do |(types, path)|
+    validators = types_and_paths.map do |(types, path)|
       Api::V3::DecisionReview::HashPathValidator.new(
         hash: @params,
         path: path,
         allowed_values: types
       )
-    end.find { |validator| !validator.path_is_valid? }&.error_msg
+    end
+
+    validators.find { |validator| !validator.path_is_valid? }&.error_msg
   end
 
   def attributes
@@ -77,14 +79,14 @@ class Api::V3::DecisionReview::IntakeParams
   end
 
   # most methods are run after `errors` method --this one isn't (hence the paranoia)
-  def has_attributes?
+  def attributes?
     @params.respond_to?(:has_key?) &&
       @params["data"].respond_to?(:has_key?) &&
       @params["data"]["attributes"].respond_to?(:has_key?)
   end
 
   def claimant_object_present?
-    has_attributes? && attributes["claimant"].respond_to?(:has_key?)
+    attributes? && attributes["claimant"].respond_to?(:has_key?)
   end
 
   def veteran_is_not_the_claimant?
@@ -98,8 +100,8 @@ class Api::V3::DecisionReview::IntakeParams
     attributes["claimant"] || {}
   end
 
-  def has_informal_conference_rep?
-    has_attributes? && !!attributes["informalConferenceRep"]
+  def informal_conference_rep?
+    attributes? && !!attributes["informalConferenceRep"]
   end
 
   def receipt_date
@@ -131,6 +133,7 @@ class Api::V3::DecisionReview::IntakeParams
   end
 
   # array of allowed types (values) for params paths
+  # rubocop:disable Metrics/MethodLength
   def types_and_paths
     [
       [OBJECT, ["data"]],
@@ -144,7 +147,7 @@ class Api::V3::DecisionReview::IntakeParams
       [[nil],          ["data", "attributes", "informalConferenceTimes", 2]],
       [[*OBJECT, nil], %w[data attributes informalConferenceRep]],
       *(
-        if has_informal_conference_rep? # ... name and phoneNumber must be present
+        if informal_conference_rep? # ... name and phoneNumber must be present
           [
             [[String],          %w[data attributes informalConferenceRep name]],
             [[String, Integer], %w[data attributes informalConferenceRep phoneNumber]]
@@ -241,6 +244,7 @@ class Api::V3::DecisionReview::IntakeParams
       end
     ]
   end
+  # rubocop:enable Metrics/MethodLength
 
   # returns the paths of all legacyAppealIssues arrays nested in params
   #
@@ -254,14 +258,18 @@ class Api::V3::DecisionReview::IntakeParams
   #
   def legacy_appeal_issues_paths
     @params.dig(*INCLUDED_PATH).each.with_index.reduce([]) do |acc, (contestable_issue, ci_index)|
-      legacy_appeal_issues = contestable_issue.dig(*LEGACY_APPEAL_ISSUES_PATH)
-
-      next acc unless legacy_appeal_issues.is_a?(Array) && legacy_appeal_issues.present?
-
-      [*acc, [*INCLUDED_PATH, ci_index, *LEGACY_APPEAL_ISSUES_PATH]]
+      if legacy_appeal_issues(contestable_issue).is_a?(Array) && !legacy_appeal_issues(contestable_issue).empty?
+        [*acc, [*INCLUDED_PATH, ci_index, *LEGACY_APPEAL_ISSUES_PATH]]
+      else
+        acc
+      end
     end
   rescue StandardError
     []
+  end
+
+  def legacy_appeal_issues(contestable_issue)
+    contestable_issue.dig(*LEGACY_APPEAL_ISSUES_PATH)
   end
 
   # given the path to an array, prepends the path of each element of that array
@@ -334,9 +342,11 @@ class Api::V3::DecisionReview::IntakeParams
   #     [  [Float], [:data, :attributes, :coord, :x] ],
   #     [  [Float], [:data, :attributes, :coord, :y] ],
   #   ]
-  def self.prepend_path_to_paths(types_and_paths:, prepend_path:)
-    types_and_paths.map do |(types, path)|
-      [types, [*prepend_path, *path]]
+  class << self
+    def prepend_path_to_paths(types_and_paths:, prepend_path:)
+      types_and_paths.map do |(types, path)|
+        [types, [*prepend_path, *path]]
+      end
     end
   end
 end

@@ -39,7 +39,7 @@ class Api::V3::DecisionReview::ContestableIssueParams
   # the ContestableIssue's ID fields
   # (legacy appeal IDs (in legacyAppealIssues arrays) are nested within ContestableIssues,
   # but are not ContestableIssue IDs)
-  ID_KEYS = %i[decisionIssueId ratingIssueId ratingDecisionIssueId].freeze
+  ID_KEYS = [:decisionIssueId, :ratingIssueId, :ratingDecisionIssueId].freeze
 
   # a RequestIssue is unidentified if it has no ID values nor a category
   IDENTIFYING_KEYS = [*ID_KEYS, :category].freeze

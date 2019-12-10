@@ -739,8 +739,8 @@ context Api::V3::DecisionReview::IntakeParams do
     end
   end
 
-  describe "#has_informal_conference_rep?" do
-    subject { intake_params.send(:has_informal_conference_rep?) }
+  describe "#informal_conference_rep?" do
+    subject { intake_params.send(:informal_conference_rep?) }
 
     it { is_expected.to be true }
 
@@ -763,8 +763,8 @@ context Api::V3::DecisionReview::IntakeParams do
     it { expect(subject.as_json).to eq attributes.as_json }
   end
 
-  describe "#has_attributes?" do
-    subject { intake_params.send(:has_attributes?) }
+  describe "#attributes?" do
+    subject { intake_params.send(:attributes?) }
 
     it { is_expected.to be true }
 

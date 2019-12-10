@@ -41,7 +41,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor, :all_dbs do
       legacyOptInApproved: legacy_opt_in_approved,
       benefitType: benefit_type,
       veteran: {
-        fileNumberOrSsn: file_number_or_ssn,
+        fileNumberOrSsn: file_number_or_ssn
       }
     }
   end
@@ -49,7 +49,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor, :all_dbs do
   let(:data) do
     {
       type: "HigherLevelReview",
-      attributes: attributes,
+      attributes: attributes
     }
   end
 
@@ -59,7 +59,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor, :all_dbs do
       {
         type: "ContestableIssue",
         attributes: {
-          ratingIssueId: rating_issue_id,
+          ratingIssueId: rating_issue_id
         }
       }
     ]
