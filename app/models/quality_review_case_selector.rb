@@ -10,11 +10,9 @@ class QualityReviewCaseSelector
     def select_case_for_quality_review?
       reached_monthly_limit_in_quality_reviews? ? false : rand < QUALITY_REVIEW_SELECTION_PROBABILITY
     end
-  end
 
-  private
-
-  def reached_monthly_limit_in_quality_reviews?
-    QualityReviewTask.this_month.size >= MONTHLY_LIMIT_OF_QUAILITY_REVIEWS
+    def reached_monthly_limit_in_quality_reviews?
+      QualityReviewTask.this_month.size >= MONTHLY_LIMIT_OF_QUAILITY_REVIEWS
+    end
   end
 end

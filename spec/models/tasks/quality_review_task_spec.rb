@@ -74,4 +74,16 @@ describe QualityReviewTask, :all_dbs do
       expect(qr_task.status).to eq(Constants.TASK_STATUSES.assigned)
     end
   end
+
+  describe "after reaching the monthly limit" do
+    before do
+      create_list(:ama_judge_quality_review_task, QualityReviewCaseSelector::MONTHLY_LIMIT_OF_QUAILITY_REVIEWS)
+    end
+
+    it "should always return false" do
+      5.times do
+        expect(QualityReviewCaseSelector.select_case_for_quality_review?).to be(false)
+      end
+    end
+  end
 end
