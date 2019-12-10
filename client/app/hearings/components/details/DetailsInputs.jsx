@@ -62,7 +62,7 @@ class DetailsInputs extends React.Component {
               requestType={requestType}
               updateVirtualHearing={updateVirtualHearing}
               openModal={openVirtualHearingModal}
-              readOnly={isVirtual && virtualHearing && !virtualHearing.jobCompleted}
+              readOnly={readOnly || (isVirtual && virtualHearing && !virtualHearing.jobCompleted)}
             />
             {this.renderVirtualHearingLinkSection()}
           </div>
@@ -75,7 +75,7 @@ class DetailsInputs extends React.Component {
               strongLabel
               required
               className={[classnames('cf-form-textinput', 'cf-inline-field')]}
-              readOnly={!virtualHearing.jobCompleted}
+              readOnly={readOnly || !virtualHearing.jobCompleted}
               onChange={(veteranEmail) => updateVirtualHearing({ veteranEmail })}
             />
             <TextField
@@ -83,7 +83,7 @@ class DetailsInputs extends React.Component {
               value={virtualHearing.representativeEmail}
               strongLabel
               className={[classnames('cf-form-textinput', 'cf-inline-field')]}
-              readOnly={!virtualHearing.jobCompleted}
+              readOnly={readOnly || !virtualHearing.jobCompleted}
               onChange={(representativeEmail) => updateVirtualHearing({ representativeEmail })}
             />
           </div>

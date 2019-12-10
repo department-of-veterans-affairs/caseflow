@@ -96,6 +96,7 @@ detectors:
   RepeatedConditional:
     exclude:
       - HearingLocation
+      - JudgeTeam
       - QueueConfig
       - RequestIssue
       - BulkTaskReassignment

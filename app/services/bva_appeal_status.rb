@@ -5,6 +5,21 @@
 class BVAAppealStatus
   attr_reader :status
 
+  SORT_KEYS = {
+    not_distributed: 1,
+    distributed_to_judge: 2,
+    assigned_to_attorney: 3,
+    assigned_to_colocated: 4,
+    in_progress: 5,
+    ready_for_signature: 6,
+    signed: 7,
+    dispatched: 8,
+    cancelled: 10,
+    misc: 11,
+    on_hold: 9,
+    unknown: 12
+  }.freeze
+
   DEFINITIONS = {
     not_distributed: "1. Not distributed",
     distributed_to_judge: "2. Distributed to judge",
@@ -57,6 +72,10 @@ class BVAAppealStatus
 
   def to_s
     DEFINITIONS[status]
+  end
+
+  def to_i
+    SORT_KEYS[status]
   end
 
   def as_json(_args)

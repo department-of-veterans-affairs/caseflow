@@ -206,10 +206,9 @@ class TaskActionRepository
         options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
           {
             label: value,
-            value: key
+            value: ColocatedTask.find_subclass_by_action(key).name
           }
-        end,
-        type: ColocatedTask.name
+        end
       }
     end
 
