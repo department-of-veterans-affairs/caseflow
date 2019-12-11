@@ -107,6 +107,8 @@ class AppealsController < ApplicationController
   end
 
   def task_tree
+    return render_access_error unless FeatureToggle.enabled?(:appeal_viz, user: current_user)
+
     no_cache
     respond_to do |format|
       format.html { render template: "queue/task_tree", layout: "plain_application" }

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 feature "Task Tree", :all_dbs do
+  before { FeatureToggle.enable!(:appeal_viz) }
+  after { FeatureToggle.disable!(:appeal_viz) }
+
   context "attorney user with assigned tasks" do
     let(:attorney_user) { create(:user) }
 

@@ -502,6 +502,9 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       User.authenticate!(roles: ["System Admin"])
     end
 
+    before { FeatureToggle.enable!(:appeal_viz) }
+    after { FeatureToggle.disable!(:appeal_viz) }
+
     context ".json request" do
       subject { get :task_tree, params: { appeal_id: appeal.vacols_id }, as: :json }
 
