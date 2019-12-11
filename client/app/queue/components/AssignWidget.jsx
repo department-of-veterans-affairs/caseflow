@@ -227,7 +227,7 @@ AssignWidget.propTypes = {
 
 const mapStateToProps = (state) => {
   const { attorneysOfJudge, attorneys, pendingDistribution } = state.queue;
-  const { selectedAssignee, selectedAssigneeSecondary, featureToggles } = state.ui;
+  const { selectedAssignee, selectedAssigneeSecondary} = state.ui;
   const { savePending } = state.ui.saveState;
 
   return {
@@ -236,8 +236,7 @@ const mapStateToProps = (state) => {
     selectedAssigneeSecondary,
     attorneys,
     distributionLoading: pendingDistribution !== null,
-    savePending,
-    featureToggles
+    savePending
   };
 };
 
