@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class RampIssueSerializer
+class Intake::RampIssueSerializer
   include FastJsonapi::ObjectSerializer
 
   attribute :id
