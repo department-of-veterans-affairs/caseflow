@@ -6,6 +6,7 @@ class Intake::JobNoteSerializer
   attribute :id
   attribute :created_at
   attribute :note
+  attribute :send_to_intake_user
 
   attribute :user do |object|
     object.user.css_id
