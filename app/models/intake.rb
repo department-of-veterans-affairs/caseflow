@@ -195,7 +195,7 @@ class Intake < ApplicationRecord
       veteran_form_name: veteran&.name&.formatted(:form),
       veteran_is_deceased: veteran&.deceased?,
       completed_at: completed_at,
-      relationships: veteran&.relationships&.map(&:ui_hash)
+      relationships: veteran&.relationships&.map(&:serialize)
     }
   end
 
