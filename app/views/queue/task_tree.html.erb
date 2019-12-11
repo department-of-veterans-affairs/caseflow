@@ -54,7 +54,7 @@
   <%= javascript_include_tag 'task-tree' %>
   <script type="text/javascript">
     $(".caret").on("click", function() {
-      let clicked = $(this);
+      const clicked = $(this);
       clicked.parent().find(".nested").toggleClass("active");
       clicked.toggleClass("caret-down");
     });
