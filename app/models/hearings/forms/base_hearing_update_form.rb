@@ -17,11 +17,7 @@ class BaseHearingUpdateForm
       if virtual_hearing_form_or_hearing_time_was_updated?
         create_or_update_virtual_hearing
         hearing.reload
-        if only_time_updated?
-          send_time_udpate_email
-        else
-          start_async_job
-        end
+        start_async_job
         add_virtual_hearing_alert
       end
     end
@@ -49,13 +45,10 @@ class BaseHearingUpdateForm
     if hearing.virtual_hearing.status == "pending" || !hearing.virtual_hearing.all_emails_sent?
       hearing.virtual_hearing.establishment.submit_for_processing!
       VirtualHearings::CreateConferenceJob.perform_now(
-        hearing_id: hearing.id
+        hearing_id: hearing.id,
+        email_type: only_time_updated? ? :updated_time_confirmation : :confirmation
       )
     end
-  end
-
-  def send_time_udpate_email
-    
   end
 
   def email_sent_flag(attr_key)
