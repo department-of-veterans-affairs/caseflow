@@ -110,22 +110,7 @@ class AppealsController < ApplicationController
     return render_access_error unless FeatureToggle.enabled?(:appeal_viz, user: current_user)
 
     no_cache
-    respond_to do |format|
-      format.html { render template: "queue/task_tree", layout: "plain_application" }
-      format.text { render plain: appeal.structure_render(*Task.column_names) }
-      format.json do
-        if BGSService.new.can_access?(appeal.veteran_file_number)
-          id = params[:appeal_id]
-          MetricsService.record("Get appeal information for ID #{id}",
-                                service: :queue,
-                                name: "AppealsController.task_tree") do
-            render json: { task_tree: task_tree_as_json }
-          end
-        else
-          render_access_error
-        end
-      end
-    end
+    task_tree_response
   end
 
   helper_method :appeal, :url_appeal_uuid, :task_tree_as_json
@@ -157,6 +142,25 @@ class AppealsController < ApplicationController
   end
 
   private
+
+  def task_tree_response
+    respond_to do |format|
+      format.html { render template: "queue/task_tree", layout: "plain_application" }
+      format.text { render plain: appeal.structure_render(*Task.column_names) }
+      format.json do
+        if BGSService.new.can_access?(appeal.veteran_file_number)
+          id = params[:appeal_id]
+          MetricsService.record("Get appeal information for ID #{id}",
+                                service: :queue,
+                                name: "AppealsController.task_tree") do
+            render json: { task_tree: task_tree_as_json }
+          end
+        else
+          render_access_error
+        end
+      end
+    end
+  end
 
   # :reek:DuplicateMethodCall { allow_calls: ['result.extra'] }
   # :reek:FeatureEnvy
