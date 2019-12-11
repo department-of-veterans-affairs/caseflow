@@ -31,7 +31,7 @@ class Rating
   TWO_LIFETIMES_DAYS = 250.years
 
   def serialize
-    ::RatingSerializer.new(self).serializable_hash[:data][:attributes]
+    Intake::RatingSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def associated_end_products
