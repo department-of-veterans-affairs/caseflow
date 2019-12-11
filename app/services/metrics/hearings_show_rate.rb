@@ -6,7 +6,7 @@
 
 class Metrics::HearingsShowRate < Metrics::Base
   def call
-    (hearings_by_disposition["held"] - hearings_by_disposition["postponed"]) / hearings.count
+    (hearings_by_disposition["held"] - hearings_by_disposition["postponed"]) / hearings.count.to_f
   end
 
   def name
@@ -20,7 +20,10 @@ class Metrics::HearingsShowRate < Metrics::Base
   private
 
   def hearings
-    @hearings ||= Hearing.where("scheduled_for > ? AND scheduled_for <", start_date, end_date)
+    @hearings ||= begin
+      day_ids = HearingDay.where("scheduled_for >= ? and scheduled_for <= ?", start_date, end_date).pluck(:id)
+      Hearing.where(hearing_day_id: day_ids)
+    end
   end
 
   def hearings_by_disposition
