@@ -29,7 +29,7 @@ class VirtualHearingMailer < ActionMailer::Base
     return "Updated time: Your virtual hearing with the Board of Veterans' Appeals" if @time_changed
 
     case recipient.title
-    when RECIPIENT_TITLES[:veteran], RECIPIENT_TITLES[:veteran]
+    when RECIPIENT_TITLES[:veteran], RECIPIENT_TITLES[:representative]
       "Confirmation: Your virtual hearing with the Board of Veterans' Appeals"
     when RECIPIENT_TITLES[:judge]
       "Confirmation: Your virtual hearing"
@@ -38,9 +38,5 @@ class VirtualHearingMailer < ActionMailer::Base
 
   def link
     (recipient.title == RECIPIENT_TITLES[:judge]) ? virtual_hearing.host_link : virtual_hearing.guest_link
-  end
-
-  def veteran_full_name
-    virtual_hearing.hearing.appeal.veteran.name.to_s
   end
 end
