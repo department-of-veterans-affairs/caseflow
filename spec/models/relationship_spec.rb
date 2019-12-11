@@ -16,8 +16,8 @@ describe Relationship, :postgres do
     )
   end
 
-  context "#ui_hash" do
-    subject { relationship.ui_hash }
+  context "#serialize" do
+    subject { relationship.serialize }
 
     context "when there are no prior claims for that relationship" do
       context "when the claimant is a spouse" do

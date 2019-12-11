@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class RatingIssueSerializer
+class Intake::RatingIssueSerializer
   include FastJsonapi::ObjectSerializer
   set_id(&:reference_id)
 
