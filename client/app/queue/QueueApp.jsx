@@ -9,7 +9,6 @@ import StringUtil from '../util/StringUtil';
 
 import {
   setCanEditAod,
-  setFeatureToggles,
   setUserRole,
   setUserCssId,
   setUserIsVsoEmployee,
@@ -84,7 +83,6 @@ import { returnToLitSupport } from './mtv/mtvActions';
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
-    this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
@@ -658,8 +656,6 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string,
   setCanEditAod: PropTypes.func,
   canEditAod: PropTypes.bool,
-  setFeatureToggles: PropTypes.func,
-  featureToggles: PropTypes.object,
   setUserRole: PropTypes.func,
   setUserCssId: PropTypes.func,
   setOrganizations: PropTypes.func,
@@ -684,7 +680,6 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       setCanEditAod,
-      setFeatureToggles,
       setUserRole,
       setUserCssId,
       setUserIsVsoEmployee,
