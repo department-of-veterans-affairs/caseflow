@@ -1,5 +1,4 @@
-/* Remove default bullets */
-#cf-task-tree {
+.cf-task-tree {
   list-style-type: none;
   margin: 0;
   padding: 1em;
@@ -7,38 +6,36 @@
   ul {
     list-style-type: none;
     margin: 0;
+
+    // tree connectors (linter made us put it here)
+    li:last-child::after {
+      height: 8px;
+      margin: 0;
+    }
   }
 
   .caret {
     cursor: pointer;
-    user-select: none; /* Prevent text selection */
+    user-select: none;
   }
 
-  /* Create the caret/arrow with a unicode, and style it */
   .caret::before {
-    content: "\25B6";
-    color: black;
+    content: '\25B6';
+    color: $color-black;
     display: inline-block;
     margin-right: 6px;
   }
 
-  /* Rotate the caret/arrow icon when clicked on (using JavaScript) */
   .caret-down::before {
     transform: rotate(90deg);
   }
 
-  /* Hide the nested list */
   .nested {
     display: none;
   }
 
-  /* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
   .active {
     display: block;
-  }
-
-  /* task attributes */
-  .task-name {
   }
 
   .task-atts {
@@ -48,8 +45,8 @@
 
   dl {
     font-size: 80%;
-    border: 1px solid #ccc;
-    background-color: #eee;
+    border: 1px solid $color-gray;
+    background-color: $color-gray-lighter;
     padding: 12px;
     width: 500px;
     margin: 0;
@@ -61,42 +58,41 @@
       width: 150px;
       text-align: right;
     }
+
     dt::after {
-      content: ":";
+      content: ':';
     }
+
     dd {
       margin-left: 160px;
     }
   }
 
-  /* tree connectors from https://two-wrongs.com/draw-a-tree-structure-with-only-css */
-  ul, li {
+  // tree connectors from https://two-wrongs.com/draw-a-tree-structure-with-only-css
+  ul,
+  li {
     position: relative;
     margin-bottom: 0;
   }
 
-  li::before, li::after {
-    content: "";
+  li::before,
+  li::after {
+    content: '';
     position: absolute;
     left: -12px;
   }
 
   li::before {
-    border-top: 1px solid #000;
+    border-top: 1px solid $color-black;
     top: 9px;
     width: 8px;
     height: 0;
   }
 
   li::after {
-    border-left: 1px solid #000;
+    border-left: 1px solid $color-black;
     height: 100%;
-    width: 0px;
+    width: 0;
     top: 2px;
-  }
-
-  ul > li:last-child::after {
-    height: 8px;
-    margin: 0;
   }
 }
