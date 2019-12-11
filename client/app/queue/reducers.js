@@ -609,17 +609,13 @@ const startedLoadingAppealValue = (state, action) => {
           }
         }
       }
-    },
-    appealDetails: {
-      $merge: {
-        [action.payload.appealId]: {}
-      }
     }
   });
 };
 
 const receiveAppealValue = (state, action) => {
   const existingState = state.loadingAppealDetail[action.payload.appealId] || {};
+  const existingDetails = state.appealDetails[action.payload.appealId] || {};
 
   return update(state, {
     loadingAppealDetail: {
@@ -633,8 +629,9 @@ const receiveAppealValue = (state, action) => {
       }
     },
     appealDetails: {
-      [action.payload.appealId]: {
-        $merge: {
+      $merge: {
+        [action.payload.appealId]: {
+          ...existingDetails,
           [action.payload.name]: action.payload.response
         }
       }
