@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Metrics::HearingsShowRate do
+describe Metrics::HearingsShowRate, :postgres do
   let(:start_date) { Time.zone.now - 31.days }
   let(:end_date) { Time.zone.now - 1.day }
   let(:date_range) { Metrics::DateRange.new(start_date, end_date) }
