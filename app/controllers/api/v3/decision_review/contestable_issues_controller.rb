@@ -61,7 +61,7 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
       titleOfActiveReview: contestable_issue.title_of_active_review,
       sourceReviewType: contestable_issue.source_review_type,
       timely: contestable_issue.timely?
-    }.reject { |_, value| value.nil? }
+    }.compact
 
     { type: "ContestableIssue", attributes: attributes }
   end
