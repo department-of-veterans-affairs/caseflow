@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
 class VirtualHearings::SendEmail
-  attr_reader :virtual_hearing, :type, :time_changed
+  attr_reader :virtual_hearing, :type
 
   def initialize(virtual_hearing:, type:)
     @virtual_hearing = virtual_hearing
     @type = type
-    @time_changed = time_changed
   end
 
   def call
