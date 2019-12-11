@@ -58,7 +58,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
           doc_reference_id: nil,
           development_item_reference_id: nil,
           established_at: 30.days.ago,
-          user: current_user,
+          user: User.api_user,
           limited_poa_code: "ABC",
           limited_poa_access: true
         )
