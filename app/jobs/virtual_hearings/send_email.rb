@@ -31,8 +31,7 @@ class VirtualHearings::SendEmail
     if type == :confirmation
       VirtualHearingMailer.confirmation(
         mail_recipient: mail_recipients[recipient],
-        virtual_hearing: virtual_hearing,
-        time_changed: time_changed
+        virtual_hearing: virtual_hearing
       ).deliver_now
     elsif type == :cancellation
       VirtualHearingMailer.cancellation(
