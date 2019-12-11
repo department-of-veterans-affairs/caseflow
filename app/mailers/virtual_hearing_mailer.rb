@@ -2,7 +2,7 @@
 
 class VirtualHearingMailer < ActionMailer::Base
   default from: "solutions@public.govdelivery.com"
-  layout "mailer"
+  layout "virtual_hearing_mailer"
   attr_reader :recipient, :virtual_hearing
 
   RECIPIENT_TITLES = {
@@ -17,17 +17,24 @@ class VirtualHearingMailer < ActionMailer::Base
     mail(to: recipient.email, subject: "Updated location: Your hearing with the Board of Veterans' Appeals")
   end
 
-  def confirmation(mail_recipient:, virtual_hearing: nil, time_changed: false)
+  def confirmation(mail_recipient:, virtual_hearing: nil)
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
     @link = link
-    @time_changed = time_changed
     mail(to: recipient.email, subject: confirmation_subject)
   end
 
-  def confirmation_subject
-    return "Updated time: Your virtual hearing with the Board of Veterans' Appeals" if @time_changed
+  def updated_time_confirmation(mail_recipient:, virtual_hearing: nil)
+    @recipient = mail_recipient
+    @virtual_hearing = virtual_hearing
+    @link = link
+    mail(
+      to: recipient.email,
+      subject: "Updated time: Your virtual hearing with the Board of Veterans' Appeals"
+    )
+  end
 
+  def confirmation_subject
     case recipient.title
     when RECIPIENT_TITLES[:veteran], RECIPIENT_TITLES[:representative]
       "Confirmation: Your virtual hearing with the Board of Veterans' Appeals"

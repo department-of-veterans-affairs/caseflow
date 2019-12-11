@@ -17,7 +17,11 @@ class BaseHearingUpdateForm
       if virtual_hearing_form_or_hearing_time_was_updated?
         create_or_update_virtual_hearing
         hearing.reload
-        start_async_job
+        if only_time_updated?
+          send_time_udpate_email
+        else
+          start_async_job
+        end
         add_virtual_hearing_alert
       end
     end
@@ -37,14 +41,21 @@ class BaseHearingUpdateForm
     !virtual_hearing_attributes.blank? || (hearing.virtual? && scheduled_time_string.present?)
   end
 
+  def only_time_updated?
+    !created? && scheduled_time_string.present?
+  end
+
   def start_async_job
     if hearing.virtual_hearing.status == "pending" || !hearing.virtual_hearing.all_emails_sent?
       hearing.virtual_hearing.establishment.submit_for_processing!
       VirtualHearings::CreateConferenceJob.perform_now(
-        hearing_id: hearing.id,
-        time_changed: scheduled_time_string.present? && !created?
+        hearing_id: hearing.id
       )
     end
+  end
+
+  def send_time_udpate_email
+    
   end
 
   def email_sent_flag(attr_key)

@@ -3,7 +3,7 @@
 class VirtualHearings::SendEmail
   attr_reader :virtual_hearing, :type, :time_changed
 
-  def initialize(virtual_hearing:, type:, time_changed: false)
+  def initialize(virtual_hearing:, type:)
     @virtual_hearing = virtual_hearing
     @type = type
     @time_changed = time_changed
@@ -37,6 +37,11 @@ class VirtualHearings::SendEmail
       ).deliver_now
     elsif type == :cancellation
       VirtualHearingMailer.cancellation(
+        mail_recipient: mail_recipients[recipient],
+        virtual_hearing: virtual_hearing
+      ).deliver_now
+    elsif type == :updated_time_confirmation
+      VirtualHearingMailer.updated_time_confirmation(
         mail_recipient: mail_recipients[recipient],
         virtual_hearing: virtual_hearing
       ).deliver_now
