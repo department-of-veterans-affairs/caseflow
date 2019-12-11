@@ -594,7 +594,7 @@ DEPENDENCIES
   fast_jsonapi
   fasterer
   foreman
-  govdelivery-tms (= 2.8.4)
+  govdelivery-tms
   guard-rspec
   holidays (~> 6.4)
   jshint
