@@ -38,7 +38,7 @@ class BaseHearingUpdateForm
   end
 
   def only_time_updated?
-    !created? && scheduled_time_string.present?
+    !virtual_hearing_created? && scheduled_time_string.present?
   end
 
   def start_async_job
@@ -57,8 +57,8 @@ class BaseHearingUpdateForm
     !(status_changed || virtual_hearing_attributes.key?(attr_key) || scheduled_time_string.present?)
   end
 
-  def created?
-    @created ||= false
+  def virtual_hearing_created?
+    @virtual_hearing_created ||= false
   end
 
   def create_or_update_virtual_hearing
@@ -67,10 +67,10 @@ class BaseHearingUpdateForm
       new_virtual_hearing.veteran_email = virtual_hearing_attributes[:veteran_email]
       new_virtual_hearing.judge_email = hearing.judge&.email
       new_virtual_hearing.representative_email = virtual_hearing_attributes[:representative_email]
-      @created = true
+      @virtual_hearing_created = true
     end
 
-    if !created?
+    if !virtual_hearing_created?
       # The email sent flag should always be set to false from the API.
       emails_sent_updates = {
         veteran_email_sent: email_sent_flag(:veteran_email),
@@ -89,7 +89,7 @@ class BaseHearingUpdateForm
 
   def add_virtual_hearing_alert
     alerts << VirtualHearingUserAlertBuilder.new(
-      changed_to_virtual: created?,
+      changed_to_virtual: virtual_hearing_created?,
       virtual_hearing_attributes: virtual_hearing_attributes,
       veteran_full_name: veteran_full_name,
       hearing_time_changed: scheduled_time_string.present?
