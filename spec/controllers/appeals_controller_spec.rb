@@ -38,9 +38,10 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       end
 
       context "when request header contains Veteran file number but appeal is associated with veteran ssn" do
-        let!(:veteran) { create(:veteran, ssn: ssn) }
+        let!(:veteran) { create(:veteran, file_number: "000000000", ssn: ssn) }
 
         it "returns valid response with one appeal" do
+          appeal
           request.headers["HTTP_CASE_SEARCH"] = veteran.file_number
           get :index, params: options
           response_body = JSON.parse(response.body)

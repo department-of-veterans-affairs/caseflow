@@ -415,7 +415,7 @@ RSpec.feature "Search", :all_dbs do
     end
 
     context "when appeal is associated with ssn not file number" do
-      let!(:veteran) { create(:veteran, ssn: Generators::Random.unique_ssn) }
+      let!(:veteran) { create(:veteran, file_number: "00000000", ssn: Generators::Random.unique_ssn) }
       let!(:legacy_appeal) do
         create(
           :legacy_appeal,
