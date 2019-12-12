@@ -1,4 +1,3 @@
-PaperTrail.config.track_associations = false
 PaperTrail::Rails::Engine.eager_load!
 
 module PaperTrail
@@ -12,7 +11,7 @@ end
 # make sure whodunnit is set in console
 Rails.application.configure do
   console do
-    PaperTrail.whodunnit = ->() {
+    PaperTrail.request.whodunnit = ->() {
       @paper_trail_whodunnit ||= (
         until RequestStore[:current_user].present? do
           puts "=" * 80
