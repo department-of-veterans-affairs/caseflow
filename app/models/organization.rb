@@ -27,6 +27,10 @@ class Organization < ApplicationRecord
     end
   end
 
+  def users_can_create_mail_task?
+    false
+  end
+
   def can_bulk_assign_tasks?
     false
   end
