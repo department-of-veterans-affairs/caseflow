@@ -44,6 +44,7 @@ export const PAGE_PATHS = {
   FINISH: '/finish',
   ADD_ISSUES: '/add_issues',
   COMPLETED: '/completed',
+  NOT_EDITABLE: '/not_editable',
   CANCEL_ISSUES: '/cancel',
   CONFIRMATION: '/confirmation',
   CLEARED_EPS: '/cleared_eps',

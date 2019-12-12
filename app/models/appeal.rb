@@ -269,7 +269,7 @@ class Appeal < DecisionReview
   end
 
   def status
-    BVAAppealStatus.new(appeal: self)
+    @status ||= BVAAppealStatus.new(appeal: self)
   end
 
   def previously_selected_for_quality_review
