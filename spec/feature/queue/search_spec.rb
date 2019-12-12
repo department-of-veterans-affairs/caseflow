@@ -413,6 +413,23 @@ RSpec.feature "Search", :all_dbs do
         expect(page).to have_content(COPY::IS_PAPER_CASE)
       end
     end
+
+    context "when appeal is associated with ssn not file number" do
+      let!(:veteran) { create(:veteran, file_number: "00000000", ssn: Generators::Random.unique_ssn) }
+      let!(:legacy_appeal) do
+        create(
+          :legacy_appeal,
+          vacols_case: create(:case, bfcorlid: "#{veteran.ssn}S")
+        )
+      end
+      scenario "found one appeal" do
+        visit "/search"
+        fill_in "searchBarEmptyList", with: veteran.file_number
+        click_on "Search"
+
+        expect(page).to have_content("1 case found for")
+      end
+    end
   end
 
   context "queue case search for appeals using docket number" do

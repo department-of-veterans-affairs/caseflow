@@ -4,8 +4,8 @@ class Intake::AppealSerializer < Intake::DecisionReviewSerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :camel_lower
 
-  attribute :docketType, &:docket_type
-  attribute :isOutcoded, &:outcoded?
+  attribute :docket_type, &:docket_type
+  attribute :is_outcoded, &:outcoded?
 
   attribute :formType do
     "appeal"

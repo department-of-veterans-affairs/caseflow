@@ -5,35 +5,29 @@ class Intake::DecisionReviewSerializer
   set_key_transform :camel_lower
 
   attribute :claimant, &:claimant_participant_id
-  attribute :veteranIsNotClaimant, &:veteran_is_not_claimant
-  attribute :processedInCaseflow, &:processed_in_caseflow?
-  attribute :legacyOptInApproved, & :legacy_opt_in_approved
-  attribute :legacyAppeals, &:serialized_legacy_appeals
+  attribute :veteran_is_not_claimant, &:veteran_is_not_claimant
+  attribute :processed_in_caseflow, &:processed_in_caseflow?
+  attribute :legacy_opt_in_approved, & :legacy_opt_in_approved
+  attribute :legacy_appeals, &:serialized_legacy_appeals
   attribute :ratings, &:serialized_ratings
-  attribute :editIssuesUrl, &:caseflow_only_edit_issues_url
-  attribute :processedAt, &:establishment_processed_at
+  attribute :edit_issues_url, &:caseflow_only_edit_issues_url
+  attribute :processed_at, &:establishment_processed_at
+  attribute :veteran_invalid_fields, &:veteran_invalid_fields
+  attribute :request_issues, &:request_issues_ui_hash
 
   attribute :decision_issues do |object|
     object.decision_issues.map(&:serialize)
-  end
-
-  attribute :veteranInvalidFields do |object|
-    object.send(:veteran_invalid_fields)
-  end
-
-  attribute :requestIssues do |object|
-    object.send(:request_issues_ui_hash)
   end
 
   attribute :active_nonrating_request_issues do |object|
     object.active_nonrating_request_issues.map(&:serialize)
   end
 
-  attribute :contestable_issues do |object|
+  attribute :contestable_issues_by_date do |object|
     object.contestable_issues.map(&:serialize)
   end
 
-  attribute :asyncable_user do |object|
+  attribute :intake_user do |object|
     object.asyncable_user&.css_id
   end
 
@@ -41,11 +35,11 @@ class Intake::DecisionReviewSerializer
     object.veteran&.relationships&.map(&:serialize)
   end
 
-  attribute :veteranValid do |object|
+  attribute :veteran_valid do |object|
     object.veteran&.valid?(:bgs)
   end
 
-  attribute :receiptDate do |object|
+  attribute :receipt_date do |object|
     object.receipt_date.to_formatted_s(:json_date)
   end
 

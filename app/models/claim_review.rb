@@ -24,7 +24,6 @@ class ClaimReview < DecisionReview
   self.abstract_class = true
 
   class NoEndProductsRequired < StandardError; end
-  class NotYetProcessed < StandardError; end
 
   class << self
     def find_by_uuid_or_reference_id!(claim_id)
@@ -43,16 +42,28 @@ class ClaimReview < DecisionReview
 
   def ui_hash
     Intake::ClaimReviewSerializer.new(self).serializable_hash[:data][:attributes]
+    # super.merge(
+    #   asyncJobUrl: async_job_url,
+    #   benefitType: benefit_type,
+    #   payeeCode: payee_code
+    # ).tap do |hash|
+    #   if processed?
+    #     hash.update(
+    #       hasClearedRatingEp: cleared_rating_ep?,
+    #       hasClearedNonratingEp: cleared_nonrating_ep?
+    #     )
+    #   end
+    # end
   end
 
   def validate_prior_to_edit
-    fail NotYetProcessed unless processed?
+    if processed?
+      # force sync on initial edit call so that we have latest EP status.
+      # This helps prevent us editing something that recently closed upstream.
+      sync_end_product_establishments!
 
-    # force sync on initial edit call so that we have latest EP status.
-    # This helps prevent us editing something that recently closed upstream.
-    sync_end_product_establishments!
-
-    verify_contentions
+      verify_contentions
+    end
 
     # this will raise any errors for missing data
     ui_hash
@@ -249,18 +260,18 @@ class ClaimReview < DecisionReview
     processed_in_vbms? && !try(:decision_review_remanded?)
   end
 
-  private
-
-  def cleared_end_products
-    @cleared_end_products ||= end_product_establishments.select { |ep| ep.status_cleared?(sync: true) }
-  end
-
   def cleared_rating_ep?
     cleared_end_products.any?(&:rating?)
   end
 
   def cleared_nonrating_ep?
     cleared_end_products.any?(&:nonrating?)
+  end
+
+  private
+
+  def cleared_end_products
+    @cleared_end_products ||= end_product_establishments.select { |ep| ep.status_cleared?(sync: true) }
   end
 
   def verify_contentions

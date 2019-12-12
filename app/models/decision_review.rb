@@ -328,12 +328,6 @@ class DecisionReview < ApplicationRecord
     fail Caseflow::Error::MustImplementInSubclass
   end
 
-  private
-
-  def contestable_issue_generator
-    @contestable_issue_generator ||= ContestableIssueGenerator.new(self)
-  end
-
   def veteran_invalid_fields
     return unless intake
 
@@ -345,6 +339,12 @@ class DecisionReview < ApplicationRecord
     request_issues.includes(
       :decision_review, :contested_decision_issue
     ).active_or_ineligible_or_withdrawn.map(&:serialize)
+  end
+
+  private
+
+  def contestable_issue_generator
+    @contestable_issue_generator ||= ContestableIssueGenerator.new(self)
   end
 
   def can_contest_rating_issues?
