@@ -142,5 +142,8 @@
     "prettier": "1.17.1",
     "sinon": "^2.1.0",
     "webpack-dev-server": "^3.9.0"
+  },
+  "resolutions": {
+    "ws": "^1.1.5"
   }
 }

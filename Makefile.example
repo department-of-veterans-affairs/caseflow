@@ -98,7 +98,7 @@ etl-migrate:	## Migrate ETL database
 	DB=etl bundle exec rake db:migrate
 
 etl-test-prepare:
-	DB=etl bundle exec db:test:prepare
+	DB=etl bundle exec rake db:test:prepare
 
 etl-rollback:	## Rollback ETL database
 	DB=etl bundle exec rake db:rollback
