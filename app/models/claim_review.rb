@@ -24,7 +24,6 @@ class ClaimReview < DecisionReview
   self.abstract_class = true
 
   class NoEndProductsRequired < StandardError; end
-  class NotYetProcessed < StandardError; end
 
   class << self
     def find_by_uuid_or_reference_id!(claim_id)
@@ -45,20 +44,25 @@ class ClaimReview < DecisionReview
     super.merge(
       asyncJobUrl: async_job_url,
       benefitType: benefit_type,
-      payeeCode: payee_code,
-      hasClearedRatingEp: cleared_rating_ep?,
-      hasClearedNonratingEp: cleared_nonrating_ep?
-    )
+      payeeCode: payee_code
+    ).tap do |hash|
+      if processed?
+        hash.update(
+          hasClearedRatingEp: cleared_rating_ep?,
+          hasClearedNonratingEp: cleared_nonrating_ep?
+        )
+      end
+    end
   end
 
   def validate_prior_to_edit
-    fail NotYetProcessed unless processed?
+    if processed?
+      # force sync on initial edit call so that we have latest EP status.
+      # This helps prevent us editing something that recently closed upstream.
+      sync_end_product_establishments!
 
-    # force sync on initial edit call so that we have latest EP status.
-    # This helps prevent us editing something that recently closed upstream.
-    sync_end_product_establishments!
-
-    verify_contentions
+      verify_contentions
+    end
 
     # this will raise any errors for missing data
     ui_hash
