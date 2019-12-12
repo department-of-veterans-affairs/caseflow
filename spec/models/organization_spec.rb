@@ -74,8 +74,8 @@ describe Organization, :postgres do
           expect(subject).to eq true
           expect(org.reload.status).to eq status
           expect(org.status_updated_at.to_s).to eq Time.zone.now.to_s
+        end
       end
-    end
     end
   end
 

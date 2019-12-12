@@ -18,7 +18,7 @@ class Organization < ApplicationRecord
     Constants.USER_STATUSES.inactive.to_sym => Constants.ORGANIZATION_STATUSES.inactive
   }
 
-  default_scope { where(:status => Constants.ORGANIZATION_STATUSES.active) }
+  default_scope { where(status: Constants.ORGANIZATION_STATUSES.active) }
 
   class << self
     def assignable(task)
