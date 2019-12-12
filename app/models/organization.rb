@@ -18,7 +18,7 @@ class Organization < ApplicationRecord
     Constants.ORGANIZATION_STATUSES.inactive.to_sym => Constants.ORGANIZATION_STATUSES.inactive
   }
 
-  default_scope { where(status: Constants.ORGANIZATION_STATUSES.active) }
+  default_scope { active }
 
   class << self
     def assignable(task)
@@ -32,6 +32,16 @@ class Organization < ApplicationRecord
     def default_active_tab
       Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
     end
+  end
+
+  def active!
+    self.status_updated_at = Time.zone.now
+    super
+  end
+
+  def inactive!
+    self.status_updated_at = Time.zone.now
+    super
   end
 
   def can_bulk_assign_tasks?
@@ -129,10 +139,6 @@ class Organization < ApplicationRecord
 
   def ama_task_serializer
     WorkQueue::TaskSerializer
-  end
-
-  def update_status!(new_status)
-    update!(status: new_status, status_updated_at: Time.zone.now)
   end
 
   private
