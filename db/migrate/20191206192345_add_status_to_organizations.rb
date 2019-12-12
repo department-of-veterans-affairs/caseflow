@@ -7,6 +7,6 @@ class AddStatusToOrganizations < ActiveRecord::Migration[5.1]
 
     add_index :organizations, :status, algorithm: :concurrently
 
-     Organization.update_all(status: "active")
+     Organization.unscoped.update_all(status: "active")
   end
 end

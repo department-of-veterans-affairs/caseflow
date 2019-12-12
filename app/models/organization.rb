@@ -14,8 +14,8 @@ class Organization < ApplicationRecord
   before_save :clean_url
 
   enum status: {
-    Constants.USER_STATUSES.active.to_sym => Constants.ORGANIZATION_STATUSES.active,
-    Constants.USER_STATUSES.inactive.to_sym => Constants.ORGANIZATION_STATUSES.inactive
+    Constants.ORGANIZATION_STATUSES.active.to_sym => Constants.ORGANIZATION_STATUSES.active,
+    Constants.ORGANIZATION_STATUSES.inactive.to_sym => Constants.ORGANIZATION_STATUSES.inactive
   }
 
   default_scope { where(status: Constants.ORGANIZATION_STATUSES.active) }
