@@ -127,7 +127,6 @@ describe JudgeTask, :all_dbs do
   describe ".create" do
     context "creating a second JudgeDecisionReviewTask" do
       let(:root_task) { create(:root_task) }
-      let(:status) { Constants.TASK_STATUSES.assigned }
       let!(:jdrt) do
         create(:ama_judge_decision_review_task, appeal: root_task.appeal, parent: root_task, assigned_to: judge)
       end
