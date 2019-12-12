@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import moment from 'moment';
 import _ from 'lodash';
