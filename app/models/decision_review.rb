@@ -126,7 +126,7 @@ class DecisionReview < ApplicationRecord
       intakeUser: asyncable_user&.css_id,
       editIssuesUrl: caseflow_only_edit_issues_url,
       processedAt: establishment_processed_at,
-      relationships: veteran&.relationships&.map(&:ui_hash),
+      relationships: veteran&.relationships&.map(&:serialize),
       claimant: claimant_participant_id,
       veteranIsNotClaimant: veteran_is_not_claimant,
       receiptDate: receipt_date.to_formatted_s(:json_date),

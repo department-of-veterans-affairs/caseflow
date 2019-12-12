@@ -42,6 +42,14 @@ class VirtualHearing < ApplicationRecord
       (representative_email.nil? || representative_email_sent)
   end
 
+  def guest_link
+    "https://#{ENV['PEXIP_CLIENT_HOST']}/webapp/?conference=#{alias_name}&pin=#{guest_pin}&join=1&role=guest"
+  end
+
+  def host_link
+    "https://#{ENV['PEXIP_CLIENT_HOST']}/webapp/?conference=#{alias_name}&pin=#{host_pin}&join=1&role=host"
+  end
+
   private
 
   def assign_created_by_user
