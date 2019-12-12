@@ -5,6 +5,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
 import AppFrame from '../components/AppFrame';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_PATHS } from '../intake/constants';
 import { EditAddIssuesPage } from '../intake/pages/addIssues';
@@ -27,6 +28,16 @@ export default class IntakeEditFrame extends React.PureComponent {
 
   displayConfirmationMessage = (details) => {
     return `${details.veteran.name}'s claim review has been successfully edited. You can close this window.`;
+  }
+
+  displayNotEditableMessage = () => {
+    const { asyncJobUrl } = this.props.serverIntake;
+
+    return <React.Fragment>
+      Review not yet established in VBMS.
+      Check <Link href={asyncJobUrl}>the job page</Link> for details.
+      You may try to edit the review again once it has been established.
+    </React.Fragment>;
   }
 
   displayCanceledMessage = (details) => {
@@ -83,6 +94,13 @@ export default class IntakeEditFrame extends React.PureComponent {
                   component={EditAddIssuesPage} />
                 <PageRoute
                   exact
+                  path={PAGE_PATHS.NOT_EDITABLE}
+                  title="Edit Claim Issues | Caseflow Intake"
+                  component={() => {
+                    return <Message title="Review not editable" displayMessage={this.displayNotEditableMessage} />;
+                  }} />
+                <PageRoute
+                  exact
                   path={PAGE_PATHS.CANCEL_ISSUES}
                   title="Edit Claim Issues | Caseflow Intake"
                   component={() => {
@@ -136,6 +154,7 @@ IntakeEditFrame.propTypes = {
     veteran: PropTypes.object,
     formType: PropTypes.string,
     editIssuesUrl: PropTypes.string,
+    asyncJobUrl: PropTypes.string,
     hasClearedNonratingEp: PropTypes.bool,
     hasClearedRatingEp: PropTypes.bool
   }),

@@ -19,6 +19,6 @@ class RampIssue < ApplicationRecord
   end
 
   def serialize
-    ::RampIssueSerializer.new(self).serializable_hash[:data][:attributes]
+    Intake::RampIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
 end

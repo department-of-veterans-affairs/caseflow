@@ -8,14 +8,22 @@ describe RootTask, :postgres do
     subject { root_task.available_actions_unwrapper(user) }
 
     context "when user is a member of the Mail team" do
-      before { allow_any_instance_of(MailTeam).to receive(:user_has_access?).and_return(true) }
+      before { allow(user).to receive(:organizations).and_return([MailTeam.singleton]) }
 
       it "should return a list that includes only the create mail task" do
         expect(subject).to eq([root_task.build_action_hash(Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h, user)])
       end
     end
 
-    context "when user is not a member of the Mail team" do
+    context "when user is a member of the Mail team" do
+      before { allow(user).to receive(:organizations).and_return([LitigationSupport.singleton]) }
+
+      it "should return a list that includes only the create mail task" do
+        expect(subject).to eq([root_task.build_action_hash(Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h, user)])
+      end
+    end
+
+    context "when user is not a member of the Mail team or Litigation support" do
       it "should return an empty list" do
         expect(subject).to eq([])
       end

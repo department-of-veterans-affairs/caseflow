@@ -55,7 +55,7 @@ class RatingIssue
   end
 
   def serialize
-    ::RatingIssueSerializer.new(self).serializable_hash[:data][:attributes]
+    Intake::RatingIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def decision_issue
