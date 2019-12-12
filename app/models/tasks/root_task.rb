@@ -53,7 +53,7 @@ class RootTask < Task
   end
 
   def self.user_can_create_mail_task?(user)
-    user.organizations.any?(&:users_can_create_mail_task?)
+    user&.organizations&.any?(&:users_can_create_mail_task?)
   end
 
   def actions_available?(_user)
