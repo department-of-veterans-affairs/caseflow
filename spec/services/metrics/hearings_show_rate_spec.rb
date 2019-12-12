@@ -31,6 +31,6 @@ describe Metrics::HearingsShowRate, :postgres do
   subject { Metrics::HearingsShowRate.new(date_range).call }
 
   it do
-    expect(subject).to eq((disposition_counts[:held] - disposition_counts[:postponed]) / total_hearings)
+    expect(subject).to eq(disposition_counts[:held] / (total_hearings - disposition_counts[:postponed]))
   end
 end
