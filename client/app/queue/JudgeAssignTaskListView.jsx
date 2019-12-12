@@ -99,17 +99,13 @@ const mapStateToProps = (state) => {
   const {
     queue: {
       attorneysOfJudge
-    },
-    ui: {
-      featureToggles
     }
   } = state;
 
   return {
     unassignedTasksCount: judgeAssignTasksSelector(state).length,
     tasksByUserId: getTasksByUserId(state),
-    attorneysOfJudge,
-    featureToggles
+    attorneysOfJudge
   };
 };
 
