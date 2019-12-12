@@ -116,31 +116,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def ui_hash
-    {
-      veteran: {
-        name: veteran&.name&.formatted(:readable_short),
-        fileNumber: veteran_file_number,
-        formName: veteran&.name&.formatted(:form),
-        ssn: veteran&.ssn
-      },
-      intakeUser: asyncable_user&.css_id,
-      editIssuesUrl: caseflow_only_edit_issues_url,
-      processedAt: establishment_processed_at,
-      relationships: veteran&.relationships&.map(&:serialize),
-      claimant: claimant_participant_id,
-      veteranIsNotClaimant: veteran_is_not_claimant,
-      receiptDate: receipt_date.to_formatted_s(:json_date),
-      legacyOptInApproved: legacy_opt_in_approved,
-      legacyAppeals: serialized_legacy_appeals,
-      ratings: serialized_ratings,
-      requestIssues: request_issues_ui_hash,
-      decisionIssues: decision_issues.map(&:ui_hash),
-      activeNonratingRequestIssues: active_nonrating_request_issues.map(&:serialize),
-      contestableIssuesByDate: contestable_issues.map(&:serialize),
-      veteranValid: veteran&.valid?(:bgs),
-      veteranInvalidFields: veteran_invalid_fields,
-      processedInCaseflow: processed_in_caseflow?
-    }
+    Intake::DecisionReviewSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def caseflow_only_edit_issues_url
