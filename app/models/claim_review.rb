@@ -42,13 +42,7 @@ class ClaimReview < DecisionReview
   end
 
   def ui_hash
-    super.merge(
-      asyncJobUrl: async_job_url,
-      benefitType: benefit_type,
-      payeeCode: payee_code,
-      hasClearedRatingEp: cleared_rating_ep?,
-      hasClearedNonratingEp: cleared_nonrating_ep?
-    )
+    Intake::ClaimReviewSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def validate_prior_to_edit
