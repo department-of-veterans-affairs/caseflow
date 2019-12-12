@@ -142,3 +142,6 @@ Lint/UriEscapeUnescape:
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
+
+Style/TrailingCommaInLiteral:
+  Enabled: false
