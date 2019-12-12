@@ -31,10 +31,10 @@ describe Organization, :postgres do
     end
   end
 
-  describe ".status" do
-    context "upon creation" do
-      let(:org) { create(:organization) }
+  fdescribe ".status" do
+    let(:org) { create(:organization) }
 
+    context "upon creation" do
       it "has a default value of 'active'" do
         expect(org.status).to eq("active")
       end
@@ -50,29 +50,25 @@ describe Organization, :postgres do
       end
     end
 
+    context "with an invalid status" do
+      subject { org.update!(status: "invalid") }
+
+      it "fails and does not update the status_updated_at column" do
+        expect { subject }.to raise_error(ArgumentError)
+        expect(org.reload.status).not_to eq "invalid"
+        expect(org.status_updated_at).to eq nil
+      end
+    end
+
     context "updates status_updated_at at proper time" do
-      let(:org) { create(:organization) }
-
-      subject { org.update_status!(status) }
-
       before { Timecop.freeze(Time.zone.now) }
 
-      context "with an invalid status" do
-        let(:status) { "invalid" }
-
-        it "fails and does not update the status_updated_at column" do
-          expect { subject }.to raise_error(ArgumentError)
-          expect(org.reload.status).not_to eq status
-          expect(org.status_updated_at).to eq nil
-        end
-      end
-
       context "with a valid status" do
-        let(:status) { Constants.ORGANIZATION_STATUSES.inactive }
-
+        subject { org.inactive! }
+        
         it "succeeds and updates the status_updated_at column" do
           expect(subject).to eq true
-          expect(org.reload.status).to eq status
+          expect(org.reload.status).to eq Constants.ORGANIZATION_STATUSES.inactive
           expect(org.status_updated_at.to_s).to eq Time.zone.now.to_s
         end
       end
