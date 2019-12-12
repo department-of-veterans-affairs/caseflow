@@ -278,10 +278,7 @@ class Task < ApplicationRecord
     TaskActionHelper.build_hash(action, self, user)
   end
 
-  # A wrapper around actions_allowable that also disallows doing actions to on_hold tasks.
   def actions_available?(user)
-    return false if status == Constants.TASK_STATUSES.on_hold && !on_timed_hold?
-
     actions_allowable?(user)
   end
 

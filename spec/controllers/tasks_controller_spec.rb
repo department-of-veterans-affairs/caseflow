@@ -29,9 +29,12 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       let!(:task12) { create(:ama_attorney_task, :in_progress, assigned_to: user) }
       let!(:task13) { create(:ama_attorney_task, :completed, assigned_to: user) }
       let!(:task16) { create(:ama_attorney_task, :completed_in_the_past, assigned_to: user) }
-      let!(:task14) { create(:ama_attorney_task, :on_hold, assigned_to: user) }
+      let!(:task14) { create(:ama_attorney_task, assigned_to: user) }
 
-      before { task3.update!(status: Constants.TASK_STATUSES.completed) }
+      before do
+        task3.update!(status: Constants.TASK_STATUSES.completed)
+        task14.update!(status: Constants.TASK_STATUSES.on_hold)
+      end
 
       it "should process the request successfully" do
         get :index, params: { user_id: user.id, role: "attorney" }

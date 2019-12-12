@@ -171,7 +171,7 @@ RSpec.feature "Attorney queue", :all_dbs do
         )
       end
 
-      before { colocated_org_task.children.first.update!(assigned_to: attorney) }
+      before { colocated_org_task.children.first.update!(assigned_to: attorney, status: :on_hold) }
 
       it "displays a single row for the appeal in the attorney's on hold tab" do
         visit("/queue")

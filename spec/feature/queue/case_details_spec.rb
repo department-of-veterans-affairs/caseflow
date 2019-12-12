@@ -667,6 +667,7 @@ RSpec.feature "Case details", :all_dbs do
       let!(:on_hold_task) do
         create(
           :colocated_task,
+          :on_hold,
           assigned_to: colocated_user,
           assigned_by: attorney_user
         )
