@@ -31,7 +31,7 @@ describe Organization, :postgres do
     end
   end
 
-  fdescribe ".status" do
+  describe ".status" do
     let(:org) { create(:organization) }
 
     context "upon creation" do
@@ -65,7 +65,7 @@ describe Organization, :postgres do
 
       context "with a valid status" do
         subject { org.inactive! }
-        
+
         it "succeeds and updates the status_updated_at column" do
           expect(subject).to eq true
           expect(org.reload.status).to eq Constants.ORGANIZATION_STATUSES.inactive
