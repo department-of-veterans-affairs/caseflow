@@ -134,35 +134,26 @@ describe JudgeTask, :all_dbs do
 
       subject { JudgeDecisionReviewTask.create!(appeal: root_task.appeal, parent: root_task, assigned_to: judge) }
 
-      context "when an open (assigned) JudgeDecisionReviewTask already exists" do
-        it "should fail creation of second JudgeDecisionReviewTask" do
-          expect { subject }.to raise_error(Caseflow::Error::DuplicateUserTask)
-          expect(root_task.appeal.tasks.count).to eq(2), root_task.appeal.tasks.to_a.to_s
+      Task.open_statuses.each do |o_status|
+        context "when an open (#{o_status}) JudgeDecisionReviewTask already exists" do
+          it "should fail creation of second JudgeDecisionReviewTask" do
+            expect(root_task.appeal.tasks.count).to eq(2), root_task.appeal.tasks.to_a.to_s
+            jdrt.update(status: o_status)
+            expect { subject }.to raise_error(Caseflow::Error::DuplicateUserTask)
+            expect(root_task.appeal.tasks.count).to eq(2), root_task.appeal.tasks.to_a.to_s
+          end
         end
       end
 
-      context "when an open (in_progress) JudgeDecisionReviewTask already exists" do
-        it "should fail creation of second JudgeDecisionReviewTask" do
-          jdrt.update(status: Constants.TASK_STATUSES.in_progress)
-          expect { subject }.to raise_error(Caseflow::Error::DuplicateUserTask)
-          expect(root_task.appeal.tasks.count).to eq(2), root_task.appeal.tasks.to_a.to_s
-        end
-      end
-
-      context "when an open (on_hold) JudgeDecisionReviewTask already exists" do
-        it "should fail creation of second JudgeDecisionReviewTask" do
-          jdrt.update(status: Constants.TASK_STATUSES.on_hold)
-          expect { subject }.to raise_error(Caseflow::Error::DuplicateUserTask)
-          expect(root_task.appeal.tasks.count).to eq(2), root_task.appeal.tasks.to_a.to_s
-        end
-      end
-
-      context "when a closed JudgeDecisionReviewTask exists" do
-        it "should create new active JudgeDecisionReviewTask" do
-          jdrt.update(status: Task.closed_statuses.sample)
-          expect { subject }.to_not raise_error
-          expect(root_task.appeal.tasks.count).to eq(3), root_task.appeal.tasks.to_a.to_s
-          expect(root_task.appeal.tasks.map(&:type).select { |t| t == JudgeDecisionReviewTask.name }.count).to eq(2)
+      Task.closed_statuses.each do |c_status|
+        context "when a closed (#{c_status}) JudgeDecisionReviewTask exists" do
+          it "should create new active JudgeDecisionReviewTask" do
+            jdrt.update(status: c_status)
+            expect(root_task.appeal.tasks.count).to eq(2), root_task.appeal.tasks.to_a.to_s
+            expect { subject }.to_not raise_error
+            expect(root_task.appeal.tasks.count).to eq(3), root_task.appeal.tasks.to_a.to_s
+            expect(root_task.appeal.tasks.where(type: JudgeDecisionReviewTask.name).count).to eq(2)
+          end
         end
       end
     end
