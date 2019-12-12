@@ -495,7 +495,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     end
   end
 
-  describe "GET appealls/:id/task_tree" do
+  describe "GET appeals/:id/task_tree" do
     let(:appeal) { create_legacy_appeal_with_hearings }
 
     before do
