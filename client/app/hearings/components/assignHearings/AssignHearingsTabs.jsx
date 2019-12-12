@@ -19,7 +19,6 @@ import { HearingTime, HearingDocketTag, AppealDocketTag,
   SuggestedHearingLocation, HearingAppellantName, CaseDetailsInformation } from './AssignHearingsFields';
 
 import PowerOfAttorneyDetail from '../../../queue/PowerOfAttorneyDetail';
-import { getAppealValue } from '../../../queue/QueueActions';
 
 const UPCOMING_HEARINGS_TAB_NAME = 'upcomingHearings';
 const AMA_APPEALS_TAB_NAME = 'amaAppeals';
@@ -384,8 +383,4 @@ const mapStateToProps = (state) => {
   return { powerOfAttorneyNamesForAppeals };
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  getAppealValue
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(AssignHearingsTabs);
+export default connect(mapStateToProps)(AssignHearingsTabs);
