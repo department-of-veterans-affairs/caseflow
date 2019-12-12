@@ -3,7 +3,7 @@
 describe Task, :all_dbs do
   context "includes PrintsTaskTree concern" do
     describe ".structure" do
-      let(:root_task) { create(:root_task, :on_hold) }
+      let(:root_task) { create(:root_task) }
       let!(:bva_task) { create(:bva_dispatch_task, :in_progress, parent: root_task) }
       let(:judge_task) { create(:ama_judge_task, :completed, parent: root_task) }
       let!(:attorney_task) { create(:ama_attorney_task, :completed, parent: judge_task) }
@@ -37,7 +37,7 @@ describe Task, :all_dbs do
   end
 
   describe ".when_child_task_completed" do
-    let(:task) { create(:task, :on_hold, type: Task.name) }
+    let(:task) { create(:task, type: Task.name) }
     let(:child) { create(:task, :completed, type: Task.name, parent: task) }
 
     subject { task.when_child_task_completed(child) }
@@ -75,7 +75,7 @@ describe Task, :all_dbs do
       end
 
       context "when task is already closed" do
-        let!(:task) { create(:task, :on_hold, type: Task.name) }
+        let!(:task) { create(:task, type: Task.name) }
         let!(:child) { create(:task, :completed, type: Task.name, parent: task) }
 
         before { task.update!(status: Constants.TASK_STATUSES.completed) }
@@ -115,7 +115,7 @@ describe Task, :all_dbs do
 
     context "when on_hold task is assigned to an organization" do
       let(:organization) { Organization.create!(name: "Other organization", url: "other") }
-      let(:task) { create(:task, :on_hold, type: Task.name, assigned_to: organization) }
+      let(:task) { create(:task, type: Task.name, assigned_to: organization) }
 
       context "when task has no child tasks" do
         let(:child) { nil }
@@ -147,7 +147,7 @@ describe Task, :all_dbs do
       end
 
       context "when task is already closed" do
-        let!(:task) { create(:task, :on_hold, type: Task.name, assigned_to: organization) }
+        let!(:task) { create(:task, type: Task.name, assigned_to: organization) }
         let!(:child) { create(:task, :completed, type: Task.name, parent: task) }
 
         before { task.update!(status: Constants.TASK_STATUSES.completed) }
@@ -828,36 +828,6 @@ describe Task, :all_dbs do
       task.update!(status: Constants.TASK_STATUSES.cancelled)
       task.task_timers.each do |task_timer|
         expect(task_timer.canceled_at).not_to eq(nil)
-      end
-    end
-  end
-
-  describe ".old_style_hold_expired?" do
-    subject { task.old_style_hold_expired? }
-
-    context "when a task is on an active old-style hold" do
-      let(:task) { create(:task, :on_hold) }
-
-      it "recognizes that the old style hold has not expired" do
-        expect(subject).to eq(false)
-      end
-    end
-
-    context "when a task has completed an old-style hold" do
-      let(:task) { create(:task, :on_hold) }
-
-      it "recognizes that the old style hold has expired" do
-        task.update(placed_on_hold_at: 200.days.ago)
-        expect(subject).to eq(true)
-      end
-    end
-
-    context "when a task has a completed old-style hold as well as a new timed hold" do
-      let(:task) { create(:task, :on_hold, placed_on_hold_at: 200.days.ago) }
-      before { TimedHoldTask.create_from_parent(task, days_on_hold: 16) }
-
-      it "does not recognize that the task has completed the old-style hold" do
-        expect(subject).to eq(false)
       end
     end
   end

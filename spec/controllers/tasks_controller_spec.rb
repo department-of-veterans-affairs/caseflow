@@ -621,17 +621,6 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       expect(response_body.first["attributes"]["started_at"]).to_not be nil
     end
 
-    it "updates status to on_hold" do
-      patch :update, params: {
-        task: { status: Constants.TASK_STATUSES.on_hold, on_hold_duration: 60 },
-        id: admin_action.id
-      }
-      expect(response.status).to eq 200
-      response_body = JSON.parse(response.body)["tasks"]["data"]
-      expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
-      expect(response_body.first["attributes"]["placed_on_hold_at"]).to_not be nil
-    end
-
     it "updates status to completed" do
       expect(admin_action.versions.length).to be 0
       expect(admin_action.parent.versions.length).to be 1

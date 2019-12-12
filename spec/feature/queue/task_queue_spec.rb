@@ -965,7 +965,6 @@ feature "Task queue", :all_dbs do
       let!(:orig_judge_task) do
         create(
           :ama_judge_decision_review_task,
-          :on_hold,
           assigned_to: judge_user,
           appeal: appeal,
           parent: root_task

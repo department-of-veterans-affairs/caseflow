@@ -89,12 +89,6 @@ class TasksController < ApplicationController
   # {
   #   assigned_to_id: 23
   # }
-  # To update colocated task
-  # e.g, for ama/legacy appeal => PATCH /tasks/:id,
-  # {
-  #   status: :on_hold,
-  #   on_hold_duration: "something"
-  # }
   def update
     tasks = task.update_from_params(update_params, current_user)
     tasks.each { |t| return invalid_record_error(t) unless t.valid? }
@@ -224,7 +218,6 @@ class TasksController < ApplicationController
   def update_params
     params.require("task").permit(
       :status,
-      :on_hold_duration,
       :assigned_to_id,
       :instructions,
       reassign: [:assigned_to_id, :assigned_to_type, :instructions],
