@@ -9,7 +9,6 @@ describe TaskTimer, :postgres do
     it "becomes eligible to attempt in the future" do
       expect(TaskTimer.requires_processing.count).to eq 0
 
-      # TODO:
       task = create(:generic_task, :on_hold)
       TaskTimer.new(task: task).submit_for_processing!(delay: Time.zone.now + 24.hours)
 
