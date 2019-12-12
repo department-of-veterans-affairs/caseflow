@@ -6,7 +6,7 @@
 
 class Metrics::HearingsShowRate < Metrics::Base
   def call
-    (hearings_by_disposition["held"] - hearings_by_disposition["postponed"]) / hearings.count.to_f
+    hearings_by_disposition["held"] / (hearings.count.to_f - hearings_by_disposition["postponed"].to_f)
   end
 
   def name
