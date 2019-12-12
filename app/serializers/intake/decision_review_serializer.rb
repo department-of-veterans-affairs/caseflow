@@ -2,6 +2,7 @@
 
 class Intake::DecisionReviewSerializer
   include FastJsonapi::ObjectSerializer
+  set_key_transform :camel_lower
 
   attribute :claimant, &:claimant_participant_id
   attribute :veteranIsNotClaimant, &:veteran_is_not_claimant
