@@ -265,6 +265,10 @@ class User < ApplicationRecord
     organizations_users.select(&:admin?).map(&:organization)
   end
 
+  def administered_judge_teams
+    administered_teams.select { |team| team.is_a?(JudgeTeam) }
+  end
+
   def user_info_for_idt
     self.class.user_repository.user_info_for_idt(css_id)
   end

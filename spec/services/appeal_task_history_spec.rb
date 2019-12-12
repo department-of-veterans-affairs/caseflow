@@ -8,7 +8,7 @@ describe AppealTaskHistory, :postgres do
   let(:user) { create(:user) }
 
   before do
-    PaperTrail.whodunnit = user.id
+    PaperTrail.request.whodunnit = user.id
     Timecop.freeze(Time.zone.now) # don't bother tracking timestamp changes in specs
   end
 
