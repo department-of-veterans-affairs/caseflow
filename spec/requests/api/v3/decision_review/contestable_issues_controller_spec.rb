@@ -27,13 +27,13 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
       expect(response).to have_http_status(:ok)
     end
 
-    it "should return a list of issues" do
+    fit "should return a list of issues in JSONAPI format" do
       Generators::Rating.build(
         participant_id: veteran.ptcpnt_id,
         profile_date: Time.zone.today - 10.days # must be before receipt_date
       ) # this is a contestable_rating_issues
       get_issues
-      issues = JSON.parse(response.body)
+      issues = JSON.parse(response.body)[:data]
       expect(issues).to be_an Array
       expect(issues.count > 0).to be true
     end
