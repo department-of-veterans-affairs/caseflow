@@ -26,11 +26,29 @@ describe ETL::Builder, :etl, :all_dbs do
 
   describe "#last_built" do
     it "returns timestamp of last build" do
-      builder = described_class.new
-      builder.full
+      Timecop.freeze(Time.zone.now) do
+        builder = described_class.new
+        built = builder.full
 
-      # use .to_s comparison since Rails.cache does not store .milliseconds
-      expect(builder.last_built.to_s).to eq(Time.zone.now.to_s)
+        # use .to_s comparison since Rails.cache does not store .milliseconds
+        expect(builder.last_built.to_s).to eq(Time.zone.now.to_s)
+        expect(built).to eq(75)
+      end
+
+      hour_from_now = Time.zone.now + 1.hour
+
+      Timecop.freeze(hour_from_now) do
+        builder = described_class.new
+
+        expect(builder.last_built).to eq((Time.zone.now - 1.hour).to_s)
+
+        Appeal.last.touch # at least one thing changed
+
+        built = builder.incremental
+
+        expect(builder.last_built.to_s).to eq(hour_from_now.to_s)
+        expect(built).to be > 0
+      end
     end
   end
 
@@ -38,7 +56,7 @@ describe ETL::Builder, :etl, :all_dbs do
     subject { described_class.new.full }
 
     context "BVA status distribution" do
-      it "has expected distribution" do
+      it "syncs all records" do
         described_class::ETL_KLASSES.each { |klass| expect("ETL::#{klass}".constantize.all.count).to eq(0) }
 
         built = subject
@@ -57,7 +75,7 @@ describe ETL::Builder, :etl, :all_dbs do
     subject { described_class.new(since: 2.days.ago).incremental }
 
     context "BVA status distribution" do
-      it "has expected distribution" do
+      it "syncs only records that have changed" do
         described_class::ETL_KLASSES.each { |klass| expect("ETL::#{klass}".constantize.all.count).to eq(0) }
 
         built = subject
