@@ -34,6 +34,7 @@ export default class OrganizationUsers extends React.PureComponent {
 
   loadingPromise = () => {
     return ApiUtil.get(`/organizations/${this.props.organization}/users`).then((response) => {
+      console.log(response)
       this.setState({
         organizationName: response.body.organization_name,
         organizationUsers: response.body.organization_users.data,
@@ -177,7 +178,33 @@ export default class OrganizationUsers extends React.PureComponent {
     const listOfUsers = this.state.organizationUsers.map((user) => {
       return <li key={user.id}>{this.formatName(user)} &nbsp;
         <span {...buttonPaddingStyle}>
-          { !user.attributes.admin && <Button
+          { user.attributes.is_judge && <Button
+            name={COPY.USER_MANAGEMENT_JUDGE_USER_LABEL_TEXT}
+            id={`Judge-user-${user.id}`}
+            classNames={['usa-button-primary']}
+            loading={this.state.changingAdminRights[user.id]}
+            /*onClick={this.modifyAdminRights(user, true)}*/ /> }
+          { !user.attributes.is_judge && !user.attributes.is_attorney && <Button
+            name={COPY.USER_MANAGEMENT_ADD_ATTORNEY_USER_BUTTON_TEXT}
+            id={`Add-Attorney-${user.id}`}
+            classNames={['usa-button-primary']}
+            loading={this.state.changingAdminRights[user.id]}
+            /*onClick={this.modifyAdminRights(user, true)}*/ /> }
+          { user.attributes.is_attorney && <Button
+            name={COPY.USER_MANAGEMENT_ATTORNEY_USER_BUTTON_TEXT}
+            id={`Attorney-user-${user.id}`}
+            classNames={['usa-button-primary']}
+            loading={this.state.changingAdminRights[user.id]}
+            /*onClick={this.modifyAdminRights(user, true)}*/ /> }
+            </span>
+            { user.attributes.is_attorney && <Button
+            name={COPY.USER_MANAGEMENT_REMOVE_ATTORNEY_USER_BUTTON_TEXT}
+            id={`Remove-Attorney-user-${user.id}`}
+            classNames={['usa-button-secondary']}
+            loading={this.state.changingAdminRights[user.id]}
+            /*onClick={this.modifyAdminRights(user, true)}*/ /> }
+            <span {...buttonPaddingStyle}>
+            { !user.attributes.admin && <Button
             name={COPY.USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT}
             id={`Make-user-admin-${user.id}`}
             classNames={['usa-button-primary']}
@@ -189,7 +216,7 @@ export default class OrganizationUsers extends React.PureComponent {
             classNames={['usa-button-secondary']}
             loading={this.state.changingAdminRights[user.id]}
             onClick={this.modifyAdminRights(user, false)} /> }
-        </span>
+            </span>
         <Button
           name={COPY.USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT}
           id={`Remove-user-${user.id}`}
