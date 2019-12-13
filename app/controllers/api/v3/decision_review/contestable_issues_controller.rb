@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseController
-  before_action :set_veteran_from_header, :set_receipt_date_from_header
+  before_action :set_veteran_from_header
 
   def index
-    if @receipt_date < standin_claim_review.ama_activation_date || Time.zone.today < @receipt_date
+    @receipt_date = request.headers["receiptDate"]
+    if !@receipt_date.is_a?(Date) ||@receipt_date < standin_claim_review.ama_activation_date || Time.zone.today < @receipt_date
       bad_receipt_date
+      return
     end
-
     issues = ContestableIssueGenerator.new(standin_claim_review).contestable_issues
     # this generates this error in UAT:
     #  BGS::PublicError (Logon ID APIUSER Not Found in the Benefits Gateway Service (BGS). Contact your
@@ -37,12 +38,6 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
         title: "Veteran not found"
       )
     end
-  end
-
-  def set_receipt_date_from_header
-    @receipt_date = Time.zone.iso8601(request.headers["receiptDate"])
-  rescue ArgumentError
-    bad_receipt_date
   end
 
   def bad_receipt_date
