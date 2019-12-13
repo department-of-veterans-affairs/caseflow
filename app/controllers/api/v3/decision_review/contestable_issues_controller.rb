@@ -13,7 +13,7 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
     # this generates this error in UAT:
     #  BGS::PublicError (Logon ID APIUSER Not Found in the Benefits Gateway Service (BGS). Contact your
     #     ISO if you need assistance gaining access to BGS.)
-    render json: issues.collect { |issue| contestable_issue_data(issue) }
+    render json: Api::V3::ContestableIssueSerializer.new(issues)
   end
 
   private
@@ -46,29 +46,5 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
       code: :bad_receipt_date,
       title: "Bad receipt date"
     )
-  end
-
-  def contestable_issue_data(contestable_issue)
-    latest_issues_in_chain =
-      contestable_issue.latest_contestable_issues.collect do |latest|
-        { id: latest.decision_issue&.id, approxDecisionDate: latest.approx_decision_date }
-      end
-    attributes = {
-      ratingIssueId: contestable_issue.rating_issue_reference_id,
-      ratingIssueProfileDate: contestable_issue.rating_issue_profile_date,
-      ratingIssueDiagnosticCode: contestable_issue.rating_issue_diagnostic_code,
-      description: contestable_issue.description,
-      isRating: contestable_issue.is_rating,
-      latestIssuesInChain: latest_issues_in_chain,
-      decisionIssueId: contestable_issue.decision_issue&.id,
-      ratingDecisionId: contestable_issue.rating_decision_reference_id,
-      approxDecisionDate: contestable_issue.approx_decision_date,
-      rampClaimId: contestable_issue.ramp_claim_id,
-      titleOfActiveReview: contestable_issue.title_of_active_review,
-      sourceReviewType: contestable_issue.source_review_type,
-      timely: contestable_issue.timely?
-    }.compact
-
-    { type: "ContestableIssue", attributes: attributes }
   end
 end

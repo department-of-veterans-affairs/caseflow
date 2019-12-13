@@ -23,7 +23,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
       )
     end
 
-    it "should return a 200 OK" do
+    fit "should return a 200 OK" do
       get_issues
       expect(response).to have_http_status(:ok)
     end
