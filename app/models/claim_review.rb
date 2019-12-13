@@ -40,20 +40,8 @@ class ClaimReview < DecisionReview
     end
   end
 
-  def ui_hash
+  def serialize
     Intake::ClaimReviewSerializer.new(self).serializable_hash[:data][:attributes]
-    # super.merge(
-    #   asyncJobUrl: async_job_url,
-    #   benefitType: benefit_type,
-    #   payeeCode: payee_code
-    # ).tap do |hash|
-    #   if processed?
-    #     hash.update(
-    #       hasClearedRatingEp: cleared_rating_ep?,
-    #       hasClearedNonratingEp: cleared_nonrating_ep?
-    #     )
-    #   end
-    # end
   end
 
   def validate_prior_to_edit
@@ -66,7 +54,7 @@ class ClaimReview < DecisionReview
     end
 
     # this will raise any errors for missing data
-    ui_hash
+    serialize
   end
 
   def async_job_url

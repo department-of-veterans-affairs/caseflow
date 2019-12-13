@@ -115,7 +115,7 @@ class DecisionReview < ApplicationRecord
     request_issues.withdrawn.map(&:withdrawal_date).compact.max
   end
 
-  def ui_hash
+  def serialize
     Intake::DecisionReviewSerializer.new(self).serializable_hash[:data][:attributes]
   end
 

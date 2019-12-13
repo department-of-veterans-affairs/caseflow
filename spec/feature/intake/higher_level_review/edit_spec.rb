@@ -445,7 +445,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
     let(:legacy_opt_in_approved) { true }
 
-    fit "does not apply untimely check to legacy opt-in" do
+    it "does not apply untimely check to legacy opt-in" do
       visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
 
       click_intake_add_issue
