@@ -37,7 +37,7 @@ class ETL::Builder
   end
 
   def last_built
-    Time.parse(checkpoint)
+    Time.zone.parse(checkpoint)
   end
 
   private
