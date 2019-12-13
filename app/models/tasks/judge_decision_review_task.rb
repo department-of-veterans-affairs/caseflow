@@ -26,6 +26,7 @@ class JudgeDecisionReviewTask < JudgeTask
 
     if appeal.tasks.open.where(
       type: type,
+      assigned_to: assigned_to,
       parent: parent
     ).any? && assigned_to.is_a?(User)
       fail(
