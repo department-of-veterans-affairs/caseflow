@@ -4,7 +4,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
   before { FeatureToggle.enable!(:api_v3) }
   after { FeatureToggle.disable!(:api_v3) }
 
-  fdescribe "#index" do
+  describe "#index" do
     let(:veteran) { create(:veteran) }
 
     let!(:api_key) do
@@ -12,7 +12,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
     end
 
     def get_issues(veteran_id: veteran.file_number, receipt_date: Time.zone.today)
-      date = receipt_date.strftime("%Y-%m-%d") if receipt_date.is_a? Time.zone
+      date = receipt_date.strftime("%Y-%m-%d") if receipt_date.is_a? Time
       get(
         "/api/v3/decision_review/contestable_issues",
         headers: {
