@@ -15,8 +15,7 @@ class TimedHoldTask < Task
   def self.create_from_parent(parent_task, days_on_hold:, assigned_by: nil, instructions: nil)
     multi_transaction do
       if parent_task.is_a?(Task)
-        # Set on_hold_duration to nil so that we override any old-style holds when we create a new timed hold.
-        parent_task.update_with_instructions(instructions: instructions, on_hold_duration: nil)
+        parent_task.update_with_instructions(instructions: instructions)
       end
       create!(
         appeal: parent_task.appeal,

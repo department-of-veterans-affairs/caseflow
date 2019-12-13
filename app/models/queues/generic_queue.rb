@@ -7,7 +7,7 @@ class GenericQueue
   end
 
   def tasks
-    (relevant_tasks + relevant_attorney_tasks).each(&:update_if_hold_expired!)
+    (relevant_tasks + relevant_attorney_tasks)
   end
 
   private

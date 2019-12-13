@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import moment from 'moment';
 import _ from 'lodash';
@@ -16,6 +17,8 @@ import { getIndexOfDocketLine, docketCutoffLineStyle } from './AssignHearingsDoc
 import { HearingTime, HearingDocketTag, AppealDocketTag,
   SuggestedHearingLocation, HearingAppellantName, CaseDetailsInformation } from './AssignHearingsFields';
 
+import PowerOfAttorneyDetail from '../../../queue/PowerOfAttorneyDetail';
+
 const UPCOMING_HEARINGS_TAB_NAME = 'upcomingHearings';
 const AMA_APPEALS_TAB_NAME = 'amaAppeals';
 const LEGACY_APPEALS_TAB_NAME = 'legacyAppeals';
@@ -30,8 +33,6 @@ const NoUpcomingHearingDayMessage = () => (
 );
 
 const AvailableVeteransTable = ({ rows, columns, selectedHearingDay, style = {} }) => {
-  let removeTimeColumn = _.slice(columns, 0, -1);
-
   if (_.isNil(selectedHearingDay)) {
     return <div><NoUpcomingHearingDayMessage /></div>;
   }
@@ -48,7 +49,7 @@ const AvailableVeteransTable = ({ rows, columns, selectedHearingDay, style = {} 
   }
 
   return <span {...style}>
-    <AssignHearingsTable columns={removeTimeColumn} rowObjects={rows} />
+    <AssignHearingsTable columns={columns} rowObjects={rows} />
   </span>;
 };
 
@@ -84,7 +85,7 @@ UpcomingHearingsTable.propTypes = {
   })
 };
 
-export default class AssignHearingsTabs extends React.Component {
+export class AssignHearingsTabs extends React.Component {
 
   isAmaAppeal = (appeal) => {
     return appeal.attributes.appealType === 'Appeal';
@@ -144,8 +145,9 @@ export default class AssignHearingsTabs extends React.Component {
       }),
       docketNumber: <AppealDocketTag appeal={appeal} />,
       suggestedLocation: this.getSuggestedHearingLocation(appeal.attributes.availableHearingLocations),
-      time: null,
-      externalId: appeal.attributes.externalAppealId
+      externalId: appeal.attributes.externalAppealId,
+      // The powerOfAttorney field is populated using the appeal's external id.
+      powerOfAttorney: appeal.attributes.externalAppealId
     }));
   };
 
@@ -165,78 +167,113 @@ export default class AssignHearingsTabs extends React.Component {
   };
 
   tabWindowColumns = (tab) => {
-    const { selectedRegionalOffice, selectedHearingDay } = this.props;
+    // Remove `displayPowerOfAttorneyColumn` when pagination lands (#11757)
+    const { selectedRegionalOffice, selectedHearingDay, displayPowerOfAttorneyColumn } = this.props;
 
     if (_.isNil(selectedHearingDay)) {
       return [];
     }
 
-    let locationColumn;
+    const columns = [
+      {
+        header: '',
+        align: 'left',
+        valueName: 'number'
+      },
+      {
+        header: 'Case Details',
+        align: 'left',
+        valueName: 'caseDetails',
+        valueFunction: (row) => <Link
+          name={row.externalId}
+          href={(() => {
+            const date = moment(selectedHearingDay.scheduledFor).format('YYYY-MM-DD');
+            const qry = `?hearingDate=${date}&regionalOffice=${selectedRegionalOffice}`;
+
+            return `/queue/appeals/${row.externalId}/${qry}`;
+          })()}>
+          {row.caseDetails}
+        </Link>
+      },
+      {
+        header: 'Type(s)',
+        align: 'left',
+        valueName: 'type'
+      },
+      {
+        header: 'Docket Number',
+        align: 'left',
+        valueName: 'docketNumber'
+      }
+    ];
 
     if (tab === UPCOMING_HEARINGS_TAB_NAME) {
-      locationColumn = {
-        name: 'Hearing Location',
-        header: 'Hearing Location',
-        align: 'left',
-        columnName: 'hearingLocation',
-        valueName: 'hearingLocation',
-        label: 'Filter by location',
-        anyFiltersAreSet: true,
-        enableFilter: true,
-        enableFilterTextTransform: false
-      };
+      columns.push(
+        {
+          name: 'Hearing Location',
+          header: 'Hearing Location',
+          align: 'left',
+          columnName: 'hearingLocation',
+          valueName: 'hearingLocation',
+          label: 'Filter by location',
+          anyFiltersAreSet: true,
+          enableFilter: true,
+          enableFilterTextTransform: false
+        },
+        {
+          header: 'Time',
+          align: 'left',
+          valueName: 'time'
+        }
+      );
     } else {
-      locationColumn = {
-        name: 'Suggested Location',
-        header: 'Suggested Location',
-        align: 'left',
-        columnName: 'suggestedLocation',
-        valueFunction: (row) => <SuggestedHearingLocation
-          suggestedLocation={row.suggestedLocation} format={this.formatSuggestedHearingLocation} />,
-        label: 'Filter by location',
-        filterValueTransform: this.formatSuggestedHearingLocation,
-        anyFiltersAreSet: true,
-        enableFilter: true,
-        enableFilterTextTransform: false
-      };
+      columns.push(
+        {
+          name: 'Suggested Location',
+          header: 'Suggested Location',
+          align: 'left',
+          columnName: 'suggestedLocation',
+          valueFunction: (row) => (
+            <SuggestedHearingLocation
+              suggestedLocation={row.suggestedLocation}
+              format={this.formatSuggestedHearingLocation}
+            />
+          ),
+          label: 'Filter by location',
+          filterValueTransform: this.formatSuggestedHearingLocation,
+          anyFiltersAreSet: true,
+          enableFilter: true,
+          enableFilterTextTransform: false
+        }
+      );
+
+      // Put this in the `push` above when pagination lands (#11757)
+      if (displayPowerOfAttorneyColumn) {
+        columns.push(
+          {
+            name: 'Power of Attorney',
+            header: 'Power of Attorney (POA)',
+            columnName: 'powerOfAttorney',
+            valueName: 'powerOfAttorney',
+            valueFunction: (row) => (
+              <PowerOfAttorneyDetail
+                key={`poa-for-${row.externalId}`}
+                appealId={row.externalId}
+                displayNameOnly
+              />
+            ),
+            enableFilter: true,
+            filterValueTransform: (appealExternalId) => {
+              const { powerOfAttorneyNamesForAppeals } = this.props;
+
+              return powerOfAttorneyNamesForAppeals[appealExternalId];
+            }
+          }
+        );
+      }
     }
 
-    return [{
-      header: '',
-      align: 'left',
-      valueName: 'number'
-    },
-    {
-      header: 'Case details',
-      align: 'left',
-      valueName: 'caseDetails',
-      valueFunction: (row) => <Link
-        name={row.externalId}
-        href={(() => {
-          const date = moment(selectedHearingDay.scheduledFor).format('YYYY-MM-DD');
-          const qry = `?hearingDate=${date}&regionalOffice=${selectedRegionalOffice}`;
-
-          return `/queue/appeals/${row.externalId}/${qry}`;
-        })()}>
-        {row.caseDetails}
-      </Link>
-    },
-    {
-      header: 'Type(s)',
-      align: 'left',
-      valueName: 'type'
-    },
-    {
-      header: 'Docket number',
-      align: 'left',
-      valueName: 'docketNumber'
-    },
-    locationColumn,
-    {
-      header: 'Time',
-      align: 'left',
-      valueName: 'time'
-    }];
+    return columns;
   }
 
   amaDocketCutoffLineStyle = (appeals) => {
@@ -310,7 +347,10 @@ const appealPropTypes = PropTypes.shape({
 });
 
 AssignHearingsTabs.propTypes = {
-  appealsReadyForHearing: PropTypes.arrayOf(appealPropTypes),
+  appealsReadyForHearing: PropTypes.oneOfType([
+    PropTypes.arrayOf(appealPropTypes),
+    PropTypes.object
+  ]),
   selectedHearingDay: PropTypes.shape({
     hearings: PropTypes.object,
     id: PropTypes.number,
@@ -322,5 +362,24 @@ AssignHearingsTabs.propTypes = {
     totalSlots: PropTypes.number
   }),
   selectedRegionalOffice: PropTypes.string,
-  room: PropTypes.string
+  room: PropTypes.string,
+  // Appeal ID => Attorney Name Array
+  powerOfAttorneyNamesForAppeals: PropTypes.objectOf(PropTypes.string),
+  // Remove when pagination lands (#11757)
+  displayPowerOfAttorneyColumn: PropTypes.bool
 };
+
+AssignHearingsTabs.defaultProps = {
+  powerOfAttorneyNamesForAppeals: {}
+};
+
+const mapStateToProps = (state) => {
+  const powerOfAttorneyNamesForAppeals = _.mapValues(
+    _.get(state, 'queue.appealDetails', {}),
+    (val) => _.get(val, 'powerOfAttorney.representative_name')
+  );
+
+  return { powerOfAttorneyNamesForAppeals };
+};
+
+export default connect(mapStateToProps)(AssignHearingsTabs);
