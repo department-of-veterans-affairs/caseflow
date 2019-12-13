@@ -20,6 +20,18 @@ describe ETL::Builder, :etl, :all_dbs do
     Timecop.travel(3.days.ago) do
       CachedUser.sync_from_vacols
     end
+
+    Timecop.freeze(Time.zone.now)
+  end
+
+  describe "#last_built" do
+    it "returns timestamp of last build" do
+      builder = described_class.new
+      builder.full
+
+      # use .to_s comparison since Rails.cache does not store .milliseconds
+      expect(builder.last_built.to_s).to eq(Time.zone.now.to_s)
+    end
   end
 
   describe "#full" do
