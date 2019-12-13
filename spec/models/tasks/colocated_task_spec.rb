@@ -323,13 +323,13 @@ describe ColocatedTask, :all_dbs do
 
         time3 = Time.utc(2015, 1, 5, 12, 0, 0)
         Timecop.freeze(time3)
-        colocated_admin_action.update(status: "on_hold", on_hold_duration: 30)
+        colocated_admin_action.update(status: "on_hold")
         expect(colocated_admin_action.reload.started_at).to eq time1
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
 
         time4 = Time.utc(2015, 1, 6, 12, 0, 0)
         Timecop.freeze(time4)
-        colocated_admin_action.update(status: "on_hold", on_hold_duration: 30)
+        colocated_admin_action.update(status: "on_hold")
         # neither dates should change
         expect(colocated_admin_action.reload.started_at).to eq time1
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
