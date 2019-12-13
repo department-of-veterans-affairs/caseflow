@@ -5,14 +5,14 @@ class Intake::DecisionReviewSerializer
   set_key_transform :camel_lower
 
   attribute :claimant, &:claimant_participant_id
-  attribute :veteran_is_not_claimant, &:veteran_is_not_claimant
+  attribute :veteran_is_not_claimant
   attribute :processed_in_caseflow, &:processed_in_caseflow?
-  attribute :legacy_opt_in_approved, & :legacy_opt_in_approved
+  attribute :legacy_opt_in_approved
   attribute :legacy_appeals, &:serialized_legacy_appeals
   attribute :ratings, &:serialized_ratings
   attribute :edit_issues_url, &:caseflow_only_edit_issues_url
   attribute :processed_at, &:establishment_processed_at
-  attribute :veteran_invalid_fields, &:veteran_invalid_fields
+  attribute :veteran_invalid_fields
   attribute :request_issues, &:request_issues_ui_hash
 
   attribute :decision_issues do |object|
