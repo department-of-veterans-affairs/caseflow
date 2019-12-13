@@ -8,7 +8,7 @@ describe BulkTaskReassignment, :all_dbs do
   let(:task_count) { 4 }
   let(:parent_assignee) { create(:organization) }
   let(:parent_task_type) { :task }
-  let(:parent_tasks) { create_list(parent_task_type, task_count, :on_hold, assigned_to: parent_assignee) }
+  let(:parent_tasks) { create_list(parent_task_type, task_count, assigned_to: parent_assignee) }
 
   let(:task_type) { :task }
   let!(:tasks) do

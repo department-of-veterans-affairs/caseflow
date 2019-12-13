@@ -29,9 +29,12 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       let!(:task12) { create(:ama_attorney_task, :in_progress, assigned_to: user) }
       let!(:task13) { create(:ama_attorney_task, :completed, assigned_to: user) }
       let!(:task16) { create(:ama_attorney_task, :completed_in_the_past, assigned_to: user) }
-      let!(:task14) { create(:ama_attorney_task, :on_hold, assigned_to: user) }
+      let!(:task14) { create(:ama_attorney_task, assigned_to: user) }
 
-      before { task3.update!(status: Constants.TASK_STATUSES.completed) }
+      before do
+        task3.update!(status: Constants.TASK_STATUSES.completed)
+        task14.update!(status: Constants.TASK_STATUSES.on_hold)
+      end
 
       it "should process the request successfully" do
         get :index, params: { user_id: user.id, role: "attorney" }
@@ -622,10 +625,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     end
 
     it "updates status to on_hold" do
-      patch :update, params: {
-        task: { status: Constants.TASK_STATUSES.on_hold, on_hold_duration: 60 },
-        id: admin_action.id
-      }
+      patch :update, params: { task: { status: Constants.TASK_STATUSES.on_hold }, id: admin_action.id }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)["tasks"]["data"]
       expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
