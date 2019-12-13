@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191206024319) do
+ActiveRecord::Schema.define(version: 20191213173125) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1185,7 +1185,6 @@ ActiveRecord::Schema.define(version: 20191206024319) do
     t.datetime "closed_at"
     t.datetime "created_at", null: false
     t.text "instructions", default: [], array: true
-    t.integer "on_hold_duration"
     t.integer "parent_id"
     t.datetime "placed_on_hold_at"
     t.datetime "started_at"
