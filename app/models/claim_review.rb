@@ -41,6 +41,7 @@ class ClaimReview < DecisionReview
   end
 
   def serialize
+    # binding.pry
     Intake::ClaimReviewSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
@@ -249,11 +250,11 @@ class ClaimReview < DecisionReview
   end
 
   def cleared_rating_ep?
-    processed? && cleared_end_products.any?(&:rating?)
+    cleared_end_products.any?(&:rating?)
   end
 
   def cleared_nonrating_ep?
-    processed? && cleared_end_products.any?(&:nonrating?)
+    cleared_end_products.any?(&:nonrating?)
   end
 
   private

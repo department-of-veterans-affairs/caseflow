@@ -186,6 +186,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def sync!
+    return unless reference_id
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
     return true unless status_active?
