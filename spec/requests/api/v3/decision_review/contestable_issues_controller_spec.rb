@@ -4,7 +4,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
   before { FeatureToggle.enable!(:api_v3) }
   after { FeatureToggle.disable!(:api_v3) }
 
-  describe "#index" do
+  fdescribe "#index" do
     let(:veteran) { create(:veteran) }
 
     let!(:api_key) do
@@ -12,12 +12,13 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
     end
 
     def get_issues(veteran_id: veteran.file_number, receipt_date: Time.zone.today)
+      date = receipt_date.strftime("%Y-%m-%d") if receipt_date.is_a? Time.zone
       get(
         "/api/v3/decision_review/contestable_issues",
         headers: {
           "Authorization" => "Token #{api_key}",
           "veteranId" => veteran_id,
-          "receiptDate" => receipt_date.strftime("%Y-%m-%d")
+          "receiptDate" => date || receipt_date
         }
       )
     end
@@ -27,7 +28,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
       expect(response).to have_http_status(:ok)
     end
 
-    fit "should return a list of issues in JSONAPI format" do
+    it "should return a list of issues in JSONAPI format" do
       Generators::Rating.build(
         participant_id: veteran.ptcpnt_id,
         profile_date: Time.zone.today - 10.days # must be before receipt_date
@@ -215,6 +216,11 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
 
     it "should return a 422 when the receipt date is bad" do
       get_issues(receipt_date: Time.zone.today - 1000.years)
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
+    it "should return a 422 when the receipt date is not json schema format" do
+      get_issues(receipt_date: 'January 8')
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end
