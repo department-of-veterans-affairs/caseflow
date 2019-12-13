@@ -203,10 +203,10 @@ class TaskActionRepository
       {
         redirect_after: "/queue",
         selected: nil,
-        options: ColocatedTask.subclasses.map do |subclass|
+        options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
           {
-            label: subclass.label,
-            value: subclass.name
+            label: value,
+            value: ColocatedTask.find_subclass_by_action(key).name
           }
         end
       }

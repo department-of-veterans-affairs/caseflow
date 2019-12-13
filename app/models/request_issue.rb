@@ -314,7 +314,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def serialize
-    ::RequestIssueSerializer.new(self).serializable_hash[:data][:attributes]
+    Intake::RequestIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def approx_decision_date_of_issue_being_contested
