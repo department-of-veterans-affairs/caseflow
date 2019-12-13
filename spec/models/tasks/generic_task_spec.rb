@@ -170,13 +170,14 @@ describe Task, :postgres do
 
   describe ".available_actions_unwrapper" do
     let(:user) { create(:user) }
-    let(:task) { create(:generic_task, trait, assigned_to: assignee) }
+    let(:task) { create(:generic_task, :completed, assigned_to: assignee) }
+
     subject { task.available_actions_unwrapper(user) }
 
     context "when task assigned to the user is has been completed" do
       let(:assignee) { user }
-      let(:trait) { :completed }
       let(:expected_actions) { [] }
+
       it "should return an empty list" do
         expect(subject).to eq(expected_actions)
       end
@@ -184,9 +185,13 @@ describe Task, :postgres do
 
     context "when task assigned to an organization the user is a member of is on hold" do
       let(:assignee) { Organization.find(create(:organization).id) }
-      let(:trait) { :on_hold }
       let(:expected_actions) { [] }
-      before { allow_any_instance_of(Organization).to receive(:user_has_access?).and_return(true) }
+
+      before do
+        allow_any_instance_of(Organization).to receive(:user_has_access?).and_return(true)
+        task.update!(status: :on_hold)
+      end
+
       it "should return an empty list" do
         expect(subject).to eq(expected_actions)
       end

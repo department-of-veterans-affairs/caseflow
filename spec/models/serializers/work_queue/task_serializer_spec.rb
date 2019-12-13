@@ -25,16 +25,5 @@ describe WorkQueue::TaskSerializer, :postgres do
         expect(subject[:on_hold_duration]).to eq days_on_hold
       end
     end
-
-    context "when setting on hold values on the task itself" do
-      before do
-        parent.update!(status: Constants.TASK_STATUSES.on_hold, on_hold_duration: days_on_hold)
-      end
-
-      it "renders the correct values for an on hold task" do
-        expect(subject[:placed_on_hold_at]).to eq now
-        expect(subject[:on_hold_duration]).to eq days_on_hold
-      end
-    end
   end
 end
