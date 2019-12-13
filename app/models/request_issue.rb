@@ -570,19 +570,6 @@ class RequestIssue < ApplicationRecord
     duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
   end
 
-  # Temporary method for populating legacy_issue table until we fully switch over
-  def create_legacy_issue!
-    return unless vacols_id
-
-    LegacyIssue.create(
-      request_issue: self,
-      vacols_id: vacols_id,
-      vacols_sequence_id: vacols_sequence_id
-    ).tap do |legacy_issue|
-      legacy_issue_optin&.update!(legacy_issue_id: legacy_issue.id)
-    end
-  end
-
   private
 
   # When a request issue already has a rating in VBMS, prevent user from editing it.
