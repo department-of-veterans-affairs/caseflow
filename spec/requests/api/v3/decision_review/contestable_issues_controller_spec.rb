@@ -214,12 +214,17 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
       expect(response).to have_http_status(:not_found)
     end
 
-    it "should return a 422 when the receipt date is bad" do
+    it "should return a 422 when the receipt is before AMA" do
       get_issues(receipt_date: Time.zone.today - 1000.years)
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
-    it "should return a 422 when the receipt date is not json schema format" do
+    it "should return a 422 when the receipt date after today" do
+      get_issues(receipt_date: Time.zone.today + 1.years)
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
+    it "should return a 422 when the receipt date is not ISO 8601 date format" do
       get_issues(receipt_date: 'January 8')
       expect(response).to have_http_status(:unprocessable_entity)
     end
