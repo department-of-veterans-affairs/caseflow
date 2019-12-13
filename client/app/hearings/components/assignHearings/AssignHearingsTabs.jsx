@@ -167,7 +167,7 @@ export class AssignHearingsTabs extends React.Component {
   };
 
   tabWindowColumns = (tab) => {
-    // TODO: Remove `displayPowerOfAttorneyColumn` when pagination lands (#11757)
+    // Remove `displayPowerOfAttorneyColumn` when pagination lands (#11757)
     const { selectedRegionalOffice, selectedHearingDay, displayPowerOfAttorneyColumn } = this.props;
 
     if (_.isNil(selectedHearingDay)) {
@@ -247,7 +247,7 @@ export class AssignHearingsTabs extends React.Component {
         }
       );
 
-      // TODO: Put this in the `push` above when pagination lands (#11757)
+      // Put this in the `push` above when pagination lands (#11757)
       if (displayPowerOfAttorneyColumn) {
         columns.push(
           {
@@ -365,7 +365,7 @@ AssignHearingsTabs.propTypes = {
   room: PropTypes.string,
   // Appeal ID => Attorney Name Array
   powerOfAttorneyNamesForAppeals: PropTypes.objectOf(PropTypes.string),
-  // TODO: Remove when pagination lands (#11757)
+  // Remove when pagination lands (#11757)
   displayPowerOfAttorneyColumn: PropTypes.bool
 };
 

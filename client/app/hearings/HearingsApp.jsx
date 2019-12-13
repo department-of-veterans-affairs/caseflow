@@ -62,8 +62,8 @@ export default class HearingsApp extends React.PureComponent {
 
   routeForListScheduleContainer = () => <ListScheduleContainer user={this.userPermissionProps()} />;
   routeForAssignHearingsContainer = () => (
-    // TODO: Remove `displayPowerOfAttorneyColumn` prop when pagination lands. (#11757)
-    // TODO: Also remove where this gets set in the view. (#11757)
+    // Remove `displayPowerOfAttorneyColumn` prop when pagination lands. (#11757)
+    // Also remove where this gets set in the view. (#11757)
     <AssignHearingsContainer
       {...this.propsForAssignHearingsContainer()}
       displayPowerOfAttorneyColumn={this.props.displayPowerOfAttorneyColumnOnAssignHearings}
@@ -191,6 +191,6 @@ HearingsApp.propTypes = {
   userRole: PropTypes.string,
   userId: PropTypes.number,
   userCssId: PropTypes.string,
-  // TODO: Remove when pagination lands. (#11757)
+  // Remove when pagination lands. (#11757)
   displayPowerOfAttorneyColumnOnAssignHearings: PropTypes.bool
 };

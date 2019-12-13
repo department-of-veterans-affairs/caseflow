@@ -124,7 +124,7 @@ class AssignHearingsContainer extends React.PureComponent {
     const { selectedRegionalOffice } = this.props;
     const roValue = selectedRegionalOffice ? selectedRegionalOffice.value : null;
 
-    // TODO: Remove `displayPowerOfAttorneyColumn` when pagination lands (#11757)
+    // Remove `displayPowerOfAttorneyColumn` when pagination lands (#11757)
     return (
       <AppSegment filledBackground>
         <h1>{COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_HEADER}</h1>
@@ -183,7 +183,7 @@ AssignHearingsContainer.propTypes = {
   upcomingHearingDays: PropTypes.object,
   userCssId: PropTypes.string,
   userId: PropTypes.number,
-  // TODO: Remove when pagination lands (#11757)
+  // Remove when pagination lands (#11757)
   displayPowerOfAttorneyColumn: PropTypes.bool
 };
 
