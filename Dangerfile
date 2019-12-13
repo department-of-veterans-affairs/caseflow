@@ -88,3 +88,21 @@ if migrations_on_large_tables.any?
     "This PR contains DB migrations on large tables. Be sure to set connection statement_timeout accordingly."
   )
 end
+
+contains_new_index = git.diff.flat_map do |chunk|
+  chunk.patch.lines.grep(/^\+\s*\w/).select do |added_line|
+    added_line.match?(/add_index/)
+  end
+end
+
+contains_statement_timeout = git.diff.flat_map do |chunk|
+  chunk.patch.lines.grep(/^\+\s*\w/).select do |added_line|
+    added_line.match?(/statement_timeout/)
+  end
+end
+
+if contains_new_index.any? && contains_statement_timeout.none?
+  warn(
+    "This PR contains DB migrations without extending statement_timeout. It may fail in production."
+  )
+end
