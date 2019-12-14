@@ -41,7 +41,6 @@ class ClaimReview < DecisionReview
   end
 
   def serialize
-    # binding.pry
     Intake::ClaimReviewSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
