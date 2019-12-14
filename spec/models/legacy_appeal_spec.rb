@@ -2526,10 +2526,10 @@ describe LegacyAppeal, :all_dbs do
 
       context "if there are active TrackVeteranTask, TimedHoldTask, and RootTask" do
         let(:today) { Time.zone.today }
+        let(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
         before do
-          create(:root_task, :in_progress, appeal: appeal)
-          create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 11)
-          create(:timed_hold_task, :in_progress, appeal: appeal, updated_at: today + 11)
+          create(:track_veteran_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 11)
+          create(:timed_hold_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 11)
         end
 
         describe "when there are no other tasks" do
@@ -2540,9 +2540,12 @@ describe LegacyAppeal, :all_dbs do
 
         describe "when there is an assigned actionable task" do
           let(:task_assignee) { create(:user) }
-          let!(:task) { create(:colocated_task, :in_progress, assigned_to: task_assignee, appeal: appeal) }
+          before do
+            create(:colocated_task, :in_progress, assigned_to: task_assignee, appeal: appeal, parent: root_task)
+          end
 
           it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
+            puts appeal.structure_render(:id, :status, :assigned_to_id, :created_at, :updated_at)
             expect(appeal.assigned_to_location).to eq(task_assignee.css_id)
           end
         end
