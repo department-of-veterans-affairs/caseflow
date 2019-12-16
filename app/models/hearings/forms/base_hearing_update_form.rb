@@ -43,6 +43,7 @@ class BaseHearingUpdateForm
   private
 
   def show_update_alert?
+    # if user only changes the hearing time for a virtual hearing, don't show update alert
     return false if hearing.virtual? && hearing_updates.except(:scheduled_time).empty?
 
     hearing_updated?
