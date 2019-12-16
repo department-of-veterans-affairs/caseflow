@@ -34,7 +34,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
         profile_date: Time.zone.today - 10.days # must be before receipt_date
       ) # this is a contestable_rating_issues
       get_issues
-      issues = JSON.parse(response.body)['data']
+      issues = JSON.parse(response.body)["data"]
       expect(issues).to be_an Array
       expect(issues.count > 0).to be true
     end
@@ -121,7 +121,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
         ) # this is a contestable_rating_issues
         another_decision_issue # instantiate this
         get_issues
-        issues = JSON.parse(response.body)['data']
+        issues = JSON.parse(response.body)["data"]
         expect(issues).not_to be_empty # remove this expectation
         issues
       end
@@ -234,12 +234,12 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
     end
 
     it "should return a 422 when the receipt date after today" do
-      get_issues(receipt_date: Time.zone.today + 1.years)
+      get_issues(receipt_date: Time.zone.today + 1.year)
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
     it "should return a 422 when the receipt date is not ISO 8601 date format" do
-      get_issues(receipt_date: 'January 8')
+      get_issues(receipt_date: "January 8")
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end
