@@ -36,7 +36,7 @@ class BaseHearingUpdateForm
   private
 
   def hearing_was_updated?
-    hearing_updates.each_key do |key|
+    hearing_updates.except(:scheduled_time).each_key do |key|
       return true if hearing_updates.dig(key).present?
     end
     false
