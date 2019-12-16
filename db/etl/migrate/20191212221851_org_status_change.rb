@@ -6,7 +6,5 @@ class OrgStatusChange < ActiveRecord::Migration[5.1]
     add_column :organizations, :status_updated_at, :datetime, comment: "Track when organization status last changed."
 
     add_index :organizations, :status, algorithm: :concurrently
-
-    Organization.unscoped.all.active!
   end
 end
