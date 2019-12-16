@@ -238,7 +238,36 @@ class WorksheetHeader extends React.PureComponent {
 }
 
 WorksheetHeader.propTypes = {
-  print: PropTypes.bool
+  onMilitaryServiceChange: PropTypes.func,
+  onRepNameChange: PropTypes.func,
+  onWitnessChange: PropTypes.func,
+  print: PropTypes.bool,
+  worksheet: PropTypes.shape({
+    appellant_city: PropTypes.string,
+    appellant_state: PropTypes.string,
+    disposition: PropTypes.string,
+    docket_name: PropTypes.string,
+    is_virtual: PropTypes.bool,
+    judge: PropTypes.shape({
+      full_name: PropTypes.string
+    }),
+    military_service: PropTypes.string,
+    readable_request_type: PropTypes.string,
+    regional_office_name: PropTypes.string,
+    representative: PropTypes.string,
+    representative_name: PropTypes.string,
+    scheduled_for: PropTypes.string,
+    veteran_age: PropTypes.number,
+    veteran_file_number: PropTypes.string,
+    veteran_first_name: PropTypes.string,
+    veteran_gender: PropTypes.string,
+    veteran_last_name: PropTypes.string,
+    witness: PropTypes.string,
+  })
+};
+
+WorksheetHeader.defaultProps = {
+  print: false
 };
 
 const mapStateToProps = (state, ownProps) => ({
