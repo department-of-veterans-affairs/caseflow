@@ -96,6 +96,7 @@ detectors:
   RepeatedConditional:
     exclude:
       - HearingLocation
+      - JudgeTeam
       - QueueConfig
       - RequestIssue
       - BulkTaskReassignment
@@ -114,6 +115,8 @@ detectors:
     public_methods_only: true
     exclude:
       - ClaimReviewAsyncStatsReporter#seconds_to_hms
+      - ETL::Syncer#filter?
+      - ETL::TaskSyncer#filter?
       - HearingAdminActionVerifyAddressTask#available_hearing_admin_actions
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations

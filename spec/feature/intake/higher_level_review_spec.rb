@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 feature "Higher-Level Review", :all_dbs do
   include IntakeHelpers
 
@@ -659,7 +656,7 @@ feature "Higher-Level Review", :all_dbs do
     end
 
     context "Veteran has no ratings" do
-      let(:decision_date) { (receipt_date + 200.days).to_date.mdY }
+      let(:decision_date) { (receipt_date + 9000.days).to_date.mdY }
 
       scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
         start_higher_level_review(veteran_no_ratings)

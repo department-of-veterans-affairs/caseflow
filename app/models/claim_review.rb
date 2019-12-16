@@ -7,6 +7,7 @@ class ClaimReview < DecisionReview
   include HasBusinessLine
 
   has_many :end_product_establishments, as: :source
+  has_many :messages, as: :detail
 
   with_options if: :saving_review do
     validate :validate_receipt_date
@@ -23,7 +24,6 @@ class ClaimReview < DecisionReview
   self.abstract_class = true
 
   class NoEndProductsRequired < StandardError; end
-  class NotYetProcessed < StandardError; end
 
   class << self
     def find_by_uuid_or_reference_id!(claim_id)
@@ -44,20 +44,25 @@ class ClaimReview < DecisionReview
     super.merge(
       asyncJobUrl: async_job_url,
       benefitType: benefit_type,
-      payeeCode: payee_code,
-      hasClearedRatingEp: cleared_rating_ep?,
-      hasClearedNonratingEp: cleared_nonrating_ep?
-    )
+      payeeCode: payee_code
+    ).tap do |hash|
+      if processed?
+        hash.update(
+          hasClearedRatingEp: cleared_rating_ep?,
+          hasClearedNonratingEp: cleared_nonrating_ep?
+        )
+      end
+    end
   end
 
   def validate_prior_to_edit
-    fail NotYetProcessed unless processed?
+    if processed?
+      # force sync on initial edit call so that we have latest EP status.
+      # This helps prevent us editing something that recently closed upstream.
+      sync_end_product_establishments!
 
-    # force sync on initial edit call so that we have latest EP status.
-    # This helps prevent us editing something that recently closed upstream.
-    sync_end_product_establishments!
-
-    verify_contentions
+      verify_contentions
+    end
 
     # this will raise any errors for missing data
     ui_hash
@@ -108,6 +113,27 @@ class ClaimReview < DecisionReview
     process_legacy_issues!
     clear_error!
     processed!
+  end
+
+  def processed!
+    super
+    AsyncableJobMessaging.new(job: self).handle_job_success
+  end
+
+  def update_error!(err)
+    super
+    AsyncableJobMessaging.new(job: self).handle_job_failure
+  end
+
+  # Cancel an unprocessed job, add a job note, and send a message to the job user's inbox.
+  # Currently this only happens manually by an engineer, and requires a message explaining
+  # why the job was cancelled and describing any additional action necessary.
+  def cancel_with_note!(current_user:, note:)
+    fail Caseflow::Error::ActionForbiddenError, message: "Acting user must be specified" unless current_user
+    fail Caseflow::Error::ActionForbiddenError, message: "Processed job cannot be cancelled" if processed?
+
+    cancel_establishment!
+    AsyncableJobMessaging.new(job: self, current_user: current_user).add_job_cancellation_note(text: note)
   end
 
   def invalid_modifiers

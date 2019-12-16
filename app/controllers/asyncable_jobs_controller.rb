@@ -41,7 +41,7 @@ class AsyncableJobsController < ApplicationController
       text: allowed_params[:note],
       send_to_intake_user: send_to_intake_user
     )
-    render json: job_note.ui_hash
+    render json: job_note.serialize
   end
 
   private

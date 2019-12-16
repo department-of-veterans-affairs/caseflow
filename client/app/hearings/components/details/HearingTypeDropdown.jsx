@@ -37,8 +37,10 @@ class HearingTypeDropdown extends React.Component {
 
     // if current value is true (a virtual hearing), then we will be sending cancellation emails,
     // if new value is true, then we will be sending confirmation emails
-    if (currentValue.value || option.value) {
-      openModal();
+    if ((currentValue.value || option.value) && currentValue.value !== option.value) {
+      const type = option.value ? 'change_to_virtual' : 'change_from_virtual';
+
+      openModal({ type });
     }
 
     if (currentValue.value && !option.value) {
@@ -55,6 +57,7 @@ class HearingTypeDropdown extends React.Component {
         options={this.HEARING_TYPE_OPTIONS}
         value={this.getValue()}
         onChange={this.onChange}
+        readOnly={this.props.readOnly}
       />
     );
   }
@@ -64,7 +67,8 @@ HearingTypeDropdown.propTypes = {
   virtualHearing: PropTypes.object,
   updateVirtualHearing: PropTypes.func,
   openModal: PropTypes.func,
-  requestType: PropTypes.string
+  requestType: PropTypes.string,
+  readOnly: PropTypes.bool
 };
 
 export default HearingTypeDropdown;

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Attorney queue", :all_dbs do
   let(:judge) { create(:user) }
   let!(:vacols_judge) { create(:staff, :judge_role, user: judge) }
@@ -143,12 +140,13 @@ RSpec.feature "Attorney queue", :all_dbs do
           assigned_by: attorney
         )
       end
-      let(:colocated_person_task) { colocated_org_task.children.first }
+      let!(:colocated_person_task) { colocated_org_task.children.first }
 
       before do
+        Colocated.singleton.add_user(create(:user))
         reassign_params = {
           assigned_to_type: User.name,
-          assigned_to_id: ColocatedTaskDistributor.new.next_assignee.id
+          assigned_to_id: Colocated.singleton.next_assignee.id
         }
         colocated_person_task.reassign(reassign_params, colocated_person_task.assigned_to)
       end

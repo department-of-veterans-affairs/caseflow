@@ -13,12 +13,18 @@ class BaseHearingUpdateForm
   def update
     ActiveRecord::Base.transaction do
       update_hearing
-
-      if !virtual_hearing_attributes.blank?
-        create_or_update_virtual_hearing
+      add_update_hearing_alert
+      if virtual_hearing_form_or_hearing_time_was_updated?
+        was_created = create_or_update_virtual_hearing
+        hearing.reload
         start_async_job
+        add_virtual_hearing_alert(changed_to_virtual: was_created)
       end
     end
+  end
+
+  def alerts
+    @alerts ||= []
   end
 
   protected
@@ -27,8 +33,12 @@ class BaseHearingUpdateForm
 
   private
 
+  def virtual_hearing_form_or_hearing_time_was_updated?
+    !virtual_hearing_attributes.blank? || (hearing.virtual? && scheduled_time_string.present?)
+  end
+
   def start_async_job
-    if hearing.virtual_hearing.status == "pending"
+    if hearing.virtual_hearing.status == "pending" || !hearing.virtual_hearing.all_emails_sent?
       hearing.virtual_hearing.establishment.submit_for_processing!
       VirtualHearings::CreateConferenceJob.perform_now(hearing_id: hearing.id)
     end
@@ -37,12 +47,11 @@ class BaseHearingUpdateForm
   def email_sent_flag(attr_key)
     status_changed = virtual_hearing_attributes.key?(:status)
 
-    !(status_changed || virtual_hearing_attributes.key?(attr_key))
+    !(status_changed || virtual_hearing_attributes.key?(attr_key) || scheduled_time_string.present?)
   end
 
   def create_or_update_virtual_hearing
     created = false
-
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
     virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
       new_virtual_hearing.veteran_email = virtual_hearing_attributes[:veteran_email]
@@ -66,5 +75,27 @@ class BaseHearingUpdateForm
     else
       VirtualHearingEstablishment.create!(virtual_hearing: virtual_hearing)
     end
+
+    created
+  end
+
+  def add_virtual_hearing_alert(changed_to_virtual:)
+    alerts << VirtualHearingUserAlertBuilder.new(
+      changed_to_virtual: changed_to_virtual,
+      virtual_hearing_attributes: virtual_hearing_attributes,
+      veteran_full_name: veteran_full_name,
+      hearing_time_changed: scheduled_time_string.present?
+    ).call.to_hash
+  end
+
+  def add_update_hearing_alert
+    alerts << UserAlert.new(
+      title: COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % veteran_full_name,
+      type: UserAlert::TYPES[:success]
+    ).to_hash
+  end
+
+  def veteran_full_name
+    @veteran_full_name ||= hearing.appeal&.veteran&.name&.to_s || "the veteran"
   end
 end

@@ -8,7 +8,7 @@ gem "aasm", "4.11.0"
 gem "activerecord-import"
 gem "acts_as_tree"
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "dfe3035db0ebe957066f24ac93706d14fd0e7a8b"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "abffaad34aa9c62afca70756277011d73bcee711"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
@@ -16,7 +16,7 @@ gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "6c0c2908a9e4a61f5bcf2a768061909e3c763fe8"
 gem "dogstatsd-ruby"
 gem "fast_jsonapi"
-gem "govdelivery-tms", "2.8.4", require: "govdelivery/tms/mail/delivery_method"
+gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "kaminari"
 # active_model_serializers has a default dependency on loofah 2.2.2 which security vulnerabilities
@@ -32,7 +32,7 @@ gem "newrelic_rpm"
 # nokogiri 1.10.4 is vulnerable to CVE-2019-13117, CVE-2019-13118, CVE-2019-18197.
 # https://github.com/sparklemotion/nokogiri/issues/1943
 gem "nokogiri", "~> 1.10.5"
-gem "paper_trail", "8.1.2"
+gem "paper_trail", "~> 10"
 # Used to speed up reporting
 gem "parallel"
 # soft delete gem
@@ -107,7 +107,8 @@ group :test, :development, :demo do
   gem "rubocop-performance"
   gem "scss_lint", require: false
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
-  gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git", branch: "mb-update-capybara-click"
+  gem "single_cov"
+  gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
   gem "timecop"
   gem "webdrivers"
 end
