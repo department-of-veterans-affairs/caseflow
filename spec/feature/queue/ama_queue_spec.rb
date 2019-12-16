@@ -284,7 +284,7 @@ RSpec.feature "AmaQueue", :all_dbs do
 
         click_on "Pal Smith"
 
-        within '#case-timeline-table' do
+        within "#case-timeline-table" do
           click_button COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
           expect(page).to have_content(existing_instruction)
         end
