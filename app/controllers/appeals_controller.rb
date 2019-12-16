@@ -106,7 +106,21 @@ class AppealsController < ApplicationController
     end
   end
 
-  helper_method :appeal, :url_appeal_uuid
+  def task_tree
+    return render_access_error unless FeatureToggle.enabled?(:appeal_viz, user: current_user)
+
+    return render_access_error unless BGSService.new.can_access?(appeal.veteran_file_number)
+
+    no_cache
+
+    respond_to do |format|
+      format.html { render template: "queue/task_tree", layout: "plain_application" }
+      format.text { render plain: appeal.structure_render(*Task.column_names) }
+      format.json { render json: { task_tree: task_tree_as_json } }
+    end
+  end
+
+  helper_method :appeal, :url_appeal_uuid, :task_tree_as_json
 
   def appeal
     @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
@@ -114,6 +128,10 @@ class AppealsController < ApplicationController
 
   def url_appeal_uuid
     params[:appeal_id]
+  end
+
+  def task_tree_as_json
+    @task_tree_as_json ||= appeal.structure_as_json(*Task.column_names)
   end
 
   def update
