@@ -515,17 +515,21 @@ feature "Task queue", :all_dbs do
           visit(organization.path)
         end
 
-        it "shows the correct filters" do
-          page.find(".unselected-filter-icon-inner", match: :first).click
-          expect(page).to have_content("#{PrivacyActTask.label.humanize} (#{unassigned_count / 2})")
-          expect(page).to have_content("#{TranslationTask.label.humanize} (#{translation_task_count})")
-        end
+        it "filters are correct, and filter as expected" do
+          step "check if there are the right number of rows for the unassigned table" do
+            expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+          end
 
-        it "filters tasks correctly" do
-          expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
-          page.find(".unselected-filter-icon-inner", match: :first).click
-          page.find("label", text: "#{TranslationTask.label.humanize} (#{translation_task_count})").click
-          expect(find("tbody").find_all("tr").length).to eq(translation_task_count)
+          step "check if the filter options are as expected" do
+            page.find(".unselected-filter-icon-inner", match: :first).click
+            expect(page).to have_content("#{PrivacyActTask.label.humanize} (#{unassigned_count / 2})")
+            expect(page).to have_content("#{TranslationTask.label.humanize} (#{translation_task_count})")
+          end
+
+          step "clicking on a filter reduces the number of results by the expect amount" do
+            page.find("label", text: "#{TranslationTask.label.humanize} (#{translation_task_count})").click
+            expect(find("tbody").find_all("tr").length).to eq(translation_task_count)
+          end
         end
       end
     end
