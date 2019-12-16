@@ -33,8 +33,6 @@ class BaseHearingUpdateForm
 
   def hearing_updates; end
 
-  private
-
   def hearing_updated?
     hearing_updates.each_key do |key|
       return true if hearing_updates.dig(key).present?
@@ -42,8 +40,11 @@ class BaseHearingUpdateForm
     false
   end
 
+  private
+
   def show_update_alert?
     return false if hearing.virtual? && hearing_updates.except(:scheduled_time).empty?
+
     hearing_updated?
   end
 
