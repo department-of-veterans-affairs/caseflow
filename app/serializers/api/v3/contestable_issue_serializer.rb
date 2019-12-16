@@ -1,12 +1,10 @@
 class Api::V3::ContestableIssueSerializer
   def initialize(contestable_issues)
-    byebug
     @contestable_issues = contestable_issues
   end
 
   def to_json
-    byebug
-    { data: @contestable_issues.map { |issue| contestable_issue_json(issue) } }
+    { data: @contestable_issues.map { |issue| contestable_issue_json(issue) } }.to_json
   end
 
   def contestable_issue_json(contestable_issue)

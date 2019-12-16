@@ -5,7 +5,7 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
 
   def index
     @receipt_date = request.headers["receiptDate"]
-    if !@receipt_date.is_a?(Date) ||@receipt_date < standin_claim_review.ama_activation_date || Time.zone.today < @receipt_date
+    if !@receipt_date.is_a?(Date) || @receipt_date < standin_claim_review.ama_activation_date || Time.zone.today < @receipt_date
       bad_receipt_date
       return
     end
@@ -13,7 +13,7 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
     # this generates this error in UAT:
     #  BGS::PublicError (Logon ID APIUSER Not Found in the Benefits Gateway Service (BGS). Contact your
     #     ISO if you need assistance gaining access to BGS.)
-    render json: Api::V3::ContestableIssueSerializer.new(issues)
+    render json: Api::V3::ContestableIssueSerializer.new(issues).to_json
   end
 
   private
