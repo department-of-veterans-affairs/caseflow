@@ -15,32 +15,33 @@ import Tooltip from '../../../components/Tooltip';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
 import { formatNameLong, formatNameLongReversed } from '../../../util/FormatUtil';
 
-class WorksheetFormEntry extends React.PureComponent {
-  render() {
-    const textAreaProps = {
-      minRows: 3,
-      maxRows: 5000,
-      value: this.props.value || '',
-      ..._.pick(
-        this.props,
-        [
-          'name',
-          'onChange',
-          'id',
-          'minRows',
-          'maxLength'
-        ]
-      )
-    };
+const WorksheetFormEntry = ({ name, id, print, value, onChange, minRows, maxLength }) => {
+  const textAreaProps = {
+    name: name,
+    id: id,
+    onChange, onChange,
+    minRows: minRows || 3,
+    maxRows: maxLength || 5000,
+    value: value || ''
+  };
 
-    return <div className="cf-hearings-worksheet-data">
-      <label htmlFor={this.props.id}>{this.props.name}</label>
-      {this.props.print ?
-        <p>{this.props.value}</p> :
-        <Textarea {...textAreaProps} />}
-    </div>;
-  }
+  return (
+    <div className="cf-hearings-worksheet-data">
+      <label htmlFor={id}>{name}</label>
+      {print ? <p>{value}</p> : <Textarea {...textAreaProps} />}
+    </div>
+  );
 }
+
+WorksheetFormEntry.propTypes = {
+  id: PropTypes.any,
+  maxLength: PropTypes.number,
+  minRows: PropTypes.number,
+  name: PropTypes.string,
+  onChange: PropTypes.func,
+  print: PropTypes.bool,
+  value: PropTypes.any,
+};
 
 const copyButtonStyling = css({
   marginTop: '-18px',
@@ -249,6 +250,7 @@ WorksheetHeader.propTypes = {
     appellant_state: PropTypes.string,
     disposition: PropTypes.string,
     docket_name: PropTypes.string,
+    docket_number: PropTypes.string,
     is_virtual: PropTypes.bool,
     judge: PropTypes.shape({
       full_name: PropTypes.string
@@ -264,7 +266,7 @@ WorksheetHeader.propTypes = {
     veteran_first_name: PropTypes.string,
     veteran_gender: PropTypes.string,
     veteran_last_name: PropTypes.string,
-    witness: PropTypes.string,
+    witness: PropTypes.string
   })
 };
 
