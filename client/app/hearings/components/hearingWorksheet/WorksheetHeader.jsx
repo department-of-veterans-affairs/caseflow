@@ -17,9 +17,9 @@ import { formatNameLong, formatNameLongReversed } from '../../../util/FormatUtil
 
 const WorksheetFormEntry = ({ name, id, print, value, onChange, minRows, maxLength }) => {
   const textAreaProps = {
-    name: name,
-    id: id,
-    onChange, onChange,
+    name,
+    id,
+    onChange,
     minRows: minRows || 3,
     maxRows: maxLength || 5000,
     value: value || ''
@@ -31,7 +31,7 @@ const WorksheetFormEntry = ({ name, id, print, value, onChange, minRows, maxLeng
       {print ? <p>{value}</p> : <Textarea {...textAreaProps} />}
     </div>
   );
-}
+};
 
 WorksheetFormEntry.propTypes = {
   id: PropTypes.any,
@@ -40,7 +40,7 @@ WorksheetFormEntry.propTypes = {
   name: PropTypes.string,
   onChange: PropTypes.func,
   print: PropTypes.bool,
-  value: PropTypes.any,
+  value: PropTypes.any
 };
 
 const copyButtonStyling = css({
