@@ -11,21 +11,17 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     Timecop.freeze(post_ama_start_date)
   end
 
-  after do
-    FeatureToggle.disable!(:api_v3)
-  end
+  after { FeatureToggle.disable!(:api_v3) }
 
   let!(:api_key) { ApiKey.create!(consumer_name: "ApiV3 Test Consumer").key_string }
 
-  let(:veteran_file_number) { "64205050" }
+  let(:file_number_or_ssn) { "64205050" }
 
   let!(:veteran) do
-    Generators::Veteran.build(file_number: veteran_file_number,
+    Generators::Veteran.build(file_number: file_number_or_ssn,
                               first_name: "Ed",
                               last_name: "Merica")
   end
-
-  let(:promulgation_date) { receipt_date - 10.days }
 
   let!(:current_user) do
     User.authenticate!(roles: ["Admin Intake"])
@@ -36,80 +32,58 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     create(:user, station_id: val, css_id: val, full_name: val)
   end
 
-  let(:profile_date) { (receipt_date - 8.days).to_datetime }
-  let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
-  let(:receipt_date) { Time.zone.today - 5.days }
-  let(:informal_conference) { true }
-  let(:same_office) { false }
-  let(:legacy_opt_in_approved) { true }
-  let(:benefit_type) { "compensation" }
-  let(:category) { "Apportionment" }
-  let(:decision_date) { Time.zone.today - 10.days }
-  let(:decision_text) { "Some text here." }
-  let(:notes) { "not sure if this is on file" }
-  let(:attributes) do
-    {
-      receiptDate: receipt_date.strftime("%F"),
-      informalConference: informal_conference,
-      sameOffice: same_office,
-      legacyOptInApproved: legacy_opt_in_approved,
-      benefitType: benefit_type
-    }
-  end
-  let(:veteran_obj) do
-    {
-      data: {
-        type: "Veteran",
-        id: veteran_file_number
-      }
-    }
-  end
-  let(:claimant_obj) do
-    {
-      data: {
-        type: "Claimant",
-        id: 44,
-        meta: {
-          payeeCode: { a: 1 }
-        }
-      }
-    }
-  end
-  let(:relationships) do
-    {
-      veteran: veteran_obj,
-      claimant: claimant_obj
-    }
-  end
-  let(:data) do
-    {
-      type: "HigherLevelReview",
-      attributes: attributes,
-      relationships: relationships
-    }
-  end
+  let(:response_json) { JSON.parse(response.body) }
+  let(:first_error_code_in_response) { response_json["errors"][0]["code"] }
+
+  let(:params) { ActionController::Parameters.new(data: data, included: included) }
+
+  let(:data) { { type: "HigherLevelReview", attributes: attributes } }
+
   let(:included) do
     [
       {
-        type: "RequestIssue",
+        type: "ContestableIssue",
         attributes: {
-          category: category,
-          decisionIssueId: 12,
-          decisionDate: decision_date.strftime("%F"),
-          decisionText: decision_text,
-          notes: notes
+          ratingIssueId: "12"
         }
       }
     ]
   end
 
+  let(:attributes) { default_attributes }
+
+  let(:default_attributes) do
+    {
+      receiptDate: receipt_date.strftime("%F"),
+      informalConference: informal_conference,
+      sameOffice: same_office,
+      legacyOptInApproved: legacy_opt_in_approved,
+      benefitType: benefit_type,
+      veteran: {
+        fileNumberOrSsn: file_number_or_ssn
+      }
+    }
+  end
+
+  let(:receipt_date) { Time.zone.today - 5.days }
+  let(:informal_conference) { true }
+  let(:same_office) { false }
+  let(:legacy_opt_in_approved) { true }
+  let(:benefit_type) { "compensation" }
+
+  let(:promulgation_date) { receipt_date - 10.days }
+  let(:profile_date) { (receipt_date - 8.days).to_datetime }
+  let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
+
   describe "#show" do
     let!(:higher_level_review) do
       processor = Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(
-        ActionController::Parameters.new(data: data, included: included),
+        params,
         create(:user)
       )
-      processor.run!.higher_level_review
+      processor.run!
+      puts processor.errors.map(&:to_h)
+      processor.higher_level_review
     end
 
     def get_higher_level_review # rubocop:disable Naming/AccessorMethodName
@@ -121,6 +95,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
     it "should return ok" do
       get_higher_level_review
+      expect(response_json).to eq ""
       expect(response).to have_http_status(:ok)
     end
 
@@ -373,25 +348,29 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
   end
 
   describe "#create" do
-    let(:params) do
-      {
-        data: data,
-        included: included
-      }
-    end
-
-    let(:post_params) do
-      [
+    before do
+      allow(User).to receive(:api_user).and_return(mock_api_user)
+      before_post
+      post(
         "/api/v3/decision_review/higher_level_reviews",
-        { params: params, headers: { "Authorization" => "Token #{api_key}" } }
-      ]
+        params: params,
+        as: :json,
+        headers: { "Authorization" => "Token #{api_key}" }
+      )
     end
 
-    context do
-      before do
+    let(:before_post) { nil }
+
+    let(:expected_error) { Api::V3::DecisionReview::IntakeError.new(expected_error_code) }
+    let(:expected_error_render_hash) do
+      Api::V3::DecisionReview::IntakeErrors.new([expected_error]).render_hash
+    end
+    let(:expected_error_json) { expected_error_render_hash[:json].as_json }
+    let(:expected_error_status) { expected_error_render_hash[:status] }
+
+    context "good request" do
+      let(:before_post) do
         allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
-        allow(User).to receive(:api_user).and_return(mock_api_user)
-        post(*post_params)
       end
 
       it "should return a 202 on success" do
@@ -401,78 +380,32 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
     context "params are missing" do
       let(:params) { {} }
+      let(:expected_error_code) { "malformed_request" }
 
-      before do
-        allow(User).to receive(:api_user).and_return(mock_api_user)
-        post(*post_params)
-      end
-
-      it "should return an error" do
-        error = Api::V3::DecisionReview::IntakeError.new(:malformed_request)
-        expect(response).to have_http_status(error.status)
-        expect(JSON.parse(response.body)).to eq(
-          Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json
-        )
-      end
-    end
-
-    context "when unknown_category_for_benefit_type" do
-      let(:category) { "Words ending in urple" }
-
-      before do
-        allow(User).to receive(:api_user).and_return(mock_api_user)
-        post(*post_params)
-      end
-
-      it "should return :request_issue_category_invalid_for_benefit_type error" do
-        error = Api::V3::DecisionReview::IntakeError.new(:request_issue_category_invalid_for_benefit_type)
-        expect(response).to have_http_status(error.status)
-        expect(JSON.parse(response.body)).to eq(
-          Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json
-        )
+      it "should return malformed_request error" do
+        expect(first_error_code_in_response).to eq expected_error_code
+        expect(response).to have_http_status expected_error_status
       end
     end
 
     context "when there's an invalid receipt_date" do
-      let(:attributes) do
-        {
-          receiptDate: "wrench",
-          informalConference: informal_conference,
-          sameOffice: same_office,
-          legacyOptInApproved: legacy_opt_in_approved,
-          benefitType: benefit_type
-        }
-      end
+      let(:attributes) { default_attributes.merge receiptDate: "wrench" }
+      let(:expected_error_code) { "intake_review_failed" }
 
-      before do
-        allow(User).to receive(:api_user).and_return(mock_api_user)
-        post(*post_params)
-      end
-
-      it "should return :intake_review_failed error" do
-        error = Api::V3::DecisionReview::IntakeError.new(:intake_review_failed)
-        expect(response).to have_http_status(error.status)
-        expect(JSON.parse(response.body)).to eq(
-          Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json
-        )
+      it "should return intake_review_failed error" do
+        expect(response_json).to eq expected_error_json
+        expect(response).to have_http_status expected_error_status
       end
     end
 
-    context "reserved_veteran_file_number" do
-      let(:veteran_file_number) { "123456789" }
+    context "using a reserved veteran file number while in prod" do
+      let(:file_number_or_ssn) { "123456789" }
+      let(:before_post) { allow(Rails).to receive(:deploy_env?).with(:prod).and_return(true) }
+      let(:expected_error_code) { "reserved_veteran_file_number" }
 
-      before do
-        allow(User).to receive(:api_user).and_return(mock_api_user)
-        allow(Rails).to receive(:deploy_env?).with(:prod).and_return(true)
-        post(*post_params)
-      end
-
-      it "should return :reserved_veteran_file_number error" do
-        error = Api::V3::DecisionReview::IntakeError.new(:reserved_veteran_file_number)
-        expect(response).to have_http_status(error.status)
-        expect(JSON.parse(response.body)).to eq(
-          Api::V3::DecisionReview::IntakeErrors.new([error]).render_hash[:json].as_json
-        )
+      it "should return reserved_veteran_file_number error" do
+        expect(response_json).to eq expected_error_json
+        expect(response).to have_http_status expected_error_status
       end
     end
   end

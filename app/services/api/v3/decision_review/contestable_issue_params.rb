@@ -80,7 +80,7 @@ class Api::V3::DecisionReview::ContestableIssueParams
 
   # post-MVP, ensure that category is valid for benefit_type
   def determine_error_code
-    no_ids_error_code || no_opt_in_error_code
+    no_ids_error_code || no_opt_in_error_code || valid_issue
   end
 
   # For MVP, only the ID fields of request issues are allowed to be populated
@@ -102,6 +102,12 @@ class Api::V3::DecisionReview::ContestableIssueParams
     :must_opt_in_to_associate_legacy_issues # error_code
   end
 
+  def cant_find_contestable_issue_error_code
+    return nil if Api::V3::DecisionReview::LookupContestableIssue.new(ids).valid?
+
+    :cant_find_contestable_issue
+  end
+    
   def legacy_appeal_issues_present?
     @attributes[:legacyAppealIssues].present?
   end
