@@ -435,12 +435,16 @@ feature "Task queue", :all_dbs do
 
     let(:unassigned_count) { 8 }
     let(:assigned_count) { 12 }
+    let!(:unassigned_tasks) do
+      create_list(:privacy_act_task, unassigned_count, :in_progress, assigned_to: organization)
+    end
+    let!(:assigned_tasks) do
+      create_list(:privacy_act_task, assigned_count, :on_hold, assigned_to: organization)
+    end
 
     before do
       organization.add_user(organization_user)
       User.authenticate!(user: organization_user)
-      create_list(:privacy_act_task, unassigned_count, :in_progress, assigned_to: organization)
-      create_list(:privacy_act_task, assigned_count, :on_hold, assigned_to: organization)
     end
 
     context "when not using pagination" do
@@ -508,14 +512,24 @@ feature "Task queue", :all_dbs do
 
       context "when filtering tasks" do
         let(:translation_task_count) { unassigned_count / 2 }
+        let!(:unassigned_tasks) do
+          privacy_tasks = create_list(
+            :privacy_act_task, unassigned_count / 2,
+            :in_progress,
+            assigned_to: organization
+          ) 
+          translation_tasks = create_list(
+            :translation_task,
+            translation_task_count,
+            :in_progress,
+            assigned_to: organization
+          )
 
-        before do
-          Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
-            .take(translation_task_count).each { |task| task.update!(type: TranslationTask.name) }
-          visit(organization.path)
+          privacy_tasks + translation_tasks
         end
 
-        it "filters are correct, and filter as expected" do
+        before { visit(organization.path) }
+
           step "check if there are the right number of rows for the unassigned table" do
             expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
           end
