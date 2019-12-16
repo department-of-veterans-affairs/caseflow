@@ -640,6 +640,20 @@ describe Task, :all_dbs do
         expect { subject }.to raise_error(ActiveRecord::RecordNotFound, /Couldn't find Task without an ID/)
       end
     end
+
+    context "when the task assignee is not active" do
+      let(:inactive_user) { create(:user, status: Constants.USER_STATUSES.inactive) }
+      let(:params) do
+        { assigned_to: inactive_user, appeal: task.appeal, parent_id: task.id }
+      end
+
+      it "should throw an error" do
+        expect { subject }.to raise_error(
+          Caseflow::Error::InvalidAssigneeStatusOnTaskCreate,
+          /Cannot assign a task to inactive User #{inactive_user.full_name}/
+        )
+      end
+    end
   end
 
   describe ".create_and_auto_assign_child_task" do

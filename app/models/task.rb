@@ -23,6 +23,7 @@ class Task < ApplicationRecord
 
   validates :assigned_to, :appeal, :type, :status, presence: true
   validate :status_is_valid_on_create, on: :create
+  validate :assignee_status_is_valid_on_create, on: :create
 
   before_create :set_assigned_at
   before_create :verify_org_task_unique
@@ -649,6 +650,14 @@ class Task < ApplicationRecord
   def status_is_valid_on_create
     if status != Constants.TASK_STATUSES.assigned
       fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
+    end
+
+    true
+  end
+
+  def assignee_status_is_valid_on_create
+    if assigned_to.is_a?(User) && !assigned_to.active?
+      fail Caseflow::Error::InvalidAssigneeStatusOnTaskCreate, assignee: assigned_to
     end
 
     true
