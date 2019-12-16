@@ -94,7 +94,7 @@ module Caseflow::Error
   class InvalidAssigneeStatusOnTaskCreate < SerializableError
     def initialize(args)
       @assignee = args[:assignee]
-      @assignee_type = @assignee.class.name
+      @assignee_type = @assignee.class.name.downcase
       @assignee_name = @assignee.is_a?(User) ? @assignee.full_name : @assignee.name
       @code = args[:code] || 400
       @message = args[:message] || "Cannot assign a task to #{@assignee.status} #{@assignee_type} #{@assignee_name}"

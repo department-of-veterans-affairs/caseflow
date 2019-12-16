@@ -650,7 +650,7 @@ describe Task, :all_dbs do
       it "should throw an error" do
         expect { subject }.to raise_error(
           Caseflow::Error::InvalidAssigneeStatusOnTaskCreate,
-          /Cannot assign a task to inactive User #{inactive_user.full_name}/
+          /Cannot assign a task to inactive user #{inactive_user.full_name}/
         )
       end
     end
