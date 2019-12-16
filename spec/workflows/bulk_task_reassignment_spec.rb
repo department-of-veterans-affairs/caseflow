@@ -159,7 +159,7 @@ describe BulkTaskReassignment, :all_dbs do
 
             before { judge_team.add_user(attorney) }
 
-            it "cancels original parent JudgeDecisionReviewTasks and moves attorney tasks to new JudgeDecisionReviewTasks" do
+            it "cancels original parent JudgeDecisionReviewTasks and moves attorney tasks to new JDRT" do
               judge_review_message = "Cancelling #{task_count} JudgeDecisionReviewTasks with ids #{ids_output} and " \
                                       "moving #{task_count} AttorneyTasks to new JudgeDecisionReviewTasks assigned " \
                                       "to the attorney's new judge"
