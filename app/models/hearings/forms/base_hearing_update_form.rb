@@ -13,7 +13,7 @@ class BaseHearingUpdateForm
   def update
     ActiveRecord::Base.transaction do
       update_hearing
-      add_update_hearing_alert
+      add_update_hearing_alert if hearing_was_updated?
       if virtual_hearing_form_or_hearing_time_was_updated?
         create_or_update_virtual_hearing
         hearing.reload
@@ -31,7 +31,16 @@ class BaseHearingUpdateForm
 
   def update_hearing; end
 
+  def hearing_updates; end
+
   private
+
+  def hearing_was_updated?
+    hearing_updates.each_key do |key|
+      return true if hearing_updates.dig(key).present?
+    end
+    false
+  end
 
   def virtual_hearing_form_or_hearing_time_was_updated?
     !virtual_hearing_attributes.blank? || (hearing.virtual? && scheduled_time_string.present?)
