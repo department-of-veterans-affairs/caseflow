@@ -93,5 +93,27 @@ describe RoundRobinTaskDistributor, :all_dbs do
         end
       end
     end
+
+    context "the assignee_pool has inactive users" do
+      let(:iterations) { 4 }
+      let(:total_distribution_count) { iterations * assignee_pool_size }
+      let(:number_of_inactive_users) { assignee_pool_size / 2 }
+
+      before do
+        assignee_pool.take(number_of_inactive_users).each(&:inactive!)
+        total_distribution_count.times do
+          create(:task, assigned_to: round_robin_distributor.next_assignee)
+        end
+      end
+
+      it "should have evenly distributed tasks to each assignee" do
+        assignee_pool.select(&:active?).each do |user|
+          expect(Task.where(assigned_to: user).count).to eq(iterations * 2)
+        end
+        assignee_pool.select(&:inactive?).each do |user|
+          expect(Task.where(assigned_to: user).count).to eq(0)
+        end
+      end
+    end
   end
 end
