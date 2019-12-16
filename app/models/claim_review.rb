@@ -249,11 +249,11 @@ class ClaimReview < DecisionReview
   end
 
   def cleared_rating_ep?
-    cleared_end_products.any?(&:rating?)
+    processed? && cleared_end_products.any?(&:rating?)
   end
 
   def cleared_nonrating_ep?
-    cleared_end_products.any?(&:nonrating?)
+    processed? && cleared_end_products.any?(&:nonrating?)
   end
 
   private
