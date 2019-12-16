@@ -5,7 +5,7 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
 
   def index
     @receipt_date = request.headers["receiptDate"]
-    if !@receipt_date.is_a?(Date) || @receipt_date < standin_claim_review.ama_activation_date || Time.zone.today < @receipt_date
+    if receipt_date_is_bad
       bad_receipt_date
       return
     end
@@ -13,7 +13,7 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
     # this generates this error in UAT:
     #  BGS::PublicError (Logon ID APIUSER Not Found in the Benefits Gateway Service (BGS). Contact your
     #     ISO if you need assistance gaining access to BGS.)
-    render json: Api::V3::ContestableIssueSerializer.new(issues).to_json
+    render json: Api::V3::ContestableIssueSerializer.new(issues)
   end
 
   private
@@ -21,12 +21,18 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
   def standin_claim_review
     # this will be refactored to support different decision review types and benefit types
     # currently only supporting HLR for "compensation"; going to have to do this for each type
-    @standin ||= HigherLevelReview.new(
+    @standin_claim_review ||= HigherLevelReview.new(
       veteran_file_number: @veteran.file_number,
       receipt_date: @receipt_date,
       # must be in ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE for can_contest_rating_issues?
       benefit_type: "compensation"
     )
+  end
+
+  def receipt_date_is_bad
+    !@receipt_date.is_a?(Date) ||
+      @receipt_date < standin_claim_review.ama_activation_date ||
+      Time.zone.today < @receipt_date
   end
 
   def set_veteran_from_header
