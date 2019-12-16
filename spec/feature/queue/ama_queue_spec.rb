@@ -284,8 +284,10 @@ RSpec.feature "AmaQueue", :all_dbs do
 
         click_on "Pal Smith"
 
-        find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, id: old_task.id.to_s).click
-        expect(page).to have_content(existing_instruction)
+        within '#case-timeline-table' do
+          click_button COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
+          expect(page).to have_content(existing_instruction)
+        end
 
         find(".Select-control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]).click
