@@ -104,6 +104,7 @@ detectors:
   TooManyInstanceVariables:
     exclude:
       - AmaAppealDispatch
+      - DuplicateUserTask
       - LegacyAppealDispatch
       - Address
       - ExternalApi::PexipService

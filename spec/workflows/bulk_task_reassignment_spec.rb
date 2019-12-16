@@ -126,7 +126,7 @@ describe BulkTaskReassignment, :all_dbs do
           end
         end
 
-        context "with children attorney tasks" do
+        context "with children attorney tasks (and assignee attorney is being made inactive)" do
           let(:attorney) { create(:user) }
           let!(:child_tasks) do
             tasks.map { |task| create(:ama_attorney_task, :completed, parent_id: task.id, assigned_to: attorney) }
@@ -154,12 +154,12 @@ describe BulkTaskReassignment, :all_dbs do
             end
           end
 
-          context "with a new judge assignee" do
+          context "with a judge to be the new assignee for new parent JudgeDecisionReviewTasks" do
             let!(:judge_team) { JudgeTeam.create_for_judge(create(:user)) }
 
             before { judge_team.add_user(attorney) }
 
-            it "describes what changes will be made and makes them" do
+            it "cancels original parent JudgeDecisionReviewTasks and moves attorney tasks to new JDRT" do
               judge_review_message = "Cancelling #{task_count} JudgeDecisionReviewTasks with ids #{ids_output} and " \
                                       "moving #{task_count} AttorneyTasks to new JudgeDecisionReviewTasks assigned " \
                                       "to the attorney's new judge"
