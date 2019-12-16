@@ -516,14 +516,14 @@ feature "Task queue", :all_dbs do
         end
 
         it "shows the correct filters" do
-          page.find_all("path.unselected-filter-icon-inner").first.click
+          page.find(".unselected-filter-icon-inner", match: :first).click
           expect(page).to have_content("#{PrivacyActTask.label.humanize} (#{unassigned_count / 2})")
           expect(page).to have_content("#{TranslationTask.label.humanize} (#{translation_task_count})")
         end
 
         it "filters tasks correctly" do
           expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
-          page.find_all("path.unselected-filter-icon-inner").first.click
+          page.find(".unselected-filter-icon-inner", match: :first).click
           page.find("label", text: "#{TranslationTask.label.humanize} (#{translation_task_count})").click
           expect(find("tbody").find_all("tr").length).to eq(translation_task_count)
         end
