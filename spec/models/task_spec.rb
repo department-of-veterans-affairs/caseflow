@@ -3,7 +3,7 @@
 describe Task, :all_dbs do
   context "includes PrintsTaskTree concern" do
     describe ".structure" do
-      let(:root_task) { create(:root_task, :on_hold) }
+      let(:root_task) { create(:root_task) }
       let!(:bva_task) { create(:bva_dispatch_task, :in_progress, parent: root_task) }
       let(:judge_task) { create(:ama_judge_task, :completed, parent: root_task) }
       let!(:attorney_task) { create(:ama_attorney_task, :completed, parent: judge_task) }
@@ -37,10 +37,11 @@ describe Task, :all_dbs do
   end
 
   describe ".when_child_task_completed" do
-    let(:task) { create(:task, :on_hold, type: Task.name) }
-    let(:child) { create(:task, :completed, type: Task.name, parent: task) }
+    let(:task) { create(:task, type: Task.name) }
+    let(:child_status) { :assigned }
+    let!(:child) { create(:task, child_status, type: Task.name, parent: task) }
 
-    subject { task.when_child_task_completed(child) }
+    subject { task.reload.when_child_task_completed(child) }
 
     context "when on_hold task is assigned to a person" do
       context "when task has no child tasks" do
@@ -54,7 +55,7 @@ describe Task, :all_dbs do
       end
 
       context "when task has 1 incomplete child task" do
-        let(:child) { create(:task, :in_progress, type: Task.name, parent_id: task.id) }
+        let!(:child_status) { :in_progress }
 
         it "should not change the task's status" do
           status_before = task.status
@@ -64,7 +65,7 @@ describe Task, :all_dbs do
       end
 
       context "when task has 1 complete child task" do
-        let(:child) { create(:task, :completed, type: Task.name, parent_id: task.id) }
+        let!(:child_status) { :completed }
 
         it "should change task's status to assigned" do
           status_before = task.status
@@ -75,8 +76,7 @@ describe Task, :all_dbs do
       end
 
       context "when task is already closed" do
-        let!(:task) { create(:task, :on_hold, type: Task.name) }
-        let!(:child) { create(:task, :completed, type: Task.name, parent: task) }
+        let!(:child_status) { :completed }
 
         before { task.update!(status: Constants.TASK_STATUSES.completed) }
 
@@ -88,10 +88,6 @@ describe Task, :all_dbs do
 
       context "when task has some complete and some incomplete child tasks" do
         let!(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
-        let(:incomplete_children) do
-          create_list(:task, 2, :in_progress, type: Task.name, parent_id: task.id)
-        end
-        let(:child) { incomplete_children.last }
 
         it "should not change the task's status" do
           status_before = task.status
@@ -102,10 +98,10 @@ describe Task, :all_dbs do
 
       context "when task has only complete child tasks" do
         let(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
-        let(:child) { completed_children.last }
+        let!(:child) { completed_children.last }
 
         it "should change task's status to assigned" do
-          status_before = task.status
+          status_before = task.reload.status
           subject
           expect(task.status).to_not eq(status_before)
           expect(task.status).to eq("assigned")
@@ -115,7 +111,7 @@ describe Task, :all_dbs do
 
     context "when on_hold task is assigned to an organization" do
       let(:organization) { Organization.create!(name: "Other organization", url: "other") }
-      let(:task) { create(:task, :on_hold, type: Task.name, assigned_to: organization) }
+      let(:task) { create(:task, type: Task.name, assigned_to: organization) }
 
       context "when task has no child tasks" do
         let(:child) { nil }
@@ -128,7 +124,7 @@ describe Task, :all_dbs do
       end
 
       context "when task has 1 incomplete child task" do
-        let(:child) { create(:task, :in_progress, type: Task.name, parent_id: task.id) }
+        let(:child_status) { :in_progress }
 
         it "should not update any attribute of the task" do
           task_status = task.status
@@ -138,7 +134,7 @@ describe Task, :all_dbs do
       end
 
       context "when task has 1 complete child task" do
-        let(:child) { create(:task, :completed, type: Task.name, parent_id: task.id) }
+        let(:child_status) { :completed }
 
         it "should update the task" do
           subject
@@ -147,8 +143,7 @@ describe Task, :all_dbs do
       end
 
       context "when task is already closed" do
-        let!(:task) { create(:task, :on_hold, type: Task.name, assigned_to: organization) }
-        let!(:child) { create(:task, :completed, type: Task.name, parent: task) }
+        let(:child_status) { :completed }
 
         before { task.update!(status: Constants.TASK_STATUSES.completed) }
 
@@ -160,10 +155,6 @@ describe Task, :all_dbs do
 
       context "when task has some complete and some incomplete child tasks" do
         let!(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
-        let(:incomplete_children) do
-          create_list(:task, 2, :in_progress, type: Task.name, parent_id: task.id)
-        end
-        let(:child) { incomplete_children.last }
 
         it "should not update any attribute of the task" do
           task_status = task.status
@@ -174,7 +165,7 @@ describe Task, :all_dbs do
 
       context "when task has only complete child tasks" do
         let(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
-        let(:child) { completed_children.last }
+        let!(:child) { completed_children.last }
 
         it "should update the task" do
           subject
@@ -184,6 +175,7 @@ describe Task, :all_dbs do
 
       context "when child task has a different type than parent" do
         let!(:child) { create(:quality_review_task, :completed, parent_id: task.id) }
+
         it "sets the status of the parent to assigned" do
           subject
           expect(task.reload.status).to eq(Constants.TASK_STATUSES.assigned)
@@ -560,18 +552,6 @@ describe Task, :all_dbs do
     end
   end
 
-  describe "#actions_available?" do
-    let(:user) { create(:user) }
-
-    context "when task status is on_hold" do
-      let(:task) { create(:generic_task, :on_hold) }
-
-      it "returns false" do
-        expect(task.actions_available?(user)).to eq(false)
-      end
-    end
-  end
-
   describe "#actions_allowable?" do
     let(:user) { create(:user) }
 
@@ -828,36 +808,6 @@ describe Task, :all_dbs do
       task.update!(status: Constants.TASK_STATUSES.cancelled)
       task.task_timers.each do |task_timer|
         expect(task_timer.canceled_at).not_to eq(nil)
-      end
-    end
-  end
-
-  describe ".old_style_hold_expired?" do
-    subject { task.old_style_hold_expired? }
-
-    context "when a task is on an active old-style hold" do
-      let(:task) { create(:task, :on_hold) }
-
-      it "recognizes that the old style hold has not expired" do
-        expect(subject).to eq(false)
-      end
-    end
-
-    context "when a task has completed an old-style hold" do
-      let(:task) { create(:task, :on_hold) }
-
-      it "recognizes that the old style hold has expired" do
-        task.update(placed_on_hold_at: 200.days.ago)
-        expect(subject).to eq(true)
-      end
-    end
-
-    context "when a task has a completed old-style hold as well as a new timed hold" do
-      let(:task) { create(:task, :on_hold, placed_on_hold_at: 200.days.ago) }
-      before { TimedHoldTask.create_from_parent(task, days_on_hold: 16) }
-
-      it "does not recognize that the task has completed the old-style hold" do
-        expect(subject).to eq(false)
       end
     end
   end

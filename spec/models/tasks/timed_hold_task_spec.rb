@@ -153,7 +153,7 @@ describe TimedHoldTask, :postgres do
       end
 
       context "when the TimedHoldTask has a parent task assigned to an organization" do
-        let(:parent_task) { create(:generic_task, :on_hold) }
+        let(:parent_task) { create(:generic_task) }
         let(:task) { create(:timed_hold_task, trait, parent: parent_task) }
         it "sets the parent task status to assigned" do
           subject
