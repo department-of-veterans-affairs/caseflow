@@ -48,7 +48,7 @@ class CaseHearingsDetail extends React.PureComponent {
   getHearingAttrs = (hearing, userIsVsoEmployee) => {
     const hearingAttrs = [{
       label: 'Type',
-      value: hearing.readableRequestType
+      value: hearing.isVirtual ? 'Virtual' : hearing.type
     },
     {
       label: 'Disposition',
@@ -167,7 +167,7 @@ class CaseHearingsDetail extends React.PureComponent {
             {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK}
           </React.Fragment>
         }
-        {!_.isEmpty(hearings) && 
+        {!_.isEmpty(hearings) &&
           <BareList
             ListElementComponent="ul"
             items={listElements.map(this.getDetailField)}
@@ -181,7 +181,13 @@ class CaseHearingsDetail extends React.PureComponent {
 
 CaseHearingsDetail.propTypes = {
   appeal: PropTypes.shape({
-    hearings: PropTypes.array,
+    hearings: PropTypes.arrayOf(
+      PropTypes.shape({
+        externalId: PropTypes.string,
+        type: PropTypes.string
+
+      })
+    ),
     caseType: PropTypes.string,
     completedHearingOnPreviousAppeal: PropTypes.bool
   }),
