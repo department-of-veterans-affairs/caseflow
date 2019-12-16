@@ -1,0 +1,17 @@
+SELECT 
+	appeals.docket_type  AS "appeals.docket_type",
+	COUNT(DISTINCT request_issues.id ) AS "request_issues.count",
+	(COALESCE(CAST( ( SUM(DISTINCT (CAST(FLOOR(COALESCE(CASE WHEN (decision_documents.decision_date  IS NULL) THEN DATEDIFF(day, (DATE(appeals.receipt_date )), CURRENT_DATE)  ELSE NULL END,0)*(CAST(1000000 AS DOUBLE PRECISION)*1.0)) AS DECIMAL(38,0))) + CAST(STRTOL(LEFT(MD5(CAST(CASE WHEN (decision_documents.decision_date  IS NULL) THEN request_issues.id  ELSE NULL END AS VARCHAR)),15),16) AS DECIMAL(38,0))* 1.0e8 + CAST(STRTOL(RIGHT(MD5(CAST(CASE WHEN (decision_documents.decision_date  IS NULL) THEN request_issues.id  ELSE NULL END AS VARCHAR)),15),16) AS DECIMAL(38,0)) ) - SUM(DISTINCT CAST(STRTOL(LEFT(MD5(CAST(CASE WHEN (decision_documents.decision_date  IS NULL) THEN request_issues.id  ELSE NULL END AS VARCHAR)),15),16) AS DECIMAL(38,0))* 1.0e8 + CAST(STRTOL(RIGHT(MD5(CAST(CASE WHEN (decision_documents.decision_date  IS NULL) THEN request_issues.id  ELSE NULL END AS VARCHAR)),15),16) AS DECIMAL(38,0))) )  AS DOUBLE PRECISION) / CAST((CAST(1000000 AS DOUBLE PRECISION)) AS DOUBLE PRECISION), 0) / NULLIF(COUNT(DISTINCT CASE WHEN (decision_documents.decision_date  IS NULL) AND DATEDIFF(day, (DATE(appeals.receipt_date )), CURRENT_DATE)  IS NOT NULL THEN request_issues.id  ELSE NULL END), 0)) AS "request_issues.average_pending_days",
+	COUNT(DISTINCT CASE WHEN (decision_documents.decision_date  IS NULL) THEN request_issues.id  ELSE NULL END) AS "request_issues.pending_appeal_request_issue_count",
+	(COALESCE(CAST( ( SUM(DISTINCT (CAST(FLOOR(COALESCE(CASE WHEN (decision_documents.decision_date  IS NOT NULL) THEN DATEDIFF(day, (DATE(appeals.receipt_date )), (DATE(decision_documents.decision_date )))  ELSE NULL END,0)*(CAST(1000000 AS DOUBLE PRECISION)*1.0)) AS DECIMAL(38,0))) + CAST(STRTOL(LEFT(MD5(CAST(CASE WHEN (decision_documents.decision_date  IS NOT NULL) THEN request_issues.id  ELSE NULL END AS VARCHAR)),15),16) AS DECIMAL(38,0))* 1.0e8 + CAST(STRTOL(RIGHT(MD5(CAST(CASE WHEN (decision_documents.decision_date  IS NOT NULL) THEN request_issues.id  ELSE NULL END AS VARCHAR)),15),16) AS DECIMAL(38,0)) ) - SUM(DISTINCT CAST(STRTOL(LEFT(MD5(CAST(CASE WHEN (decision_documents.decision_date  IS NOT NULL) THEN request_issues.id  ELSE NULL END AS VARCHAR)),15),16) AS DECIMAL(38,0))* 1.0e8 + CAST(STRTOL(RIGHT(MD5(CAST(CASE WHEN (decision_documents.decision_date  IS NOT NULL) THEN request_issues.id  ELSE NULL END AS VARCHAR)),15),16) AS DECIMAL(38,0))) )  AS DOUBLE PRECISION) / CAST((CAST(1000000 AS DOUBLE PRECISION)) AS DOUBLE PRECISION), 0) / NULLIF(COUNT(DISTINCT CASE WHEN (decision_documents.decision_date  IS NOT NULL) AND DATEDIFF(day, (DATE(appeals.receipt_date )), (DATE(decision_documents.decision_date )))  IS NOT NULL THEN request_issues.id  ELSE NULL END), 0)) AS "request_issues.average_completed_days",
+	COUNT(DISTINCT CASE WHEN (decision_documents.decision_date  IS NOT NULL) THEN request_issues.id  ELSE NULL END) AS "request_issues.completed_appeal_request_issue_count",
+	COUNT(DISTINCT decision_documents.id ) AS "decision_documents.count"
+FROM public.appeals  AS appeals
+LEFT JOIN public.request_issues  AS request_issues ON appeals.id = request_issues.decision_review_id 
+LEFT JOIN public.decision_documents  AS decision_documents ON decision_documents.appeal_id = appeals.id 
+
+WHERE 
+	((appeals.docket_type IS NOT NULL))
+GROUP BY 1
+ORDER BY 6 
+LIMIT 500
