@@ -9,6 +9,8 @@ class Api::V3::ContestableIssueSerializer
     { data: @contestable_issues.map { |issue| contestable_issue_json(issue) } }.to_json
   end
 
+  private
+
   def contestable_issue_json(contestable_issue)
     latest_issues_in_chain =
       contestable_issue.latest_contestable_issues.collect do |latest|
