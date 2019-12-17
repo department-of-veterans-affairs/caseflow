@@ -530,6 +530,7 @@ feature "Task queue", :all_dbs do
 
         before { visit(organization.path) }
 
+        it "filters are correct, and filter as expected" do
           step "check if there are the right number of rows for the unassigned table" do
             expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
           end
