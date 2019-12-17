@@ -124,6 +124,7 @@ export default class HearingTime extends React.Component {
 }
 
 HearingTime.propTypes = {
+  errorMessage: PropTypes.string,
   onChange: PropTypes.func,
   readOnly: PropTypes.bool,
   regionalOffice: PropTypes.object,
