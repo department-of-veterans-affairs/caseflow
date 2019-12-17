@@ -63,6 +63,9 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
 
     let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, regional_office: "RO06") }
     let(:expected_alert) { COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % legacy_hearing.appeal.veteran.name }
+    let(:virtual_hearing_alert) do
+      COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_TO_VIRTUAL"]["TITLE"] % legacy_hearing.appeal.veteran.name
+    end
 
     scenario "User can edit Judge and change virtual hearings" do
       visit "hearings/" + legacy_hearing.external_id.to_s + "/details"
@@ -78,7 +81,8 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       fill_in "rep-email", with: "email@testingEmail.com"
       click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
 
-      expect(page).to have_content(expected_alert)
+      expect(page).to have_no_content(expected_alert)
+      expect(page).to have_content(virtual_hearing_alert)
     end
 
     scenario "User can select judge, hearing room, hearing coordinator, and add notes" do
