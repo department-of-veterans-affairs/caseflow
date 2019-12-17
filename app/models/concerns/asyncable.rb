@@ -256,5 +256,9 @@ module Asyncable
   def path
     "/asyncable_jobs/#{self.class}/jobs/#{id}"
   end
+
+  def label
+    "#{self.class} #{id}"
+  end
 end
 # rubocop:enable Metrics/ModuleLength

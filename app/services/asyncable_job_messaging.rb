@@ -17,7 +17,7 @@ class AsyncableJobMessaging
       job_note = JobNote.create!(job: job, user: current_user, note: text, send_to_intake_user: send_to_intake_user)
       if send_to_intake_user && job.asyncable_user
         message_text = <<-EOS.strip_heredoc
-          A new note has been added to your #{job.class} job.
+          A new note has been added to #{job.label}.
           <a href="#{job_note.path}">Click here</a> to view the note.
         EOS
         Message.create!(detail: job_note, text: message_text, user: job.asyncable_user, message_type: :job_note_added)
@@ -33,7 +33,7 @@ class AsyncableJobMessaging
       job_note = JobNote.create!(job: job, user: current_user, note: text, send_to_intake_user: send_to_intake_user)
       if send_to_intake_user
         message_text = <<-EOS.strip_heredoc
-          The job for processing <a href="#{job_note.path}">#{job.class} #{job.id}</a> has been cancelled.<br />
+          The job for processing <a href="#{job_note.path}">#{job.label}</a> has been cancelled.<br />
           No further action is necessary. Please see the job details page for more information on why this job has been cancelled.
         EOS
         Message.create!(detail: job_note, text: message_text, user: job.asyncable_user, message_type: :job_cancelled)
@@ -48,7 +48,7 @@ class AsyncableJobMessaging
 
     err = ERB::Util.html_escape(job.sanitized_error)
     message_text = <<-EOS.strip_heredoc
-      The job for <a href="#{job.path}">#{job.class} #{job.id}</a> was unable to complete because of an error: #{err}<br />
+      The job for <a href="#{job.path}">#{job.label}</a> was unable to complete because of an error: #{err}<br />
       No further action is necessary as the (IT) support team has been notified.
       You will receive a separate message in your inbox when the issue has resolved.
     EOS
@@ -65,7 +65,7 @@ class AsyncableJobMessaging
     return if job.messages.failing_job_succeeded.any?
 
     message_text = <<-EOS.strip_heredoc
-      <a href="#{job.path}">#{job.class} #{job.id}</a> has successfully been processed.
+      <a href="#{job.path}">#{job.label}</a> has successfully been processed.
       No further action is necessary. If you have opened a support ticket for this issue,
       you may inform them that it may be closed.
     EOS
