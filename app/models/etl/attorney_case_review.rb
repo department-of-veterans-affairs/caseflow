@@ -37,7 +37,7 @@ class ETL::AttorneyCaseReview < ETL::Record
       target.reviewing_judge_sattyid = judge.vacols_user&.sattyid
       target.task_id = original.task_id
       target.untimely_evidence = original.untimely_evidence
-      target.vacols_id = original.vacols_id
+      target.vacols_id = original.vacols_id if appeal.is_a?(LegacyAppeal)
       target.work_product = original.work_product
 
       target
