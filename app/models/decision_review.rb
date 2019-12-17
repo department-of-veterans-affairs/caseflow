@@ -115,32 +115,8 @@ class DecisionReview < ApplicationRecord
     request_issues.withdrawn.map(&:withdrawal_date).compact.max
   end
 
-  def ui_hash
-    {
-      veteran: {
-        name: veteran&.name&.formatted(:readable_short),
-        fileNumber: veteran_file_number,
-        formName: veteran&.name&.formatted(:form),
-        ssn: veteran&.ssn
-      },
-      intakeUser: asyncable_user&.css_id,
-      editIssuesUrl: caseflow_only_edit_issues_url,
-      processedAt: establishment_processed_at,
-      relationships: veteran&.relationships&.map(&:serialize),
-      claimant: claimant_participant_id,
-      veteranIsNotClaimant: veteran_is_not_claimant,
-      receiptDate: receipt_date.to_formatted_s(:json_date),
-      legacyOptInApproved: legacy_opt_in_approved,
-      legacyAppeals: serialized_legacy_appeals,
-      ratings: serialized_ratings,
-      requestIssues: request_issues_ui_hash,
-      decisionIssues: decision_issues.map(&:ui_hash),
-      activeNonratingRequestIssues: active_nonrating_request_issues.map(&:serialize),
-      contestableIssuesByDate: contestable_issues.map(&:serialize),
-      veteranValid: veteran&.valid?(:bgs),
-      veteranInvalidFields: veteran_invalid_fields,
-      processedInCaseflow: processed_in_caseflow?
-    }
+  def serialize
+    Intake::DecisionReviewSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def caseflow_only_edit_issues_url
@@ -352,12 +328,6 @@ class DecisionReview < ApplicationRecord
     fail Caseflow::Error::MustImplementInSubclass
   end
 
-  private
-
-  def contestable_issue_generator
-    @contestable_issue_generator ||= ContestableIssueGenerator.new(self)
-  end
-
   def veteran_invalid_fields
     return unless intake
 
@@ -369,6 +339,12 @@ class DecisionReview < ApplicationRecord
     request_issues.includes(
       :decision_review, :contested_decision_issue
     ).active_or_ineligible_or_withdrawn.map(&:serialize)
+  end
+
+  private
+
+  def contestable_issue_generator
+    @contestable_issue_generator ||= ContestableIssueGenerator.new(self)
   end
 
   def can_contest_rating_issues?
