@@ -61,6 +61,10 @@ class ClaimReview < DecisionReview
     "/asyncable_jobs/#{self.class}/jobs/#{id}"
   end
 
+  def label
+    "#{self.class} #{id} (Veteran #{veteran_file_number})"
+  end
+
   def finalized_decision_issues_before_receipt_date
     return [] unless receipt_date
 
