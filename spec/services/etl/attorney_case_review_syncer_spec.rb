@@ -11,6 +11,7 @@ describe ETL::AttorneyCaseReviewSyncer, :etl, :all_dbs do
     create(:attorney_case_review, attorney: attorney, reviewing_judge: judge, task_id: task_id)
   end
 
+  # rubocop:disable Metrics/AbcSize
   def expect_denormalized_users(etl_acr)
     expect(etl_acr.attorney_css_id).to eq(attorney.css_id)
     expect(etl_acr.attorney_full_name).to eq(attorney.full_name)
@@ -19,6 +20,7 @@ describe ETL::AttorneyCaseReviewSyncer, :etl, :all_dbs do
     expect(etl_acr.reviewing_judge_full_name).to eq(judge.full_name)
     expect(etl_acr.reviewing_judge_sattyid).to eq(vacols_judge.sattyid)
   end
+  # rubocop:enable Metrics/AbcSize
 
   describe "#call" do
     before do
