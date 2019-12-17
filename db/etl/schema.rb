@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191213194037) do
+ActiveRecord::Schema.define(version: 20191217193046) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -75,6 +75,44 @@ ActiveRecord::Schema.define(version: 20191213194037) do
     t.index ["veteran_id"], name: "index_appeals_on_veteran_id"
     t.index ["veteran_is_not_claimant"], name: "index_appeals_on_veteran_is_not_claimant"
     t.index ["veteran_participant_id"], name: "index_appeals_on_veteran_participant_id"
+  end
+
+  create_table "attorney_case_reviews", force: :cascade, comment: "Denormalized attorney_case_reviews" do |t|
+    t.bigint "appeal_id", null: false, comment: "tasks.appeal_id"
+    t.string "appeal_type", null: false, comment: "tasks.appeal_type"
+    t.string "attorney_css_id", limit: 20, null: false, comment: "users.css_id"
+    t.string "attorney_full_name", limit: 255, null: false, comment: "users.full_name"
+    t.bigint "attorney_id", null: false, comment: "attorney_case_reviews.attorney_id"
+    t.string "attorney_sattyid", limit: 20, null: false, comment: "users.sattyid"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.string "document_reference_id", limit: 50, comment: "attorney_case_reviews.document_id"
+    t.string "document_type", limit: 20, comment: "attorney_case_reviews.document_type"
+    t.text "note", comment: "attorney_case_reviews.note"
+    t.boolean "overtime", comment: "attorney_case_reviews.overtime"
+    t.datetime "review_created_at", null: false, comment: "attorney_case_reviews.created_at"
+    t.bigint "review_id", null: false, comment: "attorney_case_reviews.id"
+    t.datetime "review_updated_at", null: false, comment: "attorney_case_reviews.updated_at"
+    t.string "reviewing_judge_css_id", limit: 20, null: false, comment: "users.css_id"
+    t.string "reviewing_judge_full_name", limit: 255, null: false, comment: "users.full_name"
+    t.bigint "reviewing_judge_id", null: false, comment: "attorney_case_reviews.reviewing_judge_id"
+    t.string "reviewing_judge_sattyid", limit: 20, null: false, comment: "users.sattyid"
+    t.string "task_id", null: false, comment: "attorney_case_reviews.task_id"
+    t.boolean "untimely_evidence", comment: "attorney_case_reviews.untimely_evidence"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.bigint "vacols_id", null: false, comment: "Substring attorney_case_reviews.task_id for Legacy Appeals"
+    t.string "work_product", limit: 20, comment: "attorney_case_reviews.work_product"
+    t.index ["appeal_id"], name: "index_attorney_case_reviews_on_appeal_id"
+    t.index ["appeal_type"], name: "index_attorney_case_reviews_on_appeal_type"
+    t.index ["attorney_id"], name: "index_attorney_case_reviews_on_attorney_id"
+    t.index ["created_at"], name: "index_attorney_case_reviews_on_created_at"
+    t.index ["document_type"], name: "index_attorney_case_reviews_on_document_type"
+    t.index ["review_created_at"], name: "index_attorney_case_reviews_on_review_created_at"
+    t.index ["review_id"], name: "index_attorney_case_reviews_on_review_id"
+    t.index ["review_updated_at"], name: "index_attorney_case_reviews_on_review_updated_at"
+    t.index ["reviewing_judge_id"], name: "index_attorney_case_reviews_on_reviewing_judge_id"
+    t.index ["task_id"], name: "index_attorney_case_reviews_on_task_id"
+    t.index ["updated_at"], name: "index_attorney_case_reviews_on_updated_at"
+    t.index ["vacols_id"], name: "index_attorney_case_reviews_on_vacols_id"
   end
 
   create_table "organizations", force: :cascade, comment: "Copy of Organizations table" do |t|
