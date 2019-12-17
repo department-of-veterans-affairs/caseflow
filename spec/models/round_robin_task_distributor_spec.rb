@@ -66,7 +66,7 @@ describe RoundRobinTaskDistributor, :all_dbs do
       end
 
       context "the assignee_pool contains items that aren't Users" do
-        let!(:assignee_pool) { create_list(:user, assignee_pool_size).pluck(:css_id) }
+        let!(:assignee_pool) { create_list(:organization, assignee_pool_size) }
 
         it "raises an error" do
           expect { round_robin_distributor.next_assignee }.to(raise_error) do |error|
