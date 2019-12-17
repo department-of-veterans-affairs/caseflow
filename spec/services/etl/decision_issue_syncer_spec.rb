@@ -13,7 +13,9 @@ describe ETL::DecisionIssueSyncer, :etl, :all_dbs do
         subject
 
         expect(ETL::DecisionIssue.count).to eq(1)
-        expect(ETL::DecisionIssue.first.issue_created_at).to eq(decision_issue.created_at)
+
+        # stringify datetimes to ignore milliseconds
+        expect(ETL::DecisionIssue.first.issue_created_at.to_s).to eq(decision_issue.created_at.to_s)
       end
     end
   end
