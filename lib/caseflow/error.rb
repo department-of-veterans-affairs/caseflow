@@ -17,7 +17,7 @@ module Caseflow::Error
 
   class SerializableError < StandardError
     include Caseflow::Error::ErrorSerializer
-    attr_accessor :code, :message
+    attr_accessor :code, :message, :title
   end
 
   class EfolderError < SerializableError; end
