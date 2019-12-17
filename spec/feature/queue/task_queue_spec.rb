@@ -517,7 +517,7 @@ feature "Task queue", :all_dbs do
             :privacy_act_task, unassigned_count / 2,
             :in_progress,
             assigned_to: organization
-          ) 
+          )
           translation_tasks = create_list(
             :translation_task,
             translation_task_count,
