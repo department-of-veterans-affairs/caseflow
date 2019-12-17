@@ -13,7 +13,7 @@ feature "Inbox", :postgres do
         user.messages << build(:message, text: "hello world")
         user.messages << build(:message, text: "message with <a href='/intake'>link</a>")
         user.messages << build(:message,
-                               created_at: DateTime.parse("2019-08-01T15:34:43-0500").in_time_zone,
+                               created_at: 1.month.ago,
                                text: "i have been read",
                                read_at: Time.zone.now)
       end
@@ -21,6 +21,7 @@ feature "Inbox", :postgres do
       it "show all messages and allows user to mark as read" do
         visit "/inbox"
 
+        expect(page).to have_content("Messages will remain in the intake box for 120 days")
         expect(page).to have_content("hello world")
         expect(page).to have_content("message with link")
         expect(page).to have_link("link")

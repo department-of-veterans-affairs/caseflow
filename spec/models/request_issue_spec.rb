@@ -558,6 +558,14 @@ describe RequestIssue, :all_dbs do
       end
     end
 
+    context "when request issue is ineligible" do
+      let(:closed_status) { "ineligible" }
+
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+    end
+
     context "when decision review is processed in caseflow" do
       it "calls EndProductCodeSelector" do
         expect_any_instance_of(EndProductCodeSelector).to receive(:call).once
