@@ -2,7 +2,10 @@
 
 describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: :request do
   before { FeatureToggle.enable!(:api_v3) }
-  after { FeatureToggle.disable!(:api_v3) }
+  after do
+    User.instance_variable_set(:@api_user, nil)
+    FeatureToggle.disable!(:api_v3)
+  end
 
   describe "#index" do
     let(:veteran) { create(:veteran) }
@@ -44,7 +47,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
       let(:claim_id) { "12345" }
       let(:rating_issue_reference_id) { "99999" }
       let(:end_product_establishment) do
-        EndProductEstablishment.new(
+        create(:end_product_establishment,
           source: source,
           veteran_file_number: veteran.file_number,
           code: "682HLRRRAMP", # "030HLRR",
