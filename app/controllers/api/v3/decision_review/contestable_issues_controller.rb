@@ -5,8 +5,12 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
 
   def index
     @receipt_date = request.headers["receiptDate"]
-    if receipt_date_is_bad
-      bad_receipt_date
+    if invalid_receipt_date?
+      render_error(
+        status: 422,
+        code: :bad_receipt_date,
+        title: "Bad receipt date"
+      )
       return
     end
     issues = ContestableIssueGenerator.new(standin_claim_review).contestable_issues
@@ -26,7 +30,7 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
     )
   end
 
-  def receipt_date_is_bad
+  def invalid_receipt_date?
     !@receipt_date.is_a?(Date) ||
       @receipt_date < standin_claim_review.ama_activation_date ||
       Time.zone.today < @receipt_date
@@ -41,13 +45,5 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
         title: "Veteran not found"
       )
     end
-  end
-
-  def bad_receipt_date
-    render_error(
-      status: 422,
-      code: :bad_receipt_date,
-      title: "Bad receipt date"
-    )
   end
 end
