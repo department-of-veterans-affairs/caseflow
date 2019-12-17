@@ -94,6 +94,10 @@ class EndProductCodeSelector
             appeal: {
               rating: "930AMARRCPMC",
               nonrating: "930ARNRCPMC"
+            },
+            higher_level_review: {
+              rating: "930AHDERPMC",
+              nonrating: "930AHDENRPMC"
             }
           }
         }
@@ -136,6 +140,10 @@ class EndProductCodeSelector
             appeal: {
               rating: "930ARRCLQPMC",
               nonrating: "930ARNRCLPMC"
+            },
+            higher_level_review: {
+              rating: "930AHDERLPMC",
+              nonrating: "930AHDENLPMC"
             }
           }
         }
@@ -178,6 +186,10 @@ class EndProductCodeSelector
             appeal: {
               rating: "930ARRCNQPMC",
               nonrating: "930ARNRCNPMC"
+            },
+            higher_level_review: {
+              rating: "930AHDERNPMC",
+              nonrating: "930AHDENNPMC"
             }
           }
         }
