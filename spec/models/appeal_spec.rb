@@ -675,8 +675,8 @@ describe Appeal, :all_dbs do
         end
 
         it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
-          expect(appeal.assigned_to_location).to(eq(assignee.css_id),
-            appeal.structure_render(:id, :status, :created_at, :assigned_to_id)
+          expect(appeal.assigned_to_location).to(
+            eq(assignee.css_id), appeal.structure_render(:id, :status, :created_at, :assigned_to_id)
           )
         end
       end
