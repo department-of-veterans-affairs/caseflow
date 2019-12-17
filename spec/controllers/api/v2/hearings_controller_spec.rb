@@ -140,9 +140,33 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
             response
           end
 
-          it { expect(subject.status).to eq 200 }
-          it { expect(JSON.parse(subject.body)).to have_key("hearings") }
-          it { expect(JSON.parse(subject.body)["hearings"].size).to eq 1 }
+          it "returns a 200 and response has expected attributes and values", :aggregate_failures do
+            expect(subject.status).to eq 200
+
+            response_body = JSON.parse(subject.body)
+            expect(response_body).to have_key("hearings")
+            expect(response_body["hearings"].size).to eq 1
+            expect(response_body["hearings"][0]["is_virtual"]).to eq(false)
+          end
+
+          context "is virtual" do
+            let!(:hearings) do
+              [
+                create(:legacy_hearing, regional_office: "RO42", hearing_day: hearing_day)
+              ]
+            end
+            let!(:virtual_hearing) do
+              create(:virtual_hearing, :active, :initialized, hearing: hearings[0])
+            end
+
+            it "returns a 200 and has expected response", :aggregate_failures do
+              expect(subject.status).to eq 200
+              response_body = JSON.parse(subject.body)
+              expect(response_body).to have_key("hearings")
+              expect(response_body["hearings"].size).to eq 1
+              expect(response_body["hearings"][0]["is_virtual"]).to eq true
+            end
+          end
         end
       end
 
