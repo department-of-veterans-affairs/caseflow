@@ -40,19 +40,8 @@ class ClaimReview < DecisionReview
     end
   end
 
-  def ui_hash
-    super.merge(
-      asyncJobUrl: async_job_url,
-      benefitType: benefit_type,
-      payeeCode: payee_code
-    ).tap do |hash|
-      if processed?
-        hash.update(
-          hasClearedRatingEp: cleared_rating_ep?,
-          hasClearedNonratingEp: cleared_nonrating_ep?
-        )
-      end
-    end
+  def serialize
+    Intake::ClaimReviewSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def validate_prior_to_edit
@@ -65,11 +54,15 @@ class ClaimReview < DecisionReview
     end
 
     # this will raise any errors for missing data
-    ui_hash
+    serialize
   end
 
   def async_job_url
     "/asyncable_jobs/#{self.class}/jobs/#{id}"
+  end
+
+  def label
+    "#{self.class} #{id} (Veteran #{veteran_file_number})"
   end
 
   def finalized_decision_issues_before_receipt_date
@@ -259,18 +252,18 @@ class ClaimReview < DecisionReview
     processed_in_vbms? && !try(:decision_review_remanded?)
   end
 
+  def cleared_rating_ep?
+    processed? && cleared_end_products.any?(&:rating?)
+  end
+
+  def cleared_nonrating_ep?
+    processed? && cleared_end_products.any?(&:nonrating?)
+  end
+
   private
 
   def cleared_end_products
     @cleared_end_products ||= end_product_establishments.select { |ep| ep.status_cleared?(sync: true) }
-  end
-
-  def cleared_rating_ep?
-    cleared_end_products.any?(&:rating?)
-  end
-
-  def cleared_nonrating_ep?
-    cleared_end_products.any?(&:nonrating?)
   end
 
   def verify_contentions

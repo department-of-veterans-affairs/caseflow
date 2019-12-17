@@ -108,6 +108,7 @@ detectors:
       - LegacyAppealDispatch
       - Address
       - ExternalApi::PexipService
+      - InvalidAssigneeStatusOnTaskCreate
   TooManyMethods:
     enabled: false
   TooManyStatements:
