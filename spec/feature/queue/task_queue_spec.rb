@@ -435,12 +435,16 @@ feature "Task queue", :all_dbs do
 
     let(:unassigned_count) { 8 }
     let(:assigned_count) { 12 }
+    let!(:unassigned_tasks) do
+      create_list(:privacy_act_task, unassigned_count, :in_progress, assigned_to: organization)
+    end
+    let!(:assigned_tasks) do
+      create_list(:privacy_act_task, assigned_count, :on_hold, assigned_to: organization)
+    end
 
     before do
       organization.add_user(organization_user)
       User.authenticate!(user: organization_user)
-      create_list(:privacy_act_task, unassigned_count, :in_progress, assigned_to: organization)
-      create_list(:privacy_act_task, assigned_count, :on_hold, assigned_to: organization)
     end
 
     context "when not using pagination" do
@@ -508,24 +512,39 @@ feature "Task queue", :all_dbs do
 
       context "when filtering tasks" do
         let(:translation_task_count) { unassigned_count / 2 }
+        let!(:unassigned_tasks) do
+          privacy_tasks = create_list(
+            :privacy_act_task, unassigned_count / 2,
+            :in_progress,
+            assigned_to: organization
+          )
+          translation_tasks = create_list(
+            :translation_task,
+            translation_task_count,
+            :in_progress,
+            assigned_to: organization
+          )
 
-        before do
-          Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
-            .take(translation_task_count).each { |task| task.update!(type: TranslationTask.name) }
-          visit(organization.path)
+          privacy_tasks + translation_tasks
         end
 
-        it "shows the correct filters" do
-          page.find_all("path.unselected-filter-icon-inner").first.click
-          expect(page).to have_content("#{PrivacyActTask.label.humanize} (#{unassigned_count / 2})")
-          expect(page).to have_content("#{TranslationTask.label.humanize} (#{translation_task_count})")
-        end
+        before { visit(organization.path) }
 
-        it "filters tasks correctly" do
-          expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
-          page.find_all("path.unselected-filter-icon-inner").first.click
-          page.find("label", text: "#{TranslationTask.label.humanize} (#{translation_task_count})").click
-          expect(find("tbody").find_all("tr").length).to eq(translation_task_count)
+        it "filters are correct, and filter as expected" do
+          step "check if there are the right number of rows for the unassigned table" do
+            expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+          end
+
+          step "check if the filter options are as expected" do
+            page.find(".unselected-filter-icon-inner", match: :first).click
+            expect(page).to have_content("#{PrivacyActTask.label.humanize} (#{unassigned_count / 2})")
+            expect(page).to have_content("#{TranslationTask.label.humanize} (#{translation_task_count})")
+          end
+
+          step "clicking on a filter reduces the number of results by the expect amount" do
+            page.find("label", text: "#{TranslationTask.label.humanize} (#{translation_task_count})").click
+            expect(find("tbody").find_all("tr").length).to eq(translation_task_count)
+          end
         end
       end
     end
@@ -965,7 +984,6 @@ feature "Task queue", :all_dbs do
       let!(:orig_judge_task) do
         create(
           :ama_judge_decision_review_task,
-          :on_hold,
           assigned_to: judge_user,
           appeal: appeal,
           parent: root_task

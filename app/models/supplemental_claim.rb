@@ -6,10 +6,7 @@ class SupplementalClaim < ClaimReview
   belongs_to :decision_review_remanded, polymorphic: true
 
   def ui_hash
-    super.merge(
-      formType: "supplemental_claim",
-      isDtaError: decision_review_remanded?
-    )
+    Intake::SupplementalClaimSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def start_processing_job!

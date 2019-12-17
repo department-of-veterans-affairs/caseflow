@@ -105,8 +105,8 @@ class DecisionIssue < ApplicationRecord
     REMAND_DISPOSITIONS.include?(disposition)
   end
 
-  def ui_hash
-    DecisionIssueSerializer.new(self).serializable_hash[:data][:attributes]
+  def serialize
+    Intake::DecisionIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def find_or_create_remand_supplemental_claim!

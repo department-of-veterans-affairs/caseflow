@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191209162326) do
+ActiveRecord::Schema.define(version: 20191213194037) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,10 +82,13 @@ ActiveRecord::Schema.define(version: 20191209162326) do
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"
     t.string "role", comment: "Role users in organization must have, if present"
+    t.string "status", default: "active", comment: "Whether organization is active, inactive, or in some other Status."
+    t.datetime "status_updated_at", comment: "Track when organization status last changed."
     t.string "type", comment: "Single table inheritance"
     t.datetime "updated_at"
     t.string "url", comment: "Unique portion of the organization queue url"
     t.index ["created_at"], name: "index_organizations_on_created_at"
+    t.index ["status"], name: "index_organizations_on_status"
     t.index ["updated_at"], name: "index_organizations_on_updated_at"
     t.index ["url"], name: "index_organizations_on_url", unique: true
   end
@@ -147,6 +150,7 @@ ActiveRecord::Schema.define(version: 20191209162326) do
     t.index ["assigned_to_type", "assigned_to_id"], name: "index_tasks_on_assigned_to_type_and_assigned_to_id"
     t.index ["created_at"], name: "index_tasks_on_created_at"
     t.index ["parent_id"], name: "index_tasks_on_parent_id"
+    t.index ["task_id"], name: "index_tasks_on_task_id"
     t.index ["task_status"], name: "index_tasks_on_task_status"
     t.index ["task_type"], name: "index_tasks_on_task_type"
     t.index ["updated_at"], name: "index_tasks_on_updated_at"
