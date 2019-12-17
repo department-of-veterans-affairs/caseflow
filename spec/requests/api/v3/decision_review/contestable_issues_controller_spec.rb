@@ -48,24 +48,23 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
       let(:rating_issue_reference_id) { "99999" }
       let(:end_product_establishment) do
         create(:end_product_establishment,
-          source: source,
-          veteran_file_number: veteran.file_number,
-          code: "682HLRRRAMP", # "030HLRR",
-          payee_code: "00",
-          claim_date: 14.days.ago,
-          station: "397",
-          reference_id: claim_id,
-          claimant_participant_id: veteran.ptcpnt_id,
-          synced_status: nil,
-          committed_at: nil,
-          benefit_type_code: "2",
-          doc_reference_id: nil,
-          development_item_reference_id: nil,
-          established_at: 30.days.ago,
-          user: User.api_user,
-          limited_poa_code: "ABC",
-          limited_poa_access: true
-        )
+               source: source,
+               veteran_file_number: veteran.file_number,
+               code: "682HLRRRAMP", # "030HLRR",
+               payee_code: "00",
+               claim_date: 14.days.ago,
+               station: "397",
+               reference_id: claim_id,
+               claimant_participant_id: veteran.ptcpnt_id,
+               synced_status: nil,
+               committed_at: nil,
+               benefit_type_code: "2",
+               doc_reference_id: nil,
+               development_item_reference_id: nil,
+               established_at: 30.days.ago,
+               user: User.api_user,
+               limited_poa_code: "ABC",
+               limited_poa_access: true)
       end
 
       let(:another_decision_issue) do
