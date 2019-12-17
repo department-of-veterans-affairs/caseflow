@@ -48,7 +48,12 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
 
       context "response for hearing day with hearings" do
         let(:hearing_day) do
-          create(:hearing_day, scheduled_for: Date.new(2019, 7, 7))
+          create(
+            :hearing_day,
+            request_type: HearingDay::REQUEST_TYPES[:video],
+            scheduled_for: Date.new(2019, 7, 7),
+            regional_office: "VACO"
+          )
         end
 
         context "ama hearings" do
@@ -93,6 +98,31 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
             expected_participant_ids = hearings.map { |hearing| hearing.appeal.veteran.participant_id }
             response_participant_ids = response_body["hearings"].map { |hearing| hearing["participant_id"] }
             expect(response_participant_ids).to match_array(expected_participant_ids)
+          end
+
+          context "is virtual" do
+            let!(:hearings) do
+              [
+                create(
+                  :hearing,
+                  regional_office: "VACO",
+                  hearing_day: hearing_day,
+                  scheduled_time: "9:30AM"
+                )
+              ]
+            end
+            let!(:virtual_hearing) do
+              create(:virtual_hearing, :active, :initialized, hearing: hearings[0])
+            end
+
+            it "returns a 200 and has expected response", :aggregate_failures do
+              expect(subject.status).to eq 200
+              response_body = JSON.parse(subject.body)
+              expect(response_body).to have_key("hearings")
+              expect(response_body["hearings"].size).to eq 1
+              expect(response_body["hearings"][0]).to have_key("is_virtual")
+              expect(response_body["hearings"][0]["is_virtual"]).to eq true
+            end
           end
         end
 
