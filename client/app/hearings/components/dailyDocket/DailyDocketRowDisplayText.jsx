@@ -6,7 +6,7 @@ import DocketTypeBadge from '../../../components/DocketTypeBadge';
 import { PreppedCheckbox } from './DailyDocketRowInputs';
 import COPY from '../../../../COPY.json';
 
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 const hearingPropTypes = PropTypes.shape({
   appealExternalId: PropTypes.string,
