@@ -121,9 +121,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
         ) # this is a contestable_rating_issues
         another_decision_issue # instantiate this
         get_issues
-        issues = JSON.parse(response.body)["data"]
-        expect(issues).not_to be_empty # remove this expectation
-        issues
+        JSON.parse(response.body)["data"]
       end
 
       it "should have ratingIssueId attribute" do
