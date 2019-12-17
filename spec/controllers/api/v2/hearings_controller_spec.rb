@@ -78,7 +78,7 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
             response
           end
 
-          it "hearing response has expected attributes and values", :aggregate_failures do
+          it "returns a 200 and response has expected attributes and values", :aggregate_failures do
             expect(subject.status).to eq 200
 
             response_body = JSON.parse(subject.body)
@@ -123,7 +123,6 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
               response_body = JSON.parse(subject.body)
               expect(response_body).to have_key("hearings")
               expect(response_body["hearings"].size).to eq 1
-              expect(response_body["hearings"][0]).to have_key("is_virtual")
               expect(response_body["hearings"][0]["is_virtual"]).to eq true
             end
           end
