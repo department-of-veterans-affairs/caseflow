@@ -36,7 +36,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
       get_issues
       issues = JSON.parse(response.body)["data"]
       expect(issues).to be_an Array
-      expect(issues.count > 0).to be true
+      expect(issues.count).to be > 0
     end
 
     context "returned issues" do
@@ -163,7 +163,10 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
         issues.each do |issue|
           expect(issue["attributes"].keys).to include("latestIssuesInChain")
           expect(issue["attributes"]["latestIssuesInChain"]).to be_a Array
-          expect(issue["attributes"]["latestIssuesInChain"].first.keys).to include("id", "approxDecisionDate")
+          expect(issue["attributes"]["latestIssuesInChain"].count).to be > 0
+          issue["attributes"]["latestIssuesInChain"].each do |latest_issues|
+            expect(latest_issues.keys).to include("id", "approxDecisionDate")
+          end
         end
       end
 
