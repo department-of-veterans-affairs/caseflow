@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191213173125) do
-
+ActiveRecord::Schema.define(version: 20191216191111) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -874,9 +873,12 @@ ActiveRecord::Schema.define(version: 20191213173125) do
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"
     t.string "role", comment: "Role users in organization must have, if present"
+    t.string "status", default: "active", comment: "Whether organization is active, inactive, or in some other Status."
+    t.datetime "status_updated_at", comment: "Track when organization status last changed."
     t.string "type", comment: "Single table inheritance"
     t.datetime "updated_at"
     t.string "url", comment: "Unique portion of the organization queue url"
+    t.index ["status"], name: "index_organizations_on_status"
     t.index ["updated_at"], name: "index_organizations_on_updated_at"
     t.index ["url"], name: "index_organizations_on_url", unique: true
   end
