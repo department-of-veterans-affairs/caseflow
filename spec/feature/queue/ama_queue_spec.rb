@@ -246,7 +246,7 @@ RSpec.feature "AmaQueue", :all_dbs do
         translation_organization.add_user(other_user)
       end
 
-      scenario "assign case to self" do
+      scenario "assign case to self", skip: "flake" do
         visit translation_organization.path
 
         click_on "Pal Smith"
@@ -285,7 +285,7 @@ RSpec.feature "AmaQueue", :all_dbs do
         click_on "Pal Smith"
 
         find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, id: old_task.id.to_s).click
-        expect(page).to have_content(existing_instruction)
+        expect(page).to have_content(existing_instruction) # flake
 
         find(".Select-control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]).click

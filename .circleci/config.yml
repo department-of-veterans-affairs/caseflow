@@ -254,7 +254,7 @@ jobs:
           command: |
             mkdir -p ~/test-results/mocha
             pushd client
-            ~/project/ci-bin/capture-log "node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --compilers jsx:babel-core/register test/node/setup.js test/node"
+            ~/project/ci-bin/capture-log "node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --require ./test/node/register.js --require ./test/node/setup.js 'test/node/**/*-test.js'"
 
       - run:
           name: Karma
