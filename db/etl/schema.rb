@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191209162326) do
+ActiveRecord::Schema.define(version: 20191213194037) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -147,6 +147,7 @@ ActiveRecord::Schema.define(version: 20191209162326) do
     t.index ["assigned_to_type", "assigned_to_id"], name: "index_tasks_on_assigned_to_type_and_assigned_to_id"
     t.index ["created_at"], name: "index_tasks_on_created_at"
     t.index ["parent_id"], name: "index_tasks_on_parent_id"
+    t.index ["task_id"], name: "index_tasks_on_task_id"
     t.index ["task_status"], name: "index_tasks_on_task_status"
     t.index ["task_type"], name: "index_tasks_on_task_type"
     t.index ["updated_at"], name: "index_tasks_on_updated_at"
