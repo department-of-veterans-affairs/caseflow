@@ -538,6 +538,10 @@ class Task < ApplicationRecord
     assigned_to.is_a?(Organization) ? assigned_to.name : assigned_to.css_id
   end
 
+  def child_must_have_active_assignee?
+    true
+  end
+
   private
 
   def available_hearing_admin_actions(user)
@@ -656,7 +660,7 @@ class Task < ApplicationRecord
   end
 
   def assignee_status_is_valid_on_create
-    if assigned_to.is_a?(User) && !assigned_to.active?
+    if parent&.child_must_have_active_assignee? && assigned_to.is_a?(User) && !assigned_to.active?
       fail Caseflow::Error::InvalidAssigneeStatusOnTaskCreate, assignee: assigned_to
     end
 
