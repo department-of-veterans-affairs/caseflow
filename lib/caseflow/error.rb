@@ -7,10 +7,11 @@ module Caseflow::Error
     def initialize(args)
       @code = args[:code]
       @message = args[:message]
+      @title = args[:title]
     end
 
     def serialize_response
-      { json: { "errors": [{ "status": code, "title": message, "detail": message }] }, status: code }
+      { json: { "errors": [{ "status": code, "title": title || message, "detail": message }] }, status: code }
     end
   end
 
@@ -94,9 +95,12 @@ module Caseflow::Error
   class InvalidAssigneeStatusOnTaskCreate < SerializableError
     def initialize(args)
       @assignee = args[:assignee]
+      @assignee_name = @assignee.is_a?(User) ? @assignee.full_name : @assignee.name
       @code = args[:code] || 400
-      @message = args[:message] || "Cannot assign a task to #{@assignee.status} #{@assignee.class.name.downcase} " \
-                                   "#{@assignee.is_a?(User) ? @assignee.full_name : @assignee.name}"
+      @title = args[:title] || "Uh oh! We're unable to assign this to #{@assignee_name}"
+      @message = args[:message] || "#{@assignee_name} is marked as #{@assignee.status} in Caseflow. Please select " \
+                                   "another #{@assignee.class.name.downcase} assignee or contact support if you " \
+                                   "believe you're getting this message in error."
     end
   end
 
