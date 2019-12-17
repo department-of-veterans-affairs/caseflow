@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
-shared_examples_for "hearings api route that serializes virtual hearing" do
+RSpec.shared_examples_for "hearings api route that serializes virtual hearing" do
   let!(:virtual_hearing) do
     create(:virtual_hearing, :active, :initialized, hearing: hearings[0])
   end
