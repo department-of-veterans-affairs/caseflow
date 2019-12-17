@@ -25,11 +25,22 @@
   %>
 
   <% def task_attribute_table(task_atts) %>
+    <% task = Task.find(task_atts["id"]) %>
     <dl>
-    <% task_atts.reject { |k, v| k == :tasks }.each do |key, value| %>
-      <dt><%= key %></dt>
-      <dd><%= value || "[]" %></dd>
-    <% end %>
+      <dt>Task ID</dt>
+      <dd><%= task_atts["id"] %></dd>
+      <dt>Assigned Date</dt>
+      <dd><%= task_atts["assigned_at"] %></dd>
+      <dt>Closed At Date</dt>
+      <dd><%= task_atts["closed_at"] || "()" %></dd>
+      <dt>Status</dt>
+      <dd><%= task_atts["status"] %></dd>
+      <dt>Days Assigned</dt>
+      <dd><%= (Time.zone.today - task.assigned_at.to_date).to_i %></dd>
+      <dt>Assigned To</dt>
+      <dd><%= task.assigned_to_label %></dd>
+      <dt>Parent</dt>
+      <dd><%= task.parent&.type %>&nbsp;<%= task.parent&.id %></dd>
     </dl>
   <% end %>
 
@@ -39,8 +50,20 @@
     <% task_tree_as_json.each do |appeal_type, tree| %>
     <li>
       <span>
-        <%= appeal_type %> <%= tree[:id] %>
+        <%= appeal_type %> ID: <%= tree[:id] %>
         <b><%= appeal.veteran_full_name %> (<%= appeal.veteran_file_number %>)</b>
+        <dl>
+          <dt>Notice Receipt Date</dt>
+          <dd><%= appeal.receipt_date %></dd>
+          <dt>Case Established At</dt>
+          <dd><%= appeal.established_at %></dd>
+          <dt>Days Aged</dt>
+          <dd><%= (Time.zone.today - appeal.established_at.to_date).to_i %></dd>
+          <dt>Docket Type</dt>
+          <dd><%= appeal.docket_type %></dd>
+          <dt>Advance on Docket</dt>
+          <dd><%= appeal.aod? %></dd>
+        </dl>
       </span>
     </li>
     <ul class="nested active">
