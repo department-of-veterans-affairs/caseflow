@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191217193046) do
+ActiveRecord::Schema.define(version: 20191217202614) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -113,6 +113,35 @@ ActiveRecord::Schema.define(version: 20191217193046) do
     t.index ["task_id"], name: "index_attorney_case_reviews_on_task_id"
     t.index ["updated_at"], name: "index_attorney_case_reviews_on_updated_at"
     t.index ["vacols_id"], name: "index_attorney_case_reviews_on_vacols_id"
+  end
+
+  create_table "decision_issues", force: :cascade, comment: "Copy of decision_issues" do |t|
+    t.string "benefit_type", limit: 20, comment: "decision_issues.benefit_type"
+    t.date "caseflow_decision_date", comment: "decision_issues.caseflow_decision_date"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.bigint "decision_review_id", comment: "decision_issues.decision_review_id"
+    t.string "decision_review_type", limit: 20, comment: "decision_issues.decision_review_type"
+    t.string "decision_text", comment: "decision_issues.decision_text"
+    t.string "description", comment: "decision_issues.description"
+    t.string "diagnostic_code", limit: 20, comment: "decision_issues.diagnostic_code"
+    t.string "disposition", limit: 50, comment: "decision_issues.disposition"
+    t.date "end_product_last_action_date", comment: "decision_issues.end_product_last_action_date"
+    t.datetime "issue_created_at", comment: "decision_issues.created_at"
+    t.datetime "issue_deleted_at", comment: "decision_issues.deleted_at"
+    t.datetime "issue_updated_at", comment: "decision_issues.updated_at"
+    t.bigint "participant_id", null: false, comment: "decision_issues.participant_id"
+    t.bigint "rating_issue_reference_id", comment: "decision_issues.rating_issue_reference_id"
+    t.datetime "rating_profile_date", comment: "decision_issues.rating_profile_date"
+    t.datetime "rating_promulgation_date", comment: "decision_issues.rating_promulgation_date"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.index ["created_at"], name: "index_decision_issues_on_created_at"
+    t.index ["decision_review_id", "decision_review_type"], name: "index_decision_issues_decision_review"
+    t.index ["issue_created_at"], name: "index_decision_issues_on_issue_created_at"
+    t.index ["issue_deleted_at"], name: "index_decision_issues_on_issue_deleted_at"
+    t.index ["issue_updated_at"], name: "index_decision_issues_on_issue_updated_at"
+    t.index ["participant_id"], name: "index_decision_issues_on_participant_id"
+    t.index ["rating_issue_reference_id", "disposition", "participant_id"], name: "index_decision_issues_uniq", unique: true
+    t.index ["updated_at"], name: "index_decision_issues_on_updated_at"
   end
 
   create_table "organizations", force: :cascade, comment: "Copy of Organizations table" do |t|
