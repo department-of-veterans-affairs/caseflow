@@ -235,7 +235,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
     end
 
     it "should return a 422 when the receipt date after today" do
-      get_issues(receipt_date: Time.zone.today + 1.year)
+      get_issues(receipt_date: Time.zone.tomorrow)
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
