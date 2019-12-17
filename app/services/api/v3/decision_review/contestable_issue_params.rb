@@ -8,10 +8,6 @@
 #        decisionIssueId: integer,
 #        ratingIssueId: string,
 #        ratingDecisionIssueId: string,
-#        legacyAppealIssues: [
-#          { legacyAppealId: 988, legacyAppealIssueId: 93 },
-#          ...
-#        ]
 #      }
 #    }
 #
@@ -21,111 +17,75 @@
 #  that the IntakesController uses for intaking a DecisionReview.)
 
 class Api::V3::DecisionReview::ContestableIssueParams
-  class << self
-    def intakes_controller_style_key(api_style_key)
-      API_STYLE_KEY_TO_INTAKES_CONTROLLER_STYLE_KEY[api_style_key] || api_style_key
-    end
-  end
+  attr_reader :ids
 
-  API_STYLE_KEY_TO_INTAKES_CONTROLLER_STYLE_KEY = ActiveSupport::HashWithIndifferentAccess.new(
-    decisionIssueId: :contested_decision_issue_id,
-    ratingIssueId: :rating_issue_reference_id,
-    ratingDecisionIssueId: :rating_decision_reference_id,
-    legacyAppealId: :vacols_id,
-    legacyAppealIssueId: :vacols_sequence_id,
-    category: :nonrating_issue_category
-  )
-
-  # the ContestableIssue's ID fields
-  # (legacy appeal IDs (in legacyAppealIssues arrays) are nested within ContestableIssues,
-  # but are not ContestableIssue IDs)
-  ID_KEYS = [:decisionIssueId, :ratingIssueId, :ratingDecisionIssueId].freeze
-
-  # a RequestIssue is unidentified if it has no ID values nor a category
-  IDENTIFYING_KEYS = [*ID_KEYS, :category].freeze
-
-  # category (and other non-ID fields) are not supported for MVP
-  PERMITTED_KEYS = [*ID_KEYS, :legacyAppealIssues].freeze
-
-  # only compensation for MVP
-  CATEGORIES_BY_BENEFIT_TYPE = Constants::ISSUE_CATEGORIES.slice("compensation")
-
-  attr_reader :error_code
-
-  def initialize(params:, benefit_type:, legacy_opt_in_approved:)
-    @attributes = params[:attributes].slice(*PERMITTED_KEYS)
-    # ^^^ params shape / types of fields is mostly checked in IntakeParams (not here)
+  def initialize(
+        decision_review_class:,
+        veteran:,
+        receipt_date:,
+        benefit_type:,
+        params:
+      )
+    @decision_review_class = decision_review_class
+    @veteran = veteran
+    @receipt_date = receipt_date
     @benefit_type = benefit_type
-    @legacy_opt_in_approved = legacy_opt_in_approved
-    @error_code = determine_error_code
+    @ids = params[:attributes].slice(:ratingIssueId, :decisionIssueId, :ratingDecisionIssueId).symbolize_keys
   end
 
+  def contestable_issue
+    @contestable_issue ||= unidentified? ? nil : lookup.contestable_issue
+  end
+
+  def error_code
+    return :contestable_issue_must_have_ids if unidentified?
+    return nil if lookup.found?
+
+    :couldnt_find_contestable_issue
+  end
+
+  # presence of IDs /or/ nonrating_issue_category denotes an identified request issue
+  # (nonrating_issue_category isn't supported yet)
+  def unidentified?
+    @unidentified ||= ids.values.all?(&:blank?)
+  end
+
+  # write-in request issues aren't supported at this time
+  # nil fields:
+  #   nonrating_issue_category
+  #   notes
+  #   untimely_exemption
+  #   untimely_exemption_notes
+  #   vacols_id
+  #   vacols_sequence_id
+  #   ineligible_reason
+  #   ineligible_due_to_id
+  #   edited_description
+  #   correction_type
   def intakes_controller_params
-    params = ActionController::Parameters.new(
+    ActionController::Parameters.new(
+      rating_issue_reference_id: contestable_issue&.rating_issue_reference_id,
+      rating_issue_diagnostic_code: contestable_issue&.rating_issue_diagnostic_code,
+      rating_decision_reference_id: contestable_issue&.rating_decision_reference_id,
+      decision_text: contestable_issue&.description,
+      is_unidentified: unidentified?,
+      decision_date: contestable_issue&.approx_decision_date,
       benefit_type: @benefit_type,
-      vacols_id: vacols_id,
-      vacols_sequence_id: vacols_sequence_id,
-      is_unidentified: unidentified?
+      ramp_claim_id: contestable_issue&.ramp_claim_id,
+      contested_decision_issue_id: contestable_issue&.rating_decision_reference_id
     )
-
-    (PERMITTED_KEYS - [:legacyAppealIssues]).each do |api_style_key|
-      intakes_controller_style_key = self.class.intakes_controller_style_key(api_style_key)
-      params[intakes_controller_style_key] = @attributes[api_style_key]
-    end
-
-    params
   end
 
   private
 
-  # post-MVP, ensure that category is valid for benefit_type
-  def determine_error_code
-    no_ids_error_code || no_opt_in_error_code || valid_issue
-  end
-
-  # For MVP, only the ID fields of request issues are allowed to be populated
-  # --no /write-in/ request issues (non-rating issues)
-  def no_ids_error_code
-    return nil if ids.values.any?(&:present?)
-
-    :contestable_issue_cannot_be_empty # error_code
-  end
-
-  def ids
-    @attributes.slice(*ID_KEYS)
-  end
-
-  def no_opt_in_error_code
-    return nil unless legacy_appeal_issues_present?
-    return nil if @legacy_opt_in_approved
-
-    :must_opt_in_to_associate_legacy_issues # error_code
-  end
-
-  def cant_find_contestable_issue_error_code
-    return nil if Api::V3::DecisionReview::LookupContestableIssue.new(ids).valid?
-
-    :cant_find_contestable_issue
-  end
-    
-  def legacy_appeal_issues_present?
-    @attributes[:legacyAppealIssues].present?
-  end
-
-  def unidentified?
-    identifying_fields.values.all?(&:blank?)
-  end
-
-  def identifying_fields
-    @attributes.slice(*IDENTIFYING_KEYS)
-  end
-
-  # for MVP, only one LegacyAppealIssue can be associated with a ContestableIssue
-  def vacols_id
-    @attributes.dig(:legacyAppealIssues, 0, :legacyAppealId)
-  end
-
-  def vacols_sequence_id
-    @attributes.dig(:legacyAppealIssues, 0, :legacyAppealIssueId)
+  def lookup
+    @lookup ||= Api::V3::DecisionReview::LookupContestableIssue.new(
+      {
+        decision_review_class: @decision_review_class,
+        veteran: @veteran,
+        receipt_date: @receipt_date,
+        benefit_type: @benefit_type
+      }.merge(ids)
+    )
   end
 end

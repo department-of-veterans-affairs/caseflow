@@ -5,15 +5,14 @@
 describe Api::V3::DecisionReview::LookupContestableIssue, :all_dbs do
   include IntakeHelpers
 
-  def lookup(rating_issue_id: nil, decision_issue_id: nil, rating_decision_issue_id: nil)
+  def lookup(ids = {})
     Api::V3::DecisionReview::LookupContestableIssue.new(
-      decision_review_class: decision_review_class,
-      veteran: veteran,
-      receipt_date: receipt_date,
-      benefit_type: benefit_type,
-      rating_issue_id: rating_issue_id,
-      decision_issue_id: decision_issue_id,
-      rating_decision_issue_id: rating_decision_issue_id
+      {
+        decision_review_class: decision_review_class,
+        veteran: veteran,
+        receipt_date: receipt_date,
+        benefit_type: benefit_type
+      }.merge(ids)
     )
   end
 
@@ -35,10 +34,20 @@ describe Api::V3::DecisionReview::LookupContestableIssue, :all_dbs do
   let(:promulgation_date) { receipt_date - 10.days }
   let(:profile_date) { (receipt_date - 8.days).to_datetime }
 
-  describe "#valid?" do
+  let(:contestable_issues) do
+    ContestableIssueGenerator.new(
+      decision_review_class.new(
+        veteran_file_number: veteran.file_number,
+        receipt_date: receipt_date,
+        benefit_type: benefit_type
+      )
+    ).contestable_issues
+  end
+
+  describe "#found?" do
     it "find a veteran's rating issues" do
       rating.issues.each do |issue|
-        expect(lookup(rating_issue_id: issue.reference_id).valid?).to eq true
+        expect(lookup(ratingIssueId: issue.reference_id).found?).to eq true
       end
     end
   end
@@ -53,7 +62,10 @@ describe Api::V3::DecisionReview::LookupContestableIssue, :all_dbs do
         )
       ).contestable_issues.each do |ci|
         expect(
-          lookup(rating_issue_id: ci.rating_issue_reference_id).contestable_issue.as_json
+          lookup(ratingIssueId: ci.rating_issue_reference_id).contestable_issue.as_json
+        ).to eq ci.as_json
+        expect(
+          lookup(ratingIssueId: "   #{ci.rating_issue_reference_id}").contestable_issue.as_json
         ).to eq ci.as_json
       end
     end
