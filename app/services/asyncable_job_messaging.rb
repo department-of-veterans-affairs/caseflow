@@ -33,7 +33,8 @@ class AsyncableJobMessaging
       job_note = JobNote.create!(job: job, user: current_user, note: text, send_to_intake_user: send_to_intake_user)
       if send_to_intake_user
         message_text = <<-EOS.strip_heredoc
-          The job for processing <a href="#{job_note.path}">#{job.class} #{job.id}</a> has been cancelled.
+          The job for processing <a href="#{job_note.path}">#{job.class} #{job.id}</a> has been cancelled.<br />
+          No further action is necessary. Please see the job details page for more information on why this job has been cancelled.
         EOS
         Message.create!(detail: job_note, text: message_text, user: job.asyncable_user, message_type: :job_cancelled)
       end
@@ -47,7 +48,9 @@ class AsyncableJobMessaging
 
     err = ERB::Util.html_escape(job.sanitized_error)
     message_text = <<-EOS.strip_heredoc
-      The job for <a href="#{job.path}">#{job.class} #{job.id}</a> was unable to complete because of an error: #{err}
+      The job for <a href="#{job.path}">#{job.class} #{job.id}</a> was unable to complete because of an error: #{err}<br />
+      No further action is necessary as the (IT) support team has been notified.
+      You will receive a separate message in your inbox when the issue has resolved.
     EOS
     Message.create!(
       detail: job,

@@ -66,11 +66,7 @@ class Appeal < DecisionReview
   end
 
   def ui_hash
-    super.merge(
-      docketType: docket_type,
-      isOutcoded: outcoded?,
-      formType: "appeal"
-    )
+    Intake::AppealSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def type
