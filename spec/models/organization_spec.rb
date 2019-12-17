@@ -31,6 +31,50 @@ describe Organization, :postgres do
     end
   end
 
+  describe ".status" do
+    let(:org) { create(:organization) }
+
+    context "upon creation" do
+      it "has a default value of 'active'" do
+        expect(org.status).to eq("active")
+      end
+    end
+
+    context "default scope" do
+      it "returns only active organizations unless explicitly descoped" do
+        create_list(:organization, 3)
+        create_list(:organization, 3, status: "inactive")
+
+        expect(Organization.all.size).to eq(3)
+        expect(Organization.unscoped.all.size).to eq(6)
+      end
+    end
+
+    context "with an invalid status" do
+      subject { org.update!(status: "invalid") }
+
+      it "fails and does not update the status_updated_at column" do
+        expect { subject }.to raise_error(ArgumentError)
+        expect(org.reload.status).not_to eq "invalid"
+        expect(org.status_updated_at).to eq nil
+      end
+    end
+
+    context "updates status_updated_at at proper time" do
+      before { Timecop.freeze(Time.zone.now) }
+
+      context "with a valid status" do
+        subject { org.inactive! }
+
+        it "succeeds and updates the status_updated_at column" do
+          expect(subject).to eq true
+          expect(org.reload.status).to eq Constants.ORGANIZATION_STATUSES.inactive
+          expect(org.status_updated_at.to_s).to eq Time.zone.now.to_s
+        end
+      end
+    end
+  end
+
   describe ".users" do
     context "when organization has no members" do
       let(:org) { create(:organization) }
