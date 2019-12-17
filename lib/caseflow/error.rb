@@ -282,7 +282,7 @@ module Caseflow::Error
   class VacolsRecordNotFound < VacolsRepositoryError; end
   class UserRepositoryError < VacolsRepositoryError
     include Caseflow::Error::ErrorSerializer
-    attr_accessor :code, :message
+    attr_accessor :code, :message, :title
 
     def initialize(args)
       @code = args[:code] || 400
@@ -291,7 +291,7 @@ module Caseflow::Error
   end
   class IssueRepositoryError < VacolsRepositoryError
     include Caseflow::Error::ErrorSerializer
-    attr_accessor :code, :message
+    attr_accessor :code, :message, :title
 
     def initialize(args)
       @code = args[:code] || 400

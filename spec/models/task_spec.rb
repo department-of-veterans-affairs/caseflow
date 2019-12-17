@@ -650,7 +650,8 @@ describe Task, :all_dbs do
       it "should throw an error" do
         expect { subject }.to raise_error(
           Caseflow::Error::InvalidAssigneeStatusOnTaskCreate,
-          /Cannot assign a task to inactive user #{inactive_user.full_name}/
+          "#{inactive_user.full_name} is marked as inactive in Caseflow. Please select another user assignee or " \
+          "contact support if you believe you're getting this message in error."
         )
       end
     end
