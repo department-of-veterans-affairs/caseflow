@@ -1,20 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
-RSpec.shared_examples_for "hearings api route that serializes virtual hearing" do
-  let!(:virtual_hearing) do
-    create(:virtual_hearing, :active, :initialized, hearing: hearings[0])
-  end
-
-  it "returns a 200 and has expected response", :aggregate_failures do
-    expect(subject.status).to eq 200
-    response_body = JSON.parse(subject.body)
-    expect(response_body).to have_key("hearings")
-    expect(response_body["hearings"].size).to be >= 1
-    expect(response_body["hearings"][0]["is_virtual"]).to eq true
-  end
-end
-
   let(:api_key) { ApiKey.create!(consumer_name: "API Consumer").key_string }
 
   before(:each) do
@@ -61,6 +47,20 @@ end
       end
 
       context "response for hearing day with hearings" do
+        shared_examples_for "hearings api route that serializes virtual hearing" do
+          let!(:virtual_hearing) do
+            create(:virtual_hearing, :active, :initialized, hearing: hearings[0])
+          end
+
+          it "returns a 200 and has expected response", :aggregate_failures do
+            expect(subject.status).to eq 200
+            response_body = JSON.parse(subject.body)
+            expect(response_body).to have_key("hearings")
+            expect(response_body["hearings"].size).to be >= 1
+            expect(response_body["hearings"][0]["is_virtual"]).to eq true
+          end
+        end
+
         let(:hearing_day) do
           create(
             :hearing_day,
