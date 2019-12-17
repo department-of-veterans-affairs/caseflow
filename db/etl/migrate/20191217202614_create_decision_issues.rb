@@ -21,6 +21,7 @@ class CreateDecisionIssues < ActiveRecord::Migration[5.1]
       t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
 
       t.index ["participant_id"]
+      t.index ["disposition"]
       t.index ["created_at"]
       t.index ["updated_at"]
       t.index ["issue_created_at"]

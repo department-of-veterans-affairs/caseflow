@@ -136,6 +136,7 @@ ActiveRecord::Schema.define(version: 20191217202614) do
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
     t.index ["created_at"], name: "index_decision_issues_on_created_at"
     t.index ["decision_review_id", "decision_review_type"], name: "index_decision_issues_decision_review"
+    t.index ["disposition"], name: "index_decision_issues_on_disposition"
     t.index ["issue_created_at"], name: "index_decision_issues_on_issue_created_at"
     t.index ["issue_deleted_at"], name: "index_decision_issues_on_issue_deleted_at"
     t.index ["issue_updated_at"], name: "index_decision_issues_on_issue_updated_at"
