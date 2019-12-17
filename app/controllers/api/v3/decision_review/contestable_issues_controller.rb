@@ -10,9 +10,6 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
       return
     end
     issues = ContestableIssueGenerator.new(standin_claim_review).contestable_issues
-    # this generates this error in UAT:
-    #  BGS::PublicError (Logon ID APIUSER Not Found in the Benefits Gateway Service (BGS). Contact your
-    #     ISO if you need assistance gaining access to BGS.)
     render json: Api::V3::ContestableIssueSerializer.new(issues)
   end
 
