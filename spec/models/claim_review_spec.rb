@@ -27,8 +27,25 @@ describe ClaimReview, :postgres do
   let(:informal_conference) { nil }
   let(:same_office) { nil }
   let(:benefit_type) { "compensation" }
+  let(:legacy_opt_in_approved) { nil }
   let(:ineligible_reason) { nil }
   let(:rating_profile_date) { Date.new(2018, 4, 30) }
+  let(:vacols_id) { nil }
+  let(:vacols_sequence_id) { nil }
+
+  let!(:legacy_appeal) do
+    create(:legacy_appeal, vacols_case: vacols_case)
+  end
+
+  let(:vacols_case) do
+    create(
+      :case,
+      :status_advance,
+      bfcorlid: "12341234C",
+      case_issues: [create(:case_issue, :compensation)],
+      bfdnod: 1.year.ago
+    )
+  end
 
   let(:rating_request_issue) do
     build(
@@ -38,7 +55,9 @@ describe ClaimReview, :postgres do
       contested_rating_issue_profile_date: rating_profile_date,
       contested_issue_description: "decision text",
       benefit_type: benefit_type,
-      ineligible_reason: ineligible_reason
+      ineligible_reason: ineligible_reason,
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id
     )
   end
 
@@ -93,7 +112,8 @@ describe ClaimReview, :postgres do
       receipt_date: receipt_date,
       informal_conference: informal_conference,
       same_office: same_office,
-      benefit_type: benefit_type
+      benefit_type: benefit_type,
+      legacy_opt_in_approved: legacy_opt_in_approved
     )
   end
 
@@ -430,6 +450,33 @@ describe ClaimReview, :postgres do
         subject
 
         expect(rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRR")
+        expect(rating_request_issue.legacy_issues).to be_empty
+      end
+
+      context "when there is an associated legacy issue" do
+        let(:vacols_id) { legacy_appeal.vacols_id }
+        let(:vacols_sequence_id) { legacy_appeal.issues.first.vacols_sequence_id }
+
+        context "when the veteran did not opt in their legacy issues" do
+          let(:ineligible_reason) { "legacy_issue_not_withdrawn" }
+
+          it "creates a legacy issue, but no optin" do
+            subject
+
+            expect(rating_request_issue.legacy_issues.count).to eq 1
+            expect(rating_request_issue.legacy_issue_optin).to be_nil
+          end
+        end
+
+        context "when legacy opt in is approved by the veteran" do
+          let(:ineligible_reason) { nil }
+
+          it "creates a legacy issue and an associated opt in" do
+            subject
+
+            expect(rating_request_issue.legacy_issue_optin.legacy_issue).to eq(rating_request_issue.legacy_issues.first)
+          end
+        end
       end
     end
 
