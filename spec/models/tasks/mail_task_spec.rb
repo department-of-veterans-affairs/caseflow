@@ -472,7 +472,7 @@ describe MailTask, :postgres do
     subject { mail_task.available_actions(user) }
 
     context "when the current user is not a member of the lit support team" do
-      let(:generic_task_actions) do
+      let(:task_actions) do
         [
           Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
           Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
@@ -487,21 +487,21 @@ describe MailTask, :postgres do
       context "for a ClearAndUnmistakeableErrorMailTask" do
         let(:task_class) { ClearAndUnmistakeableErrorMailTask }
         it "returns the available_actions as defined by Task" do
-          expect(subject).to eq(generic_task_actions)
+          expect(subject).to eq(task_actions)
         end
       end
 
       context "for a ReconsiderationMotionMailTask" do
         let(:task_class) { ReconsiderationMotionMailTask }
         it "returns the available_actions as defined by Task" do
-          expect(subject).to eq(generic_task_actions)
+          expect(subject).to eq(task_actions)
         end
       end
 
       context "for a VacateMotionMailTask" do
         let(:task_class) { VacateMotionMailTask }
         it "returns the available_actions as defined by Task" do
-          expect(subject).to eq(generic_task_actions)
+          expect(subject).to eq(task_actions)
         end
       end
     end

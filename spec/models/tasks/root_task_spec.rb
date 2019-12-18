@@ -37,13 +37,13 @@ describe RootTask, :postgres do
     subject { root_task.update_children_status_after_closed }
 
     context "when there are multiple children tasks" do
-      let!(:ama_task) { create(:ama_task, appeal: appeal, parent: root_task) }
+      let!(:task) { create(:ama_task, appeal: appeal, parent: root_task) }
       let!(:tracking_task) { create(:track_veteran_task, appeal: appeal, parent: root_task) }
 
-      it "should close the tracking task but not the generic task" do
+      it "should only close the tracking task" do
         expect { subject }.to_not raise_error
         expect(tracking_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
-        expect(ama_task.reload.status).to_not eq(Constants.TASK_STATUSES.completed)
+        expect(task.reload.status).to_not eq(Constants.TASK_STATUSES.completed)
       end
     end
   end
@@ -138,7 +138,7 @@ describe RootTask, :postgres do
         expect(root_task.children.count).to eq(1)
       end
 
-      context "when the child task is a generic 'ol task" do
+      context "when the child task is a normal 'ol task" do
         it "sends a message to Sentry" do
           subject
           expect(Raven).to have_received(:capture_message).exactly(1).times
@@ -180,7 +180,7 @@ describe RootTask, :postgres do
         expect(root_task.children.count).to eq(1)
       end
 
-      context "when the child task is a generic 'ol task" do
+      context "when the child task is a normal 'ol task" do
         it "does not send a message to Sentry" do
           subject
           expect(Raven).to have_received(:capture_message).exactly(0).times

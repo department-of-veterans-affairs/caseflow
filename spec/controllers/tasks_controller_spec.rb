@@ -322,7 +322,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
       end
 
-      context "when creating a generic task" do
+      context "when creating a task" do
         let(:params) do
           [{
             "external_id": appeal.external_id,

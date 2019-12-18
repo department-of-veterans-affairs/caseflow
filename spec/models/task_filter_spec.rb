@@ -92,9 +92,9 @@ describe TaskFilter, :all_dbs do
     context "when filtering by task type" do
       let(:foia_tasks) { create_list(:foia_task, 5) }
       let(:translation_tasks) { create_list(:translation_task, 6) }
-      let(:generic_tasks) { create_list(:ama_task, 7) }
+      let(:ama_tasks) { create_list(:ama_task, 7) }
       let(:all_tasks) do
-        Task.where(id: foia_tasks.pluck(:id) + translation_tasks.pluck(:id) + generic_tasks.pluck(:id))
+        Task.where(id: foia_tasks.pluck(:id) + translation_tasks.pluck(:id) + ama_tasks.pluck(:id))
       end
 
       context "when filter_params is an empty array" do
