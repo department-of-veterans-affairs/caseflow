@@ -100,14 +100,14 @@ const HearingTime = ({ hearing }) => {
           {coTime}<br />
           {hearing.regionalOfficeName}
         </p>
-     </div>
+      </div>
     );
   }
 
   return (
     <div>
       <p {...firstParagraphStyle}>
-        <b>{hearing.isVirtual ? "Virtual" : hearing.readableRequestType}</b>
+        <b>{hearing.isVirtual ? 'Virtual' : hearing.readableRequestType}</b>
       </p>
       <p>
         {coTime} /<br />
