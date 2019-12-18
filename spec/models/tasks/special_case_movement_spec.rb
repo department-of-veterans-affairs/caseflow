@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe SpecialCaseMovementTask, :postgres do
   describe ".create" do
     context "with Special Case Movement Team user" do
@@ -16,8 +13,7 @@ describe SpecialCaseMovementTask, :postgres do
       end
 
       before do
-        OrganizationsUser.add_user_to_organization(scm_user,
-                                                   SpecialCaseMovementTeam.singleton)
+        SpecialCaseMovementTeam.singleton.add_user(scm_user)
       end
 
       context "appeal ready for distribution" do

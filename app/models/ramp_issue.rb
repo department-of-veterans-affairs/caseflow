@@ -18,7 +18,7 @@ class RampIssue < ApplicationRecord
     Contention.new(description).text
   end
 
-  def ui_hash
-    { id: id, description: description }
+  def serialize
+    Intake::RampIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
 end

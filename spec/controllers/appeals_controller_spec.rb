@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.describe AppealsController, :all_dbs, type: :controller do
   include TaskHelpers
 
@@ -37,6 +34,19 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
           expect(response.status).to eq 200
           expect(response_body["appeals"].size).to eq 1
           expect(response_body["claim_reviews"].size).to eq 1
+        end
+      end
+
+      context "when request header contains Veteran file number but appeal is associated with veteran ssn" do
+        let!(:veteran) { create(:veteran, file_number: "000000000", ssn: ssn) }
+
+        it "returns valid response with one appeal" do
+          appeal
+          request.headers["HTTP_CASE_SEARCH"] = veteran.file_number
+          get :index, params: options
+          response_body = JSON.parse(response.body)
+          expect(response.status).to eq 200
+          expect(response_body["appeals"].size).to eq 1
         end
       end
 
@@ -482,6 +492,49 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       assert_response :success
       expect(appeal_json["available_hearing_locations"][0]["city"]).to eq "Holdrege"
       expect(appeal_json["hearings"][0]["type"]).to eq "Video"
+    end
+  end
+
+  describe "GET appeals/:id/task_tree" do
+    let(:appeal) { create_legacy_appeal_with_hearings }
+
+    before do
+      User.authenticate!(roles: ["System Admin"])
+    end
+
+    before { FeatureToggle.enable!(:appeal_viz) }
+    after { FeatureToggle.disable!(:appeal_viz) }
+
+    context ".json request" do
+      subject { get :task_tree, params: { appeal_id: appeal.vacols_id }, as: :json }
+
+      it "returns valid JSON tree" do
+        subject
+        task_tree = JSON.parse(response.body)["task_tree"]
+
+        expect(task_tree["LegacyAppeal"]["tasks"]).to be_a Array
+      end
+    end
+
+    context ".txt request" do
+      subject { get :task_tree, params: { appeal_id: appeal.vacols_id }, as: :text }
+
+      it "returns plain text tree" do
+        subject
+        task_tree = response.body
+
+        expect(task_tree).to match(/LegacyAppeal #{appeal.id}/)
+      end
+    end
+
+    context ".html (default) request" do
+      subject { get :task_tree, params: { appeal_id: appeal.vacols_id }, as: :html }
+
+      it "returns dynamic HTML tree" do
+        subject
+
+        expect(response).to be_ok
+      end
     end
   end
 

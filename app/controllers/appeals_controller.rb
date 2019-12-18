@@ -59,7 +59,8 @@ class AppealsController < ApplicationController
     render json: {
       representative_type: appeal.representative_type,
       representative_name: appeal.representative_name,
-      representative_address: appeal.representative_address
+      representative_address: appeal.representative_address,
+      representative_email_address: appeal.representative_email_address
     }
   end
 
@@ -105,7 +106,21 @@ class AppealsController < ApplicationController
     end
   end
 
-  helper_method :appeal, :url_appeal_uuid
+  def task_tree
+    return render_access_error unless FeatureToggle.enabled?(:appeal_viz, user: current_user)
+
+    return render_access_error unless BGSService.new.can_access?(appeal.veteran_file_number)
+
+    no_cache
+
+    respond_to do |format|
+      format.html { render template: "queue/task_tree", layout: "plain_application" }
+      format.text { render plain: appeal.structure_render(*Task.column_names) }
+      format.json { render json: { task_tree: task_tree_as_json } }
+    end
+  end
+
+  helper_method :appeal, :url_appeal_uuid, :task_tree_as_json
 
   def appeal
     @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
@@ -115,14 +130,18 @@ class AppealsController < ApplicationController
     params[:appeal_id]
   end
 
+  def task_tree_as_json
+    @task_tree_as_json ||= appeal.structure_as_json(*Task.column_names)
+  end
+
   def update
     if request_issues_update.perform!
       set_flash_success_message
 
       render json: {
-        beforeIssues: request_issues_update.before_issues.map(&:ui_hash),
-        afterIssues: request_issues_update.after_issues.map(&:ui_hash),
-        withdrawnIssues: request_issues_update.withdrawn_issues.map(&:ui_hash)
+        beforeIssues: request_issues_update.before_issues.map(&:serialize),
+        afterIssues: request_issues_update.after_issues.map(&:serialize),
+        withdrawnIssues: request_issues_update.withdrawn_issues.map(&:serialize)
       }
     else
       render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
@@ -225,7 +244,7 @@ class AppealsController < ApplicationController
   end
 
   def access_error_message
-    appeal.veteran.multiple_phone_numbers? ? COPY::DUPLICATE_PHONE_NUMBER_TITLE : COPY::ACCESS_DENIED_TITLE
+    (appeal.veteran&.multiple_phone_numbers?) ? COPY::DUPLICATE_PHONE_NUMBER_TITLE : COPY::ACCESS_DENIED_TITLE
   end
 
   def docket_number?(search)

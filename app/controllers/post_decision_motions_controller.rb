@@ -15,6 +15,16 @@ class PostDecisionMotionsController < ApplicationController
     render json: {}
   end
 
+  def return_to_lit_support
+    mail_task = task.parent
+    mail_task.update_with_instructions(instructions: params[:instructions]) if params[:instructions].present?
+
+    task.update!(status: Constants.TASK_STATUSES.cancelled)
+    flash[:success] = "Case returned to Litigation Support"
+    appeal_tasks = mail_task.appeal.reload.tasks
+    render json: { tasks: ::WorkQueue::TaskSerializer.new(appeal_tasks, is_collection: true) }
+  end
+
   private
 
   def verify_task_access
@@ -28,6 +38,6 @@ class PostDecisionMotionsController < ApplicationController
   end
 
   def motion_params
-    params.permit(:disposition, :task_id, :vacate_type, :instructions, :assigned_to_id)
+    params.permit(:disposition, :task_id, :vacate_type, :instructions, :assigned_to_id, vacated_decision_issue_ids: [])
   end
 end

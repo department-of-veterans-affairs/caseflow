@@ -20,7 +20,6 @@ SELECT
       "Tasks"."appeal_type" AS TEXT
     ) AS "appeal_type"
     ,"Tasks"."placed_on_hold_at" AS "placed_on_hold_at"
-    ,"Tasks"."on_hold_duration" AS "on_hold_duration"
     ,CAST (
       "Tasks"."assigned_to_type" AS TEXT
     ) AS "assigned_to_type"

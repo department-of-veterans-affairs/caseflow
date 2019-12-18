@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Search", :all_dbs do
   let(:attorney_user) { create(:user) }
   let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
@@ -414,6 +411,23 @@ RSpec.feature "Search", :all_dbs do
 
         expect(page).to have_content("1 case found for")
         expect(page).to have_content(COPY::IS_PAPER_CASE)
+      end
+    end
+
+    context "when appeal is associated with ssn not file number" do
+      let!(:veteran) { create(:veteran, file_number: "00000000", ssn: Generators::Random.unique_ssn) }
+      let!(:legacy_appeal) do
+        create(
+          :legacy_appeal,
+          vacols_case: create(:case, bfcorlid: "#{veteran.ssn}S")
+        )
+      end
+      scenario "found one appeal" do
+        visit "/search"
+        fill_in "searchBarEmptyList", with: veteran.file_number
+        click_on "Search"
+
+        expect(page).to have_content("1 case found for")
       end
     end
   end

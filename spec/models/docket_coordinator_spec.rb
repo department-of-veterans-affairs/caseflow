@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe DocketCoordinator, :all_dbs do
   before do
     FeatureToggle.enable!(:test_facols)
@@ -11,7 +8,7 @@ describe DocketCoordinator, :all_dbs do
     4.times do
       team = JudgeTeam.create_for_judge(create(:user))
       create_list(:user, 5).each do |attorney|
-        OrganizationsUser.add_user_to_organization(attorney, team)
+        team.add_user(attorney)
       end
     end
 

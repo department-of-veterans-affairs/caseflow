@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 feature "Asyncable Jobs index", :postgres do
   before do
     Timecop.freeze(Time.zone.now)
@@ -89,6 +86,7 @@ feature "Asyncable Jobs index", :postgres do
 
       expect(page).to have_content("another note\nwith\nmarkdown header!")
       expect(hlr.reload.job_notes.count).to eq(2)
+      expect(hlr_intake.user.messages.last.detail).to eq(hlr.job_notes.last)
     end
   end
 
@@ -166,6 +164,12 @@ feature "Asyncable Jobs index", :postgres do
       click_link hlr_intake.user.css_id
 
       expect(page).to have_current_path(manager_path(user_css_id: hlr_intake.user.css_id))
+    end
+
+    it "links to CSV export" do
+      visit "/jobs"
+
+      expect(page).to have_content "Download as CSV"
     end
 
     context "zero unprocessed jobs" do

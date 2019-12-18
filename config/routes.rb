@@ -118,6 +118,7 @@ Rails.application.routes.draw do
       get :veteran
       get :power_of_attorney
       get 'hearings', to: "appeals#most_recent_hearing"
+      get :task_tree, to: "appeals#task_tree"
       resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
       resources :special_issues, only: [:create, :index]
       resources :advance_on_docket_motions, only: [:create]
@@ -298,6 +299,7 @@ Rails.application.routes.draw do
     get code, :to => "errors#show", :status_code => code
   end
 
+  post "post_decision_motions/return", to: "post_decision_motions#return_to_lit_support"
   post "post_decision_motions", to: "post_decision_motions#create"
 
   # :nocov:

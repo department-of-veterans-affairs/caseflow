@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe Task, :all_dbs do
   context "includes PrintsTaskTree concern" do
     describe ".structure" do
-      let(:root_task) { create(:root_task, :on_hold) }
+      let(:root_task) { create(:root_task) }
       let!(:bva_task) { create(:bva_dispatch_task, :in_progress, parent: root_task) }
       let(:judge_task) { create(:ama_judge_task, :completed, parent: root_task) }
       let!(:attorney_task) { create(:ama_attorney_task, :completed, parent: judge_task) }
@@ -40,10 +37,11 @@ describe Task, :all_dbs do
   end
 
   describe ".when_child_task_completed" do
-    let(:task) { create(:task, :on_hold, type: Task.name) }
-    let(:child) { create(:task, :completed, type: Task.name, parent: task) }
+    let(:task) { create(:task, type: Task.name) }
+    let(:child_status) { :assigned }
+    let!(:child) { create(:task, child_status, type: Task.name, parent: task) }
 
-    subject { task.when_child_task_completed(child) }
+    subject { task.reload.when_child_task_completed(child) }
 
     context "when on_hold task is assigned to a person" do
       context "when task has no child tasks" do
@@ -57,7 +55,7 @@ describe Task, :all_dbs do
       end
 
       context "when task has 1 incomplete child task" do
-        let(:child) { create(:task, :in_progress, type: Task.name, parent_id: task.id) }
+        let!(:child_status) { :in_progress }
 
         it "should not change the task's status" do
           status_before = task.status
@@ -67,7 +65,7 @@ describe Task, :all_dbs do
       end
 
       context "when task has 1 complete child task" do
-        let(:child) { create(:task, :completed, type: Task.name, parent_id: task.id) }
+        let!(:child_status) { :completed }
 
         it "should change task's status to assigned" do
           status_before = task.status
@@ -78,8 +76,7 @@ describe Task, :all_dbs do
       end
 
       context "when task is already closed" do
-        let!(:task) { create(:task, :on_hold, type: Task.name) }
-        let!(:child) { create(:task, :completed, type: Task.name, parent: task) }
+        let!(:child_status) { :completed }
 
         before { task.update!(status: Constants.TASK_STATUSES.completed) }
 
@@ -91,10 +88,6 @@ describe Task, :all_dbs do
 
       context "when task has some complete and some incomplete child tasks" do
         let!(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
-        let(:incomplete_children) do
-          create_list(:task, 2, :in_progress, type: Task.name, parent_id: task.id)
-        end
-        let(:child) { incomplete_children.last }
 
         it "should not change the task's status" do
           status_before = task.status
@@ -105,10 +98,10 @@ describe Task, :all_dbs do
 
       context "when task has only complete child tasks" do
         let(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
-        let(:child) { completed_children.last }
+        let!(:child) { completed_children.last }
 
         it "should change task's status to assigned" do
-          status_before = task.status
+          status_before = task.reload.status
           subject
           expect(task.status).to_not eq(status_before)
           expect(task.status).to eq("assigned")
@@ -118,7 +111,7 @@ describe Task, :all_dbs do
 
     context "when on_hold task is assigned to an organization" do
       let(:organization) { Organization.create!(name: "Other organization", url: "other") }
-      let(:task) { create(:task, :on_hold, type: Task.name, assigned_to: organization) }
+      let(:task) { create(:task, type: Task.name, assigned_to: organization) }
 
       context "when task has no child tasks" do
         let(:child) { nil }
@@ -131,7 +124,7 @@ describe Task, :all_dbs do
       end
 
       context "when task has 1 incomplete child task" do
-        let(:child) { create(:task, :in_progress, type: Task.name, parent_id: task.id) }
+        let(:child_status) { :in_progress }
 
         it "should not update any attribute of the task" do
           task_status = task.status
@@ -141,7 +134,7 @@ describe Task, :all_dbs do
       end
 
       context "when task has 1 complete child task" do
-        let(:child) { create(:task, :completed, type: Task.name, parent_id: task.id) }
+        let(:child_status) { :completed }
 
         it "should update the task" do
           subject
@@ -150,8 +143,7 @@ describe Task, :all_dbs do
       end
 
       context "when task is already closed" do
-        let!(:task) { create(:task, :on_hold, type: Task.name, assigned_to: organization) }
-        let!(:child) { create(:task, :completed, type: Task.name, parent: task) }
+        let(:child_status) { :completed }
 
         before { task.update!(status: Constants.TASK_STATUSES.completed) }
 
@@ -163,10 +155,6 @@ describe Task, :all_dbs do
 
       context "when task has some complete and some incomplete child tasks" do
         let!(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
-        let(:incomplete_children) do
-          create_list(:task, 2, :in_progress, type: Task.name, parent_id: task.id)
-        end
-        let(:child) { incomplete_children.last }
 
         it "should not update any attribute of the task" do
           task_status = task.status
@@ -177,7 +165,7 @@ describe Task, :all_dbs do
 
       context "when task has only complete child tasks" do
         let(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
-        let(:child) { completed_children.last }
+        let!(:child) { completed_children.last }
 
         it "should update the task" do
           subject
@@ -187,6 +175,7 @@ describe Task, :all_dbs do
 
       context "when child task has a different type than parent" do
         let!(:child) { create(:quality_review_task, :completed, parent_id: task.id) }
+
         it "sets the status of the parent to assigned" do
           subject
           expect(task.reload.status).to eq(Constants.TASK_STATUSES.assigned)
@@ -563,18 +552,6 @@ describe Task, :all_dbs do
     end
   end
 
-  describe "#actions_available?" do
-    let(:user) { create(:user) }
-
-    context "when task status is on_hold" do
-      let(:task) { create(:generic_task, :on_hold) }
-
-      it "returns false" do
-        expect(task.actions_available?(user)).to eq(false)
-      end
-    end
-  end
-
   describe "#actions_allowable?" do
     let(:user) { create(:user) }
 
@@ -592,7 +569,7 @@ describe Task, :all_dbs do
       let!(:task) { create(:generic_task, assigned_to: user, parent: parent_task) }
 
       it "returns false" do
-        OrganizationsUser.add_user_to_organization(user, organization)
+        organization.add_user(user)
         expect(parent_task.actions_allowable?(user)).to eq(false)
       end
     end
@@ -661,6 +638,21 @@ describe Task, :all_dbs do
 
       it "raises an error" do
         expect { subject }.to raise_error(ActiveRecord::RecordNotFound, /Couldn't find Task without an ID/)
+      end
+    end
+
+    context "when the task assignee is not active" do
+      let(:inactive_user) { create(:user, status: Constants.USER_STATUSES.inactive) }
+      let(:params) do
+        { assigned_to: inactive_user, appeal: task.appeal, parent_id: task.id }
+      end
+
+      it "should throw an error" do
+        expect { subject }.to raise_error(
+          Caseflow::Error::InvalidAssigneeStatusOnTaskCreate,
+          "#{inactive_user.full_name} is marked as inactive in Caseflow. Please select another user assignee or " \
+          "contact support if you believe you're getting this message in error."
+        )
       end
     end
   end
@@ -835,40 +827,10 @@ describe Task, :all_dbs do
     end
   end
 
-  describe ".old_style_hold_expired?" do
-    subject { task.old_style_hold_expired? }
-
-    context "when a task is on an active old-style hold" do
-      let(:task) { create(:task, :on_hold) }
-
-      it "recognizes that the old style hold has not expired" do
-        expect(subject).to eq(false)
-      end
-    end
-
-    context "when a task has completed an old-style hold" do
-      let(:task) { create(:task, :on_hold) }
-
-      it "recognizes that the old style hold has expired" do
-        task.update(placed_on_hold_at: 200.days.ago)
-        expect(subject).to eq(true)
-      end
-    end
-
-    context "when a task has a completed old-style hold as well as a new timed hold" do
-      let(:task) { create(:task, :on_hold, placed_on_hold_at: 200.days.ago) }
-      before { TimedHoldTask.create_from_parent(task, days_on_hold: 16) }
-
-      it "does not recognize that the task has completed the old-style hold" do
-        expect(subject).to eq(false)
-      end
-    end
-  end
-
   describe ".assigned_to_same_org?" do
     subject { task.assigned_to_same_org?(other_task) }
 
-    before { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
+    before { Colocated.singleton.add_user(create(:user)) }
 
     context "when other task is assigned to a user" do
       let(:task) { create(:task, assigned_to: Colocated.singleton) }
@@ -963,6 +925,44 @@ describe Task, :all_dbs do
 
       it "should should return the grandchild" do
         expect(subject.id).to eq(grandchild_task.id)
+      end
+    end
+  end
+
+  describe ".when_child_task_created" do
+    let(:parent_task) { create(:task, appeal: create(:appeal)) }
+
+    subject { create(:task, parent: parent_task, appeal: parent_task.appeal) }
+
+    before do
+      allow(Raven).to receive(:capture_message)
+    end
+
+    context "when the task is active" do
+      it "does not send a message to Sentry" do
+        expect(parent_task.status).to eq(Constants.TASK_STATUSES.assigned)
+        expect(parent_task.children.count).to eq(0)
+
+        subject
+
+        expect(Raven).to have_received(:capture_message).exactly(0).times
+        expect(parent_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+        expect(parent_task.children.count).to eq(1)
+      end
+    end
+
+    context "when the task is closed" do
+      before { parent_task.update!(status: Constants.TASK_STATUSES.completed) }
+
+      it "sends a message to Sentry" do
+        expect(parent_task.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(parent_task.children.count).to eq(0)
+
+        subject
+
+        expect(Raven).to have_received(:capture_message).exactly(1).times
+        expect(parent_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+        expect(parent_task.children.count).to eq(1)
       end
     end
   end

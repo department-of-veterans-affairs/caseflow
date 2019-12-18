@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe OutOfServiceReminderJob do
   context "when single apps are disabled" do
     before do

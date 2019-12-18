@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 RSpec.feature "TranscriptionTeam", :postgres do
   let(:transcription_team_member) { create(:user) }
   let(:veteran) { create(:veteran, first_name: "Maisie", last_name: "Varesko", file_number: 201_905_061) }
@@ -14,7 +11,7 @@ RSpec.feature "TranscriptionTeam", :postgres do
   let!(:transcription_task) { create(:transcription_task, parent: disposition_task, appeal: appeal) }
 
   before do
-    OrganizationsUser.add_user_to_organization(transcription_team_member, TranscriptionTeam.singleton)
+    TranscriptionTeam.singleton.add_user(transcription_team_member)
     User.authenticate!(user: transcription_team_member)
   end
 
@@ -65,7 +62,7 @@ RSpec.feature "TranscriptionTeam", :postgres do
       let(:instructions_text) { "This is why I want a hearing disposition change!" }
 
       before do
-        OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
+        HearingAdmin.singleton.add_user(hearing_admin_user)
       end
 
       scenario "transcription team member requests a hearing disposition change" do

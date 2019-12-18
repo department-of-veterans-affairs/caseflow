@@ -462,7 +462,7 @@ module IntakeHelpers
   end
 
   def setup_prior_claim_with_payee_code(decision_review, veteran, prior_payee_code = "10")
-    same_claimant = decision_review.claimants.first
+    same_claimant = decision_review.claimant
 
     Generators::EndProduct.build(
       veteran_file_number: veteran.file_number,
@@ -719,6 +719,7 @@ module IntakeHelpers
           diagnostic_text: "Right arm broken",
           diagnostic_type: "Bone",
           disability_id: "123",
+          disability_date: receipt_date - 5.years - 2.days,
           type_name: "Not Service Connected"
         }
       ]
@@ -875,7 +876,7 @@ module IntakeHelpers
   # rubocop:enable Metrics/AbcSize
 
   def select_agree_to_withdraw_legacy_issues(withdraw)
-    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
+    within_fieldset("Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?") do
       find("label", text: withdraw ? "Yes" : "N/A", match: :prefer_exact).click
     end
   end

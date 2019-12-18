@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe Task, :postgres do
   describe ".available_actions" do
     let(:task) { nil }
@@ -81,7 +78,7 @@ describe Task, :postgres do
 
       context "user is a member of hearings management" do
         before do
-          OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+          HearingsManagement.singleton.add_user(user)
         end
 
         it "returns no actions when user is not a member of hearing admin" do
@@ -91,7 +88,7 @@ describe Task, :postgres do
 
       context "user is member of hearing admin" do
         before do
-          OrganizationsUser.add_user_to_organization(user, HearingAdmin.singleton)
+          HearingAdmin.singleton.add_user(user)
         end
 
         it "returns a create change hearing disposition task action" do
@@ -135,7 +132,7 @@ describe Task, :postgres do
         let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
 
         before do
-          OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+          HearingsManagement.singleton.add_user(user)
         end
 
         it "returns a create change previous hearing disposition task action" do
@@ -161,7 +158,7 @@ describe Task, :postgres do
 
       context "user is a member of hearing admin" do
         before do
-          OrganizationsUser.add_user_to_organization(user, HearingAdmin.singleton)
+          HearingAdmin.singleton.add_user(user)
         end
 
         it "returns no actions" do
@@ -173,13 +170,14 @@ describe Task, :postgres do
 
   describe ".available_actions_unwrapper" do
     let(:user) { create(:user) }
-    let(:task) { create(:generic_task, trait, assigned_to: assignee) }
+    let(:task) { create(:generic_task, :completed, assigned_to: assignee) }
+
     subject { task.available_actions_unwrapper(user) }
 
     context "when task assigned to the user is has been completed" do
       let(:assignee) { user }
-      let(:trait) { :completed }
       let(:expected_actions) { [] }
+
       it "should return an empty list" do
         expect(subject).to eq(expected_actions)
       end
@@ -187,9 +185,13 @@ describe Task, :postgres do
 
     context "when task assigned to an organization the user is a member of is on hold" do
       let(:assignee) { Organization.find(create(:organization).id) }
-      let(:trait) { :on_hold }
       let(:expected_actions) { [] }
-      before { allow_any_instance_of(Organization).to receive(:user_has_access?).and_return(true) }
+
+      before do
+        allow_any_instance_of(Organization).to receive(:user_has_access?).and_return(true)
+        task.update!(status: :on_hold)
+      end
+
       it "should return an empty list" do
         expect(subject).to eq(expected_actions)
       end
@@ -204,7 +206,7 @@ describe Task, :postgres do
     let(:task) { create(:generic_task, :in_progress, assigned_to: assignee) }
 
     before do
-      OrganizationsUser.add_user_to_organization(user, org)
+      org.add_user(user)
     end
 
     context "task assignee is current user" do
@@ -254,7 +256,7 @@ describe Task, :postgres do
 
       context "and current user belongs to that organization" do
         before do
-          OrganizationsUser.add_user_to_organization(user, org)
+          org.add_user(user)
         end
 
         it "should update the task's status" do
@@ -388,7 +390,7 @@ describe Task, :postgres do
 
       context "when there is a currently logged-in user" do
         before do
-          OrganizationsUser.add_user_to_organization(current_user, org)
+          org.add_user(current_user)
         end
         it "should create child task assigned by currently logged-in user" do
           child = Task.create_many_from_params(good_params_array, current_user).first
@@ -490,7 +492,7 @@ describe Task, :postgres do
       let(:root_task_3) { create(:root_task) }
 
       before do
-        OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
+        BvaDispatch.singleton.add_user(create(:user))
         BvaDispatchTask.create_from_root_task(root_task)
         QualityReviewTask.create_from_root_task(root_task_3).update!(status: "completed")
       end

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe Organization, :postgres do
   describe ".create" do
     context "when the input URL has uppercase letters and spaces" do
@@ -27,9 +24,53 @@ describe Organization, :postgres do
     end
 
     context "when user is a member of organization" do
-      before { OrganizationsUser.add_user_to_organization(user, org) }
+      before { org.add_user(user) }
       it "should return true" do
         expect(org.user_has_access?(user)).to be_truthy
+      end
+    end
+  end
+
+  describe ".status" do
+    let(:org) { create(:organization) }
+
+    context "upon creation" do
+      it "has a default value of 'active'" do
+        expect(org.status).to eq("active")
+      end
+    end
+
+    context "default scope" do
+      it "returns only active organizations unless explicitly descoped" do
+        create_list(:organization, 3)
+        create_list(:organization, 3, status: "inactive")
+
+        expect(Organization.all.size).to eq(3)
+        expect(Organization.unscoped.all.size).to eq(6)
+      end
+    end
+
+    context "with an invalid status" do
+      subject { org.update!(status: "invalid") }
+
+      it "fails and does not update the status_updated_at column" do
+        expect { subject }.to raise_error(ArgumentError)
+        expect(org.reload.status).not_to eq "invalid"
+        expect(org.status_updated_at).to eq nil
+      end
+    end
+
+    context "updates status_updated_at at proper time" do
+      before { Timecop.freeze(Time.zone.now) }
+
+      context "with a valid status" do
+        subject { org.inactive! }
+
+        it "succeeds and updates the status_updated_at column" do
+          expect(subject).to eq true
+          expect(org.reload.status).to eq Constants.ORGANIZATION_STATUSES.inactive
+          expect(org.status_updated_at.to_s).to eq Time.zone.now.to_s
+        end
       end
     end
   end
@@ -46,7 +87,7 @@ describe Organization, :postgres do
       let(:org) { create(:organization) }
       let(:member_cnt) { 5 }
       let(:users) { create_list(:user, member_cnt) }
-      before { users.each { |u| OrganizationsUser.add_user_to_organization(u, org) } }
+      before { users.each { |u| org.add_user(u) } }
 
       it "should return a non-empty list of members" do
         expect(org.users.length).to eq(member_cnt)
@@ -108,7 +149,7 @@ describe Organization, :postgres do
     let(:user) { create(:user) }
 
     context "when user is not an admin for the organization" do
-      before { OrganizationsUser.add_user_to_organization(user, org) }
+      before { org.add_user(user) }
       it "should return false" do
         expect(org.user_is_admin?(user)).to eq(false)
       end

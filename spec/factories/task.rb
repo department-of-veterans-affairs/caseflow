@@ -24,29 +24,14 @@ FactoryBot.define do
     trait :on_hold do
       started_at { rand(20..30).days.ago }
       placed_on_hold_at { rand(1..10).days.ago }
-      on_hold_duration { [30, 60, 90].sample }
 
       after(:create) do |task|
-        task.update_columns(status: Constants.TASK_STATUSES.on_hold)
-        task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
-      end
-    end
-
-    trait :completed_hold do
-      started_at { rand(25..30).days.ago }
-      placed_on_hold_at { rand(15..25).days.ago }
-      on_hold_duration { 10 }
-
-      after(:create) do |task|
-        task.update_columns(status: Constants.TASK_STATUSES.on_hold)
-        task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
+        TimedHoldTask.create_from_parent(task, days_on_hold: [30, 60, 90].sample)
       end
     end
 
     trait :completed do
       started_at { rand(20..30).days.ago }
-      placed_on_hold_at { rand(1..10).days.ago }
-      on_hold_duration { [30, 60, 90].sample }
       closed_at { Time.zone.now }
 
       after(:create) do |task|
@@ -57,8 +42,6 @@ FactoryBot.define do
 
     trait :completed_in_the_past do
       started_at { rand(20..30).weeks.ago }
-      placed_on_hold_at { rand(4..10).weeks.ago }
-      on_hold_duration { [30, 60, 90].sample }
 
       after(:create) do |task|
         task.update_columns(status: Constants.TASK_STATUSES.completed, closed_at: 3.weeks.ago)
@@ -376,6 +359,13 @@ FactoryBot.define do
       parent { create(:appeal_withdrawal_mail_task, appeal: appeal) }
     end
 
+    factory :returned_undeliverable_correspondence_mail_task, class: ReturnedUndeliverableCorrespondenceMailTask do
+      type { ReturnedUndeliverableCorrespondenceMailTask.name }
+      appeal { create(:appeal) }
+      assigned_to { BvaDispatch.singleton }
+      parent { create(:root_task, appeal: appeal) }
+    end
+
     factory :no_show_hearing_task, class: NoShowHearingTask do
       type { NoShowHearingTask.name }
       appeal { create(:appeal) }
@@ -539,6 +529,22 @@ FactoryBot.define do
       type { AbstractMotionToVacateTask.name }
       appeal
       association :parent, factory: :vacate_motion_mail_task
+    end
+
+    factory :denied_motion_to_vacate_task, class: DeniedMotionToVacateTask do
+      type { DeniedMotionToVacateTask.name }
+      appeal
+      association :parent, factory: :abstract_motion_to_vacate_task
+      assigned_by { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
+      assigned_to { create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1") }
+    end
+
+    factory :dismissed_motion_to_vacate_task, class: DismissedMotionToVacateTask do
+      type { DismissedMotionToVacateTask.name }
+      appeal
+      association :parent, factory: :abstract_motion_to_vacate_task
+      assigned_by { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
+      assigned_to { create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1") }
     end
 
     factory :judge_sign_motion_to_vacate_task, class: JudgeSignMotionToVacateTask do

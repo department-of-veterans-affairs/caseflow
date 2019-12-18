@@ -158,6 +158,7 @@ class LegacyAppeal < ApplicationRecord
     transcription: "33",
     translation: "14",
     schedule_hearing: "57",
+    sr_council_dvc: "66",
     case_storage: "81",
     service_organization: "55",
     closed: "99"
@@ -249,10 +250,18 @@ class LegacyAppeal < ApplicationRecord
     (disposition == "Allowed" && issues.select(&:remanded?).any?) ? "Remanded" : disposition
   end
 
-  delegate :representative_name, :representative_type,
-           :representative_address, :representatives,
-           :representative_to_hash, :representative_participant_id,
-           :vacols_representatives, to: :legacy_appeal_representative
+  delegate :representative_name,
+           :representative_type,
+           :representative_address,
+           :representatives,
+           :representative_to_hash,
+           :representative_participant_id,
+           :vacols_representatives,
+           to: :legacy_appeal_representative
+
+  def representative_email_address
+    power_of_attorney.bgs_representative_email_address
+  end
 
   def legacy_appeal_representative
     @legacy_appeal_representative ||= LegacyAppealRepresentative.new(
@@ -731,13 +740,17 @@ class LegacyAppeal < ApplicationRecord
 
   def assigned_to_location
     return location_code unless location_code_is_caseflow?
-    return active_tasks.most_recently_assigned.assigned_to_label if active_tasks.any?
-    return on_hold_tasks.most_recently_assigned.assigned_to_label if on_hold_tasks.any?
+
+    recently_updated_task = Task.any_recently_updated(
+      tasks.active.visible_in_queue_table_view,
+      tasks.on_hold.visible_in_queue_table_view
+    )
+    return recently_updated_task.assigned_to_label if recently_updated_task
 
     # shouldn't happen because if all tasks are closed the task returns to the assigning attorney
     if tasks.any?
       Raven.capture_message("legacy appeal #{external_id} has been worked in caseflow but has only closed tasks")
-      return tasks.most_recently_assigned.assigned_to_label
+      return tasks.most_recently_updated.assigned_to_label
     end
 
     # shouldn't happen because setting location to "CASEFLOW" only happens when a task is created
@@ -764,6 +777,29 @@ class LegacyAppeal < ApplicationRecord
     VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
   end
 
+  def death_dismissal!
+    multi_transaction do
+      cancel_open_caseflow_tasks!
+      LegacyAppeal.repository.update_location_for_death_dismissal!(appeal: self)
+    end
+  end
+
+  def cancel_open_caseflow_tasks!
+    tasks.open.each do |task|
+      task.update_with_instructions(
+        status: Constants.TASK_STATUSES.cancelled,
+        instructions: "Task cancelled due to death dismissal"
+      )
+    end
+  end
+
+  def eligible_for_death_dismissal?(user)
+    return false if notice_of_death_date.nil?
+
+    user_has_relevent_open_tasks = tasks.open.where(type: ColocatedTask.subclasses.map(&:name)).any?
+    user_has_relevent_open_tasks && Colocated.singleton.user_is_admin?(user)
+  end
+
   private
 
   def soc_date_eligible_for_opt_in?(receipt_date)
@@ -784,14 +820,6 @@ class LegacyAppeal < ApplicationRecord
 
   def bgs_address_service
     @bgs_address_service ||= BgsAddressService.new(participant_id: representative_participant_id)
-  end
-
-  def active_tasks
-    tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
-  end
-
-  def on_hold_tasks
-    tasks.where(status: Constants.TASK_STATUSES.on_hold)
   end
 
   def location_code_is_caseflow?

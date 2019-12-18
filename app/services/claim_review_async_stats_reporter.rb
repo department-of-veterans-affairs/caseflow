@@ -5,7 +5,7 @@ require "csv"
 class ClaimReviewAsyncStatsReporter
   attr_reader :stats
 
-  def initialize(start_date: Constants::DATES["AMA_ACTIVATION"].to_date, end_date: Time.zone.today)
+  def initialize(start_date: Constants::DATES["AMA_ACTIVATION"].to_date, end_date: Time.zone.tomorrow)
     @start_date = start_date
     @end_date = end_date
     @stats = build
@@ -45,6 +45,11 @@ class ClaimReviewAsyncStatsReporter
     end
   end
   # rubocop:enable Metrics/MethodLength
+
+  # public util method
+  def seconds_to_hms(secs)
+    [secs / 3600, secs / 60 % 60, secs % 60].map { |segment| segment.to_s.rjust(2, "0") }.join(":")
+  end
 
   private
 
@@ -147,10 +152,6 @@ class ClaimReviewAsyncStatsReporter
     @request_issues_updates ||= begin
       RequestIssuesUpdate.where("submitted_at >= ? AND submitted_at <= ?", start_date, end_date)
     end
-  end
-
-  def seconds_to_hms(secs)
-    [secs / 3600, secs / 60 % 60, secs % 60].map { |segment| segment.to_s.rjust(2, "0") }.join(":")
   end
 
   def median_time(times)

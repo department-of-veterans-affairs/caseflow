@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 RSpec.feature HearingAdminActionForeignVeteranCaseTask, :postgres do
   let!(:veteran) { create(:veteran) }
   let!(:appeal) { create(:appeal, veteran: veteran) }
@@ -23,7 +20,7 @@ RSpec.feature HearingAdminActionForeignVeteranCaseTask, :postgres do
 
   context "UI tests" do
     before do
-      OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+      HearingsManagement.singleton.add_user(user)
 
       User.authenticate!(user: user)
     end
@@ -58,7 +55,7 @@ RSpec.feature HearingAdminActionForeignVeteranCaseTask, :postgres do
         end
 
         it "can submit form with Regional Office and no notes" do
-          click_dropdown(text: "St. Petersburg, FL")
+          click_dropdown({ text: "St. Petersburg, FL" }, find(".cf-modal-body"))
 
           click_button("Confirm")
 
@@ -66,7 +63,7 @@ RSpec.feature HearingAdminActionForeignVeteranCaseTask, :postgres do
         end
 
         it "can submit form with Regional Office and notes" do
-          click_dropdown(text: "St. Petersburg, FL")
+          click_dropdown({ text: "St. Petersburg, FL" }, find(".cf-modal-body"))
           fill_in("Notes", with: instructions_text)
 
           click_button("Confirm")
@@ -81,7 +78,7 @@ RSpec.feature HearingAdminActionForeignVeteranCaseTask, :postgres do
         before do
           click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_SCHEDULE_VETERAN_LIST.label)
 
-          click_dropdown(text: "St. Petersburg, FL")
+          click_dropdown({ text: "St. Petersburg, FL" }, find(".cf-modal-body"))
           fill_in("Notes", with: instructions_text)
 
           click_button("Confirm")

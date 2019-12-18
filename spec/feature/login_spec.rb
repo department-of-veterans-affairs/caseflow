@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Login", :all_dbs do
   let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
   let(:station_id) { "405" }
@@ -50,7 +47,7 @@ RSpec.feature "Login", :all_dbs do
 
     context "User is in the Org they are trying to view" do
       before do
-        OrganizationsUser.add_user_to_organization(user, organization)
+        organization.add_user(user)
       end
 
       scenario "user is presented with RO selection page and redirects to initial location" do

@@ -8,12 +8,11 @@ class OrganizationsUser < ApplicationRecord
 
   scope :non_admin, -> { where(admin: false) }
 
-  def self.add_user_to_organization(user, organization)
-    existing_record(user, organization) || create(organization_id: organization.id, user_id: user.id)
-  end
+  # Deprecated: add_user_to_organization(user, organization)
+  # Use instead: organization.add_user(user)
 
   def self.make_user_admin(user, organization)
-    add_user_to_organization(user, organization).tap do |org_user|
+    organization.add_user(user).tap do |org_user|
       org_user.update!(admin: true)
     end
   end
@@ -23,6 +22,10 @@ class OrganizationsUser < ApplicationRecord
   end
 
   def self.remove_user_from_organization(user, organization)
+    if organization.is_a?(JudgeTeam) && organization.judge.eql?(user)
+      fail Caseflow::Error::ActionForbiddenError, message: COPY::JUDGE_TEAM_REMOVE_JUDGE_ERROR
+    end
+
     existing_record(user, organization).destroy
   end
 

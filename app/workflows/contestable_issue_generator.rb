@@ -32,7 +32,7 @@ class ContestableIssueGenerator
     return [] unless receipt_date
 
     rating_issues
-      .select { |issue| issue.profile_date && issue.profile_date.to_date < receipt_date }
+      .select { |issue| issue.profile_date && issue.profile_date.to_date <= receipt_date }
       .map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, review) }
   end
 
@@ -57,8 +57,7 @@ class ContestableIssueGenerator
     # so filter out any that are duplicates of a rating issue or that are not related to their parent rating.
     rating_decisions
       .select(&:contestable?)
-      .reject(&:rating_issue?)
-      .select { |rating_decision| rating_decision.profile_date && rating_decision.profile_date.to_date < receipt_date }
+      .select { |rating_decision| rating_decision.profile_date && rating_decision.profile_date.to_date <= receipt_date }
       .map { |rating_decision| ContestableIssue.from_rating_decision(rating_decision, review) }
   end
 

@@ -11,7 +11,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
 import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES.json';
-import { validateDateNotInFuture } from '../util/issues';
+import { validateDateNotInFuture, isTimely } from '../util/issues';
 import { formatDateStr } from '../../util/DateUtil';
 
 const NO_MATCH_TEXT = 'None of these match';
@@ -111,23 +111,8 @@ class NonratingRequestIssueModal extends React.Component {
     }
   };
 
-  isTimely = () => {
-    if (this.props.formType === 'supplemental_claim') {
-      return true;
-    }
-
-    const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
-
-    // we must do our own date math for nonrating request issues.
-    // we assume the timezone of the browser for all these.
-    const decisionDate = new Date(this.state.decisionDate);
-    const receiptDate = new Date(this.props.intakeData.receiptDate);
-    const lessThanOneYear = receiptDate - decisionDate <= ONE_YEAR_PLUS_MS;
-
-    return lessThanOneYear;
-  };
-
   onAddIssue = () => {
+    const { formType, intakeData } = this.props;
     const {
       benefitType,
       category: { value: category },
@@ -147,7 +132,7 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleReason,
       decisionReviewTitle,
       isRating: false,
-      timely: this.isTimely()
+      timely: isTimely(formType, decisionDate, intakeData.receiptDate)
     };
 
     this.props.onSubmit({ currentIssue });

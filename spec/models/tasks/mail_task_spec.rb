@@ -1,14 +1,11 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe MailTask, :postgres do
   let(:user) { create(:user) }
   let(:mail_team) { MailTeam.singleton }
   let(:root_task) { create(:root_task) }
   before do
-    OrganizationsUser.add_user_to_organization(user, mail_team)
+    mail_team.add_user(user)
   end
 
   describe ".create_from_params" do

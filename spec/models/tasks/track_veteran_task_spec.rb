@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe TrackVeteranTask, :postgres do
   let(:vso) { create(:vso) }
   let(:root_task) { create(:root_task) }
@@ -162,7 +159,7 @@ describe TrackVeteranTask, :postgres do
       end
 
       before do
-        OrganizationsUser.add_user_to_organization(vso_staff, vso)
+        vso.add_user(vso_staff)
       end
 
       context "when the individual's VSO is still the representative" do

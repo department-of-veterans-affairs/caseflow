@@ -85,8 +85,8 @@ jobs:
       - run:
           name: Database setup
           command: |
-            ~/project/ci-bin/capture-log "bundle exec rake db:create"
-            ~/project/ci-bin/capture-log "bundle exec rake db:schema:load"
+            ~/project/ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate:redo"
+            ~/project/ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate:redo"
 
       - run:
           name: Wait for FACOLS to be ready
@@ -259,7 +259,7 @@ jobs:
           command: |
             mkdir -p ~/test-results/mocha
             pushd client
-            ~/project/ci-bin/capture-log "node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --compilers jsx:babel-core/register test/node/setup.js test/node"
+            ~/project/ci-bin/capture-log "node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --require ./test/node/register.js --require ./test/node/setup.js 'test/node/**/*-test.js'"
 
       - run:
           name: Karma

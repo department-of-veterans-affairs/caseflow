@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 feature "Higher-Level Review", :all_dbs do
   include IntakeHelpers
 
@@ -116,7 +113,7 @@ feature "Higher-Level Review", :all_dbs do
       "Is the claimant someone other than the Veteran?\nPlease select an option."
     )
     expect(page).to have_content(
-      "Did they agree to withdraw their issues from the legacy system?\nPlease select an option."
+      "Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?\nPlease select an option."
     )
 
     within_fieldset("What is the Benefit Type?") do
@@ -197,7 +194,7 @@ feature "Higher-Level Review", :all_dbs do
     expect(higher_level_review.informal_conference).to eq(true)
     expect(higher_level_review.same_office).to eq(false)
     expect(higher_level_review.legacy_opt_in_approved).to eq(false)
-    expect(higher_level_review.claimants.first).to have_attributes(
+    expect(higher_level_review.claimant).to have_attributes(
       participant_id: "5382910292",
       payee_code: "10"
     )
@@ -659,7 +656,7 @@ feature "Higher-Level Review", :all_dbs do
     end
 
     context "Veteran has no ratings" do
-      let(:decision_date) { (receipt_date + 200.days).to_date.mdY }
+      let(:decision_date) { (receipt_date + 9000.days).to_date.mdY }
 
       scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
         start_higher_level_review(veteran_no_ratings)

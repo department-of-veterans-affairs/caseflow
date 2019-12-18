@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe AppealRepository, :all_dbs do
   let(:correspondent_record) do
     OpenStruct.new(
@@ -212,6 +209,22 @@ describe AppealRepository, :all_dbs do
     context "detects paper" do
       let(:folder_record) { OpenStruct.new(tivbms: "other_val", tisubj2: "other_val") }
       it { is_expected.to eq("Paper") }
+    end
+  end
+
+  context "#update_location_for_death_dismissal!" do
+    let(:appeal) do
+      create(:legacy_appeal, vacols_case: create(:case))
+    end
+
+    it "should end up in location 66" do
+      LegacyAppeal.repository.update_location_for_death_dismissal!(appeal: appeal)
+      appeal.case_record.reload
+      refreshed_appeal = LegacyAppeal.find(appeal.id)
+      final_location = LegacyAppeal::LOCATION_CODES[:sr_council_dvc]
+
+      expect(appeal.case_record.bfcurloc).to eq(final_location)
+      expect(refreshed_appeal.location_code).to eq(final_location)
     end
   end
 

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 feature "Appeal Intake", :all_dbs do
   include IntakeHelpers
 
@@ -37,7 +34,7 @@ feature "Appeal Intake", :all_dbs do
   let(:future_date) { (Time.zone.now + 30.days).to_date }
   let(:receipt_date) { (post_ama_start_date - 30.days).to_date }
   let(:untimely_days) { 372.days }
-  let(:profile_date) { (post_ama_start_date - 35.days).to_datetime }
+  let(:profile_date) { (post_ama_start_date - 35.days).utc.to_datetime }
   let(:nonrating_date) { Time.zone.yesterday }
   let(:untimely_date) { (receipt_date - untimely_days - 1.day).to_date }
   let(:promulgation_date) { receipt_date - 5.days }
@@ -413,7 +410,6 @@ feature "Appeal Intake", :all_dbs do
     expect(page).to have_content("3 issues")
     expect(page).to have_content("This is an unidentified issue")
     expect(find_intake_issue_by_number(3)).to have_css(".issue-unidentified")
-    expect_ineligible_issue(3)
 
     # add ineligible issue
     click_intake_add_issue
