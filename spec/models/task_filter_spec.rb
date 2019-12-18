@@ -41,7 +41,7 @@ describe TaskFilter, :all_dbs do
     end
 
     context "when the input tasks argument is not an ActiveRecord::Relation object" do
-      let(:args) { { tasks: [create(:generic_task)] } }
+      let(:args) { { tasks: [create(:ama_task)] } }
 
       it "raises an error" do
         expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
@@ -50,7 +50,7 @@ describe TaskFilter, :all_dbs do
 
     context "when all input arguments are valid" do
       let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{RootTask.name}"] }
-      let(:tasks) { Task.where(id: create_list(:generic_task, 6).pluck(:id)) }
+      let(:tasks) { Task.where(id: create_list(:ama_task, 6).pluck(:id)) }
 
       let(:args) { { filter_params: filter_params, tasks: tasks } }
 
@@ -92,7 +92,7 @@ describe TaskFilter, :all_dbs do
     context "when filtering by task type" do
       let(:foia_tasks) { create_list(:foia_task, 5) }
       let(:translation_tasks) { create_list(:translation_task, 6) }
-      let(:generic_tasks) { create_list(:generic_task, 7) }
+      let(:generic_tasks) { create_list(:ama_task, 7) }
       let(:all_tasks) do
         Task.where(id: foia_tasks.pluck(:id) + translation_tasks.pluck(:id) + generic_tasks.pluck(:id))
       end
@@ -337,9 +337,9 @@ describe TaskFilter, :all_dbs do
     context "when filtering by assignee" do
       let(:tasks_per_user) { 3 }
       let(:users) { create_list(:user, 3) }
-      let(:first_user_tasks) { create_list(:generic_task, tasks_per_user, assigned_to: users.first) }
-      let(:second_user_tasks) { create_list(:generic_task, tasks_per_user, assigned_to: users.second) }
-      let(:third_user_tasks) { create_list(:generic_task, tasks_per_user, assigned_to: users.third) }
+      let(:first_user_tasks) { create_list(:ama_task, tasks_per_user, assigned_to: users.first) }
+      let(:second_user_tasks) { create_list(:ama_task, tasks_per_user, assigned_to: users.second) }
+      let(:third_user_tasks) { create_list(:ama_task, tasks_per_user, assigned_to: users.third) }
       let(:all_tasks) { Task.where(id: (first_user_tasks + second_user_tasks + third_user_tasks).pluck(:id)) }
 
       before do

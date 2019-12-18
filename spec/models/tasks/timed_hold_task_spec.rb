@@ -4,7 +4,7 @@ describe TimedHoldTask, :postgres do
   let(:task) { create(:timed_hold_task) }
 
   describe ".create!" do
-    let(:parent) { create(:generic_task) }
+    let(:parent) { create(:ama_task) }
     let(:appeal) { parent.appeal }
     let(:initial_args) do
       { appeal: appeal,
@@ -25,7 +25,7 @@ describe TimedHoldTask, :postgres do
 
     context "with parent_id argument instead of parent" do
       let(:args) do
-        initial_args.reject { |key, _| key == :parent }.merge(parent_id: create(:generic_task).id)
+        initial_args.reject { |key, _| key == :parent }.merge(parent_id: create(:ama_task).id)
       end
 
       it "creates task successfully" do
@@ -83,7 +83,7 @@ describe TimedHoldTask, :postgres do
       end
 
       context "when there is an active sibling TimedHoldTask and an active sibling Task" do
-        let!(:existing_generic_task_sibling) { create(:generic_task, parent: parent, appeal: appeal) }
+        let!(:existing_generic_task_sibling) { create(:ama_task, parent: parent, appeal: appeal) }
         let!(:existing_timed_hold_task) { create(:timed_hold_task, **args, parent: parent.reload) }
 
         it "cancels the TimedHoldTask but leaves the Task alone" do
@@ -97,7 +97,7 @@ describe TimedHoldTask, :postgres do
   end
 
   describe ".create_from_parent" do
-    let(:parent) { create(:generic_task) }
+    let(:parent) { create(:ama_task) }
 
     let(:days_on_hold) { 4 }
     let(:assigned_by) { create(:user) }
@@ -153,7 +153,7 @@ describe TimedHoldTask, :postgres do
       end
 
       context "when the TimedHoldTask has a parent task assigned to an organization" do
-        let(:parent_task) { create(:generic_task) }
+        let(:parent_task) { create(:ama_task) }
         let(:task) { create(:timed_hold_task, trait, parent: parent_task) }
         it "sets the parent task status to assigned" do
           subject
@@ -185,7 +185,7 @@ describe TimedHoldTask, :postgres do
   context "start and end times" do
     let(:days_on_hold) { 18 }
     let(:user) { create(:user) }
-    let!(:parent) { create(:generic_task, assigned_to: user) }
+    let!(:parent) { create(:ama_task, assigned_to: user) }
     let!(:task) do
       TimedHoldTask.create!(appeal: parent.appeal, assigned_to: user, days_on_hold: days_on_hold, parent: parent)
     end

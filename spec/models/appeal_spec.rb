@@ -688,13 +688,13 @@ describe Appeal, :all_dbs do
 
       before do
         organization_root_task = create(:root_task, appeal: appeal_organization)
-        create(:generic_task, assigned_to: organization, appeal: appeal_organization, parent: organization_root_task)
+        create(:ama_task, assigned_to: organization, appeal: appeal_organization, parent: organization_root_task)
 
         user_root_task = create(:root_task, appeal: appeal_user)
-        create(:generic_task, assigned_to: user, appeal: appeal_user, parent: user_root_task)
+        create(:ama_task, assigned_to: user, appeal: appeal_user, parent: user_root_task)
 
         on_hold_root = create(:root_task, appeal: appeal_on_hold, updated_at: today - 1)
-        create(:generic_task, :on_hold, appeal: appeal_on_hold, parent: on_hold_root, updated_at: today + 1)
+        create(:ama_task, :on_hold, appeal: appeal_on_hold, parent: on_hold_root, updated_at: today + 1)
 
         # These tasks are the most recently updated but should be ignored in the determination
         create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 20)

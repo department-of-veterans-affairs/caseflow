@@ -1068,7 +1068,7 @@ class SeedDB
     create_colocated_legacy_tasks(attorney)
 
     FactoryBot.create_list(
-      :generic_task,
+      :ama_task,
       5,
       assigned_by: judge,
       assigned_to: Translation.singleton,

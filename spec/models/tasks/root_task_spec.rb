@@ -37,13 +37,13 @@ describe RootTask, :postgres do
     subject { root_task.update_children_status_after_closed }
 
     context "when there are multiple children tasks" do
-      let!(:generic_task) { create(:generic_task, appeal: appeal, parent: root_task) }
+      let!(:ama_task) { create(:ama_task, appeal: appeal, parent: root_task) }
       let!(:tracking_task) { create(:track_veteran_task, appeal: appeal, parent: root_task) }
 
       it "should close the tracking task but not the generic task" do
         expect { subject }.to_not raise_error
         expect(tracking_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
-        expect(generic_task.reload.status).to_not eq(Constants.TASK_STATUSES.completed)
+        expect(ama_task.reload.status).to_not eq(Constants.TASK_STATUSES.completed)
       end
     end
   end

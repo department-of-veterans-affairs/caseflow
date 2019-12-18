@@ -151,7 +151,7 @@ describe MailTask, :postgres do
 
     context "when all individually assigned tasks are complete" do
       before do
-        create_list(:generic_task, 4, :completed, appeal: root_task.appeal)
+        create_list(:ama_task, 4, :completed, appeal: root_task.appeal)
       end
 
       it "should return nil" do
@@ -161,11 +161,11 @@ describe MailTask, :postgres do
 
     context "when the most recent active task is assigned to an organization" do
       let(:user) { create(:user) }
-      let(:user_task) { create(:generic_task, appeal: root_task.appeal, assigned_to: user) }
+      let(:user_task) { create(:ama_task, appeal: root_task.appeal, assigned_to: user) }
 
       before do
         create(
-          :generic_task,
+          :ama_task,
           appeal: root_task.appeal,
           assigned_to: create(:organization),
           parent: user_task
@@ -185,8 +185,8 @@ describe MailTask, :postgres do
       let(:user) { create(:user) }
 
       before do
-        create_list(:generic_task, 6, appeal: root_task.appeal)
-        create(:generic_task, appeal: root_task.appeal, assigned_to: user)
+        create_list(:ama_task, 6, appeal: root_task.appeal)
+        create(:ama_task, appeal: root_task.appeal, assigned_to: user)
       end
 
       it "should return the user who was assigned the most recently created task" do
@@ -425,8 +425,8 @@ describe MailTask, :postgres do
       context "when the appeal is active, does not have any hearing tasks, but does have individually assigned tasks" do
         let(:user) { create(:user) }
         before do
-          create_list(:generic_task, 4, appeal: root_task.appeal)
-          create(:generic_task, appeal: root_task.appeal, assigned_to: user)
+          create_list(:ama_task, 4, appeal: root_task.appeal)
+          create(:ama_task, appeal: root_task.appeal, assigned_to: user)
         end
 
         it "should route to the user who is assigned the most recently created active task" do
