@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
-context Api::V3::DecisionReview::IntakeParams do
-  let(:intake_params) { Api::V3::DecisionReview::IntakeParams.new(params) }
+context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
+  include IntakeHelpers
+
+  let(:hlr_intake_params) { Api::V3::DecisionReview::HigherLevelReviewIntakeParams.new(params) }
 
   let(:params) do
     ActionController::Parameters.new(
@@ -130,25 +132,12 @@ context Api::V3::DecisionReview::IntakeParams do
       decisionIssueId: first_contestable_issue_decision_issue_id,
       ratingIssueId: first_contestable_issue_rating_issue_id,
       ratingDecisionIssueId: first_contestable_issue_rating_decision_issue_id,
-      legacyAppealIssues: first_contestable_issue_legacy_appeal_issues
     }
   end
 
   let(:first_contestable_issue_decision_issue_id) { 232 }
   let(:first_contestable_issue_rating_issue_id) { nil }
   let(:first_contestable_issue_rating_decision_issue_id) { nil }
-
-  let(:first_contestable_issue_legacy_appeal_issues) do
-    [
-      {
-        legacyAppealId: first_legacy_appeal_id,
-        legacyAppealIssueId: first_legacy_appeal_issue_id
-      }
-    ]
-  end
-
-  let(:first_legacy_appeal_id) { "123" }
-  let(:first_legacy_appeal_issue_id) { "1" }
 
   let(:object) { Api::V3::DecisionReview::IntakeParams::OBJECT }
   let(:bool) { Api::V3::DecisionReview::IntakeParams::BOOL }
@@ -170,7 +159,6 @@ context Api::V3::DecisionReview::IntakeParams do
           decisionIssueId: 2,
           ratingIssueId: "2",
           ratingDecisionIssueId: "2",
-          legacyAppealIssues: []
         }
       },
       {
@@ -179,16 +167,6 @@ context Api::V3::DecisionReview::IntakeParams do
           decisionIssueId: 3,
           ratingIssueId: "3",
           ratingDecisionIssueId: "3",
-          legacyAppealIssues: [
-            {
-              legacyAppealId: "123456",
-              legacyAppealIssueId: "1"
-            },
-            {
-              legacyAppealId: "123456",
-              legacyAppealIssueId: "2"
-            }
-          ]
         }
       },
       {
@@ -205,28 +183,6 @@ context Api::V3::DecisionReview::IntakeParams do
           decisionIssueId: 5,
           ratingIssueId: "5",
           ratingDecisionIssueId: "5",
-          legacyAppealIssues: [
-            {
-              legacyAppealId: "789123",
-              legacyAppealIssueId: "3"
-            },
-            {
-              legacyAppealId: "8765",
-              legacyAppealIssueId: "9"
-            },
-            {
-              legacyAppealId: "8233",
-              legacyAppealIssueId: "1"
-            },
-            {
-              legacyAppealId: "8233",
-              legacyAppealIssueId: "2"
-            },
-            {
-              legacyAppealId: "1112",
-              legacyAppealIssueId: "1"
-            }
-          ]
         }
       },
       {
@@ -235,12 +191,6 @@ context Api::V3::DecisionReview::IntakeParams do
           decisionIssueId: 6,
           ratingIssueId: "6",
           ratingDecisionIssueId: "6",
-          legacyAppealIssues: [
-            {
-              legacyAppealId: "34343",
-              legacyAppealIssueId: "56"
-            }
-          ]
         }
       }
     ]

@@ -1,10 +1,40 @@
 # frozen_string_literal: true
 
 class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
+  class << self
+    # (helper for `for_array_at_path_enumerate_types_and_paths`)
+    #
+    # given an array (prepend_path), prepends it to each path array in types_and_paths
+    #
+    # given:
+    #
+    #   prepend_path: [:data, :attributes],
+    #
+    #   types_and_paths: [
+    #     [   [Hash], []           ],
+    #     [ [String], [:name]      ],
+    #     [   [Hash], [:coord]     ],
+    #     [  [Float], [:coord, :x] ],
+    #     [  [Float], [:coord, :y] ],
+    #   ]
+    #
+    # returns:
+    #   [
+    #     [   [Hash], [:data, :attributes]             ],
+    #     [ [String], [:data, :attributes, :name]      ],
+    #     [   [Hash], [:data, :attributes, :coord]     ],
+    #     [  [Float], [:data, :attributes, :coord, :x] ],
+    #     [  [Float], [:data, :attributes, :coord, :y] ],
+    #   ]
+    def prepend_path_to_paths(types_and_paths:, prepend_path:)
+      types_and_paths.map do |(types, path)|
+        [types, [*prepend_path, *path]]
+      end
+    end
+  end
+
   OBJECT = [Hash, ActionController::Parameters, ActiveSupport::HashWithIndifferentAccess].freeze
   BOOL = [true, false].freeze
-
-  INCLUDED_PATH = ["included"].freeze
 
   CATEGORIES_BY_BENEFIT_TYPE = Constants::ISSUE_CATEGORIES.slice("compensation")
 
@@ -65,39 +95,18 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
     attributes.dig("veteran", "fileNumberOrSsn").to_s.strip
   end
 
-  private
-
-  def shape_valid?
-    shape_error_message.nil?
-  end
-
-  def shape_error_message
-    @shape_error_message ||= describe_shape_error
-  end
-
-  def describe_shape_error
-    return "payload must be an object" unless @params.respond_to?(:dig)
-
-    validators = types_and_paths.map do |(types, path)|
-      Api::V3::DecisionReview::HashPathValidator.new(
-        hash: @params,
-        path: path,
-        allowed_values: types
-      )
-    end
-
-    validators.find { |validator| !validator.path_is_valid? }&.error_msg
-  end
-
   def attributes
     attributes? ? @params["data"]["attributes"] : {}
   end
 
-  # most methods are run after `errors` method --this one isn't (hence the paranoia)
   def attributes?
-    @params.respond_to?(:has_key?) &&
+    params? &&
       @params["data"].respond_to?(:has_key?) &&
       @params["data"]["attributes"].respond_to?(:has_key?)
+  end
+
+  def params?
+    @params.respond_to?(:has_key?)
   end
 
   def claimant_object_present?
@@ -124,9 +133,15 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
   end
 
   def included
-    @params.dig(*INCLUDED_PATH)
-  rescue StandardError
-    []
+    params? ? @params["included"] : []
+  end
+
+  def shape_valid?
+    shape_error_message.nil?
+  end
+
+  def shape_error_message
+    @shape_error_message ||= describe_shape_error
   end
 
   def contestable_issues
@@ -291,35 +306,19 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
     []
   end
 
-  # (helper for `for_array_at_path_enumerate_types_and_paths`)
-  #
-  # given an array (prepend_path), prepends it to each path array in types_and_paths
-  #
-  # given:
-  #
-  #   prepend_path: [:data, :attributes],
-  #
-  #   types_and_paths: [
-  #     [   [Hash], []           ],
-  #     [ [String], [:name]      ],
-  #     [   [Hash], [:coord]     ],
-  #     [  [Float], [:coord, :x] ],
-  #     [  [Float], [:coord, :y] ],
-  #   ]
-  #
-  # returns:
-  #   [
-  #     [   [Hash], [:data, :attributes]             ],
-  #     [ [String], [:data, :attributes, :name]      ],
-  #     [   [Hash], [:data, :attributes, :coord]     ],
-  #     [  [Float], [:data, :attributes, :coord, :x] ],
-  #     [  [Float], [:data, :attributes, :coord, :y] ],
-  #   ]
-  class << self
-    def prepend_path_to_paths(types_and_paths:, prepend_path:)
-      types_and_paths.map do |(types, path)|
-        [types, [*prepend_path, *path]]
-      end
+  private
+
+  def describe_shape_error
+    return "payload must be an object" unless params?
+
+    validators = types_and_paths.map do |(types, path)|
+      Api::V3::DecisionReview::HashPathValidator.new(
+        hash: @params,
+        path: path,
+        allowed_values: types
+      )
     end
+
+    validators.find { |validator| !validator.path_is_valid? }&.error_msg
   end
 end

@@ -1,18 +1,28 @@
 # frozen_string_literal: true
 
-context Api::V3::DecisionReview::ContestableIssueParams do
+context Api::V3::DecisionReview::ContestableIssueParams, :all_dbs do
+  include IntakeHelpers
+
   let(:contestable_issue_params) do
     Api::V3::DecisionReview::ContestableIssueParams.new(
+      decision_review_class: decision_review_class,
+      veteran: veteran,
+      receipt_date: receipt_date,
       benefit_type: benefit_type,
-      legacy_opt_in_approved: legacy_opt_in_approved,
       params: params
     )
   end
 
+  let(:decision_review_class) { HigherLevelReview }
+  let!(:veteran) do
+    Generators::Veteran.build(
+      file_number: file_number,
+      first_name: first_name,
+      last_name: last_name
+    )
+  end
+  let(:receipt_date) { Time.zone.today - 6.days }
   let(:benefit_type) { "compensation" }
-
-  let(:legacy_opt_in_approved) { true }
-
   let(:params) do
     ActionController::Parameters.new(
       type: "ContestableIssue",
@@ -20,55 +30,67 @@ context Api::V3::DecisionReview::ContestableIssueParams do
     )
   end
 
+  let(:file_number) { "55555555" }
+  let(:first_name) { "Jane" }
+  let(:last_name) { "Doe" }
+
   let(:attributes) do
     {
-      decisionIssueId: decision_issue_id,
-      ratingIssueId: rating_issue_id,
-      ratingDecisionIssueId: rating_decision_issue_id,
-      legacyAppealIssues: legacy_appeal_issues
+      ratingIssueId: contestable_issues.first.rating_issue_reference_id,
+      decisionIssueId: contestable_issues.first.decision_issue&.id,
+      ratingDecisionIssueId: contestable_issues.first.rating_decision_reference_id
     }
   end
 
-  let(:decision_issue_id) { 123 }
+  let(:promulgation_date) { receipt_date - 10.days }
+  let(:profile_date) { (receipt_date - 8.days).to_datetime }
+  let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
 
-  let(:rating_issue_id) { "456" }
-
-  let(:rating_decision_issue_id) { "789" }
-
-  let(:legacy_appeal_issues) do
-    [
-      {
-        legacyAppealId: vacols_id,
-        legacyAppealIssueId: vacols_sequence_id
-      }
-    ]
+  let(:contestable_issues) do
+    ContestableIssueGenerator.new(
+      decision_review_class.new(
+        veteran_file_number: veteran.file_number,
+        receipt_date: receipt_date,
+        benefit_type: benefit_type
+      )
+    ).contestable_issues
   end
 
-  let(:vacols_id) { "135" }
+  describe "#contestable_issue" do
+    subject { contestable_issue_params.contestable_issue.as_json }
 
-  let(:vacols_sequence_id) { "246" }
+    it { is_expected.to eq contestable_issues.first.as_json }
+    it { is_expected.not_to eq contestable_issues.second.as_json }
+  end
 
   describe "#error_code" do
     subject { contestable_issue_params.error_code }
 
     it { is_expected.to be nil }
 
-    context "constestable issue without IDs" do
-      let(:decision_issue_id) { nil }
-      let(:rating_issue_id) { nil }
-      let(:rating_decision_issue_id) { nil }
-
-      it { is_expected.to eq :contestable_issue_cannot_be_empty }
-
-      context "1 ID present" do
-        let(:rating_issue_id) { "something" }
-        it { is_expected.to eq nil }
-      end
+    context "contestable issue without IDs" do
+      let(:attributes) { {} }
+      it { is_expected.to eq :contestable_issue_params_must_have_ids }
     end
 
-    context "legacy appeals not opted in" do
-      let(:legacy_opt_in_approved) { false }
-      it { is_expected.to eq :must_opt_in_to_associate_legacy_issues }
+    context "bogus id" do
+      let(:attributes) { { decisionIssueId: 0 } }
+      it { is_expected.to eq :couldnt_find_contestable_issue }
+    end
+  end
+
+  describe "#unidentified?" do
+    subject { contestable_issue_params.unidentified? }
+
+    it { is_expected.to be false }
+
+    context do
+      let(:attributes) { {} }
+      it { is_expected.to be true }
+    end
+    context do
+      let(:attributes) { { ratingDecisionIssueId: 0 } }
+      it { is_expected.to be false }
     end
   end
 
@@ -78,13 +100,16 @@ context Api::V3::DecisionReview::ContestableIssueParams do
     it do
       is_expected.to eq(
         {
+          rating_issue_reference_id: contestable_issues.first&.rating_issue_reference_id,
+          rating_issue_diagnostic_code: contestable_issues.first&.rating_issue_diagnostic_code,
+          rating_decision_reference_id: contestable_issues.first&.rating_decision_reference_id,
+          decision_text: contestable_issues.first&.description,
+          is_unidentified: contestable_issue_params.unidentified?,
+          decision_date: contestable_issues.first&.approx_decision_date,
           benefit_type: benefit_type,
-          vacols_id: attributes[:legacyAppealIssues][0][:legacyAppealId],
-          vacols_sequence_id: attributes[:legacyAppealIssues][0][:legacyAppealIssueId],
-          is_unidentified: false,
-          contested_decision_issue_id: attributes[:decisionIssueId],
-          rating_issue_reference_id: attributes[:ratingIssueId],
-          rating_decision_reference_id: attributes[:ratingDecisionIssueId]
+          ramp_claim_id: contestable_issues.first&.ramp_claim_id,
+          contested_decision_issue_id: contestable_issues.first&.decision_issue&.id
+
         }.as_json
       )
     end

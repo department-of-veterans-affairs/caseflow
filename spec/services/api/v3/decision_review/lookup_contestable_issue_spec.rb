@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# require "support/intake_helpers"
-
 describe Api::V3::DecisionReview::LookupContestableIssue, :all_dbs do
   include IntakeHelpers
 

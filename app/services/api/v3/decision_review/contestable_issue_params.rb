@@ -53,7 +53,7 @@ class Api::V3::DecisionReview::ContestableIssueParams
   end
 
   # write-in request issues aren't supported at this time
-  # nil fields:
+  # unsupported fields:
   #   nonrating_issue_category
   #   notes
   #   untimely_exemption
@@ -74,7 +74,7 @@ class Api::V3::DecisionReview::ContestableIssueParams
       decision_date: contestable_issue&.approx_decision_date,
       benefit_type: @benefit_type,
       ramp_claim_id: contestable_issue&.ramp_claim_id,
-      contested_decision_issue_id: contestable_issue&.rating_decision_reference_id
+      contested_decision_issue_id: contestable_issue&.decision_issue&.id
     )
   end
 
