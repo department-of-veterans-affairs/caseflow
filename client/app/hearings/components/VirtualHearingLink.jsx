@@ -38,9 +38,11 @@ class VirtualHearingLink extends React.PureComponent {
       return null;
     }
 
+    const href = this.getUrl();
+
     return (
       <Link
-        href={this.getUrl()}
+        href={href}
         target={newWindow ? '_blank' : '_self'}
         disabled={!virtualHearing.jobCompleted}
       >
