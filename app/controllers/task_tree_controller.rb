@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TaskTreeController < ApplicationController
-  def show 
+  def show
     return render_access_error unless FeatureToggle.enabled?(:appeal_viz, user: current_user)
 
     return render_access_error unless BGSService.new.can_access?(appeal.veteran_file_number)
