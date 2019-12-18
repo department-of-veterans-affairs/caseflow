@@ -77,7 +77,7 @@ class ColocatedTask < Task
     end
 
     def valid_type(type)
-      unless ColocatedTask.subclasses.include?(type)
+      unless ColocatedTask.subclasses.map(&:name).include?(type)
         fail Caseflow::Error::ActionForbiddenError, message: "Cannot create task of type #{type}"
       end
 
