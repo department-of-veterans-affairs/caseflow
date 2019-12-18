@@ -17,7 +17,7 @@ describe AsyncableJobMessaging, :postgres do
         message_count = owner.messages.count
         subject
         expect(owner.messages.count).to eq message_count + 1
-        expect(owner.messages.last.text).to match("A new note has been added to your HigherLevelReview job")
+        expect(owner.messages.last.text).to match("A new note has been added to HigherLevelReview")
         expect(owner.messages.last.text).to match(job.path)
         expect(owner.messages.last.message_type).to eq "job_note_added"
       end
