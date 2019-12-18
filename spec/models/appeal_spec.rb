@@ -668,7 +668,7 @@ describe Appeal, :all_dbs do
         end
       end
 
-      describe "when there is an actionable task with an assignee" do
+      describe "when there is an actionable task with an assignee", skip: "flake" do
         let(:assignee) { create(:user) }
         let!(:task) { create(:ama_attorney_task, :in_progress, assigned_to: assignee, appeal: appeal) }
 
