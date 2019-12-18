@@ -203,6 +203,35 @@ describe HearingRequestDocket, :all_dbs do
           .to match_array([appeal, no_held_hearings, no_hearings])
       end
     end
+
+    context "when an appeal aleady has a distribution" do
+      subject do
+        HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: 10, genpop: "any")
+      end
+
+      it "does not fail and distributes the legitimate tasks" do
+        number_of_already_distributed_appeals = 1
+        total_number_of_appeals = 10
+        total_number_of_appeals.times { create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge }
+
+        HearingRequestDocket.new.distribute_appeals(
+          distribution, priority: false, limit: number_of_already_distributed_appeals, genpop: "any"
+        )
+        distributed_appeals = DistributionTask.closed.take(number_of_already_distributed_appeals).map(&:appeal)
+        distributed_appeals.each do |distributed_appeal|
+          DistributionTask.create!(appeal: distributed_appeal, parent: distributed_appeal.root_task)
+        end
+
+        expect(Raven).to receive(:capture_exception).once
+
+        subject
+
+        expect(DistributionTask.open.count).to eq(number_of_already_distributed_appeals)
+        expect(DistributedCase.where.not(case_id: distributed_appeals.map(&:uuid)).count).to eq(
+          total_number_of_appeals - number_of_already_distributed_appeals
+        )
+      end
+    end
   end
 
   describe "#count" do
