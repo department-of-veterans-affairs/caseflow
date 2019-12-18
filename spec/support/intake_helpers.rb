@@ -101,7 +101,7 @@ module IntakeHelpers
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
-      docket_type: "evidence_submission",
+      docket_type: Constants.AMA_DOCKETS.evidence_submission,
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: veteran_is_not_claimant
     )
