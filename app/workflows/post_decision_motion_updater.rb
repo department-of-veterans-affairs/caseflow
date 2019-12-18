@@ -16,7 +16,7 @@ class PostDecisionMotionUpdater
       return unless motion
 
       create_new_tasks
-      create_request_issues
+      create_request_issues if grant_type?
     end
   end
 
