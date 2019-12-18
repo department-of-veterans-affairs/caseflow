@@ -159,9 +159,7 @@ class RequestIssue < ApplicationRecord
       attrs = attributes_from_intake_data(data)
       attrs = attrs.merge(decision_review: decision_review) if decision_review
 
-      new(attrs).tap do |ri|
-        ri.validate_eligibility!
-      end
+      new(attrs).tap(&:validate_eligibility!)
     end
 
     private

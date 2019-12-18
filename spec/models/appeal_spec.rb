@@ -80,7 +80,7 @@ describe Appeal, :all_dbs do
   context "#create_issues!" do
     subject { appeal.create_issues!(issues) }
 
-    let(:issues) {[request_issue]}
+    let(:issues) { [request_issue] }
     let(:request_issue) do
       create(
         :request_issue,
