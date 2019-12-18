@@ -198,9 +198,9 @@ ActiveRecord::Schema.define(version: 20191218211421) do
     t.string "sattyid"
     t.string "sdomainid", null: false
     t.string "slogid", null: false
-    t.string "smemgrp"
+    t.string "smemgrp", limit: 8
     t.string "stafkey", null: false
-    t.string "stitle"
+    t.string "stitle", limit: 16
     t.string "svlj"
     t.datetime "updated_at", null: false
     t.index ["sdomainid"], name: "index_cached_user_attributes_on_sdomainid", unique: true

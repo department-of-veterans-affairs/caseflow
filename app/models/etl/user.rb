@@ -31,6 +31,8 @@ class ETL::User < ETL::Record
       target.slogid = original.vacols_user.slogid
       target.stafkey = original.vacols_user.stafkey
       target.svlj = original.vacols_user.svlj
+      target.stitle = original.vacols_user.stitle
+      target.smemgrp = original.vacols_user.smemgrp
 
       target
     end

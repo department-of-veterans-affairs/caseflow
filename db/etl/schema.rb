@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191217202614) do
+ActiveRecord::Schema.define(version: 20191218214351) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -235,10 +235,12 @@ ActiveRecord::Schema.define(version: 20191217202614) do
     t.string "sattyid", limit: 20
     t.string "selected_regional_office", limit: 255, comment: "CSEM regional office"
     t.string "slogid", limit: 20
+    t.string "smemgrp", limit: 8
     t.string "stafkey", limit: 20
     t.string "station_id", limit: 20, null: false, comment: "CSEM station"
     t.string "status", limit: 20, default: "active", comment: "Whether or not the user is an active user of caseflow"
     t.datetime "status_updated_at", comment: "When the user's status was last updated"
+    t.string "stitle", limit: 16
     t.string "svlj", limit: 1
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
     t.integer "user_id", null: false, comment: "ID of the User"
