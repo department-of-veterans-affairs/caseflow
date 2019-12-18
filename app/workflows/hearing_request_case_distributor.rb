@@ -38,7 +38,7 @@ class HearingRequestCaseDistributor
   def create_distribution_case_for_task(task, genpop_value)
     distribution.distributed_cases.create!(
       case_id: task.appeal.uuid,
-      docket: "hearing",
+      docket: Constants.AMA_DOCKETS.hearing,
       priority: priority,
       ready_at: task.appeal.ready_for_distribution_at,
       task: task,
