@@ -8,7 +8,7 @@
     <% if task_atts[:tasks].present? and task_atts[:tasks].any? %>
       <li id="task-<%= task_atts["id"] %>" class="task-name">
         <span class="caret caret-down">
-          <%= task_type %> <%= task_atts["id"] %> [<%= task_atts["status"] %>]
+          <%= task_type %>
         </span>
         <ul class="nested active">
           <li class="task-atts"><% task_attribute_table(task_atts) %></li>
@@ -17,7 +17,7 @@
       </li>
     <% else %>
       <li id="task-<%= task_atts["id"] %>" class="task-name">
-        <%= task_type %> <%= task_atts["id"] %> [<%= task_atts["status"] %>]
+        <%= task_type %>
       </li>
       <li class="task-atts"><% task_attribute_table(task_atts) %></li>
     <% end %>
@@ -53,7 +53,7 @@
     <li class="task-name">
       <span>
         <%= appeal_type %> ID: <%= tree[:id] %>
-        <b><%= appeal.veteran_full_name %> (<%= appeal.veteran_file_number %>)</b>
+        <span class="veteran-name"><%= appeal.veteran_full_name %> (<%= appeal.veteran_file_number %>)</span>
       </span>
       <ul class="nested active">
        <li class="task-atts">
