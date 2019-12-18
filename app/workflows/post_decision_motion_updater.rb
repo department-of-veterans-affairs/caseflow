@@ -16,6 +16,7 @@ class PostDecisionMotionUpdater
       return unless motion
 
       create_new_tasks
+      create_request_issues
     end
   end
 
@@ -90,6 +91,23 @@ class PostDecisionMotionUpdater
       parent: parent,
       assigned_to: task.assigned_to
     )
+  end
+
+  def create_request_issues
+    params[:vacated_decision_issue_ids].map do |decision_issue_id|
+      prev_decision_issue = DecisionIssue.find(decision_issue_id)
+      RequestIssue.create!(
+        decision_review: prev_decision_issue.decision_review,
+        decision_review_type: prev_decision_issue.decision_review_type,
+        contested_decision_issue_id: prev_decision_issue.id,
+        contested_rating_issue_reference_id: prev_decision_issue.rating_issue_reference_id,
+        contested_rating_issue_profile_date: prev_decision_issue.rating_profile_date,
+        contested_issue_description: prev_decision_issue.description,
+        nonrating_issue_category: prev_decision_issue.nonrating_issue_category,
+        benefit_type: prev_decision_issue.benefit_type,
+        decision_date: prev_decision_issue.caseflow_decision_date
+      )
+    end
   end
 
   def disposition
