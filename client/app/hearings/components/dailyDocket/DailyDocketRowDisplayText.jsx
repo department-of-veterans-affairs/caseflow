@@ -94,7 +94,7 @@ const HearingTime = ({ hearing }) => {
     return (
       <div>
         <p {...firstParagraphStyle}>
-          <b>hearing.readableRequestType</b>
+          <b>{hearing.readableRequestType}</b>
         </p>
         <p>
           {coTime}<br />
