@@ -27,7 +27,6 @@ describe ClaimReview, :postgres do
   let(:informal_conference) { nil }
   let(:same_office) { nil }
   let(:benefit_type) { "compensation" }
-  let(:legacy_opt_in_approved) { nil }
   let(:ineligible_reason) { nil }
   let(:rating_profile_date) { Date.new(2018, 4, 30) }
   let(:vacols_id) { nil }
@@ -112,8 +111,7 @@ describe ClaimReview, :postgres do
       receipt_date: receipt_date,
       informal_conference: informal_conference,
       same_office: same_office,
-      benefit_type: benefit_type,
-      legacy_opt_in_approved: legacy_opt_in_approved
+      benefit_type: benefit_type
     )
   end
 
