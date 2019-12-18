@@ -6,10 +6,12 @@
 class ETL::Builder
   ETL_KLASSES = %w[
     Appeal
-    Task
-    User
+    AttorneyCaseReview
+    DecisionIssue
     Organization
     OrganizationsUser
+    Task
+    User
   ].freeze
 
   CHECKPOINT_KEY = "etl-last-build-checkpoint"
