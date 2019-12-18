@@ -214,9 +214,13 @@ describe HearingRequestDocket, :all_dbs do
         total_number_of_appeals = 10
         total_number_of_appeals.times { create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge }
 
-        HearingRequestDocket.new.distribute_appeals(
-          distribution, priority: false, limit: number_of_already_distributed_appeals, genpop: "any"
-        )
+        previous_distribution_judge = create(:user, last_login_at: Time.zone.now)
+        create(:staff, :judge_role, sdomainid: previous_distribution_judge.css_id)
+        previous_distribution = Distribution.create!(judge: previous_distribution_judge)
+        HearingRequestDocket.new.distribute_appeals(previous_distribution,
+                                                    priority: false,
+                                                    limit: number_of_already_distributed_appeals,
+                                                    genpop: "any")
         distributed_appeals = DistributionTask.closed.take(number_of_already_distributed_appeals).map(&:appeal)
         distributed_appeals.each do |distributed_appeal|
           DistributionTask.create!(appeal: distributed_appeal, parent: distributed_appeal.root_task)
@@ -227,9 +231,12 @@ describe HearingRequestDocket, :all_dbs do
         subject
 
         expect(DistributionTask.open.count).to eq(number_of_already_distributed_appeals)
-        expect(DistributedCase.where.not(case_id: distributed_appeals.map(&:uuid)).count).to eq(
+        expect(DistributionTask.closed.where.not(appeal_id: distributed_appeals.map(&:id)).count).to eq(
           total_number_of_appeals - number_of_already_distributed_appeals
         )
+        distributed_cases = DistributedCase.where(distribution: distribution)
+        expect(distributed_cases.count).to eq(total_number_of_appeals - number_of_already_distributed_appeals)
+        expect(distributed_cases.where(case_id: distributed_appeals.map(&:uuid)).count).to eq(0)
       end
     end
   end
