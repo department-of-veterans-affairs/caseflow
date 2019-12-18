@@ -132,8 +132,9 @@ describe InitialTasksFactory, :postgres do
         expect(RootTask.count).to eq(1)
 
         expect(InformalHearingPresentationTask.count).to eq(2)
-        expect(InformalHearingPresentationTask.first.assigned_to).to eq(pva)
-        expect(InformalHearingPresentationTask.second.assigned_to).to eq(vva)
+        # sort order is non-deterministic so load by assignee
+        expect(pva.tasks.map(&:type)).to include("InformalHearingPresentationTask")
+        expect(vva.tasks.map(&:type)).to include("InformalHearingPresentationTask")
       end
 
       it "does not create a task for a VSO if one already exists for that appeal" do
