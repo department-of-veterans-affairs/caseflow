@@ -406,6 +406,10 @@ describe Task, :all_dbs do
       let(:assignee) { user }
       let(:expected_actions) { [] }
 
+      before do
+        task.update!(status: :completed)
+      end
+
       it "should return an empty list" do
         expect(subject).to eq(expected_actions)
       end
